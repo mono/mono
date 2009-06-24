@@ -125,8 +125,8 @@ namespace Mono.CSharp {
 		public readonly Expression LeftExpr;
 		public readonly string Identifier;
 
-		ArrayList PosArguments;
-		ArrayList NamedArguments;
+		Arguments PosArguments;
+		Arguments NamedArguments;
 
 		bool resolve_error;
 		readonly bool nameEscaped;
@@ -148,15 +148,15 @@ namespace Mono.CSharp {
 		static PtrHashtable usage_attr_cache;
 		// Cache for parameter-less attributes
 		static PtrHashtable att_cache;
-		
-		public Attribute (string target, Expression left_expr, string identifier, object[] args, Location loc, bool nameEscaped)
+
+		public Attribute (string target, Expression left_expr, string identifier, Arguments[] args, Location loc, bool nameEscaped)
 		{
 			LeftExpr = left_expr;
 			Identifier = identifier;
 			Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
 			if (args != null) {
-				PosArguments = (ArrayList)args [0];
-				NamedArguments = (ArrayList)args [1];				
+				PosArguments = args [0];
+				NamedArguments = args [1];				
 			}
 			this.loc = loc;
 			ExplicitTarget = target;
@@ -376,7 +376,7 @@ namespace Mono.CSharp {
 
 			const string CharSetEnumMember = "CharSet";
 			if (NamedArguments == null) {
-				NamedArguments = new ArrayList (1);
+				NamedArguments = new Arguments (1);
 			} else {
 				foreach (NamedArgument a in NamedArguments) {
 					if (a.Name.Value == CharSetEnumMember)
@@ -475,15 +475,9 @@ namespace Mono.CSharp {
 
 		protected virtual ConstructorInfo ResolveConstructor (EmitContext ec)
 		{
-			if (PosArguments != null) {
-				for (int i = 0; i < PosArguments.Count; i++) {
-					Argument a = (Argument) PosArguments [i];
+			if (PosArguments != null)
+				PosArguments.Resolve (ec);
 
-					if (!a.Resolve (ec, Location))
-						return null;
-				}
-			}
-			
 			MethodGroupExpr mg = MemberLookupFinal (ec, ec.ContainerType,
 				Type, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
@@ -504,14 +498,8 @@ namespace Mono.CSharp {
 
 			AParametersCollection pd = TypeManager.GetParameterData (constructor);
 
-			int pos_arg_count = PosArguments.Count;
-			pos_values = new object [pos_arg_count];
-			for (int j = 0; j < pos_arg_count; ++j) {
-				Argument a = (Argument) PosArguments [j];
-
-				if (!a.Expr.GetAttributableValue (ec, a.Type, out pos_values [j]))
-					return null;
-			}
+			if (!PosArguments.GetAttributableValue (ec, out pos_values))
+				return null;
 
 			// Here we do the checks which should be done by corlib or by runtime.
 			// However Zoltan doesn't like it and every Mono compiler has to do it again.
@@ -534,7 +522,7 @@ namespace Mono.CSharp {
 			if (Type == pa.IndexerName || Type == pa.Conditional) {
 				string v = pos_values [0] as string;
 				if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
-					Report.Error (633, ((Argument)PosArguments[0]).Expr.Location,
+					Report.Error (633, PosArguments [0].Expr.Location,
 						"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
 					return null;
 				}
@@ -570,8 +558,7 @@ namespace Mono.CSharp {
 	
 				seen_names.Add (name);
 
-				if (!a.Resolve (ec, Location))
-					return false;
+				a.Resolve (ec);
 
 				Expression member = Expression.MemberLookup (
 					ec.ContainerType, Type, name,
@@ -1272,32 +1259,13 @@ namespace Mono.CSharp {
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (Owner.IsClsComplianceRequired ()) {
-				if (PosArguments != null) {
-					foreach (Argument arg in PosArguments) { 
-						// Type is undefined (was error 246)
-						if (arg.Type == null)
-							return;
-
-						if (arg.Type.IsArray) {
-							Report.Warning (3016, 1, Location, "Arrays as attribute arguments are not CLS-compliant");
-							return;
-						}
-					}
-				}
+				if (PosArguments != null)
+					PosArguments.CheckArrayAsAttribute ();
 			
 				if (NamedArguments == null)
 					return;
-			
-				foreach (NamedArgument arg in NamedArguments) {
-					// Type is undefined (was error 246)
-					if (arg.Type == null)
-						return;
 
-					if (arg.Type.IsArray) {
-						Report.Warning (3016, 1, Location, "Arrays as attribute arguments are not CLS-compliant");
-						return;
-					}
-				}
+				NamedArguments.CheckArrayAsAttribute ();
 			}
 		}
 
@@ -1306,7 +1274,7 @@ namespace Mono.CSharp {
 			if (PosArguments == null || PosArguments.Count < 1)
 				return null;
 
-			return ((Argument) PosArguments [0]).Expr;
+			return PosArguments [0].Expr;
 		}
 
 		public string GetString () 
@@ -1359,7 +1327,7 @@ namespace Mono.CSharp {
 		public readonly NamespaceEntry ns;
 
 		public GlobalAttribute (NamespaceEntry ns, string target, 
-					Expression left_expr, string identifier, object[] args, Location loc, bool nameEscaped):
+					Expression left_expr, string identifier, Arguments[] args, Location loc, bool nameEscaped):
 			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
 			this.ns = ns;

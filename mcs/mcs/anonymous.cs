@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
 
-			Expression e = new New (storey_type_expr, new ArrayList (0), Location).Resolve (ec);
+			Expression e = new New (storey_type_expr, null, Location).Resolve (ec);
 			e.Emit (ec);
 
 			Instance = new LocalTemporary (storey_type_expr.Type);
@@ -1755,14 +1755,14 @@ namespace Mono.CSharp {
 						new TypeArguments (new SimpleName (TypeParameters [i].Name, loc)), loc),
 						"Default", loc);
 
-				ArrayList arguments_equal = new ArrayList (2);
+				Arguments arguments_equal = new Arguments (2);
 				arguments_equal.Add (new Argument (new MemberAccess (new This (f.Location), f.Name)));
 				arguments_equal.Add (new Argument (new MemberAccess (other_variable, f.Name)));
 
 				Expression field_equal = new Invocation (new MemberAccess (equality_comparer,
 					"Equals", loc), arguments_equal);
 
-				ArrayList arguments_hashcode = new ArrayList (1);
+				Arguments arguments_hashcode = new Arguments (1);
 				arguments_hashcode.Add (new Argument (new MemberAccess (new This (f.Location), f.Name)));
 				Expression field_hashcode = new Invocation (new MemberAccess (equality_comparer,
 					"GetHashCode", loc), arguments_hashcode);

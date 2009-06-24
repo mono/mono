@@ -4371,16 +4371,16 @@ namespace Mono.CSharp {
 
 	public abstract class ConstructorInitializer : ExpressionStatement
 	{
-		ArrayList argument_list;
+		Arguments argument_list;
 		MethodGroupExpr base_constructor_group;
-		
-		public ConstructorInitializer (ArrayList argument_list, Location loc)
+
+		public ConstructorInitializer (Arguments argument_list, Location loc)
 		{
 			this.argument_list = argument_list;
 			this.loc = loc;
 		}
 
-		public ArrayList Arguments {
+		public Arguments Arguments {
 			get {
 				return argument_list;
 			}
@@ -4394,10 +4394,7 @@ namespace Mono.CSharp {
 		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
 			if (argument_list != null){
-				foreach (Argument a in argument_list){
-					if (!a.Resolve (ec, loc))
-						return false;
-				}
+				argument_list.Resolve (ec);
 			}
 
 			if (this is ConstructorBaseInitializer) {
@@ -4471,7 +4468,7 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list, Location l) :
+		public ConstructorBaseInitializer (Arguments argument_list, Location l) :
 			base (argument_list, l)
 		{
 		}
@@ -4485,7 +4482,7 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list, Location l) :
+		public ConstructorThisInitializer (Arguments argument_list, Location l) :
 			base (argument_list, l)
 		{
 		}
@@ -5185,7 +5182,7 @@ namespace Mono.CSharp {
 				// TODO: Should use AddScopeStatement or something else which emits correct
 				// debugger scope
 				//
-				finaly_block.AddStatement (new StatementExpression (new Invocation (method_expr, new ArrayList (0))));
+				finaly_block.AddStatement (new StatementExpression (new Invocation (method_expr, new Arguments (0))));
 				new_block.AddStatement (new TryFinally (try_block, finaly_block, Location));
 
 				block = new_block;

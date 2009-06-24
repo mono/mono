@@ -1,3 +1,10 @@
+2009-06-24  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Replaced ArrayList with Arguments in need of a nonsequential 
+	arguments expression to be implemented.
+	
+	*.sources: Add argument.cs
+
 2009-06-23  Marek Safar  <marek.safar@gmail.com>
 
 	* parameter.cs: Moved GetParameterIndexByName to base class.

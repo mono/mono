@@ -552,7 +552,7 @@ namespace Mono.CSharp {
 		///   Currently ResolveLValue wraps DoResolveLValue to perform sanity
 		///   checking and assertion checking on what we expect from Resolve
 		/// </remarks>
-		public Expression ResolveLValue (EmitContext ec, Expression right_side, Location loc)
+		public Expression ResolveLValue (EmitContext ec, Expression right_side)
 		{
 			int errors = Report.Errors;
 			bool out_access = right_side == EmptyExpression.OutAccess;
@@ -942,7 +942,7 @@ namespace Mono.CSharp {
 			if (operator_group == null)
 				return null;
 
-			ArrayList arguments = new ArrayList (1);
+			Arguments arguments = new Arguments (1);
 			arguments.Add (new Argument (e));
 			operator_group = operator_group.OverloadResolve (
 				ec, ref arguments, false, loc);
@@ -1267,17 +1267,17 @@ namespace Mono.CSharp {
 		//
 		public abstract Expression CreateExpressionTree (EmitContext ec);
 
-		protected Expression CreateExpressionFactoryCall (string name, ArrayList args)
+		protected Expression CreateExpressionFactoryCall (string name, Arguments args)
 		{
 			return CreateExpressionFactoryCall (name, null, args, loc);
 		}
 
-		protected Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args)
+		protected Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, Arguments args)
 		{
 			return CreateExpressionFactoryCall (name, typeArguments, args, loc);
 		}
 
-		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
+		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, Arguments args, Location loc)
 		{
 			return new Invocation (new MemberAccess (CreateExpressionTypeExpression (loc), name, typeArguments, loc), args);
 		}
@@ -1364,7 +1364,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
+			Arguments args = new Arguments (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 
@@ -1585,9 +1585,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (child.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			Arguments args = Arguments.CreateForExpressionTree (ec, null,
+				child.CreateExpressionTree (ec),
+				new TypeOf (new TypeExpression (type, loc), loc));
+
 			if (type.IsPointer)
 				Error_PointerInsideExpressionTree ();
 
@@ -2623,7 +2624,7 @@ namespace Mono.CSharp {
 				if (vi != null){
 					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 					if (right_side != null) {
-						return var.ResolveLValue (ec, right_side, loc);
+						return var.ResolveLValue (ec, right_side);
 					} else {
 						ResolveFlags rf = ResolveFlags.VariableOrValue;
 						if (intermediate)
@@ -2635,7 +2636,7 @@ namespace Mono.CSharp {
 				Expression expr = current_block.Toplevel.GetParameterReference (Name, loc);
 				if (expr != null) {
 					if (right_side != null)
-						return expr.ResolveLValue (ec, right_side, loc);
+						return expr.ResolveLValue (ec, right_side);
 
 					return expr.Resolve (ec);
 				}
@@ -3132,45 +3133,30 @@ namespace Mono.CSharp {
 			get { return namespace_entry == null; }
 		}
 
-		public override void EmitArguments (EmitContext ec, ArrayList arguments)
-		{
-			if (arguments == null)
-				arguments = new ArrayList (1);			
-			arguments.Insert (0, extension_argument);
-			base.EmitArguments (ec, arguments);
-		}
-
-		public override void EmitCall (EmitContext ec, ArrayList arguments)
-		{
-			if (arguments == null)
-				arguments = new ArrayList (1);
-			arguments.Insert (0, extension_argument);
-			base.EmitCall (ec, arguments);
-		}
-
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			extension_argument.Expr.MutateHoistedGenericType (storey);
 			base.MutateHoistedGenericType (storey);
 		}
 
-		public override MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList arguments, bool may_fail, Location loc)
+		public override MethodGroupExpr OverloadResolve (EmitContext ec, ref Arguments arguments, bool may_fail, Location loc)
 		{
 			if (arguments == null)
-				arguments = new ArrayList (1);
+				arguments = new Arguments (1);
 
 			arguments.Insert (0, new Argument (ExtensionExpression));
 			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespace_entry, loc);
 
 			// Store resolved argument and restore original arguments
 			if (mg != null)
-				((ExtensionMethodGroupExpr)mg).extension_argument = (Argument)arguments [0];
-			arguments.RemoveAt (0);
+				((ExtensionMethodGroupExpr)mg).extension_argument = arguments [0];
+			else
+				arguments.RemoveAt (0);	// Clean-up modified arguments for error reporting
 
 			return mg;
 		}
 
-		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ArrayList arguments, NamespaceEntry ns, Location loc)
+		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, Arguments arguments, NamespaceEntry ns, Location loc)
 		{
 			// Use normal resolve rules
 			MethodGroupExpr mg = base.OverloadResolve (ec, ref arguments, ns != null, loc);
@@ -3422,7 +3408,7 @@ namespace Mono.CSharp {
 		///     false if candidate ain't better
 		///     true  if candidate is better than the current best match
 		/// </remarks>
-		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
+		static bool BetterFunction (EmitContext ec, Arguments args, int argument_count,
 			MethodBase candidate, bool candidate_params,
 			MethodBase best, bool best_params)
 		{
@@ -3433,7 +3419,7 @@ namespace Mono.CSharp {
 			bool same = true;
 			for (int j = 0, c_idx = 0, b_idx = 0; j < argument_count; ++j, ++c_idx, ++b_idx) 
 			{
-				Argument a = (Argument) args [j];
+				Argument a = args [j];
 
 				Type ct = candidate_pd.Types [c_idx];
 				Type bt = best_pd.Types [b_idx];
@@ -3609,12 +3595,7 @@ namespace Mono.CSharp {
 			ReportUsageError ();
 		}
 		
-		public virtual void EmitArguments (EmitContext ec, ArrayList arguments)
-		{
-			Invocation.EmitArguments (ec, arguments, false, null);  
-		}
-		
-		public virtual void EmitCall (EmitContext ec, ArrayList arguments)
+		public void EmitCall (EmitContext ec, Arguments arguments)
 		{
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, best_candidate, arguments, loc);			
 		}
@@ -3721,7 +3702,7 @@ namespace Mono.CSharp {
 		/// 0 = the best, int.MaxValue = the worst
 		///
 		public int IsApplicable (EmitContext ec,
-						ref ArrayList arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
+						ref Arguments arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
 		{
 			MethodBase candidate = method;
 
@@ -3780,14 +3761,21 @@ namespace Mono.CSharp {
 #endif
 
 			if (optional_count != 0) {
- 				arguments = arg_count == 0 ? new ArrayList (optional_count) : new ArrayList (arguments);
-				for (int i = arg_count; i < pd.Count; ++i) {
+				Arguments args = new Arguments (optional_count + arg_count);
+				for (int i = 0; i < pd.Count; ++i) {
+					if (i < arg_count) {
+						args.Add (arguments[i]);
+						continue;
+					}
+
 					Expression e = pd.FixedParameters [i].DefaultValue as Constant;
 					if (e == null)
 						e = new DefaultValueExpression (new TypeExpression (pd.Types [i], loc), loc).Resolve (ec);
 
-					arguments.Add (new Argument (e));
+					args.Add (new Argument (e, Argument.AType.Default));
 				}
+
+				arguments = args;
 			}
 
 
@@ -3798,7 +3786,7 @@ namespace Mono.CSharp {
 			Parameter.Modifier p_mod = 0;
 			Type pt = null;
 			for (int i = 0; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
+				Argument a = arguments [i];
 				Parameter.Modifier a_mod = a.Modifier &
 					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
@@ -3984,7 +3972,7 @@ namespace Mono.CSharp {
 		///            that is the best match of me on Arguments.
 		///
 		/// </summary>
-		public virtual MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList Arguments,
+		public virtual MethodGroupExpr OverloadResolve (EmitContext ec, ref Arguments Arguments,
 			bool may_fail, Location loc)
 		{
 			bool method_params = false;
@@ -4001,7 +3989,7 @@ namespace Mono.CSharp {
 			//
 			Hashtable candidate_to_form = null;
 			Hashtable candidates_expanded = null;
-			ArrayList candidate_args = Arguments;
+			Arguments candidate_args = Arguments;
 
 			int arg_count = Arguments != null ? Arguments.Count : 0;
 
@@ -4348,7 +4336,7 @@ namespace Mono.CSharp {
 			// parameters used for method overrides and I am not going to fix it for SRE
 			//
 			if (candidates_expanded != null && candidates_expanded.Contains (best_candidate)) {
-				candidate_args = (ArrayList) candidates_expanded [best_candidate];
+				candidate_args = (Arguments) candidates_expanded [best_candidate];
 				arg_count = candidate_args.Count;
 			}
 
@@ -4390,7 +4378,7 @@ namespace Mono.CSharp {
 			type_arguments = ta;
 		}
 
-		public bool VerifyArgumentsCompat (EmitContext ec, ref ArrayList arguments,
+		public bool VerifyArgumentsCompat (EmitContext ec, ref Arguments arguments,
 							  int arg_count, MethodBase method,
 							  bool chose_params_expanded,
 							  bool may_fail, Location loc)
@@ -4406,7 +4394,7 @@ namespace Mono.CSharp {
 			bool has_unsafe_arg = false;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
-				a = (Argument) arguments [a_idx];
+				a = arguments [a_idx];
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters [a_idx].ModFlags;
 					pt = pd.Types [a_idx];
@@ -4478,7 +4466,7 @@ namespace Mono.CSharp {
 			int param_count = GetApplicableParametersCount (method, pd);
 			if (params_initializers == null && pd.HasParams && arg_count + 1 == param_count) {
 				if (arguments == null)
-					arguments = new ArrayList (1);
+					arguments = new Arguments (1);
 
 				pt = pd.Types [param_count - 1];
 				pt = TypeManager.GetElementType (pt);
@@ -4680,9 +4668,10 @@ namespace Mono.CSharp {
 				instance = InstanceExpression.CreateExpressionTree (ec);
 			}
 
-			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (instance));
-			args.Add (new Argument (CreateTypeOfExpression ()));
+			Arguments args = Arguments.CreateForExpressionTree (ec, null,
+				instance,
+				CreateTypeOfExpression ());
+
 			return CreateExpressionFactoryCall ("Field", args);
 		}
 
@@ -4718,7 +4707,7 @@ namespace Mono.CSharp {
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
 						if (InstanceExpression != EmptyExpression.Null)
-							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
+							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
 					}
 				} else {
 					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
@@ -5164,9 +5153,9 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args;
+			Arguments args;
 			if (IsSingleDimensionalArrayLength ()) {
-				args = new ArrayList (1);
+				args = new Arguments (1);
 				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
 				return CreateExpressionFactoryCall ("ArrayLength", args);
 			}
@@ -5176,7 +5165,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			args = new ArrayList (2);
+			args = new Arguments (2);
 			if (InstanceExpression == null)
 				args.Add (new Argument (new NullLiteral (loc)));
 			else
@@ -5289,7 +5278,7 @@ namespace Mono.CSharp {
 
 			InstanceExpression = InstanceExpression.DoResolve (ec);
 			if (lvalue_instance && InstanceExpression != null)
-				InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess, loc);
+				InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess);
 
 			if (InstanceExpression == null)
 				return false;
@@ -5561,7 +5550,7 @@ namespace Mono.CSharp {
 				my_source = temp;
 			}
 
-			ArrayList args = new ArrayList (1);
+			Arguments args = new Arguments (1);
 			args.Add (new Argument (my_source));
 			
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, setter, args, loc, false, prepared);
@@ -5772,7 +5761,7 @@ namespace Mono.CSharp {
 
 		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
 		{
-			ArrayList args = new ArrayList (1);
+			Arguments args = new Arguments (1);
 			args.Add (new Argument (source));
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, is_add ? add_accessor : remove_accessor, args, loc);
 		}

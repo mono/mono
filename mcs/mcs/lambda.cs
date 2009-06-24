@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			ArrayList arguments = new ArrayList (2);
+			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
 			return CreateExpressionFactoryCall ("Lambda",
@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			ArrayList arguments = new ArrayList (2);
+			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
 			return CreateExpressionFactoryCall ("Lambda",

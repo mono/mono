@@ -776,7 +776,7 @@ attribute
 				      "'<' unexpected: attributes cannot be generic");
 		}
 
-		object [] arguments = (object []) $3;
+		Arguments [] arguments = (Arguments []) $3;
 		MemberName left = mname.Left;
 		string identifier = mname.Name;
 
@@ -810,38 +810,38 @@ attribute_arguments
 	: /* empty */ 		{ $$ = null; } 
 	| positional_or_named_argument
 	  {
-	  	ArrayList a = new ArrayList (4);
-		a.Add ($1);
-		$$ = new object [] { a, null };
+	  	Arguments a = new Arguments (4);
+		a.Add ((Argument) $1);
+		$$ = new Arguments [] { a, null };
 	  }
 	| named_attribute_argument
 	  {
-	  	ArrayList a = new ArrayList (4);
-		a.Add ($1);  
-		$$ = new object [] { null, a };
+	  	Arguments a = new Arguments (4);
+		a.Add ((Argument) $1);  
+		$$ = new Arguments [] { null, a };
 	  }
     | attribute_arguments COMMA positional_or_named_argument
 	  {
-		object[] o = (object[]) $1;
+		Arguments[] o = (Arguments[]) $1;
 		if (o [1] != null) {
 			Report.Error (1016, ((Argument) $3).Expr.Location, "Named attribute arguments must appear after the positional arguments");
-			o [0] = new ArrayList (4);
+			o [0] = new Arguments (4);
 		}
 		
-		ArrayList args = ((ArrayList) o [0]);
+		Arguments args = ((Arguments) o [0]);
 		if (args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 		
-		args.Add ($3);
+		args.Add ((Argument) $3);
 	  }
     | attribute_arguments COMMA named_attribute_argument
 	  {
-		object[] o = (object[]) $1;
+		Arguments[] o = (Arguments[]) $1;
 		if (o [1] == null) {
-			o [1] = new ArrayList (4);
+			o [1] = new Arguments (4);
 		}
 
-		((ArrayList) o [1]).Add ($3);
+		((Arguments) o [1]).Add ((Argument) $3);
 	  }
     ;
 
@@ -2186,7 +2186,7 @@ constructor_initializer
 	  opt_argument_list CLOSE_PARENS
 	  {
 	  	--lexer.parsing_block;
-		$$ = new ConstructorBaseInitializer ((ArrayList) $5, (Location) $2);
+		$$ = new ConstructorBaseInitializer ((Arguments) $5, (Location) $2);
 	  }
 	| COLON THIS OPEN_PARENS
 	  {
@@ -2195,7 +2195,7 @@ constructor_initializer
 	  opt_argument_list CLOSE_PARENS
 	  {
 	  	--lexer.parsing_block;
-		$$ = new ConstructorThisInitializer ((ArrayList) $5, (Location) $2);
+		$$ = new ConstructorThisInitializer ((Arguments) $5, (Location) $2);
 	  }
 	| COLON error {
 		Report.Error (1018, GetLocation ($1), "Keyword `this' or `base' expected");
@@ -2541,7 +2541,7 @@ enum_body
 	;
 
 opt_enum_member_declarations
-	: /* empty */			{ $$ = new ArrayList (4); }
+	: /* empty */			{ $$ = new ArrayList (0); }
 	| enum_member_declarations opt_comma { $$ = $1; }
 	;
 
@@ -3110,7 +3110,7 @@ member_access
 invocation_expression
 	: primary_expression open_parens_any opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new Invocation ((Expression) $1, (ArrayList) $3);
+		$$ = new Invocation ((Expression) $1, (Arguments) $3);
 	  }
 	;
 
@@ -3196,17 +3196,17 @@ opt_argument_list
 argument_list
 	: argument
 	  { 
-		ArrayList list = new ArrayList (4);
-		list.Add ($1);
+		Arguments list = new Arguments (4);
+		list.Add ((Argument) $1);
 		$$ = list;
 	  }
 	| argument_list COMMA argument
 	  {
-		ArrayList list = (ArrayList) $1;
+		Arguments list = (Arguments) $1;
 		if (!($3 is NamedArgument) && list [list.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
 		
-		list.Add ($3);
+		list.Add ((Argument) $3);
 		$$ = list;
 	  }
 	| argument_list COMMA
@@ -3241,11 +3241,7 @@ non_simple_argument
 	  }
 	| ARGLIST open_parens_any argument_list CLOSE_PARENS
 	  {
-		ArrayList list = (ArrayList) $3;
-		Argument[] args = new Argument [list.Count];
-		list.CopyTo (args, 0);
-
-		$$ = new Argument (new Arglist (args, (Location) $1));
+		$$ = new Argument (new Arglist ((Arguments) $3, (Location) $1));
 	  }
 	| ARGLIST open_parens_any CLOSE_PARENS
 	  {
@@ -3262,14 +3258,14 @@ variable_reference
 	;
 
 element_access
-	: primary_expression_no_array_creation OPEN_BRACKET expression_list CLOSE_BRACKET	
+	: primary_expression_no_array_creation OPEN_BRACKET expression_list_arguments CLOSE_BRACKET	
 	  {
-		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
+		$$ = new ElementAccess ((Expression) $1, (Arguments) $3);
 	  }
-	| array_creation_expression OPEN_BRACKET expression_list CLOSE_BRACKET
+	| array_creation_expression OPEN_BRACKET expression_list_arguments CLOSE_BRACKET
 	  {
 	  	// LAMESPEC: Not allowed according to specification
-		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
+		$$ = new ElementAccess ((Expression) $1, (Arguments) $3);
 	  }	
 	| primary_expression_no_array_creation rank_specifiers
 	  {
@@ -3312,6 +3308,29 @@ expression_list
 		$$ = list;
 	  }
 	;
+	
+expression_list_arguments
+	: expression_list_argument
+	  {
+		Arguments args = new Arguments (4);
+		args.Add ((Argument) $1);
+		$$ = args;
+	  }
+	| expression_list_arguments COMMA expression_list_argument
+	  {
+		Arguments args = (Arguments) $1;
+		args.Add ((Argument) $3);
+		$$ = args;	  
+	  }
+	;
+	
+expression_list_argument
+	: expression
+	  {
+	  	$$ = new Argument ((Expression) $1);
+	  }
+	| named_argument
+	;
 
 this_access
 	: THIS
@@ -3326,13 +3345,14 @@ base_access
 		LocatedToken lt = (LocatedToken) $3;
 		$$ = new BaseAccess (lt.Value, (TypeArguments) $4, lt.Location);
 	  }
-	| BASE OPEN_BRACKET expression_list CLOSE_BRACKET
+	| BASE OPEN_BRACKET expression_list_arguments CLOSE_BRACKET
 	  {
-		$$ = new BaseIndexerAccess ((ArrayList) $3, (Location) $1);
+		$$ = new BaseIndexerAccess ((Arguments) $3, (Location) $1);
 	  }
-	| BASE error {
-		Report.Error (175, (Location) $1, "Use of keyword `base' is not valid in this context");
-		$$ = null;
+	| BASE error
+	  {
+	  	Error_SyntaxError (yyToken);
+		$$ = new BaseAccess (null, GetLocation ($2));
 	  }
 	;
 
@@ -3357,10 +3377,10 @@ object_or_delegate_creation_expression
 			if (RootContext.Version <= LanguageVersion.ISO_2)
 				Report.FeatureIsNotAvailable (GetLocation ($1), "object initializers");
 				
-			$$ = new NewInitialize ((Expression) $1, (ArrayList) $3, (CollectionOrObjectInitializers) $5, GetLocation ($1));
+			$$ = new NewInitialize ((Expression) $1, (Arguments) $3, (CollectionOrObjectInitializers) $5, GetLocation ($1));
 		}
 		else
-			$$ = new New ((Expression) $1, (ArrayList) $3, GetLocation ($1));
+			$$ = new New ((Expression) $1, (Arguments) $3, GetLocation ($1));
 	  }
 	| new_expr_start object_or_collection_initializer
 	  {

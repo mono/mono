@@ -2080,9 +2080,7 @@ namespace Mono.CSharp {
 		///   when resolving an Invocation or a DelegateInvocation and the user
 		///   did not explicitly specify type arguments.
 		/// </summary>
-		public static int InferTypeArguments (EmitContext ec,
-						       ArrayList arguments,
-						       ref MethodBase method)
+		public static int InferTypeArguments (EmitContext ec, Arguments arguments, ref MethodBase method)
 		{
 			ATypeInference ti = ATypeInference.CreateInstance (arguments);
 			Type[] i_args = ti.InferMethodArguments (ec, method);
@@ -2099,13 +2097,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Type inference.
 		/// </summary>
-		public static bool InferTypeArguments (AParametersCollection apd,
-						       ref MethodBase method)
+		public static bool InferTypeArguments (AParametersCollection param, ref MethodBase method)
 		{
 			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
-			ATypeInference ti = ATypeInference.CreateInstance (ArrayList.Adapter (apd.Types));
+			ATypeInference ti = ATypeInference.CreateInstance (DelegateCreation.CreateDelegateMethodArguments (param, Location.Null));
 			Type[] i_args = ti.InferDelegateArguments (method);
 			if (i_args == null)
 				return false;
@@ -2117,17 +2114,17 @@ namespace Mono.CSharp {
 
 	abstract class ATypeInference
 	{
-		protected readonly ArrayList arguments;
+		protected readonly Arguments arguments;
 		protected readonly int arg_count;
 
-		protected ATypeInference (ArrayList arguments)
+		protected ATypeInference (Arguments arguments)
 		{
 			this.arguments = arguments;
 			if (arguments != null)
 				arg_count = arguments.Count;
 		}
 
-		public static ATypeInference CreateInstance (ArrayList arguments)
+		public static ATypeInference CreateInstance (Arguments arguments)
 		{
 			return new TypeInferenceV3 (arguments);
 		}
@@ -2152,7 +2149,7 @@ namespace Mono.CSharp {
 		//
 		int score = int.MaxValue;
 
-		public TypeInferenceV3 (ArrayList arguments)
+		public TypeInferenceV3 (Arguments arguments)
 			: base (arguments)
 		{
 		}
@@ -2179,7 +2176,7 @@ namespace Mono.CSharp {
 				if (!t.IsGenericParameter)
 					continue;
 
-				context.LowerBoundInference ((Type)arguments[i], t);
+				context.LowerBoundInference (arguments [i].Expr.Type, t);
 			}
 
 			if (!context.FixAllTypes ())
@@ -2221,7 +2218,7 @@ namespace Mono.CSharp {
 			//
 			Type method_parameter = null;
 			for (int i = 0; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
+				Argument a = arguments [i];
 				
 				if (i < params_arguments_start) {
 					method_parameter = methodParameters.Types [i];
@@ -2304,7 +2301,7 @@ namespace Mono.CSharp {
 #endif
 
 				if (tic.IsReturnTypeNonDependent (mi, rtype))
-					score -= tic.OutputTypeInference (ec, ((Argument) arguments [i]).Expr, t_i);
+					score -= tic.OutputTypeInference (ec, arguments [i].Expr, t_i);
 			}
 
 
@@ -2805,7 +2802,7 @@ namespace Mono.CSharp {
 					return 0;
 
 				MethodGroupExpr mg = (MethodGroupExpr) e;
-				ArrayList args = DelegateCreation.CreateDelegateMethodArguments (invoke, e.Location);
+				Arguments args = DelegateCreation.CreateDelegateMethodArguments (TypeManager.GetParameterData (invoke), e.Location);
 				mg = mg.OverloadResolve (ec, ref args, true, e.Location);
 				if (mg == null)
 					return 0;

@@ -81,7 +81,7 @@ namespace Mono.CSharp.Linq
 
 		class QueryExpressionInvocation : Invocation, MethodGroupExpr.IErrorHandler
 		{
-			public QueryExpressionInvocation (QueryExpressionAccess expr, ArrayList arguments)
+			public QueryExpressionInvocation (QueryExpressionAccess expr, Arguments arguments)
 				: base (expr, arguments)
 			{
 			}
@@ -107,7 +107,7 @@ namespace Mono.CSharp.Linq
 				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
-					Argument a = (Argument) Arguments [0];
+					Argument a = Arguments [0];
 
 					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
 #if GMCS_SOURCE
@@ -134,7 +134,7 @@ namespace Mono.CSharp.Linq
 				if (mg.Name == "SelectMany") {
 					Report.Error (1943, loc,
 						"An expression type is incorrect in a subsequent `from' clause in a query expression with source type `{0}'",
-						((Argument) Arguments [0]).GetSignatureForError ());
+						Arguments [0].GetSignatureForError ());
 				} else {
 					Report.Error (1942, loc,
 						"An expression type in `{0}' clause is incorrect. Type inference failed in the call to `{1}'",
@@ -183,7 +183,7 @@ namespace Mono.CSharp.Linq
 
 		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide)
 		{
-			ArrayList args;
+			Arguments args;
 			CreateArguments (ec, out args);
 			lSide = CreateQueryExpression (lSide, args);
 			if (next != null) {
@@ -199,9 +199,9 @@ namespace Mono.CSharp.Linq
 			return lSide;
 		}
 
-		protected virtual void CreateArguments (EmitContext ec, out ArrayList args)
+		protected virtual void CreateArguments (EmitContext ec, out Arguments args)
 		{
-			args = new ArrayList (2);
+			args = new Arguments (2);
 
 			LambdaExpression selector = new LambdaExpression (loc);
 			selector.Block = block;
@@ -210,13 +210,13 @@ namespace Mono.CSharp.Linq
 			args.Add (new Argument (selector));
 		}
 
-		protected Invocation CreateQueryExpression (Expression lSide, ArrayList arguments)
+		protected Invocation CreateQueryExpression (Expression lSide, Arguments arguments)
 		{
 			return new QueryExpressionInvocation (
 				new QueryExpressionAccess (lSide, MethodName, loc), arguments);
 		}
 
-		protected Invocation CreateQueryExpression (Expression lSide, TypeArguments typeArguments, ArrayList arguments)
+		protected Invocation CreateQueryExpression (Expression lSide, TypeArguments typeArguments, Arguments arguments)
 		{
 			return new QueryExpressionInvocation (
 				new QueryExpressionAccess (lSide, MethodName, typeArguments, loc), arguments);
@@ -345,7 +345,7 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		protected override void CreateArguments (EmitContext ec, out ArrayList args)
+		protected override void CreateArguments (EmitContext ec, out Arguments args)
 		{
 			base.CreateArguments (ec, out args);
 
@@ -386,9 +386,9 @@ namespace Mono.CSharp.Linq
 			this.inner_selector = innerSelector;
 		}
 
-		protected override void CreateArguments (EmitContext ec, out ArrayList args)
+		protected override void CreateArguments (EmitContext ec, out Arguments args)
 		{
-			args = new ArrayList (4);
+			args = new Arguments (4);
 
 			args.Add (new Argument (expr));
 
@@ -507,7 +507,7 @@ namespace Mono.CSharp.Linq
 			this.lt = lt;
 		}
 
-		protected override void CreateArguments (EmitContext ec, out ArrayList args)
+		protected override void CreateArguments (EmitContext ec, out Arguments args)
 		{
 			base.CreateArguments (ec, out args);
 

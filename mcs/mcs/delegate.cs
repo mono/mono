@@ -548,8 +548,7 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec, Type delegate_type,
-							ref ArrayList args, Location loc)
+		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ref Arguments args, Location loc)
 		{
 			int arg_count;
 
@@ -673,10 +672,10 @@ namespace Mono.CSharp {
 		protected MethodGroupExpr method_group;
 		protected Expression delegate_instance_expression;
 
-		public static ArrayList CreateDelegateMethodArguments (MethodInfo invoke_method, Location loc)
+		// TODO: Should either cache it or use interface to abstract it
+		public static Arguments CreateDelegateMethodArguments (AParametersCollection pd, Location loc)
 		{
-			AParametersCollection pd = TypeManager.GetParameterData (invoke_method);
-			ArrayList delegate_arguments = new ArrayList (pd.Count);
+			Arguments delegate_arguments = new Arguments (pd.Count);
 			for (int i = 0; i < pd.Count; ++i) {
 				Argument.AType atype_modifier;
 				Type atype = pd.Types [i];
@@ -705,7 +704,7 @@ namespace Mono.CSharp {
 		{
 			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
 
-			ArrayList args = new ArrayList (3);
+			Arguments args = new Arguments (3);
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			args.Add (new Argument (new NullLiteral (loc)));
 			args.Add (new Argument (new TypeOfMethodInfo (delegate_method, loc)));
@@ -728,7 +727,7 @@ namespace Mono.CSharp {
 			method_group.DelegateType = type;
 			method_group.CustomErrorHandler = this;
 
-			ArrayList arguments = CreateDelegateMethodArguments (invoke_method, loc);
+			Arguments arguments = CreateDelegateMethodArguments (TypeManager.GetParameterData (invoke_method), loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, false, loc);
 			if (method_group == null)
 				return null;
@@ -906,12 +905,12 @@ namespace Mono.CSharp {
 	//
 	public class NewDelegate : DelegateCreation
 	{
-		public ArrayList Arguments;
+		public Arguments Arguments;
 
 		//
 		// This constructor is invoked from the `New' expression
 		//
-		public NewDelegate (Type type, ArrayList Arguments, Location loc)
+		public NewDelegate (Type type, Arguments Arguments, Location loc)
 		{
 			this.type = type;
 			this.Arguments = Arguments;
@@ -925,7 +924,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Argument a = (Argument) Arguments [0];
+			Argument a = Arguments [0];
 			if (!a.ResolveMethodGroup (ec))
 				return null;
 
@@ -967,10 +966,10 @@ namespace Mono.CSharp {
 	public class DelegateInvocation : ExpressionStatement {
 
 		readonly Expression InstanceExpr;
-		ArrayList  Arguments;
+		Arguments  Arguments;
 		MethodInfo method;
 		
-		public DelegateInvocation (Expression instance_expr, ArrayList args, Location loc)
+		public DelegateInvocation (Expression instance_expr, Arguments args, Location loc)
 		{
 			this.InstanceExpr = instance_expr;
 			this.Arguments = args;
@@ -979,17 +978,8 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args;
-			if (Arguments == null)
-				args = new ArrayList (1);
-			else
-				args = new ArrayList (Arguments.Count + 1);
-
-			args.Add (new Argument (InstanceExpr.CreateExpressionTree (ec)));
-			if (Arguments != null) {
-				foreach (Argument a in Arguments)
-					args.Add (new Argument (a.CreateExpressionTree (ec)));
-			}
+			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
+				InstanceExpr.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall ("Invoke", args);
 		}
@@ -1006,10 +996,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (Arguments != null){
-				foreach (Argument a in Arguments){
-					if (!a.Resolve (ec, loc))
-						return null;
-				}
+				Arguments.Resolve (ec);
 			}
 			
 			if (!Delegate.VerifyApplicability (ec, del_type, ref Arguments, loc))
@@ -1046,11 +1033,8 @@ namespace Mono.CSharp {
 			method = storey.MutateGenericMethod (method);
 			type = storey.MutateType (type);
 
-			if (Arguments != null) {
-				foreach (Argument a in Arguments) {
-					a.Expr.MutateHoistedGenericType (storey);
-				}
-			}
+			if (Arguments != null)
+				Arguments.MutateHoistedGenericType (storey);
 
 			InstanceExpr.MutateHoistedGenericType (storey);
 		}

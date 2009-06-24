@@ -1173,14 +1173,14 @@ namespace Mono.CSharp {
 				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
 
-				ArrayList pos = new ArrayList (1);
+				Arguments pos = new Arguments (1);
 				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
 
-				ArrayList named = new ArrayList (1);
+				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument (new LocatedToken (loc, "SkipVerification"), (new BoolLiteral (true, loc))));
 
 				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly", system_security_permissions,
-					"SecurityPermissionAttribute", new object[] { pos, named }, loc, false);
+					"SecurityPermissionAttribute", new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (this);
 
 				if (g.Resolve () != null) {

@@ -341,7 +341,7 @@ namespace Mono.CSharp.Nullable
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
+			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 
@@ -953,13 +953,13 @@ namespace Mono.CSharp.Nullable
 			if (uc != null) {
 				left = uc.Source;
 
-				ArrayList c_args = new ArrayList (2);
+				Arguments c_args = new Arguments (2);
 				c_args.Add (new Argument (uc.CreateExpressionTree (ec)));
 				c_args.Add (new Argument (left.CreateExpressionTree (ec)));
 				conversion = CreateExpressionFactoryCall ("Lambda", c_args);
 			}
 
-			ArrayList args = new ArrayList (3);
+			Arguments args = new Arguments (3);
 			args.Add (new Argument (left.CreateExpressionTree (ec)));
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
 			if (conversion != null)

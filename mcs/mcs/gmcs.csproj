@@ -52,6 +52,7 @@
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
       <Link>MonoSymbolWriter.cs</Link>
     </Compile>
+    <Compile Include="argument.cs" />
     <Compile Include="AssemblyInfo.cs">
     </Compile>
     <Compile Include="anonymous.cs">

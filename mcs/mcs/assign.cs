@@ -208,7 +208,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (1);
+			Arguments args = new Arguments (1);
 			args.Add (new Argument (this));
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 				source = EmptyExpression.Null;
 			}
 
-			target = target.ResolveLValue (ec, source, Location);
+			target = target.ResolveLValue (ec, source);
 
 			if (target == null || !ok)
 				return null;

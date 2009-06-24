@@ -557,7 +557,7 @@ namespace Mono.CSharp {
 			expr_tree_variable = new LocalVariableReference (
 				ec.CurrentBlock, variable.Name, Location, variable, false);
 
-			ArrayList arguments = new ArrayList (2);
+			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (
 				new TypeExpression (parameter_type, Location), Location)));
 			arguments.Add (new Argument (new StringConstant (Name, Location)));

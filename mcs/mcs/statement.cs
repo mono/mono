@@ -3748,7 +3748,7 @@ namespace Mono.CSharp {
 				++counter;
 			}
 
-			ArrayList args = new ArrayList (1);
+			Arguments args = new Arguments (1);
 			args.Add (new Argument (new IntConstant (init.Count, loc)));
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
 				new CollectionOrObjectInitializers (init, loc), loc);
@@ -3777,7 +3777,7 @@ namespace Mono.CSharp {
 			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
 
 			if (TypeManager.generic_ienumerable_type != null) {
-				ArrayList get_value_args = new ArrayList (2);
+				Arguments get_value_args = new Arguments (2);
 				get_value_args.Add (new Argument (value));
 				get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
 				Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (ec);
@@ -3789,8 +3789,8 @@ namespace Mono.CSharp {
 				//
 				get_item.EmitBranchable (ec, default_target, false);
 			} else {
-				ArrayList get_value_args = new ArrayList (1);
-				get_value_args.Add (value);
+				Arguments get_value_args = new Arguments (1);
+				get_value_args.Add (new Argument (value));
 
 				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (ec);
 				if (get_item == null)
@@ -5152,7 +5152,7 @@ namespace Mono.CSharp {
 				copy.Resolve (ec);
 
 				int rank = length_exprs.Length;
-				ArrayList list = new ArrayList (rank);
+				Arguments list = new Arguments (rank);
 				for (int i = 0; i < rank; i++) {
 					counter [i] = new ArrayCounter (loc);
 					counter [i].ResolveIncrement (ec);					
@@ -5163,12 +5163,12 @@ namespace Mono.CSharp {
 						lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
 						lengths [i].Resolve (ec);
 
-						ArrayList args = new ArrayList (1);
+						Arguments args = new Arguments (1);
 						args.Add (new Argument (new IntConstant (i, loc)));
 						length_exprs [i] = new Invocation (new MemberAccess (copy, "GetLength"), args).Resolve (ec);
 					}
 
-					list.Add (counter [i]);
+					list.Add (new Argument (counter [i]));
 				}
 
 				access = new ElementAccess (copy, list).Resolve (ec);
@@ -5195,7 +5195,7 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				for_each.variable = for_each.variable.ResolveLValue (ec, conv, loc);
+				for_each.variable = for_each.variable.ResolveLValue (ec, conv);
 				if (for_each.variable == null)
 					ok = false;
 

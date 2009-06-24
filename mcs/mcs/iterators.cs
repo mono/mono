@@ -249,10 +249,10 @@ namespace Mono.CSharp {
 					}
 
 					if (init != null) {
-						new_storey = new NewInitialize (storey_type_expr, new ArrayList (0),
+						new_storey = new NewInitialize (storey_type_expr, null,
 							new CollectionOrObjectInitializers (init, loc), loc);
 					} else {
-						new_storey = new New (storey_type_expr, new ArrayList (0), loc);
+						new_storey = new New (storey_type_expr, null, loc);
 					}
 
 					new_storey = new_storey.Resolve (ec);
@@ -512,7 +512,7 @@ namespace Mono.CSharp {
 					// Just call generic GetEnumerator implementation
 					//
 					get_enumerator.Block.AddStatement (
-						new Return (new Invocation (new DynamicMethodGroupExpr (gget_enumerator, Location), new ArrayList (0)), Location));
+						new Return (new Invocation (new DynamicMethodGroupExpr (gget_enumerator, Location), null), Location));
 
 					AddMethod (get_enumerator);
 					AddMethod (gget_enumerator);
