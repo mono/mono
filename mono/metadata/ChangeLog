@@ -1,5 +1,10 @@
 2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_find_enum_basetype): Simplify this function
+	by moving code outside of the loop and not decoding static fields.
+
+2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_typedef_table): Check the extends
 	token here. Move to here a flags check from verify_typedef_table_full.
 
