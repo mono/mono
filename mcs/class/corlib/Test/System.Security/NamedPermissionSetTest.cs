@@ -35,7 +35,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security {
 
 	[TestFixture]
-	public class NamedPermissionSetTest : Assertion {
+	public class NamedPermissionSetTest {
 
 		private static string name = "mono";
 		private static string sentinel = "go mono!";
@@ -59,26 +59,26 @@ namespace MonoTests.System.Security {
 		public void ConstructorName ()
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("name");
-			AssertEquals ("Name", "name", nps.Name);
-			AssertNull ("Description", nps.Description);
-			Assert ("IsUnrestricted", nps.IsUnrestricted ());
-			Assert ("IsEmpty", !nps.IsEmpty ());
-			Assert ("IsReadOnly", !nps.IsReadOnly);
-			Assert ("IsSynchronized", !nps.IsSynchronized);
-			AssertEquals ("Count", 0, nps.Count);
+			Assert.AreEqual ("name", nps.Name, "Name");
+			Assert.IsNull (nps.Description, "Description");
+			Assert.IsTrue (nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (!nps.IsEmpty (), "IsEmpty");
+			Assert.IsTrue (!nps.IsReadOnly, "IsReadOnly");
+			Assert.IsTrue (!nps.IsSynchronized, "IsSynchronized");
+			Assert.AreEqual (0, nps.Count, "Count");
 		}
 
 		[Test]
 		public void ConstructorNameReserved ()
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("FullTrust");
-			AssertEquals ("Name", "FullTrust", nps.Name);
-			AssertNull ("Description", nps.Description);
-			Assert ("IsUnrestricted", nps.IsUnrestricted ());
-			Assert ("IsEmpty", !nps.IsEmpty ());
-			Assert ("IsReadOnly", !nps.IsReadOnly);
-			Assert ("IsSynchronized", !nps.IsSynchronized);
-			AssertEquals ("Count", 0, nps.Count);
+			Assert.AreEqual ("FullTrust", nps.Name, "Name");
+			Assert.IsNull (nps.Description, "Description");
+			Assert.IsTrue (nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (!nps.IsEmpty (), "IsEmpty");
+			Assert.IsTrue (!nps.IsReadOnly, "IsReadOnly");
+			Assert.IsTrue (!nps.IsSynchronized, "IsSynchronized");
+			Assert.AreEqual (0, nps.Count, "Count");
 		}
 
 		[Test]
@@ -107,26 +107,26 @@ namespace MonoTests.System.Security {
 		public void ConstructorNamePermissionStateNone ()
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("name", PermissionState.None);
-			AssertEquals ("Name", "name", nps.Name);
-			AssertNull ("Description", nps.Description);
-			Assert ("IsUnrestricted", !nps.IsUnrestricted ());
-			Assert ("IsEmpty", nps.IsEmpty ());
-			Assert ("IsReadOnly", !nps.IsReadOnly);
-			Assert ("IsSynchronized", !nps.IsSynchronized);
-			AssertEquals ("Count", 0, nps.Count);
+			Assert.AreEqual ("name", nps.Name, "Name");
+			Assert.IsNull (nps.Description, "Description");
+			Assert.IsTrue (!nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (nps.IsEmpty (), "IsEmpty");
+			Assert.IsTrue (!nps.IsReadOnly, "IsReadOnly");
+			Assert.IsTrue (!nps.IsSynchronized, "IsSynchronized");
+			Assert.AreEqual (0, nps.Count, "Count");
 		}
 
 		[Test]
 		public void ConstructorNamePermissionStateUnrestricted ()
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("name", PermissionState.Unrestricted);
-			AssertEquals ("Name", "name", nps.Name);
-			AssertNull ("Description", nps.Description);
-			Assert ("IsUnrestricted", nps.IsUnrestricted ());
-			Assert ("IsEmpty", !nps.IsEmpty ());
-			Assert ("IsReadOnly", !nps.IsReadOnly);
-			Assert ("IsSynchronized", !nps.IsSynchronized);
-			AssertEquals ("Count", 0, nps.Count);
+			Assert.AreEqual ("name", nps.Name, "Name");
+			Assert.IsNull (nps.Description, "Description");
+			Assert.IsTrue (nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (!nps.IsEmpty (), "IsEmpty");
+			Assert.IsTrue (!nps.IsReadOnly, "IsReadOnly");
+			Assert.IsTrue (!nps.IsSynchronized, "IsSynchronized");
+			Assert.AreEqual (0, nps.Count, "Count");
 		}
 
 		[Test]
@@ -147,18 +147,18 @@ namespace MonoTests.System.Security {
 		public void ConstructorNamePermissionSetNull ()
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("name", null);
-			AssertEquals ("Name", "name", nps.Name);
-			AssertNull ("Description", nps.Description);
+			Assert.AreEqual ("name", nps.Name, "Name");
+			Assert.IsNull (nps.Description, "Description");
 #if NET_2_0
-			Assert ("IsUnrestricted", !nps.IsUnrestricted ());
-			Assert ("IsEmpty", nps.IsEmpty ());
+			Assert.IsTrue (!nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (nps.IsEmpty (), "IsEmpty");
 #else
-			Assert ("IsUnrestricted", nps.IsUnrestricted ());
-			Assert ("IsEmpty", !nps.IsEmpty ());
+			Assert.IsTrue (nps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (!nps.IsEmpty (), "IsEmpty");
 #endif
-			Assert ("IsReadOnly", !nps.IsReadOnly);
-			Assert ("IsSynchronized", !nps.IsSynchronized);
-			AssertEquals ("Count", 0, nps.Count);
+			Assert.IsTrue (!nps.IsReadOnly, "IsReadOnly");
+			Assert.IsTrue (!nps.IsSynchronized, "IsSynchronized");
+			Assert.AreEqual (0, nps.Count, "Count");
 		}
 
 		[Test]
@@ -166,12 +166,12 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name);
 			// null by default (not empty)
-			AssertNull ("Description", nps.Description);
+			Assert.IsNull (nps.Description, "Description");
 			// is null-able (without exception)
 			nps.Description = null;
-			AssertNull ("Description(null)", nps.Description);
+			Assert.IsNull (nps.Description, "Description(null)");
 			nps.Description = sentinel;
-			AssertEquals ("Description", sentinel, nps.Description);
+			Assert.AreEqual (sentinel, nps.Description, "Description");
 		}
 
 		[Test]
@@ -196,7 +196,7 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name);
 			nps.Name = sentinel;
-			AssertEquals ("Name", sentinel, nps.Name);
+			Assert.AreEqual (sentinel, nps.Name, "Name");
 		}
 
 		[Test]
@@ -206,9 +206,9 @@ namespace MonoTests.System.Security {
 			nps.Description = sentinel;
 			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Assertion));
 			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy ();
-			AssertEquals ("Name", nps.Name, copy.Name);
-			AssertEquals ("Description", nps.Description, copy.Description);
-			AssertEquals ("Count", nps.Count, copy.Count);
+			Assert.AreEqual (nps.Name, copy.Name, "Name");
+			Assert.AreEqual (nps.Description, copy.Description, "Description");
+			Assert.AreEqual (nps.Count, copy.Count, "Count");
 		}
 
 		[Test]
@@ -218,9 +218,9 @@ namespace MonoTests.System.Security {
 			nps.Description = sentinel;
 			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Assertion));
 			NamedPermissionSet copy = (NamedPermissionSet)nps.Copy ("Copy");
-			AssertEquals ("Name", "Copy", copy.Name);
-			AssertEquals ("Description", nps.Description, copy.Description);
-			AssertEquals ("Count", nps.Count, copy.Count);
+			Assert.AreEqual ("Copy", copy.Name, "Name");
+			Assert.AreEqual (nps.Description, copy.Description, "Description");
+			Assert.AreEqual (nps.Count, copy.Count, "Count");
 		}
 
 		[Test]
@@ -337,18 +337,18 @@ namespace MonoTests.System.Security {
 			nps.FromXml (w);
 
 			// having a null name can badly influence the rest of the class code
-			AssertNull ("Name", nps.Name);
+			Assert.IsNull (nps.Name, "Name");
 			NamedPermissionSet copy = (NamedPermissionSet) nps.Copy ();
-			AssertNull ("Copy.Name", copy.Name);
+			Assert.IsNull (copy.Name, "Copy.Name");
 
 			copy = nps.Copy ("name");
-			AssertEquals ("Copy(Name).Name", "name", copy.Name);
+			Assert.AreEqual ("name", copy.Name, "Copy(Name).Name");
 
 			se = nps.ToXml ();
-			AssertNull ("Name attribute", se.Attribute ("Name"));
+			Assert.IsNull (se.Attribute ("Name"), "Name attribute");
 #if NET_2_0
-			AssertEquals ("GetHashCode", 0, nps.GetHashCode ());
-			Assert ("Equals-self", nps.Equals (nps));
+			Assert.AreEqual (0, nps.GetHashCode (), "GetHashCode");
+			Assert.IsTrue (nps.Equals (nps), "Equals-self");
 #endif
 		}
 
@@ -357,26 +357,26 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet nps = new NamedPermissionSet (name, PermissionState.None);
 			SecurityElement se = nps.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 
 			NamedPermissionSet nps2 = (NamedPermissionSet) nps.Copy ();
 			nps2.FromXml (se);
-			AssertEquals ("FromXml-Copy.Name", name, nps2.Name);
+			Assert.AreEqual (name, nps2.Name, "FromXml-Copy.Name");
 			// strangely it's empty when converted from XML (but null when created)
-			AssertEquals ("FromXml-Copy.Description", "", nps2.Description);
-			Assert ("FromXml-Copy.IsUnrestricted", !nps2.IsUnrestricted ()); 
+			Assert.AreEqual ("", nps2.Description, "FromXml-Copy.Description");
+			Assert.IsTrue (!nps2.IsUnrestricted () , "FromXml-Copy.IsUnrestricted");
 
 			se.AddAttribute ("Description", sentinel);
 			nps2.FromXml (se);
-			AssertEquals ("FromXml-Add1.Name", name, nps2.Name);
-			AssertEquals ("FromXml-Add1.Description", sentinel, nps2.Description);
-			Assert ("FromXml-Add1.IsUnrestricted", !nps2.IsUnrestricted ()); 
+			Assert.AreEqual (name, nps2.Name, "FromXml-Add1.Name");
+			Assert.AreEqual (sentinel, nps2.Description, "FromXml-Add1.Description");
+			Assert.IsTrue (!nps2.IsUnrestricted () , "FromXml-Add1.IsUnrestricted");
 
 			se.AddAttribute ("Unrestricted", "true");
 			nps2.FromXml (se);
-			AssertEquals ("FromXml-Add2.Name", name, nps2.Name);
-			AssertEquals ("FromXml-Add2.Description", sentinel, nps2.Description);
-			Assert ("FromXml-Add2.IsUnrestricted", nps2.IsUnrestricted ()); 
+			Assert.AreEqual (name, nps2.Name, "FromXml-Add2.Name");
+			Assert.AreEqual (sentinel, nps2.Description, "FromXml-Add2.Description");
+			Assert.IsTrue (nps2.IsUnrestricted () , "FromXml-Add2.IsUnrestricted");
 		}
 
 		[Test]
@@ -385,12 +385,12 @@ namespace MonoTests.System.Security {
 			NamedPermissionSet ps = new NamedPermissionSet (name, PermissionState.None);
 			ps.Description = sentinel;
 			SecurityElement se = ps.ToXml ();
-			Assert ("None.ToString().StartsWith", ps.ToString().StartsWith ("<PermissionSet"));
-			AssertEquals ("None.class", "System.Security.NamedPermissionSet", (se.Attributes ["class"] as string));
-			AssertEquals ("None.version", "1", (se.Attributes ["version"] as string));
-			AssertEquals ("None.Name", name, (se.Attributes ["Name"] as string));
-			AssertEquals ("None.Description", sentinel, (se.Attributes ["Description"] as string));
-			AssertNull ("None.Unrestricted", (se.Attributes ["Unrestricted"] as string));
+			Assert.IsTrue (ps.ToString().StartsWith ("<PermissionSet"), "None.ToString().StartsWith");
+			Assert.AreEqual ("System.Security.NamedPermissionSet", (se.Attributes ["class"] as string), "None.class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "None.version");
+			Assert.AreEqual (name, (se.Attributes ["Name"] as string), "None.Name");
+			Assert.AreEqual (sentinel, (se.Attributes ["Description"] as string), "None.Description");
+			Assert.IsNull ((se.Attributes ["Unrestricted"] as string), "None.Unrestricted");
 		}
 
 		[Test]
@@ -398,12 +398,12 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet ps = new NamedPermissionSet (name, PermissionState.Unrestricted);
 			SecurityElement se = ps.ToXml ();
-			Assert ("Unrestricted.ToString().StartsWith", ps.ToString().StartsWith ("<PermissionSet"));
-			AssertEquals ("Unrestricted.class", "System.Security.NamedPermissionSet", (se.Attributes ["class"] as string));
-			AssertEquals ("Unrestricted.version", "1", (se.Attributes ["version"] as string));
-			AssertEquals ("Unrestricted.Name", name, (se.Attributes ["Name"] as string));
-			AssertNull ("Unrestricted.Description", (se.Attributes ["Description"] as string));
-			AssertEquals ("Unrestricted.Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.IsTrue (ps.ToString().StartsWith ("<PermissionSet"), "Unrestricted.ToString().StartsWith");
+			Assert.AreEqual ("System.Security.NamedPermissionSet", (se.Attributes ["class"] as string), "Unrestricted.class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "Unrestricted.version");
+			Assert.AreEqual (name, (se.Attributes ["Name"] as string), "Unrestricted.Name");
+			Assert.IsNull ((se.Attributes ["Description"] as string), "Unrestricted.Description");
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "Unrestricted.Unrestricted");
 		}
 #if NET_2_0
 		[Test]
@@ -411,20 +411,20 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet psn = new NamedPermissionSet (name, PermissionState.None);
 			NamedPermissionSet psu = new NamedPermissionSet (name, PermissionState.Unrestricted);
-			Assert ("psn!=psu", !psn.Equals (psu));
-			Assert ("psu!=psn", !psu.Equals (psn));
+			Assert.IsTrue (!psn.Equals (psu), "psn!=psu");
+			Assert.IsTrue (!psu.Equals (psn), "psu!=psn");
 			NamedPermissionSet cpsn = (NamedPermissionSet) psn.Copy ();
-			Assert ("cpsn==psn", cpsn.Equals (psn));
-			Assert ("psn==cpsn", psn.Equals (cpsn));
+			Assert.IsTrue (cpsn.Equals (psn), "cpsn==psn");
+			Assert.IsTrue (psn.Equals (cpsn), "psn==cpsn");
 			NamedPermissionSet cpsu = (NamedPermissionSet) psu.Copy ();
-			Assert ("cpsu==psu", cpsu.Equals (psu));
-			Assert ("psu==cpsu", psu.Equals (cpsu));
+			Assert.IsTrue (cpsu.Equals (psu), "cpsu==psu");
+			Assert.IsTrue (psu.Equals (cpsu), "psu==cpsu");
 			cpsn.Description = sentinel;
-			Assert ("cpsn+desc==psn", cpsn.Equals (psn));
-			Assert ("psn==cpsn+desc", psn.Equals (cpsn));
+			Assert.IsTrue (cpsn.Equals (psn), "cpsn+desc==psn");
+			Assert.IsTrue (psn.Equals (cpsn), "psn==cpsn+desc");
 			cpsn.Description = sentinel;
-			Assert ("cpsu+desc==psu", cpsu.Equals (psu));
-			Assert ("psu==cpsu+desc", psu.Equals (cpsu));
+			Assert.IsTrue (cpsu.Equals (psu), "cpsu+desc==psu");
+			Assert.IsTrue (psu.Equals (cpsu), "psu==cpsu+desc");
 		}
 
 		[Test]
@@ -434,11 +434,11 @@ namespace MonoTests.System.Security {
 			int nhc = psn.GetHashCode ();
 			NamedPermissionSet psu = new NamedPermissionSet (name, PermissionState.Unrestricted);
 			int uhc = psu.GetHashCode ();
-			Assert ("GetHashCode-1", nhc != uhc);
+			Assert.IsTrue (nhc != uhc, "GetHashCode-1");
 			psn.Description = sentinel;
-			Assert ("GetHashCode-2", psn.GetHashCode () == nhc);
+			Assert.IsTrue (psn.GetHashCode () == nhc, "GetHashCode-2");
 			psu.Description = sentinel;
-			Assert ("GetHashCode-3", psu.GetHashCode () == uhc);
+			Assert.IsTrue (psu.GetHashCode () == uhc, "GetHashCode-3");
 		}
 #endif
 	}

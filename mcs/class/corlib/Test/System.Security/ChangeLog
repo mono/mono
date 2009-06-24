@@ -1,3 +1,7 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityStateTest.cs: New. Unit tests for IsStateAvailable

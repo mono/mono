@@ -38,28 +38,28 @@ using System.Text;
 namespace MonoTests.System.Security {
 
 	[TestFixture]
-	public class PermissionSetTest : Assertion {
+	public class PermissionSetTest {
 
 		[Test]
 		public void PermissionStateNone () 
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			Assert ("PermissionStateNone.IsUnrestricted", !ps.IsUnrestricted ());
-			Assert ("PermissionStateNone.IsEmpty", ps.IsEmpty ());
-			Assert ("PermissionStateNone.IsReadOnly", !ps.IsReadOnly);
-			AssertEquals ("PermissionStateNone.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (!ps.IsUnrestricted (), "PermissionStateNone.IsUnrestricted");
+			Assert.IsTrue (ps.IsEmpty (), "PermissionStateNone.IsEmpty");
+			Assert.IsTrue (!ps.IsReadOnly, "PermissionStateNone.IsReadOnly");
+			Assert.AreEqual (ps.ToXml ().ToString (), ps.ToString (), "PermissionStateNone.ToXml().ToString()==ToString()");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted () 
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("PermissionStateUnrestricted.IsUnrestricted", ps.IsUnrestricted ());
-			Assert ("PermissionStateUnrestricted.IsEmpty", !ps.IsEmpty ());
-			Assert ("PermissionStateUnrestricted.IsReadOnly", !ps.IsReadOnly);
-			AssertEquals ("PermissionStateUnrestricted.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (ps.IsUnrestricted (), "PermissionStateUnrestricted.IsUnrestricted");
+			Assert.IsTrue (!ps.IsEmpty (), "PermissionStateUnrestricted.IsEmpty");
+			Assert.IsTrue (!ps.IsReadOnly, "PermissionStateUnrestricted.IsReadOnly");
+			Assert.AreEqual (ps.ToXml ().ToString (), ps.ToString (), "PermissionStateUnrestricted.ToXml().ToString()==ToString()");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -68,15 +68,15 @@ namespace MonoTests.System.Security {
 			// no exception is thrown
 			PermissionSet ps = new PermissionSet (null);
 #if NET_2_0
-			Assert ("PermissionStateNull.IsUnrestricted", !ps.IsUnrestricted ());
-			Assert ("PermissionStateNull.IsEmpty", ps.IsEmpty ());
+			Assert.IsTrue (!ps.IsUnrestricted (), "PermissionStateNull.IsUnrestricted");
+			Assert.IsTrue (ps.IsEmpty (), "PermissionStateNull.IsEmpty");
 #else
-			Assert ("PermissionStateNull.IsUnrestricted", ps.IsUnrestricted ());
-			Assert ("PermissionStateNull.IsEmpty", !ps.IsEmpty ());
+			Assert.IsTrue (ps.IsUnrestricted (), "PermissionStateNull.IsUnrestricted");
+			Assert.IsTrue (!ps.IsEmpty (), "PermissionStateNull.IsEmpty");
 #endif
-			Assert ("PermissionStateNull.IsReadOnly", !ps.IsReadOnly);
-			AssertEquals ("PermissionStateNull.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (!ps.IsReadOnly, "PermissionStateNull.IsReadOnly");
+			Assert.AreEqual (ps.ToXml ().ToString (), ps.ToString (), "PermissionStateNull.ToXml().ToString()==ToString()");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -85,14 +85,14 @@ namespace MonoTests.System.Security {
 			FileDialogPermission fdp = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (fdp);
-			Assert ("ps1.IsEmpty", !ps1.IsEmpty ());
+			Assert.IsTrue (!ps1.IsEmpty (), "ps1.IsEmpty");
 
 			PermissionSet ps = new PermissionSet (ps1);
-			Assert ("PermissionSetPermissionSet.IsUnrestricted", !ps.IsUnrestricted ());
-			Assert ("PermissionSetPermissionSet.IsEmpty", !ps.IsEmpty ());
-			Assert ("PermissionSetPermissionSet.IsReadOnly", !ps.IsReadOnly);
-			AssertEquals ("PermissionSetPermissionSet.ToXml().ToString()==ToString()", ps.ToXml ().ToString (), ps.ToString ());
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (!ps.IsUnrestricted (), "PermissionSetPermissionSet.IsUnrestricted");
+			Assert.IsTrue (!ps.IsEmpty (), "PermissionSetPermissionSet.IsEmpty");
+			Assert.IsTrue (!ps.IsReadOnly, "PermissionSetPermissionSet.IsReadOnly");
+			Assert.AreEqual (ps.ToXml ().ToString (), ps.ToString (), "PermissionSetPermissionSet.ToXml().ToString()==ToString()");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -100,8 +100,8 @@ namespace MonoTests.System.Security {
 		{
 			NamedPermissionSet nps = new NamedPermissionSet ("Test", PermissionState.Unrestricted);
 			PermissionSet ps = new PermissionSet (nps);
-			Assert ("IsUnrestricted", ps.IsUnrestricted ());
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (ps.IsUnrestricted (), "IsUnrestricted");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -111,20 +111,20 @@ namespace MonoTests.System.Security {
 			SecurityPermission sp2 = new SecurityPermission (SecurityPermissionFlag.ControlPolicy);
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			SecurityPermission result = (SecurityPermission)ps.AddPermission (sp1);
-			AssertEquals ("1-ControlEvidence", 1, ps.Count);
-			AssertEquals ("Flags-1", SecurityPermissionFlag.ControlEvidence, result.Flags);
+			Assert.AreEqual (1, ps.Count, "1-ControlEvidence");
+			Assert.AreEqual (SecurityPermissionFlag.ControlEvidence, result.Flags, "Flags-1");
 
 			result = (SecurityPermission)ps.AddPermission (sp2);
-			AssertEquals ("1-ControlEvidence+ControlPolicy", 1, ps.Count);
-			AssertEquals ("Flags-2", SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags);
+			Assert.AreEqual (1, ps.Count, "1-ControlEvidence+ControlPolicy");
+			Assert.AreEqual (SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags, "Flags-2");
 
 			result = (SecurityPermission)ps.AddPermission (sp2);
-			AssertEquals ("no change-1", 1, ps.Count);
-			AssertEquals ("Flags-3", SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags);
+			Assert.AreEqual (1, ps.Count, "no change-1");
+			Assert.AreEqual (SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags, "Flags-3");
 
 			result = (SecurityPermission)ps.AddPermission (sp1);
-			AssertEquals ("no change-2", 1, ps.Count);
-			AssertEquals ("Flags-4", SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags);
+			Assert.AreEqual (1, ps.Count, "no change-2");
+			Assert.AreEqual (SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence, result.Flags, "Flags-4");
 		}
 
 		[Test]
@@ -132,8 +132,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			IPermission result = ps.AddPermission (null);
-			AssertNull ("Add(null)", result);
-			AssertEquals ("0", 0, ps.Count);
+			Assert.IsNull (result, "Add(null)");
+			Assert.AreEqual (0, ps.Count, "0");
 		}
 
 		[Test]
@@ -142,19 +142,19 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.ControlEvidence);
 			IPermission result = ps.AddPermission (sp);
-			AssertNotNull ("Add(SecurityPermission)", result);
-			AssertEquals ("SecurityPermission", SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags);
-			AssertEquals ("0", 0, ps.Count);
+			Assert.IsNotNull (result, "Add(SecurityPermission)");
+			Assert.AreEqual (SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags, "SecurityPermission");
+			Assert.AreEqual (0, ps.Count, "0");
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			result = ps.AddPermission (zip);
-			AssertNotNull ("Add(ZoneIdentityPermission)", result);
+			Assert.IsNotNull (result, "Add(ZoneIdentityPermission)");
 #if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
-			AssertEquals ("ZoneIdentityPermission", SecurityZone.NoZone, (result as ZoneIdentityPermission).SecurityZone);
-			AssertEquals ("1", 0, ps.Count);
+			Assert.AreEqual (SecurityZone.NoZone, (result as ZoneIdentityPermission).SecurityZone, "ZoneIdentityPermission");
+			Assert.AreEqual (0, ps.Count, "1");
 #else
-			AssertEquals ("ZoneIdentityPermission", zip.SecurityZone, (result as ZoneIdentityPermission).SecurityZone);
-			AssertEquals ("1", 1, ps.Count);
+			Assert.AreEqual (zip.SecurityZone, (result as ZoneIdentityPermission).SecurityZone, "ZoneIdentityPermission");
+			Assert.AreEqual (1, ps.Count, "1");
 #endif
 		}
 
@@ -164,10 +164,10 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			SecurityPermission sp = new SecurityPermission (PermissionState.Unrestricted);
 			IPermission result = ps.AddPermission (sp);
-			AssertNotNull ("Add(SecurityPermission)", result);
-			AssertEquals ("SecurityPermission", SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags);
-			AssertEquals ("1", 1, ps.Count);
-			Assert ("State", !ps.IsUnrestricted ());
+			Assert.IsNotNull (result, "Add(SecurityPermission)");
+			Assert.AreEqual (SecurityPermissionFlag.AllFlags, (result as SecurityPermission).Flags, "SecurityPermission");
+			Assert.AreEqual (1, ps.Count, "1");
+			Assert.IsTrue (!ps.IsUnrestricted (), "State");
 		}
 
 		[Test]
@@ -175,8 +175,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission ("name", "role"));
-			AssertEquals ("Count", 1, ps.Count);
-			Assert ("IsEmpty", !ps.IsEmpty ());
+			Assert.AreEqual (1, ps.Count, "Count");
+			Assert.IsTrue (!ps.IsEmpty (), "IsEmpty");
 		}
 
 		[Test]
@@ -184,8 +184,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission (PermissionState.None));
-			AssertEquals ("Count", 1, ps.Count);
-			Assert ("IsEmpty", ps.IsEmpty ());
+			Assert.AreEqual (1, ps.Count, "Count");
+			Assert.IsTrue (ps.IsEmpty (), "IsEmpty");
 		}
 
 		[Test]
@@ -193,8 +193,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
-			AssertEquals ("Count", 1, ps.Count);
-			Assert ("IsEmpty", !ps.IsEmpty ());
+			Assert.AreEqual (1, ps.Count, "Count");
+			Assert.IsTrue (!ps.IsEmpty (), "IsEmpty");
 		}
 
 		[Test]
@@ -202,8 +202,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			ps.AddPermission (new PrincipalPermission ("name", "role"));
-			AssertEquals ("Count", 0, ps.Count);
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.AreEqual (0, ps.Count, "Count");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -211,8 +211,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			ps.AddPermission (new PrincipalPermission (PermissionState.None));
-			AssertEquals ("Count", 0, ps.Count);
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.AreEqual (0, ps.Count, "Count");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -220,8 +220,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			ps.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
-			AssertEquals ("Count", 0, ps.Count);
-			Assert ("ContainsNonCodeAccessPermissions", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.AreEqual (0, ps.Count, "Count");
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
 		}
 
 		[Test]
@@ -242,15 +242,15 @@ namespace MonoTests.System.Security {
 		public void ContainsNonCodeAccessPermissions ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			Assert ("Empty", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "Empty");
 
 			SecurityPermission sp = new SecurityPermission (PermissionState.Unrestricted);
 			ps.AddPermission (sp);
-			Assert ("SecurityPermission", !ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (!ps.ContainsNonCodeAccessPermissions (), "SecurityPermission");
 
 			PrincipalPermission pp = new PrincipalPermission ("mono", "hacker");
 			ps.AddPermission (pp);
-			Assert ("PrincipalPermission", ps.ContainsNonCodeAccessPermissions ());
+			Assert.IsTrue (ps.ContainsNonCodeAccessPermissions (), "PrincipalPermission");
 		}
 
 		[Test]
@@ -264,14 +264,14 @@ namespace MonoTests.System.Security {
 		public void ConvertPermissionSet_UnknownIn ()
 		{
 			byte[] result = PermissionSet.ConvertPermissionSet (String.Empty, new byte [0], "XML");
-			AssertNull (result);
+			Assert.IsNull (result);
 		}
 
 		[Test]
 		public void ConvertPermissionSet_NullData ()
 		{
 			byte[] result = PermissionSet.ConvertPermissionSet ("BINARY", null, "XML");
-			AssertNull (result);
+			Assert.IsNull (result);
 		}
 
 		[Test]
@@ -300,7 +300,7 @@ namespace MonoTests.System.Security {
 
 			byte[] result2 = PermissionSet.ConvertPermissionSet ("BINARY", result, "BINARY");
 			// there's only a little difference - but it doesn't throw an exception
-			//Assert ("BINARY!=BINARY", BitConverter.ToString (result) != BitConverter.ToString (result2));
+			//Assert.IsTrue (BitConverter.ToString (result) != BitConverter.ToString (result2), "BINARY!=BINARY");
 		}
 
 		[Test]
@@ -313,11 +313,11 @@ namespace MonoTests.System.Security {
 			byte[] data = Encoding.ASCII.GetBytes (ps.ToString ());
 			byte[] result = PermissionSet.ConvertPermissionSet ("XML", data, "BINARY");
 			byte[] result2 = PermissionSet.ConvertPermissionSet ("XMLASCII", data, "BINARY");
-			AssertEquals ("XML==XMLASCII", BitConverter.ToString (result), BitConverter.ToString (result2));
+			Assert.AreEqual (BitConverter.ToString (result), BitConverter.ToString (result2), "XML==XMLASCII");
 			byte[] back = PermissionSet.ConvertPermissionSet ("BINARY", result, "XML");
-			AssertEquals ("PS-XML", Encoding.ASCII.GetString (back), ps.ToString ());
+			Assert.AreEqual (Encoding.ASCII.GetString (back), ps.ToString (), "PS-XML");
 			back = PermissionSet.ConvertPermissionSet ("BINARY", result2, "XMLASCII");
-			AssertEquals ("PS-XMLASCII", Encoding.ASCII.GetString (back), ps.ToString ());
+			Assert.AreEqual (Encoding.ASCII.GetString (back), ps.ToString (), "PS-XMLASCII");
 		}
 
 		[Test]
@@ -326,10 +326,10 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			byte[] data = Encoding.ASCII.GetBytes (ps.ToString ());
 			byte[] result = PermissionSet.ConvertPermissionSet ("XML", data, "XML");
-			AssertEquals ("PS-XML", Encoding.ASCII.GetString (result), ps.ToString ());
+			Assert.AreEqual (Encoding.ASCII.GetString (result), ps.ToString (), "PS-XML");
 
 			result = PermissionSet.ConvertPermissionSet ("XMLASCII", data, "XMLASCII");
-			AssertEquals ("PS-XMLASCII", Encoding.ASCII.GetString (result), ps.ToString ());
+			Assert.AreEqual (Encoding.ASCII.GetString (result), ps.ToString (), "PS-XMLASCII");
 		}
 
 		[Test]
@@ -351,22 +351,22 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			PermissionSet copy = ps.Copy ();
-			Assert ("1.State", !copy.IsUnrestricted ());
-			AssertEquals ("1.Count", 0, copy.Count);
+			Assert.IsTrue (!copy.IsUnrestricted (), "1.State");
+			Assert.AreEqual (0, copy.Count, "1.Count");
 
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.ControlEvidence);
 			IPermission result = ps.AddPermission (sp);
-			AssertNotNull ("1.Add", result);
+			Assert.IsNotNull (result, "1.Add");
 			copy = ps.Copy ();
-			Assert ("2.State", !copy.IsUnrestricted ());
-			AssertEquals ("2.Count", 1, copy.Count);
+			Assert.IsTrue (!copy.IsUnrestricted (), "2.State");
+			Assert.AreEqual (1, copy.Count, "2.Count");
 
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			result = ps.AddPermission (zip);
-			AssertNotNull ("2.Add", result);
+			Assert.IsNotNull (result, "2.Add");
 			copy = ps.Copy ();
-			Assert ("3.State", !copy.IsUnrestricted ());
-			AssertEquals ("3.Count", 2, copy.Count);
+			Assert.IsTrue (!copy.IsUnrestricted (), "3.State");
+			Assert.AreEqual (2, copy.Count, "3.Count");
 		}
 
 		[Test]
@@ -374,26 +374,26 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			PermissionSet copy = ps.Copy ();
-			Assert ("1.State", copy.IsUnrestricted ());
-			AssertEquals ("1.Count", 0, copy.Count);
+			Assert.IsTrue (copy.IsUnrestricted (), "1.State");
+			Assert.AreEqual (0, copy.Count, "1.Count");
 
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.ControlEvidence);
 			IPermission result = ps.AddPermission (sp);
-			AssertNotNull ("1.Add", result);
+			Assert.IsNotNull (result, "1.Add");
 			copy = ps.Copy ();
-			Assert ("2.State", copy.IsUnrestricted ());
-			AssertEquals ("2.Count", 0, copy.Count);
+			Assert.IsTrue (copy.IsUnrestricted (), "2.State");
+			Assert.AreEqual (0, copy.Count, "2.Count");
 
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			result = ps.AddPermission (zip);
-			AssertNotNull ("2.Add", result);
+			Assert.IsNotNull (result, "2.Add");
 			copy = ps.Copy ();
-			Assert ("3.State", copy.IsUnrestricted ());
+			Assert.IsTrue (copy.IsUnrestricted (), "3.State");
 #if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
-			AssertEquals ("3.Count", 0, copy.Count);
+			Assert.AreEqual (0, copy.Count, "3.Count");
 #else
-			AssertEquals ("3.Count", 1, copy.Count);
+			Assert.AreEqual (1, copy.Count, "3.Count");
 #endif
 		}
 
@@ -467,8 +467,8 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (sp);
 			ps.CopyTo (pa, 0);
-			AssertEquals ("CopyTo", pa [0].ToString (), sp.ToString ());
-			Assert ("Reference", Object.ReferenceEquals (pa [0], sp));
+			Assert.AreEqual (pa [0].ToString (), sp.ToString (), "CopyTo");
+			Assert.IsTrue (Object.ReferenceEquals (pa [0], sp), "Reference");
 		}
 
 		[Test]
@@ -511,16 +511,16 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			SecurityElement se = ps.ToXml ();
-			AssertNotNull ("Empty.ToXml()", se);
-			AssertEquals ("Empty.Count", 0, ps.Count);
+			Assert.IsNotNull (se, "Empty.ToXml()");
+			Assert.AreEqual (0, ps.Count, "Empty.Count");
 
 			PermissionSet ps2 = (PermissionSet) ps.Copy ();
 			ps2.FromXml (se);
-			Assert ("FromXml-Copy.IsUnrestricted", !ps2.IsUnrestricted ()); 
+			Assert.IsTrue (!ps2.IsUnrestricted () , "FromXml-Copy.IsUnrestricted");
 
 			se.AddAttribute ("Unrestricted", "true");
 			ps2.FromXml (se);
-			Assert ("FromXml-Unrestricted.IsUnrestricted", ps2.IsUnrestricted ());
+			Assert.IsTrue (ps2.IsUnrestricted (), "FromXml-Unrestricted.IsUnrestricted");
 		}
 
 		[Test]
@@ -529,26 +529,26 @@ namespace MonoTests.System.Security {
 			FileDialogPermission fdp = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (fdp);
-			Assert ("ps1.IsEmpty", !ps1.IsEmpty ());
+			Assert.IsTrue (!ps1.IsEmpty (), "ps1.IsEmpty");
 
 			PermissionSet ps = new PermissionSet (ps1);
 			SecurityElement se = ps.ToXml ();
-			AssertNotNull ("One.ToXml()", se);
-			AssertEquals ("One.Count", 1, ps.Count);
+			Assert.IsNotNull (se, "One.ToXml()");
+			Assert.AreEqual (1, ps.Count, "One.Count");
 
 			PermissionSet ps2 = (PermissionSet) ps.Copy ();
 			ps2.FromXml (se);
-			Assert ("FromXml-Copy.IsUnrestricted", !ps2.IsUnrestricted ()); 
-			AssertEquals ("Copy.Count", 1, ps2.Count);
+			Assert.IsTrue (!ps2.IsUnrestricted () , "FromXml-Copy.IsUnrestricted");
+			Assert.AreEqual (1, ps2.Count, "Copy.Count");
 
 			se.AddAttribute ("Unrestricted", "true");
 			ps2.FromXml (se);
-			Assert ("FromXml-Unrestricted.IsUnrestricted", ps2.IsUnrestricted ());
+			Assert.IsTrue (ps2.IsUnrestricted (), "FromXml-Unrestricted.IsUnrestricted");
 #if NET_2_0
-			AssertEquals ("Unrestricted.Count", 0, ps2.Count);
+			Assert.AreEqual (0, ps2.Count, "Unrestricted.Count");
 #else
 			// IPermission not shown in XML but still present in Count
-			AssertEquals ("Unrestricted.Count", 1, ps2.Count);
+			Assert.AreEqual (1, ps2.Count, "Unrestricted.Count");
 #endif
 		}
 
@@ -619,46 +619,46 @@ namespace MonoTests.System.Security {
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.Assertion);
 			ps.AddPermission (sp);
 			IEnumerator e = ps.GetEnumerator ();
-			AssertNotNull ("GetEnumerator", e);
+			Assert.IsNotNull (e, "GetEnumerator");
 			int i=0;
 			while (e.MoveNext ()) {
-				Assert ("SecurityPermission", e.Current is SecurityPermission);
+				Assert.IsTrue (e.Current is SecurityPermission, "SecurityPermission");
 				i++;
 			}
-			AssertEquals ("Count", 1, i);
+			Assert.AreEqual (1, i, "Count");
 		}
 #if NET_2_0
 		[Test]
 		public void GetHashCode_ ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertEquals ("Empty", 0, ps.GetHashCode ());
+			Assert.AreEqual (0, ps.GetHashCode (), "Empty");
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.Assertion);
 			ps.AddPermission (sp);
-			Assert ("SecurityPermission", ps.GetHashCode () != 0);
+			Assert.IsTrue (ps.GetHashCode () != 0, "SecurityPermission");
 			PermissionSet copy = ps.Copy ();
-			Assert ("Copy", ps.GetHashCode () != copy.GetHashCode ());
+			Assert.IsTrue (ps.GetHashCode () != copy.GetHashCode (), "Copy");
 		}
 #endif
 		[Test]
 		public void GetPermission_Null ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertNull ("Empty", ps.GetPermission (null));
+			Assert.IsNull (ps.GetPermission (null), "Empty");
 		}
 
 		[Test]
 		public void GetPermission_None ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertNull ("Empty", ps.GetPermission (typeof (SecurityPermission)));
+			Assert.IsNull (ps.GetPermission (typeof (SecurityPermission)), "Empty");
 		}
 
 		[Test]
 		public void GetPermission_Unrestricted ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
-			AssertNull ("Empty", ps.GetPermission (typeof (SecurityPermission)));
+			Assert.IsNull (ps.GetPermission (typeof (SecurityPermission)), "Empty");
 		}
 
 		[Test]
@@ -667,14 +667,14 @@ namespace MonoTests.System.Security {
 			IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.Unrestricted);
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (isfp);
-			AssertNull ("Subclass", ps.GetPermission (typeof (IsolatedStoragePermission)));
+			Assert.IsNull (ps.GetPermission (typeof (IsolatedStoragePermission)), "Subclass");
 		}
 
 		private void Compare (string msg, PermissionSet ps, bool unrestricted, int count)
 		{
-			AssertNotNull (msg + "-NullCheck", ps);
-			Assert (msg + "-State", (ps.IsUnrestricted () == unrestricted));
-			AssertEquals (msg + "-Count", count, ps.Count);
+			Assert.IsNotNull (ps, msg + "-NullCheck");
+			Assert.IsTrue ((ps.IsUnrestricted () == unrestricted), msg + "-State");
+			Assert.AreEqual (count, ps.Count, msg + "-Count");
 		}
 
 		[Test]
@@ -682,14 +682,14 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			AssertNull ("None N null", ps1.Intersect (null));
-			AssertNull ("None1 N None2", ps1.Intersect (ps2));
-			AssertNull ("None2 N None1", ps2.Intersect (ps1));
+			Assert.IsNull (ps1.Intersect (null), "None N null");
+			Assert.IsNull (ps1.Intersect (ps2), "None1 N None2");
+			Assert.IsNull (ps2.Intersect (ps1), "None2 N None1");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-			AssertNull ("None1 N Unrestricted", ps1.Intersect (ups1));
-			AssertNull ("Unrestricted N None1", ups1.Intersect (ps1));
-			AssertNull ("Unrestricted N Null", ups1.Intersect (null));
+			Assert.IsNull (ps1.Intersect (ups1), "None1 N Unrestricted");
+			Assert.IsNull (ups1.Intersect (ps1), "Unrestricted N None1");
+			Assert.IsNull (ups1.Intersect (null), "Unrestricted N Null");
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
 			Compare ("ups1 N ups2", ups1.Intersect (ups2), true, 0);
@@ -703,9 +703,9 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (sp);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			AssertNull ("PS1 N null", ps1.Intersect (null));
-			AssertNull ("PS1 N None", ps1.Intersect (ps2));
-			AssertNull ("None N PS1", ps2.Intersect (ps1));
+			Assert.IsNull (ps1.Intersect (null), "PS1 N null");
+			Assert.IsNull (ps1.Intersect (ps2), "PS1 N None");
+			Assert.IsNull (ps2.Intersect (ps1), "None N PS1");
 
 			PermissionSet ps3 = ps1.Copy ();
 			Compare ("PS1 N PS3", ps1.Intersect (ps3), false, 1);
@@ -723,9 +723,9 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (zip);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			AssertNull ("PS1 N null", ps1.Intersect (null));
-			AssertNull ("PS1 N None", ps1.Intersect (ps2));
-			AssertNull ("None N PS1", ps2.Intersect (ps1));
+			Assert.IsNull (ps1.Intersect (null), "PS1 N null");
+			Assert.IsNull (ps1.Intersect (ps2), "PS1 N None");
+			Assert.IsNull (ps2.Intersect (ps1), "None N PS1");
 
 			PermissionSet ps3 = ps1.Copy ();
 			Compare ("PS1 N PS3", ps1.Intersect (ps3), false, 1);
@@ -754,25 +754,25 @@ namespace MonoTests.System.Security {
 		public void IsEmpty_None ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			Assert ("Empty.IsEmpty", ps.IsEmpty ());
+			Assert.IsTrue (ps.IsEmpty (), "Empty.IsEmpty");
 			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
-			AssertEquals ("Count==1", 1, ps.Count);
-			Assert ("Zip.IsEmpty", ps.IsEmpty ());	// yes empty!
+			Assert.AreEqual (1, ps.Count, "Count==1");
+			Assert.IsTrue (ps.IsEmpty ());	// yes empty!, "Zip.IsEmpty");
 		}
 
 		[Test]
 		public void IsEmpty_Unrestricted ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsEmpty", !ps.IsEmpty ());
+			Assert.IsTrue (!ps.IsEmpty (), "Unrestricted.IsEmpty");
 			ps.AddPermission (new ZoneIdentityPermission (SecurityZone.NoZone));
 #if NET_2_0
 			// Identity permissions aren't added to unrestricted permission sets in 2.0
-			AssertEquals ("Count==0", 0, ps.Count);
+			Assert.AreEqual (0, ps.Count, "Count==0");
 #else
-			AssertEquals ("Count==1", 1, ps.Count);
+			Assert.AreEqual (1, ps.Count, "Count==1");
 #endif
-			Assert ("Zip.IsEmpty", !ps.IsEmpty ());	// yes empty!
+			Assert.IsTrue (!ps.IsEmpty ());	// yes empty!, "Zip.IsEmpty");
 		}
 
 		[Test]
@@ -780,18 +780,18 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("None.IsSubsetOf(null)", ps1.IsSubsetOf (null));
-			Assert ("None1.IsSubsetOf(None2)", ps1.IsSubsetOf (ps2));
-			Assert ("None2.IsSubsetOf(None1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (null), "None.IsSubsetOf(null)");
+			Assert.IsTrue (ps1.IsSubsetOf (ps2), "None1.IsSubsetOf(None2)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None2.IsSubsetOf(None1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("None1.IsSubsetOf(Unrestricted)", ps1.IsSubsetOf (ups1));
-			Assert ("Unrestricted.IsSubsetOf(None1)", !ups1.IsSubsetOf (ps1));
-			Assert ("Unrestricted.IsSubsetOf(Null)", !ups1.IsSubsetOf (null));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "None1.IsSubsetOf(Unrestricted)");
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubsetOf(None1)");
+			Assert.IsTrue (!ups1.IsSubsetOf (null), "Unrestricted.IsSubsetOf(Null)");
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("ups1IsSubsetOf(ups2)", ups1.IsSubsetOf (ups2));
-			Assert ("ups2.IsSubsetOf(ups1)", ups2.IsSubsetOf (ups1));
+			Assert.IsTrue (ups1.IsSubsetOf (ups2), "ups1IsSubsetOf(ups2)");
+			Assert.IsTrue (ups2.IsSubsetOf (ups1), "ups2.IsSubsetOf(ups1)");
 		}
 
 		[Test]
@@ -801,17 +801,17 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (sp);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
-			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
-			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (!ps1.IsSubsetOf (null), "PS1.IsSubset(null)");
+			Assert.IsTrue (!ps1.IsSubsetOf (ps2), "PS1.IsSubset(None)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None.IsSubset(PS1)");
 
 			PermissionSet ps3 = ps1.Copy ();
-			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
-			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ps3), "PS1.IsSubset(PS3)");
+			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
-			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
 		[Test]
@@ -821,30 +821,30 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (zip);
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
-			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
-			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (!ps1.IsSubsetOf (null), "PS1.IsSubset(null)");
+			Assert.IsTrue (!ps1.IsSubsetOf (ps2), "PS1.IsSubset(None)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None.IsSubset(PS1)");
 
 			PermissionSet ps3 = ps1.Copy ();
-			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
-			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ps3), "PS1.IsSubset(PS3)");
+			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
 			ups1.AddPermission (zip);
-			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
-			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 
 			PermissionSet ups2 = new PermissionSet (PermissionState.Unrestricted);
 #if NET_2_0
 			// as ZoneIdentityPermission isn't added UPS1Z == UPS2
-			Assert ("UPS1Z.IsSubset(UPS2)", ups1.IsSubsetOf (ups2));
+			Assert.IsTrue (ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2)");
 #else
-			Assert ("UPS1Z.IsSubset(UPS2)", !ups1.IsSubsetOf (ups2));
+			Assert.IsTrue (!ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2)");
 #endif
-			Assert ("UPS2.IsSubset(UPS1Z)", ups2.IsSubsetOf (ups1));
+			Assert.IsTrue (ups2.IsSubsetOf (ups1), "UPS2.IsSubset(UPS1Z)");
 			ups2.AddPermission (zip);
-			Assert ("UPS1Z.IsSubset(UPS2Z)", ups1.IsSubsetOf (ups2));
-			Assert ("UPS2Z.IsSubset(UPS1Z)", ups2.IsSubsetOf (ups1));
+			Assert.IsTrue (ups1.IsSubsetOf (ups2), "UPS1Z.IsSubset(UPS2Z)");
+			Assert.IsTrue (ups2.IsSubsetOf (ups1), "UPS2Z.IsSubset(UPS1Z)");
 		}
 
 		[Test]
@@ -853,21 +853,21 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (new PrincipalPermission ("name", "role"));
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
-			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
-			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (!ps1.IsSubsetOf (null), "PS1.IsSubset(null)");
+			Assert.IsTrue (!ps1.IsSubsetOf (ps2), "PS1.IsSubset(None)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None.IsSubset(PS1)");
 
 			PermissionSet ps3 = ps1.Copy ();
-			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
-			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ps3), "PS1.IsSubset(PS3)");
+			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
 #if NET_2_0
-			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
 #else
-			Assert ("PS1.IsSubset(Unrestricted)", !ps1.IsSubsetOf (ups1));
+			Assert.IsTrue (!ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
 #endif
-			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
 		[Test]
@@ -876,17 +876,17 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (new PrincipalPermission (PermissionState.None));
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("PS1.IsSubset(null)", ps1.IsSubsetOf (null));
-			Assert ("PS1.IsSubset(None)", ps1.IsSubsetOf (ps2));
-			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (null), "PS1.IsSubset(null)");
+			Assert.IsTrue (ps1.IsSubsetOf (ps2), "PS1.IsSubset(None)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None.IsSubset(PS1)");
 
 			PermissionSet ps3 = ps1.Copy ();
-			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
-			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ps3), "PS1.IsSubset(PS3)");
+			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
-			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
-			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
 		[Test]
@@ -895,60 +895,60 @@ namespace MonoTests.System.Security {
 			PermissionSet ps1 = new PermissionSet (PermissionState.None);
 			ps1.AddPermission (new PrincipalPermission (PermissionState.Unrestricted));
 			PermissionSet ps2 = new PermissionSet (PermissionState.None);
-			Assert ("PS1.IsSubset(null)", !ps1.IsSubsetOf (null));
-			Assert ("PS1.IsSubset(None)", !ps1.IsSubsetOf (ps2));
-			Assert ("None.IsSubset(PS1)", ps2.IsSubsetOf (ps1));
+			Assert.IsTrue (!ps1.IsSubsetOf (null), "PS1.IsSubset(null)");
+			Assert.IsTrue (!ps1.IsSubsetOf (ps2), "PS1.IsSubset(None)");
+			Assert.IsTrue (ps2.IsSubsetOf (ps1), "None.IsSubset(PS1)");
 
 			PermissionSet ps3 = ps1.Copy ();
-			Assert ("PS1.IsSubset(PS3)", ps1.IsSubsetOf (ps3));
-			Assert ("PS3.IsSubset(PS1)", ps3.IsSubsetOf (ps1));
+			Assert.IsTrue (ps1.IsSubsetOf (ps3), "PS1.IsSubset(PS3)");
+			Assert.IsTrue (ps3.IsSubsetOf (ps1), "PS3.IsSubset(PS1)");
 
 			PermissionSet ups1 = new PermissionSet (PermissionState.Unrestricted);
 #if NET_2_0
-			Assert ("PS1.IsSubset(Unrestricted)", ps1.IsSubsetOf (ups1));
+			Assert.IsTrue (ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
 #else
-			Assert ("PS1.IsSubset(Unrestricted)", !ps1.IsSubsetOf (ups1));
+			Assert.IsTrue (!ps1.IsSubsetOf (ups1), "PS1.IsSubset(Unrestricted)");
 #endif
-			Assert ("Unrestricted.IsSubset(PS1)", !ups1.IsSubsetOf (ps1));
+			Assert.IsTrue (!ups1.IsSubsetOf (ps1), "Unrestricted.IsSubset(PS1)");
 		}
 
 		[Test]
 		public void RemovePermission_Null () 
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertNull (ps.RemovePermission (null));
+			Assert.IsNull (ps.RemovePermission (null));
 		}
 
 		[Test]
 		public void RemovePermission_None () 
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertNull ("Empty", ps.RemovePermission (typeof (SecurityPermission)));
+			Assert.IsNull (ps.RemovePermission (typeof (SecurityPermission)), "Empty");
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.Assertion);
 			ps.AddPermission (sp);
 			SecurityPermission removed = (SecurityPermission) ps.RemovePermission (typeof (SecurityPermission));
-			AssertNotNull ("SecurityPermission", removed);
-			AssertEquals ("Flags", sp.Flags, removed.Flags);
-			AssertNull ("Empty-Again", ps.RemovePermission (typeof (SecurityPermission)));
+			Assert.IsNotNull (removed, "SecurityPermission");
+			Assert.AreEqual (sp.Flags, removed.Flags, "Flags");
+			Assert.IsNull (ps.RemovePermission (typeof (SecurityPermission)), "Empty-Again");
 		}
 
 		[Test]
 		public void RemovePermission_Unrestricted ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
-			AssertNull ("Empty", ps.RemovePermission (typeof (SecurityPermission)));
+			Assert.IsNull (ps.RemovePermission (typeof (SecurityPermission)), "Empty");
 			SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.Assertion);
 			ps.AddPermission (sp);
-			AssertNull ("SecurityPermissionn", ps.RemovePermission (typeof (SecurityPermission)));
+			Assert.IsNull (ps.RemovePermission (typeof (SecurityPermission)), "SecurityPermissionn");
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ps.AddPermission (zip);
 			ZoneIdentityPermission removed = (ZoneIdentityPermission)ps.RemovePermission (typeof (ZoneIdentityPermission));
 #if NET_2_0
 			// identity permissions aren't added to unrestricted permission sets
 			// so they cannot be removed later (hence the null)
-			AssertNull ("ZoneIdentityPermission", removed);
+			Assert.IsNull (removed, "ZoneIdentityPermission");
 #else
-			AssertNotNull ("ZoneIdentityPermission", removed);
+			Assert.IsNotNull (removed, "ZoneIdentityPermission");
 #endif
 		}
 
@@ -956,36 +956,36 @@ namespace MonoTests.System.Security {
 		public void SetPermission_Null ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertNull (ps.SetPermission (null));
+			Assert.IsNull (ps.SetPermission (null));
 		}
 
 		[Test]
 		public void SetPermission_None ()
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
-			AssertEquals ("Empty", 0, ps.Count);
-			Assert ("State-None", !ps.IsUnrestricted ());
+			Assert.AreEqual (0, ps.Count, "Empty");
+			Assert.IsTrue (!ps.IsUnrestricted (), "State-None");
 
 			SecurityPermission sp = new SecurityPermission (PermissionState.Unrestricted);
 			SecurityPermission result = (SecurityPermission)ps.SetPermission (sp);
-			AssertEquals ("SecurityPermission", 1, ps.Count);
-			AssertEquals ("Flags", SecurityPermissionFlag.AllFlags, result.Flags);
-			Assert ("State-None-2", !ps.IsUnrestricted ());
+			Assert.AreEqual (1, ps.Count, "SecurityPermission");
+			Assert.AreEqual (SecurityPermissionFlag.AllFlags, result.Flags, "Flags");
+			Assert.IsTrue (!ps.IsUnrestricted (), "State-None-2");
 
 			sp = new SecurityPermission (SecurityPermissionFlag.ControlAppDomain);
 			result = (SecurityPermission)ps.SetPermission (sp);
-			AssertEquals ("SecurityPermission-2", 1, ps.Count);
-			AssertEquals ("Flags", SecurityPermissionFlag.ControlAppDomain, result.Flags);
+			Assert.AreEqual (1, ps.Count, "SecurityPermission-2");
+			Assert.AreEqual (SecurityPermissionFlag.ControlAppDomain, result.Flags, "Flags");
 
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ZoneIdentityPermission zipr = (ZoneIdentityPermission) ps.SetPermission (zip);
-			AssertEquals ("ZoneIdentityPermission", 2, ps.Count);
-			AssertEquals ("SecurityZone", SecurityZone.MyComputer, zipr.SecurityZone);
+			Assert.AreEqual (2, ps.Count, "ZoneIdentityPermission");
+			Assert.AreEqual (SecurityZone.MyComputer, zipr.SecurityZone, "SecurityZone");
 
 			zip = new ZoneIdentityPermission (SecurityZone.Intranet);
 			zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
-			AssertEquals ("ZoneIdentityPermission", 2, ps.Count);
-			AssertEquals ("SecurityZone", SecurityZone.Intranet, zipr.SecurityZone);
+			Assert.AreEqual (2, ps.Count, "ZoneIdentityPermission");
+			Assert.AreEqual (SecurityZone.Intranet, zipr.SecurityZone, "SecurityZone");
 		}
 
 		[Test]
@@ -993,34 +993,34 @@ namespace MonoTests.System.Security {
 		{
 			SecurityPermission sp = new SecurityPermission (PermissionState.Unrestricted);
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
-			AssertEquals ("Empty", 0, ps.Count);
-			Assert ("State-Unrestricted", ps.IsUnrestricted ());
+			Assert.AreEqual (0, ps.Count, "Empty");
+			Assert.IsTrue (ps.IsUnrestricted (), "State-Unrestricted");
 
 			ZoneIdentityPermission zip = new ZoneIdentityPermission (SecurityZone.MyComputer);
 			ZoneIdentityPermission zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
-			AssertEquals ("ZoneIdentityPermission", 1, ps.Count);
-			AssertEquals ("SecurityZone", SecurityZone.MyComputer, zipr.SecurityZone);
+			Assert.AreEqual (1, ps.Count, "ZoneIdentityPermission");
+			Assert.AreEqual (SecurityZone.MyComputer, zipr.SecurityZone, "SecurityZone");
 #if NET_2_0
 			// Adding a non unrestricted identity permission now results in 
 			// a permission set loosing it's unrestricted status
-			Assert ("State-Unrestricted-2", !ps.IsUnrestricted ());
+			Assert.IsTrue (!ps.IsUnrestricted (), "State-Unrestricted-2");
 #else
-			Assert ("State-Unrestricted-2", ps.IsUnrestricted ());
+			Assert.IsTrue (ps.IsUnrestricted (), "State-Unrestricted-2");
 #endif
 			zip = new ZoneIdentityPermission (SecurityZone.Intranet);
 			zipr = (ZoneIdentityPermission)ps.SetPermission (zip);
-			AssertEquals ("ZoneIdentityPermission-2", 1, ps.Count);
-			AssertEquals ("SecurityZone-2", SecurityZone.Intranet, zipr.SecurityZone);
+			Assert.AreEqual (1, ps.Count, "ZoneIdentityPermission-2");
+			Assert.AreEqual (SecurityZone.Intranet, zipr.SecurityZone, "SecurityZone-2");
 
 			SecurityPermission result = (SecurityPermission)ps.SetPermission (sp);
-			AssertEquals ("SecurityPermission", 2, ps.Count);
-			AssertEquals ("Flags", SecurityPermissionFlag.AllFlags, result.Flags);
-			Assert ("State-None", !ps.IsUnrestricted ());
+			Assert.AreEqual (2, ps.Count, "SecurityPermission");
+			Assert.AreEqual (SecurityPermissionFlag.AllFlags, result.Flags, "Flags");
+			Assert.IsTrue (!ps.IsUnrestricted (), "State-None");
 
 			sp = new SecurityPermission (SecurityPermissionFlag.ControlAppDomain);
 			result = (SecurityPermission)ps.SetPermission (sp);
-			AssertEquals ("SecurityPermission-2", 2, ps.Count);
-			AssertEquals ("Flags-2", SecurityPermissionFlag.ControlAppDomain, result.Flags);
+			Assert.AreEqual (2, ps.Count, "SecurityPermission-2");
+			Assert.AreEqual (SecurityPermissionFlag.ControlAppDomain, result.Flags, "Flags-2");
 		}
 
 		[Test]
@@ -1028,10 +1028,10 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			SecurityElement se = ps.ToXml ();
-			Assert ("None.ToString().StartsWith", ps.ToString().StartsWith ("<PermissionSet"));
-			AssertEquals ("None.class", "System.Security.PermissionSet", (se.Attributes ["class"] as string));
-			AssertEquals ("None.version", "1", (se.Attributes ["version"] as string));
-			AssertNull ("None.Unrestricted", (se.Attributes ["Unrestricted"] as string));
+			Assert.IsTrue (ps.ToString().StartsWith ("<PermissionSet"), "None.ToString().StartsWith");
+			Assert.AreEqual ("System.Security.PermissionSet", (se.Attributes ["class"] as string), "None.class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "None.version");
+			Assert.IsNull ((se.Attributes ["Unrestricted"] as string), "None.Unrestricted");
 		}
 
 		[Test]
@@ -1039,10 +1039,10 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.Unrestricted);
 			SecurityElement se = ps.ToXml ();
-			Assert ("Unrestricted.ToString().StartsWith", ps.ToString().StartsWith ("<PermissionSet"));
-			AssertEquals ("Unrestricted.class", "System.Security.PermissionSet", (se.Attributes ["class"] as string));
-			AssertEquals ("Unrestricted.version", "1", (se.Attributes ["version"] as string));
-			AssertEquals ("Unrestricted.Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.IsTrue (ps.ToString().StartsWith ("<PermissionSet"), "Unrestricted.ToString().StartsWith");
+			Assert.AreEqual ("System.Security.PermissionSet", (se.Attributes ["class"] as string), "Unrestricted.class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "Unrestricted.version");
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "Unrestricted.Unrestricted");
 		}
 
 		[Test]
@@ -1145,8 +1145,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission (PermissionState.None));
-			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
-			AssertEquals ("Count", 1, ps.Count);
+			Assert.IsTrue (ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
+			Assert.AreEqual (1, ps.Count, "Count");
 			ps.Assert ();
 			// it's simply ignored
 		}
@@ -1156,8 +1156,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission (PermissionState.None));
-			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
-			AssertEquals ("Count", 1, ps.Count);
+			Assert.IsTrue (ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
+			Assert.AreEqual (1, ps.Count, "Count");
 			ps.Deny ();
 			// it's simply ignored
 		}
@@ -1167,8 +1167,8 @@ namespace MonoTests.System.Security {
 		{
 			PermissionSet ps = new PermissionSet (PermissionState.None);
 			ps.AddPermission (new PrincipalPermission (PermissionState.None));
-			Assert ("ContainsNonCodeAccessPermissions", ps.ContainsNonCodeAccessPermissions ());
-			AssertEquals ("Count", 1, ps.Count);
+			Assert.IsTrue (ps.ContainsNonCodeAccessPermissions (), "ContainsNonCodeAccessPermissions");
+			Assert.AreEqual (1, ps.Count, "Count");
 			ps.PermitOnly ();
 			// it's simply ignored
 		}
@@ -1185,7 +1185,7 @@ namespace MonoTests.System.Security {
 			psa.XML = xml;
 			string pset = psa.CreatePermissionSet ().ToString ();
 			string currentVersion = typeof (string).Assembly.GetName ().Version.ToString ();
-			Assert (currentVersion, pset.IndexOf (currentVersion) > 0);
+			Assert.IsTrue (pset.IndexOf (currentVersion) > 0, currentVersion);
 		}
 
 		[Test]

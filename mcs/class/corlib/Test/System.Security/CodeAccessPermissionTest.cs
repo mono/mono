@@ -54,7 +54,7 @@ namespace MonoTests.System.Security {
 	}
 
 	[TestFixture]
-	public class CodeAccessPermissionTest : Assertion {
+	public class CodeAccessPermissionTest {
 
 		[Test]
 		public void CustomCAS () 
@@ -84,7 +84,7 @@ namespace MonoTests.System.Security {
 		{
 			NonAbstractCodeAccessPermission cap = new NonAbstractCodeAccessPermission ("CodeAccessPermission", "NonAbstract");
 			string s = cap.ToString ();
-			AssertEquals ("ToString", "<CodeAccessPermission>NonAbstract</CodeAccessPermission>" + Environment.NewLine, s);
+			Assert.AreEqual ("<CodeAccessPermission>NonAbstract</CodeAccessPermission>" + Environment.NewLine, s, "ToString");
 		}
 	}
 }
