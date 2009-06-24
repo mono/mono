@@ -1,5 +1,18 @@
 2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_find_enum_basetype): Call into the verifier to
+	check the field signature. Replace an assert with an explicit check.
+
+	* class.c (mono_class_setup_fields): Call into the verifier to check
+	the field signature.
+
+	* metadata-verify.c: Add mono_verifier_verify_field_signature.
+
+	* verify-internals.h: Export mono_verifier_verify_field_signature as
+	part of the internal API.
+
+2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_find_enum_basetype): Simplify this function
 	by moving code outside of the loop and not decoding static fields.
 
