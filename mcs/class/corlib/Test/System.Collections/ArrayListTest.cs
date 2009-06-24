@@ -14,14 +14,14 @@ using NUnit.Framework;
 namespace MonoTests.System.Collections
 {
 	[TestFixture]
-	public class ArrayListTest : Assertion
+	public class ArrayListTest
 	{
 		[Test]
 		public void TestCtor ()
 		{
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertNotNull ("no basic ArrayList", al1);
+				Assert.IsNotNull (al1, "no basic ArrayList");
 			}
 			{
 				bool errorThrown = false;
@@ -30,24 +30,22 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				}
-				Assert ("null icollection error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "null icollection error not thrown");
 			}
 			{
 				// what can I say?  I like chars.  [--DB]
 				char [] coll = { 'a', 'b', 'c', 'd' };
 				ArrayList al1 = new ArrayList (coll);
-				AssertNotNull ("no icollection ArrayList", al1);
+				Assert.IsNotNull (al1, "no icollection ArrayList");
 				for (int i = 0; i < coll.Length; i++) {
-					AssertEquals (i + " not ctor'ed properly.",
-							 coll [i], al1 [i]);
+					Assert.AreEqual (coll [i], al1 [i], i + " not ctor'ed properly.");
 				}
 			}
 			{
 				try {
 					Char [,] c1 = new Char [2, 2];
 					ArrayList al1 = new ArrayList (c1);
-					Fail ("Should fail with multi-dimensional array in constructor.");
+					Assert.Fail ("Should fail with multi-dimensional array in constructor.");
 				} catch (RankException) {
 				}
 			}
@@ -59,8 +57,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative capacity error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative capacity error not thrown");
 			}
 		}
 
@@ -76,22 +73,18 @@ namespace MonoTests.System.Collections
 #endif
 			for (int i = 1; i < 100; i++) {
 				ArrayList al1 = new ArrayList (i);
-				AssertEquals ("Bad capacity of " + i,
-						 i, al1.Capacity);
+				Assert.AreEqual (i, al1.Capacity, "Bad capacity of " + i);
 			}
 			{
 				ArrayList al1 = new ArrayList (0);
 				// LAMESPEC: 
-				// AssertEquals("Bad capacity when set to 0",
-				//	     16, al1.Capacity);
+				// Assert.AreEqual (//	     16, al1.Capacity, "Bad capacity when set to 0");
 				al1.Add ("?");
-				AssertEquals ("Bad capacity when set to 0",
-						 default_capacity, al1.Capacity);
+				Assert.AreEqual (default_capacity, al1.Capacity, "Bad capacity when set to 0");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertEquals ("Bad default capacity",
-						 unspecified_capacity, al1.Capacity);
+				Assert.AreEqual (unspecified_capacity, al1.Capacity, "Bad default capacity");
 			}
 		}
 
@@ -100,19 +93,16 @@ namespace MonoTests.System.Collections
 		{
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertEquals ("Bad initial count",
-						 0, al1.Count);
+				Assert.AreEqual (0, al1.Count, "Bad initial count");
 				for (int i = 1; i <= 100; i++) {
 					al1.Add (i);
-					AssertEquals ("Bad count " + i,
-							 i, al1.Count);
+					Assert.AreEqual (i, al1.Count, "Bad count " + i);
 				}
 			}
 			for (int i = 0; i < 100; i++) {
 				char [] coll = new Char [i];
 				ArrayList al1 = new ArrayList (coll);
-				AssertEquals ("Bad count for " + i,
-						 i, al1.Count);
+				Assert.AreEqual (i, al1.Count, "Bad count for " + i);
 			}
 		}
 
@@ -120,28 +110,27 @@ namespace MonoTests.System.Collections
 		public void TestIsFixed ()
 		{
 			ArrayList al1 = new ArrayList ();
-			Assert ("should not be fixed by default", !al1.IsFixedSize);
+			Assert.IsTrue (!al1.IsFixedSize, "should not be fixed by default");
 			ArrayList al2 = ArrayList.FixedSize (al1);
-			Assert ("fixed-size wrapper not working", al2.IsFixedSize);
+			Assert.IsTrue (al2.IsFixedSize, "fixed-size wrapper not working");
 		}
 
 		[Test]
 		public void TestIsReadOnly ()
 		{
 			ArrayList al1 = new ArrayList ();
-			Assert ("should not be ReadOnly by default", !al1.IsReadOnly);
+			Assert.IsTrue (!al1.IsReadOnly, "should not be ReadOnly by default");
 			ArrayList al2 = ArrayList.ReadOnly (al1);
-			Assert ("read-only wrapper not working", al2.IsReadOnly);
+			Assert.IsTrue (al2.IsReadOnly, "read-only wrapper not working");
 		}
 
 		[Test]
 		public void TestIsSynchronized ()
 		{
 			ArrayList al1 = new ArrayList ();
-			Assert ("should not be synchronized by default",
-				   !al1.IsSynchronized);
+			Assert.IsTrue (!al1.IsSynchronized, "should not be synchronized by default");
 			ArrayList al2 = ArrayList.Synchronized (al1);
-			Assert ("synchronized wrapper not working", al2.IsSynchronized);
+			Assert.IsTrue (al2.IsSynchronized, "synchronized wrapper not working");
 		}
 
 		[Test]
@@ -155,8 +144,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative item error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative item error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -165,15 +153,13 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("past-end item error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "past-end item error not thrown");
 			}
 			for (int i = 0; i <= 100; i++) {
 				al1.Add (i);
 			}
 			for (int i = 0; i <= 100; i++) {
-				AssertEquals ("item not fetched for " + i,
-						 i, al1 [i]);
+				Assert.AreEqual (i, al1 [i], "item not fetched for " + i);
 			}
 		}
 
@@ -187,21 +173,20 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("null adapter error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "null adapter error not thrown");
 			}
 			{
 				char [] list = { 'a', 'b', 'c', 'd' };
 				ArrayList al1 = ArrayList.Adapter (list);
-				AssertNotNull ("Couldn't get an adapter", al1);
+				Assert.IsNotNull (al1, "Couldn't get an adapter");
 				for (int i = 0; i < list.Length; i++) {
-					AssertEquals ("adapter not adapting", list [i], al1 [i]);
+					Assert.AreEqual (list [i], al1 [i], "adapter not adapting");
 				}
 				list [0] = 'z';
 				for (int i = 0; i < list.Length; i++) {
-					AssertEquals ("adapter not adapting", list [i], al1 [i]);
+					Assert.AreEqual (list [i], al1 [i], "adapter not adapting");
 				}
 			}
 			// Test Binary Search
@@ -219,43 +204,38 @@ namespace MonoTests.System.Collections
 					// this is what the docs say it should throw
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("search-for-wrong-type error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "search-for-wrong-type error not thrown");
 			}
 
 			{
 				char [] arr = { 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd' };
 				ArrayList al1 = ArrayList.Adapter (arr);
-				Assert ("couldn't find elem #1",
-					   al1.BinarySearch ('c') >= 3);
-				Assert ("couldn't find elem #2",
-					   al1.BinarySearch ('c') < 6);
+				Assert.IsTrue (al1.BinarySearch ('c') >= 3, "couldn't find elem #1");
+				Assert.IsTrue (al1.BinarySearch ('c') < 6, "couldn't find elem #2");
 			}
 			{
 				char [] arr = { 'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e' };
 				ArrayList al1 = ArrayList.Adapter (arr);
-				AssertEquals ("couldn't find next-higher elem",
-						 -4, al1.BinarySearch ('c'));
+				Assert.AreEqual (-4, al1.BinarySearch ('c'), "couldn't find next-higher elem");
 			}
 			{
 				char [] arr = { 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd' };
 				ArrayList al1 = ArrayList.Adapter (arr);
-				AssertEquals ("couldn't find end",
-						 -9, al1.BinarySearch ('e'));
+				Assert.AreEqual (-9, al1.BinarySearch ('e'), "couldn't find end");
 			}
 			// Sort
 			{
 				char [] starter = { 'd', 'b', 'f', 'e', 'a', 'c' };
 				ArrayList al1 = ArrayList.Adapter (starter);
 				al1.Sort ();
-				AssertEquals ("Should be sorted", 'a', al1 [0]);
-				AssertEquals ("Should be sorted", 'b', al1 [1]);
-				AssertEquals ("Should be sorted", 'c', al1 [2]);
-				AssertEquals ("Should be sorted", 'd', al1 [3]);
-				AssertEquals ("Should be sorted", 'e', al1 [4]);
-				AssertEquals ("Should be sorted", 'f', al1 [5]);
+				Assert.AreEqual ('a', al1 [0], "Should be sorted");
+				Assert.AreEqual ('b', al1 [1], "Should be sorted");
+				Assert.AreEqual ('c', al1 [2], "Should be sorted");
+				Assert.AreEqual ('d', al1 [3], "Should be sorted");
+				Assert.AreEqual ('e', al1 [4], "Should be sorted");
+				Assert.AreEqual ('f', al1 [5], "Should be sorted");
 			}
 
 			// TODO - test other adapter types?
@@ -273,10 +253,9 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("add to fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -287,19 +266,16 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 2: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString ());
 				}
-				Assert ("add to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to read only error not thrown");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
 				for (int i = 1; i <= 100; i++) {
 					al1.Add (i);
-					AssertEquals ("add failed " + i,
-							 i, al1.Count);
-					AssertEquals ("add failed " + i,
-							 i, al1 [i - 1]);
+					Assert.AreEqual (i, al1.Count, "add failed " + i);
+					Assert.AreEqual (i, al1 [i - 1], "add failed " + i);
 
 				}
 			}
@@ -308,7 +284,7 @@ namespace MonoTests.System.Collections
 				ArrayList al1 = new ArrayList (strArray);
 				al1.Add ("Hi!");
 				al1.Add ("Hi!");
-				AssertEquals ("add failed", 2, al1.Count);
+				Assert.AreEqual (2, al1.Count, "add failed");
 			}
 		}
 
@@ -325,10 +301,9 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("add to fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -340,10 +315,9 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 2: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString ());
 				}
-				Assert ("add to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -353,23 +327,19 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 3: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString ());
 				}
-				Assert ("add to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to read only error not thrown");
 			}
 
 			{
 				ArrayList a1 = new ArrayList ();
-				AssertEquals ("ArrayList should start empty",
-						 0, a1.Count);
+				Assert.AreEqual (0, a1.Count, "ArrayList should start empty");
 				char [] coll = { 'a', 'b', 'c' };
 				a1.AddRange (coll);
-				AssertEquals ("ArrayList has wrong elements",
-						 3, a1.Count);
+				Assert.AreEqual (3, a1.Count, "ArrayList has wrong elements");
 				a1.AddRange (coll);
-				AssertEquals ("ArrayList has wrong elements",
-						 6, a1.Count);
+				Assert.AreEqual (6, a1.Count, "ArrayList has wrong elements");
 			}
 
 			{
@@ -379,8 +349,7 @@ namespace MonoTests.System.Collections
 					list.Add (1);
 				}
 
-				AssertEquals ("BinarySearch off-by-one bug",
-						49, list.BinarySearch (1));
+				Assert.AreEqual (49, list.BinarySearch (1), "BinarySearch off-by-one bug");
 			}
 		}
 
@@ -401,31 +370,26 @@ namespace MonoTests.System.Collections
 					// this is what the docs say it should throw
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("search-for-wrong-type error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "search-for-wrong-type error not thrown");
 			}
 
 			{
 				char [] arr = { 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd' };
 				ArrayList al1 = new ArrayList (arr);
-				Assert ("couldn't find elem #1",
-					   al1.BinarySearch ('c') >= 3);
-				Assert ("couldn't find elem #2",
-					   al1.BinarySearch ('c') < 6);
+				Assert.IsTrue (al1.BinarySearch ('c') >= 3, "couldn't find elem #1");
+				Assert.IsTrue (al1.BinarySearch ('c') < 6, "couldn't find elem #2");
 			}
 			{
 				char [] arr = { 'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e' };
 				ArrayList al1 = new ArrayList (arr);
-				AssertEquals ("couldn't find next-higher elem",
-						 -4, al1.BinarySearch ('c'));
+				Assert.AreEqual (-4, al1.BinarySearch ('c'), "couldn't find next-higher elem");
 			}
 			{
 				char [] arr = { 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd' };
 				ArrayList al1 = new ArrayList (arr);
-				AssertEquals ("couldn't find end",
-						 -9, al1.BinarySearch ('e'));
+				Assert.AreEqual (-9, al1.BinarySearch ('e'), "couldn't find end");
 			}
 
 		}
@@ -453,7 +417,7 @@ namespace MonoTests.System.Collections
 		{
 			ArrayList al = new ArrayList ();
 			al.Add (this);
-			AssertEquals ("null", -1, al.BinarySearch (null));
+			Assert.AreEqual (-1, al.BinarySearch (null), "null");
 		}
 
 		// TODO - BinarySearch with IComparer
@@ -470,8 +434,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("add to fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -482,29 +445,23 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("add to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "add to read only error not thrown");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
 				al1.Add ('c');
-				AssertEquals ("should have one element",
-						 1, al1.Count);
+				Assert.AreEqual (1, al1.Count, "should have one element");
 				al1.Clear ();
-				AssertEquals ("should be empty",
-						 0, al1.Count);
+				Assert.AreEqual (0, al1.Count, "should be empty");
 			}
 			{
 				int [] i1 = { 1, 2, 3, 4 };
 				ArrayList al1 = new ArrayList (i1);
-				AssertEquals ("should have elements",
-						 i1.Length, al1.Count);
+				Assert.AreEqual (i1.Length, al1.Count, "should have elements");
 				int capacity = al1.Capacity;
 				al1.Clear ();
-				AssertEquals ("should be empty again",
-						 0, al1.Count);
-				AssertEquals ("capacity shouldn't have changed",
-						 capacity, al1.Capacity);
+				Assert.AreEqual (0, al1.Count, "should be empty again");
+				Assert.AreEqual (capacity, al1.Capacity, "capacity shouldn't have changed");
 			}
 		}
 
@@ -515,9 +472,9 @@ namespace MonoTests.System.Collections
 				char [] c1 = { 'a', 'b', 'c' };
 				ArrayList al1 = new ArrayList (c1);
 				ArrayList al2 = (ArrayList) al1.Clone ();
-				AssertEquals ("ArrayList match", al1 [0], al2 [0]);
-				AssertEquals ("ArrayList match", al1 [1], al2 [1]);
-				AssertEquals ("ArrayList match", al1 [2], al2 [2]);
+				Assert.AreEqual (al1 [0], al2 [0], "ArrayList match");
+				Assert.AreEqual (al1 [1], al2 [1], "ArrayList match");
+				Assert.AreEqual (al1 [2], al2 [2], "ArrayList match");
 			}
 			{
 				char [] d10 = { 'a', 'b' };
@@ -526,12 +483,12 @@ namespace MonoTests.System.Collections
 				char [] [] d1 = { d10, d11, d12 };
 				ArrayList al1 = new ArrayList (d1);
 				ArrayList al2 = (ArrayList) al1.Clone ();
-				AssertEquals ("Array match", al1 [0], al2 [0]);
-				AssertEquals ("Array match", al1 [1], al2 [1]);
-				AssertEquals ("Array match", al1 [2], al2 [2]);
+				Assert.AreEqual (al1 [0], al2 [0], "Array match");
+				Assert.AreEqual (al1 [1], al2 [1], "Array match");
+				Assert.AreEqual (al1 [2], al2 [2], "Array match");
 
 				((char []) al1 [0]) [0] = 'z';
-				AssertEquals ("shallow copy", al1 [0], al2 [0]);
+				Assert.AreEqual (al1 [0], al2 [0], "shallow copy");
 			}
 		}
 
@@ -540,9 +497,9 @@ namespace MonoTests.System.Collections
 		{
 			char [] c1 = { 'a', 'b', 'c' };
 			ArrayList al1 = new ArrayList (c1);
-			Assert ("never find a null", !al1.Contains (null));
-			Assert ("can't find value", al1.Contains ('b'));
-			Assert ("shouldn't find value", !al1.Contains ('?'));
+			Assert.IsTrue (!al1.Contains (null), "never find a null");
+			Assert.IsTrue (al1.Contains ('b'), "can't find value");
+			Assert.IsTrue (!al1.Contains ('?'), "shouldn't find value");
 		}
 
 		[Test]
@@ -557,9 +514,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("error not thrown 1", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 1");
 			}
 			{
 				bool errorThrown = false;
@@ -571,9 +528,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 2: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString ());
 				}
-				Assert ("error not thrown 2", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 2");
 			}
 			{
 				bool errorThrown = false;
@@ -592,9 +549,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 3: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString ());
 				}
-				Assert ("error not thrown 3", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 3");
 			}
 			{
 				bool errorThrown = false;
@@ -606,9 +563,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 4: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString ());
 				}
-				Assert ("error not thrown 4", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 4");
 			}
 			{
 				bool errorThrown = false;
@@ -620,9 +577,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 5: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 5: " + e.ToString ());
 				}
-				Assert ("error not thrown 5", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 5");
 			}
 			{
 				bool errorThrown = false;
@@ -634,9 +591,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 6: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 6: " + e.ToString ());
 				}
-				Assert ("error not thrown 6", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 6");
 			}
 			{
 				bool errorThrown = false;
@@ -648,9 +605,9 @@ namespace MonoTests.System.Collections
 				} catch (InvalidCastException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 7: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 7: " + e.ToString ());
 				}
-				Assert ("error not thrown 7", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown 7");
 			}
 
 			Char [] orig = { 'a', 'b', 'c', 'd' };
@@ -658,16 +615,16 @@ namespace MonoTests.System.Collections
 			Char [] copy = new Char [10];
 			Array.Clear (copy, 0, copy.Length);
 			al.CopyTo (copy, 3);
-			AssertEquals ("Wrong CopyTo 0", (char) 0, copy [0]);
-			AssertEquals ("Wrong CopyTo 1", (char) 0, copy [1]);
-			AssertEquals ("Wrong CopyTo 2", (char) 0, copy [2]);
-			AssertEquals ("Wrong CopyTo 3", orig [0], copy [3]);
-			AssertEquals ("Wrong CopyTo 4", orig [1], copy [4]);
-			AssertEquals ("Wrong CopyTo 5", orig [2], copy [5]);
-			AssertEquals ("Wrong CopyTo 6", orig [3], copy [6]);
-			AssertEquals ("Wrong CopyTo 7", (char) 0, copy [7]);
-			AssertEquals ("Wrong CopyTo 8", (char) 0, copy [8]);
-			AssertEquals ("Wrong CopyTo 9", (char) 0, copy [9]);
+			Assert.AreEqual ((char) 0, copy [0], "Wrong CopyTo 0");
+			Assert.AreEqual ((char) 0, copy [1], "Wrong CopyTo 1");
+			Assert.AreEqual ((char) 0, copy [2], "Wrong CopyTo 2");
+			Assert.AreEqual (orig [0], copy [3], "Wrong CopyTo 3");
+			Assert.AreEqual (orig [1], copy [4], "Wrong CopyTo 4");
+			Assert.AreEqual (orig [2], copy [5], "Wrong CopyTo 5");
+			Assert.AreEqual (orig [3], copy [6], "Wrong CopyTo 6");
+			Assert.AreEqual ((char) 0, copy [7], "Wrong CopyTo 7");
+			Assert.AreEqual ((char) 0, copy [8], "Wrong CopyTo 8");
+			Assert.AreEqual ((char) 0, copy [9], "Wrong CopyTo 9");
 		}
 
 		[Test]
@@ -707,15 +664,13 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				}
-				Assert ("null arg error not thrown", errorThrown);
+				Assert.IsTrue (errorThrown, "null arg error not thrown");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertEquals ("arrays start un-fixed.",
-						 false, al1.IsFixedSize);
+				Assert.AreEqual (false, al1.IsFixedSize, "arrays start un-fixed.");
 				ArrayList al2 = ArrayList.FixedSize (al1);
-				AssertEquals ("should be fixed.",
-						 true, al2.IsFixedSize);
+				Assert.AreEqual (true, al2.IsFixedSize, "should be fixed.");
 			}
 		}
 
@@ -729,7 +684,7 @@ namespace MonoTests.System.Collections
 			al1.Add ("something");
 			try {
 				en.MoveNext ();
-				Fail ("Add() didn't invalidate the enumerator");
+				Assert.Fail ("Add() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -739,7 +694,7 @@ namespace MonoTests.System.Collections
 			al1.AddRange (al1);
 			try {
 				en.MoveNext ();
-				Fail ("AddRange() didn't invalidate the enumerator");
+				Assert.Fail ("AddRange() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -749,7 +704,7 @@ namespace MonoTests.System.Collections
 			al1.Clear ();
 			try {
 				en.MoveNext ();
-				Fail ("Clear() didn't invalidate the enumerator");
+				Assert.Fail ("Clear() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -760,7 +715,7 @@ namespace MonoTests.System.Collections
 			al1.Insert (0, "new first");
 			try {
 				en.MoveNext ();
-				Fail ("Insert() didn't invalidate the enumerator");
+				Assert.Fail ("Insert() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -770,7 +725,7 @@ namespace MonoTests.System.Collections
 			al1.InsertRange (0, al1);
 			try {
 				en.MoveNext ();
-				Fail ("InsertRange() didn't invalidate the enumerator");
+				Assert.Fail ("InsertRange() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -780,7 +735,7 @@ namespace MonoTests.System.Collections
 			al1.Remove ("this");
 			try {
 				en.MoveNext ();
-				Fail ("Remove() didn't invalidate the enumerator");
+				Assert.Fail ("Remove() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -790,7 +745,7 @@ namespace MonoTests.System.Collections
 			al1.RemoveAt (2);
 			try {
 				en.MoveNext ();
-				Fail ("RemoveAt() didn't invalidate the enumerator");
+				Assert.Fail ("RemoveAt() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -800,7 +755,7 @@ namespace MonoTests.System.Collections
 			al1.RemoveRange (1, 1);
 			try {
 				en.MoveNext ();
-				Fail ("RemoveRange() didn't invalidate the enumerator");
+				Assert.Fail ("RemoveRange() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -810,7 +765,7 @@ namespace MonoTests.System.Collections
 			al1.Reverse ();
 			try {
 				en.MoveNext ();
-				Fail ("Reverse() didn't invalidate the enumerator");
+				Assert.Fail ("Reverse() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -820,7 +775,7 @@ namespace MonoTests.System.Collections
 			al1.Sort ();
 			try {
 				en.MoveNext ();
-				Fail ("Sort() didn't invalidate the enumerator");
+				Assert.Fail ("Sort() didn't invalidate the enumerator");
 			} catch (InvalidOperationException) {
 				// do nothing...this is what we expect
 			}
@@ -837,8 +792,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -848,8 +802,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -859,31 +812,28 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				}
-				Assert ("out-of-range index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "out-of-range index error not thrown");
 			}
 			{
 				String [] s1 = { "this", "is", "a", "test" };
 				ArrayList al1 = new ArrayList (s1);
 				IEnumerator en = al1.GetEnumerator ();
-				AssertNotNull ("No enumerator", en);
+				Assert.IsNotNull (en, "No enumerator");
 
 				for (int i = 0; i < s1.Length; i++) {
 					en.MoveNext ();
-					AssertEquals ("Not enumerating",
-							 al1 [i], en.Current);
+					Assert.AreEqual (al1 [i], en.Current, "Not enumerating");
 				}
 			}
 			{
 				String [] s1 = { "this", "is", "a", "test" };
 				ArrayList al1 = new ArrayList (s1);
 				IEnumerator en = al1.GetEnumerator (1, 2);
-				AssertNotNull ("No enumerator", en);
+				Assert.IsNotNull (en, "No enumerator");
 
 				for (int i = 0; i < 2; i++) {
 					en.MoveNext ();
-					AssertEquals ("Not enumerating",
-							 al1 [i + 1], en.Current);
+					Assert.AreEqual (al1 [i + 1], en.Current, "Not enumerating");
 				}
 			}
 		}
@@ -917,8 +867,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -928,8 +877,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -939,17 +887,15 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				}
-				Assert ("out-of-range index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "out-of-range index error not thrown");
 			}
 			{
 				char [] chars = { 'a', 'b', 'c', 'd', 'e', 'f' };
 				ArrayList a = new ArrayList (chars);
 				ArrayList b = a.GetRange (1, 3);
-				AssertEquals ("GetRange returned wrong size ArrayList", 3, b.Count);
+				Assert.AreEqual (3, b.Count, "GetRange returned wrong size ArrayList");
 				for (int i = 0; i < b.Count; i++) {
-					AssertEquals ("range didn't work",
-							 chars [i + 1], b [i]);
+					Assert.AreEqual (chars [i + 1], b [i], "range didn't work");
 				}
 
 				a [2] = '?'; // should screw up ArrayList b.
@@ -959,8 +905,7 @@ namespace MonoTests.System.Collections
 				} catch (InvalidOperationException) {
 					errorThrown = true;
 				}
-				AssertEquals ("Munging 'a' should mess up 'b'",
-						 true, errorThrown);
+				Assert.AreEqual (true, errorThrown, "Munging 'a' should mess up 'b'");
 			}
 			{
 				char [] chars = { 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -969,13 +914,11 @@ namespace MonoTests.System.Collections
 				object [] obj_chars = b.ToArray ();
 				for (int i = 0; i < 3; i++) {
 					char c = (char) obj_chars [i];
-					AssertEquals ("range.ToArray didn't work",
-							 chars [i + 3], c);
+					Assert.AreEqual (chars [i + 3], c, "range.ToArray didn't work");
 				}
 				char [] new_chars = (char []) b.ToArray (typeof (char));
 				for (int i = 0; i < 3; i++) {
-					AssertEquals ("range.ToArray with type didn't work",
-							 chars [i + 3], new_chars [i]);
+					Assert.AreEqual (chars [i + 3], new_chars [i], "range.ToArray with type didn't work");
 				}
 			}
 		}
@@ -1009,8 +952,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative indexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative indexof error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1020,8 +962,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("past-end indexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "past-end indexof error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1031,8 +972,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative indexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative indexof error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1042,8 +982,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("past-end indexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "past-end indexof error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1053,28 +992,20 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("past-end indexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "past-end indexof error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c', 'd', 'e' };
 				ArrayList a = new ArrayList (c);
-				AssertEquals ("never find null",
-						 -1, a.IndexOf (null));
-				AssertEquals ("never find null",
-						 -1, a.IndexOf (null, 0));
-				AssertEquals ("never find null",
-						 -1, a.IndexOf (null, 0, 5));
-				AssertEquals ("can't find elem",
-						 2, a.IndexOf ('c'));
-				AssertEquals ("can't find elem",
-						 2, a.IndexOf ('c', 2));
-				AssertEquals ("can't find elem",
-						 2, a.IndexOf ('c', 2, 2));
-				AssertEquals ("shouldn't find elem",
-						 -1, a.IndexOf ('c', 3, 2));
-				AssertEquals ("shouldn't find", -1, a.IndexOf ('?'));
-				AssertEquals ("shouldn't find", -1, a.IndexOf (3));
+				Assert.AreEqual (-1, a.IndexOf (null), "never find null");
+				Assert.AreEqual (-1, a.IndexOf (null, 0), "never find null");
+				Assert.AreEqual (-1, a.IndexOf (null, 0, 5), "never find null");
+				Assert.AreEqual (2, a.IndexOf ('c'), "can't find elem");
+				Assert.AreEqual (2, a.IndexOf ('c', 2), "can't find elem");
+				Assert.AreEqual (2, a.IndexOf ('c', 2, 2), "can't find elem");
+				Assert.AreEqual (-1, a.IndexOf ('c', 3, 2), "shouldn't find elem");
+				Assert.AreEqual (-1, a.IndexOf ('?'), "shouldn't find");
+				Assert.AreEqual (-1, a.IndexOf (3), "shouldn't find");
 			}
 		}
 
@@ -1108,8 +1039,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("insert to fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1120,8 +1050,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("insert to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1131,8 +1060,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("insert to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1142,19 +1070,18 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("insert to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to read only error not thrown");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertEquals ("arraylist starts empty", 0, al1.Count);
+				Assert.AreEqual (0, al1.Count, "arraylist starts empty");
 				al1.Insert (0, 'a');
 				al1.Insert (1, 'b');
 				al1.Insert (0, 'c');
-				AssertEquals ("arraylist needs stuff", 3, al1.Count);
-				AssertEquals ("arraylist got stuff", 'c', al1 [0]);
-				AssertEquals ("arraylist got stuff", 'a', al1 [1]);
-				AssertEquals ("arraylist got stuff", 'b', al1 [2]);
+				Assert.AreEqual (3, al1.Count, "arraylist needs stuff");
+				Assert.AreEqual ('c', al1 [0], "arraylist got stuff");
+				Assert.AreEqual ('a', al1 [1], "arraylist got stuff");
+				Assert.AreEqual ('b', al1 [2], "arraylist got stuff");
 			}
 		}
 
@@ -1171,8 +1098,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("insert to fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1184,8 +1110,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("insert to read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "insert to read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1196,8 +1121,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("negative index insert error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "negative index insert error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1208,8 +1132,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("out-of-range insert error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "out-of-range insert error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1219,19 +1142,18 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				}
-				Assert ("null insert error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "null insert error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c' };
 				ArrayList a = new ArrayList (c);
 				a.InsertRange (1, c);
-				AssertEquals ("bad insert 1", 'a', a [0]);
-				AssertEquals ("bad insert 2", 'a', a [1]);
-				AssertEquals ("bad insert 3", 'b', a [2]);
-				AssertEquals ("bad insert 4", 'c', a [3]);
-				AssertEquals ("bad insert 5", 'b', a [4]);
-				AssertEquals ("bad insert 6", 'c', a [5]);
+				Assert.AreEqual ('a', a [0], "bad insert 1");
+				Assert.AreEqual ('a', a [1], "bad insert 2");
+				Assert.AreEqual ('b', a [2], "bad insert 3");
+				Assert.AreEqual ('c', a [3], "bad insert 4");
+				Assert.AreEqual ('b', a [4], "bad insert 5");
+				Assert.AreEqual ('c', a [5], "bad insert 6");
 			}
 		}
 
@@ -1246,8 +1168,7 @@ namespace MonoTests.System.Collections
 			//} catch (ArgumentOutOfRangeException) {
 			//errorThrown = true;
 			//}
-			//Assert("first negative lastindexof error not thrown", 
-			//errorThrown);
+			//Assert.IsTrue (//errorThrown, "first negative lastindexof error not thrown");
 			//}
 			{
 				bool errorThrown = false;
@@ -1257,8 +1178,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("past-end lastindexof error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "past-end lastindexof error not thrown");
 			}
 			//{
 			//bool errorThrown = false;
@@ -1268,8 +1188,7 @@ namespace MonoTests.System.Collections
 			//} catch (ArgumentOutOfRangeException) {
 			//errorThrown = true;
 			//}
-			//Assert("second negative lastindexof error not thrown", 
-			//errorThrown);
+			//Assert.IsTrue (//errorThrown, "second negative lastindexof error not thrown");
 			//}
 			//{
 			//bool errorThrown = false;
@@ -1279,8 +1198,7 @@ namespace MonoTests.System.Collections
 			//} catch (ArgumentOutOfRangeException) {
 			//errorThrown = true;
 			//}
-			//Assert("past-end lastindexof error not thrown", 
-			//errorThrown);
+			//Assert.IsTrue (//errorThrown, "past-end lastindexof error not thrown");
 			//}
 			//{
 			//bool errorThrown = false;
@@ -1290,39 +1208,31 @@ namespace MonoTests.System.Collections
 			//} catch (ArgumentOutOfRangeException) {
 			//errorThrown = true;
 			//}
-			//Assert("past-end lastindexof error not thrown", 
-			//errorThrown);
+			//Assert.IsTrue (//errorThrown, "past-end lastindexof error not thrown");
 			//}
 			int iTest = 0;
 			try {
 				char [] c = { 'a', 'b', 'c', 'd', 'e' };
 				ArrayList a = new ArrayList (c);
-				AssertEquals ("never find null",
-						 -1, a.LastIndexOf (null));
+				Assert.AreEqual (-1, a.LastIndexOf (null), "never find null");
 				iTest++;
-				AssertEquals ("never find null",
-						 -1, a.LastIndexOf (null, 4));
+				Assert.AreEqual (-1, a.LastIndexOf (null, 4), "never find null");
 				iTest++;
-				AssertEquals ("never find null",
-						 -1, a.LastIndexOf (null, 4, 5));
+				Assert.AreEqual (-1, a.LastIndexOf (null, 4, 5), "never find null");
 				iTest++;
-				AssertEquals ("can't find elem",
-						 2, a.LastIndexOf ('c'));
+				Assert.AreEqual (2, a.LastIndexOf ('c'), "can't find elem");
 				iTest++;
-				AssertEquals ("can't find elem",
-						 2, a.LastIndexOf ('c', 4));
+				Assert.AreEqual (2, a.LastIndexOf ('c', 4), "can't find elem");
 				iTest++;
-				AssertEquals ("can't find elem",
-						 2, a.LastIndexOf ('c', 3, 2));
+				Assert.AreEqual (2, a.LastIndexOf ('c', 3, 2), "can't find elem");
 				iTest++;
-				AssertEquals ("shouldn't find elem",
-						 -1, a.LastIndexOf ('c', 4, 2));
+				Assert.AreEqual (-1, a.LastIndexOf ('c', 4, 2), "shouldn't find elem");
 				iTest++;
-				AssertEquals ("shouldn't find", -1, a.LastIndexOf ('?'));
+				Assert.AreEqual (-1, a.LastIndexOf ('?'), "shouldn't find");
 				iTest++;
-				AssertEquals ("shouldn't find", -1, a.LastIndexOf (1));
+				Assert.AreEqual (-1, a.LastIndexOf (1), "shouldn't find");
 			} catch (Exception e) {
-				Fail ("Unexpected exception caught when iTest=" + iTest + ". e=" + e);
+				Assert.Fail ("Unexpected exception caught when iTest=" + iTest + ". e=" + e);
 			}
 		}
 
@@ -1354,15 +1264,13 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				}
-				Assert ("null arg error not thrown", errorThrown);
+				Assert.IsTrue (errorThrown, "null arg error not thrown");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
-				AssertEquals ("arrays start writeable.",
-						 false, al1.IsReadOnly);
+				Assert.AreEqual (false, al1.IsReadOnly, "arrays start writeable.");
 				ArrayList al2 = ArrayList.ReadOnly (al1);
-				AssertEquals ("should be readonly.",
-						 true, al2.IsReadOnly);
+				Assert.AreEqual (true, al2.IsReadOnly, "should be readonly.");
 			}
 		}
 
@@ -1378,8 +1286,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("remove fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1390,19 +1297,18 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("remove read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove read only error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c' };
 				ArrayList a = new ArrayList (c);
 				a.Remove (1);
 				a.Remove ('?');
-				AssertEquals ("should be unchanged", c.Length, a.Count);
+				Assert.AreEqual (c.Length, a.Count, "should be unchanged");
 				a.Remove ('a');
-				AssertEquals ("should be changed", 2, a.Count);
-				AssertEquals ("should have shifted", 'b', a [0]);
-				AssertEquals ("should have shifted", 'c', a [1]);
+				Assert.AreEqual (2, a.Count, "should be changed");
+				Assert.AreEqual ('b', a [0], "should have shifted");
+				Assert.AreEqual ('c', a [1], "should have shifted");
 			}
 		}
 
@@ -1418,8 +1324,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("remove from fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove from fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1430,8 +1335,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("remove from read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove from read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1441,8 +1345,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("remove at negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove at negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1452,16 +1355,15 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("remove at out-of-range index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "remove at out-of-range index error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c' };
 				ArrayList a = new ArrayList (c);
 				a.RemoveAt (0);
-				AssertEquals ("should be changed", 2, a.Count);
-				AssertEquals ("should have shifted", 'b', a [0]);
-				AssertEquals ("should have shifted", 'c', a [1]);
+				Assert.AreEqual (2, a.Count, "should be changed");
+				Assert.AreEqual ('b', a [0], "should have shifted");
+				Assert.AreEqual ('c', a [1], "should have shifted");
 			}
 		}
 
@@ -1477,8 +1379,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("removerange from fixed size error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "removerange from fixed size error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1489,8 +1390,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("removerange from read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "removerange from read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1500,8 +1400,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("removerange at negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "removerange at negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1511,8 +1410,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("removerange at negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "removerange at negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1522,15 +1420,14 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				}
-				Assert ("removerange at bad range error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "removerange at bad range error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c' };
 				ArrayList a = new ArrayList (c);
 				a.RemoveRange (1, 2);
-				AssertEquals ("should be changed", 1, a.Count);
-				AssertEquals ("should have shifted", 'a', a [0]);
+				Assert.AreEqual (1, a.Count, "should be changed");
+				Assert.AreEqual ('a', a [0], "should have shifted");
 			}
 		}
 
@@ -1562,24 +1459,18 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				}
-				Assert ("repeat negative copies error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "repeat negative copies error not thrown");
 			}
 			{
 				ArrayList al1 = ArrayList.Repeat ("huh?", 0);
-				AssertEquals ("should be nothing in array",
-						 0, al1.Count);
+				Assert.AreEqual (0, al1.Count, "should be nothing in array");
 			}
 			{
 				ArrayList al1 = ArrayList.Repeat ("huh?", 3);
-				AssertEquals ("should be something in array",
-						 3, al1.Count);
-				AssertEquals ("array elem doesn't check",
-						 "huh?", al1 [0]);
-				AssertEquals ("array elem doesn't check",
-						 "huh?", al1 [1]);
-				AssertEquals ("array elem doesn't check",
-						 "huh?", al1 [2]);
+				Assert.AreEqual (3, al1.Count, "should be something in array");
+				Assert.AreEqual ("huh?", al1 [0], "array elem doesn't check");
+				Assert.AreEqual ("huh?", al1 [1], "array elem doesn't check");
+				Assert.AreEqual ("huh?", al1 [2], "array elem doesn't check");
 			}
 		}
 
@@ -1595,8 +1486,7 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("reverse on read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "reverse on read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1607,7 +1497,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				}
-				Assert ("error not thrown", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1618,32 +1508,29 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentException) {
 					errorThrown = true;
 				}
-				Assert ("error not thrown", errorThrown);
+				Assert.IsTrue (errorThrown, "error not thrown");
 			}
 			{
 				char [] c = { 'a', 'b', 'c', 'd', 'e' };
 				ArrayList al1 = new ArrayList (c);
 				al1.Reverse (2, 1);
 				for (int i = 0; i < al1.Count; i++) {
-					AssertEquals ("Should be no change yet",
-							 c [i], al1 [i]);
+					Assert.AreEqual (c [i], al1 [i], "Should be no change yet");
 				}
 				al1.Reverse ();
 				for (int i = 0; i < al1.Count; i++) {
-					AssertEquals ("Should be reversed",
-							 c [i], al1 [4 - i]);
+					Assert.AreEqual (c [i], al1 [4 - i], "Should be reversed");
 				}
 				al1.Reverse ();
 				for (int i = 0; i < al1.Count; i++) {
-					AssertEquals ("Should be back to normal",
-							 c [i], al1 [i]);
+					Assert.AreEqual (c [i], al1 [i], "Should be back to normal");
 				}
 				al1.Reverse (1, 3);
-				AssertEquals ("Should be back to normal", c [0], al1 [0]);
-				AssertEquals ("Should be back to normal", c [3], al1 [1]);
-				AssertEquals ("Should be back to normal", c [2], al1 [2]);
-				AssertEquals ("Should be back to normal", c [1], al1 [3]);
-				AssertEquals ("Should be back to normal", c [4], al1 [4]);
+				Assert.AreEqual (c [0], al1 [0], "Should be back to normal");
+				Assert.AreEqual (c [3], al1 [1], "Should be back to normal");
+				Assert.AreEqual (c [2], al1 [2], "Should be back to normal");
+				Assert.AreEqual (c [1], al1 [3], "Should be back to normal");
+				Assert.AreEqual (c [4], al1 [4], "Should be back to normal");
 			}
 		}
 
@@ -1678,10 +1565,9 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 1: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 1: " + e.ToString ());
 				}
-				Assert ("setrange on read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "setrange on read only error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1693,10 +1579,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 2: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 2: " + e.ToString ());
 				}
-				Assert ("setrange with null error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "setrange with null error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1707,10 +1592,9 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 3: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 3: " + e.ToString ());
 				}
-				Assert ("setrange with negative index error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "setrange with negative index error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1721,22 +1605,21 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentOutOfRangeException) {
 					errorThrown = true;
 				} catch (Exception e) {
-					Fail ("Incorrect exception thrown at 4: " + e.ToString ());
+					Assert.Fail ("Incorrect exception thrown at 4: " + e.ToString ());
 				}
-				Assert ("setrange with too much error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "setrange with too much error not thrown");
 			}
 
 			{
 				char [] c = { 'a', 'b', 'c' };
 				ArrayList al1 = ArrayList.Repeat ('?', 3);
-				Assert ("no match yet", c [0] != (char) al1 [0]);
-				Assert ("no match yet", c [1] != (char) al1 [1]);
-				Assert ("no match yet", c [2] != (char) al1 [2]);
+				Assert.IsTrue (c [0] != (char) al1 [0], "no match yet");
+				Assert.IsTrue (c [1] != (char) al1 [1], "no match yet");
+				Assert.IsTrue (c [2] != (char) al1 [2], "no match yet");
 				al1.SetRange (0, c);
-				AssertEquals ("should match", c [0], al1 [0]);
-				AssertEquals ("should match", c [1], al1 [1]);
-				AssertEquals ("should match", c [2], al1 [2]);
+				Assert.AreEqual (c [0], al1 [0], "should match");
+				Assert.AreEqual (c [1], al1 [1], "should match");
+				Assert.AreEqual (c [2], al1 [2], "should match");
 			}
 		}
 
@@ -1757,7 +1640,7 @@ namespace MonoTests.System.Collections
 			al.InsertRange (2, al);
 			String [] s2 = { "this", "is", "this", "is", "a", "test", "a", "test" };
 			for (int i = 0; i < al.Count; i++) {
-				AssertEquals ("at i=" + i, s2 [i], al [i]);
+				Assert.AreEqual (s2 [i], al [i], "at i=" + i);
 			}
 		}
 
@@ -1773,19 +1656,18 @@ namespace MonoTests.System.Collections
 				} catch (NotSupportedException) {
 					errorThrown = true;
 				}
-				Assert ("sort on read only error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "sort on read only error not thrown");
 			}
 			{
 				char [] starter = { 'd', 'b', 'f', 'e', 'a', 'c' };
 				ArrayList al1 = new ArrayList (starter);
 				al1.Sort ();
-				AssertEquals ("Should be sorted", 'a', al1 [0]);
-				AssertEquals ("Should be sorted", 'b', al1 [1]);
-				AssertEquals ("Should be sorted", 'c', al1 [2]);
-				AssertEquals ("Should be sorted", 'd', al1 [3]);
-				AssertEquals ("Should be sorted", 'e', al1 [4]);
-				AssertEquals ("Should be sorted", 'f', al1 [5]);
+				Assert.AreEqual ('a', al1 [0], "Should be sorted");
+				Assert.AreEqual ('b', al1 [1], "Should be sorted");
+				Assert.AreEqual ('c', al1 [2], "Should be sorted");
+				Assert.AreEqual ('d', al1 [3], "Should be sorted");
+				Assert.AreEqual ('e', al1 [4], "Should be sorted");
+				Assert.AreEqual ('f', al1 [5], "Should be sorted");
 			}
 			{
 				ArrayList al1 = new ArrayList ();
@@ -1797,12 +1679,12 @@ namespace MonoTests.System.Collections
 				al1.Add (null);
 
 				al1.Sort ();
-				AssertEquals ("Should be null", null, al1 [0]);
-				AssertEquals ("Should be 2. null", null, al1 [1]);
-				AssertEquals ("Should be 3. null", null, al1 [2]);
-				AssertEquals ("Should be 4. null", null, al1 [3]);
-				AssertEquals ("Should be 32", 32, al1 [4]);
-				AssertEquals ("Should be 33", 33, al1 [5]);
+				Assert.AreEqual (null, al1 [0], "Should be null");
+				Assert.AreEqual (null, al1 [1], "Should be 2. null");
+				Assert.AreEqual (null, al1 [2], "Should be 3. null");
+				Assert.AreEqual (null, al1 [3], "Should be 4. null");
+				Assert.AreEqual (32, al1 [4], "Should be 32");
+				Assert.AreEqual (33, al1 [5], "Should be 33");
 			}
 		}
 
@@ -1839,8 +1721,7 @@ namespace MonoTests.System.Collections
 				} catch (ArgumentNullException) {
 					errorThrown = true;
 				}
-				Assert ("toarray with null error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "toarray with null error not thrown");
 			}
 			{
 				bool errorThrown = false;
@@ -1852,20 +1733,18 @@ namespace MonoTests.System.Collections
 				} catch (InvalidCastException) {
 					errorThrown = true;
 				}
-				Assert ("toarray with bad type error not thrown",
-					   errorThrown);
+				Assert.IsTrue (errorThrown, "toarray with bad type error not thrown");
 			}
 			{
 				char [] c1 = { 'a', 'b', 'c', 'd', 'e' };
 				ArrayList al1 = new ArrayList (c1);
 				object [] o2 = al1.ToArray ();
 				for (int i = 0; i < c1.Length; i++) {
-					AssertEquals ("should be copy", c1 [i], o2 [i]);
+					Assert.AreEqual (c1 [i], o2 [i], "should be copy");
 				}
 				Array c2 = al1.ToArray (c1 [0].GetType ());
 				for (int i = 0; i < c1.Length; i++) {
-					AssertEquals ("should be copy",
-							 c1 [i], c2.GetValue (i));
+					Assert.AreEqual (c1 [i], c2.GetValue (i), "should be copy");
 				}
 			}
 		}
@@ -1894,11 +1773,11 @@ namespace MonoTests.System.Collections
 			}
 			al1.RemoveAt (0);
 			al1.TrimToSize ();
-			AssertEquals ("no capacity match", size - 1, al1.Capacity);
+			Assert.AreEqual (size - 1, al1.Capacity, "no capacity match");
 
 			al1.Clear ();
 			al1.TrimToSize ();
-			AssertEquals ("no default capacity", capacity, al1.Capacity);
+			Assert.AreEqual (capacity, al1.Capacity, "no default capacity");
 		}
 
 		class Comparer : IComparer
@@ -1927,7 +1806,7 @@ namespace MonoTests.System.Collections
 		public void BinarySearch1_EmptyList ()
 		{
 			ArrayList list = new ArrayList ();
-			AssertEquals ("BinarySearch", -1, list.BinarySearch (0));
+			Assert.AreEqual (-1, list.BinarySearch (0), "BinarySearch");
 		}
 
 		[Test]
@@ -1935,9 +1814,9 @@ namespace MonoTests.System.Collections
 		{
 			Comparer comparer = new Comparer ();
 			ArrayList list = new ArrayList ();
-			AssertEquals ("BinarySearch", -1, list.BinarySearch (0, comparer));
+			Assert.AreEqual (-1, list.BinarySearch (0, comparer), "BinarySearch");
 			// bug 77030 - the comparer isn't called for an empty array/list
-			Assert ("Called", !comparer.Called);
+			Assert.IsTrue (!comparer.Called, "Called");
 		}
 
 		[Test]
@@ -1945,9 +1824,9 @@ namespace MonoTests.System.Collections
 		{
 			Comparer comparer = new Comparer ();
 			ArrayList list = new ArrayList ();
-			AssertEquals ("BinarySearch", -1, list.BinarySearch (0, 0, 0, comparer));
+			Assert.AreEqual (-1, list.BinarySearch (0, 0, 0, comparer), "BinarySearch");
 			// bug 77030 - the comparer isn't called for an empty array/list
-			Assert ("Called", !comparer.Called);
+			Assert.IsTrue (!comparer.Called, "Called");
 		}
 
 		[Test]
@@ -1957,16 +1836,16 @@ namespace MonoTests.System.Collections
 		public void AddRange_GetRange ()
 		{
 			ArrayList source = ArrayList.Adapter (new object [] { "1", "2" });
-			AssertEquals ("#1", 2, source.Count);
-			AssertEquals ("#2", "1", source [0]);
-			AssertEquals ("#3", "2", source [1]);
+			Assert.AreEqual (2, source.Count, "#1");
+			Assert.AreEqual ("1", source [0], "#2");
+			Assert.AreEqual ("2", source [1], "#3");
 			ArrayList range = source.GetRange (1, 1);
-			AssertEquals ("#4", 1, range.Count);
-			AssertEquals ("#5", "2", range [0]);
+			Assert.AreEqual (1, range.Count, "#4");
+			Assert.AreEqual ("2", range [0], "#5");
 			ArrayList target = new ArrayList ();
 			target.AddRange (range);
-			AssertEquals ("#6", 1, target.Count);
-			AssertEquals ("#7", "2", target [0]);
+			Assert.AreEqual (1, target.Count, "#6");
+			Assert.AreEqual ("2", target [0], "#7");
 		}
 
 		[Test]
@@ -1978,9 +1857,9 @@ namespace MonoTests.System.Collections
 			ArrayList list = new ArrayList ();
 			list.Add (list);
 			IEnumerator enumerator = list.GetEnumerator ();
-			Assert ("#1", enumerator.MoveNext ());
-			Assert ("#2", object.ReferenceEquals (list, enumerator.Current));
-			Assert ("#3", !enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext (), "#1");
+			Assert.IsTrue (object.ReferenceEquals (list, enumerator.Current), "#2");
+			Assert.IsTrue (!enumerator.MoveNext (), "#3");
 		}
 	}
 }

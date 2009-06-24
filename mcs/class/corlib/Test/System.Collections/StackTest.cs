@@ -16,27 +16,30 @@ using NUnit.Framework;
 namespace MonoTests.System.Collections
 {
 	[TestFixture]
-	public class StackTest: Assertion
+	public class StackTest
 	{
                 private Stack stack1;
                 private Stack stack2;
                 private Stack stackInt;
 
+		[Test]
                 public void TestConstructor()
                 {
-                        AssertEquals(false, stack1 == null);
+                        Assert.AreEqual (stack1 == null, false);
                 }
                 
+		[Test]
                 public void TestICollectionConstructor1()
                 {
                         Stack stackTest = new Stack(new int[] {0, 1, 2, 3, 4});
 
                         for (int i = 4; i >= 0; i--)
-                                AssertEquals(i, stackTest.Pop());
+                                Assert.AreEqual (stackTest.Pop(), i);
 
-                        AssertEquals(0, stackTest.Count);
+                        Assert.AreEqual (stackTest.Count, 0);
                 }
 
+		[Test]
 		public void TestICollectionConstructor2()
 		{
 			bool exceptionThrown = false;
@@ -44,19 +47,21 @@ namespace MonoTests.System.Collections
 				Stack stackTest = new Stack(null);
 			} catch (ArgumentNullException e) {
 				exceptionThrown = true;
-				AssertEquals("ParamName must be \"col\"","col",e.ParamName);
+				Assert.AreEqual ("col", e.ParamName, "ParamName must be \"col\"");
 			}
-			Assert("null argument must throw ArgumentNullException", exceptionThrown);
+			Assert.IsTrue (exceptionThrown, "null argument must throw ArgumentNullException");
 					
 		}
 
+		[Test]
                 public void TestIntConstructor1()
                 {
                         Stack stackTest = new Stack(50);
 
-                        Assert(stackTest != null);
+                        Assert.IsTrue (stackTest != null);
                 }
 
+		[Test]
 		public void TestIntConstructor2()
 		{
 			bool exceptionThrown = false;
@@ -66,11 +71,12 @@ namespace MonoTests.System.Collections
 			catch (ArgumentOutOfRangeException e) 
 			{
 				exceptionThrown = true;
-				AssertEquals("ParamName must be \"initialCapacity\"","initialCapacity",e.ParamName);
+				Assert.AreEqual ("initialCapacity", e.ParamName, "ParamName must be \"initialCapacity\"");
 			}
-			Assert("negative argument must throw ArgumentOutOfRangeException", exceptionThrown);
+			Assert.IsTrue (exceptionThrown, "negative argument must throw ArgumentOutOfRangeException");
 		}
 
+		[Test]
                 public void TestCount()
                 {
                         Stack stackTest = new Stack();
@@ -80,20 +86,23 @@ namespace MonoTests.System.Collections
                         stackTest.Push(0);
                         stackTest.Push(50);
 
-                        AssertEquals(4, stackTest.Count);
+                        Assert.AreEqual (stackTest.Count, 4);
                 }
 
+		[Test]
                 public void TestIsSyncronized()
                 {
-                        AssertEquals(false, stack1.IsSynchronized);
-                        AssertEquals(true, Stack.Synchronized(stack1).IsSynchronized);
+                        Assert.AreEqual (stack1.IsSynchronized, false);
+                        Assert.AreEqual (Stack.Synchronized(stack1).IsSynchronized, true);
                 }
 
+		[Test]
                 public void TestSyncRoot()
                 {
-                        AssertEquals(false, stack1.SyncRoot == null);
+                        Assert.AreEqual (stack1.SyncRoot == null, false);
                 }
 
+		[Test]
                 public void TestGetEnumerator1()
                 {
                         stackInt.Pop();
@@ -102,16 +111,17 @@ namespace MonoTests.System.Collections
 
                         foreach (int i in stackInt)
                         {
-                                AssertEquals(j--, i);
+                                Assert.AreEqual (i, j--);
                         }
 
                         stackInt.Clear();
 
                         IEnumerator e = stackInt.GetEnumerator();
 
-                        AssertEquals(false, e.MoveNext());
+                        Assert.AreEqual (e.MoveNext(), false);
                 }
 
+		[Test]
 		public void TestGetEnumerator2()
 		{
 			
@@ -120,10 +130,11 @@ namespace MonoTests.System.Collections
 			{
 				// Tests InvalidOperationException if enumerator is uninitialized
 				Object o = e.Current;
-				Fail("InvalidOperationException should be thrown");
+				Assert.Fail ("InvalidOperationException should be thrown");
 			} catch (InvalidOperationException) {}
 		}
 
+		[Test]
 		public void TestGetEnumerator3()
 		{
 			
@@ -133,30 +144,32 @@ namespace MonoTests.System.Collections
 			{
 				// Tests InvalidOperationException if enumeration has ended
 				Object o = e.Current;
-				Fail("InvalidOperationException should be thrown");
+				Assert.Fail ("InvalidOperationException should be thrown");
 			} catch (InvalidOperationException) {}
 		}
 	
+		[Test]
 		public void TestEnumeratorReset1() 
 		{
 			IEnumerator e = stackInt.GetEnumerator();
 
 			e.MoveNext();
-			AssertEquals("current value", 4, e.Current);
+			Assert.AreEqual (4, e.Current, "current value");
 			e.MoveNext();
 
 			e.Reset();
 
 			e.MoveNext();
-			AssertEquals("current value after reset", 4, e.Current);
+			Assert.AreEqual (4, e.Current, "current value after reset");
 		}
 
+		[Test]
 		public void TestEnumeratorReset2() 
 		{
 			IEnumerator e = stackInt.GetEnumerator();
 
 			e.MoveNext();
-			AssertEquals("current value", 4, e.Current);
+			Assert.AreEqual (4, e.Current, "current value");
 
 			// modifies underlying the stack. Reset must throw InvalidOperationException
 			stackInt.Push(5);
@@ -164,11 +177,12 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				e.Reset();
-				Fail("InvalidOperationException should be thrown");
+				Assert.Fail ("InvalidOperationException should be thrown");
 			} 
 			catch (InvalidOperationException) {}
 		}
 
+		[Test]
 		public void TestEnumeratorMoveNextException() 
 		{
 			IEnumerator e = stackInt.GetEnumerator();
@@ -179,29 +193,32 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				e.MoveNext();
-				Fail("InvalidOperationException should be thrown");
+				Assert.Fail ("InvalidOperationException should be thrown");
 			} 
 			catch (InvalidOperationException) {}
 		}
 
 
+		[Test]
                 public void TestClear()
                 {
                         stackInt.Clear();
 
-                        AssertEquals(0, stackInt.Count);
+                        Assert.AreEqual (stackInt.Count, 0);
                 }
 
+		[Test]
                 public void TestClone()
                 {
                         Stack clone = (Stack)stackInt.Clone();
 
                         while (stackInt.Count > 0)
                         {
-                                AssertEquals(stackInt.Pop(), clone.Pop());
+                                Assert.AreEqual (clone.Pop(), stackInt.Pop());
                         }
                 }
 
+		[Test]
                 public void TestContains()
                 {
                         string toLocate = "test";
@@ -213,28 +230,29 @@ namespace MonoTests.System.Collections
 
 			stackInt.Push(null);
 
-			Assert(stackInt.Contains(toLocate));
+			Assert.IsTrue (stackInt.Contains(toLocate));
 
-			Assert("must contain null", stackInt.Contains(null));
+			Assert.IsTrue (stackInt.Contains(null), "must contain null");
 
 			stackInt.Pop();
 
                         stackInt.Pop();
 
-                        Assert(stackInt.Contains(toLocate));
+                        Assert.IsTrue (stackInt.Contains(toLocate));
 
                         stackInt.Pop();
 
-                        Assert(!stackInt.Contains(toLocate));
+                        Assert.IsTrue (!stackInt.Contains(toLocate));
 			
 			stackInt.Push(null);
-			Assert(stackInt.Contains(null));
+			Assert.IsTrue (stackInt.Contains(null));
 			stackInt.Pop();
-			Assert(!stackInt.Contains(null));
+			Assert.IsTrue (!stackInt.Contains(null));
 			
 			
                 }
 
+		[Test]
                 public void TestCopyTo()
                 {
                         int[] arr = new int[stackInt.Count - 1];
@@ -243,46 +261,46 @@ namespace MonoTests.System.Collections
                         try 
                         {
                                 stackInt.CopyTo(null, 0);
-                                Fail("Should throw an ArgumentNullException");
+                                Assert.Fail ("Should throw an ArgumentNullException");
                         } catch (ArgumentNullException e) {
-				AssertEquals("ParamName must be \"array\"","array",e.ParamName);
+				Assert.AreEqual ("array", e.ParamName, "ParamName must be \"array\"");
 			}
 
                         try
                         {
                                 stackInt.CopyTo(arr, -1);
-                                Fail("Should throw an ArgumentOutOfRangeException");
+                                Assert.Fail ("Should throw an ArgumentOutOfRangeException");
                         } 
 			catch (ArgumentOutOfRangeException e) 
 			{
-				AssertEquals("ParamName must be \"index\"","index",e.ParamName);
+				Assert.AreEqual ("index", e.ParamName, "ParamName must be \"index\"");
 			}
 
                         try
                         {
                                 stackInt.CopyTo(arrMulti = new int[1, 1], 1);
-                                Fail("Should throw an ArgumentException");
+                                Assert.Fail ("Should throw an ArgumentException");
                         } 
                         catch (ArgumentException) {}
 
                         try
                         {
                                 stackInt.CopyTo(arr = new int[2], 3);
-                                Fail("Should throw an ArgumentException");
+                                Assert.Fail ("Should throw an ArgumentException");
                         } 
                         catch (ArgumentException) {}
 
                         try
                         {
                                 stackInt.CopyTo(arr = new int[3], 2);
-                                Fail("Should throw an ArgumentException");
+                                Assert.Fail ("Should throw an ArgumentException");
                         } 
                         catch (ArgumentException) {}
 
                         try
                         {
                                 stackInt.CopyTo(arr = new int[2], 3);
-                                Fail("Should throw an ArgumentException");
+                                Assert.Fail ("Should throw an ArgumentException");
                         } 
                         catch (ArgumentException) {}
 
@@ -294,10 +312,11 @@ namespace MonoTests.System.Collections
 
                         for (int i = 0; i < 4; i++)
                         {
-                               AssertEquals(j--, arr[i]);
+                               Assert.AreEqual (arr[i], j--);
                         }
                 }
 
+		[Test]
                 public void TestSyncronized()
                 {
                         Stack syncStack = Stack.Synchronized(stackInt);
@@ -305,53 +324,57 @@ namespace MonoTests.System.Collections
                         syncStack.Push(5);
 
                         for (int i = 5; i >= 0; i--)
-                                AssertEquals(i, syncStack.Pop());
+                                Assert.AreEqual (syncStack.Pop(), i);
                 }
 
+		[Test]
                 public void TestPushPeekPop()
                 {
                         stackInt.Pop();
 
                         int topVal = (int)stackInt.Peek();
 
-                        AssertEquals(3, topVal);
+                        Assert.AreEqual (topVal, 3);
 
-                        AssertEquals(4, stackInt.Count);
+                        Assert.AreEqual (stackInt.Count, 4);
 
-                        AssertEquals(topVal, stackInt.Pop());
+                        Assert.AreEqual (stackInt.Pop(), topVal);
 
-                        AssertEquals(2, stackInt.Pop());
+                        Assert.AreEqual (stackInt.Pop(), 2);
 
                         Stack test = new Stack();
                         test.Push(null);
 
-                        AssertEquals(null, test.Pop());
+                        Assert.AreEqual (test.Pop(), null);
 
                 }
 		
+		[Test]
 		public void TestPop()
 		{
 			for (int i = 4; i >= 0; i--) 
 			{
-				AssertEquals(i, stackInt.Pop());
+				Assert.AreEqual (stackInt.Pop(), i);
 			}
 			try {
 				stackInt.Pop();
-				Fail("must throw InvalidOperationException");
+				Assert.Fail ("must throw InvalidOperationException");
 			} catch (InvalidOperationException){
 			}
 		}
 
+		[Test]
                 public void TestToArray()
                 {
                         object[] arr = stackInt.ToArray();
 
-                        AssertEquals(stackInt.Count, arr.Length);                       
+                        Assert.AreEqual (arr.Length, stackInt.Count);                       
 
                         for (int i = 0; i < 5; i++)
-                                AssertEquals(arr[i], stackInt.Pop());
+                                Assert.AreEqual (stackInt.Pop(), arr[i]);
                 }
 		
+		[Test]
 		public void TestResize()
 		{
 			Stack myStack = new Stack(20);
@@ -359,16 +382,17 @@ namespace MonoTests.System.Collections
 			for (int i = 0; i < 500; i++) 
 			{
 				myStack.Push(i);
-				AssertEquals("push count test",i+1, myStack.Count);
+				Assert.AreEqual (i+1, myStack.Count, "push count test");
 			}
 			
 			for (int i = 499; i >= 0; i--) 
 			{
-				AssertEquals(i, myStack.Pop());
-				AssertEquals("pop count test",i, myStack.Count);
+				Assert.AreEqual (myStack.Pop(), i);
+				Assert.AreEqual (i, myStack.Count, "pop count test");
 			}
 		}
 
+		[Test]
 		public void TestEmptyCopyTo ()
 		{
 			Stack stack = new Stack ();

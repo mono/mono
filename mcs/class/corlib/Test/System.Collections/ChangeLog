@@ -1,3 +1,14 @@
+2009-06-24  Robert Jordan  <robertj@gmx.net>
+
+	* ArrayListTest.cs, CollectionBaseTest.cs, DictionaryEntryTest.cs,
+	HashtableTest.cs: Convert all tests to new-style nunit methods.
+
+	* QueueTest.cs: likewise. Convertion revealed 25 test that were
+	disabled after the NUnit 2.4 update.
+
+	* StackTest.cs: likewise. Convertion revealed 24 test that were
+	disabled after the NUnit 2.4 update.
+
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* BitArrayTest.cs: Add a test for #421803.

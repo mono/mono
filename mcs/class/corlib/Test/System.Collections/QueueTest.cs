@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Collections {
 
 	[TestFixture]
-	public class QueueTest : Assertion {
+	public class QueueTest {
 
 		protected Queue q1;
 		protected Queue q2;
@@ -36,172 +36,175 @@ namespace MonoTests.System.Collections {
 			emptyQueue = new Queue ();
 		}
 
+		[Test]
 		public void TestConstructorException1 () 
 		{
 			try 
 			{
 				Queue q = new Queue(-1, 2);
-				Fail("Should throw an exception");
+				Assert.Fail ("Should throw an exception");
 			} catch (ArgumentOutOfRangeException e) {
-				AssertEquals("Exception's ParamName must be \"capacity\"", "capacity", e.ParamName);
+				Assert.AreEqual ("capacity", e.ParamName, "Exception's ParamName must be \"capacity\"");
 			}
 		}
 
+		[Test]
 		public void TestConstructorException2 () 
 		{
 			try 
 			{
 				Queue q = new Queue(10, 0);
-				Fail("Should throw an exception because growFactor < 1");
+				Assert.Fail ("Should throw an exception because growFactor < 1");
 			} 
 			catch (ArgumentOutOfRangeException e) 
 			{
-				AssertEquals("Exception's ParamName must be \"growFactor\"", "growFactor", e.ParamName);
+				Assert.AreEqual ("growFactor", e.ParamName, "Exception's ParamName must be \"growFactor\"");
 			}
 		}
 
+		[Test]
 		public void TestConstructorException3 () 
 		{
 			try 
 			{
 				Queue q = new Queue(10, 11);
-				Fail("Should throw an exception because growFactor > 10");
+				Assert.Fail ("Should throw an exception because growFactor > 10");
 			} 
 			catch (ArgumentOutOfRangeException e) 
 			{
-				AssertEquals("Exception's ParamName must be \"growFactor\"", "growFactor", e.ParamName);
+				Assert.AreEqual ("growFactor", e.ParamName, "Exception's ParamName must be \"growFactor\"");
 			}
 		}
 
+		[Test]
 		public void TestConstructorException4 () 
 		{
 			try 
 			{
 				Queue q = new Queue(null);
-				Fail("Should throw an exception because col == null");
+				Assert.Fail ("Should throw an exception because col == null");
 			} 
 			catch (ArgumentNullException e) 
 			{
-				AssertEquals("Exception's ParamName must be \"col\"", "col", e.ParamName);
+				Assert.AreEqual ("col", e.ParamName, "Exception's ParamName must be \"col\"");
 			}
 		}
 
+		[Test]
 		public void TestICollectionConstructor () 
 		{
 			Queue q = new Queue(new int[] {1, 2, 3, 4, 5});
-			AssertEquals("count", 5, q.Count);
+			Assert.AreEqual (5, q.Count, "count");
 			for (int i=1; i <=5; i++) 
 			{
-				AssertEquals(i,	q.Dequeue());
+				Assert.AreEqual (q.Dequeue(), i);
 			}
                 }
 
+		[Test]
 		public void TestConstructors () 
 		{
-			SetUp();
-			Assert (q1.Count == 100);
-			Assert (q2.Count == 50);
-			Assert (emptyQueue.Count == 0);
+			Assert.IsTrue (q1.Count == 100);
+			Assert.IsTrue (q2.Count == 50);
+			Assert.IsTrue (emptyQueue.Count == 0);
 		}
 
+		[Test]
 		public void TestCount() 
 		{
-			SetUp();
-
-			AssertEquals("Count #1", 100, q1.Count);
+			Assert.AreEqual (100, q1.Count, "Count #1");
 			for (int i = 1; i <=50; i ++) 
 			{
 				q1.Dequeue();
 			}
-			AssertEquals("Count #2", 50, q1.Count);
+			Assert.AreEqual (50, q1.Count, "Count #2");
 			for (int i = 1; i <=50; i ++) 
 			{
 				q1.Enqueue(i);
 			}
-			AssertEquals("Count #3", 100, q1.Count);
+			Assert.AreEqual (100, q1.Count, "Count #3");
 
-			AssertEquals("Count #4", 50, q2.Count);
+			Assert.AreEqual (50, q2.Count, "Count #4");
 
-			AssertEquals("Count #5", 0, emptyQueue.Count);
+			Assert.AreEqual (0, emptyQueue.Count, "Count #5");
 		}
 
+		[Test]
 		public void TestIsSynchronized() 
 		{
-			SetUp();
-			Assert("IsSynchronized should be false", !q1.IsSynchronized);
-			Assert("IsSynchronized should be false", !q2.IsSynchronized);
-			Assert("IsSynchronized should be false", !emptyQueue.IsSynchronized);
+			Assert.IsTrue (!q1.IsSynchronized, "IsSynchronized should be false");
+			Assert.IsTrue (!q2.IsSynchronized, "IsSynchronized should be false");
+			Assert.IsTrue (!emptyQueue.IsSynchronized, "IsSynchronized should be false");
 		}
 
+		[Test]
 		public void TestSyncRoot() 
 		{
-			SetUp();
 #if !NET_2_0 // umm, why on earth do you expect SyncRoot is the Queue itself?
-			AssertEquals("SyncRoot q1", q1, q1.SyncRoot);
-			AssertEquals("SyncRoot q2", q2, q2.SyncRoot);
-			AssertEquals("SyncRoot emptyQueue", emptyQueue, emptyQueue.SyncRoot);
+			Assert.AreEqual (q1, q1.SyncRoot, "SyncRoot q1");
+			Assert.AreEqual (q2, q2.SyncRoot, "SyncRoot q2");
+			Assert.AreEqual (emptyQueue, emptyQueue.SyncRoot, "SyncRoot emptyQueue");
 #endif
 
 			Queue q1sync = Queue.Synchronized(q1);
-			AssertEquals("SyncRoot value of a synchronized queue", q1, q1sync.SyncRoot);
+			Assert.AreEqual (q1, q1sync.SyncRoot, "SyncRoot value of a synchronized queue");
 		}
 
+		[Test]
 		public void TestCopyToException1 () 
 		{
-			SetUp();
 			try 
 			{
 				q1.CopyTo(null, 1);
-				Fail("must throw ArgumentNullException");
+				Assert.Fail ("must throw ArgumentNullException");
 			} catch (ArgumentNullException e) {
-				AssertEquals("Exception's ParamName must be \"array\"", "array", e.ParamName);
+				Assert.AreEqual ("array", e.ParamName, "Exception's ParamName must be \"array\"");
 			}
 		}
 
 
+		[Test]
 		public void TestCopyToException2 () 
 		{
-			SetUp();
 			try 
 			{
 				q1.CopyTo(new int[2,2], 1);
-				Fail("must throw ArgumentException");
+				Assert.Fail ("must throw ArgumentException");
 			} 
 			catch (ArgumentException) 
 			{
 			}
 		}
 
+		[Test]
 		public void TestCopyToException3 () 
 		{
-			SetUp();
 			try 
 			{
 				q1.CopyTo(new int[3], -1);
-				Fail("must throw ArgumentOutOfRangeException");
+				Assert.Fail ("must throw ArgumentOutOfRangeException");
 			} 
 			catch (ArgumentOutOfRangeException e) 
 			{
-				AssertEquals("Exception's ParamName must be \"index\"", "index", e.ParamName);
+				Assert.AreEqual ("index", e.ParamName, "Exception's ParamName must be \"index\"");
 			}
 		}
 
+		[Test]
 		public void TestCopyToException4 () 
 		{
-			SetUp();
 			try 
 			{
 				q1.CopyTo(new int[3], 1);
-				Fail("must throw ArgumentException");
+				Assert.Fail ("must throw ArgumentException");
 			} 
 			catch (ArgumentException) {}
 		}
 
 
+		[Test]
 		public void TestCopyTo () 
 		{
-			SetUp();
-
 			int[] a1 = new int[100];
 			int[] a2 = new int[60];
 
@@ -210,72 +213,72 @@ namespace MonoTests.System.Collections {
 				progress_marker = "before first CopyTo";
 				q1.CopyTo (a1, 0);
 				for (int i = 0; i < 100; i++)
-					AssertEquals (i, a1[i]);
+					Assert.AreEqual (a1[i], i);
 
 				// Remove some items from q2 and add other 
 				// items, to avoid having  an "easy" just created
 				// Queue
 				for (int i = 50; i < 60; i++)
-					Assert (i == (int) q2.Dequeue ());
+					Assert.IsTrue (i == (int) q2.Dequeue ());
 				for (int i = 100; i < 110; i++)
 					q2.Enqueue (i);
 				
 				progress_marker = "before second CopyTo";
 				q2.CopyTo (a2, 10);
 				for (int i = 60; i < 110; i++)
-					Assert (i == a2[i - 60 + 10]);
+					Assert.IsTrue (i == a2[i - 60 + 10]);
 				
 				// Copying an empty Queue should not modify the array
 				progress_marker = "before third CopyTo";
 				emptyQueue.CopyTo (a2, 10);
 				for (int i = 60; i < 110; i++)
-					Assert (i == a2[i - 60 + 10]);
+					Assert.IsTrue (i == a2[i - 60 + 10]);
 			} catch (Exception e) {
-				Fail ("Unexpected exception at marker <" + progress_marker + ">: e = " + e);
+				Assert.Fail ("Unexpected exception at marker <" + progress_marker + ">: e = " + e);
 			}
 
 		}
 
+		[Test]
 		public void TestEnumerator () {
-			SetUp();
 			int i;
 			IEnumerator e;
 			e = q1.GetEnumerator ();
 			i = 0;
 			while (e.MoveNext ()) {
-				AssertEquals ("q1 at i=" + i, i, ((int) e.Current));
+				Assert.AreEqual (i, ((int) e.Current), "q1 at i=" + i);
 				i++;
 			}
 			e = q2.GetEnumerator ();
 			i = 50;
 			while (e.MoveNext ()) {
-				AssertEquals (i, ((int) e.Current));
+				Assert.AreEqual (((int) e.Current), i);
 				i++;
 			}
 			e = emptyQueue.GetEnumerator ();
 			if (e.MoveNext ())
-				Fail ("Empty Queue enumerator returning elements!");
+				Assert.Fail ("Empty Queue enumerator returning elements!");
 
 			e = q1.GetEnumerator ();
 			try {
 				e.MoveNext ();
 				q1.Enqueue (0);
 				e.MoveNext ();
-				Fail ("#1 Should have thrown InvalidOperationException");
+				Assert.Fail ("#1 Should have thrown InvalidOperationException");
 			} catch	(InvalidOperationException) { }
 			e = q1.GetEnumerator ();
 		}
 
+		[Test]
 		public void TestEnumeratorException1 () 
 		{
-			SetUp();
 			IEnumerator e;
 
 			e = q1.GetEnumerator();
 			q1.Enqueue(6);
 			try {
 				e.MoveNext();
-				Fail("MoveNext must throw InvalidOperationException after Enqueue");
+				Assert.Fail ("MoveNext must throw InvalidOperationException after Enqueue");
 			} catch (InvalidOperationException) {}
 
 
@@ -284,7 +287,7 @@ namespace MonoTests.System.Collections {
 			try 
 			{
 				e.Reset();
-				Fail("Reset must throw InvalidOperationException after Enqueue");
+				Assert.Fail ("Reset must throw InvalidOperationException after Enqueue");
 			} 
 			catch (InvalidOperationException) {}
 
@@ -293,7 +296,7 @@ namespace MonoTests.System.Collections {
 			try 
 			{
 				e.Reset();
-				Fail("Reset must throw InvalidOperationException after TrimToSize");
+				Assert.Fail ("Reset must throw InvalidOperationException after TrimToSize");
 			} 
 			catch (InvalidOperationException) {}
 
@@ -306,7 +309,7 @@ namespace MonoTests.System.Collections {
 			IEnumerator e = q1.GetEnumerator();
 			while (e.MoveNext ()) {
 			}
-			AssertNotNull (e.Current);
+			Assert.IsNotNull (e.Current);
 		}
 
 		[Test]
@@ -315,74 +318,75 @@ namespace MonoTests.System.Collections {
 			IEnumerator e = q1.GetEnumerator();
 			while (e.MoveNext ()) {
 			}
-			Assert (!e.MoveNext ());
+			Assert.IsTrue (!e.MoveNext ());
 		}
 
+		[Test]
 		public void TestClone () {
-			SetUp();
 			Queue q3 = (Queue) q2.Clone ();
-			Assert (q3.Count == q2.Count);
+			Assert.IsTrue (q3.Count == q2.Count);
 			for (int i = 0; i < 50; i++)
-				Assert (q2.Dequeue ().Equals (q3.Dequeue ()));
-			Assert (q3.Count == 0);
-			Assert (q2.Count == 0);
+				Assert.IsTrue (q2.Dequeue ().Equals (q3.Dequeue ()));
+			Assert.IsTrue (q3.Count == 0);
+			Assert.IsTrue (q2.Count == 0);
 		}
 
+		[Test]
 		public void TestClear () {
-			SetUp();
 			q1.Clear ();
-			Assert (q1.Count == 0);
+			Assert.IsTrue (q1.Count == 0);
 			q2.Clear ();
-			Assert (q2.Count == 0);
+			Assert.IsTrue (q2.Count == 0);
 			emptyQueue.Clear ();
-			Assert (emptyQueue.Count == 0);
+			Assert.IsTrue (emptyQueue.Count == 0);
 		}
 
+		[Test]
 		public void TestContains () {
-			SetUp();
 			for (int i = 0; i < 100; i++) {
-				Assert (q1.Contains (i));
-				Assert (!emptyQueue.Contains (i));
+				Assert.IsTrue (q1.Contains (i));
+				Assert.IsTrue (!emptyQueue.Contains (i));
 				if (i < 50)
-					Assert (!q2.Contains (i));
+					Assert.IsTrue (!q2.Contains (i));
 				else
-					Assert (q2.Contains (i));
+					Assert.IsTrue (q2.Contains (i));
 			}
 			
-			Assert("q1 does not contain null", !q1.Contains(null));
+			Assert.IsTrue (!q1.Contains(null), "q1 does not contain null");
 			q1.Enqueue(null);
-			Assert("q1 contains null", q1.Contains(null));
+			Assert.IsTrue (q1.Contains(null), "q1 contains null");
 		}
 		
+		[Test]
 		public void TestEnqueueDequeuePeek () {
-			SetUp();
 			int q1size = q1.Count;
 			int q2size = q2.Count;
 			q2.Enqueue (null);
-			Assert (q2.Count == ++q2size);
+			Assert.IsTrue (q2.Count == ++q2size);
 			for (int i = 0; i < 50; i++) {
 				int k = (int) q1.Peek ();
-				Assert (q1.Count == q1size);
+				Assert.IsTrue (q1.Count == q1size);
 				int j = (int) q1.Dequeue ();
-				Assert (q1.Count == --q1size);
-				Assert (i == j);
-				Assert (j == k);
+				Assert.IsTrue (q1.Count == --q1size);
+				Assert.IsTrue (i == j);
+				Assert.IsTrue (j == k);
 				q2.Enqueue (j);
-				Assert (q2.Count == ++q2size);
+				Assert.IsTrue (q2.Count == ++q2size);
 			}
 			for (int i = 50; i < 100; i++) {
-				Assert (((int) q2.Dequeue ()) == i);
-				Assert (q2.Count == --q2size);
+				Assert.IsTrue (((int) q2.Dequeue ()) == i);
+				Assert.IsTrue (q2.Count == --q2size);
 			}
-			Assert (q2.Peek () == null);
-			Assert (q2.Dequeue () == null);
-			Assert (q2.Count == --q2size);
+			Assert.IsTrue (q2.Peek () == null);
+			Assert.IsTrue (q2.Dequeue () == null);
+			Assert.IsTrue (q2.Count == --q2size);
 			for (int i = 0; i < 50; i++) {
-				Assert (((int) q2.Dequeue ()) == i);
-				Assert (q2.Count == --q2size);
+				Assert.IsTrue (((int) q2.Dequeue ()) == i);
+				Assert.IsTrue (q2.Count == --q2size);
 			}
 		}
 		
+		[Test]
 		public void TestDequeue() {
 			Queue queue = new Queue();
 			string[] tmp = new string[50];
@@ -395,11 +399,12 @@ namespace MonoTests.System.Collections {
 			i = 0;
 			while(queue.Count>0){
 				string z = (string) queue.Dequeue();
-				AssertEquals (tmp[i], tmp[i], z);
+				Assert.AreEqual (tmp[i], z, tmp[i]);
 				i++;
 			}
 		}
 
+		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void TestDequeueEmpty() 
 		{
@@ -407,22 +412,22 @@ namespace MonoTests.System.Collections {
 			q.Dequeue();
 		}
 
+		[Test]
 		public void TestToArray() 
 		{
-			SetUp();
 			object[] a = q1.ToArray();
 			for (int i = 0; i < 100; i++) 
 			{
-				AssertEquals("Queue-Array mismatch",q1.Dequeue(),(int) a[i]);
+				Assert.AreEqual (q1.Dequeue(), (int) a[i], "Queue-Array mismatch");
 			}
 
 			object[] b = emptyQueue.ToArray();
-			AssertEquals("b should be a zero-lenght array", 0, b.Length); 
+			Assert.AreEqual (0, b.Length, "b should be a zero-lenght array"); 
 		}
 
+		[Test]
 		public void TestTrimToSize() 
 		{
-			SetUp();
 			for (int i=0; i < 50; i++) 
 			{
 				q1.Dequeue();
@@ -433,16 +438,17 @@ namespace MonoTests.System.Collections {
 
 		// TODO: test Syncronized operation
 
+		[Test]
 		public void TestSynchronizedException() 
 		{
 			try 
 			{
 				Queue.Synchronized(null);
-				Fail("Must throw ArgumentNullException");
+				Assert.Fail ("Must throw ArgumentNullException");
 			} 
 			catch (ArgumentNullException e)
 			{
-				AssertEquals("Exception's ParamName must be \"queue\"", "queue", e.ParamName);
+				Assert.AreEqual ("queue", e.ParamName, "Exception's ParamName must be \"queue\"");
 			}
 		}
 		
@@ -459,16 +465,16 @@ namespace MonoTests.System.Collections {
 		public void SynchronizedClone () 
 		{
 			Queue q1sync = Queue.Synchronized (q1);
-			Assert ("q1sync.IsSyncronized", q1sync.IsSynchronized); 
-			AssertEquals ("q1sync.Count", q1.Count, q1sync.Count);
+			Assert.IsTrue (q1sync.IsSynchronized, "q1sync.IsSyncronized"); 
+			Assert.AreEqual (q1.Count, q1sync.Count, "q1sync.Count");
 
 			Queue q1syncsync = Queue.Synchronized (q1sync);
-			Assert ("q1syncsync must be synchronized too", q1syncsync.IsSynchronized);
-			AssertEquals ("q1syncsync.Count", q1.Count, q1syncsync.Count);
+			Assert.IsTrue (q1syncsync.IsSynchronized, "q1syncsync must be synchronized too");
+			Assert.AreEqual (q1.Count, q1syncsync.Count, "q1syncsync.Count");
 
 			Queue q1syncclone = (Queue) q1sync.Clone();
-			Assert ("clone must be synchronized too", q1syncclone.IsSynchronized);
-			AssertEquals ("q1syncclone.Count", q1.Count, q1syncclone.Count);
+			Assert.IsTrue (q1syncclone.IsSynchronized, "clone must be synchronized too");
+			Assert.AreEqual (q1.Count, q1syncclone.Count, "q1syncclone.Count");
 		}
 
 		[Test]		
@@ -487,16 +493,16 @@ namespace MonoTests.System.Collections {
 				queue.Enqueue (i);
 
 			queue.TrimToSize ();
-			AssertEquals ("0", 0, queue.Dequeue ());
+			Assert.AreEqual (0, queue.Dequeue (), "0");
 			queue.Enqueue (411);
 
-			AssertEquals ("Count-1", 31, queue.Count);
+			Assert.AreEqual (31, queue.Count, "Count-1");
 			for (int i = 1; i < 31; i++) {
-				AssertEquals ("Peek" + i.ToString (), i, queue.Peek ());
-				AssertEquals ("Dequeue" + i.ToString (), i, queue.Dequeue ());
+				Assert.AreEqual (i, queue.Peek (), "Peek" + i.ToString ());
+				Assert.AreEqual (i, queue.Dequeue (), "Dequeue" + i.ToString ());
 			}
-			AssertEquals ("Count-2", 1, queue.Count);
-			AssertEquals ("411", 411, queue.Dequeue ());
+			Assert.AreEqual (1, queue.Count, "Count-2");
+			Assert.AreEqual (411, queue.Dequeue (), "411");
 		}
 
 		[Test]
@@ -508,8 +514,8 @@ namespace MonoTests.System.Collections {
 
 			queue.TrimToSize ();
 			queue.Enqueue (411);
-			AssertEquals ("Count-1", 32, queue.Count);
-			AssertEquals ("0", 0, queue.Dequeue ());
+			Assert.AreEqual (32, queue.Count, "Count-1");
+			Assert.AreEqual (0, queue.Dequeue (), "0");
 		}
 	}
 }

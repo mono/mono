@@ -19,7 +19,7 @@ namespace MonoTests.System.Collections
 {
 
 [TestFixture]
-public class CollectionBaseTest : Assertion
+public class CollectionBaseTest
 {
 	// We need a concrete class to test the abstract base class
 	public class ConcreteCollection : CollectionBase 
@@ -162,7 +162,7 @@ public class CollectionBaseTest : Assertion
 	public void Count() {
 		ConcreteCollection myCollection;
 		myCollection = new ConcreteCollection(4);
-		Assert(4 == myCollection.Count);
+		Assert.IsTrue (4 == myCollection.Count);
 	}
 
 	// Make sure GetEnumerator returns an object
@@ -170,7 +170,7 @@ public class CollectionBaseTest : Assertion
 	public void GetEnumerator() {
 		ConcreteCollection myCollection;
 		myCollection = new ConcreteCollection(4);
-		Assert(null != myCollection.GetEnumerator());
+		Assert.IsTrue (null != myCollection.GetEnumerator());
 	}
 
 	// OnValid disallows nulls
@@ -189,15 +189,15 @@ public class CollectionBaseTest : Assertion
 		numberOfItems = 3;
 		// The constructor inserts
 		myCollection = new ConcreteCollection(numberOfItems);
-		Assert(myCollection.onInsertFired);
-		Assert(myCollection.onInsertCompleteFired);
+		Assert.IsTrue (myCollection.onInsertFired);
+		Assert.IsTrue (myCollection.onInsertCompleteFired);
 
 		// Using the IList interface, check inserts in the middle
 		IList listObj = myCollection;
 		listObj.Insert(1, 9);
-		Assert(myCollection.onInsertIndex == 1);
-		Assert(myCollection.onInsertCompleteIndex == 1);
-		Assert(myCollection.PeekAt(1) == 9);
+		Assert.IsTrue (myCollection.onInsertIndex == 1);
+		Assert.IsTrue (myCollection.onInsertCompleteIndex == 1);
+		Assert.IsTrue (myCollection.PeekAt(1) == 9);
 	}
 
 	// Test Clear and it's hooks
@@ -209,9 +209,9 @@ public class CollectionBaseTest : Assertion
 		numberOfItems = 1;
 		myCollection = new ConcreteCollection(numberOfItems);
 		myCollection.Clear();
-		Assert(myCollection.Count == 0);
-		Assert(myCollection.onClearFired);
-		Assert(myCollection.onClearCompleteFired);
+		Assert.IsTrue (myCollection.Count == 0);
+		Assert.IsTrue (myCollection.onClearFired);
+		Assert.IsTrue (myCollection.onClearCompleteFired);
 	}
 
 	// Test RemoveAt, other removes and the hooks
@@ -228,16 +228,16 @@ public class CollectionBaseTest : Assertion
 		myCollection.RemoveAt(1);
 
 		// We should see the original third one in it's place
-		Assert(myCollection.PeekAt(1) == 2);
-		Assert(myCollection.onRemoveFired);
-		Assert(myCollection.onRemoveIndex == 1);
-		Assert(myCollection.onRemoveCompleteFired);
-		Assert(myCollection.onRemoveCompleteIndex == 1);
+		Assert.IsTrue (myCollection.PeekAt(1) == 2);
+		Assert.IsTrue (myCollection.onRemoveFired);
+		Assert.IsTrue (myCollection.onRemoveIndex == 1);
+		Assert.IsTrue (myCollection.onRemoveCompleteFired);
+		Assert.IsTrue (myCollection.onRemoveCompleteIndex == 1);
 		IList listObj = myCollection;
 		listObj.Remove(0);
 		// Confirm parameters are being passed to the hooks
-		Assert(myCollection.onRemoveIndex == 0);
-		Assert(myCollection.onRemoveCompleteIndex == 0);
+		Assert.IsTrue (myCollection.onRemoveIndex == 0);
+		Assert.IsTrue (myCollection.onRemoveCompleteIndex == 0);
 	}
 
 	// Test the random access feature
@@ -250,13 +250,13 @@ public class CollectionBaseTest : Assertion
 		myCollection = new ConcreteCollection(numberOfItems);
 		IList listObj = myCollection;
 		listObj[0] = 99;
-		Assert((int) listObj[0] == 99);
-		Assert(myCollection.onSetFired);
-		Assert(myCollection.onSetCompleteFired);
-		Assert(myCollection.onSetOldValue == 0);
-		Assert(myCollection.onSetCompleteOldValue == 0);
-		Assert(myCollection.onSetNewValue == 99);
-		Assert(myCollection.onSetCompleteNewValue == 99);
+		Assert.IsTrue ((int) listObj[0] == 99);
+		Assert.IsTrue (myCollection.onSetFired);
+		Assert.IsTrue (myCollection.onSetCompleteFired);
+		Assert.IsTrue (myCollection.onSetOldValue == 0);
+		Assert.IsTrue (myCollection.onSetCompleteOldValue == 0);
+		Assert.IsTrue (myCollection.onSetNewValue == 99);
+		Assert.IsTrue (myCollection.onSetCompleteNewValue == 99);
 	}
 
 	[Test]
@@ -269,7 +269,7 @@ public class CollectionBaseTest : Assertion
 			coll.BaseList.Add (0);
 		} catch {
 		}
-		AssertEquals (0, coll.Count);
+		Assert.AreEqual (0, coll.Count);
 	}
 
 	[Test]
@@ -284,7 +284,7 @@ public class CollectionBaseTest : Assertion
 		} catch (ArgumentOutOfRangeException) {
 			throw;
 		} finally {
-			AssertEquals (false, coll.onValidateFired);
+			Assert.AreEqual (false, coll.onValidateFired);
 		}
 	}
 
@@ -299,7 +299,7 @@ public class CollectionBaseTest : Assertion
 			coll.BaseList [0] = 11;
 		} catch {
 		} finally {
-			AssertEquals (false, coll.onSetCompleteFired);
+			Assert.AreEqual (false, coll.onSetCompleteFired);
 		}
 	}
 
@@ -320,11 +320,11 @@ public class CollectionBaseTest : Assertion
 			throwsException = false;
 		} catch {
 		} finally {
-			Assert (throwsException);
-			Assert (coll.onValidateFired);
-			Assert (coll.onSetFired);
-			Assert (coll.onSetCompleteFired);
-			AssertEquals (88, coll.BaseList [0]);
+			Assert.IsTrue (throwsException);
+			Assert.IsTrue (coll.onValidateFired);
+			Assert.IsTrue (coll.onSetFired);
+			Assert.IsTrue (coll.onSetCompleteFired);
+			Assert.AreEqual (88, coll.BaseList [0]);
 		}
 	}
 

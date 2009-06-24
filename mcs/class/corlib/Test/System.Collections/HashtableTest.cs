@@ -23,12 +23,12 @@ namespace MonoTests.System.Collections {
 
 /// <summary>Hashtable test.</summary>
 [TestFixture]
-public class HashtableTest : Assertion {
+public class HashtableTest {
 
         [Test]
 	public void TestCtor1() {
 		Hashtable h = new Hashtable();
-		AssertNotNull("No hash table", h);
+		Assert.IsNotNull (h, "No hash table");
 	}
 
         [Test]
@@ -40,8 +40,7 @@ public class HashtableTest : Assertion {
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("null hashtable error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null hashtable error not thrown");
 		}
 		{
 			string[] keys = {"this", "is", "a", "test"};
@@ -52,8 +51,7 @@ public class HashtableTest : Assertion {
 			}
 			Hashtable h2 = new Hashtable(h1);
 			for (int i = 0; i < keys.Length; i++) {
-				AssertEquals("No match for key " + keys[i],
-					     values[i], h2[keys[i]]);
+				Assert.AreEqual (values[i], h2[keys[i]], "No match for key " + keys[i]);
 			}
 		}
 	}
@@ -79,29 +77,29 @@ public class HashtableTest : Assertion {
 		// tests if negative capacity throws exception
 		try {
 			Hashtable ht = new Hashtable (-10, 0.1f, null, null);
-			Assert("must throw ArgumentOutOfRange exception, param: capacity", false);
+			Assert.Fail ("must throw ArgumentOutOfRange exception, param: capacity");
 		} catch (ArgumentOutOfRangeException e) {
-			Assert("ParamName is not capacity", e.ParamName == "capacity");
+			Assert.IsTrue (e.ParamName == "capacity", "ParamName is not capacity");
 		}
 
 		// tests if loadFactor out of range throws exception (low)
 		try {
 			Hashtable ht = new Hashtable (100, 0.01f, null, null);
-			Assert("must throw ArgumentOutOfRange exception, param: loadFactor, too low value", false);
+			Assert.Fail ("must throw ArgumentOutOfRange exception, param: loadFactor, too low value");
 		} 	catch (ArgumentOutOfRangeException e) 
 		{
-			Assert("ParamName is not loadFactor",e.ParamName == "loadFactor");
+			Assert.IsTrue (e.ParamName == "loadFactor", "ParamName is not loadFactor");
 		}
 
 		// tests if loadFactor out of range throws exception (high)
 		try 
 		{
 			Hashtable ht = new Hashtable (100, 2f, null, null);
-			Assert("must throw ArgumentOutOfRange exception, param: loadFactor, too high value", false);
+			Assert.Fail ("must throw ArgumentOutOfRange exception, param: loadFactor, too high value");
 		} 	
 		catch (ArgumentOutOfRangeException e) 
 		{
-			Assert("ParamName is not loadFactor", e.ParamName == "loadFactor");
+			Assert.IsTrue (e.ParamName == "loadFactor", "ParamName is not loadFactor");
 		}
 
 	}
@@ -112,32 +110,28 @@ public class HashtableTest : Assertion {
         [Test]	
 	public void TestCount() {
 		Hashtable h = new Hashtable();
-		AssertEquals("new table - count zero", 0, h.Count);
+		Assert.AreEqual (0, h.Count, "new table - count zero");
 		int max = 100;
 		for (int i = 1; i <= max; i++) {
 			h[i] = i;
-			AssertEquals("Count wrong for " + i,
-				     i, h.Count);
+			Assert.AreEqual (i, h.Count, "Count wrong for " + i);
 		}
 		for (int i = 1; i <= max; i++) {
 			h[i] = i * 2;
-			AssertEquals("Count shouldn't change at " + i,
-				     max, h.Count);
+			Assert.AreEqual (max, h.Count, "Count shouldn't change at " + i);
 		}
 	}
 
         [Test]        
 	public void TestIsFixedSize() {
 		Hashtable h = new Hashtable();
-		AssertEquals("hashtable not fixed by default",
-			     false, h.IsFixedSize);
+		Assert.AreEqual (false, h.IsFixedSize, "hashtable not fixed by default");
 		// TODO - any way to get a fixed-size hashtable?
 	}
 
 	public void TestIsReadOnly() {
 		Hashtable h = new Hashtable();
-		AssertEquals("hashtable not read-only by default",
-			     false, h.IsReadOnly);
+		Assert.AreEqual (false, h.IsReadOnly, "hashtable not read-only by default");
 		// TODO - any way to get a read-only hashtable?
 	}
 
@@ -145,13 +139,13 @@ public class HashtableTest : Assertion {
 	public void TestIsSynchronized ()
 	{
 		Hashtable h = new Hashtable ();
-		Assert ("hashtable not synched by default", !h.IsSynchronized);
+		Assert.IsTrue (!h.IsSynchronized, "hashtable not synched by default");
 
 		Hashtable h2 = Hashtable.Synchronized (h);
-		Assert ("hashtable should by synched", h2.IsSynchronized);
+		Assert.IsTrue (h2.IsSynchronized, "hashtable should by synched");
 
 		Hashtable h3 = (Hashtable) h2.Clone ();
-		Assert ("Cloned Hashtable should by synched", h3.IsSynchronized);
+		Assert.IsTrue (h3.IsSynchronized, "Cloned Hashtable should by synched");
 	}
 
         [Test]
@@ -163,10 +157,9 @@ public class HashtableTest : Assertion {
 				Object o = h[null];
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not \"key\"", "key", e.ParamName);
+				Assert.AreEqual ("key", e.ParamName, "ParamName is not \"key\"");
 			}
-			Assert("null hashtable error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null hashtable error not thrown");
 		}
 		// TODO - if read-only and/or fixed-size is possible,
 		//        test 'NotSupportedException' here
@@ -176,8 +169,7 @@ public class HashtableTest : Assertion {
 			int max = 100;
 			for (int i = 1; i <= max; i++) {
 				h[i] = i;
-				AssertEquals("value wrong for " + i,
-					     i, h[i]);
+				Assert.AreEqual (i, h[i], "value wrong for " + i);
 			}
 		}
 	}
@@ -193,27 +185,23 @@ public class HashtableTest : Assertion {
 		for (int i = 0; i < keys.Length; i++) {
 			h1[keys[i]] = values1[i];
 		}
-		AssertEquals("keys wrong size",
-			     keys.Length, h1.Keys.Count);
+		Assert.AreEqual (keys.Length, h1.Keys.Count, "keys wrong size");
 		for (int i = 0; i < keys.Length; i++) {
 			h1[keys[i]] = values2[i];
 		}
-		AssertEquals("keys wrong size 2",
-			     keys.Length, h1.Keys.Count);
+		Assert.AreEqual (keys.Length, h1.Keys.Count, "keys wrong size 2");
 
 		// MS .NET Always returns the same reference when calling Keys property
 		keysReference = h1.Keys;
 	    keysReference2 = h1.Keys;
-		AssertEquals("keys references differ", keysReference, keysReference2);
+		Assert.AreEqual (keysReference, keysReference2, "keys references differ");
 
 		for (int i = 0; i < keys2.Length; i++) 
 		{
 			h1[keys2[i]] = values2[i];
 		}
-		AssertEquals("keys wrong size 3",
-			keys.Length+keys2.Length, h1.Keys.Count);
-		AssertEquals("keys wrong size 4",
-			keys.Length+keys2.Length, keysReference.Count);
+		Assert.AreEqual (keys.Length+keys2.Length, h1.Keys.Count, "keys wrong size 3");
+		Assert.AreEqual (keys.Length+keys2.Length, keysReference.Count, "keys wrong size 4");
 	}
 
 	// TODO - SyncRoot
@@ -226,18 +214,16 @@ public class HashtableTest : Assertion {
 		for (int i = 0; i < keys.Length; i++) {
 			h1[keys[i]] = values1[i];
 		}
-		AssertEquals("values wrong size",
-			     keys.Length, h1.Values.Count);
+		Assert.AreEqual (keys.Length, h1.Values.Count, "values wrong size");
 		for (int i = 0; i < keys.Length; i++) {
 			h1[keys[i]] = values2[i];
 		}
-		AssertEquals("values wrong size 2",
-			     keys.Length, h1.Values.Count);
+		Assert.AreEqual (keys.Length, h1.Values.Count, "values wrong size 2");
 
 		// MS .NET Always returns the same reference when calling Values property
 		ICollection valuesReference1 = h1.Values;
 		ICollection valuesReference2 = h1.Values;
-		AssertEquals("values references differ", valuesReference1, valuesReference2);
+		Assert.AreEqual (valuesReference1, valuesReference2, "values references differ");
 	}
 
 	[Test]
@@ -249,10 +235,9 @@ public class HashtableTest : Assertion {
 				h.Add(null, "huh?");
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not 'key'", "key", e.ParamName);
+				Assert.AreEqual ("key", e.ParamName, "ParamName is not 'key'");
 			}
-			Assert("null add error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null add error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -263,8 +248,7 @@ public class HashtableTest : Assertion {
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("re-add error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "re-add error not thrown");
 		}
 		// TODO - hit NotSupportedException
 		{
@@ -272,8 +256,7 @@ public class HashtableTest : Assertion {
 			int max = 100;
 			for (int i = 1; i <= max; i++) {
 				h.Add(i, i);
-				AssertEquals("value wrong for " + i,
-					     i, h[i]);
+				Assert.AreEqual (i, h[i], "value wrong for " + i);
 			}
 		}
 	}
@@ -282,15 +265,14 @@ public class HashtableTest : Assertion {
 	public void TestClear() {
 		// TODO - hit NotSupportedException
 		Hashtable h = new Hashtable();
-		AssertEquals("new table - count zero", 0, h.Count);
+		Assert.AreEqual (0, h.Count, "new table - count zero");
 		int max = 100;
 		for (int i = 1; i <= max; i++) {
 			h[i] = i;
 		}
-		Assert("table don't gots stuff", h.Count > 0);
+		Assert.IsTrue (h.Count > 0, "table don't gots stuff");
 		h.Clear();
-		AssertEquals("Table should be cleared",
-			     0, h.Count);
+		Assert.AreEqual (0, h.Count, "Table should be cleared");
 	}
 
 #if NET_2_0
@@ -316,11 +298,10 @@ public class HashtableTest : Assertion {
 				h1[c1[i]] = c2[i];
 			}
 			Hashtable h2 = (Hashtable)h1.Clone();
-			AssertNotNull("got no clone!", h2);
-			AssertNotNull("clone's got nothing!", h2[c1[0]]);
+			Assert.IsNotNull (h2, "got no clone!");
+			Assert.IsNotNull (h2[c1[0]], "clone's got nothing!");
 			for (int i = 0; i < c1.Length; i++) {
-				AssertEquals("Hashtable match", 
-					     h1[c1[i]], h2[c1[i]]);
+				Assert.AreEqual (h1[c1[i]], h2[c1[i]], "Hashtable match");
 			}
 		}
 		{
@@ -334,15 +315,14 @@ public class HashtableTest : Assertion {
 				h1[c1[i]] = c2[i];
 			}
 			Hashtable h2 = (Hashtable)h1.Clone();
-			AssertNotNull("got no clone!", h2);
-			AssertNotNull("clone's got nothing!", h2[c1[0]]);
+			Assert.IsNotNull (h2, "got no clone!");
+			Assert.IsNotNull (h2[c1[0]], "clone's got nothing!");
 			for (int i = 0; i < c1.Length; i++) {
-				AssertEquals("Hashtable match", 
-					     h1[c1[i]], h2[c1[i]]);
+				Assert.AreEqual (h1[c1[i]], h2[c1[i]], "Hashtable match");
 			}
 
 			((char[])h1[c1[0]])[0] = 'z';
-			AssertEquals("shallow copy", h1[c1[0]], h2[c1[0]]);
+			Assert.AreEqual (h1[c1[0]], h2[c1[0]], "shallow copy");
 
 #if NET_2_0
 			// NET 2.0 stuff
@@ -351,9 +331,7 @@ public class HashtableTest : Assertion {
 			Hashtable mh1clone = (Hashtable) mh1.Clone ();
 			
 			// warning, depends on the field name.
-			AssertEquals ("EqualityComparer",
-				GetEqualityComparer (mh1),
-				GetEqualityComparer (mh1clone));
+			Assert.AreEqual (GetEqualityComparer (mh1), GetEqualityComparer (mh1clone), "EqualityComparer");
 #endif
 		}
 	}
@@ -367,10 +345,9 @@ public class HashtableTest : Assertion {
 				bool result = h.Contains(null);
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not 'key'", "key", e.ParamName);
+				Assert.AreEqual ("key", e.ParamName, "ParamName is not 'key'");
 			}
-			Assert("null add error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null add error not thrown");
 		}
 		{
 			Hashtable h = new Hashtable();
@@ -380,8 +357,8 @@ public class HashtableTest : Assertion {
 			}
 			for (int i = 0; i < 10000; i += 2) 
 			{
-				Assert("hashtable must contain"+i.ToString(), h.Contains(i));
-				Assert("hashtable does not contain "+((int)(i+1)).ToString(), !h.Contains(i+1));
+				Assert.IsTrue (h.Contains(i), "hashtable must contain"+i.ToString());
+				Assert.IsTrue (!h.Contains(i+1), "hashtable does not contain "+((int)(i+1)).ToString());
 			}
 		}
 	}
@@ -398,10 +375,9 @@ public class HashtableTest : Assertion {
 			catch (ArgumentNullException e) 
 			{
 				errorThrown = true;
-				AssertEquals("ParamName is not 'key'", "key", e.ParamName);
+				Assert.AreEqual ("key", e.ParamName, "ParamName is not 'key'");
 			}
-			Assert("null add error not thrown", 
-				errorThrown);
+			Assert.IsTrue (errorThrown, "null add error not thrown");
 		}
 		{
 			Hashtable h = new Hashtable();
@@ -411,8 +387,8 @@ public class HashtableTest : Assertion {
 			}
 			for (int i = 0; i < 1000; i += 2) 
 			{
-				Assert("hashtable must contain"+i.ToString(), h.Contains(i));
-				Assert("hashtable does not contain "+((int)(i+1)).ToString(), !h.Contains(i+1));
+				Assert.IsTrue (h.Contains(i), "hashtable must contain"+i.ToString());
+				Assert.IsTrue (!h.Contains(i+1), "hashtable does not contain "+((int)(i+1)).ToString());
 			}
 		}
 
@@ -423,15 +399,11 @@ public class HashtableTest : Assertion {
 		{
 			Hashtable h = new Hashtable();
 			h['a'] = "blue";
-			Assert("blue? it's in there!", 
-			       h.ContainsValue("blue"));
-			Assert("green? no way!", 
-			       !h.ContainsValue("green"));
-			Assert("null? no way!", 
-				!h.ContainsValue(null));
+			Assert.IsTrue (h.ContainsValue("blue"), "blue? it's in there!");
+			Assert.IsTrue (!h.ContainsValue("green"), "green? no way!");
+			Assert.IsTrue (!h.ContainsValue(null), "null? no way!");
 			h['b'] = null;
-			Assert("null? it's in there!", 
-				h.ContainsValue(null));
+			Assert.IsTrue (h.ContainsValue(null), "null? it's in there!");
 
 		}
 	}
@@ -445,10 +417,9 @@ public class HashtableTest : Assertion {
 				h.CopyTo(null, 0);
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not \"array\"", "array", e.ParamName); 
+				Assert.AreEqual ("array", e.ParamName, "ParamName is not \"array\""); 
 			}
-			Assert("null hashtable error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null hashtable error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -458,10 +429,9 @@ public class HashtableTest : Assertion {
 				h.CopyTo(o, -1);
 			} catch (ArgumentOutOfRangeException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not \"arrayIndex\"", "arrayIndex", e.ParamName);
+				Assert.AreEqual ("arrayIndex", e.ParamName, "ParamName is not \"arrayIndex\"");
 			}
-			Assert("out of range error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "out of range error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -472,8 +442,7 @@ public class HashtableTest : Assertion {
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("multi-dim array error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "multi-dim array error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -485,8 +454,7 @@ public class HashtableTest : Assertion {
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("no room in array error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "no room in array error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -500,8 +468,7 @@ public class HashtableTest : Assertion {
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("table too big error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "table too big error not thrown");
 		}
 		{
 			bool errorThrown = false;
@@ -515,8 +482,7 @@ public class HashtableTest : Assertion {
 			} catch (InvalidCastException) {
 				errorThrown = true;
 			}
-			Assert("invalid cast error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "invalid cast error not thrown");
 		}
 
 		{
@@ -532,10 +498,10 @@ public class HashtableTest : Assertion {
 				o[1] = v;
 			}
 #endif // TARGET_JVM
-			AssertEquals("first copy fine.", 'a', o[0].Key);
-			AssertEquals("first copy fine.", 1, o[0].Value);
-			AssertEquals("second copy fine.", 'b', o[1].Key);
-			AssertEquals("second copy fine.", 2, o[1].Value);
+			Assert.AreEqual ('a', o[0].Key, "first copy fine.");
+			Assert.AreEqual (1, o[0].Value, "first copy fine.");
+			Assert.AreEqual ('b', o[1].Key, "second copy fine.");
+			Assert.AreEqual (2, o[1].Value, "second copy fine.");
 		}
 	}
 
@@ -548,14 +514,12 @@ public class HashtableTest : Assertion {
 			h1[s1[i]] = c1[i];
 		}
 		IDictionaryEnumerator en = h1.GetEnumerator();
-		AssertNotNull("No enumerator", en);
+		Assert.IsNotNull (en, "No enumerator");
 		
 		for (int i = 0; i < s1.Length; i++) {
 			en.MoveNext();
-			Assert("Not enumerating for " + en.Key, 
-			       Array.IndexOf(s1, en.Key) >= 0);
-			Assert("Not enumerating for " + en.Value, 
-			       Array.IndexOf(c1, en.Value) >= 0);
+			Assert.IsTrue (Array.IndexOf(s1, en.Key) >= 0, "Not enumerating for " + en.Key);
+			Assert.IsTrue (Array.IndexOf(c1, en.Value) >= 0, "Not enumerating for " + en.Value);
 		}
 	}
 
@@ -575,7 +539,7 @@ public class HashtableTest : Assertion {
 		
 		bool result;
 		foreach (DictionaryEntry de in table1)
-			AssertEquals (de.Value, table2 [de.Key]);
+			Assert.AreEqual (table2 [de.Key], de.Value);
 	}
 	
 	[Test]
@@ -591,7 +555,7 @@ public class HashtableTest : Assertion {
 		formatter.Serialize(stream, table);
 		stream.Position = 0;
 		table = (Hashtable) formatter.Deserialize(stream);
-		AssertEquals ("#1", 1, table.Count);
+		Assert.AreEqual (1, table.Count, "#1");
 	}
 
         [Test]        
@@ -603,10 +567,9 @@ public class HashtableTest : Assertion {
 				h.Remove(null);
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not \"key\"", "key", e.ParamName);
+				Assert.AreEqual ("key", e.ParamName, "ParamName is not \"key\"");
 			}
-			Assert("null hashtable error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null hashtable error not thrown");
 		}
 		{
 			string[] keys = {"this", "is", "a", "test"};
@@ -615,17 +578,13 @@ public class HashtableTest : Assertion {
 			for (int i = 0; i < keys.Length; i++) {
 				h[keys[i]] = values[i];
 			}
-			AssertEquals("not enough in table",
-				     4, h.Count);
+			Assert.AreEqual (4, h.Count, "not enough in table");
 			h.Remove("huh?");
-			AssertEquals("not enough in table",
-				     4, h.Count);
+			Assert.AreEqual (4, h.Count, "not enough in table");
 			h.Remove("this");
-			AssertEquals("Wrong count in table",
-				     3, h.Count);
+			Assert.AreEqual (3, h.Count, "Wrong count in table");
 			h.Remove("this");
-			AssertEquals("Wrong count in table",
-				     3, h.Count);
+			Assert.AreEqual (3, h.Count, "Wrong count in table");
 		}
 	}
 
@@ -637,18 +596,15 @@ public class HashtableTest : Assertion {
 				Hashtable h = Hashtable.Synchronized(null);
 			} catch (ArgumentNullException e) {
 				errorThrown = true;
-				AssertEquals("ParamName is not \"table\"", "table", e.ParamName);
+				Assert.AreEqual ("table", e.ParamName, "ParamName is not \"table\"");
 			}
-			Assert("null hashtable error not thrown", 
-			       errorThrown);
+			Assert.IsTrue (errorThrown, "null hashtable error not thrown");
 		}
 		{
 			Hashtable h = new Hashtable();
-			Assert("hashtable not synced by default", 
-			       !h.IsSynchronized);
+			Assert.IsTrue (!h.IsSynchronized, "hashtable not synced by default");
 			Hashtable h2 = Hashtable.Synchronized(h);
-			Assert("hashtable should by synced", 
-			       h2.IsSynchronized);
+			Assert.IsTrue (h2.IsSynchronized, "hashtable should by synced");
 		}
 	}
 	
@@ -672,20 +628,20 @@ public class HashtableTest : Assertion {
         [Test]
 	public void TestAddRemoveClear() {
 		ht.Clear();
-		Assert(ht.Count==0);
+		Assert.IsTrue (ht.Count==0);
 		
 		SetDefaultData();
-		Assert(ht.Count==3);
+		Assert.IsTrue (ht.Count==3);
 		
 		bool thrown=false;
 		try {
 			ht.Add("k2","cool");
 		} catch (ArgumentException) {thrown=true;}
-		Assert("Must throw ArgumentException!",thrown);
+		Assert.IsTrue (thrown, "Must throw ArgumentException!");
 		
 		ht["k2"]="cool";
-		Assert(ht.Count==3);
-		Assert(ht["k2"].Equals("cool"));
+		Assert.IsTrue (ht.Count==3);
+		Assert.IsTrue (ht["k2"].Equals("cool"));
 		
 	}
 
@@ -694,14 +650,14 @@ public class HashtableTest : Assertion {
 		SetDefaultData();
 		Object[] entries=new Object[ht.Count];
 		ht.CopyTo(entries,0);
-		Assert("Not an entry.",entries[0] is DictionaryEntry);
+		Assert.IsTrue (entries[0] is DictionaryEntry, "Not an entry.");
 	}
 
 	[Test]
 	public void CopyTo_Empty ()
 	{
 		Hashtable ht = new Hashtable ();
-		AssertEquals ("Count", 0, ht.Count);
+		Assert.AreEqual (0, ht.Count, "Count");
 		object[] array = new object [ht.Count];
 		ht.CopyTo (array, 0);
 	}
@@ -725,14 +681,14 @@ public class HashtableTest : Assertion {
 			}
 		}
 		
-		Assert(ht.Count==n);
+		Assert.IsTrue (ht.Count==n);
 		
 		for (int i=0;i<n;i++) {
 			String key=cache[i];
 			String val=ht[key] as String;
 			String err="ht[\""+key+"\"]=\""+val+
 				"\", expected \""+cache[i+max]+"\"";
-			Assert(err,val!=null && val.Equals(cache[i+max]));
+			Assert.IsTrue (val!=null && val.Equals(cache[i+max]), err);
 		}
 		
 		int r1=(n/3);
@@ -745,32 +701,32 @@ public class HashtableTest : Assertion {
 		
 		for (int i=0;i<n;i++) {
 			if (i>=r1 && i<r2) {
-				Assert(ht[cache[i]]==null);
+				Assert.IsTrue (ht[cache[i]]==null);
 			} else {
 				String key=cache[i];
 				String val=ht[key] as String;
 				String err="ht[\""+key+"\"]=\""+val+
 					"\", expected \""+cache[i+max]+"\"";
-				Assert(err,val!=null && val.Equals(cache[i+max]));
+				Assert.IsTrue (val!=null && val.Equals(cache[i+max]), err);
 			}
 		}
 		
 		ICollection keys=ht.Keys;
 		int nKeys=0;
 		foreach (Object key in keys) {
-			Assert((key as String) != null);
+			Assert.IsTrue ((key as String) != null);
 			nKeys++;
 		}
-		Assert(nKeys==ht.Count);
+		Assert.IsTrue (nKeys==ht.Count);
 
 		
 		ICollection vals=ht.Values;
 		int nVals=0;
 		foreach (Object val in vals) {
-			Assert((val as String) != null);
+			Assert.IsTrue ((val as String) != null);
 			nVals++;
 		}
-		Assert(nVals==ht.Count);
+		Assert.IsTrue (nVals==ht.Count);
 		
 	}
 
@@ -787,11 +743,11 @@ public class HashtableTest : Assertion {
 		Hashtable ciHashtable = new Hashtable(11,1.0f,CaseInsensitiveHashCodeProvider.Default,CaseInsensitiveComparer.Default);
 		ciHashtable ["key1"] = "value";
 		ciHashtable ["key2"] = "VALUE";
-		Assert(ciHashtable ["key1"].Equals ("value"));
-		Assert(ciHashtable ["key2"].Equals ("VALUE"));
+		Assert.IsTrue (ciHashtable ["key1"].Equals ("value"));
+		Assert.IsTrue (ciHashtable ["key2"].Equals ("VALUE"));
 
 		ciHashtable ["KEY1"] = "new_value";
-		Assert(ciHashtable ["key1"].Equals ("new_value"));
+		Assert.IsTrue (ciHashtable ["key1"].Equals ("new_value"));
 
 	}
 
@@ -802,7 +758,7 @@ public class HashtableTest : Assertion {
 
 		Hashtable htCopy = new Hashtable (ht);
 
-		Assert(ht.Count == htCopy.Count);
+		Assert.IsTrue (ht.Count == htCopy.Count);
 	}
 
         [Test]
@@ -814,7 +770,7 @@ public class HashtableTest : Assertion {
 
 		while (e.MoveNext ()) {}
 
-		Assert (!e.MoveNext ());
+		Assert.IsTrue (!e.MoveNext ());
 
 	}
 
@@ -845,10 +801,10 @@ public class HashtableTest : Assertion {
 	{
 		Hashtable ht = new Hashtable ();
 		// see bug #76300
-		Assert ("Keys.IsSerializable", ht.Keys.GetType ().IsSerializable);
-		Assert ("Values.IsSerializable", ht.Values.GetType ().IsSerializable);
-		Assert ("GetEnumerator.IsSerializable", ht.GetEnumerator ().GetType ().IsSerializable);
-		Assert ("Synchronized.IsSerializable", Hashtable.Synchronized (ht).GetType ().IsSerializable);
+		Assert.IsTrue (ht.Keys.GetType ().IsSerializable, "Keys.IsSerializable");
+		Assert.IsTrue (ht.Values.GetType ().IsSerializable, "Values.IsSerializable");
+		Assert.IsTrue (ht.GetEnumerator ().GetType ().IsSerializable, "GetEnumerator.IsSerializable");
+		Assert.IsTrue (Hashtable.Synchronized (ht).GetType ().IsSerializable, "Synchronized.IsSerializable");
 	}
 
 	[Test]
