@@ -86,7 +86,7 @@ namespace System.Net
 		WebAsyncResult asyncWrite;
 		WebAsyncResult asyncRead;
 		EventHandler abortHandler;
-		bool aborted;
+		int aborted;
 		bool gotRequestStream;
 		int redirects;
 		bool expectContinue;
@@ -98,6 +98,7 @@ namespace System.Net
 		object locker = new object ();
 		bool is_ntlm_auth;
 		bool finished_reading;
+		internal WebConnection WebConnection;
 #if NET_2_0
 		DecompressionMethods auto_decomp;
 #endif
@@ -642,7 +643,7 @@ namespace System.Net
 		
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
-			if (aborted)
+			if (Aborted)
 				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
 
 			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
@@ -734,7 +735,7 @@ namespace System.Net
 
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			if (aborted)
+			if (Aborted)
 				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
 
 			if (method == null)
@@ -827,15 +828,14 @@ namespace System.Net
 		}
 
 		internal bool Aborted {
-			get { return aborted; }
+			get { return Interlocked.CompareExchange (ref aborted, 0, 0) == 1; }
 		}
 
 		public override void Abort ()
 		{
-			if (aborted)
+			if (Interlocked.CompareExchange (ref aborted, 1, 0) == 1)
 				return;
 
-			aborted = true;
 			if (haveResponse && finished_reading)
 				return;
 
@@ -1072,7 +1072,7 @@ namespace System.Net
 
 		internal void SetWriteStreamError (WebExceptionStatus status, Exception exc)
 		{
-			if (aborted)
+			if (Aborted)
 				return;
 
 			WebAsyncResult r = asyncWrite;
@@ -1133,7 +1133,7 @@ namespace System.Net
 
 		internal void SetWriteStream (WebConnectionStream stream)
 		{
-			if (aborted)
+			if (Aborted)
 				return;
 			
 			writeStream = stream;
@@ -1168,7 +1168,7 @@ namespace System.Net
 
 		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
 		{
-			if (aborted)
+			if (Aborted)
 				return;
 			lock (locker) {
 			string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
@@ -1238,7 +1238,7 @@ namespace System.Net
 		internal void SetResponseData (WebConnectionData data)
 		{
 			lock (locker) {
-			if (aborted) {
+			if (Aborted) {
 				if (data.stream != null)
 					data.stream.Close ();
 				return;
