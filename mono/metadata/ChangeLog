@@ -1,3 +1,12 @@
+2009-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-verify.c (is_valid_method_header): Fix a warning.
+
+	* metadata-internals.h (MonoImage): Remove the unused 
+	static_rgctx_invoke_wrapper_cache.
+
+	* image.c marshal.c: Ditto.
+
 2009-06-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* image.c (do_mono_image_load): Enable table data verification.
