@@ -1,3 +1,9 @@
+2009-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* threadpool.c (mono_thread_pool_add): If the domain is unloading
+	or unloaded, still return an AsyncResult, but don't add it to the
+	threadpool.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threads.c: fix missing colon when DEBUG is defined.
