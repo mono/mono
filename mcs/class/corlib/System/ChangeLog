@@ -1,6 +1,9 @@
 2009-06-25  Miguel de Icaza  <miguel@novell.com>
  
-	* Int32.cs: Validate the NumberStyles, passes Int/Int32Parse2.exe
+	* Int32.cs: Do not crash if the FormatProvider returns a null
+	value on the call to GetFormat (Type).
+
+	Validate the NumberStyles, passes Int/Int32Parse2.exe
 
 	Fix regression introduced in 2005, we need to throw
 	ArgumentNullException on Parse.

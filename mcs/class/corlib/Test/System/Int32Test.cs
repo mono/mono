@@ -223,6 +223,11 @@ public class Int32Test : Assertion
 		} catch (Exception e){
 			Assert ("C#42", typeof (ArgumentException) == e.GetType ());
 		}
+
+		// Pass a DateTimeFormatInfo, it is unable to format
+		// numbers, but we should not crash
+		
+		Int32.Parse ("123", new DateTimeFormatInfo ());
 	}
 
 #if NET_2_0	
