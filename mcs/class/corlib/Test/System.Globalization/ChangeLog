@@ -1,3 +1,7 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.	
+
 2009-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* CultureInfoTest.cs: Fix the net 1.1 build.

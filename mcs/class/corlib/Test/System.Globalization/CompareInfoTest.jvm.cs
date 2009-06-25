@@ -15,7 +15,7 @@ namespace MonoTests.System.Globalization
 {
 
 [TestFixture]
-public class CompareInfoTest : Assertion
+public class CompareInfoTest
 {
 	static bool doTest = Environment.GetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION") != "yes";
 
@@ -26,25 +26,25 @@ public class CompareInfoTest : Assertion
 	{
 		string s1 = "foo";
 		
-		AssertEquals ("Compare two empty strings", 0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", ""));
-		AssertEquals ("Compare string with empty string", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, ""));
-		AssertEquals ("Compare empty string with string", -1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", s1));
+		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", ""), "Compare two empty strings");
+		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, ""), "Compare string with empty string");
+		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", s1), "Compare empty string with string");
 
-		AssertEquals ("Compare two empty strings, with 0 offsets", 0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "", 0));
-		AssertEquals ("Compare string with empty string, with 0 offsets", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, "", 0));
-		AssertEquals ("Compare empty string with string, with 0 offsets", -1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, s1, 0));
+		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "", 0), "Compare two empty strings, with 0 offsets");
+		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, "", 0), "Compare string with empty string, with 0 offsets");
+		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, s1, 0), "Compare empty string with string, with 0 offsets");
 
-		AssertEquals ("Compare two empty strings, with 0 offsets and specified lengths", 0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "".Length, "", 0, "".Length));
-		AssertEquals ("Compare string with empty string, with 0 offsets and specified lengths", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1.Length, "", 0, "".Length));
-		AssertEquals ("Compare empty string with string, with 0 offsets and specified lengths", -1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "".Length, s1, 0, s1.Length));
+		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "".Length, "", 0, "".Length), "Compare two empty strings, with 0 offsets and specified lengths");
+		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1.Length, "", 0, "".Length), "Compare string with empty string, with 0 offsets and specified lengths");
+		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare ("", 0, "".Length, s1, 0, s1.Length), "Compare empty string with string, with 0 offsets and specified lengths");
 
-		AssertEquals ("Compare two strings, with offsets == string lengths", 0, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s1.Length, s1, s1.Length));
-		AssertEquals ("Compare two strings, with first offset == string length", -1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s1.Length, s1, 0));
-		AssertEquals ("Compare two strings, with second offset == string length", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1, s1.Length));
+		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s1.Length, s1, s1.Length), "Compare two strings, with offsets == string lengths");
+		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s1.Length, s1, 0), "Compare two strings, with first offset == string length");
+		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1, s1.Length), "Compare two strings, with second offset == string length");
 
-		AssertEquals ("Compare two strings, with zero lengths", 0, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, 0, s1, 0, 0));
-		AssertEquals ("Compare two strings, with first length zero", -1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, 0, s1, 0, s1.Length));
-		AssertEquals ("Compare strings, with second length zero", 1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1.Length, s1, 0, 0));
+		Assert.AreEqual (0, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, 0, s1, 0, 0), "Compare two strings, with zero lengths");
+		Assert.AreEqual (-1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, 0, s1, 0, s1.Length), "Compare two strings, with first length zero");
+		Assert.AreEqual (1, CultureInfo.InvariantCulture.CompareInfo.Compare (s1, 0, s1.Length, s1, 0, 0), "Compare strings, with second length zero");
 		
 	}
 
@@ -77,9 +77,9 @@ public class CompareInfoTest : Assertion
 		if (result == 0)
 			AssertEquals (message, 0, ret);
 		else if (result < 0)
-			Assert (message + String.Format ("(neg: {0})", ret), ret < 0);
+			Assert.IsTrue (message + String.Format ("(neg: {0})", ret), ret < 0);
 		else
-			Assert (message + String.Format ("(pos: {0})", ret), ret > 0);
+			Assert.IsTrue (message + String.Format ("(pos: {0})", ret), ret > 0);
 	}
 
 	void AssertCompare (string message, int result,
@@ -89,9 +89,9 @@ public class CompareInfoTest : Assertion
 		if (result == 0)
 			AssertEquals (message, 0, ret);
 		else if (result < 0)
-			Assert (message, ret < 0);
+			Assert.IsTrue (message, ret < 0);
 		else
-			Assert (message, ret > 0);
+			Assert.IsTrue (message, ret > 0);
 	}
 
 	void AssertCompare (string message, int result,
@@ -102,9 +102,9 @@ public class CompareInfoTest : Assertion
 		if (result == 0)
 			AssertEquals (message, 0, ret);
 		else if (result < 0)
-			Assert (message, ret < 0);
+			Assert.IsTrue (message, ret < 0);
 		else
-			Assert (message, ret > 0);
+			Assert.IsTrue (message, ret > 0);
 	}
 
 	void AssertIndexOf (string message, int expected,
@@ -208,28 +208,28 @@ public class CompareInfoTest : Assertion
 	void AssertIsPrefix (string message, bool expected, string source,
 		string target)
 	{
-		Assert (message, expected == invariant.IsPrefix (
+		Assert.IsTrue (message, expected == invariant.IsPrefix (
 			source, target));
 	}
 
 	void AssertIsPrefix (string message, bool expected, string source,
 		string target, CompareOptions opt)
 	{
-		Assert (message, expected == invariant.IsPrefix (
+		Assert.IsTrue (message, expected == invariant.IsPrefix (
 			source, target, opt));
 	}
 
 	void AssertIsSuffix (string message, bool expected, string source,
 		string target)
 	{
-		Assert (message, expected == invariant.IsSuffix (
+		Assert.IsTrue (message, expected == invariant.IsSuffix (
 			source, target));
 	}
 
 	void AssertIsSuffix (string message, bool expected, string source,
 		string target, CompareOptions opt)
 	{
-		Assert (message, expected == invariant.IsSuffix (
+		Assert.IsTrue (message, expected == invariant.IsSuffix (
 			source, target, opt));
 	}
 
@@ -344,10 +344,10 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#6", 4, "ABCABC", 'B', 4, 4);
 		AssertLastIndexOf ("#7", -1, "ABCABC", 'B', 5, 1);
 		AssertLastIndexOf ("#11", 0, "\\", '\\');
-		AssertEquals ("#11en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\", '\\'));
-		AssertEquals ("#11ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\", '\\'));
+		Assert.AreEqual (0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\", '\\'), "#11en");
+		Assert.AreEqual (0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\", '\\'), "#11ja");
 		AssertLastIndexOf ("#12", 8, "/system/web", 'w');
-		AssertEquals ("#12sv", 8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", 'w'));
+		Assert.AreEqual (8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", 'w'), "#12sv");
 	}
 
 	[Test]
@@ -391,8 +391,8 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIsPrefix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertIsPrefix ("#17", true, "\\b\\a a", "\\b\\a a");
-		Assert ("#17en", new CultureInfo ("en").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"));
-		Assert ("#17ja", new CultureInfo ("ja").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"));
+		Assert.IsTrue (new CultureInfo ("en").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"), "#17en");
+		Assert.IsTrue (new CultureInfo ("ja").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"), "#17ja");
 	}
 
 	[Test]
@@ -460,8 +460,8 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#18", true, "/test.css", "");
 		AssertIsSuffix ("#19", true, "/test.css", "/test.css");
 		AssertIsSuffix ("#20", true, "\\b\\a a", "\\b\\a a");
-		Assert ("#20en", new CultureInfo ("en").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"));
-		Assert ("#20ja", new CultureInfo ("ja").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"));
+		Assert.IsTrue (new CultureInfo ("en").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"), "#20en");
+		Assert.IsTrue (new CultureInfo ("ja").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"), "#20ja");
 	}
 
 	[Test]
@@ -509,8 +509,8 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#18", 0, "ABC", "\u3007");
 
 		AssertIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
-		AssertEquals ("#19en", 0, new CultureInfo ("en").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"));
-		AssertEquals ("#19ja", 0, new CultureInfo ("ja").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"));
+		Assert.AreEqual (0, new CultureInfo ("en").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"), "#19en");
+		Assert.AreEqual (0, new CultureInfo ("ja").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"), "#19ja");
 	}
 
 	[Test]
@@ -559,11 +559,11 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#18", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
 		AssertLastIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
-		AssertEquals ("#19en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
-		AssertEquals ("#19ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
+		Assert.AreEqual (0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"), "#19en");
+		Assert.AreEqual (0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"), "#19ja");
 		// bug #80612
 		AssertLastIndexOf ("#20", 8, "/system/web", "w");
-		AssertEquals ("#20sv", 8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", "w"));
+		Assert.AreEqual (8, new CultureInfo ("sv").CompareInfo.LastIndexOf ("/system/web", "w"), "#20sv");
 	}
 
 	[Test]
@@ -600,9 +600,9 @@ public class CompareInfoTest : Assertion
 	// for bug #76702
 	public void NullCharacter ()
 	{
-		AssertEquals ("#1", -1, "MONO".IndexOf ("\0\0\0"));
-		AssertEquals ("#2", -1, "MONO".LastIndexOf ("\0\0\0"));
-		AssertEquals ("#3", 1, "MONO".CompareTo ("\0\0\0"));
+		Assert.AreEqual (-1, "MONO".IndexOf ("\0\0\0"), "#1");
+		Assert.AreEqual (-1, "MONO".LastIndexOf ("\0\0\0"), "#2");
+		Assert.AreEqual (1, "MONO".CompareTo ("\0\0\0"), "#3");
 	}
 
 	[Test]
@@ -610,7 +610,7 @@ public class CompareInfoTest : Assertion
 	// MS.NET treats it as equivalent, while in IndexOf() it does not match.
 	public void NullCharacterWeird ()
 	{
-		AssertEquals ("#4", -1, "MONO".CompareTo ("MONO\0\0\0"));
+		Assert.AreEqual (-1, "MONO".CompareTo ("MONO\0\0\0"), "#4");
 	}
 
 #if NET_2_0

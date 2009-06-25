@@ -121,7 +121,8 @@ sealed class Date {
 	}
 } // class Date
 
-public class CalendarTest : TestCase {
+[TestFixture]
+public class CalendarTest {
 	private Calendar[] acal;
 	private GregorianCalendar gcal;
 	private JulianCalendar jucal;
@@ -138,7 +139,8 @@ public class CalendarTest : TestCase {
 	private KoreanLunisolarCalendar klcal;
 #endif
 
-	protected override void SetUp() {
+	[SetUp]
+	protected void SetUp() {
 		gcal = new GregorianCalendar();
 		jucal = new JulianCalendar();
 		hical = new HijriCalendar();
@@ -175,13 +177,13 @@ public class CalendarTest : TestCase {
 			StringWriter sw = new StringWriter();
 			sw.Write("Calendar {0} computes wrong DateTime.",
 				cal);
-			AssertEquals(sw.ToString(), timeG, time);
+			Assert.AreEqual(timeG, time, sw.ToString());
 
 			sw = new StringWriter();
 			Date ndate = new Date();
 			ndate.FromDateTime(cal, time);
 			sw.Write("Calendar {0} computes wrong date", cal);
-			AssertEquals(sw.ToString(), date, ndate);
+			Assert.AreEqual(date, ndate, sw.ToString());
 		}
 	}
 
@@ -189,6 +191,7 @@ public class CalendarTest : TestCase {
 	// Calendrical Calcualation. Please note that the CLR uses another
 	// epoch for the HijriCalendar, which might be the perfect thing
 	// to do.
+	[Test]
 	public void TestCCTable() {
 		// Gr Ju Hi He Ja Ta Ko TB
 		RowCheck(new Date(24,9,70,1),
@@ -441,97 +444,101 @@ public class CalendarTest : TestCase {
 			new Date(18,7,2637,1));
 	}
 
+	[Test]
 	public void TestCalendarType() {
 		GregorianCalendar gc = new GregorianCalendar(
 			GregorianCalendarTypes.Arabic);
-		AssertEquals("A01 Gregorian ctor " +
-			"with GregorianCalendarTypes parameter",
-			GregorianCalendarTypes.Arabic,
-			gc.CalendarType);
+		Assert.AreEqual(GregorianCalendarTypes.Arabic,
+						gc.CalendarType,
+						"A01 Gregorian ctor with GregorianCalendarTypes parameter");
 		gc.CalendarType = GregorianCalendarTypes.MiddleEastFrench;
-		AssertEquals("A02 GregorianCalendar.CalendarType",
-			GregorianCalendarTypes.MiddleEastFrench,
-			gc.CalendarType);
+		Assert.AreEqual(GregorianCalendarTypes.MiddleEastFrench, 
+					 gc.CalendarType, 
+					 "A02 GregorianCalendar.CalendarType");
+			
 	}
 
+	[Test]
 	public void TestStandardEras() {
-		AssertEquals("B01 ADEra", 1, GregorianCalendar.ADEra);
-		AssertEquals("B02 HebrewEra", 1, HebrewCalendar.HebrewEra);
-		AssertEquals("B03 HjriEra", 1, HijriCalendar.HijriEra);
-		AssertEquals("B04 JulianEra", 1, JulianCalendar.JulianEra);
-		AssertEquals("B05 KoreanEra", 1, KoreanCalendar.KoreanEra);
-		AssertEquals("B06 ThaiBuddhistEra", 1,
-			ThaiBuddhistCalendar.ThaiBuddhistEra);
+		Assert.AreEqual(1, GregorianCalendar.ADEra, "B01 ADEra");
+		Assert.AreEqual(1, HebrewCalendar.HebrewEra, "B02 HebrewEra");
+		Assert.AreEqual(1, HijriCalendar.HijriEra, "B03 HjriEra");
+		Assert.AreEqual(1, JulianCalendar.JulianEra, "B04 JulianEra");
+		Assert.AreEqual(1, KoreanCalendar.KoreanEra, "B05 KoreanEra");
+		Assert.AreEqual(1, ThaiBuddhistCalendar.ThaiBuddhistEra, "B06 ThaiBuddhistEra");
+			
 #if NET_2_0
-		AssertEquals("CNLunisor", 1, ChineseLunisolarCalendar.ChineseEra);
-		AssertEquals("JPLunisor", 1, JapaneseLunisolarCalendar.JapaneseEra);
-		AssertEquals("KRLunisor", 1, KoreanLunisolarCalendar.GregorianEra);
+		Assert.AreEqual(1, ChineseLunisolarCalendar.ChineseEra, "CNLunisor");
+		Assert.AreEqual(1, JapaneseLunisolarCalendar.JapaneseEra, "JPLunisor");
+		Assert.AreEqual(1, KoreanLunisolarCalendar.GregorianEra, "KRLunisor");
 #endif
 	}
 
+	[Test]
 	public void TestCurrentEra() {
-		AssertEquals("C01 GregorianCalendar.CurrentEra",
-			0, GregorianCalendar.CurrentEra);
-		AssertEquals("C02 HebrewCalendar.CurrentEra",
-			0, HebrewCalendar.CurrentEra);
-		AssertEquals("C03 HijriCalendar.CurrentEra",
-			0, HijriCalendar.CurrentEra);
-		AssertEquals("C04 JapaneseCalendar.CurrentEra",
-			0, JapaneseCalendar.CurrentEra);
-		AssertEquals("C05 JulianCalendar.CurrentEra",
-			0, JulianCalendar.CurrentEra);
-		AssertEquals("C06 KoreanCalendar.CurrentEra",
-			0, KoreanCalendar.CurrentEra);
-		AssertEquals("C07 TaiwanCalendar.CurrentEra",
-			0, TaiwanCalendar.CurrentEra);
-		AssertEquals("C08 ThaiBuddhistCalendar.CurrentEra",
-			0,
-			ThaiBuddhistCalendar.CurrentEra);
+		Assert.AreEqual(0, GregorianCalendar.CurrentEra, 
+					 "C01 GregorianCalendar.CurrentEra");
+		Assert.AreEqual(0, HebrewCalendar.CurrentEra,
+					 "C02 HebrewCalendar.CurrentEra");
+		Assert.AreEqual(0, HijriCalendar.CurrentEra, 
+					 "C03 HijriCalendar.CurrentEra");
+		Assert.AreEqual(0, JapaneseCalendar.CurrentEra, 
+					 "C04 JapaneseCalendar.CurrentEra");
+		Assert.AreEqual(0, JulianCalendar.CurrentEra, 
+					 "C05 JulianCalendar.CurrentEra");
+		Assert.AreEqual(0, KoreanCalendar.CurrentEra,
+					 "C06 KoreanCalendar.CurrentEra");
+		Assert.AreEqual(0, TaiwanCalendar.CurrentEra,
+					 "C07 TaiwanCalendar.CurrentEra");
+		Assert.AreEqual(0, ThaiBuddhistCalendar.CurrentEra,
+					 "C08 ThaiBuddhistCalendar.CurrentEra");
 	}
 
+	[Test]
 	public void TestErasProperty() {
 		foreach (Calendar cal in acal) {
 			int check = 1;
 			if (cal is JapaneseCalendar)
 				check = 4;
-			AssertEquals(String.Format("D01 {0}.Eras.Length", cal),
-				check, cal.Eras.Length);
+			Assert.AreEqual(check, cal.Eras.Length,
+						 String.Format("D01 {0}.Eras.Length", cal));
 			cal.Eras[0] = 29;
-			Assert(String.Format("D02 {0}.Eras readonly", cal),
-				cal.Eras[0] != 29);
+			Assert.IsTrue(cal.Eras[0] != 29, String.Format("D02 {0}.Eras readonly", cal));
 		}
 	}
 
 #if NET_2_0
 	[Category ("NotWorking")]
+	[Test]
 	public void TestErasProperty2() {
-		AssertEquals("cn", 1, clcal.Eras.Length);
-		AssertEquals("tw", 1, tlcal.Eras.Length);
-		AssertEquals("jp", 2, jlcal.Eras.Length);
-		AssertEquals("kr", 1, klcal.Eras.Length);
+		Assert.AreEqual(1, clcal.Eras.Length, "cn");
+		Assert.AreEqual(1, tlcal.Eras.Length, "tw");
+		Assert.AreEqual(2, jlcal.Eras.Length, "jp");
+		Assert.AreEqual(1, klcal.Eras.Length, "kr");
 
-		AssertEquals("jp.1", 4, jlcal.Eras [0]);
-		AssertEquals("jp.2", 3, jlcal.Eras [1]);
+		Assert.AreEqual(4, jlcal.Eras [0], "jp.1");
+		Assert.AreEqual(3, jlcal.Eras [1], "jp.2");
 	}
 #endif
 
+	[Test]
 	public void TestTwoDigitYearMax() {
-		AssertEquals("E01 TwoDigitYearMax GregorianCalendar",
-			2029, gcal.TwoDigitYearMax);
-		AssertEquals("E02 TwoDigitYearMax HebrewCalendar",
-			5790, hecal.TwoDigitYearMax);
-		AssertEquals("E03 TwoDigitYearMax HijriCalendar",
-			1451, hical.TwoDigitYearMax);
-		AssertEquals("E04 TwoDigitYearMax JapaneseCalendar",
-			99, jacal.TwoDigitYearMax);
-		AssertEquals("E05 TwoDigitYearMax JulianCalendar",
-			2029, jucal.TwoDigitYearMax);
-		AssertEquals("E06 TwoDigitYearMax KoreanCalendar",
-			4362, kcal.TwoDigitYearMax);
-		AssertEquals("E07 TwoDigitYearMax TaiwanCalendar",
-			99, tacal.TwoDigitYearMax);
-		AssertEquals("E08 TwoDigitYearMax ThaiBuddhistCalendar",
-			2572, tbcal.TwoDigitYearMax);
+		Assert.AreEqual(2029, gcal.TwoDigitYearMax,
+					 "E01 TwoDigitYearMax GregorianCalendar");
+		Assert.AreEqual(5790, hecal.TwoDigitYearMax,
+					 "E02 TwoDigitYearMax HebrewCalendar");
+		Assert.AreEqual(1451, hical.TwoDigitYearMax,
+					 "E03 TwoDigitYearMax HijriCalendar");
+		Assert.AreEqual(99, jacal.TwoDigitYearMax,
+					 "E04 TwoDigitYearMax JapaneseCalendar");
+		Assert.AreEqual(2029, jucal.TwoDigitYearMax,
+					 "E05 TwoDigitYearMax JulianCalendar");
+		Assert.AreEqual(4362, kcal.TwoDigitYearMax,
+					 "E06 TwoDigitYearMax KoreanCalendar");
+		Assert.AreEqual(99, tacal.TwoDigitYearMax,
+					 "E07 TwoDigitYearMax TaiwanCalendar");
+		Assert.AreEqual(2572, tbcal.TwoDigitYearMax,
+					 "E08 TwoDigitYearMax ThaiBuddhistCalendar");
 		foreach (Calendar cal in acal) {
 			bool exception = false;
 			try { 
@@ -540,9 +547,9 @@ public class CalendarTest : TestCase {
 			catch (ArgumentOutOfRangeException) {
 				exception = true;
 			}
-			Assert(String.Format("E09 {0}.TwoDigitYearMax 99 " +
-					" out of range exception", cal),
-				exception);
+			Assert.IsTrue(exception,
+				   String.Format("E09 {0}.TwoDigitYearMax 99 " +
+								 " out of range exception", cal));
 
 			exception = false;
 			int m = 10000;
@@ -553,10 +560,10 @@ public class CalendarTest : TestCase {
 			catch (ArgumentException) {
 				exception = true;
 			}
-			Assert(String.Format("E10 {0}.TwoDigitYearMax out " +
-					" of range exception value {1}",
-					cal, m),
-				exception);
+			Assert.IsTrue(exception,
+				   String.Format("E10 {0}.TwoDigitYearMax out " +
+								 " of range exception value {1}",
+								 cal, m));
 		}
 	}
 
@@ -565,9 +572,9 @@ public class CalendarTest : TestCase {
 	{
 		HebrewCalendar c = new HebrewCalendar ();
 		int year = c.GetYear (new DateTime (2005, 9, 1));
-		AssertEquals (5765, year);
+		Assert.AreEqual (5765, year);
 		int days = c.GetDaysInMonth (year, 13, 1);
-		AssertEquals (29, days);
+		Assert.AreEqual (29, days);
 	}
 
 	[Test] // bug #81783
@@ -576,15 +583,15 @@ public class CalendarTest : TestCase {
 		GregorianCalendar c = new GregorianCalendar ();
 		DateTime d = new DateTime (2007, 5, 31);
 		DateTime prev = c.AddMonths (d, -1);
-		AssertEquals ("prev", 4, prev.Month);
+		Assert.AreEqual (4, prev.Month, "prev");
 		DateTime next = c.AddMonths (d, 1);
-		AssertEquals ("next", 6, next.Month);
+		Assert.AreEqual (6, next.Month, "next");
 
 		d = new DateTime (2003, 12, 5);
 		prev = c.AddMonths (d, -13);
-		AssertEquals ("prev2", new DateTime (2002, 11, 5), prev);
+		Assert.AreEqual (new DateTime (2002, 11, 5), prev, "prev2");
 		next = c.AddMonths (d, 6);
-		AssertEquals ("next2", new DateTime (2004, 6, 5), next);
+		Assert.AreEqual (new DateTime (2004, 6, 5), next, "next2");
 	}
 
 	[Test]
@@ -593,9 +600,9 @@ public class CalendarTest : TestCase {
 		GregorianCalendar c = new GregorianCalendar ();
 		DateTime d = new DateTime (2004, 2, 29);
 		DateTime prev = c.AddYears (d, -1);
-		AssertEquals ("prev", 2, prev.Month);
+		Assert.AreEqual (2, prev.Month, "prev");
 		DateTime next = c.AddYears (d, 1);
-		AssertEquals ("next", 2, next.Month);
+		Assert.AreEqual (2, next.Month, "next");
 	}
 
 #if NET_2_0
@@ -604,95 +611,96 @@ public class CalendarTest : TestCase {
 	public void GetLeapMonth ()
 	{
 		GregorianCalendar gc = new GregorianCalendar ();
-		AssertEquals ("#1-1", 0, gc.GetLeapMonth (2007));
-		AssertEquals ("#1-2", 0, gc.GetLeapMonth (2008));
-		AssertEquals ("#1-3", 0, gc.GetLeapMonth (2100));
-		AssertEquals ("#1-4", 0, gc.GetLeapMonth (2000));
+		Assert.AreEqual (0, gc.GetLeapMonth (2007), "#1-1");
+		Assert.AreEqual (0, gc.GetLeapMonth (2008), "#1-2");
+		Assert.AreEqual (0, gc.GetLeapMonth (2100), "#1-3");
+		Assert.AreEqual (0, gc.GetLeapMonth (2000), "#1-4");
 
 		JulianCalendar jc = new JulianCalendar ();
-		AssertEquals ("#2-1", 0, jc.GetLeapMonth (2007));
-		AssertEquals ("#2-2", 0, jc.GetLeapMonth (2008));
-		AssertEquals ("#2-3", 0, jc.GetLeapMonth (2100));
-		AssertEquals ("#2-4", 0, jc.GetLeapMonth (2000));
-		AssertEquals ("#2-5", 0, jc.GetLeapMonth (2009));
-		AssertEquals ("#2-6", 0, jc.GetLeapMonth (2010));
+		Assert.AreEqual (0, jc.GetLeapMonth (2007), "#2-1");
+		Assert.AreEqual (0, jc.GetLeapMonth (2008), "#2-2");
+		Assert.AreEqual (0, jc.GetLeapMonth (2100), "#2-3");
+		Assert.AreEqual (0, jc.GetLeapMonth (2000), "#2-4");
+		Assert.AreEqual (0, jc.GetLeapMonth (2009), "#2-5");
+		Assert.AreEqual (0, jc.GetLeapMonth (2010), "#2-6");
 
 		HebrewCalendar hc = new HebrewCalendar ();
 		// 3rd, 6th, 8th, 11th 14th and 17th year in every 19 are leap.
 		// 5339 % 19 = 0.
-		AssertEquals ("#3-1", 0, hc.GetLeapMonth (5343));
-		AssertEquals ("#3-2", 0, hc.GetLeapMonth (5344));
-		AssertEquals ("#3-3", 7, hc.GetLeapMonth (5345));
-		AssertEquals ("#3-4", 0, hc.GetLeapMonth (5346));
-		AssertEquals ("#3-5", 7, hc.GetLeapMonth (5347));
-		AssertEquals ("#3-6", 0, hc.GetLeapMonth (5348));
-		AssertEquals ("#3-7", 0, hc.GetLeapMonth (5349));
+		Assert.AreEqual (0, hc.GetLeapMonth (5343), "#3-1");
+		Assert.AreEqual (0, hc.GetLeapMonth (5344), "#3-2");
+		Assert.AreEqual (7, hc.GetLeapMonth (5345), "#3-3");
+		Assert.AreEqual (0, hc.GetLeapMonth (5346), "#3-4");
+		Assert.AreEqual (7, hc.GetLeapMonth (5347), "#3-5");
+		Assert.AreEqual (0, hc.GetLeapMonth (5348), "#3-6");
+		Assert.AreEqual (0, hc.GetLeapMonth (5349), "#3-7");
 
 		ThaiBuddhistCalendar tc = new ThaiBuddhistCalendar ();
-		AssertEquals ("#4-1", 0, tc.GetLeapMonth (2520));
-		AssertEquals ("#4-2", 0, tc.GetLeapMonth (2521));
-		AssertEquals ("#4-3", 0, tc.GetLeapMonth (2522));
-		AssertEquals ("#4-4", 0, tc.GetLeapMonth (2523));
+		Assert.AreEqual (0, tc.GetLeapMonth (2520), "#4-1");
+		Assert.AreEqual (0, tc.GetLeapMonth (2521), "#4-2");
+		Assert.AreEqual (0, tc.GetLeapMonth (2522), "#4-3");
+		Assert.AreEqual (0, tc.GetLeapMonth (2523), "#4-4");
 
 		ChineseLunisolarCalendar cc = new ChineseLunisolarCalendar ();
-		AssertEquals ("#5-1", 0, cc.GetLeapMonth (2000));
-		AssertEquals ("#5-2", 5, cc.GetLeapMonth (2001));
-		AssertEquals ("#5-3", 0, cc.GetLeapMonth (2002));
-		AssertEquals ("#5-4", 0, cc.GetLeapMonth (2003));
-		AssertEquals ("#5-5", 3, cc.GetLeapMonth (2004));
-		AssertEquals ("#5-6", 0, cc.GetLeapMonth (2005));
-		AssertEquals ("#5-7", 8, cc.GetLeapMonth (2006));
-		AssertEquals ("#5-8", 0, cc.GetLeapMonth (2007));
-		AssertEquals ("#5-9", 0, cc.GetLeapMonth (2008));
-		AssertEquals ("#5-10", 6, cc.GetLeapMonth (2009));
-		AssertEquals ("#5-11", 0, cc.GetLeapMonth (2010));
-		AssertEquals ("#5-12", 0, cc.GetLeapMonth (2011));
-		AssertEquals ("#5-13", 5, cc.GetLeapMonth (2012));
-		AssertEquals ("#5-14", 0, cc.GetLeapMonth (2013));
-		AssertEquals ("#5-15", 10, cc.GetLeapMonth (2014));
-		AssertEquals ("#5-16", 0, cc.GetLeapMonth (2015));
-		AssertEquals ("#5-17", 0, cc.GetLeapMonth (2016));
-		AssertEquals ("#5-18", 7, cc.GetLeapMonth (2017));
-		AssertEquals ("#5-19", 0, cc.GetLeapMonth (2018));
-		AssertEquals ("#5-20", 0, cc.GetLeapMonth (2019));
+		Assert.AreEqual (0, cc.GetLeapMonth (2000), "#5-1");
+		Assert.AreEqual (5, cc.GetLeapMonth (2001), "#5-2");
+		Assert.AreEqual (0, cc.GetLeapMonth (2002), "#5-3");
+		Assert.AreEqual (0, cc.GetLeapMonth (2003), "#5-4");
+		Assert.AreEqual (3, cc.GetLeapMonth (2004), "#5-5");
+		Assert.AreEqual (0, cc.GetLeapMonth (2005), "#5-6");
+		Assert.AreEqual (8, cc.GetLeapMonth (2006), "#5-7");
+		Assert.AreEqual (0, cc.GetLeapMonth (2007), "#5-8");
+		Assert.AreEqual (0, cc.GetLeapMonth (2008), "#5-9");
+		Assert.AreEqual (6, cc.GetLeapMonth (2009), "#5-10");
+		Assert.AreEqual (0, cc.GetLeapMonth (2010), "#5-11");
+		Assert.AreEqual (0, cc.GetLeapMonth (2011), "#5-12");
+		Assert.AreEqual (5, cc.GetLeapMonth (2012), "#5-13");
+		Assert.AreEqual (0, cc.GetLeapMonth (2013), "#5-14");
+		Assert.AreEqual (10, cc.GetLeapMonth (2014), "#5-15");
+		Assert.AreEqual (0, cc.GetLeapMonth (2015), "#5-16");
+		Assert.AreEqual (0, cc.GetLeapMonth (2016), "#5-17");
+		Assert.AreEqual (7, cc.GetLeapMonth (2017), "#5-18");
+		Assert.AreEqual (0, cc.GetLeapMonth (2018), "#5-19");
+		Assert.AreEqual (0, cc.GetLeapMonth (2019), "#5-20");
 
 		KoreanLunisolarCalendar kc = new KoreanLunisolarCalendar ();
-		AssertEquals ("#6-1", 0, kc.GetLeapMonth (2000));
-		AssertEquals ("#6-2", 5, kc.GetLeapMonth (2001));
-		AssertEquals ("#6-3", 0, kc.GetLeapMonth (2002));
-		AssertEquals ("#6-4", 0, kc.GetLeapMonth (2003));
-		AssertEquals ("#6-5", 3, kc.GetLeapMonth (2004));
-		AssertEquals ("#6-6", 0, kc.GetLeapMonth (2005));
-		AssertEquals ("#6-7", 8, kc.GetLeapMonth (2006));
-		AssertEquals ("#6-8", 0, kc.GetLeapMonth (2007));
-		AssertEquals ("#6-9", 0, kc.GetLeapMonth (2008));
-		AssertEquals ("#6-10", 6, kc.GetLeapMonth (2009));
-		AssertEquals ("#6-11", 0, kc.GetLeapMonth (2010));
-		AssertEquals ("#6-12", 0, kc.GetLeapMonth (2011));
-		AssertEquals ("#6-13", 4, kc.GetLeapMonth (2012)); // off from cn by 1
-		AssertEquals ("#6-14", 0, kc.GetLeapMonth (2013));
-		AssertEquals ("#6-15", 10, kc.GetLeapMonth (2014));
-		AssertEquals ("#6-16", 0, kc.GetLeapMonth (2015));
-		AssertEquals ("#6-17", 0, kc.GetLeapMonth (2016));
-		AssertEquals ("#6-18", 6, kc.GetLeapMonth (2017)); // off from cn by 1
-		AssertEquals ("#6-19", 0, kc.GetLeapMonth (2018));
-		AssertEquals ("#6-20", 0, kc.GetLeapMonth (2019));
+		Assert.AreEqual (0, kc.GetLeapMonth (2000), "#6-1");
+		Assert.AreEqual (5, kc.GetLeapMonth (2001), "#6-2");
+		Assert.AreEqual (0, kc.GetLeapMonth (2002), "#6-3");
+		Assert.AreEqual (0, kc.GetLeapMonth (2003), "#6-4");
+		Assert.AreEqual (3, kc.GetLeapMonth (2004), "#6-5");
+		Assert.AreEqual (0, kc.GetLeapMonth (2005), "#6-6");
+		Assert.AreEqual (8, kc.GetLeapMonth (2006), "#6-7");
+		Assert.AreEqual (0, kc.GetLeapMonth (2007), "#6-8");
+		Assert.AreEqual (0, kc.GetLeapMonth (2008), "#6-9");
+		Assert.AreEqual (6, kc.GetLeapMonth (2009), "#6-10");
+		Assert.AreEqual (0, kc.GetLeapMonth (2010), "#6-11");
+		Assert.AreEqual (0, kc.GetLeapMonth (2011), "#6-12");
+		Assert.AreEqual (4, kc.GetLeapMonth (2012)); // off from cn by 1, "#6-13");
+		Assert.AreEqual (0, kc.GetLeapMonth (2013), "#6-14");
+		Assert.AreEqual (10, kc.GetLeapMonth (2014), "#6-15");
+		Assert.AreEqual (0, kc.GetLeapMonth (2015), "#6-16");
+		Assert.AreEqual (0, kc.GetLeapMonth (2016), "#6-17");
+		Assert.AreEqual (6, kc.GetLeapMonth (2017)); // off from cn by 1, "#6-18");
+		Assert.AreEqual (0, kc.GetLeapMonth (2018), "#6-19");
+		Assert.AreEqual (0, kc.GetLeapMonth (2019), "#6-20");
 	}
 
 	[Test]
 	public void GetWeekOfYear ()
 	{
 		GregorianCalendar gc = new GregorianCalendar ();
-		AssertEquals ("#1", 1, gc.GetWeekOfYear (new DateTime (2007, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
-		//AssertEquals ("#2", 1, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
-		AssertEquals ("#2", 3, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstDay, DayOfWeek.Sunday));
-		AssertEquals ("#3", 2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday));
-		AssertEquals ("#4", 2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday));
-		AssertEquals ("#5", 52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday));
-		AssertEquals ("#6", 52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday));
+		Assert.AreEqual (1, gc.GetWeekOfYear (new DateTime (2007, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday), "#1");
+		//Assert.AreEqual (1, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstDay, DayOfWeek.Sunday), "#2");
+		Assert.AreEqual (3, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstDay, DayOfWeek.Sunday), "#2");
+		Assert.AreEqual (2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday), "#3");
+		Assert.AreEqual (2, gc.GetWeekOfYear (new DateTime (2000, 1, 10), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday), "#4");
+		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday), "#5");
+		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday), "#6");
 	}
 #endif
 
+	[Test]
 	public void TestToFourDigitYear() {
 		foreach (Calendar cal in acal) {
 			bool working = true;
@@ -706,23 +714,20 @@ public class CalendarTest : TestCase {
 			if (cal is TaiwanCalendar)
 				working = false;
 			cal.TwoDigitYearMax = mod + 229;
-			AssertEquals(
-				String.Format("F01 {0}.TwoDigitYearMax", cal),
-					mod+229 , cal.TwoDigitYearMax);
-			AssertEquals(
-				String.Format("F02 {0}.ToFourDigitYear(29)",
-					cal),
-				working ? mod+229 : 29,
-				cal.ToFourDigitYear(29));
-			AssertEquals(
-				String.Format("F03 {0}.ToFourDigitYear(30)",
-					cal),
+			Assert.AreEqual(mod+229 , cal.TwoDigitYearMax,
+						 String.Format("F01 {0}.TwoDigitYearMax", cal));
+			Assert.AreEqual(working ? mod+229 : 29,
+						 cal.ToFourDigitYear(29),
+						 String.Format("F02 {0}.ToFourDigitYear(29)",cal));
+			Assert.AreEqual(
 				working ? mod+130 : 30,
-				cal.ToFourDigitYear(30));
-			AssertEquals(
+				cal.ToFourDigitYear(30),
+				String.Format("F03 {0}.ToFourDigitYear(30)",
+							  cal));
+			Assert.AreEqual(mod, cal.ToFourDigitYear(mod),
 				String.Format("F04 {0}.ToFourDigitYear({1})",
-					cal, mod),
-				mod, cal.ToFourDigitYear(mod));
+							  cal, mod));
+
 			bool exception = false;
 			try {
 				cal.ToFourDigitYear(-1);
@@ -730,9 +735,9 @@ public class CalendarTest : TestCase {
 			catch (ArgumentOutOfRangeException) {
 				exception = true;
 			}
-			Assert(String.Format(
+			Assert.IsTrue(exception, String.Format(
 				"F05 {0}.ToFourDigitYear(-1) exception",
-				cal), exception);
+				cal));
 			exception = false;
 			try {
 				cal.ToFourDigitYear(15000);
@@ -740,9 +745,9 @@ public class CalendarTest : TestCase {
 			catch (ArgumentOutOfRangeException) {
 				exception = true;
 			}
-			Assert(String.Format(
+			Assert.IsTrue(exception, String.Format(
 				"F05 {0}.ToFourDigitYear(15000) exception",
-				cal), exception);
+				cal));
 		}
 	}
 
@@ -750,46 +755,46 @@ public class CalendarTest : TestCase {
 	public void TestToFourDigitYear2 ()
 	{
 		GregorianCalendar gc = new GregorianCalendar ();
-		AssertEquals ("#1-1", 2029, gc.ToFourDigitYear (29));
-		AssertEquals ("#1-2", 1930, gc.ToFourDigitYear (30));
-		AssertEquals ("#1-3", 2029, gc.ToFourDigitYear (2029));
-		AssertEquals ("#1-4", 2030, gc.ToFourDigitYear (2030));
+		Assert.AreEqual (2029, gc.ToFourDigitYear (29), "#1-1");
+		Assert.AreEqual (1930, gc.ToFourDigitYear (30), "#1-2");
+		Assert.AreEqual (2029, gc.ToFourDigitYear (2029), "#1-3");
+		Assert.AreEqual (2030, gc.ToFourDigitYear (2030), "#1-4");
 
 		HebrewCalendar hbc = new HebrewCalendar ();
-		AssertEquals ("#2-1", 5790, hbc.ToFourDigitYear (90));
-		AssertEquals ("#2-2", 5691, hbc.ToFourDigitYear (91));
-		AssertEquals ("#2-3", 5790, hbc.ToFourDigitYear (5790));
-		AssertEquals ("#2-4", 5691, hbc.ToFourDigitYear (5691));
-		AssertEquals ("#2-5", 5999, hbc.ToFourDigitYear (5999));
+		Assert.AreEqual (5790, hbc.ToFourDigitYear (90), "#2-1");
+		Assert.AreEqual (5691, hbc.ToFourDigitYear (91), "#2-2");
+		Assert.AreEqual (5790, hbc.ToFourDigitYear (5790), "#2-3");
+		Assert.AreEqual (5691, hbc.ToFourDigitYear (5691), "#2-4");
+		Assert.AreEqual (5999, hbc.ToFourDigitYear (5999), "#2-5");
 		// LAMESPEC: .NET fails to throw an exception unlike documented
 		/*
 		try {
 			hbc.ToFourDigitYear (6000);
-			Fail ("#2-6");
+			Assert.Fail ("#2-6");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		*/
 
 		ThaiBuddhistCalendar tc = new ThaiBuddhistCalendar ();
-		AssertEquals ("#3-1", 2572, tc.ToFourDigitYear (72));
-		AssertEquals ("#3-2", 2473, tc.ToFourDigitYear (73));
-		AssertEquals ("#3-3", 2572, tc.ToFourDigitYear (2572));
-		AssertEquals ("#3-4", 2573, tc.ToFourDigitYear (2573));
-		AssertEquals ("#3-5", 9999, tc.ToFourDigitYear (9999));
+		Assert.AreEqual (2572, tc.ToFourDigitYear (72), "#3-1");
+		Assert.AreEqual (2473, tc.ToFourDigitYear (73), "#3-2");
+		Assert.AreEqual (2572, tc.ToFourDigitYear (2572), "#3-3");
+		Assert.AreEqual (2573, tc.ToFourDigitYear (2573), "#3-4");
+		Assert.AreEqual (9999, tc.ToFourDigitYear (9999), "#3-5");
 		// LAMESPEC: .NET fails to throw an exception unlike documented
 		/*
 		try {
 			tc.ToFourDigitYear (10000);
-			Fail ("#3-6");
+			Assert.Fail ("#3-6");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		*/
 
 		KoreanCalendar kc = new KoreanCalendar ();
-		AssertEquals ("#4-1", 4362, kc.ToFourDigitYear (62));
-		AssertEquals ("#4-2", 4263, kc.ToFourDigitYear (63));
-		AssertEquals ("#4-3", 4362, kc.ToFourDigitYear (4362));
-		AssertEquals ("#4-4", 4363, kc.ToFourDigitYear (4363));
+		Assert.AreEqual (4362, kc.ToFourDigitYear (62), "#4-1");
+		Assert.AreEqual (4263, kc.ToFourDigitYear (63), "#4-2");
+		Assert.AreEqual (4362, kc.ToFourDigitYear (4362), "#4-3");
+		Assert.AreEqual (4363, kc.ToFourDigitYear (4363), "#4-4");
 	}
 
 	// TODO: more tests :-)
