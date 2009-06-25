@@ -51,6 +51,7 @@ namespace System.Net
 		int size;
 		object locker = new object ();
 		public bool EndCalled;
+		public bool AsyncWriteAll;
 
 		public WebAsyncResult (AsyncCallback cb, object state)
 		{

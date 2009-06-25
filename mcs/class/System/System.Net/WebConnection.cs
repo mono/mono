@@ -740,10 +740,14 @@ namespace System.Net
 		}
 
 
-		internal IAsyncResult BeginRead (byte [] buffer, int offset, int size, AsyncCallback cb, object state)
+		internal IAsyncResult BeginRead (HttpWebRequest request, byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
-			if (nstream == null)
-				return null;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					return null;
+			}
 
 			IAsyncResult result = null;
 			if (!chunkedRead || chunkStream.WantMore) {
@@ -770,10 +774,14 @@ namespace System.Net
 			return result;
 		}
 		
-		internal int EndRead (IAsyncResult result)
+		internal int EndRead (HttpWebRequest request, IAsyncResult result)
 		{
-			if (nstream == null)
-				return 0;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+			}
 
 			int nbytes = 0;
 			WebAsyncResult wr = null;
@@ -852,12 +860,17 @@ namespace System.Net
 
 			return true;
   		}
-		internal IAsyncResult BeginWrite (byte [] buffer, int offset, int size, AsyncCallback cb, object state)
-		{
-			IAsyncResult result = null;
-			if (nstream == null)
-				return null;
 
+		internal IAsyncResult BeginWrite (HttpWebRequest request, byte [] buffer, int offset, int size, AsyncCallback cb, object state)
+		{
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					return null;
+			}
+
+			IAsyncResult result = null;
 			try {
 				result = nstream.BeginWrite (buffer, offset, size, cb, state);
 			} catch (Exception) {
@@ -868,10 +881,33 @@ namespace System.Net
 			return result;
 		}
 
-		internal bool EndWrite (IAsyncResult result)
+		internal void EndWrite2 (HttpWebRequest request, IAsyncResult result)
 		{
-			if (nstream == null)
-				return false;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+			}
+
+			try {
+				nstream.EndWrite (result);
+			} catch (Exception exc) {
+				status = WebExceptionStatus.SendFailure;
+				if (exc.InnerException != null)
+					throw exc.InnerException;
+				throw;
+			}
+		}
+
+		internal bool EndWrite (HttpWebRequest request, IAsyncResult result)
+		{
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+			}
 
 			try {
 				nstream.EndWrite (result);
@@ -882,10 +918,14 @@ namespace System.Net
 			}
 		}
 
-		internal int Read (byte [] buffer, int offset, int size)
+		internal int Read (HttpWebRequest request, byte [] buffer, int offset, int size)
 		{
-			if (nstream == null)
-				return 0;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					return 0;
+			}
 
 			int result = 0;
 			try {
@@ -917,10 +957,14 @@ namespace System.Net
 			return result;
 		}
 
-		internal bool Write (byte [] buffer, int offset, int size)
+		internal bool Write (HttpWebRequest request, byte [] buffer, int offset, int size)
 		{
-			if (nstream == null)
-				return false;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					return false;
+			}
 
 			try {
 				nstream.Write (buffer, offset, size);
@@ -965,6 +1009,7 @@ namespace System.Net
 				}
 
 				busy = false;
+				Data = new WebConnectionData ();
 				if (sendNext)
 					SendNext ();
 			}
@@ -979,7 +1024,6 @@ namespace System.Net
 						if (!req.FinishedReading) {
 							status = WebExceptionStatus.RequestCanceled;
 							Close (false);
-							Data = new WebConnectionData ();
 							if (queue.Count > 0) {
 								Data.request = (HttpWebRequest) queue.Dequeue ();
 								SendRequest (Data.request);

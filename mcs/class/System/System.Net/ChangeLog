@@ -1,3 +1,16 @@
+2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebAsyncResult.cs: new field that tells us if the request is being
+	written automatically because we reached the content length.
+	* WebConnection.cs:
+	* WebConnectionStream.cs: make sure we only access the NetworkStream
+	while we own it. Automatically write the request when we reach
+	ContentLength number of bytes. Kill the write buffer as soon as
+	possible. Don't use the buffer at all when chunked encoding is
+	enabled.
+
+	Fixes bugs #515931 and #510642.
+
 2009-06-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: 'socket' and 'Data' where being changed by 2
