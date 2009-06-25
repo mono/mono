@@ -1,5 +1,11 @@
 2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : instead of discarding channels, reuse them
+	  unless it is closed by session manager (session manager does not
+	  work, so channels are not actually closed automatically yet).
+
+2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SessionInstanceContextProvider.cs : new instance context provider.
 
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>

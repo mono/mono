@@ -463,6 +463,11 @@ namespace System.ServiceModel.Dispatcher
 			}
 
 				ch.Open ();
+				ProcessRequestOrInput (ch);
+			}
+
+			void ProcessRequestOrInput (IChannel ch)
+			{
 				var reply = ch as IReplyChannel;
 				var input = ch as IInputChannel;
 
@@ -525,7 +530,9 @@ namespace System.ServiceModel.Dispatcher
 					// FIXME: log it.
 					Console.WriteLine (ex);
 				} finally {
-					reply.Close ();
+					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
+					if (reply.State != CommunicationState.Closed)
+						ProcessRequestOrInput (reply);
 				}
 			}
 
@@ -541,7 +548,9 @@ namespace System.ServiceModel.Dispatcher
 					// FIXME: log it.
 					Console.WriteLine (ex);
 				} finally {
-					input.Close ();
+					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
+					if (input.State != CommunicationState.Closed)
+						ProcessRequestOrInput (input);
 				}
 			}
 
