@@ -266,6 +266,12 @@ namespace System.Reflection.Emit {
 					hasSize = true;
 					break;
 				case "SafeArraySubType":
+					value = (int)data[pos++];
+					value |= ((int)data[pos++]) << 8;
+					value |= ((int)data[pos++]) << 16;
+					value |= ((int)data[pos++]) << 24;
+					subtype = (UnmanagedType)value;
+					break;
 				case "IidParameterIndex":
 					pos += 4;
 					break;
