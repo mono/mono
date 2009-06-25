@@ -1,3 +1,9 @@
+2009-06-25  Robert Jordan  <robertj@gmx.net>
+
+	* BinaryReaderTest.cs, BinaryWriterTest.cs, BufferedStreamTest.cs,
+	PathTest.cs, PathTest.cs, StringWriterTest.cs, TextWriterTest.cs:
+	Upgrade to new NUnit style.
+
 2009-05-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* FileInfoTest.cs: Wrap Replace() tests in #if NET_2_0.

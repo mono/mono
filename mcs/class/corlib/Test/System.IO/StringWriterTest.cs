@@ -18,85 +18,90 @@ using System.Text;
 namespace MonoTests.System.IO {
 
 [TestFixture]
-public class StringWriterTest : Assertion {
+public class StringWriterTest {
+	[Test]
 	public void TestConstructors() {
                 StringBuilder sb = new StringBuilder("Test String");
 
                 StringWriter writer = new StringWriter( sb );
-                AssertEquals( sb, writer.GetStringBuilder() );
+                Assert.AreEqual (sb, writer.GetStringBuilder());
         }
 
+	[Test]
         public void TestCultureInfoConstructor() {
 
 		StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
-		AssertNotNull( writer.GetStringBuilder() );
+		Assert.IsNotNull (writer.GetStringBuilder());
 		
-		AssertEquals( String.Empty, writer.ToString() );
+		Assert.AreEqual (String.Empty, writer.ToString());
 		
 		writer.Write( 'A' );
-		AssertEquals( "A", writer.ToString() );
+		Assert.AreEqual ("A", writer.ToString());
 		
 		writer.Write( " foo" );
-		AssertEquals( "A foo", writer.ToString() );
+		Assert.AreEqual ("A foo", writer.ToString());
 		
 		
 		char[] testBuffer = "Test String".ToCharArray();
 		
 		writer.Write( testBuffer, 0, 4 );
-		AssertEquals( "A fooTest", writer.ToString() );
+		Assert.AreEqual ("A fooTest", writer.ToString());
 		
 		writer.Write( testBuffer, 5, 6 );
-		AssertEquals( "A fooTestString", writer.ToString() );
+		Assert.AreEqual ("A fooTestString", writer.ToString());
 		
 		writer = new StringWriter(CultureInfo.InvariantCulture);
 		writer.Write(null as string);
-		AssertEquals( "", writer.ToString() );
+		Assert.AreEqual ("", writer.ToString());
         }
 
+	[Test]
         public void TestWrite() {
                 StringWriter writer = new StringWriter();
 
-                AssertEquals( String.Empty, writer.ToString() );
+                Assert.AreEqual (String.Empty, writer.ToString());
                 
                 writer.Write( 'A' );
-                AssertEquals( "A", writer.ToString() );
+                Assert.AreEqual ("A", writer.ToString());
 
                 writer.Write( " foo" );
-                AssertEquals( "A foo", writer.ToString() );
+                Assert.AreEqual ("A foo", writer.ToString());
 
                 
                 char[] testBuffer = "Test String".ToCharArray();
 
                 writer.Write( testBuffer, 0, 4 );
-                AssertEquals( "A fooTest", writer.ToString() );
+                Assert.AreEqual ("A fooTest", writer.ToString());
 
                 writer.Write( testBuffer, 5, 6 );
-                AssertEquals( "A fooTestString", writer.ToString() );
+                Assert.AreEqual ("A fooTestString", writer.ToString());
 
 		writer = new StringWriter ();
                 writer.Write(null as string);
-                AssertEquals( "", writer.ToString() );
+                Assert.AreEqual ("", writer.ToString());
 
         }
 
+	[Test]
         public void TestNewLine() {
         	
         	StringWriter writer = new StringWriter();
         	
         	writer.NewLine = "\n\r";
-        	AssertEquals ("NewLine 1", "\n\r", writer.NewLine);
+        	Assert.AreEqual ("\n\r", writer.NewLine, "NewLine 1");
         	
         	writer.WriteLine ("first");
-        	AssertEquals ("NewLine 2", "first\n\r", writer.ToString());
+        	Assert.AreEqual ("first\n\r", writer.ToString(), "NewLine 2");
         	
         	writer.NewLine = "\n";
-        	AssertEquals ("NewLine 3", "first\n\r", writer.ToString());
+        	Assert.AreEqual ("first\n\r", writer.ToString(), "NewLine 3");
         	
         	writer.WriteLine ("second");
-        	AssertEquals ("NewLine 4", "first\n\rsecond\n", writer.ToString());
+        	Assert.AreEqual ("first\n\rsecond\n", writer.ToString(), "NewLine 4");
         	
         }
         
+	[Test]
         public void TestWriteLine() {
         	
         	StringWriter writer = new StringWriter();
@@ -105,21 +110,23 @@ public class StringWriterTest : Assertion {
         	writer.WriteLine ("first line");
         	writer.WriteLine ("second line");
         	        	
-        	AssertEquals ("WriteLine 1", "first line\nsecond line\n", writer.ToString ());
+        	Assert.AreEqual ("first line\nsecond line\n", writer.ToString (), "WriteLine 1");
         	writer.Close ();
         }
         
+	[Test]
         public void TestGetStringBuilder() {
         	
         	StringWriter writer = new StringWriter ();
         	writer.Write ("line");
 		StringBuilder builder = writer.GetStringBuilder ();
         	builder.Append (12);
-        	AssertEquals ("GetStringBuilder 1", "line12", writer.ToString ());
+        	Assert.AreEqual ("line12", writer.ToString (), "GetStringBuilder 1");
         	writer.Write ("test");
-        	AssertEquals ("GetStringBuilder 2", "line12test", builder.ToString ());        	        	
+        	Assert.AreEqual ("line12test", builder.ToString (), "GetStringBuilder 2");        	        	
         }
         
+	[Test]
         public void TestClose() {
         	
         	StringWriter writer = new StringWriter ();
@@ -128,36 +135,37 @@ public class StringWriterTest : Assertion {
         	
         	try {
         		writer.Write ("kicks ass");
-        		Fail ("Close 1");
+        		Assert.Fail ("Close 1");
         	} catch (Exception e) {
-        		AssertEquals ("Close 2", typeof (ObjectDisposedException), e.GetType ());
+        		Assert.AreEqual (typeof (ObjectDisposedException), e.GetType (), "Close 2");
         	}
 
-        	AssertEquals ("Close 3", "mono", writer.ToString ());
+        	Assert.AreEqual ("mono", writer.ToString (), "Close 3");
         	writer.Flush ();
         	StringBuilder builder = writer.GetStringBuilder ();
-        	AssertEquals ("Close 4", "mono", builder.ToString ());
+        	Assert.AreEqual ("mono", builder.ToString (), "Close 4");
         	
         	builder.Append (" kicks ass");
-        	AssertEquals ("Close 5", "mono kicks ass", writer.ToString ());
+        	Assert.AreEqual ("mono kicks ass", writer.ToString (), "Close 5");
         }
 
+	[Test]
         public void TestExceptions () {
         	
         	try {
         		StringWriter writer = new StringWriter (null as StringBuilder);
-        		Fail();
+        		Assert.Fail ();
         	} catch (Exception e) {
-        		AssertEquals ("Exceptions 1", typeof (ArgumentNullException), e.GetType ());
+        		Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "Exceptions 1");
         	}
         	{
        		StringWriter writer = new StringWriter (null as IFormatProvider);
         	}
         	try {
 	        	StringWriter writer = new StringWriter (null as StringBuilder, null as IFormatProvider);
-        		Fail ();
+        		Assert.Fail ();
         	} catch (Exception e) {
-        		AssertEquals ("Exceptions 2", typeof (ArgumentNullException), e.GetType ());
+        		Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "Exceptions 2");
         	}        	        	
         }
 
@@ -218,7 +226,7 @@ public class StringWriterTest : Assertion {
 	{
         	StringWriter writer = new StringWriter ();
 		writer.Close ();
-		AssertNotNull ("Disposed-Encoding", writer.Encoding);
+		Assert.IsNotNull (writer.Encoding, "Disposed-Encoding");
 	}
 
 	[Test]
@@ -235,7 +243,7 @@ public class StringWriterTest : Assertion {
         	StringWriter writer = new StringWriter ();
 		writer.Write ("Mono");
 		writer.Close ();
-		AssertNotNull ("Disposed-GetStringBuilder", writer.GetStringBuilder ());
+		Assert.IsNotNull (writer.GetStringBuilder (), "Disposed-GetStringBuilder");
 	}
 
 	[Test]
@@ -244,7 +252,7 @@ public class StringWriterTest : Assertion {
         	StringWriter writer = new StringWriter ();
 		writer.Write ("Mono");
 		writer.Close ();
-		AssertEquals ("Disposed-ToString", "Mono", writer.ToString ());
+		Assert.AreEqual ("Mono", writer.ToString (), "Disposed-ToString");
 	}
 
 	[Test]

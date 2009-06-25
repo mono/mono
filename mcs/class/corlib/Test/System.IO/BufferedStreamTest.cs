@@ -17,7 +17,7 @@ using System;
 namespace MonoTests.System.IO {
 
 [TestFixture]
-public class BufferedStreamTest : Assertion {
+public class BufferedStreamTest {
 	
 	private MemoryStream mem;
 	
@@ -43,11 +43,11 @@ public class BufferedStreamTest : Assertion {
 		str.Write (new byte [] {1, 2, 3, 4, 5, 6}, 0, 6);
 		BufferedStream stream = new BufferedStream (str);
 		
-		AssertEquals ("test#01", true, stream.CanRead);
-		AssertEquals ("test#02", true, stream.CanSeek);
-		AssertEquals ("test#03", true, stream.CanWrite);
-		AssertEquals ("test#04", 6, stream.Length);
-		AssertEquals ("test#05", 6, stream.Position);
+		Assert.AreEqual (true, stream.CanRead, "test#01");
+		Assert.AreEqual (true, stream.CanSeek, "test#02");
+		Assert.AreEqual (true, stream.CanWrite, "test#03");
+		Assert.AreEqual (6, stream.Length, "test#04");
+		Assert.AreEqual (6, stream.Position, "test#05");
 		
 		string path = Path.GetTempFileName ();
 		if (File.Exists (path))
@@ -55,11 +55,11 @@ public class BufferedStreamTest : Assertion {
 		
 		FileStream file = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 		stream = new BufferedStream (file);		
-		AssertEquals ("test#06", false, stream.CanRead);
-		AssertEquals ("test#07", true, stream.CanSeek);
-		AssertEquals ("test#08", true, stream.CanWrite);
-		AssertEquals ("test#09", 0, stream.Length);
-		AssertEquals ("test#10", 0, stream.Position);		
+		Assert.AreEqual (false, stream.CanRead, "test#06");
+		Assert.AreEqual (true, stream.CanSeek, "test#07");
+		Assert.AreEqual (true, stream.CanWrite, "test#08");
+		Assert.AreEqual (0, stream.Length, "test#09");
+		Assert.AreEqual (0, stream.Position, "test#10");		
 		file.Close ();
 		
 		if (File.Exists (path))
@@ -67,11 +67,11 @@ public class BufferedStreamTest : Assertion {
 		
 		file = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 		stream = new BufferedStream (file, 12);		
-		AssertEquals ("test#11", false, stream.CanRead);
-		AssertEquals ("test#12", true, stream.CanSeek);
-		AssertEquals ("test#13", true, stream.CanWrite);
-		AssertEquals ("test#14", 0, stream.Length);
-		AssertEquals ("test#15", 0, stream.Position);		
+		Assert.AreEqual (false, stream.CanRead, "test#11");
+		Assert.AreEqual (true, stream.CanSeek, "test#12");
+		Assert.AreEqual (true, stream.CanWrite, "test#13");
+		Assert.AreEqual (0, stream.Length, "test#14");
+		Assert.AreEqual (0, stream.Position, "test#15");		
 
 		file.Close ();
 		if (File.Exists (path))
@@ -132,9 +132,9 @@ public class BufferedStreamTest : Assertion {
 	{
 		BufferedStream stream = new BufferedStream (mem);
 		stream.Close ();
-		AssertEquals ("test#01", false, stream.CanRead);
-		AssertEquals ("test#02", false, stream.CanSeek);
-		AssertEquals ("test#03", false, stream.CanWrite);
+		Assert.AreEqual (false, stream.CanRead, "test#01");
+		Assert.AreEqual (false, stream.CanSeek, "test#02");
+		Assert.AreEqual (false, stream.CanWrite, "test#03");
 	}
 
 	[Test]	
@@ -190,28 +190,28 @@ public class BufferedStreamTest : Assertion {
 
 		byte [] bytes = new byte [10];
 		stream.Read (bytes, 0, 3);
-		AssertEquals ("test#01", 0, bytes [0]);
-		AssertEquals ("test#02", 0, bytes [1]);
-		AssertEquals ("test#03", 0, bytes [2]);
+		Assert.AreEqual (0, bytes [0], "test#01");
+		Assert.AreEqual (0, bytes [1], "test#02");
+		Assert.AreEqual (0, bytes [2], "test#03");
 
 		stream.Seek (0, SeekOrigin.Begin);
 		stream.Read (bytes, 0, 3);
-		AssertEquals ("test#04", 0, bytes [0]);
-		AssertEquals ("test#05", 1, bytes [1]);
-		AssertEquals ("test#06", 2, bytes [2]);
-		AssertEquals ("test#07", 0, bytes [0]);		
+		Assert.AreEqual (0, bytes [0], "test#04");
+		Assert.AreEqual (1, bytes [1], "test#05");
+		Assert.AreEqual (2, bytes [2], "test#06");
+		Assert.AreEqual (0, bytes [0], "test#07");		
 
 		stream.Read (bytes, 5, 3);
-		AssertEquals ("test#08", 3, bytes [5]);
-		AssertEquals ("test#09", 4, bytes [6]);
-		AssertEquals ("test#10", 5, bytes [7]);
-		AssertEquals ("test#11", 0, bytes [8]);		
+		Assert.AreEqual (3, bytes [5], "test#08");
+		Assert.AreEqual (4, bytes [6], "test#09");
+		Assert.AreEqual (5, bytes [7], "test#10");
+		Assert.AreEqual (0, bytes [8], "test#11");		
 
 		stream.Read (bytes, 0, 10);
-		AssertEquals ("test#12", 3, bytes [5]);
-		AssertEquals ("test#13", 4, bytes [6]);
-		AssertEquals ("test#14", 5, bytes [7]);
-		AssertEquals ("test#15", 0, bytes [9]);				
+		Assert.AreEqual (3, bytes [5], "test#12");
+		Assert.AreEqual (4, bytes [6], "test#13");
+		Assert.AreEqual (5, bytes [7], "test#14");
+		Assert.AreEqual (0, bytes [9], "test#15");				
 	}
 	
 	[Test]
@@ -280,15 +280,15 @@ public class BufferedStreamTest : Assertion {
 		mem.Write (new byte [] {0, 1, 2, 3, 4, 5, 6, 7}, 0, 8);
 		BufferedStream stream = new BufferedStream (mem);
 
-		AssertEquals ("test#01", -1, stream.ReadByte ());
-		AssertEquals ("test#02", -1, stream.ReadByte ());
-		AssertEquals ("test#03", -1, stream.ReadByte ());
+		Assert.AreEqual (-1, stream.ReadByte (), "test#01");
+		Assert.AreEqual (-1, stream.ReadByte (), "test#02");
+		Assert.AreEqual (-1, stream.ReadByte (), "test#03");
 
 		stream.Seek (0, SeekOrigin.Begin);
-		AssertEquals ("test#04", 0, stream.ReadByte ());
-		AssertEquals ("test#05", 1, stream.ReadByte ());
-		AssertEquals ("test#06", 2, stream.ReadByte ());
-		AssertEquals ("test#07", 3, stream.ReadByte ());		
+		Assert.AreEqual (0, stream.ReadByte (), "test#04");
+		Assert.AreEqual (1, stream.ReadByte (), "test#05");
+		Assert.AreEqual (2, stream.ReadByte (), "test#06");
+		Assert.AreEqual (3, stream.ReadByte (), "test#07");		
 	}
 	
 	[Test]
@@ -297,26 +297,26 @@ public class BufferedStreamTest : Assertion {
 		BufferedStream stream = new BufferedStream (mem);
 		
 		stream.Write (new byte [] {0, 1, 2, 3, 4}, 0, 4);
-		AssertEquals ("test#01", 4, stream.Length);
+		Assert.AreEqual (4, stream.Length, "test#01");
 		byte [] bytes = mem.GetBuffer ();
-		AssertEquals ("test#02", 0, bytes [0]);
-		AssertEquals ("test#03", 1, bytes [1]);
-		AssertEquals ("test#04", 2, bytes [2]);
-		AssertEquals ("test#05", 3, bytes [3]);
+		Assert.AreEqual (0, bytes [0], "test#02");
+		Assert.AreEqual (1, bytes [1], "test#03");
+		Assert.AreEqual (2, bytes [2], "test#04");
+		Assert.AreEqual (3, bytes [3], "test#05");
 
 		bytes = new byte [] {1, 4, 3};
 		stream.Write (bytes, 0, 3);
 		stream.Flush ();
 		bytes = mem.GetBuffer ();		
-		AssertEquals ("test#06", 0, bytes [0]);
-		AssertEquals ("test#07", 1, bytes [1]);
-		AssertEquals ("test#08", 2, bytes [2]);
-		AssertEquals ("test#09", 3, bytes [3]);
-		AssertEquals ("test#10", 1, bytes [4]);
-		AssertEquals ("test#11", 4, bytes [5]);
-		AssertEquals ("test#10", 3, bytes [6]);
-		AssertEquals ("test#11", 0, bytes [7]);
-		AssertEquals ("test#12", 7, stream.Length);
+		Assert.AreEqual (0, bytes [0], "test#06");
+		Assert.AreEqual (1, bytes [1], "test#07");
+		Assert.AreEqual (2, bytes [2], "test#08");
+		Assert.AreEqual (3, bytes [3], "test#09");
+		Assert.AreEqual (1, bytes [4], "test#10");
+		Assert.AreEqual (4, bytes [5], "test#11");
+		Assert.AreEqual (3, bytes [6], "test#10");
+		Assert.AreEqual (0, bytes [7], "test#11");
+		Assert.AreEqual (7, stream.Length, "test#12");
 	}
 		
 	[Test]
@@ -384,11 +384,11 @@ public class BufferedStreamTest : Assertion {
 		stream.WriteByte (2);
 		stream.WriteByte (3);
 		stream.Flush ();
-		AssertEquals ("test#01", 256, mem.GetBuffer ().Length);
-		AssertEquals ("test#02", 3, stream.Length);
-		AssertEquals ("test#03", 1, mem.GetBuffer () [0]);
-		AssertEquals ("test#04", 2, mem.GetBuffer () [1]);
-		AssertEquals ("test#05", 3, mem.GetBuffer () [2]);		
+		Assert.AreEqual (256, mem.GetBuffer ().Length, "test#01");
+		Assert.AreEqual (3, stream.Length, "test#02");
+		Assert.AreEqual (1, mem.GetBuffer () [0], "test#03");
+		Assert.AreEqual (2, mem.GetBuffer () [1], "test#04");
+		Assert.AreEqual (3, mem.GetBuffer () [2], "test#05");		
 	}
 	
 	[Test]
@@ -399,36 +399,36 @@ public class BufferedStreamTest : Assertion {
 		stream.WriteByte (2);
 		
 		byte [] bytes = mem.GetBuffer ();
-		AssertEquals ("test#01", 0, bytes.Length);
+		Assert.AreEqual (0, bytes.Length, "test#01");
 		stream.Flush ();
 		
 		bytes = mem.GetBuffer ();
-		AssertEquals ("test#02", 256, bytes.Length);
-		AssertEquals ("test#03", 1, bytes [0]);
-		AssertEquals ("test#04", 2, bytes [1]);
+		Assert.AreEqual (256, bytes.Length, "test#02");
+		Assert.AreEqual (1, bytes [0], "test#03");
+		Assert.AreEqual (2, bytes [1], "test#04");
 		mem.Close ();
 		mem = new MemoryStream ();
 		bytes = new byte [] {0, 1, 2, 3, 4, 5};
 		stream = new BufferedStream (mem);
 		stream.Write (bytes, 0, 2);
-		AssertEquals ("test#05", 2, stream.Length);
+		Assert.AreEqual (2, stream.Length, "test#05");
 		bytes = mem.GetBuffer ();
-		AssertEquals ("test#06", 256, bytes.Length);
+		Assert.AreEqual (256, bytes.Length, "test#06");
 
-		AssertEquals ("test#07", 0, bytes [0]);
-		AssertEquals ("test#08", 1, bytes [1]);
+		Assert.AreEqual (0, bytes [0], "test#07");
+		Assert.AreEqual (1, bytes [1], "test#08");
 		
 		stream.Write (bytes, 0, 2);
 		
 		bytes = mem.GetBuffer ();
-		AssertEquals ("test#09", 0, bytes [0]);
-		AssertEquals ("test#10", 1, bytes [1]);
-		AssertEquals ("test#11", 0, bytes [2]);
-		AssertEquals ("test#12", 0, bytes [3]);
+		Assert.AreEqual (0, bytes [0], "test#09");
+		Assert.AreEqual (1, bytes [1], "test#10");
+		Assert.AreEqual (0, bytes [2], "test#11");
+		Assert.AreEqual (0, bytes [3], "test#12");
 		stream.Flush ();
 		bytes = mem.GetBuffer ();
-		AssertEquals ("test#13", 0, bytes [2]);
-		AssertEquals ("test#14", 1, bytes [3]);
+		Assert.AreEqual (0, bytes [2], "test#13");
+		Assert.AreEqual (1, bytes [3], "test#14");
 	}
 	
 	[Test]
@@ -437,16 +437,16 @@ public class BufferedStreamTest : Assertion {
 		BufferedStream stream = new BufferedStream (mem);
 		stream.Write (new byte [] {0, 1, 2, 3, 4, 5}, 0, 6);
 		
-		AssertEquals ("test#01", 6, stream.Position);
+		Assert.AreEqual (6, stream.Position, "test#01");
 		
 		stream.Seek (-5, SeekOrigin.End);		
-		AssertEquals ("test#02", 1, stream.Position);
+		Assert.AreEqual (1, stream.Position, "test#02");
 		
 		stream.Seek (3, SeekOrigin.Current);
-		AssertEquals ("test#03", 4, stream.Position);
+		Assert.AreEqual (4, stream.Position, "test#03");
 		
 		stream.Seek (300, SeekOrigin.Current);		
-		AssertEquals ("test#04", 304, stream.Position);		
+		Assert.AreEqual (304, stream.Position, "test#04");		
 	}
 	
 	[Test]
@@ -463,12 +463,12 @@ public class BufferedStreamTest : Assertion {
 		BufferedStream stream = new BufferedStream (mem);
 		stream.Write (new byte [] {0,1,2,3,4,5}, 0, 6);
 		
-		AssertEquals ("test#01", 6, stream.Length);
+		Assert.AreEqual (6, stream.Length, "test#01");
 		stream.SetLength (60);
-		AssertEquals ("test#02", 60, stream.Length);
+		Assert.AreEqual (60, stream.Length, "test#02");
 		
 		stream.SetLength (2);
-		AssertEquals ("test#03", 2, stream.Length);	
+		Assert.AreEqual (2, stream.Length, "test#03");	
 	}
 	
 	 [Test]
@@ -505,35 +505,35 @@ public class BufferedStreamTest : Assertion {
 		stream.Write (new byte [] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, 16);
 	 	
 		stream.Position = 0;
-		AssertEquals ("test#01", 0, stream.Position);		
-		AssertEquals ("test#02", 0, stream.ReadByte ());		
+		Assert.AreEqual (0, stream.Position, "test#01");		
+		Assert.AreEqual (0, stream.ReadByte (), "test#02");		
 		
 		stream.Position = 5;
-		AssertEquals ("test#01", 5, stream.Position);		
-		AssertEquals ("test#02", 5, stream.ReadByte ());		
+		Assert.AreEqual (5, stream.Position, "test#01");		
+		Assert.AreEqual (5, stream.ReadByte (), "test#02");		
 		
 		// Should not need to read from the underlying stream:
 		stream.Position = 7;
-		AssertEquals ("test#01", 7, stream.Position);		
-		AssertEquals ("test#02", 7, stream.ReadByte ());		
+		Assert.AreEqual (7, stream.Position, "test#01");		
+		Assert.AreEqual (7, stream.ReadByte (), "test#02");		
 		
 		// Should not need to read from the underlying stream:
 		stream.Position = 5;
-		AssertEquals ("test#01", 5, stream.Position);		
-		AssertEquals ("test#02", 5, stream.ReadByte ());		
+		Assert.AreEqual (5, stream.Position, "test#01");		
+		Assert.AreEqual (5, stream.ReadByte (), "test#02");		
 				
 		// Should not need to read from the underlying stream:
 		stream.Position = 9;
-		AssertEquals ("test#01", 9, stream.Position);
-		AssertEquals ("test#02", 9, stream.ReadByte ());
+		Assert.AreEqual (9, stream.Position, "test#01");
+		Assert.AreEqual (9, stream.ReadByte (), "test#02");
 		
 		stream.Position = 10;
-		AssertEquals ("test#01", 10, stream.Position);		
-		AssertEquals ("test#02", 10, stream.ReadByte ());		
+		Assert.AreEqual (10, stream.Position, "test#01");		
+		Assert.AreEqual (10, stream.ReadByte (), "test#02");		
 		
 		stream.Position = 9;
-		AssertEquals ("test#01", 9, stream.Position);		
-		AssertEquals ("test#02", 9, stream.ReadByte ());		
+		Assert.AreEqual (9, stream.Position, "test#01");		
+		Assert.AreEqual (9, stream.ReadByte (), "test#02");		
 	 }
 
 	[Test]
@@ -543,7 +543,7 @@ public class BufferedStreamTest : Assertion {
 		stream.SetLength (32);
 		stream.Position = 32;
 		stream.SetLength (16);
-		AssertEquals ("Position==16", 16, stream.Position);
+		Assert.AreEqual (16, stream.Position, "Position==16");
 	}
 
 	[Test]

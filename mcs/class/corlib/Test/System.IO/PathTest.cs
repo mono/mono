@@ -30,7 +30,7 @@ namespace MonoTests.System.IO
 	}
 
 	[TestFixture]
-	public class PathTest : Assertion
+	public class PathTest
 	{
 		static string path1;
 		static string path2;
@@ -90,54 +90,54 @@ namespace MonoTests.System.IO
 			files [(int) OsType.Mac] = "foo:test.doc";
 
 			string testPath = Path.ChangeExtension (path1, "doc");
-			AssertEquals ("ChangeExtension #01", files [(int) OS], testPath);
+			Assert.AreEqual (files [(int) OS], testPath, "ChangeExtension #01");
 
 			testPath = Path.ChangeExtension (String.Empty, ".extension");
-			AssertEquals ("ChangeExtension #02", String.Empty, testPath);
+			Assert.AreEqual (String.Empty, testPath, "ChangeExtension #02");
 
 			testPath = Path.ChangeExtension (null, ".extension");
-			AssertEquals ("ChangeExtension #03", null, testPath);
+			Assert.AreEqual (null, testPath, "ChangeExtension #03");
 
 			testPath = Path.ChangeExtension ("path", null);
-			AssertEquals ("ChangeExtension #04", "path", testPath);
+			Assert.AreEqual ("path", testPath, "ChangeExtension #04");
 
 			testPath = Path.ChangeExtension ("path.ext", "doc");
-			AssertEquals ("ChangeExtension #05", "path.doc", testPath);
+			Assert.AreEqual ("path.doc", testPath, "ChangeExtension #05");
 
 			testPath = Path.ChangeExtension ("path.ext1.ext2", "doc");
-			AssertEquals ("ChangeExtension #06", "path.ext1.doc", testPath);
+			Assert.AreEqual ("path.ext1.doc", testPath, "ChangeExtension #06");
 
 			testPath = Path.ChangeExtension ("hogehoge.xml", ".xsl");
-			AssertEquals ("ChangeExtension #07", "hogehoge.xsl", testPath);
+			Assert.AreEqual ("hogehoge.xsl", testPath, "ChangeExtension #07");
 			testPath = Path.ChangeExtension ("hogehoge", ".xsl");
-			AssertEquals ("ChangeExtension #08", "hogehoge.xsl", testPath);
+			Assert.AreEqual ("hogehoge.xsl", testPath, "ChangeExtension #08");
 			testPath = Path.ChangeExtension ("hogehoge.xml", "xsl");
-			AssertEquals ("ChangeExtension #09", "hogehoge.xsl", testPath);
+			Assert.AreEqual ("hogehoge.xsl", testPath, "ChangeExtension #09");
 			testPath = Path.ChangeExtension ("hogehoge", "xsl");
-			AssertEquals ("ChangeExtension #10", "hogehoge.xsl", testPath);
+			Assert.AreEqual ("hogehoge.xsl", testPath, "ChangeExtension #10");
 			testPath = Path.ChangeExtension ("hogehoge.xml", String.Empty);
-			AssertEquals ("ChangeExtension #11", "hogehoge.", testPath);
+			Assert.AreEqual ("hogehoge.", testPath, "ChangeExtension #11");
 			testPath = Path.ChangeExtension ("hogehoge", String.Empty);
-			AssertEquals ("ChangeExtension #12", "hogehoge.", testPath);
+			Assert.AreEqual ("hogehoge.", testPath, "ChangeExtension #12");
 			testPath = Path.ChangeExtension ("hogehoge.", null);
-			AssertEquals ("ChangeExtension #13", "hogehoge", testPath);
+			Assert.AreEqual ("hogehoge", testPath, "ChangeExtension #13");
 			testPath = Path.ChangeExtension ("hogehoge", null);
-			AssertEquals ("ChangeExtension #14", "hogehoge", testPath);
+			Assert.AreEqual ("hogehoge", testPath, "ChangeExtension #14");
 			testPath = Path.ChangeExtension (String.Empty, null);
-			AssertEquals ("ChangeExtension #15", String.Empty, testPath);
+			Assert.AreEqual (String.Empty, testPath, "ChangeExtension #15");
 			testPath = Path.ChangeExtension (String.Empty, "bashrc");
-			AssertEquals ("ChangeExtension #16", String.Empty, testPath);
+			Assert.AreEqual (String.Empty, testPath, "ChangeExtension #16");
 			testPath = Path.ChangeExtension (String.Empty, ".bashrc");
-			AssertEquals ("ChangeExtension #17", String.Empty, testPath);
+			Assert.AreEqual (String.Empty, testPath, "ChangeExtension #17");
 			testPath = Path.ChangeExtension (null, null);
-			AssertNull ("ChangeExtension #18", testPath);
+			Assert.IsNull (testPath, "ChangeExtension #18");
 		}
 
 		[Test]
 		public void ChangeExtension_Extension_InvalidPathChars () 
 		{
 			string fn = Path.ChangeExtension ("file.ext", "<");
-			AssertEquals ("Invalid filename", "file.<", fn);
+			Assert.AreEqual ("file.<", fn, "Invalid filename");
 		}
 
 		[Test]
@@ -145,13 +145,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.ChangeExtension ("fi\0le.ext", ".extension");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -164,41 +164,41 @@ namespace MonoTests.System.IO
 			files [(int) OsType.Mac] = "foo:bar";
 
 			string testPath = Path.Combine (path2, path3);
-			AssertEquals ("Combine #01", files [(int) OS], testPath);
+			Assert.AreEqual (files [(int) OS], testPath, "Combine #01");
 
 			testPath = Path.Combine ("one", String.Empty);
-			AssertEquals ("Combine #02", "one", testPath);
+			Assert.AreEqual ("one", testPath, "Combine #02");
 
 			testPath = Path.Combine (String.Empty, "one");
-			AssertEquals ("Combine #03", "one", testPath);
+			Assert.AreEqual ("one", testPath, "Combine #03");
 
 			string current = Directory.GetCurrentDirectory ();
 			testPath = Path.Combine (current, "one");
 
 			string expected = current + DSC + "one";
-			AssertEquals ("Combine #04", expected, testPath);
+			Assert.AreEqual (expected, testPath, "Combine #04");
 
 			testPath = Path.Combine ("one", current);
 			// LAMESPEC noted in Path.cs
-			AssertEquals ("Combine #05", current, testPath);
+			Assert.AreEqual (current, testPath, "Combine #05");
 
 			testPath = Path.Combine (current, expected);
-			AssertEquals ("Combine #06", expected, testPath);
+			Assert.AreEqual (expected, testPath, "Combine #06");
 
 			testPath = DSC + "one";
 			testPath = Path.Combine (testPath, "two" + DSC);
 			expected = DSC + "one" + DSC + "two" + DSC;
-			AssertEquals ("Combine #06", expected, testPath);
+			Assert.AreEqual (expected, testPath, "Combine #06");
 
 			testPath = "one" + DSC;
 			testPath = Path.Combine (testPath, DSC + "two");
 			expected = DSC + "two";
-			AssertEquals ("Combine #06", expected, testPath);
+			Assert.AreEqual (expected, testPath, "Combine #06");
 
 			testPath = "one" + DSC;
 			testPath = Path.Combine (testPath, "two" + DSC);
 			expected = "one" + DSC + "two" + DSC;
-			AssertEquals ("Combine #07", expected, testPath);
+			Assert.AreEqual (expected, testPath, "Combine #07");
 		}
 
 		[Test]
@@ -206,13 +206,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.Combine ("a\0", "one");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -221,12 +221,12 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.Combine (null, "one");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertEquals ("#5", "path1", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path1", ex.ParamName, "#5");
 			}
 		}
 
@@ -235,13 +235,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.Combine ("one", "a\0");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -250,12 +250,12 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.Combine ("one", null);
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertEquals ("#5", "path2", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path2", ex.ParamName, "#5");
 			}
 		}
 
@@ -268,38 +268,38 @@ namespace MonoTests.System.IO
 			files [(int) OsType.Mac] = "foo";
 
 			string testDirName = Path.GetDirectoryName (path1);
-			AssertEquals ("#A1", files [(int) OS], testDirName);
+			Assert.AreEqual (files [(int) OS], testDirName, "#A1");
 			testDirName = Path.GetDirectoryName (files [(int) OS] + DSC);
-			AssertEquals ("#A2", files [(int) OS], testDirName);
+			Assert.AreEqual (files [(int) OS], testDirName, "#A2");
 
 			if (Windows) {
-				AssertEquals ("#B1", "C:\\foo", Path.GetDirectoryName ("C:\\foo\\foo.txt"));
-				AssertEquals ("#B2", null, Path.GetDirectoryName ("C:"));
-				AssertEquals ("#B3", null, Path.GetDirectoryName (@"C:\"));
-				AssertEquals ("#B4", @"C:\", Path.GetDirectoryName (@"C:\dir"));
-				AssertEquals ("#B5", @"C:\dir", Path.GetDirectoryName (@"C:\dir\"));
-				AssertEquals ("#B6", @"C:\dir", Path.GetDirectoryName (@"C:\dir\dir"));
-				AssertEquals ("#B7", @"C:\dir\dir", Path.GetDirectoryName (@"C:\dir\dir\"));
+				Assert.AreEqual ("C:\\foo", Path.GetDirectoryName ("C:\\foo\\foo.txt"), "#B1");
+				Assert.AreEqual (null, Path.GetDirectoryName ("C:"), "#B2");
+				Assert.AreEqual (null, Path.GetDirectoryName (@"C:\"), "#B3");
+				Assert.AreEqual (@"C:\", Path.GetDirectoryName (@"C:\dir"), "#B4");
+				Assert.AreEqual (@"C:\dir", Path.GetDirectoryName (@"C:\dir\"), "#B5");
+				Assert.AreEqual (@"C:\dir", Path.GetDirectoryName (@"C:\dir\dir"), "#B6");
+				Assert.AreEqual (@"C:\dir\dir", Path.GetDirectoryName (@"C:\dir\dir\"), "#B7");
 
-				AssertEquals ("#C1", "\\foo\\bar", Path.GetDirectoryName ("/foo//bar/dingus"));
-				AssertEquals ("#C2", "foo\\bar", Path.GetDirectoryName ("foo/bar/"));
-				AssertEquals ("#C3", "foo\\bar", Path.GetDirectoryName ("foo/bar\\xxx"));
-				AssertEquals ("#C4", "\\\\host\\dir\\dir2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\\path"));
+				Assert.AreEqual ("\\foo\\bar", Path.GetDirectoryName ("/foo//bar/dingus"), "#C1");
+				Assert.AreEqual ("foo\\bar", Path.GetDirectoryName ("foo/bar/"), "#C2");
+				Assert.AreEqual ("foo\\bar", Path.GetDirectoryName ("foo/bar\\xxx"), "#C3");
+				Assert.AreEqual ("\\\\host\\dir\\dir2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\\path"), "#C4");
 
 				// UNC tests
-				AssertEquals ("#D1", null, Path.GetDirectoryName (@"\\"));
-				AssertEquals ("#D2", null, Path.GetDirectoryName (@"\\server"));
-				AssertEquals ("#D3", null, Path.GetDirectoryName (@"\\server\share"));
-				AssertEquals ("#D4", @"\\server\share", Path.GetDirectoryName (@"\\server\share\"));
-				AssertEquals ("#D5", @"\\server\share", Path.GetDirectoryName (@"\\server\share\dir"));
-				AssertEquals ("#D6", @"\\server\share\dir", Path.GetDirectoryName (@"\\server\share\dir\subdir"));
+				Assert.AreEqual (null, Path.GetDirectoryName (@"\\"), "#D1");
+				Assert.AreEqual (null, Path.GetDirectoryName (@"\\server"), "#D2");
+				Assert.AreEqual (null, Path.GetDirectoryName (@"\\server\share"), "#D3");
+				Assert.AreEqual (@"\\server\share", Path.GetDirectoryName (@"\\server\share\"), "#D4");
+				Assert.AreEqual (@"\\server\share", Path.GetDirectoryName (@"\\server\share\dir"), "#D5");
+				Assert.AreEqual (@"\\server\share\dir", Path.GetDirectoryName (@"\\server\share\dir\subdir"), "#D6");
 			} else {
-				AssertEquals ("#B1", "/etc", Path.GetDirectoryName ("/etc/hostname"));
-				AssertEquals ("#B2", "/foo/bar", Path.GetDirectoryName ("/foo//bar/dingus"));
-				AssertEquals ("#B3", "foo/bar", Path.GetDirectoryName ("foo/bar/"));
-				AssertEquals ("#B4", "/", Path.GetDirectoryName ("/tmp"));
-				AssertNull ("#B5", Path.GetDirectoryName ("/"));
-				AssertEquals ("#B6", "a", Path.GetDirectoryName ("a//b"));
+				Assert.AreEqual ("/etc", Path.GetDirectoryName ("/etc/hostname"), "#B1");
+				Assert.AreEqual ("/foo/bar", Path.GetDirectoryName ("/foo//bar/dingus"), "#B2");
+				Assert.AreEqual ("foo/bar", Path.GetDirectoryName ("foo/bar/"), "#B3");
+				Assert.AreEqual ("/", Path.GetDirectoryName ("/tmp"), "#B4");
+				Assert.IsNull (Path.GetDirectoryName ("/"), "#B5");
+				Assert.AreEqual ("a", Path.GetDirectoryName ("a//b"), "#B6");
 			}
 		}
 
@@ -308,13 +308,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetDirectoryName (String.Empty);
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -323,20 +323,20 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetDirectoryName ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
 		public void GetDirectoryName_Path_Null ()
 		{
-			AssertNull (Path.GetDirectoryName (null));
+			Assert.IsNull (Path.GetDirectoryName (null));
 		}
 
 		[Test]
@@ -344,13 +344,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetDirectoryName ("   ");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -359,46 +359,46 @@ namespace MonoTests.System.IO
 		{
 			string testExtn = Path.GetExtension (path1);
 
-			AssertEquals ("GetExtension #01",  ".txt", testExtn);
+			Assert.AreEqual (".txt", testExtn, "GetExtension #01");
 
 			testExtn = Path.GetExtension (path2);
-			AssertEquals ("GetExtension #02", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #02");
 
 			testExtn = Path.GetExtension (String.Empty);
-			AssertEquals ("GetExtension #03", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #03");
 
 			testExtn = Path.GetExtension (null);
-			AssertEquals ("GetExtension #04", null, testExtn);
+			Assert.AreEqual (null, testExtn, "GetExtension #04");
 
 			testExtn = Path.GetExtension (" ");
-			AssertEquals ("GetExtension #05", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #05");
 
 			testExtn = Path.GetExtension (path1 + ".doc");
-			AssertEquals ("GetExtension #06", ".doc", testExtn);
+			Assert.AreEqual (".doc", testExtn, "GetExtension #06");
 
 			testExtn = Path.GetExtension (path1 + ".doc" + DSC + "a.txt");
-			AssertEquals ("GetExtension #07", ".txt", testExtn);
+			Assert.AreEqual (".txt", testExtn, "GetExtension #07");
 
 			testExtn = Path.GetExtension (".");
-			AssertEquals ("GetExtension #08", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #08");
 
 			testExtn = Path.GetExtension ("end.");
-			AssertEquals ("GetExtension #09", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #09");
 
 			testExtn = Path.GetExtension (".start");
-			AssertEquals ("GetExtension #10", ".start", testExtn);
+			Assert.AreEqual (".start", testExtn, "GetExtension #10");
 
 			testExtn = Path.GetExtension (".a");
-			AssertEquals ("GetExtension #11", ".a", testExtn);
+			Assert.AreEqual (".a", testExtn, "GetExtension #11");
 
 			testExtn = Path.GetExtension ("a.");
-			AssertEquals ("GetExtension #12", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #12");
 
 			testExtn = Path.GetExtension ("a");
-			AssertEquals ("GetExtension #13", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #13");
 
 			testExtn = Path.GetExtension ("makefile");
-			AssertEquals ("GetExtension #14", String.Empty, testExtn);
+			Assert.AreEqual (String.Empty, testExtn, "GetExtension #14");
 		}
 
 		[Test]
@@ -406,13 +406,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetExtension ("hi\0world.txt");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path.
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -421,13 +421,13 @@ namespace MonoTests.System.IO
 		{
 			string testFileName = Path.GetFileName (path1);
 
-			AssertEquals ("#1", "test.txt", testFileName);
+			Assert.AreEqual ("test.txt", testFileName, "#1");
 			testFileName = Path.GetFileName (null);
-			AssertEquals ("#2", null, testFileName);
+			Assert.AreEqual (null, testFileName, "#2");
 			testFileName = Path.GetFileName (String.Empty);
-			AssertEquals ("#3", String.Empty, testFileName);
+			Assert.AreEqual (String.Empty, testFileName, "#3");
 			testFileName = Path.GetFileName (" ");
-			AssertEquals ("#4", " ", testFileName);
+			Assert.AreEqual (" ", testFileName, "#4");
 		}
 
 		[Test]
@@ -435,13 +435,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFileName ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -450,13 +450,13 @@ namespace MonoTests.System.IO
 		{
 			string testFileName = Path.GetFileNameWithoutExtension (path1);
 
-			AssertEquals ("GetFileNameWithoutExtension #01", "test", testFileName);
+			Assert.AreEqual ("test", testFileName, "GetFileNameWithoutExtension #01");
 
 			testFileName = Path.GetFileNameWithoutExtension (null);
-			AssertEquals ("GetFileNameWithoutExtension #02", null, testFileName);
+			Assert.AreEqual (null, testFileName, "GetFileNameWithoutExtension #02");
 
 			testFileName = Path.GetFileNameWithoutExtension (String.Empty);
-			AssertEquals ("GetFileNameWithoutExtension #03", String.Empty, testFileName);
+			Assert.AreEqual (String.Empty, testFileName, "GetFileNameWithoutExtension #03");
 		}
 
 		[Test]
@@ -464,13 +464,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFileNameWithoutExtension ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -481,10 +481,10 @@ namespace MonoTests.System.IO
 
 			string testFullPath = Path.GetFullPath ("foo.txt");
 			string expected = current + DSC + "foo.txt";
-			AssertEquals ("GetFullPath #01", expected, testFullPath);
+			Assert.AreEqual (expected, testFullPath, "GetFullPath #01");
 
 			testFullPath = Path.GetFullPath ("a//./.././foo.txt");
-			AssertEquals ("GetFullPath #02", expected, testFullPath);
+			Assert.AreEqual (expected, testFullPath, "GetFullPath #02");
 		}
 
 		[Test]
@@ -525,15 +525,15 @@ namespace MonoTests.System.IO
 			};
 
 			for (int i = 0; i < test.GetUpperBound (0); i++) {
-				AssertEquals (String.Format ("GetFullPathUnix #{0}", i),
-					root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
+				Assert.AreEqual (root + test [i, 1], Path.GetFullPath (root + test [i, 0]),
+						 String.Format ("GetFullPathUnix #{0}", i));
 			}
 
-			AssertEquals ("#01", "/", Path.GetFullPath ("/"));
-			AssertEquals ("#02", "/hey", Path.GetFullPath ("/hey"));
-			AssertEquals ("#03", Environment.CurrentDirectory, Path.GetFullPath ("."));
-			AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
-					     Path.GetFullPath ("hey"));
+			Assert.AreEqual ("/", Path.GetFullPath ("/"), "#01");
+			Assert.AreEqual ("/hey", Path.GetFullPath ("/hey"), "#02");
+			Assert.AreEqual (Environment.CurrentDirectory, Path.GetFullPath ("."), "#03");
+			Assert.AreEqual (Path.Combine (Environment.CurrentDirectory, "hey"),
+					     Path.GetFullPath ("hey"), "#04");
 		}
 
 		[Test]
@@ -571,8 +571,8 @@ namespace MonoTests.System.IO
 			};
 
 			for (int i = 0; i < test.GetUpperBound (0); i++) {
-				AssertEquals (String.Format ("GetFullPathWindows #{0}", i),
-					root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
+				Assert.AreEqual (root + test [i, 1], Path.GetFullPath (root + test [i, 0]),
+						 String.Format ("GetFullPathWindows #{0}", i));
 			}
 
 			// UNC tests
@@ -610,8 +610,8 @@ namespace MonoTests.System.IO
 				string res = test [i, 1] != null
 					? root + test [i, 1]
 					: root2;
-				AssertEquals (String.Format ("GetFullPathWindows UNC #{0}", i),
-					res, Path.GetFullPath (root + test [i, 0]));
+				Assert.AreEqual (res, Path.GetFullPath (root + test [i, 0]),
+						 String.Format ("GetFullPathWindows UNC #{0}", i));
 			}
 		}
 
@@ -620,13 +620,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFullPath (String.Empty);
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -635,7 +635,7 @@ namespace MonoTests.System.IO
 		{
 			string fp = Path.GetFullPath ("something/");
 			char end = fp [fp.Length - 1];
-			Assert (end == Path.DirectorySeparatorChar);
+			Assert.IsTrue (end == Path.DirectorySeparatorChar);
 		}
 
 		[Test]
@@ -643,13 +643,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFullPath ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -658,12 +658,12 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFullPath (null);
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertEquals ("#5", "path", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
 			}
 		}
 
@@ -672,13 +672,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetFullPath ("  ");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -686,28 +686,28 @@ namespace MonoTests.System.IO
 		public void GetFullPath2 ()
 		{
 			if (Windows) {
-				AssertEquals ("GetFullPath w#01", @"Z:\", Path.GetFullPath ("Z:"));
+				Assert.AreEqual (@"Z:\", Path.GetFullPath ("Z:"), "GetFullPath w#01");
 #if !TARGET_JVM // Java full (canonical) path always starts with caps drive letter
-				AssertEquals ("GetFullPath w#02", @"c:\abc\def", Path.GetFullPath (@"c:\abc\def"));
+				Assert.AreEqual (@"c:\abc\def", Path.GetFullPath (@"c:\abc\def"), "GetFullPath w#02");
 #endif
-				Assert ("GetFullPath w#03", Path.GetFullPath (@"\").EndsWith (@"\"));
+				Assert.IsTrue (Path.GetFullPath (@"\").EndsWith (@"\"), "GetFullPath w#03");
 				// "\\\\" is not allowed
-				Assert ("GetFullPath w#05", Path.GetFullPath ("/").EndsWith (@"\"));
+				Assert.IsTrue (Path.GetFullPath ("/").EndsWith (@"\"), "GetFullPath w#05");
 				// "//" is not allowed
-				Assert ("GetFullPath w#07", Path.GetFullPath ("readme.txt").EndsWith (@"\readme.txt"));
-				Assert ("GetFullPath w#08", Path.GetFullPath ("c").EndsWith (@"\c"));
-				Assert ("GetFullPath w#09", Path.GetFullPath (@"abc\def").EndsWith (@"abc\def"));
-				Assert ("GetFullPath w#10", Path.GetFullPath (@"\abc\def").EndsWith (@"\abc\def"));
-				AssertEquals ("GetFullPath w#11", @"\\abc\def", Path.GetFullPath (@"\\abc\def"));
-				AssertEquals ("GetFullPath w#12", Directory.GetCurrentDirectory () + @"\abc\def", Path.GetFullPath (@"abc//def"));
-				AssertEquals ("GetFullPath w#13", Directory.GetCurrentDirectory ().Substring (0, 2) + @"\abc\def", Path.GetFullPath ("/abc/def"));
-				AssertEquals ("GetFullPath w#14", @"\\abc\def", Path.GetFullPath ("//abc/def"));
+				Assert.IsTrue (Path.GetFullPath ("readme.txt").EndsWith (@"\readme.txt"), "GetFullPath w#07");
+				Assert.IsTrue (Path.GetFullPath ("c").EndsWith (@"\c"), "GetFullPath w#08");
+				Assert.IsTrue (Path.GetFullPath (@"abc\def").EndsWith (@"abc\def"), "GetFullPath w#09");
+				Assert.IsTrue (Path.GetFullPath (@"\abc\def").EndsWith (@"\abc\def"), "GetFullPath w#10");
+				Assert.AreEqual (@"\\abc\def", Path.GetFullPath (@"\\abc\def"), "GetFullPath w#11");
+				Assert.AreEqual (Directory.GetCurrentDirectory () + @"\abc\def", Path.GetFullPath (@"abc//def"), "GetFullPath w#12");
+				Assert.AreEqual (Directory.GetCurrentDirectory ().Substring (0, 2) + @"\abc\def", Path.GetFullPath ("/abc/def"), "GetFullPath w#13");
+				Assert.AreEqual (@"\\abc\def", Path.GetFullPath ("//abc/def"), "GetFullPath w#14");
 			} else {
-				AssertEquals ("#01", "/", Path.GetFullPath ("/"));
-				AssertEquals ("#02", "/hey", Path.GetFullPath ("/hey"));
-				AssertEquals ("#03", Environment.CurrentDirectory, Path.GetFullPath ("."));
-				AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
-						     Path.GetFullPath ("hey"));
+				Assert.AreEqual ("/", Path.GetFullPath ("/"), "#01");
+				Assert.AreEqual ("/hey", Path.GetFullPath ("/hey"), "#02");
+				Assert.AreEqual (Environment.CurrentDirectory, Path.GetFullPath ("."), "#03");
+				Assert.AreEqual (Path.Combine (Environment.CurrentDirectory, "hey"),
+						     Path.GetFullPath ("hey"), "#04");
 			}
 		}
 
@@ -725,7 +725,7 @@ namespace MonoTests.System.IO
 			}
 
 			string pathRoot = Path.GetPathRoot (current);
-			AssertEquals ("GetPathRoot #01", expected, pathRoot);
+			Assert.AreEqual (expected, pathRoot, "GetPathRoot #01");
 		}
 
 		[Test]
@@ -737,28 +737,28 @@ namespace MonoTests.System.IO
 			string pathRoot;
 			
 			pathRoot = Path.GetPathRoot ("hola");
-			AssertEquals ("#A1", String.Empty, pathRoot);
+			Assert.AreEqual (String.Empty, pathRoot, "#A1");
 			pathRoot = Path.GetPathRoot (null);
-			AssertEquals ("#A2", null, pathRoot);
+			Assert.AreEqual (null, pathRoot, "#A2");
 
 			if (Windows) {
-				AssertEquals ("GetPathRoot w#01", "z:", Path.GetPathRoot ("z:"));
-				AssertEquals ("GetPathRoot w#02", "c:\\", Path.GetPathRoot ("c:\\abc\\def"));
-				AssertEquals ("GetPathRoot w#03", "\\", Path.GetPathRoot ("\\"));
-				AssertEquals ("GetPathRoot w#04", "\\\\", Path.GetPathRoot ("\\\\"));
-				AssertEquals ("GetPathRoot w#05", "\\", Path.GetPathRoot ("/"));
-				AssertEquals ("GetPathRoot w#06", "\\\\", Path.GetPathRoot ("//"));
-				AssertEquals ("GetPathRoot w#07", String.Empty, Path.GetPathRoot ("readme.txt"));
-				AssertEquals ("GetPathRoot w#08", String.Empty, Path.GetPathRoot ("c"));
-				AssertEquals ("GetPathRoot w#09", String.Empty, Path.GetPathRoot ("abc\\def"));
-				AssertEquals ("GetPathRoot w#10", "\\", Path.GetPathRoot ("\\abc\\def"));
-				AssertEquals ("GetPathRoot w#11", "\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def"));
-				AssertEquals ("GetPathRoot w#12", String.Empty, Path.GetPathRoot ("abc//def"));
-				AssertEquals ("GetPathRoot w#13", "\\", Path.GetPathRoot ("/abc/def"));
-				AssertEquals ("GetPathRoot w#14", "\\\\abc\\def", Path.GetPathRoot ("//abc/def"));
-				AssertEquals ("GetPathRoot w#15", @"C:\", Path.GetPathRoot (@"C:\"));
-				AssertEquals ("GetPathRoot w#16", @"C:\", Path.GetPathRoot (@"C:\\"));
-				AssertEquals ("GetPathRoot w#17", "\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def\\ghi"));
+				Assert.AreEqual ("z:", Path.GetPathRoot ("z:"), "GetPathRoot w#01");
+				Assert.AreEqual ("c:\\", Path.GetPathRoot ("c:\\abc\\def"), "GetPathRoot w#02");
+				Assert.AreEqual ("\\", Path.GetPathRoot ("\\"), "GetPathRoot w#03");
+				Assert.AreEqual ("\\\\", Path.GetPathRoot ("\\\\"), "GetPathRoot w#04");
+				Assert.AreEqual ("\\", Path.GetPathRoot ("/"), "GetPathRoot w#05");
+				Assert.AreEqual ("\\\\", Path.GetPathRoot ("//"), "GetPathRoot w#06");
+				Assert.AreEqual (String.Empty, Path.GetPathRoot ("readme.txt"), "GetPathRoot w#07");
+				Assert.AreEqual (String.Empty, Path.GetPathRoot ("c"), "GetPathRoot w#08");
+				Assert.AreEqual (String.Empty, Path.GetPathRoot ("abc\\def"), "GetPathRoot w#09");
+				Assert.AreEqual ("\\", Path.GetPathRoot ("\\abc\\def"), "GetPathRoot w#10");
+				Assert.AreEqual ("\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def"), "GetPathRoot w#11");
+				Assert.AreEqual (String.Empty, Path.GetPathRoot ("abc//def"), "GetPathRoot w#12");
+				Assert.AreEqual ("\\", Path.GetPathRoot ("/abc/def"), "GetPathRoot w#13");
+				Assert.AreEqual ("\\\\abc\\def", Path.GetPathRoot ("//abc/def"), "GetPathRoot w#14");
+				Assert.AreEqual (@"C:\", Path.GetPathRoot (@"C:\"), "GetPathRoot w#15");
+				Assert.AreEqual (@"C:\", Path.GetPathRoot (@"C:\\"), "GetPathRoot w#16");
+				Assert.AreEqual ("\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def\\ghi"), "GetPathRoot w#17");
 			} else {
 				// TODO: Same tests for Unix.
 			}
@@ -769,13 +769,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetPathRoot (String.Empty);
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -788,16 +788,16 @@ namespace MonoTests.System.IO
 #if NET_2_0
 			try {
 				Path.GetPathRoot ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 #else
-			AssertEquals (String.Empty, Path.GetPathRoot ("hi\0world"));
+			Assert.AreEqual (String.Empty, Path.GetPathRoot ("hi\0world"));
 #endif
 		}
 
@@ -806,13 +806,13 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.GetPathRoot ("  ");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The path is not of a legal form
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -820,9 +820,9 @@ namespace MonoTests.System.IO
 		public void GetTempPath ()
 		{
 			string getTempPath = Path.GetTempPath ();
-			Assert ("GetTempPath #01",  getTempPath != String.Empty);
-			Assert ("GetTempPath #02",  Path.IsPathRooted (getTempPath));
-			AssertEquals ("GetTempPath #03", Path.DirectorySeparatorChar, getTempPath [getTempPath.Length - 1]);
+			Assert.IsTrue (getTempPath != String.Empty, "GetTempPath #01");
+			Assert.IsTrue (Path.IsPathRooted (getTempPath), "GetTempPath #02");
+			Assert.AreEqual (Path.DirectorySeparatorChar, getTempPath [getTempPath.Length - 1], "GetTempPath #03");
 		}
 
 		[Test]
@@ -831,8 +831,8 @@ namespace MonoTests.System.IO
 			string getTempFileName = null;
 			try {
 				getTempFileName = Path.GetTempFileName ();
-				Assert ("GetTempFileName #01", getTempFileName != String.Empty);
-				Assert ("GetTempFileName #02", File.Exists (getTempFileName));
+				Assert.IsTrue (getTempFileName != String.Empty, "GetTempFileName #01");
+				Assert.IsTrue (File.Exists (getTempFileName), "GetTempFileName #02");
 			} finally {
 				if (getTempFileName != null && getTempFileName != String.Empty){
 					File.Delete (getTempFileName);
@@ -843,19 +843,19 @@ namespace MonoTests.System.IO
 		[Test]
 		public void HasExtension ()
 		{
-			AssertEquals ("HasExtension #01",  true, Path.HasExtension ("foo.txt"));
-			AssertEquals ("HasExtension #02",  false, Path.HasExtension ("foo"));
-			AssertEquals ("HasExtension #03",  true, Path.HasExtension (path1));
-			AssertEquals ("HasExtension #04",  false, Path.HasExtension (path2));
-			AssertEquals ("HasExtension #05",  false, Path.HasExtension (null));
-			AssertEquals ("HasExtension #06",  false, Path.HasExtension (String.Empty));
-			AssertEquals ("HasExtension #07",  false, Path.HasExtension (" "));
-			AssertEquals ("HasExtension #08",  false, Path.HasExtension ("."));
-			AssertEquals ("HasExtension #09",  false, Path.HasExtension ("end."));
-			AssertEquals ("HasExtension #10",  true, Path.HasExtension (".start"));
-			AssertEquals ("HasExtension #11",  true, Path.HasExtension (".a"));
-			AssertEquals ("HasExtension #12",  false, Path.HasExtension ("a."));
-			AssertEquals ("HasExtension #13",  false, Path.HasExtension ("Makefile"));
+			Assert.AreEqual (true, Path.HasExtension ("foo.txt"), "HasExtension #01");
+			Assert.AreEqual (false, Path.HasExtension ("foo"), "HasExtension #02");
+			Assert.AreEqual (true, Path.HasExtension (path1), "HasExtension #03");
+			Assert.AreEqual (false, Path.HasExtension (path2), "HasExtension #04");
+			Assert.AreEqual (false, Path.HasExtension (null), "HasExtension #05");
+			Assert.AreEqual (false, Path.HasExtension (String.Empty), "HasExtension #06");
+			Assert.AreEqual (false, Path.HasExtension (" "), "HasExtension #07");
+			Assert.AreEqual (false, Path.HasExtension ("."), "HasExtension #08");
+			Assert.AreEqual (false, Path.HasExtension ("end."), "HasExtension #09");
+			Assert.AreEqual (true, Path.HasExtension (".start"), "HasExtension #10");
+			Assert.AreEqual (true, Path.HasExtension (".a"), "HasExtension #11");
+			Assert.AreEqual (false, Path.HasExtension ("a."), "HasExtension #12");
+			Assert.AreEqual (false, Path.HasExtension ("Makefile"), "HasExtension #13");
 		}
 
 		[Test]
@@ -863,48 +863,48 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.HasExtension ("hi\0world.txt");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
 		public void IsPathRooted ()
 		{
-			Assert ("IsPathRooted #01", Path.IsPathRooted (path2));
-			Assert ("IsPathRooted #02", !Path.IsPathRooted (path3));
-			Assert ("IsPathRooted #03", !Path.IsPathRooted (null));
-			Assert ("IsPathRooted #04", !Path.IsPathRooted (String.Empty));
-			Assert ("IsPathRooted #05", !Path.IsPathRooted (" "));
-			Assert ("IsPathRooted #06", Path.IsPathRooted ("/"));
-			Assert ("IsPathRooted #07", Path.IsPathRooted ("//"));
-			Assert ("IsPathRooted #08", !Path.IsPathRooted (":"));
+			Assert.IsTrue (Path.IsPathRooted (path2), "IsPathRooted #01");
+			Assert.IsTrue (!Path.IsPathRooted (path3), "IsPathRooted #02");
+			Assert.IsTrue (!Path.IsPathRooted (null), "IsPathRooted #03");
+			Assert.IsTrue (!Path.IsPathRooted (String.Empty), "IsPathRooted #04");
+			Assert.IsTrue (!Path.IsPathRooted (" "), "IsPathRooted #05");
+			Assert.IsTrue (Path.IsPathRooted ("/"), "IsPathRooted #06");
+			Assert.IsTrue (Path.IsPathRooted ("//"), "IsPathRooted #07");
+			Assert.IsTrue (!Path.IsPathRooted (":"), "IsPathRooted #08");
 
 			if (Windows) {
-				Assert ("IsPathRooted #09", Path.IsPathRooted ("\\"));
-				Assert ("IsPathRooted #10", Path.IsPathRooted ("\\\\"));
-				Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
-				Assert ("IsPathRooted #12", Path.IsPathRooted ("z:\\"));
-				Assert ("IsPathRooted #13", Path.IsPathRooted ("z:\\topdir"));
+				Assert.IsTrue (Path.IsPathRooted ("\\"), "IsPathRooted #09");
+				Assert.IsTrue (Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
+				Assert.IsTrue (Path.IsPathRooted ("z:"), "IsPathRooted #11");
+				Assert.IsTrue (Path.IsPathRooted ("z:\\"), "IsPathRooted #12");
+				Assert.IsTrue (Path.IsPathRooted ("z:\\topdir"), "IsPathRooted #13");
 				// This looks MS BUG. It is treated as absolute path
-				Assert ("IsPathRooted #14", Path.IsPathRooted ("z:curdir"));
-				Assert ("IsPathRooted #15", Path.IsPathRooted ("\\abc\\def"));
+				Assert.IsTrue (Path.IsPathRooted ("z:curdir"), "IsPathRooted #14");
+				Assert.IsTrue (Path.IsPathRooted ("\\abc\\def"), "IsPathRooted #15");
 			} else {
-				Assert ("IsPathRooted #09", !Path.IsPathRooted ("\\"));
-				Assert ("IsPathRooted #10", !Path.IsPathRooted ("\\\\"));
-				Assert ("IsPathRooted #11", !Path.IsPathRooted ("z:"));
+				Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09");
+				Assert.IsTrue (!Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
+				Assert.IsTrue (!Path.IsPathRooted ("z:"), "IsPathRooted #11");
 			}
 		}
 
 		[Test]
 		public void IsPathRooted_Path_Empty ()
 		{
-			Assert (!Path.IsPathRooted (String.Empty));
+			Assert.IsTrue (!Path.IsPathRooted (String.Empty));
 		}
 
 		[Test]
@@ -912,35 +912,35 @@ namespace MonoTests.System.IO
 		{
 			try {
 				Path.IsPathRooted ("hi\0world");
-				Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Illegal characters in path.
-				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
-				AssertNull ("#3", ex.InnerException);
-				AssertNotNull ("#4", ex.Message);
-				AssertNull ("#5", ex.ParamName);
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
 		public void IsPathRooted_Path_Null ()
 		{
-			Assert (!Path.IsPathRooted (null));
+			Assert.IsTrue (!Path.IsPathRooted (null));
 		}
 
 		[Test]
 		public void IsPathRooted_Path_Whitespace ()
 		{
-			Assert (!Path.IsPathRooted ("  "));
+			Assert.IsTrue (!Path.IsPathRooted ("  "));
 		}
 
 		[Test]
 		public void CanonicalizeDots ()
 		{
 			string current = Path.GetFullPath (".");
-			Assert ("TestCanonicalizeDotst #01", !current.EndsWith ("."));
+			Assert.IsTrue (!current.EndsWith ("."), "TestCanonicalizeDotst #01");
 			string parent = Path.GetFullPath ("..");
-			Assert ("TestCanonicalizeDotst #02", !current.EndsWith (".."));
+			Assert.IsTrue (!current.EndsWith (".."), "TestCanonicalizeDotst #02");
 		}
 
 		[Test]
@@ -961,7 +961,7 @@ namespace MonoTests.System.IO
 #endif
 				Directory.SetCurrentDirectory (system);
 				string drive = system.Substring (0, 2);
-				AssertEquals ("current dir", system, Path.GetFullPath (drive));
+				Assert.AreEqual (system, Path.GetFullPath (drive), "current dir");
 			}
 			finally {
 				Directory.SetCurrentDirectory (curdir);
@@ -987,7 +987,7 @@ namespace MonoTests.System.IO
 				Directory.SetCurrentDirectory (system);
 				// e.g. C:dir (no backslash) will return CurrentDirectory + dir
 				string dir = system.Substring (0, 2) + "dir";
-				AssertEquals ("current dir", Path.Combine (system, "dir"), Path.GetFullPath (dir));
+				Assert.AreEqual (Path.Combine (system, "dir"), Path.GetFullPath (dir), "current dir");
 			}
 			finally {
 				Directory.SetCurrentDirectory (curdir);
@@ -1006,11 +1006,11 @@ namespace MonoTests.System.IO
 			if ((platform == 4) || (platform == 128) || (platform == 6))
 				return;
 
-			AssertEquals ("1", @"C:\Windows\dir", Path.GetFullPath (@"C:\Windows\System32\..\dir"));
-			AssertEquals ("2", @"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\dir"));
-			AssertEquals ("3", @"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\..\dir"));
-			AssertEquals ("4", @"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\..\..\dir"));
-			AssertEquals ("5", @"C:\dir\", Path.GetFullPath (@"C:\Windows\System32\..\.\..\.\..\dir\"));
+			Assert.AreEqual (@"C:\Windows\dir", Path.GetFullPath (@"C:\Windows\System32\..\dir"), "1");
+			Assert.AreEqual (@"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\dir"), "2");
+			Assert.AreEqual (@"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\..\dir"), "3");
+			Assert.AreEqual (@"C:\dir", Path.GetFullPath (@"C:\Windows\System32\..\..\..\..\dir"), "4");
+			Assert.AreEqual (@"C:\dir\", Path.GetFullPath (@"C:\Windows\System32\..\.\..\.\..\dir\"), "5");
 		}
 
 		[Test]
@@ -1019,9 +1019,9 @@ namespace MonoTests.System.IO
 			char[] invalid = Path.InvalidPathChars;
 			if (Windows) {
 #if NET_2_0
-				AssertEquals ("Length", 36, invalid.Length);
+				Assert.AreEqual (36, invalid.Length, "Length");
 #else
-				AssertEquals ("Length", 15, invalid.Length);
+				Assert.AreEqual (15, invalid.Length, "Length");
 #endif
 				foreach (char c in invalid) {
 					int i = (int) c;
@@ -1035,14 +1035,14 @@ namespace MonoTests.System.IO
 					// in both 1.1 SP1 and 2.0
 					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			} else {
 				foreach (char c in invalid) {
 					int i = (int) c;
 					if (i == 0)
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			}
 		}
@@ -1056,8 +1056,8 @@ namespace MonoTests.System.IO
 			try {
 				invalid[0] = 'a';
 				// kind of scary
-				Assert ("expected", expected[0] == 'a');
-				AssertEquals ("readonly", expected[0], Path.InvalidPathChars[0]);
+				Assert.IsTrue (expected[0] == 'a', "expected");
+				Assert.AreEqual (expected[0], Path.InvalidPathChars[0], "readonly");
 			} finally {
 				invalid[0] = original;
 			}
@@ -1069,7 +1069,7 @@ namespace MonoTests.System.IO
 		{
 			char[] invalid = Path.GetInvalidFileNameChars ();
 			if (Windows) {
-				AssertEquals (41, invalid.Length);
+				Assert.AreEqual (41, invalid.Length);
 				foreach (char c in invalid) {
 					int i = (int) c;
 					if (i < 32)
@@ -1079,7 +1079,7 @@ namespace MonoTests.System.IO
 					// ':', '*', '?', '\', '/'
 					if ((i == 58) || (i == 42) || (i == 63) || (i == 92) || (i == 47))
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			} else {
 				foreach (char c in invalid) {
@@ -1087,7 +1087,7 @@ namespace MonoTests.System.IO
 					// null or '/'
 					if ((i == 0) || (i == 47))
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			}
 		}
@@ -1098,8 +1098,8 @@ namespace MonoTests.System.IO
 			char[] expected = Path.GetInvalidFileNameChars ();
 			char[] invalid = Path.GetInvalidFileNameChars ();
 			invalid[0] = 'a';
-			Assert ("expected", expected[0] != 'a');
-			AssertEquals ("readonly", expected[0], Path.GetInvalidFileNameChars ()[0]);
+			Assert.IsTrue (expected[0] != 'a', "expected");
+			Assert.AreEqual (expected[0], Path.GetInvalidFileNameChars ()[0], "readonly");
 		}
 
 		[Test]
@@ -1107,21 +1107,21 @@ namespace MonoTests.System.IO
 		{
 			char[] invalid = Path.GetInvalidPathChars ();
 			if (Windows) {
-				AssertEquals (36, invalid.Length);
+				Assert.AreEqual (36, invalid.Length);
 				foreach (char c in invalid) {
 					int i = (int) c;
 					if (i < 32)
 						continue;
 					if ((i == 34) || (i == 60) || (i == 62) || (i == 124))
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			} else {
 				foreach (char c in invalid) {
 					int i = (int) c;
 					if (i == 0)
 						continue;
-					Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
+					Assert.Fail (String.Format ("'{0}' (#{1}) is invalid", c, i));
 				}
 			}
 		}
@@ -1135,9 +1135,9 @@ namespace MonoTests.System.IO
 					'\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\x09', '\x0A', '\x0B', '\x0C', '\x0D',
 					'\x0E', '\x0F', '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18',
 					'\x19', '\x1A', '\x1B', '\x1C', '\x1D', '\x1E', '\x1F' };
-				AssertEquals (expected.Length, invalid.Length);
+				Assert.AreEqual (expected.Length, invalid.Length);
 				for (int i = 0; i < expected.Length; i++ ) {
-					AssertEquals( "Character at position " + i,expected [i], invalid [i]);
+					Assert.AreEqual (expected [i], invalid [i], "Character at position " + i);
 				}
 			}
 		}
@@ -1148,21 +1148,21 @@ namespace MonoTests.System.IO
 			char[] expected = Path.GetInvalidPathChars ();
 			char[] invalid = Path.GetInvalidPathChars ();
 			invalid[0] = 'a';
-			Assert ("expected", expected[0] != 'a');
-			AssertEquals ("readonly", expected[0], Path.GetInvalidPathChars ()[0]);
+			Assert.IsTrue (expected[0] != 'a', "expected");
+			Assert.AreEqual (expected[0], Path.GetInvalidPathChars ()[0], "readonly");
 		}
 
 		[Test]
 		public void GetRandomFileName ()
 		{
 			string s = Path.GetRandomFileName ();
-			AssertEquals ("Length", 12, s.Length);
+			Assert.AreEqual (12, s.Length, "Length");
 			char[] invalid = Path.GetInvalidFileNameChars ();
 			for (int i=0; i < s.Length; i++) {
 				if (i == 8)
-					AssertEquals ("8", '.', s[i]);
+					Assert.AreEqual ('.', s[i], "8");
 				else
-					Assert (i.ToString (), Array.IndexOf (invalid, s[i]) == -1);
+					Assert.IsTrue (Array.IndexOf (invalid, s[i]) == -1, i.ToString ());
 			}
 		}
 
@@ -1174,15 +1174,15 @@ namespace MonoTests.System.IO
 				names [i] = Path.GetRandomFileName ();
 
 			foreach (string name in names) {
-				AssertEquals (12, name.Length);
-				AssertEquals ('.', name [8]);
+				Assert.AreEqual (12, name.Length);
+				Assert.AreEqual ('.', name [8]);
 
 				for (int i = 0; i < 12; i++) {
 					if (i == 8)
 						continue;
 
 					char c = name [i];
-					Assert (('a' <= c && c <= 'z') || ('0' <= c && c <= '9'));
+					Assert.IsTrue (('a' <= c && c <= 'z') || ('0' <= c && c <= '9'));
 				}
 			}
 		}

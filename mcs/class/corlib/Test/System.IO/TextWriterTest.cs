@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-	public class TextWriterTest : Assertion
+	public class TextWriterTest
 	{
 		class MyTextWriter : TextWriter
 		{
@@ -42,13 +42,13 @@ namespace MonoTests.System.IO
 		public void CoreNewLine ()
 		{
 			MyTextWriter w = new MyTextWriter ();
-			AssertNotNull (w.NewLine);
+			Assert.IsNotNull (w.NewLine);
 
 			w.UpdateLine ();
-			AssertEquals ('Z', w.NewLine [0]);
+			Assert.AreEqual ('Z', w.NewLine [0]);
 
 			w.UpdateLine2 ();
-			AssertEquals ('Y', w.NewLine [0]);
+			Assert.AreEqual ('Y', w.NewLine [0]);
 		}
 
 		class ArrayOrCharTester : TextWriter {
@@ -69,7 +69,7 @@ namespace MonoTests.System.IO
 		{
 			ArrayOrCharTester x = new ArrayOrCharTester ();
 			x.Write (new char [] {'a','b','c'});
-			AssertEquals (true, x.called_array);			
+			Assert.AreEqual (true, x.called_array);			
 		}
 	}
 }
