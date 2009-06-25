@@ -1,5 +1,8 @@
 2009-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_and_reloc_code): Factor out the code to
+	determine whenever a method is directly callable to a separate function.
+
 	* mini-<ARCH>.c tramp-<ARCH>.c: Remove needless casts and add new
 	needed ones as a result of the previous change.
 
