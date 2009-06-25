@@ -1,3 +1,11 @@
+2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpChannelListener.cs, TcpDuplexSessionChannel.cs :
+	  Made required changes for repeated use of message exchanges.
+	  Hold binary reader session. The channels use it incrementally.
+	  Preambles are handled at Open, and EndRecords are handled at
+	  Close, Add session shutdown hook here (not working yet though).
+
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelListenerBase_1.cs : added cancellation hook here too.

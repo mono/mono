@@ -28,7 +28,6 @@ namespace System.ServiceModel.Channels
 		Uri listen_uri;
 		TcpListener tcp_listener;
 		
-		[MonoTODO]
 		public TcpChannelListener (TcpTransportBindingElement source, 
 		                           BindingContext context) : base (context.Binding)
 		{
@@ -62,7 +61,6 @@ namespace System.ServiceModel.Channels
 			get { return listen_uri; }
 		}
 		
-		[MonoTODO]
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
 			TChannel channel = PopulateChannel (timeout);
@@ -72,9 +70,10 @@ namespace System.ServiceModel.Channels
 		
 		TChannel PopulateChannel (TimeSpan timeout)
 		{
+			var client = tcp_listener.AcceptTcpClient ();
 			// FIXME: pass delegate or something to remove the channel instance from "channels" when it is closed.
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, tcp_listener, timeout);
+				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client, timeout);
 
 			// FIXME: To implement more.
 			throw new NotImplementedException ();
@@ -110,7 +109,6 @@ namespace System.ServiceModel.Channels
 			tcp_listener = null;
 		}
 
-		[MonoTODO]
 		protected override void OnOpen (TimeSpan timeout)
 		{
 			IPHostEntry entry = Dns.GetHostEntry (listen_uri.Host);

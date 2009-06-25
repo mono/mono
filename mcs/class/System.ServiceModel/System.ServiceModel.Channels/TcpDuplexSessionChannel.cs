@@ -60,8 +60,7 @@ namespace System.ServiceModel.Channels
 
 			public override void Close (TimeSpan timeout)
 			{
-				// FIXME: what to do here?
-				throw new NotImplementedException ();
+				owner.DiscardSession ();
 			}
 		}
 
@@ -69,26 +68,23 @@ namespace System.ServiceModel.Channels
 		TcpClient client;
 		bool is_service_side;
 		EndpointAddress local_address;
-		TcpListener tcp_listener;
 		TimeSpan timeout;
 		TcpBinaryFrameManager frame;
-		TcpDuplexSession session;
+		TcpDuplexSession session; // do not use this directly. Use Session instead.
 		
 		public TcpDuplexSessionChannel (ChannelFactoryBase factory, TcpChannelInfo info, EndpointAddress address, Uri via)
 			: base (factory, address, via)
 		{
 			is_service_side = false;
 			this.info = info;
-			session = new TcpDuplexSession (this);
 		}
 		
-		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpListener tcpListener, TimeSpan timeout)
+		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client, TimeSpan timeout)
 			: base (listener)
 		{
 			is_service_side = true;
-			tcp_listener = tcpListener;
+			this.client = client;
 			this.info = info;
-			session = new TcpDuplexSession (this);
 			this.timeout = timeout;
 		}
 		
@@ -101,7 +97,16 @@ namespace System.ServiceModel.Channels
 		}
 		
 		public IDuplexSession Session {
-			get { return session; }
+			get {
+				if (session == null)
+					session = new TcpDuplexSession (this);
+				return session;
+			}
+		}
+
+		void DiscardSession ()
+		{
+			session = null;
 		}
 
 		public override void Send (Message message)
@@ -195,6 +200,11 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
+			// FIXME: should this be done at DiscardSession() ?
+			if (is_service_side)
+				frame.ProcessEndRecordRecipient ();
+			else
+				frame.ProcessEndRecordInitiator ();
 			if (client != null)
 				client.Close ();
 		}
@@ -223,15 +233,18 @@ namespace System.ServiceModel.Channels
 				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns, is_service_side) {
 					Encoder = this.Encoder,
 					Via = RemoteAddress.Uri };
+				frame.ProcessPreambleInitiator ();
+				frame.ProcessPreambleAckInitiator ();
 			} else {
 				// server side
-				client = tcp_listener.AcceptTcpClient ();
 				Stream s = client.GetStream ();
 
 				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s, is_service_side) { Encoder = this.Encoder };
 
 				// FIXME: use retrieved record properties in the request processing.
 
+				frame.ProcessPreambleRecipient (false);
+				frame.ProcessPreambleAckRecipient ();
 			}
 		}
 		
@@ -371,8 +384,10 @@ namespace System.ServiceModel.Channels
 			writer.Write (data, 0, data.Length);
 		}
 
-		void ProcessPreambleInitiator ()
+		public void ProcessPreambleInitiator ()
 		{
+			ResetWriteBuffer ();
+
 			buffer.WriteByte (VersionRecord);
 			buffer.WriteByte (1);
 			buffer.WriteByte (0);
@@ -384,9 +399,11 @@ namespace System.ServiceModel.Channels
 			buffer.WriteByte ((byte) EncodingRecord);
 			buffer.WriteByte (PreambleEndRecord);
 			buffer.Flush ();
+			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+			s.Flush ();
 		}
 
-		void ProcessPreambleAckInitiator ()
+		public void ProcessPreambleAckInitiator ()
 		{
 			int b = s.ReadByte ();
 			switch (b) {
@@ -399,12 +416,12 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		void ProcessPreambleAckRecipient ()
+		public void ProcessPreambleAckRecipient ()
 		{
 			s.WriteByte (PreambleAckRecord);
 		}
 
-		void ProcessPreambleRecipient (bool allowEndRecord)
+		public void ProcessPreambleRecipient (bool allowEndRecord)
 		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
@@ -427,11 +444,11 @@ namespace System.ServiceModel.Channels
 					EncodingRecord = (byte) s.ReadByte ();
 					break;
 				case ExtendingEncodingRecord:
-					throw new NotImplementedException ();
+					throw new NotImplementedException ("ExtendingEncodingRecord");
 				case UpgradeRequestRecord:
-					throw new NotImplementedException ();
+					throw new NotImplementedException ("UpgradeRequetRecord");
 				case UpgradeResponseRecord:
-					throw new NotImplementedException ();
+					throw new NotImplementedException ("UpgradeResponseRecord");
 				case PreambleEndRecord:
 					preambleEnd = true;
 					break;
@@ -445,16 +462,12 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		bool message_already_read_once;
+		XmlBinaryReaderSession reader_session;
+		int reader_session_items;
 
 		public Message ReadSizedMessage ()
 		{
 			// FIXME: implement full [MC-NMF].
-			if (is_service_side) {
-				ProcessPreambleRecipient (message_already_read_once);
-				message_already_read_once = true;
-				ProcessPreambleAckRecipient ();
-			}
 
 			var packetType = s.ReadByte ();
 			if (packetType != SizedEnvelopeRecord)
@@ -472,26 +485,28 @@ namespace System.ServiceModel.Channels
 			// the returned buffer consists of a serialized reader 
 			// session and the binary xml body. 
 
-			var session = new XmlBinaryReaderSession ();
+			var session = reader_session ?? new XmlBinaryReaderSession ();
+			reader_session = session;
 			byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
-			int count = 0;
 			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
 				var rbr = new BinaryReader (rms, Encoding.UTF8);
 				while (rms.Position < rms.Length)
-					session.Add (count++, rbr.ReadString ());
+					session.Add (reader_session_items++, rbr.ReadString ());
 			}
 			var benc = Encoder as BinaryMessageEncoder;
 			if (benc != null)
 				benc.CurrentReaderSession = session;
+
 			// FIXME: supply maxSizeOfHeaders.
 			Message msg = Encoder.ReadMessage (ms, 0x10000);
 			if (benc != null)
 				benc.CurrentReaderSession = null;
 
-			if (!is_service_side)
-				if (s.Read (eof_buffer, 0, 1) == 1)
-					if (eof_buffer [0] != EndRecord)
-						throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
+//			if (!is_service_side)
+//				if (s.Read (eof_buffer, 0, 1) == 1)
+//					if (eof_buffer [0] != EndRecord)
+//						throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
+//
 
 			return msg;
 		}
@@ -501,9 +516,6 @@ namespace System.ServiceModel.Channels
 		public void WriteSizedMessage (Message message)
 		{
 			ResetWriteBuffer ();
-
-			if (!is_service_side)
-				ProcessPreambleInitiator ();
 
 			// FIXME: implement full [MC-NMF] protocol.
 
@@ -544,11 +556,10 @@ namespace System.ServiceModel.Channels
 
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
 			s.Flush ();
+		}
 
-			// It is processed at *this* late.
-			if (!is_service_side)
-				ProcessPreambleAckInitiator ();
-
+		public void ProcessEndRecordInitiator ()
+		{
 			s.WriteByte (EndRecord); // it is required
 			s.Flush ();
 		}
