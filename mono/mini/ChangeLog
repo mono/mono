@@ -1,3 +1,8 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c tramp-<ARCH>.c aot-runtime.c: Use mgreg_t* as the
+	type of register arrays.
+
 2009-06-24  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
