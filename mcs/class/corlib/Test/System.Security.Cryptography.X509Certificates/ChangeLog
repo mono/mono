@@ -1,3 +1,7 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.	
+
 2008-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* X509CertificateTest.cs: Added asserts for Subject and Issuer.

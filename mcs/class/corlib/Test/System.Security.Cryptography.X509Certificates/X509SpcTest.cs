@@ -19,7 +19,7 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 	[TestFixture]
-	public class SoftwarePublisherCertificateTest : Assertion {
+	public class SoftwarePublisherCertificateTest  {
 
 		[TearDown]
 		public void TearDown () 
@@ -1010,7 +1010,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 			X509Certificate cert = new X509Certificate (motus);
-			AssertEquals ("CreateFromSignedFile", cert.GetRawCertDataString (), spc.GetRawCertDataString ());
+			Assert.AreEqual (cert.GetRawCertDataString (), spc.GetRawCertDataString (), "CreateFromSignedFile");
 		}
 
 		[Test]
@@ -1030,7 +1030,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 #if NET_2_0
 			X509Certificate cert = new X509Certificate (motus);
-			AssertEquals ("CreateFromSignedFile", cert.GetRawCertDataString (), spc.GetRawCertDataString ());
+			Assert.AreEqual (cert.GetRawCertDataString (), spc.GetRawCertDataString (), "CreateFromSignedFile");
 			// Invalid authenticode signature cannot be detected this way with 2.0 ?
 #endif
 		}
@@ -1048,7 +1048,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509Certificate.CreateFromSignedFile (filename);
 #else
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
-			AssertEquals ("NonSignedAssembly", 0, spc.GetHashCode ());
+			Assert.AreEqual (0, spc.GetHashCode (), "NonSignedAssembly");
 #endif
 		}
 	}

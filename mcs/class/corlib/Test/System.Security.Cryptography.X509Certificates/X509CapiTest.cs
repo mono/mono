@@ -125,8 +125,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 			X509Certificate x509 = new X509Certificate (handle);
 			byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
-			AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
-			Assertion.AssertEquals ("GetCertHashString", "D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString ());
+			Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
+			Assert.AreEqual ("D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString (), "GetCertHashString");
 #if NET_2_0
 			DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
 			Assert.AreEqual ("03/12/1996 18:38:47", from.ToString (), "GetEffectiveDateString");
@@ -134,25 +134,25 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual ("03/12/1997 18:38:46", until.ToString (), "GetExpirationDateString");
 #else
 			// fx 1.x has a bug where the returned dates were always in the Seattle time zone
-			Assertion.AssertEquals ("GetEffectiveDateString", "03/12/1996 10:38:47", x509.GetEffectiveDateString ());
-			Assertion.AssertEquals ("GetExpirationDateString", "03/12/1997 10:38:46", x509.GetExpirationDateString ());
+			Assert.AreEqual ("03/12/1996 10:38:47", x509.GetEffectiveDateString (), "GetEffectiveDateString");
+			Assert.AreEqual ("03/12/1997 10:38:46", x509.GetExpirationDateString (), "GetExpirationDateString");
 			// which was making it easier to test the dates ;-)
 #endif
-			Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
-			Assertion.AssertEquals ("GetHashCode", -701544240, x509.GetHashCode ());
-			Assertion.AssertEquals ("GetIssuerName", "C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName ());
-			Assertion.AssertEquals ("GetKeyAlgorithm", "1.2.840.113549.1.1.1", x509.GetKeyAlgorithm ());
+			Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
+			Assert.AreEqual (-701544240, x509.GetHashCode (), "GetHashCode");
+			Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName (), "GetIssuerName");
+			Assert.AreEqual ("1.2.840.113549.1.1.1", x509.GetKeyAlgorithm (), "GetKeyAlgorithm");
 			byte[] keyparams = { 0x05,0x00 };
-			AssertEquals ("GetKeyAlgorithmParameters", keyparams, x509.GetKeyAlgorithmParameters ());
-			Assertion.AssertEquals ("GetKeyAlgorithmParametersString", "0500", x509.GetKeyAlgorithmParametersString ());
-			Assertion.AssertEquals ("GetName", "C=US, S=California, O=CommerceNet, OU=Server Certification Authority", x509.GetName ());
+			Assert.AreEqual (keyparams, x509.GetKeyAlgorithmParameters (), "GetKeyAlgorithmParameters");
+			Assert.AreEqual ("0500", x509.GetKeyAlgorithmParametersString (), "GetKeyAlgorithmParametersString");
+			Assert.AreEqual ("C=US, S=California, O=CommerceNet, OU=Server Certification Authority", x509.GetName (), "GetName");
 			byte[] pubkey = { 0x30,0x5C,0x02,0x55,0x2D,0x58,0xE9,0xBF,0xF0,0x31,0xCD,0x79,0x06,0x50,0x5A,0xD5,0x9E,0x0E,0x2C,0xE6,0xC2,0xF7,0xF9,0xD2,0xCE,0x55,0x64,0x85,0xB1,0x90,0x9A,0x92,0xB3,0x36,0xC1,0xBC,0xEA,0xC8,0x23,0xB7,0xAB,0x3A,0xA7,0x64,0x63,0x77,0x5F,0x84,0x22,0x8E,0xE5,0xB6,0x45,0xDD,0x46,0xAE,0x0A,0xDD,0x00,0xC2,0x1F,0xBA,0xD9,0xAD,0xC0,0x75,0x62,0xF8,0x95,0x82,0xA2,0x80,0xB1,0x82,0x69,0xFA,0xE1,0xAF,0x7F,0xBC,0x7D,0xE2,0x7C,0x76,0xD5,0xBC,0x2A,0x80,0xFB,0x02,0x03,0x01,0x00,0x01 };
-			AssertEquals ("GetPublicKey", pubkey, x509.GetPublicKey ());
-			Assertion.AssertEquals ("GetPublicKeyString", "305C02552D58E9BFF031CD7906505AD59E0E2CE6C2F7F9D2CE556485B1909A92B336C1BCEAC823B7AB3AA76463775F84228EE5B645DD46AE0ADD00C21FBAD9ADC07562F89582A280B18269FAE1AF7FBC7DE27C76D5BC2A80FB0203010001", x509.GetPublicKeyString ());
-			AssertEquals ("GetRawCertData", cert, x509.GetRawCertData ());
-			Assertion.AssertEquals ("GetRawCertDataString", ToString (cert), x509.GetRawCertDataString ());
+			Assert.AreEqual (pubkey, x509.GetPublicKey (), "GetPublicKey");
+			Assert.AreEqual ("305C02552D58E9BFF031CD7906505AD59E0E2CE6C2F7F9D2CE556485B1909A92B336C1BCEAC823B7AB3AA76463775F84228EE5B645DD46AE0ADD00C21FBAD9ADC07562F89582A280B18269FAE1AF7FBC7DE27C76D5BC2A80FB0203010001", x509.GetPublicKeyString (), "GetPublicKeyString");
+			Assert.AreEqual (cert, x509.GetRawCertData (), "GetRawCertData");
+			Assert.AreEqual (ToString (cert), x509.GetRawCertDataString (), "GetRawCertDataString");
 			byte[] serial = { 0xE8,0x06,0x00,0x72,0x02 };
-			AssertEquals ("GetSerialNumber", serial, x509.GetSerialNumber ());
+			Assert.AreEqual (serial, x509.GetSerialNumber (), "GetSerialNumber");
 #if NET_2_0
 			Assert.AreEqual ("02720006E8", x509.GetSerialNumberString (), "GetSerialNumberString");
 #else
