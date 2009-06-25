@@ -1,3 +1,7 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.	
+
 2007-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DebuggerDisplayAttributeTest.cs: Make test forward compatible.

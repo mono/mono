@@ -19,7 +19,7 @@ namespace MonoTests.System.Diagnostics
 	/// location inside it.
 	/// </summary>
 	[TestFixture]
-	public class StackFrameTest1 : Assertion
+	public class StackFrameTest1
 	{
 		private StackFrame frame1;
 		private StackFrame frame2;
@@ -44,13 +44,13 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileName ()
 		{
-			AssertEquals ("File name (1)",
-						 "dir/someFile",
-						 frame1.GetFileName ());
+			Assert.AreEqual ("dir/someFile",
+						 frame1.GetFileName (),
+						 "File name (1)");
 
-			AssertEquals ("File name (2)",
-						 "SomeFile2.cs",
-						 frame2.GetFileName ());
+			Assert.AreEqual ("SomeFile2.cs",
+						 frame2.GetFileName (),
+						 "File name (2)");
 		}
 
 		/// <summary>
@@ -59,13 +59,13 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileLineNumber ()
 		{
-			AssertEquals ("Line number (1)",
-						 13,
-						 frame1.GetFileLineNumber ());
+			Assert.AreEqual (13,
+							 frame1.GetFileLineNumber (),
+							 "Line number (1)");
 
-			AssertEquals ("Line number (2)",
-						 24,
-						 frame2.GetFileLineNumber ());
+			Assert.AreEqual (24,
+							 frame2.GetFileLineNumber (),
+							 "Line number (2)");
 		}
 
 		/// <summary>
@@ -74,13 +74,13 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileColumnNumber ()
 		{
-			AssertEquals ("Column number (1)",
-						 45,
-						 frame1.GetFileColumnNumber ());
+			Assert.AreEqual (45,
+							 frame1.GetFileColumnNumber (),
+							 "Column number (1)");
 
-			AssertEquals ("Column number (2)",
-						 0,
-						 frame2.GetFileColumnNumber ());
+			Assert.AreEqual (0,
+							 frame2.GetFileColumnNumber (),
+							 "Column number (2)");
 		}
 
 		/// <summary>
@@ -89,23 +89,23 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetMethod ()
 		{
-			Assert ("Method not null (1)", (frame1.GetMethod () != null));
+			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
 
-			AssertEquals ("Class declaring the method (1)",
-						 this.GetType (),
-						 frame1.GetMethod ().DeclaringType);
-			AssertEquals ("Method name (1)",
-						 "SetUp",
-						 frame1.GetMethod ().Name);
+			Assert.AreEqual (this.GetType (),
+							 frame1.GetMethod ().DeclaringType,
+							 "Class declaring the method (1)");
+			Assert.AreEqual ("SetUp",
+							 frame1.GetMethod ().Name,
+							 "Method name (1)");
 
-			Assert ("Method not null (2)", (frame2.GetMethod () != null));
+			Assert.IsTrue ((frame2.GetMethod () != null), "Method not null (2)");
 
-			AssertEquals ("Class declaring the method (2)",
-						 this.GetType (),
-						 frame2.GetMethod ().DeclaringType);
-			AssertEquals ("Method name (2)",
-						 "SetUp",
-						 frame2.GetMethod ().Name);
+			Assert.AreEqual (this.GetType (),
+							 frame2.GetMethod ().DeclaringType,
+							 "Class declaring the method (2)");
+			Assert.AreEqual ("SetUp",
+							 frame2.GetMethod ().Name,
+							 "Method name (2)");
 		}
 	}
 
@@ -119,7 +119,7 @@ namespace MonoTests.System.Diagnostics
 	/// debug information?
 	/// </remarks>
 	[TestFixture]
-	public class StackFrameTest2 : Assertion
+	public class StackFrameTest2
 	{
 		private StackFrame frame1;
 		private StackFrame frame2;
@@ -147,18 +147,17 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileName1 ()
 		{
-			AssertNull ("File name (1)",
-					   frame1.GetFileName ());
+			Assert.IsNull (frame1.GetFileName (),
+						   "File name (1)");
 		}
 
 		[Test]
 		public void TestGetFileName2 ()
 		{
-			AssertNotNull ("File name not null", frame2.GetFileName ());
-			Assert ("File name not empty", frame2.GetFileName ().Length != 0);
-			Assert ("File name (2) " + frame2.GetFileName ()
-							+ " ends with StackFrameTest.cs",
-				   frame2.GetFileName ().EndsWith ("StackFrameTest.cs"));
+			Assert.IsNotNull (frame2.GetFileName (), "File name not null");
+			Assert.IsTrue (frame2.GetFileName ().Length != 0, "File name not empty");
+			Assert.IsTrue (frame2.GetFileName ().EndsWith ("StackFrameTest.cs"),
+						   "File name (2) " + frame2.GetFileName () + " ends with StackFrameTest.cs");
 		}
 
 		/// <summary>
@@ -167,17 +166,17 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileLineNumber ()
 		{
-			AssertEquals ("Line number (1)",
-						 0,
-						 frame1.GetFileLineNumber ());
+			Assert.AreEqual (0,
+							 frame1.GetFileLineNumber (),
+							 "Line number (1)");
 
-			AssertEquals ("Line number (2)",
-						 132,
-						 frame2.GetFileLineNumber ());
+			Assert.AreEqual (132,
+							 frame2.GetFileLineNumber (),
+							 "Line number (2)");
 
-			AssertEquals ("Line number (3)",
-						 0,
-						 frame3.GetFileLineNumber ());
+			Assert.AreEqual (0,
+							 frame3.GetFileLineNumber (),
+							 "Line number (3)");
 		}
 
 		/// <summary>
@@ -187,17 +186,17 @@ namespace MonoTests.System.Diagnostics
 		[Category ("NotWorking")] // bug #45730 - Column numbers always zero
 		public void TestGetFileColumnNumber ()
 		{
-			AssertEquals ("Column number (1)",
-						 0,
-						 frame1.GetFileColumnNumber ());
+			Assert.AreEqual (0,
+							 frame1.GetFileColumnNumber (),
+							 "Column number (1)");
 
-			AssertEquals ("Column number (2)",
-						 4,
-						 frame2.GetFileColumnNumber ());
+			Assert.AreEqual (4,
+							 frame2.GetFileColumnNumber (),
+							 "Column number (2)");
 
-			AssertEquals ("Column number (3)",
-						 0,
-						 frame3.GetFileColumnNumber ());
+			Assert.AreEqual (0,
+							 frame3.GetFileColumnNumber (),
+							 "Column number (3)");
 		}
 
 		/// <summary>
@@ -206,35 +205,35 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetMethod ()
 		{
-			Assert ("Method not null (1)",
-				   (frame1.GetMethod () != null));
+			Assert.IsNotNull (frame1.GetMethod (),
+							  "Method not null (1)");
 
-			AssertEquals ("Class declaring the method (1)",
-						 this.GetType (),
-						 frame1.GetMethod ().DeclaringType);
-			AssertEquals ("Method name (1)",
-						 "SetUp",
-						 frame1.GetMethod ().Name);
+			Assert.AreEqual (this.GetType (),
+							 frame1.GetMethod ().DeclaringType,
+							 "Class declaring the method (1)");
+			Assert.AreEqual ("SetUp",
+							 frame1.GetMethod ().Name,
+							 "Method name (1)");
 
-			Assert ("Method not null (2)",
-				   (frame2.GetMethod () != null));
+			Assert.IsNotNull (frame2.GetMethod (),
+							  "Method not null (2)");
 
-			AssertEquals ("Class declaring the method (2)",
-						 this.GetType (),
-						 frame2.GetMethod ().DeclaringType);
-			AssertEquals ("Method name (2)",
-						 "SetUp",
-						 frame2.GetMethod ().Name);
+			Assert.AreEqual (this.GetType (),
+							 frame2.GetMethod ().DeclaringType,
+							 "Class declaring the method (2)");
+			Assert.AreEqual ("SetUp",
+							 frame2.GetMethod ().Name,
+							 "Method name (2)");
 
-			Assert ("Method not null (3)",
-				   (frame3.GetMethod () != null));
+			Assert.IsNotNull (frame3.GetMethod (),
+							  "Method not null (3)");
 
-			AssertEquals ("Class declaring the method (3)",
-						 this.GetType (),
-						 frame3.GetMethod ().DeclaringType);
-			AssertEquals ("Method name (3)",
-						 "SetUp",
-						 frame3.GetMethod ().Name);
+			Assert.AreEqual (this.GetType (),
+							 frame3.GetMethod ().DeclaringType,
+							 "Class declaring the method (3)");
+			Assert.AreEqual ("SetUp",
+							 frame3.GetMethod ().Name,
+							 "Method name (3)");
 		}
 	}
 
@@ -249,7 +248,7 @@ namespace MonoTests.System.Diagnostics
 	/// debug information?
 	/// </remarks>
 	[TestFixture]
-	public class StackFrameTest3 : Assertion
+	public class StackFrameTest3
 	{
 		protected StackFrame frame1;
 		protected StackFrame frame2;
@@ -283,15 +282,14 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetFileName ()
 		{
-			AssertNull ("File name (1)",
-					   frame1.GetFileName ());
+			Assert.IsNull (frame1.GetFileName (),
+						   "File name (1)");
 
-			AssertNotNull ("File name (2) should not be null",
-					   frame2.GetFileName ());
+			Assert.IsNotNull (frame2.GetFileName (),
+							  "File name (2) should not be null");
 
-			Assert ("File name (2) " + frame2.GetFileName ()
-										+ " ends with StackFrameTest.cs",
-							   frame2.GetFileName ().EndsWith ("StackFrameTest.cs"));
+			Assert.IsTrue (frame2.GetFileName ().EndsWith ("StackFrameTest.cs"),
+						   "File name (2) " + frame2.GetFileName () + " ends with StackFrameTest.cs");
 		}
 
 		/// <summary>
@@ -303,13 +301,13 @@ namespace MonoTests.System.Diagnostics
 #endif
 		public void TestGetFileLineNumber ()
 		{
-			AssertEquals ("Line number (1)",
-						 0,
-						 frame1.GetFileLineNumber ());
+			Assert.AreEqual (0,
+							 frame1.GetFileLineNumber (),
+							 "Line number (1)");
 
-			AssertEquals ("Line number (2)",
-						 261,
-						 frame2.GetFileLineNumber ());
+			Assert.AreEqual (260,
+							 frame2.GetFileLineNumber (),
+							 "Line number (2)");
 		}
 
 		/// <summary>
@@ -322,13 +320,13 @@ namespace MonoTests.System.Diagnostics
 		[Category ("NotWorking")] // bug #45730 - Column numbers always zero
 		public void TestGetFileColumnNumber ()
 		{
-			AssertEquals ("Column number (1)",
-						 0,
-						 frame1.GetFileColumnNumber ());
+			Assert.AreEqual (0,
+						 frame1.GetFileColumnNumber (),
+							 "Column number (1)");
 
-			AssertEquals ("Column number (2)",
-						 4,
-						 frame2.GetFileColumnNumber ());
+			Assert.AreEqual (4,
+							 frame2.GetFileColumnNumber (),
+							 "Column number (2)");
 		}
 
 		/// <summary>
@@ -337,17 +335,17 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void TestGetMethod ()
 		{
-			Assert ("Method not null (1)", (frame1.GetMethod () != null));
+			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
 
-			Assert ("Method not null (2)", (frame2.GetMethod () != null));
+			Assert.IsTrue ((frame2.GetMethod () != null), "Method not null (2)");
 
-			AssertEquals ("Class declaring the method (2)",
-						 this.GetType (),
-						 frame2.GetMethod ().DeclaringType);
+			Assert.AreEqual (this.GetType (),
+							 frame2.GetMethod ().DeclaringType,
+							 "Class declaring the method (2)");
 
-			AssertEquals ("Method name (2)",
-									 "SetUp",
-									 frame2.GetMethod ().Name);
+			Assert.AreEqual ("SetUp",
+							 frame2.GetMethod ().Name,
+							 "Method name (2)");
 		}
 	}
 }
