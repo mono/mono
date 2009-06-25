@@ -1,3 +1,7 @@
+2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : add some instance provider tests.
+
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : make sure that the port to be in use is

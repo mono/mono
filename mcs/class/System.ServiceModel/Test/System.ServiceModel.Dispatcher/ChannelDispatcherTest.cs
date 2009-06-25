@@ -123,6 +123,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.IsNotNull (ed.DispatchRuntime, "#1");
 			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#2");
 			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#3");
+			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#3.2");
 			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#4");
 			d.Endpoints.Add (ed);
 			d.MessageVersion = MessageVersion.Default;
@@ -189,6 +190,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.IsNotNull (ed.DispatchRuntime, "#3");
 			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
 			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it is not still set after ChannelDispatcher.Open().
+			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#5.2");
 			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
 
 			d.Close (); // we don't have to even close it.
@@ -255,6 +257,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				Assert.IsNotNull (ed.DispatchRuntime, "#3");
 				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
 				Assert.IsNotNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
+				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#5.2");
 				Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
 				/*
 				var l = new HttpListener ();
