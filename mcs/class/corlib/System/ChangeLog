@@ -1,3 +1,8 @@
+2009-06-25  Miguel de Icaza  <miguel@novell.com>
+ 
+	* Int32.cs: Fix regression introduced in 2005, we need to throw
+	ArgumentNullException on Parse.
+	
 2009-06-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTime.cs: ignore MinValue to avoid DateTimeOffset ctor throwing
