@@ -1,4 +1,14 @@
 
+2009-06-25  Sylvain Dupont <duposyl@gmail.com>
+
+	* cominterop.h cominterop.c marshal.c: Added support for marshalling out 
+	  parameters of type SAFEARRAY[VARIANT].
+
+	* reflection.c (encode_marshal_blob): Properly generate element type
+	  (SafeArraySubType marshal attribute option).
+
+	Code is contributed under MIT/X11 license.
+
 Thu Jun 25 15:48:09 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: in mono_method_clear_object () really ensure all the
