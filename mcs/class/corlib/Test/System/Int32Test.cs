@@ -216,6 +216,13 @@ public class Int32Test : Assertion
 		} catch (Exception e){
 			Assert ("C#40", typeof (ArgumentNullException) == e.GetType ());
 		}
+
+		try {
+			Int32.Parse ("123", (NumberStyles) 60000);
+			Fail ("C#41 Should raise an ArgumentException");
+		} catch (Exception e){
+			Assert ("C#42", typeof (ArgumentException) == e.GetType ());
+		}
 	}
 
 #if NET_2_0	

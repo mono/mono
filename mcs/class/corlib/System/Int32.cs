@@ -229,6 +229,10 @@ namespace System {
 							"are permitted.");
 					return false;
 				}
+			} else if ((uint) style > (uint) NumberStyles.Any){
+				if (!tryParse)
+					exc = new ArgumentException ("Not a valid number style");
+				return false;
 			}
 
 			return true;
