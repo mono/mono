@@ -1,5 +1,10 @@
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* sockets.c: add the error number to the message so we can figure out
+	when this happens.
+
+2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* wait.c: add missing 'break'.
 
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
