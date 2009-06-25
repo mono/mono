@@ -1,3 +1,7 @@
+2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SessionInstanceContextProvider.cs : new instance context provider.
+
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DispatchRuntime.cs : do not fill InstanceContextProvider here.
