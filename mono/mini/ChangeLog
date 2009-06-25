@@ -1,5 +1,8 @@
 2009-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.c tramp-<ARCH>.c: Remove needless casts and add new
+	needed ones as a result of the previous change.
+
 	* mini-<ARCH>.c tramp-<ARCH>.c: Use mgreg_t* as the
 	type of register arrays.
 
