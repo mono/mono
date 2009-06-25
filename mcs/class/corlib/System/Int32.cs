@@ -329,12 +329,6 @@ namespace System {
 
 			if (s == null) {
 				if (!tryParse)
-					exc = GetFormatException ();
-				return false;
-			}
-			
-			if (s == null) {
-				if (!tryParse)
 					exc = new ArgumentNullException ();
 				return false;
 			}

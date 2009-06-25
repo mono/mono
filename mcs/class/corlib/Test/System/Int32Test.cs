@@ -209,6 +209,13 @@ public class Int32Test : Assertion
 		} catch (Exception e) {
 			Assert ("C#38", typeof (OverflowException) == e.GetType ());
 		}
+
+		try {
+			Int32.Parse (null);
+			Fail ("C#39: Should raise an ArgumentNullException");
+		} catch (Exception e){
+			Assert ("C#40", typeof (ArgumentNullException) == e.GetType ());
+		}
 	}
 
 #if NET_2_0	
