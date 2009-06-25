@@ -1,3 +1,9 @@
+
+Thu Jun 25 15:48:09 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: in mono_method_clear_object () really ensure all the
+	objects are removed.
+
 2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_method_signature): Call into the verifier to check
