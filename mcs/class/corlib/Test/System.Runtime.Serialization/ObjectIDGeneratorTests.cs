@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Runtime.Serialization
 {
-	public class ObjectIDGeneratorTests : TestCase
+	public class ObjectIDGeneratorTests
 	{
 		ObjectIDGenerator generator;
 
@@ -22,7 +22,8 @@ namespace MonoTests.System.Runtime.Serialization
 		int obj2 = 42;		
 		long id;
 
-		protected override void SetUp ()
+		[SetUp]
+		protected void SetUp ()
 		{
 			generator = new ObjectIDGenerator ();
 		}
@@ -35,8 +36,8 @@ namespace MonoTests.System.Runtime.Serialization
 			bool testBool1;
 			id = generator.GetId (obj1, out testBool1);
 
-			AssertEquals ("A1", 1L, id); // should start at 1
-			AssertEquals ("A2", true, testBool1);	// firstTime should be true
+			Assert.AreEqual (1L, id); // should start at 1, "A1");
+			Assert.AreEqual (true, testBool1);	// firstTime should be true, "A2");
 		}
 
 		//
@@ -49,8 +50,8 @@ namespace MonoTests.System.Runtime.Serialization
 			id = generator.GetId (obj1, out testBool1);
 			long testId1 = generator.GetId (obj1, out testBool2);
 
-			AssertEquals ("B1", testId1, id); // same object, same ID
-			AssertEquals ("B2", false, testBool2); // no longer firstTime
+			Assert.AreEqual (testId1, id); // same object, same ID, "B1");
+			Assert.AreEqual (false, testBool2); // no longer firstTime, "B2");
 		}
 
 		//
@@ -63,8 +64,8 @@ namespace MonoTests.System.Runtime.Serialization
 			id = generator.GetId (obj1, out testBool1);
 			long testId2 = generator.HasId (obj1, out testBool3);
 
-			AssertEquals ("C1", false, testBool3); // this has been inserted before
-			AssertEquals ("C2", id, testId2); // we should get the same ID
+			Assert.AreEqual (false, testBool3); // this has been inserted before, "C1");
+			Assert.AreEqual (id, testId2); // we should get the same ID, "C2");
 		}
 
 		//
@@ -75,8 +76,8 @@ namespace MonoTests.System.Runtime.Serialization
 			bool testBool4;
 			long testId3 = generator.HasId (obj2, out testBool4);
 
-			AssertEquals ("D1", 0L, testId3);
-			AssertEquals ("D2", true, testBool4);
+			Assert.AreEqual (0L, testId3, "D1");
+			Assert.AreEqual (true, testBool4, "D2");
 		}
 	}
 }

@@ -14,30 +14,30 @@ using System.Runtime.Serialization;
 
 namespace MonoTests.System.Runtime.Serialization
 {
-	public class FormatterServicesTests : TestCase
+	public class FormatterServicesTests
 	{
 		public void TestClass1 ()
 		{
 			DerivedClass1 derived = new DerivedClass1 ();
 			derived.anotherInt = 69;
 			MemberInfo [] members = FormatterServices.GetSerializableMembers (derived.GetType ());
-			Assert ("#01", members != null);
-			AssertEquals ("#02", 3, members.Length);
+			Assert.IsTrue (members != null, "#01");
+			Assert.AreEqual (3, members.Length, "#02");
 
 			object [] data = FormatterServices.GetObjectData (derived, members);
-			Assert ("#03", data != null);
-			AssertEquals ("#04", 3, data.Length);
+			Assert.IsTrue (data != null, "#03");
+			Assert.AreEqual (3, data.Length, "#04");
 
 			DerivedClass1 o = (DerivedClass1) FormatterServices.GetUninitializedObject (derived.GetType ());
-			Assert ("#05", o != null);
+			Assert.IsTrue (o != null, "#05");
 
 			o = (DerivedClass1) FormatterServices.PopulateObjectMembers (o, members, data);
-			Assert ("#06", o != null);
-			AssertEquals ("#07", "hola", o.Hello);
-			AssertEquals ("#08", 21, o.IntBase);
-			AssertEquals ("#09", 1, o.IntDerived);
-			AssertEquals ("#10", 69, o.anotherInt);
-			AssertEquals ("#11", "hey", DerivedClass1.hey);
+			Assert.IsTrue (o != null, "#06");
+			Assert.AreEqual ("hola", o.Hello, "#07");
+			Assert.AreEqual (21, o.IntBase, "#08");
+			Assert.AreEqual (1, o.IntDerived, "#09");
+			Assert.AreEqual (69, o.anotherInt, "#10");
+			Assert.AreEqual ("hey", DerivedClass1.hey, "#11");
 		}
 	}
 

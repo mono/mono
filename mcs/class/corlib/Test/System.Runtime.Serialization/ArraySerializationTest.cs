@@ -189,9 +189,9 @@ namespace MonoTests.System.Runtime.Serialization
 		
 		void CompareArrays (string txt, Array a1, Array a2)
 		{
-			Assertion.AssertEquals (txt + " length", a1.Length, a2.Length);
+			Assert.AreEqual (a1.Length, a2.Length, txt + " length");
 			for (int n=0; n<a1.Length; n++)
-				Assertion.AssertEquals (txt + " [" + n + "]", a1.GetValue (n), a2.GetValue (n));
+				Assert.AreEqual (a1.GetValue (n), a2.GetValue (n), txt + " [" + n + "]");
 		}
 	}
 }
