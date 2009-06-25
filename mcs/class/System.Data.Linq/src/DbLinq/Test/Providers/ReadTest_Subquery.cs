@@ -138,5 +138,24 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.AreEqual(38, count);
         }
 
+
+        [Test]
+        public void QueryableContains01()
+        {
+            var db = CreateDB();
+            var q1 = db.OrderDetails.Where(o => o.Discount > 0).Select(o => o.OrderID);
+            var q = db.OrderDetails.Where(o => !q1.Contains(o.OrderID));
+            Assert.AreEqual(1110, q.Count());
+        }
+
+        [Test]
+        public void QueryableContains02()
+        {
+            var db = CreateDB();
+            DateTime t = DateTime.Parse("01/01/1950");
+            var q1 = db.Employees.Where(e => e.BirthDate.HasValue && e.BirthDate.Value > t).Select(e => e.EmployeeID);
+            var q = db.Orders.Where(o => o.EmployeeID.HasValue && !q1.Contains(o.EmployeeID.Value));
+            Assert.AreEqual(279, q.Count());
+        }
     }
 }

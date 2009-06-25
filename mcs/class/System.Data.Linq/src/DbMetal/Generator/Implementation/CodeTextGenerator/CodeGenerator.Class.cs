@@ -407,6 +407,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             var storageAttribute = NewAttributeDefinition<AssociationAttribute>();
             storageAttribute["Storage"] = child.Storage;
             storageAttribute["OtherKey"] = child.OtherKey;
+            storageAttribute["ThisKey"] = child.ThisKey;
             storageAttribute["Name"] = child.Name;
 
             SpecificationDefinition specifications;
@@ -498,7 +499,8 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                                     targetTable.Type.Name));
 
             var storageAttribute = NewAttributeDefinition<AssociationAttribute>();
-            storageAttribute["Storage"] = storageField;
+			storageAttribute["Storage"] = storageField;
+			storageAttribute["OtherKey"] = parent.OtherKey;
             storageAttribute["ThisKey"] = parent.ThisKey;
             storageAttribute["Name"] = parent.Name;
             storageAttribute["IsForeignKey"] = parent.IsForeignKey;

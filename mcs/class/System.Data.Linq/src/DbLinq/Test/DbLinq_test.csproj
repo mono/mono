@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AttributeMappingSourceTest.cs" />
     <Compile Include="CsvArrayAdapterTest.cs" />
     <Compile Include="DataContextTest.cs" />
     <Compile Include="EntitySetTest.cs" />

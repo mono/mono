@@ -67,9 +67,7 @@ using nwind;
         public void A2_ProductsTableHasEntries()
         {
             Northwind db = CreateDB();
-            //string sql = "SELECT count(*) FROM Northwind.Products";
-            int result = db.ExecuteCommand("SELECT count(*) FROM Products");
-            //long iResult = base.ExecuteScalar(sql);
+            int result = db.ExecuteCommand("SELECT count(*) FROM \"Products\"");
             Assert.Greater(result, 0, "Expecting some rows in Products table, got:" + result);
         }
 

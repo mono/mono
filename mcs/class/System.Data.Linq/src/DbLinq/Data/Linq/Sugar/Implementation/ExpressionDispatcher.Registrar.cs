@@ -193,7 +193,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 .GetDataMember(memberInfo);
             if (dataMember == null)
                 return null;
-            return new ColumnExpression(table, dataMember.MappedName, memberInfo);
+            return new ColumnExpression(table, dataMember);
         }
 
         /// <summary>
@@ -382,14 +382,16 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                                                           BuilderContext builderContext)
         {
             var bindings = new List<MemberBinding>();
-            foreach (var columnExpression in RegisterAllColumns(tableExpression, builderContext))
+            
+            foreach (ColumnExpression columnExpression in RegisterAllColumns(tableExpression, builderContext))
             {
-                PropertyInfo propertyInfo = columnExpression.MemberInfo as PropertyInfo;
+                MemberInfo memberInfo = columnExpression.StorageInfo ?? columnExpression.MemberInfo;
+                PropertyInfo propertyInfo = memberInfo as PropertyInfo;
                 if (propertyInfo == null || propertyInfo.CanWrite)
                 {
                     var parameterColumn = GetOutputValueReader(columnExpression,
                                                                dataRecordParameter, mappingContextParameter, builderContext);
-                    var binding = Expression.Bind(columnExpression.MemberInfo, parameterColumn);
+                    var binding = Expression.Bind(memberInfo, parameterColumn);
                     bindings.Add(binding);
                 }
             }
@@ -413,8 +415,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             var bindings = new List<MemberBinding>();
             for (int parameterIndex = 0; parameterIndex < parameters.Count; parameterIndex++)
             {
-                var parameter = parameters[parameterIndex];
-                var memberInfo = tableType.GetSingleMember(parameter);
+				var parameter = parameters[parameterIndex];
+				var memberInfo = tableType.GetTableColumnMember(parameter);
                 if (memberInfo == null)
                 {
                     memberInfo = tableType.GetSingleMember(parameter, BindingFlags.Public | BindingFlags.NonPublic
@@ -483,6 +485,24 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             int valueIndex = RegisterOutputParameter(expression, builderContext);
             return GetOutputValueReader(expression.Type, valueIndex, dataRecordParameter, mappingContextParameter);
         }
+
+        /// <summary>
+        /// Registers the ColumnExpression as returned by the SQL request.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="dataRecordParameter"></param>
+        /// <param name="mappingContextParameter"></param>
+        /// <param name="builderContext"></param>
+        /// <returns></returns>
+        protected virtual Expression GetOutputValueReader(ColumnExpression expression,
+                                                          ParameterExpression dataRecordParameter, ParameterExpression mappingContextParameter,
+                                                          BuilderContext builderContext)
+        {
+            int valueIndex = RegisterOutputParameter(expression, builderContext);
+            Type storageType = expression.StorageInfo != null ? expression.StorageInfo.GetMemberType() : null;
+            return GetOutputValueReader(storageType ?? expression.Type, valueIndex, dataRecordParameter, mappingContextParameter);
+        }
+
 
         /// <summary>
         /// Registers the expression as returned column

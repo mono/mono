@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 
@@ -51,6 +52,31 @@ namespace DbLinq.Util
         public static MemberInfo GetSingleMember(this Type t, string name)
         {
             return GetSingleMember(t, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+        }
+
+        /// <summary>
+        /// Returns a unique MemberInfo based on column name
+        /// </summary>
+        /// <param name="t">The declaring type</param>
+        /// <param name="name">The column name for the member</param>
+        /// <returns>A MemberInfo or null</returns>
+        public static MemberInfo GetTableColumnMember(this Type t, string name)
+        {
+            return GetTableColumnMember(t, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        }
+
+        /// <summary>
+        /// Returns a unique MemberInfo based on column name
+        /// </summary>
+        /// <param name="t">The declaring type</param>
+        /// <param name="name">The column name for the member</param>
+        /// <param name="bindingFlags">Binding flags</param>
+        /// <returns>A MemberInfo or null</returns>
+        public static MemberInfo GetTableColumnMember(this Type t, string name, BindingFlags bindingFlags)
+        {
+            return (from member in t.GetMembers()
+                   where (member.GetCustomAttributes(true).OfType<ColumnAttribute>().DefaultIfEmpty(new ColumnAttribute()).Single().Name == name)
+                    select member).SingleOrDefault();
         }
 
         /// <summary>

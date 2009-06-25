@@ -58,6 +58,9 @@
     <Compile Include="..\..\..\examples\DbLinq.Pgsql.Example\nwind\Northwind.cs">
       <Link>nwind\Northwind.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\examples\DbLinq.Pgsql.Example\nwind\NorthwindCustom.cs">
+      <Link>nwind\NorthwindCustom.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\lib\DynamicLinq.cs">
       <Link>lib\DynamicLinq.cs</Link>
     </Compile>

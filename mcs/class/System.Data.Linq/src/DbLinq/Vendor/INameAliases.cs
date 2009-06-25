@@ -66,5 +66,8 @@ namespace DbLinq.Vendor
         /// <param name="schema">An optional schema (or null)</param>
         /// <returns>Member type or null if no alias found</returns>
         string GetColumnForcedType(string column, string table, string schema);
+
+        string GetDatabaseNameAlias(string databaseName);
+        string GetClassNameAlias(string className);
     }
 }

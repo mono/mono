@@ -620,7 +620,7 @@ dummy text
         /// You are not expected to hold the cache for an extended duration (except possibly for a client scenario), 
         /// or share it across threads, processes, or machines in a cluster. 
         /// </summary>
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
@@ -630,7 +630,7 @@ dummy text
             Customer c1 = new Customer() { CustomerID = "temp", CompanyName = "Test", ContactName = "Test" };
             db.Customers.InsertOnSubmit(c1);
             db.SubmitChanges();
-            db.ExecuteCommand("delete from customers WHERE CustomerID='temp'");
+            db.ExecuteCommand("delete from \"Customers\" WHERE \"CustomerID\"='temp'");
 
             var res = db.Customers.First(c => c.CustomerID == "temp");
             Assert.IsNotNull(res);
@@ -638,7 +638,7 @@ dummy text
 
 
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.WriteTest+OrderDetailWithSum' is not mapped as a Table.
         [Explicit]
 #endif
@@ -720,7 +720,7 @@ dummy text
         }
 
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
@@ -755,7 +755,7 @@ dummy text
 
                 Assert.AreEqual(1, res.Count(), "#1");
 
-                db.ExecuteCommand("delete from customers WHERE CustomerID='temp'");
+                db.ExecuteCommand("DELETE FROM \"Customers\" WHERE \"CustomerID\"='temp'");
 
                 res = from c in db.Customers
                       where c.CustomerID == id
@@ -764,8 +764,7 @@ dummy text
             }
             finally
             {
-                db.ExecuteCommand("delete from customers WHERE CustomerID='temp'");
-
+                db.ExecuteCommand("DELETE FROM \"Customers\" WHERE \"CustomerID\"='temp'");
             }
         }
 

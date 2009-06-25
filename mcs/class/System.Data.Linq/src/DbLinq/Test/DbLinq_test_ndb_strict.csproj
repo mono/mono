@@ -35,7 +35,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\build.dbg\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONO_STRICT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONO_STRICT;L2SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <SignAssembly>true</SignAssembly>
@@ -45,7 +45,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\</OutputPath>
-    <DefineConstants>TRACE;MONO_STRICT</DefineConstants>
+    <DefineConstants>TRACE;MONO_STRICT;L2SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -70,6 +70,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeMappingSourceTest.cs" />
     <Compile Include="BinaryTest.cs" />
     <Compile Include="DataContextTest.cs" />
     <Compile Include="EntitySetTest.cs" />

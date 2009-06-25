@@ -101,14 +101,14 @@ namespace DbLinq.Vendor.Implementation
             if (string.IsNullOrEmpty(databaseName))
                 throw new ArgumentException("A database name is required. Please specify /database=<databaseName>");
 
-            databaseName = GetDatabaseName(databaseName);
+            databaseName = GetDatabaseNameAliased(databaseName, nameAliases);
 
             var schemaName = NameFormatter.GetSchemaName(databaseName, GetExtraction(databaseName), nameFormat);
             var names = new Names();
             var schema = new Database
                              {
                                  Name = schemaName.DbName,
-                                 Class = schemaName.ClassName,
+                                 Class = GetRuntimeClassName(schemaName.ClassName, nameAliases),
                                  BaseType = typeof(DataContext).FullName,
                                  ContextNamespace = contextNamespace,
                                  EntityNamespace = entityNamespace,
@@ -131,7 +131,7 @@ namespace DbLinq.Vendor.Implementation
             //CheckNamesSafety(schema);
 
             // generate backing fields name (since we have here correct names)
-            GenerateStorageFields(schema);
+            GenerateStorageAndMemberFields(schema);
 
             return schema;
         }
@@ -144,6 +144,23 @@ namespace DbLinq.Vendor.Implementation
         protected virtual string GetDatabaseName(string databaseName)
         {
             return databaseName;
+        }
+
+        protected virtual string GetDatabaseNameAliased(string databaseName, INameAliases nameAliases)
+        {
+            string databaseNameAliased = nameAliases != null ? nameAliases.GetDatabaseNameAlias(databaseName) : null;
+            return (databaseNameAliased != null) ? databaseNameAliased : GetDatabaseName(databaseName);
+        }
+
+        /// <summary>
+        /// Gets a usable name for the database class.
+        /// </summary>
+        /// <param name="databaseName">Name of the clas.</param>
+        /// <returns></returns>
+        protected virtual string GetRuntimeClassName(string className, INameAliases nameAliases)
+        {
+            string classNameAliased = nameAliases != null ? nameAliases.GetClassNameAlias(className) : null;
+            return (classNameAliased != null) ? classNameAliased : className;
         }
 
         /// <summary>
@@ -402,6 +419,7 @@ namespace DbLinq.Vendor.Implementation
 
                 column.CanBeNull = columnRow.Nullable;
 
+                string columnTypeAlias = nameAliases != null ? nameAliases.GetColumnForcedType(columnRow.ColumnName, columnRow.TableName, columnRow.TableSchema) : null;
                 var columnType = MapDbType(columnName.DbName, columnRow);
 
                 var columnEnumType = columnType as EnumType;
@@ -414,6 +432,8 @@ namespace DbLinq.Vendor.Implementation
                         enumType[enumValue.Key] = enumValue.Value;
                     }
                 }
+                else if (columnTypeAlias != null)
+                    column.Type = columnTypeAlias;
                 else
                     column.Type = columnType.ToString();
 

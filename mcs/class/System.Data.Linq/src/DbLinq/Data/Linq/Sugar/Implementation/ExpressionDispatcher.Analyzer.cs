@@ -25,6 +25,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -35,7 +36,6 @@ using System.Data.Linq;
 #else
 using DbLinq.Data.Linq;
 #endif
-
 using DbLinq.Data.Linq.Implementation;
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
@@ -584,7 +584,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         protected virtual Expression AnalyzeWhere(IList<Expression> parameters, BuilderContext builderContext)
         {
-            var tablePiece = parameters[0];
+			var tablePiece = parameters[0];
             RegisterWhere(Analyze(parameters[1], tablePiece, builderContext), builderContext);
             return tablePiece;
         }
@@ -748,13 +748,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     return new EntitySetExpression(queryAssociationExpression, memberInfo.GetMemberType());
                 }
                 // then, try the column
-                var queryColumnExpression = RegisterColumn(tableExpression, memberInfo, builderContext);
+                ColumnExpression queryColumnExpression = RegisterColumn(tableExpression, memberInfo, builderContext);
                 if (queryColumnExpression != null)
                 {
-                    Type memberType = memberInfo.GetMemberType();
-                    if (queryColumnExpression.Type != memberType)
+                    Type storageType = queryColumnExpression.StorageInfo != null ? queryColumnExpression.StorageInfo.GetMemberType() : null;
+                    if (storageType != null && queryColumnExpression.Type != storageType)
                     {
-                        return Expression.Convert(queryColumnExpression, memberInfo.GetMemberType(), typeof(Convert).GetMethod("To" + memberType.Name, new Type[] { queryColumnExpression.Type }));
+                        return Expression.Convert(queryColumnExpression, queryColumnExpression.Type, typeof(Convert).GetMethod("To" + queryColumnExpression.Type.Name, new Type[] { queryColumnExpression.Type }));
                     }
                     else
                     {
@@ -1371,9 +1371,27 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         {
             if (parameters[0].Type.IsArray)
             {
-                var array = Analyze(parameters[0], builderContext);
+                Expression array = Analyze(parameters[0], builderContext);
                 var expression = Analyze(parameters[1], builderContext);
                 return new SpecialExpression(SpecialExpressionType.In, expression, array);
+            }
+            else
+            {
+                if (typeof(IQueryable).IsAssignableFrom(parameters[0].Type))
+                {
+                    Expression p0 = Analyze(parameters[1], builderContext);
+                    BuilderContext newContext = builderContext.NewSelect();
+                    InputParameterExpression ip1 = new InputParameterExpression(parameters[0], "dummy");
+
+                    Expression p1 = AnalyzeQueryProvider(ip1.GetValue() as QueryProvider, newContext);
+                    ColumnExpression c = p1 as ColumnExpression;
+                    if (!newContext.CurrentSelect.Tables.Contains(c.Table))
+                    {
+                        newContext.CurrentSelect.Tables.Add(c.Table);
+                    }
+                    // TODO: verify if this is the right place to work
+                    return new SpecialExpression(SpecialExpressionType.In, p0, newContext.CurrentSelect.Mutate(new Expression[] { p1 }));
+                }
             }
             throw Error.BadArgument("S0548: Can't analyze Contains() method");
         }
@@ -1423,18 +1441,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (constantExpression.Value is ITable)
                 {
                     var tableType = constantExpression.Type.GetGenericArguments()[0];
-                    return new TableExpression(tableType, DataMapper.GetTableName(tableType, builderContext.QueryContext.DataContext));
+                    return CreateTable(tableType, builderContext);
                 }
                 else
                 {
                     QueryProvider queryProvider = constantExpression.Value as QueryProvider;
                     if (queryProvider != null)
                     {
-                        /*
-                        BuilderContext newContext = new BuilderContext(builderContext.QueryContext);
-                        Expression tableExpression = AnalyzeQueryProvider(queryProvider, newContext);
-                        builderContext.MergeWith(newContext);
-                        */
                         Expression tableExpression = AnalyzeQueryProvider(queryProvider, builderContext.NewQuote());
                         return tableExpression;
                     }

@@ -64,7 +64,7 @@ namespace DbLinq.Data.Linq
     public partial class DataContext : IDisposable
     {
         //private readonly Dictionary<string, ITable> _tableMap = new Dictionary<string, ITable>();
-		private readonly Dictionary<Type, ITable> _tableMap = new Dictionary<Type, ITable>();
+        private readonly Dictionary<Type, ITable> _tableMap = new Dictionary<Type, ITable>();
 
         public MetaModel Mapping { get; private set; }
         // PC question: at ctor, we get a IDbConnection and the Connection property exposes a DbConnection
@@ -314,44 +314,44 @@ namespace DbLinq.Data.Linq
             Mapping = mappingSource.GetModel(GetType());
         }
 
-		/// <summary>
-		/// Checks if the table is allready mapped or maps it if not.
-		/// </summary>
-		/// <param name="tableType">Type of the table.</param>
-		/// <exception cref="InvalidOperationException">Thrown if the table is not mappable.</exception>
-		private void CheckTableMapping(Type tableType)
-		{
-			//This will throw an exception if the table is not found
-			if(Mapping.GetTable(tableType) == null)
-			{
-				throw new InvalidOperationException("The type '" + tableType.Name + "' is not mapped as a Table.");
-			}
-		}
+        /// <summary>
+        /// Checks if the table is allready mapped or maps it if not.
+        /// </summary>
+        /// <param name="tableType">Type of the table.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the table is not mappable.</exception>
+        private void CheckTableMapping(Type tableType)
+        {
+            //This will throw an exception if the table is not found
+            if(Mapping.GetTable(tableType) == null)
+            {
+                throw new InvalidOperationException("The type '" + tableType.Name + "' is not mapped as a Table.");
+            }
+        }
 
-		/// <summary>
-		/// Returns a Table for the type TEntity.
-		/// </summary>
-		/// <exception cref="InvalidOperationException">If the type TEntity is not mappable as a Table.</exception>
-		/// <typeparam name="TEntity">The table type.</typeparam>
-    	public Table<TEntity> GetTable<TEntity>() where TEntity : class
+        /// <summary>
+        /// Returns a Table for the type TEntity.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If the type TEntity is not mappable as a Table.</exception>
+        /// <typeparam name="TEntity">The table type.</typeparam>
+        public Table<TEntity> GetTable<TEntity>() where TEntity : class
         {
             return (Table<TEntity>)GetTable(typeof(TEntity));
         }
 
-		/// <summary>
-		/// Returns a Table for the given type.
-		/// </summary>
-		/// <param name="type">The table type.</param>
-		/// <exception cref="InvalidOperationException">If the type is not mappable as a Table.</exception>
+        /// <summary>
+        /// Returns a Table for the given type.
+        /// </summary>
+        /// <param name="type">The table type.</param>
+        /// <exception cref="InvalidOperationException">If the type is not mappable as a Table.</exception>
         public ITable GetTable(Type type)
         {
             Profiler.At("DataContext.GetTable(typeof({0}))", type != null ? type.Name : null);
             ITable tableExisting;
-			if (_tableMap.TryGetValue(type, out tableExisting))
+            if (_tableMap.TryGetValue(type, out tableExisting))
                 return tableExisting;
 
-			//Check for table mapping
-			CheckTableMapping(type);
+            //Check for table mapping
+            CheckTableMapping(type);
 
             var tableNew = Activator.CreateInstance(
                               typeof(Table<>).MakeGenericType(type)
@@ -640,65 +640,77 @@ namespace DbLinq.Data.Linq
         }
 
         readonly IDataMapper DataMapper = ObjectFactory.Get<IDataMapper>();
-        private void SetEntityRefQueries(object entity)
-        {
+		private void SetEntityRefQueries(object entity)
+		{
             if (!this.deferredLoadingEnabled)
                 return;
 
             // BUG: This is ignoring External Mappings from XmlMappingSource.
 
-            Type thisType = entity.GetType();
-            IList<MemberInfo> properties = DataMapper.GetEntityRefAssociations(thisType);
+			Type thisType = entity.GetType();
+			IEnumerable<MetaAssociation> associationList = Mapping.GetMetaType(entity.GetType()).Associations.Where(a => a.IsForeignKey);
+			foreach (MetaAssociation association in associationList)
+			{
+				//example of entityRef:Order.Employee
+				var memberData = association.ThisMember;
+				Type otherTableType = association.OtherType.Type;
+				ParameterExpression p = Expression.Parameter(otherTableType, "other");
+
+				var otherTable = GetTable(otherTableType);
+
+				//ie:EmployeeTerritories.EmployeeID
+				var foreignKeys = memberData.Association.ThisKey;
+				BinaryExpression predicate = null;
+				var otherPKs = memberData.Association.OtherKey;
+				IEnumerator<MetaDataMember> otherPKEnumerator = otherPKs.GetEnumerator();
+
+				if (otherPKs.Count != foreignKeys.Count)
+					throw new InvalidOperationException("Foreign keys don't match ThisKey");
+				foreach (MetaDataMember key in foreignKeys)
+				{
+					otherPKEnumerator.MoveNext();
+
+					var thisForeignKeyProperty = (PropertyInfo)key.Member;
+					object thisForeignKeyValue = thisForeignKeyProperty.GetValue(entity, null);
+
+					if (thisForeignKeyValue != null)
+					{
+						BinaryExpression keyPredicate;
+						if (!(thisForeignKeyProperty.PropertyType.IsNullable()))
+						{
+							keyPredicate = Expression.Equal(Expression.MakeMemberAccess(p, otherPKEnumerator.Current.Member),
+																		Expression.Constant(thisForeignKeyValue));
+						}
+						else
+						{
+							var ValueProperty = thisForeignKeyProperty.PropertyType.GetProperty("Value");
+							keyPredicate = Expression.Equal(Expression.MakeMemberAccess(p, otherPKEnumerator.Current.Member),
+																	 Expression.Constant(ValueProperty.GetValue(thisForeignKeyValue, null)));
+						}
+
+						if (predicate == null)
+							predicate = keyPredicate;
+						else
+							predicate = Expression.And(predicate, keyPredicate);
+					}
+				}
+				IEnumerable query = null;
+				if (predicate != null)
+				{
+					query = GetOtherTableQuery(predicate, p, otherTableType, otherTable) as IEnumerable;
+					//it would be interesting surround the above query with a .Take(1) expression for performance.
+				}
 
 
-            foreach (PropertyInfo prop in properties)
-            {
-                //example of entityRef:Order.Employee
-                AssociationAttribute associationInfo = prop.GetAttribute<AssociationAttribute>();
-                Type otherTableType = prop.PropertyType;
-                IList<MemberInfo> otherPKs = DataMapper.GetPrimaryKeys(Mapping.GetTable(otherTableType));
-
-                if (otherPKs.Count > 1)
-                    throw new NotSupportedException("Multiple keys object not supported yet.");
-
-                var otherTable = GetTable(otherTableType);
-
-                //ie:EmployeeTerritories.EmployeeID
-
-                var thisForeignKeyProperty = thisType.GetProperty(associationInfo.ThisKey);
-                object thisForeignKeyValue = thisForeignKeyProperty.GetValue(entity, null);
-
-                IEnumerable query = null;
-                if (thisForeignKeyValue != null)
-                {
-                    ParameterExpression p = Expression.Parameter(otherTableType, "other");
-                    Expression predicate;
-                    if (!(thisForeignKeyProperty.PropertyType.IsNullable()))
-                    {
-                        predicate = Expression.Equal(Expression.MakeMemberAccess(p, otherPKs.First()),
-                                                                    Expression.Constant(thisForeignKeyValue));
-                    }
-                    else
-                    {
-                        var ValueProperty = thisForeignKeyProperty.PropertyType.GetProperty("Value");
-                        predicate = Expression.Equal(Expression.MakeMemberAccess(p, otherPKs.First()),
-                                                                 Expression.Constant(ValueProperty.GetValue(thisForeignKeyValue, null)));
-                    }
-
-                    query = GetOtherTableQuery(predicate, p, otherTableType, otherTable) as IEnumerable;
-                    //it would be interesting surround the above query with a .Take(1) expression for performance.
-                }
-
-
-                FieldInfo entityRefField = entity.GetType().GetField(associationInfo.Storage, BindingFlags.NonPublic | BindingFlags.Instance);
-                object entityRefValue = null;
-                if (query != null)
-                    entityRefValue = Activator.CreateInstance(entityRefField.FieldType, query);
-                else
-                    entityRefValue = Activator.CreateInstance(entityRefField.FieldType);
-                entityRefField.SetValue(entity, entityRefValue);
-            }
-        }
+				FieldInfo entityRefField = (FieldInfo)memberData.StorageMember;
+				object entityRefValue = null;
+				if (query != null)
+					entityRefValue = Activator.CreateInstance(entityRefField.FieldType, query);
+				else
+					entityRefValue = Activator.CreateInstance(entityRefField.FieldType);
+				entityRefField.SetValue(entity, entityRefValue);
+			}
+		}
 
         /// <summary>
         /// This method is executed when the entity is being registered. Each EntitySet property has a internal query that can be set using the EntitySet.SetSource method.
@@ -712,53 +724,60 @@ namespace DbLinq.Data.Linq
 
             // BUG: This is ignoring External Mappings from XmlMappingSource.
 
-            IList<MemberInfo> properties = DataMapper.GetEntitySetAssociations(entity.GetType());
-            
-            if (properties.Any()) {
-                IList<MemberInfo> thisPKs = DataMapper.GetPrimaryKeys(Mapping.GetTable(entity.GetType()));
+			IEnumerable<MetaAssociation> associationList = Mapping.GetMetaType(entity.GetType()).Associations.Where(a => !a.IsForeignKey);
 
-                if (thisPKs.Count > 1)
-                    throw new NotSupportedException("Multiple keys object not supported yet.");
-
-                object primaryKeyValue = (thisPKs.First() as PropertyInfo).GetValue(entity, null);
-
-
-                foreach (PropertyInfo prop in properties)
+			if (associationList.Any())
+			{
+				foreach (MetaAssociation association in associationList)
                 {
-                    //example of entitySet: Employee.EmployeeTerritories
-                    var associationInfo = prop.GetAttribute<AssociationAttribute>();
-                    Type otherTableType = prop.PropertyType.GetGenericArguments().First();
+					//example of entitySet: Employee.EmployeeTerritories
+					var memberData = association.ThisMember;
+					Type otherTableType = association.OtherType.Type;
+                    ParameterExpression p = Expression.Parameter(otherTableType, "other");
 
                     //other table:EmployeeTerritories
                     var otherTable = GetTable(otherTableType);
-                    //other table member:EmployeeTerritories.EmployeeID
-                    var otherTableMember = otherTableType.GetProperty(associationInfo.OtherKey);
 
+					var otherKeys = memberData.Association.OtherKey;
+					var thisKeys = memberData.Association.ThisKey;
+                    if (otherKeys.Count != thisKeys.Count)
+                        throw new InvalidOperationException("This keys don't match OtherKey");
+                    BinaryExpression predicate = null;
+                    IEnumerator<MetaDataMember> thisKeyEnumerator = thisKeys.GetEnumerator();
+					foreach (MetaDataMember otherKey in otherKeys)
+                    {
+                        thisKeyEnumerator.MoveNext();
+                        //other table member:EmployeeTerritories.EmployeeID
+						var otherTableMember = (PropertyInfo)otherKey.Member;
 
-                    ParameterExpression p = Expression.Parameter(otherTableType, "other");
-                    Expression predicate;
-                    if (!(otherTableMember.PropertyType.IsNullable()))
-                    {
-                        predicate = Expression.Equal(Expression.MakeMemberAccess(p, otherTableMember),
-                                                                    Expression.Constant(primaryKeyValue));
-                    }
-                    else
-                    {
-                        var ValueProperty = otherTableMember.PropertyType.GetProperty("Value");
-                        predicate = Expression.Equal(Expression.MakeMemberAccess(
-                                                                    Expression.MakeMemberAccess(p, otherTableMember),
-                                                                    ValueProperty),
-                                                                 Expression.Constant(primaryKeyValue));
+                        BinaryExpression keyPredicate;
+                        if (!(otherTableMember.PropertyType.IsNullable()))
+                        {
+                            keyPredicate = Expression.Equal(Expression.MakeMemberAccess(p, otherTableMember),
+                                                                        Expression.Constant(thisKeyEnumerator.Current.Member.GetMemberValue(entity)));
+                        }
+                        else
+                        {
+                            var ValueProperty = otherTableMember.PropertyType.GetProperty("Value");
+                            keyPredicate = Expression.Equal(Expression.MakeMemberAccess(
+                                                                        Expression.MakeMemberAccess(p, otherTableMember),
+                                                                        ValueProperty),
+                                                                     Expression.Constant(thisKeyEnumerator.Current.Member.GetMemberValue(entity)));
+                        }
+                        if (predicate == null)
+                            predicate = keyPredicate;
+                        else
+                            predicate = Expression.And(predicate, keyPredicate);
                     }
 
                     var query = GetOtherTableQuery(predicate, p, otherTableType, otherTable);
 
-                    var entitySetValue = prop.GetValue(entity, null);
+					var entitySetValue = memberData.Member.GetMemberValue(entity);
 
                     if (entitySetValue == null)
                     {
-                        entitySetValue = Activator.CreateInstance(prop.PropertyType);
-                        prop.SetValue(entity, entitySetValue, null);
+						entitySetValue = Activator.CreateInstance(memberData.Member.GetMemberType());
+						memberData.Member.SetMemberValue(entity, entitySetValue);
                     }
 
                     var hasLoadedOrAssignedValues = entitySetValue.GetType().GetProperty("HasLoadedOrAssignedValues");
@@ -962,11 +981,11 @@ namespace DbLinq.Data.Linq
         /// Gets or sets the load options
         /// </summary>
         [DbLinqToDo]
-        public DataLoadOptions LoadOptions 
-        {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
-        }
+		public DataLoadOptions LoadOptions
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
 
         public DbTransaction Transaction { get; set; }
 

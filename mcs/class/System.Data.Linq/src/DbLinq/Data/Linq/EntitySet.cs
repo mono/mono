@@ -47,6 +47,7 @@ namespace DbLinq.Data.Linq
 
         private IEnumerable<TEntity> deferredSource;
         private bool deferred;
+		private bool assignedValues;
         private List<TEntity> source;
         private List<TEntity> Source
         {
@@ -60,6 +61,33 @@ namespace DbLinq.Data.Linq
             }
         }
 
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance has loaded or assigned values.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance has loaded or assigned values; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasAssignedValues
+        {
+			get { return assignedValues; }
+        }
+
+        public bool HasLoadedValues
+        {
+            get { return source != null; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has loaded or assigned values.
+        /// </summary>
+        /// <value>
+        ///     <c>true</c> if this instance has loaded or assigned values; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasLoadedOrAssignedValues
+        {
+            get { return HasLoadedValues || HasAssignedValues; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntitySet&lt;TEntity&gt;"/> class.
@@ -115,7 +143,7 @@ namespace DbLinq.Data.Linq
         }
 
         /// <summary>
-        /// TODO: Add(row)
+        /// Adds a row
         /// </summary>
         public void Add(TEntity entity)
         {
@@ -139,7 +167,9 @@ namespace DbLinq.Data.Linq
 
         IList IListSource.GetList()
         {
-            return Source;
+			//It seems that Microsoft is doing a similar thing in L2SQL, matter of fact, after doing a GetList().Add(new TEntity()), HasAssignedValues continues to be false
+			//This seems like a bug on their end, but we'll do the same for consistency
+            return this;
         }
 
         #region IList<TEntity> Members
@@ -173,7 +203,7 @@ namespace DbLinq.Data.Linq
         }
 
         /// <summary>
-        /// Removes entity as specified index
+        /// Removes entity at specified index
         /// </summary>
         /// <param name="index"></param>
         public void RemoveAt(int index)
@@ -224,6 +254,7 @@ namespace DbLinq.Data.Linq
         {
             ListChangedEventHandler handler = ListChanged;
             deferred = false;
+			assignedValues = true;
             if (deferredSource != null && handler != null)
             {
                 foreach (var item in Source)
@@ -239,7 +270,7 @@ namespace DbLinq.Data.Linq
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns>
-        /// 	<c>true</c> if [contains] [the specified entity]; otherwise, <c>false</c>.
+        ///     <c>true</c> if [contains] [the specified entity]; otherwise, <c>false</c>.
         /// </returns>
         [DbLinqToDo]
         public bool Contains(TEntity entity)
@@ -291,7 +322,7 @@ namespace DbLinq.Data.Linq
         {
             int i = Source.IndexOf(entity);
             if(i < 0)
-            	return false;
+                return false;
             deferred = false;
             Source.Remove(entity);
             OnRemove(entity);
@@ -406,7 +437,7 @@ namespace DbLinq.Data.Linq
         /// Gets a value indicating whether this instance is deferred.
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is deferred; otherwise, <c>false</c>.
+        ///     <c>true</c> if this instance is deferred; otherwise, <c>false</c>.
         /// </value>
         public bool IsDeferred
         {
@@ -467,17 +498,6 @@ namespace DbLinq.Data.Linq
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance has loaded or assigned values.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance has loaded or assigned values; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasLoadedOrAssignedValues
-        {
-            get { return source != null; }
-        }
-
-        /// <summary>
         /// Gets a new binding list.
         /// </summary>
         /// <returns></returns>
@@ -495,6 +515,7 @@ namespace DbLinq.Data.Linq
         /// <param name="entity">The entity.</param>
         private void OnAdd(TEntity entity)
         {
+			assignedValues = true;
             if (onAdd != null)
                 onAdd(entity);
         }
@@ -504,6 +525,7 @@ namespace DbLinq.Data.Linq
         /// <param name="entity">The entity.</param>
         private void OnRemove(TEntity entity)
         {
+			assignedValues = true;
             if (onRemove != null)
                 onRemove(entity);
         }

@@ -39,15 +39,31 @@ namespace DbLinq.Data.Linq.Mapping
 		//Seperator used for key lists
 		private static readonly char[] STRING_SEPERATOR =  new[] { ',' };
 
+		private static string AttributeNameNullCheck (AssociationAttribute attribute)
+		{
+			if ( attribute == null )
+				return null;
+			else
+				return attribute.Name;
+		}
+
         public AttributedMetaAssociation(MemberInfo member, AssociationAttribute attribute, MetaDataMember metaDataMember)
         {
             _memberInfo = member;
             _associationAttribute = attribute;
             _thisMember = metaDataMember;
-            _otherMember = metaDataMember; // see https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=376669
+			// The bug described here:
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=376669
+			// says that under certain conditions, there's a bug where _otherMember == _thisMember
+			// Not only is there no point in reproducing a MS bug, it's not as simple as simply setting _otherMember = metaDataMember
+			Type otherType = _memberInfo.GetFirstInnerReturnType();
+			string associationName = member.GetAttribute<AssociationAttribute>().Name;
+			AttributedMetaType ownedMetaType = metaDataMember.DeclaringType.Model.GetMetaType(otherType) as AttributedMetaType;
 
-            if (!(ThisMember.DeclaringType.Model is AttributedMetaModel))
-                throw new InvalidOperationException("Internal Error: MetaModel is not a AttributedMetaModel");
+			if ( ownedMetaType == null )
+				throw new InvalidOperationException("Key in referenced table is of a different SQL MetaData provider");
+
+			_otherMember = ownedMetaType.AssociationsLookup[otherType.GetMembers().Where(m => (AttributeNameNullCheck(m.GetAttribute<AssociationAttribute>()) == associationName) && (m != member)).Single()];
         }
 
 		/// <summary>

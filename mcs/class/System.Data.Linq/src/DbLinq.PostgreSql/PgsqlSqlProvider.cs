@@ -49,6 +49,11 @@ namespace DbLinq.PostgreSql
             return insertId;
         }
 
+        public override SqlStatement GetLiteral(DateTime literal)
+        {
+            return "'" + literal.ToString("o") + "'";
+        }        
+        
         protected override SqlStatement GetLiteralStringToUpper(SqlStatement a)
         {
             return string.Format("UPPER({0})", a);
@@ -63,7 +68,7 @@ namespace DbLinq.PostgreSql
         {
             return string.Format("(DATE_PART('Day',{0}-{1})*86400000+DATE_PART('Hour',{0}-{1})*3600000+DATE_PART('Minute',{0}-{1})*60000+DATE_PART('Second',{0}-{1})*1000+DATE_PART('Millisecond',{0}-{1}))::real", dateA, dateB);
         }
-        
+                
         protected override SqlStatement GetLiteralEqual(SqlStatement a, SqlStatement b)
         {
             // PostgreSQL return NULL (and not a boolean) for every comparaison involving

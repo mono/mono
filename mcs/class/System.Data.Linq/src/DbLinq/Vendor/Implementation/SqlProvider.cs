@@ -283,7 +283,6 @@ namespace DbLinq.Vendor.Implementation
             throw new ArgumentException(operationType.ToString());
         }
 
-
         /// <summary>
         /// Converts a special expression type to literal
         /// </summary>
@@ -1569,7 +1568,7 @@ namespace DbLinq.Vendor.Implementation
         /// </summary>
         /// <param name="namePart">The name part.</param>
         /// <returns>
-        /// 	<c>true</c> if [is made safe] [the specified name part]; otherwise, <c>false</c>.
+        ///     <c>true</c> if [is made safe] [the specified name part]; otherwise, <c>false</c>.
         /// </returns>
         protected virtual bool IsMadeSafe(string namePart)
         {
@@ -1584,7 +1583,7 @@ namespace DbLinq.Vendor.Implementation
         /// </summary>
         /// <param name="namePart">The name part.</param>
         /// <returns>
-        /// 	<c>true</c> if [is name case safe] [the specified name part]; otherwise, <c>false</c>.
+        ///     <c>true</c> if [is name case safe] [the specified name part]; otherwise, <c>false</c>.
         /// </returns>
         protected virtual bool IsNameCaseSafe(string namePart)
         {
@@ -1654,6 +1653,7 @@ namespace DbLinq.Vendor.Implementation
             case "where":
             case "order":
             case "by":
+            case "key":
 
                 return false;
             default:

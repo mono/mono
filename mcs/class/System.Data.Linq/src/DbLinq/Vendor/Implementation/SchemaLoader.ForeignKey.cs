@@ -28,6 +28,8 @@ using System.Data;
 using System.Linq;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
+using System.Text;
+using System.Collections.Generic;
 
 namespace DbLinq.Vendor.Implementation
 {
@@ -42,6 +44,20 @@ namespace DbLinq.Vendor.Implementation
         /// <param name="nameFormat">The name format.</param>
         /// <param name="names">The names.</param>
         protected abstract void LoadConstraints(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat, Names names);
+
+        protected string BuildForeignKey(IDictionary<string, ColumnName> table, string key)
+        {
+            string[] keys = key.Split(',');
+            StringBuilder result = new StringBuilder();
+            foreach (string lookupKey in keys)
+            {
+                if (result.Length != 0)
+                    result.Append(',');
+                result.Append(table[lookupKey].PropertyName);
+            }
+
+            return result.ToString();
+        }
 
         /// <summary>
         /// Loads the foreign key.
@@ -62,8 +78,8 @@ namespace DbLinq.Vendor.Implementation
             string constraintName,
             NameFormat nameFormat, Names names)
         {
-            var foreignKey = names.ColumnsNames[tableName][columnName].PropertyName;
-            var reverseForeignKey = names.ColumnsNames[referencedTableName][referencedColumnName].PropertyName;
+            var foreignKey = BuildForeignKey(names.ColumnsNames[tableName], columnName);
+            var reverseForeignKey = BuildForeignKey(names.ColumnsNames[referencedTableName], referencedColumnName);
 
             var associationName = CreateAssociationName(tableName, tableSchema,
                 referencedTableName, referencedTableSchema, constraintName, foreignKey, nameFormat);

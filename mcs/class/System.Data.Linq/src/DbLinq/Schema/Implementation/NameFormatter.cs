@@ -442,7 +442,7 @@ namespace DbLinq.Schema.Implementation
             associationName.ManyToOneMemberName = Format(words, dbOneName, nameFormat.Case, GetSingularization(Singularization.Singular, nameFormat));
             // TODO: this works only for PascalCase
             if (dbManyName == dbOneName)
-                associationName.ManyToOneMemberName = foreignKeyName + associationName.ManyToOneMemberName;
+                associationName.ManyToOneMemberName = foreignKeyName.Replace(',', '_') + associationName.ManyToOneMemberName;
             // TODO: support new extraction
             associationName.OneToManyMemberName = Format(words, dbManyName, nameFormat.Case, GetSingularization(Singularization.Plural, nameFormat));
             return associationName;

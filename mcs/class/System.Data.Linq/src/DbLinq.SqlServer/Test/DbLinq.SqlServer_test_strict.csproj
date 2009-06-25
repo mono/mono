@@ -60,6 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\examples\DbLinq.Mssql.Example\nwind\NorthwindCustom.cs">
+      <Link>nwind\NorthwindCustom.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\examples\DbLinq.Mssql.Example\nwind\originalMSNorthwind.designer.cs">
       <Link>nwind\originalMSNorthwind.designer.cs</Link>
     </Compile>

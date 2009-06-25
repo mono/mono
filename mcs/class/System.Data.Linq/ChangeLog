@@ -1,3 +1,9 @@
+2009-06-25  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Sync with DbLinq r1200.  Among other fixes, this fixes an
+	  issue where AttributeMappingSource.GetModel().GetTables() would 
+	  return duplicate types, which was unexpected by Marek Habersack.
+
 2009-06-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/**/*, tests/**/*: Sync with DbLinq r1180.  Gets unit tests into

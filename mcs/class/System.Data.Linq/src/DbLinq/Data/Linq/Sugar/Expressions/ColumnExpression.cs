@@ -30,6 +30,7 @@ using System.Reflection;
 
 using DbLinq.Data.Linq.Sugar.Expressions;
 using DbLinq.Util;
+using System.Data.Linq.Mapping;
 
 namespace DbLinq.Data.Linq.Sugar.Expressions
 {
@@ -47,17 +48,19 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
         public TableExpression Table { get; private set; }
         public string Name { get; private set; }
         public MemberInfo MemberInfo { get; private set; }
+        public MemberInfo StorageInfo { get; private set; }
 
         public string Alias { get; set; }
 
         public int RequestIndex { get; set; }
 
-        public ColumnExpression(TableExpression table, string name, MemberInfo memberInfo)
-            : base(ExpressionType, memberInfo.GetMemberType())
+        public ColumnExpression(TableExpression table, MetaDataMember metaData)
+            : base(ExpressionType, metaData.Member.GetMemberType()) // memberInfo.GetMemberType())
         {
             Table = table;
-            Name = name;
-            MemberInfo = memberInfo;
+            Name = metaData.MappedName;
+            MemberInfo = metaData.Member;
+            StorageInfo = metaData.StorageMember;
             RequestIndex = -1; // unused
         }
     }

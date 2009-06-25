@@ -322,7 +322,7 @@ using DataLinq = DbLinq.Data.Linq;
         /// <summary>
         /// from http://www.agilior.pt/blogs/pedro.rainho/archive/2008/04/11/4271.aspx
         /// </summary>
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "Using LIKE operator from linq query")]
@@ -714,7 +714,7 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.Greater(productID, 0, "Expected penID>0, got " + productID);
         }
 
-#if !DEBUG && (MSSQL && !L2SQL)
+#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
@@ -1028,5 +1028,19 @@ using DataLinq = DbLinq.Data.Linq;
             var q = db.Customers.Where(c => c.ContactName == "'; DROP TABLE DoesNotExist; --");
             Assert.AreEqual(0, q.Count());
         }
+              
+#if POSTGRES || MSSQL
+        [Test]
+        public void Storage01()
+        {
+            var db = CreateDB();
+            var q = db.NoStorageCategories.Where(c => c.CategoryID == 1);
+            var r = q.First();
+            Assert.AreEqual(1, q.Count());
+            Assert.AreEqual(1, r.CategoryID);
+            Assert.IsTrue(r.propertyInvoked_CategoryName);     
+            Assert.IsFalse(r.propertyInvoked_Description);     
+        }
+#endif    
     }
 }

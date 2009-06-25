@@ -131,7 +131,7 @@ namespace DbLinq.Vendor.Implementation
         protected virtual void CheckConstraintsName(Database schema)
         {
             CheckConstraintsName(schema,
-                       association => association.ThisKey + association.Member,
+                       association => association.ThisKey.Replace(',', '_') + association.Member,
                        association => association.Member + association.Type);
         }
 
@@ -140,7 +140,7 @@ namespace DbLinq.Vendor.Implementation
         /// </summary>
         /// <param name="schema"></param>
         /// <param name="storageGenerator"></param>
-        protected virtual void GenerateStorageFields(Database schema, Func<string, string> storageGenerator)
+        protected virtual void GenerateStorageAndMemberFields(Database schema, Func<string, string> storageGenerator)
         {
             foreach (var table in schema.Tables)
             {
@@ -148,9 +148,23 @@ namespace DbLinq.Vendor.Implementation
                 {
                     column.Storage = storageGenerator(column.Member);
                 }
+
+                Dictionary<string, int> storageFields = new Dictionary<string,int>();
+                Dictionary<string, int> memberFields = new Dictionary<string,int>();
                 foreach (var association in table.Type.Associations)
                 {
                     association.Storage = storageGenerator(association.Member);
+
+                    //Associations may contain the same foreign key more than once - add a number suffix to duplicates
+                    int storageSuffix = 0;
+                    if ( storageFields.TryGetValue(association.Storage, out storageSuffix) )
+                        association.Storage += storageSuffix;
+                    storageFields[association.Storage] = storageSuffix + 1;
+
+                    int memberSuffix = 0;
+                    if ( memberFields.TryGetValue(association.Member, out memberSuffix) )
+                        association.Member += memberSuffix;
+                    memberFields[association.Member] = memberSuffix + 1;
                 }
             }
         }
@@ -159,9 +173,9 @@ namespace DbLinq.Vendor.Implementation
         /// Generates all storage fields
         /// </summary>
         /// <param name="schema"></param>
-        protected virtual void GenerateStorageFields(Database schema)
+        protected virtual void GenerateStorageAndMemberFields(Database schema)
         {
-            GenerateStorageFields(schema, delegate(string name)
+            GenerateStorageAndMemberFields(schema, delegate(string name)
                                               {
                                                   //jgm 2008June: pre-pended underscore to have same storage format as MS
                                                   // TODO: add an option for this behavior

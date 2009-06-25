@@ -254,7 +254,7 @@ namespace DbLinq.Data.Linq
         void ITable.AttachAll(IEnumerable entities, bool asModified)
         {
             foreach (var entity in entities)
-                Context.RegisterUpdate(entity);
+				Context.RegisterUpdate(entity, asModified ? null : entity);
         }
 
         /// <summary>

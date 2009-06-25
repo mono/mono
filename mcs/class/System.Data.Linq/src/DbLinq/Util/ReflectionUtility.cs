@@ -79,6 +79,31 @@ namespace DbLinq.Util
             return GetMemberInfo(paramExpr, expression.Body);
         }
 
+        public static MemberInfo GetMemberCallInfo(LambdaExpression lambdaExpression)
+        {
+            MethodCallExpression methodCallExpression = lambdaExpression.Body as MethodCallExpression;
+            if (methodCallExpression != null)
+            {
+                Expression memberExpression = methodCallExpression;
+                while ( true )
+                {
+                    switch (memberExpression.NodeType)
+                    {
+                        case ExpressionType.MemberAccess:
+                            return ((MemberExpression)memberExpression).Member;
+                        case ExpressionType.Call:
+                            methodCallExpression = memberExpression as MethodCallExpression;
+                            memberExpression = (methodCallExpression.Object != null) ? methodCallExpression.Object : methodCallExpression.Arguments[0];
+                            break;
+                        default:
+                            return null;
+                    }
+                }
+            }
+            else
+                return GetMemberInfo(lambdaExpression);
+        }
+
         /// <summary>
         /// Returns MemberInfo specified in the lambda, optional parameter expression constraint.
         /// </summary>

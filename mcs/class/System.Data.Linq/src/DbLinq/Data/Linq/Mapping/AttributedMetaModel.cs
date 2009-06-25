@@ -184,8 +184,12 @@ namespace DbLinq.Data.Linq.Mapping
                 BindingFlags.GetProperty | BindingFlags.Static |
                 BindingFlags.Instance | BindingFlags.NonPublic |
                 BindingFlags.Public;
+            var seen = new HashSet<Type>();
             foreach (var info in _ContextType.GetMembers(scope))
             {
+                // Only look for Fields & Properties.
+                if (info.MemberType != MemberTypes.Field && info.MemberType != MemberTypes.Property)
+                    continue;
                 Type memberType = info.GetMemberType();
 
                 if (memberType == null || !memberType.IsGenericType ||
@@ -194,6 +198,9 @@ namespace DbLinq.Data.Linq.Mapping
                 var tableType = memberType.GetGenericArguments()[0];
                 if (tableType.IsGenericParameter)
                     continue;
+                if (seen.Contains(tableType))
+                    continue;
+                seen.Add(tableType);
 
                 MetaTable metaTable;
                 if (_Tables.TryGetValue(tableType, out metaTable))

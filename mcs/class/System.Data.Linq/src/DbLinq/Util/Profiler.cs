@@ -14,6 +14,17 @@ namespace DbLinq.Util
     {
         [ThreadStatic]
         private static Stopwatch timer = new Stopwatch();
+
+        private static Stopwatch Timer
+        {
+            get 
+            {
+                if (timer == null)
+                    timer = new Stopwatch();
+                return timer;
+            }
+        }
+
         [ThreadStatic]
         private static long prevTicks;
         [ThreadStatic]
@@ -40,8 +51,8 @@ namespace DbLinq.Util
         {
             profiling = true;
             prevTicks = 0;
-            timer.Reset();
-            timer.Start();
+            Timer.Reset();
+            Timer.Start();
         }
 
         [Conditional("DEBUG")]
@@ -49,11 +60,11 @@ namespace DbLinq.Util
         {
             if (profiling)
             {
-                timer.Stop();
-                Log.Write("#AT(time={0:D12}, elapsed={1:D12}) ", timer.ElapsedTicks, timer.ElapsedTicks - prevTicks);
-                prevTicks = timer.ElapsedTicks;
+                Timer.Stop();
+                Log.Write("#AT(time={0:D12}, elapsed={1:D12}) ", Timer.ElapsedTicks, Timer.ElapsedTicks - prevTicks);
+                prevTicks = Timer.ElapsedTicks;
                 Log.WriteLine(format, args);
-                timer.Start();
+                Timer.Start();
             }
         }
 
@@ -61,7 +72,7 @@ namespace DbLinq.Util
         public static void Stop()
         {
             profiling = false;
-            timer.Stop();
+            Timer.Stop();
         }
     }
 }

@@ -159,7 +159,7 @@ using nwind;
             Assert.AreEqual(db.OrderDetails.Count(), initialCount);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
