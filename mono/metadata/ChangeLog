@@ -1,3 +1,7 @@
+2009-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c (null_link_in_range): Add the dislink for the old
+	generation if an object was moved.
 
 2009-06-25  Sylvain Dupont <duposyl@gmail.com>
 
