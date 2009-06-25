@@ -130,7 +130,7 @@ namespace System.ServiceModel
 			return implementation;				
 		}
 
-		public void IncrementManualFlowControlLimit (int incrementBy)
+		public int IncrementManualFlowControlLimit (int incrementBy)
 		{
 			throw new NotImplementedException ();
 		}
@@ -164,6 +164,11 @@ namespace System.ServiceModel
 		}
 
 		protected override void OnAbort ()
+		{
+		}
+
+		[MonoTODO]
+		protected override void OnFaulted ()
 		{
 		}
 

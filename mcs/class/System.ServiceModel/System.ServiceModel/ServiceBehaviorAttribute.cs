@@ -42,15 +42,18 @@ namespace System.ServiceModel
 	{
 		public ServiceBehaviorAttribute ()
 		{
+			// FIXME: it should be PerSession as documented.
+			InstanceContextMode = InstanceContextMode.PerSession;
+
+			SessionMode = SessionMode.Allowed;
 		}
 
 		bool auto_session_shutdown, ignore_ext_data,
 			release, inc_fault_details,
-			use_sync_ctx, tx_close, validate_must_understand;
+			use_sync_ctx = true, tx_close, validate_must_understand;
 		ConcurrencyMode concurrency;
 		IsolationLevel tx_level;
 		string tx_timeout;
-		InstanceContextMode context_mode = InstanceContextMode.PerCall;
 		object singleton;
 
 		[MonoTODO]
@@ -71,10 +74,7 @@ namespace System.ServiceModel
 			set { ignore_ext_data = value; }
 		}
 
-		public InstanceContextMode InstanceContextMode {
-			get { return context_mode; }
-			set { context_mode = value; }
-		}
+		public InstanceContextMode InstanceContextMode { get; set; }
 
 		public bool ReleaseServiceInstanceOnTransactionComplete {
 			get { return release; }
@@ -88,6 +88,8 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
+		public SessionMode SessionMode { get; set; }
+
 		public bool UseSynchronizationContext {
 			get { return use_sync_ctx; }
 			set { use_sync_ctx = value; }
@@ -147,7 +149,7 @@ namespace System.ServiceModel
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			if (singleton != null && context_mode != InstanceContextMode.Single)
+			if (singleton != null && InstanceContextMode != InstanceContextMode.Single)
 				throw new InvalidOperationException ("When creating a Service host with a service instance, use InstanceContext.Mode.Single in the ServiceBehaviorAttribute.");
 
 			foreach (ChannelDispatcherBase cdb in serviceHostBase.ChannelDispatchers) {
@@ -167,8 +169,7 @@ namespace System.ServiceModel
 			case InstanceContextMode.Single:
 				return new SingletonInstanceContextProvider (new InstanceContext (host, GetWellKnownSingleton ()));
 			case InstanceContextMode.PerSession:
-				// FIXME: implement
-				throw new NotImplementedException ();
+				return new SessionInstanceContextProvider (host);
 			//case InstanceContextMode.PerCall:
 			default:
 				return null; // default

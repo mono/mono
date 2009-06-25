@@ -1,3 +1,9 @@
+2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstanceContext.cs : add missing member / cosmetic API fix.
+	* ServiceBehaviorAttribute.cs : InstanceContextMode is per-session
+	  by default.
+
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : remove more TODO.
