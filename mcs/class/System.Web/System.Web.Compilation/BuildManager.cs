@@ -594,7 +594,7 @@ namespace System.Web.Compilation {
 		static Type GetPrecompiledType (string virtualPath)
 		{
 			PreCompilationData pc_data;
-			if (precompiled.TryGetValue (virtualPath, out pc_data)) {
+			if (precompiled != null && precompiled.TryGetValue (virtualPath, out pc_data)) {
 				if (pc_data.Type == null) {
 					pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
 				}
