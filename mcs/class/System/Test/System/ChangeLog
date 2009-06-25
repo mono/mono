@@ -1,3 +1,7 @@
+2009-06-25  Robert Jordan  <robertj@gmx.net>
+
+	* UriTest.cs: Upgrade to new NUnit style.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* UriParserTest.cs: Ensure "tcp" is not a registred scheme
