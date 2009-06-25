@@ -90,6 +90,7 @@ ModelProviders/DynamicDataStringLengthAttribute.cs
 System.Web.DynamicData/ContextConfigurationTest.cs
 System.Web.DynamicData/DynamicDataExtensionsTest.cs
 System.Web.DynamicData/DynamicDataManagerTest.cs
+System.Web.DynamicData/DynamicDataRouteHandlerTest.cs
 System.Web.DynamicData/DynamicDataRouteTest.cs
 System.Web.DynamicData/MetaColumnTest.cs
 System.Web.DynamicData/MetaModelTest.cs

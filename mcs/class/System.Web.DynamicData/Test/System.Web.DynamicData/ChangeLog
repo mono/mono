@@ -1,3 +1,12 @@
+2009-06-25  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTableTest.cs: new GetVirtualPath tests.
+
+	* DynamicDataRouteTest.cs: added tests for route.Defaults
+	modifications on class init.
+
+	* DynamicDataRouteHandlerTest.cs: added
+
 2009-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaColumnTest.cs: added test for SortExpression

@@ -1,10 +1,11 @@
 //
 // DynamicDataRoute.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -43,6 +44,9 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicDataRoute : Route
 	{
+		static readonly object initLock = new object ();
+		bool initDone;
+		
 		public DynamicDataRoute (string url)
 			: base (url, null)
 		{
@@ -63,6 +67,48 @@ namespace System.Web.DynamicData
 
 		public string ViewName { get; set; }
 
+		void EnsureInitialized ()
+		{
+			if (initDone)
+				return;
+			
+			// We need to lock since we might be stored in the RouteTable.Routes
+			// collection which might be accessed from many concurrent requests.
+			lock (initLock) {
+				if (initDone)
+					return;
+				
+				initDone = true;
+				
+				string action = Action, table = Table;
+				if (action == null && table == null)
+					return;
+
+				RouteValueDictionary defaults = Defaults;
+				if (defaults == null)
+					Defaults = defaults = new RouteValueDictionary ();
+
+				if (table != null) {
+					// Force check for table existence
+					MetaModel model = Model ?? MetaModel.Default;
+					if (model != null)
+						Model.GetTable (table);
+					
+					if (defaults.ContainsKey ("Table"))
+						defaults ["Table"] = table;
+					else
+						defaults.Add ("Table", table);
+				}
+				
+				if (action != null) {
+					if (defaults.ContainsKey ("Action"))
+						defaults ["Action"] = action;
+					else
+						defaults.Add ("Action", action);
+				}
+			}
+		}
+		
 		public string GetActionFromRouteData (RouteData routeData)
 		{
 			if (routeData == null)
@@ -72,9 +118,8 @@ namespace System.Web.DynamicData
 
 		public override RouteData GetRouteData (HttpContextBase httpContext)
 		{
-			var rd = base.GetRouteData (httpContext);
-			// FIXME: something to do here?
-			return rd;
+			EnsureInitialized ();
+			return base.GetRouteData (httpContext);
 		}
 
 		public MetaTable GetTableFromRouteData (RouteData routeData)
@@ -90,11 +135,8 @@ namespace System.Web.DynamicData
 
 		public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
-			var rd = requestContext.RouteData;
-			var t = GetTableFromRouteData (rd);
-			var a = GetActionFromRouteData (rd);
-			var vp = String.Concat (t.GetActionPath (a));
-			return new VirtualPathData (this, vp);
+			EnsureInitialized ();
+			return base.GetVirtualPath (requestContext, values);
 		}
 	}
 }

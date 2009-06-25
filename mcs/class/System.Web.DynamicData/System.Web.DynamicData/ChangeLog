@@ -1,3 +1,24 @@
+2009-06-25  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: Fixes to make tests succeed.
+
+	* MetaModel.cs: added the GetDataFieldAttributes method for
+	retrieving attributes associated with data type/field.
+	Fixes to make tests succeed.
+
+	* MetaColumn.cs: refactoring - use
+	MetaModel.GetDataFieldAttributes instead of the local version.
+
+	* DynamicDataRouteHandler.cs: implemented GetRequestContext,
+	GetRequestMetaTable.
+
+	* DynamicDataRoute.cs: when the Action and Table properties are
+	set before one of GetVirtualPath or GetRouteData methods are
+	called for the first time, a check is made whether the Defaults
+	collection exists and whether it contains entries for Action and
+	Table. Initialization code makes sure those entries are inserted
+	into the dictionary in those cases.
+
 2009-06-23  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: constructor now takes ContextConfiguration instead

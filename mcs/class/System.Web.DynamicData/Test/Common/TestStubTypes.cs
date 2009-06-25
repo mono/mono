@@ -60,7 +60,7 @@ namespace MonoTests.System.Web.DynamicData
             get; private set;
         }
 
-        public bool Called {
+        public bool GetVirtualPathCalled {
             get;
             set;
         }
@@ -72,7 +72,7 @@ namespace MonoTests.System.Web.DynamicData
         public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
         {
             GetVirtualPathValues = values;
-            Called = true;
+            GetVirtualPathCalled = true;
             return base.GetVirtualPath (requestContext, values);
         }
     }

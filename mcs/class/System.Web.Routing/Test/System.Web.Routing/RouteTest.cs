@@ -934,7 +934,32 @@ namespace MonoTests.System.Web.Routing
 			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
 			Assert.IsNull (vp);
 		}
-		
+
+		[Test]
+		public void GetVirtualPath14 ()
+		{
+			var r = new MyRoute ("{table}/{action}.aspx", new MyRouteHandler ());
+			var hc = new HttpContextStub2 ("~/x/y.aspx", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary (new {
+				emptyValue = String.Empty,
+				nullValue = (string)null,
+				nonEmptyValue = "SomeValue"
+			});
+
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+			Assert.IsNotNull (vp, "#A1");
+			Assert.AreEqual ("x/y.aspx?nonEmptyValue=SomeValue", vp.VirtualPath, "#A1-1");
+
+			values["nonEmptyValue"] = "Some Value + encoding &";
+			vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+			Assert.IsNotNull (vp, "#B1");
+			Assert.AreEqual ("x/y.aspx?nonEmptyValue=Some%20Value%20%2B%20encoding%20%26", vp.VirtualPath, "#B1-1");
+
+		}
+
 		// Bug #500739
 		[Test]
 		public void RouteGetRequiredStringWithDefaults ()

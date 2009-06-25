@@ -1,10 +1,11 @@
 //
 // DynamicDataRouteHandler.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -35,6 +36,7 @@ using System.Data.Linq.Mapping;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Security.Principal;
+using System.Threading;
 using System.Web.Caching;
 using System.Web.Compilation;
 using System.Web.Routing;
@@ -46,17 +48,75 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicDataRouteHandler : IRouteHandler
 	{
-		[MonoTODO]
-		public static RequestContext GetRequestContext (HttpContext httpContext)
-		{
-			// HttpRequestBase.QueryString
-			throw new NotImplementedException ();
+		static ReaderWriterLockSlim contextsLock = new ReaderWriterLockSlim ();
+		
+		static Dictionary <HttpContext, RouteContext> contexts = new Dictionary <HttpContext, RouteContext> ();
+		Dictionary <RouteContext, IHttpHandler> handlers;
+
+		Dictionary <RouteContext, IHttpHandler> Handlers {
+			get {
+				if (handlers == null)
+					handlers = new Dictionary <RouteContext, IHttpHandler> ();
+
+				return handlers;
+			}
 		}
 
-		[MonoTODO]
+		public static RequestContext GetRequestContext (HttpContext httpContext)
+		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+			
+			RouteContext rc;
+			bool locked = false;
+			try {
+				contextsLock.EnterReadLock ();
+				locked = true;
+				if (contexts.TryGetValue (httpContext, out rc) && rc != null)
+					return rc.Context;
+			} finally {
+				if (locked)
+					contextsLock.ExitReadLock ();
+			}
+
+			var ctxWrapper = new HttpContextWrapper (httpContext);
+			RouteData rd = RouteTable.Routes.GetRouteData (ctxWrapper);
+			if (rd == null)
+				rd = new RouteData ();
+			
+			var ret = new RequestContext (ctxWrapper, rd);
+
+			locked = false;
+			try {
+				contextsLock.EnterWriteLock ();
+				locked = true;
+				contexts.Add (httpContext, MakeRouteContext (ret, null, null, null));
+			} finally {
+				if (locked)
+					contextsLock.ExitWriteLock ();
+			}
+
+			return ret;
+		}
+
 		public static MetaTable GetRequestMetaTable (HttpContext httpContext)
 		{
-			throw new NotImplementedException ();
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+
+			RouteContext rc;
+			bool locked = false;
+			try {
+				contextsLock.EnterReadLock ();
+				locked = true;
+				if (contexts.TryGetValue (httpContext, out rc) && rc != null)
+					return rc.Table;
+			} finally {
+				if (locked)
+					contextsLock.ExitReadLock ();
+			}
+
+			return null;
 		}
 
 		[MonoTODO]
@@ -95,39 +155,77 @@ namespace System.Web.DynamicData
 			if (requestContext == null)
 				throw new ArgumentNullException ("requestContext");
 			RouteData rd = requestContext.RouteData;
-			DynamicDataRoute dr = rd.Route as DynamicDataRoute;
+			var dr = rd.Route as DynamicDataRoute;
 			if (dr == null)
 				throw new ArgumentException ("The argument RequestContext does not have DynamicDataRoute in its RouteData");
-			var action = dr.GetActionFromRouteData (rd);
-			var mt = dr.GetTableFromRouteData (rd);
-
-			var rc = new RouteContext () { Route = dr, Action = action, Table = mt };
+			string action = dr.GetActionFromRouteData (rd);
+			MetaTable mt = dr.GetTableFromRouteData (rd);
+			RouteContext rc = MakeRouteContext (requestContext, dr, action, mt);
 			IHttpHandler h;
+			
+			Dictionary <RouteContext, IHttpHandler> handlers = Handlers;
 			if (handlers.TryGetValue (rc, out h))
 				return h;
 			h = CreateHandler (dr, mt, action);
-			handlers [rc] = h;
+			handlers.Add (rc, h);
 			return h;
 		}
 
-		class RouteContext
+		static RouteContext MakeRouteContext (RequestContext context, DynamicDataRoute route, string action, MetaTable table)
+		{
+			RouteData rd = null;
+			
+			if (route == null) {
+				rd = context.RouteData;
+				route = rd.Route as DynamicDataRoute;
+			}
+
+			if (route != null) {
+				if (action == null) {
+					if (rd == null)
+						rd = context.RouteData;
+					action = route.GetActionFromRouteData (rd);
+				}
+			
+				if (table == null) {
+					if (rd == null)
+						rd = context.RouteData;
+				
+					table = route.GetTableFromRouteData (rd);
+				}
+			}
+			
+			return new RouteContext () {
+				Route = route,
+				Action = action,
+				Table = table,
+				Context = context};
+		}
+		
+		sealed class RouteContext
 		{
 			public DynamicDataRoute Route;
 			public string Action;
 			public MetaTable Table;
+			public RequestContext Context;
 
+			public RouteContext ()
+			{
+			}
+			
 			public override bool Equals (object obj)
 			{
 				RouteContext other = obj as RouteContext;
-				return other.Route == Route & other.Action == Action && other.Table == Table;
+				return other.Route == Route & other.Action == Action && other.Table == Table && other.Context == Context;
 			}
 
 			public override int GetHashCode ()
 			{
-				return (Route.GetHashCode () << 19) + (Action.GetHashCode () << 9) + Table.GetHashCode ();
+				return (Route != null ? Route.GetHashCode () << 27 : 0) +
+					(Action != null ? Action.GetHashCode () << 19 : 0) +
+					(Table != null ? Table.GetHashCode () << 9 : 0) +
+					(Context != null ? Context.GetHashCode () : 0);
 			}
 		}
-
-		Dictionary<RouteContext,IHttpHandler> handlers = new Dictionary<RouteContext,IHttpHandler> ();
 	}
 }

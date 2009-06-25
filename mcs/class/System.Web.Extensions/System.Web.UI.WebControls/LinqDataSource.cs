@@ -151,7 +151,8 @@ namespace System.Web.UI.WebControls
 					return context_type;
 
 				if (String.IsNullOrEmpty (ContextTypeName))
-					throw new ArgumentException ("ContextTypeName is not set");
+					return null;
+				
 				// FIXME: retrieve type from BuildProvider or whatever.
 				context_type = LoadType (ContextTypeName);
 				if (context_type == null)

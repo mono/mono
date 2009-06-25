@@ -1,3 +1,8 @@
+2009-06-25  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteCollectionTest.cs, RouteTest.cs: added new tests for
+	GetVirtualPath
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteCollectionTest.cs: added two more test cases to the bug

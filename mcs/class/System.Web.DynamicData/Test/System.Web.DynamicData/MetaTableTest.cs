@@ -427,7 +427,22 @@ namespace MonoTests.System.Web.DynamicData
 
 			t = m.Tables[TestDataContext.TableFooNoDefaultsWithPrimaryKey];
 			var foo2 = new FooNoDefaultsWithPrimaryKey ();
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, foo2), "#B1");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#B1-1");
+			Assert.AreEqual (3, route.GetVirtualPathValues.Count, "#B1-2");
+
+			route.GetVirtualPathCalled = false;
+			foo2.PrimaryKeyColumn1 = String.Empty;
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, foo2), "#C1");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#C1-1");
+			Assert.AreEqual (3, route.GetVirtualPathValues.Count, "#C1-2");
+
+			route.GetVirtualPathCalled = false;
+			foo2.PrimaryKeyColumn1 = "SomeValue";
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=SomeValue"), t.GetActionPath (PageAction.Details, foo2), "#D1");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#D1-1");
+			Assert.AreEqual (3, route.GetVirtualPathValues.Count, "#D1-2");
 		}
 
 		[Test]
@@ -473,15 +488,41 @@ namespace MonoTests.System.Web.DynamicData
 			dataList.Add (2);
 			dataList.Add (false);
 
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, null), "#A4");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#A4-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (null, (IList<object>) null, "~/SomePath.aspx"), "#A5");
+			Assert.AreEqual (false, route.GetVirtualPathCalled, "#A5-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual ("~/SomePath.aspx?PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False", t.GetActionPath (null, dataList, "~/SomePath.aspx"), "#A6");
+			Assert.AreEqual (false, route.GetVirtualPathCalled, "#A6-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (PageAction.Details, (IList<object>) null, "~/SomePath.aspx"), "#A7");
+			Assert.AreEqual (false, route.GetVirtualPathCalled, "#A7-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual ("~/SomePath.aspx?PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False", t.GetActionPath (PageAction.Details, dataList, "~/SomePath.aspx"), "#A8");
+			Assert.AreEqual (false, route.GetVirtualPathCalled, "#A8-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null, null), "#A9");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#A9-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, null), "#A10");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#A10-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null, String.Empty), "#A11");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#A11-1");
+
+			route.GetVirtualPathCalled = false;
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, String.Empty), "#A12");
+			Assert.AreEqual (true, route.GetVirtualPathCalled, "#A12-1");
 		}
 
 		[Test]
@@ -690,7 +731,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (query.GetType () == typeof (Table<Foo>), "#A2");
 
 			var foo = new Foo (true);
-			AssertExtensions.Throws<TargetException> (() => t.GetQuery (foo), "#B1");
+			AssertExtensions.Throws (() => t.GetQuery (foo), "#B1");
 		}
 
 		[Test]

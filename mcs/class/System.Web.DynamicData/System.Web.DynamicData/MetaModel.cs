@@ -1,8 +1,9 @@
 //
 // MetaModel.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
 // Copyright (C) 2008 Novell Inc. http://novell.com
 //
@@ -50,6 +51,8 @@ namespace System.Web.DynamicData
 		static MetaModel default_model;
 		static Exception registration_exception;
 		static Dictionary<Type, MetaModel> registered_models;
+
+		DataModelProvider provider;
 		
 		public static MetaModel Default {
 			get { return default_model; }
@@ -62,9 +65,10 @@ namespace System.Web.DynamicData
 				throw new ArgumentNullException ("contextType");
 
 			MetaModel m;
-			if (registered_models.TryGetValue (contextType, out m))
-				return m;
-			throw new InvalidOperationException (String.Format ("Type '{0}' is not registered as a MetaModel", contextType));
+			if (!TryGetModel (contextType, out m))
+				throw new InvalidOperationException (String.Format ("Type '{0}' is not registered as a MetaModel", contextType));
+
+			return m;
 		}
 
 		public static void ResetRegistrationException ()
@@ -82,9 +86,6 @@ namespace System.Web.DynamicData
 			Tables = new ReadOnlyCollection<MetaTable> (new MetaTable [0]);
 			VisibleTables = new List<MetaTable> ();
 		}
-
-		DataModelProvider provider;
-
 
 		public string DynamicDataFolderVirtualPath { get; set; }
 
@@ -105,6 +106,20 @@ namespace System.Web.DynamicData
 			return GetTable (tableName).GetActionPath (action, row);
 		}
 
+		internal static void GetDataFieldAttribute <T> (AttributeCollection attributes, ref T backingField) where T: Attribute
+		{
+			if (backingField != null)
+				return;
+
+			foreach (Attribute attr in attributes) {
+				if (attr == null || !typeof (T).IsAssignableFrom (attr.GetType ()))
+					continue;
+
+				backingField = attr as T;
+				break;
+			}
+		}
+		
 		public MetaTable GetTable (string uniqueTableName)
 		{
 			MetaTable mt;
@@ -117,23 +132,31 @@ namespace System.Web.DynamicData
 		{
 			if (entityType == null)
 				throw new ArgumentNullException ("entityType");
-			if (provider != null)
-				foreach (var t in Tables)
-					if (t.EntityType == entityType)
-						return t;
+
+			foreach (var t in Tables) {
+				if (t.EntityType == entityType)
+					return t;
+			}
+			
 			throw new ArgumentException (String.Format ("Entity type '{0}' does not exist in registered context", entityType));
 		}
 
 		public MetaTable GetTable (string tableName, Type contextType)
 		{
+			if (tableName == null)
+				throw new ArgumentNullException ("tableName");
+
+			MetaModel model;
+			if (contextType != null && !TryGetModel (contextType, out model))
+				throw new ArgumentException ("Unknown context type '" + contextType + "'. This context type has not been registered.");
+			
 			return GetModel (contextType).GetTable (tableName);
 		}
-
+		
 		internal static ICustomTypeDescriptor GetTypeDescriptor (Type type)
 		{
 			return TypeDescriptor.GetProvider (type).GetTypeDescriptor (type);
 		}
-		
 
 		public void RegisterContext (Func<object> contextFactory)
 		{
@@ -191,6 +214,7 @@ namespace System.Web.DynamicData
 			var l = new List<MetaTable> ();
 			foreach (var t in dataModelProvider.Tables)
 				l.Add (new MetaTable (this, t, configuration));
+			
 			Tables = new ReadOnlyCollection<MetaTable> (l);
 			VisibleTables = l;
 			RegisterModel (dataModelProvider.ContextType, this, configuration);
@@ -235,5 +259,15 @@ namespace System.Web.DynamicData
 			table = null;
 			return false;
 		}
+
+		static bool TryGetModel (Type contextType, out MetaModel model)
+		{
+			model = null;
+			if (registered_models != null && registered_models.TryGetValue (contextType, out model))
+				return model != null;
+
+			return false;
+		}
+		
 	}
 }

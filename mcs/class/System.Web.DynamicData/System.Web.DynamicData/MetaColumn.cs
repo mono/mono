@@ -309,7 +309,7 @@ namespace System.Web.DynamicData
 				if (scaffoldReflected != null)
 					return (bool)scaffoldReflected;				
 
-				GetDataFieldAttribute <ScaffoldColumnAttribute> (ref scaffoldAttr);
+				MetaModel.GetDataFieldAttribute <ScaffoldColumnAttribute> (Attributes, ref scaffoldAttr);
 				if (scaffoldAttr != null) {
 					scaffoldReflected = scaffoldAttr.Scaffold;
 					return (bool)scaffoldReflected;
@@ -363,7 +363,7 @@ namespace System.Web.DynamicData
 
 			uiHintReflected = true;
 			UIHintAttribute attr = null;
-			GetDataFieldAttribute <UIHintAttribute> (ref attr);
+			MetaModel.GetDataFieldAttribute <UIHintAttribute> (Attributes, ref attr);
 
 			if (attr == null)
 				return null;
@@ -404,7 +404,7 @@ namespace System.Web.DynamicData
 				return dataTypeAttr;
 
 			dataTypeReflected = true;
-			GetDataFieldAttribute <DataTypeAttribute> (ref dataTypeAttr);
+			MetaModel.GetDataFieldAttribute <DataTypeAttribute> (Attributes, ref dataTypeAttr);
 			if (dataTypeAttr == null && (ColumnType == typeof (string)))
 				return new DataTypeAttribute (DataType.Text);
 
@@ -415,7 +415,7 @@ namespace System.Web.DynamicData
 		{
 			defaultValueReflected = true;
 			DefaultValueAttribute dummy = null;
-			GetDataFieldAttribute <DefaultValueAttribute> (ref dummy);
+			MetaModel.GetDataFieldAttribute <DefaultValueAttribute> (Attributes, ref dummy);
 			if (dummy == null)
 				return null;
 
@@ -426,7 +426,7 @@ namespace System.Web.DynamicData
 		{
 			descriptionReflected = true;
 			DescriptionAttribute dummy = null;
-			GetDataFieldAttribute <DescriptionAttribute> (ref dummy);
+			MetaModel.GetDataFieldAttribute <DescriptionAttribute> (Attributes, ref dummy);
 			if (dummy == null)
 				return null;
 			
@@ -436,7 +436,7 @@ namespace System.Web.DynamicData
 		string CheckDisplayName ()
 		{
 			DisplayNameAttribute attr = null;
-			GetDataFieldAttribute <DisplayNameAttribute> (ref attr);
+			MetaModel.GetDataFieldAttribute <DisplayNameAttribute> (Attributes, ref attr);
 			if (attr != null)
 				return attr.DisplayName;
 
@@ -449,7 +449,7 @@ namespace System.Web.DynamicData
 				return requiredAttr;
 
 			requiredReflected = true;
-			GetDataFieldAttribute <RequiredAttribute> (ref requiredAttr);
+			MetaModel.GetDataFieldAttribute <RequiredAttribute> (Attributes, ref requiredAttr);
 
 			return requiredAttr;
 		}
@@ -457,7 +457,7 @@ namespace System.Web.DynamicData
 		bool CheckReadOnlyAttribute ()
 		{
 			ReadOnlyAttribute attr = null;
-			GetDataFieldAttribute <ReadOnlyAttribute> (ref attr);
+			MetaModel.GetDataFieldAttribute <ReadOnlyAttribute> (Attributes, ref attr);
 
 			// Apparently attr.IsReadOnly and/or comparisons to
 			// ReadOnlyAttribute.{Yes,No} don't matter. The sole presence of the
@@ -468,7 +468,7 @@ namespace System.Web.DynamicData
 		int CheckMaxLength ()
 		{
 			StringLengthAttribute attr = null;
-			GetDataFieldAttribute <StringLengthAttribute> (ref attr);
+			MetaModel.GetDataFieldAttribute <StringLengthAttribute> (Attributes, ref attr);
 
 			if (attr != null)
 				return attr.MaximumLength;
@@ -485,24 +485,10 @@ namespace System.Web.DynamicData
 
 			return displayFormat.NullDisplayText;
 		}
-		
-		void GetDataFieldAttribute <T> (ref T backingField) where T: Attribute
-		{
-			if (backingField != null)
-				return;
-
-			foreach (Attribute attr in Attributes) {
-				if (attr == null || !typeof (T).IsAssignableFrom (attr.GetType ()))
-					continue;
-
-				backingField = attr as T;
-				break;
-			}
-		}
 
 		DisplayFormatAttribute GetDisplayFormat ()
 		{
-			GetDataFieldAttribute <DisplayFormatAttribute> (ref displayFormatAttr);
+			MetaModel.GetDataFieldAttribute <DisplayFormatAttribute> (Attributes, ref displayFormatAttr);
 			if (displayFormatAttr == null) {
 				var dta = DataTypeAttribute;
 				displayFormatAttr = dta == null ? null : dta.DisplayFormat;

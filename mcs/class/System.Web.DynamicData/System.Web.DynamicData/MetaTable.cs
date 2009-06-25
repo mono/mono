@@ -81,7 +81,8 @@ namespace System.Web.DynamicData
 			} else
 				scaffoldAllTables = false;
 			
-			var attr = Attributes [typeof (ScaffoldTableAttribute)] as ScaffoldTableAttribute;
+			ScaffoldTableAttribute attr = null;
+			MetaModel.GetDataFieldAttribute <ScaffoldTableAttribute> (Attributes, ref attr);
 			Scaffold = attr != null ? attr.Scaffold : scaffoldAllTables;
 			
 			var columns = new List <MetaColumn> ();
@@ -187,7 +188,7 @@ namespace System.Web.DynamicData
 		public bool IsReadOnly { get; private set; }
 
 		public string ListActionPath {
-			get { return GetActionPath ("List"); }
+			get { return GetActionPath (PageAction.List); }
 		}
 
 		public MetaModel Model {
@@ -224,29 +225,54 @@ namespace System.Web.DynamicData
 			}
 		}
 
+		string BuildActionPath (string path, RouteValueDictionary values)
+		{
+			var sb = new StringBuilder ();
+
+			sb.Append (path);
+			if (values != null && values.Count > 0) {
+				sb.Append ('?');
+
+				bool first = true;
+				foreach (var de in values) {
+					if (first)
+						first = false;
+					else
+						sb.Append ('&');
+					
+					sb.Append (Uri.EscapeDataString (de.Key));
+					sb.Append ('=');
+
+					object parameterValue = de.Value;
+					if (parameterValue != null)
+						sb.Append (Uri.EscapeDataString (parameterValue.ToString ()));
+				}
+			}
+			
+			return sb.ToString ();
+		}
+		
 		public object CreateContext ()
 		{
-			return Activator.CreateInstance (EntityType);
+			return Activator.CreateInstance (DataContextType);
 		}
 
 		string DetermineDisplayName ()
 		{
-			DisplayNameAttribute attr = Attributes [typeof (DisplayNameAttribute)] as DisplayNameAttribute;
+			DisplayNameAttribute attr = null;
 
+			MetaModel.GetDataFieldAttribute <DisplayNameAttribute> (Attributes, ref attr);
 			if (attr == null)
 				return Name;
-
-			string name = attr.DisplayName;
-			if (name == null)
-				return String.Empty;
-
-			return name;
+			
+			return attr.DisplayName;
 		}
 
 		bool DetermineSortDescending ()
 		{
-			DisplayColumnAttribute attr = Attributes [typeof (DisplayColumnAttribute)] as DisplayColumnAttribute;
-
+			DisplayColumnAttribute attr = null;
+			
+			MetaModel.GetDataFieldAttribute <DisplayColumnAttribute> (Attributes, ref attr);
 			if (attr == null)
 				return false;
 
@@ -295,10 +321,11 @@ namespace System.Web.DynamicData
 			}
 
 			// 2. The first string column that is not in the primary key.
+			// LAMESPEC: also a column which is not a custom one
 			ReadOnlyCollection <MetaColumn> pkc = PrimaryKeyColumns;
 			bool havePkc = pkc.Count > 0;
 			foreach (MetaColumn mc in columns) {
-				if (havePkc && pkc.Contains (mc))
+				if (mc.IsCustomProperty || (havePkc && pkc.Contains (mc)))
 					continue;
 				if (mc.ColumnType == typeof (string))
 					return mc;
@@ -369,6 +396,9 @@ namespace System.Web.DynamicData
 
 		public string GetActionPath (string action, IList<object> primaryKeyValues)
 		{
+			if (String.IsNullOrEmpty (action))
+				return String.Empty;
+			
 			var values = new RouteValueDictionary ();
 			values.Add ("Action", action);
 			values.Add ("Table", Name);			
@@ -391,6 +421,9 @@ namespace System.Web.DynamicData
 
 		public string GetActionPath (string action, RouteValueDictionary routeValues)
 		{
+			if (String.IsNullOrEmpty (action))
+				return String.Empty;
+			
 			// .NET doesn't check whether routeValues is null, we'll just "implement"
 			// the behavior here...
 			if (routeValues == null)
@@ -408,16 +441,12 @@ namespace System.Web.DynamicData
 
 		public string GetActionPath (string action, IList<object> primaryKeyValues, string path)
 		{
-			var values = new RouteValueDictionary ();
-			values.Add ("Action", String.IsNullOrEmpty (path) ? action : path);
-			values.Add ("Table", Name);			
-
-			FillWithPrimaryKeys (values, primaryKeyValues);
+			if (String.IsNullOrEmpty (path))
+				return GetActionPath (action, primaryKeyValues);
 			
-			// To see that this internal method is called, comment out setting of
-			// HttpContext in the GetActionPath_Action_PrimaryKeyValues test and look at
-			// the stack trace
-			return GetActionPathFromRoutes (values);
+			var values = new RouteValueDictionary ();
+			FillWithPrimaryKeys (values, primaryKeyValues);
+			return BuildActionPath (path, values);
 		}
 
 		public string GetActionPath (string action, object row, string path)
@@ -542,7 +571,7 @@ namespace System.Web.DynamicData
 
 		public bool TryGetColumn (string columnName, out MetaColumn column)
 		{
-			if (String.IsNullOrEmpty (columnName))
+			if (columnName == null)
 				throw new ArgumentNullException ("columnName");
 			
 			foreach (var m in Columns)
