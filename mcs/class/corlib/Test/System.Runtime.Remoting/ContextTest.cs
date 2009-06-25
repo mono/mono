@@ -33,7 +33,7 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 	
 	[TestFixture]
-	public class ContextText: Assertion
+	public class ContextText
 	{
 		TestCbo cbo = new TestCbo ();
 		Context otherCtx;
@@ -43,14 +43,14 @@ namespace MonoTests.System.Runtime.Remoting
 		public void TestDoCallback ()
 		{
 			otherCtx = cbo.GetContext ();
-			Assert ("New context not created", Thread.CurrentContext != otherCtx);
+			Assert.IsTrue (Thread.CurrentContext != otherCtx, "New context not created");
 			
 			otherCtx.DoCallBack (new CrossContextDelegate (DelegateTarget));
 		}
 		
 		void DelegateTarget ()
 		{
-			Assert ("Wrong context", Thread.CurrentContext == otherCtx);
+			Assert.IsTrue (Thread.CurrentContext == otherCtx, "Wrong context");
 		}
 		
 		[Test]
@@ -68,14 +68,14 @@ namespace MonoTests.System.Runtime.Remoting
 			
 			otherCtx.DoCallBack (new CrossContextDelegate (CheckOtherContextDatastore));
 			
-			Assert ("Wrong data 1", Context.GetData (slot).Equals ("data"));
-			Assert ("Wrong data 2", Context.GetData (namedSlot1).Equals ("data1"));
-			Assert ("Wrong data 3", Context.GetData (namedSlot2).Equals ("data2"));
+			Assert.IsTrue (Context.GetData (slot).Equals ("data"), "Wrong data 1");
+			Assert.IsTrue (Context.GetData (namedSlot1).Equals ("data1"), "Wrong data 2");
+			Assert.IsTrue (Context.GetData (namedSlot2).Equals ("data2"), "Wrong data 3");
 			
 			try
 			{
 				namedSlot1 = Context.AllocateNamedDataSlot ("slot1");
-				Assert ("Exception expected",false);
+				Assert.Fail ("Exception expected");
 			}
 			catch {}
 			
@@ -88,7 +88,7 @@ namespace MonoTests.System.Runtime.Remoting
 			}
 			catch 
 			{
-				Assert ("Exception not expected",false);
+				Assert.Fail ("Exception not expected");
 			}
 			
 			Context.FreeNamedDataSlot ("slot1");
@@ -99,9 +99,9 @@ namespace MonoTests.System.Runtime.Remoting
 			LocalDataStoreSlot namedSlot1 = Context.GetNamedDataSlot ("slot1");
 			LocalDataStoreSlot namedSlot2 = Context.GetNamedDataSlot ("slot2");
 			
-			Assert ("Slot already has data", Context.GetData (slot) == null);
-			Assert ("Slot already has data", Context.GetData (namedSlot1) == null);
-			Assert ("Slot already has data", Context.GetData (namedSlot2) == null);
+			Assert.IsTrue (Context.GetData (slot) == null, "Slot already has data");
+			Assert.IsTrue (Context.GetData (namedSlot1) == null, "Slot already has data");
+			Assert.IsTrue (Context.GetData (namedSlot2) == null, "Slot already has data");
 			
 			Context.SetData (slot, "other data");
 			Context.SetData (namedSlot1, "other data1");

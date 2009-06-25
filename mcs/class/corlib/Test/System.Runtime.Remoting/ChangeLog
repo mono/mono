@@ -1,3 +1,7 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.	
+
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* SynchronizationAttributeTest.cs: Reenable some tests which seem to

@@ -136,7 +136,7 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 
 	[TestFixture]
-	public class SynchronizationAttributeTest: Assertion
+	public class SynchronizationAttributeTest
 	{
 		SincroRequiresNew sincob = new SincroRequiresNew ();
 		SincroNotSupported notsup = new SincroNotSupported ();
@@ -153,7 +153,7 @@ namespace MonoTests.System.Runtime.Remoting
 			SecondSyncThread ();
 			
 			tr.Join ();
-			Assert ("Concurrency detected in FirstSyncThread", !otResult);
+			Assert.IsTrue (!otResult, "Concurrency detected in FirstSyncThread");
 		}
 
 		void FirstSyncThread ()
@@ -164,7 +164,7 @@ namespace MonoTests.System.Runtime.Remoting
 		void SecondSyncThread ()
 		{
 			bool concurrent = sincob.CheckConcurrency ();
-			Assert ("Concurrency detected", !concurrent);
+			Assert.IsTrue (!concurrent, "Concurrency detected");
 		}
 
 		[Test]
@@ -172,11 +172,11 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
 			SynchRes res = ob.CheckContextTransition (typeof(SincroSupported));
-			Assert ("Synchronizaton context expected", res == SynchRes.SameSync);
+			Assert.IsTrue (res == SynchRes.SameSync, "Synchronizaton context expected");
 
 			SincroSupported ob2 = new SincroSupported ();
 			res = ob2.CheckContext (Thread.CurrentContext);
-			Assert ("Synchronizaton context not expected", res == SynchRes.NoSync);
+			Assert.IsTrue (res == SynchRes.NoSync, "Synchronizaton context not expected");
 		}
 
 		[Test]
@@ -184,11 +184,11 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
 			SynchRes res = ob.CheckContextTransition (typeof(SincroRequired));
-			Assert ("Synchronizaton context expected 1", res == SynchRes.SameSync);
+			Assert.IsTrue (res == SynchRes.SameSync, "Synchronizaton context expected 1");
 
 			SincroRequired ob2 = new SincroRequired ();
 			res = ob2.CheckContext (Thread.CurrentContext);
-			Assert ("Synchronizaton context expected 2", res == SynchRes.NewSync);
+			Assert.IsTrue (res == SynchRes.NewSync, "Synchronizaton context expected 2");
 		}
 
 		[Test]
@@ -196,11 +196,11 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
 			SynchRes res = ob.CheckContextTransition (typeof(SincroRequiresNew));
-			Assert ("New synchronizaton context expected", res == SynchRes.NewSync);
+			Assert.IsTrue (res == SynchRes.NewSync, "New synchronizaton context expected");
 
 			SincroRequiresNew ob2 = new SincroRequiresNew ();
 			res = ob2.CheckContext (Thread.CurrentContext);
-			Assert ("Synchronizaton context not expected", res == SynchRes.NewSync);
+			Assert.IsTrue (res == SynchRes.NewSync, "Synchronizaton context not expected");
 		}
 
 		[Test]
@@ -208,11 +208,11 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			SincroRequiresNew ob = new SincroRequiresNew ();
 			SynchRes res = ob.CheckContextTransition (typeof(SincroNotSupported));
-			Assert ("Synchronizaton context not expected 1", res == SynchRes.NoSync);
+			Assert.IsTrue (res == SynchRes.NoSync, "Synchronizaton context not expected 1");
 
 			SincroNotSupported ob2 = new SincroNotSupported ();
 			res = ob2.CheckContext (Thread.CurrentContext);
-			Assert ("Synchronizaton context not expected 2", res == SynchRes.NoSync);
+			Assert.IsTrue (res == SynchRes.NoSync, "Synchronizaton context not expected 2");
 		}
 
 		[Test]
@@ -225,7 +225,7 @@ namespace MonoTests.System.Runtime.Remoting
 			SecondSyncThread ();
 			
 			tr.Join ();
-			Assert ("Concurrency detected in FirstSyncThread", !otResult);
+			Assert.IsTrue (!otResult, "Concurrency detected in FirstSyncThread");
 		}
 
 		[Test]
@@ -237,7 +237,7 @@ namespace MonoTests.System.Runtime.Remoting
 			SecondNotSyncThread ();
 			
 			tr.Join ();
-			Assert ("Concurrency not detected in FirstReentryThread", otResult);
+			Assert.IsTrue (otResult, "Concurrency not detected in FirstReentryThread");
 		}
 
 		void FirstNotSyncThread ()
@@ -248,7 +248,7 @@ namespace MonoTests.System.Runtime.Remoting
 		void SecondNotSyncThread ()
 		{
 			bool concurrent = sincob.CheckConcurrency ();
-			Assert ("Concurrency not detected", concurrent);
+			Assert.IsTrue (concurrent, "Concurrency not detected");
 		}
 
 		[Test]
@@ -279,7 +279,7 @@ namespace MonoTests.System.Runtime.Remoting
 			SecondReentryThread ();
 			
 			tr.Join ();
-			Assert ("Concurrency not detected in FirstReentryThread", otResult);
+			Assert.IsTrue (otResult, "Concurrency not detected in FirstReentryThread");
 		}
 
 		void FirstReentryThread ()
@@ -290,7 +290,7 @@ namespace MonoTests.System.Runtime.Remoting
 		void SecondReentryThread ()
 		{
 			bool concurrent = reentrant.CheckCalloutConcurrency (notsup);
-			Assert ("Concurrency not detected", concurrent);
+			Assert.IsTrue (concurrent, "Concurrency not detected");
 		}
 
 		[Test]
@@ -302,7 +302,7 @@ namespace MonoTests.System.Runtime.Remoting
 			SecondNoReentryThread ();
 			
 			tr.Join ();
-			Assert ("Concurrency detected in FirstNoReentryThread", !otResult);
+			Assert.IsTrue (!otResult, "Concurrency detected in FirstNoReentryThread");
 		}
 
 		void FirstNoReentryThread ()
@@ -313,7 +313,7 @@ namespace MonoTests.System.Runtime.Remoting
 		void SecondNoReentryThread ()
 		{
 			bool concurrent = notreentrant.CheckCalloutConcurrency (notsup);
-			Assert ("Concurrency detected", !concurrent);
+			Assert.IsTrue (!concurrent, "Concurrency detected");
 		}
 
 		[Test]
@@ -323,11 +323,11 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			Thread.Sleep (200);
 			bool concurrent = notreentrant.CheckConcurrency ();
-			Assert ("Concurrency detected", !concurrent);
+			Assert.IsTrue (!concurrent, "Concurrency detected");
 			notreentrant.CheckContext (Thread.CurrentContext);
 			
 			tr.Join ();
-			Assert ("Concurrency detected in CallbackThread", !otResult);
+			Assert.IsTrue (!otResult, "Concurrency detected in CallbackThread");
 		}
 
 		void CallbackThread ()
@@ -343,19 +343,19 @@ namespace MonoTests.System.Runtime.Remoting
 			tr.Start ();
 			
 			bool r = sincob.CheckMonitorWait (true);
-			Assert ("Wait timeout", r);
+			Assert.IsTrue (r, "Wait timeout");
 			
 			r = tr.Join (1000);
-			Assert ("Join timeout", r);
+			Assert.IsTrue (r, "Join timeout");
 			
 			tr = new Thread (new ThreadStart (DoMonitorPulse));
 			tr.Start ();
 			
 			r = sincob.CheckMonitorWait (false);
-			Assert ("Expected wait timeout", !r);
+			Assert.IsTrue (!r, "Expected wait timeout");
 			
 			r = tr.Join (1000);
-			Assert ("Join timeout 2", r);
+			Assert.IsTrue (r, "Join timeout 2");
 		}
 
 		void DoMonitorPulse ()

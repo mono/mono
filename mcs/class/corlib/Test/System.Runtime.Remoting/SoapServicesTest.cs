@@ -55,7 +55,7 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 
 	[TestFixture]
-	public class SoapServicesTest: Assertion
+	public class SoapServicesTest
 	{
 		public string ThisNamespace
 		{
@@ -88,42 +88,42 @@ namespace MonoTests.System.Runtime.Remoting
 			// XmlType
 
 			res = SoapServices.GetXmlElementForInteropType (typeof(SoapTest), out name, out ns);
-			Assert ("E1",res);
-			AssertEquals ("E2", "ename", name);
-			AssertEquals ("E3", "ens", ns);
+			Assert.IsTrue (res, "E1");
+			Assert.AreEqual ("ename", name, "E2");
+			Assert.AreEqual ("ens", ns, "E3");
 
 			res = SoapServices.GetXmlElementForInteropType (typeof(SoapTest1), out name, out ns);
-			Assert ("E4",!res);
+			Assert.IsTrue (!res, "E4");
 
 			res = SoapServices.GetXmlElementForInteropType (typeof(SoapTest2), out name, out ns);
-			Assert ("E5",res);
-			AssertEquals ("E6", "ename", name);
-			AssertEquals ("E7", ThisNamespace, ns);
+			Assert.IsTrue (res, "E5");
+			Assert.AreEqual ("ename", name, "E6");
+			Assert.AreEqual (ThisNamespace, ns, "E7");
 
 			res = SoapServices.GetXmlElementForInteropType (typeof(SoapTest3), out name, out ns);
-			Assert ("E8",res);
-			AssertEquals ("E9", "SoapTest3", name);
-			AssertEquals ("E10", "ens", ns);
+			Assert.IsTrue (res, "E8");
+			Assert.AreEqual ("SoapTest3", name, "E9");
+			Assert.AreEqual ("ens", ns, "E10");
 
 			// XmlElement
 
 			res = SoapServices.GetXmlTypeForInteropType (typeof(SoapTest), out name, out ns);
-			Assert ("T1",res);
-			AssertEquals ("T2", "tname", name);
-			AssertEquals ("T3", "tns", ns);
+			Assert.IsTrue (res, "T1");
+			Assert.AreEqual ("tname", name, "T2");
+			Assert.AreEqual ("tns", ns, "T3");
 
 			res = SoapServices.GetXmlTypeForInteropType (typeof(SoapTest1), out name, out ns);
-			Assert ("T4",!res);
+			Assert.IsTrue (!res, "T4");
 
 			res = SoapServices.GetXmlTypeForInteropType (typeof(SoapTest2), out name, out ns);
-			Assert ("T5",res);
-			AssertEquals ("T6", "tname", name);
-			AssertEquals ("T7", ThisNamespace, ns);
+			Assert.IsTrue (res, "T5");
+			Assert.AreEqual ("tname", name, "T6");
+			Assert.AreEqual (ThisNamespace, ns, "T7");
 
 			res = SoapServices.GetXmlTypeForInteropType (typeof(SoapTest3), out name, out ns);
-			Assert ("T8",res);
-			AssertEquals ("T9", "SoapTest3", name);
-			AssertEquals ("T10", "tns", ns);
+			Assert.IsTrue (res, "T8");
+			Assert.AreEqual ("SoapTest3", name, "T9");
+			Assert.AreEqual ("tns", ns, "T10");
 		}
 
 		[Test]
@@ -134,39 +134,39 @@ namespace MonoTests.System.Runtime.Remoting
 			// Manual registration
 
 			t = SoapServices.GetInteropTypeFromXmlElement ("aa","bb");
-			AssertEquals ("M1", t, null);
+			Assert.AreEqual (t, null, "M1");
 
 			SoapServices.RegisterInteropXmlElement ("aa","bb",typeof(SoapTest));
 			t = SoapServices.GetInteropTypeFromXmlElement ("aa","bb");
-			AssertEquals ("M2", typeof (SoapTest), t);
+			Assert.AreEqual (typeof (SoapTest), t, "M2");
 
 
 			t = SoapServices.GetInteropTypeFromXmlType ("aa","bb");
-			AssertEquals ("M3", null, t);
+			Assert.AreEqual (null, t, "M3");
 
 			SoapServices.RegisterInteropXmlType ("aa","bb",typeof(SoapTest));
 			t = SoapServices.GetInteropTypeFromXmlType ("aa","bb");
-			AssertEquals ("M4", typeof (SoapTest), t);
+			Assert.AreEqual (typeof (SoapTest), t, "M4");
 
 			// Preload type
 
 			SoapServices.PreLoad (typeof(SoapTest2));
 
 			t = SoapServices.GetInteropTypeFromXmlElement ("ename",ThisNamespace);
-			AssertEquals ("T1", typeof (SoapTest2), t);
+			Assert.AreEqual (typeof (SoapTest2), t, "T1");
 
 			t = SoapServices.GetInteropTypeFromXmlType ("tname",ThisNamespace);
-			AssertEquals ("T2", typeof (SoapTest2), t);
+			Assert.AreEqual (typeof (SoapTest2), t, "T2");
 
 			// Preload assembly
 
 			SoapServices.PreLoad (typeof(SoapTest).Assembly);
 
 			t = SoapServices.GetInteropTypeFromXmlElement ("SoapTest3","ens");
-			AssertEquals ("A1", typeof (SoapTest3), t);
+			Assert.AreEqual (typeof (SoapTest3), t, "A1");
 
 			t = SoapServices.GetInteropTypeFromXmlType ("SoapTest3","tns");
-			AssertEquals ("A2", typeof (SoapTest3), t);
+			Assert.AreEqual (typeof (SoapTest3), t, "A2");
 			
 		}
 
@@ -177,16 +177,16 @@ namespace MonoTests.System.Runtime.Remoting
 			Type t;
 
 			SoapServices.GetInteropFieldTypeAndNameFromXmlAttribute (typeof(SoapTest), "atrib", "ns1", out t, out name);
-			AssertEquals ("#1", "atribut", name);
-			AssertEquals ("#2", typeof(string), t);
+			Assert.AreEqual ("atribut", name, "#1");
+			Assert.AreEqual (typeof(string), t, "#2");
 
 			SoapServices.GetInteropFieldTypeAndNameFromXmlElement (typeof(SoapTest), "elem", "ns1", out t, out name);
-			AssertEquals ("#3", "element", name);
-			AssertEquals ("#4", typeof(int), t);
+			Assert.AreEqual ("element", name, "#3");
+			Assert.AreEqual (typeof(int), t, "#4");
 
 			SoapServices.GetInteropFieldTypeAndNameFromXmlElement (typeof(SoapTest), "elem2", null, out t, out name);
-			AssertEquals ("#5", "element2", name);
-			AssertEquals ("#6", typeof(int), t);
+			Assert.AreEqual ("element2", name, "#5");
+			Assert.AreEqual (typeof(int), t, "#6");
 		}
 
 		[Test]
@@ -198,34 +198,34 @@ namespace MonoTests.System.Runtime.Remoting
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgo");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
-			AssertEquals ("S1", "myaction", act);
+			Assert.AreEqual ("myaction", act, "S1");
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMes");
 			SoapServices.RegisterSoapActionForMethodBase (mb, "anotheraction");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
-			AssertEquals ("S2", "anotheraction", act);
+			Assert.AreEqual ("anotheraction", act, "S2");
 
 			mb = typeof(SoapTest).GetMethod ("FesAlgoMesEspecial");
 			act = SoapServices.GetSoapActionFromMethodBase (mb);
-			AssertEquals ("S3", GetClassNs (typeof(SoapTest))+ "#FesAlgoMesEspecial", act);
+			Assert.AreEqual (GetClassNs (typeof(SoapTest))+ "#FesAlgoMesEspecial", act, "S3");
 
 			string typeName, methodName;
 			bool res;
 
 			res = SoapServices.GetTypeAndMethodNameFromSoapAction ("myaction", out typeName, out methodName);
-			Assert ("M1", res);
-			AssertEquals ("M2", GetSimpleTypeName (typeof(SoapTest)), typeName);
-			AssertEquals ("M3", "FesAlgo", methodName);
+			Assert.IsTrue (res, "M1");
+			Assert.AreEqual (GetSimpleTypeName (typeof(SoapTest)), typeName, "M2");
+			Assert.AreEqual ("FesAlgo", methodName, "M3");
 
 			res = SoapServices.GetTypeAndMethodNameFromSoapAction ("anotheraction", out typeName, out methodName);
-			Assert ("M4", res);
-			AssertEquals ("M5", GetSimpleTypeName (typeof(SoapTest)), typeName);
-			AssertEquals ("M6", "FesAlgoMes", methodName);
+			Assert.IsTrue (res, "M4");
+			Assert.AreEqual (GetSimpleTypeName (typeof(SoapTest)), typeName, "M5");
+			Assert.AreEqual ("FesAlgoMes", methodName, "M6");
 
 			res = SoapServices.GetTypeAndMethodNameFromSoapAction (GetClassNs (typeof(SoapTest))+ "#FesAlgoMesEspecial", out typeName, out methodName);
-			Assert ("M7", res);
-			AssertEquals ("M8", GetSimpleTypeName (typeof(SoapTest)), typeName);
-			AssertEquals ("M9", "FesAlgoMesEspecial", methodName);
+			Assert.IsTrue (res, "M7");
+			Assert.AreEqual (GetSimpleTypeName (typeof(SoapTest)), typeName, "M8");
+			Assert.AreEqual ("FesAlgoMesEspecial", methodName, "M9");
 		}
 	}
 }

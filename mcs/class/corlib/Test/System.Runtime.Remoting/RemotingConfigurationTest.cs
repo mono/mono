@@ -90,7 +90,7 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			string _Id = RemotingConfiguration.ApplicationId;
 			
-			Assertion.Assert("#A01", _Id != null);
+			Assert.IsTrue(_Id != null, "#A01");
 		}
 		
 		// tests and set the ApplicationName
@@ -113,11 +113,11 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				AppNameTest remAppNameTest = (AppNameTest) Activator.GetObject(typeof(AppNameTest), "tcp://localhost:1234/" + RemotingConfiguration.ApplicationName + "AppNameTest.rem");
 				
-				Assertion.Assert("#B01", remAppNameTest != null);
+				Assert.IsTrue(remAppNameTest != null, "#B01");
 			}
 			catch(Exception e)
 			{
-				Assertion.Assert("#B02: " + e.Message, false);
+				Assert.Fail ("#B02: " + e.Message);
 			}
 			finally
 			{
@@ -153,7 +153,7 @@ namespace MonoTests.System.Runtime.Remoting
 					}
 				}
 				
-				Assertion.Assert("#A02", IsServerRegistered);
+				Assert.IsTrue(IsServerRegistered, "#A02");
 				
 				// register the client
 				RemotingConfiguration.RegisterWellKnownClientType(typeof(WellKnownObject), "tcp://localhost:1234/"+RemotingConfiguration.ApplicationName+"/WellKnownObject.rem");
@@ -171,15 +171,15 @@ namespace MonoTests.System.Runtime.Remoting
 					}
 				}
 				
-				Assertion.Assert("#A03", IsClientRegistered);
+				Assert.IsTrue(IsClientRegistered, "#A03");
 				
 				WellKnownObject objWellKnown = new WellKnownObject();
 				
 				
-				Assertion.Assert("#A04", objWellKnown != null);
-				Assertion.Assert("#A05", RemotingServices.IsTransparentProxy(objWellKnown));
+				Assert.IsTrue(objWellKnown != null, "#A04");
+				Assert.IsTrue(RemotingServices.IsTransparentProxy(objWellKnown), "#A05");
 				objWellKnown.Method1();
-				Assertion.Assert("#A06", objWellKnown.Method1Called);
+				Assert.IsTrue(objWellKnown.Method1Called, "#A06");
 			}
 			finally
 			{
@@ -219,7 +219,7 @@ namespace MonoTests.System.Runtime.Remoting
 					}
 				}
 				
-				Assertion.Assert("#A07", IsServerRegistered);
+				Assert.IsTrue(IsServerRegistered, "#A07");
 				
 				RemotingConfiguration.RegisterActivatedClientType(typeof(DerivedActivatedObject), "tcp://localhost:1234");
 				
@@ -235,7 +235,7 @@ namespace MonoTests.System.Runtime.Remoting
 					}
 				}
 				
-				Assertion.Assert("#A08", IsClientRegistered);				
+				Assert.IsTrue(IsClientRegistered);				, "#A08");
 				
 				// This will send a RemotingException since there is no service named DerivedActivatedObject
 				// on the server
@@ -254,7 +254,7 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			string strProcessId = null;
 			strProcessId = RemotingConfiguration.ProcessId;
-			Assertion.Assert("#AO9", strProcessId != null);
+			Assert.IsTrue(strProcessId != null, "#AO9");
 		}
 		
 		[Test]
@@ -264,7 +264,7 @@ namespace MonoTests.System.Runtime.Remoting
 			RemotingConfiguration.RegisterActivatedServiceType(typeof(ActivatedObject));
 			// ActivatedObject was previously registered as a CAO on the server
 			// so IsActivationAllowed() should return TRUE
-			Assertion.Assert("#A10", RemotingConfiguration.IsActivationAllowed(typeof(ActivatedObject)));
+			Assert.IsTrue(RemotingConfiguration.IsActivationAllowed(typeof(ActivatedObject)), "#A10");
 		}
 		
 		[Test]
@@ -280,12 +280,12 @@ namespace MonoTests.System.Runtime.Remoting
 			// DerivedActivatedObject was registered as a CAO on the client
 			acte = RemotingConfiguration.IsRemotelyActivatedClientType(typeof(DerivedActivatedObject));
 			
-			Assertion.Assert("#A11", acte != null);
-			Assertion.AssertEquals("#A12", typeof(DerivedActivatedObject), acte.ObjectType);
+			Assert.IsTrue(acte != null, "#A11");
+			Assert.AreEqual(typeof(DerivedActivatedObject), acte.ObjectType, "#A12");
 			
 			acte = RemotingConfiguration.IsRemotelyActivatedClientType(typeof(DerivedActivatedObject).ToString(), assName.Name);
-			Assertion.Assert("#A13", acte != null);
-			Assertion.AssertEquals("#A14", typeof(DerivedActivatedObject), acte.ObjectType);
+			Assert.IsTrue(acte != null, "#A13");
+			Assert.AreEqual(typeof(DerivedActivatedObject), acte.ObjectType, "#A14");
 		}
 		
 		[Test]
@@ -298,12 +298,12 @@ namespace MonoTests.System.Runtime.Remoting
 			// WellKnownObject was registered as a SAO on th client
 			acte = RemotingConfiguration.IsWellKnownClientType(typeof(WellKnownObject));
 			
-			Assertion.Assert("#A11", acte != null);
-			Assertion.AssertEquals("#A12", typeof(WellKnownObject), acte.ObjectType);
+			Assert.IsTrue(acte != null, "#A11");
+			Assert.AreEqual(typeof(WellKnownObject), acte.ObjectType, "#A12");
 			
 			acte = RemotingConfiguration.IsWellKnownClientType(typeof(WellKnownObject).ToString(), assName.Name);
-			Assertion.Assert("#A13", acte != null);
-			Assertion.AssertEquals("#A14", typeof(WellKnownObject), acte.ObjectType);
+			Assert.IsTrue(acte != null, "#A13");
+			Assert.AreEqual(typeof(WellKnownObject), acte.ObjectType, "#A14");
 			
 		}
 	}

@@ -183,7 +183,7 @@ namespace MonoTests.System.Runtime.Remoting
 	
 	// The main test class
 	[TestFixture]
-	public class RemotingServicesTest : Assertion
+	public class RemotingServicesTest 
 	{
 		private static int MarshalObjectId = 0;
 			
@@ -223,13 +223,13 @@ namespace MonoTests.System.Runtime.Remoting
 			MarshalObject objMarshal = NewMarshalObject();
 			ObjRef objRef = RemotingServices.Marshal(objMarshal);
 			
-			Assert("#A01", objRef.URI != null);
+			Assert.IsTrue(objRef.URI != null, "#A01");
 			
 			MarshalObject objRem = (MarshalObject) RemotingServices.Unmarshal(objRef);
-			AssertEquals("#A02", objMarshal.Id, objRem.Id);
+			Assert.AreEqual(objMarshal.Id, objRem.Id, "#A02");
 			
 			objRem.Id = 2;
-			AssertEquals("#A03", objMarshal.Id, objRem.Id);
+			Assert.AreEqual(objMarshal.Id, objRem.Id, "#A03");
 			
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);
@@ -238,7 +238,7 @@ namespace MonoTests.System.Runtime.Remoting
 			
 			objRef = RemotingServices.Marshal(objMarshal, objMarshal.Uri);
 			
-			Assert("#A04", objRef.URI.EndsWith(objMarshal.Uri));
+			Assert.IsTrue(objRef.URI.EndsWith(objMarshal.Uri), "#A04");
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);		
 		}
@@ -251,7 +251,7 @@ namespace MonoTests.System.Runtime.Remoting
 			ObjRef objRef = RemotingServices.Marshal(derivedObjMarshal, derivedObjMarshal.Uri, typeof(MarshalObject));
 			
 			// Check that the type of the marshaled object is MarshalObject
-			Assert("#A05", objRef.TypeInfo.TypeName.StartsWith((typeof(MarshalObject)).ToString()));
+			Assert.IsTrue(objRef.TypeInfo.TypeName.StartsWith((typeof(MarshalObject)).ToString()), "#A05");
 			
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(derivedObjMarshal);
@@ -263,11 +263,11 @@ namespace MonoTests.System.Runtime.Remoting
 		{
 			MarshalObject objMarshal = NewMarshalObject();
 			
-			Assert("#A06", RemotingServices.GetObjectUri(objMarshal) == null);
+			Assert.IsTrue(RemotingServices.GetObjectUri(objMarshal) == null, "#A06");
 			
 			ObjRef objRef = RemotingServices.Marshal(objMarshal);
 			
-			Assert("#A07", RemotingServices.GetObjectUri(objMarshal) != null);
+			Assert.IsTrue(RemotingServices.GetObjectUri(objMarshal) != null, "#A07");
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
 			//RemotingServices.Disconnect(objMarshal);
 		}
@@ -288,7 +288,7 @@ namespace MonoTests.System.Runtime.Remoting
 			
 			MarshalObject objRem = (MarshalObject) RemotingServices.Connect(typeof(MarshalObject), "tcp://localhost:1236/" + objMarshal.Uri);
 			
-			Assert("#A08", RemotingServices.IsTransparentProxy(objRem));
+			Assert.IsTrue(RemotingServices.IsTransparentProxy(objRem), "#A08");
 			
 			ChannelServices.UnregisterChannel(chn);
 			
@@ -354,14 +354,14 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				// Tests RemotingServices.GetMethodBaseFromMethodMessage()
 				AssertEquals("#A09","Method1",proxy.MthBase.Name);
-				Assert("#A09.1", !proxy.IsMethodOverloaded);
+				Assert.IsTrue(!proxy.IsMethodOverloaded, "#A09.1");
 				
 				objRem.Method2();
-				Assert("#A09.2", proxy.IsMethodOverloaded);
+				Assert.IsTrue(proxy.IsMethodOverloaded, "#A09.2");
 			
 				// Tests RemotingServices.ExecuteMessage();
 				// If ExecuteMessage does it job well, Method1 should be called 2 times
-				AssertEquals("#A10", 2, MarshalObject.Called);
+				Assert.AreEqual(2, MarshalObject.Called, "#A10");
 			}
 			finally
 			{
@@ -382,14 +382,14 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				MarshalObject objRem = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1238/MarshalObject.rem");
 				
-				Assert("#A10.1", RemotingServices.IsTransparentProxy(objRem));
+				Assert.IsTrue(RemotingServices.IsTransparentProxy(objRem), "#A10.1");
 				
 				objRem.Method1();
 				Thread.Sleep(20);
-				Assert("#A10.2", !MarshalObject.IsMethodOneWay);
+				Assert.IsTrue(!MarshalObject.IsMethodOneWay, "#A10.2");
 				objRem.Method3();
 				Thread.Sleep(20);
-				Assert("#A10.2", MarshalObject.IsMethodOneWay);
+				Assert.IsTrue(MarshalObject.IsMethodOneWay, "#A10.2");
 			}
 			finally
 			{
@@ -416,7 +416,7 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				ObjRef objRefRem = RemotingServices.GetObjRefForProxy((MarshalByRefObject)objRem);
 				
-				Assert("#A11", objRefRem != null);
+				Assert.IsTrue(objRefRem != null, "#A11");
 			}
 			finally
 			{
@@ -441,8 +441,8 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				RealProxy rp = RemotingServices.GetRealProxy(objRem);
 				
-				Assert("#A12", rp != null);
-				AssertEquals("#A13", "MonoTests.System.Runtime.Remoting.RemotingServicesInternal.MyProxy", rp.GetType().ToString());
+				Assert.IsTrue(rp != null, "#A12");
+				Assert.AreEqual("MonoTests.System.Runtime.Remoting.RemotingServicesInternal.MyProxy", rp.GetType().ToString(), "#A13");
 			}
 			finally
 			{
@@ -465,7 +465,7 @@ namespace MonoTests.System.Runtime.Remoting
 				RemotingServices.Marshal(objRem);
 				
 				objRem = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1242/"+objRem.Uri);
-				Assert("#A14", objRem != null);
+				Assert.IsTrue(objRem != null, "#A14");
 			}
 			finally
 			{
@@ -490,7 +490,7 @@ namespace MonoTests.System.Runtime.Remoting
 				RemotingServices.Marshal(objRem);
 				
 				Type typeRem = RemotingServices.GetServerTypeForUri(RemotingServices.GetObjectUri(objRem));
-				AssertEquals("#A15", type, typeRem);
+				Assert.AreEqual(type, typeRem, "#A15");
 			}
 			finally
 			{
@@ -513,12 +513,12 @@ namespace MonoTests.System.Runtime.Remoting
 				
 				MarshalObject objRem = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1245/MarshalObject.rem");
 				
-				Assert("#A16", RemotingServices.IsObjectOutOfAppDomain(objRem));
-				Assert("#A17", RemotingServices.IsObjectOutOfContext(objRem));
+				Assert.IsTrue(RemotingServices.IsObjectOutOfAppDomain(objRem), "#A16");
+				Assert.IsTrue(RemotingServices.IsObjectOutOfContext(objRem), "#A17");
 				
 				MarshalObject objMarshal = new MarshalObject();
-				Assert("#A18", !RemotingServices.IsObjectOutOfAppDomain(objMarshal));
-				Assert("#A19", !RemotingServices.IsObjectOutOfContext(objMarshal));
+				Assert.IsTrue(!RemotingServices.IsObjectOutOfAppDomain(objMarshal), "#A18");
+				Assert.IsTrue(!RemotingServices.IsObjectOutOfContext(objMarshal), "#A19");
 			}
 			finally
 			{
