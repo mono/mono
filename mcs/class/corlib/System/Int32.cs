@@ -343,12 +343,12 @@ namespace System {
 				return false;
 			}
 
-			NumberFormatInfo nfi;
+			NumberFormatInfo nfi = null;
 			if (fp != null) {
 				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
 				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
 			}
-			else
+			if (nfi == null)
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 			if (!CheckStyle (style, tryParse, ref exc))
