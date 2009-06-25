@@ -1,3 +1,7 @@
+2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* BuildManager.cs: backport r131138.
+
 2009-06-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: CreateRootBuilder quits when root builder
