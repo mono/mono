@@ -1,3 +1,7 @@
+2009-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.
+
 2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ArithmeticBigTest.cs: New. Unit tests for BigInteger

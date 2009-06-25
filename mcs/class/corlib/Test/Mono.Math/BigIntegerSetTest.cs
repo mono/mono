@@ -22,7 +22,7 @@ namespace MonoTests.Mono.Math {
 
 		protected void Expect (BigInteger actual, BigInteger expected) 
 		{
-			Assertion.AssertEquals (Name, expected, actual);
+			Assert.AreEqual (expected, actual, Name);
 		}
 	}
 }
