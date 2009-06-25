@@ -1,5 +1,11 @@
 2009-06-25  Mark Probst  <mark.probst@gmail.com>
 
+	* threadpool.c: Don't add new calls to a threadpool if the domain
+	of the call is unloading or unloaded.  When dequeuing a job, null
+	the reference in the queue.
+
+2009-06-25  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c (null_link_in_range): Add the dislink for the old
 	generation if an object was moved.
 

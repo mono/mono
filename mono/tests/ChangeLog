@@ -1,3 +1,10 @@
+2009-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain-async-invoke.cs: Test for adding async invokes while a
+	domain is unloading.
+
+	* Makefile.am: Test added.
+
 2009-06-25  Sylvain Dupont <duposyl@gmail.com>
 
 	* cominterop.cs libtest.c: Added tests for marshalling
