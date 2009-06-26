@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml.XPath
 {
 	[TestFixture]
-	public class SelectNodesTests : Assertion
+	public class SelectNodesTests
 	{
 
 		[Test]
@@ -25,8 +25,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document, nodes [0], "#2");
 		}
 
 		[Test]
@@ -35,8 +35,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/foo");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#2");
 		}
 
 		[Test]
@@ -45,7 +45,7 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("/bar");
-			AssertEquals (0, nodes.Count);
+			Assert.AreEqual (0, nodes.Count, "#1");
 		}
 
 		[Test]
@@ -54,9 +54,9 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/*");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
+			Assert.AreEqual (2, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [1], "#3");
 		}
 
 		[Test]
@@ -65,8 +65,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
 		}
 
 		[Test]
@@ -75,8 +75,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/baz");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [0]);
 		}
 
 		[Test]
@@ -85,8 +85,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo>bar</foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/text()");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0]);
 		}
 
 		[Test]
@@ -95,9 +95,9 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo>bar<baz />quux</foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/text()");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
+			Assert.AreEqual (2, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.ChildNodes [2], nodes [1], "#3");
 		}
 
 		[Test]
@@ -106,8 +106,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/..");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#2");
 		}
 
 		[Test]
@@ -116,8 +116,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/parent::node()");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#2");
 		}
 
 		[Test]
@@ -126,8 +126,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.Attributes ["bar"], nodes [0], "#2");
 		}
 
 		[Test]
@@ -136,8 +136,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/attribute::bar");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.Attributes ["bar"], nodes [0], "#2");
 		}
 
 		[Test]
@@ -146,10 +146,10 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' quux='quuux' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@*");
-			AssertEquals (2, nodes.Count);
+			Assert.AreEqual (2, nodes.Count, "#1");
 			// are the attributes guanteed to be ordered in the node list?
-			AssertSame (document.DocumentElement.Attributes ["bar"], nodes [0]);
-			AssertSame (document.DocumentElement.Attributes ["quux"], nodes [1]);
+			Assert.AreSame (document.DocumentElement.Attributes ["bar"], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.Attributes ["quux"], nodes [1], "#3");
 		}
 
 		[Test]
@@ -158,8 +158,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo bar='baz' />");
 			XmlNodeList nodes = document.SelectNodes ("/foo/@bar/..");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#2");
 		}
 		
 		[Test]
@@ -168,9 +168,9 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar|/foo/baz");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
+			Assert.AreEqual (2, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [1], "#3");
 		}
 		
 		[Test]
@@ -179,10 +179,10 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar />baz<quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/node()");
-			AssertEquals (3, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [1]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [2]);
+			Assert.AreEqual (3, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [1], "#3");
+			Assert.AreSame (document.DocumentElement.ChildNodes [2], nodes [2], "#4");
 		}
 
 		[Test]
@@ -191,8 +191,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar>1</bar><bar>2</bar></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar[1]");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [0], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [0], nodes [0], "#2");
 		}
 
 		[Test]
@@ -201,9 +201,9 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::*");
-			AssertEquals (2, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [1]);
+			Assert.AreEqual (2, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [0], "#2");
+			Assert.AreSame (document.DocumentElement.ChildNodes [2], nodes [1], "#3");
 		}
 
 		[Test]
@@ -212,8 +212,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::baz");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [1], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [1], nodes [0], "#2");
 		}
 
 		[Test]
@@ -222,8 +222,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo><bar /><baz /><quux /></foo>");
 			XmlNodeList nodes = document.SelectNodes ("/foo/bar/following-sibling::quux");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement.ChildNodes [2], nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement.ChildNodes [2], nodes [0], "#2");
 		}
 
 		[Test]
@@ -232,8 +232,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo />");
 			XmlNodeList nodes = document.SelectNodes ("(/foo) | (/foo)");
-			AssertEquals (1, nodes.Count);	// bug #27548
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count);	// bug #27548, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#1");
 		}
 
 		[Test]
@@ -242,8 +242,8 @@ namespace MonoTests.System.Xml.XPath
 			XmlDocument document = new XmlDocument ();
 			document.LoadXml ("<foo1 />");
 			XmlNodeList nodes = document.SelectNodes ("/foo1");
-			AssertEquals (1, nodes.Count);
-			AssertSame (document.DocumentElement, nodes [0]);
+			Assert.AreEqual (1, nodes.Count, "#1");
+			Assert.AreSame (document.DocumentElement, nodes [0], "#2");
 		}
 
 		[Test]
@@ -254,7 +254,7 @@ namespace MonoTests.System.Xml.XPath
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager(document.NameTable);
 			nsmgr.AddNamespace("foons", "urn:foo1:foo2");
 			XmlNodeList nodes = document.SelectNodes ("/foons:root", nsmgr);
-			AssertEquals (1, nodes.Count);
+			Assert.AreEqual (1, nodes.Count, "#1");
 		}
 
 		[Test]
@@ -265,17 +265,17 @@ namespace MonoTests.System.Xml.XPath
 			doc.LoadXml ("<root xmlns='urn:root' xmlns:hoge='urn:hoge'><foo xmlns='urn:foo'><bar xmlns=''><baz/></bar></foo></root>");
 			XmlNode n = doc.FirstChild.FirstChild.FirstChild.FirstChild; //baz
 			XmlNodeList nl = n.SelectNodes ("namespace::*");
-			AssertEquals ("hoge", nl [0].LocalName);
-			AssertEquals ("xml", nl [1].LocalName);
-			AssertEquals (2, nl.Count);
+			Assert.AreEqual ("hoge", nl [0].LocalName, "#1");
+			Assert.AreEqual ("xml", nl [1].LocalName, "#2");
+			Assert.AreEqual (2, nl.Count, "#3");
 
 			n = doc.FirstChild.FirstChild; // foo
 			nl = n.SelectNodes ("namespace::*");
 			Console.WriteLine ("at foo::");
-			AssertEquals ("xmlns", nl [0].LocalName);
-			AssertEquals ("hoge", nl [1].LocalName);
-			AssertEquals ("xml", nl [2].LocalName);
-			AssertEquals (3, nl.Count);
+			Assert.AreEqual ("xmlns", nl [0].LocalName, "#1");
+			Assert.AreEqual ("hoge", nl [1].LocalName, "#2");
+			Assert.AreEqual ("xml", nl [2].LocalName, "#3");
+			Assert.AreEqual (3, nl.Count, "#4");
 		}
 
 		[Test]
@@ -289,9 +289,9 @@ namespace MonoTests.System.Xml.XPath
 
 			XmlNode bax = baxs [0];
 			XmlNodeList ans = bax.SelectNodes ("ancestor::*");
-			AssertEquals (2, ans.Count);
-			AssertEquals ("bar", ans [0].Name);
-			AssertEquals ("baz", ans [1].Name);
+			Assert.AreEqual (2, ans.Count, "#1");
+			Assert.AreEqual ("bar", ans [0].Name, "#2");
+			Assert.AreEqual ("baz", ans [1].Name, "#3");
 		}
 
 		[Test] // bug #458245
@@ -313,7 +313,7 @@ namespace MonoTests.System.Xml.XPath
 			ns.AddNamespace ("_", "urn:foo");
 			string xpath = "//_:div//_:div//_:div";
 			var nodes = doc.SelectNodes (xpath, ns);
-			AssertEquals (4, nodes.Count);
+			Assert.AreEqual (4, nodes.Count, "#1");
 		}
 
 		[Test]
@@ -340,9 +340,9 @@ namespace MonoTests.System.Xml.XPath
 			ns.AddNamespace ("_", "http://www.w3.org/1999/xhtml");
 
 			XmlNode n = doc.SelectSingleNode ("//_:html", ns);
-			Assert ("#1", n != null);
+			Assert.IsTrue (n != null, "#1");
 			XmlNodeList nodes = n.SelectNodes (".//_:div//_:div", ns);
-			AssertEquals ("#2", 5, nodes.Count);
+			Assert.AreEqual (5, nodes.Count, "#2");
 		}
 	}
 }

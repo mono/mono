@@ -1,3 +1,11 @@
+2009-06-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SelectNodesTests.cs
+	  XPathNavigatorCommonTests.cs
+	  XPathAtomicValueTests.cs
+	  XPathNavigatorTests.cs
+	  XPathNavigatorEvaluateTests.cs : convert to newer nunit style.
+
 2009-05-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorCommonTests.cs : test that LookupNamespace() in

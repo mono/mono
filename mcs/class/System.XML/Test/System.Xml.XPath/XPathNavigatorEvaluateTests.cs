@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XPathNavigatorEvaluateTests : Assertion
+	public class XPathNavigatorEvaluateTests
 	{
 		XmlDocument document;
 		XPathNavigator navigator;
@@ -59,13 +59,13 @@ namespace MonoTests.System.Xml
 		{
 			expression = navigator.Compile("last()");
 			iterator = navigator.Select("/foo");
-			AssertEquals ("1", navigator.Evaluate ("last()").ToString());
-			AssertEquals ("1", navigator.Evaluate (expression, null).ToString ());
-			AssertEquals ("1", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("1", navigator.Evaluate ("last()").ToString(), "#1");
+			Assert.AreEqual ("1", navigator.Evaluate (expression, null).ToString (), "#2");
+			Assert.AreEqual ("1", navigator.Evaluate (expression, iterator).ToString (), "#3");
 			iterator = navigator.Select("/foo/*");
-			AssertEquals ("4", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("4", navigator.Evaluate (expression, iterator).ToString (), "#4");
 			
-			AssertEquals("3", navigator2.Evaluate ("string(//bar[last()]/@baz)"));
+			Assert.AreEqual("3", navigator2.Evaluate ("string(//bar[last()]/@baz)"), "#5");
 		}
 
 		[Test]
@@ -82,28 +82,28 @@ namespace MonoTests.System.Xml
 		{
 			expression = navigator.Compile("position()");
 			iterator = navigator.Select("/foo");
-			AssertEquals ("#1", "1", navigator.Evaluate ("position()").ToString ());
-			AssertEquals ("#2", "1", navigator.Evaluate (expression, null).ToString ());
-			AssertEquals ("#3", "0", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("1", navigator.Evaluate ("position()").ToString (), "#1");
+			Assert.AreEqual ("1", navigator.Evaluate (expression, null).ToString (), "#2");
+			Assert.AreEqual ("0", navigator.Evaluate (expression, iterator).ToString (), "#3");
 			iterator = navigator.Select("/foo/*");
-			AssertEquals ("#4", "0", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("0", navigator.Evaluate (expression, iterator).ToString (), "#4");
 			iterator.MoveNext();
-			AssertEquals ("#5", "1", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("1", navigator.Evaluate (expression, iterator).ToString (), "#5");
 			iterator.MoveNext ();
-			AssertEquals ("#6", "2", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("2", navigator.Evaluate (expression, iterator).ToString (), "#6");
 			iterator.MoveNext ();
-			AssertEquals ("#7", "3", navigator.Evaluate (expression, iterator).ToString ());
+			Assert.AreEqual ("3", navigator.Evaluate (expression, iterator).ToString (), "#7");
 		}
 
 		[Test]
 		public void CoreFunctionNodeSetCount ()
 		{
-			AssertEquals ("5", navigator.Evaluate ("count(//*)").ToString ());
-			AssertEquals ("1", navigator.Evaluate ("count(//foo)").ToString ());
-			AssertEquals ("1", navigator.Evaluate ("count(/foo)").ToString ());
-			AssertEquals ("1", navigator.Evaluate ("count(/foo/bar)").ToString ());
+			Assert.AreEqual ("5", navigator.Evaluate ("count(//*)").ToString (), "#1");
+			Assert.AreEqual ("1", navigator.Evaluate ("count(//foo)").ToString (), "#2");
+			Assert.AreEqual ("1", navigator.Evaluate ("count(/foo)").ToString (), "#3");
+			Assert.AreEqual ("1", navigator.Evaluate ("count(/foo/bar)").ToString (), "#4");
 
-			AssertEquals ("3", navigator2.Evaluate ("count(//bar)").ToString ());
+			Assert.AreEqual ("3", navigator2.Evaluate ("count(//bar)").ToString (), "#5");
 		}
 
 		public void saveTestCoreFunctionNodeSetID ()
@@ -117,17 +117,17 @@ namespace MonoTests.System.Xml
 				"<foo><bar baz='1' qux='hello' /><bar baz='2' qux='world' /></foo>");
 			navigator = document.CreateNavigator();
 
-			AssertEquals ("hello", navigator.Evaluate ("string(id('1')/@qux)").ToString ());
-			AssertEquals ("world", navigator.Evaluate ("string(id('2')/@qux)").ToString ());
+			Assert.AreEqual ("hello", navigator.Evaluate ("string(id('1')/@qux)").ToString (), "#1");
+			Assert.AreEqual ("world", navigator.Evaluate ("string(id('2')/@qux)").ToString (), "#2");
 		}
 
 		[Test]
 		public void CoreFunctionLocalName ()
 		{
-			AssertEquals ("", navigator.Evaluate ("local-name()").ToString ());
-			AssertEquals ("", navigator.Evaluate ("local-name(/bogus)").ToString ());
-			AssertEquals ("foo", navigator.Evaluate ("local-name(/foo)").ToString ());
-			AssertEquals ("bar", navigator3.Evaluate ("local-name(/foo/*)").ToString ());
+			Assert.AreEqual ("", navigator.Evaluate ("local-name()").ToString (), "#1");
+			Assert.AreEqual ("", navigator.Evaluate ("local-name(/bogus)").ToString (), "#2");
+			Assert.AreEqual ("foo", navigator.Evaluate ("local-name(/foo)").ToString (), "#3");
+			Assert.AreEqual ("bar", navigator3.Evaluate ("local-name(/foo/*)").ToString (), "#4");
 		}
 
 		// TODO:  umm.  Unable to make this return a namespace-uri so far...
@@ -137,10 +137,10 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo:bar xmlns:foo='#foo'><foo:baz><foo:qux /></foo:baz></foo:bar>");
 			navigator = document.CreateNavigator ();
 
-			AssertEquals ("", navigator.Evaluate ("namespace-uri()").ToString ());
-			AssertEquals ("", navigator.Evaluate ("namespace-uri(/bogus)").ToString ());
-			//AssertEquals("foo", navigator.Evaluate ("namespace-uri(/bar)").ToString ());
-			AssertEquals ("", navigator2.Evaluate ("namespace-uri(//bar)").ToString ());
+			Assert.AreEqual ("", navigator.Evaluate ("namespace-uri()").ToString (), "#1");
+			Assert.AreEqual ("", navigator.Evaluate ("namespace-uri(/bogus)").ToString (), "#2");
+			//Assert.AreEqual("foo", navigator.Evaluate ("namespace-uri(/bar)").ToString (), "#3");
+			Assert.AreEqual ("", navigator2.Evaluate ("namespace-uri(//bar)").ToString (), "#4");
 		}
 
 		public void saveTestCoreFunctionString ()
@@ -148,28 +148,28 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo>hello<bar>world</bar><baz>how are you</baz></foo>");
 			navigator = document.CreateNavigator ();
 
-			AssertEquals ("world", navigator.Evaluate ("string(/foo/*)").ToString ());
-			AssertEquals ("NaN", navigator.Evaluate ("string(0 div 0)").ToString ());
+			Assert.AreEqual ("world", navigator.Evaluate ("string(/foo/*)").ToString (), "#1");
+			Assert.AreEqual ("NaN", navigator.Evaluate ("string(0 div 0)").ToString (), "#2");
 			
 			try {
 				navigator.Evaluate ("string(+0)");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 			
-			AssertEquals ("0", navigator.Evaluate ("string(-0)").ToString ());			
-			AssertEquals ("Infinity", navigator.Evaluate ("string(1 div 0)").ToString ());
-			AssertEquals ("-Infinity", navigator.Evaluate ("string(-1 div 0)").ToString ());
-			AssertEquals ("45", navigator.Evaluate ("string(45)").ToString ());
-			AssertEquals ("-22", navigator.Evaluate ("string(-22)").ToString ());
-			AssertEquals ("0.25", navigator.Evaluate ("string(.25)").ToString ());
-			AssertEquals ("-0.25", navigator.Evaluate ("string(-.25)").ToString ());
-			AssertEquals ("2", navigator.Evaluate ("string(2.0)").ToString ());
-			AssertEquals ("2.01", navigator.Evaluate ("string(2.01)").ToString ());
-			AssertEquals ("-3", navigator.Evaluate ("string(-3.0)").ToString ());
-			AssertEquals ("3.45", navigator.Evaluate ("string(3.45)").ToString ());
+			Assert.AreEqual ("0", navigator.Evaluate ("string(-0)").ToString (), "#3");
+			Assert.AreEqual ("Infinity", navigator.Evaluate ("string(1 div 0)").ToString (), "#4");
+			Assert.AreEqual ("-Infinity", navigator.Evaluate ("string(-1 div 0)").ToString (), "#5");
+			Assert.AreEqual ("45", navigator.Evaluate ("string(45)").ToString (), "#6");
+			Assert.AreEqual ("-22", navigator.Evaluate ("string(-22)").ToString (), "#7");
+			Assert.AreEqual ("0.25", navigator.Evaluate ("string(.25)").ToString (), "#8");
+			Assert.AreEqual ("-0.25", navigator.Evaluate ("string(-.25)").ToString (), "#9");
+			Assert.AreEqual ("2", navigator.Evaluate ("string(2.0)").ToString (), "#10");
+			Assert.AreEqual ("2.01", navigator.Evaluate ("string(2.01)").ToString (), "#11");
+			Assert.AreEqual ("-3", navigator.Evaluate ("string(-3.0)").ToString (), "#12");
+			Assert.AreEqual ("3.45", navigator.Evaluate ("string(3.45)").ToString (), "#13");
 
 			// Wonder what this will look like under a different platform.
-			AssertEquals("0.33333333333333331", navigator.Evaluate ("string(1 div 3)").ToString ());
+			Assert.AreEqual("0.33333333333333331", navigator.Evaluate ("string(1 div 3)").ToString (), "#14");
 		}
 
 		[Test]
@@ -177,18 +177,18 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				navigator.Evaluate ("concat()");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
 			try {
 				navigator.Evaluate ("concat('foo')");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
-			AssertEquals ("foobar", navigator.Evaluate ("concat('foo', 'bar')").ToString ());
-			AssertEquals ("foobarbaz", navigator.Evaluate ("concat('foo', 'bar', 'baz')").ToString ());
-			AssertEquals ("foobarbazqux", navigator.Evaluate ("concat('foo', 'bar', 'baz', 'qux')").ToString ());
-			AssertEquals ("foobarbazquxquux", navigator.Evaluate ("concat('foo', 'bar', 'baz', 'qux', 'quux')").ToString ());
+			Assert.AreEqual ("foobar", navigator.Evaluate ("concat('foo', 'bar')").ToString (), "#1");
+			Assert.AreEqual ("foobarbaz", navigator.Evaluate ("concat('foo', 'bar', 'baz')").ToString (), "#2");
+			Assert.AreEqual ("foobarbazqux", navigator.Evaluate ("concat('foo', 'bar', 'baz', 'qux')").ToString (), "#3");
+			Assert.AreEqual ("foobarbazquxquux", navigator.Evaluate ("concat('foo', 'bar', 'baz', 'qux', 'quux')").ToString (), "#4");
 		}
 
 		[Test]
@@ -196,21 +196,21 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				navigator.Evaluate ("starts-with()");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
 			try {
 				navigator.Evaluate ("starts-with('foo')");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
 			try {
 				navigator.Evaluate ("starts-with('foo', 'bar', 'baz')");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
-			Assert ((bool)navigator.Evaluate ("starts-with('foobar', 'foo')"));
-			Assert (!(bool)navigator.Evaluate ("starts-with('foobar', 'bar')"));
+			Assert.IsTrue ((bool)navigator.Evaluate ("starts-with('foobar', 'foo')"));
+			Assert.IsTrue (!(bool)navigator.Evaluate ("starts-with('foobar', 'bar')"));
 		}
 
 		[Test]
@@ -218,21 +218,21 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				navigator.Evaluate ("contains()");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
 			try {
 				navigator.Evaluate ("contains('foo')");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
 			try {
 				navigator.Evaluate ("contains('foobar', 'oob', 'baz')");
-				Fail ("Expected an XPathException to be thrown.");
+				Assert.Fail ("Expected an XPathException to be thrown.");
 			} catch (XPathException) {}
 
-			Assert ((bool)navigator.Evaluate ("contains('foobar', 'oob')"));
-			Assert (!(bool)navigator.Evaluate ("contains('foobar', 'baz')"));
+			Assert.IsTrue ((bool)navigator.Evaluate ("contains('foobar', 'oob')"));
+			Assert.IsTrue (!(bool)navigator.Evaluate ("contains('foobar', 'baz')"));
 		}
 	}
 }

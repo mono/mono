@@ -40,7 +40,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XPathAtomicValueTests : Assertion
+	public class XPathAtomicValueTests
 	{
 		internal const string XdtNamespace = "http://www.w3.org/2003/11/xpath-datatypes";
 
@@ -158,18 +158,18 @@ namespace MonoTests.System.Xml
 			object singleValue,
 			int listCount)
 		{
-			AssertEquals ("IsNode", isNode, av.IsNode);
-			AssertEquals ("ValueType", valueType, av.ValueType);
-			AssertEquals ("XmlType", xmlType, av.XmlType);
-			AssertEquals ("TypedValue", typedValue, av.TypedValue);
-			AssertEquals ("typedValue.GetType()", typedValueType, typedValue.GetType ());
+			Assert.AreEqual (isNode, av.IsNode, "IsNode");
+			Assert.AreEqual (valueType, av.ValueType, "ValueType");
+			Assert.AreEqual (xmlType, av.XmlType, "XmlType");
+			Assert.AreEqual (typedValue, av.TypedValue, "TypedValue");
+			Assert.AreEqual (typedValueType, typedValue.GetType (), "typedValue.GetType()");
 
 			if (value != null)
-				AssertEquals ("Value", value, av.Value);
+				Assert.AreEqual (value, av.Value, "Value");
 			else {
 				try {
 					value = av.Value;
-					Fail ("not supported conversion to String.");
+					Assert.Fail ("not supported conversion to String.");
 				} catch (InvalidCastException) {
 				}
 			}
@@ -177,83 +177,83 @@ namespace MonoTests.System.Xml
 			// FIXME: Failure cases could not be tested;
 			// any kind of Exceptions are thrown as yet.
 			if (boolValue != null)
-				AssertEquals ("ValueAsBoolean", boolValue, av.ValueAsBoolean);
+				Assert.AreEqual (boolValue, av.ValueAsBoolean, "ValueAsBoolean");
 			/*
 			else {
 				try {
 					boolValue = av.ValueAsBoolean;
-					Fail ("not supported conversion to Boolean.");
+					Assert.Fail ("not supported conversion to Boolean.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (dateValue != null)
-				AssertEquals ("ValueAsDateTime", dateValue, av.ValueAsDateTime);
+				Assert.AreEqual (dateValue, av.ValueAsDateTime, "ValueAsDateTime");
 			/*
 			else {
 				try {
 					dateValue = av.ValueAsDateTime;
-					Fail ("not supported conversion to DateTime.");
+					Assert.Fail ("not supported conversion to DateTime.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (decimalValue != null)
-				AssertEquals ("ValueAsDecimal", decimalValue, av.ValueAsDecimal);
+				Assert.AreEqual (decimalValue, av.ValueAsDecimal, "ValueAsDecimal");
 			/*
 			else {
 				try {
 					decimalValue = av.ValueAsDecimal;
-					Fail ("not supported conversion to Decimal.");
+					Assert.Fail ("not supported conversion to Decimal.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (doubleValue != null)
-				AssertEquals ("ValueAsDouble", doubleValue, av.ValueAsDouble);
+				Assert.AreEqual (doubleValue, av.ValueAsDouble, "ValueAsDouble");
 			/*
 			else {
 				try {
 					doubleValue = av.ValueAsDouble;
-					Fail ("not supported conversion to Double.");
+					Assert.Fail ("not supported conversion to Double.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (int32Value != null)
-				AssertEquals ("ValueAsInt32", int32Value, av.ValueAsInt32);
+				Assert.AreEqual (int32Value, av.ValueAsInt32, "ValueAsInt32");
 			/*
 			else {
 				try {
 					int32Value = av.ValueAsInt32;
-					Fail ("not supported conversion to Int32.");
+					Assert.Fail ("not supported conversion to Int32.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (int64Value != null)
-				AssertEquals ("ValueAsInt64", int64Value, av.ValueAsInt64);
+				Assert.AreEqual (int64Value, av.ValueAsInt64, "ValueAsInt64");
 			/*
 			else {
 				try {
 					int64Value = av.ValueAsInt64;
-					Fail ("not supported conversion to Int64.");
+					Assert.Fail ("not supported conversion to Int64.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
 			if (singleValue != null)
-				AssertEquals ("ValueAsSingle", singleValue, av.ValueAsSingle);
+				Assert.AreEqual (singleValue, av.ValueAsSingle, "ValueAsSingle");
 			/*
 			else {
 				try {
 					singleValue = av.ValueAsSingle;
-					Fail ("not supported conversion to Single.");
+					Assert.Fail ("not supported conversion to Single.");
 				} catch (InvalidCastException) {
 				}
 			}
 			*/
-			AssertEquals ("ValueAsList.Count", listCount, av.ValueAsList.Count);
+			Assert.AreEqual (listCount, av.ValueAsList.Count, "ValueAsList.Count");
 		}
 
 		[Test]
@@ -471,7 +471,7 @@ namespace MonoTests.System.Xml
 			av = new XPathAtomicValue (new bool [] {true, false}, xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("ArrayList must contain just one item to be castable to bool");
+				Assert.Fail ("ArrayList must contain just one item to be castable to bool");
 			} catch (InvalidCastException) {
 			}
 
@@ -479,7 +479,7 @@ namespace MonoTests.System.Xml
 			av = new XPathAtomicValue (new ArrayList (), xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("ArrayList must contain just one item to be castable to bool");
+				Assert.Fail ("ArrayList must contain just one item to be castable to bool");
 			} catch (InvalidCastException) {
 			}
 
@@ -487,7 +487,7 @@ namespace MonoTests.System.Xml
 			av = new XPathAtomicValue ("True", xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("\"True\" is not a boolean representation (\"true\" is).");
+				Assert.Fail ("\"True\" is not a boolean representation (\"true\" is).");
 			} catch (InvalidCastException) {
 			}
 
@@ -495,7 +495,7 @@ namespace MonoTests.System.Xml
 			av = new XPathAtomicValue (DateTime.Now, xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("DateTime should not be castable to bool.");
+				Assert.Fail ("DateTime should not be castable to bool.");
 			} catch (InvalidCastException) {
 			}
 
@@ -506,7 +506,7 @@ namespace MonoTests.System.Xml
 			av = new XPathAtomicValue (node, xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("XmlText cannot be castable to bool.");
+				Assert.Fail ("XmlText cannot be castable to bool.");
 			} catch (InvalidCastException) {
 			}
 
@@ -516,7 +516,7 @@ namespace MonoTests.System.Xml
 				xstype);
 			try {
 				object o = av.ValueAsBoolean;
-				Fail ("XmlText cannot be castable to bool.");
+				Assert.Fail ("XmlText cannot be castable to bool.");
 			} catch (InvalidCastException) {
 			}
 		}
