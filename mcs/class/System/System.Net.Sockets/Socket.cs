@@ -3570,6 +3570,10 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
+			// I'd throw an ArgumentNullException, but this is what MS does.
+			if (opt_value == null)
+				throw new SocketException (10014, "Error trying to dereference an invalid pointer");
+			
 			int error;
 			
 			SetSocketOption_internal(socket, level, name, null,
@@ -3599,6 +3603,7 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
+			// NOTE: if a null is passed, the byte[] overload is used instead...
 			if (opt_value == null)
 				throw new ArgumentNullException("opt_value");
 			

@@ -1,3 +1,8 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: MS throws a SocketException in the byte[] overload when
+	the value is null.
+
 2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TcpClient.cs:
