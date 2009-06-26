@@ -163,8 +163,8 @@ namespace MonoTests.System.Net.Sockets {
 				Assert.Fail ("BeginSend wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginSend #5", true, BSSent);
-			Assertion.AssertEquals ("BeginSend #6", 4, BSBytes);
+			Assert.AreEqual (true, BSSent, "BeginSend #5");
+			Assert.AreEqual (4, BSBytes, "BeginSend #6");
 
 			client.Close ();
 		}
@@ -201,14 +201,10 @@ namespace MonoTests.System.Net.Sockets {
 				Assert.Fail ("BeginReceive wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginReceive #1", true,
-						BRReceived);
-			Assertion.AssertEquals ("BeginReceive #2", 4,
-						BRBytes.Length);
-			Assertion.AssertEquals ("BeginReceive #3", ep. Port,
-						BRFrom.Port);
-			Assertion.AssertEquals ("BeginReceive #4", ep.Address,
-						BRFrom.Address);
+			Assert.AreEqual (true, BRReceived, "BeginReceive #1");
+			Assert.AreEqual (4, BRBytes.Length, "BeginReceive #2");
+			Assert.AreEqual (ep. Port, BRFrom.Port, "BeginReceive #3");
+			Assert.AreEqual (ep.Address, BRFrom.Address, "BeginReceive #4");
 
 			client.Close ();
 		}
@@ -223,8 +219,7 @@ namespace MonoTests.System.Net.Sockets {
 			client.Send (bytes, bytes.Length, ep);
 			int avail = client.Available;
 			
-			Assertion.AssertEquals ("Available #1", bytes.Length,
-						avail);
+			Assert.AreEqual (bytes.Length, avail, "Available #1");
 
 			client.Close ();
 		}
@@ -238,8 +233,7 @@ namespace MonoTests.System.Net.Sockets {
 			/* Ignore the docs, testing shows the default
 			 * here is in fact false
 			 */
-			Assertion.AssertEquals ("DontFragmentDefault", false,
-						client.DontFragment);
+			Assert.AreEqual (false, client.DontFragment, "DontFragmentDefault");
 
 			client.Close ();
 		}
@@ -249,8 +243,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			UdpClient client = new UdpClient ();
 			
-			Assertion.AssertEquals ("EnableBroadcastDefault",
-						false, client.EnableBroadcast);
+			Assert.AreEqual (false, client.EnableBroadcast, "EnableBroadcastDefault");
 
 			client.Close ();
 		}
@@ -267,9 +260,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			client.ExclusiveAddressUse = true;
 
-			Assertion.AssertEquals ("ExclusiveAddressUseUnbound",
-						true,
-						client.ExclusiveAddressUse);
+			Assert.AreEqual (true, client.ExclusiveAddressUse, "ExclusiveAddressUseUnbound");
 
 			client.Close ();
 		}
@@ -291,9 +282,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			UdpClient client = new UdpClient ();
 			
-			Assertion.AssertEquals ("MulticastLoopbackDefault",
-						true,
-						client.MulticastLoopback);
+			Assert.AreEqual (true, client.MulticastLoopback, "MulticastLoopbackDefault");
 
 			client.Close ();
 		}

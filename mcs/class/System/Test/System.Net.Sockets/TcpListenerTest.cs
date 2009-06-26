@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
-	public class TcpListenerTest : Assertion
+	public class TcpListenerTest
 	{
 		[Test]
 		public void TcpListener ()
@@ -44,7 +44,7 @@ namespace MonoTests.System.Net.Sockets
 			}
 			
 			// make sure the connection arrives
-			Assert (inListener.Pending ());
+			Assert.IsTrue (inListener.Pending ());
 			Socket inSock = inListener.AcceptSocket ();
 
 			// now send some data and see if it comes out the other end
@@ -60,9 +60,9 @@ namespace MonoTests.System.Net.Sockets
 
 
 			// let's see if it arrived OK
-			Assert(ret != 0);
+			Assert.IsTrue (ret != 0);
 			for (int i=0; i<len; i++) 
-				Assert (inBuf[i] == outBuf [i]);
+				Assert.IsTrue (inBuf[i] == outBuf [i]);
 
 			// tidy up after ourselves
 			inSock.Close ();
@@ -79,7 +79,7 @@ namespace MonoTests.System.Net.Sockets
 			new TcpListener (65535);
 			try { new TcpListener (65536); } catch { nex++; }
 			try { new TcpListener (100000); } catch { nex++; }
-			Assert (nex == 3);			
+			Assert.IsTrue (nex == 3);			
 		}
 
 		[Test]
@@ -124,23 +124,23 @@ namespace MonoTests.System.Net.Sockets
 		public void PreStartStatus ()
 		{
 			MyListener listener = new MyListener ();
-			AssertEquals ("#01", false, listener.IsActive);
-			Assert ("#02", null != listener.GetSocket ());
+			Assert.AreEqual (false, listener.IsActive, "#01");
+			Assert.IsTrue (null != listener.GetSocket (), "#02");
 			try {
 				listener.AcceptSocket ();
-				Fail ("Exception not thrown");
+				Assert.Fail ("Exception not thrown");
 			} catch (InvalidOperationException) {
 			}
 
 			try {
 				listener.AcceptTcpClient ();
-				Fail ("Exception not thrown");
+				Assert.Fail ("Exception not thrown");
 			} catch (InvalidOperationException) {
 			}
 
 			try {
 				listener.Pending ();
-				Fail ("Exception not thrown");
+				Assert.Fail ("Exception not thrown");
 			} catch (InvalidOperationException) {
 			}
 
@@ -152,20 +152,20 @@ namespace MonoTests.System.Net.Sockets
 		{
 			MyListener listener = new MyListener ();
 			listener.Start ();
-			AssertEquals ("#01", true, listener.IsActive);
-			Assert ("#02", null != listener.GetSocket ());
+			Assert.AreEqual (true, listener.IsActive, "#01");
+			Assert.IsTrue (null != listener.GetSocket (), "#02");
 			
 			Socket sock = listener.GetSocket ();
 			listener.Start (); // Start called twice
-			AssertEquals ("#03", true, listener.IsActive);
-			Assert ("#04", null != listener.GetSocket ());
+			Assert.AreEqual (true, listener.IsActive, "#03");
+			Assert.IsTrue (null != listener.GetSocket (), "#04");
 
-			AssertEquals ("#05", false, listener.Pending ());
+			Assert.AreEqual (false, listener.Pending (), "#05");
 
 			listener.Stop ();
-			AssertEquals ("#06", false, listener.IsActive);
-			Assert ("#07", null != listener.GetSocket ());
-			Assert ("#08", sock != listener.GetSocket ());
+			Assert.AreEqual (false, listener.IsActive, "#06");
+			Assert.IsTrue (null != listener.GetSocket (), "#07");
+			Assert.IsTrue (sock != listener.GetSocket (), "#08");
 		}
 
 #if NET_2_0

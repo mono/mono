@@ -138,12 +138,10 @@ namespace MonoTests.System.Net.Sockets
 			bool block;
 
 			block = BlockingConnect(true);
-			Assertion.AssertEquals ("BlockingStatus01",
-						block, true);
+			Assert.AreEqual (block, true, "BlockingStatus01");
 
 			block = BlockingConnect(false);
-			Assertion.AssertEquals ("BlockingStatus02",
-						block, false);
+			Assert.AreEqual (block, false, "BlockingStatus02");
 		}
 
 		static bool CFAConnected = false;
@@ -180,8 +178,7 @@ namespace MonoTests.System.Net.Sockets
 					   sock);
 			CFACalledBack.WaitOne ();
 
-			Assertion.AssertEquals ("ConnectFail", CFAConnected,
-						false);
+			Assert.AreEqual (CFAConnected, false, "ConnectFail");
 		}
 		
 #if !TARGET_JVM
@@ -215,14 +212,14 @@ namespace MonoTests.System.Net.Sockets
 				ArrayList empty = new ArrayList ();
 				list.Add (acc);
 				Socket.Select (list, empty, empty, 100);
-				Assertion.AssertEquals ("#01", 0, empty.Count);
-				Assertion.AssertEquals ("#02", 1, list.Count);
+				Assert.AreEqual (0, empty.Count, "#01");
+				Assert.AreEqual (1, list.Count, "#02");
 				Socket.Select (empty, list, empty, 100);
-				Assertion.AssertEquals ("#03", 0, empty.Count);
-				Assertion.AssertEquals ("#04", 1, list.Count);
+				Assert.AreEqual (0, empty.Count, "#03");
+				Assert.AreEqual (1, list.Count, "#04");
 				Socket.Select (list, empty, empty, -1);
-				Assertion.AssertEquals ("#05", 0, empty.Count);
-				Assertion.AssertEquals ("#06", 1, list.Count);
+				Assert.AreEqual (0, empty.Count, "#05");
+				Assert.AreEqual (1, list.Count, "#06");
 				// Need to read the 10 bytes from the client to avoid a RST
 				byte [] bytes = new byte [10];
 				acc.Receive (bytes);
@@ -566,18 +563,15 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("SocketError wait timed out");
 			}
 
-			Assertion.AssertEquals ("SocketError #1", false,
-						sock.Connected);
+			Assert.AreEqual (false, sock.Connected, "SocketError #1");
 
 			int error;
 
 			error = (int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-			Assertion.AssertEquals ("SocketError #2", 10061,
-						error);
+			Assert.AreEqual (10061, error, "SocketError #2");
 
 			error = (int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-			Assertion.AssertEquals ("SocketError #3", 10061,
-						error);
+			Assert.AreEqual (10061, error, "SocketError #3");
 
 			sock.Close ();
 		}
@@ -596,8 +590,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("DontFragmentDefaultTcp",
-						false, sock.DontFragment);
+			Assert.AreEqual (false, sock.DontFragment, "DontFragmentDefaultTcp");
 
 			sock.Close ();
 		}
@@ -612,8 +605,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.DontFragment = true;
 			
-			Assertion.AssertEquals ("DontFragmentChangeTcp",
-						true, sock.DontFragment);
+			Assert.AreEqual (true, sock.DontFragment, "DontFragmentChangeTcp");
 
 			sock.Close ();
 		}
@@ -625,8 +617,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Dgram,
 						  ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("DontFragmentDefaultUdp",
-						false, sock.DontFragment);
+			Assert.AreEqual (false, sock.DontFragment, "DontFragmentDefaultUdp");
 
 			sock.Close ();
 		}
@@ -641,8 +632,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.DontFragment = true;
 			
-			Assertion.AssertEquals ("DontFragmentChangeUdp",
-						true, sock.DontFragment);
+			Assert.AreEqual (true, sock.DontFragment, "DontFragmentChangeUdp");
 
 			sock.Close ();
 		}
@@ -705,8 +695,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Dgram,
 						  ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("EnableBroadcastDefaultUdp",
-						false, sock.EnableBroadcast);
+			Assert.AreEqual (false, sock.EnableBroadcast, "EnableBroadcastDefaultUdp");
 
 			sock.Close ();
 		}
@@ -739,8 +728,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.EnableBroadcast = true;
 			
-			Assertion.AssertEquals ("EnableBroadcastChangeUdp",
-						true, sock.EnableBroadcast);
+			Assert.AreEqual (true, sock.EnableBroadcast, "EnableBroadcastChangeUdp");
 
 			sock.Close ();
 		}
@@ -772,9 +760,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.ExclusiveAddressUse = true;
 			
-			Assertion.AssertEquals ("ExclusiveAddressUseUnbound",
-						true,
-						sock.ExclusiveAddressUse);
+			Assert.AreEqual (true, sock.ExclusiveAddressUse, "ExclusiveAddressUseUnbound");
 			
 			sock.Close ();
 		}
@@ -815,12 +801,10 @@ namespace MonoTests.System.Net.Sockets
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
 							BogusPort);
 			
-			Assertion.AssertEquals ("IsBoundTcp #1", false,
-						sock.IsBound);
+			Assert.AreEqual (false, sock.IsBound, "IsBoundTcp #1");
 			
 			sock.Bind (ep);
-			Assertion.AssertEquals ("IsBoundTcp #2", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundTcp #2");
 
 			sock.Listen (1);
 			
@@ -828,20 +812,16 @@ namespace MonoTests.System.Net.Sockets
 						   SocketType.Stream,
 						   ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("IsBoundTcp #3", false,
-						sock2.IsBound);
+			Assert.AreEqual (false, sock2.IsBound, "IsBoundTcp #3");
 			
 			sock2.Connect (ep);
-			Assertion.AssertEquals ("IsBoundTcp #4", true,
-						sock2.IsBound);
+			Assert.AreEqual (true, sock2.IsBound, "IsBoundTcp #4");
 			
 			sock2.Close ();
-			Assertion.AssertEquals ("IsBoundTcp #5", true,
-						sock2.IsBound);
+			Assert.AreEqual (true, sock2.IsBound, "IsBoundTcp #5");
 
 			sock.Close ();
-			Assertion.AssertEquals ("IsBoundTcp #6", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundTcp #6");
 		}
 
 		[Test]
@@ -853,32 +833,26 @@ namespace MonoTests.System.Net.Sockets
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback,
 							BogusPort);
 			
-			Assertion.AssertEquals ("IsBoundUdp #1", false,
-						sock.IsBound);
+			Assert.AreEqual (false, sock.IsBound, "IsBoundUdp #1");
 			
 			sock.Bind (ep);
-			Assertion.AssertEquals ("IsBoundUdp #2", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundUdp #2");
 			
 			sock.Close ();
-			Assertion.AssertEquals ("IsBoundUdp #3", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundUdp #3");
 			
 
 			sock = new Socket (AddressFamily.InterNetwork,
 					   SocketType.Dgram,
 					   ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("IsBoundUdp #4", false,
-						sock.IsBound);
+			Assert.AreEqual (false, sock.IsBound, "IsBoundUdp #4");
 			
 			sock.Connect (ep);
-			Assertion.AssertEquals ("IsBoundUdp #5", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundUdp #5");
 			
 			sock.Close ();
-			Assertion.AssertEquals ("IsBoundUdp #6", true,
-						sock.IsBound);
+			Assert.AreEqual (true, sock.IsBound, "IsBoundUdp #6");
 		}
 
 		[Test]
@@ -941,8 +915,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Dgram,
 						  ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("MulticastLoopbackDefaultUdp",
-						true, sock.MulticastLoopback);
+			Assert.AreEqual (true, sock.MulticastLoopback, "MulticastLoopbackDefaultUdp");
 			
 			sock.Close ();
 		}
@@ -956,8 +929,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.MulticastLoopback = false;
 			
-			Assertion.AssertEquals ("MulticastLoopbackChangeUdp",
-						false, sock.MulticastLoopback);
+			Assert.AreEqual (false, sock.MulticastLoopback, "MulticastLoopbackChangeUdp");
 			
 			sock.Close ();
 		}
@@ -985,8 +957,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("ReceiveBufferSizeDefault",
-						8192, sock.ReceiveBufferSize);
+			Assert.AreEqual (8192, sock.ReceiveBufferSize, "ReceiveBufferSizeDefault");
 			
 			sock.Close ();
 		}
@@ -999,8 +970,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Dgram,
 						  ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("ReceiveBufferSizeDefaultUdp",
-						8192, sock.ReceiveBufferSize);
+			Assert.AreEqual (8192, sock.ReceiveBufferSize, "ReceiveBufferSizeDefaultUdp");
 			
 			sock.Close ();
 		}
@@ -1014,8 +984,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.ReceiveBufferSize = 16384;
 			
-			Assertion.AssertEquals ("ReceiveBufferSizeChange",
-						16384, sock.ReceiveBufferSize);
+			Assert.AreEqual (16384, sock.ReceiveBufferSize, "ReceiveBufferSizeChange");
 			
 			sock.Close ();
 		}
@@ -1041,8 +1010,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("SendBufferSizeDefault",
-						8192, sock.SendBufferSize);
+			Assert.AreEqual (8192, sock.SendBufferSize, "SendBufferSizeDefault");
 			
 			sock.Close ();
 		}
@@ -1055,8 +1023,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Dgram,
 						  ProtocolType.Udp);
 			
-			Assertion.AssertEquals ("SendBufferSizeDefaultUdp",
-						8192, sock.SendBufferSize);
+			Assert.AreEqual (8192, sock.SendBufferSize, "SendBufferSizeDefaultUdp");
 			
 			sock.Close ();
 		}
@@ -1070,8 +1037,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.SendBufferSize = 16384;
 			
-			Assertion.AssertEquals ("SendBufferSizeChange",
-						16384, sock.SendBufferSize);
+			Assert.AreEqual (16384, sock.SendBufferSize, "SendBufferSizeChange");
 			
 			sock.Close ();
 		}
@@ -1099,7 +1065,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Ttl = 255;
 			
-			Assertion.AssertEquals ("TtlChange", 255, sock.Ttl);
+			Assert.AreEqual (255, sock.Ttl, "TtlChange");
 			
 			sock.Close ();
 		}
@@ -1159,9 +1125,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("UseOnlyOverlappedIODefault",
-						false,
-						sock.UseOnlyOverlappedIO);
+			Assert.AreEqual (false, sock.UseOnlyOverlappedIO, "UseOnlyOverlappedIODefault");
 			
 			sock.Close ();
 		}
@@ -1189,9 +1153,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.UseOnlyOverlappedIO = true;
 			
-			Assertion.AssertEquals ("UseOnlyOverlappedIOChange",
-						true,
-						sock.UseOnlyOverlappedIO);
+			Assert.AreEqual (true, sock.UseOnlyOverlappedIO, "UseOnlyOverlappedIOChange");
 			
 			sock.Close ();
 		}
@@ -1216,8 +1178,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("SendTimeoutDefault",
-						0, sock.SendTimeout);
+			Assert.AreEqual (0, sock.SendTimeout, "SendTimeoutDefault");
 			
 			sock.Close ();
 		}
@@ -1233,25 +1194,20 @@ namespace MonoTests.System.Net.Sockets
 			 * the MSDN docs, but the MS runtime doesn't
 			 */
 			sock.SendTimeout = 50;
-			Assertion.AssertEquals ("SendTimeoutChange #1",
-						50, Approximate (50, sock.SendTimeout));
+			Assert.AreEqual (50, Approximate (50, sock.SendTimeout), "SendTimeoutChange #1");
 			
 			sock.SendTimeout = 2000;
-			Assertion.AssertEquals ("SendTimeoutChange #2",
-						2000, Approximate (2000, sock.SendTimeout));
+			Assert.AreEqual (2000, Approximate (2000, sock.SendTimeout), "SendTimeoutChange #2");
 			
 			sock.SendTimeout = 0;
-			Assertion.AssertEquals ("SendTimeoutChange #3",
-						0, Approximate (0, sock.SendTimeout));
+			Assert.AreEqual (0, Approximate (0, sock.SendTimeout), "SendTimeoutChange #3");
 			
 			/* Should be the same as setting 0 */
 			sock.SendTimeout = -1;
-			Assertion.AssertEquals ("SendTimeoutChange #4",
-						0, sock.SendTimeout);
+			Assert.AreEqual (0, sock.SendTimeout, "SendTimeoutChange #4");
 
 			sock.SendTimeout = 65536;
-			Assertion.AssertEquals ("SendTimeoutChange #5",
-						65536, Approximate (65536, sock.SendTimeout));
+			Assert.AreEqual (65536, Approximate (65536, sock.SendTimeout), "SendTimeoutChange #5");
 			
 			try {
 				sock.SendTimeout = -2;
@@ -1284,8 +1240,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("ReceiveTimeoutDefault",
-						0, sock.ReceiveTimeout);
+			Assert.AreEqual (0, sock.ReceiveTimeout, "ReceiveTimeoutDefault");
 			
 			sock.Close ();
 		}
@@ -1298,25 +1253,20 @@ namespace MonoTests.System.Net.Sockets
 						  ProtocolType.Tcp);
 			
 			sock.ReceiveTimeout = 50;
-			Assertion.AssertEquals ("ReceiveTimeoutChange #1",
-						50, Approximate (50, sock.ReceiveTimeout));
+			Assert.AreEqual (50, Approximate (50, sock.ReceiveTimeout), "ReceiveTimeoutChange #1");
 			
 			sock.ReceiveTimeout = 2000;
-			Assertion.AssertEquals ("ReceiveTimeoutChange #2",
-						2000, Approximate (2000, sock.ReceiveTimeout));
+			Assert.AreEqual (2000, Approximate (2000, sock.ReceiveTimeout), "ReceiveTimeoutChange #2");
 			
 			sock.ReceiveTimeout = 0;
-			Assertion.AssertEquals ("ReceiveTimeoutChange #3",
-						0, sock.ReceiveTimeout);
+			Assert.AreEqual (0, sock.ReceiveTimeout, "ReceiveTimeoutChange #3");
 			
 			/* Should be the same as setting 0 */
 			sock.ReceiveTimeout = -1;
-			Assertion.AssertEquals ("ReceiveTimeoutChange #4",
-						0, sock.ReceiveTimeout);
+			Assert.AreEqual (0, sock.ReceiveTimeout, "ReceiveTimeoutChange #4");
 
 			sock.ReceiveTimeout = 65536;
-			Assertion.AssertEquals ("ReceiveTimeoutChange #5",
-						65536, Approximate (65536, sock.ReceiveTimeout));
+			Assert.AreEqual (65536, Approximate (65536, sock.ReceiveTimeout), "ReceiveTimeoutChange #5");
 			
 			try {
 				sock.ReceiveTimeout = -2;
@@ -1349,8 +1299,7 @@ namespace MonoTests.System.Net.Sockets
 						  SocketType.Stream,
 						  ProtocolType.Tcp);
 			
-			Assertion.AssertEquals ("NoDelayDefaultTcp", false,
-						sock.NoDelay);
+			Assert.AreEqual (false, sock.NoDelay, "NoDelayDefaultTcp");
 			
 			sock.Close ();
 		}
@@ -1364,8 +1313,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.NoDelay = true;
 			
-			Assertion.AssertEquals ("NoDelayChangeTcp", true,
-						sock.NoDelay);
+			Assert.AreEqual (true, sock.NoDelay, "NoDelayChangeTcp");
 			
 			sock.Close ();
 		}
@@ -1491,14 +1439,10 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginAccept wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginAccept #1", true,
-						BAAccepted);
-			Assertion.AssertEquals ("BeginAccept #2", true,
-						BASocket.Connected);
-			Assertion.AssertEquals ("BeginAccept #3", false,
-						sock.Connected);
-			Assertion.AssertEquals ("BeginAccept #4", true,
-						conn.Connected);
+			Assert.AreEqual (true, BAAccepted, "BeginAccept #1");
+			Assert.AreEqual (true, BASocket.Connected, "BeginAccept #2");
+			Assert.AreEqual (false, sock.Connected, "BeginAccept #3");
+			Assert.AreEqual (true, conn.Connected, "BeginAccept #4");
 
 			BASocket.Close ();
 			conn.Close ();
@@ -1564,17 +1508,11 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginAcceptData wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginAcceptData #1", true,
-						BADAccepted);
-			Assertion.AssertEquals ("BeginAcceptData #2", true,
-						BADSocket.Connected);
-			Assertion.AssertEquals ("BeginAcceptData #3", false,
-						sock.Connected);
-			Assertion.AssertEquals ("BeginAcceptData #4", true,
-						conn.Connected);
-			Assertion.AssertEquals ("BeginAcceptData #5",
-						send_bytes.Length,
-						BADByteCount);
+			Assert.AreEqual (true, BADAccepted, "BeginAcceptData #1");
+			Assert.AreEqual (true, BADSocket.Connected, "BeginAcceptData #2");
+			Assert.AreEqual (false, sock.Connected, "BeginAcceptData #3");
+			Assert.AreEqual (true, conn.Connected, "BeginAcceptData #4");
+			Assert.AreEqual (send_bytes.Length, BADByteCount, "BeginAcceptData #5");
 			
 			/* The MS runtime gives the returned data in a
 			 * much bigger array.  TODO: investigate
@@ -1585,7 +1523,7 @@ namespace MonoTests.System.Net.Sockets
 					"BeginAcceptData #6");
 
 			for(int i = 0; i < send_bytes.Length; i++) {
-				Assertion.AssertEquals ("BeginAcceptData #" + (i+7).ToString (), send_bytes[i], BADBytes[i]);
+				Assert.AreEqual (send_bytes[i], BADBytes[i], "BeginAcceptData #" + (i+7).ToString ());
 			}
 
 			BADSocket.Close ();
@@ -1626,7 +1564,7 @@ namespace MonoTests.System.Net.Sockets
 				sock.BeginAccept (acc, 256, BADCallback, sock);
 				Assert.Fail ("BeginAcceptSocketUdp #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("BeginAcceptSocketUdp #2", 10022, ex.ErrorCode);
+				Assert.AreEqual (10022, ex.ErrorCode, "BeginAcceptSocketUdp #2");
 			} catch {
 				Assert.Fail ("BeginAcceptSocketUdp #3");
 			} finally {
@@ -1700,29 +1638,15 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginAcceptSocket wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginAcceptSocket #1", true,
-						BADAccepted);
-			Assertion.AssertEquals ("BeginAcceptSocket #2", true,
-						BADSocket.Connected);
-			Assertion.AssertEquals ("BeginAcceptSocket #3", false,
-						sock.Connected);
-			Assertion.AssertEquals ("BeginAcceptSocket #4", true,
-						conn.Connected);
-			Assertion.AssertEquals ("BeginAcceptSocket #5",
-						send_bytes.Length,
-						BADByteCount);
-			Assertion.AssertEquals ("BeginAcceptSocket #6",
-						AddressFamily.InterNetwork,
-						acc.AddressFamily);
-			Assertion.AssertEquals ("BeginAcceptSocket #7",
-						SocketType.Stream,
-						acc.SocketType);
-			Assertion.AssertEquals ("BeginAcceptSocket #8",
-						ProtocolType.Tcp,
-						acc.ProtocolType);
-			Assertion.AssertEquals ("BeginAcceptSocket #9",
-						conn.LocalEndPoint,
-						acc.RemoteEndPoint);
+			Assert.AreEqual (true, BADAccepted, "BeginAcceptSocket #1");
+			Assert.AreEqual (true, BADSocket.Connected, "BeginAcceptSocket #2");
+			Assert.AreEqual (false, sock.Connected, "BeginAcceptSocket #3");
+			Assert.AreEqual (true, conn.Connected, "BeginAcceptSocket #4");
+			Assert.AreEqual (send_bytes.Length, BADByteCount, "BeginAcceptSocket #5");
+			Assert.AreEqual (AddressFamily.InterNetwork, acc.AddressFamily, "BeginAcceptSocket #6");
+			Assert.AreEqual (SocketType.Stream, acc.SocketType, "BeginAcceptSocket #7");
+			Assert.AreEqual (ProtocolType.Tcp, acc.ProtocolType, "BeginAcceptSocket #8");
+			Assert.AreEqual (conn.LocalEndPoint, acc.RemoteEndPoint, "BeginAcceptSocket #9");
 			
 			/* The MS runtime gives the returned data in a
 			 * much bigger array.  TODO: investigate
@@ -1733,7 +1657,7 @@ namespace MonoTests.System.Net.Sockets
 					"BeginAcceptSocket #10");
 
 			for(int i = 0; i < send_bytes.Length; i++) {
-				Assertion.AssertEquals ("BeginAcceptSocket #" + (i+11).ToString (), send_bytes[i], BADBytes[i]);
+				Assert.AreEqual (send_bytes[i], BADBytes[i], "BeginAcceptSocket #" + (i+11).ToString ());
 			}
 
 			BADSocket.Close ();
@@ -1833,8 +1757,7 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginConnectAddressPort wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginConnectAddressPort #1",
-						true, BCConnected);
+			Assert.AreEqual (true, BCConnected, "BeginConnectAddressPort #1");
 			
 			sock.Close ();
 			listen.Close ();
@@ -1932,16 +1855,11 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginConnectMultiple wait failed");
 			}
 			
-			Assertion.AssertEquals ("BeginConnectMultiple #1",
-						true, BCConnected);
-			Assertion.AssertEquals ("BeginConnectMultiple #2",
-						AddressFamily.InterNetwork,
-						sock.RemoteEndPoint.AddressFamily);
+			Assert.AreEqual (true, BCConnected, "BeginConnectMultiple #1");
+			Assert.AreEqual (AddressFamily.InterNetwork, sock.RemoteEndPoint.AddressFamily, "BeginConnectMultiple #2");
 			IPEndPoint remep = (IPEndPoint)sock.RemoteEndPoint;
 			
-			Assertion.AssertEquals ("BeginConnectMultiple #2",
-						IPAddress.Loopback,
-						remep.Address);
+			Assert.AreEqual (IPAddress.Loopback, remep.Address, "BeginConnectMultiple #2");
 			
 			sock.Close ();
 			listen.Close ();
@@ -2123,8 +2041,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Connect (ip, 1254);
 			
-			Assertion.AssertEquals ("BeginDisconnect #1", true,
-						sock.Connected);
+			Assert.AreEqual (true, sock.Connected, "BeginDisconnect #1");
 			
 			sock.Shutdown (SocketShutdown.Both);
 
@@ -2137,10 +2054,8 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("BeginDisconnect wait timed out");
 			}
 			
-			Assertion.AssertEquals ("BeginDisconnect #2", true,
-						BDDisconnected);
-			Assertion.AssertEquals ("BeginDisconnect #3", false,
-						sock.Connected);
+			Assert.AreEqual (true, BDDisconnected, "BeginDisconnect #2");
+			Assert.AreEqual (false, sock.Connected, "BeginDisconnect #3");
 			
 			sock.Close ();
 			listen.Close ();
@@ -2184,7 +2099,7 @@ namespace MonoTests.System.Net.Sockets
 						sock);
 				Assert.Fail ("BeginSendNotConnected #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("BeginSendNotConnected #2", 10057, ex.ErrorCode);
+				Assert.AreEqual (10057, ex.ErrorCode, "BeginSendNotConnected #2");
 			} catch {
 				Assert.Fail ("BeginSendNotConnected #3");
 			} finally {
@@ -2224,8 +2139,7 @@ namespace MonoTests.System.Net.Sockets
 				sock.Bind (ep2);
 				Assert.Fail ("BindTwice #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("BindTwice #2",
-							10022, ex.ErrorCode);
+				Assert.AreEqual (10022, ex.ErrorCode, "BindTwice #2");
 			} catch {
 				Assert.Fail ("BindTwice #3");
 			} finally {
@@ -2250,15 +2164,13 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Connect (ep);
 
-			Assertion.AssertEquals ("Close #1", true,
-						sock.Connected);
+			Assert.AreEqual (true, sock.Connected, "Close #1");
 			
 			sock.Close (2);
 			
 			Thread.Sleep (3000);
 			
-			Assertion.AssertEquals ("Close #2", false,
-						sock.Connected);
+			Assert.AreEqual (false, sock.Connected, "Close #2");
 			
 			listen.Close ();
 		}
@@ -2280,8 +2192,7 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Connect (ip, 1249);
 			
-			Assertion.AssertEquals ("ConnectAddressPort #1",
-						true, sock.Connected);
+			Assert.AreEqual (true, sock.Connected, "ConnectAddressPort #1");
 			
 			sock.Close ();
 			listen.Close ();
@@ -2367,16 +2278,11 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Connect (ips, 1251);
 			
-			Assertion.AssertEquals ("ConnectMultiple #1",
-						true, sock.Connected);
-			Assertion.AssertEquals ("ConnectMultiple #2",
-						AddressFamily.InterNetwork,
-						sock.RemoteEndPoint.AddressFamily);
+			Assert.AreEqual (true, sock.Connected, "ConnectMultiple #1");
+			Assert.AreEqual (AddressFamily.InterNetwork, sock.RemoteEndPoint.AddressFamily, "ConnectMultiple #2");
 			IPEndPoint remep = (IPEndPoint)sock.RemoteEndPoint;
 			
-			Assertion.AssertEquals ("ConnectMultiple #2",
-						IPAddress.Loopback,
-						remep.Address);
+			Assert.AreEqual (IPAddress.Loopback, remep.Address, "ConnectMultiple #2");
 			
 			sock.Close ();
 			listen.Close ();
@@ -2540,15 +2446,13 @@ namespace MonoTests.System.Net.Sockets
 			
 			sock.Connect (ip, 1255);
 			
-			Assertion.AssertEquals ("Disconnect #1", true,
-						sock.Connected);
+			Assert.AreEqual (true, sock.Connected, "Disconnect #1");
 			
 			sock.Shutdown (SocketShutdown.Both);
 
 			sock.Disconnect (false);
 
-			Assertion.AssertEquals ("BeginDisconnect #3", false,
-						sock.Connected);
+			Assert.AreEqual (false, sock.Connected, "BeginDisconnect #3");
 			
 			sock.Close ();
 			listen.Close ();
@@ -2690,8 +2594,7 @@ namespace MonoTests.System.Net.Sockets
 				sock.Listen (1);
 				Assert.Fail ("ListenNotBound #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("ListenNotBound #2",
-							10022, ex.ErrorCode);
+				Assert.AreEqual (10022, ex.ErrorCode, "ListenNotBound #2");
 			} catch {
 				Assert.Fail ("ListenNotBound #3");
 			} finally {
@@ -2756,20 +2659,17 @@ namespace MonoTests.System.Net.Sockets
 			NetworkStream stream = new NetworkStream (sock);
 
 			readbyte = stream.ReadByte ();
-			Assertion.AssertEquals ("ReceiveRemoteClosed #1",
-						0, readbyte);
+			Assert.AreEqual (0, readbyte, "ReceiveRemoteClosed #1");
 			
 			stream.Read (bytes, 0, 0);
 
 			readbyte = stream.ReadByte ();
-			Assertion.AssertEquals ("ReceiveRemoteClosed #2",
-						0, readbyte);
+			Assert.AreEqual (0, readbyte, "ReceiveRemoteClosed #2");
 			
 			stream.Read (bytes, 0, 0);
 
 			readbyte = stream.ReadByte ();
-			Assertion.AssertEquals ("ReceiveRemoteClosed #3",
-						-1, readbyte);
+			Assert.AreEqual (-1, readbyte, "ReceiveRemoteClosed #3");
 
 			sock.Close ();
 

@@ -61,9 +61,7 @@ namespace MonoTests.System.Net.Sockets
 				Assert.IsNotNull (sockex, "ReadTimeout #2");
 
 /* Linux gives error 10035 (EWOULDBLOCK) here, whereas windows has 10060 (ETIMEDOUT)
-				Assertion.AssertEquals ("ReadTimeout #3",
-							10060,
-							sockex.ErrorCode);
+				Assert.AreEqual (10060, sockex.ErrorCode, "ReadTimeout #3");
 */
 			} catch {
 				Assert.Fail ("ReadTimeout #4");

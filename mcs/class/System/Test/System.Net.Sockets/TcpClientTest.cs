@@ -58,11 +58,11 @@ namespace MonoTests.System.Net.Sockets
 			// and see if it comes back
 			byte[] inBuf = new Byte[len];
 			int ret = inSock.Receive(inBuf, 0, len, 0);
-			Assertion.Assert(ret != 0);
+			Assert.IsTrue (ret != 0);
 
 			for (int i=0; i<len; i++) 
 			{
-				Assertion.Assert(inBuf[i] == outBuf[i]);
+				Assert.IsTrue (inBuf[i] == outBuf[i]);
 			}
 
 			// tidy up
@@ -169,8 +169,7 @@ namespace MonoTests.System.Net.Sockets
 				client.Connect (ipAddresses, 1234);
 				Assert.Fail ("ConnectMultiAny #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("ConnectMultiAny #2",
-							10049, ex.ErrorCode);
+				Assert.AreEqual (10049, ex.ErrorCode, "ConnectMultiAny #2");
 			} catch {
 				Assert.Fail ("ConnectMultiAny #3");
 			}
@@ -188,7 +187,7 @@ namespace MonoTests.System.Net.Sockets
 				client.Connect (ipAddresses, 1234);
 				Assert.Fail ("ConnectMultiRefused #1");
 			} catch (SocketException ex) {
-				Assertion.AssertEquals ("ConnectMultiRefused #2", 10061, ex.ErrorCode);
+				Assert.AreEqual (10061, ex.ErrorCode, "ConnectMultiRefused #2");
 			} catch {
 				Assert.Fail ("ConnectMultiRefused #3");
 			}
