@@ -57,7 +57,7 @@ namespace MonoTests.System.Net
 			try
 			{
 				c = new Cookie (null, null, null, null);
-				Assertion.Fail ("#1: Name cannot be null");
+				Assert.Fail ("#1: Name cannot be null");
 			}
 			catch (CookieException)
 			{
@@ -68,44 +68,44 @@ namespace MonoTests.System.Net
 		public void Name ()
 		{
 			Cookie c = new Cookie ("SomeName", "SomeValue");
-			Assertion.AssertEquals ("#1", c.Name, "SomeName");
+			Assert.AreEqual (c.Name, "SomeName", "#1");
 			try
 			{
 				c.Name = null;
-				Assertion.Fail ("#2a");
+				Assert.Fail ("#2a");
 			}
 			catch (CookieException)
 			{
-				Assertion.AssertEquals ("#2b", "SomeName", c.Name);
+				Assert.AreEqual ("SomeName", c.Name, "#2b");
 			}
 			try
 			{
 				c.Name = "";
-				Assertion.Fail ("#2c");
+				Assert.Fail ("#2c");
 			}
 			catch (CookieException)
 			{
-				Assertion.AssertEquals ("#2d", "SomeName", c.Name);
+				Assert.AreEqual ("SomeName", c.Name, "#2d");
 			}
 			try
 			{
 				c.Name = " ";
-				Assertion.Fail ("#2e");
+				Assert.Fail ("#2e");
 			}
 			catch (CookieException)
 			{
 				// bah! this fails, yet the name is changed.. 
 				// inconsistent with previous test
-				Assertion.AssertEquals ("#2f", String.Empty, c.Name);
+				Assert.AreEqual (String.Empty, c.Name, "#2f");
 			}
 			try
 			{
 				c.Name = "xxx\r\n";
-				Assertion.Fail ("#2g");
+				Assert.Fail ("#2g");
 			}
 			catch (CookieException)
 			{
-				Assertion.AssertEquals ("#2h", String.Empty, c.Name);
+				Assert.AreEqual (String.Empty, c.Name, "#2h");
 			}
 			try
 			{
@@ -113,30 +113,30 @@ namespace MonoTests.System.Net
 			}
 			catch (CookieException)
 			{
-				Assertion.Fail ("#2i");
+				Assert.Fail ("#2i");
 			}
 			try
 			{
 				c.Name = "$omeName";
-				Assertion.Fail ("#3a: Name cannot start with '$' character");
+				Assert.Fail ("#3a: Name cannot start with '$' character");
 			}
 			catch (CookieException)
 			{
-				Assertion.AssertEquals ("#3b", String.Empty, c.Name);
+				Assert.AreEqual (String.Empty, c.Name, "#3b");
 			}
 			c.Name = "SomeName$";
-			Assertion.AssertEquals ("#4", c.Name, "SomeName$");
+			Assert.AreEqual (c.Name, "SomeName$", "#4");
 			try
 			{
 				c.Name = "Some=Name";
-				Assertion.Fail ("#5a: Name cannot contain '=' character");
+				Assert.Fail ("#5a: Name cannot contain '=' character");
 			}
 			catch (CookieException)
 			{
-				Assertion.AssertEquals ("#5b", String.Empty, c.Name);
+				Assert.AreEqual (String.Empty, c.Name, "#5b");
 			}
 			c.Name = "domain";
-			Assertion.AssertEquals ("#6", c.Name, "domain");
+			Assert.AreEqual (c.Name, "domain", "#6");
 		}
 
 		[Test]
@@ -162,16 +162,16 @@ namespace MonoTests.System.Net
 			Cookie c = new Cookie("SomeName", "SomeValue");
 			try {
 				c.Value = "Some;Value";
-				Assertion.Fail ("#1: semicolon should not be accepted");
+				Assert.Fail ("#1: semicolon should not be accepted");
 			} catch (CookieException) {
 			}
 			try {
 				c.Value = "Some,Value";
-				Assertion.Fail ("#2: comma should not be accepted");
+				Assert.Fail ("#2: comma should not be accepted");
 			} catch (CookieException) {
 			}
 			c.Value = "Some\tValue";
-			Assertion.AssertEquals ("#3", c.Value, "Some\tValue");
+			Assert.AreEqual (c.Value, "Some\tValue", "#3");
 			*/
 		}
 
@@ -182,7 +182,7 @@ namespace MonoTests.System.Net
 			try
 			{
 				c.Port = "123";
-				Assertion.Fail ("#1: port must start and end with double quotes");
+				Assert.Fail ("#1: port must start and end with double quotes");
 			}
 			catch (CookieException)
 			{
@@ -195,12 +195,12 @@ namespace MonoTests.System.Net
 			}
 			catch (CookieException)
 			{
-				Assertion.Fail ("#2");
+				Assert.Fail ("#2");
 			}
 			try
 			{
 				c.Port = "\"123;124\"";
-				Assertion.Fail ("#3");
+				Assert.Fail ("#3");
 			}
 			catch (CookieException)
 			{
@@ -211,7 +211,7 @@ namespace MonoTests.System.Net
 			}
 			catch (CookieException)
 			{
-				Assertion.Fail ("#4");
+				Assert.Fail ("#4");
 			}
 			try
 			{
@@ -219,7 +219,7 @@ namespace MonoTests.System.Net
 			}
 			catch (CookieException)
 			{
-				Assertion.Fail ("#5");
+				Assert.Fail ("#5");
 			}
 		}
 
@@ -228,12 +228,12 @@ namespace MonoTests.System.Net
 		{
 			Cookie c1 = new Cookie ("NAME", "VALUE", "PATH", "DOMAIN");
 			Cookie c2 = new Cookie ("name", "value", "path", "domain");
-			Assertion.Assert ("#1", !c1.Equals (c2));
+			Assert.IsTrue (!c1.Equals (c2), "#1");
 			c2.Value = "VALUE";
 			c2.Path = "PATH";
-			Assertion.Assert ("#2", c1.Equals (c2));
+			Assert.IsTrue (c1.Equals (c2), "#2");
 			c2.Version = 1;
-			Assertion.Assert ("#3", !c1.Equals (c2));
+			Assert.IsTrue (!c1.Equals (c2), "#3");
 		}
 
 		[Test]

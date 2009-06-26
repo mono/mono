@@ -65,7 +65,7 @@ namespace MonoTests.System.Net
 		public void Sync ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
-			Assertion.AssertNotNull ("req:If Modified Since: ", req.IfModifiedSince);
+			Assert.IsNotNull (req.IfModifiedSince, "req:If Modified Since: ");
 
 			req.UserAgent = "MonoClient v1.0";
 			Assert.AreEqual ("User-Agent", req.Headers.GetKey (0), "#A1");
@@ -90,10 +90,10 @@ namespace MonoTests.System.Net
 			req.AddRange (50, 90);
 			req.AddRange ("bytes", 100); 
 			req.AddRange ("bytes", 100, 120);
-			Assertion.AssertEquals ("#1", "bytes=10-,50-90,100-,100-120", req.Headers ["Range"]);
+			Assert.AreEqual ("bytes=10-,50-90,100-,100-120", req.Headers ["Range"], "#1");
 			try {
 				req.AddRange ("bits", 2000);
-				Assertion.Fail ("#2");
+				Assert.Fail ("#2");
 			} catch (InvalidOperationException) {}
 		}
 
@@ -141,14 +141,14 @@ namespace MonoTests.System.Net
 			req.KeepAlive = false;
 			req.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv; 1.7.6) Gecko/20050317 Firefox/1.0.2";
 			req.CookieContainer = cookies;
-			Assertion.AssertEquals ("#01", 0, cookies.Count);
+			Assert.AreEqual (0, cookies.Count, "#01");
 			using (HttpWebResponse res = (HttpWebResponse) req.GetResponse()) {
 				CookieCollection coll = req.CookieContainer.GetCookies (new Uri (url));
-				Assertion.AssertEquals ("#02", 1, coll.Count);
-				Assertion.AssertEquals ("#03", 1, res.Cookies.Count);
+				Assert.AreEqual (1, coll.Count, "#02");
+				Assert.AreEqual (1, res.Cookies.Count, "#03");
 				Cookie one = coll [0];
 				Cookie two = res.Cookies [0];
-				Assertion.AssertEquals ("#04", true, object.ReferenceEquals (one, two));
+				Assert.AreEqual (true, object.ReferenceEquals (one, two), "#04");
 			}
 		}
 
@@ -172,7 +172,7 @@ namespace MonoTests.System.Net
 				stream.Write (bytes, 0, bytes.Length);
 				stream.Close ();
 				HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
-				Assertion.AssertEquals ("StatusCode", 200, (int) resp.StatusCode);
+				Assert.AreEqual (200, (int) resp.StatusCode, "StatusCode");
 				StreamReader sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
 				string x = sr.ReadToEnd ();
 				sr.Close ();
@@ -229,7 +229,7 @@ namespace MonoTests.System.Net
 				// Using StreamReader+UTF8Encoding here fails on MS runtime
 				Stream stream = resp.GetResponseStream ();
 				int nread = stream.Read (bytes, 0, 32);
-				Assertion.AssertEquals ("#01", 16, nread);
+				Assert.AreEqual (16, nread, "#01");
 				x = Encoding.ASCII.GetString (bytes, 0, 16);
 			} finally {
 				resp.Close ();
@@ -239,7 +239,7 @@ namespace MonoTests.System.Net
 			if (server.Error != null)
 				throw server.Error;
 
-			Assertion.AssertEquals ("1234567890123456", x);
+			Assert.AreEqual ("1234567890123456", x);
 		}
 
 		[Test]

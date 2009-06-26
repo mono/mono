@@ -19,7 +19,7 @@ namespace MonoTests.System.Net
 {
 
 [TestFixture]
-public class ServicePointManagerTest : Assertion
+public class ServicePointManagerTest
 {
 	private Uri googleUri;
 	private Uri yahooUri;
@@ -49,7 +49,7 @@ public class ServicePointManagerTest : Assertion
 #endif
         public void MaxServicePointManagers ()
         {
-		AssertEquals ("#1", 0, ServicePointManager.MaxServicePoints);
+		Assert.AreEqual (0, ServicePointManager.MaxServicePoints, "#1");
 		
 		DoWebRequest (googleUri);
 		Thread.Sleep (100);
@@ -89,9 +89,9 @@ public class ServicePointManagerTest : Assertion
 	{
 		ServicePointManager.MaxServicePoints = 0;
 		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri, new WebProxy (apacheUri));
-		AssertEquals ("#1", apacheUri, sp.Address);
-		AssertEquals ("#2", 2, sp.ConnectionLimit);
-		AssertEquals ("#3", "http", sp.ConnectionName);
+		Assert.AreEqual (apacheUri, sp.Address, "#1");
+		Assert.AreEqual (2, sp.ConnectionLimit, "#2");
+		Assert.AreEqual ("http", sp.ConnectionName, "#3");
 	}
 	
 	private void DoWebRequest (Uri uri)

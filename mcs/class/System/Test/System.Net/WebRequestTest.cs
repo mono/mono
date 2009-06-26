@@ -202,41 +202,41 @@ namespace MonoTests.System.Net {
 	public void All ()
 	{
 		WebRequest req = WebRequest.Create ("http://www.contoso.com");
-		Assertion.Assert ("#1", req is HttpWebRequest);
+		Assert.IsTrue (req is HttpWebRequest, "#1");
 		req = WebRequest.Create ("https://www.contoso.com");
-		Assertion.Assert ("#2", req is HttpWebRequest);
+		Assert.IsTrue (req is HttpWebRequest, "#2");
 		req = WebRequest.Create ("file://www.contoso.com");
-		Assertion.Assert ("#3", req is FileWebRequest);
+		Assert.IsTrue (req is FileWebRequest, "#3");
 #if NET_2_0
 		req = WebRequest.Create ("ftp://www.contoso.com");
-		Assertion.Assert ("#4", req is FtpWebRequest);
+		Assert.IsTrue (req is FtpWebRequest, "#4");
 #endif
 		WebRequest.RegisterPrefix ("http://www.contoso.com", new TestWebRequestCreator ());
 		bool ret = WebRequest.RegisterPrefix ("http://WWW.contoso.com", new TestWebRequestCreator ());
-		Assertion.AssertEquals ("#5a", false, ret);
+		Assert.AreEqual (false, ret, "#5a");
 		ret = WebRequest.RegisterPrefix ("http://www.contoso.com/foo/bar", new TestWebRequestCreator2 ());
-		Assertion.AssertEquals ("#5b", true, ret);
+		Assert.AreEqual (true, ret, "#5b");
 		ret = WebRequest.RegisterPrefix ("http://www", new TestWebRequestCreator3 ());
-		Assertion.AssertEquals ("#5c", true, ret);
+		Assert.AreEqual (true, ret, "#5c");
 
 		req = WebRequest.Create ("http://WWW.contoso.com");
-		Assertion.Assert ("#6", req is TestWebRequest); 
+		Assert.IsTrue (req is TestWebRequest, "#6"); 
 
 		req = WebRequest.Create ("http://WWW.contoso.com/foo/bar/index.html");
-		Assertion.Assert ("#7", req is TestWebRequest2); 
+		Assert.IsTrue (req is TestWebRequest2, "#7"); 
 		
 		req = WebRequest.Create ("http://WWW.x.com");
-		Assertion.Assert ("#8", req is TestWebRequest3); 
+		Assert.IsTrue (req is TestWebRequest3, "#8"); 
 
 		req = WebRequest.Create ("http://WWW.c");
-		Assertion.Assert ("#9", req is TestWebRequest3); 
+		Assert.IsTrue (req is TestWebRequest3, "#9"); 
 
 		req = WebRequest.CreateDefault (new Uri("http://WWW.contoso.com"));
-		Assertion.Assert ("#10", req is HttpWebRequest);
+		Assert.IsTrue (req is HttpWebRequest, "#10");
 
 		try {
 			req = WebRequest.Create ("tcp://www.contoso.com");
-			Assertion.Fail ("#11 should have failed with NotSupportedException");
+			Assert.Fail ("#11 should have failed with NotSupportedException");
 		} catch (NotSupportedException) {
 		}
 	}

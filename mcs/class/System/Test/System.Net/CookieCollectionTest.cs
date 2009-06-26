@@ -33,7 +33,7 @@ public class CookieCollectionTest
         [Test]
         public void Count ()
         {
-		Assertion.AssertEquals ("#1", col.Count, 3);
+		Assert.AreEqual (col.Count, 3, "#1");
 	}
 
         [Test]
@@ -42,18 +42,18 @@ public class CookieCollectionTest
 		Cookie c = null;
 		try {
 			c = col [-1];
-			Assertion.Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		try {
 			c = col [col.Count];
-			Assertion.Fail ("#2");
+			Assert.Fail ("#2");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		c = col ["name1"];
-		Assertion.AssertEquals ("#3", c.Name, "name1");
+		Assert.AreEqual (c.Name, "name1", "#3");
 		c = col ["NAME2"];
-		Assertion.AssertEquals ("#4", c.Name, "name2");
+		Assert.AreEqual (c.Name, "name2", "#4");
 	}
 	
         [Test]
@@ -62,7 +62,7 @@ public class CookieCollectionTest
 		try {
 			Cookie c = null;
 			col.Add (c);
-			Assertion.Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (ArgumentNullException) {
 		}
 		
@@ -70,13 +70,13 @@ public class CookieCollectionTest
 		// so we'll have to fail to.
 		try {
 			col.Add (col);
-			Assertion.Fail ("#2");
+			Assert.Fail ("#2");
 		} catch (Exception) {
 		}
-		Assertion.AssertEquals ("#3", col.Count, 3);
+		Assert.AreEqual (col.Count, 3, "#3");
 		
 		col.Add (new Cookie("name1", "value1"));		
-		Assertion.AssertEquals ("#4", col.Count, 3);
+		Assert.AreEqual (col.Count, 3, "#4");
 		
 		CookieCollection col2 = new CookieCollection();
 		Cookie c4 = new Cookie("name4", "value4");
@@ -84,9 +84,9 @@ public class CookieCollectionTest
 		col2.Add (c4);
 		col2.Add (c5);
 		col.Add (col2);
-		Assertion.AssertEquals ("#5", col.Count, 5);
-		Assertion.AssertEquals ("#6", col ["NAME4"], c4);
-		Assertion.AssertEquals ("#7", col [4], c5);
+		Assert.AreEqual (col.Count, 5, "#5");
+		Assert.AreEqual (col ["NAME4"], c4, "#6");
+		Assert.AreEqual (col [4], c5, "#7");
 	}
 	
         [Test]
@@ -94,9 +94,9 @@ public class CookieCollectionTest
 	{
 		Array a = Array.CreateInstance (typeof (Cookie), 3);
 		col.CopyTo (a, 0);
-		Assertion.AssertEquals ("#1", a.GetValue (0), col [0]);
-		Assertion.AssertEquals ("#2", a.GetValue (1), col [1]);
-		Assertion.AssertEquals ("#3", a.GetValue (2), col [2]);
+		Assert.AreEqual (a.GetValue (0), col [0], "#1");
+		Assert.AreEqual (a.GetValue (1), col [1], "#2");
+		Assert.AreEqual (a.GetValue (2), col [2], "#3");
 	}
 	
         [Test]
@@ -105,11 +105,11 @@ public class CookieCollectionTest
 		IEnumerator enumerator = col.GetEnumerator ();
 		enumerator.MoveNext ();
 		Cookie c = (Cookie) enumerator.Current;
-		Assertion.AssertEquals ("#1", c, col [0]);
+		Assert.AreEqual (c, col [0], "#1");
 		col.Add (new Cookie ("name6", "value6"));
 		try {
 			enumerator.MoveNext ();
-			Assertion.Fail ("#2");
+			Assert.Fail ("#2");
 		} catch (InvalidOperationException) {
 		}
 	}

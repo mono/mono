@@ -29,38 +29,38 @@ namespace MonoTests.System.Net
 		public void Constructors ()
 		{
 			WebProxy p = new WebProxy ();
-			Assertion.Assert ("#1", p.Address == null);
-			Assertion.AssertEquals ("#2", 0, p.BypassArrayList.Count);
-			Assertion.AssertEquals ("#3", 0, p.BypassList.Length);
-			Assertion.AssertEquals ("#4", false, p.BypassProxyOnLocal);
+			Assert.IsTrue (p.Address == null, "#1");
+			Assert.AreEqual (0, p.BypassArrayList.Count, "#2");
+			Assert.AreEqual (0, p.BypassList.Length, "#3");
+			Assert.AreEqual (false, p.BypassProxyOnLocal, "#4");
 			try {
 				p.BypassList = null;
-				Assertion.Fail ("#5 not spec'd, but should follow ms.net implementation");
+				Assert.Fail ("#5 not spec'd, but should follow ms.net implementation");
 			} catch (ArgumentNullException) { }
 
 			p = new WebProxy ("webserver.com", 8080);
-			Assertion.AssertEquals ("#6", new Uri ("http://webserver.com:8080/"), p.Address);
+			Assert.AreEqual (new Uri ("http://webserver.com:8080/"), p.Address, "#6");
 
 			p = new WebProxy ("webserver");
-			Assertion.AssertEquals ("#7", new Uri ("http://webserver"), p.Address);
+			Assert.AreEqual (new Uri ("http://webserver"), p.Address, "#7");
 
 			p = new WebProxy ("webserver.com");
-			Assertion.AssertEquals ("#8", new Uri ("http://webserver.com"), p.Address);
+			Assert.AreEqual (new Uri ("http://webserver.com"), p.Address, "#8");
 
 			p = new WebProxy ("http://webserver.com");
-			Assertion.AssertEquals ("#9", new Uri ("http://webserver.com"), p.Address);
+			Assert.AreEqual (new Uri ("http://webserver.com"), p.Address, "#9");
 
 			p = new WebProxy ("file://webserver");
-			Assertion.AssertEquals ("#10", new Uri ("file://webserver"), p.Address);
+			Assert.AreEqual (new Uri ("file://webserver"), p.Address, "#10");
 
 			p = new WebProxy ("http://www.contoso.com", true, null, null);
-			Assertion.AssertEquals ("#11", 0, p.BypassList.Length);
-			Assertion.AssertEquals ("#12", 0, p.BypassArrayList.Count);
+			Assert.AreEqual (0, p.BypassList.Length, "#11");
+			Assert.AreEqual (0, p.BypassArrayList.Count, "#12");
 
 			try {
 				p = new WebProxy ("http://contoso.com", true,
 					new string [] { "?^!@#$%^&}{][" }, null);
-				Assertion.Fail ("#13: illegal regular expression");
+				Assert.Fail ("#13: illegal regular expression");
 			} catch (ArgumentException) {
 			}
 		}
@@ -74,24 +74,24 @@ namespace MonoTests.System.Net
 			WebProxy p = new WebProxy (proxy1, true);
 			p.BypassArrayList.Add ("http://proxy2.contoso.com");
 			p.BypassArrayList.Add ("http://proxy2.contoso.com");
-			Assertion.AssertEquals ("#1", 2, p.BypassList.Length);
-			Assertion.Assert ("#2", !p.IsBypassed (new Uri ("http://www.google.com")));
-			Assertion.Assert ("#3", p.IsBypassed (proxy2));
-			Assertion.AssertEquals ("#4", proxy2, p.GetProxy (proxy2));
+			Assert.AreEqual (2, p.BypassList.Length, "#1");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#2");
+			Assert.IsTrue (p.IsBypassed (proxy2), "#3");
+			Assert.AreEqual (proxy2, p.GetProxy (proxy2), "#4");
 
 			p.BypassArrayList.Add ("?^!@#$%^&}{][");
-			Assertion.AssertEquals ("#10", 3, p.BypassList.Length);
+			Assert.AreEqual (3, p.BypassList.Length, "#10");
 			try {
-				Assertion.Assert ("#11", !p.IsBypassed (proxy2));
-				Assertion.Assert ("#12", !p.IsBypassed (new Uri ("http://www.x.com")));
-				Assertion.AssertEquals ("#13", proxy1, p.GetProxy (proxy2));
+				Assert.IsTrue (!p.IsBypassed (proxy2), "#11");
+				Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.x.com")), "#12");
+				Assert.AreEqual (proxy1, p.GetProxy (proxy2), "#13");
 				// hmm... although #11 and #13 succeeded before (#3 resp. #4), 
 				// it now fails to bypass, and the IsByPassed and GetProxy 
 				// methods do not fail.. so when an illegal regular 
 				// expression is added through this property it's ignored. 
 				// probably an ms.net bug?? :(
 			} catch (ArgumentException) {
-				Assertion.Fail ("#15: illegal regular expression");
+				Assert.Fail ("#15: illegal regular expression");
 			}
 		}
 
@@ -104,23 +104,23 @@ namespace MonoTests.System.Net
 			WebProxy p = new WebProxy (proxy1, true);
 			try {
 				p.BypassList = new string [] { "http://proxy2.contoso.com", "?^!@#$%^&}{][" };
-				Assertion.Fail ("#1");
+				Assert.Fail ("#1");
 			} catch (ArgumentException) {
 				// weird, this way invalid regex's fail again..
 			}
 
-			Assertion.AssertEquals ("#2", 2, p.BypassList.Length);
+			Assert.AreEqual (2, p.BypassList.Length, "#2");
 			// but it did apparenly store the regex's !
 
 			p.BypassList = new string [] { "http://www.x.com" };
-			Assertion.AssertEquals ("#3", 1, p.BypassList.Length);
+			Assert.AreEqual (1, p.BypassList.Length, "#3");
 
 			try {
 				p.BypassList = null;
-				Assertion.Fail ("#4");
+				Assert.Fail ("#4");
 			} catch (ArgumentNullException) { }
 
-			Assertion.AssertEquals ("#4", 1, p.BypassList.Length);
+			Assert.AreEqual (1, p.BypassList.Length, "#4");
 		}
 
 		[Test]
@@ -132,42 +132,42 @@ namespace MonoTests.System.Net
 		public void IsByPassed ()
 		{
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);
-			Assertion.Assert ("#1", !p.IsBypassed (new Uri ("http://www.google.com")));
-			Assertion.Assert ("#2", p.IsBypassed (new Uri ("http://localhost/index.html")));
-			Assertion.Assert ("#3", p.IsBypassed (new Uri ("http://localhost:8080/index.html")));
-			Assertion.Assert ("#4", p.IsBypassed (new Uri ("http://loopback:8080/index.html")));
-			Assertion.Assert ("#5", p.IsBypassed (new Uri ("http://127.0.0.01:8080/index.html")));
-			Assertion.Assert ("#6", p.IsBypassed (new Uri ("http://webserver/index.html")));
-			Assertion.Assert ("#7", !p.IsBypassed (new Uri ("http://webserver.com/index.html")));
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#1");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost/index.html")), "#2");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost:8080/index.html")), "#3");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://loopback:8080/index.html")), "#4");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://127.0.0.01:8080/index.html")), "#5");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://webserver/index.html")), "#6");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://webserver.com/index.html")), "#7");
 
 			p = new WebProxy ("http://proxy.contoso.com", false);
-			Assertion.Assert ("#11", !p.IsBypassed (new Uri ("http://www.google.com")));
-			Assertion.Assert ("#12: lamespec of ms.net", p.IsBypassed (new Uri ("http://localhost/index.html")));
-			Assertion.Assert ("#13: lamespec of ms.net", p.IsBypassed (new Uri ("http://localhost:8080/index.html")));
-			Assertion.Assert ("#14: lamespec of ms.net", p.IsBypassed (new Uri ("http://loopback:8080/index.html")));
-			Assertion.Assert ("#15: lamespec of ms.net", p.IsBypassed (new Uri ("http://127.0.0.01:8080/index.html")));
-			Assertion.Assert ("#16", !p.IsBypassed (new Uri ("http://webserver/index.html")));
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#11");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost/index.html")), "#12: lamespec of ms.net");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://localhost:8080/index.html")), "#13: lamespec of ms.net");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://loopback:8080/index.html")), "#14: lamespec of ms.net");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://127.0.0.01:8080/index.html")), "#15: lamespec of ms.net");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://webserver/index.html")), "#16");
 
 			p.BypassList = new string [] { "google.com", "contoso.com" };
-			Assertion.Assert ("#20", p.IsBypassed (new Uri ("http://www.google.com")));
-			Assertion.Assert ("#21", p.IsBypassed (new Uri ("http://www.GOOGLE.com")));
-			Assertion.Assert ("#22", p.IsBypassed (new Uri ("http://www.contoso.com:8080/foo/bar/index.html")));
-			Assertion.Assert ("#23", !p.IsBypassed (new Uri ("http://www.contoso2.com:8080/foo/bar/index.html")));
-			Assertion.Assert ("#24", !p.IsBypassed (new Uri ("http://www.foo.com:8080/contoso.com.html")));
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#20");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.GOOGLE.com")), "#21");
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.contoso.com:8080/foo/bar/index.html")), "#22");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.contoso2.com:8080/foo/bar/index.html")), "#23");
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.foo.com:8080/contoso.com.html")), "#24");
 
 			p.BypassList = new string [] { "https" };
-			Assertion.Assert ("#30", !p.IsBypassed (new Uri ("http://www.google.com")));
-			Assertion.Assert ("#31", p.IsBypassed (new Uri ("https://www.google.com")));
+			Assert.IsTrue (!p.IsBypassed (new Uri ("http://www.google.com")), "#30");
+			Assert.IsTrue (p.IsBypassed (new Uri ("https://www.google.com")), "#31");
 		}
 
 		[Test]
 		public void IsByPassed_Address_Null ()
 		{
 			WebProxy p = new WebProxy ((Uri) null, false);
-			Assertion.Assert ("#1", p.IsBypassed (new Uri ("http://www.google.com")));
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#1");
 
 			p = new WebProxy ((Uri) null, true);
-			Assertion.Assert ("#2", p.IsBypassed (new Uri ("http://www.google.com")));
+			Assert.IsTrue (p.IsBypassed (new Uri ("http://www.google.com")), "#2");
 		}
 
 		[Test]
@@ -179,7 +179,7 @@ namespace MonoTests.System.Net
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);
 			try {
 				p.IsBypassed (null);
-				Assertion.Fail ("#A1");
+				Assert.Fail ("#A1");
 #if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
@@ -196,7 +196,7 @@ namespace MonoTests.System.Net
 			p = new WebProxy ((Uri) null);
 			try {
 				p.IsBypassed (null);
-				Assertion.Fail ("#B1");
+				Assert.Fail ("#B1");
 #if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
@@ -213,7 +213,7 @@ namespace MonoTests.System.Net
 			p = new WebProxy ((Uri) null, true);
 			try {
 				p.IsBypassed (null);
-				Assertion.Fail ("#C1");
+				Assert.Fail ("#C1");
 #if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");

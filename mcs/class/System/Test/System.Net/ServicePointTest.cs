@@ -47,7 +47,7 @@ public class ServicePointTest
 		ServicePoint google = ServicePointManager.FindServicePoint (new Uri ("http://www.google.com"));
 		try {			
 			ServicePoint slashdot = ServicePointManager.FindServicePoint (new Uri ("http://www.slashdot.org"));
-			Assertion.Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (InvalidOperationException) { }
 		ServicePointManager.MaxServicePoints = 0;
 		
@@ -58,7 +58,7 @@ public class ServicePointTest
 		
 		//WriteServicePoint ("google after getting a response", google);
 		ServicePoint google2 = ServicePointManager.FindServicePoint (new Uri ("http://www.google.com/dilbert.html"));
-		Assertion.AssertEquals ("#equals", google, google2);
+		Assert.AreEqual (google, google2, "#equals");
 		res.Close ();
 		
 		// in both instances property CurrentConnections is 0 according to ms.net.
@@ -168,27 +168,27 @@ public class ServicePointTest
 		bool called = false;
 #if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate {
-			Assertion.Assert(!called);
+			Assert.IsTrue (!called);
 			called = true;
 			return null;
 		};
 #endif
 		req.GetResponse ().Close ();
 
-		Assertion.Assert (called);
+		Assert.IsTrue (called);
 
 		req = (HttpWebRequest) WebRequest.Create (uri);
 		called = false;
 #if !TARGET_JVM
 		sp.BindIPEndPointDelegate = delegate(ServicePoint point, IPEndPoint remote, int times) {
-			Assertion.Assert(times < 5);
+			Assert.IsTrue (times < 5);
 			called = true;
 			return new IPEndPoint(IPAddress.Parse("0.0.0.0"), 12345 + times);
 		};
 #endif
 		req.GetResponse ().Close ();
 
-		Assertion.Assert(called);
+		Assert.IsTrue (called);
 	}
 #endif
 

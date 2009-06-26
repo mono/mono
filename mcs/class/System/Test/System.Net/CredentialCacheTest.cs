@@ -42,56 +42,56 @@ public class CredentialCacheTest
 	
 		try {
 			c.Add (new Uri("http://www.ximian.com"), "Basic", cred1);
-			Assertion.Fail ("#1: should have failed");
+			Assert.Fail ("#1: should have failed");
 		} catch (ArgumentException) { }
 
 		c.Add (new Uri("http://www.contoso.com/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com/"), "**Unknown**");
-		Assertion.AssertEquals ("#3", result, cred1);
+		Assert.AreEqual (result, cred1, "#3");
 		c.Remove (new Uri("http://www.contoso.com/"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com/"), "**Unknown**");
-		Assertion.Assert ("#4", result == null);
+		Assert.IsTrue (result == null, "#4");
 
 		c.Add (new Uri("http://www.contoso.com/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		Assertion.AssertEquals ("#5", result, cred1);
+		Assert.AreEqual (result, cred1, "#5");
 		c.Remove (new Uri("http://www.contoso.com"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		Assertion.Assert ("#6", result == null);
+		Assert.IsTrue (result == null, "#6");
 
 		c.Add (new Uri("http://www.contoso.com/portal/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com/portal/foo/bar.html"), "**Unknown**");
-		Assertion.AssertEquals ("#7", result, cred1);
+		Assert.AreEqual (result, cred1, "#7");
 		c.Remove (new Uri("http://www.contoso.com"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		Assertion.Assert ("#8", result == null);
+		Assert.IsTrue (result == null, "#8");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/index.aspx"), "Basic");
-		Assertion.AssertEquals ("#9", result, cred3);
+		Assert.AreEqual (result, cred3, "#9");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/index"), "Basic");
-		Assertion.AssertEquals ("#10", result, cred3);
+		Assert.AreEqual (result, cred3, "#10");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/"), "Basic");
-		Assertion.AssertEquals ("#11", result, cred3);
+		Assert.AreEqual (result, cred3, "#11");
 		
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news"), "Basic");
-		Assertion.AssertEquals ("#12", result, cred4);
+		Assert.AreEqual (result, cred4, "#12");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/ne"), "Basic");
-		Assertion.AssertEquals ("#13", result, cred4);
+		Assert.AreEqual (result, cred4, "#13");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/"), "Basic");
-		Assertion.AssertEquals ("#14", result, cred4);				
+		Assert.AreEqual (result, cred4, "#14");				
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal"), "Basic");
-		Assertion.AssertEquals ("#15", result, cred5);
+		Assert.AreEqual (result, cred5, "#15");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/"), "Basic");
-		Assertion.AssertEquals ("#16", result, cred5);
+		Assert.AreEqual (result, cred5, "#16");
 
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "Basic");
-		Assertion.AssertEquals ("#17", result, cred5);		
+		Assert.AreEqual (result, cred5, "#17");		
 
 		/*		
 		IEnumerator e = c.GetEnumerator ();
@@ -101,22 +101,22 @@ public class CredentialCacheTest
 		*/
 #if NET_2_0
 		result = c.GetCredential ("www.ximian.com", 80, "Basic");
-		Assertion.Assert ("#18", result == null);		
+		Assert.IsTrue (result == null, "#18");		
 
 		c.Add ("www.ximian.com", 80, "Basic", cred1);
 
 		try {
 			c.Add ("www.ximian.com", 80, "Basic", cred1);
-			Assertion.Fail ("#19: should have failed");
+			Assert.Fail ("#19: should have failed");
 		} catch (ArgumentException) { }
 
 		result = c.GetCredential ("www.ximian.com", 80, "Basic");
-		Assertion.AssertEquals ("#20", result, cred1);		
+		Assert.AreEqual (result, cred1, "#20");		
 
 		c.Remove (new Uri("http://www.contoso.com"), "Basic");
 		c.Add ("www.contoso.com", 80, "Basic", cred5);
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "Basic");
-		Assertion.Assert ("#21", result == null);		
+		Assert.IsTrue (result == null, "#21");		
 #endif
 	}
 }
