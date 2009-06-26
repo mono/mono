@@ -42,6 +42,7 @@ Common/BazDataTypeDefaultTypes.cs
 Common/BazNoStrings.cs
 Common/BazNoStringsNoPrimary.cs
 Common/FakeHttpWorkerRequest.cs
+Common/FieldFormattingOptions.cs
 Common/FooBarNoScaffold.cs
 Common/FooDisplayColumnAttribute.cs
 Common/FooDisplayName.cs

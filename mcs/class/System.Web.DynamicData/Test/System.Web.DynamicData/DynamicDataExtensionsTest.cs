@@ -36,6 +36,8 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using NUnit.Framework;
 
+using MonoTests.Common;
+
 namespace MonoTests.System.Web.DynamicData
 {
 	class FakeWorkerRequest : HttpWorkerRequest
@@ -121,6 +123,38 @@ namespace MonoTests.System.Web.DynamicData
 	[TestFixture]
 	public class DynamicDataExtensionsTest
 	{
+		[Test]
+		public void ConvertEditedValue ()
+		{
+			FieldFormattingOptions fld = null;
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				fld.ConvertEditedValue (null);
+			}, "#A1");
+
+			fld = new FieldFormattingOptions ();
+			fld.SetProperty ("ConvertEmptyStringToNull", false);
+			Assert.AreEqual (null, fld.ConvertEditedValue (null), "#A2");
+			Assert.AreEqual (String.Empty, fld.ConvertEditedValue (String.Empty), "#A2-1");
+			Assert.AreEqual ("stuff", fld.ConvertEditedValue ("stuff"), "#A2-2");
+
+			fld.SetProperty ("ConvertEmptyStringToNull", true);
+			Assert.AreEqual (null, fld.ConvertEditedValue (null), "#A3");
+			Assert.AreEqual (null, fld.ConvertEditedValue (String.Empty), "#A3-1");
+			Assert.AreEqual ("stuff", fld.ConvertEditedValue ("stuff"), "#A3-2");
+
+			fld.SetProperty ("ConvertEmptyStringToNull", false);
+			fld.SetProperty ("NullDisplayText", "NULL");
+			Assert.AreEqual (null, fld.ConvertEditedValue (null), "#A4");
+			Assert.AreEqual (String.Empty, fld.ConvertEditedValue (String.Empty), "#A4-1");
+			Assert.AreEqual (null, fld.ConvertEditedValue ("NULL"), "#A4-2");
+			Assert.AreEqual ("stuff", fld.ConvertEditedValue ("stuff"), "#A4-3");
+
+			fld.SetProperty ("ConvertEmptyStringToNull", false);
+			fld.SetProperty ("NullDisplayText", String.Empty);
+			Assert.AreEqual (String.Empty, fld.ConvertEditedValue (String.Empty), "#A5");
+		}
+
 		[Test]
 		public void DynamicDataExtensions_GetTable_Test ()
 		{

@@ -1,10 +1,11 @@
 //
 // DynamicDataExtensions.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -44,10 +45,22 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public static class DynamicDataExtensions
 	{
-		[MonoTODO]
 		public static object ConvertEditedValue (this IFieldFormattingOptions formattingOptions, string value)
 		{
-			throw new NotImplementedException ();
+			// Not a surprise anymore...
+			if (formattingOptions == null)
+				throw new NullReferenceException ();
+
+			if (String.IsNullOrEmpty (value)) {
+				if (formattingOptions.ConvertEmptyStringToNull)
+					return null;
+			} else {
+				string nullDisplayText = formattingOptions.NullDisplayText;
+				if (!String.IsNullOrEmpty (nullDisplayText) && String.Compare (value, nullDisplayText, StringComparison.Ordinal) == 0)
+					return null;
+			}
+
+			return value;
 		}
 
 		[MonoTODO]

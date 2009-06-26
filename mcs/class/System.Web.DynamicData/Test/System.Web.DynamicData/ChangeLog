@@ -1,5 +1,7 @@
 2009-06-27  Marek Habersack  <mhabersack@novell.com>
 
+	* DynamicDataExtensionsTest.cs: added test for ConvertEditedValue
+
 	* MetaModelTest.cs: added test for DynamicDataFolderVirtualPath
 
 	* DynamicDataRouteHandlerTest.cs: implemented tests for

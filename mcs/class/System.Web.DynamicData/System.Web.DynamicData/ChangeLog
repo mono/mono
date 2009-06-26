@@ -1,5 +1,7 @@
 2009-06-27  Marek Habersack  <mhabersack@novell.com>
 
+	* DynamicDataExtensions.cs: implemented ConvertEditedValue
+
 	* MetaModel.cs: implemented DynamicDataFolderVirtualPath
 
 	* DynamicDataRouteHandler.cs: implemented SetRequestMetaTable,
