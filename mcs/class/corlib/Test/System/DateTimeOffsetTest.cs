@@ -399,6 +399,20 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ParseUnderflow ()
+		{
+			DateTimeOffset.Parse ("01/01/0001 0:0 +09:00");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ParseOverflow ()
+		{
+			DateTimeOffset.Parse ("12/31/9999 23:59 -09:00");
+		}
+
+		[Test]
 		public void ParseExactWithFractions ()
 		{
 			CultureInfo fp = CultureInfo.InvariantCulture;
