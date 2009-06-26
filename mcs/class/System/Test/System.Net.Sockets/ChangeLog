@@ -1,3 +1,7 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SocketTest.cs: tests for DontLinger.
+
 2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SocketTest.cs:
