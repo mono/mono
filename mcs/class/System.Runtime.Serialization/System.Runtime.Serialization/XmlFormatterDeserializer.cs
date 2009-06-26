@@ -51,11 +51,15 @@ namespace System.Runtime.Serialization
 
 		public static object Deserialize (XmlReader reader, Type type,
 			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate,
-			string name, string Namespace, bool verifyObjectName)
+			string name, string ns, bool verifyObjectName)
 		{
-			reader.MoveToContent();
+			reader.MoveToContent ();
 			if (verifyObjectName)
-				Verify (knownTypes, type, name, Namespace, reader);
+				if (reader.NodeType != XmlNodeType.Element ||
+				    reader.LocalName != name ||
+				    reader.NamespaceURI != ns)
+					throw new SerializationException (String.Format ("Expected element '{0}' in namespace '{1}', but found {2} node '{3}' in namespace '{4}'", name, ns, reader.NodeType, reader.LocalName, reader.NamespaceURI));
+//				Verify (knownTypes, type, name, ns, reader);
 			return new XmlFormatterDeserializer (knownTypes, surrogate).Deserialize (type, reader);
 		}
 

@@ -1,3 +1,8 @@
+2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs : verifyObjectName rather blocked
+	  correct names provided as the root names.
+
 2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlFormatterSerializer.cs, KnownTypeCollection.cs : collection
