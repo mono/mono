@@ -61,7 +61,7 @@ namespace MonoTests.Common
 
         public override string GetUriPath ()
         {
-            return "/fake";
+            return appPath;
         }
 
 	public override string GetFilePath ()
