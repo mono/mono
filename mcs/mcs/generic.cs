@@ -2219,6 +2219,8 @@ namespace Mono.CSharp {
 			Type method_parameter = null;
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments [i];
+				if (a == null)
+					continue;
 				
 				if (i < params_arguments_start) {
 					method_parameter = methodParameters.Types [i];

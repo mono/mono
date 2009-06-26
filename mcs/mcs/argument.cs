@@ -25,7 +25,7 @@ namespace Mono.CSharp
 		{
 			Ref = 1,		// ref modifier used
 			Out = 2,		// out modifier used
-			Default = 3		// argument created from default value
+			Default = 3		// argument created from default parameter value
 		}
 
 		public readonly AType ArgType;
@@ -80,6 +80,10 @@ namespace Mono.CSharp
 			return TypeManager.CSharpName (Expr.Type);
 		}
 
+		public bool IsDefaultArgument {
+			get { return ArgType == AType.Default; }
+		}
+
 		public bool ResolveMethodGroup (EmitContext ec)
 		{
 			SimpleName sn = Expr as SimpleName;
@@ -114,7 +118,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public void Emit (EmitContext ec)
+		public virtual void Emit (EmitContext ec)
 		{
 			if (ArgType != AType.Ref && ArgType != AType.Out) {
 				Expr.Emit (ec);
@@ -146,9 +150,10 @@ namespace Mono.CSharp
 		}
 	}
 
-	class NamedArgument : Argument
+	public class NamedArgument : Argument
 	{
 		public readonly LocatedToken Name;
+		LocalTemporary variable;
 
 		public NamedArgument (LocatedToken name, Expression expr)
 			: base (expr)
@@ -159,14 +164,33 @@ namespace Mono.CSharp
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			Report.Error (853, Name.Location, "An expression tree cannot contain named argument");
-			return null;
+			return base.CreateExpressionTree (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// TODO: Should guard against multiple emits
+			base.Emit (ec);
+
+			// Release temporary variable when used
+			if (variable != null)
+				variable.Release (ec);
+		}
+
+		public void EmitAssign (EmitContext ec)
+		{
+			Expr.Emit (ec);
+			variable = new LocalTemporary (Expr.Type);
+			variable.Store (ec);
+
+			Expr = variable;
 		}
 	}
 
 	public class Arguments
 	{
-		// TODO: This should really be linked list
-		ArrayList args;
+		ArrayList args;			// TODO: This should really be linked list
+		ArrayList reordered;	// TODO: LinkedList
 
 		public Arguments (int capacity)
 		{
@@ -243,20 +267,22 @@ namespace Mono.CSharp
 		//
 		public void Emit (EmitContext ec, bool dup_args, LocalTemporary this_arg)
 		{
-			int top = Count;
 			LocalTemporary[] temps = null;
 
-			if (dup_args && top != 0)
-				temps = new LocalTemporary [top];
+			if (dup_args && Count != 0)
+				temps = new LocalTemporary [Count];
 
-			int argument_index = 0;
-			Argument a;
-			for (int i = 0; i < top; i++) {
-				a = this [argument_index++];
+			if (reordered != null && Count > 1) {
+				foreach (NamedArgument na in reordered)
+					na.EmitAssign (ec);
+			}
+
+			int i = 0;
+			foreach (Argument a in args) {
 				a.Emit (ec);
 				if (dup_args) {
 					ec.ig.Emit (OpCodes.Dup);
-					(temps [i] = new LocalTemporary (a.Type)).Store (ec);
+					(temps [i++] = new LocalTemporary (a.Type)).Store (ec);
 				}
 			}
 
@@ -264,7 +290,7 @@ namespace Mono.CSharp
 				if (this_arg != null)
 					this_arg.Emit (ec);
 
-				for (int i = 0; i < top; i++) {
+				for (i = 0; i < temps.Length; i++) {
 					temps[i].Emit (ec);
 					temps[i].Release (ec);
 				}
@@ -293,6 +319,20 @@ namespace Mono.CSharp
 			args.Insert (index, arg);
 		}
 
+		public void MarkReorderedArgument (NamedArgument a)
+		{
+			//
+			// Constant expression can have no effect on left-to-right execution
+			//
+			if (a.Expr is Constant)
+				return;
+
+			if (reordered == null)
+				reordered = new ArrayList ();
+
+			reordered.Add (a);
+		}
+
 		public void Resolve (EmitContext ec)
 		{
 			foreach (Argument a in args)
@@ -312,6 +352,7 @@ namespace Mono.CSharp
 
 		public Argument this [int index] {
 			get { return (Argument) args [index]; }
+			set { args [index] = value; }
 		}
 	}
 }

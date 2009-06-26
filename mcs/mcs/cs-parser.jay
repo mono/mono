@@ -3194,7 +3194,7 @@ opt_argument_list
 	;
 
 argument_list
-	: argument
+	: argument_or_named_argument
 	  { 
 		Arguments list = new Arguments (4);
 		list.Add ((Argument) $1);
@@ -3203,10 +3203,24 @@ argument_list
 	| argument_list COMMA argument
 	  {
 		Arguments list = (Arguments) $1;
-		if (!($3 is NamedArgument) && list [list.Count - 1] is NamedArgument)
+		if (list [list.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
 		
 		list.Add ((Argument) $3);
+		$$ = list;
+	  }
+	| argument_list COMMA named_argument
+	  {
+		Arguments list = (Arguments) $1;
+		NamedArgument a = (NamedArgument) $3;
+		for (int i = 0; i < list.Count; ++i) {
+			NamedArgument na = list [i] as NamedArgument;
+			if (na != null && na.Name.Value == a.Name.Value)
+				Report.Error (1740, na.Name.Location, "Named argument `{0}' specified multiple times",
+					na.Name.Value);
+		}
+		
+		list.Add (a);
 		$$ = list;
 	  }
 	| argument_list COMMA
@@ -3214,7 +3228,7 @@ argument_list
 	  	Report.Error (839, GetLocation ($2), "An argument is missing");
 	  	$$ = null;
 	  }
-	| COMMA argument
+	| COMMA argument_or_named_argument
 	  {
 	  	Report.Error (839, GetLocation ($1), "An argument is missing");
 	  	$$ = null;
@@ -3227,7 +3241,11 @@ argument
 		$$ = new Argument ((Expression) $1);
 	  }
 	| non_simple_argument
-	| named_argument	
+	;
+
+argument_or_named_argument
+	: argument
+	| named_argument
 	;
 
 non_simple_argument

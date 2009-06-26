@@ -1,3 +1,8 @@
+2009-06-26  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, argument.cs, expression.cs, ecore.cs, cs-parser.jay:
+	Implemented C# 4.0 named arguments.
+
 2009-06-24  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, parameter.cs, iterators.cs, convert.cs,

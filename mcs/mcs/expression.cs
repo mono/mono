@@ -7539,6 +7539,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (Arguments [0] is NamedArgument)
+				Error_NamedArgument ((NamedArgument) Arguments[0]);
+
 			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, Arguments [0].Expr, t, loc).Resolve (ec);
 			if (p == null)
 				return null;
@@ -7599,6 +7602,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should never be reached");
+		}
+
+		public static void Error_NamedArgument (NamedArgument na)
+		{
+			Report.Error (1742, na.Name.Location, "An element access expression cannot use named argument");
 		}
 
 		public override string GetSignatureForError ()
@@ -7676,6 +7684,9 @@ namespace Mono.CSharp {
 			}
 
 			foreach (Argument a in ea.Arguments) {
+				if (a is NamedArgument)
+					ElementAccess.Error_NamedArgument ((NamedArgument) a);
+
 				a.Expr = ConvertExpressionToArrayIndex (ec, a.Expr);
 			}
 			

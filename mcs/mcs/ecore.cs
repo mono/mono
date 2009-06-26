@@ -3145,7 +3145,7 @@ namespace Mono.CSharp {
 				arguments = new Arguments (1);
 
 			arguments.Insert (0, new Argument (ExtensionExpression));
-			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespace_entry, loc);
+			MethodGroupExpr mg = ResolveOverloadExtensions (ec, ref arguments, namespace_entry, loc);
 
 			// Store resolved argument and restore original arguments
 			if (mg != null)
@@ -3156,7 +3156,7 @@ namespace Mono.CSharp {
 			return mg;
 		}
 
-		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, Arguments arguments, NamespaceEntry ns, Location loc)
+		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ref Arguments arguments, NamespaceEntry ns, Location loc)
 		{
 			// Use normal resolve rules
 			MethodGroupExpr mg = base.OverloadResolve (ec, ref arguments, ns != null, loc);
@@ -3173,7 +3173,7 @@ namespace Mono.CSharp {
 
 			e.ExtensionExpression = ExtensionExpression;
 			e.SetTypeArguments (type_arguments);			
-			return e.ResolveOverloadExtensions (ec, arguments, e.namespace_entry, loc);
+			return e.ResolveOverloadExtensions (ec, ref arguments, e.namespace_entry, loc);
 		}		
 	}
 
@@ -3420,6 +3420,10 @@ namespace Mono.CSharp {
 			for (int j = 0, c_idx = 0, b_idx = 0; j < argument_count; ++j, ++c_idx, ++b_idx) 
 			{
 				Argument a = args [j];
+
+				// Provided default argument value is never better
+				if (a.IsDefaultArgument && candidate_params == best_params)
+					return false;
 
 				Type ct = candidate_pd.Types [c_idx];
 				Type bt = best_pd.Types [b_idx];
@@ -3718,15 +3722,85 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (arg_count + optional_count != param_count) {
-					if (!pd.HasParams)
-						return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
-					if (arg_count < param_count - 1)
-						return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+				int args_gap = Math.Abs (arg_count - param_count);
+				if (optional_count != 0) {
+					if (args_gap > optional_count)
+						return int.MaxValue - 10000 + args_gap - optional_count;
 
-					// Initialize expanded form of a method with 1 params parameter
-					params_expanded_form = param_count == 1 && pd.HasParams;
+					// Readjust expected number when params used
+					if (pd.HasParams) {
+						optional_count--;
+						if (arg_count < param_count)
+							param_count--;
+					}
+				} else if (arg_count != param_count) {
+					if (!pd.HasParams)
+						return int.MaxValue - 10000 + args_gap;
+					if (arg_count < param_count - 1)
+						return int.MaxValue - 10000 + args_gap;
 				}
+
+				// Initialize expanded form of a method with 1 params parameter
+				params_expanded_form = param_count == 1 && pd.HasParams;
+
+				// Resize to fit optional arguments
+				if (optional_count != 0) {
+					Arguments resized;
+					if (arguments == null) {
+						resized = new Arguments (optional_count);
+					} else {
+						resized = new Arguments (param_count);
+						resized.AddRange (arguments);
+					}
+
+					for (int i = arg_count; i < param_count; ++i)
+						resized.Add (null);
+					arguments = resized;
+				}
+			}
+
+			if (arg_count > 0) {
+				//
+				// Shuffle named arguments to the right positions if there are any
+				//
+				if (arguments [arg_count - 1] is NamedArgument) {
+					arg_count = arguments.Count;
+
+					for (int i = 0; i < arg_count; ++i) {
+						bool arg_moved = false;
+						while (true) {
+							NamedArgument na = arguments[i] as NamedArgument;
+							if (na == null)
+								break;
+
+							int index = pd.GetParameterIndexByName (na.Name.Value);
+
+							// Named parameter not found or already reordered
+							if (index <= i)
+								break;
+
+							// When using parameters which should not be available to the user
+							if (index >= param_count)
+								break;
+
+							if (!arg_moved) {
+								arguments.MarkReorderedArgument (na);
+								arg_moved = true;
+							}
+
+							Argument temp = arguments[index];
+							arguments[index] = arguments[i];
+							arguments[i] = temp;
+
+							if (temp == null)
+								break;
+						}
+					}
+				} else {
+					arg_count = arguments.Count;
+				}
+			} else if (arguments != null) {
+				arg_count = arguments.Count;
 			}
 
 #if GMCS_SOURCE
@@ -3760,25 +3834,6 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (optional_count != 0) {
-				Arguments args = new Arguments (optional_count + arg_count);
-				for (int i = 0; i < pd.Count; ++i) {
-					if (i < arg_count) {
-						args.Add (arguments[i]);
-						continue;
-					}
-
-					Expression e = pd.FixedParameters [i].DefaultValue as Constant;
-					if (e == null)
-						e = new DefaultValueExpression (new TypeExpression (pd.Types [i], loc), loc).Resolve (ec);
-
-					args.Add (new Argument (e, Argument.AType.Default));
-				}
-
-				arguments = args;
-			}
-
-
 			//
 			// 2. Each argument has to be implicitly convertible to method parameter
 			//
@@ -3787,8 +3842,17 @@ namespace Mono.CSharp {
 			Type pt = null;
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = arguments [i];
-				Parameter.Modifier a_mod = a.Modifier &
-					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
+				if (a == null) {
+					if (!pd.FixedParameters [i].HasDefaultValue)
+						throw new InternalErrorException ();
+
+					Expression e = pd.FixedParameters [i].DefaultValue as Constant;
+					if (e == null)
+						e = new DefaultValueExpression (new TypeExpression (pd.Types [i], loc), loc).Resolve (ec);
+
+					arguments [i] = new Argument (e, Argument.AType.Default);
+					continue;
+				}
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters [i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
@@ -3797,6 +3861,7 @@ namespace Mono.CSharp {
 					params_expanded_form = true;
 				}
 
+				Parameter.Modifier a_mod = a.Modifier & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 				int score = 1;
 				if (!params_expanded_form)
 					score = IsArgumentCompatible (ec, a_mod, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
@@ -3815,8 +3880,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (arg_count + optional_count != param_count)
-				params_expanded_form = true;			
+			if (arg_count != param_count)
+				params_expanded_form = true;	
 			
 			return 0;
 		}
@@ -4056,9 +4121,11 @@ namespace Mono.CSharp {
 						candidate_to_form = new PtrHashtable ();
 					MethodBase candidate = Methods [i];
 					candidate_to_form [candidate] = candidate;
-				} else if (candidate_args != Arguments) {
+				}
+				
+				if (candidate_args != Arguments) {
 					if (candidates_expanded == null)
-						candidates_expanded = new Hashtable (4);
+						candidates_expanded = new Hashtable (2);
 
 					candidates_expanded.Add (Methods [i], candidate_args);
 					candidate_args = Arguments;
@@ -4241,6 +4308,15 @@ namespace Mono.CSharp {
 			best_candidate = (MethodBase) candidates [0];
 			method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 
+			//
+			// TODO: Broken inverse order of candidates logic does not work with optional
+			// parameters used for method overrides and I am not going to fix it for SRE
+			//
+			if (candidates_expanded != null && candidates_expanded.Contains (best_candidate)) {
+				candidate_args = (Arguments) candidates_expanded [best_candidate];
+				arg_count = candidate_args.Count;
+			}
+
 			for (int ix = 1; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
 
@@ -4249,7 +4325,7 @@ namespace Mono.CSharp {
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
 
-				if (BetterFunction (ec, Arguments, arg_count, 
+				if (BetterFunction (ec, candidate_args, arg_count, 
 					candidate, cand_params,
 					best_candidate, method_params)) {
 					best_candidate = candidate;
@@ -4268,7 +4344,7 @@ namespace Mono.CSharp {
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-				if (!BetterFunction (ec, Arguments, arg_count,
+				if (!BetterFunction (ec, candidate_args, arg_count,
 					best_candidate, method_params,
 					candidate, cand_params)) 
 				{
@@ -4324,15 +4400,6 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// TODO: Broken inverse order of candidates logic does not work with optional
-			// parameters used for method overrides and I am not going to fix it for SRE
-			//
-			if (candidates_expanded != null && candidates_expanded.Contains (best_candidate)) {
-				candidate_args = (Arguments) candidates_expanded [best_candidate];
-				arg_count = candidate_args.Count;
-			}
-
-			//
 			// And now check if the arguments are all
 			// compatible, perform conversions if
 			// necessary etc. and return if everything is
@@ -4376,6 +4443,7 @@ namespace Mono.CSharp {
 							  bool may_fail, Location loc)
 		{
 			AParametersCollection pd = TypeManager.GetParameterData (method);
+			int param_count = GetApplicableParametersCount (method, pd);
 
 			int errors = Report.Errors;
 			Parameter.Modifier p_mod = 0;
@@ -4411,6 +4479,33 @@ namespace Mono.CSharp {
 						break;
 
 					continue;
+				} else {
+					NamedArgument na = a as NamedArgument;
+					if (na != null) {
+						int name_index = pd.GetParameterIndexByName (na.Name.Value);
+						if (name_index < 0 || name_index >= param_count) {
+							if (DeclaringType != null && TypeManager.IsDelegateType (DeclaringType)) {
+								Report.SymbolRelatedToPreviousError (DeclaringType);
+								Report.Error (1746, na.Name.Location,
+									"The delegate `{0}' does not contain a parameter named `{1}'",
+									TypeManager.CSharpName (DeclaringType), na.Name.Value);
+							} else {
+								Report.SymbolRelatedToPreviousError (best_candidate);
+								Report.Error (1739, na.Name.Location,
+									"The best overloaded method match for `{0}' does not contain a parameter named `{1}'",
+									TypeManager.CSharpSignature (method), na.Name.Value);
+							}
+						} else if (arguments[name_index] != a) {
+							if (DeclaringType != null && TypeManager.IsDelegateType (DeclaringType))
+								Report.SymbolRelatedToPreviousError (DeclaringType);
+							else
+								Report.SymbolRelatedToPreviousError (best_candidate);
+
+							Report.Error (1744, na.Name.Location,
+								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
+								na.Name.Value);
+						}
+					}
 				}
 
 				if (delegate_type != null && !Delegate.IsTypeCovariant (a.Expr, pt))
@@ -4449,7 +4544,6 @@ namespace Mono.CSharp {
 			//
 			// Fill not provided arguments required by params modifier
 			//
-			int param_count = GetApplicableParametersCount (method, pd);
 			if (params_initializers == null && pd.HasParams && arg_count + 1 == param_count) {
 				if (arguments == null)
 					arguments = new Arguments (1);
