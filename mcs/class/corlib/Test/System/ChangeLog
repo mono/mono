@@ -1,3 +1,8 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* StringTest.cs: Convert all tests to new-style nunit 
+	classes/methods.
+
 2009-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* NumberFormatterTest.cs: Convert all tests to new-style nunit 
