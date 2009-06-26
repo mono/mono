@@ -25,7 +25,7 @@ using AssertType = NUnit.Framework.Assert;
 namespace MonoTests.System.Text
 {
 	[TestFixture]
-	public class UTF8EncodingTest : Assertion
+	public class UTF8EncodingTest 
 	{
 		private UTF8Encoding utf8;
 
@@ -38,25 +38,25 @@ namespace MonoTests.System.Text
 		[Test]
 		public void IsBrowserDisplay ()
 		{
-			Assert (utf8.IsBrowserDisplay);
+			Assert.IsTrue (utf8.IsBrowserDisplay);
 		}
 
 		[Test]
 		public void IsBrowserSave ()
 		{
-			Assert (utf8.IsBrowserSave);
+			Assert.IsTrue (utf8.IsBrowserSave);
 		}
 
 		[Test]
 		public void IsMailNewsDisplay ()
 		{
-			Assert (utf8.IsMailNewsDisplay);
+			Assert.IsTrue (utf8.IsMailNewsDisplay);
 		}
 
 		[Test]
 		public void IsMailNewsSave ()
 		{
-			Assert (utf8.IsMailNewsSave);
+			Assert.IsTrue (utf8.IsMailNewsSave);
 		}
 
 		[Test]
@@ -69,13 +69,13 @@ namespace MonoTests.System.Text
 			// see (RFC 2044)
 			byte[] utf8Bytes = utf8Enc.GetBytes (UniCode);
 
-			Assertion.AssertEquals ("UTF #1", 0x41, utf8Bytes [0]);
-			Assertion.AssertEquals ("UTF #2", 0xE2, utf8Bytes [1]);
-			Assertion.AssertEquals ("UTF #3", 0x89, utf8Bytes [2]);
-			Assertion.AssertEquals ("UTF #4", 0xA2, utf8Bytes [3]);
-			Assertion.AssertEquals ("UTF #5", 0xCE, utf8Bytes [4]);
-			Assertion.AssertEquals ("UTF #6", 0x91, utf8Bytes [5]);
-			Assertion.AssertEquals ("UTF #7", 0x2E, utf8Bytes [6]);
+			Assert.AreEqual (0x41, utf8Bytes [0], "UTF #1");
+			Assert.AreEqual (0xE2, utf8Bytes [1], "UTF #2");
+			Assert.AreEqual (0x89, utf8Bytes [2], "UTF #3");
+			Assert.AreEqual (0xA2, utf8Bytes [3], "UTF #4");
+			Assert.AreEqual (0xCE, utf8Bytes [4], "UTF #5");
+			Assert.AreEqual (0x91, utf8Bytes [5], "UTF #6");
+			Assert.AreEqual (0x2E, utf8Bytes [6], "UTF #7");
 		}
 
 		[Test]
@@ -89,18 +89,18 @@ namespace MonoTests.System.Text
 			byte[] utf8Bytes = new byte [11];
 
 			int ByteCnt = utf8Enc.GetBytes (UniCode.ToCharArray(), 0, UniCode.Length, utf8Bytes, 0);
-			Assertion.AssertEquals ("UTF #1", 11, ByteCnt);
-			Assertion.AssertEquals ("UTF #2", 0x48, utf8Bytes [0]);
-			Assertion.AssertEquals ("UTF #3", 0x69, utf8Bytes [1]);
-			Assertion.AssertEquals ("UTF #4", 0x20, utf8Bytes [2]);
-			Assertion.AssertEquals ("UTF #5", 0x4D, utf8Bytes [3]);
-			Assertion.AssertEquals ("UTF #6", 0x6F, utf8Bytes [4]);
-			Assertion.AssertEquals ("UTF #7", 0x6D, utf8Bytes [5]);
-			Assertion.AssertEquals ("UTF #8", 0x20, utf8Bytes [6]);
-			Assertion.AssertEquals ("UTF #9", 0xE2, utf8Bytes [7]);
-			Assertion.AssertEquals ("UTF #10", 0x98, utf8Bytes [8]);
-			Assertion.AssertEquals ("UTF #11", 0xBA, utf8Bytes [9]);
-			Assertion.AssertEquals ("UTF #12", 0x21, utf8Bytes [10]);
+			Assert.AreEqual (11, ByteCnt, "UTF #1");
+			Assert.AreEqual (0x48, utf8Bytes [0], "UTF #2");
+			Assert.AreEqual (0x69, utf8Bytes [1], "UTF #3");
+			Assert.AreEqual (0x20, utf8Bytes [2], "UTF #4");
+			Assert.AreEqual (0x4D, utf8Bytes [3], "UTF #5");
+			Assert.AreEqual (0x6F, utf8Bytes [4], "UTF #6");
+			Assert.AreEqual (0x6D, utf8Bytes [5], "UTF #7");
+			Assert.AreEqual (0x20, utf8Bytes [6], "UTF #8");
+			Assert.AreEqual (0xE2, utf8Bytes [7], "UTF #9");
+			Assert.AreEqual (0x98, utf8Bytes [8], "UTF #10");
+			Assert.AreEqual (0xBA, utf8Bytes [9], "UTF #11");
+			Assert.AreEqual (0x21, utf8Bytes [10], "UTF #12");
 		}
 
 		[Test]
@@ -112,10 +112,10 @@ namespace MonoTests.System.Text
 			byte[] utf8Bytes = new byte [] {0x41, 0xE2, 0x89, 0xA2, 0xCE, 0x91, 0x2E};
 			char[] UniCodeChars = utf8Enc.GetChars(utf8Bytes);
 
-			Assertion.AssertEquals ("UTF #1", 0x0041, UniCodeChars [0]);
-			Assertion.AssertEquals ("UTF #2", 0x2262, UniCodeChars [1]);
-			Assertion.AssertEquals ("UTF #3", 0x0391, UniCodeChars [2]);
-			Assertion.AssertEquals ("UTF #4", 0x002E, UniCodeChars [3]);
+			Assert.AreEqual (0x0041, UniCodeChars [0], "UTF #1");
+			Assert.AreEqual (0x2262, UniCodeChars [1], "UTF #2");
+			Assert.AreEqual (0x0391, UniCodeChars [2], "UTF #3");
+			Assert.AreEqual (0x002E, UniCodeChars [3], "UTF #4");
 		}
 
 		[Test]
@@ -127,9 +127,9 @@ namespace MonoTests.System.Text
 			UTF8Encoding UTF8enc = new UTF8Encoding ();
 #if NET_2_0
 			// hmm, where is this extra 1 coming from?
-			Assertion.AssertEquals ("UTF #1", 51, UTF8enc.GetMaxCharCount(50));
+			Assert.AreEqual (51, UTF8enc.GetMaxCharCount(50), "UTF #1");
 #else
-			Assertion.AssertEquals ("UTF #1", 50, UTF8enc.GetMaxCharCount(50));
+			Assert.AreEqual (50, UTF8enc.GetMaxCharCount(50), "UTF #1");
 #endif
 		}
 
@@ -143,9 +143,9 @@ namespace MonoTests.System.Text
 #if NET_2_0
 			// maybe under .NET 2.0 insufficient surrogate pair is
 			// just not handled, and 3 is Preamble size.
-			Assertion.AssertEquals ("UTF #1", 153, UTF8enc.GetMaxByteCount(50));
+			Assert.AreEqual (153, UTF8enc.GetMaxByteCount(50), "UTF #1");
 #else
-			Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
+			Assert.AreEqual (200, UTF8enc.GetMaxByteCount(50), "UTF #1");
 #endif
 		}
 
@@ -157,31 +157,31 @@ namespace MonoTests.System.Text
 
 			byte[] data = new byte [] { 0xC0, 0xAF };
 #if NET_2_0
-			AssertEquals ("#A0", 2, u.GetCharCount (data));
+			Assert.AreEqual (2, u.GetCharCount (data), "#A0");
 			string s = u.GetString (data);
-			AssertEquals ("#A1", "\uFFFD\uFFFD", s);
+			Assert.AreEqual ("\uFFFD\uFFFD", s, "#A1");
 #else
-			AssertEquals ("#A0", 0, u.GetCharCount (data));
+			Assert.AreEqual (0, u.GetCharCount (data), "#A0");
 			string s = u.GetString (data);
-			AssertEquals ("#A1", String.Empty, s);
+			Assert.AreEqual (String.Empty, s, "#A1");
 #endif
 
 			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
 			s = u.GetString (data);
 #if NET_2_0
-			AssertEquals ("#B1", 6, s.Length);
-			AssertEquals ("#B2", 0x30, (int) s [0]);
-			AssertEquals ("#B3", 0x31, (int) s [1]);
-			AssertEquals ("#B4", 0xFFFD, (int) s [2]);
-			AssertEquals ("#B5", 0xFFFD, (int) s [3]);
-			AssertEquals ("#B6", 0x30, (int) s [4]);
-			AssertEquals ("#B7", 0x32, (int) s [5]);
+			Assert.AreEqual (6, s.Length, "#B1");
+			Assert.AreEqual (0x30, (int) s [0], "#B2");
+			Assert.AreEqual (0x31, (int) s [1], "#B3");
+			Assert.AreEqual (0xFFFD, (int) s [2], "#B4");
+			Assert.AreEqual (0xFFFD, (int) s [3], "#B5");
+			Assert.AreEqual (0x30, (int) s [4], "#B6");
+			Assert.AreEqual (0x32, (int) s [5], "#B7");
 #else
-			AssertEquals ("#B1", 4, s.Length);
-			AssertEquals ("#B2", 0x30, (int) s [0]);
-			AssertEquals ("#B3", 0x31, (int) s [1]);
-			AssertEquals ("#B4", 0x30, (int) s [2]);
-			AssertEquals ("#B5", 0x32, (int) s [3]);
+			Assert.AreEqual (4, s.Length, "#B1");
+			Assert.AreEqual (0x30, (int) s [0], "#B2");
+			Assert.AreEqual (0x31, (int) s [1], "#B3");
+			Assert.AreEqual (0x30, (int) s [2], "#B4");
+			Assert.AreEqual (0x32, (int) s [3], "#B5");
 #endif
 		}
 
@@ -194,7 +194,7 @@ namespace MonoTests.System.Text
 			string s = utf8.GetString (data);
 			// cute but saving source code in unicode can be problematic
 			// so we just ensure we can re-encode this
-			AssertEquals ("Reconverted", BitConverter.ToString (data), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (BitConverter.ToString (data), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted");
 		}
 
 		[Test]
@@ -202,24 +202,24 @@ namespace MonoTests.System.Text
 		{
 			byte[] data211 = { 0x00 };
 			string s = utf8.GetString (data211);
-			AssertEquals ("1 byte  (U-00000000)", "\0", s);
-			AssertEquals ("Reconverted-1", BitConverter.ToString (data211), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual ("\0", s, "1 byte  (U-00000000)");
+			Assert.AreEqual (BitConverter.ToString (data211), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-1");
 
 			byte[] data212 = { 0xC2, 0x80 };
 			s = utf8.GetString (data212);
-			AssertEquals ("2 bytes (U-00000080)", 128, s [0]);
-			AssertEquals ("Reconverted-2", BitConverter.ToString (data212), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (128, s [0], "2 bytes (U-00000080)");
+			Assert.AreEqual (BitConverter.ToString (data212), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-2");
 
 			byte[] data213 = { 0xE0, 0xA0, 0x80 };
 			s = utf8.GetString (data213);
-			AssertEquals ("3 bytes (U-00000800)", 2048, s [0]);
-			AssertEquals ("Reconverted-3", BitConverter.ToString (data213), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (2048, s [0], "3 bytes (U-00000800)");
+			Assert.AreEqual (BitConverter.ToString (data213), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-3");
 
 			byte[] data214 = { 0xF0, 0x90, 0x80, 0x80 };
 			s = utf8.GetString (data214);
-			AssertEquals ("4 bytes (U-00010000)-0", 55296, s [0]);
-			AssertEquals ("4 bytes (U-00010000)-1", 56320, s [1]);
-			AssertEquals ("Reconverted-4", BitConverter.ToString (data214), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (55296, s [0], "4 bytes (U-00010000)-0");
+			Assert.AreEqual (56320, s [1], "4 bytes (U-00010000)-1");
+			Assert.AreEqual (BitConverter.ToString (data214), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-4");
 		}
 
 		[Test]
@@ -229,8 +229,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data215 = { 0xF8, 0x88, 0x80, 0x80, 0x80 };
 			string s = utf8.GetString (data215);
-			AssertNull ("5 bytes (U-00200000)", s);
-			AssertEquals ("Reconverted-5", BitConverter.ToString (data215), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "5 bytes (U-00200000)");
+			Assert.AreEqual (BitConverter.ToString (data215), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-5");
 		}
 
 		[Test]
@@ -240,8 +240,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data216 = { 0xFC, 0x84, 0x80, 0x80, 0x80, 0x80 };
 			string s = utf8.GetString (data216);
-			AssertNull ("6 bytes (U-04000000)", s);
-			AssertEquals ("Reconverted-6", BitConverter.ToString (data216), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "6 bytes (U-04000000)");
+			Assert.AreEqual (BitConverter.ToString (data216), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-6");
 		}
 
 		[Test]
@@ -249,18 +249,18 @@ namespace MonoTests.System.Text
 		{
 			byte[] data221 = { 0x7F };
 			string s = utf8.GetString (data221);
-			AssertEquals ("1 byte  (U-0000007F)", 127, s [0]);
-			AssertEquals ("Reconverted-1", BitConverter.ToString (data221), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (127, s [0], "1 byte  (U-0000007F)");
+			Assert.AreEqual (BitConverter.ToString (data221), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-1");
 
 			byte[] data222 = { 0xDF, 0xBF };
 			s = utf8.GetString (data222);
-			AssertEquals ("2 bytes (U-000007FF)", 2047, s [0]);
-			AssertEquals ("Reconverted-2", BitConverter.ToString (data222), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (2047, s [0], "2 bytes (U-000007FF)");
+			Assert.AreEqual (BitConverter.ToString (data222), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-2");
 
 			byte[] data223 = { 0xEF, 0xBF, 0xBF };
 			s = utf8.GetString (data223);
-			AssertEquals ("3 bytes (U-0000FFFF)", 65535, s [0]);
-			AssertEquals ("Reconverted-3", BitConverter.ToString (data223), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (65535, s [0], "3 bytes (U-0000FFFF)");
+			Assert.AreEqual (BitConverter.ToString (data223), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-3");
 
 		}
 
@@ -271,8 +271,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data224 = { 0x7F, 0xBF, 0xBF, 0xBF };
 			string s = utf8.GetString (data224);
-			AssertNull ("4 bytes (U-001FFFFF)", s);
-			AssertEquals ("Reconverted-4", BitConverter.ToString (data224), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "4 bytes (U-001FFFFF)");
+			Assert.AreEqual (BitConverter.ToString (data224), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-4");
 		}
 
 		[Test]
@@ -282,8 +282,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data225 = { 0xFB, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = utf8.GetString (data225);
-			AssertNull ("5 bytes (U-03FFFFFF)", s);
-			AssertEquals ("Reconverted-5", BitConverter.ToString (data225), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "5 bytes (U-03FFFFFF)");
+			Assert.AreEqual (BitConverter.ToString (data225), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-5");
 		}
 
 		[Test]
@@ -293,8 +293,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data226 = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = utf8.GetString (data226);
-			AssertNull ("6 bytes (U-7FFFFFFF)", s);
-			AssertEquals ("Reconverted-6", BitConverter.ToString (data226), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "6 bytes (U-7FFFFFFF)");
+			Assert.AreEqual (BitConverter.ToString (data226), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-6");
 		}
 
 		[Test]
@@ -302,24 +302,24 @@ namespace MonoTests.System.Text
 		{
 			byte[] data231 = { 0xED, 0x9F, 0xBF };
 			string s = utf8.GetString (data231);
-			AssertEquals ("U-0000D7FF", 55295, s [0]);
-			AssertEquals ("Reconverted-1", BitConverter.ToString (data231), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (55295, s [0], "U-0000D7FF");
+			Assert.AreEqual (BitConverter.ToString (data231), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-1");
 
 			byte[] data232 = { 0xEE, 0x80, 0x80 };
 			s = utf8.GetString (data232);
-			AssertEquals ("U-0000E000", 57344, s [0]);
-			AssertEquals ("Reconverted-2", BitConverter.ToString (data232), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (57344, s [0], "U-0000E000");
+			Assert.AreEqual (BitConverter.ToString (data232), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-2");
 
 			byte[] data233 = { 0xEF, 0xBF, 0xBD };
 			s = utf8.GetString (data233);
-			AssertEquals ("U-0000FFFD", 65533, s [0]);
-			AssertEquals ("Reconverted-3", BitConverter.ToString (data233), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (65533, s [0], "U-0000FFFD");
+			Assert.AreEqual (BitConverter.ToString (data233), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-3");
 
 			byte[] data234 = { 0xF4, 0x8F, 0xBF, 0xBF };
 			s = utf8.GetString (data234);
-			AssertEquals ("U-0010FFFF-0", 56319, s [0]);
-			AssertEquals ("U-0010FFFF-1", 57343, s [1]);
-			AssertEquals ("Reconverted-4", BitConverter.ToString (data234), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.AreEqual (56319, s [0], "U-0010FFFF-0");
+			Assert.AreEqual (57343, s [1], "U-0010FFFF-1");
+			Assert.AreEqual (BitConverter.ToString (data234), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-4");
 		}
 
 		[Test]
@@ -329,8 +329,8 @@ namespace MonoTests.System.Text
 		{
 			byte[] data235 = { 0xF4, 0x90, 0x80, 0x80 };
 			string s = utf8.GetString (data235);
-			AssertNull ("U-00110000", s);
-			AssertEquals ("Reconverted-5", BitConverter.ToString (data235), BitConverter.ToString (utf8.GetBytes (s)));
+			Assert.IsNull (s, "U-00110000");
+			Assert.AreEqual (BitConverter.ToString (data235), BitConverter.ToString (utf8.GetBytes (s)), "Reconverted-5");
 		}
 
 		[Test]
@@ -524,7 +524,7 @@ namespace MonoTests.System.Text
 			try {
 				string s = utf8.GetString (data);
 				// exception is "really" expected here
-				AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
+				Assert.AreEqual (String.Empty, s, "MS FX 1.1 behaviour");
 			}
 			catch (DecoderException) {
 				// but Mono doesn't - better stick to the standard
@@ -540,7 +540,7 @@ namespace MonoTests.System.Text
 			try {
 				string s = utf8.GetString (data);
 				// exception is "really" expected here
-				AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
+				Assert.AreEqual (String.Empty, s, "MS FX 1.1 behaviour");
 			}
 			catch (DecoderException) {
 				// but Mono doesn't - better stick to the standard
@@ -762,7 +762,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xA0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
+			Assert.AreEqual (55296, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -778,7 +778,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAD, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
+			Assert.AreEqual (56191, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -794,7 +794,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAE, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
+			Assert.AreEqual (56192, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -810,7 +810,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
+			Assert.AreEqual (56319, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -826,7 +826,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xB0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56320, s [0]);
+			Assert.AreEqual (56320, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -842,7 +842,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xBE, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 57216, s [0]);
+			Assert.AreEqual (57216, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -858,7 +858,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xBF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 57343, s [0]);
+			Assert.AreEqual (57343, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -874,8 +874,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+			Assert.AreEqual (55296, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (56320, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -891,8 +891,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 55296, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+			Assert.AreEqual (55296, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (57343, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -908,8 +908,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xB0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+			Assert.AreEqual (56191, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (56320, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -925,8 +925,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xBF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56191, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+			Assert.AreEqual (56191, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (57343, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -942,8 +942,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xB0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+			Assert.AreEqual (56192, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (56320, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -959,8 +959,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xBF, 0x8F };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56192, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 57295, s [1]);
+			Assert.AreEqual (56192, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (57295, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -976,8 +976,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xB0, 0x80 };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 56320, s [1]);
+			Assert.AreEqual (56319, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (56320, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -993,8 +993,8 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xBF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 56319, s [0]);
-			AssertEquals ("MS FX 1.1 behaviour", 57343, s [1]);
+			Assert.AreEqual (56319, s [0], "MS FX 1.1 behaviour");
+			Assert.AreEqual (57343, s [1], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -1005,7 +1005,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xEF, 0xBF, 0xBE };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 65534, s [0]);
+			Assert.AreEqual (65534, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -1016,7 +1016,7 @@ namespace MonoTests.System.Text
 			byte[] data = { 0xEF, 0xBF, 0xBF };
 			string s = utf8.GetString (data);
 			// exception is "really" expected here
-			AssertEquals ("MS FX 1.1 behaviour", 65535, s [0]);
+			Assert.AreEqual (65535, s [0], "MS FX 1.1 behaviour");
 		}
 
 		[Test]
@@ -1026,15 +1026,15 @@ namespace MonoTests.System.Text
 			byte [] data = new byte [] {0xEF, 0xBB, 0xBF};
 			Encoding enc = new UTF8Encoding (false, true);
 			string s = enc.GetString (data);
-			AssertEquals ("\uFEFF", s);
+			Assert.AreEqual (s, "\uFEFF");
 
 			Encoding utf = Encoding.UTF8;
 			char[] testChars = {'\uFEFF','A'};
 
 			byte[] bytes = utf.GetBytes(testChars);
 			char[] chars = utf.GetChars(bytes);
-			AssertEquals ("#1", '\uFEFF', chars [0]);
-			AssertEquals ("#2", 'A', chars [1]);
+			Assert.AreEqual ('\uFEFF', chars [0], "#1");
+			Assert.AreEqual ('A', chars [1], "#2");
 		}
 
 #if NET_2_0
@@ -1043,7 +1043,7 @@ namespace MonoTests.System.Text
 		{
 			Encoding e = Encoding.GetEncoding (65001).Clone ()
 				as Encoding;
-			AssertEquals (false, e.IsReadOnly);
+			Assert.AreEqual (false, e.IsReadOnly);
 			e.EncoderFallback = new EncoderExceptionFallback ();
 		}
 #endif
@@ -1072,7 +1072,7 @@ namespace MonoTests.System.Text
 			try {
 				int ret = e.GetBytes (chars, 1, 0, bytes, 0, true);
 #if NET_2_0
-				AssertEquals ("drop insufficient char in 2.0: char[]", 0, ret);
+				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: char[]");
 #else
 				Fail ("ArgumentException is expected: char[]");
 #endif
@@ -1083,7 +1083,7 @@ namespace MonoTests.System.Text
 			try {
 				int ret = Encoding.UTF8.GetBytes (s, 0, 1, bytes, 0);
 #if NET_2_0
-				AssertEquals ("drop insufficient char in 2.0: string", 0, ret);
+				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: string");
 #else
 				Fail ("ArgumentException is expected: string");
 #endif

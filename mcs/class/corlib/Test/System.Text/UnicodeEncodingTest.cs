@@ -52,10 +52,10 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (); //little-endian
                         UniBytes = UnicodeEnc.GetBytes (Unicode);
                         
-                        Assertion.AssertEquals ("Uni #1", 0xA0, UniBytes [0]);
-                        Assertion.AssertEquals ("Uni #2", 0x03, UniBytes [1]);
-                        Assertion.AssertEquals ("Uni #3", 0xA3, UniBytes [2]);
-                        Assertion.AssertEquals ("Uni #4", 0x03, UniBytes [3]);
+                        Assert.AreEqual (0xA0, UniBytes [0], "Uni #1");
+                        Assert.AreEqual (0x03, UniBytes [1], "Uni #2");
+                        Assert.AreEqual (0xA3, UniBytes [2], "Uni #3");
+                        Assert.AreEqual (0x03, UniBytes [3], "Uni #4");
                 }
         
                 [Test]
@@ -67,10 +67,10 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (true, true); //big-endian
                         UniBytes = UnicodeEnc.GetBytes (Unicode);
                         
-                        Assertion.AssertEquals ("Uni #1", 0x03, UniBytes [0]);
-                        Assertion.AssertEquals ("Uni #2", 0xA0, UniBytes [1]);
-                        Assertion.AssertEquals ("Uni #3", 0x03, UniBytes [2]);
-                        Assertion.AssertEquals ("Uni #4", 0xA3, UniBytes [3]);
+                        Assert.AreEqual (0x03, UniBytes [0], "Uni #1");
+                        Assert.AreEqual (0xA0, UniBytes [1], "Uni #2");
+                        Assert.AreEqual (0x03, UniBytes [2], "Uni #3");
+                        Assert.AreEqual (0xA3, UniBytes [3], "Uni #4");
                 }
 
                 [Test]
@@ -82,11 +82,11 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (); //little-endian 
                         int Cnt = UnicodeEnc.GetBytes (Unicode.ToCharArray(), 0, Unicode.Length, UniBytes, 0);
                         
-                        Assertion.AssertEquals ("Uni #1", 4, Cnt);
-                        Assertion.AssertEquals ("Uni #2", 0xA0, UniBytes [0]);
-                        Assertion.AssertEquals ("Uni #3", 0x03, UniBytes [1]);
-                        Assertion.AssertEquals ("Uni #4", 0xA3, UniBytes [2]);
-                        Assertion.AssertEquals ("Uni #5", 0x03, UniBytes [3]);
+                        Assert.AreEqual (4, Cnt, "Uni #1");
+                        Assert.AreEqual (0xA0, UniBytes [0], "Uni #2");
+                        Assert.AreEqual (0x03, UniBytes [1], "Uni #3");
+                        Assert.AreEqual (0xA3, UniBytes [2], "Uni #4");
+                        Assert.AreEqual (0x03, UniBytes [3], "Uni #5");
                 }
         
                 [Test]
@@ -101,7 +101,7 @@ namespace MonoTests.System.Text
                         char[] UniChars = UnicodeEnc.GetChars (UniBytes);
                         string Result = new string(UniChars);
                         
-                        Assertion.AssertEquals ("Uni #1", Unicode, Result);
+                        Assert.AreEqual (Unicode, Result, "Uni #1");
                 }
 
                 [Test]
@@ -116,7 +116,7 @@ namespace MonoTests.System.Text
                         char[] UniChars = UnicodeEnc.GetChars (UniBytes);
                         string Result = new string(UniChars);
                         
-                        Assertion.AssertEquals ("Uni #1", Unicode, Result);
+                        Assert.AreEqual (Unicode, Result, "Uni #1");
                 }
 
 		[Test]
@@ -125,8 +125,8 @@ namespace MonoTests.System.Text
 			byte[] b = new byte[] {255, 254, 115, 0, 104, 0, 105, 0};
 			UnicodeEncoding encoding = new UnicodeEncoding ();
 
-			Assertion.AssertEquals ("GetCharCount #1", 3,
-				encoding.GetCharCount (b, 2, b.Length - 2));
+			Assert.AreEqual (3, encoding.GetCharCount (b, 2, b.Length - 2), 
+							 "GetCharCount #1");
 		}
 
 	
@@ -138,8 +138,8 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (false, true); 
                         byte[] PreAmble = UnicodeEnc.GetPreamble();
 
-                        Assertion.AssertEquals ("Uni #1", 0xFF, PreAmble [0]);
-                        Assertion.AssertEquals ("Uni #2", 0xFE, PreAmble [1]);
+                        Assert.AreEqual (0xFF, PreAmble [0], "Uni #1");
+                        Assert.AreEqual (0xFE, PreAmble [1], "Uni #2");
                 }
 
                 [Test]
@@ -149,8 +149,8 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (true, true); 
                         byte[] PreAmble = UnicodeEnc.GetPreamble();
 
-                        Assertion.AssertEquals ("Uni #1", 0xFE, PreAmble [0]);
-                        Assertion.AssertEquals ("Uni #2", 0xFF, PreAmble [1]);
+                        Assert.AreEqual (0xFE, PreAmble [0], "Uni #1");
+                        Assert.AreEqual (0xFF, PreAmble [1], "Uni #2");
                 }
 
                 [Test]
@@ -160,7 +160,7 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding (false, false); 
                         byte[] PreAmble = UnicodeEnc.GetPreamble();
 
-                        Assertion.AssertEquals ("Uni #1", 0, PreAmble.Length);
+                        Assert.AreEqual (0, PreAmble.Length, "Uni #1");
                 }
                 
                 [Test]
@@ -172,10 +172,10 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
 #if NET_2_0
                         // where is this extra 1 coming from?
-                        Assertion.AssertEquals ("UTF #1", 26, UnicodeEnc.GetMaxCharCount(50));
-                        Assertion.AssertEquals ("UTF #2", 27, UnicodeEnc.GetMaxCharCount(51));
+                        Assert.AreEqual (26, UnicodeEnc.GetMaxCharCount(50), "UTF #1");
+                        Assert.AreEqual (27, UnicodeEnc.GetMaxCharCount(51), "UTF #2");
 #else
-                        Assertion.AssertEquals ("UTF #1", 25, UnicodeEnc.GetMaxCharCount(50));
+                        Assert.AreEqual (25, UnicodeEnc.GetMaxCharCount(50), "UTF #1");
 #endif
                 }
         
@@ -188,9 +188,9 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
 #if NET_2_0
                         // is this extra 2 BOM?
-                        Assertion.AssertEquals ("UTF #1", 102, UnicodeEnc.GetMaxByteCount(50));
+                        Assert.AreEqual (102, UnicodeEnc.GetMaxByteCount(50), "UTF #1");
 #else
-                        Assertion.AssertEquals ("UTF #1", 100, UnicodeEnc.GetMaxByteCount(50));
+                        Assert.AreEqual (100, UnicodeEnc.GetMaxByteCount(50), "UTF #1");
 #endif
                 }
 
@@ -222,16 +222,16 @@ namespace MonoTests.System.Text
 			UnicodeEncoding encoding;
 			
 			encoding = new UnicodeEncoding (false, true);
-			Assertion.AssertEquals ("BOM #1", encoding.GetBytes (littleEndianString), littleEndianBytes);
-			Assertion.AssertEquals ("BOM #2", encoding.GetBytes (bigEndianString), bigEndianBytes);
-			Assertion.AssertEquals ("BOM #3", encoding.GetString (littleEndianBytes), littleEndianString);
-			Assertion.AssertEquals ("BOM #4", encoding.GetString (bigEndianBytes), bigEndianString);
+			Assert.AreEqual (encoding.GetBytes (littleEndianString), littleEndianBytes, "BOM #1");
+			Assert.AreEqual (encoding.GetBytes (bigEndianString), bigEndianBytes, "BOM #2");
+			Assert.AreEqual (encoding.GetString (littleEndianBytes), littleEndianString, "BOM #3");
+			Assert.AreEqual (encoding.GetString (bigEndianBytes), bigEndianString, "BOM #4");
 
 			encoding = new UnicodeEncoding (true, true);
-			Assertion.AssertEquals ("BOM #5", encoding.GetBytes (littleEndianString), bigEndianBytes);
-			Assertion.AssertEquals ("BOM #6", encoding.GetBytes (bigEndianString), littleEndianBytes);
-			Assertion.AssertEquals ("BOM #7", encoding.GetString (littleEndianBytes), bigEndianString);
-			Assertion.AssertEquals ("BOM #8", encoding.GetString (bigEndianBytes), littleEndianString);
+			Assert.AreEqual (encoding.GetBytes (littleEndianString), bigEndianBytes, "BOM #5");
+			Assert.AreEqual (encoding.GetBytes (bigEndianString), littleEndianBytes, "BOM #6");
+			Assert.AreEqual (encoding.GetString (littleEndianBytes), bigEndianString, "BOM #7");
+			Assert.AreEqual (encoding.GetString (bigEndianBytes), littleEndianString, "BOM #8");
 		}
 	}
 }

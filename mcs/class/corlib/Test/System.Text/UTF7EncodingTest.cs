@@ -18,34 +18,34 @@ using AssertType = NUnit.Framework.Assert;
 namespace MonoTests.System.Text
 {
         [TestFixture]
-        public class UTF7EncodingTest : Assertion
+        public class UTF7EncodingTest 
         {
 		[Test]
 		public void IsBrowserDisplay ()
 		{
 			UTF7Encoding utf7 = new UTF7Encoding ();
-			Assert (!utf7.IsBrowserDisplay);
+			Assert.IsTrue (!utf7.IsBrowserDisplay);
 		}
 
 		[Test]
 		public void IsBrowserSave ()
 		{
 			UTF7Encoding utf7 = new UTF7Encoding ();
-			Assert (!utf7.IsBrowserSave);
+			Assert.IsTrue (!utf7.IsBrowserSave);
 		}
 
 		[Test]
 		public void IsMailNewsDisplay ()
 		{
 			UTF7Encoding utf7 = new UTF7Encoding ();
-			Assert (utf7.IsMailNewsDisplay);
+			Assert.IsTrue (utf7.IsMailNewsDisplay);
 		}
 
 		[Test]
 		public void IsMailNewsSave ()
 		{
 			UTF7Encoding utf7 = new UTF7Encoding ();
-			Assert (utf7.IsMailNewsSave);
+			Assert.IsTrue (utf7.IsMailNewsSave);
 		}
 
                 [Test]
@@ -58,14 +58,14 @@ namespace MonoTests.System.Text
                         
                         UTF7Bytes = UTF7enc.GetBytes (UniCodeString);
                         
-                        Assertion.AssertEquals ("UTF7 #1", 0x61, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #2", 0x7A, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #3", 0x41, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #4", 0x5A, UTF7Bytes [3]);
-                        Assertion.AssertEquals ("UTF7 #5", 0x30, UTF7Bytes [4]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x39, UTF7Bytes [5]);
-                        Assertion.AssertEquals ("UTF7 #7", 0x27, UTF7Bytes [6]);
-                        Assertion.AssertEquals ("UTF7 #8", 0x3F, UTF7Bytes [7]);
+                        Assert.AreEqual (0x61, UTF7Bytes [0], "UTF7 #1");
+                        Assert.AreEqual (0x7A, UTF7Bytes [1], "UTF7 #2");
+                        Assert.AreEqual (0x41, UTF7Bytes [2], "UTF7 #3");
+                        Assert.AreEqual (0x5A, UTF7Bytes [3], "UTF7 #4");
+                        Assert.AreEqual (0x30, UTF7Bytes [4], "UTF7 #5");
+                        Assert.AreEqual (0x39, UTF7Bytes [5], "UTF7 #6");
+                        Assert.AreEqual (0x27, UTF7Bytes [6], "UTF7 #7");
+                        Assert.AreEqual (0x3F, UTF7Bytes [7], "UTF7 #8");
                 }
         
                 [Test]
@@ -79,14 +79,14 @@ namespace MonoTests.System.Text
                         
                         int Cnt = UTF7enc.GetBytes (UniCodeString.ToCharArray(), 0, Length, UTF7Bytes, 0);
                 
-		        Assertion.AssertEquals ("UTF7 #1", 0x61, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #2", 0x7A, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #3", 0x41, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #4", 0x5A, UTF7Bytes [3]);
-                        Assertion.AssertEquals ("UTF7 #5", 0x30, UTF7Bytes [4]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x39, UTF7Bytes [5]);
-                        Assertion.AssertEquals ("UTF7 #7", 0x27, UTF7Bytes [6]);
-                        Assertion.AssertEquals ("UTF7 #8", 0x3F, UTF7Bytes [7]);
+		        Assert.AreEqual (0x61, UTF7Bytes [0], "UTF7 #1");
+                        Assert.AreEqual (0x7A, UTF7Bytes [1], "UTF7 #2");
+                        Assert.AreEqual (0x41, UTF7Bytes [2], "UTF7 #3");
+                        Assert.AreEqual (0x5A, UTF7Bytes [3], "UTF7 #4");
+                        Assert.AreEqual (0x30, UTF7Bytes [4], "UTF7 #5");
+                        Assert.AreEqual (0x39, UTF7Bytes [5], "UTF7 #6");
+                        Assert.AreEqual (0x27, UTF7Bytes [6], "UTF7 #7");
+                        Assert.AreEqual (0x3F, UTF7Bytes [7], "UTF7 #8");
 		}
         
                 [Test]
@@ -99,20 +99,20 @@ namespace MonoTests.System.Text
                         UTF7Encoding UTF7enc = new UTF7Encoding (true); 
                         UTF7Bytes = UTF7enc.GetBytes (UniCodeString);
                         
-                        Assertion.AssertEquals ("UTF7 #1", 0x21, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #2", 0x26, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #3", 0x2A, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #4", 0x3B, UTF7Bytes [3]);
+                        Assert.AreEqual (0x21, UTF7Bytes [0], "UTF7 #1");
+                        Assert.AreEqual (0x26, UTF7Bytes [1], "UTF7 #2");
+                        Assert.AreEqual (0x2A, UTF7Bytes [2], "UTF7 #3");
+                        Assert.AreEqual (0x3B, UTF7Bytes [3], "UTF7 #4");
                         
                         //Optional characters are not allowed.
                         UTF7enc = new UTF7Encoding (false);
                         UTF7Bytes = UTF7enc.GetBytes (UniCodeString);
                         
-                        Assertion.AssertEquals ("UTF7 #5", 0x2B, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x41, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #7", 0x43, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #8", 0x45, UTF7Bytes [3]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x41, UTF7Bytes [1]);
+                        Assert.AreEqual (0x2B, UTF7Bytes [0], "UTF7 #5");
+                        Assert.AreEqual (0x41, UTF7Bytes [1], "UTF7 #6");
+                        Assert.AreEqual (0x43, UTF7Bytes [2], "UTF7 #7");
+                        Assert.AreEqual (0x45, UTF7Bytes [3], "UTF7 #8");
+                        Assert.AreEqual (0x41, UTF7Bytes [1], "UTF7 #6");
                 }
         
                 [Test]
@@ -125,16 +125,16 @@ namespace MonoTests.System.Text
                         UTF7Bytes = UTF7enc.GetBytes (UniCodeString);
                         
                         //"A<NOT IDENTICAL TO><ALPHA>." is encoded as A+ImIDkQ-. see RFC 1642
-                        Assertion.AssertEquals ("UTF7 #1", 0x41, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #2", 0x2B, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #3", 0x49, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #4", 0x6D, UTF7Bytes [3]);
-                        Assertion.AssertEquals ("UTF7 #5", 0x49, UTF7Bytes [4]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x44, UTF7Bytes [5]);
-                        Assertion.AssertEquals ("UTF7 #7", 0x6B, UTF7Bytes [6]);
-                        Assertion.AssertEquals ("UTF7 #8", 0x51, UTF7Bytes [7]);
-                        Assertion.AssertEquals ("UTF7 #9", 0x2D, UTF7Bytes [8]);
-                        Assertion.AssertEquals ("UTF7 #10", 0x2E, UTF7Bytes [9]);
+                        Assert.AreEqual (0x41, UTF7Bytes [0], "UTF7 #1");
+                        Assert.AreEqual (0x2B, UTF7Bytes [1], "UTF7 #2");
+                        Assert.AreEqual (0x49, UTF7Bytes [2], "UTF7 #3");
+                        Assert.AreEqual (0x6D, UTF7Bytes [3], "UTF7 #4");
+                        Assert.AreEqual (0x49, UTF7Bytes [4], "UTF7 #5");
+                        Assert.AreEqual (0x44, UTF7Bytes [5], "UTF7 #6");
+                        Assert.AreEqual (0x6B, UTF7Bytes [6], "UTF7 #7");
+                        Assert.AreEqual (0x51, UTF7Bytes [7], "UTF7 #8");
+                        Assert.AreEqual (0x2D, UTF7Bytes [8], "UTF7 #9");
+                        Assert.AreEqual (0x2E, UTF7Bytes [9], "UTF7 #10");
                 }
         
                 [Test]
@@ -148,16 +148,16 @@ namespace MonoTests.System.Text
                         int Cnt = UTF7enc.GetBytes (UniCodeString.ToCharArray(), 0, Length, UTF7Bytes, 0);
                         
                         //"A<NOT IDENTICAL TO><ALPHA>." is encoded as A+ImIDkQ-. see RFC 1642
-                        Assertion.AssertEquals ("UTF7 #1", 0x41, UTF7Bytes [0]);
-                        Assertion.AssertEquals ("UTF7 #2", 0x2B, UTF7Bytes [1]);
-                        Assertion.AssertEquals ("UTF7 #3", 0x49, UTF7Bytes [2]);
-                        Assertion.AssertEquals ("UTF7 #4", 0x6D, UTF7Bytes [3]);
-                        Assertion.AssertEquals ("UTF7 #5", 0x49, UTF7Bytes [4]);
-                        Assertion.AssertEquals ("UTF7 #6", 0x44, UTF7Bytes [5]);
-                        Assertion.AssertEquals ("UTF7 #7", 0x6B, UTF7Bytes [6]);
-                        Assertion.AssertEquals ("UTF7 #8", 0x51, UTF7Bytes [7]);
-                        Assertion.AssertEquals ("UTF7 #9", 0x2D, UTF7Bytes [8]);
-                        Assertion.AssertEquals ("UTF7 #10", 0x2E, UTF7Bytes [9]);
+                        Assert.AreEqual (0x41, UTF7Bytes [0], "UTF7 #1");
+                        Assert.AreEqual (0x2B, UTF7Bytes [1], "UTF7 #2");
+                        Assert.AreEqual (0x49, UTF7Bytes [2], "UTF7 #3");
+                        Assert.AreEqual (0x6D, UTF7Bytes [3], "UTF7 #4");
+                        Assert.AreEqual (0x49, UTF7Bytes [4], "UTF7 #5");
+                        Assert.AreEqual (0x44, UTF7Bytes [5], "UTF7 #6");
+                        Assert.AreEqual (0x6B, UTF7Bytes [6], "UTF7 #7");
+                        Assert.AreEqual (0x51, UTF7Bytes [7], "UTF7 #8");
+                        Assert.AreEqual (0x2D, UTF7Bytes [8], "UTF7 #9");
+                        Assert.AreEqual (0x2E, UTF7Bytes [9], "UTF7 #10");
                 }
         
 		[Test]
@@ -171,12 +171,12 @@ namespace MonoTests.System.Text
 			char[] actual = UTF7enc.GetChars (UTF7Bytes);
 
 			// "A+ImIDkQ-." is decoded as "A<NOT IDENTICAL TO><ALPHA>." see RFC 1642
-			AssertEquals ("UTF #1", expected [0], actual [0]);
-			AssertEquals ("UTF #2", expected [1], actual [1]);
-			AssertEquals ("UTF #3", expected [2], actual [2]);
-			AssertEquals ("UTF #4", expected [3], actual [3]);
+			Assert.AreEqual (expected [0], actual [0], "UTF #1");
+			Assert.AreEqual (expected [1], actual [1], "UTF #2");
+			Assert.AreEqual (expected [2], actual [2], "UTF #3");
+			Assert.AreEqual (expected [3], actual [3], "UTF #4");
 
-			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+			Assert.AreEqual (UniCodeString, UTF7enc.GetString (UTF7Bytes), "GetString");
                 }
 
 		[Test]
@@ -191,17 +191,17 @@ namespace MonoTests.System.Text
 			char[] actual = UTF7enc.GetChars (UTF7Bytes);
 
 			// "Hi Mom +Jjo-!" is decoded as "Hi Mom <WHITE SMILING FACE>!"
-			AssertEquals ("UTF #1", expected [0], actual [0]);
-			AssertEquals ("UTF #2", expected [1], actual [1]);
-			AssertEquals ("UTF #3", expected [2], actual [2]);
-			AssertEquals ("UTF #4", expected [3], actual [3]);
-			AssertEquals ("UTF #5", expected [4], actual [4]);
-			AssertEquals ("UTF #6", expected [5], actual [5]);
-			AssertEquals ("UTF #7", expected [6], actual [6]);
-			AssertEquals ("UTF #8", expected [7], actual [7]);
-			AssertEquals ("UTF #9", expected [8], actual [8]);
+			Assert.AreEqual (expected [0], actual [0], "UTF #1");
+			Assert.AreEqual (expected [1], actual [1], "UTF #2");
+			Assert.AreEqual (expected [2], actual [2], "UTF #3");
+			Assert.AreEqual (expected [3], actual [3], "UTF #4");
+			Assert.AreEqual (expected [4], actual [4], "UTF #5");
+			Assert.AreEqual (expected [5], actual [5], "UTF #6");
+			Assert.AreEqual (expected [6], actual [6], "UTF #7");
+			Assert.AreEqual (expected [7], actual [7], "UTF #8");
+			Assert.AreEqual (expected [8], actual [8], "UTF #9");
 
-			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+			Assert.AreEqual (UniCodeString, UTF7enc.GetString (UTF7Bytes), "GetString");
 		}
 
 		[Test]
@@ -216,11 +216,11 @@ namespace MonoTests.System.Text
 			char[] actual = UTF7enc.GetChars (UTF7Bytes);
 
 			// "+ZeVnLIqe-" is decoded as Japanese "nihongo"
-			AssertEquals ("UTF #1", expected [0], actual [0]);
-			AssertEquals ("UTF #2", expected [1], actual [1]);
-			AssertEquals ("UTF #3", expected [2], actual [2]);
+			Assert.AreEqual (expected [0], actual [0], "UTF #1");
+			Assert.AreEqual (expected [1], actual [1], "UTF #2");
+			Assert.AreEqual (expected [2], actual [2], "UTF #3");
 
-			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+			Assert.AreEqual (UniCodeString, UTF7enc.GetString (UTF7Bytes), "GetString");
 		}
 
 		[Test]
@@ -235,28 +235,28 @@ namespace MonoTests.System.Text
 			char[] actual = UTF7enc.GetChars (UTF7Bytes);
 
 			// "Item 3 is +AKM-1." is decoded as "Item 3 is <POUND SIGN>1."
-			AssertEquals ("UTF #1", expected [0], actual [0]);
-			AssertEquals ("UTF #2", expected [1], actual [1]);
-			AssertEquals ("UTF #3", expected [2], actual [2]);
-			AssertEquals ("UTF #4", expected [3], actual [3]);
-			AssertEquals ("UTF #5", expected [4], actual [4]);
-			AssertEquals ("UTF #6", expected [5], actual [5]);
-			AssertEquals ("UTF #7", expected [6], actual [6]);
-			AssertEquals ("UTF #8", expected [7], actual [7]);
-			AssertEquals ("UTF #9", expected [8], actual [8]);
-			AssertEquals ("UTF #10", expected [9], actual [9]);
-			AssertEquals ("UTF #11", expected [10], actual [10]);
-			AssertEquals ("UTF #12", expected [11], actual [11]);
-			AssertEquals ("UTF #13", expected [12], actual [12]);
+			Assert.AreEqual (expected [0], actual [0], "UTF #1");
+			Assert.AreEqual (expected [1], actual [1], "UTF #2");
+			Assert.AreEqual (expected [2], actual [2], "UTF #3");
+			Assert.AreEqual (expected [3], actual [3], "UTF #4");
+			Assert.AreEqual (expected [4], actual [4], "UTF #5");
+			Assert.AreEqual (expected [5], actual [5], "UTF #6");
+			Assert.AreEqual (expected [6], actual [6], "UTF #7");
+			Assert.AreEqual (expected [7], actual [7], "UTF #8");
+			Assert.AreEqual (expected [8], actual [8], "UTF #9");
+			Assert.AreEqual (expected [9], actual [9], "UTF #10");
+			Assert.AreEqual (expected [10], actual [10], "UTF #11");
+			Assert.AreEqual (expected [11], actual [11], "UTF #12");
+			Assert.AreEqual (expected [12], actual [12], "UTF #13");
 
-			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+			Assert.AreEqual (UniCodeString, UTF7enc.GetString (UTF7Bytes), "GetString");
 		}
 
                 [Test]
                 public void TestMaxCharCount()
                 {
                         UTF7Encoding UTF7enc = new UTF7Encoding ();
-                        Assertion.AssertEquals ("UTF #1", 50, UTF7enc.GetMaxCharCount(50));
+                        Assert.AreEqual (50, UTF7enc.GetMaxCharCount(50), "UTF #1");
                 }
         
                 [Test]
@@ -267,9 +267,9 @@ namespace MonoTests.System.Text
                 {
                         UTF7Encoding UTF7enc = new UTF7Encoding ();
 #if NET_2_0
-                        Assertion.AssertEquals ("UTF #1", 152, UTF7enc.GetMaxByteCount(50));
+                        Assert.AreEqual (152, UTF7enc.GetMaxByteCount(50), "UTF #1");
 #else
-                        Assertion.AssertEquals ("UTF #1", 136, UTF7enc.GetMaxByteCount(50));
+                        Assert.AreEqual (136, UTF7enc.GetMaxByteCount(50), "UTF #1");
 #endif
                 }
 
