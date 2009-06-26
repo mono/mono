@@ -1,3 +1,9 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpConnection.cs:
+	* HttpListenerResponse.cs: force closing the socket when the response
+	is aborted.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebAsyncResult.cs: new field that tells us if the request is being

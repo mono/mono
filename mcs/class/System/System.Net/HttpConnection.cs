@@ -312,6 +312,11 @@ namespace System.Net {
 
 		public void Close ()
 		{
+			Close (false);
+		}
+
+		internal void Close (bool force_close)
+		{
 			if (sock != null) {
 				Stream st = GetResponseStream ();
 				st.Close ();
@@ -319,7 +324,7 @@ namespace System.Net {
 			}
 
 			if (sock != null) {
-				if (chunked && context.Response.ForceCloseChunked == false) {
+				if (!force_close && chunked && context.Response.ForceCloseChunked == false) {
 					// Don't close. Keep working.
 					chunked_uses++;
 					Unbind ();
@@ -328,7 +333,7 @@ namespace System.Net {
 					return;
 				}
 
-				if (context.Response.Headers ["connection"] == "close") {
+				if (force_close || context.Response.Headers ["connection"] == "close") {
 					Socket s = sock;
 					sock = null;
 					try {

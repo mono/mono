@@ -331,8 +331,7 @@ namespace System.Net {
 
 		void Close (bool force)
 		{
-			// TODO: use the 'force' argument
-			context.Connection.Close ();
+			context.Connection.Close (force);
 			disposed = true;
 		}
 
