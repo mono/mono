@@ -923,7 +923,7 @@ namespace System
 		internal static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
  					      out DateTime result, out DateTimeOffset dto, bool setExceptionOnError, ref Exception exception)
 		{
- 			dto = new DateTimeOffset (9, TimeSpan.Zero);
+ 			dto = new DateTimeOffset (0, TimeSpan.Zero);
 			if (s == null || s.Length == 0) {
 				if (setExceptionOnError)
 					exception = new FormatException (formatExceptionMessage);
@@ -1795,8 +1795,11 @@ namespace System
 				return false;
 
 			if (tzsign == -1) {
-				if (result != DateTime.MinValue)
-					dto = new DateTimeOffset (result);
+				if (result != DateTime.MinValue) {
+					try {
+						dto = new DateTimeOffset (result);
+					} catch { } // We handle this error in DateTimeOffset.Parse
+				}
 			} else {
 				if (tzoffmin == -1)
 					tzoffmin = 0;
@@ -1806,7 +1809,9 @@ namespace System
 					tzoffset = -tzoffset;
 					tzoffmin = -tzoffmin;
 				}
-				dto = new DateTimeOffset (result, new TimeSpan (tzoffset, tzoffmin, 0));
+				try {
+					dto = new DateTimeOffset (result, new TimeSpan (tzoffset, tzoffmin, 0));
+				} catch {} // We handle this error in DateTimeOffset.Parse
 			}
 			bool adjustToUniversal = (style & DateTimeStyles.AdjustToUniversal) != 0;
 			

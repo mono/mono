@@ -293,6 +293,9 @@ namespace System
 			if (!DateTime.CoreParse (input, formatProvider, styles, out d, out dto, true, ref exception))
 				throw exception;
 
+			if (d.Ticks != 0 && dto.Ticks == 0)
+				throw new ArgumentOutOfRangeException ("The UTC representation falls outside the 1-9999 year range");
+
 			return dto;
 		}
 
