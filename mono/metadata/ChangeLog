@@ -1,3 +1,17 @@
+2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Call into the verifier to check
+	the signature.
+
+	* loader.c (mono_method_get_signature_full): Same.
+
+	* loader.c (method_from_memberref): Same.
+
+	* metadata-verify.c: Add mono_verifier_verify_memberref_signature.
+
+	* verify-internals.h: Export mono_verifier_verify_memberref_signature as
+	part of the internal API.
+
 2009-06-25  Mark Probst  <mark.probst@gmail.com>
 
 	* threadpool.c (mono_thread_pool_add): If the domain is unloading
