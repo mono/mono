@@ -1,3 +1,9 @@
+
+Fri Jun 26 17:00:04 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: check for a null argument to SuppressFinalize () and
+	ReRegisterForFinalize ().
+
 2009-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (method_from_methodspec): Call into the verifier to check
