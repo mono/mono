@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* UTF8EncodingTest.cs: Fix the NET_1_1 build.
+
 2009-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Convert all tests to new-style nunit classes/methods. Add

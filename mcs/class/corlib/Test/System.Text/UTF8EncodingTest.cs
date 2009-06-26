@@ -1074,7 +1074,7 @@ namespace MonoTests.System.Text
 #if NET_2_0
 				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: char[]");
 #else
-				Fail ("ArgumentException is expected: char[]");
+				Assert.Fail ("ArgumentException is expected: char[]");
 #endif
 			} catch (ArgumentException) {
 			}
@@ -1085,7 +1085,7 @@ namespace MonoTests.System.Text
 #if NET_2_0
 				Assert.AreEqual (0, ret, "drop insufficient char in 2.0: string");
 #else
-				Fail ("ArgumentException is expected: string");
+				Assert.Fail ("ArgumentException is expected: string");
 #endif
 			} catch (ArgumentException) {
 			}
