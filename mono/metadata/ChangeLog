@@ -1,5 +1,16 @@
 2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (mono_metadata_parse_mh_full): Call into the verifier to check
+	the signature.
+
+	* metadata-verify.c: Add mono_verifier_verify_standalone_signature. Fix
+	blob verification.
+
+	* verify-internals.h: Export mono_verifier_verify_memberref_signature as
+	part of the internal API.
+
+2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Use is_valid_blob_object to verify blob validity
 	when doing basic verification. 
 
