@@ -13,18 +13,18 @@ using System.IO;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-	public class FileSystemWatcherTest : Assertion
+	public class FileSystemWatcherTest
 	{
 		[Test]
 		public void CheckDefaults ()
 		{
 			FileSystemWatcher fw = new FileSystemWatcher ();
-			AssertEquals ("#01", fw.EnableRaisingEvents, false);
-			AssertEquals ("#02", fw.Filter, "*.*");
-			AssertEquals ("#03", fw.IncludeSubdirectories, false);
-			AssertEquals ("#04", fw.InternalBufferSize, 8192);
-			AssertEquals ("#05", fw.NotifyFilter, NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite);
-			AssertEquals ("#06", fw.Path, "");
+			Assert.AreEqual (fw.EnableRaisingEvents, false, "#01");
+			Assert.AreEqual (fw.Filter, "*.*", "#02");
+			Assert.AreEqual (fw.IncludeSubdirectories, false, "#03");
+			Assert.AreEqual (fw.InternalBufferSize, 8192, "#04");
+			Assert.AreEqual (fw.NotifyFilter, NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite, "#05");
+			Assert.AreEqual (fw.Path, "", "#06");
 		}
 
 		[Test]

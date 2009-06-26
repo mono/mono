@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* FileSystemWatcherTest.cs: Upgrade to new NUnit style.
+
 2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileSystemWatcherTest.cs: new test.
