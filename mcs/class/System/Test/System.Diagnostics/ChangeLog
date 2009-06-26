@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* SwitchesTest.cs, TraceTest.cs: Upgrade to new NUnit style.
+
 2009-02-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
         * Process.cs: New tests for bug 477943.

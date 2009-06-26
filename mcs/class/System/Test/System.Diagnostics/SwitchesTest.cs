@@ -79,7 +79,7 @@ namespace MonoTests.System.Diagnostics {
 	}
 
 	[TestFixture]
-	public class SwitchesTest : Assertion {
+	public class SwitchesTest {
     
 		private static BooleanSwitch bon = new BooleanSwitch ("bool-true", "");
 		private static BooleanSwitch bon2 = new BooleanSwitch ("bool-true-2", "");
@@ -101,11 +101,11 @@ namespace MonoTests.System.Diagnostics {
 		[Test]
 		public void BooleanSwitches ()
 		{
-			Assert ("#BS:T:1", bon.Enabled);
-			Assert ("#BS:T:2", bon2.Enabled);
-			Assert ("#BS:T:3", bon3.Enabled);
-			Assert ("#BS:F:1", !boff.Enabled);
-			Assert ("#BS:F:2", !boff2.Enabled);
+			Assert.IsTrue (bon.Enabled, "#BS:T:1");
+			Assert.IsTrue (bon2.Enabled, "#BS:T:2");
+			Assert.IsTrue (bon3.Enabled, "#BS:T:3");
+			Assert.IsTrue (!boff.Enabled, "#BS:F:1");
+			Assert.IsTrue (!boff2.Enabled, "#BS:F:2");
 		}
 
 		[Test]
@@ -131,10 +131,10 @@ namespace MonoTests.System.Diagnostics {
 		private void CheckTraceSwitch (TraceSwitch ts, bool te, bool tw, bool ti, bool tv)
 		{
 			string desc = string.Format ("#TS:{0}", ts.DisplayName);
-			AssertEquals (desc + ":TraceError",   te, ts.TraceError);
-			AssertEquals (desc + ":TraceWarning", tw, ts.TraceWarning);
-			AssertEquals (desc + ":TraceInfo",    ti, ts.TraceInfo);
-			AssertEquals (desc + ":TraceVerbose", tv, ts.TraceVerbose);
+			Assert.AreEqual (te, ts.TraceError, desc + ":TraceError");
+			Assert.AreEqual (tw, ts.TraceWarning, desc + ":TraceWarning");
+			Assert.AreEqual (ti, ts.TraceInfo, desc + ":TraceInfo");
+			Assert.AreEqual (tv, ts.TraceVerbose, desc + ":TraceVerbose");
 		}
 
 		[Test]
@@ -143,15 +143,15 @@ namespace MonoTests.System.Diagnostics {
 #endif
 		public void NewSwitch ()
 		{
-			AssertEquals ("#NS:TestValue", "42", tns.TestValue);
-			Assert ("#NS:Validate", tns.Validate());
+			Assert.AreEqual ("42", tns.TestValue, "#NS:TestValue");
+			Assert.IsTrue (tns.Validate(), "#NS:Validate");
 		}
 
 #if NET_2_0
 		[Test]
 		public void GetSupportedAttributes ()
 		{
-			AssertNull (tns.ExposeSupportedAttributes ());
+			Assert.IsNull (tns.ExposeSupportedAttributes ());
 		}
 
 		[Test] // no ArgumentNullException happens...
@@ -164,15 +164,15 @@ namespace MonoTests.System.Diagnostics {
 		public void BooleanSwitchValidDefaultValue ()
 		{
 			BooleanSwitch s = new BooleanSwitch ("test", "", "2");
-			Assert ("#1", s.Enabled);
+			Assert.IsTrue (s.Enabled, "#1");
 			s = new BooleanSwitch ("test", "", "0");
-			Assert ("#2", !s.Enabled);
+			Assert.IsTrue (!s.Enabled, "#2");
 			s = new BooleanSwitch ("test", "", "true");
-			Assert ("#3", s.Enabled);
+			Assert.IsTrue (s.Enabled, "#3");
 			s = new BooleanSwitch ("test", "", "True");
-			Assert ("#4", s.Enabled);
+			Assert.IsTrue (s.Enabled, "#4");
 			s = new BooleanSwitch ("test", "", "truE");
-			Assert ("#5", s.Enabled);
+			Assert.IsTrue (s.Enabled, "#5");
 		}
 
 		[Test]
@@ -180,7 +180,7 @@ namespace MonoTests.System.Diagnostics {
 		public void BooleanSwitchInvalidDefaultValue ()
 		{
 			BooleanSwitch s = new BooleanSwitch ("test", "", "hoge");
-			Assert (!s.Enabled);
+			Assert.IsTrue (!s.Enabled);
 		}
 #endif
 	}

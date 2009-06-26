@@ -61,7 +61,7 @@ namespace MonoTests.System.Diagnostics {
 			Trace.WriteLine ("Entering Main");
 			Trace.WriteLine ("Exiting Main");
 
-			Assertion.AssertEquals ("#Tr01", value, buffer.ToString ());
+			Assert.AreEqual (value, buffer.ToString (), "#Tr01");
 		}
 
 		// Make sure we get the output we expect in the presence of indenting...
@@ -79,14 +79,14 @@ namespace MonoTests.System.Diagnostics {
 
 			Trace.WriteLine ("List of errors:");
 			Trace.Indent ();
-			Assertion.AssertEquals (1, Trace.IndentLevel);
+			Assert.AreEqual (1, Trace.IndentLevel);
 			Trace.WriteLine ("Error 1: File not found");
 			Trace.WriteLine ("Error 2: Directory not found");
 			Trace.Unindent ();
-			Assertion.AssertEquals (0, Trace.IndentLevel);
+			Assert.AreEqual (0, Trace.IndentLevel);
 			Trace.WriteLine ("End of list of errors");
 
-			Assertion.AssertEquals ("#In01", value, buffer.ToString());
+			Assert.AreEqual (value, buffer.ToString(), "#In01");
 		}
 
 		// Make sure that TraceListener properties (IndentLevel, IndentSize) are
@@ -108,8 +108,8 @@ namespace MonoTests.System.Diagnostics {
 			foreach (TraceListener t in Trace.Listeners) {
 				string ids = "#TATLP-S-" + t.Name;
 				string idl = "#TATLP-L-" + t.Name;
-				Assertion.AssertEquals (ids, ExpectedSize, t.IndentSize);
-				Assertion.AssertEquals (idl, ExpectedLevel, t.IndentLevel);
+				Assert.AreEqual (ExpectedSize, t.IndentSize, ids);
+				Assert.AreEqual (ExpectedLevel, t.IndentLevel, idl);
 			}
 
 			Trace.Listeners.Remove(t1);
@@ -135,16 +135,16 @@ namespace MonoTests.System.Diagnostics {
 
 			// Assertion.Assert that the listener we added has been set to the correct indent
 			// level.
-			Assertion.AssertEquals ("#LATL-L", ExpectedLevel, tl.IndentLevel);
-			Assertion.AssertEquals ("#LATL-S", ExpectedSize, tl.IndentSize);
+			Assert.AreEqual (ExpectedLevel, tl.IndentLevel, "#LATL-L");
+			Assert.AreEqual (ExpectedSize, tl.IndentSize, "#LATL-S");
 
 			// Assertion.Assert that all listeners in the collection have the same level.
 			foreach (TraceListener t in Trace.Listeners)
 			{
 				string idl = "#LATL-L:" + t.Name;
 				string ids = "#LATL-S:" + t.Name;
-				Assertion.AssertEquals(idl, ExpectedLevel, t.IndentLevel);
-				Assertion.AssertEquals(ids, ExpectedSize, t.IndentSize);
+				Assert.AreEqual (ExpectedLevel, t.IndentLevel, idl);
+				Assert.AreEqual (ExpectedSize, t.IndentSize, ids);
 			}
 		}
 
