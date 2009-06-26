@@ -178,6 +178,9 @@ namespace System.Threading
 
 		void Init (TimerCallback callback, object state, long dueTime, long period)
 		{
+			if (callback == null)
+				throw new ArgumentNullException ("callback");
+			
 			this.callback = callback;
 			this.state = state;
 

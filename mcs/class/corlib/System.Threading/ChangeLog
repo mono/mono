@@ -1,3 +1,7 @@
+2009-06-25  Miguel de Icaza  <miguel@novell.com>
+
+	* Timer.cs: Throw ArgumentNullException if the callback is null. 
+
 2009-06-22  Bill Holmes  <billholmes54@gmail.com>
 
 	* Thread.cs : Adding interrupt_on_stop field.
