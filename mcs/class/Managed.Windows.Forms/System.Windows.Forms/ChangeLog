@@ -1,3 +1,10 @@
+2009-06-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolBar.cs: In OnButtonClick only change the Pushed value for
+	buttons with toogle style. We were previously doing it for
+	DropDownButton's buttons, but that's not what .net is doing.
+	Fixes #510030.
+
 2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUICarbon.cs : support multi-byte text input.
