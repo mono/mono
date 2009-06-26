@@ -1,3 +1,13 @@
+2009-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (method_from_methodspec): Call into the verifier to check
+	the signature.
+
+	* metadata-verify.c: Addmono_verifier_verify_methodspec_signature.
+
+	* verify-internals.h: Export mono_verifier_verify_methodspec_signature as
+	part of the internal API.
+
 2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (mono_type_create_from_typespec): Call into the verifier to check
