@@ -300,12 +300,12 @@ namespace System
 		object IList.this [int index] {
 			get {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
-					throw new ArgumentOutOfRangeException ("index");
+					throw new IndexOutOfRangeException ("index");
 				return GetValueImpl (index);
 			} 
 			set {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
-					throw new ArgumentOutOfRangeException ("index");
+					throw new IndexOutOfRangeException ("index");
 				SetValueImpl (value, index);
 			}
 		}
