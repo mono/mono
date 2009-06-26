@@ -148,10 +148,10 @@ namespace System.ServiceModel.Channels
 			return l.GetEnumerator ();
 		}
 
-		XmlObjectSerializer GetSerializer<T> ()
+		XmlObjectSerializer GetSerializer<T> (int headerIndex)
 		{
 			if (!serializers.ContainsKey (typeof (T)))
-				serializers [typeof (T)] = new DataContractSerializer (typeof (T));
+				serializers [typeof (T)] = new DataContractSerializer (typeof (T), this [headerIndex].Name, this [headerIndex].Namespace);
 			return serializers [typeof (T)];
 		}
 
@@ -162,7 +162,7 @@ namespace System.ServiceModel.Channels
 				return (T) (object) new EndpointAddress (r.ReadElementContentAsString ());
 			}
 			else
-				return GetHeader<T> (index, GetSerializer<T> ());
+				return GetHeader<T> (index, GetSerializer<T> (index));
 		}
 
 		public T GetHeader<T> (int index, XmlObjectSerializer serializer)

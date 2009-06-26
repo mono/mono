@@ -106,6 +106,7 @@ namespace System.ServiceModel.Channels
 
 		void DiscardSession ()
 		{
+			frame.ProcessEndRecordInitiator ();
 			session = null;
 		}
 
@@ -152,8 +153,14 @@ namespace System.ServiceModel.Channels
 		public override bool TryReceive (TimeSpan timeout, out Message message)
 		{
 			try {
+				DateTime start = DateTime.Now;
 				message = Receive (timeout);
-				return true;
+				if (message != null)
+					return true;
+				// received EndRecord, so close the session and return false instead.
+				// (Closing channel here might not be a good idea, but right now I have no better way.)
+				Close (timeout - (DateTime.Now - start));
+				return false;
 			} catch (TimeoutException) {
 				message = null;
 				return false;
@@ -200,11 +207,10 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
-			// FIXME: should this be done at DiscardSession() ?
-			if (is_service_side)
-				frame.ProcessEndRecordRecipient ();
-			else
-				frame.ProcessEndRecordInitiator ();
+			if (!is_service_side)
+				if (session != null)
+					session.Close (timeout);
+
 			if (client != null)
 				client.Close ();
 		}
@@ -243,7 +249,7 @@ namespace System.ServiceModel.Channels
 
 				// FIXME: use retrieved record properties in the request processing.
 
-				frame.ProcessPreambleRecipient (false);
+				frame.ProcessPreambleRecipient ();
 				frame.ProcessPreambleAckRecipient ();
 			}
 		}
@@ -421,7 +427,7 @@ namespace System.ServiceModel.Channels
 			s.WriteByte (PreambleAckRecord);
 		}
 
-		public void ProcessPreambleRecipient (bool allowEndRecord)
+		public void ProcessPreambleRecipient ()
 		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
@@ -452,10 +458,6 @@ namespace System.ServiceModel.Channels
 				case PreambleEndRecord:
 					preambleEnd = true;
 					break;
-				case EndRecord:
-					if (allowEndRecord)
-						break;
-					goto default;
 				default:
 					throw new ProtocolException (String.Format ("Unexpected record type {0:X2}", b));
 				}
@@ -470,6 +472,8 @@ namespace System.ServiceModel.Channels
 			// FIXME: implement full [MC-NMF].
 
 			var packetType = s.ReadByte ();
+			if (packetType == EndRecord)
+				return null;
 			if (packetType != SizedEnvelopeRecord)
 				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
 
@@ -512,6 +516,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		byte [] eof_buffer = new byte [1];
+		MyXmlBinaryWriterSession writer_session;
 
 		public void WriteSizedMessage (Message message)
 		{
@@ -525,7 +530,9 @@ namespace System.ServiceModel.Channels
 			buffer.WriteByte (SizedEnvelopeRecord);
 
 			MemoryStream ms = new MemoryStream ();
-			var session = new MyXmlBinaryWriterSession ();
+			var session = writer_session ?? new MyXmlBinaryWriterSession ();
+			writer_session = session;
+			int writer_session_count = session.List.Count;
 			var benc = Encoder as BinaryMessageEncoder;
 			try {
 				if (benc != null)

@@ -1,3 +1,11 @@
+2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : handle EndRecord for repetitive
+	  operation that does not involve session.
+	  Preserve writer session as well as reader session.
+	* MessageHeaders.cs : take name and namespace into consideration
+	  when creating a serializer.
+
 2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpChannelListener.cs, TcpDuplexSessionChannel.cs :
