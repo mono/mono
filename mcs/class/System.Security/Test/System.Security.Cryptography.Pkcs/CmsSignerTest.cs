@@ -40,7 +40,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class CmsSignerTest : Assertion {
+	public class CmsSignerTest {
 
 		static byte[] asnNull = { 0x05, 0x00 };
 		static string sha1Oid = "1.3.14.3.2.26";
@@ -53,13 +53,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner ();
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -67,13 +67,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.IssuerAndSerialNumber);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -81,13 +81,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.SubjectKeyIdentifier);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -95,14 +95,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.Unknown);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
 			// Unknown is converted to IssuerAndSerialNumber
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		// TODO: return valid x509 certifiate with private key
@@ -118,13 +118,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNotNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -133,13 +133,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = new X509Certificate2 (); // empty
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNotNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -149,13 +149,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = null;
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -164,13 +164,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.IssuerAndSerialNumber, x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNotNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -179,13 +179,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.SubjectKeyIdentifier, x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNotNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -194,14 +194,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.Unknown, x509);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNotNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
 			// Unknown is converted to IssuerAndSerialNumber
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
@@ -210,33 +210,33 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.IssuerAndSerialNumber, null);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
-			AssertNull ("Certificate", ps.Certificate);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, ps.DigestAlgorithm.Value);
-			AssertEquals ("IncludeOption", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
-			AssertEquals ("SignerIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
-			AssertEquals ("UnsignedAttributes", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNull (ps.Certificate, "Certificate");
+			Assert.AreEqual (sha1Name, ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "IncludeOption");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "SignerIdentifierType");
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes");
 		}
 
 		[Test]
 		public void SignedAttributes ()
 		{
 			CmsSigner ps = new CmsSigner ();
-			AssertEquals ("SignedAttributes=0", 0, ps.SignedAttributes.Count);
+			Assert.AreEqual (0, ps.SignedAttributes.Count, "SignedAttributes=0");
 			ps.SignedAttributes.Add (new Pkcs9DocumentDescription ("mono"));
-			AssertEquals ("SignedAttributes=1", 1, ps.SignedAttributes.Count);
+			Assert.AreEqual (1, ps.SignedAttributes.Count, "SignedAttributes=1");
 		}
 
 		[Test]
 		public void Certificate () 
 		{
 			CmsSigner ps = new CmsSigner ();
-			AssertNull ("Certificate=default(null)", ps.Certificate);
+			Assert.IsNull (ps.Certificate, "Certificate=default(null)");
 			ps.Certificate = GetValidCertificateWithPrivateKey ();
-			AssertNotNull ("Certificate!=null", ps.Certificate);
+			Assert.IsNotNull (ps.Certificate, "Certificate!=null");
 			ps.Certificate = null;
-			AssertNull ("Certificate=null", ps.Certificate);
+			Assert.IsNull (ps.Certificate, "Certificate=null");
 		}
 
 		[Test]
@@ -244,10 +244,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner ();
 			ps.DigestAlgorithm = new Oid ("1.2.840.113549.2.5");
-			AssertEquals ("DigestAlgorithm.FriendlyName", "md5", ps.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", "1.2.840.113549.2.5", ps.DigestAlgorithm.Value);
+			Assert.AreEqual ("md5", ps.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual ("1.2.840.113549.2.5", ps.DigestAlgorithm.Value, "DigestAlgorithm.Value");
 			ps.DigestAlgorithm = null;
-			AssertNull ("DigestAlgorithm=null", ps.DigestAlgorithm);
+			Assert.IsNull (ps.DigestAlgorithm, "DigestAlgorithm=null");
 		}
 
 		[Test]
@@ -255,13 +255,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner ();
 			ps.IncludeOption = X509IncludeOption.EndCertOnly;
-			AssertEquals ("EndCertOnly", X509IncludeOption.EndCertOnly, ps.IncludeOption);
+			Assert.AreEqual (X509IncludeOption.EndCertOnly, ps.IncludeOption, "EndCertOnly");
 			ps.IncludeOption = X509IncludeOption.ExcludeRoot;
-			AssertEquals ("ExcludeRoot", X509IncludeOption.ExcludeRoot, ps.IncludeOption);
+			Assert.AreEqual (X509IncludeOption.ExcludeRoot, ps.IncludeOption, "ExcludeRoot");
 			ps.IncludeOption = X509IncludeOption.None;
-			AssertEquals ("None", X509IncludeOption.None, ps.IncludeOption);
+			Assert.AreEqual (X509IncludeOption.None, ps.IncludeOption, "None");
 			ps.IncludeOption = X509IncludeOption.WholeChain;
-			AssertEquals ("WholeChain", X509IncludeOption.WholeChain, ps.IncludeOption);
+			Assert.AreEqual (X509IncludeOption.WholeChain, ps.IncludeOption, "WholeChain");
 		}
 
 		[Test]
@@ -269,9 +269,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			CmsSigner ps = new CmsSigner ();
 			ps.SignerIdentifierType = SubjectIdentifierType.IssuerAndSerialNumber;
-			AssertEquals ("IssuerAndSerialNumber", SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType);
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, ps.SignerIdentifierType, "IssuerAndSerialNumber");
 			ps.SignerIdentifierType = SubjectIdentifierType.SubjectKeyIdentifier;
-			AssertEquals ("SubjectKeyIdentifier", SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType);
+			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, ps.SignerIdentifierType, "SubjectKeyIdentifier");
 		}
 
 		[Test]
@@ -286,9 +286,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void UnauthenticatedAttributes () 
 		{
 			CmsSigner ps = new CmsSigner ();
-			AssertEquals ("UnsignedAttributes=0", 0, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (0, ps.UnsignedAttributes.Count, "UnsignedAttributes=0");
 			ps.UnsignedAttributes.Add (new Pkcs9DocumentDescription ("mono"));
-			AssertEquals ("UnsignedAttributes=1", 1, ps.UnsignedAttributes.Count);
+			Assert.AreEqual (1, ps.UnsignedAttributes.Count, "UnsignedAttributes=1");
 		}
 	}
 }

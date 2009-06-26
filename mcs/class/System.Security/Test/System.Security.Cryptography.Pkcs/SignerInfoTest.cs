@@ -41,7 +41,7 @@ using System.Security.Cryptography.Xml;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class SignerInfoTest : Assertion {
+	public class SignerInfoTest {
 
 		static byte[] asnNull = { 0x05, 0x00 };
 		static string sha1Oid = "1.3.14.3.2.26";
@@ -75,15 +75,15 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			SignerInfo si = GetSignerInfo (issuerAndSerialNumberSignature);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, si.SignedAttributes.Count);
-			AssertNotNull ("Certificate", si.Certificate);
-			AssertEquals ("CounterSignerInfos", 0, si.CounterSignerInfos.Count);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, si.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, si.DigestAlgorithm.Value);
-			AssertEquals ("SignerIdentifier.Type", SubjectIdentifierType.IssuerAndSerialNumber, si.SignerIdentifier.Type);
-			Assert ("SignerIdentifier.Value", (si.SignerIdentifier.Value.GetType () == typeof (X509IssuerSerial)));
-			AssertEquals ("UnsignedAttributes", 0, si.UnsignedAttributes.Count);
-			AssertEquals ("Version", 1, si.Version);
+			Assert.AreEqual (0, si.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (si.Certificate, "Certificate");
+			Assert.AreEqual (0, si.CounterSignerInfos.Count, "CounterSignerInfos");
+			Assert.AreEqual (sha1Name, si.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, si.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (SubjectIdentifierType.IssuerAndSerialNumber, si.SignerIdentifier.Type, "SignerIdentifier.Type");
+			Assert.IsTrue ((si.SignerIdentifier.Value.GetType () == typeof (X509IssuerSerial)), "SignerIdentifier.Value");
+			Assert.AreEqual (0, si.UnsignedAttributes.Count, "UnsignedAttributes");
+			Assert.AreEqual (1, si.Version, "Version");
 		}
 
 		[Test]
@@ -91,15 +91,15 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			SignerInfo si = GetSignerInfo (subjectKeyIdentifierSignature);
 			// default properties
-			AssertEquals ("SignedAttributes", 0, si.SignedAttributes.Count);
-			AssertNotNull ("Certificate", si.Certificate);
-			AssertEquals ("CounterSignerInfos", 0, si.CounterSignerInfos.Count);
-			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, si.DigestAlgorithm.FriendlyName);
-			AssertEquals ("DigestAlgorithm.Value", sha1Oid, si.DigestAlgorithm.Value);
-			AssertEquals ("SignerIdentifier.Type", SubjectIdentifierType.SubjectKeyIdentifier, si.SignerIdentifier.Type);
-			AssertEquals ("SignerIdentifier.Value", "02E1A73254AEFDC0A43236F6FE236A037228B1F7", (string)si.SignerIdentifier.Value);
-			AssertEquals ("UnsignedAttributes", 0, si.UnsignedAttributes.Count);
-			AssertEquals ("Version", 3, si.Version);
+			Assert.AreEqual (0, si.SignedAttributes.Count, "SignedAttributes");
+			Assert.IsNotNull (si.Certificate, "Certificate");
+			Assert.AreEqual (0, si.CounterSignerInfos.Count, "CounterSignerInfos");
+			Assert.AreEqual (sha1Name, si.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
+			Assert.AreEqual (sha1Oid, si.DigestAlgorithm.Value, "DigestAlgorithm.Value");
+			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, si.SignerIdentifier.Type, "SignerIdentifier.Type");
+			Assert.AreEqual ("02E1A73254AEFDC0A43236F6FE236A037228B1F7", (string)si.SignerIdentifier.Value, "SignerIdentifier.Value");
+			Assert.AreEqual (0, si.UnsignedAttributes.Count, "UnsignedAttributes");
+			Assert.AreEqual (3, si.Version, "Version");
 		}
 	}
 }

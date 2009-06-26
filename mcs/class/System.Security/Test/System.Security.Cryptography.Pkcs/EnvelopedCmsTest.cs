@@ -41,7 +41,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class EnvelopedCmsTest : Assertion {
+	public class EnvelopedCmsTest {
 
 		static byte[] asnNull = { 0x05, 0x00 };
 		static string tdesOid = "1.2.840.113549.3.7";
@@ -72,17 +72,17 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private void DefaultProperties (EnvelopedCms ep, int contentLength, int version) 
 		{
-			AssertEquals ("Certificates", 0, ep.Certificates.Count);
-			AssertEquals ("ContentEncryptionAlgorithm.KeyLength", 0, ep.ContentEncryptionAlgorithm.KeyLength);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.FriendlyName", tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.Value", tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value);
-			AssertEquals ("ContentEncryptionAlgorithm.Parameters", 0, ep.ContentEncryptionAlgorithm.Parameters.Length);
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", p7DataName, ep.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", p7DataOid, ep.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", contentLength, ep.ContentInfo.Content.Length);
-			AssertEquals ("RecipientInfos", 0, ep.RecipientInfos.Count);
-			AssertEquals ("UnprotectedAttributes", 0, ep.UnprotectedAttributes.Count);
-			AssertEquals ("Version", version, ep.Version);
+			Assert.AreEqual (0, ep.Certificates.Count, "Certificates");
+			Assert.AreEqual (0, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
+			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
+			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
+			Assert.AreEqual (0, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
+			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (contentLength, ep.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.AreEqual (0, ep.RecipientInfos.Count, "RecipientInfos");
+			Assert.AreEqual (0, ep.UnprotectedAttributes.Count, "UnprotectedAttributes");
+			Assert.AreEqual (version, ep.Version, "Version");
 		}
 
 		private X509Certificate2 GetCertificate (bool includePrivateKey) 
@@ -196,19 +196,19 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			EnvelopedCms ep = new EnvelopedCms ();
 			ep.Decode (encoded);
 			// properties
-			AssertEquals ("Certificates", 0, ep.Certificates.Count);
-			AssertEquals ("ContentEncryptionAlgorithm.KeyLength", 192, ep.ContentEncryptionAlgorithm.KeyLength);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.FriendlyName", tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.Value", tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value);
-			AssertEquals ("ContentEncryptionAlgorithm.Parameters", 16, ep.ContentEncryptionAlgorithm.Parameters.Length);
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", p7DataName, ep.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", p7DataOid, ep.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 14, ep.ContentInfo.Content.Length);
-			AssertEquals ("RecipientInfos", 1, ep.RecipientInfos.Count);
+			Assert.AreEqual (0, ep.Certificates.Count, "Certificates");
+			Assert.AreEqual (192, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
+			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
+			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
+			Assert.AreEqual (16, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
+			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (14, ep.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.AreEqual (1, ep.RecipientInfos.Count, "RecipientInfos");
 			RecipientInfo ri = ep.RecipientInfos [0];
-			Assert ("RecipientInfos is KeyTransRecipientInfo", (ri is KeyTransRecipientInfo));
-			AssertEquals ("UnprotectedAttributes", 0, ep.UnprotectedAttributes.Count);
-			AssertEquals ("Version", 0, ep.Version);
+			Assert.IsTrue ((ri is KeyTransRecipientInfo), "RecipientInfos is KeyTransRecipientInfo");
+			Assert.AreEqual (0, ep.UnprotectedAttributes.Count, "UnprotectedAttributes");
+			Assert.AreEqual (0, ep.Version, "Version");
 		}
 
 		[Test]
@@ -240,17 +240,17 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			xc.Add (x509);
 			ep.Decrypt (xc);
 			// properties
-			AssertEquals ("Certificates", 0, ep.Certificates.Count);
-			AssertEquals ("ContentEncryptionAlgorithm.KeyLength", 192, ep.ContentEncryptionAlgorithm.KeyLength);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.FriendlyName", tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName);
-			AssertEquals ("ContentEncryptionAlgorithm.Oid.Value", tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value);
-			AssertEquals ("ContentEncryptionAlgorithm.Parameters", 16, ep.ContentEncryptionAlgorithm.Parameters.Length);
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", p7DataName, ep.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", p7DataOid, ep.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", "05-00", BitConverter.ToString (ep.ContentInfo.Content));
-			AssertEquals ("RecipientInfos", 1, ep.RecipientInfos.Count);
-			AssertEquals ("UnprotectedAttributes", 0, ep.UnprotectedAttributes.Count);
-			AssertEquals ("Version", 0, ep.Version);
+			Assert.AreEqual (0, ep.Certificates.Count, "Certificates");
+			Assert.AreEqual (192, ep.ContentEncryptionAlgorithm.KeyLength, "ContentEncryptionAlgorithm.KeyLength");
+			Assert.AreEqual (tdesName, ep.ContentEncryptionAlgorithm.Oid.FriendlyName, "ContentEncryptionAlgorithm.Oid.FriendlyName");
+			Assert.AreEqual (tdesOid, ep.ContentEncryptionAlgorithm.Oid.Value, "ContentEncryptionAlgorithm.Oid.Value");
+			Assert.AreEqual (16, ep.ContentEncryptionAlgorithm.Parameters.Length, "ContentEncryptionAlgorithm.Parameters");
+			Assert.AreEqual (p7DataName, ep.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (p7DataOid, ep.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual ("05-00", BitConverter.ToString (ep.ContentInfo.Content), "ContentInfo.Content");
+			Assert.AreEqual (1, ep.RecipientInfos.Count, "RecipientInfos");
+			Assert.AreEqual (0, ep.UnprotectedAttributes.Count, "UnprotectedAttributes");
+			Assert.AreEqual (0, ep.Version, "Version");
 		}
 
 		[Test]
@@ -304,7 +304,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			EnvelopedCms ep = new EnvelopedCms ();
 			ep.Decode (encoded);
 			ep.Decrypt (xc);
-			AssertEquals ("ContentInfo.Content", "05-00", BitConverter.ToString (ep.ContentInfo.Content));
+			Assert.AreEqual ("05-00", BitConverter.ToString (ep.ContentInfo.Content), "ContentInfo.Content");
 		}
 
 		[Test]

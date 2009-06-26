@@ -41,7 +41,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class SignedCmsTest : Assertion {
+	public class SignedCmsTest {
 
 		static byte[] asnNull = { 0x05, 0x00 };
 		static string pkcs7Oid = "1.2.840.113549.1.7.1";
@@ -87,9 +87,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		private void DefaultProperties (SignedCms sp, int version) 
 		{
 			// unaffected by constructors
-			AssertEquals ("Certificates", 0, sp.Certificates.Count);
-			AssertEquals ("SignerInfos", 0, sp.SignerInfos.Count);
-			AssertEquals ("Version", version, sp.Version);
+			Assert.AreEqual (0, sp.Certificates.Count, "Certificates");
+			Assert.AreEqual (0, sp.SignerInfos.Count, "SignerInfos");
+			Assert.AreEqual (version, sp.Version, "Version");
 		}
 
 		private X509Certificate2 GetCertificate (bool includePrivateKey) 
@@ -108,10 +108,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			SignedCms sp = new SignedCms ();
 			// default properties
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", pkcs7Name, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", pkcs7Oid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 0, sp.ContentInfo.Content.Length);
-			Assert ("Detached", !sp.Detached);
+			Assert.AreEqual (pkcs7Name, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (pkcs7Oid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (0, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultProperties (sp, 0);
 		}
 
@@ -122,10 +122,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (ci);
 			// default properties
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", rsaName, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", rsaOid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 2, sp.ContentInfo.Content.Length);
-			Assert ("Detached", !sp.Detached);
+			Assert.AreEqual (rsaName, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (rsaOid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (2, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultProperties (sp, 0);
 		}
 
@@ -143,10 +143,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (ci, true);
 			// default properties
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", rsaName, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", rsaOid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 2, sp.ContentInfo.Content.Length);
-			Assert ("Detached", sp.Detached);
+			Assert.AreEqual (rsaName, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (rsaOid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (2, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (sp.Detached, "Detached");
 			DefaultProperties (sp, 0);
 		}
 
@@ -157,10 +157,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (ci, false);
 			// default properties
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", rsaName, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", rsaOid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 2, sp.ContentInfo.Content.Length);
-			Assert ("Detached", !sp.Detached);
+			Assert.AreEqual (rsaName, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (rsaOid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (2, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (!sp.Detached, "Detached");
 		}
 
 		[Test]
@@ -172,10 +172,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private void DefaultSubjectIdentifierTypePropertiesCms (SignedCms sp, int version) 
 		{
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", pkcs7Name, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", pkcs7Oid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 0, sp.ContentInfo.Content.Length);
-			Assert ("Detached", !sp.Detached);
+			Assert.AreEqual (pkcs7Name, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (pkcs7Oid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (0, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultProperties (sp, version);
 		}
 
@@ -205,9 +205,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private void DefaultSubjectIdentifierTypeProperties (SignedCms sp, int version) 
 		{
-			AssertEquals ("ContentInfo.ContentType.FriendlyName", rsaName, sp.ContentInfo.ContentType.FriendlyName);
-			AssertEquals ("ContentInfo.ContentType.Value", rsaOid, sp.ContentInfo.ContentType.Value);
-			AssertEquals ("ContentInfo.Content", 2, sp.ContentInfo.Content.Length);
+			Assert.AreEqual (rsaName, sp.ContentInfo.ContentType.FriendlyName, "ContentInfo.ContentType.FriendlyName");
+			Assert.AreEqual (rsaOid, sp.ContentInfo.ContentType.Value, "ContentInfo.ContentType.Value");
+			Assert.AreEqual (2, sp.ContentInfo.Content.Length, "ContentInfo.Content");
 			DefaultProperties (sp, version);
 		}
 
@@ -218,7 +218,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.IssuerAndSerialNumber, ci);
 			// default properties
-			Assert ("Detached", !sp.Detached);
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -229,7 +229,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.SubjectKeyIdentifier, ci);
 			// default properties
-			Assert ("Detached", !sp.Detached);
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -240,7 +240,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.Unknown, ci);
 			// default properties
-			Assert ("Detached", !sp.Detached);
+			Assert.IsTrue (!sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -258,7 +258,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.IssuerAndSerialNumber, ci, true);
 			// default properties
-			Assert ("Detached", sp.Detached);
+			Assert.IsTrue (sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -269,7 +269,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.SubjectKeyIdentifier, ci, true);
 			// default properties
-			Assert ("Detached", sp.Detached);
+			Assert.IsTrue (sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -280,7 +280,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (oid, asnNull);
 			SignedCms sp = new SignedCms (SubjectIdentifierType.Unknown, ci, true);
 			// default properties
-			Assert ("Detached", sp.Detached);
+			Assert.IsTrue (sp.Detached, "Detached");
 			DefaultSubjectIdentifierTypeProperties (sp, 0);
 		}
 
@@ -383,11 +383,11 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private void CheckSignatureProperties (SignedCms sp, int version) 
 		{
-			AssertEquals ("Certificates", 1, sp.Certificates.Count);
-			AssertEquals ("ContentInfo.Content", 2, sp.ContentInfo.Content.Length);
-			Assert ("Detached", !sp.Detached);
-			AssertEquals ("SignerInfos", 1, sp.SignerInfos.Count);
-			AssertEquals ("Version", version, sp.Version);
+			Assert.AreEqual (1, sp.Certificates.Count, "Certificates");
+			Assert.AreEqual (2, sp.ContentInfo.Content.Length, "ContentInfo.Content");
+			Assert.IsTrue (!sp.Detached, "Detached");
+			Assert.AreEqual (1, sp.SignerInfos.Count, "SignerInfos");
+			Assert.AreEqual (version, sp.Version, "Version");
 		}
 
 		[Test]

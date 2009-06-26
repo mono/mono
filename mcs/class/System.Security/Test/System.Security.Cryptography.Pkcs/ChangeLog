@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* *.cs: Upgrade to new NUnit style.
+
 2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CmsRecipientCollectionTest.cs: Verify NRE behavior of ctor.

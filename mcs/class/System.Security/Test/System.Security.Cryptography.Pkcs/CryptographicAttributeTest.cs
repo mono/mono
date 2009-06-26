@@ -19,7 +19,7 @@ using System.Security.Cryptography.Pkcs;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class CryptographicAttributeTest : Assertion {
+	public class CryptographicAttributeTest {
 
 		static string defaultOid = "1.2.840.113549.1.7.1";
 		static string defaultName = "PKCS 7 Data";
@@ -29,9 +29,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			Oid o = new Oid (defaultOid);
 			CryptographicAttribute ca = new CryptographicAttribute (o);
-			AssertEquals ("Oid.FriendlyName", defaultName, ca.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, ca.Oid.Value);
-			AssertEquals ("Values", 0, ca.Values.Count);
+			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, ca.Values.Count, "Values");
 		}
 
 		[Test]
@@ -47,9 +47,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			Oid o = new Oid (defaultOid);
 			ArrayList al = new ArrayList ();
 			CryptographicAttribute ca = new CryptographicAttribute (o, al);
-			AssertEquals ("Oid.FriendlyName", defaultName, ca.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, ca.Oid.Value);
-			AssertEquals ("Values", 0, ca.Values.Count);
+			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, ca.Values.Count, "Values");
 		}
 
 		[Test]
@@ -75,9 +75,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			Oid o = new Oid (defaultOid);
 			CryptographicAttribute ca = new CryptographicAttribute (o, o);
-			AssertEquals ("Oid.FriendlyName", defaultName, ca.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, ca.Oid.Value);
-			AssertEquals ("Values", 1, ca.Values.Count);
+			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
+			Assert.AreEqual (1, ca.Values.Count, "Values");
 		}
 
 		[Test]
