@@ -16,7 +16,7 @@ using System.Web.Services.Discovery;
 namespace MonoTests.System.Web.Services.Discovery {
 
 	[TestFixture]
-	public class ContractReferenceTest : Assertion {
+	public class ContractReferenceTest {
 
 		[Test]
 		public void TestConstructors ()
@@ -27,7 +27,7 @@ namespace MonoTests.System.Web.Services.Discovery {
 		[Test]
 		public void TestConstants ()
 		{
-			AssertEquals ("http://schemas.xmlsoap.org/disco/scl/", ContractReference.Namespace);
+			Assert.AreEqual ("http://schemas.xmlsoap.org/disco/scl/", ContractReference.Namespace);
 		}
 	}
 }

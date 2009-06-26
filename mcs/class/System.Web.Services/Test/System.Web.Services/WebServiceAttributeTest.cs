@@ -16,7 +16,7 @@ using System.Web.Services;
 namespace MonoTests.System.Web.Services {
 
 	[TestFixture]
-	public class WebServiceAttributeTest : Assertion {
+	public class WebServiceAttributeTest {
 
 		[Test]
 		public void TestConstructors ()
@@ -24,9 +24,9 @@ namespace MonoTests.System.Web.Services {
 			WebServiceAttribute attribute;
 
 			attribute = new WebServiceAttribute ();
-			AssertEquals (String.Empty, attribute.Description);
-			AssertEquals (String.Empty, attribute.Name);
-			AssertEquals ("http://tempuri.org/", attribute.Namespace);
+			Assert.AreEqual (String.Empty, attribute.Description);
+			Assert.AreEqual (String.Empty, attribute.Name);
+			Assert.AreEqual ("http://tempuri.org/", attribute.Namespace);
 		}
 	}
 }

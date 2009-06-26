@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* *.cs: Upgrade to new NUnit style.
+
 2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeElement.cs : disable a test that causes NRE on .NET.
