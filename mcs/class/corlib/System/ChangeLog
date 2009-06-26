@@ -1,3 +1,10 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTime.cs: if the DateTimeOffset is out of bounds, let Parse
+	report the error. Fix stupid harmless typo.
+	* DateTimeOffset.cs: report error if the UTC date/time is out of
+	bounds.
+
 2009-06-25  Miguel de Icaza  <miguel@novell.com>
 
 	* Array.cs: IList.this needs to throw IndexOutOfRangeException
