@@ -1,3 +1,8 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* BitArrayTest.cs: Upgrade to new NUnit style. Enable
+	16 tests that were disabled after the NUnit 2.4 update.
+
 2009-06-24  Robert Jordan  <robertj@gmx.net>
 
 	* ArrayListTest.cs, CollectionBaseTest.cs, DictionaryEntryTest.cs,
