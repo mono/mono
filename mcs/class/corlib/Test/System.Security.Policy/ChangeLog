@@ -1,3 +1,7 @@
+2009-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.	
+
 2006-01-09  Raja R Harinath  <rharinath@novell.com>
 
 	* HashMembershipConditionTest.cs (HashValue): Remove 1/256 chance

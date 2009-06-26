@@ -37,7 +37,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class NetCodeGroupTest : Assertion {
+	public class NetCodeGroupTest  {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -50,16 +50,16 @@ namespace MonoTests.System.Security.Policy {
 		public void Constructor () 
 		{
 			NetCodeGroup cg = new NetCodeGroup (new AllMembershipCondition ());
-			AssertNotNull ("MembershipCondition", cg.MembershipCondition);
-			AssertNull ("PolicyStatement", cg.PolicyStatement);
+			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition");
+			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 			// documented as always null
-			AssertNull ("AttributeString", cg.AttributeString);
+			Assert.IsNull (cg.AttributeString, "AttributeString");
 #if NET_2_0
 			// seems it's easier to change code than to change code ;)
-			AssertEquals ("PermissionSetName", "Same site Web", cg.PermissionSetName);
+			Assert.AreEqual ("Same site Web", cg.PermissionSetName, "PermissionSetName");
 #else
 			// documented as always "Same site Web" but it's "Same site Web." (missing .)
-			AssertEquals ("PermissionSetName", "Same site Web.", cg.PermissionSetName);
+			Assert.AreEqual ("Same site Web.", cg.PermissionSetName, "PermissionSetName");
 #endif
 		}
 
@@ -67,7 +67,7 @@ namespace MonoTests.System.Security.Policy {
 		public void MergeLogic () 
 		{
 			NetCodeGroup cg = new NetCodeGroup (new AllMembershipCondition ());
-			AssertEquals ("MergeLogic", "Union", cg.MergeLogic);
+			Assert.AreEqual ("Union", cg.MergeLogic, "MergeLogic");
 		}
 
 		[Test]
@@ -75,13 +75,13 @@ namespace MonoTests.System.Security.Policy {
 		{
 			NetCodeGroup cg = new NetCodeGroup (new AllMembershipCondition ());
 			NetCodeGroup cg2 = (NetCodeGroup) cg.Copy ();
-			AssertEquals ("AttributeString", cg.AttributeString, cg2.AttributeString);
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("Description", cg.Description, cg2.Description);
-			AssertEquals ("MergeLogic", cg.MergeLogic, cg2.MergeLogic);
-			AssertEquals ("Name", cg.Name, cg2.Name);
-			AssertEquals ("PermissionSetName", cg.PermissionSetName, cg2.PermissionSetName);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.AttributeString, cg2.AttributeString, "AttributeString");
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.Description, cg2.Description, "Description");
+			Assert.AreEqual (cg.MergeLogic, cg2.MergeLogic, "MergeLogic");
+			Assert.AreEqual (cg.Name, cg2.Name, "Name");
+			Assert.AreEqual (cg.PermissionSetName, cg2.PermissionSetName, "PermissionSetName");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -91,8 +91,8 @@ namespace MonoTests.System.Security.Policy {
 			NetCodeGroup cg = new NetCodeGroup (new AllMembershipCondition ());
 			cg.AddChild (cgChild);
 			NetCodeGroup cg2 = (NetCodeGroup) cg.Copy ();
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -117,16 +117,16 @@ namespace MonoTests.System.Security.Policy {
 			NetCodeGroup cg = new NetCodeGroup (new AllMembershipCondition ());
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			NetCodeGroup cg2 = new NetCodeGroup (new AllMembershipCondition());
 			cg2.Name = "SomeOtherName";
 			cg2.Description = "Some Other Description";
-			Assert ("Equals (another)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (another)");
 
 			cg2.FromXml (se);
-			Assert ("Equals (FromXml)", cg.Equals (cg2));
+			Assert.IsTrue (cg.Equals (cg2), "Equals (FromXml)");
 		}
 	}
 }

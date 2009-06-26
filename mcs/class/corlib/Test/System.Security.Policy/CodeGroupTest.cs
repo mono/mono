@@ -70,7 +70,7 @@ namespace MonoTests.System.Security.Policy {
 	}
 
 	[TestFixture]
-	public class CodeGroupTest : Assertion {
+	public class CodeGroupTest  {
 
 		private const string ps_Name = "TestName";
 		
@@ -86,15 +86,15 @@ namespace MonoTests.System.Security.Policy {
 		{
 			// legal
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition(), null);
-			AssertNull ("PolicyStatement", cg.PolicyStatement);
+			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 		}
 
 		[Test]
 		public void Constructor ()
 		{
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition(), new PolicyStatement(new PermissionSet(PermissionState.None)));
-			AssertNotNull ("PolicyStatement property not set correctly by constructor.", cg.PolicyStatement);
-			AssertNotNull ("MembershipCondition property not set correctly by constructor.", cg.MembershipCondition);
+			Assert.IsNotNull (cg.PolicyStatement, "PolicyStatement property not set correctly by constructor.");
+			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition property not set correctly by constructor.");
 		}
 
 		[Test]
@@ -103,7 +103,7 @@ namespace MonoTests.System.Security.Policy {
 			const string description = "Test Description";
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition(), new PolicyStatement(new PermissionSet(PermissionState.None)));
 			cg.Description = description;
-			AssertEquals ("Description not the expected value", description, cg.Description);
+			Assert.AreEqual (description, cg.Description, "Description not the expected value");
 		}
 
 		[Test]
@@ -112,16 +112,16 @@ namespace MonoTests.System.Security.Policy {
 			const string name = "Test Name";
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition(), new PolicyStatement(new PermissionSet(PermissionState.None)));
 			cg.Name = name;
-			AssertEquals ("Description not the expected value", name, cg.Name);
+			Assert.AreEqual (name, cg.Name, "Description not the expected value");
 		}
 
 		[Test]
 		public void AddChild ()
 		{
 			MyCodeGroup cg = new MyCodeGroup(new AllMembershipCondition (), new PolicyStatement(new PermissionSet (PermissionState.None)));
-			AssertEquals ("Unexpected number of children (before add)", 0, cg.Children.Count);
+			Assert.AreEqual (0, cg.Children.Count, "Unexpected number of children (before add)");
 			cg.AddChild (new MyCodeGroup (new AllMembershipCondition (), new PolicyStatement(new PermissionSet (PermissionState.Unrestricted))));
-			AssertEquals ("Unexpected number of children (after add)", 1, cg.Children.Count);
+			Assert.AreEqual (1, cg.Children.Count, "Unexpected number of children (after add)");
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace MonoTests.System.Security.Policy {
 			PolicyStatement ps = new PolicyStatement (new PermissionSet (PermissionState.None));
 			ps.Attributes = psa;
 			MyCodeGroup cg = new MyCodeGroup(new AllMembershipCondition (), ps);
-			AssertEquals ("AttributeString", psa.ToString(), cg.AttributeString);
+			Assert.AreEqual (psa.ToString(), cg.AttributeString, "AttributeString");
 		}
 
 		[Test]
@@ -155,7 +155,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			PolicyStatement ps = new PolicyStatement(new NamedPermissionSet (ps_Name));
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
-			AssertEquals ("PermissionSetName", ps_Name, cg.PermissionSetName);
+			Assert.AreEqual (ps_Name, cg.PermissionSetName, "PermissionSetName");
 		}
 
 		[Test]
@@ -165,18 +165,18 @@ namespace MonoTests.System.Security.Policy {
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
-			Assert ("Equals (itself)", cg.Equals (cg));
-			Assert ("Equals (string)", !cg.Equals ("Not Equal to this"));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
+			Assert.IsTrue (!cg.Equals ("Not Equal to this"), "Equals (string)");
 
 			MyCodeGroup cg2 = new MyCodeGroup(new AllMembershipCondition(), ps);
 			cg2.Name = "SomeOtherName";
 			cg2.Description = "Some Other Description";
-			Assert ("Equals (another)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (another)");
 
 			cg2 = new MyCodeGroup (new ApplicationDirectoryMembershipCondition(), ps);
 			cg2.Name = cg.Name;
 			cg2.Description = cg.Description;
-			Assert ("Equals (different Membership Condition)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (different Membership Condition)");
 		}
 
 		[Test]
@@ -197,11 +197,11 @@ namespace MonoTests.System.Security.Policy {
 			cg2.Name = cg.Name;
 			cg2.Description = cg.Description;
 
-			Assert ("Should be equal when Children are ignored", cg.Equals (cg2));
-			Assert ("Should not be equal when Child count is different", !cg.Equals(cg2, true));
+			Assert.IsTrue (cg.Equals (cg2), "Should be equal when Children are ignored");
+			Assert.IsTrue (!cg.Equals(cg2, true), "Should not be equal when Child count is different");
 
 			cg2.AddChild(cgChild);
-			Assert ("Should be equal when children are equal", cg2.Equals(cg, true));
+			Assert.IsTrue (cg2.Equals(cg, true), "Should be equal when children are equal");
 		}
 
 		[Test]
@@ -222,10 +222,10 @@ namespace MonoTests.System.Security.Policy {
 			cgChild2.Description = "Child Descripiton 2";
 			cg.AddChild (cgChild2);
 
-			AssertEquals ("Should be two children before the call to Remove()", 2, cg.Children.Count);
+			Assert.AreEqual (2, cg.Children.Count, "Should be two children before the call to Remove()");
 			cg.RemoveChild(cgChild);
-			AssertEquals ("Should be one children after the call to Remove()", 1, cg.Children.Count);
-			AssertEquals("Remaining child does not have correct name", "ChildName2", ((CodeGroup)cg.Children[0]).Name);
+			Assert.AreEqual (1, cg.Children.Count, "Should be one children after the call to Remove()");
+			Assert.AreEqual("ChildName2", ((CodeGroup)cg.Children[0]).Name, "Remaining child does not have correct name");
 		}
 
 		[Test]
@@ -258,13 +258,13 @@ namespace MonoTests.System.Security.Policy {
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), new PolicyStatement(new PermissionSet (PermissionState.None)));
 			SecurityElement se = cg.ToXml ();
 			string s = se.ToString ();
-			Assert ("ToXml-Starts", s.StartsWith ("<CodeGroup class=\"MonoTests.System.Security.Policy.MyCodeGroup,"));
-			Assert ("ToXml-Ends", s.EndsWith ("version=\"1\"/>" + Environment.NewLine + "</CodeGroup>" + Environment.NewLine));
+			Assert.IsTrue (s.StartsWith ("<CodeGroup class=\"MonoTests.System.Security.Policy.MyCodeGroup,"), "ToXml-Starts");
+			Assert.IsTrue (s.EndsWith ("version=\"1\"/>" + Environment.NewLine + "</CodeGroup>" + Environment.NewLine), "ToXml-Ends");
 
 			cg.AddChild (new MyCodeGroup (new AllMembershipCondition (), new PolicyStatement(new PermissionSet (PermissionState.Unrestricted))));
 			se = cg.ToXml ();
 			s = se.ToString ();
-			Assert ("ToXml-Child", s.IndexOf ("<CodeGroup class=\"MonoTests.System.Security.Policy.MyCodeGroup,", 1) > 0);
+			Assert.IsTrue (s.IndexOf ("<CodeGroup class=\"MonoTests.System.Security.Policy.MyCodeGroup,", 1) > 0, "ToXml-Child");
 		}
 
 		[Test]
@@ -274,16 +274,16 @@ namespace MonoTests.System.Security.Policy {
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			MyCodeGroup cg2 = new MyCodeGroup (new AllMembershipCondition(), ps);
 			cg2.Name = "SomeOtherName";
 			cg2.Description = "Some Other Description";
-			Assert ("Equals (another)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (another)");
 
 			cg2.FromXml (se);
-			Assert ("Equals (FromXml)", cg.Equals (cg2));
+			Assert.IsTrue (cg.Equals (cg2), "Equals (FromXml)");
 		}
 
 		[Test]
@@ -301,13 +301,13 @@ namespace MonoTests.System.Security.Policy {
 			cg.Description = "Some Description";
 			cg.AddChild (cgChild);
 			cg.AddChild (cgChild);
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			MyCodeGroup cg2 = (MyCodeGroup) cg.Copy ();
 			cg2.FromXml (se);
 			// MissingMethodException down here (stangely not up here ?!? delayed ?)
-			Assert ("Equals (FromXml)", cg.Equals (cg2, true));
+			Assert.IsTrue (cg.Equals (cg2, true), "Equals (FromXml)");
 		}
 
 		[Test]
@@ -324,12 +324,12 @@ namespace MonoTests.System.Security.Policy {
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
 			cg.AddChild (cgChild);
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			MyCodeGroup cg2 = (MyCodeGroup) cg.Copy ();
 			cg2.FromXml (se);
-			Assert ("Equals (FromXml)", cg.Equals (cg2, true));
+			Assert.IsTrue (cg.Equals (cg2, true), "Equals (FromXml)");
 		}
 
 		[Test]

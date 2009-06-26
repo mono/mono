@@ -37,7 +37,7 @@ using System.Security.Policy;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class SiteTest : Assertion {
+	public class SiteTest  {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -78,44 +78,44 @@ namespace MonoTests.System.Security.Policy {
 		public void Site_GoMonoWebSite () 
 		{
 			Site s = new Site ("www.go-mono.com");
-			AssertEquals ("Name", "www.go-mono.com", s.Name);
+			Assert.AreEqual ("www.go-mono.com", s.Name, "Name");
 #if NET_2_0
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #else
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #endif
 			Site s2 = (Site) s.Copy ();
-			AssertEquals ("Copy.Name", s.Name, s2.Name);
-			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
+			Assert.AreEqual (s.Name, s2.Name, "Copy.Name");
+			Assert.AreEqual (s.GetHashCode (), s2.GetHashCode (), "Copy.GetHashCode");
 
 			SiteIdentityPermission sip = (SiteIdentityPermission) s.CreateIdentityPermission (null);
-			AssertEquals ("CreateIdentityPermission", s.Name, sip.Site);
+			Assert.AreEqual (s.Name, sip.Site, "CreateIdentityPermission");
 
-			Assert ("Equals", s.Equals (s2));
+			Assert.IsTrue (s.Equals (s2), "Equals");
 			Site s3 = new Site ("go-mono.com");
-			Assert ("!Equals", !s.Equals (s3));
+			Assert.IsTrue (!s.Equals (s3), "!Equals");
 		}
 
 		[Test]
 		public void Site_AllGoMonoSite () 
 		{
 			Site s = new Site ("*.go-mono.com");
-			AssertEquals ("Name", "*.go-mono.com", s.Name);
+			Assert.AreEqual ("*.go-mono.com", s.Name, "Name");
 #if NET_2_0
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #else
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #endif
 			Site s2 = (Site) s.Copy ();
-			AssertEquals ("Copy.Name", s.Name, s2.Name);
-			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
+			Assert.AreEqual (s.Name, s2.Name, "Copy.Name");
+			Assert.AreEqual (s.GetHashCode (), s2.GetHashCode (), "Copy.GetHashCode");
 
 			SiteIdentityPermission sip = (SiteIdentityPermission) s.CreateIdentityPermission (null);
-			AssertEquals ("CreateIdentityPermission", s.Name, sip.Site);
+			Assert.AreEqual (s.Name, sip.Site, "CreateIdentityPermission");
 
-			Assert ("Equals", s.Equals (s2));
+			Assert.IsTrue (s.Equals (s2), "Equals");
 			Site s3 = new Site ("go-mono.com");
-			Assert ("!Equals", !s.Equals (s3));
+			Assert.IsTrue (!s.Equals (s3), "!Equals");
 		}
 
 		[Test]
@@ -136,7 +136,7 @@ namespace MonoTests.System.Security.Policy {
 		public void EqualsCaseSensitive () {
 			Site s1 = new Site ("*.go-mono.com");
 			Site s2 = new Site ("*.Go-Mono.com");
-			Assert ("CaseSensitive", s1.Equals (s2));
+			Assert.IsTrue (s1.Equals (s2), "CaseSensitive");
 		}
 
 		[Test]
@@ -144,37 +144,37 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s1 = new Site ("www.go-mono.com");
 			Site s2 = new Site ("*.go-mono.com");
-			Assert ("Partial:1-2", !s1.Equals (s2));
-			Assert ("Partial:2-1", !s2.Equals (s1));
+			Assert.IsTrue (!s1.Equals (s2), "Partial:1-2");
+			Assert.IsTrue (!s2.Equals (s1), "Partial:2-1");
 		}
 
 		[Test]
 		public void EqualsNull () 
 		{
 			Site s1 = new Site ("*.go-mono.com");
-			Assert ("EqualsNull", !s1.Equals (null));
+			Assert.IsTrue (!s1.Equals (null), "EqualsNull");
 		}
 
 		[Test]
 		public void Site_LoneStar () 
 		{
 			Site s = new Site ("*");
-			AssertEquals ("Name", "*", s.Name);
+			Assert.AreEqual ("*", s.Name, "Name");
 #if NET_2_0
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #else
-			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+			Assert.AreEqual ("<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString (), "ToString");
 #endif
 			Site s2 = (Site) s.Copy ();
-			AssertEquals ("Copy.Name", s.Name, s2.Name);
-			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
+			Assert.AreEqual (s.Name, s2.Name, "Copy.Name");
+			Assert.AreEqual (s.GetHashCode (), s2.GetHashCode (), "Copy.GetHashCode");
 
 			SiteIdentityPermission sip = (SiteIdentityPermission) s.CreateIdentityPermission (null);
-			AssertEquals ("CreateIdentityPermission", s.Name, sip.Site);
+			Assert.AreEqual (s.Name, sip.Site, "CreateIdentityPermission");
 
-			Assert ("Equals", s.Equals (s2));
+			Assert.IsTrue (s.Equals (s2), "Equals");
 			Site s3 = new Site ("go-mono.com");
-			Assert ("!Equals", !s.Equals (s3));
+			Assert.IsTrue (!s.Equals (s3), "!Equals");
 		}
 
 		[Test]
@@ -206,7 +206,7 @@ namespace MonoTests.System.Security.Policy {
 					|| (i >= 97 && i <= 122)	// a-z
 #endif
 					|| (i >= 64 && i <= 90));	// @,A-Z
-				Assert ("#"+i, (actual == result));
+				Assert.IsTrue ((actual == result), "#"+i);
 			}
 		}
 
@@ -238,7 +238,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			foreach (string url in valid_urls) {
 				Site s = Site.CreateFromUrl (url);
-				Assert (s.Name, (s.Name.ToUpper (CultureInfo.InvariantCulture).IndexOf ("MONO") != -1));
+				Assert.IsTrue ((s.Name.ToUpper (CultureInfo.InvariantCulture).IndexOf ("MONO") != -1), s.Name);
 			}
 		}
 
@@ -263,7 +263,7 @@ namespace MonoTests.System.Security.Policy {
 				}
 				finally {
 					if (msg != null) {
-						Fail (msg);
+						Assert.Fail (msg);
 						msg = null;
 					}
 				}

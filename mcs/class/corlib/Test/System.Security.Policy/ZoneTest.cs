@@ -37,128 +37,128 @@ using System.Security.Policy;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class ZoneTest : Assertion {
+	public class ZoneTest  {
 
 		[Test]
 		public void MyComputer () 
 		{
 			Zone z = new Zone (SecurityZone.MyComputer);
-			AssertEquals ("MyComputer.SecurityZone", SecurityZone.MyComputer, z.SecurityZone);
-			Assert ("MyComputer.ToString", (z.ToString ().IndexOf ("<Zone>MyComputer</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.MyComputer, z.SecurityZone, "MyComputer.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>MyComputer</Zone>") >= 0), "MyComputer.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("MyComputer.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "MyComputer.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("MyComputer.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "MyComputer.CreateIdentityPermission");
 
-			Assert ("MyComputer.MyComputer.Equals", z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("MyComputer.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("MyComputer.Trusted.Equals", !z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("MyComputer.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("MyComputer.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("MyComputer.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("MyComputer.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.MyComputer)), "MyComputer.MyComputer.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Intranet)), "MyComputer.Intranet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Trusted)), "MyComputer.Trusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Internet)), "MyComputer.Internet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Untrusted)), "MyComputer.Untrusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.NoZone)), "MyComputer.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "MyComputer.Null.Equals");
 		}
 
 		[Test]
 		public void Intranet () 
 		{
 			Zone z = new Zone (SecurityZone.Intranet);
-			AssertEquals ("Intranet.SecurityZone", SecurityZone.Intranet, z.SecurityZone);
-			Assert ("Intranet.ToString", (z.ToString ().IndexOf ("<Zone>Intranet</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.Intranet, z.SecurityZone, "Intranet.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>Intranet</Zone>") >= 0), "Intranet.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("Intranet.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "Intranet.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("Intranet.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "Intranet.CreateIdentityPermission");
 
-			Assert ("Intranet.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("Intranet.Intranet.Equals", z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("Intranet.Trusted.Equals", !z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("Intranet.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("Intranet.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("Intranet.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("Intranet.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.MyComputer)), "Intranet.MyComputer.Equals");
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.Intranet)), "Intranet.Intranet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Trusted)), "Intranet.Trusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Internet)), "Intranet.Internet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Untrusted)), "Intranet.Untrusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.NoZone)), "Intranet.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "Intranet.Null.Equals");
 		}
 
 		[Test]
 		public void Trusted () 
 		{
 			Zone z = new Zone (SecurityZone.Trusted);
-			AssertEquals ("Trusted.SecurityZone", SecurityZone.Trusted, z.SecurityZone);
-			Assert ("Trusted.ToString", (z.ToString ().IndexOf ("<Zone>Trusted</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.Trusted, z.SecurityZone, "Trusted.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>Trusted</Zone>") >= 0), "Trusted.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("Trusted.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "Trusted.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("Trusted.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "Trusted.CreateIdentityPermission");
 
-			Assert ("Trusted.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("Trusted.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("Trusted.Trusted.Equals", z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("Trusted.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("Trusted.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("Trusted.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("Trusted.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.MyComputer)), "Trusted.MyComputer.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Intranet)), "Trusted.Intranet.Equals");
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.Trusted)), "Trusted.Trusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Internet)), "Trusted.Internet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Untrusted)), "Trusted.Untrusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.NoZone)), "Trusted.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "Trusted.Null.Equals");
 		}
 
 		[Test]
 		public void Internet () 
 		{
 			Zone z = new Zone (SecurityZone.Internet);
-			AssertEquals ("Internet.SecurityZone", SecurityZone.Internet, z.SecurityZone);
-			Assert ("Internet.ToString", (z.ToString ().IndexOf ("<Zone>Internet</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.Internet, z.SecurityZone, "Internet.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>Internet</Zone>") >= 0), "Internet.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("Internet.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "Internet.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("Internet.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "Internet.CreateIdentityPermission");
 
-			Assert ("Internet.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("Internet.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("Internet.Trusted.Equals", !z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("Internet.Internet.Equals", z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("Internet.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("Internet.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("Internet.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.MyComputer)), "Internet.MyComputer.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Intranet)), "Internet.Intranet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Trusted)), "Internet.Trusted.Equals");
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.Internet)), "Internet.Internet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Untrusted)), "Internet.Untrusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.NoZone)), "Internet.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "Internet.Null.Equals");
 		}
 
 		[Test]
 		public void Untrusted () 
 		{
 			Zone z = new Zone (SecurityZone.Untrusted);
-			AssertEquals ("Untrusted.SecurityZone", SecurityZone.Untrusted, z.SecurityZone);
-			Assert ("Untrusted.ToString", (z.ToString ().IndexOf ("<Zone>Untrusted</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.Untrusted, z.SecurityZone, "Untrusted.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>Untrusted</Zone>") >= 0), "Untrusted.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("Untrusted.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "Untrusted.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("Untrusted.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "Untrusted.CreateIdentityPermission");
 
-			Assert ("Untrusted.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("Untrusted.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("Untrusted.Trusted.Equals", !z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("Untrusted.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("Untrusted.Untrusted.Equals", z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("Untrusted.NoZone.Equals", !z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("Untrusted.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.MyComputer)), "Untrusted.MyComputer.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Intranet)), "Untrusted.Intranet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Trusted)), "Untrusted.Trusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Internet)), "Untrusted.Internet.Equals");
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.Untrusted)), "Untrusted.Untrusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.NoZone)), "Untrusted.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "Untrusted.Null.Equals");
 		}
 
 		[Test]
 		public void NoZone () 
 		{
 			Zone z = new Zone (SecurityZone.NoZone);
-			AssertEquals ("NoZone.SecurityZone", SecurityZone.NoZone, z.SecurityZone);
-			Assert ("NoZone.ToString", (z.ToString ().IndexOf ("<Zone>NoZone</Zone>") >= 0));
+			Assert.AreEqual (SecurityZone.NoZone, z.SecurityZone, "NoZone.SecurityZone");
+			Assert.IsTrue ((z.ToString ().IndexOf ("<Zone>NoZone</Zone>") >= 0), "NoZone.ToString");
 			Zone zc = (Zone) z.Copy ();
-			Assert ("NoZone.Copy.Equals", z.Equals (zc));
+			Assert.IsTrue (z.Equals (zc), "NoZone.Copy.Equals");
 			IPermission p = z.CreateIdentityPermission (null);
-			AssertNotNull ("NoZone.CreateIdentityPermission", p);
+			Assert.IsNotNull (p, "NoZone.CreateIdentityPermission");
 			// NoZone isn't added to the XML / string of permissions
-			Assert ("ToString!=NoZone", p.ToString ().IndexOf ("NoZone") < 0);
+			Assert.IsTrue (p.ToString ().IndexOf ("NoZone") < 0, "ToString!=NoZone");
 
-			Assert ("NoZone.MyComputer.Equals", !z.Equals (new Zone (SecurityZone.MyComputer)));
-			Assert ("NoZone.Intranet.Equals", !z.Equals (new Zone (SecurityZone.Intranet)));
-			Assert ("NoZone.Trusted.Equals", !z.Equals (new Zone (SecurityZone.Trusted)));
-			Assert ("NoZone.Internet.Equals", !z.Equals (new Zone (SecurityZone.Internet)));
-			Assert ("NoZone.Untrusted.Equals", !z.Equals (new Zone (SecurityZone.Untrusted)));
-			Assert ("NoZone.NoZone.Equals", z.Equals (new Zone (SecurityZone.NoZone)));
-			Assert ("NoZone.Null.Equals", !z.Equals (null));
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.MyComputer)), "NoZone.MyComputer.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Intranet)), "NoZone.Intranet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Trusted)), "NoZone.Trusted.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Internet)), "NoZone.Internet.Equals");
+			Assert.IsTrue (!z.Equals (new Zone (SecurityZone.Untrusted)), "NoZone.Untrusted.Equals");
+			Assert.IsTrue (z.Equals (new Zone (SecurityZone.NoZone)), "NoZone.NoZone.Equals");
+			Assert.IsTrue (!z.Equals (null), "NoZone.Null.Equals");
 		}
 
 		[Test]
@@ -177,7 +177,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			foreach (string url in noZoneUrls) {
 				Zone z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.NoZone, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.NoZone, z.SecurityZone, url);
 			}
 		}
 
@@ -193,15 +193,15 @@ namespace MonoTests.System.Security.Policy {
 			foreach (string u in myComputerUrls) {
 				string url = u;
 				Zone z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.MyComputer, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.MyComputer, z.SecurityZone, url);
 
 				url = "file://" + u;
 				z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.MyComputer, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.MyComputer, z.SecurityZone, url);
 
 				url = "FILE://" + u;
 				z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.MyComputer, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.MyComputer, z.SecurityZone, url);
 			}
 		}
 
@@ -215,7 +215,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			foreach (string url in intranetUrls) {
 				Zone z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.Intranet, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.Intranet, z.SecurityZone, url);
 			}
 		}
 
@@ -234,7 +234,7 @@ namespace MonoTests.System.Security.Policy {
 		{
 			foreach (string url in internetUrls) {
 				Zone z = Zone.CreateFromUrl (url);
-				AssertEquals (url, SecurityZone.Internet, z.SecurityZone);
+				Assert.AreEqual (SecurityZone.Internet, z.SecurityZone, url);
 			}
 		}
 
@@ -243,10 +243,10 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Zone z = Zone.CreateFromUrl (String.Empty);
 			string ts = z.ToString ();
-			Assert ("Class", ts.StartsWith ("<System.Security.Policy.Zone"));
-			Assert ("Version", (ts.IndexOf (" version=\"1\"") >= 0));
-			Assert ("Zone", (ts.IndexOf ("<Zone>NoZone</Zone>") >= 0));
-			Assert ("End", (ts.IndexOf ("</System.Security.Policy.Zone>") >= 0));
+			Assert.IsTrue (ts.StartsWith ("<System.Security.Policy.Zone"), "Class");
+			Assert.IsTrue ((ts.IndexOf (" version=\"1\"") >= 0), "Version");
+			Assert.IsTrue ((ts.IndexOf ("<Zone>NoZone</Zone>") >= 0), "Zone");
+			Assert.IsTrue ((ts.IndexOf ("</System.Security.Policy.Zone>") >= 0), "End");
 		}
 	}
 }

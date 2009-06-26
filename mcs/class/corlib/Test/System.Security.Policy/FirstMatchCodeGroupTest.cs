@@ -17,7 +17,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class FirstMatchCodeGroupTest : Assertion {
+	public class FirstMatchCodeGroupTest  {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -31,22 +31,22 @@ namespace MonoTests.System.Security.Policy {
 		{
 			// legal
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), null);
-			AssertNull ("PolicyStatement", cg.PolicyStatement);
+			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 		}
 
 		[Test]
 		public void Constructor () 
 		{
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
-			AssertNotNull ("PolicyStatement", cg.PolicyStatement);
-			AssertNotNull ("MembershipCondition", cg.MembershipCondition);
+			Assert.IsNotNull (cg.PolicyStatement, "PolicyStatement");
+			Assert.IsNotNull (cg.MembershipCondition, "MembershipCondition");
 		}
 
 		[Test]
 		public void MergeLogic () 
 		{
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
-			AssertEquals ("MergeLogic", "First Match", cg.MergeLogic);
+			Assert.AreEqual ("First Match", cg.MergeLogic, "MergeLogic");
 		}
 
 		[Test]
@@ -54,13 +54,13 @@ namespace MonoTests.System.Security.Policy {
 		{
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			FirstMatchCodeGroup cg2 = (FirstMatchCodeGroup) cg.Copy ();
-			AssertEquals ("AttributeString", cg.AttributeString, cg2.AttributeString);
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("Description", cg.Description, cg2.Description);
-			AssertEquals ("MergeLogic", cg.MergeLogic, cg2.MergeLogic);
-			AssertEquals ("Name", cg.Name, cg2.Name);
-			AssertEquals ("PermissionSetName", cg.PermissionSetName, cg2.PermissionSetName);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.AttributeString, cg2.AttributeString, "AttributeString");
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.Description, cg2.Description, "Description");
+			Assert.AreEqual (cg.MergeLogic, cg2.MergeLogic, "MergeLogic");
+			Assert.AreEqual (cg.Name, cg2.Name, "Name");
+			Assert.AreEqual (cg.PermissionSetName, cg2.PermissionSetName, "PermissionSetName");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -70,8 +70,8 @@ namespace MonoTests.System.Security.Policy {
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), new PolicyStatement (new PermissionSet (PermissionState.None)));
 			cg.AddChild (cgChild);
 			FirstMatchCodeGroup cg2 = (FirstMatchCodeGroup) cg.Copy ();
-			AssertEquals ("Children", cg.Children.Count, cg2.Children.Count);
-			AssertEquals ("ToXml", cg.ToXml ().ToString (), cg2.ToXml ().ToString ());
+			Assert.AreEqual (cg.Children.Count, cg2.Children.Count, "Children");
+			Assert.AreEqual (cg.ToXml ().ToString (), cg2.ToXml ().ToString (), "ToXml");
 		}
 
 		[Test]
@@ -98,16 +98,16 @@ namespace MonoTests.System.Security.Policy {
 			FirstMatchCodeGroup cg = new FirstMatchCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
 			cg.Description = "Some Description";
-			Assert ("Equals (itself)", cg.Equals (cg));
+			Assert.IsTrue (cg.Equals (cg), "Equals (itself)");
 			SecurityElement se = cg.ToXml ();
 
 			FirstMatchCodeGroup cg2 = new FirstMatchCodeGroup (new AllMembershipCondition(), ps);
 			cg2.Name = "SomeOtherName";
 			cg2.Description = "Some Other Description";
-			Assert ("Equals (another)", !cg.Equals (cg2));
+			Assert.IsTrue (!cg.Equals (cg2), "Equals (another)");
 
 			cg2.FromXml (se);
-			Assert ("Equals (FromXml)", cg.Equals (cg2));
+			Assert.IsTrue (cg.Equals (cg2), "Equals (FromXml)");
 		}
 	}
 }

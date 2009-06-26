@@ -38,20 +38,22 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class EvidenceTest : Assertion {
+	public class EvidenceTest  {
 		
 		[Test]
 		public void DefaultConstructor ()
 		{
 			Evidence evidence = new Evidence ();
 			
-			AssertEquals ("Default constructor count should be zero", evidence.Count, 0);
-			AssertEquals ("Default constructor host enumerator MoveNext() should be false", 
-				evidence.GetHostEnumerator().MoveNext(), false);
-			AssertEquals ("Default constructor assembly enumerator MoveNext() should be false",
-				evidence.GetAssemblyEnumerator().MoveNext(), false);
-			AssertEquals ("Default constructor enumerator MoveNext() should be false",
-				evidence.GetEnumerator().MoveNext(), false);
+			Assert.AreEqual (evidence.Count, 0, "Default constructor count should be zero");
+			Assert.AreEqual (evidence.GetHostEnumerator().MoveNext(), false, 
+				"Default constructor host enumerator MoveNext() should be false");
+				
+			Assert.AreEqual (evidence.GetAssemblyEnumerator().MoveNext(), false, 
+						  "Default constructor assembly enumerator MoveNext() should be false");
+				
+			Assert.AreEqual (evidence.GetEnumerator().MoveNext(), false,
+						  "Default constructor enumerator MoveNext() should be false");
 		}
 
 		[Test]
@@ -61,7 +63,8 @@ namespace MonoTests.System.Security.Policy {
 			object[] assemarray = new object[10];
 			Evidence evidence = new Evidence ( hostarray, assemarray );
 
-			AssertEquals ( "Count of multiple arg constructor should equal 20", evidence.Count, 20 );
+			Assert.AreEqual (evidence.Count, 20,
+						  "Count of multiple arg constructor should equal 20");
 		}
 
 		[Test]
@@ -72,21 +75,21 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence1 = new Evidence (hostlist, asmblist);
 			Evidence evidence2 = new Evidence (evidence1);
 			
-			AssertEquals("Copy constructor counts do not match", evidence1.Count, evidence2.Count);
+			Assert.AreEqual(evidence1.Count, evidence2.Count, "Copy constructor counts do not match");
 		}
 
 		[Test]
 		public void Constructor_Null ()
 		{
 			Evidence e = new Evidence (null);
-			AssertEquals ("Count-Empty", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-Empty");
 		}
 
 		[Test]
 		public void Constructor_NullNull ()
 		{
 			Evidence e = new Evidence (null, null);
-			AssertEquals ("Count-Empty", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-Empty");
 		}
 
 		[Test]
@@ -100,13 +103,12 @@ namespace MonoTests.System.Security.Policy {
 				obj = String.Format ("asmb-{0}", i+1);
 				comparray[i] = obj;
 				evidence.AddAssembly (obj);
-				AssertEquals (evidence.Count, i+1);
+				Assert.AreEqual (evidence.Count, i+1);
 			}
 			
 			int index = 0;
 			foreach (object compobj in evidence) {
-				AssertEquals ("Comparison object does not equal evidence assembly object", 
-					comparray[index++], compobj);
+				Assert.AreEqual (comparray[index++], compobj, "Comparison object does not equal evidence assembly object");
 			}
 		}
 
@@ -121,13 +123,13 @@ namespace MonoTests.System.Security.Policy {
 				obj = String.Format ("asmb-{0}", i+1);
 				comparray[i] = obj;
 				evidence.AddAssembly ( obj );
-				AssertEquals (evidence.Count, i+1);
+				Assert.AreEqual (evidence.Count, i+1);
 			}
 
 			int index = 0;
 			foreach (object compobj in evidence) {
-				AssertEquals ("Comparison object does not equal evidence host object", 
-					comparray[index++], compobj);
+				Assert.AreEqual (comparray[index++], compobj, "Comparison object does not equal evidence host object");
+					
 			}
 		}
 
@@ -144,7 +146,7 @@ namespace MonoTests.System.Security.Policy {
 	
 			int i = 0;		
 			foreach (object obj in evidence) {
-				AssertEquals (obj, compare[i++]);
+				Assert.AreEqual (obj, compare[i++]);
 			}
 		}
 
@@ -161,13 +163,13 @@ namespace MonoTests.System.Security.Policy {
 			int i = 0;
 			IEnumerator enumerator = evidence.GetEnumerator ();	
 			while (enumerator.MoveNext ()) {
-				AssertEquals (enumerator.Current, compare[i++]);
+				Assert.AreEqual (enumerator.Current, compare[i++]);
 			}
 
 			enumerator.Reset ();
 			i = 0;
 			while (enumerator.MoveNext ()) {
-				AssertEquals (enumerator.Current, compare[i++]);
+				Assert.AreEqual (enumerator.Current, compare[i++]);
 			}
 		}
 
@@ -180,7 +182,7 @@ namespace MonoTests.System.Security.Policy {
 			IEnumerator enumerator = evidence.GetHostEnumerator ();
 			int i = 0;
 			while (enumerator.MoveNext ()) {
-               			AssertEquals (enumerator.Current, hostarray[i++]);
+               			Assert.AreEqual (enumerator.Current, hostarray[i++]);
 			}
 		}
 
@@ -198,7 +200,7 @@ namespace MonoTests.System.Security.Policy {
 			
 			i = 0;
 			while (enumerator.MoveNext()) {
-        	        	AssertEquals (enumerator.Current, asmbarray[i++]);
+        	        	Assert.AreEqual (enumerator.Current, asmbarray[i++]);
 			}
 		}
 
@@ -208,7 +210,7 @@ namespace MonoTests.System.Security.Policy {
 			object[] hostarray = { "host-1", "host-2", "host-3", "host-4" };
 			object[] asmbarray = { "asmb-1", "asmb-2", "asmb-3", "asmb-4" };
 			Evidence evidence = new Evidence (hostarray, asmbarray);
-			Assertion.AssertEquals (evidence.Count, 8);
+			Assert.AreEqual (evidence.Count, 8);
 
 			for( int i=0; i<100; i++ ) {
 				if ( 0 == i%2 ) {
@@ -216,7 +218,7 @@ namespace MonoTests.System.Security.Policy {
 				} else {
 					evidence.AddAssembly (String.Format ("asmb-{0}", i + 5));
 				}
-				AssertEquals (evidence.Count, 9 + i);
+				Assert.AreEqual (evidence.Count, 9 + i);
 			}
 		}
 
@@ -263,7 +265,7 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence = new Evidence (null, null);
 			Evidence evidence2 = new Evidence ();
 			evidence2.Merge (evidence);
-			AssertEquals ("Count", evidence.Count, evidence2.Count);
+			Assert.AreEqual (evidence.Count, evidence2.Count, "Count");
 		}
 
 		[Test]
@@ -272,7 +274,7 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence = new Evidence (new object[10], new object[10]);
 		  	Evidence evidence2 = new Evidence ();
 			evidence2.Merge (evidence);
-			AssertEquals ("Count", evidence.Count, evidence2.Count);
+			Assert.AreEqual (evidence.Count, evidence2.Count, "Count");
 		}
 
 		[Test]
@@ -281,23 +283,23 @@ namespace MonoTests.System.Security.Policy {
 			Evidence evidence = new Evidence ();
 			evidence.Merge (null);
 			// no exception!
-			AssertEquals ("Count", 0, evidence.Count);
+			Assert.AreEqual (0, evidence.Count, "Count");
 		}
 
 		[Test]
 		public void DefaultProperties () 
 		{
 			Evidence e = new Evidence ();
-			AssertEquals ("Count", 0, e.Count);
-			Assert ("IsReadOnly", !e.IsReadOnly);
+			Assert.AreEqual (0, e.Count, "Count");
+			Assert.IsTrue (!e.IsReadOnly, "IsReadOnly");
 #if NET_2_0
-			Assert ("IsSynchronized", !e.IsSynchronized);
+			Assert.IsTrue (!e.IsSynchronized, "IsSynchronized");
 #else
 			// LAMESPEC: Always TRUE (not FALSE)
-			Assert ("IsSynchronized", e.IsSynchronized);
+			Assert.IsTrue (e.IsSynchronized, "IsSynchronized");
 #endif
-			Assert ("Locked", !e.Locked);
-			AssertNotNull ("SyncRoot", e.SyncRoot);
+			Assert.IsTrue (!e.Locked, "Locked");
+			Assert.IsNotNull (e.SyncRoot, "SyncRoot");
 		}
 
 #if NET_2_0
@@ -306,28 +308,28 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Evidence e1 = new Evidence ();
 			Evidence e2 = new Evidence ();
-			AssertEquals ("GetHashCode-1", e1.GetHashCode (), e2.GetHashCode ());
-			Assert ("e1.Equals(e2)", e1.Equals (e2));
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-1");
+			Assert.IsTrue (e1.Equals (e2), "e1.Equals(e2)");
 			e1.AddAssembly (String.Empty);
 			e2.AddAssembly (String.Empty);
-			AssertEquals ("GetHashCode-2", e1.GetHashCode (), e2.GetHashCode ());
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-2");
 			e1.AddHost (String.Empty);
 			e2.AddHost (String.Empty);
-			AssertEquals ("GetHashCode-3", e1.GetHashCode (), e2.GetHashCode ());
-			Assert ("e2.Equals(e1)", e2.Equals (e1));
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
+			Assert.IsTrue (e2.Equals (e1), "e2.Equals(e1)");
 		}
 
 		[Test]
 		public void Clear () 
 		{
 			Evidence e = new Evidence ();
-			AssertEquals ("Count-Empty", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-Empty");
 			e.AddAssembly (new object ());
-			AssertEquals ("Count+Assembly", 1, e.Count);
+			Assert.AreEqual (1, e.Count, "Count+Assembly");
 			e.AddHost (new object ());
-			AssertEquals ("Count+Host", 2, e.Count);
+			Assert.AreEqual (2, e.Count, "Count+Host");
 			e.Clear ();
-			AssertEquals ("Count-Cleared", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-Cleared");
 		}
 
 		[Category ("NotWorking")]
@@ -335,12 +337,12 @@ namespace MonoTests.System.Security.Policy {
 		public void RemoveType ()
 		{
 			Evidence e = new Evidence ();
-			AssertEquals ("Count-Empty", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-Empty");
 			e.AddAssembly (new object ());
 			e.AddHost (new object ());
-			AssertEquals ("Count", 2, e.Count);
+			Assert.AreEqual (2, e.Count, "Count");
 			e.RemoveType (typeof (object));
-			AssertEquals ("Count-RemoveType(object)", 0, e.Count);
+			Assert.AreEqual (0, e.Count, "Count-RemoveType(object)");
 		}
 #else
 		[Test]
@@ -348,9 +350,9 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Evidence e1 = new Evidence ();
 			Evidence e2 = new Evidence ();
-			Assert ("GetHashCode", e1.GetHashCode () != e2.GetHashCode ());
-			Assert ("!e1.Equals(e2)", !e1.Equals (e2));
-			Assert ("!e2.Equals(e1)", !e2.Equals (e1));
+			Assert.IsTrue (e1.GetHashCode () != e2.GetHashCode (), "GetHashCode");
+			Assert.IsTrue (!e1.Equals (e2), "!e1.Equals(e2)");
+			Assert.IsTrue (!e2.Equals (e1), "!e2.Equals(e1)");
 		}
 #endif
 		[Test]
@@ -361,7 +363,7 @@ namespace MonoTests.System.Security.Policy {
 			Evidence e = AppDomain.CurrentDomain.Evidence;
 			foreach (object o in e) {
 				if (o is PermissionRequestEvidence)
-					Fail ("Found PermissionRequestEvidence in AppDomain.CurrentDomain.Evidence");
+					Assert.Fail ("Found PermissionRequestEvidence in AppDomain.CurrentDomain.Evidence");
 			}
 		}
 
@@ -373,7 +375,7 @@ namespace MonoTests.System.Security.Policy {
 			Evidence e = Assembly.GetExecutingAssembly ().Evidence;
 			foreach (object o in e) {
 				if (o is PermissionRequestEvidence)
-					Fail ("Found PermissionRequestEvidence in Assembly.GetExecutingAssembly.Evidence");
+					Assert.Fail ("Found PermissionRequestEvidence in Assembly.GetExecutingAssembly.Evidence");
 			}
 		}
 	}
