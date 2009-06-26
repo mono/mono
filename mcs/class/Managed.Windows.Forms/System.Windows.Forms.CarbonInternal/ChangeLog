@@ -1,3 +1,8 @@
+2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KeyboardHandler.cs : support multi-byte text input.
+	  Fixed bug #501276.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* WindowHandler.cs: Don't attempt to activate a disposed Form.

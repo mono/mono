@@ -55,6 +55,8 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		internal static bool translate_modifier = false;
 
+		internal string ComposedString;
+
 		static KeyboardHandler () {
 			// our key filter table is a 256 byte array - if the corresponding byte 
 			// is set the key should be filtered from WM_CHAR (apple pushes unicode events
@@ -196,11 +198,17 @@ namespace System.Windows.Forms.CarbonInternal {
 			Marshal.FreeHGlobal (buffer);
 
 			if (key_filter_table [bdata [0]] == 0x00) {
-				// TODO: We support 2byte/4byte unicode? how does this get packed
-				msg.message = Msg.WM_CHAR;
-				msg.wParam = BitConverter.IsLittleEndian ? (IntPtr) bdata [0] : (IntPtr) bdata [size-1];
-				msg.lParam = IntPtr.Zero;
-				msg.hwnd = XplatUICarbon.FocusWindow;
+				if (size == 1) {
+					msg.message = Msg.WM_CHAR;
+					msg.wParam = BitConverter.IsLittleEndian ? (IntPtr) bdata [0] : (IntPtr) bdata [size-1];
+					msg.lParam = IntPtr.Zero;
+					msg.hwnd = XplatUICarbon.FocusWindow;
+				} else {
+					msg.message = Msg.WM_IME_COMPOSITION;
+					Encoding enc = BitConverter.IsLittleEndian ? Encoding.Unicode : Encoding.BigEndianUnicode;
+					ComposedString = enc.GetString (bdata);
+					msg.hwnd = XplatUICarbon.FocusWindow;
+				}
 			}
 		}
 
