@@ -1,5 +1,10 @@
 2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_blob_object): Add extra minsize argument.
+	Use proper overflow dectection. Fix usage of it.
+
+2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (field_from_memberref): Call into the verifier to check
 	the signature.
 
