@@ -1,5 +1,11 @@
 2009-06-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_prolog): Fix thread attaching in AOTed
+	code.
+
+	* mini.c (mono_jit_thread_attach): Allow domain to be NULL for calls from
+	AOTed code.
+
 	* CMakeLists.txt: Add minimal support for installation.
 
 2009-06-25  Zoltan Varga  <vargaz@gmail.com>
