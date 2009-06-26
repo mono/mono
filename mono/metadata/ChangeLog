@@ -1,3 +1,7 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: DontLinger can take an int or a boolean too.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threads.c: fix missing colon when DEBUG is defined.
