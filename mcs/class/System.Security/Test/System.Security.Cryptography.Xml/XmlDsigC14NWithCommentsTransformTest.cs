@@ -30,7 +30,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigC14NWithCommentsTransformTest : Assertion {
+	public class XmlDsigC14NWithCommentsTransformTest {
 
 		protected UnprotectedXmlDsigC14NWithCommentsTransform transform;
 
@@ -59,10 +59,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm, "Algorithm");
 
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -75,26 +75,26 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assert ("Output Stream", ostream);
+			Assert.IsTrue (ostream, "Output Stream");
 		}
 
 		[Test]
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertEquals ("Default InnerXml", null, xnl);
+			Assert.AreEqual (null, xnl, "Default InnerXml");
 		}
 
 #if NET_2_0
@@ -125,8 +125,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Close ();
 			}
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input, true);
-			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)", 
-				        C14NSpecExample1Output, res);
+			Assert.AreEqual (C14NSpecExample1Output, res, "Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)");
 	        }
 
 		[Test]
@@ -144,32 +143,28 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				NUnit.Framework.Assert.Ignore ("SecurityManager isn't enabled.");
 #endif
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input, false);
-			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)",
-					C14NSpecExample1Output, res);
+			Assert.AreEqual (C14NSpecExample1Output, res, "Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (with comments)");
 		}
 
 	        [Test]
 	        public void C14NSpecExample2 ()
 	        {
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample2Input, false);
-			AssertEquals ("Example 2 from c14n spec - Whitespace in Document Content (with comments)", 
-					C14NSpecExample2Output, res);
+			Assert.AreEqual (C14NSpecExample2Output, res, "Example 2 from c14n spec - Whitespace in Document Content (with comments)");
 		}
 
 	        [Test]
 	        public void C14NSpecExample3 ()
 	        {
 	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample3Input, false);
-	    		AssertEquals ("Example 3 from c14n spec - Start and End Tags (with comments)", 
-	    			        C14NSpecExample3Output, res);
+	    		Assert.AreEqual (C14NSpecExample3Output, res, "Example 3 from c14n spec - Start and End Tags (with comments)");
 	        }
 	    
 	        [Test]
 	        public void C14NSpecExample4 ()
 	        {
 	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample4Input, false);
-	    		AssertEquals ("Example 4 from c14n spec - Character Modifications and Character References (with comments)", 
-	    			        C14NSpecExample4Output, res);
+	    		Assert.AreEqual (C14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (with comments)");
 	        }
 	    
 	        [Test]
@@ -182,16 +177,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				}
 			}
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input, false);
-	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (with comments)", 
-	    				C14NSpecExample5Output, res);
+	    	    	Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (with comments)");
 	        }
     
 	        [Test]
 	        public void C14NSpecExample6 ()
 	        {
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample6Input, false);
-	    	    	AssertEquals ("Example 6 from c14n spec - UTF-8 Encoding (with comments)", 
-	    				C14NSpecExample6Output, res);
+	    	    	Assert.AreEqual (C14NSpecExample6Output, res, "Example 6 from c14n spec - UTF-8 Encoding (with comments)");
 	        }
 
 		private string ExecuteXmlDSigC14NTransform (string InputXml, bool resolver)

@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class SignedInfoTest : Assertion {
+	public class SignedInfoTest {
 
 		protected SignedInfo info;
 
@@ -31,13 +31,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Empty () 
 		{
-			AssertEquals ("CanonicalizationMethod", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", info.CanonicalizationMethod);
-			AssertNull ("Id", info.Id);
-			AssertNotNull ("References", info.References);
-			AssertEquals ("References.Count", 0, info.References.Count);
-			AssertNull ("SignatureLength", info.SignatureLength);
-			AssertNull ("SignatureMethod", info.SignatureMethod);
-			AssertEquals ("ToString()", "System.Security.Cryptography.Xml.SignedInfo", info.ToString ());
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", info.CanonicalizationMethod, "CanonicalizationMethod");
+			Assert.IsNull (info.Id, "Id");
+			Assert.IsNotNull (info.References, "References");
+			Assert.AreEqual (0, info.References.Count, "References.Count");
+			Assert.IsNull (info.SignatureLength, "SignatureLength");
+			Assert.IsNull (info.SignatureMethod, "SignatureMethod");
+			Assert.AreEqual ("System.Security.Cryptography.Xml.SignedInfo", info.ToString (), "ToString()");
 		}
 
 		[Test]
@@ -51,9 +51,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void Properties () 
 		{
 			info.CanonicalizationMethod = "http://www.go-mono.com/";
-			AssertEquals ("CanonicalizationMethod", "http://www.go-mono.com/", info.CanonicalizationMethod);
+			Assert.AreEqual ("http://www.go-mono.com/", info.CanonicalizationMethod, "CanonicalizationMethod");
 			info.Id = "Mono::";
-			AssertEquals ("Id", "Mono::", info.Id);
+			Assert.AreEqual ("Mono::", info.Id, "Id");
 		}
 
 		[Test]
@@ -63,12 +63,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			r1.Uri = "http://www.go-mono.com/";
 			r1.AddTransform (new XmlDsigBase64Transform ());
 			info.AddReference (r1);
-			AssertEquals ("References.Count 1", 1, info.References.Count);
+			Assert.AreEqual (1, info.References.Count, "References.Count 1");
 
 			Reference r2 = new Reference ("http://www.motus.com/");
 			r2.AddTransform (new XmlDsigBase64Transform ());
 			info.AddReference (r2);
-			AssertEquals ("References.Count 2", 2, info.References.Count);
+			Assert.AreEqual (2, info.References.Count, "References.Count 2");
 
 			info.SignatureMethod = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
 		}
@@ -80,10 +80,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (xml);
 			info.LoadXml (doc.DocumentElement);
-			AssertEquals ("LoadXml", xml, (info.GetXml ().OuterXml));
-			AssertEquals ("LoadXml-C14N", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", info.CanonicalizationMethod);
-			AssertEquals ("LoadXml-Algo", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", info.SignatureMethod);
-			AssertEquals ("LoadXml-Ref1", 1, info.References.Count);
+			Assert.AreEqual (xml, (info.GetXml ().OuterXml), "LoadXml");
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", info.CanonicalizationMethod, "LoadXml-C14N");
+			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", info.SignatureMethod, "LoadXml-Algo");
+			Assert.AreEqual (1, info.References.Count, "LoadXml-Ref1");
 		}
 
 		// there are many (documented) not supported methods in SignedInfo
@@ -142,8 +142,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedInfo sig = new SignedInfo ();
 			sig.LoadXml ((XmlElement) doc.SelectSingleNode ("//*[local-name()='SignedInfo']"));
 			XmlElement el = sig.GetXml ();
-			AssertEquals ("#GetXmlWOSetProperty.document", doc, el.OwnerDocument);
-			AssertEquals ("#GetXmlWOSetProperty.outerxml", result, el.OuterXml);
+			Assert.AreEqual (doc, el.OwnerDocument, "#GetXmlWOSetProperty.document");
+			Assert.AreEqual (result, el.OuterXml, "#GetXmlWOSetProperty.outerxml");
 		}
 
 		[Test]
@@ -160,7 +160,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			sig.LoadXml ((XmlElement) doc.SelectSingleNode ("//*[local-name()='SignedInfo']"));
 			sig.CanonicalizationMethod = "urn:foo";
 			XmlElement el = sig.GetXml ();
-			Assert ("#GetXmlWithSetProperty.document", doc != el.OwnerDocument);
+			Assert.IsTrue (doc != el.OwnerDocument, "#GetXmlWithSetProperty.document");
 		}
 
 		[Test] // never fails

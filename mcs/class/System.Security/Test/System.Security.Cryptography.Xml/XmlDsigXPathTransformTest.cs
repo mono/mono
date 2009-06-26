@@ -32,7 +32,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigXPathTransformTest : Assertion {
+	public class XmlDsigXPathTransformTest {
 
 		protected UnprotectedXmlDsigXPathTransform transform;
 
@@ -45,10 +45,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/1999/REC-xpath-19991116", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/1999/REC-xpath-19991116", transform.Algorithm, "Algorithm");
 
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -61,28 +61,28 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool oxmlnl = false;
 			foreach (Type t in output) {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					oxmlnl = true;
 			}
-			Assert ("Output XmlNodeList", oxmlnl);
+			Assert.IsTrue (oxmlnl, "Output XmlNodeList");
 		}
 
-		protected void AssertEquals (string msg, XmlNodeList expected, XmlNodeList actual) 
+		protected void AreEqual (string msg, XmlNodeList expected, XmlNodeList actual) 
 		{
 			for (int i=0; i < expected.Count; i++) {
 				if (expected [i].OuterXml != actual [i].OuterXml)
-					Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
+					Assert.Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
 			}
-			AssertEquals (expected.Count, actual.Count);
+			Assert.AreEqual (expected.Count, actual.Count);
 		}
 
 		[Test]
@@ -92,8 +92,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertEquals ("Default InnerXml.Count", 1, xnl.Count);
-			AssertEquals ("Default InnerXml.OuterXml", "<XPath xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></XPath>", xnl [0].OuterXml);
+			Assert.AreEqual (1, xnl.Count, "Default InnerXml.Count");
+			Assert.AreEqual ("<XPath xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></XPath>", xnl [0].OuterXml, "Default InnerXml.OuterXml");
 		}
 
 		[Test]
@@ -106,7 +106,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
 #if NET_2_0
-			AssertEquals ("Count", 0, xnl.Count);
+			Assert.AreEqual (0, xnl.Count, "Count");
 #endif
 		}
 
@@ -143,9 +143,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
 #if NET_2_0
-			AssertEquals (73, xnl.Count);
+			Assert.AreEqual (73, xnl.Count);
 #else
-			AssertEquals (47, xnl.Count);
+			Assert.AreEqual (47, xnl.Count);
 #endif
 		}
 
@@ -156,7 +156,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			// empty means no LoadInnerXml
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals ("Empy Result", 0, xnl.Count);
+			Assert.AreEqual (0, xnl.Count, "Empy Result");
 		}
 
 		[Test]
@@ -168,7 +168,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals (1, xnl.Count);
+			Assert.AreEqual (1, xnl.Count);
 		}
 
 		[Test]
@@ -178,7 +178,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			// empty means no LoadInnerXml
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals ("Empy Result", 0, xnl.Count);
+			Assert.AreEqual (0, xnl.Count, "Empy Result");
 		}
 
 		[Test]
@@ -197,9 +197,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
 #if NET_2_0
-			AssertEquals (73, xnl.Count);
+			Assert.AreEqual (73, xnl.Count);
 #else
-			AssertEquals (47, xnl.Count);
+			Assert.AreEqual (47, xnl.Count);
 #endif
 		}
 
@@ -213,7 +213,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			// empty means no LoadInnerXml
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals ("Empy Result", 0, xnl.Count);
+			Assert.AreEqual (0, xnl.Count, "Empy Result");
 		}
 
 		[Test]
@@ -222,7 +222,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertEquals ("LoadInnerXml", inner, xnl);
+			Assert.AreEqual (inner, xnl, "LoadInnerXml");
 		}
 
 		[Test]
@@ -254,18 +254,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (XmlNodeType.Document, nl [0].NodeType);
-			AssertEquals (XmlNodeType.Element, nl [1].NodeType);
-			AssertEquals ("element", nl [1].LocalName);
-			AssertEquals (XmlNodeType.Element, nl [2].NodeType);
-			AssertEquals ("foo", nl [2].LocalName);
-			AssertEquals (XmlNodeType.Element, nl [3].NodeType);
-			AssertEquals ("bar", nl [3].LocalName);
+			Assert.AreEqual (XmlNodeType.Document, nl [0].NodeType);
+			Assert.AreEqual (XmlNodeType.Element, nl [1].NodeType);
+			Assert.AreEqual ("element", nl [1].LocalName);
+			Assert.AreEqual (XmlNodeType.Element, nl [2].NodeType);
+			Assert.AreEqual ("foo", nl [2].LocalName);
+			Assert.AreEqual (XmlNodeType.Element, nl [3].NodeType);
+			Assert.AreEqual ("bar", nl [3].LocalName);
 			// MS.NET bug - ms.net returns ns node even when the
 			// current node is ns node (it is like returning
 			// attribute from attribute nodes).
-//			AssertEquals (XmlNodeType.Attribute, nl [4].NodeType);
-//			AssertEquals ("xmlns", nl [4].LocalName);
+//			Assert.AreEqual (XmlNodeType.Attribute, nl [4].NodeType);
+//			Assert.AreEqual ("xmlns", nl [4].LocalName);
 		}
 
 		[Test]
@@ -286,43 +286,43 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			t.LoadInput (doc);
 
 			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals ("0", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "0");
 
 			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
 #if NET_2_0
-			AssertEquals ("1", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "1");
 #else
-			AssertEquals ("1", 1, nl.Count);
+			Assert.AreEqual (1, nl.Count, "1");
 #endif
 
 			doc.LoadXml ("<element xmlns='urn:foo'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
 #if NET_2_0
-			AssertEquals ("2", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "2");
 #else
-			AssertEquals ("2", 2, nl.Count);
+			Assert.AreEqual (2, nl.Count, "2");
 #endif
 
 			doc.LoadXml ("<element xmlns='urn:foo' xmlns:x='urn:x'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
 #if NET_2_0
-			AssertEquals ("3", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "3");
 #else
-			AssertEquals ("3", 3, nl.Count);
+			Assert.AreEqual (3, nl.Count, "3");
 #endif
 
 			doc.LoadXml ("<envelope><Signature xmlns='http://www.w3.org/2000/09/xmldsig#'><XPath>blah</XPath></Signature></envelope>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
 #if NET_2_0
-			AssertEquals ("4", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "4");
 #else
-			AssertEquals ("4", 1, nl.Count);
-			AssertEquals ("NodeType", XmlNodeType.Attribute, nl [0].NodeType);
+			Assert.AreEqual (1, nl.Count, "4");
+			Assert.AreEqual (XmlNodeType.Attribute, nl [0].NodeType, "NodeType");
 #endif
 		}
 	}

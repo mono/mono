@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoNameTest : Assertion {
+	public class KeyInfoNameTest {
 
 		[Test]
 		public void NewKeyValue () 
@@ -30,8 +30,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoName name2 = new KeyInfoName ();
 			name2.LoadXml (xel);
 
-			AssertEquals ("newKeyValue==value", newKeyValue, name1.Value);
-			AssertEquals ("name1==name2", (name1.GetXml ().OuterXml), (name2.GetXml ().OuterXml));
+			Assert.AreEqual (newKeyValue, name1.Value, "newKeyValue==value");
+			Assert.AreEqual ((name1.GetXml ().OuterXml), (name2.GetXml ().OuterXml), "name1==name2");
 		}
 
 		[Test]
@@ -43,8 +43,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			KeyInfoName name = new KeyInfoName ();
 			name.LoadXml (doc.DocumentElement);
-			AssertEquals ("import.Name", "Mono::", name.Value);
-			AssertEquals ("import.GetXml", value, name.GetXml ().OuterXml);
+			Assert.AreEqual ("Mono::", name.Value, "import.Name");
+			Assert.AreEqual (value, name.GetXml ().OuterXml, "import.GetXml");
 		}
 
 		[Test]
@@ -68,8 +68,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			KeyInfoName name = new KeyInfoName ();
 			name.LoadXml (doc.DocumentElement);
-			AssertEquals ("invalid.Name", "", name.Value);
-			AssertEquals ("invalid.GetXml", "<KeyName xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></KeyName>", (name.GetXml ().OuterXml));
+			Assert.AreEqual ("", name.Value, "invalid.Name");
+			Assert.AreEqual ("<KeyName xmlns=\"http://www.w3.org/2000/09/xmldsig#\"></KeyName>", (name.GetXml ().OuterXml), "invalid.GetXml");
 		}
 	}
 }

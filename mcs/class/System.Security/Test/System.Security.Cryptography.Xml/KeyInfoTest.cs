@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoTest : Assertion {
+	public class KeyInfoTest {
 
 		private KeyInfo info;
 
@@ -32,8 +32,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void EmptyKeyInfo () 
 		{
-			AssertEquals ("empty", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (info.GetXml ().OuterXml));
-			AssertEquals ("empty count", 0, info.Count);
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (info.GetXml ().OuterXml), "empty");
+			Assert.AreEqual (0, info.Count, "empty count");
 		}
 
 		[Test]
@@ -42,8 +42,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoName name = new KeyInfoName ();
 			name.Value = "Mono::";
 			info.AddClause (name);
-			AssertEquals ("name", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyName>Mono::</KeyName></KeyInfo>", (info.GetXml ().OuterXml));
-			AssertEquals ("name count", 1, info.Count);
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyName>Mono::</KeyName></KeyInfo>", (info.GetXml ().OuterXml), "name");
+			Assert.AreEqual (1, info.Count, "name count");
 		}
 
 		[Test]
@@ -55,8 +55,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			KeyInfoNode node = new KeyInfoNode (doc.DocumentElement);
 			info.AddClause (node);
-			AssertEquals ("node", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><Test xmlns=\"\">KeyInfoNode</Test></KeyInfo>", (info.GetXml ().OuterXml));
-			AssertEquals ("node count", 1, info.Count);
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><Test xmlns=\"\">KeyInfoNode</Test></KeyInfo>", (info.GetXml ().OuterXml), "node");
+			Assert.AreEqual (1, info.Count, "node count");
 		}
 
 		string xmlDSA = "<DSAKeyValue><P>rjxsMU368YOCTQejWkiuO9e/vUVwkLtq1jKiU3TtJ53hBJqjFRuTa228vZe+BH2su9RPn/vYFWfQDv6zgBYe3eNdu4Afw+Ny0FatX6dl3E77Ra6Tsd3MmLXBiGSQ1mMNd5G2XQGpbt9zsGlUaexXekeMLxIufgfZLwYp67M+2WM=</P><Q>tf0K9rMyvUrU4cIkwbCrDRhQAJk=</Q><G>S8Z+1pGCed00w6DtVcqZLKjfqlCJ7JsugEFIgSy/Vxtu9YGCMclV4ijGEbPo/jU8YOSMuD7E9M7UaopMRcmKQjoKZzoJjkgVFP48Ohxl1f08lERnButsxanx3+OstFwUGQ8XNaGg3KrIoZt1FUnfxN3RHHTvVhjzNSHxMGULGaU=</G><Y>LnrxxRGLYeV2XLtK3SYz8RQHlHFZYrtznDZyMotuRfO5uC5YODhSFyLXvb1qB3WeGtF4h3Eo4KzHgMgfN2ZMlffxFRhJgTtH3ctbL8lfQoDkjeiPPnYGhspdJxr0tyZmiy0gkjJG3vwHYrLnvZWx9Wm/unqiOlGBPNuxJ+hOeP8=</Y><J>9RhE5TycDtdEIXxS3HfxFyXYgpy81zY5lVjwD6E9JP37MWEi80BlX6ab1YPm6xYSEoqReMPP9RgGiW6DuACpgI7+8vgCr4i/7VhzModJAA56PwvTu6UMt9xxKU/fT672v8ucREkMWoc7lEey</J><Seed>HxW3N4RHWVgqDQKuGg7iJTUTiCs=</Seed><PgenCounter>Asw=</PgenCounter></DSAKeyValue>";
@@ -69,7 +69,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			DSAKeyValue dsa = new DSAKeyValue (key);
 			info.AddClause (dsa);
 			AssertCrypto.AssertXmlEquals ("dsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlDSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
-			AssertEquals ("dsa count", 1, info.Count);
+			Assert.AreEqual (1, info.Count, "dsa count");
 		}
 
 		static string xmlRSA = "<RSAKeyValue><Modulus>9DC4XNdQJwMRnz5pP2a6U51MHCODRilaIoVXqUPhCUb0lJdGroeqVYT84ZyIVrcarzD7Tqs3aEOIa3rKox0N1bxQpZPqayVQeLAkjLLtzJW/ScRJx3uEDJdgT1JnM1FH0GZTinmEdCUXdLc7+Y/c/qqIkTfbwHbRZjW0bBJyExM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
@@ -82,7 +82,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			RSAKeyValue rsa = new RSAKeyValue (key);
 			info.AddClause (rsa);
 			AssertCrypto.AssertXmlEquals ("rsa", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\">" + xmlRSA + "</KeyValue></KeyInfo>", (info.GetXml ().OuterXml));
-			AssertEquals ("rsa count", 1, info.Count);
+			Assert.AreEqual (1, info.Count, "rsa count");
 		}
 
 		[Test]
@@ -92,11 +92,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			retrieval.Uri = "http://www.go-mono.org/";
 			info.AddClause (retrieval);
 #if NET_1_0
-			AssertEquals ("RetrievalMethod", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RetrievalElement URI=\"http://www.go-mono.org/\" /></KeyInfo>", (info.GetXml ().OuterXml));
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RetrievalElement URI=\"http://www.go-mono.org/\" /></KeyInfo>", (info.GetXml ().OuterXml), "RetrievalMethod");
 #else
-			AssertEquals ("RetrievalMethod", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RetrievalMethod URI=\"http://www.go-mono.org/\" /></KeyInfo>", (info.GetXml ().OuterXml));
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><RetrievalMethod URI=\"http://www.go-mono.org/\" /></KeyInfo>", (info.GetXml ().OuterXml), "RetrievalMethod");
 #endif
-			AssertEquals ("RetrievalMethod count", 1, info.Count);
+			Assert.AreEqual (1, info.Count, "RetrievalMethod count");
 		}
 
 		static byte[] cert = { 0x30,0x82,0x02,0x1D,0x30,0x82,0x01,0x86,0x02,0x01,0x14,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x04,0x05,0x00,0x30,0x58,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x43,0x41,0x31,0x1F,0x30,0x1D,0x06,0x03,0x55,0x04,0x03,0x13,0x16,0x4B,0x65,0x79,0x77,0x69,0x74,0x6E,0x65,0x73,0x73,0x20,0x43,0x61,0x6E,0x61,0x64,0x61,0x20,0x49,0x6E,0x63,0x2E,0x31,0x28,0x30,0x26,0x06,0x0A,0x2B,0x06,0x01,0x04,0x01,0x2A,0x02,0x0B,0x02,0x01,0x13,0x18,0x6B,0x65,0x79,0x77,0x69,0x74,0x6E,0x65,0x73,
@@ -113,7 +113,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoX509Data x509data = new KeyInfoX509Data (x509);
 			info.AddClause (x509data);
 			AssertCrypto.AssertXmlEquals ("X509Data", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><X509Certificate>MIICHTCCAYYCARQwDQYJKoZIhvcNAQEEBQAwWDELMAkGA1UEBhMCQ0ExHzAdBgNVBAMTFktleXdpdG5lc3MgQ2FuYWRhIEluYy4xKDAmBgorBgEEASoCCwIBExhrZXl3aXRuZXNzQGtleXdpdG5lc3MuY2EwHhcNOTYwNTA3MDAwMDAwWhcNOTkwNTA3MDAwMDAwWjBYMQswCQYDVQQGEwJDQTEfMB0GA1UEAxMWS2V5d2l0bmVzcyBDYW5hZGEgSW5jLjEoMCYGCisGAQQBKgILAgETGGtleXdpdG5lc3NAa2V5d2l0bmVzcy5jYTCBnTANBgkqhkiG9w0BAQEFAAOBiwAwgYcCgYEAzSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZMCAQMwDQYJKoZIhvcNAQEEBQADgYEAMho1ur9DJ9a01Lh25eObTWzAhsl3NbprFi0TRkqwMlOhW1rpmeIMhogXTg3+gqxOR+/7/zms7jXI+lI3CkmtWa3iiqkcxl8f+G9zfs2gMegMvvVN2bKrihK2MHhoEXwN8UlNo/2y6f8d8JH6VIX/M5Dowb+km6RiRr1hElmYQYk=</X509Certificate></X509Data></KeyInfo>", (info.GetXml ().OuterXml));
-			AssertEquals ("X509Data count", 1, info.Count);
+			Assert.AreEqual (1, info.Count, "X509Data count");
 		}
 
 		[Test]
@@ -151,7 +151,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			s += "<X509Data xmlns=\"http://www.w3.org/2000/09/xmldsig#\">";
 			s += "<X509Certificate>MIICHTCCAYYCARQwDQYJKoZIhvcNAQEEBQAwWDELMAkGA1UEBhMCQ0ExHzAdBgNVBAMTFktleXdpdG5lc3MgQ2FuYWRhIEluYy4xKDAmBgorBgEEASoCCwIBExhrZXl3aXRuZXNzQGtleXdpdG5lc3MuY2EwHhcNOTYwNTA3MDAwMDAwWhcNOTkwNTA3MDAwMDAwWjBYMQswCQYDVQQGEwJDQTEfMB0GA1UEAxMWS2V5d2l0bmVzcyBDYW5hZGEgSW5jLjEoMCYGCisGAQQBKgILAgETGGtleXdpdG5lc3NAa2V5d2l0bmVzcy5jYTCBnTANBgkqhkiG9w0BAQEFAAOBiwAwgYcCgYEAzSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZMCAQMwDQYJKoZIhvcNAQEEBQADgYEAMho1ur9DJ9a01Lh25eObTWzAhsl3NbprFi0TRkqwMlOhW1rpmeIMhogXTg3+gqxOR+/7/zms7jXI+lI3CkmtWa3iiqkcxl8f+G9zfs2gMegMvvVN2bKrihK2MHhoEXwN8UlNo/2y6f8d8JH6VIX/M5Dowb+km6RiRr1hElmYQYk=</X509Certificate></X509Data></KeyInfo>";
 			AssertCrypto.AssertXmlEquals ("Complex", s, (info.GetXml ().OuterXml));
-			AssertEquals ("RetrievalMethod count", 5, info.Count);
+			Assert.AreEqual (5, info.Count, "RetrievalMethod count");
 		}
 
 		[Test]
@@ -165,17 +165,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			info.LoadXml (doc.DocumentElement);
 
 			AssertCrypto.AssertXmlEquals ("Import", value, (info.GetXml ().OuterXml));
-			AssertEquals ("Import count", 5, info.Count);
+			Assert.AreEqual (5, info.Count, "Import count");
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void NullClause () 
 		{
-			AssertEquals ("empty count", 0, info.Count);
+			Assert.AreEqual (0, info.Count, "empty count");
 			// null is accepted...
 			info.AddClause (null);
-			AssertEquals ("null count", 1, info.Count);
+			Assert.AreEqual (1, info.Count, "null count");
 			// but can't get XML out if it!
 			XmlElement xel = info.GetXml ();
 		}
@@ -195,8 +195,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.LoadXml (bad);
 			info.LoadXml (doc.DocumentElement);
 			// LAMESPEC: no expection but Xml isn't loaded
-			AssertEquals ("invalid", "<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (info.GetXml ().OuterXml));
-			AssertEquals ("invalid count", 0, info.Count);
+			Assert.AreEqual ("<KeyInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (info.GetXml ().OuterXml), "invalid");
+			Assert.AreEqual (0, info.Count, "invalid count");
 		}
 	}
 }

@@ -39,7 +39,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigXsltTransformTest : Assertion {
+	public class XmlDsigXsltTransformTest {
 
 		protected UnprotectedXmlDsigXsltTransform transform;
 
@@ -66,10 +66,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 		void CheckProperties (XmlDsigXsltTransform transform)
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/1999/REC-xslt-19991116", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/1999/REC-xslt-19991116", transform.Algorithm, "Algorithm");
 
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -82,26 +82,26 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assert ("Output Stream", ostream);
+			Assert.IsTrue (ostream, "Output Stream");
 		}
 
 		[Test]
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertNull ("Default InnerXml", xnl);
+			Assert.IsNull (xnl, "Default InnerXml");
 		}
 
 		private string Stream2Array (Stream s) 
@@ -169,7 +169,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 #endif
 			}
 			finally {
-				Assert ("Exception not thrown", result);
+				Assert.IsTrue (result, "Exception not thrown");
 			}
 		}
 
@@ -242,11 +242,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			string output = Stream2Array (s);
 		}
 
-		protected void AssertEquals (string msg, XmlNodeList expected, XmlNodeList actual) 
+		protected void AreEqual (string msg, XmlNodeList expected, XmlNodeList actual) 
 		{
 			for (int i=0; i < expected.Count; i++) {
 				if (expected[i].OuterXml != actual[i].OuterXml)
-					Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
+					Assert.Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
 			}
 		}
 
@@ -256,7 +256,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = GetXslDoc ();
 			transform.LoadInnerXml (doc.DocumentElement.ChildNodes);
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertEquals ("LoadInnerXml", doc.DocumentElement.ChildNodes, xnl);
+			Assert.AreEqual (doc.DocumentElement.ChildNodes, xnl, "LoadInnerXml");
 		}
 
 		[Test]

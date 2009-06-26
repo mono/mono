@@ -17,24 +17,24 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class DSAKeyValueTest : Assertion {
+	public class DSAKeyValueTest {
 
 		[Test]
 		public void GenerateKey () 
 		{
 			DSAKeyValue dsa1 = new DSAKeyValue ();
-			AssertNotNull ("Key", dsa1.Key);
+			Assert.IsNotNull (dsa1.Key, "Key");
 			XmlElement xmlkey = dsa1.GetXml ();
 
 			DSAKeyValue dsa2 = new DSAKeyValue ();
 			dsa2.LoadXml (xmlkey);
 
-			Assert ("dsa1==dsa2", (dsa1.GetXml ().OuterXml) == (dsa2.GetXml ().OuterXml));
+			Assert.IsTrue ((dsa1.GetXml ().OuterXml) == (dsa2.GetXml ().OuterXml), "dsa1==dsa2");
 
 			DSA key = dsa1.Key;
 			DSAKeyValue dsa3 = new DSAKeyValue (key);
-			Assert ("dsa3==dsa1", (dsa3.GetXml ().OuterXml) == (dsa1.GetXml ().OuterXml));
-			Assert ("dsa3==dsa2", (dsa3.GetXml ().OuterXml) == (dsa2.GetXml ().OuterXml));
+			Assert.IsTrue ((dsa3.GetXml ().OuterXml) == (dsa1.GetXml ().OuterXml), "dsa3==dsa1");
+			Assert.IsTrue ((dsa3.GetXml ().OuterXml) == (dsa2.GetXml ().OuterXml), "dsa3==dsa2");
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			dsa1.LoadXml (doc.DocumentElement);
 
 			string s = (dsa1.GetXml ().OuterXml);
-			AssertEquals ("DSA Key", dsaKey, s);
+			Assert.AreEqual (dsaKey, s, "DSA Key");
 		}
 
 		[Test]

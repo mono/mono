@@ -59,7 +59,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigExcC14NTransformTest : Assertion {
+	public class XmlDsigExcC14NTransformTest {
 
 		protected UnprotectedXmlDsigExcC14NTransform transform;
 
@@ -84,8 +84,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test] // ctor ()
 		public void Constructor1 ()
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 		}
 
@@ -93,13 +93,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void Constructor2 ()
 		{
 			transform = new UnprotectedXmlDsigExcC14NTransform (true);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (false);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 		}
 
@@ -107,18 +107,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void Constructor3 ()
 		{
 			transform = new UnprotectedXmlDsigExcC14NTransform (null);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (string.Empty);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.AreEqual (string.Empty, transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform ("#default xsd");
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.AreEqual ("#default xsd", transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 		}
 
@@ -126,40 +126,40 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void Constructor4 ()
 		{
 			transform = new UnprotectedXmlDsigExcC14NTransform (true, null);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (true, string.Empty);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm, "Algorithm");
+			Assert.AreEqual (string.Empty, transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (true, "#default xsd");
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm, "Algorithm");
+			Assert.AreEqual ("#default xsd", transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (false, null);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.IsNull (transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (false, string.Empty);
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.AreEqual (string.Empty, transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigExcC14NTransform (false, "#default xsd");
-			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
-			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			Assert.AreEqual ("http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm, "Algorithm");
+			Assert.AreEqual ("#default xsd", transform.InclusiveNamespacesPrefixList, "InclusiveNamespacesPrefixList");
 			CheckProperties (transform);
 		}
 
 		void CheckProperties (XmlDsigExcC14NTransform transform)
 		{
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -172,19 +172,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assert ("Output Stream", ostream);
+			Assert.IsTrue (ostream, "Output Stream");
 		}
 
 		[Test]
@@ -196,12 +196,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			input [2] = null;
 			// property does not return a clone
 			foreach (Type t in transform.InputTypes) {
-				AssertNull (t);
+				Assert.IsNull (t);
 			}
 			// it's not a static array
 			XmlDsigExcC14NTransform t2 = new XmlDsigExcC14NTransform ();
 			foreach (Type t in t2.InputTypes) {
-				AssertNotNull (t);
+				Assert.IsNotNull (t);
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertNull ("Default InnerXml", xnl);
+			Assert.IsNull (xnl, "Default InnerXml");
 		}
 
 		private string Stream2String (Stream s) 
@@ -249,10 +249,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 #if NET_1_1
-			AssertEquals("XmlDocument", c14xml3, output);
+			Assert.AreEqual (c14xml3, output, "XmlDocument");
 #else
 			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
-			AssertEquals("XmlDocument", c14xml1, output);
+			Assert.AreEqual (c14xml1, output, "XmlDocument");
 #endif
 		}
 
@@ -268,7 +268,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("XmlChildNodes", "<Test></Test>", output);
+			Assert.AreEqual ("<Test></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -283,7 +283,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 			string expected = @"<Test><Toto></Toto></Test>";
-			AssertEquals ("XmlChildNodes", expected, output);
+			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -296,7 +296,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("MemoryStream", c14xml2, output);
+			Assert.AreEqual (c14xml2, output, "MemoryStream");
 		}
 
 		[Test]
@@ -323,24 +323,21 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Close ();
 			}
 			string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample1Input);
-			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (without comments)", 
-				        ExcC14NSpecExample1Output, res);
+			Assert.AreEqual (ExcC14NSpecExample1Output, res, "Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (without comments)");
 	        }
 
 	        [Test]
 	        public void ExcC14NSpecExample2 ()
 	        {
 			string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample2Input);
-			AssertEquals ("Example 2 from c14n spec - Whitespace in Document Content (without comments)", 
-					ExcC14NSpecExample2Output, res);
+			Assert.AreEqual (ExcC14NSpecExample2Output, res, "Example 2 from c14n spec - Whitespace in Document Content (without comments)");
 		}
 
 	        [Test]
 	        public void ExcC14NSpecExample3 ()
 	        {
 	    		string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample3Input);
-	    		AssertEquals ("Example 3 from c14n spec - Start and End Tags (without comments)", 
-	    			        ExcC14NSpecExample3Output, res);
+	    		Assert.AreEqual (ExcC14NSpecExample3Output, res, "Example 3 from c14n spec - Start and End Tags (without comments)");
 	        }
 	    
 	        [Test]
@@ -348,8 +345,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        public void ExcC14NSpecExample4 ()
 	        {
 	    		string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample4Input);
-	    		AssertEquals ("Example 4 from c14n spec - Character Modifications and Character References (without comments)", 
-	    			        ExcC14NSpecExample4Output, res);
+	    		Assert.AreEqual (ExcC14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (without comments)");
 	        }
 	    
 	        [Test]
@@ -360,16 +356,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Close ();
 			}
 	    	    	string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample5Input);
-	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (without comments)", 
-	    				ExcC14NSpecExample5Output, res);
+	    	    	Assert.AreEqual (ExcC14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
 	        }
     
 		[Test]
 	        public void ExcC14NSpecExample6 ()
 	        {
 	    	    	string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample6Input);
-	    	    	AssertEquals ("Example 6 from c14n spec - UTF-8 Encoding (without comments)", 
-	    				ExcC14NSpecExample6Output, res);
+	    	    	Assert.AreEqual (ExcC14NSpecExample6Output, res, "Example 6 from c14n spec - UTF-8 Encoding (without comments)");
 	        }
 
 		private string ExecuteXmlDSigExcC14NTransform (string InputXml)
@@ -599,7 +593,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDsigExcC14NTransform t = new XmlDsigExcC14NTransform ();
 			t.LoadInput (doc);
 			Stream s = t.GetOutput () as Stream;
-			AssertEquals (expected, new StreamReader (s, Encoding.UTF8).ReadToEnd ());
+			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), expected);
 		}
 
 		[Test]

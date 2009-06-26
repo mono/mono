@@ -38,7 +38,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigC14NTransformTest : Assertion {
+	public class XmlDsigC14NTransformTest {
 
 		protected UnprotectedXmlDsigC14NTransform transform;
 
@@ -63,7 +63,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test] // ctor ()
 		public void Constructor1 ()
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm, "Algorithm");
 			CheckProperties (transform);
 		}
 
@@ -71,18 +71,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void Constructor2 ()
 		{
 			transform = new UnprotectedXmlDsigC14NTransform (true);
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm, "Algorithm");
 			CheckProperties (transform);
 
 			transform = new UnprotectedXmlDsigC14NTransform (false);
-			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm, "Algorithm");
 			CheckProperties (transform);
 		}
 
 		void CheckProperties (XmlDsigC14NTransform transform)
 		{
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -95,26 +95,26 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in output) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assert ("Output Stream", ostream);
+			Assert.IsTrue (ostream, "Output Stream");
 		}
 
 		[Test]
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertNull ("Default InnerXml", xnl);
+			Assert.IsNull (xnl, "Default InnerXml");
 		}
 
 		private string Stream2String (Stream s) 
@@ -154,10 +154,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 #if NET_1_1
-			AssertEquals("XmlDocument", c14xml3, output);
+			Assert.AreEqual (c14xml3, output, "XmlDocument");
 #else
 			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
-			AssertEquals("XmlDocument", c14xml1, output);
+			Assert.AreEqual (c14xml1, output, "XmlDocument");
 #endif
 		}
 
@@ -173,7 +173,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("XmlChildNodes", "<Test></Test>", output);
+			Assert.AreEqual ("<Test></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -188,7 +188,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 			string expected = @"<Test><Toto></Toto></Test>";
-			AssertEquals ("XmlChildNodes", expected, output);
+			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -201,7 +201,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("MemoryStream", c14xml2, output);
+			Assert.AreEqual (c14xml2, output, "MemoryStream");
 		}
 
 		[Test]
@@ -232,24 +232,21 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Close ();
 			}
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input);
-			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (without comments)", 
-				        C14NSpecExample1Output, res);
+			Assert.AreEqual (C14NSpecExample1Output, res, "Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (without comments)");
 	        }
 
 	        [Test]
 	        public void C14NSpecExample2 ()
 	        {
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample2Input);
-			AssertEquals ("Example 2 from c14n spec - Whitespace in Document Content (without comments)", 
-					C14NSpecExample2Output, res);
+			Assert.AreEqual (C14NSpecExample2Output, res, "Example 2 from c14n spec - Whitespace in Document Content (without comments)");
 		}
 
 	        [Test]
 	        public void C14NSpecExample3 ()
 	        {
 	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample3Input);
-	    		AssertEquals ("Example 3 from c14n spec - Start and End Tags (without comments)", 
-	    			        C14NSpecExample3Output, res);
+	    		Assert.AreEqual (C14NSpecExample3Output, res, "Example 3 from c14n spec - Start and End Tags (without comments)");
 	        }
 	    
 	        [Test]
@@ -257,8 +254,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        public void C14NSpecExample4 ()
 	        {
 	    		string res = ExecuteXmlDSigC14NTransform (C14NSpecExample4Input);
-	    		AssertEquals ("Example 4 from c14n spec - Character Modifications and Character References (without comments)", 
-	    			        C14NSpecExample4Output, res);
+	    		Assert.AreEqual (C14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (without comments)");
 	        }
 	    
 	        [Test]
@@ -269,16 +265,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				sw.Close ();
 			}
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
-	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (without comments)", 
-	    				C14NSpecExample5Output, res);
+	    	    	Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
 	        }
     
 		[Test]
 	        public void C14NSpecExample6 ()
 	        {
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample6Input);
-	    	    	AssertEquals ("Example 6 from c14n spec - UTF-8 Encoding (without comments)", 
-	    				C14NSpecExample6Output, res);
+	    	    	Assert.AreEqual (C14NSpecExample6Output, res, "Example 6 from c14n spec - UTF-8 Encoding (without comments)");
 	        }
 
 		private string ExecuteXmlDSigC14NTransform (string InputXml)
@@ -508,7 +502,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
 			t.LoadInput (doc);
 			Stream s = t.GetOutput () as Stream;
-			AssertEquals (expected, new StreamReader (s, Encoding.UTF8).ReadToEnd ());
+			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), expected);
 		}
 
 #if NET_2_0
@@ -518,12 +512,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
 			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
-			AssertEquals ("#1", String.Empty, doc.DocumentElement.GetAttribute ("xmlns"));
+			Assert.AreEqual (String.Empty, doc.DocumentElement.GetAttribute ("xmlns"), "#1");
 			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
 			t.LoadInput (doc);
 			Stream s = t.GetOutput () as Stream;
-			AssertEquals ("<foo xmlns=\"urn:foo\"><bar xmlns=\"urn:bar\"></bar></foo>", new StreamReader (s, Encoding.UTF8).ReadToEnd ());
-			AssertEquals ("#2", "urn:foo", doc.DocumentElement.GetAttribute ("xmlns"));
+			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), "<foo xmlns=\"urn:foo\"><bar xmlns=\"urn:bar\"></bar></foo>");
+			Assert.AreEqual ("urn:foo", doc.DocumentElement.GetAttribute ("xmlns"), "#2");
 		}
 
 		[Test]
@@ -533,14 +527,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = new XmlDocument ();
 			doc.AppendChild (doc.CreateElement ("foo", "urn:foo"));
 			doc.DocumentElement.AppendChild (doc.CreateElement ("bar", "urn:bar"));
-			AssertEquals ("#1", String.Empty, doc.DocumentElement.GetAttribute ("xmlns:f"));
+			Assert.AreEqual (String.Empty, doc.DocumentElement.GetAttribute ("xmlns:f"), "#1");
 			XmlDsigExcC14NTransform t = new XmlDsigExcC14NTransform ();
 			t.LoadInput (doc);
 			t.PropagatedNamespaces.Add ("f", "urn:foo");
 			t.PropagatedNamespaces.Add ("b", "urn:bar");
 			Stream s = t.GetOutput () as Stream;
-			AssertEquals ("<f:foo xmlns:f=\"urn:foo\"><b:bar xmlns:b=\"urn:bar\"></b:bar></f:foo>", new StreamReader (s, Encoding.UTF8).ReadToEnd ());
-			AssertEquals ("#2", "urn:foo", doc.DocumentElement.GetAttribute ("xmlns:f"));
+			Assert.AreEqual (new StreamReader (s, Encoding.UTF8).ReadToEnd (), "<f:foo xmlns:f=\"urn:foo\"><b:bar xmlns:b=\"urn:bar\"></b:bar></f:foo>");
+			Assert.AreEqual ("urn:foo", doc.DocumentElement.GetAttribute ("xmlns:f"), "#2");
 		}
 
 		[Test]

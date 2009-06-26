@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class SignatureTest : Assertion {
+	public class SignatureTest {
 
 		protected Signature signature;
 

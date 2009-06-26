@@ -18,16 +18,16 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class KeyInfoRetrievalMethodTest : Assertion {
+	public class KeyInfoRetrievalMethodTest {
 
 		[Test]
 		public void TestNewEmptyKeyNode () 
 		{
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
 #if NET_1_0
-			AssertEquals ("Empty", "<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			Assert.AreEqual ("<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "Empty");
 #else
-			AssertEquals ("Empty", "<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			Assert.AreEqual ("<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "Empty");
 #endif
 		}
 
@@ -42,8 +42,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoRetrievalMethod uri2 = new KeyInfoRetrievalMethod (uri1.Uri);
 			uri2.LoadXml (xel);
 
-			AssertEquals ("uri1==uri2", (uri1.GetXml ().OuterXml), (uri2.GetXml ().OuterXml));
-			AssertEquals ("uri==Uri", uri, uri1.Uri);
+			Assert.AreEqual ((uri1.GetXml ().OuterXml), (uri2.GetXml ().OuterXml), "uri1==uri2");
+			Assert.AreEqual (uri, uri1.Uri, "uri==Uri");
 		}
 
 		[Test]
@@ -62,10 +62,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			// verify that proper XML is generated (equals to original)
 			string s = (uri1.GetXml ().OuterXml);
-			AssertEquals ("Xml", value, s);
+			Assert.AreEqual (value, s, "Xml");
 
 			// verify that property is parsed correctly
-			AssertEquals ("Uri", "http://www.go-mono.com/", uri1.Uri);
+			Assert.AreEqual ("http://www.go-mono.com/", uri1.Uri, "Uri");
 		}
 
 		[Test]
@@ -90,10 +90,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			AssertCrypto.AssertXmlEquals ("invalid", "<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
 #elif NET_1_1
 			// note that URI="" is present (unlike a empty Uri)
-			AssertEquals("invalid", "<RetrievalMethod URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			Assert.AreEqual ("<RetrievalMethod URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "invalid");
 #else
 			// Fx 1.0 misnamed the tag name
-			AssertEquals("invalid", "<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
+			Assert.AreEqual ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "invalid");
 #endif
 		}
 	}

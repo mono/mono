@@ -29,7 +29,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigBase64TransformTest : Assertion {
+	public class XmlDsigBase64TransformTest {
 
 		protected UnprotectedXmlDsigBase64Transform transform;
 
@@ -43,10 +43,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/2000/09/xmldsig#base64", transform.Algorithm);
+			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#base64", transform.Algorithm, "Algorithm");
 
 			Type[] input = transform.InputTypes;
-			Assert ("Input #", (input.Length == 3));
+			Assert.IsTrue ((input.Length == 3), "Input #");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
@@ -59,19 +59,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				if (t.ToString () == "System.Xml.XmlNodeList")
 					ixmlnl = true;
 			}
-			Assert ("Input Stream", istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
 			Type[] output = transform.OutputTypes;
-			Assert ("Output #", (output.Length == 1));
+			Assert.IsTrue ((output.Length == 1), "Output #");
 			// check presence of every supported output types
 			bool ostream = false;
 			foreach (Type t in input) {
 				if (t.ToString () == "System.IO.Stream")
 					ostream = true;
 			}
-			Assert ("Output Stream", ostream);
+			Assert.IsTrue (ostream, "Output Stream");
 		}
 
 		[Test]
@@ -83,12 +83,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			input [2] = null;
 			// property does not return a clone
 			foreach (Type t in transform.InputTypes) {
-				AssertNull (t);
+				Assert.IsNull (t);
 			}
 			// it's not a static array
 			XmlDsigBase64Transform t2 = new XmlDsigBase64Transform ();
 			foreach (Type t in t2.InputTypes) {
-				AssertNotNull (t);
+				Assert.IsNotNull (t);
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
-			AssertNull ("Default InnerXml", xnl);
+			Assert.IsNull (xnl, "Default InnerXml");
 		}
 
 		private string Stream2String (Stream s) 
@@ -123,7 +123,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals("XmlDocument", base64, output);
+			Assert.AreEqual (base64, output, "XmlDocument");
 		}
 
 		[Test]
@@ -131,11 +131,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			XmlDocument doc = GetDoc ();
 			XmlNodeList xpath = doc.SelectNodes ("//.");
-			AssertEquals("XPathNodeList.Count", 3, xpath.Count);
+			Assert.AreEqual (3, xpath.Count, "XPathNodeList.Count");
 			transform.LoadInput (xpath);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("XPathNodeList", base64, output);
+			Assert.AreEqual (base64, output, "XPathNodeList");
 		}
 
 		[Test]
@@ -146,7 +146,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
 			// Note that ChildNodes does not contain the text node.
-			AssertEquals ("XmlChildNodes", String.Empty, output);
+			Assert.AreEqual (String.Empty, output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -159,7 +159,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			AssertEquals ("MemoryStream", base64, output);
+			Assert.AreEqual (base64, output, "MemoryStream");
 		}
 
 		[Test]
