@@ -1,5 +1,14 @@
 2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Use is_valid_blob_object to verify blob validity
+	when doing basic verification. 
+
+	This check must be done since the runtime peeks into signatures in much
+	more places than it does decoding so it makes sense to ensure that all
+	pointers to blob objects are well formed.
+
+2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_blob_object): Add extra minsize argument.
 	Use proper overflow dectection. Fix usage of it.
 
