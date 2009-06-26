@@ -298,6 +298,20 @@ public class ArrayTest : Assertion
 		AssertEquals("#D07", d1[0], d2[0]);
 	}
 
+	[Test] public void TestIndexer ()
+	{
+		int [] a = new int [10];
+		IList b = a;
+		try {
+			object c = b [-1];
+			Fail ("IList.this [-1] should throw");
+		} catch (IndexOutOfRangeException) {
+			// Good
+		} catch (Exception){
+			Fail ("Should have thrown an IndexOutOfRangeException");
+		}
+	}
+		
 	[Test]
 	public void TestCopy() {
 		{

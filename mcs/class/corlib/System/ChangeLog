@@ -1,5 +1,8 @@
 2009-06-25  Miguel de Icaza  <miguel@novell.com>
  
+	* Array.cs: IList.this needs to throw IndexOutOfRangeException
+	when the index is invalid, not ArgumentOutOfRangeException.
+
 	* Int32.cs: Do not crash if the FormatProvider returns a null
 	value on the call to GetFormat (Type).
 
