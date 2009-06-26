@@ -59,20 +59,20 @@ namespace MonoTests.System.Collections.Specialized
 		public void Indexers ()
 		{
 			BitVector32 b = new BitVector32 (7);
-			Assertion.Assert ("#1", b [0]);
-			Assertion.Assert ("#2", b [1]);
-			Assertion.Assert ("#3", b [2]);
-			Assertion.Assert ("#4", b [4]);
-			Assertion.Assert ("#5", !b [8]);
-			Assertion.Assert ("#6", !b [16]);
+			Assert.IsTrue (b [0], "#1");
+			Assert.IsTrue (b [1], "#2");
+			Assert.IsTrue (b [2], "#3");
+			Assert.IsTrue (b [4], "#4");
+			Assert.IsTrue (!b [8], "#5");
+			Assert.IsTrue (!b [16], "#6");
 			b [8] = true;
-			Assertion.Assert ("#7", b [4]);
-			Assertion.Assert ("#8", b [8]);
-			Assertion.Assert ("#9", !b [16]);
+			Assert.IsTrue (b [4], "#7");
+			Assert.IsTrue (b [8], "#8");
+			Assert.IsTrue (!b [16], "#9");
 			b [8] = false;
-			Assertion.Assert ("#10", b [4]);
-			Assertion.Assert ("#11", !b [8]);
-			Assertion.Assert ("#12", !b [16]);
+			Assert.IsTrue (b [4], "#10");
+			Assert.IsTrue (!b [8], "#11");
+			Assert.IsTrue (!b [16], "#12");
 
 			BitVector32.Section s = BitVector32.CreateSection (31);
 			s = BitVector32.CreateSection (64, s);
@@ -83,7 +83,7 @@ namespace MonoTests.System.Collections.Specialized
 			BitVector32 b2 = new BitVector32 (b1 [s]);
 			//Console.WriteLine (b1.ToString ());
 			//Console.WriteLine (b2.ToString ());
-			Assertion.AssertEquals ("#14", 123, b1 [s]);
+			Assert.AreEqual (123, b1 [s], "#14");
 			
 			// b1 [s] = 15;
 			//Console.WriteLine (b1.ToString ());
@@ -112,50 +112,50 @@ namespace MonoTests.System.Collections.Specialized
 		public void CreateSection ()
 		{
 			BitVector32.Section s = BitVector32.CreateSection (1);
-			Assertion.AssertEquals ("#1", (short) 1, s.Mask);
+			Assert.AreEqual ((short) 1, s.Mask, "#1");
 
 			s = BitVector32.CreateSection (2);
-			Assertion.AssertEquals ("#2", (short) 3, s.Mask);
+			Assert.AreEqual ((short) 3, s.Mask, "#2");
 
 			s = BitVector32.CreateSection (3);
-			Assertion.AssertEquals ("#3", (short) 3, s.Mask);
+			Assert.AreEqual ((short) 3, s.Mask, "#3");
 
 			s = BitVector32.CreateSection (5);
-			Assertion.AssertEquals ("#4", (short) 7, s.Mask);
+			Assert.AreEqual ((short) 7, s.Mask, "#4");
 			
 			s = BitVector32.CreateSection (20);
-			Assertion.AssertEquals ("#4", (short) 0x1f, s.Mask);
+			Assert.AreEqual ((short) 0x1f, s.Mask, "#4");
 
 			s = BitVector32.CreateSection (Int16.MaxValue);
-			Assertion.AssertEquals ("#5", (short) 0x7fff, s.Mask);
+			Assert.AreEqual ((short) 0x7fff, s.Mask, "#5");
 
 			s = BitVector32.CreateSection (Int16.MaxValue - 100);
-			Assertion.AssertEquals ("#6", (short) 0x7fff, s.Mask);
+			Assert.AreEqual ((short) 0x7fff, s.Mask, "#6");
 
 			try {
 				BitVector32.Section s2 = BitVector32.CreateSection (0);
-				Assertion.Fail ("#7");
+				Assert.Fail ("#7");
 			} catch (ArgumentException) {}
 
 			try {
 				BitVector32.Section s2 = BitVector32.CreateSection (-1);
-				Assertion.Fail ("#8");
+				Assert.Fail ("#8");
 			} catch (ArgumentException) {}
 
 			try {
 				BitVector32.Section s2 = BitVector32.CreateSection (Int16.MinValue);
-				Assertion.Fail ("#9");
+				Assert.Fail ("#9");
 			} catch (ArgumentException) {}
 			
 			s = BitVector32.CreateSection (20);
-			Assertion.AssertEquals ("#10a", (short) 0x1f, s.Mask);
-			Assertion.AssertEquals ("#10b", (short) 0x00, s.Offset);			
+			Assert.AreEqual ((short) 0x1f, s.Mask, "#10a");
+			Assert.AreEqual ((short) 0x00, s.Offset, "#10b");			
 			s = BitVector32.CreateSection (120, s);
-			Assertion.AssertEquals ("#10c", (short) 0x7f, s.Mask);
-			Assertion.AssertEquals ("#10d", (short) 0x05, s.Offset);					
+			Assert.AreEqual ((short) 0x7f, s.Mask, "#10c");
+			Assert.AreEqual ((short) 0x05, s.Offset, "#10d");					
 			s = BitVector32.CreateSection (1000, s);
-			Assertion.AssertEquals ("#10e", (short) 0x3ff, s.Mask);
-			Assertion.AssertEquals ("#10f", (short) 0x0c, s.Offset);			
+			Assert.AreEqual ((short) 0x3ff, s.Mask, "#10e");
+			Assert.AreEqual ((short) 0x0c, s.Offset, "#10f");			
 		}
 
 		[Test]
@@ -217,7 +217,7 @@ namespace MonoTests.System.Collections.Specialized
 			Assert.AreEqual (1, bv[sect], "bv[sect]");
                         bv [sect] = 0; 
 
-                        Assertion.AssertEquals ("#12a", Int32.MaxValue, bv.Data);
+                        Assert.AreEqual (Int32.MaxValue, bv.Data, "#12a");
                 }
 
                 [Test, ExpectedException (typeof (ArgumentException))]

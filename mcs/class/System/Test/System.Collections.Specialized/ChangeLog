@@ -1,3 +1,8 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* BitVector32Test.cs, NameValueCollectionTest.cs:
+	Upgrade to new NUnit style.
+
 2008-08-21  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* BitVector32Test.cs: Added test to make sure illegal sections cannot
