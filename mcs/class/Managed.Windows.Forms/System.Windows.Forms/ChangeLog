@@ -1,3 +1,8 @@
+2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XplatUICarbon.cs : support multi-byte text input.
+	  Fixed bug #501276.
+
 2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ListBox.cs: When creating DrawItemEventArgs, pass either

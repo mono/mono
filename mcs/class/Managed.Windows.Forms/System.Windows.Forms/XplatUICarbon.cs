@@ -1100,6 +1100,17 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
 			switch ((Msg)msg.Msg) {
+				case Msg.WM_IME_COMPOSITION:
+					string s = KeyboardHandler.ComposedString;
+					foreach (char c in s)
+						SendMessage (msg.HWnd, Msg.WM_IME_CHAR, (IntPtr) c, msg.LParam);
+					break;
+				case Msg.WM_IME_CHAR:
+					// On Windows API it sends two WM_CHAR messages for each byte, but
+					// I wonder if it is worthy to emulate it (also no idea how to 
+					// reconstruct those bytes into chars).
+					SendMessage (msg.HWnd, Msg.WM_CHAR, msg.WParam, msg.LParam);
+					return IntPtr.Zero;
 				case Msg.WM_QUIT: {
 					if (WindowMapping [hwnd.Handle] != null)
 
