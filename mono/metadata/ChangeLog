@@ -1,3 +1,8 @@
+2009-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (inflate_generic_type): Don't crash while trying to output a message
+	on why we're aborting.
+
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: DontLinger can take an int or a boolean too.
