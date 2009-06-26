@@ -32,6 +32,18 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class HttpWebRequestTest
 	{
+#if NET_2_0
+		private Random rand = new Random();
+		private byte[] data64KB = new byte[64 * 1024]; 
+
+		[TestFixtureSetUp]
+		public void Setup()
+		{
+		    ServicePointManager.Expect100Continue = false;
+		    rand.NextBytes(data64KB);
+		}
+#endif
+
 		[Test]
 #if TARGET_JVM
 		[Ignore ("Ignore failures in Sys.Net")]
@@ -1120,7 +1132,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("NotWorking")] // Assert #2 fails
-		public void NotModiedSince ()
+		public void NotModifiedSince ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
 			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
@@ -1507,6 +1519,488 @@ namespace MonoTests.System.Net
 			protected abstract void Run ();
 		}
 
+#if NET_2_0
+		[Test]
+		public void BeginGetRequestStream()
+		{
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = 0;
+			    r.BeginGetRequestStream((a) =>
+			    {
+				using (Stream s = r.EndGetRequestStream(a)) { };
+				c.Set();
+			    },
+				null);
+			},
+			(c) => { });
+		}
+
+		[Test]
+		public void BeginGetRequestStreamNoClose()
+		{
+		    this.DoRequest(
+			(r, c) => {
+			    r.Method = "POST";
+			    r.ContentLength = 1;
+			    r.BeginGetRequestStream((a) => 
+				{
+				    r.EndGetRequestStream(a);
+				    c.Set();
+				}, 
+				null);
+			},
+			(c) => {});
+		}
+
+		[Test]
+		public void BeginGetRequestStreamCancelIfNotAllBytesWritten()
+		{
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = 10;
+			    r.BeginGetRequestStream((a) =>
+			    {
+				WebException ex = ExceptionAssert.Throws<WebException>(() =>
+				    { using (Stream s = r.EndGetRequestStream(a)) { }; }
+				);
+				Assert.AreEqual(ex.Status, WebExceptionStatus.RequestCanceled);
+				c.Set();
+			    },
+				null);
+			},
+			(c) => { });
+		}
+
+		[Test]
+		public void GetRequestStream2()
+		{
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+			    using (Stream s = r.GetRequestStream())
+			    {
+				s.Write(data64KB, 0, data64KB.Length);
+			    }
+			    c.Set();
+			},
+			(c) => { });
+		}
+
+		[Test]
+		public void GetRequestStreamNotAllBytesWritten()
+		{
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+			    WebException ex = ExceptionAssert.Throws<WebException>(() => r.GetRequestStream().Close());
+			    Assert.AreEqual(ex.Status, WebExceptionStatus.RequestCanceled);
+			    c.Set();
+			},
+			(c) => {});
+		}
+
+		[Test]
+		public void GetRequestStreamTimeout()
+		{
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+			    r.Timeout = 100;
+			    WebException ex = ExceptionAssert.Throws<WebException>(() => r.GetRequestStream());
+			    Assert.IsTrue(ex.Status == WebExceptionStatus.Timeout || ex.Status == WebExceptionStatus.ConnectFailure);
+			    c.Set();
+			});
+		}
+
+		[Test]
+		public void BeginWrite()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+			    
+			    Stream s = r.GetRequestStream();
+
+			    s.BeginWrite(data64KB, 0, data64KB.Length, 
+				(a) =>
+				{
+				    s.EndWrite(a);
+				    s.Close();
+				    r.GetResponse().Close();
+				    c.Set();
+				},
+				null);
+			},
+			(c) => 
+			{
+			    c.Request.InputStream.ReadAll(received, 0, received.Length);
+			    c.Response.StatusCode = 204;
+			    c.Response.Close();
+			});
+
+		    Assert.AreEqual(data64KB, received);
+		}
+
+		[Test]
+		public void BeginWriteAfterAbort()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+
+			    Stream s = r.GetRequestStream();
+
+			    r.Abort();
+
+			    WebException ex = ExceptionAssert.Throws<WebException>(() => s.BeginWrite(data64KB, 0, data64KB.Length, null, null));
+			    Assert.AreEqual(ex.Status, WebExceptionStatus.RequestCanceled);
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Request.InputStream.ReadAll(received, 0, received.Length);
+			    c.Response.StatusCode = 204;
+			    c.Response.Close();
+			});
+		}
+
+		[Test]
+		public void PrematureStreamCloseAborts()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length * 2;
+
+			    Stream s = r.GetRequestStream();
+			    s.Write(data64KB, 0, data64KB.Length);
+
+			    WebException ex = ExceptionAssert.Throws<WebException>(() => s.Close());
+			    Assert.AreEqual(ex.Status, WebExceptionStatus.RequestCanceled);
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Request.InputStream.ReadAll(received, 0, received.Length);
+			    c.Response.StatusCode = 204;
+			    c.Response.Close();
+			});
+		}
+
+		[Test]
+		public void Write()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+
+			    using (Stream s = r.GetRequestStream())
+			    {
+				s.Write(data64KB, 0, data64KB.Length);
+			    }
+
+			    r.GetResponse().Close();
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Request.InputStream.ReadAll(received, 0, received.Length);
+			    c.Response.StatusCode = 204;
+			    c.Response.Close();
+			});
+
+		    Assert.AreEqual(data64KB, received);
+		}
+
+		[Test]
+		public void WriteServerAborts()
+		{
+		    ManualResetEvent abort = new ManualResetEvent(false);
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.Method = "POST";
+			    r.ContentLength = data64KB.Length;
+
+			    using (Stream s = r.GetRequestStream())
+			    {
+				abort.Set();
+				Thread.Sleep(100);
+				IOException ex = ExceptionAssert.Throws<IOException>(() => s.Write(data64KB, 0, data64KB.Length));
+			    }
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    abort.WaitOne();
+			    c.Response.Abort();
+			});
+		}
+
+		[Test]
+		public void Read()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    using (HttpWebResponse x = (HttpWebResponse)r.GetResponse())
+			    using (Stream s = x.GetResponseStream())
+			    {
+				s.ReadAll(received, 0, received.Length);
+			    }
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Response.StatusCode = 200;
+			    c.Response.ContentLength64 = data64KB.Length;
+			    c.Response.OutputStream.Write(data64KB, 0, data64KB.Length);
+			    c.Response.OutputStream.Close();
+			    c.Response.Close();
+			});
+
+		    Assert.AreEqual(data64KB, received);
+		}
+
+		[Test]
+		public void ReadTimeout2()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.ReadWriteTimeout = 10;
+			    using (HttpWebResponse x = (HttpWebResponse)r.GetResponse())
+			    using (Stream s = x.GetResponseStream())
+			    {
+				WebException ex = ExceptionAssert.Throws<WebException>(
+				    () => s.ReadAll(received, 0, received.Length));
+				Assert.AreEqual(ex.Status, WebExceptionStatus.Timeout);
+			    }
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Response.StatusCode = 200;
+			    c.Response.ContentLength64 = data64KB.Length;
+			    c.Response.OutputStream.Write(data64KB, 0, data64KB.Length / 2);
+			    Thread.Sleep(1000);
+			    c.Response.OutputStream.Write(data64KB, data64KB.Length / 2, data64KB.Length / 2);
+			    c.Response.OutputStream.Close();
+			    c.Response.Close();
+			});
+		}
+
+		[Test]
+		public void ReadServerAborted()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    using (HttpWebResponse x = (HttpWebResponse)r.GetResponse())
+			    using (Stream s = x.GetResponseStream())
+			    {
+				Assert.AreEqual(1, s.ReadAll(received, 0, received.Length));
+			    }
+
+			    c.Set();
+			},
+			(c) =>
+			{
+			    c.Response.StatusCode = 200;
+			    c.Response.ContentLength64 = data64KB.Length;
+			    c.Response.OutputStream.Write(data64KB, 0, 1);
+			    c.Response.Abort();
+			});
+		}
+
+		[Test]
+		public void BeginGetResponse2()
+		{
+		    byte[] received = new byte[data64KB.Length];
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.BeginGetResponse((a) => 
+				{
+				    using (HttpWebResponse x = (HttpWebResponse)r.EndGetResponse(a))
+				    using (Stream s = x.GetResponseStream())
+				    {
+					s.ReadAll(received, 0, received.Length);
+				    }
+
+				    c.Set();
+				}, null);
+			},
+			(c) =>
+			{
+			    c.Response.StatusCode = 200;
+			    c.Response.ContentLength64 = data64KB.Length;
+			    c.Response.OutputStream.Write(data64KB, 0, data64KB.Length);
+			    c.Response.OutputStream.Close();
+			    c.Response.Close();
+			});
+
+		    Assert.AreEqual(data64KB, received);
+		}
+
+		[Test]
+		public void BeginGetResponseAborts()
+		{
+		    ManualResetEvent aborted = new ManualResetEvent(false);
+
+		    this.DoRequest(
+			(r, c) =>
+			{
+			    r.BeginGetResponse((a) =>
+			    {
+				WebException ex = ExceptionAssert.Throws<WebException>(() => r.EndGetResponse(a));
+				Assert.AreEqual(ex.Status, WebExceptionStatus.RequestCanceled);
+				c.Set();
+			    }, null);
+
+			    aborted.WaitOne();
+			    r.Abort();
+			},
+			(c) =>
+			{
+			    aborted.Set();
+			    c.Response.StatusCode = 200;
+			    c.Response.ContentLength64 = 0;
+			    c.Response.Close();
+			});
+		}
+
+		private void DoRequest(Action<HttpWebRequest, EventWaitHandle> request)
+		{
+		    int port = rand.Next(20000, 65535);
+
+		    ManualResetEvent completed = new ManualResetEvent(false);
+		    Uri address = new Uri(string.Format("http://localhost:{0}", port));
+		    HttpWebRequest client = (HttpWebRequest)WebRequest.Create(address);
+
+		    request(client, completed);
+
+		    if (!completed.WaitOne(10000))
+		    {
+			Assert.Fail("Test hung");
+		    }
+		}
+
+		private void DoRequest(Action<HttpWebRequest, EventWaitHandle> request, Action<HttpListenerContext> processor)
+		{
+		    int port = rand.Next(20000, 65535);
+
+		    ManualResetEvent[] completed = new ManualResetEvent[2];
+		    completed[0] = new ManualResetEvent(false);
+		    completed[1] = new ManualResetEvent(false);
+
+		    using (ListenerScope scope = new ListenerScope(processor, port, completed[0]))
+		    {
+			ManualResetEvent clientCompleted = new ManualResetEvent(false);
+			Uri address = new Uri(string.Format("http://localhost:{0}", port));
+			HttpWebRequest client = (HttpWebRequest)WebRequest.Create(address);
+
+			ThreadPool.QueueUserWorkItem((o) => request(client, completed[1]));
+
+			if (!WaitHandle.WaitAll(completed, 10000))
+			{
+			    Assert.Fail("Test hung.");
+			}
+		    }
+		}
+
+		private class ListenerScope : IDisposable
+		{
+		    EventWaitHandle completed;
+		    public HttpListener listener;
+		    Action<HttpListenerContext> processor;
+
+		    public ListenerScope(Action<HttpListenerContext> processor, int port, EventWaitHandle completed)
+		    {
+			this.processor = processor;
+			this.completed = completed;
+
+			this.listener = new HttpListener();
+			this.listener.Prefixes.Add(string.Format("http://localhost:{0}/", port));
+			this.listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+			this.listener.Start();
+
+			this.listener.BeginGetContext(this.RequestHandler, null);
+		    }
+
+		    private void RequestHandler(IAsyncResult result)
+		    {
+			HttpListenerContext context = null;
+
+			try
+			{
+			    context = this.listener.EndGetContext(result);
+			}
+			catch (HttpListenerException ex)
+			{
+			    // check if the thread has been aborted as in the case when we are shutting down.
+			    if (ex.ErrorCode == 995)
+			    {
+				return;
+			    }
+			}
+			catch (ObjectDisposedException)
+			{
+			    return;
+			}
+
+			ThreadPool.QueueUserWorkItem(
+			    (o) => { try { this.processor(context); } catch (HttpListenerException) {} });
+
+			this.completed.Set();
+		    }
+
+		    public void Dispose()
+		    {
+			this.listener.Stop();
+		    }
+		}
+#endif
 #if !TARGET_JVM
 		class SslHttpServer : HttpServer {
 			X509Certificate _certificate;
@@ -1642,4 +2136,73 @@ namespace MonoTests.System.Net
 		}
 #endif
 	}
+#if NET_2_0
+	    public static class StreamExtensions
+	    {
+		public static int ReadAll(this Stream stream, byte[] buffer, int offset, int count)
+		{
+		    int totalRead = 0;
+
+		    while (totalRead < count)
+		    {
+			int bytesRead = stream.Read(buffer, offset + totalRead, count - totalRead);
+
+			if (bytesRead == 0)
+			{
+			    break;
+			}
+
+			totalRead += bytesRead;
+		    }
+
+		    return totalRead;
+		}
+	    }
+
+	    public class ExceptionAssert
+	    {
+		/// <summary>
+		/// Asserts that the function throws an exception.
+		/// </summary>
+		/// <param name="f">A function execute that is expected to raise an exception.</param>
+		/// <typeparam name="T">The type of exception that is expected.</typeparam>
+		/// <returns>The exception thrown.</returns>
+		/// <exception cref="AssertFailedException">If the function does not throw an exception 
+		/// or throws a different exception.</exception>
+		/// <example><![CDATA[
+		///     ExceptionAssert.Throws(typeof(ArgumentNullException), delegate {
+		///         myObject.myFunction(null); });
+		/// ]]></example>
+		public static T Throws<T>(Action f) where T : Exception
+		{
+		    Exception actualException = null;
+
+		    try
+		    {
+			f();
+		    }
+		    catch (Exception ex)
+		    {
+			actualException = ex;
+		    }
+
+		    if (actualException == null)
+		    {
+			throw new AssertionException(string.Format(
+			    "No exception thrown. Expected '{0}'",
+			    typeof(T).FullName));
+		    }
+		    else if (typeof(T) != actualException.GetType())
+		    {
+			throw new AssertionException(string.Format(
+			    "Caught exception of type '{0}'. Expected '{1}':{2}",
+			    actualException.GetType().FullName,
+			    typeof(T).FullName,
+			    Environment.NewLine + actualException));
+		    }
+
+		    return (T)actualException;
+		}
+	    }
+#endif
 }

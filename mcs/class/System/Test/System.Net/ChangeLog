@@ -1,3 +1,8 @@
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequestTest.cs: add a bunch of tests provided by
+	Bassan Tabbara.
+
 2009-06-26  Robert Jordan  <robertj@gmx.net>
 
 	* *.cs: Upgrade to new NUnit style.
