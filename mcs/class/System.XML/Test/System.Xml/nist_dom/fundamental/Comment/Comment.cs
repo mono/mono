@@ -23,7 +23,7 @@ namespace nist_dom.fundamental
     /// Summary description for Comment.
     /// </summary>
     [TestFixture]
-    public class CommentTest : Assertion//,ITest
+    public class CommentTest//,ITest
     {
         public static int i = 1;
 /*
@@ -69,7 +69,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0001CO --------------------------

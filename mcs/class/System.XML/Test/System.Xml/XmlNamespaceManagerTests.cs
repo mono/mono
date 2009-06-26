@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlNamespaceManagerTests : Assertion
+	public class XmlNamespaceManagerTests
 	{
 		private XmlNameTable nameTable;
 		private XmlNamespaceManager namespaceManager;
@@ -33,7 +33,7 @@ namespace MonoTests.System.Xml
 		public void NewNamespaceManager ()
 		{
 			// make sure that you can call PopScope when there aren't any to pop.
-			Assert (!namespaceManager.PopScope ());
+			Assert.IsTrue (!namespaceManager.PopScope ());
 
 			// the following strings should have been added to the name table by the
 			// namespace manager.
@@ -44,30 +44,30 @@ namespace MonoTests.System.Xml
 			string xmlNamespace = "http://www.w3.org/XML/1998/namespace";
 
 			// none of them should be null.
-			AssertNotNull (xmlnsPrefix);
-			AssertNotNull (xmlPrefix);
-			AssertNotNull (stringEmpty);
-			AssertNotNull (xmlnsNamespace);
-			AssertNotNull (xmlNamespace);
+			Assert.IsNotNull (xmlnsPrefix);
+			Assert.IsNotNull (xmlPrefix);
+			Assert.IsNotNull (stringEmpty);
+			Assert.IsNotNull (xmlnsNamespace);
+			Assert.IsNotNull (xmlNamespace);
 
 			// Microsoft's XmlNamespaceManager reports that these three
 			// namespaces aren't declared for some reason.
-			Assert (!namespaceManager.HasNamespace ("xmlns"));
-			Assert (!namespaceManager.HasNamespace ("xml"));
-			Assert (!namespaceManager.HasNamespace (String.Empty));
+			Assert.IsTrue (!namespaceManager.HasNamespace ("xmlns"));
+			Assert.IsTrue (!namespaceManager.HasNamespace ("xml"));
+			Assert.IsTrue (!namespaceManager.HasNamespace (String.Empty));
 
 			// these three namespaces are declared by default.
-			AssertEquals ("http://www.w3.org/2000/xmlns/", namespaceManager.LookupNamespace ("xmlns"));
-			AssertEquals ("http://www.w3.org/XML/1998/namespace", namespaceManager.LookupNamespace ("xml"));
-			AssertEquals (String.Empty, namespaceManager.LookupNamespace (String.Empty));
+			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", namespaceManager.LookupNamespace ("xmlns"));
+			Assert.AreEqual ("http://www.w3.org/XML/1998/namespace", namespaceManager.LookupNamespace ("xml"));
+			Assert.AreEqual (String.Empty, namespaceManager.LookupNamespace (String.Empty));
 
 			// the namespaces should be the same references found in the name table.
-			AssertSame (xmlnsNamespace, namespaceManager.LookupNamespace ("xmlns"));
-			AssertSame (xmlNamespace, namespaceManager.LookupNamespace ("xml"));
-			AssertSame (stringEmpty, namespaceManager.LookupNamespace (String.Empty));
+			Assert.AreSame (xmlnsNamespace, namespaceManager.LookupNamespace ("xmlns"));
+			Assert.AreSame (xmlNamespace, namespaceManager.LookupNamespace ("xml"));
+			Assert.AreSame (stringEmpty, namespaceManager.LookupNamespace (String.Empty));
 
 			// looking up undeclared namespaces should return null.
-			AssertNull (namespaceManager.LookupNamespace ("foo"));
+			Assert.IsNull (namespaceManager.LookupNamespace ("foo"));
 		}
 
 		[Test]
@@ -76,12 +76,12 @@ namespace MonoTests.System.Xml
 			// add a new namespace.
 			namespaceManager.AddNamespace ("foo", "http://foo/");
 			// make sure the new namespace is there.
-			Assert (namespaceManager.HasNamespace ("foo"));
-			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
+			Assert.IsTrue (namespaceManager.HasNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// adding a different namespace with the same prefix
 			// is allowed.
 			namespaceManager.AddNamespace ("foo", "http://foo1/");
-			AssertEquals ("http://foo1/", namespaceManager.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://foo1/", namespaceManager.LookupNamespace ("foo"));
 		}
 
 		[Test]
@@ -96,13 +96,13 @@ namespace MonoTests.System.Xml
 			fooNamespace2 += "foo/";
 
 			// the references must be different in order for this test to prove anything.
-			Assert (!Object.ReferenceEquals (fooNamespace, fooNamespace2));
+			Assert.IsTrue (!Object.ReferenceEquals (fooNamespace, fooNamespace2));
 
 			// add the namespace with the reference that's not in the name table.
 			namespaceManager.AddNamespace ("foo", fooNamespace2);
 
 			// the returned reference should be the same one that's in the name table.
-			AssertSame (fooNamespace, namespaceManager.LookupNamespace ("foo"));
+			Assert.AreSame (fooNamespace, namespaceManager.LookupNamespace ("foo"));
 		}
 
 		[Test]
@@ -126,19 +126,19 @@ namespace MonoTests.System.Xml
 			// add a new namespace.
 			namespaceManager.AddNamespace ("foo", "http://foo/");
 			// make sure the new namespace is there.
-			Assert (namespaceManager.HasNamespace ("foo"));
-			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
+			Assert.IsTrue (namespaceManager.HasNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// push a new scope.
 			namespaceManager.PushScope ();
 			// add a new namespace.
 			namespaceManager.AddNamespace ("bar", "http://bar/");
 			// make sure the old namespace is not in this new scope.
-			Assert (!namespaceManager.HasNamespace ("foo"));
+			Assert.IsTrue (!namespaceManager.HasNamespace ("foo"));
 			// but we're still supposed to be able to lookup the old namespace.
-			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// make sure the new namespace is there.
-			Assert (namespaceManager.HasNamespace ("bar"));
-			AssertEquals ("http://bar/", namespaceManager.LookupNamespace ("bar"));
+			Assert.IsTrue (namespaceManager.HasNamespace ("bar"));
+			Assert.AreEqual ("http://bar/", namespaceManager.LookupNamespace ("bar"));
 		}
 
 		[Test]
@@ -147,17 +147,17 @@ namespace MonoTests.System.Xml
 			// add some namespaces and a scope.
 			PushScope ();
 			// pop the scope.
-			Assert (namespaceManager.PopScope ());
+			Assert.IsTrue (namespaceManager.PopScope ());
 			// make sure the first namespace is still there.
-			Assert (namespaceManager.HasNamespace ("foo"));
-			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
+			Assert.IsTrue (namespaceManager.HasNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// make sure the second namespace is no longer there.
-			Assert (!namespaceManager.HasNamespace ("bar"));
-			AssertNull (namespaceManager.LookupNamespace ("bar"));
+			Assert.IsTrue (!namespaceManager.HasNamespace ("bar"));
+			Assert.IsNull (namespaceManager.LookupNamespace ("bar"));
 			// make sure there are no more scopes to pop.
-			Assert (!namespaceManager.PopScope ());
+			Assert.IsTrue (!namespaceManager.PopScope ());
 			// make sure that popping again doesn't cause an exception.
-			Assert (!namespaceManager.PopScope ());
+			Assert.IsTrue (!namespaceManager.PopScope ());
 		}
 
 		[Test]
@@ -171,8 +171,8 @@ namespace MonoTests.System.Xml
 			namespaceManager .PopScope ();	// 2
 			namespaceManager .PopScope ();	// 1
 			namespaceManager .PopScope ();	// 0
-			AssertEquals ("urn:foo", namespaceManager.LookupNamespace ("foo"));
-			AssertEquals ("urn:bar", namespaceManager.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", namespaceManager.LookupNamespace ("foo"));
+			Assert.AreEqual ("urn:bar", namespaceManager.LookupNamespace ("bar"));
 		}
 
 		[Test]
@@ -182,13 +182,13 @@ namespace MonoTests.System.Xml
 				new XmlNamespaceManager (new NameTable ());
 			string ns = nsmgr.NameTable.Add ("urn:foo");
 			nsmgr.AddNamespace ("foo", ns);
-			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			Assert.AreEqual ("foo", nsmgr.LookupPrefix (ns));
 			nsmgr.PushScope ();
-			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			Assert.AreEqual ("foo", nsmgr.LookupPrefix (ns));
 			nsmgr.PopScope ();
-			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			Assert.AreEqual ("foo", nsmgr.LookupPrefix (ns));
 			nsmgr.RemoveNamespace ("foo", ns);
-			AssertNull (nsmgr.LookupPrefix (ns));
+			Assert.IsNull (nsmgr.LookupPrefix (ns));
 		}
 
 		[Test]
@@ -200,8 +200,8 @@ namespace MonoTests.System.Xml
 			nsmgr.NameTable.Add ("urn:hoge");
 			nsmgr.NameTable.Add ("urn:fuga");
 			nsmgr.AddNamespace (string.Empty, "urn:hoge");
-			AssertNull (nsmgr.LookupPrefix ("urn:fuga"));
-			AssertEquals (String.Empty, nsmgr.LookupPrefix ("urn:hoge"));
+			Assert.IsNull (nsmgr.LookupPrefix ("urn:fuga"));
+			Assert.AreEqual (String.Empty, nsmgr.LookupPrefix ("urn:hoge"));
 		}
 
 		string suffix = "oo";
@@ -214,9 +214,9 @@ namespace MonoTests.System.Xml
 			XmlNamespaceManager nsmgr =
 				new XmlNamespaceManager (new NameTable ());
 			nsmgr.AddNamespace ("foo", "urn:foo");
-			AssertNotNull (nsmgr.LookupPrefix ("urn:foo"));
+			Assert.IsNotNull (nsmgr.LookupPrefix ("urn:foo"));
 // FIXME: This returns registered URI inconsistently.
-//			AssertNull ("It is not atomized and thus should be failed", nsmgr.LookupPrefix ("urn:f" + suffix));
+//			Assert.IsNull (nsmgr.LookupPrefix ("urn:f" + suffix), "It is not atomized and thus should be failed");
 		}
 
 #if NET_2_0
@@ -231,39 +231,39 @@ namespace MonoTests.System.Xml
 			XmlNamespaceManager nsmgr =
 				new XmlNamespaceManager (new NameTable ());
 
-			AssertEquals ("#1", 0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#2", 0, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#3", 1, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (0, nsmgr.GetNamespacesInScope (l).Count, "#1");
+			Assert.AreEqual (0, nsmgr.GetNamespacesInScope (x).Count, "#2");
+			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (a).Count, "#3");
 
 			nsmgr.AddNamespace ("foo", "urn:foo");
-			AssertEquals ("#4", 1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#5", 1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#6", 2, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (l).Count, "#4");
+			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (x).Count, "#5");
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (a).Count, "#6");
 
 			// default namespace
 			nsmgr.AddNamespace ("", "urn:empty");
-			AssertEquals ("#7", 2, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#8", 2, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#9", 3, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (l).Count, "#7");
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (x).Count, "#8");
+			Assert.AreEqual (3, nsmgr.GetNamespacesInScope (a).Count, "#9");
 
 			// PushScope
 			nsmgr.AddNamespace ("foo", "urn:foo");
 			nsmgr.PushScope ();
-			AssertEquals ("#10", 0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#11", 2, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#12", 3, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (0, nsmgr.GetNamespacesInScope (l).Count, "#10");
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (x).Count, "#11");
+			Assert.AreEqual (3, nsmgr.GetNamespacesInScope (a).Count, "#12");
 
 			// PopScope
 			nsmgr.PopScope ();
-			AssertEquals ("#13", 2, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#14", 2, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#15", 3, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (l).Count, "#13");
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (x).Count, "#14");
+			Assert.AreEqual (3, nsmgr.GetNamespacesInScope (a).Count, "#15");
 
 			nsmgr.AddNamespace ("", "");
 			// MS bug - it should return 1 for .Local but it returns 2 instead.
-			AssertEquals ("#16", 1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals ("#17", 1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals ("#18", 2, nsmgr.GetNamespacesInScope (a).Count);
+			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (l).Count, "#16");
+			Assert.AreEqual (1, nsmgr.GetNamespacesInScope (x).Count, "#17");
+			Assert.AreEqual (2, nsmgr.GetNamespacesInScope (a).Count, "#18");
 		}
 #endif
 	}

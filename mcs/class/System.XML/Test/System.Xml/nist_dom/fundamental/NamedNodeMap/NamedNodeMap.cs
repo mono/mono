@@ -21,7 +21,7 @@ using NUnit.Framework;
 namespace nist_dom.fundamental
 {
     [TestFixture]
-    public class NamedNodeMapTest : Assertion
+    public class NamedNodeMapTest
     {
         public static int i = 2;
 /*
@@ -84,7 +84,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0001M --------------------------
@@ -136,7 +136,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0002M --------------------------
@@ -187,7 +187,7 @@ namespace nist_dom.fundamental
             results.expected = (expectedValue == null).ToString();
             results.actual = (computedValue == null).ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0003M --------------------------
@@ -248,7 +248,7 @@ namespace nist_dom.fundamental
             results.actual = computedValue;
 
             util.resetData();
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0004M --------------------------
@@ -311,7 +311,7 @@ namespace nist_dom.fundamental
             results.actual = computedValue;
 
             util.resetData();
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0005M --------------------------
@@ -373,7 +373,7 @@ namespace nist_dom.fundamental
             results.actual = computedValue;
 
             util.resetData();
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0006M --------------------------
@@ -429,7 +429,7 @@ namespace nist_dom.fundamental
             results.actual = computedValue;
 
             util.resetData();
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0007M --------------------------
@@ -485,7 +485,7 @@ namespace nist_dom.fundamental
             results.actual = computedValue;
 
             util.resetData();
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0008M --------------------------
@@ -544,7 +544,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0009M --------------------------
@@ -600,7 +600,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0010M --------------------------
@@ -651,7 +651,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0011M --------------------------
@@ -707,7 +707,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0012M --------------------------
@@ -759,7 +759,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0013M --------------------------
@@ -811,7 +811,7 @@ namespace nist_dom.fundamental
             results.expected = (expectedValue == null).ToString();
             results.actual = (computedValue == null).ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0014M --------------------------
@@ -861,7 +861,7 @@ namespace nist_dom.fundamental
             results.expected = (expectedValue == null).ToString();
             results.actual = (computedValue == null).ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0015M --------------------------
@@ -908,7 +908,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0016M --------------------------
@@ -961,7 +961,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue;
             results.actual = computedValue;
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0017M --------------------------
@@ -1021,7 +1021,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0018M --------------------------
@@ -1078,7 +1078,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0019M --------------------------
@@ -1145,7 +1145,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0020M --------------------------
@@ -1208,7 +1208,7 @@ namespace nist_dom.fundamental
 
             util.resetData();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
 
         //------------------------ End test case core-0021M --------------------------

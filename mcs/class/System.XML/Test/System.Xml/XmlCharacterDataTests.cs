@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlCharacterDataTests : Assertion
+	public class XmlCharacterDataTests
 	{
 		XmlDocument document;
 		XmlComment comment;
@@ -48,13 +48,13 @@ namespace MonoTests.System.Xml
 			changed = false;
 			changing = false;
 			comment.AppendData ("bar");
-			Assert (changed);
-			Assert (changing);
-			AssertEquals ("foobar", comment.Data);
+			Assert.IsTrue (changed);
+			Assert.IsTrue (changing);
+			Assert.AreEqual ("foobar", comment.Data);
 
 			comment.Value = "foo";
 			comment.AppendData (null);
-			AssertEquals ("foo", comment.Data);
+			Assert.AreEqual ("foo", comment.Data);
 		}
 
 		[Test]
@@ -64,25 +64,25 @@ namespace MonoTests.System.Xml
 			changed = false;
 			changing = false;
 			comment.DeleteData (1, 1);
-			Assert (changed);
-			Assert (changing);
-			AssertEquals ("br", comment.Data);
+			Assert.IsTrue (changed);
+			Assert.IsTrue (changing);
+			Assert.AreEqual ("br", comment.Data);
 
 			try 
 			{
 				comment.Value = "foo";
 				comment.DeleteData(-1, 1);
-				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Assert.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (ArgumentOutOfRangeException) {}
 
 			comment.Value = "foo";
 			comment.DeleteData(1, 5);
-			AssertEquals("f", comment.Data);
+			Assert.AreEqual ("f", comment.Data);
 
 			comment.Value = "foo";
 			comment.DeleteData(3, 10);
-			AssertEquals("foo", comment.Data);
+			Assert.AreEqual ("foo", comment.Data);
 		}
 
 		[Test]
@@ -95,27 +95,27 @@ namespace MonoTests.System.Xml
 			changed = false;
 			changing = false;
 			comment.InsertData (3, "bar");
-			Assert (changed);
-			Assert (changing);
-			AssertEquals ("foobarbaz", comment.Data);
+			Assert.IsTrue (changed);
+			Assert.IsTrue (changing);
+			Assert.AreEqual ("foobarbaz", comment.Data);
 
 			try 
 			{
 				comment.Value = "foo";
 				comment.InsertData (-1, "bar");
-				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Assert.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (ArgumentOutOfRangeException) {}
 
 			comment.Value = "foo";
 			comment.InsertData (3, "bar");
-			AssertEquals ("foobar", comment.Data);
+			Assert.AreEqual ("foobar", comment.Data);
 
 			try 
 			{
 				comment.Value = "foo";
 				comment.InsertData (4, "bar");
-				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Assert.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (ArgumentOutOfRangeException) {}
 
@@ -123,7 +123,7 @@ namespace MonoTests.System.Xml
 			{
 				comment.Value = "foo";
 				comment.InsertData (1, null);
-				Fail ("Expected an ArgumentNullException to be thrown.");
+				Assert.Fail ("Expected an ArgumentNullException to be thrown.");
 			} 
 			catch (ArgumentNullException) {}
 		}
@@ -137,23 +137,23 @@ namespace MonoTests.System.Xml
 			changed = false;
 			changing = false;
 			comment.ReplaceData (0, 3, "bar");
-			Assert (changed);
-			Assert (changing);
-			AssertEquals ("bar", comment.Data);
+			Assert.IsTrue (changed);
+			Assert.IsTrue (changing);
+			Assert.AreEqual ("bar", comment.Data);
 
 			comment.Value = "foo";
 			comment.ReplaceData (2, 3, "bar");
-			AssertEquals ("fobar", comment.Data);
+			Assert.AreEqual ("fobar", comment.Data);
 
 			comment.Value = "foo";
 			comment.ReplaceData (3, 3, "bar");
-			AssertEquals ("foobar", comment.Data);
+			Assert.AreEqual ("foobar", comment.Data);
 
 			try 
 			{
 				comment.Value = "foo";
 				comment.ReplaceData (4, 3, "bar");
-				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Assert.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (ArgumentOutOfRangeException) {}
 
@@ -161,23 +161,23 @@ namespace MonoTests.System.Xml
 			{
 				comment.Value = "foo";
 				comment.ReplaceData (-1, 3, "bar");
-				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+				Assert.Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
 			} 
 			catch (ArgumentOutOfRangeException) {}
 
 			comment.Value = "foo";
 			comment.ReplaceData (0, 2, "bar");
-			AssertEquals ("baro", comment.Data);
+			Assert.AreEqual ("baro", comment.Data);
 
 			comment.Value = "foo";
 			comment.ReplaceData (0, 5, "bar");
-			AssertEquals ("bar", comment.Data);
+			Assert.AreEqual ("bar", comment.Data);
 
 			try 
 			{
 				comment.Value = "foo";
 				comment.ReplaceData (1, 1, null);
-				Fail ("Expected an ArgumentNullException to be thrown.");
+				Assert.Fail ("Expected an ArgumentNullException to be thrown.");
 			} 
 			catch (ArgumentNullException) {}
 		}
@@ -186,7 +186,7 @@ namespace MonoTests.System.Xml
 		public void Substring ()
 		{
 			comment.Value = "test string";
-			AssertEquals ("test string", comment.Substring (0, 50));
+			Assert.AreEqual (comment.Substring (0, 50), "test string");
 		}
 
 		[Test]

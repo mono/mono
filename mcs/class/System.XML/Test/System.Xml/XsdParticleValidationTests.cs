@@ -22,7 +22,7 @@ namespace MonoTests.System.Xml
 //	using XmlValidatingReader = XmlTextReader;
 
 	[TestFixture]
-	public class XsdParticleValidationTests : Assertion
+	public class XsdParticleValidationTests
 	{
 		XmlSchema schema;
 		XmlReader xr;

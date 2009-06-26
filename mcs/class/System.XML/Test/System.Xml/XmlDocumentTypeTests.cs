@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlDocumentTypeTests : Assertion
+	public class XmlDocumentTypeTests
 	{
 		XmlDocument document;
 		XmlDocumentType docType;
@@ -34,30 +34,28 @@ namespace MonoTests.System.Xml
 //			assertequals (original.nodetype + " was incorrectly cloned.",
 //				      original.baseuri, cloned.baseuri);			
 
-			AssertNull (cloned.ParentNode);
-			AssertEquals ("Value incorrectly cloned",
-				      original.Value, cloned.Value);
+			Assert.IsNull (cloned.ParentNode);
+			Assert.AreEqual (original.Value, cloned.Value, "Value incorrectly cloned");
 
-                        Assert ("Copies, not pointers", !Object.ReferenceEquals (original, cloned));
+                        Assert.IsTrue (!Object.ReferenceEquals (original, cloned), "Copies, not pointers");
 		}
 
 		[Test]
 		public void Name ()
 		{
-			AssertEquals ("Getting Name property", "book", docType.Name);
+			Assert.AreEqual ("book", docType.Name, "Getting Name property");
 		}
 
 		[Test]
 		public void LocalName ()
 		{
-			AssertEquals ("Getting LocalName property", "book", docType.LocalName);
+			Assert.AreEqual ("book", docType.LocalName, "Getting LocalName property");
 		}
 
 		[Test]
 		public void InternalSubset ()
 		{
-			AssertEquals ("Getting Internal Subset property",
-				      "<!ELEMENT book ANY>", docType.InternalSubset);
+			Assert.AreEqual ("<!ELEMENT book ANY>", docType.InternalSubset, "Getting Internal Subset property");
 		}
 
 		[Test]
@@ -71,21 +69,20 @@ namespace MonoTests.System.Xml
 				return;
 
 			} catch (Exception) {				
-				Fail ("Incorrect Exception thrown.");
+				Assert.Fail ("Incorrect Exception thrown.");
 			}
 		}
 
 		[Test]
 		public void NodeType ()
 		{
-			AssertEquals ("NodeType property broken",
-				      docType.NodeType.ToString (), "DocumentType");
+			Assert.AreEqual (docType.NodeType.ToString (), "DocumentType", "NodeType property broken");
 		}
 		
 		[Test]
 		public void IsReadOnly ()
 		{
-			AssertEquals ("IsReadOnly property", "True", docType.IsReadOnly.ToString ());
+			Assert.AreEqual ("True", docType.IsReadOnly.ToString (), "IsReadOnly property");
 		}
 
 		[Test]
@@ -112,7 +109,7 @@ namespace MonoTests.System.Xml
 			XmlNode cloned2 = docType.CloneNode (false);
 			XmlNodeBaseProperties (original, cloned2);
 
-			AssertEquals ("Deep and shallow cloning", cloned1.Value, cloned2.Value);
+			Assert.AreEqual (cloned1.Value, cloned2.Value, "Deep and shallow cloning");
 		}
 	       
 	}

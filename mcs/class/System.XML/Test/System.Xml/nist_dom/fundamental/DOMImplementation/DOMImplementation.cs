@@ -22,7 +22,7 @@ namespace nist_dom.fundamental
     /// Summary description for Comment.
     /// </summary>
     [TestFixture]
-    public class DOMImplementationTest : Assertion
+    public class DOMImplementationTest
     {
         public static int i = 2;
 /*
@@ -73,7 +73,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue.ToString();
             results.actual = computedValue.ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
         //------------------------ End test case core-0001DI --------------------------
         //
@@ -117,7 +117,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue.ToString();
             results.actual = computedValue.ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
         //------------------------ End test case core-0002DI --------------------------
         //
@@ -163,7 +163,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue.ToString();
             results.actual = computedValue.ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
         //------------------------ End test case core-0003DI --------------------------
         //
@@ -208,7 +208,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue.ToString();
             results.actual = computedValue.ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
         //------------------------ End test case core-0004DI --------------------------
         //
@@ -255,7 +255,7 @@ namespace nist_dom.fundamental
             results.expected = expectedValue.ToString();
             results.actual = computedValue.ToString();
 
-            AssertEquals (results.expected, results.actual);
+            Assert.AreEqual (results.expected, results.actual);
         }
         //------------------------ End test case core-0005DI --------------------------
     }

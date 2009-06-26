@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlTextTests : Assertion
+	public class XmlTextTests
 	{
 		XmlDocument document;
 		XmlText text;
@@ -67,8 +67,8 @@ namespace MonoTests.System.Xml
 		public void InnerAndOuterXml ()
 		{
 			text = document.CreateTextNode ("&<>\"'");
-			AssertEquals (String.Empty, text.InnerXml);
-			AssertEquals ("&amp;&lt;&gt;\"'", text.OuterXml);
+			Assert.AreEqual (String.Empty, text.InnerXml);
+			Assert.AreEqual ("&amp;&lt;&gt;\"'", text.OuterXml);
 		}
 		
 		[Test]
@@ -80,12 +80,12 @@ namespace MonoTests.System.Xml
 			document.NodeRemoved += new XmlNodeChangedEventHandler(EventNodeRemoved);
 			XmlText t = document.DocumentElement.FirstChild as XmlText;
 			t.SplitText (5);
-			AssertNotNull (t.NextSibling);
-			AssertEquals ("test ", t.Value);
-			AssertEquals ("text.", t.NextSibling.Value);
-			Assert (changed);
-			Assert (inserted);
-			Assert (!removed);
+			Assert.IsNotNull (t.NextSibling);
+			Assert.AreEqual ("test ", t.Value);
+			Assert.AreEqual ("text.", t.NextSibling.Value);
+			Assert.IsTrue (changed);
+			Assert.IsTrue (inserted);
+			Assert.IsTrue (!removed);
 		}
 	}
 }

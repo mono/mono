@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlWriterSettingsTests : Assertion
+	public class XmlWriterSettingsTests
 	{
 		[Test]
 		public void DefaultValue ()
@@ -31,15 +31,15 @@ namespace MonoTests.System.Xml
 
 		private void DefaultValue (XmlWriterSettings s)
 		{
-			AssertEquals (true, s.CheckCharacters);
-			AssertEquals (false, s.CloseOutput);
-			AssertEquals (ConformanceLevel.Document, s.ConformanceLevel);
-			AssertEquals (Encoding.UTF8, s.Encoding);
-			AssertEquals (false, s.Indent);
-			AssertEquals ("  ", s.IndentChars);
-			AssertEquals (Environment.NewLine, s.NewLineChars);
-			AssertEquals (false, s.NewLineOnAttributes);
-			AssertEquals (false, s.OmitXmlDeclaration);
+			Assert.AreEqual (true, s.CheckCharacters);
+			Assert.AreEqual (false, s.CloseOutput);
+			Assert.AreEqual (ConformanceLevel.Document, s.ConformanceLevel);
+			Assert.AreEqual (Encoding.UTF8, s.Encoding);
+			Assert.AreEqual (false, s.Indent);
+			Assert.AreEqual ("  ", s.IndentChars);
+			Assert.AreEqual (Environment.NewLine, s.NewLineChars);
+			Assert.AreEqual (false, s.NewLineOnAttributes);
+			Assert.AreEqual (false, s.OmitXmlDeclaration);
 		}
 
 		[Test]
@@ -54,9 +54,9 @@ namespace MonoTests.System.Xml
 			w.WriteEndElement ();
 			w.Close ();
 			byte [] data = ms.ToArray ();
-			Assert (data.Length != 0);
+			Assert.IsTrue (data.Length != 0);
 			string str = s.Encoding.GetString (data);
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"shift_jis\"?><root />", str);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"shift_jis\"?><root />", str);
 
 			// For TextWriter it does not make sense
 			StringWriter sw = new StringWriter ();
@@ -64,7 +64,7 @@ namespace MonoTests.System.Xml
 			w.WriteStartElement ("root");
 			w.WriteEndElement ();
 			w.Close ();
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root />", sw.ToString ());
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root />", sw.ToString ());
 		}
 
 		[Test]
@@ -126,7 +126,7 @@ namespace MonoTests.System.Xml
 			XmlWriter w = XmlWriter.Create (sw, s);
 			w.WriteElementString ("foo", "");
 			w.Close ();
-			AssertEquals ("<foo />", sw.ToString ());
+			Assert.AreEqual ("<foo />", sw.ToString ());
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace MonoTests.System.Xml
 			w.WriteStartDocument ();
 			w.WriteElementString ("foo", "");
 			w.Close ();
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo />", sw.ToString ());
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo />", sw.ToString ());
 		}
 
 		[Test]
@@ -153,7 +153,7 @@ namespace MonoTests.System.Xml
 			w.WriteStartDocument ();
 			w.WriteElementString ("foo", "");
 			w.Close ();
-			AssertEquals ("<foo />", sw.ToString ());
+			Assert.AreEqual ("<foo />", sw.ToString ());
 		}
 
 		[Test]
@@ -173,7 +173,7 @@ namespace MonoTests.System.Xml
 			XmlWriter w = XmlWriter.Create (sw, s);
 			w.WriteElementString ("foo", "");
 			w.Close ();
-			AssertEquals ("<foo />", sw.ToString ());
+			Assert.AreEqual ("<foo />", sw.ToString ());
 		}
 
 		[Test]
@@ -198,7 +198,7 @@ namespace MonoTests.System.Xml
 			w.WriteEndElement ();
 			w.WriteEndElement ();
 			w.Close ();
-			AssertEquals (output, sw.ToString ());
+			Assert.AreEqual (output, sw.ToString ());
 		}
 
 		[Test]
@@ -229,7 +229,7 @@ namespace MonoTests.System.Xml
 			w.WriteStartElement ("root");
 			w.WriteEndElement ();
 			w.Flush ();
-			AssertEquals ("<root />", sb.ToString ());
+			Assert.AreEqual ("<root />", sb.ToString ());
 		}
 
 		[Test]
@@ -246,7 +246,7 @@ namespace MonoTests.System.Xml
 			w.WriteString ("some string");
 			w.WriteEndElement ();
 			w.Close ();
-			AssertEquals ("#1", "<root a=\"v\" b=\"x\">some string</root>", sw.ToString ());
+			Assert.AreEqual ("<root a=\"v\" b=\"x\">some string</root>", sw.ToString (), "#1");
 
 			// mixed content: bug #81770
 			string expected = "<root>some string<mixed\n    a=\"v\"\n    b=\"x\">some string</mixed></root>";
@@ -262,7 +262,7 @@ namespace MonoTests.System.Xml
 			w.WriteEndElement ();
 			w.WriteEndElement ();
 			w.Close ();
-			AssertEquals ("#2", expected, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (expected, sw.ToString ().Replace ("\r\n", "\n"), "#2");
 		}
 
 		[Test]
@@ -282,7 +282,7 @@ namespace MonoTests.System.Xml
 				doc.Save (xw);
 			}
 			// no heading newline.
-			AssertEquals ("<root />", sw.ToString ());
+			Assert.AreEqual ("<root />", sw.ToString ());
 		}
 	}
 }

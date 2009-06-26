@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlUrlResolverTests : Assertion
+	public class XmlUrlResolverTests
 	{
 		XmlUrlResolver resolver;
 
@@ -28,7 +28,7 @@ namespace MonoTests.System.Xml
 		public void FileUri ()
 		{
 			Uri resolved = resolver.ResolveUri (null, "Test/XmlFiles/xsd/xml.xsd");
-			AssertEquals ("file", resolved.Scheme);
+			Assert.AreEqual ("file", resolved.Scheme);
 			Stream s = resolver.GetEntity (resolved, null, typeof (Stream)) as Stream;
 		}
 
@@ -36,23 +36,23 @@ namespace MonoTests.System.Xml
 		[Category ("NotDotNet")]
 		public void FileUri2 ()
 		{
-			AssertEquals ("file://usr/local/src", resolver.ResolveUri (new Uri ("file://usr/local/src"), null).ToString ());
+			Assert.AreEqual (resolver.ResolveUri (new Uri ("file://usr/local/src"), null).ToString (), "file://usr/local/src");
 			// MS.NET returns the Uri.ToString() as 
 			// file://usr/local/src, but it is apparently 
 			// incorrect in the context of Unix path.
-			AssertEquals ("file:///usr/local/src", resolver.ResolveUri (new Uri ("file:///usr/local/src"), null).ToString ());
+			Assert.AreEqual (resolver.ResolveUri (new Uri ("file:///usr/local/src"), null).ToString (), "file:///usr/local/src");
 		}
 
 		[Test]
 		public void HttpUri ()
 		{
-			AssertEquals ("http://test.xml/", resolver.ResolveUri (null, "http://test.xml").ToString ());
+			Assert.AreEqual (resolver.ResolveUri (null, "http://test.xml").ToString (), "http://test.xml/");
 		}
 
 		[Test]
 		public void HttpUri2 ()
 		{
-			AssertEquals ("http://go-mono.com/", resolver.ResolveUri (new Uri ("http://go-mono.com"), null).ToString ());
+			Assert.AreEqual (resolver.ResolveUri (new Uri ("http://go-mono.com"), null).ToString (), "http://go-mono.com/");
 		}
 
 		[Test]
@@ -63,7 +63,7 @@ namespace MonoTests.System.Xml
 		public void ResolveUriWithNullArgs ()
 		{
 			resolver.ResolveUri (null, null);
-			Fail ("Should be error (MS.NET throws ArgumentException here).");
+			Assert.Fail ("Should be error (MS.NET throws ArgumentException here).");
 		}
 
 //		[Test] Uncomment if you want to test.

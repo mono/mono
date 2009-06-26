@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlNodeListTests : Assertion
+	public class XmlNodeListTests
 	{
 		XmlDocument document;
 		XmlElement documentElement;
@@ -40,10 +40,10 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo>bar</foo>");
 			documentElement = document.DocumentElement;
 			node = documentElement.FirstChild;
-			AssertEquals ("Expected a text node.", node.NodeType, XmlNodeType.Text);
-			AssertEquals ("Shouldn't have children.", node.HasChildNodes, false);
-			AssertEquals ("Should be empty node list.", node.ChildNodes.Count, 0);
-			AssertEquals ("Should be empty node list.", node.GetEnumerator().MoveNext(), false);
+			Assert.AreEqual (node.NodeType, XmlNodeType.Text, "Expected a text node.");
+			Assert.AreEqual (node.HasChildNodes, false, "Shouldn't have children.");
+			Assert.AreEqual (node.ChildNodes.Count, 0, "Should be empty node list.");
+			Assert.AreEqual (node.GetEnumerator().MoveNext(), false, "Should be empty node list.");
 		}
 
 		[Test]
@@ -51,7 +51,7 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<foo/>");
 			documentElement = document.DocumentElement;
-			AssertEquals ("Should be empty node list.", documentElement.GetEnumerator().MoveNext(), false);
+			Assert.AreEqual (documentElement.GetEnumerator().MoveNext(), false, "Should be empty node list.");
 		}
 
 		[Test]
@@ -59,14 +59,14 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<foo><child1/></foo>");
 			documentElement = document.DocumentElement;
-			AssertEquals ("Incorrect number of children returned from Count property.", documentElement.ChildNodes.Count, 1);
+			Assert.AreEqual (documentElement.ChildNodes.Count, 1, "Incorrect number of children returned from Count property.");
 			index = 1;
 			foreach (XmlNode childNode in documentElement.ChildNodes) 
 			{
-				AssertEquals ("Enumerator didn't return correct node.", "child" + index.ToString(), childNode.LocalName);
+				Assert.AreEqual ("child" + index.ToString(), childNode.LocalName, "Enumerator didn't return correct node.");
 				index++;
 			}
-			AssertEquals ("foreach didn't loop over all children correctly.", index, 2);
+			Assert.AreEqual (index, 2, "foreach didn't loop over all children correctly.");
 		}
 
 		[Test]
@@ -74,21 +74,21 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<foo><child1/><child2/><child3/></foo>");
 			element = document.DocumentElement;
-			AssertEquals ("Incorrect number of children returned from Count property.", element.ChildNodes.Count, 3);
-			AssertNull ("Index less than zero should have returned null.", element.ChildNodes [-1]);
-			AssertNull ("Index greater than or equal to Count should have returned null.", element.ChildNodes [3]);
-			AssertEquals ("Didn't return the correct child.", element.FirstChild, element.ChildNodes[0]);
-			AssertEquals ("Didn't return the correct child.", "child1", element.ChildNodes[0].LocalName);
-			AssertEquals ("Didn't return the correct child.", "child2", element.ChildNodes[1].LocalName);
-			AssertEquals ("Didn't return the correct child.", "child3", element.ChildNodes[2].LocalName);
+			Assert.AreEqual (element.ChildNodes.Count, 3, "Incorrect number of children returned from Count property.");
+			Assert.IsNull (element.ChildNodes [-1], "Index less than zero should have returned null.");
+			Assert.IsNull (element.ChildNodes [3], "Index greater than or equal to Count should have returned null.");
+			Assert.AreEqual (element.FirstChild, element.ChildNodes[0], "Didn't return the correct child.");
+			Assert.AreEqual ("child1", element.ChildNodes[0].LocalName, "Didn't return the correct child.");
+			Assert.AreEqual ("child2", element.ChildNodes[1].LocalName, "Didn't return the correct child.");
+			Assert.AreEqual ("child3", element.ChildNodes[2].LocalName, "Didn't return the correct child.");
 
 			index = 1;
 			foreach (XmlNode childNode in element.ChildNodes) 
 			{
-				AssertEquals ("Enumerator didn't return correct node.", "child" + index.ToString(), childNode.LocalName);
+				Assert.AreEqual ("child" + index.ToString(), childNode.LocalName, "Enumerator didn't return correct node.");
 				index++;
 			}
-			AssertEquals ("foreach didn't loop over all children correctly.", index, 4);
+			Assert.AreEqual (index, 4, "foreach didn't loop over all children correctly.");
 		}
 
 		[Test]
@@ -97,13 +97,13 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><child1/></foo>");
 			element = document.DocumentElement;
 			enumerator = element.GetEnumerator();
-			AssertEquals ("MoveNext should have succeeded.", enumerator.MoveNext(), true);
-			AssertEquals ("MoveNext should have failed.", enumerator.MoveNext(), false);
+			Assert.AreEqual (enumerator.MoveNext(), true, "MoveNext should have succeeded.");
+			Assert.AreEqual (enumerator.MoveNext(), false, "MoveNext should have failed.");
 			enumerator.Reset();
-			AssertEquals ("MoveNext should have succeeded.", enumerator.MoveNext(), true);
+			Assert.AreEqual (enumerator.MoveNext(), true, "MoveNext should have succeeded.");
 			element.AppendChild(document.CreateElement("child2"));
-			AssertEquals ("MoveNext should have succeeded.", enumerator.MoveNext(), true);
-			AssertEquals ("MoveNext should have failed.", enumerator.MoveNext(), false);
+			Assert.AreEqual (enumerator.MoveNext(), true, "MoveNext should have succeeded.");
+			Assert.AreEqual (enumerator.MoveNext(), false, "MoveNext should have failed.");
 		}
 
 		[Test]
@@ -114,7 +114,7 @@ namespace MonoTests.System.Xml
 			enumerator = element.GetEnumerator();
 			element.RemoveChild(element.FirstChild);
 			enumerator.MoveNext();
-			AssertEquals ("Expected child2 element.", ((XmlElement)enumerator.Current).LocalName, "child2");
+			Assert.AreEqual (((XmlElement)enumerator.Current).LocalName, "child2", "Expected child2 element.");
 		}
 
 		[Test]
@@ -125,14 +125,14 @@ namespace MonoTests.System.Xml
 			enumerator = element.GetEnumerator ();
 			enumerator.MoveNext ();
 			enumerator.MoveNext ();
-			AssertEquals ("Expected child2 element.", "child2", ((XmlElement)enumerator.Current).LocalName);
-			AssertEquals ("Expected child2 element.", "child2", element.FirstChild.NextSibling.LocalName);
+			Assert.AreEqual ("child2", ((XmlElement)enumerator.Current).LocalName, "Expected child2 element.");
+			Assert.AreEqual ("child2", element.FirstChild.NextSibling.LocalName, "Expected child2 element.");
 			element.RemoveChild (element.FirstChild.NextSibling);
 			enumerator.MoveNext ();
 			
 			try {
 				element = (XmlElement) enumerator.Current;
-				Fail ("Expected an InvalidOperationException.");
+				Assert.Fail ("Expected an InvalidOperationException.");
 			} catch (InvalidOperationException) { }
 		}
 
@@ -144,11 +144,11 @@ namespace MonoTests.System.Xml
 			element = document.DocumentElement;
 			node = document.CreateElement("child3");
 			enumerator = element.GetEnumerator();
-			AssertEquals ("MoveNext should have succeeded.", enumerator.MoveNext(), true);
+			Assert.AreEqual (enumerator.MoveNext(), true, "MoveNext should have succeeded.");
 			element.ReplaceChild(node, element.LastChild);
 			enumerator.MoveNext();
-			AssertEquals ("Expected child3 element.", ((XmlElement)enumerator.Current).LocalName, "child3");
-			AssertEquals ("MoveNext should have failed.", enumerator.MoveNext(), false);
+			Assert.AreEqual (((XmlElement)enumerator.Current).LocalName, "child3", "Expected child3 element.");
+			Assert.AreEqual (enumerator.MoveNext(), false, "MoveNext should have failed.");
 		}
 
 		[Test]
@@ -158,7 +158,7 @@ namespace MonoTests.System.Xml
 			element = document.DocumentElement;
 			enumerator = element.GetEnumerator();
 			element.RemoveChild(element.FirstChild);
-			AssertEquals ("MoveNext should have failed.", enumerator.MoveNext(), false);
+			Assert.AreEqual (enumerator.MoveNext(), false, "MoveNext should have failed.");
 		}
 
 		// TODO:  Take the word save off front of this method when XmlNode.RemoveAll() is fully implemented.
@@ -168,10 +168,10 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<foo><child1/><child2/><child3/></foo>");
 			element = document.DocumentElement;
 			enumerator = element.GetEnumerator();
-			AssertEquals ("Expected 3 children.", element.ChildNodes.Count, 3);
-			AssertEquals ("MoveNext should have succeeded.", enumerator.MoveNext(), true);
+			Assert.AreEqual (element.ChildNodes.Count, 3, "Expected 3 children.");
+			Assert.AreEqual (enumerator.MoveNext(), true, "MoveNext should have succeeded.");
 			element.RemoveAll();
-			AssertEquals ("MoveNext should have failed.", enumerator.MoveNext(), false);
+			Assert.AreEqual (enumerator.MoveNext(), false, "MoveNext should have failed.");
 		}
 
 		[Test]
@@ -183,7 +183,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				obj = enumerator.Current;
-				Fail ("Calling Current property before first node in list should have thrown InvalidOperationException.");
+				Assert.Fail ("Calling Current property before first node in list should have thrown InvalidOperationException.");
 			} catch (InvalidOperationException) { }
 		}
 
@@ -198,7 +198,7 @@ namespace MonoTests.System.Xml
 			try 
 			{
 				obj = enumerator.Current;
-				Fail ("Calling Current property after last node in list should have thrown InvalidOperationException.");
+				Assert.Fail ("Calling Current property after last node in list should have thrown InvalidOperationException.");
 			} 
 			catch (InvalidOperationException) { }
 		}
@@ -210,7 +210,7 @@ namespace MonoTests.System.Xml
 			element = document.DocumentElement;
 			enumerator = element.GetEnumerator();
 			enumerator.MoveNext();
-			AssertEquals("Consecutive calls to Current property should yield same reference.", Object.ReferenceEquals(enumerator.Current, enumerator.Current), true);
+			Assert.AreEqual (Object.ReferenceEquals(enumerator.Current, enumerator.Current), true, "Consecutive calls to Current property should yield same reference.");
 		}
 
 		[Test]
@@ -221,10 +221,10 @@ namespace MonoTests.System.Xml
 			enumerator = element.GetEnumerator();
 			enumerator.MoveNext();
 			enumerator.MoveNext();
-			AssertEquals("Expected child2.", ((XmlElement)enumerator.Current).LocalName, "child2");
+			Assert.AreEqual (((XmlElement)enumerator.Current).LocalName, "child2", "Expected child2.");
 			enumerator.Reset();
 			enumerator.MoveNext();
-			AssertEquals("Expected child1.", ((XmlElement)enumerator.Current).LocalName, "child1");
+			Assert.AreEqual (((XmlElement)enumerator.Current).LocalName, "child1", "Expected child1.");
 		}
 
 		[Test]
@@ -232,13 +232,13 @@ namespace MonoTests.System.Xml
 		{
 			document.LoadXml ("<root><foo/></root>");
 			XmlNodeList nl = document.DocumentElement.GetElementsByTagName ("bar");
-			AssertEquals ("empty list. count", 0, nl.Count);
+			Assert.AreEqual (0, nl.Count, "empty list. count");
 			try {
-				AssertNull ("index 0", nl [0]);
-				AssertNull ("index 1", nl [1]);
-				AssertNull ("index -1", nl [-1]);
+				Assert.IsNull (nl [0], "index 0");
+				Assert.IsNull (nl [1], "index 1");
+				Assert.IsNull (nl [-1], "index -1");
 			} catch (ArgumentOutOfRangeException) {
-				Fail ("don't throw index out of range.");
+				Assert.Fail ("don't throw index out of range.");
 			}
 		}
 	}

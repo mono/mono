@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlEntityTests : Assertion
+	public class XmlEntityTests
 	{
 		XmlDocument document;
 		XmlDocumentType docType;
@@ -34,15 +34,15 @@ namespace MonoTests.System.Xml
 			document.Load (xtr);
 			xtr.Close ();
 			docType = document.DocumentType;
-			AssertEquals (2, docType.Entities.Count);
+			Assert.AreEqual (2, docType.Entities.Count);
 			XmlEntity foo = docType.Entities.Item (0) as XmlEntity;
 			XmlEntity bar = docType.Entities.Item (1) as XmlEntity;
-			AssertEquals ("foo", foo.Name);
-			AssertNull (bar.Value);
-			AssertEquals (1, foo.ChildNodes.Count);
-			AssertEquals ("bar", bar.Name);
-			AssertNull (bar.Value);
-			AssertEquals (1, foo.ChildNodes.Count);
+			Assert.AreEqual ("foo", foo.Name);
+			Assert.IsNull (bar.Value);
+			Assert.AreEqual (1, foo.ChildNodes.Count);
+			Assert.AreEqual ("bar", bar.Name);
+			Assert.IsNull (bar.Value);
+			Assert.AreEqual (1, foo.ChildNodes.Count);
 		}
 	       
 	}

@@ -22,7 +22,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 
-	public class XmlCharTests : Assertion
+	[TestFixture]
+	public class XmlCharTests
 	{
 #if false
 
@@ -30,8 +31,7 @@ namespace MonoTests.System.Xml
 		public void IsFirstNameCharTest ()
 		{
 			for (int ch = 0; ch <= 0xFFFF; ++ch) {
-				Assert (
-					XmlChar.IsFirstNameChar (ch) ==
+				Assert.IsTrue (XmlChar.IsFirstNameChar (ch) ==
 						IsFirstNameChar (ch));
 			}
 		}
@@ -40,8 +40,7 @@ namespace MonoTests.System.Xml
 		public void IsNameCharTest ()
 		{
 			for (int ch = 0; ch <= 0xFFFF; ++ch) {
-				Assert (
-					XmlChar.IsNameChar (ch) ==
+				Assert.IsTrue (XmlChar.IsNameChar (ch) ==
 						IsNameChar (ch));
 			}
 		}

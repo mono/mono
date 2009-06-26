@@ -21,7 +21,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlReaderTests : Assertion
+	public class XmlReaderTests
 	{
 		[SetUp]
 		public void GetReady ()
@@ -41,10 +41,10 @@ namespace MonoTests.System.Xml
 		// copy from XmlTextReaderTests
 		private void AssertStartDocument (XmlReader xmlReader)
 		{
-			Assert (xmlReader.ReadState == ReadState.Initial);
-			Assert (xmlReader.NodeType == XmlNodeType.None);
-			Assert (xmlReader.Depth == 0);
-			Assert (!xmlReader.EOF);
+			Assert.IsTrue (xmlReader.ReadState == ReadState.Initial);
+			Assert.IsTrue (xmlReader.NodeType == XmlNodeType.None);
+			Assert.IsTrue (xmlReader.Depth == 0);
+			Assert.IsTrue (!xmlReader.EOF);
 		}
 
 		private void AssertNode (
@@ -77,9 +77,9 @@ namespace MonoTests.System.Xml
 			string value,
 			int attributeCount)
 		{
-			Assert (label + " Read() return value", xmlReader.Read ());
-			Assert (label + " ReadState", xmlReader.ReadState == ReadState.Interactive);
-			Assert (label + " !EOF", !xmlReader.EOF);
+			Assert.IsTrue (xmlReader.Read (), label + " Read() return value");
+			Assert.IsTrue (xmlReader.ReadState == ReadState.Interactive, label + " ReadState");
+			Assert.IsTrue (!xmlReader.EOF, label + " !EOF");
 			AssertNodeValues (label, xmlReader, nodeType, depth,
 				isEmptyElement, name, prefix, localName,
 				namespaceURI, value, value != String.Empty,
@@ -121,26 +121,26 @@ namespace MonoTests.System.Xml
 			bool hasAttributes)
 		{
 			label = String.Concat (label, "(", xmlReader.GetType ().Name, ")");
-			AssertEquals (label + ": NodeType", nodeType, xmlReader.NodeType);
-			AssertEquals (label + ": IsEmptyElement", isEmptyElement, xmlReader.IsEmptyElement);
+			Assert.AreEqual (nodeType, xmlReader.NodeType, label + ": NodeType");
+			Assert.AreEqual (isEmptyElement, xmlReader.IsEmptyElement, label + ": IsEmptyElement");
 
-			AssertEquals (label + ": name", name, xmlReader.Name);
+			Assert.AreEqual (name, xmlReader.Name, label + ": name");
 
-			AssertEquals (label + ": prefix", prefix, xmlReader.Prefix);
+			Assert.AreEqual (prefix, xmlReader.Prefix, label + ": prefix");
 
-			AssertEquals (label + ": localName", localName, xmlReader.LocalName);
+			Assert.AreEqual (localName, xmlReader.LocalName, label + ": localName");
 
-			AssertEquals (label + ": namespaceURI", namespaceURI, xmlReader.NamespaceURI);
+			Assert.AreEqual (namespaceURI, xmlReader.NamespaceURI, label + ": namespaceURI");
 
-			AssertEquals (label + ": Depth", depth, xmlReader.Depth);
+			Assert.AreEqual (depth, xmlReader.Depth, label + ": Depth");
 
-			AssertEquals (label + ": hasValue", hasValue, xmlReader.HasValue);
+			Assert.AreEqual (hasValue, xmlReader.HasValue, label + ": hasValue");
 
-			AssertEquals (label + ": Value", value, xmlReader.Value);
+			Assert.AreEqual (value, xmlReader.Value, label + ": Value");
 
-			AssertEquals (label + ": hasAttributes", hasAttributes, xmlReader.HasAttributes);
+			Assert.AreEqual (hasAttributes, xmlReader.HasAttributes, label + ": hasAttributes");
 
-			AssertEquals (label + ": attributeCount", attributeCount, xmlReader.AttributeCount);
+			Assert.AreEqual (attributeCount, xmlReader.AttributeCount, label + ": attributeCount");
 		}
 
 		private void AssertAttribute (
@@ -151,26 +151,26 @@ namespace MonoTests.System.Xml
 			string namespaceURI,
 			string value)
 		{
-			AssertEquals ("value", value, xmlReader [name]);
+			Assert.AreEqual (value, xmlReader [name], "value");
 
-			Assert (xmlReader.GetAttribute (name) == value);
+			Assert.IsTrue (xmlReader.GetAttribute (name) == value);
 
 			if (namespaceURI != String.Empty) {
-				Assert (xmlReader[localName, namespaceURI] == value);
-				Assert (xmlReader.GetAttribute (localName, namespaceURI) == value);
+				Assert.IsTrue (xmlReader[localName, namespaceURI] == value);
+				Assert.IsTrue (xmlReader.GetAttribute (localName, namespaceURI) == value);
 			}
 		}
 
 		private void AssertEndDocument (XmlReader xmlReader)
 		{
-			Assert ("could read", !xmlReader.Read ());
-			AssertEquals ("NodeType is not XmlNodeType.None", XmlNodeType.None, xmlReader.NodeType);
-			AssertEquals ("Depth is not 0", 0, xmlReader.Depth);
-			AssertEquals ("ReadState is not ReadState.EndOfFile",  ReadState.EndOfFile, xmlReader.ReadState);
-			Assert ("not EOF", xmlReader.EOF);
+			Assert.IsTrue (!xmlReader.Read (), "could read");
+			Assert.AreEqual (XmlNodeType.None, xmlReader.NodeType, "NodeType is not XmlNodeType.None");
+			Assert.AreEqual (0, xmlReader.Depth, "Depth is not 0");
+			Assert.AreEqual (ReadState.EndOfFile, xmlReader.ReadState, "ReadState is not ReadState.EndOfFile");
+			Assert.IsTrue (xmlReader.EOF, "not EOF");
 
 			xmlReader.Close ();
-			AssertEquals ("ReadState is not ReadState.Cosed", ReadState.Closed, xmlReader.ReadState);
+			Assert.AreEqual (ReadState.Closed, xmlReader.ReadState, "ReadState is not ReadState.Cosed");
 		}
 
 		private delegate void TestMethod (XmlReader reader);
@@ -219,13 +219,13 @@ namespace MonoTests.System.Xml
 
 		private void InitialState (XmlReader reader)
 		{
-			AssertEquals ("Depth", 0, reader.Depth);
-			AssertEquals ("EOF", false, reader.EOF);
-			AssertEquals ("HasValue", false, reader.HasValue);
-			AssertEquals ("IsEmptyElement", false, reader.IsEmptyElement);
-			AssertEquals ("LocalName", String.Empty, reader.LocalName);
-			AssertEquals ("NodeType", XmlNodeType.None, reader.NodeType);
-			AssertEquals ("ReadState", ReadState.Initial, reader.ReadState);
+			Assert.AreEqual (0, reader.Depth, "Depth");
+			Assert.AreEqual (false, reader.EOF, "EOF");
+			Assert.AreEqual (false, reader.HasValue, "HasValue");
+			Assert.AreEqual (false, reader.IsEmptyElement, "IsEmptyElement");
+			Assert.AreEqual (String.Empty, reader.LocalName, "LocalName");
+			Assert.AreEqual (XmlNodeType.None, reader.NodeType, "NodeType");
+			Assert.AreEqual (ReadState.Initial, reader.ReadState, "ReadState");
 		}
 
 		[Test]
@@ -237,25 +237,25 @@ namespace MonoTests.System.Xml
 		public void Read (XmlReader reader)
 		{
 			reader.Read ();
-			AssertEquals ("<root>.NodeType", XmlNodeType.Element, reader.NodeType);
-			AssertEquals ("<root>.Name", "root", reader.Name);
-			AssertEquals ("<root>.ReadState", ReadState.Interactive, reader.ReadState);
-			AssertEquals ("<root>.Depth", 0, reader.Depth);
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "<root>.NodeType");
+			Assert.AreEqual ("root", reader.Name, "<root>.Name");
+			Assert.AreEqual (ReadState.Interactive, reader.ReadState, "<root>.ReadState");
+			Assert.AreEqual (0, reader.Depth, "<root>.Depth");
 
 			// move to 'child'
 			reader.Read ();
-			AssertEquals ("<child/>.Depth", 1, reader.Depth);
-			AssertEquals ("<child/>.NodeType", XmlNodeType.Element, reader.NodeType);
-			AssertEquals ("<child/>.Name", "child", reader.Name);
+			Assert.AreEqual (1, reader.Depth, "<child/>.Depth");
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "<child/>.NodeType");
+			Assert.AreEqual ("child", reader.Name, "<child/>.Name");
 
 			reader.Read ();
-			AssertEquals ("</root>.Depth", 0, reader.Depth);
-			AssertEquals ("</root>.NodeType", XmlNodeType.EndElement, reader.NodeType);
-			AssertEquals ("</root>.Name", "root", reader.Name);
+			Assert.AreEqual (0, reader.Depth, "</root>.Depth");
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "</root>.NodeType");
+			Assert.AreEqual ("root", reader.Name, "</root>.Name");
 
 			reader.Read ();
-			AssertEquals ("end.EOF", true, reader.EOF);
-			AssertEquals ("end.NodeType", XmlNodeType.None, reader.NodeType);
+			Assert.AreEqual (true, reader.EOF, "end.EOF");
+			Assert.AreEqual (XmlNodeType.None, reader.NodeType, "end.NodeType");
 		}
 
 		[Test]
@@ -268,19 +268,19 @@ namespace MonoTests.System.Xml
 		public void ReadAttributeValue (XmlReader reader)
 		{
 			reader.Read ();	// root
-			Assert (reader.MoveToFirstAttribute ());
+			Assert.IsTrue (reader.MoveToFirstAttribute ());
 			// It looks like that MS.NET shows AttributeCount and
 			// HasAttributes as the same as element node!
 			this.AssertNodeValues ("#1",
 				reader, XmlNodeType.Attribute,
 				1, false, "attr", "", "attr", "", "", true, 1, true);
-			Assert (reader.ReadAttributeValue ());
+			Assert.IsTrue (reader.ReadAttributeValue ());
 			// MS.NET XmlTextReader fails. Its Prefix returns 
 			// null instead of "". It is fixed in MS.NET 2.0.
 			this.AssertNodeValues ("#2",
 				reader, XmlNodeType.Text,
 				2, false, "", "", "", "", "", true, 1, true);
-			Assert (reader.MoveToElement ());
+			Assert.IsTrue (reader.MoveToElement ());
 			this.AssertNodeValues ("#3",
 				reader, XmlNodeType.Element,
 				0, true, "root", "", "root", "", "", false, 1, true);
@@ -295,13 +295,13 @@ namespace MonoTests.System.Xml
 		public void ReadEmptyElement (XmlReader reader)
 		{
 			reader.Read ();	// root
-			AssertEquals (false, reader.IsEmptyElement);
+			Assert.AreEqual (false, reader.IsEmptyElement);
 			reader.Read ();	// foo
-			AssertEquals ("foo", reader.Name);
-			AssertEquals (true, reader.IsEmptyElement);
+			Assert.AreEqual ("foo", reader.Name);
+			Assert.AreEqual (true, reader.IsEmptyElement);
 			reader.Read ();	// bar
-			AssertEquals ("bar", reader.Name);
-			AssertEquals (false, reader.IsEmptyElement);
+			Assert.AreEqual ("bar", reader.Name);
+			Assert.AreEqual (false, reader.IsEmptyElement);
 		}
 
 		[Test]
@@ -320,20 +320,20 @@ namespace MonoTests.System.Xml
 
 			reader.Read ();
 			string s = reader.ReadString ();
-			AssertEquals ("readString.1.ret_val", "  test of ", s);
-			AssertEquals ("readString.1.Name", "b", reader.Name);
+			Assert.AreEqual ("  test of ", s, "readString.1.ret_val");
+			Assert.AreEqual ("b", reader.Name, "readString.1.Name");
 			s = reader.ReadString ();
-			AssertEquals ("readString.2.ret_val", "mixed", s);
-			AssertEquals ("readString.2.NodeType", XmlNodeType.EndElement, reader.NodeType);
+			Assert.AreEqual ("mixed", s, "readString.2.ret_val");
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "readString.2.NodeType");
 			s = reader.ReadString ();	// never proceeds.
-			AssertEquals ("readString.3.ret_val", String.Empty, s);
-			AssertEquals ("readString.3.NodeType", XmlNodeType.EndElement, reader.NodeType);
+			Assert.AreEqual (String.Empty, s, "readString.3.ret_val");
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "readString.3.NodeType");
 			reader.Read ();
-			AssertEquals ("readString.4.NodeType", XmlNodeType.Text, reader.NodeType);
-			AssertEquals ("readString.4.Value", " string.", reader.Value);
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "readString.4.NodeType");
+			Assert.AreEqual (" string.", reader.Value, "readString.4.Value");
 			s = reader.ReadString ();	// reads the same Text node.
-			AssertEquals ("readString.5.ret_val", " string. cdata string.", s);
-			AssertEquals ("readString.5.NodeType", XmlNodeType.EndElement, reader.NodeType);
+			Assert.AreEqual (" string. cdata string.", s, "readString.5.ret_val");
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "readString.5.NodeType");
 		}
 
 		[Test]
@@ -347,13 +347,13 @@ namespace MonoTests.System.Xml
 		{
 			reader.Read ();
 			reader.Read ();
-			AssertEquals ("initial.ReadState", ReadState.Interactive, reader.ReadState);
-			AssertEquals ("initial.EOF", false, reader.EOF);
-			AssertEquals ("initial.NodeType", XmlNodeType.Element, reader.NodeType);
+			Assert.AreEqual (ReadState.Interactive, reader.ReadState, "initial.ReadState");
+			Assert.AreEqual (false, reader.EOF, "initial.EOF");
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "initial.NodeType");
 			string s = reader.ReadInnerXml ();
-			AssertEquals ("read_all", "test of <b>mixed</b> string.", s);
-			AssertEquals ("after.Name", "bar", reader.Name);
-			AssertEquals ("after.NodeType", XmlNodeType.Element, reader.NodeType);
+			Assert.AreEqual ("test of <b>mixed</b> string.", s, "read_all");
+			Assert.AreEqual ("bar", reader.Name, "after.Name");
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "after.NodeType");
 		}
 
 
@@ -910,7 +910,7 @@ namespace MonoTests.System.Xml
 				"http://foo/" // value
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace (String.Empty));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace (String.Empty));
 
 			AssertEndDocument (xmlReader);
 		}
@@ -948,7 +948,7 @@ namespace MonoTests.System.Xml
 				"http://foo/" // value
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
 			AssertNode (
 				xmlReader, // xmlReader
@@ -972,8 +972,8 @@ namespace MonoTests.System.Xml
 				"http://baz/" // value
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
-			AssertEquals ("http://baz/", xmlReader.LookupNamespace ("baz"));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://baz/", xmlReader.LookupNamespace ("baz"));
 
 			AssertNode (
 				xmlReader, // xmlReader
@@ -988,8 +988,8 @@ namespace MonoTests.System.Xml
 				0 // attributeCount
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
-			AssertNull (xmlReader.LookupNamespace ("baz"));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.IsNull (xmlReader.LookupNamespace ("baz"));
 
 			AssertEndDocument (xmlReader);
 		}
@@ -1027,7 +1027,7 @@ namespace MonoTests.System.Xml
 				"http://foo/" // value
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
 			AssertNode (
 				xmlReader, // xmlReader
@@ -1051,8 +1051,8 @@ namespace MonoTests.System.Xml
 				"http://baz/" // value
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
-			AssertEquals ("http://baz/", xmlReader.LookupNamespace (String.Empty));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://baz/", xmlReader.LookupNamespace (String.Empty));
 
 			AssertNode (
 				xmlReader, // xmlReader
@@ -1067,7 +1067,7 @@ namespace MonoTests.System.Xml
 				0 // attributeCount
 			);
 
-			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			Assert.AreEqual ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
 			AssertEndDocument (xmlReader);
 		}
@@ -1114,7 +1114,7 @@ namespace MonoTests.System.Xml
 				"http://bar/" // value
 			);
 
-			AssertEquals ("http://bar/", xmlReader.LookupNamespace ("bar"));
+			Assert.AreEqual ("http://bar/", xmlReader.LookupNamespace ("bar"));
 
 			AssertEndDocument (xmlReader);
 		}
@@ -1128,12 +1128,12 @@ namespace MonoTests.System.Xml
 
 		public void MoveToElementFromAttribute (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
-			Assert (xmlReader.MoveToFirstAttribute ());
-			AssertEquals (XmlNodeType.Attribute, xmlReader.NodeType);
-			Assert (xmlReader.MoveToElement ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.MoveToFirstAttribute ());
+			Assert.AreEqual (XmlNodeType.Attribute, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.MoveToElement ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
 		}
 
 		[Test]
@@ -1145,10 +1145,10 @@ namespace MonoTests.System.Xml
 
 		public void MoveToElementFromElement (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
-			Assert (!xmlReader.MoveToElement ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (!xmlReader.MoveToElement ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
 		}
 
 		[Test]
@@ -1160,10 +1160,10 @@ namespace MonoTests.System.Xml
 
 		public void MoveToFirstAttributeWithNoAttributes (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
-			Assert (!xmlReader.MoveToFirstAttribute ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (!xmlReader.MoveToFirstAttribute ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
 		}
 
 		[Test]
@@ -1175,10 +1175,10 @@ namespace MonoTests.System.Xml
 
 		public void MoveToNextAttributeWithNoAttributes (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
-			Assert (!xmlReader.MoveToNextAttribute ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (!xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
 		}
 
 		[Test]
@@ -1223,17 +1223,17 @@ namespace MonoTests.System.Xml
 				"quuux" // value
 			);
 
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("bar", xmlReader.Name);
-			AssertEquals ("baz", xmlReader.Value);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", xmlReader.Name);
+			Assert.AreEqual ("baz", xmlReader.Value);
 
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("quux", xmlReader.Name);
-			AssertEquals ("quuux", xmlReader.Value);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("quux", xmlReader.Name);
+			Assert.AreEqual ("quuux", xmlReader.Value);
 
-			Assert (!xmlReader.MoveToNextAttribute ());
+			Assert.IsTrue (!xmlReader.MoveToNextAttribute ());
 
-			Assert (xmlReader.MoveToElement ());
+			Assert.IsTrue (xmlReader.MoveToElement ());
 
 			AssertNodeValues (
 				"#1",
@@ -1274,8 +1274,7 @@ namespace MonoTests.System.Xml
 				String.Empty,
 				"version=\"1.0\" standalone=\"yes\"",
 				2);
-			Assert ("MoveToFirstAttribute",
-				xmlReader.MoveToFirstAttribute ());
+			Assert.IsTrue (xmlReader.MoveToFirstAttribute (), "MoveToFirstAttribute");
 			this.AssertNodeValues ("#2", xmlReader, 
 				XmlNodeType.Attribute,
 				0, // FIXME: might be 1
@@ -1330,17 +1329,17 @@ namespace MonoTests.System.Xml
 
 		public void AttributeOrder (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
 
-			Assert (xmlReader.MoveToFirstAttribute ());
-			AssertEquals ("_1", xmlReader.Name);
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("_2", xmlReader.Name);
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("_3", xmlReader.Name);
+			Assert.IsTrue (xmlReader.MoveToFirstAttribute ());
+			Assert.AreEqual ("_1", xmlReader.Name);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("_2", xmlReader.Name);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("_3", xmlReader.Name);
 
-			Assert (!xmlReader.MoveToNextAttribute ());
+			Assert.IsTrue (!xmlReader.MoveToNextAttribute ());
 		}
 
 		[Test]
@@ -1353,34 +1352,34 @@ namespace MonoTests.System.Xml
 
 		public void IndexerAndAttributes (XmlReader xmlReader)
 		{
-			Assert (xmlReader.Read ());
-			AssertEquals ("1.0", xmlReader ["version"]);
-			AssertEquals ("1.0", xmlReader.GetAttribute ("version"));
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual ("1.0", xmlReader ["version"]);
+			Assert.AreEqual ("1.0", xmlReader.GetAttribute ("version"));
 			// .NET 1.1 BUG. XmlTextReader returns null, while XmlNodeReader returns "".
-			AssertEquals (null, xmlReader ["encoding"]);
-			AssertEquals (null, xmlReader.GetAttribute ("encoding"));
-			AssertEquals ("no", xmlReader ["standalone"]);
-			AssertEquals ("no", xmlReader.GetAttribute ("standalone"));
-			AssertEquals ("1.0", xmlReader [0]);
-			AssertEquals ("1.0", xmlReader.GetAttribute (0));
-			AssertEquals ("no", xmlReader [1]);
-			AssertEquals ("no", xmlReader.GetAttribute (1));
+			Assert.AreEqual (null, xmlReader ["encoding"]);
+			Assert.AreEqual (null, xmlReader.GetAttribute ("encoding"));
+			Assert.AreEqual ("no", xmlReader ["standalone"]);
+			Assert.AreEqual ("no", xmlReader.GetAttribute ("standalone"));
+			Assert.AreEqual ("1.0", xmlReader [0]);
+			Assert.AreEqual ("1.0", xmlReader.GetAttribute (0));
+			Assert.AreEqual ("no", xmlReader [1]);
+			Assert.AreEqual ("no", xmlReader.GetAttribute (1));
 
-			Assert (xmlReader.Read ());
-			AssertEquals (XmlNodeType.Element, xmlReader.NodeType);
-			AssertEquals ("1", xmlReader ["_1"]);
+			Assert.IsTrue (xmlReader.Read ());
+			Assert.AreEqual (XmlNodeType.Element, xmlReader.NodeType);
+			Assert.AreEqual ("1", xmlReader ["_1"]);
 
-			Assert (xmlReader.MoveToFirstAttribute ());
-			AssertEquals ("_1", xmlReader.Name);
-			AssertEquals ("1", xmlReader ["_1"]);
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("_2", xmlReader.Name);
-			AssertEquals ("1", xmlReader ["_1"]);
-			Assert (xmlReader.MoveToNextAttribute ());
-			AssertEquals ("_3", xmlReader.Name);
-			AssertEquals ("1", xmlReader ["_1"]);
+			Assert.IsTrue (xmlReader.MoveToFirstAttribute ());
+			Assert.AreEqual ("_1", xmlReader.Name);
+			Assert.AreEqual ("1", xmlReader ["_1"]);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("_2", xmlReader.Name);
+			Assert.AreEqual ("1", xmlReader ["_1"]);
+			Assert.IsTrue (xmlReader.MoveToNextAttribute ());
+			Assert.AreEqual ("_3", xmlReader.Name);
+			Assert.AreEqual ("1", xmlReader ["_1"]);
 
-			Assert (!xmlReader.MoveToNextAttribute ());
+			Assert.IsTrue (!xmlReader.MoveToNextAttribute ());
 		}
 
 		[Test]
@@ -1414,11 +1413,11 @@ namespace MonoTests.System.Xml
 		public void SurrogatePairContent (XmlReader xmlReader)
 		{
 			xmlReader.Read ();
-			AssertEquals (true, xmlReader.MoveToAttribute ("xmlns"));
-			AssertEquals ("xmlns", xmlReader.Name);
-			AssertEquals (2, xmlReader.Value.Length);
-			AssertEquals (0xD800, (int) xmlReader.Value [0]);
-			AssertEquals (0xDD00, (int) xmlReader.Value [1]);
+			Assert.AreEqual (true, xmlReader.MoveToAttribute ("xmlns"));
+			Assert.AreEqual ("xmlns", xmlReader.Name);
+			Assert.AreEqual (2, xmlReader.Value.Length);
+			Assert.AreEqual (0xD800, (int) xmlReader.Value [0]);
+			Assert.AreEqual (0xDD00, (int) xmlReader.Value [1]);
 		}
 
 		[Test]
@@ -1433,7 +1432,7 @@ namespace MonoTests.System.Xml
 			xmlReader.Read ();
 			xmlReader.Read ();
 			xmlReader.Read ();
-			AssertEquals (String.Empty, xmlReader.ReadOuterXml ());
+			Assert.AreEqual (String.Empty, xmlReader.ReadOuterXml ());
 		}
 
 		[Test]
@@ -1448,7 +1447,7 @@ namespace MonoTests.System.Xml
 			xmlReader.Read ();
 			xmlReader.Read ();
 			xmlReader.Read ();
-			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
+			Assert.AreEqual (String.Empty, xmlReader.ReadInnerXml ());
 		}
 
 		[Test]
@@ -1461,7 +1460,7 @@ namespace MonoTests.System.Xml
 		void LookupEmptyPrefix (XmlReader xmlReader)
 		{
 			xmlReader.Read ();
-			AssertNull (xmlReader.LookupNamespace (String.Empty));
+			Assert.IsNull (xmlReader.LookupNamespace (String.Empty));
 		}
 
 		[Test]
@@ -1476,7 +1475,7 @@ namespace MonoTests.System.Xml
 			xr.Read ();
 			xr.ReadStartElement ();
 			// consume Element node.
-			AssertEquals (XmlNodeType.Text, xr.NodeType);
+			Assert.AreEqual (XmlNodeType.Text, xr.NodeType);
 		}
 
 		[Test]
@@ -1489,11 +1488,11 @@ namespace MonoTests.System.Xml
 		void LookupNamespaceAtEndElement (XmlReader reader)
 		{
 			reader.Read ();
-			AssertEquals ("#1", "urn:foo", reader.LookupNamespace ("x"));
+			Assert.AreEqual ("urn:foo", reader.LookupNamespace ("x"), "#1");
 			reader.Read ();
-			AssertEquals ("#2", "urn:foo", reader.LookupNamespace ("x"));
+			Assert.AreEqual ("urn:foo", reader.LookupNamespace ("x"), "#2");
 			reader.Read ();
-			AssertEquals ("#3", "urn:foo", reader.LookupNamespace ("x"));
+			Assert.AreEqual ("urn:foo", reader.LookupNamespace ("x"), "#3");
 		}
 
 		[Test]
@@ -1518,11 +1517,11 @@ namespace MonoTests.System.Xml
 			s.ProhibitDtd = false;
 			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml", s);
 			xr.Read ();
-			AssertEquals ("#1", XmlNodeType.DocumentType, xr.NodeType);
+			Assert.AreEqual (XmlNodeType.DocumentType, xr.NodeType, "#1");
 			xr.Read ();
-			AssertEquals ("#2", XmlNodeType.Whitespace, xr.NodeType);
+			Assert.AreEqual (XmlNodeType.Whitespace, xr.NodeType, "#2");
 			xr.Read ();
-			AssertEquals ("#3", XmlNodeType.Element, xr.NodeType);
+			Assert.AreEqual (XmlNodeType.Element, xr.NodeType, "#3");
 		}
 
 		[Test]
@@ -1592,20 +1591,20 @@ namespace MonoTests.System.Xml
 		void ReadToDescendant (XmlReader xmlReader)
 		{
 			// move to first <bar/>
-			Assert ("#1", xmlReader.ReadToDescendant ("bar"));
+			Assert.IsTrue (xmlReader.ReadToDescendant ("bar"), "#1");
 			// no children in <bar/>. It is empty.
-			Assert ("#2", !xmlReader.ReadToDescendant ("bar"));
-			AssertEquals ("#2-2", "bar", xmlReader.Name);
+			Assert.IsTrue (!xmlReader.ReadToDescendant ("bar"), "#2");
+			Assert.AreEqual ("bar", xmlReader.Name, "#2-2");
 
 			// move to the second <foo>
 			xmlReader.Read ();
 			// move to the second <bar>
-			Assert ("#3", xmlReader.ReadToDescendant ("bar"));
+			Assert.IsTrue (xmlReader.ReadToDescendant ("bar"), "#3");
 			// move to <bar> inside <bar>...</bar>
-			Assert ("#4", xmlReader.ReadToDescendant ("bar"));
+			Assert.IsTrue (xmlReader.ReadToDescendant ("bar"), "#4");
 			// the next is EndElement of </bar>, so no move.
-			Assert ("#5", !xmlReader.ReadToDescendant ("bar"));
-			AssertEquals ("#5-2", XmlNodeType.EndElement, xmlReader.NodeType);
+			Assert.IsTrue (!xmlReader.ReadToDescendant ("bar"), "#5");
+			Assert.AreEqual (XmlNodeType.EndElement, xmlReader.NodeType, "#5-2");
 		}
 
 		[Test]
@@ -1618,7 +1617,7 @@ namespace MonoTests.System.Xml
 		void ReadToDescendant2 (XmlReader xmlReader)
 		{
 			// make sure that it works when the reader is at Initial state.
-			Assert (xmlReader.ReadToDescendant ("root"));
+			Assert.IsTrue (xmlReader.ReadToDescendant ("root"));
 		}
 
 		[Test]
@@ -1630,12 +1629,12 @@ namespace MonoTests.System.Xml
 
 		public void ReadToFollowing (XmlReader xmlReader)
 		{
-			Assert ("#1", xmlReader.ReadToFollowing ("bar"));
-			Assert ("#2", xmlReader.ReadToFollowing ("bar"));
-			AssertEquals ("#2-2", 2, xmlReader.Depth);
-			Assert ("#3", xmlReader.ReadToFollowing ("bar"));
-			AssertEquals ("#3-2", 3, xmlReader.Depth);
-			Assert ("#4", !xmlReader.ReadToFollowing ("bar"));
+			Assert.IsTrue (xmlReader.ReadToFollowing ("bar"), "#1");
+			Assert.IsTrue (xmlReader.ReadToFollowing ("bar"), "#2");
+			Assert.AreEqual (2, xmlReader.Depth, "#2-2");
+			Assert.IsTrue (xmlReader.ReadToFollowing ("bar"), "#3");
+			Assert.AreEqual (3, xmlReader.Depth, "#3-2");
+			Assert.IsTrue (!xmlReader.ReadToFollowing ("bar"), "#4");
 		}
 
 		[Test]
@@ -1648,8 +1647,8 @@ namespace MonoTests.System.Xml
 
 		void ReadToNextSiblingAtInitialState (XmlReader xmlReader)
 		{
-			Assert ("#1", !xmlReader.ReadToNextSibling ("bar"));
-			Assert ("#2", !xmlReader.ReadToNextSibling ("root"));
+			Assert.IsTrue (!xmlReader.ReadToNextSibling ("bar"), "#1");
+			Assert.IsTrue (!xmlReader.ReadToNextSibling ("root"), "#2");
 		}
 
 		[Test]
@@ -1665,16 +1664,16 @@ namespace MonoTests.System.Xml
 			xmlReader.Read (); // root
 
 			xmlReader.Read (); // foo
-			Assert ("#3", xmlReader.ReadToNextSibling ("bar"));
+			Assert.IsTrue (xmlReader.ReadToNextSibling ("bar"), "#3");
 
-			AssertEquals ("#3-2", "value", xmlReader.GetAttribute ("attr"));
+			Assert.AreEqual ("value", xmlReader.GetAttribute ("attr"), "#3-2");
 			xmlReader.Read (); // foo
 			xmlReader.Read (); // pooh
-			Assert ("#4", xmlReader.ReadToNextSibling ("bar"));
-			Assert ("#4-2", !xmlReader.IsEmptyElement);
-			Assert ("#5", xmlReader.ReadToNextSibling ("bar"));
-			Assert ("#5-2", xmlReader.IsEmptyElement);
-			Assert ("#6", xmlReader.Read ()); // /foo
+			Assert.IsTrue (xmlReader.ReadToNextSibling ("bar"), "#4");
+			Assert.IsTrue (!xmlReader.IsEmptyElement, "#4-2");
+			Assert.IsTrue (xmlReader.ReadToNextSibling ("bar"), "#5");
+			Assert.IsTrue (xmlReader.IsEmptyElement, "#5-2");
+			Assert.IsTrue (xmlReader.Read (), "#6"); // /foo
 
 			AssertNodeValues ("#7", xmlReader,
 				XmlNodeType.EndElement,
@@ -1703,12 +1702,12 @@ namespace MonoTests.System.Xml
 			r.MoveToContent (); // ->root
 			r.Read (); // root->baz
 			r.Read (); // baz->bar
-			Assert ("#1", r.ReadToNextSibling ("foo"));
-			AssertEquals ("#2", "value2", r.GetAttribute ("attr"));
+			Assert.IsTrue (r.ReadToNextSibling ("foo"), "#1");
+			Assert.AreEqual ("value2", r.GetAttribute ("attr"), "#2");
 			r.Read (); // foo[@value='value2']->bar
-			Assert ("#3", !r.ReadToNextSibling ("foo"));
-			AssertEquals ("#4", XmlNodeType.EndElement, r.NodeType);
-			AssertEquals ("#5", "foo", r.LocalName);
+			Assert.IsTrue (!r.ReadToNextSibling ("foo"), "#3");
+			Assert.AreEqual (XmlNodeType.EndElement, r.NodeType, "#4");
+			Assert.AreEqual ("foo", r.LocalName, "#5");
 		}
 
 		// bug #347768
@@ -1752,7 +1751,7 @@ namespace MonoTests.System.Xml
 				0,		// AttributeCount
 				false);		// HasAttributes
 			*/
-			AssertEquals ("#1", XmlNodeType.None, st.NodeType);
+			Assert.AreEqual (XmlNodeType.None, st.NodeType, "#1");
 
 			st.Read ();
 			AssertNodeValues ("#2", st,
@@ -1768,7 +1767,7 @@ namespace MonoTests.System.Xml
 				0,		// AttributeCount
 				false);		// HasAttributes
 
-			Assert ("#3", !st.Read ());
+			Assert.IsTrue (!st.Read (), "#3");
 
 			// At this state, reader is not positioned on <bar> yet
 			AssertNodeValues ("#3-2", reader,
@@ -1841,7 +1840,7 @@ namespace MonoTests.System.Xml
 				0,		// AttributeCount
 				false);		// HasAttributes
 
-			Assert ("#7", !st.Read ());
+			Assert.IsTrue (!st.Read (), "#7");
 		}
 
 		[Test]
@@ -1852,7 +1851,7 @@ namespace MonoTests.System.Xml
 			
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
-			AssertEquals ("#1", "1", xr.ReadElementContentAsString ());
+			Assert.AreEqual ("1", xr.ReadElementContentAsString (), "#1");
 
 			AssertNodeValues ("#1-2", xr,
 				XmlNodeType.None,
@@ -1870,20 +1869,20 @@ namespace MonoTests.System.Xml
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
 			// this XmlReader has no schema, thus the value is untyped
-			AssertEquals ("#2", "1", xr.ReadElementContentAsObject ());
+			Assert.AreEqual ("1", xr.ReadElementContentAsObject (), "#2");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
 			xr.Read ();
-			AssertEquals ("#3", "1", xr.ReadContentAsString ());
+			Assert.AreEqual ("1", xr.ReadContentAsString (), "#3");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
-			AssertEquals ("#4", 1, xr.ReadElementContentAsInt ());
+			Assert.AreEqual (1, xr.ReadElementContentAsInt (), "#4");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
-			AssertEquals ("#5", 1, xr.ReadElementContentAs (typeof (int), null));
+			Assert.AreEqual (1, xr.ReadElementContentAs (typeof (int), null), "#5");
 		}
 
 		[Test]
@@ -1906,21 +1905,20 @@ namespace MonoTests.System.Xml
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
 			// this XmlReader has no schema, thus the value is untyped
-			AssertEquals ("#1", "2006-01-02T03:04:56",
-				xr.ReadElementContentAsString ());
+			Assert.AreEqual ("2006-01-02T03:04:56", xr.ReadElementContentAsString (), "#1");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
 			xr.Read ();
-			AssertEquals ("#2", time, xr.ReadContentAsDateTime ());
+			Assert.AreEqual (time, xr.ReadContentAsDateTime (), "#2");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
-			AssertEquals ("#3", time, xr.ReadElementContentAsDateTime ());
+			Assert.AreEqual (time, xr.ReadElementContentAsDateTime (), "#3");
 
 			xr = XmlReader.Create (new StringReader (xml1));
 			xr.Read ();
-			AssertEquals ("#4", time, xr.ReadElementContentAs (typeof (DateTime), null));
+			Assert.AreEqual (time, xr.ReadElementContentAs (typeof (DateTime), null), "#4");
 		}
 
 		[Test]
@@ -1943,10 +1941,9 @@ namespace MonoTests.System.Xml
 				typeof (XmlQualifiedName), null);
 			// without IXmlNamespaceResolver, it still resolves
 			// x:el as valid QName.
-			AssertNotNull ("#1", o);
+			Assert.IsNotNull (o, "#1");
 			XmlQualifiedName q = o as XmlQualifiedName;
-			AssertEquals ("#2 : " + o.GetType (),
-				new XmlQualifiedName ("el", "urn:foo"), q);
+			Assert.AreEqual (new XmlQualifiedName ("el", "urn:foo"), q, "#2 : " + o.GetType ());
 		}
 
 		[Test]
@@ -1965,7 +1962,7 @@ namespace MonoTests.System.Xml
 			xr.Read ();
 			xr.Read ();
 			xr.Read ();
-			AssertEquals (String.Empty, xr.ReadContentAsString ()); // does not fail, unlike at Element!
+			Assert.AreEqual (String.Empty, xr.ReadContentAsString ()); // does not fail, unlike at Element!
 		}
 
 		[Test]
@@ -1973,7 +1970,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlReader xr = XmlReader.Create (new StringReader ("<?pi ?><a>test</a>"));
 			xr.Read ();
-			AssertEquals (String.Empty, xr.ReadContentAsString ());
+			Assert.AreEqual (String.Empty, xr.ReadContentAsString ());
 		}
 
 		[Test]
@@ -1982,7 +1979,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlReader xr = XmlReader.Create (new StringReader ("<?pi ?><a>test</a>"));
 			xr.Read ();
-			AssertEquals (XmlNodeType.ProcessingInstruction, xr.NodeType);
+			Assert.AreEqual (XmlNodeType.ProcessingInstruction, xr.NodeType);
 			xr.ReadElementContentAsString ();
 		}
 
@@ -2005,8 +2002,8 @@ namespace MonoTests.System.Xml
 			xr.Read ();
 			xr.Read (); // from Text "123"
 			string s = xr.ReadContentAsString ();
-			AssertEquals ("#1", "123", s);
-			AssertEquals ("#2", XmlNodeType.Element, xr.NodeType);
+			Assert.AreEqual ("123", s, "#1");
+			Assert.AreEqual (XmlNodeType.Element, xr.NodeType, "#2");
 		}
 
 		[Test]
@@ -2015,10 +2012,8 @@ namespace MonoTests.System.Xml
 			XmlTextReader r = new XmlTextReader (
 				"<root/>", XmlNodeType.Document, null);
 			r.Read ();
-			AssertEquals ("#1",
-				String.Empty, r.ReadElementContentAsString ());
-			AssertEquals ("#2",
-				XmlNodeType.None, r.NodeType);
+			Assert.AreEqual (String.Empty, r.ReadElementContentAsString (), "#1");
+			Assert.AreEqual (XmlNodeType.None, r.NodeType, "#2");
 		}
 
 		[Test]
@@ -2029,18 +2024,14 @@ namespace MonoTests.System.Xml
 			XmlTextReader r = new XmlTextReader (
 				"<root/>", XmlNodeType.Document, null);
 			r.Read ();
-			AssertEquals ("#1",
-				String.Empty, r.ReadElementContentAs (typeof (object), null));
-			AssertEquals ("#2",
-				XmlNodeType.None, r.NodeType);
+			Assert.AreEqual (String.Empty, r.ReadElementContentAs (typeof (object), null), "#1");
+			Assert.AreEqual (XmlNodeType.None, r.NodeType, "#2");
 
 			// regardless of its value, the return value is string.
 			r = new XmlTextReader ("<root>1</root>", XmlNodeType.Document, null);
 			r.Read ();
-			AssertEquals ("#3",
-				"1", r.ReadElementContentAs (typeof (object), null));
-			AssertEquals ("#4",
-				XmlNodeType.None, r.NodeType);
+			Assert.AreEqual ("1", r.ReadElementContentAs (typeof (object), null), "#3");
+			Assert.AreEqual (XmlNodeType.None, r.NodeType, "#4");
 		}
 
 		[Test]
@@ -2053,8 +2044,8 @@ namespace MonoTests.System.Xml
 		void ReadContentStringOnAttribute (XmlReader reader)
 		{
 			reader.Read ();
-			Assert (reader.MoveToAttribute ("id"));
-			AssertEquals ("myId", reader.ReadContentAsString ());
+			Assert.IsTrue (reader.MoveToAttribute ("id"));
+			Assert.AreEqual ("myId", reader.ReadContentAsString ());
 		}
 
 		[Test]
@@ -2068,8 +2059,8 @@ namespace MonoTests.System.Xml
 		{
 			reader.MoveToContent ();
 			reader.Read ();
-			AssertEquals (String.Empty, reader.ReadElementContentAsString ("sample", ""));
-			AssertEquals (XmlNodeType.EndElement, reader.NodeType);
+			Assert.AreEqual (String.Empty, reader.ReadElementContentAsString ("sample", ""));
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType);
 		}
 
 		[Test]
@@ -2086,8 +2077,8 @@ namespace MonoTests.System.Xml
 			XmlReader sub = reader.ReadSubtree ();
 			sub.ReadToDescendant ("item");
 			sub.Close ();
-			AssertEquals ("#1", XmlNodeType.EndElement, reader.NodeType);
-			AssertEquals ("#2", "item-list", reader.Name);
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#1");
+			Assert.AreEqual ("item-list", reader.Name, "#2");
 		}
 
 		[Test]
@@ -2117,10 +2108,10 @@ namespace MonoTests.System.Xml
 			XmlReader r = XmlReader.Create (new StringReader (xml));
 			r.Read ();
 			XmlReader s = r.ReadSubtree ();
-			Assert ("#1", s.Read ());
-			AssertEquals ("#2", XmlNodeType.Element, s.NodeType);
-			Assert ("#3", !s.Read ());
-			AssertEquals ("#4", XmlNodeType.None, s.NodeType);
+			Assert.IsTrue (s.Read (), "#1");
+			Assert.AreEqual (XmlNodeType.Element, s.NodeType, "#2");
+			Assert.IsTrue (!s.Read (), "#3");
+			Assert.AreEqual (XmlNodeType.None, s.NodeType, "#4");
 		}
 
 		[Test]
@@ -2135,14 +2126,14 @@ namespace MonoTests.System.Xml
 			r2.Read ();
 			XmlReader r3 = r2.ReadSubtree ();
 			r2.MoveToFirstAttribute ();
-			Assert ("#1", !r.IsEmptyElement);
-			Assert ("#2", !r2.IsEmptyElement);
+			Assert.IsTrue (!r.IsEmptyElement, "#1");
+			Assert.IsTrue (!r2.IsEmptyElement, "#2");
 			r3.Close ();
-			Assert ("#3", r.IsEmptyElement);
-			Assert ("#4", r2.IsEmptyElement);
+			Assert.IsTrue (r.IsEmptyElement, "#3");
+			Assert.IsTrue (r2.IsEmptyElement, "#4");
 			r2.Close ();
-			Assert ("#5", r.IsEmptyElement);
-			Assert ("#6", r2.IsEmptyElement);
+			Assert.IsTrue (r.IsEmptyElement, "#5");
+			Assert.IsTrue (r2.IsEmptyElement, "#6");
 		}
 
 		[Test]
@@ -2163,11 +2154,11 @@ namespace MonoTests.System.Xml
 
 			xmlReader.ReadStartElement ();
 			readBytes = xmlReader.ReadContentAsBase64 (buffer, 0, buffer.Length);
-			AssertEquals ("#1", 24, readBytes);
-			AssertEquals ("#2", 0, xmlReader.ReadContentAsBase64 (buffer, 0, buffer.Length));
+			Assert.AreEqual (24, readBytes, "#1");
+			Assert.AreEqual (0, xmlReader.ReadContentAsBase64 (buffer, 0, buffer.Length), "#2");
 			StringWriter sw = new StringWriter ();
 			foreach (byte b in buffer) sw.Write ("{0:X02}", b);
-			AssertEquals ("#3", "000102030405060708090A0B0C0D0E0F1011121314151617", sw.ToString ());
+			Assert.AreEqual ("000102030405060708090A0B0C0D0E0F1011121314151617", sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -2183,9 +2174,9 @@ namespace MonoTests.System.Xml
 				const int bufferLength = 1024;
 				byte [] buffer = new byte [bufferLength];
 				readerXml.ReadContentAsBase64 (buffer, 0, bufferLength);
-				AssertEquals ("#1", XmlNodeType.EndElement, readerXml.NodeType);
+				Assert.AreEqual (XmlNodeType.EndElement, readerXml.NodeType, "#1");
 				readerXml.Read ();
-				AssertEquals ("#2", XmlNodeType.Element, readerXml.NodeType);
+				Assert.AreEqual (XmlNodeType.Element, readerXml.NodeType, "#2");
 			}
 		}
 #endif

@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlDocumentFragmentTests : Assertion
+	public class XmlDocumentFragmentTests
 	{
 		XmlDocument document;
 		XmlDocumentFragment fragment;
@@ -26,8 +26,8 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument d = new XmlDocument ();
 			XmlDocumentFragment df = d.CreateDocumentFragment ();
-			AssertEquals ("#Constructor.NodeName", "#document-fragment", df.Name);
-			AssertEquals ("#Constructor.NodeType", XmlNodeType.DocumentFragment, df.NodeType);
+			Assert.AreEqual ("#document-fragment", df.Name, "#Constructor.NodeName");
+			Assert.AreEqual (XmlNodeType.DocumentFragment, df.NodeType, "#Constructor.NodeType");
 		}
 
 		[Test]
@@ -41,9 +41,9 @@ namespace MonoTests.System.Xml
 
 			// appending element to fragment
 			fragment.AppendChild (el);
-			AssertNotNull ("#AppendChildToFragment.Element", fragment.FirstChild);
-			AssertNotNull ("#AppendChildToFragment.Element.Children", fragment.FirstChild.FirstChild);
-			AssertEquals ("#AppendChildToFragment.Element.Child.Text", "Test Paragraph", fragment.FirstChild.FirstChild.Value);
+			Assert.IsNotNull (fragment.FirstChild, "#AppendChildToFragment.Element");
+			Assert.IsNotNull (fragment.FirstChild.FirstChild, "#AppendChildToFragment.Element.Children");
+			Assert.AreEqual ("Test Paragraph", fragment.FirstChild.FirstChild.Value, "#AppendChildToFragment.Element.Child.Text");
 		}
 
 		[Test]
@@ -58,10 +58,10 @@ namespace MonoTests.System.Xml
 
 			// appending fragment to element
 			body.AppendChild (fragment);
-			AssertNotNull ("#AppendFragmentToElement.Exist", body.FirstChild);
-			AssertEquals ("#AppendFragmentToElement.ChildIsElement", XmlNodeType.Element, body.FirstChild.NodeType);
-			AssertEquals ("#AppendFragmentToElement.FirstChild", "p", body.FirstChild.Name);
-			AssertEquals ("#AppendFragmentToElement.LastChild", "div", body.LastChild.Name);
+			Assert.IsNotNull (body.FirstChild, "#AppendFragmentToElement.Exist");
+			Assert.AreEqual (XmlNodeType.Element, body.FirstChild.NodeType, "#AppendFragmentToElement.ChildIsElement");
+			Assert.AreEqual ("p", body.FirstChild.Name, "#AppendFragmentToElement.FirstChild");
+			Assert.AreEqual ("div", body.LastChild.Name, "#AppendFragmentToElement.LastChild");
 		}
 
 		[Test]
@@ -74,7 +74,7 @@ namespace MonoTests.System.Xml
 			fragment.AppendChild (document.CreateElement ("foo"));
 			fragment.AppendChild (document.CreateElement ("bar"));
 			fragment.AppendChild (document.CreateElement ("baz"));
-			AssertEquals ("#Simple", "<foo /><bar /><baz />", fragment.InnerXml);
+			Assert.AreEqual ("<foo /><bar /><baz />", fragment.InnerXml, "#Simple");
 		}
 
 		[Test]
@@ -83,10 +83,10 @@ namespace MonoTests.System.Xml
 			document = new XmlDocument ();
 			fragment = document.CreateDocumentFragment ();
 			fragment.InnerXml = "<foo /><bar><child /></bar><baz />";
-			AssertEquals ("foo", fragment.FirstChild.Name);
-			AssertEquals ("bar", fragment.FirstChild.NextSibling.Name);
-			AssertEquals ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
-			AssertEquals ("baz", fragment.LastChild.Name);
+			Assert.AreEqual ("foo", fragment.FirstChild.Name);
+			Assert.AreEqual ("bar", fragment.FirstChild.NextSibling.Name);
+			Assert.AreEqual ("child", fragment.FirstChild.NextSibling.FirstChild.Name);
+			Assert.AreEqual ("baz", fragment.LastChild.Name);
 		}
 
 		[Test]
@@ -96,7 +96,7 @@ namespace MonoTests.System.Xml
 			fragment = document.CreateDocumentFragment ();
 			string text = "<foo /><bar><child /></bar><baz />";
 			fragment.InnerText = text;
-			AssertEquals (text, fragment.InnerText);
+			Assert.AreEqual (text, fragment.InnerText);
 		}
 	}
 }

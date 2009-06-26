@@ -22,7 +22,7 @@ using AssertType = NUnit.Framework.Assert;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlReaderSettingsTests : Assertion
+	public class XmlReaderSettingsTests
 	{
 		public Stream CreateStream (string xml)
 		{
@@ -33,29 +33,28 @@ namespace MonoTests.System.Xml
 		public void DefaultValue ()
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
-			AssertEquals ("CheckCharacters", true, s.CheckCharacters);
-			AssertEquals ("ConformanceLevel", ConformanceLevel.Document,
-				s.ConformanceLevel);
-			AssertEquals ("ValidationType", ValidationType.None, s.ValidationType);
-			AssertEquals ("IgnoreComments", false, s.IgnoreComments);
-			Assert ("ProcessInlineSchema", 0 == (s.ValidationFlags &
-				ValidationFlags.ProcessInlineSchema));
-			AssertEquals ("IgnorePI", false, s.IgnoreProcessingInstructions);
-			Assert ("ProcessSchemaLocation", 0 == (s.ValidationFlags &
-				ValidationFlags.ProcessSchemaLocation));
-			Assert ("ReportValidationWarnings", 0 == (s.ValidationFlags &
-				ValidationFlags.ReportValidationWarnings));
-			Assert ("ProcessIdentityConstraints", 0 != (s.ValidationFlags &
-				ValidationFlags.ProcessIdentityConstraints));
+			Assert.AreEqual (true, s.CheckCharacters, "CheckCharacters");
+			Assert.AreEqual (ConformanceLevel.Document, s.ConformanceLevel, "ConformanceLevel");
+			Assert.AreEqual (ValidationType.None, s.ValidationType, "ValidationType");
+			Assert.AreEqual (false, s.IgnoreComments, "IgnoreComments");
+			Assert.IsTrue (0 == (s.ValidationFlags &
+				ValidationFlags.ProcessInlineSchema), "ProcessInlineSchema");
+			Assert.AreEqual (false, s.IgnoreProcessingInstructions, "IgnorePI");
+			Assert.IsTrue (0 == (s.ValidationFlags &
+				ValidationFlags.ProcessSchemaLocation), "ProcessSchemaLocation");
+			Assert.IsTrue (0 == (s.ValidationFlags &
+				ValidationFlags.ReportValidationWarnings), "ReportValidationWarnings");
+			Assert.IsTrue (0 != (s.ValidationFlags &
+				ValidationFlags.ProcessIdentityConstraints), "ProcessIdentityConstraints");
 			// No one should use this flag BTW if someone wants
 			// code to be conformant to W3C XML Schema standard.
-			Assert ("AllowXmlAttributes", 0 != (s.ValidationFlags &
-				ValidationFlags.AllowXmlAttributes));
-			AssertEquals ("IgnoreWhitespace", false, s.IgnoreWhitespace);
-			AssertEquals ("LineNumberOffset", 0, s.LineNumberOffset);
-			AssertEquals ("LinePositionOffset", 0, s.LinePositionOffset);
-			AssertNull ("NameTable", s.NameTable);
-			AssertEquals ("Schemas.Count", 0, s.Schemas.Count);
+			Assert.IsTrue (0 != (s.ValidationFlags &
+				ValidationFlags.AllowXmlAttributes), "AllowXmlAttributes");
+			Assert.AreEqual (false, s.IgnoreWhitespace, "IgnoreWhitespace");
+			Assert.AreEqual (0, s.LineNumberOffset, "LineNumberOffset");
+			Assert.AreEqual (0, s.LinePositionOffset, "LinePositionOffset");
+			Assert.IsNull (s.NameTable, "NameTable");
+			Assert.AreEqual (0, s.Schemas.Count, "Schemas.Count");
 		}
 
 		[Test]
@@ -94,10 +93,10 @@ namespace MonoTests.System.Xml
 				sr, settings);
 			xtr.Read ();
 			xtr.MoveToFirstAttribute ();
-			AssertEquals ("   value   ", xtr.Value);
+			Assert.AreEqual ("   value   ", xtr.Value);
 			xtr.Read ();
 			// Text string is normalized
-			AssertEquals ("test\nstring", xtr.Value);
+			Assert.AreEqual ("test\nstring", xtr.Value);
 		}
 
 		[Test]
@@ -116,9 +115,9 @@ namespace MonoTests.System.Xml
 			settings.CheckCharacters = false;
 			xtr.Read ();
 			xtr.MoveToFirstAttribute ();
-			AssertEquals ("\0", xtr.Value);
+			Assert.AreEqual ("\0", xtr.Value);
 			xtr.Read ();
-			AssertEquals ("\0", xtr.Value);
+			Assert.AreEqual ("\0", xtr.Value);
 		}
 
 		// Hmm, does it really make sense? :-/
@@ -143,16 +142,16 @@ namespace MonoTests.System.Xml
 			// But it won't work against XmlNodeReader.
 			xr.Read ();
 			xr.MoveToFirstAttribute ();
-			AssertEquals ("\0", xr.Value);
+			Assert.AreEqual ("\0", xr.Value);
 			xr.Read ();
-			AssertEquals ("\0", xr.Value);
+			Assert.AreEqual ("\0", xr.Value);
 		}
 
 		[Test]
 		public void CreateAndSettings ()
 		{
-			AssertNotNull (XmlReader.Create (CreateStream ("<xml/>")).Settings);
-			AssertNotNull (XmlReader.Create ("Test/XmlFiles/simple.xml").Settings);
+			Assert.IsNotNull (XmlReader.Create (CreateStream ("<xml/>")).Settings);
+			Assert.IsNotNull (XmlReader.Create ("Test/XmlFiles/simple.xml").Settings);
 		}
 
 		[Test]
@@ -387,9 +386,9 @@ namespace MonoTests.System.Xml
 			r.Read ();
 			r.Read ();
 			// not EntityReference but Text
-			AssertEquals ("#1", XmlNodeType.Text, r.NodeType);
+			Assert.AreEqual (XmlNodeType.Text, r.NodeType, "#1");
 			r.Read ();
-			AssertEquals ("#2", XmlNodeType.EndElement, r.NodeType);
+			Assert.AreEqual (XmlNodeType.EndElement, r.NodeType, "#2");
 		}
 
 		public class XmlResolver81000 : XmlResolver
@@ -411,14 +410,14 @@ namespace MonoTests.System.Xml
 			XmlReader r = XmlReader.Create (new StringReader (xml), s);
 			r.Read ();
 			r.Read ();
-			AssertEquals (String.Empty, r.Value); // should not be at the comment node.
+			Assert.AreEqual (String.Empty, r.Value); // should not be at the comment node.
 		}
 
 		[Test]
 		public void CreateSetsBaseUri () // bug #392385
 		{
 			XmlReader r = XmlReader.Create (new StringReader ("<x/>"), new XmlReaderSettings (), "urn:foo");
-			AssertEquals ("urn:foo", r.BaseURI);
+			Assert.AreEqual ("urn:foo", r.BaseURI);
 		}
 	}
 }

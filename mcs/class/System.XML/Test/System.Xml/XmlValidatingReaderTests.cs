@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlValidatingReaderTests : Assertion
+	public class XmlValidatingReaderTests
 	{
 		public XmlValidatingReaderTests ()
 		{
@@ -48,7 +48,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// invalid element.
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -58,7 +58,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// invalid text
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -68,7 +68,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// invalid child
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -83,7 +83,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// root: invalid end
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -93,7 +93,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// invalid end
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -109,7 +109,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// invalid element
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -149,7 +149,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// valid #PCDATA
 			try {
 				dvr.Read ();	// invalid element
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -174,7 +174,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// foo
 			try {
 				dvr.Read ();	// invalid end root
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -184,7 +184,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// invalid element bar
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -201,7 +201,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// foo
 			try {
 				dvr.Read ();	// invalid element bar
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -226,7 +226,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// foo
 			try {
 				dvr.Read ();	// invalid text
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -264,7 +264,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			try {
 				dvr.Read ();	// bar: invalid (undeclared) element
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -305,7 +305,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// missing attributes
-				Fail ("should be failed."); // MS.NET fails to fail this test.
+				Assert.Fail ("should be failed."); // MS.NET fails to fail this test.
 			} catch (XmlSchemaException) {
 			}
 
@@ -318,7 +318,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// missing attributes
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 
@@ -339,7 +339,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// undeclared attribute baz
-				Fail ("should be failed.");
+				Assert.Fail ("should be failed.");
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -364,29 +364,29 @@ namespace MonoTests.System.Xml
 		{
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			AssertEquals (2, dvr.AttributeCount);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
+			Assert.AreEqual (2, dvr.AttributeCount);
 			// foo
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("foo-def", dvr ["foo"]);
-			AssertNotNull (dvr ["bar"]);
-			AssertEquals ("foo-def", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("foo-def", dvr.Value);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("foo-def", dvr ["foo"]);
+			Assert.IsNotNull (dvr ["bar"]);
+			Assert.AreEqual ("foo-def", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("foo-def", dvr.Value);
 			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("foo-def", dvr ["foo"]);
-			AssertNotNull (dvr ["bar"]);
-			AssertEquals ("bar-def", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("bar-def", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("foo-def", dvr ["foo"]);
+			Assert.IsNotNull (dvr ["bar"]);
+			Assert.AreEqual ("bar-def", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("bar-def", dvr.Value);
 		}
 
 		[Test]
@@ -399,15 +399,15 @@ namespace MonoTests.System.Xml
 			dvr.EntityHandling = EntityHandling.ExpandEntities;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
-			AssertEquals ("entity string", dvr.ReadString ());
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("entity string", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("internal entity string value", dvr.Value);
+			Assert.AreEqual ("entity string", dvr.ReadString ());
 
 			// ValidationType = None
 
@@ -416,17 +416,17 @@ namespace MonoTests.System.Xml
 			dvr.ValidationType = ValidationType.None;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
 
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("entity string", dvr.Value);
 
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
-			AssertEquals ("entity string", dvr.ReadString ());
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("internal entity string value", dvr.Value);
+			Assert.AreEqual ("entity string", dvr.ReadString ());
 		}
 
 		[Test]
@@ -439,34 +439,34 @@ namespace MonoTests.System.Xml
 			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
 			// MS BUG: it returns "entity string", however, entity should not be exanded.
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (!dvr.ReadAttributeValue ());
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (!dvr.ReadAttributeValue ());
 
 			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("internal ", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals (" value", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("internal ", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual (" value", dvr.Value);
 
 			// ValidationType = None
 
@@ -475,35 +475,35 @@ namespace MonoTests.System.Xml
 			dvr.ValidationType = ValidationType.None;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
 
 			// foo
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (!dvr.ReadAttributeValue ());
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (!dvr.ReadAttributeValue ());
 
 			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("internal ", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals (" value", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("internal ", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual (" value", dvr.Value);
 		}
 
 		[Test]
@@ -517,35 +517,35 @@ namespace MonoTests.System.Xml
 			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("entity string", dvr.Value);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (!dvr.ReadAttributeValue ());
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (!dvr.ReadAttributeValue ());
 
 			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("internal entity string value", dvr.Value);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("internal ", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals (" value", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("internal ", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual (" value", dvr.Value);
 
 			// ValidationType = None
 
@@ -554,37 +554,37 @@ namespace MonoTests.System.Xml
 			dvr.ValidationType = ValidationType.None;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
 
 			// foo
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("entity string", dvr.Value);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (!dvr.ReadAttributeValue ());
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (!dvr.ReadAttributeValue ());
 
 			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("internal entity string value", dvr.Value);
 			//  ReadAttributeValue()
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals ("internal ", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals ("ent", dvr.Name);
-			AssertEquals (String.Empty, dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (String.Empty, dvr.Name);
-			AssertEquals (" value", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual ("internal ", dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual ("ent", dvr.Name);
+			Assert.AreEqual (String.Empty, dvr.Value);
+			Assert.IsTrue (dvr.ReadAttributeValue ());
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (String.Empty, dvr.Name);
+			Assert.AreEqual (" value", dvr.Value);
 		}
 
 		[Test]
@@ -602,20 +602,20 @@ namespace MonoTests.System.Xml
 			dvr.EntityHandling = EntityHandling.ExpandEntities;
 			dvr.Read ();	// DTD
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("id1", dvr.Value);
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("nameToken", dvr.Value);
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("baz", dvr.Name);
-			AssertEquals ("list of name token", dvr.Value);
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("quux", dvr.Name);
-			AssertEquals (" quuux quuux  ", dvr.Value);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual ("root", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual ("id1", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.AreEqual ("nameToken", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("baz", dvr.Name);
+			Assert.AreEqual ("list of name token", dvr.Value);
+			Assert.IsTrue (dvr.MoveToNextAttribute ());
+			Assert.AreEqual ("quux", dvr.Name);
+			Assert.AreEqual (" quuux quuux  ", dvr.Value);
 		}
 
 		[Test]
@@ -629,17 +629,17 @@ namespace MonoTests.System.Xml
 			dvr.ValidationEventHandler += new ValidationEventHandler (OnInvalidityFound);
 			dvr.ValidationType = ValidationType.DTD;
 			dvr.Read ();	// DTD
-			Assert (dvr.Read ());	// invalid foo
-			Assert (eventFired);
-			AssertEquals ("foo", dvr.Name);
-			Assert (dvr.Read ());	// invalid bar
-			AssertEquals ("bar", dvr.Name);
-			Assert (dvr.MoveToFirstAttribute ());	// att
-			AssertEquals ("att", dvr.Name);
-			Assert (dvr.Read ());	// invalid end foo
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals (XmlNodeType.EndElement, dvr.NodeType);
-			Assert (!dvr.Read ());
+			Assert.IsTrue (dvr.Read ());	// invalid foo
+			Assert.IsTrue (eventFired);
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.IsTrue (dvr.Read ());	// invalid bar
+			Assert.AreEqual ("bar", dvr.Name);
+			Assert.IsTrue (dvr.MoveToFirstAttribute ());	// att
+			Assert.AreEqual ("att", dvr.Name);
+			Assert.IsTrue (dvr.Read ());	// invalid end foo
+			Assert.AreEqual ("foo", dvr.Name);
+			Assert.AreEqual (XmlNodeType.EndElement, dvr.NodeType);
+			Assert.IsTrue (!dvr.Read ());
 
 			// When ValidationType is None, event should not be fired,
 			eventFired = false;
@@ -647,8 +647,8 @@ namespace MonoTests.System.Xml
 			dvr.ValidationEventHandler += new ValidationEventHandler (OnInvalidityFound);
 			dvr.ValidationType = ValidationType.None;
 			dvr.Read ();	// DTD
-			Assert (dvr.Read ());	// invalid foo
-			Assert (!eventFired);
+			Assert.IsTrue (dvr.Read ());	// invalid foo
+			Assert.IsTrue (!eventFired);
 		}
 
 		private bool eventFired;
@@ -668,7 +668,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			try {
 				dvr.Read ();	// root misses attribute foo
-				Fail ();
+				Assert.Fail ();
 			} catch (XmlSchemaException) {
 			}
 
@@ -682,7 +682,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// c[1]
 			try {
 				dvr.Read ();	// c[2]
-				Fail ();
+				Assert.Fail ();
 			} catch (XmlSchemaException) {
 			}
 
@@ -693,7 +693,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// c[1]
 			try {
 				dvr.Read ();	// c[2]
-				Fail ();
+				Assert.Fail ();
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -712,30 +712,30 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent;
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals (1, dvr.Depth);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (1, dvr.Depth);
 			dvr.ResolveEntity ();
 			// It is still entity reference.
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals (2, dvr.Depth);
-			AssertEquals ("entity string", dvr.Value);
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType);
+			Assert.AreEqual (2, dvr.Depth);
+			Assert.AreEqual ("entity string", dvr.Value);
 			dvr.Read ();
-			AssertEquals (XmlNodeType.EndEntity, dvr.NodeType);
-			AssertEquals (1, dvr.Depth);
-			AssertEquals (String.Empty, dvr.Value);
+			Assert.AreEqual (XmlNodeType.EndEntity, dvr.NodeType);
+			Assert.AreEqual (1, dvr.Depth);
+			Assert.AreEqual (String.Empty, dvr.Value);
 
 			dvr.Read ();	// &ent2;
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
-			AssertEquals (1, dvr.Depth);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (1, dvr.Depth);
 			dvr.ResolveEntity ();
 			// It is still entity reference.
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
 			// It now became element node.
 			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals (2, dvr.Depth);
+			Assert.AreEqual (XmlNodeType.Element, dvr.NodeType);
+			Assert.AreEqual (2, dvr.Depth);
 		}
 
 		[Test]
@@ -751,22 +751,22 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// DTD
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent3;
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
 #if NET_2_0
 			// under .NET 2.0, an error is raised here.
 			// under .NET 1.1, the error is thrown on the next read.
 			try {
 				dvr.ResolveEntity ();
-				Fail ("Attempt to resolve undeclared entity should fail.");
+				Assert.Fail ("Attempt to resolve undeclared entity should fail.");
 			} catch (XmlException) {
 			}
 #else
 			// ent3 does not exist in this dtd.
 			dvr.ResolveEntity ();
-			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
 			try {
 				dvr.Read ();
-				Fail ("Attempt to resolve undeclared entity should fail.");
+				Assert.Fail ("Attempt to resolve undeclared entity should fail.");
 			} catch (XmlException) {
 			}
 #endif
@@ -791,10 +791,10 @@ namespace MonoTests.System.Xml
 			dvr.Read (); // doctype
 			dvr.Read (); // root
 			dvr.MoveToAttribute (0); // attr
-			Assert (dvr.ReadAttributeValue ()); // Should read expanded text
-			AssertEquals (XmlNodeType.Text, dvr.NodeType); // not EntityReference
-			AssertEquals ("entity string text", dvr.Value);
-			Assert (!dvr.ReadAttributeValue ());
+			Assert.IsTrue (dvr.ReadAttributeValue ()); // Should read expanded text
+			Assert.AreEqual (XmlNodeType.Text, dvr.NodeType); // not EntityReference
+			Assert.AreEqual ("entity string text", dvr.Value);
+			Assert.IsTrue (!dvr.ReadAttributeValue ());
 		}
 
 		[Test]
@@ -813,7 +813,7 @@ namespace MonoTests.System.Xml
 			r.Read ();
 			r.Read ();
 			r.Read ();
-			AssertEquals (refOut, r.ReadOuterXml ());
+			Assert.AreEqual (refOut, r.ReadOuterXml ());
 		}
 
 		[Test]
@@ -888,37 +888,37 @@ namespace MonoTests.System.Xml
 			xvr.Read (); // DTD
 			xvr.Read (); // whitespace
 			xvr.Read ();
-			AssertEquals ("#1-1", "urn:foo", xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#1-2", "urn:bar", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", xvr.LookupNamespace (String.Empty), "#1-1");
+			Assert.AreEqual ("urn:bar", xvr.LookupNamespace ("bar"), "#1-2");
 
-			AssertEquals ("#1-a", "urn:baz", xvr.LookupNamespace ("baz"));
-			Assert ("#1-b", xvr.MoveToAttribute ("baz:dummy"));
-			AssertEquals ("#1-c", "urn:baz", xvr.NamespaceURI);
+			Assert.AreEqual ("urn:baz", xvr.LookupNamespace ("baz"), "#1-a");
+			Assert.IsTrue (xvr.MoveToAttribute ("baz:dummy"), "#1-b");
+			Assert.AreEqual ("urn:baz", xvr.NamespaceURI, "#1-c");
 
-			Assert ("#1-d", xvr.MoveToAttribute ("dummy"));
-			AssertEquals ("#1-e", String.Empty, xvr.NamespaceURI);
+			Assert.IsTrue (xvr.MoveToAttribute ("dummy"), "#1-d");
+			Assert.AreEqual (String.Empty, xvr.NamespaceURI, "#1-e");
 
 			xvr.Read (); // first Y, empty element
-			AssertEquals ("#2-1", "urn:foo", xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#2-2", "urn:bar", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", xvr.LookupNamespace (String.Empty), "#2-1");
+			Assert.AreEqual ("urn:bar", xvr.LookupNamespace ("bar"), "#2-2");
 			xvr.Read (); // second Y, start element
-			AssertEquals ("#3-1", "urn:foo", xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#3-2", "urn:bar", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", xvr.LookupNamespace (String.Empty), "#3-1");
+			Assert.AreEqual ("urn:bar", xvr.LookupNamespace ("bar"), "#3-2");
 			xvr.Read (); // inside normal Y. Check inheritance
-			AssertEquals ("#4-1", "urn:foo", xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#4-2", "urn:bar", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", xvr.LookupNamespace (String.Empty), "#4-1");
+			Assert.AreEqual ("urn:bar", xvr.LookupNamespace ("bar"), "#4-2");
 			xvr.Read (); // second Y, end element
-			AssertEquals ("#5-1", "urn:foo", xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#5-2", "urn:bar", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual ("urn:foo", xvr.LookupNamespace (String.Empty), "#5-1");
+			Assert.AreEqual ("urn:bar", xvr.LookupNamespace ("bar"), "#5-2");
 			xvr.Read (); // third Y, suppresses default namespaces
-			AssertEquals ("#6-1", null, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#6-2", "urn:hoge", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual (null, xvr.LookupNamespace (String.Empty), "#6-1");
+			Assert.AreEqual ("urn:hoge", xvr.LookupNamespace ("bar"), "#6-2");
 			xvr.Read (); // inside suppressing Y. Check inheritance
-			AssertEquals ("#7-1", null, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#7-2", "urn:hoge", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual (null, xvr.LookupNamespace (String.Empty), "#7-1");
+			Assert.AreEqual ("urn:hoge", xvr.LookupNamespace ("bar"), "#7-2");
 			xvr.Read (); // end of suppressing element
-			AssertEquals ("#8-1", null, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#8-2", "urn:hoge", xvr.LookupNamespace ("bar"));
+			Assert.AreEqual (null, xvr.LookupNamespace (String.Empty), "#8-1");
+			Assert.AreEqual ("urn:hoge", xvr.LookupNamespace ("bar"), "#8-2");
 		}
 
 #if NET_2_0

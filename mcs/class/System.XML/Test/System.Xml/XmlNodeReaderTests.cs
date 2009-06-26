@@ -20,7 +20,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlNodeReaderTests : Assertion
+	public class XmlNodeReaderTests
 	{
 		[SetUp]
 		public void GetReady ()
@@ -36,19 +36,19 @@ namespace MonoTests.System.Xml
 			XmlNodeReader nrdr;
 			try {
 				nrdr = new XmlNodeReader (null);
-				Fail ("null reference exception is preferable.");
+				Assert.Fail ("null reference exception is preferable.");
 			} catch (NullReferenceException) {
 			}
 			nrdr = new XmlNodeReader (new XmlDocument ());
 			nrdr.Read ();
-			AssertEquals ("newDoc.ReadState", ReadState.Error, nrdr.ReadState);
-			AssertEquals ("newDoc.EOF", true, nrdr.EOF);
-			AssertEquals ("newDoc.NodeType", XmlNodeType.None, nrdr.NodeType);
+			Assert.AreEqual (ReadState.Error, nrdr.ReadState, "newDoc.ReadState");
+			Assert.AreEqual (true, nrdr.EOF, "newDoc.EOF");
+			Assert.AreEqual (XmlNodeType.None, nrdr.NodeType, "newDoc.NodeType");
 			nrdr = new XmlNodeReader (document.CreateDocumentFragment ());
 			nrdr.Read ();
-			AssertEquals ("Fragment.ReadState", ReadState.Error, nrdr.ReadState);
-			AssertEquals ("Fragment.EOF", true, nrdr.EOF);
-			AssertEquals ("Fragment.NodeType", XmlNodeType.None, nrdr.NodeType);
+			Assert.AreEqual (ReadState.Error, nrdr.ReadState, "Fragment.ReadState");
+			Assert.AreEqual (true, nrdr.EOF, "Fragment.EOF");
+			Assert.AreEqual (XmlNodeType.None, nrdr.NodeType, "Fragment.NodeType");
 		}
 
 		[Test]
@@ -56,10 +56,10 @@ namespace MonoTests.System.Xml
 		{
 			XmlNodeReader nrdr = new XmlNodeReader (document.DocumentElement);
 			nrdr.Read ();
-			AssertEquals ("<root>.NodeType", XmlNodeType.Element, nrdr.NodeType);
-			AssertEquals ("<root>.Name", "root", nrdr.Name);
-			AssertEquals ("<root>.ReadState", ReadState.Interactive, nrdr.ReadState);
-			AssertEquals ("<root>.Depth", 0, nrdr.Depth);
+			Assert.AreEqual (XmlNodeType.Element, nrdr.NodeType, "<root>.NodeType");
+			Assert.AreEqual ("root", nrdr.Name, "<root>.Name");
+			Assert.AreEqual (ReadState.Interactive, nrdr.ReadState, "<root>.ReadState");
+			Assert.AreEqual (0, nrdr.Depth, "<root>.Depth");
 		}
 
 
@@ -69,9 +69,9 @@ namespace MonoTests.System.Xml
 			document.LoadXml ("<root>test of <b>mixed</b> string.</root>");
 			XmlNodeReader nrdr = new XmlNodeReader (document);
 			nrdr.ReadInnerXml ();
-			AssertEquals ("initial.ReadState", ReadState.Initial, nrdr.ReadState);
-			AssertEquals ("initial.EOF", false, nrdr.EOF);
-			AssertEquals ("initial.NodeType", XmlNodeType.None, nrdr.NodeType);
+			Assert.AreEqual (ReadState.Initial, nrdr.ReadState, "initial.ReadState");
+			Assert.AreEqual (false, nrdr.EOF, "initial.EOF");
+			Assert.AreEqual (XmlNodeType.None, nrdr.NodeType, "initial.NodeType");
 		}
 
 		[Test]
@@ -82,38 +82,38 @@ namespace MonoTests.System.Xml
 			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent1 + ent2;
 			string xml = dtd + "<root>&ent;&ent2;</root>";
 			document.LoadXml (xml);
-			AssertEquals (xml, document.OuterXml);
+			Assert.AreEqual (xml, document.OuterXml);
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();	// DTD
 			nr.Read ();	// root
 			nr.Read ();	// &ent;
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
-			AssertEquals ("depth#1", 1, nr.Depth);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (1, nr.Depth, "depth#1");
 			nr.ResolveEntity ();
 			// It is still entity reference.
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			nr.Read ();
-			AssertEquals (XmlNodeType.Text, nr.NodeType);
-			AssertEquals ("depth#2", 2, nr.Depth);
-			AssertEquals ("entity string", nr.Value);
+			Assert.AreEqual (XmlNodeType.Text, nr.NodeType);
+			Assert.AreEqual (2, nr.Depth, "depth#2");
+			Assert.AreEqual ("entity string", nr.Value);
 			nr.Read ();
-			AssertEquals (XmlNodeType.EndEntity, nr.NodeType);
-			AssertEquals ("depth#3", 1, nr.Depth);
-			AssertEquals ("", nr.Value);
+			Assert.AreEqual (XmlNodeType.EndEntity, nr.NodeType);
+			Assert.AreEqual (1, nr.Depth, "depth#3");
+			Assert.AreEqual ("", nr.Value);
 
 			nr.Read ();	// &ent2;
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
-			AssertEquals ("depth#4", 1, nr.Depth);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (1, nr.Depth, "depth#4");
 			nr.ResolveEntity ();
-			AssertEquals (xml, document.OuterXml);
+			Assert.AreEqual (xml, document.OuterXml);
 			// It is still entity reference.
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			// It now became element node.
 			nr.Read ();
-			AssertEquals (XmlNodeType.Element, nr.NodeType);
-			AssertEquals ("depth#5", 2, nr.Depth);
+			Assert.AreEqual (XmlNodeType.Element, nr.NodeType);
+			Assert.AreEqual (2, nr.Depth, "depth#5");
 
-			AssertEquals (xml, document.OuterXml);
+			Assert.AreEqual (xml, document.OuterXml);
 		}
 
 		[Test]
@@ -132,24 +132,24 @@ namespace MonoTests.System.Xml
 			document.AppendChild (document.ReadNode (xtr));
 			document.AppendChild (document.ReadNode (xtr));
 			xtr.Close ();
-			AssertEquals (xml, document.OuterXml);
+			Assert.AreEqual (xml, document.OuterXml);
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();	// DTD
 			nr.Read ();	// root
 			nr.Read ();	// &ent3;
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			// ent3 does not exists in this dtd.
 			nr.ResolveEntity ();
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			nr.Read ();
 #if false
 			// Hmm... MS.NET returned as it is a Text node.
-			AssertEquals (XmlNodeType.Text, nr.NodeType);
-			AssertEquals (String.Empty, nr.Value);
+			Assert.AreEqual (XmlNodeType.Text, nr.NodeType);
+			Assert.AreEqual (String.Empty, nr.Value);
 			nr.Read ();
 			// Really!?
-			AssertEquals (XmlNodeType.EndEntity, nr.NodeType);
-			AssertEquals (String.Empty, nr.Value);
+			Assert.AreEqual (XmlNodeType.EndEntity, nr.NodeType);
+			Assert.AreEqual (String.Empty, nr.Value);
 #endif
 		}
 
@@ -165,11 +165,11 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 			document.AppendChild (document.ReadNode (xtr));
 			xtr.Close ();
-			AssertEquals (xml, document.OuterXml);
+			Assert.AreEqual (xml, document.OuterXml);
 			XmlNodeReader nr = new XmlNodeReader (document);
 			nr.Read ();	// root
 			nr.Read ();	// &ent;
-			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
+			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			// ent does not exists in this dtd.
 			nr.ResolveEntity ();
 		}
@@ -181,16 +181,16 @@ namespace MonoTests.System.Xml
 			XmlNodeReader nr = new XmlNodeReader (
 				document.DocumentElement.FirstChild);
 			nr.Read ();
-			AssertEquals ("#0", true, nr.IsEmptyElement);
-			Assert ("#1", !nr.Read ());
+			Assert.AreEqual (true, nr.IsEmptyElement, "#0");
+			Assert.IsTrue (!nr.Read (), "#1");
 
 			document.LoadXml ("<root><child></child></root>");
 			nr = new XmlNodeReader (
 				document.DocumentElement.FirstChild);
 			nr.Read ();
-			Assert ("#2", nr.Read ());
-			AssertEquals ("#2.2", false, nr.IsEmptyElement);
-			Assert ("#3", !nr.Read ());
+			Assert.IsTrue (nr.Read (), "#2");
+			Assert.AreEqual (false, nr.IsEmptyElement, "#2.2");
+			Assert.IsTrue (!nr.Read (), "#3");
 		}
 	}
 

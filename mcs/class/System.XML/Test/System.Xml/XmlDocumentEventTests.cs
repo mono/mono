@@ -16,7 +16,7 @@ using System.Xml;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlDocumentEventTests : Assertion
+	public class XmlDocumentEventTests
 	{
 		public static void Main ()
 		{
@@ -89,8 +89,7 @@ namespace MonoTests.System.Xml
 			XmlElement el = document.CreateElement ("root");
 			el.AppendChild (document.CreateTextNode ("simple text node."));
 			document.AppendChild (el);
-			AssertEquals (
-				"Inserting: Text into Element.\n" +
+			Assert.AreEqual ("Inserting: Text into Element.\n" +
 				"Inserted: Text into Element.\n" +
 				"Inserting: Element into Document.\n" +
 				"Inserted: Element into Document.\n",
@@ -104,8 +103,7 @@ namespace MonoTests.System.Xml
 			doc.LoadXml ("<!DOCTYPE root [<!ELEMENT root (#PCDATA)><!ATTLIST root foo CDATA 'foo-def'>]><root></root>");
 			SetEvents (doc);
 			doc.DocumentElement.RemoveAll ();
-			AssertEquals (
-				"Removing: Attribute from Element.\n" +
+			Assert.AreEqual ("Removing: Attribute from Element.\n" +
 				"Removed: Attribute from Element.\n" +
 				"Inserting: Text into Attribute.\n" +
 				"Inserted: Text into Attribute.\n" +

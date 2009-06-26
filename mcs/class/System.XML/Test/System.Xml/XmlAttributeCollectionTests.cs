@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlAttributeCollectionTests : Assertion
+	public class XmlAttributeCollectionTests
 	{
 		private XmlDocument document;
 
@@ -43,7 +43,7 @@ namespace MonoTests.System.Xml
 			XmlElement xmlElement = xmlNode as XmlElement;
 			XmlAttributeCollection attributes = xmlElement.Attributes;
 			attributes.RemoveAll ();
-			AssertEquals ("not all attributes removed.", false, xmlElement.HasAttribute ("type"));
+			Assert.AreEqual (false, xmlElement.HasAttribute ("type"), "not all attributes removed.");
 		}
 
 		[Test]
@@ -56,8 +56,8 @@ namespace MonoTests.System.Xml
 			XmlAttribute xmlAttribute3 = xmlNode as XmlAttribute;
 			XmlAttributeCollection attributeCol = xmlEl.Attributes;
 			xmlAttribute3 = attributeCol.Append (xmlAttribute3);
-			AssertEquals ("attribute name not properly created.", true, xmlAttribute3.Name.Equals ("attr3"));
-			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute3.NamespaceURI.Equals ("namespace1"));
+			Assert.AreEqual (true, xmlAttribute3.Name.Equals ("attr3"), "attribute name not properly created.");
+			Assert.AreEqual (true, xmlAttribute3.NamespaceURI.Equals ("namespace1"), "attribute namespace not properly created.");
 		}
 
 		[Test]
@@ -68,13 +68,13 @@ namespace MonoTests.System.Xml
 			XmlAttributeCollection col = xmlDoc.DocumentElement.Attributes;
 			XmlAttribute[] array = new XmlAttribute[24];
 			col.CopyTo(array, 0);
-			AssertEquals("garnet", array[0].Value);
-			AssertEquals("moonstone", array[8].Value);
-			AssertEquals("turquoize", array[11].Value);
+			Assert.AreEqual ("garnet", array[0].Value);
+			Assert.AreEqual ("moonstone", array[8].Value);
+			Assert.AreEqual ("turquoize", array[11].Value);
 			col.CopyTo(array, 12);
-			AssertEquals("garnet", array[12].Value);
-			AssertEquals("moonstone", array[20].Value);
-			AssertEquals("turquoize", array[23].Value);
+			Assert.AreEqual ("garnet", array[12].Value);
+			Assert.AreEqual ("moonstone", array[20].Value);
+			Assert.AreEqual ("turquoize", array[23].Value);
 		}
 
 		[Test]
@@ -88,14 +88,14 @@ namespace MonoTests.System.Xml
 			XmlAttribute attr = xmlDoc.CreateAttribute("b3");
 			attr.Value = "bloodstone";
 			col.SetNamedItem(attr);
-			AssertEquals("SetNamedItem.Normal", "bloodstone", el.GetAttribute("b3"));
+			Assert.AreEqual ("bloodstone", el.GetAttribute("b3"), "SetNamedItem.Normal");
 
 			attr = xmlDoc.CreateAttribute("b3");
 			attr.Value = "aquamaline";
 			col.SetNamedItem(attr);
-			AssertEquals("SetNamedItem.Override", "aquamaline", el.GetAttribute("b3"));
-			AssertEquals("SetNamedItem.Override.Count.1", 1, el.Attributes.Count);
-			AssertEquals("SetNamedItem.Override.Count.2", 1, col.Count);
+			Assert.AreEqual ("aquamaline", el.GetAttribute("b3"), "SetNamedItem.Override");
+			Assert.AreEqual (1, el.Attributes.Count, "SetNamedItem.Override.Count.1");
+			Assert.AreEqual (1, col.Count, "SetNamedItem.Override.Count.2");
 		}
 
 		[Test]
@@ -108,31 +108,31 @@ namespace MonoTests.System.Xml
 			XmlAttribute attr = xmlDoc.CreateAttribute("b1");
 			attr.Value = "garnet";
 			col.InsertAfter(attr, null);
-			AssertEquals("InsertAfterNull", "garnet", el.GetAttributeNode("b1").Value);
-			AssertEquals("InsertAfterNull.Pos", el.GetAttribute("b1"), col[0].Value);
+			Assert.AreEqual ("garnet", el.GetAttributeNode("b1").Value, "InsertAfterNull");
+			Assert.AreEqual (el.GetAttribute("b1"), col[0].Value, "InsertAfterNull.Pos");
 
 			attr = xmlDoc.CreateAttribute("b3");
 			attr.Value = "bloodstone";
 			col.InsertAfter(attr, el.GetAttributeNode("b2"));
-			AssertEquals("InsertAfterAttr", "bloodstone", el.GetAttributeNode("b3").Value);
-			AssertEquals("InsertAfterAttr.Pos", el.GetAttribute("b3"), col[2].Value);
+			Assert.AreEqual ("bloodstone", el.GetAttributeNode("b3").Value, "InsertAfterAttr");
+			Assert.AreEqual (el.GetAttribute("b3"), col[2].Value, "InsertAfterAttr.Pos");
 
 			attr = xmlDoc.CreateAttribute("b4");
 			attr.Value = "diamond";
 			col.InsertBefore(attr, null);
-			AssertEquals("InsertBeforeNull", "diamond", el.GetAttributeNode("b4").Value);
-			AssertEquals("InsertBeforeNull.Pos", el.GetAttribute("b4"), col[3].Value);
+			Assert.AreEqual ("diamond", el.GetAttributeNode("b4").Value, "InsertBeforeNull");
+			Assert.AreEqual (el.GetAttribute("b4"), col[3].Value, "InsertBeforeNull.Pos");
 
 			attr = xmlDoc.CreateAttribute("warning");
 			attr.Value = "mixed modern and traditional;-)";
 			col.InsertBefore(attr, el.GetAttributeNode("b1"));
-			AssertEquals("InsertBeforeAttr", "mixed modern and traditional;-)", el.GetAttributeNode("warning").Value);
-			AssertEquals("InsertBeforeAttr.Pos", el.GetAttributeNode("warning").Value, col[0].Value);
+			Assert.AreEqual ("mixed modern and traditional;-)", el.GetAttributeNode("warning").Value, "InsertBeforeAttr");
+			Assert.AreEqual (el.GetAttributeNode("warning").Value, col[0].Value, "InsertBeforeAttr.Pos");
 
 			attr = xmlDoc.CreateAttribute("about");
 			attr.Value = "lists of birthstone.";
 			col.Prepend(attr);
-			AssertEquals("Prepend", "lists of birthstone.", col[0].Value);
+			Assert.AreEqual ("lists of birthstone.", col[0].Value, "Prepend");
 		}
 
 		[Test]
@@ -168,9 +168,9 @@ namespace MonoTests.System.Xml
 			outOfOrder.Value = "Should still be second attribute";
 			testElement.Attributes.InsertAfter (outOfOrder, testElement.Attributes [0]);
 
-			AssertEquals ("First attribute", testElement.Attributes [0].Value);
-			AssertEquals ("Should still be second attribute", testElement.Attributes [1].Value);
-			AssertEquals ("Third attribute", testElement.Attributes [2].Value);
+			Assert.AreEqual ("First attribute", testElement.Attributes [0].Value);
+			Assert.AreEqual ("Should still be second attribute", testElement.Attributes [1].Value);
+			Assert.AreEqual ("Third attribute", testElement.Attributes [2].Value);
 		}
 
 		[Test]
@@ -183,13 +183,13 @@ namespace MonoTests.System.Xml
 
 			// Remove
 			XmlAttribute attr = col.Remove(el.GetAttributeNode("a12"));
-			AssertEquals("Remove", 11, col.Count);
-			AssertEquals("Remove.Removed", "a12", attr.Name);
+			Assert.AreEqual (11, col.Count, "Remove");
+			Assert.AreEqual ("a12", attr.Name, "Remove.Removed");
 
 			// RemoveAt
 			attr = col.RemoveAt(5);
-			AssertEquals("RemoveAt", null, el.GetAttributeNode("a6"));
-			AssertEquals("Remove.Removed", "pearl", attr.Value);
+			Assert.AreEqual (null, el.GetAttributeNode("a6"), "RemoveAt");
+			Assert.AreEqual ("pearl", attr.Value, "Remove.Removed");
 		}
 
 		[Test]
@@ -207,11 +207,11 @@ namespace MonoTests.System.Xml
 			doc.DocumentElement.RemoveAttribute("attr");
 
 			XmlAttribute defAttr = doc.DocumentElement.Attributes ["attr"];
-			AssertNotNull (defAttr);
-			AssertEquals ("default", defAttr.Value);
+			Assert.IsNotNull (defAttr);
+			Assert.AreEqual ("default", defAttr.Value);
 
 			defAttr.Value = "default"; // same value as default
-			AssertEquals (true, defAttr.Specified);
+			Assert.AreEqual (true, defAttr.Specified);
 		}
 
 		[Test]

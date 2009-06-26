@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlElementTests  : Assertion
+	public class XmlElementTests
 	{
 		private XmlDocument document;
 
@@ -33,11 +33,11 @@ namespace MonoTests.System.Xml
 					    string localName, string namespaceURI,
 					    int attributesCount)
 		{
-			AssertEquals (prefix != String.Empty ? prefix + ":" + localName : localName, element.Name);
-			AssertEquals (prefix, element.Prefix);
-			AssertEquals (localName, element.LocalName);
-			AssertEquals (namespaceURI, element.NamespaceURI);
-			//AssertEquals (attributesCount, element.Attributes.Count);
+			Assert.AreEqual (prefix != String.Empty ? prefix + ":" + localName : localName, element.Name);
+			Assert.AreEqual (prefix, element.Prefix);
+			Assert.AreEqual (localName, element.LocalName);
+			Assert.AreEqual (namespaceURI, element.NamespaceURI);
+			//Assert.AreEqual (attributesCount, element.Attributes.Count);
 		}
 
 		// for NodeInserted Event
@@ -76,14 +76,14 @@ namespace MonoTests.System.Xml
                         
 			document.AppendChild (element);
 			XmlNode deep = element.CloneNode (true);
-			// AssertEquals ("These should be the same", deep.OuterXml, element.OuterXml); 
-			AssertNull ("This is not null", deep.ParentNode);
-			Assert ("Copies, not pointers", !Object.ReferenceEquals (element,deep));
+			// Assert.AreEqual (deep.OuterXml, element.OuterXml, "These should be the same"); 
+			Assert.IsNull (deep.ParentNode, "This is not null");
+			Assert.IsTrue (!Object.ReferenceEquals (element, deep), "Copies, not pointers");
 
 			XmlNode shallow = element.CloneNode (false);
-			AssertNull ("This is not null", shallow.ParentNode);
-			Assert ("Copies, not pointers", !Object.ReferenceEquals (element,shallow));
-			AssertEquals ("Shallow clones shalt have no children!", false, shallow.HasChildNodes);
+			Assert.IsNull (shallow.ParentNode, "This is not null");
+			Assert.IsTrue (!Object.ReferenceEquals (element, shallow), "Copies, not pointers");
+			Assert.AreEqual (false, shallow.HasChildNodes, "Shallow clones shalt have no children!");
 		}
 
 		[Test]
@@ -151,26 +151,26 @@ namespace MonoTests.System.Xml
 			XmlComment comment;
 			
 			element = document.CreateElement ("foo");
-			AssertEquals (String.Empty, element.InnerXml);
-			AssertEquals ("<foo />", element.OuterXml);
+			Assert.AreEqual (String.Empty, element.InnerXml);
+			Assert.AreEqual ("<foo />", element.OuterXml);
 
 			text = document.CreateTextNode ("bar");
 			element.AppendChild (text);
-			AssertEquals ("bar", element.InnerXml);
-			AssertEquals ("<foo>bar</foo>", element.OuterXml);
+			Assert.AreEqual ("bar", element.InnerXml);
+			Assert.AreEqual ("<foo>bar</foo>", element.OuterXml);
 
 			element.SetAttribute ("baz", "quux");
-			AssertEquals ("bar", element.InnerXml);
-			AssertEquals ("<foo baz=\"quux\">bar</foo>", element.OuterXml);
+			Assert.AreEqual ("bar", element.InnerXml);
+			Assert.AreEqual ("<foo baz=\"quux\">bar</foo>", element.OuterXml);
 
 			comment = document.CreateComment ("squonk");
 			element.AppendChild (comment);
-			AssertEquals ("bar<!--squonk-->", element.InnerXml);
-			AssertEquals ("<foo baz=\"quux\">bar<!--squonk--></foo>", element.OuterXml);
+			Assert.AreEqual ("bar<!--squonk-->", element.InnerXml);
+			Assert.AreEqual ("<foo baz=\"quux\">bar<!--squonk--></foo>", element.OuterXml);
 
 			element.RemoveAll();
 			element.AppendChild(document.CreateElement("hoge"));
-			AssertEquals ("<hoge />", element.InnerXml);
+			Assert.AreEqual ("<hoge />", element.InnerXml);
 		}
 
 		[Test]
@@ -179,8 +179,8 @@ namespace MonoTests.System.Xml
 			XmlElement element = document.CreateElement ("foo");
 			element.SetAttribute ("attr1", "val1");
 			element.SetAttribute ("attr2", "val2");
-			AssertEquals ("val1", element.GetAttribute ("attr1"));
-			AssertEquals ("val2", element.GetAttribute ("attr2"));
+			Assert.AreEqual ("val1", element.GetAttribute ("attr1"));
+			Assert.AreEqual ("val2", element.GetAttribute ("attr2"));
 		}
 
 		[Test]
@@ -201,7 +201,7 @@ namespace MonoTests.System.Xml
 			XmlNode xmlNode = libraryList.Item (0);
 			XmlElement xmlElement = xmlNode as XmlElement;
 			XmlNodeList bookList = xmlElement.GetElementsByTagName ("book");
-			AssertEquals ("GetElementsByTagName (string) returned incorrect count.", 4, bookList.Count);
+			Assert.AreEqual (4, bookList.Count, "GetElementsByTagName (string) returned incorrect count.");
 		}
 
 		[Test]
@@ -228,7 +228,7 @@ namespace MonoTests.System.Xml
 			XmlNode xmlNode = libraryList.Item (0);
 			XmlElement xmlElement = xmlNode as XmlElement;
 			XmlNodeList bookList = xmlElement.GetElementsByTagName ("book", "http://www.foo.com");
-			AssertEquals ("GetElementsByTagName (string, uri) returned incorrect count.", 1, bookList.Count);
+			Assert.AreEqual (1, bookList.Count, "GetElementsByTagName (string, uri) returned incorrect count.");
 		}
 
 		[Test]
@@ -247,55 +247,55 @@ namespace MonoTests.System.Xml
 			// id='b' has different prefix. Should not caught by (name),
 			// while should caught by (name, ns).
 			XmlNodeList nl = document.DocumentElement.GetElementsByTagName ("x:a");
-			AssertEquals (2, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("c", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual (2, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [1].Attributes ["id"].Value);
 
 			nl = document.DocumentElement.GetElementsByTagName ("a", "urn:foo");
-			AssertEquals (3, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("b", nl [1].Attributes ["id"].Value);
-			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+			Assert.AreEqual (3, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("b", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [2].Attributes ["id"].Value);
 
 			// name wildcard
 			nl = document.DocumentElement.GetElementsByTagName ("*");
-			AssertEquals (5, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("b", nl [1].Attributes ["id"].Value);
-			AssertEquals ("c", nl [2].Attributes ["id"].Value);
-			AssertEquals ("d", nl [3].Attributes ["id"].Value);
-			AssertEquals ("e", nl [4].Attributes ["id"].Value);
+			Assert.AreEqual (5, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("b", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [2].Attributes ["id"].Value);
+			Assert.AreEqual ("d", nl [3].Attributes ["id"].Value);
+			Assert.AreEqual ("e", nl [4].Attributes ["id"].Value);
 
 			// wildcard - local and ns
 			nl = document.DocumentElement.GetElementsByTagName ("*", "*");
-			AssertEquals (5, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("b", nl [1].Attributes ["id"].Value);
-			AssertEquals ("c", nl [2].Attributes ["id"].Value);
-			AssertEquals ("d", nl [3].Attributes ["id"].Value);
-			AssertEquals ("e", nl [4].Attributes ["id"].Value);
+			Assert.AreEqual (5, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("b", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [2].Attributes ["id"].Value);
+			Assert.AreEqual ("d", nl [3].Attributes ["id"].Value);
+			Assert.AreEqual ("e", nl [4].Attributes ["id"].Value);
 
 			// namespace wildcard - namespace
 			nl = document.DocumentElement.GetElementsByTagName ("*", "urn:foo");
-			AssertEquals (4, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("b", nl [1].Attributes ["id"].Value);
-			AssertEquals ("c", nl [2].Attributes ["id"].Value);
-			AssertEquals ("e", nl [3].Attributes ["id"].Value);
+			Assert.AreEqual (4, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("b", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [2].Attributes ["id"].Value);
+			Assert.AreEqual ("e", nl [3].Attributes ["id"].Value);
 
 			// namespace wildcard - local only. I dare say, such usage is not XML-ish!
 			nl = document.DocumentElement.GetElementsByTagName ("a", "*");
-			AssertEquals (3, nl.Count);
-			AssertEquals ("a", nl [0].Attributes ["id"].Value);
-			AssertEquals ("b", nl [1].Attributes ["id"].Value);
-			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+			Assert.AreEqual (3, nl.Count);
+			Assert.AreEqual ("a", nl [0].Attributes ["id"].Value);
+			Assert.AreEqual ("b", nl [1].Attributes ["id"].Value);
+			Assert.AreEqual ("c", nl [2].Attributes ["id"].Value);
 		}
 
 		[Test]
 		public void OuterXmlWithNamespace ()
 		{
 			XmlElement element = document.CreateElement ("foo", "bar", "#foo");
-			AssertEquals ("<foo:bar xmlns:foo=\"#foo\" />", element.OuterXml);
+			Assert.AreEqual ("<foo:bar xmlns:foo=\"#foo\" />", element.OuterXml);
 		}		
 
 		[Test]
@@ -313,7 +313,7 @@ namespace MonoTests.System.Xml
 			XmlNode xmlNode = bookList.Item (0);
 			XmlElement xmlElement = xmlNode as XmlElement;
 			xmlElement.RemoveAllAttributes ();
-			AssertEquals ("attributes not properly removed.", false, xmlElement.HasAttribute ("type"));
+			Assert.AreEqual (false, xmlElement.HasAttribute ("type"), "attributes not properly removed.");
 		}
 
 		[Test]
@@ -327,51 +327,51 @@ namespace MonoTests.System.Xml
 			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			// RemoveAll
-			AssertNotNull (document.DocumentElement);
-			AssertEquals ("attrCount #01", 2, document.DocumentElement.Attributes.Count);
-			AssertEquals ("baz", document.DocumentElement.GetAttribute ("bar"));
-			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
-			AssertEquals (false, document.DocumentElement.GetAttributeNode ("foo").Specified);
+			Assert.IsNotNull (document.DocumentElement);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #01");
+			Assert.AreEqual ("baz", document.DocumentElement.GetAttribute ("bar"));
+			Assert.AreEqual ("def", document.DocumentElement.GetAttribute ("foo"));
+			Assert.AreEqual (false, document.DocumentElement.GetAttributeNode ("foo").Specified);
 			document.DocumentElement.RemoveAll ();
-			AssertEquals ("attrCount #02", 1, document.DocumentElement.Attributes.Count);
-			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
-			AssertEquals (String.Empty, document.DocumentElement.GetAttribute ("bar"));
+			Assert.AreEqual (1, document.DocumentElement.Attributes.Count, "attrCount #02");
+			Assert.AreEqual ("def", document.DocumentElement.GetAttribute ("foo"));
+			Assert.AreEqual (String.Empty, document.DocumentElement.GetAttribute ("bar"));
 
 			// RemoveAllAttributes
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAllAttributes ();
-			AssertEquals ("attrCount #03", 1, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (1, document.DocumentElement.Attributes.Count, "attrCount #03");
 
 			// RemoveAttribute(name)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttribute ("foo");
-			AssertEquals ("attrCount #04", 2, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #04");
 
 			// RemoveAttribute(name, ns)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttribute ("foo", String.Empty);
-			AssertEquals ("attrCount #05", 2, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #05");
 
 			// RemoveAttributeAt
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeAt (1);
-			AssertEquals ("attrCount #06", 2, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #06");
 
 			// RemoveAttributeNode
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeNode (document.DocumentElement.Attributes [1]);
-			AssertEquals ("attrCount #07", 2, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #07");
 
 			// RemoveAttributeNode(name, ns)
 			xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			document.Load (xvr);
 			document.DocumentElement.RemoveAttributeNode ("foo", String.Empty);
-			AssertEquals ("attrCount #08", 2, document.DocumentElement.Attributes.Count);
+			Assert.AreEqual (2, document.DocumentElement.Attributes.Count, "attrCount #08");
 		}
 
 		[Test]
@@ -381,8 +381,8 @@ namespace MonoTests.System.Xml
 			XmlElement xmlEl = xmlDoc.CreateElement ("TestElement");
 			XmlAttribute xmlAttribute = xmlEl.SetAttributeNode ("attr1", "namespace1");
 			XmlAttribute xmlAttribute2 = xmlEl.SetAttributeNode ("attr2", "namespace2");
-			AssertEquals ("attribute name not properly created.", true, xmlAttribute.Name.Equals ("attr1"));
-			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute.NamespaceURI.Equals ("namespace1"));
+			Assert.AreEqual (true, xmlAttribute.Name.Equals ("attr1"), "attribute name not properly created.");
+			Assert.AreEqual (true, xmlAttribute.NamespaceURI.Equals ("namespace1"), "attribute namespace not properly created.");
 		}
 
 		[Test]
@@ -400,7 +400,7 @@ namespace MonoTests.System.Xml
 			// should not affect Element node's xmlns
 			XmlElement el = document.CreateElement ("root");
 			el.SetAttribute ("xmlns", "urn:foo");
-			AssertEquals (String.Empty, el.NamespaceURI);
+			Assert.AreEqual (String.Empty, el.NamespaceURI);
 		}
 
 		[Test]
@@ -415,18 +415,18 @@ namespace MonoTests.System.Xml
 			// If only one child of the element is Text node,
 			// then no events are fired.
 			doc.DocumentElement.FirstChild.InnerText = "no events fired.";
-			AssertEquals ("NoInsertEventFired", false, Inserted);
-			AssertEquals ("NoRemoveEventFired", false, Removed);
-			AssertEquals ("SetInnerTextToSingleText", "no events fired.", doc.DocumentElement.FirstChild.InnerText);
+			Assert.AreEqual (false, Inserted, "NoInsertEventFired");
+			Assert.AreEqual (false, Removed, "NoRemoveEventFired");
+			Assert.AreEqual ("no events fired.", doc.DocumentElement.FirstChild.InnerText, "SetInnerTextToSingleText");
 			Inserted = false;
 			Removed = false;
 
 			// if only one child of the element is CDataSection,
 			// then events are fired.
 			doc.DocumentElement.LastChild.InnerText = "events are fired.";
-			AssertEquals ("InsertedEventFired", true, Inserted);
-			AssertEquals ("RemovedEventFired", true, Removed);
-			AssertEquals ("SetInnerTextToCDataSection", "events are fired.", doc.DocumentElement.LastChild.InnerText);
+			Assert.AreEqual (true, Inserted, "InsertedEventFired");
+			Assert.AreEqual (true, Removed, "RemovedEventFired");
+			Assert.AreEqual ("events are fired.", doc.DocumentElement.LastChild.InnerText, "SetInnerTextToCDataSection");
 		}
 
 		[Test]
@@ -435,27 +435,27 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root/>");
 			XmlElement el =  doc.DocumentElement;
-			AssertNull ("#Simple", el.FirstChild);
+			Assert.IsNull (el.FirstChild, "#Simple");
 			el.InnerXml = "<foo><bar att='baz'/></foo>";
 			XmlElement child = el.FirstChild as XmlElement;
-			AssertNotNull ("#Simple.Child", child);
-			AssertEquals ("#Simple.Child.Name", "foo", child.LocalName);
+			Assert.IsNotNull (child, "#Simple.Child");
+			Assert.AreEqual ("foo", child.LocalName, "#Simple.Child.Name");
 
 			XmlElement grandchild = child.FirstChild as XmlElement;
-			AssertNotNull ("#Simple.GrandChild", grandchild);
-			AssertEquals ("#Simple.GrandChild.Name", "bar", grandchild.LocalName);
-			AssertEquals ("#Simple.GrandChild.Attr", "baz", grandchild.GetAttribute ("att"));
+			Assert.IsNotNull (grandchild, "#Simple.GrandChild");
+			Assert.AreEqual ("bar", grandchild.LocalName, "#Simple.GrandChild.Name");
+			Assert.AreEqual ("baz", grandchild.GetAttribute ("att"), "#Simple.GrandChild.Attr");
 
 			doc.LoadXml ("<root xmlns='NS0' xmlns:ns1='NS1'><foo/><ns1:bar/><ns2:bar xmlns:ns2='NS2' /></root>");
 			el = doc.DocumentElement.FirstChild.NextSibling as XmlElement;	// ns1:bar
-			AssertNull ("#Namespaced.Prepare", el.FirstChild);
+			Assert.IsNull (el.FirstChild, "#Namespaced.Prepare");
 			el.InnerXml = "<ns1:baz />";
-			AssertNotNull ("#Namespaced.Child", el.FirstChild);
-			AssertEquals ("#Namespaced.Child.Name", "baz", el.FirstChild.LocalName);
-			AssertEquals ("#Namespaced.Child.NSURI", "NS1", el.FirstChild.NamespaceURI);	// important!
+			Assert.IsNotNull (el.FirstChild, "#Namespaced.Child");
+			Assert.AreEqual ("baz", el.FirstChild.LocalName, "#Namespaced.Child.Name");
+			Assert.AreEqual ("NS1", el.FirstChild.NamespaceURI, "#Namespaced.Child.NSURI");	// important!
 
 			el.InnerXml = "<hoge />";
-			AssertEquals ("#Namespaced.VerifyPreviousCleared", "hoge", el.FirstChild.Name);
+			Assert.AreEqual ("hoge", el.FirstChild.Name, "#Namespaced.VerifyPreviousCleared");
 		}
 
 		[Test]
@@ -471,15 +471,15 @@ namespace MonoTests.System.Xml
 </type>");
 			XmlElement typeNode = doc.DocumentElement;
 			typeNode.InnerText = "QPair<QString, int>";
-			AssertEquals ("QPair<QString, int>", typeNode.InnerText);
+			Assert.AreEqual ("QPair<QString, int>", typeNode.InnerText);
 		}
 
 		[Test]
 		public void IsEmpty ()
 		{
 			document.LoadXml ("<root><foo/><bar></bar></root>");
-			Assertion.AssertEquals ("Empty", true, ((XmlElement) document.DocumentElement.FirstChild).IsEmpty);
-			Assertion.AssertEquals ("Empty", false, ((XmlElement) document.DocumentElement.LastChild).IsEmpty);
+			Assert.AreEqual (true, ((XmlElement) document.DocumentElement.FirstChild).IsEmpty, "Empty");
+			Assert.AreEqual (false, ((XmlElement) document.DocumentElement.LastChild).IsEmpty, "Empty");
 		}
 
 		[Test]
@@ -491,11 +491,11 @@ namespace MonoTests.System.Xml
 
 			XmlElement el =  doc.DocumentElement;
 			el.RemoveAttribute ("a1");
-			AssertNull ("RemoveAttribute", el.GetAttributeNode ("a1"));
+			Assert.IsNull (el.GetAttributeNode ("a1"), "RemoveAttribute");
 			el.RemoveAttribute ("xlink:href");
-			AssertNull ("RemoveAttribute", el.GetAttributeNode ("href", xlinkURI));
+			Assert.IsNull (el.GetAttributeNode ("href", xlinkURI), "RemoveAttribute");
 			el.RemoveAllAttributes ();
-			AssertNull ("RemoveAllAttributes", el.GetAttributeNode ("a2"));
+			Assert.IsNull (el.GetAttributeNode ("a2"), "RemoveAllAttributes");
 		}
 
 		[Test]
@@ -506,7 +506,7 @@ namespace MonoTests.System.Xml
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			doc.DocumentElement.WriteTo (xtw);
-			AssertEquals ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", sw.ToString());
+			Assert.AreEqual ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", sw.ToString());
 		}
 
 		[Test]
@@ -522,7 +522,7 @@ namespace MonoTests.System.Xml
 			x.AppendChild (b);
 			XmlElement b2 = d.CreateElement ("p2", "b2", "");
 			b.AppendChild (b2);
-			AssertEquals ("<root><a /><b xmlns=\"probe\"><b2 /></b></root>", d.OuterXml);
+			Assert.AreEqual ("<root><a /><b xmlns=\"probe\"><b2 /></b></root>", d.OuterXml);
 		}
 
 		[Test]
@@ -532,7 +532,7 @@ namespace MonoTests.System.Xml
 			doc.LoadXml ("<root xmlns:foo='urn:dummy'><foo foo:bar='baz' /></root>");
 			doc.DocumentElement.RemoveAllAttributes ();
 
-			Assert (doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
+			Assert.IsTrue (doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
 		}
 
 		[Test]
@@ -540,7 +540,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root xmlns:foo='urn:dummy' xmlns:html='http://www.w3.org/1999/xhtml' html:style='font-size: 1em'></root>");
-			Assert (doc.OuterXml.IndexOf ("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
+			Assert.IsTrue (doc.OuterXml.IndexOf ("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
 		}
 
 		[Test]
@@ -557,7 +557,7 @@ namespace MonoTests.System.Xml
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			document.DocumentElement.WriteTo (xtw);
-			AssertEquals ("<root>&foo;</root>", sw.ToString ());
+			Assert.AreEqual ("<root>&foo;</root>", sw.ToString ());
 		}
 
 		[Test]
@@ -571,7 +571,7 @@ namespace MonoTests.System.Xml
 			doc.DocumentElement.Prefix = null;
 
 #if NET_2_0
-			AssertEquals ("#1", string.Empty, doc.DocumentElement.Prefix);
+			Assert.AreEqual (string.Empty, doc.DocumentElement.Prefix, "#1");
 			AssertClearPrefix ((string) null);
 #endif
 		}
@@ -582,7 +582,7 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root />");
 			doc.DocumentElement.Prefix = String.Empty;
-			AssertEquals ("#1", string.Empty, doc.DocumentElement.Prefix);
+			Assert.AreEqual (string.Empty, doc.DocumentElement.Prefix, "#1");
 
 			AssertClearPrefix (string.Empty);
 
@@ -592,17 +592,13 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<x:root xmlns:x=\"http://somenamespace.com\" />");
-			AssertEquals ("#Clear1", "<x:root xmlns:x=\"http://somenamespace.com\" />",
-				doc.OuterXml);
-			AssertEquals ("#Clear2", "<x:root xmlns:x=\"http://somenamespace.com\" />",
-				doc.DocumentElement.OuterXml);
-			AssertEquals ("#Clear3", "x", doc.DocumentElement.Prefix);
+			Assert.AreEqual ("<x:root xmlns:x=\"http://somenamespace.com\" />", doc.OuterXml, "#Clear1");
+			Assert.AreEqual ("<x:root xmlns:x=\"http://somenamespace.com\" />", doc.DocumentElement.OuterXml, "#Clear2");
+			Assert.AreEqual ("x", doc.DocumentElement.Prefix, "#Clear3");
 			doc.DocumentElement.Prefix = newPrefix;
-			AssertEquals ("#Clear4", "<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />",
-				doc.OuterXml);
-			AssertEquals ("#Clear5", "<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />",
-				doc.DocumentElement.OuterXml);
-			AssertEquals ("#Clear6", string.Empty, doc.DocumentElement.Prefix);
+			Assert.AreEqual ("<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />", doc.OuterXml, "#Clear4");
+			Assert.AreEqual ("<root xmlns:x=\"http://somenamespace.com\" xmlns=\"http://somenamespace.com\" />", doc.DocumentElement.OuterXml, "#Clear5");
+			Assert.AreEqual (string.Empty, doc.DocumentElement.Prefix, "#Clear6");
 		}
 
 		[Test]
@@ -636,7 +632,7 @@ namespace MonoTests.System.Xml
 				changed = true;
 			};
 			doc.DocumentElement.SetAttribute ("Key", "");
-			Assert (changed);
+			Assert.IsTrue (changed);
 		}
 
 		class MyXmlElement : XmlElement

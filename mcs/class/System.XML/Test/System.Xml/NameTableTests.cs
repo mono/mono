@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class NameTableTests : Assertion
+	public class NameTableTests
 	{
 		NameTable table;
 		
@@ -34,12 +34,12 @@ namespace MonoTests.System.Xml
 		{
 			string add = "add1";
 			string testAdd = table.Add (add);
-			AssertEquals ("#1", add, testAdd);
-			AssertSame ("#2", add, testAdd);
+			Assert.AreEqual (add, testAdd, "#1");
+			Assert.AreSame (add, testAdd, "#2");
 
 			testAdd = table.Add ("");
-			AssertEquals ("#3", string.Empty, testAdd);
-			AssertSame ("#4", string.Empty, testAdd);
+			Assert.AreEqual (string.Empty, testAdd, "#3");
+			Assert.AreSame (string.Empty, testAdd, "#4");
 		}
 
 		[Test]
@@ -60,15 +60,15 @@ namespace MonoTests.System.Xml
 			int length = 3; // "add"
 
 			string testAdd = table.Add (test, index, length);
-			AssertEquals ("#1", "add", testAdd);
+			Assert.AreEqual ("add", testAdd, "#1");
 
 			testAdd = table.Add ((char[]) null, 0, 0);
-			AssertEquals ("#2", string.Empty, testAdd);
-			AssertSame ("#3", string.Empty, testAdd);
+			Assert.AreEqual (string.Empty, testAdd, "#2");
+			Assert.AreSame (string.Empty, testAdd, "#3");
 
 			testAdd = table.Add (new char[0], 0, 0);
-			AssertEquals ("#4", string.Empty, testAdd);
-			AssertSame ("#5", string.Empty, testAdd);
+			Assert.AreEqual (string.Empty, testAdd, "#4");
+			Assert.AreSame (string.Empty, testAdd, "#5");
 		}
 
 		[Test]
@@ -100,14 +100,14 @@ namespace MonoTests.System.Xml
 		{
 			string get1 = "get1";
 			string testGet = table.Add (get1);
-			AssertEquals ("#1", "get1", testGet);
+			Assert.AreEqual ("get1", testGet, "#1");
 
-			AssertEquals ("#2", testGet, table.Get (get1));
-			AssertSame ("#3", get1, testGet );
+			Assert.AreEqual (testGet, table.Get (get1), "#2");
+			Assert.AreSame (get1, testGet, "#3");
 
 			testGet = table.Get ("");
-			AssertEquals ("#1", string.Empty, testGet);
-			AssertSame ("#2", string.Empty, testGet);
+			Assert.AreEqual (string.Empty, testGet, "#1");
+			Assert.AreSame (string.Empty, testGet, "#2");
 		}
 
 		[Test]
@@ -128,10 +128,10 @@ namespace MonoTests.System.Xml
 			int length = 3; // "get"
 			
 			string testGet = table.Add (test, index, length);
-			AssertEquals ("#1", "get", testGet);
+			Assert.AreEqual ("get", testGet, "#1");
 
-			AssertEquals ("#2", testGet, table.Get ("get"));
-			AssertEquals ("#3", testGet, table.Get (test, index, length));
+			Assert.AreEqual (testGet, table.Get ("get"), "#2");
+			Assert.AreEqual (testGet, table.Get (test, index, length), "#3");
 		}
 
 		[Test]
@@ -164,16 +164,16 @@ namespace MonoTests.System.Xml
 			string testGet = null;
 
 			testGet = table.Get ((char[]) null, 10, 0);
-			AssertEquals ("#1", string.Empty, testGet);
-			AssertSame ("#2", string.Empty, testGet);
+			Assert.AreEqual (string.Empty, testGet, "#1");
+			Assert.AreSame (string.Empty, testGet, "#2");
 
 			testGet = table.Get (new char[0], 2, 0);
-			AssertEquals ("#3", string.Empty, testGet);
-			AssertSame ("#4", string.Empty, testGet);
+			Assert.AreEqual (string.Empty, testGet, "#3");
+			Assert.AreSame (string.Empty, testGet, "#4");
 
 			testGet = table.Get (new char[3] { 'a', 'b', 'c' }, 5, 0);
-			AssertEquals ("#5", string.Empty, testGet);
-			AssertSame ("#6", string.Empty, testGet);
+			Assert.AreEqual (string.Empty, testGet, "#5");
+			Assert.AreSame (string.Empty, testGet, "#6");
 		}
 	}
 }

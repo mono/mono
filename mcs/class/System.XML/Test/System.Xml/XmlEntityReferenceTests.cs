@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlEntityReferenceTests : Assertion
+	public class XmlEntityReferenceTests
 	{
 		[Test]
 		public void WriteTo ()
@@ -25,8 +25,8 @@ namespace MonoTests.System.Xml
 			doc.LoadXml("<root/>");
 			XmlEntityReference er = doc.CreateEntityReference("foo");
 			doc.DocumentElement.AppendChild(er);
-			AssertEquals ("Name", "foo", er.Name);
-			AssertEquals ("WriteTo", "<root>&foo;</root>", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("foo", er.Name, "Name");
+			Assert.AreEqual ("<root>&foo;</root>", doc.DocumentElement.OuterXml, "WriteTo");
 		}
 
 		[Test]
@@ -41,10 +41,10 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (xtr);
 			XmlEntity ent = (XmlEntity) doc.DocumentType.Entities.GetNamedItem ("ent2");
-			AssertEquals ("ent2", ent.Name);
-			AssertEquals ("my ", ent.FirstChild.Value);
-			AssertNotNull (ent.FirstChild.NextSibling.FirstChild);
-			AssertEquals ("value", ent.FirstChild.NextSibling.FirstChild.Value);
+			Assert.AreEqual ("ent2", ent.Name);
+			Assert.AreEqual ("my ", ent.FirstChild.Value);
+			Assert.IsNotNull (ent.FirstChild.NextSibling.FirstChild);
+			Assert.AreEqual ("value", ent.FirstChild.NextSibling.FirstChild.Value);
 		}
 
 		[Test]
@@ -57,26 +57,26 @@ namespace MonoTests.System.Xml
 			doc.Load (xtr);
 			XmlEntityReference ent = doc.CreateEntityReference ("ent");
 			// ChildNodes are not added yet.
-			AssertNull (ent.FirstChild);
+			Assert.IsNull (ent.FirstChild);
 			doc.DocumentElement.AppendChild (ent);
 			// ChildNodes are added here.
-			AssertNotNull (ent.FirstChild);
+			Assert.IsNotNull (ent.FirstChild);
 
 			ent = doc.CreateEntityReference ("foo");
-			AssertNull (ent.FirstChild);
+			Assert.IsNull (ent.FirstChild);
 			// Entity value is empty when the matching DTD entity 
 			// node does not exist.
 			doc.DocumentElement.AppendChild (ent);
-			AssertNotNull (ent.FirstChild);
+			Assert.IsNotNull (ent.FirstChild);
 
-			AssertEquals (String.Empty, ent.FirstChild.Value);
+			Assert.AreEqual (String.Empty, ent.FirstChild.Value);
 
 			ent = doc.CreateEntityReference ("el");
-			AssertEquals ("", ent.InnerText);
+			Assert.AreEqual ("", ent.InnerText);
 			doc.DocumentElement.AppendChild (ent);
-			AssertEquals ("<foo>hoge</foo><bar />", ent.InnerXml);
-			AssertEquals ("hoge", ent.InnerText);
-			AssertEquals (XmlNodeType.Element, ent.FirstChild.NodeType);
+			Assert.AreEqual ("<foo>hoge</foo><bar />", ent.InnerXml);
+			Assert.AreEqual ("hoge", ent.InnerText);
+			Assert.AreEqual (XmlNodeType.Element, ent.FirstChild.NodeType);
 		}
 	}
 }
