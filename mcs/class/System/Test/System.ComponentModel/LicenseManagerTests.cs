@@ -10,14 +10,7 @@
 // (c) 2003 Martin Willemoes Hansen
 // (c) 2004 Ivan Hamilton
 
-#define NUNIT // Comment out this one if you wanna play with the test without using NUnit
-
-#if NUNIT
 using NUnit.Framework;
-#else
-using System.Reflection;
-#endif
-
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -111,47 +104,38 @@ namespace MonoTests.System.ComponentModel
 	}
 
 
-#if NUNIT
 	[TestFixture]
-	public class LicenseManagerTests : Assertion
+	public class LicenseManagerTests
 	{
 		[SetUp]
 		public void GetReady ()
 		{
-#else
-	public class LicenseManagerTests
-	{
-		static LicenseManagerTests ()
-		{
-#endif
 		}
 
-#if NUNIT
 		[Test]
-#endif
 		public void Test () 
 		{
 			object lockObject = new object ();
 			//**DEFAULT CONTEXT & LicenseUsageMode**
 			//Get CurrentContext, check default type
-			AssertEquals ("LicenseManager #1", "System.ComponentModel.Design.RuntimeLicenseContext", LicenseManager.CurrentContext.GetType().ToString());
+			Assert.AreEqual ("System.ComponentModel.Design.RuntimeLicenseContext", LicenseManager.CurrentContext.GetType().ToString(), "LicenseManager #1");
 			//Read default LicenseUsageMode, check against CurrentContext (LicCont).UsageMode
-			AssertEquals ("LicenseManager #2", LicenseManager.CurrentContext.UsageMode, LicenseManager.UsageMode);
+			Assert.AreEqual (LicenseManager.CurrentContext.UsageMode, LicenseManager.UsageMode, "LicenseManager #2");
 
 			//**CHANGING CONTEXT**
 			//Change the context and check it changes
 			LicenseContext oldcontext = LicenseManager.CurrentContext;
 			LicenseContext newcontext = new DesigntimeLicenseContext();
 			LicenseManager.CurrentContext = newcontext;
-			AssertEquals ("LicenseManager #3", newcontext, LicenseManager.CurrentContext);
+			Assert.AreEqual (newcontext, LicenseManager.CurrentContext, "LicenseManager #3");
 			//Check the UsageMode changed too
-			AssertEquals ("LicenseManager #4", newcontext.UsageMode, LicenseManager.UsageMode);
+			Assert.AreEqual (newcontext.UsageMode, LicenseManager.UsageMode, "LicenseManager #4");
 			//Set Context back to original
 			LicenseManager.CurrentContext = oldcontext;
 			//Check it went back
-			AssertEquals ("LicenseManager #5", oldcontext, LicenseManager.CurrentContext);
+			Assert.AreEqual (oldcontext, LicenseManager.CurrentContext, "LicenseManager #5");
 			//Check the UsageMode changed too
-			AssertEquals ("LicenseManager #6", oldcontext.UsageMode, LicenseManager.UsageMode);
+			Assert.AreEqual (oldcontext.UsageMode, LicenseManager.UsageMode, "LicenseManager #6");
 
 			//**CONTEXT LOCKING**
 			//Lock the context
@@ -164,18 +148,18 @@ namespace MonoTests.System.ComponentModel
 			} 
 			catch (Exception e) 
 			{
-				AssertEquals ("LicenseManager #7",typeof(InvalidOperationException), e.GetType());
+				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(), "LicenseManager #7");
 				exceptionThrown = true;
 			} 
 			//Check the exception was thrown
-			AssertEquals ("LicenseManager #8", true, exceptionThrown);
+			Assert.AreEqual (true, exceptionThrown, "LicenseManager #8");
 			//Check the context didn't change
-			AssertEquals ("LicenseManager #9", oldcontext, LicenseManager.CurrentContext);
+			Assert.AreEqual (oldcontext, LicenseManager.CurrentContext, "LicenseManager #9");
 			//Unlock it
 			LicenseManager.UnlockContext(lockObject);
 			//Now's unlocked, change it
 			LicenseManager.CurrentContext=newcontext;
-			AssertEquals ("LicenseManager #10", newcontext, LicenseManager.CurrentContext);
+			Assert.AreEqual (newcontext, LicenseManager.CurrentContext, "LicenseManager #10");
 			//Change it back
 			LicenseManager.CurrentContext = oldcontext;
 
@@ -191,21 +175,21 @@ namespace MonoTests.System.ComponentModel
 			} 
 			catch (Exception e) 
 			{
-				AssertEquals ("LicenseManager #11",typeof(ArgumentException), e.GetType());
+				Assert.AreEqual (typeof(ArgumentException), e.GetType(), "LicenseManager #11");
 				exceptionThrown = true;
 			} 
-			AssertEquals ("LicenseManager #12",true, exceptionThrown);
+			Assert.AreEqual (true, exceptionThrown, "LicenseManager #12");
 			//Unlock it
 			LicenseManager.UnlockContext(lockObject);
 
 			//** bool IsValid(Type);
-			AssertEquals ("LicenseManager #13", true, LicenseManager.IsLicensed (typeof (UnlicensedObject)));
-			AssertEquals ("LicenseManager #14", true, LicenseManager.IsLicensed (typeof (LicensedObject)));
-			AssertEquals ("LicenseManager #15", false, LicenseManager.IsLicensed (typeof (InvalidLicensedObject)));
+			Assert.AreEqual (true, LicenseManager.IsLicensed (typeof (UnlicensedObject)), "LicenseManager #13");
+			Assert.AreEqual (true, LicenseManager.IsLicensed (typeof (LicensedObject)), "LicenseManager #14");
+			Assert.AreEqual (false, LicenseManager.IsLicensed (typeof (InvalidLicensedObject)), "LicenseManager #15");
 
-			AssertEquals ("LicenseManager #16", true, LicenseManager.IsValid (typeof (UnlicensedObject)));
-			AssertEquals ("LicenseManager #17", true, LicenseManager.IsValid (typeof (LicensedObject)));
-			AssertEquals ("LicenseManager #18", false, LicenseManager.IsValid (typeof (InvalidLicensedObject)));
+			Assert.AreEqual (true, LicenseManager.IsValid (typeof (UnlicensedObject)), "LicenseManager #16");
+			Assert.AreEqual (true, LicenseManager.IsValid (typeof (LicensedObject)), "LicenseManager #17");
+			Assert.AreEqual (false, LicenseManager.IsValid (typeof (InvalidLicensedObject)), "LicenseManager #18");
 
 			UnlicensedObject unlicensedObject = new UnlicensedObject ();
 			LicensedObject licensedObject = new LicensedObject ();
@@ -213,16 +197,16 @@ namespace MonoTests.System.ComponentModel
 
 			//** bool IsValid(Type, object, License);
 			License license=null;
-			AssertEquals ("LicenseManager #19", true, LicenseManager.IsValid (unlicensedObject.GetType (), unlicensedObject, out license));
-			AssertEquals ("LicenseManager #20", null, license);
+			Assert.AreEqual (true, LicenseManager.IsValid (unlicensedObject.GetType (), unlicensedObject, out license), "LicenseManager #19");
+			Assert.AreEqual (null, license, "LicenseManager #20");
 
 			license=null;
-			AssertEquals ("LicenseManager #21",true, LicenseManager.IsValid (licensedObject.GetType (), licensedObject,out license));
-			AssertEquals ("LicenseManager #22", "TestLicense", license.GetType ().Name);
+			Assert.AreEqual (true, LicenseManager.IsValid (licensedObject.GetType (), licensedObject,out license), "LicenseManager #21");
+			Assert.AreEqual ("TestLicense", license.GetType ().Name, "LicenseManager #22");
 
 			license=null;
-			AssertEquals ("LicenseManager #23",false, LicenseManager.IsValid (invalidLicensedObject.GetType (), invalidLicensedObject, out license));
-			AssertEquals ("LicenseManager #24",null, license);
+			Assert.AreEqual (false, LicenseManager.IsValid (invalidLicensedObject.GetType (), invalidLicensedObject, out license), "LicenseManager #23");
+			Assert.AreEqual (null, license, "LicenseManager #24");
 
 			//** void Validate(Type);
 			//Shouldn't throw exception
@@ -237,20 +221,20 @@ namespace MonoTests.System.ComponentModel
 			} 
 			catch (Exception e) 
 			{
-				AssertEquals ("LicenseManager #25",typeof(LicenseException), e.GetType());
+				Assert.AreEqual (typeof(LicenseException), e.GetType(), "LicenseManager #25");
 				exceptionThrown=true;
 			} 
 			//Check the exception was thrown
-			AssertEquals ("LicenseManager #26",true, exceptionThrown);
+			Assert.AreEqual (true, exceptionThrown, "LicenseManager #26");
 
 			//** License Validate(Type, object);
 			//Shouldn't throw exception, returns null license
 			license=LicenseManager.Validate (typeof (UnlicensedObject), unlicensedObject);
-			AssertEquals ("LicenseManager #27", null, license);
+			Assert.AreEqual (null, license, "LicenseManager #27");
 
 			//Shouldn't throw exception, returns TestLicense license
 			license=LicenseManager.Validate(typeof(LicensedObject), licensedObject);
-			AssertEquals ("LicenseManager #28", "TestLicense", license.GetType ().Name);
+			Assert.AreEqual ("TestLicense", license.GetType ().Name, "LicenseManager #28");
 
 			//Should throw exception, returns null license
 			exceptionThrown=false;
@@ -261,24 +245,24 @@ namespace MonoTests.System.ComponentModel
 			} 
 			catch (Exception e) 
 			{
-				AssertEquals ("LicenseManager #29",typeof (LicenseException), e.GetType ());
+				Assert.AreEqual (typeof (LicenseException), e.GetType (), "LicenseManager #29");
 				exceptionThrown=true;
 			} 
 			//Check the exception was thrown
-			AssertEquals ("LicenseManager #30",true, exceptionThrown);
-			AssertEquals ("LicenseManager #31",null, license);
+			Assert.AreEqual (true, exceptionThrown, "LicenseManager #30");
+			Assert.AreEqual (null, license, "LicenseManager #31");
 
 
 			//** object CreateWithContext (Type, LicenseContext);
 			object cwc = null;
 			//Test we can create an unlicensed object with no context
 			cwc = LicenseManager.CreateWithContext (typeof (UnlicensedObject), null);
-			AssertEquals ("LicenseManager #32", "UnlicensedObject", cwc.GetType ().Name);
+			Assert.AreEqual ("UnlicensedObject", cwc.GetType ().Name, "LicenseManager #32");
 			//Test we can create RunTime with CurrentContext (runtime)
 			cwc = null;
 			cwc = LicenseManager.CreateWithContext (typeof (RuntimeLicensedObject),
 				LicenseManager.CurrentContext);
-			AssertEquals ("LicenseManager #33", "RuntimeLicensedObject", cwc.GetType ().Name);
+			Assert.AreEqual ("RuntimeLicensedObject", cwc.GetType ().Name, "LicenseManager #33");
 			//Test we can't create DesignTime with CurrentContext (runtime)
 			exceptionThrown=false;
 			try 
@@ -288,62 +272,24 @@ namespace MonoTests.System.ComponentModel
 			} 
 			catch (Exception e) 
 			{
-				AssertEquals ("LicenseManager #34",typeof (LicenseException), e.GetType ());
+				Assert.AreEqual (typeof (LicenseException), e.GetType (), "LicenseManager #34");
 				exceptionThrown=true;
 			} 
 			//Check the exception was thrown
-			AssertEquals ("LicenseManager #35",true, exceptionThrown);
+			Assert.AreEqual (true, exceptionThrown, "LicenseManager #35");
 			//Test we can create DesignTime with A new DesignTimeContext 
 			cwc = null;
 			cwc = LicenseManager.CreateWithContext (typeof (DesigntimeLicensedObject),
 				new DesigntimeLicenseContext ());
-			AssertEquals ("LicenseManager #36", "DesigntimeLicensedObject", cwc.GetType ().Name);
+			Assert.AreEqual ("DesigntimeLicensedObject", cwc.GetType ().Name, "LicenseManager #36");
 
 			//** object CreateWithContext(Type, LicenseContext, object[]);
 			//Test we can create RunTime with CurrentContext (runtime)
 			cwc = null;
 			cwc = LicenseManager.CreateWithContext (typeof (RuntimeLicensedObject),
 				LicenseManager.CurrentContext, new object [] { 7 });
-			AssertEquals ("LicenseManager #37", "RuntimeLicensedObject", cwc.GetType ().Name);
+			Assert.AreEqual ("RuntimeLicensedObject", cwc.GetType ().Name, "LicenseManager #37");
 
 		}
-		
-#if !NUNIT
-		void Assert (string msg, bool result)
-		{
-			if (!result)
-				Console.WriteLine (msg);
-		}
-
-		void AssertEquals (string msg, object expected, object real)
-		{
-			if (expected == null && real == null)
-				return;
-
-			if (expected != null && expected.Equals (real))
-				return;
-
-			Console.WriteLine ("{0}: expected: '{1}', got: '{2}'", msg, expected, real);
-		}
-
-		void Fail (string msg)
-		{
-			Console.WriteLine ("Failed: {0}", msg);
-		}
-
-		static void Main ()
-		{
-			LicenseManagerTests p = new LicenseManagerTests ();
-			Type t = p.GetType ();
-			MethodInfo [] methods = t.GetMethods ();
-			foreach (MethodInfo m in methods) 
-			{
-				if (m.Name.Substring (0, 4) == "Test") 
-				{
-					m.Invoke (p, null);
-				}
-			}
-		}
-#endif
 	}
 }

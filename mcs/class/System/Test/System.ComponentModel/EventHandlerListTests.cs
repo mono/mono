@@ -9,35 +9,18 @@
 // (c) 2003 Martin Willemoes Hansen
 //
 
-#define NUNIT // Comment out this one if you wanna play with the test without using NUnit
-
-#if NUNIT
 using NUnit.Framework;
-#else
-using System.Reflection;
-#endif
-
 using System;
 using System.ComponentModel;
 
 namespace MonoTests.System.ComponentModel
 {
-#if NUNIT
 	[TestFixture]
 	public class EventHandlerListTests
 	{
-#else
-	public class EventHandlerListTests
-	{
-#endif
-#if NUNIT
 		[SetUp]
 		public void GetReady ()
 		{
-#else
-		static EventHandlerListTests ()
-		{
-#endif
 		}
 
 		int calls = 0;
@@ -135,42 +118,6 @@ namespace MonoTests.System.ComponentModel
 			d = list [null] as EventHandler;
 			Assertion.Assert ("NullKey #02", d == null);
 		}
-		
-#if !NUNIT
-		void Assert (string msg, bool result)
-		{
-			if (!result)
-				Console.WriteLine (msg);
-		}
-
-		void AssertEquals (string msg, object expected, object real)
-		{
-			if (expected == null && real == null)
-				return;
-
-			if (expected != null && expected.Equals (real))
-				return;
-
-			Console.WriteLine ("{0}: expected: '{1}', got: '{2}'", msg, expected, real);
-		}
-
-		void Fail (string msg)
-		{
-			Console.WriteLine ("Failed: {0}", msg);
-		}
-
-		static void Main ()
-		{
-			EventHandlerListTests p = new EventHandlerListTests ();
-			Type t = p.GetType ();
-			MethodInfo [] methods = t.GetMethods ();
-			foreach (MethodInfo m in methods) {
-				if (m.Name.Substring (0, 4) == "Test") {
-					m.Invoke (p, null);
-				}
-			}
-		}
-#endif
 	}
 }
 
