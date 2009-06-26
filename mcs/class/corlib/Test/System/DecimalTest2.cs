@@ -38,22 +38,23 @@ namespace MonoTests.System
     /// <summary>
     /// Tests for System.Decimal
     /// </summary>
-    public class DecimalTest2 : TestCase
+    [TestFixture]
+    public class DecimalTest2
     {
-	public DecimalTest2() {}
-
         private void ReportOpError(string msg, int i, int j, decimal d1, decimal d2, decimal d3, decimal d3b)
         {
 		decimal delta = 0;
 		try {
 			delta = d3 - d3b;
 		} catch (Exception e) {
-			Fail("ReportOpError: Unexpected exception on " + d3 + " - " + d3b + ". e:" + e);
+			Assert.Fail ("ReportOpError: Unexpected exception on " + d3 + " - " + d3b + ". e:" + e);
 		}
-		Fail ("*** " + msg + " for d1=" + d1 + " i=" + i + " d2=" + d2 + " j=" + j + " d3=" + d3 + " d3b=" + d3b + "\n"
-			+ "Ist:" + d3 +  "  Soll:" + d3b + "  delta=" + (delta) + " == " + (d3 == d3b));
+		Assert.Fail ("*** " + msg + " for d1=" + d1 + " i=" + i + " d2=" + d2 + " j=" + j + " d3=" + d3 + " d3b=" + d3b + "\n"
+			+ "is:" + d3 +  "  must be:" + d3b + "  delta=" + (delta) + " == " + (d3 == d3b));
         }
 
+	[Test]
+	     
         public void TestCompare()
         {
             const int size = 14;
@@ -90,47 +91,47 @@ namespace MonoTests.System
                 Decimal d1 = data[i];
                 for (int j = 0; j < size; j++) 
                 {
-                    Assert(cmpTable[i,j] == -cmpTable[j,i]);
+                    Assert.IsTrue (cmpTable[i,j] == -cmpTable[j,i]);
                     int x = cmpTable[i,j];
                     Decimal d2 = data[j];
 
                     int y = Decimal.Compare(d1, d2);
                     if (y < 0) y = -1;
                     else if (y > 0) y = 1;
-                    Assert(x == y);
+                    Assert.IsTrue (x == y);
 
                     y = d1.CompareTo(d2);
                     if (y < 0) y = -1;
                     else if (y > 0) y = 1;
-                    Assert(x == y);
+                    Assert.IsTrue (x == y);
 
                     bool b = d1 < d2;
                     if (x != -1) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = d1 <= d2;
                     if (x == 1) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = d1 >= d2;
                     if (x == -1) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = d1 > d2;
                     if (x != 1) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = d1 == d2;
                     if (x != 0) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = d1.Equals(d2);
                     if (x != 0) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
 
                     b = Decimal.Equals(d1, d2);
                     if (x != 0) b = !b;
-                    Assert(b);
+                    Assert.IsTrue (b);
                 }
             }
         }
@@ -155,22 +156,26 @@ namespace MonoTests.System
         }
 #endif
 
+	[Test]
+	     
         public void TestRemainder()
         {
-            Assert((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
+            Assert.IsTrue ((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
             decimal res = 24420760848422211464106753m;
             decimal remainder = Decimal.Remainder(79228162514264337593543950335m, 27703302467091960609331879.53200m);
             if (AreNotEqual (res, remainder))
-                AssertEquals("A02", res, remainder);
+                Assert.AreEqual (res, remainder, "A02");
 
-            Assert((decimal)Decimal.Remainder(45937986975432m, 43987453m)
+            Assert.IsTrue ((decimal)Decimal.Remainder(45937986975432m, 43987453m)
                 == 42334506m);
-            Assert((decimal)Decimal.Remainder(45937986975000m, 5000m)
+            Assert.IsTrue ((decimal)Decimal.Remainder(45937986975000m, 5000m)
                 == 0m);
-            Assert((decimal)Decimal.Remainder(-54789548973.6234m, 1.3356m) 
+            Assert.IsTrue ((decimal)Decimal.Remainder(-54789548973.6234m, 1.3356m) 
                 == -0.1074m);
         }
 
+	[Test]
+	     
         public void TestAdd()
         {
             decimal[] args = auto_build2;
@@ -227,10 +232,12 @@ namespace MonoTests.System
 
             if (errOverflow + errOp > 0) 
             {
-                Fail("" + errOp + " wrong additions, " + errOverflow + " wrong overflows");
+                Assert.Fail ("" + errOp + " wrong additions, " + errOverflow + " wrong overflows");
             }
         }
 
+	[Test]
+	     
         public void TestMult()
         {
             decimal[] args = auto_build2;
@@ -300,12 +307,14 @@ namespace MonoTests.System
 
             if (errOverflow + errOp > 0) 
             {
-                Fail("" + errOp + " wrong multiplications, " + errOverflow + " wrong overflows");
+                Assert.Fail ("" + errOp + " wrong multiplications, " + errOverflow + " wrong overflows");
             }
         }
 
 	// MS 1.x is being less precise than Mono (2 cases). MS 2.0 is correct.
 	// Mono doesn't produce the same result for (i==21/j==3)
+	[Test]
+	     
         public void TestDiv()
         {
             decimal[] args = auto_build2;
@@ -399,7 +408,7 @@ namespace MonoTests.System
 
             if (errOverflow + errOp > 0) 
             {
-                Fail("" + errOp + " wrong division, " + errOverflow + " wrong overflows, " + errDivideByZero + " wrong divide by zero, ");
+                Assert.Fail ("" + errOp + " wrong division, " + errOverflow + " wrong overflows, " + errDivideByZero + " wrong divide by zero, ");
             }
         }
 

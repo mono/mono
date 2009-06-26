@@ -3,6 +3,11 @@
 	* StringTest.cs: Convert all tests to new-style nunit 
 	classes/methods.
 
+	* ArrayTest.cs, ConvertTest.cs, DecimalTest.cs, TimeSpanTest.cs:
+	likewise.
+
+	* DecimalTest2.cs: likewise, 5 hidden tests enabled.
+
 2009-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* NumberFormatterTest.cs: Convert all tests to new-style nunit 

@@ -54,7 +54,7 @@ namespace MonoTests.System
 	//End Auxiliary Things
 
 [TestFixture]
-public class ArrayTest : Assertion
+public class ArrayTest
 {
 	char [] arrsort = {'d', 'b', 'f', 'e', 'a', 'c'};
 
@@ -63,47 +63,47 @@ public class ArrayTest : Assertion
 	[Test]
 	public void TestIsFixedSize() {
 		char[] a1 = {'a'};
-		Assert("All arrays are fixed", a1.IsFixedSize);
+		Assert.IsTrue (a1.IsFixedSize, "All arrays are fixed");
 	}
 	
 	[Test]
 	public void TestIsReadOnly() {
 		char[] a1 = {'a'};
-		Assert("No array is readonly", !a1.IsReadOnly);
+		Assert.IsTrue (!a1.IsReadOnly, "No array is readonly");
 	}
 
 	[Test]
 	public void TestIsSynchronized() {
 		char[] a1 = {'a'};
-		Assert("No array is synchronized", !a1.IsSynchronized);
+		Assert.IsTrue (!a1.IsSynchronized, "No array is synchronized");
 	}
 
 	[Test]
 	public void TestLength() {
 		{
 			char[] a1 = { };
-			AssertEquals("Zero length array", 0, a1.Length);
+			Assert.AreEqual (0, a1.Length, "Zero length array");
 		}
 		{
 			char[] a1 = {'c'};
-			AssertEquals("One-length array", 1, a1.Length);
+			Assert.AreEqual (1, a1.Length, "One-length array");
 		}
 		{
 			char[] a1 = {'c', 'c'};
-			AssertEquals("Two-length array", 2, a1.Length);
+			Assert.AreEqual (2, a1.Length, "Two-length array");
 		}
 	}
 
 	[Test]
 	public void TestRank() {
 		char[] a1 = { 'c', 'd', 'e' };
-		AssertEquals("Rank one", 1, a1.Rank);
+		Assert.AreEqual (1, a1.Rank, "Rank one");
 
 		char[,] a2 = new Char[3,3];
-		AssertEquals("Rank two", 2, a2.Rank);
+		Assert.AreEqual (2, a2.Rank, "Rank two");
 
 		char[,,] a3 = new Char[3,3,3];
-		AssertEquals("Rank three", 3, a3.Rank);
+		Assert.AreEqual (3, a3.Rank, "Rank three");
 	}
 
 	[Test]
@@ -114,7 +114,7 @@ public class ArrayTest : Assertion
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("#B01", errorThrown);
+		Assert.IsTrue (errorThrown, "#B01");
 		errorThrown = false;
 		try {
 			char[,] c1 = new Char[2,2];
@@ -122,20 +122,20 @@ public class ArrayTest : Assertion
 		} catch (RankException) {
 			errorThrown = true;
 		}
-		Assert("#B02", errorThrown);
+		Assert.IsTrue (errorThrown, "#B02");
 
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("#B05", Array.BinarySearch(arr, 'c') >= 3);
-			Assert("#B06", Array.BinarySearch(arr, 'c') < 6);
+			Assert.IsTrue (Array.BinarySearch(arr, 'c') >= 3, "#B05");
+			Assert.IsTrue (Array.BinarySearch(arr, 'c') < 6, "#B06");
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("#B07", -4, Array.BinarySearch(arr, 'c'));
+			Assert.AreEqual (-4, Array.BinarySearch(arr, 'c'), "#B07");
 		}
 		{
 			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("#B08", -9, Array.BinarySearch(arr, 'e'));
+			Assert.AreEqual (-9, Array.BinarySearch(arr, 'e'), "#B08");
 		}
 	}
 
@@ -147,7 +147,7 @@ public class ArrayTest : Assertion
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("#B20", errorThrown);
+		Assert.IsTrue (errorThrown, "#B20");
 		errorThrown = false;
 		try {
 			char[,] c1 = new Char[2,2];
@@ -155,7 +155,7 @@ public class ArrayTest : Assertion
 		} catch (RankException) {
 			errorThrown = true;
 		}
-		Assert("#B21", errorThrown);
+		Assert.IsTrue (errorThrown, "#B21");
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -163,7 +163,7 @@ public class ArrayTest : Assertion
 		} catch (ArgumentOutOfRangeException) {
 			errorThrown = true;
 		}
-		Assert("#B22", errorThrown);
+		Assert.IsTrue (errorThrown, "#B22");
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -171,7 +171,7 @@ public class ArrayTest : Assertion
 		} catch (ArgumentOutOfRangeException) {
 			errorThrown = true;
 		}
-		Assert("#B23", errorThrown);
+		Assert.IsTrue (errorThrown, "#B23");
 		errorThrown = false;
 		try {
 			char[] c1 = {'a'};
@@ -179,20 +179,20 @@ public class ArrayTest : Assertion
 		} catch (ArgumentException) {
 			errorThrown = true;
 		}
-		Assert("#B24", errorThrown);
+		Assert.IsTrue (errorThrown, "#B24");
 
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			Assert("#B26", Array.BinarySearch(arr, 2, 8, 'c') >= 5);
-			Assert("#B27", Array.BinarySearch(arr, 2, 8, 'c') < 8);
+			Assert.IsTrue (Array.BinarySearch(arr, 2, 8, 'c') >= 5, "#B26");
+			Assert.IsTrue (Array.BinarySearch(arr, 2, 8, 'c') < 8, "#B27");
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
-			AssertEquals("#B28", -6, Array.BinarySearch(arr, 2, 8, 'c'));
+			Assert.AreEqual (-6, Array.BinarySearch(arr, 2, 8, 'c'), "#B28");
 		}
 		{
 			char[] arr = {'z', 'z', 'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
-			AssertEquals("#B29", -11, Array.BinarySearch(arr, 2, 8, 'e'));
+			Assert.AreEqual (-11, Array.BinarySearch(arr, 2, 8, 'e'), "#B29");
 		}
 	}
 
@@ -203,23 +203,23 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < 100; i++)
 			array[i] = 10;
 
-		AssertEquals("#B30", 49, Array.BinarySearch(array, 10));
+		Assert.AreEqual (49, Array.BinarySearch(array, 10), "#B30");
 	}
 
 	[Test]
 	public void BinarySearch_NullValue () 
 	{
 		int[] array = new int[1];
-		AssertEquals ("I=a,o", -1, Array.BinarySearch (array, null));
-		AssertEquals ("I=a,o,c", -1, Array.BinarySearch (array, null, null));
-		AssertEquals ("I=a,i,i,o", -1, Array.BinarySearch (array, 0, 1, null));
-		AssertEquals ("I=a,i,i,o,c", -1, Array.BinarySearch (array, 0, 1, null,null));
+		Assert.AreEqual (-1, Array.BinarySearch (array, null), "I=a,o");
+		Assert.AreEqual (-1, Array.BinarySearch (array, null, null), "I=a,o,c");
+		Assert.AreEqual (-1, Array.BinarySearch (array, 0, 1, null), "I=a,i,i,o");
+		Assert.AreEqual (-1, Array.BinarySearch (array, 0, 1, null, null), "I=a,i,i,o,c");
 
 		object[] o = new object [3] { this, this, null };
-		AssertEquals ("O=a,o", -1, Array.BinarySearch (o, null));
-		AssertEquals ("O=a,o,c", -1, Array.BinarySearch (o, null, null));
-		AssertEquals ("O=a,i,i,o", -1, Array.BinarySearch (o, 0, 3, null));
-		AssertEquals ("O=a,i,i,o,c", -1, Array.BinarySearch (o, 0, 3, null, null));
+		Assert.AreEqual (-1, Array.BinarySearch (o, null), "O=a,o");
+		Assert.AreEqual (-1, Array.BinarySearch (o, null, null), "O=a,o,c");
+		Assert.AreEqual (-1, Array.BinarySearch (o, 0, 3, null), "O=a,i,i,o");
+		Assert.AreEqual (-1, Array.BinarySearch (o, 0, 3, null, null), "O=a,i,i,o,c");
 	}
 
 	// TODO - testBinarySearch with explicit IComparer args
@@ -232,48 +232,48 @@ public class ArrayTest : Assertion
 		} catch (ArgumentNullException) {
 			errorThrown = true;
 		}
-		Assert("#C01", errorThrown);
+		Assert.IsTrue (errorThrown, "#C01");
 
 		int[] i1 = { 1, 2, 3, 4 };
 		{
 			int[] compare = {1,2,3,4};
-			AssertEquals("#C02", compare[0], i1[0]);
-			AssertEquals("#C03", compare[1], i1[1]);
-			AssertEquals("#C04", compare[2], i1[2]);
-			AssertEquals("#C05", compare[3], i1[3]);
+			Assert.AreEqual (compare[0], i1[0], "#C02");
+			Assert.AreEqual (compare[1], i1[1], "#C03");
+			Assert.AreEqual (compare[2], i1[2], "#C04");
+			Assert.AreEqual (compare[3], i1[3], "#C05");
 		}
 		Array.Clear(i1, 3, 1);
 		{
 			int[] compare = {1,2,3,0};
-			AssertEquals("#C06", compare[0], i1[0]);
-			AssertEquals("#C07", compare[1], i1[1]);
-			AssertEquals("#C08", compare[2], i1[2]);
-			AssertEquals("#C09", compare[3], i1[3]);
+			Assert.AreEqual (compare[0], i1[0], "#C06");
+			Assert.AreEqual (compare[1], i1[1], "#C07");
+			Assert.AreEqual (compare[2], i1[2], "#C08");
+			Assert.AreEqual (compare[3], i1[3], "#C09");
 		}
 		Array.Clear(i1, 1, 1);
 		{
 			int[] compare = {1,0,3,0};
-			AssertEquals("#C10", compare[0], i1[0]);
-			AssertEquals("#C11", compare[1], i1[1]);
-			AssertEquals("#C12", compare[2], i1[2]);
-			AssertEquals("#C13", compare[3], i1[3]);
+			Assert.AreEqual (compare[0], i1[0], "#C10");
+			Assert.AreEqual (compare[1], i1[1], "#C11");
+			Assert.AreEqual (compare[2], i1[2], "#C12");
+			Assert.AreEqual (compare[3], i1[3], "#C13");
 		}
 		Array.Clear(i1, 1, 3);
 		{
 			int[] compare = {1,0,0,0};
-			AssertEquals("#C14", compare[0], i1[0]);
-			AssertEquals("#C15", compare[1], i1[1]);
-			AssertEquals("#C16", compare[2], i1[2]);
-			AssertEquals("#C17", compare[3], i1[3]);
+			Assert.AreEqual (compare[0], i1[0], "#C14");
+			Assert.AreEqual (compare[1], i1[1], "#C15");
+			Assert.AreEqual (compare[2], i1[2], "#C16");
+			Assert.AreEqual (compare[3], i1[3], "#C17");
 		}
 
 		string[] s1 = { "red", "green", "blue" };
 		Array.Clear(s1, 0, 3);
 		{
 			string[] compare = {null, null, null};
-			AssertEquals("#C18", compare[0], s1[0]);
-			AssertEquals("#C19", compare[1], s1[1]);
-			AssertEquals("#C20", compare[2], s1[2]);
+			Assert.AreEqual (compare[0], s1[0], "#C18");
+			Assert.AreEqual (compare[1], s1[1], "#C19");
+			Assert.AreEqual (compare[2], s1[2], "#C20");
 		}
 	}
 
@@ -281,21 +281,21 @@ public class ArrayTest : Assertion
 	public void TestClone() {
 		char[] c1 = {'a', 'b', 'c'};
 		char[] c2 = (char[])c1.Clone();
-		AssertEquals("#D01", c1[0], c2[0]);
-		AssertEquals("#D02", c1[1], c2[1]);
-		AssertEquals("#D03", c1[2], c2[2]);
+		Assert.AreEqual (c1[0], c2[0], "#D01");
+		Assert.AreEqual (c1[1], c2[1], "#D02");
+		Assert.AreEqual (c1[2], c2[2], "#D03");
 
 		char[] d10 = {'a', 'b'};
 		char[] d11 = {'a', 'c'};
 		char[] d12 = {'b', 'c'};
 		char[][] d1 = {d10, d11, d12};
 		char[][] d2 = (char[][])d1.Clone();
-		AssertEquals("#D04", d1[0], d2[0]);
-		AssertEquals("#D05", d1[1], d2[1]);
-		AssertEquals("#D06", d1[2], d2[2]);
+		Assert.AreEqual (d1[0], d2[0], "#D04");
+		Assert.AreEqual (d1[1], d2[1], "#D05");
+		Assert.AreEqual (d1[2], d2[2], "#D06");
 
 		d1[0][0] = 'z';
-		AssertEquals("#D07", d1[0], d2[0]);
+		Assert.AreEqual (d1[0], d2[0], "#D07");
 	}
 
 	[Test] public void TestIndexer ()
@@ -304,11 +304,11 @@ public class ArrayTest : Assertion
 		IList b = a;
 		try {
 			object c = b [-1];
-			Fail ("IList.this [-1] should throw");
+			Assert.Fail ("IList.this [-1] should throw");
 		} catch (IndexOutOfRangeException) {
 			// Good
 		} catch (Exception){
-			Fail ("Should have thrown an IndexOutOfRangeException");
+			Assert.Fail ("Should have thrown an IndexOutOfRangeException");
 		}
 	}
 		
@@ -322,7 +322,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#E01", errorThrown);
+			Assert.IsTrue (errorThrown, "#E01");
 		}
 		{
 			bool errorThrown = false;
@@ -332,7 +332,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#E02", errorThrown);
+			Assert.IsTrue (errorThrown, "#E02");
 		}
 		{
 			bool errorThrown = false;
@@ -343,7 +343,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#E03", errorThrown);
+			Assert.IsTrue (errorThrown, "#E03");
 		}
 		{
 			bool errorThrown = false;
@@ -354,7 +354,7 @@ public class ArrayTest : Assertion
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
-			Assert("#E04", errorThrown);
+			Assert.IsTrue (errorThrown, "#E04");
 		}
 		{
 			bool errorThrown = false;
@@ -366,7 +366,7 @@ public class ArrayTest : Assertion
 			} catch (InvalidCastException) {
 				errorThrown = true;
 			}
-			Assert("#E05", errorThrown);
+			Assert.IsTrue (errorThrown, "#E05");
 		}
 		{
 			bool errorThrown = false;
@@ -377,7 +377,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#E06", errorThrown);
+			Assert.IsTrue (errorThrown, "#E06");
 		}
 		{
 			bool errorThrown = false;
@@ -388,7 +388,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E07", errorThrown);
+			Assert.IsTrue (errorThrown, "#E07");
 		}
 		{
 			bool errorThrown = false;
@@ -399,24 +399,24 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E08", errorThrown);
+			Assert.IsTrue (errorThrown, "#E08");
 		}
 
 		char[] orig = {'a', 'b', 'd', 'a'};
 		char[] copy = new Char[4];
 		Array.Copy(orig, copy, 4);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("#E09(" + i + ")", orig[i], copy[i]);
+			Assert.AreEqual (orig[i], copy[i], "#E09(" + i + ")");
 		}
 		Array.Clear(copy, 0, copy.Length);
 		for (int i = 0; i < orig.Length; i++) {
-			AssertEquals("#E10(" + i + ")", (char)0, copy[i]);
+			Assert.AreEqual ((char)0, copy[i], "#E10(" + i + ")");
 		}
 		Array.Copy(orig, copy, 2);
-		AssertEquals("#E11", orig[0], copy[0]);
-		AssertEquals("#E12", orig[1], copy[1]);
-		Assert("#E13", orig[2] != copy[2]);
-		Assert("#E14", orig[3] != copy[3]);
+		Assert.AreEqual (orig[0], copy[0], "#E11");
+		Assert.AreEqual (orig[1], copy[1], "#E12");
+		Assert.IsTrue (orig[2] != copy[2], "#E13");
+		Assert.IsTrue (orig[3] != copy[3], "#E14");
 	}
 
 	[Test]
@@ -430,7 +430,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E31", errorThrown);
+			Assert.IsTrue (errorThrown, "#E31");
 		}
 		{
 			bool errorThrown = false;
@@ -441,22 +441,22 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E32", errorThrown);
+			Assert.IsTrue (errorThrown, "#E32");
 		}
 		
 		char[] orig = {'a', 'b', 'd', 'a'};
 		char[] copy = new Char[4];
 		Array.Copy(orig, 1, copy, 1, 3);
-		Assert("#E33", copy[0] != orig[0]);
+		Assert.IsTrue (copy[0] != orig[0], "#E33");
 		for (int i = 1; i < orig.Length; i++) {
-			AssertEquals("#E34(" + i + ")", orig[i], copy[i]);
+			Assert.AreEqual (orig[i], copy[i], "#E34(" + i + ")");
 		}
 		Array.Clear(copy, 0, copy.Length);
 		Array.Copy(orig, 1, copy, 0, 2);
-		AssertEquals("#E35", orig[1], copy[0]);
-		AssertEquals("#E36", orig[2], copy[1]);
-		Assert("#E37", copy[2] != orig[2]);
-		Assert("#E38", copy[3] != orig[3]);
+		Assert.AreEqual (orig[1], copy[0], "#E35");
+		Assert.AreEqual (orig[2], copy[1], "#E36");
+		Assert.IsTrue (copy[2] != orig[2], "#E37");
+		Assert.IsTrue (copy[3] != orig[3], "#E38");
 	}
 
 	[Test]
@@ -480,7 +480,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#E61", errorThrown);
+			Assert.IsTrue (errorThrown, "#E61");
 		}
 		{
 			bool errorThrown = false;
@@ -496,7 +496,7 @@ public class ArrayTest : Assertion
 				errorThrown = true;
 			}
 #endif // TARGET_JVM
-			Assert("#E62", errorThrown);
+			Assert.IsTrue (errorThrown, "#E62");
 		}
 		{
 			bool errorThrown = false;
@@ -507,7 +507,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#E63", errorThrown);
+			Assert.IsTrue (errorThrown, "#E63");
 		}
 		{
 			bool errorThrown = false;
@@ -518,7 +518,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#E64", errorThrown);
+			Assert.IsTrue (errorThrown, "#E64");
 		}
 		{
 			bool errorThrown = false;
@@ -529,7 +529,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#E65", errorThrown);
+			Assert.IsTrue (errorThrown, "#E65");
 		}
 		{
 			bool errorThrown = false;
@@ -540,7 +540,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E66", errorThrown);
+			Assert.IsTrue (errorThrown, "#E66");
 		}
 		{
 			bool errorThrown = false;
@@ -551,7 +551,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E67", errorThrown);
+			Assert.IsTrue (errorThrown, "#E67");
 		}
 
 		{
@@ -569,23 +569,23 @@ public class ArrayTest : Assertion
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
-			Assert("#E68", errorThrown);
+			Assert.IsTrue (errorThrown, "#E68");
 		}
 
 		Char[] orig = {'a', 'b', 'c', 'd'};
 		Char[] copy = new Char[10];
 		Array.Clear(copy, 0, copy.Length);
 		orig.CopyTo(copy, 3);
-		AssertEquals("#E69", (char)0, copy[0]);
-		AssertEquals("#E70", (char)0, copy[1]);
-		AssertEquals("#E71", (char)0, copy[2]);
-		AssertEquals("#E72", orig[0], copy[3]);
-		AssertEquals("#E73", orig[1], copy[4]);
-		AssertEquals("#E74", orig[2], copy[5]);
-		AssertEquals("#E75", orig[3], copy[6]);
-		AssertEquals("#E76", (char)0, copy[7]);
-		AssertEquals("#E77", (char)0, copy[8]);
-		AssertEquals("#E78", (char)0, copy[9]);
+		Assert.AreEqual ((char)0, copy[0], "#E69");
+		Assert.AreEqual ((char)0, copy[1], "#E70");
+		Assert.AreEqual ((char)0, copy[2], "#E71");
+		Assert.AreEqual (orig[0], copy[3], "#E72");
+		Assert.AreEqual (orig[1], copy[4], "#E73");
+		Assert.AreEqual (orig[2], copy[5], "#E74");
+		Assert.AreEqual (orig[3], copy[6], "#E75");
+		Assert.AreEqual ((char)0, copy[7], "#E76");
+		Assert.AreEqual ((char)0, copy[8], "#E77");
+		Assert.AreEqual ((char)0, copy[9], "#E78");
 
 		{
 			// The following is valid and must not throw an exception.
@@ -597,7 +597,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#E79", !errorThrown);
+			Assert.IsTrue (!errorThrown, "#E79");
 		}
 
 		{
@@ -612,7 +612,7 @@ public class ArrayTest : Assertion
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
-			Assert("#E80", errorThrown);
+			Assert.IsTrue (errorThrown, "#E80");
 		}
 	}
 
@@ -625,7 +625,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#F01", errorThrown);
+			Assert.IsTrue (errorThrown, "#F01");
 		}
 		{
 			bool errorThrown = false;
@@ -634,7 +634,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#F02", errorThrown);
+			Assert.IsTrue (errorThrown, "#F02");
 		}
 		{
 			bool errorThrown = false;
@@ -643,7 +643,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#F03a", errorThrown);
+			Assert.IsTrue (errorThrown, "#F03a");
 		}
 #if NET_1_1
 		{
@@ -653,7 +653,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#F03b", errorThrown);
+			Assert.IsTrue (errorThrown, "#F03b");
 		}
 #endif
 #if !TARGET_JVM // Arrays lower bounds are not supported for TARGET_JVM
@@ -664,7 +664,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#F04", errorThrown);
+			Assert.IsTrue (errorThrown, "#F04");
 		}
 #endif // TARGET_JVM
 		{
@@ -675,7 +675,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#F05", errorThrown);
+			Assert.IsTrue (errorThrown, "#F05");
 		}
 #if !TARGET_JVM // CreateInstance with lower bounds not supported for TARGET_JVM
 		{
@@ -688,15 +688,15 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#F06", errorThrown);
+			Assert.IsTrue (errorThrown, "#F06");
 		}
 
 		char[] c1 = (char[])Array.CreateInstance(Type.GetType("System.Char"), 12);
-		AssertEquals("#F07", 12, c1.Length);
+		Assert.AreEqual (12, c1.Length, "#F07");
 
 		Array c2 = Array.CreateInstance(Type.GetType("System.Char"), 12, 5);
-		AssertEquals("#F08", 2, c2.Rank);
-		AssertEquals("#F09", 60, c2.Length);
+		Assert.AreEqual (2, c2.Rank, "#F08");
+		Assert.AreEqual (60, c2.Length, "#F09");
 
 
 		{
@@ -705,21 +705,21 @@ public class ArrayTest : Assertion
 			int[] src = { 512, 718, 912 };
 			Array array = Array.CreateInstance(typeof(int), lengths, bounds);
 
-			AssertEquals("#F10", 3, array.Length);
-			AssertEquals("#F11", 5, array.GetLowerBound(0));
-			AssertEquals("#F12", 7, array.GetUpperBound(0));
+			Assert.AreEqual (3, array.Length, "#F10");
+			Assert.AreEqual (5, array.GetLowerBound(0), "#F11");
+			Assert.AreEqual (7, array.GetUpperBound(0), "#F12");
 
 			src.CopyTo (array, 5);
 
 			for (int i = 0; i < src.Length; i++)
-				AssertEquals("#F13(" + i + ")", src[i], array.GetValue(i+5));
+				Assert.AreEqual (src[i], array.GetValue(i+5), "#F13(" + i + ")");
 		}
 
 		// Test that a 1 dimensional array with 0 lower bound is the
 		// same as an szarray
 		Type szarrayType = new int [10].GetType ();
-		Assert (szarrayType == (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0})).GetType ());
-		Assert (szarrayType != (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {1})).GetType ());
+		Assert.IsTrue (szarrayType == (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0})).GetType ());
+		Assert.IsTrue (szarrayType != (Array.CreateInstance (typeof (int), new int[] {1}, new int[] {1})).GetType ());
 #endif // TARGET_JVM
 	}
 	
@@ -745,53 +745,53 @@ public class ArrayTest : Assertion
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator ();
-		AssertNotNull ("#G01", en);
+		Assert.IsNotNull (en, "#G01");
 
-		Assert ("#G02", en.MoveNext ());
-		AssertEquals ("#G03", "this", en.Current);
-		Assert ("#G04", en.MoveNext ());
-		AssertEquals ("#G05", "is", en.Current);
-		Assert ("#G06", en.MoveNext ());
-		AssertEquals ("#G07", "a", en.Current);
-		Assert ("#G08", en.MoveNext ());
-		AssertEquals ("#G09", "test", en.Current);
-		Assert ("#G10", !en.MoveNext ());
+		Assert.IsTrue (en.MoveNext (), "#G02");
+		Assert.AreEqual ("this", en.Current, "#G03");
+		Assert.IsTrue (en.MoveNext (), "#G04");
+		Assert.AreEqual ("is", en.Current, "#G05");
+		Assert.IsTrue (en.MoveNext (), "#G06");
+		Assert.AreEqual ("a", en.Current, "#G07");
+		Assert.IsTrue (en.MoveNext (), "#G08");
+		Assert.AreEqual ("test", en.Current, "#G09");
+		Assert.IsTrue (!en.MoveNext (), "#G10");
 
 		en.Reset ();
-		Assert("#G11", en.MoveNext ());
-		AssertEquals ("#G12", "this", en.Current);
+		Assert.IsTrue (en.MoveNext (), "#G11");
+		Assert.AreEqual ("this", en.Current, "#G12");
 
 		// mutation does not invalidate array enumerator!
 		s1.SetValue ("change", 1);
-		Assert ("#G13", en.MoveNext ());
-		AssertEquals ("#G14", "change", en.Current);
+		Assert.IsTrue (en.MoveNext (), "#G13");
+		Assert.AreEqual ("change", en.Current, "#G14");
 	}
 
 	[Test]
 	public void TestGetEnumeratorMultipleDimension() {
 		String[,] s1 = {{"this", "is"}, {"a", "test"}};
 		IEnumerator en = s1.GetEnumerator ();
-		AssertNotNull ("#AA01", en);
+		Assert.IsNotNull (en, "#AA01");
 
-		Assert ("#AA02", en.MoveNext ());
-		AssertEquals ("#AA03", "this", en.Current);
-		Assert ("#AA04", en.MoveNext ());
-		AssertEquals ("#AA05", "is", en.Current);
-		Assert ("#AA06", en.MoveNext ());
-		AssertEquals ("#AA07", "a", en.Current);
-		Assert ("#AA08", en.MoveNext ());
-		AssertEquals ("#AA09", "test", en.Current);
-		Assert ("#AA10", !en.MoveNext ());
+		Assert.IsTrue (en.MoveNext (), "#AA02");
+		Assert.AreEqual ("this", en.Current, "#AA03");
+		Assert.IsTrue (en.MoveNext (), "#AA04");
+		Assert.AreEqual ("is", en.Current, "#AA05");
+		Assert.IsTrue (en.MoveNext (), "#AA06");
+		Assert.AreEqual ("a", en.Current, "#AA07");
+		Assert.IsTrue (en.MoveNext (), "#AA08");
+		Assert.AreEqual ("test", en.Current, "#AA09");
+		Assert.IsTrue (!en.MoveNext (), "#AA10");
 
 		en.Reset ();
-		Assert("#AA11", en.MoveNext ());
-		AssertEquals ("#AA12", "this", en.Current);
+		Assert.IsTrue (en.MoveNext (), "#AA11");
+		Assert.AreEqual ("this", en.Current, "#AA12");
 
 		int[] idxs = {0,1};
 		// mutation does not invalidate array enumerator!
 		s1.SetValue ("change", idxs);
-		Assert ("#AA13", en.MoveNext ());
-		AssertEquals ("#AA14", "change", en.Current);
+		Assert.IsTrue (en.MoveNext (), "#AA13");
+		Assert.AreEqual ("change", en.Current, "#AA14");
 	}
 
 	[Test]
@@ -807,20 +807,20 @@ public class ArrayTest : Assertion
 				myArray.SetValue( Convert.ToString(i) + j, myIndicesArray );
 			}
 		IEnumerator en = myArray.GetEnumerator ();
-		AssertNotNull ("#AB01", en);
+		Assert.IsNotNull (en, "#AB01");
 
 		// check the first couple of values
-		Assert ("#AB02", en.MoveNext ());
-		AssertEquals ("#AB03", "23", en.Current);
-		Assert ("#AB04", en.MoveNext ());
-		AssertEquals ("#AB05", "24", en.Current);
+		Assert.IsTrue (en.MoveNext (), "#AB02");
+		Assert.AreEqual ("23", en.Current, "#AB03");
+		Assert.IsTrue (en.MoveNext (), "#AB04");
+		Assert.AreEqual ("24", en.Current, "#AB05");
 
 		// then check the last element's value
 		string lastElement;
 		do {  
 			lastElement = (string)en.Current;
 		} while (en.MoveNext());
-		AssertEquals ("#AB06", "47", lastElement);
+		Assert.AreEqual ("47", lastElement, "#AB06");
 	}
 
 	[Test]
@@ -832,16 +832,16 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Add ("can not");
-			Fail ("IList.Add should throw");
+			Assert.Fail ("IList.Add should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Add threw wrong exception type");
+			Assert.Fail ("IList.Add threw wrong exception type");
 		}
 
-		Fail("IList.Add shouldn't get this far");
+		Assert.Fail ("IList.Add shouldn't get this far");
 	}
 
 	[Test]
@@ -853,16 +853,16 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Insert (0, "can not");
-			Fail ("IList.Insert should throw");
+			Assert.Fail ("IList.Insert should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Insert threw wrong exception type");
+			Assert.Fail ("IList.Insert threw wrong exception type");
 		}
 
-		Fail("IList.Insert shouldn't get this far");
+		Assert.Fail ("IList.Insert shouldn't get this far");
 	}
 
 	[Test]
@@ -874,16 +874,16 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).Remove ("can not");
-			Fail ("IList.Remove should throw");
+			Assert.Fail ("IList.Remove should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.Remove threw wrong exception type");
+			Assert.Fail ("IList.Remove threw wrong exception type");
 		}
 
-		Fail("IList.Remove shouldn't get this far");
+		Assert.Fail ("IList.Remove shouldn't get this far");
 	}
 
 	[Test]
@@ -895,16 +895,16 @@ public class ArrayTest : Assertion
 		Array myArray=Array.CreateInstance ( typeof(String), myLengthsArray, myBoundsArray );
 		try {
 			((IList)myArray).RemoveAt (0);
-			Fail ("IList.RemoveAt should throw");
+			Assert.Fail ("IList.RemoveAt should throw");
 		}
 		catch (NotSupportedException) {
 			return;
 		}
 		catch (Exception) {
-			Fail ("IList.RemoveAt threw wrong exception type");
+			Assert.Fail ("IList.RemoveAt threw wrong exception type");
 		}
 
-		Fail("IList.RemoveAt shouldn't get this far");
+		Assert.Fail ("IList.RemoveAt shouldn't get this far");
 	}
 
 	[Test]
@@ -917,20 +917,20 @@ public class ArrayTest : Assertion
 
 		try {
 			bool b = ((IList)myArray).Contains ("23");
-			Fail("IList.Contains should throw with multi-dimensional arrays");
+			Assert.Fail ("IList.Contains should throw with multi-dimensional arrays");
 		}
 		catch (RankException) {
 			int[] iArr = new int[3] { 1, 2, 3};
 			// check the first and last items
-			Assert("AC01", ((IList)iArr).Contains (1));
-			Assert("AC02", ((IList)iArr).Contains (3));
+			Assert.IsTrue (((IList)iArr).Contains (1), "AC01");
+			Assert.IsTrue (((IList)iArr).Contains (3), "AC02");
 
 			// and one that is definately not there
-			Assert("AC03", !((IList)iArr).Contains (42));
+			Assert.IsTrue (!((IList)iArr).Contains (42), "AC03");
 			return;
 		}
 
-		Fail("Should not get here");
+		Assert.Fail ("Should not get here");
 	}
 
 	[Test]
@@ -943,19 +943,19 @@ public class ArrayTest : Assertion
 
 		try {
 			bool b = ((IList)myArray).Contains ("23");
-			Fail("IList.Contains should throw with multi-dimensional arrays");
+			Assert.Fail ("IList.Contains should throw with multi-dimensional arrays");
 		}
 		catch (RankException) {
 			int[] iArr = new int[3] { 1, 2, 3};
 			// check the first and last items
-			AssertEquals("AD01", 0, ((IList)iArr).IndexOf (1));
-			AssertEquals("AD02", 2, ((IList)iArr).IndexOf (3));
+			Assert.AreEqual (0, ((IList)iArr).IndexOf (1), "AD01");
+			Assert.AreEqual (2, ((IList)iArr).IndexOf (3), "AD02");
 
 			// and one that is definately not there
-			AssertEquals("AD03", -1, ((IList)iArr).IndexOf (42));
+			Assert.AreEqual (-1, ((IList)iArr).IndexOf (42), "AD03");
 		}
 		catch (Exception e) {
-			Fail("Unexpected exception: " + e.ToString());
+			Assert.Fail ("Unexpected exception: " + e.ToString());
 		}
 
 		// check that wierd case whem lowerbound is Int32.MinValue,
@@ -963,7 +963,7 @@ public class ArrayTest : Assertion
 		int[] myLengthArray = new int[1] { 3 };
 		int[] myBoundArray = new int[1] { Int32.MinValue };
 		Array myExtremeArray=Array.CreateInstance ( typeof(String), myLengthArray, myBoundArray );
-		AssertEquals("AD04", Int32.MaxValue, ((IList)myExtremeArray).IndexOf (42));
+		Assert.AreEqual (Int32.MaxValue, ((IList)myExtremeArray).IndexOf (42), "AD04");
 
 	}
 
@@ -977,7 +977,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H01", errorThrown);
+			Assert.IsTrue (errorThrown, "#H01");
 		}
 		{
 			bool errorThrown = false;
@@ -987,15 +987,15 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H02", errorThrown);
+			Assert.IsTrue (errorThrown, "#H02");
 		}
 
 		char[] c2 = new Char[5];
-		AssertEquals("#H03", 5, c2.GetLength(0));
+		Assert.AreEqual (5, c2.GetLength(0), "#H03");
 
 		char[,] c3 = new Char[6,7];
-		AssertEquals("#H04", 6, c3.GetLength(0));
-		AssertEquals("#H05", 7, c3.GetLength(1));
+		Assert.AreEqual (6, c3.GetLength(0), "#H04");
+		Assert.AreEqual (7, c3.GetLength(1), "#H05");
 	}
 
 	[Test]
@@ -1008,7 +1008,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H31", errorThrown);
+			Assert.IsTrue (errorThrown, "#H31");
 		}
 		{
 			bool errorThrown = false;
@@ -1018,15 +1018,15 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H32", errorThrown);
+			Assert.IsTrue (errorThrown, "#H32");
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("#H33", 0, c1.GetLowerBound(0));
+		Assert.AreEqual (0, c1.GetLowerBound(0), "#H33");
 
 		char[,] c2 = new Char[4,4];
-		AssertEquals("#H34", 0, c2.GetLowerBound(0));
-		AssertEquals("#H35", 0, c2.GetLowerBound(1));
+		Assert.AreEqual (0, c2.GetLowerBound(0), "#H34");
+		Assert.AreEqual (0, c2.GetLowerBound(1), "#H35");
 	}
 
 	[Test]
@@ -1039,7 +1039,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H61", errorThrown);
+			Assert.IsTrue (errorThrown, "#H61");
 		}
 		{
 			bool errorThrown = false;
@@ -1049,15 +1049,15 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#H62", errorThrown);
+			Assert.IsTrue (errorThrown, "#H62");
 		}
 
 		char[] c1 = new Char[5];
-		AssertEquals("#H63", 4, c1.GetUpperBound(0));
+		Assert.AreEqual (4, c1.GetUpperBound(0), "#H63");
 
 		char[,] c2 = new Char[4,6];
-		AssertEquals("#H64", 3, c2.GetUpperBound(0));
-		AssertEquals("#H65", 5, c2.GetUpperBound(1));
+		Assert.AreEqual (3, c2.GetUpperBound(0), "#H64");
+		Assert.AreEqual (5, c2.GetUpperBound(1), "#H65");
 	}
 
 	[Test]
@@ -1070,7 +1070,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#I01", errorThrown);
+			Assert.IsTrue (errorThrown, "#I01");
 		}
 		{
 			bool errorThrown = false;
@@ -1080,7 +1080,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I02", errorThrown);
+			Assert.IsTrue (errorThrown, "#I02");
 		}
 		{
 			bool errorThrown = false;
@@ -1090,12 +1090,12 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I03", errorThrown);
+			Assert.IsTrue (errorThrown, "#I03");
 		}
 
 		char[] c1 = {'a', 'b', 'c', 'd'};
 		for (int i = 0; i < c1.Length; i++) {
-			AssertEquals("#I04(" + i + ")", c1[i], c1.GetValue(i));
+			Assert.AreEqual (c1[i], c1.GetValue(i), "#I04(" + i + ")");
 		}
 	}
 
@@ -1109,7 +1109,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#I21", errorThrown);
+			Assert.IsTrue (errorThrown, "#I21");
 		}
 		{
 			bool errorThrown = false;
@@ -1119,7 +1119,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I22", errorThrown);
+			Assert.IsTrue (errorThrown, "#I22");
 		}
 		{
 			bool errorThrown = false;
@@ -1129,7 +1129,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I23", errorThrown);
+			Assert.IsTrue (errorThrown, "#I23");
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1140,8 +1140,7 @@ public class ArrayTest : Assertion
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("#I24(" + i + "," + j + ")",
-					c1[i,j], c1.GetValue(i, j));
+				Assert.AreEqual (c1[i, j], c1.GetValue(i, j), "#I24(" + i + "," + j + ")");
 			}
 		}
 	}
@@ -1156,7 +1155,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#I41", errorThrown);
+			Assert.IsTrue (errorThrown, "#I41");
 		}
 		{
 			bool errorThrown = false;
@@ -1166,7 +1165,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I42", errorThrown);
+			Assert.IsTrue (errorThrown, "#I42");
 		}
 		{
 			bool errorThrown = false;
@@ -1176,7 +1175,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I43", errorThrown);
+			Assert.IsTrue (errorThrown, "#I43");
 		}
 
 		char[,,] c1 = new Char[4,2,3];
@@ -1190,8 +1189,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
-					AssertEquals("#I44(" + i + "," + j + ")",
-						c1[i,j,k], c1.GetValue(i,j,k));
+					Assert.AreEqual (c1[i, j, k], c1.GetValue(i, j, k), "#I44(" + i + "," + j + ")");
 				}
 			}
 		}
@@ -1219,7 +1217,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#I61a", errorThrown);
+			Assert.IsTrue (errorThrown, "#I61a");
 		}
 		{
 			bool errorThrown = false;
@@ -1230,7 +1228,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#I62", errorThrown);
+			Assert.IsTrue (errorThrown, "#I62");
 		}
 		{
 			bool errorThrown = false;
@@ -1241,7 +1239,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I63", errorThrown);
+			Assert.IsTrue (errorThrown, "#I63");
 		}
 		{
 			bool errorThrown = false;
@@ -1252,7 +1250,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#I64", errorThrown);
+			Assert.IsTrue (errorThrown, "#I64");
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1264,8 +1262,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				int[] coords = {i, j};
-				AssertEquals("#I65(" + i + "," + j + ")",
-					c1[i,j], c1.GetValue(coords));
+				Assert.AreEqual (c1[i, j], c1.GetValue(coords), "#I65(" + i + "," + j + ")");
 			}
 		}
 	}
@@ -1279,7 +1276,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#J01", errorThrown);
+			Assert.IsTrue (errorThrown, "#J01");
 		}
 		{
 			bool errorThrown = false;
@@ -1289,14 +1286,14 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#J02", errorThrown);
+			Assert.IsTrue (errorThrown, "#J02");
 		}
 
 		String[] s1 = {"this", "is", "a", "test"};
-		AssertEquals("#J03", -1, Array.IndexOf(s1, null));
-		AssertEquals("#J04", -1, Array.IndexOf(s1, "nothing"));
-		AssertEquals("#J05", 0, Array.IndexOf(s1, "this"));
-		AssertEquals("#J06", 3, Array.IndexOf(s1, "test"));
+		Assert.AreEqual (-1, Array.IndexOf(s1, null), "#J03");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "nothing"), "#J04");
+		Assert.AreEqual (0, Array.IndexOf(s1, "this"), "#J05");
+		Assert.AreEqual (3, Array.IndexOf(s1, "test"), "#J06");
 	}
 
 	[Test]
@@ -1308,7 +1305,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#J21", errorThrown);
+			Assert.IsTrue (errorThrown, "#J21");
 		}
 		{
 			bool errorThrown = false;
@@ -1318,7 +1315,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#J22", errorThrown);
+			Assert.IsTrue (errorThrown, "#J22");
 		}
 		{
 			bool errorThrown = false;
@@ -1328,15 +1325,15 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#J23", errorThrown);
+			Assert.IsTrue (errorThrown, "#J23");
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("#J24", -1, Array.IndexOf(s1, null, 1));
-		AssertEquals("#J25", -1, Array.IndexOf(s1, "nothing", 1));
-		AssertEquals("#J26", -1, Array.IndexOf(s1, "this", 1));
-		AssertEquals("#J27", 1, Array.IndexOf(s1, "is", 1));
-		AssertEquals("#J28", 4, Array.IndexOf(s1, "test", 1));
+		Assert.AreEqual (-1, Array.IndexOf(s1, null, 1), "#J24");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "nothing", 1), "#J25");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "this", 1), "#J26");
+		Assert.AreEqual (1, Array.IndexOf(s1, "is", 1), "#J27");
+		Assert.AreEqual (4, Array.IndexOf(s1, "test", 1), "#J28");
 	}
 
 	[Test]
@@ -1348,7 +1345,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#J41", errorThrown);
+			Assert.IsTrue (errorThrown, "#J41");
 		}
 		{
 			bool errorThrown = false;
@@ -1358,7 +1355,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#J42", errorThrown);
+			Assert.IsTrue (errorThrown, "#J42");
 		}
 		{
 			bool errorThrown = false;
@@ -1368,7 +1365,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#J43", errorThrown);
+			Assert.IsTrue (errorThrown, "#J43");
 		}
 		{
 			bool errorThrown = false;
@@ -1378,26 +1375,26 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#J44", errorThrown);
+			Assert.IsTrue (errorThrown, "#J44");
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("#J45", -1, Array.IndexOf(s1, null, 1, 3));
-		AssertEquals("#J46", -1, Array.IndexOf(s1, "nothing", 1, 3));
-		AssertEquals("#J47", -1, Array.IndexOf(s1, "this", 1, 3));
-		AssertEquals("#J48", 1, Array.IndexOf(s1, "is", 1, 3));
-		AssertEquals("#J49", -1, Array.IndexOf(s1, "test", 1, 3));
-		AssertEquals("#J50", 3, Array.IndexOf(s1, "a", 1, 3));
+		Assert.AreEqual (-1, Array.IndexOf(s1, null, 1, 3), "#J45");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "nothing", 1, 3), "#J46");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "this", 1, 3), "#J47");
+		Assert.AreEqual (1, Array.IndexOf(s1, "is", 1, 3), "#J48");
+		Assert.AreEqual (-1, Array.IndexOf(s1, "test", 1, 3), "#J49");
+		Assert.AreEqual (3, Array.IndexOf(s1, "a", 1, 3), "#J50");
 	}
 	
 	[Test]
 	public void TestIndexOf_CustomEqual ()
 	{
 		DataEqual[] test = new DataEqual [] { new DataEqual () };
-		AssertEquals (0, Array.IndexOf (test, "asdfas", 0));
+		Assert.AreEqual (0, Array.IndexOf (test, "asdfas", 0));
 		
 		IList array = (IList)test;
-		AssertEquals (0, array.IndexOf ("asdfas"));
+		Assert.AreEqual (0, array.IndexOf ("asdfas"));
 	}
 	
 	[Test]
@@ -1409,7 +1406,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#K01", errorThrown);
+			Assert.IsTrue (errorThrown, "#K01");
 		}
 		{
 			bool errorThrown = false;
@@ -1419,17 +1416,17 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#K02", errorThrown);
+			Assert.IsTrue (errorThrown, "#K02");
 		}
 
 		String[] s1 = {"this", "is", "a", "a", "test"};
-		AssertEquals("#K03", -1, Array.LastIndexOf(s1, null));
-		AssertEquals("#K04", -1, Array.LastIndexOf(s1, "nothing"));
-		AssertEquals("#K05", 0, Array.LastIndexOf(s1, "this"));
-		AssertEquals("#K06", 4, Array.LastIndexOf(s1, "test"));
-		AssertEquals("#K07", 3, Array.LastIndexOf(s1, "a"));
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, null), "#K03");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "nothing"), "#K04");
+		Assert.AreEqual (0, Array.LastIndexOf(s1, "this"), "#K05");
+		Assert.AreEqual (4, Array.LastIndexOf(s1, "test"), "#K06");
+		Assert.AreEqual (3, Array.LastIndexOf(s1, "a"), "#K07");
 
-		AssertEquals (-1, Array.LastIndexOf (new String [0], "foo"));
+		Assert.AreEqual (-1, Array.LastIndexOf (new String [0], "foo"));
 	}
 
 	[Test]
@@ -1441,7 +1438,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#K21", errorThrown);
+			Assert.IsTrue (errorThrown, "#K21");
 		}
 		{
 			bool errorThrown = false;
@@ -1451,7 +1448,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#K22", errorThrown);
+			Assert.IsTrue (errorThrown, "#K22");
 		}
 		{
 			bool errorThrown = false;
@@ -1461,15 +1458,15 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#K23", errorThrown);
+			Assert.IsTrue (errorThrown, "#K23");
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("#K24", -1, Array.LastIndexOf(s1, null, 3));
-		AssertEquals("#K25", -1, Array.LastIndexOf(s1, "nothing", 3));
-		AssertEquals("#K26", -1, Array.LastIndexOf(s1, "test", 3));
-		AssertEquals("#K27", 3, Array.LastIndexOf(s1, "a", 3));
-		AssertEquals("#K28", 0, Array.LastIndexOf(s1, "this", 3));
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, null, 3), "#K24");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "nothing", 3), "#K25");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "test", 3), "#K26");
+		Assert.AreEqual (3, Array.LastIndexOf(s1, "a", 3), "#K27");
+		Assert.AreEqual (0, Array.LastIndexOf(s1, "this", 3), "#K28");
 	}
 
 	[Test]
@@ -1481,7 +1478,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#K41", errorThrown);
+			Assert.IsTrue (errorThrown, "#K41");
 		}
 		{
 			bool errorThrown = false;
@@ -1491,7 +1488,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#K42", errorThrown);
+			Assert.IsTrue (errorThrown, "#K42");
 		}
 		{
 			bool errorThrown = false;
@@ -1501,7 +1498,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#K43", errorThrown);
+			Assert.IsTrue (errorThrown, "#K43");
 		}
 		{
 			bool errorThrown = false;
@@ -1511,16 +1508,16 @@ public class ArrayTest : Assertion
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#K44", errorThrown);
+			Assert.IsTrue (errorThrown, "#K44");
 		}
 
 		String[] s1 = {"this", "is", "really", "a", "test"};
-		AssertEquals("#K45", -1, Array.LastIndexOf(s1, null, 3, 3));
-		AssertEquals("#K46", -1, Array.LastIndexOf(s1, "nothing", 3, 3));
-		AssertEquals("#K47", -1, Array.LastIndexOf(s1, "this", 3, 3));
-		AssertEquals("#K48", 1, Array.LastIndexOf(s1, "is", 3, 3));
-		AssertEquals("#K49", -1, Array.LastIndexOf(s1, "test", 3, 3));
-		AssertEquals("#K50", 3, Array.LastIndexOf(s1, "a", 3, 3));
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, null, 3, 3), "#K45");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "nothing", 3, 3), "#K46");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "this", 3, 3), "#K47");
+		Assert.AreEqual (1, Array.LastIndexOf(s1, "is", 3, 3), "#K48");
+		Assert.AreEqual (-1, Array.LastIndexOf(s1, "test", 3, 3), "#K49");
+		Assert.AreEqual (3, Array.LastIndexOf(s1, "a", 3, 3), "#K50");
 	}
 
 	[Test]
@@ -1554,7 +1551,7 @@ public class ArrayTest : Assertion
 			if (retval != i)
 				error = true;
 		}
-		Assert (!error);
+		Assert.IsTrue (!error);
 	}
 
 	[Test]
@@ -1584,7 +1581,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#L01", errorThrown);
+			Assert.IsTrue (errorThrown, "#L01");
 		}
 		{
 			bool errorThrown = false;
@@ -1594,15 +1591,15 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#L02", errorThrown);
+			Assert.IsTrue (errorThrown, "#L02");
 		}
 		
 		char[] c1 = {'a', 'b', 'c', 'd'};
 		Array.Reverse(c1);
-		AssertEquals("#L03", 'd', c1[0]);
-		AssertEquals("#L04", 'c', c1[1]);
-		AssertEquals("#L05", 'b', c1[2]);
-		AssertEquals("#L06", 'a', c1[3]);
+		Assert.AreEqual ('d', c1[0], "#L03");
+		Assert.AreEqual ('c', c1[1], "#L04");
+		Assert.AreEqual ('b', c1[2], "#L05");
+		Assert.AreEqual ('a', c1[3], "#L06");
 
 		{
 			bool errorThrown = false;
@@ -1611,7 +1608,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#L07", errorThrown);
+			Assert.IsTrue (errorThrown, "#L07");
 		}
 		{
 			bool errorThrown = false;
@@ -1621,7 +1618,7 @@ public class ArrayTest : Assertion
 			} catch (RankException) {
 				errorThrown = true;
 			}
-			Assert("#L08", errorThrown);
+			Assert.IsTrue (errorThrown, "#L08");
 		}
 		//{
 		//bool errorThrown = false;
@@ -1631,7 +1628,7 @@ public class ArrayTest : Assertion
 		//} catch (ArgumentOutOfRangeException) {
 		//	errorThrown = true;
 		//}
-		//Assert("#L09", errorThrown);
+		//Assert.IsTrue (errorThrown, "#L09");
 		//}
 		//{
 		//bool errorThrown = false;
@@ -1641,15 +1638,15 @@ public class ArrayTest : Assertion
 		//} catch (ArgumentOutOfRangeException) {
 		//	errorThrown = true;
 		//}
-		//Assert("#L10", errorThrown);
+		//Assert.IsTrue (errorThrown, "#L10");
 		//}
 
 		char[] c2 = { 'a', 'b', 'c', 'd'};
 		Array.Reverse(c2, 1, 2);
-		AssertEquals("#L11", 'a', c2[0]);
-		AssertEquals("#L12", 'c', c2[1]);
-		AssertEquals("#L13", 'b', c2[2]);
-		AssertEquals("#L14", 'd', c2[3]);
+		Assert.AreEqual ('a', c2[0], "#L11");
+		Assert.AreEqual ('c', c2[1], "#L12");
+		Assert.AreEqual ('b', c2[2], "#L13");
+		Assert.AreEqual ('d', c2[3], "#L14");
 	}
 
 	[Test]
@@ -1662,7 +1659,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#M01", errorThrown);
+			Assert.IsTrue (errorThrown, "#M01");
 		}
 		{
 			bool errorThrown = false;
@@ -1672,7 +1669,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M02", errorThrown);
+			Assert.IsTrue (errorThrown, "#M02");
 		}
 		{
 			bool errorThrown = false;
@@ -1682,7 +1679,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M03", errorThrown);
+			Assert.IsTrue (errorThrown, "#M03");
 		}
 
 		char[] c1 = {'a', 'b', 'c', 'd'};
@@ -1691,7 +1688,7 @@ public class ArrayTest : Assertion
 			c2.SetValue(c1[i], i);
 		}
 		for (int i = 0; i < c1.Length; i++) {
-			AssertEquals("#M04(" + i + ")", c1[i], c2[i]);
+			Assert.AreEqual (c1[i], c2[i], "#M04(" + i + ")");
 		}
 
 		int[] c3 = { 1, 2, 3 };
@@ -1703,10 +1700,10 @@ public class ArrayTest : Assertion
 		try {
 			c3.CopyTo (c4, 0);
 		} catch (Exception e) {
-			Fail ("c3.CopyTo(): e=" + e);
+			Assert.Fail ("c3.CopyTo(): e=" + e);
 		}
 		for (int i = 0; i < c3.Length; i++)
-			Assert ("#M05(" + i + ")", c3[i] == c4[i]);
+			Assert.IsTrue (c3[i] == c4[i], "#M05(" + i + ")");
 
 		Object[] c5 = new Object [3];
 		long[] c6 = new long [3];
@@ -1714,16 +1711,16 @@ public class ArrayTest : Assertion
 		try {
 			c4.CopyTo (c5, 0);
 		} catch (Exception e) {
-			Fail ("c4.CopyTo(): e=" + e);
+			Assert.Fail ("c4.CopyTo(): e=" + e);
 		}
 
 		try {
 			c5.CopyTo (c6, 0);
 		} catch (Exception e) {
-			Fail ("c5.CopyTo(): e=" + e);
+			Assert.Fail ("c5.CopyTo(): e=" + e);
 		}
 		// for (int i = 0; i < c5.Length; i++)
-		// Assert ("#M06(" + i + ")", c5[i] == c6[i]);
+		// Assert.IsTrue (c5[i] == c6[i], "#M06(" + i + ")");
 	}
 
 	[Test]
@@ -1736,7 +1733,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#M21", errorThrown);
+			Assert.IsTrue (errorThrown, "#M21");
 		}
 		{
 			bool errorThrown = false;
@@ -1746,7 +1743,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M22", errorThrown);
+			Assert.IsTrue (errorThrown, "#M22");
 		}
 		{
 			bool errorThrown = false;
@@ -1756,7 +1753,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M23", errorThrown);
+			Assert.IsTrue (errorThrown, "#M23");
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1769,8 +1766,7 @@ public class ArrayTest : Assertion
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("#M24(" + i + "," + j + ")",
-					c1[i,j], c2[i, j]);
+				Assert.AreEqual (c1[i, j], c2[i, j], "#M24(" + i + "," + j + ")");
 			}
 		}
 	}
@@ -1785,7 +1781,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#M41", errorThrown);
+			Assert.IsTrue (errorThrown, "#M41");
 		}
 		{
 			bool errorThrown = false;
@@ -1795,7 +1791,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M42", errorThrown);
+			Assert.IsTrue (errorThrown, "#M42");
 		}
 		{
 			bool errorThrown = false;
@@ -1805,7 +1801,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M43", errorThrown);
+			Assert.IsTrue (errorThrown, "#M43");
 		}
 
 		char[,,] c1 = new Char[4,2,3];
@@ -1821,8 +1817,7 @@ public class ArrayTest : Assertion
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
 				for (int k = 0; k < c1.GetLength(2); k++) {
-					AssertEquals("#M44(" + i + "," + j + " )",
-						c1[i,j,k], c2[i,j,k]);
+					Assert.AreEqual (c1[i, j, k], c2[i, j, k], "#M44(" + i + "," + j + " )");
 				}
 			}
 		}
@@ -1850,7 +1845,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#M61a", errorThrown);
+			Assert.IsTrue (errorThrown, "#M61a");
 		}
 		{
 			bool errorThrown = false;
@@ -1861,7 +1856,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#M62", errorThrown);
+			Assert.IsTrue (errorThrown, "#M62");
 		}
 		{
 			bool errorThrown = false;
@@ -1872,7 +1867,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M63", errorThrown);
+			Assert.IsTrue (errorThrown, "#M63");
 		}
 		{
 			bool errorThrown = false;
@@ -1883,7 +1878,7 @@ public class ArrayTest : Assertion
 			} catch (IndexOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert("#M64", errorThrown);
+			Assert.IsTrue (errorThrown, "#M64");
 		}
 
 		char[,] c1 = new Char[4,6];
@@ -1897,8 +1892,7 @@ public class ArrayTest : Assertion
 		}
 		for (int i = 0; i < c1.GetLength(0); i++) {
 			for (int j = 0; j < c1.GetLength(1); j++) {
-				AssertEquals("#M65(" + i + "," + j + ")",
-					c1[i,j], c2[i,j]);
+				Assert.AreEqual (c1[i, j], c2[i, j], "#M65(" + i + "," + j + ")");
 			}
 		}
 	}
@@ -1913,8 +1907,8 @@ public class ArrayTest : Assertion
 				c2.SetValue (c1 [i], i);
 
 			for (int i = 0; i < c1.Length; i++) {
-				Assert ("#M81(" + i + ")", c1[i] == c2[i]);
-				AssertEquals ("#M82(" + i + ")", typeof (long), c2[i].GetType ());
+				Assert.IsTrue (c1[i] == c2[i], "#M81(" + i + ")");
+				Assert.AreEqual (typeof (long), c2[i].GetType (), "#M82(" + i + ")");
 			}
 		}
 		{
@@ -1926,7 +1920,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentException) {
 				errorThrown = true;
 			}
-			Assert("#M83", errorThrown);
+			Assert.IsTrue (errorThrown, "#M83");
 		}
 		{
 			int[] c1 = { 1, 2, 3 };
@@ -1936,7 +1930,7 @@ public class ArrayTest : Assertion
 				c2.SetValue (c1 [i], i);
 
 			for (int i = 0; i < c1.Length; i++)
-				AssertEquals ("#M84(" + i + ")", c1[i], Convert.ToInt32 (c2[i]));
+				Assert.AreEqual (c1[i], Convert.ToInt32 (c2[i]), "#M84(" + i + ")");
 		}
 		{
 			Object[] c1 = new Object [3];
@@ -1947,7 +1941,7 @@ public class ArrayTest : Assertion
 				c2.SetValue (c1 [i], i);
 
 			for (int i = 0; i < c1.Length; i++)
-				AssertEquals ("#M85(" + i + ")", c1[i], c2[i]);
+				Assert.AreEqual (c1[i], c2[i], "#M85(" + i + ")");
 		}
 		{
 			Object[] c1 = new Object [3];
@@ -1956,15 +1950,15 @@ public class ArrayTest : Assertion
 			c1[0] = test;
 
 			c2.SetValue (c1 [0], 0);
-			AssertEquals ("#M86", c1[0], c2[0]);
-			AssertEquals ("#M87", "hello", c2[0]);
+			Assert.AreEqual (c1[0], c2[0], "#M86");
+			Assert.AreEqual ("hello", c2[0], "#M87");
 		}
 		{
 			char[] c1 = { 'a', 'b', 'c' };
 			string[] c2 = new string [3];
 			try {
 				c2.SetValue (c1 [0], 0);
-				Fail ("#M88");
+				Assert.Fail ("#M88");
 			} catch (InvalidCastException) {}
 		}
 		{
@@ -1972,7 +1966,7 @@ public class ArrayTest : Assertion
 			long[] c2 = new long [3];
 			try {
 				c2.SetValue (c1 [0], 0);
-				Fail ("#M89");
+				Assert.Fail ("#M89");
 			} catch (ArgumentException) {}
 		}
 		{
@@ -2042,8 +2036,7 @@ public class ArrayTest : Assertion
 
 					int ex_index = (i * types.Length) + j;
 
-					AssertEquals ("#M90(" + types [i] + "," + types [j] + ")",
-						errorThrown, arg_ex [ex_index] == 1);
+					Assert.AreEqual (errorThrown, arg_ex [ex_index] == 1, "#M90(" + types [i] + "," + types [j] + ")");
 				}
 			}
 
@@ -2059,7 +2052,7 @@ public class ArrayTest : Assertion
 					errorThrown = true;
 				}
 
-				Assert ("#M91(" + types [i] + ")", errorThrown);
+				Assert.IsTrue (errorThrown, "#M91(" + types [i] + ")");
 			}
 
 			for (int i = 0; i < types.Length; i++) {
@@ -2074,7 +2067,7 @@ public class ArrayTest : Assertion
 					errorThrown = true;
 				}
 
-				Assert ("#M92(" + types [i] + ")", errorThrown);
+				Assert.IsTrue (errorThrown, "#M92(" + types [i] + ")");
 			}
 
 			for (int i = 0; i < types.Length; i++) {
@@ -2089,7 +2082,7 @@ public class ArrayTest : Assertion
 					errorThrown = true;
 				}
 
-				Assert ("#M93(" + types [i] + ")", !errorThrown);
+				Assert.IsTrue (!errorThrown, "#M93(" + types [i] + ")");
 			}
 
 			// Copy
@@ -2111,8 +2104,7 @@ public class ArrayTest : Assertion
 
 					int ex_index = (i * types.Length) + j;
 
-					AssertEquals ("#M94(" + types [i] + "," + types [j] + ")",
-						errorThrown, arg_ex [ex_index] == 1);
+					Assert.AreEqual (errorThrown, arg_ex [ex_index] == 1, "#M94(" + types [i] + "," + types [j] + ")");
 				}
 			}
 
@@ -2130,7 +2122,7 @@ public class ArrayTest : Assertion
 					errorThrown = true;
 				}
 
-				Assert ("#M95(" + types [i] + ")", errorThrown);
+				Assert.IsTrue (errorThrown, "#M95(" + types [i] + ")");
 			}
 
 			for (int i = 0; i < types.Length; i++) {
@@ -2147,7 +2139,7 @@ public class ArrayTest : Assertion
 					errorThrown = true;
 				}
 
-				Assert ("#M96(" + types [i] + ")", errorThrown);
+				Assert.IsTrue (errorThrown, "#M96(" + types [i] + ")");
 			}
 		}
 	}
@@ -2161,7 +2153,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#N01", errorThrown);
+			Assert.IsTrue (errorThrown, "#N01");
 		}
 		{
 			bool errorThrown = false;
@@ -2170,7 +2162,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#N02", errorThrown);
+			Assert.IsTrue (errorThrown, "#N02");
 		}
 		{
 			bool errorThrown = false;
@@ -2180,7 +2172,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#N03", errorThrown);
+			Assert.IsTrue (errorThrown, "#N03");
 		}
 		{
 			bool errorThrown = false;
@@ -2190,7 +2182,7 @@ public class ArrayTest : Assertion
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert("#N04", errorThrown);
+			Assert.IsTrue (errorThrown, "#N04");
 		}
 		{
 			int tc = 5;
@@ -2198,34 +2190,34 @@ public class ArrayTest : Assertion
 			
 			try {
 				Array.Sort (null, 0, 1);
-				Fail ("#N" + tc.ToString ());
+				Assert.Fail ("#N" + tc.ToString ());
 			}
 			catch (ArgumentException) {}
-			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			catch (Exception) { Assert.Fail ("#N" + tc.ToString ()); }
 			tc++;
 			
 			try {
 				Array.Sort (arr, -1, 3);
-				Fail ("#N" + tc.ToString ());
+				Assert.Fail ("#N" + tc.ToString ());
 			}
 			catch (ArgumentException) {}
-			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			catch (Exception) { Assert.Fail ("#N" + tc.ToString ()); }
 			tc++;
 			
 			try {
 				Array.Sort (arr, 1, -3);
-				Fail ("#N" + tc.ToString ());
+				Assert.Fail ("#N" + tc.ToString ());
 			}
 			catch (ArgumentException) {}
-			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			catch (Exception) { Assert.Fail ("#N" + tc.ToString ()); }
 			tc++;
 			
 			try {
 				Array.Sort (arr, arr.Length, arr.Length + 2);
-				Fail ("#N" + tc.ToString ());
+				Assert.Fail ("#N" + tc.ToString ());
 			}
 			catch (ArgumentException) {}
-			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			catch (Exception) { Assert.Fail ("#N" + tc.ToString ()); }
 		}
 		
 		// note: null second array => just sort first array
@@ -2234,56 +2226,56 @@ public class ArrayTest : Assertion
 		{
 			char[] c1 = (char[])starter.Clone();
 			Array.Sort(c1);
-			AssertEquals("#N21", 'a', c1[0]);
-			AssertEquals("#N22", 'b', c1[1]);
-			AssertEquals("#N23", 'c', c1[2]);
-			AssertEquals("#N24", 'd', c1[3]);
-			AssertEquals("#N25", 'e', c1[4]);
-			AssertEquals("#N26", 'f', c1[5]);
+			Assert.AreEqual ('a', c1[0], "#N21");
+			Assert.AreEqual ('b', c1[1], "#N22");
+			Assert.AreEqual ('c', c1[2], "#N23");
+			Assert.AreEqual ('d', c1[3], "#N24");
+			Assert.AreEqual ('e', c1[4], "#N25");
+			Assert.AreEqual ('f', c1[5], "#N26");
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			int[] i1 = (int[])starter1.Clone();
 			Array.Sort(c1, i1);
-			AssertEquals("#N41", 'a', c1[0]);
-			AssertEquals("#N42", 'b', c1[1]);
-			AssertEquals("#N43", 'c', c1[2]);
-			AssertEquals("#N44", 'd', c1[3]);
-			AssertEquals("#N45", 'e', c1[4]);
-			AssertEquals("#N46", 'f', c1[5]);
-			AssertEquals("#N47", 5, i1[0]);
-			AssertEquals("#N48", 2, i1[1]);
-			AssertEquals("#N49", 6, i1[2]);
-			AssertEquals("#N50", 1, i1[3]);
-			AssertEquals("#N51", 4, i1[4]);
-			AssertEquals("#N52", 3, i1[5]);
+			Assert.AreEqual ('a', c1[0], "#N41");
+			Assert.AreEqual ('b', c1[1], "#N42");
+			Assert.AreEqual ('c', c1[2], "#N43");
+			Assert.AreEqual ('d', c1[3], "#N44");
+			Assert.AreEqual ('e', c1[4], "#N45");
+			Assert.AreEqual ('f', c1[5], "#N46");
+			Assert.AreEqual (5, i1[0], "#N47");
+			Assert.AreEqual (2, i1[1], "#N48");
+			Assert.AreEqual (6, i1[2], "#N49");
+			Assert.AreEqual (1, i1[3], "#N50");
+			Assert.AreEqual (4, i1[4], "#N51");
+			Assert.AreEqual (3, i1[5], "#N52");
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			Array.Sort(c1, 1, 4);
-			AssertEquals("#N61", 'd', c1[0]);
-			AssertEquals("#N62", 'a', c1[1]);
-			AssertEquals("#N63", 'b', c1[2]);
-			AssertEquals("#N64", 'e', c1[3]);
-			AssertEquals("#N65", 'f', c1[4]);
-			AssertEquals("#N66", 'c', c1[5]);
+			Assert.AreEqual ('d', c1[0], "#N61");
+			Assert.AreEqual ('a', c1[1], "#N62");
+			Assert.AreEqual ('b', c1[2], "#N63");
+			Assert.AreEqual ('e', c1[3], "#N64");
+			Assert.AreEqual ('f', c1[4], "#N65");
+			Assert.AreEqual ('c', c1[5], "#N66");
 		}
 		{
 			char[] c1 = (char[])starter.Clone();
 			int[] i1 = (int[])starter1.Clone();
 			Array.Sort(c1, i1, 1, 4);
-			AssertEquals("#N81", 'd', c1[0]);
-			AssertEquals("#N82", 'a', c1[1]);
-			AssertEquals("#N83", 'b', c1[2]);
-			AssertEquals("#N84", 'e', c1[3]);
-			AssertEquals("#N85", 'f', c1[4]);
-			AssertEquals("#N86", 'c', c1[5]);
-			AssertEquals("#N87", 1, i1[0]);
-			AssertEquals("#N88", 5, i1[1]);
-			AssertEquals("#N89", 2, i1[2]);
-			AssertEquals("#N90", 4, i1[3]);
-			AssertEquals("#N91", 3, i1[4]);
-			AssertEquals("#N92", 6, i1[5]);
+			Assert.AreEqual ('d', c1[0], "#N81");
+			Assert.AreEqual ('a', c1[1], "#N82");
+			Assert.AreEqual ('b', c1[2], "#N83");
+			Assert.AreEqual ('e', c1[3], "#N84");
+			Assert.AreEqual ('f', c1[4], "#N85");
+			Assert.AreEqual ('c', c1[5], "#N86");
+			Assert.AreEqual (1, i1[0], "#N87");
+			Assert.AreEqual (5, i1[1], "#N88");
+			Assert.AreEqual (2, i1[2], "#N89");
+			Assert.AreEqual (4, i1[3], "#N90");
+			Assert.AreEqual (3, i1[4], "#N91");
+			Assert.AreEqual (6, i1[5], "#N92");
 		}
 	}
 
@@ -2300,7 +2292,7 @@ public class ArrayTest : Assertion
 		{
 			catched=true;
 		}
-		Assert("#TI01",!catched);
+		Assert.IsTrue (!catched, "#TI01");
 	}
 
 	[Test]
@@ -2311,7 +2303,7 @@ public class ArrayTest : Assertion
 		int[] b = {1,2,0};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI02 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI02 " + i);
 		}
 	}
 
@@ -2323,7 +2315,7 @@ public class ArrayTest : Assertion
 		double[] b = {1.0,2.0,0.0};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI03 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI03 " + i);
 		}
 	}
 
@@ -2335,7 +2327,7 @@ public class ArrayTest : Assertion
 		float[] b = {1.0F,2.0F,0.0F};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI04 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI04 " + i);
 		}
 	}
 
@@ -2347,7 +2339,7 @@ public class ArrayTest : Assertion
 		char[] b = {'1','.','0','F','2','.','0','F'};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI05 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI05 " + i);
 		}
 	}
 
@@ -2359,7 +2351,7 @@ public class ArrayTest : Assertion
 		string[] b = {"hola","adios","menos","mas"};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI06 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI06 " + i);
 		}
 	}
 
@@ -2371,7 +2363,7 @@ public class ArrayTest : Assertion
 		enua[] b = {enua.hola,enua.adios,enua.menos,enua.mas};
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI07 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI07 " + i);
 		}
 	}
 	
@@ -2382,7 +2374,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(int b in a)
 		{
-			AssertEquals("#TI08",b,0);
+			Assert.AreEqual (b, 0, "#TI08");
 		}
 	}
 	
@@ -2393,7 +2385,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(char b in a)
 		{
-			AssertEquals("#TI09",b,0);
+			Assert.AreEqual (b, 0, "#TI09");
 		}
 	}
 	
@@ -2404,7 +2396,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(double b in a)
 		{
-			AssertEquals("#TI09",b,0.0);
+			Assert.AreEqual (b, 0.0, "#TI09");
 		}
 	}
 	
@@ -2415,7 +2407,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(string b in a)
 		{
-			AssertEquals("#TI10",b,null);
+			Assert.AreEqual (b, null, "#TI10");
 		}
 	}
 	
@@ -2426,7 +2418,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(object b in a)
 		{
-			AssertEquals("#TI11",b,null);
+			Assert.AreEqual (b, null, "#TI11");
 		}
 	}
 
@@ -2437,7 +2429,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(AClass b in a)
 		{
-			AssertEquals("#TI12",b,null);
+			Assert.AreEqual (b, null, "#TI12");
 		}
 	}
 
@@ -2449,7 +2441,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(AStruct b in a)
 		{
-			AssertEquals("#TI14",b,new AStruct());
+			Assert.AreEqual (b, new AStruct(), "#TI14");
 		}
 	}
 
@@ -2465,7 +2457,7 @@ public class ArrayTest : Assertion
 		b[1].s = "HOLA";
 		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
 		{
-			AssertEquals("#TI15 " + i ,a[i],b[i]);
+			Assert.AreEqual (a[i], b[i], "#TI15 " + i);
 		}
 	}
 
@@ -2476,7 +2468,7 @@ public class ArrayTest : Assertion
 		a.Initialize();
 		foreach(DateTime b in a)
 		{
-			AssertEquals("#TI16",b,new DateTime());
+			Assert.AreEqual (b, new DateTime(), "#TI16");
 		}
 	}
 	
@@ -2556,10 +2548,10 @@ public class ArrayTest : Assertion
 		double [] a = new double [2] { 0.9, 0.3 };
 		uint [] b = new uint [2] { 4, 7 };
 		Array.Sort (a, b);
-		AssertEquals ("#1", 0.3, a [0]);
-		AssertEquals ("#2", 0.9, a [1]);
-		AssertEquals ("#3", 7, b [0]);
-		AssertEquals ("#4", 4, b [1]);
+		Assert.AreEqual (0.3, a [0], "#1");
+		Assert.AreEqual (0.9, a [1], "#2");
+		Assert.AreEqual (7, b [0], "#3");
+		Assert.AreEqual (4, b [1], "#4");
 	}
 
 	[Test]
@@ -2574,7 +2566,7 @@ public class ArrayTest : Assertion
 		}
 		Array.Clear (matrix, 0, 8);
 		for (int i=0; i < 8; i++) {
-			AssertNull (i.ToString (), matrix [i]);
+			Assert.IsNull (matrix [i], i.ToString ());
 		}
 	}
 
@@ -2583,10 +2575,10 @@ public class ArrayTest : Assertion
 	{
 		byte[,] matrix = new byte [2,2] { {1, 1}, {2, 2} };
 		Array.Clear (matrix, 0, 2);
-		AssertEquals ("0,0", 0, matrix [0,0]);
-		AssertEquals ("0,1", 0, matrix [0,1]);
-		AssertEquals ("1,0", 2, matrix [1,0]);
-		AssertEquals ("1,1", 2, matrix [1,1]);
+		Assert.AreEqual (0, matrix [0, 0], "0,0");
+		Assert.AreEqual (0, matrix [0, 1], "0,1");
+		Assert.AreEqual (2, matrix [1, 0], "1,0");
+		Assert.AreEqual (2, matrix [1, 1], "1,1");
 	}
 
 	[Test]
@@ -2679,7 +2671,7 @@ public class ArrayTest : Assertion
 		// that of the search object.
 		//
 		CharX [] x = { new CharX ('a'), new CharX ('b'), new CharX ('c') };
-		AssertEquals (1, Array.BinarySearch (x, 'b'));
+		Assert.AreEqual (1, Array.BinarySearch (x, 'b'));
 	}
 
 	class Comparer: IComparer {
@@ -2705,14 +2697,14 @@ public class ArrayTest : Assertion
 	public void BinarySearch1_EmptyList ()
 	{
 		int[] array = new int[0];
-		AssertEquals ("BinarySearch", - 1, Array.BinarySearch (array, 0));
+		Assert.AreEqual (- 1, Array.BinarySearch (array, 0), "BinarySearch");
 	}
 
 	[Test]
 	public void BinarySearch2_EmptyList ()
 	{
 		int[] array = new int[0];
-		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, 0, 0));
+		Assert.AreEqual (-1, Array.BinarySearch (array, 0, 0, 0), "BinarySearch");
 	}
 
 	[Test]
@@ -2720,9 +2712,9 @@ public class ArrayTest : Assertion
 	{
 		Comparer comparer = new Comparer ();
 		int[] array = new int[0];
-		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, comparer));
+		Assert.AreEqual (-1, Array.BinarySearch (array, 0, comparer), "BinarySearch");
 		// bug 77030 - the comparer isn't called for an empty array/list
-		Assert ("Called", !comparer.Called);
+		Assert.IsTrue (!comparer.Called, "Called");
 	}
 
 	[Test]
@@ -2730,9 +2722,9 @@ public class ArrayTest : Assertion
 	{
 		Comparer comparer = new Comparer ();
 		int[] array = new int[0];
-		AssertEquals ("BinarySearch", -1, Array.BinarySearch (array, 0, 0, comparer));
+		Assert.AreEqual (-1, Array.BinarySearch (array, 0, 0, comparer), "BinarySearch");
 		// bug 77030 - the comparer isn't called for an empty array/list
-		Assert ("Called", !comparer.Called);
+		Assert.IsTrue (!comparer.Called, "Called");
 	}
 
 #if NET_2_0
@@ -2746,7 +2738,7 @@ public class ArrayTest : Assertion
 	[Test]
 	public void ReadOnly_Count ()
 	{
-		AssertEquals (10, Array.AsReadOnly (new int [10]).Count);
+		Assert.AreEqual (10, Array.AsReadOnly (new int [10]).Count);
 	}
 
 	[Test]
@@ -2757,8 +2749,8 @@ public class ArrayTest : Assertion
 		arr [1] = 5;
 		IList<int> a = Array.AsReadOnly (arr);
 
-		Assert (a.Contains (3));
-		Assert (!a.Contains (6));
+		Assert.IsTrue (a.Contains (3));
+		Assert.IsTrue (!a.Contains (6));
 	}
 
 	[Test]
@@ -2769,9 +2761,9 @@ public class ArrayTest : Assertion
 		arr [1] = 5;
 		IList<int> a = Array.AsReadOnly (arr);
 
-		AssertEquals (0, a.IndexOf (3));
-		AssertEquals (1, a.IndexOf (5));
-		AssertEquals (-1, a.IndexOf (6));
+		Assert.AreEqual (0, a.IndexOf (3));
+		Assert.AreEqual (1, a.IndexOf (5));
+		Assert.AreEqual (-1, a.IndexOf (6));
 	}
 
 	[Test]
@@ -2782,12 +2774,12 @@ public class ArrayTest : Assertion
 		arr [1] = 5;
 		IList<int> a = Array.AsReadOnly (arr);
 
-		AssertEquals (3, a [0]);
-		AssertEquals (5, a [1]);
+		Assert.AreEqual (3, a [0]);
+		Assert.AreEqual (5, a [1]);
 
 		/* Check that modifications to the original array are visible */
 		arr [0] = 6;
-		AssertEquals (6, a [0]);
+		Assert.AreEqual (6, a [0]);
 	}
 
 	[Test]
@@ -2802,7 +2794,7 @@ public class ArrayTest : Assertion
 		foreach (int i in Array.AsReadOnly (arr))
 			sum += i;
 
-		AssertEquals (45, sum);
+		Assert.AreEqual (45, sum);
 	}
 
 	[Test]
@@ -2810,22 +2802,22 @@ public class ArrayTest : Assertion
 	{
 		int [] arr = new int [] { 1, 3, 5 };
 		Array.Resize <int> (ref arr, 3);
-		AssertEquals ("#A1", 3, arr.Length);
-		AssertEquals ("#A2", 1, arr [0]);
-		AssertEquals ("#A3", 3, arr [1]);
-		AssertEquals ("#A4", 5, arr [2]);
+		Assert.AreEqual (3, arr.Length, "#A1");
+		Assert.AreEqual (1, arr [0], "#A2");
+		Assert.AreEqual (3, arr [1], "#A3");
+		Assert.AreEqual (5, arr [2], "#A4");
 
 		Array.Resize <int> (ref arr, 2);
-		AssertEquals ("#B1", 2, arr.Length);
-		AssertEquals ("#B2", 1, arr [0]);
-		AssertEquals ("#B3", 3, arr [1]);
+		Assert.AreEqual (2, arr.Length, "#B1");
+		Assert.AreEqual (1, arr [0], "#B2");
+		Assert.AreEqual (3, arr [1], "#B3");
 
 		Array.Resize <int> (ref arr, 4);
-		AssertEquals ("#C1", 4, arr.Length);
-		AssertEquals ("#C2", 1, arr [0]);
-		AssertEquals ("#C3", 3, arr [1]);
-		AssertEquals ("#C4", 0, arr [2]);
-		AssertEquals ("#C5", 0, arr [3]);
+		Assert.AreEqual (4, arr.Length, "#C1");
+		Assert.AreEqual (1, arr [0], "#C2");
+		Assert.AreEqual (3, arr [1], "#C3");
+		Assert.AreEqual (0, arr [2], "#C4");
+		Assert.AreEqual (0, arr [3], "#C5");
 	}
 
 	[Test]
@@ -2833,7 +2825,7 @@ public class ArrayTest : Assertion
 	{
 		int [] arr = null;
 		Array.Resize (ref arr, 10);
-		AssertEquals (arr.Length, 10);
+		Assert.AreEqual (arr.Length, 10);
 	}
 
 	[Test]
@@ -2841,10 +2833,10 @@ public class ArrayTest : Assertion
 	{
 		EquatableClass[] list = new EquatableClass[] {new EquatableClass (0), new EquatableClass (1), new EquatableClass (0)};
 
-		AssertEquals ("#0", 0, Array.IndexOf<EquatableClass> (list, list[0]));
-		AssertEquals ("#1", 0, Array.IndexOf<EquatableClass> (list, new EquatableClass (0)));
-		AssertEquals ("#2", 2, Array.LastIndexOf<EquatableClass> (list, list[0]));
-		AssertEquals ("#3", 2, Array.LastIndexOf<EquatableClass> (list, new EquatableClass (0)));
+		Assert.AreEqual (0, Array.IndexOf<EquatableClass> (list, list[0]), "#0");
+		Assert.AreEqual (0, Array.IndexOf<EquatableClass> (list, new EquatableClass (0)), "#1");
+		Assert.AreEqual (2, Array.LastIndexOf<EquatableClass> (list, list[0]), "#2");
+		Assert.AreEqual (2, Array.LastIndexOf<EquatableClass> (list, new EquatableClass (0)), "#3");
 	}
 
 	public class EquatableClass : IEquatable<EquatableClass>
@@ -2866,7 +2858,7 @@ public class ArrayTest : Assertion
 	{
 		IList<int> arr = new int [10];
 		arr [0] = 5;
-		AssertEquals (5, arr [0]);
+		Assert.AreEqual (5, arr [0]);
 
 		IList<FooStruct> arr2 = new FooStruct [10];
 		FooStruct s = new FooStruct ();
@@ -2874,12 +2866,12 @@ public class ArrayTest : Assertion
 		s.j = 22;
 		arr2 [5] = s;
 		s = arr2 [5];
-		AssertEquals (11, s.i);
-		AssertEquals (22, s.j);
+		Assert.AreEqual (11, s.i);
+		Assert.AreEqual (22, s.j);
 
 		IList<string> arr3 = new string [10];
 		arr3 [5] = "ABC";
-		AssertEquals ("ABC", arr3 [5]);
+		Assert.AreEqual ("ABC", arr3 [5]);
 	}
 
 	struct FooStruct {
@@ -2894,22 +2886,22 @@ public class ArrayTest : Assertion
 		ICollection<object> test;
 		
 		test = new List<object>();
-		AssertEquals ("list<o>", test.Contains (null), false);
+		Assert.AreEqual (test.Contains (null), false, "list<o>");
 
 		test = new object[] {};
-		AssertEquals ("empty array", test.Contains (null), false);
+		Assert.AreEqual (test.Contains (null), false, "empty array");
 
 		test = new object[] {null};
-		AssertEquals ("array with null", test.Contains (null), true);
+		Assert.AreEqual (test.Contains (null), true, "array with null");
 
 		test = new List<object>(test);
-		AssertEquals ("List<object> with test", test.Contains (null), true);
+		Assert.AreEqual (test.Contains (null), true, "List<object> with test");
 		
 		test = new object[] {new object()};
-		AssertEquals ("array with object", test.Contains (null), false);
+		Assert.AreEqual (test.Contains (null), false, "array with object");
 
 		test = new List<object>(test);
-		AssertEquals ("array with test", test.Contains (null), false);
+		Assert.AreEqual (test.Contains (null), false, "array with test");
 	}
 #endif // TARGET_JVM
 #endif
@@ -2960,15 +2952,15 @@ public class ArrayTest : Assertion
 	{
 		int[] array = new int[] { 1, 2, 3};
 		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
-		Assert ("#A1", e.MoveNext ());
-		AssertEquals ("#A2", 1, e.Current);
-		Assert ("#A3", e.MoveNext ());
-		AssertEquals ("#A4", 2, e.Current);
+		Assert.IsTrue (e.MoveNext (), "#A1");
+		Assert.AreEqual (1, e.Current, "#A2");
+		Assert.IsTrue (e.MoveNext (), "#A3");
+		Assert.AreEqual (2, e.Current, "#A4");
 
 		e.Reset ();
 
-		Assert ("#C1", e.MoveNext ());
-		AssertEquals ("#C2", 1, e.Current);
+		Assert.IsTrue (e.MoveNext (), "#C1");
+		Assert.AreEqual (1, e.Current, "#C2");
 	}
 
 	[Test]
@@ -2976,21 +2968,21 @@ public class ArrayTest : Assertion
 	{
 		int[] array = new int[] { 1, 2, 3 };
 		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
-		Assert ("#A1", e.MoveNext ());
-		AssertEquals ("#A2", 1, e.Current);
-		Assert ("#A3", e.MoveNext ());
-		AssertEquals ("#A4", 2, e.Current);
-		Assert ("#A5", e.MoveNext ());
-		AssertEquals ("#A6", 3, e.Current);
-		Assert ("#A6", !e.MoveNext ());
+		Assert.IsTrue (e.MoveNext (), "#A1");
+		Assert.AreEqual (1, e.Current, "#A2");
+		Assert.IsTrue (e.MoveNext (), "#A3");
+		Assert.AreEqual (2, e.Current, "#A4");
+		Assert.IsTrue (e.MoveNext (), "#A5");
+		Assert.AreEqual (3, e.Current, "#A6");
+		Assert.IsTrue (!e.MoveNext (), "#A6");
 
 		try {
-			Fail ("#B1:" + e.Current);
+			Assert.Fail ("#B1:" + e.Current);
 		} catch (InvalidOperationException ex) {
 			// Enumeration already finished
-			AssertEquals ("#B2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#B3", ex.InnerException);
-			AssertNotNull ("#B4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
@@ -3001,12 +2993,12 @@ public class ArrayTest : Assertion
 		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
 
 		try {
-			Fail ("#A1:" + e.Current);
+			Assert.Fail ("#A1:" + e.Current);
 		} catch (InvalidOperationException ex) {
 			// Enumeration has not started. Call MoveNext
-			AssertEquals ("#A2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#A3", ex.InnerException);
-			AssertNotNull ("#A4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
 		}
 	}
 
@@ -3019,19 +3011,19 @@ public class ArrayTest : Assertion
 		e.Reset ();
 
 		try {
-			Fail ("#B1:" + e.Current);
+			Assert.Fail ("#B1:" + e.Current);
 		} catch (InvalidOperationException ex) {
 			// Enumeration has not started. Call MoveNext
-			AssertEquals ("#B2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#B3", ex.InnerException);
-			AssertNotNull ("#B4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
 	public void ICollection_IsReadOnly() {
 		ICollection<string> arr = new string [10];
 
-		Assert (arr.IsReadOnly);
+		Assert.IsTrue (arr.IsReadOnly);
 	}
 #endif
 }

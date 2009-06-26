@@ -16,7 +16,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class TimeSpanTest : Assertion {
+public class TimeSpanTest {
 
 	private void Debug (TimeSpan ts) 
 	{
@@ -32,17 +32,17 @@ public class TimeSpanTest : Assertion {
 	{
 		TimeSpan t1 = new TimeSpan (1234567890);
 
-		AssertEquals ("A1", "00:02:03.4567890", t1.ToString ());
+		Assert.AreEqual ("00:02:03.4567890", t1.ToString (), "A1");
 		t1 = new TimeSpan (1,2,3);
-		AssertEquals ("A2", "01:02:03", t1.ToString ());
+		Assert.AreEqual ("01:02:03", t1.ToString (), "A2");
 		t1 = new TimeSpan (1,2,3,4);
-		AssertEquals ("A3", "1.02:03:04", t1.ToString ());
+		Assert.AreEqual ("1.02:03:04", t1.ToString (), "A3");
 		t1 = new TimeSpan (1,2,3,4,5);
-		AssertEquals ("A4", "1.02:03:04.0050000", t1.ToString ());
+		Assert.AreEqual ("1.02:03:04.0050000", t1.ToString (), "A4");
 		t1 = new TimeSpan (-1,2,-3,4,-5);
-		AssertEquals ("A5", "-22:02:56.0050000", t1.ToString ());
+		Assert.AreEqual ("-22:02:56.0050000", t1.ToString (), "A5");
 		t1 = new TimeSpan (0,25,0,0,0);
-		AssertEquals ("A6", "1.01:00:00", t1.ToString ());
+		Assert.AreEqual ("1.01:00:00", t1.ToString (), "A6");
         }
 
 	[Test]
@@ -64,12 +64,12 @@ public class TimeSpanTest : Assertion {
 		// but the negative hours, minutes, seconds & ms correct this
 		int days = (int) (Int64.MaxValue / TimeSpan.TicksPerDay) + 1;
 		TimeSpan ts = new TimeSpan (days, Int32.MinValue, Int32.MinValue, Int32.MinValue, Int32.MinValue);
-		AssertEquals ("Days", 10650320, ts.Days);
-		AssertEquals ("Hours", 0, ts.Hours);
-		AssertEquals ("Minutes", 14, ts.Minutes);
-		AssertEquals ("Seconds", 28, ts.Seconds);
-		AssertEquals ("Milliseconds", 352, ts.Milliseconds);
-		AssertEquals ("Ticks", 9201876488683520000, ts.Ticks);
+		Assert.AreEqual (10650320, ts.Days, "Days");
+		Assert.AreEqual (0, ts.Hours, "Hours");
+		Assert.AreEqual (14, ts.Minutes, "Minutes");
+		Assert.AreEqual (28, ts.Seconds, "Seconds");
+		Assert.AreEqual (352, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (9201876488683520000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -80,12 +80,12 @@ public class TimeSpanTest : Assertion {
 	public void NoOverflowInHoursMinsSecondsMS () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
-		AssertEquals ("Days", 24879, ts.Days);
-		AssertEquals ("Hours", 22, ts.Hours);
-		AssertEquals ("Minutes", 44, ts.Minutes);
-		AssertEquals ("Seconds", 30, ts.Seconds);
-		AssertEquals ("Milliseconds", 647, ts.Milliseconds);
-		AssertEquals ("Ticks", 21496274706470000, ts.Ticks);
+		Assert.AreEqual (24879, ts.Days, "Days");
+		Assert.AreEqual (22, ts.Hours, "Hours");
+		Assert.AreEqual (44, ts.Minutes, "Minutes");
+		Assert.AreEqual (30, ts.Seconds, "Seconds");
+		Assert.AreEqual (647, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21496274706470000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -111,12 +111,12 @@ public class TimeSpanTest : Assertion {
 			TimeSpan ts = new TimeSpan (0, Int32.MaxValue - i, 0, 0, 0);
 			int h = i + 1;
 			string prefix = i.ToString () + '-';
-			AssertEquals (prefix + "Days", -(h / 24), ts.Days);
-			AssertEquals (prefix + "Hours", -(h % 24), ts.Hours);
-			AssertEquals (prefix + "Minutes", 0, ts.Minutes);
-			AssertEquals (prefix + "Seconds", 0, ts.Seconds);
-			AssertEquals (prefix + "Milliseconds", 0, ts.Milliseconds);
-			AssertEquals (prefix + "Ticks", -36000000000 * h, ts.Ticks);
+			Assert.AreEqual (-(h / 24), ts.Days, prefix + "Days");
+			Assert.AreEqual (-(h % 24), ts.Hours, prefix + "Hours");
+			Assert.AreEqual (0, ts.Minutes, prefix + "Minutes");
+			Assert.AreEqual (0, ts.Seconds, prefix + "Seconds");
+			Assert.AreEqual (0, ts.Milliseconds, prefix + "Milliseconds");
+			Assert.AreEqual (-36000000000 * h, ts.Ticks, prefix + "Ticks");
 		}
 	}
 
@@ -129,20 +129,20 @@ public class TimeSpanTest : Assertion {
 	{
 		// LAMESPEC: the highest hours are "special"
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue, 0, 0, 0);
-		AssertEquals ("Max-Days", 0, ts.Days);
-		AssertEquals ("Max-Hours", -1, ts.Hours);
-		AssertEquals ("Max-Minutes", 0, ts.Minutes);
-		AssertEquals ("Max-Seconds", 0, ts.Seconds);
-		AssertEquals ("Max-Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Max-Ticks", -36000000000, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Max-Days");
+		Assert.AreEqual (-1, ts.Hours, "Max-Hours");
+		Assert.AreEqual (0, ts.Minutes, "Max-Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Max-Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Max-Milliseconds");
+		Assert.AreEqual (-36000000000, ts.Ticks, "Max-Ticks");
 
 		ts = new TimeSpan (0, Int32.MaxValue - 596522, 0, 0, 0);
-		AssertEquals ("Days", -24855, ts.Days);
-		AssertEquals ("Hours", -3, ts.Hours);
-		AssertEquals ("Minutes", 0, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474828000000000, ts.Ticks);
+		Assert.AreEqual (-24855, ts.Days, "Days");
+		Assert.AreEqual (-3, ts.Hours, "Hours");
+		Assert.AreEqual (0, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474828000000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -153,12 +153,12 @@ public class TimeSpanTest : Assertion {
 	public void MaxHours_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue - 596523, 0, 0, 0);
-		AssertEquals ("Days", 24855, ts.Days);
-		AssertEquals ("Hours", 2, ts.Hours);
-		AssertEquals ("Minutes", 28, ts.Minutes);
-		AssertEquals ("Seconds", 16, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", 21474808960000000, ts.Ticks);
+		Assert.AreEqual (24855, ts.Days, "Days");
+		Assert.AreEqual (2, ts.Hours, "Hours");
+		Assert.AreEqual (28, ts.Minutes, "Minutes");
+		Assert.AreEqual (16, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21474808960000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -170,12 +170,12 @@ public class TimeSpanTest : Assertion {
 			TimeSpan ts = new TimeSpan (0, i, 0, 0, 0);
 			int h = i + Int32.MaxValue + 1;
 			string prefix = i.ToString () + '-';
-			AssertEquals (prefix + "Days", (h / 24), ts.Days);
-			AssertEquals (prefix + "Hours", (h % 24), ts.Hours);
-			AssertEquals (prefix + "Minutes", 0, ts.Minutes);
-			AssertEquals (prefix + "Seconds", 0, ts.Seconds);
-			AssertEquals (prefix + "Milliseconds", 0, ts.Milliseconds);
-			AssertEquals (prefix + "Ticks", 36000000000 * h, ts.Ticks);
+			Assert.AreEqual ((h / 24), ts.Days, prefix + "Days");
+			Assert.AreEqual ((h % 24), ts.Hours, prefix + "Hours");
+			Assert.AreEqual (0, ts.Minutes, prefix + "Minutes");
+			Assert.AreEqual (0, ts.Seconds, prefix + "Seconds");
+			Assert.AreEqual (0, ts.Milliseconds, prefix + "Milliseconds");
+			Assert.AreEqual (36000000000 * h, ts.Ticks, prefix + "Ticks");
 		}
 	}
 
@@ -187,29 +187,29 @@ public class TimeSpanTest : Assertion {
 	{
 #if NET_2_0
 		TimeSpan ts = new TimeSpan (0, -256204778, 0, 0, 0);
-		AssertEquals ("Days", -10675199, ts.Days);
-		AssertEquals ("Hours", -2, ts.Hours);
-		AssertEquals ("Minutes", 0, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -9223372008000000000, ts.Ticks);
+		Assert.AreEqual (-10675199, ts.Days, "Days");
+		Assert.AreEqual (-2, ts.Hours, "Hours");
+		Assert.AreEqual (0, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-9223372008000000000, ts.Ticks, "Ticks");
 #else
 		// LAMESPEC: the lowest hours are "special"
 		TimeSpan ts = new TimeSpan (0, Int32.MinValue, 0, 0, 0);
-		AssertEquals ("Min-Days", 0, ts.Days);
-		AssertEquals ("Min-Hours", 0, ts.Hours);
-		AssertEquals ("Min-Minutes", 0, ts.Minutes);
-		AssertEquals ("Min-Seconds", 0, ts.Seconds);
-		AssertEquals ("Min-Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Min-Ticks", 0, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Min-Days");
+		Assert.AreEqual (0, ts.Hours, "Min-Hours");
+		Assert.AreEqual (0, ts.Minutes, "Min-Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Min-Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Min-Milliseconds");
+		Assert.AreEqual (0, ts.Ticks, "Min-Ticks");
 
 		ts = new TimeSpan (0, -2146887125, 0, 0, 0);
-		AssertEquals ("Days", 24855, ts.Days);
-		AssertEquals ("Hours", 3, ts.Hours);
-		AssertEquals ("Minutes", 0, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", 21474828000000000, ts.Ticks);
+		Assert.AreEqual (24855, ts.Days, "Days");
+		Assert.AreEqual (3, ts.Hours, "Hours");
+		Assert.AreEqual (0, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21474828000000000, ts.Ticks, "Ticks");
 #endif
 	}
 
@@ -221,12 +221,12 @@ public class TimeSpanTest : Assertion {
 	public void MinHours_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, -2146887124, 0, 0, 0);
-		AssertEquals ("Days", -24855, ts.Days);
-		AssertEquals ("Hours", -2, ts.Hours);
-		AssertEquals ("Minutes", -28, ts.Minutes);
-		AssertEquals ("Seconds", -16, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474808960000000, ts.Ticks);
+		Assert.AreEqual (-24855, ts.Days, "Days");
+		Assert.AreEqual (-2, ts.Hours, "Hours");
+		Assert.AreEqual (-28, ts.Minutes, "Minutes");
+		Assert.AreEqual (-16, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474808960000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -238,12 +238,12 @@ public class TimeSpanTest : Assertion {
 			TimeSpan ts = new TimeSpan (0, 0, Int32.MaxValue - i, 0, 0);
 			long h = -(i + 1);
 			string prefix = i.ToString () + '-';
-			AssertEquals (prefix + "Days", (h / 1440), ts.Days);
-			AssertEquals (prefix + "Hours", ((h / 60) % 24), ts.Hours);
-			AssertEquals (prefix + "Minutes", (h % 60), ts.Minutes);
-			AssertEquals (prefix + "Seconds", 0, ts.Seconds);
-			AssertEquals (prefix + "Milliseconds", 0, ts.Milliseconds);
-			AssertEquals (prefix + "Ticks", (600000000L * h), ts.Ticks);
+			Assert.AreEqual ((h / 1440), ts.Days, prefix + "Days");
+			Assert.AreEqual (((h / 60) % 24), ts.Hours, prefix + "Hours");
+			Assert.AreEqual ((h % 60), ts.Minutes, prefix + "Minutes");
+			Assert.AreEqual (0, ts.Seconds, prefix + "Seconds");
+			Assert.AreEqual (0, ts.Milliseconds, prefix + "Milliseconds");
+			Assert.AreEqual ((600000000L * h), ts.Ticks, prefix + "Ticks");
 		}
 	}
 
@@ -256,29 +256,29 @@ public class TimeSpanTest : Assertion {
 		TimeSpan ts;
 #if NET_2_0
 		ts = new TimeSpan (0, 0, 256204778, 0, 0);
-		AssertEquals ("Max-Days", 177919, ts.Days);
-		AssertEquals ("Max-Hours", 23, ts.Hours);
-		AssertEquals ("Max-Minutes", 38, ts.Minutes);
-		AssertEquals ("Max-Seconds", 0, ts.Seconds);
-		AssertEquals ("Max-Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Max-Ticks", 153722866800000000, ts.Ticks);
+		Assert.AreEqual (177919, ts.Days, "Max-Days");
+		Assert.AreEqual (23, ts.Hours, "Max-Hours");
+		Assert.AreEqual (38, ts.Minutes, "Max-Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Max-Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Max-Milliseconds");
+		Assert.AreEqual (153722866800000000, ts.Ticks, "Max-Ticks");
 #else
 		// LAMESPEC: the highest minutes are "special"
 		ts = new TimeSpan (0, 0, Int32.MaxValue, 0, 0);
-		AssertEquals ("Max-Days", 0, ts.Days);
-		AssertEquals ("Max-Hours", 0, ts.Hours);
-		AssertEquals ("Max-Minutes", -1, ts.Minutes);
-		AssertEquals ("Max-Seconds", 0, ts.Seconds);
-		AssertEquals ("Max-Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Max-Ticks", -600000000, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Max-Days");
+		Assert.AreEqual (0, ts.Hours, "Max-Hours");
+		Assert.AreEqual (-1, ts.Minutes, "Max-Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Max-Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Max-Milliseconds");
+		Assert.AreEqual (-600000000, ts.Ticks, "Max-Ticks");
 
 		ts = new TimeSpan (0, 0, Int32.MaxValue - 35791393, 0, 0);
-		AssertEquals ("Days", -24855, ts.Days);
-		AssertEquals ("Hours", -3, ts.Hours);
-		AssertEquals ("Minutes", -14, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474836400000000, ts.Ticks);
+		Assert.AreEqual (-24855, ts.Days, "Days");
+		Assert.AreEqual (-3, ts.Hours, "Hours");
+		Assert.AreEqual (-14, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474836400000000, ts.Ticks, "Ticks");
 #endif
 	}
 
@@ -290,12 +290,12 @@ public class TimeSpanTest : Assertion {
 	public void MaxMinutes_BreakPoint () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue - 35791394, 0, 0, 0);
-		AssertEquals ("Days", 0, ts.Days);
-		AssertEquals ("Hours", 0, ts.Hours);
-		AssertEquals ("Minutes", -52, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -31200000000, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Days");
+		Assert.AreEqual (0, ts.Hours, "Hours");
+		Assert.AreEqual (-52, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-31200000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
@@ -307,12 +307,12 @@ public class TimeSpanTest : Assertion {
 			TimeSpan ts = new TimeSpan (0, 0, i, 0, 0);
 			long h = i + Int32.MaxValue + 1;
 			string prefix = i.ToString () + '-';
-			AssertEquals (prefix + "Days", (h / 1440), ts.Days);
-			AssertEquals (prefix + "Hours", ((h / 60) % 24), ts.Hours);
-			AssertEquals (prefix + "Minutes", (h % 60), ts.Minutes);
-			AssertEquals (prefix + "Seconds", 0, ts.Seconds);
-			AssertEquals (prefix + "Milliseconds", 0, ts.Milliseconds);
-			AssertEquals (prefix + "Ticks", (600000000L * h), ts.Ticks);
+			Assert.AreEqual ((h / 1440), ts.Days, prefix + "Days");
+			Assert.AreEqual (((h / 60) % 24), ts.Hours, prefix + "Hours");
+			Assert.AreEqual ((h % 60), ts.Minutes, prefix + "Minutes");
+			Assert.AreEqual (0, ts.Seconds, prefix + "Seconds");
+			Assert.AreEqual (0, ts.Milliseconds, prefix + "Milliseconds");
+			Assert.AreEqual ((600000000L * h), ts.Ticks, prefix + "Ticks");
 		}
 	}
 
@@ -325,29 +325,29 @@ public class TimeSpanTest : Assertion {
 		TimeSpan ts;
 #if NET_2_0
 		ts = new TimeSpan (0, 0, Int32.MinValue, 0, 0);
-		AssertEquals ("Days", -1491308, ts.Days);
-		AssertEquals ("Hours", -2, ts.Hours);
-		AssertEquals ("Minutes", -8, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -1288490188800000000, ts.Ticks);
+		Assert.AreEqual (-1491308, ts.Days, "Days");
+		Assert.AreEqual (-2, ts.Hours, "Hours");
+		Assert.AreEqual (-8, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-1288490188800000000, ts.Ticks, "Ticks");
 #else
 		// LAMESPEC: the highest minutes are "special"
 		ts = new TimeSpan (0, 0, Int32.MinValue, 0, 0);
-		AssertEquals ("Min-Days", 0, ts.Days);
-		AssertEquals ("Min-Hours", 0, ts.Hours);
-		AssertEquals ("Min-Minutes", 0, ts.Minutes);
-		AssertEquals ("Min-Seconds", 0, ts.Seconds);
-		AssertEquals ("Min-Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Min-Ticks", 0, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Min-Days");
+		Assert.AreEqual (0, ts.Hours, "Min-Hours");
+		Assert.AreEqual (0, ts.Minutes, "Min-Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Min-Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Min-Milliseconds");
+		Assert.AreEqual (0, ts.Ticks, "Min-Ticks");
 
 		ts = new TimeSpan (0, 0, -2111692254, 0, 0);
-		AssertEquals ("Days", 24855, ts.Days);
-		AssertEquals ("Hours", 3, ts.Hours);
-		AssertEquals ("Minutes", 14, ts.Minutes);
-		AssertEquals ("Seconds", 0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", 21474836400000000, ts.Ticks);
+		Assert.AreEqual (24855, ts.Days, "Days");
+		Assert.AreEqual (3, ts.Hours, "Hours");
+		Assert.AreEqual (14, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21474836400000000, ts.Ticks, "Ticks");
 #endif
 	}
 
@@ -359,20 +359,20 @@ public class TimeSpanTest : Assertion {
 	{
 #if NET_2_0
 		TimeSpan ts = new TimeSpan (0, 0, -2111692253, 0, 0);
-		AssertEquals ("Days", -1466452, ts.Days);
-		AssertEquals ("Hours", -22, ts.Hours);
-		AssertEquals ("Minutes", -53, ts.Minutes);
-		AssertEquals ("Seconds", -0, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -1267015351800000000, ts.Ticks);
+		Assert.AreEqual (-1466452, ts.Days, "Days");
+		Assert.AreEqual (-22, ts.Hours, "Hours");
+		Assert.AreEqual (-53, ts.Minutes, "Minutes");
+		Assert.AreEqual (-0, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-1267015351800000000, ts.Ticks, "Ticks");
 #else
 		TimeSpan ts = new TimeSpan (0, 0, -2111692253, 0, 0);
-		AssertEquals ("Days", -24855, ts.Days);
-		AssertEquals ("Hours", -3, ts.Hours);
-		AssertEquals ("Minutes", -13, ts.Minutes);
-		AssertEquals ("Seconds", -16, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474835960000000, ts.Ticks);
+		Assert.AreEqual (-24855, ts.Days, "Days");
+		Assert.AreEqual (-3, ts.Hours, "Hours");
+		Assert.AreEqual (-13, ts.Minutes, "Minutes");
+		Assert.AreEqual (-16, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474835960000000, ts.Ticks, "Ticks");
 #endif
 	}
 
@@ -380,60 +380,60 @@ public class TimeSpanTest : Assertion {
 	public void MaxSeconds () 
 	{
 		TimeSpan ts = new TimeSpan (0, 0, 0, Int32.MaxValue, 0);
-		AssertEquals ("Days", 24855, ts.Days);
-		AssertEquals ("Hours", 3, ts.Hours);
-		AssertEquals ("Minutes", 14, ts.Minutes);
-		AssertEquals ("Seconds", 7, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", 21474836470000000, ts.Ticks);
+		Assert.AreEqual (24855, ts.Days, "Days");
+		Assert.AreEqual (3, ts.Hours, "Hours");
+		Assert.AreEqual (14, ts.Minutes, "Minutes");
+		Assert.AreEqual (7, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21474836470000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
 	public void MinSeconds () 
 	{
 		TimeSpan ts = new TimeSpan (0, 0, 0, Int32.MinValue, 0);
-		AssertEquals ("Days", -24855, ts.Days);
-		AssertEquals ("Hours", -3, ts.Hours);
-		AssertEquals ("Minutes", -14, ts.Minutes);
-		AssertEquals ("Seconds", -8, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474836480000000, ts.Ticks);
+		Assert.AreEqual (-24855, ts.Days, "Days");
+		Assert.AreEqual (-3, ts.Hours, "Hours");
+		Assert.AreEqual (-14, ts.Minutes, "Minutes");
+		Assert.AreEqual (-8, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474836480000000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
 	public void MaxMilliseconds () 
 	{
 		TimeSpan ts = new TimeSpan (0, 0, 0, 0, Int32.MaxValue);
-		AssertEquals ("Days", 24, ts.Days);
-		AssertEquals ("Hours", 20, ts.Hours);
-		AssertEquals ("Minutes", 31, ts.Minutes);
-		AssertEquals ("Seconds", 23, ts.Seconds);
-		AssertEquals ("Milliseconds", 647, ts.Milliseconds);
-		AssertEquals ("Ticks", 21474836470000, ts.Ticks);
+		Assert.AreEqual (24, ts.Days, "Days");
+		Assert.AreEqual (20, ts.Hours, "Hours");
+		Assert.AreEqual (31, ts.Minutes, "Minutes");
+		Assert.AreEqual (23, ts.Seconds, "Seconds");
+		Assert.AreEqual (647, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (21474836470000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
 	public void MinMilliseconds () 
 	{
 		TimeSpan ts = new TimeSpan (0, 0, 0, 0, Int32.MinValue);
-		AssertEquals ("Days", -24, ts.Days);
-		AssertEquals ("Hours", -20, ts.Hours);
-		AssertEquals ("Minutes", -31, ts.Minutes);
-		AssertEquals ("Seconds", -23, ts.Seconds);
-		AssertEquals ("Milliseconds", -648, ts.Milliseconds);
-		AssertEquals ("Ticks", -21474836480000, ts.Ticks);
+		Assert.AreEqual (-24, ts.Days, "Days");
+		Assert.AreEqual (-20, ts.Hours, "Hours");
+		Assert.AreEqual (-31, ts.Minutes, "Minutes");
+		Assert.AreEqual (-23, ts.Seconds, "Seconds");
+		Assert.AreEqual (-648, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-21474836480000, ts.Ticks, "Ticks");
 	}
 
 	[Test]
 	public void NegativeTimeSpan () 
 	{
 		TimeSpan ts = new TimeSpan (-23, -59, -59);
-		AssertEquals ("Days", 0, ts.Days);
-		AssertEquals ("Hours", -23, ts.Hours);
-		AssertEquals ("Minutes", -59, ts.Minutes);
-		AssertEquals ("Seconds", -59, ts.Seconds);
-		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
-		AssertEquals ("Ticks", -863990000000, ts.Ticks);
+		Assert.AreEqual (0, ts.Days, "Days");
+		Assert.AreEqual (-23, ts.Hours, "Hours");
+		Assert.AreEqual (-59, ts.Minutes, "Minutes");
+		Assert.AreEqual (-59, ts.Seconds, "Seconds");
+		Assert.AreEqual (0, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (-863990000000, ts.Ticks, "Ticks");
 	}
 
 	public void TestProperties ()
@@ -441,16 +441,16 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t1 = new TimeSpan (1,2,3,4,5);
 		TimeSpan t2 = -t1;
 
-		AssertEquals ("A1", 1, t1.Days);
-		AssertEquals ("A2", 2, t1.Hours);
-		AssertEquals ("A3", 3, t1.Minutes);
-		AssertEquals ("A4", 4, t1.Seconds);
-		AssertEquals ("A5", 5, t1.Milliseconds);
-		AssertEquals ("A6", -1, t2.Days);
-		AssertEquals ("A7", -2, t2.Hours);
-		AssertEquals ("A8", -3, t2.Minutes);
-		AssertEquals ("A9", -4, t2.Seconds);
-		AssertEquals ("A10", -5, t2.Milliseconds);
+		Assert.AreEqual (1, t1.Days, "A1");
+		Assert.AreEqual (2, t1.Hours, "A2");
+		Assert.AreEqual (3, t1.Minutes, "A3");
+		Assert.AreEqual (4, t1.Seconds, "A4");
+		Assert.AreEqual (5, t1.Milliseconds, "A5");
+		Assert.AreEqual (-1, t2.Days, "A6");
+		Assert.AreEqual (-2, t2.Hours, "A7");
+		Assert.AreEqual (-3, t2.Minutes, "A8");
+		Assert.AreEqual (-4, t2.Seconds, "A9");
+		Assert.AreEqual (-5, t2.Milliseconds, "A10");
 	}
 
 	public void TestAdd ()
@@ -462,12 +462,12 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t5;
 		bool exception;
 
-		AssertEquals ("A1", 3, t3.Days);
-		AssertEquals ("A2", 5, t3.Hours);
-		AssertEquals ("A3", 7, t3.Minutes);
-		AssertEquals ("A4", 9, t3.Seconds);
-		AssertEquals ("A5", 11, t3.Milliseconds);
-		AssertEquals ("A6", "3.05:07:09.0110000", t4.ToString ());
+		Assert.AreEqual (3, t3.Days, "A1");
+		Assert.AreEqual (5, t3.Hours, "A2");
+		Assert.AreEqual (7, t3.Minutes, "A3");
+		Assert.AreEqual (9, t3.Seconds, "A4");
+		Assert.AreEqual (11, t3.Milliseconds, "A5");
+		Assert.AreEqual ("3.05:07:09.0110000", t4.ToString (), "A6");
 		try
 		{
 			t5 = TimeSpan.MaxValue + new TimeSpan (1);			
@@ -477,7 +477,7 @@ public class TimeSpanTest : Assertion {
 		{
 			exception = true;
 		}
-		Assert ("A7", exception);
+		Assert.IsTrue (exception, "A7");
 	}
 
 	public void TestCompare ()
@@ -487,16 +487,16 @@ public class TimeSpanTest : Assertion {
 		int res;
 		bool exception;
 
-		AssertEquals ("A1", -1, TimeSpan.Compare (t1, t2));
-		AssertEquals ("A2", 1, TimeSpan.Compare (t2, t1));
-		AssertEquals ("A3", 0, TimeSpan.Compare (t2, t2));
-		AssertEquals ("A4", -1, TimeSpan.Compare (TimeSpan.MinValue, TimeSpan.MaxValue));
-		AssertEquals ("A5", -1, t1.CompareTo (t2));
-		AssertEquals ("A6", 1, t2.CompareTo (t1));
-		AssertEquals ("A7", 0, t2.CompareTo (t2));
-		AssertEquals ("A8", -1, TimeSpan.Compare (TimeSpan.MinValue, TimeSpan.MaxValue));
+		Assert.AreEqual (-1, TimeSpan.Compare (t1, t2), "A1");
+		Assert.AreEqual (1, TimeSpan.Compare (t2, t1), "A2");
+		Assert.AreEqual (0, TimeSpan.Compare (t2, t2), "A3");
+		Assert.AreEqual (-1, TimeSpan.Compare (TimeSpan.MinValue, TimeSpan.MaxValue), "A4");
+		Assert.AreEqual (-1, t1.CompareTo (t2), "A5");
+		Assert.AreEqual (1, t2.CompareTo (t1), "A6");
+		Assert.AreEqual (0, t2.CompareTo (t2), "A7");
+		Assert.AreEqual (-1, TimeSpan.Compare (TimeSpan.MinValue, TimeSpan.MaxValue), "A8");
 
-		AssertEquals ("A9", 1, TimeSpan.Zero.CompareTo (null));
+		Assert.AreEqual (1, TimeSpan.Zero.CompareTo (null), "A9");
 		
 		try
 		{
@@ -507,14 +507,14 @@ public class TimeSpanTest : Assertion {
 		{
 			exception = true;
 		}
-		Assert ("A10", exception);
+		Assert.IsTrue (exception, "A10");
 
-		AssertEquals ("A11", false, t1 == t2);
-		AssertEquals ("A12", false, t1 > t2);
-		AssertEquals ("A13", false, t1 >= t2);
-		AssertEquals ("A14", true, t1 != t2);
-		AssertEquals ("A15", true, t1 < t2);
-		AssertEquals ("A16", true, t1 <= t2);
+		Assert.AreEqual (false, t1 == t2, "A11");
+		Assert.AreEqual (false, t1 > t2, "A12");
+		Assert.AreEqual (false, t1 >= t2, "A13");
+		Assert.AreEqual (true, t1 != t2, "A14");
+		Assert.AreEqual (true, t1 < t2, "A15");
+		Assert.AreEqual (true, t1 <= t2, "A16");
 	}
 
 	[Test]
@@ -528,8 +528,8 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t1;
 		bool exception;
 
-		AssertEquals ("A1", "-00:00:00.0012345", new TimeSpan (12345).Negate ().ToString ());
-		AssertEquals ("A2", "00:00:00.0012345", new TimeSpan (-12345).Duration ().ToString ());
+		Assert.AreEqual ("-00:00:00.0012345", new TimeSpan (12345).Negate ().ToString (), "A1");
+		Assert.AreEqual ("00:00:00.0012345", new TimeSpan (-12345).Duration ().ToString (), "A2");
 			
 		try
 		{
@@ -539,10 +539,10 @@ public class TimeSpanTest : Assertion {
 		catch (OverflowException) {
 			exception = true;
 		}
-		Assert ("A4", exception);
+		Assert.IsTrue (exception, "A4");
 
-		AssertEquals ("A5", "-00:00:00.0000077", (-(new TimeSpan (77))).ToString ());
-		AssertEquals("A6", "00:00:00.0000077", (+(new TimeSpan(77))).ToString());
+		Assert.AreEqual ("-00:00:00.0000077", (-(new TimeSpan (77))).ToString (), "A5");
+		Assert.AreEqual ("00:00:00.0000077", (+(new TimeSpan(77))).ToString(), "A6");
 	}
 
 	public void TestEquals ()
@@ -551,26 +551,26 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t2 = new TimeSpan (2);
 		string s = "justastring";
 
-		AssertEquals ("A1", true, t1.Equals (t1));
-		AssertEquals ("A2", false, t1.Equals (t2));
-		AssertEquals ("A3", false, t1.Equals (s));
-		AssertEquals ("A4", false, t1.Equals (null));
-		AssertEquals ("A5", true, TimeSpan.Equals (t1, t1));
-		AssertEquals ("A6", false, TimeSpan.Equals (t1, t2));
-		AssertEquals ("A7", false, TimeSpan.Equals (t1, null));
-		AssertEquals ("A8", false, TimeSpan.Equals (t1, s));
-		AssertEquals ("A9", false, TimeSpan.Equals (s, t2));
-		AssertEquals ("A10", true, TimeSpan.Equals (null,null));
+		Assert.AreEqual (true, t1.Equals (t1), "A1");
+		Assert.AreEqual (false, t1.Equals (t2), "A2");
+		Assert.AreEqual (false, t1.Equals (s), "A3");
+		Assert.AreEqual (false, t1.Equals (null), "A4");
+		Assert.AreEqual (true, TimeSpan.Equals (t1, t1), "A5");
+		Assert.AreEqual (false, TimeSpan.Equals (t1, t2), "A6");
+		Assert.AreEqual (false, TimeSpan.Equals (t1, null), "A7");
+		Assert.AreEqual (false, TimeSpan.Equals (t1, s), "A8");
+		Assert.AreEqual (false, TimeSpan.Equals (s, t2), "A9");
+		Assert.AreEqual (true, TimeSpan.Equals (null, null), "A10");
 	}
 
 	public void TestFromXXXX ()
 	{
-		AssertEquals ("A1", "12.08:16:48", TimeSpan.FromDays (12.345).ToString ());
-		AssertEquals ("A2", "12:20:42", TimeSpan.FromHours (12.345).ToString ());
-		AssertEquals ("A3", "00:12:20.7000000", TimeSpan.FromMinutes (12.345).ToString ());
-		AssertEquals ("A4", "00:00:12.3450000", TimeSpan.FromSeconds (12.345).ToString ());
-		AssertEquals ("A5", "00:00:00.0120000", TimeSpan.FromMilliseconds (12.345).ToString ());
-		AssertEquals ("A6", "00:00:00.0012345", TimeSpan.FromTicks (12345).ToString ());
+		Assert.AreEqual ("12.08:16:48", TimeSpan.FromDays (12.345).ToString (), "A1");
+		Assert.AreEqual ("12:20:42", TimeSpan.FromHours (12.345).ToString (), "A2");
+		Assert.AreEqual ("00:12:20.7000000", TimeSpan.FromMinutes (12.345).ToString (), "A3");
+		Assert.AreEqual ("00:00:12.3450000", TimeSpan.FromSeconds (12.345).ToString (), "A4");
+		Assert.AreEqual ("00:00:00.0120000", TimeSpan.FromMilliseconds (12.345).ToString (), "A5");
+		Assert.AreEqual ("00:00:00.0012345", TimeSpan.FromTicks (12345).ToString (), "A6");
 	}
 
 	[Test]
@@ -599,7 +599,7 @@ public class TimeSpanTest : Assertion {
 	public void FromDays_PositiveInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MaxValue
-		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromDays (Double.PositiveInfinity));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.FromDays (Double.PositiveInfinity));
 	}
 
 	[Test]
@@ -607,7 +607,7 @@ public class TimeSpanTest : Assertion {
 	public void FromDays_NegativeInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MinValue
-		AssertEquals (TimeSpan.MinValue, TimeSpan.FromDays (Double.NegativeInfinity));
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.FromDays (Double.NegativeInfinity));
 	}
 
 	[Test]
@@ -636,7 +636,7 @@ public class TimeSpanTest : Assertion {
 	public void FromHours_PositiveInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MaxValue
-		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromHours (Double.PositiveInfinity));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.FromHours (Double.PositiveInfinity));
 	}
 
 	[Test]
@@ -644,7 +644,7 @@ public class TimeSpanTest : Assertion {
 	public void FromHours_NegativeInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MinValue
-		AssertEquals (TimeSpan.MinValue, TimeSpan.FromHours (Double.NegativeInfinity));
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.FromHours (Double.NegativeInfinity));
 	}
 
 	[Test]
@@ -673,7 +673,7 @@ public class TimeSpanTest : Assertion {
 	public void FromMilliseconds_PositiveInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MaxValue
-		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromMilliseconds (Double.PositiveInfinity));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.FromMilliseconds (Double.PositiveInfinity));
 	}
 
 	[Test]
@@ -681,7 +681,7 @@ public class TimeSpanTest : Assertion {
 	public void FromMilliseconds_NegativeInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MinValue
-		AssertEquals (TimeSpan.MinValue, TimeSpan.FromMilliseconds (Double.NegativeInfinity));
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.FromMilliseconds (Double.NegativeInfinity));
 	}
 
 	[Test]
@@ -710,7 +710,7 @@ public class TimeSpanTest : Assertion {
 	public void FromMinutes_PositiveInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MaxValue
-		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromMinutes (Double.PositiveInfinity));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.FromMinutes (Double.PositiveInfinity));
 	}
 
 	[Test]
@@ -718,7 +718,7 @@ public class TimeSpanTest : Assertion {
 	public void FromMinutes_NegativeInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MinValue
-		AssertEquals (TimeSpan.MinValue, TimeSpan.FromMinutes (Double.NegativeInfinity));
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.FromMinutes (Double.NegativeInfinity));
 	}
 
 	[Test]
@@ -747,7 +747,7 @@ public class TimeSpanTest : Assertion {
 	public void FromSeconds_PositiveInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MaxValue
-		AssertEquals (TimeSpan.MaxValue, TimeSpan.FromSeconds (Double.PositiveInfinity));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.FromSeconds (Double.PositiveInfinity));
 	}
 
 	[Test]
@@ -755,12 +755,12 @@ public class TimeSpanTest : Assertion {
 	public void FromSeconds_NegativeInfinity ()
 	{
 		// LAMESPEC: Document to return TimeSpan.MinValue
-		AssertEquals (TimeSpan.MinValue, TimeSpan.FromSeconds (Double.NegativeInfinity));
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.FromSeconds (Double.NegativeInfinity));
 	}
 
 	public void TestGetHashCode ()
 	{
-		AssertEquals ("A1", 77, new TimeSpan (77).GetHashCode ());
+		Assert.AreEqual (77, new TimeSpan (77).GetHashCode (), "A1");
 	}
 
 	private void ParseHelper (string s, bool expectFormat, bool expectOverflow, string expect)
@@ -778,11 +778,11 @@ public class TimeSpanTest : Assertion {
 		catch (FormatException) {
 			formatException = true;
 		}
-		AssertEquals ("A1", expectFormat, formatException);
-		AssertEquals ("A2", expectOverflow, overflowException);
+		Assert.AreEqual (expectFormat, formatException, "A1");
+		Assert.AreEqual (expectOverflow, overflowException, "A2");
 
 		if (!expectOverflow && !expectFormat) {
-			AssertEquals ("A3", expect, result);
+			Assert.AreEqual (expect, result, "A3");
 		}
 	}
 
@@ -808,7 +808,7 @@ public class TimeSpanTest : Assertion {
 	public void Parse_Days_WithoutColon () 
 	{
 		TimeSpan ts = TimeSpan.Parse ("1");
-		AssertEquals ("Days", 1, ts.Days);
+		Assert.AreEqual (1, ts.Days, "Days");
 	}
 
 	public void TestSubstract ()
@@ -820,8 +820,8 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t5;
 		bool exception;
 
-		AssertEquals ("A1", "1.01:01:01.0010000", t3.ToString ());
-		AssertEquals ("A2", "1.01:01:01.0010000", t4.ToString ());
+		Assert.AreEqual ("1.01:01:01.0010000", t3.ToString (), "A1");
+		Assert.AreEqual ("1.01:01:01.0010000", t4.ToString (), "A2");
 		try {
 			t5 = TimeSpan.MinValue - new TimeSpan (1);
 			exception = false;
@@ -829,7 +829,7 @@ public class TimeSpanTest : Assertion {
 		catch (OverflowException) {
 			exception = true;
 		}
-		Assert ("A3", exception);
+		Assert.IsTrue (exception, "A3");
 	}
 
 	public void TestToString () 
@@ -837,18 +837,18 @@ public class TimeSpanTest : Assertion {
 		TimeSpan t1 = new TimeSpan (1,2,3,4,5);
 		TimeSpan t2 = -t1;
 		
-		AssertEquals ("A1", "1.02:03:04.0050000", t1.ToString ());
-		AssertEquals ("A2", "-1.02:03:04.0050000", t2.ToString ());
-		AssertEquals ("A3", "10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString ());
-		AssertEquals ("A4", "-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString ());
+		Assert.AreEqual ("1.02:03:04.0050000", t1.ToString (), "A1");
+		Assert.AreEqual ("-1.02:03:04.0050000", t2.ToString (), "A2");
+		Assert.AreEqual ("10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString (), "A3");
+		Assert.AreEqual ("-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString (), "A4");
 	}
 
 	[Test]
 	public void ToString_Constants () 
 	{
-		AssertEquals ("Zero", "00:00:00", TimeSpan.Zero.ToString ());
-		AssertEquals ("MaxValue", "10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString ());
-		AssertEquals ("MinValue", "-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString ());
+		Assert.AreEqual ("00:00:00", TimeSpan.Zero.ToString (), "Zero");
+		Assert.AreEqual ("10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString (), "MaxValue");
+		Assert.AreEqual ("-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString (), "MinValue");
 	}
 
 	[Test]
@@ -862,8 +862,8 @@ public class TimeSpanTest : Assertion {
 	[Test]
 	public void Parse_MinMaxValues () 
 	{
-		AssertEquals ("MaxValue", TimeSpan.MaxValue, TimeSpan.Parse ("10675199.02:48:05.4775807"));
-		AssertEquals ("MinValue", TimeSpan.MinValue, TimeSpan.Parse ("-10675199.02:48:05.4775808"));
+		Assert.AreEqual (TimeSpan.MaxValue, TimeSpan.Parse ("10675199.02:48:05.4775807"), "MaxValue");
+		Assert.AreEqual (TimeSpan.MinValue, TimeSpan.Parse ("-10675199.02:48:05.4775808"), "MinValue");
 	}
 
 	[Test]
