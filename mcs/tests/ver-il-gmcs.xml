@@ -19104,6 +19104,33 @@
       </method>
     </type>
   </test>
+  <test name="gtest-named-01.cs">
+    <type name="C">
+      <method name="Int32 Test(Int32, Int32, System.String)">
+        <size>6</size>
+      </method>
+      <method name="T Foo[T](T, Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void Lambda(System.Func`2[System.Int32,System.Int32])">
+        <size>9</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>173</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -41757,6 +41784,105 @@
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
         <size>26</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-01.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>12</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="XAttribute">
+      <method name="Void .ctor(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>48</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-02.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)">
+        <size>29</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>28</size>
+      </method>
+    </type>
+    <type name="MyPoint">
+      <method name="Void .ctor(Int32, Int32)">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Decimal Foo(Decimal, Decimal)">
+        <size>2</size>
+      </method>
+      <method name="System.String Bar(Int32, System.String, Char)">
+        <size>20</size>
+      </method>
+      <method name="Int32 Test(Int32, Int32)">
+        <size>30</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>279</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-03.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 TestInt(Int32)">
+        <size>3</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="C+IntDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
       </method>
     </type>
   </test>
