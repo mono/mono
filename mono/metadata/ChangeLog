@@ -1,5 +1,15 @@
 2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (mono_type_create_from_typespec): Call into the verifier to check
+	the signature.
+
+	* metadata-verify.c: Add mono_verifier_verify_typespec_signature.
+
+	* verify-internals.h: Export mono_verifier_verify_typespec_signature as
+	part of the internal API.
+
+2009-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (mono_metadata_parse_mh_full): Call into the verifier to check
 	the signature.
 
