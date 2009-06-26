@@ -28,8 +28,8 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertNull (sdc["hello"]);
-			Assertion.AssertEquals (0, sdc.Count);
+			Assert.IsNull (sdc["hello"]);
+			Assert.AreEqual (0, sdc.Count);
 		}
 		
 		[Test]
@@ -40,8 +40,8 @@ namespace MonoTests.System.Web.Services.Description
 			ServiceDescription sd = new ServiceDescription ();	
 			sdc.Add (sd);
 
-			Assertion.AssertEquals (1, sdc.Count);
-			Assertion.AssertNull (sdc[serviceDescriptionNamespace]);
+			Assert.AreEqual (1, sdc.Count);
+			Assert.IsNull (sdc[serviceDescriptionNamespace]);
 		}
 
 		[Test]
@@ -54,8 +54,8 @@ namespace MonoTests.System.Web.Services.Description
 			
 			sdc.Add (sd);
 
-			Assertion.AssertEquals (1, sdc.Count);
-			Assertion.AssertEquals (sd, sdc[serviceDescriptionNamespace]);
+			Assert.AreEqual (1, sdc.Count);
+			Assert.AreEqual (sd, sdc[serviceDescriptionNamespace]);
 		}
 	}
 }

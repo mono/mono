@@ -31,10 +31,10 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertEquals(OperationFlow.None, operations.Flow);
-			Assertion.AssertNull(operations.Input);
-			Assertion.AssertNull(operations.Output);
-			Assertion.AssertEquals(0, operations.Count);
+			Assert.AreEqual (OperationFlow.None, operations.Flow);
+			Assert.IsNull (operations.Input);
+			Assert.IsNull (operations.Output);
+			Assert.AreEqual (0, operations.Count);
 		}
 
 		[Test]
@@ -42,10 +42,10 @@ namespace MonoTests.System.Web.Services.Description
 		{
 			operations.Add(new OperationInput());
 			
-			Assertion.AssertEquals(OperationFlow.OneWay, operations.Flow);
-			Assertion.AssertNotNull(operations.Input);
-			Assertion.AssertNull(operations.Output);
-			Assertion.AssertEquals(1, operations.Count);
+			Assert.AreEqual (OperationFlow.OneWay, operations.Flow);
+			Assert.IsNotNull (operations.Input);
+			Assert.IsNull (operations.Output);
+			Assert.AreEqual (1, operations.Count);
 		}
 		
 		[Test]
@@ -53,10 +53,10 @@ namespace MonoTests.System.Web.Services.Description
 		{
 			operations.Add(new OperationOutput());
 			
-			Assertion.AssertEquals(OperationFlow.Notification, operations.Flow);
-			Assertion.AssertNull(operations.Input);
-			Assertion.AssertNotNull(operations.Output);
-			Assertion.AssertEquals(1, operations.Count);
+			Assert.AreEqual (OperationFlow.Notification, operations.Flow);
+			Assert.IsNull (operations.Input);
+			Assert.IsNotNull (operations.Output);
+			Assert.AreEqual (1, operations.Count);
 		}
 
 		[Test]
@@ -65,10 +65,10 @@ namespace MonoTests.System.Web.Services.Description
 			operations.Add(new OperationInput());
 			operations.Add(new OperationOutput());
 			
-			Assertion.AssertEquals(OperationFlow.RequestResponse, operations.Flow);
-			Assertion.AssertNotNull(operations.Input);
-			Assertion.AssertNotNull(operations.Output);
-			Assertion.AssertEquals(2, operations.Count);
+			Assert.AreEqual (OperationFlow.RequestResponse, operations.Flow);
+			Assert.IsNotNull (operations.Input);
+			Assert.IsNotNull (operations.Output);
+			Assert.AreEqual (2, operations.Count);
 		}
 
 		[Test]
@@ -77,10 +77,10 @@ namespace MonoTests.System.Web.Services.Description
 			operations.Add(new OperationOutput());
 			operations.Add(new OperationInput());
 			
-			Assertion.AssertEquals(OperationFlow.SolicitResponse, operations.Flow);
-			Assertion.AssertNotNull(operations.Input);
-			Assertion.AssertNotNull(operations.Output);
-			Assertion.AssertEquals(2, operations.Count);
+			Assert.AreEqual (OperationFlow.SolicitResponse, operations.Flow);
+			Assert.IsNotNull (operations.Input);
+			Assert.IsNotNull (operations.Output);
+			Assert.AreEqual (2, operations.Count);
 		}
 
 		[Test]

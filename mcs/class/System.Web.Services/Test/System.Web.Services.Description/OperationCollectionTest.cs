@@ -30,7 +30,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertEquals(0, operations.Count);
+			Assert.AreEqual (0, operations.Count);
 		}
 
 		[Test]
@@ -44,7 +44,7 @@ namespace MonoTests.System.Web.Services.Description
 		public void TestAddValidOperation()
 		{
 			operations.Add(new Operation());	
-			Assertion.AssertEquals(1, operations.Count);
+			Assert.AreEqual (1, operations.Count);
 		}
 	}
 }

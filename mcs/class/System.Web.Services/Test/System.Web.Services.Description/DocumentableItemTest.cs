@@ -29,14 +29,14 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertEquals(String.Empty, item.Documentation);
+			Assert.AreEqual (String.Empty, item.Documentation);
 		}
 		
 		[Test]
 		public void TestNullDocumentationString()
 		{
 			item.Documentation = null;
-			Assertion.AssertEquals(String.Empty, item.Documentation);
+			Assert.AreEqual (String.Empty, item.Documentation);
 		}
 	}
 }

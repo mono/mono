@@ -30,10 +30,10 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertEquals(String.Empty, operation.Documentation);
-			Assertion.AssertNull(operation.Name);
-			Assertion.AssertEquals(XmlQualifiedName.Empty, operation.Message);
-			Assertion.AssertNull(operation.Operation);
+			Assert.AreEqual (String.Empty, operation.Documentation);
+			Assert.IsNull (operation.Name);
+			Assert.AreEqual (XmlQualifiedName.Empty, operation.Message);
+			Assert.IsNull (operation.Operation);
 		}
 	}
 }

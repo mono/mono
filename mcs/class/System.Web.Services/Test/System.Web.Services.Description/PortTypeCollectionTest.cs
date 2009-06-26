@@ -30,8 +30,8 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertNull (ptc["hello"]);
-			Assertion.AssertEquals (0, ptc.Count);
+			Assert.IsNull (ptc["hello"]);
+			Assert.AreEqual (0, ptc.Count);
 		}
 		
 		[Test]
@@ -44,8 +44,8 @@ namespace MonoTests.System.Web.Services.Description
 			
 			ptc.Add (p);
 
-			Assertion.AssertEquals (1, ptc.Count);
-			Assertion.AssertEquals (p, ptc[portTypeName]);
+			Assert.AreEqual (1, ptc.Count);
+			Assert.AreEqual (p, ptc[portTypeName]);
 		}
 	}
 }

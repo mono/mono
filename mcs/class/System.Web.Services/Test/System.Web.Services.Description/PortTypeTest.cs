@@ -28,17 +28,17 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void TestDefaultProperties()
 		{
-			Assertion.AssertNull(portType.Name);
-			Assertion.AssertNotNull(portType.Operations);
-			Assertion.AssertEquals(0, portType.Operations.Count);
-			Assertion.AssertNull(portType.ServiceDescription);
+			Assert.IsNull (portType.Name);
+			Assert.IsNotNull (portType.Operations);
+			Assert.AreEqual (0, portType.Operations.Count);
+			Assert.IsNull (portType.ServiceDescription);
 		}
 		
 		[Test]
 		public void TestEmptyName()
 		{
 			portType.Name = String.Empty;
-			Assertion.AssertEquals(String.Empty, portType.Name);
+			Assert.AreEqual (String.Empty, portType.Name);
 		}
 
 		[Test]
@@ -46,7 +46,7 @@ namespace MonoTests.System.Web.Services.Description
 		{
 			const string LongName = "abcdefghijklmnopqrstuvwxyz";
 			portType.Name = LongName;
-			Assertion.AssertEquals(LongName, portType.Name);
+			Assert.AreEqual (LongName, portType.Name);
 		}
 	}
 }
