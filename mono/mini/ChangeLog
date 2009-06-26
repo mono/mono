@@ -1,3 +1,7 @@
+2009-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* CMakeLists.txt: Add minimal support for installation.
+
 2009-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_and_reloc_code): Factor out the code to
