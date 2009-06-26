@@ -1,3 +1,8 @@
+2009-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* NumberFormatterTest.cs: Convert all tests to new-style nunit 
+	classes/methods.
+
 2009-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringTest.cs : Fix the previous test. It was expecting wrong
