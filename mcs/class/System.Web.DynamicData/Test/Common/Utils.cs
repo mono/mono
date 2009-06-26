@@ -70,11 +70,21 @@ namespace MonoTests.Common
 			RegisterContext (model, null);
 		}
 
+		public static void RegisterContext (Type contextType)
+		{
+			RegisterContext (contextType, null);
+		}
+
 		public static void RegisterContext (DataModelProvider model, ContextConfiguration config)
 		{
 			RegisterContext (model, config, true);
 		}
 
+		public static void RegisterContext (Type contextType, ContextConfiguration config)
+		{
+			RegisterContext (contextType, config, true);
+		}
+		
 		public static void RegisterContext (DataModelProvider model, ContextConfiguration config, bool defaultModel)
 		{
 			// Just in case no model has been created yet
@@ -95,6 +105,40 @@ namespace MonoTests.Common
 			try {
 				if (registered == null)
 					m.RegisterContext (model, config);
+			} catch (InvalidOperationException ex) {
+				exception = ex;
+			}
+
+			if (exception != null) {
+				Console.WriteLine ("RegisterContext exception:");
+				Console.WriteLine (exception);
+			}
+		}
+
+		public static void RegisterContext (Type contextType, ContextConfiguration config, bool defaultModel)
+		{
+			// Just in case no model has been created yet
+			MetaModel m = new MetaModel ();
+
+			if (defaultModel)
+				m = MetaModel.Default;
+
+			Exception exception = null;
+			MetaModel registered = null;
+
+			try {
+				registered = MetaModel.GetModel (contextType);
+			} catch (Exception) {
+				// ignore
+			}
+
+			try {
+				if (registered == null) {
+					if (config != null)
+						m.RegisterContext (contextType, config);
+					else
+						m.RegisterContext (contextType);
+				}
 			} catch (InvalidOperationException ex) {
 				exception = ex;
 			}

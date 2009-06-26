@@ -1,3 +1,23 @@
+2009-06-27  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaModelTest.cs: added test for DynamicDataFolderVirtualPath
+
+	* DynamicDataRouteHandlerTest.cs: implemented tests for
+	CreateHandler (one of them isn't working atm),
+	GetCustomVirtualPagePath, GetScaffoldVirtualPagePath,
+	GetRequestMetaTable, SetRequestMetaTable
+
+2009-06-26  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicDataRouteTest.cs: MyDataContext3 is safely registered in
+	the fixture setup method.
+	Enabled the GetTableFromRouteData3 and GetRouteData tests - the
+	work fine now.
+	Added test for the RouteHandler property.
+
+	* DynamicDataRouteHandlerTest.cs: added tests for the constructor
+	and the Model property.
+
 2009-06-25  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTableTest.cs: new GetVirtualPath tests.

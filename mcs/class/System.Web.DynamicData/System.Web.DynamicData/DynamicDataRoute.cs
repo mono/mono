@@ -59,7 +59,7 @@ namespace System.Web.DynamicData
 		public MetaModel Model { get; set; }
 
 		public DynamicDataRouteHandler RouteHandler { 
-			get { return (DynamicDataRouteHandler) base.RouteHandler; }
+			get { return base.RouteHandler as DynamicDataRouteHandler; }
 			set { base.RouteHandler = value; }
 		}
 
@@ -79,6 +79,10 @@ namespace System.Web.DynamicData
 					return;
 				
 				initDone = true;
+
+				DynamicDataRouteHandler rh = RouteHandler;
+				if (rh != null)
+					rh.Model = Model;
 				
 				string action = Action, table = Table;
 				if (action == null && table == null)
@@ -119,7 +123,17 @@ namespace System.Web.DynamicData
 		public override RouteData GetRouteData (HttpContextBase httpContext)
 		{
 			EnsureInitialized ();
-			return base.GetRouteData (httpContext);
+			RouteData rd = base.GetRouteData (httpContext);
+
+			if (rd == null)
+				return null;
+
+			MetaModel model = Model ?? MetaModel.Default;
+			MetaTable table;
+			if (model == null || !model.TryGetTable (rd.GetRequiredString ("Table"), out table))
+				return null;
+			
+			return rd;
 		}
 
 		public MetaTable GetTableFromRouteData (RouteData routeData)

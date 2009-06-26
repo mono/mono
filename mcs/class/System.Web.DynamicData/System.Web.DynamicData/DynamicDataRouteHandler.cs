@@ -39,6 +39,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Web.Caching;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Routing;
 using System.Web.UI;
 
@@ -62,41 +63,40 @@ namespace System.Web.DynamicData
 			}
 		}
 
-		public static RequestContext GetRequestContext (HttpContext httpContext)
+		static RouteContext GetOrCreateRouteContext (HttpContext httpContext)
 		{
-			if (httpContext == null)
-				throw new ArgumentNullException ("httpContext");
-			
-			RouteContext rc;
+			RouteContext rc = null;
 			bool locked = false;
 			try {
 				contextsLock.EnterReadLock ();
 				locked = true;
 				if (contexts.TryGetValue (httpContext, out rc) && rc != null)
-					return rc.Context;
+					return rc;
 			} finally {
 				if (locked)
 					contextsLock.ExitReadLock ();
 			}
 
-			var ctxWrapper = new HttpContextWrapper (httpContext);
-			RouteData rd = RouteTable.Routes.GetRouteData (ctxWrapper);
-			if (rd == null)
-				rd = new RouteData ();
-			
-			var ret = new RequestContext (ctxWrapper, rd);
-
 			locked = false;
 			try {
 				contextsLock.EnterWriteLock ();
 				locked = true;
-				contexts.Add (httpContext, MakeRouteContext (ret, null, null, null));
+				rc = MakeRouteContext (new RequestContext (new HttpContextWrapper (httpContext), new RouteData ()), null, null, null);
+				contexts.Add (httpContext, rc);
 			} finally {
 				if (locked)
 					contextsLock.ExitWriteLock ();
 			}
 
-			return ret;
+			return rc;
+		}
+		
+		public static RequestContext GetRequestContext (HttpContext httpContext)
+		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+			
+			return GetOrCreateRouteContext (httpContext).Context;
 		}
 
 		public static MetaTable GetRequestMetaTable (HttpContext httpContext)
@@ -119,10 +119,13 @@ namespace System.Web.DynamicData
 			return null;
 		}
 
-		[MonoTODO]
 		public static void SetRequestMetaTable (HttpContext httpContext, MetaTable table)
 		{
-			throw new NotImplementedException ();
+			// And tradiationally... some .NET emulation code
+			if (httpContext == null)
+				throw new NullReferenceException ();
+
+			GetOrCreateRouteContext (httpContext).Table = table;
 		}
 
 		public DynamicDataRouteHandler ()
@@ -131,23 +134,60 @@ namespace System.Web.DynamicData
 
 		public MetaModel Model { get; internal set; }
 
-		[MonoTODO]
+		[MonoTODO ("Needs a working test")]
 		public virtual IHttpHandler CreateHandler (DynamicDataRoute route, MetaTable table, string action)
 		{
-			var vp = String.Concat (String.Concat (HttpContext.Current.Request.ApplicationPath, "DynamicData/PageTemplates/", action, ".aspx"));
-			return (IHttpHandler) BuildManager.CreateInstanceFromVirtualPath (vp, typeof (Page));
+			// .NET bug emulation mode
+			if (route == null || table == null || action == null)
+				throw new NullReferenceException ();
+
+			// NOTE: all code below is a result of guessing as no tests succeed for this
+			// call so far!
+
+			IHttpHandler ret = null;
+			
+			// Give custom pages a chance
+			string viewName = String.IsNullOrEmpty (action) ? route.ViewName : action;
+			string path = GetCustomPageVirtualPath (table, viewName);
+
+			// Pages might be in app resources, need to use a VPP
+			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+			
+			if (vpp != null && vpp.FileExists (path))
+				ret = BuildManager.CreateInstanceFromVirtualPath (path, typeof (Page)) as IHttpHandler;
+
+			if (ret != null)
+				return ret;
+
+			path = GetScaffoldPageVirtualPath (table, viewName);
+			if (vpp != null && vpp.FileExists (path))
+				ret = BuildManager.CreateInstanceFromVirtualPath (path, typeof (Page)) as IHttpHandler;
+			
+			return ret;
 		}
 
-		[MonoTODO]
 		protected virtual string GetCustomPageVirtualPath (MetaTable table, string viewName)
 		{
-			throw new NotImplementedException ();
+			// No such checks are made in .NET, we won't follow the pattern...
+			MetaModel model = Model;
+			if (table == null || model == null)
+				throw new NullReferenceException (); // yuck
+
+			// Believe it or not, this is what .NET does - pass a null/empty viewName
+			// and you get /.aspx at the end...
+			return model.DynamicDataFolderVirtualPath + "CustomPages/" + table.Name + "/" + viewName + ".aspx";
 		}
 
-		[MonoTODO]
 		protected virtual string GetScaffoldPageVirtualPath (MetaTable table, string viewName)
 		{
-			throw new NotImplementedException ();
+			// No such checks are made in .NET, we won't follow the pattern...
+			MetaModel model = Model;
+			if (table == null || model == null)
+				throw new NullReferenceException (); // yuck
+
+			// Believe it or not, this is what .NET does - pass a null/empty viewName
+			// and you get /.aspx at the end...
+			return model.DynamicDataFolderVirtualPath + "PageTemplates/" + viewName + ".aspx";
 		}
 
 		IHttpHandler IRouteHandler.GetHttpHandler (RequestContext requestContext)

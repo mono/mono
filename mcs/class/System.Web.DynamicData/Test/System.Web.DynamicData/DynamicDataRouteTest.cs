@@ -67,6 +67,7 @@ namespace MonoTests.System.Web.DynamicData
 		{
 			var dynamicModelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext>));
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
+			Utils.RegisterContext (typeof (MyDataContext3));
 		}
 
 		[Test]
@@ -91,13 +92,16 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNull (r.Table, "#3");
 			Assert.IsNull (r.ViewName, "#4");
 			Assert.IsNotNull (r.RouteHandler, "#5");
-			Assert.IsNull (r.RouteHandler.Model, "#6");
+			Assert.IsNotNull (r.Model, "#6");
 			Assert.IsNull (r.RouteHandler.Model, "#7"); // irrelevant to route's MetaModel
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		[Category ("NotDotNet")] // .NET throws NRE. yuck.
+#if TARGET_DOTNET
+		[Ignore ("Throws a NREX on .NET...")]
+#endif
 		public void GetActionFromRouteDataNullArg ()
 		{
 			new DynamicDataRoute ("x").GetActionFromRouteData (null);
@@ -126,6 +130,9 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		[Category ("NotDotNet")] // .NET throws NRE. yuck.
+#if TARGET_DOTNET
+		[Ignore ("Throws a NREX on .NET...")]
+#endif
 		public void GetTableFromRouteDataNullArg ()
 		{
 			new DynamicDataRoute ("x").GetTableFromRouteData (null);
@@ -153,24 +160,51 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetTableFromRouteData3 ()
 		{
 			var r = new DynamicDataRoute ("x");
-			r.Model.RegisterContext (typeof (MyDataContext3));
 			var rd = new RouteData ();
 			rd.Values["Table"] = "FooTable";
 			var t = r.GetTableFromRouteData (rd);
 		}
 
 		[Test]
-		[Ignore ("it requires working HttpContext, and it's somehow not working on both mono and .net")]
 		public void GetRouteData ()
 		{
 			var r = new DynamicDataRoute ("{table}/{action}.aspx");
-			HttpContext.Current = new HttpContext (new MyHttpWorkerRequest ());
-			RouteData rd = r.GetRouteData (new HttpContextStub ("~/FooTable/List.aspx", String.Empty));
-			Assert.IsNotNull (rd.RouteHandler, "#1");
+
+			// We need one which overloads CreateHandler
+			r.RouteHandler = new MyDynamicDataRouteHandler ();
+
+			var wrapper = new MyHttpContextWrapper ();
+			var request = wrapper.Request as MyHttpRequestWrapper;
+			request.SetProperty ("AppRelativeCurrentExecutionFilePath", "~/NoSuchTable/List.aspx");
+			request.SetProperty ("PathInfo", String.Empty);
+
+			// This must be non-null because DynamicData doesn't care to check whether the returned
+			// value is null or not...
+			request.SetProperty ("QueryString", new NameValueCollection ());
+
+			// It appears .NET checks whether the indicated table exists - if not, GetRouteData will return
+			// null (even though the Route class will find a match)
+			RouteData rd = r.GetRouteData (wrapper);
+			Assert.IsNull (rd, "#A1");
+
+			request.SetProperty ("AppRelativeCurrentExecutionFilePath", "~/BazTable/List.aspx");
+			rd = r.GetRouteData (wrapper);
+			Assert.IsNotNull (rd, "#B1");
+		}
+
+		[Test]
+		public void RouteHandler ()
+		{
+			var r = new DynamicDataRoute ("{table}/{action}.aspx");
+
+			Assert.IsNotNull (r.RouteHandler, "#A1");
+			Assert.AreEqual (typeof (DynamicDataRouteHandler), r.RouteHandler.GetType (), "#A1-1");
+
+			r.RouteHandler = null;
+			Assert.IsNull (r.RouteHandler, "#A2");
 		}
 
 		[Test]

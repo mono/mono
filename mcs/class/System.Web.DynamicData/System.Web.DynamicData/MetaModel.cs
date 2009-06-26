@@ -46,6 +46,8 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaModel
 	{
+		const string DEFAULT_DYNAMIC_DATA_VIRTUAL_FOLDER_PATH = "~/DynamicData/";
+		
 		static object registered_models_lock = new object ();
 		
 		static MetaModel default_model;
@@ -53,6 +55,7 @@ namespace System.Web.DynamicData
 		static Dictionary<Type, MetaModel> registered_models;
 
 		DataModelProvider provider;
+		string dynamicDataFolderVirtualPath;
 		
 		public static MetaModel Default {
 			get { return default_model; }
@@ -81,13 +84,26 @@ namespace System.Web.DynamicData
 			if (default_model == null)
 				default_model = this;
 
-			DynamicDataFolderVirtualPath = "~/DynamicData/";
 			FieldTemplateFactory = new FieldTemplateFactory ();
 			Tables = new ReadOnlyCollection<MetaTable> (new MetaTable [0]);
 			VisibleTables = new List<MetaTable> ();
 		}
 
-		public string DynamicDataFolderVirtualPath { get; set; }
+		public string DynamicDataFolderVirtualPath {
+			get {
+				if (dynamicDataFolderVirtualPath == null)
+					return DEFAULT_DYNAMIC_DATA_VIRTUAL_FOLDER_PATH;
+
+				return dynamicDataFolderVirtualPath;
+			}
+			
+			set {
+				if (!String.IsNullOrEmpty (value))
+					dynamicDataFolderVirtualPath = VirtualPathUtility.AppendTrailingSlash (value);
+				else
+					dynamicDataFolderVirtualPath = value;
+			}
+		}
 
 		public IFieldTemplateFactory FieldTemplateFactory { get; set; }
 
@@ -211,7 +227,7 @@ namespace System.Web.DynamicData
 
 		void RegisterContextCore (DataModelProvider dataModelProvider, ContextConfiguration configuration)
 		{
-			var l = new List<MetaTable> ();
+			var l = new List<MetaTable> (Tables);
 			foreach (var t in dataModelProvider.Tables)
 				l.Add (new MetaTable (this, t, configuration));
 			

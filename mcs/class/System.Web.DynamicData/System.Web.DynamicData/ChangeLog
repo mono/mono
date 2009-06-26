@@ -1,3 +1,29 @@
+2009-06-27  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaModel.cs: implemented DynamicDataFolderVirtualPath
+
+	* DynamicDataRouteHandler.cs: implemented SetRequestMetaTable,
+	GetCustomPageVirtualPath, GetScaffoldPageVirtualPath and
+	guessed at implementation of CreateHandler.
+
+2009-06-26  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaModel.cs: RegisterContextCore preserves already registered
+	tables.
+
+	* DynamicDataRouteHandler.cs: GetRequestContext must not retrieve
+	route data from the routes collection (if the matching route
+	happened to be an instance of DynamicDataRoute it would initialize
+	its RouteHandler's Model property, which is not correct, according
+	to tests). Instead a new RouteData instance is created each time
+	we don't find any cached context.
+
+	* DynamicDataRoute.cs: the associated route handler is set its
+	Model property when we initialize for the first time.
+	GetRouteData checks whether route data returned by base class
+	relates to a table which exists in the current context. If no such
+	table exists, null is returned.
+
 2009-06-25  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: Fixes to make tests succeed.

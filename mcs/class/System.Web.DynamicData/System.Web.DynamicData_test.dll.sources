@@ -62,6 +62,9 @@ Common/FooWithToString.cs
 Common/ITestDataContext.cs
 Common/KnownResponseHeader.cs
 Common/Mocks.cs
+Common/MyDynamicDataRouteHandler.cs
+Common/MyHttpContextWrapper.cs
+Common/MyHttpRequestWrapper.cs
 Common/TestDataColumn.cs
 Common/TestDataContainer.cs
 Common/TestDataContext2.cs

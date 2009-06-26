@@ -77,14 +77,6 @@ namespace MonoTests.System.Web.DynamicData
         }
     }
 
-	class MyDynamicDataRouteHandler : DynamicDataRouteHandler
-	{
-		public override IHttpHandler CreateHandler (DynamicDataRoute route, MetaTable table, string action)
-		{
-			return new Page () as IHttpHandler;
-		}
-	}
-
 	class MyDataContext1 : DataContext
 	{
 		public MyDataContext1 ()

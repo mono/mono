@@ -88,6 +88,26 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		public void DynamicDataFolderVirtualPath ()
+		{
+			var model = new MetaModel ();
+
+			Assert.AreEqual ("~/DynamicData/", model.DynamicDataFolderVirtualPath, "#A1");
+			model.DynamicDataFolderVirtualPath = null;
+			Assert.AreEqual ("~/DynamicData/", model.DynamicDataFolderVirtualPath, "#A2");
+			model.DynamicDataFolderVirtualPath = String.Empty;
+			Assert.AreEqual (String.Empty, model.DynamicDataFolderVirtualPath, "#A3");
+			model.DynamicDataFolderVirtualPath = "~/FolderNoTrailingSlash";
+			Assert.AreEqual ("~/FolderNoTrailingSlash/", model.DynamicDataFolderVirtualPath, "#A4");
+			model.DynamicDataFolderVirtualPath = "AnotherFolder";
+			Assert.AreEqual ("AnotherFolder/", model.DynamicDataFolderVirtualPath, "#A5");
+			model.DynamicDataFolderVirtualPath = "/YetAnotherFolder";
+			Assert.AreEqual ("/YetAnotherFolder/", model.DynamicDataFolderVirtualPath, "#A6");
+			model.DynamicDataFolderVirtualPath = null;
+			Assert.AreEqual ("~/DynamicData/", model.DynamicDataFolderVirtualPath, "#A7");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetTableNull ()
 		{
