@@ -1,5 +1,13 @@
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: don't send Content-Length header when SendChunked
+	is enabled.
+	* WebConnectionStream.cs: send the headers immediately when possible.
+	When writing the request before a Close(), if there was an exception
+	it was lost.
+
+2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpConnection.cs:
 	* HttpListenerResponse.cs: force closing the socket when the response
 	is aborted.
