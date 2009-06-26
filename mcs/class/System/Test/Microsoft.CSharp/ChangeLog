@@ -1,3 +1,7 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* CodeGeneratorIdentifierTest.cs: Upgrade to new NUnit style.
+
 2009-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* CSharpCodeProviderTest.cs: Avoid depending on the order in which

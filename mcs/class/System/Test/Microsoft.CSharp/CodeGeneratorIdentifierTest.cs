@@ -14,7 +14,7 @@ using Microsoft.CSharp;
 namespace MonoTests.Microsoft.CSharp
 {
 	[TestFixture]
-	public class CodeGeneratorIdentifierTest : Assertion
+	public class CodeGeneratorIdentifierTest
 	{
 		private ICodeGenerator gen;
 
@@ -34,18 +34,18 @@ namespace MonoTests.Microsoft.CSharp
 		public void TestCreateValidIdentifier ()
 		{
 		
-			AssertEquals ("a", gen.CreateValidIdentifier ("a"));
-			AssertEquals ("_int", gen.CreateValidIdentifier ("int"));
-			AssertEquals ("_", gen.CreateValidIdentifier ("_"));
-			AssertEquals ("1", gen.CreateValidIdentifier ("1"));
-			AssertEquals ("1a", gen.CreateValidIdentifier ("1a"));
-			AssertEquals ("1*2", gen.CreateValidIdentifier ("1*2"));
-			AssertEquals ("-", gen.CreateValidIdentifier ("-"));
-			AssertEquals ("+", gen.CreateValidIdentifier ("+"));
-			AssertEquals ("", gen.CreateValidIdentifier (""));
-			AssertEquals ("--", gen.CreateValidIdentifier ("--"));
-			AssertEquals ("++", gen.CreateValidIdentifier ("++"));
-			AssertEquals ("\u3042", gen.CreateValidIdentifier ("\u3042"));
+			Assert.AreEqual ("a", gen.CreateValidIdentifier ("a"));
+			Assert.AreEqual ("_int", gen.CreateValidIdentifier ("int"));
+			Assert.AreEqual ("_", gen.CreateValidIdentifier ("_"));
+			Assert.AreEqual ("1", gen.CreateValidIdentifier ("1"));
+			Assert.AreEqual ("1a", gen.CreateValidIdentifier ("1a"));
+			Assert.AreEqual ("1*2", gen.CreateValidIdentifier ("1*2"));
+			Assert.AreEqual ("-", gen.CreateValidIdentifier ("-"));
+			Assert.AreEqual ("+", gen.CreateValidIdentifier ("+"));
+			Assert.AreEqual ("", gen.CreateValidIdentifier (""));
+			Assert.AreEqual ("--", gen.CreateValidIdentifier ("--"));
+			Assert.AreEqual ("++", gen.CreateValidIdentifier ("++"));
+			Assert.AreEqual ("\u3042", gen.CreateValidIdentifier ("\u3042"));
 		}
 
 		[Test]
@@ -59,39 +59,39 @@ namespace MonoTests.Microsoft.CSharp
 		public void TestCreateEscapedIdentifier ()
 		{
 		
-			AssertEquals ("a", gen.CreateEscapedIdentifier ("a"));
-			AssertEquals ("@int", gen.CreateEscapedIdentifier ("int"));
-			AssertEquals ("_", gen.CreateEscapedIdentifier ("_"));
-			AssertEquals ("1", gen.CreateEscapedIdentifier ("1"));
-			AssertEquals ("1a", gen.CreateEscapedIdentifier ("1a"));
-			AssertEquals ("1*2", gen.CreateEscapedIdentifier ("1*2"));
-			AssertEquals ("-", gen.CreateEscapedIdentifier ("-"));
-			AssertEquals ("+", gen.CreateEscapedIdentifier ("+"));
-			AssertEquals ("", gen.CreateEscapedIdentifier (""));
-			AssertEquals ("--", gen.CreateEscapedIdentifier ("--"));
-			AssertEquals ("++", gen.CreateEscapedIdentifier ("++"));
-			AssertEquals ("\u3042", gen.CreateEscapedIdentifier ("\u3042"));
+			Assert.AreEqual ("a", gen.CreateEscapedIdentifier ("a"));
+			Assert.AreEqual ("@int", gen.CreateEscapedIdentifier ("int"));
+			Assert.AreEqual ("_", gen.CreateEscapedIdentifier ("_"));
+			Assert.AreEqual ("1", gen.CreateEscapedIdentifier ("1"));
+			Assert.AreEqual ("1a", gen.CreateEscapedIdentifier ("1a"));
+			Assert.AreEqual ("1*2", gen.CreateEscapedIdentifier ("1*2"));
+			Assert.AreEqual ("-", gen.CreateEscapedIdentifier ("-"));
+			Assert.AreEqual ("+", gen.CreateEscapedIdentifier ("+"));
+			Assert.AreEqual ("", gen.CreateEscapedIdentifier (""));
+			Assert.AreEqual ("--", gen.CreateEscapedIdentifier ("--"));
+			Assert.AreEqual ("++", gen.CreateEscapedIdentifier ("++"));
+			Assert.AreEqual ("\u3042", gen.CreateEscapedIdentifier ("\u3042"));
 		}
 
 		[Test]
 		public void TestIsValidIdentifier ()
 		{
-			AssertEquals (true, gen.IsValidIdentifier ("_a"));
-			AssertEquals (true, gen.IsValidIdentifier ("_"));
-			AssertEquals (true, gen.IsValidIdentifier ("@return"));
-			AssertEquals (true, gen.IsValidIdentifier ("d1"));
-			AssertEquals (true, gen.IsValidIdentifier ("_1"));
-			AssertEquals (true, gen.IsValidIdentifier ("_a_1"));
-			AssertEquals (true, gen.IsValidIdentifier ("@a"));
-			AssertEquals (false, gen.IsValidIdentifier ("1"));
-			AssertEquals (false, gen.IsValidIdentifier (" "));
-			AssertEquals (false, gen.IsValidIdentifier ("?"));
-			AssertEquals (false, gen.IsValidIdentifier (":_:"));
-			AssertEquals (false, gen.IsValidIdentifier ("_ "));
-			AssertEquals (false, gen.IsValidIdentifier ("@ "));
-			AssertEquals (false, gen.IsValidIdentifier ("1*2"));
-			AssertEquals (false, gen.IsValidIdentifier ("1_2"));
-			AssertEquals (false, gen.IsValidIdentifier ("a,b"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("_a"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("_"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("@return"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("d1"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("_1"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("_a_1"));
+			Assert.AreEqual (true, gen.IsValidIdentifier ("@a"));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("1"));
+			Assert.AreEqual (false, gen.IsValidIdentifier (" "));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("?"));
+			Assert.AreEqual (false, gen.IsValidIdentifier (":_:"));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("_ "));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("@ "));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("1*2"));
+			Assert.AreEqual (false, gen.IsValidIdentifier ("1_2"));
+			Assert.AreEqual (gen.IsValidIdentifier ("a, b"), false);
 		}
 	}
 }
