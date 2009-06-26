@@ -20,7 +20,7 @@ namespace MonoTests.System.Security.Cryptography {
 #if TARGET_JVM
 	[Ignore ("The class System.Security.Cryptography.OidEnumerator - is not supported")]
 #endif
-	public class OidEnumeratorTest : Assertion {
+	public class OidEnumeratorTest {
 #if !TARGET_JVM
 		private OidEnumerator GetEnumerator () 
 		{
@@ -45,7 +45,7 @@ namespace MonoTests.System.Security.Cryptography {
 			OidEnumerator enumerator = GetEnumerator ();
 			enumerator.MoveNext ();
 			Oid oid = enumerator.Current;
-			AssertNotNull ("Current", oid);
+			Assert.IsNotNull (oid, "Current");
 		}
 
 		[Test]
@@ -54,8 +54,8 @@ namespace MonoTests.System.Security.Cryptography {
 			OidEnumerator enumerator = GetEnumerator ();
 			while (enumerator.MoveNext ());
 			Oid oid = enumerator.Current;
-			AssertNotNull ("Current_AfterLastElement", oid);
-			AssertEquals ("Current==last", "1.2", oid.Value);
+			Assert.IsNotNull (oid, "Current_AfterLastElement");
+			Assert.AreEqual ("1.2", oid.Value, "Current==last");
 		}
 
 		[Test]
@@ -66,7 +66,7 @@ namespace MonoTests.System.Security.Cryptography {
 			while (enumerator.MoveNext ()) {
 				n++;
 			}
-			AssertEquals ("MoveNext", 3, n);
+			Assert.AreEqual (3, n, "MoveNext");
 		}
 
 		[Test]
@@ -75,9 +75,9 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			OidEnumerator enumerator = GetEnumerator ();
 			enumerator.MoveNext ();
-			AssertNotNull ("Current before reset", enumerator.Current);
+			Assert.IsNotNull (enumerator.Current, "Current before reset");
 			enumerator.Reset ();
-			AssertNotNull ("Current after reset", enumerator.Current);
+			Assert.IsNotNull (enumerator.Current, "Current after reset");
 		}
 #endif
 	}

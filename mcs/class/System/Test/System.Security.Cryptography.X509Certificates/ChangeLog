@@ -1,3 +1,8 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* X509CertificateCollectionTest.cs,
+	X509ChainPolicyTest.cs: Upgrade to new NUnit style.
+
 2009-03-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509ChainPolicyTest.cs: Add a small sleep between the Reset and

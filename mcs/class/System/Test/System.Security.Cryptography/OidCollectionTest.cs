@@ -20,7 +20,7 @@ namespace MonoTests.System.Security.Cryptography {
 #if TARGET_JVM
 	[Ignore ("The class System.Security.Cryptography.OidCollection - is not supported")]
 #endif
-	public class OidCollectionTest : Assertion {
+	public class OidCollectionTest {
 #if !TARGET_JVM
 
 		[Test]
@@ -28,10 +28,10 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			OidCollection oc = new OidCollection ();
 			// default properties
-			AssertEquals ("Count", 0, oc.Count);
-			Assert ("IsSynchronized", !oc.IsSynchronized);
-			AssertNotNull ("SyncRoot", oc.SyncRoot);
-			AssertNotNull ("GetEnumerator", oc.GetEnumerator ());
+			Assert.AreEqual (0, oc.Count, "Count");
+			Assert.IsTrue (!oc.IsSynchronized, "IsSynchronized");
+			Assert.IsNotNull (oc.SyncRoot, "SyncRoot");
+			Assert.IsNotNull (oc.GetEnumerator (), "GetEnumerator");
 		}
 
 		[Test]
@@ -39,9 +39,9 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			OidCollection oc = new OidCollection ();
 			oc.Add (new Oid ("1.0"));
-			AssertEquals ("Count", 1, oc.Count);
-			AssertEquals ("[0]", "1.0", oc [0].Value);
-			AssertEquals ("['1.0']", "1.0", oc ["1.0"].Value);
+			Assert.AreEqual (1, oc.Count, "Count");
+			Assert.AreEqual ("1.0", oc [0].Value, "[0]");
+			Assert.AreEqual ("1.0", oc ["1.0"].Value, "['1.0']");
 		}
 
 		[Test]
@@ -50,8 +50,8 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			OidCollection oc = new OidCollection ();
 			oc.Add (null);
-			AssertEquals ("Count", 1, oc.Count);
-			// AssertNull ("[0]", oc); throw NullReferenceException
+			Assert.AreEqual (1, oc.Count, "Count");
+			// Assert.IsNull (oc, "[0]"); throw NullReferenceException
 		}
 
 		[Test]
@@ -61,7 +61,7 @@ namespace MonoTests.System.Security.Cryptography {
 			oc.Add (new Oid ("1.0"));
 			Oid[] array = new Oid [1];
 			oc.CopyTo (array, 0);
-			AssertEquals ("CopyTo(Oid)", "1.0", array [0].Value);
+			Assert.AreEqual ("1.0", array [0].Value, "CopyTo(Oid)");
 		}
 
 		[Test]

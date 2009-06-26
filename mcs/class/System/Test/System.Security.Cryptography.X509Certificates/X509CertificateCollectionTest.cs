@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 	[TestFixture]
-        public class X509CertificateCollectionTest : Assertion {
+        public class X509CertificateCollectionTest {
 
 		private static byte[] cert_a = { 0x30,0x82,0x01,0xFF,0x30,0x82,0x01,0x6C,0x02,0x05,0x02,0x72,0x00,0x06,0xE8,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x02,0x05,0x00,0x30,0x5F,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x55,0x53,0x31,0x20,0x30,0x1E,0x06,0x03,0x55,0x04,0x0A,0x13,0x17,0x52,0x53,0x41,0x20,0x44,0x61,0x74,0x61,0x20,0x53,0x65,0x63,0x75,0x72,0x69,0x74,0x79,0x2C,0x20,0x49,0x6E,0x63,0x2E,0x31,0x2E,0x30,0x2C,0x06,0x03,0x55,0x04,0x0B,0x13,0x25,0x53,0x65,0x63,0x75,0x72,0x65,0x20,0x53,0x65,0x72,0x76,
 			0x65,0x72,0x20,0x43,0x65,0x72,0x74,0x69,0x66,0x69,0x63,0x61,0x74,0x69,0x6F,0x6E,0x20,0x41,0x75,0x74,0x68,0x6F,0x72,0x69,0x74,0x79,0x30,0x1E,0x17,0x0D,0x39,0x36,0x30,0x33,0x31,0x32,0x31,0x38,0x33,0x38,0x34,0x37,0x5A,0x17,0x0D,0x39,0x37,0x30,0x33,0x31,0x32,0x31,0x38,0x33,0x38,0x34,0x36,0x5A,0x30,0x61,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x55,0x53,0x31,0x13,0x30,0x11,0x06,0x03,0x55,0x04,0x08,0x13,0x0A,0x43,0x61,0x6C,0x69,0x66,0x6F,0x72,0x6E,0x69,0x61,0x31,0x14,0x30,0x12,0x06,0x03,
@@ -59,14 +59,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void Constructor ()
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
-			AssertEquals ("Count", 0, c.Count);
+			Assert.AreEqual (0, c.Count, "Count");
 		}
 
 		[Test]
 		public void Constructor_CertificateArray ()
 		{
 			X509CertificateCollection c = new X509CertificateCollection (range);
-			AssertEquals ("Count", 2, c.Count);
+			Assert.AreEqual (2, c.Count, "Count");
 		}
 
 		[Test]
@@ -82,7 +82,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509CertificateCollection coll = new X509CertificateCollection (range);
 			X509CertificateCollection c = new X509CertificateCollection (coll);
-			AssertEquals ("Count", 2, c.Count);
+			Assert.AreEqual (2, c.Count, "Count");
 		}
 
 		[Test]
@@ -97,14 +97,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void Add ()
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
-			AssertEquals ("Add a", 0, c.Add (x509a));
-			AssertEquals ("1", 1, c.Count);
+			Assert.AreEqual (0, c.Add (x509a), "Add a");
+			Assert.AreEqual (1, c.Count, "1");
 
-			AssertEquals ("Add a(dup)", 1, c.Add (x509a));
-			AssertEquals ("2", 2, c.Count);
+			Assert.AreEqual (1, c.Add (x509a), "Add a(dup)");
+			Assert.AreEqual (2, c.Count, "2");
 
-			AssertEquals ("Add b", 2, c.Add (x509b));
-			AssertEquals ("3", 3, c.Count);
+			Assert.AreEqual (2, c.Add (x509b), "Add b");
+			Assert.AreEqual (3, c.Count, "3");
 		}
 
 		[Test]
@@ -121,13 +121,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509CertificateCollection c = new X509CertificateCollection ();
 
 			c.AddRange (range);
-			AssertEquals ("Range(a+b)", 2, c.Count);
+			Assert.AreEqual (2, c.Count, "Range(a+b)");
 
 			c.AddRange (range);
-			AssertEquals ("Duplicate(a+b)", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "Duplicate(a+b)");
 
 			c.Add (x509c);
-			AssertEquals ("New(c)", 5, c.Count);
+			Assert.AreEqual (5, c.Count, "New(c)");
 		}
 
 		[Test]
@@ -146,20 +146,20 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509CertificateCollection c = new X509CertificateCollection ();
 
 			c.AddRange (c);
-			AssertEquals ("Self(none)", 0, c.Count);
+			Assert.AreEqual (0, c.Count, "Self(none)");
 
 			c.AddRange (coll);
-			AssertEquals ("Range(a+b)", 2, c.Count);
+			Assert.AreEqual (2, c.Count, "Range(a+b)");
 
 			c.AddRange (coll);
-			AssertEquals ("Duplicate(a+b)", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "Duplicate(a+b)");
 
 			c.Add (x509c);
-			AssertEquals ("New(c)", 5, c.Count);
+			Assert.AreEqual (5, c.Count, "New(c)");
 
 			// This leads to an infinite loop until the runtime throws an OutOfMemoryException
 			//c.AddRange (c);
-			//AssertEquals ("Self(double)", 10, c.Count);
+			//Assert.AreEqual (10, c.Count, "Self(double)");
 		}
 
 		[Test]
@@ -175,16 +175,16 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void Contains () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
-			Assert ("Empty-A", !c.Contains (x509a));
-			Assert ("Empty-Null", !c.Contains (null));
+			Assert.IsTrue (!c.Contains (x509a), "Empty-A");
+			Assert.IsTrue (!c.Contains (null), "Empty-Null");
 
 			c.Add (x509a);
-			Assert ("A-A", c.Contains (x509a));
-			Assert ("A-B", !c.Contains (x509b));
+			Assert.IsTrue (c.Contains (x509a), "A-A");
+			Assert.IsTrue (!c.Contains (x509b), "A-B");
 
 			// works by value not by object reference
 			X509Certificate x = new X509Certificate (cert_a);
-			Assert ("A-x", c.Contains (x));
+			Assert.IsTrue (c.Contains (x), "A-x");
 		}
 
 		[Test]
@@ -221,27 +221,27 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509CertificateCollection c = new X509CertificateCollection ();
 			c.Add (x509a);
 			c.CopyTo (array, 0);
-			Assert ("CopyTo", x509a.Equals (array [0]));
+			Assert.IsTrue (x509a.Equals (array [0]), "CopyTo");
 		}
 
 		[Test]
 		public void IndexOf () 
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
-			AssertEquals ("Empty-A", -1, c.IndexOf (x509a));
-			AssertEquals ("Empty-Null", -1, c.IndexOf (null));
+			Assert.AreEqual (-1, c.IndexOf (x509a), "Empty-A");
+			Assert.AreEqual (-1, c.IndexOf (null), "Empty-Null");
 
 			c.Add (x509a);
-			AssertEquals ("A-A", 0, c.IndexOf (x509a));
-			AssertEquals ("A-B", -1, c.IndexOf (x509b));
+			Assert.AreEqual (0, c.IndexOf (x509a), "A-A");
+			Assert.AreEqual (-1, c.IndexOf (x509b), "A-B");
 
 			// works by object reference (not value)
 			X509Certificate x = new X509Certificate (cert_a);
-			Assert ("!ReferenceEquals", !Object.ReferenceEquals (x509a, x));
+			Assert.IsTrue (!Object.ReferenceEquals (x509a, x), "!ReferenceEquals");
 #if NET_2_0
-			AssertEquals ("A-x", 0, c.IndexOf (x));
+			Assert.AreEqual (0, c.IndexOf (x), "A-x");
 #else
-			AssertEquals ("A-x", -1, c.IndexOf (x));
+			Assert.AreEqual (-1, c.IndexOf (x), "A-x");
 #endif
 		}
 
@@ -250,13 +250,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
 			c.Add (x509a);
-			AssertEquals ("a=0", 0, c.IndexOf (x509a));
+			Assert.AreEqual (0, c.IndexOf (x509a), "a=0");
 			c.Add (x509c);
-			AssertEquals ("c=1", 1, c.IndexOf (x509c));
+			Assert.AreEqual (1, c.IndexOf (x509c), "c=1");
 
 			c.Insert (1, x509b);
-			AssertEquals ("1", 1, c.IndexOf (x509b));
-			AssertEquals ("2", 2, c.IndexOf (x509c));
+			Assert.AreEqual (1, c.IndexOf (x509b), "1");
+			Assert.AreEqual (2, c.IndexOf (x509c), "2");
 		}
 
 		[Test]
@@ -264,9 +264,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509CertificateCollection c = new X509CertificateCollection ();
 			c.Add (x509a);
-			AssertEquals ("Count==1", 1, c.Count);
+			Assert.AreEqual (1, c.Count, "Count==1");
 			c.Remove (x509a);
-			AssertEquals ("Remove,Count==0", 0, c.Count);
+			Assert.AreEqual (0, c.Count, "Remove Count==0");
 		}
 
 		[Test]
@@ -290,17 +290,17 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			try {
 				// don't fail in this block
 				c.Add (x509a);
-				AssertEquals ("Read,Count==1", 1, c.Count);
+				Assert.AreEqual (1, c.Count, "Read Count==1");
 
 				// works by object reference (not by value)
 				x = new X509Certificate (cert_a);
-				Assert ("!ReferenceEquals", !Object.ReferenceEquals (x509a, x));
+				Assert.IsTrue (!Object.ReferenceEquals (x509a, x), "!ReferenceEquals");
 			}
 			catch {}
 
 			// fail here! (well for 1.x)
 			c.Remove (x);
-			AssertEquals ("Remove-by-value,Count==0", 0, c.Count);
+			Assert.AreEqual (0, c.Count, "Remove-by-value Count==0");
 		}
 
 		[Test]

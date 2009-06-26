@@ -40,7 +40,7 @@ using System.Threading;
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 	[TestFixture]
-	public class X509ChainPolicyTest : Assertion {
+	public class X509ChainPolicyTest {
 
 		static string signingTimeOid = "1.2.840.113549.1.9.5";
 
@@ -55,15 +55,15 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			// default properties
-			AssertEquals ("ApplicationPolicy", 0, cp.ApplicationPolicy.Count);
-			AssertEquals ("CertificatePolicy", 0, cp.CertificatePolicy.Count);
-			AssertEquals ("ExtraStore", 0, cp.ExtraStore.Count);
-			AssertEquals ("RevocationFlag", X509RevocationFlag.ExcludeRoot, cp.RevocationFlag);
-			AssertEquals ("RevocationMode", X509RevocationMode.Online, cp.RevocationMode);
-			AssertEquals ("UrlRetrievalTimeout", 0, cp.UrlRetrievalTimeout.Ticks);
-			AssertEquals ("VerificationFlags", X509VerificationFlags.NoFlag, cp.VerificationFlags);
+			Assert.AreEqual (0, cp.ApplicationPolicy.Count, "ApplicationPolicy");
+			Assert.AreEqual (0, cp.CertificatePolicy.Count, "CertificatePolicy");
+			Assert.AreEqual (0, cp.ExtraStore.Count, "ExtraStore");
+			Assert.AreEqual (X509RevocationFlag.ExcludeRoot, cp.RevocationFlag, "RevocationFlag");
+			Assert.AreEqual (X509RevocationMode.Online, cp.RevocationMode, "RevocationMode");
+			Assert.AreEqual (0, cp.UrlRetrievalTimeout.Ticks, "UrlRetrievalTimeout");
+			Assert.AreEqual (X509VerificationFlags.NoFlag, cp.VerificationFlags, "VerificationFlags");
 			DateTime vt = cp.VerificationTime;
-			Assert ("VerificationTime", ((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))));
+			Assert.IsTrue (((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))), "VerificationTime");
 		}
 
 		[Test]
@@ -71,7 +71,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ApplicationPolicy.Add (new Oid (signingTimeOid));
-			AssertEquals ("ApplicationPolicy", 1, cp.ApplicationPolicy.Count);
+			Assert.AreEqual (1, cp.ApplicationPolicy.Count, "ApplicationPolicy");
 		}
 
 		[Test]
@@ -80,10 +80,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ApplicationPolicy.Add (new Oid (signingTimeOid));
 			OidCollection oc = cp.ApplicationPolicy;
-			AssertEquals ("ApplicationPolicy-1", 1, oc.Count);
+			Assert.AreEqual (1, oc.Count, "ApplicationPolicy-1");
 			cp.Reset ();
-			AssertEquals ("ApplicationPolicy-2", 1, oc.Count);
-			AssertEquals ("ApplicationPolicy-3", 0, cp.ApplicationPolicy.Count);
+			Assert.AreEqual (1, oc.Count, "ApplicationPolicy-2");
+			Assert.AreEqual (0, cp.ApplicationPolicy.Count, "ApplicationPolicy-3");
 		}
 
 		[Test]
@@ -91,7 +91,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.CertificatePolicy.Add (new Oid (signingTimeOid));
-			AssertEquals ("CertificatePolicy", 1, cp.CertificatePolicy.Count);
+			Assert.AreEqual (1, cp.CertificatePolicy.Count, "CertificatePolicy");
 		}
 
 		[Test]
@@ -100,10 +100,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509ChainPolicy cp = GetPolicy ();
 			cp.CertificatePolicy.Add (new Oid (signingTimeOid));
 			OidCollection oc = cp.CertificatePolicy;
-			AssertEquals ("CertificatePolicy-1", 1, oc.Count);
+			Assert.AreEqual (1, oc.Count, "CertificatePolicy-1");
 			cp.Reset ();
-			AssertEquals ("CertificatePolicy-2", 1, oc.Count);
-			AssertEquals ("CertificatePolicy-3", 0, cp.CertificatePolicy.Count);
+			Assert.AreEqual (1, oc.Count, "CertificatePolicy-2");
+			Assert.AreEqual (0, cp.CertificatePolicy.Count, "CertificatePolicy-3");
 		}
 
 		[Test]
@@ -111,7 +111,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ExtraStore.Add (new X509Certificate2 ());
-			AssertEquals ("ExtraStore", 1, cp.ExtraStore.Count);
+			Assert.AreEqual (1, cp.ExtraStore.Count, "ExtraStore");
 		}
 
 		[Test]
@@ -120,10 +120,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ExtraStore.Add (new X509Certificate2 ());
 			X509Certificate2Collection cc = cp.ExtraStore;
-			AssertEquals ("ExtraStore-1", 1, cc.Count);
+			Assert.AreEqual (1, cc.Count, "ExtraStore-1");
 			cp.Reset ();
-			AssertEquals ("ExtraStore-2", 1, cc.Count);
-			AssertEquals ("ExtraStore-3", 0, cp.ExtraStore.Count);
+			Assert.AreEqual (1, cc.Count, "ExtraStore-2");
+			Assert.AreEqual (0, cp.ExtraStore.Count, "ExtraStore-3");
 		}
 
 		[Test]
@@ -131,11 +131,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.RevocationFlag = X509RevocationFlag.EndCertificateOnly;
-			AssertEquals ("EndCertificateOnly", X509RevocationFlag.EndCertificateOnly, cp.RevocationFlag);
+			Assert.AreEqual (X509RevocationFlag.EndCertificateOnly, cp.RevocationFlag, "EndCertificateOnly");
 			cp.RevocationFlag = X509RevocationFlag.EntireChain;
-			AssertEquals ("EntireChain", X509RevocationFlag.EntireChain, cp.RevocationFlag);
+			Assert.AreEqual (X509RevocationFlag.EntireChain, cp.RevocationFlag, "EntireChain");
 			cp.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-			AssertEquals ("ExcludeRoot", X509RevocationFlag.ExcludeRoot, cp.RevocationFlag);
+			Assert.AreEqual (X509RevocationFlag.ExcludeRoot, cp.RevocationFlag, "ExcludeRoot");
 		}
 
 		[Test]
@@ -151,11 +151,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.RevocationMode = X509RevocationMode.NoCheck;
-			AssertEquals ("NoCheck", X509RevocationMode.NoCheck, cp.RevocationMode);
+			Assert.AreEqual (X509RevocationMode.NoCheck, cp.RevocationMode, "NoCheck");
 			cp.RevocationMode = X509RevocationMode.Offline;
-			AssertEquals ("Offline", X509RevocationMode.Offline, cp.RevocationMode);
+			Assert.AreEqual (X509RevocationMode.Offline, cp.RevocationMode, "Offline");
 			cp.RevocationMode = X509RevocationMode.Online;
-			AssertEquals ("Online", X509RevocationMode.Online, cp.RevocationMode);
+			Assert.AreEqual (X509RevocationMode.Online, cp.RevocationMode, "Online");
 		}
 
 		[Test]
@@ -171,13 +171,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.UrlRetrievalTimeout = new TimeSpan (100);
-			AssertEquals ("TimeSpan=100", 100, cp.UrlRetrievalTimeout.Ticks);
+			Assert.AreEqual (100, cp.UrlRetrievalTimeout.Ticks, "TimeSpan=100");
 			cp.UrlRetrievalTimeout = new TimeSpan (0);
-			AssertEquals ("TimeSpan=0", 0, cp.UrlRetrievalTimeout.Ticks);
+			Assert.AreEqual (0, cp.UrlRetrievalTimeout.Ticks, "TimeSpan=0");
 			cp.UrlRetrievalTimeout = TimeSpan.MinValue;
-			AssertEquals ("TimeSpan=MinValue", TimeSpan.MinValue, cp.UrlRetrievalTimeout);
+			Assert.AreEqual (TimeSpan.MinValue, cp.UrlRetrievalTimeout, "TimeSpan=MinValue");
 			cp.UrlRetrievalTimeout = TimeSpan.MaxValue;
-			AssertEquals ("TimeSpan=MaxValue", TimeSpan.MaxValue, cp.UrlRetrievalTimeout);
+			Assert.AreEqual (TimeSpan.MaxValue, cp.UrlRetrievalTimeout, "TimeSpan=MaxValue");
 		}
 
 		[Test]
@@ -185,33 +185,33 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.VerificationFlags = X509VerificationFlags.AllFlags;
-			AssertEquals ("AllFlags", X509VerificationFlags.AllFlags, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.AllFlags, cp.VerificationFlags, "AllFlags");
 			cp.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-			AssertEquals ("AllowUnknownCertificateAuthority", X509VerificationFlags.AllowUnknownCertificateAuthority, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.AllowUnknownCertificateAuthority, cp.VerificationFlags, "AllowUnknownCertificateAuthority");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown;
-			AssertEquals ("IgnoreCertificateAuthorityRevocationUnknown", X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreCertificateAuthorityRevocationUnknown, cp.VerificationFlags, "IgnoreCertificateAuthorityRevocationUnknown");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreCtlNotTimeValid;
-			AssertEquals ("IgnoreCtlNotTimeValid", X509VerificationFlags.IgnoreCtlNotTimeValid, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreCtlNotTimeValid, cp.VerificationFlags, "IgnoreCtlNotTimeValid");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreCtlSignerRevocationUnknown;
-			AssertEquals ("IgnoreCtlSignerRevocationUnknown", X509VerificationFlags.IgnoreCtlSignerRevocationUnknown, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreCtlSignerRevocationUnknown, cp.VerificationFlags, "IgnoreCtlSignerRevocationUnknown");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreEndRevocationUnknown;
-			AssertEquals ("IgnoreEndRevocationUnknown", X509VerificationFlags.IgnoreEndRevocationUnknown, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreEndRevocationUnknown, cp.VerificationFlags, "IgnoreEndRevocationUnknown");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreInvalidBasicConstraints;
-			AssertEquals ("IgnoreInvalidBasicConstraints", X509VerificationFlags.IgnoreInvalidBasicConstraints, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreInvalidBasicConstraints, cp.VerificationFlags, "IgnoreInvalidBasicConstraints");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreInvalidName;
-			AssertEquals ("IgnoreInvalidName", X509VerificationFlags.IgnoreInvalidName, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreInvalidName, cp.VerificationFlags, "IgnoreInvalidName");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreInvalidPolicy;
-			AssertEquals ("IgnoreInvalidPolicy", X509VerificationFlags.IgnoreInvalidPolicy, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreInvalidPolicy, cp.VerificationFlags, "IgnoreInvalidPolicy");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreNotTimeNested;
-			AssertEquals ("IgnoreNotTimeNested", X509VerificationFlags.IgnoreNotTimeNested, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreNotTimeNested, cp.VerificationFlags, "IgnoreNotTimeNested");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreNotTimeValid;
-			AssertEquals ("IgnoreNotTimeValid", X509VerificationFlags.IgnoreNotTimeValid, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreNotTimeValid, cp.VerificationFlags, "IgnoreNotTimeValid");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreRootRevocationUnknown;
-			AssertEquals ("IgnoreRootRevocationUnknown", X509VerificationFlags.IgnoreRootRevocationUnknown, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreRootRevocationUnknown, cp.VerificationFlags, "IgnoreRootRevocationUnknown");
 			cp.VerificationFlags = X509VerificationFlags.IgnoreWrongUsage;
-			AssertEquals ("IgnoreWrongUsage", X509VerificationFlags.IgnoreWrongUsage, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.IgnoreWrongUsage, cp.VerificationFlags, "IgnoreWrongUsage");
 			cp.VerificationFlags = X509VerificationFlags.NoFlag;
-			AssertEquals ("NoFlag", X509VerificationFlags.NoFlag, cp.VerificationFlags);
+			Assert.AreEqual (X509VerificationFlags.NoFlag, cp.VerificationFlags, "NoFlag");
 		}
 
 		[Test]
@@ -226,15 +226,15 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void VerificationTime ()
 		{
 			X509ChainPolicy cp = GetPolicy ();
-			AssertEquals ("Kind=Local", DateTimeKind.Local, cp.VerificationTime.Kind);
+			Assert.AreEqual (DateTimeKind.Local, cp.VerificationTime.Kind, "Kind=Local");
 			cp.VerificationTime = DateTime.Today;
-			AssertEquals ("DateTime=Today", DateTime.Today, cp.VerificationTime);
+			Assert.AreEqual (DateTime.Today, cp.VerificationTime, "DateTime=Today");
 			cp.VerificationTime = new DateTime (0);
-			AssertEquals ("DateTime=0", 0, cp.VerificationTime.Ticks);
+			Assert.AreEqual (0, cp.VerificationTime.Ticks, "DateTime=0");
 			cp.VerificationTime = DateTime.MinValue;
-			AssertEquals ("DateTime=MinValue", DateTime.MinValue, cp.VerificationTime);
+			Assert.AreEqual (DateTime.MinValue, cp.VerificationTime, "DateTime=MinValue");
 			cp.VerificationTime = DateTime.MaxValue;
-			AssertEquals ("DateTime=MaxValue", DateTime.MaxValue, cp.VerificationTime);
+			Assert.AreEqual (DateTime.MaxValue, cp.VerificationTime, "DateTime=MaxValue");
 		}
 
 		[Test]
@@ -249,21 +249,21 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			cp.UrlRetrievalTimeout = new TimeSpan (100);
 			cp.VerificationFlags = X509VerificationFlags.AllFlags;
 			DateTime vt = cp.VerificationTime;
-			Assert ("VerificationTime", ((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))));
+			Assert.IsTrue (((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))), "VerificationTime");
 			// wait a bit before calling Reset, otherwise we could end up with the same time value
 			Thread.Sleep (100);
 			cp.Reset ();
-			Assert ("VerificationTime-Reset", (vt != cp.VerificationTime));
+			Assert.IsTrue ((vt != cp.VerificationTime), "VerificationTime-Reset");
 			// default properties
-			AssertEquals ("ApplicationPolicy", 0, cp.ApplicationPolicy.Count);
-			AssertEquals ("CertificatePolicy", 0, cp.CertificatePolicy.Count);
-			AssertEquals ("ExtraStore", 0, cp.ExtraStore.Count);
-			AssertEquals ("RevocationFlag", X509RevocationFlag.ExcludeRoot, cp.RevocationFlag);
-			AssertEquals ("RevocationMode", X509RevocationMode.Online, cp.RevocationMode);
-			AssertEquals ("UrlRetrievalTimeout", 0, cp.UrlRetrievalTimeout.Ticks);
-			AssertEquals ("VerificationFlags", X509VerificationFlags.NoFlag, cp.VerificationFlags);
+			Assert.AreEqual (0, cp.ApplicationPolicy.Count, "ApplicationPolicy");
+			Assert.AreEqual (0, cp.CertificatePolicy.Count, "CertificatePolicy");
+			Assert.AreEqual (0, cp.ExtraStore.Count, "ExtraStore");
+			Assert.AreEqual (X509RevocationFlag.ExcludeRoot, cp.RevocationFlag, "RevocationFlag");
+			Assert.AreEqual (X509RevocationMode.Online, cp.RevocationMode, "RevocationMode");
+			Assert.AreEqual (0, cp.UrlRetrievalTimeout.Ticks, "UrlRetrievalTimeout");
+			Assert.AreEqual (X509VerificationFlags.NoFlag, cp.VerificationFlags, "VerificationFlags");
 			vt = cp.VerificationTime;
-			Assert ("VerificationTime", ((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))));
+			Assert.IsTrue (((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))), "VerificationTime");
 		}
 	}
 }

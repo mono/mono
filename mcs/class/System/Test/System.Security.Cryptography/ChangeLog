@@ -1,3 +1,8 @@
+2009-06-26  Robert Jordan  <robertj@gmx.net>
+
+	* OidCollectionTest.cs, OidEnumeratorTest.cs:
+	Upgrade to new NUnit style.
+
 2007-03-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* AsnEncodedDataTest.cs, OidCollectionTest.cs, OidEnumeratorTest.cs,
