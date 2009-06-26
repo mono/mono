@@ -77,7 +77,6 @@ namespace System.Net
 			bool chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
 			string clength = cnc.Data.Headers ["Content-Length"];
 			if (!chunkedRead && clength != null && clength != "") {
-
 				try {
 					contentLength = Int32.Parse (clength);
 					if (contentLength == 0 && !IsNtlmAuth ()) {
@@ -100,10 +99,10 @@ namespace System.Net
 			this.request = request;
 			allowBuffering = request.InternalAllowBuffering;
 			sendChunked = request.SendChunked;
-			if (allowBuffering)
-				writeBuffer = new MemoryStream ();
 			if (sendChunked)
 				pending = new ManualResetEvent (true);
+			else if (allowBuffering)
+				writeBuffer = new MemoryStream ();
 		}
 
 		bool IsNtlmAuth ()
@@ -281,7 +280,10 @@ namespace System.Net
 
 	   	void WriteCallbackWrapper (IAsyncResult r)
 		{
-			WebAsyncResult result;
+			WebAsyncResult result = r as WebAsyncResult;
+			if (result != null && result.AsyncWriteAll)
+				return;
+
 			if (r.AsyncState != null) {
 				result = (WebAsyncResult) r.AsyncState;
 				result.InnerAsyncResult = r;
@@ -441,9 +443,13 @@ namespace System.Net
 					WebConnection.InitRead (cnc);
 				}
 			} catch (Exception e) {
+				KillBuffer ();
+				nextReadCalled = true;
+				cnc.Close (true);
+				if (e is System.Net.Sockets.SocketException)
+					e = new IOException ("Error writing request", e);
 				result.SetCompleted (false, e);
 			}
-			headersSent = true;
 			complete_request_written = true;
 			result.DoCallback ();
 		}
@@ -451,6 +457,9 @@ namespace System.Net
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int size,
 							AsyncCallback cb, object state)
 		{
+			if (request.Aborted)
+				throw new WebException ("The request was canceled.", null, WebExceptionStatus.RequestCanceled);
+
 			if (isRead)
 				throw new NotSupportedException ("this stream does not allow writing");
 
@@ -472,6 +481,8 @@ namespace System.Net
 			if (!sendChunked)
 				CheckWriteOverflow (request.ContentLength, totalWritten, size);
 			if (allowBuffering && !sendChunked) {
+				if (writeBuffer == null)
+					writeBuffer = new MemoryStream ();
 				writeBuffer.Write (buffer, offset, size);
 				totalWritten += size;
 				if (request.ContentLength > 0 && totalWritten == request.ContentLength) {
@@ -479,7 +490,8 @@ namespace System.Net
 						result.AsyncWriteAll = true;
 						result.InnerAsyncResult = WriteRequestAsync (new AsyncCallback (WriteRequestAsyncCB), result);
 						if (result.InnerAsyncResult == null) {
-							result.SetCompleted (true, 0);
+							if (!result.IsCompleted)
+								result.SetCompleted (true, 0);
 							result.DoCallback ();
 						}
 					} catch (Exception exc) {
@@ -603,26 +615,20 @@ namespace System.Net
 			if (headersSent)
 				return;
 
-			if (!allowBuffering || sendChunked) {
-				headersSent = true;
-				if (!cnc.Connected) {
-					KillBuffer ();
-					throw new WebException ("Not connected", null, WebExceptionStatus.SendFailure, null);
-				}
-
-				
-				if (!cnc.Write (request, buffer, offset, size)) {
-					KillBuffer ();
-					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
-				}
-
+			headers = new byte [size];
+			Buffer.BlockCopy (buffer, offset, headers, 0, size);
+			long cl = request.ContentLength;
+			string method = request.Method;
+			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
+						method == "TRACE" || method == "DELETE");
+			if (sendChunked || cl > -1 || no_writestream) {
+				WriteHeaders ();
 				if (!initRead) {
 					initRead = true;
 					WebConnection.InitRead (cnc);
 				}
-			} else {
-				headers = new byte [size];
-				Buffer.BlockCopy (buffer, offset, headers, 0, size);
+				if (!sendChunked && cl == 0)
+					Close ();
 			}
 		}
 
@@ -636,30 +642,18 @@ namespace System.Net
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
 			writeBuffer = null;
-			request.InternalContentLength = length;
-			request.SendRequestHeaders ();
+			// Headers already written to the stream
+			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
+		}
 
-			//
-			// For small requests, make a copy, it will reduce the traffic, for large
-			// requests, the NoDelay bit on the socket should take effect (set in WebConnection).
-			//
-			if (headers.Length + length < 8192){
-				byte[] b = new byte [headers.Length + length];
+		void WriteHeaders ()
+		{
+			if (headersSent)
+				return;
 
-				Buffer.BlockCopy (headers, 0, b, 0, headers.Length);
-				Buffer.BlockCopy (bytes, 0, b, headers.Length, length);
-
-				return cnc.BeginWrite (request, b, 0, b.Length, cb, state);
-			} else {
-				if (!cnc.Write (request, headers, 0, headers.Length))
-					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
-				
-				headersSent = true;
-				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
-					return null;
-				
-				return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
-			}
+			headersSent = true;
+			if (!cnc.Write (request, headers, 0, headers.Length))
+				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 		}
 
 		internal void WriteRequest ()
@@ -668,7 +662,6 @@ namespace System.Net
 				return;
 
 			if (sendChunked) {
-				request.SendRequestHeaders ();
 				requestWritten = true;
 				return;
 			}
@@ -686,52 +679,23 @@ namespace System.Net
 							WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
-			request.InternalContentLength = length;
-			request.SendRequestHeaders ();
-			requestWritten = true;
-
-			//
-			// For small requests, make a copy, it will reduce the traffic, for large
-			// requests, the NoDelay bit on the socket should take effect (set in WebConnection).
-			//
-			if (headers.Length + length < 8192){
-				byte[] b = new byte [headers.Length + length];
-
-				Buffer.BlockCopy (headers, 0, b, 0, headers.Length);
-				Buffer.BlockCopy (bytes, 0, b, headers.Length, length);
+			WriteHeaders ();
+			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+				return;
 				
-				if (!cnc.Write (request, b, 0, b.Length))
-					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
-				
-				headersSent = true;
-				complete_request_written = true;
-				
-				if (!initRead) {
-					initRead = true;
-					WebConnection.InitRead (cnc);
-				}				
-			} else {
-				if (!cnc.Write (request, headers, 0, headers.Length))
-					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
-				
-				headersSent = true;
-				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
-					return;
-				
-				IAsyncResult result = null;
-				if (length > 0)
-					result = cnc.BeginWrite (request, bytes, 0, length, null, null);
-				
-				if (!initRead) {
-					initRead = true;
-					WebConnection.InitRead (cnc);
-				}
-
-				if (length > 0) 
-					complete_request_written = cnc.EndWrite (request, result);
-				else
-					complete_request_written = true;
+			IAsyncResult result = null;
+			if (length > 0)
+				result = cnc.BeginWrite (request, bytes, 0, length, null, null);
+			
+			if (!initRead) {
+				initRead = true;
+				WebConnection.InitRead (cnc);
 			}
+
+			if (length > 0) 
+				complete_request_written = cnc.EndWrite (request, result);
+			else
+				complete_request_written = true;
 		}
 
 		internal void InternalClose ()
@@ -742,6 +706,9 @@ namespace System.Net
 		public override void Close ()
 		{
 			if (sendChunked) {
+				if (disposed)
+					return;
+				disposed = true;
 				pending.WaitOne ();
 				byte [] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
 				cnc.Write (request, chunk, 0, chunk.Length);
@@ -772,8 +739,7 @@ namespace System.Net
 
 			long length = request.ContentLength;
 
-			// writeBuffer could be null if KillBuffer was already called.
-			if (writeBuffer != null && length != -1 && length > writeBuffer.Length) {
+			if (!sendChunked && length != -1 && totalWritten != length) {
 				IOException io = new IOException ("Cannot close the stream until all bytes are written");
 				nextReadCalled = true;
 				cnc.Close (true);

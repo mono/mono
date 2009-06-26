@@ -996,15 +996,15 @@ namespace System.Net
 		string GetHeaders ()
 		{
 			bool continue100 = false;
-			if (contentLength != -1) {
+			if (sendChunked) {
+				continue100 = true;
+				webHeaders.RemoveAndAdd ("Transfer-Encoding", "chunked");
+				webHeaders.RemoveInternal ("Content-Length");
+			} else if (contentLength != -1) {
 				if (contentLength > 0)
 					continue100 = true;
 				webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				webHeaders.RemoveInternal ("Transfer-Encoding");
-			} else if (sendChunked) {
-				continue100 = true;
-				webHeaders.RemoveAndAdd ("Transfer-Encoding", "chunked");
-				webHeaders.RemoveInternal ("Content-Length");
 			}
 
 			if (actualVersion == HttpVersion.Version11 && continue100 &&
