@@ -1,3 +1,7 @@
+2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: DontLinger does not allow LingerOptions.
+
 2009-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: The spec doesn't mention that it's possible to add
