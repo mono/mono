@@ -1,3 +1,7 @@
+2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: turn WSAEINVAL into ArgumentException.
+
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: MS throws a SocketException in the byte[] overload when
