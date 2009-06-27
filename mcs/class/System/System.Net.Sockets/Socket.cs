@@ -3038,8 +3038,11 @@ namespace System.Net.Sockets
 			SetSocketOption_internal(socket, level, name, null,
 						 opt_value, 0, out error);
 
-			if (error != 0)
+			if (error != 0) {
+				if (error == 10022) // WSAEINVAL
+					throw new ArgumentException ();
 				throw new SocketException (error);
+			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, object opt_value)
@@ -3073,8 +3076,11 @@ namespace System.Net.Sockets
 				SetSocketOption_internal (socket, level, name, opt_value, null, 0, out error);
 			}
 
-			if (error != 0)
+			if (error != 0) {
+				if (error == 10022) // WSAEINVAL
+					throw new ArgumentException ();
 				throw new SocketException (error);
+			}
 		}
 
 #if NET_2_0
@@ -3086,8 +3092,11 @@ namespace System.Net.Sockets
 			int error;
 			int int_val = (optionValue) ? 1 : 0;
 			SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
-			if (error != 0)
+			if (error != 0) {
+				if (error == 10022) // WSAEINVAL
+					throw new ArgumentException ();
 				throw new SocketException (error);
+			}
 		}
 #endif
 
