@@ -742,7 +742,8 @@ namespace System.Net
 				throw new ProtocolViolationException ("Method is null.");
 
 #if !NET_2_0
-			bool send = (method == "PUT" || method == "POST");
+			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
+						method == "TRACE" || method == "DELETE");
 			if (send && contentLength < 0 && !sendChunked && !allowBuffering && KeepAlive)
 				throw new ProtocolViolationException ("Buffering is disabled, ContentLength is negative and SendChunked is disabled.");
 

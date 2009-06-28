@@ -1,5 +1,9 @@
 2009-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: fix 1.1 only test.
+
+2009-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebConnectionStream.cs: when buffering the response, we have to set
 	the internal length and regenerate the headers.
 
