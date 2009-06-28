@@ -1,5 +1,10 @@
 2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SocketTest.cs: Added tests for argument checks, and improved tests
+	for disposed socket.
+
+2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* IPv6MulticastOptionTest.cs: Added .ctor and property tests.
 	* MulticastOptionTest.cs: Added .ctor and property tests.
 	* SocketTest.cs: Fixed compiler warnings. Improved tests for

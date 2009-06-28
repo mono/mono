@@ -159,6 +159,22 @@ namespace MonoTests.System.Net.Sockets
 			CFACalledBack.Set ();
 		}
 
+		[Test] // Connect (IPEndPoint)
+		public void Connect1_RemoteEP_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork,
+				SocketType.Stream, ProtocolType.Tcp);
+			try {
+				s.Connect ((IPEndPoint) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("remoteEP", ex.ParamName, "#5");
+			}
+		}
+
 		[Test]
 		public void ConnectFailAsync ()
 		{
@@ -266,17 +282,6 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed1 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
-			s.Close();
-
-			s.ReceiveFrom (buf, ref ep);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Disposed2 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -303,79 +308,6 @@ namespace MonoTests.System.Net.Sockets
 			s.Close();
 
 			s.Poll (100, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed8 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.Receive (buf);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed9 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.Receive (buf, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed10 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.Receive (buf, 10, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed11 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.Receive (buf, 0, 10, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed12 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
-			s.Close();
-
-			s.ReceiveFrom (buf, 0, ref ep);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed13 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
-			s.Close();
-
-			s.ReceiveFrom (buf, 10, 0, ref ep);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed14 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
-			s.Close();
-
-			s.ReceiveFrom (buf, 0, 10, 0, ref ep);
 		}
 
 		[Test]
@@ -2643,7 +2575,709 @@ namespace MonoTests.System.Net.Sockets
 			RRCLastRead = true;
 			RRCReady.Set ();
 		}
-		
+
+		[Test] // Receive (Byte [])
+		public void Receive1_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((byte []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (Byte [])
+		public void Receive1_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((byte []) null);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (Byte [], SocketFlags)
+		public void Receive2_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((byte []) null, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (Byte [], SocketFlags)
+		public void Receive2_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((byte []) null, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (Byte [], Int32, SocketFlags)
+		public void Receive3_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((byte []) null, 0, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (Byte [], Int32, SocketFlags)
+		public void Receive3_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((byte []) null, 0, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (Byte [], Int32, Int32, SocketFlags)
+		public void Receive4_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((byte []) null, 0, 0, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (Byte [], Int32, Int32, SocketFlags)
+		public void Receive4_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((byte []) null, 0, 0, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+#if NET_2_0
+		[Test] // Receive (Byte [], Int32, Int32, SocketFlags, out SocketError)
+		public void Receive5_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			SocketError error;
+			try {
+				s.Receive ((byte []) null, 0, 0, SocketFlags.None, out error);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (Byte [], Int32, Int32, SocketFlags, out SocketError)
+		public void Receive5_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			SocketError error;
+			try {
+				s.Receive ((byte []) null, 0, 0, SocketFlags.None, out error);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>)
+		public void Receive6_Buffers_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffers", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>)
+		public void Receive6_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>, SocketFlags)
+		public void Receive7_Buffers_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffers", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>, SocketFlags)
+		public void Receive7_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null, (SocketFlags) 666);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>, SocketFlags, out SocketError)
+		public void Receive8_Buffers_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			SocketError error;
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null, (SocketFlags) 666,
+					out error);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffers", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // Receive (IList<ArraySegment<Byte>>, SocketFlags, out SocketError)
+		public void Receive8_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			SocketError error;
+			try {
+				s.Receive ((IList<ArraySegment<byte>>) null, (SocketFlags) 666,
+					out error);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+#endif
+
+		[Test] // ReceiveFrom (Byte [], ref EndPoint)
+		public void ReceiveFrom1_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], ref EndPoint)
+		public void ReceiveFrom1_RemoteEP_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			byte [] buffer = new byte [0];
+			EndPoint remoteEP = null;
+			try {
+				s.ReceiveFrom (buffer, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("remoteEP", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], ref EndPoint)
+		public void ReceiveFrom1_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], SocketFlags, ref EndPoint)
+		public void ReceiveFrom2_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], SocketFlags, ref EndPoint)
+		public void ReceiveFrom2_RemoteEP_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = null;
+			try {
+				s.ReceiveFrom (buffer, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("remoteEP", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], SocketFlags, ref EndPoint)
+		public void ReceiveFrom2_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+		public void ReceiveFrom3_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, -1, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+		public void ReceiveFrom3_RemoteEP_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = null;
+			try {
+				s.ReceiveFrom (buffer, -1, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("remoteEP", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+		public void ReceiveFrom3_Size_OutOfRange ()
+		{
+			Socket s;
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+
+			// size negative
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, -1, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("size", ex.ParamName, "#A5");
+			} finally {
+				s.Close ();
+			}
+
+			// size > buffer length
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, (buffer.Length + 1), (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("size", ex.ParamName, "#B5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, SocketFlags, ref EndPoint)
+		public void ReceiveFrom3_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom ((Byte []) null, -1, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+		public void ReceiveFrom4_Buffer_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+
+			try {
+				s.ReceiveFrom ((Byte []) null, -1, -1, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+		public void ReceiveFrom4_Offset_OutOfRange ()
+		{
+			Socket s;
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+
+			// offset negative
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, -1, 0, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("offset", ex.ParamName, "#A5");
+			} finally {
+				s.Close ();
+			}
+
+			// offset > buffer length
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, (buffer.Length + 1), 0, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("offset", ex.ParamName, "#B5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, ref IPEndPoint)
+		public void ReceiveFrom4_RemoteEP_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = null;
+
+			try {
+				s.ReceiveFrom (buffer, -1, -1, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("remoteEP", ex.ParamName, "#5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, EndPoint)
+		public void ReceiveFrom4_Size_OutOfRange ()
+		{
+			Socket s;
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+
+			// size negative
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, 0, -1, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("size", ex.ParamName, "#A5");
+			} finally {
+				s.Close ();
+			}
+
+			// size > buffer length
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, 0, (buffer.Length + 1), (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("size", ex.ParamName, "#B5");
+			} finally {
+				s.Close ();
+			}
+
+			// offset + size > buffer length
+			s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+							ProtocolType.Tcp);
+			try {
+				s.ReceiveFrom (buffer, 2, 4, (SocketFlags) 666, ref remoteEP);
+				Assert.Fail ("#C1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Specified argument was out of the range of valid values
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("size", ex.ParamName, "#C5");
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // ReceiveFrom (Byte [], Int32, Int32, SocketFlags, ref EndPoint)
+		public void ReceiveFrom4_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream,
+				ProtocolType.Tcp);
+			s.Close ();
+
+			byte [] buffer = new byte [5];
+			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			try {
+				s.ReceiveFrom (buffer, -1, -1, (SocketFlags) 666,
+					ref remoteEP);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
 		[Test]
 		public void ReceiveRemoteClosed ()
 		{

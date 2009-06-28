@@ -2172,32 +2172,32 @@ namespace System.Net.Sockets
 			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
 			out int error);
 
-		public void GetSocketOption (SocketOptionLevel level, SocketOptionName name, byte [] opt_value)
+		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (opt_value == null)
+			if (optionValue == null)
 				throw new SocketException ((int) SocketError.Fault,
 					"Error trying to dereference an invalid pointer");
 
 			int error;
-			
-			GetSocketOption_arr_internal(socket, level, name, ref opt_value,
+
+			GetSocketOption_arr_internal (socket, optionLevel, optionName, ref optionValue,
 				out error);
 			if (error != 0)
 				throw new SocketException (error);
 		}
 
-		public byte [] GetSocketOption (SocketOptionLevel level, SocketOptionName name, int length)
+		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int length)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			byte[] byte_val=new byte[length];
 			int error;
-			
-			GetSocketOption_arr_internal(socket, level, name, ref byte_val,
+
+			GetSocketOption_arr_internal (socket, optionLevel, optionName, ref byte_val,
 				out error);
 			if (error != 0)
 				throw new SocketException (error);
@@ -2302,17 +2302,17 @@ namespace System.Net.Sockets
 			return result;
 		}
 
-		public int Receive (byte [] buf)
+		public int Receive (byte [] buffer)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
 			SocketError error;
 
-			int ret = Receive_nochecks (buf, 0, buf.Length, SocketFlags.None, out error);
+			int ret = Receive_nochecks (buffer, 0, buffer.Length, SocketFlags.None, out error);
 			
 			if (error != SocketError.Success)
 				throw new SocketException ((int) error);
@@ -2320,17 +2320,17 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buf, SocketFlags flags)
+		public int Receive (byte [] buffer, SocketFlags flags)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
 			SocketError error;
 
-			int ret = Receive_nochecks (buf, 0, buf.Length, flags, out error);
+			int ret = Receive_nochecks (buffer, 0, buffer.Length, flags, out error);
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
@@ -2341,20 +2341,20 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buf, int size, SocketFlags flags)
+		public int Receive (byte [] buffer, int size, SocketFlags flags)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (size < 0 || size > buf.Length)
+			if (size < 0 || size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
 			SocketError error;
 
-			int ret = Receive_nochecks (buf, 0, size, flags, out error);
+			int ret = Receive_nochecks (buffer, 0, size, flags, out error);
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
@@ -2365,23 +2365,23 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public int Receive (byte [] buf, int offset, int size, SocketFlags flags)
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buf.Length)
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 
-			if (size < 0 || offset + size > buf.Length)
+			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 			
 			SocketError error;
 
-			int ret = Receive_nochecks (buf, offset, size, flags, out error);
+			int ret = Receive_nochecks (buffer, offset, size, flags, out error);
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
@@ -2393,21 +2393,21 @@ namespace System.Net.Sockets
 		}
 
 #if NET_2_0
-		public int Receive (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buf.Length)
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 
-			if (size < 0 || offset + size > buf.Length)
+			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 			
-			return Receive_nochecks (buf, offset, size, flags, out error);
+			return Receive_nochecks (buffer, offset, size, flags, out error);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -2449,18 +2449,17 @@ namespace System.Net.Sockets
 				    SocketFlags socketFlags,
 				    out SocketError errorCode)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buffers == null ||
 			    buffers.Count == 0) {
 				throw new ArgumentNullException ("buffers");
 			}
-			
-			if (disposed && closed) {
-				throw new ObjectDisposedException (GetType ().ToString ());
-			}
 
 			int numsegments = buffers.Count;
 			int nativeError;
-			int ret;			
+			int ret;
 
 			/* Only example I can find of sending a byte
 			 * array reference directly into an internal
@@ -2513,51 +2512,51 @@ namespace System.Net.Sockets
 			return true;
 		}
 #endif
-		
-		public int ReceiveFrom (byte [] buf, ref EndPoint remote_end)
+
+		public int ReceiveFrom (byte [] buffer, ref EndPoint remoteEP)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
-			return ReceiveFrom_nochecks (buf, 0, buf.Length, SocketFlags.None, ref remote_end);
+			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
 		}
 
-		public int ReceiveFrom (byte [] buf, SocketFlags flags, ref EndPoint remote_end)
+		public int ReceiveFrom (byte [] buffer, SocketFlags flags, ref EndPoint remoteEP)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
-			return ReceiveFrom_nochecks (buf, 0, buf.Length, flags, ref remote_end);
+			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, flags, ref remoteEP);
 		}
 
-		public int ReceiveFrom (byte [] buf, int size, SocketFlags flags,
-					ref EndPoint remote_end)
+		public int ReceiveFrom (byte [] buffer, int size, SocketFlags flags,
+					ref EndPoint remoteEP)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
-			if (size < 0 || size > buf.Length)
+			if (size < 0 || size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			return ReceiveFrom_nochecks (buf, 0, size, flags, ref remote_end);
+			return ReceiveFrom_nochecks (buffer, 0, size, flags, ref remoteEP);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -2569,25 +2568,25 @@ namespace System.Net.Sockets
 							    ref SocketAddress sockaddr,
 							    out int error);
 
-		public int ReceiveFrom (byte [] buf, int offset, int size, SocketFlags flags,
-					ref EndPoint remote_end)
+		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags,
+					ref EndPoint remoteEP)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
-			if (offset < 0 || offset > buf.Length)
+			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 
-			if (size < 0 || offset + size > buf.Length)
+			if (size < 0 || offset + size > buffer.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
-			return ReceiveFrom_nochecks (buf, offset, size, flags, ref remote_end);
+			return ReceiveFrom_nochecks (buffer, offset, size, flags, ref remoteEP);
 		}
 
 		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
@@ -3028,66 +3027,66 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, byte[] opt_value)
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			// I'd throw an ArgumentNullException, but this is what MS does.
-			if (opt_value == null)
+			if (optionValue == null)
 				throw new SocketException ((int) SocketError.Fault,
 					"Error trying to dereference an invalid pointer");
 			
 			int error;
-			
-			SetSocketOption_internal(socket, level, name, null,
-						 opt_value, 0, out error);
+
+			SetSocketOption_internal (socket, optionLevel, optionName, null,
+						 optionValue, 0, out error);
 
 			if (error != 0) {
-				if (error == 10022) // WSAEINVAL
+				if (error == (int) SocketError.InvalidArgument)
 					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
 
-		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, object opt_value)
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, object optionValue)
 		{
-
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (opt_value == null)
+			// NOTE: if a null is passed, the byte[] overload is used instead...
+			if (optionValue == null)
 				throw new ArgumentNullException("optionValue");
 			
 			int error;
 
-			if (level == SocketOptionLevel.Socket && name == SocketOptionName.Linger) {
-				LingerOption linger = opt_value as LingerOption;
+			if (optionLevel == SocketOptionLevel.Socket && optionName == SocketOptionName.Linger) {
+				LingerOption linger = optionValue as LingerOption;
 				if (linger == null)
 #if NET_2_0
 					throw new ArgumentException ("A 'LingerOption' value must be specified.", "optionValue");
 #else
 					throw new ArgumentException ("optionValue");
 #endif
-				SetSocketOption_internal (socket, level, name, linger, null, 0, out error);
-			} else if (level == SocketOptionLevel.IP && (name == SocketOptionName.AddMembership || name == SocketOptionName.DropMembership)) {
-				MulticastOption multicast = opt_value as MulticastOption;
+				SetSocketOption_internal (socket, optionLevel, optionName, linger, null, 0, out error);
+			} else if (optionLevel == SocketOptionLevel.IP && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
+				MulticastOption multicast = optionValue as MulticastOption;
 				if (multicast == null)
 #if NET_2_0
 					throw new ArgumentException ("A 'MulticastOption' value must be specified.", "optionValue");
 #else
 					throw new ArgumentException ("optionValue");
 #endif
-				SetSocketOption_internal (socket, level, name, multicast, null, 0, out error);
-			} else if (level == SocketOptionLevel.IPv6 && (name == SocketOptionName.AddMembership || name == SocketOptionName.DropMembership)) {
-				IPv6MulticastOption multicast = opt_value as IPv6MulticastOption;
+				SetSocketOption_internal (socket, optionLevel, optionName, multicast, null, 0, out error);
+			} else if (optionLevel == SocketOptionLevel.IPv6 && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
+				IPv6MulticastOption multicast = optionValue as IPv6MulticastOption;
 				if (multicast == null)
 #if NET_2_0
 					throw new ArgumentException ("A 'IPv6MulticastOption' value must be specified.", "optionValue");
 #else
 					throw new ArgumentException ("optionValue");
 #endif
-				SetSocketOption_internal (socket, level, name, multicast, null, 0, out error);
+				SetSocketOption_internal (socket, optionLevel, optionName, multicast, null, 0, out error);
 			} else {
 #if NET_2_0
 				throw new ArgumentException ("Invalid value specified.", "optionValue");
@@ -3097,23 +3096,23 @@ namespace System.Net.Sockets
 			}
 
 			if (error != 0) {
-				if (error == 10022) // WSAEINVAL
+				if (error == (int) SocketError.InvalidArgument)
 					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
 
 #if NET_2_0
-		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, bool optionValue)
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
 			int int_val = (optionValue) ? 1 : 0;
-			SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
+			SetSocketOption_internal (socket, optionLevel, optionName, null, null, int_val, out error);
 			if (error != 0) {
-				if (error == 10022) // WSAEINVAL
+				if (error == (int) SocketError.InvalidArgument)
 					throw new ArgumentException ();
 				throw new SocketException (error);
 			}

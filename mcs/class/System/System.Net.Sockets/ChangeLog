@@ -1,5 +1,13 @@
 2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Socket.cs: Modified some argument names to match MS. Moved disposed
+	check before argument checks in Receive. Use SocketError.InvalidArgument
+	instead of using magic numbers. Added back comments that was
+	accidentally removed in my previous commit.
+	* Socket_2_1.cs: Modified some argument names to match MS.
+
+2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Socket.cs: In GetSocketOption, throw SocketException when (byte [])
 	option value is null. Use SocketError fields instead of using "magic"
 	number. In SetSocketOption (SocketOptionLevel, SocketOptionName, object)

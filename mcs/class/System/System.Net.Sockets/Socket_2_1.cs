@@ -426,38 +426,38 @@ namespace System.Net.Sockets {
 							    SocketAddress sa,
 							    out int error);
 
-		public void Connect (EndPoint remote_end)
+		public void Connect (EndPoint remoteEP)
 		{
 			SocketAddress serial = null;
 
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (remote_end == null)
-				throw new ArgumentNullException("remote_end");
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
 
-			if (remote_end is IPEndPoint) {
-				IPEndPoint ep = (IPEndPoint) remote_end;
+			IPEndPoint ep = remoteEP as IPEndPoint;
+			if (ep != null)
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
-			}
+
 #if NET_2_1
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
 
-			DnsEndPoint dep = (remote_end as DnsEndPoint);
+			DnsEndPoint dep = (remoteEP as DnsEndPoint);
 			if (dep != null)
 				serial = dep.AsIPEndPoint ().Serialize ();
 			else
-				serial = remote_end.Serialize ();
+				serial = remoteEP.Serialize ();
 #elif NET_2_0
 			/* TODO: check this for the 1.1 profile too */
 			if (islistening)
 				throw new InvalidOperationException ();
 
-			serial = remote_end.Serialize ();
+			serial = remoteEP.Serialize ();
 #else
-			serial = remote_end.Serialize ();
+			serial = remoteEP.Serialize ();
 #endif
 
 			int error = 0;
@@ -482,8 +482,8 @@ namespace System.Net.Sockets {
 #if NET_2_0
 			isbound = true;
 #endif
-			
-			seed_endpoint = remote_end;
+
+			seed_endpoint = remoteEP;
 		}
 
 #if NET_2_0
@@ -615,23 +615,23 @@ namespace System.Net.Sockets {
 			return ret;
 		}
 
-		public object GetSocketOption (SocketOptionLevel level, SocketOptionName name)
+		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			object obj_val;
 			int error;
-			
-			GetSocketOption_obj_internal(socket, level, name, out obj_val,
+
+			GetSocketOption_obj_internal (socket, optionLevel, optionName, out obj_val,
 				out error);
 			if (error != 0)
 				throw new SocketException (error);
-			
-			if (name == SocketOptionName.Linger) {
+
+			if (optionName == SocketOptionName.Linger) {
 				return((LingerOption)obj_val);
-			} else if (name==SocketOptionName.AddMembership ||
-				   name==SocketOptionName.DropMembership) {
+			} else if (optionName == SocketOptionName.AddMembership ||
+				   optionName == SocketOptionName.DropMembership) {
 				return((MulticastOption)obj_val);
 			} else if (obj_val is int) {
 				return((int)obj_val);
@@ -662,15 +662,15 @@ namespace System.Net.Sockets {
 								     byte [] byte_val, int int_val,
 								     out int error);
 
-		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, int opt_value)
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
-			
-			SetSocketOption_internal(socket, level, name, null,
-						 null, opt_value, out error);
+
+			SetSocketOption_internal (socket, optionLevel, optionName, null,
+						 null, optionValue, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
