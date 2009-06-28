@@ -29,9 +29,13 @@ namespace MonoTests.System.Threading {
 			// this makes fair for the "DueTime" test since it 
 			// doesn't have to wait for the scheduler thread to be 
 			// created. 
-			new Timer (null, null, Timeout.Infinite, 0);
+			new Timer (new TimerCallback (DoNothing), null, Timeout.Infinite, 0);
 		}
-		
+
+		void DoNothing (object foo)
+		{
+		}
+
 		[Test]
 		public void TestDueTime ()
 		{
