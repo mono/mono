@@ -3096,7 +3096,7 @@ namespace System.Net.Sockets
 #endif
 			}
 
-			if (error != 0)
+			if (error != 0) {
 				if (error == 10022) // WSAEINVAL
 					throw new ArgumentException ();
 				throw new SocketException (error);
