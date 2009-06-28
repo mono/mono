@@ -1817,6 +1817,7 @@ namespace MonoTests.System.Net
 			(c) =>
 			{
 			    aborted.Set();
+			    Thread.Sleep (100);
 			    c.Response.StatusCode = 200;
 			    c.Response.ContentLength64 = 0;
 			    c.Response.Close();
