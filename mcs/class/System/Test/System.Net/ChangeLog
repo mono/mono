@@ -1,3 +1,10 @@
+2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SocketResponder.cs: the listener might be closed right before
+	Accept() is called and in that case we get an EINVAL.
+	* WebClientTest.cs: now that we might send separate packets for
+	headers and body, wait a little bit before checking socket.Available.
+
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequestTest.cs: add a bunch of tests provided by

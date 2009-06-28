@@ -48,6 +48,7 @@ namespace MonoTests.System.Net
 		private readonly object _syncRoot = new object ();
 
 		private const int SOCKET_CLOSED = 10004;
+		private const int SOCKET_INVALID_ARGS = 10022;
 
 		public SocketResponder (IPEndPoint localEP, SocketRequestHandler requestHandler)
 		{
@@ -116,7 +117,7 @@ namespace MonoTests.System.Net
 					}
 				} catch (SocketException ex) {
 					// ignore interruption of blocking call
-					if (ex.ErrorCode != SOCKET_CLOSED)
+					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS)
 						throw;
 				} finally {
 					Thread.Sleep (500);

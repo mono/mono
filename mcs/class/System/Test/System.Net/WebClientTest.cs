@@ -2041,6 +2041,9 @@ namespace MonoTests.System.Net
 			int bytesReceived = socket.Receive (buffer);
 			while (bytesReceived > 0) {
 				ms.Write (buffer, 0, bytesReceived);
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
 				if (socket.Available > 0) {
 					bytesReceived = socket.Receive (buffer);
 				} else {
