@@ -1,3 +1,7 @@
+2009-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequestTest.cs: backport from HEAD.
+
 2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SocketResponder.cs: the listener might be closed right before

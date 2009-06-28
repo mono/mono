@@ -77,7 +77,7 @@ namespace MonoTests.System.Net
 		public void Sync ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
-			Assertion.AssertNotNull ("req:If Modified Since: ", req.IfModifiedSince);
+			Assert.IsNotNull (req.IfModifiedSince, "req:If Modified Since: ");
 
 			req.UserAgent = "MonoClient v1.0";
 			Assert.AreEqual ("User-Agent", req.Headers.GetKey (0), "#A1");
@@ -102,10 +102,10 @@ namespace MonoTests.System.Net
 			req.AddRange (50, 90);
 			req.AddRange ("bytes", 100); 
 			req.AddRange ("bytes", 100, 120);
-			Assertion.AssertEquals ("#1", "bytes=10-,50-90,100-,100-120", req.Headers ["Range"]);
+			Assert.AreEqual ("bytes=10-,50-90,100-,100-120", req.Headers ["Range"], "#1");
 			try {
 				req.AddRange ("bits", 2000);
-				Assertion.Fail ("#2");
+				Assert.Fail ("#2");
 			} catch (InvalidOperationException) {}
 		}
 
@@ -153,14 +153,14 @@ namespace MonoTests.System.Net
 			req.KeepAlive = false;
 			req.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv; 1.7.6) Gecko/20050317 Firefox/1.0.2";
 			req.CookieContainer = cookies;
-			Assertion.AssertEquals ("#01", 0, cookies.Count);
+			Assert.AreEqual (0, cookies.Count, "#01");
 			using (HttpWebResponse res = (HttpWebResponse) req.GetResponse()) {
 				CookieCollection coll = req.CookieContainer.GetCookies (new Uri (url));
-				Assertion.AssertEquals ("#02", 1, coll.Count);
-				Assertion.AssertEquals ("#03", 1, res.Cookies.Count);
+				Assert.AreEqual (1, coll.Count, "#02");
+				Assert.AreEqual (1, res.Cookies.Count, "#03");
 				Cookie one = coll [0];
 				Cookie two = res.Cookies [0];
-				Assertion.AssertEquals ("#04", true, object.ReferenceEquals (one, two));
+				Assert.AreEqual (true, object.ReferenceEquals (one, two), "#04");
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace MonoTests.System.Net
 				stream.Write (bytes, 0, bytes.Length);
 				stream.Close ();
 				HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
-				Assertion.AssertEquals ("StatusCode", 200, (int) resp.StatusCode);
+				Assert.AreEqual (200, (int) resp.StatusCode, "StatusCode");
 				StreamReader sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
 				string x = sr.ReadToEnd ();
 				sr.Close ();
@@ -241,7 +241,7 @@ namespace MonoTests.System.Net
 				// Using StreamReader+UTF8Encoding here fails on MS runtime
 				Stream stream = resp.GetResponseStream ();
 				int nread = stream.Read (bytes, 0, 32);
-				Assertion.AssertEquals ("#01", 16, nread);
+				Assert.AreEqual (16, nread, "#01");
 				x = Encoding.ASCII.GetString (bytes, 0, 16);
 			} finally {
 				resp.Close ();
@@ -251,7 +251,7 @@ namespace MonoTests.System.Net
 			if (server.Error != null)
 				throw server.Error;
 
-			Assertion.AssertEquals ("1234567890123456", x);
+			Assert.AreEqual ("1234567890123456", x);
 		}
 
 		[Test]
@@ -393,7 +393,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #508027
-		[Category ("NotWorking")]
 		public void BeginGetResponse ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8003);
@@ -556,7 +555,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		[Test] // bug #510661
+		[Test] // bug #510661 and #514996
 		[Category ("NotWorking")]
 		public void GetRequestStream_Close_NotAllBytesWritten ()
 		{
@@ -642,7 +641,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -665,7 +664,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -692,18 +691,34 @@ namespace MonoTests.System.Net
 				Stream rs;
 				byte [] buffer;
 
+				/*
 				req = (HttpWebRequest) WebRequest.Create (url);
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
 				rs.WriteByte (0x2c);
 
 				buffer = new byte [] { 0x2a, 0x1d };
+				rs.Write (buffer, 0, buffer.Length);
+				req.Abort ();
+				*/
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+
+				buffer = new byte [] { 0x2a, 0x2c, 0x1d };
 				rs.Write (buffer, 0, buffer.Length);
 				req.Abort ();
 			}
@@ -721,7 +736,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -745,7 +760,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -778,7 +793,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -794,7 +809,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 1000;
+				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -1081,6 +1096,40 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test] // bug #513087
+		public void NonStandardVerb ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/moved/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (VerbEchoHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "WhatEver";
+				req.KeepAlive = false;
+				req.Timeout = 20000;
+				req.ReadWriteTimeout = 20000;
+
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						ep.ToString () + "/moved/", "#2");
+					Assert.AreEqual ("WhatEver", resp.Method, "#3");
+					Assert.AreEqual ("WhatEver", body, "#4");
+				}
+
+				responder.Stop ();
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")] // Assert #2 fails
 		public void NotModifiedSince ()
@@ -1192,6 +1241,9 @@ namespace MonoTests.System.Net
 			int bytesReceived = socket.Receive (buffer);
 			while (bytesReceived > 0) {
 				ms.Write (buffer, 0, bytesReceived);
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
 				if (socket.Available > 0) {
 					bytesReceived = socket.Receive (buffer);
 				} else {
@@ -1221,6 +1273,9 @@ namespace MonoTests.System.Net
 			int bytesReceived = socket.Receive (buffer);
 			while (bytesReceived > 0) {
 				ms.Write (buffer, 0, bytesReceived);
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
 				if (socket.Available > 0) {
 					bytesReceived = socket.Receive (buffer);
 				} else {
@@ -1287,6 +1342,47 @@ namespace MonoTests.System.Net
 			sw.WriteLine ("ETag: 898bbr2347056cc2e096afc66e104653");
 			sw.WriteLine ("Connection: close");
 			sw.WriteLine ();
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] VerbEchoHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+			string statusLine = null;
+			using (StreamReader sr = new StreamReader (ms, Encoding.UTF8)) {
+				statusLine = sr.ReadLine ();
+			}
+
+			string verb = "DEFAULT";
+			if (statusLine != null) {
+				string [] parts = statusLine.Split (' ');
+				if (parts.Length > 0)
+					verb = parts [0];
+			}
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/plain");
+			sw.WriteLine ("Content-Length: " + verb.Length);
+			sw.WriteLine ();
+			sw.Write (verb);
 			sw.Flush ();
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());
