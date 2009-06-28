@@ -287,36 +287,6 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed3 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.GetSocketOption (0, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed4 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.GetSocketOption (0, 0, null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
-		public void Disposed5 ()
-		{
-			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.Close();
-
-			s.GetSocketOption (0, 0, 0);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Disposed6 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -370,7 +340,6 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed11 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
 			s.Close();
 
 			s.Receive (buf, 0, 10, 0);
@@ -444,7 +413,6 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed18 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
 			s.Close();
 
 			s.Send (buf, 0, 10, 0);
@@ -499,7 +467,6 @@ namespace MonoTests.System.Net.Sockets
 		public void Disposed23 ()
 		{
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
 			s.Close();
 
 			s.Shutdown (0);
@@ -545,7 +512,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		public void SocketError ()
+		public void SocketErrorTest ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
 						  SocketType.Stream,
@@ -2749,35 +2716,652 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 #endif
-		[Test]
-		public void SetSocketOption_DontLinger ()
+
+		[Test] // GetSocketOption (SocketOptionLevel, SocketOptionName)
+		public void GetSocketOption1_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.GetSocketOption (0, 0);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // GetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void GetSocketOption2_OptionValue_Null ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			try {
+				s.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					(byte []) null);
+				Assert.Fail ("#1");
+				} catch (SocketException ex) {
+					// The system detected an invalid pointer address in attempting
+					// to use a pointer argument in a call
+					Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+					Assert.AreEqual (10014, ex.ErrorCode, "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+					Assert.AreEqual (10014, ex.NativeErrorCode, "#6");
+#if NET_2_0
+					Assert.AreEqual (SocketError.Fault, ex.SocketErrorCode, "#7");
+#endif
+				}
+		}
+
+		[Test] // GetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void GetSocketOption2_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.GetSocketOption (0, 0, (byte []) null);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // GetSocketOption (SocketOptionLevel, SocketOptionName, Int32)
+		public void GetSocketOption3_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.GetSocketOption (0, 0, 0);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void SetSocketOption1_DontLinger ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger,
+					new byte [] { 0x00 });
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger,
+					new byte [] { 0x01 });
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void SetSocketOption1_DontLinger_Null ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.DontLinger, (byte []) null);
+					Assert.Fail ("#1");
+				} catch (SocketException ex) {
+					// The system detected an invalid pointer address in attempting
+					// to use a pointer argument in a call
+					Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+					Assert.AreEqual (10014, ex.ErrorCode, "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+					Assert.AreEqual (10014, ex.NativeErrorCode, "#6");
 #if NET_2_0
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, false);
+					Assert.AreEqual (SocketError.Fault, ex.SocketErrorCode, "#7");
 #endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void SetSocketOption1_Linger_Null ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.DontLinger, (byte []) null);
+					Assert.Fail ("#1");
+				} catch (SocketException ex) {
+					// The system detected an invalid pointer address in attempting
+					// to use a pointer argument in a call
+					Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+					Assert.AreEqual (10014, ex.ErrorCode, "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+					Assert.AreEqual (10014, ex.NativeErrorCode, "#6");
+#if NET_2_0
+					Assert.AreEqual (SocketError.Fault, ex.SocketErrorCode, "#7");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Byte [])
+		public void SetSocketOption1_Socket_Close ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger,
+					new byte [] { 0x00 });
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Int32)
+		public void SetSocketOption2_DontLinger ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
 				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, 0);
 				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, 5);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (SocketException))]
-		public void SetSocketOption_Null_DontLinger ()
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Int32)
+		[Category ("NotWorking")]
+		public void SetSocketOption2_Linger ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, null);
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger, 0);
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger, 5);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void SetSocketOption_LingerOption_DontLinger ()
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Int32)
+		public void SetSocketOption2_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, 0);
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_AddMembershipIPv4_IPv6MulticastOption ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				try {
+					s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+						new IPv6MulticastOption (mcast_addr));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					// The specified value is not a valid 'MulticastOption'
+					Assert.IsTrue (ex.Message.IndexOf ("'MulticastOption'") != -1, "#5:" + ex.Message);
+					Assert.AreEqual ("optionValue", ex.ParamName, "#6");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_AddMembershipIPv4_MulticastOption ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+					new MulticastOption (mcast_addr));
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("NotWorking")]
+		public void SetSocketOption3_AddMembershipIPv4_Socket_NotBound ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			try {
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+					new MulticastOption (mcast_addr));
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				// An invalid argument was supplied
+				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+				Assert.AreEqual (10022, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
+#if NET_2_0
+				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
+#endif
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_AddMembershipIPv6_IPv6MulticastOption ()
+		{
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
+			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
+
+			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+					new IPv6MulticastOption (mcast_addr));
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_AddMembershipIPv6_MulticastOption ()
+		{
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
+			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
+
+			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				try {
+					s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+						new MulticastOption (mcast_addr));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					// The specified value is not a valid 'IPv6MulticastOption'
+					Assert.IsTrue (ex.Message.IndexOf ("'IPv6MulticastOption'") != -1, "#5:" + ex.Message);
+					Assert.AreEqual ("optionValue", ex.ParamName, "#6");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("NotWorking")]
+		public void SetSocketOption3_AddMembershipIPv6_Socket_NotBound ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
+
+			Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+			try {
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+					new IPv6MulticastOption (mcast_addr));
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				// An invalid argument was supplied
+				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+				Assert.AreEqual (10022, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
+#if NET_2_0
+				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
+#endif
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DontLinger_Boolean ()
 		{
 			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.DontLinger, new LingerOption (true, 1000));
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.DontLinger, (object) false);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// The specified value is not valid
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+#if NET_2_0
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DontLinger_Int32 ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.DontLinger, (object) 0);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// The specified value is not valid
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+#if NET_2_0
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DontLinger_LingerOption ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.DontLinger, new LingerOption (true, 1000));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+#if NET_2_0
+					// The specified value is not valid
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_Linger_Boolean ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.Linger, (object) false);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+#if NET_2_0
+					// The specified value is not valid
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_Linger_Int32 ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.Linger, (object) 0);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+#if NET_2_0
+					// The specified value is not valid
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_Linger_LingerOption ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					new LingerOption (false, 0));
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					new LingerOption (true, 0));
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					new LingerOption (false, 1000));
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					new LingerOption (true, 1000));
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DropMembershipIPv4_IPv6MulticastOption ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+					new MulticastOption (mcast_addr));
+				try {
+					s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+						new IPv6MulticastOption (mcast_addr));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					// The specified value is not a valid 'MulticastOption'
+					Assert.IsTrue (ex.Message.IndexOf ("'MulticastOption'") != -1, "#5:" + ex.Message);
+					Assert.AreEqual ("optionValue", ex.ParamName, "#6");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DropMembershipIPv4_MulticastOption ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+				MulticastOption option = new MulticastOption (mcast_addr);
+
+				s.Bind (new IPEndPoint (IPAddress.Any, 1901));
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+					option);
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+					option);
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("NotWorking")]
+		public void SetSocketOption3_DropMembershipIPv4_Socket_NotBound ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("239.255.255.250");
+
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			try {
+				s.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+					new MulticastOption (mcast_addr));
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				// An invalid argument was supplied
+				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+				Assert.AreEqual (10022, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
+#if NET_2_0
+				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
+#endif
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DropMembershipIPv6_IPv6MulticastOption ()
+		{
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
+			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
+				IPv6MulticastOption option = new IPv6MulticastOption (
+					IPAddress.Parse ("ff02::1"));
+
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+					option);
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership,
+					option);
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_DropMembershipIPv6_MulticastOption ()
+		{
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
+			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
+
+			using (Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)) {
+				s.Bind (new IPEndPoint (IPAddress.IPv6Any, 1902));
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+					new IPv6MulticastOption (mcast_addr));
+				try {
+					s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership,
+						new MulticastOption (mcast_addr));
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					// The specified value is not a valid 'IPv6MulticastOption'
+					Assert.IsTrue (ex.Message.IndexOf ("'IPv6MulticastOption'") != -1, "#5:" + ex.Message);
+					Assert.AreEqual ("optionValue", ex.ParamName, "#6");
+#else
+					Assert.AreEqual ("optionValue", ex.Message, "#5");
+					Assert.IsNull (ex.ParamName, "#6");
+#endif
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		[Category ("NotWorking")]
+		public void SetSocketOption3_DropMembershipIPv6_Socket_NotBound ()
+		{
+			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
+
+			Socket s = new Socket (AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp);
+			try {
+				s.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership,
+					new IPv6MulticastOption (mcast_addr));
+				Assert.Fail ("#1");
+			} catch (SocketException ex) {
+				// An invalid argument was supplied
+				Assert.AreEqual (typeof (SocketException), ex.GetType (), "#2");
+				Assert.AreEqual (10022, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (10022, ex.NativeErrorCode, "#6");
+#if NET_2_0
+				Assert.AreEqual (SocketError.InvalidArgument, ex.SocketErrorCode, "#7");
+#endif
+			} finally {
+				s.Close ();
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_OptionValue_Null ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)) {
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket,
+						SocketOptionName.Linger, (object) null);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("optionValue", ex.ParamName, "#5");
+				}
+			}
+		}
+
+		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+		public void SetSocketOption3_Socket_Closed ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			try {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger,
+					new LingerOption (false, 0));
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a disposed object
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
 			}
 		}
 	}
 }
-

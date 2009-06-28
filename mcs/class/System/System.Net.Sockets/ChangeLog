@@ -1,3 +1,24 @@
+2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Socket.cs: In GetSocketOption, throw SocketException when (byte [])
+	option value is null. Use SocketError fields instead of using "magic"
+	number. In SetSocketOption (SocketOptionLevel, SocketOptionName, object)
+	only accept Linger, AddMembership, DropMembership and verify option
+	value.
+	* MulticastOption.cs: Added argument checks. Save interfaceIndex that is
+	passed to .ctor, and removed MonoTODO. Renamed arguments to match MS.
+	Reset InterfaceIndex when LocalAddress is modified, and reset
+	LocalAddress when InterfaceIndex is modified.
+	* UdpClient.cs: Modified exception to more closely match MS. Fixed
+	(int, AddressFamily) .ctor to construct IPv6 endpoint when family is
+	InterNetworkV6. Added null check for multicastAddr to (IPAddress)
+	JoinMulticastGroup overload. In (int, IPAddress) and (IPAddress,
+	IPAddress) overloads of JoinMulticastGroup throw SocketException when
+	client is IPv4. Added null check for multicastAddr to (IPAddress, int),
+	overload, and moved JoinMulticastGroup call after argument checks.
+	* IPv6MulticastOption.cs: Renamed argument names to match MS. Added
+	null check to set_Group. Added range check to set_InterfaceIndex.
+
 2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: turn WSAEINVAL into ArgumentException.

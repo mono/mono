@@ -2177,6 +2177,10 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
+			if (opt_value == null)
+				throw new SocketException ((int) SocketError.Fault,
+					"Error trying to dereference an invalid pointer");
+
 			int error;
 			
 			GetSocketOption_arr_internal(socket, level, name, ref opt_value,
@@ -3031,7 +3035,8 @@ namespace System.Net.Sockets
 
 			// I'd throw an ArgumentNullException, but this is what MS does.
 			if (opt_value == null)
-				throw new SocketException (10014, "Error trying to dereference an invalid pointer");
+				throw new SocketException ((int) SocketError.Fault,
+					"Error trying to dereference an invalid pointer");
 			
 			int error;
 			
@@ -3051,32 +3056,47 @@ namespace System.Net.Sockets
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			// NOTE: if a null is passed, the byte[] overload is used instead...
 			if (opt_value == null)
-				throw new ArgumentNullException("opt_value");
+				throw new ArgumentNullException("optionValue");
 			
 			int error;
-			/* From MS documentation on SetSocketOption: "For an
-			 * option with a Boolean data type, specify a nonzero
-			 * value to enable the option, and a zero value to
-			 * disable the option."
-			 * Booleans are only handled in 2.0
-			 */
 
-			if (opt_value is System.Boolean) {
+			if (level == SocketOptionLevel.Socket && name == SocketOptionName.Linger) {
+				LingerOption linger = opt_value as LingerOption;
+				if (linger == null)
 #if NET_2_0
-				bool bool_val = (bool) opt_value;
-				int int_val = (bool_val) ? 1 : 0;
-
-				SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
+					throw new ArgumentException ("A 'LingerOption' value must be specified.", "optionValue");
 #else
-				throw new ArgumentException ("Use an integer 1 (true) or 0 (false) instead of a boolean.", "opt_value");
+					throw new ArgumentException ("optionValue");
 #endif
+				SetSocketOption_internal (socket, level, name, linger, null, 0, out error);
+			} else if (level == SocketOptionLevel.IP && (name == SocketOptionName.AddMembership || name == SocketOptionName.DropMembership)) {
+				MulticastOption multicast = opt_value as MulticastOption;
+				if (multicast == null)
+#if NET_2_0
+					throw new ArgumentException ("A 'MulticastOption' value must be specified.", "optionValue");
+#else
+					throw new ArgumentException ("optionValue");
+#endif
+				SetSocketOption_internal (socket, level, name, multicast, null, 0, out error);
+			} else if (level == SocketOptionLevel.IPv6 && (name == SocketOptionName.AddMembership || name == SocketOptionName.DropMembership)) {
+				IPv6MulticastOption multicast = opt_value as IPv6MulticastOption;
+				if (multicast == null)
+#if NET_2_0
+					throw new ArgumentException ("A 'IPv6MulticastOption' value must be specified.", "optionValue");
+#else
+					throw new ArgumentException ("optionValue");
+#endif
+				SetSocketOption_internal (socket, level, name, multicast, null, 0, out error);
 			} else {
-				SetSocketOption_internal (socket, level, name, opt_value, null, 0, out error);
+#if NET_2_0
+				throw new ArgumentException ("Invalid value specified.", "optionValue");
+#else
+				throw new ArgumentException ("optionValue");
+#endif
 			}
 
-			if (error != 0) {
+			if (error != 0)
 				if (error == 10022) // WSAEINVAL
 					throw new ArgumentException ();
 				throw new SocketException (error);

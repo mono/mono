@@ -224,6 +224,8 @@ System.Net/WebClientTest.cs
 System.Net.Configuration/ConnectionManagementSectionTest.cs
 System.Net.Configuration/HttpWebRequestElementTest.cs
 System.Net.Configuration/WebRequestModulesSectionTest.cs
+System.Net.Sockets/IPv6MulticastOptionTest.cs
+System.Net.Sockets/MulticastOptionTest.cs
 System.Net.Sockets/NetworkStreamTest.cs
 System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs

@@ -47,28 +47,37 @@ namespace System.Net.Sockets
 		public IPv6MulticastOption (IPAddress group)
 			: this (group, 0)
 		{
-
 		}
 
-		public IPv6MulticastOption (IPAddress group, long ifIndex)
+		public IPv6MulticastOption (IPAddress group, long ifindex)
 		{
 			if (group == null)
-				throw new ArgumentNullException ("grp");
+				throw new ArgumentNullException ("group");
+			if (ifindex < 0 || ifindex > 0xffffffff)
+				throw new ArgumentOutOfRangeException ("ifindex");
 
 			this.group = group;
-			this.ifIndex = ifIndex;
+			this.ifIndex = ifindex;
 		}
 
 		public IPAddress Group
 		{
 			get { return group; }
-			set { group = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				group = value;
+			}
 		}
 
 		public long InterfaceIndex
 		{
 			get { return ifIndex; }
-			set { ifIndex = value; }
+			set {
+				if (value < 0 || value > 0xffffffff)
+					throw new ArgumentOutOfRangeException ("value");
+				ifIndex = value;
+			}
 		}
 	}
 #endif

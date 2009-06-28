@@ -46,28 +46,33 @@ namespace System.Net.Sockets
 		int iface_index;
 #endif
 
-		public MulticastOption (IPAddress grp)
-			: this (grp, IPAddress.Any)
+		public MulticastOption (IPAddress group)
+			: this (group, IPAddress.Any)
 		{
-			group = grp;
 		}
+
 #if NET_2_0
-		[MonoTODO ("Get interface IP from interface index")]
 		public MulticastOption (IPAddress group, int interfaceIndex)
 		{
+			if (group == null)
+				throw new ArgumentNullException ("group");
+			if (interfaceIndex < 0 || interfaceIndex > 0xffffff)
+				throw new ArgumentOutOfRangeException ("interfaceIndex");
+
 			this.group = group;
+			this.iface_index = interfaceIndex;
 		}
 #endif
-		public MulticastOption (IPAddress grp, IPAddress addr)
+
+		public MulticastOption (IPAddress group, IPAddress mcint)
 		{
-			if (grp == null)
-				throw new ArgumentNullException ("grp");
+			if (group == null)
+				throw new ArgumentNullException ("group");
+			if (mcint == null)
+				throw new ArgumentNullException ("mcint");
 
-			if (addr == null)
-				throw new ArgumentNullException ("addr");
-
-			group = grp;
-			local = addr;
+			this.group = group;
+			this.local = mcint;
 		}
 
 		public IPAddress Group {
@@ -77,13 +82,23 @@ namespace System.Net.Sockets
 
 		public IPAddress LocalAddress {
 			get { return local; }
-			set { local = value; }
+			set {
+				local = value;
+#if NET_2_0
+				iface_index = 0;
+#endif
+			}
 		}
 
 #if NET_2_0
 		public int InterfaceIndex {
 			get { return iface_index; }
-			set { iface_index = value; }
+			set {
+				if (value < 0 || value > 0xffffff)
+					throw new ArgumentOutOfRangeException ("value");
+				iface_index = value;
+				local = null;
+			}
 		}
 #endif
 	}

@@ -1,3 +1,12 @@
+2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IPv6MulticastOptionTest.cs: Added .ctor and property tests.
+	* MulticastOptionTest.cs: Added .ctor and property tests.
+	* SocketTest.cs: Fixed compiler warnings. Improved tests for
+	closed socket. Added tests fr GetSocketOption, and SetSocketOption
+	overloads (for Linger, DontLinger, AddMembership and DropMembership).
+	* UdpClientTest.cs: Added .ctor and JoinMulticastGroup tests.
+
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SocketTest.cs: tests for DontLinger.

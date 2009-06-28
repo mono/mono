@@ -1,3 +1,8 @@
+2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added IPv6MulticastOptionTest.cs and
+	MulticastOptionTest.cs.
+
 2009-05-14  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Distribute Test/test-config-file-net-2.0.
