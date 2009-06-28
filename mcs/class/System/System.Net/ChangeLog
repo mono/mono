@@ -1,3 +1,7 @@
+2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: backported from HEAD.
+
 2009-06-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: don't send Content-Length header when SendChunked
