@@ -679,6 +679,10 @@ namespace System.Net
 							WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
+			if (!headersSent) {
+				request.InternalContentLength = length;
+				request.SendRequestHeaders ();
+			}
 			WriteHeaders ();
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 				return;
