@@ -191,6 +191,25 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebCategoryAttribute ("Parameter")]
+		[DefaultValueAttribute (DbType.Object)]
+		[WebSysDescriptionAttribute ("Parameter's DbType.")]
+		public DbType DbType
+		{
+			get {
+				object o = ViewState ["DbType"];
+				if (o == null)
+					return DbType.Object;
+				return (DbType) o;
+			}
+			set {
+				if (DbType != value) {
+					ViewState ["DbType"] = value;
+					OnParameterChanged ();
+				}
+			}
+		}
+
 		[DefaultValue (0)]
 		public int Size {
 			get { return ViewState.GetInt ("Size", 0); }
