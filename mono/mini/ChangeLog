@@ -1,3 +1,9 @@
+2009-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (get_generic_context_from_stack_frame): Fix the case
+	when the generic instance is an instantiation of a subclass of the
+	methods class. Fixes #517166.
+
 
 Fri Apr 24 16:44:08 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
