@@ -679,6 +679,13 @@ namespace System.Windows.Forms {
 
 		public bool ProcessKeys (ref Message msg, Keys keyData)
 		{
+			// We should process Alt+key only if we don't have an active menu,
+			// and hide it otherwise.
+			if ((keyData & Keys.Alt) == Keys.Alt && active) {
+				Deactivate ();
+				return false;
+			}
+
 			// If we get Alt-F4, Windows will ignore it because we have a capture,
 			// release the capture and the program will exit.  (X11 doesn't care.)
 			if ((keyData & Keys.Alt) == Keys.Alt && (keyData & Keys.F4) == Keys.F4) {
