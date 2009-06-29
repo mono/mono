@@ -2188,6 +2188,10 @@ namespace System.Web.Compilation
 		{
 			if (value is System.Web.UI.WebControls.Unit) {
 				System.Web.UI.WebControls.Unit s = (System.Web.UI.WebControls.Unit) value;
+				if (s.IsEmpty) {
+					FieldInfo f = typeof (Unit).GetField ("Empty");
+					return new InstanceDescriptor (f, null);
+				}
 				ConstructorInfo c = typeof(System.Web.UI.WebControls.Unit).GetConstructor (
 					BindingFlags.Instance | BindingFlags.Public,
 					null,
@@ -2199,6 +2203,10 @@ namespace System.Web.Compilation
 			
 			if (value is System.Web.UI.WebControls.FontUnit) {
 				System.Web.UI.WebControls.FontUnit s = (System.Web.UI.WebControls.FontUnit) value;
+				if (s.IsEmpty) {
+					FieldInfo f = typeof (FontUnit).GetField ("Empty");
+					return new InstanceDescriptor (f, null);
+				}
 
 				Type cParamType = null;
 				object cParam = null;
