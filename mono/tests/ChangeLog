@@ -1,3 +1,7 @@
+2009-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* dynamic-method-finalize.2.cs: New test.
+
 2009-06-25  Mark Probst  <mark.probst@gmail.com>
 
 	* appdomain-async-invoke.cs: Fail if BeginInvoke doesn't return an
