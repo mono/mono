@@ -1,3 +1,9 @@
+2009-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (get_generic_context_from_stack_frame): Fix the case
+	when the generic instance is an instantiation of a subclass of the
+	methods class. Fixes #517166.
+
 2009-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Fix thread attaching in AOTed
