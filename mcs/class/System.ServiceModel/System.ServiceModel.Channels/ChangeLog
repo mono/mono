@@ -1,3 +1,9 @@
+2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : do not output all (stored) writer
+	  session strings but output only those new ones in current message.
+	  This fixes inconsistent body output in repetitive use of sender.
+
 2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : handle EndRecord for repetitive

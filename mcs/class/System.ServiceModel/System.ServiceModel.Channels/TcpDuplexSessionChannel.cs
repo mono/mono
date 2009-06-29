@@ -545,8 +545,8 @@ namespace System.ServiceModel.Channels
 			// dictionary
 			MemoryStream msd = new MemoryStream ();
 			BinaryWriter dw = new BinaryWriter (msd);
-			foreach (var ds in session.List)
-				dw.Write (ds.Value);
+			for (int i = writer_session_count; i < session.List.Count; i++)
+				dw.Write (session.List [i].Value);
 			dw.Flush ();
 
 			int length = (int) (msd.Position + ms.Position);
