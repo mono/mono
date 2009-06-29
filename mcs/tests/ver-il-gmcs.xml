@@ -11604,7 +11604,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>217</size>
+        <size>232</size>
       </method>
     </type>
   </test>
@@ -11629,7 +11629,10 @@
         <size>4</size>
       </method>
       <method name="Int32 Main()">
-        <size>109</size>
+        <size>123</size>
+      </method>
+      <method name="Void TestStruct(Nullable`1)">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -34977,31 +34980,6 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-682.cs">
-    <type name="broken_cast">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void report(System.String)">
-        <size>7</size>
-      </method>
-      <method name="Void conv_ovf_i(Int64, Boolean)">
-        <size>73</size>
-      </method>
-      <method name="Void conv_ovf_i_un(Int64, Boolean)">
-        <size>73</size>
-      </method>
-      <method name="Void conv_ovf_u(Int64, Boolean)">
-        <size>73</size>
-      </method>
-      <method name="Void conv_ovf_u_un(Int64, Boolean)">
-        <size>73</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>472</size>
       </method>
     </type>
   </test>

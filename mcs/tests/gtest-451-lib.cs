@@ -1,5 +1,9 @@
 // Compiler options: -t:library -langversion:future
 
+public struct S
+{
+}
+
 public class B
 {
 	public static string TestString (string s = "mono")
@@ -16,7 +20,12 @@ public class B
 	{
 		return t;
 	}
-	
+
+	public static S TestNew (S s = new S ())
+	{
+		return s;
+	}
+
 	public static decimal TestDecimal (int i, decimal d = decimal.MinValue)
 	{
 		return d;

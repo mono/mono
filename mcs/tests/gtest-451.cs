@@ -37,6 +37,8 @@ class C
 		if (b [0] != 'h')
 			return 9;
 		
+		B.TestNew ();
+		
 		Console.WriteLine ("ok");
 		
 		return 0;

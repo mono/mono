@@ -2,6 +2,10 @@
 
 using System;
 
+struct S
+{
+}
+
 public class C
 {
 	static void Foo<T> (T t, T u = default (T))
@@ -17,6 +21,10 @@ public class C
 	{
 	}
 
+	static void TestStruct (S? s = new S ())
+	{
+	}
+	
 	public string this [int i, string s = "test"] {
 		get { return s; }
 		set { value = s; }
@@ -31,6 +39,8 @@ public class C
 		Foo<string> ("2", "3");
 		
 		TestParams ();
+		
+		TestStruct ();
 		
 		C c = new C ();
 		if (c [1] != "test")
