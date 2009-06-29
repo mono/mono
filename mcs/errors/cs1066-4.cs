@@ -1,10 +1,11 @@
 // CS1066: The default value specified for optional parameter `i' will never be used
-// Line: 6
+// Line: 7
 // Compiler options: -warnaserror -langversion:future
 
-public class C
+class C
 {
-	public int this [int i = 1] { 
-		set {}
+	public static implicit operator C (int i = 8)
+	{
+		return null;
 	}
 }
