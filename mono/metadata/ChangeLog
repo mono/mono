@@ -1,5 +1,10 @@
 2009-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c: Store the thread start argument in a hash table instead of
+	registering it as a root, as libgc doesn't support unregistering roots
+	under windows, leading to 'too many root sets' errors when many threads
+	are created.
+
 	* gc.c (mono_gc_run_finalize): Avoid finalizing dynamic methods during
 	shutdown, they can still be referenced by the other dying objects.
 	Fixes #514506.
