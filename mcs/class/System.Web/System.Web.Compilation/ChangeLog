@@ -1,3 +1,8 @@
+2009-06-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TemplateControlCompiler.cs: use the 'Empty' field for Unit and
+	FontUnit.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BuildManager.cs: backport r131138.
