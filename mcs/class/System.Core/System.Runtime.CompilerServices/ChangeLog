@@ -1,3 +1,7 @@
+2009-06-29  Marek Safar <marek.safar@gmail.com>
+
+	* ChangeLog: Add DynamicAttribute.
+
 2009-03-05  Jb Evain  <jbevain@novell.com>
 
 	* ExecutionScope.cs: add support for hoisted locals.
