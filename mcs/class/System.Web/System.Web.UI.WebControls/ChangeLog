@@ -1,3 +1,7 @@
+2009-06-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Parameter.cs: add new DbType property.
+
 2009-06-16  Marek Habersack  <mhabersack@novell.com>
 
 	* IPersistedSelector.cs: removed AspNetHostingPermission
