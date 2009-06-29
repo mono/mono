@@ -18,126 +18,127 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System {
 
-public class TimeZoneTest : TestCase {
+public class TimeZoneTest {
 
 	private CultureInfo oldcult;
 
 	public TimeZoneTest() {}
 
-	protected override void SetUp ()
+	[SetUp]
+	protected void SetUp ()
 	{
 		oldcult = Thread.CurrentThread.CurrentCulture;
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
 	}
-	
-	protected override void TearDown ()
+
+	[TearDown]
+	protected void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = oldcult;
 	}
 
 	private void CET (TimeZone t1) 
 	{
-		AssertEquals("A01", "CET", t1.StandardName);
-		AssertEquals("A02", "CEST", t1.DaylightName);
+		Assert.AreEqual("CET", t1.StandardName, "A01");
+		Assert.AreEqual("CEST", t1.DaylightName, "A02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		AssertEquals("A03", "03/31/2002 02:00:00", d1.Start.ToString ("G"));
-		AssertEquals("A04", "10/27/2002 03:00:00", d1.End.ToString ("G"));
-		AssertEquals("A05", 36000000000L, d1.Delta.Ticks);
+		Assert.AreEqual("03/31/2002 02:00:00", d1.Start.ToString ("G"), "A03");
+		Assert.AreEqual("10/27/2002 03:00:00", d1.End.ToString ("G"), "A04");
+		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "A05");
 	
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		AssertEquals("A06", "03/31/1996 02:00:00", d2.Start.ToString ("G"));
-		AssertEquals("A07", "10/27/1996 03:00:00", d2.End.ToString ("G"));
-		AssertEquals("A08", 36000000000L, d2.Delta.Ticks);
+		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G"), "A06");
+		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G"), "A07");
+		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "A08");
 	
 		DateTime d3 = new DateTime (2002,2,25);
-		AssertEquals("A09", false, t1.IsDaylightSavingTime (d3));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d3), "A09");
 		DateTime d4 = new DateTime (2002,4,2);
-		AssertEquals("A10", true, t1.IsDaylightSavingTime (d4));
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d4), "A10");
 		DateTime d5 = new DateTime (2002,11,4);
-		AssertEquals("A11", false, t1.IsDaylightSavingTime (d5));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d5), "A11");
 	
-		AssertEquals("A12", 36000000000L, t1.GetUtcOffset (d3).Ticks);
-		AssertEquals("A13", 72000000000L, t1.GetUtcOffset (d4).Ticks);
-		AssertEquals("A14", 36000000000L, t1.GetUtcOffset (d5).Ticks);
+		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d3).Ticks, "A12");
+		Assert.AreEqual(72000000000L, t1.GetUtcOffset (d4).Ticks, "A13");
+		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d5).Ticks, "A14");
 	}
 
 	private void EST (TimeZone t1) 
 	{
 		// It could be EST though...
-		//AssertEquals("B01", "Eastern Standard Time", t1.StandardName);
-		//AssertEquals("B02", "Eastern Daylight Time", t1.DaylightName);
+		//Assert.AreEqual("Eastern Standard Time", t1.StandardName, "B01");
+		//Assert.AreEqual("Eastern Daylight Time", t1.DaylightName, "B02");
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		AssertEquals("B03", "04/07/2002 02:00:00", d1.Start.ToString ("G"));
-		AssertEquals("B04", "10/27/2002 02:00:00", d1.End.ToString ("G"));
-		AssertEquals("B05", 36000000000L, d1.Delta.Ticks);
+		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G"), "B03");
+		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G"), "B04");
+		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		AssertEquals("B06", "04/07/1996 02:00:00", d2.Start.ToString ("G"));
-		AssertEquals("B07", "10/27/1996 02:00:00", d2.End.ToString ("G"));
-		AssertEquals("B08", 36000000000L, d2.Delta.Ticks);
+		Assert.AreEqual("04/07/1996 02:00:00", d2.Start.ToString ("G"), "B06");
+		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G"), "B07");
+		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
 		DateTime d3 = new DateTime (2002,2,25);
-		AssertEquals("B09", false, t1.IsDaylightSavingTime (d3));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d3), "B09");
 		DateTime d4 = new DateTime (2002,4,8);
-		AssertEquals("B10", true, t1.IsDaylightSavingTime (d4));
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d4), "B10");
 		DateTime d5 = new DateTime (2002,11,4);
-		AssertEquals("B11", false, t1.IsDaylightSavingTime (d5));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d5), "B11");
 
-		AssertEquals("B12", -180000000000L, t1.GetUtcOffset (d3).Ticks);
-		AssertEquals("B13", -144000000000L, t1.GetUtcOffset (d4).Ticks);
-		AssertEquals("B14", -180000000000L, t1.GetUtcOffset (d5).Ticks);
+		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d3).Ticks, "B12");
+		Assert.AreEqual(-144000000000L, t1.GetUtcOffset (d4).Ticks, "B13");
+		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d5).Ticks, "B14");
 	}
 
 	private void TST (TimeZone t1) 
 	{
-		AssertEquals("C01", "Tokyo Standard Time", t1.StandardName);
-		AssertEquals("C02", "Tokyo Standard Time", t1.DaylightName);
+		Assert.AreEqual("Tokyo Standard Time", t1.StandardName, "C01");
+		Assert.AreEqual("Tokyo Standard Time", t1.DaylightName, "C02");
 
 		DateTime d3 = new DateTime (2002,2,25);
-		AssertEquals("C09", false, t1.IsDaylightSavingTime (d3));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d3), "C09");
 		DateTime d4 = new DateTime (2002,4,8);
-		AssertEquals("C10", false, t1.IsDaylightSavingTime (d4));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d4), "C10");
 		DateTime d5 = new DateTime (2002,11,4);
-		AssertEquals("C11", false, t1.IsDaylightSavingTime (d5));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d5), "C11");
 
-		AssertEquals("C12", 324000000000L, t1.GetUtcOffset (d3).Ticks);
-		AssertEquals("C13", 324000000000L, t1.GetUtcOffset (d4).Ticks);
-		AssertEquals("C14", 324000000000L, t1.GetUtcOffset (d5).Ticks);
+		Assert.AreEqual(324000000000L, t1.GetUtcOffset (d3).Ticks, "C12");
+		Assert.AreEqual(324000000000L, t1.GetUtcOffset (d4).Ticks, "C13");
+		Assert.AreEqual(324000000000L, t1.GetUtcOffset (d5).Ticks, "C14");
 	}
 
 	private void GMT (TimeZone t1) {
 		// Probably wont work on MS.NET, but is better than nothing. Where do
 		// we change our implementation to match theirs?
 		
-		AssertEquals("D01", "GMT", t1.StandardName);
-		AssertEquals("D02", "BST", t1.DaylightName);
+		Assert.AreEqual("GMT", t1.StandardName, "D01");
+		Assert.AreEqual("BST", t1.DaylightName, "D02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		AssertEquals("D03", "03/31/2002 01:00:00", d1.Start.ToString ("G"));
-		AssertEquals("D04", "10/27/2002 02:00:00", d1.End.ToString ("G"));
-		AssertEquals("D05", 36000000000L, d1.Delta.Ticks);
+		Assert.AreEqual("03/31/2002 01:00:00", d1.Start.ToString ("G"), "D03");
+		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G"), "D04");
+		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "D05");
 	
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		AssertEquals("D06", "03/31/1996 01:00:00", d2.Start.ToString ("G"));
-		AssertEquals("D07", "10/27/1996 02:00:00", d2.End.ToString ("G"));
-		AssertEquals("D08", 36000000000L, d2.Delta.Ticks);
+		Assert.AreEqual("03/31/1996 01:00:00", d2.Start.ToString ("G"), "D06");
+		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G"), "D07");
+		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "D08");
 	
 		DateTime d3 = new DateTime (2002,2,25);
-		AssertEquals("D09", false, t1.IsDaylightSavingTime (d3));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d3), "D09");
 		DateTime d4 = new DateTime (2002,4,2);
-		AssertEquals("D10", true, t1.IsDaylightSavingTime (d4));
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d4), "D10");
 		DateTime d5 = new DateTime (2002,11,4);
-		AssertEquals("D11", false, t1.IsDaylightSavingTime (d5));
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d5), "D11");
 	
-		AssertEquals("D12", 0L, t1.GetUtcOffset (d3).Ticks);
-		AssertEquals("D13", 36000000000L, t1.GetUtcOffset (d4).Ticks);
-		AssertEquals("D14", 0L, t1.GetUtcOffset (d5).Ticks);
+		Assert.AreEqual(0L, t1.GetUtcOffset (d3).Ticks, "D12");
+		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d4).Ticks, "D13");
+		Assert.AreEqual(0L, t1.GetUtcOffset (d5).Ticks, "D14");
 	}
 
-
-
+	[Test]
 	public void TestCtors ()
 	{
 		TimeZone t1 = TimeZone.CurrentTimeZone;
@@ -173,8 +174,8 @@ public class TimeZoneTest : TestCase {
 		ms.Position = 0;
 		TimeZone clone = (TimeZone) bf.Deserialize (ms);
 
-		AssertEquals ("DaylightName", tz.DaylightName, clone.DaylightName);
-		AssertEquals ("StandardName", tz.StandardName, clone.StandardName);
+		Assert.AreEqual (tz.DaylightName, clone.DaylightName, "DaylightName");
+		Assert.AreEqual (tz.StandardName, clone.StandardName, "StandardName");
 	}
 
 	static private byte[] serialized_timezone = {
@@ -246,8 +247,8 @@ public class TimeZoneTest : TestCase {
 		MemoryStream ms = new MemoryStream (serialized_timezone);
 		BinaryFormatter bf = new BinaryFormatter ();
 		TimeZone tz = (TimeZone) bf.Deserialize (ms);
-		AssertEquals ("DaylightName", "Eastern Daylight Time", tz.DaylightName);
-		AssertEquals ("StandardName", "Eastern Standard Time", tz.StandardName);
+		Assert.AreEqual ("Eastern Daylight Time", tz.DaylightName, "DaylightName");
+		Assert.AreEqual ("Eastern Standard Time", tz.StandardName, "StandardName");
 	}
 
 	[Test]
@@ -258,11 +259,11 @@ public class TimeZoneTest : TestCase {
 
 		if (dst_start_utc == DateTime.MinValue)
 			return;
-		Assert ("0:1:59 < 0:3:00", tz.ToLocalTime (dst_start_utc.Subtract (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc));
-		Assert ("0:3:00 < 0:3:01", tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))));
-		Assert ("0:3:01 < 0:3:59", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))));
-		Assert ("0:3:59 < 0:4:00", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))));
-		Assert ("0:4:00 < 0:4:01", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 1, 0))));
+		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Subtract (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc), "0:1:59 < 0:3:00");
+		Assert.IsTrue (tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))), "0:3:00 < 0:3:01");
+		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))), "0:3:01 < 0:3:59");
+		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))), "0:3:59 < 0:4:00");
+		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 1, 0))), "0:4:00 < 0:4:01");
 	}
 }
 

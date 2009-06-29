@@ -18,7 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System
 {
 	[TestFixture]
-	public class SingleTest : Assertion
+	public class SingleTest 
 	{
 		CultureInfo old_culture;
 
@@ -40,50 +40,50 @@ namespace MonoTests.System
 		{
 			Single s1 = 1f;
 			Single s2 = 1f;
-			Assert ("Equals s1==s2", s1.Equals (s2));
-			Assert ("Equals s1!=NaN", !s1.Equals (Single.NaN));
+			Assert.IsTrue (s1.Equals (s2), "Equals s1==s2");
+			Assert.IsTrue (!s1.Equals (Single.NaN), "Equals s1!=NaN");
 
-			Assert ("Equals NaN=!s2", !Single.NaN.Equals (s2));
-			Assert ("Equals NaN==NaN", Single.NaN.Equals (Single.NaN));
+			Assert.IsTrue (!Single.NaN.Equals (s2), "Equals NaN=!s2");
+			Assert.IsTrue (Single.NaN.Equals (Single.NaN), "Equals NaN==NaN");
 
 			Single p0 = 0.0f;
 			Single m0 = -0.0f;
-			Assert ("0.0==-0.0", p0.Equals (m0));
-			Assert ("-0.0==0.0", m0.Equals (p0));
+			Assert.IsTrue (p0.Equals (m0), "0.0==-0.0");
+			Assert.IsTrue (m0.Equals (p0), "-0.0==0.0");
 		}
 
 		[Test]
 		public void IsInfinity ()
 		{
-			Assert ("PositiveInfinity",  Single.IsInfinity (Single.PositiveInfinity));
-			Assert ("NegativeInfinity", Single.IsInfinity (Single.NegativeInfinity));
-			Assert ("12", !Single.IsInfinity(12));
-			Assert ("NaN", !Single.IsInfinity (Single.NaN));
+			Assert.IsTrue ( Single.IsInfinity (Single.PositiveInfinity), "PositiveInfinity");
+			Assert.IsTrue (Single.IsInfinity (Single.NegativeInfinity), "NegativeInfinity");
+			Assert.IsTrue (!Single.IsInfinity(12), "12");
+			Assert.IsTrue (!Single.IsInfinity (Single.NaN), "NaN");
 		}
 
 		[Test]
 		public void IsNan ()
 		{
-			Assert ("Nan", Single.IsNaN (Single.NaN));
-			Assert ("12", !Single.IsNaN (12));
-			Assert ("PositiveInfinity", !Single.IsNaN (Single.PositiveInfinity));
-			Assert ("NegativeInfinity", !Single.IsNaN (Single.PositiveInfinity));
+			Assert.IsTrue (Single.IsNaN (Single.NaN), "Nan");
+			Assert.IsTrue (!Single.IsNaN (12), "12");
+			Assert.IsTrue (!Single.IsNaN (Single.PositiveInfinity), "PositiveInfinity");
+			Assert.IsTrue (!Single.IsNaN (Single.PositiveInfinity), "NegativeInfinity");
 		}
 
 		[Test]
 		public void IsNegativeInfinity ()
 		{
-			Assert ("IsNegativeInfinity", Single.IsNegativeInfinity (Single.NegativeInfinity));
-			Assert ("12", !Single.IsNegativeInfinity (12));
-			Assert ("NaN", !Single.IsNegativeInfinity (Single.NaN));
+			Assert.IsTrue (Single.IsNegativeInfinity (Single.NegativeInfinity), "IsNegativeInfinity");
+			Assert.IsTrue (!Single.IsNegativeInfinity (12), "12");
+			Assert.IsTrue (!Single.IsNegativeInfinity (Single.NaN), "NaN");
 		}
 
 		[Test]
 		public void IsPositiveInfinity ()
 		{
-			Assert ("PositiveInfinity", Single.IsPositiveInfinity (Single.PositiveInfinity));
-			Assert ("12", !Single.IsPositiveInfinity (12));
-			Assert ("NaN", !Single.IsPositiveInfinity (Single.NaN));
+			Assert.IsTrue (Single.IsPositiveInfinity (Single.PositiveInfinity), "PositiveInfinity");
+			Assert.IsTrue (!Single.IsPositiveInfinity (12), "12");
+			Assert.IsTrue (!Single.IsPositiveInfinity (Single.NaN), "NaN");
 		}
 
 		[Test]
@@ -92,20 +92,20 @@ namespace MonoTests.System
 			Single i = 254.9f;
 			// everything defaults to "G"
 			string def = i.ToString ("G");
-			AssertEquals ("ToString()", def, i.ToString ());
-			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
-			AssertEquals ("ToString(G)", "254.9", def);
+			Assert.AreEqual (def, i.ToString (), "ToString()");
+			Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+			Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+			Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+			Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+			Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
+			Assert.AreEqual ("254.9", def, "ToString(G)");
 		}
 
 		[Test]
 		[Category ("NotWorking")]
 		public void ToString_Roundtrip ()
 		{
-			AssertEquals ("10.78", 10.78f.ToString ("R", NumberFormatInfo.InvariantInfo));
+			Assert.AreEqual (10.78f.ToString ("R", NumberFormatInfo.InvariantInfo), "10.78");
 		}
 
 #if NET_2_0

@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class UInt16Test : Assertion
+public class UInt16Test 
 {
 	private const UInt16 MyUInt16_1 = 42;
 	private const UInt16 MyUInt16_2 = 0;
@@ -70,31 +70,31 @@ public class UInt16Test : Assertion
 	public void TestMinMax()
 	{
 		
-		AssertEquals(UInt16.MinValue, MyUInt16_2);
-		AssertEquals(UInt16.MaxValue, MyUInt16_3);
+		Assert.AreEqual(UInt16.MinValue, MyUInt16_2);
+		Assert.AreEqual(UInt16.MaxValue, MyUInt16_3);
 	}
 	
 	public void TestCompareTo()
 	{
-		Assert(MyUInt16_3.CompareTo(MyUInt16_2) > 0);
-		Assert(MyUInt16_2.CompareTo(MyUInt16_2) == 0);
-		Assert(MyUInt16_1.CompareTo((UInt16)(42)) == 0);
-		Assert(MyUInt16_2.CompareTo(MyUInt16_3) < 0);
+		Assert.IsTrue(MyUInt16_3.CompareTo(MyUInt16_2) > 0);
+		Assert.IsTrue(MyUInt16_2.CompareTo(MyUInt16_2) == 0);
+		Assert.IsTrue(MyUInt16_1.CompareTo((UInt16)(42)) == 0);
+		Assert.IsTrue(MyUInt16_2.CompareTo(MyUInt16_3) < 0);
 		try {
 			MyUInt16_2.CompareTo((object)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
 	public void TestEquals()
 	{
-		Assert(MyUInt16_1.Equals(MyUInt16_1));
-		Assert(MyUInt16_1.Equals((object)(UInt16)(42)));
-		Assert(MyUInt16_1.Equals((object)(SByte)(42)) == false);
-		Assert(MyUInt16_1.Equals(MyUInt16_2) == false);
+		Assert.IsTrue(MyUInt16_1.Equals(MyUInt16_1));
+		Assert.IsTrue(MyUInt16_1.Equals((object)(UInt16)(42)));
+		Assert.IsTrue(MyUInt16_1.Equals((object)(SByte)(42)) == false);
+		Assert.IsTrue(MyUInt16_1.Equals(MyUInt16_2) == false);
 	}
 	
 	public void TestGetHashCode()
@@ -105,90 +105,90 @@ public class UInt16Test : Assertion
 			MyUInt16_3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
 	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MyUInt16_1 == UInt16.Parse(MyString1));
-		Assert(MyUInt16_2 == UInt16.Parse(MyString2));
-		Assert(MyUInt16_3 == UInt16.Parse(MyString3));
+		Assert.IsTrue(MyUInt16_1 == UInt16.Parse(MyString1));
+		Assert.IsTrue(MyUInt16_2 == UInt16.Parse(MyString2));
+		Assert.IsTrue(MyUInt16_3 == UInt16.Parse(MyString3));
 		try {
 			UInt16.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Assert.Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			UInt16.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		try {
 			int OverInt = UInt16.MaxValue + 1;
 			UInt16.Parse(OverInt.ToString());
-			Fail("Should raise a System.OverflowException");
+			Assert.Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == UInt16.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
+		Assert.IsTrue(42 == UInt16.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
 			UInt16.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(42 == UInt16.Parse(" 42 ", Nfi));
+		Assert.IsTrue(42 == UInt16.Parse(" 42 ", Nfi));
 		try {
 			UInt16.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == UInt16.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.IsTrue(16 == UInt16.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
 			UInt16.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 	}
 	
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals("A1", MyString1, MyUInt16_1.ToString());
-		AssertEquals("A2", MyString2, MyUInt16_2.ToString());
-		AssertEquals("A3", MyString3, MyUInt16_3.ToString());
+		Assert.AreEqual(MyString1, MyUInt16_1.ToString(), "A1");
+		Assert.AreEqual(MyString2, MyUInt16_2.ToString(), "A2");
+		Assert.AreEqual(MyString3, MyUInt16_3.ToString(), "A3");
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
 			Console.WriteLine ("d:" + NumberFormatInfo.CurrentInfo.NumberDecimalDigits);
-			AssertEquals("A4:"+i.ToString(), Results1[i], MyUInt16_2.ToString(Formats1[i]));
-			AssertEquals("A5:"+i.ToString(), Results2[i], MyUInt16_3.ToString(Formats2[i]));
+			Assert.AreEqual(Results1[i], MyUInt16_2.ToString(Formats1[i]), "A4:"+i.ToString());
+			Assert.AreEqual(Results2[i], MyUInt16_3.ToString(Formats2[i]), "A5:"+i.ToString());
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals("A6:"+i.ToString(), ResultsNfi1[i], MyUInt16_2.ToString(Formats1[i], Nfi));
-			AssertEquals("A7:"+i.ToString(), ResultsNfi2[i], MyUInt16_3.ToString(Formats2[i], Nfi));
+			Assert.AreEqual(ResultsNfi1[i], MyUInt16_2.ToString(Formats1[i], Nfi), "A6:"+i.ToString());
+			Assert.AreEqual(ResultsNfi2[i], MyUInt16_3.ToString(Formats2[i], Nfi), "A7:"+i.ToString());
 		}
 		try {
 			MyUInt16_1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("A8", typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType(), "A8");
 		}
 	}
 
@@ -198,14 +198,14 @@ public class UInt16Test : Assertion
 		UInt16 i = 254;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "254", def);
+		Assert.AreEqual ("254", def, "ToString(G)");
 	}
 }
 

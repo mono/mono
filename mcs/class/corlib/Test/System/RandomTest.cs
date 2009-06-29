@@ -33,7 +33,7 @@ using System;
 namespace MonoTests.System {
 
 	[TestFixture]
-	public class RandomTest : Assertion {
+	public class RandomTest  {
 
 #if false
 		//
@@ -51,7 +51,7 @@ namespace MonoTests.System {
 			for (i=0; i<20; i++) 
 				c += r.NextDouble ();
 			c/=i;
-			Assert (c.ToString () + " is out of range.", c < .7 && c > .3);
+			Assert.IsTrue (c.ToString () + " is out of range.", c < .7 && c > .3);
 		}
 
 #endif
@@ -66,7 +66,7 @@ namespace MonoTests.System {
 				c += r.NextDouble ();
 				c2 += r2.NextDouble ();
 			}
-			AssertEquals ("Compare", c, c2);
+			Assert.AreEqual (c, c2, "Compare");
 		}
 
 		[Test]
@@ -75,7 +75,7 @@ namespace MonoTests.System {
 			Random r = new Random ();
 			for (int i=0; i<20; i++) {
 				long c = r.Next ();
-				Assert ("Next(" + i + ")", c < Int32.MaxValue && c >= 0);
+				Assert.IsTrue (c < Int32.MaxValue && c >= 0, "Next(" + i + ")");
 			}
 		}
 
@@ -85,7 +85,7 @@ namespace MonoTests.System {
 			Random r = new Random();
 			for (int i=0; i<20; i++) {
 				long c = r.Next (10);
-				Assert ("NextMax(" + i + ")", c < 10 && c >= 0);
+				Assert.IsTrue (c < 10 && c >= 0, "NextMax(" + i + ")");
 			}
 		}
 
@@ -93,19 +93,19 @@ namespace MonoTests.System {
 		public void NextMinMax()
 		{
 			Random r = new Random ();
-			AssertEquals ("#1 Failed where min == max", 42, r.Next (42, 42));
-			AssertEquals ("#2 Failed where min == max", Int32.MaxValue, r.Next (Int32.MaxValue, Int32.MaxValue));
-			AssertEquals ("#3 Failed where min == max", Int32.MinValue, r.Next (Int32.MinValue, Int32.MinValue));
-			AssertEquals ("#4 Failed where min == max", 0, r.Next (0, 0));
+			Assert.AreEqual (42, r.Next (42, 42), "#1 Failed where min == max");
+			Assert.AreEqual (Int32.MaxValue, r.Next (Int32.MaxValue, Int32.MaxValue), "#2 Failed where min == max");
+			Assert.AreEqual (Int32.MinValue, r.Next (Int32.MinValue, Int32.MinValue), "#3 Failed where min == max");
+			Assert.AreEqual (0, r.Next (0, 0), "#4 Failed where min == max");
 			for (int i = 1; i <= Int32.MaxValue / 2; i *= 2) {
 				long c = r.Next (i, i * 2);
-				Assert ("At i=" + i + " c < i*2 failed", c < i * 2);
-				Assert ("At i=" + i + " c >= i failed", c >= i);
+				Assert.IsTrue (c < i * 2, "At i=" + i + " c < i*2 failed");
+				Assert.IsTrue (c >= i, "At i=" + i + " c >= i failed");
 			}
 			for (int i = -1; i >= Int32.MinValue / 2; i *= 2) {
 				long c = r.Next (i * 2, i);
-				Assert ("At i=" + i + " c < i*2 failed", c < i);
-				Assert ("At i=" + i + " c >= i failed", c >= i * 2);
+				Assert.IsTrue (c < i, "At i=" + i + " c < i*2 failed");
+				Assert.IsTrue (c >= i * 2, "At i=" + i + " c >= i failed");
 			}
 		}
 
@@ -122,10 +122,10 @@ namespace MonoTests.System {
 				random.NextBytes (buffer);
 				r [x] = BitConverter.ToString (buffer);
 			}
-			AssertEquals ("Seed(24)", "43-DB-8B-AE-0A-88-A8-7B", r [3]);
-			AssertEquals ("Seed(8)", "E7-2A-5C-44-D1-8C-7D-74", r [2]);
-			AssertEquals ("Seed(2)", "C5-67-2A-FC-1B-4E-CD-72", r [1]);
-			AssertEquals ("Seed(0)", "B9-D1-C4-8E-34-8F-E7-71", r [0]);
+			Assert.AreEqual ("43-DB-8B-AE-0A-88-A8-7B", r [3], "Seed(24)");
+			Assert.AreEqual ("E7-2A-5C-44-D1-8C-7D-74", r [2], "Seed(8)");
+			Assert.AreEqual ("C5-67-2A-FC-1B-4E-CD-72", r [1], "Seed(2)");
+			Assert.AreEqual ("B9-D1-C4-8E-34-8F-E7-71", r [0], "Seed(0)");
 		}*/
 	}
 }

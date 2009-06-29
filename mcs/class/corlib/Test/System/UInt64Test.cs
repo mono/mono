@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class UInt64Test : Assertion
+public class UInt64Test 
 {
 	private const UInt64 MyUInt64_1 = 42;
 	private const UInt64 MyUInt64_2 = 0;
@@ -74,31 +74,31 @@ public class UInt64Test : Assertion
 	public void TestMinMax()
 	{
 		
-		AssertEquals(UInt64.MinValue, MyUInt64_2);
-		AssertEquals(UInt64.MaxValue, MyUInt64_3);
+		Assert.AreEqual(UInt64.MinValue, MyUInt64_2);
+		Assert.AreEqual(UInt64.MaxValue, MyUInt64_3);
 	}
 	
 	public void TestCompareTo()
 	{
-		Assert(MyUInt64_3.CompareTo(MyUInt64_2) > 0);
-		Assert(MyUInt64_2.CompareTo(MyUInt64_2) == 0);
-		Assert(MyUInt64_1.CompareTo((UInt64)(42)) == 0);
-		Assert(MyUInt64_2.CompareTo(MyUInt64_3) < 0);
+		Assert.IsTrue(MyUInt64_3.CompareTo(MyUInt64_2) > 0);
+		Assert.IsTrue(MyUInt64_2.CompareTo(MyUInt64_2) == 0);
+		Assert.IsTrue(MyUInt64_1.CompareTo((UInt64)(42)) == 0);
+		Assert.IsTrue(MyUInt64_2.CompareTo(MyUInt64_3) < 0);
 		try {
 			MyUInt64_2.CompareTo((object)(Int16)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
 	public void TestEquals()
 	{
-		Assert(MyUInt64_1.Equals(MyUInt64_1));
-		Assert(MyUInt64_1.Equals((object)(UInt64)(42)));
-		Assert(MyUInt64_1.Equals((object)(SByte)(42)) == false);
-		Assert(MyUInt64_1.Equals(MyUInt64_2) == false);
+		Assert.IsTrue(MyUInt64_1.Equals(MyUInt64_1));
+		Assert.IsTrue(MyUInt64_1.Equals((object)(UInt64)(42)));
+		Assert.IsTrue(MyUInt64_1.Equals((object)(SByte)(42)) == false);
+		Assert.IsTrue(MyUInt64_1.Equals(MyUInt64_2) == false);
 	}
 	
 	public void TestGetHashCode()
@@ -109,97 +109,97 @@ public class UInt64Test : Assertion
 			MyUInt64_3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
 	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MyUInt64_1 == UInt64.Parse(MyString1));
-		Assert(MyUInt64_2 == UInt64.Parse(MyString2));
-		Assert(MyUInt64_3 == UInt64.Parse(MyString3));
+		Assert.IsTrue(MyUInt64_1 == UInt64.Parse(MyString1));
+		Assert.IsTrue(MyUInt64_2 == UInt64.Parse(MyString2));
+		Assert.IsTrue(MyUInt64_3 == UInt64.Parse(MyString3));
 		try {
 			UInt64.Parse(null);
-			Fail("Should raise a ArgumentNullException");
+			Assert.Fail("Should raise a ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			UInt64.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		try {
 			double OverInt = (double)UInt64.MaxValue + 1;
 			UInt64.Parse(OverInt.ToString(), NumberStyles.Float);
-			Fail("Should raise a OverflowException");
+			Assert.Fail("Should raise a OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue(typeof(OverflowException) == e.GetType());
 		}
 		try {
 			double OverInt = (double)UInt64.MaxValue + 1;
 			UInt64.Parse(OverInt.ToString(), NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
-		Assert(42 == UInt64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
+		Assert.IsTrue(42 == UInt64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
 			UInt64.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a FormatException");
+			Assert.Fail("Should raise a FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(42 == UInt64.Parse(" 42 ", Nfi));
+		Assert.IsTrue(42 == UInt64.Parse(" 42 ", Nfi));
 		try {
 			UInt64.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == UInt64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.IsTrue(16 == UInt64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
 			UInt64.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 	}
 	
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals("A", MyString1, MyUInt64_1.ToString());
-		AssertEquals("B", MyString2, MyUInt64_2.ToString());
-		AssertEquals("C", MyString3, MyUInt64_3.ToString());
+		Assert.AreEqual(MyString1, MyUInt64_1.ToString(), "A");
+		Assert.AreEqual(MyString2, MyUInt64_2.ToString(), "B");
+		Assert.AreEqual(MyString3, MyUInt64_3.ToString(), "C");
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals("D", Results1[i], MyUInt64_2.ToString(Formats1[i]));
-			AssertEquals("E: format #" + i, Results2[i], MyUInt64_3.ToString(Formats2[i]));
+			Assert.AreEqual(Results1[i], MyUInt64_2.ToString(Formats1[i]), "D");
+			Assert.AreEqual(Results2[i], MyUInt64_3.ToString(Formats2[i]), "E: format #" + i);
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals("F", ResultsNfi1[i], MyUInt64_2.ToString(Formats1[i], Nfi));
-			AssertEquals("G", ResultsNfi2[i], MyUInt64_3.ToString(Formats2[i], Nfi));
+			Assert.AreEqual(ResultsNfi1[i], MyUInt64_2.ToString(Formats1[i], Nfi), "F");
+			Assert.AreEqual(ResultsNfi2[i], MyUInt64_3.ToString(Formats2[i], Nfi), "G");
 		}
 		try {
 			MyUInt64_1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("H", typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType(), "H");
 		}
 	}
 
@@ -209,14 +209,14 @@ public class UInt64Test : Assertion
 		UInt64 i = 254;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "254", def);
+		Assert.AreEqual ("254", def, "ToString(G)");
 	}
 }
 

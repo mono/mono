@@ -37,14 +37,14 @@ namespace MonoTests.System
 	}
 
 	[TestFixture]
-	public class ValueTypeTest : Assertion
+	public class ValueTypeTest 
 	{
 		[Test]
 		public void TestEquals ()
 		{
 			Blah a = new Blah ("abc", 1);
 			Blah b = new Blah (string.Format ("ab{0}", 'c'), 1);
-			AssertEquals ("#01", a.Equals (b), true);
+			Assert.AreEqual (a.Equals (b), true, "#01");
 		}
 
 		[Test]
@@ -52,19 +52,19 @@ namespace MonoTests.System
 		{
 			Blah a = new Blah ("abc", 1);
 			Blah b = new Blah (string.Format ("ab{0}", 'c'), 1);
-			AssertEquals ("#01", a.GetHashCode (), b.GetHashCode ());
+			Assert.AreEqual (a.GetHashCode (), b.GetHashCode (), "#01");
 
 			Lalala la = new Lalala ("abc", 1);
 			Lalala lb = new Lalala (string.Format ("ab{0}", 'c'), 1);
-			AssertEquals ("#02", la.GetHashCode (), lb.GetHashCode ());
+			Assert.AreEqual (la.GetHashCode (), lb.GetHashCode (), "#02");
 
 			a = new Blah (null, 1);
 			b = new Blah (null, 1);
-			AssertEquals ("#03", la.GetHashCode (), lb.GetHashCode ());
+			Assert.AreEqual (la.GetHashCode (), lb.GetHashCode (), "#03");
 
 			la = new Lalala (null, 1);
 			lb = new Lalala (null, 1);
-			AssertEquals ("#04", la.GetHashCode (), lb.GetHashCode ());
+			Assert.AreEqual (la.GetHashCode (), lb.GetHashCode (), "#04");
 		}
 	}
 }

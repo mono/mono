@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class SByteTest : Assertion
+public class SByteTest 
 {
 	private const SByte MySByte1 = -42;
 	private const SByte MySByte2 = -128;
@@ -38,35 +38,39 @@ public class SByteTest : Assertion
 					"127", "127.00000", "12,700.00000 %", "0007f"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
+	[Test]
 	public void TestMinMax()
 	{
-		AssertEquals(SByte.MinValue, MySByte2);
-		AssertEquals(SByte.MaxValue, MySByte3);
+		Assert.AreEqual(SByte.MinValue, MySByte2);
+		Assert.AreEqual(SByte.MaxValue, MySByte3);
 	}
 	
+	[Test]
 	public void TestCompareTo()
 	{
-		Assert(MySByte3.CompareTo(MySByte2) > 0);
-		Assert(MySByte2.CompareTo(MySByte2) == 0);
-		Assert(MySByte1.CompareTo((SByte)(-42)) == 0);
-		Assert(MySByte2.CompareTo(MySByte3) < 0);
+		Assert.IsTrue(MySByte3.CompareTo(MySByte2) > 0);
+		Assert.IsTrue(MySByte2.CompareTo(MySByte2) == 0);
+		Assert.IsTrue(MySByte1.CompareTo((SByte)(-42)) == 0);
+		Assert.IsTrue(MySByte2.CompareTo(MySByte3) < 0);
 		try {
 			MySByte2.CompareTo((object)(int)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
-		Assert(MySByte1.Equals(MySByte1));
-		Assert(MySByte1.Equals((SByte)(-42)));
-		Assert(MySByte1.Equals((Int16)(-42)) == false);
-		Assert(MySByte1.Equals(MySByte2) == false);
+		Assert.IsTrue(MySByte1.Equals(MySByte1));
+		Assert.IsTrue(MySByte1.Equals((SByte)(-42)));
+		Assert.IsTrue(MySByte1.Equals((Int16)(-42)) == false);
+		Assert.IsTrue(MySByte1.Equals(MySByte2) == false);
 	}
-	
+
+	[Test]	
 	public void TestGetHashCode()
 	{
 		try {
@@ -75,100 +79,102 @@ public class SByteTest : Assertion
 			MySByte3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
-	
+
+	[Test]	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MySByte1 == SByte.Parse(MyString1));
-		Assert(MySByte2 == SByte.Parse(MyString2));
-		Assert(MySByte3 == SByte.Parse(MyString3));
+		Assert.IsTrue(MySByte1 == SByte.Parse(MyString1));
+		Assert.IsTrue(MySByte2 == SByte.Parse(MyString2));
+		Assert.IsTrue(MySByte3 == SByte.Parse(MyString3));
 		try {
 			SByte.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Assert.Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			SByte.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		try {
 			int OverInt = SByte.MaxValue + 1;
 			SByte.Parse(OverInt.ToString());
-			Fail("Should raise a System.OverflowException");
+			Assert.Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		AssertEquals("A1", (sbyte)42, SByte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
+		Assert.AreEqual((sbyte)42, SByte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency), "A1");
 		try {
 			SByte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(-42 == SByte.Parse(" -42 ", Nfi));
+		Assert.IsTrue(-42 == SByte.Parse(" -42 ", Nfi));
 		try {
 			SByte.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == SByte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.IsTrue(16 == SByte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
 			SByte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 	}
 
 	[Test]
 	public void Parse_MinMax () 
 	{
-		AssertEquals ("MinValue", SByte.MinValue, SByte.Parse ("-128"));
-		AssertEquals ("MaxValue", SByte.MaxValue, SByte.Parse ("127"));
+		Assert.AreEqual (SByte.MinValue, SByte.Parse ("-128"), "MinValue");
+		Assert.AreEqual (SByte.MaxValue, SByte.Parse ("127"), "MaxValue");
 	}
-	
+
+	[Test]	
 	public void TestToString()
 	{
 		//test ToString()
-		Assert("MyString1, MySByte1.ToString()", String.Compare(MyString1, MySByte1.ToString()) == 0);
-		Assert("MyString2, MySByte2.ToString()", String.Compare(MyString2, MySByte2.ToString()) == 0);
-		Assert("MyString3, MySByte3.ToString()", String.Compare(MyString3, MySByte3.ToString()) == 0);
+		Assert.IsTrue(String.Compare(MyString1, MySByte1.ToString()) == 0, "MyString1, MySByte1.ToString()");
+		Assert.IsTrue(String.Compare(MyString2, MySByte2.ToString()) == 0, "MyString2, MySByte2.ToString()");
+		Assert.IsTrue(String.Compare(MyString3, MySByte3.ToString()) == 0, "MyString3, MySByte3.ToString()");
 		//test ToString(string format)
 		/*
 		TODO: These tests depend on the culture of the system running the test.
 			So, this needs to be tested in a different way.
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert("i="+i+", Results1[i]="+Results1[i]+", MySByte2.ToString(Formats1[i])="+MySByte2.ToString(Formats1[i]), String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
-			Assert("Results2[i], MySByte3.ToString(Formats2[i])", String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0);
+			Assert.IsTrue("i="+i+", Results1[i]="+Results1[i]+", MySByte2.ToString(Formats1[i])="+MySByte2.ToString(Formats1[i]), String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
+			Assert.IsTrue(String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0, "Results2[i], MySByte3.ToString(Formats2[i])");
 		}
 		*/
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert("i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MySByte2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MySByte2.ToString(Formats1[i], Nfi), String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0);
-			Assert("ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi):"+ResultsNfi2[i]+"<==>"+MySByte3.ToString(Formats2[i], Nfi), String.Compare(ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi)) == 0);
+			Assert.IsTrue(String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0, "i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MySByte2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MySByte2.ToString(Formats1[i], Nfi));
+			Assert.IsTrue(String.Compare(ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi)) == 0, "ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi):"+ResultsNfi2[i]+"<==>"+MySByte3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MySByte1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("typeof(FormatException) == e.GetType()", typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType(), "typeof(FormatException) == e.GetType()");
 		}
 	}
 
@@ -178,14 +184,14 @@ public class SByteTest : Assertion
 		SByte i = 100;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "100", def);
+		Assert.AreEqual ("100", def, "ToString(G)");
 	}
 }
 
