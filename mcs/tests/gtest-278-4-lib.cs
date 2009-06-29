@@ -1,8 +1,5 @@
 // Compiler options: -t:library
 
-// CECIL FIXME: Every method should actually throw new ApplicationException ("Should not be called");
-// but because mcs dependency on System.Reflection it cannot be done
-
 using System;
 
 public class C

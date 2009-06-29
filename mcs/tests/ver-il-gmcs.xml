@@ -7675,12 +7675,12 @@
     </type>
   </test>
   <test name="gtest-278.cs">
-    <type name="B">
+    <type name="Program">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>60</size>
+        <size>6</size>
       </method>
     </type>
   </test>
