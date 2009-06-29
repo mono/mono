@@ -1,3 +1,7 @@
+2009-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mini_regression): Handle loading errors. Fixes #508869.
+
 2009-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (get_generic_context_from_stack_frame): Fix the case
