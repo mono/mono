@@ -1,5 +1,7 @@
 2009-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-stack-traces.2.cs: Add a test for #509406.
+
 	* dynamic-method-finalize.2.cs: New test.
 
 2009-06-25  Mark Probst  <mark.probst@gmail.com>
