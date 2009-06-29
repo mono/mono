@@ -426,11 +426,13 @@ namespace System.ServiceModel.Dispatcher
 						creator_handle.WaitOne (); // released by ChannelAccepted()
 						creator_handle.Reset ();
 					}
+					if (!loop)
+						break;
 					handle.WaitOne (); // released by IChannel.Close()
 					handle.Reset ();
 				}
-				owner.CloseInput ();
 				owner.Listener.Close ();
+				owner.CloseInput ();
 			}
 
 			void ChannelAccepted (IChannel ch)

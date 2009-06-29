@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel.Description;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 namespace System.ServiceModel.Channels
@@ -21,7 +22,6 @@ namespace System.ServiceModel.Channels
 	internal class TcpChannelListener<TChannel> : InternalChannelListenerBase<TChannel> 
 		where TChannel : class, IChannel
 	{
-		List<IChannel> channels = new List<IChannel> ();
 		BindingContext context;
 		TcpChannelInfo info;
 		IDuplexSession session;
@@ -60,18 +60,29 @@ namespace System.ServiceModel.Channels
 		public override Uri Uri {
 			get { return listen_uri; }
 		}
-		
+
+		List<ManualResetEvent> accept_handles = new List<ManualResetEvent> ();
+
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			TChannel channel = PopulateChannel (timeout);
-			channels.Add (channel);
-			return channel;
-		}
-		
-		TChannel PopulateChannel (TimeSpan timeout)
-		{
-			var client = tcp_listener.AcceptTcpClient ();
-			// FIXME: pass delegate or something to remove the channel instance from "channels" when it is closed.
+			TcpClient client = null;
+			if (tcp_listener.Pending ()) {
+				client = tcp_listener.AcceptTcpClient ();
+			} else {
+				var wait = new ManualResetEvent (false);
+				tcp_listener.BeginAcceptTcpClient (delegate (IAsyncResult result) {
+					client = tcp_listener.EndAcceptTcpClient (result);
+					wait.Set ();
+					accept_handles.Remove (wait);
+				}, null);
+				if (State == CommunicationState.Closing)
+					return null;
+				accept_handles.Add (wait);
+				wait.WaitOne (timeout);
+			}
+			if (client == null)
+				return null; // onclose
+
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
 				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client, timeout);
 
@@ -105,6 +116,10 @@ namespace System.ServiceModel.Channels
 		{
 			if (tcp_listener == null)
 				throw new InvalidOperationException ("Current state is " + State);
+			lock (accept_handles) {
+				foreach (var wait in accept_handles)
+					wait.Set ();
+			}
 			tcp_listener.Stop ();
 			tcp_listener = null;
 		}

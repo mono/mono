@@ -1,5 +1,11 @@
 2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : on Abort(), do just Close() within
+	  (almost) no time.
+	* TcpChannelListener.cs : accept multiple channels at a time.
+
+2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : do not output all (stored) writer
 	  session strings but output only those new ones in current message.
 	  This fixes inconsistent body output in repetitive use of sender.

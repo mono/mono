@@ -1,3 +1,8 @@
+2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : do not iterate extra channel acceptance
+	  and hence close channels a bit more gracefully.
+
 2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : instead of discarding channels, reuse them

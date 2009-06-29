@@ -186,8 +186,7 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			if (client != null)
-				client.Close ();
+			Close (TimeSpan.FromTicks (1));
 		}
 
 		[MonoTODO]
