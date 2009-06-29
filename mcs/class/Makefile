@@ -143,6 +143,9 @@ net_3_5_dirs := \
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
 	System.Web.Extensions.Design	
+	
+net_4_0_dirs := \
+	Microsoft.CSharp
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
 net_1_1_SUBDIRS := $(common_dirs) $(net_1_1_dirs)
@@ -152,11 +155,11 @@ net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
 net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_2_1_dirs) $(net_3_5_dirs)
+SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_2_1_dirs) $(net_3_5_dirs) $(net_4_0_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
 #BROKEN_SUBDIRS =
