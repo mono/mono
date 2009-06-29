@@ -1,3 +1,9 @@
+2009-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (mono_gc_run_finalize): Avoid finalizing dynamic methods during
+	shutdown, they can still be referenced by the other dying objects.
+	Fixes #514506.
+
 2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: DontLinger does not allow LingerOptions.
