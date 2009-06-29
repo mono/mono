@@ -1,3 +1,8 @@
+2009-06-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* LicenseProviderAttribute.cs: avoid nullref when provider has not
+	been set or cannot be loaded.
+
 2009-06-23  Marek Habersack  <mhabersack@novell.com>
 
 	* TypeDescriptor.cs: do not wrap DefaultTypeDescriptionProvider.
