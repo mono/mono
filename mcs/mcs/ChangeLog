@@ -1,3 +1,10 @@
+2009-06-29  Marek Safar  <marek.safar@gmail.com>
+
+	* parameter.cs, convert.cs, expression.cs, class.cs: Default
+	parameter expression can be value-type New.
+
+	* cs-parser.jay: Clean up too many parameter modifier boolean flags.
+
 2009-06-26  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, argument.cs, expression.cs, ecore.cs, cs-parser.jay:

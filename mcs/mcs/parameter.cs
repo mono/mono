@@ -373,10 +373,27 @@ namespace Mono.CSharp {
 				if (default_expr != null) {
 					Constant value = default_expr as Constant;
 					if (value == null) {
-						if (default_expr != null && !(default_expr is DefaultValueExpression)) {
-							Report.Error (1736, default_expr.Location, "The expression being assigned to optional parameter `{0}' must be constant",
-								Name);
-							default_expr = null;
+						if (default_expr != null) {
+							bool is_valid = false;
+							if (default_expr is DefaultValueExpression) {
+								is_valid = true;
+							} else if (default_expr is New && ((New) default_expr).IsDefaultValueType) {
+								is_valid = TypeManager.IsEqual (parameter_type, default_expr.Type) ||
+									 (TypeManager.IsNullableType (parameter_type) &&
+										Convert.ImplicitNulableConversion (ec, default_expr, parameter_type) != EmptyExpression.Null);
+							} else {
+								Report.Error (1736, default_expr.Location,
+									"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+									Name);
+								is_valid = true;
+							}
+
+							if (!is_valid) {
+								default_expr = null;								
+								Report.Error (1763, Location,
+									"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+									Name, GetSignatureForError ());
+							}
 						}
 					} else {
 						Constant c = value.ConvertImplicitly (parameter_type);

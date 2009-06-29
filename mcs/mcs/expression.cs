@@ -5416,6 +5416,12 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 		}
 
+		public bool IsDefaultValueType {
+			get {
+				return TypeManager.IsValueType (type) && !HasInitializer && Arguments == null;
+			}
+		}
+
 		public virtual bool HasInitializer {
 			get {
 				return false;

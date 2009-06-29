@@ -32,7 +32,21 @@ namespace Mono.CSharp
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
-	public class CSharpParser {
+	public class CSharpParser
+	{
+		[Flags]
+		enum ParameterModifierType
+		{
+			Ref		= 1 << 1,
+			Out		= 1 << 2,
+			This	= 1 << 3,
+			Params	= 1 << 4,
+			Arglist	= 1 << 5,
+			DefaultValue = 1 << 6,
+			
+			All = Ref | Out | This | Params | Arglist | DefaultValue
+		}
+	
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
 		DeclSpace	current_class;
@@ -118,9 +132,9 @@ namespace Mono.CSharp
 		/// assembly and module attribute definitions are enabled
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
-		bool parameter_modifiers_not_allowed;
-		bool complex_parameters_modifiers_not_allowed;
-		bool arglist_allowed;
+		
+		ParameterModifierType valid_param_mod;
+		
 		bool default_parameter_used;
 
 		/// When using the interactive parser, this holds the
@@ -1272,16 +1286,16 @@ method_header
 	  member_type
 	  method_declaration_name OPEN_PARENS
 	  {
-		arglist_allowed = true;
+		valid_param_mod = ParameterModifierType.All;
 	  }
-	  opt_formal_parameter_list CLOSE_PARENS 
+	  opt_formal_parameter_list CLOSE_PARENS
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
-		arglist_allowed = false;
+		valid_param_mod = 0;
 		MemberName name = (MemberName) $4;
 		current_local_parameters = (ParametersCompiled) $7;
 
@@ -1315,7 +1329,7 @@ method_header
 	  VOID method_declaration_name
 	  OPEN_PARENS
 	  {
-	  	arglist_allowed = true;
+	  	valid_param_mod = ParameterModifierType.All;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS 
 	  {
@@ -1324,7 +1338,7 @@ method_header
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
-		arglist_allowed = false;
+		valid_param_mod = 0;
 
 		MemberName name = (MemberName) $5;
 		current_local_parameters = (ParametersCompiled) $8;
@@ -1402,19 +1416,6 @@ opt_formal_parameter_list
 	| formal_parameter_list
 	;
 	
-opt_parameter_list_no_mod
-	: /* empty */			{ $$ = ParametersCompiled.EmptyReadOnlyParameters; }
-	| 
-	  {
-		parameter_modifiers_not_allowed = true;
-	  }
-	  formal_parameter_list
-	  {
-		parameter_modifiers_not_allowed = false;
-		$$ = $2;
-	  }
-	;
-
 formal_parameter_list
 	: fixed_parameters
 	  { 
@@ -1562,7 +1563,7 @@ fixed_parameter
 			mod = Parameter.Modifier.NONE;
 		}
 		
-		if (complex_parameters_modifiers_not_allowed)
+		if ((valid_param_mod & ParameterModifierType.DefaultValue) == 0)
 			Report.Error (1065, GetLocation ($6), "Optional parameter is not valid in this context");
 		
 		LocatedToken lt = (LocatedToken) $4;
@@ -1608,21 +1609,21 @@ parameter_modifiers
 parameter_modifier
 	: REF
 	  {
-	  	if (parameter_modifiers_not_allowed)
+	  	if ((valid_param_mod & ParameterModifierType.Ref) == 0)
 	  		Error_ParameterModifierNotValid ("ref", (Location)$1);
 	  		
 	  	$$ = Parameter.Modifier.REF;
 	  }
 	| OUT
 	  {
-	  	if (parameter_modifiers_not_allowed)
+	  	if ((valid_param_mod & ParameterModifierType.Out) == 0)
 	  		Error_ParameterModifierNotValid ("out", (Location)$1);
 	  
 	  	$$ = Parameter.Modifier.OUT;
 	  }
 	| THIS
 	  {
-		if (parameter_modifiers_not_allowed)
+		if ((valid_param_mod & ParameterModifierType.This) == 0)
 	  		Error_ParameterModifierNotValid ("this", (Location)$1);
 
 	  	if (RootContext.Version <= LanguageVersion.ISO_2)
@@ -1654,7 +1655,7 @@ parameter_array
 params_modifier
 	: PARAMS
 	  {
-		if (complex_parameters_modifiers_not_allowed)
+		if ((valid_param_mod & ParameterModifierType.Params) == 0)
 			Report.Error (1670, ((Location) $1), "The `params' modifier is not allowed in current context");
 	  }
 	| PARAMS parameter_modifier
@@ -1675,7 +1676,7 @@ params_modifier
 arglist_modifier
 	: ARGLIST
 	  {
-	  	if (!arglist_allowed)
+	  	if ((valid_param_mod & ParameterModifierType.Arglist) == 0)
 	  		Report.Error (1669, (Location) $1, "__arglist is not valid in this context");
 	  }
 	;
@@ -1978,11 +1979,11 @@ operator_type
 operator_declarator
 	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = true;
+		valid_param_mod = ParameterModifierType.DefaultValue;
 	  }
-	  opt_parameter_list_no_mod CLOSE_PARENS
+	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = false;
+		valid_param_mod = 0;
 
 		Location loc = (Location) $2;
 		Operator.OpType op = (Operator.OpType) $3;
@@ -2053,11 +2054,11 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = true;
+		valid_param_mod = ParameterModifierType.DefaultValue;
 	  }
-	  opt_parameter_list_no_mod CLOSE_PARENS
+	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = false;
+		valid_param_mod = 0;
 
 		Location loc = (Location) $2;
 		current_local_parameters = (ParametersCompiled)$6;  
@@ -2071,11 +2072,11 @@ conversion_operator_declarator
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = true;
+		valid_param_mod = ParameterModifierType.DefaultValue;
 	  }
-	  opt_parameter_list_no_mod CLOSE_PARENS
+	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-		complex_parameters_modifiers_not_allowed = false;
+		valid_param_mod = 0;
 		
 		Location loc = (Location) $2;
 		current_local_parameters = (ParametersCompiled)$6;  
@@ -2126,11 +2127,12 @@ constructor_declarator
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
-		arglist_allowed = true;
+		
+		valid_param_mod = ParameterModifierType.All;
 	  }
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
-		arglist_allowed = false;
+		valid_param_mod = 0;
 		current_local_parameters = (ParametersCompiled) $6;  
 		
 		//
@@ -2394,18 +2396,19 @@ remove_accessor_declaration
 
 indexer_declaration
 	: opt_attributes opt_modifiers
-	  member_type indexer_declaration_name OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
+	  member_type indexer_declaration_name OPEN_BRACKET
+	  {
+	  	valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+	  }
+	  opt_formal_parameter_list CLOSE_BRACKET
 	  OPEN_BRACE
 	  {
+		valid_param_mod = 0;
 		implicit_value_parameter_type = (FullNamedExpression) $3;
-		indexer_parameters = (ParametersCompiled) $6;
+		indexer_parameters = (ParametersCompiled) $7;
 		
 		if (indexer_parameters.IsEmpty) {
 			Report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
-		} else if (indexer_parameters.Count == 1) {
-			Parameter p = indexer_parameters [0];
-			if (p.HasDefaultValue)
-				p.Warning_UselessOptionalParameter ();
 		}
 
 		if (RootContext.Documentation != null) {
@@ -2425,13 +2428,13 @@ indexer_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		Accessors accessors = (Accessors) $10;
+		Accessors accessors = (Accessors) $11;
 		Accessor get_block = accessors != null ? accessors.get_or_add : null;
 		Accessor set_block = accessors != null ? accessors.set_or_remove : null;
 		bool order = accessors != null ? accessors.declared_in_reverse : false;
 
 		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
-			(MemberName)$4, (int) $2, (ParametersCompiled) $6, (Attributes) $1,
+			(MemberName)$4, (int) $2, (ParametersCompiled) $7, (Attributes) $1,
 			get_block, set_block, order);
 				       
 		if ($3 == TypeManager.system_void_expr)
@@ -2602,10 +2605,16 @@ delegate_declaration
 	  opt_modifiers
 	  DELEGATE
 	  member_type type_declaration_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  OPEN_PARENS
 	  {
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+	  }
+	  opt_formal_parameter_list CLOSE_PARENS
+	  {
+		valid_param_mod = 0;
+
 		MemberName name = MakeName ((MemberName) $5);
-		ParametersCompiled p = (ParametersCompiled) $7;
+		ParametersCompiled p = (ParametersCompiled) $8;
 
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (int) $2, name, p, (Attributes) $1);
@@ -2625,7 +2634,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		current_delegate.SetParameterInfo ((ArrayList) $10);
+		current_delegate.SetParameterInfo ((ArrayList) $11);
 		$$ = current_delegate;
 
 		current_delegate = null;
@@ -3758,11 +3767,11 @@ opt_anonymous_method_signature
 anonymous_method_signature
 	: OPEN_PARENS
 	  {
-	  	complex_parameters_modifiers_not_allowed = true; 
+	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-	  	complex_parameters_modifiers_not_allowed = false;
+		valid_param_mod = 0;
 	  	$$ = $3;
 	  }
 	;
@@ -4126,13 +4135,18 @@ lambda_expression
 	  {
 		$$ = end_anonymous ((ToplevelBlock) $4);
 	  }
-	| OPEN_PARENS_LAMBDA opt_lambda_parameter_list CLOSE_PARENS ARROW 
+	| OPEN_PARENS_LAMBDA
 	  {
-		start_anonymous (true, (ParametersCompiled) $2, GetLocation ($1));
+	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+	  }
+	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
+	  {
+	  	valid_param_mod = 0;
+		start_anonymous (true, (ParametersCompiled) $3, GetLocation ($1));
 	  }
 	  lambda_expression_body 
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $6);
+		$$ = end_anonymous ((ToplevelBlock) $7);
 	  }
 	;
 

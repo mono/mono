@@ -3561,6 +3561,10 @@ namespace Mono.CSharp {
 			bool error = false;
 			for (int i = 0; i < parameters.Count; ++i) {
 				Parameter p = parameters [i];
+
+				if (p.HasDefaultValue && (IsExplicitImpl || this is Operator || (this is Indexer && parameters.Count == 1)))
+					p.Warning_UselessOptionalParameter ();
+
 				if (p.CheckAccessibility (this))
 					continue;
 

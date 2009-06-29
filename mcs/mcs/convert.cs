@@ -453,7 +453,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static Expression ImplicitNulableConversion (EmitContext ec, Expression expr, Type target_type)
+		public static Expression ImplicitNulableConversion (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
