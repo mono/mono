@@ -61,7 +61,7 @@ namespace System.ComponentModel
 		public override object TypeId {
 			get {
 				// Seems to be MS implementation
-				return (base.ToString() + Provider.ToString());
+				return (base.ToString() + (Provider != null ? Provider.ToString() : null));
 			}
 		}
 
