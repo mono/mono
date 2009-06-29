@@ -641,7 +641,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -664,7 +664,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -697,7 +697,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -713,7 +713,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -736,7 +736,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -760,7 +760,7 @@ namespace MonoTests.System.Net
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -793,7 +793,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -809,7 +809,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.Timeout = 1000;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.ContentLength = 2;
 
 				rs = req.GetRequestStream ();
@@ -859,7 +859,7 @@ namespace MonoTests.System.Net
 				req.Method = "POST";
 				req.AllowAutoRedirect = false;
 				req.Timeout = 200;
-				req.ReadWriteTimeout = 100;
+				req.ReadWriteTimeout = 2000;
 				req.KeepAlive = false;
 				Stream rs = req.GetRequestStream ();
 				rs.Close ();
