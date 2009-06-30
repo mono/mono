@@ -541,14 +541,14 @@ namespace System.Windows.Forms
 			try {
 				if (current_item == null)
 					throw new ArgumentException ("button", "The button specified is not part of this toolbar");
-				OnButtonClick (new ToolBarButtonClickEventArgs (button));
+				PerformButtonClick (new ToolBarButtonClickEventArgs (button));
 			} finally {
 				current_item = previous_item;
 			}
 		}
 #endif
 		
-		protected virtual void OnButtonClick (ToolBarButtonClickEventArgs e)
+		void PerformButtonClick (ToolBarButtonClickEventArgs e)
 		{
 			// Only change pushed for ToogleButton
 			if (e.Button.Style == ToolBarButtonStyle.ToggleButton) {
@@ -565,7 +565,11 @@ namespace System.Windows.Forms
 			button_for_focus = current_item.Button;
 			button_for_focus.UIAHasFocus = true;
 #endif
-			
+			OnButtonClick (e);
+		}
+
+		protected virtual void OnButtonClick (ToolBarButtonClickEventArgs e)
+		{			
 			ToolBarButtonClickEventHandler eh = (ToolBarButtonClickEventHandler)(Events [ButtonClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -721,9 +725,16 @@ namespace System.Windows.Forms
 				case Keys.Down:
 					HighlightButton (1);
 					return true;
-				default:
-					return false;
+				case Keys.Enter:
+				case Keys.Space:
+					if (current_item != null) {
+						OnButtonClick (new ToolBarButtonClickEventArgs (current_item.Button));
+						return true;
+					}
+					break;
 			}
+
+			return false;
 		}
 
 		void HighlightButton (int offset)
@@ -753,7 +764,9 @@ namespace System.Windows.Forms
 
 			if (curr_item != null)
 				curr_item.Hilight = false;
-			(enabled [next] as ToolBarItem).Hilight = true;
+
+			current_item = enabled [next] as ToolBarItem;
+			current_item.Hilight = true;
 		}
 
 		private void ToolBar_BackgroundImageChanged (object sender, EventArgs args)
@@ -831,7 +844,7 @@ namespace System.Windows.Forms
 					// Fire a ButtonClick
 					current_item = item;
 					if ((item.Pressed) && ((me.Button & MouseButtons.Left) == MouseButtons.Left))
-						OnButtonClick (new ToolBarButtonClickEventArgs (item.Button));
+						PerformButtonClick (new ToolBarButtonClickEventArgs (item.Button));
 				} else if (item.Pressed) {
 					item.Pressed = false;
 					item.Invalidate ();

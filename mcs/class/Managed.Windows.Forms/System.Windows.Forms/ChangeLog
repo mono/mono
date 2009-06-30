@@ -1,5 +1,13 @@
 2009-06-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ToolBar.cs: Isolate the event logic related to OnButtonClick. Also
+	set current_item when navigating with the keyboard, so we can use it
+	properly later. Finally, handle both Enter and Space to fire
+	OnButtonClick *only*, without any other impact, as .net does.
+	Fixes part of #509985.
+
+2009-06-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* MenuAPI.cs: Close any active menu when we get a simple Alt.
 	Fixes #509299.
 
