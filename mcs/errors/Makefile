@@ -53,7 +53,8 @@ check: run-mcs-tests
 test-local:
 	@:
 
-run-test-local: clean-local run-mcs-tests
+run-test-local: clean-local
+	$(MAKE) run-mcs-tests
 
 test-everything:
 	$(MAKE) PROFILE=net_1_1 run-test

@@ -1,3 +1,7 @@
+2009-06-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (run-test-local): Make parallel-make safe.
+
 2009-06-17 Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Keep at least one target usable for me.
