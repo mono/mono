@@ -85,7 +85,7 @@ namespace MonoTests.System
 			// Test all the formatstrings in the FormatTest array. 
 			// If a test fails the "DecF #" equals the index of the array.
 			foreach (FormatString fTest in FormatTest) {
-				Assertion.AssertEquals ("DecF #" + fTest.TestNumber, fTest.ExpectedResult, fTest.Number.ToString (fTest.Format));
+				Assert.AreEqual (fTest.ExpectedResult, fTest.Number.ToString (fTest.Format), "DecF #" + fTest.TestNumber);
 			}
 		}
 

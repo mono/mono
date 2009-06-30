@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class Int32Test : Assertion
+public class Int32Test 
 {
 	private const Int32 MyInt32_1 = -42;
 	private const Int32 MyInt32_2 = -2147483648;
@@ -68,36 +68,40 @@ public class Int32Test : Assertion
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
+	[Test]
 	public void TestMinMax()
 	{
 		
-		AssertEquals("#A01", Int32.MinValue, MyInt32_2);
-		AssertEquals("#A02", Int32.MaxValue, MyInt32_3);
+		Assert.AreEqual(Int32.MinValue, MyInt32_2, "#A01");
+		Assert.AreEqual(Int32.MaxValue, MyInt32_3, "#A02");
 	}
-	
+
+	[Test]	
 	public void TestCompareTo()
 	{
-		Assert("MyInt32_3.CompareTo(MyInt32_2) > 0", MyInt32_3.CompareTo(MyInt32_2) > 0);
-		Assert("MyInt32_2.CompareTo(MyInt32_2) == 0", MyInt32_2.CompareTo(MyInt32_2) == 0);
-		Assert("MyInt32_1.CompareTo((Int32)(-42)) == 0", MyInt32_1.CompareTo((object)(Int32)(-42)) == 0);
-		Assert("MyInt32_2.CompareTo(MyInt32_3) < 0", MyInt32_2.CompareTo(MyInt32_3) < 0);
+		Assert.IsTrue(MyInt32_3.CompareTo(MyInt32_2) > 0, "MyInt32_3.CompareTo(MyInt32_2) > 0");
+		Assert.IsTrue(MyInt32_2.CompareTo(MyInt32_2) == 0, "MyInt32_2.CompareTo(MyInt32_2) == 0");
+		Assert.IsTrue(MyInt32_1.CompareTo((object)(Int32)(-42)) == 0, "MyInt32_1.CompareTo((Int32)(-42)) == 0");
+		Assert.IsTrue(MyInt32_2.CompareTo(MyInt32_3) < 0, "MyInt32_2.CompareTo(MyInt32_3) < 0");
 		try {
 			MyInt32_2.CompareTo((object)(Int16)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert("typeof(ArgumentException) == e.GetType()", typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType(), "typeof(ArgumentException) == e.GetType()");
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
-		Assert ("#B01", MyInt32_1.Equals (MyInt32_1));
-		Assert ("#B02", MyInt32_1.Equals ((Int32)(-42)));
-		Assert ("#B03", MyInt32_1.Equals ((object)(SByte)(-42)) == false);
-		Assert ("#B04", MyInt32_1.Equals (MyInt32_2) == false);
+		Assert.IsTrue (MyInt32_1.Equals (MyInt32_1), "#B01");
+		Assert.IsTrue (MyInt32_1.Equals ((Int32)(-42)), "#B02");
+		Assert.IsTrue (MyInt32_1.Equals ((object)(SByte)(-42)) == false, "#B03");
+		Assert.IsTrue (MyInt32_1.Equals (MyInt32_2) == false, "#B04");
 	}
-	
+
+	[Test]	
 	public void TestGetHashCode()
 	{
 		try {
@@ -106,122 +110,123 @@ public class Int32Test : Assertion
 			MyInt32_3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
-	
+
+	[Test]	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		AssertEquals ("#C01", MyInt32_1, Int32.Parse (MyString1));
-		AssertEquals ("#C02", MyInt32_2, Int32.Parse (MyString2));
-		AssertEquals ("#C03", MyInt32_3, Int32.Parse (MyString3));
+		Assert.AreEqual (MyInt32_1, Int32.Parse (MyString1), "#C01");
+		Assert.AreEqual (MyInt32_2, Int32.Parse (MyString2), "#C02");
+		Assert.AreEqual (MyInt32_3, Int32.Parse (MyString3), "#C03");
 
-		AssertEquals ("#C04", 1, Int32.Parse ("1"));
-		AssertEquals ("#C05", 1, Int32.Parse (" 1"));
-		AssertEquals ("#C06", 1, Int32.Parse ("     1"));
-		AssertEquals ("#C07", 1, Int32.Parse ("1    "));
-		AssertEquals ("#C08", 1, Int32.Parse ("+1"));
-		AssertEquals ("#C09", -1, Int32.Parse ("-1"));
-		AssertEquals ("#C10", -1, Int32.Parse ("  -1"));
-		AssertEquals ("#C11", -1, Int32.Parse ("  -1  "));
-		AssertEquals ("#C12", -1, Int32.Parse ("  -1  "));
+		Assert.AreEqual (1, Int32.Parse ("1"), "#C04");
+		Assert.AreEqual (1, Int32.Parse (" 1"), "#C05");
+		Assert.AreEqual (1, Int32.Parse ("     1"), "#C06");
+		Assert.AreEqual (1, Int32.Parse ("1    "), "#C07");
+		Assert.AreEqual (1, Int32.Parse ("+1"), "#C08");
+		Assert.AreEqual (-1, Int32.Parse ("-1"), "#C09");
+		Assert.AreEqual (-1, Int32.Parse ("  -1"), "#C10");
+		Assert.AreEqual (-1, Int32.Parse ("  -1  "), "#C11");
+		Assert.AreEqual (-1, Int32.Parse ("  -1  "), "#C12");
 
 		try {
 			Int32.Parse(null);
-			Fail ("#C13: Should raise a System.ArgumentNullException");
+			Assert.Fail ("#C13: Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert ("#C14", typeof (ArgumentNullException) == e.GetType());
+			Assert.IsTrue (typeof (ArgumentNullException) == e.GetType(), "#C14");
 		}
 		try {
 			Int32.Parse("not-a-number");
-			Fail ("#C15: Should raise a System.FormatException");
+			Assert.Fail ("#C15: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert ("#C16", typeof (FormatException) == e.GetType());
+			Assert.IsTrue (typeof (FormatException) == e.GetType(), "#C16");
 		}
 		try {
 			double OverInt = (double)Int32.MaxValue + 1;
 			Int32.Parse(OverInt.ToString());
-			Fail ("#C17: Should raise a System.OverflowException");
+			Assert.Fail ("#C17: Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			AssertEquals ("#C18", typeof (OverflowException), e.GetType());
+			Assert.AreEqual (typeof (OverflowException), e.GetType(), "#C18");
 		}
 		//test Parse(string s, NumberStyles style)
-		AssertEquals ("#C19", 42, Int32.Parse (" $42 ", NumberStyles.Currency));
+		Assert.AreEqual (42, Int32.Parse (" $42 ", NumberStyles.Currency), "#C19");
 		try {
 			Int32.Parse("$42", NumberStyles.Integer);
-			Fail ("#C20: Should raise a System.FormatException");
+			Assert.Fail ("#C20: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert ("#C21", typeof (FormatException) == e.GetType());
+			Assert.IsTrue (typeof (FormatException) == e.GetType(), "#C21");
 		}
 		//test Parse(string s, IFormatProvider provider)
-		AssertEquals ("#C22", -42, Int32.Parse (" -42 ", Nfi));
+		Assert.AreEqual (-42, Int32.Parse (" -42 ", Nfi), "#C22");
 		try {
 			Int32.Parse("%42", Nfi);
-			Fail ("#C23: Should raise a System.FormatException");
+			Assert.Fail ("#C23: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert ("#C24", typeof (FormatException) == e.GetType());
+			Assert.IsTrue (typeof (FormatException) == e.GetType(), "#C24");
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		AssertEquals ("#C25", 16, Int32.Parse (" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.AreEqual (16, Int32.Parse (" 10 ", NumberStyles.HexNumber, Nfi), "#C25");
 		try {
 			Int32.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail ("#C26: Should raise a System.FormatException");
+			Assert.Fail ("#C26: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("#C27", typeof (FormatException) == e.GetType());
+			Assert.IsTrue(typeof (FormatException) == e.GetType(), "#C27");
 		}
 
 		try {
 			Int32.Parse (" - 1 ");
-			Fail ("#C28: Should raise FormatException");
+			Assert.Fail ("#C28: Should raise FormatException");
 		} catch (Exception e){
-			Assert ("#C29", typeof (FormatException) == e.GetType ());
+			Assert.IsTrue (typeof (FormatException) == e.GetType (), "#C29");
 		}
 
 		try {
 			Int32.Parse (" - ");
-			Fail ("#C30: Should raise FormatException");
+			Assert.Fail ("#C30: Should raise FormatException");
 		} catch (Exception e){
-			Assert ("#C31", typeof (FormatException) == e.GetType ());
+			Assert.IsTrue (typeof (FormatException) == e.GetType (), "#C31");
 		}
-		AssertEquals ("#C32", -123, Int32.Parse ("ffffff85", NumberStyles.HexNumber, Nfi));
+		Assert.AreEqual (-123, Int32.Parse ("ffffff85", NumberStyles.HexNumber, Nfi), "#C32");
 		try {
 			Int32.Parse ("100000000", NumberStyles.HexNumber, Nfi);
-			Fail ("#C33: Should raise OverflowException");
+			Assert.Fail ("#C33: Should raise OverflowException");
 		} catch (Exception e){
-			Assert ("#C34", typeof (OverflowException) == e.GetType ());
+			Assert.IsTrue (typeof (OverflowException) == e.GetType (), "#C34");
 		}
 		try {
 			Int32.Parse ("2147483648");
-			Fail ("C#35: should raise OverflowException");
+			Assert.Fail ("C#35: should raise OverflowException");
 		} catch (Exception e) {
-			Assert ("C#36", typeof (OverflowException) == e.GetType ());
+			Assert.IsTrue (typeof (OverflowException) == e.GetType (), "C#36");
 		}
 		try {
 			Int32.Parse ("2147483648", CultureInfo.InvariantCulture);
-			Fail ("C#37: should raise OverflowException");
+			Assert.Fail ("C#37: should raise OverflowException");
 		} catch (Exception e) {
-			Assert ("C#38", typeof (OverflowException) == e.GetType ());
+			Assert.IsTrue (typeof (OverflowException) == e.GetType (), "C#38");
 		}
 
 		try {
 			Int32.Parse (null);
-			Fail ("C#39: Should raise an ArgumentNullException");
+			Assert.Fail ("C#39: Should raise an ArgumentNullException");
 		} catch (Exception e){
-			Assert ("C#40", typeof (ArgumentNullException) == e.GetType ());
+			Assert.IsTrue (typeof (ArgumentNullException) == e.GetType (), "C#40");
 		}
 
 		try {
 			Int32.Parse ("123", (NumberStyles) 60000);
-			Fail ("C#41 Should raise an ArgumentException");
+			Assert.Fail ("C#41 Should raise an ArgumentException");
 		} catch (Exception e){
-			Assert ("C#42", typeof (ArgumentException) == e.GetType ());
+			Assert.IsTrue (typeof (ArgumentException) == e.GetType (), "C#42");
 		}
 
 		// Pass a DateTimeFormatInfo, it is unable to format
@@ -231,104 +236,107 @@ public class Int32Test : Assertion
 	}
 
 #if NET_2_0	
+	[Test]
 	public void TestTryParse()
 	{
 		int result;
 
-		AssertEquals (true, Int32.TryParse (MyString1, out result));
-		AssertEquals (MyInt32_1, result);
-		AssertEquals (true, Int32.TryParse (MyString2, out result));
-		AssertEquals (MyInt32_2, result);
-		AssertEquals (true, Int32.TryParse (MyString3, out result));
-		AssertEquals (MyInt32_3, result);
+		Assert.AreEqual (true, Int32.TryParse (MyString1, out result));
+		Assert.AreEqual (MyInt32_1, result);
+		Assert.AreEqual (true, Int32.TryParse (MyString2, out result));
+		Assert.AreEqual (MyInt32_2, result);
+		Assert.AreEqual (true, Int32.TryParse (MyString3, out result));
+		Assert.AreEqual (MyInt32_3, result);
 
-		AssertEquals (true, Int32.TryParse ("1", out result));
-		AssertEquals (1, result);
-		AssertEquals (true, Int32.TryParse (" 1", out result));
-		AssertEquals (1, result);
-		AssertEquals (true, Int32.TryParse ("     1", out result));
-		AssertEquals (1, result);
-		AssertEquals (true, Int32.TryParse ("1    ", out result));
-		AssertEquals (1, result);
-		AssertEquals (true, Int32.TryParse ("+1", out result));
-		AssertEquals (1, result);
-		AssertEquals (true, Int32.TryParse ("-1", out result));
-		AssertEquals (-1, result);
-		AssertEquals (true, Int32.TryParse ("  -1", out result));
-		AssertEquals (-1, result);
-		AssertEquals (true, Int32.TryParse ("  -1  ", out result));
-		AssertEquals (-1, result);
-		AssertEquals (true, Int32.TryParse ("  -1  ", out result));
-		AssertEquals (-1, result);
+		Assert.AreEqual (true, Int32.TryParse ("1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, Int32.TryParse (" 1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, Int32.TryParse ("     1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, Int32.TryParse ("1    ", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, Int32.TryParse ("+1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, Int32.TryParse ("-1", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, Int32.TryParse ("  -1", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, Int32.TryParse ("  -1  ", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, Int32.TryParse ("  -1  ", out result));
+		Assert.AreEqual (-1, result);
 
 		result = 1;
-		AssertEquals (false, Int32.TryParse (null, out result));
-		AssertEquals (0, result);
+		Assert.AreEqual (false, Int32.TryParse (null, out result));
+		Assert.AreEqual (0, result);
 
-		AssertEquals (false, Int32.TryParse ("not-a-number", out result));
+		Assert.AreEqual (false, Int32.TryParse ("not-a-number", out result));
 
 		double OverInt = (double)Int32.MaxValue + 1;
-		AssertEquals (false, Int32.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, Int32.TryParse (OverInt.ToString (), out result));
 
-		AssertEquals (false, Int32.TryParse ("$42", NumberStyles.Integer, null, out result));
-		AssertEquals (false, Int32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
-		AssertEquals (false, Int32.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
-		AssertEquals (false, Int32.TryParse (" - 1 ", out result));
-		AssertEquals (false, Int32.TryParse (" - ", out result));
-		AssertEquals (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
-		AssertEquals (false, Int32.TryParse ("10000000000", out result));
-		AssertEquals (false, Int32.TryParse ("-10000000000", out result));
-		AssertEquals (true, Int32.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
-		AssertEquals (Int32.MaxValue, result);
-		AssertEquals (true, Int32.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
-		AssertEquals (Int32.MinValue, result);
-		AssertEquals (true, Int32.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
-		AssertEquals (-1, result);
-		AssertEquals (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (false, Int32.TryParse ("$42", NumberStyles.Integer, null, out result));
+		Assert.AreEqual (false, Int32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, Int32.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, Int32.TryParse (" - 1 ", out result));
+		Assert.AreEqual (false, Int32.TryParse (" - ", out result));
+		Assert.AreEqual (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (false, Int32.TryParse ("10000000000", out result));
+		Assert.AreEqual (false, Int32.TryParse ("-10000000000", out result));
+		Assert.AreEqual (true, Int32.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (Int32.MaxValue, result);
+		Assert.AreEqual (true, Int32.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (Int32.MinValue, result);
+		Assert.AreEqual (true, Int32.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
 	}
 #endif
-	
+
+	[Test]	
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals ("#D01", MyString1, MyInt32_1.ToString ());
-		AssertEquals ("#D02", MyString2, MyInt32_2.ToString ());
-		AssertEquals ("#D03", MyString3, MyInt32_3.ToString ());
+		Assert.AreEqual (MyString1, MyInt32_1.ToString (), "#D01");
+		Assert.AreEqual (MyString2, MyInt32_2.ToString (), "#D02");
+		Assert.AreEqual (MyString3, MyInt32_3.ToString (), "#D03");
 
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals ("#D04(" + i + "," + Formats1 [i] + ")",
-				      ResultsNfi1 [i], MyInt32_2.ToString (Formats1 [i], Nfi));
-			AssertEquals ("#D05(" + i + "," + Formats2 [i] + ")",
-				      ResultsNfi2 [i], MyInt32_3.ToString (Formats2 [i], Nfi));
+			Assert.AreEqual (ResultsNfi1 [i], MyInt32_2.ToString (Formats1 [i], Nfi),
+							 "#D04(" + i + "," + Formats1 [i] + ")");
+			Assert.AreEqual (ResultsNfi2 [i], MyInt32_3.ToString (Formats2 [i], Nfi), 
+							 "#D05(" + i + "," + Formats2 [i] + ")");
 		}
 
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals ("#D06(" + i + ")", Results1 [i],
-				      MyInt32_2.ToString(Formats1[i]));
-			AssertEquals ("#D07(" + i + ")", Results2 [i],
-				      MyInt32_3.ToString(Formats2[i]));
+			Assert.AreEqual (Results1 [i], MyInt32_2.ToString(Formats1[i]), "#D06(" + i + ")");
+			Assert.AreEqual (Results2 [i], MyInt32_3.ToString(Formats2[i]),
+							 "#D07(" + i + ")");
+				      
 		}
 
 		try {
 			MyInt32_1.ToString("z");
-			Fail ("#D08: Should raise a System.FormatException");
+			Assert.Fail ("#D08: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert ("#D09", typeof (FormatException) == e.GetType());
+			Assert.IsTrue (typeof (FormatException) == e.GetType(), "#D09");
 		}
 	}
 
+	[Test]
 	public void TestCustomToString()
 	{
 		int i = 123;
 
-		AssertEquals ("Custom format string 00000", "00123", i.ToString ("00000"));
-		AssertEquals ("Custom format string ####", "123", i.ToString ("####"));
-		AssertEquals ("Custom format string ####", "0123", i.ToString ("0###"));
-		AssertEquals ("Custom format string ####", "0123", i.ToString ("#0###"));
-		AssertEquals ("Custom format string ####", "000123", i.ToString ("0#0###"));
+		Assert.AreEqual ("00123", i.ToString ("00000"), "Custom format string 00000");
+		Assert.AreEqual ("123", i.ToString ("####"), "Custom format string ####");
+		Assert.AreEqual ("0123", i.ToString ("0###"), "Custom format string ####");
+		Assert.AreEqual ("0123", i.ToString ("#0###"), "Custom format string ####");
+		Assert.AreEqual ("000123", i.ToString ("0#0###"), "Custom format string ####");
 	}
 
 	[Test]
@@ -337,10 +345,10 @@ public class Int32Test : Assertion
 		int hundred = 100;
 		int neghund = -100;
 		
-		Assert ("#TS1",  hundred.ToString ("#;#") == "100");
-		Assert ("#TS2",  hundred.ToString ("-#;#") == "-100");
-		Assert ("#TS3",  neghund.ToString ("#;#") == "100");
-		Assert ("#TS3",  neghund.ToString ("#;-#") == "-100");
+		Assert.IsTrue ( hundred.ToString ("#;#") == "100", "#TS1");
+		Assert.IsTrue ( hundred.ToString ("-#;#") == "-100", "#TS2");
+		Assert.IsTrue ( neghund.ToString ("#;#") == "100", "#TS3");
+		Assert.IsTrue ( neghund.ToString ("#;-#") == "-100", "#TS3");
 	}
 	
 	[Test]
@@ -349,14 +357,14 @@ public class Int32Test : Assertion
 		Int32 i = 254;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "254", def);
+		Assert.AreEqual ("254", def, "ToString(G)");
 	}
 }
 

@@ -27,7 +27,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class ModuleHandleTest : Assertion
+public class ModuleHandleTest 
 {	
 	public static int foo;
 
@@ -53,7 +53,7 @@ public class ModuleHandleTest : Assertion
 	[Test]
 	public void ResolveTypeToken () {
 		// A typedef
-		AssertEquals (typeof (ModuleHandleTest), Type.GetTypeFromHandle (module.ResolveTypeHandle (typeof (ModuleHandleTest).MetadataToken)));
+		Assert.AreEqual (typeof (ModuleHandleTest), Type.GetTypeFromHandle (module.ResolveTypeHandle (typeof (ModuleHandleTest).MetadataToken)));
 	}
 
 	[Test]
@@ -80,7 +80,7 @@ public class ModuleHandleTest : Assertion
 	public void ResolveFieldToken () {
 		FieldInfo fi = typeof (ModuleHandleTest).GetField ("foo");
 
-		AssertEquals (fi, FieldInfo.GetFieldFromHandle (module.ResolveFieldHandle (fi.MetadataToken)));
+		Assert.AreEqual (fi, FieldInfo.GetFieldFromHandle (module.ResolveFieldHandle (fi.MetadataToken)));
 	}
 
 	[Test]
@@ -123,7 +123,7 @@ public class ModuleHandleTest : Assertion
 	public void ResolveMethodToken () {
 		MethodInfo mi = typeof (ModuleHandleTest).GetMethod ("ResolveMethodToken");
 
-		AssertEquals (mi, MethodInfo.GetMethodFromHandle (module.ResolveMethodHandle (mi.MetadataToken)));
+		Assert.AreEqual (mi, MethodInfo.GetMethodFromHandle (module.ResolveMethodHandle (mi.MetadataToken)));
 	}
 
 	[Test]
@@ -167,7 +167,7 @@ public class ModuleHandleTest : Assertion
 
 		module.GetPEKind (out pe_kind, out machine);
 
-		AssertEquals (PortableExecutableKinds.ILOnly, pe_kind);
+		Assert.AreEqual (PortableExecutableKinds.ILOnly, pe_kind);
 	}
 
 	[Test]

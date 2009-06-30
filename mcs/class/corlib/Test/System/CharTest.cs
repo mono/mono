@@ -13,64 +13,69 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class CharTest : TestCase
+public class CharTest
 {
+	[Test]
 	public void TestCompareTo()
 	{
 		Char c1 = 'a';
 		Char c2 = 'b';
 		Char c3 = 'b';
-		Assert("Less than", c1.CompareTo(c2) == -1);
-		Assert("Greater than", c2.CompareTo(c1) == 1);
-		Assert("Equal 1", c2.CompareTo(c3) == 0);
-		Assert("Equal 2", c1.CompareTo(c1) == 0);
+		Assert.IsTrue(c1.CompareTo(c2) == -1, "Less than");
+		Assert.IsTrue(c2.CompareTo(c1) == 1, "Greater than");
+		Assert.IsTrue(c2.CompareTo(c3) == 0, "Equal 1");
+		Assert.IsTrue(c1.CompareTo(c1) == 0, "Equal 2");
 	}
-	
+
+	[Test]	
 	public void TestEquals()
 	{
 		Char c1 = 'a';
 		Char c2 = 'b';
 		Char c3 = 'b';
-		Assert("Same", c1.Equals(c1));
-		Assert("Same value", c2.Equals(c3));
-		Assert("Not same", !c1.Equals(c2));
+		Assert.IsTrue(c1.Equals(c1), "Same");
+		Assert.IsTrue(c2.Equals(c3), "Same value");
+		Assert.IsTrue(!c1.Equals(c2), "Not same");
 	}
 
+	[Test]
 	public void TestGetHashValue()
 	{
 		Char c1 = ' ';
-		AssertEquals("deterministic hash code ", c1.GetHashCode(), c1.GetHashCode());
+		Assert.AreEqual(c1.GetHashCode(), c1.GetHashCode(), "deterministic hash code ");
 		// TODO - the spec doesn't say what algorithm is used to get hash codes.  So far, just a weak test for determinism and mostly-uniqueness.
 	}
 
+	[Test]
 	public void TestGetNumericValue()
 	{
 		Char c1 = ' ';
 		Char c2 = '3';
-		AssertEquals("code 1", -1.0, Char.GetNumericValue(c1), 0.1);
-		AssertEquals("code 2", 3.0, Char.GetNumericValue(c2), 0.1);
+		Assert.AreEqual(-1.0, Char.GetNumericValue(c1), 0.1, "code 1");
+		Assert.AreEqual(3.0, Char.GetNumericValue(c2), 0.1, "code 2");
 
 		string s1 = " 3 ";
-		AssertEquals("space not number", -1.0, Char.GetNumericValue(s1, 0), 0.1);
-		AssertEquals("space not number", 3.0, Char.GetNumericValue(s1, 1), 0.1);
-		AssertEquals("space not number", -1.0, Char.GetNumericValue(s1, 2), 0.1);
+		Assert.AreEqual(-1.0, Char.GetNumericValue(s1, 0), 0.1, "space not number");
+		Assert.AreEqual(3.0, Char.GetNumericValue(s1, 1), 0.1, "space not number");
+		Assert.AreEqual(-1.0, Char.GetNumericValue(s1, 2), 0.1, "space not number");
 	}
 
+	[Test]
 	public void TestGetUnicodeCategory()
 	{
 		{
 			char Pe1 = ']';
 			char Pe2 = '}';
 			char Pe3 = ')';
-			AssertEquals("Close Punctuation", 
-				     UnicodeCategory.ClosePunctuation, 
-				     Char.GetUnicodeCategory(Pe1));
-			AssertEquals("Close Punctuation", 
-				     UnicodeCategory.ClosePunctuation, 
-				     Char.GetUnicodeCategory(Pe2));
-			AssertEquals("Close Punctuation", 
-				     UnicodeCategory.ClosePunctuation, 
-				     Char.GetUnicodeCategory(Pe3));
+			Assert.AreEqual(UnicodeCategory.ClosePunctuation, 
+							Char.GetUnicodeCategory(Pe1),
+							"Close Punctuation");
+			Assert.AreEqual(UnicodeCategory.ClosePunctuation, 
+							Char.GetUnicodeCategory(Pe2),
+							"Close Punctuation");
+			Assert.AreEqual(UnicodeCategory.ClosePunctuation, 
+							Char.GetUnicodeCategory(Pe3),
+							"Close Punctuation");
 		}
 		// TODO - ConnectorPunctuation
 		{
@@ -78,41 +83,42 @@ public class CharTest : TestCase
 			char c2 = (char)0x001F;
 			char c3 = (char)0x007F;
 			char c4 = (char)0x00F;
-			AssertEquals("Control", 
-				     UnicodeCategory.Control, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("Control", 
-				     UnicodeCategory.Control, 
-				     Char.GetUnicodeCategory(c2));
-			AssertEquals("Control", 
-				     UnicodeCategory.Control, 
-				     Char.GetUnicodeCategory(c3));
-			AssertEquals("Control", 
-				     UnicodeCategory.Control, 
-				     Char.GetUnicodeCategory(c4));
+			Assert.AreEqual(UnicodeCategory.Control, 
+							Char.GetUnicodeCategory(c1),
+							"Control");
+			Assert.AreEqual(UnicodeCategory.Control, 
+							Char.GetUnicodeCategory(c2),
+							"Control");
+			Assert.AreEqual(UnicodeCategory.Control,
+							Char.GetUnicodeCategory(c3),
+							"Control");
+			Assert.AreEqual(UnicodeCategory.Control,
+							Char.GetUnicodeCategory(c4),
+							"Control");
 		}
 		{
 			// TODO - more currencies?
 			char c1 = '$';
-			AssertEquals("Currency",
+			Assert.AreEqual(
 				     UnicodeCategory.CurrencySymbol,
-				     Char.GetUnicodeCategory(c1));
+				     Char.GetUnicodeCategory(c1),
+					 "Currency");
 		}
 		{
 			char c1 = '-';
-			AssertEquals("Dash Punctuation", 
-				     UnicodeCategory.DashPunctuation, 
-				     Char.GetUnicodeCategory(c1));
+			Assert.AreEqual(UnicodeCategory.DashPunctuation,
+							Char.GetUnicodeCategory(c1),
+							"Dash Punctuation");
 		}
 		{
 			char c1 = '2';
 			char c2 = '7';
-			AssertEquals("Decimal Digit", 
-				     UnicodeCategory.DecimalDigitNumber, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("Decimal Digit", 
-				     UnicodeCategory.DecimalDigitNumber, 
-				     Char.GetUnicodeCategory(c2));
+			Assert.AreEqual(UnicodeCategory.DecimalDigitNumber,
+							Char.GetUnicodeCategory(c1),
+							"Decimal Digit");
+			Assert.AreEqual(UnicodeCategory.DecimalDigitNumber,
+							Char.GetUnicodeCategory(c2),
+							"Decimal Digit");
 		}
 		// TODO - EnclosingMark
 		// TODO - FinalQuotePunctuation
@@ -123,22 +129,22 @@ public class CharTest : TestCase
 		{
 			char c1 = 'a';
 			char c2 = 'z';
-			AssertEquals("LowercaseLetter", 
-				     UnicodeCategory.LowercaseLetter, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("LowercaseLetter", 
-				     UnicodeCategory.LowercaseLetter, 
-				     Char.GetUnicodeCategory(c2));
+			Assert.AreEqual(UnicodeCategory.LowercaseLetter,
+							Char.GetUnicodeCategory(c1),
+							"LowercaseLetter");
+			Assert.AreEqual(UnicodeCategory.LowercaseLetter, 
+							Char.GetUnicodeCategory(c2),
+							"LowercaseLetter");
 		}
 		{
 			char c1 = '+';
 			char c2 = '=';
-			AssertEquals("MathSymbol", 
-				     UnicodeCategory.MathSymbol, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("MathSymbol", 
-				     UnicodeCategory.MathSymbol, 
-				     Char.GetUnicodeCategory(c2));
+			Assert.AreEqual(UnicodeCategory.MathSymbol,
+							Char.GetUnicodeCategory(c1),
+							"MathSymbol");
+			Assert.AreEqual(UnicodeCategory.MathSymbol,
+							Char.GetUnicodeCategory(c2),
+							"MathSymbol");
 		}
 		// TODO - ModifierSymbol
 		// TODO - NonSpacingMark
@@ -147,33 +153,33 @@ public class CharTest : TestCase
 			char c1 = '[';
 			char c2 = '{';
 			char c3 = '(';
-			AssertEquals("OpenPunctuation", 
-				     UnicodeCategory.OpenPunctuation, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("OpenPunctuation", 
-				     UnicodeCategory.OpenPunctuation, 
-				     Char.GetUnicodeCategory(c2));
-			AssertEquals("OpenPunctuation", 
-				     UnicodeCategory.OpenPunctuation, 
-				     Char.GetUnicodeCategory(c3));
+			Assert.AreEqual(UnicodeCategory.OpenPunctuation,
+							Char.GetUnicodeCategory(c1),
+							"OpenPunctuation");
+			Assert.AreEqual(UnicodeCategory.OpenPunctuation, 
+							Char.GetUnicodeCategory(c2),
+							"OpenPunctuation");
+			Assert.AreEqual(UnicodeCategory.OpenPunctuation,
+							Char.GetUnicodeCategory(c3),
+							"OpenPunctuation");
 		}
 		// TODO - OtherLetter
 		// TODO - OtherNotAssigned
 		// TODO - OtherNumber
 		{
 			char c1 = '/';
-			AssertEquals("OtherPunctuation", 
-				     UnicodeCategory.OtherPunctuation, 
-				     Char.GetUnicodeCategory(c1));
+			Assert.AreEqual(UnicodeCategory.OtherPunctuation,
+							Char.GetUnicodeCategory(c1),
+							"OtherPunctuation");
 		}
 		// TODO - OtherSymbol
 		// TODO - ParagraphSeparator
 		// TODO - PrivateUse
 		{
 			char c1 = ' ';
-			AssertEquals("SpaceSeparator", 
-				     UnicodeCategory.SpaceSeparator, 
-				     Char.GetUnicodeCategory(c1));
+			Assert.AreEqual(UnicodeCategory.SpaceSeparator,
+							Char.GetUnicodeCategory(c1),
+							"SpaceSeparator");
 		}
 		// TODO - SpacingCombiningMark
 		{
@@ -181,33 +187,34 @@ public class CharTest : TestCase
 			char c2 = (char)0xDBFF; // D800-DBFF
 			char c3 = (char)0xDC01; // DC00-DEFF
 			char c4 = (char)0xDEFF; // DC00-DEFF
-			AssertEquals("High Surrogate", 
-				     UnicodeCategory.Surrogate, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("High Surrogate", 
-				     UnicodeCategory.Surrogate, 
-				     Char.GetUnicodeCategory(c2));
-			AssertEquals("Low Surrogate", 
-				     UnicodeCategory.Surrogate, 
-				     Char.GetUnicodeCategory(c3));
-			AssertEquals("Low Surrogate", 
-				     UnicodeCategory.Surrogate, 
-				     Char.GetUnicodeCategory(c4));
+			Assert.AreEqual(UnicodeCategory.Surrogate,
+							Char.GetUnicodeCategory(c1),
+							"High Surrogate");
+			Assert.AreEqual(UnicodeCategory.Surrogate,
+							Char.GetUnicodeCategory(c2),
+							"High Surrogate");
+			Assert.AreEqual(UnicodeCategory.Surrogate,
+							Char.GetUnicodeCategory(c3),
+							"Low Surrogate");
+			Assert.AreEqual(UnicodeCategory.Surrogate,
+							Char.GetUnicodeCategory(c4),
+							"Low Surrogate");
 		}
 		// TODO - TitlecaseLetter
 		// TODO - UppercaseLetter
 		{
 			char c1 = 'A';
 			char c2 = 'Z';
-			AssertEquals("UppercaseLetter", 
-				     UnicodeCategory.UppercaseLetter, 
-				     Char.GetUnicodeCategory(c1));
-			AssertEquals("UppercaseLetter", 
-				     UnicodeCategory.UppercaseLetter, 
-				     Char.GetUnicodeCategory(c2));
+			Assert.AreEqual(UnicodeCategory.UppercaseLetter,
+							Char.GetUnicodeCategory(c1),
+							"UppercaseLetter");
+			Assert.AreEqual(UnicodeCategory.UppercaseLetter,
+							Char.GetUnicodeCategory(c2),
+							"UppercaseLetter");
 		}
 	}
 
+	[Test]
 	public void TestIsControl()
 	{
 		// control is 0000-001F, 007F-009F
@@ -215,54 +222,57 @@ public class CharTest : TestCase
 		char c2 = (char)0x001F;
 		char c3 = (char)0x007F;
 		char c4 = (char)0x009F;
-		Assert("Not control", !Char.IsControl(' '));
-		Assert("control", Char.IsControl(c1));
-		Assert("control", Char.IsControl(c2));
-		Assert("control", Char.IsControl(c3));
-		Assert("control", Char.IsControl(c4));
+		Assert.IsTrue(!Char.IsControl(' '), "Not control");
+		Assert.IsTrue(Char.IsControl(c1), "control");
+		Assert.IsTrue(Char.IsControl(c2), "control");
+		Assert.IsTrue(Char.IsControl(c3), "control");
+		Assert.IsTrue(Char.IsControl(c4), "control");
 
 		string s1 = " " + c1 + c2 + c3 + c4;
-		Assert("Not control", !Char.IsControl(s1, 0));
-		Assert("control", Char.IsControl(s1, 1));
-		Assert("control", Char.IsControl(s1, 2));
-		Assert("control", Char.IsControl(s1, 3));
-		Assert("control", Char.IsControl(s1, 4));
+		Assert.IsTrue(!Char.IsControl(s1, 0), "Not control");
+		Assert.IsTrue(Char.IsControl(s1, 1), "control");
+		Assert.IsTrue(Char.IsControl(s1, 2), "control");
+		Assert.IsTrue(Char.IsControl(s1, 3), "control");
+		Assert.IsTrue(Char.IsControl(s1, 4), "control");
 	}
 
+	[Test]
 	public void TestIsDigit()
 	{
 		char c1 = '0';
 		char c2 = '9';
-		Assert("Not digit", !Char.IsDigit(' '));
-		Assert("digit", Char.IsDigit(c1));
-		Assert("digit", Char.IsDigit(c2));
+		Assert.IsTrue(!Char.IsDigit(' '), "Not digit");
+		Assert.IsTrue(Char.IsDigit(c1), "digit");
+		Assert.IsTrue(Char.IsDigit(c2), "digit");
 
 		string s1 = " " + c1 + c2;
-		Assert("Not digit", !Char.IsDigit(s1, 0));
-		Assert("digit", Char.IsDigit(s1, 1));
-		Assert("digit", Char.IsDigit(s1, 2));
+		Assert.IsTrue(!Char.IsDigit(s1, 0), "Not digit");
+		Assert.IsTrue(Char.IsDigit(s1, 1), "digit");
+		Assert.IsTrue(Char.IsDigit(s1, 2), "digit");
 	}
 
+	[Test]
 	public void TestIsLetter()
 	{
 		char c1 = 'a';
 		char c2 = 'z';
 		char c3 = 'A';
 		char c4 = 'Z';
-		Assert("Not letter", !Char.IsLetter(' '));
-		Assert("letter", Char.IsLetter(c1));
-		Assert("letter", Char.IsLetter(c2));
-		Assert("letter", Char.IsLetter(c3));
-		Assert("letter", Char.IsLetter(c4));
+		Assert.IsTrue(!Char.IsLetter(' '), "Not letter");
+		Assert.IsTrue(Char.IsLetter(c1), "letter");
+		Assert.IsTrue(Char.IsLetter(c2), "letter");
+		Assert.IsTrue(Char.IsLetter(c3), "letter");
+		Assert.IsTrue(Char.IsLetter(c4), "letter");
 
 		string s1 = " " + c1 + c2 + c3 + c4;
-		Assert("Not letter", !Char.IsLetter(s1, 0));
-		Assert("letter", Char.IsLetter(s1, 1));
-		Assert("letter", Char.IsLetter(s1, 2));
-		Assert("letter", Char.IsLetter(s1, 3));
-		Assert("letter", Char.IsLetter(s1, 4));
+		Assert.IsTrue(!Char.IsLetter(s1, 0), "Not letter");
+		Assert.IsTrue(Char.IsLetter(s1, 1), "letter");
+		Assert.IsTrue(Char.IsLetter(s1, 2), "letter");
+		Assert.IsTrue(Char.IsLetter(s1, 3), "letter");
+		Assert.IsTrue(Char.IsLetter(s1, 4), "letter");
 	}
 
+	[Test]
 	public void TestIsLetterOrDigit()
 	{
 		char c1 = 'a';
@@ -271,80 +281,85 @@ public class CharTest : TestCase
 		char c4 = 'Z';
 		char c5 = '0';
 		char c6 = '9';
-		Assert("Not letterordigit", !Char.IsLetterOrDigit(' '));
-		Assert("letterordigit", Char.IsLetterOrDigit(c1));
-		Assert("letterordigit", Char.IsLetterOrDigit(c2));
-		Assert("letterordigit", Char.IsLetterOrDigit(c3));
-		Assert("letterordigit", Char.IsLetterOrDigit(c4));
-		Assert("letterordigit", Char.IsLetterOrDigit(c5));
-		Assert("letterordigit", Char.IsLetterOrDigit(c6));
+		Assert.IsTrue(!Char.IsLetterOrDigit(' '), "Not letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c1), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c2), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c3), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c4), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c5), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(c6), "letterordigit");
 
 		string s1 = " " + c1 + c2 + c3 + c4 + c5 + c6;
-		Assert("Not letterordigit", !Char.IsLetterOrDigit(s1, 0));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 1));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 2));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 3));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 4));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 5));
-		Assert("letterordigit", Char.IsLetterOrDigit(s1, 6));
+		Assert.IsTrue(!Char.IsLetterOrDigit(s1, 0), "Not letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 1), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 2), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 3), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 4), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 5), "letterordigit");
+		Assert.IsTrue(Char.IsLetterOrDigit(s1, 6), "letterordigit");
 	}
 
+	[Test]
 	public void TestIsLower()
 	{
 		char c1 = 'a';
 		char c2 = 'z';
-		Assert("Not lower", !Char.IsLower(' '));
-		Assert("lower", Char.IsLower(c1));
-		Assert("lower", Char.IsLower(c2));
+		Assert.IsTrue(!Char.IsLower(' '), "Not lower");
+		Assert.IsTrue(Char.IsLower(c1), "lower");
+		Assert.IsTrue(Char.IsLower(c2), "lower");
 
 		string s1 = " " + c1 + c2;
-		Assert("Not lower", !Char.IsLower(s1, 0));
-		Assert("lower", Char.IsLower(s1, 1));
-		Assert("lower", Char.IsLower(s1, 2));
+		Assert.IsTrue(!Char.IsLower(s1, 0), "Not lower");
+		Assert.IsTrue(Char.IsLower(s1, 1), "lower");
+		Assert.IsTrue(Char.IsLower(s1, 2), "lower");
 	}
 
+	[Test]
 	public void TestIsNumber()
 	{
 		char c1 = '0';
 		char c2 = '9';
 		// TODO - IsNumber of less obvious characters
 
-		Assert("Not number", !Char.IsNumber(' '));
-		Assert("number", Char.IsNumber(c1));
-		Assert("number", Char.IsNumber(c2));
+		Assert.IsTrue(!Char.IsNumber(' '), "Not number");
+		Assert.IsTrue(Char.IsNumber(c1), "number");
+		Assert.IsTrue(Char.IsNumber(c2), "number");
 
 		string s1 = " " + c1 + c2;
-		Assert("Not number", !Char.IsNumber(s1, 0));
-		Assert("number", Char.IsNumber(s1, 1));
-		Assert("number", Char.IsNumber(s1, 2));
+		Assert.IsTrue(!Char.IsNumber(s1, 0), "Not number");
+		Assert.IsTrue(Char.IsNumber(s1, 1), "number");
+		Assert.IsTrue(Char.IsNumber(s1, 2), "number");
 	}
 
+	[Test]
 	public void TestIsPunctuation()
 	{
 		char c1 = '.';
 		char c2 = '?';
-		Assert("Not punctuation", !Char.IsPunctuation(' '));
-		Assert("punctuation", Char.IsPunctuation(c1));
-		Assert("punctuation", Char.IsPunctuation(c2));
+		Assert.IsTrue(!Char.IsPunctuation(' '), "Not punctuation");
+		Assert.IsTrue(Char.IsPunctuation(c1), "punctuation");
+		Assert.IsTrue(Char.IsPunctuation(c2), "punctuation");
 
 		string s1 = " " + c1 + c2;
-		Assert("Not punctuation", !Char.IsPunctuation(s1, 0));
-		Assert("punctuation", Char.IsPunctuation(s1, 1));
-		Assert("punctuation", Char.IsPunctuation(s1, 2));
+		Assert.IsTrue(!Char.IsPunctuation(s1, 0), "Not punctuation");
+		Assert.IsTrue(Char.IsPunctuation(s1, 1), "punctuation");
+		Assert.IsTrue(Char.IsPunctuation(s1, 2), "punctuation");
 	}
 
+	[Test]
 	public void TestIsSeparator()
 	{
 		char c1 = ' ';
 
-		Assert("Not separator", !Char.IsSeparator('.'));
-		Assert("separator1", Char.IsSeparator(c1));
+		Assert.IsTrue(!Char.IsSeparator('.'), "Not separator");
+		Assert.IsTrue(Char.IsSeparator(c1), "separator1");
 
 		string s1 = "." + c1;
-		Assert("Not separator", !Char.IsSeparator(s1, 0));
-		Assert("separator1-2", Char.IsSeparator(s1, 1));
+		Assert.IsTrue(!Char.IsSeparator(s1, 0), "Not separator");
+		Assert.IsTrue(Char.IsSeparator(s1, 1), "separator1-2");
 	}
 
+	[Test]
 	public void TestIsSurrogate()
 	{
 		// high surrogate - D800-DBFF
@@ -353,64 +368,67 @@ public class CharTest : TestCase
 		char c2 = (char)0xDBFF;
 		char c3 = (char)0xDC00;
 		char c4 = (char)0xDEFF;
-		Assert("Not surrogate", !Char.IsSurrogate(' '));
-		Assert("surrogate1", Char.IsSurrogate(c1));
-		Assert("surrogate2", Char.IsSurrogate(c2));
-		Assert("surrogate3", Char.IsSurrogate(c3));
-		Assert("surrogate4", Char.IsSurrogate(c4));
+		Assert.IsTrue(!Char.IsSurrogate(' '), "Not surrogate");
+		Assert.IsTrue(Char.IsSurrogate(c1), "surrogate1");
+		Assert.IsTrue(Char.IsSurrogate(c2), "surrogate2");
+		Assert.IsTrue(Char.IsSurrogate(c3), "surrogate3");
+		Assert.IsTrue(Char.IsSurrogate(c4), "surrogate4");
 
 		string s1 = " " + c1 + c2 + c3 + c4;
-		Assert("Not surrogate", !Char.IsSurrogate(s1, 0));
-		Assert("surrogate1-2", Char.IsSurrogate(s1, 1));
-		Assert("surrogate2-2", Char.IsSurrogate(s1, 2));
-		Assert("surrogate3-2", Char.IsSurrogate(s1, 3));
-		Assert("surrogate4-2", Char.IsSurrogate(s1, 4));
+		Assert.IsTrue(!Char.IsSurrogate(s1, 0), "Not surrogate");
+		Assert.IsTrue(Char.IsSurrogate(s1, 1), "surrogate1-2");
+		Assert.IsTrue(Char.IsSurrogate(s1, 2), "surrogate2-2");
+		Assert.IsTrue(Char.IsSurrogate(s1, 3), "surrogate3-2");
+		Assert.IsTrue(Char.IsSurrogate(s1, 4), "surrogate4-2");
 	}
 
+	[Test]
 	public void TestIsSymbol()
 	{
 		char c1 = '+';
 		char c2 = '=';
-		Assert("Not symbol", !Char.IsSymbol(' '));
-		Assert("symbol", Char.IsSymbol(c1));
-		Assert("symbol", Char.IsSymbol(c2));
+		Assert.IsTrue(!Char.IsSymbol(' '), "Not symbol");
+		Assert.IsTrue(Char.IsSymbol(c1), "symbol");
+		Assert.IsTrue(Char.IsSymbol(c2), "symbol");
 
 		string s1 = " " + c1 + c2;
-		Assert("Not symbol", !Char.IsSymbol(s1, 0));
-		Assert("symbol", Char.IsSymbol(s1, 1));
-		Assert("symbol", Char.IsSymbol(s1, 2));
+		Assert.IsTrue(!Char.IsSymbol(s1, 0), "Not symbol");
+		Assert.IsTrue(Char.IsSymbol(s1, 1), "symbol");
+		Assert.IsTrue(Char.IsSymbol(s1, 2), "symbol");
 	}
 
+	[Test]
 	public void TestIsUpper()
 	{
 		char c1 = 'A';
 		char c2 = 'Z';
-		Assert("Not upper", !Char.IsUpper('a'));
-		Assert("upper", Char.IsUpper(c1));
-		Assert("upper", Char.IsUpper(c2));
+		Assert.IsTrue(!Char.IsUpper('a'), "Not upper");
+		Assert.IsTrue(Char.IsUpper(c1), "upper");
+		Assert.IsTrue(Char.IsUpper(c2), "upper");
 
 		string s1 = "a" + c1 + c2;
-		Assert("Not upper", !Char.IsUpper(s1, 0));
-		Assert("upper", Char.IsUpper(s1, 1));
-		Assert("upper", Char.IsUpper(s1, 2));
+		Assert.IsTrue(!Char.IsUpper(s1, 0), "Not upper");
+		Assert.IsTrue(Char.IsUpper(s1, 1), "upper");
+		Assert.IsTrue(Char.IsUpper(s1, 2), "upper");
 	}
 
+	[Test]
 	public void TestIsWhiteSpace()
 	{
 		char c1 = ' ';
 		char c2 = '\n';
 		char c3 = '\t';
 
-		Assert("Not whitespace", !Char.IsWhiteSpace('.'));
-		Assert("whitespace1", Char.IsWhiteSpace(c1));
-		Assert("whitespace2", Char.IsWhiteSpace(c2));
-		Assert("whitespace3", Char.IsWhiteSpace(c3));
+		Assert.IsTrue(!Char.IsWhiteSpace('.'), "Not whitespace");
+		Assert.IsTrue(Char.IsWhiteSpace(c1), "whitespace1");
+		Assert.IsTrue(Char.IsWhiteSpace(c2), "whitespace2");
+		Assert.IsTrue(Char.IsWhiteSpace(c3), "whitespace3");
 
 		string s1 = "." + c1 + c2 + c3;
-		Assert("Not whitespace", !Char.IsWhiteSpace(s1, 0));
-		Assert("whitespace1-2", Char.IsWhiteSpace(s1, 1));
-		Assert("whitespace2-2", Char.IsWhiteSpace(s1, 2));
-		Assert("whitespace3-2", Char.IsWhiteSpace(s1, 3));
+		Assert.IsTrue(!Char.IsWhiteSpace(s1, 0), "Not whitespace");
+		Assert.IsTrue(Char.IsWhiteSpace(s1, 1), "whitespace1-2");
+		Assert.IsTrue(Char.IsWhiteSpace(s1, 2), "whitespace2-2");
+		Assert.IsTrue(Char.IsWhiteSpace(s1, 3), "whitespace3-2");
 	}
 
 	[Test]
@@ -447,42 +465,46 @@ public class CharTest : TestCase
 			case 0x205F:
 #endif
 			case 0x3000:
-				Assert (i.ToString (), Char.IsWhiteSpace (c));
+				Assert.IsTrue (Char.IsWhiteSpace (c), i.ToString ());
 				break;
 			default:
-				Assert (i.ToString (), !Char.IsWhiteSpace (c));
+				Assert.IsTrue (!Char.IsWhiteSpace (c), i.ToString ());
 				break;
 			}
 		}
 	}
 
+	[Test]
 	public void TestParse()
 	{
 		char c1 = 'a';
 		string s1 = "a";
-		Assert(c1.Equals(Char.Parse(s1)));
+		Assert.IsTrue(c1.Equals(Char.Parse(s1)));
 	}	
 
 #if NET_2_0
+	[Test]
 	public void TestTryParseValid ()
 	{
 		char c1 = 'a';
 		string s1 = "a";
 		char c2;
 
-		AssertEquals ("TryParse1", true, Char.TryParse (s1, out c2));
-		AssertEquals ("TryParse2", c2, c1);
+		Assert.AreEqual (true, Char.TryParse (s1, out c2), "TryParse1");
+		Assert.AreEqual (c2, c1, "TryParse2");
 	}
 
+	[Test]
 	public void TestTryParseInvalid ()
 	{
 		string s = "abc";
 		char c;
-		AssertEquals ("TryParse3", false, Char.TryParse (s, out c));
-		AssertEquals ("TryParse4", '\0', c);
+		Assert.AreEqual (false, Char.TryParse (s, out c), "TryParse3");
+		Assert.AreEqual ('\0', c, "TryParse4");
 	}
 #endif
-	
+
+	[Test]	
 	public void TestToLower()
 	{
 		char a1 = 'a';
@@ -497,14 +519,15 @@ public class CharTest : TestCase
 		char b4 = 'z';
 		char b5 = ' ';
 		char b6 = '+';
-		AssertEquals("char lowered", b1, Char.ToLower(a1));
-		AssertEquals("char lowered", b2, Char.ToLower(a2));
-		AssertEquals("char lowered", b3, Char.ToLower(a3));
-		AssertEquals("char lowered", b4, Char.ToLower(a4));
-		AssertEquals("char lowered", b5, Char.ToLower(a5));
-		AssertEquals("char lowered", b6, Char.ToLower(a6));
+		Assert.AreEqual(b1, Char.ToLower(a1), "char lowered");
+		Assert.AreEqual(b2, Char.ToLower(a2), "char lowered");
+		Assert.AreEqual(b3, Char.ToLower(a3), "char lowered");
+		Assert.AreEqual(b4, Char.ToLower(a4), "char lowered");
+		Assert.AreEqual(b5, Char.ToLower(a5), "char lowered");
+		Assert.AreEqual(b6, Char.ToLower(a6), "char lowered");
 	}
 
+	[Test]
 	public void TestToUpper()
 	{
 		char a1 = 'a';
@@ -519,65 +542,73 @@ public class CharTest : TestCase
 		char b4 = 'Z';
 		char b5 = ' ';
 		char b6 = '+';
-		AssertEquals("char uppered", b1, Char.ToUpper(a1));
-		AssertEquals("char uppered", b2, Char.ToUpper(a2));
-		AssertEquals("char uppered", b3, Char.ToUpper(a3));
-		AssertEquals("char uppered", b4, Char.ToUpper(a4));
-		AssertEquals("char uppered", b5, Char.ToUpper(a5));
-		AssertEquals("char uppered", b6, Char.ToUpper(a6));
+		Assert.AreEqual(b1, Char.ToUpper(a1), "char uppered");
+		Assert.AreEqual(b2, Char.ToUpper(a2), "char uppered");
+		Assert.AreEqual(b3, Char.ToUpper(a3), "char uppered");
+		Assert.AreEqual(b4, Char.ToUpper(a4), "char uppered");
+		Assert.AreEqual(b5, Char.ToUpper(a5), "char uppered");
+		Assert.AreEqual(b6, Char.ToUpper(a6), "char uppered");
 	}
 
-
+	[Test]
 	public void TestToString()
 	{
 		char c1 = 'a';
 		string s1 = "a";
-		Assert(s1.Equals(c1.ToString()));
+		Assert.IsTrue(s1.Equals(c1.ToString()));
 	}
 
+	[Test]
 	public void TestGetTypeCode()
 	{
 		char c1 = 'a';
-		Assert(c1.GetTypeCode().Equals(TypeCode.Char));
+		Assert.IsTrue(c1.GetTypeCode().Equals(TypeCode.Char));
 	}
 
 #if NET_2_0
+	[Test]
 	public void TestConvertFromUtf32 ()
 	{
-		AssertEquals ("#1", "A", Char.ConvertFromUtf32 (0x41));
-		AssertEquals ("#2", "\uD800\uDC00", Char.ConvertFromUtf32 (0x10000));
+		Assert.AreEqual ("A", Char.ConvertFromUtf32 (0x41), "#1");
+		Assert.AreEqual ("\uD800\uDC00", Char.ConvertFromUtf32 (0x10000), "#2");
 	}
 
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestConvertFromUtf32Fail1 ()
 	{
 		Char.ConvertFromUtf32 (-1);
 	}
 
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestConvertFromUtf32Fail2 ()
 	{
 		Char.ConvertFromUtf32 (0x110001);
 	}
 
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestConvertFromUtf32Fail3 ()
 	{
 		Char.ConvertFromUtf32 (0xD800);
 	}
 
+	[Test]
 	public void TestConvertToUtf32 ()
 	{
-		AssertEquals ("#1", 0x10000, Char.ConvertToUtf32 ('\uD800', '\uDC00'));
-		AssertEquals ("#2", 0x10FFFF, Char.ConvertToUtf32 ('\uDBFF', '\uDFFF'));
+		Assert.AreEqual (0x10000, Char.ConvertToUtf32 ('\uD800', '\uDC00'), "#1");
+		Assert.AreEqual (0x10FFFF, Char.ConvertToUtf32 ('\uDBFF', '\uDFFF'), "#2");
 	}
 
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestConvertToUtf32Fail1 ()
 	{
 		Char.ConvertToUtf32 ('A', '\uDC00');
 	}
 
+	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestConvertUtf32Fail2 ()
 	{

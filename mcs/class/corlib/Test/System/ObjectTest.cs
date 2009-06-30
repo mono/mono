@@ -12,6 +12,7 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
+[TestFixture]
 public class ObjectTest
 {
 	public ObjectTest() {}

@@ -187,6 +187,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("Test", Enum.Format (test.GetType (), test, "f"), "#H5");
 		}
 
+		[Test]
 		public void TestFormat_FormatSpecifier ()
 		{
 			ParameterAttributes pa =
@@ -834,9 +835,9 @@ namespace MonoTests.System
 			FlagsNegativeTestEnum t;
 
 			t = FlagsNegativeTestEnum.None;
-			Assertion.AssertEquals ("#01", "None", t.ToString ());
+			Assert.AreEqual ("None", t.ToString (), "#01");
 			t = FlagsNegativeTestEnum.One;
-			Assertion.AssertEquals ("#02", "One", t.ToString ());
+			Assert.AreEqual ("One", t.ToString (), "#02");
 		}
 
 		[Test]

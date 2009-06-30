@@ -1,5 +1,8 @@
 2009-06-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.cs: Convert all tests to new-style nunit classes/methods. Enable
+	some hidden tests.
+
 	* ObjectTest.cs RandomTest.cs SByteTest.cs SingleTest.cs 
 	TimeZoneTest.cs UInt16Test.cs UInt32Test.cs UInt64Test.cs 
 	UIntPtrTest.cs ValueTypeTest.cs: Convert all tests to new-style nunit 

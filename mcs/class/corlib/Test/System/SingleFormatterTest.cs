@@ -66,7 +66,7 @@ namespace MonoTests.System
 		
 		private void FormatStringTest(int TestNumber, float Number, string Format, string ExpectedResult)
 		{
-			Assertion.AssertEquals ("SngF #" + TestNumber, ExpectedResult, Number.ToString(Format));
+			Assert.AreEqual (ExpectedResult, Number.ToString(Format), "SngF #" + TestNumber);
 		}
 		
 		string GetPercent (string s)

@@ -13,7 +13,7 @@ using System.Globalization;
 namespace MonoTests.System 
 {
 	[TestFixture]
-	public class DoubleFormatterTest : Assertion
+	public class DoubleFormatterTest 
 	{
 		CultureInfo old_culture;
 
@@ -56,7 +56,7 @@ namespace MonoTests.System
 		
 		private void FormatStringTest(string TestNumber, NumberFormatInfo NumberFormat, double Number, string Format, string ExpectedResult)
 		{
-			Assertion.AssertEquals (TestNumber, ExpectedResult, Number.ToString(Format, NumberFormat));                                
+			Assert.AreEqual (ExpectedResult, Number.ToString(Format, NumberFormat), TestNumber);
 		}
 
 		private NumberFormatInfo GetNumberFormat1()
@@ -939,7 +939,7 @@ namespace MonoTests.System
 		public void NonStandardRounding () 
 		{
 			// banker's rounding would results in 2.71828182845904
-			AssertEquals ("G-E", "2.71828182845905", Math.E.ToString (CultureInfo.InvariantCulture));
+			Assert.AreEqual ("2.71828182845905", Math.E.ToString (CultureInfo.InvariantCulture), "G-E");
 		}
 
 		// see bug #60110 for more details
@@ -947,7 +947,7 @@ namespace MonoTests.System
 		public void Roundtrip_ExactStringFormat () 
 		{
 			// here we check that the "R" output is "extactly" the same as MS implementation
-			AssertEquals ("R-E", "2.7182818284590451", Math.E.ToString ("R", CultureInfo.InvariantCulture));
+			Assert.AreEqual ("2.7182818284590451", Math.E.ToString ("R", CultureInfo.InvariantCulture), "R-E");
 		}
 
 		// see bug #60110 for more details
@@ -957,17 +957,17 @@ namespace MonoTests.System
 			// here we check that we can recreate the "extact" same double from the "R" format
 			string se = Math.E.ToString ("R", CultureInfo.InvariantCulture);
 			Double de = Double.Parse (se);
-			AssertEquals ("E==E", Math.E, de);
+			Assert.AreEqual (Math.E, de, "E==E");
 
 			// we try Mono "long" R format
 			se = "2.718281828459045090795598298427648842334747314453125";
 			de = Double.Parse (se);
-			AssertEquals ("Mono==E", Math.E, de);
+			Assert.AreEqual (Math.E, de, "Mono==E");
 
 			// we try MS "short" R format
 			se = "2.7182818284590451";
 			de = Double.Parse (se);
-			AssertEquals ("Microsoft==E", Math.E, de);
+			Assert.AreEqual (Math.E, de, "Microsoft==E");
 		}
 
 		[Test]
@@ -977,7 +977,7 @@ namespace MonoTests.System
 			// here we check that we can recreate the "extact" same double from the "R" format
 			string se = value.ToString ("R", CultureInfo.InvariantCulture);
 			Double de = Double.Parse (se);
-			AssertEquals ("-E==-E", value, de);
+			Assert.AreEqual (value, de, "-E==-E");
 		}
 	}
 }

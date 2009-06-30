@@ -77,7 +77,7 @@ namespace MonoTests.System
       RemotingServices.Marshal(objMarshal);
 
       ObjRef objRef = objMarshal.CreateObjRef(typeof(MarshalObject));
-      Assertion.AssertEquals("#A01", objRef.URI, RemotingServices.GetObjectUri(objMarshal));
+      Assert.AreEqual(objRef.URI, RemotingServices.GetObjectUri(objMarshal), "#A01");
 
       // TODO: When implemented in the mono RemotingServices class
       //RemotingServices.Disconnect(objMarshal);
@@ -104,7 +104,7 @@ namespace MonoTests.System
       
       objMarshal.InitializeLifetimeService();
       ILease lease = (ILease) objMarshal.GetLifetimeService();
-      Assertion.AssertEquals("#A02", lease.InitialLeaseTime, TimeSpan.FromSeconds(10));
+      Assert.AreEqual(lease.InitialLeaseTime, TimeSpan.FromSeconds(10), "#A02");
       
       // TODO: When implemented in the mono RemotingServices class
       //RemotingServices.Disconnect(objMarshal);
@@ -127,7 +127,7 @@ namespace MonoTests.System
 
       MarshalObject objMarshalRem = (MarshalObject) objRem;
 
-      Assertion.AssertEquals("#A03", 1, objMarshalRem.Id);
+      Assert.AreEqual(1, objMarshalRem.Id, "#A03");
 
       // TODO: When implemented in the mono RemotingServices class
       //RemotingServices.Disconnect(objMarshal);

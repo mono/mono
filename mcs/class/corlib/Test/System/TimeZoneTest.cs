@@ -18,6 +18,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System {
 
+[TestFixture]
 public class TimeZoneTest {
 
 	private CultureInfo oldcult;

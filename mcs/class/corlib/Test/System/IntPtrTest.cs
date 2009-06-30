@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System  {
 
 	[TestFixture]
-	public class IntPtrTest : Assertion {
+	public class IntPtrTest  {
 
 		[Test]
 		[ExpectedException (typeof (OverflowException))]
@@ -43,10 +43,10 @@ namespace MonoTests.System  {
 			// for 64 bits machines
 			if (IntPtr.Size > 4) {
 				IntPtr pmax = new IntPtr (Int64.MaxValue);
-				AssertEquals ("Max", Int64.MaxValue, (long) pmax);
+				Assert.AreEqual (Int64.MaxValue, (long) pmax, "Max");
 
 				IntPtr pmin = new IntPtr (Int64.MinValue);
-				AssertEquals ("Min", Int64.MinValue, (long) pmin);
+				Assert.AreEqual (Int64.MinValue, (long) pmin, "Min");
 			}
 		}
 
@@ -54,8 +54,8 @@ namespace MonoTests.System  {
 		[Test]
 		public void ToStringWithFormat ()
 		{
-			AssertEquals ("#1", "0", IntPtr.Zero.ToString ("x"));
-			AssertEquals ("#2", "3b9aca00", new IntPtr (1000000000).ToString ("x"));
+			Assert.AreEqual ("0", IntPtr.Zero.ToString ("x"), "#1");
+			Assert.AreEqual ("3b9aca00", new IntPtr (1000000000).ToString ("x"), "#2");
 		}
 #endif
 	}

@@ -16,31 +16,31 @@ using System.Globalization;
 namespace MonoTests.System {
 
 [TestFixture]
-public class BooleanTest : Assertion {
+public class BooleanTest  {
 
 	[Test]
 	public void Strings ()
 	{
-		AssertEquals("Wrong False string", "False", Boolean.FalseString);
-		AssertEquals("Wrong True string", "True", Boolean.TrueString);
+		Assert.AreEqual("False", Boolean.FalseString, "Wrong False string");
+		Assert.AreEqual("True", Boolean.TrueString, "Wrong True string");
 	}
 	
 	[Test]
 	public void CompareTo ()
 	{
 		Boolean t=true,f=false;
-		Assert ("f.CompareTo(t) < 0", f.CompareTo(t) < 0);
-		Assert ("f.CompareTo(f)", f.CompareTo(f) == 0);
-		Assert ("t.CompareTo(t) == 0", t.CompareTo(t) == 0);
-		Assert ("t.CompareTo(f) > 0", t.CompareTo(f) > 0);
-		Assert ("t.CompareTo(null) > 0", t.CompareTo(null) > 0);
+		Assert.IsTrue (f.CompareTo(t) < 0, "f.CompareTo(t) < 0");
+		Assert.IsTrue (f.CompareTo(f) == 0, "f.CompareTo(f)");
+		Assert.IsTrue (t.CompareTo(t) == 0, "t.CompareTo(t) == 0");
+		Assert.IsTrue (t.CompareTo(f) > 0, "t.CompareTo(f) > 0");
+		Assert.IsTrue (t.CompareTo(null) > 0, "t.CompareTo(null) > 0");
 
 		byte[] array = new byte [1] { 0x02 };
 		bool t2 = BitConverter.ToBoolean (array, 0);
-		Assert ("f.CompareTo(t2) < 0", f.CompareTo(t2) < 0);
-		Assert ("t2.CompareTo(t2) == 0", t2.CompareTo(t2) == 0);
-		Assert ("t2.CompareTo(f) > 0", t2.CompareTo(f) > 0);
-		Assert ("t2.CompareTo(null) > 0", t2.CompareTo(null) > 0);
+		Assert.IsTrue (f.CompareTo(t2) < 0, "f.CompareTo(t2) < 0");
+		Assert.IsTrue (t2.CompareTo(t2) == 0, "t2.CompareTo(t2) == 0");
+		Assert.IsTrue (t2.CompareTo(f) > 0, "t2.CompareTo(f) > 0");
+		Assert.IsTrue (t2.CompareTo(null) > 0, "t2.CompareTo(null) > 0");
 	}
 
 	[Test]
@@ -55,21 +55,21 @@ public class BooleanTest : Assertion {
 	{
 		Boolean t=true, f=false;
 		string s = "What Ever";
-		Assert ("t.Equals(t)", t.Equals(t));
-		Assert ("f.Equals(f)", f.Equals(f));
-		Assert ("!t.Equals(f)", !t.Equals(f));
-		Assert ("!f.Equals(t)", !f.Equals(t));
-		Assert ("!t.Equals(null)", !t.Equals(null));
-		Assert ("!f.Equals(null)", !f.Equals(null));
-		Assert ("!t.Equals(s)", !t.Equals(s));
-		Assert ("!f.Equals(s)", !f.Equals(s));
+		Assert.IsTrue (t.Equals(t), "t.Equals(t)");
+		Assert.IsTrue (f.Equals(f), "f.Equals(f)");
+		Assert.IsTrue (!t.Equals(f), "!t.Equals(f)");
+		Assert.IsTrue (!f.Equals(t), "!f.Equals(t)");
+		Assert.IsTrue (!t.Equals(null), "!t.Equals(null)");
+		Assert.IsTrue (!f.Equals(null), "!f.Equals(null)");
+		Assert.IsTrue (!t.Equals(s), "!t.Equals(s)");
+		Assert.IsTrue (!f.Equals(s), "!f.Equals(s)");
 
 		byte[] array = new byte [1] { 0x02 };
 		bool t2 = BitConverter.ToBoolean (array, 0);
-		Assert ("t2.Equals(t2)", t2.Equals(t2));
-		Assert ("t.Equals(t2)", t.Equals(t2));
-		Assert ("t2.Equals(t)", t2.Equals(t));
-		Assert ("!f.Equals(t2)", !f.Equals(t2));
+		Assert.IsTrue (t2.Equals(t2), "t2.Equals(t2)");
+		Assert.IsTrue (t.Equals(t2), "t.Equals(t2)");
+		Assert.IsTrue (t2.Equals(t), "t2.Equals(t)");
+		Assert.IsTrue (!f.Equals(t2), "!f.Equals(t2)");
 	}
 
 #pragma warning disable 1718
@@ -77,17 +77,17 @@ public class BooleanTest : Assertion {
 	public void TestEqualOperator ()
 	{
 		Boolean t=true, f=false;
-		Assert ("t==t", t==t);
-		Assert ("f==f", f==f);
-		Assert ("t!=f", t!=f);
-		Assert ("f!=t", f!=t);
+		Assert.IsTrue (t==t, "t==t");
+		Assert.IsTrue (f==f, "f==f");
+		Assert.IsTrue (t!=f, "t!=f");
+		Assert.IsTrue (f!=t, "f!=t");
 
 		byte[] array = new byte [1] { 0x02 };
 		bool t2 = BitConverter.ToBoolean (array, 0);
-		Assert ("t2==t2", t2==t2);
-		Assert ("t==t2", t==t2);
-		Assert ("t2==t", t2==t);
-		Assert ("f!=t2", f!=t2);
+		Assert.IsTrue (t2==t2, "t2==t2");
+		Assert.IsTrue (t==t2, "t==t2");
+		Assert.IsTrue (t2==t, "t2==t");
+		Assert.IsTrue (f!=t2, "f!=t2");
 	}
 #pragma warning restore 1718
 
@@ -95,35 +95,35 @@ public class BooleanTest : Assertion {
 	public void TestGetHashCode ()
 	{
 		Boolean t=true, f=false;
-		AssertEquals("GetHashCode True failed", 1, t.GetHashCode());
-		AssertEquals("GetHashCode True failed", 0, f.GetHashCode());
+		Assert.AreEqual(1, t.GetHashCode(), "GetHashCode True failed");
+		Assert.AreEqual(0, f.GetHashCode(), "GetHashCode True failed");
 	}
 
 	[Test]
 	public void TestGetType ()
 	{
 		Boolean t=true, f=false;
-		AssertEquals("GetType failed", true, Object.ReferenceEquals(t.GetType(), f.GetType()));
+		Assert.AreEqual(true, Object.ReferenceEquals(t.GetType(), f.GetType()), "GetType failed");
 	}
 
 	[Test]
 	public void GetTypeCode ()
 	{
 		Boolean b=true;
-		AssertEquals("GetTypeCode failed", TypeCode.Boolean, b.GetTypeCode());
+		Assert.AreEqual(TypeCode.Boolean, b.GetTypeCode(), "GetTypeCode failed");
 	}
 
 	[Test]
 	public void Parse () 
 	{
-		AssertEquals("Parse True failed", true, Boolean.Parse("True"));
-		AssertEquals("Parse True failed", true, Boolean.Parse(" True"));
-		AssertEquals("Parse True failed", true, Boolean.Parse("True "));
-		AssertEquals("Parse True failed", true, Boolean.Parse("tRuE"));
-		AssertEquals("Parse False failed", false, Boolean.Parse("False"));
-		AssertEquals("Parse False failed", false, Boolean.Parse(" False"));
-		AssertEquals("Parse False failed", false, Boolean.Parse("False "));
-		AssertEquals("Parse False failed", false, Boolean.Parse("fAlSe"));
+		Assert.AreEqual(true, Boolean.Parse("True"), "Parse True failed");
+		Assert.AreEqual(true, Boolean.Parse(" True"), "Parse True failed");
+		Assert.AreEqual(true, Boolean.Parse("True "), "Parse True failed");
+		Assert.AreEqual(true, Boolean.Parse("tRuE"), "Parse True failed");
+		Assert.AreEqual(false, Boolean.Parse("False"), "Parse False failed");
+		Assert.AreEqual(false, Boolean.Parse(" False"), "Parse False failed");
+		Assert.AreEqual(false, Boolean.Parse("False "), "Parse False failed");
+		Assert.AreEqual(false, Boolean.Parse("fAlSe"), "Parse False failed");
 	}
 
 	[Test]
@@ -144,8 +144,8 @@ public class BooleanTest : Assertion {
 	public void TestToString ()
 	{
 		Boolean t=true,f=false;
-		AssertEquals("ToString True Failed", Boolean.TrueString, t.ToString());
-		AssertEquals("ToString False Failed", Boolean.FalseString, f.ToString());
+		Assert.AreEqual(Boolean.TrueString, t.ToString(), "ToString True Failed");
+		Assert.AreEqual(Boolean.FalseString, f.ToString(), "ToString False Failed");
 	}
 }
 

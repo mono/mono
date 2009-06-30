@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class Int16Test : Assertion
+public class Int16Test 
 {
 	private const Int16 MyInt16_1 = -42;
 	private const Int16 MyInt16_2 = -32768;
@@ -55,36 +55,39 @@ public class Int16Test : Assertion
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
+	[Test]
 	public void TestMinMax()
 	{
-		
-		AssertEquals(Int16.MinValue, MyInt16_2);
-		AssertEquals(Int16.MaxValue, MyInt16_3);
+		Assert.AreEqual(Int16.MinValue, MyInt16_2);
+		Assert.AreEqual(Int16.MaxValue, MyInt16_3);
 	}
-	
+
+	[Test]	
 	public void TestCompareTo()
 	{
-		Assert(MyInt16_3.CompareTo(MyInt16_2) > 0);
-		Assert(MyInt16_2.CompareTo(MyInt16_2) == 0);
-		Assert(MyInt16_1.CompareTo((Int16)(-42)) == 0);
-		Assert(MyInt16_2.CompareTo(MyInt16_3) < 0);
+		Assert.IsTrue(MyInt16_3.CompareTo(MyInt16_2) > 0);
+		Assert.IsTrue(MyInt16_2.CompareTo(MyInt16_2) == 0);
+		Assert.IsTrue(MyInt16_1.CompareTo((Int16)(-42)) == 0);
+		Assert.IsTrue(MyInt16_2.CompareTo(MyInt16_3) < 0);
 		try {
 			MyInt16_2.CompareTo((object)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail ("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
-		Assert(MyInt16_1.Equals(MyInt16_1));
-		Assert(MyInt16_1.Equals((object)(Int16)(-42)));
-		Assert(MyInt16_1.Equals((object)(SByte)(-42)) == false);
-		Assert(MyInt16_1.Equals(MyInt16_2) == false);
+		Assert.IsTrue(MyInt16_1.Equals(MyInt16_1));
+		Assert.IsTrue(MyInt16_1.Equals((object)(Int16)(-42)));
+		Assert.IsTrue(MyInt16_1.Equals((object)(SByte)(-42)) == false);
+		Assert.IsTrue(MyInt16_1.Equals(MyInt16_2) == false);
 	}
-	
+
+	[Test]	
 	public void TestGetHashCode()
 	{
 		try {
@@ -93,93 +96,95 @@ public class Int16Test : Assertion
 			MyInt16_3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail ("GetHashCode should not raise an exception here");
 		}
 	}
-	
+
+	[Test]	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MyInt16_1 == Int16.Parse(MyString1));
-		Assert(MyInt16_2 == Int16.Parse(MyString2));
-		Assert(MyInt16_3 == Int16.Parse(MyString3));
+		Assert.IsTrue(MyInt16_1 == Int16.Parse(MyString1));
+		Assert.IsTrue(MyInt16_2 == Int16.Parse(MyString2));
+		Assert.IsTrue(MyInt16_3 == Int16.Parse(MyString3));
 		try {
 			Int16.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Assert.Fail ("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			Int16.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		try {
 			int OverInt = Int16.MaxValue + 1;
 			Int16.Parse(OverInt.ToString());
-			Fail("Should raise a System.OverflowException");
+			Assert.Fail ("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert.IsTrue(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == Int16.Parse(" $42 ", NumberStyles.Currency));
+		Assert.IsTrue(42 == Int16.Parse(" $42 ", NumberStyles.Currency));
 		try {
 			Int16.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(-42 == Int16.Parse(" -42 ", Nfi));
+		Assert.IsTrue(-42 == Int16.Parse(" -42 ", Nfi));
 		try {
 			Int16.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == Int16.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.IsTrue(16 == Int16.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
 			Int16.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 	}
-	
+
+	[Test]	
 	public void TestToString()
 	{
 		//test ToString()
-		Assert(String.Compare(MyString1, MyInt16_1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MyInt16_2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MyInt16_3.ToString()) == 0);
+		Assert.IsTrue(String.Compare(MyString1, MyInt16_1.ToString()) == 0);
+		Assert.IsTrue(String.Compare(MyString2, MyInt16_2.ToString()) == 0);
+		Assert.IsTrue(String.Compare(MyString3, MyInt16_3.ToString()) == 0);
 		//test ToString(string format)
 		/*
 		TODO: These tests are culture sensitive.  Need to find a way to determine the culture
 			of the system to decide the correct expected result.
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyInt16_2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MyInt16_3.ToString(Formats2[i])) == 0);
+			Assert.IsTrue(String.Compare(Results1[i], MyInt16_2.ToString(Formats1[i])) == 0);
+			Assert.IsTrue(String.Compare(Results2[i], MyInt16_3.ToString(Formats2[i])) == 0);
 		}
 		*/
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert("i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MyInt16_2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MyInt16_2.ToString(Formats1[i], Nfi), String.Compare(ResultsNfi1[i], MyInt16_2.ToString(Formats1[i], Nfi)) == 0);
-			Assert("i="+i+", ResultsNfi2[i]="+ResultsNfi2[i]+", MyInt16_3.ToString(Formats2[i]="+Formats2[i]+"): Expected "+ResultsNfi2[i]+" but got "+MyInt16_3.ToString(Formats2[i], Nfi), String.Compare(ResultsNfi2[i], MyInt16_3.ToString(Formats2[i], Nfi)) == 0);
+			Assert.IsTrue(String.Compare(ResultsNfi1[i], MyInt16_2.ToString(Formats1[i], Nfi)) == 0, "i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MyInt16_2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MyInt16_2.ToString(Formats1[i], Nfi));
+			Assert.IsTrue(String.Compare(ResultsNfi2[i], MyInt16_3.ToString(Formats2[i], Nfi)) == 0, "i="+i+", ResultsNfi2[i]="+ResultsNfi2[i]+", MyInt16_3.ToString(Formats2[i]="+Formats2[i]+"): Expected "+ResultsNfi2[i]+" but got "+MyInt16_3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MyInt16_1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 	}
 
@@ -189,14 +194,14 @@ public class Int16Test : Assertion
 		Int16 i = 254;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "254", def);
+		Assert.AreEqual ("254", def, "ToString(G)");
 	}
 }
 

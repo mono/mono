@@ -12,8 +12,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 
-using AssertType = NUnit.Framework.Assert;
-
     /// <summary>
     /// Tests for System.Int64
     /// </summary>
@@ -21,7 +19,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class Int64Test : Assertion
+public class Int64Test 
 {
 	private const Int64 MyInt64_1 = -42;
 	private const Int64 MyInt64_2 = -9223372036854775808;
@@ -111,36 +109,40 @@ public class Int64Test : Assertion
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
+	[Test]
 	public void TestMinMax()
 	{
 		
-		AssertEquals(Int64.MinValue, MyInt64_2);
-		AssertEquals(Int64.MaxValue, MyInt64_3);
+		Assert.AreEqual(Int64.MinValue, MyInt64_2);
+		Assert.AreEqual(Int64.MaxValue, MyInt64_3);
 	}
-	
+
+	[Test]	
 	public void TestCompareTo()
 	{
-		Assert(MyInt64_3.CompareTo(MyInt64_2) > 0);
-		Assert(MyInt64_2.CompareTo(MyInt64_2) == 0);
-		Assert(MyInt64_1.CompareTo((object)(Int64)(-42)) == 0);
-		Assert(MyInt64_2.CompareTo(MyInt64_3) < 0);
+		Assert.IsTrue(MyInt64_3.CompareTo(MyInt64_2) > 0);
+		Assert.IsTrue(MyInt64_2.CompareTo(MyInt64_2) == 0);
+		Assert.IsTrue(MyInt64_1.CompareTo((object)(Int64)(-42)) == 0);
+		Assert.IsTrue(MyInt64_2.CompareTo(MyInt64_3) < 0);
 		try {
 			MyInt64_2.CompareTo((object)(Int16)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
-		Assert(MyInt64_1.Equals(MyInt64_1));
-		Assert(MyInt64_1.Equals((object)(Int64)(-42)));
-		Assert(MyInt64_1.Equals((object)(SByte)(-42)) == false);
-		Assert(MyInt64_1.Equals(MyInt64_2) == false);
+		Assert.IsTrue(MyInt64_1.Equals(MyInt64_1));
+		Assert.IsTrue(MyInt64_1.Equals((object)(Int64)(-42)));
+		Assert.IsTrue(MyInt64_1.Equals((object)(SByte)(-42)) == false);
+		Assert.IsTrue(MyInt64_1.Equals(MyInt64_2) == false);
 	}
-	
+
+	[Test]	
 	public void TestGetHashCode()
 	{
 		try {
@@ -149,38 +151,41 @@ public class Int64Test : Assertion
 			MyInt64_3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
-	
+
+	[Test]	
     public void TestRoundTripGeneral() 
     {
         foreach(long lv in vals) 
         {
             string s = lv.ToString(Nfi);
             long lv2 = Int64.Parse(s);
-            Assert(lv == lv2);
+            Assert.IsTrue(lv == lv2);
             long lv3 = Int64.Parse(s, NumberStyles.Integer, Nfi);
-            Assert(lv == lv3);
+            Assert.IsTrue(lv == lv3);
         }
     }
 
+	[Test]
     public void TestRoundTripHex() 
     {
         foreach(long lv in vals) 
         {
             string s = lv.ToString("x", Nfi);
             long lv2 = Int64.Parse(s, NumberStyles.HexNumber, Nfi);
-            Assert(lv == lv2);
+            Assert.IsTrue(lv == lv2);
         }
     }
 
+	[Test]
     public void TestParseNull()
     {
         try 
         {
             Int64.Parse(null);
-            Fail("Should raise System.ArgumentNullException"); 
+            Assert.Fail("Should raise System.ArgumentNullException"); 
         } 
         catch (ArgumentNullException) 
         {
@@ -188,17 +193,18 @@ public class Int64Test : Assertion
         }
     }
 
+	[Test]
     public void TestParse()
     {
         long lv;
 
         lv = Int64.Parse(sval1Test1, style1, Nfi);
-        AssertEquals("Long value should be equal for Test1", val1, lv);
+        Assert.AreEqual(val1, lv, "Long value should be equal for Test1");
 
 	try
         {
             lv = Int64.Parse(sval1Test1, Nfi);
-            Fail("Should raise FormatException 1");
+            Assert.Fail("Should raise FormatException 1");
         }
         catch (FormatException)
         {
@@ -206,14 +212,14 @@ public class Int64Test : Assertion
         }
 
         lv = Int64.Parse(sval1Test2, style1, Nfi);
-        AssertEquals("Value should be the same for Test2 with style1", val1, lv);
+        Assert.AreEqual(val1, lv, "Value should be the same for Test2 with style1");
         lv = Int64.Parse(sval1Test2, Nfi);
-        AssertEquals("Value should be the same for Test2 without style1", val1, lv);
+        Assert.AreEqual(val1, lv, "Value should be the same for Test2 without style1");
 
 	try
         {
             lv = Int64.Parse(sval1Test4, style1, Nfi);
-            Fail("Should raise FormatException 3");
+            Assert.Fail("Should raise FormatException 3");
         }
         catch (FormatException)
         {
@@ -221,123 +227,125 @@ public class Int64Test : Assertion
         }
 
         lv = Int64.Parse(sval1Test5, NumberStyles.Currency, Nfi);
-        AssertEquals("Value should be the same for Test5 and currency style", val1, lv);
+        Assert.AreEqual(val1, lv, "Value should be the same for Test5 and currency style");
 
 	//test Parse(string s)
-	Assert(MyInt64_1 == Int64.Parse(MyString1));
-	Assert(MyInt64_2 == Int64.Parse(MyString2));
-	Assert(MyInt64_3 == Int64.Parse(MyString3));
+	Assert.IsTrue(MyInt64_1 == Int64.Parse(MyString1));
+	Assert.IsTrue(MyInt64_2 == Int64.Parse(MyString2));
+	Assert.IsTrue(MyInt64_3 == Int64.Parse(MyString3));
 	try {
 		Int64.Parse(null);
-		Fail("#1:Should raise a System.ArgumentNullException");
+		Assert.Fail("#1:Should raise a System.ArgumentNullException");
 	}
 	catch (Exception e) {
-		Assert("#2", typeof(ArgumentNullException) == e.GetType());
+		Assert.IsTrue(typeof(ArgumentNullException) == e.GetType(), "#2");
 	}
 	try {
 		Int64.Parse("not-a-number");
-		Fail("#3:Should raise a System.FormatException");
+		Assert.Fail("#3:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert("#4", typeof(FormatException) == e.GetType());
+		Assert.IsTrue(typeof(FormatException) == e.GetType(), "#4");
 	}
 	//test Parse(string s, NumberStyles style)
 	try {
 		double OverInt = (double)Int64.MaxValue + 1;
 		Int64.Parse(OverInt.ToString(), NumberStyles.Float);
-		Fail("#5:Should raise a System.OverflowException");
+		Assert.Fail("#5:Should raise a System.OverflowException");
 	}
 	catch (Exception e) {
-		Assert("#6", typeof(OverflowException) == e.GetType());
+		Assert.IsTrue(typeof(OverflowException) == e.GetType(), "#6");
 	}
 	try {
 		Int64.Parse("10000000000000000", NumberStyles.HexNumber);
-		Fail("#7:Should raise a System.OverflowException");
+		Assert.Fail("#7:Should raise a System.OverflowException");
 	}
 	catch (Exception e) {
-		Assert("#8", typeof(OverflowException) == e.GetType());
+		Assert.IsTrue(typeof(OverflowException) == e.GetType(), "#8");
 	}
 	try {
 		double OverInt = (double)Int64.MaxValue + 1;
 		Int64.Parse(OverInt.ToString(), NumberStyles.Integer);
-		Fail("#9:Should raise a System.FormatException");
+		Assert.Fail("#9:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert("#10", typeof(FormatException) == e.GetType());
+		Assert.IsTrue(typeof(FormatException) == e.GetType(), "#10");
 	}
-	AssertEquals("A1", (long)42, Int64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
+	Assert.AreEqual((long)42, Int64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency), "A1");
 	try {
 		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
-		Fail("#11:Should raise a System.FormatException");
+		Assert.Fail("#11:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert("#12", typeof(FormatException) == e.GetType());
+		Assert.IsTrue(typeof(FormatException) == e.GetType(), "#12");
 	}
 	//test Parse(string s, IFormatProvider provider)
-	Assert("A2", -42 == Int64.Parse(" -42 ", Nfi));
+	Assert.IsTrue(-42 == Int64.Parse(" -42 ", Nfi), "A2");
 	try {
 		Int64.Parse("%42", Nfi);
-		Fail("#13:Should raise a System.FormatException");
+		Assert.Fail("#13:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert("#14", typeof(FormatException) == e.GetType());
+		Assert.IsTrue(typeof(FormatException) == e.GetType(), "#14");
 	}
 	//test Parse(string s, NumberStyles style, IFormatProvider provider)
-	Assert("A3", 16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+	Assert.IsTrue(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi), "A3");
 	try {
 		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
-		Fail("#15:Should raise a System.FormatException");
+		Assert.Fail("#15:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert("#16", typeof(FormatException) == e.GetType());
+		Assert.IsTrue(typeof(FormatException) == e.GetType(), "#16");
 	}
 	try {
 		long.Parse ("9223372036854775808");
-		AssertType.Fail ("#17:should raise an OverflowException");
+		Assert.Fail ("#17:should raise an OverflowException");
 	} catch (Exception e) {
-		Assert("#18", typeof(OverflowException) == e.GetType());
+		Assert.IsTrue(typeof(OverflowException) == e.GetType(), "#18");
 	}
 	try {
 		long.Parse ("9223372036854775808", CultureInfo.InvariantCulture);
-		AssertType.Fail ("#19:should raise an OverflowException");
+		Assert.Fail ("#19:should raise an OverflowException");
 	} catch (Exception e) {
-		Assert("#20", typeof(OverflowException) == e.GetType());
+		Assert.IsTrue(typeof(OverflowException) == e.GetType(), "#20");
 	}
     }
 
+	[Test]
     public void TestToString() 
     {
         string s;
 
         s = val1.ToString("c", Nfi);
-        Assert("val1 does not become sval1Test6", s.Equals(sval1Test6));
+        Assert.IsTrue(s.Equals(sval1Test6), "val1 does not become sval1Test6");
 
         s = val1.ToString("n", Nfi);
-        AssertEquals("val1 does not become sval1Test7", sval1Test7, s);
+        Assert.AreEqual(sval1Test7, s, "val1 does not become sval1Test7");
 
 	//test ToString()
-	AssertEquals("MyInt64_1.ToString()", MyString1, MyInt64_1.ToString());
-	AssertEquals("MyInt64_2.ToString()", MyString2, MyInt64_2.ToString());
-	AssertEquals("MyInt64_3.ToString()", MyString3, MyInt64_3.ToString());
+	Assert.AreEqual(MyString1, MyInt64_1.ToString(), "MyInt64_1.ToString()");
+	Assert.AreEqual(MyString2, MyInt64_2.ToString(), "MyInt64_2.ToString()");
+	Assert.AreEqual(MyString3, MyInt64_3.ToString(), "MyInt64_3.ToString()");
 	//test ToString(string format)
 	for (int i=0; i < Formats1.Length; i++) {
-		AssertEquals("MyInt64_2.ToString(Formats1["+i+"])", Results1[i], MyInt64_2.ToString(Formats1[i]));
-		AssertEquals("MyInt64_3.ToString(Formats2["+i+"])", Results2[i], MyInt64_3.ToString(Formats2[i]));
+		Assert.AreEqual(Results1[i], MyInt64_2.ToString(Formats1[i]), "MyInt64_2.ToString(Formats1["+i+"])");
+		Assert.AreEqual(Results2[i], MyInt64_3.ToString(Formats2[i]), "MyInt64_3.ToString(Formats2["+i+"])");
 	}
 	//test ToString(string format, IFormatProvider provider);
 	for (int i=0; i < Formats1.Length; i++) {
-		AssertEquals("MyInt64_2.ToString(Formats1["+i+"], Nfi)", ResultsNfi1[i], MyInt64_2.ToString(Formats1[i], Nfi));
-		AssertEquals("MyInt64_3.ToString(Formats2["+i+"], Nfi)", ResultsNfi2[i], MyInt64_3.ToString(Formats2[i], Nfi));
+		Assert.AreEqual(ResultsNfi1[i], MyInt64_2.ToString(Formats1[i], Nfi), "MyInt64_2.ToString(Formats1["+i+"], Nfi)");
+		Assert.AreEqual(ResultsNfi2[i], MyInt64_3.ToString(Formats2[i], Nfi), "MyInt64_3.ToString(Formats2["+i+"], Nfi)");
 	}
 	try {
 		MyInt64_1.ToString("z");
-		Fail("Should raise a System.FormatException");
+		Assert.Fail("Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		AssertEquals("Exception is wrong type", typeof(FormatException), e.GetType());
+		Assert.AreEqual(typeof(FormatException), e.GetType(), "Exception is wrong type");
 	}
     }
 
+	[Test]
     public void TestUserCurrency()
     {
         string s= "";
@@ -346,50 +354,51 @@ public class Int64Test : Assertion
 	try {
 		s = val1.ToString("c", NfiUser);
 		iTest++;
-		AssertEquals("Currency value type 1 is not what we want to try to parse", sval1UserCur1, s);
+		Assert.AreEqual(sval1UserCur1, s, "Currency value type 1 is not what we want to try to parse");
 		iTest++;
 		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
 		iTest++;
-		Assert(v == val1);
+		Assert.IsTrue(v == val1);
 	} catch (Exception e) {
-		Fail ("1 Unexpected exception at iTest = " + iTest + ", s = " + s + ":e = " + e);
+		Assert.Fail ("1 Unexpected exception at iTest = " + iTest + ", s = " + s + ":e = " + e);
 	}
    
 	iTest = 1;
 	try {
 		s = val2.ToString("c", NfiUser);
 		iTest++;
-		AssertEquals("Currency value type 2 is not what we want to try to parse", sval2UserCur1, s);
+		Assert.AreEqual(sval2UserCur1, s, "Currency value type 2 is not what we want to try to parse");
 		iTest++;
 		v = Int64.Parse(s, NumberStyles.Currency, NfiUser);
 		iTest++;
-		Assert(v == val2);
+		Assert.IsTrue(v == val2);
 	} catch (Exception e) {
-		Fail ("2 Unexpected exception at iTest = " + iTest + ":e = " + e);
+		Assert.Fail ("2 Unexpected exception at iTest = " + iTest + ":e = " + e);
 	}
     }
 
+	[Test]
     public void TestUserPercent()
     {
         string s;
 
         s = val1.ToString("p", NfiUser);
-        Assert(s.Equals(sval1UserPercent1));
+        Assert.IsTrue(s.Equals(sval1UserPercent1));
 
         s = val2.ToString("p", NfiUser);
-        Assert(s.Equals(sval2UserPercent1));
+        Assert.IsTrue(s.Equals(sval2UserPercent1));
     }
 
 		[Test]
 		public void Parse_MaxValue ()
 		{
-			AssertEquals ("9223372036854775807", Int64.MaxValue, Int64.Parse ("9223372036854775807"));
+			Assert.AreEqual (Int64.MaxValue, Int64.Parse ("9223372036854775807"), "9223372036854775807");
 		}
 
 		[Test]
 		public void Parse_MinValue ()
 		{
-			AssertEquals ("-9223372036854775808,10", Int64.MinValue, Int64.Parse ("-9223372036854775808"));
+			Assert.AreEqual (Int64.MinValue, Int64.Parse ("-9223372036854775808"), "-9223372036854775808,10");
 		}
 
 		[Test]
@@ -426,14 +435,14 @@ public class Int64Test : Assertion
 			Int64 i = 254;
 			// everything defaults to "G"
 			string def = i.ToString ("G");
-			AssertEquals ("ToString()", def, i.ToString ());
-			AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-			AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-			AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-			AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-			AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+			Assert.AreEqual (def, i.ToString (), "ToString()");
+			Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+			Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+			Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+			Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+			Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-			AssertEquals ("ToString(G)", "254", def);
+			Assert.AreEqual ("254", def, "ToString(G)");
 		}
 	}
 }

@@ -16,7 +16,8 @@ using System.Threading;
 namespace MonoTests.System
 {
 
-public class IntegerFormatterTest : TestCase
+[TestFixture]
+public class IntegerFormatterTest
 {
 	private const int INT32 = 0;
 	private const int INT64 = 1;
@@ -26,10 +27,7 @@ public class IntegerFormatterTest : TestCase
 
 	public IntegerFormatterTest () {}
 
-	protected override void SetUp () {}
-	
-	protected override void TearDown() {}
-
+	[Test]
 	public void TestStandard ()
 	{
 		// Make the test Culture insensitive
@@ -94,19 +92,19 @@ public class IntegerFormatterTest : TestCase
 		switch (testType) {
 		case INT32:
 			int i32 = Int32.Parse (number, nfi);
-			AssertEquals(id, expected, i32.ToString (format, nfi));
+			Assert.AreEqual(expected, i32.ToString (format, nfi), id);
 			break;
 		case INT64:
 			long i64 = Int64.Parse (number, nfi);
-			AssertEquals(id, expected, i64.ToString (format, nfi));
+			Assert.AreEqual(expected, i64.ToString (format, nfi), id);
 			break;
 		case UINT32:
 			uint ui32 = UInt32.Parse (number, nfi);
-			AssertEquals(id, expected, ui32.ToString (format, nfi));
+			Assert.AreEqual(expected, ui32.ToString (format, nfi), id);
 			break;
 		case UINT64:
 			ulong ui64 = UInt64.Parse (number, nfi);
-			AssertEquals(id, expected, ui64.ToString (format, nfi));
+			Assert.AreEqual(expected, ui64.ToString (format, nfi), id);
 			break;
 		}
 	}

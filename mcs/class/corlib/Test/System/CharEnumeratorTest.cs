@@ -13,13 +13,15 @@ using System;
 namespace MonoTests.System
 {
 
-public class CharEnumeratorTest : TestCase
+[TestFixture]
+public class CharEnumeratorTest
 {
 	public CharEnumeratorTest () {}
 
 	string _s;
 
-	protected override void SetUp ()
+	[SetUp]
+	protected void SetUp ()
 	{
 		_s = "Emma en Sophie";
 	}
@@ -37,15 +39,17 @@ public class CharEnumeratorTest : TestCase
 		return res;
 	}
 
+	[Test]
 	public void TestBasic ()
 	{
 		CharEnumerator ce = _s.GetEnumerator ();
 
 		ce.MoveNext ();
 
-		AssertEquals ("A1", _s, GetFromEnumerator (ce));
+		Assert.AreEqual (_s, GetFromEnumerator (ce), "A1");
 	}
 
+	[Test]
 	public void TestClone ()
 	{
 		CharEnumerator ce1, ce2=null;
@@ -60,9 +64,10 @@ public class CharEnumeratorTest : TestCase
 			cont = ce1.MoveNext ();
 		}
 
-		AssertEquals ("A1", "Sophie", GetFromEnumerator(ce2));
+		Assert.AreEqual ("Sophie", GetFromEnumerator(ce2), "A1");
 	}
 
+	[Test]
 	public void TestReadOutOfBounds ()
 	{
 		char c;
@@ -76,11 +81,11 @@ public class CharEnumeratorTest : TestCase
 		catch (InvalidOperationException) {
 			exception = true;
 		}
-		Assert ("A1", exception);
+		Assert.IsTrue (exception, "A1");
 
-		AssertEquals("A2", true, ce.MoveNext ());
+		Assert.AreEqual(true, ce.MoveNext (), "A2");
 
-		AssertEquals ("A3", _s, GetFromEnumerator (ce));
+		Assert.AreEqual (_s, GetFromEnumerator (ce), "A3");
 
 		try {
 			c = ce.Current;
@@ -88,10 +93,10 @@ public class CharEnumeratorTest : TestCase
 		catch (InvalidOperationException) {
 			exception = true;
 		}
-		Assert ("A4", exception);
+		Assert.IsTrue (exception, "A4");
 
-		AssertEquals("A5", false, ce.MoveNext() );
-		AssertEquals("A6", false, ce.MoveNext() );
+		Assert.AreEqual(false, ce.MoveNext() , "A5");
+		Assert.AreEqual(false, ce.MoveNext() , "A6");
 
 		ce.Reset ();
 
@@ -101,14 +106,14 @@ public class CharEnumeratorTest : TestCase
 		catch (InvalidOperationException) {
 			exception = true;
 		}
-		Assert ("A7", exception);
+		Assert.IsTrue (exception, "A7");
 
-		AssertEquals ("A8", true, ce.MoveNext ());
+		Assert.AreEqual (true, ce.MoveNext (), "A8");
 
-		AssertEquals ("A9", _s, GetFromEnumerator (ce));
+		Assert.AreEqual (_s, GetFromEnumerator (ce), "A9");
 
-		AssertEquals ("A10", false, ce.MoveNext ());
-		AssertEquals ("A11", false, ce.MoveNext ());
+		Assert.AreEqual (false, ce.MoveNext (), "A10");
+		Assert.AreEqual (false, ce.MoveNext (), "A11");
 	}
 
 }

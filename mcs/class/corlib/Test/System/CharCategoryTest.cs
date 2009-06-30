@@ -19,7 +19,7 @@ using System.Reflection;
 namespace MonoTests.System
 {
 	[TestFixture]
-	public class CharCategoryTest : Assertion
+	public class CharCategoryTest 
 	{
 		static char DSC = Path.DirectorySeparatorChar;
 
@@ -43,7 +43,7 @@ namespace MonoTests.System
 //			StreamReader sr = new StreamReader (filename);
 //			dump = sr.ReadToEnd ();
 //			sr.Close ();
-			AssertEquals (dump, sw.ToString ());
+			Assert.AreEqual (dump, sw.ToString ());
 		}
 
 		[Test]

@@ -167,12 +167,12 @@ namespace MonoTests.System
 			try {
 				Assert.AreEqual (1234.5678, Double.Parse ("1,234.5678", NumberStyles.Float | NumberStyles.AllowThousands, Nfi), "#C1");
 			} catch (Exception e) {
-				Assertion.Fail ("#C2: Parse Failed NumberStyles.AllowThousands with e = " + e.ToString ());
+				Assert.Fail ("#C2: Parse Failed NumberStyles.AllowThousands with e = " + e.ToString ());
 			}
 
 			try {
 				Double.Parse (null);
-				Assertion.Fail ("#D1");
+				Assert.Fail ("#D1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
@@ -202,7 +202,7 @@ namespace MonoTests.System
 
 			try {
 				Double.Parse ("-1" + sep + "79769313486232e308");
-				Assertion.Fail ("#G1");
+				Assert.Fail ("#G1");
 			} catch (OverflowException ex) {
 				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#G2");
 				Assert.IsNull (ex.InnerException, "#G3");
@@ -212,7 +212,7 @@ namespace MonoTests.System
 			for (i = 0; i < string_values_fail.Length; ++i) {
 				try {
 					Double.Parse (string_values_fail [i]);
-					Assertion.Fail ("#H1: " + string_values_fail [i]);
+					Assert.Fail ("#H1: " + string_values_fail [i]);
 				} catch (FormatException ex) {
 					Assert.AreEqual (typeof (FormatException), ex.GetType (), "#H2");
 					Assert.IsNull (ex.InnerException, "#H3");

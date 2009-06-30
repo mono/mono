@@ -15,7 +15,7 @@ using System;
 namespace MonoTests.System {
 
 	[TestFixture]
-	public class BufferTest : Assertion {
+	public class BufferTest  {
 
 		const int SIZE = 10;
 		byte [] byteArray  = new byte [SIZE];   // 8-bits unsigned integer array
@@ -31,7 +31,7 @@ namespace MonoTests.System {
 			Buffer.BlockCopy (myArray1, 0, myArray2, 0, SizeOfInt32  * myArray1.Length);
 		
 			for (int i = 0; i < myArray1.Length; i++) 
-				AssertEquals ("TestBlockCopy Error at i=" + i, i + 1, myArray2 [i]);		
+				Assert.AreEqual (i + 1, myArray2 [i], "TestBlockCopy Error at i=" + i);
 		}
 
 		[Test]
@@ -154,39 +154,39 @@ namespace MonoTests.System {
 		
 			try {
 				Buffer.ByteLength (null);	
-				Fail ("TestByteLength: ArgumentNullException not thrown");
+				Assert.Fail ("TestByteLength: ArgumentNullException not thrown");
 			} catch (ArgumentNullException) {
 				// do nothing, this is expected
 			} catch (Exception e) {
-				Fail ("Unexpected exception on Buffer.ByteLength (null):" + e);
+				Assert.Fail ("Unexpected exception on Buffer.ByteLength (null):" + e);
 			}
 		
 			try {
 				Buffer.ByteLength (someArray);	
-				Fail ("TestByteLength: ArgumentException not thrown");
+				Assert.Fail ("TestByteLength: ArgumentException not thrown");
 			} catch (ArgumentException) {
 				// do nothing, this is expected
 			} catch (Exception e) {
-				Fail ("Unexpected exception on Buffer.ByteLength (non primitive array):" + e);
+				Assert.Fail ("Unexpected exception on Buffer.ByteLength (non primitive array):" + e);
 			}
 		
 			numBytes = Buffer.ByteLength (floatArray);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray", 40, numBytes);
+			Assert.AreEqual (40, numBytes, "TestByteLength: wrong byteLength for floatArray");
 
 			numBytes = Buffer.ByteLength (floatArray2);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray2", 400, numBytes);
+			Assert.AreEqual (400, numBytes, "TestByteLength: wrong byteLength for floatArray2");
 
 			numBytes = Buffer.ByteLength (floatArray3);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray3", 4000, numBytes);
+			Assert.AreEqual (4000, numBytes, "TestByteLength: wrong byteLength for floatArray3");
 
 			numBytes = Buffer.ByteLength (floatArray4);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray4", 0, numBytes);
+			Assert.AreEqual (0, numBytes, "TestByteLength: wrong byteLength for floatArray4");
 
 			numBytes = Buffer.ByteLength (floatArray5);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray5", 0, numBytes);
+			Assert.AreEqual (0, numBytes, "TestByteLength: wrong byteLength for floatArray5");
 
 			numBytes = Buffer.ByteLength (floatArray6);
-			AssertEquals ("TestByteLength: wrong byteLength for floatArray6", 0, numBytes);
+			Assert.AreEqual (0, numBytes, "TestByteLength: wrong byteLength for floatArray6");
 		}
 		
 		[Test]
@@ -203,8 +203,7 @@ namespace MonoTests.System {
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert ("TestGetByte: ArgumentNullException not thrown",
-				errorThrown);
+			Assert.IsTrue (errorThrown, "TestGetByte: ArgumentNullException not thrown");
 		
 			errorThrown = false;
 		
@@ -213,8 +212,7 @@ namespace MonoTests.System {
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert ("TestGetByte: ArgumentOutOfRangeException (negative index) not implemented",
-				errorThrown);
+			Assert.IsTrue (errorThrown, "TestGetByte: ArgumentOutOfRangeException (negative index) not implemented");
 		
 			errorThrown = false;
 		
@@ -223,20 +221,20 @@ namespace MonoTests.System {
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert ("TestGetByte: ArgumentOutOfRangeException (index bigger/equal than array's size not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "TestGetByte: ArgumentOutOfRangeException (index bigger/equal than array's size not thrown");
 		
 			errorThrown = false;
 		
 			try {
 				Buffer.GetByte (someArray, 0);	
-				Fail ("TestGetByte: ArgumentException not thrown");
+				Assert.Fail ("TestGetByte: ArgumentException not thrown");
 			} catch (ArgumentException) {
 				// do nothing, this is expected
 			} catch (Exception e) {
-				Fail ("Unexpected exception on Buffer.GetByte (non primitive array):" + e);
+				Assert.Fail ("Unexpected exception on Buffer.GetByte (non primitive array):" + e);
 			}
 		
-			AssertEquals ("TestGetByte Error", (Byte)8, Buffer.GetByte (byteArray, 5));
+			Assert.AreEqual ((Byte)8, Buffer.GetByte (byteArray, 5), "TestGetByte Error");
 		}
 	
 		[Test]
@@ -250,7 +248,7 @@ namespace MonoTests.System {
 			} catch (ArgumentNullException) {
 				errorThrown = true;
 			}
-			Assert ("TestSetByte: ArgumentNullException not thrown", errorThrown);
+			Assert.IsTrue (errorThrown, "TestSetByte: ArgumentNullException not thrown");
 			errorThrown = false;
 		
 			try {
@@ -258,8 +256,7 @@ namespace MonoTests.System {
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert ("TestSetByte: ArgumentOutOfRangeException (case: negative index) not thrown",
-				errorThrown);
+			Assert.IsTrue (errorThrown, "TestSetByte: ArgumentOutOfRangeException (case: negative index) not thrown");
 			errorThrown = false;
 		
 			try {
@@ -267,21 +264,20 @@ namespace MonoTests.System {
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
 			}
-			Assert ("TestSetByte: ArgumentOutOfRangeException (case: index bigger/equal than array'size",
-				errorThrown);
+			Assert.IsTrue (errorThrown, "TestSetByte: ArgumentOutOfRangeException (case: index bigger/equal than array'size");
 			errorThrown = false;
 		
 			try {
 				Buffer.SetByte (someArray, 0, 42);	
-				Fail ("TestSetByte: ArgumentException not thrown");
+				Assert.Fail ("TestSetByte: ArgumentException not thrown");
 			} catch (ArgumentException) {
 				// do nothing, this is expected
 			} catch (Exception e) {
-				Fail ("Unexpected exception on Buffer.SetByte (non primitive array):" + e);
+				Assert.Fail ("Unexpected exception on Buffer.SetByte (non primitive array):" + e);
 			}
 		
 			Buffer.SetByte (byteArray, 3, (byte) 10);
-			AssertEquals ("TestSetByte", (Byte)10, Buffer.GetByte (byteArray, 3));
+			Assert.AreEqual ((Byte)10, Buffer.GetByte (byteArray, 3), "TestSetByte");
 		}
 	}
 }

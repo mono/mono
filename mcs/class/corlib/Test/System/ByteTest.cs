@@ -14,7 +14,7 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class ByteTest : Assertion
+public class ByteTest 
 {
 	private const Byte MyByte1 = 42;
 	private const Byte MyByte2 = 0;
@@ -97,31 +97,31 @@ public class ByteTest : Assertion
 
 	public void TestMinMax()
 	{
-		AssertEquals(Byte.MinValue, MyByte2);
-		AssertEquals(Byte.MaxValue, MyByte3);
+		Assert.AreEqual(Byte.MinValue, MyByte2);
+		Assert.AreEqual(Byte.MaxValue, MyByte3);
 	}
 	
 	public void TestCompareTo()
 	{
-		Assert(MyByte3.CompareTo(MyByte2) > 0);
-		Assert(MyByte2.CompareTo(MyByte2) == 0);
-		Assert(MyByte1.CompareTo((object)(Byte)42) == 0);
-		Assert(MyByte2.CompareTo(MyByte3) < 0);
+		Assert.IsTrue (MyByte3.CompareTo(MyByte2) > 0);
+		Assert.IsTrue (MyByte2.CompareTo(MyByte2) == 0);
+		Assert.IsTrue (MyByte1.CompareTo((object)(Byte)42) == 0);
+		Assert.IsTrue (MyByte2.CompareTo(MyByte3) < 0);
 		try {
 			MyByte2.CompareTo((object)100);
-			Fail("Should raise a System.ArgumentException");
+			Assert.Fail ("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert.IsTrue (typeof(ArgumentException) == e.GetType());
 		}
 	}
 
 	public void TestEquals()
 	{
-		Assert(MyByte1.Equals(MyByte1));
-		Assert(MyByte1.Equals((object)(Byte)42));
-		Assert(MyByte1.Equals((object)(Int16)42) == false);
-		Assert(MyByte1.Equals(MyByte2) == false);
+		Assert.IsTrue (MyByte1.Equals(MyByte1));
+		Assert.IsTrue (MyByte1.Equals((object)(Byte)42));
+		Assert.IsTrue (MyByte1.Equals((object)(Int16)42) == false);
+		Assert.IsTrue (MyByte1.Equals(MyByte2) == false);
 	}
 	
 	public void TestGetHashCode()
@@ -132,60 +132,59 @@ public class ByteTest : Assertion
 			MyByte3.GetHashCode();
 		}
 		catch {
-			Fail("GetHashCode should not raise an exception here");
+			Assert.Fail ("GetHashCode should not raise an exception here");
 		}
 	}
 	
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert("MyByte1="+MyByte1+", MyString1="+MyString1+", Parse="+Byte.Parse(MyString1) , MyByte1 == Byte.Parse(MyString1));
-		Assert("MyByte2", MyByte2 == Byte.Parse(MyString2));
-		Assert("MyByte3", MyByte3 == Byte.Parse(MyString3));
+		Assert.IsTrue (MyByte1 == Byte.Parse(MyString1), "MyByte1="+MyByte1+", MyString1="+MyString1+", Parse="+Byte.Parse(MyString1));
+		Assert.IsTrue(MyByte2 == Byte.Parse(MyString2), "MyByte2");
+		Assert.IsTrue(MyByte3 == Byte.Parse(MyString3), "MyByte3");
 
 		try {
 			Byte.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Assert.Fail ("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert("Should get ArgumentNullException", typeof(ArgumentNullException) == e.GetType());
+			Assert.IsTrue(typeof(ArgumentNullException) == e.GetType(), "Should get ArgumentNullException");
 		}
 		try {
 			Byte.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("not-a-number", typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType(), "not-a-number");
 		}
 
 		//test Parse(string s, NumberStyles style)
-		AssertEquals(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ",
-				(byte)42, Byte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ",
-						NumberStyles.Currency));
+		Assert.AreEqual((byte)42, Byte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency),
+						" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ");
 		try {
 			Byte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 and NumberStyles.Integer", typeof(FormatException) == e.GetType());
+			Assert.IsTrue (typeof(FormatException) == e.GetType(), NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 and NumberStyles.Integer");
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(" 42 and Nfi", 42 == Byte.Parse(" 42 ", Nfi));
+		Assert.IsTrue(42 == Byte.Parse(" 42 ", Nfi), " 42 and Nfi");
 		try {
 			Byte.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("%42 and Nfi", typeof(FormatException) == e.GetType());
+			Assert.IsTrue(typeof(FormatException) == e.GetType(), "%42 and Nfi");
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert("NumberStyles.HexNumber", 16 == Byte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		Assert.IsTrue(16 == Byte.Parse(" 10 ", NumberStyles.HexNumber, Nfi), "NumberStyles.HexNumber");
 		try {
 			Byte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi", typeof(FormatException) == e.GetType());
+			Assert.IsTrue (typeof(FormatException) == e.GetType(), NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi");
 		}
 	}
 
@@ -201,25 +200,25 @@ public class ByteTest : Assertion
 	public void TestToString()
 	{
 		//test ToString()
-		AssertEquals("Compare failed for MyString1 and MyByte1", MyString1, MyByte1.ToString());
-		AssertEquals("Compare failed for MyString2 and MyByte2", MyString2, MyByte2.ToString());
-		AssertEquals("Compare failed for MyString3 and MyByte3", MyString3, MyByte3.ToString());
+		Assert.AreEqual(MyString1, MyByte1.ToString(), "Compare failed for MyString1 and MyByte1");
+		Assert.AreEqual(MyString2, MyByte2.ToString(), "Compare failed for MyString2 and MyByte2");
+		Assert.AreEqual(MyString3, MyByte3.ToString(), "Compare failed for MyString3 and MyByte3");
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals("Compare failed for Formats1["+i.ToString()+"]", Results1[i], MyByte2.ToString(Formats1[i]));
-			AssertEquals("Compare failed for Formats2["+i.ToString()+"]", Results2[i], MyByte3.ToString(Formats2[i]));
+			Assert.AreEqual(Results1[i], MyByte2.ToString(Formats1[i]), "Compare failed for Formats1["+i.ToString()+"]");
+			Assert.AreEqual(Results2[i], MyByte3.ToString(Formats2[i]), "Compare failed for Formats2["+i.ToString()+"]");
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			AssertEquals("Compare failed for Formats1["+i.ToString()+"] with Nfi", Results1_Nfi[i], MyByte2.ToString(Formats1[i], Nfi));
-			AssertEquals("Compare failed for Formats2["+i.ToString()+"] with Nfi", Results2_Nfi[i], MyByte3.ToString(Formats2[i], Nfi));
+			Assert.AreEqual(Results1_Nfi[i], MyByte2.ToString(Formats1[i], Nfi), "Compare failed for Formats1["+i.ToString()+"] with Nfi");
+			Assert.AreEqual(Results2_Nfi[i], MyByte3.ToString(Formats2[i], Nfi), "Compare failed for Formats2["+i.ToString()+"] with Nfi");
 		}
 		try {
 			MyByte1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Assert.Fail ("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			AssertEquals("Exception is the wrong type", typeof(FormatException), e.GetType());
+			Assert.AreEqual(typeof(FormatException), e.GetType(), "Exception is the wrong type");
 		}
 		
 	}
@@ -230,14 +229,14 @@ public class ByteTest : Assertion
 		byte i = 254;
 		// everything defaults to "G"
 		string def = i.ToString ("G");
-		AssertEquals ("ToString()", def, i.ToString ());
-		AssertEquals ("ToString((IFormatProvider)null)", def, i.ToString ((IFormatProvider)null));
-		AssertEquals ("ToString((string)null)", def, i.ToString ((string)null));
-		AssertEquals ("ToString(empty)", def, i.ToString (String.Empty));
-		AssertEquals ("ToString(null,null)", def, i.ToString (null, null));
-		AssertEquals ("ToString(empty,null)", def, i.ToString (String.Empty, null));
+		Assert.AreEqual (def, i.ToString (), "ToString()");
+		Assert.AreEqual (def, i.ToString ((IFormatProvider)null), "ToString((IFormatProvider)null)");
+		Assert.AreEqual (def, i.ToString ((string)null), "ToString((string)null)");
+		Assert.AreEqual (def, i.ToString (String.Empty), "ToString(empty)");
+		Assert.AreEqual (def, i.ToString (null, null), "ToString(null,null)");
+		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
-		AssertEquals ("ToString(G)", "254", def);
+		Assert.AreEqual ("254", def, "ToString(G)");
 	}
 }
 

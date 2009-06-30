@@ -9,14 +9,16 @@ using System;
 
 namespace MonoTests.System {
 
-public class ResolveEventArgsTest : TestCase
+[TestFixture]
+public class ResolveEventArgsTest
 {
 	public ResolveEventArgsTest() {}
 
+	[Test]
 	public void TestTheWholeThing()
         {
                 ResolveEventArgs REA = new ResolveEventArgs("REA_Name");
-                Assert ("Name property not correct", REA.Name == "REA_Name");
+                Assert.AreEqual (REA.Name, "REA_Name", "Name property not correct");
         }
 }
 
