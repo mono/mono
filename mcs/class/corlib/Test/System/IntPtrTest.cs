@@ -15,7 +15,9 @@ namespace MonoTests.System  {
 	[TestFixture]
 	public class IntPtrTest  {
 
+		// The corresponding fix was reverted (r136567)
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (OverflowException))]
 		public void Test64on32 () 
 		{
