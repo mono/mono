@@ -14,7 +14,7 @@ using System.Collections;
 using NUnit.Framework;
 
 namespace MonoTests.System.Collections {
-	public class ReadOnlyCollectionBaseTest : TestCase 	{
+	public class ReadOnlyCollectionBaseTest {
 		// We need a concrete class to test the abstract base class
 		public class ConcreteReadOnlyCollection : ReadOnlyCollectionBase 
 		{
@@ -24,23 +24,25 @@ namespace MonoTests.System.Collections {
 		}
 
 		// Make sure that the Count is 0 for a new object
+		[Test]
 		public void TestZeroCountOnNew() 
 		{
 			ConcreteReadOnlyCollection myCollection;
 			myCollection = new ConcreteReadOnlyCollection();
 #if NET_2_0
-			Assert (-1 == myCollection.Count);
+			Assert.IsTrue (-1 == myCollection.Count);
 #else						
-			Assert ( 0 == myCollection.Count);
+			Assert.IsTrue ( 0 == myCollection.Count);
 #endif					
 		}
 
 		// Make sure we get an object from GetEnumerator()
+		[Test]
 		public void TestGetEnumerator() 
 		{
 			ConcreteReadOnlyCollection myCollection;
 			myCollection = new ConcreteReadOnlyCollection();
-			Assert(null != myCollection.GetEnumerator());
+			Assert.IsTrue (null != myCollection.GetEnumerator());
 		}
 	}
 }

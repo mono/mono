@@ -1,3 +1,8 @@
+2009-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* ReadOnlyCollectionBaseTest.cs NewArrayListTest.cs: Convert all tests
+	to new-style nunit classes/methods.	
+
 2009-06-26  Robert Jordan  <robertj@gmx.net>
 
 	* BitArrayTest.cs: Upgrade to new NUnit style. Enable

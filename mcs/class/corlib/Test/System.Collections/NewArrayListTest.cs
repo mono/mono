@@ -42,7 +42,6 @@ namespace MonoTests.System.Collections
 	/// </summary>
 	[TestFixture]
 	public class NewArrayListTest
-		: TestCase 
 	{
 		private object[] c_TestData = new Object[] {0,1,2,3,4,5,6,7,8,9};
 
@@ -50,7 +49,7 @@ namespace MonoTests.System.Collections
 		{
 			if (values.Count != list.Count) 
 			{
-				Assertion.Assert(message, false);
+				Assert.Fail (message);
 			}
 
 			for (int i = 0; i < list.Count; i++) 
@@ -62,7 +61,7 @@ namespace MonoTests.System.Collections
 
 				if ((list[i] == null || values[i] == null) || !list[i].Equals(values[i])) 
 				{
-					Assertion.Assert(message, false);
+					Assert.Fail (message);
 				}
 			}
 		}
@@ -86,7 +85,7 @@ namespace MonoTests.System.Collections
 				{
 					if ((int)arrayList[j] < (int)arrayList[j - 1]) 
 					{
-						Assertion.Fail("ArrayList.Sort()");
+						Assert.Fail("ArrayList.Sort()");
 
 						return;
 					}
@@ -129,13 +128,13 @@ namespace MonoTests.System.Collections
 			for (int i = 0; i < 10; i++) 
 			{			
 				x = arrayList.IndexOf(i);
-				Assertion.Assert("ArrayList.IndexOf(" + i + ")", x == i);
+				Assert.IsTrue(x == i, "ArrayList.IndexOf(" + i + ")");
 			}
 
 			try 
 			{
 				arrayList.IndexOf(0, 10, 1);
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -144,7 +143,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				arrayList.IndexOf(0, 0, -1);
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -153,7 +152,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				arrayList.IndexOf(0, -1, -1);
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -162,7 +161,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				arrayList.IndexOf(0, 9, 10);				
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{				
@@ -174,13 +173,13 @@ namespace MonoTests.System.Collections
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 
 			try 
 			{
 				arrayList.IndexOf(0, 0, 11);
-				Assertion.Fail("ArrayList.IndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.IndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{				
@@ -192,14 +191,14 @@ namespace MonoTests.System.Collections
 			{
 				x = arrayList.LastIndexOf(i);
 
-				Assertion.Assert("ArrayList.LastIndexOf(" + i + ")", x == i);
+				Assert.IsTrue(x == i, "ArrayList.LastIndexOf(" + i + ")");
 			}			
 
 			try 
 			{
 				arrayList.IndexOf(0, 10, 1);
 
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -209,7 +208,7 @@ namespace MonoTests.System.Collections
 			{
 				arrayList.IndexOf(0, 0, -1);
 
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -219,7 +218,7 @@ namespace MonoTests.System.Collections
 			{
 				arrayList.LastIndexOf(0, -1, -1);
 
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
@@ -231,13 +230,13 @@ namespace MonoTests.System.Collections
 			}
 			catch (ArgumentOutOfRangeException) 
 			{
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 
 			try 
 			{
 				arrayList.LastIndexOf(0, 0, 10);
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{				
@@ -246,7 +245,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				arrayList.LastIndexOf(0, 0, 11);
-				Assertion.Fail("ArrayList.LastIndexOf(0, 10, 1)");
+				Assert.Fail("ArrayList.LastIndexOf(0, 10, 1)");
 			}
 			catch (ArgumentOutOfRangeException) 
 			{				
@@ -322,12 +321,12 @@ namespace MonoTests.System.Collections
 			// Make sure the readOnlyList is a wrapper and not a clone.
 
 			arrayList.Add(10);
-			Assertion.Assert("readOnlyList.Count == 11", readOnlyList.Count == 11);
+			Assert.IsTrue(readOnlyList.Count == 11, "readOnlyList.Count == 11");
 
 			try 
 			{
 				readOnlyList.Add(0);
-				Assertion.Fail("readOnlyList.Add(0)");
+				Assert.Fail("readOnlyList.Add(0)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -337,7 +336,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.AddRange(c_TestData);
 
-				Assertion.Fail("readOnlyList.AddRange(c_TestData)");
+				Assert.Fail("readOnlyList.AddRange(c_TestData)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -349,7 +348,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.BinarySearch(1)");
+				Assert.Fail("readOnlyList.BinarySearch(1)");
 			}			
 
 			try 
@@ -358,13 +357,13 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.Capacity");
+				Assert.Fail("readOnlyList.Capacity");
 			}
 
 			try 
 			{
 				readOnlyList.Clear();
-				Assertion.Fail("readOnlyList.Clear()");
+				Assert.Fail("readOnlyList.Clear()");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -376,7 +375,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.Clone()");
+				Assert.Fail("readOnlyList.Clone()");
 			}			
 
 			try 
@@ -385,7 +384,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.Contains");
+				Assert.Fail("readOnlyList.Contains");
 			}
 
 			try 
@@ -394,7 +393,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.CopyTo(new Array(readOnlyList.Count))");
+				Assert.Fail("readOnlyList.CopyTo(new Array(readOnlyList.Count))");
 			}
 
 			try 
@@ -406,7 +405,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.GetEnumerator()");
+				Assert.Fail("readOnlyList.GetEnumerator()");
 			}
 
 			try 
@@ -415,7 +414,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.GetRange(0, 1)");
+				Assert.Fail("readOnlyList.GetRange(0, 1)");
 			}
 
 			try 
@@ -424,13 +423,13 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.readOnlyList.IndexOf(1)");
+				Assert.Fail("readOnlyList.readOnlyList.IndexOf(1)");
 			}
 
 			try 
 			{
 				readOnlyList[0] = 0;
-				Assertion.Fail("readOnlyList[0] = 0");
+				Assert.Fail("readOnlyList[0] = 0");
 			}
 			catch (NotSupportedException) 
 			{
@@ -442,14 +441,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.IndexOf(0)");
+				Assert.Fail("readOnlyList.IndexOf(0)");
 			}
 
 			try 
 			{
 				readOnlyList.InsertRange(0, new object[] {1,2});
 
-				Assertion.Fail("readOnlyList.InsertRange(0, new object[] {1,2})");
+				Assert.Fail("readOnlyList.InsertRange(0, new object[] {1,2})");
 			}
 			catch (NotSupportedException) 
 			{
@@ -461,14 +460,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.LastIndexOf(1)");
+				Assert.Fail("readOnlyList.LastIndexOf(1)");
 			}
 
 			try 
 			{
 				readOnlyList.Remove(1);
 
-				Assertion.Fail("readOnlyList.Remove(1)");
+				Assert.Fail("readOnlyList.Remove(1)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -478,7 +477,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.RemoveAt(1);
 
-				Assertion.Fail("readOnlyList.RemoveAt(1)");
+				Assert.Fail("readOnlyList.RemoveAt(1)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -488,7 +487,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.RemoveRange(0, 1);
 
-				Assertion.Fail("readOnlyList.RemoveRange(0, 1)");
+				Assert.Fail("readOnlyList.RemoveRange(0, 1)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -498,7 +497,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.Reverse();
 
-				Assertion.Fail("readOnlyList.Reverse()");
+				Assert.Fail("readOnlyList.Reverse()");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -508,7 +507,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.SetRange(0, new Object[] {0, 1});
 
-				Assertion.Fail("readOnlyList.SetRange(0, new Object[] {0, 1})");
+				Assert.Fail("readOnlyList.SetRange(0, new Object[] {0, 1})");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -518,7 +517,7 @@ namespace MonoTests.System.Collections
 			{
 				readOnlyList.Sort();
 
-				Assertion.Fail("readOnlyList.Sort()");
+				Assert.Fail("readOnlyList.Sort()");
 			}
 			catch (NotSupportedException) 
 			{
@@ -530,14 +529,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("readOnlyList.ToArray()");
+				Assert.Fail("readOnlyList.ToArray()");
 			}
 
 			try 
 			{
 				readOnlyList.TrimToSize();
 
-				Assertion.Fail("readOnlyList.TrimToSize()");
+				Assert.Fail("readOnlyList.TrimToSize()");
 			}
 			catch (NotSupportedException) 
 			{
@@ -557,12 +556,12 @@ namespace MonoTests.System.Collections
 			// Make sure the fixedSizeList is a wrapper and not a clone.
 
 			arrayList.Add(10);
-			Assertion.Assert("fixedSizeList.Count == 11", fixedSizeList.Count == 11);
+			Assert.IsTrue(fixedSizeList.Count == 11, "fixedSizeList.Count == 11");
 
 			try 
 			{
 				fixedSizeList.Add(0);
-				Assertion.Fail("fixedSizeList.Add(0)");
+				Assert.Fail("fixedSizeList.Add(0)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -571,7 +570,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				fixedSizeList.Remove(0);
-				Assertion.Fail("fixedSizeList.Remove(0)");
+				Assert.Fail("fixedSizeList.Remove(0)");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -580,7 +579,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				fixedSizeList.RemoveAt(0);
-				Assertion.Fail("fixedSizeList.RemoveAt(0)");
+				Assert.Fail("fixedSizeList.RemoveAt(0)");
 			}
 			catch (NotSupportedException) 
 			{
@@ -589,7 +588,7 @@ namespace MonoTests.System.Collections
 			try 
 			{
 				fixedSizeList.Clear();
-				Assertion.Fail("fixedSizeList.Clear()");
+				Assert.Fail("fixedSizeList.Clear()");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -601,13 +600,13 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList[0] = 0");
+				Assert.Fail("fixedSizeList[0] = 0");
 			}
 
 			try 
 			{
 				fixedSizeList.Clear();
-				Assertion.Fail("fixedSizeList.Clear()");
+				Assert.Fail("fixedSizeList.Clear()");
 			}
 			catch (NotSupportedException) 
 			{
@@ -619,7 +618,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.Contains");
+				Assert.Fail("fixedSizeList.Contains");
 			}
 
 			try 
@@ -628,7 +627,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.Count");
+				Assert.Fail("fixedSizeList.Count");
 			}
 
 			try 
@@ -637,7 +636,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.GetRange(0, 1)");
+				Assert.Fail("fixedSizeList.GetRange(0, 1)");
 			}
 
 			try 
@@ -646,14 +645,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.IndexOf(0)");
+				Assert.Fail("fixedSizeList.IndexOf(0)");
 			}
 
 			try 
 			{
 				fixedSizeList.InsertRange(0, new object[] {1,2});
 
-				Assertion.Fail("fixedSizeList.InsertRange(0, new object[] {1,2})");
+				Assert.Fail("fixedSizeList.InsertRange(0, new object[] {1,2})");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -665,7 +664,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.Reverse()");
+				Assert.Fail("fixedSizeList.Reverse()");
 			}
 
 			try 
@@ -674,7 +673,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{				
-				Assertion.Fail("fixedSizeList.SetRange(0, new Object[] {0, 1})");
+				Assert.Fail("fixedSizeList.SetRange(0, new Object[] {0, 1})");
 			}
 
 			try 
@@ -683,7 +682,7 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.Sort()");
+				Assert.Fail("fixedSizeList.Sort()");
 			}
 
 			try 
@@ -692,14 +691,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.ToArray()");
+				Assert.Fail("fixedSizeList.ToArray()");
 			}
 
 			try 
 			{
 				fixedSizeList.TrimToSize();
 
-				Assertion.Fail("fixedSizeList.TrimToSize()");
+				Assert.Fail("fixedSizeList.TrimToSize()");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -711,14 +710,14 @@ namespace MonoTests.System.Collections
 			}
 			catch (NotSupportedException) 
 			{
-				Assertion.Fail("fixedSizeList.Clone()");
+				Assert.Fail("fixedSizeList.Clone()");
 			}
 			
 			try 
 			{
 				fixedSizeList.AddRange(c_TestData);
 
-				Assertion.Fail("fixedSizeList.AddRange(c_TestData)");
+				Assert.Fail("fixedSizeList.AddRange(c_TestData)");
 			}
 			catch (NotSupportedException) 
 			{				
@@ -825,7 +824,7 @@ namespace MonoTests.System.Collections
 
 			arrayList.Capacity = x * 2;
 
-			Assert("arrayList.Capacity == x * 2", arrayList.Capacity == x * 2);
+			Assert.IsTrue(arrayList.Capacity == x * 2, "arrayList.Capacity == x * 2");
 
 			VerifyContains(arrayList, c_TestData, "VerifyContains(arrayList, c_TestData)");
 		}
@@ -849,11 +848,11 @@ namespace MonoTests.System.Collections
 
 			arrayList.AddRange(c_TestData);
 
-			Assertion.Assert("arrayList.Capacity == 10", arrayList.Capacity == 10);
+			Assert.IsTrue(arrayList.Capacity == 10, "arrayList.Capacity == 10");
 
 			arrayList.Add(10);
 
-			Assertion.Assert("arrayList.Capacity == 20", arrayList.Capacity == 20);
+			Assert.IsTrue(arrayList.Capacity == 20, "arrayList.Capacity == 20");
 
 			VerifyContains(arrayList, new object[] {0,1,2,3,4,5,6,7,8,9,10}, "VerifyContains");
 		}
@@ -886,7 +885,7 @@ namespace MonoTests.System.Collections
 			{
 				arrayList.BinarySearch(new object());
 
-				Assertion.Fail("1: Binary search on object that doesn't support IComparable.");
+				Assert.Fail("1: Binary search on object that doesn't support IComparable.");
 			}
 			catch (ArgumentException) 
 			{				
@@ -900,7 +899,7 @@ namespace MonoTests.System.Collections
 			{
 				arrayList.BinarySearch(1);
 
-				Assertion.Fail("2: Binary search on incompatible object.");
+				Assert.Fail("2: Binary search on incompatible object.");
 			}
 			catch (ArgumentException) 
 			{				
@@ -917,8 +916,8 @@ namespace MonoTests.System.Collections
 				arrayList.Add(1);
 			}
 
-			Assertion.Assert("BinarySearch should start in middle.", arrayList.BinarySearch(1) == 49);			
-			Assertion.Assert("arrayList.BinarySearch(0, 0, 0, Comparer.Default)", arrayList.BinarySearch(0, 0, 0, Comparer.Default) == -1);
+			Assert.IsTrue(arrayList.BinarySearch(1) == 49, "BinarySearch should start in middle.");
+			Assert.IsTrue(arrayList.BinarySearch(0, 0, 0, Comparer.Default) == -1, "arrayList.BinarySearch(0, 0, 0, Comparer.Default)");
 		}
 
 		[Test]
@@ -1088,7 +1087,7 @@ namespace MonoTests.System.Collections
 
 			rangeList = arrayList.GetRange(3, 5);
 
-			Assertion.Assert("rangeList.Count == 5", rangeList.Count == 5);
+			Assert.IsTrue(rangeList.Count == 5, "rangeList.Count == 5");
 
 			this.VerifyContains(rangeList, new object[] {3,4,5,6,7}, "1: VerifyContains(rangeList)");
 			
@@ -1107,7 +1106,7 @@ namespace MonoTests.System.Collections
 			rangeList.Add(3);
 			rangeList.Add(11);
 			
-			Assertion.Assert("rangeList.LastIndexOf(6) == 4", rangeList.LastIndexOf(6) == 4);
+			Assert.IsTrue(rangeList.LastIndexOf(6) == 4, "rangeList.LastIndexOf(6) == 4");
 
 			rangeList.Sort();
 
@@ -1155,7 +1154,7 @@ namespace MonoTests.System.Collections
 
 			while (enumerator.MoveNext()) 
 			{
-				Assertion.Assert("enumerator.Current == x", (int)enumerator.Current == x);
+				Assert.IsTrue((int)enumerator.Current == x, "enumerator.Current == x");
 
 				x++;
 			}
@@ -1166,7 +1165,7 @@ namespace MonoTests.System.Collections
 
 			while (enumerator.MoveNext()) 
 			{
-				Assertion.Assert("enumerator.Current == x", (int)enumerator.Current == x);
+				Assert.IsTrue((int)enumerator.Current == x, "enumerator.Current == x");
 
 				x++;
 			}
@@ -1180,7 +1179,7 @@ namespace MonoTests.System.Collections
 
 			while (enumerator.MoveNext()) 
 			{
-				Assertion.Assert("enumerator.Current == x", (int)enumerator.Current == x);
+				Assert.IsTrue((int)enumerator.Current == x, "enumerator.Current == x");
 
 				x++;
 			}
@@ -1191,7 +1190,7 @@ namespace MonoTests.System.Collections
 
 			while (enumerator.MoveNext()) 
 			{
-				Assertion.Assert("enumerator.Current == x", (int)enumerator.Current == x);
+				Assert.IsTrue((int)enumerator.Current == x, "enumerator.Current == x");
 
 				x++;
 			}
@@ -1200,11 +1199,11 @@ namespace MonoTests.System.Collections
 
 			enumerator = arrayList.GetEnumerator(arrayList.Count, 0);
 
-			Assertion.Assert("!enumerator.MoveNext()", !enumerator.MoveNext());
+			Assert.IsTrue(!enumerator.MoveNext(), "!enumerator.MoveNext()");
 
 			enumerator.Reset();
 			
-			Assertion.Assert("!enumerator.MoveNext()", !enumerator.MoveNext());
+			Assert.IsTrue(!enumerator.MoveNext(), "!enumerator.MoveNext()");
 		}
 
 		[Test]
@@ -1243,7 +1242,7 @@ namespace MonoTests.System.Collections
 			{
 				if (!o.Equals(x)) 
 				{
-					Assertion.Fail("Arraylist.GetEnumerator()");
+					Assert.Fail("Arraylist.GetEnumerator()");
 
 					break;
 				}
@@ -1257,7 +1256,7 @@ namespace MonoTests.System.Collections
 
 			enumerator.MoveNext();
 
-			Assert("enumerator.Current == 0", (int)enumerator.Current == 0);
+			Assert.IsTrue((int)enumerator.Current == 0, "enumerator.Current == 0");
 
 			// Invalidate the enumerator.
 
@@ -1267,11 +1266,11 @@ namespace MonoTests.System.Collections
 			{
 				// According to the spec this should still work even though the enumerator is invalid.
 
-				Assert("enumerator.Current == 0", (int)enumerator.Current == 0);
+				Assert.IsTrue((int)enumerator.Current == 0, "enumerator.Current == 0");
 			}
 			catch (InvalidOperationException) 
 			{
-				Assert("enumerator.Current should not fail.", false);
+				Assert.IsTrue(false, "enumerator.Current should not fail.");
 			}
 
 			try 
@@ -1280,7 +1279,7 @@ namespace MonoTests.System.Collections
 
 				enumerator.MoveNext();
 
-				Assert("enumerator.Current should fail.", false);
+				Assert.IsTrue(false, "enumerator.Current should fail.");
 			}
 			catch (InvalidOperationException) 
 			{
@@ -1388,7 +1387,7 @@ namespace MonoTests.System.Collections
 			int total = 0;
 			foreach (int b in a)
 				total += b;
-			Assert ("Count should be 6", total == 6);
+			Assert.IsTrue (total == 6, "Count should be 6");
 		}
 
 		[Test]
@@ -1406,16 +1405,16 @@ namespace MonoTests.System.Collections
 				count++;
 				if (b == null){
 					if (found_null)
-						Assert ("Should only find one null", false);
+						Assert.IsTrue (false, "Should only find one null");
 					found_null = true;
 				} else {
 					total += (int) b;
 				}
 			}
 			
-			Assert ("Should fine one null", found_null);
-			Assert ("Total should be 4", total == 4);
-			Assert ("Count should be 3", count == 3);
+			Assert.IsTrue (found_null, "Should fine one null");
+			Assert.IsTrue (total == 4, "Total should be 4");
+			Assert.IsTrue (count == 3, "Count should be 3");
 		}
 	}
 }
