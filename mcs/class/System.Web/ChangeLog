@@ -1,3 +1,8 @@
+2009-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/ServerControlInClientSideComment.aspx 
+
 2009-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* browscap.ini.diff: updated to match the latest upstream
