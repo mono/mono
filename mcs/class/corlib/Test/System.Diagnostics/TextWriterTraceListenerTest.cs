@@ -15,36 +15,41 @@ using NUnit.Framework;
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
-	public class TextWriterTraceListenerTest1 : TestCase
+	public class TextWriterTraceListenerTest1
 	{
 		private TextWriterTraceListener listener;
-		
-		protected override void SetUp()
+
+		[SetUp]
+		protected void SetUp()
 		{
 			listener = new TextWriterTraceListener();
 			listener.Writer = Console.Out;
 		}
 		
-		protected override void TearDown()
+		[TearDown]
+		protected void TearDown()
 		{
 			listener = null;
 		}
-		
+
+		[Test]
 		public void TestWrite()
 		{
-			Assert("Null Listener", !(listener == null));
-			Assert("Null Writer", !(listener.Writer == null));
+			Assert.IsTrue(!(listener == null), "Null Listener");
+			Assert.IsTrue(!(listener.Writer == null), "Null Writer");
 			listener.Write("Test Message\n");
 			
 		}
 		
+		[Test]
 		public void TestWriteLine()
 		{
-			Assert("Null Listener", !(listener == null));
-			Assert("Null Writer", !(listener.Writer == null));
+			Assert.IsTrue(!(listener == null), "Null Listener");
+			Assert.IsTrue(!(listener.Writer == null), "Null Writer");
 			listener.WriteLine("Test WriteLine Message");
 		}
 		
+		[Test]
 		public void TestFlush()
 		{
 			listener.Flush();

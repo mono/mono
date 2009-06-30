@@ -13,44 +13,53 @@ namespace MonoTests.System.Diagnostics
 {
 	public class DebugTest
 	{
-		private class DebugTest1 : TestCase
+		[TestFixture]
+		private class DebugTest1
 		{
-			protected override void SetUp()
+			[SetUp]
+			protected void SetUp()
 			{
 				Debug.Listeners.Add(new TextWriterTraceListener(Console.Error));	
 			}
 			
-			protected override void TearDown()
+			[TearDown]
+			protected void TearDown()
 			{
 				
 			}
-			
+
+			[Test]
 			public void TestAssert()
 			{
 				Debug.Assert(false, "Testing Assertions");
 			}
-			
-			public void TestFail()
+
+			[Test]			
+			public void TestFail ()
 			{
 				Debug.Fail("Testing Fail method");
 			}
-			
+
+			[Test]			
 			public void TestWrite()
 			{
 				Debug.Write("Testing Write", "Testing the output of the Write method");
 			}
-			
+
+			[Test]			
 			public void TestWriteIf()
 			{
 				Debug.WriteIf(true, "Testing WriteIf");
 				Debug.WriteIf(false, "Testing WriteIf", "Passed false");
 			}
-			
+
+			[Test]			
 			public void TestWriteLine()
 			{
 				Debug.WriteLine("Testing WriteLine method");
 			}
-			
+
+			[Test]			
 			public void TestWriteLineIf()
 			{
 				Debug.WriteLineIf(true, "Testing WriteLineIf");
