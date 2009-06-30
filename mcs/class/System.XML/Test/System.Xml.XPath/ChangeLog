@@ -1,3 +1,8 @@
+2009-06-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	* XPathNavigatorTests.cs (XPathDocumentMoveToId) [!NET_2_0]:
+	Fix compile.
+
 2009-06-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SelectNodesTests.cs

@@ -263,7 +263,7 @@ namespace MonoTests.System.Xml
 			// When it is XmlTextReader, XPathDocument fails.
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			nav = new XPathDocument (xtr).CreateNavigator ();
-			Assert.IsTrue ("ctor() from XmlTextReader", !nav.MoveToId ("aaa"), "#3");
+			Assert.IsTrue (!nav.MoveToId ("aaa"), "ctor() from XmlTextReader");
 			xtr.Close ();
 #endif
 		}
