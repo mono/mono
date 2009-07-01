@@ -19,5 +19,6 @@ gtest-variance-4.cs
 gtest-variance-5.cs IGNORE
 gtest-variance-8.cs
 gtest-variance-10.cs
+gtest-variance-12.cs
 
 test-704.cs IGNORE #472845
