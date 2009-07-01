@@ -147,8 +147,11 @@ namespace System.Net
 
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
 
+#if NET_1_1
+					socket.SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, !sPoint.UseNagleAlgorithm);
+#endif
 #if NET_2_0
-					socket.NoDelay = true;
+					socket.NoDelay = !sPoint.UseNagleAlgorithm;
 					if (!sPoint.CallEndPointDelegate (socket, remote)) {
 						socket.Close ();
 						socket = null;
