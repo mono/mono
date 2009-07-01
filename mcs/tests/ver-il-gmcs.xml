@@ -19144,6 +19144,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-11.cs">
+    <type name="D">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Contra[T](IContravariant`1, IContravariant`1)">
+        <size>38</size>
+      </method>
+      <method name="Boolean Covariant[T](ICovariant`1, ICovariant`1)">
+        <size>38</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>38</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-6.cs">
     <type name="Program">
       <method name="Void .ctor()">
