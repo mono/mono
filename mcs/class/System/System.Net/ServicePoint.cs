@@ -179,7 +179,6 @@ namespace System.Net
 			set { SendContinue = value; }
 		}
 
-		[MonoTODO ("Use me")]
 		public bool UseNagleAlgorithm {
 			get { return useNagle; }
 			set { useNagle = value; }
