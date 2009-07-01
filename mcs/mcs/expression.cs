@@ -2611,7 +2611,7 @@ namespace Mono.CSharp {
 		Expression ResolveOperatorDelegate (EmitContext ec, Type l, Type r)
 		{
 			bool is_equality = (oper & Operator.EqualityMask) != 0;
-			if (!TypeManager.IsEqual (l, r)) {
+			if (!TypeManager.IsEqual (l, r) && !TypeManager.IsVariantOf (r, l)) {
 				Expression tmp;
 				if (right.eclass == ExprClass.MethodGroup || (r == TypeManager.anonymous_method_type && !is_equality)) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);

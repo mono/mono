@@ -5299,7 +5299,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeManager.CheckTypeVariance (MemberType, Variance.Covariant, this);
+			Variance variance = this is Event ? Variance.Contravariant : Variance.Covariant;
+			TypeManager.CheckTypeVariance (MemberType, variance, this);
 		}
 
 		protected bool IsTypePermitted ()

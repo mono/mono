@@ -1,5 +1,11 @@
 2009-07-01  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, class.cs: Events variance.
+	
+	* cs-parser.jay: Interface events error messages.
+
+2009-07-01  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, argument.cs: Updated type inference logic to C# 4.0.
 
 2009-06-29  Marek Safar  <marek.safar@gmail.com>

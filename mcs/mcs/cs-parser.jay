@@ -2291,30 +2291,29 @@ event_declaration
 		
 		if (current_container.Kind == Kind.Interface) {
 			Report.Error (69, (Location) $3, "Event in interface cannot have add or remove accessors");
-		}
-
-		if ($8 == null){
+			$8 = new Accessors (null, null);
+		} else if ($8 == null) {
 			Report.Error (65, (Location) $3, "`{0}.{1}': event property must have both add and remove accessors",
-				current_container.Name, name.GetSignatureForError ());
-			$$ = null;
-		} else {
-			Accessors accessors = (Accessors) $8;
-			
-			if (accessors.get_or_add == null || accessors.set_or_remove == null)
-				// CS0073 is already reported, so no CS0065 here.
-				$$ = null;
-			else {
-				Event e = new EventProperty (
-					current_class, (FullNamedExpression) $4, (int) $2, name,
-					(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
-				if (RootContext.Documentation != null) {
-					e.DocComment = Lexer.consume_doc_comment ();
-					Lexer.doc_state = XmlCommentState.Allowed;
-				}
+				current_container.GetSignatureForError (), name.GetSignatureForError ());
+			$8 = new Accessors (null, null);
+		}
+		
+		Accessors accessors = (Accessors) $8;
 
-				current_container.AddEvent (e);
-				implicit_value_parameter_type = null;
+		if (accessors.get_or_add == null || accessors.set_or_remove == null)
+			// CS0073 is already reported, so no CS0065 here.
+			$$ = null;
+		else {
+			Event e = new EventProperty (
+				current_class, (FullNamedExpression) $4, (int) $2, name,
+				(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
+			if (RootContext.Documentation != null) {
+				e.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
 			}
+
+			current_container.AddEvent (e);
+			implicit_value_parameter_type = null;
 		}
 		current_local_parameters = null;
 	  }
