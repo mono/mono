@@ -80,6 +80,10 @@ namespace Mono.CSharp
 			return TypeManager.CSharpName (Expr.Type);
 		}
 
+		public bool IsByRef {
+			get { return ArgType == AType.Ref || ArgType == AType.Out; }
+		}
+
 		public bool IsDefaultArgument {
 			get { return ArgType == AType.Default; }
 		}
@@ -110,7 +114,7 @@ namespace Mono.CSharp
 					Expr = Expr.Resolve (ec);
 
 				// Verify that the argument is writeable
-				if (Expr != null && (ArgType == AType.Out || ArgType == AType.Ref))
+				if (Expr != null && IsByRef)
 					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
 
 				if (Expr == null)
@@ -120,7 +124,7 @@ namespace Mono.CSharp
 
 		public virtual void Emit (EmitContext ec)
 		{
-			if (ArgType != AType.Ref && ArgType != AType.Out) {
+			if (!IsByRef) {
 				Expr.Emit (ec);
 				return;
 			}

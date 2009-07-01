@@ -1871,7 +1871,7 @@ namespace Mono.CSharp {
 			return LookupTypeContainer (t);
 		}
 
-		static Variance GetTypeParameterVariance (Type type)
+		public static Variance GetTypeParameterVariance (Type type)
 		{
 			TypeParameter tparam = LookupTypeParameter (type);
 			if (tparam != null)
@@ -2126,7 +2126,7 @@ namespace Mono.CSharp {
 
 		public static ATypeInference CreateInstance (Arguments arguments)
 		{
-			return new TypeInferenceV3 (arguments);
+			return new TypeInference (arguments);
 		}
 
 		public virtual int InferenceScore {
@@ -2140,16 +2140,16 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Implements C# 3.0 type inference
+	// Implements C# type inference
 	//
-	class TypeInferenceV3 : ATypeInference
+	class TypeInference : ATypeInference
 	{
 		//
 		// Tracks successful rate of type inference
 		//
 		int score = int.MaxValue;
 
-		public TypeInferenceV3 (Arguments arguments)
+		public TypeInference (Arguments arguments)
 			: base (arguments)
 		{
 		}
@@ -2245,8 +2245,18 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				if (a.IsByRef) {
+					score -= tic.ExactInference (a.Type, method_parameter);
+					continue;
+				}
+
 				if (a.Expr.Type == TypeManager.null_type)
 					continue;
+
+				if (TypeManager.IsValueType (method_parameter)) {
+					score -= tic.LowerBoundInference (a.Type, method_parameter);
+					continue;
+				}
 
 				//
 				// Otherwise an output type inference is made
@@ -2313,6 +2323,36 @@ namespace Mono.CSharp {
 
 	public class TypeInferenceContext
 	{
+		enum BoundKind
+		{
+			Exact	= 0,
+			Lower	= 1,
+			Upper	= 2
+		}
+
+		class BoundInfo
+		{
+			public readonly Type Type;
+			public readonly BoundKind Kind;
+
+			public BoundInfo (Type type, BoundKind kind)
+			{
+				this.Type = type;
+				this.Kind = kind;
+			}
+			
+			public override int GetHashCode ()
+			{
+				return Type.GetHashCode ();
+			}
+
+			public override bool Equals (object obj)
+			{
+				BoundInfo a = (BoundInfo) obj;
+				return Type == a.Type && Kind == a.Kind;
+			}
+		}
+
 		readonly Type[] unfixed_types;
 		readonly Type[] fixed_types;
 		readonly ArrayList[] bounds;
@@ -2343,12 +2383,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void AddToBounds (Type t, int index)
+		void AddToBounds (BoundInfo bound, int index)
 		{
 			//
 			// Some types cannot be used as type arguments
 			//
-			if (t == TypeManager.void_type || t.IsPointer)
+			if (bound.Type == TypeManager.void_type || bound.Type.IsPointer)
 				return;
 
 			ArrayList a = bounds [index];
@@ -2356,7 +2396,7 @@ namespace Mono.CSharp {
 				a = new ArrayList ();
 				bounds [index] = a;
 			} else {
-				if (a.Contains (t))
+				if (a.Contains (bound))
 					return;
 			}
 
@@ -2370,7 +2410,7 @@ namespace Mono.CSharp {
 			//        //	t = constraints.EffectiveBaseClass;
 			//    }
 			//}
-			a.Add (t);
+			a.Add (bound);
 		}
 		
 		bool AllTypesAreFixed (Type[] types)
@@ -2427,7 +2467,7 @@ namespace Mono.CSharp {
 			if (pos == -1)
 				return 0;
 
-			AddToBounds (u, pos);
+			AddToBounds (new BoundInfo (u, BoundKind.Exact), pos);
 			return 1;
 		}
 
@@ -2530,7 +2570,7 @@ namespace Mono.CSharp {
 
 			if (candidates.Count == 1) {
 				unfixed_types[i] = null;
-				fixed_types[i] = (Type)candidates[0];
+				fixed_types[i] = ((BoundInfo) candidates[0]).Type;
 				return true;
 			}
 
@@ -2543,14 +2583,23 @@ namespace Mono.CSharp {
 			int cii;
 			int candidates_count = candidates.Count;
 			for (int ci = 0; ci < candidates_count; ++ci) {
-				Type candidate = (Type)candidates [ci];
+				BoundInfo bound = (BoundInfo)candidates [ci];
 				for (cii = 0; cii < candidates_count; ++cii) {
 					if (cii == ci)
 						continue;
 
-					if (!Convert.ImplicitConversionExists (null,
-						new TypeExpression ((Type)candidates [cii], Location.Null), candidate)) {
+					if (bound.Kind == BoundKind.Exact)
 						break;
+
+					Type ctype = ((BoundInfo) candidates[cii]).Type;
+					if (bound.Kind == BoundKind.Lower) {
+						if (!Convert.ImplicitConversionExists (null, new TypeExpression (ctype, Location.Null), bound.Type)) {
+							break;
+						}
+					} else {
+						if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), ctype)) {
+							break;
+						}
 					}
 				}
 
@@ -2560,7 +2609,7 @@ namespace Mono.CSharp {
 				if (best_candidate != null)
 					return false;
 
-				best_candidate = candidate;
+				best_candidate = bound.Type;
 			}
 
 			if (best_candidate == null)
@@ -2650,30 +2699,37 @@ namespace Mono.CSharp {
 		//
 		public int LowerBoundInference (Type u, Type v)
 		{
+			return LowerBoundInference (u, v, false);
+		}
+
+		//
+		// Lower-bound (false) or Upper-bound (true) inference based on inversed argument
+		//
+		int LowerBoundInference (Type u, Type v, bool inversed)
+		{
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);
 			if (pos != -1) {
-				AddToBounds (u, pos);
+				AddToBounds (new BoundInfo (u, inversed ? BoundKind.Upper : BoundKind.Lower), pos);
 				return 1;
 			}			
 
 			// If U is an array type
 			if (u.IsArray) {
 				int u_dim = u.GetArrayRank ();
-				Type v_e;
-				Type u_e = TypeManager.GetElementType (u);
+				Type v_i;
+				Type u_i = TypeManager.GetElementType (u);
 
 				if (v.IsArray) {
 					if (u_dim != v.GetArrayRank ())
 						return 0;
 
-					v_e = TypeManager.GetElementType (v);
+					v_i = TypeManager.GetElementType (v);
 
-					if (u.IsByRef) {
-						return LowerBoundInference (u_e, v_e);
-					}
+					if (TypeManager.IsValueType (u_i))
+						return ExactInference (u_i, v_i);
 
-					return ExactInference (u_e, v_e);
+					return LowerBoundInference (u_i, v_i, inversed);
 				}
 
 				if (u_dim != 1)
@@ -2685,19 +2741,19 @@ namespace Mono.CSharp {
 						(g_v != TypeManager.generic_ienumerable_type))
 						return 0;
 
-					v_e = TypeManager.GetTypeArguments (v)[0];
+					v_i = TypeManager.GetTypeArguments (v) [0];
+					Type v_i_open = TypeManager.GetTypeArguments (g_v)[0];
+					Variance variance = TypeManager.GetTypeParameterVariance (v_i_open);
+					if (variance == Variance.None)
+						return ExactInference (u_i, v_i);
 
-					if (u.IsByRef) {
-						return LowerBoundInference (u_e, v_e);
-					}
-
-					return ExactInference (u_e, v_e);
+					return LowerBoundInference (u_i, v_i);
 				}
 			} else if (v.IsGenericType && !v.IsGenericTypeDefinition) {
 				//
-				// if V is a constructed type C<V1..Vk> and there is a unique set of types U1..Uk
-				// such that a standard implicit conversion exists from U to C<U1..Uk> then an exact
-				// inference is made from each Ui for the corresponding Vi
+				// if V is a constructed type C<V1..Vk> and there is a unique type C<U1..Uk>
+				// such that U is identical to, inherits from (directly or indirectly),
+				// or implements (directly or indirectly) C<U1..Uk>
 				//
 				ArrayList u_candidates = new ArrayList ();
 				if (u.IsGenericType)
@@ -2723,9 +2779,9 @@ namespace Mono.CSharp {
 						continue;
 
 					//
-					// The unique set of types U1..Uk means that if we have an interface C<T>,
-					// class U: C<int>, C<long> then no type inference is made when inferring
-					// from U to C<T> because T could be int or long
+					// The unique set of types U1..Uk means that if we have an interface I<T>,
+					// class U : I<int>, I<long> then no type inference is made when inferring
+					// type I<T> by applying type U because T could be int or long
 					//
 					if (unique_candidate_targs != null) {
 						Type[] second_unique_candidate_targs = u_candidate.GetGenericArguments ();
@@ -2733,7 +2789,7 @@ namespace Mono.CSharp {
 							unique_candidate_targs = second_unique_candidate_targs;
 							continue;
 						}
-						
+
 						//
 						// This should always cause type inference failure
 						//
@@ -2745,10 +2801,23 @@ namespace Mono.CSharp {
 				}
 
 				if (unique_candidate_targs != null) {
+					Type[] ga_open_v = open_v.GetGenericArguments ();
 					int score = 0;
-					for (int i = 0; i < unique_candidate_targs.Length; ++i)
-						if (ExactInference (unique_candidate_targs [i], ga_v [i]) == 0)
-							++score;
+					for (int i = 0; i < unique_candidate_targs.Length; ++i) {
+						Variance variance = TypeManager.GetTypeParameterVariance (ga_open_v [i]);
+
+						Type u_i = unique_candidate_targs [i];
+						if (variance == Variance.None || TypeManager.IsValueType (u_i)) {
+							if (ExactInference (u_i, ga_v [i]) == 0)
+								++score;
+						} else {
+							bool upper_bound = (variance == Variance.Contravariant && !inversed) ||
+								(variance == Variance.Covariant && inversed);
+
+							if (LowerBoundInference (u_i, ga_v [i], upper_bound) == 0)
+								++score;
+						}
+					}
 					return score;
 				}
 			}
