@@ -1,3 +1,8 @@
+2009-07-02  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs: Handle type inference of identical type parameters
+	with different bounds.
+
 2009-07-01  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, class.cs: Events variance.

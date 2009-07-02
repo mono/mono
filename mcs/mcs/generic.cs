@@ -2588,10 +2588,15 @@ namespace Mono.CSharp {
 					if (cii == ci)
 						continue;
 
+					Type ctype = ((BoundInfo) candidates[cii]).Type;
+					
+					// Same type parameters with different bounds
+					if (ctype == bound.Type)
+						continue;
+
 					if (bound.Kind == BoundKind.Exact)
 						break;
 
-					Type ctype = ((BoundInfo) candidates[cii]).Type;
 					if (bound.Kind == BoundKind.Lower) {
 						if (!Convert.ImplicitConversionExists (null, new TypeExpression (ctype, Location.Null), bound.Type)) {
 							break;
@@ -2606,7 +2611,7 @@ namespace Mono.CSharp {
 				if (cii != candidates_count)
 					continue;
 
-				if (best_candidate != null)
+				if (best_candidate != null && best_candidate != bound.Type)
 					return false;
 
 				best_candidate = bound.Type;
@@ -2742,9 +2747,7 @@ namespace Mono.CSharp {
 						return 0;
 
 					v_i = TypeManager.GetTypeArguments (v) [0];
-					Type v_i_open = TypeManager.GetTypeArguments (g_v)[0];
-					Variance variance = TypeManager.GetTypeParameterVariance (v_i_open);
-					if (variance == Variance.None)
+					if (TypeManager.IsValueType (u_i))
 						return ExactInference (u_i, v_i);
 
 					return LowerBoundInference (u_i, v_i);
