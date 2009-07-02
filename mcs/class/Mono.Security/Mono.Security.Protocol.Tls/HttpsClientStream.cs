@@ -99,6 +99,7 @@ namespace Mono.Security.Protocol.Tls {
 				bool res = ServicePointManager.CertificatePolicy.CheckValidationResult (sp, certificate, _request, _status);
 				if (!res)
 					return false;
+				failed = true;
 			}
 #if NET_2_0
 #pragma warning restore 618
