@@ -32,6 +32,10 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+#if NET_2_0
+using SNS = System.Net.Security;
+using SNCX = System.Security.Cryptography.X509Certificates;
+#endif
 
 namespace Mono.Security.Protocol.Tls {
 
@@ -87,10 +91,37 @@ namespace Mono.Security.Protocol.Tls {
 			// only one problem can be reported by this interface
 			_status = ((failed) ? certificateErrors [0] : 0);
 
+#if NET_2_0
+#pragma warning disable 618
+#endif
 			if (ServicePointManager.CertificatePolicy != null) {
 				ServicePoint sp = _request.ServicePoint;
-				return ServicePointManager.CertificatePolicy.CheckValidationResult (sp, certificate, _request, _status);
+				bool res = ServicePointManager.CertificatePolicy.CheckValidationResult (sp, certificate, _request, _status);
+				if (!res)
+					return false;
 			}
+#if NET_2_0
+#pragma warning restore 618
+#endif
+#if NET_2_0
+			SNS.RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
+			if (cb != null) {
+				SNS.SslPolicyErrors ssl_errors = 0;
+				foreach (int i in certificateErrors) {
+					if (i == (int)-2146762490) // TODO: is this what happens when the purpose is wrong?
+						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateNotAvailable;
+					else if (i == (int) -2146762481)
+						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateNameMismatch;
+					else
+						ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateChainErrors;
+				}
+				SNCX.X509Certificate2 cert2 = new SNCX.X509Certificate2 (certificate.GetRawCertData ());
+				SNCX.X509Chain chain = new SNCX.X509Chain ();
+				if (!chain.Build (cert2))
+					ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateChainErrors;
+				return cb (_request, cert2, chain, ssl_errors);
+			}
+#endif
 			return failed;
 		}
         }
