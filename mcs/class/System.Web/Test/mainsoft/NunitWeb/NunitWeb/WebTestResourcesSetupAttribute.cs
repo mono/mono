@@ -44,7 +44,7 @@ namespace MonoTests.SystemWeb.Framework
 		public Type Type {
 			get { return type; }
 			set {
-				if (type == null)
+				if (value == null)
 					throw new ArgumentNullException ("value");
 				
 				type = value;
