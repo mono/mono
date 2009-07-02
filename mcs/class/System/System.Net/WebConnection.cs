@@ -958,8 +958,9 @@ namespace System.Net
 			return result;
 		}
 
-		internal bool Write (HttpWebRequest request, byte [] buffer, int offset, int size)
+		internal bool Write (HttpWebRequest request, byte [] buffer, int offset, int size, ref string err_msg)
 		{
+			err_msg = null;
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
@@ -973,8 +974,9 @@ namespace System.Net
 				if (ssl && !certsAvailable)
 					GetCertificates ();
 			} catch (Exception e) {
+				err_msg = e.Message;
 				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
-				string msg = "Write";
+				string msg = "Write: " + err_msg;
 				if (e is WebException) {
 					HandleError (wes, e, msg);
 					return false;

@@ -1,5 +1,13 @@
 2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebConnection.cs: provide better error message when there's an error
+	writing.
+	* WebConnectionStream.cs: don't nullify the buffer until
+	CheckFinalStatus() decides that there are no more authentication
+	retries or redirects.
+
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* ServicePointManager.cs: implement ServerCertificateValidationCallback.
 	* DefaultCertificatePolicy.cs: if there's a SCVC registered, don't do
 	normal error checking.a
