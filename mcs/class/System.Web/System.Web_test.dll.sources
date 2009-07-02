@@ -33,6 +33,7 @@ mainsoft/NunitWeb/NunitWeb/PostableWorkerRequest.cs
 mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
+mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 System.Web/AppBrowsersTest.cs
 System.Web/HttpBrowserCapabilitiesTest.cs
 System.Web/HttpCacheVaryByContentEncodingsTest.cs

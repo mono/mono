@@ -349,6 +349,21 @@ namespace MonoTests.SystemWeb.Framework
 #endif
 		}
 
+		static WebTestResourcesSetupAttribute.SetupHandler CheckResourcesSetupHandler ()
+		{
+			// It is assumed WebTest is included in the same assembly which contains the
+			// tests themselves
+			object[] attributes = typeof (WebTest).Assembly.GetCustomAttributes (typeof (WebTestResourcesSetupAttribute), true);
+			if (attributes == null || attributes.Length == 0)
+				return null;
+			
+			WebTestResourcesSetupAttribute attr = attributes [0] as WebTestResourcesSetupAttribute;
+			if (attr == null)
+				return null;
+
+			return attr.Handler;
+		}
+		
 		public static void EnsureHosting ()
 		{
 			if (host != null)
@@ -360,7 +375,12 @@ namespace MonoTests.SystemWeb.Framework
 			host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
 			if (host != null)
 				return;
-			CopyResources ();
+			WebTestResourcesSetupAttribute.SetupHandler resHandler = CheckResourcesSetupHandler ();
+			if (resHandler == null)
+				CopyResources ();
+			else
+				resHandler ();
+			
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
 				LoadAssemblyRecursive (ass);
 

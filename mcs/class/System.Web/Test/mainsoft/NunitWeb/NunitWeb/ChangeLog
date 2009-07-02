@@ -1,3 +1,16 @@
+2009-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTestResourcesSetupAttribute.cs: added. Can be used to specify
+	resources setup method alternative to the default
+	WebTest.CopyResources (). Useful in cases when WebTest is used
+	outside System.Web tests and different initial resources are
+	required.
+
+	* WebTest.cs: check whether the assembly WebTest is found in is
+	decorated with the WebTestResourcesSetup attribute and, if yes,
+	use handler specified by the attribute to perform initial
+	resources copying in EnsureHosting ().
+
 2009-01-22  Marek Habersack  <mhabersack@novell.com>
 
 	* WebTest.cs: Run () sets the internal field
