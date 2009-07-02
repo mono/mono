@@ -1043,7 +1043,7 @@ namespace System.Net
 			if ((auto_decomp & DecompressionMethods.Deflate) != 0)
 				accept_encoding = accept_encoding != null ? "gzip, deflate" : "deflate";
 			if (accept_encoding != null)
-				webHeaders.SetInternal ("Accept-Encoding", accept_encoding);
+				webHeaders.RemoveAndAdd ("Accept-Encoding", accept_encoding);
 #endif
 			if (!usedPreAuth && preAuthenticate)
 				DoPreAuthenticate ();
