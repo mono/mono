@@ -86,9 +86,9 @@ namespace MonoTests.SystemWeb.Framework
 				throw new InvalidOperationException ("Method '" + methodName + "' must return void and take no parameters.");
 
 #if NET_2_0
-			ret = Delegate.CreateDelegate (type, null, mi, false) as SetupHandler;
+			ret = Delegate.CreateDelegate (typeof (SetupHandler), null, mi, false) as SetupHandler;
 #else
-			ret = Delegate.CreateDelegate (type, mi) as SetupHandler;
+			ret = Delegate.CreateDelegate (typeof (SetupHandler), mi) as SetupHandler;
 #endif
 			if (ret == null)
 				throw new InvalidOperationException ("Failed to create a delegate to method '" + methodName + "'.");
