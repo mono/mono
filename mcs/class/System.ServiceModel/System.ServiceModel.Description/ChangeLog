@@ -1,5 +1,10 @@
 2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContractDescriptionGenerator.cs : actually it had to fill all of
+	  the interface methods (and implementation methods).
+
+2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContractDescriptionGenerator.cs : do not reject derived service
 	  contract from another service contract type.
 

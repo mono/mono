@@ -136,10 +136,13 @@ namespace System.ServiceModel.Description
 				cd.ProtectionLevel = sca.ProtectionLevel;
 
 			// FIXME: load Behaviors
-			MethodInfo [] contractMethods = exactContractType.GetMethods ();
+			MethodInfo [] contractMethods = exactContractType.IsInterface ? GetAllMethods (exactContractType) : exactContractType.GetMethods ();
 			MethodInfo [] serviceMethods = contractMethods;
 			if (givenServiceType != null && exactContractType.IsInterface) {
-				serviceMethods = givenServiceType.GetInterfaceMap (exactContractType).TargetMethods;
+				var l = new List<MethodInfo> ();
+				foreach (Type t in GetAllInterfaceTypes (exactContractType))
+					l.AddRange (givenServiceType.GetInterfaceMap (t).TargetMethods);
+				serviceMethods = l.ToArray ();
 			}
 			
 			for (int i = 0; i < contractMethods.Length; ++i)
@@ -174,6 +177,22 @@ namespace System.ServiceModel.Description
 				throw new InvalidOperationException (String.Format ("The service contract type {0} has no operation. At least one operation must exist.", contractType));
 			*/
 			return cd;
+		}
+
+		static MethodInfo [] GetAllMethods (Type type)
+		{
+			var l = new List<MethodInfo> ();
+			foreach (var t in GetAllInterfaceTypes (type))
+				l.AddRange (t.GetMethods ());
+			return l.ToArray ();
+		}
+
+		static IEnumerable<Type> GetAllInterfaceTypes (Type type)
+		{
+			yield return type;
+			foreach (var t in type.GetInterfaces ())
+				foreach (var tt in GetAllInterfaceTypes (t))
+					yield return tt;
 		}
 
 		static OperationDescription GetOrCreateOperation (

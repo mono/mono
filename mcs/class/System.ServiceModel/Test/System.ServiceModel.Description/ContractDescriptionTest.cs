@@ -413,8 +413,12 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void GetDerivedContract ()
 		{
-			ContractDescription.GetContract (typeof (IFoo3));
-			ContractDescription.GetContract (typeof (Foo3));
+			var cd = ContractDescription.GetContract (typeof (IFoo3));
+			Assert.AreEqual (typeof (IFoo3), cd.ContractType, "#1");
+			Assert.AreEqual (3, cd.Operations.Count, "#2");
+			cd = ContractDescription.GetContract (typeof (Foo3));
+			Assert.AreEqual (typeof (IFoo3), cd.ContractType, "#3");
+			Assert.AreEqual (3, cd.Operations.Count, "#4");
 		}
 
 		// It is for testing attribute search in interfaces.
