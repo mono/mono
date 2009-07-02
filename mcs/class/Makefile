@@ -145,6 +145,7 @@ net_3_5_dirs := \
 	System.Web.Extensions.Design	
 	
 net_4_0_dirs := \
+	System.Dynamic		\
 	Microsoft.CSharp
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
