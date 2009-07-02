@@ -655,7 +655,7 @@ namespace System.Windows.Forms
 		{
 			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
 				Keys key_data = (Keys)msg.WParam.ToInt32();
-				if (HandleKeyDown (key_data))
+				if (HandleKeyDown (ref msg, key_data))
 					return true;
 			} 
 			return base.InternalPreProcessMessage (ref msg);
@@ -711,10 +711,14 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private bool HandleKeyDown (Keys key_data)
+		private bool HandleKeyDown (ref Message msg, Keys key_data)
 		{
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return false;
+
+			// Handle the key as needed if the current item is a dropdownbutton.
+			if (HandleKeyOnDropDown (ref msg, key_data))
+				return true;
 
 			switch (key_data) {
 				case Keys.Left:
@@ -732,6 +736,29 @@ namespace System.Windows.Forms
 						return true;
 					}
 					break;
+			}
+
+			return false;
+		}
+
+		bool HandleKeyOnDropDown (ref Message msg, Keys key_data)
+		{
+			if (current_item == null || current_item.Button.Style != ToolBarButtonStyle.DropDownButton ||
+					current_item.Button.DropDownMenu == null)
+				return false;
+
+			Menu dropdown_menu = current_item.Button.DropDownMenu;
+
+			if (dropdown_menu.Tracker.active) {
+				dropdown_menu.ProcessCmdKey (ref msg, key_data);
+				return true; // always true if the menu is active
+			}
+
+			if (key_data == Keys.Up || key_data == Keys.Down) {
+				current_item.DDPressed = true;
+				current_item.Invalidate ();
+				OnButtonDropDown (new ToolBarButtonClickEventArgs (current_item.Button));
+				return true;
 			}
 
 			return false;

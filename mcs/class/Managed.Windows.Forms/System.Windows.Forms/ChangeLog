@@ -1,3 +1,10 @@
+2009-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolBar.cs: When handling the key down message, if we are on a
+	drop down button, either show the DropDownMenu or pass the key to its
+	ProcessCmdKey method as needed.
+	Fixes the remaining bits of #509985.
+
 2009-06-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolBar.cs: Isolate the event logic related to OnButtonClick. Also
