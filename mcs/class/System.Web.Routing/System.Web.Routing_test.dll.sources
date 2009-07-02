@@ -1,11 +1,14 @@
 System.Web.Routing/AssertExtensions.cs
+System.Web.Routing/FakeHttpWorkerRequest.cs
 System.Web.Routing/HttpMethodConstraintTest.cs
+System.Web.Routing/KnownResponseHeader.cs
 System.Web.Routing/RouteCollectionTest.cs
 System.Web.Routing/RouteDataTest.cs
 System.Web.Routing/RouteTest.cs
 System.Web.Routing/RouteValueDictionaryTest.cs
 System.Web.Routing/StopRoutingHandlerTest.cs
 System.Web.Routing/TestStubTypes.cs
+System.Web.Routing/UnknownResponseHeader.cs
 System.Web.Routing/UrlRoutingHandlerTest.cs
 System.Web.Routing/UrlRoutingModuleTest.cs
 System.Web.Routing/VirtualPathDataTest.cs

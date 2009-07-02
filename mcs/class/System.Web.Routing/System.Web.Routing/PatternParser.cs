@@ -82,7 +82,7 @@ namespace System.Web.Routing
 			PatternToken tmpToken;
 			
 			segments = new PatternSegment [partsCount];			
-			parameterNames = new Dictionary <string, bool> ();
+			parameterNames = new Dictionary <string, bool> (StringComparer.OrdinalIgnoreCase);
 			
 			for (int i = 0; i < partsCount; i++) {
 				if (haveSegmentWithCatchAll)
@@ -495,13 +495,21 @@ namespace System.Web.Routing
 					if (parameterNames.ContainsKey (parameterName) || defaultValues.Has (parameterName) || constraints.Has (parameterName))
 						continue;
 
+					object parameterValue = de.Value;
+					if (parameterValue == null)
+						continue;
+
+					var parameterValueAsString = parameterValue as string;
+					if (parameterValueAsString != null && parameterValueAsString.Length == 0)
+						continue;
+					
 					if (first) {
 						ret.Append ('?');
 						first = false;
 					} else
 						ret.Append ('&');
 
-					object parameterValue = de.Value;
+					
 					ret.Append (Uri.EscapeDataString (parameterName));
 					ret.Append ('=');
 					if (parameterValue != null)
