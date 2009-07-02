@@ -641,7 +641,6 @@ namespace System.Net
 			requestWritten = true;
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
-			writeBuffer = null;
 			// Headers already written to the stream
 			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
 		}
@@ -652,8 +651,9 @@ namespace System.Net
 				return;
 
 			headersSent = true;
-			if (!cnc.Write (request, headers, 0, headers.Length))
-				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
+			string err_msg = null;
+			if (!cnc.Write (request, headers, 0, headers.Length, ref err_msg))
+				throw new WebException ("Error writing request: " + err_msg, null, WebExceptionStatus.SendFailure, null);
 		}
 
 		internal void WriteRequest ()
@@ -671,7 +671,6 @@ namespace System.Net
 
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
-			writeBuffer = null;
 			if (request.ContentLength != -1 && request.ContentLength < length) {
 				nextReadCalled = true;
 				cnc.Close (true);
@@ -719,7 +718,8 @@ namespace System.Net
 				disposed = true;
 				pending.WaitOne ();
 				byte [] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
-				cnc.Write (request, chunk, 0, chunk.Length);
+				string err_msg = null;
+				cnc.Write (request, chunk, 0, chunk.Length, ref err_msg);
 				return;
 			}
 
