@@ -19160,6 +19160,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-13.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T](T, IList`1)">
+        <size>1</size>
+      </method>
+      <method name="Void Test()">
+        <size>17</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T](T, I`1)">
+        <size>1</size>
+      </method>
+      <method name="Void Test[U](U, I`1)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-variance-6.cs">
     <type name="Program">
       <method name="Void .ctor()">
