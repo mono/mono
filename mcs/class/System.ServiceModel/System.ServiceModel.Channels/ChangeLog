@@ -1,3 +1,7 @@
+2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelBase.cs : some more async methods.
+
 2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : on Abort(), do just Close() within

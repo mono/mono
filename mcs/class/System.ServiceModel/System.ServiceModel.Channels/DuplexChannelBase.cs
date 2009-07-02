@@ -68,9 +68,38 @@ namespace System.ServiceModel.Channels
 
 		void SetupDelegates ()
 		{
+			open_handler = new Action<TimeSpan> (Open);
+			close_handler = new Action<TimeSpan> (Close);
 			send_handler = new AsyncSendHandler (Send);
 			receive_handler = new AsyncReceiveHandler (Receive);
 			wait_handler = new AsyncWaitForMessageHandler (WaitForMessage);
+			try_receive_handler = new TryReceiveHandler (TryReceive);
+		}
+
+		// Open
+		Action<TimeSpan> open_handler;
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return open_handler.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			open_handler.EndInvoke (result);
+		}
+
+		// Close
+		Action<TimeSpan> close_handler;
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			return close_handler.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			close_handler.EndInvoke (result);
 		}
 
 		// Send
@@ -128,17 +157,13 @@ namespace System.ServiceModel.Channels
 		public abstract Message Receive (TimeSpan timeout);
 
 		// TryReceive
-		// FIXME: apply those "async to call sync" pattern too (but how?)
 
 		delegate bool TryReceiveHandler (TimeSpan timeout, out Message msg);
-
 		TryReceiveHandler try_receive_handler;
 
 		public virtual IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
 		{
 			Message dummy;
-			if (try_receive_handler == null)
-				try_receive_handler = new TryReceiveHandler (TryReceive);
 			return try_receive_handler.BeginInvoke (timeout, out dummy, callback, state);
 		}
 		
