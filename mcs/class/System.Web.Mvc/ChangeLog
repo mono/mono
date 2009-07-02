@@ -1,0 +1,8 @@
+2009-04-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: fixed resource ID generation.
+
+2009-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* Initial import of ASP.NET MVC 1.0
+
