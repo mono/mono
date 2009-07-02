@@ -1,0 +1,72 @@
+#####################################################################################
+#
+#  Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# This source code is subject to terms and conditions of the Microsoft Public License. A
+# copy of the license can be found in the License.html file at the root of this distribution. If
+# you cannot locate the  Microsoft Public License, please send an email to
+# dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
+# by the terms of the Microsoft Public License.
+#
+# You must not remove this notice, or any other, from this software.
+#
+#
+#####################################################################################
+
+InvalidArgumentValue=Invalid argument value
+ComObjectExpected=COM object is expected.
+CannotCall=Cannot perform call.
+
+## ExceptionType=ArgumentException
+COMObjectDoesNotSupportEvents=COM object does not support events.
+
+## ExceptionType=ArgumentException
+COMObjectDoesNotSupportSourceInterface=COM object does not support specified source interface.
+
+## ExceptionType=InvalidOperationException
+SetComObjectDataFailed=Marshal.SetComObjectData failed.
+
+## ExceptionType=InvalidOperationException
+MethodShouldNotBeCalled=This method exists only to keep the compiler happy.
+
+## ExceptionType=InvalidOperationException
+UnexpectedVarEnum=Unexpected VarEnum {0}.
+
+## ExceptionType=System.Reflection.TargetParameterCountException
+DispBadParamCount=Error while invoking {0}.
+
+## ExceptionType=MissingMemberException
+DispMemberNotFound=Error while invoking {0}.
+
+## ExceptionType=ArgumentException
+DispNoNamedArgs=Error while invoking {0}. Named arguments are not supported.
+
+## ExceptionType=OverflowException
+DispOverflow=Error while invoking {0}.
+
+## ExceptionType=ArgumentException
+DispTypeMismatch=Could not convert argument {0} for call to {1}.
+
+## ExceptionType=ArgumentException
+DispParamNotOptional=Error while invoking {0}. A required parameter was omitted.
+
+## ExceptionType=InvalidOperationException
+CannotRetrieveTypeInformation=ResolveComReference.CannotRetrieveTypeInformation.
+
+## ExceptionType=ArgumentException
+GetIDsOfNamesInvalid=IDispatch::GetIDsOfNames behaved unexpectedly for {0}.
+
+## ExceptionType=InvalidOperationException
+UnsupportedEnumType=Attempting to wrap an unsupported enum type.
+
+## ExceptionType=InvalidOperationException
+UnsupportedHandlerType=Attempting to pass an event handler of an unsupported type.
+
+## ExceptionType=MissingMemberException
+CouldNotGetDispId=Could not get dispatch ID for {0} (error: {1}).
+
+## ExceptionType=System.Reflection.AmbiguousMatchException
+AmbiguousConversion=There are valid conversions from {0} to {1}.
+
+## ExceptionType=NotImplementedException
+VariantGetAccessorNYI=Variant.GetAccessor cannot handle {0}.
