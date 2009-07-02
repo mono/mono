@@ -1,3 +1,7 @@
+2009-07-02  Marek Safar  <marek.safar@gmail.com>
+
+	* net_4_0_System.Core.dll.sources: New file.
+
 2009-06-04  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: fix the 2.1 profile version.
