@@ -1,5 +1,12 @@
 2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: avoid duplicating Accept-Encoding if GetHeaders()
+	is called twice.
+	* WebConnectionStream.cs: don't send a 0 content length for non-write
+	requests.
+
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebConnection.cs: must use the 'int' version in 1.1.
 
 2009-07-01 Gonzalo Paniagua Javier <gonzalo@novell.com>

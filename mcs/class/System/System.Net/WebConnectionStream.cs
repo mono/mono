@@ -680,7 +680,11 @@ namespace System.Net
 			}
 
 			if (!headersSent) {
-				request.InternalContentLength = length;
+				string method = request.Method;
+				bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
+							method == "TRACE" || method == "DELETE");
+				if (!no_writestream)
+					request.InternalContentLength = length;
 				request.SendRequestHeaders ();
 			}
 			WriteHeaders ();
