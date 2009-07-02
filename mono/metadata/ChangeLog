@@ -1,3 +1,29 @@
+2009-07-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	The runtime wrappers are all bound to a given type that must
+	exist in the same image. For regular images we use the <Module>
+	type, which is required to exist for all images.
+
+	The <Module> type can't be used for dynamic images because it
+	might not exist at the time the wrapper is required, so we create
+	a synthetic type to use instead.
+
+	The current code works because of the 2 stage setup of MonoClass,
+	but once this is gone it will no longer work.
+
+	* icall-def.h: Add ModuleBuilder::set_wrappers_type.
+
+	* metadata-internals.h (MonoDynamicImage): Add wrappers_type.
+
+	* object-internals.h: Export mono_image_set_wrappers_type icall
+	as part of the internal API.
+
+	* marshal.c (get_wrapper_target_class): If the image is dynamic,
+	use MonoDynamicImage::wrappers_type instead of the <Module> type.
+
+	reflection.c: Add mono_image_set_wrappers_type qhixh sets the dynamic
+	image wrappers_type to the provided value.
+
 2009-07-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* appdomain.c (deregister_reflection_info_roots): No need
