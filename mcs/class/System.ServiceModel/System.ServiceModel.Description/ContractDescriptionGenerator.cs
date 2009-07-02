@@ -109,8 +109,10 @@ namespace System.ServiceModel.Description
 			} else {
 				foreach (Type t in contracts.Keys)
 					if (t.IsAssignableFrom(givenContractType)) {
-						if (sca != null)
-							throw new InvalidOperationException("The contract type of " + givenContractType + " is ambiguous: can be either " + exactContractType + " or " + t);
+						if (t.IsAssignableFrom (exactContractType)) // exact = IDerived, t = IBase
+							continue;
+						if (sca != null && (exactContractType == null || !exactContractType.IsAssignableFrom (t))) // t = IDerived, exact = IBase
+							throw new InvalidOperationException ("The contract type of " + givenContractType + " is ambiguous: can be either " + exactContractType + " or " + t);
 						exactContractType = t;
 						sca = contracts [t];
 					}

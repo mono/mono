@@ -34,7 +34,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using NUnit.Framework;
 
-namespace MonoTests.System.ServiceModel
+namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
 	public class ContractDescriptionTest
@@ -410,6 +410,13 @@ namespace MonoTests.System.ServiceModel
 				ReleaseInstanceMode.AfterCall, "#5");
 		}
 
+		[Test]
+		public void GetDerivedContract ()
+		{
+			ContractDescription.GetContract (typeof (IFoo3));
+			ContractDescription.GetContract (typeof (Foo3));
+		}
+
 		// It is for testing attribute search in interfaces.
 		public class Foo : IFoo
 		{
@@ -465,6 +472,21 @@ namespace MonoTests.System.ServiceModel
 			// FIXME: it does not pass yet
 			[OperationContract]
 			Mona NewMona (Mona source);
+		}
+
+		[ServiceContract]
+		public interface IFoo3 : IFoo
+		{
+			[OperationContract]
+			string HeyMan (string msg, string msg2);
+		}
+
+		public class Foo3 : Foo, IFoo3
+		{
+			public string HeyMan (string msg, string msg2)
+			{
+				return msg + msg2;
+			}
 		}
 
 		[ServiceContract]
