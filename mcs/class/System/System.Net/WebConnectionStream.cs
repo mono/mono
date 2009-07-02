@@ -680,6 +680,7 @@ namespace System.Net
 			}
 
 			if (!headersSent) {
+				string method = request.Method;
 				bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
 							method == "TRACE" || method == "DELETE");
 				if (!no_writestream)
