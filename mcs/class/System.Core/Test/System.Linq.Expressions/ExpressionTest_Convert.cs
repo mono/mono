@@ -570,5 +570,16 @@ namespace MonoTests.System.Linq.Expressions {
 			Action convnull = () => Assert.AreEqual (null, conv (null));
 			convnull.AssertThrows (typeof (InvalidOperationException));
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void ConvertNullableIntToStringWithConvertMethod ()
+		{
+			Expression.Convert (
+				Expression.Constant ((int?) 0),
+				typeof (string),
+				typeof (Convert).GetMethod ("ToString", new [] { typeof (object) }));
+		}
 	}
 }
