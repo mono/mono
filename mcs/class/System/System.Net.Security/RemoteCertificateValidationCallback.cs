@@ -29,17 +29,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if NET_2_0
 
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security 
 {
-	public delegate bool RemoteCertificateValidationCallback (
+#if !NET_2_1
+	public
+#endif
+	delegate bool RemoteCertificateValidationCallback (
 		object sender,
+#if !NET_2_1
 		X509Certificate certificate,
 		X509Chain chain,
+#else
+		object certificate,
+		object chain,
+#endif
 		SslPolicyErrors sslPolicyErrors);
 }
 
 #endif
+
