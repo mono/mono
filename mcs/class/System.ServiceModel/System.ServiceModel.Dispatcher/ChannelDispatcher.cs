@@ -312,7 +312,7 @@ namespace System.ServiceModel.Dispatcher
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
 				foreach (var ed in owner.Endpoints)
-					if (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null)
+					if (ed.DispatchRuntime.InstanceContextProvider == null && (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null))
 						throw new InvalidOperationException ("There is no default constructor for the service Type in the DispatchRuntime");
 				SetupChannelAcceptor ();
 			}

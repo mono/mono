@@ -1,3 +1,8 @@
+2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : when service instance is provided to the
+	  ServiceHost, do not reject Type-less state.
+
 2009-06-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : do not iterate extra channel acceptance
