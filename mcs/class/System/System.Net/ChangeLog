@@ -1,5 +1,11 @@
 2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* ServicePointManager.cs: implement ServerCertificateValidationCallback.
+	* DefaultCertificatePolicy.cs: if there's a SCVC registered, don't do
+	normal error checking.a
+
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpWebRequest.cs: avoid duplicating Accept-Encoding if GetHeaders()
 	is called twice.
 	* WebConnectionStream.cs: don't send a 0 content length for non-write

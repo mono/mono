@@ -39,6 +39,11 @@ namespace System.Net {
 		// but) expired certificates.
 		public bool CheckValidationResult (ServicePoint point, X509Certificate certificate, WebRequest request, int certificateProblem)
 		{
+#if NET_2_0 && SECURITY_DEP
+			// If using default policy and the new callback is there, ignore this
+			if (ServicePointManager.ServerCertificateValidationCallback != null)
+				return true;
+#endif
 			switch (certificateProblem) {
 				case 0:			// No error
 				case -2146762495:	// CERT_E_EXPIRED 0x800B0101 (WinError.h)
@@ -49,3 +54,4 @@ namespace System.Net {
 		}
 	}
 }
+
