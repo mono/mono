@@ -40,6 +40,12 @@ using MX = Mono.Security.X509;
 namespace System.Security.Cryptography.X509Certificates {
 
 	public class X509Certificate2 : X509Certificate {
+#if !SECURITY_DEP
+		// Used in Mono.Security HttpsClientStream
+		public X509Certificate2 (byte[] rawData)
+		{
+		}
+#endif
 #if SECURITY_DEP
 		private bool _archived;
 		private X509ExtensionCollection _extensions;

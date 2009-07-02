@@ -353,8 +353,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		private bool IsChainComplete (X509Certificate2 certificate)
 		{
 			// the chain is complete if we have a self-signed certificate
-			if (!IsSelfIssued (certificate))
-				return false;
+			if (IsSelfIssued (certificate))
+				return true;
 
 			// we're very limited to what we can do without certificate extensions
 			if (certificate.Version < 3)
@@ -761,6 +761,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				// FIXME - download and install new CRL
 				// then you get a second chance
 				// crl = FindCrl (ca_cert, ref valid, ref out_of_date);
+
+				// We need to get the subjectAltName and an URI from there (or use OCSP)	
+				// X509KeyUsageExtension subjectAltName = (X509KeyUsageExtension) ca_cert.Extensions["2.5.29.17"];
 			}
 
 			if (crl != null) {
@@ -854,5 +857,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 	}
 }
-
+#elif NET_2_0 && !NET_2_1
+namespace System.Security.Cryptography.X509Certificates {
+	public class X509Chain {
+		public bool Build (X509Certificate2 cert)
+		{
+			return false;
+		}
+	}
+}
 #endif
+
