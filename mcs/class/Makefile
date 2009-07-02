@@ -119,6 +119,7 @@ net_2_0_dirs := \
 	System.IdentityModel.Selectors	\
 	System.ServiceModel		\
 	System.ServiceModel.Web		\
+	System.Web.Mvc			\
 	Mono.Management			\
 	Mono.Options 			\
 	Mono.Simd

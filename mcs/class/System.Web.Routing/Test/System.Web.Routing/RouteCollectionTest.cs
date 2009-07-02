@@ -32,6 +32,8 @@ using System.Web;
 using System.Web.Routing;
 using NUnit.Framework;
 
+using MonoTests.Common;
+
 namespace MonoTests.System.Web.Routing
 {
 	[TestFixture]
@@ -282,7 +284,7 @@ namespace MonoTests.System.Web.Routing
 			rd = c.GetRouteData (hc);
 			vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
 			Assert.IsNotNull (vpd, "#B1");
-			Assert.AreEqual ("//_modified", vpd.VirtualPath, "#B2");
+			Assert.AreEqual ("/_modified", vpd.VirtualPath, "#B2");
 			Assert.AreEqual (0, vpd.DataTokens.Count, "#B3");
 
 			hc = new HttpContextStub2 ("~/Account/LogOn", String.Empty, String.Empty);
@@ -484,7 +486,45 @@ namespace MonoTests.System.Web.Routing
 			);
 			Assert.IsNull (vp, "#5");
 		}
-		
+
+		[Test]
+		public void GetVirtualPath7 ()
+		{
+			var c = new RouteCollection ();
+
+			c.Add (new MyRoute ("{table}/{action}.aspx", new MyRouteHandler ()) {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+			});
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+			var rd = new RouteData ();
+			var hc = new HttpContextWrapper (ctx);
+
+			var vp = c.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary {
+				{"Table", "FooTable"},
+				{"Action", "Details"}
+			});
+
+			Assert.IsNotNull (vp, "#A1");
+			Assert.AreEqual ("/FooTable/Details.aspx", vp.VirtualPath, "#A1-1");
+
+			vp = c.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary {
+				{"Table", "FooTable"},
+				{"Action", String.Empty}
+			});
+
+			Assert.IsNull (vp, "#B1");
+
+			vp = c.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary {
+				{"Table", "FooTable"},
+				{"Action", null}
+			});
+
+			Assert.IsNull (vp, "#C1");
+		}
+
 		[Test]
 		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
 		public void GetVirtualPathToExistingFile ()

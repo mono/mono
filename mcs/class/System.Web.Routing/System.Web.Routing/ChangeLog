@@ -1,3 +1,10 @@
+2009-06-25  Marek Habersack  <mhabersack@novell.com>
+
+	* PatternParser.cs: parameter name lookups must be
+	case-insensitive.
+	Null and empty (string) parameters are skipped when building query
+	part of the action path.
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteValueDictionaryExtensions.cs: if both values are strings in
