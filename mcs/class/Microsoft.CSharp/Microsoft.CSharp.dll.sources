@@ -2,4 +2,8 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+Microsoft.CSharp.RuntimeBinder/CSharpArgumentInfo.cs
 Microsoft.CSharp.RuntimeBinder/CSharpArgumentInfoFlags.cs
+Microsoft.CSharp.RuntimeBinder/CSharpCallFlags.cs
+Microsoft.CSharp.RuntimeBinder/CSharpConversionKind.cs
+Microsoft.CSharp.RuntimeBinder/CSharpInvokeMemberBinder.cs
