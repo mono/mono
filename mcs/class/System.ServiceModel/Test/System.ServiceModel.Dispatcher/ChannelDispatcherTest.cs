@@ -231,7 +231,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var binding = new BasicHttpBinding ();
 			var listener = new MyChannelListener<IReplyChannel> (uri);
 			MyChannelDispatcher d = new MyChannelDispatcher (listener);
 			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
@@ -257,7 +256,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				Assert.IsNotNull (ed.DispatchRuntime, "#3");
 				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
 				Assert.IsNotNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
-				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#5.2");
 				Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
 				/*
 				var l = new HttpListener ();
@@ -266,7 +264,37 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				l.Stop ();
 				*/
 			} finally {
-				h.Close ();
+				h.Close (TimeSpan.FromSeconds (10));
+				h.Abort ();
+			}
+		}
+
+		// FIXME: this test itself indeed passes, but some weird conflict that blocks correspoding port happens between this and somewhere (probably above)
+//		[Test]
+		public void EndpointDispatcherAddTest9 () // test singleton service
+		{
+			var uri = CreateAvailableUri ("http://localhost:37564");
+			ServiceHost h = new ServiceHost (new TestContract (), uri);
+			h.Description.Behaviors.Find<ServiceBehaviorAttribute> ().InstanceContextMode = InstanceContextMode.Single;
+			var listener = new MyChannelListener<IReplyChannel> (uri);
+			MyChannelDispatcher d = new MyChannelDispatcher (listener);
+			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+			d.Endpoints.Add (ed);
+			ed.DispatchRuntime.Type = typeof (TestContract);
+			d.MessageVersion = MessageVersion.Default;
+			h.AddServiceEndpoint (typeof (TestContract), new BasicHttpBinding (), uri.ToString ());
+			h.ChannelDispatchers.Clear ();
+			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#1");
+			h.ChannelDispatchers.Add (d);
+			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#2");
+			try {
+				h.Open (TimeSpan.FromSeconds (10));
+				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
+				Assert.IsNotNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
+				Assert.IsNotNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
+			} finally {
+				h.Close (TimeSpan.FromSeconds (10));
+				h.Abort ();
 			}
 		}
 

@@ -158,16 +158,24 @@ namespace System.ServiceModel
 					continue;
 				if (IncludeExceptionDetailInFaults) // may be set also in ServiceDebugBehaviorAttribute
 					cd.IncludeExceptionDetailInFaults = true;
-				foreach (EndpointDispatcher ed in cd.Endpoints)
-					ed.DispatchRuntime.InstanceContextProvider = CreateInstanceContextProvider (serviceHostBase);
+				foreach (EndpointDispatcher ed in cd.Endpoints) {
+					if (InstanceContextMode == InstanceContextMode.Single)
+						ed.DispatchRuntime.SingletonInstanceContext = CreateSingletonInstanceContext (serviceHostBase);
+					ed.DispatchRuntime.InstanceContextProvider = CreateInstanceContextProvider (serviceHostBase, ed.DispatchRuntime);
+				}
 			}
 		}
 
-		IInstanceContextProvider CreateInstanceContextProvider (ServiceHostBase host)
+		InstanceContext CreateSingletonInstanceContext (ServiceHostBase host)
+		{
+			return new InstanceContext (host, GetWellKnownSingleton ());
+		}
+
+		IInstanceContextProvider CreateInstanceContextProvider (ServiceHostBase host, DispatchRuntime runtime)
 		{
 			switch (InstanceContextMode) {
 			case InstanceContextMode.Single:
-				return new SingletonInstanceContextProvider (new InstanceContext (host, GetWellKnownSingleton ()));
+				return new SingletonInstanceContextProvider (runtime.SingletonInstanceContext);
 			case InstanceContextMode.PerSession:
 				return new SessionInstanceContextProvider (host);
 			//case InstanceContextMode.PerCall:

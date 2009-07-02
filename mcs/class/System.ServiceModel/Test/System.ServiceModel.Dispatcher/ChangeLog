@@ -1,3 +1,8 @@
+2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : add singleton instance context test
+	  (but disabled, for some weird conflict).
+
 2009-06-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : add some instance provider tests.
