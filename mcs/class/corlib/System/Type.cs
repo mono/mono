@@ -1392,6 +1392,13 @@ namespace System {
 
 #endif
 
+#if NET_4_0
+		public virtual bool IsEquivalentTo (Type other)
+		{
+			return this == other;
+		}
+#endif
+
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass
 		 * of System.Type or an instance of TypeDelegator.

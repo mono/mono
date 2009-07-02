@@ -1265,6 +1265,13 @@ namespace System {
 		public event UnhandledExceptionEventHandler UnhandledException;
 #endif
 
+#if NET_4_0
+		[MonoTODO]
+		public bool IsHomogenous {
+			get { return false; }
+		}
+#endif
+
 #if NET_2_0
 
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
