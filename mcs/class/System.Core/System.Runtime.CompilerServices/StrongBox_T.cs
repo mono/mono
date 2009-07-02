@@ -32,15 +32,21 @@ namespace System.Runtime.CompilerServices {
 
 		public T Value;
 
-		object IStrongBox.Value
+#if NET_4_0
+		public StrongBox ()
 		{
-			get { return Value; }
-			set { Value = (T) value; }
 		}
+#endif		
 
 		public StrongBox (T value)
 		{
 			Value = value;
+		}
+
+		object IStrongBox.Value
+		{
+			get { return Value; }
+			set { Value = (T) value; }
 		}
 	}
 }

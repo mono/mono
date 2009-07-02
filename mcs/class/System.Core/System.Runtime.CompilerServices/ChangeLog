@@ -1,6 +1,10 @@
+2009-07-02  Marek Safar <marek.safar@gmail.com>
+
+	* StrongBox_T.cs: Add 4.0 bits.
+
 2009-06-29  Marek Safar <marek.safar@gmail.com>
 
-	* ChangeLog: Add DynamicAttribute.
+	* DynamicAttribute.cs: Add DynamicAttribute.
 
 2009-03-05  Jb Evain  <jbevain@novell.com>
 
