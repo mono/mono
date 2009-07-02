@@ -109,6 +109,9 @@ namespace System.Net
 #endif
 		static bool useNagle;
 #endif
+#if NET_2_0
+		static RemoteCertificateValidationCallback server_cert_cb;
+#endif
 
 		// Fields
 		
@@ -240,15 +243,14 @@ namespace System.Net
 			set { _securityProtocol = value; }
 		}
 
-#if NET_2_0 && SECURITY_DEP
-		[MonoTODO]
+#if NET_2_0
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {
-				throw GetMustImplement ();
+				return server_cert_cb;
 			}
 			set {
-				throw GetMustImplement ();
+				server_cert_cb = value;
 			}
 		}
 #endif
