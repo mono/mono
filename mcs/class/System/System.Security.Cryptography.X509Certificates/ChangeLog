@@ -1,3 +1,9 @@
+2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* X509Certificate2.cs:
+	* X509Chain.cs: changes to make everything compile with latest changes
+	and fixed typo in IsChainComplete().
+
 2008-06-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Allow password-less ctor to (try to) open 
