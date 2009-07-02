@@ -78,6 +78,9 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void set_wrappers_type (ModuleBuilder mb, Type ab);
+
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool transient) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
@@ -92,7 +95,13 @@ namespace System.Reflection.Emit {
 			basic_init (this);
 
 			CreateGlobalType ();
-			
+
+			if (assb.IsRun) {
+				TypeBuilder tb = new TypeBuilder (this, TypeAttributes.Abstract, 0xFFFFFF); /*last valid token*/
+				Type type = tb.CreateType ();
+				set_wrappers_type (this, type);
+			}
+
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null)
@@ -144,8 +153,7 @@ namespace System.Reflection.Emit {
 			if ((size <= 0) || (size > 0x3f0000))
 				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
 
-			if (global_type == null)
-				global_type = new TypeBuilder (this, 0);
+			CreateGlobalType ();
 
 			string typeName = "$ArrayType$" + size;
 			Type datablobtype = GetType (typeName, false, false);
@@ -204,8 +212,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("global methods must be static");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global methods already created");
-			if (global_type == null)
-				global_type = new TypeBuilder (this, 0);
+			CreateGlobalType ();
 			MethodBuilder mb = global_type.DefineMethod (name, attributes, callingConvention, returnType, requiredReturnTypeCustomModifiers, optionalReturnTypeCustomModifiers, parameterTypes, requiredParameterTypeCustomModifiers, optionalParameterTypeCustomModifiers);
 
 			addGlobalMethod (mb);
@@ -223,8 +230,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("global methods must be static");
 			if (global_type_created != null)
 				throw new InvalidOperationException ("global methods already created");
-			if (global_type == null)
-				global_type = new TypeBuilder (this, 0);
+			CreateGlobalType ();
 			MethodBuilder mb = global_type.DefinePInvokeMethod (name, dllName, entryName, attributes, callingConvention, returnType, parameterTypes, nativeCallConv, nativeCharSet);
 
 			addGlobalMethod (mb);
@@ -787,7 +793,7 @@ namespace System.Reflection.Emit {
 
 		internal void CreateGlobalType () {
 			if (global_type == null)
-				global_type = new TypeBuilder (this, 0);
+				global_type = new TypeBuilder (this, 0, 1);
 		}
 
 		internal override Guid GetModuleVersionId ()

@@ -112,13 +112,13 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern EventInfo get_event_info (EventBuilder eb);
 
-		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr)
+		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
 			this.parent = null;
 			this.attrs = attr;
 			this.class_size = UnspecifiedTypeSize;
-			this.table_idx = 1;
-			fullname = this.tname = "<Module>";
+			this.table_idx = table_idx;
+			fullname = this.tname = table_idx == 1 ? "<Module>" : "type_"+table_idx;
 			this.nspace = String.Empty;
 			pmodule = mb;
 			setup_internal_class (this);

@@ -737,6 +737,17 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		internal bool IsRun {
+			get {
+				return access == (uint)AssemblyBuilderAccess.Run || access == (uint)AssemblyBuilderAccess.RunAndSave
+#if NET_4_0
+					 || access == (uint)AssemblyBuilderAccess.RunAndCollect
+#endif
+				;
+
+			}
+		}
+
 		internal string AssemblyDir {
 			get {
 				return dir;
