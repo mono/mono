@@ -144,11 +144,9 @@ namespace System.Net
 				WebConnectionData data = Data;
 				foreach (IPAddress address in hostEntry.AddressList) {
 					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
-
 #if NET_1_1
-					socket.SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, !sPoint.UseNagleAlgorithm);
+					socket.SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, sPoint.UseNagleAlgorithm ? 0 : 1);
 #endif
 #if NET_2_0
 					socket.NoDelay = !sPoint.UseNagleAlgorithm;
