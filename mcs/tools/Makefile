@@ -14,8 +14,6 @@ net_1_1_dirs := \
 	browsercaps-updater	\
 	monop		\
 	gacutil		\
-	linker		\
-	tuner		\
 	cil-strip	\
 	resgen		\
 	macpack		\
@@ -34,6 +32,8 @@ net_1_1_dirs := \
 net_2_0_dirs := \
 	al			\
 	corcompare	\
+	linker		\
+	tuner		\
 	csharplib	\
 	csharp		\
 	mono-xsd	\
