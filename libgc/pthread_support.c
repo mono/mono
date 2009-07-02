@@ -1010,7 +1010,11 @@ void GC_thr_init()
       t -> flags = DETACHED | MAIN_THREAD;
 #ifdef MONO_DEBUGGER_SUPPORTED
       if (gc_thread_vtable && gc_thread_vtable->thread_created)
-        gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
+#     ifdef GC_DARWIN_THREADS
+        gc_thread_vtable->thread_created (mach_thread_self (), &t->stop_info.stack_ptr);
+#     else
+         gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
+#     endif
 #endif
 
     GC_stop_init();
@@ -1324,7 +1328,11 @@ void * GC_start_routine_head(void * arg, void *base_addr,
 #   endif /* IA64 */
 #ifdef MONO_DEBUGGER_SUPPORTED
     if (gc_thread_vtable && gc_thread_vtable->thread_created)
-	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
+#	ifdef GC_DARWIN_THREADS
+	gc_thread_vtable->thread_created (mach_thread_self(), &me->stop_info.stack_ptr);
+#	else
+ 	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
+#	endif
 #endif
     UNLOCK();
 

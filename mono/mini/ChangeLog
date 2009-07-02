@@ -1,3 +1,18 @@
+2009-07-02  jonas echterhoff <jonas@unity3d.com>
+	
+	* mini.c: Move initialization of jit_mutex before debugger initialization
+	
+	to avoid crashes.
+	
+	
+	* Info.plist: added Info.plist and link flag to enable the mono executable
+	to access other processes. Requires codesigning of the executable to work.
+	
+	* mdb-debug-info32-darwin.s: The same as mdb-debug-info32.s, changed to 
+	
+	compile on OS X.
+	
+
 2009-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (mini_regression): Handle loading errors. Fixes #508869.

@@ -10,6 +10,12 @@
 
 struct thread_stop_info {
     mach_port_t mach_thread;
+
+    int	signal;
+    word last_stop_count;	/* GC_last_stop_count value when thread	*/
+    				/* last successfully handled a suspend	*/
+    				/* signal.				*/
+    ptr_t stack_ptr;  		/* Valid only when stopped.      	*/
 };
 
 struct GC_mach_thread {
