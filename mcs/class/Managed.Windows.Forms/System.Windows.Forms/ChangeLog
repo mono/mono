@@ -1,3 +1,10 @@
+2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MenuAPI.cs: When handling the Keys.Left key, don't close the menu if
+	the current menu is specifically a ContextMenu (this is what .net does
+	as well). This way we also avoid a crash caused by MenuTracker trying
+	to use the menu when it was already hidden.
+
 2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintPreviewDialog.cs: Remove the code used to handle the

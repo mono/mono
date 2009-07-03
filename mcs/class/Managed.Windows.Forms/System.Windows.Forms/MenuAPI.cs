@@ -790,7 +790,7 @@ namespace System.Windows.Forms {
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
 					}
-				} else {
+				} else if (!(CurrentMenu is ContextMenu)) { // ContextMenu root remains active.
 					HideSubPopups (CurrentMenu, TopMenu);
 					if (CurrentMenu.parent_menu != null)
 						CurrentMenu = CurrentMenu.parent_menu;
