@@ -1,5 +1,11 @@
 2009-07-03  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (finish_gray_stack): Set the to_space pointer after
+	processing the disappearing links, and process disappearing links
+	in a loop until no new objects are copied.
+
+2009-07-03  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c (handle_enum): Invoke the write barrier when copying
 	value type instances.
 
