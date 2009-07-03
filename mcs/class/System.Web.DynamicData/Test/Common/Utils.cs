@@ -11,7 +11,7 @@ using MonoTests.System.Web.DynamicData;
 
 namespace MonoTests.Common
 {
-	static class Utils
+	public static class Utils
 	{
 		public static MetaModel CommonInitialize ()
 		{

@@ -10,12 +10,12 @@ using MonoTests.DataSource;
 
 namespace MonoTests.ModelProviders
 {
-	public class DynamicDataContainerTableProvider : TableProvider
+	public class DynamicDataContainerTableProvider <T> : TableProvider
 	{
 		ReadOnlyCollection<ColumnProvider> columns;
 		DynamicDataTable table;
 
-		public DynamicDataContainerTableProvider (DynamicDataContainerModelProvider owner, DynamicDataTable table)
+		public DynamicDataContainerTableProvider (DynamicDataContainerModelProvider <T> owner, DynamicDataTable table)
 			: base (owner)
 		{
 			if (table == null)
@@ -52,16 +52,16 @@ namespace MonoTests.ModelProviders
 
 			var columns = new List<ColumnProvider> ();
 			foreach (var column in containerColumns)
-				columns.Add (new DynamicDataContainerColumnProvider (this, column));
+				columns.Add (new DynamicDataContainerColumnProvider <T> (this, column));
 
 			return new ReadOnlyCollection<ColumnProvider> (columns);
 		}
 
 		public void ResolveAssociations ()
 		{
-			DynamicDataContainerColumnProvider column;
+			DynamicDataContainerColumnProvider <T> column;
 			foreach (var cp in Columns) {
-				column = cp as DynamicDataContainerColumnProvider;
+				column = cp as DynamicDataContainerColumnProvider <T>;
 				if (column == null)
 					continue;
 				column.ResolveAssociations ();

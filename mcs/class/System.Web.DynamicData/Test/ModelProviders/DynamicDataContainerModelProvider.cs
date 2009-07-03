@@ -7,23 +7,24 @@ using System.Web.DynamicData;
 using System.Web.DynamicData.ModelProviders;
 
 using MonoTests.DataSource;
+using MonoTests.Common;
 
 namespace MonoTests.ModelProviders
 {
-	public class DynamicDataContainerModelProvider : DataModelProvider
+	public class DynamicDataContainerModelProvider <TContext> : DataModelProvider
 	{
-		IDynamicDataContainer container;
+		IDynamicDataContainer <TContext> container;
 		Type containerType;
 		ReadOnlyCollection<TableProvider> tables;
 
-		IDynamicDataContainer Container
+		public IDynamicDataContainer <TContext> Container
 		{
 			get
 			{
 				if (container != null)
 					return container;
 
-				container = Activator.CreateInstance (containerType) as IDynamicDataContainer;
+				container = Activator.CreateInstance (containerType) as IDynamicDataContainer <TContext>;
 				if (container == null)
 					throw new InvalidOperationException ("Failed to create an instance of container type '" + ContextType + "'.");
 
@@ -35,7 +36,7 @@ namespace MonoTests.ModelProviders
 		{
 			get
 			{
-				return Container.ContainedType;
+				return typeof (TContext);
 			}
 			protected set
 			{
@@ -43,18 +44,13 @@ namespace MonoTests.ModelProviders
 			}
 		}
 
-		public DynamicDataContainerModelProvider (Type containerType)
+		public DynamicDataContainerModelProvider ()
 		{
-			if (containerType == null)
-				throw new ArgumentNullException ("contextType");
-
-			if (!typeof (IDynamicDataContainer).IsAssignableFrom (containerType))
-				throw new ArgumentException ("Container type must implement the IDynamicDataContainer interface.", "contextType");
-
-			this.containerType = containerType;
+			Type genType = typeof (TestDataContainer<>).GetGenericTypeDefinition ();
+			this.containerType = genType.MakeGenericType (new Type[] { ContextType });
 		}
 
-		public DynamicDataContainerModelProvider (IDynamicDataContainer container)
+		public DynamicDataContainerModelProvider (IDynamicDataContainer <TContext> container)
 		{
 			if (container == null)
 				throw new ArgumentNullException ("container");
@@ -82,7 +78,7 @@ namespace MonoTests.ModelProviders
 		void ResolveAssociations ()
 		{
 			foreach (var t in Tables) {
-				var table = t as DynamicDataContainerTableProvider;
+				var table = t as DynamicDataContainerTableProvider <TContext>;
 				if (t == null)
 					continue;
 				table.ResolveAssociations ();
@@ -98,7 +94,7 @@ namespace MonoTests.ModelProviders
 
 			var tables = new List<TableProvider> ();
 			foreach (var table in containerTables)
-				tables.Add (new DynamicDataContainerTableProvider (this, table));
+				tables.Add (new DynamicDataContainerTableProvider <TContext>(this, table));
 
 			return new ReadOnlyCollection<TableProvider> (tables);
 		}

@@ -10,7 +10,7 @@ using MonoTests.DataSource;
 
 namespace MonoTests.DataObjects
 {
-    public class EmployeeDynamicDataContainer : DynamicDataContainer <List <Employee>>
+    public class EmployeeDynamicDataContainer : DynamicDataContainer <Employee>
     {
         public override Type ContainedType
         {
@@ -25,20 +25,11 @@ namespace MonoTests.DataObjects
         {
         }
 
-        public EmployeeDynamicDataContainer (List<Employee> data)
-            : base (data)
+        public EmployeeDynamicDataContainer (string tableName)
+            : base (tableName)
         {
-            if (data == null)
-                PopulateWithData ();
         }
-
-        void PopulateWithData ()
-        {
-            Data = new List<Employee> {
-                new Employee { FirstName = "Marek", LastName = "Habersack" }
-            };
-        }
-
+        
         public override int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
         {
             throw new NotImplementedException ();
@@ -56,25 +47,7 @@ namespace MonoTests.DataObjects
 
         public override IEnumerable Select (DataSourceSelectArguments args, string where, ParameterCollection whereParams)
         {
-            List<Employee> data = Data;
-            int count = data == null ? 0 : data.Count;
-
-            if (args.RetrieveTotalRowCount)
-                args.TotalRowCount = count;
-
-            int startIndex = args.StartRowIndex;
-            if (count == 0 || count < startIndex)
-                return new Employee[0];
-
-            int max = args.MaximumRows;
-            if (max == 0 || max > count)
-                max = count;
-            max -= startIndex;
-
-            var ret = new List<Employee> ();
-            ret.AddRange (data.GetRange (args.StartRowIndex, max));
-
-            return ret;
+		throw new NotImplementedException ();
         }
 
         public override List<DynamicDataTable> GetTables ()

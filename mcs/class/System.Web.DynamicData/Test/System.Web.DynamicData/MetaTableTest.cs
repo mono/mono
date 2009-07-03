@@ -65,12 +65,12 @@ namespace MonoTests.System.Web.DynamicData
 	[TestFixture]
 	public class MetaTableTest
 	{
-		DynamicDataContainerModelProvider dynamicModelProvider;
+		DynamicDataContainerModelProvider <TestDataContext> dynamicModelProvider;
 
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-			dynamicModelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext>));
+			dynamicModelProvider = new DynamicDataContainerModelProvider <TestDataContext> ();
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
 		}
 

@@ -65,7 +65,7 @@ namespace MonoTests.System.Web.DynamicData
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-			var dynamicModelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext>));
+			var dynamicModelProvider = new DynamicDataContainerModelProvider <TestDataContext> ();
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
 			Utils.RegisterContext (typeof (MyDataContext3));
 		}

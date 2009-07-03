@@ -3,20 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 using MonoTests.DataSource;
 using MonoTests.ModelProviders;
 
 namespace MonoTests.Common
 {
-	class TestDataContainer <DataType>: DynamicDataContainer<DataType> where DataType: ITestDataContext
+	public class TestDataContainer <TContext>: DynamicDataContainer<TContext> where TContext: ITestDataContext
 	{
 		public TestDataContainer ()
-		: this (default (DataType))
 		{ }
 
-		public TestDataContainer (DataType data)
-		: base (data)
+		public TestDataContainer (string tableName)
+		: base (tableName)
 		{ }
 
 		public override int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
@@ -34,16 +34,15 @@ namespace MonoTests.Common
 			throw new NotImplementedException ();
 		}
 
-		public override IEnumerable Select (DataSourceSelectArguments args, string where, global::System.Web.UI.WebControls.ParameterCollection whereParams)
+		public override IEnumerable Select (DataSourceSelectArguments args, string where, ParameterCollection whereParams)
 		{
-			throw new NotImplementedException ();
+			TContext contextInstance = ContainedTypeInstance;
+			return ContainedTypeInstance.GetTableData (TableName, args, where, whereParams);
 		}
 
 		public override List<DynamicDataTable> GetTables ()
 		{
-			DataType data = Data;
-			if (data == null)
-				data = Activator.CreateInstance<DataType> ();
+			var data = Activator.CreateInstance<TContext> ();
 			return data.GetTables ();
 		}
 	}

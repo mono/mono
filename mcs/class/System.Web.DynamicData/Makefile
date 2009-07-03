@@ -20,15 +20,61 @@ ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
+# Use genresources.sh to generate the list below
 TEST_RESOURCE_FILES = \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax.cs \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
-	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config
+	Test/WebPages/DynamicData/Content/FilterUserControl.ascx,MonoTests.WebPages.DynamicData.Content.FilterUserControl.ascx	\
+	Test/WebPages/DynamicData/Content/FilterUserControl.ascx.cs,MonoTests.WebPages.DynamicData.Content.FilterUserControl.ascx.cs	\
+	Test/WebPages/DynamicData/Content/GridViewPager.ascx,MonoTests.WebPages.DynamicData.Content.GridViewPager.ascx	\
+	Test/WebPages/DynamicData/Content/GridViewPager.ascx.cs,MonoTests.WebPages.DynamicData.Content.GridViewPager.ascx.cs	\
+	Test/WebPages/DynamicData/Content/Images/Back.gif,MonoTests.WebPages.DynamicData.Content.Images.Back.gif	\
+	Test/WebPages/DynamicData/Content/Images/header_back.gif,MonoTests.WebPages.DynamicData.Content.Images.header_back.gif	\
+	Test/WebPages/DynamicData/Content/Images/PgFirst.gif,MonoTests.WebPages.DynamicData.Content.Images.PgFirst.gif	\
+	Test/WebPages/DynamicData/Content/Images/PgLast.gif,MonoTests.WebPages.DynamicData.Content.Images.PgLast.gif	\
+	Test/WebPages/DynamicData/Content/Images/PgNext.gif,MonoTests.WebPages.DynamicData.Content.Images.PgNext.gif	\
+	Test/WebPages/DynamicData/Content/Images/PgPrev.gif,MonoTests.WebPages.DynamicData.Content.Images.PgPrev.gif	\
+	Test/WebPages/DynamicData/Content/Images/plus.gif,MonoTests.WebPages.DynamicData.Content.Images.plus.gif	\
+	Test/WebPages/DynamicData/FieldTemplates/Boolean.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Boolean.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Boolean_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Boolean_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Children.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Children.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Children.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Children.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/DateTime.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.DateTime.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/DateTime.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.DateTime.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/DateTime_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.DateTime_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/DateTime_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.DateTime_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Decimal_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Decimal_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Decimal_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Decimal_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/ForeignKey.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.ForeignKey.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/ForeignKey.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.ForeignKey.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/ForeignKey_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.ForeignKey_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/ForeignKey_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.ForeignKey_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Integer_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Integer_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Integer_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Integer_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/MultilineText_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.MultilineText_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/MultilineText_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.MultilineText_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Text.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Text.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Text.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Text.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/Text_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Text_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/Text_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Text_Edit.ascx.cs	\
+	Test/WebPages/DynamicData/PageTemplates/Details.aspx,MonoTests.WebPages.DynamicData.PageTemplates.Details.aspx	\
+	Test/WebPages/DynamicData/PageTemplates/Details.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.Details.aspx.cs	\
+	Test/WebPages/DynamicData/PageTemplates/Edit.aspx,MonoTests.WebPages.DynamicData.PageTemplates.Edit.aspx	\
+	Test/WebPages/DynamicData/PageTemplates/Edit.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.Edit.aspx.cs	\
+	Test/WebPages/DynamicData/PageTemplates/Insert.aspx,MonoTests.WebPages.DynamicData.PageTemplates.Insert.aspx	\
+	Test/WebPages/DynamicData/PageTemplates/Insert.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.Insert.aspx.cs	\
+	Test/WebPages/DynamicData/PageTemplates/List.aspx,MonoTests.WebPages.DynamicData.PageTemplates.List.aspx	\
+	Test/WebPages/DynamicData/PageTemplates/List.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.List.aspx.cs	\
+	Test/WebPages/DynamicData/PageTemplates/ListDetails.aspx,MonoTests.WebPages.DynamicData.PageTemplates.ListDetails.aspx	\
+	Test/WebPages/DynamicData/PageTemplates/ListDetails.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.ListDetails.aspx.cs	\
+	Test/WebPages/DynamicData/web.config,MonoTests.WebPages.DynamicData.web.config	\
+	Test/WebPages/Global.asax,MonoTests.WebPages.Global.asax	\
+	Test/WebPages/ListView_DynamicControl_01.aspx,MonoTests.WebPages.ListView_DynamicControl_01.aspx	\
+	Test/WebPages/ListView_DynamicControl_01.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_01.aspx.cs	\
+	Test/WebPages/Site.css,MonoTests.WebPages.Site.css	\
+	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
+	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\
+	Test/WebPages/web.config,MonoTests.WebPages.web.config
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 

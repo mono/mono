@@ -65,16 +65,16 @@ namespace MonoTests.System.Web.DynamicData
 	[TestFixture]
 	public class MetaColumnTest
 	{
-		DynamicDataContainerModelProvider dynamicModelProvider;
-		DynamicDataContainerModelProvider dynamicModelProviderNoScaffold;
+		DynamicDataContainerModelProvider <TestDataContext> dynamicModelProvider;
+		DynamicDataContainerModelProvider<TestDataContext2> dynamicModelProviderNoScaffold;
 
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-			dynamicModelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext>));
+			dynamicModelProvider = new DynamicDataContainerModelProvider <TestDataContext> ();
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
 
-			dynamicModelProviderNoScaffold = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext2>));
+			dynamicModelProviderNoScaffold = new DynamicDataContainerModelProvider <TestDataContext2> ();
 			Utils.RegisterContext (dynamicModelProviderNoScaffold, new ContextConfiguration () { ScaffoldAllTables = false }, false);
 		}
 

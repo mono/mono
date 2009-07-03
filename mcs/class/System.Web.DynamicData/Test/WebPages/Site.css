@@ -1,0 +1,272 @@
+﻿/* Cascading Stylesheet for Common Elements */
+
+/* Begin: General */
+body.template
+{
+    padding-left: 8px;
+    padding-right: 8px;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 75%;
+    color: #666666;
+}
+body.template h1
+{
+    padding-bottom: 12px;
+    border-bottom: 1px dotted #bbbbbb;
+    font-size: 2.2em;
+    font-family: Trebuchet MS, Arial, sans-serif;
+    color: #888888;
+}
+span.allcaps
+{
+    font-variant: small-caps;
+}
+body.template h2
+{
+    margin-bottom: 10px;
+    font-family: Trebuchet MS, Arial, sans-serif;
+    font-size: 1.65em;
+    color: #888888;
+}
+div.back
+{
+    margin-bottom: -20px;
+    position: relative;
+    top: -28px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+}
+div.back img
+{
+    position: relative;
+    margin-top: 0em;
+    padding-left: 8px;
+    padding-right: 8px;
+    border: none;
+    background-color: #ffffff;
+}
+div.back a:link,
+div.back a:visited
+{
+    color: #839ce7;
+    text-decoration: none;
+    background-color: #ffffff;
+    padding-right: 8px;
+    top: -.2em;
+    left: .25em;
+}
+div.back a:hover
+{
+    color: #000099;
+    text-decoration: underline !important;
+}
+/* End: General */
+
+/* Begin: Tables */
+body.template table.listview, table.gridview, table.detailstable 
+{
+    border: 1px solid #dbddff; 
+    border-bottom: 3px solid #dbddff;
+    border-collapse: collapse;
+    font-family: Tahoma, Arial, sans-serif;
+    color: #666666;
+    font-size: 95%; 
+
+}
+
+body.template table.listview th, table.gridview th, table.detailstable th,
+body.template table.listview td, table.gridview td, table.detailstable td 
+{
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 1.1em;
+}
+
+body.template table.listview th, table.gridview th, table.detailstable th
+{
+    background-position: 1px 1px;
+    background-repeat: repeat-x;
+    background-color: #ffffff;
+    font-size: 100%;
+    text-align: left;
+    line-height: 1.3em;
+    color: #666666;
+    border-left: 1px solid #dbddff;
+    border-right: 1px solid #dbddff;
+    border-bottom: 1px solid #dbddff;
+}
+
+body.template table.listview td, table.gridview td, table.detailstable td
+{
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px dotted #dadada;
+}
+
+body.template td.bold {
+    font-weight:bold;
+}
+
+body.template th a:link,
+body.template th a:visited,
+body.template th a:hover
+{
+    color: #666666;
+    text-decoration: none;
+}
+
+body.template td a:link,
+body.template td a:visited
+{
+    color: #718ABE;
+    text-decoration: none;
+    padding-right: 6px;
+}
+body.template td a:hover
+{
+    color: #000099;
+    text-decoration: underline !important;
+}
+table.gridview
+{
+    width: 100%;
+}
+table.gridview table td
+{
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+table.gridview th {
+    background-image:url(DynamicData/Content/Images/header_back.gif);
+}
+
+table.listview
+{
+    width: 100%;
+}
+table.listview td a:link, 
+table.listview td a:visited
+{
+    font-size: 100%;
+}
+table.listview table td
+{
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+table.listview th {
+    background-image:url(DynamicData/Content/Images/header_back.gif);
+}
+
+table.detailstable td
+{
+    border-left: 1px solid #dbddff;
+    border-right: 1px solid #dbddff;
+    vertical-align:top;
+}
+
+table.detailstable th
+{
+    background: #FCFDFE;
+    vertical-align:top;
+}
+
+td.nowrap 
+{
+    white-space: nowrap;
+}
+/* The following modifies the details table */
+body.template tr
+{
+    background: #FCFDFE;
+}
+/* The following modifies the controls in the list table footer */
+tr.footer td
+{
+    background: #dbddff;
+    height: 1.5em;
+}
+
+/* The following modifies the selected row in the list table */
+tr.selected td
+{
+    background: #fdffb8;
+}
+
+/* End: Tables */
+
+/* The following modifies the page number control which exists under the main table */
+div.pager
+{
+    padding: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+span.results1
+{
+    float:left;
+}
+span.results2
+{
+    float:right;
+}
+/* The following modifies the results per page control which exists under the main table */
+div.results
+{
+    display: inline;
+    position: relative;
+    padding: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-top: -1.75em;
+    float:right;
+}
+/* Set's the appearance of the drop down control*/
+.droplist
+{
+    padding: 0px;
+    font-family: Tahoma, Arial, Sans-Serif;
+    font-size: .95em;
+    color: #666666;
+}
+/* Bottom hyperlink design*/
+div.bottomhyperlink
+{
+    font-family: Tahoma, Arial, Sans-Serif;
+    font-size: 100%;
+    margin-top: -3px;
+}
+div.bottomhyperlink a:link,
+div.bottomhyperlink a:visited
+{
+    color: #839ce7;
+    text-decoration: none;
+
+    font-family: Tahoma, Arial, Sans-Serif;
+
+    font-size: 100%;
+
+    margin-top: -3px;
+}
+div.bottomhyperlink a:hover
+{
+
+    color: #000099;
+
+    text-decoration: underline !important;
+
+    font-family: Tahoma, Arial, Sans-Serif;
+
+    font-size: 100%;
+}
+div.bottomhyperlink img
+{
+    position: relative;
+    top: 0em;
+    padding-right: .4em;
+    border: none;
+}

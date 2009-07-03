@@ -1,4 +1,3 @@
-../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/AssemblyInfo.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/crc32.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/Header.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlAttribute.cs
@@ -33,6 +32,9 @@
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Response.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/WebTest.cs
+../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
+Assembly/AssemblyInfo.cs
+Common/AFieldTemplate.cs
 Common/AssertExtensions.cs
 Common/AssociatedBar.cs
 Common/AssociatedFoo.cs
@@ -41,6 +43,7 @@ Common/Baz.cs
 Common/BazDataTypeDefaultTypes.cs
 Common/BazNoStrings.cs
 Common/BazNoStringsNoPrimary.cs
+Common/EmployeesDataContext.cs
 Common/FakeHttpWorkerRequest.cs
 Common/FieldFormattingOptions.cs
 Common/FooBarNoScaffold.cs
@@ -62,6 +65,7 @@ Common/FooWithMetadataType.cs
 Common/FooWithToString.cs
 Common/ITestDataContext.cs
 Common/KnownResponseHeader.cs
+Common/MiscExtensions.cs
 Common/Mocks.cs
 Common/MyDynamicDataRouteHandler.cs
 Common/MyHttpContextWrapper.cs
@@ -71,6 +75,8 @@ Common/TestDataContainer.cs
 Common/TestDataContext2.cs
 Common/TestDataContext.cs
 Common/TestDataTable.cs
+Common/TestsBasePage.cs
+Common/TestsSetup.cs
 Common/TestStubTypes.cs
 Common/UnknownResponseHeader.cs
 Common/Utils.cs
@@ -92,6 +98,7 @@ ModelProviders/DynamicDataContainerTableProvider.cs
 ModelProviders/DynamicDataSortableAttribute.cs
 ModelProviders/DynamicDataStringLengthAttribute.cs
 System.Web.DynamicData/ContextConfigurationTest.cs
+System.Web.DynamicData/DynamicControlTest.cs
 System.Web.DynamicData/DynamicDataExtensionsTest.cs
 System.Web.DynamicData/DynamicDataManagerTest.cs
 System.Web.DynamicData/DynamicDataRouteHandlerTest.cs
@@ -100,4 +107,3 @@ System.Web.DynamicData/MetaColumnTest.cs
 System.Web.DynamicData/MetaModelTest.cs
 System.Web.DynamicData/MetaTableTest.cs
 System.Web.DynamicData.ModelProviders/TableProviderTest.cs
-

@@ -1,0 +1,5 @@
+2009-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* Added some resources to WebPages - a test web page for
+	DynamicControlTest and the required DynamicData scaffolding.
+

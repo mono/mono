@@ -1,0 +1,6 @@
+2009-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: added. Necessary, because we need to set up
+	WebTest environment and it is done via an assembly-level custom
+	attribute.
+

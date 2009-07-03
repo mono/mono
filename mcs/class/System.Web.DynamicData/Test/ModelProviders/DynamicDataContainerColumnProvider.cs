@@ -10,7 +10,7 @@ using MonoTests.DataSource;
 
 namespace MonoTests.ModelProviders
 {
-	public class DynamicDataContainerColumnProvider : ColumnProvider
+	public class DynamicDataContainerColumnProvider <T> : ColumnProvider
 	{
 		DynamicDataColumn column;
 		bool associationResolved;
@@ -26,7 +26,7 @@ namespace MonoTests.ModelProviders
 			}
 		}
 
-		public DynamicDataContainerColumnProvider (DynamicDataContainerTableProvider owner, DynamicDataColumn column)
+		public DynamicDataContainerColumnProvider (DynamicDataContainerTableProvider <T> owner, DynamicDataColumn column)
 			: base (owner)
 		{
 			if (column == null)
@@ -36,7 +36,7 @@ namespace MonoTests.ModelProviders
 
 			Type columnType = column.DataType;
 			if (columnType == null)
-				throw new InvalidOperationException ("column.DataType must not be null for column '" + column.Name + "'");
+				throw new InvalidOperationException ("column.TContext must not be null for column '" + column.Name + "'");
 
 			Name = column.Name;
 			ColumnType = columnType;

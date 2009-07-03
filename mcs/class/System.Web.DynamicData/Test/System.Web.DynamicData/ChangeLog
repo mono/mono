@@ -1,3 +1,7 @@
+2009-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicControlTest.cs: added
+
 2009-06-27  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicDataExtensionsTest.cs: added test for ConvertEditedValue

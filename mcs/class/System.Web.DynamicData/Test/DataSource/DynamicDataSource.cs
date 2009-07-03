@@ -9,117 +9,142 @@ using System.Web.UI.WebControls;
 
 namespace MonoTests.DataSource
 {
-    [PersistChildren(false)]
-    [ParseChildren(true)]
-    public class DynamicDataSource : DataSourceControl, IDynamicDataSource
-    {
-        const string DEFAULT_VIEW_NAME = "DefaultView";
-        static readonly string[] emptyNames = new string[] { "DefaultView" };
+	[PersistChildren (false)]
+	[ParseChildren (true)]
+	public class DynamicDataSource : DataSourceControl, IDynamicDataSource
+	{
+		const string DEFAULT_VIEW_NAME = "DefaultView";
+		static readonly string[] emptyNames = new string[] { "DefaultView" };
 
-        DynamicDataSourceView defaultView;
-        ParameterCollection whereCollection;
-        
-        public DynamicDataSourceView DefaultView
-        {
-            get
-            {
-                if (defaultView == null)
-                    defaultView = new DynamicDataSourceView (this, DEFAULT_VIEW_NAME);
-                return defaultView;
-            }
-        }
+		DataSourceView defaultView;
+		ParameterCollection whereCollection;
+		Type dataContainerType;
 
-        public string DataContainerTypeName
-        {
-            get;
-            set;
-        }
+		public DynamicDataSource ()
+			: this (null)
+		{
+		}
 
-        public object DataContainerInstance
-        {
-            get;
-            set;
-        }
+		public DynamicDataSource (string dataContainerTypeName)
+		{
+			this.DataContainerTypeName = dataContainerTypeName;
+		}
 
-        #region DataSourceControl Members
-        protected override DataSourceView GetView (string viewName)
-        {
-            if (String.IsNullOrEmpty (viewName))
-                return DefaultView;
+		public DataSourceView DefaultView {
+			get {
+				if (defaultView == null)
+					defaultView = CreateView (DEFAULT_VIEW_NAME);
+				return defaultView;
+			}
+		}
 
-            return new DynamicDataSourceView (this, viewName);
-        }
-        #endregion
+		public Type DataContainerType {
+			get {
+				if (dataContainerType == null)
+					dataContainerType = Type.GetType (DataContainerTypeName, true);
 
-        #region IDynamicDataSource Members
+				return dataContainerType;
+			}
+		}
 
-        public bool AutoGenerateWhereClause
-        {
-            get;
-            set;
-        }
+		public string DataContainerTypeName {
+			get;
+			set;
+		}
 
-        public Type ContextType
-        {
-            get;
-            set;
-        }
+		public object DataContainerInstance
+		{
+			get;
+			set;
+		}
 
-        public bool EnableDelete
-        {
-            get;
-            set;
-        }
+		DataSourceView CreateView (string viewName)
+		{
+			Type genType = typeof (DynamicDataSourceView<>).GetGenericTypeDefinition ();
 
-        public bool EnableInsert
-        {
-            get;
-            set;
-        }
+			return Activator.CreateInstance (genType.MakeGenericType (new Type[] { ContextType }), this, viewName) as DataSourceView;
+		}
 
-        public bool EnableUpdate
-        {
-            get;
-            set;
-        }
+		#region DataSourceControl Members
+		protected override DataSourceView GetView (string viewName)
+		{
+			if (String.IsNullOrEmpty (viewName))
+				return DefaultView;
 
-        public string EntitySetName
-        {
-            get;
-            set;
-        }
+			return CreateView (viewName);
+		}
+		#endregion
 
-        public event EventHandler<DynamicValidatorEventArgs> Exception;
+		#region IDynamicDataSource Members
 
-        public string Where
-        {
-            get;
-            set;
-        }
+		public bool AutoGenerateWhereClause
+		{
+			get;
+			set;
+		}
 
-        [PersistenceMode (PersistenceMode.InnerProperty)]
-        public ParameterCollection WhereParameters
-        {
-            get {
-                if (whereCollection == null)
-                    whereCollection = new ParameterCollection ();
-                return whereCollection;
-            }
-        }
+		public Type ContextType
+		{
+			get;
+			set;
+		}
 
-        #endregion
+		public bool EnableDelete
+		{
+			get;
+			set;
+		}
 
-        #region IDataSource Members
-        DataSourceView IDataSource.GetView (string viewName)
-        {
-            return GetView (viewName);
-        }
+		public bool EnableInsert
+		{
+			get;
+			set;
+		}
 
-        ICollection IDataSource.GetViewNames ()
-        {
-            return emptyNames;
-        }
+		public bool EnableUpdate
+		{
+			get;
+			set;
+		}
 
-        #endregion
-    }
+		public string EntitySetName
+		{
+			get;
+			set;
+		}
+
+		public event EventHandler<DynamicValidatorEventArgs> Exception;
+
+		public string Where
+		{
+			get;
+			set;
+		}
+
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ParameterCollection WhereParameters
+		{
+			get
+			{
+				if (whereCollection == null)
+					whereCollection = new ParameterCollection ();
+				return whereCollection;
+			}
+		}
+
+		#endregion
+
+		#region IDataSource Members
+		DataSourceView IDataSource.GetView (string viewName)
+		{
+			return GetView (viewName);
+		}
+
+		ICollection IDataSource.GetViewNames ()
+		{
+			return emptyNames;
+		}
+
+		#endregion
+	}
 }
