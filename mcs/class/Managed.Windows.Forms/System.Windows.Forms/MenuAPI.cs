@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void Deactivate ()
+		internal void Deactivate ()
 		{
 			bool redrawbar = (keynav_state != KeyNavState.Idle) && (TopMenu is MainMenu); 
 

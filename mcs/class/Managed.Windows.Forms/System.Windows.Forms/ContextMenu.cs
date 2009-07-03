@@ -140,5 +140,9 @@ namespace System.Windows.Forms
 		}
 #endif
 		#endregion Public Methods
+		internal void Hide ()
+		{
+			tracker.Deactivate ();
+		}
 	}
 }

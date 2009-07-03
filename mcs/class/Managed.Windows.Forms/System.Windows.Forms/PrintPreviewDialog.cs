@@ -207,9 +207,6 @@ namespace System.Windows.Forms {
 
 		class PrintToolBar : ToolBar
 		{
-			bool dropdownmenu_visible;
-			ContextMenu dropdownmenu;
-
 			public int GetNext (int pos)
 			{
 				// Select the next button that is *not* a separator
@@ -284,46 +281,35 @@ namespace System.Windows.Forms {
 				CurrentItem = pos;
 			}
 
+			bool OnDropDownButton {
+				get {
+					return CurrentItem != -1 && items [CurrentItem].Button.Style == ToolBarButtonStyle.DropDownButton;
+				}
+			}
+
 			internal override bool InternalPreProcessMessage (ref Message msg)
 			{
 				Keys key = (Keys)msg.WParam.ToInt32 ();
 				switch (key) {
+					// Up/Down keys are processed only if we are
+					// on a dropdown button, and ignored otherwise.
 					case Keys.Up:
 					case Keys.Down:
-						// We know that this toolbar only has one DropDownButton
-						if (CurrentItem != -1 && items [CurrentItem].Button.Style == ToolBarButtonStyle.DropDownButton) {
-							if (dropdownmenu == null) {
-								dropdownmenu = (ContextMenu)(items [CurrentItem].Button.DropDownMenu);
-#if NET_2_0
-								dropdownmenu.Collapse += new EventHandler (OnDropDownMenuCollapse);
-#endif
-							}
-
-							if (!dropdownmenu_visible) {
-								items [CurrentItem].DDPressed = dropdownmenu_visible = true;
-								items [CurrentItem].Invalidate ();
-
-								ShowDropDownMenu (items [CurrentItem]);
-							} else
-								dropdownmenu.ProcessCmdKey (ref msg, key);
-						}
+						if (OnDropDownButton)
+							break; // process base impl.
 						return true;
 					case Keys.Left:
 					case Keys.Right:
 					case Keys.Tab:
+						if (OnDropDownButton)
+							((ContextMenu)(items [CurrentItem].Button.DropDownMenu)).Hide ();
+
 						NavigateItems (key);
 						return true;
 				}
 
 				return base.InternalPreProcessMessage (ref msg);
 			}
-
-#if NET_2_0
-			void OnDropDownMenuCollapse (object o, EventArgs args)
-			{
-				dropdownmenu_visible = false;
-			}
-#endif
 		}
 
 		void CloseButtonClicked (object sender, EventArgs e)

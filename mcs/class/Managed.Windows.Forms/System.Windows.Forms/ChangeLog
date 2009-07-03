@@ -1,3 +1,14 @@
+2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PrintPreviewDialog.cs: Remove the code used to handle the
+	DropDown menu, since we are now doing it by default in ToolBar, and
+	just call the base impl as needed.Also, deactivate the dropdown menu
+	before moving the focus to a different button in our toolbar, as .net
+	does.
+	* ContextMenu.cs:
+	* MenuAPI.cs: Make as internal the needed bits to deactivate a
+	ContextMenu, and also to keep some beauty in our api.
+
 2009-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolBar.cs: When handling the key down message, if we are on a
