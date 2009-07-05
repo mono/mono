@@ -1,3 +1,9 @@
+2009-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When computing the width of each tab page, use the
+	page's Font instead of the tab control one.
+	Fixes #514368.
+
 2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MenuAPI.cs: When handling the Keys.Left key, don't close the menu if
