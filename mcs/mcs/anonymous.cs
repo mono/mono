@@ -999,7 +999,7 @@ namespace Mono.CSharp {
 		{
 			AnonymousMethodBody am;
 			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
-				am = CompatibleMethod (ec, tic, GetType (), delegate_type);
+				am = CompatibleMethod (ec, tic, TypeManager.null_type, delegate_type);
 			}
 			
 			if (am == null)
