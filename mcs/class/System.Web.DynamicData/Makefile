@@ -26,13 +26,6 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicData/Content/FilterUserControl.ascx.cs,MonoTests.WebPages.DynamicData.Content.FilterUserControl.ascx.cs	\
 	Test/WebPages/DynamicData/Content/GridViewPager.ascx,MonoTests.WebPages.DynamicData.Content.GridViewPager.ascx	\
 	Test/WebPages/DynamicData/Content/GridViewPager.ascx.cs,MonoTests.WebPages.DynamicData.Content.GridViewPager.ascx.cs	\
-	Test/WebPages/DynamicData/Content/Images/Back.gif,MonoTests.WebPages.DynamicData.Content.Images.Back.gif	\
-	Test/WebPages/DynamicData/Content/Images/header_back.gif,MonoTests.WebPages.DynamicData.Content.Images.header_back.gif	\
-	Test/WebPages/DynamicData/Content/Images/PgFirst.gif,MonoTests.WebPages.DynamicData.Content.Images.PgFirst.gif	\
-	Test/WebPages/DynamicData/Content/Images/PgLast.gif,MonoTests.WebPages.DynamicData.Content.Images.PgLast.gif	\
-	Test/WebPages/DynamicData/Content/Images/PgNext.gif,MonoTests.WebPages.DynamicData.Content.Images.PgNext.gif	\
-	Test/WebPages/DynamicData/Content/Images/PgPrev.gif,MonoTests.WebPages.DynamicData.Content.Images.PgPrev.gif	\
-	Test/WebPages/DynamicData/Content/Images/plus.gif,MonoTests.WebPages.DynamicData.Content.Images.plus.gif	\
 	Test/WebPages/DynamicData/FieldTemplates/Boolean.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates/Boolean.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/Boolean_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean_Edit.ascx	\
@@ -75,6 +68,14 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\
 	Test/WebPages/web.config,MonoTests.WebPages.web.config
+
+# Test/WebPages/DynamicData/Content/Images/Back.gif,MonoTests.WebPages.DynamicData.Content.Images.Back.gif	\
+# Test/WebPages/DynamicData/Content/Images/header_back.gif,MonoTests.WebPages.DynamicData.Content.Images.header_back.gif	\
+# Test/WebPages/DynamicData/Content/Images/PgFirst.gif,MonoTests.WebPages.DynamicData.Content.Images.PgFirst.gif	\
+# Test/WebPages/DynamicData/Content/Images/PgLast.gif,MonoTests.WebPages.DynamicData.Content.Images.PgLast.gif	\
+# Test/WebPages/DynamicData/Content/Images/PgNext.gif,MonoTests.WebPages.DynamicData.Content.Images.PgNext.gif	\
+# Test/WebPages/DynamicData/Content/Images/PgPrev.gif,MonoTests.WebPages.DynamicData.Content.Images.PgPrev.gif	\
+# Test/WebPages/DynamicData/Content/Images/plus.gif,MonoTests.WebPages.DynamicData.Content.Images.plus.gif	\
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
