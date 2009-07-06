@@ -1,3 +1,10 @@
+2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added tests for bug #511851. Added tests
+	for request stream. Fixed compiler warnings, and fixed code style.
+	* HttpWebResponseTest.cs: Added tests for response stream. Fixed
+	compiler warnings.
+
 2009-07-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequestTest.cs: add tests for POST + redirect and 401.
