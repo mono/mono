@@ -93,7 +93,7 @@ namespace MonoTests.System.Web.Compilation {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (CompilationException))]
+		[ExpectedException ("System.Web.Compilation.CompilationException")]
 		public void InvalidPropertyBindTest1 ()
 		{
 			new WebTest ("InvalidPropertyBind1.aspx").Run ();
@@ -107,7 +107,7 @@ namespace MonoTests.System.Web.Compilation {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CompilationException))]
+		[ExpectedException ("System.Web.Compilation.CompilationException")]
 		public void InvalidPropertyBindTest3 ()
 		{
 			new WebTest ("InvalidPropertyBind3.aspx").Run ();

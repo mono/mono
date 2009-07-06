@@ -1,3 +1,8 @@
+2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* PageParserTest.cs (MissingMasterFile): Don't use 'typeof' on a
+	System.Web internal exception type.
+
 2009-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageParserFilterTest.cs: added
