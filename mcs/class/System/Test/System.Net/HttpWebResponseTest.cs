@@ -665,7 +665,10 @@ namespace MonoTests.System.Net
 		}
 
 #if NET_2_0
-		[Test]
+		[Test] // bug #324182
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void CanTimeout ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -764,7 +767,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Buffer_Null ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -816,7 +818,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Count_Negative ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -869,7 +870,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Count_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -922,7 +922,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Offset_Negative ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -975,7 +974,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Offset_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);

@@ -307,12 +307,6 @@ namespace System.Net
 
 		public override int Read (byte [] buffer, int offset, int size)
 		{
-			if (!isRead)
-				throw new NotSupportedException ("this stream does not allow reading");
-
-			if (totalRead >= contentLength)
-				return 0;
-
 			AsyncCallback cb = new AsyncCallback (ReadCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, cb, null);
 			if (!res.IsCompleted && !res.WaitUntilComplete (ReadTimeout, false)) {
@@ -334,8 +328,10 @@ namespace System.Net
 				throw new ArgumentNullException ("buffer");
 
 			int length = buffer.Length;
-			if (size < 0 || offset < 0 || length < offset || length - offset < size)
-				throw new ArgumentOutOfRangeException ();
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException ("size");
 
 			lock (locker) {
 				pendingReads++;
@@ -467,8 +463,10 @@ namespace System.Net
 				throw new ArgumentNullException ("buffer");
 
 			int length = buffer.Length;
-			if (size < 0 || offset < 0 || length < offset || length - offset < size)
-				throw new ArgumentOutOfRangeException ();
+			if (offset < 0 || length < offset)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (size < 0 || (length - offset) < size)
+				throw new ArgumentOutOfRangeException ("size");
 
 			if (sendChunked) {
 				lock (locker) {
@@ -591,9 +589,6 @@ namespace System.Net
 		
 		public override void Write (byte [] buffer, int offset, int size)
 		{
-			if (isRead)
-				throw new NotSupportedException ("This stream does not allow writing");
-
 			AsyncCallback cb = new AsyncCallback (WriteCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, cb, null);
 			if (!res.IsCompleted && !res.WaitUntilComplete (WriteTimeout, false)) {
@@ -778,11 +773,11 @@ namespace System.Net
 		}
 
 		public override bool CanRead {
-			get { return isRead; }
+			get { return !disposed && isRead; }
 		}
 
 		public override bool CanWrite {
-			get { return !isRead; }
+			get { return !disposed && !isRead; }
 		}
 
 		public override long Length {

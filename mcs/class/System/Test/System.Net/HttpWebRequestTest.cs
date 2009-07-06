@@ -1502,38 +1502,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
-		[Test] // bug #324182
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
-		public void Stream_CanTimeout ()
-		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
-			string url = "http://" + localEP.ToString () + "/original/";
-
-			// allow autoredirect
-			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
-				responder.Start ();
-
-				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
-				req.Method = "POST";
-				req.Timeout = 2000;
-				req.ReadWriteTimeout = 2000;
-				req.KeepAlive = false;
-				Stream rs = req.GetRequestStream ();
-				Assert.IsTrue (rs.CanTimeout, "#1");
-				rs.Close ();
-				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
-					Stream os = resp.GetResponseStream ();
-					Assert.IsTrue (os.CanTimeout, "#2");
-					os.Close ();
-				}
-				responder.Stop ();
-			}
-		}
-#endif
-
 		[Test] // bug #353495
 		[Category ("NotWorking")]
 		public void LastModifiedKind ()
@@ -2639,7 +2607,10 @@ namespace MonoTests.System.Net
 		}
 
 #if NET_2_0
-		[Test]
+		[Test] // bug #324182
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void CanTimeout ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2665,7 +2636,6 @@ namespace MonoTests.System.Net
 #endif
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CanWrite ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2829,7 +2799,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Count_Negative ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2860,7 +2829,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Count_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2891,7 +2859,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Offset_Negative ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2922,7 +2889,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Write_Offset_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);

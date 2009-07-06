@@ -1,5 +1,12 @@
 2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* HttpWebRequestTest.cs: Enabled tests, and removed test that is now
+	covered by two separate CanTimeout tests for request and response
+	stream.
+	* HttpWebResponseStreamTest.cs: Enabled tests.
+
+2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* HttpWebRequestTest.cs: Marked test notworking on 1.0 profile.
 
 2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
