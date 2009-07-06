@@ -85,7 +85,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 				w.WriteLine("RenderBeginTag");
 			}
 
-			protected internal override void RenderContents (HtmlTextWriter w)
+			protected override void RenderContents (HtmlTextWriter w)
 			{
 				w.WriteLine("RenderContents");
 			}
