@@ -136,7 +136,12 @@ namespace MonoTests.System.Linq
 		[Test]
 		public void Cast_Integers_YieldsUpcastedObjects ()
 		{
+#if false
+			// shouldn't this be inferred?
 			Read (1, 10, 100).Cast<object> ().AssertEquals (1, 10, 100);
+#else
+			Read (1, 10, 100).Cast<object> ().AssertEquals<object> (1, 10, 100);
+#endif
 		}
 
 		[Test]
