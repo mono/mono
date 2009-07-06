@@ -38,7 +38,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
 
-	class TestPage : Page {
+	class TestPage : SystemWebTestShim.Page {
 
 		private HttpContext ctx;
 
