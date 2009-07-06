@@ -531,6 +531,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #511851
+#if ONLY_1_1
+		[Category ("NotWorking")]
+#endif
 		public void BeginGetRequestStream_Request_Aborted ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8002);
