@@ -89,7 +89,8 @@ common_dirs := \
 	CustomMarshalers		\
 	OpenSystem.C			\
 	Mono.Cecil			\
-	Mono.Cecil.Mdb
+	Mono.Cecil.Mdb			\
+	SystemWebTestShim
 
 net_1_1_dirs :=		\
 	FirebirdSql.Data.Firebird

@@ -79,7 +79,7 @@ TEST_RESOURCE_FILES = \
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
 
 EXTRA_DISTFILES =
 

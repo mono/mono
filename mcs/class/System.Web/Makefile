@@ -215,7 +215,7 @@ echo-warning-systemcore:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
 ifeq (net_2_0, $(PROFILE))
 TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
 endif

@@ -1,3 +1,7 @@
+2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (TEST_MCS_FLAGS): Reference SystemWebTestShim.
+
 2009-05-26  Marek Habersack  <mhabersack@novell.com>
 
 	* Test/System.Web.UI/ScriptReferenceBaseTest.cs: added tests for
