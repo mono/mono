@@ -87,12 +87,12 @@ common_dirs := \
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
 	CustomMarshalers		\
-	OpenSystem.C
+	OpenSystem.C			\
+	Mono.Cecil			\
+	Mono.Cecil.Mdb
 
 net_1_1_dirs :=		\
-	FirebirdSql.Data.Firebird	\
-	Mono.Cecil			\
-	Mono.Cecil.Mdb		\
+	FirebirdSql.Data.Firebird
 
 net_2_0_dirs := \
 	Microsoft.Build.Framework	\
@@ -120,7 +120,7 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets
-	
+
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
 	System.Web.Extensions.Design_1.0
@@ -143,7 +143,7 @@ net_3_5_dirs := \
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
 	System.Web.Extensions.Design	
-	
+
 net_4_0_dirs := \
 	System.Dynamic		\
 	Microsoft.CSharp
