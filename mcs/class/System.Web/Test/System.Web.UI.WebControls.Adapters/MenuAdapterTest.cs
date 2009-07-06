@@ -176,7 +176,17 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 			internal MyMenuAdapter (Menu c) : base (c)
 			{
 			}
-									
+
+			internal new void OnInit (EventArgs e)
+			{
+				base.OnInit (e);
+			}
+
+			internal new void OnPreRender (EventArgs e)
+			{
+				base.OnPreRender (e);
+			}
+
 			new internal void RenderBeginTag (HtmlTextWriter w)
 			{
 				base.RenderBeginTag (w);
@@ -194,6 +204,11 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 
 			new internal Menu Control {
 				get { return base.Control; }
+			}
+
+			internal new void RenderItem (HtmlTextWriter w, MenuItem mi, int i)
+			{
+				base.RenderItem (w, mi, i);
 			}
 		}
 		

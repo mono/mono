@@ -1,5 +1,10 @@
 2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
 
+	* MenuAdapterTest.cs (MyMenuAdapter): Add new forwarding methods
+	to expose protected base methods.
+
+2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
+
 	* DataBoundControlAdapterTest.cs (PerformDataBinding): Don't use
 	'protected internal' when overriding a method from a different assembly.
 	* HideDisabledControlAdapterTest.cs (RenderContents): Likewise.
