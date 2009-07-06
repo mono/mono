@@ -3,4 +3,5 @@ SystemWebTestShim/Adapters.cs
 SystemWebTestShim/BuildManager.cs
 SystemWebTestShim/HttpCapabilitiesBase.cs
 SystemWebTestShim/Page.cs
+SystemWebTestShim/UrlUtils.cs
 ../../build/common/Consts.cs

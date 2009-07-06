@@ -42,28 +42,28 @@ namespace MonoTests.System.Web.Util
 		[Test]
 		public void CanonicTest()
 		{
-			Assert.AreEqual("/Sample.aspx",UrlUtils.Canonic("/WebApplication1//../Sample.aspx"));
+			Assert.AreEqual("/Sample.aspx",SystemWebTestShim.UrlUtils.Canonic("/WebApplication1//../Sample.aspx"));
 		}
 		[Test]
 		public void CanonicTest2()
 		{
-			Assert.AreEqual("Sample.aspx",UrlUtils.Canonic("Path1/../Sample.aspx"));
+			Assert.AreEqual("Sample.aspx",SystemWebTestShim.UrlUtils.Canonic("Path1/../Sample.aspx"));
 		}
 		[Test]
 		public void CanonicTest3()
 		{
-			Assert.AreEqual("/Path1/Sample.aspx",UrlUtils.Canonic("/../Path1/Sample.aspx"));
+			Assert.AreEqual("/Path1/Sample.aspx",SystemWebTestShim.UrlUtils.Canonic("/../Path1/Sample.aspx"));
 		}
 		[Test]
 		public void CanonicTest4()
 		{
-			Assert.AreEqual("/Sample.aspx",UrlUtils.Canonic("/../Path1/../../Sample.aspx"));
+			Assert.AreEqual("/Sample.aspx",SystemWebTestShim.UrlUtils.Canonic("/../Path1/../../Sample.aspx"));
 		}
 		[Test]
 		[ExpectedException(typeof(HttpException))]
 		public void CanonicTest5()
 		{
-			UrlUtils.Canonic("../Path1/../../Sample.aspx");
+			SystemWebTestShim.UrlUtils.Canonic("../Path1/../../Sample.aspx");
 		}
 	}
 }
