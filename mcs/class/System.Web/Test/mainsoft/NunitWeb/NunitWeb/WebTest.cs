@@ -123,9 +123,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// <seealso cref="MonoTests.SystemWeb.Framework.Response.Body"/>
 		public string Run ()
 		{
-#if NET_2_0
-			global::System.Web.Compilation.BuildManager.suppressDebugModeMessages = true;
-#endif
+			SystemWebTestShim.BuildManager.SuppressDebugModeMessages ();
 
 			if (Request.Url == null)
 				Request.Url = Invoker.GetDefaultUrl ();
