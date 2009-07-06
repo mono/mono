@@ -189,7 +189,9 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
 			Assert.IsNotNull (identity.Target);
+#if !NET_4_0
 			Assert.AreEqual (typeof (ExecutionScope), identity.Target.GetType ());
+#endif
 		}
 
 		class Foo {
@@ -205,6 +207,7 @@ namespace MonoTests.System.Linq.Expressions {
 			}
 		}
 
+#if !NET_4_0
 		[Test]
 		[Category ("TargetJvmNotSupported")]
 		public void GlobalsInScope ()
@@ -237,6 +240,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ("gazonk42", del ());
 		}
+#endif
 
 		[Test]
 		public void SimpleHoistedParameter ()
