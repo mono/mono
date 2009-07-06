@@ -1,3 +1,8 @@
+2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* AssemblyInfo.cs: Don't make internals visible to
+	System.Web.Extensions_test and System.Web.DynamicData_test.
+
 2009-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyInfo.cs: added InternalsVisibleTo for
