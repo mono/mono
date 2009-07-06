@@ -51,7 +51,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 		{
 			WebControl parent = new MyWebControl();
 			MyWebControl c = new MyWebControl ();
-			HideDisabledControlAdapter a = new HideDisabledControlAdapter (c);
+			SystemWebTestShim.HideDisabledControlAdapter a = new SystemWebTestShim.HideDisabledControlAdapter (c);
 			StringWriter sw;
 			HtmlTextWriter w;
 

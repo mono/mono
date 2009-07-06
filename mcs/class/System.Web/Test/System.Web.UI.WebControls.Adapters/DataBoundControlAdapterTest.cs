@@ -82,7 +82,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 			}
 		}
 
-		class MyDataBoundControlAdapter : DataBoundControlAdapter
+		class MyDataBoundControlAdapter : SystemWebTestShim.DataBoundControlAdapter
 		{
 			internal MyDataBoundControlAdapter (DataBoundControl c) : base (c)
 			{

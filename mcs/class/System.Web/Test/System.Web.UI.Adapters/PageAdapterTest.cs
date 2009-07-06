@@ -261,7 +261,7 @@ namespace MonoTests.System.Web.UI.Adapters
 			WebTest.Unload ();
 		}
 
-		class MyPageAdapter : PageAdapter
+		class MyPageAdapter : SystemWebTestShim.PageAdapter
 		{
 			internal MyPageAdapter (MyPage p) : base (p)
 			{
@@ -270,9 +270,14 @@ namespace MonoTests.System.Web.UI.Adapters
 			new internal string ClientState {
 				get { return base.ClientState; }
 			}
+
+			new internal string GetPostBackFormReference (string s)
+			{
+				return base.GetPostBackFormReference (s);
+			}
 		}
 
-		class MyPage : Page
+		class MyPage : SystemWebTestShim.Page
 		{
 			NameValueCollection post_back_mode = new NameValueCollection ();
 			

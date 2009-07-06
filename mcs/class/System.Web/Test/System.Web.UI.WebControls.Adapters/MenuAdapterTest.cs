@@ -171,7 +171,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 
 		}
 
-		class MyMenuAdapter : MenuAdapter
+		class MyMenuAdapter : SystemWebTestShim.MenuAdapter
 		{
 			internal MyMenuAdapter (Menu c) : base (c)
 			{

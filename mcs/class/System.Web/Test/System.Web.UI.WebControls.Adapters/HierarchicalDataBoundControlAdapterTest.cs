@@ -81,7 +81,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 			}
 		}
 
-		class MyHierarchicalDataBoundControlAdapter : HierarchicalDataBoundControlAdapter
+		class MyHierarchicalDataBoundControlAdapter : SystemWebTestShim.HierarchicalDataBoundControlAdapter
 		{
 			internal MyHierarchicalDataBoundControlAdapter (HierarchicalDataBoundControl c) : base (c)
 			{

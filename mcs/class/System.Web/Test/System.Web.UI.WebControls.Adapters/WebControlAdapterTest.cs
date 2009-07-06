@@ -128,7 +128,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 
 		}
 
-		class MyWebControlAdapter : WebControlAdapter
+		class MyWebControlAdapter : SystemWebTestShim.WebControlAdapter
 		{
 			internal MyWebControlAdapter (WebControl wc) : base (wc)
 			{
