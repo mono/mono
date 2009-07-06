@@ -1,3 +1,4 @@
 Assembly/AssemblyInfo.cs
 SystemWebTestShim/BuildManager.cs
+SystemWebTestShim/HttpCapabilitiesBase.cs
 ../../build/common/Consts.cs
