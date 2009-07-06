@@ -97,7 +97,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		[Test]
 		public void DeterminePostBackMode ()
 		{
-			Assert.AreEqual(page.DeterminePostBackMode (), mpa.DeterminePostBackMode (),
+			Assert.AreEqual(page.MyDeterminePostBackMode (), mpa.DeterminePostBackMode (),
 				"DeterminePostBackMode #1");
 		}
 
@@ -263,7 +263,7 @@ namespace MonoTests.System.Web.UI.Adapters
 
 		class MyPageAdapter : PageAdapter
 		{
-			internal MyPageAdapter (Page p) : base (p)
+			internal MyPageAdapter (MyPage p) : base (p)
 			{
 			}
 			
@@ -274,15 +274,16 @@ namespace MonoTests.System.Web.UI.Adapters
 
 		class MyPage : Page
 		{
-			internal MyPage () : base ()
-			{
-			}
-			
 			NameValueCollection post_back_mode = new NameValueCollection ();
 			
-			override protected internal NameValueCollection DeterminePostBackMode ()
+			override protected NameValueCollection DeterminePostBackMode ()
 			{
 				return post_back_mode;
+			}
+
+			internal NameValueCollection MyDeterminePostBackMode ()
+			{
+				return DeterminePostBackMode ();
 			}
 		}
 	}
