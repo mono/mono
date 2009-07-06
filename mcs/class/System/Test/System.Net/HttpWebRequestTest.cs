@@ -934,6 +934,99 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void PostAndRedirect_NoCL ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8769);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				Stream rs = req.GetRequestStream ();
+				rs.WriteByte (10);
+				rs.Close ();
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#A1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						localEP.ToString () + "/moved/", "#A2");
+					Assert.AreEqual ("GET", resp.Method, "#A3");
+					Assert.AreEqual ("LOOKS OK", body, "#A4");
+				}
+				responder.Stop ();
+			}
+		}
+
+		[Test]
+		public void PostAndRedirect_CL ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8770);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.ContentLength  = 1;
+				Stream rs = req.GetRequestStream ();
+				rs.WriteByte (10);
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#A1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						localEP.ToString () + "/moved/", "#A2");
+					Assert.AreEqual ("GET", resp.Method, "#A3");
+					Assert.AreEqual ("LOOKS OK", body, "#A4");
+				}
+				responder.Stop ();
+			}
+		}
+
+		[Test]
+		public void PostAnd401 ()
+		{
+			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8771);
+			string url = "http://" + localEP.ToString () + "/original/";
+
+			using (SocketResponder responder = new SocketResponder (localEP, new SocketRequestHandler (RedirectRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.ContentLength  = 1;
+				Stream rs = req.GetRequestStream ();
+				rs.WriteByte (10);
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#A1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						localEP.ToString () + "/moved/", "#A2");
+					Assert.AreEqual ("GET", resp.Method, "#A3");
+					Assert.AreEqual ("LOOKS OK", body, "#A4");
+				}
+				responder.Stop ();
+			}
+		}
+
 		[Test] // bug #324347
 		[Category ("NotWorking")]
 		public void InternalServerError ()
@@ -1292,7 +1385,8 @@ namespace MonoTests.System.Net
 			StringWriter sw = new StringWriter ();
 			if (statusLine.StartsWith ("POST /original/")) {
 				sw.WriteLine ("HTTP/1.0 302 Found");
-				sw.WriteLine ("Location: " + "http://" + IPAddress.Loopback.ToString () + ":8764/moved/");
+				EndPoint ep = socket.LocalEndPoint;
+				sw.WriteLine ("Location: " + "http://" + ep.ToString () + "/moved/");
 				sw.WriteLine ();
 				sw.Flush ();
 			} else if (statusLine.StartsWith ("GET /moved/")) {
@@ -1313,6 +1407,18 @@ namespace MonoTests.System.Net
 
 		static byte [] InternalErrorHandler (Socket socket)
 		{
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
 			StringWriter sw = new StringWriter ();
 			sw.WriteLine ("HTTP/1.1 500 Too Lazy");
 			sw.WriteLine ("Content-Length: 0");
@@ -1388,6 +1494,62 @@ namespace MonoTests.System.Net
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 
+		static byte [] PostAnd401Handler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				 // We don't check for Content-Length or anything else here, so we give the client a little time to write
+				 // after sending the headers
+				Thread.Sleep (200);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+			string statusLine = null;
+			bool have_auth = false;
+			int cl = -1;
+			using (StreamReader sr = new StreamReader (ms, Encoding.UTF8)) {
+				string l;
+				while ((l = sr.ReadLine ()) != null) {
+					if (statusLine == null) {
+						statusLine = l;
+					} else if (l.StartsWith ("Authorization:")) {
+						have_auth = true;
+					} else if (l.StartsWith ("Content-Length:")) {
+						cl = Int32.Parse (l.Substring ("content-length: ".Length));
+					}
+				}
+			}
+
+			StringWriter sw = new StringWriter ();
+			if (!have_auth) {
+				sw.WriteLine ("HTTP/1.0 401 Invalid Credentials");
+				sw.WriteLine ("WWW-Authenticate: basic Yeah");
+				sw.WriteLine ();
+				sw.Flush ();
+			} else if (cl > 0 && statusLine.StartsWith ("POST ")) {
+				sw.WriteLine ("HTTP/1.0 200 OK");
+				sw.WriteLine ("Content-Type: text/plain");
+				sw.WriteLine ("Content-Length: 8");
+				sw.WriteLine ();
+				sw.Write ("LOOKS OK");
+				sw.Flush ();
+			} else {
+				sw.WriteLine ("HTTP/1.0 500 test failed");
+				sw.WriteLine ("Content-Length: 0");
+				sw.WriteLine ();
+				sw.Flush ();
+			}
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
 		[Test]
 		public void NtlmAuthentication ()
 		{
@@ -2047,7 +2209,8 @@ namespace MonoTests.System.Net
 
 					writer.Write (answer);
 					writer.Flush ();
-					evt.WaitOne (50000, false);
+					if (evt.WaitOne (5000, false))
+						error = new Exception ("Timeout when stopping the server");
 				} catch (Exception e) {
 					error = e;
 				}
