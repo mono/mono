@@ -32,6 +32,7 @@
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Response.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/WebTest.cs
+../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 code/Country.cs
 code/CountryCollection.cs
 System.Web.Script.Serialization/JavaScriptSerializerTest.cs
