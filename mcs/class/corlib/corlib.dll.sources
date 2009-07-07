@@ -514,6 +514,7 @@ System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
 System.Reflection.Emit/ConstructorOnTypeBuilderInst.cs
 System.Reflection.Emit/CustomAttributeBuilder.cs
+System.Reflection.Emit/DerivedTypes.cs
 System.Reflection.Emit/DynamicILInfo.cs
 System.Reflection.Emit/DynamicMethod.cs
 System.Reflection.Emit/EnumBuilder.cs

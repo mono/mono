@@ -1347,13 +1347,12 @@ namespace System.Reflection.Emit
 
 		protected override bool IsArrayImpl ()
 		{
-			return Type.IsArrayImpl (this);
+			return false; /*A TypeBuilder never represents a non typedef type.*/
 		}
 
 		protected override bool IsByRefImpl ()
 		{
-			// FIXME
-			return false;
+			return false; /*A TypeBuilder never represents a non typedef type.*/
 		}
 
 		protected override bool IsCOMObjectImpl ()
@@ -1363,8 +1362,7 @@ namespace System.Reflection.Emit
 
 		protected override bool IsPointerImpl ()
 		{
-			// FIXME
-			return false;
+			return false; /*A TypeBuilder never represents a non typedef type.*/
 		}
 
 		protected override bool IsPrimitiveImpl ()
@@ -1385,13 +1383,13 @@ namespace System.Reflection.Emit
 		[MonoTODO]
 		public override Type MakeArrayType ()
 		{
-			return base.MakeArrayType ();
+			return MakeArrayType (1);
 		}
 
 		[MonoTODO]
 		public override Type MakeArrayType (int rank)
 		{
-			return base.MakeArrayType (rank);
+			return new ArrayType (this, rank);
 		}
 
 		[MonoTODO]

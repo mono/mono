@@ -1409,7 +1409,8 @@ namespace System {
 				 * subclasses cannot modify _impl so if it is zero, it means the
 				 * type is not created by the runtime.
 				 */
-				return _impl.Value == IntPtr.Zero;
+				return _impl.Value == IntPtr.Zero &&
+					(GetType ().Assembly != typeof (Type).Assembly || GetType () == typeof (TypeDelegator));
 			}
 		}
 
