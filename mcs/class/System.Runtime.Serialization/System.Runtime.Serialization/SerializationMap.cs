@@ -336,8 +336,26 @@ namespace System.Runtime.Serialization
 				serializer.WriteEndElement ();
 			}
 		}
-		
-		/* Deserialize non-primitive types */
+
+		public virtual object DeserializeObject (XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+			bool isEmpty = reader.IsEmptyElement;
+			reader.ReadStartElement ();
+
+			object res;
+
+			if (isEmpty)
+				res = DeserializeEmptyContent (reader, deserializer);
+			else
+				res = DeserializeContent (reader, deserializer);
+
+			reader.MoveToContent ();
+			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
+				reader.ReadEndElement ();
+			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
+				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, RuntimeType.FullName));
+			return res;
+		}
 
 		// This is sort of hack. The argument reader already moved ahead of
 		// the actual empty element.It's just for historical consistency.
@@ -438,6 +456,13 @@ namespace System.Runtime.Serialization
 				throw new SerializationException ();
 
 			ixs.WriteXml (serializer.Writer);
+		}
+
+		public override object DeserializeObject (XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+			IXmlSerializable ixs = (IXmlSerializable) FormatterServices.GetUninitializedObject (RuntimeType);
+			ixs.ReadXml (reader);
+			return ixs;
 		}
 
 #if !NET_2_1

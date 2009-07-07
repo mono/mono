@@ -144,24 +144,9 @@ namespace System.Runtime.Serialization
 					throw new SerializationException (String.Format ("Value type {0} cannot be null.", type));
 			}
 
-			bool isEmpty = reader.IsEmptyElement;
-			reader.ReadStartElement ();
-
-			object res = DeserializeContent (graph_qname, type, reader, isEmpty);
-
-			reader.MoveToContent ();
-			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
-				reader.ReadEndElement ();
-			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
-				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, type.FullName));
-			return res;
-		}
-
-		object DeserializeContent (QName name, Type type, XmlReader reader, bool isEmpty)
-		{
-			if (KnownTypeCollection.GetPrimitiveTypeFromName (name.Name) != null) {
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
 				string value;
-				if (isEmpty) {
+				if (reader.IsEmptyElement) {
 					if (type.IsValueType)
 						return Activator.CreateInstance (type);
 					else
@@ -169,10 +154,15 @@ namespace System.Runtime.Serialization
 						value = String.Empty;
 				}
 				else
-					value = reader.ReadContentAsString ();
-				return KnownTypeCollection.PredefinedTypeStringToObject (value, name.Name, reader);
+					value = reader.ReadElementContentAsString ();
+				return KnownTypeCollection.PredefinedTypeStringToObject (value, graph_qname.Name, reader);
 			}
 
+			return DeserializeByMap (graph_qname, type, reader);
+		}
+
+		object DeserializeByMap (QName name, Type type, XmlReader reader)
+		{
 			SerializationMap map = types.FindUserMap (name);
 			if (map == null && (name.Namespace == KnownTypeCollection.MSArraysNamespace ||
 			    name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal))) {
@@ -183,10 +173,7 @@ namespace System.Runtime.Serialization
 			if (map == null)
 				throw new SerializationException (String.Format ("Unknown type {0} is used for DataContract with reference of name {1}. Any derived types of a data contract or a data member should be added to KnownTypes.", type, name));
 
-			if (isEmpty)
-				return map.DeserializeEmptyContent (reader, this);
-			else
-				return map.DeserializeContent (reader, this);
+			return map.DeserializeObject (reader, this);
 		}
 
 		Type GetTypeFromNamePair (string name, string ns)

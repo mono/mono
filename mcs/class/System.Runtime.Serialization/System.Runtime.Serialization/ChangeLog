@@ -1,3 +1,9 @@
+2009-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs, SerializationMap.cs : IXmlSerializable
+	  were not deserialized correctly as it has mismatch on wrapper
+	  element. This fixes PeerNodeAddress.EndpointAddress deserialization.
+
 2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlFormatterDeserializer.cs : verifyObjectName rather blocked
