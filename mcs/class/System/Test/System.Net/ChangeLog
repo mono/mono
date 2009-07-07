@@ -1,3 +1,8 @@
+2009-07-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClientTest.cs: if we write the 100 response, reset the output
+	stream writer.
+
 2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Enabled tests, and removed test that is now
