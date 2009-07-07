@@ -207,6 +207,8 @@ namespace System.Windows.Forms {
 
 		class PrintToolBar : ToolBar
 		{
+			bool left_pressed;
+
 			public int GetNext (int pos)
 			{
 				// Select the next button that is *not* a separator
@@ -237,7 +239,8 @@ namespace System.Windows.Forms {
 				base.OnGotFocus (args);
 
 				// Select either the last one or the first one, depending on the direction
-				CurrentItem = (Control.ModifierKeys & Keys.Shift) != 0 ? GetPrev (items.Length) : 0;
+				CurrentItem = (Control.ModifierKeys & Keys.Shift) != 0 || left_pressed ? GetPrev (items.Length) : 0;
+				left_pressed = false;
 			}
 
 			// We need to handle Left/Right for our controls by ourselves, as opposed to
@@ -246,6 +249,7 @@ namespace System.Windows.Forms {
 			{
 				switch ((keyData & Keys.KeyCode)) {
 					case Keys.Left:
+						left_pressed = true; // Simulate Tab+Alt if focus goes to our buttons
 						SelectNextOnParent (false);
 						return true;
 					case Keys.Right:
