@@ -35,26 +35,30 @@ namespace System.Net {
 	public abstract class EndPoint {
 
 		// NB: These methods really do nothing but throw
-		// NotSupportedException
+		// NotImplementedException
 		
 		public virtual AddressFamily AddressFamily {
-			get {
-				throw new NotSupportedException();
-			}
+			get { throw NotImplemented (); }
 		}
 		
 		public virtual EndPoint Create (SocketAddress address)
 		{
-			throw new NotSupportedException();
+			throw NotImplemented ();
 		}
 
 		public virtual SocketAddress Serialize ()
 		{
-			throw new NotSupportedException();
+			throw NotImplemented ();
 		}
 
 		protected EndPoint ()
 		{
+		}
+
+		static Exception NotImplemented ()
+		{
+			// hide the "normal" NotImplementedException from corcompare-like tools
+			return new NotImplementedException ();
 		}
 	}
 }
