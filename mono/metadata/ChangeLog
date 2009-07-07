@@ -1,5 +1,14 @@
 2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall-def.h: Add System.Reflection.Emit.DerivedType::create_unmanaged_type.
+
+	* object-internals.h: Add MonoReflectionArrayType and
+	mono_reflection_create_unmanaged_type.
+
+	* reflection.c: Implement support for ArrayType.
+
+2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_method_header): Parse EH block
 	flags correctly.
 
