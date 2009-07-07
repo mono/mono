@@ -605,13 +605,12 @@ namespace System.Net
 		{
 		}
 
-		internal void SetHeaders (byte [] buffer, int offset, int size)
+		internal void SetHeaders (byte [] buffer)
 		{
 			if (headersSent)
 				return;
 
-			headers = new byte [size];
-			Buffer.BlockCopy (buffer, offset, headers, 0, size);
+			headers = buffer;
 			long cl = request.ContentLength;
 			string method = request.Method;
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
@@ -656,10 +655,9 @@ namespace System.Net
 			if (requestWritten)
 				return;
 
-			if (sendChunked) {
-				requestWritten = true;
+			requestWritten = true;
+			if (sendChunked)
 				return;
-			}
 
 			if (!allowBuffering || writeBuffer == null)
 				return;

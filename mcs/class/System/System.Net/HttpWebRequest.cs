@@ -1124,7 +1124,7 @@ namespace System.Net
 			string reqstr = req.ToString ();
 			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);
 			try {
-				writeStream.SetHeaders (bytes, 0, bytes.Length);
+				writeStream.SetHeaders (bytes);
 			} catch (WebException wexc) {
 				SetWriteStreamError (wexc.Status);
 			} catch (Exception) {
