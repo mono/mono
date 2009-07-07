@@ -196,6 +196,7 @@ System.Net/CredentialCacheTest.cs
 System.Net/DnsPermissionAttributeTest.cs
 System.Net/DnsPermissionTest.cs
 System.Net/DnsTest.cs
+System.Net/EndPointTest.cs
 System.Net/FileWebRequestTest.cs
 System.Net/FileWebResponseTest.cs
 System.Net/FtpWebRequestTest.cs
