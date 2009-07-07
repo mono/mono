@@ -129,6 +129,7 @@ System.ServiceModel/MessageSecurityVersionTest.cs
 System.ServiceModel/NetMsmqBindingTest.cs
 System.ServiceModel/NetTcpBindingTest.cs
 System.ServiceModel/NetPeerTcpBindingTest.cs
+System.ServiceModel/PeerNodeAddressTest.cs
 System.ServiceModel/ServiceAssert.cs
 System.ServiceModel/ServiceEndpointCollectionTest.cs
 System.ServiceModel/ServiceEndpointTest.cs
