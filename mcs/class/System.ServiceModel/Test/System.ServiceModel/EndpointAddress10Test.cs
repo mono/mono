@@ -56,6 +56,19 @@ namespace MonoTests.System.ServiceModel
 			using (XmlReader xr = XmlReader.Create (sr)) {
 				((IXmlSerializable) e).ReadXml (xr);
 			}
+
+			sr = new StringReader (@"<EndpointReference xmlns=""http://www.w3.org/2005/08/addressing""><Address>http://localhost:8080/</Address></EndpointReference>");
+			using (XmlReader xr = XmlReader.Create (sr))
+				EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, xr);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadWriteXml2 ()
+		{
+			var sr = new StringReader (@"<Address>http://localhost:8080/</Address>");
+			using (XmlReader xr = XmlReader.Create (sr))
+				EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, xr);
 		}
 
 		[Test]
