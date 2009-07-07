@@ -109,8 +109,12 @@ namespace System.Drawing.Printing
 #if NET_2_0
 		[MonoTODO]
 		public int RawKind {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get {
+				return (int)kind;
+			}
+			set {
+				kind = (PaperKind)value;
+			}
 		}
 
 #endif
