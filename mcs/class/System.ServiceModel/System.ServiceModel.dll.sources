@@ -671,7 +671,9 @@ System.ServiceModel.MsmqIntegration/MsmqIntegrationMessageProperty.cs
 System.ServiceModel.MsmqIntegration/MsmqIntegrationSecurity.cs
 System.ServiceModel.MsmqIntegration/MsmqMessage.cs
 System.ServiceModel.PeerResolvers/CustomPeerResolverService.cs
+System.ServiceModel.PeerResolvers/ICustomPeerResolverContract.cs
 System.ServiceModel.PeerResolvers/IPeerResolverContract.cs
+System.ServiceModel.PeerResolvers/LocalPeerResolverService.cs
 System.ServiceModel.PeerResolvers/PeerCustomResolverSettings.cs
 System.ServiceModel.PeerResolvers/PeerReferralPolicy.cs
 System.ServiceModel.PeerResolvers/PeerResolverMode.cs

@@ -1,3 +1,11 @@
+2009-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomPeerResolverService.cs, LocalPeerResolverService.cs,
+	  ICustomPeerResolverContract.cs : add local machine peer resolver
+	  implementation that can work across appdomains (based on
+	  dispatching peer resolver that communicates with a ServiceHost
+	  which is either locally started or running as a different process).
+
 2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomPeerResolverService.cs : Refresh() now gives readable reply.
