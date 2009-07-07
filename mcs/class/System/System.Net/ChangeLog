@@ -1,3 +1,17 @@
+2009-07-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: set the content length when uploading values. This
+	allows reusing the connection.
+	* WebConnectionStream.cs: SetHeaders() takes ownership of the buffer
+	and does not need to copy it any more. WriteRequest() wasn't always
+	setting 'requestWritten' to true.
+	* HttpWebRequest.cs: change in SetHeaders call.
+
+2009-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebConnectionStream.cs: Move and improve argument checks to match MS.
+	Modified CanRead and CanWrite to return false when instance is disposed.
+
 2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: provide better error message when there's an error

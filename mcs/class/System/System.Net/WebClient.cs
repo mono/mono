@@ -738,7 +738,6 @@ namespace System.Net
 			Headers ["Content-Type"] = urlEncodedCType;
 			WebRequest request = SetupRequest (uri, method, true);
 			try {
-				Stream rqStream = request.GetRequestStream ();
 				MemoryStream tmpStream = new MemoryStream ();
 				foreach (string key in data) {
 					byte [] bytes = Encoding.UTF8.GetBytes (key);
@@ -754,8 +753,10 @@ namespace System.Net
 					tmpStream.SetLength (--length); // remove trailing '&'
 				
 				byte [] buf = tmpStream.GetBuffer ();
-				rqStream.Write (buf, 0, length);
-				rqStream.Close ();
+				request.ContentLength = length;
+				using (Stream rqStream = request.GetRequestStream ()) {
+					rqStream.Write (buf, 0, length);
+				}
 				tmpStream.Close ();
 				
 				WebResponse response = request.GetResponse ();
