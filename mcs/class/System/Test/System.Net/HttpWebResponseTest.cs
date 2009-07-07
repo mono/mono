@@ -25,9 +25,9 @@ namespace MonoTests.System.Net
 		public void CharacterSet_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -48,8 +48,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -57,9 +55,9 @@ namespace MonoTests.System.Net
 		public void Close_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -71,8 +69,6 @@ namespace MonoTests.System.Net
 				HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
 				((IDisposable) resp).Dispose ();
 				resp.Close ();
-
-				responder.Stop ();
 			}
 		}
 
@@ -80,9 +76,9 @@ namespace MonoTests.System.Net
 		public void ContentEncoding_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -103,8 +99,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -112,9 +106,9 @@ namespace MonoTests.System.Net
 		public void ContentLength_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -127,8 +121,6 @@ namespace MonoTests.System.Net
 				((IDisposable) resp).Dispose ();
 
 				Assert.AreEqual (9, resp.ContentLength);
-
-				responder.Stop ();
 			}
 		}
 
@@ -136,9 +128,9 @@ namespace MonoTests.System.Net
 		public void ContentType_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -159,8 +151,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -168,9 +158,9 @@ namespace MonoTests.System.Net
 		public void Cookies_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -201,8 +191,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#B4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#B5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -210,9 +198,9 @@ namespace MonoTests.System.Net
 		public void GetResponseHeader_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -233,8 +221,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -242,9 +228,9 @@ namespace MonoTests.System.Net
 		public void GetResponseStream_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -265,8 +251,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -274,9 +258,9 @@ namespace MonoTests.System.Net
 		public void Headers_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -308,8 +292,6 @@ namespace MonoTests.System.Net
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
 #endif
-
-				responder.Stop ();
 			}
 		}
 
@@ -317,9 +299,9 @@ namespace MonoTests.System.Net
 		public void LastModified_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -340,8 +322,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -349,9 +329,9 @@ namespace MonoTests.System.Net
 		public void Method_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -372,8 +352,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -381,9 +359,9 @@ namespace MonoTests.System.Net
 		public void ProtocolVersion_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -404,8 +382,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -413,9 +389,9 @@ namespace MonoTests.System.Net
 		public void ResponseUri_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -436,8 +412,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -445,9 +419,9 @@ namespace MonoTests.System.Net
 		public void Server_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -468,8 +442,6 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
@@ -477,9 +449,9 @@ namespace MonoTests.System.Net
 		public void StatusCode_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -492,8 +464,6 @@ namespace MonoTests.System.Net
 				((IDisposable) resp).Dispose ();
 
 				Assert.AreEqual (HttpStatusCode.OK, resp.StatusCode);
-
-				responder.Stop ();
 			}
 		}
 
@@ -501,9 +471,9 @@ namespace MonoTests.System.Net
 		public void StatusDescription_Disposed ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			string url = "http://" + ep.ToString () + "/test/";
 
-			using (SocketResponder responder = new SocketResponder (new IPEndPoint (IPAddress.Loopback, 8000), new SocketRequestHandler (FullResponseHandler))) {
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (FullResponseHandler))) {
 				responder.Start ();
 
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
@@ -524,12 +494,10 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.AreEqual (typeof (HttpWebResponse).FullName, ex.ObjectName, "#5");
 				}
-
-				responder.Stop ();
 			}
 		}
 
-		static byte [] FullResponseHandler (Socket socket)
+		internal static byte [] FullResponseHandler (Socket socket)
 		{
 			StringWriter sw = new StringWriter ();
 			sw.NewLine = "\r\n";
@@ -547,5 +515,676 @@ namespace MonoTests.System.Net
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
+	}
+
+	[TestFixture]
+	public class HttpResponseStreamTest
+	{
+		[Test]
+		public void BeginRead_Buffer_Null ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = null;
+					try {
+						try {
+							rs.BeginRead (buffer, 0, 0, null, null);
+							Assert.Fail ("#A1");
+						} catch (ArgumentNullException ex) {
+							Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("buffer", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						buffer = null;
+						try {
+							rs.BeginRead (buffer, 0, 0, null, null);
+							Assert.Fail ("#B1");
+						} catch (ArgumentNullException ex) {
+							Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("buffer", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void BeginWrite ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						rs.BeginWrite (buffer, 0, buffer.Length, null, null);
+						Assert.Fail ("#1");
+					} catch (NotSupportedException ex) {
+						// The stream does not support writing
+						Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+						Assert.IsNull (ex.InnerException, "#3");
+						Assert.IsNotNull (ex.Message, "#4");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CanRead ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.IsTrue (rs.CanRead, "#1");
+						rs.Close ();
+						Assert.IsFalse (rs.CanRead, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void CanSeek ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.IsFalse (rs.CanSeek, "#1");
+						rs.Close ();
+						Assert.IsFalse (rs.CanSeek, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+#if NET_2_0
+		[Test] // bug #324182
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void CanTimeout ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.IsTrue (rs.CanTimeout, "#1");
+						rs.Close ();
+						Assert.IsTrue (rs.CanTimeout, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+#endif
+
+		[Test]
+		public void CanWrite ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.IsFalse (rs.CanWrite, "#1");
+						rs.Close ();
+						Assert.IsFalse (rs.CanWrite, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						Assert.AreEqual (1, rs.Read (buffer, 4, 1), "#A1");
+						Assert.AreEqual (new byte [] { 0x00, 0x00, 0x00, 0x00, 0x3c }, buffer, "#A2");
+						Assert.AreEqual (2, rs.Read (buffer, 0, 2), "#B1");
+						Assert.AreEqual (new byte [] { 0x64, 0x75, 0x00, 0x00, 0x3c }, buffer, "#B2");
+						Assert.AreEqual (4, rs.Read (buffer, 1, 4), "#C1");
+						Assert.AreEqual (new byte [] { 0x64, 0x6d, 0x6d, 0x79, 0x20 }, buffer, "#C2");
+						Assert.AreEqual (2, rs.Read (buffer, 0, 3), "#D1");
+						Assert.AreEqual (new byte [] { 0x2f, 0x3e, 0x6d, 0x79, 0x20 }, buffer, "#D2");
+						Assert.AreEqual (0, rs.Read (buffer, 1, 3), "#E1");
+						Assert.AreEqual (new byte [] { 0x2f, 0x3e, 0x6d, 0x79, 0x20 }, buffer, "#E2");
+						Assert.AreEqual (0, rs.Read (buffer, buffer.Length, 0), "#G1");
+						Assert.AreEqual (new byte [] { 0x2f, 0x3e, 0x6d, 0x79, 0x20 }, buffer, "#G2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read_Buffer_Null ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = null;
+					try {
+						try {
+							rs.Read (buffer, 0, 0);
+							Assert.Fail ("#A1");
+						} catch (ArgumentNullException ex) {
+							Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("buffer", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						buffer = null;
+						try {
+							rs.Read (buffer, 0, 0);
+							Assert.Fail ("#B1");
+						} catch (ArgumentNullException ex) {
+							Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("buffer", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read_Count_Negative ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						try {
+							rs.Read (buffer, 1, -1);
+							Assert.Fail ("#A1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("size", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						try {
+							rs.Read (buffer, 1, -1);
+							Assert.Fail ("#B1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("size", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read_Count_Overflow ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						try {
+							rs.Read (buffer, buffer.Length - 2, 3);
+							Assert.Fail ("#A1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("size", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						try {
+							rs.Read (buffer, buffer.Length - 2, 3);
+							Assert.Fail ("#B1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("size", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read_Offset_Negative ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						try {
+							rs.Read (buffer, -1, 0);
+							Assert.Fail ("#A1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("offset", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						try {
+							rs.Read (buffer, -1, 0);
+							Assert.Fail ("#B1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("offset", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void Read_Offset_Overflow ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						try {
+							rs.Read (buffer, buffer.Length + 1, 0);
+							Assert.Fail ("#A1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+							Assert.IsNull (ex.InnerException, "#A3");
+							Assert.IsNotNull (ex.Message, "#A4");
+							Assert.AreEqual ("offset", ex.ParamName, "#A5");
+						}
+
+						// read full response
+						buffer = new byte [24];
+						Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+
+						try {
+							rs.Read (buffer, buffer.Length + 1, 0);
+							Assert.Fail ("#B1");
+						} catch (ArgumentOutOfRangeException ex) {
+							// Specified argument was out of the range of valid values
+							Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+							Assert.IsNull (ex.InnerException, "#B3");
+							Assert.IsNotNull (ex.Message, "#B4");
+							Assert.AreEqual ("offset", ex.ParamName, "#B5");
+						}
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_Stream_Closed ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					rs.Close ();
+					try {
+						rs.Read (new byte [0], 0, 0);
+						Assert.Fail ("#A1");
+					} catch (WebException ex) {
+						// The request was aborted: The connection was closed unexpectedly
+						Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
+						Assert.IsNull (ex.InnerException, "#A3");
+						Assert.IsNotNull (ex.Message, "#A4");
+						Assert.IsNull (ex.Response, "#A5");
+						Assert.AreEqual (WebExceptionStatus.ConnectionClosed, ex.Status, "#A6");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [24];
+					Assert.AreEqual (9, rs.Read (buffer, 0, buffer.Length));
+					rs.Close ();
+					try {
+						rs.Read (new byte [0], 0, 0);
+						Assert.Fail ("#B1");
+					} catch (WebException ex) {
+						// The request was aborted: The connection was closed unexpectedly
+						Assert.AreEqual (typeof (WebException), ex.GetType (), "#B2");
+						Assert.IsNull (ex.InnerException, "#B3");
+						Assert.IsNotNull (ex.Message, "#B4");
+						Assert.IsNull (ex.Response, "#B5");
+						Assert.AreEqual (WebExceptionStatus.ConnectionClosed, ex.Status, "#B6");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+#if NET_2_0
+		[Test]
+		public void ReadTimeout ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.AreEqual (2000, rs.ReadTimeout, "#1");
+						rs.Close ();
+						Assert.AreEqual (2000, rs.ReadTimeout, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+#endif
+
+		[Test]
+		public void Write ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					byte [] buffer = new byte [5];
+					try {
+						rs.Write (buffer, 0, buffer.Length);
+						Assert.Fail ("#1");
+					} catch (NotSupportedException ex) {
+						// The stream does not support writing
+						Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+						Assert.IsNull (ex.InnerException, "#3");
+						Assert.IsNotNull (ex.Message, "#4");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+
+#if NET_2_0
+		[Test]
+		public void WriteTimeout ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + ep.ToString () + "/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (HttpWebResponseTest.FullResponseHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+				req.KeepAlive = false;
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					Stream rs = resp.GetResponseStream ();
+					try {
+						Assert.AreEqual (2000, rs.WriteTimeout, "#1");
+						rs.Close ();
+						Assert.AreEqual (2000, rs.WriteTimeout, "#2");
+					} finally {
+						rs.Close ();
+						req.Abort ();
+					}
+				}
+			}
+		}
+#endif
 	}
 }

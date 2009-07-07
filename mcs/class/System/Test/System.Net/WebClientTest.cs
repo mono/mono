@@ -2058,22 +2058,17 @@ namespace MonoTests.System.Net
 			string expect = null;
 
 			StreamReader sr = new StreamReader (ms, Encoding.UTF8);
-			string line = sr.ReadLine ();
+			string line = null;
 			byte state = 0;
-			while (line != null) {
+			while ((line = sr.ReadLine ()) != null) {
 				if (state > 0) {
 					state = 2;
 					sb.Append (line);
 					sb.Append ("\r\n");
-					line = sr.ReadLine ();
-				} else {
-					if (line.StartsWith ("Expect:"))
-						expect = line.Substring (8);
-					line = sr.ReadLine ();
-					if (line.Length == 0) {
-						state = 1;
-						line = sr.ReadLine ();
-					}
+				} if (line.Length == 0) {
+					state = 1;
+				} else if (line.StartsWith ("Expect:")) {
+					expect = line.Substring (8);
 				}
 			}
 
@@ -2092,6 +2087,7 @@ namespace MonoTests.System.Net
 				bytesReceived = socket.Receive (buffer);
 				while (bytesReceived > 0) {
 					ms.Write (buffer, 0, bytesReceived);
+					Thread.Sleep (200);
 					if (socket.Available > 0) {
 						bytesReceived = socket.Receive (buffer);
 					} else {
@@ -2111,6 +2107,7 @@ namespace MonoTests.System.Net
 				}
 			}
 
+			sw = new StringWriter ();
 			sw.WriteLine ("HTTP/1.1 200 OK");
 			sw.WriteLine ("Content-Type: text/xml");
 			sw.WriteLine ("Content-Length: " + sb.Length.ToString (CultureInfo.InvariantCulture));
