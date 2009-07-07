@@ -54,14 +54,17 @@ namespace System.Web {
 
 		public string ErrorText {
 			get { return _errorText; }
+			set { _errorText = value; }
 		}
 		
 		public string VirtualPath {
 			get { return _virtualPath; }
+			set { _virtualPath = value; }
 		}
 
 		public int Line {
 			get { return _line; }
+			set { _line = value; }
 		}
 	}
 }
