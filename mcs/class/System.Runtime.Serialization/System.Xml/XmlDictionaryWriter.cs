@@ -208,8 +208,19 @@ namespace System.Xml
 					}
 					reader.MoveToElement ();
 				}
+				if (reader.IsEmptyElement)
+					WriteEndElement ();
+				else {
+					int depth = reader.Depth;
+					reader.Read ();
+					if (reader.NodeType != XmlNodeType.EndElement) {
+						do {
+							WriteNode (reader, defattr);
+						} while (depth < reader.Depth);
+					}
+					WriteFullEndElement ();
+				}
 				reader.Read ();
-				WriteNode (reader, defattr);
 				break;
 			case XmlNodeType.Attribute:
 			case XmlNodeType.Text:

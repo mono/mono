@@ -1293,5 +1293,19 @@ namespace MonoTests.System.Xml
 			xw.WriteArray ("", "root", "", array, 1, 3);
 			Assert.AreEqual ("<root>false</root><root>true</root><root>true</root>", Output, "#1");
 		}
+
+		[Test]
+		public void WriteNode ()
+		{
+			string s = @"<Resolve xmlns='http://schemas.microsoft.com/net/2006/05/peer' xmlns:i='http://www.w3.org/2001/XMLSchema-instance'><ClientId>79310c9f-18d4-4337-a95a-1865ca54a66e</ClientId><MaxAddresses>3</MaxAddresses><MeshId>amesh</MeshId></Resolve>".Replace ('\'', '"');
+			var sw = new StringWriter ();
+			var xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, new XmlWriterSettings () { OmitXmlDeclaration = true }));
+			var xr = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (s)));
+			xr.MoveToContent ();
+			while (!xr.EOF && xr.NodeType != XmlNodeType.EndElement)
+				xw.WriteNode (xr, false);
+			xw.Flush ();
+			Assert.AreEqual (s, sw.ToString ());
+		}
 	}
 }
