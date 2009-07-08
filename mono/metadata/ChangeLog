@@ -4,6 +4,13 @@
 
 2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object-internals.h: Add MonoReflectionDerivedType.
+
+	* reflection.c: Implement support for PointerType.
+	Fixed tons of warnings.
+
+2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object-internals.h: Add MonoReflectionByRefType.
 
 	* reflection.c: Implement support for ByRefType.
