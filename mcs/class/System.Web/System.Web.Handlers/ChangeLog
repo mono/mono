@@ -1,3 +1,9 @@
+2009-07-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AssemblyResourceLoader.cs: send minimal headers set and don't call
+	response.End.  When possible, write the resource using the unsafe
+	methods in HttpResponseStream.a
+
 2009-04-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AssemblyResourceLoader.cs: MS sets cacheability to public. Add
