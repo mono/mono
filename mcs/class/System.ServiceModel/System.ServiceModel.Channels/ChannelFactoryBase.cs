@@ -37,7 +37,8 @@ namespace System.ServiceModel.Channels
 	public abstract class ChannelFactoryBase<TChannel>
 		: ChannelFactoryBase, IChannelFactory<TChannel>
 	{
-		[MonoTODO]
+		List<TChannel> channels = new List<TChannel> ();
+
 		protected ChannelFactoryBase ()
 			: this (DefaultCommunicationTimeouts.Instance)
 		{
@@ -59,34 +60,45 @@ namespace System.ServiceModel.Channels
 			EndpointAddress remoteAddress, Uri via)
 		{
 			ValidateCreateChannel ();
-			return OnCreateChannel (remoteAddress, via);
+			var ch = OnCreateChannel (remoteAddress, via);
+			channels.Add (ch);
+			return ch;
 		}
 
 		protected abstract TChannel OnCreateChannel (
 			EndpointAddress remoteAddress, Uri via);
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnAbort ()
 		{
+			// this implicitly premises: TChannel is IChannel
+			foreach (IChannel ch in channels)
+				ch.Abort ();
 			base.OnAbort ();
 		}
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnClose (TimeSpan timeout)
 		{
-			base.OnClose (timeout);
+			DateTime start = DateTime.Now;
+			// this implicitly premises: TChannel is IChannel
+			foreach (IChannel ch in channels)
+				ch.Close (timeout - (DateTime.Now - start));
+			base.OnClose (timeout - (DateTime.Now - start));
 		}
 
-		[MonoTODO ("find out what to do here.")]
+		Action<TimeSpan> close_delegate;
+
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			return base.OnBeginClose (timeout, callback, state);
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			base.OnEndClose (result);
+			if (close_delegate == null)
+				throw new InvalidOperationException ("Async close operation has not started");
+			close_delegate.EndInvoke (result);
 		}
 
 		protected void ValidateCreateChannel ()
@@ -102,7 +114,6 @@ namespace System.ServiceModel.Channels
 	{
 		TimeSpan open_timeout, close_timeout, receive_timeout, send_timeout;
 
-		[MonoTODO]
 		protected ChannelFactoryBase ()
 			: this (DefaultCommunicationTimeouts.Instance)
 		{
@@ -138,27 +149,30 @@ namespace System.ServiceModel.Channels
 			return null;
 		}
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnAbort ()
 		{
+			// what should we do here?
 		}
 
-		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
+		Action<TimeSpan> close_delegate;
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO]
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				throw new InvalidOperationException ("Async close operation has not started");
+			close_delegate.EndInvoke (result);
 		}
 
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
+			// what should we do here?
 		}
 	}
 }

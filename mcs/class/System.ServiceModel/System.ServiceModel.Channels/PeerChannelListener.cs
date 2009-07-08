@@ -37,7 +37,7 @@ using System.Text;
 
 namespace System.ServiceModel.Channels
 {
-	internal class PeerChannelListener<TChannel> : ChannelListenerBase<TChannel>
+	internal class PeerChannelListener<TChannel> : InternalChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
 		PeerTransportBindingElement source;
@@ -93,46 +93,12 @@ namespace System.ServiceModel.Channels
 			throw new InvalidOperationException (String.Format ("Not supported channel '{0}' (mono bug; it is incorrectly allowed at construction time)", typeof (TChannel)));
 		}
 
-		protected override IAsyncResult OnBeginAcceptChannel (
-			TimeSpan timeout, AsyncCallback callback,
-			object asyncState)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override IAsyncResult OnBeginWaitForChannel (
-			TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override bool OnEndWaitForChannel (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
 		protected override bool OnWaitForChannel (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override void OnEndOpen (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}
@@ -144,19 +110,6 @@ namespace System.ServiceModel.Channels
 
 			foreach (TChannel ch in channels)
 				ch.Close(timeout);
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndClose (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("find out what to do here.")]

@@ -1,3 +1,10 @@
+2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactoryBase.cs, HttpChannelFactory.cs,
+	  PeerChannelFactory.cs : close opened channels at OnClose() as
+	  documented. Implement async methods.
+	* PeerChannelListener.cs : removed some NIE overrides.
+
 2009-07-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexChannelBase.cs : some more async methods.
