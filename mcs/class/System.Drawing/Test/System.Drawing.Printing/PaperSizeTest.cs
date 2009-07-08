@@ -34,6 +34,7 @@ namespace MonoTests.System.Drawing.Printing
 	[TestFixture]
 	public class PaperSizeTest
 	{
+#if NET_2_0
 		[Test]
 		public void PaperSizeKindTest()
 		{
@@ -130,6 +131,7 @@ namespace MonoTests.System.Drawing.Printing
 				Assert.Fail ("should not have thrown #1b");
 			}
 		}
+#endif
 	
 	}
 }
