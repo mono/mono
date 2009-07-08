@@ -1,3 +1,9 @@
+2009-07-08  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicControlTest.cs: added tests for ApplyFormatInEditMode,
+	Column, ConvertEmptyStringToNull, CssClass, DataField,
+	DataFormatString, FieldTemplate, Table, UIHint
+
 2009-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicControlTest.cs: added

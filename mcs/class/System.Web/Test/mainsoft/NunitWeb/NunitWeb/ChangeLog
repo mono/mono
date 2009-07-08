@@ -1,3 +1,8 @@
+2009-07-08  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTest.cs: added new public property - TestBaseDir, to be used
+	by code which needs to access the files in the work dir.
+
 2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* WebTest.cs (Run): Use SystemWebTestShim.BuildManager.

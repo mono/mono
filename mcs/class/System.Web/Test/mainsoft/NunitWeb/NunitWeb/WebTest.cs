@@ -443,13 +443,23 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		public static event EventHandler AppUnloaded;
-			
+
+		public static string TestBaseDir {
+			get {
+#if !TARGET_JVM
+				return baseDir;
+#else
+				return String.Empty;
+#endif
+			}
+		}
+		
 #if !TARGET_JVM
 		const string VIRTUAL_BASE_DIR = "/NunitWeb";
 		private static string baseDir;
 		private static string binDir;
 		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
-
+		
 		static void LoadAssemblyRecursive (Assembly ass)
 		{
 			if (ass.GlobalAssemblyCache)

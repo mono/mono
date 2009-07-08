@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class FooEmpty
+	public class FooEmpty
 	{
 	}
 }

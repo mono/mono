@@ -9,7 +9,7 @@ using MonoTests.ModelProviders;
 
 namespace MonoTests.Common
 {
-	class BazDataTypeDefaultTypes
+	public class BazDataTypeDefaultTypes
 	{
 		public char Char_Column { get; set; }
 		public byte Byte_Column { get; set; }
@@ -59,5 +59,16 @@ namespace MonoTests.Common
 		[StringLength (255)]
 		[DynamicDataStringLength (512)]
 		public string MaximumLength_Column5 { get; set; }
+
+		public BazDataTypeDefaultTypes () : this (false)
+		{}
+
+		public BazDataTypeDefaultTypes (bool fillValues)
+		{
+			if (fillValues) {
+				Char_Column = 'a';
+				String_Column = "string";
+			}
+		}
 	}
 }

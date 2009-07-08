@@ -24,7 +24,7 @@ namespace MonoTests.Common
 					continue;
 
 				if (typeof (TChild).IsAssignableFrom (child.GetType ())) {
-					if (!String.IsNullOrEmpty (id))
+					if (String.IsNullOrEmpty (id))
 						return child as TChild;
 					if (String.Compare (child.ID, id, StringComparison.OrdinalIgnoreCase) == 0)
 						return child as TChild;

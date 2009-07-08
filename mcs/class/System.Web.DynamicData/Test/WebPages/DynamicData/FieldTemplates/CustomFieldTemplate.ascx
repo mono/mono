@@ -1,0 +1,2 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="CustomFieldTemplate.ascx.cs" Inherits="DynamicData_FieldTemplates_CustomFieldTemplate" %>
+<span class="field"><%= Column.Name %></span>: <span class="customFieldTemplate"><asp:Literal runat="server" ID="Literal1" Text="<%# FieldValueString %>" /></span>

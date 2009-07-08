@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.DynamicData;
 using System.Web.UI;
 
@@ -12,8 +13,29 @@ namespace MonoTests.Common
 	public class TestsBasePage <DataContextType> : global::System.Web.UI.Page where DataContextType: new()
 	{
 		Type containerType;
+		bool? outsideTestSuite;
 
-		public bool OutsideTestSuite { get; set; }
+		public bool OutsideTestSuite {
+			get {
+				if (outsideTestSuite == null) {
+					object o = WebConfigurationManager.AppSettings["OutsideTestSuite"];
+					string s = o as string;
+					bool b;
+					if (s == null)
+						outsideTestSuite = false;
+					else if (Boolean.TryParse (s, out b))
+						outsideTestSuite = b;
+					else
+						outsideTestSuite = false;
+				}
+
+				return (bool) outsideTestSuite;
+			}
+
+			set {
+				outsideTestSuite = value;
+			}
+		}
 
 		public virtual Type ContextType {
 			get { return typeof (DataContextType); }

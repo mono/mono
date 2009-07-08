@@ -15,8 +15,9 @@
         </LayoutTemplate>
         <ItemTemplate>
 	<div>
-		<div><asp:DynamicControl runat="server" DataField="FirstName" id="FirstName"/></div>
-		<div style="float:right"><asp:DynamicControl runat="server" DataField="LastName" id="LastName"/></div>
+		<test:PokerDynamicControl runat="server" DataField="FirstName" id="FirstName"/> 
+		<test:PokerDynamicControl runat="server" DataField="LastName" id="LastName"/>
+		<test:PokerDynamicControl runat="server" DataField="Active" ID="Active" CssClass="activeCssClass" />
         </div>
         </ItemTemplate>
       </asp:ListView>

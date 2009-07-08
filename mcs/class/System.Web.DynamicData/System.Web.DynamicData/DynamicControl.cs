@@ -142,6 +142,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		protected override void OnInit (EventArgs e)
 		{
+			// It seems _all_ the properties are initialized _only_ here. Further user's
+			// actions to set the Column property don't affect the other properties
+			// which derive their values from the associated MetaColumn.
 			base.OnInit (e);
 		}
 

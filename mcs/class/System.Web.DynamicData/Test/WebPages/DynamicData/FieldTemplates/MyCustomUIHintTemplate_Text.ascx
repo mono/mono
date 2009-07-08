@@ -1,0 +1,2 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="MyCustomUIHintTemplate_Text.ascx.cs" Inherits="DynamicData_FieldTemplates_MyCustomUIHintTemplate_Text" %>
+<span class="field"><%= Column.Name %></span>: <span class="myCustomUIHintTemplate_Text"><asp:Literal runat="server" ID="Literal1" Text="<%# FieldValueString %>" /></span>

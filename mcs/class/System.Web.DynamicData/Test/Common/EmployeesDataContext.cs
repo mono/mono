@@ -19,6 +19,8 @@ namespace MonoTests.Common
 	public class EmployeesDataContext : ITestDataContext
 	{
 		List<Employee> employees;
+		List<SeasonalEmployee> seasonalEmployees;
+		List<BazDataTypeDefaultTypes> defaultDataTypes;
 
 		public List<Employee> Employees {
 			get {
@@ -29,10 +31,33 @@ namespace MonoTests.Common
 			}
 		}
 
+		public List<SeasonalEmployee> SeasonalEmployees {
+			get
+			{
+				if (seasonalEmployees == null)
+					seasonalEmployees = new List<SeasonalEmployee> ();
+				return seasonalEmployees;
+			}
+		}
+
+		public List<BazDataTypeDefaultTypes> DefaultDataTypes {
+			get {
+				if (defaultDataTypes == null)
+					defaultDataTypes = new List<BazDataTypeDefaultTypes> ();
+				return defaultDataTypes;
+			}
+		}
+
 		public IList GetTableData (string tableName, DataSourceSelectArguments args, string where, ParameterCollection whereParams)
 		{
 			if (String.Compare (tableName, "EmployeeTable", StringComparison.OrdinalIgnoreCase) == 0)
 				return Employees;
+
+			if (String.Compare (tableName, "SeasonalEmployeeTable", StringComparison.OrdinalIgnoreCase) == 0)
+				return SeasonalEmployees;
+
+			if (String.Compare (tableName, "BazDataTypeDefaultTypesTable", StringComparison.OrdinalIgnoreCase) == 0)
+				return DefaultDataTypes;
 
 			return null;
 		}
@@ -42,6 +67,8 @@ namespace MonoTests.Common
 			var ret = new List<DynamicDataTable> ();
 
 			ret.Add (new TestDataTable<Employee> ());
+			ret.Add (new TestDataTable<SeasonalEmployee> ());
+			ret.Add (new TestDataTable<BazDataTypeDefaultTypes> ());
 
 			return ret;
 		}

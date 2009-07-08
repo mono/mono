@@ -1,3 +1,3 @@
 ﻿<%@ Control Language="C#" CodeFile="Boolean.ascx.cs" Inherits="BooleanField" %>
 
-<asp:CheckBox runat="server" ID="CheckBox1" Enabled="false" />
+<span class="field"><%= Column.Name %></span>: <asp:CheckBox runat="server" ID="CheckBox1" Enabled="false" />
