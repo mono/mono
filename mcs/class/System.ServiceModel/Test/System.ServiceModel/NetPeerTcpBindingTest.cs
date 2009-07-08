@@ -74,6 +74,8 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual (0, n.Port, "#4");
 			Assert.IsNotNull (n.ReaderQuotas, "#5");
 
+			Assert.IsFalse (((IBindingRuntimePreferences) n).ReceiveSynchronously, "#6");
+
 			var bec = n.CreateBindingElements ();
 			Assert.IsNotNull (bec.Find<PeerCustomResolverBindingElement> (), "#bec0");
 			Assert.IsNotNull (bec.Find<BinaryMessageEncodingBindingElement> (), "#bec1");

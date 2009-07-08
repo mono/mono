@@ -39,9 +39,7 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
-	public class NetPeerTcpBinding : Binding,
-		IBindingDeliveryCapabilities, IBindingMulticastCapabilities,
-		ISecurityCapabilities, IBindingRuntimePreferences
+	public class NetPeerTcpBinding : Binding, IBindingRuntimePreferences
 	{
 		// We don't support PNRP
 		public static bool IsPnrpAvailable {
@@ -125,48 +123,8 @@ namespace System.ServiceModel
 
 		// explicit interface implementations
 
-		[MonoTODO]
-		bool IBindingDeliveryCapabilities.AssuresOrderedDelivery {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool IBindingDeliveryCapabilities.QueuedDelivery {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
-			get { throw new NotImplementedException (); }
-		}
-
-		bool IBindingMulticastCapabilities.IsMulticast {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedRequestProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedResponseProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientAuthentication {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientWindowsIdentity {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsServerAuthentication {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 	}
 }
