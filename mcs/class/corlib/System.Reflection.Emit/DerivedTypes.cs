@@ -352,6 +352,7 @@ namespace System.Reflection.Emit
 			return elementName + "&";
 		}
 
+#if NET_2_0
 		public override Type MakeArrayType ()
 		{
 			throw new ArgumentException ("Cannot create an array type of a byref type");
@@ -371,6 +372,7 @@ namespace System.Reflection.Emit
 		{
 			throw new ArgumentException ("Cannot create a pointer type of a byref type");
 		}
+#endif
 	}
 
 
