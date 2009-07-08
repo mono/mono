@@ -36,7 +36,13 @@ using System.Text;
 
 namespace System.ServiceModel.Channels
 {
-	internal class PeerChannelFactory<TChannel> : ChannelFactoryBase<TChannel>
+	internal interface IPeerChannelManager
+	{
+		PeerTransportBindingElement Source { get; }
+		PeerResolver Resolver { get; }
+	}
+
+	internal class PeerChannelFactory<TChannel> : ChannelFactoryBase<TChannel>, IPeerChannelManager
 	{
 		PeerTransportBindingElement source;
 		MessageEncoder encoder;
@@ -75,9 +81,9 @@ namespace System.ServiceModel.Channels
 
 			Type t = typeof (TChannel);
 			if (t == typeof (IOutputChannel))
-				return (TChannel) (object) new PeerOutputChannel ((PeerChannelFactory<IOutputChannel>) (object) this, address, via, Resolver);
+				return (TChannel) (object) new PeerDuplexChannel (this, address, via, Resolver);
 			if (t == typeof (IDuplexChannel))
-				return (TChannel) (object) new PeerDuplexChannel ((PeerChannelFactory<IDuplexChannel>) (object) this, address, via, Resolver);
+				return (TChannel) (object) new PeerDuplexChannel (this, address, via, Resolver);
 			throw new InvalidOperationException (String.Format ("channel type {0} is not supported.", typeof (TChannel).Name));
 		}
 

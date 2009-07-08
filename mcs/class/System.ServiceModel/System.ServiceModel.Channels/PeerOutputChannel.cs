@@ -1,3 +1,4 @@
+#if false
 //
 // PeerOutputChannel.cs
 //
@@ -111,3 +112,4 @@ namespace System.ServiceModel.Channels
 		}
 	}
 }
+#endif

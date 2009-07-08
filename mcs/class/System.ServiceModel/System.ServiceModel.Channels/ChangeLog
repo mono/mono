@@ -1,5 +1,12 @@
 2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs, PeerChannelListener.cs, PeerOutputChannel.cs,
+	  PeerInputChannel.cs, PeerChannelFactory.cs : those channels are
+	  going to be unified to PeerDuplexChannel. And it is likely that
+	  input and output functionalities are to be unified too.
+
+2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelFactory.cs : (TcpChannelInfo) ease type restriction. I
 	  may have to reuse it for peer transport.
 	* PeerChannelListener.cs : add binding member.

@@ -44,8 +44,8 @@ namespace System.ServiceModel.Channels
 		PeerResolver resolver;
 		PeerNode node;
 
-		public PeerDuplexChannel (PeerChannelFactory<IDuplexChannel> factory, EndpointAddress address, Uri via, PeerResolver resolver)
-			: base (factory, address, via)
+		public PeerDuplexChannel (IPeerChannelManager factory, EndpointAddress address, Uri via, PeerResolver resolver)
+			: base ((ChannelFactoryBase) factory, address, via)
 		{
 			binding = factory.Source;
 			this.resolver = factory.Resolver;
@@ -56,8 +56,8 @@ namespace System.ServiceModel.Channels
 		}
 
 		// FIXME: receive local_address too
-		public PeerDuplexChannel (PeerChannelListener<IDuplexChannel> listener)
-			: base (listener)
+		public PeerDuplexChannel (IPeerChannelManager listener)
+			: base ((ChannelListenerBase) listener)
 		{
 			binding = listener.Source;
 			this.resolver = listener.Resolver;

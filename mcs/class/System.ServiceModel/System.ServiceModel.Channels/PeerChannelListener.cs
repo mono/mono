@@ -37,7 +37,7 @@ using System.Text;
 
 namespace System.ServiceModel.Channels
 {
-	internal class PeerChannelListener<TChannel> : InternalChannelListenerBase<TChannel>
+	internal class PeerChannelListener<TChannel> : InternalChannelListenerBase<TChannel>, IPeerChannelManager
 		where TChannel : class, IChannel
 	{
 		PeerTransportBindingElement source;
@@ -89,10 +89,10 @@ namespace System.ServiceModel.Channels
 		TChannel PopulateChannel (TimeSpan timeout)
 		{
 			if (typeof (TChannel) == typeof (IInputChannel))
-				return (TChannel) (object) new PeerInputChannel ((PeerChannelListener<IInputChannel>) (object) this, timeout);
+				return (TChannel) (object) new PeerDuplexChannel (this);
 			// FIXME: handle timeout somehow.
 			if (typeof (TChannel) == typeof (IDuplexChannel))
-				return (TChannel) (object) new PeerDuplexChannel ((PeerChannelListener<IDuplexChannel>) (object) this);
+				return (TChannel) (object) new PeerDuplexChannel (this);
 
 			throw new InvalidOperationException (String.Format ("Not supported channel '{0}' (mono bug; it is incorrectly allowed at construction time)", typeof (TChannel)));
 		}
