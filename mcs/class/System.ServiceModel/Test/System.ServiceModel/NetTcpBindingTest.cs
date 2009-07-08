@@ -27,10 +27,12 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.Net.Sockets;
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel
@@ -50,6 +52,65 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsNotNull (tr, "#tr1");
 			Assert.AreEqual (false, tr.TeredoEnabled, "#tr2");
 			Assert.AreEqual ("net.tcp", tr.Scheme, "#tr3");
+
+			Assert.IsFalse (n.TransactionFlow, "#4");
+			var tx = n.CreateBindingElements ().Find<TransactionFlowBindingElement> ();
+			Assert.IsNotNull (tx, "#tx1");
+		}
+
+		[Test]
+		public void SimpleConnection ()
+		{
+			var host = new ServiceHost (typeof (Foo));
+			var bindingsvc = new NetTcpBinding ();
+			bindingsvc.Security.Mode = SecurityMode.None;
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost/");
+			host.Open (TimeSpan.FromSeconds (5));
+			try {
+				var bindingcli = new NetTcpBinding ();
+				bindingcli.Security.Mode = SecurityMode.None;
+				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost/")).CreateChannel ();
+				Assert.AreEqual (5, cli.Add (1, 4));
+				Assert.AreEqual ("monkey science", cli.Join ("monkey", "science"));
+			} finally {
+				host.Close (TimeSpan.FromSeconds (5));
+				var t = new TcpListener (808);
+				t.Start ();
+				t.Stop ();
+			}
+			Assert.IsTrue (Foo.AddCalled, "#1");
+			Assert.IsTrue (Foo.JoinCalled, "#2");
+		}
+
+		[ServiceContract]
+		public interface IFoo
+		{
+			[OperationContract]
+			int Add (short s, int i);
+			[OperationContract]
+			string Join (string s1, string s2);
+		}
+
+		public interface IFooClient : IFoo, IClientChannel
+		{
+		}
+
+		public class Foo : IFoo
+		{
+			public static bool AddCalled;
+			public static bool JoinCalled;
+
+			public int Add (short s, int i)
+			{
+				AddCalled = true;
+				return s + i;
+			}
+
+			public string Join (string s1, string s2)
+			{
+				JoinCalled = true;
+				return s1 + " " + s2;
+			}
 		}
 	}
 }
