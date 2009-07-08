@@ -4,6 +4,12 @@
 
 2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object-internals.h: Add MonoReflectionByRefType.
+
+	* reflection.c: Implement support for ByRefType.
+
+2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall-def.h: Add System.Reflection.Emit.DerivedType::create_unmanaged_type.
 
 	* object-internals.h: Add MonoReflectionArrayType and
