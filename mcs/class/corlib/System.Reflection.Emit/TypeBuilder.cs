@@ -1395,7 +1395,7 @@ namespace System.Reflection.Emit
 		[MonoTODO]
 		public override Type MakeByRefType ()
 		{
-			return base.MakeByRefType ();
+			return new ByRefType (this);;
 		}
 
 		[MonoTODO]

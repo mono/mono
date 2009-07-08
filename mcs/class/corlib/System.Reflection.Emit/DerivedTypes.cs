@@ -222,8 +222,7 @@ namespace System.Reflection.Emit
 
 		public override Type MakeByRefType ()
 		{
-			create_unmanaged_type (this);
-			return base.MakeByRefType ();
+			return new ByRefType (this);
 		}
 
 		public override Type MakePointerType ()
@@ -330,6 +329,48 @@ namespace System.Reflection.Emit
 				sb.Append (",");
 			sb.Append ("]");
 			return sb.ToString ();
+		}
+	}
+
+
+	internal class ByRefType : DerivedType
+	{
+		internal ByRefType (Type elementType) : base (elementType)
+		{
+		}
+
+		protected override bool IsByRefImpl ()
+		{
+			return true;
+		}
+
+		public override Type BaseType {
+			get { return null; }
+		}
+
+		internal override String FormatName (string elementName)
+		{
+			return elementName + "&";
+		}
+
+		public override Type MakeArrayType ()
+		{
+			throw new ArgumentException ("Cannot create an array type of a byref type");
+		}
+
+		public override Type MakeArrayType (int rank)
+		{
+			throw new ArgumentException ("Cannot create an array type of a byref type");
+		}
+
+		public override Type MakeByRefType ()
+		{
+			throw new ArgumentException ("Cannot create a byref type of an already byref type");
+		}
+
+		public override Type MakePointerType ()
+		{
+			throw new ArgumentException ("Cannot create a pointer type of a byref type");
 		}
 	}
 }
