@@ -1,3 +1,9 @@
+2009-07-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PaperSize.cs: Implement support for RawKind.
+	Patch by Andy Hume (andyhume32@yahoo.co.uk).
+	Fixes part of #507739.
+
 2009-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PaperSize.cs: Actually implement RawKind by retrieving and setting

@@ -74,7 +74,7 @@ namespace System.Drawing.Printing
 				return width;
 			}set
 			 {
-			 	if (Kind != PaperKind.Custom)
+			 	if (kind != PaperKind.Custom)
 			 		throw new ArgumentException();
 				 width = value;
 			 }
@@ -84,7 +84,7 @@ namespace System.Drawing.Printing
 				return height;
 			}set
 			 {
-			 	if (Kind != PaperKind.Custom)
+			 	if (kind != PaperKind.Custom)
 			 		throw new ArgumentException();
 				 height = value;
 			 }
@@ -95,7 +95,7 @@ namespace System.Drawing.Printing
 				return name;
 			}
 			set{
-				if (Kind != PaperKind.Custom)
+				if (kind != PaperKind.Custom)
 			 		throw new ArgumentException();
 				 name = value;
 			 }
@@ -103,11 +103,15 @@ namespace System.Drawing.Printing
 	
 		public PaperKind Kind{
 			get{
+				// .net ignores the values that are less than 0
+				// the value returned is not used internally, however.
+				if (kind > PaperKind.PrcEnvelopeNumber10Rotated)
+					return PaperKind.Custom;
+
 				return kind;
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
 		public int RawKind {
 			get {
 				return (int)kind;
