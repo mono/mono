@@ -67,6 +67,8 @@ System.Drawing.Imaging/TiffCodecTest.cs
 System.Drawing.Imaging/WmfPlaceableFileHeaderTest.cs
 System.Drawing.Printing/MarginsTest.cs
 System.Drawing.Printing/PageSettingsTest.cs
+System.Drawing.Printing/PageSourceTest.cs
+System.Drawing.Printing/PaperSizeTest.cs
 System.Drawing.Printing/PrinterUnitConvertTest.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
