@@ -212,7 +212,6 @@ namespace System.Web.Handlers {
 			return href;
 		}
 
-	
 #if SYSTEM_WEB_EXTENSIONS
 		protected virtual void ProcessRequest (HttpContext context)
 #else
@@ -229,12 +228,12 @@ namespace System.Web.Handlers {
 			DecryptAssemblyResource (request.QueryString ["d"], out asmName, out resourceName);
 			if (resourceName == null)
 				throw new HttpException (404, "No resource name given");
-			
+
 			if (asmName == null || asmName == "s")
 				assembly = currAsm;
 			else
 				assembly = Assembly.Load (asmName);
-			
+
 			WebResourceAttribute wra = null;
 			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
 			for (int i = 0; i < attrs.Length; i++) {
@@ -270,7 +269,11 @@ namespace System.Web.Handlers {
 				if (atime > -1) {
 #endif
 					if (atime == File.GetLastWriteTimeUtc (assembly.Location).Ticks) {
+						response.Clear ();
 						response.StatusCode = 304;
+						response.ContentType = null;
+						response.CacheControl = "public"; // easier to set it to public as MS than remove it
+						context.ApplicationInstance.CompleteRequest ();
 						return;
 					}
 				}
@@ -288,9 +291,14 @@ namespace System.Web.Handlers {
 					} catch { }
 					if (modif != DateTime.MinValue)
 #endif
-						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif)
+						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif) {
+							response.Clear ();
 							response.StatusCode = 304;
+							response.ContentType = null;
+							response.CacheControl = "public"; // easier to set it to public as MS than remove it
+							context.ApplicationInstance.CompleteRequest ();
 							return;
+						}
 				} catch {}
 			}
 
@@ -310,8 +318,15 @@ namespace System.Web.Handlers {
 					TextWriter w = response.Output;
 					new PerformSubstitutionHelper (assembly).PerformSubstitution (r, w);
 				}
-			}
-			else {
+#if NET_2_0
+			} else if (response.OutputStream is HttpResponseStream) {
+				UnmanagedMemoryStream st = (UnmanagedMemoryStream) s;
+				HttpResponseStream hstream = (HttpResponseStream) response.OutputStream;
+				unsafe {
+					hstream.WritePtr (new IntPtr (st.PositionPointer), (int) st.Length);
+				}
+#endif
+			} else {
 				byte [] buf = new byte [1024];
 				Stream output = response.OutputStream;
 				int c;

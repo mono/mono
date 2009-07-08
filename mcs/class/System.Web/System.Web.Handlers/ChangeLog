@@ -4,6 +4,12 @@
 	Last-Modified header and return 304 if validating max-age=0 or
 	If-Modified-Since succeeds.
 
+2009-04-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AssemblyResourceLoader.cs: MS sets cacheability to public. Add
+	Last-Modified header and return 304 if validating max-age=0 or
+	If-Modified-Since succeeds.
+
 2008-05-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyResourceLoader.cs: do not add the same entry to a
