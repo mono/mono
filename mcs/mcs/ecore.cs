@@ -5978,22 +5978,25 @@ namespace Mono.CSharp {
 			if (te != null)
 				return te;
 
+			if (RootContext.Version < LanguageVersion.V_3)
+				Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
+
 			if (initializer == null)
 				return null;
-			
-	  		if (initializer.Count > 1) {
-	  			Location loc = ((Mono.CSharp.CSharpParser.VariableDeclaration)initializer [1]).Location;
-	  			Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+
+			if (initializer.Count > 1) {
+				Location loc_init = ((CSharpParser.VariableDeclaration) initializer[1]).Location;
+				Report.Error (819, loc_init, "An implicitly typed local variable declaration cannot include multiple declarators");
 				initializer = null;
 				return null;
-	  		}
-			  	
-			Expression variable_initializer = ((Mono.CSharp.CSharpParser.VariableDeclaration)initializer [0]).expression_or_array_initializer;
+			}
+
+			Expression variable_initializer = ((CSharpParser.VariableDeclaration) initializer[0]).expression_or_array_initializer;
 			if (variable_initializer == null) {
 				Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
 				return null;
 			}
-			
+
 			return null;
 		}
 	}
