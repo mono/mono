@@ -1,3 +1,9 @@
+2009-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypes.cs: Refactor the types here to move
+	a lot of code to the base DerivedType in preparation
+	for upcomming ByRefType and PointerType puppies.
+
 2009-07-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (IsArrayImpl): Return false always as a

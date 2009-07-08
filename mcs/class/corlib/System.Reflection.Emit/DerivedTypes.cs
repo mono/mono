@@ -34,6 +34,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Text;
 
 
 namespace System.Reflection.Emit
@@ -45,21 +46,17 @@ namespace System.Reflection.Emit
 
 	internal abstract class DerivedType : Type
 	{
+		internal Type elementType;
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void create_unmanaged_type (Type type);
-	
-	}
 
-	internal class ArrayType : DerivedType
-	{
-		Type elementType;
-		int rank;
-
-		internal ArrayType (Type elementType, int rank)
+		internal DerivedType (Type elementType)
 		{
 			this.elementType = elementType;
-			this.rank = rank;
 		}
+
+		internal abstract String FormatName (string elementName);
 
 		public override Type GetInterface (string name, bool ignoreCase)
 		{
@@ -157,7 +154,7 @@ namespace System.Reflection.Emit
 
 		protected override bool IsArrayImpl ()
 		{
-			return true;
+			return false;
 		}
 
 		protected override bool IsByRefImpl ()
@@ -202,11 +199,6 @@ namespace System.Reflection.Emit
 		public override bool IsInstanceOfType (object o)
 		{
 			return false;
-		}
-
-		public override int GetArrayRank ()
-		{
-			return rank;
 		}
 
 #if NET_2_0
@@ -257,17 +249,16 @@ namespace System.Reflection.Emit
 			get { return FullName + ", " + elementType.Assembly.FullName; }
 		}
 
-		public override Type BaseType {
-			get { return typeof (System.Array); }
-		}
 
 		public override string FullName {
 			get {
-				//FIXME use a StringBuilder
-				String commas = "";
-				for (int i = 1; i < rank; ++i)
-					commas += ",";
-				return String.Format("{0}[{1}]", elementType.FullName, commas);
+				return FormatName (elementType.FullName);
+			}
+		}
+
+		public override string Name {
+			get {
+				return FormatName (elementType.Name);
 			}
 		}
 
@@ -306,15 +297,39 @@ namespace System.Reflection.Emit
 		{
 			throw new NotSupportedException ();
 		}
+	}
 
-		public override string Name {
-			get {
-				//FIXME use a StringBuilder
-				String commas = "";
-				for (int i = 1; i < rank; ++i)
-					commas += ",";
-				return String.Format("{0}[{1}]", elementType.Name, commas);
-			}
+	internal class ArrayType : DerivedType
+	{
+		int rank;
+
+		internal ArrayType (Type elementType, int rank) : base (elementType)
+		{
+			this.rank = rank;
+		}
+
+		protected override bool IsArrayImpl ()
+		{
+			return true;
+		}
+
+		public override int GetArrayRank ()
+		{
+			return rank;
+		}
+
+		public override Type BaseType {
+			get { return typeof (System.Array); }
+		}
+
+		internal override String FormatName (string elementName)
+		{
+			StringBuilder sb = new StringBuilder (elementName);
+			sb.Append ("[");
+			for (int i = 1; i < rank; ++i)
+				sb.Append (",");
+			sb.Append ("]");
+			return sb.ToString ();
 		}
 	}
 }
