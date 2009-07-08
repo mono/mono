@@ -68,6 +68,11 @@ namespace System.Drawing.Printing
 
 		public PaperSourceKind Kind{
 			get {
+				// Exactly at 256 (as opposed to Custom, which is 257 and the max value of PaperSourceKind),
+				// we must return Custom always.
+				if ((int)kind >= 256)
+					return PaperSourceKind.Custom;
+
 				return this.kind; 
 			}
 		}
@@ -83,13 +88,12 @@ namespace System.Drawing.Printing
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		public int RawKind {
 			get {
-				throw new NotImplementedException ();
+				return (int)kind;
 			}
 			set {
-				throw new NotImplementedException ();
+				kind = (PaperSourceKind)value;
 			}
 		}		  
 #endif

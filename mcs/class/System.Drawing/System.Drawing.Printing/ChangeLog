@@ -1,3 +1,8 @@
+2009-07-08  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* PaperSource.cs: Implement RawKind.
+	Fixes the remaining bits of #507739.
+
 2009-07-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PaperSize.cs: Implement support for RawKind.
