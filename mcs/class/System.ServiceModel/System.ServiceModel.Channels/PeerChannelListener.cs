@@ -67,6 +67,10 @@ namespace System.ServiceModel.Channels
 
 		public PeerResolver Resolver { get; set; }
 
+		public PeerTransportBindingElement Source {
+			get { return source; }
+		}
+
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
 		}

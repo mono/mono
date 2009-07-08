@@ -21,14 +21,14 @@ namespace System.ServiceModel.Channels
 {
 	internal class TcpChannelInfo
 	{
-		public TcpChannelInfo (TcpTransportBindingElement element, MessageEncoder encoder, XmlDictionaryReaderQuotas readerQuotas)
+		public TcpChannelInfo (TransportBindingElement element, MessageEncoder encoder, XmlDictionaryReaderQuotas readerQuotas)
 		{
 			this.BindingElement = element;
 			this.MessageEncoder = encoder;
 			this.ReaderQuotas = readerQuotas ?? new XmlDictionaryReaderQuotas ();
 		}
 
-		public TcpTransportBindingElement BindingElement { get; private set; }
+		public TransportBindingElement BindingElement { get; private set; }
 
 		public MessageEncoder MessageEncoder { get; private set; }
 

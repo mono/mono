@@ -1,5 +1,12 @@
 2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpChannelFactory.cs : (TcpChannelInfo) ease type restriction. I
+	  may have to reuse it for peer transport.
+	* PeerChannelListener.cs : add binding member.
+	* PeerDuplexChannel.cs : remove NIE overrides. Fill fields a bit.
+
+2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactoryBase.cs, HttpChannelFactory.cs,
 	  PeerChannelFactory.cs : close opened channels at OnClose() as
 	  documented. Implement async methods.

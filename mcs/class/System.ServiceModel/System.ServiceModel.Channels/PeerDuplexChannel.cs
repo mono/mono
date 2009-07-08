@@ -39,8 +39,7 @@ namespace System.ServiceModel.Channels
 {
 	internal class PeerDuplexChannel : DuplexChannelBase
 	{
-		PeerChannelFactory<IDuplexChannel> factory;
-		PeerChannelListener<IDuplexChannel> listener;
+		PeerTransportBindingElement binding;
 		EndpointAddress local_address;
 		PeerResolver resolver;
 		PeerNode node;
@@ -48,8 +47,8 @@ namespace System.ServiceModel.Channels
 		public PeerDuplexChannel (PeerChannelFactory<IDuplexChannel> factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base (factory, address, via)
 		{
-			this.factory = factory;
-			this.resolver = resolver;
+			binding = factory.Source;
+			this.resolver = factory.Resolver;
 
 			// It could be opened even with empty list of PeerNodeAddresses.
 			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
@@ -60,8 +59,8 @@ namespace System.ServiceModel.Channels
 		public PeerDuplexChannel (PeerChannelListener<IDuplexChannel> listener)
 			: base (listener)
 		{
-			this.listener = listener;
-
+			binding = listener.Source;
+			this.resolver = listener.Resolver;
 			// FIXME: set resolver and node.
 		}
 
@@ -88,16 +87,6 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		public override IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool EndTryReceive (IAsyncResult result, out Message message)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
@@ -111,35 +100,9 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
 		protected override void OnClose (TimeSpan timeout)
 		{
 			node.Close (timeout);
-		}
-		
-		[MonoTODO]
-		protected override void OnEndClose (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
 		}
 
 		// At some stage I should unify this class with PeerOutputChannel (and probably PeerInputChannel). Too much duplicate.
