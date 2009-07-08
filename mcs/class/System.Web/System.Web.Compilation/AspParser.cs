@@ -538,9 +538,18 @@ namespace System.Web.Compilation
 			bool databinding;
 			varname = Eat ('=');
 			databinding = !varname && Eat ('#');
-
+			string odds = tokenizer.Odds;
+			
 			tokenizer.Verbatim = true;
 			inside_tags = GetVerbatim (tokenizer.get_token (), "%>");
+			if (databinding && odds != null && odds.Length > 0) {
+				databinding = false;
+
+				// We encountered <% #something here %>, this should be passed
+				// verbatim to the compiler
+				inside_tags = '#' + inside_tags;
+			}			
+
 			tokenizer.Verbatim = false;
 			id = inside_tags;
 			attributes = null;

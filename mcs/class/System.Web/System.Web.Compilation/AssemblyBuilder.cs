@@ -759,6 +759,16 @@ namespace System.Web.Compilation {
 
 			if (units.Length == 0 && files.Count == 0 && resources.Count == 0 && options.EmbeddedResources.Count == 0)
 				return null;
+
+			if (options.IncludeDebugInformation) {
+				string compilerOptions = options.CompilerOptions;
+				if (String.IsNullOrEmpty (compilerOptions))
+					compilerOptions = "/d:DEBUG";
+				else if (compilerOptions.IndexOf ("d:DEBUG", StringComparison.OrdinalIgnoreCase) == -1)
+					compilerOptions += " /d:DEBUG";
+				
+				options.CompilerOptions = compilerOptions;
+			}
 			
 			string filename;
 			StreamWriter sw = null;

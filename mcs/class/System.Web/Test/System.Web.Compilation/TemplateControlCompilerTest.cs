@@ -71,6 +71,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
 			WebTest.CopyResource (GetType (), "LinkInHeadWithEmbeddedExpression.aspx", "LinkInHeadWithEmbeddedExpression.aspx");
 			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
+			WebTest.CopyResource (GetType (), "PreprocessorDirectivesInMarkup.aspx", "PreprocessorDirectivesInMarkup.aspx");
 #endif
 		}
 		
@@ -191,6 +192,13 @@ namespace MonoTests.System.Web.Compilation {
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			string originalHtml = @"<script type=""text/javascript"">alert (escape(""reporting/location?report=ViewsByDate&minDate=minDate&maxDate=maxDate""));</script>";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug #520024")]
+		public void PreprocessorDirectivesInMarkup ()
+		{
+			// Just test if it doesn't throw an exception
+			new WebTest ("PreprocessorDirectivesInMarkup.aspx").Run ();
 		}
 #endif
 
