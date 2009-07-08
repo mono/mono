@@ -26,6 +26,427 @@ namespace MonoTests.System.Reflection.Emit
 {
 #if NET_2_0
 	[TestFixture]
+	public class PointerTypeTest
+	{
+		AssemblyBuilder assembly;
+		ModuleBuilder module;
+		int typeCount;
+		static string ASSEMBLY_NAME = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
+
+		string MakeName ()
+		{
+			return "internal__type"+ typeCount++;
+		}
+
+		[SetUp]
+		protected void SetUp ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = ASSEMBLY_NAME;
+
+			assembly =
+				Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+
+			module = assembly.DefineDynamicModule ("module1");
+			typeCount = 0;
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void NonStandardPropertiesValues ()
+		{
+			/*
+			Those are tests for properties that return non-sense values on MS.
+			*/
+			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			//a ptr doesn't have any base type
+			Assert.AreEqual (null, ptr.BaseType, "#1");
+		}
+
+		[Test]
+		public void PropertiesValue ()
+		{
+			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+
+			Assert.AreEqual (assembly, ptr.Assembly, "#1");
+			Assert.AreEqual ("ns.type*, " + assembly.FullName, ptr.AssemblyQualifiedName, "#2");
+			Assert.AreEqual ("ns.type*", ptr.FullName, "#4");
+			Assert.AreEqual (module, ptr.Module, "#5");
+			Assert.AreEqual ("ns", ptr.Namespace, "#6");
+			Assert.AreEqual (ptr, ptr.UnderlyingSystemType, "#7");
+			Assert.AreEqual ("type*", ptr.Name, "#8");
+
+			try {
+				object x = ptr.GUID;
+				Assert.Fail ("#9");
+			} catch (NotSupportedException) {}
+
+			try {
+				object x = ptr.TypeHandle;
+				Assert.Fail ("#10");
+			} catch (NotSupportedException) {}
+		}	
+
+		[Test]
+		public void Methods ()
+		{
+			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+
+			try {
+				ptr.GetInterface ("foo", true);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetInterfaces ();
+				Assert.Fail ("#2");
+			} catch (NotSupportedException) {
+
+			}
+	
+			Assert.AreEqual (tb, ptr.GetElementType ());
+	
+			try {
+				ptr.GetEvent ("foo", BindingFlags.Public);
+				Assert.Fail ("#4");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetEvents (BindingFlags.Public);
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetField ("foo", BindingFlags.Public);
+				Assert.Fail ("#6");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetFields (BindingFlags.Public);
+				Assert.Fail ("#7");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetMembers (BindingFlags.Public);
+				Assert.Fail ("#8");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetMethod ("Sort");
+				Assert.Fail ("#9");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetMethods (BindingFlags.Public);
+				Assert.Fail ("#9");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetNestedType ("bla", BindingFlags.Public);
+				Assert.Fail ("#10");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetNestedTypes (BindingFlags.Public);
+				Assert.Fail ("#11");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetProperties (BindingFlags.Public);
+				Assert.Fail ("#12");
+			} catch (NotSupportedException) {
+
+			}	
+	
+			try {
+				ptr.GetProperty ("Length");
+				Assert.Fail ("#13");
+			} catch (NotSupportedException) {
+
+			}
+	
+			try {
+				ptr.GetConstructor (new Type[] { typeof (int) });
+				Assert.Fail ("#14");
+			} catch (NotSupportedException) {
+
+			}
+	
+			TypeAttributes attr = TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Class | TypeAttributes.Public;
+			Assert.AreEqual (attr, ptr.Attributes, "#15");
+
+			Assert.IsTrue (ptr.HasElementType, "#16");
+			Assert.IsFalse (ptr.IsArray, "#17");
+			Assert.IsFalse (ptr.IsByRef, "#18");
+			Assert.IsFalse (ptr.IsCOMObject, "#19");
+			Assert.IsTrue (ptr.IsPointer, "#20");
+			Assert.IsFalse (ptr.IsPrimitive, "#21");
+
+			try {
+				ptr.GetConstructors (BindingFlags.Public);
+				Assert.Fail ("#22");
+			} catch (NotSupportedException) {
+
+			}
+
+			try {
+				ptr.InvokeMember ("GetLength", BindingFlags.Public, null, null, null);
+				Assert.Fail ("#23");
+			} catch (NotSupportedException) {
+
+			}
+
+			try {
+				ptr.GetArrayRank ();
+				Assert.Fail ("#23");
+			} catch (NotSupportedException) {
+
+			}
+		}
+
+		[Test]
+		public void AttributeValues ()
+		{
+				TypeBuilder tb = module.DefineType (MakeName (), TypeAttributes.NotPublic);
+				Assert.AreEqual (TypeAttributes.NotPublic, tb.Attributes, "#1");
+
+				tb = module.DefineType (MakeName (), TypeAttributes.Public);
+				Assert.AreEqual (TypeAttributes.Public, tb.Attributes, "#2");
+
+				tb = module.DefineType (MakeName (), TypeAttributes.Public | TypeAttributes.Serializable | TypeAttributes.Sealed);
+				Assert.AreEqual (TypeAttributes.Public | TypeAttributes.Serializable | TypeAttributes.Sealed, tb.Attributes, "#3");
+
+				tb = module.DefineType (MakeName (), TypeAttributes.Public | TypeAttributes.Abstract);
+				Assert.AreEqual (TypeAttributes.Public | TypeAttributes.Abstract, tb.Attributes, "$4");
+		}
+
+		[Test]
+		public void AsParamType ()
+		{
+
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+	
+			MethodBuilder mb = tb.DefineMethod ("Test", MethodAttributes.Public, typeof (void), new Type [1] { ptr });
+			ILGenerator ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+	
+			Type res = tb.CreateType ();	
+	
+			object o = Activator.CreateInstance (res);
+			//FIXME this crashes the runtime
+			//res.GetMethod ("Test").Invoke (o, new object[1] { null });
+		}
+
+		[Test]
+		public void AsLocalVariable ()
+		{
+
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+	
+			MethodBuilder mb = tb.DefineMethod ("Test", MethodAttributes.Public, typeof (void), new Type [0]);
+			ILGenerator ilgen = mb.GetILGenerator ();
+			ilgen.DeclareLocal (ptr);
+			ilgen.Emit (OpCodes.Ret);
+	
+			Type res = tb.CreateType ();	
+	
+			object o = Activator.CreateInstance (res);
+			res.GetMethod ("Test").Invoke (o, null);
+		}
+
+		[Test]
+		public void TestEquals ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Type ptr2 = tb.MakePointerType ();
+			Assert.IsFalse (ptr.Equals (ptr2), "#1");
+			Assert.IsTrue (ptr.Equals (ptr), "#2");
+		}
+
+		[Test]
+		public void IsSubclassOf ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Assert.IsFalse (ptr.IsSubclassOf (tb), "#1");
+			Assert.IsFalse (ptr.IsSubclassOf (typeof (object[])), "#2");
+		}
+
+		[Test]
+		public void IsAssignableFrom ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Assert.IsFalse (ptr.IsAssignableFrom (tb), "#1");
+			Assert.IsFalse (ptr.IsAssignableFrom (typeof (object[])), "#2");
+			Assert.IsFalse (typeof (object[]).IsAssignableFrom (ptr), "#3");
+			Assert.IsFalse (typeof (object).IsAssignableFrom (ptr), "#4");
+		}
+
+		[Test]
+		public void GetInterfaceMap ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				ptr.GetInterfaceMap (typeof (IEnumerable));
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {
+
+			}
+		}
+
+		[Test]
+		public void IsInstanceOfType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Assert.IsFalse (ptr.IsInstanceOfType (tb), "#1");
+			Assert.IsFalse (ptr.IsInstanceOfType (null), "#2");
+			Assert.IsFalse (ptr.IsInstanceOfType (new object [1]), "#3");
+
+			Type t = tb.CreateType ();
+			object obj = Activator.CreateInstance (t);
+			Assert.IsFalse (ptr.IsInstanceOfType (obj), "#4");
+		}
+
+		[Test]
+		public void IsGenericTypeDefinition ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Assert.IsFalse (ptr.IsGenericTypeDefinition, "#1");
+		}
+
+		[Test]
+		public void IsGenericType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Assert.IsFalse (ptr.IsGenericType, "#1");
+		}
+
+		[Test]
+		public void MakeGenericType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				ptr.MakeGenericType (new Type[] { typeof (string) });
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+		}
+
+		[Test]
+		public void GenericParameterPosition ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				int pos = ptr.GenericParameterPosition;
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}
+		}
+
+		[Test]
+		public void GenericParameterAttributes ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				object attr = ptr.GenericParameterAttributes;
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+		}
+
+		[Test]
+		public void GetGenericParameterConstraints ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				ptr.GetGenericParameterConstraints ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}
+		}
+
+		[Test]
+		public void MakeArrayType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Type res = ptr.MakeArrayType ();
+			Assert.IsNotNull (res, "#1");
+			Assert.IsTrue (res.IsArray, "#2");
+
+			res = ptr.MakeArrayType (2);
+			Assert.IsNotNull (res, "#3");
+			Assert.IsTrue (res.IsArray, "#4");
+		}
+
+		[Test]
+		public void MakeByRefType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Type res = ptr.MakeByRefType ();
+
+			Assert.IsNotNull (res, "#1");
+			Assert.IsTrue (res.IsByRef, "#2");
+		}
+
+		[Test]
+		public void MakePointerType ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			Type res = ptr.MakePointerType ();
+
+			Assert.IsNotNull (res, "#1");
+			Assert.IsTrue (res.IsPointer, "#2");
+		}
+
+		[Test]
+		public void StructLayoutAttribute ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			Type ptr = tb.MakePointerType ();
+			try {
+				object x = ptr.StructLayoutAttribute;
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+		}
+	}
+
+
+	[TestFixture]
 	public class ByrefTypeTest
 	{
 		AssemblyBuilder assembly;

@@ -227,8 +227,7 @@ namespace System.Reflection.Emit
 
 		public override Type MakePointerType ()
 		{
-			create_unmanaged_type (this);
-			return base.MakePointerType ();
+			return new PointerType (this);
 		}
 
 		public override GenericParameterAttributes GenericParameterAttributes {
@@ -373,4 +372,27 @@ namespace System.Reflection.Emit
 			throw new ArgumentException ("Cannot create a pointer type of a byref type");
 		}
 	}
+
+
+	internal class PointerType : DerivedType
+	{
+		internal PointerType (Type elementType) : base (elementType)
+		{
+		}
+
+		protected override bool IsPointerImpl ()
+		{
+			return true;
+		}
+
+		public override Type BaseType {
+			get { return null; }
+		}
+
+		internal override String FormatName (string elementName)
+		{
+			return elementName + "*";
+		}
+	}
+
 }

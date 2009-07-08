@@ -1407,7 +1407,7 @@ namespace System.Reflection.Emit
 		[MonoTODO]
 		public override Type MakePointerType ()
 		{
-			return base.MakePointerType ();
+			return new PointerType (this);
 		}
 #endif
 		

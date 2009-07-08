@@ -1,5 +1,12 @@
 2009-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* DerivedTypes.cs: Implemented PointerType.
+
+	* TypeBuilder.cs (MakePointerType): Return an
+	instance of PointerType.
+
+2009-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* DerivedTypes.cs: Implemented ByRefType.
 
 	* TypeBuilder.cs (MakeByRefType): Return an
