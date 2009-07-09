@@ -95,7 +95,7 @@ namespace System.ServiceModel.PeerResolvers
 			if (node == null)
 				return new RefreshResponseInfo () { Result = RefreshResult.RegistrationNotFound };
 			node.Refresh ();
-			return new RefreshResponseInfo () { Result = RefreshResult.Success, RegistrationLifetime = DateTime.Now - node.LastRefreshTime };
+			return new RefreshResponseInfo () { Result = RefreshResult.Success, RegistrationLifetime = RefreshInterval - (DateTime.Now - node.LastRefreshTime) };
 		}
 
 		public RegisterResponseInfo Register (RegisterInfo registerInfo)
