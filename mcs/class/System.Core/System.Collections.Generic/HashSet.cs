@@ -548,8 +548,7 @@ namespace System.Collections.Generic {
 
 		void ICollection<T>.Add (T item)
 		{
-			if (!Add (item))
-				throw new ArgumentException ();
+			Add (item);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
