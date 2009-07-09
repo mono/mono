@@ -1,3 +1,8 @@
+2009-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs (check_arguments): Allow a type to match its byref version.
+	Fixes #520690.
+
 2009-06-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* ParameterInfo.cs (DefaultValue): Add support for decimals, their default
