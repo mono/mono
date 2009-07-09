@@ -367,7 +367,8 @@ namespace MonoTests.System
 			Assert.AreEqual (0, typeof (NewVTable).GetMethod ("Overload", new Type[0]).GetParameters ().Length, "#05");
 
 			// Test byref parameters
-			Assert.AreEqual (null, typeof (NewVTable).GetMethod ("byref_method", new Type[] { typeof (int) }), "#06");
+			// This works in net 3.5
+			//Assert.AreEqual (null, typeof (NewVTable).GetMethod ("byref_method", new Type[] { typeof (int) }), "#06");
 			Type byrefInt = typeof (NewVTable).GetMethod ("byref_method").GetParameters ()[0].ParameterType;
 			Assert.IsNotNull (typeof (NewVTable).GetMethod ("byref_method", new Type[] { byrefInt }), "#07");
 		}
@@ -2121,7 +2122,7 @@ PublicKeyToken=b77a5c561934e089"));
 		[Test] // bug #348522
 		public void InvokeMember_WithoutDefaultValue ()
 		{
-			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;;
+			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;
 			try {
 				typeof (Bug348522).InvokeMember ("Test", flags, new FirstMethodBinder (), new Bug348522(),
 					new object [] {Missing.Value}, null, null, null);
@@ -2134,6 +2135,20 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("parameters", ex.ParamName, "#6");
 			}
+		}
+
+		[Test]
+		public void InvokeMember_OutParam ()
+		{
+			object[] args = new object[] { new string [0] };
+			typeof (TypeTest).InvokeMember ("OutTest", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.Public, null, null, args);
+			Assert.IsTrue (args [0] is string[]);
+			Assert.AreEqual (10, ((string[])args[0]).Length);
+		}
+
+		public static void OutTest (out string[] a1)
+		{
+			a1 = new string [10];
 		}
 
 		class X
