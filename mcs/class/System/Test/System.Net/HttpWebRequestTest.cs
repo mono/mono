@@ -166,6 +166,7 @@ namespace MonoTests.System.Net
 
 #if !TARGET_JVM //NotWorking
 		[Test]
+		[Ignore ("Fails on MS.NET")]
 		public void SslClientBlock ()
 		{
 			// This tests that the write request/initread/write body sequence does not hang
