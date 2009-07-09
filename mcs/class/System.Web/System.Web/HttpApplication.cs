@@ -1602,8 +1602,7 @@ namespace System.Web {
 
 			bool allowCache;
 #if NET_2_0
-			global::System.Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration (req.Path, null, req.FilePath);
-			HttpHandlersSection httpHandlersSection = cfg.GetSection ("system.web/httpHandlers") as HttpHandlersSection;
+			HttpHandlersSection httpHandlersSection = WebConfigurationManager.GetSection ("system.web/httpHandlers", req.Path, req.Context) as HttpHandlersSection;
 			ret = httpHandlersSection.LocateHandler (verb, url, out allowCache);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
