@@ -61,8 +61,7 @@ namespace System.Web.Security
 
 			HttpRequest req = context.Request;
 #if NET_2_0
-			global::System.Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration (req.Path, null, req.FilePath);			
-			AuthorizationSection config = (AuthorizationSection) cfg.GetSection ("system.web/authorization");
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection ("system.web/authorization", req.Path, context);
 #else
 			AuthorizationConfig config = (AuthorizationConfig) context.GetConfig ("system.web/authorization");
 			if (config == null)

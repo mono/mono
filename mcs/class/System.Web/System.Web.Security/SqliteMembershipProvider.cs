@@ -140,8 +140,7 @@ namespace System.Web.Security
 			}
 
 			// Get encryption and decryption key information from the configuration.
-			System.Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration(HostingEnvironment.ApplicationVirtualPath);
-			m_MachineKey = (MachineKeySection)cfg.GetSection("system.web/machineKey");
+			m_MachineKey = (MachineKeySection)WebConfigurationManager.GetSection("system.web/machineKey", null);
 
 			if (!m_PasswordFormat.Equals(MembershipPasswordFormat.Clear))
 			{
