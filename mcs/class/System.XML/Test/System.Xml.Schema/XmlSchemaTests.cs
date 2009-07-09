@@ -423,7 +423,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #502115
-		[Ignore ("wrong test as commented on bugzilla")]
 		public void ExtensionRedefineAttribute1 ()
 		{
 			const string xml = "<Bar xmlns='foo'/>";
@@ -459,6 +458,7 @@ namespace MonoTests.System.Xml
 					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
+				return;
 			}
 
 			XmlValidatingReader vr = new XmlValidatingReader (xml,
@@ -505,7 +505,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #502115
-		[Ignore ("wrong test as commented on bugzilla")]
 		public void ExtensionRedefineAttribute3 ()
 		{
 			const string xml = "<Bar xmlns='foo'/>";
@@ -541,6 +540,7 @@ namespace MonoTests.System.Xml
 					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
+				return;
 			}
 
 			XmlValidatingReader vr = new XmlValidatingReader (xml,
