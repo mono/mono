@@ -335,6 +335,16 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (42, dest [6]);
 		}
 
+		[Test]
+		public void TestICollection ()
+		{
+			var set = new HashSet<int> () as ICollection<int>;
+			set.Add (42);
+			set.Add (42);
+
+			Assert.AreEqual (2, set.Count);
+		}
+
 		static void AssertContainsOnly<T> (IEnumerable<T> result, IEnumerable<T> data)
 		{
 			Assert.AreEqual (result.Count (), data.Count ());
