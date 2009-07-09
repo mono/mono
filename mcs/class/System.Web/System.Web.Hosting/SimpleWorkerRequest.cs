@@ -58,12 +58,14 @@ namespace System.Web.Hosting {
 		// computed
 		string raw_url;
 
+#if NET_2_0
 		static readonly string root_web_config_path;
 
 		static SimpleWorkerRequest ()
 		{
 			root_web_config_path = WebConfigurationManager.OpenWebConfiguration ("~").FilePath;
 		}
+#endif
 
 		//
 		// Constructor used when the target application domain
