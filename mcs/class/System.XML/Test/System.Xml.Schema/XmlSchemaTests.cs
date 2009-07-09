@@ -423,6 +423,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #502115
+		[Ignore ("wrong test as commented on bugzilla")]
 		public void ExtensionRedefineAttribute1 ()
 		{
 			const string xml = "<Bar xmlns='foo'/>";
@@ -504,6 +505,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #502115
+		[Ignore ("wrong test as commented on bugzilla")]
 		public void ExtensionRedefineAttribute3 ()
 		{
 			const string xml = "<Bar xmlns='foo'/>";
