@@ -1,3 +1,11 @@
+2009-07-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: fall back to default resource provider factory
+	if the factory provided by user doesn't have the required object
+	in Get{Global,Local}ResourceObject. Fixes bug #520397
+	Refactored the GetResourceObject method and the
+	ResourceManagerCacheKey class to DefaultResourceProvider.
+
 2009-07-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ParserError.cs: add 3 missing setters. Patch from Daniel Gagne.
