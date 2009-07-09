@@ -1177,6 +1177,9 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
+#if NET_2_0
+			context.MapRequestHandlerDone = false;
+#endif
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
 			if (eventHandler != null) {
@@ -1243,6 +1246,7 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
+			context.MapRequestHandlerDone = true;
 #endif
 			
 			StartTimer ("GetHandler");
@@ -1481,7 +1485,9 @@ namespace System.Web {
 			cfg = GlobalizationConfiguration.GetInstance (null);
 			if (cfg != null) {
 				app_culture = cfg.Culture;
+				autoCulture = false; // to hush the warning
 				appui_culture = cfg.UICulture;
+				autoUICulture = false; // to hush the warning
 			}
 #endif
 
@@ -1596,8 +1602,7 @@ namespace System.Web {
 
 			bool allowCache;
 #if NET_2_0
-			global::System.Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration (req.Path, null, req.FilePath);
-			HttpHandlersSection httpHandlersSection = cfg.GetSection ("system.web/httpHandlers") as HttpHandlersSection;
+			HttpHandlersSection httpHandlersSection = WebConfigurationManager.GetSection ("system.web/httpHandlers", req.Path, req.Context) as HttpHandlersSection;
 			ret = httpHandlersSection.LocateHandler (verb, url, out allowCache);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");

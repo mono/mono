@@ -1,3 +1,9 @@
+2009-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpContext.cs:
+	* HttpRuntime.cs:
+	* HttpApplication.cs: backported from HEAD.
+
 2009-07-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: fall back to default resource provider factory
