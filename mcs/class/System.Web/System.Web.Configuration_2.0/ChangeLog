@@ -1,3 +1,9 @@
+2009-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConfigurationManager.cs: when caching configuration and sections,
+	use the configuration file directory instead of the incoming request
+	path.
+
 2009-06-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConfigurationHost.cs: workaround to avoid definition errors when

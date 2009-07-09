@@ -243,8 +243,16 @@ namespace System.Web.Configuration {
 		
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
 		{
-			if (path == null || path.Length == 0)
+			return OpenWebConfiguration (path, site, locationSubPath, server, null, null, false);
+		}
+
+		static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password, bool fweb)
+		{
+			if (String.IsNullOrEmpty (path))
 				path = "/";
+
+			if (!fweb && !String.IsNullOrEmpty (path))
+				path = FindWebConfig (path);
 
 			string confKey = path + site + locationSubPath + server + userName + password;
 			_Configuration conf = null;
@@ -324,20 +332,23 @@ namespace System.Web.Configuration {
 
 		internal static object GetSection (string sectionName, string path, HttpContext context)
 		{
-			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, path)];
+			string config_vdir = FindWebConfig (path);
+			if (String.IsNullOrEmpty (config_vdir))
+				config_vdir = "/";
+
+			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, config_vdir)];
 			if (cachedSection != null)
 				return cachedSection;
 
-			
 			HttpRequest req = context != null ? context.Request : null;
-			_Configuration c = OpenWebConfiguration (path, /* path */
+			_Configuration c = OpenWebConfiguration (config_vdir, //path, /* path */
 								 null, /* site */
 					 			 req != null ? VirtualPathUtility.GetDirectory (req.Path) : null, /* locationSubPath */
 								 null, /* server */
 								 null, /* userName */
-								 null  /* password */);
+								 null, /* password */
+								 true  /* path from FindWebConfig */);
 			ConfigurationSection section = c.GetSection (sectionName);
-
 			if (section == null)
 				return null;
 
@@ -349,7 +360,7 @@ namespace System.Web.Configuration {
 				value = collection;
 			}
 
-			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
+			AddSectionToCache (GetSectionCacheKey (sectionName, config_vdir), value);
 			return value;
 #else
 #if MONOWEB_DEP
@@ -357,7 +368,7 @@ namespace System.Web.Configuration {
 #else
 			object value = null;
 #endif
-			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
+			AddSectionToCache (GetSectionCacheKey (sectionName, config_vdir), value);
 			return value;
 #endif
 		}
