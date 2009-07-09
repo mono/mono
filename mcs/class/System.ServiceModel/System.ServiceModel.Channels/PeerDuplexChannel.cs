@@ -37,6 +37,14 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
+
+	// PeerDuplexChannel can be created either from PeerChannelFactory
+	// (as IOutputChannel) or PeerChannelListener (as IInputChannel).
+	//
+	// PeerNode has to be created before Open() (at least at client side).
+	// On open, it tries to resolve the nodes in the mesh (and do something
+	// - but what?). Then registers itself to the mesh and refreshes it.
+
 	internal class PeerDuplexChannel : DuplexChannelBase
 	{
 		PeerTransportBindingElement binding;
@@ -52,7 +60,7 @@ namespace System.ServiceModel.Channels
 
 			// It could be opened even with empty list of PeerNodeAddresses.
 			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
-			node = new PeerNodeImpl (resolver, RemoteAddress, factory.Source.Port);
+			node = new PeerNodeImpl (resolver, RemoteAddress, factory.Source.ListenIPAddress, factory.Source.Port);
 		}
 
 		// FIXME: receive local_address too
@@ -62,6 +70,8 @@ namespace System.ServiceModel.Channels
 			binding = listener.Source;
 			this.resolver = listener.Resolver;
 			// FIXME: set resolver and node.
+
+			node = new PeerNodeImpl (resolver, null, listener.Source.ListenIPAddress, listener.Source.Port);
 		}
 
 		public override EndpointAddress LocalAddress {

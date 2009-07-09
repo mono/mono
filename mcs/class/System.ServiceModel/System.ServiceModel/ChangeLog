@@ -1,3 +1,9 @@
+2009-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerNode.cs : some implementation cleanup before significant
+	  refactoring. Mesh state is not maintained here. Use optionally
+	  fixed listener address and port. Set offline status when closed.
+
 2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetPeerTcpBinding.cs : Fix interface implementations.
