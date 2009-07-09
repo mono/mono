@@ -78,6 +78,10 @@ namespace System.Web {
 #if NET_2_0
 		[ThreadStatic]
 		static ResourceProviderFactory provider_factory;
+
+		[ThreadStatic]
+		static DefaultResourceProviderFactory default_provider_factory;
+		
 		[ThreadStatic]
 		static Dictionary <string, IResourceProvider> resource_providers;
 		
@@ -88,12 +92,18 @@ namespace System.Web {
 			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
 		}
 #else
-		[ThreadStatic]
-		static Dictionary <ResourceManagerCacheKey, ResourceManager> resourceManagerCache;
 		internal static Assembly AppGlobalResourcesAssembly;
 #endif
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
+
+		static DefaultResourceProviderFactory DefaultProviderFactory {
+			get {
+				if (default_provider_factory == null)
+					default_provider_factory = new DefaultResourceProviderFactory ();
+				return default_provider_factory;
+			}
+		}
 #endif
 		
 		public HttpContext (HttpWorkerRequest wr)
@@ -437,28 +447,6 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
-		{
-			ResourceManager rm;
-			try {
-				if (resourceManagerCache == null)
-					resourceManagerCache = new Dictionary <ResourceManagerCacheKey, ResourceManager> ();
-				
-				ResourceManagerCacheKey key = new ResourceManagerCacheKey (classKey, assembly);
-				if (!resourceManagerCache.TryGetValue (key, out rm)) {
-					rm = new ResourceManager (classKey, assembly);
-					rm.IgnoreCase = true;
-					resourceManagerCache.Add (key, rm);
-				}
-				
-				return rm.GetObject (resourceKey, culture);
-			} catch (MissingManifestResourceException) {
-				throw;
-			} catch (Exception ex) {
-				throw new HttpException ("Failed to retrieve the specified global resource object.", ex);
-			}
-		}
-		
 		public static object GetGlobalResourceObject (string classKey, string resourceKey)
 		{
 			return GetGlobalResourceObject (classKey, resourceKey, Thread.CurrentThread.CurrentUICulture);
@@ -468,42 +456,59 @@ namespace System.Web {
 		{
 			if (resource_providers == null)
 				resource_providers = new Dictionary <string, IResourceProvider> ();
-			
+
 			if (provider_factory != null)
 				return true;
-
+			
 			GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
 
 			if (gs == null)
 				return false;
 
 			String rsfTypeName = gs.ResourceProviderFactoryType;
-			if (String.IsNullOrEmpty (rsfTypeName))
-				return false;
+			bool usingDefault = false;
+			if (String.IsNullOrEmpty (rsfTypeName)) {
+				usingDefault = true;
+				rsfTypeName = typeof (DefaultResourceProviderFactory).AssemblyQualifiedName;
+			}
 			
 			Type rsfType = HttpApplication.LoadType (rsfTypeName, true);
 			ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
 			
-			if (rpf == null)
+			if (rpf == null && usingDefault)
 				return false;
 
 			provider_factory = rpf;
+			if (usingDefault)
+				default_provider_factory = rpf as DefaultResourceProviderFactory;
+			
 			return true;
 		}
-		
+
 		internal static IResourceProvider GetResourceProvider (string key, bool isLocal)
 		{
 			if (!EnsureProviderFactory ())
 				return null;
 
+			// TODO: check if it makes sense to cache the providers and, if yes, maybe
+			// we should expire the entries (or just store them in InternalCache?)
 			IResourceProvider rp = null;
 			if (!resource_providers.TryGetValue (key, out rp)) {
 				if (isLocal)
 					rp = provider_factory.CreateLocalResourceProvider (key);
 				else
 					rp = provider_factory.CreateGlobalResourceProvider (key);
-				if (rp == null)
-					return null;
+				
+				if (rp == null) {
+					if (isLocal)
+						rp = DefaultProviderFactory.CreateLocalResourceProvider (key);
+					else
+						rp = DefaultProviderFactory.CreateGlobalResourceProvider (key);
+
+					if (rp == null)
+						return null;
+				}
+				
 				resource_providers.Add (key, rp);
 			}
 
@@ -522,14 +527,7 @@ namespace System.Web {
 		
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			object ret = GetGlobalObjectFromFactory (classKey, resourceKey, culture);
-			if (ret != null)
-				return ret;
-			
-			if (AppGlobalResourcesAssembly == null)
-				return null;
-
-			return GetResourceObject ("Resources." + classKey, resourceKey, culture, AppGlobalResourcesAssembly);
+			return GetGlobalObjectFromFactory (classKey, resourceKey, culture);
 		}
 
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey)
@@ -551,51 +549,12 @@ namespace System.Web {
 			if (!VirtualPathUtility.IsAbsolute (virtualPath))
 				throw new ArgumentException ("The specified virtualPath was not rooted.");
 
-			object ret = GetLocalObjectFromFactory (virtualPath, resourceKey, culture);
-			if (ret != null)
-				return ret;
-			
-			string path = VirtualPathUtility.GetDirectory (virtualPath);
-			Assembly asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
-			if (asm == null) {
-				AppResourcesCompiler ac = new AppResourcesCompiler (path);
-				asm = ac.Compile ();
-				if (asm == null)
-					throw new MissingManifestResourceException ("A resource object was not found at the specified virtualPath.");
-			}
-			
-			path = Path.GetFileName (virtualPath);
-			return GetResourceObject (path, resourceKey, culture, asm);
+			return GetLocalObjectFromFactory (virtualPath, resourceKey, culture);
 		}
 
 		public object GetSection (string name)
 		{
 			return WebConfigurationManager.GetSection (name);
-		}
-
-		sealed class ResourceManagerCacheKey
-		{
-			readonly string _name;
-			readonly Assembly _asm;
-
-			public ResourceManagerCacheKey (string name, Assembly asm)
-			{
-				_name = name;
-				_asm = asm;
-			}
-
-			public override bool Equals (object obj)
-			{
-				if (!(obj is ResourceManagerCacheKey))
-					return false;
-				ResourceManagerCacheKey key = (ResourceManagerCacheKey) obj;
-				return key._asm == _asm && _name.Equals (key._name, StringComparison.Ordinal);
-			}
-
-			public override int GetHashCode ()
-			{
-				return _name.GetHashCode () + _asm.GetHashCode ();
-			}
 		}
 #endif
 		object IServiceProvider.GetService (Type service)
