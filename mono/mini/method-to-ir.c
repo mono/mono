@@ -2216,6 +2216,10 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 	if (this && sig->hasthis && 
 	    (method->klass->marshalbyref || method->klass == mono_defaults.object_class) && 
 	    !(method->flags & METHOD_ATTRIBUTE_VIRTUAL) && !MONO_CHECK_THIS (this)) {
+		if (mono_method_check_context_used (method)) {
+			g_assert (cfg->generic_sharing_context);
+			return NULL;
+		}
 		call->method = mono_marshal_get_remoting_invoke_with_check (method);
 	} else {
 		call->method = method;
@@ -2338,6 +2342,8 @@ mono_emit_rgctx_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMeth
 #endif
 	}
 	ins = mono_emit_method_call_full (cfg, method, sig, args, this, imt_arg);
+	if (!ins)
+		return NULL;
 
 	call = (MonoCallInst*)ins;
 	if (vtable_arg) {
@@ -6131,6 +6137,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							((MonoMethodInflated*)cmethod)->context.method_inst);
 					}
 					ins = mono_emit_method_call_full (cfg, cmethod, fsig, sp, sp [0], imt_arg);
+					if (!ins)
+						GENERIC_SHARING_FAILURE (*ip);
 				} else
 #endif
 				{
@@ -6457,6 +6465,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				ins = (MonoInst*)mono_emit_method_call_full (cfg, cmethod, fsig, sp, virtual ? sp [0] : NULL, NULL);
 			}
+			if (!ins)
+				GENERIC_SHARING_FAILURE (*ip);
 
 			if (!MONO_TYPE_IS_VOID (fsig->ret))
 				*sp++ = ins;
@@ -7363,7 +7373,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						inline_costs += costs - 5;
 					} else {
 						INLINE_FAILURE;
-						mono_emit_method_call_full (cfg, cmethod, fsig, sp, callvirt_this_arg, NULL);
+						if (!mono_emit_method_call_full (cfg, cmethod, fsig, sp, callvirt_this_arg, NULL))
+							GENERIC_SHARING_FAILURE (*ip);
 					}
 				} else if (context_used &&
 						(!mono_method_is_generic_sharable_impl (cmethod, TRUE) ||

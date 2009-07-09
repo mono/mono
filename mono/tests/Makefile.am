@@ -289,6 +289,7 @@ BASE_TEST_CS_SRC=		\
 	generic-array-iface-set.2.cs	\
 	generic-typedef.2.cs	\
 	generic-marshalbyref.2.cs	\
+	generic-xdomain.2.cs	\
 	bug-431413.2.cs	\
 	bug-459285.2.cs	\
 	generic-virtual-invoke.2.cs	\
@@ -751,7 +752,7 @@ test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		generic-marshalbyref.2.exe bug-459285.2.exe bug-461198.2.exe	\
 		generic-sealed-virtual.2.exe generic-stack-traces.2.exe		\
 		generic-stack-traces2.2.exe bug-472600.2.exe bug-473482.2.exe	\
-		bug-473999.2.exe bug-479763.2.exe
+		bug-473999.2.exe bug-479763.2.exe generic-xdomain.2.exe
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
 		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared                $$fn > $$fn.stdout || exit 1;	\

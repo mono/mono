@@ -1,3 +1,12 @@
+2009-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r137640.
+
+	* generic-xdomain.2.cs: Test case for generic marshal-by-ref
+	objects.
+
+	* Makefile.am: Test added.
+
 2009-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-stack-traces.2.cs: Add a test for #509406.
