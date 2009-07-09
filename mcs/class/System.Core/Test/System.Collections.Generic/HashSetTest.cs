@@ -342,7 +342,7 @@ namespace MonoTests.System.Collections.Generic {
 			set.Add (42);
 			set.Add (42);
 
-			Assert.AreEqual (2, set.Count);
+			Assert.AreEqual (1, set.Count);
 		}
 
 		static void AssertContainsOnly<T> (IEnumerable<T> result, IEnumerable<T> data)
