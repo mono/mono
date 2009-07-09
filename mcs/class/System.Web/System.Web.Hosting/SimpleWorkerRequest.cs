@@ -57,7 +57,14 @@ namespace System.Web.Hosting {
 			
 		// computed
 		string raw_url;
-		
+
+		static readonly string root_web_config_path;
+
+		static SimpleWorkerRequest ()
+		{
+			root_web_config_path = WebConfigurationManager.OpenWebConfiguration ("~").FilePath;
+		}
+
 		//
 		// Constructor used when the target application domain
 		// was created with ApplicationHost.CreateApplicationHost
@@ -129,7 +136,7 @@ namespace System.Web.Hosting {
 		}
 #if NET_2_0
 		public override string RootWebConfigPath {
-			get { return WebConfigurationManager.OpenWebConfiguration ("~").FilePath; }
+			get { return root_web_config_path; }
 		}
 #endif
 
