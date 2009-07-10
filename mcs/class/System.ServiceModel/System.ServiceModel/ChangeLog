@@ -1,5 +1,9 @@
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexClientBase.cs : oops, fix build.
+
+2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexClientBase.cs : add missing members here too.
 
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>

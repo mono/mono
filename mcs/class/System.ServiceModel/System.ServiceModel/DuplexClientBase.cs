@@ -50,7 +50,7 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected DuplexClientBase (InstanceContext instance,
+		protected DuplexClientBase (object instance,
 			string bindingConfigurationName, EndpointAddress address)
 			: this (new InstanceContext (instance), bindingConfigurationName, address)
 		{
