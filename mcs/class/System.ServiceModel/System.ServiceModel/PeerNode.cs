@@ -51,14 +51,17 @@ namespace System.ServiceModel
 
 		internal int NodeId { get; set; }
 
-		internal abstract bool IsOpen { get; }
+		internal bool IsOpen {
+			get { return RegisteredId != null; }
+		}
+
+		internal object RegisteredId { get; set; }
 
 		public int Port { get; private set; }
 
 		public abstract PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
 
-		internal abstract void Open (TimeSpan timeout);
-		internal abstract void Close (TimeSpan timeout);
+		internal abstract TcpListener GetTcpListener ();
 
 		public void RefreshConnection ()
 		{
@@ -92,33 +95,24 @@ namespace System.ServiceModel
 			public PeerNodeAddress Address { get; set; }
 		}
 
-		internal PeerNodeImpl (PeerResolver resolver, EndpointAddress remoteAddress, IPAddress fixedListenAddress, int port)
+		internal PeerNodeImpl (EndpointAddress remoteAddress, IPAddress fixedListenAddress, int port)
 			: base (remoteAddress.Uri.Host, port)
 		{
-			this.resolver = resolver;
 			this.listen_address = fixedListenAddress ?? IPAddress.Any;
 			this.remote_address = remoteAddress;
 		}
 
-		PeerResolver resolver;
 		EndpointAddress remote_address;
 		IPAddress listen_address;
-		object registered_id;
-		TcpListener listener;
 
 		// FIXME: implement
 		public override PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
 
-		internal override bool IsOpen {
-			get { return registered_id != null; }
-		}
-
-		internal override void Open (TimeSpan timeout)
+		internal override TcpListener GetTcpListener ()
 		{
-			DateTime startTime = DateTime.Now;
-
 			int p = Port;
 			var rnd = Port != 0 ? null : new Random ();
+			TcpListener listener = null;
 			while (p < 51000) {
 				if (rnd != null)
 					p = rnd.Next (50000, 51000); // This range is picked up sorta randomly.
@@ -134,22 +128,7 @@ namespace System.ServiceModel
 			}
 			if (listener == null)
 				throw new InvalidOperationException (String.Format ("The specified endpoint is available for a peer node to listen. IP address: {0}, Port {1}", listen_address, Port));
-			var ep = (IPEndPoint) listener.LocalEndpoint;
-			string name = Dns.GetHostName ();
-			var nid = new Random ().Next (0, int.MaxValue);
-			var pna = new PeerNodeAddress (new EndpointAddress ("net.tcp://" + name + ":" + ep.Port + "/PeerChannelEndpoints/" + Guid.NewGuid ()), new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (listen_address).AddressList));
-			registered_id = resolver.Register (MeshId, pna, timeout - (DateTime.Now - startTime));
-			NodeId = nid;
-			SetOnline ();
-		}
-
-		internal override void Close (TimeSpan timeout)
-		{
-			resolver.Unregister (registered_id, timeout);
-			SetOffline ();
-			if (listener != null)
-				listener.Stop ();
-			registered_id = null;
+			return listener;
 		}
 	}
 }

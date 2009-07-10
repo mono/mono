@@ -27,9 +27,11 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
@@ -51,16 +53,20 @@ namespace System.ServiceModel.Channels
 		EndpointAddress local_address;
 		PeerResolver resolver;
 		PeerNode node;
+		TcpListener listener;
+		TcpChannelInfo info;
+		List<PeerNodeAddress> peers = new List<PeerNodeAddress> ();
 
 		public PeerDuplexChannel (IPeerChannelManager factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base ((ChannelFactoryBase) factory, address, via)
 		{
 			binding = factory.Source;
 			this.resolver = factory.Resolver;
+			info = new TcpChannelInfo (binding, factory.MessageEncoder, null); // FIXME: fill properties correctly.
 
 			// It could be opened even with empty list of PeerNodeAddresses.
 			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
-			node = new PeerNodeImpl (resolver, RemoteAddress, factory.Source.ListenIPAddress, factory.Source.Port);
+			node = new PeerNodeImpl (RemoteAddress, factory.Source.ListenIPAddress, factory.Source.Port);
 		}
 
 		// FIXME: receive local_address too
@@ -69,9 +75,9 @@ namespace System.ServiceModel.Channels
 		{
 			binding = listener.Source;
 			this.resolver = listener.Resolver;
-			// FIXME: set resolver and node.
+			info = new TcpChannelInfo (binding, listener.MessageEncoder, null); // FIXME: fill properties correctly.
 
-			node = new PeerNodeImpl (resolver, null, listener.Source.ListenIPAddress, listener.Source.Port);
+			node = new PeerNodeImpl (null, listener.Source.ListenIPAddress, listener.Source.Port);
 		}
 
 		public override EndpointAddress LocalAddress {
@@ -87,38 +93,77 @@ namespace System.ServiceModel.Channels
 
 		// DuplexChannelBase
 
+		TcpDuplexSessionChannel CreateInnerChannel (PeerNodeAddress pna)
+		{
+			var cfb = Manager as ChannelFactoryBase;
+			if (cfb != null)
+				return new TcpDuplexSessionChannel (cfb, info, pna.EndpointAddress, Via);
+			else
+				return new TcpDuplexSessionChannel ((ChannelListenerBase) Manager, info, listener.AcceptTcpClient ());
+		}
+
 		public override void Send (Message message, TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			ThrowIfDisposedOrNotOpen ();
+
+			DateTime start = DateTime.Now;
+
+			foreach (var pna in peers) {
+				var inner = CreateInnerChannel (pna);
+				inner.Open (timeout - (DateTime.Now - start));
+				inner.Send (message, timeout);
+			}
 		}
 
 		public override Message Receive (TimeSpan timeout)
 		{
+			ThrowIfDisposedOrNotOpen ();
+
 			throw new NotImplementedException ();
 		}
 
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
+			ThrowIfDisposedOrNotOpen ();
+
 			throw new NotImplementedException ();
 		}
 		
 		// CommunicationObject
 		
-		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
+			OnClose (TimeSpan.Zero);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			node.Close (timeout);
+			DateTime start = DateTime.Now;
+			peers.Clear ();
+			resolver.Unregister (node.RegisteredId, timeout - (DateTime.Now - start));
+			node.SetOffline ();
+			if (listener != null)
+				listener.Stop ();
+			node.RegisteredId = null;
 		}
 
-		// At some stage I should unify this class with PeerOutputChannel (and probably PeerInputChannel). Too much duplicate.
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			node.Open (timeout);
+			DateTime start = DateTime.Now;
+
+			// FIXME: supply maxAddresses
+			peers.AddRange (resolver.Resolve (node.MeshId, 3, timeout));
+
+			listener = node.GetTcpListener ();
+			var ep = (IPEndPoint) listener.LocalEndpoint;
+			string name = Dns.GetHostName ();
+			var nid = new Random ().Next (0, int.MaxValue);
+			var ea = new EndpointAddress ("net.tcp://" + name + ":" + ep.Port + "/PeerChannelEndpoints/" + Guid.NewGuid ());
+			var pna = new PeerNodeAddress (ea, new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (ep.Address).AddressList));
+			node.RegisteredId = resolver.Register (node.MeshId, pna, timeout - (DateTime.Now - start));
+			node.NodeId = nid;
+
+			node.SetOnline ();
 		}
 	}
 }
