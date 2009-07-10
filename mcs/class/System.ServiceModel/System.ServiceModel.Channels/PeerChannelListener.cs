@@ -62,7 +62,7 @@ namespace System.ServiceModel.Channels
 				}
 			}
 			if (encoder == null)
-				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
+				encoder = new BinaryMessageEncoder ();
 		}
 
 		public PeerResolver Resolver { get; set; }

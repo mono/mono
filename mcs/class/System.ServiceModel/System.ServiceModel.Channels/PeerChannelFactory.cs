@@ -40,6 +40,7 @@ namespace System.ServiceModel.Channels
 	{
 		PeerTransportBindingElement Source { get; }
 		PeerResolver Resolver { get; }
+		MessageEncoder MessageEncoder { get; }
 	}
 
 	internal class PeerChannelFactory<TChannel> : ChannelFactoryBase<TChannel>, IPeerChannelManager
@@ -58,7 +59,7 @@ namespace System.ServiceModel.Channels
 				}
 			}
 			if (encoder == null)
-				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
+				encoder = new BinaryMessageEncoder ();
 		}
 
 		public PeerResolver Resolver { get; set; }
