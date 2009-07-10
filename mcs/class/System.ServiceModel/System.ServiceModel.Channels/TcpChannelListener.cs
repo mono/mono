@@ -84,7 +84,7 @@ namespace System.ServiceModel.Channels
 				return null; // onclose
 
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client, timeout);
+				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
 
 			// FIXME: To implement more.
 			throw new NotImplementedException ();

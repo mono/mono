@@ -68,7 +68,6 @@ namespace System.ServiceModel.Channels
 		TcpClient client;
 		bool is_service_side;
 		EndpointAddress local_address;
-		TimeSpan timeout;
 		TcpBinaryFrameManager frame;
 		TcpDuplexSession session; // do not use this directly. Use Session instead.
 		
@@ -79,13 +78,12 @@ namespace System.ServiceModel.Channels
 			this.info = info;
 		}
 		
-		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client, TimeSpan timeout)
+		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client)
 			: base (listener)
 		{
 			is_service_side = true;
 			this.client = client;
 			this.info = info;
-			this.timeout = timeout;
 		}
 		
 		public MessageEncoder Encoder {
