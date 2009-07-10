@@ -39,7 +39,59 @@ namespace System.ServiceModel
 	public class DuplexChannelFactory<TChannel> : ChannelFactory<TChannel>
 	{
 		InstanceContext callback_instance;
-		
+		Type callback_instance_type;
+
+		public DuplexChannelFactory (Type callbackInstanceType)
+			: base ()
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			string endpointConfigurationName)
+			: base (endpointConfigurationName)
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			string endpointConfigurationName,
+			EndpointAddress remoteAddress)
+			: base (endpointConfigurationName, remoteAddress)
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			ServiceEndpoint endpoint)
+			: base (endpoint)
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			Binding binding)
+			: base (binding)
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			Binding binding,
+			string remoteAddress)
+			: base (binding, new EndpointAddress (remoteAddress))
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
+		public DuplexChannelFactory (Type callbackInstanceType,
+			Binding binding,
+			EndpointAddress remoteAddress)
+			: base (binding, remoteAddress)
+		{
+			callback_instance_type = callbackInstanceType;
+		}
+
 		public DuplexChannelFactory (object callbackInstance)
 			: this (new InstanceContext (callbackInstance))
 		{
@@ -72,9 +124,22 @@ namespace System.ServiceModel
 
 		public DuplexChannelFactory (object callbackInstance,
 			Binding binding,
+			string remoteAddress)
+			: this (callbackInstance, binding, new EndpointAddress (remoteAddress))
+		{
+		}
+
+		public DuplexChannelFactory (object callbackInstance,
+			Binding binding,
 			EndpointAddress remoteAddress)
 			: this (new InstanceContext (callbackInstance), binding, remoteAddress)
 		{
+		}
+
+		public DuplexChannelFactory (InstanceContext callbackInstance)
+			: base ()
+		{
+			callback_instance = callbackInstance;
 		}
 
 		public DuplexChannelFactory (InstanceContext callbackInstance,
@@ -82,6 +147,13 @@ namespace System.ServiceModel
 			: base (binding)
 		{
 			callback_instance = callbackInstance;
+		}
+
+		public DuplexChannelFactory (InstanceContext callbackInstance,
+			Binding binding,
+			string remoteAddress)
+			: this (callbackInstance, binding, new EndpointAddress (remoteAddress))
+		{
 		}
 
 		public DuplexChannelFactory (InstanceContext callbackInstance,
@@ -113,12 +185,61 @@ namespace System.ServiceModel
 		{
 			callback_instance = callbackInstance;
 		}
-		
-		public static TChannel CreateChannel (InstanceContext callbackInstance, 
-		                                      Binding binding, 
-		                                      EndpointAddress endpointAddress)
+
+		// CreateChannel() instance methods
+
+		public TChannel CreateChannel (InstanceContext callbackInstance)
 		{
-			return new DuplexChannelFactory<TChannel> (callbackInstance, binding, endpointAddress).CreateChannel ();
+			return CreateChannel (callbackInstance, Endpoint.Address, null);
 		}
+
+		public override TChannel CreateChannel (EndpointAddress address, Uri via)
+		{
+			return CreateChannel (callback_instance, address, via);
+		}
+
+		public TChannel CreateChannel (InstanceContext callbackInstance, EndpointAddress address)
+		{
+			return CreateChannel (callbackInstance, address, null);
+		}
+
+		public virtual TChannel CreateChannel (InstanceContext callbackInstance, EndpointAddress address, Uri via)
+		{
+			// FIXME: supply callbackInstance
+			return base.CreateChannel (address, via);
+		}
+
+		// CreateChannel() factory methods
+
+		public static TChannel CreateChannel (object callbackObject, string endpointConfigurationName)
+		{
+			return CreateChannel (new InstanceContext (callbackObject), endpointConfigurationName);
+		}
+
+		public static TChannel CreateChannel (InstanceContext callbackInstance, string endpointConfigurationName)
+		{
+			return new DuplexChannelFactory<TChannel> (callbackInstance, endpointConfigurationName).CreateChannel (callbackInstance);
+		}
+
+		public static TChannel CreateChannel (object callbackObject, Binding binding, EndpointAddress endpointAddress)
+		{
+			return CreateChannel (new InstanceContext (callbackObject), binding, endpointAddress);
+		}
+
+		public static TChannel CreateChannel (InstanceContext callbackInstance, Binding binding, EndpointAddress endpointAddress)
+		{
+			return new DuplexChannelFactory<TChannel> (callbackInstance, binding, endpointAddress).CreateChannel (callbackInstance);
+		}
+
+		public static TChannel CreateChannel (object callbackObject, Binding binding, EndpointAddress endpointAddress, Uri via)
+		{
+			return CreateChannel (new InstanceContext (callbackObject), binding, endpointAddress, via);
+		}
+
+		public static TChannel CreateChannel (InstanceContext callbackInstance, Binding binding, EndpointAddress endpointAddress, Uri via)
+		{
+			return new DuplexChannelFactory<TChannel> (callbackInstance, binding, endpointAddress).CreateChannel (callbackInstance, endpointAddress, via);
+		}
+
 	}
 }

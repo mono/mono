@@ -1,5 +1,9 @@
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexChannelFactory.cs : fill missing members.
+
+2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerNode.cs : significant refactoring. It does not call resolver
 	  to manage the node itself but rather hold its state.
 
