@@ -272,8 +272,8 @@ namespace System.Net
 			
 			try {
 				request = SetupRequest (address);
-				WebResponse response = request.GetResponse ();
-				Stream st = ProcessResponse (response);
+				WebResponse response = GetWebResponse (request);
+				Stream st = response.GetResponseStream ();
 				return ReadAll (st, (int) response.ContentLength, userToken);
 			} catch (ThreadInterruptedException){
 				if (request != null)
@@ -330,8 +330,8 @@ namespace System.Net
 			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
 				try {
 					request = SetupRequest (address);
-					WebResponse response = request.GetResponse ();
-					Stream st = ProcessResponse (response);
+					WebResponse response = GetWebResponse (request);
+					Stream st = response.GetResponseStream ();
 					
 					int cLength = (int) response.ContentLength;
 					int length = (cLength <= -1 || cLength > 32*1024) ? 32*1024 : cLength;
@@ -389,8 +389,8 @@ namespace System.Net
 				async = false;
 #endif				
 				request = SetupRequest (address);
-				WebResponse response = request.GetResponse ();
-				return ProcessResponse (response);
+				WebResponse response = GetWebResponse (request);
+				return response.GetResponseStream ();
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -541,8 +541,8 @@ namespace System.Net
 					stream.Write (data, 0, contentLength);
 				}
 				
-				WebResponse response = request.GetResponse ();
-				Stream st = ProcessResponse (response);
+				WebResponse response = GetWebResponse (request);
+				Stream st = response.GetResponseStream ();
 				return ReadAll (st, (int) response.ContentLength, userToken);
 			} catch (ThreadInterruptedException){
 				if (request != null)
@@ -651,8 +651,8 @@ namespace System.Net
 				reqStream.Write (realBoundary, 0, realBoundary.Length);
 				reqStream.Close ();
 				reqStream = null;
-				WebResponse response = request.GetResponse ();
-				Stream st = ProcessResponse (response);
+				WebResponse response = GetWebResponse (request);
+				Stream st = response.GetResponseStream ();
 				resultBytes = ReadAll (st, (int) response.ContentLength, userToken);
 			} catch (ThreadInterruptedException){
 				if (request != null)
@@ -759,8 +759,8 @@ namespace System.Net
 				}
 				tmpStream.Close ();
 				
-				WebResponse response = request.GetResponse ();
-				Stream st = ProcessResponse (response);
+				WebResponse response = GetWebResponse (request);
+				Stream st = response.GetResponseStream ();
 				return ReadAll (st, (int) response.ContentLength, userToken);
 			} catch (ThreadInterruptedException) {
 				request.Abort ();
@@ -979,12 +979,6 @@ namespace System.Net
 			WebRequest request = SetupRequest (uri);
 			request.Method = DetermineMethod (uri, method, is_upload);
 			return request;
-		}
-
-		Stream ProcessResponse (WebResponse response)
-		{
-			responseHeaders = response.Headers;
-			return response.GetResponseStream ();
 		}
 
 		byte [] ReadAll (Stream stream, int length, object userToken)
@@ -1229,8 +1223,8 @@ namespace System.Net
 					WebRequest request = null;
 					try {
 						request = SetupRequest ((Uri) args [0]);
-						WebResponse response = request.GetResponse ();
-						Stream stream = ProcessResponse (response);
+						WebResponse response = GetWebResponse (request);
+						Stream stream = response.GetResponseStream ();
 						OnOpenReadCompleted (
 							new OpenReadCompletedEventArgs (stream, null, false, args [1]));
 					} catch (ThreadInterruptedException){
@@ -1534,21 +1528,32 @@ namespace System.Net
 				UploadValuesCompleted (this, args);
 		}
 
-		[MonoNotSupported("")]
-		protected virtual WebRequest GetWebRequest (Uri address)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected virtual WebResponse GetWebResponse (WebRequest request)
-		{
-			return request.GetResponse ();
-		}
-
 		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
 		{
-			return request.EndGetResponse (result);
+			WebResponse response = request.EndGetResponse (result);
+			responseHeaders = response.Headers;
+			return response;
 		}
 #endif
+
+#if NET_2_0
+		protected virtual
+#endif
+		WebRequest GetWebRequest (Uri address)
+		{
+			return SetupRequest (address);
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		WebResponse GetWebResponse (WebRequest request)
+		{
+			WebResponse response = request.GetResponse ();
+			responseHeaders = response.Headers;
+			return response;
+		}
+
 	}
 }
+
