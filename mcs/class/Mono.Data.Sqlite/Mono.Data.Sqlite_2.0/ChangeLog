@@ -1,3 +1,7 @@
+2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SQLiteConnection.cs : remove Console.WriteLine().
+
 2009-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* UnsafeNativeMethods.cs: added import of the old sqlite3_open

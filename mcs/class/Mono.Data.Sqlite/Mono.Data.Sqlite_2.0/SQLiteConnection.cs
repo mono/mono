@@ -761,7 +761,6 @@ namespace Mono.Data.Sqlite
       // For each semi-colon piece, split into key and value pairs by the presence of the = sign
       for (n = 0; n < x; n++)
       {
-	      Console.WriteLine (arParts [n]);
         arPiece = SqliteConvert.Split(arParts[n], '=');
         if (arPiece.Length == 2)
         {
