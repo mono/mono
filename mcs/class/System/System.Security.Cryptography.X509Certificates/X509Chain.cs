@@ -353,8 +353,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		private bool IsChainComplete (X509Certificate2 certificate)
 		{
 			// the chain is complete if we have a self-signed certificate
-			if (IsSelfIssued (certificate))
-				return true;
+			if (!IsSelfIssued (certificate))
+				return false;
 
 			// we're very limited to what we can do without certificate extensions
 			if (certificate.Version < 3)
