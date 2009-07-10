@@ -1150,7 +1150,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (expr.Type == TypeManager.anonymous_method_type) {
+			if (expr.Type == InternalType.AnonymousMethod) {
 				Report.Error (837, loc, "The `{0}' operator cannot be applied to a lambda expression or anonymous method",
 					OperatorName);
 				return null;
@@ -2613,13 +2613,13 @@ namespace Mono.CSharp {
 			bool is_equality = (oper & Operator.EqualityMask) != 0;
 			if (!TypeManager.IsEqual (l, r) && !TypeManager.IsVariantOf (r, l)) {
 				Expression tmp;
-				if (right.eclass == ExprClass.MethodGroup || (r == TypeManager.anonymous_method_type && !is_equality)) {
+				if (right.eclass == ExprClass.MethodGroup || (r == InternalType.AnonymousMethod && !is_equality)) {
 					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
 					right = tmp;
 					r = right.Type;
-				} else if (left.eclass == ExprClass.MethodGroup || (l == TypeManager.anonymous_method_type && !is_equality)) {
+				} else if (left.eclass == ExprClass.MethodGroup || (l == InternalType.AnonymousMethod && !is_equality)) {
 					tmp = Convert.ImplicitConversionRequired (ec, left, r, loc);
 					if (tmp == null)
 						return null;
@@ -2839,7 +2839,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (l == TypeManager.anonymous_method_type)
+				if (l == InternalType.AnonymousMethod)
 					return null;
 
 				if (TypeManager.IsValueType (l))
@@ -6243,7 +6243,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (array_element_type == null || array_element_type == TypeManager.null_type ||
-				array_element_type == TypeManager.void_type || array_element_type == TypeManager.anonymous_method_type ||
+				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
 				arguments.Count != dimensions) {
 				Error_NoBestType ();
 				return null;
@@ -6633,7 +6633,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = typeof (ArglistAccess);
+			type = InternalType.Arglist;
 			if (Arguments != null)
 				Arguments.Resolve (ec);
 
@@ -7128,7 +7128,7 @@ namespace Mono.CSharp {
 
 			Type expr_type = expr_resolved.Type;
 			if (expr_type.IsPointer || expr_type == TypeManager.void_type ||
-				expr_type == TypeManager.null_type || expr_type == TypeManager.anonymous_method_type) {
+				expr_type == TypeManager.null_type || expr_type == InternalType.AnonymousMethod) {
 				Unary.Error_OperatorCannotBeApplied (loc, ".", expr_type);
 				return null;
 			}
@@ -9557,7 +9557,7 @@ namespace Mono.CSharp {
 
 			type = e.Type;
 			if (type == TypeManager.void_type || type == TypeManager.null_type ||
-				type == TypeManager.anonymous_method_type || type.IsPointer) {
+				type == InternalType.AnonymousMethod || type.IsPointer) {
 				Error_InvalidInitializer (e.GetSignatureForError ());
 				return null;
 			}

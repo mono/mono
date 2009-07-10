@@ -1129,7 +1129,7 @@ namespace Mono.CSharp {
 			// anywhere', we depend on special conversion
 			// rules.
 			// 
-			type = TypeManager.anonymous_method_type;
+			type = InternalType.AnonymousMethod;
 
 			if ((Parameters != null) && !Parameters.Resolve (ec))
 				return null;

@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 			}
 
 			// Exlude internal compiler types
-			if (targetType == TypeManager.anonymous_method_type)
+			if (targetType == InternalType.AnonymousMethod)
 				return null;
 
 			if (type != TypeManager.null_type && !Convert.ImplicitStandardConversionExists (this, targetType))

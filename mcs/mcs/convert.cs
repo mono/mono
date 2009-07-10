@@ -281,7 +281,7 @@ namespace Mono.CSharp {
 
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type)
-				return target_type != TypeManager.anonymous_method_type;
+				return target_type != InternalType.AnonymousMethod;
 
 			if (TypeManager.IsGenericParameter (expr_type))
 				return ImplicitTypeParameterConversion (expr, target_type) != null;
@@ -656,7 +656,7 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
-			if (expr.Type == TypeManager.anonymous_method_type) {
+			if (expr.Type == InternalType.AnonymousMethod) {
 				if (!TypeManager.IsDelegateType (target_type) &&
 					TypeManager.DropGenericTypeArguments (target_type) != TypeManager.expression_type)
 					return false;
@@ -779,7 +779,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Conversion from __arglist to System.ArgIterator
-			if (expr_type == typeof (ArglistAccess))
+			if (expr_type == InternalType.Arglist)
 				return target_type == TypeManager.arg_iterator_type;
 
 			return false;
@@ -1224,7 +1224,7 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (expr_type.Equals (target_type)) {
-				if (expr_type != TypeManager.null_type && expr_type != TypeManager.anonymous_method_type)
+				if (expr_type != TypeManager.null_type && expr_type != InternalType.AnonymousMethod)
 					return expr;
 				return null;
 			}
@@ -1293,14 +1293,14 @@ namespace Mono.CSharp {
 					return EmptyCast.Create (new NullPointer (loc), target_type);
 			}
 
-			if (expr_type == TypeManager.anonymous_method_type){
+			if (expr_type == InternalType.AnonymousMethod){
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
 				Expression am = ame.Compatible (ec, target_type);
 				if (am != null)
 					return am.DoResolve (ec);
 			}
 
-			if (expr_type == typeof (ArglistAccess) && target_type == TypeManager.arg_iterator_type)
+			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)
 				return expr;
 
 			return null;

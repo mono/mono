@@ -370,7 +370,7 @@ namespace Mono.CSharp {
 		protected void Error_ValueCannotBeConvertedCore (EmitContext ec, Location loc, Type target, bool expl)
 		{
 			// The error was already reported as CS1660
-			if (type == TypeManager.anonymous_method_type)
+			if (type == InternalType.AnonymousMethod)
 				return;
 
 			if (TypeManager.IsGenericParameter (Type) && TypeManager.IsGenericParameter (target) && type.Name == target.Name) {
@@ -3234,7 +3234,7 @@ namespace Mono.CSharp {
 		{
 			this.loc = loc;
 			eclass = ExprClass.MethodGroup;
-			this.type = typeof (MethodGroupExpr);
+			this.type = InternalType.MethodGroup;
 			queried_type = type;
 		}
 
@@ -3315,7 +3315,7 @@ namespace Mono.CSharp {
 		static int BetterExpressionConversion (EmitContext ec, Argument a, Type p, Type q)
 		{
 			Type argument_type = TypeManager.TypeToCoreType (a.Type);
-			if (argument_type == TypeManager.anonymous_method_type && RootContext.Version > LanguageVersion.ISO_2) {
+			if (argument_type == InternalType.AnonymousMethod && RootContext.Version > LanguageVersion.ISO_2) {
 				//
 				// Uwrap delegate from Expression<T>
 				//
@@ -5935,7 +5935,7 @@ namespace Mono.CSharp {
 	/// Handles `var' contextual keyword; var becomes a keyword only
 	/// if no type called var exists in a variable scope
 	/// 
-	public class VarExpr : SimpleName
+	class VarExpr : SimpleName
 	{
 		// Used for error reporting only
 		ArrayList initializer;
@@ -5957,7 +5957,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
 			type = right_side.Type;
-			if (type == TypeManager.null_type || type == TypeManager.void_type || type == TypeManager.anonymous_method_type) {
+			if (type == TypeManager.null_type || type == TypeManager.void_type || type == InternalType.AnonymousMethod) {
 				Report.Error (815, loc, "An implicitly typed local variable declaration cannot be initialized with `{0}'",
 				              right_side.GetSignatureForError ());
 				return false;
@@ -5969,7 +5969,10 @@ namespace Mono.CSharp {
 
 		protected override void Error_TypeOrNamespaceNotFound (IResolveContext ec)
 		{
-			Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
+			if (RootContext.Version < LanguageVersion.V_3)
+				base.Error_TypeOrNamespaceNotFound (ec);
+			else
+				Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
 		}
 
 		public override TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)

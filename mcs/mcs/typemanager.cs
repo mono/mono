@@ -71,7 +71,6 @@ namespace Mono.CSharp {
 	static public Type void_ptr_type;
 	static public Type exception_type;
 
-	static public Type anonymous_method_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
 	static public Type mbr_type;
@@ -965,7 +964,6 @@ namespace Mono.CSharp {
 		//
 		// These are only used for compare purposes
 		//
-		anonymous_method_type = typeof (AnonymousMethodBody);
 		null_type = typeof (NullLiteral);
 		
 		void_ptr_type = GetPointerType (void_type);
@@ -2463,7 +2461,7 @@ namespace Mono.CSharp {
 				return a.FullName == b.FullName;
 
 			// Some types are never equal
-			if (a == TypeManager.null_type || a == TypeManager.anonymous_method_type)
+			if (a == TypeManager.null_type || a == InternalType.AnonymousMethod)
 				return false;
 
 			return true;
@@ -3186,6 +3184,14 @@ namespace Mono.CSharp {
 #endregion
 	
 }
+
+	class InternalType
+	{
+		public static readonly Type AnonymousMethod = typeof (AnonymousMethodBody);
+		public static readonly Type Arglist = typeof (ArglistAccess);
+		public static readonly Type Dynamic = new DynamicType ();
+		public static readonly Type MethodGroup = typeof (MethodGroupExpr);
+	}
 
 /// <summary>
 ///   There is exactly one instance of this class per type.

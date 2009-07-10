@@ -206,7 +206,7 @@ namespace Mono.CSharp {
 
 		public override Type Resolve (IResolveContext ec)
 		{
-			return typeof (ArglistAccess);
+			return InternalType.Arglist;
 		}
 
 		public override string GetSignatureForError ()
@@ -975,7 +975,7 @@ namespace Mono.CSharp {
 
 			if (varargs != 0) {
 				par [par.Length - 1] = new ArglistParameter (Location.Null);
-				types [types.Length - 1] = typeof (ArglistAccess);
+				types [types.Length - 1] = InternalType.Arglist;
 			}
 
 			return method != null ?

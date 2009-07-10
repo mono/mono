@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type expr_type = expr_resolved.Type;
-			if (expr_type.IsPointer || expr_type == TypeManager.void_type || expr_type == TypeManager.null_type || expr_type == TypeManager.anonymous_method_type) {
+			if (expr_type.IsPointer || expr_type == TypeManager.void_type || expr_type == TypeManager.null_type || expr_type == InternalType.AnonymousMethod) {
 				Unary.Error_OperatorCannotBeApplied (loc, ".", expr_type);
 				return null;
 			}

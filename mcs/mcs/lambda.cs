@@ -111,7 +111,7 @@ namespace Mono.CSharp {
 			}
 
 			eclass = ExprClass.Value;
-			type = TypeManager.anonymous_method_type;						
+			type = InternalType.AnonymousMethod;
 			return this;
 		}
 
