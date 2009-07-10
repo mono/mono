@@ -131,7 +131,7 @@ namespace System.Diagnostics
 		}
 		
 		internal bool HaveEnvVars {
-			get { return (envVars != null && envVars.Count > 0); }
+			get { return (envVars != null); }
 		}
 		
 		[DefaultValue (false)]
