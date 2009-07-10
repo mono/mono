@@ -1,3 +1,8 @@
+2009-07-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: implement GetWebRequest and GetWebResponse. Use them
+	instead of SetupRequest and ProcessResponse.
+
 2009-07-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: set the content length when uploading values. This
