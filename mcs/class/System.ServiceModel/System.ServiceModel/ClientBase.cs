@@ -214,7 +214,6 @@ namespace System.ServiceModel
 			InnerChannel.DisplayInitializationUI ();
 		}
 
-#if NET_2_1
 		protected T GetDefaultValueForInitialization<T> ()
 		{
 			return default (T);
@@ -224,6 +223,9 @@ namespace System.ServiceModel
 
 		void RunCompletedCallback (SendOrPostCallback callback, InvokeAsyncCompletedEventArgs args)
 		{
+#if !NET_2_1
+			callback (args);
+#else
 			object dispatcher = dispatcher_main_property.GetValue (null, null);
 			if (dispatcher == null) {
 				callback (args);
@@ -239,6 +241,7 @@ namespace System.ServiceModel
 				}
 			};
 			dispatcher_begin_invoke_method.Invoke (dispatcher, new object [] {a, new object [] {this, new EventArgs ()}});
+#endif
 		}
 
 		protected void InvokeAsync (BeginOperationDelegate beginOperationDelegate,
@@ -273,7 +276,8 @@ namespace System.ServiceModel
 			begin_async_result = beginOperationDelegate (inValues, cb, userState);
 		}
 		IAsyncResult begin_async_result;
-#else
+
+#if !NET_2_1
 		void IDisposable.Dispose ()
 		{
 			Close ();
@@ -358,12 +362,7 @@ namespace System.ServiceModel
 
 		#endregion
 
-#if NET_2_1
-		protected
-#else
-		internal
-#endif
-		class InvokeAsyncCompletedEventArgs : AsyncCompletedEventArgs
+		protected class InvokeAsyncCompletedEventArgs : AsyncCompletedEventArgs
 		{
 			internal InvokeAsyncCompletedEventArgs (object [] results, Exception error, bool cancelled, object userState)
 				: base (error, cancelled, userState)

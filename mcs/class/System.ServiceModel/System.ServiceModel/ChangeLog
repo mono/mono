@@ -1,5 +1,9 @@
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : some of Silverlight API are backported to full CLR.
+
+2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelFactory.cs : fill missing members.
 
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
