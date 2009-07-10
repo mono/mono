@@ -1,3 +1,8 @@
+2009-07-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* X509Chain.cs: revert my last change here since it caused 2 tests to
+	fail.
+
 2009-07-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* X509Certificate2.cs:
