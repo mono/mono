@@ -1,3 +1,11 @@
+2009-07-10  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* amd64/amd64-codegen.h: Add marcos for coding several specific sse opcodes.
+	* amd64/amd64-codegen.h: Fix bugs in simd marcos.
+
 2009-06-24  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
