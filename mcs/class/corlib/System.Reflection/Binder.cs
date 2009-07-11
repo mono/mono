@@ -222,6 +222,8 @@ namespace System.Reflection
 						if (type == typeof (float))
 							return (float)(char)value;
 					}
+					if (vtype == typeof (IntPtr) && type.IsPointer)
+						return value;
 					return Convert.ChangeType (value, type);
 				}
 				return null;
@@ -348,6 +350,8 @@ namespace System.Reflection
 				default:
 					/* TODO: handle valuetype -> byref */
 					if (to == typeof (object) && from.IsValueType)
+						return true;
+					if (to.IsPointer && from == typeof (IntPtr))
 						return true;
 
 					return to.IsAssignableFrom (from);

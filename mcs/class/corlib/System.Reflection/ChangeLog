@@ -1,3 +1,7 @@
+2009-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Allow conversion of IntPtr to pointer types.
+
 2009-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs (check_arguments): Allow a type to match its byref version.
