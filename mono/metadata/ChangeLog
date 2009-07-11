@@ -1,3 +1,13 @@
+2009-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoIntPtr): New structure describing a boxed
+	IntPtr.
+
+	* object.c (mono_runtime_invoke_array): Handle ptr arguments and
+	returns. Fixes #519953.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Handle pointer returns.
+
 2009-07-09  Mark Probst  <mark.probst@gmail.com>
 
 	* class-internals.h, generic-sharing.c: New RGCTX info type for
