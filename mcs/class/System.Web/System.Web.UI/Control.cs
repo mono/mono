@@ -693,6 +693,9 @@ namespace System.Web.UI
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void ApplyStyleSheetSkin (Page page)
 		{
+			if (page == null)
+				return;
+
 			if (!EnableTheming) /* this enough? */
 				return;
 
