@@ -205,6 +205,47 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void SelectMethod_ByRef ()
+		{
+			Type type = typeof (ByRefMatch);
+			BindingFlags flags = BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+
+			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int) }, null);
+			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int).MakeByRefType () }, null);
+			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
+
+			match = new MethodBase [] { mi_run_ref };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#B1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run_ref, selected, "#B2");
+
+			match = new MethodBase [] { mi_run };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run, selected, "#C1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#C1");
+
+			match = new MethodBase [] { mi_run, mi_run_ref };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run, selected, "#D1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run_ref, selected, "#D2");
+		}
+
+		[Test]
 		public void ArgNullOnMethod () // see bug 58846. We throwed nullref here.
 		{
 			Type type = typeof (SampleClass);
@@ -222,6 +263,45 @@ namespace MonoTests.System.Reflection
 
 			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [] {null}, null);
 			Assert.IsNotNull (prop);
+		}
+
+		[Test]
+		public void BindToMethod_ByRef ()
+		{
+			Type type = typeof (ByRefMatch);
+			BindingFlags flags = BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance;
+			MethodBase [] match;
+			object [] args = new object [] { 5 };
+			object state;
+			MethodBase selected;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int) }, null);
+			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int).MakeByRefType () }, null);
+			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
+
+			match = new MethodBase [] { mi_run };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#1");
+
+			match = new MethodBase [] { mi_run_ref };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run_ref, selected, "#2");
+
+			match = new MethodBase [] { mi_run, mi_run_ref };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#3");
+
+			match = new MethodBase [] { mi_run_ref, mi_run };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#4");
 		}
 
 		[Test] // bug #41691
@@ -559,6 +639,17 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		class ByRefMatch {
+			public void Run (int i)
+			{
+			}
+
+			public void Run (out int i)
+			{
+				i = 0;
+			}
+		}
+
 		[Test] // bug  #471257
 		public void TestCustomBinderNonNullArgs ()
 		{
@@ -643,6 +734,5 @@ namespace MonoTests.System.Reflection
 			MethodInfo method = typeof (Foo).GetMethod ("Add");
 			method.Invoke((new Foo ()), 0, new Int32Binder (), new object [] {1, "2"}, null);
 		}
-
 	}
 }

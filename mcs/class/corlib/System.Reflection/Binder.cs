@@ -165,7 +165,7 @@ namespace System.Reflection
 							types [i] = args [i].GetType ();
 					}
 				}
-				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers);
+				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers, true);
 				state = null;
 				if (names != null)
 					ReorderParameters (names, ref args, selected);
@@ -358,18 +358,27 @@ namespace System.Reflection
 				}
 			}
 
-			private static bool check_arguments (Type[] types, ParameterInfo[] args) {
+			private static bool check_arguments (Type[] types, ParameterInfo[] args, bool allowByRefMatch) {
 				for (int i = 0; i < types.Length; ++i) {
 					bool match = check_type (types [i], args [i].ParameterType);
-					if (!match && args [i].ParameterType.IsByRef)
-						match = check_type (types [i], args [i].ParameterType.GetElementType ());
+					if (!match && allowByRefMatch) {
+						Type param_type = args [i].ParameterType;
+						if (param_type.IsByRef)
+							match = check_type (types [i], param_type.GetElementType ());
+					}
 					if (!match)
 						return false;
 				}
 				return true;
 			}
 
-			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
+			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase [] match, Type [] types, ParameterModifier [] modifiers)
+			{
+				return SelectMethod (bindingAttr, match, types, modifiers,
+					false);
+			}
+
+			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch)
 			{
 				MethodBase m;
 				int i, j;
@@ -424,7 +433,7 @@ namespace System.Reflection
 					ParameterInfo[] args = m.GetParameters ();
 					if (args.Length != types.Length)
 						continue;
-					if (!check_arguments (types, args))
+					if (!check_arguments (types, args, allowByRefMatch))
 						continue;
 
 					if (result != null)
