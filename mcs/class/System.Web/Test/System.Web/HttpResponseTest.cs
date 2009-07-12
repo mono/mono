@@ -26,11 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Text;
-using System.Web;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
+using System.Text;
+using System.Web;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Web {
@@ -151,11 +153,19 @@ namespace MonoTests.System.Web {
 		public override void SendResponseFromMemory(byte[] arr, int x)
 		{
 			data_sent = true;
-			data = new byte [x];
-			for (int i = 0; i < x; i++)
-				data [i] = arr [i];
-			data_len = x;
-			total += data_len;
+			if (data != null) {
+				byte [] tmp = new byte [data.Length + x];
+				Array.Copy (data, tmp, data.Length);
+				Array.Copy (arr, 0, tmp, data.Length, x);
+				data = tmp;
+				data_len = data.Length;
+			} else {
+				data = new byte [x];
+				for (int i = 0; i < x; i++)
+					data [i] = arr [i];
+				data_len = x;
+			}
+			total += x;
 		}
 		
 		public override void SendResponseFromFile(string a, long b , long c)
@@ -261,11 +271,12 @@ namespace MonoTests.System.Web {
 			c.Response.Write ("Hola");
 			Assert.AreEqual (1, f.data_len, "T3");
 			c.Response.Flush ();
-			Assert.AreEqual (4, f.data_len, "T4");
-			Assert.AreEqual ((byte) 'H', f.data [0], "T5");
-			Assert.AreEqual ((byte) 'o', f.data [1], "T6");
-			Assert.AreEqual ((byte) 'l', f.data [2], "T7");
-			Assert.AreEqual ((byte) 'a', f.data [3], "T8");
+			Assert.AreEqual (5, f.data_len, "T4");
+			Assert.AreEqual ((byte) 'a', f.data [0], "T5");
+			Assert.AreEqual ((byte) 'H', f.data [1], "T6");
+			Assert.AreEqual ((byte) 'o', f.data [2], "T7");
+			Assert.AreEqual ((byte) 'l', f.data [3], "T8");
+			Assert.AreEqual ((byte) 'a', f.data [4], "T9");
 		}
 
 		[Test]
@@ -505,22 +516,22 @@ namespace MonoTests.System.Web {
 			UnknownResponseHeader unknown;
 
 			Assert.AreEqual (3, f.UnknownResponseHeaders.Count, "#C1");
-			
+
 			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders ["X-AspNet-Version"];
 			Assert.AreEqual ("X-AspNet-Version", unknown.Name, "#C2");
 			Assert.AreEqual (Environment.Version.ToString (3), unknown.Value, "#C3");
-			
+
 			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders ["Content-Disposition"];
 			Assert.AreEqual ("Content-Disposition", unknown.Name, "#C4");
 			Assert.AreEqual ("inline", unknown.Value, "#C5");
 
 			ArrayList al = f.UnknownResponseHeaders ["My-Custom-Header"] as ArrayList;
 			Assert.AreEqual (2, al.Count, "#C6");
-			
+
 			unknown = (UnknownResponseHeader) al [0];
 			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C7");
 			Assert.AreEqual ("never", unknown.Value, "#C8");
-			
+
 			unknown = (UnknownResponseHeader) al [1];
 			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C9");
 			Assert.AreEqual ("always", unknown.Value, "#C10");
@@ -554,14 +565,11 @@ namespace MonoTests.System.Web {
 
 			KnownResponseHeader known;
 
-			Assert.AreEqual (2, f.KnownResponseHeaders.Count, "#B1");
-			// Assert.IsTrue (f != null, "f is null");
-			// Assert.IsTrue (f.KnownResponseHeaders != null, "f.KnownResponseHeaders is null");
-			// Assert.IsTrue (f.KnownResponseHeaders ["Transfer-Encoding"] != null, "No Transfer-Encoding");
+			Assert.AreEqual (3, f.KnownResponseHeaders.Count, "#B1");
 			
-			// known = (KnownResponseHeader) f.KnownResponseHeaders ["Transfer-Encoding"];
-			// Assert.AreEqual (HttpWorkerRequest.HeaderTransferEncoding, known.Index, "#B2");
-			// Assert.AreEqual ("chunked", known.Value, "#B3");
+			known = (KnownResponseHeader) f.KnownResponseHeaders ["Transfer-Encoding"];
+			Assert.AreEqual (HttpWorkerRequest.HeaderTransferEncoding, known.Index, "#B2");
+			Assert.AreEqual ("chunked", known.Value, "#B3");
 			
 			known = (KnownResponseHeader) f.KnownResponseHeaders ["Cache-Control"];
 			Assert.AreEqual (HttpWorkerRequest.HeaderCacheControl, known.Index, "#B4");
@@ -579,6 +587,282 @@ namespace MonoTests.System.Web {
 #else
 			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#C1");
 #endif
+		}
+	}
+
+	[TestFixture]
+	public class HttpResponseOutputStreamTest
+	{
+		FakeHttpWorkerRequest2 worker;
+		HttpContext context;
+		HttpResponse response;
+		Stream out_stream;
+
+		[SetUp]
+		public void Setup ()
+		{
+			context = Cook (2, out worker);
+			response = context.Response;
+			out_stream = response.OutputStream;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (response != null)
+				response.Close ();
+		}
+
+		[Test]
+		public void CanRead ()
+		{
+			Assert.IsFalse (out_stream.CanRead, "#1");
+			out_stream.Close ();
+			Assert.IsFalse (out_stream.CanRead, "#2");
+		}
+
+		[Test]
+		public void CanSeek ()
+		{
+			Assert.IsFalse (out_stream.CanSeek, "#1");
+			out_stream.Close ();
+			Assert.IsFalse (out_stream.CanSeek, "#2");
+		}
+
+		[Test]
+		public void CanWrite ()
+		{
+			Assert.IsTrue (out_stream.CanWrite, "#1");
+			out_stream.Close ();
+			Assert.IsTrue (out_stream.CanWrite, "#2");
+		}
+
+		[Test]
+		public void Flush ()
+		{
+			byte [] buffer = Encoding.UTF8.GetBytes ("mono");
+			out_stream.Write (buffer, 0, buffer.Length);
+			out_stream.Flush ();
+			Assert.AreEqual (0, worker.data_len);
+		}
+
+		[Test]
+		public void Length ()
+		{
+			try {
+				long len = out_stream.Length;
+				Assert.Fail ("#1:" + len);
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Position ()
+		{
+			try {
+				long pos = out_stream.Position;
+				Assert.Fail ("#A1:" + pos);
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				out_stream.Position = 0;
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void Read ()
+		{
+			byte [] buffer = new byte [5];
+
+			try {
+				out_stream.Read (buffer, 0, buffer.Length);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Seek ()
+		{
+			try {
+				out_stream.Seek (5, SeekOrigin.Begin);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void SetLength ()
+		{
+			try {
+				out_stream.SetLength (5L);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Write ()
+		{
+			byte [] buffer;
+
+			buffer = Encoding.UTF8.GetBytes ("mono");
+			out_stream.Write (buffer, 0, buffer.Length);
+			buffer = Encoding.UTF8.GetBytes ("just rocks!!");
+			out_stream.Write (buffer, 5, 6);
+			out_stream.Write (buffer, 0, 4);
+			Assert.IsFalse (worker.OutputProduced, "#1");
+			response.Flush ();
+			Assert.IsTrue (worker.OutputProduced, "#2");
+
+			string output = Encoding.UTF8.GetString (worker.data);
+			Assert.AreEqual ("e\r\nmonorocks!just\r\n", output);
+		}
+
+		[Test]
+		public void Write_Buffer_Null ()
+		{
+			try {
+				out_stream.Write ((byte []) null, 0, 0);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("buffer", ex.ParamName, "#5");
+			}
+#else
+			} catch (NullReferenceException) {
+			}
+#endif
+		}
+
+		[Test]
+		public void Write_Count_Negative ()
+		{
+			byte [] buffer = new byte [] { 0x0a, 0x1f, 0x2d };
+
+			// offset < 0
+			try {
+				out_stream.Write (buffer, 1, -1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("count", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Write_Count_Overflow ()
+		{
+			byte [] buffer;
+
+			buffer = Encoding.UTF8.GetBytes ("Mono");
+			out_stream.Write (buffer, 0, buffer.Length + 5);
+			buffer = Encoding.UTF8.GetBytes ("Just Rocks!!");
+			out_stream.Write (buffer, 5, buffer.Length - 2);
+			response.Flush ();
+
+			string output = Encoding.UTF8.GetString (worker.data);
+			Assert.AreEqual ("b\r\nMonoRocks!!\r\n", output);
+		}
+
+		[Test]
+		public void Write_Offset_Negative ()
+		{
+			byte [] buffer = new byte [] { 0x0a, 0x1f, 0x2d };
+
+			// offset < 0
+			try {
+				out_stream.Write (buffer, -1, 0);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("offset", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Write_Offset_Overflow ()
+		{
+			byte [] buffer = new byte [] { 0x0a, 0x1f, 0x2d };
+
+			// offset == buffer length
+#if NET_2_0
+			try {
+				out_stream.Write (buffer, buffer.Length, 0);
+				Assert.Fail ("#A1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("offset", ex.ParamName, "#A5");
+			}
+#else
+			out_stream.Write (buffer, buffer.Length, 0);
+#endif
+
+			// offset > buffer length
+#if NET_2_0
+			try {
+				out_stream.Write (buffer, buffer.Length + 1, 0);
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("offset", ex.ParamName, "#B5");
+			}
+#else
+			out_stream.Write (buffer, buffer.Length + 1, 0);
+#endif
+
+			response.Flush ();
+			Assert.AreEqual (0, worker.data_len);
+		}
+
+		[Test]
+		public void Write_Stream_Closed ()
+		{
+			byte [] buffer = Encoding.UTF8.GetBytes ("mono");
+			out_stream.Close ();
+			out_stream.Write (buffer, 0, buffer.Length);
+			response.Flush ();
+
+			string output = Encoding.UTF8.GetString (worker.data);
+			Assert.AreEqual ("4\r\nmono\r\n", output);
+		}
+
+		HttpContext Cook (int re, out FakeHttpWorkerRequest2 f)
+		{
+			f = new FakeHttpWorkerRequest2 (re);
+			return new HttpContext (f);
 		}
 	}
 }

@@ -513,9 +513,30 @@ namespace System.Web {
 
 		}
 
-	        public override void Write (byte [] buffer, int offset, int count)
+		public override void Write (byte [] buffer, int offset, int count)
 		{
 			bool buffering = response.BufferOutput;
+
+#if NET_2_0
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+#endif
+
+			int max_count = buffer.Length - offset;
+#if NET_2_0
+			if (offset < 0 || max_count <= 0)
+#else
+			if (offset < 0)
+#endif
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count > max_count)
+				count = max_count;
+#if ONLY_1_1
+			if (max_count <= 0)
+				return;
+#endif
 
 			if (buffering) {
 				// It does not matter whether we're in ApplyFilter or not
@@ -721,54 +742,54 @@ namespace System.Web {
 			memcpy4 (dest, src, size);
 		}
 
-	        public override bool CanRead {
-	                get {
-				return false;
-			}	
-	        }
-			
-	        public override bool CanSeek {
-	                get {
+		public override bool CanRead {
+			get {
 				return false;
 			}
-	        }
-	        public override bool CanWrite {
-	                get {
+		}
+
+		public override bool CanSeek {
+			get {
+				return false;
+			}
+		}
+
+		public override bool CanWrite {
+			get {
 				return true;
 			}
-	        }
-		
+		}
+
 		const string notsupported = "HttpResponseStream is a forward, write-only stream";
-		
-	        public override long Length {
-	                get {
-				throw new InvalidOperationException (notsupported);
+
+		public override long Length {
+			get {
+				throw new NotSupportedException (notsupported);
 			}
-	        }
+		}
 	
 		public override long Position {
-	                get {
-				throw new InvalidOperationException (notsupported);
+			get {
+				throw new NotSupportedException (notsupported);
 			}
-	                set {
-				throw new InvalidOperationException (notsupported);
+			set {
+				throw new NotSupportedException (notsupported);
 			}
-	        }
-		
-	        public override long Seek (long offset, SeekOrigin origin)
-		{
-			throw new InvalidOperationException (notsupported);
 		}
 		
-	        public override void SetLength (long value) 
+		public override long Seek (long offset, SeekOrigin origin)
 		{
-			throw new InvalidOperationException (notsupported);
+			throw new NotSupportedException (notsupported);
+		}
+
+		public override void SetLength (long value) 
+		{
+			throw new NotSupportedException (notsupported);
 		}
 	
 		public override int Read (byte [] buffer, int offset, int count)
 		{
-			throw new InvalidOperationException (notsupported);
+			throw new NotSupportedException (notsupported);
 		}
 	}
 }
-
