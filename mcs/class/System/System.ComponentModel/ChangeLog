@@ -3,13 +3,51 @@
 	* LicenseProviderAttribute.cs: avoid nullref when provider has not
 	been set or cannot be loaded.
 
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptor.cs: do not wrap DefaultTypeDescriptionProvider.
+	Implemented GetAttributes and GetProperties in
+	DefaultTypeDescriptor.
+
+	* AttributeCollection.cs: make sure that attrList is never null.
+
+2009-06-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WeakObjectWrapper.cs, WeakObjectWrapperComparer.cs: added - used
+	by TypeDescriptor for storage of type description providers.
+
+	* TypeDescriptor.cs: implemented part of the 2.0+ API which deals
+	with adding/removing/getting type description providers.
+
+	* AttributeCollection.cs: do not throw NREX when attrList is
+	null in Count.
+
+2009-05-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* ListChangedEventArgs.cs: Fix .NET compatibility problems (discovered
+	  from trying to run the System.Data.Linq unit tests).
+
 2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Win32Exception.cs: made W32ErrorMessage internal.
 
-2009-02-21  Jb Evain  <jbevain@novell.com>
+2009-02-28  Zoltan Varga  <vargaz@gmail.com>
 
-	* EventHandlerList.cs: fix the 1.1 profile.
+	* EventHandlerList.cs: Change this to use a linked list as stated by the
+	MSDN docs.
+
+2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ReflectionPropertyDescriptor.cs: Don't cache getter and
+	setter properties. Cache instead the PropertyInfo objects
+	that defined them.
+
+	PropertyInfo::Get/SetValue is faster than calling the method
+	throught reflection.	
+
+2009-02-21  Kornél Pál  <kornelpal@gmail.com>
+
+	* EventHandlerList.cs: Fix profile 1.x build by not using HandlerEntry.
 
 2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

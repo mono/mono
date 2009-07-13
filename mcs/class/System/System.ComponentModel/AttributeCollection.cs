@@ -44,7 +44,8 @@ namespace System.ComponentModel
 		
 		internal AttributeCollection (ArrayList attributes)
 		{
-			attrList = attributes;
+			if (attributes != null)
+				attrList = attributes;
 		}
 		
 #if NET_2_0
@@ -161,7 +162,7 @@ namespace System.ComponentModel
 
 		public int Count {
 			get {
-				return attrList.Count;
+				return attrList != null ? attrList.Count : 0;
 			}
 		}
 

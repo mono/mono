@@ -409,6 +409,8 @@ System.ComponentModel/UInt16Converter.cs
 System.ComponentModel/UInt32Converter.cs
 System.ComponentModel/UInt64Converter.cs
 System.ComponentModel/WarningException.cs
+System.ComponentModel/WeakObjectWrapper.cs
+System.ComponentModel/WeakObjectWrapperComparer.cs
 System.ComponentModel/Win32Exception.cs
 System.Configuration/ApplicationScopedSettingAttribute.cs
 System.Configuration/ApplicationSettingsBase.cs

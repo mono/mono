@@ -39,6 +39,10 @@ using System.Globalization;
 using System.ComponentModel.Design;
 using System.Security.Permissions;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.ComponentModel
 {
 
@@ -51,43 +55,98 @@ public sealed class TypeDescriptor
 	private static Hashtable typeTable = new Hashtable ();
 	private static Hashtable editors;
 
+#if NET_2_0
+	static object typeDescriptionProvidersLock = new object ();
+	static Dictionary <Type, LinkedList <TypeDescriptionProvider>> typeDescriptionProviders;
+
+	static object componentDescriptionProvidersLock = new object ();
+	static Dictionary <WeakObjectWrapper, LinkedList <TypeDescriptionProvider>> componentDescriptionProviders;
+
+	static TypeDescriptor ()
+	{
+		typeDescriptionProviders = new Dictionary <Type, LinkedList <TypeDescriptionProvider>> ();
+		componentDescriptionProviders = new Dictionary <WeakObjectWrapper, LinkedList <TypeDescriptionProvider>> (new WeakObjectWrapperComparer ());
+	}
+#endif
 	private TypeDescriptor ()
 	{
 	}
 
 #if NET_2_0
-	[MonoNotSupported ("")]
+	[MonoNotSupported ("Mono does not support COM")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type ComObjectType {
 		get { throw new NotImplementedException (); }
 	}
 
-	[MonoNotSupported("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider AddAttributes (object instance, params Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
+		if (instance == null)
+			throw new ArgumentNullException ("instance");
+		if (attributes == null)
+			throw new ArgumentNullException ("attributes");
+
+		var ret = new AttributeProvider (attributes, GetProvider (instance));
+		AddProvider (ret, instance);
+
+		return ret;
 	}
 
-	[MonoNotSupported("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider AddAttributes (Type type, params Attribute [] attributes)
 	{
-		throw new NotImplementedException ();
-	}
+		if (type == null)
+			throw new ArgumentNullException ("type");
+		if (attributes == null)
+			throw new ArgumentNullException ("attributes");
 
-	[MonoNotSupported("")]
+		var ret = new AttributeProvider (attributes, GetProvider (type));
+		AddProvider (ret, type);
+		
+		return ret;
+	}
+	
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void AddProvider (TypeDescriptionProvider provider, object instance)
 	{
-		throw new NotImplementedException ();
+		if (provider == null)
+			throw new ArgumentNullException ("provider");
+		if (instance == null)
+			throw new ArgumentNullException ("instance");
+
+		lock (componentDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+			WeakObjectWrapper instanceWrapper = new WeakObjectWrapper (instance);
+			
+			if (!componentDescriptionProviders.TryGetValue (instanceWrapper, out plist)) {
+				plist = new LinkedList <TypeDescriptionProvider> ();
+				componentDescriptionProviders.Add (new WeakObjectWrapper (instance), plist);
+			}
+
+			plist.AddLast (provider);
+			instanceWrapper = null;
+		}
 	}
 
-	[MonoNotSupported("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void AddProvider (TypeDescriptionProvider provider, Type type)
 	{
-		throw new NotImplementedException ();
+		if (provider == null)
+			throw new ArgumentNullException ("provider");
+		if (type == null)
+			throw new ArgumentNullException ("type");
+
+		lock (typeDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+
+			if (!typeDescriptionProviders.TryGetValue (type, out plist)) {
+				plist = new LinkedList <TypeDescriptionProvider> ();
+				typeDescriptionProviders.Add (type, plist);
+			}
+
+			plist.AddLast (provider);
+		}
 	}
 
 	[MonoTODO]
@@ -695,32 +754,65 @@ public sealed class TypeDescriptor
 	}
 
 #if NET_2_0
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider GetProvider (object instance)
 	{
-		throw new NotImplementedException ();
+		if (instance == null)
+			throw new ArgumentNullException ("instance");
+
+		TypeDescriptionProvider ret = null;
+		lock (componentDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+			WeakObjectWrapper instanceWrapper = new WeakObjectWrapper (instance);
+			
+			if (componentDescriptionProviders.TryGetValue (instanceWrapper, out plist) && plist.Count > 0)
+				ret = plist.Last.Value;
+			
+			instanceWrapper = null;
+		}
+
+		if (ret == null)
+			return new DefaultTypeDescriptionProvider ();
+		else
+			return new WrappedTypeDescriptionProvider (ret);
 	}
 
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static TypeDescriptionProvider GetProvider (Type type)
 	{
-		throw new NotImplementedException ();
+		if (type == null)
+			throw new ArgumentNullException ("type");
+		
+		TypeDescriptionProvider ret = null;
+		lock (typeDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+			
+			if (typeDescriptionProviders.TryGetValue (type, out plist) && plist.Count > 0)
+				ret = plist.Last.Value;
+		}
+
+		if (ret == null)
+			return new DefaultTypeDescriptionProvider ();
+		else
+			return new WrappedTypeDescriptionProvider (ret);
 	}
 
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type GetReflectionType (object instance)
 	{
-		throw new NotImplementedException ();
+		if (instance == null)
+			throw new ArgumentNullException ("instance");
+		
+		return instance.GetType ();
 	}
 
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static Type GetReflectionType (Type type)
 	{
-		throw new NotImplementedException ();
+		if (type == null)
+			throw new ArgumentNullException ("type");
+		
+		return type;
 	}
 
 	[MonoNotSupported("Associations not supported")]
@@ -751,18 +843,73 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void RemoveProvider (TypeDescriptionProvider provider, object instance)
 	{
-		throw new NotImplementedException ();
+		if (provider == null)
+			throw new ArgumentNullException ("provider");
+		if (instance == null)
+			throw new ArgumentNullException ("instance");
+
+		bool removed = false;
+		lock (componentDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+			WeakObjectWrapper instanceWrapper = new WeakObjectWrapper (instance);
+
+			if (componentDescriptionProviders.TryGetValue (instanceWrapper, out plist) && plist.Count > 0) {
+				RemoveProvider (provider, plist);
+				removed = true;
+			}
+			
+			instanceWrapper = null;
+		}
+
+		var refreshed = Refreshed;
+		if (refreshed != null)
+			refreshed (new RefreshEventArgs (instance));
 	}
 
-	[MonoNotSupported ("")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public static void RemoveProvider (TypeDescriptionProvider provider, Type type)
 	{
-		throw new NotImplementedException ();
+		if (provider == null)
+			throw new ArgumentNullException ("provider");
+		if (type == null)
+			throw new ArgumentNullException ("type");
+
+		bool removed = false;
+		lock (typeDescriptionProvidersLock) {
+			LinkedList <TypeDescriptionProvider> plist;
+
+			if (typeDescriptionProviders.TryGetValue (type, out plist) && plist.Count > 0) {
+				RemoveProvider (provider, plist);
+				removed = true;
+			}
+		}
+
+		var refreshed = Refreshed;
+		if (refreshed != null)
+			refreshed (new RefreshEventArgs (type));
+	}
+
+	static void RemoveProvider (TypeDescriptionProvider provider, LinkedList <TypeDescriptionProvider> plist)
+	{
+		LinkedListNode <TypeDescriptionProvider> node = plist.Last;
+		LinkedListNode <TypeDescriptionProvider> first = plist.First;
+		TypeDescriptionProvider p;
+				
+		do {
+			p = node.Value;
+			if (p == provider) {
+				plist.Remove (node);
+				break;
+			}
+			if (node == first)
+				break;
+					
+			node = node.Previous;
+					
+		} while (true);
 	}
 #endif
 
@@ -874,6 +1021,197 @@ public sealed class TypeDescriptor
 			type = Type.GetType (typeName);
 		return type;
 	}
+
+#if NET_2_0
+	sealed class AttributeProvider : TypeDescriptionProvider
+	{
+		Attribute[] attributes;
+		
+		public AttributeProvider (Attribute[] attributes, TypeDescriptionProvider parent)
+			: base (parent)
+		{
+			this.attributes = attributes;
+		}
+
+		public override ICustomTypeDescriptor GetTypeDescriptor (Type type, object instance)
+		{
+			return new AttributeTypeDescriptor (base.GetTypeDescriptor (type, instance), attributes);
+		}
+		
+		sealed class AttributeTypeDescriptor : CustomTypeDescriptor
+		{
+			Attribute[] attributes;
+			
+			public AttributeTypeDescriptor (ICustomTypeDescriptor parent, Attribute[] attributes)
+				: base (parent)
+			{
+				this.attributes = attributes;
+			}
+
+			public override AttributeCollection GetAttributes ()
+			{
+				AttributeCollection attrs = base.GetAttributes ();
+
+				if (attrs != null && attrs.Count > 0)
+					return AttributeCollection.FromExisting (attrs, attributes);
+				else
+					return new AttributeCollection (attributes);
+			}
+		}
+	}
+
+	sealed class WrappedTypeDescriptionProvider : TypeDescriptionProvider
+	{
+		public TypeDescriptionProvider Wrapped { get; private set; }
+		
+		public WrappedTypeDescriptionProvider (TypeDescriptionProvider wrapped)
+		{
+			Wrapped = wrapped;
+		}
+
+		public override object CreateInstance (IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
+		{
+			TypeDescriptionProvider wrapped = Wrapped;
+
+			if (wrapped == null)
+				return base.CreateInstance (provider, objectType, argTypes, args);
+			
+			return wrapped.CreateInstance (provider, objectType, argTypes, args);
+		}
+
+		public override IDictionary GetCache (object instance)
+		{
+			TypeDescriptionProvider wrapped = Wrapped;
+
+			if (wrapped == null)
+				return base.GetCache (instance);
+
+			return wrapped.GetCache (instance);
+		}
+
+		public override ICustomTypeDescriptor GetExtendedTypeDescriptor (object instance)
+		{
+			return new DefaultTypeDescriptor (this, null, instance);
+		}
+
+		public override string GetFullComponentName (object component)
+		{
+			TypeDescriptionProvider wrapped = Wrapped;
+
+			if (wrapped == null)
+				return base.GetFullComponentName (component);
+
+			return wrapped.GetFullComponentName (component);
+		}
+
+		public override Type GetReflectionType (Type type, object instance)
+		{
+			TypeDescriptionProvider wrapped = Wrapped;
+
+			if (wrapped == null)
+				return base.GetReflectionType (type, instance);
+
+			return wrapped.GetReflectionType (type, instance);
+		}
+
+		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
+		{
+			return new DefaultTypeDescriptor (this, objectType, instance);
+		}
+	}
+
+	// TODO: this needs more work
+	sealed class DefaultTypeDescriptor : CustomTypeDescriptor
+	{
+		TypeDescriptionProvider owner;
+		Type objectType;
+		object instance;
+
+		public DefaultTypeDescriptor (TypeDescriptionProvider owner, Type objectType, object instance)
+		{
+			this.owner = owner;
+			this.objectType = objectType;
+			this.instance = instance;
+		}
+
+		public override AttributeCollection GetAttributes ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetAttributes ();
+
+			if (instance != null)
+				return TypeDescriptor.GetAttributes (instance, false);
+
+			if (objectType != null)
+				return TypeDescriptor.GetTypeInfo (objectType).GetAttributes ();
+			
+			return base.GetAttributes ();
+		}
+		
+		public override string GetClassName ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetClassName ();
+
+			return base.GetClassName ();
+		}
+
+		public override PropertyDescriptor GetDefaultProperty ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetDefaultProperty ();
+
+			PropertyDescriptor ret;
+			if (objectType != null)
+				ret = TypeDescriptor.GetTypeInfo (objectType).GetDefaultProperty ();
+			else if (instance != null)
+				ret = TypeDescriptor.GetTypeInfo (instance.GetType ()).GetDefaultProperty ();
+			else
+				ret = base.GetDefaultProperty ();
+
+			return ret;
+		}
+
+		public override PropertyDescriptorCollection GetProperties ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetProperties ();
+
+			if (instance != null)
+				return TypeDescriptor.GetProperties (instance, null, false);
+
+			if (objectType != null)
+				return TypeDescriptor.GetTypeInfo (objectType).GetProperties (null);
+
+			return base.GetProperties ();
+		}		
+	}
+
+	sealed class DefaultTypeDescriptionProvider : TypeDescriptionProvider
+	{
+		public DefaultTypeDescriptionProvider ()
+		{
+		}
+
+		public override ICustomTypeDescriptor GetExtendedTypeDescriptor (object instance)
+		{
+			return new DefaultTypeDescriptor (this, null, instance);
+		}
+
+		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
+		{
+			return new DefaultTypeDescriptor (this, objectType, instance);
+		}
+	}
+#endif
 }
 
 	internal abstract class Info
