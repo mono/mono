@@ -41,9 +41,11 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripTextBox () : base (new ToolStripTextBoxControl ())
 		{
-			(this.TextBox as ToolStripTextBoxControl).OwnerItem = this;
-			base.Control.border_style = BorderStyle.None;
-			(base.Control as ToolStripTextBoxControl).Border = BorderStyle.Fixed3D;
+			ToolStripTextBoxControl text_box = TextBox as ToolStripTextBoxControl;
+			text_box.OwnerItem = this;
+			text_box.border_style = BorderStyle.None;
+			text_box.TopMargin = 3; // need to explicitly set the margin
+			text_box.Border = BorderStyle.Fixed3D; // ToolStripTextBoxControl impl, not TextBox
 			this.border_style = BorderStyle.Fixed3D;
 		}
 

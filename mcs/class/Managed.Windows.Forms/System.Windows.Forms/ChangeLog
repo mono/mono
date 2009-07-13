@@ -1,3 +1,12 @@
+2009-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBoxBase.cs: Expose the margin top width as a property, to keep
+	the code clean.
+	* ToolStripTextBox.cs: Since we are actually using no border in the
+	default TextBox impl, and we are drawing the border ourselves, we need
+	to manually set the top margin.
+	Fixes part of #507462.
+
 2009-07-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintPreviewDialog.cs: Record when left was pressed, so we can

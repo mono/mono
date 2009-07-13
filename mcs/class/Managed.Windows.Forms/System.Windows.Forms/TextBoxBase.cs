@@ -1770,6 +1770,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal int TopMargin {
+			get {
+				return document.top_margin;
+			}
+			set {
+				document.top_margin = value;
+			}
+		}
+
 		#region UIA Framework Properties
 
 		internal ScrollBar UIAHScrollBar {
