@@ -80,7 +80,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 8)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector8s*)ptr;
 				}
 			}
@@ -93,7 +93,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 8)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector8us*)ptr;
 				}
 			}
@@ -106,7 +106,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 16)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector16sb*)ptr;
 				}
 			}
@@ -119,7 +119,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 16)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector16b*)ptr;
 				}
 			}
@@ -273,7 +273,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 8)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector8s*)ptr;
 				}
 			}
@@ -286,7 +286,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 8)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector8us*)ptr;
 				}
 			}
@@ -299,7 +299,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 16)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector16sb*)ptr;
 				}
 			}
@@ -312,7 +312,7 @@ namespace Mono.Simd
 			if (offset < 0 || offset > array.Length - 16)
 				throw new IndexOutOfRangeException ();
 			unsafe {
-				fixed (void *ptr = &array[0]) {
+				fixed (void *ptr = &array[offset]) {
 					return *(Vector16b*)ptr;
 				}
 			}

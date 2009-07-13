@@ -1,3 +1,7 @@
+2009-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* Changelog: Rename this to ChangeLog.
+
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Mono.Simd.dll.sources: Added VectorOperations.cs
