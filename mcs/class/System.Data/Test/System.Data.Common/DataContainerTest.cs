@@ -61,7 +61,7 @@ namespace MonoTests.System.Data.Common
 
 				DataTable dt = new DataTable ();
 				myadapter.Fill (dt);
-				Assertion.AssertEquals ("Row count must be three", 3, dt.Rows.Count);
+				Assert.AreEqual (3, dt.Rows.Count, "Row count must be three");
 			} finally {
 				CleanTestSetup ();
 				CloseConnection ();

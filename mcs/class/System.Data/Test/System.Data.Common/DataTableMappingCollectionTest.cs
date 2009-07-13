@@ -36,7 +36,7 @@ using System.Data.Common;
 namespace MonoTests.System.Data.Common
 {
 	[TestFixture]
-	public class DataTableMappingCollectionTest : Assertion
+	public class DataTableMappingCollectionTest
 	{
 		DataTableMappingCollection tableMapCollection;
 		DataTableMapping [] tabs;
@@ -44,11 +44,11 @@ namespace MonoTests.System.Data.Common
 		public void GetReady()
 		{
 			tabs=new DataTableMapping[5];
-			tabs[0]=new DataTableMapping("sourceCustomers","dataSetCustomers");
-			tabs[1]=new DataTableMapping("sourceEmployees","dataSetEmployees");
-			tabs[2]=new DataTableMapping("sourceBooks","dataSetBooks");
-			tabs[3]=new DataTableMapping("sourceStore","dataSetStore");
-			tabs[4]=new DataTableMapping("sourceInventory","dataSetInventory");
+			tabs[0]=new DataTableMapping("sourceCustomers", "dataSetCustomers");
+			tabs[1]=new DataTableMapping("sourceEmployees", "dataSetEmployees");
+			tabs[2]=new DataTableMapping("sourceBooks", "dataSetBooks");
+			tabs[3]=new DataTableMapping("sourceStore", "dataSetStore");
+			tabs[4]=new DataTableMapping("sourceInventory", "dataSetInventory");
 			tableMapCollection=new DataTableMappingCollection();
 		}
 		
@@ -62,15 +62,15 @@ namespace MonoTests.System.Data.Common
 		public void Add()
 		{
 			int t=tableMapCollection.Add((Object)tabs[0]);
-			AssertEquals("test1",0,t);
+			Assert.AreEqual(0, t, "test1");
 			bool eq1=tabs[0].Equals(tableMapCollection[0]);
-			AssertEquals("test2",true,eq1);
-			AssertEquals("test3",1,tableMapCollection.Count);
+			Assert.AreEqual(true, eq1, "test2");
+			Assert.AreEqual(1, tableMapCollection.Count, "test3");
 			DataTableMapping tab2;
-			tab2=tableMapCollection.Add("sourceEmployees","dataSetEmployees");
+			tab2=tableMapCollection.Add("sourceEmployees", "dataSetEmployees");
 			bool eq2=tab2.Equals(tableMapCollection[1]);
-			AssertEquals("test4",true,eq2);
-			AssertEquals("test5",2,tableMapCollection.Count);
+			Assert.AreEqual(true, eq2, "test4");
+			Assert.AreEqual(2, tableMapCollection.Count, "test5");
 		}
 		
 		[Test]
@@ -84,59 +84,59 @@ namespace MonoTests.System.Data.Common
 		[Test]
 		public void AddRange()
 		{
-			tableMapCollection.Add(new DataTableMapping("sourceFactory","dataSetFactory"));
-			AssertEquals("test1",1,tableMapCollection.Count);
+			tableMapCollection.Add(new DataTableMapping("sourceFactory", "dataSetFactory"));
+			Assert.AreEqual(1, tableMapCollection.Count, "test1");
 			tableMapCollection.AddRange(tabs);
-			AssertEquals("test2",6,tableMapCollection.Count);
+			Assert.AreEqual(6, tableMapCollection.Count, "test2");
 			bool eq;
 			eq=tabs[0].Equals(tableMapCollection[1]);
-			AssertEquals("test3",true,eq);
+			Assert.AreEqual(true, eq, "test3");
 			eq=tabs[1].Equals(tableMapCollection[2]);
-			AssertEquals("test4",true,eq);
+			Assert.AreEqual(true, eq, "test4");
 			eq=tabs[0].Equals(tableMapCollection[0]);
-			AssertEquals("test5",false,eq);
+			Assert.AreEqual(false, eq, "test5");
 			eq=tabs[1].Equals(tableMapCollection[0]);
-			AssertEquals("test6",false,eq);			
+			Assert.AreEqual(false, eq, "test6");
 		}
 		
 		[Test]
 		public void Clear()
 		{
-			DataTableMapping tab1=new DataTableMapping("sourceSuppliers","dataSetSuppliers");
+			DataTableMapping tab1=new DataTableMapping("sourceSuppliers", "dataSetSuppliers");
 			tableMapCollection.Add((Object)tab1);
-			AssertEquals("test1",1,tableMapCollection.Count);
+			Assert.AreEqual(1, tableMapCollection.Count, "test1");
 			tableMapCollection.Clear();
-			AssertEquals("test2",0,tableMapCollection.Count);
+			Assert.AreEqual(0, tableMapCollection.Count, "test2");
 			tableMapCollection.AddRange(tabs);
-			AssertEquals("test3",5,tableMapCollection.Count);
+			Assert.AreEqual(5, tableMapCollection.Count, "test3");
 			tableMapCollection.Clear();
-			AssertEquals("test4",0,tableMapCollection.Count);
+			Assert.AreEqual(0, tableMapCollection.Count, "test4");
 		}
 		
 		[Test]
 		public void Contains()
 		{
-			DataTableMapping tab1=new DataTableMapping("sourceCustomers","dataSetCustomers");
+			DataTableMapping tab1=new DataTableMapping("sourceCustomers", "dataSetCustomers");
 			tableMapCollection.AddRange(tabs);
 			bool eq;
 			eq=tableMapCollection.Contains((Object)tabs[0]);
-			AssertEquals("test1",true,eq);
+			Assert.AreEqual(true, eq, "test1");
 			eq=tableMapCollection.Contains((Object)tabs[1]);
-			AssertEquals("test2",true,eq);
+			Assert.AreEqual(true, eq, "test2");
 			eq=tableMapCollection.Contains((Object)tab1);
-			AssertEquals("test3",false,eq);
+			Assert.AreEqual(false, eq, "test3");
 			eq=tableMapCollection.Contains(tabs[0].SourceTable);
-			AssertEquals("test4",true,eq);
+			Assert.AreEqual(true, eq, "test4");
 			eq=tableMapCollection.Contains(tabs[1].SourceTable);
-			AssertEquals("test5",true,eq);
+			Assert.AreEqual(true, eq, "test5");
 			eq=tableMapCollection.Contains(tab1.SourceTable);
-			AssertEquals("test6",true,eq);
+			Assert.AreEqual(true, eq, "test6");
 			eq=tableMapCollection.Contains(tabs[0].DataSetTable);
-			AssertEquals("test7",false,eq);
+			Assert.AreEqual(false, eq, "test7");
 			eq=tableMapCollection.Contains(tabs[1].DataSetTable);
-			AssertEquals("test8",false,eq);
+			Assert.AreEqual(false, eq, "test8");
 			eq=tableMapCollection.Contains(tab1.DataSetTable);
-			AssertEquals("test9",false,eq);
+			Assert.AreEqual(false, eq, "test9");
 		}
 		
 		[Test]
@@ -144,25 +144,25 @@ namespace MonoTests.System.Data.Common
 		{
 			DataTableMapping [] tabcops=new DataTableMapping[5];
 			tableMapCollection.AddRange(tabs);
-			tableMapCollection.CopyTo(tabcops,0);
+			tableMapCollection.CopyTo(tabcops, 0);
 			bool eq;
 			for (int i=0;i<5;i++)
 			{
 				eq=tableMapCollection[i].Equals(tabcops[i]);
-				AssertEquals("test1"+i,true,eq);
+				Assert.AreEqual (true, eq, "test1" + i);
 			}
 			tabcops=null;
 			tabcops=new DataTableMapping[7];
-			tableMapCollection.CopyTo(tabcops,2);
+			tableMapCollection.CopyTo(tabcops, 2);
 			for (int i=0;i<5;i++)
 			{
 				eq=tableMapCollection[i].Equals(tabcops[i+2]);
-				AssertEquals("test2"+i,true,eq);
+				Assert.AreEqual (true, eq, "test2" + i);
 			}
 			eq=tableMapCollection[0].Equals(tabcops[0]);
-			AssertEquals("test31",false,eq);
+			Assert.AreEqual (false, eq, "test31");
 			eq=tableMapCollection[0].Equals(tabcops[1]);
-			AssertEquals("test32",false,eq);
+			Assert.AreEqual (false, eq, "test32");
 		}
 		
 		[Test]
@@ -174,31 +174,31 @@ namespace MonoTests.System.Data.Common
 			DataTableMappingCollection copy1;
 			copy1=tableMapCollection;
 			
-//			AssertEquals("test1",false,tableMapCollection.Equals(collect2));
-			AssertEquals("test2",true,tableMapCollection.Equals(copy1));
-//			AssertEquals("test3",false,collect2.Equals(tableMapCollection));
-			AssertEquals("test4",true,copy1.Equals(tableMapCollection));
-//			AssertEquals("test5",false,collect2.Equals(copy1));
-			AssertEquals("test6",true,copy1.Equals(tableMapCollection));
-			AssertEquals("test7",true,tableMapCollection.Equals(tableMapCollection));
-//			AssertEquals("test8",true,collect2.Equals(collect2));
-			AssertEquals("test9",true,copy1.Equals(copy1));
+//			Assert.AreEqual(false, tableMapCollection.Equals(collect2), "test1");
+			Assert.AreEqual(true, tableMapCollection.Equals(copy1), "test2");
+//			Assert.AreEqual(false, collect2.Equals(tableMapCollection), "test3");
+			Assert.AreEqual(true, copy1.Equals(tableMapCollection), "test4");
+//			Assert.AreEqual(false, collect2.Equals(copy1), "test5");
+			Assert.AreEqual(true, copy1.Equals(tableMapCollection), "test6");
+			Assert.AreEqual(true, tableMapCollection.Equals(tableMapCollection), "test7");
+//			Assert.AreEqual(true, collect2.Equals(collect2), "test8");
+			Assert.AreEqual(true, copy1.Equals(copy1), "test9");
 			
-//			AssertEquals("test10",false,Object.Equals(collect2,tableMapCollection));
-			AssertEquals("test11",true,Object.Equals(copy1,tableMapCollection));
-//			AssertEquals("test12",false,Object.Equals(tableMapCollection,collect2));
-			AssertEquals("test13",true,Object.Equals(tableMapCollection,copy1));
-//			AssertEquals("test14",false,Object.Equals(copy1,collect2));
-			AssertEquals("test15",true,Object.Equals(tableMapCollection,copy1));
-			AssertEquals("test16",true,Object.Equals(tableMapCollection,tableMapCollection));
-//			AssertEquals("test17",true,Object.Equals(collect2,collect2));
-			AssertEquals("test18",true,Object.Equals(copy1,copy1));
-//			AssertEquals("test10",false,Object.Equals(tableMapCollection,collect2));
-			AssertEquals("test11",true,Object.Equals(tableMapCollection,copy1));
-//			AssertEquals("test12",false,Object.Equals(collect2,tableMapCollection));
-			AssertEquals("test13",true,Object.Equals(copy1,tableMapCollection));
-//			AssertEquals("test14",false,Object.Equals(collect2,copy1));
-			AssertEquals("test15",true,Object.Equals(copy1,tableMapCollection));
+//			Assert.AreEqual(false, Object.Equals(collect2, tableMapCollection), "test10");
+			Assert.AreEqual(true, Object.Equals(copy1, tableMapCollection), "test11");
+//			Assert.AreEqual(false, Object.Equals(tableMapCollection, collect2), "test12");
+			Assert.AreEqual(true, Object.Equals(tableMapCollection, copy1), "test13");
+//			Assert.AreEqual(false, Object.Equals(copy1, collect2), "test14");
+			Assert.AreEqual(true, Object.Equals(tableMapCollection, copy1), "test15");
+			Assert.AreEqual(true, Object.Equals(tableMapCollection, tableMapCollection), "test16");
+//			Assert.AreEqual(true, Object.Equals(collect2, collect2), "test17");
+			Assert.AreEqual(true, Object.Equals(copy1, copy1), "test18");
+//			Assert.AreEqual(false, Object.Equals(tableMapCollection, collect2), "test10");
+			Assert.AreEqual(true, Object.Equals(tableMapCollection, copy1), "test11");
+//			Assert.AreEqual(false, Object.Equals(collect2, tableMapCollection), "test12");
+			Assert.AreEqual(true, Object.Equals(copy1, tableMapCollection), "test13");
+//			Assert.AreEqual(false, Object.Equals(collect2, copy1), "test14");
+			Assert.AreEqual(true, Object.Equals(copy1, tableMapCollection), "test15");
 		}
 		
 		[Test]
@@ -209,17 +209,17 @@ namespace MonoTests.System.Data.Common
 			DataTableMapping tab1;
 			tab1=tableMapCollection.GetByDataSetTable("dataSetCustomers");
 			eq=(tab1.DataSetTable.Equals("dataSetCustomers") && tab1.SourceTable.Equals("sourceCustomers"));
-			AssertEquals("test1",true,eq);
+			Assert.AreEqual(true, eq, "test1");
 			tab1=tableMapCollection.GetByDataSetTable("dataSetEmployees");
 			eq=(tab1.DataSetTable.Equals("dataSetEmployees") && tab1.SourceTable.Equals("sourceEmployees"));
-			AssertEquals("test2",true,eq);
+			Assert.AreEqual(true, eq, "test2");
 						
 			tab1=tableMapCollection.GetByDataSetTable("datasetcustomers");
 			eq=(tab1.DataSetTable.Equals("dataSetCustomers") && tab1.SourceTable.Equals("sourceCustomers"));
-			AssertEquals("test3",true,eq);
+			Assert.AreEqual(true, eq, "test3");
 			tab1=tableMapCollection.GetByDataSetTable("datasetemployees");
 			eq=(tab1.DataSetTable.Equals("dataSetEmployees") && tab1.SourceTable.Equals("sourceEmployees"));
-			AssertEquals("test4",true,eq);
+			Assert.AreEqual(true, eq, "test4");
 			
 		}
 		
@@ -229,27 +229,27 @@ namespace MonoTests.System.Data.Common
 			tableMapCollection.AddRange(tabs);
 			bool eq;
 			DataTableMapping tab1;
-			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceCustomers","dataSetCustomers",MissingMappingAction.Passthrough);
+			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceCustomers", "dataSetCustomers", MissingMappingAction.Passthrough);
 			eq=(tab1.DataSetTable.Equals("dataSetCustomers") && tab1.SourceTable.Equals("sourceCustomers"));
-			AssertEquals("test1",true,eq);
-			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceEmployees","dataSetEmployees",MissingMappingAction.Passthrough);
+			Assert.AreEqual(true, eq, "test1");
+			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceEmployees", "dataSetEmployees", MissingMappingAction.Passthrough);
 			eq=(tab1.DataSetTable.Equals("dataSetEmployees") && tab1.SourceTable.Equals("sourceEmployees"));
-			AssertEquals("test2",true,eq);
+			Assert.AreEqual(true, eq, "test2");
 			
-			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceData","dataSetData",MissingMappingAction.Passthrough);
+			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceData", "dataSetData", MissingMappingAction.Passthrough);
 			eq=(tab1.DataSetTable.Equals("sourceData") && tab1.SourceTable.Equals("dataSetData"));
-			AssertEquals("test3",false, eq);
+			Assert.AreEqual(false, eq, "test3");
 			eq=tableMapCollection.Contains(tab1);
-			AssertEquals("test4",false,eq);
-			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceData","dataSetData",MissingMappingAction.Ignore);
-			AssertEquals("test5",null,tab1);
+			Assert.AreEqual(false, eq, "test4");
+			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceData", "dataSetData", MissingMappingAction.Ignore);
+			Assert.AreEqual(null, tab1, "test5");
 		}
 		
 		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetTableMappingBySchemaActionException1()
 		{
-			DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceCustomers","dataSetCustomers",MissingMappingAction.Error);
+			DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection, "sourceCustomers", "dataSetCustomers", MissingMappingAction.Error);
 		}
 		
 		[Test]
@@ -258,14 +258,14 @@ namespace MonoTests.System.Data.Common
 			tableMapCollection.AddRange(tabs);
 			int ind;
 			ind=tableMapCollection.IndexOf(tabs[0]);
-			AssertEquals("test1",0,ind);
+			Assert.AreEqual(0, ind, "test1");
 			ind=tableMapCollection.IndexOf(tabs[1]);
-			AssertEquals("test2",1,ind);
+			Assert.AreEqual(1, ind, "test2");
 					
 			ind=tableMapCollection.IndexOf(tabs[0].SourceTable);
-			AssertEquals("test3",0,ind);
+			Assert.AreEqual(0, ind, "test3");
 			ind=tableMapCollection.IndexOf(tabs[1].SourceTable);
-			AssertEquals("test4",1,ind);			
+			Assert.AreEqual(1, ind, "test4");
 		}
 		
 		[Test]
@@ -274,27 +274,27 @@ namespace MonoTests.System.Data.Common
 			tableMapCollection.AddRange(tabs);
 			int ind;
 			ind=tableMapCollection.IndexOfDataSetTable(tabs[0].DataSetTable);
-			AssertEquals("test1",0,ind);
+			Assert.AreEqual(0, ind, "test1");
 			ind=tableMapCollection.IndexOfDataSetTable(tabs[1].DataSetTable);
-			AssertEquals("test2",1,ind);
+			Assert.AreEqual(1, ind, "test2");
 						
 			ind=tableMapCollection.IndexOfDataSetTable("datasetcustomers");
-			AssertEquals("test3",0,ind);
+			Assert.AreEqual(0, ind, "test3");
 			ind=tableMapCollection.IndexOfDataSetTable("datasetemployees");
-			AssertEquals("test4",1,ind);
+			Assert.AreEqual(1, ind, "test4");
 						
 			ind=tableMapCollection.IndexOfDataSetTable("sourcedeter");
-			AssertEquals("test5",-1,ind);
+			Assert.AreEqual(-1, ind, "test5");
 		}
 		
 		[Test]
 		public void Insert()
 		{
 			tableMapCollection.AddRange(tabs);
-			DataTableMapping mymap=new DataTableMapping("sourceTestAge","datatestSetAge");
-			tableMapCollection.Insert(3,mymap);
+			DataTableMapping mymap=new DataTableMapping("sourceTestAge", "datatestSetAge");
+			tableMapCollection.Insert(3, mymap);
 			int ind=tableMapCollection.IndexOfDataSetTable("datatestSetAge");
-			AssertEquals("test1",3,ind);
+			Assert.AreEqual(3, ind, "test1");
 		}
 		
 		[Test]
@@ -302,11 +302,11 @@ namespace MonoTests.System.Data.Common
 		public void Remove()
 		{
 			tableMapCollection.AddRange(tabs);
-			DataTableMapping mymap=new DataTableMapping("sourceCustomers","dataSetCustomers");
+			DataTableMapping mymap=new DataTableMapping("sourceCustomers", "dataSetCustomers");
 			tableMapCollection.Add(mymap);
 			tableMapCollection.Remove((Object)mymap);
 			bool eq=tableMapCollection.Contains((Object)mymap);
-			AssertEquals("test1",false,eq);
+			Assert.AreEqual(false, eq, "test1");
 		}
 		
 		[Test]
@@ -323,7 +323,7 @@ namespace MonoTests.System.Data.Common
 		public void RemoveException2()
 		{
 			tableMapCollection.AddRange(tabs);
-			DataTableMapping mymap=new DataTableMapping("sourceAge","dataSetAge");
+			DataTableMapping mymap=new DataTableMapping("sourceAge", "dataSetAge");
 			tableMapCollection.Remove(mymap);
 		}
 		
@@ -334,15 +334,15 @@ namespace MonoTests.System.Data.Common
 			bool eq;
 			tableMapCollection.RemoveAt(0);
 			eq=tableMapCollection.Contains(tabs[0]);
-			AssertEquals("test1",false,eq);
+			Assert.AreEqual(false, eq, "test1");
 			eq=tableMapCollection.Contains(tabs[1]);
-			AssertEquals("test2",true,eq);
+			Assert.AreEqual(true, eq, "test2");
 						
 			tableMapCollection.RemoveAt("sourceEmployees");
 			eq=tableMapCollection.Contains(tabs[1]);
-			AssertEquals("test3",false,eq);
+			Assert.AreEqual(false, eq, "test3");
 			eq=tableMapCollection.Contains(tabs[2]);
-			AssertEquals("test4",true,eq);			
+			Assert.AreEqual(true, eq, "test4");
 		}
 		
 		[Test]
@@ -365,7 +365,7 @@ namespace MonoTests.System.Data.Common
 #endif
 		public void ToStringTest()
 		{
-			AssertEquals("test1","System.Data.Common.DataTableMappingCollection",tableMapCollection.ToString());
+			Assert.AreEqual("System.Data.Common.DataTableMappingCollection", tableMapCollection.ToString(), "test1");
 		}
 	}
 }

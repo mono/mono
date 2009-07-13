@@ -73,9 +73,9 @@ namespace MonoTests.System.Data.Odbc
                         reader = cmd.ExecuteReader ();
                         if (reader.Read ()) {
                                 byte b = reader.GetByte (0); 
-                                Assertion.AssertEquals ("GetByte returns wrong result!", 0xff, b);
+                                Assert.AreEqual (0xff, b, "GetByte returns wrong result!");
                         } else // This should not happen while testing
-                                Assertion.AssertEquals ("test table doens not have a test data!", true, true);
+                                Assert.AreEqual (true, true, "test table doens not have a test data!");
                     } finally { // try/catch is necessary to gracefully close connections
                         if (reader != null && reader.IsClosed)
                                 reader.Close ();
@@ -96,23 +96,17 @@ namespace MonoTests.System.Data.Odbc
                 dbcmd.CommandText = sql;
                 IDataReader reader = dbcmd.ExecuteReader ();
                 try {
-                        Assertion.AssertEquals ("GetDataTypeName returns invalid Type for column #1", 
-                                        "TinyInt", reader.GetDataTypeName (0));
-                        Assertion.AssertEquals ("GetDataTypeName returns invalid Type for column #2", 
-                                        "VarChar", reader.GetDataTypeName (1));
+                        Assert.AreEqual ("TinyInt", reader.GetDataTypeName (0), "GetDataTypeName returns invalid Type for column #1");
+                        Assert.AreEqual ("VarChar", reader.GetDataTypeName (1), "GetDataTypeName returns invalid Type for column #2");
                         // Test via method GetFieldType.ToString
-                        Assertion.AssertEquals ("GetFieldType returns invalid Type for column #1", 
-                                        "System.Byte", reader.GetFieldType (0).ToString ());
-                        Assertion.AssertEquals ("GetFieldType returns invalid Type for column #2", 
-                                        "System.String", reader.GetFieldType (1).ToString ());
+                        Assert.AreEqual ("System.Byte", reader.GetFieldType (0).ToString (), "GetFieldType returns invalid Type for column #1");
+                        Assert.AreEqual ("System.String", reader.GetFieldType (1).ToString (), "GetFieldType returns invalid Type for column #2");
 
                         // Test via method GetSchemaTable
                         reader = dbcmd.ExecuteReader ();
                         DataTable schemaTable = reader.GetSchemaTable ();
-                        Assertion.AssertEquals ("GetSchemaTable.ColumnDataType failes for column #1", 
-                                        typeof (Byte), schemaTable.Rows [0]["DataType"]);
-                        Assertion.AssertEquals ("GetSchemaTable.ColumnDataType failes for column #1", 
-                                        typeof (String), schemaTable.Rows [1]["DataType"]);
+                        Assert.AreEqual (typeof (Byte), schemaTable.Rows [0]["DataType"], "GetSchemaTable.ColumnDataType failes for column #1");
+                        Assert.AreEqual (typeof (String), schemaTable.Rows [1]["DataType"], "GetSchemaTable.ColumnDataType failes for column #1");
               } finally {
                         // clean up
                         if (reader != null && !reader.IsClosed)
@@ -131,7 +125,7 @@ namespace MonoTests.System.Data.Odbc
               dbcmd.CommandText = sql;
               OdbcDataReader reader = dbcmd.ExecuteReader ();
               try {
-                      Assertion.AssertEquals ("GetName failes ", "pk_tint", reader.GetName (0));
+                      Assert.AreEqual ("pk_tint", reader.GetName (0), "GetName failes ");
               } finally {
                       // clean up
                       if (reader != null && !reader.IsClosed)
@@ -169,8 +163,7 @@ namespace MonoTests.System.Data.Odbc
                                 // assemble here.
                                 string col = Encoding.Default.GetString (val, 0, buffstart);
                                 
-                                Assertion.AssertEquals ("The assembled value length does not match", 
-                                              39, col.Length);
+                                Assert.AreEqual (39, col.Length, "The assembled value length does not match");
                         }
                 } finally {
                         // clean up
@@ -191,15 +184,12 @@ namespace MonoTests.System.Data.Odbc
                 OdbcDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess);
                 try {
                         if (reader.Read ()) {
-                                Assertion.AssertEquals ("GetBytes on a fixed length column does not work!", 
-                                                  11, reader.GetBytes (1,0,null,0,0));
-                                Assertion.AssertEquals ("GetBytes with non null column does not work!", 
-                                                  39, reader.GetBytes (3,0,null,0,0));
+                                Assert.AreEqual (11, reader.GetBytes (1,0,null,0,0), "GetBytes on a fixed length column does not work!");
+                                Assert.AreEqual (39, reader.GetBytes (3,0,null,0,0), "GetBytes with non null column does not work!");
                         }
                         // for null value, length in bytes should return 0
                         if (reader.Read ()) 
-                                Assertion.AssertEquals ("GetBytes with null column does not return -1" ,
-                                                  -1, reader.GetBytes (3,0,null,0,0));
+                                AssertEquals ("GetBytes with null column does not return -1" , -1, reader.GetBytes (3,0,null,0,0));
                 } finally {
                         // clean up
                         if (reader != null && !reader.IsClosed )
@@ -220,8 +210,7 @@ namespace MonoTests.System.Data.Odbc
                 try {
                         if (reader.Read ()) {
                                 object ob = reader.GetValue (3);
-                                Assertion.AssertEquals ("Type of binary column is wrong!", 
-                                                "System.Byte[]", ob.GetType ().ToString () );
+                                Assert.AreEqual ("System.Byte[]", ob.GetType ().ToString () , "Type of binary column is wrong!");
                         }
                 } finally {
                         // clean up
@@ -243,23 +232,20 @@ namespace MonoTests.System.Data.Odbc
                 try {
                         if (reader.Read ()) {
                                 object ob = reader["col_datetime"];
-                                Assertion.AssertEquals ("Type of datetime column is wrong!", 
-                                                "System.DateTime", ob.GetType ().ToString () );
+                                Assert.AreEqual ("System.DateTime", ob.GetType ().ToString () , "Type of datetime column is wrong!");
                                 ob = reader["col_date"];
-                                Assertion.AssertEquals ("Type of date column is wrong!", 
-                                                "System.DateTime", ob.GetType ().ToString () );
+                                Assert.AreEqual ("System.DateTime", ob.GetType ().ToString () , "Type of date column is wrong!");
 				// FIXME : Once TIME data type is fixed, enable this check
                                 //ob = reader["col_time"];
-                                //Assertion.AssertEquals ("Type of time column is wrong!", 
-                                                //"System.DateTime", ob.GetType ().ToString () );
+                                //Assert.AreEqual ("System.DateTime", ob.GetType ().ToString () , "Type of time column is wrong!");
 
 				DateTime dt = reader.GetDateTime (4);
-				Assertion.AssertEquals ("DateValue (SQL_TIMESTAMP) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				Assert.AreEqual (new DateTime (2004, 8, 22, 0, 0, 0), dt, "DateValue (SQL_TIMESTAMP) is wrong");
 				dt = reader.GetDateTime (5);
-				Assertion.AssertEquals ("DateValue (SQL_DATE) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				Assert.AreEqual (new DateTime (2004, 8, 22, 0, 0, 0), dt, "DateValue (SQL_DATE) is wrong");
 				// FIXME : Once TIME data type is fixed, enable this check
 				//dt = reader.GetDateTime (7);
-				//Assertion.AssertEquals ("DateValue is wrong", "2004-08-22", dt.ToString ());
+				//Assert.AreEqual ("2004-08-22", dt.ToString (), "DateValue is wrong");
                         }
                 } finally {
                         // clean up
@@ -320,10 +306,8 @@ namespace MonoTests.System.Data.Odbc
                 try {
                         if (reader.Read ()) {
                                 object ob = reader.GetValue (0);
-                                Assertion.AssertEquals ("Type of tinyInt column is wrong!", 
-                                                "System.Byte", ob.GetType ().ToString () );
-                                Assertion.AssertEquals ("Value of tinyInt column is wrong!", 
-                                                1, Convert.ToInt16(ob) );
+                                Assert.AreEqual ("System.Byte", ob.GetType ().ToString () , "Type of tinyInt column is wrong!");
+                                Assert.AreEqual (1, Convert.ToInt16(ob) , "Value of tinyInt column is wrong!");
                         }
                 } finally {
                         // clean up
