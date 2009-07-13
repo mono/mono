@@ -1,3 +1,8 @@
+2009-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* x86/x86-codegen.h: Applied patch from Marian Salaj <salo3@atlas.cz>.
+	Fix encoding of PMINSW and PMINSD. Fixes #521662.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/tramp.c: Include a change from the debian patches. Avoid #include-ing
