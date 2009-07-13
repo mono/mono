@@ -1,3 +1,14 @@
+2009-07-13  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Fix the race condition in the unmanaged allocator by
+	locking earlier.  Fix it in the managed allocator by making sure
+	that no thread is stopped there before the GC runs.  If we do stop
+	a thread there, we restart it and let it run a but, until it stops
+	somewhere else.
+
+	* gc-internal.h, gc.c: Function for getting the IP from a signal
+	context via a function registered by mini.
+
 2009-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (MonoIntPtr): New structure describing a boxed
