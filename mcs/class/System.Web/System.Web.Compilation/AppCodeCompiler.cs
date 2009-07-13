@@ -668,9 +668,17 @@ namespace System.Web.Compilation
 				} else
 					return;
 
-				if (HttpApplication.LoadTypeFromBin (providerTypeName) == null)
-					throw new HttpException (String.Format ("Profile provider type not found: {0}",
-										providerTypeName));
+				Exception noTypeException = null;
+				Type ptype = null;
+				
+				try {
+					ptype = HttpApplication.LoadTypeFromBin (providerTypeName);
+				} catch (Exception ex) {
+					noTypeException = ex;
+				}
+
+				if (ptype == null)
+					throw new HttpException (String.Format ("Profile provider type not found: {0}", providerTypeName), noTypeException);
 			}
 		}
 

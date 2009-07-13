@@ -48,27 +48,6 @@ namespace System.Web.Configuration {
 		public static ProviderBase InstantiateProvider (ProviderSettings providerSettings, Type providerType)
 		{
 			Type settingsType = HttpApplication.LoadType (providerSettings.Type);
-			
-			if (settingsType == null)
-				settingsType = HttpApplication.LoadTypeFromBin (providerSettings.Type);
-
-			// check App_Code dlls
-			if (settingsType == null) {
-				IList appCode = BuildManager.CodeAssemblies;
-
-				if (appCode != null && appCode.Count > 0) {
-					Assembly asm;
-					foreach (object o in appCode) {
-						asm = o as Assembly;
-						if (asm == null)
-							continue;
-						settingsType = asm.GetType (providerSettings.Type);
-						if (settingsType != null)
-							break;
-					}
-				}
-			}
-
 			if (settingsType == null)
 				throw new ConfigurationErrorsException (String.Format ("Could not find type: {0}",
 										       providerSettings.Type));

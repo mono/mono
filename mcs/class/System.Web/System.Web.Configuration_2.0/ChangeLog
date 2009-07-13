@@ -1,3 +1,9 @@
+2009-07-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ProvidersHelper.cs: InstantiateProvider doesn't have to
+	explicitly look for types in App_Code assemblies - this is done in
+	HttpApplication.LoadType.
+
 2009-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConfigurationManager.cs: when caching configuration and sections,
