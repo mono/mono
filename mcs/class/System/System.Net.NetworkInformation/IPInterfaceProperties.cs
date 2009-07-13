@@ -142,7 +142,6 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		[MonoTODO ("Always returns an empty collection.")]
 		public override IPAddressCollection DnsAddresses {
 			get {
 				ParseResolvConf ();
@@ -150,7 +149,6 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		[MonoTODO ("Does not return anything.")]
 		public override string DnsSuffix {
 			get {
 				ParseResolvConf ();
