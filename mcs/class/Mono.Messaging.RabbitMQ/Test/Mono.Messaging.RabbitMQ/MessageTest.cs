@@ -30,10 +30,11 @@
 using NUnit.Framework;
 using NUnit.Mocks;
 using System;
-//using System.Messaging;
 using System.Security;
 using System.Security.Permissions;
 using System.Reflection;
+using SystemMessage = System.Messaging.Message;
+using SystemAcknowledgeTypes = System.Messaging.AcknowledgeTypes;
 
 using Mono.Messaging;
 
@@ -58,8 +59,8 @@ namespace MonoTests.Mono.Messaging.RabbitMQ {
             messageMock.Expect ("set_AcknowledgeType", 
                 AcknowledgeTypes.FullReachQueue);
                 
-            System.Messaging.Message m = TestUtils.CreateMessage (iMessage);
-            m.AcknowledgeType = System.Messaging.AcknowledgeTypes.FullReachQueue;
+            SystemMessage m = TestUtils.CreateMessage (iMessage);
+            m.AcknowledgeType = SystemAcknowledgeTypes.FullReachQueue;
             
             messageMock.Verify ();
         }

@@ -63,7 +63,6 @@ namespace System.Messaging
 			return "UnknownError";
 		}
 
-		[MonoTODO]
 		public override string Message 
 		{
 			get { return base.Message; }

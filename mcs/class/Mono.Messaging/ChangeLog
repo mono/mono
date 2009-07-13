@@ -1,3 +1,8 @@
+2009-06-11  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Mono.Messaging_test.dll.sources:  Moved MessageBaseTest.cs and
+	MessageEnumeratorTest.cs to Mono.Messaging.RabbitMQ.Test.
+
 2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* Mono.Messaging_test.dll.sources:  Added MessageEnumeratorExceptionTest.cs

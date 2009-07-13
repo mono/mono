@@ -40,9 +40,8 @@ namespace Mono.Messaging.RabbitMQ {
 
 	public class RabbitMQMessagingProvider : IMessagingProvider {
 		
-		private volatile uint txCounter = 0;
+		private int txCounter = 0;
 		private readonly uint localIp;
-		private static readonly string DEFAULT_REALM = "/data";
 		
 		public RabbitMQMessagingProvider()
 		{
@@ -74,13 +73,14 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public IMessageQueueTransaction CreateMessageQueueTransaction ()
 		{
-			string txId = localIp.ToString () + (++txCounter).ToString (); 
+			Interlocked.Increment (ref txCounter);
+			string txId = localIp.ToString () + txCounter.ToString (); 
 			return new RabbitMQMessageQueueTransaction (txId);
 		}
 		
 		public void DeleteQueue (QueueReference qRef)
 		{
-			RabbitMQMessageQueue.Delete (DEFAULT_REALM, qRef);
+			RabbitMQMessageQueue.Delete (qRef);
 		}
 		
 		private readonly IDictionary queues = new Hashtable ();

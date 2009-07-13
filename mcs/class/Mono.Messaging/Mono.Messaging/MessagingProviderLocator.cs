@@ -43,10 +43,9 @@ namespace Mono.Messaging
 	public class MessagingProviderLocator 
 	{
 		public static readonly TimeSpan InfiniteTimeout = TimeSpan.MaxValue;
+		private static readonly MessagingProviderLocator instance = new MessagingProviderLocator();		
+		private readonly IMessagingProvider provider;
 		
-		private static MessagingProviderLocator instance = new MessagingProviderLocator();		
-		private readonly object syncObj = new object();
-		private IMessagingProvider provider = null;
 		
 		private MessagingProviderLocator () {
 			string providerName = System.Environment.GetEnvironmentVariable("MONO_MESSAGING_PROVIDER");
@@ -55,7 +54,9 @@ namespace Mono.Messaging
 			provider = CreateProvider (providerName);
 		}
 		
-		public static MessagingProviderLocator Instance { get { return instance; } }
+		public static MessagingProviderLocator Instance { 
+			get { return instance; }
+		}
 		
 		public static IMessagingProvider GetProvider ()
 		{
@@ -68,8 +69,7 @@ namespace Mono.Messaging
 			if (t == null)
 				throw new Exception ("Can't find class: " + className);
 			
-			ConstructorInfo ci = t.GetConstructor (BindingFlags.Public | 
-			                                       BindingFlags.Instance,
+			ConstructorInfo ci = t.GetConstructor (BindingFlags.Public | BindingFlags.Instance,
 			                                       Type.DefaultBinder,
 			                                       new Type[0],
 			                                       new ParameterModifier[0]);

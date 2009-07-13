@@ -77,7 +77,6 @@ common_dirs := \
 	RabbitMQ.Client			\
 	Mono.Messaging			\
 	System.Messaging	        \
-	Mono.Messaging.RabbitMQ		\
 	System.ServiceProcess           \
 	System.Drawing.Design		\
 	System.Design			\
@@ -120,7 +119,8 @@ net_2_0_dirs := \
 	Mono.Management			\
 	Mono.Options 			\
 	Mono.Simd			\
-	Mono.Tasklets
+	Mono.Tasklets       \
+	Mono.Messaging.RabbitMQ
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\

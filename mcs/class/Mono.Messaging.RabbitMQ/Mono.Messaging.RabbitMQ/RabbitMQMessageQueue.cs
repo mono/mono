@@ -62,7 +62,6 @@ namespace Mono.Messaging.RabbitMQ {
 		private QueueReference qRef = QueueReference.DEFAULT;
 		private readonly RabbitMQMessagingProvider provider;
 		private readonly MessageFactory helper;
-		private readonly string realm;
 		private readonly bool transactional;
 		
 		public RabbitMQMessageQueue (RabbitMQMessagingProvider provider,
@@ -74,17 +73,9 @@ namespace Mono.Messaging.RabbitMQ {
 		public RabbitMQMessageQueue (RabbitMQMessagingProvider provider,
 		                             QueueReference qRef, 
 		                             bool transactional)
-			: this (provider, "/data", qRef, transactional)
-		{
-		}
-		
-		public RabbitMQMessageQueue (RabbitMQMessagingProvider provider,
-		                             string realm, QueueReference qRef,
-		                             bool transactional)
 		{
 			this.provider = provider;
 			this.helper = new MessageFactory (provider);
-			this.realm = realm;
 			this.qRef = qRef;
 			this.transactional = transactional;
 		}
@@ -203,7 +194,7 @@ namespace Mono.Messaging.RabbitMQ {
 			// No-op (Queue are currently stateless)
 		}
 		
-		public static void Delete (string realm, QueueReference qRef)
+		public static void Delete (QueueReference qRef)
 		{
 			ConnectionFactory cf = new ConnectionFactory ();
 			

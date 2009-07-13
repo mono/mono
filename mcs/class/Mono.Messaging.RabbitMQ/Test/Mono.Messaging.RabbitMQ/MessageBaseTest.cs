@@ -33,6 +33,12 @@ using System.Messaging;
 using System.Reflection;
 using Mono.Messaging;
 
+using SystemAcknowledgeTypes = System.Messaging.AcknowledgeTypes;
+using SystemCryptographicProviderType = System.Messaging.CryptographicProviderType;
+using SystemEncryptionAlgorithm = System.Messaging.EncryptionAlgorithm;
+using SystemHashAlgorithm = System.Messaging.HashAlgorithm;
+using SystemMessagePriority = System.Messaging.MessagePriority;
+
 using NUnit.Framework;
 
 namespace MonoTests.Mono.Messaging {
@@ -59,7 +65,7 @@ namespace MonoTests.Mono.Messaging {
 			Assert.IsNull (m.Body, "Body default should be Null");
 			Assert.IsNull (m.Formatter, "Formatter default should null");
 			
-			Assert.AreEqual (System.Messaging.AcknowledgeTypes.None, 
+			Assert.AreEqual (SystemAcknowledgeTypes.None, 
 					m.AcknowledgeType, 
 					"AcknowledgeType default should be None");
 			Assert.AreEqual (null, m.AdministrationQueue, 
@@ -68,7 +74,7 @@ namespace MonoTests.Mono.Messaging {
 			Assert.AreEqual (true, m.AttachSenderId, "AttachSenderId default should be true");
 			Assert.AreEqual ("Microsoft Base Cryptographic Provider, Ver. 1.0", m.AuthenticationProviderName, 
 					"AuthenticationProviderName should default to \"Microsoft Base Cryptographic Provider, Ver. 1.0\"");
-			Assert.AreEqual (System.Messaging.CryptographicProviderType.RsaFull, 
+			Assert.AreEqual (SystemCryptographicProviderType.RsaFull, 
 					m.AuthenticationProviderType, 
 					"AuthenticationProviderType should default to RsaFull");
 			Assert.AreEqual (null, m.BodyStream, "BodyStream should default to null");
@@ -78,18 +84,18 @@ namespace MonoTests.Mono.Messaging {
 					"DestinationSymmetricKey should default to an empty array");
 			Assert.AreEqual (new byte[0], m.DigitalSignature,
 					"DigitalSignature default to an empty array");
-			Assert.AreEqual (System.Messaging.EncryptionAlgorithm.Rc2,
+			Assert.AreEqual (SystemEncryptionAlgorithm.Rc2,
 					m.EncryptionAlgorithm,
 					"EncryptionAlgorithm should default to Rc2");
 			Assert.AreEqual (new byte[0], m.Extension, 
 					"Extension should default to an empty array");
-			Assert.AreEqual (System.Messaging.HashAlgorithm.Sha, m.HashAlgorithm, 
+			Assert.AreEqual (SystemHashAlgorithm.Sha, m.HashAlgorithm, 
 					"HashAlgorithm should default to Sha");
 			Assert.AreEqual (Guid.Empty.ToString () + "\\0", m.Id, "Id should default to Guid.Empty");
 			Assert.AreEqual ("", m.Label, "Label should default to \"\"");
 			Assert.AreEqual (false, m.IsFirstInTransaction, "IsFirstInTransaction should default to false");
 			Assert.AreEqual (false, m.IsLastInTransaction, "IsLastInTransaction should default to false");
-			Assert.AreEqual (System.Messaging.MessagePriority.Normal, m.Priority,
+			Assert.AreEqual (SystemMessagePriority.Normal, m.Priority,
 					"Priority should default to Normal");
 			Assert.AreEqual (false, m.Recoverable, "Recoverable should default to false");
 			Assert.AreEqual (null, m.ResponseQueue, "ResponseQueue should default to null");

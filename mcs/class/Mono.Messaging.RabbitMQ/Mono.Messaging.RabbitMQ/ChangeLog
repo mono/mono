@@ -1,3 +1,10 @@
+2009-07-11  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageFactory.cs: Switched to DateTime.UtcNow.
+	* RabbitMQMessageQueue.cs: Removed some unecessary references to realm.
+	* RabbitMQMessagingProvider.cs: Removed some unecessary references to realm.
+	Changed volatile field to use Interlocked.Increment (++i is not thread safe).
+
 2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageFactory.cs: Moved TimeSpanToInt32 method to here.

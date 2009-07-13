@@ -1,3 +1,7 @@
+2009-07-11  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueueException.cs: Removed MonoTODO.
+
 2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageEnumerator.cs:  Added calls to the delegate IMessageEnumerator

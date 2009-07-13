@@ -118,7 +118,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 				Assert.IsNotNull (pi, "Property not defined: " + property);
 				object o = pi.GetValue (m, null);
 				Assert.Fail (property + ": " + o);
-			} catch (InvalidOperationException e) {
+			} catch (InvalidOperationException) {
 			} catch (TargetInvocationException e) {
 				Assert.AreEqual (typeof (InvalidOperationException), 
 				                 e.InnerException.GetType ());
@@ -153,7 +153,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 				Assert.IsNotNull(pi, "Property not defined: " + property);
 				pi.SetValue(m, null, null);
 				Assert.Fail(property);
-			} catch (InvalidOperationException e) {
+			} catch (InvalidOperationException) {
 			} catch (TargetInvocationException e) {
 				Assert.AreEqual(exceptionType,
 				                e.InnerException.GetType(),

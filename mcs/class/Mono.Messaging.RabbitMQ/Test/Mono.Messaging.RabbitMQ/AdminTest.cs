@@ -109,7 +109,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			q.Send (m3);
 			q.Send (m4);
 			
-			Message received = q.Receive ();			
+			q.Receive ();			
 			q.Purge ();
 			q.Receive (new TimeSpan (0, 0, 2));
 		}
@@ -122,7 +122,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			
 			q.Send (m1);
 			
-			Message received = q.Receive ();
+			q.Receive ();
 
 			MessageQueue.Delete(@".\private$\delete-queue");
 		}

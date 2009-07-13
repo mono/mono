@@ -85,7 +85,7 @@ namespace Mono.Messaging.RabbitMQ {
 			if (msg.CorrelationId != null)
 				mb.Properties.CorrelationId = msg.CorrelationId;
 			// TODO: Change to DateTime.UtcNow??
-			mb.Properties.Timestamp = MessageFactory.DateTimeToAmqpTimestamp (DateTime.Now);
+			mb.Properties.Timestamp = MessageFactory.DateTimeToAmqpTimestamp (DateTime.UtcNow);
 			Hashtable headers = new Hashtable ();
 			
 			headers[SENDER_VERSION_KEY] = msg.SenderVersion;

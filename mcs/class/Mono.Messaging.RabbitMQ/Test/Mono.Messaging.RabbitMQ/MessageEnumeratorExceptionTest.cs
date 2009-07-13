@@ -33,6 +33,10 @@ using System.Reflection;
 
 using Mono.Messaging;
 
+using SystemMessageEnumerator = System.Messaging.MessageEnumerator;
+using SystemMessageQueueException = System.Messaging.MessageQueueException;
+using SystemIMessageFormatter = System.Messaging.IMessageFormatter;
+
 using NUnit.Framework;
 using NUnit.Mocks;
 
@@ -51,55 +55,55 @@ namespace MonoTests.Mono.Messaging {
 		}
 
 		[Test]
-		[ExpectedException("System.Messaging.MessageQueueException")]
+		[ExpectedException(typeof(SystemMessageQueueException))]
 		public void RemoveCurrentThrowsConnectionException ()
 		{
 			mockME.ExpectAndThrow ("RemoveCurrent", new ConnectionException (QueueReference.DEFAULT), null);
-			System.Messaging.MessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
+			SystemMessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
 			me.RemoveCurrent ();
 		}
 		
 		[Test]
-		[ExpectedException("System.InvalidOperationException")]
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void RemoveCurrentThrowsMessageUnavailableException ()
 		{
 			mockME.ExpectAndThrow ("RemoveCurrent", new MessageUnavailableException (), null);
-			System.Messaging.MessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
+			SystemMessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
 			me.RemoveCurrent ();
 		}		
 		
 		[Test]
-		[ExpectedException("System.Messaging.MessageQueueException")]
+		[ExpectedException(typeof(SystemMessageQueueException))]
 		public void RemoveCurrentThrowsMonoMessagingException ()
 		{
 			mockME.ExpectAndThrow ("RemoveCurrent", new MonoMessagingException (), null);
-			System.Messaging.MessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
+			SystemMessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
 			me.RemoveCurrent ();
 		}		
 		
 		[Test]
-		[ExpectedException("System.NotImplementedException")]
+		[ExpectedException(typeof(NotImplementedException))]
 		public void RemoveCurrentThrowsMessageNotImplemented ()
 		{
 			mockME.ExpectAndThrow ("RemoveCurrent", new NotImplementedException (), null);
-			System.Messaging.MessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
+			SystemMessageEnumerator me = CreateEnumerator ((IMessageEnumerator) mockME.MockInstance);
 			me.RemoveCurrent ();
 		}		
 	
-		public System.Messaging.MessageEnumerator CreateEnumerator (IMessageEnumerator ime)
+		public SystemMessageEnumerator CreateEnumerator (IMessageEnumerator ime)
 		{
             Type[] types = { 
-                typeof (IMessageEnumerator), typeof (System.Messaging.IMessageFormatter)
+                typeof (IMessageEnumerator), typeof (SystemIMessageFormatter)
             };
                 
-            ConstructorInfo ci = typeof (System.Messaging.MessageEnumerator).GetConstructor (
+            ConstructorInfo ci = typeof (SystemMessageEnumerator).GetConstructor (
                 BindingFlags.NonPublic | BindingFlags.Instance, 
                 Type.DefaultBinder, types, new ParameterModifier[0]);
                 
             if (ci == null)
                 throw new Exception ("ConstructorInfo is null");
             
-            return (System.Messaging.MessageEnumerator) ci.Invoke (new object[] { ime, null });
+            return (SystemMessageEnumerator) ci.Invoke (new object[] { ime, null });
 		}
 	}
 }

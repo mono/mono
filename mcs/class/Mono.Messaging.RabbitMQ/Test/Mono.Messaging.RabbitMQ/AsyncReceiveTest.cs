@@ -134,7 +134,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-5");
 			IAsyncResult result = q.BeginReceive (new TimeSpan (0, 0, 2));
 			result.AsyncWaitHandle.WaitOne ();
-			Message rMsg = q.EndReceive (result);
+			q.EndReceive (result);
 		}		
 	}
 }

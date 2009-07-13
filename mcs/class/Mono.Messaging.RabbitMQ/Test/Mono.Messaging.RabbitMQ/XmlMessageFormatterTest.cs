@@ -119,7 +119,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
             
             Assert.AreEqual (t0.Iii, t1.Iii, "The int did not serialise/deserialise properly");
             Assert.AreEqual (t0.Sss, t1.Sss, "The string did not serialise/deserialise properly");
-            Assert.AreEqual (t0.Ttt, t1.Ttt, "The date did not serialise/deserialise properly");
+            Assert.AreEqual (t0.Ttt.ToString (), t1.Ttt.ToString (), "The date did not serialise/deserialise properly");
 			
 			mock1.Verify ();
 			mock2.Verify ();

@@ -53,7 +53,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-[assembly: CLSCompliant (true)]
+[assembly: CLSCompliant (false)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
