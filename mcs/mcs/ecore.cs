@@ -715,27 +715,39 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (non_methods == null) {
+					if (non_methods == null)
 						non_methods = new ArrayList (2);
+
+					bool is_candidate = true;
+					for (int i = 0; i < non_methods.Count; ++i) {
+						MemberInfo n_m = (MemberInfo) non_methods [i];
+						if (n_m.DeclaringType.IsInterface && TypeManager.ImplementsInterface (m.DeclaringType, n_m.DeclaringType)) {
+							non_methods.Remove (n_m);
+							--i;
+						} else if (m.DeclaringType.IsInterface && TypeManager.ImplementsInterface (n_m.DeclaringType, m.DeclaringType)) {
+							is_candidate = false;
+							break;
+						}
+					}
+					
+					if (is_candidate) {
 						non_methods.Add (m);
-						continue;
 					}
-
-					foreach (MemberInfo n_m in non_methods) {
-						if (m.DeclaringType.IsInterface && TypeManager.ImplementsInterface (m.DeclaringType, n_m.DeclaringType))
-							continue;
-
-						Report.SymbolRelatedToPreviousError (m);
-						Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
-							TypeManager.GetFullNameSignature (m), TypeManager.GetFullNameSignature (n_m));
-						return null;
-					}
+				}
+				
+				if (methods.Count == 0 && non_methods != null && non_methods.Count > 1) {
+					Report.SymbolRelatedToPreviousError ((MemberInfo)non_methods [1]);
+					Report.SymbolRelatedToPreviousError ((MemberInfo)non_methods [0]);
+					Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+						TypeManager.GetFullNameSignature ((MemberInfo)non_methods [1]),
+						TypeManager.GetFullNameSignature ((MemberInfo)non_methods [0]));
+					return null;
 				}
 
 				if (methods.Count == 0)
 					return ExprClassFromMemberInfo (container_type, (MemberInfo)non_methods [0], loc);
 
-				if (non_methods != null) {
+				if (non_methods != null && non_methods.Count > 0) {
 					MethodBase method = (MethodBase) methods [0];
 					MemberInfo non_method = (MemberInfo) non_methods [0];
 					if (method.DeclaringType == non_method.DeclaringType) {

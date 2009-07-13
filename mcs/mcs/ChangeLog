@@ -1,3 +1,9 @@
+2009-07-13  Marcus Griep  <marcus@griep.us>
+
+	* ecore.cs: Fix obscure bug with resolving members of interfaces
+	that hide parent interface members. Fixes bug #444388 and corrects
+	bug #323096
+
 2009-07-13  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (LocalVariableReference): Bounce resolve.
