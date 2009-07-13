@@ -201,8 +201,65 @@ namespace System.Net.NetworkInformation {
 				return Read ("statistics/tx_packets");
 			}
 		}
+	}
 
+	// dummy class
+	class MacOsIPv4InterfaceStatistics : IPv4InterfaceStatistics
+	{
+		MacOsNetworkInterface macos;
 		
+		public MacOsIPv4InterfaceStatistics (MacOsNetworkInterface parent)
+		{
+			macos = parent;
+		}
+
+		public override long BytesReceived {
+			get { return 0; }
+		}
+
+		public override long BytesSent {
+			get { return 0; }
+		}
+
+		public override long IncomingPacketsDiscarded {
+			get { return 0; }
+		}
+
+		public override long IncomingPacketsWithErrors {
+			get { return 0; }
+		}
+
+		public override long IncomingUnknownProtocolPackets {
+			get { return 0; }
+		}
+
+		public override long NonUnicastPacketsReceived {
+			get { return 0; }
+		}
+
+		public override long NonUnicastPacketsSent {
+			get { return 0; }
+		}
+
+		public override long OutgoingPacketsDiscarded {
+			get { return 0; }
+		}
+
+		public override long OutgoingPacketsWithErrors {
+			get { return 0; }
+		}
+
+		public override long OutputQueueLength {
+			get { return 0; }
+		}
+
+		public override long UnicastPacketsReceived {
+			get { return 0; }
+		}
+
+		public override long UnicastPacketsSent {
+			get { return 0; }
+		}
 	}
 	
 }

@@ -42,6 +42,9 @@ using System.Globalization;
 
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
+
 		static Version windowsVer51 = new Version (5, 1);
 		static internal readonly bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
 		
@@ -53,8 +56,20 @@ namespace System.Net.NetworkInformation {
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
 			if (runningOnUnix) {
+				bool darwin = false;
+				IntPtr buf = Marshal.AllocHGlobal (8192);
+				if (uname (buf) == 0) {
+					string os = Marshal.PtrToStringAnsi (buf);
+					if (os == "Darwin")
+						darwin = true;
+				}
+				Marshal.FreeHGlobal (buf);
+
 				try {
-					return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
+					if (darwin)
+						return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
+					else
+						return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
 				} catch (SystemException ex) {
 					throw ex;
 				} catch {
@@ -87,7 +102,7 @@ namespace System.Net.NetworkInformation {
 			get {
 				if (runningOnUnix) {
 					try {
-						return LinuxNetworkInterface.IfNameToIndex ("lo");
+						return UnixNetworkInterface.IfNameToIndex ("lo");
 					} catch  {
 						return 0;
 					}
@@ -111,17 +126,103 @@ namespace System.Net.NetworkInformation {
 		public abstract bool SupportsMulticast { get; }
 	}
 
+	abstract class UnixNetworkInterface : NetworkInterface
+	{
+		[DllImport("libc")]
+		static extern int if_nametoindex(string ifname);
+
+		protected IPv4InterfaceStatistics ipv4stats;
+		protected IPInterfaceProperties ipproperties;
+		
+		string               name;
+		int                  index;
+		protected List <IPAddress> addresses;
+		byte[]               macAddress;
+		NetworkInterfaceType type;
+		
+		internal UnixNetworkInterface (string name)
+		{
+			this.name = name;
+			addresses = new List<IPAddress> ();
+		}
+
+		public static int IfNameToIndex (string ifname)
+		{
+			return if_nametoindex(ifname);
+		}
+		
+		internal void AddAddress (IPAddress address)
+		{
+			addresses.Add (address);
+		}
+
+		internal void SetLinkLayerInfo (int index, byte[] macAddress, NetworkInterfaceType type)
+		{
+			this.index = index;
+			this.macAddress = macAddress;
+			this.type = type;
+		}
+
+		public override PhysicalAddress GetPhysicalAddress ()
+		{
+			if (macAddress != null)
+				return new PhysicalAddress (macAddress);
+			else
+				return PhysicalAddress.None;
+		}
+
+		public override bool Supports (NetworkInterfaceComponent networkInterfaceComponent)
+		{
+			bool wantIPv4 = networkInterfaceComponent == NetworkInterfaceComponent.IPv4;
+			bool wantIPv6 = wantIPv4 ? false : networkInterfaceComponent == NetworkInterfaceComponent.IPv6;
+				
+			foreach (IPAddress address in addresses) {
+				if (wantIPv4 && address.AddressFamily == AddressFamily.InterNetwork)
+					return true;
+				else if (wantIPv6 && address.AddressFamily == AddressFamily.InterNetworkV6)
+					return true;
+			}
+			
+			return false;
+		}
+
+		public override string Description {
+			get { return name; }
+		}
+
+		public override string Id {
+			get { return name; }
+		}
+
+		public override bool IsReceiveOnly {
+			get { return false; }
+		}
+
+		public override string Name {
+			get { return name; }
+		}
+		
+		public override NetworkInterfaceType NetworkInterfaceType {
+			get { return type; }
+		}
+		
+		[MonoTODO ("Parse dmesg?")]
+		public override long Speed {
+			get {
+				// Bits/s
+				return 1000000;
+			}
+		}
+	}
+
 	//
 	// This class needs support from the libsupport.so library to fetch the
 	// data using arch-specific ioctls.
 	//
 	// For this to work, we have to create this on the factory above.
 	//
-	class LinuxNetworkInterface : NetworkInterface
+	class LinuxNetworkInterface : UnixNetworkInterface
 	{
-		[DllImport("libc")]
-		static extern int if_nametoindex(string ifname);
-
 		[DllImport ("libc")]
 		static extern int getifaddrs (out IntPtr ifap);
 
@@ -132,13 +233,6 @@ namespace System.Net.NetworkInformation {
 		const int AF_INET6  = 10;
 		const int AF_PACKET = 17;
 		
-		IPv4InterfaceStatistics ipv4stats;
-		IPInterfaceProperties ipproperties;
-		
-		string               name;
-		int                  index;
-		List <IPAddress>     addresses;
-		byte[]               macAddress;
 		NetworkInterfaceType type;
 		string               iface_path;
 		string               iface_operstate_path;
@@ -146,11 +240,6 @@ namespace System.Net.NetworkInformation {
 
 		internal string IfacePath {
 			get { return iface_path; }
-		}
-		
-		public static int IfNameToIndex (string ifname)
-		{
-			return if_nametoindex(ifname);
 		}
 		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
@@ -246,8 +335,14 @@ namespace System.Net.NetworkInformation {
 					if (!address.Equals (IPAddress.None))
 						iface.AddAddress (address);
 
-					if (macAddress != null || type == NetworkInterfaceType.Loopback)
+					if (macAddress != null || type == NetworkInterfaceType.Loopback) {
+						if (type == NetworkInterfaceType.Ethernet) {
+							if (Directory.Exists(iface.IfacePath + "wireless")) {
+								type = NetworkInterfaceType.Wireless80211;
+							}
+						}
 						iface.SetLinkLayerInfo (index, macAddress, type);
+					}
 
 					next = addr.ifa_next;
 				}
@@ -265,29 +360,11 @@ namespace System.Net.NetworkInformation {
 		}
 		
 		LinuxNetworkInterface (string name)
+			: base (name)
 		{
-			this.name = name;
-			addresses = new List<IPAddress> ();
 			iface_path = "/sys/class/net/" + name + "/";
 			iface_operstate_path = iface_path + "operstate";
 			iface_flags_path = iface_path + "flags";
-		}
-
-		internal void AddAddress (IPAddress address)
-		{
-			addresses.Add (address);
-		}
-
-		internal void SetLinkLayerInfo (int index, byte[] macAddress, NetworkInterfaceType type)
-		{
-			this.index = index;
-			this.macAddress = macAddress;
-			if (type == NetworkInterfaceType.Ethernet) {
-				if (Directory.Exists(iface_path + "wireless")) {
-					type = NetworkInterfaceType.Wireless80211;
-				}
-			}
-			this.type = type;
 		}
 
 		public override IPInterfaceProperties GetIPProperties ()
@@ -301,53 +378,9 @@ namespace System.Net.NetworkInformation {
 		{
 			if (ipv4stats == null)
 				ipv4stats = new LinuxIPv4InterfaceStatistics (this);
-			
 			return ipv4stats;
 		}
 
-		public override PhysicalAddress GetPhysicalAddress ()
-		{
-			if (macAddress != null)
-				return new PhysicalAddress (macAddress);
-			else
-				return PhysicalAddress.None;
-		}
-
-		public override bool Supports (NetworkInterfaceComponent networkInterfaceComponent)
-		{
-			bool wantIPv4 = networkInterfaceComponent == NetworkInterfaceComponent.IPv4;
-			bool wantIPv6 = wantIPv4 ? false : networkInterfaceComponent == NetworkInterfaceComponent.IPv6;
-				
-			foreach (IPAddress address in addresses) {
-				if (wantIPv4 && address.AddressFamily == AddressFamily.InterNetwork)
-					return true;
-				else if (wantIPv6 && address.AddressFamily == AddressFamily.InterNetworkV6)
-					return true;
-                        }
-			
-                        return false;
-		}
-
-		public override string Description {
-			get { return name; }
-		}
-
-		public override string Id {
-			get { return name; }
-		}
-
-		public override bool IsReceiveOnly {
-			get { return false; }
-		}
-
-		public override string Name {
-			get { return name; }
-		}
-		
-		public override NetworkInterfaceType NetworkInterfaceType {
-			get { return type; }
-		}
-		
 		public override OperationalStatus OperationalStatus {
 			get {
 				if (!Directory.Exists (iface_path))
@@ -384,14 +417,6 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		[MonoTODO ("Parse dmesg?")]
-		public override long Speed {
-			get {
-				// Bits/s
-				return 1000000;
-			}
-		}
-		
 		public override bool SupportsMulticast {
 			get {
 				if (!Directory.Exists (iface_path))
@@ -409,6 +434,143 @@ namespace System.Net.NetworkInformation {
 				} catch {
 					return false;
 				}
+			}
+		}
+	}
+
+	class MacOsNetworkInterface : UnixNetworkInterface
+	{
+		[DllImport ("libc")]
+		static extern int getifaddrs (out IntPtr ifap);
+
+		[DllImport ("libc")]
+		static extern void freeifaddrs (IntPtr ifap);
+
+		const int AF_INET  = 2;
+		const int AF_INET6 = 30;
+		const int AF_LINK  = 18;
+		
+		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
+		{
+			var interfaces = new Dictionary <string, MacOsNetworkInterface> ();
+			IntPtr ifap;
+			if (getifaddrs (out ifap) != 0)
+				throw new SystemException ("getifaddrs() failed");
+
+			try {
+				IntPtr next = ifap;
+				while (next != IntPtr.Zero) {
+					MacOsStructs.ifaddrs addr = (MacOsStructs.ifaddrs) Marshal.PtrToStructure (next, typeof (MacOsStructs.ifaddrs));
+					IPAddress address = IPAddress.None;
+					string    name = addr.ifa_name;
+					int       index = -1;
+					byte[]    macAddress = null;
+					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+
+					if (addr.ifa_addr != IntPtr.Zero) {
+						MacOsStructs.sockaddr sockaddr = (MacOsStructs.sockaddr) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr));
+
+						if (sockaddr.sa_family == AF_INET6) {
+							MacOsStructs.sockaddr_in6 sockaddr6 = (MacOsStructs.sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in6));
+							address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
+						} else if (sockaddr.sa_family == AF_INET) {
+							MacOsStructs.sockaddr_in sockaddrin = (MacOsStructs.sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in));
+							address = new IPAddress (sockaddrin.sin_addr);
+						} else if (sockaddr.sa_family == AF_LINK) {
+							MacOsStructs.sockaddr_dl sockaddrdl = (MacOsStructs.sockaddr_dl) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_dl));
+
+							macAddress = new byte [(int) sockaddrdl.sdl_alen];
+							Array.Copy (sockaddrdl.sdl_data, sockaddrdl.sdl_nlen, macAddress, 0, macAddress.Length);
+							index = sockaddrdl.sdl_index;
+
+							int hwtype = (int) sockaddrdl.sdl_type;
+							if (Enum.IsDefined (typeof (MacOsArpHardware), hwtype)) {
+								switch ((MacOsArpHardware) hwtype) {
+									case MacOsArpHardware.ETHER:
+										type = NetworkInterfaceType.Ethernet;
+										break;
+
+									case MacOsArpHardware.ATM:
+										type = NetworkInterfaceType.Atm;
+										break;
+									
+									case MacOsArpHardware.SLIP:
+										type = NetworkInterfaceType.Slip;
+										break;
+									
+									case MacOsArpHardware.PPP:
+										type = NetworkInterfaceType.Ppp;
+										break;
+									
+									case MacOsArpHardware.LOOPBACK:
+										type = NetworkInterfaceType.Loopback;
+										macAddress = null;
+										break;
+
+									case MacOsArpHardware.FDDI:
+										type = NetworkInterfaceType.Fddi;
+										break;
+								}
+							}
+						}
+					}
+
+					MacOsNetworkInterface iface = null;
+
+					if (!interfaces.TryGetValue (name, out iface)) {
+						iface = new MacOsNetworkInterface (name);
+						interfaces.Add (name, iface);
+					}
+
+					if (!address.Equals (IPAddress.None))
+						iface.AddAddress (address);
+
+					if (macAddress != null || type == NetworkInterfaceType.Loopback)
+						iface.SetLinkLayerInfo (index, macAddress, type);
+
+					next = addr.ifa_next;
+				}
+			} finally {
+				freeifaddrs (ifap);
+			}
+
+			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
+			int x = 0;
+			foreach (NetworkInterface thisInterface in interfaces.Values) {
+				result [x] = thisInterface;
+				x++;
+			}
+			return result;
+		}
+		
+		MacOsNetworkInterface (string name)
+			: base (name)
+		{
+		}
+
+		public override IPInterfaceProperties GetIPProperties ()
+		{
+			if (ipproperties == null)
+				ipproperties = new MacOsIPInterfaceProperties (this, addresses);
+			return ipproperties;
+		}
+
+		public override IPv4InterfaceStatistics GetIPv4Statistics ()
+		{
+			if (ipv4stats == null)
+				ipv4stats = new MacOsIPv4InterfaceStatistics (this);
+			return ipv4stats;
+		}
+
+		public override OperationalStatus OperationalStatus {
+			get {
+				return OperationalStatus.Unknown;
+			}
+		}
+
+		public override bool SupportsMulticast {
+			get {
+				return false;
 			}
 		}
 	}
