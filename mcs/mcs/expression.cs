@@ -4166,13 +4166,13 @@ namespace Mono.CSharp {
 		public Block Block;
 		public LocalInfo local_info;
 		bool is_readonly;
+		bool resolved;	// TODO: merge with eclass
 
 		public LocalVariableReference (Block block, string name, Location l)
 		{
 			Block = block;
 			this.name = name;
 			loc = l;
-			eclass = ExprClass.Variable;
 		}
 
 		//
@@ -4270,11 +4270,16 @@ namespace Mono.CSharp {
 				}
 			}
 
+			resolved |= ec.DoFlowAnalysis;
+			eclass = ExprClass.Variable;
 			return this;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (resolved)
+				return this;
+
 			ResolveLocalInfo ();
 			local_info.Used = true;
 
@@ -4287,7 +4292,7 @@ namespace Mono.CSharp {
 			return DoResolveBase (ec);
 		}
 
-		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			ResolveLocalInfo ();
 
