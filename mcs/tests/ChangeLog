@@ -1,3 +1,8 @@
+2009-07-13  Marcus Griep  <marcus@griep.us>
+
+	* test-723.cs, test-724.cs: Added test for resolution of interface
+	members that hide parent interface definitions.
+
 2009-06-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (test-local): Empty out.

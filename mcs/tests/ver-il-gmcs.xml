@@ -29079,24 +29079,6 @@
       </method>
     </type>
   </test>
-  <test name="test-416.cs">
-    <type name="ModTest">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main(System.String[])">
-        <size>20</size>
-      </method>
-    </type>
-    <type name="n1.Adder">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Add(Int32, Int32)">
-        <size>4</size>
-      </method>
-    </type>
-  </test>
   <test name="test-417.cs">
     <type name="blah2.MyClass">
       <method name="Void .ctor()">
@@ -29113,26 +29095,6 @@
       </method>
       <method name="Void Main(System.String[])">
         <size>13</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-418.cs">
-    <type name="M3">
-      <method name="Void .ctor()">
-        <size>12</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>133</size>
-      </method>
-    </type>
-    <type name="M1">
-      <method name="Void .ctor(String)">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="M2">
-      <method name="Void .ctor()">
-        <size>7</size>
       </method>
     </type>
   </test>
@@ -35908,6 +35870,48 @@
       </method>
       <method name="Int32 EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-723.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_Count()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Maine">
+      <method name="Int32 Main()">
+        <size>21</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-724.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 DoTest(System.String, System.String, System.String, Int32)">
+        <size>29</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>110</size>
+      </method>
+    </type>
+    <type name="Concrete">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String A.get_Spec()">
+        <size>6</size>
+      </method>
+      <method name="System.String B.get_Spec()">
+        <size>6</size>
+      </method>
+      <method name="System.String get_Spec()">
+        <size>6</size>
       </method>
     </type>
   </test>
