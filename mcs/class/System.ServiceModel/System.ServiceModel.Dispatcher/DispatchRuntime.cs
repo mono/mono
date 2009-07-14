@@ -48,6 +48,7 @@ namespace System.ServiceModel.Dispatcher
 		bool suppress_audio_failure = true;
 		bool completes_tx_on_close, ignore_tx_msg_props, inpersonate;
 		bool release_tx_complete;
+		bool validate_must_understand = true;
 		ClientRuntime callback_client_runtime;
 		ConcurrencyMode concurrency_mode;
 		InstanceContext instance_context;
@@ -219,6 +220,11 @@ namespace System.ServiceModel.Dispatcher
 		public DispatchOperation UnhandledDispatchOperation {
 			get { return unhandled_dispatch_oper; }
 			set { unhandled_dispatch_oper = value; }
+		}
+
+		public bool ValidateMustUnderstand {
+			get { return validate_must_understand; }
+			set { validate_must_understand = value; }
 		}
 	}
 }

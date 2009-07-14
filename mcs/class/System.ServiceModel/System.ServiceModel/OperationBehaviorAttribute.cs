@@ -38,8 +38,13 @@ namespace System.ServiceModel
 		IOperationBehavior
 	{
 		ImpersonationOption impersonation;
-		bool tx_auto_complete, tx_scope_required;
+		bool tx_auto_complete, tx_scope_required, auto_dispose_params = true;
 		ReleaseInstanceMode mode;
+
+		public bool AutoDisposeParameters {
+			get { return auto_dispose_params; }
+			set { auto_dispose_params = value; }
+		}
 
 		public ImpersonationOption Impersonation {
 			get { return impersonation; }
@@ -73,6 +78,7 @@ namespace System.ServiceModel
 			OperationDescription description,
 			DispatchOperation dispatch)
 		{
+			dispatch.AutoDisposeParameters = auto_dispose_params;
 			dispatch.Impersonation = impersonation;
 			dispatch.ReleaseInstanceBeforeCall =
 				mode == ReleaseInstanceMode.BeforeCall ||

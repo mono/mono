@@ -52,7 +52,8 @@ namespace System.ServiceModel.Dispatcher
 		bool serialize_reply = true, deserialize_request = true,
 			is_oneway, is_terminating,
 			release_after_call, release_before_call,
-			tx_auto_complete, tx_required;
+			tx_auto_complete, tx_required,
+			auto_dispose_params = true;
 		ImpersonationOption impersonation;
 		IDispatchMessageFormatter formatter, actual_formatter;
 		IOperationInvoker invoker;
@@ -93,6 +94,11 @@ namespace System.ServiceModel.Dispatcher
 
 		public SynchronizedCollection<ICallContextInitializer> CallContextInitializers {
 			get { return ctx_initializers; }
+		}
+
+		public bool AutoDisposeParameters {
+			get { return auto_dispose_params; }
+			set { auto_dispose_params = value; }
 		}
 
 		public bool DeserializeRequest {

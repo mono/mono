@@ -1,5 +1,11 @@
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationBehaviorAttribute.cs :
+	  add AutoDisposeParameters, and apply it.
+	* CallbackBehaviorAttribute.cs : added couple of missing members.
+
+2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceBehaviorAttribute.cs : fix default values and simplify code.
 
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
