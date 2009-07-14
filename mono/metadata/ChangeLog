@@ -1,3 +1,11 @@
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_array_token): Resolve return
+	type using mono_reflection_type_get_handle.
+
+	* reflection.c (mono_image_get_array_token): Resolve array method
+	parent type using mono_reflection_type_get_handle.
+
 2009-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_image_basic_init): Applied patch from
