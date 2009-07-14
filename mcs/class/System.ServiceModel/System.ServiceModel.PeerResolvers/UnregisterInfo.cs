@@ -37,10 +37,9 @@ namespace System.ServiceModel.PeerResolvers
 			get { return body.RegistrationId; }
 		}
 		
-		[MonoTODO]
 		public bool HasBody ()
 		{
-			throw new NotImplementedException ();
+			return true; // FIXME: I have no idea when it returns false
 		}
 	}
 	

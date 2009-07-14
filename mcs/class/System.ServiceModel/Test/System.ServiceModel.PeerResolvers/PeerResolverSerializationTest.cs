@@ -36,9 +36,26 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.PeerResolvers;
 using System.Xml;
+using NUnit.Framework;
 
+namespace MonoTests.System.ServiceModel.PeerResolvers
+{
+
+[TestFixture]
 public class PeerResolverSerializationTest
 {
+	[Test]
+	public void HasBody ()
+	{
+		Assert.IsTrue (new RegisterInfo ().HasBody (), "#1");
+		Assert.IsTrue (new RegisterResponseInfo ().HasBody (), "#2");
+		Assert.IsTrue (new ResolveInfo ().HasBody (), "#3");
+		Assert.IsTrue (new ResolveResponseInfo ().HasBody (), "#4");
+		Assert.IsTrue (new RefreshInfo ().HasBody (), "#5");
+		Assert.IsTrue (new RefreshResponseInfo ().HasBody (), "#6");
+	}
+
+	[Test]
 	public void ResolveResponseInfo ()
 	{
 		var ser = new DataContractSerializer (typeof (ResolveResponseInfo));
@@ -80,3 +97,5 @@ public class PeerNodeAddress
 	public IList<IPAddress> Addresses { get; set; }
 }
 */
+
+}

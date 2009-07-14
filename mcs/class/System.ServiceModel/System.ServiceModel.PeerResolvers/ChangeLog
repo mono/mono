@@ -1,5 +1,18 @@
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceSettingsResponseInfo.cs
+	  RegisterResponseInfo.cs
+	  RefreshResponseInfo.cs
+	  ResolveInfo.cs
+	  UpdateInfo.cs
+	  RegisterInfo.cs
+	  UnregisterInfo.cs
+	  ResolveResponseInfo.cs
+	  RefreshInfo.cs : implement HasBody(). I couldn't find any case
+	  that this method might return false.
+
+2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CustomPeerResolverService.cs : remove commented code.
 	  Fix and reduce extra code in ServiceBehaviorAttribute.
 

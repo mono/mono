@@ -38,10 +38,9 @@ namespace System.ServiceModel.PeerResolvers
 			set { body.RegistrationLifetime = value; }
 		}
 		
-		[MonoTODO]
 		public bool HasBody ()
 		{
-			throw new NotImplementedException ();
+			return true; // FIXME: I have no idea when it returns false
 		}
 	}
 	
