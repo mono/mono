@@ -1,3 +1,16 @@
+2009-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationSaveEventArgs.cs, ConfigurationSaveEventHandler.cs:
+	added
+
+	* Configuration.cs: added two internal events - SaveStart and
+	SaveEnd. They are used by System.Web's configuration system to
+	suppress application reloads when configuration is modified and
+	saved from within a web application. It is necessary to use events
+	since there is no guarantee the web application will use
+	WebConfigurationManager (and thus WebConfigurationHost) for
+	writing.
+
 2009-06-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationLocation.cs: if the path passed to constructor

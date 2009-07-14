@@ -48,10 +48,13 @@ namespace System.Web.Configuration {
 	public static class WebConfigurationManager
 	{
 #if !TARGET_J2EE
+		static readonly object suppressAppReloadLock = new object ();
+		
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 		static Hashtable sectionCache = new Hashtable ();
 		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
+		static bool suppressAppReload;
 #else
 		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
 		static internal IInternalConfigConfigurationFactory configFactory
@@ -139,7 +142,6 @@ namespace System.Web.Configuration {
 			}
 		}
 #endif
-
 		static ArrayList extra_assemblies = null;
 		static internal ArrayList ExtraAssemblies {
 			get {
@@ -161,10 +163,10 @@ namespace System.Web.Configuration {
 		
 		static WebConfigurationManager ()
 		{
-			PropertyInfo prop = typeof(ConfigurationManager).GetProperty ("ConfigurationFactory", BindingFlags.Static | BindingFlags.NonPublic);
-			if (prop != null)
-				configFactory = prop.GetValue (null, null) as IInternalConfigConfigurationFactory;
-
+			configFactory = ConfigurationManager.ConfigurationFactory;
+			_Configuration.SaveStart += ConfigurationSaveHandler;
+			_Configuration.SaveEnd += ConfigurationSaveHandler;
+			
 			// Part of fix for bug #491531
 			Type type = Type.GetType ("System.Configuration.CustomizableFileSettingsProvider, System", false);
 			if (type != null) {
@@ -174,6 +176,13 @@ namespace System.Web.Configuration {
 			}
 		}
 
+		static void ConfigurationSaveHandler (_Configuration sender, ConfigurationSaveEventArgs args)
+		{
+			string rootConfigPath = WebConfigurationHost.GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
+			if (String.Compare (args.StreamPath, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0)
+				SuppressAppReload (args.Start);
+		}
+		
 		public static _Configuration OpenMachineConfiguration ()
 		{
 			return ConfigurationManager.OpenMachineConfiguration ();
@@ -460,7 +469,19 @@ namespace System.Web.Configuration {
 			HttpRequest req = ctx != null ? ctx.Request : null;
 			return req != null ? req.Path : HttpRuntime.AppDomainAppVirtualPath;
 		}
+		
+		internal static bool SuppressAppReload (bool newValue)
+		{
+			bool ret;
+			
+			lock (suppressAppReloadLock) {
+				ret = suppressAppReload;
+				suppressAppReload = newValue;
+			}
 
+			return ret;
+		}
+		
 		internal static void RemoveConfigurationFromCache (HttpContext ctx)
 		{
 			configurations.Remove (GetCurrentPath (ctx));
@@ -642,7 +663,6 @@ namespace System.Web.Configuration {
 			// nothing. We need a context.
 		}
 	}
-
 #endregion
 }
 

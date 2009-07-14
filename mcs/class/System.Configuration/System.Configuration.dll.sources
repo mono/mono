@@ -50,6 +50,8 @@ System.Configuration/ConfigurationPropertyCollection.cs
 System.Configuration/ConfigurationPropertyOptions.cs
 System.Configuration/ConfigurationRemoveElement.cs
 System.Configuration/ConfigurationSaveMode.cs
+System.Configuration/ConfigurationSaveEventArgs.cs
+System.Configuration/ConfigurationSaveEventHandler.cs
 System.Configuration/ConfigurationSection.cs
 System.Configuration/ConfigurationSectionCollection.cs
 System.Configuration/ConfigurationSectionGroup.cs

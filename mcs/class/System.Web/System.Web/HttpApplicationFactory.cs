@@ -717,9 +717,12 @@ namespace System.Web {
 	        static void OnFileChanged(object sender, FileSystemEventArgs args)
 	        {
 			string name = args.Name;
+			bool isConfig = false;
+			
 			if (StrUtils.EndsWith (name, "onfig", true)) {
 				if (String.Compare (Path.GetFileName (name), "web.config", true) != 0)
 					return;
+				isConfig = true;
 			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
 				return;
 
@@ -731,6 +734,17 @@ namespace System.Web {
 			FileSystemWatcher watcher = sender as FileSystemWatcher;
 			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true) == 0 && Directory.Exists (name))
 				return;
+
+#if NET_2_0
+			// We re-enable suppression here since WebConfigurationManager will disable
+			// it after save is done. WebConfigurationManager is called twice by
+			// Configuration - just after opening the target file and just after closing
+			// it. For that reason we will receive two change notifications and if we
+			// disabled suppression here, it would reload the application on the second
+			// change notification.
+			if (isConfig && WebConfigurationManager.SuppressAppReload (true))
+				return;
+#endif
 			
 	        	lock (watchers_lock) {
 				if(app_shutdown)

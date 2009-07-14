@@ -1,3 +1,9 @@
+2009-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Configuration.dll.sources: added
+	System.Configuration/ConfigurationSaveEventArgs.cs
+	System.Configuration/ConfigurationSaveEventHandler.cs
+
 2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Configuration_test.dll.sources: added
