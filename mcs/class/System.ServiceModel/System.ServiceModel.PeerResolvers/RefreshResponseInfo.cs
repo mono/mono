@@ -14,7 +14,7 @@ namespace System.ServiceModel.PeerResolvers
 	[MessageContract (IsWrapped = false)]
 	public class RefreshResponseInfo
 	{
-		[MessageBodyMember (Name = "RegreshResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		[MessageBodyMember (Name = "RefreshResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 		RefreshResponseInfoDC body;
 		
 		public RefreshResponseInfo ()
