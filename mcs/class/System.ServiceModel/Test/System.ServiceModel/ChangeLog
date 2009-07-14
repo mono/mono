@@ -1,3 +1,7 @@
+2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : new test.
+
 2009-07-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBindingTest.cs : added simple connection test. It somehow

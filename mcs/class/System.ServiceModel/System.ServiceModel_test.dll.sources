@@ -110,6 +110,7 @@ System.ServiceModel.Security/ServiceSecurityContextTest.cs
 System.ServiceModel.Security/SupportingTokenParametersTest.cs
 System.ServiceModel.Security/WSSecurityTokenSerializerTest.cs
 System.ServiceModel/BasicHttpBindingTest.cs
+System.ServiceModel/CallbackBehaviorAttributeTest.cs
 System.ServiceModel/ChannelFactoryTest.cs
 System.ServiceModel/ChannelFactory_1Test.cs
 System.ServiceModel/ClientBaseTest.cs
