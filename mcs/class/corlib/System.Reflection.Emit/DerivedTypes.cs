@@ -201,7 +201,16 @@ namespace System.Reflection.Emit
 			return false;
 		}
 
-#if NET_2_0
+		public override bool IsAssignableFrom (Type c)
+		{
+			return false;
+		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public override bool ContainsGenericParameters {
+			get { return elementType.ContainsGenericParameters; }
+		}
+
 		//FIXME this should be handled by System.Type
 		public override Type MakeGenericType (params Type[] typeArguments)
 		{
@@ -244,7 +253,12 @@ namespace System.Reflection.Emit
 		}
 
 		public override string AssemblyQualifiedName {
-			get { return FullName + ", " + elementType.Assembly.FullName; }
+			get {
+				string fullName = FormatName (elementType.FullName);
+				if (fullName == null)
+					return null;
+				return fullName + ", " + elementType.Assembly.FullName;
+			}
 		}
 
 
@@ -277,7 +291,10 @@ namespace System.Reflection.Emit
 		}
 
 		public override Type UnderlyingSystemType {
-			get { return this; }
+			get {
+				create_unmanaged_type (this);
+				return this;
+			}
 		}
 
 		//MemberInfo
@@ -320,8 +337,17 @@ namespace System.Reflection.Emit
 			get { return typeof (System.Array); }
 		}
 
+		protected override TypeAttributes GetAttributeFlagsImpl ()
+		{
+			if (((ModuleBuilder)elementType.Module).assemblyb.IsCompilerContext)
+				return (elementType.Attributes & TypeAttributes.VisibilityMask) | TypeAttributes.Sealed | TypeAttributes.Serializable;
+			return elementType.Attributes;
+		}
+
 		internal override String FormatName (string elementName)
 		{
+			if (elementName == null)
+				return null;
 			StringBuilder sb = new StringBuilder (elementName);
 			sb.Append ("[");
 			for (int i = 1; i < rank; ++i)
@@ -349,6 +375,8 @@ namespace System.Reflection.Emit
 
 		internal override String FormatName (string elementName)
 		{
+			if (elementName == null)
+				return null;
 			return elementName + "&";
 		}
 
@@ -393,6 +421,8 @@ namespace System.Reflection.Emit
 
 		internal override String FormatName (string elementName)
 		{
+			if (elementName == null)
+				return null;
 			return elementName + "*";
 		}
 	}

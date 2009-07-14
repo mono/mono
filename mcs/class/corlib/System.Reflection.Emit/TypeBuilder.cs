@@ -1380,22 +1380,22 @@ namespace System.Reflection.Emit
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		public override Type MakeArrayType ()
 		{
 			return MakeArrayType (1);
 		}
 
-		[MonoTODO]
 		public override Type MakeArrayType (int rank)
 		{
+			if (rank < 1)
+				throw new IndexOutOfRangeException ();
 			return new ArrayType (this, rank);
 		}
 
 		[MonoTODO]
 		public override Type MakeByRefType ()
 		{
-			return new ByRefType (this);;
+			return new ByRefType (this);
 		}
 
 		[MonoTODO]

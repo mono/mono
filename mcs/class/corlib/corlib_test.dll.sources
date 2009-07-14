@@ -141,6 +141,7 @@ System.Reflection.Emit/DynamicMethodTest.cs
 System.Reflection.Emit/EnumBuilderTest.cs
 System.Reflection.Emit/EventBuilderTest.cs
 System.Reflection.Emit/FieldBuilderTest.cs
+System.Reflection.Emit/GenericTypeParameterBuilderTest.cs
 System.Reflection.Emit/ILGeneratorTest.cs
 System.Reflection.Emit/MethodBuilderTest.cs
 System.Reflection.Emit/MethodOnTypeBuilderInstTest.cs

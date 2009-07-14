@@ -88,6 +88,8 @@ namespace System.Reflection.Emit
 		[ComVisible (true)]
 		public override bool IsSubclassOf (Type c)
 		{
+			if (!((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+				throw not_supported ();
 			if (BaseType == null)
 				return false;
 			else
@@ -96,7 +98,9 @@ namespace System.Reflection.Emit
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
-			return TypeAttributes.Public;
+			if (((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+				return TypeAttributes.Public;
+			throw not_supported ();
 		}
 
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
@@ -205,6 +209,11 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
+		public override bool IsInstanceOfType (object o)
+		{
+			throw not_supported ();
+		}
+
 		protected override bool IsArrayImpl ()
 		{
 			return false;
@@ -271,7 +280,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override Guid GUID {
-			get { return Guid.Empty; }
+			get { throw not_supported (); }
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
@@ -321,12 +330,12 @@ namespace System.Reflection.Emit
 
 		public override Type[] GetGenericArguments ()
 		{
-			throw not_supported ();
+			throw new InvalidOperationException ();
 		}
 
 		public override Type GetGenericTypeDefinition ()
 		{
-			throw not_supported ();
+			throw new InvalidOperationException ();
 		}
 
 		public override bool ContainsGenericParameters {
@@ -347,7 +356,9 @@ namespace System.Reflection.Emit
 
 		public override GenericParameterAttributes GenericParameterAttributes {
 			get {
-				return attrs;
+				if (((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+					return attrs;
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -357,6 +368,8 @@ namespace System.Reflection.Emit
 
 		public override Type[] GetGenericParameterConstraints ()
 		{
+			if (!((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+				throw new InvalidOperationException ();
 			if (base_type == null) {
 				if (iface_constraints != null)
 					return iface_constraints;
@@ -421,16 +434,16 @@ namespace System.Reflection.Emit
 			return base.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override Type MakeArrayType ()
 		{
-			return base.MakeArrayType ();
+			return MakeArrayType (1);
 		}
 
-		[MonoTODO]
 		public override Type MakeArrayType (int rank)
 		{
-			return base.MakeArrayType (rank);
+			if (rank < 1)
+				throw new IndexOutOfRangeException ();
+			return new ArrayType (this, rank);
 		}
 
 		[MonoTODO]

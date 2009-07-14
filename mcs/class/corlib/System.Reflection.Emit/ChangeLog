@@ -1,3 +1,29 @@
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypes.cs (DerivedType): Implement IsAssignableFrom
+	and ContainsGenericParameters
+
+	* DerivedTypes.cs (DerivedType::UnderlyingSystemType): Create 
+	the unmanaged type before returning so the resulting object is
+	understood as a SystemType.
+
+	* DerivedTypes.cs (DerivedType::AssemblyQualifiedName): Return null
+	if element's FullName is null as well.
+
+	* DerivedTypes.cs (ArrayType::GetAttributeFlagsImpl): Return proper
+	array flags if under compiler context.
+	
+	* DerivedTypes.cs (*::FormatName): Return null if elementName is.
+
+	* GenericTypeParameterBuilder.cs: Improve compatibility when not
+	under compler context.
+
+	* GenericTypeParameterBuilder.cs (MakeArrayType): Return an instance
+	of ArrayType instead of relying on the runtime for it.
+
+	* TypeBuilder.cs: Add error checking to MakeArrayType and remove some
+	MonoTODO.
+
 2009-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilder.cs: Applied patch from <Dax@daxxfiles.net>. Save
