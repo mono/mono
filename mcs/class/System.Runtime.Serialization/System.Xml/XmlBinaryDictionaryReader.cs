@@ -156,8 +156,13 @@ namespace System.Xml
 					case BF.TextIndex:
 						return DictValue.Value;
 					case BF.Zero:
+						return "0";
 					case BF.One:
-						return XmlConvert.ToString ((int) TypedValue);
+						return "1";
+					case BF.BoolTrue:
+						return "true";
+					case BF.BoolFalse:
+						return "false";
 					case BF.Int8:
 						return XmlConvert.ToString ((byte) TypedValue);
 					case BF.Int16:
