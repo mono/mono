@@ -42,70 +42,48 @@ namespace System.ServiceModel
 	{
 		public ServiceBehaviorAttribute ()
 		{
-			// FIXME: it should be PerSession as documented.
+			AutomaticSessionShutdown = true;
+			ConcurrencyMode = ConcurrencyMode.Single;
 			InstanceContextMode = InstanceContextMode.PerSession;
-
+			MaxItemsInObjectGraph = 0x10000;
 			SessionMode = SessionMode.Allowed;
+			ReleaseServiceInstanceOnTransactionComplete = true;
+			UseSynchronizationContext = true;
+			ValidateMustUnderstand = true;
 		}
 
-		bool auto_session_shutdown, ignore_ext_data,
-			release, inc_fault_details,
-			use_sync_ctx = true, tx_close, validate_must_understand;
-		ConcurrencyMode concurrency;
-		IsolationLevel tx_level;
 		string tx_timeout;
 		object singleton;
 
 		[MonoTODO]
-		public bool AutomaticSessionShutdown {
-			get { return auto_session_shutdown; }
-			set { auto_session_shutdown = value; }
-		}
+		public bool AutomaticSessionShutdown { get; set; }
 
 		[MonoTODO]
-		public ConcurrencyMode ConcurrencyMode {
-			get { return concurrency; }
-			set { concurrency = value; }
-		}
+		public ConcurrencyMode ConcurrencyMode { get; set; }
 
 		[MonoTODO]
-		public bool IgnoreExtensionDataObject {
-			get { return ignore_ext_data; }
-			set { ignore_ext_data = value; }
-		}
+		public bool IgnoreExtensionDataObject { get; set; }
 
 		public InstanceContextMode InstanceContextMode { get; set; }
 
-		public bool ReleaseServiceInstanceOnTransactionComplete {
-			get { return release; }
-			set { release = value; }
-		}
+		public bool IncludeExceptionDetailInFaults { get; set; }
 
 		[MonoTODO]
-		public bool IncludeExceptionDetailInFaults {
-			get { return inc_fault_details; }
-			set { inc_fault_details = value; }
-		}
+		public int MaxItemsInObjectGraph { get; set; }
+
+		[MonoTODO]
+		public bool ReleaseServiceInstanceOnTransactionComplete { get; set; }
 
 		[MonoTODO]
 		public SessionMode SessionMode { get; set; }
 
-		public bool UseSynchronizationContext {
-			get { return use_sync_ctx; }
-			set { use_sync_ctx = value; }
-		}
+		public bool UseSynchronizationContext { get; set; }
 
 		[MonoTODO]
-		public bool TransactionAutoCompleteOnSessionClose {
-			get { return tx_close; }
-			set { tx_close = value; }
-		}
+		public IsolationLevel TransactionIsolationLevel { get; set; }
 
 		[MonoTODO]
-		public IsolationLevel TransactionIsolationLevel {
-			get { return tx_level; }
-			set { tx_level = value; }
-		}
+		public bool TransactionAutoCompleteOnSessionClose { get; set; }
 
 		[MonoTODO]
 		public string TransactionTimeout {
@@ -118,10 +96,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public bool ValidateMustUnderstand {
-			get { return validate_must_understand; }
-			set { validate_must_understand = value; }
-		}
+		public bool ValidateMustUnderstand { get; set; }
 
 		public object GetWellKnownSingleton ()
 		{
