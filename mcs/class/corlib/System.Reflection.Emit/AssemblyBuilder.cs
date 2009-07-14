@@ -122,6 +122,7 @@ namespace System.Reflection.Emit
 		ImageFileMachine machine;
 		bool corlib_internal;
 		Type[] type_forwarders;
+		byte[] pktoken;
 		#endregion
 #pragma warning restore 169, 414
 		
@@ -203,6 +204,15 @@ namespace System.Reflection.Emit
 				flags |= (uint) AssemblyNameFlags.PublicKey;
 
 			this.corlib_internal = corlib_internal;
+			if (sn != null) {
+				this.pktoken = new byte[sn.PublicKeyToken.Length * 2];
+				int pkti = 0;
+				foreach (byte pkb in sn.PublicKeyToken) {
+					string part = pkb.ToString("x2");
+					this.pktoken[pkti++] = (byte)part[0];
+					this.pktoken[pkti++] = (byte)part[1];
+				}
+			}
 
 			basic_init (this);
 		}
