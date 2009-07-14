@@ -1,5 +1,11 @@
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceBehaviorAttribute.cs : fix IsolationLevel default value.
+	* CallbackBehaviorAttribute.cs : ditto.
+	  Partly implemented interface methods.
+
+2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* OperationBehaviorAttribute.cs :
 	  add AutoDisposeParameters, and apply it.
 	* CallbackBehaviorAttribute.cs : added couple of missing members.

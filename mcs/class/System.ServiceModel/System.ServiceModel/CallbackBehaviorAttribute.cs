@@ -45,6 +45,7 @@ namespace System.ServiceModel
 			MaxItemsInObjectGraph = 0x10000;
 			UseSynchronizationContext = true;
 			ValidateMustUnderstand = true;
+			TransactionIsolationLevel = IsolationLevel.Unspecified;
 		}
 
 		[MonoTODO]
@@ -80,12 +81,11 @@ namespace System.ServiceModel
 		{
 		}
 
-		[MonoTODO]
 		void IEndpointBehavior.ApplyDispatchBehavior (
 			ServiceEndpoint serviceEndpoint,
 			EndpointDispatcher dispatcher)
 		{
-			throw new NotImplementedException ();
+			throw new InvalidOperationException ("This attribute cannot be applied to service endpoint dispatcher");
 		}
 
 		[MonoTODO]
@@ -93,6 +93,9 @@ namespace System.ServiceModel
 			ServiceEndpoint serviceEndpoint,
 			ClientRuntime behavior)
 		{
+			if (serviceEndpoint.Contract.CallbackContractType == null)
+				throw new InvalidOperationException ("This attribute can be applied only to duplex service endpoint");
+
 			throw new NotImplementedException ();
 		}
 

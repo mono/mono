@@ -48,6 +48,7 @@ namespace System.ServiceModel
 			MaxItemsInObjectGraph = 0x10000;
 			SessionMode = SessionMode.Allowed;
 			ReleaseServiceInstanceOnTransactionComplete = true;
+			TransactionIsolationLevel = IsolationLevel.Unspecified;
 			UseSynchronizationContext = true;
 			ValidateMustUnderstand = true;
 		}
