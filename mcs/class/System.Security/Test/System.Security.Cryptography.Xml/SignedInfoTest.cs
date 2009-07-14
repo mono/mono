@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2009 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -189,6 +189,28 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			sig.LoadXml ((XmlElement) doc.SelectSingleNode ("//*[local-name()='SignedInfo']"));
 			sig.CanonicalizationMethod = "urn:foo";
 			XmlElement el = sig.GetXml ();
+		}
+
+		[Test]
+		public void SignatureLength ()
+		{
+			// we can set the length before the algorithm
+			SignedInfo si = new SignedInfo ();
+			si.SignatureLength = "128";
+			Assert.AreEqual ("128", si.SignatureLength, "SignatureLength-1");
+			Assert.IsNull (si.SignatureMethod, "SignatureMethod-1");
+
+			// zero
+			si.SignatureMethod = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+			si.SignatureLength = "0";
+			Assert.AreEqual ("0", si.SignatureLength, "SignatureLength-2");
+			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", si.SignatureMethod, "SignatureMethod-2");
+
+			// mixup length and method
+			si.SignatureLength = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+			si.SignatureMethod = "0";
+			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", si.SignatureLength, "SignatureLength-3");
+			Assert.AreEqual ("0", si.SignatureMethod, "SignatureMethod-3");
 		}
 	}
 }

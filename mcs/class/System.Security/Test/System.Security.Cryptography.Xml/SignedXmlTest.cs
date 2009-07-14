@@ -1294,5 +1294,209 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.IsTrue (sign.CheckSignature (new HMACRIPEMD160 (hmackey)));
 		}
 #endif
+		// CVE-2009-0217
+		// * a 0-length signature is the worse case - it accepts anything
+		// * between 1-7 bits length are considered invalid (not a multiple of 8)
+		// * a 8 bits signature would have one chance, out of 256, to be valid
+		// * and so on... until we hit (output-length / 2) or 80 bits (see ERRATUM)
+
+		static bool erratum = true; // xmldsig erratum for CVE-2009-0217
+
+		static SignedXml GetSignedXml (string xml)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+
+			SignedXml sign = new SignedXml (doc);
+			sign.LoadXml (doc.DocumentElement);
+			return sign;
+		}
+
+		static void CheckErratum (SignedXml signed, KeyedHashAlgorithm hmac, string message)
+		{
+			if (erratum) {
+				try {
+					signed.CheckSignature (hmac);
+					Assert.Fail (message + ": unexcepted success");
+				}
+				catch (CryptographicException) {
+				}
+				catch (Exception e) {
+					Assert.Fail (message + ": unexcepted " + e.ToString ());
+				}
+			} else {
+				Assert.IsTrue (signed.CheckSignature (hmac), message);
+			}
+		}
+
+		private void HmacMustBeMultipleOfEightBits (int bits)
+		{
+			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
+    <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
+      <HMACOutputLength>{0}</HMACOutputLength>
+    </SignatureMethod>
+    <Reference URI=""#object"">
+      <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
+      <DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>
+    gA==
+  </SignatureValue>
+  <Object Id=""object"">some other text</Object>
+</Signature>
+";
+			SignedXml sign = GetSignedXml (String.Format (xml, bits));
+			// only multiple of 8 bits are supported
+			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")));
+		}
+
+		[Test]
+		public void HmacMustBeMultipleOfEightBits ()
+		{
+			for (int i = 1; i < 160; i++) {
+				// The .NET framework only supports multiple of 8 bits
+				if (i % 8 == 0)
+					continue;
+
+				try {
+					HmacMustBeMultipleOfEightBits (i);
+					Assert.Fail ("Unexpected Success " + i.ToString ());
+				}
+				catch (CryptographicException) {
+				}
+				catch (Exception e) {
+					Assert.Fail ("Unexpected Exception " + i.ToString () + " : " + e.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // will fail until a fix is available
+		public void VerifyHMAC_ZeroLength ()
+		{
+			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
+    <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
+      <HMACOutputLength>0</HMACOutputLength>
+    </SignatureMethod>
+    <Reference URI=""#object"">
+      <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
+      <DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>
+  </SignatureValue>
+  <Object Id=""object"">some other text</Object>
+</Signature>
+";
+			SignedXml sign = GetSignedXml (xml);
+
+			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")), "1");
+			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("")), "2");
+			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("oops")), "3");
+			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")), "4");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // will fail until a fix is available
+		public void VerifyHMAC_SmallerThanMinimumLength ()
+		{
+			// 72 is a multiple of 8 but smaller than the minimum of 80 bits
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1""><HMACOutputLength>72</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>2dimB+P5Aw5K</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
+			SignedXml sign = GetSignedXml (xml);
+			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")), "72");
+		}
+
+		[Test]
+		public void VerifyHMAC_MinimumLength ()
+		{
+			// 80 bits is the minimum (and the half-size of HMACSHA1)
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1""><HMACOutputLength>80</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>jVQPtLj61zNYjw==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
+			SignedXml sign = GetSignedXml (xml);
+			Assert.IsTrue (sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret"))));
+		}
+#if NET_2_0
+		[Test]
+		[Category ("NotDotNet")] // will fail until a fix is available
+		public void VerifyHMAC_SmallerHalfLength ()
+		{
+			// 80bits is smaller than the half-size of HMACSHA256
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#hmac-sha256""><HMACOutputLength>80</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>vPtw7zKVV/JwQg==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
+			SignedXml sign = GetSignedXml (xml);
+			CheckErratum (sign, new HMACSHA256 (Encoding.ASCII.GetBytes ("secret")), "80");
+		}
+
+		[Test]
+		public void VerifyHMAC_HalfLength ()
+		{
+			// 128 is the half-size of HMACSHA256
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#hmac-sha256""><HMACOutputLength>128</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>aegpvkAwOL8gN/CjSnW6qw==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
+			SignedXml sign = GetSignedXml (xml);
+			Assert.IsTrue (sign.CheckSignature (new HMACSHA256 (Encoding.ASCII.GetBytes ("secret"))));
+		}
+#endif
+		[Test]
+		public void VerifyHMAC_FullLength ()
+		{
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" /><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>7/XTsHaBSOnJ/jXD5v0zL6VKYsk=</DigestValue></Reference></SignedInfo><SignatureValue>a0goL9esBUKPqtFYgpp2KST4huk=</SignatureValue><Object Id=""object"">some text</Object></Signature>";
+			SignedXml sign = GetSignedXml (xml);
+			Assert.IsTrue (sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret"))));
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void VerifyHMAC_HMACOutputLength_Signature_Mismatch ()
+		{
+			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
+    <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
+      <HMACOutputLength>80</HMACOutputLength>
+    </SignatureMethod>
+    <Reference URI=""#object"">
+      <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
+      <DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>
+  </SignatureValue>
+  <Object Id=""object"">some other text</Object>
+</Signature>
+";
+			SignedXml sign = GetSignedXml (xml);
+			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void VerifyHMAC_HMACOutputLength_Invalid ()
+		{
+			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
+    <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
+      <HMACOutputLength>I wish this was not a string property</HMACOutputLength>
+    </SignatureMethod>
+    <Reference URI=""#object"">
+      <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
+      <DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>
+  </SignatureValue>
+  <Object Id=""object"">some other text</Object>
+</Signature>
+";
+			SignedXml sign = GetSignedXml (xml);
+			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")));
+		}
 	}
 }
