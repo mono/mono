@@ -57,10 +57,12 @@ namespace System.Net.Sockets
 		public bool DisconnectReuseSocket { get; set; }
 		public SocketAsyncOperation LastOperation { get; private set; }
 		public int Offset { get; private set; }
-		public IPPacketInformation ReceiveMessageFromPacketInfo { get; private set; }
 		public EndPoint RemoteEndPoint { get; set; }
+#if !NET_2_1
+		public IPPacketInformation ReceiveMessageFromPacketInfo { get; private set; }
 		public SendPacketsElement[] SendPacketsElements { get; set; }
 		public TransmitFileOptions SendPacketsFlags { get; set; }
+#endif
 		public int SendPacketsSendSize { get; set; }
 		public SocketError SocketError { get; set; }
 		public SocketFlags SocketFlags { get; set; }
@@ -91,8 +93,10 @@ namespace System.Net.Sockets
 			LastOperation = SocketAsyncOperation.None;
 			Offset = 0;
 			RemoteEndPoint = null;
+#if !NET_2_1
 			SendPacketsElements = null;
 			SendPacketsFlags = TransmitFileOptions.UseDefaultWorkerThread;
+#endif
 			SendPacketsSendSize = 0;
 			SocketError = SocketError.Success;
 			SocketFlags = SocketFlags.None;

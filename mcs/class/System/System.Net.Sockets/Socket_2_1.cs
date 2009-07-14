@@ -41,14 +41,17 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Reflection;
 using System.IO;
-using System.Net.Configuration;
 using System.Security;
 using System.Text;
 
+#if !NET_2_1
+using System.Net.Configuration;
+#endif
+
 #if NET_2_0
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 #if !NET_2_1
+using System.Net.NetworkInformation;
 using System.Timers;
 #endif
 #endif
