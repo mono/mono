@@ -34,11 +34,12 @@ namespace MonoTests.Common
 			}
 
 			if (exception == null || exception.GetType () != exceptionType)
-				Assert.Fail ("{0}{1}Expected: {2}{1}But was: {3}{1}",
+				Assert.Fail ("{0}{1}Expected: {2}{1}But was: {3}{1}{4}{1}",
 				    message,
 				    Environment.NewLine,
 				    exceptionType,
-				    exception == null ? "null" : exception.GetType ().ToString ());
+				    exception == null ? "no exception" : exception.GetType ().ToString (),
+				    exception == null ? "no exception" : exception.ToString ());
 		}
 
 		public static void Throws (AssertThrowsDelegate code, string message)

@@ -43,10 +43,46 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FieldTemplateFactory : IFieldTemplateFactory
 	{
-		[MonoTODO]
+		const string DEFAULT_TEMPLATE_FOLDER_VIRTUAL_PATH = "FieldTemplates/";
+		
+		string templateFolderVirtualPath;
+		
 		public MetaModel Model { get; private set; }
-		[MonoTODO]
-		public string TemplateFolderVirtualPath { get; set; }
+
+		public string TemplateFolderVirtualPath {
+			get {
+				if (templateFolderVirtualPath) {
+					MetaModel m = Model;
+
+					templateFolderVirtualPath = m != null ?
+						m.DynamicDataFolderVirtualPath + DEFAULT_TEMPLATE_FOLDER_VIRTUAL_PATH :
+						DEFAULT_TEMPLATE_FOLDER_VIRTUAL_PATH;
+				}
+
+				return templateFolderVirtualPath;
+			}
+			
+			set {
+				MetaModel m = Model;
+
+				if (m != null) {
+					if (value == null)
+						templateFolderVirtualPath = m.DynamicDataFolderVirtualPath + DEFAULT_TEMPLATE_FOLDER_VIRTUAL_PATH;
+					else if (value.Length == 0)
+						// "compatibility"
+						throw new ArgumentNullException ("value");
+					else
+						templateFolderVirtualPath = m.DynamicDataFolderVirtualPath + value;
+				} else {
+					if (value == null)
+						templateFolderVirtualPath = DEFAULT_TEMPLATE_FOLDER_VIRTUAL_PATH;
+					else
+						templateFolderVirtualPath = value;
+				}
+
+				templateFolderVirtualPath = VirtualPathUtility.AppendTrailingSlash (templateFolderVirtualPath);
+			}
+		}
 
 		[MonoTODO]
 		public virtual string BuildVirtualPath (string templateName, MetaColumn column, DataBoundControlMode mode)
@@ -57,27 +93,36 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public virtual IFieldTemplate CreateFieldTemplate (MetaColumn column, DataBoundControlMode mode, string uiHint)
 		{
-			throw new NotImplementedException ();
+			// NO checks are made on parameters in .NET, but well "handle" the NREX
+			// throws in the other methods
+			DataBoundControlMode newMode = PreprocessMode (column, mode);
+			string path = null;
+			
+			return BuildManager.CreateInstanceFromVirtualPath (path, typeof (IFieldTemplate));
 		}
 
 		[MonoTODO]
 		public virtual string GetFieldTemplateVirtualPath (MetaColumn column, DataBoundControlMode mode, string uiHint)
 		{
+			// NO checks are made on parameters in .NET, but well "handle" the NREX
+			// throws in the other methods
+			DataBoundControlMode newMode = PreprocessMode (column, mode);
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public virtual void Initialize (MetaModel model)
 		{
-			if (model == null)
-				throw new ArgumentNullException ("model");
 			Model = model;
-			// FIXME: do something more.
 		}
 
 		[MonoTODO]
 		public virtual DataBoundControlMode PreprocessMode (MetaColumn column, DataBoundControlMode mode)
 		{
+			// In good tradition of .NET's DynamicData, let's not check the
+			// parameters...
+			if (column == null)
+				throw new NullReferenceException ();
+			
 			throw new NotImplementedException ();
 		}
 	}

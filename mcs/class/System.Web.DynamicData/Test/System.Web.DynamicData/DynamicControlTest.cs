@@ -1,5 +1,5 @@
 ﻿//
-// MetaModelTest.cs
+// DynamicControlTest.cs
 //
 // Authors:
 //      Marek Habersack <mhabersack@novell.com>
@@ -109,6 +109,14 @@ namespace MonoTests.System.Web.DynamicData
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_03.aspx.cs", "ListView_DynamicControl_03.aspx.cs");
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_04.aspx", "ListView_DynamicControl_04.aspx");
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_04.aspx.cs", "ListView_DynamicControl_04.aspx.cs");
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			CleanUp_FullTypeNameTemplates ();
+			CleanUp_ShortTypeNameTemplates ();
+			WebTest.Unload ();
 		}
 
 		[Test]
@@ -669,8 +677,6 @@ namespace MonoTests.System.Web.DynamicData
 			"Char.ascx.cs",
 			"Byte.ascx",
 			"Byte.ascx.cs",
-			"Boolean.ascx",
-			"Boolean.ascx.cs",
 			"Int16.ascx",
 			"Int16.ascx.cs",
 			"Int32.ascx",
@@ -786,6 +792,161 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		public void GetAttribute ()
+		{
+			var dc = new DynamicControl ();
+			Assert.AreEqual (String.Empty, dc.GetAttribute ("NoSuchAttribute"), "#A1");
+
+			dc.SetAttribute ("MyAttribute", "value");
+			Assert.AreEqual ("value", dc.GetAttribute ("MyAttribute"), "#B1");
+
+			// Nice...
+			AssertExtensions.Throws <KeyNotFoundException> (() => {
+				dc.GetAttribute ("NoSuchAttribute");
+			}, "#C1");
+		}
+
+		[Test]
+		public void HtmlEncode ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_01.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (HtmlEncode_OnLoad);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void HtmlEncode_OnLoad (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			var dc = lc.FindChild<DynamicControl> ("FirstName");
+			Assert.IsNotNull (dc, "#A1-1");
+			Assert.IsNotNull (dc.Column, "#A1-2");
+
+			Assert.AreEqual (true, dc.HtmlEncode, "#B1");
+			Assert.AreEqual (dc.HtmlEncode, dc.Column.HtmlEncode, "#B1-1");
+
+			dc.HtmlEncode = false;
+			Assert.AreEqual (false, dc.HtmlEncode, "#C1");
+			Assert.AreNotEqual (dc.HtmlEncode, dc.Column.HtmlEncode, "#C1-1");
+		}
+
+		[Test]
+		public void IFieldTemplateHost_FormattingOptions ()
+		{
+			var dc = new DynamicControl ();
+
+			Assert.IsNotNull (((IFieldTemplateHost) dc).FormattingOptions, "#A1");
+			Assert.AreEqual (dc, ((IFieldTemplateHost) dc).FormattingOptions, "#A2");
+		}
+
+		[Test]
+		public void Mode ()
+		{
+			var dc = new DynamicControl (DataBoundControlMode.Edit);
+			Assert.AreEqual (DataBoundControlMode.Edit, dc.Mode, "#A1");
+
+			dc.Mode = DataBoundControlMode.Insert;
+			Assert.AreEqual (DataBoundControlMode.Insert, dc.Mode, "#A2");
+
+			dc.Mode = DataBoundControlMode.ReadOnly;
+			Assert.AreEqual (DataBoundControlMode.ReadOnly, dc.Mode, "#A3");
+		}
+
+		[Test]
+		public void NullDisplayText ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_01.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (NullDisplayText_OnLoad);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void NullDisplayText_OnLoad (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			var dc = lc.FindChild<DynamicControl> ("FirstName");
+			Assert.IsNotNull (dc, "#A1-1");
+			Assert.IsNotNull (dc.Column, "#A1-2");
+
+			Assert.AreEqual (String.Empty, dc.NullDisplayText, "#B1");
+			Assert.AreEqual (dc.NullDisplayText, dc.Column.NullDisplayText, "#B1-1");
+
+			dc.NullDisplayText = "Text";
+			Assert.AreEqual ("Text", dc.NullDisplayText, "#C1");
+			Assert.AreNotEqual (dc.NullDisplayText, dc.Column.NullDisplayText, "#C1-1");
+
+			dc = lc.FindChild<DynamicControl> ("LastName");
+			Assert.IsNotNull (dc, "#D1");
+			Assert.IsNotNull (dc.Column, "#D1-1");
+			Assert.AreEqual ("No value for this column", dc.NullDisplayText, "#D1-2");
+			Assert.AreEqual (dc.NullDisplayText, dc.Column.NullDisplayText, "#D1-3");
+
+			dc.NullDisplayText = String.Empty;
+			Assert.AreEqual (String.Empty, dc.NullDisplayText, "#E1");
+			Assert.AreNotEqual (dc.NullDisplayText, dc.Column.NullDisplayText, "#E1-1");
+		}
+
+		[Test]
+		public void SetAttribute ()
+		{
+			var dc = new PokerDynamicControl ();
+
+			string html = dc.RenderToString ();
+			Assert.IsNotNull (html, "#A1");
+
+			dc.SetAttribute ("MyAttribute", "Value");
+			html = dc.RenderToString ();
+			Assert.IsNotNull (html, "#B1");
+			Assert.AreEqual ("Value", dc.GetAttribute ("MyAttribute"), "#B2");
+
+			dc.SetAttribute ("MyAttribute", "Another value");
+			Assert.AreEqual ("Another value", dc.GetAttribute ("MyAttribute"), "#C1");
+		}
+
+		[Test]
+		public void SetAttribute_1 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_01.aspx");
+			var delegates = new PageDelegates ();
+			delegates.PreRenderComplete = SetAttribute_OnPreRenderComplete_1;
+			test.Invoker = new PageInvoker (delegates);
+
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void SetAttribute_OnPreRenderComplete_1 (Page p)
+		{
+			// TODO: figure out how the attributes are used. They aren't rendered along with the control,
+			// but obviously they must be used somewhere...
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			var dc = lc.FindChild<PokerDynamicControl> ("FirstName");
+			Assert.IsNotNull (dc, "#A1-1");
+
+			string html = dc.RenderToString ();
+			Assert.IsFalse (String.IsNullOrEmpty (html), "#B1");
+
+			dc.SetAttribute ("MyAttribute", "value");
+			html = dc.RenderToString ();
+			Assert.IsFalse (String.IsNullOrEmpty (html), "#C1");
+		}
+
+		[Test]
 		public void Table ()
 		{
 			var test = new WebTest ("ListView_DynamicControl_01.aspx");
@@ -889,6 +1050,15 @@ namespace MonoTests.System.Web.DynamicData
 
 			// UIHint attribute found on the associated field but overriden in the page
 			Assert.AreEqual ("MyCustomUIHintTemplate_Text", dc.UIHint, "#D1-2");
+		}
+
+		[Test]
+		public void ValidationGroup ()
+		{
+			// TODO: more complicated tests involving actual page and validation
+			var dc = new DynamicControl ();
+			dc.ValidationGroup = "Group1";
+			Assert.AreEqual ("Group1", dc.ValidationGroup, "#A1");
 		}
 	}
 }

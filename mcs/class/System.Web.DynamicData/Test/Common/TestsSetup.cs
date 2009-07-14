@@ -90,6 +90,12 @@ namespace MonoTests.Common
 
 			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.MyCustomUIHintTemplate_Text.ascx", BuildPath ("DynamicData/FieldTemplates/MyCustomUIHintTemplate_Text.ascx"));
 			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.MyCustomUIHintTemplate_Text.ascx.cs", BuildPath ("DynamicData/FieldTemplates/MyCustomUIHintTemplate_Text.ascx.cs"));
+
+			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.PlainControlTemplate.ascx", BuildPath ("DynamicData/FieldTemplates/PlainControlTemplate.ascx"));
+			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.PlainControlTemplate.ascx.cs", BuildPath ("DynamicData/FieldTemplates/PlainControlTemplate.ascx.cs"));
+
+			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx", BuildPath ("DynamicData/FieldTemplates/CustomColor.ascx"));
+			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx.cs", BuildPath ("DynamicData/FieldTemplates/CustomColor.ascx.cs"));
 		}
 	}
 }

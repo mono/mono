@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -26,6 +27,13 @@ namespace MonoTests.Common
 		public object GetViewState ()
 		{
 			return SaveViewState ();
+		}
+
+		public string RenderToString ()
+		{
+			var sb = new StringBuilder ();
+			Render (new HtmlTextWriter (new StringWriter (sb)));
+			return sb.ToString ();
 		}
 	}
 }

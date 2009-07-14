@@ -39,6 +39,8 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicData/FieldTemplates/Boolean_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Boolean_Edit.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/Children.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Children.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates/Children.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Children.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/CustomColor.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/CustomColor.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/CustomFieldTemplate.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.CustomFieldTemplate.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates/CustomFieldTemplate.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.CustomFieldTemplate.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/DateTime.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.DateTime.ascx	\
@@ -119,6 +121,8 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt32.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt32.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt64.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt64.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt64.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt64.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates/PlainControlTemplate.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.PlainControlTemplate.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates/PlainControlTemplate.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.PlainControlTemplate.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/Text.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Text.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates/Text.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates.Text.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates/Text_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates.Text_Edit.ascx	\
