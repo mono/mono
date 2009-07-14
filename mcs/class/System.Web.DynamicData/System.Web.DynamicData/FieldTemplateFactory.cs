@@ -35,6 +35,7 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Caching;
+using System.Web.Compilation;
 using System.Web.UI.WebControls;
 
 namespace System.Web.DynamicData
@@ -51,7 +52,7 @@ namespace System.Web.DynamicData
 
 		public string TemplateFolderVirtualPath {
 			get {
-				if (templateFolderVirtualPath) {
+				if (templateFolderVirtualPath == null) {
 					MetaModel m = Model;
 
 					templateFolderVirtualPath = m != null ?
@@ -98,7 +99,7 @@ namespace System.Web.DynamicData
 			DataBoundControlMode newMode = PreprocessMode (column, mode);
 			string path = null;
 			
-			return BuildManager.CreateInstanceFromVirtualPath (path, typeof (IFieldTemplate));
+			return (IFieldTemplate) BuildManager.CreateInstanceFromVirtualPath (path, typeof (IFieldTemplate));
 		}
 
 		[MonoTODO]
