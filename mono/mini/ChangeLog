@@ -1,5 +1,10 @@
 2009-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (mono_LDADD): Pass LLVM_LDFLAGS to the linked.
+
+	* unwind.c (mono_unwind_get_ops_from_fde): Make this return
+	the length of the native code as well.
+
         * basic-simd.cs: Add a test for #521662.
 
 Mon Jul 13 17:58:50 CEST 2009 Paolo Molaro <lupus@ximian.com>
