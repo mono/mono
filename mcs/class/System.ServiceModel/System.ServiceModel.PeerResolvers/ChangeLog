@@ -1,5 +1,12 @@
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ResolveResponseInfo.cs : by default it returns empty address list,
+	  instead of xsi:nil.
+	* LocalPeerResolverService.cs : resolve operation should return
+	  all registered nodes but the client itself.
+
+2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RefreshResponseInfo.cs : fix name typo.
 
 2009-07-09  Atsushi Enomoto  <atsushi@ximian.com>

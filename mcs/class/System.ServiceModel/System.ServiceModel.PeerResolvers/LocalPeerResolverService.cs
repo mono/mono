@@ -119,7 +119,9 @@ namespace System.ServiceModel.PeerResolvers
 			var rr = new ResolveResponseInfo ();
 			if (!mesh_map.TryGetValue (r.MeshId, out mesh))
 				return rr;
-			foreach (var node in mesh.TakeWhile (n => n.ClientId == r.ClientId)) {
+			// FIXME: find out how to use the argument ClientId.
+			// So far, it is used to filter out the registered node from the same ClientId.
+			foreach (var node in mesh.TakeWhile (n => n.ClientId != r.ClientId)) {
 				rr.Addresses.Add (node.Address);
 				if (rr.Addresses.Count == r.MaxAddresses)
 					break;

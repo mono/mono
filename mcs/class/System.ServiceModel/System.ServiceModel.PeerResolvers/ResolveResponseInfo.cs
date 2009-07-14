@@ -47,6 +47,7 @@ namespace System.ServiceModel.PeerResolvers
 
 		public ResolveResponseInfoDC ()
 		{
+			addresses = new List<PeerNodeAddress> ();
 		}
 		
 		[DataMember]
