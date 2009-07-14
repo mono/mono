@@ -1,5 +1,5 @@
 //
-// CSharpInvokeMemberBinder.cs
+// CSharpBinaryOperationBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,23 +30,22 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpInvokeMemberBinder : InvokeMemberBinder
+	public class CSharpBinaryOperationBinder : BinaryOperationBinder
 	{
-		CSharpCallFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
-		IList<Type> typeArguments;
-		Type callingContext;
+		bool is_checked, is_member_access;
 		
-		public CSharpInvokeMemberBinder (CSharpCallFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (name, false, argumentInfo.ToCallInfo ())
+		public CSharpBinaryOperationBinder (ExpressionType operation, bool isChecked, bool isMemberAccess, IEnumerable<CSharpArgumentInfo> argumentInfo)
+			: base (operation)
 		{
-			this.flags = flags;
-			this.callingContext = callingContext;
-			this.argumentInfo = argumentInfo.ToReadOnly ();
-			this.typeArguments = typeArguments.ToReadOnly ();
+			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
+			this.is_checked = isChecked;
+			this.is_member_access = isMemberAccess;
 		}
 		
 		public IList<CSharpArgumentInfo> ArgumentInfo {
@@ -55,22 +54,15 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Type CallingContext {
+		public bool IsChecked {
 			get {
-				return callingContext;
+				return is_checked;
 			}
 		}
 		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpInvokeMemberBinder;
-			return other != null && base.Equals (obj) && other.flags == flags && other.callingContext == callingContext && 
-				other.argumentInfo.SequenceEqual (argumentInfo) && other.typeArguments.SequenceEqual (typeArguments);
-		}
-
-		public CSharpCallFlags Flags {
+		public bool IsMemberAccess {
 			get {
-				return flags;
+				return is_member_access;
 			}
 		}
 		
@@ -80,21 +72,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 		
 		[MonoTODO]
-		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
+		public override DynamicMetaObject FallbackBinaryOperation (DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
-		{
-			throw new NotImplementedException ();			
-		}
-		
-		public IList<Type> TypeArguments {
-			get {
-				return typeArguments;
-			}
 		}
 	}
 }

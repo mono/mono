@@ -1,5 +1,5 @@
 //
-// CSharpInvokeMemberBinder.cs
+// CSharpInvokeBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -33,20 +33,18 @@ using System.Linq;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpInvokeMemberBinder : InvokeMemberBinder
+	public class CSharpInvokeBinder : InvokeBinder
 	{
 		CSharpCallFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
-		IList<Type> typeArguments;
 		Type callingContext;
 		
-		public CSharpInvokeMemberBinder (CSharpCallFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (name, false, argumentInfo.ToCallInfo ())
+		public CSharpInvokeBinder (CSharpCallFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
+			: base (argumentInfo.ToCallInfo ())
 		{
 			this.flags = flags;
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();
-			this.typeArguments = typeArguments.ToReadOnly ();
 		}
 		
 		public IList<CSharpArgumentInfo> ArgumentInfo {
@@ -63,9 +61,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override bool Equals (object obj)
 		{
-			var other = obj as CSharpInvokeMemberBinder;
+			var other = obj as CSharpInvokeBinder;
 			return other != null && base.Equals (obj) && other.flags == flags && other.callingContext == callingContext && 
-				other.argumentInfo.SequenceEqual (argumentInfo) && other.typeArguments.SequenceEqual (typeArguments);
+				other.argumentInfo.SequenceEqual (argumentInfo);
 		}
 
 		public CSharpCallFlags Flags {
@@ -83,18 +81,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
-		{
-			throw new NotImplementedException ();			
-		}
-		
-		public IList<Type> TypeArguments {
-			get {
-				return typeArguments;
-			}
 		}
 	}
 }

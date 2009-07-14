@@ -4,6 +4,16 @@
 Assembly/AssemblyInfo.cs
 Microsoft.CSharp.RuntimeBinder/CSharpArgumentInfo.cs
 Microsoft.CSharp.RuntimeBinder/CSharpArgumentInfoFlags.cs
+Microsoft.CSharp.RuntimeBinder/CSharpBinaryOperationBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpCallFlags.cs
 Microsoft.CSharp.RuntimeBinder/CSharpConversionKind.cs
+Microsoft.CSharp.RuntimeBinder/CSharpConvertBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpGetIndexBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpGetMemberBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpInvokeBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpInvokeMemberBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpIsEventBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpSetIndexBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpSetMemberBinder.cs
+Microsoft.CSharp.RuntimeBinder/CSharpUnaryOperationBinder.cs
+Microsoft.CSharp.RuntimeBinder/Extensions.cs
