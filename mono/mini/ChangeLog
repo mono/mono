@@ -1,3 +1,9 @@
+
+Wed Jul 15 16:24:57 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: integrate most of Steven Munroe (<munroesj@us.ibm.com>)
+	first patch at http://bugzilla.novell.com/show_bug.cgi?id=487846.
+
 2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-x86.md: Fix missing clobbering from trancendental simd
