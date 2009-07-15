@@ -221,39 +221,52 @@ namespace System.Drawing
 				throw new NotImplementedException ("Operation not implemented under X11");
 		
 			if (GDIPlus.Display == IntPtr.Zero) {
-				GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);					
+				GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 			}
 
 			window = GDIPlus.XRootWindow (GDIPlus.Display, 0);
-			defvisual = GDIPlus.XDefaultVisual (GDIPlus.Display, 0);				
+			defvisual = GDIPlus.XDefaultVisual (GDIPlus.Display, 0);
 			XVisualInfo visual = new XVisualInfo ();
 
 			/* Get XVisualInfo for this visual */
 			visual.visualid = GDIPlus.XVisualIDFromVisual(defvisual);
 			vPtr = GDIPlus.XGetVisualInfo (GDIPlus.Display, 0x1 /* VisualIDMask */, ref visual, ref nitems);
 			visual = (XVisualInfo) Marshal.PtrToStructure(vPtr, typeof (XVisualInfo));
-
-			/* Sorry I do not have access to a computer with > deepth. Fell free to add more pixel formats */	
+#if false
+			Console.WriteLine ("visual\t{0}", visual.visual);
+			Console.WriteLine ("visualid\t{0}", visual.visualid);
+			Console.WriteLine ("screen\t{0}", visual.screen);
+			Console.WriteLine ("depth\t{0}", visual.depth);
+			Console.WriteLine ("klass\t{0}", visual.klass);
+			Console.WriteLine ("red_mask\t{0:X}", visual.red_mask);
+			Console.WriteLine ("green_mask\t{0:X}", visual.green_mask);
+			Console.WriteLine ("blue_mask\t{0:X}", visual.blue_mask);
+			Console.WriteLine ("colormap_size\t{0}", visual.colormap_size);
+			Console.WriteLine ("bits_per_rgb\t{0}", visual.bits_per_rgb);
+#endif
 			image = GDIPlus.XGetImage (GDIPlus.Display, window, sourceX, sourceY, blockRegionSize.Width,
 				blockRegionSize.Height, AllPlanes, 2 /* ZPixmap*/);
 				
 			Bitmap bmp = new Bitmap (blockRegionSize.Width, blockRegionSize.Height);
 			int red, blue, green;
+			int red_mask = (int) visual.red_mask;
+			int blue_mask = (int) visual.blue_mask;
+			int green_mask = (int) visual.green_mask;
 			for (int y = 0; y < blockRegionSize.Height; y++) {
 				for (int x = 0; x < blockRegionSize.Width; x++) {
 					pixel = GDIPlus.XGetPixel (image, x, y);
 
 					switch (visual.depth) {
 						case 16: /* 16bbp pixel transformation */
-							red = (int) ((pixel & visual.red_mask ) >> 8) & 0xff;
-							green = (int) (((pixel & visual.green_mask ) >> 3 )) & 0xff;
-							blue = (int) ((pixel & visual.blue_mask ) << 3 ) & 0xff;
+							red = (int) ((pixel & red_mask ) >> 8) & 0xff;
+							green = (int) (((pixel & green_mask ) >> 3 )) & 0xff;
+							blue = (int) ((pixel & blue_mask ) << 3 ) & 0xff;
 							break;
 						case 24:
 						case 32:
-							red = (int) ((pixel & visual.red_mask ) >> 16) & 0xff;
-							green = (int) (((pixel & visual.green_mask ) >> 8 )) & 0xff;
-							blue = (int) ((pixel & visual.blue_mask )) & 0xff;
+							red = (int) ((pixel & red_mask ) >> 16) & 0xff;
+							green = (int) (((pixel & green_mask ) >> 8 )) & 0xff;
+							blue = (int) ((pixel & blue_mask )) & 0xff;
 							break;
 						default:
 							string text = Locale.GetText ("{0}bbp depth not supported.", visual.depth);

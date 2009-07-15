@@ -198,13 +198,13 @@ namespace System.Drawing
 	internal struct XVisualInfo
 	{
 		internal IntPtr visual;
-		internal int visualid;
+		internal IntPtr visualid;
 		internal int screen;
 		internal uint depth;
 		internal int klass;
-		internal uint red_mask;
-		internal uint green_mask;
-		internal uint blue_mask;
+		internal IntPtr red_mask;
+		internal IntPtr green_mask;
+		internal IntPtr blue_mask;
 		internal int colormap_size;
 		internal int bits_per_rgb;		
 	}
