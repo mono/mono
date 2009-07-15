@@ -1,6 +1,11 @@
 2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* DerivedTypesTest.cs: New tests for PointerTypeinteraction
+	* DerivedTypesTest.cs: New tests for interaction with
+	EnumBuilder objects.
+
+2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypesTest.cs: New tests for PointerType interaction
 	with GenericTypeParameterBuilder.
 
 2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>

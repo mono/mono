@@ -1669,6 +1669,61 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (gparam, arr.GetElementType (), "#22");
 		}
+
+		[Test]
+		public void GenericTypeMembersOfEnum ()
+		{
+			var eb = module.DefineEnum ("dd.enum", TypeAttributes.Public, typeof (int));
+			Type arr = eb.MakeArrayType ();
+
+			try {
+				arr.GetGenericArguments ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+
+			try {
+				arr.GetGenericParameterConstraints ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {}
+
+			try {
+				arr.GetGenericTypeDefinition ();
+				Assert.Fail ("#3");
+			} catch (NotSupportedException) {}
+		
+			Assert.IsFalse (arr.ContainsGenericParameters, "#4");
+			try {
+				var x = arr.GenericParameterAttributes;
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) {}
+
+			try {
+				var x = arr.GenericParameterPosition;
+				Assert.Fail ("#6");
+			} catch (InvalidOperationException) {}
+
+
+			Assert.IsFalse (arr.IsGenericParameter, "#8");
+			Assert.IsFalse (arr.IsGenericType, "#9");
+			Assert.IsFalse (arr.IsGenericTypeDefinition, "#10");
+
+			Assert.AreEqual (TypeAttributes.Public | TypeAttributes.Sealed, arr.Attributes, "#11");
+
+			Assert.IsTrue (arr.HasElementType, "#12");
+			Assert.IsTrue (arr.IsArray, "#13");
+
+			Assert.AreEqual (assembly, arr.Assembly, "#14");
+			Assert.AreEqual ("dd.enum[], MonoTests.System.Reflection.Emit.TypeBuilderTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", arr.AssemblyQualifiedName, "#15");
+			Assert.AreEqual (typeof (Array), arr.BaseType, "#16");
+			Assert.AreEqual ("dd.enum[]", arr.FullName, "#17");
+			Assert.AreEqual (module, arr.Module, "#18");
+			Assert.AreEqual ("dd", arr.Namespace, "#19");
+			Assert.AreEqual (arr, arr.UnderlyingSystemType, "#20");
+			Assert.AreEqual ("enum[]", arr.Name, "#21");
+
+			Assert.AreEqual (eb, arr.GetElementType (), "#22");
+		}
+
 	}
 #endif
 }

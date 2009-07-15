@@ -352,28 +352,26 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public override Type MakeArrayType ()
 		{
-			return base.MakeArrayType ();
+			return MakeArrayType (1);  
 		}
 
-		[MonoTODO]
 		public override Type MakeArrayType (int rank)
 		{
-			return base.MakeArrayType (rank);
+			if (rank < 1)
+				throw new IndexOutOfRangeException ();
+			return new ArrayType (this, rank);
 		}
 
-		[MonoTODO]
 		public override Type MakeByRefType ()
 		{
-			return base.MakeByRefType ();
+			return new ByRefType (this);
 		}
 
-		[MonoTODO]
 		public override Type MakePointerType ()
 		{
-			return base.MakePointerType ();
+			return new PointerType (this);
 		}
 #endif
 
