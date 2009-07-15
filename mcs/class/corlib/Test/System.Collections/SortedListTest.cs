@@ -1104,6 +1104,123 @@ namespace MonoTests.System.Collections
 			SortedList clone = (SortedList) sl.Clone ();
 		}
 
+		sealed class StartsWithComparator : IComparer {
+			public static readonly StartsWithComparator Instance = new StartsWithComparator();
+
+			public int Compare(object p, object w)
+			{
+				string part = (string) p;
+				string whole = (string) w;
+				// let the default string comparer deal with null or when part is not smaller then whole
+				if (part == null || whole == null || part.Length >= whole.Length)
+					return String.Compare (part, whole);
+
+				// loop through all characters that part and whole have in common
+				int pos = 0;
+				bool match;
+				do {
+					match = (part[pos] == whole[pos]);
+				} while (match && ++pos < part.Length);
+
+				// return result of last comparison
+				return match ? 0 : (part[pos] < whole[pos] ? -1 : 1);
+			}
+		}
+
+		sealed class StartsWithComparatorPartWholeCheck : IComparer
+		{
+			public static readonly StartsWithComparator Instance = new StartsWithComparator();
+
+			public int Compare(object p, object w)
+			{
+				string part = (string) p;
+				string whole = (string) w;
+				Assert.IsTrue(part == "Part", "#PWC0");
+				Assert.IsTrue(whole == "Whole", "#PWC1");
+
+				// let the default string comparer deal with null or when part is not smaller then whole
+				if (part == null || whole == null || part.Length >= whole.Length)
+					return String.Compare(part, whole);
+
+				// loop through all characters that part and whole have in common
+				int pos = 0;
+				bool match;
+				do {
+					match = (part[pos] == whole[pos]);
+				} while (match && ++pos < part.Length);
+
+				// return result of last comparison
+				return match ? 0 : (part[pos] < whole[pos] ? -1 : 1);
+			}
+		}
+
+		[Test]
+		public void ComparatorUsageTest()
+		{
+			SortedList sl = new SortedList(StartsWithComparator.Instance);
+
+			sl.Add("Apples", "Value-Apples");
+			sl.Add("Bananas", "Value-Bananas");
+			sl.Add("Oranges", "Value-Oranges");
+
+			// Ensure 3 objects exist in the collection
+			Assert.IsTrue(sl.Count == 3, "Count");
+
+			// Complete Match Test Set
+			Assert.IsTrue(sl.ContainsKey("Apples"), "#A0");
+			Assert.IsTrue(sl.ContainsKey("Bananas"), "#A1");
+			Assert.IsTrue(sl.ContainsKey("Oranges"), "#A2");
+
+			// Partial Match Test Set
+			Assert.IsTrue(sl.ContainsKey("Apples are great fruit!"), "#B0");
+			Assert.IsTrue(sl.ContainsKey("Bananas are better fruit."), "#B1");
+			Assert.IsTrue(sl.ContainsKey("Oranges are fun to peel."), "#B2");
+
+			// Reversed Match Test Set
+			Assert.IsFalse(sl.ContainsKey("Value"), "#C0");
+
+			// No match tests
+			Assert.IsFalse(sl.ContainsKey("I forgot to bring my bananas."), "#D0");
+			Assert.IsFalse(sl.ContainsKey("My apples are on vacation."), "#D0");
+			Assert.IsFalse(sl.ContainsKey("The oranges are not ripe yet."), "#D0");
+
+		}
+
+		[Test]
+		public void ComparatorPartWholeCheck()
+		{
+			SortedList sl = new SortedList (StartsWithComparatorPartWholeCheck.Instance);
+			sl.Add("Part", "Value-Part");
+			Assert.IsFalse(sl.ContainsKey("Whole"), "#PWC2");
+		}
+
+		[Test]
+		public void NonComparatorStringCheck()
+		{
+			SortedList sl = new SortedList ();
+
+			sl.Add("Oranges", "Value-Oranges");
+			sl.Add("Apples", "Value-Apples");
+			sl.Add("Bananas", "Value-Bananas");
+
+			int i = 0;
+			Assert.IsTrue(sl.Count == 3, "NCSC #A0");
+
+			Assert.IsTrue(sl.ContainsKey("Apples"), "NCSC #B1");
+			Assert.IsTrue(sl.ContainsKey("Bananas"), "NCSC #B2");
+			Assert.IsTrue(sl.ContainsKey("Oranges"), "NCSC #B3");
+
+			Assert.IsFalse(sl.ContainsKey("XApples"), "NCSC #C1");
+			Assert.IsFalse(sl.ContainsKey("XBananas"), "NCSC #C2");
+			Assert.IsFalse(sl.ContainsKey("XOranges"), "NCSC #C3");
+
+			string [] keys = new string [sl.Keys.Count];
+			sl.Keys.CopyTo (keys, 0);
+			Assert.IsTrue(keys [0] == "Apples", "NCSC #D1");
+			Assert.IsTrue(keys [1] == "Bananas", "NCSC #D2");
+			Assert.IsTrue(keys [2] == "Oranges", "NCSC #D3");
+		}
+
 		private static byte [] _serializedValues = new byte [] {
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
 			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04,
