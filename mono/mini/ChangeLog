@@ -1,3 +1,10 @@
+2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-x86.md:
+	* cpu-amd64.md: Revert previous change as those instructions
+	take 2 separate arguments. Remember to read the arch docs more
+	carefully next time.
+
 2009-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp (mono_llvm_build_alloca): Update to latest llvm api.
