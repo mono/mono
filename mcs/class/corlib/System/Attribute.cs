@@ -262,7 +262,7 @@ namespace System
 			MemberTypes mtype = element.MemberType;
 			if (mtype == MemberTypes.Property)
 				return (Attribute []) MonoCustomAttrs.GetCustomAttributes (element, inherit);
-			return (Attribute []) element.GetCustomAttributes (inherit);
+			return (Attribute []) element.GetCustomAttributes (typeof (Attribute), inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (ParameterInfo element, bool inherit)

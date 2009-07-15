@@ -12,7 +12,9 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -723,6 +725,144 @@ namespace MonoTests.System
 			Assert.IsTrue (a.Equals (d), "#7");
 			Assert.IsFalse (a.Equals (null), "#8");
 		}
+
+#if NET_2_0
+		class UserType : TypeDelegator {
+			public int GetCattr1;
+			public int GetCattr2;
+			public int IsDef;
+			public bool lastInherit;
+			public Type lastAttrType;
+
+			public UserType (Type type) : base (type) {}
+			
+			public override object [] GetCustomAttributes (bool inherit)
+			{
+				++GetCattr1;
+				lastInherit = inherit;
+				lastAttrType = null;
+				return base.GetCustomAttributes (inherit);
+			}
+
+			public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+			{
+				++GetCattr2;
+				lastInherit = inherit;
+				lastAttrType = attributeType;
+				return base.GetCustomAttributes (attributeType, inherit);
+			}
+
+			public override bool IsDefined (Type attributeType, bool inherit)
+			{
+				++IsDef;
+				lastInherit = inherit;
+				lastAttrType = attributeType;
+				return base.IsDefined (attributeType, inherit);
+			}
+		}
+
+		[Test]
+		public void GetCustomAttributeOnUserType ()
+		{
+			UserType type = new UserType (typeof (AttributeTest));
+			var res = Attribute.GetCustomAttribute (type, typeof (TestFixtureAttribute));
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (typeof (TestFixtureAttribute), res.GetType (), "#2");
+
+			Assert.AreEqual (0, type.IsDef, "#4");
+			Assert.AreEqual (0, type.GetCattr1, "#5");
+			Assert.AreEqual (1, type.GetCattr2, "#6");
+			Assert.IsTrue (type.lastInherit, "#7");
+			Assert.AreEqual (typeof (TestFixtureAttribute), type.lastAttrType, "#8");
+		}
+
+		[Test]
+		public void GetCustomAttributeOnMethodInfo ()
+		{
+			MemberInfo method = typeof (AttributeTest).GetMethod ("GetCustomAttributeOnMethodInfo");
+			var res = Attribute.GetCustomAttribute (method, typeof (TestAttribute));
+
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (typeof (TestAttribute), res.GetType (), "#2");
+		}
+
+		[Test]
+		public void GetCustomAttributesOnUserType ()
+		{
+			UserType type = new UserType (typeof (AttributeTest));
+			var res = Attribute.GetCustomAttributes (type);
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (1, res.Length, "#2");
+			Assert.AreEqual (typeof (TestFixtureAttribute), res [0].GetType (), "#3");
+
+			Assert.AreEqual (0, type.IsDef, "#4");
+			Assert.AreEqual (0, type.GetCattr1, "#5");
+			Assert.AreEqual (1, type.GetCattr2, "#6");
+			Assert.IsTrue (type.lastInherit, "#7");
+			Assert.AreEqual (typeof (Attribute), type.lastAttrType, "#8");
+		}
+
+		[Test]
+		public void IsDefinedOnUserType ()
+		{
+			UserType type = new UserType (typeof (AttributeTest));
+			var res = Attribute.IsDefined (type, typeof (TestFixtureAttribute));
+			Assert.IsTrue (res, "#1");
+
+			Assert.AreEqual (1, type.IsDef, "#4");
+			Assert.AreEqual (0, type.GetCattr1, "#5");
+			Assert.AreEqual (0, type.GetCattr2, "#6");
+			Assert.IsTrue (type.lastInherit, "#7");
+			Assert.AreEqual (typeof (TestFixtureAttribute), type.lastAttrType, "#8");
+		}
+
+		[Test]
+		public void GetCustomAttributeOnNewSreTypes ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
+			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
+
+			var tb = module.DefineType ("ns.type", TypeAttributes.Public);
+			var arr = tb.MakeArrayType ();
+			var ptr = tb.MakePointerType ();
+			var byref = tb.MakeByRefType ();
+
+			try {
+				Attribute.GetCustomAttribute (arr, typeof (ObsoleteAttribute));
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+
+			try {
+				Attribute.GetCustomAttribute (ptr, typeof (ObsoleteAttribute));
+				Assert.Fail ("#2");
+			} catch (NotSupportedException) {}
+
+			try {
+				Attribute.GetCustomAttribute (byref, typeof (ObsoleteAttribute));
+				Assert.Fail ("#3");
+			} catch (NotSupportedException) {}
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void GetCustomAttributeOnBadSreTypes ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "MonoTests.System.Reflection.Emit.TypeBuilderTest";
+			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
+
+			var tb = module.DefineType ("ns.type", TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
+			var ginst = tb.MakeGenericType (typeof (int));
+			Assert.IsNull (Attribute.GetCustomAttribute (ginst, typeof (ObsoleteAttribute)), "#1");
+		}
+#endif
+
 
 		private int GetAttributeCount (object[] attributes, Type attributeType)
 		{

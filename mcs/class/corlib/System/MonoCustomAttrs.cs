@@ -35,6 +35,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Reflection.Emit;
 
 #if  NET_2_0
 using System.Collections.Generic;
@@ -44,6 +45,21 @@ namespace System
 {
 	internal class MonoCustomAttrs
 	{
+		static Assembly corlib;
+
+		/* Treat as user types all corlib types extending System.Type that are not MonoType and TypeBuilder */
+		static bool IsUserCattrProvider (object obj)
+		{
+			Type type = obj as Type;
+			if ((type is MonoType) || (type is TypeBuilder))
+				return false;
+			if ((obj is Type))
+				return true;
+			if (corlib == null)
+				 corlib = typeof (int).Assembly;
+			return obj.GetType ().Assembly != corlib;
+		}
+	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, Type attributeType, bool pseudoAttrs);
 
@@ -79,7 +95,11 @@ namespace System
 
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType)
 		{
-			object[] attrs = GetCustomAttributesInternal (obj, attributeType, false);
+			object[] attrs;
+			if (IsUserCattrProvider (obj))
+				attrs = obj.GetCustomAttributes (attributeType, true);
+			else
+				attrs = GetCustomAttributesInternal (obj, attributeType, false);
 
 			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
 			if (pseudoAttrs != null) {
@@ -266,12 +286,8 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
 
-			/* Avoid calling .Assembly if possible */
-			Type otype = obj.GetType ();
-			if (otype != typeof (MonoType) && otype.Assembly != typeof (int).Assembly)
-				// User types might overwrite GetCustomAttributes () but not 
-				// IsDefined ().
-				return obj.GetCustomAttributes (attributeType, inherit).Length > 0;
+			if (IsUserCattrProvider (obj))
+				return obj.IsDefined (attributeType, inherit);
 
 			if (IsDefinedInternal (obj, attributeType))
 				return true;

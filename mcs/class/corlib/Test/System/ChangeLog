@@ -1,3 +1,8 @@
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AttributeTest.cs: Add tests for user types passed to
+	Attribute.GetCustomAttribute[s].
+	
 2009-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Enabled test that was failing due to regression.
