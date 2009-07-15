@@ -1,3 +1,10 @@
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-x86.md: Fix missing clobbering from trancendental simd
+	ops.
+
+	* cpu-amd64.md: Same.
+
 2009-07-14 Jerry Maine <crashfourit@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by
