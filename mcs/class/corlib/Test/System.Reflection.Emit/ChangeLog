@@ -1,3 +1,8 @@
+2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypesTest.cs: New tests for generics related 
+	stuff and interaction with GenericTypeParameterBuilder.
+
 2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DerivedTypesTest.cs: Added tests for generics related 

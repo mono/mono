@@ -1,3 +1,8 @@
+2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* GenericTypeParameterBuilder.cs (MakeByRefType): Return an instance
+	of ByRefType instead of relying on the runtime for it.
+
 2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DerivedTypes.cs (DerivedType): Implement IsAssignableFrom

@@ -519,16 +519,22 @@ namespace MonoTests.System.Reflection.Emit
 		[SetUp]
 		protected void SetUp ()
 		{
+			SetUp (AssemblyBuilderAccess.RunAndSave);
+		}
+
+		protected void SetUp (AssemblyBuilderAccess mode)
+		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
 
 			assembly =
 				Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+					assemblyName, mode, Path.GetTempPath ());
 
 			module = assembly.DefineDynamicModule ("module1");
 			typeCount = 0;
 		}
+
 
 		[Test]
 		[Category ("NotDotNet")]
@@ -937,6 +943,79 @@ namespace MonoTests.System.Reflection.Emit
 				object x = byref.StructLayoutAttribute;
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void ByRefOfAttriburesUnderCompilerContext ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			var gparam = tb.DefineGenericParameters ("F")[0];
+			Type byref = gparam.MakeByRefType ();
+
+			tb = module.DefineType (MakeName (), TypeAttributes.Public);
+			Assert.AreEqual (TypeAttributes.Public , tb.MakeByRefType ().Attributes, "#1");
+
+		}
+
+		[Test]
+		public void ByRefOfGenericTypeParameter ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			var gparam = tb.DefineGenericParameters ("F")[0];
+			Type byref = gparam.MakeByRefType ();
+
+			try {
+				byref.GetGenericArguments ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+
+			try {
+				byref.GetGenericParameterConstraints ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {}
+
+			try {
+				byref.GetGenericTypeDefinition ();
+				Assert.Fail ("#3");
+			} catch (NotSupportedException) {}
+		
+			Assert.IsTrue (byref.ContainsGenericParameters, "#4");
+			try {
+				var x = byref.GenericParameterAttributes;
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) {}
+
+			try {
+				var x = byref.GenericParameterPosition;
+				Assert.Fail ("#6");
+			} catch (InvalidOperationException) {}
+
+
+			Assert.IsFalse (byref.IsGenericParameter, "#8");
+			Assert.IsFalse (byref.IsGenericType, "#9");
+			Assert.IsFalse (byref.IsGenericTypeDefinition, "#10");
+
+			try {
+				var x = byref.Attributes; 
+				Assert.Fail ("#11");
+			} catch (NotSupportedException) {}
+
+			Assert.IsTrue (byref.HasElementType, "#12");
+			Assert.IsTrue (byref.IsByRef, "#13");
+
+			Assert.AreEqual (assembly, byref.Assembly, "#14");
+			Assert.AreEqual (null, byref.AssemblyQualifiedName, "#15");
+			Assert.AreEqual (null, byref.BaseType, "#16");
+			Assert.AreEqual (null, byref.FullName, "#17");
+			Assert.AreEqual (module, byref.Module, "#18");
+			Assert.AreEqual (null, byref.Namespace, "#19");
+			Assert.AreEqual (byref, byref.UnderlyingSystemType, "#20");
+			Assert.AreEqual ("F&", byref.Name, "#21");
+
+			Assert.AreEqual (gparam, byref.GetElementType (), "#22");
 		}
 	}
 
