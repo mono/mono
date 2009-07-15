@@ -1,5 +1,11 @@
 2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_locals_signature): Don't complain
+	on signature with zero locals since MS generates it and doesn't
+	bother with.
+
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_image_get_array_token): Resolve return
 	type using mono_reflection_type_get_handle.
 
