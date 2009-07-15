@@ -50,6 +50,7 @@ namespace System.Web {
 		public ParserError this [int index]
 		{
 			get { return (ParserError) InnerList [index]; }
+			set { InnerList[index] = value; }
 		}
 		
 		public int Add (ParserError error)
