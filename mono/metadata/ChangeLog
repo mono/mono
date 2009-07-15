@@ -1,5 +1,15 @@
 2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* refletion.c: Replace all reads of MonoReflectionType::type with
+	calls to mono_reflection_type_get_handle. Only the functions that
+	deal with constructing TypeBuilder::type have not been changed
+	because they have to deal with NULL values.
+
+	This is a first step into supporting reflection types that don't
+	map directly into their unmanaged counterpart.
+
+2009-07-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (parse_locals_signature): Don't complain
 	on signature with zero locals since MS generates it and doesn't
 	bother with.
