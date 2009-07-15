@@ -1,8 +1,13 @@
+2009-04-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StreamReader.cs: if Peek() needs to block, do it.
+	Fixes bug #496905.
+
 2009-05-05  Miguel de Icaza  <miguel@novell.com>
 
 	* Contribution from David Uvalle <david.uvalle@gmail.com> that
 	implements FileInfo.Replace.
-	
+
 2009-04-25  Miguel de Icaza  <miguel@novell.com>
 
 	* StreamReader.cs (DataAvailable): New internal function to work

@@ -667,7 +667,7 @@ namespace System.IO {
 			for (int i = 0; i < dirs.Length; i++) {
 				// WIN32 path components must be trimmed
 				if (Environment.IsRunningOnWindows)
-					dirs[i] = dirs[i].Trim ();
+					dirs[i] = dirs[i].TrimEnd ();
 				
 				if (dirs[i] == "." || (i != 0 && dirs[i].Length == 0))
 					continue;
