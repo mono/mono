@@ -174,7 +174,7 @@ namespace System.Web.Configuration
 		{
 			if (String.IsNullOrEmpty (pathToMatch))
 				return false;
-			
+
 			bool result = false;
 			string[] handlerPaths = Path.Split (',');
 			int slash = pathToMatch.LastIndexOf ('/');
@@ -251,7 +251,10 @@ namespace System.Web.Configuration
 					else
 						noLeadingSlashPathToMatch = origPathToMatch;
 				}
-					
+
+				if (pattern.IndexOf ('/') >= 0)
+					noLeadingSlashPathToMatch = AdjustPath (pattern, noLeadingSlashPathToMatch);
+
 				if (sp.IsMatch (noLeadingSlashPathToMatch)) {
 					result = true;
 					break;
@@ -259,6 +262,28 @@ namespace System.Web.Configuration
 			}
 			
 			return result;
+		}
+
+		static string AdjustPath (string pattern, string path)
+		{
+			int nslashes = 0;
+			foreach (char c in pattern)
+				if (c == '/')
+					nslashes++;
+
+			int i;
+			for (i = path.Length - 1; i >= 0; i--) {
+				if (path [i] == '/') {
+					nslashes--;
+					if (nslashes == -1)
+						break;
+				}
+			}
+
+			if (nslashes >= 0 || i == 0)
+				return path;
+
+			return path.Substring (i + 1);
 		}
 
 		// Loads the handler, possibly delay-loaded.
