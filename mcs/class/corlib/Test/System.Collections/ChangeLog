@@ -1,3 +1,7 @@
+2009-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SortedListTest.cs: new tests by Kevin Fitzgerald.
+
 2009-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* ReadOnlyCollectionBaseTest.cs NewArrayListTest.cs: Convert all tests
