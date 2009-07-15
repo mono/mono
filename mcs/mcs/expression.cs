@@ -3908,18 +3908,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			expr = expr.Resolve (ec);
-
+			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				return null;
-
-			if (expr.Type != TypeManager.bool_type){
-				expr = Expression.ResolveBoolean (
-					ec, expr, loc);
-				
-				if (expr == null)
-					return null;
-			}
 			
 			Assign ass = expr as Assign;
 			if (ass != null && ass.Source is Constant) {
