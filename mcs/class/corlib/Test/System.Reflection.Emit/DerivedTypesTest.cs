@@ -500,6 +500,65 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
 		}
+
+		[Test]
+		public void ByRefOfGenericTypeParameter ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			var gparam = tb.DefineGenericParameters ("F")[0];
+			Type ptr = gparam.MakePointerType ();
+
+			try {
+				ptr.GetGenericArguments ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+
+			try {
+				ptr.GetGenericParameterConstraints ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {}
+
+			try {
+				ptr.GetGenericTypeDefinition ();
+				Assert.Fail ("#3");
+			} catch (NotSupportedException) {}
+		
+			Assert.IsTrue (ptr.ContainsGenericParameters, "#4");
+			try {
+				var x = ptr.GenericParameterAttributes;
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) {}
+
+			try {
+				var x = ptr.GenericParameterPosition;
+				Assert.Fail ("#6");
+			} catch (InvalidOperationException) {}
+
+
+			Assert.IsFalse (ptr.IsGenericParameter, "#8");
+			Assert.IsFalse (ptr.IsGenericType, "#9");
+			Assert.IsFalse (ptr.IsGenericTypeDefinition, "#10");
+
+			try {
+				var x = ptr.Attributes; 
+				Assert.Fail ("#11");
+			} catch (NotSupportedException) {}
+
+			Assert.IsTrue (ptr.HasElementType, "#12");
+			Assert.IsTrue (ptr.IsPointer, "#13");
+
+			Assert.AreEqual (assembly, ptr.Assembly, "#14");
+			Assert.AreEqual (null, ptr.AssemblyQualifiedName, "#15");
+			//XXX LAMEIMPL this passes on MS even thou it's pretty much very wrong. 
+			//Assert.AreEqual (typeof (Array), ptr.BaseType, "#16");
+			Assert.AreEqual (null, ptr.FullName, "#17");
+			Assert.AreEqual (module, ptr.Module, "#18");
+			Assert.AreEqual (null, ptr.Namespace, "#19");
+			Assert.AreEqual (ptr, ptr.UnderlyingSystemType, "#20");
+			Assert.AreEqual ("F*", ptr.Name, "#21");
+
+			Assert.AreEqual (gparam, ptr.GetElementType (), "#22");
+		}
 	}
 
 
@@ -534,7 +593,6 @@ namespace MonoTests.System.Reflection.Emit
 			module = assembly.DefineDynamicModule ("module1");
 			typeCount = 0;
 		}
-
 
 		[Test]
 		[Category ("NotDotNet")]
@@ -956,7 +1014,7 @@ namespace MonoTests.System.Reflection.Emit
 			Type byref = gparam.MakeByRefType ();
 
 			tb = module.DefineType (MakeName (), TypeAttributes.Public);
-			Assert.AreEqual (TypeAttributes.Public , tb.MakeByRefType ().Attributes, "#1");
+			Assert.AreEqual (TypeAttributes.Public , byref.Attributes, "#1");
 
 		}
 

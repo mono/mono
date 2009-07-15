@@ -457,10 +457,9 @@ namespace System.Reflection.Emit
 			return base.MakeGenericType (typeArguments);
 		}
 
-		[MonoTODO]
 		public override Type MakePointerType ()
 		{
-			return base.MakePointerType ();
+			return new PointerType (this);
 		}
 	}
 }
