@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 #if MONOWEB_DEP
@@ -42,14 +43,18 @@ using System.Configuration;
 using System.Configuration.Internal;
 using _Configuration = System.Configuration.Configuration;
 using System.Web.Util;
+using System.Threading;
 
 namespace System.Web.Configuration {
 
 	public static class WebConfigurationManager
 	{
-#if !TARGET_J2EE
-		static readonly object suppressAppReloadLock = new object ();
+		const int SAVE_LOCATIONS_CHECK_INTERVAL = 6000; // milliseconds
 		
+		static readonly object suppressAppReloadLock = new object ();
+		static readonly object saveLocationsCacheLock = new object ();
+		
+#if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 		static Hashtable sectionCache = new Hashtable ();
@@ -57,6 +62,7 @@ namespace System.Web.Configuration {
 		static bool suppressAppReload;
 #else
 		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
+		
 		static internal IInternalConfigConfigurationFactory configFactory
 		{
 			get{
@@ -142,6 +148,9 @@ namespace System.Web.Configuration {
 			}
 		}
 #endif
+		static Dictionary <string, DateTime> saveLocationsCache;
+		static Timer saveLocationsTimer;
+		
 		static ArrayList extra_assemblies = null;
 		static internal ArrayList ExtraAssemblies {
 			get {
@@ -176,11 +185,53 @@ namespace System.Web.Configuration {
 			}
 		}
 
+		static void ReenableWatcherOnConfigLocation (object state)
+		{
+			string path = state as string;
+			if (String.IsNullOrEmpty (path))
+				return;
+
+			DateTime lastWrite;
+			lock (saveLocationsCacheLock) {
+				if (!saveLocationsCache.TryGetValue (path, out lastWrite))
+					lastWrite = DateTime.MinValue;
+			}
+
+			DateTime now = DateTime.Now;
+			if (lastWrite == DateTime.MinValue || now.Subtract (lastWrite).TotalMilliseconds >= SAVE_LOCATIONS_CHECK_INTERVAL) {
+				saveLocationsTimer.Dispose ();
+				saveLocationsTimer = null;
+				HttpApplicationFactory.EnableWatcher (VirtualPathUtility.RemoveTrailingSlash (HttpRuntime.AppDomainAppPath), "?eb.?onfig");
+			} else
+				saveLocationsTimer.Change (SAVE_LOCATIONS_CHECK_INTERVAL, SAVE_LOCATIONS_CHECK_INTERVAL);
+		}
+		
 		static void ConfigurationSaveHandler (_Configuration sender, ConfigurationSaveEventArgs args)
 		{
-			string rootConfigPath = WebConfigurationHost.GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
-			if (String.Compare (args.StreamPath, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0)
-				SuppressAppReload (args.Start);
+			lock (suppressAppReloadLock) {
+				string rootConfigPath = WebConfigurationHost.GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
+				if (String.Compare (args.StreamPath, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0) {
+					SuppressAppReload (args.Start);
+					if (args.Start) {
+						HttpApplicationFactory.DisableWatcher (VirtualPathUtility.RemoveTrailingSlash (HttpRuntime.AppDomainAppPath), "?eb.?onfig");
+
+						lock (saveLocationsCacheLock) {
+							if (saveLocationsCache == null)
+								saveLocationsCache = new Dictionary <string, DateTime> (StringComparer.Ordinal);
+							if (saveLocationsCache.ContainsKey (rootConfigPath))
+								saveLocationsCache [rootConfigPath] = DateTime.Now;
+							else
+								saveLocationsCache.Add (rootConfigPath, DateTime.Now);
+
+							if (saveLocationsTimer == null)
+								saveLocationsTimer = new Timer (ReenableWatcherOnConfigLocation,
+												rootConfigPath,
+												SAVE_LOCATIONS_CHECK_INTERVAL,
+												SAVE_LOCATIONS_CHECK_INTERVAL);
+						}
+					}
+				}
+			}
 		}
 		
 		public static _Configuration OpenMachineConfiguration ()

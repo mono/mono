@@ -1,3 +1,13 @@
+2009-07-15  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: another approach to suppressing
+	application reloads after the app writes to its root web.config
+	file. Leaving the previous code in place to get more
+	protection. It's a kludge, but it's the best option to avoid
+	all the races caused by System.Configuration+FileSystemWatcher
+	without rewriting large parts of System.Configuration (and
+	System.Web.Configuration). Fixes bug #522017
+
 2009-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: added support for suppressing

@@ -449,6 +449,7 @@ namespace System.Configuration {
 				tw.WriteEndElement ();
 			}
 			finally {
+				tw.Flush ();
 				tw.Close ();
 			}
 		}
