@@ -1515,7 +1515,7 @@ namespace System.Drawing
 		internal extern static IntPtr XGetVisualInfo (IntPtr display, int vinfo_mask, ref XVisualInfo vinfo_template, ref int nitems);
 
 		[DllImport ("libX11", EntryPoint="XVisualIDFromVisual")]
-		internal extern static int XVisualIDFromVisual(IntPtr visual);
+		internal extern static IntPtr XVisualIDFromVisual (IntPtr visual);
 
 		[DllImport ("libX11", EntryPoint="XFree")]
 		internal extern static void XFree (IntPtr data);	
