@@ -141,25 +141,34 @@ namespace Microsoft.Build.Tasks {
 
 		public ResolvedReference FindInDirectory (ITaskItem reference, string directory, string [] file_extensions)
 		{
-			if (reference.ItemSpec.IndexOf (',') > 0) {
-				// Probably an assembly name
-				AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
-				foreach (string extn in file_extensions) {
-					foreach (string file in Directory.GetFiles (directory, "*" + extn)) {
-						AssemblyName found = AssemblyName.GetAssemblyName (file);
-
-						//FIXME: Extract 'name' and look only for name.dll name.exe ?
-						if (AssemblyNamesCompatible (key_aname, found, false))
-							return GetResolvedReference (reference, file, true, SearchPath.Directory);
-
-						SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
-					}
-				}
-			} else {
+			if (reference.ItemSpec.IndexOf (',') < 0) {
 				// Try as a filename
 				string path = Path.Combine (directory, reference.ItemSpec);
 				if (GetAssemblyNameFromFile (path) != null)
 					return GetResolvedReference (reference, path, true, SearchPath.Directory);
+
+				foreach (string extn in file_extensions) {
+					string path_with_extn = path + extn;
+					if (GetAssemblyNameFromFile (path_with_extn) != null)
+						return GetResolvedReference (reference, path_with_extn, true, SearchPath.Directory);
+				}
+			}
+
+			// Probably an assembly name
+			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+			foreach (string extn in file_extensions) {
+				foreach (string file in Directory.GetFiles (directory, "*" + extn)) {
+					AssemblyName found_aname = GetAssemblyNameFromFile (file);
+					if (found_aname == null)
+						// error already logged
+						continue;
+
+					//FIXME: Extract 'name' and look only for name.dll name.exe ?
+					if (AssemblyNamesCompatible (key_aname, found_aname, false))
+						return GetResolvedReference (reference, file, true, SearchPath.Directory);
+
+					SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
+				}
 			}
 
 			return null;
@@ -169,7 +178,7 @@ namespace Microsoft.Build.Tasks {
 		{
 			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
 			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
-				AssemblyName aname = AssemblyName.GetAssemblyName (file);
+				AssemblyName aname = GetAssemblyNameFromFile (file);
 				gac_asm.NameToAssemblyNameCache [aname.Name] =
 					new KeyValuePair<AssemblyName, string> (aname, file);
 			}
@@ -243,18 +252,18 @@ namespace Microsoft.Build.Tasks {
 		public AssemblyName GetAssemblyNameFromFile (string filename)
 		{
 			AssemblyName aname = null;
+			filename = Path.GetFullPath (filename);
 			try {
 				aname = AssemblyName.GetAssemblyName (filename);
 			} catch (FileNotFoundException) {
+				SearchLogger.WriteLine ("Considered '{0}' as a file, but the file does not exist",
+						filename);
 			} catch (BadImageFormatException) {
+				SearchLogger.WriteLine ("Considered '{0}' as a file, but it is an invalid assembly",
+						filename);
 			}
 
-			if (aname != null)
-				return aname;
-
-			SearchLogger.WriteLine ("Considered '{0}' as a file, but it is either an invalid assembly " +
-					"or file does not exist.", Path.GetFullPath (filename));
-			return null;
+			return aname;
 		}
 
 		static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)

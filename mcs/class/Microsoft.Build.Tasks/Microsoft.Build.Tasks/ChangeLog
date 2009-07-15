@@ -1,3 +1,17 @@
+2009-07-16  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #519922.
+
+	* AssemblyResolver.cs (FindInDirectory): Try the @reference as a
+	filename as it is, or with different @file_extensions.
+	If @reference is a assembly name, then look for *.@file_extensions
+	for target assembly.
+	(GetAssemblyNameFromFile): Log FileNotFoundException and BadImageFormatException
+	separately, instead of a single unclear message.
+
+	Change all uses of Assembly.GetAssemblyName with GetAssemblyNameFromFile
+	which does the required error checking and logging.
+
 2009-06-12  Ankit Jain  <jankit@novell.com>
 
 	* Utilities.cs: New.
