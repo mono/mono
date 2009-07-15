@@ -701,6 +701,34 @@ namespace System.Web {
 			}
 		}
 
+		internal static void DisableWatcher (string virtualPath, string filter)
+		{
+			EnableWatcherEvents (virtualPath, filter, false);
+		}
+
+		internal static void EnableWatcher (string virtualPath, string filter)
+		{
+			EnableWatcherEvents (virtualPath, filter, true);
+		}
+		
+		static void EnableWatcherEvents (string virtualPath, string filter, bool enable)
+		{
+			lock (watchers_lock) {
+				foreach (FileSystemWatcher watcher in watchers) {
+					if (
+#if NET_2_0
+						String.Compare (watcher.Path, virtualPath, StringComparison.Ordinal) != 0 || String.Compare (watcher.Filter, filter, StringComparison.Ordinal) != 0
+#else
+						String.Compare (watcher.Path, virtualPath) != 0 || String.Compare (watcher.Filter, filter) != 0
+#endif
+					)
+						continue;
+					
+					watcher.EnableRaisingEvents = enable;
+				}
+			}
+		}
+		
 		internal static void EnableWatchers ()
 		{
 			lock (watchers_lock) {
