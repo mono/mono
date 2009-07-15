@@ -597,10 +597,10 @@ namespace System.Collections {
 			while (left <= right) {
 				int guess = (left + right) >> 1;
 
-				int cmp = comparer.Compare (key, table[guess].key);
+				int cmp = comparer.Compare (table[guess].key, key);
 				if (cmp == 0) return guess;
 
-				if (cmp >  0) left = guess+1;
+				if (cmp <  0) left = guess+1;
 				else right = guess-1;
 			}
 
