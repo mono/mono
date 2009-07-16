@@ -1,3 +1,11 @@
+2009-07-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Adjust manually the top border for out internal
+	ComboBox, since removing the border from it leaves it without any
+	margin. This is not noticeable in a default ComboBox, but it is in an
+	instance shown on top of ToolStrip.
+	Fixes the remaining part of #507462.
+
 2009-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBoxBase.cs: Expose the margin top width as a property, to keep

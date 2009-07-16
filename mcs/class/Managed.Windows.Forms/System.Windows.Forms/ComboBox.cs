@@ -457,6 +457,7 @@ namespace System.Windows.Forms
 					textbox_ctrl.KeyPress += new KeyPressEventHandler (OnTextKeyPress);
 					textbox_ctrl.Click += new EventHandler (OnTextBoxClick);
 					textbox_ctrl.ContextMenu = ContextMenu;
+					textbox_ctrl.TopMargin = 1; // since we don't have borders, adjust manually the top
 
 					if (IsHandleCreated == true)
 						Controls.AddImplicit (textbox_ctrl);
