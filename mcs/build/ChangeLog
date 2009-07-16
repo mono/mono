@@ -1,3 +1,8 @@
+2009-07-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	* profiles/net_2_0_bootstrap.make (BOOTSTRAP_PROFILE): Set to
+	net_1_1_bootstrap instead of net_1_1.
+
 2009-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* profiles/net_4_0.make: Add preliminary net 4.0 profile.

@@ -1,3 +1,9 @@
+2009-07-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	Improve coarse-grain parallelism in the build
+	* Makefile (_boot_:net_2_0_bootstrap): Depend on
+	'net_1_1_bootstrap' profile, rather than 'net_1_1'.
+
 2009-07-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* nunit20 : removed old framework.

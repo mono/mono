@@ -4,7 +4,7 @@
 # Note that we're using the .NET 1.1 MCS but MONO_PATH points to the net_2_0_bootstrap directory.
 # We do it this way to get assembly version references right.
 #
-BOOTSTRAP_PROFILE = net_1_1
+BOOTSTRAP_PROFILE = net_1_1_bootstrap
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 
