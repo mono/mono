@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
-#elif NET_3_5
+#elif NET_3_5 || (NET_2_1 && !INSIDE_CORLIB)
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

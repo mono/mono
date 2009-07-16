@@ -1,5 +1,5 @@
 /*
- * System.InvalidimeZoneException
+ * System.InvalidTimeZoneException
  *
  * Author(s)
  * 	Stephane Delcroix <stephane@delcroix.org>
