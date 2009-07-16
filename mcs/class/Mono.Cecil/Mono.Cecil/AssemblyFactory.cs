@@ -93,10 +93,17 @@ namespace Mono.Cecil {
 		static TargetRuntime CurrentRuntime ()
 		{
 			Version corlib = typeof (object).Assembly.GetName ().Version;
-			if (corlib.Major == 1)
+
+			switch (corlib.Major) {
+			case 1:
 				return corlib.Minor == 0 ? TargetRuntime.NET_1_0 : TargetRuntime.NET_1_1;
-			else // if (corlib.Major == 2)
+			case 2:
 				return TargetRuntime.NET_2_0;
+			case 4:
+				return TargetRuntime.NET_4_0;
+			default:
+				throw new NotSupportedException ();
+			}
 		}
 
 		public static AssemblyDefinition DefineAssembly (string name, AssemblyKind kind)

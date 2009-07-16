@@ -466,6 +466,7 @@ namespace Mono.Cecil.Metadata {
 				heap.MinorVersion = 0;
 				break;
 			case TargetRuntime.NET_2_0 :
+			case TargetRuntime.NET_4_0 :
 				heap.MajorVersion = 2;
 				heap.MinorVersion = 0;
 				break;

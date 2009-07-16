@@ -317,7 +317,7 @@ namespace Mono.Cecil.Binary {
 		{
 			m_textWriter.Write (header.Cb);
 
-			if (m_mdWriter.TargetRuntime == TargetRuntime.NET_2_0) {
+			if (m_mdWriter.TargetRuntime >= TargetRuntime.NET_2_0) {
 				m_textWriter.Write ((ushort) 2);
 				m_textWriter.Write ((ushort) 5);
 			} else {
