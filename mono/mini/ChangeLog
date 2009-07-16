@@ -1,7 +1,15 @@
+2009-07-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Add some infrastructure for AOT support.
+
 2009-07-15  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini-llvm-cpp.cpp (mono_llvm_build_alloca): Update to latest llvm api.
-
+	* mini-llvm-cpp.c: Update to the latest llvm api.
+	
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Set the EnablePrettyStackTrace
+	option to false to prevent llvm from installing signal handlers which
+	trip up the gc.
+	
 2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-x86.md:
@@ -12,7 +20,6 @@
 2009-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp (mono_llvm_build_alloca): Update to latest llvm api.
-
 
 Wed Jul 15 17:20:27 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
