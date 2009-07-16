@@ -47,6 +47,7 @@ namespace System.Drawing
 		private IntPtr	fontObject = IntPtr.Zero;
 #if NET_2_0		
 		private string  systemFontName;
+		private string  originalFontName;
 #endif		
 		private float _size;
 		private object olf;
@@ -59,6 +60,9 @@ namespace System.Drawing
 #if ONLY_1_1
 			if (familyName == null)
 				throw new ArgumentNullException ("familyName");
+#endif
+#if NET_2_0
+			originalFontName = familyName;
 #endif
                         FontFamily family;
 			// NOTE: If family name is null, empty or invalid,
@@ -501,6 +505,13 @@ namespace System.Drawing
 		public string SystemFontName {
 			get {
 				return systemFontName;
+			}
+		}
+
+		[Browsable(false)]
+		public string OriginalFontName {
+			get {
+				return originalFontName;
 			}
 		}
 #endif
