@@ -1057,6 +1057,14 @@ by setting the option
 Turns off the garbage collection in Mono.  This should be only used
 for debugging purposes
 .TP
+\fBLVM_COUNT\fR
+When Mono is compiled with LLVM support, this instructs the runtime to
+stop using LLVM after the specified number of methods are JITed.
+This is a tool used in diagnostics to help isolate problems in the
+code generation backend.   For example \fBLLVM_COUNT=10\fR would only
+compile 10 methods with LLVM and then switch to the Mono JIT engine.
+\fBLLVM_COUNT=0\fR would disable the LLVM engine altogether.
+.TP
 \fBMONO_AOT_CACHE\fR
 If set, this variable will instruct Mono to ahead-of-time compile new
 assemblies on demand and store the result into a cache in
