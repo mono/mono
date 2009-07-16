@@ -37,7 +37,7 @@ using System.Collections.Generic;
 
 namespace System.Net {
 
-	public class WebHeaderCollection : IEnumerable {
+	public sealed class WebHeaderCollection : IEnumerable {
 
 		internal Dictionary<string, string> headers;
 		bool validate;
