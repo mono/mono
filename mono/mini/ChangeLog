@@ -1,5 +1,8 @@
 2009-07-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Use module instead of ctx->module
+	in a few places.
+	
 	* mini-llvm.c: Add some infrastructure for AOT support.
 
 2009-07-15  Zoltan Varga  <vargaz@gmail.com>
