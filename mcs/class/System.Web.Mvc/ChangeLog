@@ -1,3 +1,8 @@
+2009-07-17  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Mvc/DefaultModelBinder.cs: applied workaround for gmcs
+	bug which is fixed in trunk but not in the 2.4 branch(es)
+
 2009-04-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: fixed resource ID generation.
