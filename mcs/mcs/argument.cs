@@ -211,6 +211,29 @@ namespace Mono.CSharp
 			this.args.AddRange (args.args);
 		}
 
+		public ArrayList CreateDynamicBinderArguments ()
+		{
+			ArrayList all = new ArrayList (args.Count);
+			Location loc = Location.Null;
+
+			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
+
+			foreach (Argument a in args) {
+				Arguments dargs = new Arguments (2);
+
+				// TODO: Inspect a.Type or a.Expression
+
+				// CSharpArgumentInfoFlags.None = 0
+				dargs.Add (new Argument (new IntLiteral (0, loc)));
+
+				// TODO: named
+				dargs.Add (new Argument (new NullLiteral (loc)));
+				all.Add (new New (new MemberAccess (binder, "CSharpArgumentInfo", loc), dargs, loc));
+			}
+
+			return all;
+		}
+
 		public static Arguments CreateForExpressionTree (EmitContext ec, Arguments args, params Expression[] e)
 		{
 			Arguments all = new Arguments ((args == null ? 0 : args.Count) + e.Length);

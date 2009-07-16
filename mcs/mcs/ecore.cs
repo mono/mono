@@ -978,6 +978,12 @@ namespace Mono.CSharp {
 			if (e.Type == TypeManager.bool_type)
 				return e;
 
+			if (e.Type == InternalType.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (e));
+				return new DynamicUnaryConversion ("IsTrue", args, loc);
+			}
+
 			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, Location.Null);
 
 			if (converted != null)
@@ -1208,8 +1214,14 @@ namespace Mono.CSharp {
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
-		public Expression ConvertExpressionToArrayIndex (EmitContext ec, Expression source)
+		protected Expression ConvertExpressionToArrayIndex (EmitContext ec, Expression source)
 		{
+			if (source.type == InternalType.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (source));
+				return new DynamicConversion (TypeManager.int32_type, false, args, loc).Resolve (ec);
+			}
+
 			Expression converted;
 			
 			using (ec.With (EmitContext.Flags.CheckState, true)) {
@@ -2524,6 +2536,9 @@ namespace Mono.CSharp {
 
 				return fne;
 			}
+
+			if (!HasTypeArguments && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3)
+				return new DynamicTypeExpr (loc);
 
 			if (silent || errors != Report.Errors)
 				return null;
@@ -5706,7 +5721,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		void Error_AssignmentEventOnly ()
+		public void Error_AssignmentEventOnly ()
 		{
 			Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
 				GetSignatureForError ());

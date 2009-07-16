@@ -367,7 +367,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!TypeManager.IsEqual (target_type, source_type)){
+			if (!TypeManager.IsEqual (target_type, source_type)) {
+				if (source_type == InternalType.Dynamic) {
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (source));
+					return new DynamicConversion (target_type, false, args, loc).Resolve (ec);
+				}
+
 				Expression resolved = ResolveConversions (ec);
 
 				if (resolved != this)
@@ -546,6 +552,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (op != Binary.Operator.Addition && op != Binary.Operator.Subtraction)
+				target.Error_AssignmentEventOnly ();
+
 			source = source.Resolve (ec);
 			if (source == null)
 				return null;
@@ -622,6 +631,7 @@ namespace Mono.CSharp {
 			if (original_source == null)
 				return null;
 
+			MemberAccess ma = target as MemberAccess;
 			using (ec.Set (EmitContext.Flags.InCompoundAssignment)) {
 				target = target.Resolve (ec);
 			}
@@ -643,6 +653,37 @@ namespace Mono.CSharp {
 			// effects.
 			//
 			source = new Binary (op, new TargetExpression (target), original_source, true);
+
+			// TODO: TargetExpression breaks MemberAccess composition
+			if (target is DynamicMemberBinder) {
+				Arguments targs = ((DynamicMemberBinder) target).Arguments;
+				source = source.Resolve (ec);
+
+				Arguments args = new Arguments (2);
+				args.AddRange (targs);
+				args.Add (new Argument (source));
+				source = new DynamicMemberBinder (true, ma.Name, args, loc).Resolve (ec);
+
+				// Handles possible event addition/subtraction
+				if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
+					args = new Arguments (2);
+					args.AddRange (targs);
+					args.Add (new Argument (original_source));
+					string method_prefix = op == Binary.Operator.Addition ?
+						Event.AEventAccessor.AddPrefix : Event.AEventAccessor.RemovePrefix;
+
+					Expression invoke = new DynamicInvocation (
+						new MemberAccess (original_source, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
+
+					args = new Arguments (1);
+					args.AddRange (targs);
+					source = new DynamicEventCompoundAssign (ma.Name, args,
+						(ExpressionStatement) source, (ExpressionStatement) invoke, loc).Resolve (ec);
+				}
+
+				return source;
+			}
+
 			return base.DoResolve (ec);
 		}
 

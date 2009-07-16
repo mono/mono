@@ -5069,7 +5069,8 @@ namespace Mono.CSharp {
 			if (builder == null) {
 				builder = container.TypeBuilder.DefineMethod (
 					method_name, flags, method.CallingConventions,
-					method.ReturnType, param.GetEmitTypes ());
+					TypeManager.TypeToReflectionType (method.ReturnType),
+					param.GetEmitTypes ());
 				return;
 			}
 
@@ -6934,7 +6935,7 @@ namespace Mono.CSharp {
 		sealed class AddDelegateMethod: AEventPropertyAccessor
 		{
 			public AddDelegateMethod (Event method, Accessor accessor):
-				base (method, accessor, "add_")
+				base (method, accessor, AddPrefix)
 			{
 			}
 		}
@@ -6942,7 +6943,7 @@ namespace Mono.CSharp {
 		sealed class RemoveDelegateMethod: AEventPropertyAccessor
 		{
 			public RemoveDelegateMethod (Event method, Accessor accessor):
-				base (method, accessor, "remove_")
+				base (method, accessor, RemovePrefix)
 			{
 			}
 		}
@@ -7016,7 +7017,7 @@ namespace Mono.CSharp {
 		sealed class AddDelegateMethod: EventFieldAccessor
 		{
 			public AddDelegateMethod (Event method):
-				base (method, "add_")
+				base (method, AddPrefix)
 			{
 			}
 
@@ -7028,7 +7029,7 @@ namespace Mono.CSharp {
 		sealed class RemoveDelegateMethod: EventFieldAccessor
 		{
 			public RemoveDelegateMethod (Event method):
-				base (method, "remove_")
+				base (method, RemovePrefix)
 			{
 			}
 
@@ -7129,6 +7130,9 @@ namespace Mono.CSharp {
 			ImplicitParameter param_attr;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
+
+			public const string AddPrefix = "add_";
+			public const string RemovePrefix = "remove_";
 
 			protected AEventAccessor (Event method, string prefix)
 				: base (method, prefix)

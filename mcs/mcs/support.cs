@@ -410,7 +410,7 @@ namespace Mono.CSharp {
 	class DynamicType : Type
 	{
 		public override Assembly Assembly {
-			get { throw new NotImplementedException (); }
+			get { return UnderlyingSystemType.Assembly; }
 		}
 
 		public override string AssemblyQualifiedName {

@@ -1,3 +1,13 @@
+2009-07-16  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, generic.cs, argument.cs, linq.cs, convert.cs,
+	assign.cs, expression.cs, statement.cs, support.cs, ecore.cs,
+	class.cs, driver.cs: Work on dynamic binding.
+
+	* dynamic.cs: New file.
+
+	* *.sources, *.proj: Updated.
+
 2009-07-15  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (Conditional): Avoid double Resolve.

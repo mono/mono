@@ -122,7 +122,8 @@ namespace Mono.CSharp {
 	//
 	//   Unary implements unary expressions.
 	//
-	public class Unary : Expression {
+	public class Unary : Expression
+	{
 		public enum Operator : byte {
 			UnaryPlus, UnaryNegation, LogicalNot, OnesComplement,
 			AddressOf,  TOP
@@ -446,6 +447,12 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+			if (Expr.Type == InternalType.Dynamic) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (Expr));
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
+			}
+
 			if (TypeManager.IsNullableType (Expr.Type))
 				return new Nullable.LiftedUnaryOperator (Oper, Expr).Resolve (ec);
 
@@ -549,6 +556,19 @@ namespace Mono.CSharp {
 		{
 			Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
 				oper, TypeManager.CSharpName (t));
+		}
+
+		//
+		// Converts operator to System.Linq.Expressions.ExpressionType enum name
+		//
+		string GetOperatorExpressionTypeName ()
+		{
+			switch (Oper) {
+			case Operator.UnaryPlus:
+				return "UnaryPlus";
+			default:
+				throw new NotImplementedException ("Unknown express type operator " + Oper.ToString ());
+			}
 		}
 
 		static bool IsFloat (Type t)
@@ -1618,7 +1638,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Binary operators
 	/// </summary>
-	public class Binary : Expression {
+	public class Binary : Expression, IDynamicBinder
+	{
 
 		protected class PredefinedOperator {
 			protected readonly Type left;
@@ -1998,6 +2019,23 @@ namespace Mono.CSharp {
 		protected void Error_OperatorCannotBeApplied (Expression left, Expression right)
 		{
 			Error_OperatorCannotBeApplied (left, right, OperName (oper), loc);
+		}
+
+		//
+		// Converts operator to System.Linq.Expressions.ExpressionType enum name
+		//
+		string GetOperatorExpressionTypeName ()
+		{
+			switch (oper) {
+			case Operator.Addition:
+				return is_compound ? "AddAssign" : "Add";
+			case Operator.Equality:
+				return "Equal";
+			case Operator.Multiply:
+				return is_compound ? "MultiplyAssign" : "Multiply";
+			default:
+				throw new NotImplementedException ("Unknown expression type operator " + oper.ToString ());
+			}
 		}
 
 		static string GetOperatorMetadataName (Operator op)
@@ -2569,6 +2607,13 @@ namespace Mono.CSharp {
 				}
 				CheckUselessComparison (lc, right.Type);
 				CheckUselessComparison (rc, left.Type);
+			}
+
+			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
+				Arguments args = new Arguments (2);
+				args.Add (new Argument (left));
+				args.Add (new Argument (right));
+				return new DynamicExpressionStatement (this, args, loc).Resolve (ec);
 			}
 
 			if (RootContext.Version >= LanguageVersion.ISO_2 &&
@@ -3459,6 +3504,25 @@ namespace Mono.CSharp {
 			target.left = left.Clone (clonectx);
 			target.right = right.Clone (clonectx);
 		}
+
+		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		{
+			Arguments binder_args = new Arguments (4);
+
+			MemberAccess sle = new MemberAccess (new MemberAccess (
+				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
+
+			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
+
+			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
+			binder_args.Add (new Argument (new BoolLiteral (ec.CheckState, loc)));
+
+			bool member_access = left is DynamicMemberBinder || right is DynamicMemberBinder;
+			binder_args.Add (new Argument (new BoolLiteral (member_access, loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+
+			return new New (new MemberAccess (binder, "CSharpBinaryOperationBinder", loc), binder_args, loc);
+		}
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
@@ -3909,8 +3973,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			expr = Expression.ResolveBoolean (ec, expr, loc);
-			if (expr == null)
-				return null;
 			
 			Assign ass = expr as Assign;
 			if (ass != null && ass.Source is Constant) {
@@ -3920,7 +3982,7 @@ namespace Mono.CSharp {
 			true_expr = true_expr.Resolve (ec);
 			false_expr = false_expr.Resolve (ec);
 
-			if (true_expr == null || false_expr == null)
+			if (true_expr == null || false_expr == null || expr == null)
 				return null;
 
 			eclass = ExprClass.Value;
@@ -4565,8 +4627,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Invocation of methods or delegates.
 	/// </summary>
-	public class Invocation : ExpressionStatement {
-		protected Arguments Arguments;
+	public class Invocation : ExpressionStatement
+	{
+		protected Arguments arguments;
 		protected Expression expr;
 		protected MethodGroupExpr mg;
 		bool arguments_resolved;
@@ -4583,7 +4646,7 @@ namespace Mono.CSharp {
 			else
 				this.expr = expr;
 			
-			Arguments = arguments;
+			this.arguments = arguments;
 			if (expr != null)
 				loc = expr.Location;
 		}
@@ -4611,7 +4674,7 @@ namespace Mono.CSharp {
 				mg.InstanceExpression.CreateExpressionTree (ec) :
 				new NullLiteral (loc);
 
-			args = Arguments.CreateForExpressionTree (ec, Arguments,
+			args = Arguments.CreateForExpressionTree (ec, arguments,
 				instance,
 				mg.CreateExpressionTree (ec));
 
@@ -4635,9 +4698,14 @@ namespace Mono.CSharp {
 			if (mg == null) {
 				Type expr_type = expr_resolved.Type;
 
+				if (expr_type == InternalType.Dynamic) {
+					Arguments args = ((DynamicMemberBinder) expr_resolved).Arguments;
+					return new DynamicInvocation (expr as MemberAccess, args, loc).Resolve (ec);
+				}
+
 				if (expr_type != null && TypeManager.IsDelegateType (expr_type)){
 					return (new DelegateInvocation (
-						expr_resolved, Arguments, loc)).Resolve (ec);
+						expr_resolved, arguments, loc)).Resolve (ec);
 				}
 
 				MemberExpr me = expr_resolved as MemberExpr;
@@ -4659,8 +4727,8 @@ namespace Mono.CSharp {
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
-			if (Arguments != null && !arguments_resolved) {
-				Arguments.Resolve (ec);
+			if (arguments != null && !arguments_resolved) {
+				arguments.Resolve (ec);
 			}
 
 			mg = DoResolveOverload (ec);
@@ -4704,7 +4772,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (Arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
+			if (arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
 					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
 				else
@@ -4723,7 +4791,7 @@ namespace Mono.CSharp {
 
 		protected virtual MethodGroupExpr DoResolveOverload (EmitContext ec)
 		{
-			return mg.OverloadResolve (ec, ref Arguments, false, loc);
+			return mg.OverloadResolve (ec, ref arguments, false, loc);
 		}
 
 		public static bool IsSpecialMethodInvocation (MethodBase method, Location loc)
@@ -4914,7 +4982,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			mg.EmitCall (ec, Arguments);
+			mg.EmitCall (ec, arguments);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
@@ -4932,8 +5000,8 @@ namespace Mono.CSharp {
 		{
 			Invocation target = (Invocation) t;
 
-			if (Arguments != null)
-				target.Arguments = Arguments.Clone (clonectx);
+			if (arguments != null)
+				target.arguments = arguments.Clone (clonectx);
 
 			target.expr = expr.Clone (clonectx);
 		}
@@ -4941,8 +5009,8 @@ namespace Mono.CSharp {
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			mg.MutateHoistedGenericType (storey);
-			if (Arguments != null) {
-				Arguments.MutateHoistedGenericType (storey);
+			if (arguments != null) {
+				arguments.MutateHoistedGenericType (storey);
 			}
 		}
 	}
@@ -7123,6 +7191,15 @@ namespace Mono.CSharp {
 			}
 
 			Type expr_type = expr_resolved.Type;
+			if (expr_type == InternalType.Dynamic) {
+				Arguments args = new Arguments (2);
+				args.Add (new Argument (expr_resolved.Resolve (ec)));
+				if (right_side != null)
+					args.Add (new Argument (right_side));
+
+				return new DynamicMemberBinder (right_side != null, Name, args, loc).Resolve (ec);
+			}
+
 			if (expr_type.IsPointer || expr_type == TypeManager.void_type ||
 				expr_type == TypeManager.null_type || expr_type == InternalType.AnonymousMethod) {
 				Unary.Error_OperatorCannotBeApplied (loc, ".", expr_type);
@@ -7573,6 +7650,13 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
+			if (t == InternalType.Dynamic) {
+				Arguments args = new Arguments (Arguments.Count + 1);
+				args.Add (new Argument (Expr));
+				args.AddRange (Arguments);
+				return new DynamicIndexBinder (false, args, loc).Resolve (ec);
+			}
+
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
 				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
@@ -7594,6 +7678,14 @@ namespace Mono.CSharp {
 
 			if (type.IsPointer)
 				return MakePointerAccess (ec, type);
+
+			if (type == InternalType.Dynamic) {
+				Arguments args = new Arguments (Arguments.Count + 2);
+				args.Add (new Argument (Expr));
+				args.AddRange (Arguments);
+				args.Add (new Argument (right_side));
+				return new DynamicIndexBinder (true, args, loc).Resolve (ec);
+			}
 
 			if (Expr.eclass != ExprClass.Variable && TypeManager.IsStruct (type))
 				Error_CannotModifyIntermediateExpressionValue (ec);
@@ -9060,7 +9152,7 @@ namespace Mono.CSharp {
 		public CollectionElementInitializer (Expression argument)
 			: base (null, new Arguments (1), true)
 		{
-			Arguments.Add (new ElementInitializerArgument (argument));
+			base.arguments.Add (new ElementInitializerArgument (argument));
 			this.loc = argument.Location;
 		}
 
@@ -9068,7 +9160,7 @@ namespace Mono.CSharp {
 			: base (null, new Arguments (arguments.Count), true)
 		{
 			foreach (Expression e in arguments)
-				Arguments.Add (new ElementInitializerArgument (e));
+				base.arguments.Add (new ElementInitializerArgument (e));
 
 			this.loc = loc;
 		}
@@ -9078,8 +9170,8 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 
-			ArrayList expr_initializers = new ArrayList (Arguments.Count);
-			foreach (Argument a in Arguments)
+			ArrayList expr_initializers = new ArrayList (arguments.Count);
+			foreach (Argument a in arguments)
 				expr_initializers.Add (a.CreateExpressionTree (ec));
 
 			args.Add (new Argument (new ArrayCreation (
@@ -9090,8 +9182,8 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			CollectionElementInitializer target = (CollectionElementInitializer) t;
-
-			target.Arguments = Arguments.Clone (clonectx);
+			if (arguments != null)
+				target.arguments = arguments.Clone (clonectx);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -9102,7 +9194,7 @@ namespace Mono.CSharp {
 			// TODO: We could call a constructor which takes element count argument,
 			// for known types like List<T>, Dictionary<T, U>
 
-			Arguments.Resolve (ec);
+			arguments.Resolve (ec);
 
 			base.expr = new AddMemberAccess (ec.CurrentInitializerVariable, loc);
 

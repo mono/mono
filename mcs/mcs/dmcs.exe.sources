@@ -15,6 +15,7 @@ decl.cs
 delegate.cs
 doc.cs
 driver.cs
+dynamic.cs
 ecore.cs
 enum.cs
 eval.cs

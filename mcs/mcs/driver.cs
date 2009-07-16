@@ -788,6 +788,8 @@ namespace Mono.CSharp
 
 			if (RootContext.Version > LanguageVersion.ISO_2)
 				soft_references.Add ("System.Core");
+			if (RootContext.Version > LanguageVersion.V_3)
+				soft_references.Add ("Microsoft.CSharp");
 		}
 
 		public static string OutputFile

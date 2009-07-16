@@ -1485,11 +1485,7 @@ namespace Mono.CSharp {
 					is_class = is_struct = false;
 				}
 			} else {
-#if MS_COMPATIBLE
-				is_class = false;
-				if (!atype.IsGenericType)
-#endif
-				is_class = atype.IsClass || atype.IsInterface;
+				is_class = TypeManager.IsReferenceType (atype);
 				is_struct = TypeManager.IsValueType (atype) && !TypeManager.IsNullableType (atype);
 			}
 

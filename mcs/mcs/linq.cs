@@ -89,7 +89,7 @@ namespace Mono.CSharp.Linq
 			protected override MethodGroupExpr DoResolveOverload (EmitContext ec)
 			{
 				mg.CustomErrorHandler = this;
-				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref Arguments, false, loc);
+				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, false, loc);
 				return rmg;
 			}
 
@@ -107,7 +107,7 @@ namespace Mono.CSharp.Linq
 				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
-					Argument a = Arguments [0];
+					Argument a = arguments [0];
 
 					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
 #if GMCS_SOURCE
@@ -134,7 +134,7 @@ namespace Mono.CSharp.Linq
 				if (mg.Name == "SelectMany") {
 					Report.Error (1943, loc,
 						"An expression type is incorrect in a subsequent `from' clause in a query expression with source type `{0}'",
-						Arguments [0].GetSignatureForError ());
+						arguments [0].GetSignatureForError ());
 				} else {
 					Report.Error (1942, loc,
 						"An expression type in `{0}' clause is incorrect. Type inference failed in the call to `{1}'",

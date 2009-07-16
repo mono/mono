@@ -78,9 +78,6 @@ namespace Mono.CSharp {
 				Report.Error (error, s);
 		}
 
-		/// <summary>
-		///   Return value indicates whether all code paths emitted return.
-		/// </summary>
 		public virtual void Emit (EmitContext ec)
 		{
 			ec.Mark (loc);
@@ -1329,7 +1326,7 @@ namespace Mono.CSharp {
 					//
 					builder = TypeManager.DeclareLocalPinned (ec.ig, VariableType);
 				else
-					builder = ec.ig.DeclareLocal (VariableType);
+					builder = ec.ig.DeclareLocal (TypeManager.TypeToReflectionType (VariableType));
 			}
 		}
 

@@ -92,6 +92,12 @@ namespace Mono.CSharp {
 	static internal Type expression_type;
 	public static Type parameter_expression_type;
 
+	//
+	// C# 4.0
+	//
+	public static Type call_site_type;
+	public static Type generic_call_site_type;
+
 	// 
 	// Expressions representing the internal types.  Used during declaration
 	// definition.
@@ -2167,6 +2173,15 @@ namespace Mono.CSharp {
 		}
 #endif
 		return t;
+	}
+
+	//
+	// Converts any type to reflection supported type
+	//
+	public static Type TypeToReflectionType (Type type)
+	{
+		// TODO: Very lame and painful, GetReference () is enough for mcs-cecil
+		return type == InternalType.Dynamic ? object_type : type;
 	}
 
 	/// <summary>

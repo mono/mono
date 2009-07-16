@@ -16,6 +16,7 @@ decl.cs
 delegate.cs
 doc.cs
 doc-bootstrap.cs
+dynamic.cs
 enum.cs
 ecore.cs
 eval.cs
