@@ -4796,8 +4796,10 @@ namespace Mono.CSharp {
 					vi.VariableInfo = null;
 				}
 
-				if (!c.Resolve (ec))
+				if (!c.Resolve (ec)) {
 					ok = false;
+					continue;
+				}
 
 				Type resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {

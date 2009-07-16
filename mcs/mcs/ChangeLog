@@ -1,3 +1,8 @@
+2009-07-16  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #521671
+	* statement.cs: Fixed crash when checking missing type.
+
 2009-06-17  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #514096
