@@ -1,5 +1,11 @@
 2009-07-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_patch_info_hash): Fix the handling of 
+	MONO_PATCH_INFO_INTERNAL_METHOD.
+	(mono_patch_info_equal): Ditto.
+
+2009-07-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c (mono_llvm_emit_method): Use module instead of ctx->module
 	in a few places.
 	
