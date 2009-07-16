@@ -15,7 +15,9 @@ class Implementer : Interface<Implementer>
 
 class MainClass
 {
-	public static void Main (string [] args)
+	public static int Main ()
 	{
+		new Implementer ();
+		return 0;
 	}
 }

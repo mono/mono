@@ -9355,8 +9355,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main(System.String[])">
-        <size>1</size>
+      <method name="Int32 Main()">
+        <size>8</size>
       </method>
     </type>
   </test>
