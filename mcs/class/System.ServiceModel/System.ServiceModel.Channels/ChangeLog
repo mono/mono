@@ -1,5 +1,11 @@
 2009-07-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs: add the registered node itself to peer list.
+	  (The messaging must be done as TCP request/reply pattern, so it's
+	  not working yet.)
+
+2009-07-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpRequestChannel.cs : new channel file (TCP for request/reply
 	  messaging pattern). The messaging part is not working yet.
 	* TcpChannelFactory.cs : support IRequestChannel.

@@ -163,6 +163,10 @@ namespace System.ServiceModel.Channels
 			node.RegisteredId = resolver.Register (node.MeshId, pna, timeout - (DateTime.Now - start));
 			node.NodeId = nid;
 
+			// Add itself to the local list as well.
+			// FIXME: it might become unnecessary once it implemented new node registration from peer resolver service.
+			peers.Add (pna);
+
 			node.SetOnline ();
 		}
 	}
