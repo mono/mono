@@ -39,18 +39,13 @@ namespace System.ServiceModel
 	[MonoTODO]
 	public class NetTcpBinding : Binding, IBindingRuntimePreferences
 	{
-		HostNameComparisonMode comparison_mode;
-		long max_pool_size;
-		int max_buf_size;
 		int max_conn;
-		long max_msg_size;
 		OptionalReliableSession reliable_session;
 		NetTcpSecurity security;
 		XmlDictionaryReaderQuotas reader_quotas;
 		EnvelopeVersion soap_version;
 		bool transaction_flow;
 		TransactionProtocol transaction_protocol;
-		TransferMode transfer_mode;
 		TcpTransportBindingElement transport = new TcpTransportBindingElement ();
 
 		public NetTcpBinding ()
@@ -70,8 +65,8 @@ namespace System.ServiceModel
 		}
 
 		public HostNameComparisonMode HostNameComparisonMode {
-			get { return comparison_mode; }
-			set { comparison_mode = value; }
+			get { return transport.HostNameComparisonMode; }
+			set { transport.HostNameComparisonMode = value; }
 		}
 
 		public int ListenBacklog {
@@ -80,23 +75,24 @@ namespace System.ServiceModel
 		}
 
 		public long MaxBufferPoolSize {
-			get { return max_pool_size; }
-			set { max_pool_size = value; }
+			get { return transport.MaxBufferPoolSize; }
+			set { transport.MaxBufferPoolSize = value; }
 		}
 
 		public int MaxBufferSize {
-			get { return max_buf_size; }
-			set { max_buf_size = value; }
+			get { return transport.MaxBufferSize; }
+			set { transport.MaxBufferSize = value; }
 		}
 
+		[MonoTODO]
 		public int MaxConnections {
 			get { return max_conn; }
 			set { max_conn = value; }
 		}
 
 		public long MaxReceivedMessageSize {
-			get { return max_msg_size; }
-			set { max_msg_size = value; }
+			get { return transport.MaxReceivedMessageSize; }
+			set { transport.MaxReceivedMessageSize = value; }
 		}
 
 		public bool PortSharingEnabled {
@@ -104,6 +100,7 @@ namespace System.ServiceModel
 			set { transport.PortSharingEnabled = value; }
 		}
 
+		[MonoTODO]
 		public OptionalReliableSession ReliableSession {
 			get { return reliable_session; }
 		}
@@ -122,8 +119,8 @@ namespace System.ServiceModel
 		}
 
 		public TransferMode TransferMode {
-			get { return transfer_mode; }
-			set { transfer_mode = value; }
+			get { return transport.TransferMode; }
+			set { transport.TransferMode = value; }
 		}
 
 		public bool TransactionFlow {
@@ -146,7 +143,9 @@ namespace System.ServiceModel
 		{
 			BindingElement tx = new TransactionFlowBindingElement (TransactionProtocol.WSAtomicTransactionOctober2004);
 			SecurityBindingElement sec = CreateMessageSecurity ();
-			BindingElement msg = new BinaryMessageEncodingBindingElement ();
+			var msg = new BinaryMessageEncodingBindingElement ();
+			if (ReaderQuotas != null)
+				ReaderQuotas.CopyTo (msg.ReaderQuotas);
 			BindingElement tr = GetTransport ();
 			List<BindingElement> list = new List<BindingElement> ();
 			if (tx != null)
