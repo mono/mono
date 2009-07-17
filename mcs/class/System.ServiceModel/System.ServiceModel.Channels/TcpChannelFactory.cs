@@ -71,6 +71,9 @@ namespace System.ServiceModel.Channels
 			if (t == typeof (IDuplexSessionChannel))
 				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, address, via);
 			
+			if (t == typeof (IRequestChannel))
+				return (TChannel) (object) new TcpRequestChannel (this, info, address, via);
+
 			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
 		}
 

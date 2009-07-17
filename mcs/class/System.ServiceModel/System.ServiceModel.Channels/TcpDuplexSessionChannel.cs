@@ -332,6 +332,7 @@ namespace System.ServiceModel.Channels
 		public const byte PreambleAckRecord = 0xB;
 		public const byte PreambleEndRecord = 0xC;
 
+		public const byte UnsizedMessageTerminator = 0;
 		public const byte SingletonUnsizedMode = 1;
 		public const byte DuplexMode = 2;
 		public const byte SimplexMode = 3;
@@ -503,11 +504,45 @@ namespace System.ServiceModel.Channels
 			if (benc != null)
 				benc.CurrentReaderSession = null;
 
-//			if (!is_service_side)
-//				if (s.Read (eof_buffer, 0, 1) == 1)
-//					if (eof_buffer [0] != EndRecord)
-//						throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
-//
+			return msg;
+		}
+
+		// FIXME: support timeout
+		public Message ReadUnsizedMessage (TimeSpan timeout)
+		{
+			var packetType = s.ReadByte ();
+			if (packetType == EndRecord)
+				return null;
+			if (packetType != UnsizedEnvelopeRecord)
+				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
+
+			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
+			if (EncodingRecord != 8)
+				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+
+			// Encoding type 8:
+			// the returned buffer consists of a serialized reader 
+			// session and the binary xml body. 
+
+			var session = reader_session ?? new XmlBinaryReaderSession ();
+			reader_session = session;
+			byte [] rsbuf = new TcpBinaryFrameManager (0, s, is_service_side).ReadSizedChunk ();
+			
+			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
+				var rbr = new BinaryReader (rms, Encoding.UTF8);
+				while (rms.Position < rms.Length)
+					session.Add (reader_session_items++, rbr.ReadString ());
+			}
+			var benc = Encoder as BinaryMessageEncoder;
+			if (benc != null)
+				benc.CurrentReaderSession = session;
+
+			// FIXME: supply maxSizeOfHeaders.
+			Message msg = Encoder.ReadMessage (s, 0x10000);
+			if (benc != null)
+				benc.CurrentReaderSession = null;
+			if (s.ReadByte () != UnsizedMessageTerminator)
+				throw new InvalidOperationException ("Unsized message terminator is expected");
 
 			return msg;
 		}
@@ -518,8 +553,6 @@ namespace System.ServiceModel.Channels
 		public void WriteSizedMessage (Message message)
 		{
 			ResetWriteBuffer ();
-
-			// FIXME: implement full [MC-NMF] protocol.
 
 			if (EncodingRecord != 8)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
@@ -558,6 +591,52 @@ namespace System.ServiceModel.Channels
 
 			writer.Flush ();
 
+			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+			s.Flush ();
+		}
+
+		// FIXME: support timeout
+		public void WriteUnsizedMessage (Message message, TimeSpan timeout)
+		{
+			ResetWriteBuffer ();
+
+			if (EncodingRecord != 8)
+				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+
+			buffer.WriteByte (UnsizedEnvelopeRecord);
+
+			MemoryStream ms = new MemoryStream ();
+			var session = writer_session ?? new MyXmlBinaryWriterSession ();
+			writer_session = session;
+			int writer_session_count = session.List.Count;
+			var benc = Encoder as BinaryMessageEncoder;
+			try {
+				if (benc != null)
+					benc.CurrentWriterSession = session;
+				Encoder.WriteMessage (message, ms);
+			} finally {
+				benc.CurrentWriterSession = null;
+			}
+
+			// dictionary
+			MemoryStream msd = new MemoryStream ();
+			BinaryWriter dw = new BinaryWriter (msd);
+			for (int i = writer_session_count; i < session.List.Count; i++)
+				dw.Write (session.List [i].Value);
+			dw.Flush ();
+
+			int length = (int) (msd.Position + ms.Position);
+			var msda = msd.ToArray ();
+
+			writer.Write (msda, 0, msda.Length);
+			// message body
+			var arr = ms.GetBuffer ();
+			writer.Write (arr, 0, (int) ms.Position);
+
+			writer.Write (UnsizedMessageTerminator); // terminator
+			writer.Flush ();
+
+			// FIXME: it should be rewritten to directly write to the stream.
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
 			s.Flush ();
 		}
