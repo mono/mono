@@ -1,3 +1,8 @@
+2009-07-18  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Fix and enable the internal allocator instead of
+	using malloc/free (which causes deadlocks).
+
 2009-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* refletion.c: Fix builds with SRE disabled by adding a minimal
