@@ -1,3 +1,9 @@
+2009-07-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RadioButtonTest.cs: Update the Checked test to not depend on
+	Form.Show, since we need to check the same behaviour even if no handle
+	has been created yet.
+
 2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewTest.cs: Duplicate test label fix.
