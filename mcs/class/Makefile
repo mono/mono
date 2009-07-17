@@ -39,7 +39,6 @@ common_dirs := \
 	System.Drawing			\
 	System.Transactions		\
 	System.EnterpriseServices	\
-	Mono.C5				\
 	Mono.Data.Tds			\
 	System.Data			\
 	Mono.Data			\
@@ -116,6 +115,7 @@ net_2_0_dirs := \
 	System.ServiceModel		\
 	System.ServiceModel.Web		\
 	System.Web.Mvc			\
+	Mono.C5				\
 	Mono.Management			\
 	Mono.Options 			\
 	Mono.Simd			\
