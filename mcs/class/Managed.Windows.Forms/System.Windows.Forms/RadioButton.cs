@@ -114,16 +114,14 @@ namespace System.Windows.Forms {
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
 			TextAlign = ContentAlignment.MiddleLeft;
 			TabStop = false;
-
-			GotFocus += new EventHandler (GotFocusHandler);
 		}
 		#endregion	// Public Constructors
 
 		#region Private Methods
 
-		// if we get focus, and no RadioButton in the parent control is
-		// checked, mark Checked as true for us
-		private void GotFocusHandler (object o, EventArgs args)
+		// When getting OnEnter we need to set Checked as true in case none of the sibling radio
+		// buttons is checked.
+		private void PerformDefaultCheck ()
 		{
 			// if we are already checked, no need to check the other controls
 			if (!auto_check || Checked)
@@ -353,6 +351,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnEnter(EventArgs e) {
+			PerformDefaultCheck ();
 			base.OnEnter(e);
 		}
 
