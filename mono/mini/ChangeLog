@@ -1,5 +1,9 @@
 2009-07-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_method): Change the handling of the
+	MONO_LASTAOT env variable so MONO_LASTAOT=0 means that no aot methods
+	are used.
+
 	* mini.c (mono_patch_info_equal): Really fix the handling of RGCTX_FETCH.
 
 2009-07-17  Zoltan Varga  <vargaz@gmail.com>
