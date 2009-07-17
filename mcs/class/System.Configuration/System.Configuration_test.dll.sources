@@ -8,6 +8,7 @@ System.Configuration/ConfigurationPermissionTest.cs
 System.Configuration/ConfigurationPropertyTest.cs
 System.Configuration/ConfigurationManagerTest.cs
 System.Configuration/ConfigurationSectionGroupTest.cs
+System.Configuration/ConfigurationSectionTest.cs
 System.Configuration/ConnectionStringSettingsTest.cs
 System.Configuration/DefaultValidatorTest.cs
 System.Configuration/ExeConfigurationFileMapTest.cs
