@@ -384,12 +384,10 @@ namespace System.Configuration
 					val.DeserializeElement (reader, serializeCollectionKey);
 					readProps [prop] = prop.Name;
 
-					reader.Read();
+					if(depth == reader.Depth)
+						reader.Read();
 
-				} while (depth < reader.Depth);
-
-				if (reader.NodeType == XmlNodeType.EndElement)
-					reader.Read ();
+				} while (depth < reader.Depth);				
 			}
 			
 			modified = false;

@@ -1,3 +1,9 @@
+2009-07-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ConfigurationElement.cs: don't skip xml nodes when reading 2
+	ConfigurationElement in a row. Patch by Greg Smolyn that fixes bug
+	#521231.
+
 2009-07-15  Marek Habersack  <mhabersack@novell.com>
 
 	* Configuration.cs: explicitly flush the stream when writing XML
