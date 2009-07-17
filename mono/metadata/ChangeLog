@@ -1,5 +1,11 @@
 2009-07-18  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: When a thread is unregistered, don't free its remsets
+	but put them on a list which is processed with the other thread's
+	remsets.
+
+2009-07-18  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Fix and enable the internal allocator instead of
 	using malloc/free (which causes deadlocks).
 
