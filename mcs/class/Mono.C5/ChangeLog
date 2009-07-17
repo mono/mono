@@ -1,3 +1,9 @@
+2009-07-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* add-conditional.pl Makefile: Applied patch from Marcus Griep 
+	<marcus@griep.us>. Remove workarounds for compiling this assembly in the
+	net 1.1 profile.
+
 2006-03-07  Martin Baulig  <martin@ximian.com>
 
 	* Test/hashing/HashDictionaryTests.cs: Temporarily disable some
