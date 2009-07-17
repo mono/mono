@@ -1,3 +1,8 @@
+2009-07-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-proclib.c: fix reading processor usage for a process. Patch
+	from Jacob Gladish that fixes bug #523052.
+
 2009-07-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-proclib.c: fixed setting the NUL terminator.
