@@ -39,11 +39,15 @@ namespace System.ServiceModel.Channels
 	internal abstract class RequestChannelBase : ChannelBase, IRequestChannel
 	{
 		ChannelFactoryBase channel_factory;
+		EndpointAddress address;
+		Uri via;
 
-		public RequestChannelBase (ChannelFactoryBase factory)
+		public RequestChannelBase (ChannelFactoryBase factory, EndpointAddress address, Uri via)
 			: base (factory)
 		{
 			this.channel_factory = factory;
+			this.address = address;
+			this.via = via;
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {
@@ -54,9 +58,13 @@ namespace System.ServiceModel.Channels
 			get { return channel_factory.DefaultOpenTimeout; }
 		}
 
-		public abstract EndpointAddress RemoteAddress { get; }
+		public EndpointAddress RemoteAddress {
+			get { return address; }
+		}
 
-		public abstract Uri Via { get; }
+		public Uri Via {
+			get { return via; }
+		}
 
 		// Request
 
@@ -72,8 +80,47 @@ namespace System.ServiceModel.Channels
 			return BeginRequest (message, DefaultSendTimeout, callback, state);
 		}
 
-		public abstract IAsyncResult BeginRequest (Message message, TimeSpan timeout, AsyncCallback callback, object state);
+		Func<Message,TimeSpan,Message> request_delegate;
 
-		public abstract Message EndRequest (IAsyncResult result);
+		public virtual IAsyncResult BeginRequest (Message message, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (request_delegate == null)
+				request_delegate = new Func<Message,TimeSpan,Message> (Request);
+			return request_delegate.BeginInvoke (message, timeout, callback, state);
+		}
+
+		public virtual Message EndRequest (IAsyncResult result)
+		{
+			return request_delegate.EndInvoke (result);
+		}
+
+		// Open and Close
+		Action<TimeSpan> open_delegate;
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			open_delegate.EndInvoke (result);
+		}
+
+		Action<TimeSpan> close_delegate;
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			close_delegate.EndInvoke (result);
+		}
 	}
 }

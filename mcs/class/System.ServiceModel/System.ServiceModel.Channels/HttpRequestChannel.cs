@@ -40,8 +40,6 @@ namespace System.ServiceModel.Channels
 	internal class HttpRequestChannel : RequestChannelBase
 	{
 		HttpChannelFactory<IRequestChannel> source;
-		EndpointAddress address;
-		Uri via;
 
 		WebRequest web_request;
 
@@ -52,11 +50,9 @@ namespace System.ServiceModel.Channels
 
 		public HttpRequestChannel (HttpChannelFactory<IRequestChannel> factory,
 			EndpointAddress address, Uri via)
-			: base (factory)
+			: base (factory, address, via)
 		{
 			this.source = factory;
-			this.address = address;
-			this.via = via;
 		}
 
 		public int MaxSizeOfHeaders {
@@ -65,14 +61,6 @@ namespace System.ServiceModel.Channels
 
 		public MessageEncoder Encoder {
 			get { return source.MessageEncoder; }
-		}
-
-		public override EndpointAddress RemoteAddress {
-			get { return address; }
-		}
-
-		public override Uri Via {
-			get { return via; }
 		}
 
 		// Request
