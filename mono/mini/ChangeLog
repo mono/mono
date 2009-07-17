@@ -1,5 +1,8 @@
 2009-07-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_patch_info_equal): Revert the last change for now as it
+	seems to break the aot tests.
+	
 	* mini.c (mono_patch_info_equal): Fix the handling of 
 	MONO_PATCH_INFO_RGCTX_FETCH.
 
