@@ -1,3 +1,11 @@
+2009-07-18  Marek Habersack  <mhabersack@novell.com>
+
+	* DefaultResourceProvider.cs: if GetResourceObject is passed a
+	null or empty classKey it just returns null.
+
+	* AppResourcesAssemblyBuilder.cs: satellite assemblies are now
+	built using al instead of gmcs - makes the build slightly faster.
+
 2009-07-13  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: wrap HttpApplication.LoadTypeFromBin call in

@@ -527,7 +527,7 @@ namespace System.Web {
 		
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			return GetGlobalObjectFromFactory (classKey, resourceKey, culture);
+			return GetGlobalObjectFromFactory ("Resources." + classKey, resourceKey, culture);
 		}
 
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey)

@@ -1,3 +1,9 @@
+2009-07-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: GetGlobalResourceObject must look for resources
+	in the 'Resources' "namespace" - it was a regression from the
+	previous change to that method.
+
 2009-07-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: added internal methods to
