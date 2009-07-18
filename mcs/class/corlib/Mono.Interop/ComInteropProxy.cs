@@ -54,7 +54,8 @@ namespace Mono.Interop
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static ComInteropProxy FindProxy (IntPtr pItf);
 
-		public ComInteropProxy (Type t)
+		// Private. Objects must be created with CreateProxy.
+		ComInteropProxy (Type t)
 			: base (t)
 		{
 			// object only created here
@@ -62,16 +63,16 @@ namespace Mono.Interop
 			com_object = __ComObject.CreateRCW (t);
 		}
 
-		internal void CacheProxy ()
+		void CacheProxy ()
 		{
 			// called from unmanaged code after .ctor is invoked
 			// we need .ctor to create unmanaged object and thus IUnknown property value
 			AddProxy (com_object.IUnknown, this);
 		}
 
-        internal ComInteropProxy (IntPtr pUnk)
-            : this (pUnk, typeof (__ComObject))
-        {
+		ComInteropProxy (IntPtr pUnk)
+			: this (pUnk, typeof (__ComObject))
+		{
 		}
 
 		internal ComInteropProxy (IntPtr pUnk, Type t)
@@ -97,6 +98,25 @@ namespace Mono.Interop
 				System.Threading.Interlocked.Increment (ref obj.ref_count);
 				return obj;
 			}
+		}
+
+		// Gets the proxy of the specified COM type. If the COM type is
+		// already known, a cached proxy will be returned.
+		internal static ComInteropProxy CreateProxy (Type t)
+		{
+			ComInteropProxy proxy = new ComInteropProxy (t);
+			proxy.com_object.Initialize (t);
+
+			ComInteropProxy cachedProxy = FindProxy (proxy.com_object.IUnknown);
+			if (cachedProxy != null) {
+				// check that the COM type of the cached proxy matches
+				// the requested type. See 2nd part of bug #520437.
+				Type cachedType = cachedProxy.com_object.GetType ();
+				if (cachedType != t)
+					throw new InvalidCastException (String.Format ("Unable to cast object of type '{0}' to type '{1}'.", cachedType, t));
+				return cachedProxy;
+			}
+			return proxy;
 		}
 
 		public override IMessage Invoke (IMessage msg)

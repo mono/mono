@@ -1,3 +1,7 @@
+2009-07-11  Robert Jordan  <robertj@gmx.net>
+
+	* RemotingServices.cs: Track ComInteropProxy's changes.
+
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
 	* RemotingServices.cs (GetDomainProxy): Make a copy of the array

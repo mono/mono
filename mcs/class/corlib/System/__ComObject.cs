@@ -72,19 +72,26 @@ namespace System
 
 		public __ComObject ()
 		{
-			Type t = GetType ();
-			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
-			if (ocd != null) {
-				iunknown = ocd (IntPtr.Zero);
-				if (iunknown == IntPtr.Zero)
-					throw new COMException (string.Format("ObjectCreationDelegate for type {0} failed to return a valid COM object", t));
-			} else {
-				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
-				Marshal.ThrowExceptionForHR (hr);
-			}
+			Initialize (GetType ());
 		}
 
 		internal __ComObject (Type t) {
+			Initialize (t);
+		}
+
+		internal __ComObject (IntPtr pItf)
+		{
+			Guid iid = IID_IUnknown;
+			int hr = Marshal.QueryInterface (pItf, ref iid, out iunknown);
+			Marshal.ThrowExceptionForHR (hr);
+		}
+
+		internal void Initialize (Type t)
+		{
+			// Guard multiple invocation.
+			if (iunknown != IntPtr.Zero)
+				return;
+			
 			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
 			if (ocd != null) {
 				iunknown = ocd (IntPtr.Zero);
@@ -95,13 +102,6 @@ namespace System
 				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 				Marshal.ThrowExceptionForHR (hr);
 			}
-		}
-
-		internal __ComObject (IntPtr pItf)
-		{
-			Guid iid = IID_IUnknown;
-			int hr = Marshal.QueryInterface (pItf, ref iid, out iunknown);
-			Marshal.ThrowExceptionForHR (hr);
 		}
 
 		private static Guid GetCLSID (Type t)

@@ -581,7 +581,7 @@ namespace System.Runtime.Remoting
 
 		internal static object CreateClientProxyForComInterop (Type type)
 		{
-			Mono.Interop.ComInteropProxy proxy = new Mono.Interop.ComInteropProxy (type);
+			Mono.Interop.ComInteropProxy proxy = Mono.Interop.ComInteropProxy.CreateProxy (type);
 			return proxy.GetTransparentProxy ();
 		}
 	
