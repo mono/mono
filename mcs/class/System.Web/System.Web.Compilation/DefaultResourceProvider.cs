@@ -108,6 +108,9 @@ namespace System.Web.Compilation
 
 		static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
 		{
+			if (String.IsNullOrEmpty (classKey))
+				return null;
+			
 			ResourceManager rm;
 			try {
 				if (resourceManagerCache == null)
