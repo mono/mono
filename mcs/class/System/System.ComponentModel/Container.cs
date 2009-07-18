@@ -61,9 +61,9 @@ namespace System.ComponentModel {
 		
 		class DefaultSite : ISite {
 
-			private IComponent component;
-			private Container container;
-			private string     name;
+			private readonly IComponent component;
+			private readonly Container container;
+			private string name;
 			
 			public DefaultSite (string name, IComponent component, Container container)
 			{
@@ -107,13 +107,6 @@ namespace System.ComponentModel {
 
 				return container.GetService (t);
 			}
-		}
-		
-		// <summary>
-		//   Container constructor
-		// </summary>
-		public Container ()
-		{
 		}
 
 		public virtual ComponentCollection Components {
@@ -187,36 +180,33 @@ namespace System.ComponentModel {
 
 		protected virtual object GetService (Type service)
 		{
-			if (typeof(IContainer) != service) {
-				return null; 
-			}
+			if (typeof(IContainer) != service)
+				return null;
 			return this;
 		}
 
 		public virtual void Remove (IComponent component)
 		{
-			Remove (component, true);		
+			Remove (component, true);
 		}
 
-		private void Remove (IComponent component, bool unsite)
+		void Remove (IComponent component, bool unsite)
 		{
-			if (component.Site != null && component.Site.Container == this) {
-				if (unsite) {
-					component.Site = null;
+			if (component != null) {
+				if (component.Site != null && component.Site.Container == this) {
+					if (unsite)
+						component.Site = null;
+					c.Remove (component);
 				}
-				c.Remove (component);
-			}					
+			}
 		}
 
 #if NET_2_0
 		protected void RemoveWithoutUnsiting (IComponent component)
 		{
-			if (component.Site != null && component.Site.Container == this) {
-				Remove (component, false);
-			}
+			Remove (component, false);
 		}
 #endif
-		
 	}
 	
 }

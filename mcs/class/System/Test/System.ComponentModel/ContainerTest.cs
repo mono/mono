@@ -39,7 +39,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 #if NET_2_0
-		public void Remove_WithoutUnsiting (IComponent component)
+		public new void RemoveWithoutUnsiting (IComponent component)
 		{
 			base.RemoveWithoutUnsiting (component);
 		}
@@ -375,13 +375,6 @@ namespace MonoTests.System.ComponentModel
 			_container.Remove (component);
 			Assert.IsNull (component.Site, "#3");
 			Assert.IsFalse (_container.Contains (component), "#4");
-
-#if NET_2_0
-			_container.Add (component);
-			_container.Remove_WithoutUnsiting (component);
-			Assert.IsNotNull (component.Site, "#5");
-			Assert.IsFalse (_container.Contains (component), "#6");
-#endif
 		}
 
 		[Test] // Dispose ()
@@ -511,7 +504,114 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNull (service, "#4");
 		}
 
+		[Test]
+		public void Remove ()
+		{
+			TestComponent compA;
+			TestComponent compB;
+			ISite siteA;
+			ISite siteB;
+
+			compA = new TestComponent ();
+			_container.Add (compA);
+			siteA = compA.Site;
+			compB = new TestComponent ();
+			_container.Add (compB);
+			siteB = compB.Site;
+			_container.Remove (compB);
+			Assert.AreSame (siteA, compA.Site, "#A1");
+			Assert.IsNull (compB.Site, "#A2");
+			Assert.AreEqual (1, _container.Components.Count, "#A3");
+			Assert.AreSame (compA, _container.Components [0], "#A4");
+
+			// remove component with no site
+			compB = new TestComponent ();
+			_container.Remove (compB);
+			Assert.AreSame (siteA, compA.Site, "#B1");
+			Assert.IsNull (compB.Site, "#B2");
+			Assert.AreEqual (1, _container.Components.Count, "#B3");
+			Assert.AreSame (compA, _container.Components [0], "#B4");
+
+			// remove component associated with other container
+			TestContainer container2 = new TestContainer ();
+			compB = new TestComponent ();
+			container2.Add (compB);
+			siteB = compB.Site;
+			_container.Remove (compB);
+			Assert.AreSame (siteA, compA.Site, "#C1");
+			Assert.AreSame (siteB, compB.Site, "#C2");
+			Assert.AreEqual (1, _container.Components.Count, "#C3");
+			Assert.AreSame (compA, _container.Components [0], "#C4");
+			Assert.AreEqual (1, container2.Components.Count, "#C5");
+			Assert.AreSame (compB, container2.Components [0], "#C6");
+		}
+
+		[Test]
+		public void Remove_Component_Null ()
+		{
+			_container.Add (new TestComponent ());
+			_container.Remove ((IComponent) null);
+			Assert.AreEqual (1, _container.Components.Count);
+		}
+
 #if NET_2_0
+		[Test]
+		public void RemoveWithoutUnsiting ()
+		{
+			TestComponent compA;
+			TestComponent compB;
+			ISite siteA;
+			ISite siteB;
+
+			compA = new TestComponent ();
+			_container.Add (compA);
+			siteA = compA.Site;
+			compB = new TestComponent ();
+			_container.Add (compB);
+			siteB = compB.Site;
+			_container.RemoveWithoutUnsiting (compB);
+			Assert.AreSame (siteA, compA.Site, "#A1");
+			Assert.AreSame (siteB, compB.Site, "#A2");
+			Assert.AreEqual (1, _container.Components.Count, "#A3");
+			Assert.AreSame (compA, _container.Components [0], "#A4");
+
+			// remove component with no site
+			compB = new TestComponent ();
+			_container.RemoveWithoutUnsiting (compB);
+			Assert.AreSame (siteA, compA.Site, "#B1");
+			Assert.IsNull (compB.Site, "#B2");
+			Assert.AreEqual (1, _container.Components.Count, "#B3");
+			Assert.AreSame (compA, _container.Components [0], "#B4");
+
+			// remove component associated with other container
+			TestContainer container2 = new TestContainer ();
+			compB = new TestComponent ();
+			container2.Add (compB);
+			siteB = compB.Site;
+			_container.RemoveWithoutUnsiting (compB);
+			Assert.AreSame (siteA, compA.Site, "#C1");
+			Assert.AreSame (siteB, compB.Site, "#C2");
+			Assert.AreEqual (1, _container.Components.Count, "#C3");
+			Assert.AreSame (compA, _container.Components [0], "#C4");
+			Assert.AreEqual (1, container2.Components.Count, "#C5");
+			Assert.AreSame (compB, container2.Components [0], "#C6");
+		}
+
+		[Test]
+		public void RemoveWithoutUnsiting_Component_Null ()
+		{
+			ISite site;
+			TestComponent component;
+
+			component = new TestComponent ();
+			_container.Add (component);
+			site = component.Site;
+			_container.RemoveWithoutUnsiting ((IComponent) null);
+			Assert.AreSame (site, component.Site, "#1");
+			Assert.AreEqual (1, _container.Components.Count, "#2");
+			Assert.AreSame (component, _container.Components [0], "#3");
+		}
+
 		[Test]
 		public void ValidateName_Component_Null ()
 		{

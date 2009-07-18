@@ -1,5 +1,9 @@
 2009-07-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ContainerTest.cs: Added tests for Remove and RemoveWithoutUnsiting.
+
+2009-07-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ContainerTest.cs: Added tests for Add, Dispose, ValidateName and
 	GetService.
 
