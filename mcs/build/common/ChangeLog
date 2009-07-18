@@ -1,3 +1,7 @@
+2009-07-18  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Consts.cs.in:  Added constant for Mono.Messaging.RabbitMQ.
+
 2009-06-15  Miguel de Icaza  <miguel@novell.com>
 
 	* MonoTODOAttribute.cs: Thin diet, no point in having virtual

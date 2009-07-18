@@ -55,7 +55,7 @@ using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+[assembly: AssemblyKeyFile("../mono.pub")]
 
 #if NET_2_0
 	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
