@@ -1,3 +1,10 @@
+2009-07-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Container.cs: Changed Dispose(bool) behaviour to match .NET, based
+	on patch by Tom Hindle (tom_hindle@sil.org). Also use ValidateName
+	in Add overloads on 1.0 profile by making it available as private
+	method. Use case-insensitive comparison of component name.
+
 2009-06-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* LicenseProviderAttribute.cs: avoid nullref when provider has not

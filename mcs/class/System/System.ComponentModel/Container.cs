@@ -131,13 +131,10 @@ namespace System.ComponentModel {
 		public virtual void Add (IComponent component, string name)
 		{
 			if (component != null) {
-				if (component.Site == null || component.Site.Container != this) {					
-					if (component.Site != null) {
-						component.Site.Container.Remove (component);
-					}
-#if NET_2_0
+				if (component.Site == null || component.Site.Container != this) {
 					ValidateName (component, name);
-#endif
+					if (component.Site != null)
+						component.Site.Container.Remove (component);
 					component.Site = this.CreateSite (component, name);
 					c.Add (component);
 				}
@@ -145,17 +142,21 @@ namespace System.ComponentModel {
 		}
 
 #if NET_2_0
-		protected virtual void ValidateName (IComponent component, string name)
+		protected virtual
+#endif
+		void ValidateName (IComponent component, string name)
 		{
 			if (component == null)
 				throw new ArgumentNullException ("component");
 			if (name == null)
 				return;
-			foreach (IComponent ic in c)
-				if (ic.Site != null && ic.Site.Name == name)
+			foreach (IComponent ic in c) {
+				if (object.ReferenceEquals (component, ic))
+					continue;
+				if (ic.Site != null && string.Compare (ic.Site.Name, name, true) == 0)
 					throw new ArgumentException (String.Format ("There already is a named component '{0}' in this container", name));
+			}
 		}
-#endif
 
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
@@ -168,22 +169,15 @@ namespace System.ComponentModel {
 			GC.SuppressFinalize (this);
 		}
 
-		bool disposed = false;
-		
-		protected virtual void Dispose (bool release_all)
+		protected virtual void Dispose (bool disposing)
 		{
-			if (disposed)
-				return;
-			disposed = true;
-
-			if (release_all){
-				foreach (IComponent component in c) {
-					component.Site = null;
+			if (disposing) {
+				while (c != null && c.Count > 0) {
+					var component = c [c.Count -1] as IComponent;
+					Remove (component);
 					component.Dispose ();
 				}
 			}
-
-			c = null;
 		}
 
 		~Container ()
