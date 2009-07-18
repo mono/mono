@@ -1,5 +1,11 @@
 2009-07-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Container.cs: Use generic list on 2.0 profile, and avoid using var
+	on 1.0 profile. Use for loop instead of while in Dispose to avoid
+	accessing count on each iteration.
+
+2009-07-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Container.cs: Avoid NRE in Remove and RemoveWithoutUnsiting.
 
 2009-07-18  Gert Driesen  <drieseng@users.sourceforge.net>

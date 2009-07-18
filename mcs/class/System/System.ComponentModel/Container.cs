@@ -33,6 +33,9 @@
 //
 
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.ComponentModel {
 
@@ -45,8 +48,11 @@ namespace System.ComponentModel {
 	// </remarks>
 	public class Container : IContainer, IDisposable {
 
+#if NET_2_0
+		private List<IComponent> c = new List<IComponent> ();
+#else
 		private ArrayList c = new ArrayList ();
-		//ComponentCollection cc;
+#endif
 
 		// <summary>
 		//   Auxiliary class to support the default behaviour of CreateSite
@@ -111,8 +117,12 @@ namespace System.ComponentModel {
 
 		public virtual ComponentCollection Components {
 			get {
-				Array a = c.ToArray(typeof (IComponent));
-				return new ComponentCollection((IComponent[]) a);
+#if NET_2_0
+				IComponent [] a = c.ToArray ();
+#else
+				IComponent [] a = (IComponent []) c.ToArray (typeof (IComponent));
+#endif
+				return new ComponentCollection (a);
 			}
 		}
 
@@ -165,8 +175,12 @@ namespace System.ComponentModel {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				while (c != null && c.Count > 0) {
-					var component = c [c.Count -1] as IComponent;
+				for (int i = (c.Count - 1); i >= 0; i--) {
+#if NET_2_0
+					var component = c [i];
+#else
+					IComponent component = c [i] as IComponent;
+#endif
 					Remove (component);
 					component.Dispose ();
 				}
