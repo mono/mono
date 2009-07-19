@@ -1,3 +1,17 @@
+2009-07-19  Geoff Norton  <gnorton@novell.com>
+
+	* mini.h: Add prototypes for mono_runtime_syscall_fork and
+	mono_gdb_render_native_backtraces
+	* mini-darwin.c: Apple's syscall(SYS_fork) is very weird on x86,
+	so we implement the sane semantics to the runtime here
+	(mono_gdb_render_native_backtraces).  Apple also uses an ancient gdb
+	so we need to call it differently (mono_gdb_render_native_backtraces)
+	* mini-posix.c: Move the old semantics from mini.c to the prototypes
+	here for default implementations.
+	* mini.c: Refactor mono_handle_native_sigsegv so that we can properly
+	support Apple's weird syscall (SYS_fork) implementation and not busy
+	loop in abort() on native crashes on OSX anymore.
+
 2009-07-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_method): Change the handling of the
