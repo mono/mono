@@ -204,7 +204,46 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (prop, "short");
 		}
 
-#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void SelectMethod_AmbiguousMatch ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#A1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#B1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#B3");
+
+			match = new MethodBase [] { mi_single_param, mi_single_param };
+			types = new Type [] { typeof (object) };
+			try {
+				binder.SelectMethod (flags, match, types, null);
+				Assert.Fail ("#C1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+
+			match = new MethodBase [] { mi_single_param, mi_single_param };
+			types = new Type [] { typeof (string) };
+			try {
+				binder.SelectMethod (flags, match, types, null);
+				Assert.Fail ("#D1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+		}
+
 		[Test]
 		public void SelectMethod_ByRef ()
 		{
@@ -213,19 +252,30 @@ namespace MonoTests.System.Reflection
 			MethodBase [] match;
 			Type [] types;
 			MethodBase selected;
+			Type ref_int;
 
 			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int) }, null);
 			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+#if NET_2_0
 			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int).MakeByRefType () }, null);
+#else
+			MethodInfo mi_run_ref = type.GetMethod ("RunV1", flags);
+#endif
 			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
+
+#if NET_2_0
+			ref_int = typeof (int).MakeByRefType ();
+#else
+			ref_int = mi_run_ref.GetParameters () [0].ParameterType;
+#endif
 
 			match = new MethodBase [] { mi_run_ref };
 			types = new Type [] { typeof (int) };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.IsNull (selected, "#B1");
-			types = new Type [] { typeof (int).MakeByRefType () };
+			types = new Type [] { ref_int };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.AreSame (mi_run_ref, selected, "#B2");
 
@@ -233,7 +283,7 @@ namespace MonoTests.System.Reflection
 			types = new Type [] { typeof (int) };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.AreSame (mi_run, selected, "#C1");
-			types = new Type [] { typeof (int).MakeByRefType () };
+			types = new Type [] { ref_int };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.IsNull (selected, "#C1");
 
@@ -241,14 +291,138 @@ namespace MonoTests.System.Reflection
 			types = new Type [] { typeof (int) };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.AreSame (mi_run, selected, "#D1");
-			types = new Type [] { typeof (int).MakeByRefType () };
+			types = new Type [] { ref_int };
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.AreSame (mi_run_ref, selected, "#D2");
 		}
-#endif
 
 		[Test]
-		public void ArgNullOnMethod () // see bug 58846. We throwed nullref here.
+		[Category ("NotWorking")]
+		public void SelectMethod_Params ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+
+			types = new Type [] { typeof (object), typeof (object) };
+			MethodInfo mi_non_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_non_params, "#A1");
+			Assert.AreEqual (2, mi_non_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [0].ParameterType, "#A3");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [1].ParameterType, "#A4");
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#B1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#C1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#C2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#C3");
+
+			match = new MethodBase [] { mi_params };
+			types = new Type [] { typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#D1");
+			types = new Type [] { typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#D2");
+			types = new Type [] { typeof (object), typeof (object []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_params, selected, "#D3");
+			types = new Type [] { typeof (object), typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#D4");
+
+			match = new MethodBase [] { mi_non_params };	
+			types = new Type [] { typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#E1");
+			types = new Type [] { typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_non_params, selected, "#E2");
+			types = new Type [] { typeof (object), typeof (object []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_non_params, selected, "#E3");
+			types = new Type [] { typeof (object), typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#E4");
+
+			match = new MethodBase [] { mi_non_params, mi_params };
+			types = new Type [] { typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#F1");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			types = new Type [] { typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_non_params, selected, "#F2");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			types = new Type [] { typeof (object), typeof (object []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_params, selected, "#F3");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			types = new Type [] { typeof (object), typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#F4");
+
+			match = new MethodBase [] { mi_params, mi_non_params };
+			types = new Type [] { typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#G1");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			types = new Type [] { typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_non_params, selected, "#G2");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			types = new Type [] { typeof (object), typeof (object []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_params, selected, "#G3");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			types = new Type [] { typeof (object), typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#G4");
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_single_param, selected, "#H1");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_non_params, selected, "#H2");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (object), typeof (object []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_params, selected, "#H3");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (object), typeof (object), typeof (object) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#H4");
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (string) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_single_param, selected, "#I1");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (string), typeof (string) };
+			selected = binder.SelectMethod (flags, match, types, null); 
+			Assert.AreSame (mi_non_params, selected, "#I2");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (string), typeof (string []) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_params, selected, "#I3");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			types = new Type [] { typeof (string), typeof (string), typeof (long) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#I4");
+		}
+
+		[Test] // bug #314809
+		public void ArgNullOnMethod ()
 		{
 			Type type = typeof (SampleClass);
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
@@ -267,7 +441,6 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (prop);
 		}
 
-#if NET_2_0
 		[Test]
 		public void BindToMethod_ByRef ()
 		{
@@ -282,31 +455,389 @@ namespace MonoTests.System.Reflection
 			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int) }, null);
 			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+#if NET_2_0
 			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
 				new Type [] { typeof (int).MakeByRefType () }, null);
+#else
+			MethodInfo mi_run_ref = type.GetMethod ("RunV1", flags);
+#endif
 			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
 
 			match = new MethodBase [] { mi_run };
 			selected = binder.BindToMethod (flags, match, ref args, null, culture,
 				null, out state);
-			Assert.AreSame (mi_run, selected, "#1");
+			Assert.AreSame (mi_run, selected, "#B1");
 
 			match = new MethodBase [] { mi_run_ref };
 			selected = binder.BindToMethod (flags, match, ref args, null, culture,
 				null, out state);
-			Assert.AreSame (mi_run_ref, selected, "#2");
+			Assert.AreSame (mi_run_ref, selected, "#B2");
 
 			match = new MethodBase [] { mi_run, mi_run_ref };
 			selected = binder.BindToMethod (flags, match, ref args, null, culture,
 				null, out state);
-			Assert.AreSame (mi_run, selected, "#3");
+			Assert.AreSame (mi_run, selected, "#B3");
 
 			match = new MethodBase [] { mi_run_ref, mi_run };
 			selected = binder.BindToMethod (flags, match, ref args, null, culture,
 				null, out state);
-			Assert.AreSame (mi_run, selected, "#4");
+			Assert.AreSame (mi_run, selected, "#B4");
 		}
-#endif
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BindToMethod_AmbiguousMatch ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+			object state;
+			object [] args;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#A1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#B1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#B3");
+
+			match = new MethodBase [] { mi_single_param, mi_single_param };
+			args = new object [] { new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#C1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+
+			match = new MethodBase [] { mi_single_param, mi_single_param };
+			args = new object [] { string.Empty };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#D1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+
+			match = new MethodBase [] { mi_params, mi_params };
+			args = new object [] { new object (), new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#E1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+
+			match = new MethodBase [] { mi_params, mi_params };
+			args = new object [] { string.Empty, 0L };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#F1");
+			} catch (AmbiguousMatchException) {
+				// Ambiguous match found
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BindToMethod_Params ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+			object state;
+			object [] args;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			types = new Type [] { typeof (object), typeof (object) };
+			MethodInfo mi_non_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_non_params, "#A1");
+			Assert.AreEqual (2, mi_non_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [0].ParameterType, "#A3");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [1].ParameterType, "#A4");
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#B1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#C1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#C2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#C3");
+
+			match = new MethodBase [] { mi_params };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D1");
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D2");
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D3");
+			args = new object [] { new object (), new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D4");
+
+			match = new MethodBase [] { mi_non_params };
+			args = new object [] { new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#E1");
+			} catch (MissingMethodException) {
+				// Member not found
+			}
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#E2");
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#E3");
+			args = new object [] { new object (), new object (), new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#E4");
+			} catch (MissingMethodException) {
+				// Member not found
+			}
+
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#F1");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#F2");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#F3");
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object (), new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#F4");
+
+			match = new MethodBase [] { mi_params, mi_non_params };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#G1");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#G2");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#G3");
+			match = new MethodBase [] { mi_params, mi_non_params };
+			args = new object [] { new object (), new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#G4");
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_single_param, selected, "#H1");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#H2");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#H3");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object (), new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#H4");
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { string.Empty };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_single_param, selected, "#I1");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { string.Empty, string.Empty };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#I2");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { string.Empty, new string [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#I3");
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { string.Empty, string.Empty, 5L };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#I4");
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		public void BindToMethod_Params_Mono ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+			object state;
+			object [] args;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			types = new Type [] { typeof (object), typeof (object) };
+			MethodInfo mi_non_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_non_params, "#A1");
+			Assert.AreEqual (2, mi_non_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [0].ParameterType, "#A3");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [1].ParameterType, "#A4");
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#B1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#C1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#C2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#C3");
+
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D1");
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#D2");
+			args = new object [] { new object (), new object [0] };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D3");
+			args = new object [] { new object (), new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D4");
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_single_param, selected, "#E1");
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_non_params, selected, "#E2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BindToMethod_Params_MS ()
+		{
+			Type type = typeof (BinderTest);
+			BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+			object state;
+			object [] args;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			types = new Type [] { typeof (object), typeof (object) };
+			MethodInfo mi_non_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_non_params, "#A1");
+			Assert.AreEqual (2, mi_non_params.GetParameters ().Length, "#A2");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [0].ParameterType, "#A3");
+			Assert.AreEqual (typeof (object), mi_non_params.GetParameters () [1].ParameterType, "#A4");
+			types = new Type [] { typeof (object), typeof (object []) };
+			MethodInfo mi_params = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_params, "#B1");
+			Assert.AreEqual (2, mi_params.GetParameters ().Length, "#B2");
+			Assert.AreEqual (typeof (object), mi_params.GetParameters () [0].ParameterType, "#B3");
+			Assert.AreEqual (typeof (object []), mi_params.GetParameters () [1].ParameterType, "#B4");
+			types = new Type [] { typeof (object) };
+			MethodInfo mi_single_param = type.GetMethod ("params_method1", flags, binder, types, null);
+			Assert.IsNotNull (mi_single_param, "#C1");
+			Assert.AreEqual (1, mi_single_param.GetParameters ().Length, "#C2");
+			Assert.AreEqual (typeof (object), mi_single_param.GetParameters () [0].ParameterType, "#C3");
+
+			match = new MethodBase [] { mi_non_params, mi_params };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#D1");
+			args = new object [] { new object (), new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#D2");
+			} catch (AmbiguousMatchException) {
+			}
+			args = new object [] { new object (), new object [0] };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#D3");
+			} catch (AmbiguousMatchException) {
+			}
+			args = new object [] { new object (), new object (), new object () };
+			try {
+				binder.BindToMethod (flags, match, ref args, null, culture,
+					null, out state);
+				Assert.Fail ("#D4");
+			} catch (IndexOutOfRangeException) {
+			}
+
+			match = new MethodBase [] { mi_params, mi_non_params, mi_single_param };
+			args = new object [] { new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_single_param, selected, "#E1");
+			args = new object [] { new object (), new object () };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_params, selected, "#E2");
+		}
 
 		[Test] // bug #41691
 		public void BindToMethodNamedArgs ()
@@ -397,17 +928,44 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void TestParamsAttribute ()
 		{
-			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object) }, null);
-			Assert.AreEqual (typeof (object), mi.GetParameters ()[1].ParameterType);
+			MethodInfo mi;
 
-			MethodInfo mi2 = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
-			Assert.AreEqual (typeof (object[]), mi2.GetParameters ()[1].ParameterType);
+			mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object) }, null);
+			Assert.IsNotNull (mi, "#A1");
+			Assert.AreEqual (typeof (object), mi.GetParameters () [1].ParameterType, "#A2");
+
+			mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object []) }, null);
+			Assert.IsNotNull (mi, "#B1");
+			Assert.AreEqual (typeof (object []), mi.GetParameters () [1].ParameterType, "#B2");
 		}
 
-		public static void params_method1 (object o, params object[] o2) {
+		[Test]
+		[Category ("NotDotNet")]
+		public void TestParamsAttribute2_Mono ()
+		{
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			Assert.IsNotNull (mi, "#1");
+			Assert.AreEqual (typeof (object []), mi.GetParameters () [1].ParameterType, "#2");
 		}
 
-		public static void params_method1 (object o, object o2) {
+		[Test]
+		[Category ("NotWorking")]
+		public void TestParamsAttribute2_MS ()
+		{
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			Assert.IsNull (mi, "#1");
+		}
+
+		public static void params_method1 (object o)
+		{
+		}
+
+		public static void params_method1 (object o, params object[] o2)
+		{
+		}
+
+		public static void params_method1 (object o, object o2)
+		{
 		}
 
 		public static double DoubleMethod (double d) {
@@ -432,7 +990,9 @@ namespace MonoTests.System.Reflection
 		public void TestExactBinding ()
 		{
 			Type[] types = new Type[] { typeof(int) };
-			Assert.AreEqual (null, typeof (BinderTest).GetMethod("MethodWithLongParam", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.ExactBinding,  null, types, null));
+			BindingFlags flags = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.ExactBinding;
+			Assert.IsNull (typeof (BinderTest).GetMethod("MethodWithLongParam",
+				flags, null, types, null));
 		}
 
 		public void Bug42457Method (object thing)
@@ -553,24 +1113,31 @@ namespace MonoTests.System.Reflection
 			typeof(Bug324998BBad).GetMethod("f", BUG324998_BINDING_FLAGS);
 		}
 
-        void Bug380361 (MyEnum e) { }
+		void Bug380361 (MyEnum e) { }
 
-        [Test]
-        public void TestEnumConversion ()
-        {
-            Type type = this.GetType ();
-            MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
-            mi.Invoke (this, new object [] { (int)MyEnum.Zero });
-        }
+		[Test]
+		public void TestEnumConversion ()
+		{
+			Type type = this.GetType ();
+			MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
+			mi.Invoke (this, new object [] { (int)MyEnum.Zero });
+		}
 
-        [Test]
-        [ExpectedException(typeof (ArgumentException))]
-        public void TestEnumConversion2 ()
-        {
-            Type type = this.GetType ();
-            MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
-            mi.Invoke (this, new object [] { (long)MyEnum.Zero });
-        }
+		[Test]
+		public void TestEnumConversion2 ()
+		{
+			Type type = this.GetType ();
+			MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
+			try {
+				mi.Invoke (this, new object [] { (long) MyEnum.Zero });
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
 
 		class AssertingBinder : Binder {
 
@@ -648,7 +1215,11 @@ namespace MonoTests.System.Reflection
 			{
 			}
 
+#if NET_2_0
 			public void Run (out int i)
+#else
+			public void RunV1 (out int i)
+#endif
 			{
 				i = 0;
 			}
