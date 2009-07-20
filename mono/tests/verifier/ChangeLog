@@ -1,3 +1,12 @@
+2009-07-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile: Add support for new test kind badmd for tests with broken
+	metadata.
+
+	* make_tests.sh: Fix some tests that have broken metadata.
+
+	* *.sh: Add execute bit.
+
 2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_ldflda_owned_field_on_cctor.il: Fix visibility of .ctor.
