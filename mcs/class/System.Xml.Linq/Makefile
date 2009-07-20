@@ -17,7 +17,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 
-VALID_PROFILE := $(filter net_2_0 net_2_1_raw net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Xml.Linq.dll
 NO_INSTALL = yes
