@@ -1,3 +1,7 @@
+2009-07-20  Geoff Norton  <gnorton@novell.com>
+
+	* thread-private.h: Use the new mono-semaphore.h.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* sockets.c: add the error number to the message so we can figure out
