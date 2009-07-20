@@ -23,7 +23,7 @@ EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
 	Test/System.Runtime.Serialization/one.xml
 
-VALID_PROFILE := $(filter net_2_0 net_2_1_raw net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Runtime.Serialization.dll
 NO_INSTALL = yes
