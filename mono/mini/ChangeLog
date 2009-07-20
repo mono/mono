@@ -1,3 +1,8 @@
+2009-07-20  Geoff Norton  <gnorton@novell.com>
+
+	* mini-x86.c: Fix --trace on darwin-x86 and other systems which require
+	aligned access.
+
 2009-07-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_jit_runtime_invoke): Speed this up by adding a hash to
