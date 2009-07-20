@@ -1,3 +1,8 @@
+2009-07-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_cast): Fail for any non reference type that isn't boxed.
+	Fixes #522784.
+
 2009-07-20  Robert Jordan  <robertj@gmx.net>
 
 	* cominterop.c (cominterop_get_managed_wrapper_adjusted):
