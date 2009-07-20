@@ -1,3 +1,9 @@
+2009-07-21  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: GetReferencedAssemblies unconditionally
+	includes all assemblies from bin/ for precompiled sites. Fixes bug
+	#502016
+
 2009-07-18  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultResourceProvider.cs: if GetResourceObject is passed a
