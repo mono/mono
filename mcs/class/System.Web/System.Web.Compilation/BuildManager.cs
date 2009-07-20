@@ -841,17 +841,10 @@ namespace System.Web.Compilation {
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, al);
 
-			if (is_precompiled) {
-				// Add well-known assemblies which need to be referenced by everyone
-				string binDir = HttpApplication.BinDirectory;
-				string asmPath;
 
-				foreach (String s in new string[] {"App_Code.dll", "App_GlobalResources.dll", "App_global.asax.dll"}) {
-					asmPath = Path.Combine (binDir, s);
-					if (File.Exists (asmPath))
-						LoadAssembly (asmPath, al);
-				}
-			} else if (addAssembliesInBin) {
+			// Precompiled sites unconditionally load all assemblies from bin/ (fix for
+			// bug #502016)
+			if (is_precompiled || addAssembliesInBin) {
 				foreach (string s in HttpApplication.BinDirectoryAssemblies) {
 					try {
 						LoadAssembly (s, al);
