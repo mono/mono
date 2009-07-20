@@ -744,7 +744,7 @@ namespace System.Threading {
 			}
 		}
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		private void StartSafe ()
 		{
 			try {
@@ -795,7 +795,7 @@ namespace System.Threading {
 				_principal = CurrentThread._principal;
 
 			// Thread_internal creates and starts the new thread, 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			if (Thread_internal((ThreadStart) StartSafe) == (IntPtr) 0)
 #else
 			if (Thread_internal(threadstart) == (IntPtr) 0)
