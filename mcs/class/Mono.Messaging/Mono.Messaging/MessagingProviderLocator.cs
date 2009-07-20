@@ -46,11 +46,14 @@ namespace Mono.Messaging
 		private static readonly MessagingProviderLocator instance = new MessagingProviderLocator();
 		private readonly IMessagingProvider provider;
 		private const string MESSAGING_PROVIDER_KEY = "MONO_MESSAGING_PROVIDER";
+		private const string RABBIT_MQ_CLASS_NAME = "Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider";
+		private const string RABBIT_MQ_FULL_CLASS_NAME = RABBIT_MQ_CLASS_NAME + ",Mono.Messaging.RabbitMQ";
+		private const string RABBIT_MQ_ALIAS = "rabbitmq";
 		
 		private MessagingProviderLocator () {
 			string providerName = GetProviderClassName ();
 			if (providerName == null || providerName == "")
-				throw new Exception("Configuration/Environment Variable MONO_MESSAGING_PROVIDER not defined");
+				providerName = RABBIT_MQ_ALIAS;
 			provider = CreateProvider (providerName);
 		}
 		
@@ -95,10 +98,10 @@ namespace Mono.Messaging
 		private Type ResolveType (string classNameOrAlias)
 		{
 			switch (classNameOrAlias) {
-			case "rabbitmq":
-			case "Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider,Mono.Messaging.RabbitMQ":
+			case RABBIT_MQ_ALIAS:
+			case RABBIT_MQ_FULL_CLASS_NAME:
 				Assembly a = Assembly.Load (Consts.AssemblyMono_Messaging_RabbitMQ);
-				return a.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider");
+				return a.GetType (RABBIT_MQ_CLASS_NAME);
 			default:
 				throw new MonoMessagingException ("Unknown MessagingProvider class name or alias: " + classNameOrAlias);
 			}
