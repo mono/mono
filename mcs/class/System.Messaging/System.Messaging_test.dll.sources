@@ -1,1 +1,10 @@
+System.Messaging/AdminTest.cs
+System.Messaging/AsyncPeekTest.cs
+System.Messaging/AsyncReceiveTest.cs
+System.Messaging/BasicMessagingTest.cs
+System.Messaging/MessageEnumeratorTest.cs
 System.Messaging/MessageQueuePermissionAttributeTest.cs
+System.Messaging/MQUtil.cs
+System.Messaging/PeekTest.cs
+System.Messaging/SelectorTest.cs
+System.Messaging/TransactionMessagingTest.cs

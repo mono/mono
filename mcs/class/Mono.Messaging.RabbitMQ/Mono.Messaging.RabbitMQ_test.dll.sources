@@ -1,14 +1,5 @@
-Mono.Messaging.RabbitMQ/MQUtil.cs
-Mono.Messaging.RabbitMQ/BasicMessagingTest.cs
-Mono.Messaging.RabbitMQ/AdminTest.cs
 Mono.Messaging.RabbitMQ/FailuresTest.cs
 Mono.Messaging.RabbitMQ/RabbitMQMessagingProviderTest.cs
-Mono.Messaging.RabbitMQ/MessageEnumeratorTest.cs
-Mono.Messaging.RabbitMQ/PeekTest.cs
-Mono.Messaging.RabbitMQ/TransactionMessagingTest.cs
-Mono.Messaging.RabbitMQ/SelectorTest.cs
-Mono.Messaging.RabbitMQ/AsyncReceiveTest.cs
-Mono.Messaging.RabbitMQ/AsyncPeekTest.cs
 Mono.Messaging.RabbitMQ/BinaryMessageFormatterTest.cs
 Mono.Messaging.RabbitMQ/XmlMessageFormatterTest.cs
 Mono.Messaging.RabbitMQ/TestUtils.cs
