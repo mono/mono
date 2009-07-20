@@ -36,7 +36,7 @@ using System.Text.RegularExpressions;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messaging.RabbitMQ
+namespace MonoTests.System.Messaging
 {
 	[TestFixture]
 	public class AsyncPeekTest {

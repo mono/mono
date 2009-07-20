@@ -31,12 +31,9 @@
 using System;
 using System.Messaging;
 
-//using Mono.Messaging;
-//using Mono.Messaging.RabbitMQ;
-
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messaging.RabbitMQ
+namespace MonoTests.System.Messaging
 {
 	[TestFixture]
 	public class MessageEnumeratorTest {

@@ -31,7 +31,7 @@
 using System;
 using System.Messaging;
 
-namespace MonoTests.Mono.Messaging.RabbitMQ
+namespace MonoTests.System.Messaging
 {
 	public class MQUtil
 	{

@@ -33,7 +33,7 @@ using System.Messaging;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messaging.RabbitMQ
+namespace MonoTests.System.Messaging
 {
 	[TestFixture]
 	public class PeekTest {
