@@ -1,3 +1,8 @@
+2009-07-21  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: make sure to ignore invalid bin/
+	assemblies in AddAssembliesInBin and GetTypeFromBin.
+
 2009-06-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: AddAssembliesInBin (1.1 profile) tries to

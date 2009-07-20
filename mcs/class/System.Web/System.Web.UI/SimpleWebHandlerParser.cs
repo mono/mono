@@ -386,12 +386,27 @@ namespace System.Web.UI
 
 		void AddAssembliesInBin ()
 		{
+			Exception ex;
 			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
+				ex = null;
+				
 				try {
 					Assembly assembly = Assembly.LoadFrom (s);
 					AddAssembly (assembly, true);
+				} catch (FileLoadException e) {
+					ex = e;
+					// ignore
+				} catch (BadImageFormatException e) {
+					ex = e;
+					// ignore
 				} catch (Exception e) {
 					throw new Exception ("Error while loading " + s, e);
+				}
+				
+				if (ex != null && HttpRuntime.IsDebuggingEnabled) {
+					Console.WriteLine ("**** DEBUG MODE *****");
+					Console.WriteLine ("Bad assembly found in bin/. Exception (ignored):");
+					Console.WriteLine (ex);
 				}
 			}
 		}
@@ -475,7 +490,16 @@ namespace System.Web.UI
 #endif
 
 			foreach (string dll in HttpApplication.BinDirectoryAssemblies) {
-				assembly = Assembly.LoadFrom (dll);
+				try {
+					assembly = Assembly.LoadFrom (dll);
+				} catch (FileLoadException) {
+					// ignore
+					continue;
+				} catch (BadImageFormatException) {
+					// ignore
+					continue;
+				}
+				
 				type = assembly.GetType (typeName, false);
 				if (type != null) {
 					if (result != null) 
