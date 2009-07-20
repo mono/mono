@@ -1,5 +1,7 @@
 2009-07-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Add a 'tool-prefix' option to be used when cross-compiling.
+	
 	* aot-compiler.c (add_generic_instances): Emit instances of 
 	GenericComparer<T> for primitive types.
 
