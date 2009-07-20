@@ -1,3 +1,8 @@
+2009-07-20  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: filter the valid profile on the framework version,
+	to make it easier to have custom variants.
+
 2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.Web.dll.sources: Remove the common
