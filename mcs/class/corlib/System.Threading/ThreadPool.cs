@@ -219,7 +219,7 @@ namespace System.Threading {
 
 		static WaitCallback MoonlightHandler (WaitCallback callback)
 		{
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			return delegate (object o) {
 				try {
 					callback (o);
