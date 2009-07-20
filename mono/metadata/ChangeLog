@@ -1,5 +1,9 @@
 2009-07-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_typespec_blob): Fix error message.
+
+2009-07-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (parse_field): Allow byref field.
 
 	* metadata-verify.c (parse_locals_signature): Allow byref locals.
