@@ -1,3 +1,7 @@
+2009-07-20  Jb Evain  <jbevain@novell.com>
+
+	* profiles/monotouch.make: add monotouch profile.
+
 2009-07-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	* profiles/net_2_0_bootstrap.make (BOOTSTRAP_PROFILE): Set to
