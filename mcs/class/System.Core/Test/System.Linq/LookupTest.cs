@@ -68,5 +68,19 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (0x00ff00, lookup ["GrEeN"].First ());
 			Assert.AreEqual (0x0000ff, lookup ["Blue"].First ());
 		}
+
+		[Test]
+		public void EmptyResult ()
+		{
+			var lookup = GetColors ().ToLookup (
+				c => c.Name,
+				c => c.Value,
+				StringComparer.OrdinalIgnoreCase);
+
+			var l = lookup ["notexist"];
+			Assert.IsNotNull (l);
+			int [] values = (int []) l;
+			Assert.AreEqual (values.Length, 0);
+		}
 	}
 }

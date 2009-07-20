@@ -1,3 +1,8 @@
+2009-07-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Lookup.cs: when there are no matching elements, return an empty
+	enumerable. Fixes bug #523386.
+
 2009-05-18  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (Max, Min): fix generic versions.
