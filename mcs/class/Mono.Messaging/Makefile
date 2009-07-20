@@ -4,9 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Messaging.dll
 
-ifdef NET_1_0
-LIB_MCS_FLAGS = /r:System.dll
-else NET_1_1
+ifeq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = /r:System.dll
 else
 LIB_MCS_FLAGS = /r:System.dll /r:System.Configuration
