@@ -45,8 +45,10 @@ namespace System.Linq {
 
 		public IEnumerable<TElement> this [TKey key] {
 			get {
-				if (groups.ContainsKey (key))
-					return groups [key];
+				IGrouping<TKey, TElement> group;
+				if (groups.TryGetValue (key, out group))
+					return group;
+
 				return new TElement [0];
 			}
 		}
