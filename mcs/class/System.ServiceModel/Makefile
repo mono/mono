@@ -47,7 +47,7 @@ EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
 # Useful for debugging under Visual Studio 2005
 # NO_SIGN_ASSEMBLY = yes
 
-VALID_PROFILE := $(filter net_2_0 net_2_1_raw net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.dll
 NO_INSTALL = yes
