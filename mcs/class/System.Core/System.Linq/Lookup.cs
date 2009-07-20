@@ -44,7 +44,11 @@ namespace System.Linq {
 		}
 
 		public IEnumerable<TElement> this [TKey key] {
-			get { return groups [key]; }
+			get {
+				if (groups.ContainsKey (key))
+					return groups [key];
+				return new TElement [0];
+			}
 		}
 
 		internal Lookup (Dictionary<TKey, List<TElement>> lookup)
