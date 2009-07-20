@@ -1,3 +1,11 @@
+2009-07-20  Robert Jordan  <robertj@gmx.net>
+
+	* cominterop.c (cominterop_get_managed_wrapper_adjusted):
+	Fix invalid IL in valuetype handling (STOBJ must push the
+	corresponding class). Fixes bug #523149.
+
+	Code is contributed under MIT/X11 license.
+
 2009-07-20  Geoff Norton  <gnorton@novell.com>
 
 	* gc.c: Use proper semaphores where available on posix and darwin.
