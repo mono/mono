@@ -1,3 +1,8 @@
+2009-07-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: don't try to finish the z_stream if it has not been
+	used. This fixes all the tests after the latest change.
+
 2009-07-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Makefile.am: replaced zlib_macros.c with zlib-helper.c
