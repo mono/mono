@@ -102,10 +102,12 @@ CloseZStream (ZStream *zstream)
 
 	status = 0;
 	if (zstream->compress) {
-		status = deflate (zstream->stream, Z_FINISH);
-		flush_status = Flush (zstream);
-		if (status == Z_OK || status == Z_STREAM_END)
-			status = flush_status;
+		if (zstream->stream->total_out) {
+			status = deflate (zstream->stream, Z_FINISH);
+			flush_status = Flush (zstream);
+			if (status == Z_OK || status == Z_STREAM_END)
+				status = flush_status;
+		}
 		deflateEnd (zstream->stream);
 	} else {
 		inflateEnd (zstream->stream);
