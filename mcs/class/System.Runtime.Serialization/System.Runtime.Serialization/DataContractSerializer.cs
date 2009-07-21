@@ -55,6 +55,7 @@ namespace System.Runtime.Serialization
 
 		int max_items = 0x10000; // FIXME: could be from config.
 
+		bool names_filled;
 		XmlDictionaryString root_name, root_ns;
 
 		public DataContractSerializer (Type type)
@@ -197,6 +198,7 @@ namespace System.Runtime.Serialization
 			XmlDictionary d = new XmlDictionary ();
 			root_name = d.Add (name);
 			root_ns = d.Add (ns);
+			names_filled = true;
 		}
 
 		void Initialize (
@@ -339,7 +341,10 @@ namespace System.Runtime.Serialization
 
 
 			if (graph == null) {
-				writer.WriteStartElement (root_name, root_ns);
+				if (names_filled)
+					writer.WriteStartElement (root_name.Value, root_ns.Value);
+				else
+					writer.WriteStartElement (root_name, root_ns);
 				writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
 				return;
 			}
@@ -350,7 +355,10 @@ namespace System.Runtime.Serialization
 
 			known_types.Add (graph.GetType ());
 
-			writer.WriteStartElement (root_name, root_ns);
+			if (names_filled)
+				writer.WriteStartElement (root_name.Value, root_ns.Value);
+			else
+				writer.WriteStartElement (root_name, root_ns);
 			if (root_ns.Value != root_qname.Namespace)
 				if (root_qname.Namespace != KnownTypeCollection.MSSimpleNamespace)
 					writer.WriteXmlnsAttribute (null, root_qname.Namespace);
