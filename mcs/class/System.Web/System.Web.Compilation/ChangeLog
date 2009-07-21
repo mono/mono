@@ -1,5 +1,9 @@
 2009-07-21  Marek Habersack  <mhabersack@novell.com>
 
+	* AspTokenizer.cs: in put_back, store inTag value as well.
+
+	* AspParser.cs: correctly parse code like "<asp:tag> < </asp:tag>"
+
 	* BuildManager.cs: GetReferencedAssemblies unconditionally
 	includes all assemblies from bin/ for precompiled sites. Fixes bug
 	#502016

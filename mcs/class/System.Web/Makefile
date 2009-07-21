@@ -171,7 +171,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx \
 	Test/mainsoft/NunitWebResources/ServerSideControlsInScriptBlock.aspx \
 	Test/mainsoft/NunitWebResources/ServerControlInClientSideComment.aspx \
-	Test/mainsoft/NunitWebResources/PreprocessorDirectivesInMarkup.aspx
+	Test/mainsoft/NunitWebResources/PreprocessorDirectivesInMarkup.aspx \
+	Test/mainsoft/NunitWebResources/UnquotedAngleBrackets.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
