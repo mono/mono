@@ -1,5 +1,13 @@
 2009-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpReplyChannel.cs : new reply channel implementation.
+	* TcpChannelListener.cs : use above for streamed reply channel.
+	* TcpDuplexSessionChannel.cs : more streaming mode support.
+	* TcpRequestChannel.cs : a couple of updates to get it working
+	  with the reply channel above. Still some issues on .NET interop.
+
+2009-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RequestContext.cs : added internal derived class that implements
 	  some members.
 

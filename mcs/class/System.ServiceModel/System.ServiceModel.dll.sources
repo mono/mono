@@ -284,6 +284,7 @@ System.ServiceModel.Channels/TcpChannelFactory.cs
 System.ServiceModel.Channels/TcpChannelListener.cs
 System.ServiceModel.Channels/TcpConnectionPoolSettings.cs
 System.ServiceModel.Channels/TcpDuplexSessionChannel.cs
+System.ServiceModel.Channels/TcpReplyChannel.cs
 System.ServiceModel.Channels/TcpRequestChannel.cs
 System.ServiceModel.Channels/TcpTransportBindingElement.cs
 System.ServiceModel.Channels/TextMessageEncoder.cs

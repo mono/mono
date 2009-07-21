@@ -86,8 +86,10 @@ namespace System.ServiceModel.Channels
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
 				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
 
-			// FIXME: To implement more.
-			throw new NotImplementedException ();
+			if (typeof (TChannel) == typeof (IReplyChannel))
+				return (TChannel) (object) new TcpReplyChannel (this, info, client);
+
+			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
 		}
 
 		[MonoTODO]

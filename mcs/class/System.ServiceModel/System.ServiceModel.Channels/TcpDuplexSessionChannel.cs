@@ -337,6 +337,14 @@ namespace System.ServiceModel.Channels
 		public const byte DuplexMode = 2;
 		public const byte SimplexMode = 3;
 		public const byte SingletonSizedMode = 4;
+
+		public const byte EncodingUtf8 = 3;
+		public const byte EncodingUtf16 = 4;
+		public const byte EncodingUtf16LE = 5;
+		public const byte EncodingMtom = 6;
+		public const byte EncodingBinary = 7;
+		public const byte EncodingBinaryWithDictionary = 8;
+
 		MyBinaryReader reader;
 		MyBinaryWriter writer;
 
@@ -348,7 +356,7 @@ namespace System.ServiceModel.Channels
 			reader = new MyBinaryReader (s);
 			ResetWriteBuffer ();
 
-			EncodingRecord = 8; // FIXME: it should depend on mode.
+			EncodingRecord = EncodingBinaryWithDictionary; // FIXME: it should depend on mode.
 		}
 
 		Stream s;
@@ -382,10 +390,10 @@ namespace System.ServiceModel.Channels
 			return buffer;
 		}
 
-		public void WriteSizedChunk (byte [] data)
+		public void WriteSizedChunk (byte [] data, int index, int length)
 		{
-			writer.WriteVariableInt (data.Length);
-			writer.Write (data, 0, data.Length);
+			writer.WriteVariableInt (length);
+			writer.Write (data, index, length);
 		}
 
 		public void ProcessPreambleInitiator ()
@@ -480,7 +488,7 @@ namespace System.ServiceModel.Channels
 			var ms = new MemoryStream (buffer, 0, buffer.Length);
 
 			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
-			if (EncodingRecord != 8)
+			if (EncodingRecord != EncodingBinaryWithDictionary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
 			// Encoding type 8:
@@ -511,40 +519,30 @@ namespace System.ServiceModel.Channels
 		public Message ReadUnsizedMessage (TimeSpan timeout)
 		{
 			var packetType = s.ReadByte ();
+
 			if (packetType == EndRecord)
 				return null;
 			if (packetType != UnsizedEnvelopeRecord)
 				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
 
-			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
-			if (EncodingRecord != 8)
+			// Encoding type 7 is expected
+			if (EncodingRecord != EncodingBinary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
-			// Encoding type 8:
-			// the returned buffer consists of a serialized reader 
-			// session and the binary xml body. 
-
-			var session = reader_session ?? new XmlBinaryReaderSession ();
-			reader_session = session;
-			byte [] rsbuf = new TcpBinaryFrameManager (0, s, is_service_side).ReadSizedChunk ();
-			
-			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
-				var rbr = new BinaryReader (rms, Encoding.UTF8);
-				while (rms.Position < rms.Length)
-					session.Add (reader_session_items++, rbr.ReadString ());
-			}
-			var benc = Encoder as BinaryMessageEncoder;
-			if (benc != null)
-				benc.CurrentReaderSession = session;
+			byte [] buffer = ReadSizedChunk ();
+			var ms = new MemoryStream (buffer, 0, buffer.Length);
 
 			// FIXME: supply maxSizeOfHeaders.
-			Message msg = Encoder.ReadMessage (s, 0x10000);
-			if (benc != null)
-				benc.CurrentReaderSession = null;
-			if (s.ReadByte () != UnsizedMessageTerminator)
-				throw new InvalidOperationException ("Unsized message terminator is expected");
+			Message msg = Encoder.ReadMessage (ms, 0x10000);
 
 			return msg;
+		}
+
+		public void ReadUnsizedMessageTerminator (TimeSpan timeout)
+		{
+			var terminator = s.ReadByte ();
+			if (terminator != UnsizedMessageTerminator)
+				throw new InvalidOperationException (String.Format ("Unsized message terminator is expected. Got '{0}' (&#x{1:X};).", (char) terminator, terminator));
 		}
 
 		byte [] eof_buffer = new byte [1];
@@ -584,7 +582,7 @@ namespace System.ServiceModel.Channels
 			int sizeOfLength = writer.GetSizeOfLength (msda.Length);
 
 			writer.WriteVariableInt (length + sizeOfLength); // dictionary array also involves the size of itself.
-			WriteSizedChunk (msda);
+			WriteSizedChunk (msda, 0, msda.Length);
 			// message body
 			var arr = ms.GetBuffer ();
 			writer.Write (arr, 0, (int) ms.Position);
@@ -600,44 +598,22 @@ namespace System.ServiceModel.Channels
 		{
 			ResetWriteBuffer ();
 
-			if (EncodingRecord != 8)
+			if (EncodingRecord != EncodingBinary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
-			buffer.WriteByte (UnsizedEnvelopeRecord);
+			s.WriteByte (UnsizedEnvelopeRecord);
+			s.Flush ();
 
-			MemoryStream ms = new MemoryStream ();
-			var session = writer_session ?? new MyXmlBinaryWriterSession ();
-			writer_session = session;
-			int writer_session_count = session.List.Count;
-			var benc = Encoder as BinaryMessageEncoder;
-			try {
-				if (benc != null)
-					benc.CurrentWriterSession = session;
-				Encoder.WriteMessage (message, ms);
-			} finally {
-				benc.CurrentWriterSession = null;
-			}
-
-			// dictionary
-			MemoryStream msd = new MemoryStream ();
-			BinaryWriter dw = new BinaryWriter (msd);
-			for (int i = writer_session_count; i < session.List.Count; i++)
-				dw.Write (session.List [i].Value);
-			dw.Flush ();
-
-			int length = (int) (msd.Position + ms.Position);
-			var msda = msd.ToArray ();
-
-			writer.Write (msda, 0, msda.Length);
-			// message body
-			var arr = ms.GetBuffer ();
-			writer.Write (arr, 0, (int) ms.Position);
-
-			writer.Write (UnsizedMessageTerminator); // terminator
-			writer.Flush ();
-
-			// FIXME: it should be rewritten to directly write to the stream.
+			Encoder.WriteMessage (message, buffer);
+			new MyBinaryWriter (s).WriteVariableInt ((int) buffer.Position);
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+			s.Flush ();
+		}
+
+		// FIXME: handle timeout
+		public void WriteUnsizedMessageTerminator (TimeSpan timeout)
+		{
+			s.WriteByte (UnsizedMessageTerminator); // terminator
 			s.Flush ();
 		}
 

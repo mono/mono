@@ -71,7 +71,8 @@ namespace System.ServiceModel.Channels
 			NetworkStream ns = client.GetStream ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, false) {
 				Encoder = this.Encoder,
-				Via = RemoteAddress.Uri };
+				Via = RemoteAddress.Uri,
+				EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
 			frame.ProcessPreambleInitiator ();
 			frame.ProcessPreambleAckInitiator ();
 		}
@@ -79,10 +80,14 @@ namespace System.ServiceModel.Channels
 		public override Message Request (Message input, TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
+
+			if (input.Headers.To == null)
+				input.Headers.To = RemoteAddress.Uri;
+
 			frame.WriteUnsizedMessage (input, timeout);
 			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
+			frame.WriteUnsizedMessageTerminator (timeout - (DateTime.Now - start));
 			frame.ProcessEndRecordInitiator ();
-			frame.ProcessEndRecordRecipient (); // process *both*.
 			return ret;
 		}
 	}
