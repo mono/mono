@@ -1,3 +1,8 @@
+2009-07-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Do the work done in the exception
+	handler in a separate icall, to reduce the size of the wrappers.
+
 2009-07-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (is_valid_typespec_blob): Fix error message.
