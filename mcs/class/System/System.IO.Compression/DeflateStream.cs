@@ -4,8 +4,28 @@
 //
 // Authors:
 //	Christopher James Lahey <clahey@ximian.com>
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// (c) 2004 Novell, Inc. <http://www.novell.com>
+// (c) Copyright 2004,2009 Novell, Inc. <http://www.novell.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #if NET_2_0
@@ -17,188 +37,127 @@ using System.Runtime.Remoting.Messaging;
 namespace System.IO.Compression {
 	public class DeflateStream : Stream
 	{
-		private Stream compressedStream;
-		private CompressionMode mode;
-		private bool leaveOpen;
-		private bool open;
-		private IntPtr z_stream;
+		delegate int UnmanagedReadOrWrite (IntPtr buffer, int length);
+		delegate int ReadMethod (byte[] array, int offset, int count);
+		delegate void WriteMethod (byte[] array, int offset, int count);
 
-		private const int BUFFER_SIZE = 4096;
-		private IntPtr sized_buffer;
-		static int bytes_read = 0;
-		private bool finished = false;
-		private enum ZReturnConsts {
-			Z_OK = 0,
-			Z_STREAM_END = 1,
-			Z_NEED_DICT = 2,
-			Z_STREAM_ERROR = -2,
-			Z_DATA_ERROR = -3,
-			Z_MEM_ERROR = -4,
-			Z_BUF_ERROR = -5,
+		Stream base_stream;
+		CompressionMode mode;
+		bool leaveOpen;
+		bool disposed;
+		UnmanagedReadOrWrite feeder; // This will be passed to unmanaged code and used there
+		IntPtr z_stream;
+		byte [] io_buffer;
+
+		public DeflateStream (Stream compressedStream, CompressionMode mode) :
+			this (compressedStream, mode, false, false)
+		{
 		}
-		private enum ZFlushConsts {
-			Z_NO_FLUSH     = 0,
-			Z_PARTIAL_FLUSH = 1, /* will be removed, use Z_SYNC_FLUSH instead */
-			Z_SYNC_FLUSH    = 2,
-			Z_FULL_FLUSH    = 3,
-			Z_FINISH        = 4,
-			Z_BLOCK         = 5,
-		};
 
-		[DllImport("MonoPosixHelper")]
-		static extern IntPtr create_z_stream(CompressionMode compress, bool gzip);
-		[DllImport("MonoPosixHelper")]
-		static extern void free_z_stream(IntPtr z_stream, CompressionMode compress );
-		[DllImport("MonoPosixHelper")]
-		static extern void z_stream_set_next_in(IntPtr z_stream, IntPtr next_in);
-		[DllImport("MonoPosixHelper")]
-		static extern void z_stream_set_avail_in(IntPtr z_stream, int avail_in);
-		[DllImport("MonoPosixHelper")]
-		static extern int z_stream_get_avail_in(IntPtr z_stream);
-		[DllImport("MonoPosixHelper")]
-		static extern void z_stream_set_next_out(IntPtr z_stream, IntPtr next_out);
-		//[DllImport("MonoPosixHelper")]
-		//static extern void z_stream_set_avail_out(IntPtr z_stream, int avail_out);
-		[DllImport("MonoPosixHelper")]
-		static extern ZReturnConsts z_stream_inflate(IntPtr z_stream, ref int avail_out);
-		[DllImport("MonoPosixHelper")]
-		static extern ZReturnConsts z_stream_deflate(IntPtr z_stream, ZFlushConsts flush, IntPtr next_out, ref int avail_out);
-		delegate int  ReadMethod (byte[] array, int offset, int count);
-		delegate void WriteMethod(byte[] array, int offset, int count);
+		public DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) :
+			this (compressedStream, mode, leaveOpen, false)
+		{
+		}
 
 		internal DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen, bool gzip)
 		{
 			if (compressedStream == null)
 				throw new ArgumentNullException ("compressedStream");
 
-			switch (mode) {
-			case CompressionMode.Compress:
-			case CompressionMode.Decompress:
-				break;
-			default:
+			if (mode != CompressionMode.Compress && mode != CompressionMode.Decompress)
 				throw new ArgumentException ("mode");
-			}
 
-			this.compressedStream = compressedStream;
-			this.mode = mode;
-			this.leaveOpen = leaveOpen;
-			this.sized_buffer = Marshal.AllocHGlobal (BUFFER_SIZE);
-			this.z_stream = create_z_stream (mode, gzip);
+			this.base_stream = compressedStream;
+			this.feeder = (mode == CompressionMode.Compress) ? new UnmanagedReadOrWrite (UnmanagedWrite) :
+									   new UnmanagedReadOrWrite (UnmanagedRead);
+			this.z_stream = CreateZStream (mode, gzip, feeder);
 			if (z_stream == IntPtr.Zero) {
+				this.base_stream = null;
+				this.feeder = null;
 				throw new NotImplementedException ("Failed to initialize zlib. You probably have an old zlib installed. Version 1.2.0.4 or later is required.");
 			}
-			this.open = true;
-			if (mode == CompressionMode.Compress) {
-				Flush();
-			}
+			this.mode = mode;
+			this.leaveOpen = leaveOpen;
 		}
-
-		public DeflateStream (Stream compressedStream, CompressionMode mode) :
-			this (compressedStream, mode, false, false) { }
-
-		public DeflateStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) :
-			this (compressedStream, mode, leaveOpen, false) { }
 
 		protected override void Dispose (bool disposing)
 		{
-			if (!open) {
-				base.Dispose (disposing);
-				return;
+			if (disposing && !disposed) {
+				disposed = true;
+				IntPtr zz = z_stream;
+				z_stream = IntPtr.Zero;
+				int res = 0;
+				if (zz != IntPtr.Zero)
+					res = CloseZStream (zz); // This will Flush() the remaining output if any
+
+				io_buffer = null;
+				if (!leaveOpen) {
+					Stream st = base_stream;
+					if (st != null)
+						st.Close ();
+					base_stream = null;
+				}
+				CheckResult (res, "Dispose");
 			}
 
-			try {
-				FlushInternal (true);
-				base.Dispose (disposing);
-			} finally {
-				try {
-					DisposeCore ();
-				} finally {
-					if (disposing)
-						Marshal.FreeHGlobal (sized_buffer);
-				}
-			}
+			base.Dispose (disposing);
 		}
 
-		void DisposeCore ()
+		int UnmanagedRead (IntPtr buffer, int length)
 		{
-			if (/*mode == CompressionMode.Decompress &&*/ compressedStream.CanSeek) {
-				int avail_in = z_stream_get_avail_in (z_stream);
-				if (avail_in != 0) {
-					compressedStream.Seek (- avail_in, SeekOrigin.Current);
-					z_stream_set_avail_in (z_stream, 0);
+			int total = 0;
+			int n = 1;
+			while (length > 0 && n > 0) {
+				if (io_buffer == null)
+					io_buffer = new byte [4096];
+
+				n = base_stream.Read (io_buffer, 0, io_buffer.Length);
+				if (n > 0) {
+					Marshal.Copy (io_buffer, 0, buffer, n);
+					unsafe {
+						buffer = new IntPtr ((byte *) buffer.ToPointer () + n);
+					}
+					length -= n;
+					total += n;
 				}
 			}
-
-			free_z_stream (z_stream,mode);
-			z_stream = IntPtr.Zero;
-
-			if (!leaveOpen) {
-				compressedStream.Close();
-			}
-
-			open = false;
+			return total;
 		}
 
-		private int ReadInternal(byte[] array, int offset, int count) {
-			int buffer_size;
-			if (finished)
-				return 0;
+		int UnmanagedWrite (IntPtr buffer, int length)
+		{
+			int total = 0;
+			while (length > 0) {
+				if (io_buffer == null)
+					io_buffer = new byte [4096];
 
-			if (compressedStream.CanSeek)
-				buffer_size = BUFFER_SIZE;
-			else
-				buffer_size = 1;
-
-			IntPtr buffer = Marshal.AllocHGlobal(count);
-			try {
-				int avail_out;
-
-				avail_out = count;
-				z_stream_set_next_out (z_stream, buffer);
-
-				while (avail_out != 0 && !finished) {
-					if (z_stream_get_avail_in (z_stream) == 0) {
-						byte[] read_buf = new byte[buffer_size];
-						int length_read = compressedStream.Read (read_buf, 0, buffer_size);
-						bytes_read += length_read;
-						if (length_read == 0) {
-							break;
-						}
-						Marshal.Copy (read_buf, 0, sized_buffer, length_read);
-						z_stream_set_next_in (z_stream, sized_buffer);
-						z_stream_set_avail_in (z_stream, length_read);
-					}
-					ZReturnConsts ret_val = z_stream_inflate(z_stream, ref avail_out);
-					switch (ret_val) {
-					case ZReturnConsts.Z_OK:
-						break;
-					case ZReturnConsts.Z_STREAM_END:
-						finished = true;
-						break;
-					case ZReturnConsts.Z_NEED_DICT:
-						throw new InvalidDataException ("ZLib stream requires a dictionary.");
-					case ZReturnConsts.Z_DATA_ERROR:
-						throw new InvalidDataException ("Invalid ZLib data.");
-					case ZReturnConsts.Z_STREAM_ERROR:
-						throw new InvalidOperationException ("Internal DeflateStream error.");
-					case ZReturnConsts.Z_MEM_ERROR:
-						throw new OutOfMemoryException ();
-					case ZReturnConsts.Z_BUF_ERROR:
-						throw new InvalidOperationException ("Internal DeflateStream error: Buf error.");
-					}
+				int count = Math.Min (length, io_buffer.Length);
+				Marshal.Copy (buffer, io_buffer, 0, count);
+				base_stream.Write (io_buffer, 0, count);
+				unsafe {
+					buffer = new IntPtr ((byte *) buffer.ToPointer () + count);
 				}
-				if (count != avail_out)
-					Marshal.Copy (buffer, array, offset, count - avail_out);
-				return count - avail_out; 
-			} finally {
-				Marshal.FreeHGlobal(buffer);
+				length -= count;
+				total += count;
 			}
+			return total;
+		}
+
+		unsafe int ReadInternal (byte[] array, int offset, int count)
+		{
+			int result = 0;
+			fixed (byte *b = array) {
+				IntPtr ptr = new IntPtr (b + offset);
+				result = ReadZStream (z_stream, ptr, count);
+			}
+			CheckResult (result, "ReadInternal");
+			return result;
 		}
 
 		public override int Read (byte[] dest, int dest_offset, int count)
 		{
-			if (!open)
-				throw new ObjectDisposedException ("DeflateStream");
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
 			if (dest == null)
 				throw new ArgumentNullException ("Destination array is null.");
 			if (!CanRead)
@@ -214,51 +173,20 @@ namespace System.IO.Compression {
 			return ReadInternal (dest, dest_offset, count);
 		}
 
-
-		private ZReturnConsts do_deflate (ZFlushConsts flush, out int avail_out) {
-			avail_out = BUFFER_SIZE;
-			ZReturnConsts ret_val = z_stream_deflate (z_stream, flush, sized_buffer, ref avail_out);
-			switch (ret_val) {
-			case ZReturnConsts.Z_STREAM_ERROR:
-				throw new InvalidOperationException ("Internal error.");
-			case ZReturnConsts.Z_MEM_ERROR:
-				throw new InvalidOperationException ("Memory error.");
+		unsafe void WriteInternal (byte[] array, int offset, int count)
+		{
+			int result = 0;
+			fixed (byte *b = array) {
+				IntPtr ptr = new IntPtr (b + offset);
+				result = WriteZStream (z_stream, ptr, count);
 			}
-			return ret_val;
-		}
-
-		private void WriteInternal(byte[] array, int offset, int count) {
-			IntPtr buffer = Marshal.AllocHGlobal(count);
-			try {
-				int avail_in;
-
-				avail_in = count;
-
-				Marshal.Copy (array, offset, buffer, count);
-				z_stream_set_next_in (z_stream, buffer);
-				z_stream_set_avail_in (z_stream, avail_in);
-				while (avail_in != 0) {
-					int avail_out;
-				
-					do_deflate (ZFlushConsts.Z_NO_FLUSH, out avail_out);
-
-					if (avail_out != BUFFER_SIZE) {
-						byte[] output = new byte[BUFFER_SIZE - avail_out];
-						Marshal.Copy (sized_buffer, output, 0, BUFFER_SIZE - avail_out);
-						compressedStream.Write(output, 0, BUFFER_SIZE - avail_out);
-					}
-
-					avail_in = z_stream_get_avail_in (z_stream);
-				}
-			} finally {
-				Marshal.FreeHGlobal(buffer);
-			}
+			CheckResult (result, "WriteInternal");
 		}
 
 		public override void Write (byte[] src, int src_offset, int count)
 		{
-			if (!open)
-				throw new ObjectDisposedException ("DeflateStream");
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
 
 			if (src == null)
 				throw new ArgumentNullException ("src");
@@ -275,55 +203,61 @@ namespace System.IO.Compression {
 			WriteInternal (src, src_offset, count);
 		}
 
-		private void FlushInternal (bool finish) 
+		static void CheckResult (int result, string where)
 		{
-			if (!open)
-				throw new ObjectDisposedException ("DeflateStream");
-
-			int avail_out;
-			ZReturnConsts ret_val;
-
-			if (!(open && mode == CompressionMode.Compress && compressedStream.CanWrite))
+			if (result >= 0)
 				return;
 
-			z_stream_set_next_in (z_stream, IntPtr.Zero);
-			z_stream_set_avail_in (z_stream, 0);
-
-			while (true) {
-				ret_val = do_deflate (finish ? ZFlushConsts.Z_FINISH : ZFlushConsts.Z_SYNC_FLUSH, out avail_out);
-
-				if (BUFFER_SIZE != avail_out) {
-					byte[] output = new byte[BUFFER_SIZE - avail_out];
-					Marshal.Copy (sized_buffer, output, 0, BUFFER_SIZE - avail_out);
-					compressedStream.Write(output, 0, BUFFER_SIZE - avail_out);
-				} else {
-					if (!finish)
-						break;
-				}
-				if (ret_val == ZReturnConsts.Z_STREAM_END)
-					break;
+			string error;
+			switch (result) {
+			case -1: // Z_ERRNO
+				error = "Unknown error"; // Marshal.GetLastWin32() ?
+				break;
+			case -2: // Z_STREAM_ERROR
+				error = "Internal error";
+				break;
+			case -3: // Z_DATA_ERROR
+				error = "Corrupted data";
+				break;
+			case -4: // Z_MEM_ERROR
+				error = "Not enough memory";
+				break;
+			case -5: // Z_BUF_ERROR
+				error = "Internal error (no progress possible)";
+				break;
+			case -6: // Z_VERSION_ERROR
+				error = "Invalid version";
+				break;
+			case -10:
+				error = "Invalid argument(s)";
+				break;
+			case -11:
+				error = "IO error";
+				break;
+			default:
+				error = "Unknown error";
+				break;
 			}
 
-			compressedStream.Flush();
+			throw new IOException (error + " " + where);
 		}
 
-		public override void Flush () {
-			FlushInternal (false);
-		}
+		public override void Flush ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
 
-		public override long Seek (long offset, SeekOrigin origin) {
-			throw new System.NotSupportedException();
-		}
-
-		public override void SetLength (long value) {
-			throw new System.NotSupportedException();
+			if (CanWrite) {
+				int result = Flush (z_stream);
+				CheckResult (result, "Flush");
+			}
 		}
 
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
-			if (!open)
-				throw new ObjectDisposedException ("DeflateStream");
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
 
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
@@ -347,8 +281,8 @@ namespace System.IO.Compression {
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
 							AsyncCallback cback, object state)
 		{
-			if (!open)
-				throw new ObjectDisposedException ("DeflateStream");
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().FullName);
 
 			if (!CanWrite)
 				throw new InvalidOperationException ("This stream does not support writing");
@@ -369,7 +303,8 @@ namespace System.IO.Compression {
 			return w.BeginInvoke (buffer, offset, count, cback, state);			
 		}
 
-		public override int EndRead(IAsyncResult async_result) {
+		public override int EndRead(IAsyncResult async_result)
+		{
 			if (async_result == null)
 				throw new ArgumentNullException ("async_result");
 
@@ -401,39 +336,56 @@ namespace System.IO.Compression {
 			return;
 		}
 
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void SetLength (long value)
+		{
+			throw new NotSupportedException();
+		}
+
 		public Stream BaseStream {
-			get {
-				return compressedStream;
-			}
+			get { return base_stream; }
 		}
+
 		public override bool CanRead {
-			get {
-				return open && mode == CompressionMode.Decompress && compressedStream.CanRead;
-			}
+			get { return !disposed && mode == CompressionMode.Decompress && base_stream.CanRead; }
 		}
+
 		public override bool CanSeek {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
+
 		public override bool CanWrite {
-			get {
-				return open && mode == CompressionMode.Compress && compressedStream.CanWrite;
-			}
+			get { return !disposed && mode == CompressionMode.Compress && base_stream.CanWrite; }
 		}
+
 		public override long Length {
-			get {
-				throw new System.NotSupportedException();
-			}
+			get { throw new NotSupportedException(); }
 		}
+
 		public override long Position {
-			get {
-				throw new System.NotSupportedException();
-			}
-			set {
-				throw new System.NotSupportedException();
-			}
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
 		}
+
+		[DllImport ("MonoPosixHelper")]
+		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder);
+
+		[DllImport ("MonoPosixHelper")]
+		static extern int CloseZStream (IntPtr stream);
+
+		[DllImport ("MonoPosixHelper")]
+		static extern int Flush (IntPtr stream);
+
+		[DllImport ("MonoPosixHelper")]
+		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
+
+		[DllImport ("MonoPosixHelper")]
+		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
 	}
 }
 #endif
+
