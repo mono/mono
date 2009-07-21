@@ -50,12 +50,8 @@ namespace System.IO.Compression {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
-				if (deflateStream != null) {
-					deflateStream.Dispose ();
-					deflateStream = null;
-				}
-			}
+			if (disposing)
+				deflateStream.Dispose ();
 			base.Dispose (disposing);
 		}
 

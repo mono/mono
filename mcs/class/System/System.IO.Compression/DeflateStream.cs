@@ -37,6 +37,7 @@ using System.Runtime.Remoting.Messaging;
 namespace System.IO.Compression {
 	public class DeflateStream : Stream
 	{
+		const int BufferSize = 4096;
 		delegate int UnmanagedReadOrWrite (IntPtr buffer, int length);
 		delegate int ReadMethod (byte[] array, int offset, int count);
 		delegate void WriteMethod (byte[] array, int offset, int count);
@@ -109,9 +110,10 @@ namespace System.IO.Compression {
 			int n = 1;
 			while (length > 0 && n > 0) {
 				if (io_buffer == null)
-					io_buffer = new byte [4096];
+					io_buffer = new byte [BufferSize];
 
-				n = base_stream.Read (io_buffer, 0, io_buffer.Length);
+				int count = Math.Min (length, io_buffer.Length);
+				n = base_stream.Read (io_buffer, 0, count);
 				if (n > 0) {
 					Marshal.Copy (io_buffer, 0, buffer, n);
 					unsafe {
@@ -129,7 +131,7 @@ namespace System.IO.Compression {
 			int total = 0;
 			while (length > 0) {
 				if (io_buffer == null)
-					io_buffer = new byte [4096];
+					io_buffer = new byte [BufferSize];
 
 				int count = Math.Min (length, io_buffer.Length);
 				Marshal.Copy (buffer, io_buffer, 0, count);
