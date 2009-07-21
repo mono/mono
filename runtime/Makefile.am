@@ -37,6 +37,10 @@ build_profiles += net_2_1_raw
 test_profiles += net_2_1_raw
 endif
 
+if INSTALL_MONOTOUCH
+build_profiles += monotouch
+endif
+
 if BUILD_MCS
 
 # The write check is to foil 'make distcheck'
