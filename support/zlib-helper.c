@@ -13,6 +13,7 @@
 #include "zlib.h"
 #endif
 
+#include <glib.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -25,28 +26,39 @@
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
 
-typedef int (*read_write_func) (unsigned char *buffer, int length);
+typedef gint (*read_write_func) (guchar *buffer, gint length);
 struct _ZStream {
 	z_stream *stream;
-	unsigned char *buffer;
+	guchar *buffer;
 	read_write_func func;
-	unsigned char compress;
-	unsigned char eof;
+	guchar compress;
+	guchar eof;
 };
 typedef struct _ZStream ZStream;
 
-ZStream *CreateZStream (int compress, unsigned char gzip, read_write_func func);
-int CloseZStream (ZStream *zstream);
-int Flush (ZStream *stream);
-int ReadZStream (ZStream *stream, unsigned char *buffer, int length);
-int WriteZStream (ZStream *stream, unsigned char *buffer, int length);
+ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func);
+gint CloseZStream (ZStream *zstream);
+gint Flush (ZStream *stream);
+gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
+gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
 
+static void *
+z_alloc (void *opaque, gsize nitems, gsize item_size)
+{
+	return g_malloc0 (nitems * item_size);
+}
+
+static void
+z_free (void *opaque, void *ptr)
+{
+	g_free (ptr);
+}
 
 ZStream *
-CreateZStream (int compress, unsigned char gzip, read_write_func func)
+CreateZStream (gint compress, guchar gzip, read_write_func func)
 {
 	z_stream *z;
-	int retval;
+	gint retval;
 	ZStream *result;
 
 	if (func == NULL)
@@ -57,10 +69,7 @@ CreateZStream (int compress, unsigned char gzip, read_write_func func)
 	return NULL;
 #endif
 
-	z = (z_stream *) malloc (sizeof (z_stream));
-	if (z == NULL)
-		return NULL;
-	memset (z, 0, sizeof (z_stream));
+	z = g_new0 (z_stream, 1);
 	if (compress) {
 		retval = deflateInit2 (z, Z_DEFAULT_COMPRESSION, Z_DEFLATED, gzip ? 31 : -15, 8, Z_DEFAULT_STRATEGY);
 	} else {
@@ -68,34 +77,24 @@ CreateZStream (int compress, unsigned char gzip, read_write_func func)
 	}
 
 	if (retval != Z_OK) {
-		free (z);
+		g_free (z);
 		return NULL;
 	}
-	result = malloc (sizeof (ZStream));
-	memset (result, 0, sizeof (ZStream));
+	z->zalloc = z_alloc;
+	z->zfree = z_free;
+	result = g_new0 (ZStream, 1);
 	result->stream = z;
 	result->func = func;
 	result->compress = compress;
-	result->buffer = (unsigned char *) malloc (BUFFER_SIZE);
-	if (result->buffer == NULL) {
-		free (result);
-		if (compress) {
-			deflateEnd (z);
-		} else {
-			inflateEnd (z);
-		}
-		free (z);
-		return NULL;
-	}
-	memset (result->buffer, 0, BUFFER_SIZE);
+	result->buffer = g_new (guchar, BUFFER_SIZE);
 	return result;
 }
 
-int
+gint
 CloseZStream (ZStream *zstream)
 {
-	int status;
-	int flush_status;
+	gint status;
+	gint flush_status;
 
 	if (zstream == NULL)
 		return ARGUMENT_ERROR;
@@ -112,17 +111,17 @@ CloseZStream (ZStream *zstream)
 	} else {
 		inflateEnd (zstream->stream);
 	}
-	free (zstream->buffer);
-	free (zstream->stream);
+	g_free (zstream->buffer);
+	g_free (zstream->stream);
 	memset (zstream, 0, sizeof (ZStream));
-	free (zstream);
+	g_free (zstream);
 	return status;
 }
 
-static int
+static gint
 write_to_managed (ZStream *stream)
 {
-	int n;
+	gint n;
 	z_stream *zs;
 
 	zs = stream->stream;
@@ -136,7 +135,7 @@ write_to_managed (ZStream *stream)
 	return 0;
 }
 
-int
+gint
 Flush (ZStream *stream)
 {
 	if (!stream->compress)
@@ -145,11 +144,11 @@ Flush (ZStream *stream)
 	return write_to_managed (stream);
 }
 
-int
-ReadZStream (ZStream *stream, unsigned char *buffer, int length)
+gint
+ReadZStream (ZStream *stream, guchar *buffer, gint length)
 {
-	int n;
-	int status;
+	gint n;
+	gint status;
 	z_stream *zs;
 
 	if (stream == NULL || buffer == NULL || length < 0)
@@ -179,11 +178,11 @@ ReadZStream (ZStream *stream, unsigned char *buffer, int length)
 	return length - zs->avail_out;
 }
 
-int
-WriteZStream (ZStream *stream, unsigned char *buffer, int length)
+gint
+WriteZStream (ZStream *stream, guchar *buffer, gint length)
 {
-	int n;
-	int status;
+	gint n;
+	gint status;
 	z_stream *zs;
 
 	if (stream == NULL || buffer == NULL || length < 0)
