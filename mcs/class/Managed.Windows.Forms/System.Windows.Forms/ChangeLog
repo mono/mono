@@ -1,5 +1,13 @@
 2009-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Dnd.cs: Implement support for XdndActionList, so we can get the
+	complete list of the supported actions in the drag source, and use the
+	action passed in the Position message only as a fallback. This will
+	help us with dnd operations with non winforms apps.
+	Fixes #402158.
+
+2009-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ToolStripItemCollection.cs: Use a List<> instead of an ArrayList in
 	Find. This should fix the exception we were getting when trying to
 	convert the ArrayList to an array of objects (since we were losing the
