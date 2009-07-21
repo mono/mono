@@ -175,11 +175,12 @@ namespace System.ComponentModel {
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				for (int i = (c.Count - 1); i >= 0; i--) {
+				while (c.Count > 0) {
+					int index = c.Count - 1;
 #if NET_2_0
-					var component = c [i];
+					var component = c [index];
 #else
-					IComponent component = c [i] as IComponent;
+					IComponent component = c [index] as IComponent;
 #endif
 					Remove (component);
 					component.Dispose ();

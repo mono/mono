@@ -1,3 +1,8 @@
+2009-07-20  Tom Hindle <tom_hindle@sil.org>
+
+	* Container.cs: Replaced for loop with for loop.
+	[Fixes bug #522474]
+
 2009-07-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Container.cs: Use generic list on 2.0 profile, and avoid using var

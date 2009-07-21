@@ -487,6 +487,15 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNull (compB.Site, "#D5");
 		}
 
+		[Test] // bug #522474
+		public void Dispose_Recursive ()
+		{
+			MyComponent comp = new MyComponent ();
+			Container container = comp.CreateContainer ();
+			comp.Dispose ();
+			Assert.AreEqual (0, container.Components.Count);
+		}
+
 		[Test]
 		public void GetService ()
 		{
@@ -704,6 +713,28 @@ namespace MonoTests.System.ComponentModel
 
 		class MyComponent : Component
 		{
+			private Container container;
+
+			protected override void Dispose (bool disposing)
+			{
+				if (container != null)
+					container.Dispose ();
+				base.Dispose (disposing);
+			}
+
+			public Container CreateContainer ()
+			{
+				if (container != null)
+					throw new InvalidOperationException ();
+				container = new Container ();
+				container.Add (new MyComponent ());
+				container.Add (this);
+				return container;
+			}
+
+			public Container Container {
+				get { return container; }
+			}
 		}
 
 		class MyContainer : IContainer
