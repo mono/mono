@@ -164,7 +164,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/LinkInHeadWithEmbeddedExpression.aspx \
 	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx \
 	Test/mainsoft/NunitWebResources/ServerSideControlsInScriptBlock.aspx \
-	Test/mainsoft/NunitWebResources/ServerControlInClientSideComment.aspx
+	Test/mainsoft/NunitWebResources/ServerControlInClientSideComment.aspx \
+	Test/mainsoft/NunitWebResources/UnquotedAngleBrackets.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))
