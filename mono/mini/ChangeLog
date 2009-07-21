@@ -1,3 +1,8 @@
+2009-07-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_emit_prolog): Fix thread attaching in aot
+	code.
+
 2009-07-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-simd.cs (Main): Pass args to the test driver.
