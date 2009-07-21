@@ -28,6 +28,51 @@ using System;
 
 namespace System.ServiceModel.Channels
 {
+	internal abstract class InternalRequestContext : RequestContext
+	{
+		protected InternalRequestContext (IDefaultCommunicationTimeouts timeouts)
+		{
+			this.timeouts = timeouts;
+		}
+
+		IDefaultCommunicationTimeouts timeouts;
+
+		public override IAsyncResult BeginReply (Message message, AsyncCallback callback, object state)
+		{
+			return BeginReply (message, timeouts.SendTimeout, callback, state);
+		}
+
+		Action<Message,TimeSpan> reply_delegate;
+
+		public override IAsyncResult BeginReply (Message message, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+			if (reply_delegate == null)
+				reply_delegate = new Action<Message,TimeSpan> (Reply);
+			return reply_delegate.BeginInvoke (message, timeout, callback, state);
+		}
+
+		public override void EndReply (IAsyncResult result)
+		{
+			if (result == null)
+				throw new ArgumentNullException ("result");
+			if (reply_delegate == null)
+				throw new InvalidOperationException ("Async reply operation has not started");
+			reply_delegate.EndInvoke (result);
+		}
+
+		public override void Close ()
+		{
+			Close (timeouts.CloseTimeout);
+		}
+
+		public override void Reply (Message message)
+		{
+			Reply (message, timeouts.SendTimeout);
+		}
+	}
+
 	public abstract class RequestContext : IDisposable
 	{
 		public abstract Message RequestMessage { get; }
