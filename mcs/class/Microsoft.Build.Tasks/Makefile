@@ -23,6 +23,7 @@ endif
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\
+	/r:System.Core.dll			\
 	/r:System.Xml.dll			\
 	/r:System.Windows.Forms.dll		\
 	/r:Microsoft.Build.Utilities.dll	\

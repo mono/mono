@@ -10,11 +10,14 @@
 ./Project01/bin/Debug/fr-CA/Lib1.resources.dll
 ./Project01/bin/Debug/fr-CA/Lib2.resources.dll
 ./Project01/bin/Debug/lib2_folder/Lib2.deploy.txt
+./Project01/bin/Debug/foo.dll
 ./Project01/bin/Debug/Lib2.dll
 ./Project01/bin/Debug/fr-FR/Lib1.resources.dll
 ./Project01/bin/Debug/fr-FR/Lib2.resources.dll
 ./Project01/bin/Debug/Lib1.deploy.txt
 ./Project01/bin/Debug/Project01.exe
+./Project01/bin/Debug/abc.dll
+./Project01/bin/Debug/bar.dll
 ./Project01/bin/Debug/Lib1.dll.mdb
 ./Project01/bin/Debug/Lib1.dll
 ./Project01/bin/Debug/Lib4.dll.mdb

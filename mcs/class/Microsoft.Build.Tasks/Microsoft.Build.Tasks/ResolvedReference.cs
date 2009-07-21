@@ -27,6 +27,8 @@
 
 #if NET_2_0
 
+using System;
+using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -34,14 +36,39 @@ namespace Microsoft.Build.Tasks {
 	
 	class ResolvedReference {
 		public ITaskItem TaskItem;
+		public AssemblyName AssemblyName;
 		public SearchPath FoundInSearchPath;
 		public bool CopyLocal;
+		public bool IsPrimary; //default: true
 
-		public ResolvedReference (string filename, bool copy_local, SearchPath search_path)
+		public ResolvedReference (string filename, AssemblyName asm_name, bool copy_local, SearchPath search_path)
 		{
 			this.TaskItem = new TaskItem (filename);
+			AssemblyName = asm_name;
 			CopyLocal = copy_local;
-			this.FoundInSearchPath = search_path;
+			IsPrimary = true;
+			FoundInSearchPath = search_path;
+		}
+
+		public string FoundInSearchPathAsString ()
+		{
+			switch (FoundInSearchPath) {
+			case SearchPath.Gac:
+				return "{GAC}";
+			case SearchPath.TargetFrameworkDirectory:
+				return "{TargetFrameworkDirectory}";
+			case SearchPath.CandidateAssemblies:
+				return "{CandidateAssemblies}";
+			case SearchPath.HintPath:
+				return "{HintPathFromItem}";
+			case SearchPath.RawFileName:
+				return "{RawFileName}";
+			case SearchPath.Directory:
+				return TaskItem.ItemSpec;
+			default:
+				throw new NotImplementedException (String.Format (
+						"Implement me for SearchPath: {0}", FoundInSearchPath));
+			}
 		}
 	}
 

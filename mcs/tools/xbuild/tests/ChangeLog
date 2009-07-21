@@ -1,3 +1,10 @@
+2009-07-22  Ankit Jain  <jankit@novell.com>
+
+	* standalone/Project01: Add references to two "external" assemblies
+	with dependencies.
+	* standalone/Project01/Program.cs: Add references in code to the new
+	assemblies, to ensure that they are required for compilation.
+
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
 	* standalone/Project01: Add missing Lib2.deploy.txt in the correct

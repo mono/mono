@@ -1,3 +1,25 @@
+2009-07-22  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #517974.
+	* ResolvedReference.cs (AssemblyName): New.
+	(IsPrimary): New. Primary (eg. specified in the project file) or
+	dependent reference.
+	(FoundInSearchPathAsString): New.
+	* AssemblyResolver.cs (GetResolvedReference): Add a 'assembly name'
+	param for the new field in ResolvedReference.
+	(AssemblyNamesCompatible): Fix the check for public key token.
+	Track api changes.
+
+	* ResolveAssemblyReference.cs: Keep track of resolved assemblies,
+	prevent duplicate references and other files.
+	Process dependencies after resolving all the primary references.
+	Search for dependencies in parent assembly's dir first and then
+	the specified search paths.
+	Detect assembly version conflicts and try to resolve.
+	Improve logged messages.
+	(PrimaryReference): New.
+	(ResolveAssemblyReferenceHelper.AddUniqueFile): New extension method.
+
 2009-07-16  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #519922.

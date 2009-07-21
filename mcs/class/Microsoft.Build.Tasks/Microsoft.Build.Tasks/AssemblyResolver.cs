@@ -125,7 +125,7 @@ namespace Microsoft.Build.Tasks {
 			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
 				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version)) {
 					// gac and tgt frmwk refs are not copied private
-					return GetResolvedReference (reference, pair.Value, false,
+					return GetResolvedReference (reference, pair.Value, pair.Key, false,
 							SearchPath.TargetFrameworkDirectory);
 				}
 
@@ -144,13 +144,16 @@ namespace Microsoft.Build.Tasks {
 			if (reference.ItemSpec.IndexOf (',') < 0) {
 				// Try as a filename
 				string path = Path.Combine (directory, reference.ItemSpec);
-				if (GetAssemblyNameFromFile (path) != null)
-					return GetResolvedReference (reference, path, true, SearchPath.Directory);
+				AssemblyName aname = GetAssemblyNameFromFile (path);
+				if (aname != null)
+					return GetResolvedReference (reference, path, aname, true, SearchPath.Directory);
 
 				foreach (string extn in file_extensions) {
 					string path_with_extn = path + extn;
-					if (GetAssemblyNameFromFile (path_with_extn) != null)
-						return GetResolvedReference (reference, path_with_extn, true, SearchPath.Directory);
+					aname = GetAssemblyNameFromFile (path_with_extn);
+					if (aname != null)
+						return GetResolvedReference (reference, path_with_extn, aname, true,
+								SearchPath.Directory);
 				}
 			}
 
@@ -165,7 +168,8 @@ namespace Microsoft.Build.Tasks {
 
 					//FIXME: Extract 'name' and look only for name.dll name.exe ?
 					if (AssemblyNamesCompatible (key_aname, found_aname, false))
-						return GetResolvedReference (reference, file, true, SearchPath.Directory);
+						return GetResolvedReference (reference, file, found_aname, true,
+								SearchPath.Directory);
 
 					SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
 				}
@@ -198,7 +202,7 @@ namespace Microsoft.Build.Tasks {
 			if (name.Version != null) {
 				string ret;
 				if (gac [name.Name].TryGetValue (name.Version, out ret))
-					return GetResolvedReference (reference, ret, false, SearchPath.Gac);
+					return GetResolvedReference (reference, ret, name, false, SearchPath.Gac);
 
 				// not found
 				if (specific_version) {
@@ -212,7 +216,9 @@ namespace Microsoft.Build.Tasks {
 			gac [name.Name].Keys.CopyTo (versions, 0);
 			Array.Sort (versions, (IComparer <Version>) null);
 			Version highest = versions [versions.Length - 1];
-			return GetResolvedReference (reference, gac [name.Name] [highest], false, SearchPath.Gac);
+			//FIXME: the aname being used here isn't correct, its version should
+			//	 actually match "highest"
+			return GetResolvedReference (reference, gac [name.Name] [highest], name, false, SearchPath.Gac);
 		}
 
 		public ResolvedReference ResolveHintPathReference (ITaskItem reference, bool specific_version)
@@ -239,7 +245,7 @@ namespace Microsoft.Build.Tasks {
 			}
 
 			if (AssemblyNamesCompatible (name, found, specific_version)) {
-				resolved = GetResolvedReference (reference, hintpath, true, SearchPath.HintPath);
+				resolved = GetResolvedReference (reference, hintpath, found, true, SearchPath.HintPath);
 			} else {
 				SearchLogger.WriteLine ("Considered {0}, but assembly name '{1}' did not match the " +
 						"expected '{2}' (SpecificVersion={3})", hintpath, found, name, specific_version);
@@ -266,7 +272,7 @@ namespace Microsoft.Build.Tasks {
 			return aname;
 		}
 
-		static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
+		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
 		{
 			if (a.Name != b.Name)
 				return false;
@@ -281,9 +287,13 @@ namespace Microsoft.Build.Tasks {
 			byte [] b_bytes = b.GetPublicKeyToken ();
 
 			if (specificVersion) {
-				if (a_bytes == null || a_bytes.Length == 0)
-					return false;
-				if (b_bytes == null || b_bytes.Length == 0)
+				bool a_is_empty = (a_bytes == null || a_bytes.Length == 0);
+				bool b_is_empty = (b_bytes == null || b_bytes.Length == 0);
+
+				if (a_is_empty && b_is_empty)
+					return true;
+
+				if (a_is_empty || b_is_empty)
 					return false;
 
 				for (int i = 0; i < a_bytes.Length; i++)
@@ -306,7 +316,7 @@ namespace Microsoft.Build.Tasks {
 		// If metadata 'Private' is present then use that or use @default_value
 		// as the value for CopyLocal
 		internal ResolvedReference GetResolvedReference (ITaskItem reference, string filename,
-				bool default_value, SearchPath search_path)
+				AssemblyName aname, bool default_value, SearchPath search_path)
 		{
 			string pvt = reference.GetMetadata ("Private");
 
@@ -315,7 +325,7 @@ namespace Microsoft.Build.Tasks {
 				//FIXME: log a warning for invalid value
 				Boolean.TryParse (pvt, out copy_local);
 
-			return new ResolvedReference (filename, copy_local, search_path);
+			return new ResolvedReference (filename, aname, copy_local, search_path);
 		}
 
 		public TaskLoggingHelper Log {

@@ -17,6 +17,9 @@ namespace Project01
 
 			Lib1.Publisher publisher = new Lib1.Publisher ();
 			Console.WriteLine ("Publisher default name: {0}", publisher.Name);
+
+			Foo f = new Foo ();
+			Bar b = new Bar ();
 		}
 	}
 }
