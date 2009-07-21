@@ -1,3 +1,9 @@
+2009-07-21  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: GetReferencedAssemblies unconditionally
+	includes all assemblies from bin/ for precompiled sites. Fixes bug
+	#502016
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BuildManager.cs: backport r131138.
