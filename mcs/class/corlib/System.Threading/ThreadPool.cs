@@ -95,7 +95,9 @@ namespace System.Threading {
 
 		public static bool QueueUserWorkItem (WaitCallback callBack, object state)
 		{
+#if NET_2_1 && !MONOTOUCH
 			callBack = MoonlightHandler (callBack);
+#endif
 			IAsyncResult ar = callBack.BeginInvoke (state, null, null);
 			if (ar == null)
 				return false;
@@ -217,9 +219,9 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_1 && !MONOTOUCH
 		static WaitCallback MoonlightHandler (WaitCallback callback)
 		{
-#if NET_2_1 && !MONOTOUCH
 			return delegate (object o) {
 				try {
 					callback (o);
@@ -228,9 +230,7 @@ namespace System.Threading {
 					Thread.MoonlightUnhandledException (ex);
 				} 
 			};
-#else
-			return callback;
-#endif
 		}
+#endif
 	}
 }
