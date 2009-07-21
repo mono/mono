@@ -110,6 +110,7 @@ CloseZStream (ZStream *zstream)
 	} else {
 		inflateEnd (zstream->stream);
 	}
+	free (zstream->buffer);
 	free (zstream->stream);
 	memset (zstream, 0, sizeof (ZStream));
 	free (zstream);
