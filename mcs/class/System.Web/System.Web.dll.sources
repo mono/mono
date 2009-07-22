@@ -108,6 +108,7 @@ System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Compilation/WebHandlerBuildProvider.cs
 System.Web.Compilation/WebServiceBuildProvider.cs
 System.Web.Compilation/WsdlBuildProvider.cs
+../System.Design/System.Data.Design/TypedDataSetGenerator.cs
 System.Web.Compilation/XsdBuildProvider.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationConfigHandler.cs

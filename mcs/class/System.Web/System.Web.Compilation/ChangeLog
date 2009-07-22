@@ -1,3 +1,8 @@
+2009-07-21  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* XsdBuildProvider.cs: Use System.Data.Design version of
+	TypedDataSetGenerator instead of System.Data's.
+	
 2009-07-21  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: in put_back, store inTag value as well.
