@@ -1,5 +1,10 @@
 2009-07-22  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (mono_gc_wbarrier_value_copy): Make sure the class's
+	GC descriptor is computed before we use it.
+
+2009-07-22  Mark Probst  <mark.probst@gmail.com>
+
 	* icall.c (ves_icall_System_Array_SetGenericValueImpl): Use a
 	write barrier if necessary.
 
