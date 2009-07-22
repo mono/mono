@@ -11649,6 +11649,25 @@
       </method>
     </type>
   </test>
+  <test name="gtest-453.cs">
+    <type name="Test.CompilerTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Int32 DoSomething[T](System.String, T, T ByRef)">
+        <size>73</size>
+      </method>
+      <method name="Void ThisDoesNotWork()">
+        <size>27</size>
+      </method>
+      <method name="Void ThisWorksFine()">
+        <size>38</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
