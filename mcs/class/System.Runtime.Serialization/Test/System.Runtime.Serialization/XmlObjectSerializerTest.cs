@@ -1209,7 +1209,14 @@ namespace MonoTests.System.Runtime.Serialization
 		public void BaseKnownTypeAttributes ()
 		{
 			// bug #524088
-			string xml = @"<DummyPlaylist xmlns='http://example.com/schemas/asx'><Entries><DummyEntry><EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-instance' i:type='PartDummyEntryInfo'/></DummyEntry></Entries></DummyPlaylist>";
+			string xml = @"
+<DummyPlaylist xmlns='http://example.com/schemas/asx'>
+  <Entries>
+    <DummyEntry>
+      <EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-instance' i:type='PartDummyEntryInfo'/>
+    </DummyEntry>
+  </Entries>
+</DummyPlaylist>";
 
 			using (XmlReader reader = XmlReader.Create (new StringReader (xml))) {
 				DummyPlaylist playlist = new DataContractSerializer(typeof(DummyPlaylist)).ReadObject(reader) as DummyPlaylist;

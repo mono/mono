@@ -341,6 +341,7 @@ namespace System.Runtime.Serialization
 		{
 			bool isEmpty = reader.IsEmptyElement;
 			reader.ReadStartElement ();
+			reader.MoveToContent ();
 
 			object res;
 

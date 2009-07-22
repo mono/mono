@@ -1,5 +1,10 @@
 2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : now we can make xml indented as
+	  originally done in #524088.
+
+2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : added test for bug #524088 by
 	  Rolf Bjarne Kvinge (a bit modified).
 
