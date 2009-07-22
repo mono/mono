@@ -622,7 +622,7 @@ namespace System.Net
 					WebConnection.InitRead (cnc);
 				}
 				if (!sendChunked && cl == 0)
-					Close ();
+					requestWritten = true;
 			}
 		}
 
