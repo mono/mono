@@ -239,7 +239,7 @@ namespace System.Xml.Linq
 				XElement el = (node as XElement) ?? node.Parent;
 				if (el == null)
 					return String.Empty;
-				return el.GetPrefixOfNamespace (name.Namespace);
+				return el.GetPrefixOfNamespace (name.Namespace) ?? String.Empty;
 			}
 		}
 

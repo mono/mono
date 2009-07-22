@@ -166,6 +166,16 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void PrefixOnEmptyNS ()
+		{
+			string xml = @"<Dummy xmlns='http://example.com/schemas/asx' />";
+			XElement element = XElement.Parse (xml);
+			var r = element.CreateReader ();
+			r.Read ();
+			Assert.AreEqual (String.Empty, r.Prefix);
+		}
+
+		[Test]
 		public void NamePropsOnEOF ()
 		{
 			string xml = @"<Dummy xmlns='http://example.com/schemas/asx' />";
