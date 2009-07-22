@@ -1214,6 +1214,8 @@ System.Web/WebROCollection.cs
 System.Web/WebSysDescriptionAttribute.cs
 System.Web/XmlSiteMapProvider.cs
 
+../System.Design/System.Data.Design/TypedDataSetGenerator.cs
+
 ../System.Web.Routing/System.Web.Routing/HttpMethodConstraint.cs
 ../System.Web.Routing/System.Web.Routing/IRouteConstraint.cs
 ../System.Web.Routing/System.Web.Routing/IRouteHandler.cs
