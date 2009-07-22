@@ -2584,21 +2584,43 @@ namespace Mono.CSharp {
 					if (cii == ci)
 						continue;
 
-					Type ctype = ((BoundInfo) candidates[cii]).Type;
+					BoundInfo cbound = (BoundInfo) candidates[cii];
 					
 					// Same type parameters with different bounds
-					if (ctype == bound.Type)
-						continue;
+					if (cbound.Type == bound.Type) {
+						if (bound.Kind != BoundKind.Exact)
+							bound = cbound;
 
-					if (bound.Kind == BoundKind.Exact)
+						continue;
+					}
+
+					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
+						if (cbound.Kind != BoundKind.Exact) {
+							if (!Convert.ImplicitConversionExists (null, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+								break;
+							}
+
+							continue;
+						}
+						
+						if (bound.Kind != BoundKind.Exact) {
+							if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+								break;
+							}
+
+							bound = cbound;
+							continue;
+						}
+						
 						break;
+					}
 
 					if (bound.Kind == BoundKind.Lower) {
-						if (!Convert.ImplicitConversionExists (null, new TypeExpression (ctype, Location.Null), bound.Type)) {
+						if (!Convert.ImplicitConversionExists (null, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
 							break;
 						}
 					} else {
-						if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), ctype)) {
+						if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 							break;
 						}
 					}
