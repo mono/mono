@@ -1,3 +1,11 @@
+2009-07-22  Mark Probst  <mark.probst@gmail.com>
+
+	* icall-def.h, icall.c, thread-types.h: New separate icall for
+	VolatileWrite(object&,object) that uses a write barrier.
+
+	* console-unix.c, file-io.c, icall.c, threads.c: Use write
+	barriers in icalls which write to "ref" or "out" arguments.
+
 2009-07-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Do the work done in the exception
