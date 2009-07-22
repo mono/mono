@@ -5136,6 +5136,7 @@ namespace Mono.CSharp {
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			mg.MutateHoistedGenericType (storey);
+			type = storey.MutateType (type);
 			if (Arguments != null) {
 				foreach (Argument a in Arguments)
 					a.Expr.MutateHoistedGenericType (storey);
