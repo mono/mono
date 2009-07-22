@@ -123,7 +123,7 @@ namespace System.Xml.Linq
 		}
 
 		public override bool IsEmptyElement {
-			get { return node is XElement ? ((XElement) node).IsEmpty : false; }
+			get { return (attr < 0 && node is XElement) ? ((XElement) node).IsEmpty : false; }
 		}
 
 		XAttribute GetCurrentAttribute ()

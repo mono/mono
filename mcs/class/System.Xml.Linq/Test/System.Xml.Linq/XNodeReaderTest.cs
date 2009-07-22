@@ -153,5 +153,16 @@ namespace MonoTests.System.Xml.Linq
 			reader.MoveToContent (); // do Read() and shift state to Interactive.
 			Assert.AreEqual (true, reader.MoveToFirstAttribute (), "#2");
 		}
+
+		[Test]
+		public void IsEmptyElement ()
+		{
+			string xml = @"<Dummy xmlns='http://example.com/schemas/asx' />";
+			XElement element = XElement.Parse (xml);
+			var r = element.CreateReader ();
+			r.Read ();
+			r.MoveToAttribute (0);
+			Assert.IsFalse (r.IsEmptyElement);
+		}
 	}
 }
