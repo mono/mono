@@ -1,3 +1,7 @@
+2009-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* XmlSchemaDataImporter.cs: Added null checks.
+	
 2009-07-22  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* XmlSchemaDataImporter.cs:

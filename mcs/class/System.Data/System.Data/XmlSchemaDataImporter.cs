@@ -1251,18 +1251,20 @@ namespace System.Data
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
 				
-				if (e != null && e.LocalName == "Connections") {
+				if (e == null)
+					continue;
+				
+				if (e.LocalName == "Connections") {
 					providerName = ((XmlElement)e.FirstChild).GetAttribute ("Provider");
 					connString = ((XmlElement)e.FirstChild).GetAttribute ("AppSettingsPropertyName");
+					continue;
 				}
 				// #325464 debugging
 				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
 				
 				provider = DbProviderFactories.GetFactory (providerName);
 				
-				if (e != null && e.LocalName != "Tables") {
-					continue;
-				} else {
+				if (e.LocalName == "Tables") {
 					foreach (XmlNode node in e.ChildNodes) {
 						ProcessTableAdapter (node as XmlElement, provider, connString);
 					}
@@ -1278,6 +1280,9 @@ namespace System.Data
 		{
 			XmlElement e;
 			string datasetTableName = null;
+			
+			if (el == null)
+				return;
 			
 			// #325464 debugging
 			//Console.WriteLine ("in ProcessTableAdapters...");
@@ -1329,6 +1334,9 @@ namespace System.Data
 			string cmdType;
 			string tmp = null;
 			XmlElement e;
+			
+			if (el == null)
+				return;
 			
 			//Console.WriteLine ("ProcessDbSources: "+el.LocalName);
 
@@ -1412,23 +1420,23 @@ namespace System.Data
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
 				
-				if (e != null) {
-					
-					switch (e.LocalName) {
-						case "SelectCommand": 
-							cmdInfo.Command = ProcessDbCommand (e.FirstChild as XmlElement);
-							currentAdapter.Commands.Add (cmdInfo);
-							break;
-						case "InsertCommand": 
-							currentAdapter.Adapter.InsertCommand = ProcessDbCommand (e.FirstChild as XmlElement);
-							break;
-						case "UpdateCommand": 
-							currentAdapter.Adapter.UpdateCommand = ProcessDbCommand (e.FirstChild as XmlElement);
-							break;
-						case "DeleteCommand": 
-							currentAdapter.Adapter.DeleteCommand = ProcessDbCommand (e.FirstChild as XmlElement);
-							break;
-					}
+				if (e == null) 
+					continue;
+				
+				switch (e.LocalName) {
+					case "SelectCommand": 
+						cmdInfo.Command = ProcessDbCommand (e.FirstChild as XmlElement);
+						currentAdapter.Commands.Add (cmdInfo);
+						break;
+					case "InsertCommand": 
+						currentAdapter.Adapter.InsertCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						break;
+					case "UpdateCommand": 
+						currentAdapter.Adapter.UpdateCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						break;
+					case "DeleteCommand": 
+						currentAdapter.Adapter.DeleteCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						break;
 				}
 			}
 		}
@@ -1440,6 +1448,9 @@ namespace System.Data
 			string cmdText = null;
 			string cmdType = null;
 			ArrayList parameters = null;
+			
+			if (el == null)
+				return null;
 			
 			cmdType = el.GetAttribute ("CommandType");
 			foreach (XmlNode n in el.ChildNodes) {
@@ -1468,10 +1479,13 @@ namespace System.Data
 		{
 			//Console.WriteLine ("ProcessDbParameters: "+el.LocalName);
 			string tmp = null;
-			ArrayList parameters = new ArrayList ();
-			DbParameter param = null;
-			
 			XmlElement e;
+			DbParameter param = null;
+			ArrayList parameters = new ArrayList ();
+			
+			if (el == null)
+				return parameters;
+			
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
 				
@@ -1511,6 +1525,9 @@ namespace System.Data
 
 		private void ProcessColumnMapping (XmlElement el, DataTableMapping tableMapping)
 		{
+			if (el == null)
+				return;
+			
 			tableMapping.ColumnMappings.Add (el.GetAttribute ("SourceColumn"), 
 			                                 el.GetAttribute ("DataSetColumn"));
 		}
