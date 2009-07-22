@@ -37,6 +37,7 @@
 using System;
 using System.Xml;
 using System.Data;
+using System.Data.Common;
 using System.Collections;
 using System.CodeDom;
 using System.Globalization;
@@ -46,6 +47,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Reflection;
 
 // only for Driver
 using Microsoft.CSharp;
@@ -100,13 +102,47 @@ namespace System.Data
 			new Generator (ds, cns, gen, options).Run ();
 		}
 
+#if NET_2_0
+		public static void CreateDataSetClasses (DataSet ds,
+			CodeNamespace cns, CodeDomProvider codeProvider,
+			ClassGeneratorOptions options)
+		{
+			new Generator (ds, cns, codeProvider, options).Run ();
+		}
+
+		public static void CreateDataSetClasses (DataSet ds, 
+		                                         CodeCompileUnit cunit, 
+		                                         CodeNamespace cns, 
+		                                         CodeDomProvider codeProvider, 
+		                                         ClassGeneratorOptions options)
+		{
+			new Generator (ds, cunit, cns, codeProvider, options).Run ();
+		}
+#endif
 		public static string MakeSafeName (string name, ICodeGenerator codeGen)
 		{
 			if (name == null || codeGen == null)
-				throw new NullReferenceException ();
+				throw new ArgumentNullException ();
 
 			name = codeGen.CreateValidIdentifier (name);
 
+			return MakeSafeNameInternal (name);
+		}
+		
+#if NET_2_0
+		public static string MakeSafeName (string name, CodeDomProvider provider)
+		{
+			if (name == null || provider == null)
+				throw new ArgumentNullException ();
+
+			name = provider.CreateValidIdentifier (name);
+
+			return MakeSafeNameInternal (name);
+		}
+#endif
+		
+		public static string MakeSafeNameInternal (string name)
+		{
 			if (name.Length == 0)
 				return "_";
 
@@ -143,13 +179,19 @@ namespace System.Data
 #endif
 
 #if DATACLASS_GENERATOR_STANDALONE
-	public class ClassGeneratorOptions
+	public delegate string CodeDomNamingMethod (string source, CodeDomProvider provider);
 #else
-	internal class ClassGeneratorOptions
+	internal delegate string CodeDomNamingMethod (string source, CodeDomProvider provider);
+#endif	
+	
+#if DATACLASS_GENERATOR_STANDALONE
+	public class ClassICodeGeneratorOptions : ClassGeneratorOptions
+#else
+	internal class ClassICodeGeneratorOptions : ClassGeneratorOptions
 #endif
 	{
-		public bool MakeClassesInsideDataSet = true; // default = MS compatible
-
+		ICodeGenerator gen;
+		
 		public CodeNamingMethod CreateDataSetName;
 		public CodeNamingMethod CreateTableTypeName;
 		public CodeNamingMethod CreateTableMemberName;
@@ -159,8 +201,15 @@ namespace System.Data
 		public CodeNamingMethod CreateRelationName;
 		public CodeNamingMethod CreateTableDelegateName;
 		public CodeNamingMethod CreateEventArgsName;
+		public CodeNamingMethod CreateTableAdapterNSName;
+		public CodeNamingMethod CreateTableAdapterName;
 
-		internal string DataSetName (string source, ICodeGenerator gen)
+		public ClassICodeGeneratorOptions (ICodeGenerator codeGen)
+		{
+			this.gen = codeGen;
+		}
+		
+		internal override string DataSetName (string source)
 		{
 			if (CreateDataSetName != null)
 				return CreateDataSetName (source, gen);
@@ -168,7 +217,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen);
 		}
 
-		internal string TableTypeName (string source, ICodeGenerator gen)
+		internal override string TableTypeName (string source)
 		{
 			if (CreateTableTypeName != null)
 				return CreateTableTypeName (source, gen);
@@ -176,7 +225,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "DataTable";
 		}
 
-		internal string TableMemberName (string source, ICodeGenerator gen)
+		internal override string TableMemberName (string source)
 		{
 			if (CreateTableMemberName != null)
 				return CreateTableMemberName (source, gen);
@@ -184,7 +233,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen);
 		}
 
-		internal string TableColName (string source, ICodeGenerator gen)
+		internal override string TableColName (string source)
 		{
 			if (CreateTableColumnName != null)
 				return CreateTableColumnName (source, gen);
@@ -192,7 +241,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen);
 		}
 
-		internal string TableDelegateName (string source, ICodeGenerator gen)
+		internal override string TableDelegateName (string source)
 		{
 			if (CreateTableDelegateName != null)
 				return CreateTableDelegateName (source, gen);
@@ -200,7 +249,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "RowChangedEventHandler";
 		}
 
-		internal string EventArgsName (string source, ICodeGenerator gen)
+		internal override string EventArgsName (string source)
 		{
 			if (CreateEventArgsName != null)
 				return CreateEventArgsName (source, gen);
@@ -208,7 +257,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "RowChangedEventArgs";
 		}
 
-		internal string ColumnName (string source, ICodeGenerator gen)
+		internal override string ColumnName (string source)
 		{
 			if (CreateColumnName != null)
 				return CreateColumnName (source, gen);
@@ -216,7 +265,7 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen);
 		}
 
-		internal string RowName (string source, ICodeGenerator gen)
+		internal override string RowName (string source)
 		{
 			if (CreateRowName != null)
 				return CreateRowName (source, gen);
@@ -224,37 +273,211 @@ namespace System.Data
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "Row";
 		}
 
-		internal string RelationName (string source, ICodeGenerator gen)
+		internal override string RelationName (string source)
 		{
 			if (CreateRelationName != null)
 				return CreateRelationName (source, gen);
 			else
 				return CustomDataClassGenerator.MakeSafeName (source, gen) + "Relation";
 		}
+
+		internal override string TableAdapterNSName (string source)
+		{
+			if (CreateTableAdapterNSName != null)
+				return CreateTableAdapterNSName (source, gen);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, gen) + "TableAdapters";
+		}
+		
+		internal override string TableAdapterName (string source)
+		{
+			if (CreateTableAdapterName != null)
+				return CreateTableAdapterName (source, gen);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, gen);
+		}
+	}
+	
+#if NET_2_0
+#if DATACLASS_GENERATOR_STANDALONE
+	public class ClassCodeDomProviderOptions : ClassGeneratorOptions
+#else
+	internal class ClassCodeDomProviderOptions : ClassGeneratorOptions
+#endif
+	{
+		CodeDomProvider provider;
+		
+		public CodeDomNamingMethod CreateDataSetName;
+		public CodeDomNamingMethod CreateTableTypeName;
+		public CodeDomNamingMethod CreateTableMemberName;
+		public CodeDomNamingMethod CreateTableColumnName;
+		public CodeDomNamingMethod CreateColumnName;
+		public CodeDomNamingMethod CreateRowName;
+		public CodeDomNamingMethod CreateRelationName;
+		public CodeDomNamingMethod CreateTableDelegateName;
+		public CodeDomNamingMethod CreateEventArgsName;			
+		public CodeDomNamingMethod CreateTableAdapterNSName;
+		public CodeDomNamingMethod CreateTableAdapterName;
+		
+		public ClassCodeDomProviderOptions (CodeDomProvider codeProvider)
+		{
+			this.provider = codeProvider;
+		}
+		
+		internal override string DataSetName (string source)
+		{
+			if (CreateDataSetName != null)
+				return CreateDataSetName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider);
+		}
+
+		internal override string TableTypeName (string source)
+		{
+			if (CreateTableTypeName != null)
+				return CreateTableTypeName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "DataTable";
+		}
+
+		internal override string TableMemberName (string source)
+		{
+			if (CreateTableMemberName != null)
+				return CreateTableMemberName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider);
+		}
+
+		internal override string TableColName (string source)
+		{
+			if (CreateTableColumnName != null)
+				return CreateTableColumnName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider);
+		}
+
+		internal override string TableDelegateName (string source)
+		{
+			if (CreateTableDelegateName != null)
+				return CreateTableDelegateName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "RowChangedEventHandler";
+		}
+
+		internal override string EventArgsName (string source)
+		{
+			if (CreateEventArgsName != null)
+				return CreateEventArgsName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "RowChangedEventArgs";
+		}
+
+		internal override string ColumnName (string source)
+		{
+			if (CreateColumnName != null)
+				return CreateColumnName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider);
+		}
+
+		internal override string RowName (string source)
+		{
+			if (CreateRowName != null)
+				return CreateRowName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "Row";
+		}
+
+		internal override string RelationName (string source)
+		{
+			if (CreateRelationName != null)
+				return CreateRelationName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "Relation";
+		}
+
+		internal override string TableAdapterNSName (string source)
+		{
+			if (CreateTableAdapterNSName != null)
+				return CreateTableAdapterNSName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider) + "TableAdapters";
+		}
+
+		internal override string TableAdapterName (string source)
+		{
+			if (CreateTableAdapterName != null)
+				return CreateTableAdapterName (source, provider);
+			else
+				return CustomDataClassGenerator.MakeSafeName (source, provider);
+		}		
+	}
+#endif  // NET_2_0
+	
+#if DATACLASS_GENERATOR_STANDALONE
+	public abstract class ClassGeneratorOptions
+#else
+	internal abstract class ClassGeneratorOptions
+#endif
+	{
+		public bool MakeClassesInsideDataSet = true; // default = MS compatible
+		
+		internal abstract string DataSetName (string source);
+		internal abstract string TableTypeName (string source);
+		internal abstract string TableMemberName (string source);
+		internal abstract string TableColName (string source);
+		internal abstract string TableDelegateName (string source);
+		internal abstract string EventArgsName (string source);
+		internal abstract string ColumnName (string source);
+		internal abstract string RowName (string source);
+		internal abstract string RelationName (string source);
+		internal abstract string TableAdapterNSName (string source);
+		internal abstract string TableAdapterName (string source);
 	}
 
 	internal class Generator
 	{
-		static ClassGeneratorOptions DefaultOptions = new ClassGeneratorOptions ();
+//		static ClassGeneratorOptions DefaultOptions = new ClassGeneratorOptions ();
 
 		DataSet ds;
 		CodeNamespace cns;
 		ClassGeneratorOptions opts;
-		ICodeGenerator gen;
+		CodeCompileUnit cunit;
 
 		CodeTypeDeclaration dsType;
 
-		public Generator (DataSet ds, CodeNamespace cns, ICodeGenerator gen, ClassGeneratorOptions options)
+		public Generator (DataSet ds, CodeNamespace cns, ICodeGenerator codeGen, ClassGeneratorOptions options)
 		{
 			this.ds = ds;
 			this.cns = cns;
-			this.gen = gen;
 			this.opts = options;
-
+			this.cunit = null;
 			if (opts == null)
-				opts = DefaultOptions;
+				opts = new ClassICodeGeneratorOptions (codeGen);
+		}
+#if NET_2_0
+		public Generator (DataSet ds, CodeNamespace cns, CodeDomProvider codeProvider, 
+		                  ClassGeneratorOptions options)
+		{
+			this.ds = ds;
+			this.cns = cns;
+			this.opts = options;
+			this.cunit = null;
+			if (opts == null)
+				opts = new ClassCodeDomProviderOptions (codeProvider);			
 		}
 
+		public Generator (DataSet ds, CodeCompileUnit cunit, CodeNamespace cns, 
+		                  CodeDomProvider codeProvider, ClassGeneratorOptions options)
+		{
+			this.ds = ds;
+			this.cns = cns;
+			this.opts = options;
+			this.cunit = cunit;
+			if (opts == null)
+				opts = new ClassCodeDomProviderOptions (codeProvider);
+		}
+#endif
 		public void Run ()
 		{
 			// using decls
@@ -268,6 +491,7 @@ namespace System.Data
 
 			CodeTypeDeclaration dsType = GenerateDataSetType ();
 			cns.Types.Add (dsType);
+
 			foreach (DataTable dt in ds.Tables) {
 				// 1. table types ([foo]DataTable)
 				// 2. row types ([foo]Row)
@@ -278,9 +502,9 @@ namespace System.Data
 
 				CodeTypeDeclaration dtRow = GenerateDataRowType (dt);
 
-				CodeTypeDelegate dtDelegate = new CodeTypeDelegate (opts.TableDelegateName (dt.TableName, gen));
+				CodeTypeDelegate dtDelegate = new CodeTypeDelegate (opts.TableDelegateName (dt.TableName));
 				dtDelegate.Parameters.Add (Param (typeof (object), "o"));
-				dtDelegate.Parameters.Add (Param (opts.EventArgsName (dt.TableName, gen), "e"));
+				dtDelegate.Parameters.Add (Param (opts.EventArgsName (dt.TableName), "e"));
 
 				CodeTypeDeclaration dtEventType = GenerateEventType (dt);
 
@@ -298,8 +522,23 @@ namespace System.Data
 					cns.Types.Add (dtEventType);
 				}
 			}
-		}
 
+#if NET_2_0
+			if (cunit == null)
+				return;
+			
+			TableAdapterSchemaInfo adapterInfo = ds.TableAdapterSchemaData;
+			if (adapterInfo != null) {
+				// #325464 debugging
+				//Console.WriteLine (opts.TableAdapterNSName(opts.DataSetName (ds.DataSetName)));
+				CodeNamespace cnsTA = new CodeNamespace (opts.TableAdapterNSName(opts.DataSetName (ds.DataSetName)));
+				CodeTypeDeclaration dtAdapter = GenerateTableAdapterType (adapterInfo);
+				cnsTA.Types.Add (dtAdapter);
+				cunit.Namespaces.Add (cnsTA);
+			}
+#endif
+		}
+		
 		private CodeThisReferenceExpression This ()
 		{
 			return new CodeThisReferenceExpression ();
@@ -325,6 +564,16 @@ namespace System.Data
 			return new CodeTypeReference (name);
 		}
 
+		private CodeTypeReference TypeRefArray (Type t, int dimension)
+		{
+			return new CodeTypeReference (TypeRef (t), dimension);
+		}
+
+		private CodeTypeReference TypeRefArray (string name, int dimension)
+		{
+			return new CodeTypeReference (TypeRef (name), dimension);
+		}
+		
 		private CodeParameterDeclarationExpression Param (string t, string name)
 		{
 			return new CodeParameterDeclarationExpression (t, name);
@@ -373,6 +622,11 @@ namespace System.Data
 		private CodeExpression NewArray (Type t, params CodeExpression [] parameters)
 		{
 			return new CodeArrayCreateExpression (t, parameters);
+		}
+
+		private CodeExpression NewArray (Type t, int size )
+		{
+			return new CodeArrayCreateExpression (t, size);
 		}
 
 		private CodeVariableReferenceExpression Local (string name)
@@ -446,11 +700,49 @@ namespace System.Data
 			return new CodeBinaryOperatorExpression (exp1, CodeBinaryOperatorType.IdentityInequality, exp2);
 		}
 
+		private CodeBinaryOperatorExpression GreaterThan (CodeExpression exp1, CodeExpression exp2)
+		{
+			return new CodeBinaryOperatorExpression (exp1, CodeBinaryOperatorType.GreaterThan, exp2);
+		}
+
+		private CodeBinaryOperatorExpression LessThan (CodeExpression exp1, CodeExpression exp2)
+		{
+			return new CodeBinaryOperatorExpression (exp1, CodeBinaryOperatorType.LessThan, exp2);
+		}
+
+		private CodeBinaryOperatorExpression Compute (CodeExpression exp1, CodeExpression exp2, CodeBinaryOperatorType ops)
+		{
+			if (ops >= CodeBinaryOperatorType.Add && ops < CodeBinaryOperatorType.Assign)
+				return new CodeBinaryOperatorExpression (exp1, ops, exp2);
+			else
+				return null;
+		}
+
+		private CodeBinaryOperatorExpression BitOps (CodeExpression exp1, CodeExpression exp2, CodeBinaryOperatorType ops)
+		{
+			if (ops >= CodeBinaryOperatorType.BitwiseOr && ops <= CodeBinaryOperatorType.BitwiseAnd)
+				return new CodeBinaryOperatorExpression (exp1, ops, exp2);
+			else
+				return null;
+		}
+		
+		private CodeBinaryOperatorExpression BooleanOps (CodeExpression exp1, CodeExpression exp2, CodeBinaryOperatorType ops)
+		{
+			if (ops >= CodeBinaryOperatorType.BooleanOr && ops <= CodeBinaryOperatorType.BooleanAnd)
+				return new CodeBinaryOperatorExpression (exp1, ops, exp2);
+			else
+				return null;
+		}
+
 		private CodeTypeReferenceExpression TypeRefExp (Type t)
 		{
 			return new CodeTypeReferenceExpression (t);
 		}
 
+		private CodeTypeOfExpression TypeOfRef (string name)
+		{
+			return new CodeTypeOfExpression (TypeRef (name));
+		}
 
 		private CodeExpressionStatement Eval (CodeExpression exp)
 		{
@@ -494,7 +786,7 @@ namespace System.Data
 		private CodeTypeDeclaration GenerateDataSetType ()
 		{
 			// Type
-			dsType = new CodeTypeDeclaration (opts.DataSetName (ds.DataSetName, gen));
+			dsType = new CodeTypeDeclaration (opts.DataSetName (ds.DataSetName));
 			dsType.BaseTypes.Add (TypeRef (typeof (DataSet)));
 			dsType.BaseTypes.Add (TypeRef (typeof (IXmlSerializable)));
 
@@ -741,8 +1033,8 @@ namespace System.Data
 
 			// table
 			foreach (DataTable dt in ds.Tables) {
-				string tableFieldName = "__table" + opts.TableMemberName (dt.TableName, gen);
-				string tableTypeName = opts.TableTypeName (dt.TableName, gen);
+				string tableFieldName = "__table" + opts.TableMemberName (dt.TableName);
+				string tableTypeName = opts.TableTypeName (dt.TableName);
 				m.Statements.Add (Let (FieldRef (tableFieldName), New (tableTypeName)));
 				m.Statements.Add (Eval (MethodInvoke (PropRef ("Tables"), "Add", FieldRef (tableFieldName))));
 			}
@@ -751,7 +1043,7 @@ namespace System.Data
 			bool ucExists = false;
 			// First the UniqueConstraints
 			foreach (DataTable dt in ds.Tables) {
-				string tname = "__table" + opts.TableMemberName (dt.TableName, gen);
+				string tname = "__table" + opts.TableMemberName (dt.TableName);
 				foreach (Constraint c in dt.Constraints) {
 					UniqueConstraint uc = c as UniqueConstraint;
 					if (uc != null) {
@@ -765,7 +1057,7 @@ namespace System.Data
 			}
 			// Then the ForeignKeyConstraints
 			foreach (DataTable dt in ds.Tables) {
-				string tname = "__table" + opts.TableMemberName (dt.TableName, gen);
+				string tname = "__table" + opts.TableMemberName (dt.TableName);
 				foreach (Constraint c in dt.Constraints) {
 					ForeignKeyConstraint fkc = c as ForeignKeyConstraint;
 					if (fkc != null) {
@@ -773,21 +1065,21 @@ namespace System.Data
 							m.Statements.Add (VarDecl (typeof (ForeignKeyConstraint), "fkc", null));
 							fkcExists = true;
 						}
-						string rtname = "__table" + opts.TableMemberName (fkc.RelatedTable.TableName, gen);
+						string rtname = "__table" + opts.TableMemberName (fkc.RelatedTable.TableName);
 						CreateForeignKeyStatements (m, fkc, tname, rtname);
 					}
 				}
 			}
 			// What if other cases? dunno. Just ignore ;-)
 			foreach (DataRelation rel in ds.Relations) {
-				string relName = opts.RelationName (rel.RelationName, gen);
+				string relName = opts.RelationName (rel.RelationName);
 				ArrayList pcols = new ArrayList ();
 				foreach (DataColumn pcol in rel.ParentColumns)
-					pcols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ParentTable.TableName, gen)), "Columns"), Const (pcol.ColumnName)));
+					pcols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ParentTable.TableName)), "Columns"), Const (pcol.ColumnName)));
 
 				ArrayList ccols = new ArrayList ();
 				foreach (DataColumn ccol in rel.ChildColumns)
-					ccols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ChildTable.TableName, gen)), "Columns"), Const (ccol.ColumnName)));
+					ccols.Add (IndexerRef (PropRef (FieldRef ("__table" + opts.TableMemberName (rel.ChildTable.TableName)), "Columns"), Const (ccol.ColumnName)));
 
 				// relation field
 				string fieldName = "__relation" + relName;
@@ -860,10 +1152,10 @@ namespace System.Data
 			m.Name = "InitializeFields";
 
 			foreach (DataTable dt in ds.Tables)
-				m.Statements.Add (Eval (MethodInvoke (FieldRef ("__table" + opts.TableMemberName (dt.TableName, gen)), "InitializeFields")));
+				m.Statements.Add (Eval (MethodInvoke (FieldRef ("__table" + opts.TableMemberName (dt.TableName)), "InitializeFields")));
 
 			foreach (DataRelation rel in ds.Relations)
-				m.Statements.Add (Let (FieldRef ("__relation" + opts.RelationName (rel.RelationName, gen)), IndexerRef (PropRef ("Relations"), Const (rel.RelationName))));
+				m.Statements.Add (Let (FieldRef ("__relation" + opts.RelationName (rel.RelationName)), IndexerRef (PropRef ("Relations"), Const (rel.RelationName))));
 
 			return m;
 		}
@@ -887,8 +1179,8 @@ namespace System.Data
 
 		private void CreateDataSetTableMembers (CodeTypeDeclaration dsType, DataTable table)
 		{
-			string tableTypeName = opts.TableTypeName (table.TableName, gen);
-			string tableVarName = opts.TableMemberName (table.TableName, gen);
+			string tableTypeName = opts.TableTypeName (table.TableName);
+			string tableVarName = opts.TableMemberName (table.TableName);
 
 			CodeMemberField privTable = new CodeMemberField ();
 			privTable.Type = TypeRef (tableTypeName);
@@ -909,7 +1201,7 @@ namespace System.Data
 
 		private void CreateDataSetRelationMembers (CodeTypeDeclaration dsType, DataRelation relation)
 		{
-			string relName = opts.RelationName (relation.RelationName, gen);
+			string relName = opts.RelationName (relation.RelationName);
 			string fieldName = "__relation" + relName;
 
 			CodeMemberField field = new CodeMemberField ();
@@ -937,7 +1229,7 @@ namespace System.Data
 		private CodeTypeDeclaration GenerateDataTableType (DataTable dt)
 		{
 			CodeTypeDeclaration t = new CodeTypeDeclaration ();
-			t.Name = opts.TableTypeName (dt.TableName, gen);
+			t.Name = opts.TableTypeName (dt.TableName);
 			t.BaseTypes.Add (TypeRef (typeof (DataTable)));
 			t.BaseTypes.Add (TypeRef (typeof (IEnumerable)));
 
@@ -1038,7 +1330,7 @@ namespace System.Data
 
 			string colRef;
 			foreach (DataColumn col in dt.Columns) {
-				colRef = String.Format("__column{0}", opts.TableColName (col.ColumnName, gen));
+				colRef = String.Format("__column{0}", opts.TableColName (col.ColumnName));
 
 				m.Statements.Add (Let (FieldRef (colRef), IndexerRef (PropRef ("Columns"), Const (col.ColumnName))));
 				if (!col.AllowDBNull)
@@ -1063,7 +1355,7 @@ namespace System.Data
 			m.Name = "Clone";
 			m.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 			m.ReturnType = TypeRef (typeof (DataTable));
-			string typeName = opts.TableTypeName (dt.TableName, gen);
+			string typeName = opts.TableTypeName (dt.TableName);
 			m.Statements.Add (
 				VarDecl (typeName, "t", Cast (typeName, MethodInvoke (Base (), "Clone"))));
 			m.Statements.Add (Eval (MethodInvoke (Local ("t"), "InitializeFields")));
@@ -1088,21 +1380,21 @@ namespace System.Data
 			m.Name = "CreateInstance";
 			m.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 			m.ReturnType = TypeRef (typeof (DataTable));
-			m.Statements.Add (Return (New (opts.TableTypeName (dt.TableName, gen))));
+			m.Statements.Add (Return (New (opts.TableTypeName (dt.TableName))));
 			return m;
 		}
 
 		private CodeMemberField CreateTableColumnField (DataTable dt, DataColumn col)
 		{
 			CodeMemberField f = new CodeMemberField ();
-			f.Name = "__column" + opts.ColumnName (col.ColumnName, gen);
+			f.Name = "__column" + opts.ColumnName (col.ColumnName);
 			f.Type = TypeRef (typeof (DataColumn));
 			return f;
 		}
 
 		private CodeMemberProperty CreateTableColumnProperty (DataTable dt, DataColumn col)
 		{
-			string name = opts.ColumnName (col.ColumnName, gen);
+			string name = opts.ColumnName (col.ColumnName);
 			CodeMemberProperty p = new CodeMemberProperty ();
 			p.Name = name + "Column";
 			p.Attributes = MemberAttributes.Assembly;
@@ -1125,7 +1417,7 @@ namespace System.Data
 
 		private CodeMemberProperty CreateTableIndexer (DataTable dt)
 		{
-			string rowName = opts.RowName (dt.TableName, gen);
+			string rowName = opts.RowName (dt.TableName);
 			CodeMemberProperty ix = new CodeMemberProperty ();
 			ix.Name = "Item"; // indexer
 			ix.Attributes = MemberAttributes.Public;
@@ -1139,7 +1431,7 @@ namespace System.Data
 		private CodeMemberMethod CreateTableAddRow1 (DataTable dt)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			string rowType = opts.RowName (dt.TableName, gen);
+			string rowType = opts.RowName (dt.TableName);
 			m.Name = "Add" + rowType;
 			m.Attributes = MemberAttributes.Public;
 			m.Parameters.Add (Param (TypeRef (rowType), "row"));
@@ -1150,7 +1442,7 @@ namespace System.Data
 		private CodeMemberMethod CreateTableAddRow2 (DataTable dt)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			string rowType = opts.RowName (dt.TableName, gen);
+			string rowType = opts.RowName (dt.TableName);
 			m.Name = "Add" + rowType;
 			m.ReturnType = TypeRef (rowType);
 			m.Attributes = MemberAttributes.Public;
@@ -1162,7 +1454,7 @@ namespace System.Data
 					foreach (DataRelation r in dt.DataSet.Relations) {
 						if (r.ChildTable == dt) {
 							// parameter
-							string paramType = opts.RowName (r.ParentTable.TableName, gen);
+							string paramType = opts.RowName (r.ParentTable.TableName);
 							string paramName = paramType;
 							m.Parameters.Add (Param (paramType, paramName));
 							// CODE: SetParentRow (fooRow, DataSet.Relations ["foo_bar"]);
@@ -1173,7 +1465,7 @@ namespace System.Data
 				}
 				else {
 					// parameter
-					string paramName = opts.ColumnName (col.ColumnName, gen);
+					string paramName = opts.ColumnName (col.ColumnName);
 					m.Parameters.Add (Param (col.DataType, paramName));
 					// row ["foo"] = foo;
 					m.Statements.Add (Let (IndexerRef (Local ("row"), Const (paramName)), ParamRef (paramName)));
@@ -1190,7 +1482,7 @@ namespace System.Data
 		private CodeMemberMethod CreateTableNewRow (DataTable dt)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			string rowType = opts.RowName (dt.TableName, gen);
+			string rowType = opts.RowName (dt.TableName);
 			m.Name = "New" + rowType;
 			m.ReturnType = TypeRef (rowType);
 			m.Attributes = MemberAttributes.Public;
@@ -1205,14 +1497,14 @@ namespace System.Data
 			m.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 			m.ReturnType = TypeRef (typeof (DataRow));
 			m.Parameters.Add (Param (typeof (DataRowBuilder), "builder"));
-			m.Statements.Add (Return (New (opts.RowName (dt.TableName, gen), ParamRef ("builder"))));
+			m.Statements.Add (Return (New (opts.RowName (dt.TableName), ParamRef ("builder"))));
 			return m;
 		}
 
 		private CodeMemberMethod CreateTableRemoveRow (DataTable dt)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			string rowType = opts.RowName (dt.TableName, gen);
+			string rowType = opts.RowName (dt.TableName);
 			m.Name = "Remove" + rowType;
 			m.Attributes = MemberAttributes.Public;
 			m.Parameters.Add (Param (TypeRef (rowType), "row"));
@@ -1226,7 +1518,7 @@ namespace System.Data
 			m.Name = "GetRowType";
 			m.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 			m.ReturnType = TypeRef (typeof (Type));
-			m.Statements.Add (Return (new CodeTypeOfExpression (opts.RowName (dt.TableName, gen))));
+			m.Statements.Add (Return (new CodeTypeOfExpression (opts.RowName (dt.TableName))));
 			return m;
 		}
 
@@ -1241,14 +1533,14 @@ namespace System.Data
 					Base (),
 					m.Name,
 					ParamRef ("e"))));
-			string eventName = opts.TableMemberName (dt.TableName, gen) + "Row" + type;
+			string eventName = opts.TableMemberName (dt.TableName) + "Row" + type;
 			CodeStatement trueStmt = Eval (
 				new CodeDelegateInvokeExpression(
 					new CodeEventReferenceExpression (This (), eventName),
 					This (), 
 					New (
-						opts.EventArgsName (dt.TableName, gen),
-						Cast (opts.RowName (dt.TableName, gen), PropRef (ParamRef ("e"), "Row")),
+						opts.EventArgsName (dt.TableName),
+						Cast (opts.RowName (dt.TableName), PropRef (ParamRef ("e"), "Row")),
 						PropRef (ParamRef ("e"), "Action"))));
 
 			m.Statements.Add (
@@ -1264,8 +1556,8 @@ namespace System.Data
 		{
 			CodeMemberEvent cme = new CodeMemberEvent ();
 			cme.Attributes = MemberAttributes.Public;
-			cme.Name = opts.TableMemberName (dt.TableName, gen) + nameSuffix;
-			cme.Type = TypeRef (opts.TableDelegateName (dt.TableName, gen));
+			cme.Name = opts.TableMemberName (dt.TableName) + nameSuffix;
+			cme.Type = TypeRef (opts.TableDelegateName (dt.TableName));
 			return cme;
 		}
 
@@ -1278,7 +1570,7 @@ namespace System.Data
 		public CodeTypeDeclaration GenerateDataRowType (DataTable dt)
 		{
 			CodeTypeDeclaration t = new CodeTypeDeclaration ();
-			t.Name = opts.RowName (dt.TableName, gen);
+			t.Name = opts.RowName (dt.TableName);
 			t.BaseTypes.Add (TypeRef (typeof (DataRow)));
 
 			t.Members.Add (CreateRowCtor (dt));
@@ -1308,7 +1600,7 @@ namespace System.Data
 			c.Parameters.Add (Param (typeof (DataRowBuilder), "builder"));
 			c.BaseConstructorArgs.Add (ParamRef ("builder"));
 			c.Statements.Add (Let (FieldRef (GetRowTableFieldName (dt)), Cast (
-				opts.TableTypeName (dt.TableName, gen),
+				opts.TableTypeName (dt.TableName),
 				PropRef ("Table"))));
 			return c;
 		}
@@ -1321,14 +1613,14 @@ namespace System.Data
 		{
 			CodeMemberField f = new CodeMemberField ();
 			f.Name = GetRowTableFieldName (dt);
-			f.Type = TypeRef (opts.TableTypeName (dt.TableName, gen));
+			f.Type = TypeRef (opts.TableTypeName (dt.TableName));
 			return f;
 		}
 
 		private CodeMemberProperty CreateRowColumnProperty (DataTable dt, DataColumn col)
 		{
 			CodeMemberProperty p = new CodeMemberProperty ();
-			p.Name = opts.ColumnName (col.ColumnName, gen);
+			p.Name = opts.ColumnName (col.ColumnName);
 			p.Type = TypeRef (col.DataType);
 			p.Attributes = MemberAttributes.Public;
 
@@ -1342,7 +1634,7 @@ namespace System.Data
 			p.GetStatements.Add (VarDecl (typeof (object), "ret",
 				IndexerRef (PropRef 
 					(PropRef (GetRowTableFieldName (dt)), 
-					opts.TableColName (col.ColumnName, gen) + "Column"))));
+					opts.TableColName (col.ColumnName) + "Column"))));
 			p.GetStatements.Add (new CodeConditionStatement (
 				Equals (
 					Local ("ret"),
@@ -1352,7 +1644,7 @@ namespace System.Data
 				new CodeStatement [] {
 					Return (Cast (col.DataType, Local ("ret"))) }));
 
-			p.SetStatements.Add (Let (IndexerRef (PropRef (PropRef (GetRowTableFieldName (dt)), opts.TableColName (col.ColumnName, gen) + "Column")), new CodePropertySetValueReferenceExpression ()));
+			p.SetStatements.Add (Let (IndexerRef (PropRef (PropRef (GetRowTableFieldName (dt)), opts.TableColName (col.ColumnName) + "Column")), new CodePropertySetValueReferenceExpression ()));
 
 			return p;
 		}
@@ -1360,7 +1652,7 @@ namespace System.Data
 		private CodeMemberMethod CreateRowColumnIsNull (DataTable dt, DataColumn col)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			m.Name = "Is" + opts.ColumnName (col.ColumnName, gen) + "Null";
+			m.Name = "Is" + opts.ColumnName (col.ColumnName) + "Null";
 			m.Attributes = MemberAttributes.Public;
 			m.ReturnType = TypeRef (typeof (bool));
 			m.Statements.Add (Return (MethodInvoke (
@@ -1368,19 +1660,19 @@ namespace System.Data
 				// table[foo].[bar]Column
 				PropRef (
 					PropRef (GetRowTableFieldName (dt)), 
-					opts.TableColName (col.ColumnName, gen) + "Column"))));
+					opts.TableColName (col.ColumnName) + "Column"))));
 			return m;
 		}
 
 		private CodeMemberMethod CreateRowColumnSetNull (DataTable dt, DataColumn col)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			m.Name = "Set" + opts.ColumnName (col.ColumnName, gen) + "Null";
+			m.Name = "Set" + opts.ColumnName (col.ColumnName) + "Null";
 			m.Attributes = MemberAttributes.Public;
 			m.Statements.Add (Let (IndexerRef (
 				PropRef (
 					PropRef (GetRowTableFieldName (dt)), 
-					opts.TableColName (col.ColumnName, gen) + "Column")),
+					opts.TableColName (col.ColumnName) + "Column")),
 				PropRef (TypeRefExp (typeof (DBNull)), "Value")));
 
 			return m;
@@ -1389,10 +1681,10 @@ namespace System.Data
 		private CodeMemberProperty CreateRowParentRowProperty (DataTable dt, DataRelation rel)
 		{
 			CodeMemberProperty p = new CodeMemberProperty ();
-			p.Name = opts.TableMemberName (rel.ParentTable.TableName, gen) + "Row" +
+			p.Name = opts.TableMemberName (rel.ParentTable.TableName) + "Row" +
 				(rel.ParentTable.TableName == rel.ChildTable.TableName ? "Parent" : String.Empty);
 			p.Attributes = MemberAttributes.Public;
-			p.Type = TypeRef (opts.RowName (rel.ParentTable.TableName, gen));
+			p.Type = TypeRef (opts.RowName (rel.ParentTable.TableName));
 			p.GetStatements.Add (Return (Cast (p.Type, MethodInvoke (
 				"GetParentRow",
 				IndexerRef (
@@ -1419,9 +1711,9 @@ namespace System.Data
 		private CodeMemberMethod CreateRowGetChildRows (DataTable dt, DataRelation rel)
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
-			m.Name = "Get" + opts.TableMemberName (rel.ChildTable.TableName, gen) + "Rows";
+			m.Name = "Get" + opts.TableMemberName (rel.ChildTable.TableName) + "Rows";
 			m.Attributes = MemberAttributes.Public;
-			m.ReturnType = new CodeTypeReference (opts.RowName (rel.ChildTable.TableName, gen), 1);
+			m.ReturnType = new CodeTypeReference (opts.RowName (rel.ChildTable.TableName), 1);
 			m.Statements.Add (Return (Cast (m.ReturnType, MethodInvoke (
 				"GetChildRows",
 				IndexerRef (
@@ -1451,13 +1743,13 @@ namespace System.Data
 		private CodeTypeDeclaration GenerateEventType (DataTable dt)
 		{
 			CodeTypeDeclaration t = new CodeTypeDeclaration ();
-			t.Name = opts.EventArgsName (dt.TableName, gen);
+			t.Name = opts.EventArgsName (dt.TableName);
 			t.BaseTypes.Add (TypeRef (typeof (EventArgs)));
 			t.Attributes = MemberAttributes.Public;
 
 			t.Members.Add (
 				new CodeMemberField (
-					TypeRef (opts.RowName (dt.TableName, gen)),
+					TypeRef (opts.RowName (dt.TableName)),
 					"eventRow"));
 			t.Members.Add (
 				new CodeMemberField (
@@ -1481,7 +1773,7 @@ namespace System.Data
 		{
 			CodeConstructor c = new CodeConstructor ();
 			c.Attributes = MemberAttributes.Public;
-			c.Parameters.Add (Param (TypeRef (opts.RowName (dt.TableName, gen)), "r"));
+			c.Parameters.Add (Param (TypeRef (opts.RowName (dt.TableName)), "r"));
 			c.Parameters.Add (Param (TypeRef (typeof (DataRowAction)), "a"));
 			c.Statements.Add (Let (FieldRef ("eventRow"), ParamRef ("r")));
 			c.Statements.Add (Let (FieldRef ("eventAction"), ParamRef ("a")));
@@ -1498,7 +1790,7 @@ namespace System.Data
 			CodeMemberProperty p = new CodeMemberProperty ();
 			p.Name = "Row";
 			p.Attributes = MemberAttributes.Public | MemberAttributes.Final;
-			p.Type = TypeRef (opts.RowName (dt.TableName, gen));
+			p.Type = TypeRef (opts.RowName (dt.TableName));
 			p.HasSet = false;
 			p.GetStatements.Add (Return (FieldRef ("eventRow")));
 			return p;
@@ -1521,7 +1813,546 @@ namespace System.Data
 
 #endregion
 
+#if NET_2_0
+#region Table Adapter class
+		
+		private CodeTypeDeclaration GenerateTableAdapterType (TableAdapterSchemaInfo taInfo)
+		{
+			string qualifiedBaseClassName;
+			Type type = null;
+			int fIndex = -1;
+			
+			CodeTypeDeclaration t = new CodeTypeDeclaration ();
+			t.Name = opts.TableAdapterName (taInfo.Name);
+			t.BaseTypes.Add (TypeRef (taInfo.BaseClass));
+		
+			t.Members.Add (CreateTableAdapterDefaultCtor ());
+
+			// table adapter fields/properties
+			CreateDBAdapterFieldAndProperty (t, taInfo.Adapter);
+			CreateDBConnectionFieldAndProperty (t, taInfo.Connection);
+			
+			DbCommand cmd = null;
+			if (taInfo.Commands.Count > 0)
+				cmd = ((DbCommandInfo)taInfo.Commands[0]).Command;
+			else
+				cmd = taInfo.Provider.CreateCommand ();
+			CreateDBCommandCollectionFieldAndProperty (t, cmd);
+			CreateAdapterClearBeforeFillFieldAndProperty (t);
+
+			CreateAdapterInitializeMethod (t, taInfo);
+			CreateConnectionInitializeMethod (t, taInfo);
+			CreateCommandCollectionInitializeMethod (t, taInfo);
+
+			CreateDbSourceMethods (t, taInfo);
+			if (taInfo.ShortCommands)
+				CreateShortCommandMethods (t, taInfo);
+			
+			return t;
+		}
+		
+		private CodeConstructor CreateTableAdapterDefaultCtor ()
+		{
+			CodeConstructor ctor = new CodeConstructor ();
+			ctor.Attributes = MemberAttributes.Public;
+			ctor.Statements.Add (Let (PropRef ("ClearBeforeFill"), Const (true)));
+			
+			return ctor;
+		}	
+
+		private void CreateDBAdapterFieldAndProperty (CodeTypeDeclaration t, DbDataAdapter adapter)
+		{
+			CodeExpression expr;
+			CodeStatement setStmt;
+			CodeStatement stmt;
+			CodeMemberField f = new CodeMemberField ();
+			f.Name = "_adapter";
+			f.Type = TypeRef (adapter.GetType ());
+			t.Members.Add (f);
+			
+			CodeMemberProperty p = new CodeMemberProperty ();
+			p.Name = "Adapter";
+			p.Attributes = MemberAttributes.Private;
+			p.Type = f.Type;
+			p.HasSet = false;
+
+			expr = FieldRef ("_adapter");
+			setStmt = Eval (MethodInvoke ("InitAdapter"));
+			stmt = new CodeConditionStatement (Equals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt},
+			                                   new CodeStatement [] {});
+			p.GetStatements.Add (stmt);
+			p.GetStatements.Add (Return (expr));
+			t.Members.Add (p);
+		}
+		
+		private void CreateDBConnectionFieldAndProperty (CodeTypeDeclaration t, DbConnection conn)
+		{
+			CodeExpression expr;
+			CodeStatement setStmt;
+			CodeStatement stmt;
+			CodeMemberField f = new CodeMemberField ();
+			f.Name = "_connection";
+			f.Type = TypeRef (conn.GetType ());
+			t.Members.Add (f);
+
+			CodeMemberProperty p = new CodeMemberProperty ();
+			p.Name = "Connection";
+			p.Attributes = MemberAttributes.Assembly;
+			p.Type = f.Type;
+
+			expr = FieldRef ("_connection");
+			setStmt = Eval (MethodInvoke ("InitConnection"));
+			stmt = new CodeConditionStatement (Equals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt},
+			                                   new CodeStatement [] {});
+			p.GetStatements.Add (stmt);
+			p.GetStatements.Add (Return (expr));
+			p.SetStatements.Add (Let (expr, new CodePropertySetValueReferenceExpression()));
+
+			// update connection in Insert/Delete/Update commands of adapter
+						
+			// insert command
+			string cmdStr = "InsertCommand";
+			string connStr = "Connection";
+			setStmt = null;
+			stmt = null;
+			expr = null;
+
+			expr = PropRef (PropRef ("Adapter"), cmdStr);
+			setStmt = Let (PropRef (expr, connStr), new CodePropertySetValueReferenceExpression());
+			stmt = new CodeConditionStatement (Inequals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt},
+			                                   new CodeStatement [] {});			
+			p.SetStatements.Add (stmt);
+
+			// delete command
+			setStmt = null;
+			stmt = null;
+			expr = null;
+			
+			cmdStr = "DeleteCommand";
+			expr = PropRef (PropRef ("Adapter"), cmdStr);
+			setStmt = Let (PropRef (expr, connStr), new CodePropertySetValueReferenceExpression());
+			stmt = new CodeConditionStatement (Inequals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt}, new CodeStatement [] {});
+			p.SetStatements.Add (stmt);
+
+			// update command
+			setStmt = null;
+			stmt = null;
+
+			cmdStr = "UpdateCommand";
+			expr = PropRef (PropRef ("Adapter"), cmdStr);			
+			setStmt = Let (PropRef (expr, connStr), new CodePropertySetValueReferenceExpression());
+			stmt = new CodeConditionStatement (Inequals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt}, new CodeStatement [] {});
+			p.SetStatements.Add (stmt);
+
+			// iterate through command collection and update it
+			setStmt = null;
+			expr = null;
+			stmt = null;
+			setStmt = VarDecl (typeof (int), "i", Const (0));
+			expr = LessThan (Local ("i"), PropRef (PropRef ("CommandCollection"), "Length"));
+			stmt = Let (Local ("i"), Compute (Local ("i"), Const (1), CodeBinaryOperatorType.Add));
+			
+			// statements to execute in the loop
+			CodeExpression expr1 = IndexerRef (PropRef ("CommandCollection"), Local ("i"));
+			CodeStatement setStmt1 = Let (PropRef (expr1, "Connection"), new CodePropertySetValueReferenceExpression());
+			CodeStatement stmt1 = new CodeConditionStatement (Inequals (expr1, Const (null)),
+			                                   new CodeStatement [] {setStmt1}, new CodeStatement [] {});
+			CodeIterationStatement forLoop = new CodeIterationStatement (setStmt, expr, stmt,
+			                                                             new CodeStatement[] {stmt1});
+			p.SetStatements.Add (forLoop);						
+			t.Members.Add (p);
+		}
+
+		private void CreateDBCommandCollectionFieldAndProperty (CodeTypeDeclaration t, DbCommand cmd)
+		{
+			CodeExpression expr;
+			CodeStatement setStmt;
+			CodeStatement stmt;
+			CodeMemberField f = new CodeMemberField ();
+			f.Name = "_commandCollection";
+			f.Type = TypeRefArray (cmd.GetType (), 1);
+			t.Members.Add (f);
+			
+			CodeMemberProperty p = new CodeMemberProperty ();
+			p.Name = "CommandCollection";
+			p.Attributes = MemberAttributes.Family;
+			p.Type = f.Type;
+			p.HasSet = false;
+
+			expr = FieldRef ("_commandCollection");
+			setStmt = Eval (MethodInvoke ("InitCommandCollection"));
+			stmt = new CodeConditionStatement (Equals (expr, Const (null)),
+			                                   new CodeStatement [] {setStmt},
+			                                   new CodeStatement [] {});
+			p.GetStatements.Add (stmt);
+			p.GetStatements.Add (Return (expr));
+			t.Members.Add (p);
+		}
+
+		private void CreateAdapterClearBeforeFillFieldAndProperty (CodeTypeDeclaration t)
+		{
+			CodeMemberField f = new CodeMemberField ();
+			f.Name = "_clearBeforeFill";
+			f.Type = TypeRef (typeof (bool));
+			t.Members.Add (f);
+			
+			CodeMemberProperty p = new CodeMemberProperty ();
+			p.Name = "ClearBeforeFill";
+			p.Attributes = MemberAttributes.Public;
+			p.Type = f.Type;
+			p.SetStatements.Add (Let (FieldRef ("_clearBeforeFill"), 
+			                          new CodePropertySetValueReferenceExpression()));
+			p.GetStatements.Add (Return (FieldRef ("_clearBeforeFill")));
+			t.Members.Add (p);
+		}
+
+		private void CreateAdapterInitializeMethod (CodeTypeDeclaration t, TableAdapterSchemaInfo taInfo)
+		{
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.Name = "InitAdapter";
+			m.Attributes = MemberAttributes.Private;
+			
+			// code statements
+			CodeExpression expr;
+			CodeStatement stmt;
+			
+			// initialize adapter
+			expr = FieldRef ("_adapter");
+			stmt = Let (expr, New (taInfo.Adapter.GetType ()));
+			m.Statements.Add (stmt);
+			
+			// populate tableMapping
+			stmt = VarDecl (typeof (DataTableMapping), "tableMapping", null);
+			m.Statements.Add (stmt);
+			foreach (DataTableMapping tblMap in taInfo.Adapter.TableMappings) {
+				expr = Local ("tableMapping");
+				stmt = Let (expr, New (tblMap.GetType ()));
+				m.Statements.Add (stmt);
+				
+				stmt = Let (PropRef (expr, "SourceTable"), Const (tblMap.SourceTable));
+				m.Statements.Add (stmt);
+				
+				stmt = Let (PropRef (expr, "DataSetTable"), Const (tblMap.DataSetTable));
+				m.Statements.Add (stmt);
+				
+				foreach (DataColumnMapping colMap in tblMap.ColumnMappings) { 
+					stmt = Eval (MethodInvoke (PropRef (expr, "ColumnMappings"), "Add", 
+					                           new CodeExpression [] {Const (colMap.SourceColumn), Const (colMap.DataSetColumn)}));
+					m.Statements.Add (stmt);
+				}
+				expr = PropRef (FieldRef ("_adapter"), "TableMappings");
+				stmt = Eval (MethodInvoke (expr, "Add", Local ("tableMapping")));
+				m.Statements.Add (stmt);
+			}
+			// Generate code for adapter's deletecommand
+			expr = PropRef (FieldRef ("_adapter"), "DeleteCommand");
+			DbCommand cmd = taInfo.Adapter.DeleteCommand;
+			AddDbCommandStatements (m, expr, cmd);
+
+			// Generate code for adapter's insertcommand
+			expr = PropRef (FieldRef ("_adapter"), "InsertCommand");
+			cmd = taInfo.Adapter.InsertCommand;
+			AddDbCommandStatements (m, expr, cmd);
+
+			// Generate code for adapter's updatecommand
+			expr = PropRef (FieldRef ("_adapter"), "UpdateCommand");
+			cmd = taInfo.Adapter.UpdateCommand;
+			AddDbCommandStatements (m, expr, cmd);
+
+			t.Members.Add (m);
+		}
+		
+		private void AddDbCommandStatements (CodeMemberMethod m, 
+		                                     CodeExpression expr, 
+		                                     DbCommand cmd)
+		{
+			if (cmd == null)
+				return;
+			
+			CodeExpression expr1;
+			CodeStatement stmt = Let (expr, New (cmd.GetType ()));
+			m.Statements.Add (stmt);
+			
+			stmt = Let (PropRef (expr,"Connection"), PropRef ("Connection"));
+			m.Statements.Add (stmt);
+			stmt = Let (PropRef (expr, "CommandText"), Const (cmd.CommandText));
+			m.Statements.Add (stmt);
+			expr1 = PropRef (Local(typeof (CommandType).FullName), cmd.CommandType.ToString ());
+			stmt = Let (PropRef (expr, "CommandType"), expr1);
+			m.Statements.Add (stmt);
+			
+			expr1 = PropRef (expr, "Parameters");
+			foreach (DbParameter param in cmd.Parameters) {
+				AddDbParameterStatements (m, expr1, param);
+			}
+		}
+		
+		private void AddDbParameterStatements (CodeMemberMethod m, 
+		                                       CodeExpression expr, 
+		                                       DbParameter param)
+		{
+			object dbType = param.FrameworkDbType;
+			string srcColumn = null;
+			
+			if (param.SourceColumn != String.Empty)
+				srcColumn = param.SourceColumn;
+			
+			CodeExpression[] args = new CodeExpression[] {
+				Const (param.ParameterName),
+				PropRef (Local(dbType.GetType().FullName), dbType.ToString ()), 
+				Const (param.Size),
+				PropRef(Local(typeof (ParameterDirection).FullName), param.Direction.ToString ()),
+				Const (param.IsNullable),
+				Const (((IDbDataParameter)param).Precision),
+				Const (((IDbDataParameter)param).Scale),
+				Const (srcColumn),
+				PropRef (Local (typeof (DataRowVersion).FullName), param.SourceVersion.ToString ()),
+				/* Const (param.SourceColumnNullMapping), */ // TODO: Investigate with other providers
+				Const (param.Value)
+			};
+			m.Statements.Add (Eval (MethodInvoke (expr, "Add", New (param.GetType (), args))));
+		}
+		private void CreateConnectionInitializeMethod (CodeTypeDeclaration t, 
+		                                               TableAdapterSchemaInfo taInfo)
+		{
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.Name = "InitConnection";
+			m.Attributes = MemberAttributes.Private;
+			
+			// code statements
+			CodeExpression expr, expr1;
+			CodeStatement stmt;
+			
+			// initialize connection
+			expr = FieldRef ("_connection");
+			stmt = Let (expr, New (taInfo.Connection.GetType ()));
+			m.Statements.Add (stmt);
+			
+			// assign connection string
+			expr = PropRef (FieldRef ("_connection"), "ConnectionString");
+			expr1 = IndexerRef (PropRef (Local (typeof (System.Configuration.ConfigurationManager).ToString()), "ConnectionStrings"), 
+			                    Const (taInfo.ConnectionString));
+			stmt = Let (expr, PropRef (expr1, "ConnectionString"));
+			m.Statements.Add (stmt);
+			
+			t.Members.Add (m);
+		}
+		
+		private void CreateCommandCollectionInitializeMethod (CodeTypeDeclaration t, 
+		                                                      TableAdapterSchemaInfo taInfo)
+		{
+			//string tmp = null;
+			Type type;
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.Name = "InitCommandCollection";
+			m.Attributes = MemberAttributes.Private;
+			
+			// code statements
+			CodeExpression expr, expr1;
+			CodeStatement stmt;
+			
+			type = ((DbCommandInfo)taInfo.Commands[0]).Command.GetType();
+			
+			// initialize connection
+			expr = FieldRef ("_commandCollection");
+			stmt = Let (expr, NewArray (type, taInfo.Commands.Count));
+			m.Statements.Add (stmt);
+			
+			// loop through the collection and generate the code
+			for (int idx = 0; idx < taInfo.Commands.Count; idx++) {
+				DbCommand cmd = ((DbCommandInfo)taInfo.Commands[idx]).Command;
+				// Allocate
+				expr1 = IndexerRef (expr, Const (idx));
+				stmt = Let (expr1, New (type));
+				m.Statements.Add (stmt);
+				
+				// Initialize cmd members
+				stmt = Let (PropRef (expr1, "Connection"), PropRef ("Connection"));
+				m.Statements.Add (stmt);
+				stmt = Let (PropRef (expr1, "CommandText"), Const (cmd.CommandText));
+				m.Statements.Add (stmt);
+				stmt = Let (PropRef (expr1, "CommandType"), 
+				            PropRef (Local(typeof (CommandType).FullName), cmd.CommandType.ToString ()));
+				m.Statements.Add (stmt);
+				expr1 = PropRef (expr1, "Parameters");
+				foreach (DbParameter param in cmd.Parameters) {
+					AddDbParameterStatements (m, expr1, param);
+				}
+			}		
+			t.Members.Add (m);
+		}
+		
+		private void CreateDbSourceMethods (CodeTypeDeclaration t, 
+		                                    TableAdapterSchemaInfo taInfo)
+		{
+			string tmp = null;
+			CodeMemberMethod m = null;
+			CodeExpression expr, expr1, expr2;
+			CodeStatement stmt;
+			string tmpScalarVal = null;
+			
+			expr = PropRef (PropRef ("Adapter"), "SelectCommand");
+			// loop through the collection and generate the code
+			for (int idx = 0; idx < taInfo.Commands.Count; idx++) {
+				DbCommandInfo cmdInfo = (DbCommandInfo)taInfo.Commands[idx];
+				
+				foreach (DbSourceMethodInfo mInfo in cmdInfo.Methods) {
+					Console.WriteLine ("Generating code for {0} method", mInfo.Name);
+					
+					// TODO: Add support for Fill methods
+					if (mInfo.MethodType == GenerateMethodsType.Fill)
+						continue;
+					
+					m = new CodeMemberMethod ();
+					m.Name = mInfo.Name;
+					
+					stmt = Let (expr, IndexerRef (PropRef ("CommandCollection"), Const (idx)));
+					m.Statements.Add (stmt);
+					
+					switch ((MemberAttributes) Enum.Parse (typeof (MemberAttributes), mInfo.Modifier)) {
+						case MemberAttributes.Public:
+							m.Attributes = MemberAttributes.Public;
+							break;
+
+						case MemberAttributes.Private:
+							m.Attributes = MemberAttributes.Private;
+							break;
+						
+						case MemberAttributes.Assembly:
+							m.Attributes = MemberAttributes.Assembly;
+							break;
+						
+						case MemberAttributes.Family:
+							m.Attributes = MemberAttributes.Family;
+							break;
+					}
+					//Console.WriteLine ("QueryType: {0}", mInfo.QueryType);
+					QueryType qType = (QueryType) Enum.Parse (typeof (QueryType), mInfo.QueryType);
+					switch (qType) {
+						case QueryType.Scalar:
+						case QueryType.NoData:
+							// executes non query and returns status
+							m.ReturnType = TypeRef (typeof (int));
+							AddGeneratedMethodParametersAndStatements (m, expr, cmdInfo.Command);
+						
+							// store connection state
+							tmp = typeof (System.Data.ConnectionState).FullName;
+							expr1 = PropRef (Local ("command"), "Connection");
+							expr2 = PropRef (PropRef (Local ("System"), "Data"), "ConnectionState");
+							stmt = VarDecl (tmp, "previousConnectionState", PropRef (expr1, "State"));
+							m.Statements.Add (stmt);
+							
+							// Open connection, if its not already
+							CodeExpression expr3 = BitOps (PropRef (expr1, "State"), PropRef (expr2, "Open"),
+						                                   CodeBinaryOperatorType.BitwiseAnd);
+							stmt = new CodeConditionStatement (Inequals (expr3, PropRef (expr2, "Open")), 
+							                                                  new CodeStatement[] {Eval (MethodInvoke (expr1, "Open", 
+							                                         									new CodeExpression[] {}))},
+							                                                  new CodeStatement[] {});
+							m.Statements.Add (stmt);
+						
+							// declare return variable and execute query
+							CodeTryCatchFinallyStatement try1 = new CodeTryCatchFinallyStatement ();
+						
+							if (qType == QueryType.NoData) {
+								m.Statements.Add (VarDecl (typeof (int), "returnValue", null));
+								expr3 = MethodInvoke (Local ("command"), "ExecuteNonQuery", new CodeExpression[] {});
+							} else {
+								tmpScalarVal = mInfo.ScalarCallRetval.Substring (0, mInfo.ScalarCallRetval.IndexOf (','));
+								m.Statements.Add (VarDecl (TypeRef (tmpScalarVal).BaseType, "returnValue", null));
+								expr3 = MethodInvoke (Local ("command"), "ExecuteScalar", new CodeExpression[] {});
+							}
+						
+							// Execute query
+							try1.TryStatements.Add (Let (Local ("returnValue"), expr3));
+							
+							// fill finally block
+							stmt = new CodeConditionStatement (Equals (Local ("previousConnectionState"), PropRef (expr2, "Closed")), 
+																new CodeStatement[] {Eval (MethodInvoke (expr1, "Close", 
+							                                         									new CodeExpression[] {}))},
+																new CodeStatement[] {});
+							try1.FinallyStatements.Add (stmt);
+							m.Statements.Add (try1);
+						
+							// return the value
+							if (qType == QueryType.NoData) {
+								m.Statements.Add (Return (Local ("returnValue")));
+							} else {
+								expr2 = Equals (Local ("returnValue"), Const (null));
+								expr3 = Equals (MethodInvoke (Local ("returnValue"), "GetType", new CodeExpression[] {}), 
+							                	TypeOfRef ("System.DBNull"));
+								stmt = new CodeConditionStatement (BooleanOps (expr2, expr3, CodeBinaryOperatorType.BooleanOr), 
+							                                   		new CodeStatement[] {Return (Const (null))},
+																	new CodeStatement[] {Return (Cast (tmpScalarVal, Local ("returnValue")))});
+								m.Statements.Add (stmt);
+							}
+						
+							break;
+
+						case QueryType.Rowset:
+							// returns DataTable
+							// TODO: Handle multiple DataTables
+							tmp = opts.DataSetName (ds.DataSetName) + "." + opts.TableTypeName (ds.Tables[0].TableName);
+							m.ReturnType = TypeRef (tmp);
+
+							AddGeneratedMethodParametersAndStatements (m, expr, cmdInfo.Command);
+							stmt = VarDecl (tmp, "dataTable", New (tmp));
+							m.Statements.Add (stmt);
+
+							// fill datatable
+							expr = PropRef ("Adapter");
+							stmt = Eval (MethodInvoke (expr, "Fill", Local ("dataTable")));
+							m.Statements.Add (stmt);
+
+							// return statement
+							m.Statements.Add (Return (Local ("dataTable")));
+							break;
+					}
+					t.Members.Add (m);
+				}			
+			}
+		}
+		
+		private void AddGeneratedMethodParametersAndStatements (CodeMemberMethod m, 
+		                                                        CodeExpression expr,
+		                                                        DbCommand cmd)
+		{
+			CodeStatement stmt;
+			CodeExpression expr1;
+			int idx = 0;
+			string tmp;
+			DbType dbType = DbType.DateTime;
+			foreach (DbParameter param in cmd.Parameters) {
+				if (param.Direction != ParameterDirection.ReturnValue) {
+					if (param.ParameterName[0] == '@')
+						tmp = param.ParameterName.Substring (1);
+					else
+						tmp = param.ParameterName;
+					if (param.SystemType != null)
+						m.Parameters.Add (Param (TypeRef(param.SystemType), tmp));
+					expr1 = IndexerRef (PropRef (expr, "Parameters"), Const (idx));
+					stmt = Let (expr1, ParamRef (tmp));
+					m.Statements.Add (stmt);
+				}
+				idx++;
+			}
+		}
+		
+		private void CreateShortCommandMethods (CodeTypeDeclaration t, TableAdapterSchemaInfo taInfo)
+		{
+			
+		}
+		
+#endregion
+#endif	//NET_2_0
+
 	}
+	
 }
 
 

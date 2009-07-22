@@ -70,6 +70,10 @@ namespace System.Data
 		private DataViewManager defaultView;
 		private CultureInfo locale;
 		internal XmlDataDocument _xmlDataDocument;
+
+#if NET_2_0
+		internal TableAdapterSchemaInfo tableAdapterSchemaInfo;
+#endif
 		bool initInProgress;
 
 		#region Constructors
@@ -194,6 +198,13 @@ namespace System.Data
 			get { return locale != null; }
 		}
 
+		
+#if NET_2_0
+		internal TableAdapterSchemaInfo TableAdapterSchemaData {
+			get { return tableAdapterSchemaInfo; }
+		}
+#endif
+		
 		internal void InternalEnforceConstraints (bool value,bool resetIndexes)
 		{
 			if (value == enforceConstraints)
@@ -820,7 +831,11 @@ namespace System.Data
 		public void ReadXmlSchema (XmlReader reader)
 		{
 #if true
-			new XmlSchemaDataImporter (this, reader, true).Process ();
+			XmlSchemaDataImporter xsdImporter = new XmlSchemaDataImporter (this, reader, true);
+			xsdImporter.Process ();
+#if NET_2_0
+			tableAdapterSchemaInfo = xsdImporter.CurrentAdapter;
+#endif
 #else
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);

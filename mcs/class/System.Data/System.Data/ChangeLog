@@ -1,3 +1,47 @@
+2009-07-22  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* CustomDataClassGenerator.cs (CreateCommandCollectionInitializeMethod):
+	Fix generation of DbCommand[] instead of DbCommand()[].  Fix IndexRef to 
+	ref proper index.
+	Avoid using SourceColumnNullMapping property in the constructor 
+	of DbParameter while creating the code.
+	
+2009-07-18  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* CustomDataClassGenerator.cs (CreateDbSourceMethods): Handle cases of Scalar 
+	and NoData QueryTypes.
+	
+2009-07-17  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* TableAdapterSchemaInfo.cs: Wrap DbCommand within DbCommandInfo and 
+	define MethodInfo to hold method properties common to both Get and Fill.
+	
+	* CustomDataClassGenerator.cs (CreateDbSourceMethods): Handle cases of Fill 
+	and Get appropriately.
+	
+2009-07-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* CustomDataClassGenerator.cs (CreateDbSourceMethods):  Handle 
+	methods of type "Fill".
+	
+	* XmlSchemaDataImporter.cs (ProcessDbParameters): Handle empty strings 
+	while setting parameter properties.
+	
+2009-07-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Part of fix for #325464
+	* CustomDataClassGenerator.cs: Add implementation to generate 
+	TableAdapter code.
+	
+	* DataSet.cs (TableAdapterSchemaData): New internal property that 
+	holds TableAdapter details to generate code from.
+	
+	* XmlConstants.cs: Add Msdatasource constant to handle 
+	<...:xml-msdatasource> elements.
+	
+	* XmlSchemaDataImporter.cs: Implement handling of <TableAdapter ...>
+	* TableAdapterSchemaInfo.cs: New 
+	
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #325464 - ToolItems.xsd
