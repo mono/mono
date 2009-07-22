@@ -2202,7 +2202,7 @@ namespace System.Data
 				DbCommandInfo cmdInfo = (DbCommandInfo)taInfo.Commands[idx];
 				
 				foreach (DbSourceMethodInfo mInfo in cmdInfo.Methods) {
-					Console.WriteLine ("Generating code for {0} method", mInfo.Name);
+					//Console.WriteLine ("Generating code for {0} method", mInfo.Name);
 					
 					// TODO: Add support for Fill methods
 					if (mInfo.MethodType == GenerateMethodsType.Fill)

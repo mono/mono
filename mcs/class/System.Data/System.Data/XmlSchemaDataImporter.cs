@@ -1294,7 +1294,7 @@ namespace System.Data
 			    currentAdapter.Name == String.Empty)
 				currentAdapter.Name = el.GetAttribute ("DataAccessorName");
 
-			Console.WriteLine ("Name: "+currentAdapter.Name);
+			//Console.WriteLine ("Name: "+currentAdapter.Name);
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
 				

@@ -1,4 +1,9 @@
 2009-07-22  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* XmlSchemaDataImporter.cs:
+	CustomDataClassGenerator.cs: Silence off CWLs.
+	
+2009-07-22  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* CustomDataClassGenerator.cs (CreateCommandCollectionInitializeMethod):
 	Fix generation of DbCommand[] instead of DbCommand()[].  Fix IndexRef to 
