@@ -839,6 +839,13 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void DeserializeEnumFlags ()
+		{
+			Deserialize<Colors2> (
+				@"<Colors2 xmlns=""http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization""/>");
+		}
+
+		[Test]
 		public void DeserializeEnumWithDC ()
 		{
 			ColorsWithDC cdc = Deserialize<ColorsWithDC> (
@@ -1206,6 +1213,28 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void EmptyChildren ()
+		{
+                string xml = @"
+<DummyPlaylist xmlns='http://example.com/schemas/asx'>
+        <Entries>
+                <DummyEntry>
+                        <EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-ins
+tance' i:type='PartDummyEntryInfo'/>
+                        <Href>http://vmsservices.example.com:8080/VideoService.s
+vc?crid=45541/part=1/guid=ae968b5d-e4a5-41fe-9b23-ed631b27cd21/</Href>
+                </DummyEntry>
+        </Entries>
+</DummyPlaylist>
+";
+			var reader = XmlReader.Create (new StringReader (xml));
+			DummyPlaylist playlist = (DummyPlaylist) new DataContractSerializer (typeof (DummyPlaylist)).ReadObject (reader);
+			Assert.AreEqual (1, playlist.entries.Count, "#1");
+			Assert.IsTrue (playlist.entries [0] is DummyEntry, "#2");
+			Assert.IsNotNull (playlist.entries [0].Href, "#3");
+		}
+
+		[Test]
 		public void BaseKnownTypeAttributes ()
 		{
 			// bug #524088
@@ -1252,6 +1281,11 @@ namespace MonoTests.System.Runtime.Serialization
  	}
  
 	public enum Colors {
+		Red, Green, Blue
+	}
+
+	[Flags]
+	public enum Colors2 {
 		Red, Green, Blue
 	}
 
@@ -1530,16 +1564,18 @@ public class MyDictionary<K,V> : Dictionary<K,V>
 {
 }
 
-// bug #524088
+// bug #524086
 [DataContract(Namespace="http://example.com/schemas/asx")]
 public class DummyEntry
 {
     [DataMember]
     public DummyEntryInfo EntryInfo { get; set; }
+    [DataMember]
+    public string Href { get; set; }
 }
 
-[DataContract(Namespace="http://example.com/schemas/asx")]
-[KnownType(typeof(PartDummyEntryInfo))]
+[DataContract(Namespace="http://example.com/schemas/asx"),
+KnownType(typeof(PartDummyEntryInfo))]
 public abstract class DummyEntryInfo
 {
 }
@@ -1547,8 +1583,10 @@ public abstract class DummyEntryInfo
 [DataContract(Namespace="http://example.com/schemas/asx")]
 public class DummyPlaylist
 {
+    public IList<DummyEntry> entries = new List<DummyEntry> ();
+
     [DataMember]
-    public IList<DummyEntry> Entries { get; set; }
+    public IList<DummyEntry> Entries { get { return entries; } set {entries = value;} }
 }
 
 [DataContract(Namespace="http://example.com/schemas/asx")]
@@ -1556,6 +1594,8 @@ public class PartDummyEntryInfo : DummyEntryInfo
 {
     public PartDummyEntryInfo() {}
 }
+
+// bug #524088
 
 [DataContract(Namespace="http://example.com/schemas/asx")]
 public class AsxEntryInfo

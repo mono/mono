@@ -363,17 +363,23 @@ namespace System.Runtime.Serialization
 		public virtual object DeserializeEmptyContent (XmlReader reader,
 			XmlFormatterDeserializer deserializer)
 		{
-			return DeserializeContent (reader, deserializer);
+			return DeserializeContent (reader, deserializer, true);
 		}
 
 		public virtual object DeserializeContent (XmlReader reader,
 			XmlFormatterDeserializer deserializer)
 		{
+			return DeserializeContent (reader, deserializer, false);
+		}
+
+		object DeserializeContent (XmlReader reader,
+			XmlFormatterDeserializer deserializer, bool empty)
+		{
 			object instance = FormatterServices.GetUninitializedObject (RuntimeType);
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
 			int memberInd = -1;
-			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
+			while (!empty && reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
 				int i = 0;
 				for (; i < Members.Count; i++) { // unordered
@@ -961,6 +967,7 @@ namespace System.Runtime.Serialization
 	internal class EnumMap : SerializationMap
 	{
 		List<EnumMemberInfo> enum_members;
+		bool flag_attr;
 
 		public EnumMap (
 			Type type, QName qname, KnownTypeCollection knownTypes)
@@ -971,6 +978,7 @@ namespace System.Runtime.Serialization
 				typeof (DataContractAttribute), false);
 			if (atts.Length != 0)
 				has_dc = true;
+			flag_attr = type.GetCustomAttributes (typeof (FlagsAttribute), false).Length > 0;
 
 			enum_members = new List<EnumMemberInfo> ();
 			BindingFlags flags = BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Static;
@@ -1047,6 +1055,14 @@ namespace System.Runtime.Serialization
 				"Enum value '{0}' is invalid for type '{1}' and cannot be serialized.", graph, RuntimeType));
 		}
 
+		public override object DeserializeEmptyContent (XmlReader reader,
+			XmlFormatterDeserializer deserializer)
+		{
+			if (!flag_attr)
+				throw new SerializationException (String.Format ("Enum value '' is invalid for type '{0}' and cannot be deserialized.", RuntimeType));
+			return Enum.ToObject (RuntimeType, 0);
+		}
+
 		public override object DeserializeContent (XmlReader reader,
 			XmlFormatterDeserializer deserializer)
 		{
@@ -1058,8 +1074,9 @@ namespace System.Runtime.Serialization
 						return emi.Value;
 			}
 
-			throw new SerializationException (String.Format (
-				"Enum value '{0}' is invalid for type '{1}' and cannot be deserialized.", value, RuntimeType));
+			if (!flag_attr)
+				throw new SerializationException (String.Format ("Enum value '{0}' is invalid for type '{1}' and cannot be deserialized.", value, RuntimeType));
+			return Enum.ToObject (RuntimeType, 0);
 		}
 	}
 

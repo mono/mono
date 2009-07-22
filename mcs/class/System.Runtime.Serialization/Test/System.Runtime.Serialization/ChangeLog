@@ -1,5 +1,11 @@
 2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs :
+	  Add test for bug #524086 by Rolf Bjarne Kvinge.
+	  Add enum flags test, which should not raise an error.
+
+2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : add test for bug #524083, by
 	  Rolf Bjarne Kvinge.
 
