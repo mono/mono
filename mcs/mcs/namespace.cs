@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual Type LookupTypeReflection (string name, Location loc)
+		public virtual Type LookupTypeReflection (string name, Location loc, bool must_be_unique)
 		{
 			Type found_type = null;
 
@@ -79,6 +79,9 @@ namespace Mono.CSharp {
 				Type t = GetTypeInAssembly (a, name);
 				if (t == null)
 					continue;
+
+				if (!must_be_unique)
+					return t;
 
 				if (found_type == null) {
 					found_type = t;
@@ -303,9 +306,9 @@ namespace Mono.CSharp {
 			return (RootNamespace) root_namespaces[name];
 		}
 
-		public override Type LookupTypeReflection (string name, Location loc)
+		public override Type LookupTypeReflection (string name, Location loc, bool must_be_unique)
 		{
-			Type found_type = base.LookupTypeReflection (name, loc);
+			Type found_type = base.LookupTypeReflection (name, loc, must_be_unique);
 
 			if (modules != null) {
 				foreach (Module module in modules) {
@@ -520,7 +523,7 @@ namespace Mono.CSharp {
 				}
 			}
 			string lookup = t != null ? t.FullName : (fullname.Length == 0 ? name : fullname + "." + name);
-			Type rt = root.LookupTypeReflection (lookup, loc);
+			Type rt = root.LookupTypeReflection (lookup, loc, t == null);
 
 			// HACK: loc.IsNull when the type is core type
 			if (t == null || (rt != null && loc.IsNull))
