@@ -704,6 +704,18 @@ namespace MonoTests.System.Xml
 			XPathNavigator navigator = document.CreateNavigator();
 			Assert.AreEqual (navigator.OuterXml, navigator.InnerXml, "#1");
 		}
+
+		[Test] // bug #515136
+		public void SelectChildrenEmpty ()
+		{
+			string s = "<root> <foo> </foo> </root>";
+			XPathDocument doc = new XPathDocument (new StringReader (s));
+			XPathNavigator nav = doc.CreateNavigator ();
+			XPathNodeIterator it = nav.SelectChildren (String.Empty, String.Empty);
+			foreach (XPathNavigator xpn in it)
+				return;
+			Assert.Fail ("no selection");
+		}
 #endif
 	}
 }

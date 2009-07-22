@@ -1,3 +1,8 @@
+2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : name test did not handle String.Empty cases
+	  for name and ns (i.e. no filter). Fixed bug #515136.
+
 2009-06-09  Gonzalo Paniagua, Miguel de Icaza  <gonzalo@novell.com, miguel@novell.com>
 
 	* Expression.cs: improve the ExpressionCache, it still does not

@@ -661,7 +661,7 @@ namespace System.Xml.XPath
 			nav.MoveToFirstChild ();
 			XPathNavigator nav2 = nav.Clone ();
 			do {
-				if (nav.LocalName == name && nav.NamespaceURI == ns) {
+				if ((name == String.Empty || nav.LocalName == name) && (ns == String.Empty || nav.NamespaceURI == ns)) {
 					nav2.MoveTo (nav);
 					yield return nav2;
 				}
