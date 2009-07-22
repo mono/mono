@@ -1,3 +1,7 @@
+2009-07-18  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TypedDataSetGenerator.cs: Implement two of the Generate methods.
+	
 2008-01-11  Raja R Harinath  <harinath@hurrynot.org>
 
 	* TypedDataSetGenerator.cs: Remove mention of NET_3_5 -- the

@@ -111,6 +111,7 @@ System.Data/StatementType.cs
 System.Data/StrongTypingException.cs
 System.Data/SyntaxErrorException.cs
 ../../build/common/MonoTODOAttribute.cs
+System.Data/TableAdapterSchemaInfo.cs
 System.Data/TypedDataSetGenerator.cs
 System.Data/TypeDataSetGeneratorException.cs
 System.Data/UniqueConstraint.cs

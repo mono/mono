@@ -38,6 +38,7 @@ using System.ComponentModel.Design;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
+using System.IO;
 
 namespace System.Data.Design
 {
@@ -63,16 +64,29 @@ namespace System.Data.Design
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public static string Generate (DataSet dataSet, CodeNamespace codeNamespace, CodeDomProvider codeProvider)
 		{
-			throw new NotImplementedException ();
+			// See CustomDataclassGenerator.cs
+			CustomDataClassGenerator.CreateDataSetClasses (
+				dataSet, codeNamespace, codeProvider, null);
+
+			return null;
 		}
 
-		[MonoTODO]
 		public static string Generate (string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider)
 		{
-			throw new NotImplementedException ();
+			if (inputFileContent == null || inputFileContent.Length < 5)
+				return null;
+			
+			DataSet ds = new DataSet ();
+			StringReader sr = new StringReader (inputFileContent);
+			ds.ReadXmlSchema (sr as TextReader);
+			
+			// See CustomDataclassGenerator.cs
+			CustomDataClassGenerator.CreateDataSetClasses (
+				ds, compileUnit, mainNamespace, codeProvider, null);
+				
+			return null;
 		}
 
 		[MonoTODO]

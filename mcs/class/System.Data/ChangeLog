@@ -1,3 +1,7 @@
+2009-07-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* System.Data.dll.sources: Added TableAdapterSchemaInfo.cs.
+	
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added SqlCommandBuilderTest.cs
