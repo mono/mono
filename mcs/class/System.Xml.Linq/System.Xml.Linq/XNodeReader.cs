@@ -80,6 +80,8 @@ namespace System.Xml.Linq
 
 		public override int Depth {
 			get {
+				if (EOF)
+					return 0;
 				int i = 0;
 				// document.Depth = 0, root.Depth = 0, others.Depth = they depend
 				for (XNode n = node.Parent; n != null; n = n.Parent)
@@ -98,7 +100,7 @@ namespace System.Xml.Linq
 
 		public override bool HasAttributes {
 			get {
-				if (end_element || node == null)
+				if (EOF || end_element || node == null)
 					return false;
 
 				if (node is XElement)
@@ -109,6 +111,8 @@ namespace System.Xml.Linq
 
 		public override bool HasValue {
 			get {
+				if (EOF)
+					return false;
 				if (attr >= 0)
 					return true;
 				switch (node.NodeType) {
@@ -123,7 +127,7 @@ namespace System.Xml.Linq
 		}
 
 		public override bool IsEmptyElement {
-			get { return (attr < 0 && node is XElement) ? ((XElement) node).IsEmpty : false; }
+			get { return !EOF && attr < 0 && node is XElement ? ((XElement) node).IsEmpty : false; }
 		}
 
 		XAttribute GetCurrentAttribute ()
@@ -133,6 +137,8 @@ namespace System.Xml.Linq
 
 		XAttribute GetXAttribute (int idx)
 		{
+			if (EOF)
+				return null;
 			XElement el = node as XElement;
 			if (el == null)
 				return null;
@@ -146,7 +152,7 @@ namespace System.Xml.Linq
 		// XName for element and attribute, string for xmldecl attributes, doctype attribute, doctype name and PI, null for empty.
 		object GetCurrentName ()
 		{
-			if (attr_value)
+			if (EOF || attr_value)
 				return null;
 			return GetName (attr);
 		}
@@ -293,6 +299,8 @@ namespace System.Xml.Linq
 
 		public override string LookupNamespace (string prefix)
 		{
+			if (EOF)
+				return String.Empty;
 			XElement el = (node as XElement) ?? node.Parent;
 			if (el == null)
 				return String.Empty;

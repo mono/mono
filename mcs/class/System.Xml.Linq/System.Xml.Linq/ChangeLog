@@ -1,5 +1,10 @@
 2009-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeReader.cs : a couple of properties did not return correct
+	  value for EOF state.
+
+2009-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeReader.cs : do not return element's IsEmpty on attributes.
 
 2009-07-20  Jb Evain  <jbevain@novell.com>

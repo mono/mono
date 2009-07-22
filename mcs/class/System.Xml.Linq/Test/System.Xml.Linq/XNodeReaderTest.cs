@@ -164,5 +164,20 @@ namespace MonoTests.System.Xml.Linq
 			r.MoveToAttribute (0);
 			Assert.IsFalse (r.IsEmptyElement);
 		}
+
+		[Test]
+		public void NamePropsOnEOF ()
+		{
+			string xml = @"<Dummy xmlns='http://example.com/schemas/asx' />";
+			XElement element = XElement.Parse (xml);
+			var r = element.CreateReader ();
+			r.Read ();
+			r.Read ();
+			Assert.AreEqual (String.Empty, r.LocalName, "#1");
+			Assert.AreEqual (String.Empty, r.NamespaceURI, "#2");
+			Assert.AreEqual (0, r.Depth, "#3");
+			Assert.IsFalse (r.HasAttributes, "#4");
+			Assert.AreEqual (String.Empty, r.LookupNamespace (String.Empty), "#5");
+		}
 	}
 }
