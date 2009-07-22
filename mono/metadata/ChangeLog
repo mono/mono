@@ -1,5 +1,12 @@
 2009-07-22  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Align array bounds calculation to mono_array_size_t
+	so that big arrays are handled correctly.  Always use
+	safe_object_get_size() to calculate array object sizes, which
+	takes bounds into account.
+
+2009-07-22  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c (mono_gc_wbarrier_value_copy): Make sure the class's
 	GC descriptor is computed before we use it.
 
