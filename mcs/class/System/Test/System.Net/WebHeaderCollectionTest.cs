@@ -5,6 +5,7 @@
 //   Lawrence Pit (loz@cable.a2000.nl)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Gert Driesen (drieseng@users.sourceforge.net)
+//   Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
@@ -375,5 +376,94 @@ namespace MonoTests.System.Net
 			0x74, 0x74, 0x61, 0x63, 0x68, 0x0b
 #endif
 		};
+
+#if NET_2_0
+		static string [] request_headers = new string [] {
+			"Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Accept-Ranges", "Authorization", 
+			"Cache-Control", "Connection", "Cookie", "Content-Length", "Content-Type", "Date", 
+			"Expect", "From", "Host", "If-Match", "If-Modified-Since", "If-None-Match", 
+			"If-Range", "If-Unmodified-Since", "Max-Forwards", "Pragma", "Proxy-Authorization", 
+			"Range", "Referer", "TE", "Upgrade", "User-Agent", "Via", "Warn" };
+
+		static string [] response_headers = new string [] {
+			"Accept-Ranges", "Age", "Allow", "Cache-Control", "Content-Encoding", "Content-Language", 
+			"Content-Length", "Content-Location", "Content-Disposition", "Content-MD5", "Content-Range", 
+			"Content-Type", "Date", "ETag", "Expires", "Last-Modified", "Location", "Pragma", 
+			"Proxy-Authenticate", "Retry-After", "Server", "Set-Cookie", "Trailer", 
+			"Transfer-Encoding", "Vary", "Via", "Warn", "WWW-Authenticate" };
+
+		static string [] restricted_request_request = new string [] {
+			"Accept", "Connection", "Content-Length", "Content-Type", "Date",
+			"Expect", "Host", "If-Modified-Since", "Range", "Referer",
+			"User-Agent" };
+		static string [] restricted_response_request = new string [] {
+			"Content-Length", "Content-Type", "Date", "Transfer-Encoding" };
+
+		static string [] restricted_request_response = new string [] {
+			 "Content-Length" };
+		static string [] restricted_response_response = new string [] {
+			 "Content-Length", "Transfer-Encoding", "WWW-Authenticate" };
+
+		[Test]
+		public void IsRestricted_2_0_RequestRequest ()
+		{
+			int count = 0;
+			foreach (string str in request_headers) {
+				if (WebHeaderCollection.IsRestricted (str, false)) {
+					Assert.IsTrue (Array.IndexOf (restricted_request_request, str) != -1, "restricted " + str);
+					count++;
+				} else {
+					Assert.IsTrue (Array.IndexOf (restricted_request_request, str) == -1, str);
+				}
+			}
+			Assert.IsTrue (count == restricted_request_request.Length, "req-req length");
+		}
+
+		[Test]
+		public void IsRestricted_2_0_ResponseRequest ()
+		{
+			int count = 0;
+			foreach (string str in response_headers) {
+				if (WebHeaderCollection.IsRestricted (str, false)) {
+					Assert.IsTrue (Array.IndexOf (restricted_response_request, str) != -1, "restricted " + str);
+					count++;
+				} else {
+					Assert.IsTrue (Array.IndexOf (restricted_response_request, str) == -1, str);
+				}
+			}
+			Assert.IsTrue (count == restricted_response_request.Length, "length");
+		}
+
+		[Test]
+		public void IsRestricted_2_0_RequestResponse ()
+		{
+			int count = 0;
+			foreach (string str in request_headers) {
+				if (WebHeaderCollection.IsRestricted (str, true)) {
+					Assert.IsTrue (Array.IndexOf (restricted_request_response, str) != -1, "restricted " + str);
+					count++;
+				} else {
+					Assert.IsTrue (Array.IndexOf (restricted_request_response, str) == -1, str);
+				}
+			}
+			Assert.IsTrue (count == restricted_request_response.Length, "length");
+		}
+
+		[Test]
+		public void IsRestricted_2_0_ResponseResponse ()
+		{
+			int count = 0;
+			foreach (string str in response_headers) {
+				if (WebHeaderCollection.IsRestricted (str, true)) {
+					Assert.IsTrue (Array.IndexOf (restricted_response_response, str) != -1, "restricted " + str);
+					count++;
+				} else {
+					Assert.IsTrue (Array.IndexOf (restricted_response_response, str) == -1, str);
+				}
+			}
+			Assert.IsTrue (count == restricted_response_response.Length, "length");
+		}
+#endif
 	}
 }
+
