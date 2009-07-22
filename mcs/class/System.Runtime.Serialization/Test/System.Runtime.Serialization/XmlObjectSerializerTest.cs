@@ -1205,6 +1205,18 @@ namespace MonoTests.System.Runtime.Serialization
 			}
 		}
 
+		[Test]
+		public void BaseKnownTypeAttributes ()
+		{
+			// bug #524088
+			string xml = @"<DummyPlaylist xmlns='http://example.com/schemas/asx'><Entries><DummyEntry><EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-instance' i:type='PartDummyEntryInfo'/></DummyEntry></Entries></DummyPlaylist>";
+
+			using (XmlReader reader = XmlReader.Create (new StringReader (xml))) {
+				DummyPlaylist playlist = new DataContractSerializer(typeof(DummyPlaylist)).ReadObject(reader) as DummyPlaylist;
+				Assert.IsNotNull (playlist);
+			}
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1498,3 +1510,32 @@ class Foo<X,Y,Z>
 public class MyDictionary<K,V> : Dictionary<K,V>
 {
 }
+
+// bug #524088
+[DataContract(Namespace="http://example.com/schemas/asx")]
+public class DummyEntry
+{
+    [DataMember]
+    public DummyEntryInfo EntryInfo { get; set; }
+}
+
+[DataContract(Namespace="http://example.com/schemas/asx")]
+[KnownType(typeof(PartDummyEntryInfo))]
+public abstract class DummyEntryInfo
+{
+}
+
+[DataContract(Namespace="http://example.com/schemas/asx")]
+public class DummyPlaylist
+{
+    [DataMember]
+    public IList<DummyEntry> Entries { get; set; }
+}
+
+[DataContract(Namespace="http://example.com/schemas/asx")]
+public class PartDummyEntryInfo : DummyEntryInfo
+{
+    public PartDummyEntryInfo() {}
+}
+
+

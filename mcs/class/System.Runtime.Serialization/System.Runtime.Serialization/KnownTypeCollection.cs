@@ -749,6 +749,13 @@ namespace System.Runtime.Serialization
 			SharedContractMap ret =
 				new SharedContractMap (type, qname, this);
 			contracts.Add (ret);
+
+			object [] attrs = type.GetCustomAttributes (typeof (KnownTypeAttribute), true);
+			for (int i = 0; i < attrs.Length; i++) {
+				KnownTypeAttribute kt = (KnownTypeAttribute) attrs [i];
+				TryRegister (kt.Type);
+			}
+
 			return ret;
 		}
 
