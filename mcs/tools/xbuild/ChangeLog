@@ -1,5 +1,11 @@
 2009-07-22  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.VisualBasic.targets (Vbc.References): Remove
+	"@(ChildProjectReferences)" as it gets resolved earlier
+	and is part of @(ResolvedFiles).
+
+2009-07-22  Ankit Jain  <jankit@novell.com>
+
 	* xbuild.Microsoft.CSharp.targets (Csc.References): Remove
 	"@(ChildProjectReferences)" as it gets resolved earlier
 	and is part of @(ResolvedFiles).
