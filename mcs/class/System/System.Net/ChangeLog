@@ -1,5 +1,9 @@
 2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebHeaderCollection.cs: implemente the 2.0 IsRestricted().
+
+2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebConnectionStream.cs: when sending a 0-length POST, ignore further
 	writes instead of throwing.
 	Fixes bug #524049.

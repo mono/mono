@@ -33,6 +33,9 @@
 
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -48,6 +51,9 @@ namespace System.Net
 	{
 		private static readonly Hashtable restricted;
 		private static readonly Hashtable multiValue;
+#if NET_2_0
+		static readonly Dictionary<string, bool> restricted_response;
+#endif
 		private bool internallyCreated = false;
 		
 		// Static Initializer
@@ -71,7 +77,15 @@ namespace System.Net
 			restricted.Add ("referer", true);
 			restricted.Add ("transfer-encoding", true);
 			restricted.Add ("user-agent", true);			
-			
+			restricted.Add ("proxy-connection", true);			
+
+			//
+#if NET_2_0
+			restricted_response = new Dictionary<string, bool> (StringComparer.InvariantCultureIgnoreCase);
+			restricted_response.Add ("Content-Length", true);
+			restricted_response.Add ("Transfer-Encoding", true);
+			restricted_response.Add ("WWW-Authenticate", true);
+#endif
 			// see par 14 of RFC 2068 to see which header names
 			// accept multiple values each separated by a comma
 			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
@@ -247,10 +261,14 @@ namespace System.Net
 		}
 
 #if NET_2_0
-		[MonoNotSupported("")]
 		public static bool IsRestricted (string headerName, bool response)
 		{
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (headerName))
+				throw new ArgumentNullException ("headerName");
+
+			if (response)
+				return restricted_response.ContainsKey (headerName);
+			return restricted.ContainsKey (headerName);
 		}
 #endif
 
