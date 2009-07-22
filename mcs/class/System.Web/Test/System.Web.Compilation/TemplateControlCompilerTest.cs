@@ -56,6 +56,8 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ServerSideControlsInScriptBlock.aspx", "ServerSideControlsInScriptBlock.aspx");
 			WebTest.CopyResource (GetType (), "ServerControlInClientSideComment.aspx", "ServerControlInClientSideComment.aspx");
 			WebTest.CopyResource (GetType (), "UnquotedAngleBrackets.aspx", "UnquotedAngleBrackets.aspx");
+			WebTest.CopyResource (GetType (), "FullTagsInText.aspx", "FullTagsInText.aspx");
+			WebTest.CopyResource (GetType (), "TagsExpressionsAndCommentsInText.aspx", "TagsExpressionsAndCommentsInText.aspx");
 #if NET_2_0
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
@@ -215,6 +217,20 @@ namespace MonoTests.System.Web.Compilation {
 		{
 			// We just test if it doesn't throw an exception
 			new WebTest ("UnquotedAngleBrackets.aspx").Run ();
+		}
+
+		[Test]
+		public void FullTagsInText ()
+		{
+			// We just test if it doesn't throw an exception
+			new WebTest ("FullTagsInText.aspx").Run ();
+		}
+
+		[Test]
+		public void TagsExpressionsAndCommentsInText ()
+		{
+			// We just test if it doesn't throw an exception
+			new WebTest ("TagsExpressionsAndCommentsInText.aspx").Run ();
 		}
 		
 		[Test]
