@@ -6,7 +6,10 @@ class Test<T> where T: struct{
 
 class X
 {
-	static void Main ()
-	{ }
+	static int Main ()
+	{
+		new Test<bool> ();
+		return 0;
+	}
 }
 

@@ -3962,15 +3962,15 @@
   <test name="gtest-151.cs">
     <type name="Test`1[T]">
       <method name="Void .ctor()">
-        <size>45</size>
+        <size>15</size>
       </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
+      <method name="Int32 Main()">
+        <size>8</size>
       </method>
     </type>
   </test>
@@ -10658,7 +10658,7 @@
         <size>7</size>
       </method>
       <method name="Boolean Foo(T)">
-        <size>10</size>
+        <size>15</size>
       </method>
     </type>
     <type name="Program">
@@ -11484,6 +11484,19 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-443.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void M[T]()">
+        <size>28</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -13691,6 +13704,52 @@
       </method>
       <method name="Void &lt;&gt;m__0(TFirst)">
         <size>47</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-56.cs">
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T def()">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void foo(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void cf[T]()">
+        <size>35</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>17</size>
+      </method>
+    </type>
+    <type name="C+DF">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;cf&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>22</size>
       </method>
     </type>
   </test>
