@@ -219,6 +219,25 @@ namespace MonoTests.System.Xml
 //			Assert.IsNull (nsmgr.LookupPrefix ("urn:f" + suffix), "It is not atomized and thus should be failed");
 		}
 
+		[Test]
+		public void TryToAddPrefixXml ()
+		{
+			NameTable nt = new NameTable ();
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (nt);
+
+			nsmgr.AddNamespace ("xml", "http://www.w3.org/XML/1998/namespace");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TryToAddPrefixXmlns ()
+		{
+			NameTable nt = new NameTable ();
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (nt);
+
+			nsmgr.AddNamespace ("xmlns", "http://www.w3.org/2000/xmlns/");
+		}
+
 #if NET_2_0
 		XmlNamespaceScope l = XmlNamespaceScope.Local;
 		XmlNamespaceScope x = XmlNamespaceScope.ExcludeXml;

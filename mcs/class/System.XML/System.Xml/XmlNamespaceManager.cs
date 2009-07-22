@@ -151,6 +151,9 @@ namespace System.Xml
 				uri = nameTable.Add (uri);
 			}
 
+			if (prefix == PrefixXml && uri == XmlnsXml)
+				return;
+
 			IsValidDeclaration (prefix, uri, true);
 
 			if (prefix.Length == 0)
