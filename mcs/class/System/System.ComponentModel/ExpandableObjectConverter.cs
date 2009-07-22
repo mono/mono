@@ -40,7 +40,7 @@ namespace System.ComponentModel
 		public ExpandableObjectConverter ()
 		{
 		}
-
+#if !NET_2_1
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value, Attribute[] attributes)
 		{
@@ -51,5 +51,6 @@ namespace System.ComponentModel
 		{
 			return true;
 		}
+#endif
 	}
 }
