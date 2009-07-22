@@ -1,3 +1,9 @@
+2009-07-15  Veerapuram Varadhan
+
+	** Part of fix for #325464
+	* DbParameter.cs (FrameworkDbType, DbTypeMapping, SystemType): New internal properties 
+	required to convert between DbType/FrameworkType/SystemType.
+	
 2009-05-10  Marek Habersack  <mhabersack@novell.com>
 
 	* DbConnection.cs: implemented the DbProviderFactory property

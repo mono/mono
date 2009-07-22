@@ -85,9 +85,30 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
+		
 		static SqlParameter ()
 		{
+
+#if NET_2_0
+			if (DbTypeMapping == null)
+				DbTypeMapping = new Hashtable ();
+			
+			DbTypeMapping.Add (SqlDbType.BigInt, typeof (long));
+			DbTypeMapping.Add (SqlDbType.Bit, typeof (bool));
+			DbTypeMapping.Add (SqlDbType.NVarChar, typeof (string));
+			DbTypeMapping.Add (SqlDbType.DateTime, typeof (DateTime));
+			DbTypeMapping.Add (SqlDbType.Decimal, typeof (decimal));
+			DbTypeMapping.Add (SqlDbType.Float, typeof (double));
+			DbTypeMapping.Add (SqlDbType.VarBinary, typeof (byte []));
+			DbTypeMapping.Add (SqlDbType.TinyInt, typeof (byte));
+			DbTypeMapping.Add (SqlDbType.Int, typeof (int));
+			DbTypeMapping.Add (SqlDbType.Real, typeof (float));
+			DbTypeMapping.Add (SqlDbType.SmallInt, typeof (short));
+			DbTypeMapping.Add (SqlDbType.UniqueIdentifier, typeof (Guid));
+			DbTypeMapping.Add (SqlDbType.Variant, typeof (object));
+#endif		
 			type_mapping = new Hashtable ();
+
 			type_mapping.Add (typeof (long), SqlDbType.BigInt);
 			type_mapping.Add (typeof (SqlTypes.SqlInt64), SqlDbType.BigInt);
 
@@ -126,9 +147,9 @@ namespace System.Data.SqlClient {
 
 			type_mapping.Add (typeof (SqlTypes.SqlMoney), SqlDbType.Money);
 
-			type_mapping.Add (typeof (object), SqlDbType.Variant);
+			type_mapping.Add (typeof (object), SqlDbType.Variant);			
 		}
-
+		
 		public SqlParameter () 
 			: this (String.Empty, SqlDbType.NVarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
@@ -217,7 +238,7 @@ namespace System.Data.SqlClient {
 				break;
 			}
 
-			SetDbTypeName ((string) dbValues [16]);
+			SqlDbType = (SqlDbType) FrameworkDbTypeFromName ((string) dbValues [16]);
 
 			if (MetaParameter.IsVariableSizeType) {
 				if (dbValues [10] != DBNull.Value)
@@ -544,6 +565,82 @@ namespace System.Data.SqlClient {
 			SetSqlDbType ((SqlDbType) t);
 		}
 
+#if NET_2_0
+		// Returns System.Type corresponding to the underlying SqlDbType
+		internal override Type SystemType {
+			get {
+				return (Type) DbTypeMapping [sqlDbType];
+			}
+		}
+		
+		internal override object FrameworkDbType {
+			get {
+				return sqlDbType;
+			}
+			
+			set {
+				object t;
+				try {
+					t = (DbType) DbTypeFromName ((string)value);
+					SetDbType ((DbType)t);
+				} catch (ArgumentException ex) {
+					t = (SqlDbType)FrameworkDbTypeFromName ((string)value);
+					SetSqlDbType ((SqlDbType) t);
+				}
+			}
+		}
+		
+#endif
+		private DbType DbTypeFromName (string name) {
+			switch (name.ToLower ()) {
+				case "ansistring":
+					return DbType.AnsiString;
+				case "ansistringfixedlength":
+					return DbType.AnsiStringFixedLength;
+				case "binary": 
+					return DbType.Binary;
+				case "boolean":
+					return DbType.Boolean;
+				case "byte":
+					return DbType.Byte;
+				case "currency": 
+					return DbType.Currency;
+				case "date":
+					return DbType.Date;
+				case "datetime": 
+					return DbType.DateTime;
+				case "decimal":
+					return DbType.Decimal;
+				case "double": 
+					return DbType.Double;
+				case "guid": 
+					return DbType.Guid;
+				case "int16": 
+					return DbType.Int16;
+				case "int32": 
+					return DbType.Int32;
+				case "int64": 
+					return DbType.Int64;
+				case "object": 
+					return DbType.Object;
+				case "single": 
+					return DbType.Single;
+				case "string": 
+					return DbType.String;
+				case "stringfixedlength": 
+					return DbType.StringFixedLength;
+				case "time": 
+					return DbType.Time;
+#if NET_2_0			
+				case "xml": 
+					return DbType.Xml;
+#endif
+				default:
+					string exception = String.Format ("No mapping exists from {0} to a known DbType.", name);
+					throw new ArgumentException (exception);
+			}
+		}
+		
 		// When the DbType is set, we also set the SqlDbType, as well as the SQL Server
 		// string representation of the type name.  If the DbType is not convertible
 		// to an SqlDbType, throw an exception.
@@ -644,89 +741,63 @@ namespace System.Data.SqlClient {
 		}
 
 		// Used by internal constructor which has a SQL Server typename
-		private void SetDbTypeName (string dbTypeName)
+		private SqlDbType FrameworkDbTypeFromName (string dbTypeName)
 		{
 			switch (dbTypeName.ToLower ()) {	
 			case "bigint":
-				SqlDbType = SqlDbType.BigInt;
-				break;
+				return SqlDbType.BigInt;
 			case "binary":
-				SqlDbType = SqlDbType.Binary;
-				break;
+				return SqlDbType.Binary;
 			case "bit":
-				SqlDbType = SqlDbType.Bit;
-				break;
+				return SqlDbType.Bit;
 			case "char":
-				SqlDbType = SqlDbType.Char;
-				break;
+				return SqlDbType.Char;
 			case "datetime":
-				SqlDbType = SqlDbType.DateTime;
-				break;
+				return SqlDbType.DateTime;
 			case "decimal":
-				SqlDbType = SqlDbType.Decimal;
-				break;
+				return SqlDbType.Decimal;
 			case "float":
-				SqlDbType = SqlDbType.Float;
-				break;
+				return SqlDbType.Float;
 			case "image":
-				SqlDbType = SqlDbType.Image;
-				break;
+				return SqlDbType.Image;
 			case "int":
-				SqlDbType = SqlDbType.Int;
-				break;
+				return SqlDbType.Int;
 			case "money":
-				SqlDbType = SqlDbType.Money;
-				break;
+				return SqlDbType.Money;
 			case "nchar":
-				SqlDbType = SqlDbType.NChar;
-				break;
+				return SqlDbType.NChar;
 			case "ntext":
-				SqlDbType = SqlDbType.NText;
-				break;
+				return SqlDbType.NText;
 			case "nvarchar":
-				SqlDbType = SqlDbType.NVarChar;
-				break;
+				return SqlDbType.NVarChar;
 			case "real":
-				SqlDbType = SqlDbType.Real;
-				break;
+				return SqlDbType.Real;
 			case "smalldatetime":
-				SqlDbType = SqlDbType.SmallDateTime;
-				break;
+				return SqlDbType.SmallDateTime;
 			case "smallint":
-				SqlDbType = SqlDbType.SmallInt;
-				break;
+				return SqlDbType.SmallInt;
 			case "smallmoney":
-				SqlDbType = SqlDbType.SmallMoney;
-				break;
+				return SqlDbType.SmallMoney;
 			case "text":
-				SqlDbType = SqlDbType.Text;
-				break;
+				return SqlDbType.Text;
 			case "timestamp":
-				SqlDbType = SqlDbType.Timestamp;
-				break;
+				return SqlDbType.Timestamp;
 			case "tinyint":
-				SqlDbType = SqlDbType.TinyInt;
-				break;
+				return SqlDbType.TinyInt;
 			case "uniqueidentifier":
-				SqlDbType = SqlDbType.UniqueIdentifier;
-				break;
+				return SqlDbType.UniqueIdentifier;
 			case "varbinary":
-				SqlDbType = SqlDbType.VarBinary;
-				break;
+				return SqlDbType.VarBinary;
 			case "varchar":
-				SqlDbType = SqlDbType.VarChar;
-				break;
+				return SqlDbType.VarChar;
 			case "sql_variant":
-				SqlDbType = SqlDbType.Variant;
-				break;
+				return SqlDbType.Variant;
 #if NET_2_0				
 			case "xml":
-				SqlDbType = SqlDbType.Xml;
-				break;
+				return SqlDbType.Xml;
 #endif
 			default:
-				SqlDbType = SqlDbType.Variant;
-				break;
+				return SqlDbType.Variant;
 			}
 		}
 

@@ -207,7 +207,7 @@ namespace System.Data.Odbc
 		public OdbcType OdbcType {
 			get { return _typeMap.OdbcType; }
 			set {
-				if (value == OdbcType)
+				if (value == _typeMap.OdbcType)
 					return;
 
 				_typeMap = OdbcTypeConverter.GetTypeMap (value);

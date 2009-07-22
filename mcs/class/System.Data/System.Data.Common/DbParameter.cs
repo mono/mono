@@ -31,13 +31,14 @@
 //
 
 #if NET_2_0 || TARGET_JVM
+using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data.Common {
 	public abstract class DbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter
 	{
 		#region Constructors
-
+		internal static Hashtable dbTypeMapping;
 		protected DbParameter ()
 		{
 		}
@@ -92,6 +93,23 @@ namespace System.Data.Common {
 		#region Methods
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public abstract void ResetDbType ();
+		
+		internal virtual object FrameworkDbType {
+			get {return null;}
+			set {}
+		}
+		
+		internal protected static Hashtable DbTypeMapping {
+			get { return dbTypeMapping;}
+			set { dbTypeMapping = value;}
+		}
+		
+		// LAMESPEC: Implementors should populate the dbTypeMapping accordingly
+		internal virtual Type SystemType {
+			get {
+				return (Type) dbTypeMapping [DbType];
+			}
+		}
 		#endregion // Methods
 	}
 }
