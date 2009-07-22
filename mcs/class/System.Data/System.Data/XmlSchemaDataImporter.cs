@@ -159,6 +159,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
@@ -207,7 +208,7 @@ namespace System.Data
 			}
 		}
 	}
-
+	
 	internal class TableStructure
 	{
 		public TableStructure (DataTable table)
@@ -320,7 +321,11 @@ namespace System.Data
 		ArrayList targetElements = new ArrayList ();
 
 		TableStructure currentTable;
-
+	
+#if NET_2_0
+		// TODO: Do we need a collection here?
+		TableAdapterSchemaInfo currentAdapter;
+#endif
 		#endregion
 
 		// .ctor()
@@ -336,6 +341,13 @@ namespace System.Data
 			schema.Compile (null);
 		}
 
+#if NET_2_0
+		// properties
+		internal TableAdapterSchemaInfo CurrentAdapter {
+			get { return currentAdapter; }
+		}
+#endif
+		
 		// methods
 
 		public void Process ()
@@ -1207,13 +1219,304 @@ namespace System.Data
 				if (ai != null) {
 					foreach (XmlNode n in ai.Markup) {
 						XmlElement el = n as XmlElement;
+						
+						// #325464 debugging
+						//Console.WriteLine ("Name: " + el.LocalName + " NS: " + el.NamespaceURI + " Const: " + XmlConstants.MsdataNamespace);
 						if (el != null && el.LocalName == "Relationship" && el.NamespaceURI == XmlConstants.MsdataNamespace)
 							HandleRelationshipAnnotation (el, nested);
+#if NET_2_0
+						if (el != null && el.LocalName == "DataSource" && el.NamespaceURI == XmlConstants.MsdatasourceNamespace)
+							HandleDataSourceAnnotation (el, nested);
+#endif
 					}
 				}
 			}
 		}
 
+#if NET_2_0
+		private void HandleDataSourceAnnotation (XmlElement el, bool nested)
+		{
+			// Handle: Connections and Tables
+			// For Tables: extract the provider information from connection and use
+			// the corresponding providerfactory to create the adapter and et al objects 
+			// and populate them
+			
+			// #325464 debugging
+			//Console.WriteLine ("In HandleDataSourceAnnotation... ");
+			string providerName = null;
+			string connString = null;
+			DbProviderFactory provider;
+			XmlElement e;
+			
+			foreach (XmlNode n in el.ChildNodes) {
+				e = n as XmlElement;
+				
+				if (e != null && e.LocalName == "Connections") {
+					providerName = ((XmlElement)e.FirstChild).GetAttribute ("Provider");
+					connString = ((XmlElement)e.FirstChild).GetAttribute ("AppSettingsPropertyName");
+				}
+				// #325464 debugging
+				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
+				
+				provider = DbProviderFactories.GetFactory (providerName);
+				
+				if (e != null && e.LocalName != "Tables") {
+					continue;
+				} else {
+					foreach (XmlNode node in e.ChildNodes) {
+						ProcessTableAdapter (node as XmlElement, provider, connString);
+					}
+				}
+				// #325464 debugging
+				//Console.WriteLine (e.LocalName);
+			}
+			// #325464 debugging
+			//Console.WriteLine ("... exit");
+		}
+		
+		private void ProcessTableAdapter (XmlElement el, DbProviderFactory provider, string connStr)
+		{
+			XmlElement e;
+			string datasetTableName = null;
+			
+			// #325464 debugging
+			//Console.WriteLine ("in ProcessTableAdapters...");
+			currentAdapter = new TableAdapterSchemaInfo (provider); 
+			currentAdapter.ConnectionString = connStr;
+			
+			//Console.WriteLine ("Provider: {0}, connection: {1}, adapter: {2}", 
+			//                   provider, currentAdapter.Connection, currentAdapter.Adapter);
+			currentAdapter.BaseClass = el.GetAttribute ("BaseClass");
+			datasetTableName = el.GetAttribute ("Name");
+			currentAdapter.Name = el.GetAttribute ("GeneratorDataComponentClassName");
+			
+			if (currentAdapter.Name == null ||
+			    currentAdapter.Name == String.Empty)
+				currentAdapter.Name = el.GetAttribute ("DataAccessorName");
+
+			Console.WriteLine ("Name: "+currentAdapter.Name);
+			foreach (XmlNode n in el.ChildNodes) {
+				e = n as XmlElement;
+				
+				//Console.WriteLine ("Children of Tables: "+e.LocalName);
+				if (e == null)
+					continue;
+				
+				switch (e.LocalName) {
+					case "MainSource": 
+					case "Sources": 
+						foreach (XmlNode msn in e.ChildNodes)
+							ProcessDbSource (msn as XmlElement);
+						break;
+					
+					case "Mappings":
+						DataTableMapping tableMapping = new DataTableMapping ();
+						tableMapping.SourceTable = "Table";
+						tableMapping.DataSetTable = datasetTableName;
+						
+						foreach (XmlNode mps in e.ChildNodes)
+							ProcessColumnMapping (mps as XmlElement, tableMapping);
+						
+						currentAdapter.Adapter.TableMappings.Add (tableMapping);
+						break;						
+				}
+			}
+		}
+		
+		private void ProcessDbSource (XmlElement el)
+		{
+			
+			string cmdType;
+			string tmp = null;
+			XmlElement e;
+			
+			//Console.WriteLine ("ProcessDbSources: "+el.LocalName);
+
+			tmp = el.GetAttribute ("GenerateShortCommands");
+			//Console.WriteLine ("GenerateShortCommands: {0}", tmp);
+			if (tmp != null && tmp != String.Empty)
+				currentAdapter.ShortCommands = Convert.ToBoolean (tmp);
+		
+			DbCommandInfo cmdInfo = new DbCommandInfo ();
+			tmp = el.GetAttribute ("GenerateMethods");
+			if (tmp != null && tmp != String.Empty) {
+				DbSourceMethodInfo mthdInfo = null;
+				
+				switch ((GenerateMethodsType) Enum.Parse (typeof (GenerateMethodsType), tmp)) {
+				case GenerateMethodsType.Get:
+					mthdInfo = new DbSourceMethodInfo ();
+					mthdInfo.Name = el.GetAttribute ("GetMethodName");
+					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
+					if (mthdInfo.Modifier == String.Empty)
+						mthdInfo.Modifier = "Public";
+					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
+					mthdInfo.QueryType = el.GetAttribute ("QueryType");
+					mthdInfo.MethodType = GenerateMethodsType.Get;
+					cmdInfo.Methods = new DbSourceMethodInfo [1];
+					cmdInfo.Methods[0] = mthdInfo;
+					break;
+					
+				case GenerateMethodsType.Fill:
+					mthdInfo = new DbSourceMethodInfo ();
+					mthdInfo.Name = el.GetAttribute ("FillMethodName");
+					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
+					if (mthdInfo.Modifier == String.Empty)
+						mthdInfo.Modifier = "Public";
+					mthdInfo.ScalarCallRetval = null;
+					mthdInfo.QueryType = null;
+					mthdInfo.MethodType = GenerateMethodsType.Fill;
+					cmdInfo.Methods = new DbSourceMethodInfo [1];
+					cmdInfo.Methods[0] = mthdInfo;
+					break;
+					
+				case GenerateMethodsType.Both:
+					mthdInfo = new DbSourceMethodInfo ();
+					// Get
+					mthdInfo.Name = el.GetAttribute ("GetMethodName");
+					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
+					if (mthdInfo.Modifier == String.Empty)
+						mthdInfo.Modifier = "Public";
+					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
+					mthdInfo.QueryType = el.GetAttribute ("QueryType");
+					mthdInfo.MethodType = GenerateMethodsType.Get;
+					cmdInfo.Methods = new DbSourceMethodInfo [2];
+					cmdInfo.Methods[0] = mthdInfo;
+					
+					// Fill
+					mthdInfo = new DbSourceMethodInfo ();
+					mthdInfo.Name = el.GetAttribute ("FillMethodName");
+					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
+					if (mthdInfo.Modifier == String.Empty)
+						mthdInfo.Modifier = "Public";
+					mthdInfo.ScalarCallRetval = null;
+					mthdInfo.QueryType = null;
+					mthdInfo.MethodType = GenerateMethodsType.Fill;
+					cmdInfo.Methods[1] = mthdInfo;
+					break;
+				}
+			} else {
+				// no Get or Fill methods - non <MainSource> sources
+				DbSourceMethodInfo mthdInfo = new DbSourceMethodInfo ();
+				mthdInfo.Name = el.GetAttribute ("Name");
+				mthdInfo.Modifier = el.GetAttribute ("Modifier");
+				if (mthdInfo.Modifier == String.Empty)
+					mthdInfo.Modifier = "Public";
+				mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
+				mthdInfo.QueryType = el.GetAttribute ("QueryType");
+				mthdInfo.MethodType = GenerateMethodsType.None;
+				// Add MethodInfo to DbCommandInfo
+				cmdInfo.Methods = new DbSourceMethodInfo [1];
+				cmdInfo.Methods[0] = mthdInfo;
+			}
+			
+			foreach (XmlNode n in el.ChildNodes) {
+				e = n as XmlElement;
+				
+				if (e != null) {
+					
+					switch (e.LocalName) {
+						case "SelectCommand": 
+							cmdInfo.Command = ProcessDbCommand (e.FirstChild as XmlElement);
+							currentAdapter.Commands.Add (cmdInfo);
+							break;
+						case "InsertCommand": 
+							currentAdapter.Adapter.InsertCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+							break;
+						case "UpdateCommand": 
+							currentAdapter.Adapter.UpdateCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+							break;
+						case "DeleteCommand": 
+							currentAdapter.Adapter.DeleteCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+							break;
+					}
+				}
+			}
+		}
+		
+		private DbCommand ProcessDbCommand (XmlElement el)
+		{
+			XmlElement e;
+			//Console.WriteLine (el.LocalName);
+			string cmdText = null;
+			string cmdType = null;
+			ArrayList parameters = null;
+			
+			cmdType = el.GetAttribute ("CommandType");
+			foreach (XmlNode n in el.ChildNodes) {
+				e = n as XmlElement;
+				if (e != null && e.LocalName == "CommandText")
+					cmdText = e.InnerText;
+				else if (e != null && e.LocalName == "Parameters" && !e.IsEmpty)
+					parameters = ProcessDbParameters (e);
+			}
+			
+			DbCommand cmd = currentAdapter.Provider.CreateCommand ();
+			cmd.CommandText = cmdText;
+			if (cmdType == "StoredProcedure")
+				cmd.CommandType = CommandType.StoredProcedure;
+			else
+				cmd.CommandType = CommandType.Text;
+
+			if (parameters != null)
+				cmd.Parameters.AddRange (parameters.ToArray ());
+			
+			//Console.WriteLine ("Parameters count: {0}", cmd.Parameters.Count);
+			return cmd;
+		}
+		
+		private ArrayList ProcessDbParameters (XmlElement el)
+		{
+			//Console.WriteLine ("ProcessDbParameters: "+el.LocalName);
+			string tmp = null;
+			ArrayList parameters = new ArrayList ();
+			DbParameter param = null;
+			
+			XmlElement e;
+			foreach (XmlNode n in el.ChildNodes) {
+				e = n as XmlElement;
+				
+				if (e == null)
+					continue;
+				param = currentAdapter.Provider.CreateParameter ();
+
+				tmp = e.GetAttribute ("AllowDbNull");
+				if (tmp != null && tmp != String.Empty)
+					param.IsNullable = Convert.ToBoolean (tmp);
+				
+				param.ParameterName = e.GetAttribute ("ParameterName");
+				tmp = e.GetAttribute ("ProviderType");
+				if (tmp == null || tmp == String.Empty)
+					tmp = e.GetAttribute ("DbType");
+				param.FrameworkDbType = tmp;
+				
+				tmp = e.GetAttribute ("Direction");
+				param.Direction = (ParameterDirection) Enum.Parse (typeof (ParameterDirection), tmp);
+				
+				((IDbDataParameter)param).Precision = Convert.ToByte (e.GetAttribute ("Precision"));
+				((IDbDataParameter)param).Scale = Convert.ToByte (e.GetAttribute ("Scale"));
+				param.Size = Convert.ToInt32 (e.GetAttribute ("Size"));
+				param.SourceColumn = e.GetAttribute ("SourceColumn");
+				
+				tmp = e.GetAttribute ("SourceColumnNullMapping");
+				if (tmp != null && tmp != String.Empty)
+					param.SourceColumnNullMapping = Convert.ToBoolean (tmp);
+				
+				tmp = e.GetAttribute ("SourceVersion");
+				param.SourceVersion = (DataRowVersion) Enum.Parse (typeof (DataRowVersion), tmp);				
+				parameters.Add (param);
+			}
+			
+			return parameters;
+		}
+
+		private void ProcessColumnMapping (XmlElement el, DataTableMapping tableMapping)
+		{
+			tableMapping.ColumnMappings.Add (el.GetAttribute ("SourceColumn"), 
+			                                 el.GetAttribute ("DataSetColumn"));
+		}
+		
+#endif
+		
 		private void HandleRelationshipAnnotation (XmlElement el, bool nested)
 		{
 			string name = el.GetAttribute ("name");
