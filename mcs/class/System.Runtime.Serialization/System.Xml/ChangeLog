@@ -1,3 +1,8 @@
+2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReader.cs : ReadValueAsBase64(byte[],int,int) is only
+	  in SL2.
+
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs : read false (0x84) and true (0x86).

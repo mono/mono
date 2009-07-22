@@ -453,10 +453,12 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
+#if NET_2_1
 		public virtual byte [] ReadValueAsBase64 (byte [] bytes, int start, int length)
 		{
 			throw new NotSupportedException (); // as it is documented ...
 		}
+#endif
 
 		public virtual bool TryGetValueAsDictionaryString (out XmlDictionaryString value)
 		{
