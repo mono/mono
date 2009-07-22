@@ -1344,7 +1344,7 @@ namespace Mono.CSharp {
 					return CreateConstantResult (TypeManager.IsEqual (d, t));
 			}
 
-			if (!TypeManager.IsReferenceType (expr.Type))
+			if (TypeManager.IsGenericParameter (expr.Type))
 				expr = new BoxedCast (expr, d);
 
 			return this;
@@ -5429,9 +5429,6 @@ namespace Mono.CSharp {
 				vr.EmitLoad (ec);
 			}
 			
-			if (is_type_parameter)
-				return DoEmitTypeParameter (ec);
-
 			if (Arguments != null)
 				Arguments.Emit (ec);
 
@@ -5446,6 +5443,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+			
+			if (is_type_parameter)
+				return DoEmitTypeParameter (ec);			
 
 			ConstructorInfo ci = (ConstructorInfo) method;
 #if MS_COMPATIBLE
