@@ -80,14 +80,31 @@
 	</Target>
 
 	<Target
+		Name="AssignProjectConfigurations"
+		Condition="'@(ProjectReference)' != ''">
+
+		<Message Text="projectref: @(ProjectReference) ProjectReferenceWithConfiguration: @(ProjectReferenceWithConfiguration)"/>
+		<AssignProjectConfiguration
+			ProjectReferences = "@(ProjectReference)"
+			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)">
+
+			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
+		</AssignProjectConfiguration>
+		<Message Text="after, ProjectReferenceWithConfiguration: config %(ProjectReferenceWithConfiguration.SetConfiguration) %(ProjectReferenceWithConfiguration.SetPlatform)"/>
+	</Target>
+
+
+	<Target
 		Name="ResolveProjectReferences"
-		Condition=" '@(ProjectReference)' != ''"
+		DependsOnTargets="AssignProjectConfigurations"
 	>
 		<!-- FIXME: don't build if building a .sln, since project ref would already have been built -->
 		<MSBuild
-			Projects="@(ProjectReference)"
+			Projects="@(ProjectReferenceWithConfiguration)"
 			Targets="GetTargetPath"
-		>
+			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
+			Condition="'@(ProjectReferenceWithConfiguration)' != ''">
+
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
 	</Target>

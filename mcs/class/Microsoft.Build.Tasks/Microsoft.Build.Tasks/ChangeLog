@@ -1,3 +1,7 @@
+2009-07-23  Ankit Jain  <jankit@novell.com>
+
+	* AssignProjectConfiguration.cs (Execute): Implement.
+
 2009-07-22  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #517974.
