@@ -51,9 +51,27 @@ namespace System.Xml
 		{
 		}
 
+		static XmlException invalidDataException = new XmlException ("invalid data.");
+
 		public override void Close ()
 		{
 			this.input.Close ();
+		}
+
+		public override int Read ([In, Out] char[] dest_buffer, int index, int count)
+		{
+			try {
+				return base.Read (dest_buffer, index, count);
+			}
+#if NET_1_1
+			catch (System.ArgumentException) {
+				throw invalidDataException;
+			}
+#else
+			catch (System.Text.DecoderFallbackException) {
+				throw invalidDataException;
+			}
+#endif
 		}
 
 		protected override void Dispose (bool disposing)

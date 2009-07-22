@@ -1,3 +1,8 @@
+2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlInputStream.cs : cosmetic exception type change. Patch by
+	  Hib Eris. Fixed bug #523971.
+
 2009-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlReaderSettings.cs: Set prohibitDtd when changing the value 

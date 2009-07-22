@@ -1283,5 +1283,17 @@ namespace MonoTests.System.Xml
 			Assert.IsNull (ctx.NamespaceManager, "#1");
 			reader.Read (); // should not raise NRE.
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidUTF ()
+		{
+			byte [] data = new byte [] {0x4d, 0x53, 0x43, 0x46,
+				0x00, 0x00, 0x00, 0x00, 0xab, 0x0a};
+			XmlTextReader xtr = new XmlTextReader (
+				new MemoryStream (data));
+			xtr.Read ();
+		}
+
 	}
 }
