@@ -147,6 +147,7 @@ namespace System.Runtime.Serialization
 			if (KnownTypeCollection.GetPrimitiveTypeFromName (graph_qname.Name) != null) {
 				string value;
 				if (reader.IsEmptyElement) {
+					reader.Read (); // advance
 					if (type.IsValueType)
 						return Activator.CreateInstance (type);
 					else

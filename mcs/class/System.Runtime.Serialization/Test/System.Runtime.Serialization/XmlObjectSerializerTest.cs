@@ -1224,6 +1224,18 @@ namespace MonoTests.System.Runtime.Serialization
 			}
 		}
 
+		[Test]
+		public void Bug524083 ()
+		{
+			string xml = @"
+<AsxEntryInfo xmlns='http://example.com/schemas/asx'>
+	<AdvertPrompt/>
+</AsxEntryInfo>";
+						
+			using (XmlReader reader = XmlReader.Create (new StringReader (xml)))
+				new DataContractSerializer(typeof (AsxEntryInfo)).ReadObject (reader);
+		}
+		
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1545,4 +1557,9 @@ public class PartDummyEntryInfo : DummyEntryInfo
     public PartDummyEntryInfo() {}
 }
 
-
+[DataContract(Namespace="http://example.com/schemas/asx")]
+public class AsxEntryInfo
+{
+    [DataMember]
+    public string AdvertPrompt { get; set; }
+}
