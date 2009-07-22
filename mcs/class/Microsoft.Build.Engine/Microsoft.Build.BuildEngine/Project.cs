@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -75,6 +76,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool				building;
 		BuildSettings			current_settings;
 
+		static string extensions_path;
 		static XmlNamespaceManager	manager;
 		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 
@@ -865,6 +867,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
@@ -1081,6 +1084,24 @@ namespace Microsoft.Build.BuildEngine {
 					null, null, MessageImportance.Low);
 
 			ParentEngine.EventSource.FireMessageRaised (this, bmea);
+		}
+
+		static string ExtensionsPath {
+			get {
+				if (extensions_path == null) {
+					// NOTE: code from mcs/tools/gacutil/driver.cs
+					PropertyInfo gac = typeof (System.Environment).GetProperty (
+							"GacPath", BindingFlags.Static | BindingFlags.NonPublic);
+
+					if (gac != null) {
+						MethodInfo get_gac = gac.GetGetMethod (true);
+						string gac_path = (string) get_gac.Invoke (null, null);
+						extensions_path = Path.GetFullPath (Path.Combine (
+									gac_path, Path.Combine ("..", "xbuild")));
+					}
+				}
+				return extensions_path;
+			}
 		}
 
 		public BuildPropertyGroup EvaluatedProperties {
