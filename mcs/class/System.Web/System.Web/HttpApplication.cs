@@ -1840,12 +1840,19 @@ namespace System.Web {
 			}
 #endif
 
-			type = LoadTypeFromBin (typeName);
+			Exception loadException = null;
+			try {
+				type = null;
+				type = LoadTypeFromBin (typeName);
+			} catch (Exception ex) {
+				loadException = ex;
+			}
+			
 			if (type != null)
 				return type;
 #endif
 			if (throwOnMissing)
-				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName));
+				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName), loadException);
 			
 			return null;
 		}
@@ -1855,7 +1862,18 @@ namespace System.Web {
 			Type type = null;
 			
 			foreach (string s in BinDirectoryAssemblies) {
-				Assembly binA = Assembly.LoadFrom (s);
+				Assembly binA = null;
+				
+				try {
+					binA = Assembly.LoadFrom (s);
+				} catch (FileLoadException) {
+					// ignore
+					continue;
+				} catch (BadImageFormatException) {
+					// ignore
+					continue;
+				}
+				
 				type = binA.GetType (typeName, false);
 				if (type == null)
 					continue;
