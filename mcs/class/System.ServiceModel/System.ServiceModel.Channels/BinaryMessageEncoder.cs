@@ -246,7 +246,7 @@ namespace System.ServiceModel.Channels
 				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
 
 			return Message.CreateMessage (
-				XmlDictionaryReader.CreateBinaryReader (stream, session ? soap_dictionary : null, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), session ? CurrentReaderSession : null),
+				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), session ? CurrentReaderSession : null),
 				maxSizeOfHeaders, MessageVersion);
 		}
 
@@ -254,7 +254,7 @@ namespace System.ServiceModel.Channels
 		{
 			VerifyMessageVersion (message);
 
-			using (var xw = XmlDictionaryWriter.CreateBinaryWriter (stream, session ? soap_dictionary : null, session ? CurrentWriterSession : null))
+			using (var xw = XmlDictionaryWriter.CreateBinaryWriter (stream, soap_dictionary, session ? CurrentWriterSession : null))
 				message.WriteMessage (xw);
 		}
 
