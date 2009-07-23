@@ -11668,6 +11668,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-454.cs">
+    <type name="TestNS.TestCase">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Compare[T](T[], T[])">
+        <size>2</size>
+      </method>
+      <method name="Void DoSomething[T](System.Func`3[T,T,System.Int32])">
+        <size>30</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>19</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
