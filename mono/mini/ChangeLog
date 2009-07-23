@@ -14,6 +14,11 @@
 
 2009-07-20  Geoff Norton  <gnorton@novell.com>
 
+	* mini-x86.h: Fix the x86 version guards to use Apple's
+	properly defined macros.
+
+2009-07-20  Geoff Norton  <gnorton@novell.com>
+
 	* mini-x86.c: Fix --trace on darwin-x86 and other systems which require
 	aligned access.
 
