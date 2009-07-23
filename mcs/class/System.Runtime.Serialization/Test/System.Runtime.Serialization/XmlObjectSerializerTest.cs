@@ -1278,6 +1278,37 @@ vc?crid=45541/part=1/guid=ae968b5d-e4a5-41fe-9b23-ed631b27cd21/</Href>
 			Assert.AreEqual (runtimeType, o.GetType (), "#DS0");
 			return (T)o;
 		}
+
+		public Dictionary<string, object> GenericDictionary (Dictionary<string, object> settings)
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				DataContractSerializer save = new DataContractSerializer (settings.GetType ());
+				save.WriteObject (ms, settings);
+
+				ms.Position = 0;
+
+				DataContractSerializer load = new DataContractSerializer (typeof (Dictionary<string, object>));
+				return (Dictionary<string, object>) load.ReadObject (ms);
+			}
+		}
+
+		[Test]
+		public void GenericDictionaryEmpty ()
+		{
+			Dictionary<string, object> in_settings = new Dictionary<string, object> ();
+			Dictionary<string, object> out_settings = GenericDictionary (in_settings);
+			out_settings.Clear ();
+		}
+
+		[Test]
+		public void GenericDictionaryOneElement ()
+		{
+			Dictionary<string, object> in_settings = new Dictionary<string, object> ();
+			in_settings.Add ("one", "ONE");
+			Dictionary<string, object> out_settings = GenericDictionary (in_settings);
+			Assert.AreEqual ("ONE", out_settings ["one"], "out");
+			out_settings.Clear ();
+		}
  	}
  
 	public enum Colors {
