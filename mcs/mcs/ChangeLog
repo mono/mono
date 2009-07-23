@@ -1,5 +1,10 @@
 2009-07-23  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, delegate.cs: Moved arguments resolve into their
+	counterparts expressions.
+
+2009-07-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #523683
 	* convert.cs, delegate.cs: Use common overload mechanism for method
 	group conversion check.

@@ -4694,6 +4694,12 @@ namespace Mono.CSharp {
 			if (expr_resolved == null)
 				return null;
 
+			//
+			// Next, evaluate all the expressions in the argument list
+			//
+			if (arguments != null && !arguments_resolved)
+				arguments.Resolve (ec);
+
 			mg = expr_resolved as MethodGroupExpr;
 			if (mg == null) {
 				Type expr_type = expr_resolved.Type;
@@ -4722,13 +4728,6 @@ namespace Mono.CSharp {
 				}
 
 				((ExtensionMethodGroupExpr)mg).ExtensionExpression = me.InstanceExpression;
-			}
-
-			//
-			// Next, evaluate all the expressions in the argument list
-			//
-			if (arguments != null && !arguments_resolved) {
-				arguments.Resolve (ec);
 			}
 
 			mg = DoResolveOverload (ec);
@@ -7594,16 +7593,6 @@ namespace Mono.CSharp {
 			this.Arguments = args;
 		}
 
-		bool CommonResolve (EmitContext ec)
-		{
-			Expr = Expr.Resolve (ec);
-
-			if (Arguments != null)
-				Arguments.Resolve (ec);
-
-			return Expr != null;
-		}
-
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
@@ -7622,15 +7611,14 @@ namespace Mono.CSharp {
 			if (Arguments [0] is NamedArgument)
 				Error_NamedArgument ((NamedArgument) Arguments[0]);
 
-			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, Arguments [0].Expr, t, loc).Resolve (ec);
-			if (p == null)
-				return null;
+			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, Arguments [0].Expr.Resolve (ec), t, loc);
 			return new Indirection (p, loc).Resolve (ec);
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!CommonResolve (ec))
+			Expr = Expr.Resolve (ec);
+			if (Expr == null)
 				return null;
 
 			//
@@ -7670,7 +7658,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			if (!CommonResolve (ec))
+			Expr = Expr.Resolve (ec);
+			if (Expr == null)
 				return null;
 
 			type = Expr.Type;
@@ -7763,6 +7752,8 @@ namespace Mono.CSharp {
 
 			if (eclass != ExprClass.Invalid)
 				return this;
+
+			ea.Arguments.Resolve (ec);
 
 			Type t = ea.Expr.Type;
 			int rank = ea.Arguments.Count;
@@ -8290,6 +8281,8 @@ namespace Mono.CSharp {
 
 		Expression ResolveAccessor (EmitContext ec, AccessorType accessorType)
 		{
+			arguments.Resolve (ec);
+
 			if (!CommonResolve (ec))
 				return null;
 

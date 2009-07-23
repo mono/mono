@@ -926,10 +926,6 @@ namespace Mono.CSharp {
 			if (del_type == null)
 				return null;
 			
-			if (Arguments != null){
-				Arguments.Resolve (ec);
-			}
-			
 			if (!Delegate.VerifyApplicability (ec, del_type, ref Arguments, loc))
 				return null;
 
