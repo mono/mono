@@ -568,6 +568,60 @@ namespace System.Web.Compilation
 			InitParser (reader, filename);
 		}
 #endif
+
+		void CheckForDuplicateIds (ControlBuilder root, Stack scopes)
+		{
+			if (root == null)
+				return;
+			
+			if (scopes == null)
+				scopes = new Stack ();
+			
+#if NET_2_0
+			Dictionary <string, bool> ids;
+#else
+			Hashtable ids;
+#endif
+			
+			if (scopes.Count == 0 || root.IsNamingContainer) {
+#if NET_2_0
+				ids = new Dictionary <string, bool> (StringComparer.Ordinal);
+#else
+				ids = new Hashtable ();
+#endif
+				scopes.Push (ids);
+			} else {
+#if NET_2_0
+				ids = scopes.Peek () as Dictionary <string, bool>;
+#else
+				ids = scopes.Peek () as Hashtable;
+#endif
+			}
+			
+			if (ids == null)
+				return;
+
+			ControlBuilder cb;
+			string id;
+			ArrayList children = root.Children;
+			if (children != null) {
+				foreach (object o in children) {
+					cb = o as ControlBuilder;
+					if (cb == null)
+						continue;
+
+					id = cb.ID;
+					if (id == null || id.Length == 0)
+						continue;
+				
+					if (ids.ContainsKey (id))
+						throw new ParseException (cb.Location, "Id '" + id + "' is already used by another control.");
+
+					ids.Add (id, true);
+					CheckForDuplicateIds (cb, scopes);
+				}
+			}
+		}
 		
 		public void Parse (string file)
 		{
@@ -603,6 +657,7 @@ namespace System.Web.Compilation
 					throw new ParseException (stack.Builder.Location,
 								  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
 
+				CheckForDuplicateIds (RootBuilder, null);
 			} finally {
 				if (reader != null)
 					reader.Close ();
@@ -705,8 +760,8 @@ namespace System.Web.Compilation
 
 			string i = new string ('\t', indent);
 			Console.Write (i);
-			Console.WriteLine ("b: {0} id: {1} type: {2} parent: {3}",
-					   builder, builder.ID, builder.ControlType, builder.ParentBuilder);
+			Console.WriteLine ("b: {0}; naming container: {1}; id: {2}; type: {3}; parent: {4}",
+					   builder, builder.IsNamingContainer, builder.ID, builder.ControlType, builder.ParentBuilder);
 
 			if (builder.Children != null)
 			foreach (object o in builder.Children) {
