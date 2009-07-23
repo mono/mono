@@ -446,12 +446,17 @@ namespace System.Web.Compilation {
 			if (skip == -1 || (skip == 0 && app_vpath == "/"))
 				return;
 
-			string slash = (app_vpath.EndsWith ("/") ? "" : "/");
+			if (!app_vpath.EndsWith ("/"))
+				app_vpath = app_vpath + "/";
 			Dictionary<string, PreCompilationData> copy = new Dictionary<string, PreCompilationData> (precompiled);
 			precompiled.Clear ();
 			foreach (KeyValuePair<string,PreCompilationData> entry in copy) {
 				parts = entry.Key.Split ('/');
-				string new_path = app_vpath + slash + String.Join ("/", parts, skip, parts.Length - skip);
+				string new_path;
+				if (String.IsNullOrEmpty (parts [0]))
+					new_path = app_vpath + String.Join ("/", parts, skip + 1, parts.Length - skip - 1);
+				else
+					new_path = app_vpath + String.Join ("/", parts, skip, parts.Length - skip);
 				entry.Value.VirtualPath = new_path;
 				precompiled.Add (new_path, entry.Value);
 			}
