@@ -257,6 +257,9 @@ namespace System.Net
 			if (headerName == "") // MS throw nullexception here!
 				throw new ArgumentException ("empty string", "headerName");
 
+			if (!IsHeaderName (headerName))
+				throw new ArgumentException ("Invalid character in header");
+
 			return restricted.ContainsKey (headerName);
 		}
 
@@ -265,6 +268,10 @@ namespace System.Net
 		{
 			if (String.IsNullOrEmpty (headerName))
 				throw new ArgumentNullException ("headerName");
+
+			if (!IsHeaderName (headerName))
+				throw new ArgumentException ("Invalid character in header");
+
 
 			if (response)
 				return restricted_response.ContainsKey (headerName);
@@ -681,31 +688,30 @@ namespace System.Net
 		
 		internal static bool IsHeaderName (string name)
 		{
-			// token          = 1*<any CHAR except CTLs or tspecials>
-			// tspecials      = "(" | ")" | "<" | ">" | "@"
-			//                | "," | ";" | ":" | "\" | <">
-			//                | "/" | "[" | "]" | "?" | "="
-			//                | "{" | "}" | SP | HT
-			
 			if (name == null || name.Length == 0)
 				return false;
 
 			int len = name.Length;
 			for (int i = 0; i < len; i++) {			
 				char c = name [i];
-				if (c < 0x20 || c >= 0x7f)
+				if (c > 126 || !allowed_chars [(int) c])
 					return false;
 			}
 			
-			return name.IndexOfAny (tspecials) == -1;
+			return true;
 		}
 
-		private static char [] tspecials = 
-				new char [] {'(', ')', '<', '>', '@',
-					     ',', ';', ':', '\\', '"',
-					     '/', '[', ']', '?', '=',
-					     '{', '}', ' ', '\t'};
-							
+		static bool [] allowed_chars = new bool [126] {
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
+			true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
+			false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, true, false
+			};
 	}
 }
 
