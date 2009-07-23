@@ -1,3 +1,10 @@
+2009-07-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGrid.cs: Use click handlers for each ToolStripButton instead
+	of using a global handler for the ToolStrip. This way the buttons can
+	be recovered and can have its PerformClick method called properly.
+	Fixes #522454.
+
 2009-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: Implement support for XdndActionList, so we can get the

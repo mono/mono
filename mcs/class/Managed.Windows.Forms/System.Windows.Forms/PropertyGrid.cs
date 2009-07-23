@@ -174,7 +174,9 @@ namespace System.Windows.Forms
 								      new PropertyToolBarSeparator (),
 								      propertypages_toolbarbutton});
 			//toolbar.ButtonSize = new System.Drawing.Size (20, 20);
-			toolbar.ItemClicked += new ToolStripItemClickedEventHandler (toolbar_ButtonClick);
+			categorized_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
+			alphabetic_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
+			propertypages_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
 #else
 			toolbar.Buttons.AddRange(new ToolBarButton [] {categorized_toolbarbutton,
 								      alphabetic_toolbarbutton,
@@ -898,6 +900,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		private void toolbarbutton_clicked (object o, EventArgs args)
+		{
+			toolbar_Clicked (o as PropertyToolBarButton);
+		}
+#endif
+
 		private void SelectPropertyTab (PropertyTab propertyTab)
 		{
 			if (propertyTab != null && selected_tab != propertyTab) {
@@ -1560,12 +1569,7 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-#if NET_2_0
-		private void toolbar_ButtonClick (object sender, ToolStripItemClickedEventArgs e)
-		{
-			toolbar_Clicked (e.ClickedItem as PropertyToolBarButton);
-		}
-#else
+#if !NET_2_0
 		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e)
 		{
 			toolbar_Clicked (e.Button as PropertyToolBarButton);
