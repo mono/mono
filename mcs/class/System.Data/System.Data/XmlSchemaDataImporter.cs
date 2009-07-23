@@ -1245,8 +1245,8 @@ namespace System.Data
 			//Console.WriteLine ("In HandleDataSourceAnnotation... ");
 			string providerName = null;
 			string connString = null;
-			DbProviderFactory provider;
-			XmlElement e;
+			DbProviderFactory provider = null;
+			XmlElement e, tablesElement = null;
 			
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
@@ -1257,23 +1257,21 @@ namespace System.Data
 				if (e.LocalName == "Connections") {
 					providerName = ((XmlElement)e.FirstChild).GetAttribute ("Provider");
 					connString = ((XmlElement)e.FirstChild).GetAttribute ("AppSettingsPropertyName");
+					provider = DbProviderFactories.GetFactory (providerName);
 					continue;
 				}
 				// #325464 debugging
 				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
 				
-				provider = DbProviderFactories.GetFactory (providerName);
-				
-				if (e.LocalName == "Tables") {
-					foreach (XmlNode node in e.ChildNodes) {
-						ProcessTableAdapter (node as XmlElement, provider, connString);
-					}
-				}
-				// #325464 debugging
-				//Console.WriteLine (e.LocalName);
+				if (e.LocalName == "Tables")
+					tablesElement = e;
 			}
-			// #325464 debugging
-			//Console.WriteLine ("... exit");
+				
+			if (tablesElement != null && provider != null) {
+				foreach (XmlNode node in tablesElement.ChildNodes) {
+					ProcessTableAdapter (node as XmlElement, provider, connString);
+				}
+			}
 		}
 		
 		private void ProcessTableAdapter (XmlElement el, DbProviderFactory provider, string connStr)

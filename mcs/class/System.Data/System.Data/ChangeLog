@@ -1,5 +1,10 @@
 2009-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* XmlSchemaDataImporter.cs (HandleDataSourceAnnotation): Don't rely 
+	on the order of elements.
+	
+2009-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* XmlSchemaDataImporter.cs: String.IsNullOrEmpty changes
 	
 2009-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
