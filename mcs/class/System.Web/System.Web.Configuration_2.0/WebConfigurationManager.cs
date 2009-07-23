@@ -490,7 +490,7 @@ namespace System.Web.Configuration {
 			if (req == null)
 				return path;
 
-			curPath = dir;
+			curPath = path;
 			string rootPath = HttpRuntime.AppDomainAppVirtualPath;
 			string physPath;
 
