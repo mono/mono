@@ -81,9 +81,6 @@ namespace System.Reflection
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern ConstructorInfo[] GetConstructors_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -229,7 +226,7 @@ namespace System.Reflection
 			do {
 				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
-					l.AddRange (gi.GetMethods_impl (bf, this));
+					l.AddRange (gi.GetMethodsInternal (bf, this));
 				else if (current_type is TypeBuilder)
 					l.AddRange (current_type.GetMethods (bf));
 				else {
@@ -251,18 +248,20 @@ namespace System.Reflection
 			return result;
 		}
 
-		protected MethodInfo[] GetMethods_impl (BindingFlags bf, Type reftype)
+		MethodInfo[] GetMethodsInternal (BindingFlags bf, MonoGenericClass reftype)
 		{
+			if (generic_type.num_methods == 0)
+				return new MethodInfo [0];
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
+			MethodInfo accessor;
 
 			initialize ();
 
-			MethodInfo[] methods = GetMethods_internal (reftype);
-
-			for (int i = 0; i < methods.Length; i++) {
-				MethodInfo c = methods [i];
+			for (int i = 0; i < generic_type.num_methods; ++i) {
+				MethodInfo c = generic_type.methods [i];
 
 				match = false;
 				mattrs = c.Attributes;
@@ -285,8 +284,10 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
+				c = TypeBuilder.GetMethod (this, c);
 				l.Add (c);
 			}
+
 			MethodInfo[] result = new MethodInfo [l.Count];
 			l.CopyTo (result);
 			return result;
@@ -465,6 +466,8 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 			MethodInfo accessor;
+
+			initialize ();
 
 			foreach (PropertyInfo pinfo in generic_type.properties) {
 				match = false;

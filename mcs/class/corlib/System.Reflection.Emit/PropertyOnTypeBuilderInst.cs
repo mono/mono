@@ -104,7 +104,7 @@ namespace System.Reflection.Emit
 		{
 			MethodInfo mi = prop.GetGetMethod (nonPublic);
 			if (mi != null && prop.DeclaringType == instantiation.generic_type) {
-				mi = instantiation.GetCorrespondingInflatedMethod (mi); //FIXME unify this with TypeBuiler.GetMethod
+				mi = TypeBuilder.GetMethod (instantiation, mi);
 			}
 			return mi; 
 		}
@@ -121,7 +121,7 @@ namespace System.Reflection.Emit
 		{
 			MethodInfo mi = prop.GetSetMethod (nonPublic);
 			if (mi != null && prop.DeclaringType == instantiation.generic_type) {
-				mi = instantiation.GetCorrespondingInflatedMethod (mi); //FIXME unify this with TypeBuiler.GetMethod
+				mi = TypeBuilder.GetMethod (instantiation, mi);
 			}
 			return mi; 
 		}

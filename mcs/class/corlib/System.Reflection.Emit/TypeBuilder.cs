@@ -59,8 +59,8 @@ namespace System.Reflection.Emit
 		private Type parent;
 		private Type nesting_type;
 		private Type[] interfaces;
-		private int num_methods;
-		private MethodBuilder[] methods;
+		internal int num_methods;
+		internal MethodBuilder[] methods;
 		private ConstructorBuilder[] ctors;
 		internal PropertyBuilder[] properties;
 		private int num_fields;

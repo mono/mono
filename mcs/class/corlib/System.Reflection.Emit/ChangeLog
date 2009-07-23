@@ -1,3 +1,12 @@
+2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyOnTypeBuilderInst.cs: Use TypeBuilder::GetMethod instead of
+	MonoGenericClass::GetCorrespondingInflatedMethod. This is possible
+	since the returned methods of MonoGenericClass::GetMethods have been
+	unified with TypeBuilder::GetMethod.
+
+	* TypeBuilder.cs: Make property related fields internal.
+
 2009-07-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInst.cs: Implement ToString to help debugging.
