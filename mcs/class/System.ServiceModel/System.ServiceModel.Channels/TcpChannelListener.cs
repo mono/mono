@@ -65,6 +65,22 @@ namespace System.ServiceModel.Channels
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
+			TcpClient client = AcceptTcpClient (timeout);
+			if (client == null)
+				return null; // onclose
+
+			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
+				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
+
+			if (typeof (TChannel) == typeof (IReplyChannel))
+				return (TChannel) (object) new TcpReplyChannel (this, info, client);
+
+			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
+		}
+
+		// TcpReplyChannel requires refreshed connection after each request processing.
+		internal TcpClient AcceptTcpClient (TimeSpan timeout)
+		{
 			TcpClient client = null;
 			if (tcp_listener.Pending ()) {
 				client = tcp_listener.AcceptTcpClient ();
@@ -80,16 +96,7 @@ namespace System.ServiceModel.Channels
 				accept_handles.Add (wait);
 				wait.WaitOne (timeout);
 			}
-			if (client == null)
-				return null; // onclose
-
-			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
-
-			if (typeof (TChannel) == typeof (IReplyChannel))
-				return (TChannel) (object) new TcpReplyChannel (this, info, client);
-
-			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
+			return client;
 		}
 
 		[MonoTODO]

@@ -1,5 +1,11 @@
 2009-07-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpChannelListener.cs, TcpReplyChannel.cs, TcpRequestChannel.cs:
+	  Acquire TcpClient for each request/reply. Now it is fully
+	  interoperable with .NET.
+
+2009-07-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpReplyChannel.cs, TcpRequestChannel.cs: it somehow adds/expects
 	  ReplyTo and MessageId (though it is session-less), and it expects
 	  EndRecord at weird stage, inconsistent with [MC-NMF]...

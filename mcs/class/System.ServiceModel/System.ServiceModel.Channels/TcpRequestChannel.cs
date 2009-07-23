@@ -66,6 +66,10 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+		}
+
+		void CreateClient (TimeSpan timeout)
+		{
 			int explicitPort = RemoteAddress.Uri.Port;
 			client = new TcpClient (RemoteAddress.Uri.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 			
@@ -82,6 +86,8 @@ namespace System.ServiceModel.Channels
 		{
 			DateTime start = DateTime.Now;
 
+			CreateClient (timeout);
+
 			if (input.Headers.To == null)
 				input.Headers.To = RemoteAddress.Uri;
 			if (input.Headers.ReplyTo == null)
@@ -89,7 +95,7 @@ namespace System.ServiceModel.Channels
 			if (input.Headers.MessageId == null)
 				input.Headers.MessageId = new UniqueId ();
 
-			frame.WriteUnsizedMessage (input, timeout);
+			frame.WriteUnsizedMessage (input, timeout - (DateTime.Now - start));
 
 			// It somehow sends EndRecord now ...
 			frame.ProcessEndRecordInitiator ();

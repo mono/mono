@@ -96,6 +96,8 @@ namespace System.ServiceModel.Channels
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
 				owner.frame.ProcessEndRecordInitiator ();
+				owner.client.Close ();
+				owner.client = null;
 			}
 		}
 
@@ -127,12 +129,15 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (client != null)
-				client.Close ();
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
+			if (client == null)
+				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
+
+			// FIXME: use timeout
 			NetworkStream ns = client.GetStream ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
 			frame.ProcessPreambleRecipient ();
