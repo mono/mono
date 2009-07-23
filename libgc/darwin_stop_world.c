@@ -2,6 +2,7 @@
 
 # if defined(GC_DARWIN_THREADS)
 
+#include <AvailabilityMacros.h>
 #include "mono/utils/mono-compiler.h"
 
 #ifdef MONO_DEBUGGER_SUPPORTED
@@ -111,7 +112,8 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) ABORT("thread_get_state failed");
 	
 #if defined(I386)
-#if defined(_STRUCT_X86_EXCEPTION_STATE32)
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+
 	lo = state.__esp;
 
 	GC_push_one(state.__eax); 
@@ -356,7 +358,7 @@ void GC_push_all_stacks() {
 			     (natural_t *)&info, &outCount);
 	if(r != KERN_SUCCESS) continue;
 
-#if defined(_STRUCT_X86_EXCEPTION_STATE32)
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
 	lo = (void*)info.__esp;
 	hi = (ptr_t)FindTopOfStack(info.__esp);
 
