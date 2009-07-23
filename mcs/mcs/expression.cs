@@ -9144,14 +9144,14 @@ namespace Mono.CSharp {
 		}
 
 		public CollectionElementInitializer (Expression argument)
-			: base (null, new Arguments (1), true)
+			: base (null, new Arguments (1))
 		{
 			base.arguments.Add (new ElementInitializerArgument (argument));
 			this.loc = argument.Location;
 		}
 
 		public CollectionElementInitializer (ArrayList arguments, Location loc)
-			: base (null, new Arguments (arguments.Count), true)
+			: base (null, new Arguments (arguments.Count))
 		{
 			foreach (Expression e in arguments)
 				base.arguments.Add (new ElementInitializerArgument (e));
@@ -9184,11 +9184,6 @@ namespace Mono.CSharp {
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
-
-			// TODO: We could call a constructor which takes element count argument,
-			// for known types like List<T>, Dictionary<T, U>
-
-			arguments.Resolve (ec);
 
 			base.expr = new AddMemberAccess (ec.CurrentInitializerVariable, loc);
 
