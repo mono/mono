@@ -61,7 +61,7 @@ namespace System.Reflection.Emit
 		private Type[] interfaces;
 		internal int num_methods;
 		internal MethodBuilder[] methods;
-		private ConstructorBuilder[] ctors;
+		internal ConstructorBuilder[] ctors;
 		internal PropertyBuilder[] properties;
 		internal int num_fields;
 		internal FieldBuilder[] fields;

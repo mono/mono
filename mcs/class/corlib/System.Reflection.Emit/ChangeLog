@@ -1,5 +1,14 @@
 2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ConstructorBuilder.cs: Make parameters and pinfo fields internal.
+
+	* ConstructorOnTypeBuilderInst.cs: Build it under BOOTSTRAP_NET_2_0.
+	Properly implement GetParameters under compiler context.
+
+	* TypeBuilder.cs: Make ctors field internal.
+
+2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* FieldOnTypeBuilderInst.cs: Implement MetadataToken and FieldToken
 	for compiler context.
 

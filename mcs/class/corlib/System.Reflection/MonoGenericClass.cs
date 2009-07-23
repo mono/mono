@@ -57,9 +57,7 @@ namespace System.Reflection
 #pragma warning restore 649
 		#endregion
 
-#if NET_2_0
 		Hashtable fields, ctors, methods;
-#endif
 
 		internal MonoGenericClass ()
 			: base (null)
@@ -77,12 +75,6 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern FieldInfo GetCorrespondingInflatedField (string generic);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern ConstructorInfo[] GetConstructors_internal (Type reflected_type);
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
 
@@ -178,19 +170,16 @@ namespace System.Reflection
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
 			initialize ();
-		
-#if NET_2_0
-			if (fromNoninstanciated is ConstructorBuilder) {
-				ConstructorBuilder cb = (ConstructorBuilder)fromNoninstanciated;
-				if (ctors == null)
-					ctors = new Hashtable ();
-				if (!ctors.ContainsKey (cb))
-					ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
-				return (ConstructorInfo)ctors [cb];
-			}
-			
-#endif
-			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
+
+			if (!(fromNoninstanciated is ConstructorBuilder))
+				throw new InvalidOperationException ("Inflating non ConstructorBuilder objects is not supported: " + fromNoninstanciated.GetType ());
+
+			ConstructorBuilder cb = (ConstructorBuilder)fromNoninstanciated;
+			if (ctors == null)
+				ctors = new Hashtable ();
+			if (!ctors.ContainsKey (cb))
+				ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
+			return (ConstructorInfo)ctors [cb];
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
@@ -298,7 +287,7 @@ namespace System.Reflection
 			do {
 				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
-					l.AddRange (gi.GetConstructors_impl (bf, this));
+					l.AddRange (gi.GetConstructorsInternal (bf, this));
 				else if (current_type is TypeBuilder)
 					l.AddRange (current_type.GetConstructors (bf));
 				else {
@@ -317,18 +306,19 @@ namespace System.Reflection
 			return result;
 		}
 
-		protected ConstructorInfo[] GetConstructors_impl (BindingFlags bf, Type reftype)
+		ConstructorInfo[] GetConstructorsInternal (BindingFlags bf, MonoGenericClass reftype)
 		{
+			if (generic_type.ctors == null)
+				return new ConstructorInfo [0];
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 
 			initialize ();
 
-			ConstructorInfo[] ctors = GetConstructors_internal (reftype);
-
-			for (int i = 0; i < ctors.Length; i++) {
-				ConstructorInfo c = ctors [i];
+			for (int i = 0; i < generic_type.ctors.Length; i++) {
+				ConstructorInfo c = generic_type.ctors [i];
 
 				match = false;
 				mattrs = c.Attributes;
@@ -351,7 +341,7 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
-				l.Add (c);
+				l.Add (TypeBuilder.GetConstructor (this, c));
 			}
 
 			ConstructorInfo[] result = new ConstructorInfo [l.Count];

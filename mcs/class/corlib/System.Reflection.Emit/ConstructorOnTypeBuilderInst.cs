@@ -31,7 +31,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 
 namespace System.Reflection.Emit
 {
@@ -99,7 +99,15 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo[] GetParameters ()
 		{
-			return cb.GetParameters ();
+			if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext)
+				throw new NotSupportedException ();
+
+			ParameterInfo [] res = new ParameterInfo [cb.parameters.Length];
+			for (int i = 0; i < cb.parameters.Length; i++) {
+				Type type = instantiation.InflateType (cb.parameters [i]);
+				res [i] = new ParameterInfo (cb.pinfo == null ? null : cb.pinfo [i], type, this, i);
+			}
+			return res;
 		}
 
 		public override int MetadataToken {
