@@ -57,12 +57,14 @@ namespace System.Web.Compilation
 			public readonly string Value;
 			public readonly int Position;
 			public readonly int CurrentToken;
+			public readonly bool InTag;
 			
-			public PutBackItem (string value, int position, int currentToken)
+			public PutBackItem (string value, int position, int currentToken, bool inTag)
 			{
 				Value = value;
 				Position = position;
 				CurrentToken = currentToken;
+				InTag = inTag;
 			}
 		}
 		
@@ -118,7 +120,7 @@ namespace System.Web.Compilation
 				putBackBuffer = new Stack ();
 
 			string val = Value;
-			putBackBuffer.Push (new PutBackItem (val, position, current_token));
+			putBackBuffer.Push (new PutBackItem (val, position, current_token, inTag));
 			position -= val.Length;
 		}
 		
@@ -132,6 +134,7 @@ namespace System.Web.Compilation
 				val = null;
 				sb = new StringBuilder (pbi.Value);
 				current_token = pbi.CurrentToken;
+				inTag = pbi.InTag;
 				return current_token;
 			}
 

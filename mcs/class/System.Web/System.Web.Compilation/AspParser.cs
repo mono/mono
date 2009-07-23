@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2004-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -154,7 +156,8 @@ namespace System.Web.Compilation
 
 		bool Eat (int expected_token)
 		{
-			if (tokenizer.get_token () != expected_token) {
+			int token = tokenizer.get_token ();
+			if (token != expected_token) {
 				tokenizer.put_back ();
 				return false;
 			}
@@ -227,7 +230,7 @@ namespace System.Web.Compilation
 						continue;
 					}
 
-					if (tokenizer.Value.Trim () == "" && tagtype == TagType.Directive) {
+					if (tokenizer.Value.Trim ().Length == 0 && tagtype == TagType.Directive) {
 						continue;
 					}
 
@@ -381,9 +384,24 @@ namespace System.Web.Compilation
 
 				break;
 			default:
+				string idvalue = null;
+				// This is to handle code like:
+				//
+				//  <asp:ListItem runat="server"> < </asp:ListItem>
+				//
+				if ((char)token == '<') {
+					string odds = tokenizer.Odds;
+					if (odds != null && odds.Length > 0 && Char.IsWhiteSpace (odds [0])) {
+						tokenizer.put_back ();
+						idvalue = odds;
+					} else
+						idvalue = tokenizer.Value;
+				} else
+					idvalue = tokenizer.Value;
+				
 				tagtype = TagType.Text;
 				tokenizer.InTag = false;
-				id = "<" + tokenizer.Value;
+				id = "<" + idvalue;
 				break;
 			}
 		}
