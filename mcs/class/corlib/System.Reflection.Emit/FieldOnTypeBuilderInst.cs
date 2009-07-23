@@ -100,10 +100,19 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override int MetadataToken {
+			get {
+				if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+					throw new InvalidOperationException ();
+				return fb.MetadataToken;
+			} 
+		}
+
 		public override Type FieldType {
 			get {
-				// FIXME:
-				throw new NotImplementedException ();
+				if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+					throw new NotSupportedException ();
+				return instantiation.InflateType (fb.FieldType);
 			}
 		}
 

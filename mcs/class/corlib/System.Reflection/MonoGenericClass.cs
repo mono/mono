@@ -84,9 +84,6 @@ namespace System.Reflection
 		protected extern ConstructorInfo[] GetConstructors_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern FieldInfo[] GetFields_internal (Type reflected_type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
@@ -370,7 +367,7 @@ namespace System.Reflection
 			do {
 				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
-					l.AddRange (gi.GetFields_impl (bf, this));
+					l.AddRange (gi.GetFieldsInternal (bf, this));
 				else if (current_type is TypeBuilder)
 					l.AddRange (current_type.GetFields (bf));
 				else {
@@ -389,18 +386,19 @@ namespace System.Reflection
 			return result;
 		}
 
-		protected FieldInfo[] GetFields_impl (BindingFlags bf, Type reftype)
+		FieldInfo[] GetFieldsInternal (BindingFlags bf, MonoGenericClass reftype)
 		{
+			if (generic_type.num_fields == 0)
+				return new FieldInfo [0];
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			FieldAttributes fattrs;
 
 			initialize ();
 
-			FieldInfo[] fields = GetFields_internal (reftype);
-
-			for (int i = 0; i < fields.Length; i++) {
-				FieldInfo c = fields [i];
+			for (int i = 0; i < generic_type.num_fields; i++) {
+				FieldInfo c = generic_type.fields [i];
 
 				match = false;
 				fattrs = c.Attributes;
@@ -423,8 +421,9 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
-				l.Add (c);
+				l.Add (TypeBuilder.GetField (this, c));
 			}
+
 			FieldInfo[] result = new FieldInfo [l.Count];
 			l.CopyTo (result);
 			return result;

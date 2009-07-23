@@ -1,5 +1,12 @@
 2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* FieldOnTypeBuilderInst.cs: Implement MetadataToken and FieldToken
+	for compiler context.
+
+	* TypeBuilder.cs: Make FieldBuilder related fields internal.
+
+2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* PropertyOnTypeBuilderInst.cs: Use TypeBuilder::GetMethod instead of
 	MonoGenericClass::GetCorrespondingInflatedMethod. This is possible
 	since the returned methods of MonoGenericClass::GetMethods have been

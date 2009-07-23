@@ -63,8 +63,8 @@ namespace System.Reflection.Emit
 		internal MethodBuilder[] methods;
 		private ConstructorBuilder[] ctors;
 		internal PropertyBuilder[] properties;
-		private int num_fields;
-		private FieldBuilder[] fields;
+		internal int num_fields;
+		internal FieldBuilder[] fields;
 		private EventBuilder[] events;
 		private CustomAttributeBuilder[] cattrs;
 		internal TypeBuilder[] subtypes;
