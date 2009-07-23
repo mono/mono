@@ -1,3 +1,9 @@
+2009-07-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SerializationMap.cs : Ensure Dictionary is still deserialized
+	correctly (wrt previous change). Fix moonlight isolated storage
+	settings.
+
 2009-07-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : for empty element, do not try to consume
