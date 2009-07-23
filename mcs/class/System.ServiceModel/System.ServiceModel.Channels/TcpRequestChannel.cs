@@ -86,8 +86,8 @@ namespace System.ServiceModel.Channels
 
 			frame.WriteUnsizedMessage (input, timeout);
 			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
-			frame.WriteUnsizedMessageTerminator (timeout - (DateTime.Now - start));
 			frame.ProcessEndRecordInitiator ();
+			frame.ProcessEndRecordRecipient (); // both
 			return ret;
 		}
 	}

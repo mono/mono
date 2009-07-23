@@ -1,5 +1,11 @@
 2009-07-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpReplyChannel.cs, TcpRequestChannel.cs, TcpBinaryFrameManager.cs:
+	  Send and receive unsized message terminator at once.
+	  Send EndRecord mutually. Got one .net client request working.
+
+2009-07-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncoder.cs : revert the previous dictionary change.
 	  They are indeed used for non-in-band-dictionary messages.
 

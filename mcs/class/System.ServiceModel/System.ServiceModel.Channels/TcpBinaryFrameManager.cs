@@ -309,14 +309,11 @@ namespace System.ServiceModel.Channels
 			// FIXME: supply maxSizeOfHeaders.
 			Message msg = Encoder.ReadMessage (ms, 0x10000);
 
-			return msg;
-		}
-
-		public void ReadUnsizedMessageTerminator (TimeSpan timeout)
-		{
 			var terminator = s.ReadByte ();
 			if (terminator != UnsizedMessageTerminator)
 				throw new InvalidOperationException (String.Format ("Unsized message terminator is expected. Got '{0}' (&#x{1:X};).", (char) terminator, terminator));
+
+			return msg;
 		}
 
 		byte [] eof_buffer = new byte [1];
@@ -381,12 +378,7 @@ namespace System.ServiceModel.Channels
 			Encoder.WriteMessage (message, buffer);
 			new MyBinaryWriter (s).WriteVariableInt ((int) buffer.Position);
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
-			s.Flush ();
-		}
 
-		// FIXME: handle timeout
-		public void WriteUnsizedMessageTerminator (TimeSpan timeout)
-		{
 			s.WriteByte (UnsizedMessageTerminator); // terminator
 			s.Flush ();
 		}

@@ -90,8 +90,8 @@ namespace System.ServiceModel.Channels
 			{
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
-				owner.frame.ReadUnsizedMessageTerminator (timeout - (DateTime.Now - start));
 				owner.frame.ProcessEndRecordRecipient ();
+				owner.frame.ProcessEndRecordInitiator ();
 			}
 		}
 
