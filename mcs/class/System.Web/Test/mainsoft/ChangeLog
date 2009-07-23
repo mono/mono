@@ -1,3 +1,7 @@
+2009-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWebResources/ServerControlInClientSideComment.aspx: added
+
 2008-12-23  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWeb/Makefile (NunitWeb.dll): added NunitWeb/CustomSection.cs

@@ -42,6 +42,10 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Web.Compilation
 {
 	class BuilderLocation
@@ -952,6 +956,77 @@ namespace System.Web.Compilation
 		{
 			if (ignore_text)
 				return;
+			
+			// Another gross hack - get rid of comments in the parsed text
+			int textLen = text.Length;
+			int textMaxIndex = textLen - 1;
+			int commentStart = text.IndexOf ("<!--");
+			int commentLastStart = 0;
+#if NET_2_0
+			List <int> commentRanges = null;
+#else
+			ArrayList commentRanges = null;
+#endif
+
+			while (commentStart != -1) {
+				int commentEnd = text.IndexOf ("-->", commentStart);
+
+				if (commentEnd == -1) {
+					if (commentStart == 0)
+						return;
+					commentEnd = textMaxIndex;
+				}
+
+				if (commentRanges == null) {
+#if NET_2_0
+					commentRanges = new List <int> ();
+#else
+					commentRanges = new ArrayList ();
+#endif
+				}
+
+				if (commentStart > commentLastStart) {
+					commentRanges.Add (commentLastStart);
+					commentRanges.Add (commentStart);
+				}
+
+				if (commentEnd == textMaxIndex)
+					break;
+				
+				commentLastStart = commentEnd + 3;
+				if (commentLastStart > textMaxIndex)
+					break;
+				
+				commentStart = text.IndexOf ("<!--", commentLastStart);
+				if (commentStart == -1) {
+					int tailLength = textMaxIndex - commentLastStart;
+					if (tailLength > 0) {
+						commentRanges.Add (commentLastStart);
+						commentRanges.Add (tailLength);
+					}
+					break;
+				}
+			}
+
+			if (commentRanges != null) {
+				if (commentRanges.Count == 0)
+					return;
+				
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < commentRanges.Count; i += 2) {
+#if NET_2_0
+					sb.Append (text.Substring (commentRanges [i], commentRanges [i + 1]));
+#else
+					sb.Append (text.Substring ((int)commentRanges [i], (int)commentRanges [i + 1]));
+#endif
+				}
+
+				string noComments = sb.ToString ().Trim ();
+				if (noComments.Length == 0)
+					return;
+
+				text = noComments;
+			}
 
 			// And again... the first one wins - if we have expressions and server-side
 			// controls together in one block of plain text, tough luck...
@@ -965,7 +1040,6 @@ namespace System.Web.Compilation
 
 			int startIndex = 0, index = 0;
 			Match match;
-			int textLen = text.Length;
 
 			while (index > -1 && startIndex < textLen) {
 				match = runatServer.Match (text, index);
