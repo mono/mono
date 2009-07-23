@@ -490,7 +490,7 @@ namespace System.Web.Configuration {
 			if (req == null)
 				return path;
 
-			curPath = path;
+			curPath = dir;
 			string rootPath = HttpRuntime.AppDomainAppVirtualPath;
 			string physPath;
 
@@ -505,7 +505,7 @@ namespace System.Web.Configuration {
 					break;
 				
 				curPath = GetParentDir (rootPath, curPath);
-				if (curPath == null) {
+				if (curPath == null || curPath == "~") {
 					curPath = rootPath;
 					break;
 				}
