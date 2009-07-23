@@ -479,71 +479,6 @@ namespace Mono.CSharp {
 			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
 		
-		/// <summary>
-		///  Verifies whether the method in question is compatible with the delegate
-		///  Returns the method itself if okay and null if not.
-		/// </summary>
-		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
-						       MethodGroupExpr old_mg, MethodBase mb)
-		{
-			bool is_method_definition = TypeManager.IsGenericMethodDefinition (mb);
-			
-			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
-			if (invoke_mb == null)
-				return null;
-				
-			if (is_method_definition)
-				invoke_mb = (MethodInfo) TypeManager.DropGenericMethodArguments (invoke_mb);
-
-			AParametersCollection invoke_pd = TypeManager.GetParameterData (invoke_mb);
-
-#if GMCS_SOURCE
-			if (!is_method_definition && old_mg.type_arguments == null &&
-			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
-				return null;
-#endif
-			AParametersCollection pd = TypeManager.GetParameterData (mb);
-
-			if (invoke_pd.Count != pd.Count)
-				return null;
-
-			for (int i = pd.Count; i > 0; ) {
-				i--;
-
-				Type invoke_pd_type = invoke_pd.Types [i];
-				Type pd_type = pd.Types [i];
-				Parameter.Modifier invoke_pd_type_mod = invoke_pd.FixedParameters [i].ModFlags;
-				Parameter.Modifier pd_type_mod = pd.FixedParameters [i].ModFlags;
-
-				invoke_pd_type_mod &= ~Parameter.Modifier.PARAMS;
-				pd_type_mod &= ~Parameter.Modifier.PARAMS;
-
-				if (invoke_pd_type_mod != pd_type_mod)
-					return null;
-
-				if (TypeManager.IsEqual (invoke_pd_type, pd_type))
-					continue;
-
-				if (IsTypeCovariant (new EmptyExpression (invoke_pd_type), pd_type))
-					continue;
-
-				return null;
-			}
-
-			Type invoke_mb_retval = ((MethodInfo) invoke_mb).ReturnType;
-			Type mb_retval = ((MethodInfo) mb).ReturnType;
-			if (TypeManager.TypeToCoreType (invoke_mb_retval) == TypeManager.TypeToCoreType (mb_retval))
-				return mb;
-
-			//if (!IsTypeCovariant (mb_retval, invoke_mb_retval))
-			//	return null;
-
-			if (RootContext.Version == LanguageVersion.ISO_1) 
-				return null;
-
-			return mb;
-		}
-
 		// <summary>
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
@@ -836,17 +771,16 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
 		}
 
-		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type target_type)
+		public static bool ImplicitStandardConversionExists (EmitContext ec, MethodGroupExpr mg, Type target_type)
 		{
 			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
-				return null;
+				return false;
 
-			foreach (MethodInfo mi in mg.Methods){
-				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi);
-				if (mb != null)
-					return mb;
-			}
-			return null;
+			mg.DelegateType = target_type;
+			MethodInfo invoke = Delegate.GetInvokeMethod (null, target_type);
+
+			Arguments arguments = CreateDelegateMethodArguments (TypeManager.GetParameterData (invoke), mg.Location);
+			return mg.OverloadResolve (ec, ref arguments, true, mg.Location) != null;
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
