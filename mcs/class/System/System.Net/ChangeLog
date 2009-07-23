@@ -1,5 +1,10 @@
 2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebHeaderCollection.cs: check the validity of the characters in the
+	header names.
+
+2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebHeaderCollection.cs: implemente the 2.0 IsRestricted().
 
 2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
