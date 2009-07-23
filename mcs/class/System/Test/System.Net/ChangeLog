@@ -1,5 +1,9 @@
 2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebHeaderCollectionTest.cs: test for allowed characters in headers.
+
+2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebHeaderCollectionTest.cs: test for 2.0 IsRestricted().
 
 2009-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
