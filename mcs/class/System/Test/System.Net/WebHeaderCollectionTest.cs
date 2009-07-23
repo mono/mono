@@ -377,7 +377,159 @@ namespace MonoTests.System.Net
 #endif
 		};
 
+		[Test]
+		public void IsRestricted_InvalidChars_1 ()
+		{
+			// Not allowed:
+			//	0-32
+			//	34
+			//	39-41
+			//	44
+			//	47
+			//	91-93
+			//	123
+			//	125
+			//	>= 127
+			int [] singles = new int [] { 34, 44, 47, 123, 125 };
+			foreach (int single in singles) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) single, 1));
+					Assert.Fail (String.Format ("{0}: {1}", single, (char) single));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 0; i <= 32; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1));
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 39; i <= 41; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1));
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 91; i <= 93; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1));
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 127; i <= 255; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1));
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+		}
 #if NET_2_0
+		[Test]
+		public void IsRestricted_InvalidChars_Request_2 ()
+		{
+			// Not allowed:
+			//	0-32
+			//	34
+			//	39-41
+			//	44
+			//	47
+			//	91-93
+			//	123
+			//	125
+			//	>= 127
+			int [] singles = new int [] { 34, 44, 47, 123, 125 };
+			foreach (int single in singles) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) single, 1), false);
+					Assert.Fail (String.Format ("{0}: {1}", single, (char) single));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 0; i <= 32; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), false);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 39; i <= 41; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), false);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 91; i <= 93; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), false);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 127; i <= 255; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), false);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+		}
+
+		[Test]
+		public void IsRestricted_InvalidChars_Response_2 ()
+		{
+			// Not allowed:
+			//	0-32
+			//	34
+			//	39-41
+			//	44
+			//	47
+			//	91-93
+			//	123
+			//	125
+			//	>= 127
+			int [] singles = new int [] { 34, 44, 47, 123, 125 };
+			foreach (int single in singles) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) single, 1), true);
+					Assert.Fail (String.Format ("{0}: {1}", single, (char) single));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 0; i <= 32; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), true);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 39; i <= 41; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), true);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 91; i <= 93; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), true);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+			for (int i = 127; i <= 255; i++) {
+				try {
+					WebHeaderCollection.IsRestricted (new string ((char) i, 1), true);
+					Assert.Fail (String.Format ("{0}: {1}", i, (char) i));
+				} catch (ArgumentException) {
+				}
+			}
+		}
+
 		static string [] request_headers = new string [] {
 			"Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Accept-Ranges", "Authorization", 
 			"Cache-Control", "Connection", "Cookie", "Content-Length", "Content-Type", "Date", 
