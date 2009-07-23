@@ -83,14 +83,12 @@
 		Name="AssignProjectConfigurations"
 		Condition="'@(ProjectReference)' != ''">
 
-		<Message Text="projectref: @(ProjectReference) ProjectReferenceWithConfiguration: @(ProjectReferenceWithConfiguration)"/>
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
 			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
-		<Message Text="after, ProjectReferenceWithConfiguration: config %(ProjectReferenceWithConfiguration.SetConfiguration) %(ProjectReferenceWithConfiguration.SetPlatform)"/>
 	</Target>
 
 
