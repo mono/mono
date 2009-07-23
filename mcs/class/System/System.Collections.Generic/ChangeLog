@@ -1,3 +1,8 @@
+2009-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SortedList.cs: the IComparar.Compare arguments were reversed.
+	Fixes bug #521750. Patch by Kevin Fitzgerald.
+
 2009-05-06  Pia Eriksson  <pe@hallerud.se>
 
 	* SortedList.cs: Handle Count == 0 in CopyTo correcly
