@@ -1295,8 +1295,7 @@ namespace System.Data
 			datasetTableName = el.GetAttribute ("Name");
 			currentAdapter.Name = el.GetAttribute ("GeneratorDataComponentClassName");
 			
-			if (currentAdapter.Name == null ||
-			    currentAdapter.Name == String.Empty)
+			if (String.IsNullOrEmpty (currentAdapter.Name))
 				currentAdapter.Name = el.GetAttribute ("DataAccessorName");
 
 			//Console.WriteLine ("Name: "+currentAdapter.Name);
@@ -1342,12 +1341,12 @@ namespace System.Data
 
 			tmp = el.GetAttribute ("GenerateShortCommands");
 			//Console.WriteLine ("GenerateShortCommands: {0}", tmp);
-			if (tmp != null && tmp != String.Empty)
+			if (!String.IsNullOrEmpty (tmp))
 				currentAdapter.ShortCommands = Convert.ToBoolean (tmp);
 		
 			DbCommandInfo cmdInfo = new DbCommandInfo ();
 			tmp = el.GetAttribute ("GenerateMethods");
-			if (tmp != null && tmp != String.Empty) {
+			if (!String.IsNullOrEmpty (tmp)) {
 				DbSourceMethodInfo mthdInfo = null;
 				
 				switch ((GenerateMethodsType) Enum.Parse (typeof (GenerateMethodsType), tmp)) {
@@ -1355,7 +1354,7 @@ namespace System.Data
 					mthdInfo = new DbSourceMethodInfo ();
 					mthdInfo.Name = el.GetAttribute ("GetMethodName");
 					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
-					if (mthdInfo.Modifier == String.Empty)
+					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
 					mthdInfo.QueryType = el.GetAttribute ("QueryType");
@@ -1368,7 +1367,7 @@ namespace System.Data
 					mthdInfo = new DbSourceMethodInfo ();
 					mthdInfo.Name = el.GetAttribute ("FillMethodName");
 					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
-					if (mthdInfo.Modifier == String.Empty)
+					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = null;
 					mthdInfo.QueryType = null;
@@ -1382,7 +1381,7 @@ namespace System.Data
 					// Get
 					mthdInfo.Name = el.GetAttribute ("GetMethodName");
 					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
-					if (mthdInfo.Modifier == String.Empty)
+					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
 					mthdInfo.QueryType = el.GetAttribute ("QueryType");
@@ -1394,7 +1393,7 @@ namespace System.Data
 					mthdInfo = new DbSourceMethodInfo ();
 					mthdInfo.Name = el.GetAttribute ("FillMethodName");
 					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
-					if (mthdInfo.Modifier == String.Empty)
+					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = null;
 					mthdInfo.QueryType = null;
@@ -1407,7 +1406,7 @@ namespace System.Data
 				DbSourceMethodInfo mthdInfo = new DbSourceMethodInfo ();
 				mthdInfo.Name = el.GetAttribute ("Name");
 				mthdInfo.Modifier = el.GetAttribute ("Modifier");
-				if (mthdInfo.Modifier == String.Empty)
+				if (String.IsNullOrEmpty (mthdInfo.Modifier))
 					mthdInfo.Modifier = "Public";
 				mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
 				mthdInfo.QueryType = el.GetAttribute ("QueryType");
@@ -1494,12 +1493,12 @@ namespace System.Data
 				param = currentAdapter.Provider.CreateParameter ();
 
 				tmp = e.GetAttribute ("AllowDbNull");
-				if (tmp != null && tmp != String.Empty)
+				if (!String.IsNullOrEmpty (tmp))
 					param.IsNullable = Convert.ToBoolean (tmp);
 				
 				param.ParameterName = e.GetAttribute ("ParameterName");
 				tmp = e.GetAttribute ("ProviderType");
-				if (tmp == null || tmp == String.Empty)
+				if (!String.IsNullOrEmpty (tmp))
 					tmp = e.GetAttribute ("DbType");
 				param.FrameworkDbType = tmp;
 				
@@ -1512,7 +1511,7 @@ namespace System.Data
 				param.SourceColumn = e.GetAttribute ("SourceColumn");
 				
 				tmp = e.GetAttribute ("SourceColumnNullMapping");
-				if (tmp != null && tmp != String.Empty)
+				if (!String.IsNullOrEmpty (tmp))
 					param.SourceColumnNullMapping = Convert.ToBoolean (tmp);
 				
 				tmp = e.GetAttribute ("SourceVersion");
