@@ -1,3 +1,8 @@
+2009-07-23  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources:
+	  split out binary frame manager class into separate file.
+
 2009-07-21  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: add TcpReplyChannel.

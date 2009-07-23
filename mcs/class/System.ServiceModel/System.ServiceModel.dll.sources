@@ -283,6 +283,7 @@ System.ServiceModel.Channels/SymmetricSecurityBindingElement.cs
 System.ServiceModel.Channels/TcpChannelFactory.cs
 System.ServiceModel.Channels/TcpChannelListener.cs
 System.ServiceModel.Channels/TcpConnectionPoolSettings.cs
+System.ServiceModel.Channels/TcpBinaryFrameManager.cs
 System.ServiceModel.Channels/TcpDuplexSessionChannel.cs
 System.ServiceModel.Channels/TcpReplyChannel.cs
 System.ServiceModel.Channels/TcpRequestChannel.cs
