@@ -1056,7 +1056,6 @@ namespace System.Web.Compilation
 #endif
 
 			ret.Add (new TextBlock (TextBlockType.Verbatim, text));
-			ret = FindRegexBlocks (clientCommentRegex, null, null, ret, TextBlockType.Comment, true);
 			ret = FindRegexBlocks (runatServer, endOfTag, CheckTagEndNeeded, ret, TextBlockType.Tag, false);
 			ret = FindRegexBlocks (expressionRegex, null, null, ret, TextBlockType.Expression, false);
 
