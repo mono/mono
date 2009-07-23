@@ -1,3 +1,12 @@
+2009-07-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInst.cs: Implement ToString to help debugging.
+
+	* TypeBuilder.cs: Make the properties field internal.
+
+	* PropertyOnTypeBuilderInst.cs: New type implementing a property of an
+	inflated TypeBuilder.
+
 2009-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EnumBuilder.cs: Use new derived types for array, pointer and byref.

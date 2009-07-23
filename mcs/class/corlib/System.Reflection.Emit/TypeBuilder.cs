@@ -62,7 +62,7 @@ namespace System.Reflection.Emit
 		private int num_methods;
 		private MethodBuilder[] methods;
 		private ConstructorBuilder[] ctors;
-		private PropertyBuilder[] properties;
+		internal PropertyBuilder[] properties;
 		private int num_fields;
 		private FieldBuilder[] fields;
 		private EventBuilder[] events;

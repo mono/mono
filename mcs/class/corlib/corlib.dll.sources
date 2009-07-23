@@ -544,6 +544,7 @@ System.Reflection.Emit/ParameterBuilder.cs
 System.Reflection.Emit/ParameterToken.cs
 System.Reflection.Emit/PEFileKinds.cs
 System.Reflection.Emit/PropertyBuilder.cs
+System.Reflection.Emit/PropertyOnTypeBuilderInst.cs
 System.Reflection.Emit/PropertyToken.cs
 System.Reflection.Emit/SignatureHelper.cs
 System.Reflection.Emit/SignatureToken.cs

@@ -30,6 +30,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 #if NET_2_0
 
@@ -96,6 +97,24 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
+		public override string ToString ()
+		{
+			 //IEnumerable`1 get_Item(TKey)
+			 StringBuilder sb = new StringBuilder (ReturnType.ToString ());
+			 sb.Append (" ");
+			 sb.Append (mb.Name);
+			 sb.Append ("(");
+			 if (((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext) {
+				 ParameterInfo [] par = GetParameters ();
+				 for (int i = 0; i < par.Length; ++i) {
+				 	if (i > 0)
+				 		sb.Append (", ");
+				 	sb.Append (par [i].ParameterType);
+				 }
+			}
+			 sb.Append (")");
+			 return sb.ToString ();
+		}
 		//
 		// MethodBase members
 		//

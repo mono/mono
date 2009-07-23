@@ -52,7 +52,7 @@ namespace System.Reflection
 	{
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649
-		protected TypeBuilder generic_type;
+		internal TypeBuilder generic_type;
 		bool initialized;
 #pragma warning restore 649
 		#endregion
@@ -72,7 +72,7 @@ namespace System.Reflection
 		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
+		internal extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern FieldInfo GetCorrespondingInflatedField (string generic);
@@ -88,9 +88,6 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern FieldInfo[] GetFields_internal (Type reflected_type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern PropertyInfo[] GetProperties_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
@@ -440,7 +437,7 @@ namespace System.Reflection
 			do {
 				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
-					l.AddRange (gi.GetProperties_impl (bf, this));
+					l.AddRange (gi.GetPropertiesInternal (bf, this));
 				else if (current_type is TypeBuilder)
 					l.AddRange (current_type.GetProperties (bf));
 				else {
@@ -459,24 +456,21 @@ namespace System.Reflection
 			return result;
 		}
 
-		protected PropertyInfo[] GetProperties_impl (BindingFlags bf, Type reftype)
+		PropertyInfo[] GetPropertiesInternal (BindingFlags bf, MonoGenericClass reftype)
 		{
+			if (generic_type.properties == null)
+				return new PropertyInfo [0];
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 			MethodInfo accessor;
 
-			initialize ();
-
-			PropertyInfo[] properties = GetProperties_internal (reftype);
-
-			for (int i = 0; i < properties.Length; i++) {
-				PropertyInfo c = properties [i];
-
+			foreach (PropertyInfo pinfo in generic_type.properties) {
 				match = false;
-				accessor = c.GetGetMethod (true);
+				accessor = pinfo.GetGetMethod (true);
 				if (accessor == null)
-					accessor = c.GetSetMethod (true);
+					accessor = pinfo.GetSetMethod (true);
 				if (accessor == null)
 					continue;
 				mattrs = accessor.Attributes;
@@ -499,7 +493,7 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
-				l.Add (c);
+				l.Add (new PropertyOnTypeBuilderInst (reftype, pinfo));
 			}
 			PropertyInfo[] result = new PropertyInfo [l.Count];
 			l.CopyTo (result);

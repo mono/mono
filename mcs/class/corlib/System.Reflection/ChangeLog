@@ -1,3 +1,8 @@
+2009-07-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Kill GetProperties_internal and implement it
+	all in terms of managed code.
+
 2009-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Binder.cs: Only allow a type to match its byref version for
