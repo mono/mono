@@ -225,6 +225,15 @@ namespace System.Web.UI {
 			}
 		}
 
+		internal bool IsNamingContainer {
+			get {
+				if (type == null)
+					return false;
+
+				return typeof (INamingContainer).IsAssignableFrom (type);
+			}
+		}
+		
 		ControlBuilder MyNamingContainer {
 			get {
 				if (myNamingContainer == null) {
