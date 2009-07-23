@@ -180,7 +180,10 @@ namespace System.Web.Services.Protocols
 		{
 			MethodStubInfo method = handler.GetRequestMethod (context);
 			if (method == null) return null;
-			
+
+			int cache_duration = method.MethodInfo.CacheDuration;
+			if (cache_duration > 0)
+				context.Response.ExpiresAbsolute = DateTime.Now.AddSeconds (cache_duration);
 			if (method.MethodInfo.EnableSession)
 				return new SessionWrapperHandler (handler);
 			else
