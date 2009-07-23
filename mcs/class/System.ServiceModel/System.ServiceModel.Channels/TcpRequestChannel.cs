@@ -1,10 +1,10 @@
 //
-// HttpRequestChannel.cs
+// TcpRequestChannel.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -83,10 +84,17 @@ namespace System.ServiceModel.Channels
 
 			if (input.Headers.To == null)
 				input.Headers.To = RemoteAddress.Uri;
+			if (input.Headers.ReplyTo == null)
+				input.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
+			if (input.Headers.MessageId == null)
+				input.Headers.MessageId = new UniqueId ();
 
 			frame.WriteUnsizedMessage (input, timeout);
-			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
+
+			// It somehow sends EndRecord now ...
 			frame.ProcessEndRecordInitiator ();
+
+			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
 			frame.ProcessEndRecordRecipient (); // both
 			return ret;
 		}

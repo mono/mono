@@ -58,6 +58,8 @@ namespace System.ServiceModel.Channels
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			var msg = frame.ReadUnsizedMessage (timeout);
+			// It somehow receives EndRecord now ...
+			frame.ProcessEndRecordRecipient ();
 			return new TcpRequestContext (this, msg);
 		}
 
@@ -88,9 +90,11 @@ namespace System.ServiceModel.Channels
 
 			public override void Reply (Message message, TimeSpan timeout)
 			{
+				if (message.Headers.RelatesTo == null)
+					message.Headers.RelatesTo = request.Headers.MessageId;
+
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
-				owner.frame.ProcessEndRecordRecipient ();
 				owner.frame.ProcessEndRecordInitiator ();
 			}
 		}
