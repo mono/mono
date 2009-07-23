@@ -342,6 +342,17 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			return res.Replace ("\r\n", "<br />");
 		}
 
+		string FormatSourceFile (string filename)
+		{
+			if (filename == null || filename.Length == 0)
+				return String.Empty;
+
+			if (filename.StartsWith ("@@"))
+				return "[internal] <!-- " + filename + " -->";
+
+			return filename;
+		}
+		
 		string GetHtmlizedErrorMessage ()
 		{
 			StringBuilder builder = new StringBuilder ();
@@ -391,9 +402,9 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
 				builder.Append ("<br/><p><strong>Source File: </strong>");
 				if (exc.SourceFile != exc.FileName)
-					builder.Append (exc.SourceFile);
+					builder.Append (FormatSourceFile (exc.SourceFile));
 				else
-					builder.Append (exc.FileName);
+					builder.Append (FormatSourceFile (exc.FileName));
 
 				if ((isParseException || isCompileException) && exc.ErrorLines.Length > 0) {
 					builder.Append ("&nbsp;&nbsp;<strong>Line: </strong>");

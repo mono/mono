@@ -1,3 +1,8 @@
+2009-07-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: added an internal helper property
+	IsNamingContainer.
+
 2009-06-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: AddAssembliesInBin (1.1 profile) tries to

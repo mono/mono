@@ -5,6 +5,8 @@
 	comment, tag and expression regular expressions to the text 
 	and splits it into blocks of different types. Then the blocks are
 	processed accordingly.
+	Check for duplicate control IDs at the end of parse. Fixes bug
+	#524358
 
 2009-06-30  Marek Habersack  <mhabersack@novell.com>
 
