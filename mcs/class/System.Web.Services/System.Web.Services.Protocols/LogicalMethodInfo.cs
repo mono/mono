@@ -277,6 +277,24 @@ namespace System.Web.Services.Protocols {
 				return (attribute != null) ? attribute.EnableSession : false;
 			}
 		}
+		internal int CacheDuration {
+			get {
+				if (method_info == null)
+					return -1;
+
+				if (attribute == null) {
+					object [] o = method_info.GetCustomAttributes (false);
+					foreach (Attribute att in o) {
+						if (att is WebMethodAttribute) {
+							attribute = (WebMethodAttribute) att;
+							break;
+						}
+					}
+				}
+
+				return (attribute != null) ? attribute.CacheDuration : -1;
+			}
+		}
 		#endregion // Properties
 
 		#region Methods
