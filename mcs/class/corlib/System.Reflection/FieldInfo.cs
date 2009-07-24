@@ -158,7 +158,7 @@ namespace System.Reflection {
 			return internal_from_handle_type (handle.Value, IntPtr.Zero);
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (false)]
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
 		{
