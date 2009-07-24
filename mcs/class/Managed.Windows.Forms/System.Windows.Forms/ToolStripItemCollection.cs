@@ -191,13 +191,13 @@ namespace System.Windows.Forms
 		[MonoTODO ("searchAllChildren parameter isn't used")]
 		public ToolStripItem[] Find (string key, bool searchAllChildren)
 		{
-			if (key == null)
+			if (key == null || key.Length == 0)
 				throw new ArgumentNullException ("key");
 
 			List<ToolStripItem> list = new List<ToolStripItem> ();
 
 			foreach (ToolStripItem tsi in this) {
-				if (tsi.Name == key) {
+				if (String.Compare (tsi.Name, key, true) == 0) {
 					list.Add (tsi);
 
 					if (searchAllChildren) {
