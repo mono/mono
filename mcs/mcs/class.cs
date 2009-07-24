@@ -4395,21 +4395,26 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
+		public ExpressionStatement Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
-			if (argument_list != null){
-				argument_list.Resolve (ec);
+			if (argument_list != null) {
+				bool dynamic;
+				argument_list.Resolve (ec, out dynamic);
+				if (dynamic) {
+					SimpleName ctor = new SimpleName (ConstructorBuilder.ConstructorName, loc);
+					return new DynamicInvocation (ctor, argument_list, loc).Resolve (ec) as ExpressionStatement;
+				}
 			}
 
 			if (this is ConstructorBaseInitializer) {
 				if (ec.ContainerType.BaseType == null)
-					return true;
+					return this;
 
 				type = ec.ContainerType.BaseType;
 				if (TypeManager.IsStruct (ec.ContainerType)) {
 					Report.Error (522, loc,
 						"`{0}': Struct constructors cannot call base constructors", TypeManager.CSharpSignature (caller_builder));
-					return false;
+					return this;
 				}
 			} else {
 				//
@@ -4419,7 +4424,7 @@ namespace Mono.CSharp {
 				// struct D { public D (int a) : this () {}
 				//
 				if (TypeManager.IsStruct (ec.ContainerType) && argument_list == null)
-					return true;
+					return this;
 				
 				type = ec.ContainerType;
 			}
@@ -4430,13 +4435,13 @@ namespace Mono.CSharp {
 				loc) as MethodGroupExpr;
 			
 			if (base_constructor_group == null)
-				return false;
+				return this;
 			
 			base_constructor_group = base_constructor_group.OverloadResolve (
 				ec, ref argument_list, false, loc);
 			
 			if (base_constructor_group == null)
-				return false;
+				return this;
 			
 			ConstructorInfo base_ctor = (ConstructorInfo)base_constructor_group;
 			
@@ -4444,7 +4449,7 @@ namespace Mono.CSharp {
 				Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
 			}
 						
-			return true;
+			return this;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4700,9 +4705,9 @@ namespace Mono.CSharp {
 					//
 					if (Initializer != null) {
 						ec.IsStatic = true;
-						Initializer.Resolve (ConstructorBuilder, ec);
+						ExpressionStatement expr = Initializer.Resolve (ConstructorBuilder, ec);
 						ec.IsStatic = false;
-						block.AddScopeStatement (new StatementExpression (Initializer));
+						block.AddScopeStatement (new StatementExpression (expr));
 					}
 				}
 			}

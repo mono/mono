@@ -90,16 +90,6 @@ namespace Mono.CSharp
 			return f;
 		}
 
-		//
-		// Returns DynamicMetaObjectBinder.ReturnType value for each binder. It
-		// has to be kept in sync manually !
-		//
-		protected virtual Type CallSiteReturnType {
-			get {
-				return TypeManager.object_type;
-			}
-		}
-
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			throw new NotImplementedException ();
@@ -116,7 +106,10 @@ namespace Mono.CSharp
 					"System.Runtime.CompilerServices", "CallSite`1", Kind.Class, true);
 
 			eclass = ExprClass.Value;
-			type = InternalType.Dynamic;
+
+			if (type == null)
+				type = InternalType.Dynamic;
+
 			return this;
 		}
 
@@ -146,7 +139,7 @@ namespace Mono.CSharp
 				targs[i + 1] = new TypeExpression (TypeManager.TypeToReflectionType (arguments [i].Type), loc);
 
 			if (!isStatement)
-				targs[targs.Length - 1] = new TypeExpression (CallSiteReturnType, loc);
+				targs [targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
 
 			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (new GenericTypeExpr (t, new TypeArguments (targs), loc)), loc);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
@@ -196,13 +189,9 @@ namespace Mono.CSharp
 			this.assignment = assignment;
 			this.invoke = invoke;
 			base.binder = this;
-		}
 
-		protected override Type CallSiteReturnType {
-			get {
-				// Used by += or -= only
-				return TypeManager.bool_type;
-			}
+			// Used by += or -= only
+			type = TypeManager.bool_type;
 		}
 
 		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
@@ -214,11 +203,6 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
 
 			return new New (new MemberAccess (binder, "CSharpIsEventBinder", loc), binder_args, loc);
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return base.DoResolve (ec);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -298,34 +282,42 @@ namespace Mono.CSharp
 
 	class DynamicInvocation : DynamicExpressionStatement, IDynamicBinder
 	{
-		MemberAccess member_access;
+		ATypeNameExpression member;
 
-		public DynamicInvocation (MemberAccess memberAccess, Arguments args, Location loc)
+		public DynamicInvocation (ATypeNameExpression member, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			base.binder = this;
-			this.member_access = memberAccess;
+			this.member = member;
+		}
+
+		public DynamicInvocation (ATypeNameExpression member, Arguments args, Type type, Location loc)
+			: this (member, args, loc)
+		{
+			// When a return type is known not to be dynamic
+			this.type = type;
 		}
 
 		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (member_access != null ? 5 : 3);
+			Arguments binder_args = new Arguments (member != null ? 5 : 3);
 			MemberAccess binder = GetBinderNamespace (loc);
 
+			// TODO: It's SimpleName for base.ctor ()
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpCallFlags", loc), "None", loc)));
-			if (member_access != null)
-				binder_args.Add (new Argument (new StringLiteral (member_access.Name, member_access.Location)));
+			if (member != null)
+				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
 
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
 
 			// TODO: member_access.TypeArguments
-			if (member_access != null)
+			if (member != null)
 				binder_args.Add (new Argument (new NullLiteral (loc)));
 
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
 			return new New (new MemberAccess (binder,
-				member_access != null ? "CSharpInvokeMemberBinder" : "CSharpInvokeBinder", loc), binder_args, loc);
+				member != null ? "CSharpInvokeMemberBinder" : "CSharpInvokeBinder", loc), binder_args, loc);
 		}
 	}
 
@@ -378,14 +370,8 @@ namespace Mono.CSharp
 		{
 			this.name = name;
 			base.binder = this;
-		}
-
-		protected override Type CallSiteReturnType
-		{
-			get
-			{
-				return name == "IsTrue" || name == "IsFalse" ? TypeManager.bool_type : base.CallSiteReturnType;
-			}
+			if (name == "IsTrue" || name == "IsFalse")
+				type = TypeManager.bool_type;
 		}
 
 		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)

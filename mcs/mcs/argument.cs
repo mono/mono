@@ -360,10 +360,16 @@ namespace Mono.CSharp
 			reordered.Add (a);
 		}
 
-		public void Resolve (EmitContext ec)
+		//
+		// Returns dynamic when at least one argument is of dynamic type
+		//
+		public void Resolve (EmitContext ec, out bool dynamic)
 		{
-			foreach (Argument a in args)
+			dynamic = false;
+			foreach (Argument a in args) {
 				a.Resolve (ec);
+				dynamic |= a.Type == InternalType.Dynamic;
+			}
 		}
 
 		public void MutateHoistedGenericType (AnonymousMethodStorey storey)

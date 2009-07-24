@@ -4697,18 +4697,26 @@ namespace Mono.CSharp {
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
+			bool dynamic_arg = false;
 			if (arguments != null && !arguments_resolved)
-				arguments.Resolve (ec);
+				arguments.Resolve (ec, out dynamic_arg);
 
+			Type expr_type = expr_resolved.Type;
 			mg = expr_resolved as MethodGroupExpr;
-			if (mg == null) {
-				Type expr_type = expr_resolved.Type;
 
-				if (expr_type == InternalType.Dynamic) {
-					Arguments args = ((DynamicMemberBinder) expr_resolved).Arguments;
-					return new DynamicInvocation (expr as MemberAccess, args, loc).Resolve (ec);
+			if (expr_type == InternalType.Dynamic || dynamic_arg) {
+				if (mg != null && mg.IsBase) {
+					Report.Error (1971, loc,
+						"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
+						mg.Name);
+					return null;
 				}
 
+				Arguments args = ((DynamicMemberBinder) expr_resolved).Arguments;
+				return new DynamicInvocation (expr as MemberAccess, args, loc).Resolve (ec);
+			}
+
+			if (mg == null) {
 				if (expr_type != null && TypeManager.IsDelegateType (expr_type)){
 					return (new DelegateInvocation (
 						expr_resolved, arguments, loc)).Resolve (ec);
@@ -5322,11 +5330,18 @@ namespace Mono.CSharp {
 				return this;
 
 			// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
-			Expression ml = MemberLookupFinal (ec, type, type, ".ctor",
+			Expression ml = MemberLookupFinal (ec, type, type, ConstructorInfo.ConstructorName,
 				MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
-			if (Arguments != null)
-				Arguments.Resolve (ec);
+			if (Arguments != null) {
+				bool dynamic;
+				Arguments.Resolve (ec, out dynamic);
+
+				if (dynamic) {
+					Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec)));
+					return new DynamicInvocation (new SimpleName (ConstructorInfo.ConstructorName, loc), Arguments, type, loc).Resolve (ec);
+				}
+			}
 
 			if (ml == null)
 				return null;
@@ -6698,8 +6713,10 @@ namespace Mono.CSharp {
 		{
 			eclass = ExprClass.Variable;
 			type = InternalType.Arglist;
-			if (Arguments != null)
-				Arguments.Resolve (ec);
+			if (Arguments != null) {
+				bool dynamic;	// Can be ignored as there is always only 1 overload
+				Arguments.Resolve (ec, out dynamic);
+			}
 
 			return this;
 		}
@@ -7639,13 +7656,6 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
-			if (t == InternalType.Dynamic) {
-				Arguments args = new Arguments (Arguments.Count + 1);
-				args.Add (new Argument (Expr));
-				args.AddRange (Arguments);
-				return new DynamicIndexBinder (false, args, loc).Resolve (ec);
-			}
-
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
 				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
@@ -7668,14 +7678,6 @@ namespace Mono.CSharp {
 
 			if (type.IsPointer)
 				return MakePointerAccess (ec, type);
-
-			if (type == InternalType.Dynamic) {
-				Arguments args = new Arguments (Arguments.Count + 2);
-				args.Add (new Argument (Expr));
-				args.AddRange (Arguments);
-				args.Add (new Argument (right_side));
-				return new DynamicIndexBinder (true, args, loc).Resolve (ec);
-			}
 
 			if (Expr.eclass != ExprClass.Variable && TypeManager.IsStruct (type))
 				Error_CannotModifyIntermediateExpressionValue (ec);
@@ -7753,7 +7755,9 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			ea.Arguments.Resolve (ec);
+			// dynamic is used per argument in ConvertExpressionToArrayIndex case
+			bool dynamic;
+			ea.Arguments.Resolve (ec, out dynamic);
 
 			Type t = ea.Expr.Type;
 			int rank = ea.Arguments.Count;
@@ -7766,7 +7770,6 @@ namespace Mono.CSharp {
 			type = TypeManager.GetElementType (t);
 			if (type.IsPointer && !ec.InUnsafe) {
 				UnsafeError (ea.Location);
-				return null;
 			}
 
 			foreach (Argument a in ea.Arguments) {
@@ -8245,17 +8248,15 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Call", args);
 		}
 
-		protected virtual bool CommonResolve (EmitContext ec)
+		protected virtual void CommonResolve (EmitContext ec)
 		{
 			indexer_type = instance_expr.Type;
 			current_type = ec.ContainerType;
-
-			return true;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAccessor (ec, AccessorType.Get);
+			return ResolveAccessor (ec, AccessorType.Get, null);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -8271,7 +8272,7 @@ namespace Mono.CSharp {
 				Error_CannotModifyIntermediateExpressionValue (ec);
 			}
 
-			Expression e = ResolveAccessor (ec, AccessorType.Set);
+			Expression e = ResolveAccessor (ec, AccessorType.Set, right_side);
 			if (e == null)
 				return null;
 
@@ -8279,12 +8280,26 @@ namespace Mono.CSharp {
 			return e;
 		}
 
-		Expression ResolveAccessor (EmitContext ec, AccessorType accessorType)
+		Expression ResolveAccessor (EmitContext ec, AccessorType accessorType, Expression right_side)
 		{
-			arguments.Resolve (ec);
+			bool dynamic;
+			arguments.Resolve (ec, out dynamic);
+			if (dynamic || indexer_type == InternalType.Dynamic) {
+				int additional = right_side == null ? 1 : 2;
+				Arguments args = new Arguments (arguments.Count + additional);
+				if (is_base_indexer) {
+					Report.Error (1972, loc, "The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
+				} else {
+					args.Add (new Argument (instance_expr));
+				}
+				args.AddRange (arguments);
+				if (right_side != null)
+					args.Add (new Argument (right_side));
 
-			if (!CommonResolve (ec))
-				return null;
+				return new DynamicIndexBinder (accessorType == AccessorType.Set, args, loc).Resolve (ec);
+			}
+
+			CommonResolve (ec);
 
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
 			if (ilist.Methods == null) {
@@ -8578,16 +8593,12 @@ namespace Mono.CSharp {
 			this.arguments = args;
 		}
 
-		protected override bool CommonResolve (EmitContext ec)
+		protected override void CommonResolve (EmitContext ec)
 		{
 			instance_expr = ec.GetThis (loc);
 
 			current_type = ec.ContainerType.BaseType;
 			indexer_type = current_type;
-
-			arguments.Resolve (ec);
-
-			return true;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)

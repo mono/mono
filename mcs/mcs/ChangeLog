@@ -1,5 +1,10 @@
 2009-07-24  Marek Safar  <marek.safar@gmail.com>
 
+	* argument.cs, dynamic.cs, expression.cs, class.cs, attribute.cs:
+	Dynamic arguments.
+
+2009-07-24  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs (MutateField): Add imported types handling.
 
 2009-07-23  Marek Safar  <marek.safar@gmail.com>

@@ -475,8 +475,12 @@ namespace Mono.CSharp {
 
 		protected virtual ConstructorInfo ResolveConstructor (EmitContext ec)
 		{
-			if (PosArguments != null)
-				PosArguments.Resolve (ec);
+			if (PosArguments != null) {
+				bool dynamic;
+				PosArguments.Resolve (ec, out dynamic);
+				if (dynamic)
+					throw new NotImplementedException ("dynamic");
+			}
 
 			MethodGroupExpr mg = MemberLookupFinal (ec, ec.ContainerType,
 				Type, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
