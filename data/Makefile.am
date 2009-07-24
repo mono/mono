@@ -1,4 +1,8 @@
-SUBDIRS = net_1_1 net_2_0 net_4_0
+SUBDIRS = net_1_1 net_2_0
+
+if INSTALL_4_0
+SUBDIRS += net_4_0
+endif
 
 monodir = $(sysconfdir)/mono
 
