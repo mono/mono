@@ -1,4 +1,32 @@
 
+Fri Jul 24 17:28:37 CEST 2009 Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+	* mini-ppc.c (mono_arch_output_basic_block):
+	(OP_STOREI1_MEMBASE_REG): Handle 32-bit offsets combining addis
+	for bits 32-47 with signed load/store diplacements for bits
+	48-63.  Use prefered base/offset order for indexed form.
+	(OP_STOREI2_MEMBASE_REG, OP_STORE_MEMBASE_REG): Same.
+	(OP_LOAD_MEMBASE, OP_LOADI4_MEMBASE, OP_LOADU4_MEMBASE,
+	OP_LOADI1_MEMBASE, OP_LOADU1_MEMBASE, OP_LOADU2_MEMBASE,
+	OP_LOADI2_MEMBASE): Same.
+	(OP_STORER8_MEMBASE_REG, OP_LOADR8_MEMBASE,
+	OP_STORER4_MEMBASE_REG, OP_LOADR4_MEMBASE): Same.
+	(OP_STOREI1_MEMINDEX): Use prefered base/offset order for
+	indexed form.
+	(OP_STOREI2_MEMINDEX, OP_STORE_MEMINDEX): Same.
+	(OP_LOAD_MEMINDEX, OP_LOADI4_MEMINDEX, OP_LOADU4_MEMINDEX,
+	OP_LOADU2_MEMINDEX, OP_LOADI2_MEMINDEX, OP_LOADU1_MEMINDEX,
+	OP_LOADI1_MEMINDEX): Same
+	(OP_LOADR4_MEMINDEX, OP_LOADR8_MEMINDEX, OP_STORER4_MEMINDEX,
+	OP_STORER8_MEMINDEX): Same
+	(OP_JMP): Use addis/addi sequence for int cfg->stack_usage
+	computations.
+	(mono_arch_emit_prolog): Handle 32-bit offsets combining addis
+	for bits 32-47 with signed load/store diplacements for bits
+	48-63.  Use prefered base/offset order for indexed form.
+
 Fri Jul 24 16:57:12 CEST 2009 Steven Munroe  <munroesj@us.ibm.com>
 
 This patch is contributed under the terms of the MIT/X11 license
