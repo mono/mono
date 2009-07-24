@@ -1,3 +1,27 @@
+
+Fri Jul 24 16:57:12 CEST 2009 Steven Munroe  <munroesj@us.ibm.com>
+
+This patch is contributed under the terms of the MIT/X11 license
+
+	* mini-ppc.c: Define PPC_MOVE_FPR_GPR and PPC_ISA_64.
+	(mono_arch_get_vcall_slot): Fx pointer to int cast warning.
+	(mono_arch_decompose_opts): Make OP_ICONV_TO_R4 and
+	OP_ICONV_TO_R8 decompose conditional on !PPC_ISA_64.
+	(mono_arch_output_basic_block) [OP_JMP]: Use ppc_load32 for
+	cfg->stack_usage to avoid size warnings.
+	(mono_arch_output_basic_block) [__mono_ppc64__]: Replace
+	store/load sequence with mffgpr if PPC_MOVE_FPR_GPR is true.
+	(mono_arch_output_basic_block) [!__mono_ppc64__]: For
+	OP_ICONV_TO_R4 or OP_ICONV_TO_R8 and PPC_ISA_64 use fcfid
+	to convert.
+	(mono_arch_emit_prolog): Move mono_emit_unwind_op_def_cfa 
+	after code varible is initialized.
+	Add g_assert ppc_is_imm16 for ainfo->offset. Handle
+	ainfo->size == 8 when ainfo->offset !ppc_is_imm16.
+	(mono_arch_emit_epilog): 
+	Move Use ppc_load32 for cfg->stack_usage to avoid size
+	warnings.
+
 2009-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: The write barrier doesn't do the store anymore,
