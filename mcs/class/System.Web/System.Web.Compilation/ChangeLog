@@ -9,12 +9,6 @@
 	try/catch, so that we can wrap the possible exception in
 	HttpException.
 
-2009-06-30  Marek Habersack  <mhabersack@novell.com>
-
-	* AspGenerator.cs: TextParsed must remove client-side comments
-	from the passed text before attempting to parse the text for
-	server side controls and expressions. Fixes bug #517656
-
 2009-07-21  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: in put_back, store inTag value as well.

@@ -42,10 +42,6 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
 
-#if NET_2_0
-using System.Collections.Generic;
-#endif
-
 namespace System.Web.Compilation
 {
 	class BuilderLocation
@@ -527,60 +523,6 @@ namespace System.Web.Compilation
 			InitParser (reader, filename);
 		}
 #endif
-
-		void CheckForDuplicateIds (ControlBuilder root, Stack scopes)
-		{
-			if (root == null)
-				return;
-			
-			if (scopes == null)
-				scopes = new Stack ();
-			
-#if NET_2_0
-			Dictionary <string, bool> ids;
-#else
-			Hashtable ids;
-#endif
-			
-			if (scopes.Count == 0 || root.IsNamingContainer) {
-#if NET_2_0
-				ids = new Dictionary <string, bool> (StringComparer.Ordinal);
-#else
-				ids = new Hashtable ();
-#endif
-				scopes.Push (ids);
-			} else {
-#if NET_2_0
-				ids = scopes.Peek () as Dictionary <string, bool>;
-#else
-				ids = scopes.Peek () as Hashtable;
-#endif
-			}
-			
-			if (ids == null)
-				return;
-
-			ControlBuilder cb;
-			string id;
-			ArrayList children = root.Children;
-			if (children != null) {
-				foreach (object o in children) {
-					cb = o as ControlBuilder;
-					if (cb == null)
-						continue;
-
-					id = cb.ID;
-					if (id == null || id.Length == 0)
-						continue;
-				
-					if (ids.ContainsKey (id))
-						throw new ParseException (cb.Location, "Id '" + id + "' is already used by another control.");
-
-					ids.Add (id, true);
-					CheckForDuplicateIds (cb, scopes);
-				}
-			}
-		}
 		
 		public void Parse (string file)
 		{
@@ -616,7 +558,6 @@ namespace System.Web.Compilation
 					throw new ParseException (stack.Builder.Location,
 								  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
 
-				CheckForDuplicateIds (RootBuilder, null);
 			} finally {
 				if (reader != null)
 					reader.Close ();
@@ -719,8 +660,8 @@ namespace System.Web.Compilation
 
 			string i = new string ('\t', indent);
 			Console.Write (i);
-			Console.WriteLine ("b: {0}; naming container: {1}; id: {2}; type: {3}; parent: {4}",
-					   builder, builder.IsNamingContainer, builder.ID, builder.ControlType, builder.ParentBuilder);
+			Console.WriteLine ("b: {0} id: {1} type: {2} parent: {3}",
+					   builder, builder.ID, builder.ControlType, builder.ParentBuilder);
 
 			if (builder.Children != null)
 			foreach (object o in builder.Children) {
@@ -852,9 +793,9 @@ namespace System.Web.Compilation
 				Directory.SetCurrentDirectory (origdir);
 				if (newdir [newdir.Length - 1] != '/')
 					newdir += "/";
-			} catch (DirectoryNotFoundException) {
+			} catch (DirectoryNotFoundException ex) {
 				return; // will be converted into 404
-			} catch (FileNotFoundException) {
+			} catch (FileNotFoundException ex) {
 				return; // as above
 			} catch (Exception ex) {
 				// better safe than sorry
@@ -1011,77 +952,6 @@ namespace System.Web.Compilation
 		{
 			if (ignore_text)
 				return;
-			
-			// Another gross hack - get rid of comments in the parsed text
-			int textLen = text.Length;
-			int textMaxIndex = textLen - 1;
-			int commentStart = text.IndexOf ("<!--");
-			int commentLastStart = 0;
-#if NET_2_0
-			List <int> commentRanges = null;
-#else
-			ArrayList commentRanges = null;
-#endif
-
-			while (commentStart != -1) {
-				int commentEnd = text.IndexOf ("-->", commentStart);
-
-				if (commentEnd == -1) {
-					if (commentStart == 0)
-						return;
-					commentEnd = textMaxIndex;
-				}
-
-				if (commentRanges == null) {
-#if NET_2_0
-					commentRanges = new List <int> ();
-#else
-					commentRanges = new ArrayList ();
-#endif
-				}
-
-				if (commentStart > commentLastStart) {
-					commentRanges.Add (commentLastStart);
-					commentRanges.Add (commentStart);
-				}
-
-				if (commentEnd == textMaxIndex)
-					break;
-				
-				commentLastStart = commentEnd + 3;
-				if (commentLastStart > textMaxIndex)
-					break;
-				
-				commentStart = text.IndexOf ("<!--", commentLastStart);
-				if (commentStart == -1) {
-					int tailLength = textMaxIndex - commentLastStart;
-					if (tailLength > 0) {
-						commentRanges.Add (commentLastStart);
-						commentRanges.Add (tailLength);
-					}
-					break;
-				}
-			}
-
-			if (commentRanges != null) {
-				if (commentRanges.Count == 0)
-					return;
-				
-				StringBuilder sb = new StringBuilder ();
-				for (int i = 0; i < commentRanges.Count; i += 2) {
-#if NET_2_0
-					sb.Append (text.Substring (commentRanges [i], commentRanges [i + 1]));
-#else
-					sb.Append (text.Substring ((int)commentRanges [i], (int)commentRanges [i + 1]));
-#endif
-				}
-
-				string noComments = sb.ToString ().Trim ();
-				if (noComments.Length == 0)
-					return;
-
-				text = noComments;
-			}
 
 			// And again... the first one wins - if we have expressions and server-side
 			// controls together in one block of plain text, tough luck...
@@ -1095,6 +965,7 @@ namespace System.Web.Compilation
 
 			int startIndex = 0, index = 0;
 			Match match;
+			int textLen = text.Length;
 
 			while (index > -1 && startIndex < textLen) {
 				match = runatServer.Match (text, index);
