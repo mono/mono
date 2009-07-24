@@ -1,3 +1,10 @@
+2009-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* null-gc.c (mono_gc_wbarrier_generic_nostore): Define this to fix
+	the build.
+
+	* boehm-gc.c: Ditto.
+	
 2009-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, marshal.c, object.h: Make the managed write barrier
