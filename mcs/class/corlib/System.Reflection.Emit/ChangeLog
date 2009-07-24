@@ -1,3 +1,10 @@
+2009-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* FieldOnTypeBuilderInst.cs: Add a ToString() to help debugging.
+	Make fields internal.
+
+	* MethodOnTypeBuilderInst.cs: Build it under BOOTSTRAP_NET_2_0.
+
 2009-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConstructorBuilder.cs: Make parameters and pinfo fields internal.

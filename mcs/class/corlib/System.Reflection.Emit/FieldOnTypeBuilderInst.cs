@@ -31,7 +31,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 
 namespace System.Reflection.Emit
 {
@@ -41,8 +41,8 @@ namespace System.Reflection.Emit
 	internal class FieldOnTypeBuilderInst : FieldInfo
 	{
 		#region Keep in sync with object-internals.h
-		MonoGenericClass instantiation;
-		FieldBuilder fb;
+		internal MonoGenericClass instantiation;
+		internal FieldBuilder fb;
 		#endregion
 
 		public FieldOnTypeBuilderInst (MonoGenericClass instantiation, FieldBuilder fb) {
@@ -84,6 +84,12 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
+		public override string ToString ()
+		{
+			if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+				return fb.FieldType.ToString () + " " + Name;
+			return FieldType.ToString () + " " + Name;
+		}
 		//
 		// FieldInfo members
 		//

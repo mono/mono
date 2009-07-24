@@ -32,7 +32,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 
 namespace System.Reflection.Emit
 {

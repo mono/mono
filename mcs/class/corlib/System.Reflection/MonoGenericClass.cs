@@ -73,9 +73,6 @@ namespace System.Reflection
 		internal extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern FieldInfo GetCorrespondingInflatedField (string generic);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
@@ -138,15 +135,9 @@ namespace System.Reflection
 		{
 			initialize ();
 
-#if NET_2_0
-			if (fromNoninstanciated is MethodOnTypeBuilderInst) {
-				MethodOnTypeBuilderInst mbinst = (MethodOnTypeBuilderInst)fromNoninstanciated;
-				if (((ModuleBuilder)mbinst.mb.Module).assemblyb.IsCompilerContext)
-					fromNoninstanciated = mbinst.mb;
-				else
-					throw new ArgumentException ("method declaring type is not the generic type definition of type", "method");
-			}
-
+			if (!(fromNoninstanciated is MethodBuilder))
+				throw new InvalidOperationException ("Inflating non MethodBuilder objects is not supported: " + fromNoninstanciated.GetType ());
+	
 			if (fromNoninstanciated is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)fromNoninstanciated;
 
@@ -162,7 +153,6 @@ namespace System.Reflection
 					return (MethodInfo)methods [mb];
 				}
 			}
-#endif
 
 			return GetCorrespondingInflatedMethod (fromNoninstanciated);
 		}
@@ -186,21 +176,22 @@ namespace System.Reflection
 		{
 			initialize ();
 
-#if NET_2_0
-			if (fromNoninstanciated is FieldBuilder) {
-				FieldBuilder fb = (FieldBuilder)fromNoninstanciated;
-				if (fields == null)
-					fields = new Hashtable ();
-				if (!fields.ContainsKey (fb))
-					fields [fb] = new FieldOnTypeBuilderInst (this, fb);
-				return (FieldInfo)fields [fb];
-			}
-#endif
-			return GetCorrespondingInflatedField (fromNoninstanciated.Name);
+			if (!(fromNoninstanciated is FieldBuilder))
+				throw new InvalidOperationException ("Inflating non FieldBuilder objects is not supported: " + fromNoninstanciated.GetType ());
+
+			FieldBuilder fb = (FieldBuilder)fromNoninstanciated;
+			if (fields == null)
+				fields = new Hashtable ();
+			if (!fields.ContainsKey (fb))
+				fields [fb] = new FieldOnTypeBuilderInst (this, fb);
+			return (FieldInfo)fields [fb];
 		}
 		
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+
 			ArrayList l = new ArrayList ();
 
 			//
@@ -281,6 +272,9 @@ namespace System.Reflection
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -351,6 +345,9 @@ namespace System.Reflection
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -421,6 +418,9 @@ namespace System.Reflection
 
 		public override PropertyInfo[] GetProperties (BindingFlags bf)
 		{
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -492,41 +492,11 @@ namespace System.Reflection
 			return result;
 		}
 
-		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr,
-								 Binder binder, Type returnType,
-								 Type[] types,
-								 ParameterModifier[] modifiers)
-		{
-			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
-			PropertyInfo [] props = GetProperties (bindingAttr);
-
-			ArrayList al = null;
-			for (int i = 0; i < props.Length; ++i) {
-				if (String.Compare (props [i].Name, name, ignoreCase) == 0) {
-					if (al == null)
-						al = new ArrayList ();
-					al.Add (props [i]);
-				}
-			}
-			if (al == null)
-				return null;
-
-			props = (PropertyInfo[])al.ToArray (typeof (PropertyInfo));
-			
-			int count = props.Length;
-			
-			if (count == 1 && (types == null || types.Length == 0) &&
-			    (returnType == null || returnType == props[0].PropertyType))
-				return props [0];
-
-			if (binder == null)
-				binder = Binder.DefaultBinder;
-			
-			return binder.SelectProperty (bindingAttr, props, returnType, types, modifiers);
-		}
-
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
