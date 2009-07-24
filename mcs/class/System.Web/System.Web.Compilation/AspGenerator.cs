@@ -3,10 +3,9 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//      Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-// Copyright (c) 2004-2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -182,26 +181,6 @@ namespace System.Web.Compilation
 		}
 	}
 
-	enum TextBlockType
-	{
-		Verbatim,
-		Expression,
-		Tag,
-		Comment
-	}
-	
-	sealed class TextBlock
-	{
-		public string Content;
-		public readonly TextBlockType Type;
-		
-		public TextBlock (TextBlockType type, string content)
-		{
-			Content = content;
-			Type = type;
-		}
-	}
-	
 	class AspGenerator
 	{
 #if NET_2_0
@@ -209,26 +188,6 @@ namespace System.Web.Compilation
 		
 		internal static Regex DirectiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
-		static readonly Regex runatServer = new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/?>",
-							       RegexOptions.Compiled | RegexOptions.Singleline |
-							       RegexOptions.Multiline | RegexOptions.IgnoreCase |
-							       RegexOptions.CultureInvariant);
-		
-		static readonly Regex endOfTag = new Regex (@"</[\w:\.]+\s*>",
-							    RegexOptions.Compiled | RegexOptions.Singleline |
-							    RegexOptions.Multiline | RegexOptions.IgnoreCase |
-							    RegexOptions.CultureInvariant);
-		
-		static readonly Regex expressionRegex = new Regex (@"<%.*%>",
-								   RegexOptions.Compiled | RegexOptions.Singleline |
-								   RegexOptions.Multiline | RegexOptions.IgnoreCase |
-								   RegexOptions.CultureInvariant);
-
-		static readonly Regex clientCommentRegex = new Regex (@"<!--.*-->",
-								      RegexOptions.Compiled | RegexOptions.Singleline |
-								      RegexOptions.Multiline | RegexOptions.IgnoreCase |
-								      RegexOptions.CultureInvariant);
-		
 		ParserStack pstack;
 		BuilderLocationStack stack;
 		TemplateParser tparser;
@@ -798,6 +757,10 @@ namespace System.Web.Compilation
 		// The kludge supports only self-closing tags inside attributes.
 		//
 		// KLUDGE WARNING!!
+		static readonly Regex runatServer=new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/>",
+							     RegexOptions.Compiled | RegexOptions.Singleline |
+							     RegexOptions.Multiline | RegexOptions.IgnoreCase |
+							     RegexOptions.CultureInvariant);
 		bool ProcessTagsInAttributes (ILocation location, string tagid, TagAttributes attributes, TagType type)
 		{
 			if (attributes == null || attributes.Count == 0)
@@ -889,9 +852,9 @@ namespace System.Web.Compilation
 				Directory.SetCurrentDirectory (origdir);
 				if (newdir [newdir.Length - 1] != '/')
 					newdir += "/";
-			} catch (DirectoryNotFoundException ex) {
+			} catch (DirectoryNotFoundException) {
 				return; // will be converted into 404
-			} catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException) {
 				return; // as above
 			} catch (Exception ex) {
 				// better safe than sorry
@@ -1043,105 +1006,118 @@ namespace System.Web.Compilation
 
 			return Path.GetFullPath (Path.Combine (basedir, filename));
 		}
-
-		delegate bool CheckBlockEnd (string text);
 		
-		bool CheckTagEndNeeded (string text)
-		{
-			return !text.EndsWith ("/>");
-		}
-		
-#if NET_2_0
-		List <TextBlock>
-#else
-		ArrayList
-#endif
-		FindRegexBlocks (Regex rxStart, Regex rxEnd, CheckBlockEnd checkEnd, IList blocks, TextBlockType typeForMatches, bool discardBlocks)
-		{
-#if NET_2_0
-			var ret = new List <TextBlock> ();
-#else
-			ArrayList ret = new ArrayList ();
-#endif
-			
-			foreach (TextBlock block in blocks) {
-				if (block.Type != TextBlockType.Verbatim) {
-					ret.Add (block);
-					continue;
-				}
-
-				int lastIndex = 0, index;
-				MatchCollection matches = rxStart.Matches (block.Content);
-				bool foundMatches = matches.Count > 0;
-				foreach (Match match in matches) {
-					foundMatches = true;
-					index = match.Index;
-					if (lastIndex < index)
-						ret.Add (new TextBlock (TextBlockType.Verbatim, block.Content.Substring (lastIndex, index - lastIndex)));
-
-					string value = match.Value;
-					if (rxEnd != null && checkEnd (value)) {
-						int startFrom = index + value.Length;
-						Match m = rxEnd.Match (block.Content, startFrom);
-						if (m.Success)
-							value += block.Content.Substring (startFrom, m.Index - startFrom) + m.Value;
-					}
-
-					if (!discardBlocks)
-						ret.Add (new TextBlock (typeForMatches, value));
-					lastIndex = index + value.Length;
-				}
-
-				if (lastIndex > 0 && lastIndex < block.Content.Length)
-					ret.Add (new TextBlock (TextBlockType.Verbatim, block.Content.Substring (lastIndex)));
-
-				if (!foundMatches)
-					ret.Add (block);
-			}
-
-			return ret;
-		}
-		
-		IList SplitTextIntoBlocks (string text)
-		{
-#if NET_2_0
-			var ret = new List <TextBlock> ();
-#else
-			ArrayList ret = new ArrayList ();
-#endif
-
-			ret.Add (new TextBlock (TextBlockType.Verbatim, text));
-			ret = FindRegexBlocks (clientCommentRegex, null, null, ret, TextBlockType.Comment, true);
-			ret = FindRegexBlocks (runatServer, endOfTag, CheckTagEndNeeded, ret, TextBlockType.Tag, false);
-			ret = FindRegexBlocks (expressionRegex, null, null, ret, TextBlockType.Expression, false);
-
-			return ret;
-		}
-
 		void TextParsed (ILocation location, string text)
 		{
 			if (ignore_text)
 				return;
+			
+			// Another gross hack - get rid of comments in the parsed text
+			int textLen = text.Length;
+			int textMaxIndex = textLen - 1;
+			int commentStart = text.IndexOf ("<!--");
+			int commentLastStart = 0;
+#if NET_2_0
+			List <int> commentRanges = null;
+#else
+			ArrayList commentRanges = null;
+#endif
 
-			IList blocks = SplitTextIntoBlocks (text);
-			foreach (TextBlock block in blocks) {
-				switch (block.Type) {
-					case TextBlockType.Verbatim:
-						this.text.Append (block.Content);
-						break;
+			while (commentStart != -1) {
+				int commentEnd = text.IndexOf ("-->", commentStart);
 
-					case TextBlockType.Expression:
-						if (this.text.Length > 0)
-							FlushText (true);
-						CodeRenderParser r = new CodeRenderParser (block.Content, stack.Builder);
-						r.AddChildren (this);
-						break;
+				if (commentEnd == -1) {
+					if (commentStart == 0)
+						return;
+					commentEnd = textMaxIndex;
+				}
 
-					case TextBlockType.Tag:
-						ParseAttributeTag (block.Content);
-						break;
+				if (commentRanges == null) {
+#if NET_2_0
+					commentRanges = new List <int> ();
+#else
+					commentRanges = new ArrayList ();
+#endif
+				}
+
+				if (commentStart > commentLastStart) {
+					commentRanges.Add (commentLastStart);
+					commentRanges.Add (commentStart);
+				}
+
+				if (commentEnd == textMaxIndex)
+					break;
+				
+				commentLastStart = commentEnd + 3;
+				if (commentLastStart > textMaxIndex)
+					break;
+				
+				commentStart = text.IndexOf ("<!--", commentLastStart);
+				if (commentStart == -1) {
+					int tailLength = textMaxIndex - commentLastStart;
+					if (tailLength > 0) {
+						commentRanges.Add (commentLastStart);
+						commentRanges.Add (tailLength);
+					}
+					break;
 				}
 			}
+
+			if (commentRanges != null) {
+				if (commentRanges.Count == 0)
+					return;
+				
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < commentRanges.Count; i += 2) {
+#if NET_2_0
+					sb.Append (text.Substring (commentRanges [i], commentRanges [i + 1]));
+#else
+					sb.Append (text.Substring ((int)commentRanges [i], (int)commentRanges [i + 1]));
+#endif
+				}
+
+				string noComments = sb.ToString ().Trim ();
+				if (noComments.Length == 0)
+					return;
+
+				text = noComments;
+			}
+
+			// And again... the first one wins - if we have expressions and server-side
+			// controls together in one block of plain text, tough luck...
+			if (text.IndexOf ("<%") != -1 && !inScript) {
+				if (this.text.Length > 0)
+					FlushText (true);
+				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
+				r.AddChildren (this);
+				return;
+			}
+
+			int startIndex = 0, index = 0;
+			Match match;
+
+			while (index > -1 && startIndex < textLen) {
+				match = runatServer.Match (text, index);
+					
+				if (match.Success) {
+					string value = match.Value;
+					index = match.Index;
+					if (index > startIndex)
+						this.text.Append (text.Substring (startIndex, index - startIndex));
+					ParseAttributeTag (value);
+					index += value.Length;
+					startIndex = index;
+				} else
+					break;
+
+				if (index < textLen)
+					index = text.IndexOf ('<', index);
+				else
+					break;
+			}
+			
+			this.text.Append (text.Substring (startIndex));
+			//PrintLocation (location);
 		}
 
 		void FlushText ()
@@ -1355,7 +1331,7 @@ namespace System.Web.Compilation
 					CheckLanguage (language);
 					string src = (string) attributes ["src"];
 					if (src != null) {
-						if (src.Length == 0)
+						if (src == "")
 							throw new ParseException (Parser,
 								"src cannot be an empty string");
 

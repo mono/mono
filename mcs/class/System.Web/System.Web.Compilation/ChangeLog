@@ -9,16 +9,6 @@
 	try/catch, so that we can wrap the possible exception in
 	HttpException.
 
-2009-07-23  Marek Habersack  <mhabersack@novell.com>
-
-	* AspGenerator.cs: TextParsed takes a different approach to
-	post-processing text blocks now. It applies, in order, client-side
-	comment, tag and expression regular expressions to the text 
-	and splits it into blocks of different types. Then the blocks are
-	processed accordingly.
-	Check for duplicate control IDs at the end of parse. Fixes bug
-	#524358
-
 2009-06-30  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: TextParsed must remove client-side comments
