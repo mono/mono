@@ -550,8 +550,10 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericType (field.DeclaringType)) {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
-					// TODO: It should throw on imported types
-					return TypeBuilder.GetField (t, field);
+					if (field.Module == Module.Builder)
+						return TypeBuilder.GetField (t, field);
+
+					return FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);						
 				}
 			}
 #endif
