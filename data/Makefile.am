@@ -1,4 +1,4 @@
-SUBDIRS = net_1_1 net_2_0
+SUBDIRS = net_1_1 net_2_0 net_4_0
 
 monodir = $(sysconfdir)/mono
 

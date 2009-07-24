@@ -8,11 +8,17 @@ noinst_SCRIPTS = mono-wrapper monodis-wrapper
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
+if INSTALL_4_0
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config
+endif
+
 etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
 etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
+etc/mono/4.0/machine.config: $(top_srcdir)/data/net_4_0/machine.config
+etc/mono/4.0/web.config: $(top_srcdir)/data/net_4_0/web.config
 
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
