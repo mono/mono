@@ -1,3 +1,9 @@
+2009-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: The write barrier doesn't do the store anymore,
+	so we have always to emit it.  Also, emit the wbarrier after the
+	store.
+
 2009-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_get_delegate_invoke_impls): Add a trampoline

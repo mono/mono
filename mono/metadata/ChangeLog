@@ -1,5 +1,13 @@
 2009-07-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, marshal.c, object.h: Make the managed write barrier
+	not perform the store itself.  Introduce
+	mono_gc_wbarrier_generic_nostore(), which is the same as
+	mono_gc_wbarrier_generic_store(), except it doesn't perform the
+	store.
+
+2009-07-24  Mark Probst  <mark.probst@gmail.com>
+
 	* icall.c (ves_icall_System_Array_SetGenericValueImpl):
 	mono_gc_wbarrier_value_copy() doesn't perform the copy itself, so
 	we still need the memcpy().
