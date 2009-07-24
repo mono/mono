@@ -260,6 +260,8 @@ namespace System.ServiceModel
 			string endpointConfigurationName,
 			EndpointAddress remoteAddress)
 		{
+			if (remoteAddress == null)
+				throw new ArgumentNullException ("remoteAddress");
 			InitializeEndpoint (CreateDescription ());
 			service_endpoint.Address = remoteAddress;
 			ApplyConfiguration (endpointConfigurationName);
@@ -268,6 +270,10 @@ namespace System.ServiceModel
 		protected void InitializeEndpoint (Binding binding,
 			EndpointAddress remoteAddress)
 		{
+			if (binding == null)
+				throw new ArgumentNullException ("binding");
+			if (remoteAddress == null)
+				throw new ArgumentNullException ("remoteAddress");
 			InitializeEndpoint (CreateDescription ());
 			service_endpoint.Binding = binding;
 			service_endpoint.Address = remoteAddress;
@@ -275,6 +281,8 @@ namespace System.ServiceModel
 
 		protected void InitializeEndpoint (ServiceEndpoint endpoint)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
 			service_endpoint = endpoint;
 		}
 

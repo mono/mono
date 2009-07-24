@@ -123,6 +123,8 @@ namespace System.ServiceModel.Channels
 
 		public PeerCustomResolver (ServiceEndpoint endpoint)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
 			client = new ChannelFactory<ICustomPeerResolverClient> (endpoint).CreateChannel ();
 		}
 
