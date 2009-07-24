@@ -36,15 +36,15 @@ namespace System.ServiceModel.Channels
 {
 	internal abstract class DuplexChannelBase : ChannelBase, IDuplexChannel
 	{
-		ChannelFactoryBase channel_factory_base;
-		ChannelListenerBase channel_listener_base;
+		//ChannelFactoryBase channel_factory_base;
+		//ChannelListenerBase channel_listener_base;
 		EndpointAddress local_address;
 		EndpointAddress remote_address;
 		Uri via;
 		
 		public DuplexChannelBase (ChannelFactoryBase factory, EndpointAddress remoteAddress, Uri via) : base (factory)
 		{
-			channel_factory_base = factory;
+			//channel_factory_base = factory;
 			remote_address = remoteAddress;
 			this.via = via;
 			SetupDelegates ();
@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
 		
 		public DuplexChannelBase (ChannelListenerBase listener) : base (listener)
 		{
-			channel_listener_base = listener;
+			//channel_listener_base = listener;
 			SetupDelegates ();
 		}
 

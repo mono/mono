@@ -1,5 +1,11 @@
 2009-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerChannelListener.cs : set source field. Remove unnecessary NIE.
+	* DuplexChannelBase.cs : comment out some extra fields (so far).
+	* PeerDuplexChannel.cs : pass valid EndpointAddress to PeerNodeImpl.
+
+2009-07-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerCustomResolverBindingElement.cs : add some null checks.
 
 2009-07-23  Atsushi Enomoto  <atsushi@ximian.com>

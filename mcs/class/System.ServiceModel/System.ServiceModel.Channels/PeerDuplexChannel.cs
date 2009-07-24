@@ -77,7 +77,7 @@ namespace System.ServiceModel.Channels
 			this.resolver = listener.Resolver;
 			info = new TcpChannelInfo (binding, listener.MessageEncoder, null); // FIXME: fill properties correctly.
 
-			node = new PeerNodeImpl (null, listener.Source.ListenIPAddress, listener.Source.Port);
+			node = new PeerNodeImpl (new EndpointAddress (((ChannelListenerBase) listener).Uri), listener.Source.ListenIPAddress, listener.Source.Port);
 		}
 
 		public override EndpointAddress LocalAddress {

@@ -50,6 +50,7 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context.Binding)
 		{
+			this.source = source;
 			// FIXME: consider ListenUriMode
 			// FIXME: there should be some way to post-provide Uri in case of null listenerUri in context.
 			listen_uri = context.ListenUriBaseAddress != null ?
@@ -104,7 +105,6 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected override void OnClose (TimeSpan timeout)
