@@ -46,15 +46,15 @@ namespace System.Reflection.Emit {
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class EventBuilder : _EventBuilder {
 #pragma warning disable 169, 414
-		string name;
+		internal string name;
 		Type type;
 		TypeBuilder typeb;
 		CustomAttributeBuilder[] cattrs;
-		MethodBuilder add_method;
-		MethodBuilder remove_method;
-		MethodBuilder raise_method;
-		MethodBuilder[] other_methods;
-		EventAttributes attrs;
+		internal MethodBuilder add_method;
+		internal MethodBuilder remove_method;
+		internal MethodBuilder raise_method;
+		internal MethodBuilder[] other_methods;
+		internal EventAttributes attrs;
 		int table_idx;
 #pragma warning restore 169, 414
 
