@@ -143,6 +143,18 @@ namespace System.Data.Common
 		IDbCommand SelectCommand {
 			get { return ((IDbDataAdapter) this).SelectCommand; }
 		}
+
+		IDbCommand DeleteCommand {
+			get { return ((IDbDataAdapter) this).DeleteCommand; }
+		}
+
+		IDbCommand InsertCommand {
+			get { return ((IDbDataAdapter) this).InsertCommand; }
+		}
+
+		IDbCommand UpdateCommand {
+			get { return ((IDbDataAdapter) this).UpdateCommand; }
+		}
 #endif
 
 		#endregion // Properties
@@ -610,17 +622,17 @@ namespace System.Data.Common
 				switch (row.RowState) {
 				case DataRowState.Added:
 					statementType = StatementType.Insert;
-					command = ((IDbDataAdapter) this).InsertCommand;
+					command = InsertCommand;
 					commandName = "Insert";
 					break;
 				case DataRowState.Deleted:
 					statementType = StatementType.Delete;
-					command = ((IDbDataAdapter) this).DeleteCommand;
+					command = DeleteCommand;
 					commandName = "Delete";
 					break;
 				case DataRowState.Modified:
 					statementType = StatementType.Update;
-					command = ((IDbDataAdapter) this).UpdateCommand;
+					command = UpdateCommand;
 					commandName = "Update";
 					break;
 				case DataRowState.Unchanged:
@@ -654,28 +666,48 @@ namespace System.Data.Common
 				try {
 					if (command != null) {
 						DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
+#if ONLY_1_1
 						IDataParameter nullCheckParam = null;
+#endif
 						foreach (IDataParameter parameter in command.Parameters) {
-							if ((parameter.Direction & ParameterDirection.Input) != 0) {
-								string dsColumnName = parameter.SourceColumn;
-								if (columnMappings.Contains(parameter.SourceColumn))
-									dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
-								if (dsColumnName == null || dsColumnName.Length <= 0) {
-									nullCheckParam = parameter;
-									continue;
-								}
+							if ((parameter.Direction & ParameterDirection.Input) == 0)
+								continue;
 
-								DataRowVersion rowVersion = parameter.SourceVersion;
-								// Parameter version is ignored for non-update commands
-								if (statementType == StatementType.Delete) 
-									rowVersion = DataRowVersion.Original;
+							DataRowVersion rowVersion = parameter.SourceVersion;
+							// Parameter version is ignored for non-update commands
+							if (statementType == StatementType.Delete)
+								rowVersion = DataRowVersion.Original;
 
+							string dsColumnName = parameter.SourceColumn;
+#if NET_2_0
+							if (columnMappings.Contains(dsColumnName)) {
+								dsColumnName = columnMappings [dsColumnName].DataSetColumn;
 								parameter.Value = row [dsColumnName, rowVersion];
-								if (nullCheckParam != null && (parameter.Value != null
-									&& parameter.Value != DBNull.Value)) {
+							} else {
+								parameter.Value = null;
+							}
+
+							DbParameter nullCheckParam = parameter as DbParameter;
+#else
+							if (columnMappings.Contains(dsColumnName))
+								dsColumnName = columnMappings [dsColumnName].DataSetColumn;
+							if (dsColumnName == null || dsColumnName.Length == 0) {
+								nullCheckParam = parameter;
+								continue;
+							}
+							parameter.Value = row [dsColumnName, rowVersion];
+#endif
+
+#if NET_2_0
+							if (nullCheckParam != null && nullCheckParam.SourceColumnNullMapping) {
+#else
+							if (nullCheckParam != null) {
+#endif
+								if (parameter.Value != null && parameter.Value != DBNull.Value)
 									nullCheckParam.Value = 0;
-									nullCheckParam = null;
-								}
+								else
+									nullCheckParam.Value = 1;
+								nullCheckParam = null;
 							}
 						}
 					}

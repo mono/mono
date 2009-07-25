@@ -1,4 +1,15 @@
-2009-07-15  Veerapuram Varadhan
+2009-07-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* DbCommandBuilder.cs (CreateDeleteCommand, CreateUpdateCommand): Add the 
+	nullcheck-param into the respective command's parameter list.  Fixes 
+	build breaks.  Individual provider's CommandBuilder classes from 2.0 
+	profile onwards use the base version of methods to maintain these commands.
+	(Get*Command): Cleanup code duplication
+	* DbDataAdapter (Update): Use SourceColumnNullMapping property to handle 
+	nullcheckparams.  Fixes #522624.  Patch by 
+	Gert Driesen  <drieseng@users.sourceforge.net>.
+	
+2009-07-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Part of fix for #325464
 	* DbParameter.cs (FrameworkDbType, DbTypeMapping, SystemType): New internal properties 
