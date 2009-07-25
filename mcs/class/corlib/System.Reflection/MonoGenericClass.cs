@@ -96,8 +96,10 @@ namespace System.Reflection
 			initialized = true;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern Type GetParentType ();
+		Type GetParentType ()
+		{
+			return InflateType (generic_type.BaseType);		
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern Type InflateType_internal (Type type);
