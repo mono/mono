@@ -1,5 +1,10 @@
 2009-07-20  Michael Barker  <mike@middlesoft.co.uk>
 
+	* MessagingProviderLocator.cs: Changed System.Exceptions to
+	MonoMessagingExceptions.
+
+2009-07-20  Michael Barker  <mike@middlesoft.co.uk>
+
 	* MessagingProviderLocator.cs: Default to rabbitmq if no
 	MONO_MESSAGING_PROVIDER variable is defined.
 

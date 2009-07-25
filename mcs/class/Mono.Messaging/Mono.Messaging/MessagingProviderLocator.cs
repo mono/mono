@@ -69,7 +69,7 @@ namespace Mono.Messaging
 #if NET_2_0 || BOOTSTRAP_NET_2_0 || NET_3_0 || NET_2_1 || NET_3_0 || NET_3_5 || NET_4_0 || BOOTSTRAP_NET_4_0
 		private string GetProviderClassName ()
 		{
-			string className = System.Configuration.ConfigurationSettings.AppSettings[MESSAGING_PROVIDER_KEY];
+			string className = System.Configuration.ConfigurationManager.AppSettings[MESSAGING_PROVIDER_KEY];
 			return className != null ? className : System.Environment.GetEnvironmentVariable(MESSAGING_PROVIDER_KEY);
 		}
 #else
@@ -83,14 +83,14 @@ namespace Mono.Messaging
 		{
 			Type t = ResolveType (className);			
 			if (t == null)
-				throw new Exception ("Can't find class: " + className);
+				throw new MonoMessagingException ("Can't find class: " + className);
 			
 			ConstructorInfo ci = t.GetConstructor (BindingFlags.Public | BindingFlags.Instance,
 			                                       Type.DefaultBinder,
 			                                       new Type[0],
 			                                       new ParameterModifier[0]);
 			if (ci == null)
-				throw new Exception ("Can't find constructor");
+				throw new MonoMessagingException ("Can't find constructor");
 			
 			return (IMessagingProvider) ci.Invoke (new object[0]);
 		}
