@@ -58,7 +58,7 @@ namespace System.Reflection.Emit
 		private string nspace;
 		private Type parent;
 		private Type nesting_type;
-		private Type[] interfaces;
+		internal Type[] interfaces;
 		internal int num_methods;
 		internal MethodBuilder[] methods;
 		internal ConstructorBuilder[] ctors;

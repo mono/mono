@@ -67,13 +67,13 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
+		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
+		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern EventInfo[] GetEvents_internal (Type reflected_type);
+		extern EventInfo[] GetEvents_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -111,9 +111,6 @@ namespace System.Reflection
 			return InflateType_internal (type);
 		}
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern MonoGenericClass[] GetInterfaces_internal ();
-
 		public override Type BaseType {
 			get {
 				Type parent = GetParentType ();
@@ -121,9 +118,21 @@ namespace System.Reflection
 			}
 		}
 
+		Type[] GetInterfacesInternal ()
+		{
+			if (generic_type.interfaces == null)
+				return new Type [0];
+			Type[] res = new Type [generic_type.interfaces.Length];
+			for (int i = 0; i < res.Length; ++i)
+				res [i] = InflateType (generic_type.interfaces [i]);
+			return res;
+		}
+
 		public override Type[] GetInterfaces ()
 		{
-			return GetInterfaces_internal ();
+			if (!generic_type.IsCompilerContext)
+				throw new NotSupportedException ();
+			return GetInterfacesInternal ();
 		}
 
 		protected override bool IsValueTypeImpl ()
@@ -175,6 +184,11 @@ namespace System.Reflection
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
 			initialize ();
+
+			if (fromNoninstanciated is FieldOnTypeBuilderInst && generic_type.IsCompilerContext) {
+				FieldOnTypeBuilderInst finst = (FieldOnTypeBuilderInst)fromNoninstanciated;
+				fromNoninstanciated = finst.fb;
+			}
 
 			if (!(fromNoninstanciated is FieldBuilder))
 				throw new InvalidOperationException ("Inflating non FieldBuilder objects is not supported: " + fromNoninstanciated.GetType ());
@@ -579,7 +593,7 @@ namespace System.Reflection
 			if (c == this)
 				return true;
 
-			MonoGenericClass[] interfaces = GetInterfaces_internal ();
+			Type[] interfaces = GetInterfacesInternal ();
 
 			if (c.IsInterface) {
 				if (interfaces == null)
