@@ -181,7 +181,7 @@ namespace System.Data.Common {
 			// If no table was found, then we can't do an delete
 			if (QuotedTableName == String.Empty)
 				return null;
-
+			
 			CreateNewCommand (ref _deleteCommand);
 
 			string command = String.Format ("DELETE FROM {0}", QuotedTableName);
@@ -211,14 +211,18 @@ namespace System.Data.Common {
 				if (!isKey && allowNull) {
 					parameter = _deleteCommand.CreateParameter ();
 					if (option) {
-						parameter.ParameterName = String.Format ("@{0}",
+						parameter.ParameterName = String.Format ("@IsNull_{0}",
 											 schemaRow ["BaseColumnName"]);
 					} else {
 						parameter.ParameterName = String.Format ("@p{0}", parmIndex++);
 					}
 					String sourceColumnName = (string) schemaRow ["BaseColumnName"];
 					parameter.Value = 1;
-
+					parameter.DbType = DbType.Int32;
+					// This should be set for nullcheckparam
+					parameter.SourceColumnNullMapping = true;
+					_deleteCommand.Parameters.Add (parameter);
+					
 					whereClause.Append ("(");
 					whereClause.Append (String.Format (clause1, parameter.ParameterName, 
 									   GetQuotedString (sourceColumnName)));
@@ -343,16 +347,20 @@ namespace System.Data.Common {
 				if (!isKey && allowNull) {
 					parameter = _updateCommand.CreateParameter ();
 					if (option) {
-						parameter.ParameterName = String.Format ("@{0} IS NULL",
+						parameter.ParameterName = String.Format ("@IsNull_{0}",
 											 schemaRow ["BaseColumnName"]);
 					} else {
 						parameter.ParameterName = String.Format ("@p{0}", parmIndex++);
 					}
+					parameter.DbType = DbType.Int32;
 					parameter.Value = 1;
+					// This should be set for nullcheckparam
+					parameter.SourceColumnNullMapping = true;
 					whereClause.Append ("(");
 					whereClause.Append (String.Format (clause1, parameter.ParameterName,
 									   GetQuotedString ((string) schemaRow ["BaseColumnName"])));
 					whereClause.Append (" OR ");
+					_updateCommand.Parameters.Add (parameter);
 				}
 
 				if (option)
@@ -505,10 +513,7 @@ namespace System.Data.Common {
 
 		public DbCommand GetDeleteCommand ()
 		{
-			BuildCache (true);
-			if (_deleteCommand == null)
-				return CreateDeleteCommand (false);
-			return _deleteCommand;
+			return GetDeleteCommand (false);
 		}
 
 		public DbCommand GetDeleteCommand (bool option)
@@ -521,10 +526,7 @@ namespace System.Data.Common {
 
 		public DbCommand GetInsertCommand ()
 		{
-			BuildCache (true);
-			if (_insertCommand == null)
-				return CreateInsertCommand (false);
-			return _insertCommand;
+			return GetInsertCommand (false);
 		}
 
 		public DbCommand GetInsertCommand (bool option)
@@ -537,10 +539,7 @@ namespace System.Data.Common {
 
 		public DbCommand GetUpdateCommand ()
 		{
-			BuildCache (true);
-			if (_updateCommand == null)
-				return CreateUpdateCommand (false);
-			return _updateCommand;
+			return GetUpdateCommand (false);
 		}
 
 		public DbCommand GetUpdateCommand (bool option)
