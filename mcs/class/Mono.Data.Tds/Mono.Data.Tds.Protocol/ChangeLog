@@ -1,3 +1,7 @@
+2009-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TdsConnectionPool.cs: Fixed typo in ResetConnectionPool.
+
 2009-05-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #382734
