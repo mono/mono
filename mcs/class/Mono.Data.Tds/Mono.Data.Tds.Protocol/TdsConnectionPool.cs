@@ -259,7 +259,7 @@ retry:
 				lock (conns) {
 					Tds tds;
 					int i;
-					for (i = conns.Count - 1; i >= 0; i++) {
+					for (i = conns.Count - 1; i >= 0; i--) {
 						tds = (Tds) conns [i];
 						tds.poolStatus = 2; // 2 -> disconnect me upon release
 					}
