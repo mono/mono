@@ -27,44 +27,48 @@ using System;
 namespace MonoTests.System.Text {
 
 	[TestFixture]
-	public class StringBuilderTest : Assertion {
+	public class StringBuilderTest  {
 
 		private StringBuilder sb;
 
+		[Test]
 		public void TestConstructor1() 
 		{
 			// check the parameterless ctor
 			sb = new StringBuilder();
-			AssertEquals(String.Empty, sb.ToString());
-			AssertEquals(0, sb.Length);
-			AssertEquals(16, sb.Capacity);
+			Assert.AreEqual(String.Empty, sb.ToString());
+			Assert.AreEqual(0, sb.Length);
+			Assert.AreEqual(16, sb.Capacity);
 		}
 
+		[Test]
 		public void TestConstructor2() 
 		{
 			// check ctor that specifies the capacity
 			sb = new StringBuilder(10);
-			AssertEquals(String.Empty, sb.ToString());
-			AssertEquals(0, sb.Length);
+			Assert.AreEqual(String.Empty, sb.ToString());
+			Assert.AreEqual(0, sb.Length);
 			// check that capacity is not less than default
-			AssertEquals(10, sb.Capacity);
+			Assert.AreEqual(10, sb.Capacity);
 
 			sb = new StringBuilder(42);
-			AssertEquals(String.Empty, sb.ToString());
-			AssertEquals(0, sb.Length);
+			Assert.AreEqual(String.Empty, sb.ToString());
+			Assert.AreEqual(0, sb.Length);
 			// check that capacity is set
-			AssertEquals(42, sb.Capacity);
+			Assert.AreEqual(42, sb.Capacity);
 		}
-		
+
+		[Test]		
 		public void TestConstructor3() {
 			// check ctor that specifies the capacity & maxCapacity
 			sb = new StringBuilder(444, 1234);
-			AssertEquals(String.Empty, sb.ToString());
-			AssertEquals(0, sb.Length);
-			AssertEquals(444, sb.Capacity);
-			AssertEquals(1234, sb.MaxCapacity);
+			Assert.AreEqual(String.Empty, sb.ToString());
+			Assert.AreEqual(0, sb.Length);
+			Assert.AreEqual(444, sb.Capacity);
+			Assert.AreEqual(1234, sb.MaxCapacity);
 		}
 
+		[Test]
 		public void TestConstructor4() 
 		{
 			// check for exception in ctor that specifies the capacity & maxCapacity
@@ -75,15 +79,17 @@ namespace MonoTests.System.Text {
 				return;
 			}
 			// if we didn't catch an exception, then we have a problem Houston.
-			NUnit.Framework.Assertion.Fail("Capacity exeeds MaxCapacity");
+			NUnit.Framework.Assertion.Fail("Capacity exceeds MaxCapacity");
 		}
 
+		[Test]
 	public void TestConstructor5() {
 		String someString = null;
 		sb = new StringBuilder(someString);
-		AssertEquals("Should be empty string", String.Empty, sb.ToString());
+		Assert.AreEqual(String.Empty, sb.ToString(), "Should be empty string");
 	}
 
+		[Test]
 	public void TestConstructor6() {
 		// check for exception in ctor that prevents startIndex less than zero
 		try {
@@ -97,6 +103,7 @@ namespace MonoTests.System.Text {
 		NUnit.Framework.Assertion.Fail("StartIndex not allowed to be less than zero.");
 	}
 
+		[Test]
 	public void TestConstructor7() {
 		// check for exception in ctor that prevents length less than zero
 		try {
@@ -110,6 +117,7 @@ namespace MonoTests.System.Text {
 		NUnit.Framework.Assertion.Fail("Length not allowed to be less than zero.");
 	}
 
+		[Test]
 	public void TestConstructor8() {
 		// check for exception in ctor that ensures substring is contained in given string
 		// check that startIndex is not too big
@@ -124,6 +132,7 @@ namespace MonoTests.System.Text {
 		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
 	}
 
+		[Test]
 	public void TestConstructor9() {
 		// check for exception in ctor that ensures substring is contained in given string
 		// check that length doesn't go beyond end of string
@@ -138,79 +147,84 @@ namespace MonoTests.System.Text {
 		NUnit.Framework.Assertion.Fail("StartIndex and length must refer to a location within the string.");
 	}
 
+		[Test]
 	public void TestConstructor10() {
 		// check that substring is taken properly and made into a StringBuilder
 		String someString = "someString";
 		sb = new StringBuilder(someString, 4, 6, 18);
 		string expected = "String";
-		AssertEquals( expected, sb.ToString());
+		Assert.AreEqual( expected, sb.ToString());
 	}
 
+		[Test]
 	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void TestConstructor11 () {
 		new StringBuilder (-1);
 	}
-		
+
+		[Test]		
 	public void TestAppend() {
                 StringBuilder sb = new StringBuilder( "Foo" );
                 sb.Append( "Two" );
                 string expected = "FooTwo";
-                AssertEquals( expected, sb.ToString() );
+                Assert.AreEqual( expected, sb.ToString() );
         }
 
+		[Test]
         public void TestInsert() {
                 StringBuilder sb = new StringBuilder();
 
-                AssertEquals( String.Empty, sb.ToString() ); 
+                Assert.AreEqual( String.Empty, sb.ToString() ); 
                         /* Test empty StringBuilder conforms to spec */
 
                 sb.Insert( 0, "Foo" ); /* Test insert at start of empty string */
 
-                AssertEquals( "Foo", sb.ToString() );
+                Assert.AreEqual( "Foo", sb.ToString() );
 
                 sb.Insert( 1, "!!" ); /* Test insert not at start of string */
 
-                AssertEquals( "F!!oo", sb.ToString() );
+                Assert.AreEqual( "F!!oo", sb.ToString() );
 
                 sb.Insert( 5, ".." ); /* Test insert at end of string */
 
-                AssertEquals( "F!!oo..", sb.ToString() );
+                Assert.AreEqual( "F!!oo..", sb.ToString() );
         
                 sb.Insert( 0, 1234 ); /* Test insert of a number (at start of string) */
                 
 				// FIX: Why does this test fail?
-                //AssertEquals( "1234F!!oo..", sb.ToString() );
+                //Assert.AreEqual( "1234F!!oo..", sb.ToString() );
                 
                 sb.Insert( 5, 1.5 ); /* Test insert of a decimal (and end of string) */
                 
 				// FIX: Why does this test fail?
-				//AssertEquals( "1234F1.5!!oo..", sb.ToString() );
+				//Assert.AreEqual( "1234F1.5!!oo..", sb.ToString() );
 
                 sb.Insert( 4, 'A' ); /* Test char insert in middle of string */
 
 				// FIX: Why does this test fail?
-				//AssertEquals( "1234AF1.5!!oo..", sb.ToString() );
+				//Assert.AreEqual( "1234AF1.5!!oo..", sb.ToString() );
 
         }
 
+		[Test]
         public void TestReplace() {
                 StringBuilder sb = new StringBuilder( "Foobarbaz" );
 
                 sb.Replace( "bar", "!!!" );             /* Test same length replace in middle of string */
                 
-                AssertEquals( "Foo!!!baz", sb.ToString() );
+                Assert.AreEqual( "Foo!!!baz", sb.ToString() );
 
                 sb.Replace( "Foo", "ABcD" );            /* Test longer replace at start of string */
 
-                AssertEquals( "ABcD!!!baz", sb.ToString() );
+                Assert.AreEqual( "ABcD!!!baz", sb.ToString() );
 
                 sb.Replace( "baz", "00" );              /* Test shorter replace at end of string */
                         
-                AssertEquals( "ABcD!!!00", sb.ToString() );
+                Assert.AreEqual( "ABcD!!!00", sb.ToString() );
 
                 sb.Replace( sb.ToString(), null );      /* Test string clear as in spec */
 
-                AssertEquals( String.Empty, sb.ToString() );
+                Assert.AreEqual( String.Empty, sb.ToString() );
 
                 /*           |         10        20        30
                 /*         |0123456789012345678901234567890| */
@@ -218,17 +232,18 @@ namespace MonoTests.System.Text {
 
                 sb.Replace( "abc", "!!!", 0, 31 ); /* Partial replace at start of string */
 
-                AssertEquals( "!!! this is testing !!! the !!! abc partial replace abc", sb.ToString() );
+                Assert.AreEqual( "!!! this is testing !!! the !!! abc partial replace abc", sb.ToString() );
 
                 sb.Replace( "testing", "", 0, 15 ); /* Test replace across boundary */
 
-                AssertEquals( "!!! this is testing !!! the !!! abc partial replace abc", sb.ToString() );
+                Assert.AreEqual( "!!! this is testing !!! the !!! abc partial replace abc", sb.ToString() );
 
                 sb.Replace( "!!!", "" ); /* Test replace with empty string */
 
-                AssertEquals(" this is testing  the  abc partial replace abc", sb.ToString() );
+                Assert.AreEqual(sb.ToString() , " this is testing  the  abc partial replace abc");
         }
 
+		[Test]
         public void TestAppendFormat() {
         }
 
@@ -240,12 +255,12 @@ namespace MonoTests.System.Text {
 		sb.Append ("Second");
 		sb.Append ("Third");
 		sb.Replace ("Second", "Gone", 2, sb.Length-2);
-		AssertEquals ("#01", "FirstGoneThird", sb.ToString ());
+		Assert.AreEqual ("FirstGoneThird", sb.ToString (), "#01");
 
 		sb.Length = 0;
 		sb.Append ("This, is, a, list");
 		sb.Replace (",", "comma-separated", 11, sb.Length-11);
-		AssertEquals ("#02", "This, is, acomma-separated list", sb.ToString ());
+		Assert.AreEqual ("This, is, acomma-separated list", sb.ToString (), "#02");
 	}
 
 	[Test]
@@ -254,7 +269,7 @@ namespace MonoTests.System.Text {
 		StringBuilder sb = new StringBuilder();
 		sb.Append("testtesttest");
 		sb.Insert(0, '^');
-		AssertEquals ("#01", "^testtesttest", sb.ToString ());
+		Assert.AreEqual ("^testtesttest", sb.ToString (), "#01");
 	}
 
 	[Test]
@@ -263,7 +278,7 @@ namespace MonoTests.System.Text {
 		StringBuilder sb = new StringBuilder();
 		char [] ca = new char [] { 'c' };
 		sb.Append (ca);
-		AssertEquals ("#01", "c", sb.ToString ());
+		Assert.AreEqual ("c", sb.ToString (), "#01");
 	}
 
 
@@ -273,7 +288,7 @@ namespace MonoTests.System.Text {
 		StringBuilder b = new StringBuilder ();
 		b.Append ("Hello, I am a StringBuilder");
 		b.Remove (0, 7);  // Should remove "Hello, "
-		AssertEquals ("#01", "I am a StringBuilder", b.ToString ());
+		Assert.AreEqual ("I am a StringBuilder", b.ToString (), "#01");
 	}
 
 	[Test]
@@ -281,14 +296,14 @@ namespace MonoTests.System.Text {
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.Insert(0, "aa");
-		AssertEquals ("#01", "aa", sb.ToString ());
+		Assert.AreEqual ("aa", sb.ToString (), "#01");
 
 		char [] charArr = new char [] { 'b', 'c', 'd' };
 		sb.Insert(1, charArr, 1, 1);
-		AssertEquals ("#02", "aca", sb.ToString ());
+		Assert.AreEqual ("aca", sb.ToString (), "#02");
 
 		sb.Insert (1, null, 0, 0);
-		AssertEquals ("#03", "aca", sb.ToString ());
+		Assert.AreEqual ("aca", sb.ToString (), "#03");
 		
 		try {
 			sb.Insert (1, null, 1, 1);
@@ -439,8 +454,8 @@ namespace MonoTests.System.Text {
 		} catch (ArgumentOutOfRangeException) {
 		}
 
-		AssertEquals (2, sb.Capacity);
-		AssertEquals (3, sb.MaxCapacity);
+		Assert.AreEqual (2, sb.Capacity);
+		Assert.AreEqual (3, sb.MaxCapacity);
 	}
 	
 	[Test]
@@ -464,27 +479,46 @@ namespace MonoTests.System.Text {
 	public void CapacityFromString ()
 	{
 		StringBuilder sb = new StringBuilder ("hola").Append ("lala");
-		AssertEquals ("#01", "holalala", sb.ToString ());
+		Assert.AreEqual ("holalala", sb.ToString (), "#01");
 	}
 
 	[Test]
 	public void ReplaceWithLargerString ()
 	{
 		StringBuilder sb = new StringBuilder ("ABCDE");
-		AssertEquals ("#1", "ABCDE", sb.ToString ());
+		Assert.AreEqual ("ABCDE", sb.ToString (), "#1");
 		sb.Replace ("ABC", "abcaa", 0, 3);
-		AssertEquals ("#2", "abcaaDE", sb.ToString ());
+		Assert.AreEqual ("abcaaDE", sb.ToString (), "#2");
 	}
 
+	[Test]
+	public void MaxCapacity_Overflow4 ()
+	{
+		StringBuilder sb = new StringBuilder (2, 3);
+		Assert.AreEqual (2, sb.Capacity);
+		Assert.AreEqual (3, sb.MaxCapacity);
+		try {
+			sb.Length = 4;
+			Assert.Fail ("#01");
+		} catch (ArgumentOutOfRangeException) {
+		}
+
+		try {
+			sb.EnsureCapacity (5);
+			Assert.Fail ("#02");
+		} catch (ArgumentOutOfRangeException) {
+		}
+	}
+	
 	[Test]
 	public void SetLength ()
 	{
 		StringBuilder sb = new StringBuilder ("Text");
-		AssertEquals ("#1", 4, sb.Length);
-		AssertEquals ("#2", "Text", sb.ToString ());
+		Assert.AreEqual (4, sb.Length, "#1");
+		Assert.AreEqual ("Text", sb.ToString (), "#2");
 		sb.Length = 8;
-		AssertEquals ("#3", 8, sb.Length);
-		AssertEquals ("#4", "Text\0\0\0\0", sb.ToString ());
+		Assert.AreEqual (8, sb.Length, "#3");
+		Assert.AreEqual ("Text\0\0\0\0", sb.ToString (), "#4");
 	}
 }
 
