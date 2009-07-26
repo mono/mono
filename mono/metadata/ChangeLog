@@ -1,5 +1,9 @@
 2009-07-26  Miguel de Icaza  <miguel@novell.com>
 
+	* icall.c (ves_icall_Type_GetNestedType): Throw an exception when
+	passed invalid arguments.   Fixes another crasher in the
+	Silverlight test suite.
+
 	* class.c (mono_class_array_element_size): Return 0 for the size
 	of the class;  This fixes the crasher exposed by :
 
