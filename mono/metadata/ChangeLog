@@ -1,3 +1,9 @@
+2009-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c (mono_reflection_sighelper_get_signature_local):
+	Only dereference the assembly if it has been set.    Fixes a
+	crasher exposed by #525328
+
 2009-07-25  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, object.h, null-gc.c, boehm-gc.c, marshal.c: Really
