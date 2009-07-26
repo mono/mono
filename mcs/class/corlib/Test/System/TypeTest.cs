@@ -2907,6 +2907,14 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (byref_type_param.DeclaringType);
 		}
 
+		[Test]
+		public void MakeArrayTypeTest ()
+		{
+			// This should not crash:
+			typeof (void).MakeArrayType ();
+		}
+		
+
 		[ComVisible (true)]
 		public class ComFoo<T> {
 		}
