@@ -1,3 +1,8 @@
+2009-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* Calendar.cs: Do not add internal abstract methods to the
+	Calendar class, it prevents derived classes from existing. 
+
 2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfo.cs : it seems that zh-Hant and zh-Hans are introduced

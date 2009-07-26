@@ -250,7 +250,17 @@ public abstract class Calendar
 	/// <exception cref="T:ArgumentOutOfRangeException">
 	/// The exception will be thrown, if the year is not valid.
 	/// </exception>
-	internal abstract void M_CheckYE(int year, ref int era);
+	internal virtual void M_CheckYE(int year, ref int era)
+	{
+		//
+		// By default, we do nothing.
+		//
+		// This used to be an abstract method in Mono's implementation,
+		// but that means that end-user code could not create their
+		// own calendars.
+		//
+		// Binaries would also crash in this condition.
+	}
 
 	/// <value>
 	/// <para>The property gives the maximum value for years with two
