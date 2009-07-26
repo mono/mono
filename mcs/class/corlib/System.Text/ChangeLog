@@ -1,5 +1,10 @@
 2009-07-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* StringBuilder.cs: don't throw on null values in ctor(string, int).
+	Unify another ctor into the main one to account for MaxCapacity.
+
+2009-07-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* StringBuilder.cs: small fixes dealing with _maxCapacity.
 
 2009-01-13  Jb Evain  <jbevain@novell.com>
