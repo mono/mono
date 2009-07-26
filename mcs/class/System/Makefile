@@ -40,7 +40,7 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
 	$(RESOURCE_FILES)				\
 	$(TEST_RESOURCES)
-	
+
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
 ifdef lib_file
 ifdef PROFILE_2_OR_4
@@ -127,7 +127,7 @@ endif
 
 include ../../build/library.make
 
-$(the_lib): $(CYCLIC_DEP_FILES)
+$(build_lib): $(CYCLIC_DEP_FILES)
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)
 
