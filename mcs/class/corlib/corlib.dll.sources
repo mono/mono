@@ -519,7 +519,6 @@ System.Reflection.Emit/DynamicILInfo.cs
 System.Reflection.Emit/DynamicMethod.cs
 System.Reflection.Emit/EnumBuilder.cs
 System.Reflection.Emit/EventBuilder.cs
-System.Reflection.Emit/EventOnTypeBuilderInst.cs
 System.Reflection.Emit/EventToken.cs
 System.Reflection.Emit/FieldBuilder.cs
 System.Reflection.Emit/FieldOnTypeBuilderInst.cs

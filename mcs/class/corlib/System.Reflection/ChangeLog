@@ -1,15 +1,5 @@
 2009-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* MonoGenericClass.cs (initialize): Remember the number
-	of events available at initialization time. This is required as
-	mcs expect this behavior under compiler context that new events
-	are not returned for an instance that was inflated before.
-
-	* MonoGenericClass.cs: Kill GetEvents_internal and implement it
-	in terms of managed code.
-
-2009-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
-
 	* MonoGenericClass.cs (GetParentType): Implement using managed code.
 
 2009-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
