@@ -53,11 +53,16 @@ library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_lib).so $(the_pdb) $(the_mdb
 
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
+else
+ifdef LIBRARY_USE_INTERMEDIATE_FILE
+build_libdir = $(the_libdir)tmp/
+else
+build_libdir = $(the_libdir)
+endif
+endif
+
 build_lib = $(build_libdir)$(LIBRARY_NAME)
 library_CLEAN_FILES += $(build_lib) $(build_lib:.dll=.pdb)
-else
-build_lib = $(the_lib)
-endif
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
@@ -216,27 +221,33 @@ endif
 
 Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
 
+ifdef ENABLE_AOT
+ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
+
+DO_AOT := $(Q_AOT) MONO_PATH='$(build_libdir):$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version
+
+endif
+endif
+
+ifndef DO_AOT
+DO_AOT = @:
+endif
+
 # The library
 
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
-ifdef LIBRARY_USE_INTERMEDIATE_FILE
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
-	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
-	$(Q) mv $(LIBRARY_NAME) $@
-	$(Q) test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
-	$(Q) test ! -f $(LIBRARY_NAME:.dll=.pdb) || mv $(LIBRARY_NAME:.dll=.pdb) $(dir $@)$(LIBRARY_NAME:.dll=.pdb)
-else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
-endif
+	$(DO_AOT) $@
 
-
-ifdef ENABLE_AOT
-ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
-	$(Q_AOT) MONO_PATH=$(the_libdir) $(RUNTIME) --aot=bind-to-runtime-version $@ > $(PROFILE)_aot.log 2>&1
-endif
+ifdef LIBRARY_USE_INTERMEDIATE_FILE
+$(the_lib): $(build_lib)
+	$(Q) cp $(build_lib) $@
+	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
+	$(Q) test ! -f $(build_lib).so || mv $(build_lib).so $@.so
+	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
 endif
 
 $(makefrag): $(sourcefile)
