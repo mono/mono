@@ -1832,7 +1832,7 @@ namespace Mono.CSharp
 				try {
 					CodeGen.Assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
 				} catch (ArgumentException) {
-					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
+					Report.RuntimeMissingSupport (Location.Null, "resource embedding ");
 				}
 			} else {
 				CodeGen.Assembly.Builder.DefineVersionInfoResource ();
@@ -1841,7 +1841,7 @@ namespace Mono.CSharp
 			if (win32IconFile != null) {
 				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 				if (define_icon == null) {
-					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
+					Report.RuntimeMissingSupport (Location.Null, "resource embedding");
 				} else {
 					define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
 				}
