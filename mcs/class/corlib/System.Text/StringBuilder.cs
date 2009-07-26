@@ -122,7 +122,6 @@ namespace System.Text {
 	
 		public int MaxCapacity {
 			get {
-				// MS runtime always returns Int32.MaxValue.
 				return _maxCapacity;
 			}
 		}
@@ -130,7 +129,7 @@ namespace System.Text {
 		public int Capacity {
 			get {
 				if (_str.Length == 0)
-					return constDefaultCapacity;
+					return Math.Min (_maxCapacity, constDefaultCapacity);
 				
 				return _str.Length;
 			}
@@ -138,6 +137,9 @@ namespace System.Text {
 			set {
 				if (value < _length)
 					throw new ArgumentException( "Capacity must be larger than length" );
+
+				if (value > _maxCapacity)
+					throw new ArgumentOutOfRangeException ("value", "Should be less than or equal to MaxCapacity");
 
 				InternalEnsureCapacity(value);
 			}
