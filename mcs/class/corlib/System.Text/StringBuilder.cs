@@ -56,10 +56,15 @@ namespace System.Text {
 		private string _str;
 		private string _cached_str;
 		
-		private int _maxCapacity = Int32.MaxValue;
+		private int _maxCapacity;
 		private const int constDefaultCapacity = 16;
 
 		public StringBuilder(string value, int startIndex, int length, int capacity) 
+			: this (value, startIndex, length, capacity, Int32.MaxValue)
+		{
+		}
+
+		private StringBuilder(string value, int startIndex, int length, int capacity, int maxCapacity)
 		{
 			// first, check the parameters and throw appropriate exceptions if needed
 			if (null == value)
@@ -76,15 +81,26 @@ namespace System.Text {
 			if (capacity < 0)
 				throw new System.ArgumentOutOfRangeException ("capacity", capacity, "capacity must be greater than zero.");
 
+			if (maxCapacity < 1)
+				throw new System.ArgumentOutOfRangeException ("maxCapacity", "maxCapacity is less than one.");
+			if (capacity > maxCapacity)
+				throw new System.ArgumentOutOfRangeException ("capacity", "Capacity exceeds maximum capacity.");
+
 			// make sure startIndex and length give a valid substring of value
 			// re-ordered to avoid possible integer overflow
 			if (startIndex > value.Length - length)
 				throw new System.ArgumentOutOfRangeException ("startIndex", startIndex, "StartIndex and length must refer to a location within the string.");
 
-			if (capacity == 0)
-				capacity = constDefaultCapacity;
+			if (capacity == 0) {
+				if (maxCapacity > constDefaultCapacity)
+					capacity = constDefaultCapacity;
+				else
+					_str = _cached_str = String.Empty;
+			}
+			_maxCapacity = maxCapacity;
 
-			_str = String.InternalAllocateStr ((length > capacity) ? length : capacity);
+			if (_str == null)
+				_str = String.InternalAllocateStr ((length > capacity) ? length : capacity);
 			if (length > 0)
 				String.CharCopy (_str, 0, value, startIndex, length);
 			
@@ -95,14 +111,7 @@ namespace System.Text {
 
 		public StringBuilder(int capacity) : this (String.Empty, 0, 0, capacity) {}
 
-		public StringBuilder(int capacity, int maxCapacity) : this (String.Empty, 0, 0, capacity) {
-			if (maxCapacity < 1)
-				throw new System.ArgumentOutOfRangeException ("maxCapacity", "maxCapacity is less than one.");
-			if (capacity > maxCapacity)
-				throw new System.ArgumentOutOfRangeException ("capacity", "Capacity exceeds maximum capacity.");
-
-			_maxCapacity = maxCapacity;
-		}
+		public StringBuilder(int capacity, int maxCapacity) : this (String.Empty, 0, 0, capacity, maxCapacity) { }
 
 		public StringBuilder (string value)
 		{
@@ -116,9 +125,10 @@ namespace System.Text {
 			
 			_length = value.Length;
 			_str = _cached_str = value;
+			_maxCapacity = Int32.MaxValue;
 		}
 	
-		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
+		public StringBuilder( string value, int capacity) : this(value == null ? "" : value, 0, value == null ? 0 : value.Length, capacity) {}
 	
 		public int MaxCapacity {
 			get {
