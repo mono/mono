@@ -92,6 +92,11 @@ namespace System.Collections.Generic
 		
 		public void CopyTo (T [] dest, int idx)
 		{
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
+			if (idx < 0)
+				throw new ArgumentOutOfRangeException ("idx");
+			
 			// this gets copied in the order that it is poped
 			if (_array != null) {
 				Array.Copy (_array, 0, dest, idx, _size);
