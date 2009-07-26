@@ -79,7 +79,7 @@ namespace MonoTests.System.Text {
 				return;
 			}
 			// if we didn't catch an exception, then we have a problem Houston.
-			NUnit.Framework.Assertion.Fail("Capacity exeeds MaxCapacity");
+			NUnit.Framework.Assertion.Fail("Capacity exceeds MaxCapacity");
 		}
 
 		[Test]
@@ -491,6 +491,25 @@ namespace MonoTests.System.Text {
 		Assert.AreEqual ("abcaaDE", sb.ToString (), "#2");
 	}
 
+	[Test]
+	public void MaxCapacity_Overflow4 ()
+	{
+		StringBuilder sb = new StringBuilder (2, 3);
+		Assert.AreEqual (2, sb.Capacity);
+		Assert.AreEqual (3, sb.MaxCapacity);
+		try {
+			sb.Length = 4;
+			Assert.Fail ("#01");
+		} catch (ArgumentOutOfRangeException) {
+		}
+
+		try {
+			sb.EnsureCapacity (5);
+			Assert.Fail ("#02");
+		} catch (ArgumentOutOfRangeException) {
+		}
+	}
+	
 	[Test]
 	public void SetLength ()
 	{
