@@ -34,6 +34,8 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.IO;
+using System.Xml;
 
 using NUnit.Framework;
 
@@ -235,16 +237,50 @@ namespace MonoTests.System.Data.SqlClient
 #endif
 		public void InferType_Char ()
 		{
-			Char value = Char.MaxValue;
+			Char value = 'X';
 
-			SqlParameter param = new SqlParameter ();
 #if NET_2_0
-			param.Value = value;
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
-			Assert.AreEqual (DbType.String, param.DbType, "#2");
+			String string_value = "X";
+
+			SqlParameter p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (DbType.String, p.DbType, "#A:DbType");
+			Assert.AreEqual (string_value, p.Value, "#A:Value");
+
+			p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#B:Value1");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#B:Value2");
+
+			p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#C:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#C:DbType");
+			Assert.AreEqual (string_value, p.Value, "#C:Value2");
+
+			p = new SqlParameter ("name", value);
+			Assert.AreEqual (value, p.Value, "#D:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#D:DbType");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#D:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#D:Value2");
+
+			p = new SqlParameter ("name", 5);
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#E:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#E:DbType");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#E:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#E:Value2");
+
+			p = new SqlParameter ("name", SqlDbType.NVarChar);
+			p.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#F:SqlDbType");
+			Assert.AreEqual (value, p.Value, "#F:Value");
 #else
+			SqlParameter p = new SqlParameter ();
 			try {
-				param.Value = value;
+				p.Value = value;
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// The parameter data type of Char is invalid
@@ -264,14 +300,49 @@ namespace MonoTests.System.Data.SqlClient
 		{
 			Char [] value = new Char [] { 'A', 'X' };
 
-			SqlParameter param = new SqlParameter ();
 #if NET_2_0
-			param.Value = value;
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
-			Assert.AreEqual (DbType.String, param.DbType, "#2");
+			String string_value = "AX";
+
+			SqlParameter p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#A:Value1");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (DbType.String, p.DbType, "#A:DbType");
+			Assert.AreEqual (string_value, p.Value, "#A:Value2");
+
+			p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#B:Value1");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#B:Value2");
+
+			p = new SqlParameter ();
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#C:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#C:DbType");
+			Assert.AreEqual (string_value, p.Value, "#C:Value2");
+
+			p = new SqlParameter ("name", value);
+			Assert.AreEqual (value, p.Value, "#D:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#D:DbType");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#D:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#D:Value2");
+
+			p = new SqlParameter ("name", 5);
+			p.Value = value;
+			Assert.AreEqual (value, p.Value, "#E:Value1");
+			Assert.AreEqual (DbType.String, p.DbType, "#E:DbType");
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#E:SqlDbType");
+			Assert.AreEqual (string_value, p.Value, "#E:Value2");
+
+			p = new SqlParameter ("name", SqlDbType.NVarChar);
+			p.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#F:SqlDbType");
+			Assert.AreEqual (value, p.Value, "#F:Value");
 #else
+			SqlParameter p = new SqlParameter ();
 			try {
-				param.Value = value;
+				p.Value = value;
 				Assert.Fail ("#1");
 			} catch (FormatException) {
 				// appears to be bug in .NET 1.1 while constructing
@@ -916,21 +987,589 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter = new SqlParameter ();
 			Assert.IsNull (parameter.SqlValue, "#A1");
 
-			parameter.SqlValue = "Char";
+			object value;
+
+			value = "Char";
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "String:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "String:SqlValue1");
+			Assert.AreEqual (typeof (SqlString), parameter.SqlValue.GetType (), "String:SqlValue2");
+			Assert.AreEqual (value, ((SqlString) parameter.SqlValue).Value, "String:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "String:Value");
+
+			value = true;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "Boolean:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Boolean:SqlValue1");
+			Assert.AreEqual (typeof (SqlBoolean), parameter.SqlValue.GetType (), "Boolean:SqlValue2");
+			Assert.AreEqual (value, ((SqlBoolean) parameter.SqlValue).Value, "Boolean:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Boolean:Value");
+
+			value = (byte) 0x0a;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "Boolean:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Boolean:SqlValue1");
+			Assert.AreEqual (typeof (SqlByte), parameter.SqlValue.GetType (), "Boolean:SqlValue2");
+			Assert.AreEqual (value, ((SqlByte) parameter.SqlValue).Value, "Boolean:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Boolean:Value");
+
+			value = new DateTime (2008, 6, 4);
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "DateTime:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "DateTime:SqlValue1");
+			Assert.AreEqual (typeof (SqlDateTime), parameter.SqlValue.GetType (), "DateTime:SqlValue2");
+			Assert.AreEqual (value, ((SqlDateTime) parameter.SqlValue).Value, "DateTime:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "DateTime:Value");
+
+			value = Guid.NewGuid ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "Guid:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Guid:SqlValue1");
+			Assert.AreEqual (typeof (SqlGuid), parameter.SqlValue.GetType (), "Guid:SqlValue2");
+			Assert.AreEqual (value, ((SqlGuid) parameter.SqlValue).Value, "Guid:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Guid:Value");
+
+			value = (short) 5;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "Int16:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Int16:SqlValue1");
+			Assert.AreEqual (typeof (SqlInt16), parameter.SqlValue.GetType (), "Int16:SqlValue2");
+			Assert.AreEqual (value, ((SqlInt16) parameter.SqlValue).Value, "Int16:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Int16:Value");
+
+			value = 10;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "Int32:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Int32:SqlValue1");
+			Assert.AreEqual (typeof (SqlInt32), parameter.SqlValue.GetType (), "Int32:SqlValue2");
+			Assert.AreEqual (value, ((SqlInt32) parameter.SqlValue).Value, "Int32:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Int32:Value");
+
+			value = 56L;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "Int64:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Int64:SqlValue1");
+			Assert.AreEqual (typeof (SqlInt64), parameter.SqlValue.GetType (), "Int64:SqlValue2");
+			Assert.AreEqual (value, ((SqlInt64) parameter.SqlValue).Value, "Int64:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Int64:Value");
+
+			parameter.SqlValue = 45.5D;
+			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "Double:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Double:SqlValue1");
+			Assert.AreEqual (typeof (SqlDouble), parameter.SqlValue.GetType (), "Double:SqlValue2");
+			Assert.AreEqual (45.5D, ((SqlDouble) parameter.SqlValue).Value, "Double:SqlValue3");
+			Assert.AreEqual (45.5D, parameter.Value, "Double:Value");
+
+			value = 45m;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "Decimal:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Decimal:SqlValue1");
+			Assert.AreEqual (typeof (SqlDecimal), parameter.SqlValue.GetType (), "Decimal:SqlValue2");
+			Assert.AreEqual (value, ((SqlDecimal) parameter.SqlValue).Value, "Decimal:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Decimal:Value");
+
+			value = 45f;
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "Decimal:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Decimal:SqlValue1");
+			Assert.AreEqual (typeof (SqlSingle), parameter.SqlValue.GetType (), "Decimal:SqlValue2");
+			Assert.AreEqual (value, ((SqlSingle) parameter.SqlValue).Value, "Decimal:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Decimal:Value");
+
+			value = new byte [] { 0x0d, 0x0a };
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "Bytes:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Bytes:SqlValue1");
+			Assert.AreEqual (typeof (SqlBinary), parameter.SqlValue.GetType (), "Bytes:SqlValue2");
+			Assert.AreEqual (value, ((SqlBinary) parameter.SqlValue).Value, "Bytes:SqlValue3");
+			Assert.AreEqual (value, parameter.Value, "Bytes:Value");
+
+			parameter = new SqlParameter ();
+			value = 'X';
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "Chars:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Chars:SqlValue1");
+			Assert.AreEqual (typeof (SqlString), parameter.SqlValue.GetType (), "Chars:SqlValue2");
+			Assert.AreEqual ("X", ((SqlString) parameter.SqlValue).Value, "Chars:SqlValue3");
+			// FIXME bug #525321
+			//Assert.AreEqual ("X", parameter.Value, "Chars:Value");
+
+			value = new char [] { 'X', 'A' };
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "Chars:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "Chars:SqlValue1");
+			Assert.AreEqual (typeof (SqlString), parameter.SqlValue.GetType (), "Chars:SqlValue2");
+			Assert.AreEqual ("XA", ((SqlString) parameter.SqlValue).Value, "Chars:SqlValue3");
+			// FIXME bug #525321
+			//Assert.AreEqual ("XA", parameter.Value, "Chars:Value");
+		}
+#endif
+
+		[Test]
+		public void SqlTypes_SqlBinary ()
+		{
+			SqlParameter parameter;
+			SqlBinary value = new SqlBinary (new byte [] { 0x0d, 0x0a });
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlBinary.Null;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlBinary.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlBinary.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlBoolean ()
+		{
+			SqlParameter parameter;
+			SqlBoolean value = new SqlBoolean (false);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlBoolean.Null;
+			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlBoolean.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlBoolean.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlByte ()
+		{
+			SqlParameter parameter;
+			SqlByte value = new SqlByte (0x0d);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlByte.Null;
+			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlByte.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlByte.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+#if NET_2_0
+		[Test]
+		public void SqlTypes_SqlBytes ()
+		{
+			SqlParameter parameter;
+			SqlBytes value = new SqlBytes (new byte [] { 0x0d, 0x0a });
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreSame (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreSame (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlBytes.Null;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "#B:SqlValue1");
+			Assert.AreEqual (typeof (SqlBytes), parameter.SqlValue.GetType (), "#B:SqlValue2");
+			Assert.IsTrue (((SqlBytes) parameter.SqlValue).IsNull, "#B:SqlValue3");
+			Assert.IsNotNull (parameter.Value, "#B:Value1");
+			Assert.AreEqual (typeof (SqlBytes), parameter.Value.GetType (), "#B:Value2");
+			Assert.IsTrue (((SqlBytes) parameter.Value).IsNull, "#B:Value3");
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#C:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlChars ()
+		{
+			SqlParameter parameter;
+			SqlChars value = new SqlChars (new char [] { 'X', 'A' });
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreSame (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreSame (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlChars.Null;
 			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.IsNotNull (parameter.SqlValue, "#B:SqlValue1");
-			// FIXME
-			//Assert.AreEqual (typeof (SqlString), parameter.SqlValue.GetType (), "#B:SqlValue2");
-			//Assert.AreEqual ("Char", ((SqlString) parameter.SqlValue).Value, "#B:SqlValue3");
-			Assert.AreEqual ("Char", parameter.Value, "#B:Value");
+			Assert.AreEqual (typeof (SqlChars), parameter.SqlValue.GetType (), "#B:SqlValue2");
+			Assert.IsTrue (((SqlChars) parameter.SqlValue).IsNull, "#B:SqlValue3");
+			Assert.IsNotNull (parameter.Value, "#B:Value1");
+			Assert.AreEqual (typeof (SqlChars), parameter.Value.GetType (), "#B:Value2");
+			Assert.IsTrue (((SqlChars) parameter.Value).IsNull, "#B:Value3");
 
-			parameter.SqlValue = 10;
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#C:SqlDbType");
+			Assert.AreSame (value, parameter.SqlValue, "#C:SqlValue");
+			Assert.AreSame (value, parameter.Value, "#C:Value");
+		}
+#endif
+
+		[Test]
+		public void SqlTypes_SqlDateTime ()
+		{
+			SqlParameter parameter;
+			SqlDateTime value = new SqlDateTime (DateTime.Now);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlDateTime.Null;
+			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlDateTime.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlDateTime.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlDecimal ()
+		{
+			SqlParameter parameter;
+			SqlDecimal value = new SqlDecimal (45m);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlDecimal.Null;
+			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlDecimal.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlDecimal.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlDouble ()
+		{
+			SqlParameter parameter;
+			SqlDouble value = new SqlDouble (4.5D);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlDouble.Null;
+			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlDouble.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlDouble.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlGuid ()
+		{
+			SqlParameter parameter;
+			SqlGuid value = new SqlGuid (Guid.NewGuid ());
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlGuid.Null;
+			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlGuid.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlGuid.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlInt16 ()
+		{
+			SqlParameter parameter;
+			SqlInt16 value = new SqlInt16 ((short) 5);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlInt16.Null;
+			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlInt16.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlInt16.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlInt32 ()
+		{
+			SqlParameter parameter;
+			SqlInt32 value = new SqlInt32 (5);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlInt32.Null;
+			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlInt32.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlInt32.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#C:SqlDbType");
-			Assert.IsNotNull (parameter.SqlValue, "#C:SqlValue1");
-			// FIXME
-			//Assert.AreEqual (typeof (SqlInt32), parameter.SqlValue.GetType (), "#C:SqlValue2");
-			//Assert.AreEqual (10, ((SqlInt32) parameter.SqlValue).Value, "#C:SqlValue3");
-			Assert.AreEqual (10, parameter.Value, "#C:Value");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlInt64 ()
+		{
+			SqlParameter parameter;
+			SqlInt64 value = new SqlInt64 (5L);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlInt64.Null;
+			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlInt64.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlInt64.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlMoney ()
+		{
+			SqlParameter parameter;
+			SqlMoney value = new SqlMoney (45m);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlMoney.Null;
+			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlMoney.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlMoney.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlSingle ()
+		{
+			SqlParameter parameter;
+			SqlSingle value = new SqlSingle (45f);
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlSingle.Null;
+			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlSingle.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlSingle.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+		[Test]
+		public void SqlTypes_SqlString ()
+		{
+			SqlParameter parameter;
+			SqlString value = new SqlString ("XA");
+
+#if NET_2_0
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreEqual (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreEqual (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlString.Null;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.AreEqual (SqlString.Null, parameter.SqlValue, "#B:SqlValue");
+			Assert.AreEqual (SqlString.Null, parameter.Value, "#B:Value");
+#endif
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#C:SqlDbType");
+#if NET_2_0
+			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
+#endif
+			Assert.AreEqual (value, parameter.Value, "#C:Value");
+		}
+
+#if NET_2_0
+		[Test]
+		public void SqlTypes_SqlXml ()
+		{
+			SqlParameter parameter;
+			SqlXml value = new SqlXml (new XmlTextReader (new StringReader ("<test>Mono</test>")));
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = value;
+			Assert.AreEqual (SqlDbType.Xml, parameter.SqlDbType, "#A:SqlDbType");
+			Assert.AreSame (value, parameter.SqlValue, "#A:SqlValue");
+			Assert.AreSame (value, parameter.Value, "#A:Value");
+
+			parameter = new SqlParameter ();
+			parameter.SqlValue = SqlXml.Null;
+			Assert.AreEqual (SqlDbType.Xml, parameter.SqlDbType, "#B:SqlDbType");
+			Assert.IsNotNull (parameter.SqlValue, "#B:SqlValue1");
+			Assert.AreEqual (typeof (SqlXml), parameter.SqlValue.GetType (), "#B:SqlValue2");
+			Assert.IsTrue (((SqlXml) parameter.SqlValue).IsNull, "#B:SqlValue3");
+			Assert.IsNotNull (parameter.Value, "#B:Value1");
+			Assert.AreEqual (typeof (SqlXml), parameter.Value.GetType (), "#B:Value2");
+			Assert.IsTrue (((SqlXml) parameter.Value).IsNull, "#B:Value3");
+
+			parameter = new SqlParameter ();
+			parameter.Value = value;
+			Assert.AreEqual (SqlDbType.Xml, parameter.SqlDbType, "#C:SqlDbType");
+			Assert.AreSame (value, parameter.SqlValue, "#C:SqlValue");
+			Assert.AreSame (value, parameter.Value, "#C:Value");
 		}
 #endif
 
