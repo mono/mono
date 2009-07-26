@@ -1302,6 +1302,9 @@ namespace System {
 		{
 			if (rank < 1)
 				throw new IndexOutOfRangeException ();
+			if (this == typeof (void))
+				throw new NotSupportedException ();
+			
 			return make_array_type (rank);
 		}
 
