@@ -1,5 +1,17 @@
 2009-07-26  Raja R Harinath  <harinath@hurrynot.org>
 
+	Make AOT compilation explicit
+	* platforms/darwin.make (PLATFORM_AOT_SUFFIX): New.
+	* platforms/linux.make (PLATFORM_AOT_SUFFIX): New.
+	* library.make ($(build_lib)): Don't try to AOT compile the
+	library in its possibly temporary location.
+	(DO_AOT): Remove.  Move to ...
+	($(the_lib)$(PLATFORM_AOT_SUFFIX)): ... here, new rule to
+	explicitly run the AOT compilation.
+	(all-local) [ENABLE_AOT]: Build the AOT compiled library as appropriate.
+
+2009-07-26  Raja R Harinath  <harinath@hurrynot.org>
+
 	Fix parallel-build issues with LIBRARY_USE_INTERMEDIATE_FILE
 	* library.make (build_lib): Define to a profile dependent
 	temporary location for LIBRARY_USE_INTERMEDIATE_FILE.

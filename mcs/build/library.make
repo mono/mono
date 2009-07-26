@@ -219,20 +219,6 @@ BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD
 endif
 endif
 
-Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
-
-ifdef ENABLE_AOT
-ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
-
-DO_AOT := $(Q_AOT) MONO_PATH='$(build_libdir):$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version
-
-endif
-endif
-
-ifndef DO_AOT
-DO_AOT = @:
-endif
-
 # The library
 
 $(the_lib): $(the_libdir)/.stamp
@@ -240,14 +226,26 @@ $(the_lib): $(the_libdir)/.stamp
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
-	$(DO_AOT) $@
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)
 	$(Q) cp $(build_lib) $@
 	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
-	$(Q) test ! -f $(build_lib).so || mv $(build_lib).so $@.so
 	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
+endif
+
+ifdef PLATFORM_AOT_SUFFIX
+Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
+$(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version $(the_lib)
+endif
+
+ifdef ENABLE_AOT
+ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
+
+all-local: $(the_lib)$(PLATFORM_AOT_SUFFIX)
+
+endif
 endif
 
 $(makefrag): $(sourcefile)

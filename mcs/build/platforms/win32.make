@@ -26,6 +26,9 @@ PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
 PLATFORM_PATH_SEPARATOR = ;
 
+## not so simple :-)
+#PLATFORM_AOT_SUFFIX = .dll
+
 hidden_prefix = 
 hidden_suffix = .tmp
 
