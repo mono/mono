@@ -680,7 +680,7 @@ namespace System.Reflection.Emit {
 			make_room (6);
 
 			if (local.ilgen != this)
-				throw new Exception ("Trying to emit a local from a different ILGenerator.");
+				throw new ArgumentException ("Trying to emit a local from a different ILGenerator.");
 
 			/* inline the code from ll_emit () to optimize il code size */
 			if (opcode.StackBehaviourPop == StackBehaviour.Pop1) {
