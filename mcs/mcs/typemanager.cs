@@ -1296,7 +1296,12 @@ namespace Mono.CSharp {
 		if (t.Module == RootContext.ToplevelTypes.Builder)
 			return false;
 
-		throw new NotImplementedException ("imported dynamic type");
+		PredefinedAttribute pa = PredefinedAttributes.Get.Dynamic;
+		if (pa == null)
+			return false;
+
+		object[] res = t.GetCustomAttributes (pa.Type, false);
+		return res != null && res.Length != 0;
 	}
 	
 	public static bool IsEnumType (Type t)

@@ -1,7 +1,8 @@
 2009-07-27  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, argument.cs, convert.cs, assign.cs, expression.cs,
-	ecore.cs: Add TypeManager.IsDynamicType.
+	ecore.cs: Add TypeManager.IsDynamicType,
+	PredefinedAttributes.Dynamic.
 
 2009-07-27  Marek Safar  <marek.safar@gmail.com>
 

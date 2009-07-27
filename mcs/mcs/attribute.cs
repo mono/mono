@@ -1948,6 +1948,9 @@ namespace Mono.CSharp {
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
 
+		// New in .NET 4.0
+		public readonly PredefinedAttribute Dynamic;
+
 		//
 		// Optional types which are used as types and for member lookup
 		//
@@ -1992,6 +1995,8 @@ namespace Mono.CSharp {
 			UnsafeValueType = new PredefinedAttribute ("System.Runtime.CompilerServices", "UnsafeValueTypeAttribute");
 
 			Extension = new PredefinedAttribute ("System.Runtime.CompilerServices", "ExtensionAttribute");
+
+			Dynamic = new PredefinedAttribute ("System.Runtime.CompilerServices", "DynamicAttribute");
 
 			DefaultMember = new PredefinedAttribute ("System.Reflection", "DefaultMemberAttribute");
 			DecimalConstant = new PredefinedAttribute ("System.Runtime.CompilerServices", "DecimalConstantAttribute");
