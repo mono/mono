@@ -1120,8 +1120,13 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
-			if (count < 0 || startIndex < array.GetLowerBound (0) ||
-				startIndex > array.GetUpperBound (0) ||	startIndex - count + 1 < array.GetLowerBound (0))
+			int lb = array.GetLowerBound (0);
+			// Empty arrays do not throw ArgumentOutOfRangeException
+			if (array.Length == 0)
+				return lb - 1;
+
+			if (count < 0 || startIndex < lb ||
+				startIndex > array.GetUpperBound (0) ||	startIndex - count + 1 < lb)
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
@@ -1129,7 +1134,7 @@ namespace System
 					return i;
 			}
 
-			return array.GetLowerBound (0) - 1;
+			return lb - 1;
 		}
 
 #if !BOOTSTRAP_WITH_OLDLIB
