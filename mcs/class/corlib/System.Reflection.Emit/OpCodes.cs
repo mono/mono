@@ -662,7 +662,7 @@ namespace System.Reflection.Emit {
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
 
 		public static readonly OpCode Stelem = new OpCode (
-			0xFF << 0 | 0xA4 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_popref << 24,
+			0xFF << 0 | 0xA4 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popref_popi_pop1 << 24,
 			1 << 0 | (byte) OpCodeType.Objmodel << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
 
 		public static readonly OpCode Unbox_Any = new OpCode (
@@ -895,7 +895,7 @@ namespace System.Reflection.Emit {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static readonly OpCode Constrained = new OpCode (
 			0xFE << 0 | 0x16 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Pop0 << 24,
-			2 << 0 | (byte) OpCodeType.Prefix << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
+			2 << 0 | (byte) OpCodeType.Prefix << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Meta << 24);
 #endif
 		public static readonly OpCode Cpblk = new OpCode (
 			0xFE << 0 | 0x17 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popi_popi_popi << 24,
@@ -920,7 +920,7 @@ namespace System.Reflection.Emit {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static readonly OpCode Readonly = new OpCode (
 			0xFE << 0 | 0x1E << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Pop0 << 24,
-			2 << 0 | (byte) OpCodeType.Primitive << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Next << 24);
+			2 << 0 | (byte) OpCodeType.Prefix << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Meta << 24);
 #endif
 
                 public static bool TakesSingleByteArgument (OpCode inst)

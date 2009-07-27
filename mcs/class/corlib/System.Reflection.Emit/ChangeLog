@@ -1,3 +1,11 @@
+2009-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	OpCode.cs: HashCode is meant to be calculated based on Name. 
+
+	OpCodeNames.cs: Fix some names.
+
+	OpCodes.cs: Fix Stelem, Constrained and Readonly specs.
+
 2009-07-26  Miguel de Icaza  <miguel@novell.com>
 
 	* ILGenerator.cs: Fix the exception thrown when LocalBuilders are

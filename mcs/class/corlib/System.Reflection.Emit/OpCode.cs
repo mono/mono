@@ -63,7 +63,7 @@ namespace System.Reflection.Emit {
 
 		public override int GetHashCode ()
 		{
-			return Value;
+			return Name.GetHashCode ();
 		}
 
 		public override bool Equals (Object obj)
