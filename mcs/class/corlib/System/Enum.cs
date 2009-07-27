@@ -300,9 +300,11 @@ namespace System
 			return Convert.ToSingle (get_value (), provider);
 		}
 
-		object IConvertible.ToType (Type type, IFormatProvider provider)
+		object IConvertible.ToType (Type targetType, IFormatProvider provider)
 		{
-			return Convert.ToType (get_value (), type, provider, false);
+			if (targetType == null)
+				throw new ArgumentNullException ("targetType");
+			return Convert.ToType (get_value (), targetType, provider, false);
 		}
 
 #if ONLY_1_1

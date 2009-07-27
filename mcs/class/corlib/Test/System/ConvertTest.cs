@@ -3604,6 +3604,24 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CharChangeTypeNullNull ()
+		{
+			char a = 'a';
+			IConvertible convert = a;
+			convert.ToType (null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void StringChangeTypeNullNull ()
+		{
+			string a = "a";
+			IConvertible convert = a;
+			convert.ToType (null, null);
+		}
+
+		[Test]
 		// 2005/01/10: The docs say this should throw an InvalidCastException,
 		// however, MS.NET 1.1 throws a NullReferenceException. Assuming docs
 		// are wrong.

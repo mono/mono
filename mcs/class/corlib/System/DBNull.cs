@@ -129,11 +129,11 @@ namespace System
 			throw new InvalidCastException ();
 		}
 
-		object IConvertible.ToType (Type type, IFormatProvider provider)
+		object IConvertible.ToType (Type targetType, IFormatProvider provider)
 		{
-			if (type == typeof (string))
+			if (targetType == typeof (string))
 				return String.Empty;
-			if (type == typeof (DBNull))
+			if (targetType == typeof (DBNull))
 				return this;
 			throw new InvalidCastException ();
 		}

@@ -1,3 +1,18 @@
+2009-07-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Value types implementing IConvertible.ToType now throw an
+	ArgumentNullException if they are passed a null as the
+	"targetType" argument.
+
+	This code can not be put directly in the Convert.ToType method, as
+	this method is used by Convert.ToType (object o, TypeCode tc)
+	which uses null as a target to throw a different kind of error
+	(InvalidCastException).
+
+	Fixes a few more bugs in the Silverlight BCL test suite.
+
+	Additionally, the parameter type has been renamed.
+
 2009-07-26  Miguel de Icaza  <miguel@novell.com>
 
 	* Type.cs: (GetMember) call directly the worker method, instead of

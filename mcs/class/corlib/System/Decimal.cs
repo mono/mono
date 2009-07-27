@@ -1238,9 +1238,11 @@ namespace System
 			return (UInt64)(Decimal.Truncate (d));
 		}
 
-		object IConvertible.ToType (Type type, IFormatProvider provider)
+		object IConvertible.ToType (Type targetType, IFormatProvider provider)
 		{
-			return Convert.ToType (this, type, provider, false);
+			if (targetType == null)
+				throw new ArgumentNullException ("targetType");
+			return Convert.ToType (this, targetType, provider, false);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

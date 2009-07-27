@@ -168,9 +168,11 @@ namespace System
 			return TypeCode.Byte;
 		}
 
-		object IConvertible.ToType (Type type, IFormatProvider provider)
+		object IConvertible.ToType (Type targetType, IFormatProvider provider)
 		{
-			return System.Convert.ToType (m_value, type, provider, false);
+			if (targetType == null)
+				throw new ArgumentNullException ("targetType");
+			return System.Convert.ToType (m_value, targetType, provider, false);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
