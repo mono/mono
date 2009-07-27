@@ -86,18 +86,22 @@ namespace System.Reflection {
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
 				if (add == null)
-					throw new Exception ("No add method!?");
+					throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
 				if (add.DeclaringType.IsValueType) {
+					if (target == null && !add.IsStatic)
+						throw new TargetException ("Cannot add a handler to a non static event with a null target");
 					add.Invoke (target, new object [] {handler});
 					return;
 				}
 				cached_add_event = CreateAddEventDelegate (add);
 			}
+			//if (target == null && is_instance)
+			//	throw new TargetException ("Cannot add a handler to a non static event with a null target");
 			cached_add_event (target, handler);
 #else
 			MethodInfo add = GetAddMethod ();
 			if (add == null)
-				throw new Exception ("No add method!?");
+				throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
 			add.Invoke (target, new object [] {handler});
 #endif
 		}
@@ -163,6 +167,10 @@ namespace System.Reflection {
 
 		static void AddEventFrame<T,D> (AddEvent<T,D> addEvent, object obj, object dele)
 		{
+			if (obj == null)
+				throw new TargetException ("Cannot add a handler to a non static event with a null target");
+			if (!(obj is T))
+				throw new TargetException ("Object doesn't match target");
 			addEvent ((T)obj, (D)dele);
 		}
 

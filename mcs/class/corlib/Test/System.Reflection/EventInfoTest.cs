@@ -73,16 +73,59 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (pub.GetRemoveMethod (), "#B3");
 		}
 
+#if NET_2_0
+		[Test]
+		public void AddHandlerToNullInstanceEventRaisesTargetException ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("pub");
+			EventHandler dele = (a,b) => {};
+			try {
+				ev.AddEventHandler (null, dele);
+				Assert.Fail ("#1");
+			} catch (TargetException) {}
+		}
+
+		[Test]
+		public void AddHandleToPrivateEventRaisesInvalidOperationException ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("priv", BindingFlags.NonPublic| BindingFlags.Instance);
+			EventHandler dele = (a,b) => {};
+			try {
+				ev.AddEventHandler (new PrivateEvent (), dele);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}			
+		}
+
+
+		[Test]
+		public void AddHandlerWithIncompatibleTargetShouldRaiseTargetException ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("pub");
+			EventHandler dele = (a,b) => {};
+			try {
+				ev.AddEventHandler (new PublicEvent (), dele);
+				Assert.Fail ("#1");
+			} catch (TargetException) {}			
+		}
+#endif
+
 #pragma warning disable 67
 		public class PrivateEvent
 		{
 			private static event EventHandler x;
 		}
-		
+
 		public class PublicEvent
 		{
 			public static event EventHandler x;
 		}
+
+		public class TestClass
+		{
+			public event EventHandler pub;
+			private event EventHandler priv;
+		}
+
 #pragma warning restore 67
 	}
 }
