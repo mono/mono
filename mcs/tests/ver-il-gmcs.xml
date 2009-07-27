@@ -42667,6 +42667,24 @@
       </method>
     </type>
   </test>
+  <test name="test-partial-26.cs">
+    <type name="ConsoleApplication1.X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="ConsoleApplication1.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>50</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
