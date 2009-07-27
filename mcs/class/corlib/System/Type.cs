@@ -745,7 +745,7 @@ namespace System {
 
 		public MemberInfo[] GetMember (string name)
 		{
-			return GetMember (name, DefaultBindingFlags);
+			return GetMember (name, MemberTypes.All, DefaultBindingFlags);
 		}
 		
 		public virtual MemberInfo[] GetMember (string name, BindingFlags bindingAttr)
@@ -755,6 +755,8 @@ namespace System {
 
 		public virtual MemberInfo[] GetMember (string name, MemberTypes type, BindingFlags bindingAttr)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			if ((bindingAttr & BindingFlags.IgnoreCase) != 0)
 				return FindMembers (type, bindingAttr, FilterNameIgnoreCase, name);
 			else

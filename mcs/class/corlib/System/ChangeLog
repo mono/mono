@@ -1,3 +1,10 @@
+2009-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* Type.cs: (GetMember) call directly the worker method, instead of
+	calling through an intermediary.
+
+	(GetMember, full): throw if the name is null.
+
 2009-07-19  Robert Jordan  <robertj@gmx.net>
 
 	* __ComObject.cs: Factor out Initialize method and expose it to
