@@ -1,5 +1,11 @@
 2009-07-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #415375
+	* expression.cs: Fixed object and reference type parameter
+	comparison.
+
+2009-07-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #525342
 	* class.cs: Attach partial method attributes to method
 	implementation.

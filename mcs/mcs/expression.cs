@@ -2927,8 +2927,7 @@ namespace Mono.CSharp {
 			// standard but it looks like it works like that.
 			//
 			if (lgen) {
-				constraints = TypeManager.GetTypeParameterConstraints (l);
-				if (constraints == null || constraints.IsReferenceType)
+				if (!TypeManager.IsReferenceType (l))
 					return null;
 			} else if (l.IsInterface) {
 				l = TypeManager.object_type;
@@ -2937,8 +2936,7 @@ namespace Mono.CSharp {
 			}
 
 			if (rgen) {
-				constraints = TypeManager.GetTypeParameterConstraints (r);
-				if (constraints == null || constraints.IsReferenceType)
+				if (!TypeManager.IsReferenceType (r))
 					return null;
 			} else if (r.IsInterface) {
 				r = TypeManager.object_type;
