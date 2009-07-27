@@ -1573,6 +1573,35 @@ public class ArrayTest
 	}
 
 	[Test]
+	public void LastIndexOf_0LengthArray ()
+	{
+		Array array = Array.CreateInstance (typeof (char), 0);
+		int idx = Array.LastIndexOf (array, (object) null, -1, 0);
+		Assert.IsTrue (idx == -1, "#01");
+		idx = Array.LastIndexOf (array, (object) null, -1, 10);
+		Assert.IsTrue (idx == -1, "#02");
+		idx = Array.LastIndexOf (array, (object) null, -100, 10);
+		Assert.IsTrue (idx == -1, "#02");
+
+		array = Array.CreateInstance (typeof (char), 1);
+		try {
+			Array.LastIndexOf (array, (object) null, -1, 0);
+			Assert.Fail ("#04");
+		} catch (ArgumentOutOfRangeException e) {
+		}
+		try {
+			Array.LastIndexOf (array, (object) null, -1, 10);
+			Assert.Fail ("#05");
+		} catch (ArgumentOutOfRangeException e) {
+		}
+		try {
+			Array.LastIndexOf (array, (object) null, -100, 10);
+			Assert.Fail ("#06");
+		} catch (ArgumentOutOfRangeException e) {
+		}
+	}
+
+	[Test]
 	public void TestReverse() {
 		{
 			bool errorThrown = false;
