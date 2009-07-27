@@ -11684,6 +11684,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-455.cs">
+    <type name="ConsoleApplication1.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="ConsoleApplication1.Inner`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Compare(System.Object, T)">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
