@@ -978,7 +978,7 @@ namespace Mono.CSharp {
 			if (e.Type == TypeManager.bool_type)
 				return e;
 
-			if (e.Type == InternalType.Dynamic) {
+			if (TypeManager.IsDynamicType (e.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (e));
 				return new DynamicUnaryConversion ("IsTrue", args, loc);
@@ -1216,7 +1216,7 @@ namespace Mono.CSharp {
 		//
 		protected Expression ConvertExpressionToArrayIndex (EmitContext ec, Expression source)
 		{
-			if (source.type == InternalType.Dynamic) {
+			if (TypeManager.IsDynamicType (source.type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
 				return new DynamicConversion (TypeManager.int32_type, false, args, loc).Resolve (ec);

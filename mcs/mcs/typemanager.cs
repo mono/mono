@@ -1281,6 +1281,23 @@ namespace Mono.CSharp {
 		t = DropGenericTypeArguments (t);
 		return IsSubclassOf (t, TypeManager.delegate_type);
 	}
+
+	//
+	// Is a type of dynamic type
+	//
+	public static bool IsDynamicType (Type t)
+	{
+		if (t == InternalType.Dynamic)
+			return true;
+
+		if (t != object_type)
+			return false;
+
+		if (t.Module == RootContext.ToplevelTypes.Builder)
+			return false;
+
+		throw new NotImplementedException ("imported dynamic type");
+	}
 	
 	public static bool IsEnumType (Type t)
 	{
@@ -2181,7 +2198,7 @@ namespace Mono.CSharp {
 	public static Type TypeToReflectionType (Type type)
 	{
 		// TODO: Very lame and painful, GetReference () is enough for mcs-cecil
-		return type == InternalType.Dynamic ? object_type : type;
+		return IsDynamicType (type) ? object_type : type;
 	}
 
 	/// <summary>

@@ -368,7 +368,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!TypeManager.IsEqual (target_type, source_type)) {
-				if (source_type == InternalType.Dynamic) {
+				if (TypeManager.IsDynamicType (source_type)) {
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (source));
 					return new DynamicConversion (target_type, false, args, loc).Resolve (ec);

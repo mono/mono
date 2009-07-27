@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			if (target_type == TypeManager.object_type || TypeManager.IsDynamicType (target_type)) {
 				//
 				// A pointer type cannot be converted to object
 				//
@@ -395,7 +395,7 @@ namespace Mono.CSharp {
 			//
 			// From any value-type to the type object.
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			if (target_type == TypeManager.object_type || TypeManager.IsDynamicType (target_type)) {
 				//
 				// A pointer type cannot be converted to object
 				//

@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (Expr.Type == InternalType.Dynamic) {
+			if (TypeManager.IsDynamicType (Expr.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (Expr));
 				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
@@ -2609,7 +2609,7 @@ namespace Mono.CSharp {
 				CheckUselessComparison (rc, left.Type);
 			}
 
-			if (left.Type == InternalType.Dynamic || right.Type == InternalType.Dynamic) {
+			if (TypeManager.IsDynamicType (left.Type) || TypeManager.IsDynamicType (right.Type)) {
 				Arguments args = new Arguments (2);
 				args.Add (new Argument (left));
 				args.Add (new Argument (right));
@@ -4704,7 +4704,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr_resolved.Type;
 			mg = expr_resolved as MethodGroupExpr;
 
-			if (expr_type == InternalType.Dynamic || dynamic_arg) {
+			if (dynamic_arg || TypeManager.IsDynamicType (expr_type)) {
 				if (mg != null && mg.IsBase) {
 					Report.Error (1971, loc,
 						"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
@@ -7208,7 +7208,7 @@ namespace Mono.CSharp {
 			}
 
 			Type expr_type = expr_resolved.Type;
-			if (expr_type == InternalType.Dynamic) {
+			if (TypeManager.IsDynamicType (expr_type)) {
 				Arguments args = new Arguments (2);
 				args.Add (new Argument (expr_resolved.Resolve (ec)));
 				if (right_side != null)
@@ -8284,7 +8284,7 @@ namespace Mono.CSharp {
 		{
 			bool dynamic;
 			arguments.Resolve (ec, out dynamic);
-			if (dynamic || indexer_type == InternalType.Dynamic) {
+			if (dynamic || TypeManager.IsDynamicType (indexer_type)) {
 				int additional = right_side == null ? 1 : 2;
 				Arguments args = new Arguments (arguments.Count + additional);
 				if (is_base_indexer) {

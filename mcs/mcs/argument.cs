@@ -368,7 +368,7 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				dynamic |= a.Type == InternalType.Dynamic;
+				dynamic |= TypeManager.IsDynamicType (a.Type);
 			}
 		}
 
