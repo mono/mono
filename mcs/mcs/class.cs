@@ -4353,6 +4353,7 @@ namespace Mono.CSharp {
 
 			if (attributes == null) {
 				attributes = methodDefinition.attributes;
+				attributes.AttachTo (this);
 			} else {
 				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
 			}
