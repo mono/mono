@@ -136,7 +136,7 @@ namespace System.Reflection {
 		{
 			MethodInfo remove = GetRemoveMethod ();
 			if (remove == null)
-				throw new Exception ("No remove method!?");
+				throw new InvalidOperationException ("Cannot remove a handler to an event that doesn't have a visible remove method");
 
 			remove.Invoke (target, new object [] {handler});
 		}

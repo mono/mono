@@ -96,7 +96,6 @@ namespace MonoTests.System.Reflection
 			} catch (InvalidOperationException) {}			
 		}
 
-
 		[Test]
 		public void AddHandlerWithIncompatibleTargetShouldRaiseTargetException ()
 		{
@@ -106,6 +105,17 @@ namespace MonoTests.System.Reflection
 				ev.AddEventHandler (new PublicEvent (), dele);
 				Assert.Fail ("#1");
 			} catch (TargetException) {}			
+		}
+
+		[Test]
+		public void RemoveHandleToPrivateEventRaisesInvalidOperationException ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("priv", BindingFlags.NonPublic| BindingFlags.Instance);
+			EventHandler dele = (a,b) => {};
+			try {
+				ev.RemoveEventHandler (new PrivateEvent (), dele);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}			
 		}
 #endif
 
