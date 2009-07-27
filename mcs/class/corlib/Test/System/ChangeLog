@@ -1,3 +1,7 @@
+2009-07-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ArrayTest.cs: new LastIndexOf test for 0-length arrays.
+
 2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTimeTest.cs: add test for parsing a negative timezone.
