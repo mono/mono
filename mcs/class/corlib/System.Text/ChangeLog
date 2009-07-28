@@ -1,5 +1,8 @@
 2009-07-28  Miguel de Icaza  <miguel@novell.com>
 
+	* UTF8Encoding.cs: Small optimization, reuse the static
+	EncoderFallback and DecoderFallback instead of creating new ones. 
+
 	* UTF8Encoding.cs: Use Equals to compare the objects as the
 	fallback objects do not overload operator ==.    The comparison
 	was previously failing.
