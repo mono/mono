@@ -244,10 +244,11 @@ namespace System.ServiceModel
 			Close ();
 		}
 
-		[MonoTODO]
 		public T GetProperty<T> () where T : class
 		{
-			throw new NotImplementedException ();
+			if (OpenedChannelFactory != null)
+				OpenedChannelFactory.GetProperty<T> ();
+			return null;
 		}
 
 		protected void EnsureOpened ()
@@ -260,23 +261,20 @@ namespace System.ServiceModel
 			string endpointConfigurationName,
 			EndpointAddress remoteAddress)
 		{
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
 			InitializeEndpoint (CreateDescription ());
-			service_endpoint.Address = remoteAddress;
+			if (remoteAddress != null)
+				service_endpoint.Address = remoteAddress;
 			ApplyConfiguration (endpointConfigurationName);
 		}
 
 		protected void InitializeEndpoint (Binding binding,
 			EndpointAddress remoteAddress)
 		{
-			if (binding == null)
-				throw new ArgumentNullException ("binding");
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
 			InitializeEndpoint (CreateDescription ());
-			service_endpoint.Binding = binding;
-			service_endpoint.Address = remoteAddress;
+			if (binding != null)
+				service_endpoint.Binding = binding;
+			if (remoteAddress != null)
+				service_endpoint.Address = remoteAddress;
 		}
 
 		protected void InitializeEndpoint (ServiceEndpoint endpoint)
@@ -286,43 +284,52 @@ namespace System.ServiceModel
 			service_endpoint = endpoint;
 		}
 
-		[MonoTODO]
 		protected override void OnAbort ()
 		{
+			if (OpenedChannelFactory != null)
+				OpenedChannelFactory.Abort ();
 		}
 
-		[MonoTODO]
+		Action<TimeSpan> close_delegate;
+		Action<TimeSpan> open_delegate;
+
+
 		protected override IAsyncResult OnBeginClose (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO]
 		protected override IAsyncResult OnBeginOpen (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnClose);
+			return open_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO]
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				throw new InvalidOperationException ("Async close operation has not started");
+			close_delegate.EndInvoke (result);
 		}
 
-		[MonoTODO]
 		protected override void OnEndOpen (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				throw new InvalidOperationException ("Async close operation has not started");
+			open_delegate.EndInvoke (result);
 		}
 
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
+			if (OpenedChannelFactory != null)
+				OpenedChannelFactory.Close (timeout);
 		}
 
-		[MonoTODO]
 		protected override void OnOpen (TimeSpan timeout)
 		{
 		}
