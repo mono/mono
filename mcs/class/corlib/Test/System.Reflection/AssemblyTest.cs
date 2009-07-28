@@ -1154,5 +1154,15 @@ namespace MonoTests.System.Reflection
 				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
 			}
 		}
+
+		[Test]
+		public void GetTypeWithEmptyStringShouldThrow ()
+		{
+			try {
+				typeof (string).Assembly.GetType ("");
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+		}
+
 	}
 }

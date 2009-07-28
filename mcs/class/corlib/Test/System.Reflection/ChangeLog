@@ -1,5 +1,10 @@
 2009-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* AssemblyTest.cs: Add test for empty string passed to
+	Assembly::GetType.
+
+2009-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* EventInfoTest.cs: Add test for private event and
 	RemoveEventHandler.
 

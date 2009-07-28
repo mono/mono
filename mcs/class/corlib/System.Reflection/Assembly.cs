@@ -369,6 +369,8 @@ namespace System.Reflection {
 		{
 			if (name == null)
 				throw new ArgumentNullException (name);
+			if (name.Length == 0)
+			throw new ArgumentException ("name", "Name cannot be empty");
 
 			return InternalGetType (null, name, throwOnError, ignoreCase);
 		}

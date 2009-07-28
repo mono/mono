@@ -1,5 +1,9 @@
 2009-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Assembly.cs (GetType): Throw if name is empty.
+
+2009-07-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* EventInfo (RemoveEventHandler): Throw InvalidOperationException if the
 	event remove method is not visible.
 
