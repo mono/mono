@@ -279,6 +279,8 @@ namespace System.Net
 				if (request != null)
 					request.Abort ();
 				throw;
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -315,6 +317,8 @@ namespace System.Net
 				async = false;
 #endif				
 				DownloadFileCore (address, fileName, null);
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -391,6 +395,8 @@ namespace System.Net
 				request = SetupRequest (address);
 				WebResponse response = GetWebResponse (request);
 				return response.GetResponseStream ();
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -446,6 +452,8 @@ namespace System.Net
 #endif				
 				WebRequest request = SetupRequest (address, method, true);
 				return request.GetRequestStream ();
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -594,6 +602,8 @@ namespace System.Net
 				async = false;
 #endif				
 				return UploadFileCore (address, method, fileName, null);
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -715,6 +725,8 @@ namespace System.Net
 				async = false;
 #endif				
 				return UploadValuesCore (address, method, data, null);
+			} catch (WebException wexc) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
