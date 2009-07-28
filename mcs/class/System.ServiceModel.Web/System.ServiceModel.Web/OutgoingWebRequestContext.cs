@@ -26,7 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.Net;
+using System.ServiceModel.Channels;
 
 namespace System.ServiceModel.Web
 {
@@ -36,69 +38,51 @@ namespace System.ServiceModel.Web
 		{
 		}
 
-		[MonoTODO]
-		public string Accept {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string Accept { get; set; }
 
-		[MonoTODO]
-		public long ContentLength {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public long ContentLength { get; set; }
 
-		[MonoTODO]
-		public string ContentType {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string ContentType { get; set; }
 
-		[MonoTODO]
-		public WebHeaderCollection Headers {
-			get { throw new NotImplementedException (); }
-		}
+		public WebHeaderCollection Headers { get; private set; }
 
-		[MonoTODO]
-		public string IfMatch {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string IfMatch { get; set; }
 
-		[MonoTODO]
-		public string IfModifiedSince {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string IfModifiedSince { get; set; }
 
-		[MonoTODO]
-		public string IfNoneMatch {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string IfNoneMatch { get; set; }
 
-		[MonoTODO]
-		public string IfUnmodifiedSince {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string IfUnmodifiedSince { get; set; }
 
-		[MonoTODO]
-		public string Method {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string Method { get; set; }
 
-		[MonoTODO]
-		public bool SuppressEntityBody {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public bool SuppressEntityBody { get; set; }
 
-		[MonoTODO]
-		public string UserAgent {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public string UserAgent { get; set; }
+
+		internal void Apply (HttpRequestMessageProperty hp)
+		{
+			hp.Headers.Add (Headers);
+			if (Accept != null)
+				hp.Headers ["Accept"] = Accept;
+			if (ContentLength > 0)
+				hp.Headers ["Content-Length"] = ContentLength.ToString (NumberFormatInfo.InvariantInfo);
+			if (ContentType != null)
+				hp.Headers ["Content-Type"] = ContentType;
+			if (IfMatch != null)
+				hp.Headers ["If-Match"] = IfMatch;
+			if (IfModifiedSince != null)
+				hp.Headers ["If-Modified-Since"] = IfModifiedSince;
+			if (IfNoneMatch != null)
+				hp.Headers ["If-None-Match"] = IfNoneMatch;
+			if (IfUnmodifiedSince != null)
+				hp.Headers ["If-Unmodified-Since"] = IfUnmodifiedSince;
+			if (Method != null)
+				hp.Method = Method;
+			if (SuppressEntityBody)
+				hp.SuppressEntityBody = true;
+			if (UserAgent != null)
+				hp.Headers ["User-Agent"] = UserAgent;
 		}
 	}
 }

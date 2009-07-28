@@ -1,3 +1,7 @@
+2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OutgoingWebRequestContext.cs : implement.
+
 2008-06-11  Noam Lampert <noaml@mainsoft.com>
 
 	* WebServiceHost.cs: Open endpoint on BaseAddress if necessary

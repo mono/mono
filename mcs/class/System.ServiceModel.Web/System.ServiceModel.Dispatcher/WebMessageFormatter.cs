@@ -194,6 +194,10 @@ namespace System.ServiceModel.Description
 
 				var hp = new HttpRequestMessageProperty ();
 				hp.Method = Info.Method;
+
+				// FIXME: isn't it always null?
+				if (WebOperationContext.Current != null)
+					WebOperationContext.Current.OutgoingRequest.Apply (hp);
 				// FIXME: set hp.SuppressEntityBody for some cases.
 				ret.Properties.Add (HttpRequestMessageProperty.Name, hp);
 
