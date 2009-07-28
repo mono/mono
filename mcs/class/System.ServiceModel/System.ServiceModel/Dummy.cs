@@ -11,7 +11,6 @@ namespace System.ServiceModel
 	public class NetNamedPipeBinding : Binding { public override BindingElementCollection CreateBindingElements () { throw new NotImplementedException (); }  public override string Scheme { get { return null; } } }
 	public class NetNamedPipeSecurity { }
 	public class PeerHopCountAttribute { }
-	public class TransactionFlowAttribute { }
 }
 
 namespace System.ServiceModel.Activation.Configuration
