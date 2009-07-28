@@ -91,6 +91,9 @@ namespace Mono.CSharp {
 	//
 	static internal Type expression_type;
 	public static Type parameter_expression_type;
+	public static Type fieldinfo_type;
+	public static Type methodinfo_type;
+	public static Type ctorinfo_type;
 
 	//
 	// C# 4.0
@@ -133,6 +136,7 @@ namespace Mono.CSharp {
 	public static MethodInfo methodbase_get_type_from_handle;
 	public static MethodInfo methodbase_get_type_from_handle_generic;
 	public static MethodInfo fieldinfo_get_field_from_handle;
+	public static MethodInfo fieldinfo_get_field_from_handle_generic;
 	static public MethodInfo activator_create_instance;
 
 	//
@@ -263,6 +267,7 @@ namespace Mono.CSharp {
 		methodbase_get_type_from_handle =
 		methodbase_get_type_from_handle_generic =
 		fieldinfo_get_field_from_handle =
+		fieldinfo_get_field_from_handle_generic =
 		activator_create_instance = null;
 
 		int_get_offset_to_string_data =

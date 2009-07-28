@@ -6864,55 +6864,77 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class TypeOfMethodInfo : TypeOfMethod
+	class TypeOfMethod : TypeOfMember
 	{
-		public TypeOfMethodInfo (MethodBase method, Location loc)
+		public TypeOfMethod (MethodBase method, Location loc)
 			: base (method, loc)
 		{
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = typeof (MethodInfo);
+			if (member is MethodInfo) {
+				type = TypeManager.methodinfo_type;
+				if (type == null)
+					type = TypeManager.methodinfo_type = TypeManager.CoreLookupType ("System.Reflection", "MethodInfo", Kind.Class, true);
+			} else {
+				type = TypeManager.ctorinfo_type;
+				if (type == null)
+					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType ("System.Reflection", "ConstructorInfo", Kind.Class, true);
+			}
+
 			return base.DoResolve (ec);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo) method);
+			if (member is ConstructorInfo)
+				ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) member);
+			else
+				ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo) member);
+
 			base.Emit (ec);
 			ec.ig.Emit (OpCodes.Castclass, type);
 		}
+
+		protected override string GetMethodName {
+			get { return "GetMethodFromHandle"; }
+		}
+
+		protected override string RuntimeHandleName {
+			get { return "RuntimeMethodHandle"; }
+		}
+
+		protected override MethodInfo TypeFromHandle {
+			get {
+				return TypeManager.methodbase_get_type_from_handle;
+			}
+			set {
+				TypeManager.methodbase_get_type_from_handle = value;
+			}
+		}
+
+		protected override MethodInfo TypeFromHandleGeneric {
+			get {
+				return TypeManager.methodbase_get_type_from_handle_generic;
+			}
+			set {
+				TypeManager.methodbase_get_type_from_handle_generic = value;
+			}
+		}
+
+		protected override string TypeName {
+			get { return "MethodBase"; }
+		}
 	}
 
-	class TypeOfConstructorInfo : TypeOfMethod
+	abstract class TypeOfMember : Expression
 	{
-		public TypeOfConstructorInfo (MethodBase method, Location loc)
-			: base (method, loc)
-		{
-		}
+		protected readonly MemberInfo member;
 
-		public override Expression DoResolve (EmitContext ec)
+		protected TypeOfMember (MemberInfo member, Location loc)
 		{
-			type = typeof (ConstructorInfo);
-			return base.DoResolve (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) method);
-			base.Emit (ec);
-			ec.ig.Emit (OpCodes.Castclass, type);
-		}
-	}
-
-	abstract class TypeOfMethod : Expression
-	{
-		protected readonly MethodBase method;
-
-		protected TypeOfMethod (MethodBase method, Location loc)
-		{
-			this.method = method;
+			this.member = member;
 			this.loc = loc;
 		}
 
@@ -6926,27 +6948,25 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			bool is_generic = TypeManager.IsGenericType (method.DeclaringType);
-			MethodInfo mi = is_generic ?
-				TypeManager.methodbase_get_type_from_handle_generic :
-				TypeManager.methodbase_get_type_from_handle;
+			bool is_generic = TypeManager.IsGenericType (member.DeclaringType);
+			MethodInfo mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
 
 			if (mi == null) {
-				Type t = TypeManager.CoreLookupType ("System.Reflection", "MethodBase", Kind.Class, true);
-				Type handle_type = TypeManager.CoreLookupType ("System", "RuntimeMethodHandle", Kind.Class, true);
+				Type t = TypeManager.CoreLookupType ("System.Reflection", TypeName, Kind.Class, true);
+				Type handle_type = TypeManager.CoreLookupType ("System", RuntimeHandleName, Kind.Class, true);
 
 				if (t == null || handle_type == null)
 					return null;
 
-				mi = TypeManager.GetPredefinedMethod (t, "GetMethodFromHandle", loc,
+				mi = TypeManager.GetPredefinedMethod (t, GetMethodName, loc,
 					is_generic ?
 					new Type[] { handle_type, TypeManager.runtime_handle_type } :
 					new Type[] { handle_type } );
 
 				if (is_generic)
-					TypeManager.methodbase_get_type_from_handle_generic = mi;
+					TypeFromHandleGeneric = mi;
 				else
-					TypeManager.methodbase_get_type_from_handle = mi;
+					TypeFromHandle = mi;
 			}
 
 			eclass = ExprClass.Value;
@@ -6955,54 +6975,75 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			bool is_generic = TypeManager.IsGenericType (method.DeclaringType);
+			bool is_generic = TypeManager.IsGenericType (member.DeclaringType);
 			MethodInfo mi;
 			if (is_generic) {
-				mi = TypeManager.methodbase_get_type_from_handle_generic;
-				ec.ig.Emit (OpCodes.Ldtoken, method.DeclaringType);
+				mi = TypeFromHandleGeneric;
+				ec.ig.Emit (OpCodes.Ldtoken, member.DeclaringType);
 			} else {
-				mi = TypeManager.methodbase_get_type_from_handle;
+				mi = TypeFromHandle;
 			}
 
 			ec.ig.Emit (OpCodes.Call, mi);
 		}
+
+		protected abstract string GetMethodName { get; }
+		protected abstract string RuntimeHandleName { get; }
+		protected abstract MethodInfo TypeFromHandle { get; set; }
+		protected abstract MethodInfo TypeFromHandleGeneric { get; set; }
+		protected abstract string TypeName { get; }
 	}
 
-	internal class TypeOfField : Expression
+	class TypeOfField : TypeOfMember
 	{
-		readonly FieldInfo field;
-
 		public TypeOfField (FieldInfo field, Location loc)
+			: base (field, loc)
 		{
-			this.field = field;
-			this.loc = loc;
-		}
-
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (TypeManager.fieldinfo_get_field_from_handle == null) {
-				Type t = TypeManager.CoreLookupType ("System.Reflection", "FieldInfo", Kind.Class, true);
-				Type handle_type = TypeManager.CoreLookupType ("System", "RuntimeFieldHandle", Kind.Class, true);
+			if (TypeManager.fieldinfo_type == null)
+				TypeManager.fieldinfo_type = TypeManager.CoreLookupType ("System.Reflection", TypeName, Kind.Class, true);
 
-				if (t != null && handle_type != null)
-					TypeManager.fieldinfo_get_field_from_handle = TypeManager.GetPredefinedMethod (t,
-						"GetFieldFromHandle", loc, handle_type);
-			}
-
-			type = typeof (FieldInfo);
-			eclass = ExprClass.Value;
-			return this;
+			type = TypeManager.fieldinfo_type;
+			return base.DoResolve (ec);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, field);
-			ec.ig.Emit (OpCodes.Call, TypeManager.fieldinfo_get_field_from_handle);
+			ec.ig.Emit (OpCodes.Ldtoken, (FieldInfo) member);
+			base.Emit (ec);
+		}
+
+		protected override string GetMethodName {
+			get { return "GetFieldFromHandle"; }
+		}
+
+		protected override string RuntimeHandleName {
+			get { return "RuntimeFieldHandle"; }
+		}
+
+		protected override MethodInfo TypeFromHandle {
+			get {
+				return TypeManager.fieldinfo_get_field_from_handle;
+			}
+			set {
+				TypeManager.fieldinfo_get_field_from_handle = value;
+			}
+		}
+
+		protected override MethodInfo TypeFromHandleGeneric {
+			get {
+				return TypeManager.fieldinfo_get_field_from_handle_generic;
+			}
+			set {
+				TypeManager.fieldinfo_get_field_from_handle_generic = value;
+			}
+		}
+
+		protected override string TypeName {
+			get { return "FieldInfo"; }
 		}
 	}
 
@@ -8243,7 +8284,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
 				instance_expr.CreateExpressionTree (ec),
-				new TypeOfMethodInfo (get, loc));
+				new TypeOfMethod (get, loc));
 
 			return CreateExpressionFactoryCall ("Call", args);
 		}
@@ -8742,7 +8783,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (source.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-			args.Add (new Argument (new TypeOfMethodInfo (method, loc)));
+			args.Add (new Argument (new TypeOfMethod (method, loc)));
 			return CreateExpressionFactoryCall ("Convert", args);
 		}
 			

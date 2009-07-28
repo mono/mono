@@ -1,3 +1,8 @@
+2009-07-28  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, expression.cs, ecore.cs, delegate.cs: Use correct
+	version of GetFieldHandle for fields of generic types.
+
 2009-07-27  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, argument.cs, convert.cs, assign.cs, expression.cs,

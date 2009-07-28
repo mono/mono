@@ -3593,15 +3593,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (best_candidate.IsConstructor)
-				return new TypeOfConstructorInfo (best_candidate, loc);
-
 			IMethodData md = TypeManager.GetMethod (best_candidate);
 			if (md != null && md.IsExcluded ())
 				Report.Error (765, loc,
 					"Partial methods with only a defining declaration or removed conditional methods cannot be used in an expression tree");
 			
-			return new TypeOfMethodInfo (best_candidate, loc);
+			return new TypeOfMethod (best_candidate, loc);
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
@@ -5277,13 +5274,13 @@ namespace Mono.CSharp {
 				args.Add (new Argument (new NullLiteral (loc)));
 			else
 				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOfMethodInfo (getter, loc)));
+			args.Add (new Argument (new TypeOfMethod (getter, loc)));
 			return CreateExpressionFactoryCall ("Property", args);
 		}
 
 		public Expression CreateSetterTypeOfExpression ()
 		{
-			return new TypeOfMethodInfo (setter, loc);
+			return new TypeOfMethod (setter, loc);
 		}
 
 		public override Type DeclaringType {

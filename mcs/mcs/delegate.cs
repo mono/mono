@@ -639,7 +639,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			args.Add (new Argument (new NullLiteral (loc)));
-			args.Add (new Argument (new TypeOfMethodInfo (delegate_method, loc)));
+			args.Add (new Argument (new TypeOfMethod (delegate_method, loc)));
 			Expression e = new Invocation (ma, args).Resolve (ec);
 			if (e == null)
 				return null;
