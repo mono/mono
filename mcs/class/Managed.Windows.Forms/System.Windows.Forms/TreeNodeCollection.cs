@@ -216,8 +216,6 @@ namespace System.Windows.Forms {
 			if (owner != null) {
 				tree_view = owner.TreeView;
 				if (tree_view != null) {
-					tree_view.highlighted_node = null;
-					tree_view.selected_node = null;
 					tree_view.UpdateBelow (owner);
 					tree_view.RecalculateVisibleOrder (owner);
 					tree_view.UpdateScrollBars (false);
@@ -355,6 +353,7 @@ namespace System.Windows.Forms {
 			TreeNode removed = nodes [index];
 			TreeNode prev = GetPrevNode (removed);
 			TreeNode new_selected = null;
+			bool re_set_selected = false;
 			bool visible = removed.IsVisible;
 
 			TreeView tree_view = null;
@@ -365,13 +364,14 @@ namespace System.Windows.Forms {
 				tree_view.RecalculateVisibleOrder (prev);
 
 				if (removed == tree_view.SelectedNode) {
+					re_set_selected = true;
 					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
 					if (oe.MoveNext () && oe.MoveNext ()) {
 						new_selected = oe.CurrentNode;
 					} else {
 						oe = new OpenTreeNodeEnumerator (removed);
 						oe.MovePrevious ();
-						new_selected = oe.CurrentNode;
+						new_selected = oe.CurrentNode == removed ? null : oe.CurrentNode;
 					}
 				}
 			}
@@ -384,7 +384,7 @@ namespace System.Windows.Forms {
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 
-			if (tree_view != null && new_selected != null) {
+			if (tree_view != null && re_set_selected) {
 				tree_view.SelectedNode = new_selected;
 			}
 
