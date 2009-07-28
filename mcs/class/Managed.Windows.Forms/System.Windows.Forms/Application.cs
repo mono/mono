@@ -511,6 +511,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public
+#else
+		internal
 #endif
 		static bool FilterMessage (ref Message message)
 		{
