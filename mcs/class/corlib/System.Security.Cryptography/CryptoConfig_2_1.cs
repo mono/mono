@@ -127,9 +127,11 @@ namespace System.Security.Cryptography {
 			return num;
 		}
 #if NET_2_1
-		// not (really) required for Moonlight
+		// we need SHA1 support to verify the codecs binary integrity
 		public static string MapNameToOID (string name)
 		{
+			if ((name != null) && name.Contains ("SHA1"))
+				return "1.3.14.3.2.26";
 			return String.Empty;
 		}
 

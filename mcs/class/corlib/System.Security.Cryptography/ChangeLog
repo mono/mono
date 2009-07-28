@@ -1,3 +1,8 @@
+2009-07-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoConfig_2_1.cs: Add SHA1 support in MapNameToOID in order to
+	be able to verify the codecs signature integrity.
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DSACryptoServiceProvider.cs, RSACryptoServiceProvider.cs: Remove
