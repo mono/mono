@@ -111,6 +111,7 @@
 		<Copy
 			SourceFiles="@(ReferenceCopyLocalPaths)"
 			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutputPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
 		/>
 	</Target>
 
@@ -187,12 +188,14 @@
 
 		<MakeDir Directories="$(IntermediateOutputPath)%(ManifestNonResxWithCulture.Culture)"/>
 		<Copy SourceFiles = "@(NonResxWithCulture)"
-			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')">
+			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')"
+			SkipUnchangedFiles="true">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithCultureOnDisk"/>
 		</Copy>
 
 		<Copy SourceFiles = "@(NonResxWithNoCulture)"
-			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')">
+			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')"
+			SkipUnchangedFiles="true">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
 		</Copy>
 	</Target>
@@ -259,13 +262,15 @@
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
-			DestinationFolder="$(OutputPath)" />
+			DestinationFolder="$(OutputPath)"
+			SkipUnchangedFiles="true" />
 
-		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
+		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
 
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"
-			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')" />
+			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')"
+			SkipUnchangedFiles="true"/>
 	</Target>
 
 	<Target Name="_CopyDeployFilesToOutputDirectory"
@@ -274,17 +279,17 @@
 			CopyDeployFilesToOutputDirectoryPreserveNewest"/>
 
 	<Target Name="CopyDeployFilesToOutputDirectoryPreserveNewest"
-		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
+		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
+		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
+		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)')">
 
-		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>
+		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)')"/>
 	</Target>
 
 	<!-- Copy if newer -->
 	<Target Name="_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways"
-		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
-		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
-		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)'">
+		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
 			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>

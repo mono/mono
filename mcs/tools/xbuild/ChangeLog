@@ -1,3 +1,10 @@
+2009-07-28  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Add missing 'SkipUnchangedFiles=true'
+	for the Copy tasks.
+	(CopyDeployFiles*): Fix typos, Add inputs/outputs for the
+	PreserveNewest case and remove for copy always case.
+
 2009-07-23  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Oops, forgot to remove some
