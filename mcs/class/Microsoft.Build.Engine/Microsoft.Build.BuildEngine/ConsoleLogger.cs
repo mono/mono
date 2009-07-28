@@ -132,8 +132,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic)) {
-				WriteLine (String.Format ("Done building project \"{0}\".", args.ProjectFile));
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
+							args.Succeeded ? String.Empty : "-- FAILED"));
 				WriteLine (String.Empty);
 			}
 		}
@@ -148,8 +149,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			indent--;
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
-				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".",
-					args.TargetName, args.ProjectFile));
+				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
+					args.TargetName, args.ProjectFile,
+					args.Succeeded ? String.Empty : "-- FAILED"));
 			if (!args.Succeeded)
 				errorCount++;
 			WriteLine (String.Empty);

@@ -1,3 +1,9 @@
+2009-07-28  Ankit Jain  <jankit@novell.com>
+
+	* TaskEngine.cs (Prepare): Fix formatting mistake.
+	* ConsoleLogger.cs: Emit "-- FAILED" also when project/target building
+	fails. Also, emit result of project at Normal verbosity level.
+
 2009-07-23  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #511370.
