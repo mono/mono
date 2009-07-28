@@ -109,7 +109,7 @@ namespace System.Web {
 				return false;
 
 			if (pi [0].ParameterType != typeof (object) ||
-			    pi [1].ParameterType != typeof (EventArgs))
+			    !typeof (EventArgs).IsAssignableFrom (pi [1].ParameterType))
 				return false;
 			
 			return true;

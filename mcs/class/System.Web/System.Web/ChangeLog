@@ -1,3 +1,9 @@
+2009-07-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpApplicationFactory.cs: allow subclasses of EventHandler for
+	event handlers in global.asax.
+	Fixes bug #525743.
+
 2009-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: if an exception is processed which refers to
