@@ -220,7 +220,9 @@ w.Close ();
 
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
+			if (web_request != null)
+				web_request.Abort ();
+			web_request = null;
 		}
 
 		// Close
