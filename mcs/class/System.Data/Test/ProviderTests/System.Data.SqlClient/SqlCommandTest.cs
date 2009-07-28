@@ -813,16 +813,36 @@ namespace MonoTests.System.Data.SqlClient
 			cmd = new SqlCommand ("InvalidQuery", conn);
 			try {
 				cmd.ExecuteReader ();
-				Assert.Fail ("#1");
+				Assert.Fail ("#A1");
 			} catch (SqlException ex) {
 				// Could not find stored procedure 'InvalidQuery'
-				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
-				Assert.AreEqual ((byte) 16, ex.Class, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#6:" + ex.Message);
-				Assert.AreEqual (2812, ex.Number, "#7");
-				Assert.AreEqual ((byte) 62, ex.State, "#8");
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#A2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#A6:" + ex.Message);
+				Assert.AreEqual (2812, ex.Number, "#A7");
+				Assert.AreEqual ((byte) 62, ex.State, "#A8");
+
+				// connection is not closed
+				Assert.AreEqual (ConnectionState.Open, conn.State, "#A9");
+			}
+
+			try {
+				cmd.ExecuteReader (CommandBehavior.CloseConnection);
+				Assert.Fail ("#B1");
+			} catch (SqlException ex) {
+				// Could not find stored procedure 'InvalidQuery'
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#B6:" + ex.Message);
+				Assert.AreEqual (2812, ex.Number, "#B7");
+				Assert.AreEqual ((byte) 62, ex.State, "#B8");
+
+				// connection is closed
+				Assert.AreEqual (ConnectionState.Closed, conn.State, "#B9");
 			}
 		}
 
