@@ -1,3 +1,13 @@
+2009-07-28  Ankit Jain  <jankit@novell.com>
+
+	* Exec.cs (AddCommandLineCommands): First word from @command is treated
+	as exec name, and rest as arguments. Extract arguments here.
+	(ExecuteTool): Don't ignore params.
+	(GenerateFullPathToTool): Extract first word as tool name.
+	(HandleTaskExecutionErrors): Honor IgnoreExitCode property.
+	(LogEventsFromTextOutput): Log as messages.
+	* ManagedCompiler.cs (HandleTaskExecutionErrors): Implement.
+
 2009-07-23  Ankit Jain  <jankit@novell.com>
 
 	* AssignProjectConfiguration.cs (Execute): Implement.
