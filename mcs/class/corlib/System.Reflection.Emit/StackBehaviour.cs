@@ -150,7 +150,7 @@ namespace System.Reflection.Emit {
 		/// </summary>
 		Varpush = 0x1B
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		,
 		Popref_popi_pop1 = 0x1C
 #endif
