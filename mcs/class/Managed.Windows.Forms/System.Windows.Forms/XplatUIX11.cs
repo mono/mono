@@ -3648,6 +3648,11 @@ namespace System.Windows.Forms {
 			in_doevents = true;
 
 			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+				Message m = Message.Create (msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+
+				if (Application.FilterMessage (ref m))
+					continue;
+
 				TranslateMessage (ref msg);
 				DispatchMessage (ref msg);
 

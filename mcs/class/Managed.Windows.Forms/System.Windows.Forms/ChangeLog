@@ -1,5 +1,15 @@
 2009-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* XplatUIX11.cs:
+	* XplatUIWin32.cs: We need to filter the messages using
+	Application.FilterMessage for our DoEvents implementations. Observe
+	that I don't like the idea of XplatUI call the upper level Application
+	class, but at this point is easier and simpler to do this call - based
+	on the fact it's only one simple call.
+	Fixes #516735.
+
+2009-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNodeCollection.cs: When removing the selected node, set the
 	SelectedNode value of TreeView to null if there aren't more nodes left - 
 	this is better than to clear the selected node in Clear, since we need

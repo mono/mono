@@ -1945,6 +1945,11 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG();
 
 			while (GetMessage(ref msg, IntPtr.Zero, 0, 0, false)) {
+				Message m = Message.Create (msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+
+				if (Application.FilterMessage (ref m))
+					continue;
+
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 			}
