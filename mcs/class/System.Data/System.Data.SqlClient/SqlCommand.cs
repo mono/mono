@@ -588,9 +588,15 @@ namespace System.Data.SqlClient {
 			this.behavior = behavior;
 			if ((behavior & CommandBehavior.SequentialAccess) != 0)
 				Tds.SequentialAccess = true;
-			Execute (true);
-			Connection.DataReader = new SqlDataReader (this);
-			return Connection.DataReader;
+			try {
+				Execute (true);
+				Connection.DataReader = new SqlDataReader (this);
+				return Connection.DataReader;
+			} catch {
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
+				throw;
+			}
 		}
 
 		public
