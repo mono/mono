@@ -890,6 +890,7 @@ System.ServiceModel/ServiceRuntimeChannel.cs
 System.ServiceModel/ServiceSecurityContext.cs
 System.ServiceModel/SpnEndpointIdentity.cs
 System.ServiceModel/TcpTransportSecurity.cs
+System.ServiceModel/TransactionFlowAttribute.cs
 System.ServiceModel/TransactionProtocol.cs
 System.ServiceModel/TransferMode.cs
 System.ServiceModel/UnknownMessageReceivedEventArgs.cs
