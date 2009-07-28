@@ -60,6 +60,12 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		public void TestCompat ()
+		{
+			Assert.IsTrue (new UTF8Encoding ().Equals (new UTF8Encoding ()));
+		}
+		
+		[Test]
 		public void TestEncodingGetBytes1()
 		{
 			UTF8Encoding utf8Enc = new UTF8Encoding ();

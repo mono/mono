@@ -1019,9 +1019,9 @@ fail_no_space:
 		if (enc != null) {
 #if NET_2_0
 			return (codePage == enc.codePage &&
-					emitIdentifier == enc.emitIdentifier &&
-					DecoderFallback == enc.DecoderFallback &&
-					EncoderFallback == enc.EncoderFallback);
+				emitIdentifier == enc.emitIdentifier &&
+				DecoderFallback.Equals (enc.DecoderFallback) &&
+				EncoderFallback.Equals (enc.EncoderFallback));
 #else
 			return (codePage == enc.codePage &&
 					emitIdentifier == enc.emitIdentifier &&

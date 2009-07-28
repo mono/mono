@@ -1,3 +1,9 @@
+2009-07-28  Miguel de Icaza  <miguel@novell.com>
+
+	* UTF8Encoding.cs: Use Equals to compare the objects as the
+	fallback objects do not overload operator ==.    The comparison
+	was previously failing.
+
 2009-07-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StringBuilder.cs: don't throw on null values in ctor(string, int).
