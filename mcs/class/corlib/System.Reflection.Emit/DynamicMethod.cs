@@ -92,7 +92,10 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes) : this (name, returnType, parameterTypes, false) {
 		}
 
-		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, false, true) {
+		[MonoTODO ("Visibility is not restricted")]
+		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility)
+			: this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, restrictedSkipVisibility, true)
+		{
 		}
 
 		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted)
