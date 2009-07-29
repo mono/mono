@@ -451,5 +451,10 @@ namespace Mono.CSharp
 		{
 			return false;
 		}
+		
+		public static TypeContainer LookupGenericTypeContainer (Type t)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
