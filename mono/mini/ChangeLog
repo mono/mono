@@ -1,3 +1,8 @@
+2009-07-29  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c (mono_codegen):
+	Call profiler hook to keep track of method code buffers.
+
 2009-07-27  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Invoke write barriers for the
