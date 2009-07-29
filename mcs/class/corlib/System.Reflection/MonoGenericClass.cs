@@ -187,11 +187,6 @@ namespace System.Reflection
 		{
 			initialize ();
 
-			if (fromNoninstanciated is FieldOnTypeBuilderInst && generic_type.IsCompilerContext) {
-				FieldOnTypeBuilderInst finst = (FieldOnTypeBuilderInst)fromNoninstanciated;
-				fromNoninstanciated = finst.fb;
-			}
-
 			if (!(fromNoninstanciated is FieldBuilder))
 				throw new InvalidOperationException ("Inflating non FieldBuilder objects is not supported: " + fromNoninstanciated.GetType ());
 
