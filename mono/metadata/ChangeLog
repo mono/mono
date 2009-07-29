@@ -1,3 +1,8 @@
+2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_type_get_handle): Handle the new encoding
+	schema for vectors and one dimension SZARRAY.
+
 2009-07-27  Mark Probst  <mark.probst@gmail.com>
 
 	* icall-def.h, thread-types.h, threads.c: New separate icalls for
