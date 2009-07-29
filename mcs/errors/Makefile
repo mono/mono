@@ -42,7 +42,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
+VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1 net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 
 check: run-mcs-tests 
@@ -60,6 +60,10 @@ test-everything:
 	$(MAKE) PROFILE=net_1_1 run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
+ifeq (net_4_0, $(PROFILE))
+COMPILER_NAME = dmcs
+TEST_PATTERN = '*cs*.cs'
+endif
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = '*cs*.cs'
