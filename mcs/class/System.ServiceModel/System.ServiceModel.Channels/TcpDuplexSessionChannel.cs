@@ -106,6 +106,10 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+		internal TcpClient TcpClient {
+			get { return client; }
+		}
+
 		void DiscardSession ()
 		{
 			frame.ProcessEndRecordInitiator ();

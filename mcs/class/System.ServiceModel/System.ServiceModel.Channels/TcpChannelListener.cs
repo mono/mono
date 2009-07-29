@@ -62,20 +62,41 @@ namespace System.ServiceModel.Channels
 		}
 
 		List<ManualResetEvent> accept_handles = new List<ManualResetEvent> ();
+		List<TChannel> accepted_channels = new List<TChannel> ();
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			TcpClient client = AcceptTcpClient (timeout);
+			DateTime start = DateTime.Now;
+
+			// Close channels that are incorrectly kept open first.
+			var l = new List<TcpDuplexSessionChannel> ();
+			foreach (var tch in accepted_channels) {
+				var dch = tch as TcpDuplexSessionChannel;
+				if (dch != null && dch.TcpClient != null && !dch.TcpClient.Connected)
+					l.Add (dch);
+			}
+			foreach (var dch in l)
+				dch.Close (timeout - (DateTime.Now - start));
+
+			TcpClient client = AcceptTcpClient (timeout - (DateTime.Now - start));
 			if (client == null)
 				return null; // onclose
 
+			TChannel ch;
+
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
+				ch = (TChannel) (object) new TcpDuplexSessionChannel (this, info, client);
+			else if (typeof (TChannel) == typeof (IReplyChannel))
+				ch = (TChannel) (object) new TcpReplyChannel (this, info, client);
+			else
+				throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
 
-			if (typeof (TChannel) == typeof (IReplyChannel))
-				return (TChannel) (object) new TcpReplyChannel (this, info, client);
+			((ChannelBase) (object) ch).Closed += delegate {
+				accepted_channels.Remove (ch);
+				};
+			accepted_channels.Add (ch);
 
-			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
+			return ch;
 		}
 
 		// TcpReplyChannel requires refreshed connection after each request processing.
