@@ -1,3 +1,8 @@
+2009-07-29  Massimiliano Mantione  <massi@ximian.com>
+
+	* mono-codeman.c (free_chunklist and new_codechunk):
+	Call profiler hooks to keep track of code chunks.
+
 2009-07-20  Geoff Norton  <gnorton@novell.com>
 
 	* mono-semaphore.h: Refactor from io-layer/thread-private.h so it
