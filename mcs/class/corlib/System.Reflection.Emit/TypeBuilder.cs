@@ -1075,6 +1075,9 @@ namespace System.Reflection.Emit
 		
 		public override Type[] GetInterfaces ()
 		{
+			if (is_created)
+				return created.GetInterfaces ();
+
 			if (interfaces != null) {
 				Type[] ret = new Type [interfaces.Length];
 				interfaces.CopyTo (ret, 0);

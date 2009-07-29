@@ -10689,6 +10689,24 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNull (tb.GetGenericArguments (), "#1");
 		}
 
+		public interface IFaceA {}
+		public interface IFaceB : IFaceA {}
+		[Test]
+		public void GetInterfacesAfterCreate ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (object), new Type[] { typeof (IFaceB) });
+
+			Type[] ifaces = tb.GetInterfaces ();
+			Assert.AreEqual (1, ifaces.Length, "#1");
+			Assert.AreEqual (typeof (IFaceB), ifaces [0], "#2");
+
+			tb.CreateType ();
+			ifaces = tb.GetInterfaces ();
+			Assert.AreEqual (2, ifaces.Length, "#3");
+			Assert.AreEqual (typeof (IFaceB), ifaces [0], "#4");
+			Assert.AreEqual (typeof (IFaceA), ifaces [1], "#5");
+		}
+
 #endif
 #if NET_2_0
 #if !WINDOWS
