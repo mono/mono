@@ -57,6 +57,7 @@ namespace Microsoft.Build.Tasks {
 
 				try {
 					File.Delete (path);
+					Log.LogMessage (MessageImportance.Normal, "Deleting file '{0}'", path);
 					temporaryDeletedFiles.Add (file);
 				}
 				catch (ArgumentException ex) {
