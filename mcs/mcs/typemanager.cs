@@ -3103,7 +3103,7 @@ namespace Mono.CSharp {
 		return null;
 	}
 
-	const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic |
+	public const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic |
 									BindingFlags.Static | BindingFlags.Instance | 
 									BindingFlags.DeclaredOnly;
 
