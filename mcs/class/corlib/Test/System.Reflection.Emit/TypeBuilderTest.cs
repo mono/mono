@@ -10642,6 +10642,24 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			Assert.AreEqual (0, tb.GenericParameterPosition, "#1");
 		}
+
+		[Test]
+		public void GetGenericTypeDefinitionBehavior ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.GetGenericTypeDefinition ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}
+
+			tb.DefineGenericParameters ("T");
+			Assert.AreEqual (tb, tb.GetGenericTypeDefinition (), "#2");
+
+			tb.CreateType ();
+			Assert.AreEqual (tb, tb.GetGenericTypeDefinition (), "#3");
+
+		}
+
 #endif
 #if NET_2_0
 #if !WINDOWS

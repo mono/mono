@@ -1749,9 +1749,9 @@ namespace System.Reflection.Emit
 
 		public override Type GetGenericTypeDefinition ()
 		{
-			create_generic_class ();
-
-			return base.GetGenericTypeDefinition_impl ();
+			if (generic_params == null)
+				throw new InvalidOperationException ("Type is not generic");
+			return this;
 		}
 
 		public override bool ContainsGenericParameters {

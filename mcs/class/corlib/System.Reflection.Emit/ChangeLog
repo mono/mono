@@ -1,5 +1,10 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilder.cs (GetGenericTypeDefinition): Either
+	throw or return itself.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilder.cs (GenericParameterPosition): Return 0
 	instead of throwing.
 
