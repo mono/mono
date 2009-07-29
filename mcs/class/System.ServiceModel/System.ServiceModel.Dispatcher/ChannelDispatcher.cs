@@ -460,11 +460,11 @@ namespace System.ServiceModel.Dispatcher
 						handle.Set (); // release loop wait lock.
 						};
 					};
+				ch.Open ();
 			} finally {
 				creator_handle.Set ();
 			}
 
-				ch.Open ();
 				ProcessRequestOrInput (ch);
 			}
 

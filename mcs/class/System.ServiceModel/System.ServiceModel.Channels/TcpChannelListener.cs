@@ -102,6 +102,8 @@ namespace System.ServiceModel.Channels
 		// TcpReplyChannel requires refreshed connection after each request processing.
 		internal TcpClient AcceptTcpClient (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
+
 			TcpClient client = null;
 			if (tcp_listener.Pending ()) {
 				client = tcp_listener.AcceptTcpClient ();
@@ -117,6 +119,19 @@ namespace System.ServiceModel.Channels
 				accept_handles.Add (wait);
 				wait.WaitOne (timeout);
 			}
+
+			// This may be optional though ...
+			if (client != null) {
+				foreach (var ch in accepted_channels) {
+					var dch = ch as TcpDuplexSessionChannel;
+					if (dch == null || dch.TcpClient == null)
+						continue;
+					if (((IPEndPoint) dch.TcpClient.Client.RemoteEndPoint).Equals (client.Client.RemoteEndPoint))
+						// ... then it should be handled in another BeginTryReceive/EndTryReceive loop in ChannelDispatcher.
+						return AcceptTcpClient (timeout - (DateTime.Now - start));
+				}
+			}
+
 			return client;
 		}
 
