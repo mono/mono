@@ -3236,8 +3236,8 @@ PublicKeyToken=b77a5c561934e089"));
 			Type szarray = typeof (int).MakeArrayType (1);
 
 			Assert.AreNotEqual (vector, szarray, "#1");
-			Assert.AreEqual ("Int32[]", vector.Name);
-			Assert.AreEqual ("Int32[*]", vector.Name);
+			Assert.AreEqual ("Int32[]", vector.Name, "#2");
+			Assert.AreEqual ("Int32[*]", szarray.Name, "#3");
 		}
 
 #endif
