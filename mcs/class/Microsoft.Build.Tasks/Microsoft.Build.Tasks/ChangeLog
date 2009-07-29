@@ -1,5 +1,11 @@
 2009-07-30  Ankit Jain  <jankit@novell.com>
 
+	* ReadLinesFromFile.cs (Execute): Log a warning instead of an error
+	if unable to read from the file. Fix a null check. Always return
+	true.
+
+2009-07-30  Ankit Jain  <jankit@novell.com>
+
 	* Delete.cs (Execute): Log a message when deleting a file.
 
 2009-07-28  Ankit Jain  <jankit@novell.com>
