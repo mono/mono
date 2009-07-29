@@ -1086,6 +1086,34 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void OneDimMultiDimentionArray ()
+		{
+			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
+
+			Type arr1 = tb.MakeArrayType ();
+			Type arr2 = tb.MakeArrayType (1);
+			Type arr3 = arr1.MakeArrayType (1);
+
+			Assert.AreEqual ("type[]", arr1.Name, "#1");
+			Assert.AreEqual ("type[*]", arr2.Name, "#2");
+			Assert.AreEqual ("type[][*]", arr3.Name, "#3");
+
+			var gparam = tb.DefineGenericParameters ("F")[0];
+			Type arr4 = gparam.MakeArrayType ();
+			Type arr5 = gparam.MakeArrayType (1);
+
+			Assert.AreEqual ("F[]", arr4.Name, "#4");
+			Assert.AreEqual ("F[*]", arr5.Name, "#5");
+
+			var eb = module.DefineEnum ("enum", TypeAttributes.Public, tb);
+			Type arr6 = eb.MakeArrayType ();
+			Type arr7 = eb.MakeArrayType (1);
+
+			Assert.AreEqual ("enum[]", arr6.Name, "#6");
+			Assert.AreEqual ("enum[*]", arr7.Name, "#7");
+		}
+
+		[Test]
 		public void PropertiesValue ()
 		{
 			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);

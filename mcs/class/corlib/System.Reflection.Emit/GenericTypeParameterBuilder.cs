@@ -436,7 +436,7 @@ namespace System.Reflection.Emit
 
 		public override Type MakeArrayType ()
 		{
-			return MakeArrayType (1);
+			return  new ArrayType (this, 0);
 		}
 
 		public override Type MakeArrayType (int rank)

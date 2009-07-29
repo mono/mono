@@ -219,7 +219,7 @@ namespace System.Reflection.Emit
 
 		public override Type MakeArrayType ()
 		{
-			return MakeArrayType (1);
+			return new ArrayType (this, 0);
 		}
 
 		public override Type MakeArrayType (int rank)
@@ -330,7 +330,7 @@ namespace System.Reflection.Emit
 
 		public override int GetArrayRank ()
 		{
-			return rank;
+			return (rank == 0) ? 1 : rank;
 		}
 
 		public override Type BaseType {
@@ -352,6 +352,8 @@ namespace System.Reflection.Emit
 			sb.Append ("[");
 			for (int i = 1; i < rank; ++i)
 				sb.Append (",");
+			if (rank == 1)
+				sb.Append ("*");
 			sb.Append ("]");
 			return sb.ToString ();
 		}

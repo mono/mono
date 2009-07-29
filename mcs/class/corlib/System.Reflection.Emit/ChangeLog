@@ -1,5 +1,17 @@
 2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* DerivedTypes.cs (ArrayType): Special case vector arrays using zero
+	 as rank. This is required because we need to make the distinction
+	between a vector and a one dimension SZARRAY.
+
+	* EnumBuilder.cs: Create vectors as rank-zero ArrayType objects.
+
+ 	* TypeBuilder.cs: Same.
+
+	* GenericTypeParameterBuilder.cs: Same.
+
+2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	DerivedTypes.cs: ByRef and Pointer types return Array as base
 	type.
 
