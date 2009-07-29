@@ -954,13 +954,13 @@ namespace Mono.CSharp {
 
 			Type gt = TypeManager.DropGenericTypeArguments (ret);
 			if (gt == TypeManager.generic_ienumerable_type) {
-				original_iterator_type = args [0];
+				original_iterator_type = TypeManager.TypeToCoreType (args [0]);
 				is_enumerable = true;
 				return true;
 			}
 			
 			if (gt == TypeManager.generic_ienumerator_type) {
-				original_iterator_type = args [0];
+				original_iterator_type = TypeManager.TypeToCoreType (args [0]);
 				is_enumerable = false;
 				return true;
 			}

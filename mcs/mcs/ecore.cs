@@ -4008,7 +4008,7 @@ namespace Mono.CSharp {
 
 				for (int i = 0; i < pargs.Length; i++) 
 				{
-					Type specific = MoreSpecific (pargs [i], qargs [i]);
+					Type specific = MoreSpecific (TypeManager.TypeToCoreType (pargs [i]), TypeManager.TypeToCoreType (qargs [i]));
 					if (specific == pargs [i])
 						p_specific_at_least_once = true;
 					if (specific == qargs [i])

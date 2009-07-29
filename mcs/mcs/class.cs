@@ -7723,11 +7723,11 @@ namespace Mono.CSharp {
 			
 			Type first_arg_type_unwrap = first_arg_type;
 			if (TypeManager.IsNullableType (first_arg_type))
-				first_arg_type_unwrap = TypeManager.GetTypeArguments (first_arg_type) [0];
+				first_arg_type_unwrap = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (first_arg_type) [0]);
 			
 			Type return_type_unwrap = return_type;
 			if (TypeManager.IsNullableType (return_type))
-				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];			
+				return_type_unwrap = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (return_type) [0]);
 
 			//
 			// Rules for conversion operators

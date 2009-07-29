@@ -1564,7 +1564,7 @@ namespace Mono.CSharp {
 				TypeArguments new_args = new TypeArguments ();
 
 				for (int i = 0; i < types.Length; i++) {
-					Type t = types [i];
+					Type t = TypeManager.TypeToCoreType (types [i]);
 
 					if (t.IsGenericParameter) {
 						int pos = t.GenericParameterPosition;
@@ -2764,7 +2764,7 @@ namespace Mono.CSharp {
 						(g_v != TypeManager.generic_ienumerable_type))
 						return 0;
 
-					v_i = TypeManager.GetTypeArguments (v) [0];
+					v_i = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (v) [0]);
 					if (TypeManager.IsValueType (u_i))
 						return ExactInference (u_i, v_i);
 

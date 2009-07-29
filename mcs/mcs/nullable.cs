@@ -64,7 +64,7 @@ namespace Mono.CSharp.Nullable
 		public NullableInfo (Type type)
 		{
 			Type = type;
-			UnderlyingType = TypeManager.GetTypeArguments (type) [0];
+			UnderlyingType = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (type) [0]);
 
 			PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null, Type.EmptyTypes);
 			PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null, Type.EmptyTypes);
@@ -302,7 +302,7 @@ namespace Mono.CSharp.Nullable
 			// Avoid unwraping and wraping of the same type
 			//
 			Unwrap unwrap = expr as Unwrap;
-			if (unwrap != null && TypeManager.IsEqual (expr.Type, TypeManager.GetTypeArguments (type) [0]))
+			if (unwrap != null && TypeManager.IsEqual (expr.Type, TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (type) [0])))
 				return unwrap.Original;
 		
 			return new Wrap (expr, type);
@@ -811,7 +811,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			if (TypeManager.IsNullableType (l))
-				l = TypeManager.GetTypeArguments (l) [0];
+				l = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (l) [0]);
 
 			base.EmitOperator (ec, l);
 		}

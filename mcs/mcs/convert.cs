@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 				return false;
 
 			Type element_type = TypeManager.GetElementType (array);
-			Type arg_type = TypeManager.GetTypeArguments (list) [0];
+			Type arg_type = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (list) [0]);
 
 			if (element_type == arg_type)
 				return true;
@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 				gt != TypeManager.generic_ienumerable_type)
 				return false;
 			
-			Type arg_type = TypeManager.GetTypeArguments(list)[0];
+			Type arg_type = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments(list)[0]);
 			Type element_type = TypeManager.GetElementType(array);
 			
 			if (element_type == arg_type)
@@ -463,12 +463,12 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.null_type)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
-			Type target = TypeManager.GetTypeArguments (target_type)[0];
+			Type target = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (target_type)[0]);
 			Expression e;
 
 			// S? -> T?
 			if (TypeManager.IsNullableType (expr_type)) {
-				Type etype = TypeManager.GetTypeArguments (expr_type)[0];
+				Type etype = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (expr_type)[0]);
 
 				if (ec == null)
 					return ImplicitConversionExists (ec, new EmptyExpression (etype), target) ? EmptyExpression.Null : null;
@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
 				if (TypeManager.IsNullableType (expr_type)) {
-					Type target = TypeManager.GetTypeArguments (target_type)[0];
+					Type target = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (target_type)[0]);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
@@ -1892,7 +1892,7 @@ namespace Mono.CSharp {
 				} else if (expr_type == TypeManager.object_type) {
 					return new UnboxCast (expr, target_type);
 				} else {
-					Type target = TypeManager.GetTypeArguments (target_type) [0];
+					Type target = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (target_type) [0]);
 
 					e = ExplicitConversionCore (ec, expr, target, loc);
 					if (e != null)

@@ -1616,7 +1616,7 @@ namespace Mono.CSharp {
 			if (type.IsArray) {
 				result = IsClsCompliant (TypeManager.GetElementType (type));
 			} else if (TypeManager.IsNullableType (type)) {
-				result = IsClsCompliant (TypeManager.GetTypeArguments (type) [0]);
+				result = IsClsCompliant (TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (type) [0]));
 			} else {
 				result = AnalyzeTypeCompliance (type);
 			}

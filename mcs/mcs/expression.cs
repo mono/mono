@@ -1271,7 +1271,7 @@ namespace Mono.CSharp {
 				return CreateConstantResult (false);
 
 			if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
-				d = TypeManager.GetTypeArguments (d) [0];
+				d = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (d) [0]);
 				d_is_nullable = true;
 			}
 
@@ -1280,7 +1280,7 @@ namespace Mono.CSharp {
 			Type t = probe_type_expr.Type;
 			bool t_is_nullable = false;
 			if (TypeManager.IsNullableType (t) && !TypeManager.ContainsGenericParameters (t)) {
-				t = TypeManager.GetTypeArguments (t) [0];
+				t = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (t) [0]);
 				t_is_nullable = true;
 			}
 
@@ -7443,7 +7443,7 @@ namespace Mono.CSharp {
 				
 				TypeArguments new_args = new TypeArguments ();
 				foreach (Type decl in TypeManager.GetTypeArguments (expr_type))
-					new_args.Add (new TypeExpression (decl, loc));
+					new_args.Add (new TypeExpression (TypeManager.TypeToCoreType (decl), loc));
 
 				if (targs != null)
 					new_args.Add (targs);

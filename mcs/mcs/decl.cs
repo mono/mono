@@ -1177,7 +1177,7 @@ namespace Mono.CSharp {
 				Type[] args = TypeManager.GetTypeArguments (current_type);
 				Type[] targs = TypeManager.GetTypeArguments (t);
 				for (int i = 0; i < args.Length; i++)
-					targs [i] = args [i];
+					targs [i] = TypeManager.TypeToCoreType (args [i]);
 
 #if GMCS_SOURCE
 				t = t.MakeGenericType (targs);

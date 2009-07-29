@@ -651,7 +651,7 @@ namespace Mono.CSharp {
 		}
 
 		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
-			t = GetTypeArguments (t)[0];
+			t = TypeToCoreType (GetTypeArguments (t)[0]);
 			return CSharpName (t) + "?";
 		}
 
