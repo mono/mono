@@ -370,7 +370,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override Type BaseType {
-			get { return null; }
+			get { return typeof (Array); }
 		}
 
 		internal override String FormatName (string elementName)
@@ -416,7 +416,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override Type BaseType {
-			get { return null; }
+			get { return typeof(Array); }
 		}
 
 		internal override String FormatName (string elementName)

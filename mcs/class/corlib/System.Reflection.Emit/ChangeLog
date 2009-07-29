@@ -1,3 +1,8 @@
+2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	DerivedTypes.cs: ByRef and Pointer types return Array as base
+	type.
+
 2009-07-28  Marek Safar  <marek.safar@gmail.com>
 
 	* DynamicMethod.cs: Pass skipVisibility.

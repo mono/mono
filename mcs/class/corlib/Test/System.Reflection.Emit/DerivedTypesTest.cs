@@ -53,19 +53,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		public void NonStandardPropertiesValues ()
-		{
-			/*
-			Those are tests for properties that return non-sense values on MS.
-			*/
-			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
-			Type ptr = tb.MakePointerType ();
-			//a ptr doesn't have any base type
-			Assert.AreEqual (null, ptr.BaseType, "#1");
-		}
-
-		[Test]
 		public void PropertiesValue ()
 		{
 			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
@@ -550,7 +537,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (assembly, ptr.Assembly, "#14");
 			Assert.AreEqual (null, ptr.AssemblyQualifiedName, "#15");
 			//XXX LAMEIMPL this passes on MS even thou it's pretty much very wrong. 
-			//Assert.AreEqual (typeof (Array), ptr.BaseType, "#16");
+			Assert.AreEqual (typeof (Array), ptr.BaseType, "#16");
 			Assert.AreEqual (null, ptr.FullName, "#17");
 			Assert.AreEqual (module, ptr.Module, "#18");
 			Assert.AreEqual (null, ptr.Namespace, "#19");
@@ -592,19 +579,6 @@ namespace MonoTests.System.Reflection.Emit
 
 			module = assembly.DefineDynamicModule ("module1");
 			typeCount = 0;
-		}
-
-		[Test]
-		[Category ("NotDotNet")]
-		public void NonStandardPropertiesValues ()
-		{
-			/*
-			Those are tests for properties that return non-sense values on MS.
-			*/
-			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
-			Type byref = tb.MakeByRefType ();
-			//a byref doesn't have any base type
-			Assert.AreEqual (null, byref.BaseType, "#1");
 		}
 
 		[Test]
@@ -1066,7 +1040,8 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (assembly, byref.Assembly, "#14");
 			Assert.AreEqual (null, byref.AssemblyQualifiedName, "#15");
-			Assert.AreEqual (null, byref.BaseType, "#16");
+			//XXX LAMEIMPL this passes on MS even thou it's pretty much very wrong. 
+			Assert.AreEqual (typeof (Array), byref.BaseType, "#16");
 			Assert.AreEqual (null, byref.FullName, "#17");
 			Assert.AreEqual (module, byref.Module, "#18");
 			Assert.AreEqual (null, byref.Namespace, "#19");
