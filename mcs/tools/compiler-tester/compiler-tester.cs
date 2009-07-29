@@ -1356,8 +1356,23 @@ namespace TestRunner {
 				return 1;
 			}
 
-			string [] files = Directory.GetFiles (".", test_pattern);
-			if (files.Length == 0) {
+			ArrayList files = new ArrayList ();
+			switch (test_pattern) {
+			case "v1":
+				files.AddRange (Directory.GetFiles (".", "test*.cs"));
+				break;
+			case "v2":
+				files.AddRange (Directory.GetFiles (".", "gtest*.cs"));
+				goto case "v1";
+			case "v4":
+				files.AddRange (Directory.GetFiles (".", "dtest*.cs"));
+				goto case "v2";
+			default:
+				files.AddRange (Directory.GetFiles (".", test_pattern));
+				break;
+			}
+
+			if (files.Count == 0) {
 				Console.Error.WriteLine ("No files matching `{0}' found", test_pattern);
 				return 2;
 			}
