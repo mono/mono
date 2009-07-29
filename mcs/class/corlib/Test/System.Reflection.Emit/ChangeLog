@@ -1,5 +1,9 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest.cs: Test for GenericParameterPosition.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest.cs: Test for DeclaringMethod.
 
 2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>

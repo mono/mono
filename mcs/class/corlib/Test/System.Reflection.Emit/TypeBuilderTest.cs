@@ -10633,7 +10633,14 @@ namespace MonoTests.System.Reflection.Emit
 		public void DeclaringMethodReturnsNull ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			Assert.IsNull (tb.DeclaringMethod, null);
+			Assert.IsNull (tb.DeclaringMethod, null, "#1");
+		}
+
+		[Test]
+		public void GenericParameterPositionReturns0 ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			Assert.AreEqual (0, tb.GenericParameterPosition, "#1");
 		}
 #endif
 #if NET_2_0

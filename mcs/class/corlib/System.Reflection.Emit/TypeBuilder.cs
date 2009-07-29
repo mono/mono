@@ -1778,7 +1778,7 @@ namespace System.Reflection.Emit
 		[MonoTODO]
 		public override int GenericParameterPosition {
 			get {
-				throw new NotImplementedException ();
+				return 0;
 			}
 		}
 
