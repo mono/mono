@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
+VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1 net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -55,20 +55,26 @@ test-casts: boot-casts.out mcs-casts.out
 
 eval.exe: eval-tests.cs
 
+ifeq (net_4_0, $(PROFILE))
+COMPILER_NAME = dmcs
+TEST_PATTERN = 'v4'
+LOCAL_RUNTIME_FLAGS = --verify-all
+#TOPTIONS += '-il:ver-il-dmcs.xml'
+endif
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
-TEST_PATTERN = '*test-*.cs'
+TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
 endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
-TEST_PATTERN = '*test-*.cs'
+TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --verify-all
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 ifeq (net_1_1, $(PROFILE))
 COMPILER_NAME = mcs
-TEST_PATTERN = 'test-*.cs'
+TEST_PATTERN = 'v1'
 LOCAL_RUNTIME_FLAGS = --verify-all
 endif
 
