@@ -88,7 +88,7 @@ namespace System.Reflection
 				parent.initialize ();
 
 			initialize (generic_type.GetMethods (flags),
-						generic_type.GetConstructors (flags),
+						generic_type.GetConstructorsInternal (flags),
 						generic_type.GetFields (flags),
 						generic_type.GetProperties (flags),
 						generic_type.GetEvents_internal (flags));

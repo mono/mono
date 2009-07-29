@@ -1,5 +1,13 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest: Test for GetConstructors.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest: Test for DefineMethodOverride.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest: Test for GetInterfaces.
 
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>

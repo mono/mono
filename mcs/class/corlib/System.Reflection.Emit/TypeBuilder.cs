@@ -651,6 +651,8 @@ namespace System.Reflection.Emit
 			if (methodInfoDeclaration == null)
 				throw new ArgumentNullException ("methodInfoDeclaration");
 			check_not_created ();
+			if (methodInfoBody.DeclaringType != this)
+				throw new ArgumentException ("method body must belong to this type");
 
 			if (methodInfoBody is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)methodInfoBody;
@@ -873,6 +875,14 @@ namespace System.Reflection.Emit
 			if (is_created)
 				return created.GetConstructors (bindingAttr);
 
+			if (!IsCompilerContext)
+				throw new NotSupportedException ();
+
+			return GetConstructorsInternal (bindingAttr);
+		}
+
+		internal ConstructorInfo[] GetConstructorsInternal (BindingFlags bindingAttr)
+		{
 			if (ctors == null)
 				return new ConstructorInfo [0];
 			ArrayList l = new ArrayList ();

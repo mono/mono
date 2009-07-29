@@ -10707,6 +10707,39 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (IFaceA), ifaces [1], "#5");
 		}
 
+		public interface MB_Iface
+		{
+		    int Test ();
+		}
+
+		public class MB_Impl : MB_Iface
+		{
+		    public virtual int Test () { return 1; }
+		}
+		[Test]
+		public void MethodOverrideBodyMustBelongToTypeBuilder ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			MethodInfo md = typeof (MB_Iface).GetMethod("Test");
+            MethodInfo md2 = typeof (MB_Impl).GetMethod("Test");
+			try {
+            	tb.DefineMethodOverride (md, md2);
+            	Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+		}
+
+		[Test]
+		public void GetConstructorsThrowWhenIncomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.GetConstructors (BindingFlags.Instance);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) { }
+
+			tb.CreateType ();
+			Assert.IsNotNull (tb.GetConstructors (BindingFlags.Instance), "#2");
+		}
 #endif
 #if NET_2_0
 #if !WINDOWS

@@ -1,5 +1,15 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilder.cs (GetConstructors): Throw if
+	TypeBuilder is incomplete.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (DefineMethodOverride): Throw if
+	method body doesn't belong to the TypeBuilder.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilder.cs (GetInterfaces): Return the expanded
 	interface list if the type has been created.
 
