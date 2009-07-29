@@ -1,3 +1,8 @@
+2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	TypeTest.cs: Add test for one-dym multidimensional array
+	created with Type::MakeArrayType (1).
+
 2009-07-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ArrayTest.cs: new LastIndexOf test for 0-length arrays.

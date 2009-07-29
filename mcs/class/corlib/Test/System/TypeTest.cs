@@ -3226,6 +3226,22 @@ PublicKeyToken=b77a5c561934e089"));
 			foreach (var m in t2.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic))
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
+
+#if NET_2_0
+
+		[Test]
+		public void MakeArrayTypeOfOneDimension ()
+		{
+			Type vector = typeof (int).MakeArrayType ();
+			Type szarray = typeof (int).MakeArrayType (1);
+
+			Assert.AreNotEqual (vector, szarray, "#1");
+			Assert.AreEqual ("Int32[]", vector.Name);
+			Assert.AreEqual ("Int32[*]", vector.Name);
+		}
+
+#endif
+
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{
 			foreach (PropertyInfo p in props)

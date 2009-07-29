@@ -1296,7 +1296,7 @@ namespace System {
 
 		public virtual Type MakeArrayType ()
 		{
-			return MakeArrayType (1);
+			return make_array_type (0);
 		}
 
 		public virtual Type MakeArrayType (int rank)
