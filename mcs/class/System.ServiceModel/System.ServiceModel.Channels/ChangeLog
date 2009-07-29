@@ -1,5 +1,15 @@
 2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs :
+	  Remove extra NIE overrides.
+	  Implement OnAbort() apart from OnClose().
+	  For duplex session channel, unlike reply channel, it must acquire
+	  TCP connection before OnOpen(), otherwise ChannelDispatcher
+	  releases the connection acceptance WaitHandle and the detected
+	  live connection may be stolen by another channel acceptor.
+
+2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : implement OnAbort().
 
 2009-07-24  Atsushi Enomoto  <atsushi@ximian.com>

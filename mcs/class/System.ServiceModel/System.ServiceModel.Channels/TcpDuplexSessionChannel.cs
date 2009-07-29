@@ -76,6 +76,10 @@ namespace System.ServiceModel.Channels
 		{
 			is_service_side = false;
 			this.info = info;
+
+			// make sure to acquire TcpClient here.
+			int explicitPort = RemoteAddress.Uri.Port;
+			client = new TcpClient (RemoteAddress.Uri.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 		}
 		
 		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client)
@@ -184,24 +188,14 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			Close (TimeSpan.FromTicks (1));
+			if (!is_service_side)
+				if (session != null)
+					session.Close (TimeSpan.FromTicks (0));
+
+			if (client != null)
+				client.Close ();
 		}
 
-		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
 			if (!is_service_side)
@@ -212,26 +206,9 @@ namespace System.ServiceModel.Channels
 				client.Close ();
 		}
 		
-		[MonoTODO]
-		protected override void OnEndClose (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		protected override void OnOpen (TimeSpan timeout)
 		{
 			if (! is_service_side) {
-				int explicitPort = RemoteAddress.Uri.Port;
-				client = new TcpClient (RemoteAddress.Uri.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
-				                        //RemoteAddress.Uri.Port);
-				
 				NetworkStream ns = client.GetStream ();
 				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns, is_service_side) {
 					Encoder = this.Encoder,
