@@ -910,8 +910,7 @@ namespace System.Reflection.Emit
 
 		public override Type GetElementType ()
 		{
-			check_created ();
-			return created.GetElementType ();
+			throw new NotSupportedException ();
 		}
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)

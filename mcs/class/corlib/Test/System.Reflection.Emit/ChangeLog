@@ -1,5 +1,9 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest.cs: Test for GetElementType.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest.cs: Test for GetGenericTypeDefinition.
 
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>

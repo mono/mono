@@ -10657,9 +10657,17 @@ namespace MonoTests.System.Reflection.Emit
 
 			tb.CreateType ();
 			Assert.AreEqual (tb, tb.GetGenericTypeDefinition (), "#3");
-
 		}
 
+		[Test]
+		public void GetElementTypeNotSupported ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.GetElementType ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
+		}
 #endif
 #if NET_2_0
 #if !WINDOWS
