@@ -812,8 +812,11 @@ namespace System.Reflection.Emit
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
 
 			if (methods != null) {
+				bool is_concrete = !IsAbstract;
 				for (int i = 0; i < num_methods; ++i) {
 					MethodBuilder mb = (MethodBuilder)(methods[i]);
+					if (is_concrete && mb.IsAbstract)
+						throw new InvalidOperationException ("Type is concrete but has abstract method " + mb);
 					mb.check_override ();
 					mb.fixup ();
 				}

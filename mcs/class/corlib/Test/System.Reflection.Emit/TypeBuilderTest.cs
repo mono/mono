@@ -10617,6 +10617,18 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 
+		[Test]
+		public void CreateConcreteTypeWithAbstractMethod ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineMethod("method", MethodAttributes.Abstract | MethodAttributes.Public);
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {}
+		}
+
+
 #if NET_2_0
 #if !WINDOWS
 		/* 
