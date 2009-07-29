@@ -1036,42 +1036,19 @@ namespace System {
 
 			// Console.WriteLine ("FindMembers for {0} (Type: {1}): {2}",
 			// this.FullName, this.GetType().FullName, this.obj_address());
-
-			if ((memberType & MemberTypes.Constructor) != 0) {
-				ConstructorInfo[] c = GetConstructors (bindingAttr);
-				if (filter != null) {
-					foreach (MemberInfo m in c) {
-						if (filter (m, filterCriteria))
-							l.Add (m);
-					}
-				} else {
-					l.AddRange (c);
-				}
-			}
-			if ((memberType & MemberTypes.Event) != 0) {
-				EventInfo[] c = GetEvents (bindingAttr);
-				if (filter != null) {
-					foreach (MemberInfo m in c) {
-						if (filter (m, filterCriteria))
-							l.Add (m);
-					}
-				} else {
-					l.AddRange (c);
-				}
-			}
-			if ((memberType & MemberTypes.Field) != 0) {
-				FieldInfo[] c = GetFields (bindingAttr);
-				if (filter != null) {
-					foreach (MemberInfo m in c) {
-						if (filter (m, filterCriteria))
-							l.Add (m);
-					}
-				} else {
-					l.AddRange (c);
-				}
-			}
 			if ((memberType & MemberTypes.Method) != 0) {
 				MethodInfo[] c = GetMethods (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Constructor) != 0) {
+				ConstructorInfo[] c = GetConstructors (bindingAttr);
 				if (filter != null) {
 					foreach (MemberInfo m in c) {
 						if (filter (m, filterCriteria))
@@ -1097,6 +1074,28 @@ namespace System {
 					}
 				} else {
 					c = GetProperties (bindingAttr);
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Event) != 0) {
+				EventInfo[] c = GetEvents (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
+			if ((memberType & MemberTypes.Field) != 0) {
+				FieldInfo[] c = GetFields (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
+					}
+				} else {
 					l.AddRange (c);
 				}
 			}
