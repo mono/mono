@@ -72,14 +72,18 @@ namespace Mono.CSharp.Nullable
 
 			HasValue = has_value_pi.GetGetMethod (false);
 			Value = value_pi.GetGetMethod (false);
-#if MS_COMPATIBLE
-			if (UnderlyingType.Module == RootContext.ToplevelTypes.Builder) {
-				Type o_type = TypeManager.DropGenericTypeArguments (type);
-				Constructor = TypeBuilder.GetConstructor (type,
-					TypeManager.GetPredefinedConstructor (o_type, Location.Null, o_type.GetGenericArguments ()));
+
+			// When compiling corlib
+			if (type.Module == RootContext.ToplevelTypes.Builder) {
+				TypeContainer tc = TypeManager.LookupGenericTypeContainer (type);
+				
+				// TODO: check for correct overload
+				Constructor c = ((Constructor) tc.InstanceConstructors [0]);
+
+				Constructor = TypeBuilder.GetConstructor (type, c.ConstructorBuilder);
 				return;
 			}
-#endif
+
 			Constructor = type.GetConstructor (new Type[] { UnderlyingType });
 		}
 	}

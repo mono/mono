@@ -1,5 +1,9 @@
 2009-07-29  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs: Fixed SRE crash during corlib compilation.
+
+2009-07-29  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, typemanager.cs, decl.cs, iterators.cs, convert.cs,
 	nullable.cs, expression.cs, ecore.cs, class.cs, attribute.cs:
 	More TypeManager.TypeToCoreType needed.
