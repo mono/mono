@@ -1784,7 +1784,7 @@ namespace System.Reflection.Emit
 
 		public override MethodBase DeclaringMethod {
 			get {
-				throw new NotImplementedException ();
+				return null;
 			}
 		}
 

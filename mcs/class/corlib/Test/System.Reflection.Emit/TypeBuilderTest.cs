@@ -10628,7 +10628,14 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (InvalidOperationException) {}
 		}
 
-
+#if NET_2_0
+		[Test]
+		public void DeclaringMethodReturnsNull ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			Assert.IsNull (tb.DeclaringMethod, null);
+		}
+#endif
 #if NET_2_0
 #if !WINDOWS
 		/* 
