@@ -1,5 +1,10 @@
 2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpReplyChannel.cs : make sure to not try to receive request when
+	  it is already closed.
+
+2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelListener.cs, TcpDuplexSessionChannel.cs :
 	  some mannerless clients [*1] do not send EndRecord accordingly, but
 	  such channels at listener side should not be kept open. So, close

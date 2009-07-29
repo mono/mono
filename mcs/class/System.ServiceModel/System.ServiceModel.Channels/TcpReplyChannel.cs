@@ -55,6 +55,10 @@ namespace System.ServiceModel.Channels
 
 		public override RequestContext ReceiveRequest (TimeSpan timeout)
 		{
+			// It is used while it is already closed.
+			if (client == null || !client.Connected)
+				return null;
+
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			var msg = frame.ReadUnsizedMessage (timeout);
