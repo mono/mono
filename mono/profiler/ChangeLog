@@ -1,4 +1,11 @@
 2009-06-18  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Implemented data structures to keep track
+	of code buffers produced by the runtime, and used them instead of
+	jit_info_table_find for the statistical profiler.
+	This eliminates crashes related to problems with the writer thread and
+	its registration to the runtime.
+
+2009-06-18  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Removed debugging printf statement.
 
 2009-06-18  Massimiliano Mantione <massi@ximian.com>
