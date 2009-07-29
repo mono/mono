@@ -10668,6 +10668,27 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
 		}
+
+		[Test]
+		public void GenericParameterAttributesReturnsNone ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			Assert.AreEqual (GenericParameterAttributes.None, tb.GenericParameterAttributes, "#1");
+
+			tb.DefineGenericParameters ("T");
+			Assert.AreEqual (GenericParameterAttributes.None, tb.GenericParameterAttributes, "#2");
+
+			tb.CreateType ();
+			Assert.AreEqual (GenericParameterAttributes.None, tb.GenericParameterAttributes, "#3");
+		}
+
+		[Test]
+		public void GetGenericArgumentsReturnsNullForNonGenericTypeBuilder ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			Assert.IsNull (tb.GetGenericArguments (), "#1");
+		}
+
 #endif
 #if NET_2_0
 #if !WINDOWS

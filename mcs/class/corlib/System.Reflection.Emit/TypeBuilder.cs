@@ -1740,10 +1740,11 @@ namespace System.Reflection.Emit
 
 		public override Type[] GetGenericArguments ()
 		{
-			if (generic_params != null)
-				return generic_params;
-
-			throw new InvalidOperationException ();
+			if (generic_params == null)
+				return null;
+			Type[] args = new Type [generic_params.Length];
+			generic_params.CopyTo (args, 0);
+			return args;
 		}
 
 		public override Type GetGenericTypeDefinition ()
@@ -1762,6 +1763,10 @@ namespace System.Reflection.Emit
 		public extern override bool IsGenericParameter {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
+		}
+
+		public override GenericParameterAttributes GenericParameterAttributes {
+			get { return GenericParameterAttributes.None; }
 		}
 
 		public override bool IsGenericTypeDefinition {

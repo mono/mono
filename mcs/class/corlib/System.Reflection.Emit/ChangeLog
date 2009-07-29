@@ -1,5 +1,14 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilder.cs (GetGenericArguments): Returns null for
+	 non generic TypeBuilders.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (GenericParameterAttributes): Return none.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilder.cs (GetElementType): Throw always.
 
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
