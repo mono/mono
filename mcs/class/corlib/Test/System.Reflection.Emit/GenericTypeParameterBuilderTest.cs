@@ -303,6 +303,16 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (res.IsPointer, "#2");
 		}
 
+		[Test]
+		public void SetBaseTypeConstraintWithNull ()
+		{
+			TypeBuilder tb = module.DefineType ("dd.test", TypeAttributes.Public);
+			var gparam = tb.DefineGenericParameters ("A", "B")[1];
+
+			Assert.IsNull (gparam.BaseType, "#1");
+			gparam.SetBaseTypeConstraint (null);
+			Assert.AreEqual (typeof (object), gparam.BaseType, "#2");
+		}
 
 		[Test]
 		public void GenericTypeMembers ()

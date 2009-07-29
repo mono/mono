@@ -56,7 +56,7 @@ namespace System.Reflection.Emit
 
 		public void SetBaseTypeConstraint (Type baseTypeConstraint)
 		{
-			this.base_type = baseTypeConstraint;
+			this.base_type = baseTypeConstraint ?? typeof (object);
 		}
 
 		[ComVisible (true)]

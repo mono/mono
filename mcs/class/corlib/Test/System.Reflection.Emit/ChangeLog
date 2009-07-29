@@ -1,5 +1,10 @@
 2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* GenericTypeParameterBuilderTest.cs: Test for BaseType
+	and SetBaseTypeConstraint.
+
+2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* DerivedTypesTests.cs: Add test for the distinction between
 	vector and one-dimension SZARRAY.
 
