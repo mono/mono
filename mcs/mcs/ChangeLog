@@ -1,3 +1,7 @@
+2009-07-29  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: Update after recent SRE fixes.
+
 2009-07-28  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, expression.cs, ecore.cs, delegate.cs: Use correct

@@ -550,6 +550,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericType (field.DeclaringType)) {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
+					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
 					if (field.Module == Module.Builder)
 						return TypeBuilder.GetField (t, field);
 
@@ -563,7 +564,6 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 		protected Type MutateArrayType (Type array)
 		{
-			int rank = array.GetArrayRank ();
 			Type element = TypeManager.GetElementType (array);
 			if (element.IsArray) {
 				element = MutateArrayType (element);
@@ -574,6 +574,10 @@ namespace Mono.CSharp {
 			} else {
 				return array;
 			}
+
+			int rank = array.GetArrayRank ();
+			if (rank == 1)
+				return element.MakeArrayType ();
 
 			return element.MakeArrayType (rank);
 		}
@@ -710,6 +714,11 @@ namespace Mono.CSharp {
 			}
 
 			if (inner_access == null) {
+// TODO: It should be something like this to work correctly with expression trees				
+//				inner_access = ec.CurrentAnonymousMethod.Storey != storey && storey.MemberName.IsGeneric ?
+//					new FieldExpr (field.FieldBuilder, storey.Instance.Type, field.Location) :
+//					new FieldExpr (field.FieldBuilder, field.Location);
+							
 				inner_access = new FieldExpr (field.FieldBuilder, field.Location);
 				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				inner_access.Resolve (ec);
