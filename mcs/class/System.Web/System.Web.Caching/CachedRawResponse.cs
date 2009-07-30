@@ -32,6 +32,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Web.Caching {
 
@@ -42,7 +43,7 @@ namespace System.Web.Caching {
 		int status_code;
 		string status_desc;
 		int content_length;
-		ArrayList headers;
+		NameValueCollection headers;
 		byte[] buffer;
 		
 		internal CachedRawResponse (HttpCachePolicy policy)
@@ -76,11 +77,11 @@ namespace System.Web.Caching {
 			set { content_length = value; }
 		}
 		
-		internal ArrayList Headers {
+		internal NameValueCollection Headers {
 			get { return headers; }
 		}
 
-		internal void SetHeaders (ArrayList headers) {
+		internal void SetHeaders (NameValueCollection headers) {
 			this.headers = headers;
 		}
 

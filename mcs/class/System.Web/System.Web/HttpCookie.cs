@@ -78,9 +78,9 @@ namespace System.Web {
 			Value = value;
 		}
 
-		internal BaseResponseHeader GetCookieHeader ()
+		internal string GetCookieHeaderValue ()
 		{
-			StringBuilder builder = new StringBuilder ("");
+			StringBuilder builder = new StringBuilder ();
 
 			builder.Append (name);
 			builder.Append ("=");
@@ -109,7 +109,7 @@ namespace System.Web {
 				builder.Append ("; HttpOnly");
 			}
 
-			return new UnknownResponseHeader ("Set-Cookie", builder.ToString());
+			return builder.ToString ();
 		}
 
 		public string Domain {

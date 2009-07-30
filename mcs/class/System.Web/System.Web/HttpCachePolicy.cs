@@ -28,6 +28,7 @@
 //
 
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -81,11 +82,9 @@ namespace System.Web
 		bool set_no_store;
 		bool set_no_transform;
 		bool valid_until_expires;
-
-		// always false in 1.x
-		bool omit_vary_star;
-
 #if NET_2_0
+		bool omit_vary_star;
+		
 		public HttpCacheVaryByContentEncodings VaryByContentEncodings {
 			get { return vary_by_content_encodings; }
 		}
@@ -122,7 +121,13 @@ namespace System.Web
 
 		// always false in 1.x
 		internal bool OmitVaryStar {
-			get { return omit_vary_star; }
+			get {
+#if NET_2_0
+				return omit_vary_star;
+#else
+				return false;
+#endif
+			}
 		}
 
 		internal bool ValidUntilExpires {
@@ -271,6 +276,7 @@ namespace System.Web
 				return;
 
 			ProxyMaxAge = delta;
+			HaveProxyMaxAge = true;
 		}
 
 		public void SetRevalidation (HttpCacheRevalidation revalidation)
@@ -315,7 +321,7 @@ namespace System.Web
 				allow_response_in_browser_history = allow;
 		}
 
-		internal void SetHeaders (HttpResponse response, ArrayList headers)
+		internal void SetHeaders (HttpResponse response, NameValueCollection headers)
 		{
 			bool noCache = false;
 			string cc = null;
@@ -341,8 +347,8 @@ namespace System.Web
 			if (noCache) {
 				response.CacheControl = cc;
 				if (!allow_response_in_browser_history) {
-					headers.Add (new UnknownResponseHeader ("Expires", "-1"));
-					headers.Add (new UnknownResponseHeader ("Pragma", "no-cache"));
+					headers.Add ("Expires", "-1");
+					headers.Add ("Pragma", "no-cache");
 				}
 			} else {
 				if (HaveMaxAge)
@@ -350,7 +356,7 @@ namespace System.Web
 
 				if (have_expire_date) {
 					string expires = TimeUtil.ToUtcTimeString (expire_date);
-					headers.Add (new UnknownResponseHeader ("Expires", expires));
+					headers.Add ("Expires", expires);
 				}
 			}
 
@@ -359,22 +365,21 @@ namespace System.Web
 			if (set_no_transform)
 				cc = String.Concat (cc, ", no-transform");
 
-			headers.Add (new UnknownResponseHeader ("Cache-Control", cc));
+			headers.Add ("Cache-Control", cc);
 
 			if (last_modified_from_file_dependencies || etag_from_file_dependencies)
 				HeadersFromFileDependencies (response);
 
 			if (etag != null)
-				headers.Add (new UnknownResponseHeader ("ETag", etag));
+				headers.Add ("ETag", etag);
 
 			if (have_last_modified)
-				headers.Add (new UnknownResponseHeader ("Last-Modified",
-							     TimeUtil.ToUtcTimeString (last_modified)));
+				headers.Add ("Last-Modified", TimeUtil.ToUtcTimeString (last_modified));
 
 			if (!vary_by_params.IgnoreParams) {
-				BaseResponseHeader vb = vary_by_params.GetResponseHeader ();
+				string vb = vary_by_params.GetResponseHeaderValue ();
 				if (vb != null)
-					headers.Add (vb);
+					headers.Add ("Vary", vb);
 			}
 		}
 

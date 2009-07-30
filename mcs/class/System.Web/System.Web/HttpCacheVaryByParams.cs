@@ -63,9 +63,9 @@ namespace System.Web {
 			return names;
 		}
 
-		internal BaseResponseHeader GetResponseHeader ()
+		internal string GetResponseHeaderValue ()
 		{
-			StringBuilder builder = new StringBuilder ("");
+			StringBuilder builder = new StringBuilder ();
 
 			foreach (string parm in parms.Keys) {
 				builder.Append (parm);
@@ -75,7 +75,7 @@ namespace System.Web {
 			if (builder.Length == 0)
 				return null;
 
-			return new UnknownResponseHeader ("Vary", builder.ToString());
+			return builder.ToString();
 		}
 
 		public bool IgnoreParams {
