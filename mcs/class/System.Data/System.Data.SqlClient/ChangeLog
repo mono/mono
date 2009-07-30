@@ -19,10 +19,10 @@
 	more cleanup for 2.0 profile.
 
 2009-07-26  Veerapuram Varadhan  <vvaradhan@novell.com>
-    
-   	* SqlParameter.cs (get/set_SqlValue, GetSqlValue): Return the appropriately
-   	SQL-typed param value.  Fixes failing provider tests.
-   	
+
+	* SqlParameter.cs (get/set_SqlValue, GetSqlValue): Return the appropriately 
+	SQL-typed param value.  Fixes failing provider tests.
+	
 2009-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlParameter.cs: Improved support for SqlValue and SqlTypes.

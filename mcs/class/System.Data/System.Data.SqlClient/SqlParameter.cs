@@ -205,7 +205,7 @@ namespace System.Data.SqlClient {
 							      isNullable, precision, 
 							      scale,
 							      GetFrameworkValue);
-			metaParameter.RawValue = value;
+			metaParameter.RawValue =  value;
 			if (dbType != SqlDbType.Variant) 
 				SqlDbType = dbType;
 			Direction = direction;
@@ -967,7 +967,90 @@ namespace System.Data.SqlClient {
 				tdsValue = null;
 			return tdsValue;
 		}
-
+		
+		// TODO: Code copied from SqlDataReader, need a better approach
+		object GetSqlValue (object value)
+		{		
+			if (value == null)
+				return value;
+			
+			switch (sqlDbType) {
+			case SqlDbType.BigInt:
+				if (value == DBNull.Value)
+					return SqlInt64.Null;
+				return (SqlInt64) ((long) value);
+			case SqlDbType.Binary:
+			case SqlDbType.Image:
+			case SqlDbType.VarBinary:
+			case SqlDbType.Timestamp:
+				if (value == DBNull.Value)
+					return SqlBinary.Null;
+				return (SqlBinary) ((byte[]) value);
+			case SqlDbType.Bit:
+				if (value == DBNull.Value)
+					return SqlBoolean.Null;
+				return (SqlBoolean) ((bool) value);
+			case SqlDbType.Char:
+			case SqlDbType.NChar:
+			case SqlDbType.NText:
+			case SqlDbType.NVarChar:
+			case SqlDbType.Text:
+			case SqlDbType.VarChar:
+				if (value == DBNull.Value)
+					return SqlString.Null;
+				return (SqlString) ((string) value);
+			case SqlDbType.DateTime:
+			case SqlDbType.SmallDateTime:
+				if (value == DBNull.Value)
+					return SqlDateTime.Null;
+				return (SqlDateTime) ((DateTime) value);
+			case SqlDbType.Decimal:
+				if (value == DBNull.Value)
+					return SqlDecimal.Null;
+				if (value is TdsBigDecimal)
+					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				return (SqlDecimal) ((decimal) value);
+			case SqlDbType.Float:
+				if (value == DBNull.Value)
+					return SqlDouble.Null;
+				return (SqlDouble) ((double) value);
+			case SqlDbType.Int:
+				if (value == DBNull.Value)
+					return SqlInt32.Null;
+				return (SqlInt32) ((int) value);
+			case SqlDbType.Money:
+			case SqlDbType.SmallMoney:
+				if (value == DBNull.Value)
+					return SqlMoney.Null;
+				return (SqlMoney) ((decimal) value);
+			case SqlDbType.Real:
+				if (value == DBNull.Value)
+					return SqlSingle.Null;
+				return (SqlSingle) ((float) value);
+			case SqlDbType.UniqueIdentifier:
+				if (value == DBNull.Value)
+					return SqlGuid.Null;
+				return (SqlGuid) ((Guid) value);
+			case SqlDbType.SmallInt:
+				if (value == DBNull.Value)
+					return SqlInt16.Null;
+				return (SqlInt16) ((short) value);
+			case SqlDbType.TinyInt:
+				if (value == DBNull.Value)
+					return SqlByte.Null;
+				return (SqlByte) ((byte) value);
+#if NET_2_0
+			case SqlDbType.Xml:
+				if (value == DBNull.Value)
+					return SqlByte.Null;
+				return (SqlXml) value;
+#endif
+			}
+			
+			// FIXME: Do the right thing
+			return null;
+		}
+		
 		object SqlTypeToFrameworkType (object value)
 		{
 			INullable nullable = value as INullable;
