@@ -42,5 +42,5 @@ include ../../build/library.make
 
 ifdef DRAWING_DESIGN_DEP_FILE
 LIB_MCS_FLAGS += -define:DRAWING_DESIGN_DEP -r:$(DRAWING_DESIGN_DEP)
-$(the_lib): $(DRAWING_DESIGN_DEP_FILE)
+$(build_lib): $(DRAWING_DESIGN_DEP_FILE)
 endif

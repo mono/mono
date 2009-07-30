@@ -232,17 +232,17 @@ include ../../build/library.make
 
 ifdef WEBSERVICES_DEP_FILE
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
-$(the_lib): $(WEBSERVICES_DEP_FILE)
+$(build_lib): $(WEBSERVICES_DEP_FILE)
 endif
 
 ifdef MONOWEB_DEP_FILE
 LIB_MCS_FLAGS += -define:MONOWEB_DEP -r:$(MONOWEB_DEP)
-$(the_lib): $(MONOWEB_DEP_FILE)
+$(build_lib): $(MONOWEB_DEP_FILE)
 endif
 
 ifdef SYSTEMCORE_DEP_FILE
 LIB_MCS_FLAGS += -define:SYSTEMCORE_DEP -r:$(SYSTEMCORE_DEP)
-$(the_lib): $(SYSTEMCORE_DEP_FILE)
+$(build_lib): $(SYSTEMCORE_DEP_FILE)
 endif
 
 ifdef DEBUG
@@ -261,7 +261,7 @@ ifdef DEVEL
 LIB_MCS_FLAGS += -define:DEVEL
 endif
 
-$(the_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
+$(build_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
 
 $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`

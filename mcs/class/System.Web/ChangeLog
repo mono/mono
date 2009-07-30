@@ -1,3 +1,7 @@
+2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile ($(build_lib)): Move cyclic dependencies onto this.
+
 2009-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added
