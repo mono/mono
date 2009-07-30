@@ -1,3 +1,11 @@
+2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
+
+	* RBTree.cs (NodeEnumerator.check_current): New helper.
+	(NodeEnumerator.Current): Don't check invariants.
+	* SortedDictionary.cs (Enumerator.Current): Likewise.
+	(ValueCollection.Enumerator.Current): Likewise.
+	(KeyCollection.Enumerator.Current): Likewise.
+
 2009-07-26  Miguel de Icaza  <miguel@novell.com>
 
 	* Stack.cs: Check arguments.
