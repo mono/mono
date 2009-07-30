@@ -171,6 +171,11 @@ namespace Mono.Data.Tds.Protocol {
 			get;
 			set;
 		}
+		
+		public string DataTypeName {
+			get;
+			set;
+		}
 #endif
 		
 		// This allows the storage of arbitrary properties in addition to the predefined ones

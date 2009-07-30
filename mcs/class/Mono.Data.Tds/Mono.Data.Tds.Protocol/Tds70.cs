@@ -828,6 +828,7 @@ namespace Mono.Data.Tds.Protocol
 				col.IsReadOnly = !writable;
 				col.AllowDBNull = nullable;
 				col.BaseTableName = tableName;
+				col.DataTypeName = Enum.GetName (typeof (TdsColumnType), xColumnType);
 #else
 				col ["ColumnType"] = columnType;
 				col ["ColumnName"] = columnName;
@@ -839,6 +840,7 @@ namespace Mono.Data.Tds.Protocol
 				col ["IsReadOnly"] = !writable;
 				col ["AllowDBNull"] = nullable;
 				col ["BaseTableName"] = tableName;
+				col ["DataTypeName"] = Enum.GetName (typeof (TdsColumnType), xColumnType);
 #endif
 			}
 			return result;
