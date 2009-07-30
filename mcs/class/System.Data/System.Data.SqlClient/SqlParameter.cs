@@ -1138,7 +1138,7 @@ namespace System.Data.SqlClient {
 				return value;
 			
 			if (value is string && ((string)value).Length == 0)
-				return DBNull.Value;
+				return String.Empty;
 			
 			switch (sqlDbType)  {
 			case SqlDbType.BigInt :

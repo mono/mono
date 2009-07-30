@@ -1,5 +1,11 @@
 2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	** Fixes the issue reported by Scott <Scott.Fluto@cmgl.ca> in Mono-list
+	* SqlParameter.cs (ConvertToFrameworkType): Return String.Empty 
+	in case of zero-length strings.
+	
+2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* SqlDataAdapter.cs (IDbDataAdapter.*Command): Remove over-engineered 
 	checks as the base implementation is changed.
 	
