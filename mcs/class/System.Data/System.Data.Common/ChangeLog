@@ -1,3 +1,8 @@
+2009-07-27  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DbCommandBuilder.cs (CreateUpdateCommand): Don't set Nullable 
+	property "Original_*" fields.
+	
 2009-07-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* DbCommandBuilder.cs (Create*Command): Fill up the missing pieces from 

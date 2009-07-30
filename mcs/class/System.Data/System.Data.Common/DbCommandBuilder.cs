@@ -387,7 +387,7 @@ namespace System.Data.Common {
 				else 
 					parameter = CreateParameter (_updateCommand, parmIndex++, schemaRow);
 				parameter.SourceVersion = DataRowVersion.Original;
-				parameter.IsNullable = allowNull;
+				//parameter.IsNullable = allowNull;
 				ApplyParameterInfo (parameter, schemaRow, StatementType.Update, true);
 
 				whereClause.Append (String.Format (clause2, GetQuotedString (parameter.SourceColumn), parameter.ParameterName));
