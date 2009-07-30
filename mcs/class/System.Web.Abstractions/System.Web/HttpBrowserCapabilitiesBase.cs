@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Caching;
@@ -39,6 +40,9 @@ using System.Web.UI;
 
 namespace System.Web
 {
+#if NET_4_0
+        [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpBrowserCapabilitiesBase : IFilterResolutionService

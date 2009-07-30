@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -41,6 +42,9 @@ using System.Web.Caching;
 
 namespace System.Web
 {
+#if NET_4_0
+        [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpResponseWrapper : HttpResponseBase
@@ -112,10 +116,8 @@ namespace System.Web
 			set { w.HeaderEncoding = value; }
 		}
 
-		[MonoTODO]
 		public override NameValueCollection Headers {
-			//get { return w.Headers; }
-			get { throw new NotImplementedException (); }
+			get { return w.Headers; }
 		}
 
 		public override bool IsClientConnected {
@@ -154,12 +156,9 @@ namespace System.Web
 			set { w.StatusDescription = value; }
 		}
 
-		[MonoTODO]
 		public override int SubStatusCode {
-			//get { return w.SubStatusCode; }
-			//set { w.SubStatusCode = value; }
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return w.SubStatusCode; }
+			set { w.SubStatusCode = value; }
 		}
 
 		public override bool SuppressContent {
@@ -167,12 +166,9 @@ namespace System.Web
 			set { w.SuppressContent = value; }
 		}
 
-		[MonoTODO]
 		public override bool TrySkipIisCustomErrors {
-			//get { return w.TrySkipIisCustomErrors; }
-			//set { w.TrySkipIisCustomErrors = value; }
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return w.TrySkipIisCustomErrors; }
+			set { w.TrySkipIisCustomErrors = value; }
 		}
 
 		public override void AddCacheDependency (params CacheDependency [] dependencies)
@@ -260,11 +256,9 @@ namespace System.Web
 			w.Close ();
 		}
 
-		[MonoTODO]
 		public override void DisableKernelCache ()
 		{
-			// w.DisableKernelCache ();
-			throw new NotImplementedException ();
+			 w.DisableKernelCache ();
 		}
 
 		public override void End ()
@@ -292,11 +286,10 @@ namespace System.Web
 			w.Redirect (url, endResponse);
 		}
 
-		[MonoTODO]
 		public override void RemoveOutputCacheItem (string path)
 		{
-			// w.RemoveOutputCacheItem (path);
-			throw new NotImplementedException ();
+			 //w.RemoveOutputCacheItem (path);
+			 throw new NotImplementedException ();
 		}
 
 		public override void SetCookie (HttpCookie cookie)
