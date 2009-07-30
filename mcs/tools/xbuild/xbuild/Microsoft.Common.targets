@@ -19,6 +19,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<OutDir Condition="'$(OutDir)' == ''">$(OutputPath)</OutDir>
+		<OutDir Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">$(OutDir)\</OutDir>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj\</BaseIntermediateOutputPath>
 		<CleanFile Condition="'$(CleanFile)'==''">$(MSBuildProjectFile).FilesWrittenAbsolute.txt</CleanFile>
 	</PropertyGroup>
@@ -33,14 +38,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<TargetPath Include="$(OutputPath)" />
+		<TargetPath Include="$(OutDir)" />
 	</ItemGroup>
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
 		
 		<MakeDir 
-			Directories="$(OutputPath);$(IntermediateOutputPath)"
+			Directories="$(OutDir);$(IntermediateOutputPath)"
 		/>
 
 		<GetFrameworkPath>
@@ -63,7 +68,7 @@
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
-			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutputPath)"
+			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutDir)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
@@ -91,6 +96,7 @@
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
+
 	</Target>
 
 
@@ -112,7 +118,7 @@
 	<Target Name = "CopyFilesMarkedCopyLocal">
 		<Copy
 			SourceFiles="@(ReferenceCopyLocalPaths)"
-			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutputPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true">
 			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
 		</Copy>
@@ -156,7 +162,7 @@
 	<Target
 		Name="CoreBuild"
 		DependsOnTargets="$(CoreBuildDependsOn)"
-		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
+		Outputs="$(OutDir)$(AssemblyName)$(TargetExt)"
 	/>
 
 	<Target Name="BuildResources"
@@ -272,18 +278,18 @@
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
-			DestinationFolder="$(OutputPath)"
+			DestinationFolder="$(OutDir)"
 			SkipUnchangedFiles="true" >
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
-		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true">
+		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"
-			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')"
+			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutDir)\%(Culture)\$(AssemblyName).resources.dll')"
 			SkipUnchangedFiles="true">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
@@ -297,10 +303,10 @@
 	<Target Name="CopyDeployFilesToOutputDirectoryPreserveNewest"
 		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
 		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
-		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)')">
+		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)')">
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 	</Target>
@@ -310,7 +316,7 @@
 		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')">
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutDir)%(TargetPath)')">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites2"/>
 		</Copy>

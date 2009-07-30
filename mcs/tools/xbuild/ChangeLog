@@ -1,5 +1,11 @@
 2009-07-30  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #484771.
+	* xbuild/Microsoft.Common.targets (ResolveAssemblyReference): Add support
+	for $(OutDir).
+
+2009-07-30  Ankit Jain  <jankit@novell.com>
+
 	* ErrorUtilities.cs: Set version to Consts.MonoVersion .
 
 2009-07-30  Ankit Jain  <jankit@novell.com>
