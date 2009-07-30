@@ -114,8 +114,6 @@ namespace System.Data.Common
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
-			//get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
-			//set { ((IDbDataAdapter) this).DeleteCommand = value; }
 			get { return (DbCommand) _deleteCommand; }
 			set { _deleteCommand = value; }
 		}

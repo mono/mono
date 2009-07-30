@@ -1,3 +1,7 @@
+2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* DbDataAdapter.cs (set_DeleteCommand): Code cleanup.
+	
 2009-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* DbDataAdapter.cs (*Command properties): Don't call IDbDataAdapter.*Command, 

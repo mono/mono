@@ -139,45 +139,21 @@ namespace System.Data.SqlClient {
 		
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set { 
-				if (value == null ||
-				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
-					SelectCommand = (SqlCommand) value; 
-				else
-					throw new InvalidCastException (); 
-			}
+			set { SelectCommand = (SqlCommand) value; }
 		}
 		
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
-			set { 
-				if (value == null ||
-				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
-					InsertCommand = (SqlCommand) value; 
-				else
-					throw new InvalidCastException (); 
-			}
+			set { InsertCommand = (SqlCommand) value; }
 		}
 		
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set { 
-				if (value == null ||
-				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
-					UpdateCommand = (SqlCommand) value; 
-				else
-					throw new InvalidCastException (); 
-			}
+			set { UpdateCommand = (SqlCommand) value; }
 		}
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
-			set { 
-				if (value == null ||
-				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
-					DeleteCommand = (SqlCommand) value; 
-				else
-					throw new InvalidCastException (); 
-			}
+			set { DeleteCommand = (SqlCommand) value; }
 		}
 
 #if NET_2_0
