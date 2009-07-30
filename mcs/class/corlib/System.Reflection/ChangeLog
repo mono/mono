@@ -1,3 +1,8 @@
+2009-07-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfo.cs: Throw an exception if internal_from_handle_type ()
+	returns null. Fixes #525733.
+
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (initialize): Call TypeBuilder::GetConstructorsInternal

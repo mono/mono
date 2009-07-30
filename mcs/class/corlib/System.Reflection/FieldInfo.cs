@@ -164,7 +164,10 @@ namespace System.Reflection {
 		{
 			if (handle.Value == IntPtr.Zero)
 				throw new ArgumentException ("The handle is invalid.");
-			return internal_from_handle_type (handle.Value, declaringType.Value);
+			FieldInfo fi = internal_from_handle_type (handle.Value, declaringType.Value);
+			if (fi == null)
+				throw new ArgumentException ("The field handle and the type handle are incompatible.");
+			return fi;
 		}
 #endif
 
