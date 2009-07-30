@@ -1,3 +1,11 @@
+2009-07-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlParameter.cs: Modified ConvertToFrameworkType to only perform
+	conversion if type of value is different from "system type". Make
+	DbTypeMapping hashtable available on 1.0 profile, and add missing
+	mappings. Wrap FormatException adding information on conversion
+	that failed.
+
 2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataAdapter.cs (*Command): Build fix for 1.x profile.

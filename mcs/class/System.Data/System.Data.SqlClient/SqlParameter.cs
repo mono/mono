@@ -45,6 +45,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -79,6 +80,8 @@ namespace System.Data.SqlClient {
 		string xmlSchemaCollectionDatabase = String.Empty;
 		string xmlSchemaCollectionOwningSchema = String.Empty;
 		string xmlSchemaCollectionName = String.Empty;
+#else
+		static Hashtable DbTypeMapping;
 #endif
 
 		static Hashtable type_mapping;
@@ -90,17 +93,25 @@ namespace System.Data.SqlClient {
 		
 		static SqlParameter ()
 		{
-
-#if NET_2_0
 			if (DbTypeMapping == null)
 				DbTypeMapping = new Hashtable ();
 			
 			DbTypeMapping.Add (SqlDbType.BigInt, typeof (long));
 			DbTypeMapping.Add (SqlDbType.Bit, typeof (bool));
+			DbTypeMapping.Add (SqlDbType.Char, typeof (string));
+			DbTypeMapping.Add (SqlDbType.NChar, typeof (string));
+			DbTypeMapping.Add (SqlDbType.Text, typeof (string));
+			DbTypeMapping.Add (SqlDbType.NText, typeof (string));
+			DbTypeMapping.Add (SqlDbType.VarChar, typeof (string));
 			DbTypeMapping.Add (SqlDbType.NVarChar, typeof (string));
+			DbTypeMapping.Add (SqlDbType.SmallDateTime, typeof (DateTime));
 			DbTypeMapping.Add (SqlDbType.DateTime, typeof (DateTime));
 			DbTypeMapping.Add (SqlDbType.Decimal, typeof (decimal));
 			DbTypeMapping.Add (SqlDbType.Float, typeof (double));
+			DbTypeMapping.Add (SqlDbType.Binary, typeof (byte []));
+			DbTypeMapping.Add (SqlDbType.Image, typeof (byte []));
+			DbTypeMapping.Add (SqlDbType.Money, typeof (decimal));
+			DbTypeMapping.Add (SqlDbType.SmallMoney, typeof (decimal));
 			DbTypeMapping.Add (SqlDbType.VarBinary, typeof (byte []));
 			DbTypeMapping.Add (SqlDbType.TinyInt, typeof (byte));
 			DbTypeMapping.Add (SqlDbType.Int, typeof (int));
@@ -108,7 +119,10 @@ namespace System.Data.SqlClient {
 			DbTypeMapping.Add (SqlDbType.SmallInt, typeof (short));
 			DbTypeMapping.Add (SqlDbType.UniqueIdentifier, typeof (Guid));
 			DbTypeMapping.Add (SqlDbType.Variant, typeof (object));
+#if NET_2_0
+			DbTypeMapping.Add (SqlDbType.Xml, typeof (string));
 #endif
+
 			type_mapping = new Hashtable ();
 
 			type_mapping.Add (typeof (long), SqlDbType.BigInt);
@@ -588,14 +602,17 @@ namespace System.Data.SqlClient {
 			SetSqlDbType ((SqlDbType) t);
 		}
 
-#if NET_2_0
 		// Returns System.Type corresponding to the underlying SqlDbType
-		internal override Type SystemType {
+#if NET_2_0
+		internal override
+#endif
+		Type SystemType {
 			get {
 				return (Type) DbTypeMapping [sqlDbType];
 			}
 		}
-		
+
+#if NET_2_0
 		internal override object FrameworkDbType {
 			get {
 				return sqlDbType;
@@ -1136,58 +1153,34 @@ namespace System.Data.SqlClient {
 		{
 			if (value == null || value == DBNull.Value)
 				return value;
-			
-			if (value is string && ((string)value).Length == 0)
-				return String.Empty;
-			
-			switch (sqlDbType)  {
-			case SqlDbType.BigInt :
-				return Convert.ChangeType (value, typeof (Int64));
-			case SqlDbType.Binary:
-			case SqlDbType.Image:
-			case SqlDbType.VarBinary:
-				if (value is byte[])
-					return value;
-				break;
-			case SqlDbType.Bit:
-				return Convert.ChangeType (value, typeof (bool));
-			case SqlDbType.Int:
-				return Convert.ChangeType (value, typeof (Int32));
-			case SqlDbType.SmallInt :
-				return Convert.ChangeType (value, typeof (Int16));
-			case SqlDbType.TinyInt :
-				return Convert.ChangeType (value, typeof (byte));
-			case SqlDbType.Float:
-				return Convert.ChangeType (value, typeof (Double));
-			case SqlDbType.Real:
-				return Convert.ChangeType (value, typeof (Single));
-			case SqlDbType.Decimal:
-				return Convert.ChangeType (value, typeof (Decimal));
-			case SqlDbType.Money:
-			case SqlDbType.SmallMoney:
-				{
-					Decimal val = (Decimal)Convert.ChangeType (value, typeof (Decimal));
-					return Decimal.Round(val, 4);
-				}
-			case SqlDbType.DateTime:
-			case SqlDbType.SmallDateTime:
-				return Convert.ChangeType (value, typeof (DateTime));
-			case SqlDbType.VarChar:
-			case SqlDbType.NVarChar:
-			case SqlDbType.Char:
-			case SqlDbType.NChar:
-			case SqlDbType.Text:
-			case SqlDbType.NText:
-#if NET_2_0
-			case SqlDbType.Xml:
-#endif
-				return Convert.ChangeType (value,  typeof (string));
-			case SqlDbType.UniqueIdentifier:
-				return Convert.ChangeType (value,  typeof (Guid));
-			case SqlDbType.Variant:
+			if (sqlDbType == SqlDbType.Variant)
 				return metaParameter.Value;
+
+			Type frameworkType = SystemType;
+			if (frameworkType == null)
+				throw new NotImplementedException ("Type Not Supported : " + sqlDbType.ToString());
+
+			Type valueType = value.GetType ();
+			if (valueType == frameworkType)
+				return value;
+
+			object sqlvalue = null;
+
+			try {
+				sqlvalue = Convert.ChangeType (value, frameworkType);
+				switch (sqlDbType) {
+				case SqlDbType.Money:
+				case SqlDbType.SmallMoney:
+					sqlvalue = Decimal.Round ((decimal) sqlvalue, 4);
+					break;
+				}
+			} catch (FormatException ex) {
+				throw new FormatException (string.Format (CultureInfo.InvariantCulture,
+					"Parameter value could not be converted from {0} to {1}.",
+					valueType.Name, frameworkType.Name), ex);
 			}
-			throw new  NotImplementedException ("Type Not Supported : " + sqlDbType.ToString());
+
+			return sqlvalue;
 		}
 
 #if NET_2_0
