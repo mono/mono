@@ -962,6 +962,18 @@ namespace System {
 		{
 			return CreateDomain (friendlyName, securityInfo, CreateDomainSetup (appBasePath, appRelativeSearchPath, shadowCopyFiles));
 		}
+		
+#if NET_2_0
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
+		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.ApplicationTrust = new ApplicationTrust (grantSet, fullTrustAssemblies ?? new StrongName [0]);
+			return CreateDomain (friendlyName, securityInfo, info);		
+		}
+#endif
 
 		static AppDomainSetup CreateDomainSetup (string appBasePath, string appRelativeSearchPath, bool shadowCopyFiles)
 		{
@@ -982,15 +994,6 @@ namespace System {
 
 			return info;
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
-		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern bool InternalIsFinalizingForUnload (int domain_id);
