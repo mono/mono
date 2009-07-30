@@ -1,3 +1,9 @@
+2009-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlParameterTest.cs: Marked SqlChars/SqlBytes tests for SqlValue
+	as NotWorking as these types are considered as SqlString/SqlBinary
+	respectively.
+	
 2009-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlParameterTest.cs: Added/improved tests for SqlValue, and

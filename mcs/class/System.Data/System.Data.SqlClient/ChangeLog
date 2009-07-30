@@ -1,8 +1,28 @@
+2009-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDataAdapter.cs (IDbDataAdapter.*Command): Revert some of my earlier
+	changes.  Validate the incoming value as we use bases' implementation now.
+	Fixes failing tests.
+
+	* SqlParameter.cs (GetSqlValue): Simplify handling of SqlValue and SqlTypes.
+	(SqlTypeToFramworkType): Added support for SqlChars and SqlBytes types.
+
 2009-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommand.cs: Ensure connection is closed if CloseConnection
 	behavior is set, and reader could not be created.
 
+2009-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* More clean up of fix for #522624/#507663
+	* SqlCommandBuilder.cs: Appropriately handle rowUpdatingHandler and
+	more cleanup for 2.0 profile.
+
+2009-07-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+    
+   	* SqlParameter.cs (get/set_SqlValue, GetSqlValue): Return the appropriately
+   	SQL-typed param value.  Fixes failing provider tests.
+   	
 2009-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlParameter.cs: Improved support for SqlValue and SqlTypes.

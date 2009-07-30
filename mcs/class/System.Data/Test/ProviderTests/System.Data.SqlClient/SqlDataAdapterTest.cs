@@ -922,7 +922,7 @@ namespace MonoTests.System.Data.SqlClient
 				command.Connection = conn;
 				SelectCommand = command;
 				Fill (dt, command.ExecuteReader ());
-				Assert.AreEqual (6, dt.Rows.Count, "#1");
+				Assert.AreEqual (4, dt.Rows.Count, "#1");
 				Assert.AreEqual (6, dt.Columns.Count, "#1");
 			} finally {
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
