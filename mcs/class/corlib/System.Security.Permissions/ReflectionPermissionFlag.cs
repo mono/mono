@@ -49,8 +49,14 @@ namespace System.Security.Permissions {
 
 		MemberAccess = 0x00000002,
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		ReflectionEmit = 0x4,
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		AllFlags = TypeInformation | MemberAccess | ReflectionEmit,
 
 #if NET_2_0

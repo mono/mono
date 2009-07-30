@@ -63,7 +63,13 @@ namespace System.Security.Permissions {
 		public ReflectionPermissionFlag Flags {
 			get { return flags; }
 			set {
-				if ((value & ReflectionPermissionFlag.AllFlags) != value) {
+#if NET_2_0
+				const ReflectionPermissionFlag all_flags = ReflectionPermissionFlag.AllFlags | ReflectionPermissionFlag.RestrictedMemberAccess;
+#else				
+				const ReflectionPermissionFlag all_flags = ReflectionPermissionFlag.AllFlags;
+#endif
+
+				if ((value & all_flags) != value) {
 					string msg = String.Format (Locale.GetText ("Invalid flags {0}"), value);
 					throw new ArgumentException (msg, "ReflectionPermissionFlag");
 				}
