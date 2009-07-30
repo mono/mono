@@ -1,5 +1,10 @@
 2009-07-30  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets (ResolveAssemblyReference): Output
+	ResolvedFiles to @(ReferencePath), required for IDE integration.
+
+2009-07-30  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets: Implement 'Clean' target. Currently
 	just handles clean for a full build.
 

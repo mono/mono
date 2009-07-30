@@ -73,6 +73,7 @@
 			FindRelatedFiles="true"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
+			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
 			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolveAssemblyReferenceResolvedFiles"/>
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
