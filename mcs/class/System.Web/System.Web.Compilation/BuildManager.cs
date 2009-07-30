@@ -163,10 +163,12 @@ namespace System.Web.Compilation {
 			foreach (string vpath in precompiled.Keys) {
 				parts = vpath.Split ('/');
 				for (int i = 0; i < parts.Length; i++) {
+					if (String.IsNullOrEmpty (parts [i]))
+						continue;
 					string test_path = String.Join ("/", parts, i, parts.Length - i);
 					VirtualPath result = GetAbsoluteVirtualPath (test_path);
 					if (result != null && File.Exists (result.PhysicalPath)) {
-						skip = i;
+						skip = i - 1;
 						break;
 					}
 				}
