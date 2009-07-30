@@ -10014,7 +10014,7 @@
         <size>7</size>
       </method>
       <method name="Boolean Check(T, T)">
-        <size>5</size>
+        <size>15</size>
       </method>
     </type>
     <type name="C">
@@ -10027,15 +10027,15 @@
         <size>7</size>
       </method>
       <method name="Boolean Check(T, T)">
-        <size>5</size>
+        <size>15</size>
       </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
+      <method name="Int32 Main()">
+        <size>28</size>
       </method>
     </type>
   </test>
