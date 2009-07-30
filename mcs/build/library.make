@@ -69,7 +69,7 @@ SN = :
 else
 sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
 SN = $(Q) MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
-SNFLAGS = -q -R
+SNFLAGS = -q
 endif
 
 ifeq ($(PLATFORM), win32)
@@ -225,12 +225,12 @@ $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
-	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
+	$(SN) $(SNFLAGS) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)
-	$(SN) $(SNFLAGS) $(build_lib) $(LIBRARY_SNK)
 	$(Q) cp $(build_lib) $@
+	$(SN) $(SNFLAGS) -v $@
 	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
 	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
 endif

@@ -34,5 +34,5 @@ MONO_PATH=MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(t
 $(the_lib): $(the_libdir)/.stamp Makefile Mono.CSharp.dll.sources $(build_lib)
 	$(MKINSTALLDIRS) fixup
 	$(MONO_PATH) $(RUNTIME) $(LINKER) -d fixup/$(PROFILE) -o out -l none -c skip -b true -x link.xml -s Mono.Tuner.AdjustVisibility,Mono.Tuner:OutputStep -s Mono.Tuner.PrintStatus,Mono.Tuner:OutputStep  -i compiler.info
-	$(SN) $(SNFLAGS) out/Mono.CSharp.dll $(topdir)/class/mono.snk
+	$(SN) $(SNFLAGS) -R out/Mono.CSharp.dll $(topdir)/class/mono.snk
 	cp out/Mono.CSharp.dll $(the_lib)
