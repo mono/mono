@@ -65,6 +65,13 @@ namespace Microsoft.Build.Tasks {
 
 			foreach (ITaskItem project in projects) {
 				filename = project.GetMetadata ("FullPath");
+				if (!File.Exists (filename)) {
+					Log.LogError ("Could not find the project file '{0}'", filename);
+					if (stopOnFirstFailure)
+						break;
+
+					continue;
+				}
 
 				Directory.SetCurrentDirectory (Path.GetDirectoryName (filename));
 				outputs = new Hashtable ();
