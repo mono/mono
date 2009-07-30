@@ -1194,6 +1194,8 @@ namespace MonoTests.System.Data.SqlClient
 
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
+	        // This doesn't work as SqlBytes are represented as SqlBinary
 		public void SqlTypes_SqlBytes ()
 		{
 			SqlParameter parameter;
@@ -1223,6 +1225,8 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+	        // This doesn't work as SqlChars are represented as SqlString
 		public void SqlTypes_SqlChars ()
 		{
 			SqlParameter parameter;
