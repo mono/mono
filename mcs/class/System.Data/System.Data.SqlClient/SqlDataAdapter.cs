@@ -5,11 +5,12 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//	 Veerapuram Varadhan  (vvaradhan@novell.com)
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) 2002 Tim Coleman
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -134,6 +135,49 @@ namespace System.Data.SqlClient {
 		SqlCommand UpdateCommand {
 			get { return (SqlCommand)base.UpdateCommand; }
 			set { base.UpdateCommand = value; }
+		}
+		
+		IDbCommand IDbDataAdapter.SelectCommand {
+			get { return SelectCommand; }
+			set { 
+				if (value == null ||
+				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
+					SelectCommand = (SqlCommand) value; 
+				else
+					throw new InvalidCastException (); 
+			}
+		}
+		
+		IDbCommand IDbDataAdapter.InsertCommand {
+			get { return InsertCommand; }
+			set { 
+				if (value == null ||
+				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
+					InsertCommand = (SqlCommand) value; 
+				else
+					throw new InvalidCastException (); 
+			}
+		}
+		
+		IDbCommand IDbDataAdapter.UpdateCommand {
+			get { return UpdateCommand; }
+			set { 
+				if (value == null ||
+				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
+					UpdateCommand = (SqlCommand) value; 
+				else
+					throw new InvalidCastException (); 
+			}
+		}
+		IDbCommand IDbDataAdapter.DeleteCommand {
+			get { return DeleteCommand; }
+			set { 
+				if (value == null ||
+				    value.GetType ().IsAssignableFrom (typeof (System.Data.SqlClient.SqlCommand)))
+					DeleteCommand = (SqlCommand) value; 
+				else
+					throw new InvalidCastException (); 
+			}
 		}
 
 #if NET_2_0
