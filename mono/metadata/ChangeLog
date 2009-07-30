@@ -1,5 +1,11 @@
 2009-07-30  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: When we stop a thread and its stack top is not within
+	its allocated stack (because it's in an altstack signal handler),
+	restart it and stop it again, until it is.
+
+2009-07-30  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Take a thread's stack top and registers from the
 	sigcontext in the suspend signal handler.
 

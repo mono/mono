@@ -1,5 +1,9 @@
 2009-07-30  Mark Probst  <mark.probst@gmail.com>
 
+	* mono-sigcontext.h: Include config.h.
+
+2009-07-30  Mark Probst  <mark.probst@gmail.com>
+
 	* mono-sigcontext.h, Makefile.am: Arch-dependent sigcontext
 	macros, moved from mini.
 
