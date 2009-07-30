@@ -1,4 +1,9 @@
 2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DbDataAdapter.cs (IDbDataAdapter.get_*Command): For non 2.0 profile, do not 
+	implement these properties and related changes.
+	
+2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* DbDataAdapter.cs (set_DeleteCommand): Code cleanup.
 	

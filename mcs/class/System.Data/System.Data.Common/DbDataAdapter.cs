@@ -140,22 +140,6 @@ namespace System.Data.Common
 					throw new NotSupportedException ();
 			}
 		}
-#else
-		IDbCommand SelectCommand {
-			get { return ((IDbDataAdapter) this).SelectCommand; }
-		}
-
-		IDbCommand DeleteCommand {
-			get { return ((IDbDataAdapter) this).DeleteCommand; }
-		}
-
-		IDbCommand InsertCommand {
-			get { return ((IDbDataAdapter) this).InsertCommand; }
-		}
-
-		IDbCommand UpdateCommand {
-			get { return ((IDbDataAdapter) this).UpdateCommand; }
-		}
 #endif
 
 		#endregion // Properties
@@ -490,8 +474,9 @@ namespace System.Data.Common
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override IDataParameter[] GetFillParameters ()
 		{
-			IDataParameter[] parameters = new IDataParameter [SelectCommand.Parameters.Count];
-			SelectCommand.Parameters.CopyTo (parameters, 0);
+			IDbCommand selectCmd = ((IDbDataAdapter) this).SelectCommand;
+			IDataParameter[] parameters = new IDataParameter [selectCmd.Parameters.Count];
+			selectCmd.Parameters.CopyTo (parameters, 0);
 			return parameters;
 		}
 		
@@ -623,17 +608,17 @@ namespace System.Data.Common
 				switch (row.RowState) {
 				case DataRowState.Added:
 					statementType = StatementType.Insert;
-					command = InsertCommand;
+					command = ((IDbDataAdapter) this).InsertCommand;
 					commandName = "Insert";
 					break;
 				case DataRowState.Deleted:
 					statementType = StatementType.Delete;
-					command = DeleteCommand;
+					command = ((IDbDataAdapter) this).DeleteCommand;
 					commandName = "Delete";
 					break;
 				case DataRowState.Modified:
 					statementType = StatementType.Update;
-					command = UpdateCommand;
+					command = ((IDbDataAdapter) this).UpdateCommand;
 					commandName = "Update";
 					break;
 				case DataRowState.Unchanged:
