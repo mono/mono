@@ -229,6 +229,19 @@ namespace MonoTests.System.Reflection
 				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetFieldFromHandle2_Incompatible ()
+		{
+			RuntimeFieldHandle fh = typeof (FieldInfoTest<int>).GetField ("TestField").FieldHandle;
+
+			FieldInfoTest<string> instance = new FieldInfoTest<string> ();
+			Type t2 = instance.GetType ();
+			RuntimeTypeHandle th = t2.TypeHandle;
+
+			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
+		}
 #endif
 
 		[Test]
