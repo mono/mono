@@ -575,43 +575,51 @@ namespace System.Collections.Generic {
 		public struct Enumerator : IEnumerator<T>, IDisposable {
 
 			HashSet<T> hashset;
-			int current;
+			int next;
 			int stamp;
 
+			T current;
+
 			internal Enumerator (HashSet<T> hashset)
+				: this ()
 			{
 				this.hashset = hashset;
 				this.stamp = hashset.generation;
-
-				current = NO_SLOT;
 			}
 
 			public bool MoveNext ()
 			{
 				CheckState ();
 
-				while (current < hashset.touched)
-					if (hashset.GetLinkHashCode (++current) != 0)
-						return true;
+				if (next < 0)
+					return false;
 
+				while (next < hashset.touched) {
+					int cur = next++;
+					if (hashset.GetLinkHashCode (cur) != 0) {
+						current = hashset.slots [cur];
+						return true;
+					}
+				}
+
+				next = NO_SLOT;
 				return false;
 			}
 
 			public T Current {
-				get {
-					CheckCurrent ();
-
-					return hashset.slots [current];
-				}
+				get { return current; }
 			}
 
 			object IEnumerator.Current {
-				get { return this.Current; }
+				get {
+					CheckCurrent ();
+					return current;
+				}
 			}
 
 			void IEnumerator.Reset ()
 			{
-				current = NO_SLOT;
+				next = 0;
 			}
 
 			public void Dispose ()
@@ -631,7 +639,7 @@ namespace System.Collections.Generic {
 			{
 				CheckState ();
 
-				if (current == NO_SLOT || current >= hashset.touched)
+				if (next <= 0)
 					throw new InvalidOperationException ("Current is not valid");
 			}
 		}

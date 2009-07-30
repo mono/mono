@@ -1,3 +1,12 @@
+2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	* HashSet.cs (Enumerator.next): Rename from Enumerator.current and
+	change meaning to be the index of the slot to start searching on
+	the next iteration.
+	(Enumerator.current): New.  Contains the current element.
+	(Enumerator.MoveNext): Update.  Avoid an out-of-bounds access.
+	(Enumerator.Current): Don't check any invariants.
+
 2009-07-09  Jb Evain  <jbevain@novell.com>
 
 	* HashSet.cs (ICollection<T>.Add): fix for bug #520760. Do not throw
