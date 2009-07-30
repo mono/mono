@@ -1,3 +1,7 @@
+2009-07-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelBase.cs : fix wrong loop implementation.
+
 2009-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpChannelListener.cs : to avoid creating two or more channels

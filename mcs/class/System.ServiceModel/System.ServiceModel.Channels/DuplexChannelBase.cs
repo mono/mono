@@ -174,7 +174,13 @@ namespace System.ServiceModel.Channels
 		
 		public virtual bool TryReceive (TimeSpan timeout, out Message message)
 		{
-			return EndTryReceive (BeginTryReceive (timeout, null, null), out message);
+			try {
+				message = Receive (timeout);
+				return true;
+			} catch (TimeoutException) {
+				message = null;
+				return false;
+			}
 		}
 
 		// WaitForMessage
