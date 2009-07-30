@@ -1,5 +1,10 @@
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
+	* ListTest.cs (Enumerator_Current): New test, includes
+	relevant parts of #491858 and #517415.
+
+2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
+
 	* DictionaryTest.cs (Enumerator_Current): New test, includes
 	relevant parts of #491858 and #517415.
 

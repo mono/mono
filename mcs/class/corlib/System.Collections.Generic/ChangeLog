@@ -1,3 +1,10 @@
+2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	* List.cs (Enumerator.current): New.
+	(Enumerator.MoveNext): Update it.
+	(Enumerator.Current): Don't verify any invariants.
+	(Enumerator.Dispose): Set 'l' to null.
+
 2009-07-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Dictionary.cs (Enumerator.current): New.

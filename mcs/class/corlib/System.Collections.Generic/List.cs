@@ -744,54 +744,63 @@ namespace System.Collections.Generic {
 			List <T> l;
 			int idx;
 			int ver;
-			
+
+			T current;
+
 			internal Enumerator (List <T> l)
+				: this ()
 			{
 				this.l = l;
 				idx = NOT_STARTED;
 				ver = l._version;
 			}
 			
-			// for some fucked up reason, MSFT added a useless dispose to this class
-			// It means that in foreach, we must still do a try/finally. Broken, very
-			// broken.
 			public void Dispose ()
 			{
-				idx = NOT_STARTED;
+				l = null;
+			}
+
+			void VerifyState ()
+			{
+				if (l == null)
+					throw new ObjectDisposedException (GetType ().FullName);
+				if (ver != l._version)
+					throw new InvalidOperationException (
+						"Collection was modified; enumeration operation may not execute.");
 			}
 			
 			public bool MoveNext ()
 			{
-				if (ver != l._version)
-					throw new InvalidOperationException ("Collection was modified;"
-						+ "enumeration operation may not execute.");
-				
+				VerifyState ();
+
 				if (idx == NOT_STARTED)
 					idx = l._size;
 				
-				return idx != FINISHED && -- idx != FINISHED;
+				if (idx != FINISHED && -- idx != FINISHED) {
+					current = l._items [l._size - 1 - idx];
+					return true;
+				}
+
+				return false;
 			}
 			
 			public T Current {
-				get {
-					if (idx < 0)
-						throw new InvalidOperationException ();
-					
-					return l._items [l._size - 1 - idx];
-				}
+				get { return current; }
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				if (ver != l._version)
-					throw new InvalidOperationException ("Collection was modified;"
-						+ "enumeration operation may not execute.");
-				
+				VerifyState ();
 				idx = NOT_STARTED;
 			}
 			
 			object IEnumerator.Current {
-				get { return Current; }
+				get {
+					VerifyState ();
+					if (idx < 0)
+						throw new InvalidOperationException ();
+					return current;
+				}
 			}
 		}
 	}
