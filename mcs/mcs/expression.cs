@@ -2877,9 +2877,11 @@ namespace Mono.CSharp {
 					//
 					// Only allow to compare same reference type parameter
 					//
-					constraints = TypeManager.GetTypeParameterConstraints (l);
-					if (constraints != null && constraints.IsReferenceType)
+					if (TypeManager.IsReferenceType (l)) {
+						left = new BoxedCast (left, TypeManager.object_type);
+						right = new BoxedCast (right, TypeManager.object_type);
 						return this;
+					}
 
 					return null;
 				}
