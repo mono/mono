@@ -1,5 +1,9 @@
 2009-07-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlParameterTest.cs: Improved tests for bug #382589.
+
+2009-07-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlParameterTest.cs: Added test for bug #526794, and failed
 	conversion from (zero-length) string to int. Changed spaces to tabs.
 

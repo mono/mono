@@ -270,7 +270,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #382589
-		[ExpectedException (typeof (SqlException))]
 		public void DecimalMaxAsParamValueExceptionTest () 
 		{
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
@@ -287,12 +286,22 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter pValue = new SqlParameter("@decmax", Decimal.MaxValue);
 			pValue.Direction = ParameterDirection.InputOutput;
 			cmd.Parameters.Add(pValue);
-			cmd.ExecuteNonQuery();
-			Assert.Fail ("Expected exception didn't occur");
+
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (SqlException ex) {
+				// Error converting data type numeric to decimal
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (8114, ex.Number, "#6");
+				Assert.AreEqual ((byte) 5, ex.State, "#7");
+			}
 		}
 
 		[Test] // bug# 382589
-		[ExpectedException (typeof (SqlException))]
 		public void DecimalMinAsParamValueExceptionTest () 
 		{
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
@@ -309,8 +318,18 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter pValue = new SqlParameter("@decmax", Decimal.MinValue);
 			pValue.Direction = ParameterDirection.InputOutput;
 			cmd.Parameters.Add(pValue);
-			cmd.ExecuteNonQuery();
-			Assert.Fail ("Expected exception didn't occur");
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (SqlException ex) {
+				// Error converting data type numeric to decimal
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreEqual (8114, ex.Number, "#6");
+				Assert.AreEqual ((byte) 5, ex.State, "#7");
+			}
 		}
 
 		[Test] // bug #526794
