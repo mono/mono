@@ -32,11 +32,6 @@ using System;
 namespace Mono.XBuild.CommandLine {
 	public static class ErrorUtilities {
 
-		static string[] usage = {
-			"",
-			"No usage help yet"
-		};
-		
 		static string[] version = {
 			String.Format ("XBuild Engine Version {0}", Consts.MonoVersion),
 			String.Format ("Mono, Version {0}", Consts.MonoVersion),
@@ -82,9 +77,24 @@ namespace Mono.XBuild.CommandLine {
 
 		static public void ShowUsage ()
 		{
-			Display (usage);
+			Display (version);
+			Console.WriteLine ("xbuild [options] [project-file]");
+			Console.WriteLine (
+				"    /version		Show the xbuild version\n" +
+				"    /noconsolelogger	Disable the default console logger\n" +
+				"    /target:T1[,TN]	List of targets to build\n" +
+				"    /property:Name=Value\n" +
+				"			Set or override project properties\n" +
+				"    /logger:<logger>	Custom logger to log events\n" +
+				"    /verbosity:<level>	Logger verbosity level : quiet, minimal, normal, detailed, diagnostic\n" +
+				"    /validate		Validate the project file against the schema\n" +
+				"    /validate:<schema>	Validate the project file against the specified schema\n" +
+				"    /consoleloggerparameters:<params>\n" +
+				"			Parameters for the console logger\n" +
+				"    /nologo		Don't show the initial banner\n" +
+				"    /help		Show this help\n"
+				);
 			Environment.Exit (0);
-			
 		}
 
 		static public void ShowVersion (bool exit)
