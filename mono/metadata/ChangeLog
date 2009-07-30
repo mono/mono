@@ -1,3 +1,14 @@
+2009-07-30  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Take a thread's stack top and registers from the
+	sigcontext in the suspend signal handler.
+
+	* sgen-gc.h, sgen-archdep.h, Makefile.am: Move arch-dependent
+	stuff to sgen-archdep.h.
+
+	* gc.c, gc-internal.h: Remove the get_ip_from_sigctx installer and
+	caller, because have code in sgen-archdep.h to acquire that data.
+
 2009-07-29  Massimiliano Mantione  <massi@ximian.com>
 
 	* profiler.c, profiler.h, profiler-private.h:

@@ -1,3 +1,14 @@
+2009-07-30  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: get_ip_from_sigctx installer has been removed, so don't
+	call it anymore.
+
+	* mini-x86.h, mini-amd64.h, mini-ppc.h: UCONTEXT macros moved (to
+	utils/mono-sigcontext.h).
+
+	* exceptions-amd64.c: Use the UCONTEXT_GREGS macro instead of an
+	#ifdef.
+
 2009-07-29  Massimiliano Mantione  <massi@ximian.com>
 
 	* mini.c (mono_codegen):
