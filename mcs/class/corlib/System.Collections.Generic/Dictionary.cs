@@ -798,7 +798,10 @@ namespace System.Collections.Generic {
 			int stamp;
 			const int NOT_STARTED = -1; // must be -1
 
+			internal KeyValuePair<TKey, TValue> current;
+
 			internal Enumerator (Dictionary<TKey, TValue> dictionary)
+				: this ()
 			{
 				this.dictionary = dictionary;
 				stamp = dictionary.generation;
@@ -810,38 +813,41 @@ namespace System.Collections.Generic {
 			{
 				VerifyState ();
 				while (cur < dictionary.touchedSlots) {
-					if ((dictionary.linkSlots [++cur].HashCode & HASH_FLAG) != 0)
+					if ((dictionary.linkSlots [++cur].HashCode & HASH_FLAG) != 0) {
+						current = new KeyValuePair <TKey, TValue> (
+							dictionary.keySlots [cur],
+							dictionary.valueSlots [cur]
+							);
 						return true;
+					}
 				}
 				return false;
 			}
 
+			// No error checking happens.  Usually, Current is immediately preceded by a MoveNext(), so it's wasteful to check again
 			public KeyValuePair<TKey, TValue> Current {
-				get { 
-					VerifyCurrent (); 
-					return new KeyValuePair <TKey, TValue> (
-						dictionary.keySlots [cur],
-						dictionary.valueSlots [cur]
-					);
-				}
+				get { return current; }
 			}
 			
 			internal TKey CurrentKey {
 				get {
 					VerifyCurrent ();
-					return dictionary.keySlots [cur];
+					return current.Key;
 				}
 			}
 			
 			internal TValue CurrentValue {
 				get {
 					VerifyCurrent ();
-					return dictionary.valueSlots [cur];
+					return current.Value;
 				}
 			}
 
 			object IEnumerator.Current {
-				get { return Current; }
+				get {
+					VerifyCurrent ();
+					return current;
+				}
 			}
 
 			void IEnumerator.Reset ()
@@ -851,31 +857,23 @@ namespace System.Collections.Generic {
 
 			internal void Reset ()
 			{
+				VerifyState ();
 				cur = NOT_STARTED;
 			}
 
 			DictionaryEntry IDictionaryEnumerator.Entry {
 				get {
 					VerifyCurrent ();
-					return new DictionaryEntry (
-						dictionary.keySlots [cur],
-						dictionary.valueSlots [cur]
-					);
+					return new DictionaryEntry (current.Key, current.Value);
 				}
 			}
 
 			object IDictionaryEnumerator.Key {
-				get {
-					VerifyCurrent();
-					return dictionary.keySlots [cur];
-				}
+				get { return CurrentKey; }
 			}
 
 			object IDictionaryEnumerator.Value {
-				get {
-					VerifyCurrent();
-					return dictionary.valueSlots [cur];
-				}
+				get { return CurrentValue; }
 			}
 
 			void VerifyState ()
@@ -1021,7 +1019,7 @@ namespace System.Collections.Generic {
 				}
 
 				public TKey Current {
-					get { return host_enumerator.CurrentKey; }
+					get { return host_enumerator.current.Key; }
 				}
 
 				object IEnumerator.Current {
@@ -1149,7 +1147,7 @@ namespace System.Collections.Generic {
 
 				public void Dispose ()
 				{
-					host_enumerator.Dispose();
+					host_enumerator.Dispose ();
 				}
 
 				public bool MoveNext ()
@@ -1158,7 +1156,7 @@ namespace System.Collections.Generic {
 				}
 
 				public TValue Current {
-					get { return host_enumerator.CurrentValue; }
+					get { return host_enumerator.current.Value; }
 				}
 
 				object IEnumerator.Current {
