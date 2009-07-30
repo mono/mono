@@ -1,3 +1,8 @@
+2009-07-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (main_thread_handler): Check that the assembly loaded
+	matches the filename when doing AOT.
+
 2009-07-30  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: get_ip_from_sigctx installer has been removed, so don't
