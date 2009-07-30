@@ -34,6 +34,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Text;
+using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
@@ -43,8 +44,9 @@ namespace System.ServiceModel.Channels
 		PeerTransportBindingElement source;
 		BindingContext context;
 		Uri listen_uri;
-		List<IChannel> channels = new List<IChannel> ();
+		TChannel channel;
 		MessageEncoder encoder;
+		AutoResetEvent accept_handle = new AutoResetEvent (false);
 
 		public PeerChannelListener (PeerTransportBindingElement source,
 			BindingContext context)
@@ -82,9 +84,16 @@ namespace System.ServiceModel.Channels
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			TChannel ch = PopulateChannel (timeout);
-			channels.Add (ch);
-			return ch;
+			DateTime start = DateTime.Now;
+			if (channel != null)
+				if (!accept_handle.WaitOne (timeout))
+					throw new TimeoutException ();
+			channel = PopulateChannel (timeout - (DateTime.Now - start));
+			((CommunicationObject) (object) channel).Closed += delegate {
+				this.channel = null;
+				accept_handle.Set ();
+				};
+			return channel;
 		}
 
 		TChannel PopulateChannel (TimeSpan timeout)
@@ -109,16 +118,14 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (ServiceHostingEnvironment.InAspNet)
-				return;
-
-			foreach (TChannel ch in channels)
-				ch.Close(timeout);
+			if (channel != null)
+				channel.Close (timeout);
 		}
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnAbort ()
 		{
+			if (channel != null)
+				channel.Abort ();
 		}
 	}
 }
