@@ -325,7 +325,9 @@ namespace Microsoft.Build.Tasks {
 				//FIXME: log a warning for invalid value
 				Boolean.TryParse (pvt, out copy_local);
 
-			return new ResolvedReference (filename, aname, copy_local, search_path);
+			ITaskItem new_item = new TaskItem (reference);
+			new_item.ItemSpec = filename;
+			return new ResolvedReference (new_item, aname, copy_local, search_path, reference.ItemSpec);
 		}
 
 		public TaskLoggingHelper Log {

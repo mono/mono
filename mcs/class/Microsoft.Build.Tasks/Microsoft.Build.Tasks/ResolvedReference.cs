@@ -41,13 +41,17 @@ namespace Microsoft.Build.Tasks {
 		public bool CopyLocal;
 		public bool IsPrimary; //default: true
 
-		public ResolvedReference (string filename, AssemblyName asm_name, bool copy_local, SearchPath search_path)
+		public ResolvedReference (ITaskItem item, AssemblyName asm_name, bool copy_local, SearchPath search_path,
+				string original_item_spec)
 		{
-			this.TaskItem = new TaskItem (filename);
+			this.TaskItem = item;
 			AssemblyName = asm_name;
 			CopyLocal = copy_local;
 			IsPrimary = true;
 			FoundInSearchPath = search_path;
+
+			TaskItem.SetMetadata ("OriginalItemSpec", original_item_spec);
+			TaskItem.SetMetadata ("ResolvedFrom", FoundInSearchPathAsString ());
 		}
 
 		public string FoundInSearchPathAsString ()
