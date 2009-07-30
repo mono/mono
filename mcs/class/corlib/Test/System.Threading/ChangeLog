@@ -1,3 +1,27 @@
+2009-07-30 Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* System.Threading.Tasks/TaskTest.cs:
+	* FutureTests.cs:
+	* ParallelConcurrentStackTests.cs:
+	* ConcurrentSkipListTests.cs:
+	* ConcurrentQueueTests.cs:
+	* ConcurrentBagTests.cs:
+	* ConcurrentStackTests.cs:
+	* BlockingCollectionTests.cs:
+	* ConcurrentDictionaryTests.cs:
+	* CollectionStressTestHelper.cs:
+	* ParallelConcurrentQueueTests.cs:
+	* CancellationTokenTests.cs:
+	* ManualResetEventSlimTests.cs:
+	* SnziTests.cs:
+	* SemaphoreSlimTests.cs:
+	* ParallelTests.cs:
+	* CountdownEventTests.cs:
+	* AggregateExceptionTests.cs:
+	* ThreadLazyTests.cs:
+	* ParallelTestHelper.cs: Add ParallelFx unit tests for System.Threading
+	namespace
+
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Convert all tests to new-style nunit classes/methods.

@@ -1,0 +1,12 @@
+2009-07-27  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Future.cs:
+	* Task.cs:
+	* TaskCanceledException.cs:
+	* TaskContinuationOptions.cs:
+	* TaskCreationOptions.cs:
+	* TaskFactory.cs:
+	* TaskScheduler.cs:
+	* TaskSchedulerException.cs:
+	* TaskStatus.cs: Added ParallelFx files for System.Threading.Tasks namespace
+	

@@ -1,3 +1,27 @@
+2009-07-30 Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* AggregateException.cs:
+	* AtomicBoolean.cs:
+	* Barrier.cs:
+	* CSnzi.cs:
+	* CancellationToken.cs:
+	* CancellationTokenRegistration.cs:
+	* CancellationTokenSource.cs:
+	* CountdownEvent.cs:
+	* ICancelableOperation.cs:
+	* LazyInitializer.cs:
+	* ManualResetEventSlim.cs:
+	* Parallel.cs:
+	* ParallelLoopResult.cs:
+	* ParallelLoopState.cs:
+	* ParallelOptions.cs:
+	* SemaphoreSlim.cs:
+	* Snzi.cs:
+	* SpinLock.cs:
+	* SpinWait.cs:
+	* ThreadLocal.cs:
+	* Watch.cs: Add ParallelFx files for System.Threading namespace
+
 2009-07-21  Jb Evain  <jbevain@novell.com>
 
 	* ThreadPool.cs: avoid an unecessary method call when not running

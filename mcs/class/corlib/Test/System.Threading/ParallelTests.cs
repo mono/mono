@@ -1,0 +1,116 @@
+#if NET_4_0
+// ParallelTests.cs
+//
+// Copyright (c) 2008 Jérémie "Garuma" Laval
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+//
+
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.IO;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
+
+using NUnit;
+using NUnit.Core;
+using NUnit.Framework;
+
+namespace ParallelFxTests
+{
+	
+	[TestFixture()]
+	public class ParallelTests
+	{
+		//int[] pixels;
+		//RayTracerApp rayTracer;
+		
+		public void Setup()
+		{
+			/*Stream stream = Assembly.GetAssembly(typeof(ParallelTests)).GetManifestResourceStream("raytracer-output.xml");
+			Console.WriteLine(stream == null);
+			XmlSerializer serializer = new XmlSerializer(typeof(int[]));
+			pixels = (int[])serializer.Deserialize(stream);
+			rayTracer = new RayTracerApp();*/
+		}
+		
+		[Test]
+		public void ParallelForTestCase()
+		{
+			ParallelTestHelper.Repeat (() => {
+				int[] expected = Enumerable.Range (1, 1000).Select ((e) => e * 2).ToArray ();
+				int[] actual = Enumerable.Range (1, 1000).ToArray ();
+				SpinWait sw = new SpinWait ();
+				
+				Parallel.For (0, actual.Length, (i) => { actual[i] *= 2; sw.SpinOnce (); });
+				
+				CollectionAssert.AreEquivalent (expected, actual, "#1, same pixels");
+				CollectionAssert.AreEqual (expected, actual, "#2, pixels in order");
+			});
+		}
+
+		[Test, ExpectedException(typeof(AggregateException))]
+		public void ParallelForExceptionTestCase()
+		{
+			Parallel.For(1, 100, delegate (int i) { throw new Exception("foo"); });
+		}
+		
+		[Test]
+		public void ParallelForEachTestCase()
+		{
+			ParallelTestHelper.Repeat (() => {
+				IEnumerable<int> e = Enumerable.Repeat(1, 500);
+				ConcurrentQueue<int> queue = new ConcurrentQueue<int> ();
+				SpinWait sw = new SpinWait ();
+				int count = 0;
+				
+				Parallel.ForEach (e, (element) => { Interlocked.Increment(ref count); queue.Enqueue (element); sw.SpinOnce (); });
+				
+				Assert.AreEqual (500, count, "#1");
+				CollectionAssert.AreEquivalent (e, queue, "#2");
+			});
+		}
+		
+		[Test, ExpectedException(typeof(AggregateException))]
+		public void ParallelForEachExceptionTestCse()
+		{
+			IEnumerable<int> e = Enumerable.Repeat(1, 10);
+			Parallel.ForEach (e, delegate (int element) { throw new Exception ("foo"); });
+		}
+		
+		[Test]
+		public void ParallelWhileTestCase()
+		{
+			ParallelTestHelper.Repeat (() => {
+				int i = 0;
+				int count = 0;
+				
+				Parallel.While (() => Interlocked.Increment (ref i) <= 10, () => Interlocked.Increment (ref count));
+				
+				Assert.Greater(i, 10, "#1");
+				Assert.AreEqual(10, count, "#2");
+			});
+		}
+	}
+}
+#endif

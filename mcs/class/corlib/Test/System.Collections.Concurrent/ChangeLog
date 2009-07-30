@@ -1,0 +1,13 @@
+2009-07-27  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BlockingCollectionTests.cs:
+	* CollectionStressTestHelper.cs:
+	* ConcurrentBagTests.cs:
+	* ConcurrentDictionaryTests.cs:
+	* ConcurrentQueueTests.cs:
+	* ConcurrentSkipListTests.cs:
+	* ConcurrentStackTests.cs:
+	* ParallelConcurrentQueueTests.cs:
+	* ParallelConcurrentStackTests.cs: ParallelFx unit tests for
+	System.Collections.Concurrent namespace.
+

@@ -1,0 +1,12 @@
+2009-07-27  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BlockingCollection.cs:
+	* ConcurrentBag.cs:
+	* ConcurrentDictionary.cs:
+	* ConcurrentQueue.cs:
+	* ConcurrentSkipList.cs:
+	* ConcurrentStack.cs:
+	* IProducerConsumerCollection.cs:
+	* OrderablePartitioner.cs:
+	* Partitioner.cs: Added ParallelFx files for System.Collections.Concurrent namespace
+

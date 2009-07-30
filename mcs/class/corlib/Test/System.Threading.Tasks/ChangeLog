@@ -1,0 +1,5 @@
+2009-07-30  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* FutureTests.cs:
+	* TasksTests: Add ParallelFx unit tests for
+	System.Threading.Tasks namespace
