@@ -1,5 +1,11 @@
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
+	* HashSet.cs (Enumerator.CheckCurrent): Inline into ...
+	(Enumerator.IEnumerator.Current): ... this.
+	(Enumerator.IEnumerator.Reset): Check invariants.
+
+2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
+
 	* HashSet.cs (Enumerator.next): Rename from Enumerator.current and
 	change meaning to be the index of the slot to start searching on
 	the next iteration.

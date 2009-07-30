@@ -612,13 +612,16 @@ namespace System.Collections.Generic {
 
 			object IEnumerator.Current {
 				get {
-					CheckCurrent ();
+					CheckState ();
+					if (next <= 0)
+						throw new InvalidOperationException ("Current is not valid");
 					return current;
 				}
 			}
 
 			void IEnumerator.Reset ()
 			{
+				CheckState ();
 				next = 0;
 			}
 
@@ -633,14 +636,6 @@ namespace System.Collections.Generic {
 					throw new ObjectDisposedException (null);
 				if (hashset.generation != stamp)
 					throw new InvalidOperationException ("HashSet have been modified while it was iterated over");
-			}
-
-			void CheckCurrent ()
-			{
-				CheckState ();
-
-				if (next <= 0)
-					throw new InvalidOperationException ("Current is not valid");
 			}
 		}
 
