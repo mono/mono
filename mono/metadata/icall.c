@@ -1532,12 +1532,17 @@ ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal (MonoReflectionField *
 }
 
 static MonoReflectionField*
-ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField *handle, MonoClass *klass)
+ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField *handle, MonoType *type)
 {
+	MonoClass *klass;
+
 	g_assert (handle);
 
-	if (!klass)
+	if (!type) {
 		klass = handle->parent;
+	} else {
+		klass = mono_class_from_mono_type (type);
+	}
 
 	/* FIXME: check that handle is a field of klass or of a parent: return null
 	 * and throw the exception in managed code.
