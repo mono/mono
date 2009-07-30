@@ -5,13 +5,14 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
 //   Sureshkumar T <tsureshkumar@novell.com>
+//   Veerapuram Varadhan  <vvaradhan@novell.com>
 //
 // (C) Ximian, Inc
 // Copyright (C) Tim Coleman, 2002-2003
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -106,29 +107,31 @@ namespace System.Data.Common
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
-			get { return (DbCommand) ((IDbDataAdapter) this).SelectCommand; }
-			set { ((IDbDataAdapter) this).SelectCommand = value; }
+			get { return (DbCommand) _selectCommand; }
+			set { _selectCommand = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
-			get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
-			set { ((IDbDataAdapter) this).DeleteCommand = value; }
+			//get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
+			//set { ((IDbDataAdapter) this).DeleteCommand = value; }
+			get { return (DbCommand) _deleteCommand; }
+			set { _deleteCommand = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
-			get { return (DbCommand) ((IDbDataAdapter) this).InsertCommand; }
-			set { ((IDbDataAdapter) this).InsertCommand = value; }
+			get { return (DbCommand)_insertCommand; }
+			set { _insertCommand = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
-			get { return (DbCommand) ((IDbDataAdapter) this).UpdateCommand; }
-			set { ((IDbDataAdapter) this).UpdateCommand = value; }
+			get { return (DbCommand)_updateCommand; }
+			set { _updateCommand = value; }
 		}
 
 		[DefaultValue (1)]
