@@ -34,6 +34,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
+using System.Collections.Generic;
 
 namespace System.Security.Policy
 {
@@ -46,16 +47,43 @@ namespace System.Security.Policy
 		private object _xtranfo;
 		private bool _trustrun;
 		private bool _persist;
+		IList<StrongName> fullTrustAssemblies;
 
 		public ApplicationTrust ()
 		{
+			fullTrustAssemblies = new List<StrongName> (0);
 		}
 
 		public ApplicationTrust (ApplicationIdentity applicationIdentity)
+			: this ()
 		{
 			if (applicationIdentity == null)
 				throw new ArgumentNullException ("applicationIdentity");
 			_appid = applicationIdentity;
+		}
+		
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		ApplicationTrust (PermissionSet defaultGrantSet, IEnumerable<StrongName> fullTrustAssemblies)
+		{
+			if (defaultGrantSet == null)
+				throw new ArgumentNullException ("defaultGrantSet");
+
+			_defaultPolicy = new PolicyStatement (defaultGrantSet);
+
+			if (fullTrustAssemblies == null)
+				throw new ArgumentNullException ("fullTrustAssemblies");
+
+			this.fullTrustAssemblies = new List<StrongName> ();
+			foreach (var a in fullTrustAssemblies) {
+				if (a == null)
+					throw new ArgumentException ("fullTrustAssemblies contains an assembly that does not have a StrongName");
+
+				this.fullTrustAssemblies.Add ((StrongName) a.Copy ());
+			}
 		}
 
 		public ApplicationIdentity ApplicationIdentity {
@@ -173,6 +201,14 @@ namespace System.Security.Policy
 
 			return se;
 		}
+		
+#if NET_4_0		
+		public IList<StrongName> FullTrustAssemblies {
+			get {
+				return fullTrustAssemblies;
+			}
+		}
+#endif		
 
 		// internal stuff
 
