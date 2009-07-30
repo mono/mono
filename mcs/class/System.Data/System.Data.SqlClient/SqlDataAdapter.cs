@@ -40,17 +40,13 @@ namespace System.Data.SqlClient {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
-	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, ICloneable
+	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
 	{
 		#region Fields
 
 #if !NET_2_0
 		bool disposed;
 #endif
-		SqlCommand deleteCommand;
-		SqlCommand insertCommand;
-		SqlCommand selectCommand;
-		SqlCommand updateCommand;
 #if NET_2_0
 		int updateBatchSize;
 #endif
@@ -89,9 +85,13 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand DeleteCommand {
-			get { return deleteCommand; }
-			set { deleteCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand DeleteCommand {
+			get { return (SqlCommand)base.DeleteCommand; }
+			set { base.DeleteCommand = value; }
 		}
 
 #if !NET_2_0
@@ -99,9 +99,13 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand InsertCommand {
-			get { return insertCommand; }
-			set { insertCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand InsertCommand {
+			get { return (SqlCommand)base.InsertCommand; }
+			set { base.InsertCommand = value; }
 		}
 
 #if !NET_2_0
@@ -109,9 +113,13 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand SelectCommand {
+			get { return (SqlCommand)base.SelectCommand; }
+			set { base.SelectCommand = value; }
 		}
 
 #if !NET_2_0
@@ -119,29 +127,13 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand UpdateCommand {
-			get { return updateCommand; }
-			set { updateCommand = value; }
-		}
-
-		IDbCommand IDbDataAdapter.DeleteCommand {
-			get { return DeleteCommand; }
-			set { DeleteCommand = (SqlCommand) value; }
-		}
-
-		IDbCommand IDbDataAdapter.InsertCommand {
-			get { return InsertCommand; }
-			set { InsertCommand = (SqlCommand) value; }
-		}
-
-		IDbCommand IDbDataAdapter.SelectCommand {
-			get { return SelectCommand; }
-			set { SelectCommand = (SqlCommand) value; }
-		}
-
-		IDbCommand IDbDataAdapter.UpdateCommand {
-			get { return UpdateCommand; }
-			set { UpdateCommand = (SqlCommand) value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand UpdateCommand {
+			get { return (SqlCommand)base.UpdateCommand; }
+			set { base.UpdateCommand = value; }
 		}
 
 #if NET_2_0

@@ -7,6 +7,13 @@
 
 	* SqlParameter.cs: Improved support for SqlValue and SqlTypes.
 
+2009-07-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Fixes #507663
+	* SqlCommandBuilder.cs: From 2.0 onwards, use base's 
+	implementation for handling auto-generated commands.
+	* SqlDataAdapter.cs: -- ditto --
+	
 2009-07-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlParameter.cs: Implement the "internal" FrameworkDbType, 
