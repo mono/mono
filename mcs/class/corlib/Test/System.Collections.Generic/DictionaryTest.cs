@@ -1041,6 +1041,66 @@ namespace MonoTests.System.Collections.Generic {
 			((IDisposable) e4).Dispose ();
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
 		}
+
+		[Test]
+		// based on #491858, #517415
+		public void KeyEnumerator_Current ()
+		{
+			var e1 = new Dictionary<int,int>.KeyCollection.Enumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e1.Current; }));
+
+			var d = new Dictionary<int,int> ().Keys;
+			var e2 = d.GetEnumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			e2.MoveNext ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			e2.Dispose ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+
+			var e3 = ((IEnumerable<int>) d).GetEnumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			e3.MoveNext ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			e3.Dispose ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+
+			var e4 = ((IEnumerable) d).GetEnumerator ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			e4.MoveNext ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			((IDisposable) e4).Dispose ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+		}
+
+		[Test]
+		// based on #491858, #517415
+		public void ValueEnumerator_Current ()
+		{
+			var e1 = new Dictionary<int,int>.ValueCollection.Enumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e1.Current; }));
+
+			var d = new Dictionary<int,int> ().Values;
+			var e2 = d.GetEnumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			e2.MoveNext ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			e2.Dispose ();
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+
+			var e3 = ((IEnumerable<int>) d).GetEnumerator ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			e3.MoveNext ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			e3.Dispose ();
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+
+			var e4 = ((IEnumerable) d).GetEnumerator ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			e4.MoveNext ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			((IDisposable) e4).Dispose ();
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+		}
 	}
 }
 
