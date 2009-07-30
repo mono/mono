@@ -1,3 +1,8 @@
+2009-07-30  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Replace the templates lock with the loader
+	lock because of very hard to resolve deadlock issues.
+
 2009-07-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Use 
