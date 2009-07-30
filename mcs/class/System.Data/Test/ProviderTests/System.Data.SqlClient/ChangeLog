@@ -1,15 +1,12 @@
-<<<<<<< HEAD:class/System.Data/Test/ProviderTests/System.Data.SqlClient/ChangeLog
 2009-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandTest.cs: Improved test for invalid statement to cover
 	CloseConnection behavior.
 
-=======
 2009-07-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataAdapterTest.cs: Test fix. 
 	
->>>>>>> Test fix.:class/System.Data/Test/ProviderTests/System.Data.SqlClient/ChangeLog
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlParameterTest.cs: Added test for bug #382589.
