@@ -1,5 +1,9 @@
 2009-07-30  Ankit Jain  <jankit@novell.com>
 
+	* ErrorUtilities.cs: Set version to Consts.MonoVersion .
+
+2009-07-30  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets (ResolveAssemblyReference): Output
 	ResolvedFiles to @(ReferencePath), required for IDE integration.
 

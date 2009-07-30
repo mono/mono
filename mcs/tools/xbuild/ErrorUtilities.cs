@@ -38,7 +38,7 @@ namespace Mono.XBuild.CommandLine {
 		};
 		
 		static string[] version = {
-			"XBuild Engine Version 0.1",
+			String.Format ("XBuild Engine Version {0}", Consts.MonoVersion),
 			String.Format ("Mono, Version {0}", Consts.MonoVersion),
 			"Copyright (C) Marek Sieradzki 2005. All rights reserved.",
 		};
