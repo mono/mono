@@ -1,5 +1,11 @@
 2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
 
+	* List.cs (Enumerator.next): Rename from Enumerator.idx and change
+	meaning to be the index of the next item to be enumerated.
+	(Enumerator.MoveNext): Simplify.
+
+2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
+
 	* Dictionary.cs (Enumerator.next): Rename from Enumerator.cur and
 	change meaning to be the index of the slot to start searching on
 	the next iteration.

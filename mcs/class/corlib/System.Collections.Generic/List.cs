@@ -735,14 +735,8 @@ namespace System.Collections.Generic {
 				
 		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IDisposable {
-			const int NOT_STARTED = -2;
-			
-			// this MUST be -1, because we depend on it in move next.
-			// we just decr the size, so, 0 - 1 == FINISHED
-			const int FINISHED = -1;
-			
 			List <T> l;
-			int idx;
+			int next;
 			int ver;
 
 			T current;
@@ -751,7 +745,6 @@ namespace System.Collections.Generic {
 				: this ()
 			{
 				this.l = l;
-				idx = NOT_STARTED;
 				ver = l._version;
 			}
 			
@@ -773,14 +766,15 @@ namespace System.Collections.Generic {
 			{
 				VerifyState ();
 
-				if (idx == NOT_STARTED)
-					idx = l._size;
-				
-				if (idx != FINISHED && -- idx != FINISHED) {
-					current = l._items [l._size - 1 - idx];
+				if (next < 0)
+					return false;
+
+				if (next < l._size) {
+					current = l._items [next++];
 					return true;
 				}
 
+				next = -1;
 				return false;
 			}
 			
@@ -791,13 +785,13 @@ namespace System.Collections.Generic {
 			void IEnumerator.Reset ()
 			{
 				VerifyState ();
-				idx = NOT_STARTED;
+				next = 0;
 			}
 			
 			object IEnumerator.Current {
 				get {
 					VerifyState ();
-					if (idx < 0)
+					if (next <= 0)
 						throw new InvalidOperationException ();
 					return current;
 				}
