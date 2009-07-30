@@ -61,8 +61,6 @@ namespace System.ServiceModel
 
 		public abstract PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
 
-		internal abstract TcpListener GetTcpListener ();
-
 		public void RefreshConnection ()
 		{
 		}
@@ -95,40 +93,15 @@ namespace System.ServiceModel
 			public PeerNodeAddress Address { get; set; }
 		}
 
-		internal PeerNodeImpl (EndpointAddress remoteAddress, IPAddress fixedListenAddress, int port)
-			: base (remoteAddress.Uri.Host, port)
+		internal PeerNodeImpl (string meshId, IPAddress fixedListenAddress, int port)
+			: base (meshId, port)
 		{
 			this.listen_address = fixedListenAddress ?? IPAddress.Any;
-			this.remote_address = remoteAddress;
 		}
 
-		EndpointAddress remote_address;
 		IPAddress listen_address;
 
 		// FIXME: implement
 		public override PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
-
-		internal override TcpListener GetTcpListener ()
-		{
-			int p = Port;
-			var rnd = Port != 0 ? null : new Random ();
-			TcpListener listener = null;
-			while (p < 51000) {
-				if (rnd != null)
-					p = rnd.Next (50000, 51000); // This range is picked up sorta randomly.
-				listener = new TcpListener (listen_address, p);
-				try {
-					listener.Start ();
-					break;
-				} catch (SocketException) {
-					listener = null;
-					if (rnd == null)
-						break;
-				}
-			}
-			if (listener == null)
-				throw new InvalidOperationException (String.Format ("The specified endpoint is available for a peer node to listen. IP address: {0}, Port {1}", listen_address, Port));
-			return listener;
-		}
 	}
 }

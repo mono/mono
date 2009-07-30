@@ -1,5 +1,13 @@
 2009-07-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : ongoing refactoring to work both as
+	  listener and client. Now it creates a listening peer node, and
+	  creates a set of TCP client channels for each peer in the mesh.
+
+	  (EndpointAddress must be fixed to not filter out correct inputs).
+
+2009-07-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerChannelListener.cs : do not accept more than one channel
 	  which results in lots of listening peer node. Only one is enough.
 
