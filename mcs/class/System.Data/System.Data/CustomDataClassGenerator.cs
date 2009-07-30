@@ -122,7 +122,7 @@ namespace System.Data
 		public static string MakeSafeName (string name, ICodeGenerator codeGen)
 		{
 			if (name == null || codeGen == null)
-				throw new ArgumentNullException ();
+				throw new NullReferenceException ();
 
 			name = codeGen.CreateValidIdentifier (name);
 
@@ -133,7 +133,7 @@ namespace System.Data
 		public static string MakeSafeName (string name, CodeDomProvider provider)
 		{
 			if (name == null || provider == null)
-				throw new ArgumentNullException ();
+				throw new NullReferenceException ();
 
 			name = provider.CreateValidIdentifier (name);
 
