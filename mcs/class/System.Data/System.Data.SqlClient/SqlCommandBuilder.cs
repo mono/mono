@@ -50,32 +50,27 @@ namespace System.Data.SqlClient
 	{
 		#region Fields
 
+#if ONLY_1_1
 		bool disposed;
 
 		DataTable dbSchemaTable;
-#if ONLY_1_1
 		string quotePrefix;
 		string quoteSuffix;
-#endif
 		string tableName;
-#if NET_2_0
-		readonly string _catalogSeparator = ".";
-		readonly string _schemaSeparator = ".";
-		readonly CatalogLocation _catalogLocation = CatalogLocation.Start;
-#endif
-#if ONLY_1_1
 		SqlDataAdapter adapter;
 		SqlCommand insertCommand;
 		SqlCommand deleteCommand;
 		SqlCommand updateCommand;
-#endif
-	
 		// Used to construct WHERE clauses
 		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
 		static readonly string clause2 = "({0} = {1})";
 
-		private SqlRowUpdatingEventHandler rowUpdatingHandler;
-
+#else
+		readonly string _catalogSeparator = ".";
+		readonly string _schemaSeparator = ".";
+		readonly CatalogLocation _catalogLocation = CatalogLocation.Start;
+#endif
+	
 		#endregion // Fields
 
 		#region Constructors
@@ -121,10 +116,6 @@ namespace System.Data.SqlClient
 				base.DataAdapter = value;
 #endif
 			}
-		}
-
-		private string QuotedTableName {
-			get { return GetQuotedString (tableName); }
 		}
 
 		[Browsable (false)]
@@ -581,29 +572,24 @@ namespace System.Data.SqlClient
 			command.DeriveParameters ();
 		}
 
-#if NET_2_0
-		new
-#else
-		protected override
-#endif
-		void Dispose (bool disposing)
+#if ONLY_1_1
+		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
-#if ONLY_1_1
 					if (insertCommand != null)
 						insertCommand.Dispose ();
 					if (deleteCommand != null)
 						deleteCommand.Dispose ();
 					if (updateCommand != null)
 						updateCommand.Dispose ();
-#endif
 					if (dbSchemaTable != null)
 						dbSchemaTable.Dispose ();
 				}
 				disposed = true;
 			}
 		}
+#endif
 
 		public
 #if NET_2_0
@@ -635,19 +621,6 @@ namespace System.Data.SqlClient
 				return CreateInsertCommand (false);
 			return insertCommand;
 #endif
-		}
-
-		private string GetQuotedString (string value)
-		{
-			if (value == null || value.Length == 0)
-				return value;
-
-			string prefix = QuotePrefix;
-			string suffix = QuoteSuffix;
-
-			if (prefix.Length == 0 && suffix.Length == 0)
-				return value;
-			return String.Format ("{0}{1}{2}", prefix, value, suffix);
 		}
 
 		public 
@@ -749,22 +722,40 @@ namespace System.Data.SqlClient
 			return true;
 		}
 
-		public
-#if NET_2_0
-		new
-#endif
-		void RefreshSchema ()
+#if ONLY_1_1				
+		private string GetQuotedString (string value)
+		{
+			if (value == null || value.Length == 0)
+				return value;
+
+			string prefix = QuotePrefix;
+			string suffix = QuoteSuffix;
+
+			if (prefix.Length == 0 && suffix.Length == 0)
+				return value;
+			return String.Format ("{0}{1}{2}", prefix, value, suffix);
+		}
+
+		string GetNullCheckParameterName (string parameterName)
+		{
+			return GetParameterName ("IsNull_" + parameterName);
+		}
+
+
+		private string QuotedTableName {
+			get { return GetQuotedString (tableName); }
+		}
+
+		public void RefreshSchema ()
 		{
 			// FIXME: "Figure out what else needs to be cleaned up when we refresh."
 			tableName = String.Empty;
 			dbSchemaTable = null;
-			base.RefreshSchema ();
-#if ONLY_1_1
 			deleteCommand = null;
 			insertCommand = null;
 			updateCommand = null;
-#endif
 		}
+#endif
 
 #if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
@@ -813,11 +804,6 @@ namespace System.Data.SqlClient
 			return String.Format ("@{0}", parameterName);
 		}
 
-		string GetNullCheckParameterName (string parameterName)
-		{
-			return GetParameterName ("IsNull_" + parameterName);
-		}
-
 #if NET_2_0
 		protected override string GetParameterPlaceholder (int parameterOrdinal)
 		{
@@ -829,7 +815,7 @@ namespace System.Data.SqlClient
 
 		#region Event Handlers
 
-		private void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs args)
+		void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs args)
 		{
 			if (args.Command != null)
 				return;
@@ -854,11 +840,15 @@ namespace System.Data.SqlClient
 #if NET_2_0
 		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
 		{
-			if (!(adapter is SqlDataAdapter)) {
-				throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
-			}
-			rowUpdatingHandler = new SqlRowUpdatingEventHandler (RowUpdatingHandler);
-			((SqlDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
+				SqlDataAdapter sda = adapter as SqlDataAdapter;
+				if (sda == null) {
+					throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
+				}
+				
+				if (sda != base.DataAdapter)
+					sda.RowUpdating += new SqlRowUpdatingEventHandler (RowUpdatingHandler);
+				else
+					sda.RowUpdating -= new SqlRowUpdatingEventHandler (RowUpdatingHandler);;
 		}
 
 		protected override DataTable GetSchemaTable (DbCommand srcCommand)
