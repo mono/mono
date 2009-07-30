@@ -1,5 +1,11 @@
 2009-07-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_Type_GetMethodsByName): Use 
+	mono_class_get_vtable_size () instead of accessing klass->vtable_size
+	directly. Fixes #525338.
+
+	* class.c (mono_class_get_vtable_size): New helper function.
+
 	* icall.c (ves_icall_System_Reflection_FieldInfo_internal_from_handle_type): Fix the second argument, its a MonoType* not a MonoClass*. Check whenever
 	the field belongs to the type. Fixes #525733.
 
