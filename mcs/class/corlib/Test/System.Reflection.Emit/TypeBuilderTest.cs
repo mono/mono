@@ -10621,7 +10621,7 @@ namespace MonoTests.System.Reflection.Emit
 		public void CreateConcreteTypeWithAbstractMethod ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.DefineMethod("method", MethodAttributes.Abstract | MethodAttributes.Public);
+			tb.DefineMethod("method", MethodAttributes.Abstract | MethodAttributes.Public, typeof (void), Type.EmptyTypes);
 			try {
 				tb.CreateType ();
 				Assert.Fail ("#1");
