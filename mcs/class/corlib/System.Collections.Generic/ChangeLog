@@ -1,3 +1,10 @@
+2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Dictionary.cs (Enumerator.next): Rename from Enumerator.cur and
+	change meaning to be the index of the slot to start searching on
+	the next iteration.
+	(Enumerator.MoveNext): Avoid an out-of-bounds access.
+
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* List.cs (Enumerator.current): New.

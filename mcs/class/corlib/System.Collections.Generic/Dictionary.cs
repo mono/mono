@@ -794,9 +794,8 @@ namespace System.Collections.Generic {
 			IDisposable, IDictionaryEnumerator, IEnumerator
 		{
 			Dictionary<TKey, TValue> dictionary;
-			int cur;
+			int next;
 			int stamp;
-			const int NOT_STARTED = -1; // must be -1
 
 			internal KeyValuePair<TKey, TValue> current;
 
@@ -805,15 +804,18 @@ namespace System.Collections.Generic {
 			{
 				this.dictionary = dictionary;
 				stamp = dictionary.generation;
-
-				cur = NOT_STARTED;
 			}
 
 			public bool MoveNext ()
 			{
 				VerifyState ();
-				while (cur < dictionary.touchedSlots) {
-					if ((dictionary.linkSlots [++cur].HashCode & HASH_FLAG) != 0) {
+
+				if (next < 0)
+					return false;
+
+				while (next < dictionary.touchedSlots) {
+					int cur = next++;
+					if ((dictionary.linkSlots [cur].HashCode & HASH_FLAG) != 0) {
 						current = new KeyValuePair <TKey, TValue> (
 							dictionary.keySlots [cur],
 							dictionary.valueSlots [cur]
@@ -821,6 +823,8 @@ namespace System.Collections.Generic {
 						return true;
 					}
 				}
+
+				next = -1;
 				return false;
 			}
 
@@ -858,7 +862,7 @@ namespace System.Collections.Generic {
 			internal void Reset ()
 			{
 				VerifyState ();
-				cur = NOT_STARTED;
+				next = 0;
 			}
 
 			DictionaryEntry IDictionaryEnumerator.Entry {
@@ -887,7 +891,7 @@ namespace System.Collections.Generic {
 			void VerifyCurrent ()
 			{
 				VerifyState ();
-				if (cur == NOT_STARTED || cur >= dictionary.touchedSlots)
+				if (next <= 0)
 					throw new InvalidOperationException ("Current is not valid");
 			}
 
