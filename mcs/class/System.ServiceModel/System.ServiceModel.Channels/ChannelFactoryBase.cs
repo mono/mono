@@ -59,6 +59,8 @@ namespace System.ServiceModel.Channels
 		public TChannel CreateChannel (
 			EndpointAddress remoteAddress, Uri via)
 		{
+			if (remoteAddress == null)
+				throw new ArgumentNullException ("remoteAddress");
 			ValidateCreateChannel ();
 			var ch = OnCreateChannel (remoteAddress, via);
 			channels.Add (ch);
@@ -83,22 +85,6 @@ namespace System.ServiceModel.Channels
 			foreach (IChannel ch in channels)
 				ch.Close (timeout - (DateTime.Now - start));
 			base.OnClose (timeout - (DateTime.Now - start));
-		}
-
-		Action<TimeSpan> close_delegate;
-
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			if (close_delegate == null)
-				close_delegate = new Action<TimeSpan> (OnClose);
-			return close_delegate.BeginInvoke (timeout, callback, state);
-		}
-
-		protected override void OnEndClose (IAsyncResult result)
-		{
-			if (close_delegate == null)
-				throw new InvalidOperationException ("Async close operation has not started");
-			close_delegate.EndInvoke (result);
 		}
 
 		protected void ValidateCreateChannel ()
@@ -150,6 +136,28 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected override void OnAbort ()
+		{
+			// what should we do here?
+		}
+
+		Action<TimeSpan> open_delegate;
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
+			AsyncCallback callback, object state)
+		{
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			if (open_delegate == null)
+				throw new InvalidOperationException ("Async open operation has not started");
+			open_delegate.EndInvoke (result);
+		}
+
+		protected override void OnOpen (TimeSpan timeout)
 		{
 			// what should we do here?
 		}

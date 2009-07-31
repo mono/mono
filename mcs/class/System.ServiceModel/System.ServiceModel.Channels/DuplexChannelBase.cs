@@ -66,7 +66,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		public Uri Via {
-			get { return via; }
+			get { return via ?? RemoteAddress.Uri; }
 		}
 
 		void SetupDelegates ()

@@ -87,26 +87,5 @@ namespace System.ServiceModel.Channels
 				return (TChannel) (object) new PeerDuplexChannel (this, address, via, Resolver);
 			throw new InvalidOperationException (String.Format ("channel type {0} is not supported.", typeof (TChannel).Name));
 		}
-
-		Action<TimeSpan> open_delegate;
-
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			if (open_delegate == null)
-				open_delegate = new Action<TimeSpan> (OnOpen);
-			return open_delegate.BeginInvoke (timeout, callback, state);
-		}
-
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			if (open_delegate == null)
-				throw new InvalidOperationException ("Async open operation has not started");
-			open_delegate.EndInvoke (result);
-		}
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
-		}
 	}
 }

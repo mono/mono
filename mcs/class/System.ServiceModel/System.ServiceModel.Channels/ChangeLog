@@ -1,5 +1,13 @@
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RequestChannelBase.cs, DuplexChannelBase.cs :
+	  Return endpoint address Uri when no explicit Via uri is specified.
+	* ChannelFactoryBase.cs : Remove extra async close methods.
+	  Add async open methods. Reject null EndpointAddress.
+	* PeerChannelFactory.cs : remove async open methods (now in base).
+
+2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs : set correct message endpoint (To header).
 
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
