@@ -51,7 +51,6 @@ namespace System.ServiceModel.Channels
 	{
 		IChannelFactory<IDuplexSessionChannel> client_factory;
 		PeerTransportBindingElement binding;
-		EndpointAddress local_address;
 		PeerResolver resolver;
 		PeerNode node;
 		IChannelListener<IDuplexSessionChannel> channel_listener;
@@ -70,7 +69,6 @@ namespace System.ServiceModel.Channels
 			node = new PeerNodeImpl (RemoteAddress.Uri.Host, factory.Source.ListenIPAddress, factory.Source.Port);
 		}
 
-		// FIXME: receive local_address too
 		public PeerDuplexChannel (IPeerChannelManager listener)
 			: base ((ChannelListenerBase) listener)
 		{
@@ -79,10 +77,6 @@ namespace System.ServiceModel.Channels
 			info = new TcpChannelInfo (binding, listener.MessageEncoder, null); // FIXME: fill properties correctly.
 
 			node = new PeerNodeImpl (((ChannelListenerBase) listener).Uri.Host, listener.Source.ListenIPAddress, listener.Source.Port);
-		}
-
-		public override EndpointAddress LocalAddress {
-			get { return local_address; }
 		}
 
 		public override T GetProperty<T> ()

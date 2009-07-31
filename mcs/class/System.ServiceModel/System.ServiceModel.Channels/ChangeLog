@@ -1,3 +1,8 @@
+2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs, PeerDuplexChannel.cs,
+	  DuplexChannelBase.cs : set LocalAddress property at base.
+
 2009-07-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerDuplexChannel.cs : ongoing refactoring to work both as

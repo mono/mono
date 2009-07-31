@@ -67,7 +67,6 @@ namespace System.ServiceModel.Channels
 		TcpChannelInfo info;
 		TcpClient client;
 		bool is_service_side;
-		EndpointAddress local_address;
 		TcpBinaryFrameManager frame;
 		TcpDuplexSession session; // do not use this directly. Use Session instead.
 		
@@ -94,10 +93,6 @@ namespace System.ServiceModel.Channels
 			get { return info.MessageEncoder; }
 		}
 
-		public override EndpointAddress LocalAddress {
-			get { return local_address; }
-		}
-		
 		public IDuplexSession Session {
 			get {
 				if (session == null)

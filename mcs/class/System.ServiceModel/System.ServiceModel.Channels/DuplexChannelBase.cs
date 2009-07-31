@@ -53,11 +53,14 @@ namespace System.ServiceModel.Channels
 		public DuplexChannelBase (ChannelListenerBase listener) : base (listener)
 		{
 			//channel_listener_base = listener;
+			local_address = new EndpointAddress (listener.Uri);
 			SetupDelegates ();
 		}
 
-		public abstract EndpointAddress LocalAddress { get; }
-		
+		public EndpointAddress LocalAddress {
+			get { return local_address; }
+		}
+
 		public EndpointAddress RemoteAddress {
 			get { return remote_address; }
 		}
