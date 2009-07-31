@@ -1,4 +1,8 @@
-2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+2009-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest: Test for IsDefined.
+
+2009-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest: Test for GetNestedType.
 

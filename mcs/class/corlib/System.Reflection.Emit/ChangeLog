@@ -1,5 +1,10 @@
 2009-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilder.cs (IsDefined): Throw if not
+	created and not in compiler context.
+
+2009-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilder.cs (GetNestedTypes): Throw if not
 	created and not in compiler context.
 

@@ -10769,6 +10769,20 @@ namespace MonoTests.System.Reflection.Emit
 			res = nested2.CreateType ();
 			Assert.AreEqual (res, tb.GetNestedType ("Bar2", BindingFlags.NonPublic), "#4");
 		}
+
+
+		[Test]
+		public void IsDefinedThrowWhenIncomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.IsDefined (typeof (string), true);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) { }
+
+			tb.CreateType ();
+			Assert.IsNotNull (tb.IsDefined (typeof (string), true), "#2");
+		}
 #endif
 #if NET_2_0
 #if !WINDOWS

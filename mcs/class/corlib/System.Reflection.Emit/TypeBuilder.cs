@@ -368,6 +368,8 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
+			if (!is_created && !IsCompilerContext)
+				throw new NotSupportedException ();
 			/*
 			 * MS throws NotSupported here, but we can't because some corlib
 			 * classes make calls to IsDefined.
