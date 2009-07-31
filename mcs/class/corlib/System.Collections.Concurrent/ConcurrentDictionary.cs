@@ -27,13 +27,13 @@ using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace System.Collections.Concurrent
 {
-	public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
-		, ICollection<KeyValuePair<TKey, TValue>>, ICollection, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable
-			, IProducerConsumerCollection<KeyValuePair<TKey, TValue>>
-		
+	public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
+	  ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, 
+	  IDictionary, ICollection, IEnumerable, ISerializable, IDeserializationCallback
 	{
 		class Pair
 		{
@@ -64,17 +64,69 @@ namespace System.Collections.Concurrent
 		
 		// Assumption: a List<T> is never empty
 		ConcurrentSkipList<Basket> container
-			= new ConcurrentSkipList<Basket> ((value) => value [0].GetHashCode ());
+			= new ConcurrentSkipList<Basket> ((value) => value[0].GetHashCode ());
 		int count;
 		int stamp = int.MinValue;
+		IEqualityComparer<TKey> comparer;
 		
-		public ConcurrentDictionary ()
+		public ConcurrentDictionary () : this (EqualityComparer<TKey>.Default)
 		{
 		}
 		
-		public void Add (TKey key, TValue value)
+		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> values)
+			: this (values, EqualityComparer<TKey>.Default)
+		{
+			foreach (KeyValuePair<TKey, TValue> pair in values)
+				Add (pair.Key, pair.Value);
+		}
+		
+		public ConcurrentDictionary (IEqualityComparer<TKey> comparer)
+		{
+			this.comparer = comparer;
+		}
+		
+		public ConcurrentDictionary (IEnumerable<KeyValuePair<TKey, TValue>> values, IEqualityComparer<TKey> comparer)
+			: this (comparer)
+		{			
+			foreach (KeyValuePair<TKey, TValue> pair in values)
+				Add (pair.Key, pair.Value);
+		}
+		
+		// Parameters unused
+		public ConcurrentDictionary (int concurrencyLevel, int capacity)
+			: this (EqualityComparer<TKey>.Default)
+		{
+			
+		}
+		
+		public ConcurrentDictionary (int concurrencyLevel, 
+		                             IEnumerable<KeyValuePair<TKey, TValue>> values,
+		                             IEqualityComparer<TKey> comparer)
+			: this (values, comparer)
+		{
+			
+		}
+		
+		// Parameters unused
+		public ConcurrentDictionary (int concurrencyLevel, int capacity, IEqualityComparer<TKey> comparer)
+			: this (comparer)
+		{
+			
+		}
+		
+		internal ConcurrentDictionary (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		void Add (TKey key, TValue value)
 		{
 			while (!TryAdd (key, value));
+		}
+		
+		void IDictionary<TKey, TValue>.Add (TKey key, TValue value)
+		{
+			Add (key, value);
 		}
 		
 		public bool TryAdd (TKey key, TValue value)
@@ -88,7 +140,7 @@ namespace System.Collections.Concurrent
 				// Find a maybe more sexy locking scheme later
 				lock (basket) {
 					foreach (var p in basket) {
-						if (p.Key.Equals (key))
+						if (comparer.Equals (p.Key, key))
 							throw new ArgumentException ("An element with the same key already exists");
 					}
 					basket.Add (new Pair (key, value));
@@ -108,7 +160,7 @@ namespace System.Collections.Concurrent
 			Add (pair.Key, pair.Value);
 		}
 		
-		public TValue GetValue (TKey key)
+		TValue GetValue (TKey key)
 		{
 			TValue temp;
 			if (!TryGetValue (key, out temp))
@@ -126,13 +178,31 @@ namespace System.Collections.Concurrent
 				return false;
 			
 			lock (basket) {
-				Pair pair = basket.Find ((p) => p.Key.Equals (key));
+				Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
 				if (pair == null)
 					return false;
 				value = pair.Value;
 			}
 			
 			return true;
+		}
+		
+		public bool TryUpdate (TKey key, TValue newValue, TValue comparand)
+		{
+			Basket basket;
+			if (!TryGetBasket (key, out basket))
+				return false;
+			
+			lock (basket) {
+				Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+				if (pair.Value.Equals (comparand)) {
+					pair.Value = newValue;
+					
+					return true;
+				}
+			}
+			
+			return false;
 		}
 		
 		public TValue this[TKey key] {
@@ -146,7 +216,7 @@ namespace System.Collections.Concurrent
 					return;
 				}
 				lock (basket) {
-					Pair pair = basket.Find ((p) => p.Key.Equals (key));
+					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
 					if (pair == null)
 						throw new InvalidOperationException ("pair is null, shouldn't be");
 					pair.Value = value;
@@ -155,20 +225,41 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		public bool Remove(TKey key)
+		public bool TryRemove(TKey key, out TValue value)
 		{
+			value = default (TValue);
 			Basket b;
+			
 			if (!TryGetBasket (key, out b))
 				return false;
 			
 			lock (b) {
+				TValue temp = default (TValue);
 				// Should always be == 1 but who know
-				bool result = b.RemoveAll ((p) => p.Key.Equals (key)) >= 1;
+				bool result = b.RemoveAll ((p) => {
+					bool r = comparer.Equals (p.Key, key);
+					if (r) temp = p.Value;
+					return r;
+				}) >= 1;
+				value = temp;
+				
 				if (result)
 					Interlocked.Decrement (ref count);
 				
 				return result;
 			}
+		}
+		
+		bool Remove (TKey key)
+		{
+			TValue dummy;
+			
+			return TryRemove (key, out dummy);
+		}
+		
+		bool IDictionary<TKey, TValue>.Remove (TKey key)
+		{
+			return Remove (key);
 		}
 		
 		bool ICollection<KeyValuePair<TKey,TValue>>.Remove (KeyValuePair<TKey,TValue> pair)
@@ -181,22 +272,49 @@ namespace System.Collections.Concurrent
 			return container.ContainsFromHash (key.GetHashCode ());
 		}
 		
+		bool IDictionary.Contains (object key)
+		{
+			if (!(key is TKey))
+				return false;
+			
+			return ContainsKey ((TKey)key);
+		}
+		
+		void IDictionary.Remove (object key)
+		{
+			if (!(key is TKey))
+				return;
+			
+			Remove ((TKey)key);
+		}
+		
+		object IDictionary.this [object key]
+		{
+			get {
+				if (!(key is TKey))
+					throw new ArgumentException ("key isn't of correct type", "key");
+				
+				return this[(TKey)key];
+			}
+			set {
+				if (!(key is TKey) || !(value is TValue))
+					throw new ArgumentException ("key or value aren't of correct type");
+				
+				this[(TKey)key] = (TValue)value;
+			}
+		}
+		
+		void IDictionary.Add (object key, object value)
+		{
+			if (!(key is TKey) || !(value is TValue))
+				throw new ArgumentException ("key or value aren't of correct type");
+			
+			Add ((TKey)key, (TValue)value);
+		}
+		
 		bool ICollection<KeyValuePair<TKey,TValue>>.Contains (KeyValuePair<TKey, TValue> pair)
 		{
 			return ContainsKey (pair.Key);
-		}
-		
-		public bool TryAdd (KeyValuePair<TKey, TValue> item)
-		{
-			Add (item.Key, item.Value);
-			
-			return true;
-		}
-		
-		public bool TryTake (out KeyValuePair<TKey, TValue> item)
-		{
-			item = default (KeyValuePair<TKey, TValue>);
-			return false;
 		}
 		
 		public KeyValuePair<TKey,TValue>[] ToArray ()
@@ -219,7 +337,19 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		public bool IsReadOnly {
+		public bool IsEmpty {
+			get {
+				return count == 0;
+			}
+		}
+		
+		bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly {
+			get {
+				return false;
+			}
+		}
+		
+		bool IDictionary.IsReadOnly {
 			get {
 				return false;
 			}
@@ -256,9 +386,14 @@ namespace System.Collections.Concurrent
 			CopyTo (arr, startIndex, count);
 		}
 		
-		public void CopyTo (KeyValuePair<TKey, TValue>[] array, int startIndex)
+		void CopyTo (KeyValuePair<TKey, TValue>[] array, int startIndex)
 		{
 			CopyTo (array, startIndex, count);
+		}
+		
+		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue>[] array, int startIndex)
+		{
+			CopyTo (array, startIndex);
 		}
 		
 		void CopyTo (KeyValuePair<TKey, TValue>[] array, int startIndex, int num)
@@ -307,17 +442,26 @@ namespace System.Collections.Concurrent
 			}
 		}
 
-		bool ICollection.IsSynchronized {
-			get {
-				return true;
-			}
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
 		}
 		
-		public bool IsFixedSize {
+		bool ICollection.IsSynchronized {
+			get { return true; }
+		}
+
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		bool IDictionary.IsFixedSize {
 			get {
 				return false;
 			}
 		}
+			
 		
 		bool TryGetBasket (TKey key, out Basket basket)
 		{

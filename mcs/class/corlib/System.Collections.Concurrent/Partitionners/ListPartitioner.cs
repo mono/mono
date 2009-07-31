@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace System.Collections.Concurrent
 {
-	public class ListPartitioner<T> : OrderablePartitioner<T>
+	internal class ListPartitioner<T> : OrderablePartitioner<T>
 	{
 		IList<T> source;
 		

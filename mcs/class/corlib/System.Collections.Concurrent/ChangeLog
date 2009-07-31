@@ -1,3 +1,9 @@
+2009-07-31 Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentDictionary.cs:
+	* ConcurrentQueue.cs:
+	* ConcurrentStack.cs: Make the classes comply with B1 API
+
 2009-07-27  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* BlockingCollection.cs:

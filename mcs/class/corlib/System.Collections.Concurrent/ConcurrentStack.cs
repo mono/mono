@@ -62,24 +62,45 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		/// <summary>
-		/// </summary>
-		/// <param name="element"></param>
 		public void Push (T element)
 		{
 			Node temp = new Node ();
 			temp.Value = element;
-			
 			do {
-				temp.Next = head;
-			} while (Interlocked.CompareExchange<Node> (ref head, temp, temp.Next) != temp.Next);
+			  temp.Next = head;
+			} while (Interlocked.CompareExchange (ref head, temp, temp.Next) != temp.Next);
 			
 			Interlocked.Increment (ref count);
 		}
+
+		public void PushRange (T[] values)
+		{
+		  PushRange (values, 0, values.Length);
+		}
+
+		public void PushRange (T[] values, int start, int length)
+		{
+		  Node insert = null;
+		  Node first = null;
+
+		  for (int i = start; i < length; i++) {
+			Node temp = new Node ();
+			temp.Value = values[i];
+			temp.Next = insert;
+			insert = temp;
+
+			if (first == null)
+			  first = temp;
+		  }
+		  
+		  do {
+			first.Next = head;
+		  } while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
+
+		  Interlocked.Add (ref count, length);
+		}
+
 		
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
 		public bool TryPop (out T value)
 		{
 			Node temp;
@@ -90,17 +111,46 @@ namespace System.Collections.Concurrent
 					value = default (T);
 					return false;
 				}
-			} while (Interlocked.CompareExchange<Node> (ref head, temp.Next, temp) != temp);
+			} while (Interlocked.CompareExchange (ref head, temp.Next, temp) != temp);
 			
 			Interlocked.Decrement (ref count);
 			
 			value = temp.Value;
 			return true;
 		}
+
+		public int TryPopRange (T[] values)
+		{
+		  return TryPopRange (values, 0, values.Length);
+		}
+
+		public int TryPopRange (T[] values, int startIndex, int count)
+		{
+		  int insertIndex = startIndex;
+		  Node temp;
+		  Node end;
+
+		  do {
+			temp = head;
+			if (temp == null)
+			  return -1;
+			end = temp;
+			for (int j = 0; j < count - 1; j++) {
+			  end = end.Next;
+			  if (end == null)
+				break;
+			}
+		  } while (Interlocked.CompareExchange (ref head, end, temp) != temp);
+		  
+		  int i;
+		  for (i = startIndex; i < count && temp != null; i++) {
+			values[i] = temp.Value;
+			temp = temp.Next;
+		  }
+
+		  return i - 1;
+		}
 		
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
 		public bool TryPeek (out T value)
 		{
 			Node myHead = head;
@@ -146,7 +196,7 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		public void CopyTo (Array array, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
 			T[] dest = array as T[];
 			if (dest == null)
@@ -163,7 +213,7 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -172,7 +222,7 @@ namespace System.Collections.Concurrent
 			get { return true; }
 		}
 
-		public virtual void OnDeserialization (object sender)
+		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 			throw new NotImplementedException ();
 		}

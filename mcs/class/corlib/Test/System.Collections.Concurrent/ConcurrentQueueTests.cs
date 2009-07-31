@@ -124,9 +124,6 @@ namespace ParallelFxTests
 			queue.TryDequeue(out value);
 			queue.TryDequeue(out value);
 			Assert.AreEqual(8, queue.Count, "#2");
-			queue.Clear();
-			Assert.AreEqual(0, queue.Count, "#3");
-			Assert.IsTrue(queue.IsEmpty, "#4");
 		}
 		
 		//[Ignore]
@@ -171,7 +168,7 @@ namespace ParallelFxTests
 		public void TryDequeueEmptyTestCase()
 		{
 			int value;
-			queue.Clear();
+			queue = new ConcurrentQueue<int> ();
 			queue.Enqueue(1);
 			Assert.IsTrue(queue.TryDequeue(out value), "#1");
 			Assert.IsFalse(queue.TryDequeue(out value), "#2");

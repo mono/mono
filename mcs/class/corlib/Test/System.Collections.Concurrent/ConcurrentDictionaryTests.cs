@@ -38,25 +38,27 @@ namespace ParallelFxTests
 		ConcurrentDictionary<string, int> map;
 		
 		[SetUp]
-		public void Setup()
+		public void Setup ()
 		{
-			map = new ConcurrentDictionary<string, int>();
+			map = new ConcurrentDictionary<string, int> ();
 			AddStuff();
 		}
 		
-		void AddStuff()
+		void AddStuff ()
 		{
-			map.Add("foo", 1);
-			map.Add("bar", 2);
-			map.Add("foobar", 3);
+		  map.TryAdd ("foo", 1);
+			map.TryAdd ("bar", 2);
+			map.TryAdd ("foobar", 3);
 		}
 		
 		[Test]
-		public void AddWithoutDuplicateTest()
+		public void AddWithoutDuplicateTest ()
 		{
-			map.Add("baz", 2);
+			map.TryAdd("baz", 2);
+			int val;
 			
-			Assert.AreEqual(2, map.GetValue("baz"));
+			Assert.IsTrue (map.TryGetValue("baz", out val));
+			Assert.AreEqual(2, val);
 			Assert.AreEqual(2, map["baz"]);
 			Assert.AreEqual(4, map.Count);
 		}
@@ -98,18 +100,19 @@ namespace ParallelFxTests
 				Setup ();
 				int index = 0;
 				bool r1 = false, r2 = false, r3 = false;
+				int val;
 				
 				ParallelTestHelper.ParallelStressTest (map, delegate {
 					int own = Interlocked.Increment (ref index);
 					switch (own) {
 					case 1:
-						r1 = map.Remove ("foo");
+						r1 = map.TryRemove ("foo", out val);
 						break;
 					case 2:
-						r2 =map.Remove ("bar");
+					  r2 =map.TryRemove ("bar", out val);
 						break;
 					case 3:
-						r3 = map.Remove ("foobar");
+					  r3 = map.TryRemove ("foobar", out val);
 						break;
 					}
 				}, 3);
@@ -130,13 +133,13 @@ namespace ParallelFxTests
 		[Test, ExpectedException(typeof(ArgumentException))]
 		public void AddWithDuplicate()
 		{
-			map.Add("foo", 6);
+			map.TryAdd("foo", 6);
 		}
 		
 		[Test]
 		public void GetValueTest()
 		{
-			Assert.AreEqual(1, map.GetValue("foo"), "#1");
+		  Assert.AreEqual(1, map["foo"], "#1");
 			Assert.AreEqual(2, map["bar"], "#2");
 			Assert.AreEqual(3, map.Count, "#3");
 		}
@@ -146,7 +149,7 @@ namespace ParallelFxTests
 		{
 			int val;
 			Assert.IsFalse(map.TryGetValue("barfoo", out val));
-			map.GetValue("barfoo");
+			val = map["barfoo"];
 		}
 		
 		[Test]
@@ -156,7 +159,6 @@ namespace ParallelFxTests
 			int val;
 			
 			Assert.AreEqual(9, map["foo"], "#1");
-			Assert.AreEqual(9, map.GetValue("foo"), "#2");
 			Assert.IsTrue(map.TryGetValue("foo", out val), "#3");
 			Assert.AreEqual(9, val, "#4");
 		}

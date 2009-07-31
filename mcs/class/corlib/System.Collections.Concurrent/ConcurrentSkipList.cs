@@ -31,7 +31,7 @@ using System.Collections.Generic;
 namespace System.Collections.Concurrent
 {
 	
-	public class ConcurrentSkipList<T> : IProducerConsumerCollection<T>
+	internal class ConcurrentSkipList<T> : IProducerConsumerCollection<T>
 	{
 		// Used for randomSeed
 		[ThreadStatic]

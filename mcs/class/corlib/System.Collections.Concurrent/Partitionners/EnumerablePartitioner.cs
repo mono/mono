@@ -31,7 +31,7 @@ using System.Collections.Generic;
 
 namespace System.Collections.Concurrent
 {
-	public class EnumerablePartitioner<T> : OrderablePartitioner<T>
+	internal class EnumerablePartitioner<T> : OrderablePartitioner<T>
 	{
 		IEnumerable<T> source;
 #if USE_MONITOR

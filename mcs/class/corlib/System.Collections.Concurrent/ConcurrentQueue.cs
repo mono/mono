@@ -142,7 +142,7 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		public void Clear ()
+		internal void Clear ()
 		{
 			count = 0;
 			tail = head = new Node ();
@@ -171,7 +171,7 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		public void CopyTo (Array array, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
 			T[] dest = array as T[];
 			if (dest == null)
@@ -195,7 +195,7 @@ namespace System.Collections.Concurrent
 			return dest;
 		}
 		
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -204,7 +204,7 @@ namespace System.Collections.Concurrent
 			get { return true; }
 		}
 
-		public virtual void OnDeserialization (object sender)
+		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 			throw new NotImplementedException ();
 		}
