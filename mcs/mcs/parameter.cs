@@ -89,6 +89,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void EmitPredefined (PredefinedAttribute pa, Location loc)
+		{
+			if (builder != null)
+				pa.EmitAttribute (builder, loc);
+		}
+
 		public override IResolveContext ResolveContext {
 			get {
 				throw new NotSupportedException ();
@@ -537,6 +543,9 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+
+			if (TypeManager.IsDynamicType (parameter_type))
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (builder, Location);
 		}
 
 		public override string[] ValidAttributeTargets {

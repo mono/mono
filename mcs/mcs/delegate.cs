@@ -330,6 +330,11 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+			if (TypeManager.IsDynamicType (ret_type)) {
+				return_attributes = new ReturnParameter (InvokeBuilder, Location);
+				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+			}
+
 			Parameters.ApplyAttributes (InvokeBuilder);
 
 			if (BeginInvokeBuilder != null) {

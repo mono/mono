@@ -2066,6 +2066,12 @@ namespace Mono.CSharp {
 				builder.SetCustomAttribute (cab);
 		}
 
+		public void EmitAttribute (PropertyBuilder builder)
+		{
+			if (ResolveBuilder ())
+				builder.SetCustomAttribute (cab);
+		}
+
 		public void EmitAttribute (FieldBuilder builder)
 		{
 			if (ResolveBuilder ())

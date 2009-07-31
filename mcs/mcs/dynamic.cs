@@ -29,7 +29,7 @@ namespace Mono.CSharp
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 	}
 

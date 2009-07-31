@@ -407,6 +407,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+#if NET_4_0
+	[System.Diagnostics.DebuggerDisplay ("Dynamic type")]
+#endif
 	class DynamicType : Type
 	{
 		public override Assembly Assembly {
@@ -582,7 +585,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return GetType ().ToString ();
+			return UnderlyingSystemType.ToString ();
 		}
 
 		public override RuntimeTypeHandle TypeHandle {

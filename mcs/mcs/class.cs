@@ -3870,6 +3870,11 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (MethodBuilder);
 
+			if (TypeManager.IsDynamicType (ReturnType)) {
+				return_attributes = new ReturnParameter (MethodBuilder, Location);
+				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+			}
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -5466,6 +5471,9 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
+			if (TypeManager.IsDynamicType (member_type))
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (FieldBuilder);
+
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (FieldBuilder);
 
@@ -6058,6 +6066,11 @@ namespace Mono.CSharp {
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
 				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
+			if (TypeManager.IsDynamicType (ReturnType)) {
+				return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+			}
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -6566,8 +6579,13 @@ namespace Mono.CSharp {
 			// case, we do not actually emit the ".property", so there is nowhere to
 			// put the attribute
 			//
-			if (PropertyBuilder != null && OptAttributes != null)
-				OptAttributes.Emit ();
+			if (PropertyBuilder != null) {
+				if (OptAttributes != null)
+					OptAttributes.Emit ();
+
+				if (TypeManager.IsDynamicType (member_type))
+					PredefinedAttributes.Get.Dynamic.EmitAttribute (PropertyBuilder);
+			}
 
 			if (!Get.IsDummy)
 				Get.Emit (Parent);

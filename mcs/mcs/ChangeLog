@@ -1,3 +1,8 @@
+2009-07-31  Marek Safar  <marek.safar@gmail.com>
+
+	* parameter.cs, dynamic.cs, support.cs, class.cs, delegate.cs,
+	attribute.cs: Emit dynamic export attribute.
+
 2009-07-30  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: More verifier work.
