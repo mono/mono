@@ -106,6 +106,14 @@ namespace System.ServiceModel.Channels
 			ThrowIfDisposedOrNotOpen ();
 
 			DateTime start = DateTime.Now;
+			
+			// rewriter message header to net.p2p endpoint.
+			//
+			// FIXME: I'm not sure rewriting it here is the right
+			// answer. It is possible that it should be done on
+			// creating internal tcp channel factory creating,
+			// using Via uri.
+			message.Headers.To = (RemoteAddress ?? LocalAddress).Uri;
 
 			foreach (var pna in peers) {
 				var inner = CreateInnerClient (pna);
