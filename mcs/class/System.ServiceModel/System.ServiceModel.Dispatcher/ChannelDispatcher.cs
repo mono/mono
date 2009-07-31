@@ -560,8 +560,11 @@ namespace System.ServiceModel.Dispatcher
 				EndpointDispatcher candidate = null;
 				for (int i = 0; i < owner.Endpoints.Count; i++) {
 					if (owner.IsMessageMatchesEndpointDispatcher (message, owner.Endpoints [i])) {
-						candidate = owner.Endpoints [i];
-						break;
+						var newdis = owner.Endpoints [i];
+						if (candidate == null || candidate.FilterPriority < newdis.FilterPriority)
+							candidate = newdis;
+						else if (candidate.FilterPriority == newdis.FilterPriority)
+							throw new MultipleFilterMatchesException ();
 					}
 				}
 				if (candidate == null)
