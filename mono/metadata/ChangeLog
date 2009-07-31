@@ -1,3 +1,17 @@
+2009-02-11 Tom Hindke <tom_hindle@sil.org>
+
+	* marshal.c (mono_array_to_lparray): Implemented so managed object types are converted to native types.
+
+	* marshal.c: Added new method mono_free_lparray to free memory allocated by mono_array_to_lparray
+
+	* marshal.c (emit_marshal_array): call emit mono_free_lparray where approprate.
+
+	* marshal.c (conv_to_icall): added MONO_MARSHAL_FREE_LPARRAY case
+
+	* metadata.h (MonoMarshalConv enum): added MONO_MARSHAL_FREE_LPARRAY
+
+	Code is contributed under MIT/X11 license
+
 2009-08-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Fix naming of stelem and ldelem.
