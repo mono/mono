@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.Threading.Tasks
 {
@@ -47,6 +48,12 @@ namespace System.Threading.Tasks
 		public TaskCanceledException (Task task): base ("The Task was canceled")
 		{
 			this.task = task;
+		}
+		
+		protected TaskCanceledException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			
 		}
 		
 		public Task Task {

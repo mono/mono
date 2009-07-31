@@ -55,6 +55,16 @@ namespace System.Threading
 		{
 			return this.id == other.id && this.source == other.source;
 		}
+		
+		public static bool operator== (CancellationTokenRegistration lhs, CancellationTokenRegistration rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+		
+		public static bool operator!= (CancellationTokenRegistration lhs, CancellationTokenRegistration rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 		#endregion
 		
 		public override int GetHashCode ()

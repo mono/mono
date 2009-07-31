@@ -94,35 +94,36 @@ namespace System.Threading.Tasks
 		}
 		#endregion
 		
-		#region StartNew for Task<T>	
-		public Task<T> StartNew<T> (Func<T> function)
+		#region StartNew for Task<TResult>	
+		public Task<TResult> StartNew<TResult> (Func<TResult> function)
 		{
-			return StartNew<T> (function, options, scheduler);
+			return StartNew<TResult> (function, options, scheduler);
 		}
 		
-		public Task<T> StartNew<T> (Func<T> function, TaskCreationOptions options)
+		public Task<TResult> StartNew<TResult> (Func<TResult> function, TaskCreationOptions options)
 		{
-			return StartNew<T> (function, options, scheduler);
+			return StartNew<TResult> (function, options, scheduler);
 		}
 		
-		public Task<T> StartNew<T> (Func<T> function, TaskCreationOptions options, TaskScheduler scheduler)
+		public Task<TResult> StartNew<TResult> (Func<TResult> function, TaskCreationOptions options, TaskScheduler scheduler)
 		{
-			return StartNew<T> ((o) => function (), null, options, scheduler);
+			return StartNew<TResult> ((o) => function (), null, options, scheduler);
 		}
 		
-		public Task<T> StartNew<T> (Func<object, T> function, object state)
+		public Task<TResult> StartNew<TResult> (Func<object, TResult> function, object state)
 		{
-			return StartNew<T> (function, state, options, scheduler);
+			return StartNew<TResult> (function, state, options, scheduler);
 		}
 		
-		public Task<T> StartNew<T> (Func<object, T> function, object state, TaskCreationOptions options)
+		public Task<TResult> StartNew<TResult> (Func<object, TResult> function, object state, TaskCreationOptions options)
 		{
-			return StartNew<T> (function, state, options, scheduler);
+			return StartNew<TResult> (function, state, options, scheduler);
 		}
 		
-		public Task<T> StartNew<T> (Func<object, T> function, object state, TaskCreationOptions options, TaskScheduler scheduler)
+		public Task<TResult> StartNew<TResult> (Func<object, TResult> function, object state, TaskCreationOptions options,
+		                                        TaskScheduler scheduler)
 		{
-			Task<T> t = new Task<T> (function, state, options);
+			Task<TResult> t = new Task<TResult> (function, state, options);
 			t.Start (scheduler);
 			
 			return t;
@@ -131,34 +132,39 @@ namespace System.Threading.Tasks
 		
 		#region Continue
 		
-		
+		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction)
 		{
 			return ContinueWhenAny (tasks, continuationAction, contOptions, scheduler);
 		}
 		
+		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, TaskContinuationOptions continuationOptions)
 		{
 			return ContinueWhenAny (tasks, continuationAction, continuationOptions, scheduler);
 		}
 
+		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, TaskContinuationOptions continuationOptions,
 		                            TaskScheduler scheduler)
 		{
 		  return null;
 		}
 		
+		[MonoTODO]
 		public Task<TResult> ContinueWhenAny<TResult> (Task[] tasks, Func<Task, TResult> continuationAction)
 		{
 			return ContinueWhenAny (tasks, continuationAction, contOptions);
 		}
 		
+		[MonoTODO]
 		public Task<TResult> ContinueWhenAny<TResult> (Task[] tasks, Func<Task, TResult> continuationAction,
 		                                      TaskContinuationOptions continuationOptions)
 		{
 			return ContinueWhenAny (tasks, continuationAction, continuationOptions, scheduler);
 		}
 
+		[MonoTODO]
 		public Task<TResult> ContinueWhenAny<TResult> (Task[] tasks, Func<Task, TResult> continuationAction,
 		                                               TaskContinuationOptions continuationOptions,
 		                                               TaskScheduler scheduler)
@@ -180,7 +186,7 @@ namespace System.Threading.Tasks
 		public Task ContinueWhenAll (Task[] tasks, Action<Task[]> continuationFunction,
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length - 1);
+			CountdownEvent evt = new CountdownEvent (tasks.Length);
 			Task cont = new Task ((o) => continuationFunction ((Task[])o), tasks, options);
 			
 			foreach (Task t in tasks)
@@ -190,21 +196,21 @@ namespace System.Threading.Tasks
 		}
 
 		
-		public Task<TResult> ContinueWhenAll<TResult>(Task[] tasks, Func<Task[], TResult> continuationFunction)
+		public Task<TResult> ContinueWhenAll<TResult> (Task[] tasks, Func<Task[], TResult> continuationFunction)
 		{
 			return ContinueWhenAll<TResult> (tasks, continuationFunction, contOptions);
 		}
 		
-		public Task<TResult> ContinueWhenAll<TResult>(Task[] tasks, Func<Task[], TResult> continuationFunction,
-		                                              TaskContinuationOptions continuationOptions)
+		public Task<TResult> ContinueWhenAll<TResult> (Task[] tasks, Func<Task[], TResult> continuationFunction,
+		                                               TaskContinuationOptions continuationOptions)
 		{
 			return ContinueWhenAll<TResult> (tasks, continuationFunction, continuationOptions, scheduler);
 		}
 		
-		public Task<TResult> ContinueWhenAll<TResult>(Task[] tasks, Func<Task[], TResult> continuationFunction,
-		                                              TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		public Task<TResult> ContinueWhenAll<TResult> (Task[] tasks, Func<Task[], TResult> continuationFunction,
+		                                               TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			CountdownEvent evt = new CountdownEvent (tasks.Length - 1);
+			CountdownEvent evt = new CountdownEvent (tasks.Length);
 			Task<TResult> cont = new Task<TResult> ((o) => continuationFunction ((Task[])o), tasks, options);
 			
 			foreach (Task t in tasks)
@@ -223,35 +229,40 @@ namespace System.Threading.Tasks
 		
 		const string errorMsg = "Mono's thread pool doesn't support this operation yet";
 		
+		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod)
 		{
 			return FromAsync (asyncResult, endMethod, options);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod,
 		                       TaskCreationOptions creationOptions)
 		{
 			return FromAsync (asyncResult, endMethod, creationOptions);
 		}
 		
-		
+		[MonoLimitation(errorMsg)]
 		public Task FromAsync (IAsyncResult asyncResult, Action<IAsyncResult> endMethod,
 		                       TaskCreationOptions creationOptions, TaskScheduler scheduler)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod)
 		{
 			return FromAsync<TResult> (asyncResult, endMethod, options);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
 		                                         TaskCreationOptions creationOptions)
 		{
 			return FromAsync<TResult> (asyncResult, endMethod, creationOptions);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
 		                                         TaskCreationOptions creationOptions, TaskScheduler scheduler)
 		{
@@ -259,57 +270,63 @@ namespace System.Threading.Tasks
 		}
 		
 		
-		
+		[MonoLimitation(errorMsg)]
 		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                       object state)
 		{
 			return FromAsync<object> ((a, c, o) => beginMethod (c, o), endMethod, state, options);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
 		                       object state, TaskCreationOptions creationOptions)
 		{
 			return FromAsync<object> ((a, c, o) => beginMethod (c, o), endMethod, state, creationOptions);
 		}
 		
-		public Task FromAsync<T1> (Func<T1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                           T1 arg1, object state)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                              TArg1 arg1, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task FromAsync<T1> (Func<T1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                           T1 arg1, object state, TaskCreationOptions creationOptions)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                              TArg1 arg1, object state, TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task FromAsync<T1, T2> (Func<T1, T2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                               T1 arg1, T2 arg2, object state)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                                     TArg1 arg1, TArg2 arg2, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task FromAsync<T1, T2> (Func<T1, T2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                               T1 arg1, T2 arg2, object state, TaskCreationOptions creationOptions)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                                     TArg1 arg1, TArg2 arg2, object state, TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		/*public Task FromAsync<T1, T2, T3> (Func<T1, T2, T3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                                   T1 arg1, T2 arg2, T3 arg3, object state)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                                            TArg1 arg1, TArg2 arg2, TArg3 arg3, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task FromAsync<T1, T2, T3> (Func<T1, T2, T3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
-		                                   T1 arg1, T2 arg2, T3 arg3, object state, TaskCreationOptions creationOptions)
+		[MonoLimitation(errorMsg)]
+		public Task FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod, Action<IAsyncResult> endMethod,
+		                                            TArg1 arg1, TArg2 arg2, TArg3 arg3, object state, TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
-		}*/
+		}		
 		
-		
-		
+		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                         Func<IAsyncResult, TResult> endMethod,
 		                                         object state)
@@ -317,6 +334,7 @@ namespace System.Threading.Tasks
 			throw new NotSupportedException (errorMsg);
 		}
 		
+		[MonoLimitation(errorMsg)]
 		public Task<TResult> FromAsync<TResult> (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                         Func<IAsyncResult, TResult> endMethod,
 		                       object state, TaskCreationOptions creationOptions)
@@ -324,48 +342,320 @@ namespace System.Threading.Tasks
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task<TResult> FromAsync<T1, TResult> (Func<T1, AsyncCallback, Object, IAsyncResult> beginMethod,
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TResult> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                                Func<IAsyncResult, TResult> endMethod,
+		                                                TArg1 arg1, object state)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TResult> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                             Func<IAsyncResult, TResult> endMethod,
-		                           T1 arg1, object state)
+		                                             TArg1 arg1, object state, TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task<TResult> FromAsync<T1, TResult> (Func<T1, AsyncCallback, Object, IAsyncResult> beginMethod,
-		                                             Func<IAsyncResult, TResult> endMethod,
-		                                             T1 arg1, object state, TaskCreationOptions creationOptions)
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TResult> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                                       Func<IAsyncResult, TResult> endMethod,
+		                                                       TArg1 arg1, TArg2 arg2, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task<TResult> FromAsync<T1, T2, TResult> (Func<T1, T2, AsyncCallback, Object, IAsyncResult> beginMethod,
-		                                                 Func<IAsyncResult, TResult> endMethod,
-		                                                 T1 arg1, T2 arg2, object state)
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TResult> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                                       Func<IAsyncResult, TResult> endMethod,
+		                                                       TArg1 arg1, TArg2 arg2, object state, TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task<TResult> FromAsync<T1, T2, TResult> (Func<T1, T2, AsyncCallback, Object, IAsyncResult> beginMethod,
-		                                                 Func<IAsyncResult, TResult> endMethod,
-		                                                 T1 arg1, T2 arg2, object state, TaskCreationOptions creationOptions)
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TArg3, TResult> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                                              Func<IAsyncResult, TResult> endMethod,
+		                                                              TArg1 arg1, TArg2 arg2, TArg3 arg3, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
-		/*
-		public Task<TResult> FromAsync<T1, T2, T3, TResult> (Func<T1, T2, T3, AsyncCallback, Object, IAsyncResult> beginMethod,
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TArg3, TResult> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                                              Func<IAsyncResult, TResult> endMethod,
+		                                                              TArg1 arg1, TArg2 arg2, TArg3 arg3, object state,
+		                                                              TaskCreationOptions creationOptions)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		#endregion
+		
+		public TaskScheduler Scheduler {
+			get {
+				return scheduler;
+			}
+		}
+		
+		public TaskContinuationOptions ContinuationOptions {
+			get {
+				return contOptions;
+			}
+		}
+		
+		public TaskCreationOptions CreationOptions {
+			get {
+				return options;
+			}
+		}
+	}
+	
+	public class TaskFactory<TResult>
+	{
+		TaskScheduler scheduler;
+		TaskCreationOptions options;
+		TaskContinuationOptions contOptions;
+		
+		TaskFactory parent;
+		
+		#region ctors
+		public TaskFactory () : this (TaskScheduler.Current, TaskCreationOptions.None, TaskContinuationOptions.None)
+		{	
+		}
+		
+		public TaskFactory (TaskScheduler scheduler) : this (scheduler, TaskCreationOptions.None, TaskContinuationOptions.None)
+		{	
+		}
+		
+		public TaskFactory (TaskCreationOptions options, TaskContinuationOptions contOptions)
+			: this (TaskScheduler.Current, options, contOptions)
+		{	
+		}
+		
+		public TaskFactory (TaskScheduler scheduler, TaskCreationOptions options, TaskContinuationOptions contOptions)
+		{
+			this.scheduler = scheduler;
+			this.options = options;
+			this.contOptions = contOptions;
+			this.parent = new TaskFactory (scheduler, options, contOptions);
+		}
+		#endregion
+		
+		#region StartNew for Task<TResult>	
+		public Task<TResult> StartNew (Func<TResult> function)
+		{
+			return StartNew (function, options, scheduler);
+		}
+		
+		public Task<TResult> StartNew (Func<TResult> function, TaskCreationOptions options)
+		{
+			return StartNew (function, options, scheduler);
+		}
+		
+		public Task<TResult> StartNew (Func<TResult> function, TaskCreationOptions options, TaskScheduler scheduler)
+		{
+			return StartNew ((o) => function (), null, options, scheduler);
+		}
+		
+		public Task<TResult> StartNew (Func<object, TResult> function, object state)
+		{
+			return StartNew (function, state, options, scheduler);
+		}
+		
+		public Task<TResult> StartNew (Func<object, TResult> function, object state, TaskCreationOptions options)
+		{
+			return StartNew (function, state, options, scheduler);
+		}
+		
+		public Task<TResult> StartNew (Func<object, TResult> function, object state, TaskCreationOptions options,
+		                                        TaskScheduler scheduler)
+		{
+			return parent.StartNew<TResult> (function, state, options, scheduler);
+		}
+		#endregion
+		
+		#region Continue
+		[MonoTODO]
+		public Task ContinueWhenAny (Task<TResult>[] tasks, Action<Task<TResult>> continuationAction)
+		{
+			return ContinueWhenAny (tasks, continuationAction, contOptions, scheduler);
+		}
+		
+		[MonoTODO]
+		public Task ContinueWhenAny (Task<TResult>[] tasks, Action<Task<TResult>> continuationAction,
+		                             TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWhenAny (tasks, continuationAction, continuationOptions, scheduler);
+		}
+
+		[MonoTODO]
+		public Task ContinueWhenAny (Task<TResult>[] tasks, Action<Task<TResult>> continuationAction,
+		                             TaskContinuationOptions continuationOptions,
+		                             TaskScheduler scheduler)
+		{
+		  return null;
+		}
+		
+		[MonoTODO]
+		public Task<TNewResult> ContinueWhenAny<TNewResult> (Task<TResult>[] tasks, Func<Task, TNewResult> continuationAction)
+		{
+			return ContinueWhenAny (tasks, continuationAction, contOptions);
+		}
+		
+		[MonoTODO]
+		public Task<TNewResult> ContinueWhenAny<TNewResult> (Task<TResult>[] tasks, Func<Task, TNewResult> continuationAction,
+		                                      TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWhenAny (tasks, continuationAction, continuationOptions, scheduler);
+		}
+
+		[MonoTODO]
+		public Task<TNewResult> ContinueWhenAny<TNewResult> (Task<TResult>[] tasks, Func<Task, TNewResult> continuationAction,
+		                                               TaskContinuationOptions continuationOptions,
+		                                               TaskScheduler scheduler)
+		{
+			return null;
+		}
+		
+		public Task ContinueWhenAll (Task<TResult>[] tasks, Action<Task<TResult>[]> continuationFunction)
+		{
+			return ContinueWhenAll (tasks, continuationFunction, contOptions);
+		}
+		
+		public Task ContinueWhenAll (Task<TResult>[] tasks, Action<Task<TResult>[]> continuationFunction,
+		                             TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWhenAll (tasks, continuationFunction, continuationOptions, scheduler);
+		}
+		
+		public Task ContinueWhenAll (Task<TResult>[] tasks, Action<Task<TResult>[]> continuationFunction,
+		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			CountdownEvent evt = new CountdownEvent (tasks.Length);
+			Task cont = new Task ((o) => continuationFunction ((Task<TResult>[])o), tasks, options);
+			
+			foreach (Task t in tasks)
+				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
+			
+			return cont;
+		}
+		
+		public Task<TNewResult> ContinueWhenAll<TNewResult> (Task<TResult>[] tasks,
+		                                                     Func<Task<TNewResult>[], TNewResult> continuationFunction)
+		{
+			return ContinueWhenAll (tasks, continuationFunction, contOptions);
+		}
+		
+		public Task<TNewResult> ContinueWhenAll<TNewResult> (Task<TResult>[] tasks,
+		                                                     Func<Task<TNewResult>[], TNewResult> continuationFunction,
+		                                                     TaskContinuationOptions continuationOptions)
+		{
+			return ContinueWhenAll (tasks, continuationFunction, continuationOptions, scheduler);
+		}
+		
+		public Task<TNewResult> ContinueWhenAll<TNewResult> (Task<TResult>[] tasks,
+		                                                     Func<Task<TNewResult>[], TNewResult> continuationFunction,
+		                                                     TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			CountdownEvent evt = new CountdownEvent (tasks.Length);
+			Task<TNewResult> cont = new Task<TNewResult> ((o) => continuationFunction ((Task<TResult>[])o), tasks, options);
+			
+			foreach (Task t in tasks)
+				t.ContinueWithCore (cont, continuationOptions, scheduler, evt.Signal);
+			
+			return cont;
+		}
+
+		#endregion
+		
+		#region FromAsync
+		const string errorMsg = "Mono's thread pool doesn't support this operation yet";
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod)
+		{
+			return FromAsync (asyncResult, endMethod, options);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
+		                                TaskCreationOptions creationOptions)
+		{
+			return FromAsync (asyncResult, endMethod, creationOptions);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync (IAsyncResult asyncResult, Func<IAsyncResult, TResult> endMethod,
+		                                TaskCreationOptions creationOptions, TaskScheduler scheduler)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                Func<IAsyncResult, TResult> endMethod,
+		                                object state)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync (Func<AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                Func<IAsyncResult, TResult> endMethod,
+		                                object state, TaskCreationOptions creationOptions)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                       Func<IAsyncResult, TResult> endMethod,
+		                                       TArg1 arg1, object state)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1> (Func<TArg1, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                       Func<IAsyncResult, TResult> endMethod,
+		                                       TArg1 arg1, object state, TaskCreationOptions creationOptions)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                              Func<IAsyncResult, TResult> endMethod,
+		                                              TArg1 arg1, TArg2 arg2, object state)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2> (Func<TArg1, TArg2, AsyncCallback, Object, IAsyncResult> beginMethod,
+		                                              Func<IAsyncResult, TResult> endMethod,
+		                                              TArg1 arg1, TArg2 arg2, object state, TaskCreationOptions creationOptions)
+		{
+			throw new NotSupportedException (errorMsg);
+		}
+		
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                     Func<IAsyncResult, TResult> endMethod,
-		                                                     T1 arg1, T2 arg2, T3 arg3, object state)
+		                                                     TArg1 arg1, TArg2 arg2, TArg3 arg3, object state)
 		{
 			throw new NotSupportedException (errorMsg);
 		}
 		
-		public Task<TResult> FromAsync<T1, T2, T3, TResult> (Func<T1, T2, T3, AsyncCallback, Object, IAsyncResult> beginMethod,
+		[MonoLimitation(errorMsg)]
+		public Task<TResult> FromAsync<TArg1, TArg2, TArg3> (Func<TArg1, TArg2, TArg3, AsyncCallback, Object, IAsyncResult> beginMethod,
 		                                                     Func<IAsyncResult, TResult> endMethod,
-		                                                     T1 arg1, T2 arg2, T3 arg3, object state,
+		                                                     TArg1 arg1, TArg2 arg2, TArg3 arg3, object state,
 		                                                     TaskCreationOptions creationOptions)
 		{
 			throw new NotSupportedException (errorMsg);
-		}*/
+		}
 		#endregion
 		
 		public TaskScheduler Scheduler {

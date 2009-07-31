@@ -31,7 +31,7 @@ using System.Collections.Generic;
 namespace System.Threading
 {
 	
-	public class CancellationTokenSource
+	public class CancellationTokenSource : IDisposable, ICancelableOperation
 	{
 		volatile bool canceled;
 		volatile bool processed;
@@ -80,6 +80,11 @@ namespace System.Threading
 			
 			if (exceptions != null && exceptions.Count > 0)
 				throw new AggregateException (exceptions);
+		}
+		
+		public void Dispose ()
+		{
+			
 		}
 		
 		public static CancellationTokenSource CreateLinkedTokenSource (CancellationToken token1, CancellationToken token2)

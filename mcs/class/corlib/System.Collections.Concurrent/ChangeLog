@@ -1,3 +1,12 @@
+2009-07-31  Jérémie Laval  <jeremie.laval@gmail.com>
+
+        * ConcurrentBag.cs:
+        * ConcurrentQueue.cs:
+        * ConcurrentStack.cs:
+        * ConcurrentSkipList.cs:
+        * ConcurrentDictionary.cs:
+        * IProducerConsumerCollection.cs: Make the namespace comply to 4.0b1
+
 2009-07-31 Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionary.cs:

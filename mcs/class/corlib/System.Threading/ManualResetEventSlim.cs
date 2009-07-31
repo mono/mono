@@ -37,8 +37,7 @@ namespace System.Threading
 		readonly SpinWait sw = new SpinWait ();
 
 		int state;
-		
-		//bool isDisposed;
+
 		
 		public ManualResetEventSlim () : this(false, 20)
 		{
@@ -54,11 +53,6 @@ namespace System.Threading
 			this.spinCount = spinCount;
 		}
 		
-		/*~ManualResetEventSlim()
-		{
-			Dispose(false);
-		}*/
-		
 		public bool IsSet {
 			get {
 				return state == isSet;
@@ -73,13 +67,12 @@ namespace System.Threading
 		
 		public void Reset ()
 		{
-			Thread.VolatileWrite (ref state, isNotSet);
+			Interlocked.Exchange (ref state, isNotSet);
 		}
 		
 		public void Set ()
 		{
-			// Make sure that even is state was cached by a CPU the new value is correctly propagated
-			Thread.VolatileWrite (ref state, isSet);
+			Interlocked.Exchange (ref state, isSet);
 		}
 		
 		public void Wait ()
@@ -119,7 +112,7 @@ namespace System.Threading
 				if (s.ElapsedMilliseconds >= millisecondsTimeout)
 					return false;
 				
-				Thread.Sleep (0);
+				sw.SpinOnce ();
 			}
 			
 			return true;
@@ -130,24 +123,23 @@ namespace System.Threading
 			return Wait ((int)ts.TotalMilliseconds);
 		}
 		
+		[MonoTODO]
 		public WaitHandle WaitHandle {
 			get {
-				// FIXME
 				return null;
 			}
 		}
 		
 		#region IDisposable implementation 
-		
 		public void Dispose ()
 		{
-			//Dispose(true);
+			Dispose(true);
 		}
 		
-		/*protected virtual void Dispose(bool managedRes)
+		protected virtual void Dispose(bool managedRes)
 		{
 			
-		}*/
+		}
 		#endregion 
 		
 	}

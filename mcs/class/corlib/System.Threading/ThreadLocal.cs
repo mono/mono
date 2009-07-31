@@ -70,6 +70,12 @@ namespace System.Threading
 			}
 		}
 		
+		public override string ToString ()
+		{
+			return string.Format("[ThreadLocal: IsValueCreated={0}, Value={1}]", IsValueCreated, Value);
+		}
+
+		
 		T GetValueThreadLocal ()
 		{
 			DataSlotWrapper myWrapper = Thread.GetData (localStore) as DataSlotWrapper;

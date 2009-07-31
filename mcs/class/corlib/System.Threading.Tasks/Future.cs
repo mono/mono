@@ -28,46 +28,62 @@ using System;
 namespace System.Threading.Tasks
 {
 	
-	public class Task<T>: Task
+	public class Task<TResult>: Task
 	{
-		T value;
+		TResult value;
+		TaskFactory<TResult> factory = new TaskFactory<TResult> ();
 		
-		Func<object, T> function;
+		Func<object, TResult> function;
 		object state;
 		
-		public T Value {
+		public TResult Result {
 			get {
 				Wait ();
 				return value;
 			}
-			private set {
+			internal set {
 				this.value = value;
 			}
 		}
 		
-		public Task (Func<T> function) : this (function, TaskCreationOptions.None)
+		public new Exception Exception {
+			get {
+				return base.Exception;
+			}
+			internal set {
+				base.Exception = value;
+			}
+		}
+		
+		public new TaskFactory<TResult> Factory {
+			get {
+				return factory;
+			}
+		}
+		
+		public Task (Func<TResult> function) : this (function, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Func<T> function, TaskCreationOptions options) : this ((o) => function (), null, options)
+		public Task (Func<TResult> function, TaskCreationOptions options) : this ((o) => function (), null, options)
 		{
 			
 		}
 		
-		public Task (Func<object, T> function, object state) : this (function, state, TaskCreationOptions.None)
+		public Task (Func<object, TResult> function, object state) : this (function, state, TaskCreationOptions.None)
 		{
 			
 		}
 		
-		public Task (Func<object, T> function, object state, TaskCreationOptions options)
+		public Task (Func<object, TResult> function, object state, TaskCreationOptions options)
 			: base (null, state, options)
 		{
 			this.function = function;
 			this.state = state;
 		}
 		
-		protected override void InnerInvoke ()
+		internal override void InnerInvoke ()
 		{
 			if (function != null)
 				value = function (state);
@@ -76,47 +92,48 @@ namespace System.Threading.Tasks
 			state = null;
 		}
 		
-		public Task ContinueWith (Action<Task<T>> a)
+		public Task ContinueWith (Action<Task<TResult>> a)
 		{
 			return ContinueWith (a, TaskContinuationOptions.None);
 		}
 		
-		public Task ContinueWith (Action<Task<T>> a, TaskContinuationOptions options)
+		public Task ContinueWith (Action<Task<TResult>> a, TaskContinuationOptions options)
 		{
-			return ContinueWith (a, TaskScheduler.Current, options);
+			return ContinueWith (a, options, TaskScheduler.Current);
 		}
 		
-		public Task ContinueWith (Action<Task<T>> a, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task<TResult>> a, TaskScheduler scheduler)
 		{
-			return ContinueWith (a, scheduler, TaskContinuationOptions.None);
+			return ContinueWith (a, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task ContinueWith (Action<Task<T>> a, TaskScheduler scheduler, TaskContinuationOptions options)
+		public Task ContinueWith (Action<Task<TResult>> a, TaskContinuationOptions options, TaskScheduler scheduler)
 		{
-			Task t = new Task ((o) => a ((Task<T>)o), this, TaskCreationOptions.None);
+			Task t = new Task ((o) => a ((Task<TResult>)o), this, TaskCreationOptions.None);
 			ContinueWithCore (t, options, scheduler);
 			
 			return t;
 		}
 		
-		public Task<U> ContinueWith<U> (Func<Task<T>, U> a)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a)
 		{
-			return ContinueWith<U> (a, TaskContinuationOptions.None);
+			return ContinueWith<TNewResult> (a, TaskContinuationOptions.None);
 		}
 		
-		public Task<U> ContinueWith<U> (Func<Task<T>, U> a, TaskContinuationOptions options)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskContinuationOptions options)
 		{
-			return ContinueWith<U> (a, TaskScheduler.Current, options);
+			return ContinueWith<TNewResult> (a, options, TaskScheduler.Current);
 		}
 		
-		public Task<U> ContinueWith<U> (Func<Task<T>, U> a, TaskScheduler scheduler)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskScheduler scheduler)
 		{
-			return ContinueWith<U> (a, scheduler, TaskContinuationOptions.None);
+			return ContinueWith<TNewResult> (a, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task<U> ContinueWith<U> (Func<Task<T>, U> a, TaskScheduler scheduler, TaskContinuationOptions options)
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskContinuationOptions options,
+		                                                  TaskScheduler scheduler)
 		{
-			Task<U> t = new Task<U> ((o) => a ((Task<T>)o), this, TaskCreationOptions.None);
+			Task<TNewResult> t = new Task<TNewResult> ((o) => a ((Task<TResult>)o), this, TaskCreationOptions.None);
 			ContinueWithCore (t, options, scheduler);
 			
 			return t;

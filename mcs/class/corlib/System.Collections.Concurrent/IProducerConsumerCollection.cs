@@ -34,6 +34,7 @@ namespace System.Collections.Concurrent
 		bool TryAdd (T item);
 		bool TryTake (out T item);
 		T[] ToArray ();
+		void CopyTo (T[] array, int index);
 	}
 }
 #endif

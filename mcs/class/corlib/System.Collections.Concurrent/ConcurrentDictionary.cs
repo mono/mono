@@ -114,7 +114,8 @@ namespace System.Collections.Concurrent
 			
 		}
 		
-		internal ConcurrentDictionary (SerializationInfo info, StreamingContext context)
+		[MonoTODO]
+		protected ConcurrentDictionary (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -442,26 +443,39 @@ namespace System.Collections.Concurrent
 			}
 		}
 
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		bool ICollection.IsSynchronized {
-			get { return true; }
-		}
-
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-			throw new NotImplementedException ();
-		}
 		
 		bool IDictionary.IsFixedSize {
 			get {
 				return false;
 			}
 		}
-			
+		
+		[MonoTODO]
+		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			GetObjectData (info, context);
+		}
+		
+		bool ICollection.IsSynchronized {
+			get { return true; }
+		}
+
+		[MonoTODO]
+		protected virtual void OnDeserialization (object sender)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			OnDeserialization (sender);
+		}
 		
 		bool TryGetBasket (TKey key, out Basket basket)
 		{

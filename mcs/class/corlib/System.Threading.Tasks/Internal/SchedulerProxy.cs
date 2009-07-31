@@ -30,7 +30,7 @@ using System;
 namespace System.Threading.Tasks
 {
 	
-	public class SchedulerProxy : IScheduler
+	internal class SchedulerProxy : IScheduler
 	{
 		TaskScheduler scheduler;
 		

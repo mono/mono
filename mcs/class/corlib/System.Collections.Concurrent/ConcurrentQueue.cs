@@ -44,9 +44,7 @@ namespace System.Collections.Concurrent
 		Node head = new Node ();
 		Node tail;
 		int count;
-		
-		/// <summary>
-		/// </summary>
+
 		public ConcurrentQueue ()
 		{
 			tail = head;
@@ -56,6 +54,12 @@ namespace System.Collections.Concurrent
 		{
 			foreach (T item in enumerable)
 				Enqueue (item);
+		}
+		
+		[MonoTODO]
+		protected ConcurrentQueue (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public void Enqueue (T item)
@@ -195,18 +199,31 @@ namespace System.Collections.Concurrent
 			return dest;
 		}
 		
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		[MonoTODO]
+		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			GetObjectData (info, context);
 		}
 		
 		bool ICollection.IsSynchronized {
 			get { return true; }
 		}
 
-		void IDeserializationCallback.OnDeserialization (object sender)
+		[MonoTODO]
+		protected virtual void OnDeserialization (object sender)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			OnDeserialization (sender);
 		}
 
 		bool IProducerConsumerCollection<T>.TryTake (out T item)

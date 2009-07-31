@@ -56,6 +56,12 @@ namespace System.Collections.Concurrent
 				Push (item);
 		}
 		
+		[MonoTODO]
+		protected ConcurrentStack (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		bool IProducerConsumerCollection<T>.TryAdd (T elem)
 		{
 			Push (elem);
@@ -75,31 +81,30 @@ namespace System.Collections.Concurrent
 
 		public void PushRange (T[] values)
 		{
-		  PushRange (values, 0, values.Length);
+			PushRange (values, 0, values.Length);
 		}
-
+		
 		public void PushRange (T[] values, int start, int length)
 		{
-		  Node insert = null;
-		  Node first = null;
-
-		  for (int i = start; i < length; i++) {
-			Node temp = new Node ();
-			temp.Value = values[i];
-			temp.Next = insert;
-			insert = temp;
-
-			if (first == null)
-			  first = temp;
-		  }
-		  
-		  do {
-			first.Next = head;
-		  } while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
-
-		  Interlocked.Add (ref count, length);
+			Node insert = null;
+			Node first = null;
+			
+			for (int i = start; i < length; i++) {
+				Node temp = new Node ();
+				temp.Value = values[i];
+				temp.Next = insert;
+				insert = temp;
+				
+				if (first == null)
+					first = temp;
+			}
+			
+			do {
+				first.Next = head;
+			} while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
+			
+			Interlocked.Add (ref count, length);
 		}
-
 		
 		public bool TryPop (out T value)
 		{
@@ -121,34 +126,33 @@ namespace System.Collections.Concurrent
 
 		public int TryPopRange (T[] values)
 		{
-		  return TryPopRange (values, 0, values.Length);
+			return TryPopRange (values, 0, values.Length);
 		}
 
 		public int TryPopRange (T[] values, int startIndex, int count)
 		{
-		  int insertIndex = startIndex;
-		  Node temp;
-		  Node end;
-
-		  do {
-			temp = head;
-			if (temp == null)
-			  return -1;
-			end = temp;
-			for (int j = 0; j < count - 1; j++) {
-			  end = end.Next;
-			  if (end == null)
-				break;
+			Node temp;
+			Node end;
+			
+			do {
+				temp = head;
+				if (temp == null)
+					return -1;
+				end = temp;
+				for (int j = 0; j < count - 1; j++) {
+					end = end.Next;
+					if (end == null)
+						break;
+				}
+			} while (Interlocked.CompareExchange (ref head, end, temp) != temp);
+			
+			int i;
+			for (i = startIndex; i < count && temp != null; i++) {
+				values[i] = temp.Value;
+				temp = temp.Next;
 			}
-		  } while (Interlocked.CompareExchange (ref head, end, temp) != temp);
-		  
-		  int i;
-		  for (i = startIndex; i < count && temp != null; i++) {
-			values[i] = temp.Value;
-			temp = temp.Next;
-		  }
-
-		  return i - 1;
+			
+			return i - 1;
 		}
 		
 		public bool TryPeek (out T value)
@@ -213,18 +217,31 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		[MonoTODO]
+		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			GetObjectData (info, context);
 		}
 		
 		bool ICollection.IsSynchronized {
 			get { return true; }
 		}
 
-		void IDeserializationCallback.OnDeserialization (object sender)
+		[MonoTODO]
+		protected virtual void OnDeserialization (object sender)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			OnDeserialization (sender);
 		}
 
 		bool IProducerConsumerCollection<T>.TryTake (out T item)

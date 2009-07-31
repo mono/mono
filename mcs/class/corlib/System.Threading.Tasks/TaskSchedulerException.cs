@@ -42,20 +42,20 @@ namespace System.Threading.Tasks
 
 		}
 
-		internal TaskSchedulerException (SerializationInfo info, StreamingContext context)
-			  : base (info, context)
+		protected TaskSchedulerException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		
 		}
 	
 		public TaskSchedulerException (Exception innerException)
-			  : base (exceptionDefaultMessage, innerException)
+			: base (exceptionDefaultMessage, innerException)
 		{
 		
 		}
 	
 		public TaskSchedulerException (string message, Exception innerException)
-			  : base (message, innerException)
+			: base (message, innerException)
 		{
 		
 		}

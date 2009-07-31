@@ -33,8 +33,7 @@ namespace System.Threading
 		readonly int max;
 		
 		int currCount;
-		
-		bool isCanceled;
+
 		bool isDisposed;
 		
 		SpinWait wait = new SpinWait ();
@@ -69,8 +68,6 @@ namespace System.Threading
 		
 		void CheckState ()
 		{
-			if (isCanceled)
-				throw new OperationCanceledException ("The SemaphoreSlim is canceled.");
 			if (isDisposed)
 				throw new ObjectDisposedException ("The SemaphoreSlim has been disposed.");
 		}
@@ -79,17 +76,6 @@ namespace System.Threading
 			get {
 				return currCount;
 			}
-		}
-		
-		public bool IsCanceled {
-			get {
-				return isCanceled;
-			}
-		}
-		
-		public void Cancel ()
-		{
-			isCanceled = true;
 		}
 		
 		public int Release ()
@@ -167,6 +153,7 @@ namespace System.Threading
 			return true;
 		}
 		
+		[MonoTODO ("Cf CountdownEvent for ManualResetEvent usage")]
 		public WaitHandle AvailableWaitHandle {
 			get {
 				return null;

@@ -417,6 +417,7 @@ System.Threading/WaitHandleCas.cs
 
 System.Threading.Tasks/TaskTest.cs
 System.Threading.Tasks/FutureTests.cs
+System.Threading.Tasks/TaskCompletionSourceTests.cs
 System.Collections.Concurrent/ParallelConcurrentStackTests.cs
 System.Collections.Concurrent/ConcurrentSkipListTests.cs
 ../System.Collections.Concurrent/ConcurrentSkipList.cs
@@ -429,7 +430,6 @@ System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Concurrent/ParallelConcurrentQueueTests.cs
 System.Threading/CancellationTokenTests.cs
 System.Threading/ManualResetEventSlimTests.cs
-System.Threading/SnziTests.cs
 System.Threading/SemaphoreSlimTests.cs
 System.Threading/ParallelTests.cs
 System.Threading/CountdownEventTests.cs

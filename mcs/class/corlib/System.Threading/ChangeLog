@@ -1,3 +1,15 @@
+2009-07-31  Jérémie Laval  <jeremie.laval@gmail.com>
+
+        * Snzi.cs:
+        * Parallel.cs:
+        * SpinLock.cs:
+        * SpinWait.cs:
+        * ThreadLocal.cs:
+        * SemaphoreSlim.cs:
+        * CountdownEvent.cs:
+        * ManualResetEventSlim.cs:
+        * CancellationTokenSource.cs: Various 4.0 b1 API mismatch fixes.
+
 2009-07-30 Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* AggregateException.cs:

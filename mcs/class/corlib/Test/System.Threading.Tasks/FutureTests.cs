@@ -45,7 +45,7 @@ namespace ParallelFxTests
 			Task<int> f = InitTestTask ();
 			
 			Assert.IsNotNull(f, "#1");
-			Assert.AreEqual(5, f.Value, "#2");
+			Assert.AreEqual(5, f.Result, "#2");
 		}
 		
 		[Test]
@@ -54,13 +54,13 @@ namespace ParallelFxTests
 			bool result = false;
 			
 			Task<int> f = InitTestTask ();
-			Task<int> cont = f.ContinueWith ((future) => { result = true; return future.Value * 2; });
+			Task<int> cont = f.ContinueWith ((future) => { result = true; return future.Result * 2; });
 			f.Wait ();
 			cont.Wait ();
 			
 			Assert.IsNotNull (cont, "#1");
 			Assert.IsTrue (result, "#2");
-			Assert.AreEqual (10, cont.Value);
+			Assert.AreEqual (10, cont.Result);
 		}
 		
 		/* Not pertinent anymore

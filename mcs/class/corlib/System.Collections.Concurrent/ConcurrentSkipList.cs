@@ -218,7 +218,10 @@ namespace System.Collections.Concurrent
 					if (!isMarked) {
 						toDelete = succs [found];
 						topLayer = toDelete.TopLayer;
-						toDelete.SpinLock.Enter ();
+						bool taken = false;
+						do {
+							toDelete.SpinLock.Enter (ref taken);
+						} while (!taken);
 						// Now that we have the lock, check if the node hasn't already been marked
 						if (toDelete.Marked) {
 							toDelete.SpinLock.Exit (true);
@@ -275,7 +278,10 @@ namespace System.Collections.Concurrent
 				return false;
 			
 			try {
-				succs [found].SpinLock.Enter ();
+				bool taken = false;
+				do {
+					succs [found].SpinLock.Enter (ref taken);
+				} while (!taken);
 				Node node = succs [found];
 				if (node.FullyLinked && !node.Marked) {
 					value = node.Value;
@@ -335,7 +341,10 @@ namespace System.Collections.Concurrent
 				succ = succs [layer];
 				if (pred != prevPred) {
 					// Possible optimization : limit topLayer to the first refused lock
-					pred.SpinLock.Enter ();
+					bool taken = false;
+					do {
+						pred.SpinLock.Enter (ref taken);
+					} while (!taken);
 					highestLocked = layer;
 					prevPred = pred;
 				}

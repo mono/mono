@@ -31,7 +31,6 @@ namespace System.Threading
 	{
 		int count;
 		readonly int initial;
-		bool isCanceled;
 		ManualResetEvent evt = new ManualResetEvent (false);
 		
 		public CountdownEvent (int count)
@@ -54,8 +53,6 @@ namespace System.Threading
 			Action<int> check = delegate (int value) {
 				if (value < 0)
 				throw new InvalidOperationException ("the specified count is larger that CurrentCount");
-				if (IsCanceled)
-				throw new OperationCanceledException ();
 			};
 			
 			int newValue;
@@ -94,10 +91,7 @@ namespace System.Threading
 			if (num < 0)
 				throw new ArgumentOutOfRangeException ("num");
 			
-			Action<int> check = delegate (int value) {
-				if (IsCanceled)
-				throw new OperationCanceledException ();
-			};
+			Action<int> check = delegate (int value) {	};
 			
 			return ApplyOperation (num, check);
 		}
@@ -133,6 +127,11 @@ namespace System.Threading
 			while (!IsSet) {
 				wait.SpinOnce ();
 			}
+		}
+		
+		public bool Wait (CancellationToken token)
+		{
+			return Wait (() => token.IsCancellationRequested);
 		}
 		
 		public bool Wait (int timeoutMilli)
@@ -231,25 +230,12 @@ namespace System.Threading
 		{
 			
 		}
-		#endregion 
 		
-		
-		#region ISupportsCancellation implementation 
-		
-		public void Cancel ()
+		protected virtual void Dispose (bool managedRes)
 		{
-			Interlocked.Exchange (ref count, 0);
-			isCanceled = true;
+			
 		}
-		
-		public bool IsCanceled {
-			get {
-				return isCanceled;
-			}
-		}
-		
-		#endregion 
-		
+		#endregion 	
 	}
 }
 #endif

@@ -32,12 +32,12 @@ namespace System.Threading
 {
 	public static class Parallel
 	{
-		public static int GetBestWorkerNumber ()
+		internal static int GetBestWorkerNumber ()
 		{
 			return GetBestWorkerNumber (TaskScheduler.Current);
 		}
 		
-		public static int GetBestWorkerNumber (TaskScheduler scheduler)
+		internal static int GetBestWorkerNumber (TaskScheduler scheduler)
 		{	
 			return scheduler.MaximumConcurrencyLevel;
 		}

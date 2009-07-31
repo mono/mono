@@ -144,11 +144,16 @@ namespace System.Collections.Concurrent
 			if (a == null)
 				return;
 			
+			CopyTo (a, index);
+		}
+		
+		public void CopyTo (T[] array, int index)
+		{
 			int c = count;
-			if (a.Length < c + index)
+			if (array.Length < c + index)
 				throw new InvalidOperationException ("Array is not big enough");
 			
-			CopyTo (a, index, c);
+			CopyTo (array, index, c);
 		}
 		
 		void CopyTo (T[] array, int index, int num)

@@ -43,6 +43,12 @@ namespace System.Threading
 			}
 		}
 		
+		public bool IsHeld {
+			get {
+				return lockState == isOwned;
+			}
+		}
+		
 		public bool IsHeldByCurrentThread {
 			get {
 				if (isThreadOwnerTrackingEnabled)
@@ -62,14 +68,12 @@ namespace System.Threading
 		
 		void CheckAndSetThreadId ()
 		{
-			// FIXME: LockRecursionException is not implement atm, swap line when it is
 			if (threadWhoTookLock == Thread.CurrentThread.ManagedThreadId)
-				//throw new LockRecursionException("The current thread has already acquired this lock.");
-				throw new Exception ("The current thread has already acquired this lock.");
+				throw new LockRecursionException("The current thread has already acquired this lock.");
 			threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
 		}
 		
-		public void ReliableEnter (ref bool lockTaken)
+		public void Enter (ref bool lockTaken)
 		{
 			try {
 				Enter ();
@@ -79,9 +83,7 @@ namespace System.Threading
 			}
 		}
 		
-		// FIXME
-		//[ReliabilityContractAttribute]
-		public void Enter () 
+		internal void Enter () 
 		{
 			int result = Interlocked.Exchange (ref lockState, isOwned);
 			
@@ -106,7 +108,7 @@ namespace System.Threading
 			CheckAndSetThreadId ();
 		}
 		
-		public bool TryEnter ()
+		bool TryEnter ()
 		{
 			//Thread.BeginCriticalRegion();
 
@@ -118,12 +120,12 @@ namespace System.Threading
 			return false;
 		}
 		
-		public bool TryEnter (TimeSpan timeout)
+		bool TryEnter (TimeSpan timeout)
 		{
 			return TryEnter ((int)timeout.TotalMilliseconds);
 		}
 		
-		public bool TryEnter (int milliSeconds)
+		bool TryEnter (int milliSeconds)
 		{
 			//Thread.BeginCriticalRegion();
 			
@@ -140,7 +142,7 @@ namespace System.Threading
 			return result;
 		}
 		
-		public void TryReliableEnter (ref bool lockTaken)
+		public void TryEnter (ref bool lockTaken)
 		{
 			try {
 				lockTaken = TryEnter ();
@@ -149,24 +151,23 @@ namespace System.Threading
 			}
 		}
 		
-		public void TryReliableEnter (TimeSpan timeout, ref bool lockTaken)
+		public void TryEnter (TimeSpan timeout, ref bool lockTaken)
 		{
-			TryReliableEnter ((int)timeout.TotalMilliseconds, ref lockTaken);
+			TryEnter ((int)timeout.TotalMilliseconds, ref lockTaken);
 		}
 		
-		public void TryReliableEnter (int milliSeconds, ref bool lockTaken)
+		public void TryEnter (int milliSeconds, ref bool lockTaken)
 		{
 			//Thread.BeginCriticalRegion();
 			
 			Watch sw = Watch.StartNew ();
 			
 			while (sw.ElapsedMilliseconds < milliSeconds) {
-				TryReliableEnter (ref lockTaken);
+				TryEnter (ref lockTaken);
 			}
 			sw.Stop ();
 		}
 
-		//FIXME
 		//[ReliabilityContractAttribute]
 		public void Exit () 
 		{ 
