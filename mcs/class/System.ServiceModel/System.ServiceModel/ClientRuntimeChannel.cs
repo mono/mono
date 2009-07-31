@@ -46,6 +46,7 @@ namespace System.ServiceModel
 		: CommunicationObject, IClientChannel
 	{
 		ClientRuntime runtime;
+		EndpointAddress remote_address;
 		ChannelFactory factory;
 		IRequestChannel request_channel;
 		IOutputChannel output_channel; // could also be IDuplexChannel instance.
@@ -65,9 +66,11 @@ namespace System.ServiceModel
 		#endregion
 
 		public ClientRuntimeChannel (ServiceEndpoint endpoint,
-			ChannelFactory factory)
+			ChannelFactory factory, EndpointAddress remoteAddress, Uri via)
 		{
 			this.runtime = endpoint.CreateRuntime ();
+			this.remote_address = remoteAddress ?? endpoint.Address;
+			runtime.Via = via;
 			this.factory = factory;
 			_processDelegate = new ProcessDelegate (Process);
 			requestDelegate = new RequestDelegate (Request);
@@ -429,11 +432,8 @@ namespace System.ServiceModel
 			if (output_channel != null)
 				return;
 
-			EndpointAddress address = factory.Endpoint.Address;
-			Uri via = Runtime.Via;
-
 			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			output_channel = (IOutputChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
+			output_channel = (IOutputChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {remote_address, Via});
 		}
 
 		// This handles both IRequestChannel and IRequestSessionChannel.
@@ -442,11 +442,8 @@ namespace System.ServiceModel
 			if (request_channel != null)
 				return;
 
-			EndpointAddress address = factory.Endpoint.Address;
-			Uri via = Runtime.Via;
-
 			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			request_channel = (IRequestChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
+			request_channel = (IRequestChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {remote_address, Via});
 		}
 
 		void Output (OperationDescription od, object [] parameters)

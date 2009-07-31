@@ -51,23 +51,25 @@ namespace System.ServiceModel
 
 			//
 			// public __clientproxy_MyContract (
-			//	ServiceEndpoint arg1, ChannelFactory arg2)
-			//	: base (arg1, arg2)
+			//	ServiceEndpoint arg1, ChannelFactory arg2, EndpointAddress arg3, Uri arg4)
+			//	: base (arg1, arg2, arg3, arg4)
 			// {
 			// }
 			//
-			Type [] ctorargs = new Type [] {typeof (ServiceEndpoint), typeof (ChannelFactory)};
+			Type [] ctorargs = new Type [] {typeof (ServiceEndpoint), typeof (ChannelFactory), typeof (EndpointAddress), typeof (Uri)};
 			CodeMethod ctor = c.CreateConstructor (
 				MethodAttributes.Public, ctorargs);
 			CodeBuilder b = ctor.CodeBuilder;
 			MethodBase baseCtor = crtype.GetConstructors (
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) [0];
-			if (baseCtor == null) throw new Exception ("INTERNAL ERROR: ClientBase<T>.ChannelBase<T>#C.ctor(ClientBase<T>) does not exist.");
+			if (baseCtor == null) throw new Exception ("INTERNAL ERROR: ClientRuntimeChannel.ctor() was not found.");
 			b.Call (
 				ctor.GetThis (),
 				baseCtor,
 				new CodeArgumentReference (typeof (ServiceEndpoint), 1, "arg0"),
-				new CodeArgumentReference (typeof (ChannelFactory), 2, "arg1"));
+				new CodeArgumentReference (typeof (ChannelFactory), 2, "arg1"),
+				new CodeArgumentReference (typeof (EndpointAddress), 3, "arg2"),
+				new CodeArgumentReference (typeof (Uri), 4, "arg3"));
 
 			// member implementation
 			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
