@@ -1,5 +1,10 @@
 2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
 
+	* ListTest.cs: Add a few testcases for IList interface, using null
+	values with a List<int>.
+
+2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
+
 	* DictionaryTest.cs (KeyEnumerator_Current): New test.  Test the
 	Keys slice enumerator.
 	(ValueEnumerator_Current): Likewise, for the Values slice.

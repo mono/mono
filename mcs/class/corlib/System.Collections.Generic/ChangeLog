@@ -1,5 +1,12 @@
 2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
 
+	* List.cs (IList.this.set): Convert NullReference and InvalidCast
+	exceptions into ArgumentExceptions.
+	(IList.Add, IList.Contains, IList.IndexOf, IList.Insert, IList.Remove):
+	Convert NullReferenceException to ArgumentException.
+
+2009-07-31  Raja R Harinath  <harinath@hurrynot.org>
+
 	* List.cs (Enumerator.next): Rename from Enumerator.idx and change
 	meaning to be the index of the next item to be enumerated.
 	(Enumerator.MoveNext): Simplify.

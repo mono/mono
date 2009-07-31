@@ -658,28 +658,31 @@ namespace System.Collections.Generic {
 		{
 			try {
 				Add ((T) item);
+				return _size - 1;
+			} catch (NullReferenceException) {
 			} catch (InvalidCastException) {
-				throw new ArgumentException("item");
 			}
-			return _size - 1;
+			throw new ArgumentException ("item");
 		}
 		
 		bool IList.Contains (object item)
 		{
 			try {
 				return Contains ((T) item);
+			} catch (NullReferenceException) {
 			} catch (InvalidCastException) {
-				return false;
 			}
+			return false;
 		}
 		
 		int IList.IndexOf (object item)
 		{
 			try {
-				return IndexOf((T) item);
+				return IndexOf ((T) item);
+			} catch (NullReferenceException) {
 			} catch (InvalidCastException) {
-				return -1;
 			}
+			return -1;
 		}
 		
 		void IList.Insert (int index, object item)
@@ -691,22 +694,24 @@ namespace System.Collections.Generic {
 			CheckIndex (index);
 			try {
 				Insert (index, (T) item);
+				return;
+			} catch (NullReferenceException) {
 			} catch (InvalidCastException) {
-				throw new ArgumentException("item");
 			}
+			throw new ArgumentException ("item");
 		}
 		
 		void IList.Remove (object item)
 		{
 			try {
 				Remove ((T) item);
+				return;
+			} catch (NullReferenceException) {
 			} catch (InvalidCastException) {
-				// Swallow the exception--if we
-				// can't cast to the correct type
-				// then we've already "succeeded"
-				// in removing the item from the
-				// List.
 			}
+			// Swallow the exception--if we can't cast to the
+			// correct type then we've already "succeeded" in
+			// removing the item from the List.
 		}
 		
 		bool ICollection <T>.IsReadOnly {
@@ -729,7 +734,16 @@ namespace System.Collections.Generic {
 		
 		object IList.this [int index] {
 			get { return this [index]; }
-			set { this [index] = (T) value; }
+			set {
+				try {
+					this [index] = (T) value;
+					return;
+				} catch (NullReferenceException) {
+					// can happen when 'value' is null and T is a valuetype
+				} catch (InvalidCastException) {
+				}
+				throw new ArgumentException ("value");
+			}
 		}
 #endregion
 				

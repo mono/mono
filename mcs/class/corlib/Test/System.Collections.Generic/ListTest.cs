@@ -188,17 +188,31 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test, ExpectedException(typeof (ArgumentException))]
-		public void IList_InsertInvalidType ()
+		public void IList_InsertInvalidType1 ()
 		{
 			IList list = _list1 as IList;
 			list.Insert(0, new object());
 		}
+
+		[Test, ExpectedException(typeof (ArgumentException))]
+		public void IList_InsertInvalidType2 ()
+		{
+			IList list = _list1 as IList;
+			list.Insert(0, null);
+		}
 		
 		[Test, ExpectedException(typeof (ArgumentException))]
-		public void IList_AddInvalidType()
+		public void IList_AddInvalidType1()
 		{
 			IList list = _list1 as IList;
 			list.Add(new object());
+		}
+
+		[Test, ExpectedException(typeof (ArgumentException))]
+		public void IList_AddInvalidType2()
+		{
+			IList list = _list1 as IList;
+			list.Add(null);
 		}
 		
 		[Test]
@@ -207,6 +221,9 @@ namespace MonoTests.System.Collections.Generic {
 			IList list = _list1 as IList;
 			int nCount = list.Count;
 			list.Remove(new object());
+			Assert.AreEqual(nCount, list.Count);
+
+			list.Remove(null);
 			Assert.AreEqual(nCount, list.Count);
 		}
 
@@ -1128,6 +1145,8 @@ namespace MonoTests.System.Collections.Generic {
 			List<string> list = new List<string>();
 			list.Add("foo");
 			Assert.IsFalse (((IList)list).Contains(new object()));
+
+			Assert.IsFalse (((IList)_list1).Contains(null));
 		}
 		
 		[Test]
@@ -1136,6 +1155,8 @@ namespace MonoTests.System.Collections.Generic {
 			List<string> list = new List<string>();
 			list.Add("foo");
 			Assert.AreEqual (-1, ((IList)list).IndexOf(new object()));
+
+			Assert.AreEqual (-1, ((IList)_list1).IndexOf(null));
 		}
 
 		// for bug #77277 test case
