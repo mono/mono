@@ -77,8 +77,8 @@ namespace System.ServiceModel.Channels
 			this.info = info;
 
 			// make sure to acquire TcpClient here.
-			int explicitPort = RemoteAddress.Uri.Port;
-			client = new TcpClient (RemoteAddress.Uri.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
+			int explicitPort = Via.Port;
+			client = new TcpClient (Via.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 		}
 		
 		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client)
@@ -211,7 +211,7 @@ namespace System.ServiceModel.Channels
 				NetworkStream ns = client.GetStream ();
 				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns, is_service_side) {
 					Encoder = this.Encoder,
-					Via = RemoteAddress.Uri };
+					Via = this.Via };
 				frame.ProcessPreambleInitiator ();
 				frame.ProcessPreambleAckInitiator ();
 			} else {

@@ -70,13 +70,13 @@ namespace System.ServiceModel.Channels
 
 		void CreateClient (TimeSpan timeout)
 		{
-			int explicitPort = RemoteAddress.Uri.Port;
-			client = new TcpClient (RemoteAddress.Uri.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
+			int explicitPort = Via.Port;
+			client = new TcpClient (Via.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 			
 			NetworkStream ns = client.GetStream ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, false) {
 				Encoder = this.Encoder,
-				Via = RemoteAddress.Uri,
+				Via = this.Via,
 				EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
 			frame.ProcessPreambleInitiator ();
 			frame.ProcessPreambleAckInitiator ();

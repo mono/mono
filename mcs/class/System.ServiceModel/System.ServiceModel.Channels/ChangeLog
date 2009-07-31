@@ -1,5 +1,10 @@
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpChannelFactory.cs, TcpDuplexSessionChannel.cs,
+	  TcpRequestChannel.cs : use Via uri to validate and connect.
+
+2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RequestChannelBase.cs, DuplexChannelBase.cs :
 	  Return endpoint address Uri when no explicit Via uri is specified.
 	* ChannelFactoryBase.cs : Remove extra async close methods.

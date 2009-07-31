@@ -57,14 +57,14 @@ namespace System.ServiceModel.Channels
 			info = new TcpChannelInfo (source, encoder, quotas);
 		}
 
-		[MonoTODO]
 		protected override TChannel OnCreateChannel (
 			EndpointAddress address, Uri via)
 		{			
 			ThrowIfDisposedOrNotOpen ();
 
-			if (info.BindingElement.Scheme != address.Uri.Scheme)
-				throw new ArgumentException (String.Format ("Argument EndpointAddress has unsupported URI scheme: {0}", address.Uri.Scheme));
+			var targetUri = via ?? address.Uri;
+			if (info.BindingElement.Scheme != targetUri.Scheme)
+				throw new ArgumentException (String.Format ("Argument EndpointAddress has unsupported URI scheme: {0}", targetUri.Scheme));
 
 			Type t = typeof (TChannel);
 			
