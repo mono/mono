@@ -1,5 +1,15 @@
 2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilder.cs (GetEvents): Throw if not created
+	and not in compiler context.
+
+	* TypeBuilder.cs (GetNestedType): Don't rely on
+	MonoType implementation as it doesn't work if the
+	nested type is defined after the TypeBuilder is
+	created.
+
+2009-07-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilder.cs (GetConstructors): Throw if
 	TypeBuilder is incomplete.
 

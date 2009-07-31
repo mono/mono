@@ -10740,6 +10740,35 @@ namespace MonoTests.System.Reflection.Emit
 			tb.CreateType ();
 			Assert.IsNotNull (tb.GetConstructors (BindingFlags.Instance), "#2");
 		}
+
+		[Test]
+		public void GetEventsThrowWhenIncomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.GetEvents (BindingFlags.Instance);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) { }
+
+			tb.CreateType ();
+			Assert.IsNotNull (tb.GetEvents (BindingFlags.Instance), "#2");
+		}
+
+		[Test]
+		public void GetNestedTypeCreatedAfterTypeIsCreated ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			TypeBuilder nested = tb.DefineNestedType ("Bar", TypeAttributes.Class | TypeAttributes.NestedPrivate);
+			tb.CreateType ();
+			Assert.IsNull (tb.GetNestedType ("Bar", BindingFlags.NonPublic), "#1");
+			Type res = nested.CreateType ();
+			Assert.AreEqual (res, tb.GetNestedType ("Bar", BindingFlags.NonPublic), "#2");
+
+			TypeBuilder nested2 = tb.DefineNestedType ("Bar2", TypeAttributes.Class | TypeAttributes.NestedPrivate);
+			Assert.IsNull (tb.GetNestedType ("Bar2", BindingFlags.NonPublic), "#3");
+			res = nested2.CreateType ();
+			Assert.AreEqual (res, tb.GetNestedType ("Bar2", BindingFlags.NonPublic), "#4");
+		}
 #endif
 #if NET_2_0
 #if !WINDOWS

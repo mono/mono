@@ -937,13 +937,11 @@ namespace System.Reflection.Emit
 
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
 		{
-			/* FIXME: mcs calls this
-			   check_created ();
-			*/
-			if (!is_created)
-				return new EventInfo [0];
-			else
+			if (is_created)
 				return created.GetEvents (bindingAttr);
+			if (!IsCompilerContext)
+				throw new NotSupportedException ();
+			return new EventInfo [0]; /*FIXME shouldn't we return the events here?*/
 		}
 
 		// This is only used from MonoGenericInst.initialize().
@@ -1263,7 +1261,25 @@ namespace System.Reflection.Emit
 		public override Type GetNestedType (string name, BindingFlags bindingAttr)
 		{
 			check_created ();
-			return created.GetNestedType (name, bindingAttr);
+
+			if (subtypes == null)
+				return null;
+
+			foreach (TypeBuilder t in subtypes) {
+				if (!t.is_created)
+					continue;
+				if ((t.attrs & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic) {
+					if ((bindingAttr & BindingFlags.Public) == 0)
+						continue;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) == 0)
+						continue;
+				}
+				if (t.Name == name)
+					return t.created;
+			}
+
+			return null;
 		}
 
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr)

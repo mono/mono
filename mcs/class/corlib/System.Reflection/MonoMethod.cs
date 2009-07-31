@@ -548,6 +548,8 @@ namespace System.Reflection {
 					sb.Append (", ");
 				sb.Append (p[i].ParameterType.Name);
 			}
+			if (CallingConvention == CallingConventions.Any)
+				sb.Append (", ...");
 			sb.Append (")");
 			return sb.ToString ();
 		}
