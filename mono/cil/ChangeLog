@@ -1,3 +1,9 @@
+2009-07-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	cil-opcodes.xml: Fix naming of stelem and ldelem to be
+	the same of the spec. Fix stack effect of stelem. Change
+	type of constrained and readonly prefixes. 
+
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* cil-opcodes.xml: Add an 'icall_addr' opcode.
