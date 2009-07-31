@@ -34,6 +34,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.PeerResolvers;
 using System.ServiceModel.Security;
 using System.Threading;
 
@@ -49,13 +50,37 @@ namespace System.ServiceModel.Channels
 
 	internal class PeerDuplexChannel : DuplexChannelBase
 	{
+		enum RemotePeerStatus
+		{
+			None,
+			Connected,
+			Error,
+		}
+
+		class RemotePeerConnection
+		{
+			public RemotePeerConnection (PeerNodeAddress address)
+			{
+				Address = address;
+			}
+
+			public PeerNodeAddress Address { get; private set; }
+			public RemotePeerStatus Status { get; set; }
+			public IPeerConnectorClient Channel { get; set; }
+		}
+
+		interface IPeerConnectorClient : IClientChannel, IPeerConnectorContract
+		{
+		}
+
 		IChannelFactory<IDuplexSessionChannel> client_factory;
+		ChannelFactory<IPeerConnectorClient> channel_factory;
 		PeerTransportBindingElement binding;
 		PeerResolver resolver;
 		PeerNode node;
 		IChannelListener<IDuplexSessionChannel> channel_listener;
 		TcpChannelInfo info;
-		List<PeerNodeAddress> peers = new List<PeerNodeAddress> ();
+		List<RemotePeerConnection> peers = new List<RemotePeerConnection> ();
 
 		public PeerDuplexChannel (IPeerChannelManager factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base ((ChannelFactoryBase) factory, address, via)
@@ -88,17 +113,17 @@ namespace System.ServiceModel.Channels
 
 		// DuplexChannelBase
 
-		IDuplexSessionChannel CreateInnerClient (PeerNodeAddress pna)
+		IPeerConnectorClient CreateInnerClient (PeerNodeAddress pna)
 		{
 			// FIXME: pass more setup parameters
-			if (client_factory == null) {
+			if (channel_factory == null) {
 				var binding = new NetTcpBinding ();
 				binding.Security.Mode = SecurityMode.None;
-				client_factory = binding.BuildChannelFactory<IDuplexSessionChannel> (new object [0]);
-				client_factory.Open ();
+				channel_factory = new ChannelFactory<IPeerConnectorClient> (binding);
 			}
 
-			return client_factory.CreateChannel (pna.EndpointAddress, Via);
+			// FIXME: EndpointAddress must be "net.p2p://{meshId}", eliminating the remaining path.
+			return channel_factory.CreateChannel (RemoteAddress ?? LocalAddress, pna.EndpointAddress.Uri);
 		}
 
 		public override void Send (Message message, TimeSpan timeout)
@@ -107,18 +132,20 @@ namespace System.ServiceModel.Channels
 
 			DateTime start = DateTime.Now;
 			
-			// rewriter message header to net.p2p endpoint.
-			//
-			// FIXME: I'm not sure rewriting it here is the right
-			// answer. It is possible that it should be done on
-			// creating internal tcp channel factory creating,
-			// using Via uri.
-			message.Headers.To = (RemoteAddress ?? LocalAddress).Uri;
+			foreach (var pc in peers) {
+				if (pc.Status == RemotePeerStatus.None) {
+					var inner = CreateInnerClient (pc.Address);
+					pc.Channel = inner;
+					inner.Open (timeout - (DateTime.Now - start));
+					inner.OperationTimeout = timeout - (DateTime.Now - start);
+					inner.Connect (new ConnectInfo () { PeerNodeAddress = pc.Address, NodeId = (uint) node.NodeId });
 
-			foreach (var pna in peers) {
-				var inner = CreateInnerClient (pna);
-				inner.Open (timeout - (DateTime.Now - start));
-				inner.Send (message, timeout);
+					// FIXME: wait for Welcome or Reject and take further action.
+					throw new NotImplementedException ();
+				}
+
+				pc.Channel.OperationTimeout = timeout - (DateTime.Now - start);
+				pc.Channel.SendMessage (message);
 			}
 		}
 
@@ -173,7 +200,8 @@ namespace System.ServiceModel.Channels
 			DateTime start = DateTime.Now;
 
 			// FIXME: supply maxAddresses
-			peers.AddRange (resolver.Resolve (node.MeshId, 3, timeout));
+			foreach (var a in resolver.Resolve (node.MeshId, 3, timeout))
+				peers.Add (new RemotePeerConnection (a));
 
 			// FIXME: pass more configuration
 			var binding = new NetTcpBinding ();
@@ -209,7 +237,7 @@ namespace System.ServiceModel.Channels
 
 			// Add itself to the local list as well.
 			// FIXME: it might become unnecessary once it implemented new node registration from peer resolver service.
-			peers.Add (pna);
+			peers.Add (new RemotePeerConnection (pna));
 
 			node.SetOnline ();
 		}
