@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Threading;
 
 namespace System.ServiceModel.Channels
@@ -35,19 +36,25 @@ namespace System.ServiceModel.Channels
 		: ChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
-		protected InternalChannelListenerBase ()
-			: base ()
+		protected InternalChannelListenerBase (BindingContext context)
+			: base (context.Binding)
 		{
+			// for ListenUriMode(.Unique), the URI uniqueness
+			// should be assured by the derived types.
+			listen_uri =
+				context.ListenUriRelativeAddress != null ?
+				new Uri (context.ListenUriBaseAddress, context.ListenUriRelativeAddress) :
+				context.ListenUriBaseAddress;
 		}
 
-		protected InternalChannelListenerBase (IDefaultCommunicationTimeouts timeouts)
-			: base (timeouts)
-		{
-		}
-
+		Uri listen_uri;
 		Func<TimeSpan,TChannel> accept_channel_delegate;
 		Func<TimeSpan,bool> wait_delegate;
 		Action<TimeSpan> open_delegate, close_delegate;
+
+		public override Uri Uri {
+			get { return listen_uri; }
+		}
 
 		protected Thread CurrentAsyncThread { get; private set; }
 		protected IAsyncResult CurrentAsyncResult { get; private set; }

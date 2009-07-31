@@ -25,23 +25,14 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		TcpChannelInfo info;
 		IDuplexSession session;
-		Uri listen_uri;
 		TcpListener tcp_listener;
 		
-		public TcpChannelListener (TcpTransportBindingElement source, 
-		                           BindingContext context) : base (context.Binding)
+		public TcpChannelListener (TcpTransportBindingElement source, BindingContext context)
+			: base (context)
 		{
 			MessageEncoder encoder = null;
 			XmlDictionaryReaderQuotas quotas = null;
 
-			if (context.ListenUriMode == ListenUriMode.Explicit)
-				listen_uri =
-					context.ListenUriRelativeAddress != null ?
-					new Uri (context.ListenUriBaseAddress, context.ListenUriRelativeAddress) :
-					context.ListenUriBaseAddress;
-			else
-				throw new NotImplementedException ();
-			
 			foreach (BindingElement be in context.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
@@ -57,10 +48,6 @@ namespace System.ServiceModel.Channels
 			info = new TcpChannelInfo (source, encoder, quotas);
 		}
 		
-		public override Uri Uri {
-			get { return listen_uri; }
-		}
-
 		List<ManualResetEvent> accept_handles = new List<ManualResetEvent> ();
 		List<TChannel> accepted_channels = new List<TChannel> ();
 
@@ -171,12 +158,12 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			IPHostEntry entry = Dns.GetHostEntry (listen_uri.Host);
+			IPHostEntry entry = Dns.GetHostEntry (Uri.Host);
 			
 			if (entry.AddressList.Length ==0)
-				throw new ArgumentException (String.Format ("Invalid listen URI: {0}", listen_uri));
+				throw new ArgumentException (String.Format ("Invalid listen URI: {0}", Uri));
 			
-			int explicitPort = listen_uri.Port;
+			int explicitPort = Uri.Port;
 			tcp_listener = new TcpListener (entry.AddressList [0], explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 			tcp_listener.Start ();
 		}

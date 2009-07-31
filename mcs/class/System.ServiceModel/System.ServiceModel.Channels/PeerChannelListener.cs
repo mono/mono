@@ -43,20 +43,15 @@ namespace System.ServiceModel.Channels
 	{
 		PeerTransportBindingElement source;
 		BindingContext context;
-		Uri listen_uri;
 		TChannel channel;
 		MessageEncoder encoder;
 		AutoResetEvent accept_handle = new AutoResetEvent (false);
 
 		public PeerChannelListener (PeerTransportBindingElement source,
 			BindingContext context)
-			: base (context.Binding)
+			: base (context)
 		{
 			this.source = source;
-			// FIXME: consider ListenUriMode
-			// FIXME: there should be some way to post-provide Uri in case of null listenerUri in context.
-			listen_uri = context.ListenUriBaseAddress != null ?
-				new Uri (context.ListenUriBaseAddress, context.ListenUriRelativeAddress) : null;
 			foreach (BindingElement be in context.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
@@ -76,10 +71,6 @@ namespace System.ServiceModel.Channels
 
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
-		}
-
-		public override Uri Uri {
-			get { return listen_uri; }
 		}
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)

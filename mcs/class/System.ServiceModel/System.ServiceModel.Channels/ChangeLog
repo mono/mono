@@ -1,5 +1,12 @@
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelListenerBase_1.cs, TcpChannelListener.cs,
+	  PeerChannelListener.cs, HttpChannelListener.cs :
+	  support ListenUri accordingly too so that it could be used when
+	  it is different from LocalAddress.Uri.
+
+2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelFactory.cs, TcpDuplexSessionChannel.cs,
 	  TcpRequestChannel.cs : use Via uri to validate and connect.
 
