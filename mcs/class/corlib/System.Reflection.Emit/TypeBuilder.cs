@@ -1284,6 +1284,9 @@ namespace System.Reflection.Emit
 
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
 		{
+			if (!is_created && !IsCompilerContext)
+				throw new NotSupportedException ();
+
 			bool match;
 			ArrayList result = new ArrayList ();
 
