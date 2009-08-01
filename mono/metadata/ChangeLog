@@ -1,3 +1,12 @@
+2009-07-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (print_unimplemented_interface_method_info): Print the
+	full type name.
+
+	* class.c (mono_class_setup_vtable_general): When dealing with a
+	generic instance first check if the generic type definition is
+	not broken.
+
 2009-02-11 Tom Hindke <tom_hindle@sil.org>
 
 	* marshal.c (mono_array_to_lparray): Implemented so managed object types are converted to native types.
