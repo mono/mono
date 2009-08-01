@@ -1164,22 +1164,32 @@ namespace System.Data.SqlClient {
 			if (valueType == frameworkType)
 				return value;
 
+#if NET_2_0
 			object sqlvalue = null;
 
 			try {
-				sqlvalue = Convert.ChangeType (value, frameworkType);
-				switch (sqlDbType) {
-				case SqlDbType.Money:
-				case SqlDbType.SmallMoney:
-					sqlvalue = Decimal.Round ((decimal) sqlvalue, 4);
-					break;
-				}
+				sqlvalue = ConvertToFrameworkType (value, frameworkType);
 			} catch (FormatException ex) {
 				throw new FormatException (string.Format (CultureInfo.InvariantCulture,
 					"Parameter value could not be converted from {0} to {1}.",
 					valueType.Name, frameworkType.Name), ex);
 			}
 
+			return sqlvalue;
+#else
+			return ConvertToFrameworkType (value, frameworkType);
+#endif
+		}
+
+		object ConvertToFrameworkType (object value, Type frameworkType)
+		{
+			object sqlvalue = Convert.ChangeType (value, frameworkType);
+			switch (sqlDbType) {
+			case SqlDbType.Money:
+			case SqlDbType.SmallMoney:
+				sqlvalue = Decimal.Round ((decimal) sqlvalue, 4);
+				break;
+			}
 			return sqlvalue;
 		}
 
