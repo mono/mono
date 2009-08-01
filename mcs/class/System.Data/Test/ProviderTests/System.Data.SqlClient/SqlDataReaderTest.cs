@@ -84,7 +84,8 @@ namespace MonoTests.System.Data.SqlClient
 		SqlCommand cmd = null;
 		SqlDataReader reader = null;
 		String query = "Select type_{0},type_{2},convert({1},null) from numeric_family where id=1";
-		DataSet sqlDataset = null; 
+		DataSet sqlDataset = null;
+		EngineConfig engine;
 
 		DataTable numericDataTable =null;
 		DataTable stringDataTable =null;
@@ -120,7 +121,9 @@ namespace MonoTests.System.Data.SqlClient
 		public void Setup ()
 		{
 			conn.Open ();
+			engine = ConnectionManager.Singleton.Engine;
 		}
+
 		[TearDown]
 		public void TearDown ()
 		{
@@ -129,9 +132,10 @@ namespace MonoTests.System.Data.SqlClient
 
 			conn.Close ();
 		}
-		
+
 		[Test]
-		public void ReadEmptyNTextFieldTest () {
+		public void ReadEmptyNTextFieldTest ()
+		{
 			try {
 				DBHelper.ExecuteNonQuery (conn, "create table #tmp_monotest (name ntext)");
 				DBHelper.ExecuteNonQuery (conn, "insert into #tmp_monotest values ('')");
@@ -146,11 +150,14 @@ namespace MonoTests.System.Data.SqlClient
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-		}		
+		}
 
 		[Test]
-		public void ReadBingIntTest() 
+		public void ReadBigIntTest()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			try {
 				string query = "SELECT CAST(548967465189498 AS bigint) AS Value";
 				SqlCommand cmd = new SqlCommand();
@@ -211,11 +218,9 @@ namespace MonoTests.System.Data.SqlClient
 
 			try {
 				CallGetMethod (s, 1);
-				Assert.Fail ("#1[Get"+s+"] InvalidCastException must be thrown");	
-			}catch (AssertionException e) {
-				throw e;		
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidCastException), e.GetType(),
+				Assert.Fail ("#1[Get"+s+"] InvalidCastException must be thrown");
+			} catch (InvalidCastException e) {
+				Assert.AreEqual (typeof (InvalidCastException), e.GetType (),
 					"#2[Get"+s+"] Incorrect Exception : " + e);
 			}
 		
@@ -224,11 +229,9 @@ namespace MonoTests.System.Data.SqlClient
 			if (!s.StartsWith("Sql")) {
 				try {
 					CallGetMethod (s, 2);
-					Assert.Fail ("#3[Get"+s+"] Exception must be thrown");	
-				}catch (AssertionException e) {
-					throw e;
-				}catch (Exception e){
-					Assert.AreEqual (typeof(SqlNullValueException),e.GetType(),
+					Assert.Fail ("#3[Get"+s+"] Exception must be thrown");
+				} catch (SqlNullValueException e) {
+					Assert.AreEqual (typeof (SqlNullValueException), e.GetType (),
 						"#4[Get"+s+"] Incorrect Exception : " + e);
 				}
 			}
@@ -236,10 +239,8 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				CallGetMethod (s, 3);
 				Assert.Fail ("#5[Get"+s+"] IndexOutOfRangeException must be thrown");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e){
-				Assert.AreEqual (typeof(IndexOutOfRangeException), e.GetType(),
+			} catch (IndexOutOfRangeException e) {
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (),
 					"#6[Get"+s+"] Incorrect Exception : " + e);
 			}
 		}
@@ -313,7 +314,11 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetInt32Test ()
 		{
-			cmd.CommandText = string.Format (query, "int", "int", "bigint");
+			if (ClientVersion == 7)
+				cmd.CommandText = string.Format (query, "int", "int", "decimal1");
+			else
+				cmd.CommandText = string.Format (query, "int", "int", "bigint");
+
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
 			// Test for standard exceptions 
@@ -335,6 +340,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetInt64Test ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = string.Format (query, "bigint", "bigint", "int");
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
@@ -468,7 +476,7 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.GetBytes (0, 0, null, 0, 0);
 				Assert.Fail ("#1");
-			}catch (InvalidCastException ex) {
+			} catch (InvalidCastException ex) {
 				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#4");
@@ -1208,12 +1216,12 @@ namespace MonoTests.System.Data.SqlClient
 			
 			len  = (int)reader.GetChars (0,0,null,0,0);
 			arr = new char [10];
-			for (int i=0; i<len; ++i) {
-				Assert.AreEqual (len-i, reader.GetChars (0, i, null, 0, 0), "#9_"+i);
-				Assert.AreEqual (1, reader.GetChars (0, i, arr, 0, 1), "#10_"+i);
-				Assert.AreEqual (charstring [i], arr [0], "#11_"+i);
+			for (int i = 0; i < len; ++i) {
+				Assert.AreEqual (len - i, reader.GetChars (0, i, null, 0, 0), "#9_" + i);
+				Assert.AreEqual (1, reader.GetChars (0, i, arr, 0, 1), "#10_" + i);
+				Assert.AreEqual (charstring [i], arr [0], "#11_" + i);
 			}
-			Assert.AreEqual (0, reader.GetChars (0, len+10, null, 0, 0));
+			Assert.AreEqual (0, reader.GetChars (0, len + 10, null, 0, 0));
 
 			reader.Close ();
 		}
@@ -1754,9 +1762,7 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.IsDBNull (10);
 				Assert.Fail ("#1 Invalid Argument");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
+			} catch (IndexOutOfRangeException e) {
 				Assert.AreEqual (typeof(IndexOutOfRangeException), e.GetType(),
 					"#1 Incorrect Exception : " + e); 
 			}
@@ -1774,9 +1780,7 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.Read ();
 				Assert.Fail ("#3 Exception shud be thrown : Reader is closed");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
+			} catch (InvalidOperationException e) {
 				Assert.AreEqual (typeof(InvalidOperationException), e.GetType (),
 					"#4 Incorrect Exception : " + e);
 			}
@@ -1842,9 +1846,7 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.GetName (3);
 				Assert.Fail ("#4 Exception shud be thrown");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
+			} catch (IndexOutOfRangeException e) {
 				Assert.AreEqual (typeof(IndexOutOfRangeException), e.GetType(),
 					"#5 Incorrect Exception : " + e);
 			}
@@ -1866,9 +1868,7 @@ namespace MonoTests.System.Data.SqlClient
 
 			try {
 				reader.GetOrdinal ("invalidname");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
+			} catch (IndexOutOfRangeException e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException),
 					e.GetType(), "#4 Incorrect Exception : " + e);
 			}
@@ -2448,7 +2448,10 @@ namespace MonoTests.System.Data.SqlClient
 
 			Assert.AreEqual (0, row0["ColumnOrdinal"], "#2");
 			Assert.AreEqual (17, row0["ColumnSize"], "#3");
-			Assert.AreEqual (38, row0["NumericPrecision"], "#4"); 
+			if (ClientVersion == 7)
+				Assert.AreEqual (28, row0["NumericPrecision"], "#4"); 
+			else
+				Assert.AreEqual (38, row0 ["NumericPrecision"], "#4"); 
 			Assert.AreEqual (0, row0["NumericScale"], "#5");
 
 			Assert.AreEqual (false, row0["IsUnique"], "#6"); 
@@ -2484,10 +2487,8 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.GetSchemaTable ();
 				Assert.Fail ("#28 Exception shud be thrown" );
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (InvalidOperationException), e.GetType(),
 					"#29 Incorrect Exception");
 			}
 		}
@@ -2505,10 +2506,8 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				reader.GetDataTypeName (10);
 				Assert.Fail ("#4 Exception shud be thrown");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(IndexOutOfRangeException), e.GetType(),
+			} catch (IndexOutOfRangeException e) {
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (),
 					"#5 Incorrect Exception : " + e);
 			}
 		}
@@ -2516,6 +2515,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetFieldType_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -3108,6 +3110,12 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (columns [i] [1], col.DataType, prefix + "DataType (" + i + ")");
 			}
 		}
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
+			}
+		}
 	}
 
 	[TestFixture]
@@ -3138,6 +3146,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ColumnSize_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -3487,6 +3498,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void DataType_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -3832,6 +3846,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void IsLong_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -4177,6 +4194,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void NumericPrecision_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -4269,7 +4289,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#A:IsNull");
-				Assert.AreEqual (38, row ["NumericPrecision"], "#A:Value");
+				if (ClientVersion == 7)
+					Assert.AreEqual (28, row ["NumericPrecision"], "#A:Value");
+				else
+					Assert.AreEqual (38, row ["NumericPrecision"], "#A:Value");
 			}
 
 			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
@@ -4287,7 +4310,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#C:IsNull");
-				Assert.AreEqual (38, row ["NumericPrecision"], "#C:Value");
+				if (ClientVersion == 7)
+					Assert.AreEqual (28, row ["NumericPrecision"], "#C:Value");
+				else
+					Assert.AreEqual (38, row ["NumericPrecision"], "#C:Value");
 			}
 
 			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
@@ -4600,6 +4626,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void NumericScale_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -5020,6 +5049,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ProviderType_BigInt ()
 		{
+			if (ClientVersion <= 7)
+				Assert.Ignore ("BigInt data type is not supported.");
+
 			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
 			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
@@ -5379,7 +5411,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		private int ClientVersion {
-		        get {
+			get {
 				return (engine.ClientVersion);
 			}
 		}

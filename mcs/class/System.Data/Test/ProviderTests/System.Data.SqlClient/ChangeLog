@@ -1,5 +1,11 @@
 2009-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlDataReaderTest.cs: Fixes for SQL Server 7.0 / TDS 7. Avoid
+	catching and rethrowing AssertionException. Minor code formatting
+	changes.
+
+2009-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandBuilderTest.cs: Fixes for SQL Server 7.0 / TDS 7.
 	* SqlCommandTest.cs: Fixes for SQL Server 7.0 / TDS 7.
 	* SqlConnectionTest.cs: Fixes for SQL Server 7.0 / TDS 7.
