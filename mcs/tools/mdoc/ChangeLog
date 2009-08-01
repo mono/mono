@@ -1,3 +1,14 @@
+2009-07-31  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Record attributes that are placed
+	  on property get/set and event add/remove accessors.
+	* Test/DocTest-v1.cs: Add attributes to some accessors.
+	* Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget.xml,
+	  Test/en.expected/Mono.DocTest/Widget.xml,
+	  Test/html.expected/Mono.DocTest/Widget.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush.
+
 2009-06-23  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Don't generate an exception when an
