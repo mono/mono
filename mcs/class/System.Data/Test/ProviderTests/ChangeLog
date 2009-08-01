@@ -1,3 +1,10 @@
+2009-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* app-net_1.1.config: added engine config for SQL Server 7.0. Fixed
+	values of clientVersion.
+	* app-net_2.0.config: added engine config for SQL Server 7.0. Fixed
+	values of clientVersion.
+
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* app-net_2.0.config: New test box details - update.
