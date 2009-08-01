@@ -1,3 +1,10 @@
+2009-07-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	TypeTest.cs: Add test for Type::DeclaringMethod.
+	In special for throwing when the type is not a
+	generic param and for DeclaringMethod returning
+	a method bound to the right type.
+
 2009-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	TypeTest.cs: Fix the test.

@@ -3240,6 +3240,41 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("Int32[*]", szarray.Name, "#3");
 		}
 
+		public class DeclaringMethodFoo {
+			public void Test<T> (T t) {}
+			public void Test2<T> (ref T t) {}
+		}
+
+		public class DeclaringMethodBar<T> {
+			public void Test2 (ref T t) {}
+		}
+
+		[Test]
+		public void DeclaringMethodOnlyWorksWithGenericArgs ()
+		{
+	        MethodInfo testMethod = typeof (DeclaringMethodFoo).GetMethod ("Test");
+	        MethodBase otherMethod = testMethod.GetParameters ()[0].ParameterType.DeclaringMethod;
+
+			Assert.AreEqual (testMethod, otherMethod,"#1");
+
+			Assert.IsNull (typeof (DeclaringMethodBar<>).GetGenericArguments ()[0].DeclaringMethod, "#2");
+
+			try {
+				var x = typeof (int).DeclaringMethod;
+				Assert.Fail ("#3");
+			} catch (InvalidOperationException) {}
+
+			try {
+				var x = typeof (DeclaringMethodFoo).GetMethod ("Test2").GetParameters () [0].ParameterType.DeclaringMethod;
+				Assert.Fail ("#4");
+			} catch (InvalidOperationException) {}
+
+			try {
+				var x = typeof (DeclaringMethodBar<>).GetMethod ("Test2").GetParameters () [0].ParameterType.DeclaringMethod;
+				Assert.Fail ("#5");
+			} catch (InvalidOperationException) {}
+
+		}
 #endif
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)
