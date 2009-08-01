@@ -87,6 +87,17 @@
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Del event")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>add: Mono.DocTest.Doc("Del add accessor")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>remove: Mono.DocTest.Doc("Del remove accessor")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.DocTest.Widget+Del</ReturnType>
       </ReturnValue>
@@ -94,8 +105,6 @@
         <summary>To be added.</summary>
         <remarks>
           <c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
-        <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="AnotherEvent">
@@ -181,6 +190,11 @@
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Height property")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -197,6 +211,14 @@
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Item property")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>set: Mono.DocTest.Doc("Item property set accessor")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -598,6 +620,17 @@
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("Width property")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>get: Mono.DocTest.Doc("Width get accessor")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>set: Mono.DocTest.Doc("Width set accessor")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>

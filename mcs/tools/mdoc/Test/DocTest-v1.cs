@@ -290,10 +290,17 @@ namespace Mono.DocTest {
 
 		/// <value>A <see cref="T:System.Int32" /> value...</value>
 		/// <remarks><c>P:Mono.DocTest.Widget.Width</c>.</remarks>
-		public int Width {get {return 0;} protected set {}}
+		[Doc ("Width property")]
+		public int Width {
+			[Doc ("Width get accessor")]
+			get {return 0;}
+			[Doc ("Width set accessor")]
+			protected set {}
+		}
 
 		/// <value>A <see cref="T:System.Int64" /> value...</value>
 		/// <remarks><c>P:Mono.DocTest.Widget.Height</c>.</remarks>
+		[Doc ("Height property")]
 		protected long Height {get {return 0;}}
 
 		/// <value>A <see cref="T:System.Int16" /> value...</value>
@@ -308,7 +315,12 @@ namespace Mono.DocTest {
 		/// <param name="i">TODO</param>
 		/// <remarks><c>P:Mono.DocTest.Widget.Item(System.Int32)</c>.</remarks>
 		/// <value>A <see cref="T:System.Int32" /> instance.</value>
-		public int this [int i] {get {return 0;} set {}}
+		[Doc ("Item property")]
+		public int this [int i] {
+			get {return 0;}
+			[Doc ("Item property set accessor")]
+			set {}
+		}
 
 		/// <param name="s">Some <see cref="T:System.String" />.</param>
 		/// <param name="i">I love <see cref="T:System.Int32" />s.</param>
@@ -317,7 +329,13 @@ namespace Mono.DocTest {
 		public int this [string s, int i] {get {return 0;} set {}}
 
 		/// <remarks><c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
-		public event Del AnEvent;
+		[Doc ("Del event")]
+		public event Del AnEvent {
+			[Doc ("Del add accessor")]
+			add {}
+			[Doc ("Del remove accessor")]
+			remove {}
+		}
 
 		/// <remarks><c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
 		protected event Del AnotherEvent;

@@ -207,8 +207,6 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
-            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="E:Mono.DocTest.Widget.AnotherEvent">
             <summary>To be added.</summary>

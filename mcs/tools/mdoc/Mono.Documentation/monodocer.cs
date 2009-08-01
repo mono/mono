@@ -493,7 +493,7 @@ class MDocUpdater : MDocCommand
 		XmlElement index_assembly = parent.OwnerDocument.CreateElement("Assembly");
 		index_assembly.SetAttribute ("Name", assembly.Name.Name);
 		index_assembly.SetAttribute ("Version", assembly.Name.Version.ToString());
-		MakeAttributes (index_assembly, assembly.CustomAttributes, true);
+		MakeAttributes (index_assembly, assembly.CustomAttributes, 0);
 		parent.AppendChild(index_assembly);
 	}
 
@@ -1479,7 +1479,7 @@ class MDocUpdater : MDocCommand
 			ClearElement(root, "Interfaces");
 		}
 
-		MakeAttributes (root, type.CustomAttributes, false);
+		MakeAttributes (root, type.CustomAttributes, 0);
 		
 		if (DocUtils.IsDelegate (type)) {
 			MakeTypeParameters (root, type.GenericParameters);
@@ -1530,9 +1530,28 @@ class MDocUpdater : MDocCommand
 		else {
 			ClearElement (me, "AssemblyInfo");
 		}
+
 		ICustomAttributeProvider p = mi as ICustomAttributeProvider;
 		if (p != null)
-			MakeAttributes (me, p.CustomAttributes, false);
+			MakeAttributes (me, p.CustomAttributes, 0);
+
+		PropertyReference pr = mi as PropertyReference;
+		if (pr != null) {
+			PropertyDefinition pd = pr.Resolve ();
+			if (pd.GetMethod != null)
+				MakeAttributes (me, pd.GetMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "get: ");
+			if (pd.SetMethod != null)
+				MakeAttributes (me, pd.SetMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "set: ");
+		}
+		EventReference er = mi as EventReference;
+		if (er != null) {
+			EventDefinition ed = er.Resolve ();
+			if (ed.AddMethod != null)
+				MakeAttributes (me, ed.AddMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "add: ");
+			if (ed.RemoveMethod != null)
+				MakeAttributes (me, ed.RemoveMethod.CustomAttributes, AttributeFlags.KeepExistingAttributes, "remove: ");
+		}
+
 		MakeReturnValue(me, mi);
 		if (mi is MethodReference) {
 			MethodReference mb = (MethodReference) mi;
@@ -2168,18 +2187,31 @@ class MDocUpdater : MDocCommand
 		"System.Runtime.CompilerServices.ExtensionAttribute",
 	};
 
-	private void MakeAttributes (XmlElement root, CustomAttributeCollection attributes, bool assemblyAttributes)
+	[Flags]
+	enum AttributeFlags {
+		None,
+		KeepExistingAttributes = 0x1,
+	}
+
+	private void MakeAttributes (XmlElement root, CustomAttributeCollection attributes, AttributeFlags flags)
 	{
+		MakeAttributes (root, attributes, flags, null);
+	}
+
+	private void MakeAttributes (XmlElement root, CustomAttributeCollection attributes, AttributeFlags flags, string prefix)
+	{
+		bool keepExisting = (flags & AttributeFlags.KeepExistingAttributes) != 0;
 		if (attributes.Count == 0) {
-			ClearElement(root, "Attributes");
+			if (!keepExisting)
+				ClearElement(root, "Attributes");
 			return;
 		}
 
 		bool b = false;
 		XmlElement e = (XmlElement)root.SelectSingleNode("Attributes");
-		if (e != null)
+		if (e != null && !keepExisting)
 			e.RemoveAll();
-		else
+		else if (e == null)
 			e = root.OwnerDocument.CreateElement("Attributes");
 		
 		foreach (CustomAttribute attribute in attributes.Cast<CustomAttribute> ()
@@ -2227,7 +2259,7 @@ class MDocUpdater : MDocCommand
 			
 			string name = attribute.Constructor.DeclaringType.FullName;
 			if (name.EndsWith("Attribute")) name = name.Substring(0, name.Length-"Attribute".Length);
-			WriteElementText(ae, "AttributeName", name + a2);
+			WriteElementText(ae, "AttributeName", prefix + name + a2);
 		}
 		
 		if (b && e.ParentNode == null)
@@ -2292,7 +2324,7 @@ class MDocUpdater : MDocCommand
 				if (p.IsOut) pe.SetAttribute("RefType", "out");
 				else pe.SetAttribute("RefType", "ref");
 			}
-			MakeAttributes (pe, p.CustomAttributes, false);
+			MakeAttributes (pe, p.CustomAttributes, 0);
 		}
 	}
 	
@@ -2310,7 +2342,7 @@ class MDocUpdater : MDocCommand
 			XmlElement pe = root.OwnerDocument.CreateElement("TypeParameter");
 			e.AppendChild(pe);
 			pe.SetAttribute("Name", t.Name);
-			MakeAttributes (pe, t.CustomAttributes, false);
+			MakeAttributes (pe, t.CustomAttributes, 0);
 			XmlElement ce = (XmlElement) e.SelectSingleNode ("Constraints");
 			ConstraintCollection constraints = t.Constraints;
 			GenericParameterAttributes attrs = t.Attributes;
@@ -2380,7 +2412,7 @@ class MDocUpdater : MDocCommand
 		e.RemoveAll();
 		WriteElementText(e, "ReturnType", GetDocTypeFullName (type));
 		if (attributes != null)
-			MakeAttributes(e, attributes, false);
+			MakeAttributes(e, attributes, 0);
 	}
 	
 	private void MakeReturnValue (XmlElement root, IMemberReference mi)
