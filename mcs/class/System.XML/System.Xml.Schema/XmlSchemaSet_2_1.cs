@@ -32,7 +32,7 @@ namespace System.Xml.Schema {
 
 	public class XmlSchemaSet {
 
-		private XmlSchemaSet ()
+		internal XmlSchemaSet ()
 		{
 		}
 	}

@@ -1,1 +1,8 @@
 #include net_2_1_raw_System.Xml.dll.sources
+System.Xml.Schema/XmlSchemaValidationFlags.cs 
+System.Xml/ValidationType.cs
+System.Xml.Schema/ValidationEventArgs.cs
+System.Xml.Schema/XmlSchemaException.cs
+System.Xml.Schema/ValidationHandler.cs
+System.Xml/XmlUrlResolverMonoTouch.cs
+

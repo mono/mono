@@ -113,10 +113,12 @@ namespace System.Xml.Schema
 				innerException)
 		{
 			hasLineInfo = true;
+#if !MONOTOUCH
 			this.lineNumber = sourceObject.LineNumber;
 			this.linePosition = sourceObject.LinePosition;
 			this.sourceObj	=	sourceObject;
 			this.sourceUri	=	sourceObject.SourceUri;
+#endif
 		}
 
 		public XmlSchemaException(string message, Exception innerException)
@@ -161,9 +163,11 @@ namespace System.Xml.Schema
 					(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
 					lineNumber,
 					linePosition);
+#if !MONOTOUCH
 			if (sourceObj != null)
 				msg += String.Format (CultureInfo.InvariantCulture, " Related schema item SourceUri: {0}, Line {1}, Position {2}.",
 					sourceObj.SourceUri, sourceObj.LineNumber, sourceObj.LinePosition);
+#endif
 			return msg;
 		}
 
