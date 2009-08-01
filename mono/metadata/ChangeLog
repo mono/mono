@@ -1,5 +1,13 @@
 2009-08-01  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (mono_gc_wbarrier_value_copy): Don't compute the GC
+	descriptor here.  We assume it's already been computed.
+
+	* generic-sharing.c (instantiate_other_info): Compute the GC
+	descriptor for info type MONO_RGCTX_INFO_KLASS.
+
+2009-08-01  Mark Probst  <mark.probst@gmail.com>
+
 	* reflection.c (mono_type_get_object): MonoDomain is an unmanaged
 	type, so don't use MONO_OBJECT_SETREF to set a field.
 

@@ -1,3 +1,9 @@
+2009-08-01  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mini_emit_stobj): If we call mono_value_copy()
+	in shared generic code, we might have to look up the class in the
+	RGCTX.  If we use the class directly, compute its GC descriptor.
+
 2009-07-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mono_jit_runtime_invoke): Fix a warning.
