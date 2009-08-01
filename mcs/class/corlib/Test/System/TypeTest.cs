@@ -3275,6 +3275,17 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (InvalidOperationException) {}
 
 		}
+
+		[Test]
+		public void GetArrayRankThrowsForNonArrayType ()
+		{
+			Assert.AreEqual (1, typeof (int[]).GetArrayRank (), "#1");
+			Assert.AreEqual (2, typeof (int[,]).GetArrayRank (), "#2");
+			try {
+				typeof (int).GetArrayRank ();
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {}
+		}
 #endif
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)
