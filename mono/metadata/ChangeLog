@@ -1,5 +1,10 @@
 2009-08-01  Mark Probst  <mark.probst@gmail.com>
 
+	* reflection.c (mono_type_get_object): MonoDomain is an unmanaged
+	type, so don't use MONO_OBJECT_SETREF to set a field.
+
+2009-08-01  Mark Probst  <mark.probst@gmail.com>
+
 	* gc.c: We were missing one case where invoking a finalizer would
 	not reset the domain.  Also, in the finalizer thread loop, assert
 	that we're in the root domain.
