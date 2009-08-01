@@ -31,6 +31,7 @@
 using System.IO;
 using System.Reflection;
 
+#if !MONOTOUCH
 namespace System.Xml
 {
 	public class XmlXapResolver : XmlResolver
@@ -66,3 +67,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif
