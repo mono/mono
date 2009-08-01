@@ -1,3 +1,9 @@
+2009-08-01  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c: We were missing one case where invoking a finalizer would
+	not reset the domain.  Also, in the finalizer thread loop, assert
+	that we're in the root domain.
+
 2009-07-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_MonoType_GetArrayRank): Throw ArgumentException
