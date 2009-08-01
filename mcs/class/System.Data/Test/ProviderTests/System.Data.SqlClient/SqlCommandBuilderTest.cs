@@ -317,6 +317,9 @@ namespace MonoTests.System.Data
 		[Test] // GetUpdateCommand ()
 		public void GetUpdateCommand1_AutoIncrement ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Key information is not available for temporary tables.");
+
 			SqlCommand cmd = null;
 
 			try {
@@ -692,6 +695,9 @@ namespace MonoTests.System.Data
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand1_AutoIncrement ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Key information is not available for temporary tables.");
+
 			SqlCommand cmd = null;
 
 			try {
@@ -948,7 +954,10 @@ namespace MonoTests.System.Data
 				param = cmd.Parameters [0];
 				Assert.AreEqual (ParameterDirection.ReturnValue, param.Direction, "#B:Direction");
 				Assert.IsFalse (param.IsNullable, "#B:IsNullable");
-				Assert.AreEqual ("@RETURN_VALUE", param.ParameterName, "#B:ParameterName");
+				if (ClientVersion == 7)
+					Assert.AreEqual ("RETURN_VALUE", param.ParameterName, "#B:ParameterName");
+				else
+					Assert.AreEqual ("@RETURN_VALUE", param.ParameterName, "#B:ParameterName");
 				Assert.AreEqual (0, param.Precision, "#B:Precision");
 				Assert.AreEqual (0, param.Scale, "#B:Scale");
 				//Assert.AreEqual (0, param.Size, "#B:Size");
@@ -970,7 +979,10 @@ namespace MonoTests.System.Data
 				Assert.IsFalse (param.IsNullable, "#D:IsNullable");
 				Assert.AreEqual ("@param1", param.ParameterName, "#D:ParameterName");
 				Assert.AreEqual (5, param.Precision, "#D:Precision");
-				Assert.AreEqual (3, param.Scale, "#D:Scale");
+				if (ClientVersion == 7)
+					Assert.AreEqual (2, param.Scale, "#D:Scale");
+				else
+					Assert.AreEqual (3, param.Scale, "#D:Scale");
 				//Assert.AreEqual (0, param.Size, "#D:Size");
 				Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#D:SqlDbType");
 				Assert.IsNull (param.Value, "#D:Value");
@@ -989,7 +1001,10 @@ namespace MonoTests.System.Data
 				cmd.Parameters ["@param1"].Value = 4.000m;
 				cmd.Parameters ["@param2"].Value = DBNull.Value;
 				cmd.ExecuteNonQuery ();
-				Assert.AreEqual (666, cmd.Parameters ["@RETURN_VALUE"].Value, "#F1");
+				if (ClientVersion == 7)
+					Assert.AreEqual (666, cmd.Parameters ["RETURN_VALUE"].Value, "#F1");
+				else
+					Assert.AreEqual (666, cmd.Parameters ["@RETURN_VALUE"].Value, "#F1");
 				Assert.AreEqual (5, cmd.Parameters ["@param0"].Value, "#F2");
 				Assert.AreEqual (11m, cmd.Parameters ["@param1"].Value, "#F3");
 				Assert.AreEqual (DBNull.Value, cmd.Parameters ["@param2"].Value, "#F4");
@@ -1382,9 +1397,7 @@ namespace MonoTests.System.Data
 #endif
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (3)");
 #if NET_2_0
-			Assert.IsNotNull (param.SqlValue, prefix + "SqlValue (3)");
-			Assert.AreEqual (typeof (SqlInt32), param.SqlValue.GetType (), prefix + "SqlValue (3)");
-			Assert.AreEqual (1, ((SqlInt32) param.SqlValue).Value, prefix + "SqlValue (3)");
+			Assert.AreEqual (new SqlInt32 (1), param.SqlValue, prefix + "SqlValue (3)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (3)");
 #endif
 			Assert.AreEqual (1, param.Value, prefix + "Value (3)");
@@ -1560,7 +1573,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
 
 			if (ClientVersion > 7)
-			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+				Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
 			else
 				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 
@@ -1656,7 +1669,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@p4", param.ParameterName, prefix + "ParameterName (3)");
 
 			if (ClientVersion > 7)
-			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+				Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
 			else
 				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
 
@@ -1766,9 +1779,7 @@ namespace MonoTests.System.Data
 #endif
 			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, prefix + "SqlDbType (6)");
 #if NET_2_0
-			Assert.IsNotNull (param.SqlValue, prefix + "SqlValue (6)");
-			Assert.AreEqual (typeof (SqlInt32), param.SqlValue.GetType (), prefix + "SqlValue (6)");
-			Assert.AreEqual (1, ((SqlInt32) param.SqlValue).Value, prefix + "SqlValue (6)");
+			Assert.AreEqual (new SqlInt32 (1), param.SqlValue, prefix + "SqlValue (6)");
 			//Assert.AreEqual (string.Empty, param.UdtTypeName, prefix + "UdtTypeName (6)");
 #endif
 			Assert.AreEqual (1, param.Value, prefix + "Value (6)");
@@ -1821,7 +1832,7 @@ namespace MonoTests.System.Data
 		}
 
 		static int ClientVersion {
-		        get {
+			get {
 				return (SqlCommandBuilderTest.Engine.ClientVersion);
 			}
 		}

@@ -44,11 +44,13 @@ namespace MonoTests.System.Data.SqlClient
 		SqlConnection conn;
 		SqlTransaction trans;
 		String connectionString;
+		EngineConfig engine;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			connectionString = ConnectionManager.Singleton.ConnectionString;
+			engine = ConnectionManager.Singleton.Engine;
 		}
 
 		[TearDown]
@@ -1533,7 +1535,10 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsNotNull (ex.Message, "#5");
 					Assert.IsTrue (ex.Message.IndexOf ("SAVE1") != -1, "#6");
 					Assert.AreEqual (6401, ex.Number, "#7");
-					Assert.AreEqual ((byte) 1, ex.State, "#8");
+					if (ClientVersion == 7)
+						Assert.AreEqual ((byte) 2, ex.State, "#8");
+					else
+						Assert.AreEqual ((byte) 1, ex.State, "#8");
 				}
 
 				trans.Commit ();
@@ -2067,6 +2072,12 @@ namespace MonoTests.System.Data.SqlClient
 				conn = new SqlConnection (connectionString);
 				conn.Open ();
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+			}
+		}
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
 			}
 		}
 

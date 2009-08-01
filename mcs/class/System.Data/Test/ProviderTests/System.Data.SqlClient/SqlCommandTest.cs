@@ -52,9 +52,16 @@ namespace MonoTests.System.Data.SqlClient
 		SqlConnection conn;
 		SqlCommand cmd;
 		string connectionString = ConnectionManager.Singleton.ConnectionString;
+		EngineConfig engine;
 
 		static readonly decimal SMALLMONEY_MAX = 214748.3647m;
 		static readonly decimal SMALLMONEY_MIN = -214748.3648m;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			engine = ConnectionManager.Singleton.Engine;
+		}
 
 		[TearDown]
 		public void TearDown ()
@@ -187,13 +194,19 @@ namespace MonoTests.System.Data.SqlClient
 				result = cmd.ExecuteScalar ();
 				Assert.Fail ("#B1");
 			} catch (SqlException ex) {
-				// Incorrect syntax near the keyword 'from'
 				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
 				Assert.AreEqual ((byte) 15, ex.Class, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("'from'") != -1, "#B6:"+ ex.Message);
-				Assert.AreEqual (156, ex.Number, "#B7");
+				if (ClientVersion == 7) {
+					// Incorrect syntax near '*'
+					Assert.IsTrue (ex.Message.IndexOf ("'*'") != -1, "#B6: " + ex.Message);
+					Assert.AreEqual (170, ex.Number, "#B7");
+				} else {
+					// Incorrect syntax near the keyword 'from'
+					Assert.IsTrue (ex.Message.IndexOf ("'from'") != -1, "#B6: " + ex.Message);
+					Assert.AreEqual (156, ex.Number, "#B7");
+				}
 				Assert.AreEqual ((byte) 1, ex.State, "#B8");
 			}
 
@@ -595,7 +608,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#A5");
 				Assert.IsTrue (ex.Message.IndexOf ("'id1'") != -1, "#A6:" + ex.Message);
 				Assert.AreEqual (207, ex.Number, "#A7");
-				Assert.AreEqual ((byte) 1, ex.State, "#A8");
+				if (ClientVersion == 7)
+					Assert.AreEqual ((byte) 3, ex.State, "#A8");
+				else
+					Assert.AreEqual ((byte) 1, ex.State, "#A8");
 			}
 
 			// ensure connection is not closed after error
@@ -1589,16 +1605,23 @@ namespace MonoTests.System.Data.SqlClient
 					cmd.ExecuteNonQuery ();
 					Assert.Fail ("#B1");
 				} catch (SqlException ex) {
-					// Procedure or Function '#sp_temp_insert_employee'
-					// expects parameter '@fname', which was not supplied
 					Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
 					Assert.AreEqual ((byte) 16, ex.Class, "#B3");
 					Assert.IsNull (ex.InnerException, "#B4");
 					Assert.IsNotNull (ex.Message, "#B5");
 					Assert.IsTrue (ex.Message.IndexOf ("#sp_temp_insert_employee") != -1, "#B6:"+ ex.Message);
-					Assert.IsTrue (ex.Message.IndexOf ("'@fname'") != -1, "#B7:" + ex.Message);
-					Assert.AreEqual (201, ex.Number, "#B8");
-					Assert.AreEqual ((byte) 4, ex.State, "#B9");
+					if (ClientVersion == 7) {
+						// fname is not a parameter for procedure #sp_temp_insert_employee
+						Assert.IsTrue (ex.Message.IndexOf ("fname") != -1, "#B7: " + ex.Message);
+						Assert.AreEqual (8145, ex.Number, "#B8");
+						Assert.AreEqual ((byte) 2, ex.State, "#B9");
+					} else {
+						// Procedure or Function '#sp_temp_insert_employee' expects
+						// parameter '@fname', which was not supplied
+						Assert.IsTrue (ex.Message.IndexOf ("'@fname'") != -1, "#B7: " + ex.Message);
+						Assert.AreEqual (201, ex.Number, "#B8");
+						Assert.AreEqual ((byte) 4, ex.State, "#B9");
+					}
 				}
 #endif
 			} finally {
@@ -1615,6 +1638,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #319598
 		public void LongQueryTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Hangs on SQL Server 7.0");
+
 			SqlConnection conn = new SqlConnection (
 							connectionString + ";Pooling=false");
 			using (conn) {
@@ -1629,6 +1655,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #319598
 		public void LongStoredProcTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Hangs on SQL Server 7.0");
+
 			SqlConnection conn = new SqlConnection (
 							connectionString + ";Pooling=false");
 			using (conn) {
@@ -2533,9 +2562,14 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ((byte) 15, ex.Class, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("'NewId'") != -1, "#B6:" + ex.Message);
-				Assert.IsTrue (ex.Message.IndexOf ("\"@Id\"") != -1, "#B7:" + ex.Message);
-				Assert.AreEqual (102, ex.Number, "#B8");
+				Assert.IsTrue (ex.Message.IndexOf ("'NewId'") != -1, "#B6: " + ex.Message);
+				if (ClientVersion == 7) {
+					Assert.IsTrue (ex.Message.IndexOf ("'@Id'") != -1, "#B7: " + ex.Message);
+					Assert.AreEqual (170, ex.Number, "#B8");
+				} else {
+					Assert.IsTrue (ex.Message.IndexOf ("\"@Id\"") != -1, "#B7: " + ex.Message);
+					Assert.AreEqual (102, ex.Number, "#B8");
+				}
 				Assert.AreEqual ((byte) 1, ex.State, "#B9");
 			}
 #endif
@@ -2878,6 +2912,12 @@ namespace MonoTests.System.Data.SqlClient
 				throw new AssertionException (string.Format (CultureInfo.InvariantCulture,
 					"Expected: {0} ({1}), but was: {2} ({3}). {4}",
 					x, x.GetType (), y, y.GetType (), msg));
+			}
+		}
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
 			}
 		}
 

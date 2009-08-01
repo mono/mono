@@ -40,15 +40,189 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Data.SqlClient
 {
-
 	[TestFixture]
 	[Category ("sqlserver")]
 	public class SqlDataAdapterTest
 	{
-		SqlDataAdapter adapter = null; 
-		DataSet data = null ;
-		string  connectionString = ConnectionManager.Singleton.ConnectionString;
-		SqlConnection conn = null; 
+		SqlDataAdapter adapter;
+		SqlDataReader dr;
+		DataSet data;
+		string connectionString = ConnectionManager.Singleton.ConnectionString;
+		SqlConnection conn;
+		EngineConfig engine;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			engine = ConnectionManager.Singleton.Engine;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (adapter != null) {
+				adapter.Dispose ();
+				adapter = null;
+			}
+
+			if (dr != null) {
+				dr.Close ();
+				dr = null;
+			}
+
+			if (conn != null) {
+				conn.Close ();
+				conn = null;
+			}
+		}
+
+		[Test]
+		public void Update_DeleteRow ()
+		{
+			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			conn.Open ();
+
+			DataTable dt = new DataTable ();
+			adapter = new SqlDataAdapter ("SELECT * FROM employee", conn);
+			SqlCommandBuilder builder = new SqlCommandBuilder (adapter);
+			adapter.DeleteCommand = builder.GetDeleteCommand ();
+			adapter.Fill (dt);
+
+			DateTime now = DateTime.Now;
+
+			DateTime doj = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+
+			DateTime dob = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+			dob.Subtract (new TimeSpan (20 * 365, 0, 0, 0));
+
+			try {
+				DataRow newRow = dt.NewRow ();
+				newRow ["id"] = 6002;
+				newRow ["fname"] = "boston";
+				newRow ["dob"] = dob;
+				newRow ["doj"] = doj;
+				newRow ["email"] = "mono@novell.com";
+				dt.Rows.Add (newRow);
+				adapter.Update (dt);
+
+				foreach (DataRow row in dt.Rows)
+					if (((int) row ["id"]) == 6002)
+						row.Delete ();
+				adapter.Update (dt);
+
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT id, fname, lname, dob, doj, email FROM employee WHERE id = 6002";
+				dr = cmd.ExecuteReader ();
+				Assert.IsFalse (dr.Read ());
+				dr.Close ();
+			} finally {
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+			}
+		}
+
+		[Test]
+		public void Update_InsertRow ()
+		{
+			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			conn.Open ();
+
+			DataTable dt = new DataTable ();
+			adapter = new SqlDataAdapter ("SELECT * FROM employee", conn);
+
+			SqlCommandBuilder builder = new SqlCommandBuilder (adapter);
+			adapter.InsertCommand = builder.GetInsertCommand ();
+			adapter.Fill (dt);
+
+			DateTime now = DateTime.Now;
+
+			DateTime doj = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+
+			DateTime dob = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+			dob.Subtract (new TimeSpan (20 * 365, 0, 0, 0));
+
+			try {
+				DataRow newRow = dt.NewRow ();
+				newRow ["id"] = 6002;
+				newRow ["fname"] = "boston";
+				newRow ["dob"] = dob;
+				newRow ["doj"] = doj;
+				newRow ["email"] = "mono@novell.com";
+				dt.Rows.Add (newRow);
+				adapter.Update (dt);
+
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT id, fname, lname, dob, doj, email FROM employee WHERE id = 6002";
+				dr = cmd.ExecuteReader ();
+				Assert.IsTrue (dr.Read (), "#A1");
+				Assert.AreEqual (6002, dr.GetValue (0), "#A2");
+				Assert.AreEqual ("boston", dr.GetValue (1), "#A3");
+				Assert.AreEqual (DBNull.Value, dr.GetValue (2), "#A4");
+				Assert.AreEqual (dob, dr.GetValue (3), "#A5");
+				Assert.AreEqual (doj, dr.GetValue (4), "#A6");
+				Assert.AreEqual ("mono@novell.com", dr.GetValue (5), "#A7");
+				Assert.IsFalse (dr.Read (), "#A8");
+				dr.Close ();
+			} finally {
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+			}
+		}
+
+		[Test]
+		public void Update_UpdateRow ()
+		{
+			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			conn.Open ();
+
+			DataTable dt = new DataTable ();
+			adapter = new SqlDataAdapter ("SELECT * FROM employee", conn);
+			SqlCommandBuilder builder = new SqlCommandBuilder (adapter);
+			adapter.UpdateCommand = builder.GetUpdateCommand ();
+			adapter.Fill (dt);
+
+			DateTime now = DateTime.Now;
+
+			DateTime doj = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+
+			DateTime dob = new DateTime (now.Year, now.Month, now.Day, now.Hour,
+				now.Minute, now.Second);
+			dob.Subtract (new TimeSpan (20 * 365, 0, 0, 0));
+
+			try {
+				DataRow newRow = dt.NewRow ();
+				newRow ["id"] = 6002;
+				newRow ["fname"] = "boston";
+				newRow ["dob"] = dob;
+				newRow ["doj"] = doj;
+				newRow ["email"] = "mono@novell.com";
+				dt.Rows.Add (newRow);
+				adapter.Update (dt);
+
+				foreach (DataRow row in dt.Rows)
+					if (((int) row ["id"]) == 6002)
+						row ["lname"] = "de Icaza";
+				adapter.Update (dt);
+
+				SqlCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT id, fname, lname, dob, doj, email FROM employee WHERE id = 6002";
+				dr = cmd.ExecuteReader ();
+				Assert.IsTrue (dr.Read (), "#A1");
+				Assert.AreEqual (6002, dr.GetValue (0), "#A2");
+				Assert.AreEqual ("boston", dr.GetValue (1), "#A3");
+				Assert.AreEqual ("de Icaza", dr.GetValue (2), "#A4");
+				Assert.AreEqual (dob, dr.GetValue (3), "#A5");
+				Assert.AreEqual (doj, dr.GetValue (4), "#A6");
+				Assert.AreEqual ("mono@novell.com", dr.GetValue (5), "#A7");
+				Assert.IsFalse (dr.Read (), "#A8");
+				dr.Close ();
+			} finally {
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+			}
+		}
 
 		/**
 		   The below test will not run everytime, since the region id column is unique
@@ -131,7 +305,7 @@ namespace MonoTests.System.Data.SqlClient
 		   NULL		bbbbbb
 		**/
 		[Test]
-		public void NullGuidTest() 
+		public void NullGuidTest()
 		{
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			try {
@@ -151,7 +325,6 @@ namespace MonoTests.System.Data.SqlClient
 			}
 			// the bug 68804 - is that the fill hangs!
 			Assert.AreEqual("Done","Done");
-					
 		}
 
 		[Test]
@@ -209,6 +382,7 @@ namespace MonoTests.System.Data.SqlClient
 				adapter.SelectCommand.Connection.ConnectionString,
 				"#11  ");
 		}
+
 		[Test]
 		public void Fill_Test_ConnState ()
 		{
@@ -252,12 +426,12 @@ namespace MonoTests.System.Data.SqlClient
 		{
 			//Check if a table is created for each resultset 
 			String batchQuery = "Select id,type_bit,type_int from numeric_family;";
-			batchQuery += "Select type_bit,type_bigint from numeric_family";
+			batchQuery += "Select type_bit from numeric_family";
 			adapter = new SqlDataAdapter (batchQuery, connectionString);
 			data = new DataSet ("test1");
 			adapter.Fill (data);
 			Assert.AreEqual (2, data.Tables.Count,"#1 2 Table shud be created");
-				
+
 			//Check if Table and Col are named correctly for unnamed columns 
 			string query = "Select 10,20 from numeric_family;" ;
 			query += "Select 10,20 from numeric_family";
@@ -350,7 +524,7 @@ namespace MonoTests.System.Data.SqlClient
 
 			// Test if rows are appended  and not merged 
 			// when primary key is not returned in the result-set
-			string query = "Select type_int,type_bigint from numeric_family";
+			string query = "Select type_int from numeric_family";
 			adapter.SelectCommand.CommandText = query;
 			data = new DataSet ("test2");
 			adapter.Fill (data);
@@ -439,42 +613,74 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Fill_Test_FillErrorTest ()
 		{
-			string query = "select type_bigint from numeric_family where id=1 or id=4 ";
+			string query = "select type_int from numeric_family where id=1 or id=4 ";
 
 			DataSet ds = new DataSet ();
 			DataTable table = ds.Tables.Add ("test");
-			table.Columns.Add ("col", typeof (int));
+			table.Columns.Add ("col", typeof (short));
 
 			adapter = new SqlDataAdapter (query, connectionString);
 			DataTableMapping mapping = adapter.TableMappings.Add ("numeric_family", "test");
-			mapping.ColumnMappings.Add ("type_bigint", "col");
+			mapping.ColumnMappings.Add ("type_int", "col");
 
-			int count = 0;
 			try {
-				count = adapter.Fill (ds, "numeric_family");
-				Assert.Fail ("#1 Overflow exception must be thrown");
-			}catch (Exception e) {
-				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#1a Expected exception is OverflowException");
+				adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#A1");
+			} catch (OverflowException) {
+			} catch (ArgumentException ex) {
+				// System.OverflowException: Value was either too large or too
+				// small for an Int16
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+#if NET_2_0
+				Assert.IsNotNull (ex.InnerException, "#A3");
+#else
+				Assert.IsNull (ex.InnerException, "#A3");
+#endif
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
+
+#if NET_2_0
+				OverflowException inner = ex.InnerException as OverflowException;
+				Assert.IsNotNull (inner, "#A6");
+				Assert.AreEqual (typeof (OverflowException), inner.GetType (), "#A7");
+				Assert.IsNull (inner.InnerException, "#A8");
+				Assert.IsNotNull (inner.Message, "#A9");
+#endif
 			}
-			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#2");
-			Assert.AreEqual (0, count, "#3");
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#A10");
 
 			adapter.FillError += new FillErrorEventHandler (ErrorHandler);
 			FillErrorContinue = false;
 			try {
-				count = adapter.Fill (ds, "numeric_family");
-				Assert.Fail ("#4 Overflow exception must be thrown");
-			}catch (Exception e) {
-				Assert.AreEqual (typeof (OverflowException), e.GetType (), "#4 Overflow exception must be thrown");
+				adapter.Fill (ds, "numeric_family");
+				Assert.Fail ("#B1");
+			} catch (OverflowException) {
+			} catch (ArgumentException ex) {
+				// System.OverflowException: Value was either too large or too
+				// small for an Int16
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+#if NET_2_0
+				Assert.IsNotNull (ex.InnerException, "#B3");
+#else
+				Assert.IsNull (ex.InnerException, "#B3");
+#endif
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+
+#if NET_2_0
+				OverflowException inner = ex.InnerException as OverflowException;
+				Assert.IsNotNull (inner, "#B6");
+				Assert.AreEqual (typeof (OverflowException), inner.GetType (), "#B7");
+				Assert.IsNull (inner.InnerException, "#B8");
+				Assert.IsNotNull (inner.Message, "#B9");
+#endif
 			}
-			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#5");
-			Assert.AreEqual (0, count, "#6");
+			Assert.AreEqual (0, ds.Tables [0].Rows.Count, "#B10");
 
 			FillErrorContinue = true;
-			count = adapter.Fill (ds, "numeric_family");
-			// 1 row shud be filled
-			Assert.AreEqual (1, ds.Tables [0].Rows.Count, "#7");
-			Assert.AreEqual (1, count, "#8");
+			int count = adapter.Fill (ds, "numeric_family");
+			Assert.AreEqual (1, ds.Tables [0].Rows.Count, "#C1");
+			Assert.AreEqual (1, count, "#C2");
 		}
 
 		void ErrorHandler (object sender, FillErrorEventArgs args)
@@ -503,7 +709,7 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void FillSchemaTest ()
 		{
-			string query = ""; 	
+			string query;
 
 			// Test if connection is closed if excepton occurs during fill schema 
 			query = "select * from invalid_table"; 
@@ -511,9 +717,8 @@ namespace MonoTests.System.Data.SqlClient
 			data = new DataSet ("test");
 			try {
 				adapter.FillSchema (data , SchemaType.Source);
-			}catch {
-				if ( adapter.SelectCommand.Connection.State != ConnectionState.Closed)
-				{
+			} catch {
+				if (adapter.SelectCommand.Connection.State != ConnectionState.Closed) {
 					Assert.Fail ("#0 Conn shud be closed if exception occurs");
 					adapter.SelectCommand.Connection.Close();
 				}
@@ -588,7 +793,7 @@ namespace MonoTests.System.Data.SqlClient
 				Console.WriteLine ("Table == {0}",tab.TableName);
 				foreach (DataColumn col in tab.Columns)
 					Console.WriteLine (" Col = {0} " , col.ColumnName);
-			}			
+			}
 			*/
 		}
 
@@ -624,24 +829,25 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				adapter.Fill (data);
 				Assert.Fail ("#8 Exception shud be thrown: Schema Mismatch");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e){
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
-					"#9 Incorrect Exception : "+e); 
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof(InvalidOperationException), ex.GetType(),
+					"#9");
 			}
-		
-			// Test for invalid MissingSchema Value 	
+
+			// Test for invalid MissingSchema Value
 			try {
 				adapter.MissingSchemaAction = (MissingSchemaAction)(-5000);
 				Assert.Fail ("#10 Exception shud be thrown: Invalid Value");
-			}catch (AssertionException e){
-				throw e;
-			}catch (Exception e){
-				Assert.AreEqual (typeof(ArgumentException), e.GetType(),
-					"#11 Incorrect Exception : " +e);
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#11");
 			}
-			
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#11");
+			}
+#endif
+
 			// Tests if Data is filled correctly if schema is defined 
 			// manually and MissingSchemaAction.Error is set 
 			adapter.MissingSchemaAction = MissingSchemaAction.Error;
@@ -650,13 +856,9 @@ namespace MonoTests.System.Data.SqlClient
 			table.Columns.Add ("id");
 			table.Columns.Add ("type_bit");
 			table.Columns.Add ("type_int");
-			try {
-				adapter.Fill (data);
-				Assert.AreEqual (1, data.Tables.Count, "#12");
-				Assert.AreEqual (4, data.Tables[0].Rows.Count, "#13");
-			}catch (Exception e) {
-				Assert.Fail ("#12 Unexpected Exception : " + e);
-			}
+			adapter.Fill (data);
+			Assert.AreEqual (1, data.Tables.Count, "#12");
+			Assert.AreEqual (4, data.Tables[0].Rows.Count, "#13");
 		}
 		
 		[Test]
@@ -684,23 +886,25 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				adapter.Fill (data);
 				Assert.Fail ("#5 Exception shud be thrown : Mapping is missing");
-			}catch (AssertionException e){
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
-					"#6 Incorrect Exception : " + e);
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof(InvalidOperationException), ex.GetType(),
+					"#6");
 			}
 
 			try {
 				adapter.MissingMappingAction = (MissingMappingAction)(-5000);
 				Assert.Fail ("#7 Exception shud be thrown : Invalid Value");
-			}catch (AssertionException e){
-				throw e;
-			}catch (Exception e){
-				Assert.AreEqual (typeof(ArgumentException), e.GetType(),
-					"#8 Incorrect Exception : " +e); 
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (),
+					"#8");
 			}
-		
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#8");
+			}
+#endif
+
 			// Test if mapping the column and table names works correctly	
 			adapter.MissingMappingAction = MissingMappingAction.Error;
 			data.Reset ();
@@ -722,12 +926,10 @@ namespace MonoTests.System.Data.SqlClient
 				"#10 Data shud be populated if mapping is correct");
 		}
 
-		// Test case for bug #76433 
-		[Test]
+		[Test] // bug #76433
 		public void FillSchema_ValuesTest()
 		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			using (conn) {
+			using (SqlConnection conn = new SqlConnection(connectionString)) {
 				conn.Open();
 				IDbCommand command = conn.CreateCommand();
 
@@ -741,12 +943,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataSet dataSet = new DataSet();
 				string selectString = "SELECT * FROM #tmp_TestTable";
 				IDbDataAdapter dataAdapter = new SqlDataAdapter (
-									selectString,conn);
+									selectString, conn);
 				dataAdapter.FillSchema(dataSet, SchemaType.Mapped);
 
 				Assert.AreEqual (1, dataSet.Tables.Count, "#1");
-
-				//DataColumn col = dataSet.Tables[0].Columns[0]; 
 				Assert.IsFalse (dataSet.Tables[0].Columns[0].AllowDBNull,"#2");
 				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull,"#3");
 			}
@@ -755,8 +955,7 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Fill_CheckSchema ()
 		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			using (conn) {
+			using (SqlConnection conn = new SqlConnection(connectionString)) {
 				conn.Open();
 
 				IDbCommand command = conn.CreateCommand();
@@ -773,22 +972,28 @@ namespace MonoTests.System.Data.SqlClient
 				IDbDataAdapter dataAdapter = new SqlDataAdapter (
 									selectString,conn);
 				dataAdapter.Fill (dataSet);
-				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull, "#1");
-				Assert.AreEqual (0, dataSet.Tables[0].PrimaryKey.Length, "#2");
+				Assert.AreEqual (1, dataSet.Tables.Count, "#A1");
+				Assert.AreEqual (2, dataSet.Tables [0].Columns.Count, "#A2");
+				Assert.IsTrue (dataSet.Tables [0].Columns [1].AllowDBNull, "#A3");
+				Assert.AreEqual (0, dataSet.Tables [0].PrimaryKey.Length, "#A4");
 
 				dataSet.Reset ();
-				dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey ;
+				dataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
 				dataAdapter.Fill (dataSet);
-				Assert.IsFalse (dataSet.Tables[0].Columns[1].AllowDBNull, "#3");
-				Assert.AreEqual (1, dataSet.Tables[0].PrimaryKey.Length, "#4");
+				Assert.AreEqual (1, dataSet.Tables.Count, "#B1");
+				Assert.AreEqual (2, dataSet.Tables [0].Columns.Count, "#B2");
+				Assert.IsFalse (dataSet.Tables [0].Columns [1].AllowDBNull, "#B3");
+				if (ClientVersion == 7)
+					Assert.AreEqual (0, dataSet.Tables [0].PrimaryKey.Length, "#B4");
+				else
+					Assert.AreEqual (1, dataSet.Tables [0].PrimaryKey.Length, "#B4");
 			}
 		}
 
 		[Test]
 		public void FillSchema_CheckSchema ()
 		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			using (conn) {
+			using (SqlConnection conn = new SqlConnection(connectionString)) {
 				conn.Open();
 
 				IDbCommand command = conn.CreateCommand();
@@ -823,9 +1028,8 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					dataAdapter.FillSchema (dataSet, SchemaType.Mapped);
 					Assert.Fail ("#4 Error should be thrown");
-				} catch (Exception e) {
-					Assert.AreEqual (typeof (InvalidOperationException), e.GetType (),
-							 "#4 InvalidOperationException must be thrown");
+				} catch (InvalidOperationException ex) {
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#4");
 				}
 			}
 		}
@@ -899,9 +1103,15 @@ namespace MonoTests.System.Data.SqlClient
 		public void UpdateBatchSizeArgumentOutOfRangeTest ()
 		{
 			adapter = new SqlDataAdapter();
-			adapter.UpdateBatchSize = -2;	
+			adapter.UpdateBatchSize = -2;
 		}
 #endif
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
+			}
+		}
 	}
 
 #if NET_2_0
@@ -909,7 +1119,7 @@ namespace MonoTests.System.Data.SqlClient
 	[Category ("sqlserver")]
 	public class SqlDataAdapterInheritTest : DbDataAdapter
 	{
-		SqlConnection conn = null; 
+		SqlConnection conn = null;
 
 		[Test]
 		public void FillDataAdapterTest () {
@@ -923,7 +1133,7 @@ namespace MonoTests.System.Data.SqlClient
 				SelectCommand = command;
 				Fill (dt, command.ExecuteReader ());
 				Assert.AreEqual (4, dt.Rows.Count, "#1");
-				Assert.AreEqual (6, dt.Columns.Count, "#1");
+				Assert.AreEqual (6, dt.Columns.Count, "#2");
 			} finally {
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
 				ConnectionManager.Singleton.CloseConnection ();

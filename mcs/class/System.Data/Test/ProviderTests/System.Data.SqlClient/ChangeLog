@@ -1,3 +1,15 @@
+2009-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilderTest.cs: Fixes for SQL Server 7.0 / TDS 7.
+	* SqlCommandTest.cs: Fixes for SQL Server 7.0 / TDS 7.
+	* SqlConnectionTest.cs: Fixes for SQL Server 7.0 / TDS 7.
+	* SqlDataAdapterTest.cs: Added tests for Update. Fixed Fill_Test_Data,
+	Fill_Test_PriKey and Fill_Test_FillErrorTest to pass on SQL Server 7.0.
+	Avoid catching and rethrowing AssertionException. Minor improvements.
+	* SqlParameterTest.cs: Fixes for SQL Server 7.0 / TDS 7. Updated
+	ZeroLengthString to pass on 1.0 profile.
+	* SqlTransactionTest.cs: Fixes for SQL Server 7.0 / TDS 7.
+
 2009-07-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlParameterTest.cs: Improved tests for bug #382589.

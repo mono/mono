@@ -45,12 +45,14 @@ namespace MonoTests.System.Data
 		SqlConnection conn;
 		String connectionString;
 		ArrayList events;
+		EngineConfig engine;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			events = new ArrayList ();
 			connectionString = ConnectionManager.Singleton.ConnectionString;
+			engine = ConnectionManager.Singleton.Engine;
 		}
 
 		[TearDown]
@@ -165,7 +167,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ((byte) 11, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("\"invalidDB\"") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("invalidDB") != -1, "#6: " + ex.Message);
 				Assert.AreEqual (4060, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
@@ -703,7 +705,10 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("master", conn.Database, "#1");
 
 			// ensure we're really in the expected database
-			cmd.CommandText = "SELECT name FROM sys.databases WHERE name = 'master'";
+			if (ClientVersion == 7)
+				cmd.CommandText = "SELECT name FROM sysdatabases WHERE name = 'master'";
+			else
+				cmd.CommandText = "SELECT name FROM sys.databases WHERE name = 'master'";
 			using (SqlDataReader dr = cmd.ExecuteReader ()) {
 				Assert.IsTrue (dr.Read (), "#2");
 			}
@@ -824,6 +829,12 @@ namespace MonoTests.System.Data
 			return connection_count;
 		}
 #endif
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
+			}
+		}
 	}
 
 #if NET_2_0

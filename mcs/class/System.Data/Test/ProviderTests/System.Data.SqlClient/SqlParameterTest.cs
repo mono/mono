@@ -44,12 +44,14 @@ namespace MonoTests.System.Data.SqlClient
 		SqlConnection conn;
 		SqlCommand cmd;
 		SqlDataReader rdr;
+		EngineConfig engine;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
+			engine = ConnectionManager.Singleton.Engine;
 		}
 
 		[TearDown]
@@ -65,6 +67,9 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #324840
 		public void ParameterSizeTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Hangs on SQL Server 7.0");
+
 			string longstring = new String('x', 20480);
 			SqlParameter prm;
 			cmd = new SqlCommand ("create table #text1 (ID int not null, Val1 ntext)", conn);
@@ -222,8 +227,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #382589
-		public void DecimalMaxAsParamValueTest () 
+		public void DecimalMaxAsParamValueTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Maximum precision is 28.");
+
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,0) OUT)"
 				+ "AS " + Environment.NewLine
 				+ "BEGIN" + Environment.NewLine
@@ -246,8 +254,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #382589
-		public void DecimalMinAsParamValueTest () 
+		public void DecimalMinAsParamValueTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Maximum precision is 28.");
+
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,0) OUT)"
 				+ "AS " + Environment.NewLine
 				+ "BEGIN" + Environment.NewLine
@@ -270,8 +281,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #382589
-		public void DecimalMaxAsParamValueExceptionTest () 
+		public void DecimalMaxAsParamValueExceptionTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Maximum precision is 28.");
+
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
 				+ "AS " + Environment.NewLine
 				+ "BEGIN" + Environment.NewLine
@@ -302,8 +316,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug# 382589
-		public void DecimalMinAsParamValueExceptionTest () 
+		public void DecimalMinAsParamValueExceptionTest ()
 		{
+			if (ClientVersion == 7)
+				Assert.Ignore ("Maximum precision is 28.");
+
 			string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
 				+ "AS " + Environment.NewLine
 				+ "BEGIN" + Environment.NewLine
@@ -363,6 +380,7 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteNonQuery ();
 				Assert.Fail ("#B1");
 			} catch (FormatException ex) {
+#if NET_2_0
 				// Failed to convert parameter value from a String to a Int32
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -375,6 +393,18 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (FormatException), inner.GetType (), "#B7");
 				Assert.IsNull (inner.InnerException, "#B8");
 				Assert.IsNotNull (inner.Message, "#B9");
+#else
+				// Input string was not in a correct format
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+#endif
+			}
+		}
+
+		int ClientVersion {
+			get {
+				return (engine.ClientVersion);
 			}
 		}
 	}
