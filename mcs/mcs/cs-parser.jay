@@ -6014,10 +6014,13 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 				// multiple lines would force code to be executed out of sync
 				if (decl.expression_or_array_initializer != null){
 				        string id = "$" + decl.identifier;
-					current_block.AddVariable (type, id, decl.Location);					
+					LocalInfo vi = current_block.AddVariable (type, id, decl.Location);					
+
+					// Avoid warning about this variable not being used.
+					vi.Used = true;
 
 					LocalVariableReference var;
-					var = new LocalVariableReferenceWithClassSideEffect (current_container, decl.identifier, current_block, id, decl.Location);
+					var = new LocalVariableReferenceWithClassSideEffect (current_container, decl.identifier, current_block, id, vi, decl.Location);
 					Assign assign = new SimpleAssign (var, decl.expression_or_array_initializer, decl.Location);
 					current_block.AddStatement (new StatementExpression (assign));
 					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);

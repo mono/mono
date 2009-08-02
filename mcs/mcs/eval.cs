@@ -1081,8 +1081,8 @@ namespace Mono.CSharp {
 		TypeContainer container;
 		string name;
 		
-		public LocalVariableReferenceWithClassSideEffect (TypeContainer container, string name, Block current_block, string local_variable_id, Location loc)
-			: base (current_block, local_variable_id, loc)
+		public LocalVariableReferenceWithClassSideEffect (TypeContainer container, string name, Block current_block, string local_variable_id, LocalInfo li, Location loc)
+			: base (current_block, local_variable_id, loc, li, false)
 		{
 			this.container = container;
 			this.name = name;
