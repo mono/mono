@@ -354,7 +354,7 @@ namespace System.Xml.Linq
 
 		static void DefineDefaultSettings (XmlReaderSettings settings, LoadOptions options)
 		{
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			// 2.1 has a DtdProcessing property which defaults to DtdProcessing.Prohibit
 			settings.DtdProcessing = DtdProcessing.Parse;
 #else
