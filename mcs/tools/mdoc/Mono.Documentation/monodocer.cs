@@ -2140,12 +2140,9 @@ class MDocUpdater : MDocCommand
 			e = root.OwnerDocument.CreateElement("AssemblyInfo");
 			root.AppendChild(e);
 		}
-		MyXmlNodeList matches = new MyXmlNodeList (assemblyVersions.Length);
-		foreach (XmlElement v in e.SelectNodes ("AssemblyVersion")) {
-			foreach (string sv in assemblyVersions)
-				if (v.InnerText == sv)
-					matches.Add (v);
-		}
+		List<XmlNode> matches = e.SelectNodes ("AssemblyVersion").Cast<XmlNode>()
+			.Where(v => Array.IndexOf (assemblyVersions, v.InnerText) >= 0)
+			.ToList ();
 		// matches.Count > 0 && add: ignore -- already present
 		if (matches.Count > 0 && !add) {
 			foreach (XmlNode c in matches)
