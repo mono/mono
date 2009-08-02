@@ -30,7 +30,7 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:Mono.Security.dll
 endif
 
-ifeq (2.1, $(FRAMEWORK_VERSION))
+ifeq (net_2_1_raw, $(PROFILE))
 LIB_MCS_FLAGS += /r:System.Net
 endif
 
