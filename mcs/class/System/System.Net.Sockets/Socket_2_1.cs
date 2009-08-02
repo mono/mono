@@ -444,7 +444,7 @@ namespace System.Net.Sockets {
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
 
@@ -687,7 +687,7 @@ namespace System.Net.Sockets {
 #endif
 		}
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		static MethodInfo check_socket_policy;
 
 		static void CheckConnect (SocketAsyncEventArgs e, bool checkPolicy)

@@ -54,6 +54,7 @@ namespace System.Net
 					return;
 				
 				modules = new ArrayList ();
+#if !MONOTOUCH
 #if NET_2_0 && CONFIGURATION_DEP
 				object cfg = ConfigurationManager.GetSection ("system.net/authenticationModules");
 				AuthenticationModulesSection s = cfg as AuthenticationModulesSection;
@@ -69,6 +70,7 @@ namespace System.Net
 				}
 #else
 				ConfigurationSettings.GetConfig ("system.net/authenticationModules");
+#endif
 #endif
 			}
 		}

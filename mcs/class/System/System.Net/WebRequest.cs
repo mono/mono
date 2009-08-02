@@ -40,6 +40,14 @@ using System.Net.Cache;
 using System.Security.Principal;
 #endif
 
+#if MONOTOUCH
+using ConfigurationException = System.ArgumentException;
+
+namespace System.Net.Configuration {
+	class Dummy {}
+}
+#endif
+
 namespace System.Net 
 {
 	[Serializable]
@@ -55,6 +63,12 @@ namespace System.Net
 		
 		static WebRequest ()
 		{
+#if MONOTOUCH
+			AddPrefix ("http", typeof (HttpRequestCreator));
+			AddPrefix ("https", typeof (HttpRequestCreator));
+			AddPrefix ("file", typeof (FileWebRequestCreator));
+			AddPrefix ("http", typeof (FtpRequestCreator));
+#else
 #if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
 			WebRequestModulesSection s = cfg as WebRequestModulesSection;
@@ -66,6 +80,7 @@ namespace System.Net
 			}
 #endif
 			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
+#endif
 		}
 		
 		protected WebRequest () 

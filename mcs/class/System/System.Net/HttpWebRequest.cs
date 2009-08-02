@@ -110,8 +110,9 @@ namespace System.Net
 		// Constructors
 		static HttpWebRequest ()
 		{
-			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
 			defaultMaxResponseHeadersLength = 64 * 1024;
+#if !MONOTOUCH
+			NetConfig config = ConfigurationSettings.GetConfig ("system.net/settings") as NetConfig;
 			if (config != null) {
 				int x = config.MaxResponseHeadersLength;
 				if (x != -1)
@@ -119,6 +120,7 @@ namespace System.Net
 
 				defaultMaxResponseHeadersLength = x;
 			}
+#endif
 		}
 #endif
 

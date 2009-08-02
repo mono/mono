@@ -478,7 +478,7 @@ namespace System {
 				return host; 
 			} 
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public UriHostNameType HostNameType { 
 			get {
 				EnsureAbsoluteUri ();
@@ -515,7 +515,7 @@ namespace System {
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public bool IsLoopback { 
 			get {
 				EnsureAbsoluteUri ();

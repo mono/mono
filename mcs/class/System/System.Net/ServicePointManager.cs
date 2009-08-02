@@ -118,11 +118,14 @@ namespace System.Net
 		public const int DefaultNonPersistentConnectionLimit = 4;
 		public const int DefaultPersistentConnectionLimit = 2;
 
+#if !MONOTOUCH
 		const string configKey = "system.net/connectionManagement";
 		static ConnectionManagementData manager;
+#endif
 		
 		static ServicePointManager ()
 		{
+#if !MONOTOUCH
 #if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
@@ -139,6 +142,7 @@ namespace System.Net
 			if (manager != null) {
 				defaultConnectionLimit = (int) manager.GetMaxConnections ("*");				
 			}
+#endif
 		}
 
 		// Constructors
@@ -243,7 +247,7 @@ namespace System.Net
 			set { _securityProtocol = value; }
 		}
 
-#if NET_2_0
+#if NET_2_0 && !MONOTOUCH
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {
@@ -311,7 +315,11 @@ namespace System.Net
 					throw new InvalidOperationException ("maximum number of service points reached");
 
 				string addr = address.ToString ();
+#if MONOTOUCH
+				int limit = defaultConnectionLimit;
+#else
 				int limit = (int) manager.GetMaxConnections (addr);
+#endif
 				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
 #if NET_1_1
 				sp.Expect100Continue = expectContinue;
