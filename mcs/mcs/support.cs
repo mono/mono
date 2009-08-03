@@ -479,7 +479,7 @@ namespace Mono.CSharp {
 
 		public override Type[] GetInterfaces ()
 		{
-			throw new NotImplementedException ();
+			return Type.EmptyTypes;
 		}
 
 		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)

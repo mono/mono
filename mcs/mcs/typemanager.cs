@@ -519,6 +519,9 @@ namespace Mono.CSharp {
 		if (t == typeof (MethodGroupExpr))
 			return "method group";
 
+		if (IsDynamicType (t))
+			return "dynamic";
+
 		if (t == null)
 			return "internal error";
 

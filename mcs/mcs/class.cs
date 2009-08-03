@@ -822,7 +822,11 @@ namespace Mono.CSharp {
 					continue;
 
 				if (i == 0 && Kind == Kind.Class && !fne_resolved.Type.IsInterface) {
-					base_class = fne_resolved;
+					if (fne_resolved is DynamicTypeExpr)
+						Report.Error (1965, Location, "Class `{0}' cannot derive from dynamic type",
+							GetSignatureForError ());
+					else
+						base_class = fne_resolved;
 					continue;
 				}
 
@@ -7746,6 +7750,14 @@ namespace Mono.CSharp {
 			Type return_type_unwrap = return_type;
 			if (TypeManager.IsNullableType (return_type))
 				return_type_unwrap = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (return_type) [0]);
+
+			if (TypeManager.IsDynamicType (return_type) || TypeManager.IsDynamicType (first_arg_type)) {
+				Report.Error (1964, Location,
+					"User-defined operator `{0}' cannot convert to or from the dynamic type",
+					GetSignatureForError ());
+
+				return false;
+			}
 
 			//
 			// Rules for conversion operators

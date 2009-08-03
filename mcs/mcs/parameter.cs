@@ -439,8 +439,8 @@ namespace Mono.CSharp {
 				return parameter_type;
 			}
 
-			if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
-				Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
+			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || TypeManager.IsDynamicType (parameter_type))) {
+				Report.Error (1103, Location, "The extension method cannot be of type `{0}'",
 					TypeManager.CSharpName (parameter_type));
 			}
 

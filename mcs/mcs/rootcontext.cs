@@ -27,11 +27,7 @@ namespace Mono.CSharp {
 		V_4			= 4,
 		Future		= 100,
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
 		Default		= LanguageVersion.V_4,
-#else
-		Default		= LanguageVersion.V_3
-#endif
 	}
 
 	enum MetadataVersion

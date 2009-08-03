@@ -1,5 +1,12 @@
 2009-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, parameter.cs, support.cs, class.cs: Dynamic type
+	restrictions.
+	
+	* rootcontext.cs: Default to langversion v4.
+
+2009-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	* pending.cs: Check return type before member info is set.
 
 2009-08-03  Marek Safar  <marek.safar@gmail.com>
