@@ -1,4 +1,4 @@
-// CS1103: The type of extension method cannot be `int*'
+// CS1103: The extension method cannot be of type `int*'
 // Line: 7
 // Compiler options: -unsafe
 
