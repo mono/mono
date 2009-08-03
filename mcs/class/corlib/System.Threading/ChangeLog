@@ -1,3 +1,8 @@
+2009-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Always call Thread_free_internal from the finalizer, since
+	it frees other things besides the handle. Fixes #527576.
+
 2009-07-31  Jérémie Laval  <jeremie.laval@gmail.com>
 
         * Snzi.cs:

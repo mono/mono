@@ -823,8 +823,6 @@ namespace System.Threading {
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		~Thread() {
-			// Free up the handle
-			if (system_thread_handle != (IntPtr) 0)
 				Thread_free_internal(system_thread_handle);
 		}
 
