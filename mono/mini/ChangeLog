@@ -1,3 +1,11 @@
+2009-08-01 Jerry Maine <crashfourit@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* basic-simd.cs: Added tests for stressing the regalloc when running with
+	16 simd regs and when simd and fp ops share the same reg bank.
+
 2009-08-01  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mini_emit_stobj): If we call mono_value_copy()
