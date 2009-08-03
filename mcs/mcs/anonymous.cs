@@ -714,12 +714,10 @@ namespace Mono.CSharp {
 			}
 
 			if (inner_access == null) {
-// TODO: It should be something like this to work correctly with expression trees				
-//				inner_access = ec.CurrentAnonymousMethod.Storey != storey && storey.MemberName.IsGeneric ?
-//					new FieldExpr (field.FieldBuilder, storey.Instance.Type, field.Location) :
-//					new FieldExpr (field.FieldBuilder, field.Location);
+				inner_access = field.Parent.MemberName.IsGeneric ?
+					new FieldExpr (field.FieldBuilder, field.Parent.CurrentType, field.Location) :
+					new FieldExpr (field.FieldBuilder, field.Location);
 							
-				inner_access = new FieldExpr (field.FieldBuilder, field.Location);
 				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				inner_access.Resolve (ec);
 				cached_inner_access.Add (ec.CurrentAnonymousMethod, inner_access);
