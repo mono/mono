@@ -3,6 +3,22 @@
 	Contributed under the terms of the MIT/X11 license by
 	Jerry Maine <crashfourit@gail.com>.
 
+	* mini-amd64.c: Added a change to help tell the difference as 
+	to what perpose	the xmm register is being used--mainly to help
+	with debuging.
+	* mini-amd64.h: Changed callee regs to use 15 out of 16 
+	(one used for special cases) xmm registers for both fp
+	and simd ops. Added define to turn on new feature in the regalloc
+	that allows fp and simd ops to share the xmm regs happily.
+	* codegen.c: Added code to detect for which perpose an xmm reg is
+	being used (fp or simd)	and to translate back and forth to the
+	correct logical reg bank (fp or simd) for 'spill load's.
+
+2009-08-01 Jerry Maine <crashfourit@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
 	* basic-simd.cs: Added tests for stressing the regalloc when running with
 	16 simd regs and when simd and fp ops share the same reg bank.
 
