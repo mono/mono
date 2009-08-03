@@ -61,6 +61,8 @@ namespace System.Xml.XPath
 		public static XElement XPathSelectElement (this XNode node, string xpath, IXmlNamespaceResolver nsResolver)
 		{
 			XPathNavigator nav = CreateNavigator (node).SelectSingleNode (xpath, nsResolver);
+			if (nav == null)
+				return null;
 			return nav.UnderlyingObject as XElement;
 		}
 
