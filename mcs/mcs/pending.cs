@@ -425,6 +425,14 @@ namespace Mono.CSharp {
 					if (j != arg_len)
 						continue;
 
+					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
+					if (!TypeManager.IsEqual (ret_type, rt) &&
+						!(ret_type == null && rt == TypeManager.void_type) &&
+						!(rt == null && ret_type == TypeManager.void_type)) {
+						tm.found [i] = method;
+						continue;
+					}
+
 					if (op != Operation.Lookup) {
 						// If `t != null', then this is an explicitly interface
 						// implementation and we can always clear the method.
@@ -439,12 +447,6 @@ namespace Mono.CSharp {
 					} else {
 						tm.found [i] = method;
 					}
-
-					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
-					if (!TypeManager.IsEqual (ret_type, rt) &&
-						!(ret_type == null && rt == TypeManager.void_type) &&
-						!(rt == null && ret_type == TypeManager.void_type))
-						continue;
 
 					//
 					// Lookups and ClearOne return

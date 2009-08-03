@@ -1,5 +1,9 @@
 2009-08-03  Marek Safar  <marek.safar@gmail.com>
 
+	* pending.cs: Check return type before member info is set.
+
+2009-08-03  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Fully initialize generic hoisted field expression.
 
 2009-08-02  Miguel de Icaza  <miguel@novell.com>
