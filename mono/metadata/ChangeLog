@@ -1,6 +1,9 @@
 2009-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Thread_free_internal): 
+	Avoid a crash if synch_cs is not set.
+	
+	* threads.c (ves_icall_System_Threading_Thread_Thread_free_internal): 
 	Handle the case when the handle is 0.
 
 	* appdomain.c: Bump corlib version.
