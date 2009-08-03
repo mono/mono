@@ -67,7 +67,7 @@ namespace System.Net
 			AddPrefix ("http", typeof (HttpRequestCreator));
 			AddPrefix ("https", typeof (HttpRequestCreator));
 			AddPrefix ("file", typeof (FileWebRequestCreator));
-			AddPrefix ("http", typeof (FtpRequestCreator));
+			AddPrefix ("ftp", typeof (FtpRequestCreator));
 #else
 #if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
