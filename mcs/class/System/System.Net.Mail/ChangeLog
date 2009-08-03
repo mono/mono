@@ -1,3 +1,8 @@
+2009-08-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Attachment.cs: set the body encoding for multipart attachments.
+	Fixes bug #527177.
+
 2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SmtpClient.cs: handle dots. Patch by Ted Unangst that fixes bug
