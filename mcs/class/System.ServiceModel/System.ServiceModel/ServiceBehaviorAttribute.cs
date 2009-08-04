@@ -126,7 +126,7 @@ namespace System.ServiceModel
 			ServiceHostBase serviceHostBase)
 		{
 			if (singleton != null && InstanceContextMode != InstanceContextMode.Single)
-				throw new InvalidOperationException ("When creating a Service host with a service instance, use InstanceContext.Mode.Single in the ServiceBehaviorAttribute.");
+				throw new InvalidOperationException ("When creating a Service host with a service instance, use InstanceContextMode.Single in the ServiceBehaviorAttribute.");
 
 			foreach (ChannelDispatcherBase cdb in serviceHostBase.ChannelDispatchers) {
 				ChannelDispatcher cd = cdb as ChannelDispatcher;
