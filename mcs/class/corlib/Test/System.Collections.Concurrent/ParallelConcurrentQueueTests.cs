@@ -52,9 +52,6 @@ namespace ParallelFxTests
 			queue.TryPeek(out value);
 			ParallelTestHelper.ParallelRemover(queue, numThread, 3);
 			Assert.AreEqual(10 * numThread - 3, queue.Count, "#2");
-			queue.Clear();
-			Assert.AreEqual(0, queue.Count, "#3");
-			Assert.IsTrue(queue.IsEmpty, "#4");
 		}
 	}
 }
