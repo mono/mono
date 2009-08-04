@@ -368,6 +368,18 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
+		ICollection IDictionary.Keys {
+			get {
+				return (ICollection)Keys;
+			}
+		}
+		
+		ICollection IDictionary.Values {
+			get {
+				return (ICollection)Values;
+			}
+		}
+		
 		ICollection<T> GetPart<T> (Func<KeyValuePair<TKey, TValue>, T> extractor)
 		{
 			List<T> temp = new List<T> ();
@@ -433,6 +445,56 @@ namespace System.Collections.Concurrent
 				lock (b) {
 					foreach (Pair p in b)
 						yield return new KeyValuePair<TKey, TValue> (p.Key, p.Value);
+				}
+			}
+		}
+		
+		IDictionaryEnumerator IDictionary.GetEnumerator ()
+		{
+			return new ConcurrentDictionaryEnumerator (GetEnumeratorInternal ());
+		}
+		
+		class ConcurrentDictionaryEnumerator : IDictionaryEnumerator
+		{
+			IEnumerator<KeyValuePair<TKey, TValue>> internalEnum;
+			
+			public ConcurrentDictionaryEnumerator (IEnumerator<KeyValuePair<TKey, TValue>> internalEnum)
+			{
+				this.internalEnum = internalEnum;
+			}
+			
+			public bool MoveNext ()
+			{
+				return internalEnum.MoveNext ();
+			}
+			
+			public void Reset ()
+			{
+				internalEnum.Reset ();
+			}
+			
+			public object Current {
+				get {
+					return Entry;
+				}
+			}
+			
+			public DictionaryEntry Entry {
+				get {
+					KeyValuePair<TKey, TValue> current = internalEnum.Current;
+					return new DictionaryEntry (current.Key, current.Value);
+				}
+			}
+			
+			public object Key {
+				get {
+					return internalEnum.Current.Key;
+				}
+			}
+			
+			public object Value {
+				get {
+					return internalEnum.Current.Value;
 				}
 			}
 		}

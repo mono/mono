@@ -120,28 +120,6 @@ namespace System.Threading
 			return false;
 		}
 		
-		bool TryEnter (TimeSpan timeout)
-		{
-			return TryEnter ((int)timeout.TotalMilliseconds);
-		}
-		
-		bool TryEnter (int milliSeconds)
-		{
-			//Thread.BeginCriticalRegion();
-			
-			Watch sw = Watch.StartNew ();
-			bool result = false;
-			
-			while (sw.ElapsedMilliseconds < milliSeconds) {
-				if (lockState == isFree && Interlocked.Exchange (ref lockState, isOwned) == isFree) {
-					threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
-					result = true;
-				}
-			}
-			sw.Stop ();
-			return result;
-		}
-		
 		public void TryEnter (ref bool lockTaken)
 		{
 			try {

@@ -1,3 +1,7 @@
+2009-08-04 Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* SpinLock: Remove unused private methods.
+
 2009-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs: Always call Thread_free_internal from the finalizer, since
