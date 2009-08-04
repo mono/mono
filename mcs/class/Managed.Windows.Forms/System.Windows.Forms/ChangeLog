@@ -1,5 +1,11 @@
 2009-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: When handling mouse down on a column, don't do any sort
+	even if the list supports it if we are empty. This way we avoid an exc
+	sorting the empty list, and keep the UI compatible with .net.
+
+2009-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: In Edit () check we have any row before trying to use
 	the current row. Fixes a IOOR exc with an empty data grid.
 

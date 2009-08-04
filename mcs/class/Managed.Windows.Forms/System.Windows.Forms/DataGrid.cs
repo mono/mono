@@ -1533,6 +1533,10 @@ namespace System.Windows.Forms
 
 				if (ListManager.List is IBindingList == false)
 					break;
+
+				// Don't do any sort if we are empty, as .net does
+				if (ListManager.Count == 0)
+					return;
 			
 				ListSortDirection direction = ListSortDirection.Ascending;
 				PropertyDescriptor prop = CurrentTableStyle.GridColumnStyles[testinfo.Column].PropertyDescriptor;
