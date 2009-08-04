@@ -2534,6 +2534,9 @@ namespace System.Windows.Forms
 			if (!CurrentTableStyle.GridColumnStyles[CurrentColumn].bound)
 				return;
 
+			if (ListManager != null && ListManager.Count == 0)
+				return;
+
 			is_editing = true;
 			is_changing = false;
 

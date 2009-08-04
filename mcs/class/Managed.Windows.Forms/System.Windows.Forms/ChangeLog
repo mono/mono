@@ -1,3 +1,8 @@
+2009-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: In Edit () check we have any row before trying to use
+	the current row. Fixes a IOOR exc with an empty data grid.
+
 2009-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGridColumnStyle.cs: Don't call CheckValidDataSource when setting
