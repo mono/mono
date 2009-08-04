@@ -17,3 +17,5 @@ Microsoft.CSharp.RuntimeBinder/CSharpSetIndexBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpSetMemberBinder.cs
 Microsoft.CSharp.RuntimeBinder/CSharpUnaryOperationBinder.cs
 Microsoft.CSharp.RuntimeBinder/Extensions.cs
+Microsoft.CSharp.RuntimeBinder/RuntimeBinderException.cs
+Microsoft.CSharp.RuntimeBinder/RuntimeBinderInternalCompilerException.cs
