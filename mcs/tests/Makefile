@@ -1,5 +1,5 @@
 #
-# use `run-test'
+# use make run-test PROFILE=net_2_0
 #
 
 thisdir = tests
