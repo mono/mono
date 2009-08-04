@@ -1,3 +1,8 @@
+2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* make_imt_test.sh: fix freebsd build by Makoto Kishimoto
+	  http://lists.ximian.com/pipermail/mono-devel-list/2008-November/029970.html
+
 2009-07-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* generic_type_definition.2.cs: This test verifies for a lot of stuff
