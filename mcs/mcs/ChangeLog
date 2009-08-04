@@ -1,3 +1,9 @@
+2009-08-04  Marek Safar  <marek.safar@gmail.com>
+
+	A second fix for bug #525342
+	* class.cs: Attach partial method attributes to method
+	implementation.
+
 2009-08-03  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, parameter.cs, support.cs, class.cs: Dynamic type

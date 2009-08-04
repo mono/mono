@@ -4075,6 +4075,8 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW | Modifiers.UNSAFE;
 
+		Method partialMethodImplementation;
+
 		public Method (DeclSpace parent, GenericMethod generic,
 			       FullNamedExpression return_type, int mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
@@ -4217,6 +4219,9 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
+			if (partialMethodImplementation != null && IsPartialDefinition)
+				MethodBuilder = partialMethodImplementation.MethodBuilder;
+
 			if (RootContext.StdLib && TypeManager.IsSpecialType (ReturnType)) {
 				Error1599 (Location, ReturnType);
 				return false;
@@ -4293,17 +4298,16 @@ namespace Mono.CSharp {
 				Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 				if (IsPartialDefinition) {
 					//
-					// Do attribute checks only when partial implementation does not exist
+					// Use partial method implementation builder for partial method declaration attributes
 					//
-					if (MethodBuilder == null)
-						base.Emit ();
-
-					return;
-				}
-
-				if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0)
+					if (partialMethodImplementation != null) {
+						MethodBuilder = partialMethodImplementation.MethodBuilder;
+						return;
+					}
+				} else if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0) {
 					Report.Error (759, Location, "A partial method `{0}' implementation is missing a partial method declaration",
 						GetSignatureForError ());
+				}
 
 				base.Emit ();
 				
@@ -4351,7 +4355,7 @@ namespace Mono.CSharp {
 		public void SetPartialDefinition (Method methodDefinition)
 		{
 			caching_flags |= Flags.PartialDefinitionExists;
-			methodDefinition.MethodBuilder = MethodBuilder;
+			methodDefinition.partialMethodImplementation = this;
 
 			for (int i = 0; i < methodDefinition.Parameters.Count; ++i ) {
 				Parameters [i].DefaultValue = methodDefinition.Parameters [i].DefaultValue;
@@ -4362,7 +4366,6 @@ namespace Mono.CSharp {
 
 			if (attributes == null) {
 				attributes = methodDefinition.attributes;
-				attributes.AttachTo (this);
 			} else {
 				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
 			}
