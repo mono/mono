@@ -1,3 +1,8 @@
+2009-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* GridColumnStylesCollectionTest.cs: New test for #465019. Also make
+	public the test class, so it is *actually* loaded by nunit.
+
 2009-07-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripItemCollectionTest.cs: New test for Find.
