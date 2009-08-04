@@ -1,3 +1,8 @@
+2009-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (thread_cleanup): Free serialized_ui_culture_info. Fixes
+	#527902.
+
 2009-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Thread_free_internal): 
