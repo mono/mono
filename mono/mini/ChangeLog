@@ -1,3 +1,17 @@
+2009-10-06  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* basic-simd.cs: added test for packed double square root.
+	* cpu-amd64.md: added opcode info for packed double square root.
+	* cpu-x86.md: added opcode info for packed double square root.
+	* mini-ops.h: added IR opcode for packed double square root.
+	* mini-x86.c: added IR to native translation code for packed double square root.
+	* mini-amd64.c: removed todo for packed double square root.
+	* simd-intrinsics.c: added method to IR opcode converstion for
+	packed double square root.
+
 2009-08-01 Jerry Maine <crashfourit@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by
