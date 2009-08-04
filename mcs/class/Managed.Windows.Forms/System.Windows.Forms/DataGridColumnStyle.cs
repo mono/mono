@@ -487,8 +487,8 @@ namespace System.Windows.Forms
 
 			property_descriptor = null;
 
-			if (value != null && value.ListManager != null)
-				CheckValidDataSource (value.ListManager);
+			// we don't check whether the DataGrid.ListManager is valid or not.
+			// This is done by .net later as requiered, but not at this point.
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)

@@ -1,3 +1,10 @@
+2009-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGridColumnStyle.cs: Don't call CheckValidDataSource when setting
+	the owner DataGrid - even if this seems to be the right thing to do,
+	.net is not doind this check at this point, but in later operations.
+	Fixes #465019.
+
 2009-07-28  Mike Gorse  <mgorse@novell.com>
 
 	* ToolStripMenuItem.cs: Added UIA CheckOnClickChanged event.
