@@ -286,6 +286,13 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static Vector2d Sqrt (this Vector2d v1)
+		{
+			return new Vector2d (System.Math.Sqrt (v1.x),
+								System.Math.Sqrt (v1.y));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us Average (this Vector8us va, Vector8us vb) {
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
