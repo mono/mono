@@ -1,5 +1,9 @@
 2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyHandler.cs : there is better way to check IsOneWay.
+
+2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* OperationInvokerHandler.cs : One way operation has no reply.
 	* ReplyHandler.cs : ditto.
 
