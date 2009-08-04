@@ -154,16 +154,7 @@ namespace System.ServiceModel
 
 		public T GetCallbackChannel<T> ()
 		{
-			if (!(channel is IDuplexContextChannel))
-				return default (T);
-			IDuplexContextChannel duplex = (IDuplexContextChannel) channel;
-			foreach (IChannel ch in duplex.CallbackInstance.IncomingChannels)
-				if (typeof (T).IsAssignableFrom (ch.GetType ()))
-					return (T) (object) ch;
-			foreach (IChannel ch in duplex.CallbackInstance.OutgoingChannels)
-				if (typeof (T).IsAssignableFrom (ch.GetType ()))
-					return (T) (object) ch;
-			return default (T);
+			return (T) (object) channel;
 		}
 
 		[MonoTODO]

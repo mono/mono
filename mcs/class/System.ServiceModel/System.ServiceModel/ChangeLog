@@ -1,5 +1,11 @@
 2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationContext.cs : GetCallbackChannel<T>() should just return
+	  channel (which should also implement T, which must be callback
+	  type).
+
+2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceBehaviorAttribute.cs : cosmetic spelling fix.
 
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
