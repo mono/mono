@@ -17,6 +17,10 @@ namespace System.ServiceModel.Dispatcher
 
 		protected override bool ProcessRequest (MessageProcessingContext mrc)
 		{
+			// if IsOneWay then no need to handle reply
+			if (mrc.ReplyMessage == null)
+				return false;
+
 			if (duplex != null)
 				mrc.Reply (duplex, true);
 			else

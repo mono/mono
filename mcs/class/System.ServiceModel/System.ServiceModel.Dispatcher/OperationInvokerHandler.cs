@@ -82,6 +82,9 @@ namespace System.ServiceModel.Dispatcher
 			DispatchOperation operation = mrc.Operation;
 			mrc.EventsHandler.AfterInvoke (operation);
 
+			if (operation.IsOneWay)
+				return;
+
 			Message res = null;
 			if (operation.SerializeReply)
 				res = operation.Formatter.SerializeReply (

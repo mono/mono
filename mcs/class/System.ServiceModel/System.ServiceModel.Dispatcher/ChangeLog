@@ -1,3 +1,8 @@
+2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : One way operation has no reply.
+	* ReplyHandler.cs : ditto.
+
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : raise error on multiple endpoint match
