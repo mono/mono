@@ -9,29 +9,39 @@ namespace System.ServiceModel.PeerResolvers
 {
 	internal class Consts
 	{
-		public const string Namespace = "http://schemas.microsoft.com/net/2006/05/peer/resolver";
+		public const string Namespace = "http://schemas.microsoft.com/net/2006/05/peer";
 	}
 
-	[ServiceContract (Name = "IPeerConnectorContract", Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
+	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
 	internal interface IPeerConnectorContract
 	{
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
 		void Connect (ConnectInfo connect);
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/Welcome", IsOneWay = true)]
 		void Welcome (WelcomeInfo welcome);
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/Refuse", IsOneWay = true)]
 		void Refuse (RefuseInfo refuse);
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/Disconnect", IsOneWay = true)]
 		void Disconnect (DisconnectInfo disconnect);
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/LinkUtility", IsOneWay = true)]
 		void LinkUtility (LinkUtilityInfo linkUtility);
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = Consts.Namespace + "/Ping", IsOneWay = true)]
 		void Ping ();
+
+		[OperationContract (IsOneWay = true)]
+		void SendMessage (Message msg);
+	}
+
+	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
+	internal interface IPeerReceiverContract
+	{
+		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
+		void Connect (ConnectInfo connect);
 
 		[OperationContract (IsOneWay = true)]
 		void SendMessage (Message msg);
@@ -75,7 +85,7 @@ namespace System.ServiceModel.PeerResolvers
 		public ulong NodeId { get; set; }
 	}
 
-	[MessageContract]
+	[MessageContract (IsWrapped = false)]
 	internal class ConnectInfo
 	{
 		public ConnectInfo ()
@@ -83,7 +93,7 @@ namespace System.ServiceModel.PeerResolvers
 			dc = new ConnectInfoDC ();
 		}
 
-		[MessageBodyMember]
+		[MessageBodyMember (Name = "Connect", Namespace = Consts.Namespace)]
 		ConnectInfoDC dc;
 
 		public PeerNodeAddress PeerNodeAddress {
@@ -108,7 +118,7 @@ namespace System.ServiceModel.PeerResolvers
 		public Referral [] Referrals { get; set; }
 	}
 
-	[MessageContract]
+	[MessageContract (IsWrapped = false)]
 	internal class WelcomeInfo
 	{
 		public WelcomeInfo ()
@@ -116,7 +126,7 @@ namespace System.ServiceModel.PeerResolvers
 			dc = new WelcomeInfoDC ();
 		}
 
-		[MessageBodyMember]
+		[MessageBodyMember (Name = "Welcome", Namespace = Consts.Namespace)]
 		WelcomeInfoDC dc;
 
 		public ulong NodeId {
@@ -141,7 +151,7 @@ namespace System.ServiceModel.PeerResolvers
 		public RefuseReason Reason { get; set; }
 	}
 
-	[MessageContract]
+	[MessageContract (IsWrapped = false)]
 	internal class RefuseInfo
 	{
 		public RefuseInfo ()
@@ -149,7 +159,7 @@ namespace System.ServiceModel.PeerResolvers
 			dc = new RefuseInfoDC ();
 		}
 
-		[MessageBodyMember]
+		[MessageBodyMember (Name = "Refuse", Namespace = Consts.Namespace)]
 		RefuseInfoDC dc;
 
 		public Referral [] Referrals {
@@ -174,7 +184,7 @@ namespace System.ServiceModel.PeerResolvers
 		public DisconnectReason Reason { get; set; }
 	}
 
-	[MessageContract]
+	[MessageContract (IsWrapped = false)]
 	internal class DisconnectInfo
 	{
 		public DisconnectInfo ()
@@ -182,7 +192,7 @@ namespace System.ServiceModel.PeerResolvers
 			dc = new DisconnectInfoDC ();
 		}
 
-		[MessageBodyMember]
+		[MessageBodyMember (Name = "Disconnect", Namespace = Consts.Namespace)]
 		DisconnectInfoDC dc;
 
 		public Referral [] Referrals {
@@ -207,7 +217,7 @@ namespace System.ServiceModel.PeerResolvers
 		public uint Useful { get; set; }
 	}
 
-	[MessageContract]
+	[MessageContract (IsWrapped = false)]
 	internal class LinkUtilityInfo
 	{
 		public LinkUtilityInfo ()
@@ -215,7 +225,7 @@ namespace System.ServiceModel.PeerResolvers
 			dc = new LinkUtilityInfoDC ();
 		}
 
-		[MessageBodyMember (Name = "LinkUtilityInfo")]
+		[MessageBodyMember (Name = "LinkUtilityInfo", Namespace = Consts.Namespace)]
 		LinkUtilityInfoDC dc;
 
 		public uint Total {
