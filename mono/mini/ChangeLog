@@ -1,4 +1,11 @@
-2009-10-06  Jerry Maine  <crashfourit@gmail.com>
+2009-07-03  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+	
+	* fixed wrong dates in changelog.
+
+2009-07-03  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
 	Jerry Maine <crashfourit@gail.com>.
@@ -12,7 +19,7 @@
 	* simd-intrinsics.c: added method to IR opcode converstion for
 	packed double square root.
 
-2009-08-01 Jerry Maine <crashfourit@gmail.com>
+2009-08-03 Jerry Maine <crashfourit@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by
 	Jerry Maine <crashfourit@gail.com>.
@@ -28,7 +35,7 @@
 	being used (fp or simd)	and to translate back and forth to the
 	correct logical reg bank (fp or simd) for 'spill load's.
 
-2009-08-01 Jerry Maine <crashfourit@gmail.com>
+2009-08-03 Jerry Maine <crashfourit@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by
 	Jerry Maine <crashfourit@gail.com>.
