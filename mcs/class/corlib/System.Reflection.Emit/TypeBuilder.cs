@@ -65,7 +65,7 @@ namespace System.Reflection.Emit
 		internal PropertyBuilder[] properties;
 		internal int num_fields;
 		internal FieldBuilder[] fields;
-		private EventBuilder[] events;
+		internal EventBuilder[] events;
 		private CustomAttributeBuilder[] cattrs;
 		internal TypeBuilder[] subtypes;
 		internal TypeAttributes attrs;
@@ -1428,7 +1428,6 @@ namespace System.Reflection.Emit
 			return new ArrayType (this, rank);
 		}
 
-		[MonoTODO]
 		public override Type MakeByRefType ()
 		{
 			return new ByRefType (this);
@@ -1440,7 +1439,6 @@ namespace System.Reflection.Emit
 			return base.MakeGenericType (typeArguments);
 		}
 
-		[MonoTODO]
 		public override Type MakePointerType ()
 		{
 			return new PointerType (this);

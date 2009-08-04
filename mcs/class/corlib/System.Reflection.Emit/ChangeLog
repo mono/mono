@@ -1,3 +1,13 @@
+2009-08-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* EventBuilder.cs: Make some fields internal.
+
+	* TypeBuilder.cs: Make events field internal.
+	Remove some MonoTODOs that are already done.
+
+	* EventOnTypeBuilderInst.cs: New file which implements
+	the required functionality by compiler context.
+
 2009-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (IsDefined): Throw if not

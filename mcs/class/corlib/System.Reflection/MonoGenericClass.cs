@@ -58,6 +58,7 @@ namespace System.Reflection
 		#endregion
 
 		Hashtable fields, ctors, methods;
+		int event_count;
 
 		internal MonoGenericClass ()
 			: base (null)
@@ -71,9 +72,6 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern EventInfo[] GetEvents_internal (Type reflected_type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -86,12 +84,14 @@ namespace System.Reflection
 			MonoGenericClass parent = GetParentType () as MonoGenericClass;
 			if (parent != null)
 				parent.initialize ();
-
+			EventInfo[] events = generic_type.GetEvents_internal (flags);
+			event_count = events.Length;
+				
 			initialize (generic_type.GetMethods (flags),
 						generic_type.GetConstructorsInternal (flags),
 						generic_type.GetFields (flags),
 						generic_type.GetProperties (flags),
-						generic_type.GetEvents_internal (flags));
+						events);
 
 			initialized = true;
 		}
@@ -514,7 +514,7 @@ namespace System.Reflection
 			do {
 				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
-					l.AddRange (gi.GetEvents_impl (bf, this));
+					l.AddRange (gi.GetEventsInternal (bf, this));
 				else if (current_type is TypeBuilder)
 					l.AddRange (current_type.GetEvents (bf));
 				else {
@@ -532,25 +532,25 @@ namespace System.Reflection
 			l.CopyTo (result);
 			return result;
 		}
+	
+		EventInfo[] GetEventsInternal (BindingFlags bf, MonoGenericClass reftype) {
+			if (generic_type.events == null)
+				return new EventInfo [0];
 
-		protected EventInfo[] GetEvents_impl (BindingFlags bf, Type reftype)
-		{
+			initialize ();
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 			MethodInfo accessor;
 
-			initialize ();
-
-			EventInfo[] events = GetEvents_internal (reftype);
-
-			for (int i = 0; i < events.Length; i++) {
-				EventInfo c = events [i];
+			for (int i = 0; i < event_count; ++i) {
+				EventBuilder ev = generic_type.events [i];
 
 				match = false;
-				accessor = c.GetAddMethod (true);
+				accessor = ev.add_method;
 				if (accessor == null)
-					accessor = c.GetRemoveMethod (true);
+					accessor = ev.remove_method;
 				if (accessor == null)
 					continue;
 				mattrs = accessor.Attributes;
@@ -573,7 +573,7 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
-				l.Add (c);
+				l.Add (new EventOnTypeBuilderInst (this, ev));
 			}
 			EventInfo[] result = new EventInfo [l.Count];
 			l.CopyTo (result);
