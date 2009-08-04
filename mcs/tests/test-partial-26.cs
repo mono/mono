@@ -15,6 +15,20 @@ namespace ConsoleApplication1
 			int i;
 		}
 	}
+	
+	public partial class Y
+	{
+		partial void Foo ()
+		{
+			int i;
+		}
+	}
+	
+	public partial class Y
+	{
+		[CLSCompliant (true)]
+		partial void Foo ();
+	}
 
 	class Program
 	{
@@ -22,10 +36,15 @@ namespace ConsoleApplication1
 		{
 			var x = typeof (X).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetCustomAttributes (true);
 			Console.WriteLine (x.Length);
-			if (x.Length == 1)
-				return 0;
+			if (x.Length != 1)
+				return 1;
 
-			return 1;
+			x = typeof (Y).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetCustomAttributes (true);
+			Console.WriteLine (x.Length);
+			if (x.Length != 1)
+				return 2;
+			
+			return 0;
 		}
 	}
 }

@@ -42675,7 +42675,15 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>50</size>
+        <size>98</size>
+      </method>
+    </type>
+    <type name="ConsoleApplication1.Y">
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
