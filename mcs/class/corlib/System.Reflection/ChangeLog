@@ -1,5 +1,10 @@
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs (InflateType): Implement it in terms of managed
+	code and kill the corresponding icall.
+
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Add type_arguments field and constructor
 	that initializes it.
 

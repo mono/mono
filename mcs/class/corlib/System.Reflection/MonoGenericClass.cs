@@ -108,16 +108,35 @@ namespace System.Reflection
 			return InflateType (generic_type.BaseType);		
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern Type InflateType_internal (Type type);
-
 		internal Type InflateType (Type type)
 		{
 			if (type == null)
 				return null;
 			if (!type.IsGenericParameter && !type.ContainsGenericParameters)
 				return type;
-			return InflateType_internal (type);
+			if (type.IsGenericParameter) {
+				if (type.DeclaringMethod == null)
+					return type_arguments [type.GenericParameterPosition];
+				return type;
+			}
+			if (type.IsPointer)
+				return InflateType (type.GetElementType ()).MakePointerType ();
+			if (type.IsByRef)
+				return InflateType (type.GetElementType ()).MakeByRefType ();
+			if (type.IsArray) {
+				if (type.GetArrayRank () > 1)
+					return InflateType (type.GetElementType ()).MakeArrayType (type.GetArrayRank ());
+				if (type.ToString ().EndsWith ("[*]")) /*FIXME, the reflection API doesn't offer a way around this*/
+					return InflateType (type.GetElementType ()).MakeArrayType (1);
+				return InflateType (type.GetElementType ()).MakeArrayType ();
+			}
+
+			Type[] args = type.GetGenericArguments ();
+			for (int i = 0; i < args.Length; ++i)
+				args [i] = InflateType (args [i]);
+
+			Type gtd = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition ();
+			return gtd.MakeGenericType (args);
 		}
 		
 		public override Type BaseType {
