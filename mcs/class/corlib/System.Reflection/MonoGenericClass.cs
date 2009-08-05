@@ -710,32 +710,7 @@ namespace System.Reflection
 			return new PointerType (this);
 		}
 
-		public override Type GetElementType ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		protected override bool HasElementTypeImpl ()
-		{
-			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
-		}
-
-		protected override bool IsArrayImpl ()
-		{
-			return Type.IsArrayImpl (this);
-		}
-
-		protected override bool IsByRefImpl ()
-		{
-			return false;
-		}
-
 		protected override bool IsCOMObjectImpl ()
-		{
-			return false;
-		}
-
-		protected override bool IsPointerImpl ()
 		{
 			return false;
 		}

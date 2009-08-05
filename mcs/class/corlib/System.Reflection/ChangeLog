@@ -1,3 +1,9 @@
+2009-08-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Remove Is(Array|Pointer|ByRef)Impl
+	and GetElementType since the runtime still produces instances
+	of MonoGenericClass for those types.
+
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs: Implement more methods from MonoType.
