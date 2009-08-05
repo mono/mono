@@ -205,8 +205,20 @@ namespace System.ServiceModel
 
 		public virtual TChannel CreateChannel (InstanceContext callbackInstance, EndpointAddress address, Uri via)
 		{
-			// FIXME: supply callbackInstance
-			return base.CreateChannel (address, via);
+			if (callbackInstance == null)
+				throw new ArgumentNullException ("callbackInstance");
+
+			EnsureOpened ();
+			Type type = ClientProxyGenerator.CreateProxyType (typeof (TChannel), Endpoint.Contract, true);
+			// in .NET and SL2, it seems that the proxy is RealProxy.
+			// But since there is no remoting in SL2 (and we have
+			// no special magic), we have to use different approach
+			// that should work either.
+			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address, via});
+
+			((DuplexClientRuntimeChannel) proxy).CallbackInstance = callbackInstance;
+
+			return (TChannel) proxy;
 		}
 
 		// CreateChannel() factory methods

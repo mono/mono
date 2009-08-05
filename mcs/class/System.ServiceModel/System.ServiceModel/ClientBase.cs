@@ -153,13 +153,13 @@ namespace System.ServiceModel
 			ChannelFactory = factory;
 		}
 
-		void Initialize (InstanceContext instance,
+		internal virtual void Initialize (InstanceContext instance,
 			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{
 			ChannelFactory = new ChannelFactory<TChannel> (endpointConfigurationName, remoteAddress);
 		}
 
-		void Initialize (InstanceContext instance,
+		internal virtual void Initialize (InstanceContext instance,
 			Binding binding, EndpointAddress remoteAddress)
 		{
 			ChannelFactory = new ChannelFactory<TChannel> (binding, remoteAddress);
@@ -167,7 +167,7 @@ namespace System.ServiceModel
 
 		public ChannelFactory<TChannel> ChannelFactory {
 			get { return factory; }
-			private set {
+			internal set {
 				factory = value;
 				factory.OwnerClientBase = this;
 			}

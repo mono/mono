@@ -38,10 +38,10 @@ namespace System.ServiceModel
 {
 	internal class ClientProxyGenerator
 	{
-		public static Type CreateProxyType (Type contractInterface, ContractDescription cd)
+		public static Type CreateProxyType (Type contractInterface, ContractDescription cd, bool duplex)
 		{
 			string modname = "dummy";
-			Type crtype = typeof (ClientRuntimeChannel);
+			Type crtype = duplex ? typeof (DuplexClientRuntimeChannel) : typeof (ClientRuntimeChannel);
 
 			// public class __clientproxy_MyContract : ClientRuntimeChannel, [ContractType]
 			CodeClass c = new CodeModule (modname).CreateClass (

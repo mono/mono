@@ -1,5 +1,11 @@
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexChannelFactory.cs, ClientProxyGenerator.cs, ClientBase.cs,
+	  ChannelFactory_1.cs, DuplexClientBase.cs :
+	  create IDuplexContextChannel from ClientBase if required.
+
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexClientRuntimeChannel.cs : new proxy base channel.
 
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>

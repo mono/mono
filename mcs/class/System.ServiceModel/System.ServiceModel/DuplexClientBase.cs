@@ -57,36 +57,42 @@ namespace System.ServiceModel
 		}
 
 		protected DuplexClientBase (InstanceContext instance)
-			: base ()
+			: base (instance)
 		{
-			this.instance = instance;
 		}
 
 		protected DuplexClientBase (InstanceContext instance,
 			Binding binding, EndpointAddress address)
-			: base (binding, address)
+			: base (instance, binding, address)
 		{
-			this.instance = instance;
 		}
 
 		protected DuplexClientBase (InstanceContext instance,
 			string configurationName)
-			: base (configurationName)
+			: base (instance, configurationName)
 		{
-			this.instance = instance;
 		}
 
 		protected DuplexClientBase (InstanceContext instance,
 			string configurationName, EndpointAddress address)
-			: base (configurationName, address)
+			: base (instance, configurationName, address)
 		{
-			this.instance = instance;
 		}
-
-		InstanceContext instance;
 
 		public IDuplexContextChannel InnerDuplexChannel {
 			get { throw new NotImplementedException (); }
+		}
+
+		internal override void Initialize (InstanceContext instance,
+			string endpointConfigurationName, EndpointAddress remoteAddress)
+		{
+			ChannelFactory = new DuplexChannelFactory<TChannel> (instance, endpointConfigurationName, remoteAddress);
+		}
+
+		internal virtual void Initialize (InstanceContext instance,
+			Binding binding, EndpointAddress remoteAddress)
+		{
+			ChannelFactory = new DuplexChannelFactory<TChannel> (instance, binding, remoteAddress);
 		}
 
 		protected override TChannel CreateChannel ()
