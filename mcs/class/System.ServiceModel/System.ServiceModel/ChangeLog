@@ -1,5 +1,9 @@
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : fix 2.1 build.
+
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : actually CallbackInstance is set and
 	  should be available.
 

@@ -36,6 +36,11 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
+#if NET_2_1
+	internal class DuplexClientRuntimeChannel
+	{
+	}
+#else
 	internal class DuplexClientRuntimeChannel
 		: ClientRuntimeChannel, IDuplexContextChannel
 	{
@@ -71,6 +76,7 @@ namespace System.ServiceModel
 			session_shutdown_delegate.EndInvoke (result);
 		}
 	}
+#endif
 
 	internal class ClientRuntimeChannel
 		: CommunicationObject, IClientChannel
