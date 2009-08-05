@@ -662,13 +662,20 @@ namespace System.Reflection
 		string format_name (bool full_name, bool assembly_qualified)
 		{
 			StringBuilder sb = new StringBuilder (generic_type.FullName);
+			bool compiler_ctx = generic_type.IsCompilerContext;
+
 			sb.Append ("[");
 			for (int i = 0; i < type_arguments.Length; ++i) {
 				if (i > 0)
 					sb.Append (",");
+				
 				string name = full_name ? type_arguments [i].AssemblyQualifiedName : type_arguments [i].ToString ();
-				if (name == null)
-					return null;
+				if (name == null) {
+					if (compiler_ctx && type_arguments [i].IsGenericParameter)
+						name = type_arguments [i].Name;
+					else
+						return null;
+				}
 				if (full_name)
 					sb.Append ("[");
 				sb.Append (name);

@@ -1,5 +1,11 @@
 2009-08-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs (FullName): mcs depends that FullName
+	doesn't return null for instantiations over generic params
+	of type builders. We special case this under compiler context.
+
+2009-08-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Remove Is(Array|Pointer|ByRef)Impl
 	and GetElementType since the runtime still produces instances
 	of MonoGenericClass for those types.
