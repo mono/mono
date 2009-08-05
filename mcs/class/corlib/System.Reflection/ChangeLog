@@ -1,5 +1,10 @@
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs: Implement Is*Impl methods to simply
+	return false.
+
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Implement Make(Array,ByRef,Pointer) using the
 	new managed types.
 
