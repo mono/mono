@@ -36,13 +36,46 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
-#if TARGET_DOTNET
-	[MonoTODO]
-	public
-#else
-	internal
-#endif
-	class ClientRuntimeChannel
+	internal class DuplexClientRuntimeChannel
+		: ClientRuntimeChannel, IDuplexContextChannel
+	{
+		public DuplexClientRuntimeChannel (ServiceEndpoint endpoint,
+			ChannelFactory factory, EndpointAddress remoteAddress, Uri via)
+			: base (endpoint, factory, remoteAddress, via)
+		{
+		}
+
+		public bool AutomaticInputSessionShutdown {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public InstanceContext CallbackInstance {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		Action<TimeSpan> session_shutdown_delegate;
+
+		public void CloseOutputSession (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IAsyncResult BeginCloseOutputSession (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (session_shutdown_delegate == null)
+				session_shutdown_delegate = new Action<TimeSpan> (CloseOutputSession);
+			return session_shutdown_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		public void EndCloseOutputSession (IAsyncResult result)
+		{
+			session_shutdown_delegate.EndInvoke (result);
+		}
+	}
+
+	internal class ClientRuntimeChannel
 		: CommunicationObject, IClientChannel
 	{
 		ClientRuntime runtime;

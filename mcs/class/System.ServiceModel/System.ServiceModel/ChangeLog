@@ -1,5 +1,9 @@
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexClientRuntimeChannel.cs : new proxy base channel.
+
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceRuntimeChannel.cs : it should implement IServiceChannel,
 	  not IClientChannel.
 
