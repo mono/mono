@@ -1,5 +1,9 @@
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MethodOnTypeBuilderInstTest.cs: Really fix the test.
+
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodOnTypeBuilderInstTest.cs: Pointer inflation
 	was fixed. Use the right assert on the test.
 

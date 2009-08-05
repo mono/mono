@@ -606,9 +606,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (float), new_params [1].ParameterType, "N#2");
 			Assert.AreEqual (typeof (float).MakeArrayType (), new_params [2].ParameterType, "N#3");
 
-			//Assert.AreEqual (typeof (float).MakePointerType (), new_params [3].ParameterType, "N#4");
-			//FIXME this is the current behavior when inflating pointers
-			Assert.AreEqual (typeParams [0].MakePointerType (), old_params [3].ParameterType, "N#4");
+			Assert.AreEqual (typeof (float).MakePointerType (), new_params [3].ParameterType, "N#4");
 
 			Assert.AreEqual (typeof (float).MakeByRefType (), new_params [4].ParameterType, "N#5");
 			Assert.AreEqual (typeof (GenericType <float>), new_params [5].ParameterType, "N#6");
