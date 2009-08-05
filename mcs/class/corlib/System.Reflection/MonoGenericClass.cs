@@ -633,6 +633,28 @@ namespace System.Reflection
 			else
 				return c.IsAssignableFrom (parent);
 		}
+
+		public override Type MakeArrayType ()
+		{
+			return new ArrayType (this, 0);
+		}
+
+		public override Type MakeArrayType (int rank)
+		{
+			if (rank < 1)
+				throw new IndexOutOfRangeException ();
+			return new ArrayType (this, rank);
+		}
+
+		public override Type MakeByRefType ()
+		{
+			return new ByRefType (this);
+		}
+
+		public override Type MakePointerType ()
+		{
+			return new PointerType (this);
+		}
 	}
 }
 
