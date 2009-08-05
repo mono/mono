@@ -1,3 +1,12 @@
+2009-08-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_generic_class_get_object): Initialized the
+	managed type arguments array.
+
+	* object-internals.h (MonoReflectionGenericClass): Add type_arguments field.
+
+	* appdomain.c: Bump corlib version.
+
 2009-08-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (thread_cleanup): Free serialized_ui_culture_info. Fixes
