@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Mono.CSharp
 {
@@ -51,8 +52,9 @@ namespace Mono.CSharp
 			}
 		}
 
-		static StaticDataClass site_container;
+		static StaticDataClass global_site_container;
 		static int field_counter;
+		static int container_counter;
 
 		readonly Arguments arguments;
 		protected IDynamicBinder binder;
@@ -70,18 +72,24 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected static Field CreateSiteField (FullNamedExpression type)
+		static TypeContainer CreateSiteContainer ()
 		{
-			if (site_container == null) {
-				site_container = new StaticDataClass ();
-				RootContext.ToplevelTypes.AddCompilerGeneratedClass (site_container);
-				site_container.DefineType ();
-				site_container.Define ();
-//				site_container.EmitType ();
+			if (global_site_container == null) {
+				global_site_container = new StaticDataClass ();
+				RootContext.ToplevelTypes.AddCompilerGeneratedClass (global_site_container);
+				global_site_container.DefineType ();
+				global_site_container.Define ();
+//				global_site_container.EmitType ();
 
-				RootContext.RegisterCompilerGeneratedType (site_container.TypeBuilder);
+				RootContext.RegisterCompilerGeneratedType (global_site_container.TypeBuilder);
 			}
 
+			return global_site_container;
+		}
+
+		static Field CreateSiteField (FullNamedExpression type)
+		{
+			TypeContainer site_container = CreateSiteContainer ();
 			Field f = new Field (site_container, type, Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName ("Site" +  field_counter++), null);
 			f.Define ();
@@ -126,22 +134,7 @@ namespace Mono.CSharp
 		void EmitCall (EmitContext ec, bool isStatement)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			int default_args = isStatement ? 1 : 2;
-
-			string d_name = isStatement ? "Action`" : "Func`";
-			Type t = TypeManager.CoreLookupType ("System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
-			if (t == null)
-				throw new NotImplementedException ("Create compiler generated delegate");
-
-			FullNamedExpression[] targs = new FullNamedExpression [dyn_args_count + default_args];
-			targs [0] = new TypeExpression (TypeManager.call_site_type, loc);
-			for (int i = 0; i < dyn_args_count; ++i)
-				targs[i + 1] = new TypeExpression (TypeManager.TypeToReflectionType (arguments [i].Type), loc);
-
-			if (!isStatement)
-				targs [targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
-
-			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (new GenericTypeExpr (t, new TypeArguments (targs), loc)), loc);
+			TypeExpr site_type = CreateSiteType (isStatement, dyn_args_count);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
@@ -156,8 +149,17 @@ namespace Mono.CSharp
 
 			args = new Arguments (1 + dyn_args_count);
 			args.Add (new Argument (site_field_expr));
-			if (arguments != null)
-				args.AddRange (arguments);
+			if (arguments != null) {
+				foreach (Argument a in arguments) {
+					if (a is NamedArgument) {
+						// Name is not valid in this context
+						args.Add (new Argument (a.Expr, a.ArgType));
+						continue;
+					}
+
+					args.Add (a);
+				}
+			}
 
 			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (ec), args, loc).Resolve (ec);
 			if (target != null)
@@ -170,6 +172,66 @@ namespace Mono.CSharp
 		{
 			return new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "Microsoft", loc), "CSharp", loc), "RuntimeBinder", loc);
+		}
+
+		TypeExpr CreateSiteType (bool isStatement, int dyn_args_count)
+		{
+			int default_args = isStatement ? 1 : 2;
+
+			bool has_ref_out_argument = false;
+			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
+			targs [0] = new TypeExpression (TypeManager.call_site_type, loc);
+			for (int i = 0; i < dyn_args_count; ++i) {
+				Type arg_type;
+				Argument a = arguments [i];
+				if (a.Type == TypeManager.null_type)
+					arg_type = TypeManager.object_type;
+				else
+					arg_type = TypeManager.TypeToReflectionType (a.Type);
+
+				if (a.ArgType == Argument.AType.Out || a.ArgType == Argument.AType.Ref)
+					has_ref_out_argument = true;
+
+				targs [i + 1] = new TypeExpression (arg_type, loc);
+			}
+
+			TypeExpr del_type = null;
+			if (!has_ref_out_argument) {
+				string d_name = isStatement ? "Action`" : "Func`";
+
+				Type t = TypeManager.CoreLookupType ("System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
+				if (t != null) {
+					if (!isStatement)
+						targs[targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
+
+					del_type = new GenericTypeExpr (t, new TypeArguments (targs), loc);
+				}
+			}
+
+			// No appropriate predefined delegate found
+			if (del_type == null) {
+				Type rt = isStatement ? TypeManager.void_type : type;
+				Parameter[] p = new Parameter [dyn_args_count + 1];
+				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
+
+				for (int i = 1; i < dyn_args_count + 1; ++i)
+					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
+
+				TypeContainer parent = CreateSiteContainer ();
+				Delegate d = new Delegate (null, parent, new TypeExpression (rt, loc),
+					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
+					new MemberName ("Container" + container_counter++.ToString ("X")),
+					new ParametersCompiled (p), null);
+
+				d.DefineType ();
+				d.Define ();
+
+				parent.AddDelegate (d);
+				del_type = new TypeExpression (d.TypeBuilder, loc);
+			}
+
+			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (del_type), loc);
+			return site_type;
 		}
 	}
 
@@ -302,22 +364,48 @@ namespace Mono.CSharp
 		{
 			Arguments binder_args = new Arguments (member != null ? 5 : 3);
 			MemberAccess binder = GetBinderNamespace (loc);
+			bool is_member_access = member is MemberAccess;
 
-			// TODO: It's SimpleName for base.ctor ()
-			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpCallFlags", loc), "None", loc)));
-			if (member != null)
+			string call_flags;
+			if (!is_member_access && member is SimpleName) {
+				call_flags = "SimpleNameCall";
+				is_member_access = true;
+			} else {
+				call_flags = "None";
+			}
+
+			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpCallFlags", loc), call_flags, loc)));
+
+			if (is_member_access)
 				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
 
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
 
-			// TODO: member_access.TypeArguments
-			if (member != null)
-				binder_args.Add (new Argument (new NullLiteral (loc)));
+			if (member != null && member.HasTypeArguments) {
+				TypeArguments ta = member.TypeArguments;
+				if (ta.Resolve (ec)) {
+					ArrayList targs = new ArrayList (ta.Count);
+					foreach (Type t in ta.Arguments)
+						targs.Add (new TypeOf (new TypeExpression (t, loc), loc));
 
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+					binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", targs, loc)));
+				}
+			} else if (is_member_access) {
+				binder_args.Add (new Argument (new NullLiteral (loc)));
+			}
+
+			Expression real_args;
+			if (args == null) {
+				// Cannot be null because .NET trips over
+				real_args = new ArrayCreation (new MemberAccess (binder, "CSharpArgumentInfo", loc), "[]", new ArrayList (0), loc);
+			} else {
+				real_args = new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc);
+			}
+
+			binder_args.Add (new Argument (real_args));
 
 			return new New (new MemberAccess (binder,
-				member != null ? "CSharpInvokeMemberBinder" : "CSharpInvokeBinder", loc), binder_args, loc);
+				is_member_access ? "CSharpInvokeMemberBinder" : "CSharpInvokeBinder", loc), binder_args, loc);
 		}
 	}
 

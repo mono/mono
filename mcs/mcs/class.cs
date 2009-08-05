@@ -823,7 +823,7 @@ namespace Mono.CSharp {
 
 				if (i == 0 && Kind == Kind.Class && !fne_resolved.Type.IsInterface) {
 					if (fne_resolved is DynamicTypeExpr)
-						Report.Error (1965, Location, "Class `{0}' cannot derive from dynamic type",
+						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
 					else
 						base_class = fne_resolved;

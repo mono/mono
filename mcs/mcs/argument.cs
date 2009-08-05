@@ -23,9 +23,10 @@ namespace Mono.CSharp
 	{
 		public enum AType : byte
 		{
-			Ref = 1,		// ref modifier used
-			Out = 2,		// out modifier used
-			Default = 3		// argument created from default parameter value
+			Ref = 1,			// ref modifier used
+			Out = 2,			// out modifier used
+			Default = 3,		// argument created from default parameter value
+			DynamicStatic = 4	// static argument for dynamic binding
 		}
 
 		public readonly AType ArgType;
@@ -221,13 +222,43 @@ namespace Mono.CSharp
 			foreach (Argument a in args) {
 				Arguments dargs = new Arguments (2);
 
-				// TODO: Inspect a.Type or a.Expression
-
 				// CSharpArgumentInfoFlags.None = 0
-				dargs.Add (new Argument (new IntLiteral (0, loc)));
+				const string info_flags_enum = "CSharpArgumentInfoFlags";
+				Expression info_flags = new IntLiteral (0, loc);
 
-				// TODO: named
-				dargs.Add (new Argument (new NullLiteral (loc)));
+				if (a.Expr is Constant) {
+					// Any constant is emitted as a literal
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "LiteralConstant", loc));
+				} else if (a.ArgType == Argument.AType.Ref) {
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsRef", loc));
+				} else if (a.ArgType == Argument.AType.Out) {
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsOut", loc));
+				} else if (a.ArgType == Argument.AType.DynamicStatic) {
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc));
+				}
+
+				if (!TypeManager.IsDynamicType (a.Expr.Type)) {
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc));
+				}
+
+				string named_value;
+				NamedArgument na = a as NamedArgument;
+				if (na != null) {
+					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "NamedArgument", loc));
+
+					named_value = na.Name.Value;
+				} else {
+					named_value = null;
+				}
+
+				dargs.Add (new Argument (info_flags));
+				dargs.Add (new Argument (new StringLiteral (named_value, loc)));
 				all.Add (new New (new MemberAccess (binder, "CSharpArgumentInfo", loc), dargs, loc));
 			}
 

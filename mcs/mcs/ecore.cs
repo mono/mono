@@ -2373,6 +2373,12 @@ namespace Mono.CSharp {
 
 			return Name;
 		}
+
+		public TypeArguments TypeArguments {
+			get {
+				return targs;
+			}
+		}
 	}
 	
 	/// <summary>

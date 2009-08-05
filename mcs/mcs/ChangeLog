@@ -1,3 +1,8 @@
+2009-08-05  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, dynamic.cs, expression.cs, ecore.cs, class.cs,
+	delegate.cs: Work on dynamic binding.
+
 2009-08-04  Marek Safar  <marek.safar@gmail.com>
 
 	A second fix for bug #525342

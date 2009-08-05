@@ -564,6 +564,12 @@ namespace Mono.CSharp {
 		string GetOperatorExpressionTypeName ()
 		{
 			switch (Oper) {
+			case Operator.OnesComplement:
+				return "OnesComplement";
+			case Operator.LogicalNot:
+				return "Not";
+			case Operator.UnaryNegation:
+				return "Negate";
 			case Operator.UnaryPlus:
 				return "UnaryPlus";
 			default:
@@ -1013,6 +1019,12 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
+			if (TypeManager.IsDynamicType (expr.Type)) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (expr));
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
+			}
+
 			eclass = ExprClass.Value;
 
 			if (TypeManager.IsNullableType (expr.Type))
@@ -1113,6 +1125,17 @@ namespace Mono.CSharp {
 		public override void EmitStatement (EmitContext ec)
 		{
 			EmitCode (ec, false);
+		}
+
+		//
+		// Converts operator to System.Linq.Expressions.ExpressionType enum name
+		//
+		string GetOperatorExpressionTypeName ()
+		{
+			if ((mode & Mode.IsDecrement) != 0)
+				return "Decrement";
+
+			return "Increment";
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -2029,10 +2052,36 @@ namespace Mono.CSharp {
 			switch (oper) {
 			case Operator.Addition:
 				return is_compound ? "AddAssign" : "Add";
+			case Operator.BitwiseAnd:
+				return is_compound ? "AndAssign" : "And";
+			case Operator.BitwiseOr:
+				return is_compound ? "OrAssign" : "Or";
+			case Operator.Division:
+				return is_compound ? "DivideAssign" : "Divide";
+			case Operator.ExclusiveOr:
+				return is_compound ? "ExclusiveOrAssign" : "ExclusiveOr";
 			case Operator.Equality:
 				return "Equal";
+			case Operator.GreaterThan:
+				return "GreaterThan";
+			case Operator.GreaterThanOrEqual:
+				return "GreaterThanOrEqual";
+			case Operator.Inequality:
+				return "NotEqual";
+			case Operator.LeftShift:
+				return is_compound ? "LeftShiftAssign" : "LeftShift";
+			case Operator.LessThan:
+				return "LessThan";
+			case Operator.LessThanOrEqual:
+				return "LessThanOrEqual";
+			case Operator.Modulus:
+				return is_compound ? "ModuloAssign" : "Modulo";
 			case Operator.Multiply:
 				return is_compound ? "MultiplyAssign" : "Multiply";
+			case Operator.RightShift:
+				return is_compound ? "RightShiftAssign" : "RightShift";
+			case Operator.Subtraction:
+				return is_compound ? "SubtractAssign" : "Subtract";
 			default:
 				throw new NotImplementedException ("Unknown expression type operator " + oper.ToString ());
 			}
@@ -4707,15 +4756,47 @@ namespace Mono.CSharp {
 			mg = expr_resolved as MethodGroupExpr;
 
 			if (dynamic_arg || TypeManager.IsDynamicType (expr_type)) {
-				if (mg != null && mg.IsBase) {
-					Report.Error (1971, loc,
-						"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
-						mg.Name);
-					return null;
+				Arguments args;
+				DynamicMemberBinder dmb = expr_resolved as DynamicMemberBinder;
+				if (dmb != null) {
+					args = dmb.Arguments;
+					if (arguments != null)
+						args.AddRange (arguments);
+				} else if (mg == null) {
+					if (arguments == null)
+						args = new Arguments (1);
+					else
+						args = arguments;
+
+					args.Insert (0, new Argument (expr_resolved));
+					expr = null;
+				} else {
+					if (mg.IsBase) {
+						Report.Error (1971, loc,
+							"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
+							mg.Name);
+						return null;
+					}
+
+					args = arguments;
+
+					if (mg.IsStatic != mg.IsInstance) {
+						if (args == null)
+							args = new Arguments (1);
+
+						if (mg.IsStatic) {
+							args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicStatic));
+						} else {
+							MemberAccess ma = expr as MemberAccess;
+							if (ma != null)
+								args.Insert (0, new Argument (ma.Left.Resolve (ec)));
+							else
+								args.Insert (0, new Argument (new This (loc).Resolve (ec)));
+						}
+					}
 				}
 
-				Arguments args = ((DynamicMemberBinder) expr_resolved).Arguments;
-				return new DynamicInvocation (expr as MemberAccess, args, loc).Resolve (ec);
+				return new DynamicInvocation (expr as ATypeNameExpression, args, loc).Resolve (ec);
 			}
 
 			if (mg == null) {
@@ -6777,13 +6858,12 @@ namespace Mono.CSharp {
 			typearg = texpr.Type;
 
 			if (typearg == TypeManager.void_type) {
-				Error (673, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
-				return null;
-			}
-
-			if (typearg.IsPointer && !ec.InUnsafe){
+				Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
+			} else if (typearg.IsPointer && !ec.InUnsafe){
 				UnsafeError (loc);
-				return null;
+			} else if (TypeManager.IsDynamicType (typearg)) {
+				Report.Error (1962, QueriedType.Location,
+					"The typeof operator cannot be used on the dynamic type");
 			}
 
 			type = TypeManager.type_type;
@@ -6806,7 +6886,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, typearg);
+			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.TypeToReflectionType (typearg));
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
@@ -7506,6 +7586,12 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return expr.GetSignatureForError () + "." + base.GetSignatureForError ();
+		}
+
+		public Expression Left {
+			get {
+				return expr;
+			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -8235,12 +8321,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		enum AccessorType
-		{
-			Get,
-			Set
-		}
-
 		//
 		// Points to our "data" repository
 		//
@@ -8271,15 +8351,9 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		static string GetAccessorName (AccessorType at)
+		static string GetAccessorName (bool isSet)
 		{
-			if (at == AccessorType.Set)
-				return "set";
-
-			if (at == AccessorType.Get)
-				return "get";
-
-			throw new NotImplementedException (at.ToString ());
+			return isSet ? "set" : "get";
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -8299,7 +8373,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAccessor (ec, AccessorType.Get, null);
+			return ResolveAccessor (ec, null);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -8315,16 +8389,13 @@ namespace Mono.CSharp {
 				Error_CannotModifyIntermediateExpressionValue (ec);
 			}
 
-			Expression e = ResolveAccessor (ec, AccessorType.Set, right_side);
-			if (e == null)
-				return null;
-
-			set_expr = Convert.ImplicitConversion (ec, right_side, type, loc);
-			return e;
+			return ResolveAccessor (ec, right_side);
 		}
 
-		Expression ResolveAccessor (EmitContext ec, AccessorType accessorType, Expression right_side)
+		Expression ResolveAccessor (EmitContext ec, Expression right_side)
 		{
+			CommonResolve (ec);
+
 			bool dynamic;
 			arguments.Resolve (ec, out dynamic);
 			if (dynamic || TypeManager.IsDynamicType (indexer_type)) {
@@ -8339,10 +8410,8 @@ namespace Mono.CSharp {
 				if (right_side != null)
 					args.Add (new Argument (right_side));
 
-				return new DynamicIndexBinder (accessorType == AccessorType.Set, args, loc).Resolve (ec);
+				return new DynamicIndexBinder (right_side != null, args, loc).Resolve (ec);
 			}
-
-			CommonResolve (ec);
 
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
 			if (ilist.Methods == null) {
@@ -8370,7 +8439,7 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 
 			MethodInfo accessor;
-			if (accessorType == AccessorType.Get) {
+			if (right_side == null) {
 				accessor = get = pi.GetGetMethod (true);
 			} else {
 				accessor = set = pi.GetSetMethod (true);
@@ -8380,12 +8449,14 @@ namespace Mono.CSharp {
 						TypeManager.GetFullNameSignature (pi));
 					return null;
 				}
+
+				set_expr = Convert.ImplicitConversion (ec, right_side, type, loc);
 			}
 
 			if (accessor == null) {
 				Report.SymbolRelatedToPreviousError (pi);
 				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks a `{1}' accessor",
-					TypeManager.GetFullNameSignature (pi), GetAccessorName (accessorType));
+					TypeManager.GetFullNameSignature (pi), GetAccessorName (right_side != null));
 				return null;
 			}
 
@@ -8407,7 +8478,7 @@ namespace Mono.CSharp {
 					(set.Attributes & MethodAttributes.MemberAccessMask) != (get.Attributes & MethodAttributes.MemberAccessMask)) {
 					Report.SymbolRelatedToPreviousError (accessor);
 					Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because a `{1}' accessor is inaccessible",
-						TypeManager.GetFullNameSignature (pi), GetAccessorName (accessorType));
+						TypeManager.GetFullNameSignature (pi), GetAccessorName (right_side != null));
 				} else {
 					Report.SymbolRelatedToPreviousError (pi);
 					ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (pi));

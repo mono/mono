@@ -249,7 +249,10 @@ namespace Mono.CSharp {
 			TypeManager.RegisterMethod (InvokeBuilder, Parameters);
 			member_cache.AddMember (InvokeBuilder, this);
 
-			if (TypeManager.iasyncresult_type != null && TypeManager.asynccallback_type != null) {
+			//
+			// Don't emit async method for compiler generated delegates (e.g. dynamic site containers)
+			//
+			if (TypeManager.iasyncresult_type != null && TypeManager.asynccallback_type != null && !IsCompilerGenerated) {
 				DefineAsyncMethods (cc);
 			}
 
