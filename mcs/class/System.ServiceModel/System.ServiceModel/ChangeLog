@@ -1,3 +1,8 @@
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : it should implement IServiceChannel,
+	  not IClientChannel.
+
 2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationContext.cs : GetCallbackChannel<T>() should just return

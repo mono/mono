@@ -34,12 +34,10 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel
 {
-	internal class ServiceRuntimeChannel : CommunicationObject, IContextChannel, IClientChannel
+	internal class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
 	{
 		IExtensionCollection<IContextChannel> extensions;
 		readonly IChannel channel;		
-		bool _allowInitializationUI;
-		Uri _via;
 		readonly TimeSpan _openTimeout;
 		readonly TimeSpan _closeTimeout;
 
@@ -80,9 +78,6 @@ namespace System.ServiceModel
 
 		public IOutputSession OutputSession {
 			get {
-				var ch = channel as ISessionChannel<IOutputSession>;
-				if (ch != null)
-					return ch.Session;
 				var dch = channel as ISessionChannel<IDuplexSession>;
 				return dch != null ? dch.Session : null;
 			}
@@ -90,10 +85,8 @@ namespace System.ServiceModel
 
 		public EndpointAddress RemoteAddress {
 			get {
-				if (channel is IRequestChannel)
-					return ((IRequestChannel) channel).RemoteAddress;
-				if (channel is IOutputChannel)
-					return ((IOutputChannel) channel).RemoteAddress;
+				if (channel is IDuplexChannel)
+					return ((IDuplexChannel) channel).RemoteAddress;
 				return null;
 			}
 		}
@@ -165,41 +158,9 @@ namespace System.ServiceModel
 			}
 		}
 
-
-		#region IClientChannel Members
-
-		public bool AllowInitializationUI {
-			get {
-				return _allowInitializationUI;
-			}
-			set {
-				_allowInitializationUI = value;
-			}
-		}
-
-		public bool DidInteractiveInitialization {
+		public Uri ListenUri {
 			get { throw new NotImplementedException (); }
 		}
-
-		public Uri Via {
-			get { return _via; }
-		}
-
-		public IAsyncResult BeginDisplayInitializationUI (AsyncCallback callback, object state) {
-			throw new NotImplementedException ();
-		}
-
-		public void EndDisplayInitializationUI (IAsyncResult result) {
-			throw new NotImplementedException ();
-		}
-
-		public void DisplayInitializationUI () {
-			throw new NotImplementedException ();
-		}
-
-		public event EventHandler<UnknownMessageReceivedEventArgs> UnknownMessageReceived;
-
-		#endregion
 
 		#region IDisposable Members
 
