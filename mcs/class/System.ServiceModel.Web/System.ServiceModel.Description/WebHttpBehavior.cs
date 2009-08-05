@@ -37,26 +37,16 @@ namespace System.ServiceModel.Description
 	{
 		public WebHttpBehavior ()
 		{
+			DefaultBodyStyle = WebMessageBodyStyle.Bare;
+			DefaultOutgoingRequestFormat = WebMessageFormat.Xml;
+			DefaultOutgoingResponseFormat = WebMessageFormat.Xml;
 		}
 
-		WebMessageFormat default_request_format, default_response_format;
-		WebMessageBodyStyle default_body_style;
+		public virtual WebMessageBodyStyle DefaultBodyStyle { get; set; }
 
-		[MonoTODO]
-		public virtual WebMessageBodyStyle DefaultBodyStyle {
-			get { return default_body_style; }
-			set { default_body_style = value; }
-		}
+		public virtual WebMessageFormat DefaultOutgoingRequestFormat { get; set; }
 
-		public virtual WebMessageFormat DefaultOutgoingRequestFormat {
-			get { return default_request_format; }
-			set { default_request_format = value; }
-		}
-
-		public virtual WebMessageFormat DefaultOutgoingResponseFormat {
-			get { return default_response_format; }
-			set { default_response_format = value; }
-		}
+		public virtual WebMessageFormat DefaultOutgoingResponseFormat { get; set; }
 
 		public virtual void AddBindingParameters (ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{

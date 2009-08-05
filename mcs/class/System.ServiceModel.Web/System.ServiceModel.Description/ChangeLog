@@ -1,6 +1,12 @@
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehavior.cs, WebScriptEnablingBehavior.cs :
+	  implemented properties as in documented way.
+	  Remove extra derived GetQueryStringConverter().
+
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs, WebScriptEnablingBehavior.cs :
 	  mostly implemented Validate().
 
 2008-04-21  Igor Zelmanovich  <igorz@mainsoft.com>

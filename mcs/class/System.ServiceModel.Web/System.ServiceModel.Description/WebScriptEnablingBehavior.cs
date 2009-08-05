@@ -37,28 +37,16 @@ namespace System.ServiceModel.Description
 	{
 		public WebScriptEnablingBehavior ()
 		{
+			DefaultBodyStyle = WebMessageBodyStyle.WrappedRequest;
+			DefaultOutgoingRequestFormat = WebMessageFormat.Json;
+			DefaultOutgoingResponseFormat = WebMessageFormat.Json;
 		}
 
-		WebMessageFormat default_request_format, default_response_format;
-		WebMessageBodyStyle default_body_style;
+		public override WebMessageBodyStyle DefaultBodyStyle { get; set; }
 
-		[MonoTODO]
-		public override WebMessageBodyStyle DefaultBodyStyle {
-			get { return default_body_style; }
-			set { default_body_style = value; }
-		}
+		public override WebMessageFormat DefaultOutgoingRequestFormat { get; set; }
 
-		[MonoTODO]
-		public override WebMessageFormat DefaultOutgoingRequestFormat {
-			get { return default_request_format; }
-			set { default_request_format = value; }
-		}
-
-		[MonoTODO]
-		public override WebMessageFormat DefaultOutgoingResponseFormat {
-			get { return default_response_format; }
-			set { default_response_format = value; }
-		}
+		public override WebMessageFormat DefaultOutgoingResponseFormat { get; set; }
 
 		[MonoTODO]
 		protected override void AddClientErrorInspector (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
@@ -77,12 +65,6 @@ namespace System.ServiceModel.Description
 
 		public override void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-		}
-
-		[MonoTODO]
-		protected override QueryStringConverter GetQueryStringConverter (OperationDescription operationDescription)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("add non-XmlSerializer-ness check (but where?)")]
