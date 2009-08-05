@@ -85,10 +85,30 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("add non-XmlSerializer-ness check (but where?)")]
 		public override void Validate (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			ValidateBinding (endpoint);
+
+			foreach (var od in endpoint.Contract.Operations) {
+				var wga = od.Behaviors.Find<WebGetAttribute> ();
+				if (wga != null && wga.UriTemplate != null)
+					throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
+				var wia = od.Behaviors.Find<WebInvokeAttribute> ();
+				if (wia != null) {
+					if (wia.UriTemplate != null)
+						throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
+					switch (wia.Method.ToUpper ()) {
+					case "GET":
+					case "POST":
+						break;
+					default:
+						throw new InvalidOperationException ("Only GET and POST HTTP methods are valid used for WebScriptEnablingBehavior");
+					}
+				}
+			}
 		}
 	}
 }

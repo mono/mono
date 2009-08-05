@@ -131,9 +131,27 @@ namespace System.ServiceModel.Description
 			return new WebMessageFormatter.RequestDispatchFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("check UriTemplate validity")]
 		public virtual void Validate (ServiceEndpoint endpoint)
 		{
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			ValidateBinding (endpoint);
+		}
+
+		protected virtual void ValidateBinding (ServiceEndpoint endpoint)
+		{
+			switch (endpoint.Binding.Scheme) {
+			case "http":
+			case "https":
+				break;
+			default:
+				throw new InvalidOperationException ("Only http and https are allowed for WebHttpBehavior");
+			}
+			if (!endpoint.Binding.MessageVersion.Equals (MessageVersion.None))
+				throw new InvalidOperationException ("Only MessageVersion.None is allowed for WebHttpBehavior");
+			if (!endpoint.Binding.CreateBindingElements ().Find<TransportBindingElement> ().ManualAddressing)
+				throw new InvalidOperationException ("ManualAddressing in the transport binding element in the binding must be true for WebHttpBehavior");
 		}
 	}
 }

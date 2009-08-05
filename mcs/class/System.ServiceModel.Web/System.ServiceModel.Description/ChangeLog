@@ -1,3 +1,8 @@
+2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs, WebScriptEnablingBehavior.cs :
+	  mostly implemented Validate().
+
 2008-04-21  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* WebHttpBehavior.cs : override endpoint's ContractFilter 
