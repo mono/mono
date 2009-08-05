@@ -50,10 +50,7 @@ namespace System.ServiceModel
 			set { throw new NotImplementedException (); }
 		}
 
-		public InstanceContext CallbackInstance {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public InstanceContext CallbackInstance { get; set; }
 
 		Action<TimeSpan> session_shutdown_delegate;
 
