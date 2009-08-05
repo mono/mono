@@ -53,6 +53,7 @@ namespace System.Reflection
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649
 		internal TypeBuilder generic_type;
+		Type[] type_arguments;
 		bool initialized;
 #pragma warning restore 649
 		#endregion
@@ -65,6 +66,12 @@ namespace System.Reflection
 		{
 			// this should not be used
 			throw new InvalidOperationException ();
+		}
+
+		internal MonoGenericClass (TypeBuilder tb, Type[] args) : base (null)
+		{
+			this.generic_type = tb;
+			this.type_arguments = args;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -1,3 +1,7 @@
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Environment.cs: Bump corlib version.
+
 2009-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs: Bump corlib version.

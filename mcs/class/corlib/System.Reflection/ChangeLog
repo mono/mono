@@ -1,3 +1,8 @@
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Add type_arguments field and constructor
+	that initializes it.
+
 2009-08-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (initialize): Remember the number
