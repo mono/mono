@@ -1,5 +1,10 @@
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs: Implement more methods from MonoType.
+	Done with all type name related properties.
+
+2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Implement Is*Impl methods to simply
 	return false.
 

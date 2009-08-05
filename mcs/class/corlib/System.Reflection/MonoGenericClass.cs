@@ -37,6 +37,7 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Text;
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 
@@ -634,6 +635,59 @@ namespace System.Reflection
 				return c.IsAssignableFrom (parent);
 		}
 
+		public override Type UnderlyingSystemType {
+			get { return this; }
+		}
+
+		public override string Name {
+			get { return generic_type.Name; }
+		}
+
+		public override string Namespace {
+			get { return generic_type.Namespace; }
+		}
+
+		public override string FullName {
+			get { return format_name (true, false); }
+		}
+
+		public override string AssemblyQualifiedName {
+			get { return format_name (true, true); }
+		}
+
+		public override Guid GUID {
+			get { throw new NotSupportedException (); }
+		}
+
+		string format_name (bool full_name, bool assembly_qualified)
+		{
+			StringBuilder sb = new StringBuilder (generic_type.FullName);
+			sb.Append ("[");
+			for (int i = 0; i < type_arguments.Length; ++i) {
+				if (i > 0)
+					sb.Append (",");
+				string name = full_name ? type_arguments [i].AssemblyQualifiedName : type_arguments [i].ToString ();
+				if (name == null)
+					return null;
+				if (full_name)
+					sb.Append ("[");
+				sb.Append (name);
+				if (full_name)
+					sb.Append ("]");
+			}
+			sb.Append ("]");
+			if (assembly_qualified) {
+				sb.Append (", ");
+				sb.Append (generic_type.Assembly.FullName);
+			}
+			return sb.ToString ();
+		}
+
+		public override string ToString ()
+		{
+			return format_name (false, false);
+		}
+
 		public override Type MakeArrayType ()
 		{
 			return new ArrayType (this, 0);
@@ -654,6 +708,11 @@ namespace System.Reflection
 		public override Type MakePointerType ()
 		{
 			return new PointerType (this);
+		}
+
+		public override Type GetElementType ()
+		{
+			throw new NotSupportedException ();
 		}
 
 		protected override bool HasElementTypeImpl ()
