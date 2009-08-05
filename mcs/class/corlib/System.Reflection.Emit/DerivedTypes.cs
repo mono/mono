@@ -239,6 +239,11 @@ namespace System.Reflection.Emit
 			return new PointerType (this);
 		}
 
+		public override string ToString ()
+		{
+			return FormatName (elementType.ToString ());
+		}
+
 		public override GenericParameterAttributes GenericParameterAttributes {
 			get { throw new NotSupportedException (); }
 		}
