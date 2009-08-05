@@ -127,6 +127,7 @@ System.Reflection/EventInfoTest.cs
 System.Reflection/FieldInfoTest.cs
 System.Reflection/MethodBaseTest.cs
 System.Reflection/MethodInfoTest.cs
+System.Reflection/MonoGenericClassTest.cs
 System.Reflection/ParameterInfoTest.cs
 System.Reflection/PropertyInfoTest.cs
 System.Reflection/ReflectedTypeTest.cs
