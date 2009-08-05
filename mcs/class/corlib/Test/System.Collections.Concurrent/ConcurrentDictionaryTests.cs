@@ -32,7 +32,7 @@ using NUnit.Framework;
 
 namespace ParallelFxTests
 {
-	[TestFixture, Ignore]
+	[TestFixture]
 	public class ConcurrentDictionaryTests
 	{
 		ConcurrentDictionary<string, int> map;

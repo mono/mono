@@ -38,7 +38,8 @@ namespace System.Threading.Tasks
 		
 		public TResult Result {
 			get {
-				Wait ();
+				if (function != null)
+					Wait ();
 				return value;
 			}
 			internal set {
