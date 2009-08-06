@@ -83,7 +83,9 @@ namespace System.ServiceModel
 	{
 		ClientRuntime runtime;
 		EndpointAddress remote_address;
-		ChannelFactory factory;
+		ServiceEndpoint endpoint;
+		IChannelFactory factory;
+		TimeSpan default_open_timeout, default_close_timeout;
 		IRequestChannel request_channel;
 		IOutputChannel output_channel; // could also be IDuplexChannel instance.
 
@@ -107,7 +109,10 @@ namespace System.ServiceModel
 			this.runtime = endpoint.CreateRuntime ();
 			this.remote_address = remoteAddress ?? endpoint.Address;
 			runtime.Via = via;
-			this.factory = factory;
+			this.endpoint = endpoint;
+			this.factory = factory.OpenedChannelFactory;
+			default_open_timeout = factory.DefaultOpenTimeout;
+			default_close_timeout = factory.DefaultCloseTimeout;
 			_processDelegate = new ProcessDelegate (Process);
 			requestDelegate = new RequestDelegate (Request);
 			sendDelegate = new SendDelegate (Send);
@@ -117,8 +122,8 @@ namespace System.ServiceModel
 			OperationTimeout = TimeSpan.FromMinutes (1);
 
 			// determine operation channel to create.
-			if (factory.OpenedChannelFactory is IChannelFactory<IRequestChannel> ||
-			    factory.OpenedChannelFactory is IChannelFactory<IRequestSessionChannel>)
+			if (factory is IChannelFactory<IRequestChannel> ||
+			    factory is IChannelFactory<IRequestSessionChannel>)
 				SetupRequestChannel ();
 			else
 				SetupOutputChannel ();
@@ -330,11 +335,11 @@ namespace System.ServiceModel
 
 		// CommunicationObject
 		protected internal override TimeSpan DefaultOpenTimeout {
-			get { return factory.DefaultOpenTimeout; }
+			get { return default_open_timeout; }
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {
-			get { return factory.DefaultCloseTimeout; }
+			get { return default_close_timeout; }
 		}
 
 		protected override void OnAbort ()
@@ -440,7 +445,7 @@ namespace System.ServiceModel
 				operation = Runtime.OperationSelector.SelectOperation (method, parameters);
 			else
 				operation = operationName;
-			OperationDescription od = factory.Endpoint.Contract.Operations.Find (operation);
+			OperationDescription od = endpoint.Contract.Operations.Find (operation);
 			if (od == null)
 				throw new Exception (String.Format ("OperationDescription for operation '{0}' was not found in its internally-generated contract.", operation));
 			return od;
@@ -451,12 +456,12 @@ namespace System.ServiceModel
 			BindingParameterCollection pl =
 				new BindingParameterCollection ();
 
-			ContractDescription cd = factory.Endpoint.Contract;
+			ContractDescription cd = endpoint.Contract;
 #if !NET_2_1
 			pl.Add (ChannelProtectionRequirements.CreateFromContract (cd));
 
-			foreach (IEndpointBehavior behavior in factory.Endpoint.Behaviors)
-				behavior.AddBindingParameters (factory.Endpoint, pl);
+			foreach (IEndpointBehavior behavior in endpoint.Behaviors)
+				behavior.AddBindingParameters (endpoint, pl);
 #endif
 
 			return pl;
@@ -468,8 +473,8 @@ namespace System.ServiceModel
 			if (output_channel != null)
 				return;
 
-			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			output_channel = (IOutputChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {remote_address, Via});
+			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+			output_channel = (IOutputChannel) method.Invoke (factory, new object [] {remote_address, Via});
 		}
 
 		// This handles both IRequestChannel and IRequestSessionChannel.
@@ -478,8 +483,8 @@ namespace System.ServiceModel
 			if (request_channel != null)
 				return;
 
-			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			request_channel = (IRequestChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {remote_address, Via});
+			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+			request_channel = (IRequestChannel) method.Invoke (factory, new object [] {remote_address, Via});
 		}
 
 		void Output (OperationDescription od, object [] parameters)
@@ -571,7 +576,7 @@ namespace System.ServiceModel
 
 		Message CreateRequest (ClientOperation op, object [] parameters)
 		{
-			MessageVersion version = factory.Endpoint.Binding.MessageVersion;
+			MessageVersion version = endpoint.Binding.MessageVersion;
 			if (version == null)
 				version = MessageVersion.Default;
 
