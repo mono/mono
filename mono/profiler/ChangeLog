@@ -1,4 +1,13 @@
-2009-06-18  Massimiliano Mantione <massi@ximian.com>
+2009-08-06  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	- Avoid registering the writer thread with the runtime unless when
+	it must create a heap snapshot.
+	- Simplified buffer flushing when an appdomain, image or assembly is
+	unloaded (now it can be done in the current thread).
+	- During shutdown, moved "code chunk cleanup" is a region of code
+	that holds the profiler lock.
+
+2009-07-29  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Implemented data structures to keep track
 	of code buffers produced by the runtime, and used them instead of
 	jit_info_table_find for the statistical profiler.
