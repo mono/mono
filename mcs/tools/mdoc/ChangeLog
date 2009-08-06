@@ -1,3 +1,9 @@
+2009-08-06  Jonathan Pryor <jpryor@novell.com>
+
+	* mdoc.exe.sources: Add ../../build/common/Consts.cs to the build.
+	* Mono.Documentation/mdoc.cs: mdoc version is Consts.MonoVersion, not
+	  some hard-coded, perpetually out-of-date version.
+
 2009-08-02  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Sometimes <AssemblyVersion/> is

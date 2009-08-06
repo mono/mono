@@ -58,7 +58,7 @@ namespace Mono.Documentation {
 			List<string> extra = p.Parse (args);
 
 			if (showVersion) {
-				Console.WriteLine ("mdoc 0.1.0");
+				Console.WriteLine ("mdoc {0}", Consts.MonoVersion);
 				return;
 			}
 			if (extra.Count == 0) {

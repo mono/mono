@@ -1,3 +1,4 @@
+../../build/common/Consts.cs
 ../../class/Mono.Options/Mono.Options/Options.cs
 Mono.Documentation/assembler.cs
 Mono.Documentation/dump.cs
