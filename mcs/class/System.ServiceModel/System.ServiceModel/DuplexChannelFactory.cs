@@ -250,7 +250,7 @@ namespace System.ServiceModel
 
 		public static TChannel CreateChannel (InstanceContext callbackInstance, Binding binding, EndpointAddress endpointAddress, Uri via)
 		{
-			return new DuplexChannelFactory<TChannel> (callbackInstance, binding, endpointAddress).CreateChannel (callbackInstance, endpointAddress, via);
+			return new DuplexChannelFactory<TChannel> (callbackInstance, binding).CreateChannel (callbackInstance, endpointAddress, via);
 		}
 
 	}

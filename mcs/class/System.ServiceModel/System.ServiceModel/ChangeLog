@@ -1,5 +1,10 @@
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexChannelFactory.cs, ClientRuntimeChannel.cs,
+	  ChannelFactory_1.cs : more ServiceEndpoint dep reduction.
+
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : removing extra deps on ServiceEndpoint.
 
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>

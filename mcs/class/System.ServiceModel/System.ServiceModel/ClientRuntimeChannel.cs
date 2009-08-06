@@ -108,7 +108,7 @@ namespace System.ServiceModel
 			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
 		{
 			this.runtime = endpoint.CreateRuntime ();
-			this.remote_address = remoteAddress ?? endpoint.Address;
+			this.remote_address = remoteAddress;
 			runtime.Via = via;
 			this.contract = endpoint.Contract;
 			this.message_version = endpoint.Binding.MessageVersion;

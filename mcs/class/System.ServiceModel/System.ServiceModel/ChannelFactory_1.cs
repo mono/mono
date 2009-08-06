@@ -129,7 +129,7 @@ namespace System.ServiceModel
 			// But since there is no remoting in SL2 (and we have
 			// no special magic), we have to use different approach
 			// that should work either.
-			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address, via});
+			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address ?? Endpoint.Address, via});
 			return (TChannel) proxy;
 		}
 
