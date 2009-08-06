@@ -61,7 +61,7 @@ namespace Microsoft.Scripting {
         /// This is the factory method to get the ComObject corresponding to an RCW
         /// </summary>
         /// <returns></returns>
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
 #endif
         [SecurityCritical]

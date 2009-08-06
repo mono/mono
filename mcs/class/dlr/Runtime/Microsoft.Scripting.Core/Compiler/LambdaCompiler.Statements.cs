@@ -26,6 +26,10 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions.Compiler {
 #else

@@ -28,6 +28,10 @@ using Microsoft.Runtime.CompilerServices;
 #endif
 
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -69,7 +73,7 @@ namespace Microsoft.Linq.Expressions {
         /// <param name="nodes">The expressions to visit.</param>
         /// <returns>The modified expression list, if any of the elements were modified;
         /// otherwise, returns the original expression list.</returns>
-        protected ReadOnlyCollection<Expression> Visit(ReadOnlyCollection<Expression> nodes) {
+        public ReadOnlyCollection<Expression> Visit(ReadOnlyCollection<Expression> nodes) {
             Expression[] newNodes = null;
             for (int i = 0, n = nodes.Count; i < n; i++) {
                 Expression node = Visit(nodes[i]);
@@ -118,7 +122,7 @@ namespace Microsoft.Linq.Expressions {
         /// optionally replacing it with a new element.</param>
         /// <returns>The modified node list, if any of the elements were modified;
         /// otherwise, returns the original node list.</returns>
-        protected static ReadOnlyCollection<T> Visit<T>(ReadOnlyCollection<T> nodes, Func<T, T> elementVisitor) {
+        public static ReadOnlyCollection<T> Visit<T>(ReadOnlyCollection<T> nodes, Func<T, T> elementVisitor) {
             T[] newNodes = null;
             for (int i = 0, n = nodes.Count; i < n; i++) {
                 T node = elementVisitor(nodes[i]);
@@ -147,7 +151,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         /// <exception cref="InvalidOperationException">The visit method for this node returned a different type.</exception>
-        protected T VisitAndConvert<T>(T node, string callerName) where T : Expression {
+        public T VisitAndConvert<T>(T node, string callerName) where T : Expression {
             if (node == null) {
                 return null;
             }
@@ -167,7 +171,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         /// <exception cref="InvalidOperationException">The visit method for this node returned a different type.</exception>
-        protected ReadOnlyCollection<T> VisitAndConvert<T>(ReadOnlyCollection<T> nodes, string callerName) where T : Expression {
+        public ReadOnlyCollection<T> VisitAndConvert<T>(ReadOnlyCollection<T> nodes, string callerName) where T : Expression {
             T[] newNodes = null;
             for (int i = 0, n = nodes.Count; i < n; i++) {
                 T node = Visit(nodes[i]) as T;
@@ -199,22 +203,14 @@ namespace Microsoft.Linq.Expressions {
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitBinary(BinaryExpression node) {
             // Walk children in evaluation order: left, conversion, right
-            Expression l = Visit(node.Left);
-            LambdaExpression c = VisitAndConvert(node.Conversion, "VisitBinary");
-            Expression r = Visit(node.Right);
-            if (l == node.Left && r == node.Right && c == node.Conversion) {
-                return node;
-            }
-            if (node.IsReferenceComparison) {
-                if (node.NodeType == ExpressionType.Equal) {
-                    return Expression.ReferenceEqual(l, r);
-                } else {
-                    return Expression.ReferenceNotEqual(l, r);
-                }
-            }
-            var result = Expression.MakeBinary(node.NodeType, l, r, node.IsLiftedToNull, node.Method, c);
-            ValidateBinary(node, result);
-            return result;
+            return ValidateBinary(
+                node,
+                node.Update(
+                    Visit(node.Left),
+                    VisitAndConvert(node.Conversion, "VisitBinary"),
+                    Visit(node.Right)
+                )
+            );
         }
 
         /// <summary>
@@ -259,13 +255,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitConditional(ConditionalExpression node) {
-            Expression t = Visit(node.Test);
-            Expression l = Visit(node.IfTrue);
-            Expression r = Visit(node.IfFalse);
-            if (t == node.Test && l == node.IfTrue && r == node.IfFalse) {
-                return node;
-            }
-            return Expression.Condition(t, l, r, node.Type);
+            return node.Update(Visit(node.Test), Visit(node.IfTrue), Visit(node.IfFalse));
         }
 
         /// <summary>
@@ -326,7 +316,7 @@ namespace Microsoft.Linq.Expressions {
         /// <see cref="Expression.VisitChildren" /> will try to reduce the node.
         /// </remarks>
         protected internal virtual Expression VisitExtension(Expression node) {
-            return node.VisitChildren(this.Visit);
+            return node.VisitChildren(this);
         }
 
         /// <summary>
@@ -336,12 +326,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitGoto(GotoExpression node) {
-            LabelTarget t = VisitLabelTarget(node.Target);
-            Expression v = Visit(node.Value);
-            if (t == node.Target && v == node.Value) {
-                return node;
-            }
-            return Expression.MakeGoto(node.Kind, t, v, node.Type);
+            return node.Update(VisitLabelTarget(node.Target), Visit(node.Value));
         }
 
         /// <summary>
@@ -377,12 +362,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitLabel(LabelExpression node) {
-            LabelTarget l = VisitLabelTarget(node.Target);
-            Expression d = Visit(node.DefaultValue);
-            if (l == node.Target && d == node.DefaultValue) {
-                return node;
-            }
-            return Expression.Label(l, d);
+            return node.Update(VisitLabelTarget(node.Target), Visit(node.DefaultValue));
         }
 
         /// <summary>
@@ -393,12 +373,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitLambda<T>(Expression<T> node) {
-            Expression b = Visit(node.Body);
-            var p = VisitAndConvert(node.Parameters, "VisitLambda");
-            if (b == node.Body && p == node.Parameters) {
-                return node;
-            }
-            return Expression.Lambda<T>(b, node.Name, node.TailCall, p);
+            return node.Update(Visit(node.Body), VisitAndConvert(node.Parameters, "VisitLambda"));
         }
 
         /// <summary>
@@ -408,15 +383,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitLoop(LoopExpression node) {
-            LabelTarget @break = VisitLabelTarget(node.BreakLabel);
-            LabelTarget @continue = VisitLabelTarget(node.ContinueLabel);
-            Expression b = Visit(node.Body);
-            if (@break == node.BreakLabel &&
-                @continue == node.ContinueLabel &&
-                b == node.Body) {
-                return node;
-            }
-            return Expression.Loop(b, @break, @continue);
+            return node.Update(VisitLabelTarget(node.BreakLabel), VisitLabelTarget(node.ContinueLabel), Visit(node.Body));
         }
 
         /// <summary>
@@ -426,11 +393,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitMember(MemberExpression node) {
-            Expression e = Visit(node.Expression);
-            if (e == node.Expression) {
-                return node;
-            }
-            return Expression.MakeMemberAccess(e, node.Member);
+            return node.Update(Visit(node.Expression));
         }
 
         /// <summary>
@@ -472,14 +435,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitNewArray(NewArrayExpression node) {
-            ReadOnlyCollection<Expression> e = Visit(node.Expressions);
-            if (e == node.Expressions) {
-                return node;
-            }
-            if (node.NodeType == ExpressionType.NewArrayInit) {
-                return Expression.NewArrayInit(node.Type.GetElementType(), e);
-            }
-            return Expression.NewArrayBounds(node.Type.GetElementType(), e);
+            return node.Update(Visit(node.Expressions));
         }
 
         /// <summary>
@@ -490,14 +446,7 @@ namespace Microsoft.Linq.Expressions {
         /// otherwise, returns the original expression.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
         protected internal virtual Expression VisitNew(NewExpression node) {
-            ReadOnlyCollection<Expression> a = Visit(node.Arguments);
-            if (a == node.Arguments) {
-                return node;
-            }
-            if (node.Members != null) {
-                return Expression.New(node.Constructor, a, node.Members);
-            }
-            return Expression.New(node.Constructor, a);
+            return node.Update(Visit(node.Arguments));
         }
 
         /// <summary>
@@ -517,11 +466,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
-            var v = VisitAndConvert(node.Variables, "VisitRuntimeVariables");
-            if (v == node.Variables) {
-                return node;
-            }
-            return Expression.RuntimeVariables(v);
+            return node.Update(VisitAndConvert(node.Variables, "VisitRuntimeVariables"));
         }
 
         /// <summary>
@@ -531,12 +476,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual SwitchCase VisitSwitchCase(SwitchCase node) {
-            ReadOnlyCollection<Expression> t = Visit(node.TestValues);
-            Expression b = Visit(node.Body);
-            if (t == node.TestValues && b == node.Body) {
-                return node;
-            }
-            return Expression.SwitchCase(b, t);
+            return node.Update(Visit(node.TestValues), Visit(node.Body));
         }
 
         /// <summary>
@@ -546,15 +486,14 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitSwitch(SwitchExpression node) {
-            Expression s = Visit(node.SwitchValue);
-            ReadOnlyCollection<SwitchCase> c = Visit(node.Cases, VisitSwitchCase);
-            Expression d = Visit(node.DefaultBody);
-            if (s == node.SwitchValue && c == node.Cases && d == node.DefaultBody) {
-                return node;
-            }
-            var result = Expression.Switch(node.Type, s, d, node.Comparison, c);
-            ValidateSwitch(node, result);
-            return result;
+            return ValidateSwitch(
+                node,
+                node.Update(
+                    Visit(node.SwitchValue),
+                    Visit(node.Cases, VisitSwitchCase),
+                    Visit(node.DefaultBody)
+                )
+            );
         }
 
         /// <summary>
@@ -564,13 +503,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual CatchBlock VisitCatchBlock(CatchBlock node) {
-            ParameterExpression v = VisitAndConvert(node.Variable, "VisitCatchBlock");
-            Expression f = Visit(node.Filter);
-            Expression b = Visit(node.Body);
-            if (v == node.Variable && b == node.Body && f == node.Filter) {
-                return node;
-            }
-            return Expression.MakeCatchBlock(node.Test, v, b, f);
+            return node.Update(VisitAndConvert(node.Variable, "VisitCatchBlock"), Visit(node.Filter), Visit(node.Body));
         }
 
         /// <summary>
@@ -580,18 +513,12 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitTry(TryExpression node) {
-            Expression b = Visit(node.Body);
-            ReadOnlyCollection<CatchBlock> h = Visit(node.Handlers, VisitCatchBlock);
-            Expression y = Visit(node.Finally);
-            Expression f = Visit(node.Fault);
-
-            if (b == node.Body &&
-                h == node.Handlers &&
-                y == node.Finally &&
-                f == node.Fault) {
-                return node;
-            }
-            return Expression.MakeTry(node.Type, b, y, f, h);
+            return node.Update(
+                Visit(node.Body),
+                Visit(node.Handlers, VisitCatchBlock),
+                Visit(node.Finally),
+                Visit(node.Fault)
+            );
         }
 
         /// <summary>
@@ -601,14 +528,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitTypeBinary(TypeBinaryExpression node) {
-            Expression e = Visit(node.Expression);
-            if (e == node.Expression) {
-                return node;
-            }
-            if (node.NodeType == ExpressionType.TypeIs) {
-                return Expression.TypeIs(e, node.TypeOperand);
-            }
-            return Expression.TypeEqual(e, node.TypeOperand);
+            return node.Update(Visit(node.Expression));
         }
 
         /// <summary>
@@ -618,13 +538,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitUnary(UnaryExpression node) {
-            Expression o = Visit(node.Operand);
-            if (o == node.Operand) {
-                return node;
-            }
-            var result = Expression.MakeUnary(node.NodeType, o, node.Type, node.Method);
-            ValidateUnary(node, result);
-            return result;
+            return ValidateUnary(node, node.Update(Visit(node.Operand)));
         }
 
         /// <summary>
@@ -634,12 +548,10 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitMemberInit(MemberInitExpression node) {
-            NewExpression n = VisitAndConvert(node.NewExpression, "VisitMemberInit");
-            ReadOnlyCollection<MemberBinding> bindings = Visit(node.Bindings, VisitMemberBinding);
-            if (n == node.NewExpression && bindings == node.Bindings) {
-                return node;
-            }
-            return Expression.MemberInit(n, bindings);
+            return node.Update(
+                VisitAndConvert(node.NewExpression, "VisitMemberInit"),
+                Visit(node.Bindings, VisitMemberBinding)
+            );
         }
 
         /// <summary>
@@ -649,12 +561,10 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected internal virtual Expression VisitListInit(ListInitExpression node) {
-            NewExpression n = VisitAndConvert(node.NewExpression, "VisitListInit");
-            ReadOnlyCollection<ElementInit> initializers = Visit(node.Initializers, VisitElementInit);
-            if (n == node.NewExpression && initializers == node.Initializers) {
-                return node;
-            }
-            return Expression.ListInit(n, initializers);
+            return node.Update(
+                VisitAndConvert(node.NewExpression, "VisitListInit"),
+                Visit(node.Initializers, VisitElementInit)
+            );
         }
 
         /// <summary>
@@ -664,11 +574,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual ElementInit VisitElementInit(ElementInit node) {
-            ReadOnlyCollection<Expression> arguments = Visit(node.Arguments);
-            if (arguments == node.Arguments) {
-                return node;
-            }
-            return Expression.ElementInit(node.AddMethod, arguments);
+            return node.Update(Visit(node.Arguments));
         }
 
         /// <summary>
@@ -697,11 +603,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual MemberAssignment VisitMemberAssignment(MemberAssignment node) {
-            Expression e = Visit(node.Expression);
-            if (e == node.Expression) {
-                return node;
-            }
-            return Expression.Bind(node.Member, e);
+            return node.Update(Visit(node.Expression));
         }
 
         /// <summary>
@@ -711,11 +613,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node) {
-            ReadOnlyCollection<MemberBinding> bindings = Visit(node.Bindings, VisitMemberBinding);
-            if (bindings == node.Bindings) {
-                return node;
-            }
-            return Expression.MemberBind(node.Member, bindings);
+            return node.Update(Visit(node.Bindings, VisitMemberBinding));
         }
 
         /// <summary>
@@ -725,11 +623,7 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The modified expression, if it or any subexpression was modified;
         /// otherwise, returns the original expression.</returns>
         protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding node) {
-            ReadOnlyCollection<ElementInit> initializers = Visit(node.Initializers, VisitElementInit);
-            if (initializers == node.Initializers) {
-                return node;
-            }
-            return Expression.ListBind(node.Member, initializers);
+            return node.Update(Visit(node.Initializers, VisitElementInit));
         }
 
 
@@ -741,18 +635,22 @@ namespace Microsoft.Linq.Expressions {
         // require derived classes to be explicit about what they want to do if
         // types change.
         //
-        private static void ValidateUnary(UnaryExpression before, UnaryExpression after) {
-            if (before.Method == null) {
+        private static UnaryExpression ValidateUnary(UnaryExpression before, UnaryExpression after) {
+            if (before != after && before.Method == null) {
                 if (after.Method != null) {
                     throw Error.MustRewriteWithoutMethod(after.Method, "VisitUnary");
                 }
 
-                ValidateChildType(before.Operand.Type, after.Operand.Type, "VisitUnary");
+                // rethrow has null operand
+                if (before.Operand != null && after.Operand != null) {
+                    ValidateChildType(before.Operand.Type, after.Operand.Type, "VisitUnary");
+                }
             }
+            return after;
         }
 
-        private static void ValidateBinary(BinaryExpression before, BinaryExpression after) {
-            if (before.Method == null) {
+        private static BinaryExpression ValidateBinary(BinaryExpression before, BinaryExpression after) {
+            if (before != after && before.Method == null) {
                 if (after.Method != null) {
                     throw Error.MustRewriteWithoutMethod(after.Method, "VisitBinary");
                 }
@@ -760,15 +658,17 @@ namespace Microsoft.Linq.Expressions {
                 ValidateChildType(before.Left.Type, after.Left.Type, "VisitBinary");
                 ValidateChildType(before.Right.Type, after.Right.Type, "VisitBinary");
             }
+            return after;
         }
 
         // We wouldn't need this if switch didn't infer the method.
-        private static void ValidateSwitch(SwitchExpression before, SwitchExpression after) {
+        private static SwitchExpression ValidateSwitch(SwitchExpression before, SwitchExpression after) {
             // If we did not have a method, we don't want to bind to one,
             // it might not be the right thing.
             if (before.Comparison == null && after.Comparison != null) {
                 throw Error.MustRewriteWithoutMethod(after.Comparison, "VisitSwitch");
             }
+            return after;
         }
 
         // Value types must stay as the same type, otherwise it's now a

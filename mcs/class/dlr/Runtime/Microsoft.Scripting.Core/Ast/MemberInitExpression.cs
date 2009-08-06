@@ -87,7 +87,10 @@ namespace Microsoft.Linq.Expressions {
             get { return _bindings; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitMemberInit(this);
         }
 
@@ -138,6 +141,21 @@ namespace Microsoft.Linq.Expressions {
                     return ReduceMemberInit(member, ((MemberMemberBinding)binding).Bindings, false);
                 default: throw ContractUtils.Unreachable;
             }
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="newExpression">The <see cref="NewExpression" /> property of the result.</param>
+        /// <param name="bindings">The <see cref="Bindings" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public MemberInitExpression Update(NewExpression newExpression, IEnumerable<MemberBinding> bindings) {
+            if (newExpression == NewExpression && bindings == Bindings) {
+                return this;
+            }
+            return Expression.MemberInit(newExpression, bindings);
         }
     }
 

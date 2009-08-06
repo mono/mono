@@ -1,10 +1,10 @@
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.20624</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D4AE44AD-07B9-41DC-BB3B-1FDCDE3C987D}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -18,12 +18,13 @@
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\fxcop\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -38,7 +39,7 @@
     <Optimize>false</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\Debug\</OutputPath>
 <DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
-    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -51,7 +52,7 @@
     <Optimize>true</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\Release\</OutputPath>
 <DocumentationFile>$(OutputPath)\Microsoft.Dynamic.XML</DocumentationFile>
-    <DefineConstants>TRACE;$(SignedSym);MICROSOFT_DYNAMIC</DefineConstants>
+    <DefineConstants>TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

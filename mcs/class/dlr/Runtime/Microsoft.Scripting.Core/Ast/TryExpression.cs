@@ -24,6 +24,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -101,8 +105,28 @@ namespace Microsoft.Linq.Expressions {
             get { return _fault; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitTry(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="body">The <see cref="Body" /> property of the result.</param>
+        /// <param name="handlers">The <see cref="Handlers" /> property of the result.</param>
+        /// <param name="finally">The <see cref="Finally" /> property of the result.</param>
+        /// <param name="fault">The <see cref="Fault" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public TryExpression Update(Expression body, IEnumerable<CatchBlock> handlers, Expression @finally, Expression fault) {
+            if (body == Body && handlers == Handlers && @finally == Finally && fault == Fault) {
+                return this;
+            }
+            return Expression.MakeTry(Type, body, @finally, fault, handlers);
         }
     }
 

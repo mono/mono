@@ -1,23 +1,23 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.20624</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8B0F1074-750E-4D64-BF23-A1E0F54261E5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Scripting.ExtensionAttribute</RootNamespace>
     <AssemblyName>Microsoft.Scripting.ExtensionAttribute</AssemblyName>
-    <OldToolsVersion>2.0</OldToolsVersion>
 <AssemblyOriginatorKeyFile>$(SolutionDir)\Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
     <BaseAddress>866123776</BaseAddress>
-    <SilverlightPath Condition="$(SilverlightPath) == ''">$(ProgramFiles)\Microsoft Silverlight\2.0.40115.0</SilverlightPath>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(ProgramFiles)\Microsoft Silverlight\3.0.40624.0</SilverlightPath>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -77,7 +77,7 @@
     <SilverlightBuild>true</SilverlightBuild>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" Condition=" $(SilverlightBuild) != 'true' " />
+    <Reference Include="System" Condition=" '$(SilverlightBuild)' != 'true' " />
     <Reference Include="mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" Condition=" '$(SilverlightBuild)' == 'true' ">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SilverlightPath)\mscorlib.dll</HintPath>

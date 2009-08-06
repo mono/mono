@@ -22,6 +22,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -82,8 +86,27 @@ namespace Microsoft.Linq.Expressions {
             get { return _continue; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitLoop(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="breakLabel">The <see cref="BreakLabel" /> property of the result.</param>
+        /// <param name="continueLabel">The <see cref="ContinueLabel" /> property of the result.</param>
+        /// <param name="body">The <see cref="Body" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public LoopExpression Update(LabelTarget breakLabel, LabelTarget continueLabel, Expression body) {
+            if (breakLabel == BreakLabel && continueLabel == ContinueLabel && body == Body) {
+                return this;
+            }
+            return Expression.Loop(body, breakLabel, continueLabel);
         }
     }
 

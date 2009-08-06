@@ -65,6 +65,21 @@ namespace Microsoft.Linq.Expressions {
         public override string ToString() {
             return ExpressionStringBuilder.SwitchCaseToString(this);
         }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="testValues">The <see cref="TestValues" /> property of the result.</param>
+        /// <param name="body">The <see cref="Body" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public SwitchCase Update(IEnumerable<Expression> testValues, Expression body) {
+            if (testValues == TestValues && body == Body) {
+                return this;
+            }
+            return Expression.SwitchCase(body, testValues);
+        }
     }
 
     public partial class Expression {

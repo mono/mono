@@ -32,11 +32,11 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Microsoft.Dynamic.ComInterop")]
+[assembly: AssemblyTitle("Microsoft.Dynamic")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Microsoft.Dynamic.ComInterop")]
+[assembly: AssemblyProduct("Microsoft.Dynamic")]
 [assembly: AssemblyCopyright("� Microsoft Corporation.  All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -59,7 +59,7 @@ using System.Security;
 // by using the '*' as shown below:
 [assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 
-[assembly: AssemblyVersion("0.9.6.10")]
+[assembly: AssemblyVersion("0.9.6.20")]
 [assembly: AssemblyFileVersion("1.0.0.00")]
 [assembly: AssemblyInformationalVersion("1.0")]
 [assembly: AllowPartiallyTrustedCallers]

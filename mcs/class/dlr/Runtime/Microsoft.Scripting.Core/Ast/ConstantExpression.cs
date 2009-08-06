@@ -22,6 +22,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -79,7 +83,10 @@ namespace Microsoft.Linq.Expressions {
             get { return _value; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitConstant(this);
         }
     }

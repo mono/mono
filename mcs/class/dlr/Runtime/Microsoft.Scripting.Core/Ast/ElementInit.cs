@@ -28,6 +28,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -74,6 +78,20 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>A <see cref="String"/> representation of the node.</returns>
         public override string ToString() {
             return ExpressionStringBuilder.ElementInitBindingToString(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="arguments">The <see cref="Arguments" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public ElementInit Update(IEnumerable<Expression> arguments) {
+            if (arguments == Arguments) {
+                return this;
+            }
+            return Expression.ElementInit(AddMethod, arguments);
         }
     }
 

@@ -67,7 +67,12 @@ namespace Microsoft.Scripting.Utils {
             ParameterInfo[] pis;
             lock (_ParamInfoCache) {
                 if (!_ParamInfoCache.TryGetValue(method, out pis)) {
-                    _ParamInfoCache[method] = pis = method.GetParameters();
+                    pis = method.GetParameters();
+
+                    Type t = method.DeclaringType;
+                    if (t != null && TypeUtils.CanCache(t)) {
+                        _ParamInfoCache[method] = pis;
+                    }
                 }
             }
             return pis;

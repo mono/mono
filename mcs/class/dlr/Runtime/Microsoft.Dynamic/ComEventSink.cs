@@ -278,7 +278,7 @@ namespace Microsoft.Scripting {
 
         #region IDisposable
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]
@@ -290,7 +290,7 @@ namespace Microsoft.Scripting {
 
         #endregion
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]

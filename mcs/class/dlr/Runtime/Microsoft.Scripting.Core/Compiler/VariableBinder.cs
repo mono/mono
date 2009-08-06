@@ -24,6 +24,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions.Compiler {
 #else

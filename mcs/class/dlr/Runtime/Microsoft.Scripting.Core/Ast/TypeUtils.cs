@@ -24,6 +24,10 @@ using Microsoft.Linq.Expressions;
 #endif
 using System.Reflection;
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Dynamic.Utils {
 #else
@@ -149,8 +153,9 @@ namespace Microsoft.Scripting.Utils {
             return false;
         }
 
-        internal static bool AreEquivalent(Type t1, Type t2) {
-#if MICROSOFT_SCRIPTING_CORE
+        internal static bool AreEquivalent(Type t1, Type t2)
+        {
+#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
             return t1 == t2;
 #else
             return t1 == t2 || t1.IsEquivalentTo(t2);
@@ -580,6 +585,41 @@ namespace Microsoft.Scripting.Utils {
 
         internal static Type GetNonRefType(this Type type) {
             return type.IsByRef ? type.GetElementType() : type;
+        }
+
+        private static readonly Assembly _mscorlib = typeof(object).Assembly;
+        private static readonly Assembly _systemCore = typeof(Expression).Assembly;
+
+        /// <summary>
+        /// We can cache references to types, as long as they aren't in
+        /// collectable assemblies. Unfortunately, we can't really distinguish
+        /// between different flavors of assemblies. But, we can at least
+        /// create a whitelist for types in mscorlib (so we get the primitives)
+        /// and System.Core (so we find Func/Action overloads, etc).
+        /// </summary>
+        internal static bool CanCache(this Type t) {
+            // Note: we don't have to scan base or declaring types here.
+            // There's no way for a type in mscorlib to derive from or be
+            // contained in a type from another assembly. The only thing we
+            // need to look at is the generic arguments, which are the thing
+            // that allows mscorlib types to be specialized by types in other
+            // assemblies.
+
+            var asm = t.Assembly;
+            if (asm != _mscorlib && asm != _systemCore) {
+                // Not in mscorlib or our assembly
+                return false;
+            }
+
+            if (t.IsGenericType) {
+                foreach (Type g in t.GetGenericArguments()) {
+                    if (!CanCache(g)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

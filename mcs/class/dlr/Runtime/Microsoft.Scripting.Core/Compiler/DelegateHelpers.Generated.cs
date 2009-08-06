@@ -201,7 +201,10 @@ namespace Microsoft.Linq.Expressions.Compiler {
             }
 
             if (!curTypeInfo.TypeChain.TryGetValue(lookingUp, out nextTypeInfo)) {
-                curTypeInfo.TypeChain[lookingUp] = nextTypeInfo = new TypeInfo();
+                nextTypeInfo = new TypeInfo();
+                if (TypeUtils.CanCache(lookingUp)) {
+                    curTypeInfo.TypeChain[lookingUp] = nextTypeInfo;
+                }
             }
             return nextTypeInfo;
         }

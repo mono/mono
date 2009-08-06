@@ -1,10 +1,11 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.20624</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2AE75F5A-CD1F-4925-9647-AF4D1C282FB4}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -14,13 +15,13 @@
     <AssemblyName>Microsoft.Scripting.Core</AssemblyName>
 <DocumentationFile>$(OutputPath)\Microsoft.Scripting.Core.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <OldToolsVersion>2.0</OldToolsVersion>
 <AssemblyOriginatorKeyFile>$(SolutionDir)\Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
-    <SilverlightPath Condition="$(SilverlightPath) == ''">$(ProgramFiles)\Microsoft Silverlight\2.0.40115.0</SilverlightPath>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(ProgramFiles)\Microsoft Silverlight\3.0.40624.0</SilverlightPath>
     <BaseAddress>855638016</BaseAddress>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -89,8 +90,8 @@
     <SilverlightBuild>true</SilverlightBuild>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" Condition=" $(SilverlightBuild) != 'true' " />
-    <Reference Include="System.Configuration" Condition=" $(SilverlightBuild) != 'true' " />
+    <Reference Include="System" Condition=" '$(SilverlightBuild)' != 'true' " />
+    <Reference Include="System.Configuration" Condition=" '$(SilverlightBuild)' != 'true' " />
     <Reference Include="mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" Condition=" '$(SilverlightBuild)' == 'true' ">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SilverlightPath)\mscorlib.dll</HintPath>
@@ -99,8 +100,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SilverlightPath)\System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data" Condition=" $(SilverlightBuild) != 'true' " />
-    <Reference Include="System.Xml" Condition=" $(SilverlightBuild) != 'true' " />
+    <Reference Include="System.Data" Condition=" '$(SilverlightBuild)' != 'true' " />
+    <Reference Include="System.Xml" Condition=" '$(SilverlightBuild)' != 'true' " />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Hosts\Silverlight\SilverlightVersion.cs" Condition=" '$(SilverlightBuild)' == 'true' ">

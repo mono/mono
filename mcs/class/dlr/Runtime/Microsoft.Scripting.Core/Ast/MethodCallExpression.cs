@@ -30,6 +30,10 @@ using Microsoft.Runtime.CompilerServices;
 #endif
 
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -91,11 +95,29 @@ namespace Microsoft.Linq.Expressions {
             get { return GetOrMakeArguments(); }
         }
 
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="object">The <see cref="Object" /> property of the result.</param>
+        /// <param name="arguments">The <see cref="Arguments" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public MethodCallExpression Update(Expression @object, IEnumerable<Expression> arguments) {
+            if (@object == Object && arguments == Arguments) {
+                return this;
+            }
+            return Expression.Call(@object, Method, arguments);
+        }
+
         internal virtual ReadOnlyCollection<Expression> GetOrMakeArguments() {
             throw ContractUtils.Unreachable;
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitMethodCall(this);
         }
 

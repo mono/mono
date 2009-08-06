@@ -71,8 +71,26 @@ namespace Microsoft.Linq.Expressions {
             get { return _defaultValue; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitLabel(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="target">The <see cref="Target" /> property of the result.</param>
+        /// <param name="defaultValue">The <see cref="DefaultValue" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public LabelExpression Update(LabelTarget target, Expression defaultValue) {
+            if (target == Target && defaultValue == DefaultValue) {
+                return this;
+            }
+            return Expression.Label(target, defaultValue);
         }
     }
 

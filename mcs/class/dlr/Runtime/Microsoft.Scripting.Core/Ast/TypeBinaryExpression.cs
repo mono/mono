@@ -22,6 +22,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -161,8 +165,28 @@ namespace Microsoft.Linq.Expressions {
 
         #endregion
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitTypeBinary(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public TypeBinaryExpression Update(Expression expression) {
+            if (expression == Expression) {
+                return this;
+            }
+            if (NodeType == ExpressionType.TypeIs) {
+                return Expression.TypeIs(expression, TypeOperand);
+            }
+            return Expression.TypeEqual(expression, TypeOperand);
         }
     }
 

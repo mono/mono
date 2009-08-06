@@ -22,6 +22,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -106,8 +110,26 @@ namespace Microsoft.Linq.Expressions {
             get { return _kind; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitGoto(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="target">The <see cref="Target" /> property of the result.</param>
+        /// <param name="value">The <see cref="Value" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public GotoExpression Update(LabelTarget target, Expression value) {
+            if (target == Target && value == Value) {
+                return this;
+            }
+            return Expression.MakeGoto(Kind, target, value, Type);
         }
     }
 

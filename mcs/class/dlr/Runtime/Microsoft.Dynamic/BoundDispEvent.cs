@@ -85,7 +85,7 @@ namespace Microsoft.Scripting {
         /// </summary>
         /// <param name="handler">The handler to be added.</param>
         /// <returns>The original event with handler added.</returns>
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]
@@ -110,7 +110,7 @@ namespace Microsoft.Scripting {
         /// </summary>
         /// <param name="handler">The handler to be removed.</param>
         /// <returns>The original event with handler removed.</returns>
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]

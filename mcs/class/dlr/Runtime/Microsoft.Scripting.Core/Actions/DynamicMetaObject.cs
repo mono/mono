@@ -24,7 +24,12 @@ using Microsoft.Scripting.Utils;
 using Microsoft.Linq.Expressions;
 #endif
 using System.Reflection;
+
+#if SILVERLIGHT
+using System.Core;
+#else
 using System.Runtime.Remoting;
+#endif
 
 #if CODEPLEX_40
 namespace System.Dynamic {

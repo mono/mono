@@ -25,6 +25,10 @@ using Microsoft.Scripting.Utils;
 #endif
 using System.Reflection;
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -76,18 +80,21 @@ namespace Microsoft.Linq.Expressions {
             }
             return false;
         }
+
         /// <summary>
         /// Gets the right operand of the binary operation.
         /// </summary>
         public Expression Right {
             get { return _right; }
         }
+
         /// <summary>
         /// Gets the left operand of the binary operation.
         /// </summary>
         public Expression Left {
             get { return _left; }
         }
+
         /// <summary>
         /// Gets the implementing method for the binary operation.
         /// </summary>
@@ -97,6 +104,34 @@ namespace Microsoft.Linq.Expressions {
 
         internal virtual MethodInfo GetMethod() {
             return null;
+        }
+
+        // Note: takes children in evaluation order, which is also the order
+        // that ExpressionVisitor visits them. Having them this way reduces the
+        // chances people will make a mistake and use an inconsistent order in
+        // derived visitors.
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="left">The <see cref="Left" /> property of the result.</param>
+        /// <param name="conversion">The <see cref="Conversion" /> property of the result.</param>
+        /// <param name="right">The <see cref="Right" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public BinaryExpression Update(Expression left, LambdaExpression conversion, Expression right) {
+            if (left == Left && right == Right && conversion == Conversion) {
+                return this;
+            }
+            if (IsReferenceComparison) {
+                if (NodeType == ExpressionType.Equal) {
+                    return Expression.ReferenceEqual(left, right);
+                } else {
+                    return Expression.ReferenceNotEqual(left, right);
+                }
+            }
+            return Expression.MakeBinary(NodeType, left, right, IsLiftedToNull, Method, conversion);
         }
 
         /// <summary>
@@ -274,6 +309,7 @@ namespace Microsoft.Linq.Expressions {
         internal virtual LambdaExpression GetConversion() {
             return null;
         }
+
         /// <summary>
         /// Gets a value that indicates whether the expression tree node represents a lifted call to an operator.
         /// </summary>
@@ -299,7 +335,10 @@ namespace Microsoft.Linq.Expressions {
             }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitBinary(this);
         }
 

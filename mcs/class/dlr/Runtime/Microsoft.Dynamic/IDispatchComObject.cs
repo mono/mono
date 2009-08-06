@@ -352,7 +352,7 @@ namespace Microsoft.Scripting {
             funcDescHandle = pFuncDesc;
         }
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]
@@ -515,7 +515,7 @@ namespace Microsoft.Scripting {
             return typeInfoCoClass;
         }
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]

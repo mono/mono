@@ -75,7 +75,7 @@ namespace Microsoft.Scripting {
 
         #region Base Class Overrides
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         // to match the base method
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
 #else
@@ -93,7 +93,7 @@ namespace Microsoft.Scripting {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-#if MICROSOFT_DYNAMIC
+#if CLR2
         // to match the base method
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
 #else

@@ -52,7 +52,10 @@ namespace Microsoft.Linq.Expressions {
             get { return ExpressionType.Default; }
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitDefault(this);
         }
     }

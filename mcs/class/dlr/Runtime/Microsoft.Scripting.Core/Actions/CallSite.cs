@@ -31,6 +31,10 @@ using Microsoft.Linq.Expressions.Compiler;
 #endif
 using System.Reflection;
 
+#if SILVERLIGHT
+using System.Core;
+#endif //SILVERLIGHT
+
 #if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
 #else
@@ -109,15 +113,24 @@ namespace Microsoft.Runtime.CompilerServices {
             }
             Func<CallSiteBinder, CallSite> ctor;
 
+            MethodInfo method = null;
             var ctors = _SiteCtors;
             lock (ctors) {
                 if (!ctors.TryGetValue(delegateType, out ctor)) {
-                    MethodInfo method = typeof(CallSite<>).MakeGenericType(delegateType).GetMethod("Create");
-                    ctor = (Func<CallSiteBinder, CallSite>)Delegate.CreateDelegate(typeof(Func<CallSiteBinder, CallSite>), method);
-                    ctors.Add(delegateType, ctor);
+                    method = typeof(CallSite<>).MakeGenericType(delegateType).GetMethod("Create");
+
+                    if (TypeUtils.CanCache(delegateType)) {
+                        ctor = (Func<CallSiteBinder, CallSite>)Delegate.CreateDelegate(typeof(Func<CallSiteBinder, CallSite>), method);
+                        ctors.Add(delegateType, ctor);
+                    }
                 }
             }
-            return ctor(binder);
+            if (ctor != null) {
+                return ctor(binder);
+            }
+
+            // slow path
+            return (CallSite)method.Invoke(null, new object[] { binder });
         }
     }
 

@@ -22,6 +22,10 @@ using Microsoft.Scripting.Utils;
 #endif
 using System.Diagnostics;
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -93,8 +97,27 @@ namespace Microsoft.Linq.Expressions {
             return Expression.Empty();
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitConditional(this);
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="test">The <see cref="Test" /> property of the result.</param>
+        /// <param name="ifTrue">The <see cref="IfTrue" /> property of the result.</param>
+        /// <param name="ifFalse">The <see cref="IfFalse" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public ConditionalExpression Update(Expression test, Expression ifTrue, Expression ifFalse) {
+            if (test == Test && ifTrue == IfTrue && ifFalse == IfFalse) {
+                return this;
+            }
+            return Expression.Condition(test, ifTrue, ifFalse, Type);
         }
     }
 

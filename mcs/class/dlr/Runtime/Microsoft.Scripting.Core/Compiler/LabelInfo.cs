@@ -15,10 +15,12 @@
 using System; using Microsoft;
 
 
+#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
 #if CODEPLEX_40
 using ILGenerator = System.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
 #else
 using ILGenerator = Microsoft.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
+#endif
 #endif
 
 using System.Collections.Generic;
@@ -29,6 +31,10 @@ using System.Dynamic.Utils;
 using Microsoft.Scripting.Utils;
 #endif
 using System.Reflection.Emit;
+
+#if SILVERLIGHT
+using System.Core;
+#endif
 
 #if CODEPLEX_40
 namespace System.Linq.Expressions.Compiler {

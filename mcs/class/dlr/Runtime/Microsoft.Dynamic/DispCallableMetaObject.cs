@@ -48,7 +48,7 @@ namespace Microsoft.Scripting {
                 base.BindInvoke(binder, args);
         }
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]
@@ -73,7 +73,7 @@ namespace Microsoft.Scripting {
             return null;
         }
 
-#if MICROSOFT_DYNAMIC
+#if CLR2
         [SecurityCritical, SecurityTreatAsSafe]
 #else
         [SecuritySafeCritical]

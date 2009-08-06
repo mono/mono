@@ -22,7 +22,7 @@ namespace System.Dynamic {
 namespace Microsoft.Scripting {
 #endif
 
-#if MICROSOFT_DYNAMIC
+#if true
     internal static partial class Strings {
         private static string FormatString(string format, params object[] args) {
             return string.Format(System.Globalization.CultureInfo.CurrentCulture, format, args);

@@ -25,6 +25,10 @@ using Microsoft.Scripting.Utils;
 #endif
 using System.Threading;
 
+#if SILVERLIGHT
+using System.Core;
+#endif
+
 #if CODEPLEX_40
 namespace System.Linq.Expressions {
 #else
@@ -66,7 +70,10 @@ namespace Microsoft.Linq.Expressions {
         internal BlockExpression() {
         }
 
-        internal override Expression Accept(ExpressionVisitor visitor) {
+        /// <summary>
+        /// Dispatches to the specific visit method for this node type.
+        /// </summary>
+        protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitBlock(this);
         }
 
@@ -85,6 +92,22 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>The <see cref="Type"/> that represents the static type of the expression.</returns>
         public override Type Type {
             get { return GetExpression(ExpressionCount - 1).Type; }
+        }
+
+        /// <summary>
+        /// Creates a new expression that is like this one, but using the
+        /// supplied children. If all of the children are the same, it will
+        /// return this expression.
+        /// </summary>
+        /// <param name="variables">The <see cref="Variables" /> property of the result.</param>
+        /// <param name="expressions">The <see cref="Expressions" /> property of the result.</param>
+        /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
+        public BlockExpression Update(IEnumerable<ParameterExpression> variables, IEnumerable<Expression> expressions) {
+            if (variables == Variables && expressions == Expressions) {
+                return this;
+            }
+
+            return Expression.Block(Type, variables, expressions);
         }
 
         internal virtual Expression GetExpression(int index) {
