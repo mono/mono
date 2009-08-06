@@ -1,5 +1,9 @@
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : removing extra deps on ServiceEndpoint.
+
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : eliminate dependency on ChannelFactory,
 	  which will block using it for callback instances.
 

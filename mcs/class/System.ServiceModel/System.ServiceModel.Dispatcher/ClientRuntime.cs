@@ -35,7 +35,6 @@ namespace System.ServiceModel.Dispatcher
 {
 	public sealed class ClientRuntime
 	{
-		Type callback, contract;
 		SynchronizedCollection<IChannelInitializer> channel_initializers
 			= new SynchronizedCollection<IChannelInitializer> ();
 		SynchronizedCollection<IInteractiveChannelInitializer> interactive_channel_initializers
@@ -65,17 +64,15 @@ namespace System.ServiceModel.Dispatcher
 #endif
 
 		// .ctor() for Clients
-		internal ClientRuntime (ServiceEndpoint endpoint)
+		internal ClientRuntime (ContractDescription contract)
 		{
-			contract_name = endpoint.Contract.Name;
-			contract_ns = endpoint.Contract.Namespace;
-			contract = endpoint.Contract.ContractType;
+			contract_name = contract.Name;
+			contract_ns = contract.Namespace;
+			ContractClientType = contract.ContractType;
+			CallbackClientType = contract.CallbackContractType;
 		}
 
-		public Type CallbackClientType {
-			get { return callback; }
-			set { callback = value; }
-		}
+		public Type CallbackClientType { get; set; }
 
 		public SynchronizedCollection<IChannelInitializer> ChannelInitializers {
 			get { return channel_initializers; }
@@ -94,10 +91,7 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		
-		public Type ContractClientType {
-			get { return contract; }
-			set { contract = value; }
-		}
+		public Type ContractClientType { get; set; }
 
 #if !NET_2_1
 		public DispatchRuntime CallbackDispatchRuntime {

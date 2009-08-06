@@ -83,7 +83,8 @@ namespace System.ServiceModel
 	{
 		ClientRuntime runtime;
 		EndpointAddress remote_address;
-		ServiceEndpoint endpoint;
+		ContractDescription contract;
+		MessageVersion message_version;
 		IChannelFactory factory;
 		TimeSpan default_open_timeout, default_close_timeout;
 		IRequestChannel request_channel;
@@ -104,15 +105,16 @@ namespace System.ServiceModel
 		#endregion
 
 		public ClientRuntimeChannel (ServiceEndpoint endpoint,
-			ChannelFactory factory, EndpointAddress remoteAddress, Uri via)
+			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
 		{
 			this.runtime = endpoint.CreateRuntime ();
 			this.remote_address = remoteAddress ?? endpoint.Address;
 			runtime.Via = via;
-			this.endpoint = endpoint;
-			this.factory = factory.OpenedChannelFactory;
-			default_open_timeout = factory.DefaultOpenTimeout;
-			default_close_timeout = factory.DefaultCloseTimeout;
+			this.contract = endpoint.Contract;
+			this.message_version = endpoint.Binding.MessageVersion;
+			this.factory = channelFactory.OpenedChannelFactory;
+			default_open_timeout = channelFactory.DefaultOpenTimeout;
+			default_close_timeout = channelFactory.DefaultCloseTimeout;
 			_processDelegate = new ProcessDelegate (Process);
 			requestDelegate = new RequestDelegate (Request);
 			sendDelegate = new SendDelegate (Send);
@@ -445,26 +447,10 @@ namespace System.ServiceModel
 				operation = Runtime.OperationSelector.SelectOperation (method, parameters);
 			else
 				operation = operationName;
-			OperationDescription od = endpoint.Contract.Operations.Find (operation);
+			OperationDescription od = contract.Operations.Find (operation);
 			if (od == null)
 				throw new Exception (String.Format ("OperationDescription for operation '{0}' was not found in its internally-generated contract.", operation));
 			return od;
-		}
-
-		BindingParameterCollection CreateBindingParameters ()
-		{
-			BindingParameterCollection pl =
-				new BindingParameterCollection ();
-
-			ContractDescription cd = endpoint.Contract;
-#if !NET_2_1
-			pl.Add (ChannelProtectionRequirements.CreateFromContract (cd));
-
-			foreach (IEndpointBehavior behavior in endpoint.Behaviors)
-				behavior.AddBindingParameters (endpoint, pl);
-#endif
-
-			return pl;
 		}
 
 		// This handles IDuplexChannel, IOutputChannel, and those for session channels.
@@ -576,7 +562,7 @@ namespace System.ServiceModel
 
 		Message CreateRequest (ClientOperation op, object [] parameters)
 		{
-			MessageVersion version = endpoint.Binding.MessageVersion;
+			MessageVersion version = message_version;
 			if (version == null)
 				version = MessageVersion.Default;
 

@@ -1,3 +1,7 @@
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceEndpoint.cs : follow ClientRuntime change.
+
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceEndpoint.cs : ListenUri defaults to Address.Uri.

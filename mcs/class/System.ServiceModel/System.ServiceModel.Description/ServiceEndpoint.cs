@@ -115,7 +115,7 @@ namespace System.ServiceModel.Description
 		{
 			ServiceEndpoint se = this;
 
-			ClientRuntime proxy = new ClientRuntime (se);
+			ClientRuntime proxy = new ClientRuntime (se.Contract);
 			//proxy.ContractClientType = typeof (TChannel);
 
 			foreach (OperationDescription od in se.Contract.Operations)
