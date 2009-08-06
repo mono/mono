@@ -27,3 +27,7 @@ cs1540-9.cs
 gcs0111-8.cs
 
 cs1644-11.cs IGNORE
+
+# the error message has an assembly version in it
+cs1685.cs
+gcs1685.cs
