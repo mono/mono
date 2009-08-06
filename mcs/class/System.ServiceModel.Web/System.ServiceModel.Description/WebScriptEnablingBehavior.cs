@@ -67,6 +67,12 @@ namespace System.ServiceModel.Description
 		{
 		}
 
+		[MonoTODO]
+		protected override QueryStringConverter GetQueryStringConverter (OperationDescription operationDescription)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO ("add non-XmlSerializer-ness check (but where?)")]
 		public override void Validate (ServiceEndpoint endpoint)
 		{
