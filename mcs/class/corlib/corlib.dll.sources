@@ -318,6 +318,7 @@ System.Diagnostics/DebuggerVisualizerAttribute.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.CodeAnalysis/SuppressMessageAttribute.cs
+System.Diagnostics.Contracts/PureAttribute.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs

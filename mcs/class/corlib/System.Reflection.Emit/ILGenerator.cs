@@ -1034,10 +1034,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		[Obsolete ("Use ILOffset")]
 		internal static int Mono_GetCurrentOffset (ILGenerator ig)
 		{
 			return ig.code_len;
 		}
+		
+#if NET_4_0
+		public int ILOffset {
+			get { return code_len; }
+		}
+#endif
 
 		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
