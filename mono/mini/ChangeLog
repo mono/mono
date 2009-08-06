@@ -1,3 +1,8 @@
+2009-08-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_compile_method_inner): Throw an exception instead
+	of asserting when a method is JIT compiled in full-aot mode.
+
 2009-08-03  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
