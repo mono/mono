@@ -173,6 +173,9 @@ namespace Mono.Cecil {
 				return null;
 
 			string currentGac = GetCurrentGacPath ();
+			if (currentGac == null)
+				return null;
+
 			if (OnMono ()) {
 				string s = GetAssemblyFile (reference, currentGac);
 				if (File.Exists (s))
@@ -206,10 +209,14 @@ namespace Mono.Cecil {
 
 		static string GetCurrentGacPath ()
 		{
+			string file = typeof (Uri).Module.FullyQualifiedName;
+			if (!File.Exists (file))
+				return null;
+
 			return Directory.GetParent (
 				Directory.GetParent (
 					Path.GetDirectoryName (
-						typeof (Uri).Module.FullyQualifiedName)
+						file)
 					).FullName
 				).FullName;
 		}

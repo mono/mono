@@ -1,8 +1,12 @@
+2009-08-06  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs:
+	Do not crash when the GAC folder can't be found.
+
 2009-07-28  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/AssemblyStripper.cs: Make all methods share
 	the same body.
-	
 
 2009-07-16  Jb Evain  <jbevain@novell.com>
 
