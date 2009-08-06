@@ -157,11 +157,10 @@ w.Close ();
 		}
 	}
 
-	internal abstract class HttpReplyChannel : ReplyChannelBase
+	internal abstract class HttpReplyChannel : InternalReplyChannelBase
 	{
 		HttpChannelListenerBase<IReplyChannel> source;
 		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
-		EndpointAddress local_address;
 
 		public HttpReplyChannel (HttpChannelListenerBase<IReplyChannel> listener)
 			: base (listener)
@@ -171,11 +170,6 @@ w.Close ();
 
 		public MessageEncoder Encoder {
 			get { return source.MessageEncoder; }
-		}
-
-		// FIXME: where is it set?
-		public override EndpointAddress LocalAddress {
-			get { return local_address; }
 		}
 
 		internal MessageVersion MessageVersion {

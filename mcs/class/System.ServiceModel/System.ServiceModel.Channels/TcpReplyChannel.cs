@@ -36,7 +36,7 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
-	internal class TcpReplyChannel : ReplyChannelBase
+	internal class TcpReplyChannel : InternalReplyChannelBase
 	{
 		TcpClient client;
 		TcpChannelInfo info;
@@ -125,10 +125,6 @@ namespace System.ServiceModel.Channels
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
-		}
-
-		public override EndpointAddress LocalAddress {
-			get { throw new NotImplementedException (); }
 		}
 
 		protected override void OnClose (TimeSpan timeout)

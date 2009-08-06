@@ -37,6 +37,21 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
+	internal abstract class InternalReplyChannelBase : ReplyChannelBase
+	{
+		public InternalReplyChannelBase (ChannelListenerBase listener)
+			: base (listener)
+		{
+			local_address = new EndpointAddress (listener.Uri);
+		}
+
+		EndpointAddress local_address;
+
+		public override EndpointAddress LocalAddress {
+			get { return local_address; }
+		}
+	}
+
 	internal abstract class ReplyChannelBase : ChannelBase, IReplyChannel
 	{
 		public ReplyChannelBase (ChannelListenerBase listener)
@@ -119,13 +134,12 @@ namespace System.ServiceModel.Channels
 
 		public abstract bool WaitForRequest (TimeSpan timeout);
 
-		delegate bool WaitDelegate (TimeSpan timeout);
-		WaitDelegate wait_delegate;
+		Func<TimeSpan,bool> wait_delegate;
 
 		public virtual IAsyncResult BeginWaitForRequest (TimeSpan timeout, AsyncCallback callback, object state)
 		{
 			if (wait_delegate == null)
-				wait_delegate = new WaitDelegate (WaitForRequest);
+				wait_delegate = new Func<TimeSpan,bool> (WaitForRequest);
 			return wait_delegate.BeginInvoke (timeout, callback, state);
 		}
 
@@ -163,28 +177,36 @@ namespace System.ServiceModel.Channels
 			return recv_delegate.EndInvoke (result);
 		}
 
+		Action<TimeSpan> open_delegate, close_delegate;
+
 		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
 			AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnEndOpen (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				throw new InvalidOperationException ("async open operation has not started");
+			open_delegate.EndInvoke (result);
 		}
 
-		[MonoTODO]
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
 			AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO]
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				throw new InvalidOperationException ("async close operation has not started");
+			close_delegate.EndInvoke (result);
 		}
 	}
 }

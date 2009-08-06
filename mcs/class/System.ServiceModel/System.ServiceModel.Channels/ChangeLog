@@ -1,3 +1,8 @@
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ReplyChannelBase.cs, TcpReplyChannel.cs, HttpReplyChannel.cs:
+	  implement remaining async methods and LocalAddress.
+
 2009-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerDuplexChannel.cs : ongoing listener refactoring. Now it uses
