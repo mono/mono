@@ -42,14 +42,6 @@ namespace C5UnitTests.Templates.Events
       seen = new CollectionEventList<TItem>(EqualityComparer<TItem>.Default);
     }
 
-    public SCG.IEnumerable<EventTypeEnum> SpecsNone
-    {
-      get
-      {
-        CircularQueue<EventTypeEnum> specs = new CircularQueue<EventTypeEnum>();
-        return specs;
-      }
-    }
     public SCG.IEnumerable<EventTypeEnum> SpecsBasic
     {
       get
@@ -255,7 +247,6 @@ namespace C5UnitTests.Templates.Events
     }
 
     [Test]
-    [Ignore("Temporarily disabled.  2006-03-07.  Martin")]
     public void RetainAll()
     {
       for (int i = 0; i < 10; i++)
@@ -352,10 +343,6 @@ namespace C5UnitTests.Templates.Events
 
   public class SortedIndexedTester<U> : IndexedTester<U> where U : IIndexedSorted<int>
   {
-    public override SCG.IEnumerable<EventTypeEnum> GetSpecs()
-    {
-      return SpecsNone;
-    }
     [Test]
     public void DeleteMinMax()
     {

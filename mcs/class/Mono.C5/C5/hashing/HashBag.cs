@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -509,7 +508,7 @@ namespace C5
     [Tested]
     public override void CopyTo(T[] array, int index)
     {
-      if (index < 0 || index >= array.Length || index + Count > array.Length)
+      if (index < 0 || index + Count > array.Length)
         throw new ArgumentOutOfRangeException();
 
       foreach (KeyValuePair<T, int> p in dict)
@@ -548,6 +547,16 @@ namespace C5
       if (ActiveEvents != 0)
         raiseForAdd(item);
       return true;
+    }
+
+    /// <summary>
+    /// Add an item to this bag.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    [Tested]
+    void SCG.ICollection<T>.Add(T item)
+    {
+        Add(item);
     }
 
     private void add(ref T item)
@@ -677,5 +686,3 @@ namespace C5
     #endregion
   }
 }
-
-#endif

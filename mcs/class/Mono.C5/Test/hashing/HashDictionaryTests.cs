@@ -25,7 +25,7 @@ using NUnit.Framework;
 using SCG = System.Collections.Generic;
 namespace C5UnitTests.hashtable.dictionary
 {
-  using DictionaryIntToInt = HashDictionary<int,int>;
+  using DictionaryIntToInt = HashDictionary<int, int>;
 
   [TestFixture]
   public class GenericTesters
@@ -36,6 +36,12 @@ namespace C5UnitTests.hashtable.dictionary
       Fun<DictionaryIntToInt> factory = delegate() { return new DictionaryIntToInt(TenEqualityComparer.Default); };
       new C5UnitTests.Templates.Events.DictionaryTester<DictionaryIntToInt>().Test(factory);
     }
+
+    [Test]
+    public void TestSerialize()
+    {
+      C5UnitTests.Templates.Extensible.Serialization.DTester<DictionaryIntToInt>();
+    }
   }
 
   static class Factory
@@ -44,7 +50,6 @@ namespace C5UnitTests.hashtable.dictionary
   }
 
   [TestFixture]
-  [Ignore("This is also broken on MS.NET.  2006-03-07.  Martin")]
   public class Formatting
   {
     IDictionary<int, int> coll;
@@ -54,6 +59,7 @@ namespace C5UnitTests.hashtable.dictionary
     [TearDown]
     public void Dispose() { coll = null; rad16 = null; }
     [Test]
+    [Category("NotWorking")]
     public void Format()
     {
       Assert.AreEqual("{  }", coll.ToString());
@@ -218,6 +224,19 @@ namespace C5UnitTests.hashtable.dictionary
       s = "MMM";
       Assert.IsFalse(dict.UpdateOrAdd("C", s));
       Assert.AreEqual("MMM", dict["C"]);
+
+      // bug20071112 fixed 2008-02-03
+      s = "NNN";
+      String old;
+      Assert.IsTrue(dict.UpdateOrAdd("R", s, out old));
+      Assert.AreEqual("NNN", dict["R"]);
+      Assert.AreEqual("LLL", old);
+      s = "OOO";
+      Assert.IsFalse(dict.UpdateOrAdd("D", s, out old));
+      Assert.AreEqual("OOO", dict["D"]);
+      // Unclear which of these is correct:
+      // Assert.AreEqual(null, old);
+      // Assert.AreEqual("OOO", old);
     }
 
     [Test]
@@ -270,7 +289,7 @@ namespace C5UnitTests.hashtable.dictionary
 
 
     [Test]
-    [Ignore("This is also broken on MS.NET.  2006-03-07.  Martin")]
+    [Category("NotWorking")]
     public void Keys()
     {
       SCG.IEnumerator<string> keys = dict.Keys.GetEnumerator();
@@ -286,7 +305,7 @@ namespace C5UnitTests.hashtable.dictionary
 
 
     [Test]
-    [Ignore("This is also broken on MS.NET.  2006-03-07.  Martin")]
+    [Category("NotWorking")]
     public void Values()
     {
       SCG.IEnumerator<string> values = dict.Values.GetEnumerator();
@@ -308,7 +327,7 @@ namespace C5UnitTests.hashtable.dictionary
 
 
     [Test]
-    [Ignore("This is also broken on MS.NET.  2006-03-07.  Martin")]
+    [Category("NotWorking")]
     public void NormalUse()
     {
       Assert.IsTrue(dictenum.MoveNext());

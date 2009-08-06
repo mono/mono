@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -320,10 +319,12 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="keyequalityComparer"></param>
-    public DictionaryBase(SCG.IEqualityComparer<K> keyequalityComparer) {
+    protected DictionaryBase(SCG.IEqualityComparer<K> keyequalityComparer)
+    {
       if (keyequalityComparer == null)
         throw new NullReferenceException("Key equality comparer cannot be null");
-      this.keyequalityComparer = keyequalityComparer; }
+      this.keyequalityComparer = keyequalityComparer;
+    }
 
     #region IDictionary<K,V> Members
 
@@ -356,9 +357,9 @@ namespace C5
     /// <exception cref="DuplicateNotAllowedException"> 
     /// If the input contains duplicate keys or a key already present in this dictionary.</exception>
     /// <param name="entries"></param>
-    public virtual void AddAll<L,W>(SCG.IEnumerable<KeyValuePair<L, W>> entries)
-        where L : K
-        where W : V
+    public virtual void AddAll<L, W>(SCG.IEnumerable<KeyValuePair<L, W>> entries)
+      where L : K
+      where W : V
     {
       foreach (KeyValuePair<L, W> pair in entries)
       {
@@ -431,31 +432,32 @@ namespace C5
       return pairs.Contains(p);
     }
 
-      class LiftedEnumerable<H> : SCG.IEnumerable<KeyValuePair<K, V>> where H : K
+    [Serializable]
+    class LiftedEnumerable<H> : SCG.IEnumerable<KeyValuePair<K, V>> where H : K
+    {
+      SCG.IEnumerable<H> keys;
+      public LiftedEnumerable(SCG.IEnumerable<H> keys) { this.keys = keys; }
+      public SCG.IEnumerator<KeyValuePair<K, V>> GetEnumerator() { foreach (H key in keys) yield return new KeyValuePair<K, V>(key); }
+
+      #region IEnumerable Members
+
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
       {
-          SCG.IEnumerable<H> keys;
-          public LiftedEnumerable(SCG.IEnumerable<H> keys) { this.keys = keys; }
-          public SCG.IEnumerator<KeyValuePair<K, V>> GetEnumerator() { foreach (H key in keys) yield return new KeyValuePair<K, V>(key); }
-
-          #region IEnumerable Members
-
-          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-          {
-              throw new Exception("The method or operation is not implemented.");
-          }
-
-          #endregion
+        throw new Exception("The method or operation is not implemented.");
       }
+
+      #endregion
+    }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="keys"></param>
     /// <returns></returns>
-      public virtual bool ContainsAll<H>(SCG.IEnumerable<H> keys) where H : K
-      {
-          return pairs.ContainsAll(new LiftedEnumerable<H>(keys));
-      }
+    public virtual bool ContainsAll<H>(SCG.IEnumerable<H> keys) where H : K
+    {
+      return pairs.ContainsAll(new LiftedEnumerable<H>(keys));
+    }
 
     /// <summary>
     /// Check if there is an entry with a specified key and report the corresponding
@@ -584,7 +586,7 @@ namespace C5
 
 
     #region Keys,Values support classes
-
+    [Serializable]
     internal class ValuesCollection : CollectionValueBase<V>, ICollectionValue<V>
     {
       ICollection<KeyValuePair<K, V>> pairs;
@@ -614,6 +616,7 @@ namespace C5
 
 
 
+    [Serializable]
     internal class KeysCollection : CollectionValueBase<K>, ICollectionValue<K>
     {
       ICollection<KeyValuePair<K, V>> pairs;
@@ -770,6 +773,7 @@ namespace C5
   /// <i>See the source code for <see cref="T:C5.TreeDictionary`2"/> for an example</i>
   /// 
   /// </summary>
+  [Serializable]
   public abstract class SortedDictionaryBase<K, V> : DictionaryBase<K, V>, ISortedDictionary<K, V>
   {
     #region Fields
@@ -785,7 +789,7 @@ namespace C5
     /// </summary>
     /// <param name="keycomparer"></param>
     /// <param name="keyequalityComparer"></param>
-    public SortedDictionaryBase(SCG.IComparer<K> keycomparer, SCG.IEqualityComparer<K> keyequalityComparer) : base(keyequalityComparer) { this.keycomparer = keycomparer; }
+    protected SortedDictionaryBase(SCG.IComparer<K> keycomparer, SCG.IEqualityComparer<K> keyequalityComparer) : base(keyequalityComparer) { this.keycomparer = keycomparer; }
 
     #endregion
 
@@ -804,8 +808,60 @@ namespace C5
     public new ISorted<K> Keys { get { return new SortedKeysCollection(this, sortedpairs, keycomparer, EqualityComparer); } }
 
     /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a predecessor</returns>
+    [Tested]
+    public bool TryPredecessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sortedpairs.TryPredecessor(new KeyValuePair<K, V>(key), out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The successor, if any</param>
+    /// <returns>True if the key has a successor</returns>
+    [Tested]
+    public bool TrySuccessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sortedpairs.TrySuccessor(new KeyValuePair<K, V>(key), out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a weak predecessor</returns>
+    [Tested]
+    public bool TryWeakPredecessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sortedpairs.TryWeakPredecessor(new KeyValuePair<K, V>(key), out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The weak successor, if any</param>
+    /// <returns>True if the key has a weak successor</returns>
+    [Tested]
+    public bool TryWeakSuccessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sortedpairs.TryWeakSuccessor(new KeyValuePair<K, V>(key), out res);
+    }
+
+    /// <summary>
     /// Get the entry in the dictionary whose key is the
-    /// predecessor of a specified key.
+    /// predecessor of the specified key.
     /// </summary>
     /// <exception cref="NoSuchItemException"></exception>
     /// <param name="key">The key</param>
@@ -813,31 +869,12 @@ namespace C5
     [Tested]
     public KeyValuePair<K, V> Predecessor(K key)
     {
-      KeyValuePair<K, V> p = new KeyValuePair<K, V>(key);
-
-      return sortedpairs.Predecessor(p);
+      return sortedpairs.Predecessor(new KeyValuePair<K, V>(key));
     }
-
 
     /// <summary>
     /// Get the entry in the dictionary whose key is the
-    /// weak predecessor of a specified key.
-    /// </summary>
-    /// <exception cref="NoSuchItemException"></exception>
-    /// <param name="key">The key</param>
-    /// <returns>The entry</returns>
-    [Tested]
-    public KeyValuePair<K, V> WeakPredecessor(K key)
-    {
-      KeyValuePair<K, V> p = new KeyValuePair<K, V>(key);
-
-      return sortedpairs.WeakPredecessor(p);
-    }
-
-
-    /// <summary>
-    /// Get the entry in the dictionary whose key is the
-    /// successor of a specified key.
+    /// successor of the specified key.
     /// </summary>
     /// <exception cref="NoSuchItemException"></exception>
     /// <param name="key">The key</param>
@@ -845,15 +882,25 @@ namespace C5
     [Tested]
     public KeyValuePair<K, V> Successor(K key)
     {
-      KeyValuePair<K, V> p = new KeyValuePair<K, V>(key);
-
-      return sortedpairs.Successor(p);
+      return sortedpairs.Successor(new KeyValuePair<K, V>(key));
     }
-
 
     /// <summary>
     /// Get the entry in the dictionary whose key is the
-    /// weak successor of a specified key.
+    /// weak predecessor of the specified key.
+    /// </summary>
+    /// <exception cref="NoSuchItemException"></exception>
+    /// <param name="key">The key</param>
+    /// <returns>The entry</returns>
+    [Tested]
+    public KeyValuePair<K, V> WeakPredecessor(K key)
+    {
+      return sortedpairs.WeakPredecessor(new KeyValuePair<K, V>(key));
+    }
+
+    /// <summary>
+    /// Get the entry in the dictionary whose key is the
+    /// weak successor of the specified key.
     /// </summary>
     /// <exception cref="NoSuchItemException"></exception>
     /// <param name="key">The key</param>
@@ -996,7 +1043,7 @@ namespace C5
     }
 
     #endregion
-
+    [Serializable]
     class KeyValuePairComparable : IComparable<KeyValuePair<K, V>>
     {
       IComparable<K> cutter;
@@ -1008,6 +1055,7 @@ namespace C5
       public bool Equals(KeyValuePair<K, V> other) { return cutter.Equals(other.Key); }
     }
 
+    [Serializable]
     class ProjectedDirectedEnumerable : MappedDirectedEnumerable<KeyValuePair<K, V>, K>
     {
       public ProjectedDirectedEnumerable(IDirectedEnumerable<KeyValuePair<K, V>> directedpairs) : base(directedpairs) { }
@@ -1016,6 +1064,7 @@ namespace C5
 
     }
 
+    [Serializable]
     class ProjectedDirectedCollectionValue : MappedDirectedCollectionValue<KeyValuePair<K, V>, K>
     {
       public ProjectedDirectedCollectionValue(IDirectedCollectionValue<KeyValuePair<K, V>> directedpairs) : base(directedpairs) { }
@@ -1024,6 +1073,7 @@ namespace C5
 
     }
 
+    [Serializable]
     class SortedKeysCollection : SequencedBase<K>, ISorted<K>
     {
       ISortedDictionary<K, V> sorteddict;
@@ -1032,8 +1082,8 @@ namespace C5
       ISorted<KeyValuePair<K, V>> sortedpairs;
       SCG.IComparer<K> comparer;
 
-      internal SortedKeysCollection(ISortedDictionary<K, V> sorteddict, ISorted<KeyValuePair<K, V>> sortedpairs, SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> itemequalityComparer) 
-        :base(itemequalityComparer)
+      internal SortedKeysCollection(ISortedDictionary<K, V> sorteddict, ISorted<KeyValuePair<K, V>> sortedpairs, SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> itemequalityComparer)
+        : base(itemequalityComparer)
       {
         this.sorteddict = sorteddict;
         this.sortedpairs = sortedpairs;
@@ -1065,6 +1115,38 @@ namespace C5
       public K DeleteMax() { throw new ReadOnlyCollectionException(); }
 
       public SCG.IComparer<K> Comparer { get { return comparer; } }
+
+      public bool TryPredecessor(K item, out K res)
+      {
+          KeyValuePair<K, V> pRes;
+          bool success = sorteddict.TryPredecessor(item, out pRes);
+          res = pRes.Key;
+          return success;
+      }
+
+      public bool TrySuccessor(K item, out K res)
+      {
+          KeyValuePair<K, V> pRes;
+          bool success = sorteddict.TrySuccessor(item, out pRes);
+          res = pRes.Key;
+          return success;
+      }
+
+      public bool TryWeakPredecessor(K item, out K res)
+      {
+          KeyValuePair<K, V> pRes;
+          bool success = sorteddict.TryWeakPredecessor(item, out pRes);
+          res = pRes.Key;
+          return success;
+      }
+
+      public bool TryWeakSuccessor(K item, out K res)
+      {
+          KeyValuePair<K, V> pRes;
+          bool success = sorteddict.TryWeakSuccessor(item, out pRes);
+          res = pRes.Key;
+          return success;
+      }
 
       public K Predecessor(K item) { return sorteddict.Predecessor(item).Key; }
 
@@ -1171,7 +1253,7 @@ namespace C5
 
       public void RemoveAllCopies(K item) { throw new ReadOnlyCollectionException(); }
 
-      public void RemoveAll<U> (SCG.IEnumerable<U> items)  where U : K { throw new ReadOnlyCollectionException(); }
+      public void RemoveAll<U>(SCG.IEnumerable<U> items) where U : K { throw new ReadOnlyCollectionException(); }
 
       public void Clear() { throw new ReadOnlyCollectionException(); }
 
@@ -1187,6 +1269,8 @@ namespace C5
       public bool DuplicatesByCounting { get { return true; } }
 
       public bool Add(K item) { throw new ReadOnlyCollectionException(); }
+
+      void SCG.ICollection<K>.Add(K item) { throw new ReadOnlyCollectionException(); }
 
       public void AddAll(System.Collections.Generic.IEnumerable<K> items) { throw new ReadOnlyCollectionException(); }
 
@@ -1247,6 +1331,7 @@ namespace C5
 
   }
 
+  [Serializable]
   class SortedArrayDictionary<K, V> : SortedDictionaryBase<K, V>, IDictionary<K, V>, ISortedDictionary<K, V>
   {
     #region Constructors
@@ -1264,7 +1349,8 @@ namespace C5
     /// </summary>
     /// <param name="comparer"></param>
     /// <param name="equalityComparer"></param>
-    public SortedArrayDictionary(SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> equalityComparer) : base(comparer,equalityComparer)
+    public SortedArrayDictionary(SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> equalityComparer)
+      : base(comparer, equalityComparer)
     {
       pairs = sortedpairs = new SortedArray<KeyValuePair<K, V>>(new KeyValuePairComparer<K, V>(comparer));
     }
@@ -1275,7 +1361,8 @@ namespace C5
     /// <param name="comparer"></param>
     /// <param name="equalityComparer"></param>
     /// <param name="capacity"></param>
-    public SortedArrayDictionary(int capacity, SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> equalityComparer) : base(comparer,equalityComparer)
+    public SortedArrayDictionary(int capacity, SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> equalityComparer)
+      : base(comparer, equalityComparer)
     {
       pairs = sortedpairs = new SortedArray<KeyValuePair<K, V>>(capacity, new KeyValuePairComparer<K, V>(comparer));
     }
@@ -1294,4 +1381,3 @@ namespace C5
 
   }
 }
-#endif

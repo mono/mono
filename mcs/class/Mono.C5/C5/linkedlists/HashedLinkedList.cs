@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +31,7 @@ namespace C5
   /// A list collection class based on a doubly linked list data structure.
   /// </summary>
   [Serializable]
-  public class HashedLinkedList<T> : SequencedBase<T>, IList<T>
+  public class HashedLinkedList<T> : SequencedBase<T>, IList<T>, SCG.IList<T>
 #if HASHINDEX
 #else
 , IStack<T>, IQueue<T>
@@ -80,7 +79,7 @@ namespace C5
     /// </summary>
     HashedLinkedList<T> underlying;
 
-    //Note: all views will have the same views list since all view objects are created by MemeberwiseClone()
+    //Note: all views will have the same views list since all view objects are created by MemberwiseClone()
     WeakViewList<HashedLinkedList<T>> views;
     WeakViewList<HashedLinkedList<T>>.Node myWeakReference;
 
@@ -388,7 +387,7 @@ namespace C5
       if (underlying != null)
         underlying.size--;
 #if HASHINDEX
-        removefromtaggroup(node);
+      removefromtaggroup(node);
 #endif
       return node.item;
     }
@@ -429,14 +428,14 @@ namespace C5
           if (view != this)
           {
 #if HASHINDEX
-          if (pred.precedes(view.startsentinel) || (view.startsentinel == pred && view.size > 0))
-            view.offset += added;
-          if (view.startsentinel.precedes(pred) && succ.precedes(view.endsentinel))
-            view.size += added;
-          if (view.startsentinel == pred && view.size > 0)
-            view.startsentinel = succ.prev;
-          if (view.endsentinel == succ)
-            view.endsentinel = pred.next;
+            if (pred.precedes(view.startsentinel) || (view.startsentinel == pred && view.size > 0))
+              view.offset += added;
+            if (view.startsentinel.precedes(pred) && succ.precedes(view.endsentinel))
+              view.size += added;
+            if (view.startsentinel == pred && view.size > 0)
+              view.startsentinel = succ.prev;
+            if (view.endsentinel == succ)
+              view.endsentinel = pred.next;
 #else
             if (view.Offset == realInsertionIndex && view.size > 0)
               view.startsentinel = succ.prev;
@@ -459,14 +458,14 @@ namespace C5
           if (view != this)
           {
 #if HASHINDEX
-          if (view.startsentinel.precedes(node) && node.precedes(view.endsentinel))
-            view.size--;
-          if (!view.startsentinel.precedes(node))
-            view.offset--;
-          if (view.startsentinel == node)
-            view.startsentinel = node.prev;
-          if (view.endsentinel == node)
-            view.endsentinel = node.next;
+            if (view.startsentinel.precedes(node) && node.precedes(view.endsentinel))
+              view.size--;
+            if (!view.startsentinel.precedes(node))
+              view.offset--;
+            if (view.startsentinel == node)
+              view.startsentinel = node.prev;
+            if (view.endsentinel == node)
+              view.endsentinel = node.next;
 #else
             if (view.offset - 1 == realRemovalIndex)
               view.startsentinel = node.prev;
@@ -790,7 +789,7 @@ namespace C5
     /// <param name="node">The node to remove</param>
     void removefromtaggroup(Node node)
     {
-      //
+     
       TagGroup taggroup = node.taggroup;
 
       if (--taggroup.count == 0)
@@ -810,10 +809,13 @@ namespace C5
         return;
 
       TagGroup otg;
-
-      if ((otg = taggroup.first.prev.taggroup).count <= losize)
+      // bug20070911:
+      Node neighbor;
+      if ((neighbor = taggroup.first.prev) != startsentinel
+          && (otg = neighbor.taggroup).count <= losize)
         taggroup.first = otg.first;
-      else if ((otg = taggroup.last.next.taggroup).count <= losize)
+      else if ((neighbor = taggroup.last.next) != endsentinel 
+               && (otg = neighbor.taggroup).count <= losize)
         taggroup.last = otg.last;
       else
         return;
@@ -853,8 +855,7 @@ namespace C5
       Debug.Assert(ptgt + 1 <= ntgt - 1);
 
       int ofs = wordsize - hibits;
-#warning hack alert was there a -1 here?
-      int newtgs = taggroup.count / hisize;// - 1;
+      int newtgs = (taggroup.count - 1) / hisize;
       int tgtdelta = (int)((ntgt + 0.0 - ptgt) / (newtgs + 2)), tgtag = ptgt;
 
       tgtdelta = tgtdelta == 0 ? 1 : tgtdelta;
@@ -967,7 +968,7 @@ namespace C5
 #endif
       }
 #if HASHINDEX
-      public Position(Node node, int foo) { this.Endpoint = node; View = null; Left = false;}
+      public Position(Node node, int foo) { this.Endpoint = node; View = null; Left = false; }
 #else
       public Position(int index) { this.Index = index; View = null; Left = false; }
 #endif
@@ -1283,7 +1284,7 @@ namespace C5
         if (underlying != null)
         {
           isValid = false;
-          if (!disposingUnderlying)
+          if (!disposingUnderlying && views != null)
             views.Remove(myWeakReference);
           endsentinel = null;
           startsentinel = null;
@@ -1296,8 +1297,9 @@ namespace C5
           //isValid = false;
           //endsentinel = null;
           //startsentinel = null;
-          foreach (HashedLinkedList<T> view in views)
-            view.Dispose(true);
+          if (views != null)
+            foreach (HashedLinkedList<T> view in views)
+              view.Dispose(true);
           //views = null;
           Clear();
         }
@@ -1499,18 +1501,20 @@ namespace C5
       }
       finally
       {
-        taggroup.count += count;
-        taggroup.first = succ.prev;
-        taggroup.last = node;
-        succ.prev = node;
-        node.next = succ;
-        if (node.tag == node.prev.tag)
-          splittaggroup(taggroup);
-        size += count;
-        if (underlying != null)
-          underlying.size += count;
-        if (count > 0)
-        {
+        if (count != 0)
+        { 
+          taggroup.count += count;
+          if (taggroup != pred.taggroup)
+            taggroup.first = pred.next;
+          if (taggroup != succ.taggroup)
+            taggroup.last = node;
+          succ.prev = node;
+          node.next = succ;
+          if (node.tag == node.prev.tag)
+            splittaggroup(taggroup);
+          size += count;
+          if (underlying != null)
+            underlying.size += count;
           fixViewsAfterInsert(succ, pred, count, 0);
           raiseForInsertAll(pred, i, count, insertion);
         }
@@ -1586,7 +1590,7 @@ namespace C5
     /// Create a new list consisting of the results of mapping all items of this
     /// list.
     /// </summary>
-    /// <param name="mapper">The delegate definging the map.</param>
+    /// <param name="mapper">The delegate defining the map.</param>
     /// <returns>The new list.</returns>
     [Tested]
     public IList<V> Map<V>(Fun<T, V> mapper)
@@ -1643,6 +1647,10 @@ namespace C5
 #endif
       }
 
+#if HASHINDEX
+      taggroup.first = retval.startsentinel.next;
+      taggroup.last = mcursor;
+#endif
       retval.endsentinel.prev = mcursor;
       mcursor.next = retval.endsentinel;
       retval.size = size;
@@ -2175,8 +2183,13 @@ namespace C5
           tag = tag + tagdelta > taglimit ? taglimit : tag + tagdelta;
           cursor.tag = tag;
           t.count++;
+          cursor.taggroup = t;
           cursor = cursor.next;
         }
+        if (t != startsentinel.taggroup)
+          t.first = startsentinel.next;
+        if (t != endsentinel.taggroup)
+          t.last = endsentinel.prev;
         if (tag == taglimit)
           splittaggroup(t);
       }
@@ -2489,7 +2502,7 @@ namespace C5
       get
       {
 #if HASHINDEX
-        return  Speed.Constant ;
+        return Speed.Constant;
 #else
         return Speed.Linear;
 #endif
@@ -2598,7 +2611,7 @@ namespace C5
       {
         insertNode(true, endsentinel, node);
         (underlying ?? this).raiseForAdd(item);
-        return false; 
+        return false;
       }
       if (!insideview(node))
         throw new ArgumentException("Item alredy in indexed list but outside view");
@@ -3030,7 +3043,7 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="predicate"></param>
-    void RetainAll(Fun<T,bool> predicate)
+    void RetainAll(Fun<T, bool> predicate)
     {
       updatecheck();
       if (size == 0)
@@ -3160,7 +3173,7 @@ namespace C5
           mcursor = mcursor.next;
           retval.size++;
 #if HASHINDEX
-          retval.dict.Add(cursor.item, mcursor); 
+          retval.dict.Add(cursor.item, mcursor);
           mcursor.taggroup = taggroup;
           mcursor.tag = (int)(tagdelta * count++);
 #endif
@@ -3168,7 +3181,12 @@ namespace C5
         cursor = cursor.next;
       }
 #if HASHINDEX
-      taggroup.count = retval.size;
+      if (retval.size > 0)
+      {
+        taggroup.count = retval.size;
+        taggroup.first = retval.startsentinel.next;
+        taggroup.last = mcursor;
+      }
 #endif
       retval.endsentinel.prev = mcursor;
       mcursor.next = retval.endsentinel;
@@ -3560,6 +3578,11 @@ namespace C5
       return retval;
     }
 
+    string zeitem(Node node)
+    {
+      return node == null ? "(null node)" : node.item.ToString();
+    }
+
     /// <summary>
     /// Check the sanity of this list
     /// </summary>
@@ -3657,6 +3680,14 @@ namespace C5
 
           if (node.taggroup != oldtg)
           {
+
+            if (node.taggroup.first != node)
+            {
+              string ntfi = zeitem(node.taggroup.first);
+              Console.WriteLine("Bad first pointer in taggroup: node.taggroup.first.item ({0}), node.item ({1}) at index={2} item={3}", ntfi, node.item, count, node.item);
+              retval = false;
+            }
+
             if (oldtg != null)
             {
               if (oldtg.count != taggroupsize)
@@ -3668,6 +3699,18 @@ namespace C5
               if (oldtaggroupsize <= losize && taggroupsize <= losize)
               {
                 Console.WriteLine("Two small taggroups in a row: oldtaggroupsize ({0}), taggroupsize ({1}) at index={2} item={3}", oldtaggroupsize, taggroupsize, count, node.item);
+                retval = false;
+              }
+
+              if (node.taggroup.tag <= oldtg.tag)
+              {
+                Console.WriteLine("Taggroup tags not strictly increasing: oldtaggrouptag ({0}), taggrouptag ({1}) at index={2} item={3}", oldtg.tag, node.taggroup.tag, count, node.item);
+                retval = false;
+              }
+
+              if (oldtg.last != node.prev)
+              {
+                Console.WriteLine("Bad last pointer in taggroup: oldtg.last.item ({0}), node.prev.item ({1}) at index={2} item={3}", oldtg.last.item, node.prev.item, count, node.item);
                 retval = false;
               }
 
@@ -3716,6 +3759,18 @@ namespace C5
             Console.WriteLine("Two small taggroups in a row: oldtaggroupsize ({0}), taggroupsize ({1}) at index={2} item={3}", oldtaggroupsize, taggroupsize, count, node.item);
             retval = false;
           }
+
+              if (node.taggroup.tag <= oldtg.tag)
+              {
+                Console.WriteLine("Taggroup tags not strictly increasing: oldtaggrouptag ({0}), taggrouptag ({1}) at index={2} item={3}", oldtg.tag, node.taggroup.tag, count, node.item);
+                retval = false;
+              }
+
+              if (oldtg.last != node.prev)
+              {
+                Console.WriteLine("Bad last pointer in taggroup: oldtg.last.item ({0}), node.prev.item ({1}) at index={2} item={3}", zeitem(oldtg.last), zeitem(node.prev), count, node.item);
+                retval = false;
+              }
         }
 
         if (seentaggroups != taggroups)
@@ -3779,7 +3834,86 @@ namespace C5
 
     #endregion
 
+    #region System.Collections.Generic.IList<T> Members
+
+    void System.Collections.Generic.IList<T>.RemoveAt(int index)
+    {
+      RemoveAt(index);
+    }
+
+    void System.Collections.Generic.ICollection<T>.Add(T item)
+    {
+      Add(item);
+    }
+
+    #endregion
+
+    #region System.Collections.ICollection Members
+
+    bool System.Collections.ICollection.IsSynchronized
+    {
+      get { return false; }
+    }
+
+    [Obsolete]
+    Object System.Collections.ICollection.SyncRoot
+    {
+      // Presumably safe to use the startsentinel (of type Node, always != null) as SyncRoot
+      // since the class Node is private.
+      get { return underlying != null ? ((System.Collections.ICollection)underlying).SyncRoot : startsentinel; }
+    }
+
+    void System.Collections.ICollection.CopyTo(Array arr, int index)
+    {
+      if (index < 0 || index + Count > arr.Length)
+        throw new ArgumentOutOfRangeException();
+
+      foreach (T item in this)
+        arr.SetValue(item, index++);
+    }
+
+    #endregion
+  
+    #region System.Collections.IList Members
+
+    Object System.Collections.IList.this[int index] 
+    {
+      get { return this[index]; }
+      set { this[index] = (T)value; }
+    }
+
+    int System.Collections.IList.Add(Object o)
+    {
+      bool added = Add((T)o);
+      // What position to report if item not added? SC.IList.Add doesn't say
+      return added ? Count-1 : -1; 
+    }
+
+    bool System.Collections.IList.Contains(Object o)
+    {
+      return Contains((T)o);
+    }
+
+    int System.Collections.IList.IndexOf(Object o)
+    {
+      return Math.Max(-1, IndexOf((T)o));
+    }
+
+    void System.Collections.IList.Insert(int index, Object o)
+    {
+      Insert(index, (T)o);
+    }
+
+    void System.Collections.IList.Remove(Object o)
+    {
+      Remove((T)o);
+    }
+
+    void System.Collections.IList.RemoveAt(int index)
+    {
+      RemoveAt(index);
+    }
+
+    #endregion
   }
 }
-
-#endif

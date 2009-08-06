@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,6 +27,7 @@ namespace C5
   /// <summary>
   /// A sorted generic dictionary based on a red-black tree set.
   /// </summary>
+  [Serializable]
   public class TreeDictionary<K, V> : SortedDictionaryBase<K, V>, IDictionary<K, V>, ISortedDictionary<K, V>
   {
 
@@ -79,4 +79,3 @@ namespace C5
 
   }
 }
-#endif

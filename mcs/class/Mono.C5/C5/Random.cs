@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -163,6 +162,7 @@ namespace C5
     /// </summary>
     /// <exception cref="ArgumentException">If Q is not of length exactly 16</exception>
     /// <param name="Q">The start state. Must be a collection of random bits given by an array of exactly 16 uints.</param>
+    [CLSCompliant(false)]
     public C5Random(uint[] Q)
     {
       if (Q.Length != 16)
@@ -171,4 +171,3 @@ namespace C5
     }
   }
 }
-#endif

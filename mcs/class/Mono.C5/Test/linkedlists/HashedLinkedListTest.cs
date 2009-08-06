@@ -47,6 +47,13 @@ namespace C5UnitTests.linkedlists.hashed
       C5UnitTests.Templates.Extensible.Serialization.Tester<CollectionOfInt>();
       C5UnitTests.Templates.Extensible.Serialization.ViewTester<CollectionOfInt>();
     }
+
+    [Test]
+    public void List()
+    {
+      C5UnitTests.Templates.List.Dispose.Tester<CollectionOfInt>();
+      C5UnitTests.Templates.List.SCG_IList.Tester<CollectionOfInt>();
+    }
   }
 
   static class Factory
@@ -496,7 +503,7 @@ namespace C5UnitTests.linkedlists.hashed
       [Test]
       public void Get()
       {
-        Assert.IsNotNull(list.SyncRoot);
+        Assert.IsNotNull(((System.Collections.IList)list).SyncRoot);
       }
     }
   }
@@ -816,9 +823,6 @@ namespace C5UnitTests.linkedlists.hashed
     }
   }
 
-
-
-
   namespace IList_
   {
     [TestFixture]
@@ -1023,7 +1027,7 @@ namespace C5UnitTests.linkedlists.hashed
 
 
       [Test]
-      public void UpdateOrAdd()
+      public void UpdateOrAdd1()
       {
         KeyValuePair<int, int> p = new KeyValuePair<int, int>(3, 78);
 
@@ -1036,6 +1040,18 @@ namespace C5UnitTests.linkedlists.hashed
         Assert.AreEqual(79, lst[10].Value);
       }
 
+      [Test]
+      public void UpdateOrAdd2()
+      {
+          ICollection<String> coll = new HashedLinkedList<String>();
+          // s1 and s2 are distinct objects but contain the same text:
+          String old, s1 = "abc", s2 = ("def" + s1).Substring(3);
+          Assert.IsFalse(coll.UpdateOrAdd(s1, out old));
+          Assert.AreEqual(null, old);
+          Assert.IsTrue(coll.UpdateOrAdd(s2, out old));
+          Assert.IsTrue(Object.ReferenceEquals(s1, old));
+          Assert.IsFalse(Object.ReferenceEquals(s2, old));
+      }
 
       [Test]
       public void RemoveWithReturn()
@@ -1463,6 +1479,72 @@ namespace C5UnitTests.linkedlists.hashed
           Assert.IsTrue(IC.eq(lst2, 3, 5, 6, 7), "Contents " + i);
         }
       }
+    }
+
+    [TestFixture]
+    public class AddingThenRemoving
+    {
+        [Test]
+        public void AddingThenRemovingTest1()
+        {
+            // bug20070911:
+            HashedLinkedList<int> test = new HashedLinkedList<int>();
+            for (int i = 0; i < 33; i++)
+            {
+                test.Add(i);
+            } // for
+
+            for (int i = 0; i < 33; i++)
+            {
+                test.Remove(i);
+            } // for
+            Assert.IsTrue(test.IsEmpty);
+            for (int count = 0; count < 520; count++)
+            {
+                HashedLinkedList<int> hll = new HashedLinkedList<int>();
+                for (int i = 1; i <= count; i++)
+                {
+                    hll.Add(i);
+                } 
+                Assert.AreEqual(count, hll.Count);
+                for (int i = 1; i <= count; i++)
+                {
+                    hll.Remove(i);
+                } 
+                Assert.IsTrue(hll.IsEmpty);
+            }
+        }
+
+        [Test]
+        public void AddingThenRemovingTest2()
+        {
+            // bug20070911:
+            HashedLinkedList<int> test = new HashedLinkedList<int>();
+            for (int i = 0; i < 33; i++)
+            {
+                test.Add(i);
+            } // for
+
+            for (int i = 32; i >= 0; i--)
+            {
+                test.Remove(i);
+            } // for
+            Assert.IsTrue(test.IsEmpty);
+            for (int count = 0; count < 520; count++)
+            {
+                HashedLinkedList<int> hll = new HashedLinkedList<int>();
+                for (int i = 1; i <= count; i++)
+                {
+                    hll.Add(i);
+                }
+                Assert.AreEqual(count, hll.Count);
+                for (int i = count; i >= 1; i--)
+                {
+                    hll.Remove(i);
+                }
+                Assert.IsTrue(hll.IsEmpty);
+            }
+        }
     }
   }
 
@@ -1967,11 +2049,12 @@ namespace C5UnitTests.linkedlists.hashed
       [Test]
       public void SyncRoot()
       {
-        Assert.AreSame(view.SyncRoot, list.SyncRoot);
+        Assert.AreSame(((System.Collections.IList)view).SyncRoot, ((System.Collections.IList)list).SyncRoot);
       }
     }
+
     [TestFixture]
-    public class MulipleViews
+    public class MultipleViews
     {
       IList<int> list;
       IList<int>[][] views;

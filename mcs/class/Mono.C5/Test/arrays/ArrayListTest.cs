@@ -48,6 +48,13 @@ namespace C5UnitTests.arrays.list
       C5UnitTests.Templates.Extensible.Serialization.Tester<CollectionOfInt>();
       C5UnitTests.Templates.Extensible.Serialization.ViewTester<CollectionOfInt>();
     }
+
+    [Test]
+    public void List()
+    {
+      C5UnitTests.Templates.List.Dispose.Tester<CollectionOfInt>();
+      C5UnitTests.Templates.List.SCG_IList.Tester<CollectionOfInt>();
+    }
   }
 
   static class Factory
@@ -1151,7 +1158,7 @@ namespace C5UnitTests.arrays.list
       [Test]
       public void Get()
       {
-        Assert.IsNotNull(list.SyncRoot);
+        Assert.IsNotNull(((System.Collections.IList)list).SyncRoot);
       }
     }
   }
@@ -1978,7 +1985,7 @@ namespace C5UnitTests.arrays.list
 
 
       [Test]
-      public void UpdateOrAdd()
+      public void UpdateOrAdd1()
       {
         KeyValuePair<int, int> p = new KeyValuePair<int, int>(3, 78);
 
@@ -1991,6 +1998,18 @@ namespace C5UnitTests.arrays.list
         Assert.AreEqual(79, lst[10].Value);
       }
 
+      [Test]
+      public void UpdateOrAdd2()
+      {
+          ICollection<String> coll = new ArrayList<String>();
+          // s1 and s2 are distinct objects but contain the same text:
+          String old, s1 = "abc", s2 = ("def" + s1).Substring(3);
+          Assert.IsFalse(coll.UpdateOrAdd(s1, out old));
+          Assert.AreEqual(null, old);
+          Assert.IsTrue(coll.UpdateOrAdd(s2, out old));
+          Assert.IsTrue(Object.ReferenceEquals(s1, old));
+          Assert.IsFalse(Object.ReferenceEquals(s2, old));
+      }
 
       [Test]
       public void RemoveWithReturn()
@@ -2738,7 +2757,7 @@ namespace C5UnitTests.arrays.list
       [Test]
       public void SyncRoot()
       {
-        Assert.AreSame(view.SyncRoot, list.SyncRoot);
+        Assert.AreSame(((System.Collections.IList)view).SyncRoot, ((System.Collections.IList)list).SyncRoot);
       }
     }
     [TestFixture]

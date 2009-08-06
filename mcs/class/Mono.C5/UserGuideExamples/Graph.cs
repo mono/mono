@@ -610,7 +610,7 @@ namespace Graph
     }
 
     //Note: no warning on update of edgedata!
-    //TODO: Shouldn't Update or Add return the old value?
+    //TODO: Shouldn´t Update or Add return the old value?
     //Then it would be easy to check for updates 
     public bool AddEdge(V start, V end, E edgedata)
     {

@@ -27,9 +27,21 @@ using SCG=System.Collections.Generic;
 
 namespace C5UnitTests.trees.RBDictionary
 {
+  using DictionaryIntToInt = TreeDictionary<int, int>;
+
   static class Factory
   {
     public static IDictionary<K,V> New<K,V>() { return new TreeDictionary<K,V>(); }
+  }
+
+  [TestFixture]
+  public class GenericTesters
+  {
+    [Test]
+    public void TestSerialize()
+    {
+      C5UnitTests.Templates.Extensible.Serialization.DTester<DictionaryIntToInt>();
+    }
   }
 
 
@@ -89,7 +101,7 @@ namespace C5UnitTests.trees.RBDictionary
     }
 
 		[Test]
-		public void Pred()
+		public void Pred1()
 		{
 			dict.Add("A", "1");
 			dict.Add("C", "2");
@@ -102,8 +114,48 @@ namespace C5UnitTests.trees.RBDictionary
 			Assert.AreEqual("3", dict.Successor("C").Value);
 			Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
 			Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
-		}
+    }
 
+    [Test]
+    public void Pred2()
+    {
+      dict.Add("A", "1");
+      dict.Add("C", "2");
+      dict.Add("E", "3");
+      KeyValuePair<String, String> res;
+      Assert.IsTrue(dict.TryPredecessor("B", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryPredecessor("C", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TrySuccessor("B", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TrySuccessor("C", out res));
+      Assert.AreEqual("3", res.Value);
+      Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
+      Assert.AreEqual("2", res.Value);
+
+      Assert.IsFalse(dict.TryPredecessor("A", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TrySuccessor("E", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+    }   
 
 		[Test]
 		public void Initial()
@@ -171,6 +223,125 @@ namespace C5UnitTests.trees.RBDictionary
 		}
 	}
 
+  [TestFixture]
+  public class GuardedSortedDictionaryTest
+  {
+    private GuardedSortedDictionary<string, string> dict;
+
+    [SetUp]
+    public void Init() { 
+      ISortedDictionary<string,string> dict = new TreeDictionary<string, string>(new SC());
+      dict.Add("A", "1");
+      dict.Add("C", "2");
+      dict.Add("E", "3");
+      this.dict = new GuardedSortedDictionary<string, string>(dict);
+    }
+
+    [TearDown]
+    public void Dispose() { dict = null; }
+
+    [Test]
+    public void Pred1()
+    {
+      Assert.AreEqual("1", dict.Predecessor("B").Value);
+      Assert.AreEqual("1", dict.Predecessor("C").Value);
+      Assert.AreEqual("1", dict.WeakPredecessor("B").Value);
+      Assert.AreEqual("2", dict.WeakPredecessor("C").Value);
+      Assert.AreEqual("2", dict.Successor("B").Value);
+      Assert.AreEqual("3", dict.Successor("C").Value);
+      Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
+      Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
+    }
+
+    [Test]
+    public void Pred2()
+    {
+      KeyValuePair<String, String> res;
+      Assert.IsTrue(dict.TryPredecessor("B", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryPredecessor("C", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
+      Assert.AreEqual("1", res.Value);
+      Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TrySuccessor("B", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TrySuccessor("C", out res));
+      Assert.AreEqual("3", res.Value);
+      Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
+      Assert.AreEqual("2", res.Value);
+      Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
+      Assert.AreEqual("2", res.Value);
+
+      Assert.IsFalse(dict.TryPredecessor("A", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TrySuccessor("E", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+
+      Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
+      Assert.AreEqual(null, res.Key);
+      Assert.AreEqual(null, res.Value);
+    }
+
+    [Test]
+    public void Initial()
+    {
+      Assert.IsTrue(dict.IsReadOnly);
+
+      Assert.AreEqual(3, dict.Count);
+      Assert.AreEqual("1", dict["A"]);
+    }
+
+    [Test]
+    public void Contains()
+    {
+      Assert.IsTrue(dict.Contains("A"));
+      Assert.IsFalse(dict.Contains("1"));
+    }
+
+    [Test]
+    [ExpectedException(typeof(ReadOnlyCollectionException))]
+    public void IllegalAdd()
+    {
+      dict.Add("Q", "7");
+    }
+
+    [Test]
+    [ExpectedException(typeof(ReadOnlyCollectionException))]
+    public void IllegalClear()
+    {
+      dict.Clear();
+    }
+    [Test]
+
+    [ExpectedException(typeof(ReadOnlyCollectionException))]
+    public void IllegalSet()
+    {
+      dict["A"] = "8";
+    }
+
+    [ExpectedException(typeof(ReadOnlyCollectionException))]
+    public void IllegalRemove()
+    {
+      dict.Remove("A");
+    }
+
+    [Test]
+    [ExpectedException(typeof(NoSuchItemException))]
+    public void GettingNonExisting()
+    {
+      Console.WriteLine(dict["R"]);
+    }
+  }
+
 	[TestFixture]
 	public class Enumerators
 	{
@@ -197,10 +368,8 @@ namespace C5UnitTests.trees.RBDictionary
 			dict = null;
 		}
 
-
-
 		[Test]
-		public void Keys()
+		public void KeysEnumerator()
 		{
 			SCG.IEnumerator<string> keys = dict.Keys.GetEnumerator();
 			Assert.AreEqual(3, dict.Keys.Count);
@@ -213,8 +382,57 @@ namespace C5UnitTests.trees.RBDictionary
 			Assert.IsFalse(keys.MoveNext());
 		}
 
+    [Test]
+    public void KeysISorted()
+    {
+      ISorted<string> keys = dict.Keys;
+      Assert.IsTrue(keys.IsReadOnly);
+      Assert.AreEqual("R", keys.FindMin());
+      Assert.AreEqual("T", keys.FindMax());
+      Assert.IsTrue(keys.Contains("S"));
+      Assert.AreEqual(3, keys.Count);
+      // This doesn't hold, maybe because the dict uses a special key comparer?
+      // Assert.IsTrue(keys.SequencedEquals(new WrappedArray<string>(new string[] { "R", "S", "T" })));
+      Assert.IsTrue(keys.UniqueItems().All(delegate(String s) { return s == "R" || s == "S" || s == "T"; }));
+      Assert.IsTrue(keys.All(delegate(String s) { return s == "R" || s == "S" || s == "T"; }));
+      Assert.IsFalse(keys.Exists(delegate(String s) { return s != "R" && s != "S" && s != "T"; }));
+      String res;
+      Assert.IsTrue(keys.Find(delegate(String s) { return s == "R"; }, out res));
+      Assert.AreEqual("R", res);
+      Assert.IsFalse(keys.Find(delegate(String s) { return s == "Q"; }, out res));
+      Assert.AreEqual(null, res);
+    }
+
+    [Test]
+    public void KeysISortedPred()
+    {
+      ISorted<string> keys = dict.Keys;
+      String res;
+      Assert.IsTrue(keys.TryPredecessor("S", out res));
+      Assert.AreEqual("R", res);
+      Assert.IsTrue(keys.TryWeakPredecessor("R", out res));
+      Assert.AreEqual("R", res);
+      Assert.IsTrue(keys.TrySuccessor("S", out res));
+      Assert.AreEqual("T", res);
+      Assert.IsTrue(keys.TryWeakSuccessor("T", out res));
+      Assert.AreEqual("T", res);
+      Assert.IsFalse(keys.TryPredecessor("R", out res));
+      Assert.AreEqual(null, res);
+      Assert.IsFalse(keys.TryWeakPredecessor("P", out res));
+      Assert.AreEqual(null, res);
+      Assert.IsFalse(keys.TrySuccessor("T", out res));
+      Assert.AreEqual(null, res);
+      Assert.IsFalse(keys.TryWeakSuccessor("U", out res));
+      Assert.AreEqual(null, res);
+
+      Assert.AreEqual("R", keys.Predecessor("S"));
+      Assert.AreEqual("R", keys.WeakPredecessor("R"));
+      Assert.AreEqual("T", keys.Successor("S"));
+      Assert.AreEqual("T", keys.WeakSuccessor("T"));
+    }
+ 
 		[Test]
-		public void Values()
+		public void ValuesEnumerator()
 		{
 			SCG.IEnumerator<string> values = dict.Values.GetEnumerator();
 			Assert.AreEqual(3, dict.Values.Count);
@@ -246,8 +464,6 @@ namespace C5UnitTests.trees.RBDictionary
 			Assert.IsFalse(dictenum.MoveNext());
 		}
 	}
-
-
 
 
 	namespace PathCopyPersistence

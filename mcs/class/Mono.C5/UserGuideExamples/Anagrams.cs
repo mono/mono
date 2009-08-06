@@ -64,7 +64,7 @@ namespace Anagrams
 
     public static SCG.IEnumerable<String> ReadFileWords(String filename, int n)
     {
-      Regex delim = new Regex("[^a-z√¶√∏√•A-Z√Ü√ò√Ö0-9-]+");
+      Regex delim = new Regex("[^a-zÊ¯ÂA-Z∆ÿ≈0-9-]+");
       Encoding enc = Encoding.GetEncoding("iso-8859-1");
       using (TextReader rd = new StreamReader(filename, enc))
       {

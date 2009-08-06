@@ -19,7 +19,7 @@
  SOFTWARE.
 */
 
-// C5 example: various tests 2005-01-01
+// C5 example: various tests 2005 and later
 
 // Compile with 
 //   csc /r:C5.dll Try.cs 
@@ -33,32 +33,47 @@ namespace Try
 {
   class MyTest
   {
-    public static void Main()
+    public static void Main(String[] args)
     {
-      IList<bool> list = new ArrayList<bool>();
-      list.AddAll(new bool[] { false, false, true, true, false });
-      list.CollectionCleared 
-	+= delegate(Object coll, ClearedEventArgs args) {
-	  ClearedRangeEventArgs crargs = args as ClearedRangeEventArgs;
-	  if (crargs != null) {
-	    Console.WriteLine("Cleared {0} to {1}", 
-			      crargs.Start, crargs.Start+crargs.Count-1);
-	  } else {
-	    Console.WriteLine("Cleared {0} items", args.Count);
-	  }
-	};
-      list.RemoveInterval(2, 2);
-      HashSet<int> hash = new HashSet<int>();
-      hash.ItemsRemoved 
-	+= delegate {
-	  Console.WriteLine("Item was removed");
-	};
-      hash.ItemsAdded 
-	+= delegate {
-	  Console.WriteLine("Item was added");
-	};
-      hash.UpdateOrAdd(2);
-      hash.UpdateOrAdd(2);
+      SCG.IEqualityComparer<int> natural = EquatableEqualityComparer<int>.Default;
+      SCG.IEqualityComparer<int> c5comp = EqualityComparer<int>.Default;
+      int count = int.Parse(args[0]);
+      {
+        bool res = false;
+        Timer t = new Timer();
+        for (int i = count; i > 0; i--)
+        {
+          res = natural.Equals(4, 5);
+        }
+        Console.WriteLine("Time = {0} ns/comparison\n", t.Check() * 1E9 / count);
+      }
+      {
+        bool res = false;
+        Timer t = new Timer();
+        for (int i = count; i > 0; i--)
+        {
+          res = c5comp.Equals(4, 5);
+        }
+        Console.WriteLine("Time = {0} ns/comparison\n", t.Check() * 1E9 / count);
+      }
+    }
+  }
+
+  // Crude timing utility ----------------------------------------
+
+  public class Timer
+  {
+    private DateTime start;
+
+    public Timer()
+    {
+      start = DateTime.Now;
+    }
+
+    public double Check()
+    {
+      TimeSpan dur = DateTime.Now - start;
+      return dur.TotalSeconds;
     }
   }
 }

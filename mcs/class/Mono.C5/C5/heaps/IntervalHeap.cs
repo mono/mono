@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -52,10 +51,6 @@ namespace C5
 
       public override string ToString() { return String.Format("[{0}; {1}]", first, last); }
     }
-
-
-
-    object syncroot = new object();
 
     int stamp;
 
@@ -254,7 +249,7 @@ namespace C5
     /// Create an interval heap with external item comparer and default initial capacity (16)
     /// </summary>
     /// <param name="comparer">The external comparer</param>
-    public IntervalHeap(SCG.IComparer<T> comparer) : this(16,comparer) { }
+    public IntervalHeap(SCG.IComparer<T> comparer) : this(16, comparer) { }
 
 
     //TODO: maybe remove
@@ -270,7 +265,7 @@ namespace C5
     /// </summary>
     /// <param name="comparer">The external comparer</param>
     /// <param name="capacity">The initial capacity</param>
-    public IntervalHeap(int capacity, SCG.IComparer<T> comparer) : this(capacity,comparer,new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
+    public IntervalHeap(int capacity, SCG.IComparer<T> comparer) : this(capacity, comparer, new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
 
     IntervalHeap(int capacity, SCG.IComparer<T> comparer, SCG.IEqualityComparer<T> itemequalityComparer)
     {
@@ -384,14 +379,6 @@ namespace C5
     /// is kept in the collection together with the total count.</value>
     public virtual bool DuplicatesByCounting { get { return false; } }
 
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value>The distinguished object to use for locking to synchronize multithreaded access</value>
-    [Tested]
-    public object SyncRoot { [Tested]get { return syncroot; } }
 
 
     /// <summary>
@@ -691,7 +678,7 @@ namespace C5
       {
         int cell;
         bool isfirst;
-        Handle myhandle = checkHandle(handle, out cell, out isfirst);
+        checkHandle(handle, out cell, out isfirst);
 
         return isfirst ? heap[cell].first : heap[cell].last;
       }
@@ -757,8 +744,8 @@ namespace C5
       if (myhandle == null)
         handle = myhandle = new Handle();
       else
-          if (myhandle.index != -1)
-        throw new InvalidPriorityQueueHandleException("Handle not valid for reuse");
+        if (myhandle.index != -1)
+          throw new InvalidPriorityQueueHandleException("Handle not valid for reuse");
       if (add(myhandle, item))
       {
         raiseItemsAdded(item, 1);
@@ -904,7 +891,10 @@ namespace C5
       {
         retval = heap[cell].first;
         heap[cell].first = item;
-        if (size == 2 * cell + 1) // cell == lastcell
+        if (size == 1)
+        {
+        }
+        else if (size == 2 * cell + 1) // cell == lastcell
         {
           int p = (cell + 1) / 2 - 1;
           if (comparer.Compare(item, heap[p].last) > 0)
@@ -1099,5 +1089,3 @@ namespace C5
   }
 
 }
-
-#endif

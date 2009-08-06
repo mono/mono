@@ -223,8 +223,6 @@ namespace C5UnitTests
     /// <param name="expected"></param>
     public void Check(SCG.IEnumerable<CollectionEvent<T>> expected)
     {
-#if FIXME
-      /// Temporarily disabled.  2006-03-07.  Martin
       int i = 0;
       foreach (CollectionEvent<T> expectedEvent in expected)
       {
@@ -238,7 +236,6 @@ namespace C5UnitTests
       }
       if (i < happened.Count)
         Assert.Fail(string.Format("Event number {0} seen but no event expected:\n {1}", i, happened[i]));
-#endif
       happened.Clear();
     }
     public void Clear() { happened.Clear(); }

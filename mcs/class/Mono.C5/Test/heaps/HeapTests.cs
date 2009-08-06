@@ -69,7 +69,7 @@ namespace C5UnitTests.heaps
     {
       Assert.AreEqual(EventTypeEnum.Basic, queue.ListenableEvents);
     }
-    
+
     enum Acts
     {
       Add, Remove, Changed
@@ -90,7 +90,7 @@ namespace C5UnitTests.heaps
       Assert.AreEqual(EventTypeEnum.Changed | EventTypeEnum.Added | EventTypeEnum.Removed, queue.ActiveEvents);
       queue.Add(34);
       queue.Add(56);
-      queue.AddAll<int>(new int[] {});
+      queue.AddAll<int>(new int[] { });
       queue.Add(34);
       queue.Add(12);
       queue.DeleteMax();
@@ -272,6 +272,18 @@ namespace C5UnitTests.heaps
       queue.Add(ref handle, 7);
       //Replace last item in queue with something large
       Assert.AreEqual(7, queue.Replace(handle, 12));
+      Assert.IsTrue(queue.Check());
+    }
+
+    /// <summary>
+    /// Bug by Viet Yen Nguyen <v.y.nguyen@alumnus.utwente.nl>
+    /// </summary>
+    [Test]
+    public void Replace3()
+    {
+      IPriorityQueueHandle<int> handle = null;
+      queue.Add(ref handle, 10);
+      Assert.AreEqual(10, queue.Replace(handle, 12));
       Assert.IsTrue(queue.Check());
     }
 

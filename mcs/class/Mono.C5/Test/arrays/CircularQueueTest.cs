@@ -207,6 +207,23 @@ namespace C5UnitTests.arrays.circularqueue
       Assert.AreEqual(2, queue.Count);
     }
 
+    //This test by Steve Wallace uncovered a bug in the indexing.
+    [Test]
+    public void SW200602()
+    {
+      C5.CircularQueue<int> list = new C5.CircularQueue<int>(8);
+      for (int count = 0; count <= 7; count++)
+      {
+        list.Enqueue(count);
+      }
+      int end = list.Count;
+      for (int index = 0; index < end; index++)
+      {
+        Assert.AreEqual(index, list[0]);
+        list.Dequeue();
+      }
+    }
+
     [TearDown]
     public void Dispose() { queue = null; }
 

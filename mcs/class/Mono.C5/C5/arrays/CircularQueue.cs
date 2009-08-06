@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -120,7 +119,8 @@ namespace C5
         if (i < 0 || i >= size)
           throw new IndexOutOfRangeException();
         i = i + front;
-        return array[i >= size ? i - size : i];
+        //Bug fix by Steve Wallace 2006/02/10
+        return array[i >= array.Length ? i - array.Length : i];
       }
     }
 
@@ -333,4 +333,3 @@ namespace C5
     }
   }
 }
-#endif

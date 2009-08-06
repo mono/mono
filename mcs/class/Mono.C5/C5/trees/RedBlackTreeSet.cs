@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -1030,6 +1029,18 @@ namespace C5
       if (ActiveEvents != 0)
         raiseForAdd(jtem);
       return true;
+    }
+
+    /// <summary>
+    /// Add an item to this collection if possible. If this collection has set
+    /// semantics, the item will be added if not already in the collection. If
+    /// bag semantics, the item will always be added.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    [Tested]
+    void SCG.ICollection<T>.Add(T item)
+    {
+        Add(item);
     }
 
     private bool add(T item, ref T j)
@@ -2149,7 +2160,7 @@ namespace C5
       if (size == t.size)
         return;
 
-#warning improve (mainly for bag) by usig a Node iterator instead of ItemMultiplicities()
+#warning improve (mainly for bag) by using a Node iterator instead of ItemMultiplicities()
       CircularQueue<KeyValuePair<T, int>> wasRemoved = null;
       if ((ActiveEvents & EventTypeEnum.Removed) != 0)
       {
@@ -3196,7 +3207,189 @@ namespace C5
     }
     #endregion
 
-    #region IPredecesorStructure<T> Members
+    #region ISorted<T> Members
+
+    /// <summary>
+    /// Find the strict predecessor of item in the sorted collection,
+    /// that is, the greatest item in the collection smaller than the item.
+    /// </summary>
+    /// <param name="item">The item to find the predecessor for.</param>
+    /// <param name="res">The predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a predecessor; otherwise false.</returns>
+    public bool TryPredecessor(T item, out T res)
+    {
+        if (!isValid)
+            throw new ViewDisposedException("Snapshot has been disposed");
+        Node cursor = root, bestsofar = null;
+
+        while (cursor != null)
+        {
+            int comp = comparer.Compare(cursor.item, item);
+
+            if (comp < 0)
+            {
+                bestsofar = cursor;
+                cursor = right(cursor);
+            }
+            else if (comp == 0)
+            {
+                cursor = left(cursor);
+                while (cursor != null)
+                {
+                    bestsofar = cursor;
+                    cursor = right(cursor);
+                }
+            }
+            else
+                cursor = left(cursor);
+        }
+        if (bestsofar == null)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = bestsofar.item;
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the strict successor of item in the sorted collection,
+    /// that is, the least item in the collection greater than the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the successor for.</param>
+    /// <param name="res">The successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a successor; otherwise false.</returns>
+    public bool TrySuccessor(T item, out T res)
+    {
+        if (!isValid)
+            throw new ViewDisposedException("Snapshot has been disposed");
+        Node cursor = root, bestsofar = null;
+
+        while (cursor != null)
+        {
+            int comp = comparer.Compare(cursor.item, item);
+
+            if (comp > 0)
+            {
+                bestsofar = cursor;
+                cursor = left(cursor);
+            }
+            else if (comp == 0)
+            {
+                cursor = right(cursor);
+                while (cursor != null)
+                {
+                    bestsofar = cursor;
+                    cursor = left(cursor);
+                }
+            }
+            else
+                cursor = right(cursor);
+        }
+
+        if (bestsofar == null)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = bestsofar.item;
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the weak predecessor of item in the sorted collection,
+    /// that is, the greatest item in the collection smaller than or equal to the item.
+    /// </summary>
+    /// <param name="item">The item to find the weak predecessor for.</param>
+    /// <param name="res">The weak predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak predecessor; otherwise false.</returns>
+    public bool TryWeakPredecessor(T item, out T res)
+    {
+        if (!isValid)
+            throw new ViewDisposedException("Snapshot has been disposed");
+        Node cursor = root, bestsofar = null;
+
+        while (cursor != null)
+        {
+            int comp = comparer.Compare(cursor.item, item);
+
+            if (comp < 0)
+            {
+                bestsofar = cursor;
+                cursor = right(cursor);
+            }
+            else if (comp == 0)
+            {
+                res = cursor.item;
+                return true;
+            }
+            else
+                cursor = left(cursor);
+        }
+        if (bestsofar == null)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = bestsofar.item;
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the weak successor of item in the sorted collection,
+    /// that is, the least item in the collection greater than or equal to the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the weak successor for.</param>
+    /// <param name="res">The weak successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak successor; otherwise false.</returns>
+    public bool TryWeakSuccessor(T item, out T res)
+    {
+        if (!isValid)
+            throw new ViewDisposedException("Snapshot has been disposed");
+        Node cursor = root, bestsofar = null;
+
+        while (cursor != null)
+        {
+            int comp = comparer.Compare(cursor.item, item);
+
+            if (comp == 0)
+            {
+                res = cursor.item;
+                return true;
+            }
+            else if (comp > 0)
+            {
+                bestsofar = cursor;
+                cursor = left(cursor);
+            }
+            else
+                cursor = right(cursor);
+        }
+
+        if (bestsofar == null)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = bestsofar.item;
+            return true;
+        }
+    }
+
 
     /// <summary>
     /// Find the strict predecessor in the sorted collection of a particular value,
@@ -3209,36 +3402,11 @@ namespace C5
     [Tested]
     public T Predecessor(T item)
     {
-      if (!isValid)
-        throw new ViewDisposedException("Snapshot has been disposed");
-      Node cursor = root, bestsofar = null;
-
-      while (cursor != null)
-      {
-        int comp = comparer.Compare(cursor.item, item);
-
-        if (comp < 0)
-        {
-          bestsofar = cursor;
-          cursor = right(cursor);
-        }
-        else if (comp == 0)
-        {
-          cursor = left(cursor);
-          while (cursor != null)
-          {
-            bestsofar = cursor;
-            cursor = right(cursor);
-          }
-        }
+        T res;
+        if (TryPredecessor(item, out res))
+            return res;
         else
-          cursor = left(cursor);
-      }
-
-      if (bestsofar != null)
-        return bestsofar.item;
-      else
-        throw new NoSuchItemException();
+            throw new NoSuchItemException();
     }
 
 
@@ -3253,29 +3421,11 @@ namespace C5
     [Tested]
     public T WeakPredecessor(T item)
     {
-      if (!isValid)
-        throw new ViewDisposedException("Snapshot has been disposed");
-      Node cursor = root, bestsofar = null;
-
-      while (cursor != null)
-      {
-        int comp = comparer.Compare(cursor.item, item);
-
-        if (comp < 0)
-        {
-          bestsofar = cursor;
-          cursor = right(cursor);
-        }
-        else if (comp == 0)
-          return cursor.item;
+        T res;
+        if (TryWeakPredecessor(item, out res))
+            return res;
         else
-          cursor = left(cursor);
-      }
-
-      if (bestsofar != null)
-        return bestsofar.item;
-      else
-        throw new NoSuchItemException();
+            throw new NoSuchItemException();
     }
 
 
@@ -3290,36 +3440,11 @@ namespace C5
     [Tested]
     public T Successor(T item)
     {
-      if (!isValid)
-        throw new ViewDisposedException("Snapshot has been disposed");
-      Node cursor = root, bestsofar = null;
-
-      while (cursor != null)
-      {
-        int comp = comparer.Compare(cursor.item, item);
-
-        if (comp > 0)
-        {
-          bestsofar = cursor;
-          cursor = left(cursor);
-        }
-        else if (comp == 0)
-        {
-          cursor = right(cursor);
-          while (cursor != null)
-          {
-            bestsofar = cursor;
-            cursor = left(cursor);
-          }
-        }
+        T res;
+        if (TrySuccessor(item, out res))
+            return res;
         else
-          cursor = right(cursor);
-      }
-
-      if (bestsofar != null)
-        return bestsofar.item;
-      else
-        throw new NoSuchItemException();
+            throw new NoSuchItemException();
     }
 
 
@@ -3334,35 +3459,14 @@ namespace C5
     [Tested]
     public T WeakSuccessor(T item)
     {
-      if (!isValid)
-        throw new ViewDisposedException("Snapshot has been disposed");
-      Node cursor = root, bestsofar = null;
-
-      while (cursor != null)
-      {
-        int comp = comparer.Compare(cursor.item, item);
-
-        if (comp == 0)
-          return cursor.item;
-        else if (comp > 0)
-        {
-          bestsofar = cursor;
-          cursor = left(cursor);
-        }
+        T res;
+        if (TryWeakSuccessor(item, out res))
+            return res;
         else
-          cursor = right(cursor);
-      }
-
-      if (bestsofar != null)
-        return bestsofar.item;
-      else
-        throw new NoSuchItemException();
+            throw new NoSuchItemException();
     }
 
-    #endregion
-
-    #region ISorted<T> Members
-
+   
     /// <summary>
     /// Query this sorted collection for items greater than or equal to a supplied value.
     /// </summary>
@@ -3824,7 +3928,7 @@ namespace C5
 
       TreeSet<T> res = (TreeSet<T>)MemberwiseClone();
       SnapRef newSnapRef = new SnapRef(res);
-      res.isReadOnly = true;
+      res.isReadOnlyBase = true;
       res.isSnapShot = true;
       res.snapList = newSnapRef;
 
@@ -4322,7 +4426,7 @@ namespace C5
     }
 
 
-    bool rbminicheck(Node n, bool redp, System.IO.TextWriter o, out T min, out T max, out int blackheight, int maxgen)
+    bool rbminicheck(Node n, bool redp, System.IO.TextWriter o, out T min, out T max, out int blackheight)
     {//Red-Black invariant
       bool res = true;
 
@@ -4345,13 +4449,13 @@ namespace C5
 
       if (n.left != null)
       {
-        res = rbminicheck(n.left, n.red, o, out min, out otherext, out lbh, generation) && res;
+        res = rbminicheck(n.left, n.red, o, out min, out otherext, out lbh) && res;
         res = massert(comparer.Compare(n.item, otherext) > 0, n, "Value not > all left children", o) && res;
       }
 
       if (n.right != null)
       {
-        res = rbminicheck(n.right, n.red, o, out otherext, out max, out rbh, generation) && res;
+        res = rbminicheck(n.right, n.red, o, out otherext, out max, out rbh) && res;
         res = massert(comparer.Compare(n.item, otherext) < 0, n, "Value not < all right children", o) && res;
       }
 
@@ -4457,7 +4561,7 @@ namespace C5
           return !rv;
         }
 #endif
-        bool res = rbminicheck(root, false, o, out min, out max, out blackheight, generation);
+        bool res = rbminicheck(root, false, o, out min, out max, out blackheight);
         res = massert(blackheight == blackdepth, root, "bad blackh/d", o) && res;
         res = massert(!root.red, root, "root is red", o) && res;
 #if MAINTAIN_SIZE
@@ -4489,5 +4593,3 @@ namespace C5
   }
 }
 
-
-#endif

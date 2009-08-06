@@ -27,7 +27,7 @@ using SCG = System.Collections.Generic;
 
 namespace C5UnitTests.wrappers
 {
-  namespace Events
+  namespace events
   {
     [TestFixture]
     public class IList_
@@ -657,7 +657,6 @@ namespace C5UnitTests.wrappers
         Assert.AreEqual(true, wrapped.Show(new System.Text.StringBuilder(), ref j, null));
         wrapped.Sort();
         Assert.AreEqual("[ 0:4, 1:5, 2:6 ]", wrapped.ToString());
-        Assert.IsNotNull(wrapped.SyncRoot);
         Assert.IsTrue(IC.eq(wrapped.ToArray(), 4, 5, 6));
         Assert.AreEqual("[ ... ]", wrapped.ToString("L4", null));
         Assert.AreEqual(null, wrapped.Underlying);
@@ -718,9 +717,11 @@ namespace C5UnitTests.wrappers
       }
 
       [Test]
+      [Category("NotWorking")]
       public void View()
       {
-        WrappedArray<int> outerwrapped = new WrappedArray<int>(new int[] { 3, 4, 6, 5, 7 });
+        int[] inner = new int[] { 3, 4, 6, 5, 7 };
+        WrappedArray<int> outerwrapped = new WrappedArray<int>(inner);
         WrappedArray<int> wrapped = (WrappedArray<int>)outerwrapped.View(1, 3);
         //
         Assert.AreEqual(6, wrapped[1]);
@@ -779,7 +780,6 @@ namespace C5UnitTests.wrappers
         Assert.AreEqual(true, wrapped.Show(new System.Text.StringBuilder(), ref j, null));
         wrapped.Sort();
         Assert.AreEqual("[ 0:4, 1:5, 2:6 ]", wrapped.ToString());
-        Assert.IsNotNull(wrapped.SyncRoot);
         Assert.IsTrue(IC.eq(wrapped.ToArray(), 4, 5, 6));
         Assert.AreEqual("[ ... ]", wrapped.ToString("L4", null));
         Assert.AreEqual(outerwrapped, wrapped.Underlying);
@@ -803,7 +803,8 @@ namespace C5UnitTests.wrappers
       [Test]
       public void ViewWithExc()
       {
-        WrappedArray<int> outerwrapped = new WrappedArray<int>(new int[] { 3, 4, 6, 5, 7 });
+        int[] inner = new int[] { 3, 4, 6, 5, 7 };
+        WrappedArray<int> outerwrapped = new WrappedArray<int>(inner);
         WrappedArray<int> wrapped = (WrappedArray<int>)outerwrapped.View(1, 3);
         //
         try { wrapped.Add(1); Assert.Fail("No throw"); }

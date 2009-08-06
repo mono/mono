@@ -1,46 +1,63 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProductVersion>8.0.40607</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D70489CD-ABDA-48FF-BD1E-BE3F7495BE71}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <StartupObject>
-    </StartupObject>
     <RootNamespace>C5</RootNamespace>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>C5</AssemblyName>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>.\bin\Debug\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>DEBUG</DefineConstants>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IncrementalBuild>false</IncrementalBuild>
     <DocumentationFile>c5.xml</DocumentationFile>
-    <FxCopRules>+ComRules.dll;+DesignRules.dll|AbstractTypesShouldNotHaveConstructors;+DesignRules.dll|AddAndSubtractOverrideShouldHaveOperatorEqualsOverride;-DesignRules.dll|AssembliesAreMarkedClsCompliant;-DesignRules.dll|AssembliesHaveStrongNames;+DesignRules.dll|AssembliesHaveVersionNumbers;-DesignRules.dll|AssembliesShouldBeComVisibleAttributed;+DesignRules.dll|AttributesAreAttributeUsageAttributed;+DesignRules.dll|AttributesShouldHaveAccessorsForAllArguments;+DesignRules.dll|AvoidNamespacesWithFewMembers;-DesignRules.dll|AvoidOutParameters;+DesignRules.dll|AvoidValueTypesPassedAsByRefParameters;+DesignRules.dll|ConsiderHavingOnlyOneDimensionForIndexer;+DesignRules.dll|ConsiderPassingBaseTypesAsParameters;+DesignRules.dll|ConsiderReplacingMethodsWithProperties;+DesignRules.dll|ConsiderReplacingRepetitiveArgsWithParameterArray;+DesignRules.dll|DefaultParametersAreNotUsed;+DesignRules.dll|EnumerationsShouldBeFlagsAttributed;+DesignRules.dll|EnumerationsShouldBeInt32;+DesignRules.dll|EnumerationsShouldBeIntegralType;+DesignRules.dll|EventFirstParametersAreTypeObject;+DesignRules.dll|EventHandlersReturnVoid;+DesignRules.dll|EventSecondParametersAreEventArgsType;+DesignRules.dll|EventsHaveTwoParameters;+DesignRules.dll|EventsShouldBeUsed;+DesignRules.dll|ExceptionAndSystemExceptionTypesAreNotCaught;+DesignRules.dll|ExceptionsRequireMultipleConstructors;-DesignRules.dll|ExplicitMethodImplementationsInUnsealedClassesHaveVisibleAlternates;+DesignRules.dll|ExternallyVisibleNestedTypesShouldNotBeUsed;+DesignRules.dll|ICollectionImplementationsHaveStronglyTypedMembers;+DesignRules.dll|IComparableImplementationsOverrideEquals;+DesignRules.dll|IComparableImplementationsOverrideOperators;+DesignRules.dll|IEnumeratorImplementationsHaveStronglyTypedMembers;+DesignRules.dll|IListImplementationsHaveStronglyTypedMembers;+DesignRules.dll|InterfacesShouldNotBeEmpty;+DesignRules.dll|ISerializableTypesAreMarkedSerializable;+DesignRules.dll|ObsoleteAttributeOnMemberShouldProvideMessage;+DesignRules.dll|ObsoleteAttributeOnTypeShouldProvideMessage;-DesignRules.dll|OnlyIntegralValuesOrStringsShouldBeUsedForIndexers;+DesignRules.dll|PropertiesShouldNotBeWriteOnly;+DesignRules.dll|ReferenceTypesAreNotPassedAsByRefParameters;+DesignRules.dll|ReferenceTypesShouldNotOverrideOperatorEquals;+DesignRules.dll|SealedTypesDoNotDeclareProtectedMembers;+DesignRules.dll|SealedTypesDoNotDeclareVirtualMembers;+DesignRules.dll|TypesAllocatingUnmanagedResourcesImplementIDisposable;+DesignRules.dll|TypesBelongToNamespaces;+DesignRules.dll|TypesDoNotHavePublicInstanceFields;+DesignRules.dll|TypesHavingOnlyStaticMembersShouldBeSealed;+DesignRules.dll|TypesHavingOnlyStaticMembersShouldNotHaveConstructors;+DesignRules.dll|UriParametersShouldNotBeStrings;+DesignRules.dll|UriPropertiesShouldNotBeStrings;+DesignRules.dll|UriReturnValuesShouldNotBeStrings;+GlobalizationRules.dll;+MaintainabilityRules.dll;+NamingRules.dll;+PerformanceRules.dll;+ReliabilityRules.dll;+SecurityRules.dll;+UsageRules.dll</FxCopRules>
-    <RunFxCop>false</RunFxCop>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugSymbols>false</DebugSymbols>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>.\bin\Release\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <IncrementalBuild>false</IncrementalBuild>
-    <DocumentationFile>
-    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugSnk|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugSnk\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;STRONGNAME</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseSnk|AnyCPU' ">
+    <OutputPath>bin\ReleaseSnk\</OutputPath>
+    <DefineConstants>TRACE;STRONGNAME</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.2.30703\System.dll</HintPath>
-      <Name>System</Name>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="arrays\CircularQueue.cs" />
@@ -60,13 +77,10 @@
     <Compile Include="Hashers.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Collections.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dictionaries.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="linkedlists\HashedLinkedList.cs" />
     <Compile Include="Random.cs" />
@@ -76,44 +90,27 @@
     <Compile Include="MappedEnumerators.cs" />
     <Compile Include="WrappedArray.cs" />
     <Compile Include="Wrappers.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="arrays\ArrayList.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="arrays\SortedArray.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="hashing\HashBag.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="hashing\HashDictionary.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="hashing\HashTable.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="heaps\IntervalHeap.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="linkedlists\LinkedList.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="trees\RedBlackTreeSet.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="trees\RedBlackTreeBag.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="trees\RedBlackTreeDictionary.cs">
-      <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
   <PropertyGroup>
@@ -121,8 +118,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>

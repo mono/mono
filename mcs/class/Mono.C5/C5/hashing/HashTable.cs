@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -450,10 +449,10 @@ namespace C5
             {
               b.item = item;
             }
-            item = b.item;
-
             if (raise && update)
               raiseForUpdate(item, olditem);
+            // bug20071112:
+            item = olditem;
             return true;
           }
 
@@ -573,6 +572,8 @@ namespace C5
     notfound:
       if (raise && add)
         raiseForAdd(item);
+      if (update)
+        item = default(T);
       return false;
     }
 
@@ -801,8 +802,8 @@ namespace C5
     /// Create a hash set with natural item equalityComparer and default fill threshold (66%)
     /// and initial table size (16).
     /// </summary>
-    public HashSet() 
-			: this(EqualityComparer<T>.Default) { }
+    public HashSet()
+      : this(EqualityComparer<T>.Default) { }
 
 
     /// <summary>
@@ -810,8 +811,8 @@ namespace C5
     /// and initial table size (16).
     /// </summary>
     /// <param name="itemequalityComparer">The external item equalityComparer</param>
-    public HashSet(SCG.IEqualityComparer<T> itemequalityComparer) 
-			: this(16, itemequalityComparer) { }
+    public HashSet(SCG.IEqualityComparer<T> itemequalityComparer)
+      : this(16, itemequalityComparer) { }
 
 
     /// <summary>
@@ -819,8 +820,8 @@ namespace C5
     /// </summary>
     /// <param name="capacity">Initial table size (rounded to power of 2, at least 16)</param>
     /// <param name="itemequalityComparer">The external item equalityComparer</param>
-    public HashSet(int capacity, SCG.IEqualityComparer<T> itemequalityComparer) 
-			: this(capacity, 0.66, itemequalityComparer) { }
+    public HashSet(int capacity, SCG.IEqualityComparer<T> itemequalityComparer)
+      : this(capacity, 0.66, itemequalityComparer) { }
 
 
     /// <summary>
@@ -829,7 +830,8 @@ namespace C5
     /// <param name="capacity">Initial table size (rounded to power of 2, at least 16)</param>
     /// <param name="fill">Fill threshold (in range 10% to 90%)</param>
     /// <param name="itemequalityComparer">The external item equalityComparer</param>
-    public HashSet(int capacity, double fill, SCG.IEqualityComparer<T> itemequalityComparer) : base(itemequalityComparer)
+    public HashSet(int capacity, double fill, SCG.IEqualityComparer<T> itemequalityComparer)
+      : base(itemequalityComparer)
     {
       if (fill < 0.1 || fill > 0.9)
         throw new ArgumentException("Fill outside valid range [0.1, 0.9]");
@@ -1066,7 +1068,12 @@ namespace C5
 #endif
       indexmask = aux.indexmask;
       resizethreshhold = aux.resizethreshhold;
-
+      bits = aux.bits;
+      bitsc = aux.bitsc;
+#if DEBUG
+#else
+      randomhashfactor = aux.randomhashfactor;
+#endif
 
       if ((ActiveEvents & EventTypeEnum.Removed) != 0)
         raiseForRemoveAll(wasRemoved);
@@ -1317,6 +1324,16 @@ namespace C5
     }
 
     /// <summary>
+    /// Add an item to this set.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    [Tested]
+    void SCG.ICollection<T>.Add(T item)
+    {
+        Add(item);
+    }
+
+    /// <summary>
     /// Add the elements from another collection with a more specialized item type 
     /// to this collection. Since this
     /// collection has set semantics, only items not already in the collection
@@ -1452,6 +1469,28 @@ namespace C5
       return true;
 #else
       bool retval = true;
+
+      if (bitsc != 32 - bits)
+      {
+        Console.WriteLine("bitsc != 32 - bits ({0}, {1})", bitsc, bits);
+        retval = false;
+      }
+      if (indexmask != (1 << bits) - 1)
+      {
+        Console.WriteLine("indexmask != (1 << bits) - 1 ({0}, {1})", indexmask, bits);
+        retval = false;
+      }
+      if (table.Length != indexmask + 1)
+      {
+        Console.WriteLine("table.Length != indexmask + 1 ({0}, {1})", table.Length, indexmask);
+        retval = false;
+      }
+      if (bitsc != 32 - bits)
+      {
+        Console.WriteLine("resizethreshhold != (int)(table.Length * fillfactor) ({0}, {1}, {2})", resizethreshhold, table.Length, fillfactor);
+        retval = false;
+      }
+
       for (int i = 0, s = table.Length; i < s; i++)
       {
         int level = 0;
@@ -1599,5 +1638,3 @@ namespace C5
 
   }
 }
-
-#endif

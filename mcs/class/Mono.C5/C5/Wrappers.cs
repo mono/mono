@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -702,6 +701,12 @@ namespace C5
     public virtual bool Add(T item)
     { throw new ReadOnlyCollectionException(); }
 
+    /// <summary>
+    /// </summary>
+    /// <exception cref="ReadOnlyCollectionException"> since this is a read-only wrappper</exception>
+    /// <param name="item"></param>
+    void SCG.ICollection<T>.Add(T item)
+    { throw new ReadOnlyCollectionException(); }
 
     /// <summary>
     /// </summary>
@@ -892,6 +897,46 @@ namespace C5
     #endregion
 
     #region ISorted<T> Members
+
+    /// <summary>
+    /// Find the strict predecessor of item in the guarded sorted collection,
+    /// that is, the greatest item in the collection smaller than the item.
+    /// </summary>
+    /// <param name="item">The item to find the predecessor for.</param>
+    /// <param name="res">The predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a predecessor; otherwise false.</returns>
+    public bool TryPredecessor(T item, out T res) { return sorted.TryPredecessor(item, out res); }
+
+
+    /// <summary>
+    /// Find the strict successor of item in the guarded sorted collection,
+    /// that is, the least item in the collection greater than the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the successor for.</param>
+    /// <param name="res">The successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a successor; otherwise false.</returns>
+    public bool TrySuccessor(T item, out T res) { return sorted.TrySuccessor(item, out res); }
+
+
+    /// <summary>
+    /// Find the weak predecessor of item in the guarded sorted collection,
+    /// that is, the greatest item in the collection smaller than or equal to the item.
+    /// </summary>
+    /// <param name="item">The item to find the weak predecessor for.</param>
+    /// <param name="res">The weak predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak predecessor; otherwise false.</returns>
+    public bool TryWeakPredecessor(T item, out T res) { return sorted.TryWeakPredecessor(item, out res); }
+
+
+    /// <summary>
+    /// Find the weak successor of item in the sorted collection,
+    /// that is, the least item in the collection greater than or equal to the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the weak successor for.</param>
+    /// <param name="res">The weak successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak successor; otherwise false.</returns>
+    public bool TryWeakSuccessor(T item, out T res) { return sorted.TryWeakSuccessor(item, out res); }
+
 
     /// <summary>
     /// Find the predecessor of the item in the wrapped sorted collection
@@ -1260,7 +1305,7 @@ namespace C5
   /// <see cref="T:C5.HashedArray`1"/>.
   /// </i>
   /// </summary>
-  public class GuardedList<T> : GuardedSequenced<T>, IList<T>
+  public class GuardedList<T> : GuardedSequenced<T>, IList<T>, SCG.IList<T>
   {
     #region Fields
 
@@ -1273,13 +1318,16 @@ namespace C5
     #region Constructor
 
     /// <summary>
-    /// Wrap a list in a read-only wrapper
+    /// Wrap a list in a read-only wrapper.  A list gets wrapped as read-only,
+    /// a list view gets wrapped as read-only and non-slidable.
     /// </summary>
     /// <param name="list">The list</param>
     public GuardedList(IList<T> list)
       : base(list)
     {
       this.innerlist = list;
+      // If wrapping a list view, make innerlist = the view, and make 
+      // underlying = a guarded version of the view's underlying list
       if (list.Underlying != null)
         underlying = new GuardedList<T>(list.Underlying, null, false);
     }
@@ -1345,9 +1393,9 @@ namespace C5
     /// <summary>
     /// </summary>
     /// <exception cref="ReadOnlyCollectionException"> since this is a read-only wrappper</exception>
-    /// <param name="i"></param>
+    /// <param name="index"></param>
     /// <param name="item"></param>
-    public void Insert(int i, T item)
+    public void Insert(int index, T item)
     { throw new ReadOnlyCollectionException(); }
 
     /// <summary>
@@ -1746,6 +1794,86 @@ namespace C5
       return new GuardedList<T>((IList<T>)(innerlist.Clone()));
     }
 
+    #region System.Collections.Generic.IList<T> Members
+
+    void System.Collections.Generic.IList<T>.RemoveAt(int index)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    void System.Collections.Generic.ICollection<T>.Add(T item)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    #endregion
+
+    #region System.Collections.ICollection Members
+
+    bool System.Collections.ICollection.IsSynchronized
+    {
+      get { return false; }
+    }
+
+    [Obsolete]
+    Object System.Collections.ICollection.SyncRoot
+    {
+      get { return innerlist.SyncRoot; }
+    }
+
+    void System.Collections.ICollection.CopyTo(Array arr, int index)
+    {
+      if (index < 0 || index + Count > arr.Length)
+        throw new ArgumentOutOfRangeException();
+
+      foreach (T item in this)
+        arr.SetValue(item, index++);
+    }
+
+    #endregion
+
+    #region System.Collections.IList Members
+    
+    Object System.Collections.IList.this[int index]
+    {
+      get { return this[index]; }
+      set
+      {
+        throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+      }
+    }
+
+    int System.Collections.IList.Add(Object o)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    bool System.Collections.IList.Contains(Object o)
+    {
+      return Contains((T)o);
+    }
+
+    int System.Collections.IList.IndexOf(Object o)
+    {
+      return Math.Max(-1, IndexOf((T)o));
+    }
+
+    void System.Collections.IList.Insert(int index, Object o)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    void System.Collections.IList.Remove(Object o)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    void System.Collections.IList.RemoveAt(int index)
+    {
+      throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
+    }
+
+    #endregion
   }
 
   /// <summary>
@@ -2061,6 +2189,54 @@ namespace C5
     public new ISorted<K> Keys { get { return null; } }
 
     /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a predecessor</returns>
+    public bool TryPredecessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sorteddict.TryPredecessor(key, out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The successor, if any</param>
+    /// <returns>True if the key has a successor</returns>
+    public bool TrySuccessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sorteddict.TrySuccessor(key, out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a weak predecessor</returns>
+    public bool TryWeakPredecessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sorteddict.TryWeakPredecessor(key, out res);
+    }
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The weak successor, if any</param>
+    /// <returns>True if the key has a weak successor</returns>
+    public bool TryWeakSuccessor(K key, out KeyValuePair<K, V> res)
+    {
+      return sorteddict.TryWeakSuccessor(key, out res);
+    }
+
+    /// <summary>
     /// Get the entry in the wrapped dictionary whose key is the
     /// predecessor of a specified key.
     /// </summary>
@@ -2069,7 +2245,6 @@ namespace C5
     /// <returns>The entry</returns>
     public KeyValuePair<K, V> Predecessor(K key)
     { return sorteddict.Predecessor(key); }
-
 
     /// <summary>
     /// Get the entry in the wrapped dictionary whose key is the
@@ -2102,10 +2277,6 @@ namespace C5
     /// <returns>The entry</returns>
     public KeyValuePair<K, V> WeakSuccessor(K key)
     { return sorteddict.WeakSuccessor(key); }
-
-    #endregion
-
-    #region ISortedDictionary<K,V> Members
 
     /// <summary>
     /// 
@@ -2232,4 +2403,3 @@ namespace C5
   }
 
 }
-#endif

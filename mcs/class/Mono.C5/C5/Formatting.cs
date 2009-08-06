@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,10 +64,11 @@ namespace C5
     /// <returns>True if <code>obj</code> was shown completely.</returns>
     public static bool Show(Object obj, StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
     {
+      IShowable showable;
       if (rest <= 0)
         return false;
-      else if (obj is IShowable)
-        return ((IShowable)obj).Show(stringbuilder, ref rest, formatProvider);
+      else if ((showable = obj as IShowable) != null)
+        return showable.Show(stringbuilder, ref rest, formatProvider);
       int oldLength = stringbuilder.Length;
       stringbuilder.AppendFormat(formatProvider, "{0}", obj);
       rest -= (stringbuilder.Length - oldLength);
@@ -124,16 +124,17 @@ namespace C5
       bool showMultiplicities = false;
       //TODO: do not test here at run time, but select code at compile time
       //      perhaps by delivering the print type to this metod
-      if (items is IList<T>)
+      IList<T> list;
+      ICollection<T> coll = items as ICollection<T>;
+      if ((list = items as IList<T>) != null)
       {
         startdelim = "[ ";
         enddelim = " ]";
         //TODO: should have been (items as IIndexed<T>).IndexingSpeed
-        showIndexes = (items as IList<T>).IndexingSpeed == Speed.Constant;
+        showIndexes = list.IndexingSpeed == Speed.Constant;
       }
-      else if (items is ICollection<T>)
+      else if (coll != null)
       {
-        ICollection<T> coll = items as ICollection<T>;
         if (coll.AllowsDuplicates)
         {
           startdelim = "{{ ";
@@ -151,7 +152,7 @@ namespace C5
 
       if (showMultiplicities)
       {
-        foreach (KeyValuePair<T, int> p in (items as ICollection<T>).ItemMultiplicities())
+        foreach (KeyValuePair<T, int> p in coll.ItemMultiplicities())
         {
           complete = false;
           if (rest <= 0)
@@ -246,4 +247,3 @@ namespace C5
     }
   }
 }
-#endif

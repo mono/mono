@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,6 +52,16 @@ namespace C5
     /// </summary>
     /// <value></value>
     public static Feature Features { get { return features; } }
+
+    #endregion
+
+    #region Events
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <value></value>
+    public override EventTypeEnum ListenableEvents { get { return EventTypeEnum.Basic; } }
 
     #endregion
 
@@ -340,6 +349,105 @@ namespace C5
     #region ISorted<T> Members
 
     /// <summary>
+    /// Find the strict predecessor of item in the sorted array,
+    /// that is, the greatest item in the collection smaller than the item.
+    /// </summary>
+    /// <param name="item">The item to find the predecessor for.</param>
+    /// <param name="res">The predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a predecessor; otherwise false.</returns>
+    public bool TryPredecessor(T item, out T res)
+    {
+        int lo;
+        binarySearch(item, out lo);
+        if (lo == 0)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = array[lo - 1];
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the strict successor of item in the sorted array,
+    /// that is, the least item in the collection greater than the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the successor for.</param>
+    /// <param name="res">The successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a successor; otherwise false.</returns>
+    public bool TrySuccessor(T item, out T res)
+    {
+        int hi;
+        if (binarySearch(item, out hi)) 
+            hi++;
+        if (hi >= size)
+        {
+            res = default(T);
+            return false;
+        } else {
+            res = array[hi];
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the weak predecessor of item in the sorted array,
+    /// that is, the greatest item in the collection smaller than or equal to the item.
+    /// </summary>
+    /// <param name="item">The item to find the weak predecessor for.</param>
+    /// <param name="res">The weak predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak predecessor; otherwise false.</returns>
+    public bool TryWeakPredecessor(T item, out T res)
+    {
+        int lo;
+
+        if (!binarySearch(item, out lo)) 
+            lo--;
+
+        if (lo < 0)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = array[lo];
+            return true;
+        }
+    }
+
+
+    /// <summary>
+    /// Find the weak successor of item in the sorted array,
+    /// that is, the least item in the collection greater than or equal to the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the weak successor for.</param>
+    /// <param name="res">The weak successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak successor; otherwise false.</returns>
+    public bool TryWeakSuccessor(T item, out T res)
+    {
+        int hi;
+
+        binarySearch(item, out hi);
+        if (hi >= size)
+        {
+            res = default(T);
+            return false;
+        }
+        else
+        {
+            res = array[hi];
+            return true;
+        }
+    }
+
+
+    /// <summary>
     /// Find the strict predecessor in the sorted collection of a particular value,
     /// i.e. the largest item in the collection less than the supplied value.
     /// </summary>
@@ -552,9 +660,10 @@ namespace C5
       //too expensive to do repeated inserts, thus:
       updatecheck();
 
-      int j = 0, i = 0, c = -1, itemcount = EnumerableBase<U>.countItems(items);
+      int j = 0, i = 0, c = -1, itemcount = EnumerableBase<U>.countItems(items), numAdded = 0;
       SortedArray<T> res = new SortedArray<T>(size + itemcount, comparer);
       T lastitem = default(T);
+      T[] addedItems = new T[itemcount];
 
       foreach (T item in items)
       {
@@ -568,7 +677,7 @@ namespace C5
         if (j > 0 && comparer.Compare(lastitem, item) >= 0)
           throw new ArgumentException("Argument not sorted");
 
-        lastitem = res.array[j++] = item;
+        addedItems[numAdded++] = lastitem = res.array[j++] = item;
       next:
         c = -1;
       }
@@ -577,6 +686,7 @@ namespace C5
 
       size = j;
       array = res.array;
+      raiseForAddAll(addedItems, numAdded);
     }
 
 
@@ -593,8 +703,14 @@ namespace C5
       if (lowind == size)
         return;
 
+      T[] removed = new T[size - lowind];
+      Array.Copy(array, lowind, removed, 0, removed.Length);
+      Array.Reverse(removed);
+
       Array.Clear(array, lowind, size - lowind);
       size = lowind;
+
+      raiseForRemoveRange(removed);
     }
 
 
@@ -613,9 +729,15 @@ namespace C5
       if (highind <= lowind)
         return;
 
+      T[] removed = new T[highind - lowind];
+      Array.Copy(array, lowind, removed, 0, removed.Length);
+      Array.Reverse(removed);
+
       Array.Copy(array, highind, array, lowind, size - highind);
       Array.Clear(array, size - highind + lowind, highind - lowind);
       size -= highind - lowind;
+
+      raiseForRemoveRange(removed);
     }
 
 
@@ -632,9 +754,23 @@ namespace C5
       if (highind == 0)
         return;
 
+      T[] removed = new T[highind];
+      Array.Copy(array, 0, removed, 0, removed.Length);
+
       Array.Copy(array, highind, array, 0, size - highind);
       Array.Clear(array, size - highind, highind);
       size = size - highind;
+
+      raiseForRemoveRange(removed);
+    }
+
+    private void raiseForRemoveRange(T[] removed)
+    {
+       foreach(T item in removed)
+         raiseItemsRemoved(item, 1);
+
+       if(removed.Length > 0)
+         raiseCollectionChanged();
     }
 
     #endregion
@@ -649,8 +785,23 @@ namespace C5
     public Speed ContainsSpeed { [Tested]get { return Speed.Log; } }
 
     /// <summary>
-    /// Check if this collection contains (an item equivalent to according to the
-    /// itemequalityComparer) a particular value.
+    /// Remove all items from this collection, resetting internal array size.
+    /// </summary>
+    [Tested]
+    override public void Clear()
+    {
+      int oldCount = size;
+      base.Clear();
+      if(oldCount > 0)
+      {
+        raiseCollectionCleared(true, oldCount);
+        raiseCollectionChanged();
+      }
+    }
+
+    /// <summary>
+    /// Check if this collection contains (an item equivalent according to the
+    /// itemequalityComparer) to a particular value.
     /// </summary>
     /// <param name="item">The value to check for.</param>
     /// <returns>True if the items is in this collection.</returns>
@@ -706,11 +857,12 @@ namespace C5
         return true;
       }
 
-      if (size == array.Length - 1) expand();
+      if (size == array.Length) expand();
 
       Array.Copy(array, ind, array, ind + 1, size - ind);
       array[ind] = item;
       size++;
+      raiseForAdd(item);
       return false;
     }
 
@@ -744,6 +896,7 @@ namespace C5
       {
         olditem = array[ind];
         array[ind] = item;
+        raiseForUpdate(item, olditem);
         return true;
       }
 
@@ -779,15 +932,17 @@ namespace C5
       {
         olditem = array[ind];
         array[ind] = item;
+        raiseForUpdate(item, olditem);
         return true;
       }
 
-      if (size == array.Length - 1) expand();
+      if (size == array.Length) expand();
 
       Array.Copy(array, ind, array, ind + 1, size - ind);
       array[ind] = item;
       size++;
       olditem = default(T);
+      raiseForAdd(item);
       return false;
     }
 
@@ -806,8 +961,10 @@ namespace C5
       updatecheck();
       if (binarySearch(item, out ind))
       {
+        T removeditem = array[ind];
         Array.Copy(array, ind + 1, array, ind, size - ind - 1);
         array[--size] = default(T);
+        raiseForRemove(removeditem);
         return true;
       }
 
@@ -836,6 +993,7 @@ namespace C5
         removeditem = array[ind];
         Array.Copy(array, ind + 1, array, ind, size - ind - 1);
         array[--size] = default(T);
+        raiseForRemove(removeditem);
         return true;
       }
 
@@ -855,6 +1013,9 @@ namespace C5
       //This is O(m*logn) with n bits extra storage
       //(Not better to collect the m items and sort them)
       updatecheck();
+        
+      RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(this);
+      bool mustFire = raiseHandler.MustFire;
 
       int[] toremove = new int[(size >> 5) + 1];
       int ind, j = 0;
@@ -866,9 +1027,13 @@ namespace C5
       for (int i = 0; i < size; i++)
         if ((toremove[i >> 5] & (1 << (i & 31))) == 0)
           array[j++] = array[i];
+        else if (mustFire)
+          raiseHandler.Remove(array[i]);
 
       Array.Clear(array, j, size - j);
       size = j;
+      if (mustFire)
+        raiseHandler.Raise();
     }
 
     /// <summary>
@@ -883,6 +1048,9 @@ namespace C5
       //(Not better to collect the m items and sort them)
       updatecheck();
 
+      RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(this);
+      bool mustFire = raiseHandler.MustFire;
+
       int[] toretain = new int[(size >> 5) + 1];
       int ind, j = 0;
 
@@ -893,9 +1061,13 @@ namespace C5
       for (int i = 0; i < size; i++)
         if ((toretain[i >> 5] & (1 << (i & 31))) != 0)
           array[j++] = array[i];
+        else if (mustFire)
+          raiseHandler.Remove(array[i]);
 
       Array.Clear(array, j, size - j);
       size = j;
+      if (mustFire)
+        raiseHandler.Raise();
     }
 
     /// <summary>
@@ -1024,8 +1196,20 @@ namespace C5
       if (binarySearch(item, out ind)) return false;
 
       insert(ind, item);
+      raiseForAdd(item);
       return true;
     }
+
+    /// <summary>
+    /// Add an item to this collection if possible. 
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    [Tested]
+    void SCG.ICollection<T>.Add(T item)
+    {
+        Add(item);
+    }
+
 
     /// <summary>
     /// Add the elements from another collection with a more specialized item type 
@@ -1049,8 +1233,9 @@ namespace C5
 
       Sorting.IntroSort<T>(newarr, size, toadd, comparer);
 
-      int j = 0, i = 0;
+      int j = 0, i = 0, numAdded = 0;
       T lastitem = default(T);
+      T[] addedItems = new T[toadd];
 
       //The following eliminates duplicates (including duplicates in input)
       //while merging the old and new collection
@@ -1060,7 +1245,7 @@ namespace C5
           lastitem = newarr[j++] = array[i++];
 
         if (j == 0 || comparer.Compare(lastitem, newarr[k]) < 0)
-          lastitem = newarr[j++] = newarr[k];
+          addedItems[numAdded++] = lastitem = newarr[j++] = newarr[k];
       }
 
       while (i < size) newarr[j++] = array[i++];
@@ -1068,6 +1253,17 @@ namespace C5
       Array.Clear(newarr, j, size + toadd - j);
       size = j;
       array = newarr;
+
+      raiseForAddAll(addedItems, numAdded);
+    }
+
+    private void raiseForAddAll(T[] addedItems, int numAdded)
+    {
+      if ((ActiveEvents & EventTypeEnum.Added) != 0)
+        for(int i = 0 ;i < numAdded; i += 1)
+          raiseItemsAdded(addedItems[i], 1);
+      if (numAdded > 0)
+        raiseCollectionChanged();
     }
 
     #endregion
@@ -1103,6 +1299,7 @@ namespace C5
       size--;
       Array.Copy(array, 1, array, 0, size);
       array[size] = default(T);
+      raiseForRemove(retval);
       return retval;
     }
 
@@ -1136,6 +1333,7 @@ namespace C5
 
       size--;
       array[size] = default(T);
+      raiseForRemove(retval);
       return retval;
     }
 
@@ -1212,6 +1410,7 @@ namespace C5
       size--;
       Array.Copy(array, i + 1, array, i, size - i);
       array[size] = default(T);
+      raiseForRemoveAt(i, retval);
       return retval;
     }
 
@@ -1229,6 +1428,16 @@ namespace C5
       Array.Copy(array, start + count, array, start, size - start - count);
       size -= count;
       Array.Clear(array, size, count);
+      raiseForRemoveInterval(start, count);
+    }
+
+    private void raiseForRemoveInterval(int start, int count)
+    {
+      if (ActiveEvents != 0 && count > 0)
+      {
+        raiseCollectionCleared(size == 0, count);
+        raiseCollectionChanged();
+      }
     }
 
     #endregion
@@ -1265,4 +1474,3 @@ namespace C5
 
   }
 }
-#endif

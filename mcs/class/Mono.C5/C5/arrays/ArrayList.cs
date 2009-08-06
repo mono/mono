@@ -1,4 +1,3 @@
-#if NET_2_0
 
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
@@ -38,7 +37,7 @@ namespace C5
   /// but very inefficiently, use a LinkedList (<see cref="T:C5.LinkedList`1"/>) instead.</i>
   /// </summary>
   [Serializable]
-  public class ArrayList<T> : ArrayBase<T>, IList<T> //, System.Runtime.Serialization.ISerializable
+  public class ArrayList<T> : ArrayBase<T>, IList<T>, SCG.IList<T>
 #if HASHINDEX
 #else
 , IStack<T>, IQueue<T>
@@ -82,140 +81,140 @@ namespace C5
     /// <value></value>
     public override EventTypeEnum ListenableEvents { get { return underlying == null ? EventTypeEnum.All : EventTypeEnum.None; } }
 
-/*
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event CollectionChangedHandler<T> CollectionChanged
-    {
-      add
-      {
-        if (underlying == null)
-          base.CollectionChanged += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.CollectionChanged -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+    /*
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event CollectionChangedHandler<T> CollectionChanged
+        {
+          add
+          {
+            if (underlying == null)
+              base.CollectionChanged += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.CollectionChanged -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event CollectionClearedHandler<T> CollectionCleared
-    {
-      add
-      {
-        if (underlying == null)
-          base.CollectionCleared += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.CollectionCleared -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event CollectionClearedHandler<T> CollectionCleared
+        {
+          add
+          {
+            if (underlying == null)
+              base.CollectionCleared += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.CollectionCleared -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event ItemsAddedHandler<T> ItemsAdded
-    {
-      add
-      {
-        if (underlying == null)
-          base.ItemsAdded += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.ItemsAdded -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event ItemsAddedHandler<T> ItemsAdded
+        {
+          add
+          {
+            if (underlying == null)
+              base.ItemsAdded += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.ItemsAdded -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event ItemInsertedHandler<T> ItemInserted
-    {
-      add
-      {
-        if (underlying == null)
-          base.ItemInserted += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.ItemInserted -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event ItemInsertedHandler<T> ItemInserted
+        {
+          add
+          {
+            if (underlying == null)
+              base.ItemInserted += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.ItemInserted -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event ItemsRemovedHandler<T> ItemsRemoved
-    {
-      add
-      {
-        if (underlying == null)
-          base.ItemsRemoved += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.ItemsRemoved -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event ItemsRemovedHandler<T> ItemsRemoved
+        {
+          add
+          {
+            if (underlying == null)
+              base.ItemsRemoved += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.ItemsRemoved -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public override event ItemRemovedAtHandler<T> ItemRemovedAt
-    {
-      add
-      {
-        if (underlying == null)
-          base.ItemRemovedAt += value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-      remove
-      {
-        if (underlying == null)
-          base.ItemRemovedAt -= value;
-        else
-          throw new UnlistenableEventException("Can't listen to a view");
-      }
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public override event ItemRemovedAtHandler<T> ItemRemovedAt
+        {
+          add
+          {
+            if (underlying == null)
+              base.ItemRemovedAt += value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+          remove
+          {
+            if (underlying == null)
+              base.ItemRemovedAt -= value;
+            else
+              throw new UnlistenableEventException("Can't listen to a view");
+          }
+        }
 
-      */
+          */
 
     #endregion
     #region Util
@@ -248,9 +247,15 @@ namespace C5
     /// <param name="newsize">The new count of </param>
     protected override void expand(int newcapacity, int newsize)
     {
-      base.expand(newcapacity, newsize);
       if (underlying != null)
-        underlying.array = array;
+        underlying.expand(newcapacity, newsize);
+      else
+      {
+        base.expand(newcapacity, newsize);
+        if (views != null)
+          foreach (ArrayList<T> v in views)
+            v.array = array;
+      }
     }
 
     #endregion
@@ -642,14 +647,14 @@ namespace C5
     /// Create an array list with external item equalityComparer and initial capacity 8 items.
     /// </summary>
     /// <param name="itemequalityComparer">The external item equalityComparer</param>
-    public ArrayList(SCG.IEqualityComparer<T> itemequalityComparer) : this(8,itemequalityComparer) { }
+    public ArrayList(SCG.IEqualityComparer<T> itemequalityComparer) : this(8, itemequalityComparer) { }
 
 
     /// <summary>
     /// Create an array list with default item equalityComparer and prescribed initial capacity.
     /// </summary>
     /// <param name="capacity">The prescribed capacity</param>
-    public ArrayList(int capacity) : this(capacity,EqualityComparer<T>.Default) { }
+    public ArrayList(int capacity) : this(capacity, EqualityComparer<T>.Default) { }
 
 
     /// <summary>
@@ -657,7 +662,8 @@ namespace C5
     /// </summary>
     /// <param name="capacity">The prescribed capacity</param>
     /// <param name="itemequalityComparer">The external item equalityComparer</param>
-    public ArrayList(int capacity, SCG.IEqualityComparer<T> itemequalityComparer) : base(capacity,itemequalityComparer)
+    public ArrayList(int capacity, SCG.IEqualityComparer<T> itemequalityComparer)
+      : base(capacity, itemequalityComparer)
     {
 #if HASHINDEX
       itemIndex = new HashSet<KeyValuePair<T, int>>(new KeyValuePairEqualityComparer<T, int>(itemequalityComparer));
@@ -1498,7 +1504,7 @@ namespace C5
         raiseCollectionChanged();
       }
     }
-#endregion
+    #endregion
 
     #region ICollection<T> Members
 
@@ -1799,7 +1805,7 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="predicate"></param>
-    void RemoveAll(Fun<T,bool> predicate)
+    void RemoveAll(Fun<T, bool> predicate)
     {
       updatecheck();
       if (size == 0)
@@ -2210,6 +2216,20 @@ namespace C5
         }
       }
 
+      {
+        ArrayList<T> u = underlying ?? this;
+        if (u.views != null)
+          foreach (ArrayList<T> v in u.views)
+          {
+            if (u.array != v.array)
+            {
+              Console.WriteLine("View from {0} of length has different base array than the underlying list", v.offset, v.size);
+              retval = false;
+            }
+          }
+      }
+
+
 #if HASHINDEX
       if (underlyingsize != itemIndex.Count)
       {
@@ -2297,7 +2317,7 @@ namespace C5
       (underlying ?? this).raiseForAdd(item);
       return true;
     }
-    
+
 
     /// <summary>
     /// Add the elements from another collection to this collection.
@@ -2464,7 +2484,7 @@ namespace C5
         if (underlying != null)
         {
           isValid = false;
-          if (!disposingUnderlying)
+          if (!disposingUnderlying && views != null)
             views.Remove(myWeakReference);
           underlying = null;
           views = null;
@@ -2473,8 +2493,9 @@ namespace C5
         else
         {
           //isValid = false;
-          foreach (ArrayList<T> view in views)
-            view.Dispose(true);
+          if (views != null)
+            foreach (ArrayList<T> view in views)
+              view.Dispose(true);
           Clear();
         }
       }
@@ -2498,7 +2519,7 @@ namespace C5
     #endregion
 
     #region ISerializable Members
-/*
+    /*
     /// <summary>
     /// 
     /// </summary>
@@ -2532,8 +2553,86 @@ namespace C5
       }
     }
 */
-#endregion
+    #endregion
+
+    #region System.Collections.Generic.IList<T> Members
+
+    void System.Collections.Generic.IList<T>.RemoveAt(int index)
+    {
+      RemoveAt(index);
+    }
+
+    void System.Collections.Generic.ICollection<T>.Add(T item)
+    {
+      Add(item);
+    }
+
+    #endregion
+
+    #region System.Collections.ICollection Members
+
+    bool System.Collections.ICollection.IsSynchronized
+    {
+      get { return false; }
+    }
+
+    [Obsolete]
+    Object System.Collections.ICollection.SyncRoot
+    {
+      get { return underlying != null ? ((System.Collections.ICollection)underlying).SyncRoot : array; }
+    }
+
+    void System.Collections.ICollection.CopyTo(Array arr, int index)
+    {
+      if (index < 0 || index + Count > arr.Length)
+        throw new ArgumentOutOfRangeException();
+
+      foreach (T item in this)
+        arr.SetValue(item, index++);
+    }
+
+    #endregion
+
+    #region System.Collections.IList Members
+
+    Object System.Collections.IList.this[int index]
+    {
+      get { return this[index]; }
+      set { this[index] = (T)value; }
+    }
+
+    int System.Collections.IList.Add(Object o)
+    {
+      bool added = Add((T)o);
+      // What position to report if item not added? SC.IList.Add doesn't say
+      return added ? Count - 1 : -1;
+    }
+
+    bool System.Collections.IList.Contains(Object o)
+    {
+      return Contains((T)o);
+    }
+
+    int System.Collections.IList.IndexOf(Object o)
+    {
+      return Math.Max(-1, IndexOf((T)o));
+    }
+
+    void System.Collections.IList.Insert(int index, Object o)
+    {
+      Insert(index, (T)o);
+    }
+
+    void System.Collections.IList.Remove(Object o)
+    {
+      Remove((T)o);
+    }
+
+    void System.Collections.IList.RemoveAt(int index)
+    {
+      RemoveAt(index);
+    }
+
+    #endregion
   }
 }
-
-#endif

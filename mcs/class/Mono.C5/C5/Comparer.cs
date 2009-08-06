@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,11 +27,11 @@ using System.Diagnostics;
 using SCG = System.Collections.Generic;
 
 namespace C5
-{ 
-/// <summary>
-/// A default item comparer for an item type that is either generic (IComparable&lt;T&gt;)
-/// or ordinarily (System.IComparable) comparable.
-/// </summary>
+{
+  /// <summary>
+  /// A default item comparer for an item type that is either generic (IComparable&lt;T&gt;)
+  /// or ordinarily (System.IComparable) comparable.
+  /// </summary>
   public static class Comparer<T>
   {
     readonly static Type naturalComparerO = typeof(NaturalComparerO<>);
@@ -62,14 +61,41 @@ namespace C5
 
         if (t.IsValueType)
         {
+          if (t.Equals(typeof(char)))
+            return cachedComparer = (SCG.IComparer<T>)(new CharComparer());
+
+          if (t.Equals(typeof(sbyte)))
+            return cachedComparer = (SCG.IComparer<T>)(new SByteComparer());
+
+          if (t.Equals(typeof(byte)))
+            return cachedComparer = (SCG.IComparer<T>)(new ByteComparer());
+
+          if (t.Equals(typeof(short)))
+            return cachedComparer = (SCG.IComparer<T>)(new ShortComparer());
+
+          if (t.Equals(typeof(ushort)))
+            return cachedComparer = (SCG.IComparer<T>)(new UShortComparer());
+
           if (t.Equals(typeof(int)))
             return cachedComparer = (SCG.IComparer<T>)(new IntComparer());
+
+          if (t.Equals(typeof(uint)))
+            return cachedComparer = (SCG.IComparer<T>)(new UIntComparer());
+
+          if (t.Equals(typeof(long)))
+            return cachedComparer = (SCG.IComparer<T>)(new LongComparer());
+
+          if (t.Equals(typeof(ulong)))
+            return cachedComparer = (SCG.IComparer<T>)(new ULongComparer());
+
+          if (t.Equals(typeof(float)))
+            return cachedComparer = (SCG.IComparer<T>)(new FloatComparer());
 
           if (t.Equals(typeof(double)))
             return cachedComparer = (SCG.IComparer<T>)(new DoubleComparer());
 
-          if (t.Equals(typeof(byte)))
-            return cachedComparer = (SCG.IComparer<T>)(new ByteComparer());
+          if (t.Equals(typeof(decimal)))
+            return cachedComparer = (SCG.IComparer<T>)(new DecimalComparer());
         }
 
         if (typeof(IComparable<T>).IsAssignableFrom(t))
@@ -95,6 +121,7 @@ namespace C5
   /// A natural generic IComparer for an IComparable&lt;T&gt; item type
   /// </summary>
   /// <typeparam name="T"></typeparam>
+  [Serializable]
   public class NaturalComparer<T> : SCG.IComparer<T>
       where T : IComparable<T>
   {
@@ -112,8 +139,8 @@ namespace C5
   /// A natural generic IComparer for a System.IComparable item type
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class NaturalComparerO<T> : SCG.IComparer<T>
-      where T : System.IComparable
+  [Serializable]
+  public class NaturalComparerO<T> : SCG.IComparer<T> where T : System.IComparable
   {
     /// <summary>
     /// Compare two items
@@ -129,6 +156,7 @@ namespace C5
   /// A generic comparer for type T based on a Comparison[T] delegate
   /// </summary>
   /// <typeparam name="T"></typeparam>
+  [Serializable]
   public class DelegateComparer<T> : SCG.IComparer<T>
   {
     readonly Comparison<T> cmp;
@@ -151,4 +179,3 @@ namespace C5
     public int Compare(T item1, T item2) { return cmp(item1, item2); }
   }
 }
-#endif

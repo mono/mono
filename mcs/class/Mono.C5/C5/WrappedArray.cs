@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +31,7 @@ namespace C5
   /// size of the array will be invalid (and throw <see cref="T:C5.FixedSizeCollectionException"/>
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class WrappedArray<T> : IList<T>
+  public class WrappedArray<T> : IList<T>, SCG.IList<T>
   {
     class InnerList : ArrayList<T>
     {
@@ -541,11 +540,6 @@ namespace C5
     #endregion
 
     #region IExtensible<T> Members
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public object SyncRoot { get { return innerlist.SyncRoot; } }
 
     /// <summary>
     /// 
@@ -858,8 +852,86 @@ namespace C5
 
     #endregion
 
+    #region System.Collections.Generic.IList<T> Members
 
+    void System.Collections.Generic.IList<T>.RemoveAt(int index)
+    {
+      throw new FixedSizeCollectionException();
+    }
 
+    void System.Collections.Generic.ICollection<T>.Add(T item)
+    {
+      throw new FixedSizeCollectionException();
+    }
+
+    #endregion
+
+    #region System.Collections.ICollection Members
+
+    bool System.Collections.ICollection.IsSynchronized
+    {
+      get { return false; }
+    }
+
+    [Obsolete]
+    Object System.Collections.ICollection.SyncRoot
+    {
+      get { return ((System.Collections.IList)innerlist).SyncRoot; }
+    }
+
+    void System.Collections.ICollection.CopyTo(Array arr, int index)
+    {
+      if (index < 0 || index + Count > arr.Length)
+        throw new ArgumentOutOfRangeException();
+
+      foreach (T item in this)
+        arr.SetValue(item, index++);
+    }
+    
+    #endregion
+
+    #region System.Collections.IList Members
+
+    Object System.Collections.IList.this[int index]
+    {
+      get { return this[index]; }
+      set { this[index] = (T)value; }
+    }
+
+    int System.Collections.IList.Add(Object o)
+    {
+      bool added = Add((T)o);
+      // What position to report if item not added? SC.IList.Add doesn't say
+      return added ? Count - 1 : -1;
+    }
+
+    bool System.Collections.IList.Contains(Object o)
+    {
+      return Contains((T)o);
+    }
+
+    int System.Collections.IList.IndexOf(Object o)
+    {
+      return Math.Max(-1, IndexOf((T)o));
+    }
+
+    void System.Collections.IList.Insert(int index, Object o)
+    {
+      Insert(index, (T)o);
+    }
+
+    void System.Collections.IList.Remove(Object o)
+    {
+      Remove((T)o);
+    }
+
+    void System.Collections.IList.RemoveAt(int index)
+    {
+      RemoveAt(index);
+    }
+
+    #endregion
+    
     #region IEnumerable Members
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -870,4 +942,3 @@ namespace C5
     #endregion
   }
 }
-#endif

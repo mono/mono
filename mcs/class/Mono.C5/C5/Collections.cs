@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -459,14 +458,13 @@ namespace C5
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException"> if <code>index</code> 
     /// is not a valid index
-    /// into the array (i.e. negative or not less than the size of the array)
+    /// into the array (i.e. negative or greater than the size of the array)
     /// or the array does not have room for the items.</exception>
     /// <param name="array">The array to copy to.</param>
     /// <param name="index">The starting index.</param>
     [Tested]
     public virtual void CopyTo(T[] array, int index)
     {
-#warning This code does not fit the doc comment and unit tests
       if (index < 0 || index + Count > array.Length)
         throw new ArgumentOutOfRangeException();
 
@@ -675,12 +673,10 @@ namespace C5
   {
     #region Fields
 
-    object syncroot = new object();
-
     /// <summary>
     /// The underlying field of the ReadOnly property
     /// </summary>
-    protected bool isReadOnly = false;
+    protected bool isReadOnlyBase = false;
 
     /// <summary>
     /// The current stamp value
@@ -705,7 +701,7 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="itemequalityComparer"></param>
-    public CollectionBase(SCG.IEqualityComparer<T> itemequalityComparer)
+    protected CollectionBase(SCG.IEqualityComparer<T> itemequalityComparer)
     {
       if (itemequalityComparer == null)
         throw new NullReferenceException("Item EqualityComparer cannot be null.");
@@ -782,7 +778,7 @@ namespace C5
     static Type isortedtype = typeof(ISorted<T>);
 
     /// <summary>
-    /// Examine if tit and tat are equal as unsequenced collections
+    /// Examine if collection1 and collection2 are equal as unsequenced collections
     /// using the specified item equalityComparer (assumed compatible with the two collections).
     /// </summary>
     /// <param name="collection1">The first collection</param>
@@ -795,17 +791,21 @@ namespace C5
       if (object.ReferenceEquals(collection1, collection2))
         return true;
 
+      // bug20070227:
+      if (collection1 == null || collection2 == null)
+        return false;
+
       if (collection1.Count != collection2.Count)
         return false;
 
       //This way we might run through both enumerations twice, but
       //probably not (if the hash codes are good)
-      //TODO: cehck equal equalityComparers, at least here!
+      //TODO: check equal equalityComparers, at least here!
       if (collection1.GetUnsequencedHashCode() != collection2.GetUnsequencedHashCode())
         return false;
 
       //TODO: move this to the sorted implementation classes? 
-      //Really depends on speed of IntanceOfType: we could save a cast
+      //Really depends on speed of InstanceOfType: we could save a cast
       {
         ISorted<T> stit, stat;
         if ((stit = collection1 as ISorted<T>) != null && (stat = collection2 as ISorted<T>) != null && stit.Comparer == stat.Comparer)
@@ -878,9 +878,8 @@ namespace C5
 
 
     /// <summary>
-    /// Check if the contents of that is equal to the contents of this
-    /// in the unsequenced sense. Using the item equalityComparer of this collection. 
-    /// Assuming that the item EqualityComparer is compatible with otherCollection!
+    /// Check if the contents of otherCollection is equal to the contents of this
+    /// in the unsequenced sense.  Uses the item equality comparer of this collection
     /// </summary>
     /// <param name="otherCollection">The collection to compare to.</param>
     /// <returns>True if  equal</returns>
@@ -909,7 +908,7 @@ namespace C5
     /// <exception cref="ReadOnlyCollectionException">If colection is read-only</exception>
     protected virtual void updatecheck()
     {
-      if (isReadOnly)
+      if (isReadOnlyBase)
         throw new ReadOnlyCollectionException();
 
       stamp++;
@@ -924,7 +923,7 @@ namespace C5
     /// </summary>
     /// <value>True if this collection is read only</value>
     [Tested]
-    public virtual bool IsReadOnly { [Tested]get { return isReadOnly; } }
+    public virtual bool IsReadOnly { [Tested]get { return isReadOnlyBase; } }
 
     #endregion
 
@@ -959,14 +958,6 @@ namespace C5
     /// <summary>
     /// 
     /// </summary>
-    /// <value>A distinguished object to use for locking to synchronize multithreaded access</value>
-    [Tested]
-    public virtual object SyncRoot { get { return syncroot; } }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <value>True if this collection is empty</value>
     [Tested]
     public override bool IsEmpty { [Tested]get { return size == 0; } }
@@ -993,7 +984,7 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="itemequalityComparer"></param>
-    public DirectedCollectionBase(SCG.IEqualityComparer<T> itemequalityComparer) : base(itemequalityComparer) { }
+    protected DirectedCollectionBase(SCG.IEqualityComparer<T> itemequalityComparer) : base(itemequalityComparer) { }
     /// <summary>
     /// <code>Forwards</code> if same, else <code>Backwards</code>
     /// </summary>
@@ -1045,7 +1036,7 @@ namespace C5
     /// 
     /// </summary>
     /// <param name="itemequalityComparer"></param>
-    public SequencedBase(SCG.IEqualityComparer<T> itemequalityComparer) : base(itemequalityComparer) { }
+    protected SequencedBase(SCG.IEqualityComparer<T> itemequalityComparer) : base(itemequalityComparer) { }
 
     #region Util
 
@@ -1274,7 +1265,7 @@ namespace C5
     /// <param name="capacity">The initial capacity of the internal array container.
     /// Will be rounded upwards to the nearest power of 2 greater than or equal to 8.</param>
     /// <param name="itemequalityComparer">The item equalityComparer to use, primarily for item equality</param>
-    public ArrayBase(int capacity, SCG.IEqualityComparer<T> itemequalityComparer)
+    protected ArrayBase(int capacity, SCG.IEqualityComparer<T> itemequalityComparer)
       : base(itemequalityComparer)
     {
       int newlength = 8;
@@ -1519,5 +1510,3 @@ namespace C5
     #endregion
   }
 }
-
-#endif

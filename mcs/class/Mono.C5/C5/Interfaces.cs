@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -104,7 +103,6 @@ namespace C5
     bool IsEmpty { get;}
 
     /// <summary>
-    /// 
     /// </summary>
     /// <value>The number of items in this collection</value>
     int Count { get;}
@@ -290,7 +288,7 @@ namespace C5
   /// The simplest interface of a main stream generic collection
   /// with lookup, insertion and removal operations. 
   /// </summary>
-  public interface ICollection<T> : IExtensible<T>
+  public interface ICollection<T> : IExtensible<T>, SCG.ICollection<T>
   {
     //This is somewhat similar to the RandomAccess marker itf in java
     /// <summary>
@@ -302,6 +300,34 @@ namespace C5
     /// <value>A characterization of the speed of lookup operations
     /// (<code>Contains()</code> etc.) of the implementation of this collection.</value>
     Speed ContainsSpeed { get;}
+
+    /// <summary>
+    /// </summary>
+    /// <value>The number of items in this collection</value>
+    new int Count { get; }
+
+    /// <summary>
+    /// If true any call of an updating operation will throw an
+    /// <code>ReadOnlyCollectionException</code>
+    /// </summary>
+    /// <value>True if this collection is read-only.</value>
+    new bool IsReadOnly { get; }
+
+    /// <summary>
+    /// Add an item to this collection if possible. If this collection has set
+    /// semantics, the item will be added if not already in the collection. If
+    /// bag semantics, the item will always be added.
+    /// </summary>
+    /// <param name="item">The item to add.</param>
+    /// <returns>True if item was added.</returns>
+    new bool Add(T item);
+
+    /// <summary>
+    /// Copy the items of this collection to a contiguous part of an array.
+    /// </summary>
+    /// <param name="array">The array to copy to</param>
+    /// <param name="index">The index at which to copy the first item</param>
+    new void CopyTo(T[] array, int index);
 
     /// <summary>
     /// The unordered collection hashcode is defined as the sum of 
@@ -332,7 +358,7 @@ namespace C5
     /// </summary>
     /// <param name="item">The value to check for.</param>
     /// <returns>True if the items is in this collection.</returns>
-    bool Contains(T item);
+    new bool Contains(T item);
 
 
     /// <summary>
@@ -342,6 +368,7 @@ namespace C5
     /// <param name="item">The value to count.</param>
     /// <returns>The number of copies found.</returns>
     int ContainsCount(T item);
+
 
     /// <summary>
     /// 
@@ -438,7 +465,7 @@ namespace C5
     /// </summary>
     /// <param name="item">The value to remove.</param>
     /// <returns>True if the item was found (and removed).</returns>
-    bool Remove(T item);
+    new bool Remove(T item);
 
 
     /// <summary>
@@ -474,7 +501,7 @@ namespace C5
     /// <summary>
     /// Remove all items from this collection.
     /// </summary>
-    void Clear();
+    new void Clear();
 
 
     /// <summary>
@@ -555,7 +582,7 @@ namespace C5
     /// </summary>
     /// <param name="item">Item to search for.</param>
     /// <returns>Index of item from start. A negative number if item not found, 
-    /// namely the two-complement of the index at which the Add operation would put the item.</returns>
+    /// namely the one's complement of the index at which the Add operation would put the item.</returns>
     int IndexOf(T item);
 
 
@@ -672,7 +699,7 @@ namespace C5
   ///
   /// NBNBNB: we need a description of the view functionality here!
   /// </summary>
-  public interface IList<T> : IIndexed<T>, IDisposable
+  public interface IList<T> : IIndexed<T>, IDisposable, SCG.IList<T>, System.Collections.IList
   {
     /// <summary>
     /// </summary>
@@ -708,7 +735,78 @@ namespace C5
     /// <param name="index">The index of the item to fetch or store.</param>
     new T this[int index] { get; set;}
 
+    #region Ambiguous calls when extending SCG.IList<T>
+
+    #region SCG.ICollection<T>
     /// <summary>
+    /// 
+    /// </summary>
+    new int Count { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    new bool IsReadOnly { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    new bool Add(T item);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    new void Clear();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    new bool Contains(T item);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="index"></param>
+    new void CopyTo(T[] array, int index);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    new bool Remove(T item);
+
+    #endregion
+
+    #region SCG.IList<T> proper
+
+    /// <summary>
+    /// Searches for an item in the list going forwards from the start. 
+    /// </summary>
+    /// <param name="item">Item to search for.</param>
+    /// <returns>Index of item from start. A negative number if item not found, 
+    /// namely the one's complement of the index at which the Add operation would put the item.</returns>
+    new int IndexOf(T item);
+
+    /// <summary>
+    /// Remove the item at a specific position of the list.
+    /// </summary>
+    /// <exception cref="IndexOutOfRangeException"> if <code>index</code> is negative or
+    /// &gt;= the size of the collection.</exception>
+    /// <param name="index">The index of the item to remove.</param>
+    /// <returns>The removed item.</returns>
+    new T RemoveAt(int index);
+
+    #endregion
+
+    #endregion
+
+    /*/// <summary>
     /// Insert an item at a specific index location in this list. 
     /// </summary>
     /// <exception cref="IndexOutOfRangeException"> if <code>index</code> is negative or
@@ -718,7 +816,7 @@ namespace C5
     /// already in the list.</exception>
     /// <param name="index">The index at which to insert.</param>
     /// <param name="item">The item to insert.</param>
-    void Insert(int index, T item);
+    void Insert(int index, T item);*/
 
     /// <summary>
     /// Insert an item at the end of a compatible view, used as a pointer.
@@ -1165,7 +1263,47 @@ namespace C5
     /// The comparer object supplied at creation time for this sorted collection.
     /// </summary>
     /// <value>The comparer</value>
-    SCG.IComparer<T> Comparer { get;}
+    SCG.IComparer<T> Comparer { get; }
+
+    /// <summary>
+    /// Find the strict predecessor of item in the sorted collection,
+    /// that is, the greatest item in the collection smaller than the item.
+    /// </summary>
+    /// <param name="item">The item to find the predecessor for.</param>
+    /// <param name="res">The predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a predecessor; otherwise false.</returns>
+    bool TryPredecessor(T item, out T res);
+
+
+    /// <summary>
+    /// Find the strict successor of item in the sorted collection,
+    /// that is, the least item in the collection greater than the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the successor for.</param>
+    /// <param name="res">The successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a successor; otherwise false.</returns>
+    bool TrySuccessor(T item, out T res);
+
+
+    /// <summary>
+    /// Find the weak predecessor of item in the sorted collection,
+    /// that is, the greatest item in the collection smaller than or equal to the item.
+    /// </summary>
+    /// <param name="item">The item to find the weak predecessor for.</param>
+    /// <param name="res">The weak predecessor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak predecessor; otherwise false.</returns>
+    bool TryWeakPredecessor(T item, out T res);
+
+
+    /// <summary>
+    /// Find the weak successor of item in the sorted collection,
+    /// that is, the least item in the collection greater than or equal to the supplied value.
+    /// </summary>
+    /// <param name="item">The item to find the weak successor for.</param>
+    /// <param name="res">The weak successor, if any; otherwise the default value for T.</param>
+    /// <returns>True if item has a weak successor; otherwise false.</returns>
+    bool TryWeakSuccessor(T item, out T res);
+
 
     /// <summary>
     /// Find the strict predecessor in the sorted collection of a particular value,
@@ -1674,6 +1812,42 @@ namespace C5
     SCG.IComparer<K> Comparer { get;}
 
     /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a predecessor</returns>
+    bool TryPredecessor(K key, out KeyValuePair<K, V> res);
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The successor, if any</param>
+    /// <returns>True if the key has a successor</returns>
+    bool TrySuccessor(K key, out KeyValuePair<K, V> res);
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak predecessor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The predecessor, if any</param>
+    /// <returns>True if key has a weak predecessor</returns>
+    bool TryWeakPredecessor(K key, out KeyValuePair<K, V> res);
+
+    /// <summary>
+    /// Find the entry in the dictionary whose key is the
+    /// weak successor of the specified key.
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="res">The weak successor, if any</param>
+    /// <returns>True if the key has a weak successor</returns>
+    bool TryWeakSuccessor(K key, out KeyValuePair<K, V> res);
+
+    /// <summary>
     /// Find the entry with the largest key less than a given key.
     /// </summary>
     /// <exception cref="NoSuchItemException"> if there is no such entry. </exception>
@@ -1883,5 +2057,3 @@ namespace C5
     bool Equals(T item1, T item2);
   }*/
 }
-
-#endif

@@ -1,4 +1,3 @@
-#if NET_2_0
 /*
  Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +28,7 @@ namespace C5
   /// sufficiently in the regression test suite.
   /// </summary>
   [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-  public class TestedAttribute : Attribute
+  public sealed class TestedAttribute : Attribute
   {
 
     /// <summary>
@@ -47,4 +46,3 @@ namespace C5
     public override string ToString() { return "Tested via " + via; }
   }
 }
-#endif

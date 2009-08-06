@@ -18,6 +18,7 @@ templates/GenericCollectionTester.cs
 SupportClasses.cs
 AssemblyInfo.cs
 BasesTest.cs
+InterfacesTest.cs
 Records.cs
 WrappersTest.cs
 Sorting.cs

@@ -650,7 +650,7 @@ namespace C5UnitTests.arrays.sorted
 
 
 		[Test]
-		public void UpdateOrAdd()
+		public void UpdateOrAdd1()
 		{
 			KeyValuePair<int,int> p = new KeyValuePair<int,int>(3, 78);
 
@@ -663,6 +663,45 @@ namespace C5UnitTests.arrays.sorted
 			Assert.AreEqual(79, lst[10].Value);
 		}
 
+        [Test]
+        public void UpdateOrAdd2()
+        {
+            ICollection<String> coll = new SortedArray<String>();
+            // s1 and s2 are distinct objects but contain the same text:
+            String old, s1 = "abc", s2 = ("def" + s1).Substring(3);
+            Assert.IsFalse(coll.UpdateOrAdd(s1, out old));
+            Assert.AreEqual(null, old);
+            Assert.IsTrue(coll.UpdateOrAdd(s2, out old));
+            Assert.IsTrue(Object.ReferenceEquals(s1, old));
+            Assert.IsFalse(Object.ReferenceEquals(s2, old));
+        }
+
+        [Test]
+        public void UpdateOrAddWithExpand()
+        {
+            // bug20071217
+            SortedArray<double> arr = new SortedArray<double>();
+            for (int i = 0; i < 50; i++)
+            {
+                arr.UpdateOrAdd(i + 0.1);
+                arr.Add(i + 0.2);
+            }
+            Assert.IsTrue(arr.Count == 100);
+        }
+
+        [Test]
+        public void FindOrAddWithExpand()
+        {
+            // bug20071217
+            SortedArray<double> arr = new SortedArray<double>();
+            for (int i = 0; i < 50; i++)
+            {
+                double iVar = i + 0.1;
+                arr.FindOrAdd(ref iVar);
+                arr.Add(i * 0.2);
+            }
+            Assert.IsTrue(arr.Count == 100);
+        }
 
 		[Test]
 		public void RemoveWithReturn()
@@ -878,6 +917,107 @@ namespace C5UnitTests.arrays.sorted
 				tree.Add(2 * i);
 		}
 
+        [Test]
+        public void FindPredecessor()
+        {
+            loadup();
+            int res;
+            Assert.IsTrue(tree.TryPredecessor(7, out res) && res == 6);
+            Assert.IsTrue(tree.TryPredecessor(8, out res) && res == 6);
+
+            //The bottom
+            Assert.IsTrue(tree.TryPredecessor(1, out res) && res == 0);
+
+            //The top
+            Assert.IsTrue(tree.TryPredecessor(39, out res) && res == 38);
+        }
+
+        [Test]
+        public void FindPredecessorTooLow1()
+        {
+            int res;
+            Assert.IsFalse(tree.TryPredecessor(-2, out res));
+            Assert.AreEqual(0, res);
+            Assert.IsFalse(tree.TryPredecessor(0, out res));
+            Assert.AreEqual(0, res);
+        }
+
+        [Test]
+        public void FindWeakPredecessor()
+        {
+            loadup();
+            int res;
+            Assert.IsTrue(tree.TryWeakPredecessor(7, out res) && res == 6);
+            Assert.IsTrue(tree.TryWeakPredecessor(8, out res) && res == 8);
+
+            //The bottom
+            Assert.IsTrue(tree.TryWeakPredecessor(1, out res) && res == 0);
+            Assert.IsTrue(tree.TryWeakPredecessor(0, out res) && res == 0);
+
+            //The top
+            Assert.IsTrue(tree.TryWeakPredecessor(39, out res) && res == 38);
+            Assert.IsTrue(tree.TryWeakPredecessor(38, out res) && res == 38);
+        }
+
+        [Test]
+        public void FindWeakPredecessorTooLow1()
+        {
+            int res;
+            Assert.IsFalse(tree.TryWeakPredecessor(-1, out res));
+            Assert.AreEqual(0, res);
+        }
+
+        [Test]
+        public void FindSuccessor()
+        {
+            loadup();
+            int res;
+            Assert.IsTrue(tree.TrySuccessor(7, out res) && res == 8);
+            Assert.IsTrue(tree.TrySuccessor(8, out res) && res == 10);
+
+            //The bottom
+            Assert.IsTrue(tree.TrySuccessor(0, out res) && res == 2);
+            Assert.IsTrue(tree.TrySuccessor(-1, out res) && res == 0);
+
+            //The top
+            Assert.IsTrue(tree.TrySuccessor(37, out res) && res == 38);
+        }
+
+        [Test]
+        public void FindSuccessorTooHigh()
+        {
+            int res;
+            Assert.IsFalse(tree.TrySuccessor(38, out res));
+            Assert.AreEqual(0, res);
+            Assert.IsFalse(tree.TrySuccessor(39, out res));
+            Assert.AreEqual(0, res);
+        }
+
+        [Test]
+        public void FindWeakSuccessor()
+        {
+            loadup();
+            int res;
+            Assert.IsTrue(tree.TryWeakSuccessor(6, out res) && res == 6);
+            Assert.IsTrue(tree.TryWeakSuccessor(7, out res) && res == 8);
+
+            //The bottom
+            Assert.IsTrue(tree.TryWeakSuccessor(-1, out res) && res == 0);
+            Assert.IsTrue(tree.TryWeakSuccessor(0, out res) && res == 0);
+
+            //The top
+            Assert.IsTrue(tree.TryWeakSuccessor(37, out res) && res == 38);
+            Assert.IsTrue(tree.TryWeakSuccessor(38, out res) && res == 38);
+        }
+
+        [Test]
+        public void FindWeakSuccessorTooHigh1()
+        {
+            int res;
+            Assert.IsFalse(tree.TryWeakSuccessor(39, out res));
+            Assert.AreEqual(0, res);
+        }
+
 
 		[Test]
 		public void Predecessor()
@@ -893,7 +1033,6 @@ namespace C5UnitTests.arrays.sorted
 			Assert.AreEqual(38, tree.Predecessor(39));
 		}
 
-
 		[Test]
 		[ExpectedException(typeof(NoSuchItemException))]
 		public void PredecessorTooLow1()
@@ -908,7 +1047,6 @@ namespace C5UnitTests.arrays.sorted
 		{
 			tree.Predecessor(0);
 		}
-
 
 		[Test]
 		public void WeakPredecessor()
@@ -926,10 +1064,9 @@ namespace C5UnitTests.arrays.sorted
 			Assert.AreEqual(38, tree.WeakPredecessor(38));
 		}
 
-
 		[Test]
-    [ExpectedException(typeof(NoSuchItemException))]
-    public void WeakPredecessorTooLow1()
+        [ExpectedException(typeof(NoSuchItemException))]
+        public void WeakPredecessorTooLow1()
 		{
 			tree.WeakPredecessor(-1);
 		}
@@ -952,16 +1089,16 @@ namespace C5UnitTests.arrays.sorted
 
 
 		[Test]
-    [ExpectedException(typeof(NoSuchItemException))]
-    public void SuccessorTooHigh1()
+        [ExpectedException(typeof(NoSuchItemException))]
+        public void SuccessorTooHigh1()
 		{
 			tree.Successor(38);
 		}
 
 
 		[Test]
-    [ExpectedException(typeof(NoSuchItemException))]
-    public void SuccessorTooHigh2()
+        [ExpectedException(typeof(NoSuchItemException))]
+        public void SuccessorTooHigh2()
 		{
 			tree.Successor(39);
 		}
@@ -983,10 +1120,9 @@ namespace C5UnitTests.arrays.sorted
 			Assert.AreEqual(38, tree.WeakSuccessor(38));
 		}
 
-
 		[Test]
-    [ExpectedException(typeof(NoSuchItemException))]
-    public void WeakSuccessorTooHigh1()
+        [ExpectedException(typeof(NoSuchItemException))]
+        public void WeakSuccessorTooHigh1()
 		{
 			tree.WeakSuccessor(39);
 		}
@@ -1969,7 +2105,7 @@ namespace C5UnitTests.arrays.sorted
 		public class SyncRoot
 		{
 			private SortedArray<int> tree;
-
+      private readonly Object mySyncRoot = new Object();
 			int sz = 5000;
 
 
@@ -2044,11 +2180,11 @@ namespace C5UnitTests.arrays.sorted
 			private void safe1()
 			{
 				for (int i = 0; i < 2 * sz; i++)
-					lock (tree.SyncRoot)
+					lock (mySyncRoot)
 						tree.Add(i * 2);
 
 				for (int i = 1; i < sz; i++)
-					lock (tree.SyncRoot)
+					lock (mySyncRoot)
 						tree.Remove(i * 4);
 			}
 
@@ -2066,11 +2202,11 @@ namespace C5UnitTests.arrays.sorted
 			private void safe2()
 			{
 				for (int i = 2 * sz; i > 0; i--)
-					lock (tree.SyncRoot)
+					lock (mySyncRoot)
 						tree.Add(i * 2 + 1);
 
 				for (int i = sz; i > 0; i--)
-					lock (tree.SyncRoot)
+					lock (mySyncRoot)
 						tree.Remove(i * 4 + 1);
 			}
 
