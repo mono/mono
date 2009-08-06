@@ -1,5 +1,9 @@
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : de-factorying toward callback instancing.
+
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelFactory.cs, ClientRuntimeChannel.cs,
 	  ChannelFactory_1.cs : more ServiceEndpoint dep reduction.
 

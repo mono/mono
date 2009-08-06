@@ -106,15 +106,20 @@ namespace System.ServiceModel
 
 		public ClientRuntimeChannel (ServiceEndpoint endpoint,
 			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
+			: this (endpoint.CreateRuntime (), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
 		{
-			this.runtime = endpoint.CreateRuntime ();
+		}
+
+		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
+		{
+			this.runtime = runtime;
 			this.remote_address = remoteAddress;
 			runtime.Via = via;
-			this.contract = endpoint.Contract;
-			this.message_version = endpoint.Binding.MessageVersion;
-			this.factory = channelFactory.OpenedChannelFactory;
-			default_open_timeout = channelFactory.DefaultOpenTimeout;
-			default_close_timeout = channelFactory.DefaultCloseTimeout;
+			this.contract = contract;
+			this.message_version = messageVersion;
+			this.factory = factory;
+			default_open_timeout = openTimeout;
+			default_close_timeout = closeTimeout;
 			_processDelegate = new ProcessDelegate (Process);
 			requestDelegate = new RequestDelegate (Request);
 			sendDelegate = new SendDelegate (Send);
@@ -123,12 +128,12 @@ namespace System.ServiceModel
 			AllowInitializationUI = true;
 			OperationTimeout = TimeSpan.FromMinutes (1);
 
-			// determine operation channel to create.
-			if (factory is IChannelFactory<IRequestChannel> ||
-			    factory is IChannelFactory<IRequestSessionChannel>)
-				SetupRequestChannel ();
-			else
-				SetupOutputChannel ();
+
+			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+			var channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
+			output_channel = channel as IOutputChannel;
+			if (output_channel == null)
+				request_channel = channel as IRequestChannel;
 		}
 
 		public ClientRuntime Runtime {
@@ -451,26 +456,6 @@ namespace System.ServiceModel
 			if (od == null)
 				throw new Exception (String.Format ("OperationDescription for operation '{0}' was not found in its internally-generated contract.", operation));
 			return od;
-		}
-
-		// This handles IDuplexChannel, IOutputChannel, and those for session channels.
-		void SetupOutputChannel ()
-		{
-			if (output_channel != null)
-				return;
-
-			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			output_channel = (IOutputChannel) method.Invoke (factory, new object [] {remote_address, Via});
-		}
-
-		// This handles both IRequestChannel and IRequestSessionChannel.
-		void SetupRequestChannel ()
-		{
-			if (request_channel != null)
-				return;
-
-			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			request_channel = (IRequestChannel) method.Invoke (factory, new object [] {remote_address, Via});
 		}
 
 		void Output (OperationDescription od, object [] parameters)
