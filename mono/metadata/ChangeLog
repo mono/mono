@@ -1,3 +1,11 @@
+2009-08-06  Massimiliano Mantione  <massi@ximian.com>
+
+	* bohem-gc.c (mono_gc_add_weak_track_handle): Get the domain
+	from the object because it could not yet be available globally
+	(it happens if the profiler tries to create a gchandle on the
+	MonoThread object of a thread that is still registering itself
+	with the runtime).
+
 2009-08-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_generic_class_get_object): Initialized the
