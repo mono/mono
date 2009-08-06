@@ -1,5 +1,9 @@
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : unify IChannel field to one.
+
+2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : de-factorying toward callback instancing.
 
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>

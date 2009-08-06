@@ -87,8 +87,7 @@ namespace System.ServiceModel
 		MessageVersion message_version;
 		IChannelFactory factory;
 		TimeSpan default_open_timeout, default_close_timeout;
-		IRequestChannel request_channel;
-		IOutputChannel output_channel; // could also be IDuplexChannel instance.
+		IChannel channel;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -130,14 +129,19 @@ namespace System.ServiceModel
 
 
 			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			var channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
-			output_channel = channel as IOutputChannel;
-			if (output_channel == null)
-				request_channel = channel as IRequestChannel;
+			channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
 		}
 
 		public ClientRuntime Runtime {
 			get { return runtime; }
+		}
+
+		IRequestChannel RequestChannel {
+			get { return channel as IRequestChannel; }
+		}
+
+		IOutputChannel OutputChannel {
+			get { return channel as IOutputChannel; }
 		}
 
 		#region IClientChannel
@@ -300,11 +304,11 @@ namespace System.ServiceModel
 
 		public IInputSession InputSession {
 			get {
-				ISessionChannel<IInputSession> ch = request_channel as ISessionChannel<IInputSession>;
-				ch = ch ?? output_channel as ISessionChannel<IInputSession>;
+				ISessionChannel<IInputSession> ch = RequestChannel as ISessionChannel<IInputSession>;
+				ch = ch ?? OutputChannel as ISessionChannel<IInputSession>;
 				if (ch != null)
 					return ch.Session;
-				var dch = output_channel as ISessionChannel<IDuplexSession>;
+				var dch = OutputChannel as ISessionChannel<IDuplexSession>;
 				return dch != null ? dch.Session : null;
 			}
 		}
@@ -321,17 +325,17 @@ namespace System.ServiceModel
 
 		public IOutputSession OutputSession {
 			get {
-				ISessionChannel<IOutputSession> ch = request_channel as ISessionChannel<IOutputSession>;
-				ch = ch ?? output_channel as ISessionChannel<IOutputSession>;
+				ISessionChannel<IOutputSession> ch = RequestChannel as ISessionChannel<IOutputSession>;
+				ch = ch ?? OutputChannel as ISessionChannel<IOutputSession>;
 				if (ch != null)
 					return ch.Session;
-				var dch = output_channel as ISessionChannel<IDuplexSession>;
+				var dch = OutputChannel as ISessionChannel<IDuplexSession>;
 				return dch != null ? dch.Session : null;
 			}
 		}
 
 		public EndpointAddress RemoteAddress {
-			get { return request_channel != null ? request_channel.RemoteAddress : output_channel.RemoteAddress; }
+			get { return RequestChannel != null ? RequestChannel.RemoteAddress : OutputChannel.RemoteAddress; }
 		}
 
 		public string SessionId {
@@ -389,7 +393,7 @@ namespace System.ServiceModel
 		// IChannel
 
 		IChannel OperationChannel {
-			get { return (IChannel) request_channel ?? output_channel; }
+			get { return channel; }
 		}
 
 		public T GetProperty<T> () where T : class
@@ -460,8 +464,8 @@ namespace System.ServiceModel
 
 		void Output (OperationDescription od, object [] parameters)
 		{
-			if (output_channel.State != CommunicationState.Opened)
-				output_channel.Open ();
+			if (OutputChannel.State != CommunicationState.Opened)
+				OutputChannel.Open ();
 
 			ClientOperation op = runtime.Operations [od.Name];
 			Send (CreateRequest (op, parameters), OperationTimeout);
@@ -510,12 +514,12 @@ namespace System.ServiceModel
 		// They are internal for ClientBase<T>.ChannelBase use.
 		internal Message Request (Message msg, TimeSpan timeout)
 		{
-			if (request_channel != null)
-				return request_channel.Request (msg, timeout);
+			if (RequestChannel != null)
+				return RequestChannel.Request (msg, timeout);
 			else {
 				DateTime startTime = DateTime.Now;
-				output_channel.Send (msg, timeout);
-				return ((IDuplexChannel) output_channel).Receive (timeout - (DateTime.Now - startTime));
+				OutputChannel.Send (msg, timeout);
+				return ((IDuplexChannel) OutputChannel).Receive (timeout - (DateTime.Now - startTime));
 			}
 		}
 
@@ -531,7 +535,7 @@ namespace System.ServiceModel
 
 		internal void Send (Message msg, TimeSpan timeout)
 		{
-			output_channel.Send (msg, timeout);
+			OutputChannel.Send (msg, timeout);
 		}
 
 		internal IAsyncResult BeginSend (Message msg, TimeSpan timeout, AsyncCallback callback, object state)
