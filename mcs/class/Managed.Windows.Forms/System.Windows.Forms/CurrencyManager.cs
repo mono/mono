@@ -116,30 +116,7 @@ namespace System.Windows.Forms {
 
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
-			if (list is Array) {
-				Type element = list.GetType ().GetElementType ();
-				return TypeDescriptor.GetProperties (element);
-			}
-
-			if (list is ITypedList) {
-				return ((ITypedList)list).GetItemProperties (null);
-			}
-
-			PropertyInfo [] props = data_source.GetType().GetProperties ();
-			for (int i = 0; i < props.Length; i++) {
-				if (props [i].Name == "Item") {
-					Type t = props [i].PropertyType;
-					if (t == typeof (object))
-						continue;
-					return GetBrowsableProperties (t);
-				}
-			}
-
-			if (list.Count > 0) {
-				return GetBrowsableProperties (list [0].GetType ());
-			}
-			
-			return new PropertyDescriptorCollection (null);
+			return ListBindingHelper.GetListItemProperties (list);
 		}
 
 		public override void RemoveAt (int index)

@@ -1,5 +1,9 @@
 2009-08-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CurrencyManager.cs: Remove duplicate code.
+
+2009-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewCell.cs, DataGridViewColumn.cs: 
 	Massive population performance boost. From seconds to ms.
 	[Fixes bug #528887]
