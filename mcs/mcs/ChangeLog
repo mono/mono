@@ -1,3 +1,7 @@
+2009-08-06  Miguel de Icaza  <miguel@novell.com>
+
+	* class.cs: Catch another case for cs0533 error, fixes #324782.
+
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* typemanager.cs (GetGenericArguments): SRE returns null for

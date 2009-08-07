@@ -3461,6 +3461,11 @@ namespace Mono.CSharp {
 					if (!IsInterface && (base_method.IsVirtual || base_method.IsAbstract)) {
 						Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
 							GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+						if (base_method.IsAbstract){
+							Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
+								      GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+							ok = false;
+						}
 					} else {
 						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 							GetSignatureForError (), TypeManager.CSharpSignature (base_method));
