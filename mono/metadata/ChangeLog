@@ -1,3 +1,20 @@
+2009-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object-internals.h (MonoReflectionMethodOnTypeBuilderInst): Add new fields
+	to handle inflated generic methods.
+
+	* appdomain.c: Bump corlib version.
+
+	* reflection.c (mono_image_get_method_on_inst_token): Handle generic method
+	instances.
+
+	* reflection.c (fixup_method): Same
+
+	* reflection.c (resolve_object): Same.
+
+	* reflection.c (inflate_method): Replace a g_assert_not_reached with a
+	g_error and a decent message.
+
 2009-08-06  Massimiliano Mantione  <massi@ximian.com>
 
 	* bohem-gc.c (mono_gc_add_weak_track_handle): Get the domain
