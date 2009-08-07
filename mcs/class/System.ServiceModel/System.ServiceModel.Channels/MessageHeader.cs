@@ -212,12 +212,15 @@ namespace System.ServiceModel.Channels
 			{
 				Id = reader.GetAttribute ("Id", Constants.WsuNamespace);
 
-				// FIXME: fill is_ref
 				string s = reader.GetAttribute ("relay", soap_ns);
 				relay = s != null ? XmlConvert.ToBoolean (s) : false;
 				s = reader.GetAttribute ("mustUnderstand", soap_ns);
 				must_understand = s != null ? XmlConvert.ToBoolean (s) : false;
 				actor = reader.GetAttribute ("actor", soap_ns) ?? String.Empty;
+
+				s = reader.GetAttribute ("IsReferenceParameter", Constants.WsaNamespace);
+				is_ref = s != null ? XmlConvert.ToBoolean (s) : false;
+
 				local_name = reader.LocalName;
 				namespace_uri = reader.NamespaceURI;
 				body = reader.ReadOuterXml ();

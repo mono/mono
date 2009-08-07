@@ -1,3 +1,7 @@
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs : fill IsReferenceParameter.
+
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReplyChannelBase.cs, TcpReplyChannel.cs, HttpReplyChannel.cs:
