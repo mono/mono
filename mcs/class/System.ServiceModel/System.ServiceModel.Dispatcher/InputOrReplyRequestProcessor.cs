@@ -54,9 +54,13 @@ namespace System.ServiceModel.Dispatcher
 
 		OperationContext CreateOperationContext (Message incoming)
 		{
-			ServiceRuntimeChannel contextChannel = new ServiceRuntimeChannel (reply_or_input,
-													dispatch_runtime.ChannelDispatcher.DefaultOpenTimeout,
-													dispatch_runtime.ChannelDispatcher.DefaultCloseTimeout);
+			ServiceRuntimeChannel contextChannel;
+			if (dispatch_runtime.CallbackClientRuntime != null) {
+				var type = ServiceProxyGenerator.CreateCallbackProxyType (dispatch_runtime.CallbackClientRuntime.CallbackClientType);
+				contextChannel = (ServiceRuntimeChannel) Activator.CreateInstance (type, new object [] {reply_or_input, dispatch_runtime});
+			}
+			else
+				contextChannel = new ServiceRuntimeChannel (reply_or_input, dispatch_runtime);
 			OperationContext opCtx = new OperationContext (contextChannel);
 			opCtx.IncomingMessage = incoming;
 			opCtx.EndpointDispatcher = dispatch_runtime.EndpointDispatcher;

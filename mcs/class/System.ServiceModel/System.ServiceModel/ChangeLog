@@ -1,5 +1,11 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceRuntimeChannel.cs : change .ctor() args.
+	  Add proxy hook methods that simply calls those in callback
+	  ClientRuntimeChannel.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : create callback runtime here, if required.
 
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>

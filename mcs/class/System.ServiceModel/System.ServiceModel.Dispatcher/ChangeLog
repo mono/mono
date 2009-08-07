@@ -1,5 +1,10 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* InputOrReplyRequestProcessor.cs : now it could return an instance
+	  of dynamically generated proxy over DuplexServiceRuntimeChannel.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntime.cs : oops, it should have been committed at a time.
 	  Change .ctor() args. Make some properties auto.
 

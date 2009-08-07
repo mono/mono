@@ -36,10 +36,17 @@ namespace System.ServiceModel
 {
 	internal class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel
 	{
-		public DuplexServiceRuntimeChannel (IChannel channel, TimeSpan openTimeout, TimeSpan closeTimeout)
-			: base (channel, openTimeout, closeTimeout)
+		public DuplexServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
+			: base (channel, runtime)
 		{
+			// setup callback ClientRuntimeChannel.
+			var crt = runtime.CallbackClientRuntime;
+			var cd = ContractDescriptionGenerator.GetCallbackContract (crt.CallbackClientType);
+			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
+							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);
 		}
+
+		ClientRuntimeChannel client;
 
 		public bool AutomaticInputSessionShutdown {
 			get { throw new NotImplementedException (); }
@@ -66,6 +73,23 @@ namespace System.ServiceModel
 		{
 			session_shutdown_delegate.EndInvoke (result);
 		}
+
+		// proxy base implementation.
+
+		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
+		{
+			return client.BeginProcess (method, operationName, parameters, callback, asyncState);
+		}
+
+		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
+		{
+			return client.EndProcess (method, operationName, parameters, result);
+		}
+
+		public object Process (MethodBase method, string operationName, object [] parameters)
+		{
+			return client.Process (method, operationName, parameters);
+		}
 	}
 
 	internal class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
@@ -75,11 +99,11 @@ namespace System.ServiceModel
 		readonly TimeSpan _openTimeout;
 		readonly TimeSpan _closeTimeout;
 
-		public ServiceRuntimeChannel (IChannel channel, TimeSpan openTimeout, TimeSpan closeTimeout)
+		public ServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 		{
 			this.channel = channel;
-			this._openTimeout = openTimeout;
-			this._closeTimeout = closeTimeout;
+			this._openTimeout = runtime.ChannelDispatcher.DefaultOpenTimeout;
+			this._closeTimeout = runtime.ChannelDispatcher.DefaultCloseTimeout;
 		}
 
 		#region IContextChannel
