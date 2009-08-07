@@ -1,3 +1,11 @@
+2009-08-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Implement almost all methods required
+	to move to inherit from System.Type. The only missing methods
+	are Is(Array|Pointer|ByRef)Impl and GetElementType since the
+	runtime still generates weird instances for generics instances
+	of non-SRE types with SRE types as generic arguments.
+
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (InflateType): Add support to inflate

@@ -1,3 +1,8 @@
+2009-08-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClassTest.cs: Test for methods that must
+	throw.
+
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClassTest.cs: New file.
