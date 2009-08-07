@@ -34,6 +34,40 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel
 {
+	internal class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel
+	{
+		public DuplexServiceRuntimeChannel (IChannel channel, TimeSpan openTimeout, TimeSpan closeTimeout)
+			: base (channel, openTimeout, closeTimeout)
+		{
+		}
+
+		public bool AutomaticInputSessionShutdown {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public InstanceContext CallbackInstance { get; set; }
+
+		Action<TimeSpan> session_shutdown_delegate;
+
+		public void CloseOutputSession (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IAsyncResult BeginCloseOutputSession (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (session_shutdown_delegate == null)
+				session_shutdown_delegate = new Action<TimeSpan> (CloseOutputSession);
+			return session_shutdown_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		public void EndCloseOutputSession (IAsyncResult result)
+		{
+			session_shutdown_delegate.EndInvoke (result);
+		}
+	}
+
 	internal class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
 	{
 		IExtensionCollection<IContextChannel> extensions;

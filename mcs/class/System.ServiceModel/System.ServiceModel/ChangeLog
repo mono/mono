@@ -1,5 +1,9 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceRuntimeChannel.cs : created derived duplex type.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : close/abort channels.
 	  factory is optional now.
 
