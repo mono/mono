@@ -409,6 +409,11 @@ namespace System.ServiceModel
 			
 			//Build the dispatch operations
 			DispatchRuntime db = endpoint_dispatcher.DispatchRuntime;
+			if (se.Contract.CallbackContractType != null) {
+				var ccd = ContractDescriptionGenerator.GetCallbackContract (se.Contract.CallbackContractType);
+				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
+				db.CallbackClientRuntime.CallbackClientType = ccd.ContractType;
+			}
 			foreach (OperationDescription od in se.Contract.Operations)
 				if (!db.Operations.Contains (od.Name))
 					PopulateDispatchOperation (db, od);

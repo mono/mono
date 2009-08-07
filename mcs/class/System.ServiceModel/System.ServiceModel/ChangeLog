@@ -1,5 +1,9 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : create callback runtime here, if required.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : factory was not fully optional. Add
 	  contextChannel argument to make room for duplex callback channel.
 
