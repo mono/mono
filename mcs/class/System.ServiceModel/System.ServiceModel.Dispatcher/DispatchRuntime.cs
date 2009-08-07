@@ -81,8 +81,6 @@ namespace System.ServiceModel.Dispatcher
 		internal DispatchRuntime (EndpointDispatcher dispatcher)
 		{
 			endpoint_dispatcher = dispatcher;
-			// FIXME: is this really created at any time?
-			callback_client_runtime = new ClientRuntime (this);
 			unhandled_dispatch_oper = new DispatchOperation (
 				this, "*", "*", "*");
 		}
@@ -110,9 +108,9 @@ namespace System.ServiceModel.Dispatcher
 			get { return endpoint_dispatcher; }
 		}
 
-		[MonoTODO] // needs update when we can explore Duplex channels.
 		public ClientRuntime CallbackClientRuntime {
 			get { return callback_client_runtime; }
+			internal set { callback_client_runtime = value; }
 		}
 
 		public ReadOnlyCollection<IAuthorizationPolicy> ExternalAuthorizationPolicies {
