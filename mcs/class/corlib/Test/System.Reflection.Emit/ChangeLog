@@ -1,3 +1,7 @@
+2009-08-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DynamicMethodTest.cs: Add regression test for bug #529238.
+
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Add tests for

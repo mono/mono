@@ -331,7 +331,32 @@ namespace MonoTests.System.Reflection.Emit
 			object[] invokeArgs = { "Hello, World!" };
 			object objRet = hello.Invoke (null, invokeArgs);
 			Assert.AreEqual (2, objRet);
-		}			
+		}
+
+		public delegate int IntInvoker();
+
+		public class Foo<T> {
+			public virtual int Test () { return 99; }
+		} 
+
+		[Test]
+		public void ConstrainedPrexixDoesntCrash () //bug #529238
+		{
+			Type foo = typeof (Foo<int>);
+
+			DynamicMethod dm = new DynamicMethod ("Hello", typeof (int), null);
+			ILGenerator ilgen = dm.GetILGenerator ();
+			ilgen.DeclareLocal (foo);
+			ilgen.Emit (OpCodes.Newobj, foo.GetConstructor (new Type [0]));
+			ilgen.Emit (OpCodes.Stloc_0);
+			ilgen.Emit (OpCodes.Ldloca_S, 0);
+			ilgen.Emit (OpCodes.Constrained, foo);
+			ilgen.Emit (OpCodes.Callvirt, foo.GetMethod ("Test"));
+			ilgen.Emit (OpCodes.Ret);
+
+			IntInvoker hi = (IntInvoker) dm.CreateDelegate (typeof (IntInvoker));
+			Assert.AreEqual (99, hi (), "#1");	
+		}
 	}
 }
 
