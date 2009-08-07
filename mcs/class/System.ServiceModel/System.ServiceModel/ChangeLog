@@ -1,3 +1,8 @@
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : close/abort channels.
+	  factory is optional now.
+
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : unify IChannel field to one.

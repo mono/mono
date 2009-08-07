@@ -85,9 +85,9 @@ namespace System.ServiceModel
 		EndpointAddress remote_address;
 		ContractDescription contract;
 		MessageVersion message_version;
-		IChannelFactory factory;
 		TimeSpan default_open_timeout, default_close_timeout;
 		IChannel channel;
+		IChannelFactory factory;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -116,7 +116,6 @@ namespace System.ServiceModel
 			runtime.Via = via;
 			this.contract = contract;
 			this.message_version = messageVersion;
-			this.factory = factory;
 			default_open_timeout = openTimeout;
 			default_close_timeout = closeTimeout;
 			_processDelegate = new ProcessDelegate (Process);
@@ -130,6 +129,8 @@ namespace System.ServiceModel
 
 			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
 			channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
+
+			this.factory = factory;
 		}
 
 		public ClientRuntime Runtime {
@@ -355,23 +356,32 @@ namespace System.ServiceModel
 
 		protected override void OnAbort ()
 		{
-			factory.Abort ();
+			channel.Abort ();
+			if (factory != null)
+				factory.Abort ();
 		}
+
+		Action<TimeSpan> close_delegate;
 
 		protected override IAsyncResult OnBeginClose (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			return factory.BeginClose (timeout, callback, state);
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			factory.EndClose (result);
+			close_delegate.EndInvoke (result);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			factory.Close (timeout);
+			DateTime start = DateTime.Now;
+			channel.Close (timeout);
+			if (factory != null)
+				factory.Close (timeout - (DateTime.Now - start));
 		}
 
 		protected override IAsyncResult OnBeginOpen (
