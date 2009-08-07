@@ -1726,12 +1726,17 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateSkipIterator<TSource> (IEnumerable<TSource> source, int count)
 		{
-			int i = 0;
-			foreach (var element in source) {
-				if (i++ < count)
-					continue;
+			var enumerator = source.GetEnumerator ();
+			try {
+				while (count-- > 0)
+					if (!enumerator.MoveNext ())
+						yield break;
 
-				yield return element;
+				while (enumerator.MoveNext ())
+					yield return enumerator.Current;
+
+			} finally {
+				enumerator.Dispose ();
 			}
 		}
 

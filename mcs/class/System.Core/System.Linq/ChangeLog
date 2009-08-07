@@ -1,3 +1,7 @@
+2009-08-07  Marek Safar  <marek.safar@gmail.com>
+
+	* Enumerable.cs (Skip): Optimized and fixed int.MaxValue overflow.
+
 2009-07-20  Jb Evain  <jbevain@novell.com>
 
 	* Lookup.cs: avoid a double dictionary lookup on the indexer.
