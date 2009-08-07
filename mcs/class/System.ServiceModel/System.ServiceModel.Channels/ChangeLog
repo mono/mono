@@ -1,5 +1,9 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : add fixme comment and remove extra FIXME.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs : fill IsReferenceParameter.
 
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
