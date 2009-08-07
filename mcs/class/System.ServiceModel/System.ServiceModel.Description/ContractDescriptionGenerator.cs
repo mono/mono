@@ -67,13 +67,11 @@ namespace System.ServiceModel.Description
 			return table;
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType) {
 			return GetContract (contractType, (Type) null);
 		}
 
-		[MonoTODO]
 		public static ContractDescription GetContract (
 			Type contractType, object serviceImplementation) {
 			if (serviceImplementation == null)
@@ -93,9 +91,18 @@ namespace System.ServiceModel.Description
 			return null;
 		}
 
-		[MonoTODO]
+		public static ContractDescription GetCallbackContract (Type type)
+		{
+			return GetContract (type, null, true);
+		}
+
 		public static ContractDescription GetContract (
 			Type givenContractType, Type givenServiceType)
+		{
+			return GetContract (givenContractType, givenServiceType, false);
+		}
+
+		static ContractDescription GetContract (Type givenContractType, Type givenServiceType, bool assumeServiceContract)
 		{
 			// FIXME: serviceType should be used for specifying attributes like OperationBehavior.
 
@@ -117,8 +124,13 @@ namespace System.ServiceModel.Description
 						sca = contracts [t];
 					}
 			}
+			if (exactContractType == null)
+				exactContractType = givenContractType;
 			if (sca == null) {
-				throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", givenContractType));
+				if (assumeServiceContract)
+					sca = new ServiceContractAttribute ();
+				else
+					throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", givenContractType));
 			}
 			string name = sca.Name ?? exactContractType.Name;
 			string ns = sca.Namespace ?? "http://tempuri.org/";

@@ -1,5 +1,11 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContractDescriptionGenerator.cs : add new contract getter to
+	  create callback contract type (which does not demand
+	  ServiceContractAttribute).
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceEndpoint.cs, ContractDescription.cs : moved client runtime
 	  creator from former to latter.
 
