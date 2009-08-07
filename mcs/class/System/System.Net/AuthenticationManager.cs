@@ -54,7 +54,11 @@ namespace System.Net
 					return;
 				
 				modules = new ArrayList ();
-#if !MONOTOUCH
+#if MONOTOUCH
+				modules.Add (new BasicClient ());
+				modules.Add (new DigestClient ());
+				modules.Add (new NtlmClient ());
+#else
 #if NET_2_0 && CONFIGURATION_DEP
 				object cfg = ConfigurationManager.GetSection ("system.net/authenticationModules");
 				AuthenticationModulesSection s = cfg as AuthenticationModulesSection;
