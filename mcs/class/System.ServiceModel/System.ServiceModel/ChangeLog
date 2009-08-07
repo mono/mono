@@ -1,5 +1,10 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : factory was not fully optional. Add
+	  contextChannel argument to make room for duplex callback channel.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientProxyGenerator.cs : split client-specific code generation
 	  from those common to service callback generation.
 	* ServiceProxyGenerator.cs : new file, uses common basis above.

@@ -105,11 +105,11 @@ namespace System.ServiceModel
 
 		public ClientRuntimeChannel (ServiceEndpoint endpoint,
 			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
-			: this (endpoint.CreateRuntime (), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
+			: this (endpoint.CreateRuntime (), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, null, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
 		{
 		}
 
-		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
+		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannel contextChannel, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
 		{
 			this.runtime = runtime;
 			this.remote_address = remoteAddress;
@@ -126,11 +126,13 @@ namespace System.ServiceModel
 			AllowInitializationUI = true;
 			OperationTimeout = TimeSpan.FromMinutes (1);
 
-
-			var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
-			channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
-
-			this.factory = factory;
+			if (contextChannel != null)
+				channel = contextChannel;
+			else {
+				var method = factory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+				channel = (IChannel) method.Invoke (factory, new object [] {remote_address, Via});
+				this.factory = factory;
+			}
 		}
 
 		public ClientRuntime Runtime {
