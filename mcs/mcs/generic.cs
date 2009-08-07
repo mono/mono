@@ -607,7 +607,7 @@ namespace Mono.CSharp {
 					iface = iface.GetGenericTypeDefinition ();
 				
 				bool ok = false;
-				for (int ii = 0; i < InterfaceConstraints.Length; ++ii) {
+				for (int ii = 0; ii < InterfaceConstraints.Length; ii++) {
 					Type check = InterfaceConstraints [ii];
 					if (check.IsGenericType)
 						check = check.GetGenericTypeDefinition ();

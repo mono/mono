@@ -1,5 +1,9 @@
 2009-08-06  Miguel de Icaza  <miguel@novell.com>
 
+	* generic.cs: This loop was incorrect, it was increment ii, but
+	checking for `i'.  This was a change introduced to fix #327497,
+	now we fix #424012.
+ 
 	* class.cs: Catch another case for cs0533 error, fixes #324782.
 
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
