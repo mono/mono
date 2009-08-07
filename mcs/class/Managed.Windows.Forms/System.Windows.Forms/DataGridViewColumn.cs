@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		private Type valueType;
 		private bool visible = true;
 		private int width = 100;
+		private int dataColumnIndex;
 
 		private bool headerTextSet = false;
 
@@ -68,6 +69,7 @@ namespace System.Windows.Forms {
 			headerCell.SetColumnIndex(Index);
 			headerCell.Value = string.Empty;
 			displayIndex = -1;
+			dataColumnIndex = -1;
 			dataPropertyName = string.Empty;
 			fillWeight = 100.0F;
 			sortMode = DataGridViewColumnSortMode.NotSortable;
@@ -180,6 +182,11 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+		}
+
+		internal int DataColumnIndex {
+			get { return dataColumnIndex; }
+			set { dataColumnIndex = value; }
 		}
 
 		[DefaultValue (0)]
