@@ -72,7 +72,7 @@ namespace System.Reflection.Emit
 		private bool init_locals = true;
 		private IntPtr generic_container;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		private GenericTypeParameterBuilder[] generic_params;
+		internal GenericTypeParameterBuilder[] generic_params;
 #else
 		private Object generic_params; /* so offsets are the same */
 #endif

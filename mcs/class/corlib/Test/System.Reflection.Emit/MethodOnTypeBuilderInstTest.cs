@@ -612,6 +612,78 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (GenericType <float>), new_params [5].ParameterType, "N#6");
 			Assert.AreEqual (typeof (GenericType <GenericType<float>>), new_params [6].ParameterType, "N#7");
 		}
+
+		[Test]
+		public void GenericMethodInstanceValues ()
+		{
+			var tb = module.DefineType ("foo.type");
+			var gparam = tb.DefineGenericParameters ("T") [0];
+
+			var mb0 = tb.DefineMethod ("str2", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type[] { gparam, gparam.MakeArrayType () });
+
+			var mb = tb.DefineMethod ("str", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type [0]);
+			var mparam = mb.DefineGenericParameters ("K") [0];
+			mb.SetReturnType (mparam);
+			mb.SetParameters (new Type[] { mparam, mparam.MakeArrayType () });
+
+			var ginst = tb.MakeGenericType (typeof (double));
+			var gmd = TypeBuilder.GetMethod (ginst, mb);
+			var minst = gmd.MakeGenericMethod (typeof (int));
+
+			var mmb = TypeBuilder.GetMethod (ginst, mb0);
+
+			Assert.IsNull (mmb.GetGenericArguments (), "#1");
+			Assert.AreEqual (1, gmd.GetGenericArguments ().Length, "#2");
+			Assert.AreEqual (1, minst.GetGenericArguments ().Length, "#3");
+			Assert.AreEqual (typeof (int), minst.GetGenericArguments () [0], "#4");
+
+			try {
+				var x = mmb.ContainsGenericParameters;
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) { }
+
+			Assert.IsTrue (gmd.IsGenericMethodDefinition, "#6");
+			Assert.IsFalse (minst.IsGenericMethodDefinition, "#7");
+
+			Assert.IsFalse (mmb.IsGenericMethod, "#8");
+			Assert.IsTrue (gmd.IsGenericMethod, "#9");
+			Assert.IsTrue (minst.IsGenericMethod, "#10");
+
+			Assert.AreEqual (mb0, mmb.GetGenericMethodDefinition (), "#11");
+			Assert.AreEqual (mb, gmd.GetGenericMethodDefinition (), "#12");
+			Assert.AreEqual (gmd, minst.GetGenericMethodDefinition (), "#13");
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void GenericMethodInstanceValuesUnderCompilerContext ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+
+			var tb = module.DefineType ("foo.type");
+			var gparam = tb.DefineGenericParameters ("T") [0];
+
+			var mb0 = tb.DefineMethod ("str2", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type[] { gparam, gparam.MakeArrayType () });
+
+			var mb = tb.DefineMethod ("str", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type [0]);
+			var mparam = mb.DefineGenericParameters ("K") [0];
+			mb.SetReturnType (mparam);
+			mb.SetParameters (new Type[] { mparam, mparam.MakeArrayType () });
+
+			var ginst = tb.MakeGenericType (typeof (double));
+			var gmd = TypeBuilder.GetMethod (ginst, mb);
+			var minst = gmd.MakeGenericMethod (typeof (int));
+
+			var mmb = TypeBuilder.GetMethod (ginst, mb0);
+
+			Assert.AreEqual (mparam, gmd.ReturnType, "#1");
+			Assert.AreEqual (typeof (int), minst.ReturnType, "#2");
+
+			Assert.AreEqual (mparam, gmd.GetParameters ()[0].ParameterType, "#3");
+			Assert.IsTrue (gmd.GetParameters ()[1].ParameterType.IsArray, "#4");
+			Assert.AreEqual (typeof (int), minst.GetParameters ()[0].ParameterType, "#5");
+			Assert.AreEqual (typeof (int[]), minst.GetParameters ()[1].ParameterType, "#6");
+		}
 	}
 }
 

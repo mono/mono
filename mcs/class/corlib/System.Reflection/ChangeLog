@@ -1,3 +1,11 @@
+2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (InflateType): Add support to inflate
+	generic method arguments.
+
+	* MonoGenericClass.cs (GetMethod): Remove restriction
+	with generic methods.
+
 2009-08-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (FullName): mcs depends that FullName

@@ -44,6 +44,8 @@ namespace System.Reflection.Emit
 		#region Keep in sync with object-internals.h
 		MonoGenericClass instantiation;
 		internal MethodBuilder mb;
+		Type[] method_arguments;
+		MethodOnTypeBuilderInst generic_method_definition;
 		#endregion
 
 		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder mb)
@@ -52,6 +54,14 @@ namespace System.Reflection.Emit
 			this.mb = mb;
 		}
 
+		internal MethodOnTypeBuilderInst (MethodOnTypeBuilderInst gmd, Type[] typeArguments)
+		{
+			this.instantiation = gmd.instantiation;
+			this.mb = gmd.mb;
+			this.method_arguments = new Type [typeArguments.Length];
+			typeArguments.CopyTo (this.method_arguments, 0);
+			this.generic_method_definition = gmd;
+		}
 		//
 		// MemberInfo members
 		//
@@ -78,7 +88,7 @@ namespace System.Reflection.Emit
 			get { 
 				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext)
 					return mb.ReturnType;
-				return instantiation.InflateType (mb.ReturnType);
+				return instantiation.InflateType (mb.ReturnType, method_arguments);
 			}
 		}
 
@@ -131,7 +141,7 @@ namespace System.Reflection.Emit
 
 			ParameterInfo [] res = new ParameterInfo [mb.parameters.Length];
 			for (int i = 0; i < mb.parameters.Length; i++) {
-				Type type = instantiation.InflateType (mb.parameters [i]);
+				Type type = instantiation.InflateType (mb.parameters [i], method_arguments);
 				res [i] = new ParameterInfo (mb.pinfo == null ? null : mb.pinfo [i + 1], type, this, i + 1);
 			}
 			return res;
@@ -173,34 +183,63 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override MethodInfo MakeGenericMethod (params Type [] typeArguments)
+		{
+			if (mb.generic_params == null || method_arguments != null)
+				throw new NotSupportedException (); //FIXME is this the right exception?
+
+			if (typeArguments == null)
+				throw new ArgumentNullException ("typeArguments");
+
+			foreach (Type t in typeArguments) {
+				if (t == null)
+					throw new ArgumentNullException ("typeArguments");
+			}
+
+			if (mb.generic_params.Length != typeArguments.Length)
+				throw new ArgumentException ("Invalid argument array length");
+
+			return new MethodOnTypeBuilderInst (this, typeArguments);
+		}
+
 		public override Type [] GetGenericArguments ()
 		{
-			//FIXME test that once we support generic methods 
-			return mb.GetGenericArguments ();
+			if (mb.generic_params == null)
+				return null;
+			Type[] source = method_arguments ?? mb.generic_params;
+			Type[] result = new Type [source.Length];
+			source.CopyTo (result, 0);
+			return result;
 		}
 
 		public override MethodInfo GetGenericMethodDefinition ()
 		{
-			return mb;
+			return (MethodInfo)generic_method_definition ?? mb;
 		}
 
 		public override bool ContainsGenericParameters {
 			get {
-				throw new NotSupportedException ();
+				if (mb.generic_params == null)
+					throw new NotSupportedException ();
+				if (method_arguments == null)
+					return true;
+				foreach (Type t in method_arguments) {
+					if (t.ContainsGenericParameters)
+						return true;
+				}
+				return false;
 			}
 		}
 
 		public override bool IsGenericMethodDefinition {
 			get {
-				//FIXME test that once we support generic methods 
-				return mb.IsGenericMethodDefinition;
+				return mb.generic_params != null && method_arguments == null;
 			}
 		}
 
 		public override bool IsGenericMethod {
 			get {
-				//FIXME test that once we support generic methods 
-				return mb.IsGenericMethod;
+				return mb.generic_params != null;
 			}
 		}
 

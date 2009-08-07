@@ -1,3 +1,8 @@
+2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInstTest.cs: Add tests for
+	generic method instances over generic type instances.
+
 2009-08-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Really fix the test.

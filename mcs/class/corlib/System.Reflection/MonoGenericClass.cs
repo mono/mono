@@ -78,9 +78,6 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
-
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -111,6 +108,11 @@ namespace System.Reflection
 
 		internal Type InflateType (Type type)
 		{
+			return InflateType (type, null);
+		}
+
+		internal Type InflateType (Type type, Type[] method_args)
+		{
 			if (type == null)
 				return null;
 			if (!type.IsGenericParameter && !type.ContainsGenericParameters)
@@ -118,23 +120,25 @@ namespace System.Reflection
 			if (type.IsGenericParameter) {
 				if (type.DeclaringMethod == null)
 					return type_arguments [type.GenericParameterPosition];
+				if (method_args != null)
+					return method_args [type.GenericParameterPosition];
 				return type;
 			}
 			if (type.IsPointer)
-				return InflateType (type.GetElementType ()).MakePointerType ();
+				return InflateType (type.GetElementType (), method_args).MakePointerType ();
 			if (type.IsByRef)
-				return InflateType (type.GetElementType ()).MakeByRefType ();
+				return InflateType (type.GetElementType (), method_args).MakeByRefType ();
 			if (type.IsArray) {
 				if (type.GetArrayRank () > 1)
-					return InflateType (type.GetElementType ()).MakeArrayType (type.GetArrayRank ());
+					return InflateType (type.GetElementType (), method_args).MakeArrayType (type.GetArrayRank ());
 				if (type.ToString ().EndsWith ("[*]")) /*FIXME, the reflection API doesn't offer a way around this*/
-					return InflateType (type.GetElementType ()).MakeArrayType (1);
-				return InflateType (type.GetElementType ()).MakeArrayType ();
+					return InflateType (type.GetElementType (), method_args).MakeArrayType (1);
+				return InflateType (type.GetElementType (), method_args).MakeArrayType ();
 			}
 
 			Type[] args = type.GetGenericArguments ();
 			for (int i = 0; i < args.Length; ++i)
-				args [i] = InflateType (args [i]);
+				args [i] = InflateType (args [i], method_args);
 
 			Type gtd = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition ();
 			return gtd.MakeGenericType (args);
@@ -176,23 +180,12 @@ namespace System.Reflection
 			if (!(fromNoninstanciated is MethodBuilder))
 				throw new InvalidOperationException ("Inflating non MethodBuilder objects is not supported: " + fromNoninstanciated.GetType ());
 	
-			if (fromNoninstanciated is MethodBuilder) {
-				MethodBuilder mb = (MethodBuilder)fromNoninstanciated;
-
-				// FIXME: We can't yet handle creating generic instantiations of
-				// MethodOnTypeBuilderInst objects
-				// Also, mono_image_get_method_on_inst_token () can't handle generic
-				// methods
-				if (!mb.IsGenericMethodDefinition) {
-					if (methods == null)
-						methods = new Hashtable ();
-					if (!methods.ContainsKey (mb))
-						methods [mb] = new MethodOnTypeBuilderInst (this, mb);
-					return (MethodInfo)methods [mb];
-				}
-			}
-
-			return GetCorrespondingInflatedMethod (fromNoninstanciated);
+			MethodBuilder mb = (MethodBuilder)fromNoninstanciated;
+			if (methods == null)
+				methods = new Hashtable ();
+			if (!methods.ContainsKey (mb))
+				methods [mb] = new MethodOnTypeBuilderInst (this, mb);
+			return (MethodInfo)methods [mb];
 		}
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
