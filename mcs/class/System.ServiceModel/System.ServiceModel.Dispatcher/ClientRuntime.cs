@@ -39,9 +39,6 @@ namespace System.ServiceModel.Dispatcher
 			= new SynchronizedCollection<IChannelInitializer> ();
 		SynchronizedCollection<IInteractiveChannelInitializer> interactive_channel_initializers
 			= new SynchronizedCollection<IInteractiveChannelInitializer> ();
-#if !NET_2_1
-		DispatchRuntime dispatch;
-#endif
 		SynchronizedCollection<IClientMessageInspector> inspectors
 			= new SynchronizedCollection<IClientMessageInspector> ();
 		ClientOperation.ClientOperationCollection operations
@@ -52,24 +49,11 @@ namespace System.ServiceModel.Dispatcher
 		string contract_name, contract_ns;
 		int max_fault_size = 0x10000; // FIXME: not verified.
 
-#if !NET_2_1
-		// .ctor() for DispatchRuntime.CallbackClientRuntime
-		internal ClientRuntime (DispatchRuntime parent)
-		{
-			// maybe it could be null, for non-duplex channels.
-			this.dispatch = parent;
-			contract_name = dispatch.EndpointDispatcher.ContractName;
-			contract_ns = dispatch.EndpointDispatcher.ContractNamespace;
-		}
-#endif
-
 		// .ctor() for Clients
-		internal ClientRuntime (ContractDescription contract)
+		internal ClientRuntime (string name, string ns)
 		{
-			contract_name = contract.Name;
-			contract_ns = contract.Namespace;
-			ContractClientType = contract.ContractType;
-			CallbackClientType = contract.CallbackContractType;
+			contract_name = name;
+			contract_ns = ns;
 		}
 
 		public Type CallbackClientType { get; set; }
@@ -94,9 +78,7 @@ namespace System.ServiceModel.Dispatcher
 		public Type ContractClientType { get; set; }
 
 #if !NET_2_1
-		public DispatchRuntime CallbackDispatchRuntime {
-			get { return dispatch; }
-		}
+		public DispatchRuntime CallbackDispatchRuntime { get; internal set; }
 #endif
 
 		public SynchronizedCollection<IClientMessageInspector> MessageInspectors {

@@ -1,5 +1,10 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntime.cs : oops, it should have been committed at a time.
+	  Change .ctor() args. Make some properties auto.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DispatchRuntime.cs : callback runtime is set later.
 
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
