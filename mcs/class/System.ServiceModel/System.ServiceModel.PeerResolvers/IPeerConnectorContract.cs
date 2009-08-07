@@ -37,7 +37,7 @@ namespace System.ServiceModel.PeerResolvers
 		void SendMessage (Message msg);
 	}
 
-	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
+	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed, CallbackContract = typeof (IPeerConnectorContract))]
 	internal interface IPeerReceiverContract
 	{
 		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]

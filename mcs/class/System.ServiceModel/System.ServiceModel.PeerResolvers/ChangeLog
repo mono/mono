@@ -1,3 +1,7 @@
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPeerConnectorContract.cs : add callback contract.
+
 2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPeerConnectorContract.cs : fix contract and add receiver iface
