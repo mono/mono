@@ -1,3 +1,7 @@
+2009-08-07  Marek Safar  <marek.safar@gmail.com>
+
+	* AppDomain.cs: IsHomogenous always returns true for now.
+
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Environment.cs: Bump corlib version.

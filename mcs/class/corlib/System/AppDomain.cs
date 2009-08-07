@@ -1271,7 +1271,7 @@ namespace System {
 #if NET_4_0
 		[MonoTODO]
 		public bool IsHomogenous {
-			get { return false; }
+			get { return true; }
 		}
 #endif
 
