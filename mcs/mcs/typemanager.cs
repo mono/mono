@@ -2630,7 +2630,7 @@ namespace Mono.CSharp {
 	public static Type[] GetGenericArguments (MethodBase mi)
 	{
 #if GMCS_SOURCE
-		return mi.GetGenericArguments ();
+		return mi.GetGenericArguments () ?? Type.EmptyTypes;
 #else
 		return Type.EmptyTypes;
 #endif

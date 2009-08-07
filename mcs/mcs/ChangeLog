@@ -1,3 +1,10 @@
+2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* typemanager.cs (GetGenericArguments): SRE returns null for
+	generic methods on type builder instances if they are not generic
+	themselves. For example, for Foo<int>::Bar() it returns null, but
+	not for Foo<int>::Bar<>() or Foo<int>::Bar<double>().
+
 2009-08-05  Marek Safar  <marek.safar@gmail.com>
 
 	* argument.cs, dynamic.cs, expression.cs, ecore.cs, class.cs,
