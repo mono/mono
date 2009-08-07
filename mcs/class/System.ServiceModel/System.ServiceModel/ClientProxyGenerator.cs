@@ -36,7 +36,7 @@ using Mono.CodeGeneration;
 
 namespace System.ServiceModel
 {
-	internal class ClientProxyGenerator
+	internal class ClientProxyGenerator : ProxyGeneratorBase
 	{
 		public static Type CreateProxyType (Type contractInterface, ContractDescription cd, bool duplex)
 		{
@@ -70,7 +70,14 @@ namespace System.ServiceModel
 				new CodeArgumentReference (typeof (ChannelFactory), 2, "arg1"),
 				new CodeArgumentReference (typeof (EndpointAddress), 3, "arg2"),
 				new CodeArgumentReference (typeof (Uri), 4, "arg3"));
+			return CreateProxyTypeOperations (crtype, c, cd);
+		}
+	}
 
+	internal class ProxyGeneratorBase
+	{
+		protected static Type CreateProxyTypeOperations (Type crtype, CodeClass c, ContractDescription cd)
+		{
 			// member implementation
 			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 			foreach (OperationDescription od in cd.Operations) {

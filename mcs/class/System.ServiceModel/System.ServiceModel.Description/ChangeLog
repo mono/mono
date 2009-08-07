@@ -1,3 +1,8 @@
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceEndpoint.cs, ContractDescription.cs : moved client runtime
+	  creator from former to latter.
+
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceEndpoint.cs : follow ClientRuntime change.

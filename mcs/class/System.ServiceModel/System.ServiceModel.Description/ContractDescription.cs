@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
@@ -142,6 +143,47 @@ namespace System.ServiceModel.Description
 		public Collection<ContractDescription> GetInheritedContracts ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal ClientRuntime CreateClientRuntime ()
+		{
+			ClientRuntime proxy = new ClientRuntime (Name, Namespace) { ContractClientType = ContractType, CallbackClientType = CallbackContractType };
+			//proxy.ContractClientType = typeof (TChannel);
+
+			foreach (OperationDescription od in Operations) {
+				if (!proxy.Operations.Contains (od.Name))
+					PopulateClientOperation (proxy, od);
+				foreach (IOperationBehavior ob in od.Behaviors)
+					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
+			}
+
+			return proxy;
+		}
+
+		void PopulateClientOperation (ClientRuntime proxy, OperationDescription od)
+		{
+			string reqA = null, resA = null;
+			foreach (MessageDescription m in od.Messages) {
+				if (m.Direction == MessageDirection.Input)
+					reqA = m.Action;
+				else
+					resA = m.Action;
+			}
+			ClientOperation o =
+				od.IsOneWay ?
+				new ClientOperation (proxy, od.Name, reqA) :
+				new ClientOperation (proxy, od.Name, reqA, resA);
+			foreach (MessageDescription md in od.Messages) {
+				if (md.Direction == MessageDirection.Input &&
+				    md.Body.Parts.Count == 1 &&
+				    md.Body.Parts [0].Type == typeof (Message))
+					o.SerializeRequest = false;
+				if (md.Direction == MessageDirection.Output &&
+				    md.Body.ReturnValue != null &&
+				    md.Body.ReturnValue.Type == typeof (Message))
+					o.DeserializeReply = false;
+			}
+			proxy.Operations.Add (o);
 		}
 	}
 }

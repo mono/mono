@@ -1,5 +1,11 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientProxyGenerator.cs : split client-specific code generation
+	  from those common to service callback generation.
+	* ServiceProxyGenerator.cs : new file, uses common basis above.
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceRuntimeChannel.cs : created derived duplex type.
 
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
