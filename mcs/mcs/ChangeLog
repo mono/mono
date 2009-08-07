@@ -1,3 +1,7 @@
+2009-08-07  Marek Safar  <marek.safar@gmail.com>
+
+	* dynamic.cs, expression.cs: More dynamic conversions.
+
 2009-08-06  Miguel de Icaza  <miguel@novell.com>
 
 	* generic.cs: This loop was incorrect, it was increment ii, but

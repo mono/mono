@@ -1555,8 +1555,12 @@ namespace Mono.CSharp {
 
 			if (type.IsPointer && !ec.InUnsafe) {
 				UnsafeError (loc);
-				return null;
+			} else if (TypeManager.IsDynamicType (expr.Type)) {
+				Arguments arg = new Arguments (1);
+				arg.Add (new Argument (expr));
+				return new DynamicConversion (type, true, arg, loc).Resolve (ec);
 			}
+
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
@@ -2074,6 +2078,10 @@ namespace Mono.CSharp {
 				return "LessThan";
 			case Operator.LessThanOrEqual:
 				return "LessThanOrEqual";
+			case Operator.LogicalAnd:
+				return "And";
+			case Operator.LogicalOr:
+				return "Or";
 			case Operator.Modulus:
 				return is_compound ? "ModuloAssign" : "Modulo";
 			case Operator.Multiply:
@@ -2629,24 +2637,22 @@ namespace Mono.CSharp {
 					ec, oper, lc, rc, loc);
 				if (e != null || Report.Errors != prev_e)
 					return e;
-			} else {
-				if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) &&
+			} else if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) && !TypeManager.IsDynamicType (left.Type) &&
 					((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue))) {
 
-					if ((ResolveOperator (ec)) == null) {
-						Error_OperatorCannotBeApplied (left, right);
-						return null;
-					}
-
-					//
-					// The result is a constant with side-effect
-					//
-					Constant side_effect = rc == null ?
-						new SideEffectConstant (lc, right, loc) :
-						new SideEffectConstant (rc, left, loc);
-
-					return ReducedExpression.Create (side_effect, this);
+				if ((ResolveOperator (ec)) == null) {
+					Error_OperatorCannotBeApplied (left, right);
+					return null;
 				}
+
+				//
+				// The result is a constant with side-effect
+				//
+				Constant side_effect = rc == null ?
+					new SideEffectConstant (lc, right, loc) :
+					new SideEffectConstant (rc, left, loc);
+
+				return ReducedExpression.Create (side_effect, this);
 			}
 
 			// Comparison warnings
@@ -6861,7 +6867,7 @@ namespace Mono.CSharp {
 				Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
 			} else if (typearg.IsPointer && !ec.InUnsafe){
 				UnsafeError (loc);
-			} else if (TypeManager.IsDynamicType (typearg)) {
+			} else if (texpr is DynamicTypeExpr) {
 				Report.Error (1962, QueriedType.Location,
 					"The typeof operator cannot be used on the dynamic type");
 			}

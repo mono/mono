@@ -280,13 +280,12 @@ namespace Mono.CSharp
 
 	class DynamicConversion : DynamicExpressionStatement, IDynamicBinder
 	{
-		Type target_type;
 		bool is_explicit;
 
 		public DynamicConversion (Type targetType, bool isExplicit, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
-			this.target_type = targetType;
+			type = targetType;
 			is_explicit = isExplicit;
 			base.binder = this;
 		}
@@ -296,7 +295,7 @@ namespace Mono.CSharp
 			Arguments binder_args = new Arguments (2);
 			MemberAccess binder = GetBinderNamespace (loc);
 
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (target_type, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpConversionKind", loc),
 				is_explicit ? "ExplicitConversion" : "ImplicitConversion", loc)));
 			binder_args.Add (new Argument (new BoolLiteral (ec.CheckState, loc)));
