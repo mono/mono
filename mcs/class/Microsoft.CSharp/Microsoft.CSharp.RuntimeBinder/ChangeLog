@@ -1,3 +1,9 @@
+2009-08-07  Marek Safar <marek.safar@gmail.com>
+
+	* CSharpInvokeBinder.cs, CSharpGetIndexBinder.cs, Extensions.cs,
+	CSharpArgumentInfo.cs, CSharpInvokeMemberBinder.cs,
+	CSharpSetIndexBinder.cs: Skip overhead arguments.
+
 2009-08-04  Marek Safar <marek.safar@gmail.com>
 
 	* RuntimeBinderInternalCompilerException.cs,

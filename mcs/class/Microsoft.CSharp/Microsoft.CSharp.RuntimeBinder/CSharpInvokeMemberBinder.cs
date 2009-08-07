@@ -41,7 +41,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		Type callingContext;
 		
 		public CSharpInvokeMemberBinder (CSharpCallFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (name, false, argumentInfo.ToCallInfo ())
+			: base (name, false, CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
 		{
 			this.flags = flags;
 			this.callingContext = callingContext;

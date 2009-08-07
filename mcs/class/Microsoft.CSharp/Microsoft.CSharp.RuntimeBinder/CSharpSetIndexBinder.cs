@@ -39,7 +39,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		Type callingContext;
 		
 		public CSharpSetIndexBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (argumentInfo.ToCallInfo ())
+			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 2))
 		{
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();

@@ -41,12 +41,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return col == null ?
 				new ReadOnlyCollectionBuilder<T> (0) :
 				new ReadOnlyCollectionBuilder<T> (col);
-		}
-		
-		public static CallInfo ToCallInfo (this IEnumerable<CSharpArgumentInfo> argumentInfo)
-		{
-			var named = from arg in argumentInfo where arg.IsNamed select arg.Name;
-			return new CallInfo (argumentInfo.Count (), named);
-		}
+		}	
 	}
 }

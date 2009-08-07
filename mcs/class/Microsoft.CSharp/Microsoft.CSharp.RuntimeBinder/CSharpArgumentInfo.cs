@@ -27,7 +27,9 @@
 //
 
 using System;
+using System.Dynamic;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -63,6 +65,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public string Name {
 			get { return name; }
+		}
+		
+		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
+		{
+			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.Name;
+			return new CallInfo (Math.Max (0, argumentInfo.Count () - skipCount), named);
 		}
 	}
 }
