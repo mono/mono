@@ -883,6 +883,7 @@ System.ServiceModel/ServiceActivationException.cs
 System.ServiceModel/ServiceAuthorizationManager.cs
 System.ServiceModel/ServiceBehaviorAttribute.cs
 System.ServiceModel/ServiceContractAttribute.cs
+System.ServiceModel/ServiceProxyGenerator.cs
 System.ServiceModel/ServiceHost.cs
 System.ServiceModel/ServiceHostBase.cs
 System.ServiceModel/ServiceHostingEnvironment.cs
