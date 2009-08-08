@@ -1,5 +1,9 @@
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContractDescription.cs : wcf & 2.1 is specially annoying land :(
+
+2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContractDescriptionGenerator.cs : add new contract getter to
 	  create callback contract type (which does not demand
 	  ServiceContractAttribute).
