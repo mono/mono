@@ -261,27 +261,49 @@ namespace Microsoft.Build.BuildEngine {
 		public virtual void Shutdown ()
 		{
 		}
+
+		static bool InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 		
 		private string FormatErrorEvent (BuildErrorEventArgs args)
 		{
-			// FIXME: show more complicated args
-			if (args.LineNumber != 0 && args.ColumnNumber != 0) {
-				return String.Format ("{0}({1},{2}): {3} Error {4}: {5}", args.File, args.LineNumber, args.ColumnNumber,
-					args.Subcategory, args.Code, args.Message);
+			// For some reason we get an 1-char empty string as Subcategory somtimes.
+			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+			string subcat = subprefix == "" ? "" : args.Subcategory;
+				
+			if (args.LineNumber != 0){
+				if (args.ColumnNumber != 0 && !InEmacs) 
+					return String.Format ("{0}({1},{2}): {3}{4}error {5}: {6}",
+							      args.File, args.LineNumber, args.ColumnNumber,
+							      subprefix, subcat, args.Code, args.Message);
+
+				return String.Format ("{0}({1}): {2}{3}error {4}: {5}",
+						      args.File, args.LineNumber,
+						      subprefix, subcat, args.Code, args.Message);
 			} else {
-				return String.Format ("{0}: {1} Error {2}: {3}", args.File, args.Subcategory, args.Code,
+				return String.Format ("{0}: {1}{2}error {3}: {4}", args.File, subprefix, subcat, args.Code,
 					args.Message);
 			}
 		}
 
 		private string FormatWarningEvent (BuildWarningEventArgs args)
 		{
+			// For some reason we get an 1-char empty string as Subcategory somtimes.
+			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+			string subcat = subprefix == "" ? "" : args.Subcategory;
+
 			// FIXME: show more complicated args
-			if (args.LineNumber != 0 && args.ColumnNumber != 0) {
-				return String.Format ("{0}({1},{2}): {3} Warning {4}: {5}", args.File, args.LineNumber, args.ColumnNumber,
-					args.Subcategory, args.Code, args.Message);
+			if (args.LineNumber != 0){
+
+				if (args.ColumnNumber != 0 && !InEmacs) {
+					return String.Format ("{0}({1},{2}): {3}{4}warning {5}: {6}",
+							      args.File, args.LineNumber, args.ColumnNumber,
+							      subprefix, subcat, args.Code, args.Message);
+				}
+				return String.Format ("{0}({1}): {2}{3}warning {4}: {5}",
+						      args.File, args.LineNumber,
+						      subprefix, subcat, args.Code, args.Message);
 			} else {
-				return String.Format ("{0}: {1} Warning {2}: {3}", args.File, args.Subcategory, args.Code,
+				return String.Format ("{0}: {1} warning {2}: {3}", args.File, args.Subcategory, args.Code,
 					args.Message);
 			}
 		}
