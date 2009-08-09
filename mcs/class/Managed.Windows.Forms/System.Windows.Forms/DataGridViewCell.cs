@@ -887,6 +887,11 @@ namespace System.Windows.Forms {
 				value = e.Value;
 			}
 			
+			if (value == null || (cellStyle != null && value == cellStyle.DataSourceNullValue)) {
+				if (FormattedValueType == typeof (string))
+					return String.Empty;
+			}
+
 			if (FormattedValueType == typeof(string) && value is IFormattable && !String.IsNullOrEmpty (cellStyle.Format))
 				return ((IFormattable) value).ToString (cellStyle.Format, cellStyle.FormatProvider);
 			if (value != null && FormattedValueType.IsAssignableFrom (value.GetType()))
@@ -922,7 +927,10 @@ namespace System.Windows.Forms {
 			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 		
-			if (DataProperty != null)
+			if (OwningRow != null && OwningRow.Index == DataGridView.NewRowIndex)
+				return DefaultNewRowValue;
+
+			if (DataProperty != null && OwningRow.DataBoundItem != null)
 				return DataProperty.GetValue (OwningRow.DataBoundItem);
 			
 			if (valuex != null)

@@ -1,3 +1,7 @@
+2009-08-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewCell.cs: Handle null and DBNull values.
+
 2009-08-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ListBindingHelper.cs: Fix the 1.0 build by making this type available
