@@ -148,6 +148,8 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (@"abc*(?!c{1,})", RegexOptions.None, "abcc", "Pass. Group[0]=(0,4)"),//50
 			new RegexTrial (@"(a)(?<1>b)(?'1'c)", RegexOptions.ExplicitCapture, "abc", "Pass. Group[0]=(0,3) Group[1]=(1,1)(2,1)"),//51
 			new RegexTrial (@"(?>a*).", RegexOptions.ExplicitCapture, "aaaa", "Fail."),//52
+
+			new RegexTrial (@"(?<ab>ab)c\1", RegexOptions.None, "abcabc", "Pass. Group[0]=(0,5) Group[1]=(0,2)"),//53
 		};
 
 		[Test]
@@ -318,5 +320,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]	public void RegexJvmTrial0050 () { trials [50].Execute (); }
 		[Test]	public void RegexJvmTrial0051 () { trials [51].Execute (); }
 		[Test]	public void RegexJvmTrial0052 () { trials [52].Execute (); }
+
+		[Test]	public void RegexTrial0053 () { trials [53].Execute (); }
 	}
 }

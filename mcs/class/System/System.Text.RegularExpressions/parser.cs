@@ -1080,7 +1080,10 @@ namespace System.Text.RegularExpressions.Syntax {
 			foreach (CapturingGroup group in caps) {
 				if (group.Name != null) {
 					if (!dict.Contains (group.Name)) {
+						string gid_s = gid.ToString ();
 						dict.Add (group.Name, group);
+						if (!dict.Contains (gid_s))
+							dict.Add (gid_s, group);
 						group.Number = gid ++;
 
 						++ num_groups;
