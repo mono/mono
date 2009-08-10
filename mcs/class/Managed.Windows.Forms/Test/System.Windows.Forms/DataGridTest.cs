@@ -594,5 +594,30 @@ namespace MonoTests.System.Windows.Forms
 			dg.DataSource = ds;
 			Assert.AreEqual (0, data_source_changed_count, "A3");
 		}
+
+		[Test]
+		public void TestManagerSetDataSourceWithEmptyStyle ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+			dg.BindingContext = new BindingContext ();
+
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("MyTable");
+			dt.Columns.Add ("A", typeof (string));
+			dt.Rows.Add ("a");
+			ds.Tables.Add (dt);
+
+			// Add the style for the table we have, but leave it empty
+			// - this is, no column styles
+			DataGridTableStyle table_style = new DataGridTableStyle ();
+			table_style.MappingName = "MyTable";
+			dg.TableStyles.Add (table_style);
+
+			Assert.AreEqual (0, table_style.GridColumnStyles.Count, "#A1");
+
+			dg.DataSource = dt;
+
+			Assert.AreEqual (1, table_style.GridColumnStyles.Count, "#B1");
+		}
 	}
 }
