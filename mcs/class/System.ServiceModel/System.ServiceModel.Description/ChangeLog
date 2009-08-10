@@ -1,5 +1,12 @@
 2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceContractGenerator.cs : removed ChannelBase proxy stuff,
+	  which will be moved to svcutil source.
+	  The targets for extension should be the interface, not the client
+	  class.
+
+2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceContractGenerator.cs,
 	  OperationContractGenerationContext.cs : support extensions i.e.
 	  IServiceContractGenerationExtension and IOperation...(ditto) .
