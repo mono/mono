@@ -1,5 +1,10 @@
 2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGridTest.cs: Don't use DataGrid.Rows.Add() for our latest test,
+	since it is 2.0. Use DataGrid.NewRow() instead.
+
+2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGridTest.cs: New test for the interaction between DataSource and
 	TableStyles.
 

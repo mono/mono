@@ -604,7 +604,7 @@ namespace MonoTests.System.Windows.Forms
 			DataSet ds = new DataSet ("DataSet");
 			DataTable dt = new DataTable ("MyTable");
 			dt.Columns.Add ("A", typeof (string));
-			dt.Rows.Add ("a");
+			dt.NewRow ();
 			ds.Tables.Add (dt);
 
 			// Add the style for the table we have, but leave it empty
