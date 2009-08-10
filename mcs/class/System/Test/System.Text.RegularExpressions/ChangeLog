@@ -1,5 +1,9 @@
 2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
 
+	* RegexMatchTests.cs (RegexTrial0054..60): New.
+
+2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
+
 	* RegexMatchTests.cs (RegexTrial0053): New.
 
 2009-02-27  Jonathan Pryor <jpryor@novell.com>

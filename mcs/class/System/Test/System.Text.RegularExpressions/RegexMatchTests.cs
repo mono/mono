@@ -150,6 +150,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (@"(?>a*).", RegexOptions.ExplicitCapture, "aaaa", "Fail."),//52
 
 			new RegexTrial (@"(?<ab>ab)c\1", RegexOptions.None, "abcabc", "Pass. Group[0]=(0,5) Group[1]=(0,2)"),//53
+			new RegexTrial (@"\1", RegexOptions.ECMAScript, "-", "Fail."),//54
+			new RegexTrial (@"\2", RegexOptions.ECMAScript, "-", "Fail."),//55
+			new RegexTrial (@"(a)|\2", RegexOptions.ECMAScript, "-", "Fail."),//56
+			new RegexTrial (@"\4400", RegexOptions.None, "asdf 012", "Pass. Group[0]=(4,2)"),//57
+			new RegexTrial (@"\4400", RegexOptions.ECMAScript, "asdf 012", "Fail."),//58
+			new RegexTrial (@"\4400", RegexOptions.None, "asdf$0012", "Fail."),//59
+			new RegexTrial (@"\4400", RegexOptions.ECMAScript, "asdf$0012", "Pass. Group[0]=(4,3)"),//60
 		};
 
 		[Test]
@@ -322,5 +329,12 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]	public void RegexJvmTrial0052 () { trials [52].Execute (); }
 
 		[Test]	public void RegexTrial0053 () { trials [53].Execute (); }
+		[Test]	public void RegexTrial0054 () { trials [54].Execute (); }
+		[Test]	public void RegexTrial0055 () { trials [55].Execute (); }
+		[Test]	public void RegexTrial0056 () { trials [56].Execute (); }
+		[Test]	public void RegexTrial0057 () { trials [57].Execute (); }
+		[Test]	public void RegexTrial0058 () { trials [58].Execute (); }
+		[Test]	public void RegexTrial0059 () { trials [59].Execute (); }
+		[Test]	public void RegexTrial0060 () { trials [60].Execute (); }
 	}
 }

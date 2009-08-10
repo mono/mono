@@ -1,5 +1,11 @@
 2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
 
+	* syntax.cs (BackslashNumber.ResolveReference): Implement fallback
+	to octal numbers, and ECMAScript semantics.
+	* parser.cs (ResolveReferences): Use it.
+
+2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
+
 	* syntax.cs (BackslashNumber): New class.
 	* parser.cs (ParseSpecial): Create it instead of 'Reference' if a
 	numeric backreference is seen.

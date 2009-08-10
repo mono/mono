@@ -702,7 +702,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			set { ignore = value; }
 		}
 
-		public override void Compile (ICompiler cmp, bool reverse) {
+		public static void CompileLiteral (string str, ICompiler cmp, bool ignore, bool reverse)
+		{
 			if (str.Length == 0)
 				return;
 
@@ -710,6 +711,11 @@ namespace System.Text.RegularExpressions.Syntax {
 				cmp.EmitCharacter (str[0], false, ignore, reverse);
 			else
 				cmp.EmitString (str, ignore, reverse);
+		}
+
+		public override void Compile (ICompiler cmp, bool reverse)
+		{
+			CompileLiteral (str, cmp, ignore, reverse);
 		}
 
 		public override void GetWidth (out int min, out int max) {
@@ -805,6 +811,49 @@ namespace System.Text.RegularExpressions.Syntax {
 			: base (ignore)
 		{
 			this.ecma = ecma;
+		}
+
+		// Precondition: groups [num_str] == null
+		public bool ResolveReference (string num_str, Hashtable groups)
+		{
+			if (ecma) {
+				int i;
+				for (i = 1; i < num_str.Length; ++i) {
+					string name = num_str.Substring (0, i);
+					CapturingGroup group = (CapturingGroup) groups [name];
+					if (group == null)
+						break;
+					CapturingGroup = group;
+				}
+				if (i > 1) {
+					literal = num_str.Substring (i - 1);
+					return true;
+				}
+			} else {
+				if (num_str.Length == 1)
+					return false;
+			}
+
+			int ptr = 0;
+			int as_octal = Parser.ParseOctal (num_str, ref ptr);
+			// Since ParseOctal reads at most 3 digits, as_octal <= octal 0777
+			if (as_octal == -1)
+				return false;
+			if (as_octal > 0xff && ecma) {
+				as_octal /= 8;
+				--ptr;
+			}
+			as_octal &= 0xff;
+			literal = ((char) as_octal) + num_str.Substring (ptr);
+			return true;
+		}
+
+		public override void Compile (ICompiler cmp, bool reverse)
+		{
+			if (CapturingGroup != null)
+				base.Compile (cmp, reverse);
+			if (literal != null)
+				Literal.CompileLiteral (literal, cmp, IgnoreCase, reverse);
 		}
 	}
 

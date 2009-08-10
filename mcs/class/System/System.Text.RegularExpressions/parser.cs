@@ -1102,6 +1102,9 @@ namespace System.Text.RegularExpressions.Syntax {
 				if (!dict.Contains (name)) {
 					if (expr is CaptureAssertion && !Char.IsDigit (name [0]))
 						continue;
+					BackslashNumber bn = expr as BackslashNumber;
+					if (bn != null && bn.ResolveReference (name, dict))
+						continue;
 					throw NewParseException ("Reference to undefined group " +
 						(Char.IsDigit (name[0]) ? "number " : "name ") +
 						name);
