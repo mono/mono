@@ -44,7 +44,7 @@ namespace System.ServiceModel.Description
 			CodeTypeDeclaration declaringType,
 			CodeMemberMethod method)
 			: this (serviceContractGenerator, contract, operation,
-				declaringType, false, method, null)
+				declaringType, method, null, null)
 		{
 		}
 
@@ -53,38 +53,24 @@ namespace System.ServiceModel.Description
 			ServiceContractGenerationContext contract,
 			OperationDescription operation,
 			CodeTypeDeclaration declaringType,
+			CodeMemberMethod method,
 			CodeMemberMethod beginMethod,
 			CodeMemberMethod endMethod)
-			: this (serviceContractGenerator, contract, operation,
-				declaringType, true, beginMethod, endMethod)
-		{
-		}
-
-		private OperationContractGenerationContext (
-			ServiceContractGenerator serviceContractGenerator,
-			ServiceContractGenerationContext contract,
-			OperationDescription operation,
-			CodeTypeDeclaration declaringType,
-			bool isAsync,
-			CodeMemberMethod method, // sync
-			CodeMemberMethod endMethod) // async
 		{
 			generator = serviceContractGenerator;
 			this.contract = contract;
 			this.operation = operation;
 			declaring_type = declaringType;
 			this.method = method;
+			this.begin_method = beginMethod;
 			this.end_method = endMethod;
-			is_async = isAsync;
 		}
 
-		bool is_async;
 		ServiceContractGenerator generator;
 		ServiceContractGenerationContext contract;
 		OperationDescription operation;
 		CodeTypeDeclaration declaring_type;
-		CodeMemberMethod method;
-		CodeMemberMethod end_method;
+		CodeMemberMethod method, begin_method, end_method;
 
 		public ServiceContractGenerator ServiceContractGenerator {
 			get { return generator; }
@@ -98,14 +84,17 @@ namespace System.ServiceModel.Description
 		public CodeTypeDeclaration DeclaringType {
 			get { return declaring_type; }
 		}
-		public CodeMemberMethod Method {
+		public CodeMemberMethod SyncMethod {
 			get { return method; }
+		}
+		public CodeMemberMethod BeginMethod {
+			get { return begin_method; }
 		}
 		public CodeMemberMethod EndMethod {
 			get { return end_method; }
 		}
 		public bool IsAsync {
-			get { return is_async; }
+			get { return begin_method != null; }
 		}
 	}
 }

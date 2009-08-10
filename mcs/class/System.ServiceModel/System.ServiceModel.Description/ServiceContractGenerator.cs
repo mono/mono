@@ -55,6 +55,7 @@ namespace System.ServiceModel.Description
 			= new Dictionary<ContractDescription,Type> ();
 		ServiceContractGenerationOptions options;
 		Dictionary<QName, QName> imported_names = null;
+		ServiceContractGenerationContext contract_context;
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -130,15 +131,17 @@ namespace System.ServiceModel.Description
 		{
 			CodeNamespace cns = GetNamespace (contractDescription.Namespace);
 			imported_names = new Dictionary<QName, QName> ();
-			try {
-				return ExportInterface (contractDescription, cns);
-			} finally {
-				if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
-					GenerateProxyClass (contractDescription, cns);
+			var ret = ExportInterface (contractDescription, cns);
 
-				if ((Options & ServiceContractGenerationOptions.ChannelInterface) != 0)
-					GenerateChannelInterface (contractDescription, cns);
-			}
+			// FIXME: handle duplex callback
+
+			if ((Options & ServiceContractGenerationOptions.ChannelInterface) != 0)
+				GenerateChannelInterface (contractDescription, cns);
+
+			if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
+				GenerateProxyClass (contractDescription, cns);
+
+			return ret;
 		}
 
 		CodeNamespace GetNamespace (string ns)
@@ -177,6 +180,8 @@ namespace System.ServiceModel.Description
 			type.TypeAttributes = TypeAttributes.Public;
 			type.BaseTypes.Add (clientBase);
 			type.BaseTypes.Add (new CodeTypeReference (cd.Name));
+
+			contract_context = new ServiceContractGenerationContext (this, cd, type);
 
 			// .ctor()
 			CodeConstructor ctor = new CodeConstructor ();
@@ -245,6 +250,13 @@ namespace System.ServiceModel.Description
 			// Add channelbase
 			GenerateProxyChannelClass (cd, type, clientBase);
 #endif
+
+			// add extensions
+			foreach (var cb in cd.Behaviors) {
+				var gex = cb as IServiceContractGenerationExtension;
+				if (gex != null)
+					gex.GenerateContract (contract_context);
+			}
 		}
 
 		void GenerateProxyChannelClass (ContractDescription cd, CodeTypeDeclaration parentClass, CodeTypeReference clientBaseType)
@@ -444,6 +456,8 @@ namespace System.ServiceModel.Description
 				// EndXxx() implementation
 
 				cm = new CodeMemberMethod ();
+				cm.Attributes = MemberAttributes.Public 
+						| MemberAttributes.Final;
 				type.Members.Add (cm);
 				cm.Name = "End" + od.Name;
 
@@ -475,13 +489,17 @@ namespace System.ServiceModel.Description
 
 		void AddImplementationChannelMethods (CodeTypeDeclaration type, ContractDescription cd)
 		{
+			CodeMemberMethod syncMethod = null, beginMethod = null, endMethod = null;
 			foreach (OperationDescription od in cd.Operations) {
 				CodeMemberMethod cm = new CodeMemberMethod ();
 				type.Members.Add (cm);
-				if (GenerateAsync)
+				if (GenerateAsync) {
 					cm.Name = "Begin" + od.Name;
-				else
+					beginMethod = cm;
+				} else {
 					cm.Name = od.Name;
+					syncMethod = cm;
+				}
 				cm.Attributes = MemberAttributes.Public 
 						| MemberAttributes.Final;
 				CodeTypeReference returnTypeFromMessageContract = null;
@@ -535,14 +553,19 @@ namespace System.ServiceModel.Description
 					cm.Statements.Add (new CodeMethodReturnStatement (call));
 
 				// For async mode, add EndXxx() too.
-				if (!GenerateAsync)
-					return;
+				if (!GenerateAsync) {
+					ProcessOperationContextExtensions (od, type, syncMethod, null, null);
+					continue;
+				}
 
 				// EndXxx() implementation
 
 				cm = new CodeMemberMethod ();
+				cm.Attributes = MemberAttributes.Public 
+						| MemberAttributes.Final;
 				type.Members.Add (cm);
 				cm.Name = "End" + od.Name;
+				endMethod = cm;
 
 				var res = new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (IAsyncResult)), "result");
 				cm.Parameters.Add (res);
@@ -572,6 +595,21 @@ namespace System.ServiceModel.Description
 					cm.Statements.Add (new CodeExpressionStatement (call));
 				else
 					cm.Statements.Add (new CodeMethodReturnStatement (call));
+
+				ProcessOperationContextExtensions (od, type, syncMethod, beginMethod, endMethod);
+			}
+		}
+
+		void ProcessOperationContextExtensions (OperationDescription od, CodeTypeDeclaration type, CodeMemberMethod sync, CodeMemberMethod begin, CodeMemberMethod end)
+		{
+			OperationContractGenerationContext octx = null;
+			foreach (var ob in od.Behaviors) {
+				var gex = ob as IOperationContractGenerationExtension;
+				if (gex == null)
+					continue;
+				if (octx == null)
+					octx = new OperationContractGenerationContext (this, contract_context, od, type, sync, begin, end);
+				gex.GenerateOperation (octx);
 			}
 		}
 
@@ -616,7 +654,7 @@ namespace System.ServiceModel.Description
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		private void ExportDataContract (XmlTypeMapping mapping)
 		{
 			if (mapping == null)
