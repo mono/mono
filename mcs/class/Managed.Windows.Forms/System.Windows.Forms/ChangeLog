@@ -1,3 +1,9 @@
+2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: When setting the data source, if we have a user
+	provided table style available, force a complete bind in case the
+	column styles for that table style is empty.
+
 2009-08-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCell.cs: Handle null and DBNull values.

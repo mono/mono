@@ -2449,8 +2449,10 @@ namespace System.Windows.Forms
 				} else if (CurrentTableStyle == grid_style ||
 					 CurrentTableStyle.MappingName != list_name) {
 					// If the style has been defined by the user, use it
+					// Also, if the user provided style is empty,
+					// force a bind for it
 					CurrentTableStyle = styles_collection[list_name];
-					current_style.CreateColumnsForTable (true);
+					current_style.CreateColumnsForTable (current_style.GridColumnStyles.Count > 0);
 				} else {
 					current_style.CreateColumnsForTable (true);
 				}
