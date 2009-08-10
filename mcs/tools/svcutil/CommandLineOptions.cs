@@ -59,6 +59,19 @@ namespace Mono.ServiceContractTool
 		[Option ("Generate typed messages.", "typedMessage", "tm")]
 		public bool GenerateTypedMessages;
 
+		bool generate_moonlight_proxy;
+
+		[Option ("Generate moonlight client. (This option may vanish.)", "moonlight")]
+		public bool GenerateMoonlightProxy {
+			get { return generate_moonlight_proxy; }
+			set {
+				if (!value)
+					return;
+				generate_moonlight_proxy = true;
+				GenerateAsync = true;
+			}
+		}
+
 		[Option ("Generate types as internal.", 'i', "internal")]
 		public bool GenerateTypesAsInternal;
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using System.Collections.ObjectModel;
 using System.Xml;
 using System.Xml.Schema;
@@ -92,8 +93,18 @@ namespace Mono.ServiceContractTool
 				generator.GenerateServiceContractType (se.Contract);*/
 
 			Collection<ContractDescription> contracts = importer.ImportAllContracts ();
-			foreach (ContractDescription cd in contracts)
-				generator.GenerateServiceContractType (cd);
+			foreach (ContractDescription cd in contracts) {
+				if (co.GenerateMoonlightProxy) {
+					var moonctx = new MoonlightChannelBaseContext ();
+					cd.Behaviors.Add (new MoonlightChannelBaseContractExtension (moonctx));
+					foreach (var od in cd.Operations)
+						od.Behaviors.Add (new MoonlightChannelBaseOperationExtension (moonctx));
+					generator.GenerateServiceContractType (cd);
+					moonctx.Fixup ();
+				}
+				else
+					generator.GenerateServiceContractType (cd);
+			}
 
 			/*if (cns.Types.Count == 0) {
 				Console.Error.WriteLine ("Argument assemblies have no types.");
