@@ -79,16 +79,17 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return base.GetHashCode ();
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();
+			var b = new CSharpInvokeBinder (flags, callingContext, argumentInfo);
+			
+			// TODO: Is errorSuggestion ever used?
+			return b.Defer (target, args);
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();			
+			return CSharpBinder.Bind (target, errorSuggestion, args);
 		}
 		
 		public IList<Type> TypeArguments {

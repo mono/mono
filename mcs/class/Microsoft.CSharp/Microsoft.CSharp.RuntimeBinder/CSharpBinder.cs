@@ -1,5 +1,5 @@
 //
-// CSharpInvokeBinder.cs
+// CSharpBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,58 +28,25 @@
 
 using System;
 using System.Dynamic;
-using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpInvokeBinder : InvokeBinder
+	class CSharpBinder
 	{
-		CSharpCallFlags flags;
-		IList<CSharpArgumentInfo> argumentInfo;
-		Type callingContext;
-		
-		public CSharpInvokeBinder (CSharpCallFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
+		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion, DynamicMetaObject[] args)
 		{
-			this.flags = flags;
-			this.callingContext = callingContext;
-			this.argumentInfo = argumentInfo.ToReadOnly ();
+			return Bind (target, errorSuggestion);
 		}
 		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-
-		public Type CallingContext {
-			get {
-				return callingContext;
-			}
-		}
-		
-		public override bool Equals (object obj)
+		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			var other = obj as CSharpInvokeBinder;
-			return other != null && base.Equals (obj) && other.flags == flags && other.callingContext == callingContext && 
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-
-		public CSharpCallFlags Flags {
-			get {
-				return flags;
-			}
-		}
-		
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-		
-		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
-		{
-			return CSharpBinder.Bind (target, errorSuggestion, args);
+            return errorSuggestion ??
+                   new DynamicMetaObject(
+                           Expression.Constant(new object ()),
+                           target.Restrictions.Merge(
+                               BindingRestrictions.GetTypeRestriction(
+                                   target.Expression, target.LimitType)));
 		}
 	}
 }

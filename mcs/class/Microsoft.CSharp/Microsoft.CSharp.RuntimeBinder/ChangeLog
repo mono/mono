@@ -1,3 +1,8 @@
+2009-08-10  Marek Safar <marek.safar@gmail.com>
+
+	* CSharpInvokeBinder.cs, CSharpGetMemberBinder.cs,
+	CSharpInvokeMemberBinder.cs: Defer fallback for now.
+
 2009-08-07  Marek Safar <marek.safar@gmail.com>
 
 	* CSharpInvokeBinder.cs, CSharpGetIndexBinder.cs, Extensions.cs,

@@ -69,10 +69,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return base.GetHashCode ();
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackGetMember (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();			
+			return CSharpBinder.Bind (target, errorSuggestion);
 		}
 	}
 }

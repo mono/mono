@@ -19,3 +19,4 @@ Microsoft.CSharp.RuntimeBinder/CSharpUnaryOperationBinder.cs
 Microsoft.CSharp.RuntimeBinder/Extensions.cs
 Microsoft.CSharp.RuntimeBinder/RuntimeBinderException.cs
 Microsoft.CSharp.RuntimeBinder/RuntimeBinderInternalCompilerException.cs
+Microsoft.CSharp.RuntimeBinder/CSharpBinder.cs
