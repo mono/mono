@@ -797,6 +797,17 @@ namespace System.Text.RegularExpressions.Syntax {
 		private bool ignore;
 	}
 
+	class BackslashNumber : Reference {
+		string literal;
+		bool ecma;
+
+		public BackslashNumber (bool ignore, bool ecma)
+			: base (ignore)
+		{
+			this.ecma = ecma;
+		}
+	}
+
 	class CharacterClass : Expression {
 		public CharacterClass (bool negate, bool ignore) {
 			this.negate = negate;

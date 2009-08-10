@@ -1,5 +1,11 @@
 2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
 
+	* syntax.cs (BackslashNumber): New class.
+	* parser.cs (ParseSpecial): Create it instead of 'Reference' if a
+	numeric backreference is seen.
+
+2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
+
 	* parser.cs (ResolveReferences): Allow named groups to be
 	referred-to by their group numbers too.
 

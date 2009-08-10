@@ -864,7 +864,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				// FIXME test if number is within number of assigned groups
 				// this may present a problem for right-to-left matching
 
-				Reference reference = new Reference (IsIgnoreCase (options));
+				Reference reference = new BackslashNumber (IsIgnoreCase (options), ecma);
 				refs.Add (reference, n.ToString ());
 				expr = reference;
 				break;
