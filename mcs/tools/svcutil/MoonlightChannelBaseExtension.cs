@@ -138,9 +138,9 @@ namespace Mono.ServiceContractTool
 			var channelBase = new CodeTypeReference ("ChannelBase", gt);
 			var type = new CodeTypeDeclaration (name);
 			parentClass.Members.Add (type);
-			type.TypeAttributes = TypeAttributes.Public;
 			type.BaseTypes.Add (channelBase);
 			type.BaseTypes.Add (new CodeTypeReference (cd.Name));
+			type.TypeAttributes |= TypeAttributes.NestedPrivate;
 
 			ml_context.ChannelType = type;
 
@@ -215,24 +215,24 @@ namespace Mono.ServiceContractTool
 			cm.Attributes = MemberAttributes.Public 
 					| MemberAttributes.Final;
 
-			List<CodeExpression> inArgs = new List<CodeExpression> ();
-			List<CodeExpression> outArgs = new List<CodeExpression> ();
+			var inArgs = new List<CodeParameterDeclarationExpression > ();
+			var outArgs = new List<CodeParameterDeclarationExpression > ();
 
-			foreach (var md in od.Messages) {
-				var l = md.Direction == MessageDirection.Input ? inArgs : outArgs;
-				foreach (var p in md.Body.Parts)
-					if (p != md.Body.ReturnValue)
-						l.Add (new CodeArgumentReferenceExpression (p.Name));
+			foreach (CodeParameterDeclarationExpression p in context.BeginMethod.Parameters) {
+				inArgs.Add (p);
+				cm.Parameters.Add (p);
 			}
+			inArgs.RemoveAt (inArgs.Count - 1);
+			inArgs.RemoveAt (inArgs.Count - 1);
 
-			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (AsyncCallback)), "asyncCallback"));
-			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (object)), "userState"));
+//			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (AsyncCallback)), "asyncCallback"));
+//			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (object)), "userState"));
 			cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
 
 			var argsDecl = new CodeVariableDeclarationStatement (
 				typeof (object []),
 				"args",
-				new CodeArrayCreateExpression (typeof (object), inArgs.ToArray ()));
+				new CodeArrayCreateExpression (typeof (object), inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ()));
 			cm.Statements.Add (argsDecl);
 
 			var args = new List<CodeExpression> ();
@@ -271,12 +271,14 @@ namespace Mono.ServiceContractTool
 				new CodeArrayCreateExpression (typeof (object), new CodePrimitiveExpression (outArgs.Count)));
 			cm.Statements.Add (argsDecl);
 
-			call = new CodeMethodInvokeExpression (
+			call = new CodeCastExpression (
+				context.EndMethod.ReturnType,
+				new CodeMethodInvokeExpression (
 				new CodeBaseReferenceExpression (),
 				"EndInvoke",
 				new CodePrimitiveExpression (od.Name),
 				new CodeVariableReferenceExpression ("args"),
-				new CodeArgumentReferenceExpression (resultArgName));
+				new CodeArgumentReferenceExpression (resultArgName)));
 
 			if (cm.ReturnType.BaseType == "System.Void")
 				cm.Statements.Add (new CodeExpressionStatement (call));

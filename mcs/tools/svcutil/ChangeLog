@@ -1,5 +1,10 @@
 2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MoonlightChannelBaseExtension.cs : fixed a couple of generated
+	  code to compile on .NET (not in mcs yet; some nested generics bug).
+
+2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Driver.cs, CommandLineOptions.cs : add moonlight proxy generator
 	  support.
 	* MoonlightChannelBaseExtension.cs : new, moonlight proxy generator.
