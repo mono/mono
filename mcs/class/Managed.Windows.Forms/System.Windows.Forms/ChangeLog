@@ -1,3 +1,13 @@
+2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* DataGrid.cs: Actually call BindColumns in the handler for
+	ListManager.MetaDataChanged, since the current code is already taking
+	into account the scenario when a custom table style is used - this was
+	confusing us before, and that's why we commented the call to
+	BindColumns. Also call CallAreasAndInvalidate, to properly reflect the
+	changes as needed.
+	Fixes #465021.
+
 2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGrid.cs: When setting the data source, if we have a user
