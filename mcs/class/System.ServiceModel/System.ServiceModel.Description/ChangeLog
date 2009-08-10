@@ -1,3 +1,9 @@
+2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : first step to add moonlight-based
+	  client proxy generator (it is not supported in 3.5. needs to be
+	  enabled by some hook, such as reflection-based hack).
+
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescription.cs : wcf & 2.1 is specially annoying land :(
