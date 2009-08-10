@@ -1,3 +1,13 @@
+2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* metadata.c:
+	* metadata.h:
+	* object.c:
+	* class-internals.h:
+	* generic-sharing.c:
+	* marshal.c: use a #define instead of sizeof() for a few
+	structures that use a zero-length array.
+
 2009-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object-internals.h (MonoReflectionMethodOnTypeBuilderInst): Add new fields

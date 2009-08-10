@@ -1,3 +1,11 @@
+2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* tramp-arm.c:
+	* tramp-amd64.c:
+	* tramp-ppc.c:
+	* tramp-x86.c: use a #define instead of sizeof() for a few
+	structures that use a zero-length array.
+
 2009-08-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir/CEE_CONSTRAINED_): Handle the
