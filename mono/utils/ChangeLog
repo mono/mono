@@ -1,3 +1,7 @@
+2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* monobitset.h: add comment.
+
 2009-08-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-sigcontext.h (UCONTEXT_GREGS): Fix freebsd definition.
