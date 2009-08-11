@@ -1,3 +1,8 @@
+2009-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* sqlserver7.sql: Added script for SQL Server 7.0, with unicode
+	encoding (as isql7 does not deal well with utf-8).
+
 2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MySQL_5.sql: Added numeric and decimal colums with different
