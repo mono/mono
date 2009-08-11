@@ -60,19 +60,18 @@ namespace System.ServiceModel.Web
 		}
 
 		public WebChannelFactory (Uri remoteAddress)
-			: base ()
+			: this (String.Empty, remoteAddress)
 		{
-			Endpoint.Address = new EndpointAddress (remoteAddress);
 		}
 
-		public WebChannelFactory (string configurationName, Uri remoteAddress)
-			: this (configurationName)
+		public WebChannelFactory (string endpointConfigurationName, Uri remoteAddress)
+			: base (endpointConfigurationName)
 		{
 			Endpoint.Address = new EndpointAddress (remoteAddress);
 		}
 
 		public WebChannelFactory (Binding binding, Uri remoteAddress)
-			: this (new ServiceEndpoint (ContractDescription.GetContract (typeof (TChannel)), binding, new EndpointAddress (remoteAddress)))
+			: base (binding, new EndpointAddress (remoteAddress))
 		{
 		}
 
