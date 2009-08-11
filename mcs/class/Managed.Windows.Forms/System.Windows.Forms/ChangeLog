@@ -1,3 +1,11 @@
+2009-08-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: When a new TableStyle is added, don't create new
+	columns for it unless it is empty - this is the correct way to both
+	respect the columns if they were provided by our user, or create them
+	for him in case the column collection is empty.
+	Fixes #323111.
+
 2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* DataGrid.cs: Actually call BindColumns in the handler for

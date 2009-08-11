@@ -2494,7 +2494,8 @@ namespace System.Windows.Forms
 			case CollectionChangeAction.Add:
 				if (e.Element != null && String.Compare (list_name, ((DataGridTableStyle)e.Element).MappingName, true) == 0) {
 					CurrentTableStyle = (DataGridTableStyle)e.Element;
-					((DataGridTableStyle) e.Element).CreateColumnsForTable (false);
+					// force to auto detect columns in case the new style is completely empty
+					((DataGridTableStyle) e.Element).CreateColumnsForTable (CurrentTableStyle.GridColumnStyles.Count > 0);
 				}
 				break;
 			case CollectionChangeAction.Remove:
