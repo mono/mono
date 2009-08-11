@@ -1,5 +1,15 @@
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* Watch.cs:
+	* SpinWait.cs:
+	* CountdownEvent.cs:
+	* CancellationToken.cs:
+	* ICancelableOperation.cs:
+	* CancellationTokenSource.cs:
+	* CancellationTokenRegistration.cs: Add BOOTSTRAP_NET_4_0.
+
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* Parallel.cs: Disable While method.
 	* CountdownEvent.cs: Fix method signature.
 	* Barrier.cs: Moved type.

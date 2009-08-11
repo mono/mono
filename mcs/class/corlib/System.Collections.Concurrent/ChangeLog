@@ -1,5 +1,10 @@
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ConcurrentQueue.cs:
+	* IProducerConsumerCollection.cs: Add BOOTSTRAP_NET_4_0.
+
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* BlockingCollection.cs: Moved type.
 
 

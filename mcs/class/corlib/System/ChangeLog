@@ -1,3 +1,9 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Funcs.cs:
+	* Action.cs:
+	* AggregateException.cs: Add BOOTSTRAP_NET_4_0.
+
 2009-08-07  Marek Safar  <marek.safar@gmail.com>
 
 	* AppDomain.cs: IsHomogenous always returns true for now.
