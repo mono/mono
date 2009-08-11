@@ -1,3 +1,8 @@
+
+Tue Aug 11 14:38:57 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: more documentation for MonoType accessors.
+
 2009-08-11  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix incorrect size definitions where the tail array isn't a list
