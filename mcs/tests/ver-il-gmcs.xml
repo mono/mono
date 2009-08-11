@@ -18638,6 +18638,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-23.cs">
+    <type name="C">
+      <method name="U Test[T,U](T[], System.Func`2[T,U])">
+        <size>14</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>77</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__0(System.String)">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void .ctor()">
