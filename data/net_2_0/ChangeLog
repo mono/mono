@@ -1,3 +1,8 @@
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DefaultWsdlHelpGenerator.aspx: the 'Message Layout' can now handle
+	self-referencing types. Fixes bug #529353.
+
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultWsdlHelpGenerator.aspx: the link element in <head> must

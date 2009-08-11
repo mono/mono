@@ -10,6 +10,7 @@
 --%>
 
 <%@ Import Namespace="System.Collections" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="System.Xml.Serialization" %>
 <%@ Import Namespace="System.Xml" %>
@@ -1035,7 +1036,7 @@ public class HtmlSampleGenerator: SampleGenerator
 			if (elem == null) throw new InvalidOperationException ("Element not found: " + qname);
 			WriteElementSample (xtw, qname.Namespace, elem);
 		}
-		
+
 		void WriteElementSample (XmlTextWriter xtw, string ns, XmlSchemaElement elem)
 		{
 			bool sharedAnnType = false;
@@ -1129,9 +1130,18 @@ public class HtmlSampleGenerator: SampleGenerator
 		{
 			WriteAttributes (xtw, stype.Attributes, stype.AnyAttribute);
 		}
-		
+
+		Dictionary<XmlSchemaComplexType,int> recursed_types = new Dictionary<XmlSchemaComplexType,int> ();
 		void WriteComplexTypeElements (XmlTextWriter xtw, string ns, XmlSchemaComplexType stype)
 		{
+			int prev = 0;
+			if (recursed_types.ContainsKey (stype))
+				prev = recursed_types [stype];
+
+			if (prev > 1)
+				return;
+			recursed_types [stype] = ++prev;
+
 			if (stype.Particle != null)
 				WriteParticleComplexContent (xtw, ns, stype.Particle);
 			else
@@ -1141,6 +1151,8 @@ public class HtmlSampleGenerator: SampleGenerator
 				else if (stype.ContentModel is XmlSchemaComplexContent)
 					WriteComplexContent (xtw, ns, (XmlSchemaComplexContent)stype.ContentModel);
 			}
+			prev = recursed_types [stype];
+			recursed_types [stype] = --prev;
 		}
 
 		void WriteAttributes (XmlTextWriter xtw, XmlSchemaObjectCollection atts, XmlSchemaAnyAttribute anyat)
