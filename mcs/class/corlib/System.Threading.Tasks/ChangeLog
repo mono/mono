@@ -1,5 +1,10 @@
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* Task.cs: Make WaitAny uses general continuation
+	framework.
+
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* TaskFactory.cs: Fix methods signature.
 
 2009-08-05  Jérémie Laval  <jeremie.laval@gmail.com>

@@ -586,19 +586,19 @@ namespace System.Threading.Tasks
 			int index = 0;
 			
 			foreach (Task t in tasks) {
-				if (t.IsCompleted) {
-					return index;
-				}
-				t.completed += delegate (object sender, EventArgs e) {
+				t.ContinueWith (delegate {
+					int indexResult = index;
 					int result = Interlocked.Increment (ref numFinished);
 					// Check if we are the first to have finished
-					if (result == 1) {
-						Task target = (Task)sender;
-						indexFirstFinished = Array.FindIndex (tasks, (elem) => elem == target);
-					}
-				};	
+					if (result == 1)
+						indexFirstFinished = indexResult;
+				});	
 				index++;
 			}
+			
+			// One task already finished
+			if (indexFirstFinished != -1)
+				return indexFirstFinished;
 			
 			// All tasks are supposed to use the same TaskManager
 			tasks[0].scheduler.ParticipateUntil (delegate {
