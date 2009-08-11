@@ -1,3 +1,13 @@
+2009-08-11  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix incorrect size definitions where the tail array isn't a list
+	of pointers
+	* class-internals.h (MONO_SIZEOF_MARSHAL_TYPE): Use offsetof to
+	define size.
+	* domain-internals.h (MONO_SIZEOF_JIT_INFO): Likewise.
+	* metadata.h (MONO_SIZEOF_TYPE): Likewise.
+	* reflection.h (MONO_SIZEOF_CUSTOM_ATTR_INFO): Likewise.
+
 2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* reflection.h:
