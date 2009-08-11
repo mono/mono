@@ -1,5 +1,11 @@
 2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* domain.c:
+	* domain-internals.h: add and use #define's instead of sizeof()
+	for MonoJitInfo and MonoJitInfoTable.
+
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* object.c:
 	* class.h: use #define instead of sizeof() for MonoRemoteClass.
 

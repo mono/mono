@@ -1,3 +1,19 @@
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* exceptions-arm.c:
+	* exceptions-hppa.c:
+	* mini.c:
+	* exceptions-s390x.c:
+	* exceptions-mips.c:
+	* exceptions-ppc.c:
+	* exceptions-sparc.c:
+	* exceptions-alpha.c:
+	* aot-runtime.c:
+	* mini-trampolines.c:
+	* exceptions-x86.c:
+	* exceptions-s390.c: add and use #define's instead of sizeof()
+	for MonoJitInfo and MonoJitInfoTable.
+
 2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* tramp-arm.c:
