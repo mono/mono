@@ -1,5 +1,10 @@
 2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* reflection.h:
+	* reflection.c: MONO_SIZEOF_CUSTOM_ATTR_INFO.
+
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* metadata.c:
 	* loader.c:
 	* metadata-internals.h:
