@@ -1,5 +1,10 @@
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : (ChannelBase) now ClientRuntimeChannel demands an
+	  explicit address.
+
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : use new IOperationInvoker implementation.
 
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
