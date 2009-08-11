@@ -31,7 +31,7 @@ namespace System.Threading.Tasks
 	public class Task<TResult>: Task
 	{
 		TResult value;
-		TaskFactory<TResult> factory = new TaskFactory<TResult> ();
+		static TaskFactory<TResult> factory = new TaskFactory<TResult> ();
 		
 		Func<object, TResult> function;
 		object state;
@@ -56,7 +56,7 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public new TaskFactory<TResult> Factory {
+		public static TaskFactory<TResult> Factory {
 			get {
 				return factory;
 			}

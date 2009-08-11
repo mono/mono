@@ -1,5 +1,9 @@
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* Future.cs: Add static to Factory property
+
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* Task.cs: Make WaitAny uses general continuation
 	framework.
 
