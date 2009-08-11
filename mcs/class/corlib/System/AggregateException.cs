@@ -28,7 +28,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace System.Threading
+namespace System
 {
 	[System.SerializableAttribute]
 	public class AggregateException : Exception

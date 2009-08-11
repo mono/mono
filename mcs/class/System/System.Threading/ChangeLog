@@ -1,3 +1,7 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Barrier.cs: added.
+
 2006-09-28  Andrew Skiba <andrews@mainsoft.com>
 
 	* Semaphore.cs: TARGET_JVM

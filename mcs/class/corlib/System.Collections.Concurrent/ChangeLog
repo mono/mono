@@ -1,3 +1,8 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BlockingCollection.cs: Moved type.
+
+
 2009-08-04 Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionary: Fix compilation issue

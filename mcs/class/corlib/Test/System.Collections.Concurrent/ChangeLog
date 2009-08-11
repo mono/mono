@@ -1,3 +1,7 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BlockingCollectionTests.cs: Moved file.
+
 2009-08-05  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionaryTests.cs: Re-enable ConcurrentDictionary unit

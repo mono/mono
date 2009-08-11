@@ -428,6 +428,7 @@ namespace System.Threading
 		}
 		#endregion
 		
+		/* Disabled as this is an API addition
 		#region While		
 		public static void While (Func<bool> predicate, Action body)
 		{
@@ -451,6 +452,7 @@ namespace System.Threading
 		}
 		
 		#endregion
+		*/
 
 		#region Invoke
 		public static void Invoke (params Action[] actions)

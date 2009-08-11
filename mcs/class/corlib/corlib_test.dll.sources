@@ -425,7 +425,6 @@ System.Collections.Concurrent/ConcurrentSkipListTests.cs
 System.Collections.Concurrent/ConcurrentQueueTests.cs
 System.Collections.Concurrent/ConcurrentBagTests.cs
 System.Collections.Concurrent/ConcurrentStackTests.cs
-System.Collections.Concurrent/BlockingCollectionTests.cs
 System.Collections.Concurrent/ConcurrentDictionaryTests.cs
 System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Concurrent/ParallelConcurrentQueueTests.cs
@@ -434,6 +433,6 @@ System.Threading/ManualResetEventSlimTests.cs
 System.Threading/SemaphoreSlimTests.cs
 System.Threading/ParallelTests.cs
 System.Threading/CountdownEventTests.cs
-System.Threading/AggregateExceptionTests.cs
+System/AggregateExceptionTests.cs
 System.Threading/ThreadLazyTests.cs
 System.Threading/ParallelTestHelper.cs

@@ -98,6 +98,7 @@ namespace ParallelFxTests
 			Parallel.ForEach (e, delegate (int element) { throw new Exception ("foo"); });
 		}
 		
+		/* Disabled as this is an API addition
 		[Test]
 		public void ParallelWhileTestCase()
 		{
@@ -110,7 +111,7 @@ namespace ParallelFxTests
 				Assert.Greater(i, 10, "#1");
 				Assert.AreEqual(10, count, "#2");
 			});
-		}
+		}*/
 	}
 }
 #endif

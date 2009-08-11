@@ -129,9 +129,9 @@ namespace System.Threading
 			}
 		}
 		
-		public bool Wait (CancellationToken token)
+		public void Wait (CancellationToken token)
 		{
-			return Wait (() => token.IsCancellationRequested);
+			Wait (() => token.IsCancellationRequested);
 		}
 		
 		public bool Wait (int timeoutMilli)

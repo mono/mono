@@ -1,3 +1,10 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Parallel.cs: Disable While method.
+	* CountdownEvent.cs: Fix method signature.
+	* Barrier.cs: Moved type.
+	* AggregateException.cs: Moved type.
+
 2009-08-04 Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* SpinLock: Remove unused private methods.
@@ -16,7 +23,7 @@
         * ThreadLocal.cs:
         * SemaphoreSlim.cs:
         * CountdownEvent.cs:
-        * ManualResetEventSlim.cs:
+        * ManualResetEventSlim.cs
         * CancellationTokenSource.cs: Various 4.0 b1 API mismatch fixes.
 
 2009-07-30 Jérémie Laval  <jeremie.laval@gmail.com>

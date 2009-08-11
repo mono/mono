@@ -471,3 +471,4 @@ System.Timers/ElapsedEventArgsCas.cs
 System.Timers/TimerCas.cs
 System.Web/AspNetHostingPermissionCas.cs
 System.Web/AspNetHostingPermissionAttributeCas.cs
+System.Collections.Concurrent/BlockingCollectionTests.cs

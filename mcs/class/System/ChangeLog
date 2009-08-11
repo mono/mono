@@ -1,3 +1,8 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* System.dll.sources: Adding ParallelFx files.
+	* System_test.dll.sources: Adding ParallelFx test files.
+
 2009-07-26  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile ($(build_lib)): Make CYCLIC_DEP_FILES depend on this.

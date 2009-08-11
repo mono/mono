@@ -1,3 +1,7 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* TaskFactory.cs: Fix methods signature.
+
 2009-08-05  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Future.cs: Fix for Future, when using TaskCompletionSource

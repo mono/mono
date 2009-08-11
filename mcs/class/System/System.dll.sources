@@ -951,6 +951,7 @@ System.Threading/Semaphore.cs
 System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
+System.Threading/Barrier.cs
 System.Timers/ElapsedEventArgs.cs
 System.Timers/ElapsedEventHandler.cs
 System.Timers/Timer.cs
@@ -1007,3 +1008,5 @@ System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
 System/IUriData.cs
 System/UriData.cs
+System.Collections.Concurrent/BlockingCollection.cs
+../corlib/System.Threading/AtomicBoolean.cs

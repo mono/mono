@@ -27,6 +27,7 @@ using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace System.Collections.Concurrent
 {
@@ -131,7 +132,7 @@ namespace System.Collections.Concurrent
 		
 		public bool TryAdd (T item, int millisecondsTimeout)
 		{
-			Watch sw = Watch.StartNew ();
+			Stopwatch sw = Stopwatch.StartNew ();
 			while (isFull ()) {
 				if (isComplete.Value || sw.ElapsedMilliseconds > millisecondsTimeout) {
 					sw.Stop ();
@@ -154,7 +155,7 @@ namespace System.Collections.Concurrent
 		
 		public bool TryRemove (out T item, int millisecondsTimeout)
 		{
-			Watch sw = Watch.StartNew ();
+			Stopwatch sw = Stopwatch.StartNew ();
 			while (underlyingColl.Count == 0) {
 				if (isComplete.Value || sw.ElapsedMilliseconds > millisecondsTimeout) {
 					item = default (T);

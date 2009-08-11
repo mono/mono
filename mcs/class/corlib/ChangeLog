@@ -1,3 +1,8 @@
+2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* corlib.dll.sources: Update with moved files.
+	* corlib_test.dll.source: Updated with moved files.
+
 2009-07-31  Jérémie Laval  <jeremie.laval@gmail.com>
 
         * corlib.dll.sources: Added TaskCompletionSource
