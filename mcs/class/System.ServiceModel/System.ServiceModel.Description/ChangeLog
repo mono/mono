@@ -1,3 +1,9 @@
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs :
+	  add Binding properties. Properties are now auto.
+	* ServiceMetadataExtension.cs : take Binding too to build dispatcher.
+
 2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs : removed ChannelBase proxy stuff,
