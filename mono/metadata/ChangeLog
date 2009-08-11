@@ -1,3 +1,8 @@
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* object.c:
+	* class.h: use #define instead of sizeof() for MonoRemoteClass.
+
 2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* metadata.c:
