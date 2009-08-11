@@ -1,5 +1,10 @@
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataResolver.cs : added remaining methods.
+	* MetadataExchangeClient.cs : a bit of required changes for above.
+
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs :
 	  add Binding properties. Properties are now auto.
 	* ServiceMetadataExtension.cs : take Binding too to build dispatcher.

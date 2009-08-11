@@ -46,21 +46,18 @@ using SMMessage = System.ServiceModel.Channels.Message;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
+	[MonoTODO ("MetadataExchangeClientMode is not considered")]
 	public class MetadataExchangeClient
 	{
 		string scheme;
 
 		EndpointAddress address;
 		SMBinding binding;
+		MetadataExchangeClientMode mode = MetadataExchangeClientMode.MetadataExchange;
 
+		[MonoTODO ("use empty configuration")]
 		public MetadataExchangeClient ()
 		{
-			//FIXME: Look for config element, implementing
-			//	IMetadataExchange contract
-			//	Use Channel<IMetadataExchange> .. ?
-			
-			throw new NotImplementedException ();
 		}
 
 		public MetadataExchangeClient (SMBinding mexBinding)
@@ -81,6 +78,7 @@ namespace System.ServiceModel.Description
 		public MetadataExchangeClient (Uri address, MetadataExchangeClientMode mode)
 		{
 			this.address = new EndpointAddress (address.AbsoluteUri);
+			this.mode = mode;
 		}
 
 		public MetadataSet GetMetadata ()
@@ -91,7 +89,7 @@ namespace System.ServiceModel.Description
 		public MetadataSet GetMetadata (EndpointAddress address)
 		{
 			//FIXME: default mode?
-			return GetMetadataInternal (address, MetadataExchangeClientMode.MetadataExchange);
+			return GetMetadataInternal (address, mode);
 		}
 
 		public MetadataSet GetMetadata (Uri address, MetadataExchangeClientMode mode)
@@ -99,7 +97,7 @@ namespace System.ServiceModel.Description
 			return GetMetadataInternal (new EndpointAddress (address.AbsoluteUri), mode);
 		}
 
-		MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
+		internal MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
 		{
 			if (binding == null)
 				binding = MetadataExchangeBindings.CreateMexHttpBinding ();
