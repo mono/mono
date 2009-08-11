@@ -2373,10 +2373,27 @@ namespace Mono.CSharp {
 			}
 		}
 
+		// 
+		// Used together with AddCommonTypeBound fo implement
+		// 7.4.2.13 Finding the best common type of a set of expressions
+		//
+		public TypeInferenceContext ()
+		{
+			fixed_types = new Type [1];
+			unfixed_types = new Type [1];
+			unfixed_types[0] = InternalType.Arglist; // it can be any internal type
+			bounds = new ArrayList [1];
+		}
+
 		public Type[] InferredTypeArguments {
 			get {
 				return fixed_types;
 			}
+		}
+
+		public void AddCommonTypeBound (Type type)
+		{
+			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0);
 		}
 
 		void AddToBounds (BoundInfo bound, int index)
@@ -2566,7 +2583,11 @@ namespace Mono.CSharp {
 
 			if (candidates.Count == 1) {
 				unfixed_types[i] = null;
-				fixed_types[i] = ((BoundInfo) candidates[0]).Type;
+				Type t = ((BoundInfo) candidates[0]).Type;
+				if (t == TypeManager.null_type)
+					return false;
+
+				fixed_types [i] = t;
 				return true;
 			}
 

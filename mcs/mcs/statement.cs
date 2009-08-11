@@ -827,27 +827,21 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
+			if (ec.InferReturnType) {
+				ec.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+				return true;
+			}
+
 			if (Expr.Type != ec.ReturnType) {
-				if (ec.InferReturnType) {
-					//
-					// void cannot be used in contextual return
-					//
-					if (Expr.Type == TypeManager.void_type)
-						return false;
+				Expr = Convert.ImplicitConversionRequired (ec, Expr, ec.ReturnType, loc);
 
-					ec.ReturnType = Expr.Type;
-				} else {
-					Expr = Convert.ImplicitConversionRequired (
-						ec, Expr, ec.ReturnType, loc);
-
-					if (Expr == null) {
-						if (am != null) {
-							Report.Error (1662, loc,
-								"Cannot convert `{0}' to delegate type `{1}' because some of the return types in the block are not implicitly convertible to the delegate return type",
-								am.ContainerType, am.GetSignatureForError ());
-						}
-						return false;
+				if (Expr == null) {
+					if (am != null) {
+						Report.Error (1662, loc,
+							"Cannot convert `{0}' to delegate type `{1}' because some of the return types in the block are not implicitly convertible to the delegate return type",
+							am.ContainerType, am.GetSignatureForError ());
 					}
+					return false;
 				}
 			}
 

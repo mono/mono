@@ -1008,15 +1008,11 @@ namespace Mono.CSharp {
 		{
 			AnonymousMethodBody am;
 			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
-				am = CompatibleMethod (ec, tic, TypeManager.null_type, delegate_type);
+				am = CompatibleMethod (ec, tic, InternalType.Arglist, delegate_type);
 			}
 			
 			if (am == null)
 				return null;
-
-			// Stop referencing gmcs NullLiteral type
-			if (am.ReturnType == TypeManager.null_type)
-				am.ReturnType = null;
 
 			return am.ReturnType;
 		}
@@ -1311,8 +1307,10 @@ namespace Mono.CSharp {
 
 			IDisposable aec_dispose = null;
 			EmitContext.Flags flags = 0;
-			if (ec.InferReturnType)
+			if (ec.InferReturnType) {
 				flags |= EmitContext.Flags.InferReturnType;
+				aec.ReturnTypeInference = new TypeInferenceContext ();
+			}
 
 			if (ec.IsInProbingMode)
 				flags |= EmitContext.Flags.ProbingMode;
@@ -1330,8 +1328,10 @@ namespace Mono.CSharp {
 			bool unreachable;
 			bool res = aec.ResolveTopBlock (ec, Block, Block.Parameters, null, out unreachable);
 
-			if (ec.InferReturnType)
-				ReturnType = aec.ReturnType;
+			if (ec.InferReturnType) {
+				aec.ReturnTypeInference.FixAllTypes ();
+				ReturnType = aec.ReturnTypeInference.InferredTypeArguments [0];
+			}
 
 			if (aec_dispose != null) {
 				aec_dispose.Dispose ();

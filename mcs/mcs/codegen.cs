@@ -602,6 +602,8 @@ namespace Mono.CSharp {
 			get { return (flags & Flags.InferReturnType) != 0; }
 		}
 
+		public TypeInferenceContext ReturnTypeInference;
+
 		// IResolveContext.IsInObsoleteScope
 		public bool IsInObsoleteScope {
 			get {

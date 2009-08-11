@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 		}
 
 		protected override bool DoResolve (EmitContext ec)
-		{	
+		{
 			//
 			// When delegate returns void, only expression statements can be used
 			//
@@ -199,10 +199,10 @@ namespace Mono.CSharp {
 				Expr = Expr.Resolve (ec);
 				if (Expr == null)
 					return false;
-				
+
 				if (Expr is ExpressionStatement)
 					return true;
-				
+
 				Expr.Error_InvalidExpressionStatement ();
 				return false;
 			}

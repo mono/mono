@@ -429,6 +429,13 @@ namespace Mono.CSharp
 
 	public class TypeInferenceContext
 	{
+		public Type[] InferredTypeArguments;
+		
+		public void AddCommonTypeBound (Type type)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		public void ExactInference (Type u, Type v)
 		{
 			throw new NotImplementedException ();
@@ -437,6 +444,11 @@ namespace Mono.CSharp
 		public Type InflateGenericArgument (Type t)
 		{
 			throw new NotImplementedException ();		
+		}
+		
+		public bool FixAllTypes ()
+		{
+			return false;
 		}
 	}
 	

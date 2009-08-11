@@ -1,3 +1,9 @@
+2009-08-11  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, lambda.cs, anonymous.cs, statement.cs, generic-mcs.cs,
+	codegen.cs: Finding the best common type of a set of expressions for
+	lambda statements.
+
 2009-08-07  Marek Safar  <marek.safar@gmail.com>
 
 	* dynamic.cs, expression.cs: More dynamic conversions.
