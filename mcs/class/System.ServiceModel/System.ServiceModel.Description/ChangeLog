@@ -1,5 +1,9 @@
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataExchangeClient.cs : add missing async methods.
+
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MetadataResolver.cs : added remaining methods.
 	* MetadataExchangeClient.cs : a bit of required changes for above.
 
