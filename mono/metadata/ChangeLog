@@ -1,5 +1,13 @@
 2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* metadata.c:
+	* loader.c:
+	* metadata-internals.h:
+	* method-builder.c:
+	* reflection.c: use MONO_SIZEOF_METHOD_HEADER.
+
+2009-08-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* cominterop.c:
 	* metadata.c:
 	* metadata.h:
