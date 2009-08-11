@@ -1,3 +1,10 @@
+2009-08-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* SplitContainer.cs: Avoid updating the splitter distance if it hasn't 
+	moved. Updating the distance was causing a re-layout which was resetting 
+	the clicks counter and preventing DoubleClick from every firing.
+	[Fixes bug #521387]
+
 2009-08-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGrid.cs: When a new TableStyle is added, don't create new
