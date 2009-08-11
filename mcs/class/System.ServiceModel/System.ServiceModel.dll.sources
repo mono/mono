@@ -614,6 +614,7 @@ System.ServiceModel.Dispatcher/ClientOperation.cs
 System.ServiceModel.Dispatcher/ClientRuntime.cs
 System.ServiceModel.Dispatcher/DataContractSerializerServiceBehavior.cs
 System.ServiceModel.Dispatcher/DefaultInstanceContextProvider.cs
+System.ServiceModel.Dispatcher/DefaultOperationInvoker.cs
 System.ServiceModel.Dispatcher/DispatchOperation.cs
 System.ServiceModel.Dispatcher/DispatchRuntime.cs
 System.ServiceModel.Dispatcher/EndpointAddressMessageFilter.cs

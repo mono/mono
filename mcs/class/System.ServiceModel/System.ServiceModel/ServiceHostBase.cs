@@ -479,11 +479,7 @@ namespace System.ServiceModel
 			}
 
 			// Setup Invoker
-			// FIXME: support async method
-			if (od.SyncMethod != null)
-				o.Invoker = new SyncMethodInvoker (od.SyncMethod);
-			else
-				o.Invoker = new AsyncMethodInvoker (od.BeginMethod, od.EndMethod);
+			o.Invoker = new DefaultOperationInvoker (od);
 
 			// Setup Formater
 			o.Formatter = BaseMessagesFormatter.Create (od);
@@ -612,6 +608,7 @@ namespace System.ServiceModel
 			Close ();
 		}
 
+		/*
 		class SyncMethodInvoker : IOperationInvoker
 		{
 			readonly MethodInfo _methodInfo;
@@ -692,5 +689,7 @@ namespace System.ServiceModel
 
 			#endregion
 		}
+		*/
 	}
+
 }

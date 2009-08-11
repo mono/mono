@@ -1,3 +1,7 @@
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : use new IOperationInvoker implementation.
+
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceRuntimeChannel.cs : change .ctor() args.

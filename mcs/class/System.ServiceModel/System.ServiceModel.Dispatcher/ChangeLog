@@ -1,3 +1,10 @@
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IOperationInvoker.cs : fix interface.
+	* DefaultOperationInvoker.cs : refresh implementation of the above.
+	* BaseMessagesFormatter.cs, OperationInvokerHandler.cs :
+	  dependent changes for above.
+
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InputOrReplyRequestProcessor.cs : now it could return an instance
