@@ -817,16 +817,14 @@ namespace System.Text.RegularExpressions.Syntax {
 		public bool ResolveReference (string num_str, Hashtable groups)
 		{
 			if (ecma) {
-				int i;
-				for (i = 1; i < num_str.Length; ++i) {
-					string name = num_str.Substring (0, i);
-					CapturingGroup group = (CapturingGroup) groups [name];
-					if (group == null)
-						break;
-					CapturingGroup = group;
+				int last_i = 0;
+				for (int i = 1; i < num_str.Length; ++i) {
+					if (groups [num_str.Substring (0, i)] != null)
+						last_i = i;
 				}
-				if (i > 1) {
-					literal = num_str.Substring (i - 1);
+				if (last_i != 0) {
+					CapturingGroup = (CapturingGroup) groups [num_str.Substring (0, last_i)];
+					literal = num_str.Substring (last_i);
 					return true;
 				}
 			} else {

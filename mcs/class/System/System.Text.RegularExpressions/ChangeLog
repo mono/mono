@@ -1,3 +1,8 @@
+2009-08-12  Raja R Harinath  <harinath@hurrynot.org>
+
+	* syntax.cs (BackslashNumber.ResolveReference): Improve ECMAScript
+	semantics.  Handle cases like "group 43 exists but group 4 doesn't".
+
 2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
 
 	* syntax.cs (BackslashNumber.ResolveReference): Implement fallback
