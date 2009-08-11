@@ -26,9 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Xml;
 
 namespace System.ServiceModel.Description
 {
@@ -41,6 +43,7 @@ namespace System.ServiceModel.Description
 		{
 			format = new DataContractFormatAttribute ();
 			this.operation = operation;
+			MaxItemsInObjectGraph = int.MaxValue;
 		}
 
 		public DataContractSerializerOperationBehavior (
@@ -49,17 +52,33 @@ namespace System.ServiceModel.Description
 		{
 			this.format = dataContractFormatAttribute;
 			this.operation = operation;
+			MaxItemsInObjectGraph = int.MaxValue;
 		}
 
 		public DataContractFormatAttribute DataContractFormatAttribute {
 			get { return format; }
 		}
 
+		public bool IgnoreExtensionDataObject { get; set; }
+
+		public int MaxItemsInObjectGraph { get; set; }
+
+		public IDataContractSurrogate DataContractSurrogate { get; set; }
+
+		public virtual XmlObjectSerializer CreateSerializer (Type type, string name, string ns, IList<Type> knownTypes)
+		{
+			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+		}
+
+		public virtual XmlObjectSerializer CreateSerializer (Type type, XmlDictionaryString name, XmlDictionaryString ns, IList<Type> knownTypes)
+		{
+			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+		}
+
 		void IOperationBehavior.AddBindingParameters (
 			OperationDescription description,
 			BindingParameterCollection parameters)
 		{
-			throw new NotImplementedException ();
 		}
 
 		void IOperationBehavior.ApplyDispatchBehavior (
