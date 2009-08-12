@@ -1,3 +1,9 @@
+2009-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (GCHandle_CheckCurrentDomain): Moved this here from icall.c.
+
+	* boehm-gc.c (mono_gc_add_weak_track_handle): Handle nulls.
+
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-scan-object.h: Object scanning code factored out
