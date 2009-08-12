@@ -1,5 +1,14 @@
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
 
+	* exception.c (mono_exception_from_name_domain): Actually create
+	the exception in the specified domain.
+
+	* appdomain.c (mono_domain_create_appdomain_internal): Create the
+	OutOfMemoryException a bit later so that the domain is inialized
+	"enough" that it works.
+
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
 	* threads.c (thread_cleanup): Clean up the cached_culture_info
 	array to prevent cross-domain references.
 
