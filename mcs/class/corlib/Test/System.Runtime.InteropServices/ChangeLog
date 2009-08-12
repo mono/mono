@@ -1,3 +1,8 @@
+2009-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* GCHandleTest.cs: Add a test for null GC handles with type 
+	WeakTrackResurrection.
+
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Convert all tests to new-style nunit classes/methods.

@@ -32,6 +32,12 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void AllocNullWeakTrack ()
+		{
+			GCHandle gch = GCHandle.Alloc(null, GCHandleType.WeakTrackResurrection);
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddrOfPinnedObjectNormal ()
 		{
