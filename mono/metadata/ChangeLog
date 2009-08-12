@@ -1,5 +1,9 @@
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
 
+	* gc.c: #define GC_dont_gc if we're compiling with SGen.
+
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
 	* domain.c (mono_domain_free): Free a domain's mono_g_hash_tables
 	before clearing a domain in the GC.
 
