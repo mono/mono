@@ -1,5 +1,13 @@
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-scan-object.h: Object scanning code factored out
+	to sgen-scan-object.h, which can be included and parameterized via
+	macros.
+
+	* Makefile.am: sgen-scan-object.h added.
+
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
 	* gc.c: #define GC_dont_gc if we're compiling with SGen.
 
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
