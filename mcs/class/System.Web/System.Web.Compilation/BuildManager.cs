@@ -1243,8 +1243,13 @@ namespace System.Web.Compilation {
 						try {
 							GenerateAssembly (abuilder, buildItems, virtualPath, buildKind);
 						} catch (Exception ex) {
-							if (requestBuildItem == null || abuilder != originalRequestAssemblyBuilder)
-								throw;
+							if (requestBuildItem == null || abuilder != originalRequestAssemblyBuilder) {
+								if (ex.GetType () == typeof (HttpException))
+									throw;
+								
+								throw new HttpException ("Compilation failed.", ex);
+							}
+							
 							// There will be another assembly containing
 							// just the requested virtual path, let's
 							// give it a chance
@@ -1253,7 +1258,15 @@ namespace System.Web.Compilation {
 
 						if (needToBuildRequestItemAlone) {
 							AssignToAssemblyBuilder (assemblyBaseName, virtualPath, requestBuildItem, assemblyBuilders, true);
-							GenerateAssembly (requestBuildItem.assemblyBuilder, buildItems, virtualPath, buildKind);
+							try {
+								GenerateAssembly (requestBuildItem.assemblyBuilder, buildItems, virtualPath, buildKind);
+							} catch (Exception ex) {
+								if (ex.GetType () == typeof (HttpException))
+									throw;
+								
+								throw new HttpException ("Compilation failed.", ex);
+							}
+							
 							needToBuildRequestItemAlone = false;
 						}
 					}
