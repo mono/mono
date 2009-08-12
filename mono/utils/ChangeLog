@@ -1,3 +1,8 @@
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-hash.c (mono_g_hash_mark): If the keys are managed objects,
+	rehash the table after marking.
+
 2009-08-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* monobitset.h: add comment.
