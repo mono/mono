@@ -1,5 +1,10 @@
 2009-08-12  Mark Probst  <mark.probst@gmail.com>
 
+	* domain.c (mono_domain_free): Free a domain's mono_g_hash_tables
+	before clearing a domain in the GC.
+
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
 	* exception.c (mono_exception_from_name_domain): Actually create
 	the exception in the specified domain.
 
