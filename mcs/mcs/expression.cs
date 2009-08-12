@@ -1789,7 +1789,7 @@ namespace Mono.CSharp {
 				//
 				// Start a new concat expression using converted expression
 				//
-				return new StringConcat (ec, b.loc, b.left, b.right).Resolve (ec);
+				return new StringConcat (b.loc, b.left, b.right).Resolve (ec);
 			}
 		}
 
@@ -3687,15 +3687,15 @@ namespace Mono.CSharp {
 	public class StringConcat : Expression {
 		Arguments arguments;
 		
-		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
+		public StringConcat (Location loc, Expression left, Expression right)
 		{
 			this.loc = loc;
 			type = TypeManager.string_type;
 			eclass = ExprClass.Value;
 
 			arguments = new Arguments (2);
-			Append (ec, left);
-			Append (ec, right);
+			Append (left);
+			Append (right);
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -3741,7 +3741,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
-		public void Append (EmitContext ec, Expression operand)
+		public void Append (Expression operand)
 		{
 			//
 			// Constant folding
@@ -7326,10 +7326,10 @@ namespace Mono.CSharp {
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, LookupIdentifier, loc);
+				FullNamedExpression retval = ns.Lookup (LookupIdentifier, loc);
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, LookupIdentifier);
+					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier);
 				else if (targs != null)
 					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (ec, false);
 
@@ -7486,10 +7486,10 @@ namespace Mono.CSharp {
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, LookupIdentifier, loc);
+				FullNamedExpression retval = ns.Lookup (LookupIdentifier, loc);
 
 				if (retval == null && !silent)
-					ns.Error_NamespaceDoesNotExist (rc.DeclContainer, loc, LookupIdentifier);
+					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier);
 				else if (targs != null)
 					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (rc, silent);
 

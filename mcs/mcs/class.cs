@@ -733,33 +733,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		//
-		// Emits the instance field initializers
-		//
-		public bool EmitFieldInitializers (EmitContext ec)
-		{
-			if (partial_parts != null) {
-				foreach (TypeContainer part in partial_parts)
-					part.EmitFieldInitializers (ec);
-			}
-
-			ArrayList fields;
-			
-			if (ec.IsStatic){
-				fields = initialized_static_fields;
-			} else {
-				fields = initialized_fields;
-			}
-
-			if (fields == null)
-				return true;
-
-			foreach (FieldInitializer f in fields) {
-				f.EmitStatement (ec);
-			}
-			return true;
-		}
-		
 		public override string DocComment {
 			get {
 				return comment;

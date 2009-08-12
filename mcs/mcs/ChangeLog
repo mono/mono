@@ -1,3 +1,8 @@
+2009-08-12  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, decl.cs, expression.cs, namespace.cs, ecore.cs,
+	class.cs: Removed unused parameters and methods.
+
 2009-08-11  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, lambda.cs, anonymous.cs, statement.cs, generic-mcs.cs,

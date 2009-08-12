@@ -2968,7 +2968,7 @@ namespace Mono.CSharp {
 			//
 			if (type == null) {
 				Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, false);
-				FullNamedExpression fne = ns.Lookup (null, name, loc);
+				FullNamedExpression fne = ns.Lookup (name, loc);
 				if (fne != null)
 					type = fne.Type;
 			}

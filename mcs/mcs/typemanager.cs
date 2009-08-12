@@ -787,7 +787,7 @@ namespace Mono.CSharp {
 	public static Type CoreLookupType (string ns_name, string name, Kind type_kind, bool required)
 	{
 		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
-		Expression expr = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
+		Expression expr = ns.Lookup (name, Location.Null);
 
 		if (expr == null) {
 			if (required) {

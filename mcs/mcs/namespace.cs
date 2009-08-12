@@ -295,7 +295,7 @@ namespace Mono.CSharp {
 			retval.AddAssemblyReference (assembly);
 		}
 
-		public override void Error_NamespaceDoesNotExist(DeclSpace ds, Location loc, string name)
+		public override void Error_NamespaceDoesNotExist(Location loc, string name)
 		{
 			Report.Error (400, loc, "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
 				name);
@@ -406,10 +406,10 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public virtual void Error_NamespaceDoesNotExist (DeclSpace ds, Location loc, string name)
+		public virtual void Error_NamespaceDoesNotExist (Location loc, string name)
 		{
 			if (name.IndexOf ('`') > 0) {
-				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
+				FullNamedExpression retval = Lookup (SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
 					Error_TypeArgumentsCannotBeUsed (retval, loc);
 					return;
@@ -553,7 +553,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
+		public FullNamedExpression Lookup (string name, Location loc)
 		{
 			if (namespaces.Contains (name))
 				return (Namespace) namespaces [name];
@@ -1084,12 +1084,12 @@ namespace Mono.CSharp {
 			return parent.LookupExtensionMethod (extensionType, currentClass, name, loc);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			// Precondition: Only simple names (no dots) will be looked up with this function.
 			FullNamedExpression resolved = null;
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
-				if ((resolved = curr_ns.Lookup (ds, name, loc, ignore_cs0104)) != null)
+				if ((resolved = curr_ns.Lookup (name, loc, ignore_cs0104)) != null)
 					break;
 			}
 			return resolved;
@@ -1140,12 +1140,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
+		private FullNamedExpression Lookup (string name, Location loc, bool ignore_cs0104)
 		{
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = ns.Lookup (ds, name, loc);
+			FullNamedExpression fne = ns.Lookup (name, loc);
 
 			//
 			// Check aliases. 
@@ -1182,7 +1182,7 @@ namespace Mono.CSharp {
 			//
 			FullNamedExpression match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
-				match = using_ns.Lookup (ds, name, loc);
+				match = using_ns.Lookup (name, loc);
 				if (match == null || !(match is TypeExpr))
 					continue;
 				if (fne != null) {

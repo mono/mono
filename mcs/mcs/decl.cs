@@ -1214,7 +1214,7 @@ namespace Mono.CSharp {
 			else if (Parent != null)
 				e = Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 			else
-				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
+				e = NamespaceEntry.LookupNamespaceOrType (name, loc, ignore_cs0104);
 
 			if (errors == Report.Errors)
 				Cache [name] = e;
