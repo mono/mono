@@ -1,3 +1,7 @@
+2009-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* CodeTypeReferenceTest.cs: added test for bug #523341
+
 2007-01-25  Ilya Kharmatsky  <ilyak -at- mainsoft.com>
 	
 	* CodeTypeReferenceTest.cs :

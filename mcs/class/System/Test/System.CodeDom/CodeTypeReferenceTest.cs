@@ -586,6 +586,18 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (reference.TypeArguments, "#5");
 			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
 		}
+
+		[Test (Description="Bug #523341")]
+		public void GenericTypeTest6 ()
+		{
+			CodeTypeReference reference = new CodeTypeReference ("System.Collections.List<System.Globalization.CultureInfo[]>");
+			Assert.AreEqual ("System.Collections.List<System.Globalization.CultureInfo[]>", reference.BaseType, "#1");
+			Assert.AreEqual (0, reference.ArrayRank, "#2");
+			Assert.IsNull (reference.ArrayElementType, "#3");
+			Assert.AreEqual (0, (int) reference.Options, "#4");
+			Assert.IsNotNull (reference.TypeArguments, "#5");
+			Assert.AreEqual (0, reference.TypeArguments.Count, "#6");
+		}
 #endif
 
 		// bug #76535
