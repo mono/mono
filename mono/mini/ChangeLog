@@ -1,5 +1,8 @@
 2009-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (arch_emit_imt_thunk): Rework the arm code to
+	avoid clobbering IP.
+
 	* mini-trampolines.c (mono_magic_trampoline): Allocate a local to
 	hold the trampoline argument, so its initial value is available during
 	debugging.
