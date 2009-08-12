@@ -1,3 +1,12 @@
+2009-08-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h: Add a bunch of temporary icalls to MonoGenericClass.
+
+	* reflection.c (mono_reflection_type_get_handle): Handle MonoGenericClass.
+
+	* reflection.c (encode_cattr_value): Use mono_reflection_type_get_handle to encode
+	System.Type.
+
 2009-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c (GCHandle_CheckCurrentDomain): Moved this here from icall.c.
