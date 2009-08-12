@@ -1,3 +1,7 @@
+2009-08-12  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c (thread_cleanup): Clean up the cached_culture_info
+	array to prevent cross-domain references.
 
 Tue Aug 11 14:38:57 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
