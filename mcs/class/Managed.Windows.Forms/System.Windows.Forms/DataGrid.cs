@@ -1680,6 +1680,12 @@ namespace System.Windows.Forms
 
 					Cursor = Cursors.Default;
 					break;
+				case HitTestType.RowHeader:
+					if (e.Button == MouseButtons.Left)
+						ShiftSelection (testinfo.Row);
+
+					Cursor = Cursors.Default;
+					break;
 				default:
 					Cursor = Cursors.Default;
 					break;
