@@ -1,3 +1,8 @@
+2009-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: build only in the 2.0 profile, or otherwise we'll end
+	up with the resulting assembly referencing the 4.0 corlib.
+
 2009-04-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: fixed resource ID generation.

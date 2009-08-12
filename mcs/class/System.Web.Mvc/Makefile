@@ -26,8 +26,8 @@ endif
 
 EXTRA_DISTFILES = $(RESX_DIST)
 
-# This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+# This is a .NET 3.5+ assembly - it must be built ONLY in the 2.0 profile
+VALID_PROFILE := $(filter net_2_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.Mvc.dll
 NO_INSTALL = yes
