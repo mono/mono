@@ -1,3 +1,7 @@
+2009-08-10  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Add ../monodoc/Resources/mdoc-html-format.xsl as a resource.
+
 2009-08-06  Jonathan Pryor <jpryor@novell.com>
 
 	* mdoc.exe.sources: Add ../../build/common/Consts.cs to the build.

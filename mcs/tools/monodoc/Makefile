@@ -14,6 +14,7 @@ RESOURCE_FILES = \
 	Resources/home.html               \
 	Resources/Lminus.gif              \
 	Resources/Lplus.gif               \
+	Resources/mdoc-html-format.xsl    \
 	Resources/mdoc-html-utils.xsl     \
 	Resources/mdoc-sections-css.xsl   \
 	Resources/mdoc-sections.xsl       \
@@ -50,6 +51,7 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/home.html,home.html                           \
 	/resource:Resources/Lminus.gif,Lminus.gif                         \
 	/resource:Resources/Lplus.gif,Lplus.gif                           \
+	/resource:Resources/mdoc-html-format.xsl,mdoc-html-format.xsl     \
 	/resource:Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl       \
 	/resource:Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl   \
 	/resource:Resources/mdoc-sections.xsl,mdoc-sections.xsl           \

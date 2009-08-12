@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LOCAL_MCS_FLAGS = \
+	/resource:../monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
 	/resource:../monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
 	/resource:../monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
 	/resource:../monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \

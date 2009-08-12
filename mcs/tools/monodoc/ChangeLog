@@ -1,3 +1,34 @@
+2009-09-10  Jonathan Pryor  <jpryor@novell.com>
+
+	* Resources/mdoc-html-format: Added; XSLT file to match
+	  "//format[@type='text/html']//*", to support "pass-through"
+	  semantics.  This allows you to use actual HTML within your
+	  documentation and have it visible to HTML-supporting output formats.
+	  WARNING: Use as a "last resort" -- this is primarily intended for
+	  importing existing HTML w/o needing lots of extra logic to convert
+	  into mdoc format XML first (with a corresponding loss of fidelity).
+	  However, it means that if (when) we get non-HTML output format
+	  support, the <format type="text/html" /> blocks WILL be skipped for
+	  that non-HTML output format.
+
+	  For example, the forever-on-the-back-burner ROFF output support --
+	  to remove the use of lynx, as no one ever has it installed --
+	  wouldn't be able to support HTML format, so it would skip these
+	  <format type="text/html"/> blocks.
+
+	  Consider <format /> the moral equivalent of Perl POD's 
+	  '=begin formatname' block; see perlpod(1).
+	* Resources/mdoc-html-utils.xsl: <xsl:import/> mdoc-html-format.xsl.
+	  It *must* be imported (NOT included) so that it will have a lower
+	  priority than other <template/>s, thus allowing the HTML formatter
+	  to <xsl:apply-templates/> which then use the "normal" rules.  This
+	  allows:
+		<format type="text/html">
+			<p><see cref="T:System.String" /></p>
+		</format>
+	  to work as expected.
+	* Makefile: Add mdoc-html-format.xsl as a resource.
+
 2009-04-16  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/man-provider.cs: NEVER return a non-null string from
