@@ -1,3 +1,7 @@
+2009-08-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-528055.il: Regression test for #528055.
+
 2009-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* make_imt_test.sh: fix freebsd build by Makoto Kishimoto
