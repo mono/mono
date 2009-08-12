@@ -1,3 +1,19 @@
+2009-08-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r139815.
+
+	* class.c: Add mono_class_get_field_from_name_full which does
+	the same as mono_class_get_field_from_name but does check field
+	signature as well.
+
+	* class-internals.h: Export mono_class_get_field_from_name_full as
+	part of the internal API.
+
+	* loader.c (field_from_memberref): Search fields by name and signature
+	as it's valid to have two fields with same name but different types.
+
+	Fixes #528055.
+
 2009-08-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (thread_cleanup): Free serialized_ui_culture_info. Fixes
