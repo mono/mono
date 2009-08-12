@@ -1,5 +1,10 @@
 2009-08-12  Marek Safar  <marek.safar@gmail.com>
 
+	* decl.cs, ecore.cs, class.cs, attribute.cs, codegen.cs: Pushed
+	LookupNamespaceOrType to ResolveContext.
+
+2009-08-12  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, decl.cs, expression.cs, namespace.cs, ecore.cs,
 	class.cs: Removed unused parameters and methods.
 

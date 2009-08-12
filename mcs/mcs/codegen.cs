@@ -257,6 +257,8 @@ namespace Mono.CSharp {
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
 
+		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
+
 		// the declcontainer to lookup for type-parameters.  Should only use LookupGeneric on it.
 		//
 		// FIXME: This is somewhat of a hack.  We don't need a full DeclSpace for this.  We just need the
@@ -1047,6 +1049,15 @@ namespace Mono.CSharp {
 
 			return my_this;
 		}
+
+		#region IResolveContext Members
+
+		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		{
+			return ResolveContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
+		}
+
+		#endregion
 	}
 
 
@@ -1106,6 +1117,11 @@ namespace Mono.CSharp {
 
 		public bool IsInUnsafeScope {
 			get { return false; }
+		}
+
+		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		{
+			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
 		#endregion

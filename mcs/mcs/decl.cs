@@ -670,6 +670,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public virtual FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		{
+			return Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
+		}
+
 		/// <summary>
 		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
 		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
@@ -1201,7 +1206,7 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			if (Cache.Contains (name))
 				return (FullNamedExpression) Cache [name];

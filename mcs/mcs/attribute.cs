@@ -114,6 +114,11 @@ namespace Mono.CSharp {
 				get { return rc.GenericDeclContainer; }
 			}
 
+			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+			{
+				return rc.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			}
+
 			#endregion
 		}
 

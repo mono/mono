@@ -154,6 +154,46 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Different context is needed when resolving type container base
+		// types. Type names come from the parent scope but type parameter
+		// names from the container scope.
+		//
+		struct BaseContext : IResolveContext
+		{
+			TypeContainer tc;
+
+			public BaseContext (TypeContainer tc)
+			{
+				this.tc = tc;
+			}
+
+			#region IResolveContext Members
+
+			public DeclSpace DeclContainer {
+				get { return tc.Parent; }
+			}
+
+			public bool IsInObsoleteScope {
+				get { return tc.IsInObsoleteScope; }
+			}
+
+			public bool IsInUnsafeScope {
+				get { return tc.IsInUnsafeScope; }
+			}
+
+			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+			{
+				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			}
+
+			public DeclSpace GenericDeclContainer {
+				get { return tc.GenericDeclContainer; }
+			}
+
+			#endregion
+		}
+
 		[Flags]
 		enum CachedMethods
 		{
@@ -782,6 +822,7 @@ namespace Mono.CSharp {
 
 			int count = type_bases.Count;
 			TypeExpr [] ifaces = null;
+			IResolveContext base_context = new BaseContext (this);
 			for (int i = 0, j = 0; i < count; i++){
 				FullNamedExpression fne = (FullNamedExpression) type_bases [i];
 
@@ -790,7 +831,7 @@ namespace Mono.CSharp {
 				// it does ObsoleteAttribute and constraint checks which require
 				// base type to be set
 				//
-				TypeExpr fne_resolved = fne.ResolveAsBaseTerminal (this, false);
+				TypeExpr fne_resolved = fne.ResolveAsBaseTerminal (base_context, false);
 				if (fne_resolved == null)
 					continue;
 
