@@ -1,3 +1,7 @@
+2009-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ResolveEventArgs.cs: Add net 4.0 RequestingAssembly property.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Funcs.cs:
