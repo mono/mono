@@ -210,6 +210,12 @@ namespace System.CodeDom
 				return;
 			}
 
+			int lastAngle = baseType.LastIndexOf ('>');
+			if (lastAngle != -1 && lastAngle > array_end) {
+				this.baseType = baseType;
+				return;
+			}
+			
 			string[] args = baseType.Substring (array_start + 1, array_end - array_start - 1).Split (',');
 
 			if ((array_end - array_start) != args.Length) {

@@ -1,3 +1,8 @@
+2009-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* CodeTypeReference.cs: generic types specialized on arrays must
+	not be treated as array declarations. Fixes bug #523341
+
 2008-02-10  Juraj Skripsky  <js@hotfeet.ch>
 
 	* CodeObject.cs: Add empty Visit method implementation.
