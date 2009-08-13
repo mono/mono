@@ -1,3 +1,7 @@
+2009-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : update profile check.
+
 2008-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Json.dll.sources, Makefile : initial checkin.

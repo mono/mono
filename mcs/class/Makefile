@@ -158,6 +158,7 @@ net_3_5_dirs := \
 
 net_4_0_dirs := \
 	System.Dynamic		\
+	System.Json		\
 	Microsoft.CSharp
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI

@@ -11,7 +11,8 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 
-ifneq (net_2_1, $(PROFILE))
+VALID_PROFILE := $(filter 2.1 4.0, $(FRAMEWORK_VERSION))
+ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Json.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes
