@@ -68,6 +68,15 @@ namespace Mono.DocTest {
 	///  <para>
 	///   cref=<c>T:Mono.DocTest.DocAttribute</c>.
 	///  </para>
+	///  <format type="text/html">
+	///   <table width="100%">
+	///     <tr>
+	///       <td style="color:red">red</td>
+	///       <td style="color:blue">blue</td>
+	///       <td style="color:green">green</td>
+	///     </tr>
+	///   </table>
+	///  </format>
 	///  <code lang="C#" src="../DocTest.cs#DocAttribute Example" />
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.All)]

@@ -1,4 +1,13 @@
-2009-08-10  Jonathan Pryor <jpryor@novell.com>
+2009-08-12  Jonathan Pryor <jpryor@novell.com>
+
+	* Test/DocTest-v1.cs: Add a comment which uses <format/>, to test html
+	  escaping behavior.
+	* Resources/monodoc-ecma.xsd: Permit <format/> in various elements.
+	* Test/en.expected.importslashdoc/Mono.DocTest/DocAttribute.xml,
+	  Test/html.expected/Mono.DocTest/DocAttribute.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush.
+
+2009-08-12  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Add ../monodoc/Resources/mdoc-html-format.xsl as a resource.
 

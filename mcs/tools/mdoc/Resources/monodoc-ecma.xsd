@@ -143,6 +143,7 @@ add masterdoc support?
         <xs:element ref="block" />
         <xs:element ref="c" />
         <xs:element ref="code" />
+        <xs:element ref="format" />
         <xs:element ref="list" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
@@ -277,6 +278,7 @@ add masterdoc support?
   <xs:element name="example">
     <xs:complexType mixed="true">
       <xs:choice maxOccurs="unbounded">
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="code" />
         <xs:element ref="c" />
@@ -290,6 +292,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -304,6 +307,15 @@ add masterdoc support?
     <xs:complexType>
       <xs:attribute ref="name" />
       <xs:attribute ref="inherited" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="format">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:any minOccurs="0" processContents="lax" />
+      </xs:sequence>
+      <xs:attribute ref="type" />
     </xs:complexType>
   </xs:element>
 
@@ -472,6 +484,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="format" />
         <xs:element ref="see" />
         <xs:element ref="list" />
         <xs:element ref="link" />
@@ -491,6 +504,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="c" />
+        <xs:element ref="format" />
         <xs:element ref="see" />
         <xs:element ref="block" />
         <xs:element ref="paramref" />
@@ -531,6 +545,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -554,6 +569,7 @@ add masterdoc support?
         <xs:element ref="block" />
         <xs:element ref="c" />
         <xs:element ref="code" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -569,6 +585,7 @@ add masterdoc support?
   <xs:element name="returns">
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="format" />
         <xs:element ref="list" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
@@ -606,6 +623,7 @@ add masterdoc support?
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -652,6 +670,7 @@ add masterdoc support?
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
         <xs:element ref="c" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -676,6 +695,7 @@ add masterdoc support?
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element ref="block" />
           <xs:element ref="c" />
+          <xs:element ref="format" />
           <xs:element ref="see" />
           <xs:element ref="para"  />
           <xs:element ref="paramref" />
@@ -748,6 +768,7 @@ add masterdoc support?
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
         <xs:element ref="c" />
+        <xs:element ref="format" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
