@@ -1,3 +1,13 @@
+2009-08-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs:
+	* WebConnectionStream.cs: if there's an error writing the headers from
+	a buffered request, propagate the error instead of hiding it and
+	causing a different one later (ie, ObjectDisposedException instead of
+	the original WebException). This happened when posting without
+	Content-Length set to an HTTPS url without validating the server
+	certificate.
+
 2009-07-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: rethrow WebExceptions instead of creating a new one
