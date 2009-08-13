@@ -677,7 +677,7 @@ namespace Mono.CSharp {
 
 		public virtual Type LookupTypeParameter (string name)
 		{
-			return Parent.LookupTypeParameter (name);
+			return Parent.PartialContainer.LookupTypeParameter (name);
 		}
 
 		/// <summary>
@@ -1240,14 +1240,14 @@ namespace Mono.CSharp {
 			}
 
 			if (Parent != null)
-				return Parent.LookupTypeParameter (name);
+				return Parent.PartialContainer.LookupTypeParameter (name);
 
 			return null;
 		}
 
 		Type LookupLocalTypeParameter (string name)
 		{
-			foreach (var tp in CurrentTypeParameters) {
+			foreach (var tp in type_params) {
 				if (tp.Name == name)
 					return tp.Type;
 			}
