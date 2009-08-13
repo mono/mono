@@ -1,5 +1,9 @@
 2009-08-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_reflection_type_get_handle): Fix typo.
+
+2009-08-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Add mono_class_get_field_from_name_full which does
 	the same as mono_class_get_field_from_name but does check field
 	signature as well.
