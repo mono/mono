@@ -34,6 +34,7 @@ namespace System.Windows.Forms {
 		private object state;
 		private bool completed;
 		private object return_value;
+		private Exception exception;
 
 		public AsyncMethodResult ()
 		{
@@ -68,10 +69,18 @@ namespace System.Windows.Forms {
 		public object EndInvoke ()
 		{
 			lock (this) {
-				if (completed)
-					return return_value;
+				if (completed) {
+					if (exception == null)
+						return return_value;
+					else
+						throw exception;
+				}
 			}
 			handle.WaitOne ();
+			
+			if (exception != null)
+				throw exception;
+				
 			return return_value;
 		}
 
@@ -80,6 +89,15 @@ namespace System.Windows.Forms {
 			lock (this) {
 				completed = true;
 				return_value = result;
+				handle.Set ();
+			}
+		}
+		
+		public void CompleteWithException (Exception ex)
+		{
+			lock (this) {
+				completed = true;
+				exception = ex;
 				handle.Set ();
 			}
 		}

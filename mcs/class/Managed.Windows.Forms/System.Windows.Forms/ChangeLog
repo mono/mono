@@ -1,3 +1,13 @@
+2009-08-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* AsyncMethodResult.cs: Store a exception field in case the called
+	method actually caused an exception. This way we can throw it later.
+	* XplatUIDriver.cs: Check if the async method result has an exception
+	- throw it if needed. 
+	The idea is that Control.Invoke throws the exception from the thread
+	that called it, not the main MWF thread. 
+	Patch by Tom Spink <tspink@gmail.com>. Fixes #497175.
+
 2009-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGrid.cs: In mouse move we need to shift the selection in case
