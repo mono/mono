@@ -1,5 +1,10 @@
 2009-08-13  Jonathan Pryor  <jpryor@novell.com>
 
+	* Monodoc/provider.cs: Add a RootTree.AddSource(string) method, so that 
+	  additional directories can be checked for .source file loading.
+
+2009-08-13  Jonathan Pryor  <jpryor@novell.com>
+
 	* Monodoc/provider.cs: Make RootTree.LoadTree() just call
 	  RootTree.LoadTree(null), and move the .config-file parsing into
 	  .LoadTree(string) (for when basedir==null).  This will simplify the

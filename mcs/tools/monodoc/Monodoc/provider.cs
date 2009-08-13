@@ -893,14 +893,40 @@ public class RootTree : Tree {
 		//
 		// Load the sources
 		//
-		string sources_dir = Path.Combine (basedir, "sources");
+		root.AddSource (Path.Combine (basedir, "sources"));
 		
+		foreach (string path in UncompiledHelpSources) {
+			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
+			hs.RootTree = root;
+			root.help_sources.Add (hs);
+			string epath = "extra-help-source-" + hs.Name;
+			Node hsn = root.CreateNode (hs.Name, "root:/" + epath);
+			root.name_to_hs [epath] = hs;
+			hsn.EnsureNodes ();
+			foreach (Node n in hs.Tree.Nodes){
+				hsn.AddNode (n);
+			}
+		}
+		
+		// Clean the tree
+		PurgeNode(root);
+
+		root.Sort ();
+
+		return root;
+	}
+
+	public void AddSource (string sources_dir)
+	{
+		Node third_party = LookupEntryPoint ("various") ?? this;
+
 		string [] files = Directory.GetFiles (sources_dir);
+
 		foreach (string file in files){
 			if (!file.EndsWith (".source"))
 				continue;
 
-			doc = new XmlDocument ();
+			XmlDocument doc = new XmlDocument ();
 			try {
 				doc.Load (file);
 			} catch {
@@ -910,7 +936,7 @@ public class RootTree : Tree {
 
 			XmlNodeList extra_nodes = doc.SelectNodes ("/monodoc/node");
 			if (extra_nodes.Count > 0)
-				root.Populate (third_party, extra_nodes);
+				Populate (third_party, extra_nodes);
 
 			XmlNodeList sources = doc.SelectNodes ("/monodoc/source");
 			if (sources == null){
@@ -941,11 +967,11 @@ public class RootTree : Tree {
 				HelpSource hs = GetHelpSource (provider, basefilepath);
 				if (hs == null)
 					continue;
-				hs.RootTree = root;
-				root.help_sources.Add (hs);
-				root.name_to_hs [path] = hs;
+				hs.RootTree = this;
+				help_sources.Add (hs);
+				name_to_hs [path] = hs;
 
-				Node parent = root.LookupEntryPoint (path);
+				Node parent = LookupEntryPoint (path);
 				if (parent == null){
 					Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
 					parent = third_party;
@@ -957,26 +983,6 @@ public class RootTree : Tree {
 				parent.Sort ();
 			}
 		}
-		
-		foreach (string path in UncompiledHelpSources) {
-			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
-			hs.RootTree = root;
-			root.help_sources.Add (hs);
-			string epath = "extra-help-source-" + hs.Name;
-			Node hsn = root.CreateNode (hs.Name, "root:/" + epath);
-			root.name_to_hs [epath] = hs;
-			hsn.EnsureNodes ();
-			foreach (Node n in hs.Tree.Nodes){
-				hsn.AddNode (n);
-			}
-		}
-		
-		// Clean the tree
-		PurgeNode(root);
-
-		root.Sort ();
-
-		return root;
 	}
 	
 	// Delete nodes which does not have documentaiton (source)
