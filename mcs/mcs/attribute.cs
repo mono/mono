@@ -198,12 +198,6 @@ namespace Mono.CSharp {
 				      "expression or array creation expression");
 		}
 		
-		static void Error_TypeParameterInAttribute (Location loc)
-		{
-			Report.Error (
-				-202, loc, "Can not use a type parameter in an attribute");
-		}
-
 		public void Error_MissingGuidAttribute ()
 		{
 			Report.Error (596, Location, "The Guid attribute must be specified with the ComImport attribute");
@@ -393,7 +387,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			DeclSpace ds = context.GenericDeclContainer;		
+			DeclSpace ds = context.GenericDeclContainer;
 			EmitContext ec = new EmitContext (context, ds, ds,
 				Location, null, typeof (Attribute), ds.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
@@ -559,11 +553,6 @@ namespace Mono.CSharp {
 				
 				if (!(member is PropertyExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (a);
-					return false;
-				}
-
-				if (a.Expr is TypeParameterExpr){
-					Error_TypeParameterInAttribute (Location);
 					return false;
 				}
 

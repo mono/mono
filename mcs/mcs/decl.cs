@@ -675,6 +675,11 @@ namespace Mono.CSharp {
 			return Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
+		public virtual Type LookupTypeParameter (string name)
+		{
+			return Parent.LookupTypeParameter (name);
+		}
+
 		/// <summary>
 		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
 		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
@@ -1075,6 +1080,9 @@ namespace Mono.CSharp {
 			if (TypeManager.HasElementType (check_type))
 				return CheckAccessLevel (TypeManager.GetElementType (check_type));
 
+			if (TypeManager.IsGenericParameter (check_type))
+				return true;
+
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
 
 			switch (check_attr){
@@ -1221,6 +1229,30 @@ namespace Mono.CSharp {
 				Cache [name] = e;
 			
 			return e;
+		}
+
+		public override Type LookupTypeParameter (string name)
+		{
+			if (type_params != null) {
+				Type t = LookupLocalTypeParameter (name);
+				if (t != null)
+					return t;
+			}
+
+			if (Parent != null)
+				return Parent.LookupTypeParameter (name);
+
+			return null;
+		}
+
+		Type LookupLocalTypeParameter (string name)
+		{
+			foreach (var tp in CurrentTypeParameters) {
+				if (tp.Name == name)
+					return tp.Type;
+			}
+
+			return null;
 		}
 
 		/// <remarks>
@@ -1385,28 +1417,6 @@ namespace Mono.CSharp {
 			get {
 				return count_type_params;
 			}
-		}
-
-		public TypeParameterExpr LookupGeneric (string name, Location loc)
-		{
-			if (!IsGeneric)
-				return null;
-
-			TypeParameter [] current_params;
-			if (this is TypeContainer)
-				current_params = PartialContainer.CurrentTypeParameters;
-			else
-				current_params = CurrentTypeParameters;
-
-			foreach (TypeParameter type_param in current_params) {
-				if (type_param.Name == name)
-					return new TypeParameterExpr (type_param, loc);
-			}
-
-			if (Parent != null)
-				return Parent.LookupGeneric (name, loc);
-
-			return null;
 		}
 
 		// Used for error reporting only

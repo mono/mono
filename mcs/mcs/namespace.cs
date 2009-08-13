@@ -1090,6 +1090,11 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
+		public Type LookupTypeParameter (string name)
+		{
+			return null;
+		}
+
 		public ICollection CompletionGetTypesStartingWith (DeclSpace ds, string prefix)
 		{
 			Hashtable result = new Hashtable ();

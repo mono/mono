@@ -284,9 +284,15 @@ namespace Mono.CSharp {
 
 			GenericTypeExpr ct = te as GenericTypeExpr;
 			if (ct != null) {
-				// Skip constrains check for overrides and explicit implementations
-				// TODO: they should use different overload
-				GenericMethod gm = ec.GenericDeclContainer as GenericMethod;
+				//
+				// TODO: Constrained type parameters check for parameters of generic method overrides is broken
+				// There are 2 solutions.
+				// 1, Skip this check completely when we are in override/explicit impl scope
+				// 2, Copy type parameters constraints from base implementation and pass (they have to be emitted anyway)
+				//
+				MemberCore gm = ec as GenericMethod;
+				if (gm == null)
+					gm = ec as Method;
 				if (gm != null && ((gm.ModFlags & Modifiers.OVERRIDE) != 0 || gm.MemberName.Left != null)) {
 					te.loc = loc;
 					return te;
@@ -2520,12 +2526,12 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			FullNamedExpression fne = ec.GenericDeclContainer.LookupGeneric (Name, loc);
-			if (fne != null)
-				return fne.ResolveAsTypeStep (ec, silent);
+			Type t = ec.LookupTypeParameter (Name);
+			if (t != null)
+				return new TypeParameterExpr (TypeManager.LookupTypeParameter (t), loc).ResolveAsTypeStep (ec, false);
 
 			int errors = Report.Errors;
-			fne = ec.LookupNamespaceOrType (Name, loc, /*ignore_cs0104=*/ false);
+			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, loc, /*ignore_cs0104=*/ false);
 
 			if (fne != null) {
 				if (fne.Type == null)

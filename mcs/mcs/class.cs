@@ -187,6 +187,11 @@ namespace Mono.CSharp {
 				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 			}
 
+			public Type LookupTypeParameter (string name)
+			{
+				return tc.PartialContainer.LookupTypeParameter (name);
+			}
+
 			public DeclSpace GenericDeclContainer {
 				get { return tc.GenericDeclContainer; }
 			}
@@ -893,7 +898,7 @@ namespace Mono.CSharp {
 					if (base_class == TypeManager.system_object_expr)
 						base_class = new_base_class;
 					else {
-						if (new_base_class != null && !new_base_class.Equals (base_class)) {
+						if (new_base_class != null && !TypeManager.IsEqual (new_base_class.Type, base_class.Type)) {
 							Report.SymbolRelatedToPreviousError (base_class.Location, "");
 							Report.Error (263, part.Location,
 								"Partial declarations of `{0}' must not specify different base classes",
@@ -3576,9 +3581,7 @@ namespace Mono.CSharp {
 
 		protected bool DefineParameters (ParametersCompiled parameters)
 		{
-			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
-
-			if (!parameters.Resolve (rc))
+			if (!parameters.Resolve (this))
 				return false;
 
 			bool error = false;
@@ -4369,6 +4372,17 @@ namespace Mono.CSharp {
 
 			base_ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 			return mi;
+		}
+
+		public override Type LookupTypeParameter (string name)
+		{
+			if (GenericMethod != null) {
+				Type t = GenericMethod.LookupTypeParameter (name);
+				if (t != null)
+					return t;
+			}
+
+			return base.LookupTypeParameter (name);
 		}
 
 		public void SetPartialDefinition (Method methodDefinition)
