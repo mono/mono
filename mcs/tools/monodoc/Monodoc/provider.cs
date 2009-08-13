@@ -848,19 +848,7 @@ public class RootTree : Tree {
 	
 	public static RootTree LoadTree ()
 	{
-		string basedir;
-		string myPath = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-		string cfgFile = myPath + ".config";
-		if (!File.Exists (cfgFile)) {
-			basedir = ".";
-			return LoadTree (basedir);
-		}
-		
-		XmlDocument d = new XmlDocument ();
-		d.Load (cfgFile);
-		basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
-		
-		return LoadTree (basedir);
+		return LoadTree (null);
 	}
 	
 	//
@@ -868,6 +856,18 @@ public class RootTree : Tree {
 	//
 	public static RootTree LoadTree (string basedir)
 	{
+		if (basedir == null) {
+			string myPath = System.Reflection.Assembly.GetExecutingAssembly ().Location;
+			string cfgFile = myPath + ".config";
+			if (!File.Exists (cfgFile)) {
+				basedir = ".";
+			}
+			else {
+				XmlDocument d = new XmlDocument ();
+				d.Load (cfgFile);
+				basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
+			}
+		}
 		XmlDocument doc = new XmlDocument ();
 
 		RootTree root = new RootTree ();

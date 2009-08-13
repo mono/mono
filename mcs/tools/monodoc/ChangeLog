@@ -1,4 +1,14 @@
-2009-09-10  Jonathan Pryor  <jpryor@novell.com>
+2009-08-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/provider.cs: Make RootTree.LoadTree() just call
+	  RootTree.LoadTree(null), and move the .config-file parsing into
+	  .LoadTree(string) (for when basedir==null).  This will simplify the
+	  logic of monodoc, as we want to add the ability to monodoc to use
+	  any arbitrary directory, and this will remove the need to do 
+	  `if (d==null) RootTree.LoadTree(); else RootTree.LoadTree(d)`.
+	  This also conforms to FxDG guidelines.
+
+2009-08-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* Resources/mdoc-html-format: Added; XSLT file to match
 	  "//format[@type='text/html']//*", to support "pass-through"
