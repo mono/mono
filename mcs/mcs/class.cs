@@ -6263,7 +6263,7 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				parameters.Resolve (ResolveContext);
+				parameters.Resolve (this);
 				
 				base.Define (parent);
 
@@ -7434,7 +7434,7 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				parameters.Resolve (ResolveContext);
+				parameters.Resolve (this);
 				return base.Define (parent);
 			}
 			

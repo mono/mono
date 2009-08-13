@@ -21,14 +21,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Abstract Base class for parameters of a method.
 	/// </summary>
-	public abstract class ParameterBase : Attributable {
-
+	public abstract class ParameterBase : Attributable
+	{
 		protected ParameterBuilder builder;
-
-		protected ParameterBase (Attributes attrs)
-			: base (attrs)
-		{
-		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
@@ -59,8 +54,7 @@ namespace Mono.CSharp {
 	/// Class for applying custom attributes on the return type
 	/// </summary>
 	public class ReturnParameter : ParameterBase {
-		public ReturnParameter (MethodBuilder mb, Location location):
-			base (null)
+		public ReturnParameter (MethodBuilder mb, Location location)
 		{
 			try {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
@@ -95,12 +89,6 @@ namespace Mono.CSharp {
 				pa.EmitAttribute (builder, loc);
 		}
 
-		public override IResolveContext ResolveContext {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
 		/// <summary>
 		/// Is never called
 		/// </summary>
@@ -118,8 +106,7 @@ namespace Mono.CSharp {
 	/// 
 	// TODO: should use more code from Parameter.ApplyAttributeBuilder
 	public class ImplicitParameter : ParameterBase {
-		public ImplicitParameter (MethodBuilder mb):
-			base (null)
+		public ImplicitParameter (MethodBuilder mb)
 		{
 			builder = mb.DefineParameter (1, ParameterAttributes.None, "value");			
 		}
@@ -127,12 +114,6 @@ namespace Mono.CSharp {
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Parameter;
-			}
-		}
-
-		public override IResolveContext ResolveContext {
-			get {
-				throw new NotSupportedException ();
 			}
 		}
 
@@ -258,14 +239,12 @@ namespace Mono.CSharp {
 		int idx;
 		public bool HasAddressTaken;
 
-		IResolveContext resolve_context;
 		LocalVariableReference expr_tree_variable;
 		static TypeExpr parameter_expr_tree_type;
 
 		public HoistedVariable HoistedVariableReference;
 
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
-			: base (attrs)
 		{
 			if (type == TypeManager.system_void_expr)
 				Report.Error (1536, loc, "Invalid parameter type `void'");
@@ -274,6 +253,9 @@ namespace Mono.CSharp {
 			modFlags = mod;
 			Location = loc;
 			TypeName = type;
+
+			// Only assign, attributes will be attached during resolve
+			base.attributes = attrs;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
@@ -345,22 +327,16 @@ namespace Mono.CSharp {
 			return member.IsAccessibleAs (parameter_type);
 		}
 
-		public override IResolveContext ResolveContext {
-			get {
-				return resolve_context;
-			}
-		}
-
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
 		public virtual Type Resolve (IResolveContext rc)
 		{
-			// HACK: to resolve attributes correctly
-			this.resolve_context = rc;
-
 			if (parameter_type != null)
 				return parameter_type;
+
+			if (attributes != null)
+				attributes.AttachTo (this, rc);
 
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (rc, false);
 			if (texpr == null)
@@ -557,10 +533,8 @@ namespace Mono.CSharp {
 		public Parameter Clone ()
 		{
 			Parameter p = (Parameter) MemberwiseClone ();
-			if (attributes != null) {
+			if (attributes != null)
 				p.attributes = attributes.Clone ();
-				p.attributes.AttachTo (p);
-			}
 
 			return p;
 		}

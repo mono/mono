@@ -29,28 +29,30 @@ namespace Mono.CSharp {
 	///   Base class for objects that can have Attributes applied to them.
 	/// </summary>
 	public abstract class Attributable {
-		/// <summary>
-		///   Attributes for this type
-		/// </summary>
+		//
+		// Holds all attributes attached to this element
+		//
  		protected Attributes attributes;
 
-		public Attributable (Attributes attrs)
+		public void AddAttributes (Attributes attrs, IResolveContext context)
 		{
-			if (attrs != null)
-				OptAttributes = attrs;
+			if (attrs == null)
+				return;
+
+			if (attributes == null)
+				attributes = attrs;
+			else
+				throw new NotImplementedException ();
+
+			attributes.AttachTo (this, context);
 		}
 
-		public Attributes OptAttributes 
-		{
+		public Attributes OptAttributes {
 			get {
 				return attributes;
 			}
 			set {
 				attributes = value;
-
-				if (attributes != null) {
-					attributes.AttachTo (this);
-				}
 			}
 		}
 
@@ -64,8 +66,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract AttributeTargets AttributeTargets { get; }
 
-		public abstract IResolveContext ResolveContext { get; }
-
 		public abstract bool IsClsComplianceRequired ();
 
 		/// <summary>
@@ -77,51 +77,6 @@ namespace Mono.CSharp {
 
 	public class Attribute : Expression
 	{
-		//
-		// Wraps owner resolve context, the owner is an attribute
-		// parent and the rest is exactly same
-		//
-		struct AttributeResolveContext : IResolveContext
-		{
-			readonly IResolveContext rc;
-
-			public AttributeResolveContext (IResolveContext rc)
-			{
-				this.rc = rc;
-			}
-
-			#region IResolveContext Members
-
-			public DeclSpace DeclContainer {
-				get {
-					DeclSpace ds = rc as DeclSpace;
-					if (ds == null)
-						return rc.DeclContainer;
-
-					return ds;
-				}
-			}
-
-			public bool IsInObsoleteScope {
-				get { return rc.IsInObsoleteScope; }
-			}
-
-			public bool IsInUnsafeScope {
-				get { return rc.IsInUnsafeScope; }
-			}
-
-			public DeclSpace GenericDeclContainer {
-				get { return rc.GenericDeclContainer; }
-			}
-
-			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
-			{
-				return rc.LookupNamespaceOrType (name, loc, ignore_cs0104);
-			}
-
-			#endregion
-		}
-
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
 
@@ -136,8 +91,16 @@ namespace Mono.CSharp {
 		bool resolve_error;
 		readonly bool nameEscaped;
 
-		// It can contain more onwers when the attribute is applied to multiple fiels.
-		protected Attributable[] owners;
+		//
+		// An attribute can be attached to multiple targets (e.g. multiple fields)
+		//
+		protected Attributable[] targets;
+
+		//
+		// A member context for the attribute, it's much easier to hold it here
+		// than trying to pull it during resolve
+		//
+		IResolveContext context;
 
 		static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
@@ -187,22 +150,30 @@ namespace Mono.CSharp {
 			att_cache = new PtrHashtable ();
 		}
 
-		public virtual void AttachTo (Attributable owner)
+		//
+		// When the same attribute is attached to multiple fiels
+		// we use @target field as a list of targets. The attribute
+		// has to be resolved only once but emitted for each target.
+		//
+		public virtual void AttachTo (Attributable target, IResolveContext context)
 		{
-			if (this.owners == null) {
-				this.owners = new Attributable[1] { owner };
+			if (this.targets == null) {
+				this.targets = new Attributable[] { target };
+				this.context = context;
 				return;
 			}
 
-			// When the same attribute is attached to multiple fiels
-			// we use this extra_owners as a list of owners. The attribute
-			// then can be removed because will be emitted when first owner
-			// is served
-			Attributable[] new_array = new Attributable [this.owners.Length + 1];
-			owners.CopyTo (new_array, 0);
-			new_array [owners.Length] = owner;
-			this.owners = new_array;
-			owner.OptAttributes = null;
+			// Resize target array
+			Attributable[] new_array = new Attributable [this.targets.Length + 1];
+			targets.CopyTo (new_array, 0);
+			new_array [targets.Length] = target;
+			this.targets = new_array;
+
+			// No need to update context, different targets cannot have
+			// different contexts, it's enough to remove same attributes
+			// from secondary members.
+
+			target.OptAttributes = null;
 		}
 
 		void Error_InvalidNamedArgument (NamedArgument name)
@@ -260,7 +231,7 @@ namespace Mono.CSharp {
 
 		Attributable Owner {
 			get {
-				return owners [0];
+				return targets [0];
 			}
 		}
 
@@ -271,13 +242,11 @@ namespace Mono.CSharp {
 
 		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
 		{
-			IResolveContext rc = new AttributeResolveContext (Owner.ResolveContext);
-
 			TypeExpr te;
 			if (LeftExpr == null) {
-				te = ResolveAsTypeTerminal (new SimpleName (name, Location), rc, silent);
+				te = ResolveAsTypeTerminal (new SimpleName (name, Location), context, silent);
 			} else {
-				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name), rc, silent);
+				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name), context, silent);
 			}
 
 			if (te == null)
@@ -424,12 +393,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Attributable owner = Owner;
-			DeclSpace ds = owner.ResolveContext as DeclSpace;
-			if (ds == null)
-				ds = owner.ResolveContext.DeclContainer;
-			
-			EmitContext ec = new EmitContext (owner.ResolveContext, ds, ds,
+			DeclSpace ds = context.GenericDeclContainer;		
+			EmitContext ec = new EmitContext (context, ds, ds,
 				Location, null, typeof (Attribute), ds.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
 
@@ -660,7 +625,7 @@ namespace Mono.CSharp {
 					field_infos.Add (fi);
 				}
 
-				if (obsolete_attr != null && !Owner.ResolveContext.IsInObsoleteScope)
+				if (obsolete_attr != null && !context.IsInObsoleteScope)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location);
 			}
 
@@ -1242,10 +1207,9 @@ namespace Mono.CSharp {
 			}
 
 			try {
-				foreach (Attributable owner in owners)
-					owner.ApplyAttributeBuilder (this, cb, PredefinedAttributes.Get);
-			}
-			catch (Exception e) {
+				foreach (Attributable target in targets)
+					target.ApplyAttributeBuilder (this, cb, PredefinedAttributes.Get);
+			} catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
 				return;
 			}
@@ -1340,19 +1304,20 @@ namespace Mono.CSharp {
 			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
 			this.ns = ns;
-			this.owners = new Attributable[1];
 		}
 		
-		public override void AttachTo (Attributable owner)
+		public override void AttachTo (Attributable target, IResolveContext context)
 		{
 			if (ExplicitTarget == "assembly") {
-				owners [0] = CodeGen.Assembly;
+				base.AttachTo (CodeGen.Assembly, context);
 				return;
 			}
+
 			if (ExplicitTarget == "module") {
-				owners [0] = RootContext.ToplevelTypes;
+				base.AttachTo (RootContext.ToplevelTypes, context);
 				return;
 			}
+
 			throw new NotImplementedException ("Unknown global explicit target " + ExplicitTarget);
 		}
 
@@ -1434,10 +1399,10 @@ namespace Mono.CSharp {
 			Attrs.AddRange (attrs);
 		}
 
-		public void AttachTo (Attributable attributable)
+		public void AttachTo (Attributable attributable, IResolveContext context)
 		{
 			foreach (Attribute a in Attrs)
-				a.AttachTo (attributable);
+				a.AttachTo (attributable, context);
 		}
 
 		public Attributes Clone ()

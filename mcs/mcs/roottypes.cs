@@ -62,7 +62,7 @@ namespace Mono.CSharp
 		public void AddAttributes (ArrayList attrs)
 		{
 			foreach (Attribute a in attrs)
-				a.AttachTo (this);
+				a.AttachTo (this, CodeGen.Assembly);
 
 			if (attributes == null) {
 				attributes = new Attributes (attrs);
@@ -152,10 +152,6 @@ namespace Mono.CSharp
 			get {
 				return this;
 			}
-		}
-
-		public override IResolveContext ResolveContext {
-			get { return this; }
 		}
 
 		protected override bool AddMemberType (DeclSpace ds)

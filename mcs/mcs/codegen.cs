@@ -1061,17 +1061,12 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext {
-
-		protected CommonAssemblyModulClass ():
-			base (null)
-		{
-		}
-
+	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext
+	{
 		public void AddAttributes (ArrayList attrs)
 		{
 			foreach (Attribute a in attrs)
-				a.AttachTo (this);
+				a.AttachTo (this, this);
 
 			if (attributes == null) {
 				attributes = new Attributes (attrs);
@@ -1095,10 +1090,6 @@ namespace Mono.CSharp {
 				a.Resolve ();
 			}
 			return a;
-		}
-
-		public override IResolveContext ResolveContext {
-			get { return this; }
 		}
 
 		#region IResolveContext Members
@@ -1199,7 +1190,7 @@ namespace Mono.CSharp {
 
 				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly", system_security_permissions,
 					"SecurityPermissionAttribute", new Arguments[] { pos, named }, loc, false);
-				g.AttachTo (this);
+				g.AttachTo (this, this);
 
 				if (g.Resolve () != null) {
 					declarative_security = new ListDictionary ();

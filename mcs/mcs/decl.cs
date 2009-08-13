@@ -317,11 +317,11 @@ namespace Mono.CSharp {
 		internal Flags caching_flags;
 
 		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
-			: base (attrs)
 		{
 			this.Parent = parent;
 			member_name = name;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
+			AddAttributes (attrs, this);
 		}
 
 		protected virtual void SetMemberName (MemberName new_name)
@@ -806,10 +806,6 @@ namespace Mono.CSharp {
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
-		}
-
-		public override IResolveContext ResolveContext {
-			get { return this; }
 		}
 
 		#region IResolveContext Members
