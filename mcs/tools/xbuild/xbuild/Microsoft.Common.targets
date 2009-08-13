@@ -68,7 +68,7 @@
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
-			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutDir)"
+			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{PkgConfig};{GAC};{RawFileName};$(OutDir)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"

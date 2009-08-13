@@ -122,8 +122,8 @@ namespace Microsoft.Build.Tasks {
 							resolved_ref.TaskItem.GetMetadata ("CopyLocal"));
 
 					Log.LogMessage (MessageImportance.Low,
-							"\tReference found at search path '{0}'",
-							resolved_ref.FoundInSearchPathAsString ());
+							"\tReference found at search path {0}",
+							resolved_ref.FoundInSearchPathAsString);
 
 					if (TryAddNewReference (tempResolvedFiles, resolved_ref) &&
 						!IsFromGacOrTargetFramework (resolved_ref)) {
@@ -199,6 +199,8 @@ namespace Microsoft.Build.Tasks {
 				} else if (String.Compare (spath, "{CandidateAssemblyFiles}") == 0) {
 					assembly_resolver.SearchLogger.WriteLine (
 							"Warning: {CandidateAssemblyFiles} not supported currently");
+				} else if (String.Compare (spath, "{PkgConfig}") == 0) {
+					resolved = assembly_resolver.ResolvePkgConfigReference (item, specific_version);
 				} else {
 					resolved = assembly_resolver.FindInDirectory (
 							item, spath,
@@ -332,8 +334,8 @@ namespace Microsoft.Build.Tasks {
 					aname, resolved_ref.TaskItem.ItemSpec);
 
 				Log.LogMessage (MessageImportance.Low,
-						"\tReference found at search path '{0}'",
-						resolved_ref.FoundInSearchPathAsString ());
+						"\tReference found at search path {0}",
+						resolved_ref.FoundInSearchPathAsString);
 
 				if (resolved_ref.FoundInSearchPath == SearchPath.Directory) {
 					// override CopyLocal with parent's val
@@ -350,8 +352,8 @@ namespace Microsoft.Build.Tasks {
 				} else {
 					//gac or tgtfmwk
 					Log.LogMessage (MessageImportance.Low,
-							"\tThis is CopyLocal {0} as it is in the gac or one " +
-							"of the target framework directories",
+							"\tThis is CopyLocal {0} as it is in the gac," +
+							"target framework directory or provided by a package.",
 							copy_local);
 
 					TryAddNewReference (tempResolvedFiles, resolved_ref);

@@ -32,10 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.PkgConfig;
 
 namespace Microsoft.Build.Tasks {
 	internal class AssemblyResolver {
@@ -45,6 +47,8 @@ namespace Microsoft.Build.Tasks {
 		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
 		StringWriter sw;
+
+		static PcFileCache cache;
 
 		public AssemblyResolver ()
 		{
@@ -221,6 +225,34 @@ namespace Microsoft.Build.Tasks {
 			return GetResolvedReference (reference, gac [name.Name] [highest], name, false, SearchPath.Gac);
 		}
 
+		public ResolvedReference ResolvePkgConfigReference (ITaskItem reference, bool specific_version)
+		{
+			PackageAssemblyInfo pkg = null;
+
+			if (specific_version) {
+				pkg = PcCache.GetAssemblyLocation (reference.ItemSpec);
+			} else {
+				// if not specific version, then just match simple name
+				string name = reference.ItemSpec;
+				if (name.IndexOf (',') > 0)
+					name = name.Substring (0, name.IndexOf (','));
+				pkg = PcCache.ResolveAssemblyName (name).FirstOrDefault ();
+			}
+
+			if (pkg == null) {
+				SearchLogger.WriteLine ("Considered {0}, but could not find in any pkg-config files.",
+						reference.ItemSpec);
+				return null;
+			}
+
+			ResolvedReference rr = GetResolvedReference (reference, pkg.File, new AssemblyName (pkg.FullName),
+						false, SearchPath.PkgConfig);
+			rr.FoundInSearchPathAsString = String.Format ("{{PkgConfig}} provided by package named {0}",
+							pkg.ParentPackage.Name);
+
+			return rr;
+		}
+
 		public ResolvedReference ResolveHintPathReference (ITaskItem reference, bool specific_version)
 		{
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
@@ -272,34 +304,37 @@ namespace Microsoft.Build.Tasks {
 			return aname;
 		}
 
+		// if @specificVersion is true then match full name, else just the simple name
 		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
 		{
 			if (a.Name != b.Name)
 				return false;
 
+			if (!specificVersion)
+				// ..and simple names match
+				return true;
+
 			if (a.CultureInfo != null && !a.CultureInfo.Equals (b.CultureInfo))
 				return false;
 
-			if (specificVersion && a.Version != null && a.Version != b.Version)
+			if (a.Version != null && a.Version != b.Version)
 				return false;
 
 			byte [] a_bytes = a.GetPublicKeyToken ();
 			byte [] b_bytes = b.GetPublicKeyToken ();
 
-			if (specificVersion) {
-				bool a_is_empty = (a_bytes == null || a_bytes.Length == 0);
-				bool b_is_empty = (b_bytes == null || b_bytes.Length == 0);
+			bool a_is_empty = (a_bytes == null || a_bytes.Length == 0);
+			bool b_is_empty = (b_bytes == null || b_bytes.Length == 0);
 
-				if (a_is_empty && b_is_empty)
-					return true;
+			if (a_is_empty && b_is_empty)
+				return true;
 
-				if (a_is_empty || b_is_empty)
+			if (a_is_empty || b_is_empty)
+				return false;
+
+			for (int i = 0; i < a_bytes.Length; i++)
+				if (a_bytes [i] != b_bytes [i])
 					return false;
-
-				for (int i = 0; i < a_bytes.Length; i++)
-					if (a_bytes [i] != b_bytes [i])
-						return false;
-			}
 
 			return true;
 		}
@@ -313,14 +348,14 @@ namespace Microsoft.Build.Tasks {
 
 		// FIXME: to get default values of CopyLocal, compare with TargetFrameworkDirectories
 
-		// If metadata 'Private' is present then use that or use @default_value
+		// If metadata 'Private' is present then use that or use @default_copy_local_value
 		// as the value for CopyLocal
 		internal ResolvedReference GetResolvedReference (ITaskItem reference, string filename,
-				AssemblyName aname, bool default_value, SearchPath search_path)
+				AssemblyName aname, bool default_copy_local_value, SearchPath search_path)
 		{
 			string pvt = reference.GetMetadata ("Private");
 
-			bool copy_local = default_value;
+			bool copy_local = default_copy_local_value;
 			if (!String.IsNullOrEmpty (pvt))
 				//FIXME: log a warning for invalid value
 				Boolean.TryParse (pvt, out copy_local);
@@ -331,7 +366,22 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		public TaskLoggingHelper Log {
-			set { log = value; }
+			set {
+				log = value;
+				PcFileCacheContext.Log = value;
+			}
+		}
+
+		static PcFileCache PcCache  {
+			get {
+				if (cache == null) {
+					PcFileCacheContext context = new PcFileCacheContext ();
+					cache = new PcFileCache (context);
+					cache.Update ();
+				}
+
+				return cache;
+			}
 		}
 	}
 
@@ -348,6 +398,31 @@ namespace Microsoft.Build.Tasks {
 		}
 	}
 
+	class PcFileCacheContext : IPcFileCacheContext
+	{
+		public static TaskLoggingHelper Log;
+
+		// In the implementation of this method, the host application can extract
+		// information from the pc file and store it in the PackageInfo object
+		public void StoreCustomData (PcFile pcfile, PackageInfo pkg)
+		{
+		}
+
+		// Should return false if the provided package does not have required
+		// custom data
+		public bool IsCustomDataComplete (string pcfile, PackageInfo pkg)
+		{
+			return true;
+		}
+
+		// Called to report errors
+		public void ReportError (string message, Exception ex)
+		{
+			Log.LogMessage (MessageImportance.Low, "Error loading pkg-config files: {0} : {1}",
+					message, ex.ToString ());
+		}
+	}
+
 	enum SearchPath
 	{
 		Gac,
@@ -355,7 +430,8 @@ namespace Microsoft.Build.Tasks {
 		CandidateAssemblies,
 		HintPath,
 		Directory,
-		RawFileName
+		RawFileName,
+		PkgConfig
 	}
 }
 

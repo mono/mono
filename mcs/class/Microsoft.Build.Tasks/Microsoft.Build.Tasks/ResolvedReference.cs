@@ -41,6 +41,8 @@ namespace Microsoft.Build.Tasks {
 		public bool CopyLocal;
 		public bool IsPrimary; //default: true
 
+		string found_search_path_string;
+
 		public ResolvedReference (ITaskItem item, AssemblyName asm_name, bool copy_local, SearchPath search_path,
 				string original_item_spec)
 		{
@@ -51,10 +53,20 @@ namespace Microsoft.Build.Tasks {
 			FoundInSearchPath = search_path;
 
 			TaskItem.SetMetadata ("OriginalItemSpec", original_item_spec);
-			TaskItem.SetMetadata ("ResolvedFrom", FoundInSearchPathAsString ());
+			TaskItem.SetMetadata ("ResolvedFrom", FoundInSearchPathToString ());
 		}
 
-		public string FoundInSearchPathAsString ()
+		public string FoundInSearchPathAsString {
+			get {
+				if (found_search_path_string == null)
+					return FoundInSearchPathToString ();
+				else
+					return found_search_path_string;
+			}
+			set { found_search_path_string = value; }
+		}
+
+		string FoundInSearchPathToString ()
 		{
 			switch (FoundInSearchPath) {
 			case SearchPath.Gac:
@@ -69,6 +81,8 @@ namespace Microsoft.Build.Tasks {
 				return "{RawFileName}";
 			case SearchPath.Directory:
 				return TaskItem.ItemSpec;
+			case SearchPath.PkgConfig:
+				return "{PkgConfig}";
 			default:
 				throw new NotImplementedException (String.Format (
 						"Implement me for SearchPath: {0}", FoundInSearchPath));

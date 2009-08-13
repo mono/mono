@@ -1,3 +1,20 @@
+2009-08-14  Ankit Jain  <jankit@novell.com>
+
+	* PcFileCache.cs: New. From monodevelop.
+	* AssemblyResolver.cs (ResolvePkgConfigReference): New. Use PcFileCache
+	to resolve assembly references.
+	(AssemblyNamesCompatible): If SpecificVersion is false, then compare
+	only simple names.
+	(GetResolvedReference): Rename default_value to default_copy_local_value.
+	(Cache): New.
+	(PcFileCacheContext): New.
+	(SearchPath): Add 'PkgConfig' to the enum.
+	* ResolveAssemblyReference.cs: Add support for '{PkgConfig}'. Update
+	messages.
+	* ResolvedReference.cs (FoundInSearchPathToString): Create from ..
+	(FoundInSearchPathAsString): .. this. Change this to a property to
+	allow custom "found in .. " messages.
+
 2009-07-31  Ankit Jain  <jankit@novell.com>
 
 	* MSBuild.cs (Execute): Log error if the file doesn't exist.
