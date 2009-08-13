@@ -1068,11 +1068,6 @@ namespace System.Net
 			usedPreAuth = true;
 		}
 		
-		internal void SetWriteStreamError (WebExceptionStatus status)
-		{
-			SetWriteStreamError (status, null);
-		}
-
 		internal void SetWriteStreamError (WebExceptionStatus status, Exception exc)
 		{
 			if (Aborted)
@@ -1097,7 +1092,7 @@ namespace System.Net
 			}
 		}
 
-		internal void SendRequestHeaders ()
+		internal void SendRequestHeaders (bool propagate_error)
 		{
 			StringBuilder req = new StringBuilder ();
 			string query;
@@ -1128,9 +1123,13 @@ namespace System.Net
 			try {
 				writeStream.SetHeaders (bytes);
 			} catch (WebException wexc) {
-				SetWriteStreamError (wexc.Status);
-			} catch (Exception) {
-				SetWriteStreamError (WebExceptionStatus.SendFailure);
+				SetWriteStreamError (wexc.Status, wexc);
+				if (propagate_error)
+					throw;
+			} catch (Exception exc) {
+				SetWriteStreamError (WebExceptionStatus.SendFailure, exc);
+				if (propagate_error)
+					throw;
 			}
 		}
 
@@ -1146,7 +1145,7 @@ namespace System.Net
 				writeStream.SendChunked = false;
 			}
 
-			SendRequestHeaders ();
+			SendRequestHeaders (false);
 
 			haveRequest = true;
 			

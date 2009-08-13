@@ -677,7 +677,7 @@ namespace System.Net
 							method == "TRACE" || method == "DELETE");
 				if (!no_writestream)
 					request.InternalContentLength = length;
-				request.SendRequestHeaders ();
+				request.SendRequestHeaders (true);
 			}
 			WriteHeaders ();
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
