@@ -789,13 +789,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				TypeExpr te = resolved as TypeExpr;
-				if (te != null) {
-					if (!te.CheckAccessLevel (rc.DeclContainer)) {
-						Report.SymbolRelatedToPreviousError (te.Type);
-						Expression.ErrorIsInaccesible (resolved.Location, resolved.GetSignatureForError ());
-					}
-				}
+				if (resolved is TypeExpr)
+					resolved = resolved.ResolveAsBaseTerminal (rc, false);
 
 				return resolved;
 			}

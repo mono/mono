@@ -7227,6 +7227,8 @@ namespace Mono.CSharp {
 			}
 
 			int errors = Report.Errors;
+			// TODO: Implement ec.Namespace
+
 			expr = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
 			if (expr == null) {
 				if (errors == Report.Errors)

@@ -1,5 +1,10 @@
 2009-08-13  Marek Safar  <marek.safar@gmail.com>
 
+	* lambda.cs, expression.cs, statement.cs, namespace.cs, ecore.cs:
+	Moved resolved logic from Emit to Resolve.
+
+2009-08-13  Marek Safar  <marek.safar@gmail.com>
+
 	* parameter.cs, decl.cs, roottypes.cs, class.cs, attribute.cs,
 	codegen.cs: Reworked atttributes handling of ResolveContext.
 

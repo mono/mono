@@ -2451,11 +2451,11 @@ namespace Mono.CSharp {
 					name);
 		}
 
-		public bool IdenticalNameAndTypeName (EmitContext ec, Expression resolved_to, Location loc)
+		public bool IdenticalNameAndTypeName (IResolveContext mc, Expression resolved_to, Location loc)
 		{
 			return resolved_to != null && resolved_to.Type != null && 
 				resolved_to.Type.Name == Name &&
-				(ec.LookupNamespaceOrType (Name, loc, /* ignore_cs0104 = */ true) != null);
+				(mc.LookupNamespaceOrType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

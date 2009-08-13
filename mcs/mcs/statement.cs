@@ -4295,29 +4295,30 @@ namespace Mono.CSharp {
 				pinned_string.Pinned = true;
 			}
 
+			public StringEmitter Resolve (EmitContext rc)
+			{
+				pinned_string.Resolve (rc);
+
+				if (TypeManager.int_get_offset_to_string_data == null) {
+					TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (
+						TypeManager.runtime_helpers_type, "OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
+				}
+
+				return this;
+			}
+
 			public override void Emit (EmitContext ec)
 			{
-				pinned_string.Resolve (ec);
 				pinned_string.ResolveVariable (ec);
 
 				converted.Emit (ec);
 				pinned_string.EmitAssign (ec);
 
-				PropertyInfo p = TypeManager.int_get_offset_to_string_data;
-				if (p == null) {
-					// TODO: Move to resolve
-					p = TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (
-						TypeManager.runtime_helpers_type, "OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
-
-					if (p == null)
-						return;
-				}
-
 				// TODO: Should use Binary::Add
 				pinned_string.Emit (ec);
 				ec.ig.Emit (OpCodes.Conv_I);
 
-				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, p, pinned_string.Location);
+				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, TypeManager.int_get_offset_to_string_data, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (ec).Emit (ec);
 
@@ -4442,7 +4443,7 @@ namespace Mono.CSharp {
 				// Case 3: string
 				//
 				if (e.Type == TypeManager.string_type){
-					data [i] = new StringEmitter (e, vi, loc);
+					data [i] = new StringEmitter (e, vi, loc).Resolve (ec);
 					i++;
 					continue;
 				}
