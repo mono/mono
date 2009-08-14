@@ -1,3 +1,8 @@
+2009-08-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arm_emit_load_imm): Use movt/movw if the cpu
+	supports it.
+
 2009-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (arch_emit_imt_thunk): Rework the arm code to
