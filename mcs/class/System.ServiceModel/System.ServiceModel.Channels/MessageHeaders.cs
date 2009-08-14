@@ -318,7 +318,8 @@ namespace System.ServiceModel.Channels
 			}
 			set {
 				RemoveAll ("Action", version.Addressing.Namespace);
-				Add (MessageHeader.CreateHeader ("Action", version.Addressing.Namespace, value, true));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("Action", version.Addressing.Namespace, value, true));
 			}
 		}
 
@@ -337,10 +338,8 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("FaultTo", Constants.WSA1);
-				Add (MessageHeader.CreateHeader (
-						"FaultTo", 
-						Constants.WSA1,
-						EndpointAddress10.FromEndpointAddress (value)));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("FaultTo", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
 
@@ -354,10 +353,8 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("From", Constants.WSA1);
-				Add (MessageHeader.CreateHeader (
-						"From", 
-						Constants.WSA1,
-						EndpointAddress10.FromEndpointAddress (value)));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("From", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
 #endif
@@ -376,10 +373,8 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("MessageID", Constants.WSA1);
-				Add (MessageHeader.CreateHeader (
-						"MessageID", 
-						Constants.WSA1,
-						value.ToString ()));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("MessageID", Constants.WSA1, value.ToString ()));
 			}
 		}
 
@@ -395,10 +390,8 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("MessageID", Constants.WSA1);
-				Add (MessageHeader.CreateHeader (
-						"RelatesTo", 
-						Constants.WSA1,
-						value.ToString ()));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WSA1, value.ToString ()));
 			}
 
 		}
@@ -414,10 +407,8 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("ReplyTo", Constants.WSA1);
-				Add (MessageHeader.CreateHeader (
-						"ReplyTo", 
-						Constants.WSA1,
-						EndpointAddress10.FromEndpointAddress (value)));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("ReplyTo", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
 #endif
@@ -430,11 +421,8 @@ namespace System.ServiceModel.Channels
 			}
 			set { 
 				RemoveAll ("To", version.Addressing.Namespace);
-				Add (MessageHeader.CreateHeader (
-						"To", 
-						version.Addressing.Namespace, 
-						value.AbsoluteUri,
-						true));
+				if (value != null)
+					Add (MessageHeader.CreateHeader ("To", version.Addressing.Namespace, value.AbsoluteUri, true));
 			}
 		}
 

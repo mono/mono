@@ -1,5 +1,9 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : allow null header value on each specific setter.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelBase.cs, TcpDuplexSessionChannel.cs :
 	  get local and remote address of connected counterpart to get
 	  callback channel connected.
