@@ -101,8 +101,8 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks		\
 	System.Core			\
+	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
