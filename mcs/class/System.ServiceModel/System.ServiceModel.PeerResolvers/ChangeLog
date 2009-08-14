@@ -1,5 +1,9 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IPeerConnectorContract.cs : add itself as CallbackContract.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPeerConnectorContract.cs : remove receiver contract.
 
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>

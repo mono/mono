@@ -12,7 +12,7 @@ namespace System.ServiceModel.PeerResolvers
 		public const string Namespace = "http://schemas.microsoft.com/net/2006/05/peer";
 	}
 
-	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
+	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed, CallbackContract = typeof (IPeerConnectorContract))]
 	internal interface IPeerConnectorContract
 	{
 		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
