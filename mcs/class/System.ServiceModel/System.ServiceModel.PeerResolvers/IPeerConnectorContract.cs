@@ -45,6 +45,8 @@ namespace System.ServiceModel.PeerResolvers
 
 		[OperationContract (IsOneWay = true)]
 		void SendMessage (Message msg);
+		[OperationContract (Action = Consts.Namespace + "/Disconnect", IsOneWay = true)]
+		void Disconnect (DisconnectInfo disconnect);
 	}
 
 	// Common datatype
