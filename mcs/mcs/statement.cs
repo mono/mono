@@ -2471,7 +2471,7 @@ namespace Mono.CSharp {
 				//
 				// Creates anonymous method storey for this block
 				//
-				am_storey = new AnonymousMethodStorey (this, ec.TypeContainer, mc, gm, "AnonStorey");
+				am_storey = new AnonymousMethodStorey (this, ec.CurrentTypeDefinition, mc, gm, "AnonStorey");
 			}
 
 			return am_storey;
@@ -3702,12 +3702,12 @@ namespace Mono.CSharp {
 				string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
 			}
 
-			Field field = new Field (ec.TypeContainer, string_dictionary_type,
+			Field field = new Field (ec.CurrentTypeDefinition, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
 				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), loc), null);
 			if (!field.Define ())
 				return;
-			ec.TypeContainer.PartialContainer.AddField (field);
+			ec.CurrentTypeDefinition.PartialContainer.AddField (field);
 
 			ArrayList init = new ArrayList ();
 			int counter = 0;
@@ -4920,7 +4920,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression ml = Expression.MemberLookup (
-				ec.ContainerType, TypeManager.idisposable_type, expr_type,
+				ec.CurrentType, TypeManager.idisposable_type, expr_type,
 				"Dispose", Location.Null);
 
 			if (!(ml is MethodGroupExpr)) {
@@ -5398,7 +5398,7 @@ namespace Mono.CSharp {
 						enumerator_type = return_type;
 						if (!FetchGetCurrent (ec, return_type))
 							get_current = new PropertyExpr (
-								ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
+								ec.CurrentType, TypeManager.ienumerator_getcurrent, loc);
 						if (!FetchMoveNext (return_type))
 							move_next = TypeManager.bool_movenext_void;
 						return true;
@@ -5410,7 +5410,7 @@ namespace Mono.CSharp {
 						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
 						get_current = new PropertyExpr (
-							ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
+							ec.CurrentType, TypeManager.ienumerator_getcurrent, loc);
 						return true;
 					}
 				} else {
@@ -5460,7 +5460,7 @@ namespace Mono.CSharp {
 			bool FetchGetCurrent (EmitContext ec, Type t)
 			{
 				PropertyExpr pe = Expression.MemberLookup (
-					ec.ContainerType, t, "Current", MemberTypes.Property,
+					ec.CurrentType, t, "Current", MemberTypes.Property,
 					Expression.AllBindingFlags, loc) as PropertyExpr;
 				if (pe == null)
 					return false;
@@ -5496,7 +5496,7 @@ namespace Mono.CSharp {
 			bool TryType (EmitContext ec, Type t)
 			{
 				MethodGroupExpr mg = Expression.MemberLookup (
-					ec.ContainerType, t, "GetEnumerator", MemberTypes.Method,
+					ec.CurrentType, t, "GetEnumerator", MemberTypes.Method,
 					Expression.AllBindingFlags, loc) as MethodGroupExpr;
 				if (mg == null)
 					return false;

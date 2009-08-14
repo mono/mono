@@ -262,7 +262,7 @@ namespace Mono.CSharp
 			MemberAccess binder = GetBinderNamespace (loc);
 
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
 			return new New (new MemberAccess (binder, "CSharpIsEventBinder", loc), binder_args, loc);
 		}
@@ -320,7 +320,7 @@ namespace Mono.CSharp
 			Arguments binder_args = new Arguments (2);
 			MemberAccess binder = GetBinderNamespace (loc);
 
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
 			return new New (new MemberAccess (binder, isSet ? "CSharpSetIndexBinder" : "CSharpGetIndexBinder", loc), binder_args, loc);
@@ -378,7 +378,7 @@ namespace Mono.CSharp
 			if (is_member_access)
 				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
 
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
@@ -427,7 +427,7 @@ namespace Mono.CSharp
 			MemberAccess binder = GetBinderNamespace (loc);
 
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.ContainerType, loc), loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
 			return new New (new MemberAccess (binder, isSet ? "CSharpSetMemberBinder" : "CSharpGetMemberBinder", loc), binder_args, loc);

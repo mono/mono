@@ -170,6 +170,14 @@ namespace Mono.CSharp {
 
 			#region IResolveContext Members
 
+			public Type CurrentType {
+				get { return tc.Parent.CurrentType; }
+			}
+
+			public TypeContainer CurrentTypeDefinition {
+				get { return tc.Parent.CurrentTypeDefinition; }
+			}
+
 			public DeclSpace DeclContainer {
 				get { return tc.Parent; }
 			}
@@ -1227,7 +1235,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			CurrentType = current_type.Type;
+			currentType = current_type.Type;
 			return true;
 		}
 
@@ -3808,10 +3816,10 @@ namespace Mono.CSharp {
 			return Parent.MemberCache.CheckExistingMembersOverloads (this, name, Parameters);
 		}
 
-		public virtual EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+		public virtual EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (
-				this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
+				this, this.ds, Location, ig, MemberType, ModFlags, false);
 		}
 
 		protected override bool ResolveMemberType ()
@@ -4468,11 +4476,11 @@ namespace Mono.CSharp {
 			}
 
 			if (this is ConstructorBaseInitializer) {
-				if (ec.ContainerType.BaseType == null)
+				if (ec.CurrentType.BaseType == null)
 					return this;
 
-				type = ec.ContainerType.BaseType;
-				if (TypeManager.IsStruct (ec.ContainerType)) {
+				type = ec.CurrentType.BaseType;
+				if (TypeManager.IsStruct (ec.CurrentType)) {
 					Report.Error (522, loc,
 						"`{0}': Struct constructors cannot call base constructors", TypeManager.CSharpSignature (caller_builder));
 					return this;
@@ -4484,10 +4492,10 @@ namespace Mono.CSharp {
 				//
 				// struct D { public D (int a) : this () {}
 				//
-				if (TypeManager.IsStruct (ec.ContainerType) && argument_list == null)
+				if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
 					return this;
 				
-				type = ec.ContainerType;
+				type = ec.CurrentType;
 			}
 
 			base_constructor_group = MemberLookupFinal (
@@ -4735,7 +4743,7 @@ namespace Mono.CSharp {
 
 			base.Emit ();
 
-			EmitContext ec = CreateEmitContext (null, null);
+			EmitContext ec = CreateEmitContext (null);
 
 			//
 			// If we use a "this (...)" constructor initializer, then
@@ -4860,7 +4868,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
+		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (this, Parent, Location, ig_, TypeManager.void_type, ModFlags, true);
@@ -4900,7 +4908,7 @@ namespace Mono.CSharp {
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
 
-		EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
+		EmitContext CreateEmitContext (ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
 		string GetSignatureForError ();
 		bool IsExcluded ();
@@ -5118,7 +5126,7 @@ namespace Mono.CSharp {
 				if (implementing != null)
 					parent_method = implementing;
 
-				EmitContext ec = method.CreateEmitContext (container, null);
+				EmitContext ec = method.CreateEmitContext (null);
 				if (!GenericMethod.DefineType (ec, builder, parent_method, is_override))
 					return false;
 			}
@@ -5168,9 +5176,9 @@ namespace Mono.CSharp {
 
 			EmitContext ec;
 			if (block != null)
-				ec = method.CreateEmitContext (parent, builder.GetILGenerator ());
+				ec = method.CreateEmitContext (builder.GetILGenerator ());
 			else
-				ec = method.CreateEmitContext (parent, null);
+				ec = method.CreateEmitContext (null);
 
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
 
@@ -6065,7 +6073,7 @@ namespace Mono.CSharp {
 
 		public abstract ParametersCompiled ParameterInfo { get ; }
 		public abstract Type ReturnType { get; }
-		public abstract EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
+		public abstract EmitContext CreateEmitContext (ILGenerator ig);
 
 		#endregion
 
@@ -6427,10 +6435,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
+			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (this,
-					ds, method.ds, method.Location, ig, ReturnType,
+					method.ds, method.Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
@@ -7283,7 +7291,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
+			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (
 					this, method.Parent, Location, ig, ReturnType,

@@ -127,7 +127,7 @@ namespace Mono.CSharp {
 				if (current == null)
 					return null;
 
-				CurrentType = current.Type;
+				currentType = current.Type;
 			}
 #endif
 
@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			else
 				arg_count = args.Count;
 
-			MethodBase mb = GetInvokeMethod (ec.ContainerType, delegate_type);
+			MethodBase mb = GetInvokeMethod (ec.CurrentType, delegate_type);
 			MethodGroupExpr me = new MethodGroupExpr (new MemberInfo [] { mb }, delegate_type, loc);
 			
 			AParametersCollection pd = TypeManager.GetParameterData (mb);
@@ -661,9 +661,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
+			constructor_method = Delegate.GetConstructor (ec.CurrentType, type);
 
-			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.ContainerType, type);
+			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.CurrentType, type);
 			method_group.DelegateType = type;
 			method_group.CustomErrorHandler = this;
 
@@ -755,7 +755,7 @@ namespace Mono.CSharp {
 
 		void Error_ConversionFailed (EmitContext ec, MethodBase method, Expression return_type)
 		{
-			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.ContainerType, type);
+			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.CurrentType, type);
 			string member_name = delegate_instance_expression != null ?
 				Delegate.FullDelegateDesc (method) :
 				TypeManager.GetFullNameSignature (method);
@@ -890,7 +890,7 @@ namespace Mono.CSharp {
 				//
 				delegate_instance_expression = e;
 				method_group = new MethodGroupExpr (new MemberInfo [] { 
-					Delegate.GetInvokeMethod (ec.ContainerType, e.Type) }, e.Type, loc);
+					Delegate.GetInvokeMethod (ec.CurrentType, e.Type) }, e.Type, loc);
 			}
 
 			return base.DoResolve (ec);
@@ -937,7 +937,7 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, ref Arguments, loc))
 				return null;
 
-			method = Delegate.GetInvokeMethod (ec.ContainerType, del_type);
+			method = Delegate.GetInvokeMethod (ec.CurrentType, del_type);
 			type = TypeManager.TypeToCoreType (method.ReturnType);
 			eclass = ExprClass.Value;
 			

@@ -388,7 +388,7 @@ namespace Mono.CSharp {
 			}
 
 			DeclSpace ds = context.GenericDeclContainer;
-			EmitContext ec = new EmitContext (context, ds, ds,
+			EmitContext ec = new EmitContext (context, ds,
 				Location, null, typeof (Attribute), ds.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
 
@@ -446,7 +446,7 @@ namespace Mono.CSharp {
 					throw new NotImplementedException ("dynamic");
 			}
 
-			MethodGroupExpr mg = MemberLookupFinal (ec, ec.ContainerType,
+			MethodGroupExpr mg = MemberLookupFinal (ec, ec.CurrentType,
 				Type, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Location) as MethodGroupExpr;
@@ -529,13 +529,13 @@ namespace Mono.CSharp {
 				a.Resolve (ec);
 
 				Expression member = Expression.MemberLookup (
-					ec.ContainerType, Type, name,
+					ec.CurrentType, Type, name,
 					MemberTypes.All,
 					BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static,
 					Location);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec.ContainerType, Type, name,
+					member = Expression.MemberLookup (ec.CurrentType, Type, name,
 						MemberTypes.All, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static,
 						Location);
 

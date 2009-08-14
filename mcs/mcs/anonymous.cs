@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public LocalTemporary Instance;
 
-		public AnonymousMethodStorey (Block block, DeclSpace parent, MemberBase host, GenericMethod generic, string name)
+		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, GenericMethod generic, string name)
 			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE)
 		{
 			Parent = parent;
@@ -174,7 +174,7 @@ namespace Mono.CSharp {
 
 		public void AddCapturedThisField (EmitContext ec)
 		{
-			TypeExpr type_expr = new TypeExpression (ec.ContainerType, Location);
+			TypeExpr type_expr = new TypeExpression (ec.CurrentType, Location);
 			Field f = AddCompilerGeneratedField ("<>f__this", type_expr);
 			f.Define ();
 			hoisted_this = new HoistedThis (this, f);
@@ -1037,7 +1037,7 @@ namespace Mono.CSharp {
 			//
 
 			MethodInfo invoke_mb = Delegate.GetInvokeMethod (
-				ec.ContainerType, delegate_type);
+				ec.CurrentType, delegate_type);
 			Type return_type = TypeManager.TypeToCoreType (invoke_mb.ReturnType);
 
 #if MS_COMPATIBLE
@@ -1219,7 +1219,7 @@ namespace Mono.CSharp {
 				Block = am.Block;
 			}
 
-			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				EmitContext aec = AnonymousMethod.aec;
 				aec.ig = ig;
@@ -1298,7 +1298,7 @@ namespace Mono.CSharp {
 		{
 			// TODO: Implement clone
 			aec = new EmitContext (
-				ec.ResolveContext, ec.TypeContainer, ec.DeclContainer,
+				ec.ResolveContext, ec.DeclContainer,
 				Location, null, ReturnType,
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
@@ -1424,7 +1424,7 @@ namespace Mono.CSharp {
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
-			DeclSpace parent = storey != null ? storey : ec.TypeContainer;
+			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition;
 
 			MemberCore mc = ec.ResolveContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? mc.Name : null,
@@ -1564,7 +1564,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Ldftn, delegate_method);
 
-			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
+			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.CurrentType, type);
 #if MS_COMPATIBLE
             if (type.IsGenericType && type is TypeBuilder)
                 constructor_method = TypeBuilder.GetConstructor (type, constructor_method);

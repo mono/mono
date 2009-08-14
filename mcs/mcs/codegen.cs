@@ -253,7 +253,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public interface IResolveContext
 	{
+		Type CurrentType { get; }
+		TypeContainer CurrentTypeDefinition { get; }
 		DeclSpace DeclContainer { get; }
+
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
 
@@ -283,7 +286,6 @@ namespace Mono.CSharp {
 
 		DeclSpace decl_space;
 		
-		public DeclSpace TypeContainer;
 		public ILGenerator ig;
 
 		[Flags]
@@ -368,12 +370,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		Type return_type;
 
-		/// <summary>
-		///   Points to the Type (extracted from the TypeContainer) that
-		///   declares this body of code
-		/// </summary>
-		public readonly Type ContainerType;
-		
 		/// <summary>
 		///   Whether this is generating code for a constructor
 		/// </summary>
@@ -463,13 +459,12 @@ namespace Mono.CSharp {
 					      CurrentAnonymousMethod, loc);
 		}
 		
-		public EmitContext (IResolveContext rc, DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ResolveContext = rc;
 			this.ig = ig;
 
-			TypeContainer = parent;
 			this.decl_space = ds;
 			if (RootContext.Checked)
 				flags |= Flags.CheckState;
@@ -485,31 +480,26 @@ namespace Mono.CSharp {
 			CurrentFile = 0;
 			current_phase = Phase.Created;
 
-			if (parent != null){
-				// Can only be null for the ResolveType contexts.
-				ContainerType = parent.TypeBuilder;
-				if (rc.IsInUnsafeScope)
-					flags |= Flags.InUnsafe;
-			}
 			loc = l;
 		}
 
 		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
-				    Type return_type, int code_flags, bool is_constructor)
-			: this (rc, ds, ds, l, ig, return_type, code_flags, is_constructor)
+				    Type return_type, int code_flags)
+			: this (rc, ds, l, ig, return_type, code_flags, false)
 		{
 		}
 
-		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
-				    Type return_type, int code_flags)
-			: this (rc, ds, ds, l, ig, return_type, code_flags, false)
-		{
+		public Type CurrentType {
+			get { return ResolveContext.CurrentType; }
+		}
+
+		public TypeContainer CurrentTypeDefinition {
+			get { return ResolveContext.CurrentTypeDefinition; }
 		}
 
 		// IResolveContext.DeclContainer
 		public DeclSpace DeclContainer { 
 			get { return decl_space; }
-			set { decl_space = value; }
 		}
 
 		// IResolveContext.GenericDeclContainer
@@ -526,7 +516,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool InUnsafe {
-			get { return (flags & Flags.InUnsafe) != 0; }
+			get { return IsInUnsafeScope; }
 		}
 
 		public bool InCatch {
@@ -622,7 +612,7 @@ namespace Mono.CSharp {
 
 		// IResolveContext.IsInUnsafeScope
 		public bool IsInUnsafeScope {
-			get { return InUnsafe || ResolveContext.IsInUnsafeScope; }
+			get { return (flags & Flags.InUnsafe) != 0 || ResolveContext.IsInUnsafeScope; }
 		}
 
 		public bool IsAnonymousMethodAllowed {
@@ -1105,6 +1095,14 @@ namespace Mono.CSharp {
 		}
 
 		#region IResolveContext Members
+
+		public Type CurrentType {
+			get { return null; }
+		}
+
+		public TypeContainer CurrentTypeDefinition {
+			get { throw new InternalErrorException ("No TypeContainer in module context"); }
+		}
 
 		public DeclSpace DeclContainer {
 			get { return RootContext.ToplevelTypes; }

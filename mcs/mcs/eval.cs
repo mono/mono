@@ -405,7 +405,7 @@ namespace Mono.CSharp {
 					if (method == null)
 						throw new InternalErrorException ("did not find the the Host method");
 
-					EmitContext ec = method.CreateEmitContext (method.Parent, null);
+					EmitContext ec = method.CreateEmitContext (null);
 					bool unreach;
 
 					try {

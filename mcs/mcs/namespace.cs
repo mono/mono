@@ -564,7 +564,7 @@ namespace Mono.CSharp {
 		//
 		// Completes types with the given `prefix' and stores the results in `result'
 		//
-		public void CompletionGetTypesStartingWith (DeclSpace ds, string prefix, Hashtable result)
+		public void CompletionGetTypesStartingWith (string prefix, Hashtable result)
 		{
 			int l = fullname.Length + 1;
 			ICollection res = root.CompletionGetTypesStartingWith (fullname + "." + prefix);
@@ -1089,7 +1089,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public ICollection CompletionGetTypesStartingWith (DeclSpace ds, string prefix)
+		public ICollection CompletionGetTypesStartingWith (string prefix)
 		{
 			Hashtable result = new Hashtable ();
 			
@@ -1100,10 +1100,10 @@ namespace Mono.CSharp {
 						if (ld != -1){
 							string rest = prefix.Substring (ld+1);
 
-							using_ns.CompletionGetTypesStartingWith (ds, rest, result);
+							using_ns.CompletionGetTypesStartingWith (rest, result);
 						}
 					}
-					using_ns.CompletionGetTypesStartingWith (ds, prefix, result);
+					using_ns.CompletionGetTypesStartingWith (prefix, result);
 				}
 			}
 
@@ -1315,6 +1315,14 @@ namespace Mono.CSharp {
 		}
 
 		#region IResolveContext Members
+
+		public Type CurrentType {
+			get { return SlaveDeclSpace.CurrentType; }
+		}
+
+		public TypeContainer CurrentTypeDefinition {
+			get { return SlaveDeclSpace.CurrentTypeDefinition; }
+		}
 
 		public DeclSpace DeclContainer {
 			get { return SlaveDeclSpace; }

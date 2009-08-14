@@ -190,10 +190,10 @@ namespace Mono.CSharp {
 				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, ParametersCompiled.EmptyReadOnlyParameters, Location);
 			}
 
-			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				EmitContext ec = new EmitContext (
-					this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
+					this, this.ds, Location, ig, MemberType, ModFlags, false);
 
 				ec.CurrentAnonymousMethod = host.Iterator;
 				return ec;

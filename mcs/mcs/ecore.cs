@@ -831,13 +831,13 @@ namespace Mono.CSharp {
 			Expression e;
 
 			int errors = Report.Errors;
-			e = MemberLookup (ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
+			e = MemberLookup (ec.CurrentType, qualifier_type, queried_type, name, mt, bf, loc);
 
 			if (e != null || errors != Report.Errors)
 				return e;
 
 			// No errors were reported by MemberLookup, but there was an error.
-			return Error_MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type,
+			return Error_MemberLookupFailed (ec.CurrentType, qualifier_type, queried_type,
 					name, null, mt, bf);
 		}
 
@@ -869,7 +869,7 @@ namespace Mono.CSharp {
 							// Although a derived class can access protected members of
 							// its base class it cannot do so through an instance of the
 							// base class (CS1540).  If the qualifier_type is a base of the
-							// ec.ContainerType and the lookup succeeds with the latter one,
+							// ec.CurrentType and the lookup succeeds with the latter one,
 							// then we are in this situation.
 							Error_CannotAccessProtected (loc, mi, qualifier_type, container_type);
 						} else {
@@ -956,7 +956,7 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr operator_group;
 			string mname = Operator.GetMetadataName (is_true ? Operator.OpType.True : Operator.OpType.False);
-			operator_group = MethodLookup (ec.ContainerType, e.Type, mname, loc) as MethodGroupExpr;
+			operator_group = MethodLookup (ec.CurrentType, e.Type, mname, loc) as MethodGroupExpr;
 			if (operator_group == null)
 				return null;
 
@@ -2692,7 +2692,7 @@ namespace Mono.CSharp {
 				if (lookup_ds.TypeBuilder == null)
 					continue;
 
-				e = MemberLookup (ec.ContainerType, lookup_ds.TypeBuilder, Name, loc);
+				e = MemberLookup (ec.CurrentType, lookup_ds.TypeBuilder, Name, loc);
 				if (e != null) {
 					PropertyExpr pe = e as PropertyExpr;
 					if (pe != null) {
@@ -2700,10 +2700,10 @@ namespace Mono.CSharp {
 
 						// since TypeManager.MemberLookup doesn't know if we're doing a lvalue access or not,
 						// it doesn't know which accessor to check permissions against
-						if (param.IsEmpty && pe.IsAccessibleFrom (ec.ContainerType, right_side != null))
+						if (param.IsEmpty && pe.IsAccessibleFrom (ec.CurrentType, right_side != null))
 							break;
 					} else if (e is EventExpr) {
-						if (((EventExpr) e).IsAccessibleFrom (ec.ContainerType))
+						if (((EventExpr) e).IsAccessibleFrom (ec.CurrentType))
 							break;
 					} else if (targs != null && e is TypeExpression) {
 						e = new GenericTypeExpr (e.Type, targs, loc).ResolveAsTypeStep (ec, false);
@@ -2722,7 +2722,7 @@ namespace Mono.CSharp {
 
 			if (e == null) {
 				if (almost_matched == null && almost_matched_members.Count > 0) {
-					almost_matched_type = ec.ContainerType;
+					almost_matched_type = ec.CurrentType;
 					almost_matched = (ArrayList) almost_matched_members.Clone ();
 				}
 				e = ResolveAsTypeStep (ec, true);
@@ -2751,8 +2751,8 @@ namespace Mono.CSharp {
 				if (almost_matched != null)
 					almost_matched_members = almost_matched;
 				if (almost_matched_type == null)
-					almost_matched_type = ec.ContainerType;
-				return Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
+					almost_matched_type = ec.CurrentType;
+				return Error_MemberLookupFailed (ec.CurrentType, null, almost_matched_type, Name,
 					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags);
 			}
 
@@ -2783,7 +2783,7 @@ namespace Mono.CSharp {
 						left = ec.GetThis (loc);
 					}
 				} else {
-					left = new TypeExpression (ec.ContainerType, loc);
+					left = new TypeExpression (ec.CurrentType, loc);
 				}
 
 				me = me.ResolveMemberAccess (ec, left, loc, null);
@@ -4248,13 +4248,13 @@ namespace Mono.CSharp {
 						}
 
 						if (has_inaccessible_candidates_only) {
-							if (InstanceExpression != null && type != ec.ContainerType && TypeManager.IsNestedFamilyAccessible (ec.ContainerType, best_candidate.DeclaringType)) {
+							if (InstanceExpression != null && type != ec.CurrentType && TypeManager.IsNestedFamilyAccessible (ec.CurrentType, best_candidate.DeclaringType)) {
 								// Although a derived class can access protected members of
 								// its base class it cannot do so through an instance of the
 								// base class (CS1540).  If the qualifier_type is a base of the
-								// ec.ContainerType and the lookup succeeds with the latter one,
+								// ec.CurrentType and the lookup succeeds with the latter one,
 								// then we are in this situation.
-								Error_CannotAccessProtected (loc, best_candidate, queried_type, ec.ContainerType);
+								Error_CannotAccessProtected (loc, best_candidate, queried_type, ec.CurrentType);
 							} else {
 								Report.SymbolRelatedToPreviousError (best_candidate);
 								ErrorIsInaccesible (loc, GetSignatureForError ());
@@ -4951,9 +4951,7 @@ namespace Mono.CSharp {
 					return Report_AssignToReadonly (right_side);
 
 				if (ec.IsConstructor) {
-					Type ctype = ec.TypeContainer.CurrentType;
-					if (ctype == null)
-						ctype = ec.ContainerType;
+					Type ctype = ec.CurrentType;
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
 					if (!TypeManager.IsEqual (ctype, FieldInfo.DeclaringType))
@@ -5402,11 +5400,11 @@ namespace Mono.CSharp {
 			InstanceExpression.CheckMarshalByRefAccess (ec);
 
 			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
-			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
-			    !TypeManager.IsNestedChildOf (ec.ContainerType, InstanceExpression.Type) &&
-			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.ContainerType)) {
+			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.CurrentType) &&
+			    !TypeManager.IsNestedChildOf (ec.CurrentType, InstanceExpression.Type) &&
+			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.CurrentType)) {
 				Report.SymbolRelatedToPreviousError (PropertyInfo);
-				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
+				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.CurrentType);
 				return false;
 			}
 
@@ -5483,7 +5481,7 @@ namespace Mono.CSharp {
 
 			bool must_do_cs1540_check = false;
 			if (getter != null &&
-			    !IsAccessorAccessible (ec.ContainerType, getter, out must_do_cs1540_check)) {
+			    !IsAccessorAccessible (ec.CurrentType, getter, out must_do_cs1540_check)) {
 				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					Report.SymbolRelatedToPreviousError (pm);
@@ -5570,7 +5568,7 @@ namespace Mono.CSharp {
 			}
 
 			bool must_do_cs1540_check;
-			if (!IsAccessorAccessible (ec.ContainerType, setter, out must_do_cs1540_check)) {
+			if (!IsAccessorAccessible (ec.CurrentType, setter, out must_do_cs1540_check)) {
 				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (setter) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					Report.SymbolRelatedToPreviousError (pm);
@@ -5743,8 +5741,8 @@ namespace Mono.CSharp {
 			// If the event is local to this class, we transform ourselves into a FieldExpr
 			//
 
-			if (EventInfo.DeclaringType == ec.ContainerType ||
-			    TypeManager.IsNestedChildOf(ec.ContainerType, EventInfo.DeclaringType)) {
+			if (EventInfo.DeclaringType == ec.CurrentType ||
+			    TypeManager.IsNestedChildOf(ec.CurrentType, EventInfo.DeclaringType)) {
 				EventField mi = TypeManager.GetEventField (EventInfo);
 
 				if (mi != null) {
@@ -5796,9 +5794,9 @@ namespace Mono.CSharp {
 			// TODO: Exact copy from PropertyExpr
 			//
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
-			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
-			    !TypeManager.IsNestedChildOf (ec.ContainerType, InstanceExpression.Type) &&
-			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.ContainerType)) {
+			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.CurrentType) &&
+			    !TypeManager.IsNestedChildOf (ec.CurrentType, InstanceExpression.Type) &&
+			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.CurrentType)) {
 				Report.SymbolRelatedToPreviousError (EventInfo);
 				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
 				return false;
@@ -5829,8 +5827,8 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			bool must_do_cs1540_check;
-			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check) &&
-			      IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
+			if (!(IsAccessorAccessible (ec.CurrentType, add_accessor, out must_do_cs1540_check) &&
+			      IsAccessorAccessible (ec.CurrentType, remove_accessor, out must_do_cs1540_check))) {
 				Report.SymbolRelatedToPreviousError (EventInfo);
 				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
 				return null;

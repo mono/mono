@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 			ArrayList results = new ArrayList ();
 
 			AppendResults (results, Prefix, Evaluator.GetVarNames ());
-			AppendResults (results, Prefix, ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, Prefix));
+			AppendResults (results, Prefix, ec.CurrentTypeDefinition.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
 			AppendResults (results, Prefix, Evaluator.GetUsingList ());
 			
 			throw new CompletionResult (Prefix, (string []) results.ToArray (typeof (string)));
@@ -172,7 +172,7 @@ namespace Mono.CSharp {
 				CompletionSimpleName.AppendResults (
 					results,
 					partial_name, 
-					ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, namespaced_partial));
+					ec.CurrentTypeDefinition.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
 			} else {
 				MemberInfo [] result = expr_type.FindMembers (
 					MemberTypes.All, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,

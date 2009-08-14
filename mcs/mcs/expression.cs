@@ -690,7 +690,7 @@ namespace Mono.CSharp {
 			}
 
 			string op_name = CSharp.Operator.GetMetadataName (op_type);
-			MethodGroupExpr user_op = MemberLookup (ec.ContainerType, expr.Type, op_name, MemberTypes.Method, AllBindingFlags, expr.Location) as MethodGroupExpr;
+			MethodGroupExpr user_op = MemberLookup (ec.CurrentType, expr.Type, op_name, MemberTypes.Method, AllBindingFlags, expr.Location) as MethodGroupExpr;
 			if (user_op == null)
 				return null;
 
@@ -984,7 +984,7 @@ namespace Mono.CSharp {
 			else
 				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
 
-			mg = MemberLookup (ec.ContainerType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+			mg = MemberLookup (ec.CurrentType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 
 			if (mg != null) {
 				Arguments args = new Arguments (1);
@@ -3135,11 +3135,11 @@ namespace Mono.CSharp {
 
 			string op = GetOperatorMetadataName (user_oper);
 
-			MethodGroupExpr left_operators = MemberLookup (ec.ContainerType, l, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+			MethodGroupExpr left_operators = MemberLookup (ec.CurrentType, l, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 			MethodGroupExpr right_operators = null;
 
 			if (!TypeManager.IsEqual (r, l)) {
-				right_operators = MemberLookup (ec.ContainerType, r, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+				right_operators = MemberLookup (ec.CurrentType, r, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 				if (right_operators == null && left_operators == null)
 					return null;
 			} else if (left_operators == null) {
@@ -6493,7 +6493,7 @@ namespace Mono.CSharp {
 		{
 			eclass = ExprClass.Variable;
 			if (type == null)
-				type = ec.ContainerType;
+				type = ec.CurrentType;
 			return this;
 		}
 
@@ -6589,7 +6589,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentAnonymousMethod == null)
 				return true;
 
-			if (ec.TypeContainer is Struct && ec.CurrentIterator == null)
+			if (ec.CurrentType.IsValueType && ec.CurrentIterator == null)
 				return false;
 
 			return true;
@@ -6601,11 +6601,7 @@ namespace Mono.CSharp {
 				return true;
 
 			eclass = ExprClass.Variable;
-
-			if (ec.TypeContainer.CurrentType != null)
-				type = ec.TypeContainer.CurrentType;
-			else
-				type = ec.ContainerType;
+			type = ec.CurrentType;
 
 			if (!IsThisAvailable (ec)) {
 				if (ec.IsStatic) {
@@ -6617,7 +6613,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			is_struct = ec.TypeContainer is Struct;
+			is_struct = type.IsValueType;
 
 			if (block != null) {
 				if (block.Toplevel.ThisVariable != null)
@@ -6677,7 +6673,7 @@ namespace Mono.CSharp {
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
-			if (ec.TypeContainer is Class){
+			if (ec.CurrentType.IsClass){
 				if (right_side == EmptyExpression.UnaryAddress)
 					Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
 				else if (right_side == EmptyExpression.OutAccess)
@@ -7367,11 +7363,11 @@ namespace Mono.CSharp {
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (
-				ec.ContainerType, expr_type, expr_type, Name, loc);
+				ec.CurrentType, expr_type, expr_type, Name, loc);
 
 			if (member_lookup == null && targs != null) {
 				member_lookup = MemberLookup (
-					ec.ContainerType, expr_type, expr_type, LookupIdentifier, loc);
+					ec.CurrentType, expr_type, expr_type, LookupIdentifier, loc);
 			}
 
 			if (member_lookup == null) {
@@ -7397,7 +7393,7 @@ namespace Mono.CSharp {
 
 				expr = expr_resolved;
 				member_lookup = Error_MemberLookupFailed (
-					ec.ContainerType, expr_type, expr_type, Name, null,
+					ec.CurrentType, expr_type, expr_type, Name, null,
 					AllMemberTypes, AllBindingFlags);
 				if (member_lookup == null)
 					return null;
@@ -8376,7 +8372,7 @@ namespace Mono.CSharp {
 		protected virtual void CommonResolve (EmitContext ec)
 		{
 			indexer_type = instance_expr.Type;
-			current_type = ec.ContainerType;
+			current_type = ec.CurrentType;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8476,7 +8472,7 @@ namespace Mono.CSharp {
 			}
 
 			bool must_do_cs1540_check;
-			if (!IsAccessorAccessible (ec.ContainerType, accessor, out must_do_cs1540_check)) {
+			if (!IsAccessorAccessible (ec.CurrentType, accessor, out must_do_cs1540_check)) {
 				if (set == null)
 					set = pi.GetSetMethod (true);
 				else
@@ -8650,7 +8646,7 @@ namespace Mono.CSharp {
 		Expression CommonResolve (EmitContext ec)
 		{
 			Expression member_lookup;
-			Type current_type = ec.ContainerType;
+			Type current_type = ec.CurrentType;
 			Type base_type = current_type.BaseType;
 
 			if (!This.IsThisAvailable (ec)) {
@@ -8662,10 +8658,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec.ContainerType, null, base_type, Identifier,
+			member_lookup = MemberLookup (ec.CurrentType, null, base_type, Identifier,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				Error_MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier,
+				Error_MemberLookupFailed (ec.CurrentType, base_type, base_type, Identifier,
 					null, AllMemberTypes, AllBindingFlags);
 				return null;
 			}
@@ -8719,7 +8715,7 @@ namespace Mono.CSharp {
 		{
 			instance_expr = ec.GetThis (loc);
 
-			current_type = ec.ContainerType.BaseType;
+			current_type = ec.CurrentType.BaseType;
 			indexer_type = current_type;
 		}
 

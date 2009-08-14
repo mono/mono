@@ -820,6 +820,14 @@ namespace Mono.CSharp {
 
 		#region IResolveContext Members
 
+		public virtual Type CurrentType {
+			get { return Parent.CurrentType; }
+		}
+
+		public virtual TypeContainer CurrentTypeDefinition {
+			get { return Parent.CurrentTypeDefinition; }
+		}
+
 		public DeclSpace DeclContainer {
 			get { return Parent; }
 		}
@@ -869,7 +877,7 @@ namespace Mono.CSharp {
 		///   currently defining.  We need to lookup members on this
 		///   instead of the TypeBuilder.
 		/// </summary>
-		public Type CurrentType;
+		protected Type currentType;
 
 		//
 		// This is the namespace in which this typecontainer
@@ -1398,6 +1406,14 @@ namespace Mono.CSharp {
 
 				return type_param_list;
 			}
+		}
+
+		public override Type CurrentType {
+			get { return currentType ?? TypeBuilder; }
+		}
+
+		public override TypeContainer CurrentTypeDefinition {
+			get { return PartialContainer; }
 		}
 
 		public TypeParameter[] CurrentTypeParameters {
