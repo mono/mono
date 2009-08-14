@@ -1,3 +1,9 @@
+2009-08-14  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	- Added user thread reading commands from a local tcp port.
+	- Fixed file flushing after writing a block.
+	- Force full buffer flushing after disabling the profiler.
+
 2009-08-06  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	- Avoid registering the writer thread with the runtime unless when
