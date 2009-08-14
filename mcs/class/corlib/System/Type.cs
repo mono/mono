@@ -211,7 +211,7 @@ namespace System {
 				if (IsInterface)
 					return false;
 
-				return !IsSubclassOf (typeof (ValueType));
+				return !IsValueType;
 			}
 		}
 
