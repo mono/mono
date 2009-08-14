@@ -1,3 +1,8 @@
+2009-08-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_unwind_info): Handle the case when the
+	MonoJitInfo doesn't belong to its methods aot image.
+
 2009-08-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Use SP as the default frame reg.
