@@ -82,17 +82,17 @@ namespace System.ServiceModel.Channels
 			{
 				if (connect == null)
 					throw new ArgumentNullException ("connect");
-try {
 				var ch = OperationContext.Current.GetCallbackChannel<IPeerConnectorContract> ();
 				// FIXME: check and reject if inappropriate.
 				ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
+			}
 
-} catch (Exception ex) {
-Console.WriteLine ("Exception during Connect()");
-Console.WriteLine (ex);
-throw;
-}
-
+			public void Disconnect (DisconnectInfo disconnect)
+			{
+				if (disconnect == null)
+					throw new ArgumentNullException ("disconnect");
+				// Console.WriteLine ("DisconnectInfo.Reason: " + disconnect.Reason);
+				// FIXME: handle disconnection in practice. So far I see nothing to do.
 			}
 
 			public void Welcome (WelcomeInfo welcome)
@@ -162,7 +162,7 @@ throw;
 				channel_factory = new ChannelFactory<IPeerConnectorClient> (binding);
 			}
 
-			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId), pna.EndpointAddress.Uri);
+			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), pna.EndpointAddress.Uri);
 		}
 
 		public override void Send (Message message, TimeSpan timeout)
@@ -281,7 +281,7 @@ message = mb.CreateMessage ();
 			sba.InstanceContextMode = InstanceContextMode.Single;
 			sba.IncludeExceptionDetailInFaults = true;
 
-			var se = listener_host.AddServiceEndpoint (typeof (IPeerReceiverContract), binding, "net.p2p://" + node.MeshId);
+			var se = listener_host.AddServiceEndpoint (typeof (IPeerReceiverContract).FullName, binding, "net.p2p://" + node.MeshId + "/");
 			se.ListenUri = uri;
 			listener_host.Open (timeout - (DateTime.Now - start));
 

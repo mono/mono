@@ -1,5 +1,9 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : handle Disconnect(). Fix URLs a bit.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelListener.cs : do not try to compare dead connection's
 	  IPEndPoint (it raises an error).
 
