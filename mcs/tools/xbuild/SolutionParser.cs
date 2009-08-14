@@ -3,8 +3,11 @@
 //
 // Author:
 //   Jonathan Chambers (joncham@gmail.com)
+//   Ankit Jain <jankit@novell.com>
+//   Lluis Sanchez Gual <lluis@novell.com>
 //
 // (C) 2009 Jonathan Chambers
+// Copyright 2008, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -46,7 +49,7 @@ namespace Mono.XBuild.CommandLine {
 		}
 
 		public Dictionary<TargetInfo, TargetInfo> TargetMap = new Dictionary<TargetInfo, TargetInfo> ();
-		public List<Guid> Dependencies = new List<Guid> ();
+		public Dictionary<Guid, ProjectInfo> Dependencies = new Dictionary<Guid, ProjectInfo> ();
 	}
 
 	struct TargetInfo {
@@ -118,25 +121,28 @@ namespace Mono.XBuild.CommandLine {
 
 				projectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
 
+				Match projectSectionMatch = projectDependenciesRegex.Match (m.Groups[6].Value);
+				while (projectSectionMatch.Success) {
+					Match projectDependencyMatch = projectDependencyRegex.Match (projectSectionMatch.Value);
+					while (projectDependencyMatch.Success) {
+						projectInfo.Dependencies [new Guid (projectDependencyMatch.Groups[1].Value)] = null;
+						projectDependencyMatch = projectDependencyMatch.NextMatch ();
+					}
+					projectSectionMatch = projectSectionMatch.NextMatch ();
+				}
+				m = m.NextMatch ();
+			}
+
+			foreach (ProjectInfo projectInfo in projectInfos.Values) {
 				Project currentProject = p.ParentEngine.CreateNewProject ();
 				currentProject.Load (Path.Combine (solutionDir,
 							projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar)));
 
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");
-					projectInfo.Dependencies.Add (new Guid (projectReferenceGuid));
+					Guid guid = new Guid (projectReferenceGuid);
+					projectInfo.Dependencies [guid] = projectInfos [guid];
 				}
-
-				Match projectSectionMatch = projectDependenciesRegex.Match (m.Groups[6].Value);
-				while (projectSectionMatch.Success) {
-					Match projectDependencyMatch = projectDependencyRegex.Match (projectSectionMatch.Value);
-					while (projectDependencyMatch.Success) {
-						projectInfo.Dependencies.Add (new Guid (projectDependencyMatch.Groups[1].Value));
-						projectDependencyMatch = projectDependencyMatch.NextMatch ();
-					}
-					projectSectionMatch = projectSectionMatch.NextMatch ();
-				}
-				m = m.NextMatch ();
 			}
 
 			Match globalMatch = globalRegex.Match (line);
@@ -162,11 +168,12 @@ namespace Mono.XBuild.CommandLine {
 				globalSectionMatch = globalSectionMatch.NextMatch ();
 			}
 
+			int num_levels = AddBuildLevels (p, solutionTargets, projectInfos);
+
 			AddCurrentSolutionConfigurationContents (p, solutionTargets, projectInfos);
 			AddValidateSolutionConfiguration (p);
 			AddProjectTargets (p, solutionTargets, projectInfos);
-			AddSolutionTargets (p, projectInfos);
-
+			AddSolutionTargets (p, num_levels);
 		}
 
 		void AddGeneralSettings (string solutionFile, Project p)
@@ -325,21 +332,28 @@ namespace Mono.XBuild.CommandLine {
 			foreach (KeyValuePair<Guid, ProjectInfo> projectInfo in projectInfos) {
 				ProjectInfo project = projectInfo.Value;
 				foreach (string buildTarget in buildTargets) {
-					Target target = p.Targets.AddNewTarget (project.Name + (buildTarget == "Build" ? string.Empty : ":" + buildTarget));
+					string target_name = project.Name +
+						(buildTarget == "Build" ? string.Empty : ":" + buildTarget);
+
+					if (IsBuildTargetName (project.Name))
+						target_name = "Solution:" + target_name;
+
+					Target target = p.Targets.AddNewTarget (target_name);
 					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''"; 
-					string dependencies = string.Empty;
-					foreach (Guid dependency in project.Dependencies) {
-						ProjectInfo dependentInfo;
-						if (projectInfos.TryGetValue (dependency, out dependentInfo)) {
+
+					if (project.Dependencies.Count > 0) {
+						StringBuilder dependencies = new StringBuilder ();
+						foreach (ProjectInfo dependentInfo in project.Dependencies.Values) {
 							if (dependencies.Length > 0)
-								dependencies += ";";
-							dependencies += dependentInfo.Name;
+								dependencies.Append (";");
+							if (IsBuildTargetName (dependentInfo.Name))
+								dependencies.Append ("Solution:");
+							dependencies.Append (dependentInfo.Name);
 							if (buildTarget != "Build")
-								dependencies += ":" + buildTarget;
+								dependencies.Append (":" + buildTarget);
 						}
+						target.DependsOnTargets = dependencies.ToString ();
 					}
-					if (dependencies != string.Empty)
-						target.DependsOnTargets = dependencies;
 
 					foreach (TargetInfo targetInfo in solutionTargets) {
 						BuildTask task = null;
@@ -352,7 +366,7 @@ namespace Mono.XBuild.CommandLine {
 						if (projectTargetInfo.Build) {
 							task = target.AddNewTask ("MSBuild");
 							task.SetParameterValue ("Projects", project.FileName);
-							
+
 							if (buildTarget != "Build")
 								task.SetParameterValue ("Targets", buildTarget);
 							task.SetParameterValue ("Properties", string.Format ("Configuration={0}; Platform={1}; BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)", projectTargetInfo.Configuration, projectTargetInfo.Platform));
@@ -366,23 +380,154 @@ namespace Mono.XBuild.CommandLine {
 			}
 		}
 
-		void AddSolutionTargets (Project p, Dictionary<Guid, ProjectInfo> projectInfos)
+		bool IsBuildTargetName (string name)
+		{
+			foreach (string tgt in buildTargets)
+				if (name == tgt)
+					return true;
+			return false;
+		}
+
+		// returns number of levels
+		int AddBuildLevels (Project p, List<TargetInfo> solutionTargets, Dictionary<Guid, ProjectInfo> projectInfos)
+		{
+			List<ProjectInfo>[] infosByLevel = TopologicalSort<ProjectInfo> (projectInfos.Values);
+
+			foreach (TargetInfo targetInfo in solutionTargets) {
+				BuildItemGroup big = p.AddNewItemGroup ();
+				big.Condition = String.Format (" ('$(Configuration)' == '{0}') and ('$(Platform)' == '{1}') ",
+						targetInfo.Configuration, targetInfo.Platform);
+
+				//FIXME: every level has projects that can be built in parallel.
+				//	 levels are ordered on the basis of the dependency graph
+
+				for (int i = 0; i < infosByLevel.Length; i ++) {
+					string build_level = String.Format ("BuildLevel{0}", i);
+					string skip_level = String.Format ("SkipLevel{0}", i);
+					string missing_level = String.Format ("MissingConfigLevel{0}", i);
+
+					foreach (ProjectInfo projectInfo in infosByLevel [i]) {
+						TargetInfo projectTargetInfo;
+						if (!projectInfo.TargetMap.TryGetValue (targetInfo, out projectTargetInfo)) {
+							// missing project config
+							big.AddNewItem (missing_level, projectInfo.Name);
+							continue;
+						}
+
+						if (projectTargetInfo.Build) {
+							BuildItem item = big.AddNewItem (build_level, projectInfo.FileName);
+							item.SetMetadata ("Configuration", projectTargetInfo.Configuration);
+							item.SetMetadata ("Platform", projectTargetInfo.Platform);
+						} else {
+							// build disabled
+							big.AddNewItem (skip_level, projectInfo.Name);
+						}
+					}
+				}
+			}
+
+			return infosByLevel.Length;
+		}
+
+		void AddSolutionTargets (Project p, int num_levels)
 		{
 			foreach (string buildTarget in buildTargets) {
 				Target t = p.Targets.AddNewTarget (buildTarget);
 				t.Condition = "'$(CurrentSolutionConfigurationContents)' != ''";
-				BuildTask task = t.AddNewTask ("CallTarget");
-				string targets = string.Empty;
-				foreach (KeyValuePair<Guid, ProjectInfo> projectInfo in projectInfos) {
-					if (targets.Length > 0)
-						targets += ";";
-					targets += projectInfo.Value.Name;
+
+				for (int i = 0; i < num_levels; i ++) {
+					string level_str = String.Format ("BuildLevel{0}", i);
+					BuildTask task = t.AddNewTask ("MSBuild");
+					task.SetParameterValue ("Condition", String.Format ("'@({0})' != ''", level_str));
+					task.SetParameterValue ("Projects", String.Format ("@({0})", level_str));
+					task.SetParameterValue ("Properties",
+						string.Format ("Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)"));
 					if (buildTarget != "Build")
-						targets += ":" + buildTarget;
+						task.SetParameterValue ("Targets", buildTarget);
+					//FIXME: change this to BuildInParallel=true, when parallel
+					//	 build support gets added
+					task.SetParameterValue ("RunEachTargetSeparately", "true");
+
+					level_str = String.Format ("SkipLevel{0}", i);
+					task = t.AddNewTask ("Message");
+					task.Condition = String.Format ("'@({0})' != ''", level_str);
+					task.SetParameterValue ("Text",
+						String.Format ("The project '%({0}.Identity)' is disabled for solution " +
+							"configuration '$(Configuration)|$(Platform)'.", level_str));
+
+					level_str = String.Format ("MissingConfigLevel{0}", i);
+					task = t.AddNewTask ("Warning");
+					task.Condition = String.Format ("'@({0})' != ''", level_str);
+					task.SetParameterValue ("Text",
+						String.Format ("The project configuration for project '%({0}.Identity)' " +
+							"corresponding to the solution configuration " +
+							"'$(Configuration)|$(Platform)' was not found.", level_str));
 				}
-				task.SetParameterValue ("Targets", targets);
-				task.SetParameterValue ("RunEachTargetSeparately", "true");
 			}
+		}
+
+		// Sorts the ProjectInfo dependency graph, to obtain
+		// a series of build levels with projects. Projects
+		// in each level can be run parallel (no inter-dependency).
+		static List<T>[] TopologicalSort<T> (IEnumerable<T> items) where T: ProjectInfo
+		{
+			IList<T> allItems;
+			allItems = items as IList<T>;
+			if (allItems == null)
+				allItems = new List<T> (items);
+
+			bool[] inserted = new bool[allItems.Count];
+			bool[] triedToInsert = new bool[allItems.Count];
+			int[] levels = new int [allItems.Count];
+
+			int maxdepth = 0;
+			for (int i = 0; i < allItems.Count; ++i) {
+				int d = Insert<T> (i, allItems, levels, inserted, triedToInsert);
+				if (d > maxdepth)
+					maxdepth = d;
+			}
+
+			// Separate out the project infos by build level
+			List<T>[] infosByLevel = new List<T>[maxdepth];
+			for (int i = 0; i < levels.Length; i ++) {
+				int level = levels [i] - 1;
+				if (infosByLevel [level] == null)
+					infosByLevel [level] = new List<T> ();
+
+				infosByLevel [level].Add (allItems [i]);
+			}
+
+			return infosByLevel;
+		}
+
+		// returns level# for the project
+		static int Insert<T> (int index, IList<T> allItems, int[] levels, bool[] inserted, bool[] triedToInsert)
+			where T: ProjectInfo
+		{
+			if (inserted [index])
+				return levels [index];
+
+			if (triedToInsert[index])
+				throw new InvalidOperationException ("Cyclic dependency found in the project dependency graph");
+
+			triedToInsert[index] = true;
+			ProjectInfo insertItem = allItems[index];
+
+			int maxdepth = 0;
+			foreach (ProjectInfo dependency in insertItem.Dependencies.Values) {
+				for (int j = 0; j < allItems.Count; ++j) {
+					ProjectInfo checkItem = allItems [j];
+					if (dependency.FileName == checkItem.FileName) {
+						int d = Insert (j, allItems, levels, inserted, triedToInsert);
+						maxdepth = d > maxdepth ? d : maxdepth;
+						break;
+					}
+				}
+			}
+			levels [index] = maxdepth + 1;
+			inserted [index] = true;
+
+			return levels [index];
 		}
 	}
 }
