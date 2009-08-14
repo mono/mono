@@ -11,6 +11,50 @@
     <SolutionName>Project01</SolutionName>
     <SolutionPath>/home/radical/w1/mcs/tools/xbuild/tests/standalone/Project01/Project01.sln</SolutionPath>
   </PropertyGroup>
+  <ItemGroup Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'Any CPU') ">
+    <BuildLevel0 Include="Lib3\Lib3.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel0>
+    <BuildLevel0 Include="Lib4\Lib4.csproj">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel0>
+    <BuildLevel1 Include="Lib2\Lib2.csproj">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel1>
+    <BuildLevel2 Include="Lib1\Lib1.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel2>
+    <BuildLevel3 Include="Project01\Main.csproj">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel3>
+  </ItemGroup>
+  <ItemGroup Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'Any CPU') ">
+    <BuildLevel0 Include="Lib3\Lib3.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel0>
+    <BuildLevel0 Include="Lib4\Lib4.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel0>
+    <BuildLevel1 Include="Lib2\Lib2.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel1>
+    <BuildLevel2 Include="Lib1\Lib1.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel2>
+    <BuildLevel3 Include="Project01\Main.csproj">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </BuildLevel3>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == '' ">
     <Configuration>Debug</Configuration>
   </PropertyGroup>
@@ -125,15 +169,59 @@
     <MSBuild Projects="Lib4\Lib4.csproj" Targets="Publish" Properties="Configuration=Release; Platform=AnyCPU; BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'Any CPU') " />
   </Target>
   <Target Name="Build" Condition="'$(CurrentSolutionConfigurationContents)' != ''">
-    <CallTarget Targets="Main;Lib1;Lib2;Lib3;Lib4" RunEachTargetSeparately="true" />
+    <MSBuild Condition="'@(BuildLevel0)' != ''" Projects="@(BuildLevel0)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel0)' != ''" Text="The project '%(SkipLevel0.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel0)' != ''" Text="The project configuration for project '%(MissingConfigLevel0.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel1)' != ''" Projects="@(BuildLevel1)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel1)' != ''" Text="The project '%(SkipLevel1.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel1)' != ''" Text="The project configuration for project '%(MissingConfigLevel1.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel2)' != ''" Projects="@(BuildLevel2)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel2)' != ''" Text="The project '%(SkipLevel2.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel2)' != ''" Text="The project configuration for project '%(MissingConfigLevel2.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel3)' != ''" Projects="@(BuildLevel3)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel3)' != ''" Text="The project '%(SkipLevel3.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel3)' != ''" Text="The project configuration for project '%(MissingConfigLevel3.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
   </Target>
   <Target Name="Clean" Condition="'$(CurrentSolutionConfigurationContents)' != ''">
-    <CallTarget Targets="Main:Clean;Lib1:Clean;Lib2:Clean;Lib3:Clean;Lib4:Clean" RunEachTargetSeparately="true" />
+    <MSBuild Condition="'@(BuildLevel0)' != ''" Projects="@(BuildLevel0)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Clean" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel0)' != ''" Text="The project '%(SkipLevel0.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel0)' != ''" Text="The project configuration for project '%(MissingConfigLevel0.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel1)' != ''" Projects="@(BuildLevel1)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Clean" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel1)' != ''" Text="The project '%(SkipLevel1.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel1)' != ''" Text="The project configuration for project '%(MissingConfigLevel1.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel2)' != ''" Projects="@(BuildLevel2)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Clean" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel2)' != ''" Text="The project '%(SkipLevel2.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel2)' != ''" Text="The project configuration for project '%(MissingConfigLevel2.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel3)' != ''" Projects="@(BuildLevel3)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Clean" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel3)' != ''" Text="The project '%(SkipLevel3.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel3)' != ''" Text="The project configuration for project '%(MissingConfigLevel3.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
   </Target>
   <Target Name="Rebuild" Condition="'$(CurrentSolutionConfigurationContents)' != ''">
-    <CallTarget Targets="Main:Rebuild;Lib1:Rebuild;Lib2:Rebuild;Lib3:Rebuild;Lib4:Rebuild" RunEachTargetSeparately="true" />
+    <MSBuild Condition="'@(BuildLevel0)' != ''" Projects="@(BuildLevel0)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Rebuild" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel0)' != ''" Text="The project '%(SkipLevel0.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel0)' != ''" Text="The project configuration for project '%(MissingConfigLevel0.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel1)' != ''" Projects="@(BuildLevel1)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Rebuild" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel1)' != ''" Text="The project '%(SkipLevel1.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel1)' != ''" Text="The project configuration for project '%(MissingConfigLevel1.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel2)' != ''" Projects="@(BuildLevel2)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Rebuild" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel2)' != ''" Text="The project '%(SkipLevel2.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel2)' != ''" Text="The project configuration for project '%(MissingConfigLevel2.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel3)' != ''" Projects="@(BuildLevel3)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Rebuild" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel3)' != ''" Text="The project '%(SkipLevel3.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel3)' != ''" Text="The project configuration for project '%(MissingConfigLevel3.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
   </Target>
   <Target Name="Publish" Condition="'$(CurrentSolutionConfigurationContents)' != ''">
-    <CallTarget Targets="Main:Publish;Lib1:Publish;Lib2:Publish;Lib3:Publish;Lib4:Publish" RunEachTargetSeparately="true" />
+    <MSBuild Condition="'@(BuildLevel0)' != ''" Projects="@(BuildLevel0)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Publish" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel0)' != ''" Text="The project '%(SkipLevel0.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel0)' != ''" Text="The project configuration for project '%(MissingConfigLevel0.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel1)' != ''" Projects="@(BuildLevel1)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Publish" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel1)' != ''" Text="The project '%(SkipLevel1.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel1)' != ''" Text="The project configuration for project '%(MissingConfigLevel1.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel2)' != ''" Projects="@(BuildLevel2)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Publish" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel2)' != ''" Text="The project '%(SkipLevel2.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel2)' != ''" Text="The project configuration for project '%(MissingConfigLevel2.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
+    <MSBuild Condition="'@(BuildLevel3)' != ''" Projects="@(BuildLevel3)" Properties="Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" Targets="Publish" RunEachTargetSeparately="true" />
+    <Message Condition="'@(SkipLevel3)' != ''" Text="The project '%(SkipLevel3.Identity)' is disabled for solution configuration '$(Configuration)|$(Platform)'." />
+    <Warning Condition="'@(MissingConfigLevel3)' != ''" Text="The project configuration for project '%(MissingConfigLevel3.Identity)' corresponding to the solution configuration '$(Configuration)|$(Platform)' was not found." />
   </Target>
 </Project>

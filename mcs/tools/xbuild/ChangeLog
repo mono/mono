@@ -1,5 +1,36 @@
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #530368.
+	* SolutionParser.cs (AddProjectTargets): If a project name matches one
+	of the targets that we emit (Build/Clean etc), then rename to
+	"Solution:<project name>".
+
+2009-08-14  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (AllowUnsafeBlocks): Don't set any
+	default value.
+	(OutputPath): Set a default value.
+	(DeployOutputFiles): Copy only if something available to copy.
+
+2009-08-14  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ProjectInfo.Dependencies): Change to a dictionary
+	to keep track of corresponding ProjectInfo objects.
+	(ParseSolution): Refactor to populate the ProjectInfo.Dependencies
+	dictionary. Use AddBuildLevels to emit build levels to allow
+	parallel builds.
+	(AddProjectTargets): Dependency's projectInfo is directly available now.
+	(AddBuildLevels): New. Emit items named BuildLevelN, where each level
+	has projects that can be built in parallel. Lower levels represent
+	dependencies for higher levels.
+	(AddSolutionTargets): Instead of using CallTarget, directly use MSBuild
+	task with the new BuildLevelN stuff. Also tell the user about disabled
+	projects or missing project configs.
+	(TopologicalSort): New.
+	(Insert): New. Based on code from monodevelop.
+
+2009-08-14  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets (ResolveAssemblyReference): Add
 	'{PkgConfig}' to SearchPaths.
 
