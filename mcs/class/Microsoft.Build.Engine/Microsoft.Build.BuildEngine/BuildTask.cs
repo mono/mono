@@ -42,6 +42,7 @@ namespace Microsoft.Build.BuildEngine {
 		ITaskHost		hostObject;
 		Target			parentTarget;
 		XmlElement		taskElement;
+		TaskLoggingHelper	logger;
 	
 		internal BuildTask (XmlElement taskElement, Target parentTarget)
 		{
@@ -94,9 +95,10 @@ namespace Microsoft.Build.BuildEngine {
 				result = taskEngine.Execute ();
 				if (result)
 					taskEngine.PublishOutput ();
-			// FIXME: it should be logged (exception)
 			} catch (Exception e) {
-				Console.Error.WriteLine (e);
+				logger.LogError ("Error executing task {0}: {1}", taskElement.LocalName, e.Message);
+				logger.LogMessage (MessageImportance.Low,
+						"Error executing task {0}: {1}", taskElement.LocalName, e.ToString ());
 				result = false;
 			}
 
@@ -165,6 +167,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			task = (ITask)Activator.CreateInstance (this.Type);
 			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project, 0, 0, ContinueOnError);
+			logger = new TaskLoggingHelper (task);
 			
 			return task;
 		}

@@ -31,6 +31,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="asm1/foo.dll" />
+    <Reference Include="asm2/bar.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

@@ -19,7 +19,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<OutDir Condition="'$(OutDir)' == ''">$(OutputPath)</OutDir>
+		<OutDir Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">$(OutDir)\</OutDir>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj\</BaseIntermediateOutputPath>
+		<CleanFile Condition="'$(CleanFile)'==''">$(MSBuildProjectFile).FilesWrittenAbsolute.txt</CleanFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(IntermediateOutputPath)' == ''">
@@ -32,14 +38,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<TargetPath Include="$(OutputPath)" />
+		<TargetPath Include="$(OutDir)" />
 	</ItemGroup>
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
 		
 		<MakeDir 
-			Directories="$(OutputPath);$(IntermediateOutputPath)"
+			Directories="$(OutDir);$(IntermediateOutputPath)"
 		/>
 
 		<GetFrameworkPath>
@@ -62,7 +68,7 @@
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
-			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutputPath)"
+			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{PkgConfig};{GAC};{RawFileName};$(OutDir)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
@@ -72,6 +78,7 @@
 			FindRelatedFiles="true"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
+			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
 			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolveAssemblyReferenceResolvedFiles"/>
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
@@ -80,14 +87,30 @@
 	</Target>
 
 	<Target
+		Name="AssignProjectConfigurations"
+		Condition="'@(ProjectReference)' != ''">
+
+		<AssignProjectConfiguration
+			ProjectReferences = "@(ProjectReference)"
+			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)">
+
+			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
+		</AssignProjectConfiguration>
+
+	</Target>
+
+
+	<Target
 		Name="ResolveProjectReferences"
-		Condition=" '@(ProjectReference)' != ''"
+		DependsOnTargets="AssignProjectConfigurations"
 	>
 		<!-- FIXME: don't build if building a .sln, since project ref would already have been built -->
 		<MSBuild
-			Projects="@(ProjectReference)"
+			Projects="@(ProjectReferenceWithConfiguration)"
 			Targets="GetTargetPath"
-		>
+			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
+			Condition="'@(ProjectReferenceWithConfiguration)' != ''">
+
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
 	</Target>
@@ -95,8 +118,10 @@
 	<Target Name = "CopyFilesMarkedCopyLocal">
 		<Copy
 			SourceFiles="@(ReferenceCopyLocalPaths)"
-			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutputPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
-		/>
+			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true">
+			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
+		</Copy>
 	</Target>
 
 <!--
@@ -129,14 +154,15 @@
 			CopyFilesMarkedCopyLocal;
 			BuildResources;
 			CoreCompile;
-			DeployOutputFiles
+			DeployOutputFiles;
+			_RecordCleanFile
 		</CoreBuildDependsOn>
 	</PropertyGroup>
 
 	<Target
 		Name="CoreBuild"
 		DependsOnTargets="$(CoreBuildDependsOn)"
-		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
+		Outputs="$(OutDir)$(AssemblyName)$(TargetExt)"
 	/>
 
 	<Target Name="BuildResources"
@@ -172,13 +198,17 @@
 
 		<MakeDir Directories="$(IntermediateOutputPath)%(ManifestNonResxWithCulture.Culture)"/>
 		<Copy SourceFiles = "@(NonResxWithCulture)"
-			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')">
+			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')"
+			SkipUnchangedFiles="true">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithCultureOnDisk"/>
+			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
 		</Copy>
 
 		<Copy SourceFiles = "@(NonResxWithNoCulture)"
-			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')">
+			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')"
+			SkipUnchangedFiles="true">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
+			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
 		</Copy>
 	</Target>
 
@@ -190,6 +220,7 @@
 			Condition = "'@(ResxWithNoCulture)' != '' ">
 
 			<Output TaskParameter = "OutputResources" ItemName = "ManifestResourceWithNoCulture"/>
+			<Output TaskParameter = "FilesWritten" ItemName = "FileWrites"/>
 		</GenerateResource>
 
 		<GenerateResource
@@ -199,6 +230,7 @@
 			Condition = "'@(ResxWithCulture)' != '' ">
 
 			<Output TaskParameter = "OutputResources" ItemName = "ManifestResourceWithCulture"/>
+			<Output TaskParameter = "FilesWritten" ItemName = "FileWrites"/>
 		</GenerateResource>
 	</Target>
 
@@ -212,8 +244,10 @@
 		<AL
 			Culture = "%(Culture)"
 			EmbedResources = "@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
-			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
-		/>
+			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll" >
+			<Output TaskParameter="OutputAssembly" ItemName="FileWrites"/>
+		</AL>
+
 
 		<CreateItem
 			Include = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
@@ -244,13 +278,21 @@
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
-			DestinationFolder="$(OutputPath)" />
+			DestinationFolder="$(OutDir)"
+			SkipUnchangedFiles="true" >
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
 
-		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
+		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
 
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"
-			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')" />
+			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutDir)\%(Culture)\$(AssemblyName).resources.dll')"
+			SkipUnchangedFiles="true">
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
 	</Target>
 
 	<Target Name="_CopyDeployFilesToOutputDirectory"
@@ -259,20 +301,25 @@
 			CopyDeployFilesToOutputDirectoryPreserveNewest"/>
 
 	<Target Name="CopyDeployFilesToOutputDirectoryPreserveNewest"
-		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
+		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
+		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
+		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
 
-		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>
+		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
 	</Target>
 
 	<!-- Copy if newer -->
 	<Target Name="_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways"
-		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
-		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
-		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)'">
+		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
-			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutDir)%(TargetPath)')">
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites2"/>
+		</Copy>
 	</Target>
 
 	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
@@ -339,6 +386,14 @@
 
 	</Target>
 
+	<Target Name="_RecordCleanFile"
+		DependsOnTargets="_GetCompileOutputsForClean">
+		<WriteLinesToFile
+			File="$(BaseIntermediateOutputPath)$(CleanFile)"
+			Lines="@(FileWrites->'%(FullPath)')"
+			Overwrite="true"/>
+	</Target>
+
 	<PropertyGroup>
 		<CleanDependsOn>
 			BeforeClean;
@@ -347,16 +402,33 @@
 		</CleanDependsOn>
 	</PropertyGroup>
 
-	<!-- FIXME: Include all generated files -->
+	<Target Name="_GetCompileOutputsForClean">
+		<CreateItem Include="@(IntermediateAssembly)" Condition="Exists('@(IntermediateAssembly)')">
+			<Output TaskParameter="Include" ItemName="FileWrites"/>
+		</CreateItem>
+
+		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')">
+			<Output TaskParameter="Include" ItemName="FileWrites"/>
+		</CreateItem>
+	</Target>
+
+	<!-- Get the list of files written, for clean -->
+	<Target Name="_GetCleanFileWrites"
+		DependsOnTargets="_GetCompileOutputsForClean">
+		<ReadLinesFromFile File="$(BaseIntermediateOutputPath)$(CleanFile)">
+			<Output TaskParameter="Lines" ItemName="FileWrites"/>
+		</ReadLinesFromFile>
+	</Target>
+
 	<Target Name="Clean" DependsOnTargets="$(CleanDependsOn)"/>
 
 	<!-- Override in project to run before/after clean tasks -->
 	<Target Name="BeforeClean" />
 	<Target Name="AfterClean" />
 
-	<Target Name="CoreClean">
-		<Message Text="Trying to delete $(OutputPath)$(AssemblyName)$(TargetExt)"/>
-		<Delete Files="$(OutputPath)$(AssemblyName)$(TargetExt)" />
+	<Target Name="CoreClean" DependsOnTargets="_GetCleanFileWrites">
+		<Delete Files="@(FileWrites)" TreatErrorsAsWarnings="true"/>
 	</Target>
 
 </Project>

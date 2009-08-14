@@ -39,7 +39,6 @@ namespace Microsoft.Build.Tasks {
 	
 		ITaskItem	file;
 		ITaskItem[]	lines;
-		StreamReader	streamReader;
 	
 		public ReadLinesFromFile ()
 		{
@@ -47,29 +46,24 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			StreamReader streamReader = null;
 			try {
-				if ( file == null)
-					throw new ArgumentNullException ("File", "File property must be set.");
-
 				streamReader = new StreamReader (file.GetMetadata ("FullPath"));
-				string line;
 				List <ITaskItem> temporaryLines = new List <ITaskItem> ();
-				while ((line = streamReader.ReadLine ()) != null) {
+
+				string line;
+				while ((line = streamReader.ReadLine ()) != null)
 					temporaryLines.Add (new TaskItem (line));
-				}
 				
 				lines = temporaryLines.ToArray ();
+			} catch (IOException ex) {
+				Log.LogWarningFromException (ex);
+			} finally {
+				if (streamReader != null)
+					streamReader.Dispose ();
+			}
 
-				return true;
-			}
-			catch (Exception ex) {
-				Log.LogErrorFromException (ex);
-				return false;
-			}
-			finally {
-				streamReader.Close ();
-			}
-			
+			return true;
 		}
 
 		[Required]

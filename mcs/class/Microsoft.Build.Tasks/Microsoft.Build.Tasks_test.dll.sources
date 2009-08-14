@@ -1,5 +1,6 @@
 Microsoft.Build.Tasks/ALTest.cs
 Microsoft.Build.Tasks/AssignCultureTest.cs
+Microsoft.Build.Tasks/AssignProjectConfigurationTest.cs
 Microsoft.Build.Tasks/AssignTargetPathTest.cs
 Microsoft.Build.Tasks/CombinePathTest.cs
 Microsoft.Build.Tasks/CopyTest.cs

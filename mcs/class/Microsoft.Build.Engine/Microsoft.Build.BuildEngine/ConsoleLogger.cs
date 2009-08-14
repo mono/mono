@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using Microsoft.Build.Framework;
@@ -46,6 +47,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool		performanceSummary;
 		bool		showSummary;
 		bool		skipProjectStartedText;
+		List<string> errors, warnings;
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -74,6 +76,8 @@ namespace Microsoft.Build.BuildEngine {
 			this.performanceSummary = false;
 			this.showSummary = true;
 			this.skipProjectStartedText = false;
+			errors = new List<string> ();
+			warnings = new List<string> ();
 		}
 		
 		public void ApplyParameter (string parameterName,
@@ -115,6 +119,19 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			if (performanceSummary == true) {
 			}
+
+			if (errors.Count > 0) {
+				WriteLine ("Errors:");
+				foreach (string error in errors)
+					WriteLine (error);
+			}
+
+			if (warnings.Count > 0) {
+				WriteLine ("Warnings:");
+				foreach (string warning in warnings)
+					WriteLine (warning);
+			}
+
 			if (showSummary == true){
 				TimeSpan timeElapsed = args.Timestamp - buildStart;
 				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
@@ -132,8 +149,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic)) {
-				WriteLine (String.Format ("Done building project \"{0}\".", args.ProjectFile));
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
+							args.Succeeded ? String.Empty : "-- FAILED"));
 				WriteLine (String.Empty);
 			}
 		}
@@ -148,8 +166,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			indent--;
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
-				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".",
-					args.TargetName, args.ProjectFile));
+				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
+					args.TargetName, args.ProjectFile,
+					args.Succeeded ? String.Empty : "-- FAILED"));
 			if (!args.Succeeded)
 				errorCount++;
 			WriteLine (String.Empty);
@@ -184,15 +203,19 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) 
-				WriteLineWithoutIndent (FormatWarningEvent (args));
+			string msg = FormatWarningEvent (args);
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))
+				WriteLineWithoutIndent (msg);
+			warnings.Add (msg);
 			warningCount++;
 		}
 		
 		public void ErrorHandler (object sender, BuildErrorEventArgs args)
 		{
+			string msg = FormatErrorEvent (args);
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) 
-				WriteLineWithoutIndent (FormatErrorEvent (args));
+				WriteLineWithoutIndent (msg);
+			errors.Add (msg);
 			errorCount++;
 		}
 		
@@ -238,25 +261,47 @@ namespace Microsoft.Build.BuildEngine {
 		public virtual void Shutdown ()
 		{
 		}
+
+		static bool InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 		
 		private string FormatErrorEvent (BuildErrorEventArgs args)
 		{
-			// FIXME: show more complicated args
-			if (args.LineNumber != 0 && args.ColumnNumber != 0) {
-				return String.Format ("{0}({1},{2}): {3} error {4}: {5}", args.File, args.LineNumber, args.ColumnNumber,
-					args.Subcategory, args.Code, args.Message);
+			// For some reason we get an 1-char empty string as Subcategory somtimes.
+			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+			string subcat = subprefix == "" ? "" : args.Subcategory;
+				
+			if (args.LineNumber != 0){
+				if (args.ColumnNumber != 0 && !InEmacs) 
+					return String.Format ("{0}({1},{2}): {3}{4}error {5}: {6}",
+							      args.File, args.LineNumber, args.ColumnNumber,
+							      subprefix, subcat, args.Code, args.Message);
+
+				return String.Format ("{0}({1}): {2}{3}error {4}: {5}",
+						      args.File, args.LineNumber,
+						      subprefix, subcat, args.Code, args.Message);
 			} else {
-				return String.Format ("{0}: {1} error {2}: {3}", args.File, args.Subcategory, args.Code,
+				return String.Format ("{0}: {1}{2}error {3}: {4}", args.File, subprefix, subcat, args.Code,
 					args.Message);
 			}
 		}
 
 		private string FormatWarningEvent (BuildWarningEventArgs args)
 		{
+			// For some reason we get an 1-char empty string as Subcategory somtimes.
+			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+			string subcat = subprefix == "" ? "" : args.Subcategory;
+
 			// FIXME: show more complicated args
-			if (args.LineNumber != 0 && args.ColumnNumber != 0) {
-				return String.Format ("{0}({1},{2}): {3} warning {4}: {5}", args.File, args.LineNumber, args.ColumnNumber,
-					args.Subcategory, args.Code, args.Message);
+			if (args.LineNumber != 0){
+
+				if (args.ColumnNumber != 0 && !InEmacs) {
+					return String.Format ("{0}({1},{2}): {3}{4}warning {5}: {6}",
+							      args.File, args.LineNumber, args.ColumnNumber,
+							      subprefix, subcat, args.Code, args.Message);
+				}
+				return String.Format ("{0}({1}): {2}{3}warning {4}: {5}",
+						      args.File, args.LineNumber,
+						      subprefix, subcat, args.Code, args.Message);
 			} else {
 				return String.Format ("{0}: {1} warning {2}: {3}", args.File, args.Subcategory, args.Code,
 					args.Message);

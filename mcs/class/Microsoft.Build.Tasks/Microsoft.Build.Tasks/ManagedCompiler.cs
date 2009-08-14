@@ -134,7 +134,7 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected override bool HandleTaskExecutionErrors ()
 		{
-			return true;
+			return ExitCode == 0 && !Log.HasLoggedErrors;
 		}
 		
 		[MonoTODO]

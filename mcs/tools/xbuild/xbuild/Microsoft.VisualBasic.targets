@@ -63,7 +63,7 @@
 			OptionStrictType="$(OptionStrictType)" 
 			OutputAssembly="$(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
-			References="@(ResolvedFiles);@(ChildProjectReferences)"
+			References="@(ResolvedFiles)"
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ResponseFiles="$(CompilerResponseFile)"
