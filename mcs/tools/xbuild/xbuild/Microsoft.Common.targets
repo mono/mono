@@ -12,9 +12,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
+		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 	</PropertyGroup>
 
@@ -290,6 +290,7 @@
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"
 			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutDir)\%(Culture)\$(AssemblyName).resources.dll')"
+			Condition = "'@(IntermediateSatelliteAssemblies)' != ''"
 			SkipUnchangedFiles="true">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
@@ -318,7 +319,6 @@
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
 			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutDir)%(TargetPath)')">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-			<Output TaskParameter="DestinationFiles" ItemName="FileWrites2"/>
 		</Copy>
 	</Target>
 
