@@ -1,3 +1,8 @@
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : EndpointNotFoundException message could
+	  be a bit kindful.
+
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IOperationInvoker.cs : fix interface.
