@@ -1,5 +1,14 @@
 2009-08-14  Mark Probst  <mark.probst@gmail.com>
 
+	* appdomain.c, metadata-internals.h, image.c: In MonoImage add a
+	list of classes for which we have to unregister reflection_info
+	with the GC and which are not in the namespace cache.
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Add
+	the class to the list.
+
+2009-08-14  Mark Probst  <mark.probst@gmail.com>
+
 	* domain.c (mono_domain_free): Unregister the GC roots in
 	MonoDomain.
 
