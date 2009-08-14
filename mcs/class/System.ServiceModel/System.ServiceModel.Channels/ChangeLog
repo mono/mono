@@ -1,3 +1,10 @@
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelBase.cs, TcpDuplexSessionChannel.cs :
+	  get local and remote address of connected counterpart to get
+	  callback channel connected.
+	* PeerDuplexChannel.cs : remove FIXME wrt above.
+
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerDuplexChannel.cs : add fixme comment and remove extra FIXME.

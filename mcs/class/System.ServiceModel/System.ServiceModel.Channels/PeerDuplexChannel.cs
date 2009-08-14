@@ -84,8 +84,6 @@ namespace System.ServiceModel.Channels
 					throw new ArgumentNullException ("connect");
 try {
 				var ch = OperationContext.Current.GetCallbackChannel<IPeerConnectorContract> ();
-// FIXME: so, this duplex channel, when created by a listener, lacks RemoteAddress to send callback. Get it from somewhere.
-Console.WriteLine ("FIXME FIXME:" + ((IContextChannel) ch).RemoteAddress);
 				// FIXME: check and reject if inappropriate.
 				ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
 

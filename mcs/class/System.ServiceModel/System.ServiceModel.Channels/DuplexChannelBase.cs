@@ -57,11 +57,11 @@ namespace System.ServiceModel.Channels
 			SetupDelegates ();
 		}
 
-		public EndpointAddress LocalAddress {
+		public virtual EndpointAddress LocalAddress {
 			get { return local_address; }
 		}
 
-		public EndpointAddress RemoteAddress {
+		public virtual EndpointAddress RemoteAddress {
 			get { return remote_address; }
 		}
 
