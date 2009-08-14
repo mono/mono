@@ -9523,12 +9523,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 SetEnum(System.String, Enum)">
-        <size>2</size>
-      </method>
-      <method name="Int32 SetEnum(Int32, Enum)">
-        <size>2</size>
-      </method>
     </type>
     <type name="Test">
       <method name="Void .ctor()">
@@ -9536,6 +9530,14 @@
       </method>
       <method name="Int32 Main(System.String[])">
         <size>31</size>
+      </method>
+    </type>
+    <type name="TestThing">
+      <method name="Int32 SetEnum(System.String, System.Enum)">
+        <size>2</size>
+      </method>
+      <method name="Int32 SetEnum(Int32, System.Enum)">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -25891,11 +25893,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Boolean EnumInSet(Enum, System.Enum[])">
-        <size>37</size>
-      </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Boolean EnumInSet(System.Enum, System.Enum[])">
+        <size>37</size>
       </method>
     </type>
   </test>
@@ -30106,7 +30108,7 @@
       <method name="System.Object get_Val()">
         <size>7</size>
       </method>
-      <method name="Enum get_Val2()">
+      <method name="System.Enum get_Val2()">
         <size>7</size>
       </method>
     </type>
