@@ -710,10 +710,17 @@ namespace System.Web.UI {
 						// builder call.
 						defaultPropertyBuilder = null;
 						childBuilder = CreatePropertyBuilder (tagid, parser, atts);
-					} else
-						childBuilder = defaultPropertyBuilder.CreateSubBuilder (tagid, atts,
-													null, parser,
-													location);
+					} else {
+						Type ct = ControlType;
+						MemberInfo[] mems = ct != null ? ct.GetMember (tagid, MemberTypes.Property, FlagsNoCase) : null;
+						PropertyInfo prop = mems != null && mems.Length > 0 ? mems [0] as PropertyInfo : null;
+
+						if (prop != null && typeof (ITemplate).IsAssignableFrom (prop.PropertyType)) {
+							childBuilder = CreatePropertyBuilder (tagid, parser, atts);
+							defaultPropertyBuilder = null;
+						} else
+							childBuilder = defaultPropertyBuilder.CreateSubBuilder (tagid, atts, null, parser, location);
+					}
 				}
 
 				return childBuilder;
