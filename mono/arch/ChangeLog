@@ -1,3 +1,7 @@
+2009-08-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/arm-codegen.h: Add armv6 MOVW/MOVT.
+
 2009-07-03  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
