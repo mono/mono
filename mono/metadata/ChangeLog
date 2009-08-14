@@ -1,5 +1,15 @@
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add new warning level for errors specified
+	by ECMA 335 but that MS ignores.
+
+	* metadata-verify.c (verify_method_table): Make compiler controled
+	visibility + (rt)specialname error a warning as MS ignores this. Ignoring
+	this check is safe because the end result will only be some visibility
+	exceptions been thrown.
+
+2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (get_boxable_mono_type): Don't allow the
 	use of the generic type definition on boxed type positions.
 
