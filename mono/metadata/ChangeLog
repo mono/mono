@@ -1,3 +1,8 @@
+2009-08-14  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c (mono_domain_free): Unregister the GC roots in
+	MonoDomain.
+
 2009-08-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_reflection_type_get_handle): Fix typo.
