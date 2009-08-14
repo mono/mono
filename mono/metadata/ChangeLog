@@ -1,6 +1,15 @@
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	loader.c (field_from_memberref): Don't crash if either the field
+	* loader.c (mono_loader_error_prepare_exception): Handle missing field
+	errors with no class set.
+
+	* loader.c (field_from_memberref): If the field signature is of the wrong
+	type fail with a MissingFieldException instead of a BadImageException as
+	this is the behavior observed on MS. 
+
+2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Don't crash if either the field
 	signature or the typespec class are invalid.
 
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
