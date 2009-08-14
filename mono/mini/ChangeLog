@@ -1,5 +1,14 @@
 2009-08-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_method): Rename 'aot_module' -> 'amodule'. Allocate
+	the methods_loaded array using amodule->info->nmethods.
+
+	* mini.h (MonoAotFileInfo): Add an 'nmethods' field.
+	(MONO_AOT_FILE_VERSION): Bump this.
+
+	* aot-compiler.c: Emit more generic instances allowing some parts of linq
+	to work.
+
 	* aot-runtime.c (mono_aot_get_unwind_info): Handle the case when the
 	MonoJitInfo doesn't belong to its methods aot image.
 
