@@ -100,6 +100,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		// Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed.
 		// This is used to evaluate $(MSBuildBinPath).
+		/* This isn't valid for 3.5
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestNewProject ()
@@ -107,7 +109,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine ();
 
 			engine.CreateNewProject ();
-		}
+		}*/
 
 		[Test]
 		public void TestBinPath ()

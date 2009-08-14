@@ -110,15 +110,17 @@ namespace Microsoft.Build.BuildEngine {
 			buildTasks.Remove (buildTask);
 		}
 		
-		// FIXME: log errors instead of throwing exceptions
 		internal bool Build ()
 		{
 			bool deps;
 			bool result;
 
-			// log that target is being skipped
-			if (!ConditionParser.ParseAndEvaluate (Condition, Project))
+			if (!ConditionParser.ParseAndEvaluate (Condition, Project)) {
+				LogMessage (MessageImportance.Low,
+						"Target {0} skipped due to false condition: {1}",
+						Name, Condition);
 				return true;
+			}
 
 			try {
 				buildState = BuildState.Started;
@@ -127,7 +129,6 @@ namespace Microsoft.Build.BuildEngine {
 				result = deps ? DoBuild () : false;
 
 				buildState = BuildState.Finished;
-			// FIXME: log it 
 			} catch (Exception e) {
 				LogError ("Error building target {0}: {1}", Name, e.ToString ());
 				return false;
@@ -213,6 +214,17 @@ namespace Microsoft.Build.BuildEngine {
 				null, null, null, 0, 0, 0, 0, String.Format (message, messageArgs),
 				null, null);
 			engine.EventSource.FireErrorRaised (this, beea);
+		}
+
+		void LogMessage (MessageImportance importance, string message, params object [] messageArgs)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
+			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
+				String.Format (message, messageArgs), null,
+				null, importance);
+			engine.EventSource.FireMessageRaised (this, bmea);
 		}
 	
 		public string Condition {

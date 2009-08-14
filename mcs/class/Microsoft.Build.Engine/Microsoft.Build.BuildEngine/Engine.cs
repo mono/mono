@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
@@ -63,7 +64,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public Engine ()
-			: this (null)
+			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
 		{
 		}
 

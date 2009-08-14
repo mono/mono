@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security;
 using Microsoft.Build.Framework;
@@ -67,17 +68,21 @@ namespace Microsoft.Build.Tasks {
 		ITaskItem[]	suggestedRedirects;
 		string[]	targetFrameworkDirectories;
 		string		targetProcessorArchitecture;
-		static string []	assembly_file_search_paths;
 		static string []	default_assembly_extensions;
 
 		AssemblyResolver	assembly_resolver;
-		List<ITaskItem>	tempSatelliteFiles, tempRelatedFiles, tempResolvedDepFiles;
-		List<ITaskItem> tempResolvedFiles, tempCopyLocalFiles;
+		List<string> dependency_search_paths;
+		Dictionary<string, ResolvedReference> assemblyNameToResolvedRef;
+		Dictionary<string, ITaskItem>	tempSatelliteFiles, tempRelatedFiles,
+			tempResolvedDepFiles, tempCopyLocalFiles;
+		List<ITaskItem> tempResolvedFiles;
+		List<PrimaryReference> primaryReferences;
+		Dictionary<string, string> alreadyScannedAssemblyNames;
+
+		//FIXME: construct and use a graph of the dependencies, useful across projects
 
 		static ResolveAssemblyReference ()
 		{
-			assembly_file_search_paths = new string [] {
-				"{TargetFrameworkDirectory}", "{GAC}", String.Empty };
 			default_assembly_extensions = new string [] { ".dll", ".exe" };
 		}
 
@@ -87,15 +92,17 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		//FIXME: make this reusable
-		//FIXME: make sure finals refs are not repeated
 		public override bool Execute ()
 		{
 			assembly_resolver.Log = Log;
-			tempResolvedFiles = new List <ITaskItem> ();
-			tempCopyLocalFiles = new List <ITaskItem> ();
-			tempSatelliteFiles = new List<ITaskItem> ();
-			tempRelatedFiles = new List<ITaskItem> ();
-			tempResolvedDepFiles = new List<ITaskItem> ();
+			tempResolvedFiles = new List<ITaskItem> ();
+			tempCopyLocalFiles = new Dictionary<string, ITaskItem> ();
+			tempSatelliteFiles = new Dictionary<string, ITaskItem> ();
+			tempRelatedFiles = new Dictionary<string, ITaskItem> ();
+			tempResolvedDepFiles = new Dictionary<string, ITaskItem> ();
+
+			primaryReferences = new List<PrimaryReference> ();
+			assemblyNameToResolvedRef = new Dictionary<string, ResolvedReference> ();
 
 			foreach (ITaskItem item in assemblies) {
 				if (!String.IsNullOrEmpty (item.GetMetadata ("SubType"))) {
@@ -114,42 +121,62 @@ namespace Microsoft.Build.Tasks {
 							item.ItemSpec, resolved_ref.TaskItem,
 							resolved_ref.TaskItem.GetMetadata ("CopyLocal"));
 
-					tempResolvedFiles.Add (resolved_ref.TaskItem);
+					Log.LogMessage (MessageImportance.Low,
+							"\tReference found at search path {0}",
+							resolved_ref.FoundInSearchPathAsString);
 
-					if (!IsFromGacOrTargetFramework (resolved_ref))
-						ResolveAssemblyFileDependencies (resolved_ref.TaskItem,
-								resolved_ref.TaskItem.GetMetadata ("CopyLocal"));
+					if (TryAddNewReference (tempResolvedFiles, resolved_ref) &&
+						!IsFromGacOrTargetFramework (resolved_ref)) {
+						primaryReferences.Add (new PrimaryReference (
+								resolved_ref.TaskItem,
+								resolved_ref.TaskItem.GetMetadata ("CopyLocal")));
+					}
 				}
 			}
 
 			ResolveAssemblyFiles ();
-			
+
+			alreadyScannedAssemblyNames = new Dictionary<string, string> ();
+
+			// the first element is place holder for parent assembly's dir
+			dependency_search_paths = new List<string> () { String.Empty };
+			dependency_search_paths.AddRange (searchPaths);
+
+			// resolve dependencies
+			foreach (PrimaryReference pref in primaryReferences)
+				ResolveAssemblyFileDependencies (pref.TaskItem, pref.ParentCopyLocal);
+
 			resolvedFiles = tempResolvedFiles.ToArray ();
-			copyLocalFiles = tempCopyLocalFiles.ToArray ();
-			satelliteFiles = tempSatelliteFiles.ToArray ();
-			relatedFiles = tempRelatedFiles.ToArray ();
-			resolvedDependencyFiles = tempResolvedDepFiles.ToArray ();
+			copyLocalFiles = tempCopyLocalFiles.Values.ToArray ();
+			satelliteFiles = tempSatelliteFiles.Values.ToArray ();
+			relatedFiles = tempRelatedFiles.Values.ToArray ();
+			resolvedDependencyFiles = tempResolvedDepFiles.Values.ToArray ();
 
 			tempResolvedFiles.Clear ();
 			tempCopyLocalFiles.Clear ();
 			tempSatelliteFiles.Clear ();
 			tempRelatedFiles.Clear ();
 			tempResolvedDepFiles.Clear ();
+			alreadyScannedAssemblyNames.Clear ();
+			primaryReferences.Clear ();
+			assemblyNameToResolvedRef.Clear ();
+			dependency_search_paths = null;
 
 			return true;
 		}
 
 		// Use @search_paths to resolve the reference
-		ResolvedReference ResolveReference (ITaskItem item, string [] search_paths)
+		ResolvedReference ResolveReference (ITaskItem item, IEnumerable<string> search_paths)
 		{
+			ResolvedReference resolved = null;
+			bool specific_version;
+
 			assembly_resolver.ResetSearchLogger ();
 
-			ResolvedReference resolved = null;
-			foreach (string spath in search_paths) {
-				bool specific_version;
-				if (!TryGetSpecificVersionValue (item, out specific_version))
-					return null;
+			if (!TryGetSpecificVersionValue (item, out specific_version))
+				return null;
 
+			foreach (string spath in search_paths) {
 				assembly_resolver.SearchLogger.WriteLine ("For searchpath {0}", spath);
 
 				if (String.Compare (spath, "{HintPathFromItem}") == 0) {
@@ -165,12 +192,15 @@ namespace Microsoft.Build.Tasks {
 					resolved = assembly_resolver.ResolveGacReference (item, specific_version);
 				} else if (String.Compare (spath, "{RawFileName}") == 0) {
 					//FIXME: identify assembly names, as extract the name, and try with that?
-					if (assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec) != null)
-						resolved = assembly_resolver.GetResolvedReference (item, item.ItemSpec, true,
+					AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
+					if (aname != null)
+						resolved = assembly_resolver.GetResolvedReference (item, item.ItemSpec, aname, true,
 								SearchPath.RawFileName);
 				} else if (String.Compare (spath, "{CandidateAssemblyFiles}") == 0) {
 					assembly_resolver.SearchLogger.WriteLine (
 							"Warning: {CandidateAssemblyFiles} not supported currently");
+				} else if (String.Compare (spath, "{PkgConfig}") == 0) {
+					resolved = assembly_resolver.ResolvePkgConfigReference (item, specific_version);
 				} else {
 					resolved = assembly_resolver.FindInDirectory (
 							item, spath,
@@ -211,6 +241,8 @@ namespace Microsoft.Build.Tasks {
 		void ResolveAssemblyFiles ()
 		{
 			foreach (ITaskItem item in assemblyFiles) {
+				assembly_resolver.ResetSearchLogger ();
+
 				if (!File.Exists (item.ItemSpec)) {
 					Log.LogMessage (MessageImportance.Low,
 							"Primary Reference from AssemblyFiles {0}, file not found. Ignoring",
@@ -221,79 +253,89 @@ namespace Microsoft.Build.Tasks {
 				Log.LogMessage (MessageImportance.Low, "Primary Reference from AssemblyFiles {0}", item.ItemSpec);
 				string copy_local;
 
-				ResolvedReference rr = assembly_resolver.GetResolvedReference (item, item.ItemSpec, true,
+				AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
+				if (aname == null) {
+					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
+					Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
+					continue;
+				}
+
+				ResolvedReference rr = assembly_resolver.GetResolvedReference (item, item.ItemSpec, aname, true,
 						SearchPath.RawFileName);
 				copy_local = rr.CopyLocal.ToString ();
 
-				tempResolvedFiles.Add (rr.TaskItem);
+				if (!TryAddNewReference (tempResolvedFiles, rr))
+					// already resolved
+					continue;
+
 				SetCopyLocal (rr.TaskItem, copy_local);
 
 				FindAndAddRelatedFiles (item.ItemSpec, copy_local);
 				FindAndAddSatellites (item.ItemSpec, copy_local);
 
 				if (FindDependencies && !IsFromGacOrTargetFramework (rr))
-					ResolveAssemblyFileDependencies (item, copy_local);
+					primaryReferences.Add (new PrimaryReference (item, copy_local));
 			}
 		}
-
-		//FIXME: caching
 
 		// Tries to resolve assemblies referenced by @item
 		// Skips gac references
 		// @item : filename
 		void ResolveAssemblyFileDependencies (ITaskItem item, string parent_copy_local)
 		{
-			string basepath = Path.GetDirectoryName (item.ItemSpec);
-
-			// set the 3rd search path to this ref's base path
-			// Will be used for resolving the dependencies
-			assembly_file_search_paths [2] = basepath;
-
-			Dictionary<string, string> alreadyResolvedAssemblies = new Dictionary<string, string> ();
-
 			Queue<string> dependencies = new Queue<string> ();
 			dependencies.Enqueue (item.ItemSpec);
 
 			while (dependencies.Count > 0) {
-				Assembly asm = Assembly.ReflectionOnlyLoadFrom (dependencies.Dequeue ());
-				if (alreadyResolvedAssemblies.ContainsKey (asm.FullName))
+				string filename = Path.GetFullPath (dependencies.Dequeue ());
+				Assembly asm = Assembly.ReflectionOnlyLoadFrom (filename);
+				if (alreadyScannedAssemblyNames.ContainsKey (asm.FullName))
 					continue;
 
+				// set the 1st search path to this ref's base path
+				// Will be used for resolving the dependencies
+				dependency_search_paths [0] = Path.GetDirectoryName (filename);
+
 				foreach (AssemblyName aname in asm.GetReferencedAssemblies ()) {
-					if (alreadyResolvedAssemblies.ContainsKey (aname.FullName))
+					if (alreadyScannedAssemblyNames.ContainsKey (aname.FullName))
 						continue;
 
-					Log.LogMessage (MessageImportance.Low, "Dependency {0}", aname);
-					Log.LogMessage (MessageImportance.Low, "\tRequired by {0}", asm.FullName);
-
 					ResolvedReference resolved_ref = ResolveDependencyByAssemblyName (
-							aname, parent_copy_local);
+							aname, asm.FullName, parent_copy_local);
 
-					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref)) {
+					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref))
 						dependencies.Enqueue (resolved_ref.TaskItem.ItemSpec);
-						FindAndAddSatellites (resolved_ref.TaskItem.ItemSpec, parent_copy_local);
-					}
 				}
-				alreadyResolvedAssemblies.Add (asm.FullName, String.Empty);
+				alreadyScannedAssemblyNames.Add (asm.FullName, String.Empty);
 			}
 		}
 
-		// Resolves by looking assembly_file_search_paths
-		// which has - gac, tgtfmwk, and base dir of the parent
-		// reference
-		ResolvedReference ResolveDependencyByAssemblyName (AssemblyName aname, string parent_copy_local)
+		// Resolves by looking dependency_search_paths
+		// which is dir of parent reference file, and
+		// SearchPaths
+		ResolvedReference ResolveDependencyByAssemblyName (AssemblyName aname, string parent_asm_name,
+				string parent_copy_local)
 		{
-			// Look in TargetFrameworkDirectory, Gac
+			// This will check for compatible assembly name/version
+			ResolvedReference resolved_ref;
+			if (TryGetResolvedReferenceByAssemblyName (aname, false, out resolved_ref))
+				return resolved_ref;
+
+			Log.LogMessage (MessageImportance.Low, "Dependency {0}", aname);
+			Log.LogMessage (MessageImportance.Low, "\tRequired by {0}", parent_asm_name);
+
 			ITaskItem item = new TaskItem (aname.FullName);
 			item.SetMetadata ("SpecificVersion", "false");
-			ResolvedReference resolved_ref = ResolveReference (
-							item,
-							assembly_file_search_paths);
+			resolved_ref = ResolveReference (item, dependency_search_paths);
 
 			string copy_local = "false";
 			if (resolved_ref != null) {
 				Log.LogMessage (MessageImportance.Low, "\tReference {0} resolved to {1}.",
 					aname, resolved_ref.TaskItem.ItemSpec);
+
+				Log.LogMessage (MessageImportance.Low,
+						"\tReference found at search path {0}",
+						resolved_ref.FoundInSearchPathAsString);
 
 				if (resolved_ref.FoundInSearchPath == SearchPath.Directory) {
 					// override CopyLocal with parent's val
@@ -303,17 +345,19 @@ namespace Microsoft.Build.Tasks {
 							"\tThis is CopyLocal {0} as parent item has this value",
 							copy_local);
 
-					FindAndAddRelatedFiles (resolved_ref.TaskItem.ItemSpec, parent_copy_local);
+					if (TryAddNewReference (tempResolvedFiles, resolved_ref)) {
+						FindAndAddRelatedFiles (resolved_ref.TaskItem.ItemSpec, parent_copy_local);
+						FindAndAddSatellites (resolved_ref.TaskItem.ItemSpec, parent_copy_local);
+					}
 				} else {
 					//gac or tgtfmwk
 					Log.LogMessage (MessageImportance.Low,
-							"\tThis is CopyLocal {0} as it is in the gac or one " +
-							"of the target framework directories",
+							"\tThis is CopyLocal {0} as it is in the gac," +
+							"target framework directory or provided by a package.",
 							copy_local);
 
+					TryAddNewReference (tempResolvedFiles, resolved_ref);
 				}
-
-				tempResolvedFiles.Add (resolved_ref.TaskItem);
 			} else {
 				Log.LogWarning ("\tReference '{0}' not resolved", aname);
 				Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
@@ -333,7 +377,7 @@ namespace Microsoft.Build.Tasks {
 					ITaskItem item = new TaskItem (rfile);
 					SetCopyLocal (item, parent_copy_local);
 
-					tempRelatedFiles.Add (item);
+					tempRelatedFiles.AddUniqueFile (item);
 				}
 			}
 		}
@@ -360,9 +404,22 @@ namespace Microsoft.Build.Tasks {
 					ITaskItem item = new TaskItem (res_path);
 					SetCopyLocal (item, parent_copy_local);
 					item.SetMetadata ("DestinationSubdirectory", culture + dir_sep);
-					tempSatelliteFiles.Add (item);
+					tempSatelliteFiles.AddUniqueFile (item);
 				}
 			}
+		}
+
+		// returns true is it was new
+		bool TryAddNewReference (List<ITaskItem> file_list, ResolvedReference key_ref)
+		{
+			ResolvedReference found_ref;
+			if (!TryGetResolvedReferenceByAssemblyName (key_ref.AssemblyName, key_ref.IsPrimary, out found_ref)) {
+				assemblyNameToResolvedRef [key_ref.AssemblyName.Name] = key_ref;
+				file_list.Add (key_ref.TaskItem);
+
+				return true;
+			}
+			return false;
 		}
 
 		void SetCopyLocal (ITaskItem item, string copy_local)
@@ -371,7 +428,45 @@ namespace Microsoft.Build.Tasks {
 
 			// Assumed to be valid value
 			if (Boolean.Parse (copy_local))
-				tempCopyLocalFiles.Add (item);
+				tempCopyLocalFiles.AddUniqueFile (item);
+		}
+
+		bool TryGetResolvedReferenceByAssemblyName (AssemblyName key_aname, bool is_primary, out ResolvedReference found_ref)
+		{
+			found_ref = null;
+			// Match by just name
+			if (!assemblyNameToResolvedRef.TryGetValue (key_aname.Name, out found_ref))
+				// not there
+				return false;
+
+			// match for full name
+			if (AssemblyResolver.AssemblyNamesCompatible (key_aname, found_ref.AssemblyName, true))
+				// exact match, so its already there, dont add anything
+				return true;
+
+			// we have a name match, but version mismatch!
+			assembly_resolver.SearchLogger.WriteLine ("A conflict was detected between '{0}' and '{1}'",
+					key_aname.FullName, found_ref.AssemblyName.FullName);
+
+			if (is_primary == found_ref.IsPrimary) {
+				assembly_resolver.SearchLogger.WriteLine ("Unable to choose between the two. " +
+						"Choosing '{0}' arbitrarily.", found_ref.AssemblyName.FullName);
+				return true;
+			}
+
+			// since all dependencies are processed after
+			// all primary refererences, the one in the cache
+			// has to be a primary
+			// Prefer a primary reference over a dependency
+
+			assembly_resolver.SearchLogger.WriteLine ("Choosing '{0}' as it is a primary reference.",
+					found_ref.AssemblyName.FullName);
+
+			Log.LogWarning ("Found a conflict between : '{0}' and '{1}'. Using '{0}' reference.",
+					found_ref.AssemblyName.FullName,
+					key_aname.FullName);
+
+			return true;
 		}
 
 		bool IsCopyLocal (ITaskItem item)
@@ -539,6 +634,32 @@ namespace Microsoft.Build.Tasks {
                         }
                 }
 	}
+
+	static class ResolveAssemblyReferenceHelper {
+		public static void AddUniqueFile (this Dictionary<string, ITaskItem> dic, ITaskItem item)
+		{
+			if (dic == null)
+				throw new ArgumentNullException ("dic");
+			if (item == null)
+				throw new ArgumentNullException ("item");
+
+			string fullpath = Path.GetFullPath (item.ItemSpec);
+			if (!dic.ContainsKey (fullpath))
+				dic [fullpath] = item;
+		}
+	}
+
+	struct PrimaryReference {
+		public ITaskItem TaskItem;
+		public string ParentCopyLocal;
+
+		public PrimaryReference (ITaskItem item, string parent_copy_local)
+		{
+			TaskItem = item;
+			ParentCopyLocal = parent_copy_local;
+		}
+	}
+
 }
 
 #endif

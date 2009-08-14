@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 //
 // (C) 2005 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,89 +49,43 @@ namespace Microsoft.Build.Tasks {
 		string		stdOutEncoding;
 		string		workingDirectory;
 		
-		//Process		process;
-		//int		executionTime;
-		
 		public Exec ()
 		{
 			ignoreExitCode = false;
 		}
 		
-		// FIXME: what does that method do?
-		[MonoTODO]
 		protected internal override void AddCommandLineCommands (CommandLineBuilderExtension commandLine)
 		{
+			if (!String.IsNullOrEmpty (command)) {
+				string[] commandTable = command.Split (null, 2);
+				string arguments = String.Empty;
+				if (commandTable.Length == 2)
+					commandLine.AppendSwitch (commandTable [1]);
+			}
 			base.AddCommandLineCommands (commandLine);
 		}
-		
-		/*public override bool Execute ()
-		{
-			StringCollection temporaryOutputs = new StringCollection ();
-			string line = null;
-			string[] commandTable = command.Split (null, 2);
-			string filename = commandTable [0];
-			string arguments = "";
-			if (commandTable.Length == 2)
-				arguments = commandTable [1];
-		
-			if (workingDirectory != null)
-				process.StartInfo.WorkingDirectory = workingDirectory;
-			process.StartInfo.FileName = filename;
-			process.StartInfo.Arguments = arguments;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.StartInfo.RedirectStandardError = true;
-			process.StartInfo.UseShellExecute = false;
-			
-			try {
-				process.Start ();
-				process.WaitForExit ();
 
-				//exitCode = process.ExitCode;
-				while ((line = process.StandardOutput.ReadLine ()) != null)
-					temporaryOutputs.Add (line);
-				outputs = new ITaskItem [temporaryOutputs.Count];
-				int i  = 0;
-				foreach (string s in temporaryOutputs)
-					outputs [i++] = new TaskItem (s);
-			}
-			catch (Exception ex) {
-				Log.LogErrorFromException (ex);
-				return false;
-			}
-			
-			if (exitCode != 0 && ignoreExitCode == false)
-				return false;
-			else
-				return true;
-		}*/
-		
-		// FIXME: we need to write another ExecuteTool and RealExecute that will collect std output and
-		// make it available through Outputs property
-		
-		[MonoTODO]
 		protected override int ExecuteTool (string pathToTool,
 						    string responseFileCommands,
 						    string commandLineCommands)
 		{
-			return base.ExecuteTool (GenerateFullPathToTool (), String.Empty, String.Empty);
+			return base.ExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
 		}
-		
+
 		[MonoTODO]
 		protected override string GenerateFullPathToTool ()
 		{
-			return command;
+			return command.Split (null, 2) [0];
 		}
 		
-		[MonoTODO]
 		protected override string GetWorkingDirectory ()
 		{
 			return workingDirectory;
 		}
 		
-		[MonoTODO]
 		protected override bool HandleTaskExecutionErrors ()
 		{
-			return true;
+			return ExitCode == 0 || ignoreExitCode;
 		}
 		
 		[MonoTODO]
@@ -143,6 +99,11 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 		
+		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
+		{
+			Log.LogMessage (importance, singleLine);
+		}
+
 		[MonoTODO]
 		protected override bool ValidateParameters ()
 		{
