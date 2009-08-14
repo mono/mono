@@ -69,7 +69,7 @@ namespace System.ServiceModel.Channels
 			public IPeerConnectorClient Channel { get; set; }
 		}
 
-		class LocalPeerReceiver : IPeerReceiverContract
+		class LocalPeerReceiver : IPeerConnectorContract
 		{
 			public LocalPeerReceiver (PeerDuplexChannel owner)
 			{
@@ -97,10 +97,22 @@ namespace System.ServiceModel.Channels
 
 			public void Welcome (WelcomeInfo welcome)
 			{
+				owner.HandleWelcomeResponse (welcome);
 			}
 
 			public void Refuse (RefuseInfo refuse)
 			{
+				owner.HandleRefuseResponse (refuse);
+			}
+
+			public void LinkUtility (LinkUtilityInfo linkUtility)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public void Ping ()
+			{
+				throw new NotImplementedException ();
 			}
 
 			public void SendMessage (Message msg)
@@ -165,6 +177,21 @@ namespace System.ServiceModel.Channels
 			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), pna.EndpointAddress.Uri);
 		}
 
+		public void HandleWelcomeResponse (WelcomeInfo welcome)
+		{
+			last_connect_response = welcome;
+			connect_handle.Set ();
+		}
+
+		public void HandleRefuseResponse (RefuseInfo refuse)
+		{
+			last_connect_response = refuse;
+			connect_handle.Set ();
+		}
+
+		AutoResetEvent connect_handle = new AutoResetEvent (false);
+		object last_connect_response;
+
 		public override void Send (Message message, TimeSpan timeout)
 		{
 			ThrowIfDisposedOrNotOpen ();
@@ -173,6 +200,7 @@ namespace System.ServiceModel.Channels
 			
 			foreach (var pc in peers) {
 				if (pc.Status == RemotePeerStatus.None) {
+					pc.Status = RemotePeerStatus.Error; // prepare for cases that it resulted in an error in the middle.
 					var inner = CreateInnerClient (pc.Address);
 					pc.Channel = inner;
 					inner.Open (timeout - (DateTime.Now - start));
@@ -180,7 +208,11 @@ namespace System.ServiceModel.Channels
 					inner.Connect (new ConnectInfo () { PeerNodeAddress = pc.Address, NodeId = (uint) node.NodeId });
 
 					// FIXME: wait for Welcome or Reject and take further action.
-					throw new NotImplementedException ();
+					if (!connect_handle.WaitOne (timeout - (DateTime.Now - start)))
+						throw new TimeoutException ();
+					if (last_connect_response is RefuseInfo)
+						throw new CommunicationException ("Peer neighbor connection was refused");
+					pc.Status = RemotePeerStatus.Connected;
 				}
 
 				pc.Channel.OperationTimeout = timeout - (DateTime.Now - start);
@@ -281,7 +313,7 @@ message = mb.CreateMessage ();
 			sba.InstanceContextMode = InstanceContextMode.Single;
 			sba.IncludeExceptionDetailInFaults = true;
 
-			var se = listener_host.AddServiceEndpoint (typeof (IPeerReceiverContract).FullName, binding, "net.p2p://" + node.MeshId + "/");
+			var se = listener_host.AddServiceEndpoint (typeof (IPeerConnectorContract).FullName, binding, "net.p2p://" + node.MeshId + "/");
 			se.ListenUri = uri;
 			listener_host.Open (timeout - (DateTime.Now - start));
 

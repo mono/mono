@@ -1,5 +1,9 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IPeerConnectorContract.cs : remove receiver contract.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPeerConnectorContract.cs : add Disconnect() to receiver contract.
 
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>

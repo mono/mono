@@ -37,18 +37,6 @@ namespace System.ServiceModel.PeerResolvers
 		void SendMessage (Message msg);
 	}
 
-	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed, CallbackContract = typeof (IPeerConnectorContract))]
-	internal interface IPeerReceiverContract
-	{
-		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
-		void Connect (ConnectInfo connect);
-
-		[OperationContract (IsOneWay = true)]
-		void SendMessage (Message msg);
-		[OperationContract (Action = Consts.Namespace + "/Disconnect", IsOneWay = true)]
-		void Disconnect (DisconnectInfo disconnect);
-	}
-
 	// Common datatype
 
 	[DataContract (Name = "Referral", Namespace = Consts.Namespace)]
