@@ -1409,7 +1409,7 @@ namespace Mono.CSharp {
 		}
 
 		public override Type CurrentType {
-			get { return currentType ?? TypeBuilder; }
+			get { return currentType != null ? currentType : TypeBuilder; }
 		}
 
 		public override TypeContainer CurrentTypeDefinition {
