@@ -119,10 +119,12 @@ namespace System.Web.Compilation
 				var cache = new Dictionary <string, bool> (dictionaryComparer);
 				AddVirtualDir (GetVirtualDirectory (virtualPath.Absolute), bpcoll, cache);
 				cache = null;
+				if (buildProviders == null || buildProviders.Count == 0)
+					AddVirtualFile (GetVirtualFile (virtualPath.Absolute), bpcoll);
 			}
 
 			if (buildProviders == null || buildProviders.Count == 0)
-				return null;
+					return null;
 			
 			var buildProviderGroups = new List <BuildProviderGroup> ();
 			foreach (BuildProvider bp in buildProviders.Values)
@@ -236,7 +238,7 @@ namespace System.Web.Compilation
 		{
 			if (!vpp.DirectoryExists (VirtualPathUtility.GetDirectory (virtualPath)))
 				return null;
-			
+
 			return vpp.GetDirectory (virtualPath);
 		}
 
