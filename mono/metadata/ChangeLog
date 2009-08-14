@@ -1,5 +1,10 @@
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	loader.c (field_from_memberref): Don't crash if either the field
+	signature or the typespec class are invalid.
+
+2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verifier_load_field): Don't allow field related
 	ops to reference fields on generic type definition.
 
