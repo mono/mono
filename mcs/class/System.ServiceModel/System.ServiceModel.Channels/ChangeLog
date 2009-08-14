@@ -1,5 +1,10 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpChannelListener.cs : do not try to compare dead connection's
+	  IPEndPoint (it raises an error).
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaders.cs : allow null header value on each specific setter.
 
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>

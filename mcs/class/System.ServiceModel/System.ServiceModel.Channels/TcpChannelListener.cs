@@ -111,7 +111,7 @@ namespace System.ServiceModel.Channels
 			if (client != null) {
 				foreach (var ch in accepted_channels) {
 					var dch = ch as TcpDuplexSessionChannel;
-					if (dch == null || dch.TcpClient == null)
+					if (dch == null || dch.TcpClient == null && !dch.TcpClient.Connected)
 						continue;
 					if (((IPEndPoint) dch.TcpClient.Client.RemoteEndPoint).Equals (client.Client.RemoteEndPoint))
 						// ... then it should be handled in another BeginTryReceive/EndTryReceive loop in ChannelDispatcher.
