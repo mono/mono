@@ -332,19 +332,28 @@ namespace Mono.XBuild.CommandLine {
 			foreach (KeyValuePair<Guid, ProjectInfo> projectInfo in projectInfos) {
 				ProjectInfo project = projectInfo.Value;
 				foreach (string buildTarget in buildTargets) {
-					Target target = p.Targets.AddNewTarget (project.Name + (buildTarget == "Build" ? string.Empty : ":" + buildTarget));
+					string target_name = project.Name +
+						(buildTarget == "Build" ? string.Empty : ":" + buildTarget);
+
+					if (IsBuildTargetName (project.Name))
+						target_name = "Solution:" + target_name;
+
+					Target target = p.Targets.AddNewTarget (target_name);
 					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''"; 
 
-					string dependencies = string.Empty;
-					foreach (ProjectInfo dependentInfo in project.Dependencies.Values) {
-						if (dependencies.Length > 0)
-							dependencies += ";";
-						dependencies += dependentInfo.Name;
-						if (buildTarget != "Build")
-							dependencies += ":" + buildTarget;
+					if (project.Dependencies.Count > 0) {
+						StringBuilder dependencies = new StringBuilder ();
+						foreach (ProjectInfo dependentInfo in project.Dependencies.Values) {
+							if (dependencies.Length > 0)
+								dependencies.Append (";");
+							if (IsBuildTargetName (dependentInfo.Name))
+								dependencies.Append ("Solution:");
+							dependencies.Append (dependentInfo.Name);
+							if (buildTarget != "Build")
+								dependencies.Append (":" + buildTarget);
+						}
+						target.DependsOnTargets = dependencies.ToString ();
 					}
-					if (dependencies != string.Empty)
-						target.DependsOnTargets = dependencies;
 
 					foreach (TargetInfo targetInfo in solutionTargets) {
 						BuildTask task = null;
@@ -369,6 +378,14 @@ namespace Mono.XBuild.CommandLine {
 					}
 				}
 			}
+		}
+
+		bool IsBuildTargetName (string name)
+		{
+			foreach (string tgt in buildTargets)
+				if (name == tgt)
+					return true;
+			return false;
 		}
 
 		// returns number of levels

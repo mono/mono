@@ -1,5 +1,12 @@
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #530368.
+	* SolutionParser.cs (AddProjectTargets): If a project name matches one
+	of the targets that we emit (Build/Clean etc), then rename to
+	"Solution:<project name>".
+
+2009-08-14  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets (AllowUnsafeBlocks): Don't set any
 	default value.
 	(OutputPath): Set a default value.
