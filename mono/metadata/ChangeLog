@@ -1,3 +1,10 @@
+2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_boxable_mono_type): Don't allow the
+	use of the generic type definition on boxed type positions.
+
+	Fixes #531237.
+
 2009-08-14  Mark Probst  <mark.probst@gmail.com>
 
 	* threadpool.c: Make sure no cross-domain references remain in
