@@ -707,16 +707,21 @@ namespace System.Web.Compilation {
 				doBatch = false;
 			
 			if (doBatch) {
-				if (dir == null)
-					throw new HttpException (404, "Virtual directory '" + virtualPath.Directory + "' does not exist.");
-				
 				BuildKind fileKind;
-				foreach (VirtualFile file in dir.Files) {
-					if (!knownFileTypes.TryGetValue (VirtualPathUtility.GetExtension (file.Name), out fileKind))
-						continue;
+				if (dir == null) {
+					VirtualFile vf = vpp.GetFile (vpAbsolute);
+					if (vf == null)
+						throw new HttpException (404, "Virtual directory '" + virtualPath.Directory + "' does not exist. Virtual file '" + vpAbsolute + "' does not exist.");
+					if (knownFileTypes.TryGetValue (VirtualPathUtility.GetExtension (vpAbsolute), out fileKind) && fileKind == fileKind)
+						ret.Add (vf);
+				} else {
+					foreach (VirtualFile file in dir.Files) {
+						if (!knownFileTypes.TryGetValue (VirtualPathUtility.GetExtension (file.Name), out fileKind))
+							continue;
 
-					if (kind == fileKind)
-						ret.Add (file);
+						if (kind == fileKind)
+							ret.Add (file);
+					}
 				}
 			} else {
 				VirtualFile vf = vpp.GetFile (vpAbsolute);

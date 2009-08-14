@@ -1,3 +1,9 @@
+2009-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: when VirtualPathProvider reports a virtual
+	directory doesn't exist, try to get the requested virtual path
+	using VirtualPathProvider.GetFile. Fixes #525974
+
 2009-08-12  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: show source code when an error occurs while
