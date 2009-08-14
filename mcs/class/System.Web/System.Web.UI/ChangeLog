@@ -1,3 +1,12 @@
+2009-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: when CreateSubBuilder is called on a builder
+	which is supposed to treat its children as properties and the
+	default property builder is defined, first check if the tag which
+	has just been parsed isn't a template property. If it is, don't
+	use the default property builder, instead create a template
+	property builder directly. Fixes bug #527753
+
 2009-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: added an internal helper property
