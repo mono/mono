@@ -1,5 +1,7 @@
 2009-08-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arm_emit_load_imm): Only emit a movt if needed.
+	
 	* mini-arm.c (mono_arm_emit_load_imm): Use movt/movw if the cpu
 	supports it.
 
