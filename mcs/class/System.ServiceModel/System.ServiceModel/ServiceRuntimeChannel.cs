@@ -95,15 +95,13 @@ namespace System.ServiceModel
 	internal class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
 	{
 		IExtensionCollection<IContextChannel> extensions;
-		readonly IChannel channel;		
-		readonly TimeSpan _openTimeout;
-		readonly TimeSpan _closeTimeout;
+		readonly IChannel channel;
+		readonly DispatchRuntime runtime;
 
 		public ServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 		{
 			this.channel = channel;
-			this._openTimeout = runtime.ChannelDispatcher.DefaultOpenTimeout;
-			this._closeTimeout = runtime.ChannelDispatcher.DefaultCloseTimeout;
+			this.runtime = runtime;
 		}
 
 		#region IContextChannel
@@ -157,11 +155,11 @@ namespace System.ServiceModel
 
 		// CommunicationObject
 		protected internal override TimeSpan DefaultOpenTimeout {
-			get { return _openTimeout; }
+			get { return runtime.ChannelDispatcher.DefaultOpenTimeout; }
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {
-			get { return _closeTimeout; }
+			get { return runtime.ChannelDispatcher.DefaultCloseTimeout; }
 		}
 
 		protected override void OnAbort ()
@@ -217,7 +215,7 @@ namespace System.ServiceModel
 		}
 
 		public Uri ListenUri {
-			get { throw new NotImplementedException (); }
+			get { return runtime.ChannelDispatcher.Listener.Uri; }
 		}
 
 		#region IDisposable Members

@@ -1,5 +1,10 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceRuntimeChannel.cs : return timeouts that are set at
+	  dispatch runtime later than its .ctor(). Provide ListenUri too.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AllEnums.cs : add AddressFilterMode and SupportedAddressingMode.
 	* ServiceBehaviorAttribute.cs : added missing properties.
 
