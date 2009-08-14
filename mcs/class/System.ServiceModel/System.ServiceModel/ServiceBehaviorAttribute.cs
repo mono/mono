@@ -57,6 +57,16 @@ namespace System.ServiceModel
 		object singleton;
 
 		[MonoTODO]
+		public string Name { get; set; }
+		[MonoTODO]
+		public string Namespace { get; set; }
+		[MonoTODO]
+		public string ConfigurationName { get; set; }
+
+		[MonoTODO]
+		public AddressFilterMode AddressFilterMode { get; set; }
+
+		[MonoTODO]
 		public bool AutomaticSessionShutdown { get; set; }
 
 		[MonoTODO]

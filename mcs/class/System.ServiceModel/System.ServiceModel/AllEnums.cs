@@ -37,6 +37,13 @@ namespace System.ServiceModel.Activation
 
 namespace System.ServiceModel
 {
+	public enum AddressFilterMode
+	{
+		Exact,
+		Prefix,
+		Any
+	}
+
 	public enum AuditLevel
 	{
 		None,
@@ -307,6 +314,13 @@ namespace System.ServiceModel.Channels
 		Lax,
 		LaxTimestampFirst,
 		LaxTimestampLast,
+	}
+
+	public enum SupportedAddressingMode
+	{
+		Anonymous,
+		NonAnonymous,
+		Mixed
 	}
 
 	public enum TransferSession

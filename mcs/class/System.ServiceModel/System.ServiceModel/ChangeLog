@@ -1,3 +1,8 @@
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AllEnums.cs : add AddressFilterMode and SupportedAddressingMode.
+	* ServiceBehaviorAttribute.cs : added missing properties.
+
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase.cs : (ChannelBase) now ClientRuntimeChannel demands an
