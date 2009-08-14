@@ -182,6 +182,11 @@ namespace Mono.CSharp {
 				get { return tc.IsInUnsafeScope; }
 			}
 
+			public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+			{
+				return null;
+			}
+
 			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 			{
 				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
@@ -2658,7 +2663,17 @@ namespace Mono.CSharp {
 
 		public override ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 		{
-			return NamespaceEntry.LookupExtensionMethod (extensionType, this, name, loc);
+			DeclSpace top_level = Parent;
+			if (top_level != null) {
+				while (top_level.Parent != null)
+					top_level = top_level.Parent;
+
+				ArrayList candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name);
+				if (candidates != null)
+					return new ExtensionMethodGroupExpr (candidates, NamespaceEntry, extensionType, loc);
+			}
+
+			return NamespaceEntry.LookupExtensionMethod (extensionType, name, loc);
 		}
 
 		protected override TypeAttributes TypeAttr {

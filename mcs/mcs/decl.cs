@@ -670,6 +670,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		{
+			return Parent.LookupExtensionMethod (extensionType, name, loc);
+		}
+
 		public virtual FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			return Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
@@ -1195,11 +1200,6 @@ namespace Mono.CSharp {
 				return t;
 			}
 
-			return null;
-		}
-
-		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
-		{
 			return null;
 		}
 

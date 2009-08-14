@@ -1,3 +1,12 @@
+2009-08-14  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs, expression.cs, namespace.cs, ecore.cs, class.cs,
+	codegen.cs: Add IResolveContext::LookupExtensionMethod.
+
+2009-08-14  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Removed TypeContainer and ContainerType from EmitContext.
+
 2009-08-13  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs: Look in PartialContainer for parent type parameters.

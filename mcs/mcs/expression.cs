@@ -4817,7 +4817,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				mg = ec.TypeContainer.LookupExtensionMethod (me.Type, me.Name, loc);
+				mg = ec.LookupExtensionMethod (me.Type, me.Name, loc);
 				if (mg == null) {
 					Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
 						expr_resolved.GetSignatureForError ());
@@ -7383,7 +7383,7 @@ namespace Mono.CSharp {
 				if (expr_eclass == ExprClass.Value || expr_eclass == ExprClass.Variable ||
 					expr_eclass == ExprClass.IndexerAccess || expr_eclass == ExprClass.PropertyAccess ||
 					expr_eclass == ExprClass.EventAccess) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Name, loc);
+					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (expr_type, Name, loc);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = expr_resolved;
 

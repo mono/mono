@@ -257,6 +257,7 @@ namespace Mono.CSharp {
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
 
+		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
 		Type LookupTypeParameter (string name);
 
@@ -1053,6 +1054,11 @@ namespace Mono.CSharp {
 
 		#region IResolveContext Members
 
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		{
+			return ResolveContext.LookupExtensionMethod (extensionType, name, loc);
+		}
+
 		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			return ResolveContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
@@ -1114,6 +1120,11 @@ namespace Mono.CSharp {
 
 		public bool IsInUnsafeScope {
 			get { return false; }
+		}
+
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)

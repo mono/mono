@@ -3206,7 +3206,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// Search continues
-			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name, loc);
+			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, Name, loc);
 			if (e == null)
 				return base.OverloadResolve (ec, ref arguments, false, loc);
 
@@ -4201,7 +4201,7 @@ namespace Mono.CSharp {
 				// not an extension method. We start extension methods lookup from here
 				//
 				if (InstanceExpression != null) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name, loc);
+					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (type, Name, loc);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
 						ex_method_lookup.SetTypeArguments (type_arguments);
