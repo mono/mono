@@ -1,5 +1,9 @@
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationContextScope.cs : check null arg.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceRuntimeChannel.cs : return timeouts that are set at
 	  dispatch runtime later than its .ctor(). Provide ListenUri too.
 

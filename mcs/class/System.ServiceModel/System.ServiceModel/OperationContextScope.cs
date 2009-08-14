@@ -41,6 +41,8 @@ namespace System.ServiceModel
 
 		public OperationContextScope (OperationContext context)
 		{
+			if (context == null)
+				throw new ArgumentNullException ("context");
 			previous = OperationContext.Current;
 			OperationContext.Current = context;
 		}
