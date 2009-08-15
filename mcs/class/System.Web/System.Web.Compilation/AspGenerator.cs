@@ -1518,7 +1518,7 @@ namespace System.Web.Compilation
 			void DoParseExpressions (string str)
 			{
 				int startIndex = 0, index = 0;
-				Regex codeDirective = new Regex ("(<%(?!@)(?<code>.*?)%>)|(<[\\w:\\.]+.*?runat=[\"']?server[\"']?.*?/>)",
+				Regex codeDirective = new Regex ("(<%(?!@)(?<code>(.|\\s)*?)%>)|(<[\\w:\\.]+.*?runat=[\"']?server[\"']?.*?/>)",
 								 RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 				Match match;
 				int strLen = str.Length;

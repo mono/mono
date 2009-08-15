@@ -1,3 +1,8 @@
+2009-08-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: CodeRenderParser.DoParseExpressions - match
+	newline characters inside expressions. Fixes bug #526449
+
 2009-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManagerDirectoryBuilder.cs: when VirtualPathProvider

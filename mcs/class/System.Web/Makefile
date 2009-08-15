@@ -174,7 +174,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/PreprocessorDirectivesInMarkup.aspx \
 	Test/mainsoft/NunitWebResources/UnquotedAngleBrackets.aspx \
 	Test/mainsoft/NunitWebResources/FullTagsInText.aspx \
-	Test/mainsoft/NunitWebResources/TagsExpressionsAndCommentsInText.aspx
+	Test/mainsoft/NunitWebResources/TagsExpressionsAndCommentsInText.aspx \
+	Test/mainsoft/NunitWebResources/NewlineInCodeExpression.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
