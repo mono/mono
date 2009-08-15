@@ -49,14 +49,17 @@ namespace System.Web.Script.Serialization
 		int _maxJsonLength;
 		int _recursionLimit;
 		JavaScriptTypeResolver _typeResolver;
-		internal static readonly JavaScriptSerializer DefaultSerializer = new JavaScriptSerializer ();
+		internal static readonly JavaScriptSerializer DefaultSerializer = new JavaScriptSerializer (null, false);
 
-		public JavaScriptSerializer () 
-			: this(null)
+		public JavaScriptSerializer () : this (null, false)
 		{
 		}
 
-		public JavaScriptSerializer (JavaScriptTypeResolver resolver) 
+		public JavaScriptSerializer (JavaScriptTypeResolver resolver) : this (null, false)
+		{
+		}
+		
+		internal JavaScriptSerializer (JavaScriptTypeResolver resolver, bool registerConverters)
 		{
 			_typeResolver = resolver;
 
@@ -64,13 +67,36 @@ namespace System.Web.Script.Serialization
 			if (section == null) {
 				_maxJsonLength = 102400;
 				_recursionLimit = 100;
-			}
-			else {
+			} else {
 				_maxJsonLength = section.MaxJsonLength;
 				_recursionLimit = section.RecursionLimit;
+
+				ConvertersCollection converters = section.Converters;
+				if (converters != null && converters.Count > 0) {
+					var cvtlist = new List <JavaScriptConverter> ();
+					Type type;
+					string typeName;
+					JavaScriptConverter jsc;
+					
+					foreach (Converter cvt in converters) {
+						typeName = cvt != null ? cvt.Type : null;
+						if (typeName == null)
+							continue;
+
+						type = HttpApplication.LoadType (typeName, true);
+						if (type == null || !typeof (JavaScriptConverter).IsAssignableFrom (type))
+							continue;
+						
+						jsc = Activator.CreateInstance (type) as JavaScriptConverter;
+						cvtlist.Add (jsc);
+					}
+					
+					RegisterConverters (cvtlist);
+				}
 			}
 		}
 
+		
 		public int MaxJsonLength {
 			get {
 				return _maxJsonLength;

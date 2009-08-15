@@ -196,7 +196,7 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 		readonly Hashtable _methodMap;
 		readonly Type _type;
 		readonly string _proxy;
-		static readonly JavaScriptSerializer JSSerializer = new JavaScriptSerializer ();
+		static readonly JavaScriptSerializer JSSerializer = new JavaScriptSerializer (null, true);
 
 		private LogicalTypeInfo (Type t, string filePath) {
 			_type = t;

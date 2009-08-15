@@ -1,3 +1,8 @@
+2009-08-15  Marek Habersack  <mhabersack@novell.com>
+
+	* LogicalTypeInfo.cs: make sure JavaScriptSerializer instance used
+	here reads custom converters from web.config. Fixes bug #525589
+
 2009-06-14  Robert Jordan  <robertj@gmx.net>
 
 	* ScriptHandlerFactory.cs: handle precompiled web services.
