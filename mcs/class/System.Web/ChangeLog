@@ -1,3 +1,8 @@
+2009-08-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/NewlineInCodeExpression.aspx
+ 
 2009-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added

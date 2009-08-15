@@ -58,6 +58,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "UnquotedAngleBrackets.aspx", "UnquotedAngleBrackets.aspx");
 			WebTest.CopyResource (GetType (), "FullTagsInText.aspx", "FullTagsInText.aspx");
 			WebTest.CopyResource (GetType (), "TagsExpressionsAndCommentsInText.aspx", "TagsExpressionsAndCommentsInText.aspx");
+			WebTest.CopyResource (GetType (), "NewlineInCodeExpression.aspx", "NewlineInCodeExpression.aspx");
 #if NET_2_0
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
@@ -195,8 +196,17 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = @"<script type=""text/javascript"">alert (escape(""reporting/location?report=ViewsByDate&minDate=minDate&maxDate=maxDate""));</script>";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
-#endif
 
+		[Test (Description="Bug #526449")]
+		public void NewlineInCodeExpression ()
+		{
+			string pageHtml = new WebTest ("NewlineInCodeExpression.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = "<a href=\"test\">bla</a>";
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+#endif
+		
 		[Test (Description="Bug #517656")]
 		public void ServerControlInClientSideComment ()
 		{
