@@ -1,5 +1,10 @@
 2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
 
+	* parser.cs (ResolveReferences): Handle some cases of
+	explicitly-named numeric groups.
+
+2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
+
 	* parser.cs (ResolveReferences): Rearrange slightly to prepare for
 	future changes.
 

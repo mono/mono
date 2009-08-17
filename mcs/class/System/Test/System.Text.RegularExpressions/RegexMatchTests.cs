@@ -157,6 +157,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (@"\4400", RegexOptions.ECMAScript, "asdf 012", "Fail."),//58
 			new RegexTrial (@"\4400", RegexOptions.None, "asdf$0012", "Fail."),//59
 			new RegexTrial (@"\4400", RegexOptions.ECMAScript, "asdf$0012", "Pass. Group[0]=(4,3)"),//60
+			new RegexTrial (@"(?<2>ab)(?<c>c)(?<d>d)", RegexOptions.None, "abcd", "Pass. Group[0]=(0,4) Group[1]=(2,1) Group[2]=(0,2) Group[3]=(3,1)"),// 61
 		};
 
 		[Test]
@@ -336,5 +337,6 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]	public void RegexTrial0058 () { trials [58].Execute (); }
 		[Test]	public void RegexTrial0059 () { trials [59].Execute (); }
 		[Test]	public void RegexTrial0060 () { trials [60].Execute (); }
+		[Test]	public void RegexTrial0061 () { trials [61].Execute (); }
 	}
 }

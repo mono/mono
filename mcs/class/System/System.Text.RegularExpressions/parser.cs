@@ -1081,15 +1081,31 @@ namespace System.Text.RegularExpressions.Syntax {
 			foreach (CapturingGroup group in caps) {
 				if (group.Name == null)
 					continue;
+
 				if (dict.Contains (group.Name)) {
 					CapturingGroup prev = (CapturingGroup) dict [group.Name];
 					group.Number = prev.Number;
 					continue;
 				}
+
+				if (Char.IsDigit (group.Name [0])) {
+					int ptr = 0;
+					int group_gid = ParseDecimal (group.Name, ref ptr);
+					if (ptr == group.Name.Length) {
+						// FIXME: Handle non-contiguous groups
+						group.Number = group_gid;
+						dict.Add (group.Name, group);
+						++ num_groups;
+						continue;
+					}
+				}
+
 				string gid_s = gid.ToString ();
+				while (dict.Contains (gid_s))
+					gid_s = (++gid).ToString ();
+
+				dict.Add (gid_s, group);
 				dict.Add (group.Name, group);
-				if (!dict.Contains (gid_s))
-					dict.Add (gid_s, group);
 				group.Number = gid ++;
 				++ num_groups;
 			}
