@@ -70,7 +70,7 @@ namespace System.ServiceModel.PeerResolvers
 	internal class ConnectInfoDC
 	{
 		[DataMember]
-		public PeerNodeAddress PeerNodeAddress { get; set; }
+		public PeerNodeAddress Address { get; set; }
 		[DataMember]
 		public ulong NodeId { get; set; }
 	}
@@ -86,9 +86,9 @@ namespace System.ServiceModel.PeerResolvers
 		[MessageBodyMember (Name = "Connect", Namespace = Consts.Namespace)]
 		ConnectInfoDC dc;
 
-		public PeerNodeAddress PeerNodeAddress {
-			get { return dc.PeerNodeAddress; }
-			set { dc.PeerNodeAddress = value; }
+		public PeerNodeAddress Address {
+			get { return dc.Address; }
+			set { dc.Address = value; }
 		}
 
 		public ulong NodeId {

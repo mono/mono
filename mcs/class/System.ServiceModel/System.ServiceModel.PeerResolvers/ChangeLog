@@ -1,3 +1,8 @@
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPeerConnectorContract.cs : fix internal member name to get
+	  serialized correctly.
+
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPeerConnectorContract.cs : add itself as CallbackContract.
