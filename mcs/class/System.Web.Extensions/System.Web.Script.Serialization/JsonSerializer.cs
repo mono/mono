@@ -240,6 +240,9 @@ namespace System.Web.Script.Serialization
 		bool ShouldIgnoreMember (MemberInfo mi, out MethodInfo getMethod)
 		{
 			getMethod = null;
+			if (mi == null)
+				return true;
+			
 			if (mi.IsDefined (typeof (ScriptIgnoreAttribute), true))
 				return true;
 			
@@ -250,7 +253,7 @@ namespace System.Web.Script.Serialization
 			PropertyInfo pi = mi as PropertyInfo;
 			if (pi == null)
 				return true;
-
+			
 			getMethod = pi.GetGetMethod ();
 			if (getMethod == null || getMethod.GetParameters ().Length > 0) {
 				getMethod = null;
@@ -302,13 +305,20 @@ namespace System.Web.Script.Serialization
 				}
 			}
 
-			MemberInfo[] members = type.GetMembers (BindingFlags.Public | BindingFlags.Instance);
+			SerializeMembers <FieldInfo> (type.GetFields (BindingFlags.Public | BindingFlags.Instance), obj, output, ref first);
+			SerializeMembers <PropertyInfo> (type.GetProperties (BindingFlags.Public | BindingFlags.Instance), obj, output, ref first);
+
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "}");
+		}
+
+		void SerializeMembers <T> (T[] members, object obj, StringBuilder output, ref bool first) where T: MemberInfo
+		{
 			MemberInfo member;
 			MethodInfo getMethod;
 			string name;
 			
-			foreach (MemberInfo mi in members) {
-				if (ShouldIgnoreMember (mi, out getMethod))
+			foreach (T mi in members) {
+				if (ShouldIgnoreMember (mi as MemberInfo, out getMethod))
 					continue;
 
 				name = mi.Name;
@@ -321,8 +331,6 @@ namespace System.Web.Script.Serialization
 				if (first)
 					first = false;
 			}
-
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, "}");
 		}
 		
 		void SerializeEnumerable (StringBuilder output, IEnumerable enumerable)

@@ -1,3 +1,7 @@
+2009-08-17  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializerTest.cs: fixed broken tests
+
 2009-03-17  Marek Habersack  <mhabersack@novell.com>
 
 	* JavaScriptSerializerTest.cs: added tests for conversion to
