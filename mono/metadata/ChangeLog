@@ -1,3 +1,8 @@
+2009-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_add_weak_track_handle): Don't do any work if
+	obj is NULL.
+
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_loader_error_prepare_exception): Handle missing field
