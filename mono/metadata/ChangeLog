@@ -5,6 +5,11 @@
 
 2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_get_signature_full): Fail gracefully if signature
+	parsing fails.
+
+2009-08-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_loader_error_prepare_exception): Handle missing field
 	errors with no class set.
 
