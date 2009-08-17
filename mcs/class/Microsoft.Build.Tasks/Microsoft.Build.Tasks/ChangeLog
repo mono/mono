@@ -1,5 +1,9 @@
 2009-08-18  Ankit Jain  <jankit@novell.com>
 
+	* PcFileCache.cs (PackageInfo): Mark internal.
+
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
 	* AssemblyResolver.cs (FindInTargetFramework): Perform case insensitive
 	assembly name comparison. Use the new AssemblyNamesCompatible api.
 	(AssemblyNamesCompatible): Add new overload with a 'ignoreCase' param.

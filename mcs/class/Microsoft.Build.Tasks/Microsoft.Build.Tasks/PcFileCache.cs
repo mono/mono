@@ -606,7 +606,7 @@ namespace Mono.PkgConfig
 		}
 	}
 	
-	public class PackageInfo
+	internal class PackageInfo
 	{
 		Dictionary<string,string> customData;
 		
