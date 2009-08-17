@@ -1060,45 +1060,44 @@ namespace System.Text.RegularExpressions.Syntax {
 			return result.ToString ();
 		}
 
-		private void ResolveReferences () {
+		private void ResolveReferences ()
+		{
 			int gid = 1;
 			Hashtable dict = new Hashtable ();
 
 			// number unnamed groups
 
 			foreach (CapturingGroup group in caps) {
-				if (group.Name == null) {
-					dict.Add (gid.ToString (), group);
-					group.Number = gid ++;
+				if (group.Name != null)
+					continue;
 
-					++ num_groups;
-				}
+				dict.Add (gid.ToString (), group);
+				group.Number = gid ++;
+				++ num_groups;
 			}
 
 			// number named groups
 
 			foreach (CapturingGroup group in caps) {
-				if (group.Name != null) {
-					if (!dict.Contains (group.Name)) {
-						string gid_s = gid.ToString ();
-						dict.Add (group.Name, group);
-						if (!dict.Contains (gid_s))
-							dict.Add (gid_s, group);
-						group.Number = gid ++;
-
-						++ num_groups;
-					}
-					else {
-						CapturingGroup prev = (CapturingGroup)dict[group.Name];
-						group.Number = prev.Number;
-					}
+				if (group.Name == null)
+					continue;
+				if (dict.Contains (group.Name)) {
+					CapturingGroup prev = (CapturingGroup) dict [group.Name];
+					group.Number = prev.Number;
+					continue;
 				}
+				string gid_s = gid.ToString ();
+				dict.Add (group.Name, group);
+				if (!dict.Contains (gid_s))
+					dict.Add (gid_s, group);
+				group.Number = gid ++;
+				++ num_groups;
 			}
 
 			// resolve references
 
 			foreach (Expression expr in refs.Keys) {
-				string name = (string)refs[expr];
+				string name = (string) refs [expr];
 				if (!dict.Contains (name)) {
 					if (expr is CaptureAssertion && !Char.IsDigit (name [0]))
 						continue;

@@ -1,5 +1,10 @@
 2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
 
+	* parser.cs (ResolveReferences): Rearrange slightly to prepare for
+	future changes.
+
+2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
+
 	* Regex.cs (GetGroupNumbers): List group numbers in ascending order.
 	(GetGroupNames): List names in order of group number.
 
