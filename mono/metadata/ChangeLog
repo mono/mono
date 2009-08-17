@@ -1,5 +1,10 @@
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (mono_metadata_parse_array_full): Fix memory leak
+	of array bounds.
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_signature): Don't assert on broken
 	signature. Print a more usefull error message.
 
