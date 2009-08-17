@@ -299,17 +299,17 @@ namespace System.Text.RegularExpressions {
 		
 		public string [] GetGroupNames ()
 		{
-			string [] names = new string [mapping.Count];
-			mapping.Keys.CopyTo (names, 0);
-
+			string [] names = new string [1 + group_count];
+			Array.Copy (_groupNumberToNameMap, names, 1 + group_count);
 			return names;
 		}
 
 		public int[] GetGroupNumbers ()
 		{
-			int[] numbers = new int [mapping.Count];
-			mapping.Values.CopyTo (numbers, 0);
-
+			int[] numbers = new int [1 + group_count];
+			for (int i = 0; i <= group_count; ++i)
+				numbers [i] = i;
+			// FIXME: needs to handle arbitrarily numbered groups '(?<43>abc)'
 			return numbers;
 		}
 

@@ -1,3 +1,8 @@
+2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Regex.cs (GetGroupNumbers): List group numbers in ascending order.
+	(GetGroupNames): List names in order of group number.
+
 2009-08-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* syntax.cs (BackslashNumber.ResolveReference): Improve ECMAScript
