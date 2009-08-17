@@ -1,5 +1,12 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : ongoing implementation. Fix wrong peer
+	  destination address in Connect() request. To repeat sending
+	  request, use buffered copy. Set some peer-channel specific
+	  header items. (todo: and consume them.)
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Message.cs : state is set only after WriteBodyContents().
 
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>

@@ -37,6 +37,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.PeerResolvers;
 using System.ServiceModel.Security;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -83,6 +84,7 @@ namespace System.ServiceModel.Channels
 				if (connect == null)
 					throw new ArgumentNullException ("connect");
 				var ch = OperationContext.Current.GetCallbackChannel<IPeerConnectorContract> ();
+				// FIXME: wrong destination
 				// FIXME: check and reject if inappropriate.
 				ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
 			}
@@ -133,6 +135,7 @@ namespace System.ServiceModel.Channels
 		ServiceHost listener_host;
 		TcpChannelInfo info;
 		List<RemotePeerConnection> peers = new List<RemotePeerConnection> ();
+		PeerNodeAddress local_node_address;
 
 		public PeerDuplexChannel (IPeerChannelManager factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base ((ChannelFactoryBase) factory, address, via)
@@ -197,25 +200,39 @@ namespace System.ServiceModel.Channels
 			ThrowIfDisposedOrNotOpen ();
 
 			DateTime start = DateTime.Now;
-			
+
+			// FIXME: give max buffer size
+			var mb = message.CreateBufferedCopy (0x10000);
+
 			foreach (var pc in peers) {
+				message = mb.CreateMessage ();
+
 				if (pc.Status == RemotePeerStatus.None) {
 					pc.Status = RemotePeerStatus.Error; // prepare for cases that it resulted in an error in the middle.
 					var inner = CreateInnerClient (pc.Address);
 					pc.Channel = inner;
 					inner.Open (timeout - (DateTime.Now - start));
 					inner.OperationTimeout = timeout - (DateTime.Now - start);
-					inner.Connect (new ConnectInfo () { PeerNodeAddress = pc.Address, NodeId = (uint) node.NodeId });
+					inner.Connect (new ConnectInfo () { Address = local_node_address, NodeId = (uint) node.NodeId });
 
 					// FIXME: wait for Welcome or Reject and take further action.
+/*
+Console.WriteLine ("WAITING FOR Welcome or Refuse");
 					if (!connect_handle.WaitOne (timeout - (DateTime.Now - start)))
 						throw new TimeoutException ();
+Console.WriteLine ("got signaled");
 					if (last_connect_response is RefuseInfo)
 						throw new CommunicationException ("Peer neighbor connection was refused");
+*/
 					pc.Status = RemotePeerStatus.Connected;
 				}
 
 				pc.Channel.OperationTimeout = timeout - (DateTime.Now - start);
+
+				if (message.Headers.MessageId == null)
+					message.Headers.MessageId = new UniqueId ();
+				message.Headers.Add (MessageHeader.CreateHeader ("PeerTo", String.Empty, RemoteAddress));
+				message.Headers.Add (MessageHeader.CreateHeader ("PeerVia", String.Empty, RemoteAddress));
 				pc.Channel.SendMessage (message);
 			}
 		}
@@ -320,6 +337,7 @@ message = mb.CreateMessage ();
 			var nid = new Random ().Next (0, int.MaxValue);
 			var ea = new EndpointAddress (uri);
 			var pna = new PeerNodeAddress (ea, new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (name).AddressList));
+			local_node_address = pna;
 			node.RegisteredId = resolver.Register (node.MeshId, pna, timeout - (DateTime.Now - start));
 			node.NodeId = nid;
 
