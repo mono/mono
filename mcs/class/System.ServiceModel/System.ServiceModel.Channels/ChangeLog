@@ -1,5 +1,10 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : eliminate wrong use of
+	  ReadElementContentAsString() (it is not always simple string).
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaders.cs : when the value is null, do not try to
 	  deserialize EndpointAddress.
 

@@ -164,7 +164,7 @@ namespace System.ServiceModel.Channels
 				return (T) dmh.Value;
 			if (typeof (T) == typeof (EndpointAddress)) {
 				XmlDictionaryReader r = GetReaderAtHeader (index);
-				return r.NodeType != XmlNodeType.Element ? default (T) : (T) (object) new EndpointAddress (r.ReadElementContentAsString ());
+				return r.NodeType != XmlNodeType.Element ? default (T) : (T) (object) EndpointAddress.ReadFrom (r);
 			}
 			else
 				return GetHeader<T> (index, GetSerializer<T> (index));
