@@ -358,10 +358,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				source.Error_UnexpectedKind (ec.DeclContainer, "variable or value", loc);
-				return null;
-			} else if ((RootContext.Version == LanguageVersion.ISO_1) &&
+			if ((RootContext.Version == LanguageVersion.ISO_1) &&
 				   (source is MethodGroupExpr)){
 				((MethodGroupExpr) source).ReportUsageError ();
 				return null;
@@ -489,7 +486,7 @@ namespace Mono.CSharp {
 				//
 
 				// TODO: Use ResolveContext only
-				EmitContext f_ec = new EmitContext (rc, rc.DeclContainer, loc, null, TypeManager.void_type, 0, true);
+				EmitContext f_ec = new EmitContext (rc, rc.GenericDeclContainer, loc, null, TypeManager.void_type, 0, true);
 				f_ec.IsStatic = ec.IsStatic;
 				f_ec.CurrentBlock = ec.CurrentBlock;
 

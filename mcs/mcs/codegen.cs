@@ -271,14 +271,12 @@ namespace Mono.CSharp {
 		//
 		TypeContainer CurrentTypeDefinition { get; }
 
-		// Obsolete
-		DeclSpace DeclContainer { get; }
-
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
 
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
+		FullNamedExpression LookupNamespaceAlias (string name);
 
 		// the declcontainer to lookup for type-parameters.  Should only use LookupGeneric on it.
 		//
@@ -517,14 +515,9 @@ namespace Mono.CSharp {
 			get { return ResolveContext.CurrentTypeDefinition; }
 		}
 
-		// IResolveContext.DeclContainer
-		public DeclSpace DeclContainer { 
-			get { return decl_space; }
-		}
-
 		// IResolveContext.GenericDeclContainer
 		public DeclSpace GenericDeclContainer {
-			get { return DeclContainer; }
+			get { return decl_space; }
 		}
 
 		public bool CheckState {
@@ -1074,6 +1067,11 @@ namespace Mono.CSharp {
 			return ResolveContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
+		public FullNamedExpression LookupNamespaceAlias (string name)
+		{
+			return ResolveContext.LookupNamespaceAlias (name);
+		}
+
 		#endregion
 	}
 
@@ -1147,6 +1145,11 @@ namespace Mono.CSharp {
 		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, loc, ignore_cs0104);
+		}
+
+		public FullNamedExpression LookupNamespaceAlias (string name)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion

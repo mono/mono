@@ -260,5 +260,10 @@ namespace Mono.CSharp
 		{
 			return PartialContainer.IsClsComplianceRequired ();
 		}
+
+		public override FullNamedExpression LookupNamespaceAlias (string name)
+		{
+			return NamespaceEntry.LookupNamespaceAlias (name);
+		}
 	}
 }

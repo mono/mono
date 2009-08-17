@@ -5437,7 +5437,7 @@ namespace Mono.CSharp {
 
 			method = ml as MethodGroupExpr;
 			if (method == null) {
-				ml.Error_UnexpectedKind (ec.DeclContainer, "method group", loc);
+				ml.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
 				return null;
 			}
 
@@ -7223,9 +7223,7 @@ namespace Mono.CSharp {
 			}
 
 			int errors = Report.Errors;
-			// TODO: Implement ec.Namespace
-
-			expr = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
+			expr = ec.LookupNamespaceAlias (alias);
 			if (expr == null) {
 				if (errors == Report.Errors)
 					Report.Error (432, loc, "Alias `{0}' not found", alias);
@@ -7408,7 +7406,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!texpr.CheckAccessLevel (ec.DeclContainer)) {
+				if (!texpr.CheckAccessLevel (ec.GenericDeclContainer)) {
 					Report.SymbolRelatedToPreviousError (member_lookup.Type);
 					ErrorIsInaccesible (loc, TypeManager.CSharpName (member_lookup.Type));
 					return null;
@@ -7506,7 +7504,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup = MemberLookup (
-				rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
+				rc.CurrentType, expr_type, expr_type, LookupIdentifier,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				if (silent)
@@ -7548,7 +7546,7 @@ namespace Mono.CSharp {
 		protected virtual void Error_IdentifierNotFound (IResolveContext rc, FullNamedExpression expr_type, string identifier)
 		{
 			Expression member_lookup = MemberLookup (
-				rc.DeclContainer.TypeBuilder, expr_type.Type, expr_type.Type, SimpleName.RemoveGenericArity (identifier),
+				rc.CurrentType, expr_type.Type, expr_type.Type, SimpleName.RemoveGenericArity (identifier),
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 
 			if (member_lookup != null) {
@@ -7561,7 +7559,7 @@ namespace Mono.CSharp {
 			}
 
 			member_lookup = MemberLookup (
-				rc.DeclContainer.TypeBuilder, expr_type.Type, expr_type.Type, identifier,
+				rc.CurrentType, expr_type.Type, expr_type.Type, identifier,
 					MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
 
 			if (member_lookup == null) {

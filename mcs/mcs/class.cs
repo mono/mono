@@ -199,6 +199,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			public FullNamedExpression LookupNamespaceAlias (string name)
+			{
+				return tc.Parent.LookupNamespaceAlias (name);
+			}
+
 			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 			{
 				TypeParameter[] tp = CurrentTypeParameters;

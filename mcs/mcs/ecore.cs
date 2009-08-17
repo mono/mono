@@ -1040,16 +1040,18 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (DeclSpace ds, string expected, Location loc)
+		public void Error_UnexpectedKind (MemberCore mc, string expected, Location loc)
 		{
-			Error_UnexpectedKind (ds, expected, ExprClassName, loc);
+			Error_UnexpectedKind (mc, expected, ExprClassName, loc);
 		}
 
-		public void Error_UnexpectedKind (DeclSpace ds, string expected, string was, Location loc)
+		public void Error_UnexpectedKind (MemberCore mc, string expected, string was, Location loc)
 		{
-			string name = GetSignatureForError ();
-			if (ds != null)
-				name = ds.GetSignatureForError () + '.' + name;
+			string name;
+			if (mc != null)
+				name = mc.GetSignatureForError ();
+			else
+				name = GetSignatureForError ();
 
 			Report.Error (118, loc, "`{0}' is a `{1}' but a `{2}' was expected",
 			      name, was, expected);
@@ -2497,7 +2499,10 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsGenericTypeDefinition (t) && !TypeManager.IsGenericType (t))
 				return null;
 
-			DeclSpace ds = ec.DeclContainer;
+			if (ec.CurrentType == null)
+				return null;
+
+			DeclSpace ds = ec.CurrentTypeDefinition;
 			while (ds != null && !IsNestedChild (t, ds.TypeBuilder))
 				ds = ds.Parent;
 
@@ -2557,31 +2562,37 @@ namespace Mono.CSharp {
 
 		protected virtual void Error_TypeOrNamespaceNotFound (IResolveContext ec)
 		{
-			MemberCore mc = ec.DeclContainer.GetDefinition (Name);
-			if (mc != null) {
-				Error_UnexpectedKind (ec.DeclContainer, "type", GetMemberType (mc), loc);
-				return;
-			}
+			if (ec.CurrentType != null) {
+				if (ec.CurrentTypeDefinition != null) {
+					MemberCore mc = ec.CurrentTypeDefinition.GetDefinition (Name);
+					if (mc != null) {
+						Error_UnexpectedKind (mc, "type", GetMemberType (mc), loc);
+						return;
+					}
+				}
 
-			string ns = ec.DeclContainer.NamespaceEntry.NS.Name;
-			string fullname = (ns.Length > 0) ? ns + "." + Name : Name;
-			foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
-				Type type = a.GetType (fullname);
-				if (type != null) {
-					Report.SymbolRelatedToPreviousError (type);
-					Expression.ErrorIsInaccesible (loc, TypeManager.CSharpName (type));
-					return;
+				string ns = ec.CurrentType.Namespace;
+				string fullname = (ns.Length > 0) ? ns + "." + Name : Name;
+				foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
+					Type type = a.GetType (fullname);
+					if (type != null) {
+						Report.SymbolRelatedToPreviousError (type);
+						Expression.ErrorIsInaccesible (loc, TypeManager.CSharpName (type));
+						return;
+					}
+				}
+
+				if (ec.CurrentTypeDefinition != null) {
+					Type t = ec.CurrentTypeDefinition.LookupAnyGeneric (Name);
+					if (t != null) {
+						Namespace.Error_InvalidNumberOfTypeArguments (t, loc);
+						return;
+					}
 				}
 			}
 
-			Type t = ec.DeclContainer.LookupAnyGeneric (Name);
-			if (t != null) {
-				Namespace.Error_InvalidNumberOfTypeArguments (t, loc);
-				return;
-			}
-
 			if (targs != null) {
-				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
+				FullNamedExpression retval = ec.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
 					Namespace.Error_TypeArgumentsCannotBeUsed (retval, loc);
 					return;
@@ -2683,12 +2694,8 @@ namespace Mono.CSharp {
 
 			Type almost_matched_type = null;
 			ArrayList almost_matched = null;
-			for (DeclSpace lookup_ds = ec.DeclContainer; lookup_ds != null; lookup_ds = lookup_ds.Parent) {
-				// either RootDeclSpace or GenericMethod
-				if (lookup_ds.TypeBuilder == null)
-					continue;
-
-				e = MemberLookup (ec.CurrentType, lookup_ds.TypeBuilder, Name, loc);
+			for (Type lookup_ds = ec.CurrentType; lookup_ds != null; lookup_ds = lookup_ds.DeclaringType) {
+				e = MemberLookup (ec.CurrentType, lookup_ds, Name, loc);
 				if (e != null) {
 					PropertyExpr pe = e as PropertyExpr;
 					if (pe != null) {
@@ -2711,7 +2718,7 @@ namespace Mono.CSharp {
 				}
 
 				if (almost_matched == null && almost_matched_members.Count > 0) {
-					almost_matched_type = lookup_ds.TypeBuilder;
+					almost_matched_type = lookup_ds;
 					almost_matched = (ArrayList) almost_matched_members.Clone ();
 				}
 			}
@@ -2748,8 +2755,10 @@ namespace Mono.CSharp {
 					almost_matched_members = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.CurrentType;
+
+				string type_name = ec.ResolveContext.CurrentType == null ? null : ec.ResolveContext.CurrentType.Name;
 				return Error_MemberLookupFailed (ec.CurrentType, null, almost_matched_type, Name,
-					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags);
+					type_name, AllMemberTypes, AllBindingFlags);
 			}
 
 			if (e is MemberExpr) {
@@ -5052,7 +5061,7 @@ namespace Mono.CSharp {
 
 				// Optimization for build-in types
 				// TODO: Iterators don't set current container
-				if (TypeManager.IsStruct (type) && type == ec.DeclContainer.TypeBuilder && ec.CurrentIterator == null) {
+				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.ResolveContext.CurrentType) && ec.CurrentIterator == null) {
 					LoadFromPtr (ig, type);
 				} else {
 					IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);

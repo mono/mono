@@ -1114,7 +1114,7 @@ namespace Mono.CSharp {
 		}
 
 		// Looks-up a alias named @name in this and surrounding namespace declarations
-		public FullNamedExpression LookupAlias (string name)
+		public FullNamedExpression LookupNamespaceAlias (string name)
 		{
 			for (NamespaceEntry n = this; n != null; n = n.ImplicitParent) {
 				if (n.using_aliases == null)
