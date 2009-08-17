@@ -1,5 +1,15 @@
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_loader_set_error_bad_image): Improve
+	error messages.
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_get_method_full): Convert an assertion
+	into a loader error.
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class-internals.h, class.c: Better naming and documentation.
 
 2009-08-17  Zoltan Varga  <vargaz@gmail.com>
