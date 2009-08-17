@@ -1,3 +1,14 @@
+2009-08-18  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DateComparisonTest.cs: Fix test-data xml path.
+	
+2009-07-23  Adam Wendt  <adam@awendtconsulting.com>
+
+       * DateComparisonTest.cs
+       (TestDateComparisonRight, TestDateComparisonLeft): Test case to
+       check that comparison of date and string works regardless of which
+       side the existing date is.
+
 2007-06-06  Nagappan A  <anagappan@novell.com>
 
 	* DataColumnExpressionTest.cs (DataColumnCharTest): Test case to

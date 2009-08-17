@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<things>
+<thing>
+    <title>bar</title>
+    <start>2009-07-19 00:01</start>
+</thing>
+<thing>
+    <title>foo</title>
+    <start>2009-08-19 00:01</start>
+</thing>
+</things>
