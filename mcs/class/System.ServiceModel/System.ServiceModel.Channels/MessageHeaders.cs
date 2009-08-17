@@ -157,6 +157,11 @@ namespace System.ServiceModel.Channels
 
 		public T GetHeader<T> (int index)
 		{
+			if (l.Count <= index)
+				throw new ArgumentOutOfRangeException ("index");
+			var dmh = l [index] as MessageHeader.DefaultMessageHeader;
+			if (dmh != null && dmh.Value != null && typeof (T).IsAssignableFrom (dmh.Value.GetType ()))
+				return (T) dmh.Value;
 			if (typeof (T) == typeof (EndpointAddress)) {
 				XmlDictionaryReader r = GetReaderAtHeader (index);
 				return (T) (object) new EndpointAddress (r.ReadElementContentAsString ());
