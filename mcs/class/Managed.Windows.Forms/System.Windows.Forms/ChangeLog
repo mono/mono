@@ -1,3 +1,12 @@
+2009-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: When getting ProcessKeyPreview fired, call Edit() if we
+	are not editing already - so the edition is actually active on our
+	column style textbox. Also, it seems the code handling process the
+	grid keys is repeated, but instead of removing it, just comment it for
+	now.
+	Fixes part of #323051.
+
 2009-08-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AsyncMethodResult.cs: Store a exception field in case the called

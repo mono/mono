@@ -1418,20 +1418,24 @@ namespace System.Windows.Forms
 			base.OnHandleDestroyed (e);
 		}
 
+		// It seems we have repeated code with ProcessKeyPreview, specifically
+		// the call to ProcessGridKey. In practice it seems this event is *never* fired
+		// since the key events are handled by the current column's textbox. 
+		// We are keeping commented anyway, in case we need to actually call it.
 		protected override void OnKeyDown (KeyEventArgs ke)
 		{
 			base.OnKeyDown (ke);
 			
-			if (ProcessGridKey (ke) == true)
+			/*if (ProcessGridKey (ke) == true)
 				ke.Handled = true;
 
-			/* TODO: we probably don't need this check,
-			 * since current_cell wouldn't have been set
-			 * to something invalid */
+			// TODO: we probably don't need this check,
+			// since current_cell wouldn't have been set
+			// to something invalid
 			if (CurrentTableStyle.GridColumnStyles.Count > 0) {
 				CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].OnKeyDown
 					(ke, current_cell.RowNumber, current_cell.ColumnNumber);
-			}
+			}*/
 		}
 
 		protected override void OnKeyPress (KeyPressEventArgs kpe)
@@ -2018,6 +2022,13 @@ namespace System.Windows.Forms
 				KeyEventArgs ke = new KeyEventArgs (key);
 				if (ProcessGridKey (ke))
 					return true;
+
+				// if we receive a key event, make sure that input is actually
+				// taken into account.
+				if (!is_editing) {
+					Edit ();
+					return true;
+				}
 			}
 
 			return base.ProcessKeyPreview (ref m);
