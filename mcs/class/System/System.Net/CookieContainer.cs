@@ -40,8 +40,11 @@ namespace System.Net
 {
 	[Serializable]
 	[MonoTODO ("Need to remove older/unused cookies if it reaches the maximum capacity")]
-	public class CookieContainer
-	{
+#if NET_2_1
+	public sealed class CookieContainer {
+#else
+	public class CookieContainer {
+#endif
 		public const int DefaultCookieLengthLimit = 4096;
 		public const int DefaultCookieLimit = 300;
 		public const int DefaultPerDomainCookieLimit = 20;

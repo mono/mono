@@ -30,7 +30,7 @@
 namespace System.Net
 {
 	public class NetworkCredential : ICredentials
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 					, ICredentialsByHost
 #endif
 	{
@@ -83,7 +83,7 @@ namespace System.Net
 			return this;
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public NetworkCredential GetCredential (string host, int port, string authenticationType)
 		{
 			return this;

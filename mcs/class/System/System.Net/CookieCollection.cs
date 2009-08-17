@@ -37,8 +37,11 @@ using System.Runtime.Serialization;
 namespace System.Net 
 {
 	[Serializable]
-	public class CookieCollection : ICollection, IEnumerable
-	{
+#if NET_2_1
+	public sealed class CookieCollection : ICollection, IEnumerable {
+#else
+	public class CookieCollection : ICollection, IEnumerable {
+#endif
 		class CookieCollectionPathComparer : IComparer
 		{
 			int IComparer.Compare (object p1, object p2)
