@@ -319,5 +319,16 @@ namespace MonoTests.System.ServiceModel.Channels
 			m = Message.CreateMessage (MessageVersion.Default, new FaultCode ("ActionNotSupported", "urn:myfault"), "I dunno", "urn:myaction");
 			Assert.IsTrue (m.IsFault, "#2");
 		}
+
+		[Test]
+		public void State ()
+		{
+			var msg = Message.CreateMessage (MessageVersion.Soap11, "urn:foo", (object) null);
+			var xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (TextWriter.Null));
+			msg.WriteStartEnvelope (xw);
+			Assert.AreEqual (MessageState.Created, msg.State, "#1");
+			msg.WriteStartBody (xw);
+			Assert.AreEqual (MessageState.Created, msg.State, "#2");
+		}
 	}
 }

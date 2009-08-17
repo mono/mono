@@ -1,3 +1,7 @@
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added test for State.
+
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CommunicationObjectTest.cs : added a couple of close/abort tests

@@ -162,13 +162,13 @@ namespace System.ServiceModel.Channels
 				OnWriteBodyContents (writer);
 			else if (Version.Envelope == EnvelopeVersion.None)
 				WriteXsiNil (writer);
+			State = MessageState.Written;
 		}
 
 		public void WriteMessage (XmlDictionaryWriter writer)
 		{
 			if (State != MessageState.Created)
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
-			State = MessageState.Written;
 
 			OnWriteMessage (writer);
 		}
@@ -180,9 +180,8 @@ namespace System.ServiceModel.Channels
 
 		public void WriteStartBody (XmlDictionaryWriter writer)
 		{
-			if (State != MessageState.Created && State != MessageState.Written)
+			if (State != MessageState.Created)
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
-			State = MessageState.Written;
 
 			OnWriteStartBody (writer);
 		}
@@ -195,9 +194,8 @@ namespace System.ServiceModel.Channels
 
 		public void WriteStartEnvelope (XmlDictionaryWriter writer)
 		{
-			if (State != MessageState.Created && State != MessageState.Written)
+			if (State != MessageState.Created)
 				throw new InvalidOperationException (String.Format ("The message is already at {0} state", State));
-			State = MessageState.Written;
 
 			OnWriteStartEnvelope (writer);
 		}

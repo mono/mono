@@ -1,5 +1,9 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Message.cs : state is set only after WriteBodyContents().
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaders.cs : eliminate wrong use of
 	  ReadElementContentAsString() (it is not always simple string).
 
