@@ -1,3 +1,9 @@
+2009-08-17  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #525306
+	* SqlConnection.cs (Open): Use Tds80 also in case of non-pooling 
+	connections.
+
 2009-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlParameter.cs (ConvertToFrameworkType): Only wrap FormatException

@@ -535,7 +535,7 @@ namespace System.Data.SqlClient
 				if (!pooling) {
 					if(!ParseDataSource (dataSource, out port, out serverName))
 						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
-					tds = new Tds70 (serverName, port, PacketSize, ConnectionTimeout);
+					tds = new Tds80 (serverName, port, PacketSize, ConnectionTimeout);
 					tds.Pooling = false;
 				}
 				else {
