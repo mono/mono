@@ -287,6 +287,8 @@ namespace System.ServiceModel.Channels
 					this.formatter.WriteObjectContent (writer, value);
 			}
 
+			public object Value { get { return value; } }
+
 			public override string Actor { get { return actor; }}
 
 			public override bool IsReferenceParameter { get { return is_ref; }}

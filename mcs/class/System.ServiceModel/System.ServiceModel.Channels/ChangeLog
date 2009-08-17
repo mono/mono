@@ -1,5 +1,9 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	 * MessageHeader.cs : add Value property. (Forgot dependent change.)
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	 * MessageHeaders.cs : GetHeader<T>() could mostly skip extra
 	   serialization and deserialization of values.
 
