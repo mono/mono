@@ -1,5 +1,10 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : wildcard action support was not working
+	  for one-way channels.
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : set expected AddressFilter.
 
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>

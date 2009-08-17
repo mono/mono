@@ -1,5 +1,10 @@
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IPeerConnectorContract.cs : use wildcard for the actual message
+	  transfer operation.
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPeerConnectorContract.cs : fix internal member name to get
 	  serialized correctly.
 

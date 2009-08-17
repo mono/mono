@@ -33,7 +33,7 @@ namespace System.ServiceModel.PeerResolvers
 		[OperationContract (Action = Consts.Namespace + "/Ping", IsOneWay = true)]
 		void Ping ();
 
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = "*", IsOneWay = true)]
 		void SendMessage (Message msg);
 	}
 
