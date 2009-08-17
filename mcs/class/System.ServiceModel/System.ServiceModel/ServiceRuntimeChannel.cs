@@ -48,6 +48,16 @@ namespace System.ServiceModel
 
 		ClientRuntimeChannel client;
 
+		public override bool AllowOutputBatching {
+			get { return client.AllowOutputBatching; }
+			set { client.AllowOutputBatching = value; }
+		}
+
+		public virtual TimeSpan OperationTimeout {
+			get { return client.OperationTimeout; }
+			set { client.OperationTimeout = value; }
+		}
+
 		public bool AutomaticInputSessionShutdown {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -107,7 +117,7 @@ namespace System.ServiceModel
 		#region IContextChannel
 
 		[MonoTODO]
-		public bool AllowOutputBatching { get; set; }
+		public virtual bool AllowOutputBatching { get; set; }
 
 		public IInputSession InputSession {
 			get {
@@ -130,7 +140,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public TimeSpan OperationTimeout { get; set; }
+		public virtual TimeSpan OperationTimeout { get; set; }
 
 		public IOutputSession OutputSession {
 			get {

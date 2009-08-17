@@ -1,3 +1,8 @@
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : made some properties in duplex context
+	  channel dispatching to internal client.
+
 2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationContextScope.cs : check null arg.
