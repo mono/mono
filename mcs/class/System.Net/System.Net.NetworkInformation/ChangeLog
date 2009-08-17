@@ -1,0 +1,5 @@
+2009-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NetworkChange_2_1.cs: New. Minimal SL3 version
+	* NetworkInterface_2_1.cs: New. Minimal SL3 version
+
