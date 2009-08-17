@@ -127,7 +127,7 @@ namespace Microsoft.Build.Tasks {
 
 			KeyValuePair<AssemblyName, string> pair;
 			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
-				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version)) {
+				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version, true)) {
 					// gac and tgt frmwk refs are not copied private
 					return GetResolvedReference (reference, pair.Value, pair.Key, false,
 							SearchPath.TargetFrameworkDirectory);
@@ -304,10 +304,16 @@ namespace Microsoft.Build.Tasks {
 			return aname;
 		}
 
-		// if @specificVersion is true then match full name, else just the simple name
 		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
 		{
-			if (a.Name != b.Name)
+			return AssemblyNamesCompatible (a, b, specificVersion, false);
+		}
+
+		// if @specificVersion is true then match full name, else just the simple name
+		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion,
+				bool ignoreCase)
+		{
+			if (String.Compare (a.Name, b.Name, ignoreCase) != 0)
 				return false;
 
 			if (!specificVersion)
