@@ -35,7 +35,7 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.Tasks {
 	public class TaskLoggingHelperExtension : TaskLoggingHelper {
 		
-		public TaskLoggingHelperExtension ()
+		internal TaskLoggingHelperExtension ()
 			: base (null)
 		{
 		}

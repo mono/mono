@@ -1,5 +1,9 @@
 2009-08-18  Ankit Jain  <jankit@novell.com>
 
+	* TaskLoggingHelperExtensios.cs (.ctor): Mark internal.
+
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
 	* PcFileCache.cs (PackageInfo): Mark internal.
 
 2009-08-18  Ankit Jain  <jankit@novell.com>
