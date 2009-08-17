@@ -1,5 +1,11 @@
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_get_marshal_info): Assert if
+	signature is invalid. Bounds check stores to the
+	mspecs array;
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (field_from_memberref): Fix warning.
 
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
