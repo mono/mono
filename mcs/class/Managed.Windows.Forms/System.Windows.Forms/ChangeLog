@@ -1,3 +1,13 @@
+2009-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: 
+	* ThemeWin32Classic.cs: When the user clicks on a new cell, we should reset any
+	previous selection, just like .net does. Also, in the cases where a
+	cell is being edited and it keeps the selected status, use the normal
+	colors for it, and use the selected colors for the rest of the columns of
+	that row.
+	Fixes the remaining bits of #323051.
+
 2009-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGrid.cs: When getting ProcessKeyPreview fired, call Edit() if we

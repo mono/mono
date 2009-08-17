@@ -2223,6 +2223,7 @@ namespace System.Windows.Forms
 
 			// PaintCells at row, column
 			int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
+			DataGridCell current_cell = grid.CurrentCell;
 
 			if (column_cnt > 0) {
 				Region prev_clip = g.Clip;
@@ -2243,14 +2244,24 @@ namespace System.Windows.Forms
 						current_clip.Intersect (prev_clip);
 						g.Clip = current_clip;
 
+						Brush colBackBrush = backBrush;
+						Brush colForeBrush = foreBrush;
+
+						// If we are in the precise cell we are editing, then use the normal colors
+						// even if we are selected.
+						if (grid.is_editing && column == current_cell.ColumnNumber && row == current_cell.RowNumber) {
+							colBackBrush = ResPool.GetSolidBrush (grid.BackColor);
+							colForeBrush = ResPool.GetSolidBrush (grid.ForeColor);
+						}
+
 						if (is_newrow) {
 							grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
-														     backBrush,
-														     foreBrush);
+														     colBackBrush,
+														     colForeBrush);
 						} else {
 							grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
-													       backBrush,
-													       foreBrush,
+													       colBackBrush,
+													       colForeBrush,
 													       grid.RightToLeft == RightToLeft.Yes);
 						}
 

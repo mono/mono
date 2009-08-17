@@ -268,7 +268,7 @@ namespace System.Windows.Forms
 		/* editing state */
 		bool cursor_in_add_row;
 		bool add_row_changed;
-		bool is_editing;		// Current cell is edit mode
+		internal bool is_editing;		// Current cell is edit mode
 		bool is_changing;
 
 		internal Stack data_source_stack;
@@ -1488,6 +1488,7 @@ namespace System.Windows.Forms
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
+					ResetSelection ();
 					CurrentCell = new_cell;
 					Edit ();
 				} else {
@@ -2027,6 +2028,7 @@ namespace System.Windows.Forms
 				// taken into account.
 				if (!is_editing) {
 					Edit ();
+					InvalidateRow (current_cell.RowNumber);
 					return true;
 				}
 			}
