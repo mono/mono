@@ -404,6 +404,7 @@ namespace System.ServiceModel
 				new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
 			endpoint_dispatcher.DispatchRuntime.Type = Description.ServiceType;
 			endpoint_dispatcher.ContractFilter = GetContractFilter (se.Contract);
+			endpoint_dispatcher.AddressFilter = new EndpointAddressMessageFilter (se.Address);
 			endpoint_dispatcher.ChannelDispatcher = cd;
 			cd.Endpoints.Add (endpoint_dispatcher);
 			
