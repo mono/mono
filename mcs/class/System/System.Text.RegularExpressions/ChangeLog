@@ -1,3 +1,8 @@
+2009-08-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* parser.cs (GetMapping): Extend duplicate check for numeric
+	groups too.
+
 2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* parser.cs (ResolveReferences): Handle some cases of

@@ -156,16 +156,13 @@ namespace System.Text.RegularExpressions.Syntax {
 			mapping.Add ("0", 0);
 			for (int i = 0; i < end; i++) {
 				CapturingGroup group = (CapturingGroup) caps [i];
-				if (group.Name != null) {
-					if (mapping.Contains (group.Name)) {
-						if ((int) mapping [group.Name] != group.Number)
-							throw new SystemException ("invalid state");
-						continue;
-					}
-					mapping.Add (group.Name, group.Number);
-				} else {
-					mapping.Add (group.Number.ToString (), group.Number);
+				string name = group.Name != null ? group.Name : group.Number.ToString ();
+				if (mapping.Contains (name)) {
+					if ((int) mapping [name] != group.Number)
+						throw new SystemException ("invalid state");
+					continue;
 				}
+				mapping.Add (name, group.Number);
 			}
 
 			return mapping;
