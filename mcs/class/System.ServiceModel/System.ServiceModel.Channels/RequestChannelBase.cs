@@ -66,6 +66,13 @@ namespace System.ServiceModel.Channels
 			get { return via ?? RemoteAddress.Uri; }
 		}
 
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (IChannelFactory))
+				return (T) (object) channel_factory;
+			return base.GetProperty<T> ();
+		}
+
 		// Request
 
 		public Message Request (Message message)
