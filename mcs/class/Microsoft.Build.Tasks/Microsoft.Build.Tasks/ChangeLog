@@ -1,3 +1,9 @@
+2009-08-17  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs (TargetFrameworkAssemblies..ctor): Make assembly
+	name lookups for target framework assemblies, case insensitive. Helps
+	with cases like "System.configuration", which vs.net is known to emit.
+
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
 	* PcFileCache.cs: New. From monodevelop.

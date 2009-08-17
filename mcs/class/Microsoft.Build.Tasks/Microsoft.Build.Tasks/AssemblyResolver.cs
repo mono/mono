@@ -394,7 +394,8 @@ namespace Microsoft.Build.Tasks {
 		public TargetFrameworkAssemblies (string path)
 		{
 			this.Path = path;
-			NameToAssemblyNameCache = new Dictionary<string, KeyValuePair<AssemblyName, string>> ();
+			NameToAssemblyNameCache = new Dictionary<string, KeyValuePair<AssemblyName, string>> (
+					StringComparer.InvariantCultureIgnoreCase);
 		}
 	}
 
