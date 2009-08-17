@@ -243,6 +243,7 @@ namespace Mono.Data.Tds.Protocol
 
 			//Comm.Append (empty, 3, pad);
 			//byte[] version = {0x00, 0x0, 0x0, 0x71};
+			//Console.WriteLine ("Version: {0}", ClientVersion[3]);
 			Comm.Append (ClientVersion); // TDS Version 7
 			Comm.Append ((int)this.PacketSize); // Set the Block Size
 			Comm.Append (empty, 3, pad);
@@ -564,13 +565,16 @@ namespace Mono.Data.Tds.Protocol
 				Comm.Append (param.Scale);
 			}
 
+			
+			/* VARADHAN: TDS 8 Debugging */
 			/*
-			 * VARADHAN: TDS 8 Debugging *
 			if (Collation != null) {
 				Console.WriteLine ("Collation is not null");
 				Console.WriteLine ("Column Type: {0}", colType);
 				Console.WriteLine ("Collation bytes: {0} {1} {2} {3} {4}", Collation[0], Collation[1], Collation[2],
 				                   Collation[3], Collation[4]);
+			} else {
+				Console.WriteLine ("Collation is null");
 			}
 			*/
 			
@@ -761,9 +765,8 @@ namespace Mono.Data.Tds.Protocol
 			//return ColumnValues [0].ToString ();
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
-			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int numColumns = Comm.GetTdsShort ();
 			for (int i = 0; i < numColumns; i += 1) {
 				byte[] flagData = new byte[4];
@@ -816,7 +819,7 @@ namespace Mono.Data.Tds.Protocol
 				string columnName = Comm.GetString (Comm.GetByte ());
 
 				TdsDataColumn col = new TdsDataColumn ();
-				result.Add (col);
+				Columns.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
@@ -843,7 +846,6 @@ namespace Mono.Data.Tds.Protocol
 				col ["DataTypeName"] = Enum.GetName (typeof (TdsColumnType), xColumnType);
 #endif
 			}
-			return result;
 		}
 
 		public override void Unprepare (string statementId)

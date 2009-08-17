@@ -64,6 +64,7 @@ namespace Mono.Data.Tds.Protocol
 
 		public virtual Tds CreateConnection (TdsConnectionInfo info)
 		{
+			//Console.WriteLine ("CreateConnection: TdsVersion:{0}", version);
 			switch (version)
 			{
 				case TdsVersion.tds42:

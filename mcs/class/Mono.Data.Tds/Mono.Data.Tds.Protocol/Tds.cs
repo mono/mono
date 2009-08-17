@@ -215,7 +215,7 @@ namespace Mono.Data.Tds.Protocol
 				}
 			}
 		}
-		
+
 		private void SkipRow ()
 		{
 			SkipToColumnIndex (Columns.Count);
@@ -420,6 +420,7 @@ namespace Mono.Data.Tds.Protocol
 			this.tdsVersion = tdsVersion;
 			this.packetSize = packetSize;
 			this.dataSource = dataSource;
+			this.columns = new TdsDataColumnCollection ();
 
 			comm = new TdsComm (dataSource, port, packetSize, timeout, tdsVersion);
 		}
@@ -1507,7 +1508,7 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		protected abstract TdsDataColumnCollection ProcessColumnInfo ();
+		protected abstract void ProcessColumnInfo ();
 
 		protected void ProcessColumnNames ()
 		{
@@ -1619,6 +1620,7 @@ namespace Mono.Data.Tds.Protocol
 				database = newDB;
 				break;
 			case TdsEnvPacketSubType.CollationInfo:
+				//Console.WriteLine ("ProcessEnvironmentChange::Got collation info");
 				cLen = comm.GetByte ();
 				collation = comm.GetBytes (cLen, true);
 				lcid = TdsCollation.LCID (collation);
@@ -1639,6 +1641,7 @@ namespace Mono.Data.Tds.Protocol
 			uint srvVersion = 0;
 			GetSubPacketLength ();
 			
+			//Console.WriteLine ("ProcessLoginAck: B4 tdsVersion:{0}", tdsVersion);
 			// Valid only for a Login7 request
 			if (tdsVersion >= TdsVersion.tds70) {
 				comm.Skip (1);
@@ -1658,6 +1661,7 @@ namespace Mono.Data.Tds.Protocol
 					tdsVersion = TdsVersion.tds90;
 					break;
 				}
+				//Console.WriteLine ("ProcessLoginAck: after tdsVersion:{0}", tdsVersion);				
 			}
 			
 			if (tdsVersion >= TdsVersion.tds70) {
@@ -1809,7 +1813,8 @@ namespace Mono.Data.Tds.Protocol
 			case TdsPacketSubType.ColumnInfo:      // TDS 4.2
 			case TdsPacketSubType.ColumnMetadata:  // TDS 7.0
 			case TdsPacketSubType.RowFormat:       // TDS 5.0
-				columns = ProcessColumnInfo ();
+				Columns.Clear ();
+				ProcessColumnInfo ();
 				break;
 			case TdsPacketSubType.ColumnDetail:
 				ProcessColumnDetail ();

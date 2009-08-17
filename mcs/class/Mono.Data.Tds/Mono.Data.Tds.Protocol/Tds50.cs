@@ -460,10 +460,9 @@ namespace Mono.Data.Tds.Protocol
 			return id;
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
 			isSelectQuery = true; 
-			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			/*int totalLength = */Comm.GetTdsShort ();
 			int count = Comm.GetTdsShort ();
 			for (int i = 0; i < count; i += 1) {
@@ -507,7 +506,7 @@ namespace Mono.Data.Tds.Protocol
 					Comm.Skip (Comm.GetTdsShort ()); // Class ID
 
 				TdsDataColumn col = new TdsDataColumn ();
-				result.Add (col);
+				Columns.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
@@ -536,7 +535,6 @@ namespace Mono.Data.Tds.Protocol
 				col ["IsHidden"] = hidden;
 #endif
 			}
-			return result;
 		}
 
 		private void SendParamFormat ()

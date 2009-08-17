@@ -67,18 +67,20 @@ namespace Mono.Data.Tds.Protocol {
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
 		{
+			//Console.WriteLine ("Tds80::Connect");
 			return base.Connect (connectionParameters);
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
 			// We are connected to a Sql 7.0 server
-			if (TdsVersion < TdsVersion.tds80)
-				return base.ProcessColumnInfo ();
+			if (TdsVersion < TdsVersion.tds80) {
+				base.ProcessColumnInfo ();
+				return;
+			}
 			
 			// VARADHAN: TDS 8 Debugging
 			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... entry");
-			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int numColumns = Comm.GetTdsShort ();
 			//Console.WriteLine ("Column count={0}", numColumns); TDS 8 Debugging
 			for (int i = 0; i < numColumns; i += 1) {
@@ -156,7 +158,7 @@ namespace Mono.Data.Tds.Protocol {
 				string columnName = Comm.GetString (Comm.GetByte ());
 
 				TdsDataColumn col = new TdsDataColumn ();
-				result.Add (col);
+				Columns.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
@@ -186,7 +188,6 @@ namespace Mono.Data.Tds.Protocol {
 #endif
 			}
 			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... exit");  TDS 8 Debugging
-			return result;
 		}
 
 		protected override void ProcessOutputParam ()

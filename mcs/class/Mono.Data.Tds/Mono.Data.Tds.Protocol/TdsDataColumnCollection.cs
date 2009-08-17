@@ -76,11 +76,22 @@ namespace Mono.Data.Tds.Protocol {
 			return index;
 		}
 
+		public void Add (TdsDataColumnCollection columns)
+		{
+			foreach (TdsDataColumn col in columns)
+				Add (col);
+		}
+		
 		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}
 
+		public void Clear ()
+		{
+			list.Clear ();
+		}
+		
 		#endregion // Methods
 	}
 }

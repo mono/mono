@@ -218,14 +218,12 @@ namespace Mono.Data.Tds.Protocol {
 			return IsConnected;
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
 			byte precision;
 			byte scale;
 			int totalLength = Comm.GetTdsShort ();
 			int bytesRead = 0;
-
-			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 
 			while (bytesRead < totalLength) {
 				scale = 0;
@@ -273,7 +271,7 @@ namespace Mono.Data.Tds.Protocol {
 				}
 
 				TdsDataColumn col = new TdsDataColumn ();
-				int index = result.Add (col);
+				int index = Columns.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnSize = bufLength;
@@ -294,8 +292,6 @@ namespace Mono.Data.Tds.Protocol {
 				col["AllowDBNull"] = nullable;
 #endif
 			}
-
-			return result;
 		}
 
 		#endregion // Methods
