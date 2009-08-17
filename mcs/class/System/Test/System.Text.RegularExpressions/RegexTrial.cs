@@ -37,15 +37,17 @@ namespace MonoTests.System.Text.RegularExpressions {
 				RegexOptions real_options = (compiled == 1) ? (options | RegexOptions.Compiled) : options;
 				try {
 					Regex re = new Regex (pattern, real_options);
+					int [] group_nums = re.GetGroupNumbers ();
 					Match m = re.Match (input);
 
 					if (m.Success) {
 						result = "Pass.";
-					
-						for (int i = 0; i < m.Groups.Count; ++ i) {
-							Group group = m.Groups [i];
 
-							result += " Group[" + i + "]=";
+						for (int i = 0; i < m.Groups.Count; ++ i) {
+							int gid = group_nums [i];
+							Group group = m.Groups [gid];
+
+							result += " Group[" + gid + "]=";
 							foreach (Capture cap in group.Captures)
 								result += "(" + cap.Index + "," + cap.Length + ")";
 						}

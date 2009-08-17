@@ -1,3 +1,7 @@
+2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* RegexTrial.cs (Execute): Prepare to handle dis-contiguous group numbers.
+
 2009-08-10  Raja R Harinath  <harinath@hurrynot.org>
 
 	* RegexMatchTests.cs (RegexTrial0054..60): New.
