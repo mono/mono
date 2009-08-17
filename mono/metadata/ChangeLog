@@ -1,5 +1,10 @@
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_signature): Don't assert on broken
+	signature. Print a more usefull error message.
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_get_marshal_info): Assert if
 	signature is invalid. Bounds check stores to the
 	mspecs array;
