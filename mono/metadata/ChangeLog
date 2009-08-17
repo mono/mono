@@ -1,5 +1,10 @@
 2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_get_param_names): Check if signature
+	is null. Don't store beyond the size of the name array.
+
+2009-08-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_get_method_constrained): Check if signature
 	is null.
 
