@@ -174,6 +174,10 @@ namespace Mono.CSharp {
 				get { return tc.Parent.CurrentType; }
 			}
 
+			public TypeParameter[] CurrentTypeParameters {
+				get { return tc.PartialContainer.CurrentTypeParameters; }
+			}
+
 			public TypeContainer CurrentTypeDefinition {
 				get { return tc.Parent.CurrentTypeDefinition; }
 			}
@@ -197,12 +201,14 @@ namespace Mono.CSharp {
 
 			public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 			{
-				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
-			}
+				TypeParameter[] tp = CurrentTypeParameters;
+				if (tp != null) {
+					TypeParameter t = TypeParameter.FindTypeParameter (tp, name);
+					if (t != null)
+						return new TypeParameterExpr (t, loc);
+				}
 
-			public Type LookupTypeParameter (string name)
-			{
-				return tc.PartialContainer.LookupTypeParameter (name);
+				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 			}
 
 			public DeclSpace GenericDeclContainer {
@@ -1014,7 +1020,10 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 				GenericTypeParameterBuilder[] gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
-				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				int offset = CountTypeParameters;
+				if (CurrentTypeParameters != null)
+					offset -= CurrentTypeParameters.Length;
+
 				if (offset > 0) {
 					nested_gen_params = new GenericTypeParameterBuilder [offset];
 					Array.Copy (gen_params, nested_gen_params, offset);
@@ -1158,9 +1167,9 @@ namespace Mono.CSharp {
 
 		void UpdateTypeParameterConstraints (TypeContainer part)
 		{
-			TypeParameter[] current_params = CurrentTypeParameters;
+			TypeParameter[] current_params = type_params;
 			for (int i = 0; i < current_params.Length; i++) {
-				Constraints c = part.CurrentTypeParameters [i].Constraints;
+				Constraints c = part.type_params [i].Constraints;
 				if (c == null)
 					continue;
 
@@ -1197,17 +1206,18 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ();
 
 			TypeExpr current_type = null;
-
-			foreach (TypeParameter type_param in CurrentTypeParameters) {
-				if (!type_param.Resolve (this)) {
-					error = true;
-					return false;
+			if (CurrentTypeParameters != null) {
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
+					if (!type_param.Resolve (this)) {
+						error = true;
+						return false;
+					}
 				}
-			}
 
-			if (partial_parts != null && is_generic) {
-				foreach (TypeContainer part in partial_parts)
-					UpdateTypeParameterConstraints (part);
+				if (partial_parts != null) {
+					foreach (TypeContainer part in partial_parts)
+						UpdateTypeParameterConstraints (part);
+				}
 			}
 
 			for (int i = 0; i < TypeParameters.Length; ++i) {
@@ -1298,6 +1308,12 @@ namespace Mono.CSharp {
 
 			InTransit = null;
 			return true;
+		}
+
+		public override TypeParameter[] CurrentTypeParameters {
+			get {
+				return PartialContainer.type_params;
+			}
 		}
 
 		/// <summary>
@@ -2851,7 +2867,7 @@ namespace Mono.CSharp {
 				else if (Name != "System.Object")
 					base_class = TypeManager.system_object_expr;
 			} else {
-				if (Kind == Kind.Class && base_class is TypeParameterExpr){
+				if (Kind == Kind.Class && TypeManager.IsGenericParameter (base_class.Type)){
 					Report.Error (
 						689, base_class.Location,
 						"Cannot derive from `{0}' because it is a type parameter",
@@ -4167,6 +4183,18 @@ namespace Mono.CSharp {
 					(Parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
+		public override FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		{
+			TypeParameter[] tp = CurrentTypeParameters;
+			if (tp != null) {
+				TypeParameter t = TypeParameter.FindTypeParameter (tp, name);
+				if (t != null)
+					return new TypeParameterExpr (t, loc);
+			}
+
+			return base.LookupNamespaceOrType (name, loc, ignore_cs0104);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Conditional) {
@@ -4250,6 +4278,15 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public override TypeParameter[] CurrentTypeParameters {
+			get {
+				if (GenericMethod != null)
+					return GenericMethod.CurrentTypeParameters;
+
+				return null;
+			}
 		}
 
 		//
@@ -4395,17 +4432,6 @@ namespace Mono.CSharp {
 
 			base_ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 			return mi;
-		}
-
-		public override Type LookupTypeParameter (string name)
-		{
-			if (GenericMethod != null) {
-				Type t = GenericMethod.LookupTypeParameter (name);
-				if (t != null)
-					return t;
-			}
-
-			return base.LookupTypeParameter (name);
 		}
 
 		public void SetPartialDefinition (Method methodDefinition)

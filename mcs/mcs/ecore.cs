@@ -2526,10 +2526,6 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			Type t = ec.LookupTypeParameter (Name);
-			if (t != null)
-				return new TypeParameterExpr (TypeManager.LookupTypeParameter (t), loc).ResolveAsTypeStep (ec, false);
-
 			int errors = Report.Errors;
 			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, loc, /*ignore_cs0104=*/ false);
 

@@ -321,8 +321,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				TypeParameterExpr texpr = expr as TypeParameterExpr;
-				if (texpr != null)
+				if (TypeManager.IsGenericParameter (expr.Type))
 					type_param_constraints.Add (expr);
 				else if (expr.IsInterface)
 					iface_constraints.Add (expr);
@@ -367,7 +366,7 @@ namespace Mono.CSharp {
 				list.Add (iface_constraint.Type);
 			}
 
-			foreach (TypeParameterExpr expr in type_param_constraints) {
+			foreach (TypeExpr expr in type_param_constraints) {
 				foreach (Type type in list) {
 					if (!type.Equals (expr.Type))
 						continue;
@@ -430,11 +429,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool CheckTypeParameterConstraints (TypeParameter tparam, ref TypeExpr prevConstraint, ArrayList seen)
+		bool CheckTypeParameterConstraints (Type tparam, ref TypeExpr prevConstraint, ArrayList seen)
 		{
 			seen.Add (tparam);
 
-			Constraints constraints = tparam.Constraints;
+			Constraints constraints = TypeManager.LookupTypeParameter (tparam).Constraints;
 			if (constraints == null)
 				return true;
 
@@ -472,15 +471,15 @@ namespace Mono.CSharp {
 			if (constraints.type_param_constraints == null)
 				return true;
 
-			foreach (TypeParameterExpr expr in constraints.type_param_constraints) {
-				if (seen.Contains (expr.TypeParameter)) {
+			foreach (TypeExpr expr in constraints.type_param_constraints) {
+				if (seen.Contains (expr.Type)) {
 					Report.Error (454, loc, "Circular constraint " +
 						      "dependency involving `{0}' and `{1}'",
 						      tparam.Name, expr.GetSignatureForError ());
 					return false;
 				}
 
-				if (!CheckTypeParameterConstraints (expr.TypeParameter, ref prevConstraint, seen))
+				if (!CheckTypeParameterConstraints (expr.Type, ref prevConstraint, seen))
 					return false;
 			}
 
@@ -509,8 +508,8 @@ namespace Mono.CSharp {
 			if (type_param_constraints.Count != 0) {
 				ArrayList seen = new ArrayList ();
 				TypeExpr prev_constraint = class_constraint;
-				foreach (TypeParameterExpr expr in type_param_constraints) {
-					if (!CheckTypeParameterConstraints (expr.TypeParameter, ref prev_constraint, seen))
+				foreach (TypeExpr expr in type_param_constraints) {
+					if (!CheckTypeParameterConstraints (expr.Type, ref prev_constraint, seen))
 						return false;
 					seen.Clear ();
 				}
@@ -857,6 +856,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public static TypeParameter FindTypeParameter (TypeParameter[] tparams, string name)
+		{
+			foreach (var tp in tparams) {
+				if (tp.Name == name)
+					return tp;
+			}
+
+			return null;
+		}
+
 		public void SetConstraints (GenericTypeParameterBuilder type)
 		{
 			GenericParameterAttributes attr = GenericParameterAttributes.None;
@@ -1130,17 +1139,11 @@ namespace Mono.CSharp {
 	///   A TypeExpr which already resolved to a type parameter.
 	/// </summary>
 	public class TypeParameterExpr : TypeExpr {
-		TypeParameter type_parameter;
-
-		public TypeParameter TypeParameter {
-			get {
-				return type_parameter;
-			}
-		}
 		
 		public TypeParameterExpr (TypeParameter type_parameter, Location loc)
 		{
-			this.type_parameter = type_parameter;
+			this.type = type_parameter.Type;
+			this.eclass = ExprClass.TypeParameter;
 			this.loc = loc;
 		}
 
@@ -1151,8 +1154,6 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			type = type_parameter.Type;
-			eclass = ExprClass.TypeParameter;
 			return this;
 		}
 
@@ -1742,6 +1743,12 @@ namespace Mono.CSharp {
 		{
 			this.return_type = return_type;
 			this.parameters = parameters;
+		}
+
+		public override TypeParameter[] CurrentTypeParameters {
+			get {
+				return base.type_params;
+			}
 		}
 
 		public override TypeBuilder DefineType ()

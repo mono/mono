@@ -253,8 +253,25 @@ namespace Mono.CSharp {
 	/// </summary>
 	public interface IResolveContext
 	{
+		//
+		// A scope type context, it can be inflated for generic types
+		//
 		Type CurrentType { get; }
+
+		//
+		// A scope type parameters either VAR or MVAR
+		//
+		TypeParameter[] CurrentTypeParameters { get; }
+
+		//
+		// A type definition of the type context. For partial types definition use
+		// CurrentTypeDefinition.PartialContainer otherwise the context is local
+		//
+		// TODO: CurrentType.Definition
+		//
 		TypeContainer CurrentTypeDefinition { get; }
+
+		// Obsolete
 		DeclSpace DeclContainer { get; }
 
 		bool IsInObsoleteScope { get; }
@@ -262,7 +279,6 @@ namespace Mono.CSharp {
 
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
-		Type LookupTypeParameter (string name);
 
 		// the declcontainer to lookup for type-parameters.  Should only use LookupGeneric on it.
 		//
@@ -491,6 +507,10 @@ namespace Mono.CSharp {
 
 		public Type CurrentType {
 			get { return ResolveContext.CurrentType; }
+		}
+
+		public TypeParameter[] CurrentTypeParameters {
+			get { return ResolveContext.CurrentTypeParameters; }
 		}
 
 		public TypeContainer CurrentTypeDefinition {
@@ -1054,11 +1074,6 @@ namespace Mono.CSharp {
 			return ResolveContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
-		public Type LookupTypeParameter (string name)
-		{
-			return ResolveContext.LookupTypeParameter (name);
-		}
-
 		#endregion
 	}
 
@@ -1100,6 +1115,10 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
+		public TypeParameter[] CurrentTypeParameters {
+			get { return null; }
+		}
+
 		public TypeContainer CurrentTypeDefinition {
 			get { throw new InternalErrorException ("No TypeContainer in module context"); }
 		}
@@ -1128,11 +1147,6 @@ namespace Mono.CSharp {
 		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
 			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, loc, ignore_cs0104);
-		}
-
-		public Type LookupTypeParameter (string name)
-		{
-			return null;
 		}
 
 		#endregion

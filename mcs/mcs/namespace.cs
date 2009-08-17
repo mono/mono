@@ -1084,11 +1084,6 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
-		public Type LookupTypeParameter (string name)
-		{
-			return null;
-		}
-
 		public ICollection CompletionGetTypesStartingWith (string prefix)
 		{
 			Hashtable result = new Hashtable ();
@@ -1322,6 +1317,10 @@ namespace Mono.CSharp {
 
 		public TypeContainer CurrentTypeDefinition {
 			get { return SlaveDeclSpace.CurrentTypeDefinition; }
+		}
+
+		public TypeParameter[] CurrentTypeParameters {
+			get { return SlaveDeclSpace.CurrentTypeParameters; }
 		}
 
 		public DeclSpace DeclContainer {

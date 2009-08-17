@@ -406,7 +406,7 @@ namespace Mono.CSharp {
 				(modFlags & Parameter.Modifier.ISBYREF) != 0 ? Variance.None : Variance.Contravariant,
 				rc as MemberCore);
 
-			if (texpr is TypeParameterExpr)
+			if (TypeManager.IsGenericParameter (parameter_type))
 				return parameter_type;
 
 			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {

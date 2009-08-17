@@ -403,7 +403,7 @@ namespace Mono.CSharp {
 		public AnonymousMethodStorey GetGenericStorey ()
 		{
 			DeclSpace storey = this;
-			while (storey != null && storey.CurrentTypeParameters.Length == 0)
+			while (storey != null && storey.CurrentTypeParameters == null)
 				storey = storey.Parent;
 
 			return storey as AnonymousMethodStorey;
@@ -600,10 +600,10 @@ namespace Mono.CSharp {
 		//
 		public Type MutateGenericArgument (Type type)
 		{
-			foreach (TypeParameter tp in CurrentTypeParameters) {
-				if (tp.Name == type.Name) {
+			if (CurrentTypeParameters != null) {
+				TypeParameter tp = TypeParameter.FindTypeParameter (CurrentTypeParameters, type.Name);
+				if (tp != null)
 					return tp.Type;
-				}
 			}
 
 			return type;
@@ -1439,7 +1439,7 @@ namespace Mono.CSharp {
 					new TypeExpression (ReturnType, Location), parameters);
 
 				ArrayList list = new ArrayList ();
-				foreach (TypeParameter tparam in ((IMethodData)mc).GenericMethod.CurrentTypeParameters) {
+				foreach (TypeParameter tparam in ec.CurrentTypeParameters) {
 					if (tparam.Constraints != null)
 						list.Add (tparam.Constraints.Clone ());
 				}

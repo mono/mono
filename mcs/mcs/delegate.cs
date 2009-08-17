@@ -80,6 +80,12 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
+		public override TypeParameter[] CurrentTypeParameters {
+			get {
+				return base.type_params;
+			}
+		}
+
 		public override TypeBuilder DefineType ()
 		{
 			if (TypeBuilder != null)
@@ -112,13 +118,17 @@ namespace Mono.CSharp {
 				GenericTypeParameterBuilder[] gen_params;
 				gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
-				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				int offset = CountTypeParameters;
+				if (CurrentTypeParameters != null)
+					offset -= CurrentTypeParameters.Length;
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 
-				foreach (TypeParameter type_param in CurrentTypeParameters) {
-					if (!type_param.Resolve (this))
-						return null;
+				if (CurrentTypeParameters != null) {
+					foreach (TypeParameter type_param in CurrentTypeParameters) {
+						if (!type_param.Resolve (this))
+							return null;
+					}
 				}
 
 				Expression current = new SimpleName (

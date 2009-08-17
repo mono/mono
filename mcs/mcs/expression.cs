@@ -1432,7 +1432,7 @@ namespace Mono.CSharp {
 			Type etype = expr.Type;
 
 			if (!TypeManager.IsReferenceType (type) && !TypeManager.IsNullableType (type)) {
-				if (probe_type_expr is TypeParameterExpr) {
+				if (TypeManager.IsGenericParameter (type)) {
 					Report.Error (413, loc,
 						"The `as' operator cannot be used with a non-reference type parameter `{0}'. Consider adding `class' or a reference type constraint",
 						probe_type_expr.GetSignatureForError ());
@@ -7498,13 +7498,13 @@ namespace Mono.CSharp {
 			if (tnew_expr == null)
 				return null;
 
-			if (tnew_expr is TypeParameterExpr) {
+			Type expr_type = tnew_expr.Type;
+			if (TypeManager.IsGenericParameter (expr_type)) {
 				Report.Error (704, loc, "A nested type cannot be specified through a type parameter `{0}'",
 					tnew_expr.GetSignatureForError ());
 				return null;
 			}
 
-			Type expr_type = tnew_expr.Type;
 			Expression member_lookup = MemberLookup (
 				rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);

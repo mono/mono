@@ -128,6 +128,11 @@ namespace Mono.CSharp
 		public void ErrorInvalidVariance (MemberCore mc, Variance v)
 		{
 		}
+		
+		public static TypeParameter FindTypeParameter (TypeParameter[] all, string name)
+		{
+			throw new NotImplementedException ();
+		}
 
 		//
 		// MemberContainer

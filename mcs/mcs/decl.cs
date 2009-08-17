@@ -680,11 +680,6 @@ namespace Mono.CSharp {
 			return Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
-		public virtual Type LookupTypeParameter (string name)
-		{
-			return Parent.PartialContainer.LookupTypeParameter (name);
-		}
-
 		/// <summary>
 		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
 		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
@@ -826,6 +821,10 @@ namespace Mono.CSharp {
 
 		public virtual TypeContainer CurrentTypeDefinition {
 			get { return Parent.CurrentTypeDefinition; }
+		}
+
+		public virtual TypeParameter[] CurrentTypeParameters {
+			get { return null; }
 		}
 
 		public DeclSpace DeclContainer {
@@ -1223,44 +1222,31 @@ namespace Mono.CSharp {
 			if (Cache.Contains (name))
 				return (FullNamedExpression) Cache [name];
 
-			FullNamedExpression e;
+			FullNamedExpression e = null;
 			int errors = Report.Errors;
-			Type t = LookupNestedTypeInHierarchy (name);
-			if (t != null)
-				e = new TypeExpression (t, Location.Null);
-			else if (Parent != null)
-				e = Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
-			else
-				e = NamespaceEntry.LookupNamespaceOrType (name, loc, ignore_cs0104);
+
+			TypeParameter[] tp = CurrentTypeParameters;
+			if (tp != null) {
+				TypeParameter tparam = TypeParameter.FindTypeParameter (tp, name);
+				if (tparam != null)
+					e = new TypeParameterExpr (tparam, Location.Null);
+			}
+
+			if (e == null) {
+				Type t = LookupNestedTypeInHierarchy (name);
+
+				if (t != null)
+					e = new TypeExpression (t, Location.Null);
+				else if (Parent != null)
+					e = Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
+				else
+					e = NamespaceEntry.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			}
 
 			if (errors == Report.Errors)
 				Cache [name] = e;
 			
 			return e;
-		}
-
-		public override Type LookupTypeParameter (string name)
-		{
-			if (type_params != null) {
-				Type t = LookupLocalTypeParameter (name);
-				if (t != null)
-					return t;
-			}
-
-			if (Parent != null)
-				return Parent.PartialContainer.LookupTypeParameter (name);
-
-			return null;
-		}
-
-		Type LookupLocalTypeParameter (string name)
-		{
-			foreach (var tp in type_params) {
-				if (tp.Name == name)
-					return tp.Type;
-			}
-
-			return null;
 		}
 
 		/// <remarks>
@@ -1309,7 +1295,7 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList ();
 			if (the_parent != null && the_parent.IsGeneric) {
 				// FIXME: move generics info out of DeclSpace
-				TypeParameter[] parent_params = the_parent.PartialContainer.TypeParameters;
+				TypeParameter[] parent_params = the_parent.TypeParameters;
 				list.AddRange (parent_params);
 			}
  
@@ -1317,8 +1303,8 @@ namespace Mono.CSharp {
 			for (int i = 0; i < count; i++) {
 				TypeParameter param = type_params [i];
 				list.Add (param);
-				if (Parent.IsGeneric) {
-					foreach (TypeParameter tp in Parent.PartialContainer.CurrentTypeParameters) {
+				if (Parent.CurrentTypeParameters != null) {
+					foreach (TypeParameter tp in Parent.CurrentTypeParameters) {
 						if (tp.Name != param.Name)				
 							continue;
 
@@ -1414,19 +1400,6 @@ namespace Mono.CSharp {
 
 		public override TypeContainer CurrentTypeDefinition {
 			get { return PartialContainer; }
-		}
-
-		public TypeParameter[] CurrentTypeParameters {
-			get {
-				if (!IsGeneric)
-					throw new InvalidOperationException ();
-
-				// TODO: Something is seriously broken here
-				if (type_params == null)
-					return new TypeParameter [0];
-
-				return type_params;
-			}
 		}
 
 		public int CountTypeParameters {
