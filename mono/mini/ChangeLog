@@ -1,5 +1,9 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* method-to-ir.c: Fix warnings for uninitialized variables.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* mini-exceptions.c:
 	* aot-compiler.c: Fix printf warnings.
 
