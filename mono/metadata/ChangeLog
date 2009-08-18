@@ -1,5 +1,11 @@
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (do_mono_metadata_parse_type): Do error
+	checking for element types. Don't abort if presented
+	with a broken type kind.
+
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (mono_metadata_parse_method_signature_full):
 	Gracefully fail bad vararg signatures.
 
