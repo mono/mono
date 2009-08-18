@@ -1,3 +1,7 @@
+2009-08-17  Geoff Norton  <gnorton@novell.com>
+
+	* NtlmClient.cs: Mono.Http does not exist on monotouch
+
 2009-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieCollection.cs: Seal class for NET_2_1 (SL3)

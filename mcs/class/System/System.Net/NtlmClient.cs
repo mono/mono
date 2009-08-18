@@ -42,9 +42,11 @@ namespace System.Net
 
 		static NtlmClient ()
 		{
+#if !MONOTOUCH
 			Assembly ass = Assembly.Load (Consts.AssemblyMono_Http);
 			if (ass != null)
 				ntlmAuthType = ass.GetType ("Mono.Http.NtlmClient", false);
+#endif
 		}
 		
 		public NtlmClient ()
