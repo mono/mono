@@ -65,6 +65,9 @@ namespace System.Web.Compilation
 		string verbatimID;
 		string fileText;
 		StringReader fileReader;
+		bool _internal;
+		int _internalLineOffset;
+		AspParser outer;
 		
 		EventHandlerList events = new EventHandlerList ();
 		
@@ -95,9 +98,18 @@ namespace System.Web.Compilation
 			this.filename = filename;
 			this.fileText = input.ReadToEnd ();
 			this.fileReader = new StringReader (this.fileText);
+			this._internalLineOffset = 0;
 			tokenizer = new AspTokenizer (this.fileReader);
 		}
 
+		public AspParser (string filename, TextReader input, int startLineOffset, AspParser outer)
+			: this (filename, input)
+		{
+			this._internal = true;
+			this._internalLineOffset = startLineOffset;
+			this.outer = outer;
+		}
+		
 #if NET_2_0
 		public byte[] MD5Checksum {
 			get {
@@ -110,7 +122,12 @@ namespace System.Web.Compilation
 #endif
 		
 		public int BeginLine {
-			get { return beginLine; }
+			get {
+				if (Internal)
+					return beginLine + InternalLineOffset;
+
+				return beginLine;
+			}
 		}
 
 		public int BeginColumn {
@@ -118,19 +135,38 @@ namespace System.Web.Compilation
 		}
 
 		public int EndLine {
-			get { return endLine; }
+			get {
+				if (Internal)
+					return endLine + InternalLineOffset;
+				return endLine;
+			}
 		}
 
 		public int EndColumn {
 			get { return endColumn; }
 		}
 
+		public bool Internal {
+			get { return _internal; }
+			set { _internal = value; }
+		}
+
+		public int InternalLineOffset {
+			get { return _internalLineOffset; }
+			set { _internalLineOffset = value; }
+		}
+		
 		public string FileText {
 			get {
-				if (fileText != null)
-					return fileText;
+				string ret = null;
 				
-				return null;
+				if (Internal && outer != null)
+					ret = outer.FileText;
+				
+				if (ret == null && fileText != null)
+					ret = fileText;
+				
+				return ret;
 			}
 		}
 		
@@ -139,12 +175,31 @@ namespace System.Web.Compilation
 				if (beginPosition >= endPosition || fileText == null)
 					return null;
 
-				return fileText.Substring (beginPosition, endPosition - beginPosition);
+				string text = FileText;
+				int start, len;
+				
+				if (Internal && outer != null) {
+					start = beginPosition + InternalLineOffset;
+					len = (endPosition + InternalLineOffset) - start;
+				} else {
+					start = beginPosition;
+					len = endPosition - beginPosition;
+				}
+				
+				if (text != null)
+					return text.Substring (start, len);
+
+				return null;
 			}
 		}
 
 		public string Filename {
-			get { return filename; }
+			get {
+				if (Internal && outer != null)
+					return outer.Filename;
+				
+				return filename;
+			}
 		}
 
 		public string VerbatimID {

@@ -59,6 +59,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "FullTagsInText.aspx", "FullTagsInText.aspx");
 			WebTest.CopyResource (GetType (), "TagsExpressionsAndCommentsInText.aspx", "TagsExpressionsAndCommentsInText.aspx");
 			WebTest.CopyResource (GetType (), "NewlineInCodeExpression.aspx", "NewlineInCodeExpression.aspx");
+			WebTest.CopyResource (GetType (), "DuplicateControlsInClientComment.aspx", "DuplicateControlsInClientComment.aspx");
 #if NET_2_0
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
@@ -214,12 +215,24 @@ namespace MonoTests.System.Web.Compilation {
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif
+
+		[Test (Description="Bug #525104")]
+		[ExpectedException (typeof (HttpException))]
+		public void DuplicateControlsInClientComment ()
+		{
+			// Just test if it throws an exception
+			new WebTest ("DuplicateControlsInClientCommment.aspx").Run ();
+		}
 		
 		[Test (Description="Bug #517656")]
 		public void ServerControlInClientSideComment ()
 		{
-			// We just test if it doesn't throw an exception
-			new WebTest ("ServerControlInClientSideComment.aspx").Run ();
+			string pageHtml = new WebTest ("ServerControlInClientSideComment.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"<!-- comment start
+  <input id=""testBox"" type=""checkbox"" name=""testBox"" />
+comment end -->";
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 
 		[Test]

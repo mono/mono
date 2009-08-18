@@ -1,6 +1,10 @@
 <%@ Page Language = "C#" %>
 
 <html><head><title>Bug 517656</title><head><body>
+<form runat="server">
+<%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><!-- comment start
+  <asp:Checkbox id="testBox" runat="server" />
+comment end --><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
 <p>ASP.NET repeater control to follow...</p>
 <asp:Repeater id="censusRepeater" runat="server">
 	<HeaderTemplate />
@@ -33,4 +37,5 @@
 	</ItemTemplate>
 	<FooterTemplate />
 </asp:Repeater>
+</form>
 </body></html>
