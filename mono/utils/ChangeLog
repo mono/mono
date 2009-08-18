@@ -1,5 +1,9 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* strtod.c: Fix warnings for uninitialized variables.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* mono-proclib.c:
 	* mono-counters.c: Fix printf warnings.
 
