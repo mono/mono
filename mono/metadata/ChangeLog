@@ -1,5 +1,19 @@
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c: Fix usage of mono_metadata_interfaces_from_typedef_full.
+
+	* metadata-internals.h: Fix declaration of 
+	mono_metadata_interfaces_from_typedef_full.
+
+	* metadata.c (mono_metadata_interfaces_from_typedef_full): Add extra
+	heap_alloc_result parameter that controls if the result should be
+	g_malloc'd.
+
+	* metadata.c (mono_metadata_interfaces_from_typedef): Let the resulting
+	array be g_malloc'd and properly document this public API function.
+
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cil-coff.h: Fix METHOD_HEADER_FORMAT_MASK to be 2 bits and
 	remove METHOD_HEADER_TINY_FORMAT1.
 
