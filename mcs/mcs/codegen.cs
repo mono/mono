@@ -273,6 +273,7 @@ namespace Mono.CSharp {
 
 		bool IsInObsoleteScope { get; }
 		bool IsInUnsafeScope { get; }
+		bool IsStatic { get; }
 
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
@@ -358,15 +359,12 @@ namespace Mono.CSharp {
 			
 			InCompoundAssignment = 1 << 10,
 
-			OmitDebuggingInfo = 1 << 11
+			OmitDebuggingInfo = 1 << 11,
+
+			BaseInitializer = 1 << 12
 		}
 
 		Flags flags;
-
-		/// <summary>
-		///   Whether we are emitting code inside a static or instance method
-		/// </summary>
-		public bool IsStatic;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
@@ -454,7 +452,6 @@ namespace Mono.CSharp {
 			if (return_type == null)
 				throw new ArgumentNullException ("return_type");
 
-			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 		}
@@ -590,6 +587,12 @@ namespace Mono.CSharp {
 			get { return (flags & Flags.InUnsafe) != 0 || ResolveContext.IsInUnsafeScope; }
 		}
 
+		// TODO: Hopefully temporary hack for anonyous methods, ResolveContext != EmitContext
+		public object AnonymousStatic;
+		public bool IsStatic {
+			get { return AnonymousStatic != null ? (bool) AnonymousStatic : ResolveContext.IsStatic; }
+		}
+
 		public bool IsAnonymousMethodAllowed {
 			get { return isAnonymousMethodAllowed; }
 			set { isAnonymousMethodAllowed = value; }
@@ -597,6 +600,10 @@ namespace Mono.CSharp {
 
 		public bool IsInFieldInitializer {
 			get { return (flags & Flags.InFieldInitializer) != 0; }
+		}
+
+		public bool IsBaseInitializer {
+			get { return (flags & Flags.BaseInitializer) != 0; }
 		}
 		
 		public bool IsInCompoundAssignment {
@@ -950,6 +957,10 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsInUnsafeScope {
+			get { return false; }
+		}
+
+		public bool IsStatic {
 			get { return false; }
 		}
 

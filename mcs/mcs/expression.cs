@@ -6583,7 +6583,7 @@ namespace Mono.CSharp {
 
 		public static bool IsThisAvailable (EmitContext ec)
 		{
-			if (ec.IsStatic || ec.IsInFieldInitializer)
+			if (ec.IsStatic || ec.IsInFieldInitializer || ec.IsBaseInitializer)
 				return false;
 
 			if (ec.CurrentAnonymousMethod == null)
@@ -6606,10 +6606,12 @@ namespace Mono.CSharp {
 			if (!IsThisAvailable (ec)) {
 				if (ec.IsStatic) {
 					Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
-				} else {
+				} else if (ec.CurrentAnonymousMethod != null) {
 					Report.Error (1673, loc,
 						"Anonymous methods inside structs cannot access instance members of `this'. " +
 						"Consider copying `this' to a local variable outside the anonymous method and using the local instead");
+				} else {
+					Error (27, "Keyword `this' is not available in the current context");
 				}
 			}
 
@@ -6653,15 +6655,7 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!ResolveBase (ec))
-				return null;
-
-
-			if (ec.IsInFieldInitializer) {
-				Error (27, "Keyword `this' is not available in the current context");
-				return null;
-			}
-			
+			ResolveBase (ec);
 			return this;
 		}
 

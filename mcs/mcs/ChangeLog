@@ -1,5 +1,9 @@
 2009-08-18  Marek Safar  <marek.safar@gmail.com>
 
+	* *.cs: Add IResolveContext::IsStatic.
+
+2009-08-18  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Moved TopBlock's methods from EmitContext to TopBlock.
 
 2009-08-17  Marek Safar  <marek.safar@gmail.com>

@@ -194,6 +194,10 @@ namespace Mono.CSharp {
 				get { return tc.IsInUnsafeScope; }
 			}
 
+			public bool IsStatic {
+				get { return tc.IsStatic; }
+			}
+
 			public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 			{
 				return null;
@@ -2954,12 +2958,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool IsStatic {
-			get {
-				return (ModFlags & Modifiers.STATIC) != 0;
-			}
-		}
-
 		//
 		// FIXME: How do we deal with the user specifying a different
 		// layout?
@@ -4508,9 +4506,9 @@ namespace Mono.CSharp {
 				//
 				// Spec mandates that constructor initializer will not have `this' access
 				//
-				ec.IsStatic = true;
-				argument_list.Resolve (ec, out dynamic);
-				ec.IsStatic = false;
+				using (ec.Set (EmitContext.Flags.BaseInitializer)) {
+					argument_list.Resolve (ec, out dynamic);
+				}
 
 				if (dynamic) {
 					SimpleName ctor = new SimpleName (ConstructorBuilder.ConstructorName, loc);

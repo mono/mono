@@ -2766,7 +2766,7 @@ namespace Mono.CSharp {
 
 				Expression left;
 				if (me.IsInstance) {
-					if (ec.IsStatic || ec.IsInFieldInitializer) {
+					if (ec.IsStatic || ec.IsInFieldInitializer || ec.IsBaseInitializer) {
 						//
 						// Note that an MemberExpr can be both IsInstance and IsStatic.
 						// An unresolved MethodGroupExpr can contain both kinds of methods

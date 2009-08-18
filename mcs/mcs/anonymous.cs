@@ -1223,7 +1223,7 @@ namespace Mono.CSharp {
 			{
 				EmitContext aec = AnonymousMethod.aec;
 				aec.ig = ig;
-				aec.IsStatic = (ModFlags & Modifiers.STATIC) != 0;
+				aec.AnonymousStatic = (ModFlags & Modifiers.STATIC) != 0;
 				return aec;
 			}
 
@@ -1303,7 +1303,6 @@ namespace Mono.CSharp {
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
-			aec.IsStatic = ec.IsStatic;
 
 			IDisposable aec_dispose = null;
 			EmitContext.Flags flags = 0;

@@ -1335,6 +1335,10 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.IsInUnsafeScope; }
 		}
 
+		public bool IsStatic {
+			get { return SlaveDeclSpace.IsStatic; }
+		}
+
 		public DeclSpace GenericDeclContainer {
 			get { return SlaveDeclSpace; }
 		}

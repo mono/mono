@@ -858,6 +858,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsStatic {
+			get { return (ModFlags & Modifiers.STATIC) != 0; }
+		}
+
 		#endregion
 	}
 
