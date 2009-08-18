@@ -57,6 +57,7 @@ namespace System.ServiceModel.Channels
 		public ReplyChannelBase (ChannelListenerBase listener)
 			: base (listener)
 		{
+			this.listener = listener;
 		}
 
 		ChannelListenerBase listener;
