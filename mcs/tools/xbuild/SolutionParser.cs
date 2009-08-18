@@ -125,6 +125,8 @@ namespace Mono.XBuild.CommandLine {
 				while (projectSectionMatch.Success) {
 					Match projectDependencyMatch = projectDependencyRegex.Match (projectSectionMatch.Value);
 					while (projectDependencyMatch.Success) {
+						// we might not have projectInfo available right now, so
+						// set it to null, and fill it in later
 						projectInfo.Dependencies [new Guid (projectDependencyMatch.Groups[1].Value)] = null;
 						projectDependencyMatch = projectDependencyMatch.NextMatch ();
 					}
@@ -141,7 +143,27 @@ namespace Mono.XBuild.CommandLine {
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");
 					Guid guid = new Guid (projectReferenceGuid);
-					projectInfo.Dependencies [guid] = projectInfos [guid];
+					ProjectInfo info = projectInfos [guid];
+					if (info != null)
+						// ignore if not found
+						projectInfo.Dependencies [guid] = info;
+				}
+			}
+
+			// fill in the project info for deps found in the .sln file
+			foreach (ProjectInfo projectInfo in projectInfos.Values) {
+				List<Guid> missingInfos = new List<Guid> ();
+				foreach (KeyValuePair<Guid, ProjectInfo> dependency in projectInfo.Dependencies) {
+					if (dependency.Value == null)
+						missingInfos.Add (dependency.Key);
+				}
+
+				foreach (Guid guid in missingInfos) {
+					ProjectInfo info;
+					if (projectInfos.TryGetValue (guid, out info))
+						projectInfo.Dependencies [guid] = info;
+					else
+						projectInfo.Dependencies.Remove (guid);
 				}
 			}
 
