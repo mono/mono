@@ -1,5 +1,14 @@
 2009-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ToolStripItem.cs: When the owner changes its Font, call the
+	OnFontChanged event, so we let our users know that we likely have a
+	new font - since Font is an ambient property.
+	* ToolStripDropDownItem.cs: When our Font changes, propagate that
+	information to our DropDown control, if any.
+	Fixes #531515.
+
+2009-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: 
 	* ThemeWin32Classic.cs: When the user clicks on a new cell, we should reset any
 	previous selection, just like .net does. Also, in the cases where a

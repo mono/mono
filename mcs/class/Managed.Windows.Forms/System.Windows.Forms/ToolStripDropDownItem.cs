@@ -226,6 +226,11 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
+
+			// don't use DropDown directly, since doing that
+			// would created the DropDown control
+			if (drop_down != null)
+				drop_down.Font = Font;
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e)

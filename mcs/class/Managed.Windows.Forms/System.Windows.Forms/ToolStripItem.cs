@@ -1176,6 +1176,7 @@ namespace System.Windows.Forms
 		protected internal virtual void OnOwnerFontChanged (EventArgs e)
 		{
 			this.CalculateAutoSize ();
+			OnFontChanged (EventArgs.Empty);
 		}
 		
 		protected virtual void OnPaint (PaintEventArgs e)
