@@ -214,15 +214,15 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = "<a href=\"test\">bla</a>";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
-#endif
 
-		[Test (Description="Bug #525104")]
+		[Test (Description="Bug #524358")]
 		[ExpectedException (typeof (HttpException))]
 		public void DuplicateControlsInClientComment ()
 		{
 			// Just test if it throws an exception
-			new WebTest ("DuplicateControlsInClientCommment.aspx").Run ();
+			new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
 		}
+#endif
 		
 		[Test (Description="Bug #517656")]
 		public void ServerControlInClientSideComment ()

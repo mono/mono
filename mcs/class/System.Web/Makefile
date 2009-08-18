@@ -76,7 +76,6 @@ RESOURCE_FILES_2 = \
 OTHER_RES = $(RESOURCE_FILES_1)
 TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax \
-	Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax.cs \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
