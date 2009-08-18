@@ -702,8 +702,15 @@ namespace System.Web.Compilation
 				return type;
 			}
 
+#if NET_2_0
 			Parse ();
-
+#else
+			try {
+				Parse ();
+			} catch (ParseException ex) {
+				throw new HttpException ("Compilation failed.", ex);
+			}
+#endif
 			BaseCompiler compiler = GetCompilerFromType ();
 			
 			type = compiler.GetCompiledType ();
