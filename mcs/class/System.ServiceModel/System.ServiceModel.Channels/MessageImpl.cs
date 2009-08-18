@@ -255,6 +255,14 @@ namespace System.ServiceModel.Channels
 		{
 			body.WriteBodyContents (writer);
 		}
+
+		protected override MessageBuffer OnCreateBufferedCopy (
+			int maxBufferSize)
+		{
+			var headers = new MessageHeaders (Headers);
+			var props = new MessageProperties (Properties);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, body.CreateBufferedCopy (maxBufferSize), false);
+		}
 	}
 }
 

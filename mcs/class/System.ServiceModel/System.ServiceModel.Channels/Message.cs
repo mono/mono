@@ -211,6 +211,7 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
+		[MonoTODO ("use maxBufferSize")]
 		protected virtual MessageBuffer OnCreateBufferedCopy (
 			int maxBufferSize)
 		{

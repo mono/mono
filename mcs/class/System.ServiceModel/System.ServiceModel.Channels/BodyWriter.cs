@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
@@ -56,14 +57,19 @@ namespace System.ServiceModel.Channels
 			OnWriteBodyContents (writer);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("use maxBufferSize somewhere")]
 		protected virtual BodyWriter OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
-			throw new NotImplementedException ();
+			var s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			s.ConformanceLevel = ConformanceLevel.Auto;
+			StringWriter sw = new StringWriter ();
+			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, s)))
+				WriteBodyContents (w);
+			return new XmlReaderBodyWriter (sw.ToString ());
 		}
 
-		[MonoTODO]
 		protected abstract void OnWriteBodyContents (
 			XmlDictionaryWriter writer);
 	}

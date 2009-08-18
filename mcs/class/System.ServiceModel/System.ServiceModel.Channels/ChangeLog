@@ -1,5 +1,10 @@
 2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Message.cs, MessageImpl.cs, BodyWriter.cs :
+	  Implement BodyWriter.OnCreateBufferedCopy() and use it.
+
+2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ReplyChannelBase.cs : initialize field.
 
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
