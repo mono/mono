@@ -294,17 +294,9 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmitContext : IResolveContext {
 
-		//
-		// Holds a varible used during collection or object initialization.
-		//
-		public Expression CurrentInitializerVariable;
-
-		DeclSpace decl_space;
-		
-		public ILGenerator ig;
-
 		[Flags]
-		public enum Flags : int {
+		public enum Options
+		{
 			/// <summary>
 			///   This flag tracks the `checked' state of the compilation,
 			///   it controls whether we should generate code that does overflow
@@ -315,7 +307,7 @@ namespace Mono.CSharp {
 			///   checked/unchecked statements or expressions.   Contrast this with
 			///   the ConstantCheckState flag.
 			/// </summary>
-			CheckState = 1 << 0,
+			CheckedScope = 1 << 0,
 
 			/// <summary>
 			///   The constant check state is always set to `true' and cant be changed
@@ -324,58 +316,107 @@ namespace Mono.CSharp {
 			/// </summary>
 			ConstantCheckState = 1 << 1,
 
-			AllCheckStateFlags = CheckState | ConstantCheckState,
+			AllCheckStateFlags = CheckedScope | ConstantCheckState,
 
-			/// <summary>
-			///  Whether we are inside an unsafe block
-			/// </summary>
-			InUnsafe = 1 << 2,
+			//
+			// unsafe { ... } scope
+			//
+			UnsafeScope = 1 << 2,
+			CatchScope = 1 << 3,
+			FinallyScope = 1 << 4,
+			FieldInitializerScope = 1 << 5,
+			CompoundAssignmentScope = 1 << 6,
+			FixedInitializerScope = 1 << 7,
+			BaseInitializer = 1 << 8,
 
-			InCatch = 1 << 3,
-			InFinally = 1 << 4,
+			//
+			// Inside an enum definition, we do not resolve enumeration values
+			// to their enumerations, but rather to the underlying type/value
+			// This is so EnumVal + EnumValB can be evaluated.
+			//
+			// There is no "E operator + (E x, E y)", so during an enum evaluation
+			// we relax the rules
+			//
+			EnumScope = 1 << 9,
+
+			ConstantScope = 1 << 10,
+
+			ConstructorScope = 1 << 11,
 
 			/// <summary>
 			///   Whether control flow analysis is enabled
 			/// </summary>
-			DoFlowAnalysis = 1 << 5,
+			DoFlowAnalysis = 1 << 20,
 
 			/// <summary>
 			///   Whether control flow analysis is disabled on structs
 			///   (only meaningful when DoFlowAnalysis is set)
 			/// </summary>
-			OmitStructFlowAnalysis = 1 << 6,
+			OmitStructFlowAnalysis = 1 << 21,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
 			///
-			ProbingMode = 1	<<	7,
+			ProbingMode = 1	<<	22,
 
 			//
-			// Inside field intializer expression
+			// Return and ContextualReturn statements will set the ReturnType
+			// value based on the expression types of each return statement
+			// instead of the method return type which is initially null.
 			//
-			InFieldInitializer = 1 << 8,
-			
-			InferReturnType = 1 << 9,
-			
-			InCompoundAssignment = 1 << 10,
+			InferReturnType = 1 << 23,
 
-			OmitDebuggingInfo = 1 << 11,
-
-			BaseInitializer = 1 << 12
+			OmitDebuggingInfo = 1 << 24
 		}
 
-		Flags flags;
+		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
+		// it's public so that we can use a struct at the callsite
+		public struct FlagsHandle : IDisposable
+		{
+			EmitContext ec;
+			readonly Options invmask, oldval;
+
+			public FlagsHandle (EmitContext ec, Options flagsToSet)
+				: this (ec, flagsToSet, flagsToSet)
+			{
+			}
+
+			internal FlagsHandle (EmitContext ec, Options mask, Options val)
+			{
+				this.ec = ec;
+				invmask = ~mask;
+				oldval = ec.flags & mask;
+				ec.flags = (ec.flags & invmask) | (val & mask);
+
+				if ((mask & Options.ProbingMode) != 0)
+					Report.DisableReporting ();
+			}
+
+			public void Dispose ()
+			{
+				if ((invmask & Options.ProbingMode) == 0)
+					Report.EnableReporting ();
+
+				ec.flags = (ec.flags & invmask) | oldval;
+			}
+		}
+
+		Options flags;
+
+		//
+		// Holds a varible used during collection or object initialization.
+		//
+		public Expression CurrentInitializerVariable;
+
+		DeclSpace decl_space;
+
+		public ILGenerator ig;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
 		Type return_type;
-
-		/// <summary>
-		///   Whether this is generating code for a constructor
-		/// </summary>
-		public bool IsConstructor;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
@@ -403,25 +444,10 @@ namespace Mono.CSharp {
 		public bool HasReturnLabel;
 
 		/// <summary>
-		///  Whether we are in a `fixed' initialization
-		/// </summary>
-		public bool InFixedInitializer;
-
-		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
-		/// <summary>
-		///   Inside an enum definition, we do not resolve enumeration values
-		///   to their enumerations, but rather to the underlying type/value
-		///   This is so EnumVal + EnumValB can be evaluated.
-		///
-		///   There is no "E operator + (E x, E y)", so during an enum evaluation
-		///   we relax the rules
-		/// </summary>
-		public bool InEnumContext;
-
 		public readonly IResolveContext ResolveContext;
 
 		/// <summary>
@@ -431,35 +457,36 @@ namespace Mono.CSharp {
 			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
-		bool isAnonymousMethodAllowed = true;
-
 		FlowBranching current_flow_branching;
+
+		public TypeInferenceContext ReturnTypeInference;
 
 //		static int next_id = 0;
 //		int id = ++next_id;
 
 		public EmitContext (IResolveContext rc, DeclSpace ds, ILGenerator ig,
-				    Type return_type, int code_flags, bool is_constructor)
+				    Type return_type)
 		{
 			this.ResolveContext = rc;
 			this.ig = ig;
 
 			this.decl_space = ds;
+
+			//
+			// The default setting comes from the command line option
+			//
 			if (RootContext.Checked)
-				flags |= Flags.CheckState;
-			flags |= Flags.ConstantCheckState;
+				flags |= Options.CheckedScope;
+
+			//
+			// The constant check state is always set to true
+			//
+			flags |= Options.ConstantCheckState;
 
 			if (return_type == null)
 				throw new ArgumentNullException ("return_type");
 
 			ReturnType = return_type;
-			IsConstructor = is_constructor;
-		}
-
-		public EmitContext (IResolveContext rc, DeclSpace ds, ILGenerator ig,
-				    Type return_type, int code_flags)
-			: this (rc, ds, ig, return_type, code_flags, false)
-		{
 		}
 
 		public Type CurrentType {
@@ -479,97 +506,51 @@ namespace Mono.CSharp {
 			get { return decl_space; }
 		}
 
-		public bool CheckState {
-			get { return (flags & Flags.CheckState) != 0; }
-		}
-
 		public bool ConstantCheckState {
-			get { return (flags & Flags.ConstantCheckState) != 0; }
+			get { return (flags & Options.ConstantCheckState) != 0; }
 		}
 
 		public bool InUnsafe {
-			get { return IsInUnsafeScope; }
-		}
-
-		public bool InCatch {
-			get { return (flags & Flags.InCatch) != 0; }
-		}
-
-		public bool InFinally {
-			get { return (flags & Flags.InFinally) != 0; }
+			get { return HasSet (Options.UnsafeScope) || ResolveContext.IsInUnsafeScope; }
 		}
 
 		public bool DoFlowAnalysis {
-			get { return (flags & Flags.DoFlowAnalysis) != 0; }
+			get { return (flags & Options.DoFlowAnalysis) != 0; }
 		}
 
 		public bool OmitStructFlowAnalysis {
-			get { return (flags & Flags.OmitStructFlowAnalysis) != 0; }
+			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
 
-		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
-		// it's public so that we can use a struct at the callsite
-		public struct FlagsHandle : IDisposable
+		public bool HasSet (Options options)
 		{
-			EmitContext ec;
-			readonly Flags invmask, oldval;
+			return (this.flags & options) == options;
+		}
 
-			public FlagsHandle (EmitContext ec, Flags flagsToSet)
-				: this (ec, flagsToSet, flagsToSet)
-			{
-			}
-
-			internal FlagsHandle (EmitContext ec, Flags mask, Flags val)
-			{
-				this.ec = ec;
-				invmask = ~mask;
-				oldval = ec.flags & mask;
-				ec.flags = (ec.flags & invmask) | (val & mask);
-
-				if ((mask & Flags.ProbingMode) != 0)
-					Report.DisableReporting ();
-			}
-
-			public void Dispose ()
-			{
-				if ((invmask & Flags.ProbingMode) == 0)
-					Report.EnableReporting ();
-
-				ec.flags = (ec.flags & invmask) | oldval;
-			}
+		public bool HasAny (Options options)
+		{
+			return (this.flags & options) != 0;
 		}
 
 		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
-		public FlagsHandle Set (Flags flagsToSet)
+		public FlagsHandle Set (Options options)
 		{
-			return new FlagsHandle (this, flagsToSet);
+			return new FlagsHandle (this, options);
 		}
 
-		public FlagsHandle With (Flags bits, bool enable)
+		public FlagsHandle With (Options options, bool enable)
 		{
-			return new FlagsHandle (this, bits, enable ? bits : 0);
+			return new FlagsHandle (this, options, enable ? options : 0);
 		}
 
 		public FlagsHandle WithFlowAnalysis (bool do_flow_analysis, bool omit_struct_analysis)
 		{
-			Flags newflags = 
-				(do_flow_analysis ? Flags.DoFlowAnalysis : 0) |
-				(omit_struct_analysis ? Flags.OmitStructFlowAnalysis : 0);
-			return new FlagsHandle (this, Flags.DoFlowAnalysis | Flags.OmitStructFlowAnalysis, newflags);
+			Options newflags = 
+				(do_flow_analysis ? Options.DoFlowAnalysis : 0) |
+				(omit_struct_analysis ? Options.OmitStructFlowAnalysis : 0);
+			return new FlagsHandle (this, Options.DoFlowAnalysis | Options.OmitStructFlowAnalysis, newflags);
 		}
 		
-		/// <summary>
-		///   If this is true, then Return and ContextualReturn statements
-		///   will set the ReturnType value based on the expression types
-		///   of each return statement instead of the method return type
-		///   (which is initially null).
-		/// </summary>
-		public bool InferReturnType {
-			get { return (flags & Flags.InferReturnType) != 0; }
-		}
-
-		public TypeInferenceContext ReturnTypeInference;
-
 		// IResolveContext.IsInObsoleteScope
 		public bool IsInObsoleteScope {
 			get {
@@ -579,35 +560,17 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsInProbingMode {
-			get { return (flags & Flags.ProbingMode) != 0; }
+			get { return (flags & Options.ProbingMode) != 0; }
 		}
 
-		// IResolveContext.IsInUnsafeScope
-		public bool IsInUnsafeScope {
-			get { return (flags & Flags.InUnsafe) != 0 || ResolveContext.IsInUnsafeScope; }
+		bool IResolveContext.IsInUnsafeScope {
+			get { return InUnsafe; }
 		}
 
 		// TODO: Hopefully temporary hack for anonyous methods, ResolveContext != EmitContext
 		public object AnonymousStatic;
 		public bool IsStatic {
 			get { return AnonymousStatic != null ? (bool) AnonymousStatic : ResolveContext.IsStatic; }
-		}
-
-		public bool IsAnonymousMethodAllowed {
-			get { return isAnonymousMethodAllowed; }
-			set { isAnonymousMethodAllowed = value; }
-		}
-
-		public bool IsInFieldInitializer {
-			get { return (flags & Flags.InFieldInitializer) != 0; }
-		}
-
-		public bool IsBaseInitializer {
-			get { return (flags & Flags.BaseInitializer) != 0; }
-		}
-		
-		public bool IsInCompoundAssignment {
-			get { return (flags & Flags.InCompoundAssignment) != 0; }
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -621,12 +584,12 @@ namespace Mono.CSharp {
 		}
 
 		public bool OmitDebuggingInfo {
-			get { return (flags & Flags.OmitDebuggingInfo) != 0; }
+			get { return (flags & Options.OmitDebuggingInfo) != 0; }
 			set {
 				if (value)
-					flags |= Flags.OmitDebuggingInfo;
+					flags |= Options.OmitDebuggingInfo;
 				else
-					flags &= ~Flags.OmitDebuggingInfo;
+					flags &= ~Options.OmitDebuggingInfo;
 			}
 		}
 
@@ -645,7 +608,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (Block block)
 		{
-			flags |= Flags.DoFlowAnalysis;
+			flags |= Options.DoFlowAnalysis;
 
 			current_flow_branching = FlowBranching.CreateBranching (
 				CurrentBranching, FlowBranching.BranchingType.Block, block, block.StartLocation);

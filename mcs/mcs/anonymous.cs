@@ -873,8 +873,8 @@ namespace Mono.CSharp {
 		//
 		public bool ImplicitStandardConversionExists (EmitContext ec, Type delegate_type)
 		{
-			using (ec.With (EmitContext.Flags.InferReturnType, false)) {
-				using (ec.Set (EmitContext.Flags.ProbingMode)) {
+			using (ec.With (EmitContext.Options.InferReturnType, false)) {
+				using (ec.Set (EmitContext.Options.ProbingMode)) {
 					return Compatible (ec, delegate_type) != null;
 				}
 			}
@@ -1007,7 +1007,7 @@ namespace Mono.CSharp {
 		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AnonymousMethodBody am;
-			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
+			using (ec.Set (EmitContext.Options.ProbingMode | EmitContext.Options.InferReturnType)) {
 				am = CompatibleMethod (ec, tic, InternalType.Arglist, delegate_type);
 			}
 			
@@ -1118,7 +1118,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!ec.IsAnonymousMethodAllowed) {
+			if (ec.HasSet (EmitContext.Options.ConstantScope)) {
 				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
@@ -1299,26 +1299,25 @@ namespace Mono.CSharp {
 			// TODO: Implement clone
 			aec = new EmitContext (
 				ec.ResolveContext, ec.GenericDeclContainer,
-				null, ReturnType,
-				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
+				null, ReturnType);
 
 			aec.CurrentAnonymousMethod = this;
 
 			IDisposable aec_dispose = null;
-			EmitContext.Flags flags = 0;
-			if (ec.InferReturnType) {
-				flags |= EmitContext.Flags.InferReturnType;
+			EmitContext.Options flags = 0;
+			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
+				flags |= EmitContext.Options.InferReturnType;
 				aec.ReturnTypeInference = new TypeInferenceContext ();
 			}
 
 			if (ec.IsInProbingMode)
-				flags |= EmitContext.Flags.ProbingMode;
+				flags |= EmitContext.Options.ProbingMode;
 
-			if (ec.IsInFieldInitializer)
-				flags |= EmitContext.Flags.InFieldInitializer;
+			if (ec.HasSet (EmitContext.Options.FieldInitializerScope))
+				flags |= EmitContext.Options.FieldInitializerScope;
 
-			if (ec.IsInUnsafeScope)
-				flags |= EmitContext.Flags.InUnsafe;
+			if (ec.InUnsafe)
+				flags |= EmitContext.Options.UnsafeScope;
 
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
@@ -1326,7 +1325,7 @@ namespace Mono.CSharp {
 
 			bool res = Block.Resolve (ec.CurrentBranching, aec, Block.Parameters, null);
 
-			if (ec.InferReturnType) {
+			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
 				aec.ReturnTypeInference.FixAllTypes ();
 				ReturnType = aec.ReturnTypeInference.InferredTypeArguments [0];
 			}

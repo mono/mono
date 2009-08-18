@@ -389,8 +389,8 @@ namespace Mono.CSharp {
 
 			DeclSpace ds = context.GenericDeclContainer;
 			EmitContext ec = new EmitContext (context, ds,
-				null, typeof (Attribute), ds.ModFlags, false);
-			ec.IsAnonymousMethodAllowed = false;
+				null, typeof (Attribute));
+			ec.Set (EmitContext.Options.ConstantScope);
 
 			ConstructorInfo ctor = ResolveConstructor (ec);
 			if (ctor == null) {

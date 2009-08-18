@@ -827,7 +827,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (ec.InferReturnType) {
+			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
 				ec.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
 				return true;
 			}
@@ -2054,7 +2054,7 @@ namespace Mono.CSharp {
 
 				ec.CurrentBlock = this;
 				Expression e;
-				using (ec.With (EmitContext.Flags.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
+				using (ec.With (EmitContext.Options.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
 					e = cv.Resolve (ec);
 				}
 				if (e == null)
@@ -2086,7 +2086,7 @@ namespace Mono.CSharp {
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
-			using (ec.With (EmitContext.Flags.InUnsafe, ec.InUnsafe | Unsafe)) {
+			using (ec.With (EmitContext.Options.UnsafeScope, ec.InUnsafe | Unsafe)) {
 				flags |= Flags.VariablesInitialized;
 
 				if (variables != null) {
@@ -2332,7 +2332,7 @@ namespace Mono.CSharp {
 		{
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-			using (ec.Set (EmitContext.Flags.OmitDebuggingInfo)) {
+			using (ec.Set (EmitContext.Options.OmitDebuggingInfo)) {
 				foreach (Statement s in scope_initializers)
 					s.Emit (ec);
 			}
@@ -2893,7 +2893,7 @@ namespace Mono.CSharp {
 				if (!ResolveMeta (rc, ip))
 					return false;
 
-				using (rc.With (EmitContext.Flags.DoFlowAnalysis, true)) {
+				using (rc.With (EmitContext.Options.DoFlowAnalysis, true)) {
 					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
 
 					if (!Resolve (rc))
@@ -4237,13 +4237,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Block.Emit (ec);
 		}
 
@@ -4271,13 +4271,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 			        return Block.Resolve (ec);
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				Block.Emit (ec);
 		}
 
@@ -4305,13 +4305,13 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.InUnsafe, true))
+			using (ec.With (EmitContext.Options.UnsafeScope, true))
 				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.InUnsafe, true))
+			using (ec.With (EmitContext.Options.UnsafeScope, true))
 				Block.Emit (ec);
 		}
 
@@ -4485,9 +4485,10 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				ec.InFixedInitializer = true;
-				e = e.Resolve (ec);
-				ec.InFixedInitializer = false;
+				using (ec.Set (EmitContext.Options.FixedInitializerScope)) {
+					e = e.Resolve (ec);
+				}
+
 				if (e == null)
 					return false;
 
@@ -4685,7 +4686,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.InCatch, true)) {
+			using (ec.With (EmitContext.Options.CatchScope, true)) {
 				if (type_expr != null) {
 					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
 					if (te == null)
@@ -4755,7 +4756,7 @@ namespace Mono.CSharp {
 
 			if (ok)
 				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
-			using (ec.With (EmitContext.Flags.InFinally, true)) {
+			using (ec.With (EmitContext.Options.FinallyScope, true)) {
 				if (!fini.Resolve (ec))
 					ok = false;
 			}

@@ -3838,7 +3838,7 @@ namespace Mono.CSharp {
 		public virtual EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (
-				this, this.ds, ig, MemberType, ModFlags, false);
+				this, this.ds, ig, MemberType);
 		}
 
 		protected override bool ResolveMemberType ()
@@ -4506,7 +4506,7 @@ namespace Mono.CSharp {
 				//
 				// Spec mandates that constructor initializer will not have `this' access
 				//
-				using (ec.Set (EmitContext.Flags.BaseInitializer)) {
+				using (ec.Set (EmitContext.Options.BaseInitializer)) {
 					argument_list.Resolve (ec, out dynamic);
 				}
 
@@ -4887,8 +4887,9 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (this, Parent, ig_, TypeManager.void_type, ModFlags, true);
+			EmitContext ec = new EmitContext (this, Parent, ig_, TypeManager.void_type);
 			ec.CurrentBlock = block;
+			ec.Set (EmitContext.Options.ConstructorScope);
 			return ec;
 		}
 
@@ -5717,7 +5718,7 @@ namespace Mono.CSharp {
 
 		public override void Emit()
 		{
-			EmitContext ec = new EmitContext (this, Parent, null, TypeManager.void_type, ModFlags);
+			EmitContext ec = new EmitContext (this, Parent, null, TypeManager.void_type);
 			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return;
@@ -6452,8 +6453,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (this,
-					method.ds, ig, ReturnType,
-					method.ModFlags, false);
+					method.ds, ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
@@ -7308,8 +7308,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (
-					this, method.Parent, ig, ReturnType,
-					method.ModFlags, false);
+					this, method.Parent, ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()

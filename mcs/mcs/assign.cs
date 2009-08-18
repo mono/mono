@@ -486,16 +486,16 @@ namespace Mono.CSharp {
 				//
 
 				// TODO: Use ResolveContext only
-				EmitContext f_ec = new EmitContext (rc, rc.GenericDeclContainer, null, TypeManager.void_type, 0, true);
+				EmitContext f_ec = new EmitContext (rc, rc.GenericDeclContainer, null, TypeManager.void_type);
 				f_ec.CurrentBlock = ec.CurrentBlock;
 
-				EmitContext.Flags flags = EmitContext.Flags.InFieldInitializer;
-				if (ec.IsInUnsafeScope)
-					flags |= EmitContext.Flags.InUnsafe;
+				EmitContext.Options flags = EmitContext.Options.FieldInitializerScope | EmitContext.Options.ConstructorScope;
+				if (ec.InUnsafe)
+					flags |= EmitContext.Options.UnsafeScope;
 
-				f_ec.Set (flags);
-
-				resolved = base.DoResolve (f_ec) as ExpressionStatement;
+				using (f_ec.Set (flags)) {
+					resolved = base.DoResolve (f_ec) as ExpressionStatement;
+				}
 			}
 
 			return resolved;
@@ -628,7 +628,7 @@ namespace Mono.CSharp {
 				return null;
 
 			MemberAccess ma = target as MemberAccess;
-			using (ec.Set (EmitContext.Flags.InCompoundAssignment)) {
+			using (ec.Set (EmitContext.Options.CompoundAssignmentScope)) {
 				target = target.Resolve (ec);
 			}
 			

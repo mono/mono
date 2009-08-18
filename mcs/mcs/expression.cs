@@ -356,7 +356,7 @@ namespace Mono.CSharp {
 				Error_PointerInsideExpressionTree ();
 				return null;
 			case Operator.UnaryNegation:
-				if (ec.CheckState && user_op == null && !IsFloat (type))
+				if (ec.HasSet (EmitContext.Options.CheckedScope) && user_op == null && !IsFloat (type))
 					method_name = "NegateChecked";
 				else
 					method_name = "Negate";
@@ -499,7 +499,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Operator.UnaryNegation:
-				if (ec.CheckState && !IsFloat (type)) {
+				if (ec.HasSet (EmitContext.Options.CheckedScope) && !IsFloat (type)) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					if (type == TypeManager.int64_type)
 						ig.Emit (OpCodes.Conv_U8);
@@ -649,7 +649,7 @@ namespace Mono.CSharp {
 				is_fixed = fe != null && fe.IsFixed;
 			}
 
-			if (!is_fixed && !ec.InFixedInitializer) {
+			if (!is_fixed && !ec.HasSet (EmitContext.Options.FixedInitializerScope)) {
 				Error (212, "You can only take the address of unfixed expression inside of a fixed statement initializer");
 			}
 
@@ -1072,22 +1072,22 @@ namespace Mono.CSharp {
 			Binary.EmitOperatorOpcode (ec, op, t);
 
 			if (t == TypeManager.sbyte_type){
-				if (ec.CheckState)
+				if (ec.HasSet (EmitContext.Options.CheckedScope))
 					ig.Emit (OpCodes.Conv_Ovf_I1);
 				else
 					ig.Emit (OpCodes.Conv_I1);
 			} else if (t == TypeManager.byte_type){
-				if (ec.CheckState)
+				if (ec.HasSet (EmitContext.Options.CheckedScope))
 					ig.Emit (OpCodes.Conv_Ovf_U1);
 				else
 					ig.Emit (OpCodes.Conv_U1);
 			} else if (t == TypeManager.short_type){
-				if (ec.CheckState)
+				if (ec.HasSet (EmitContext.Options.CheckedScope))
 					ig.Emit (OpCodes.Conv_Ovf_I2);
 				else
 					ig.Emit (OpCodes.Conv_I2);
 			} else if (t == TypeManager.ushort_type || t == TypeManager.char_type){
-				if (ec.CheckState)
+				if (ec.HasSet (EmitContext.Options.CheckedScope))
 					ig.Emit (OpCodes.Conv_Ovf_U2);
 				else
 					ig.Emit (OpCodes.Conv_U2);
@@ -2145,7 +2145,7 @@ namespace Mono.CSharp {
 
 			switch (oper){
 			case Operator.Multiply:
-				if (ec.CheckState){
+				if (ec.HasSet (EmitContext.Options.CheckedScope)){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Mul_Ovf;
 					else if (!IsFloat (l))
@@ -2172,7 +2172,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.Addition:
-				if (ec.CheckState){
+				if (ec.HasSet (EmitContext.Options.CheckedScope)){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Add_Ovf;
 					else if (!IsFloat (l))
@@ -2184,7 +2184,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.Subtraction:
-				if (ec.CheckState){
+				if (ec.HasSet (EmitContext.Options.CheckedScope)){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
 					else if (!IsFloat (l))
@@ -2625,7 +2625,7 @@ namespace Mono.CSharp {
 			Constant rc = right as Constant;
 
 			// The conversion rules are ignored in enum context but why
-			if (!ec.InEnumContext && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
+			if (!ec.HasSet (EmitContext.Options.EnumScope) && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
 				lc = EnumLiftUp (ec, lc, rc, loc);
 				if (lc != null)
 					rc = EnumLiftUp (ec, rc, lc, loc);
@@ -3546,7 +3546,7 @@ namespace Mono.CSharp {
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			if ((oper & Operator.LogicalMask) != 0 ||
-			    (ec.CheckState && (oper == Operator.Multiply || oper == Operator.Addition || oper == Operator.Subtraction))) {
+			    (ec.HasSet (EmitContext.Options.CheckedScope) && (oper == Operator.Multiply || oper == Operator.Addition || oper == Operator.Subtraction))) {
 				base.EmitSideEffect (ec);
 			} else {
 				left.EmitSideEffect (ec);
@@ -3572,7 +3572,7 @@ namespace Mono.CSharp {
 			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
 
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.CheckState, loc)));
+			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (EmitContext.Options.CheckedScope), loc)));
 
 			bool member_access = left is DynamicMemberBinder || right is DynamicMemberBinder;
 			binder_args.Add (new Argument (new BoolLiteral (member_access, loc)));
@@ -3593,7 +3593,7 @@ namespace Mono.CSharp {
 			
 			switch (oper) {
 			case Operator.Addition:
-				if (method == null && ec.CheckState && !IsFloat (type))
+				if (method == null && ec.HasSet (EmitContext.Options.CheckedScope) && !IsFloat (type))
 					method_name = "AddChecked";
 				else
 					method_name = "Add";
@@ -3647,7 +3647,7 @@ namespace Mono.CSharp {
 				method_name = "Modulo";
 				break;
 			case Operator.Multiply:
-				if (method == null && ec.CheckState && !IsFloat (type))
+				if (method == null && ec.HasSet (EmitContext.Options.CheckedScope) && !IsFloat (type))
 					method_name = "MultiplyChecked";
 				else
 					method_name = "Multiply";
@@ -3656,7 +3656,7 @@ namespace Mono.CSharp {
 				method_name = "RightShift";
 				break;
 			case Operator.Subtraction:
-				if (method == null && ec.CheckState && !IsFloat (type))
+				if (method == null && ec.HasSet (EmitContext.Options.CheckedScope) && !IsFloat (type))
 					method_name = "SubtractChecked";
 				else
 					method_name = "Subtract";
@@ -6583,7 +6583,7 @@ namespace Mono.CSharp {
 
 		public static bool IsThisAvailable (EmitContext ec)
 		{
-			if (ec.IsStatic || ec.IsInFieldInitializer || ec.IsBaseInitializer)
+			if (ec.IsStatic || ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.BaseInitializer | EmitContext.Options.ConstantScope))
 				return false;
 
 			if (ec.CurrentAnonymousMethod == null)
@@ -6730,11 +6730,9 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
 
-			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) 
-			{
+			if (ec.HasSet (EmitContext.Options.FieldInitializerScope) || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) {
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method");
-				return this;
 			}
 
 			return this;
@@ -7613,13 +7611,13 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				return Expr.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				Expr = Expr.Resolve (ec);
 			
 			if (Expr == null)
@@ -7635,13 +7633,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				Expr.Emit (ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
@@ -7673,13 +7671,13 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				return Expr.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
@@ -7695,13 +7693,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Expr.Emit (ec);
 		}
 		
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
-			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
@@ -9094,7 +9092,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (ec.InCatch || ec.InFinally) {
+			if (ec.HasAny (EmitContext.Options.CatchScope | EmitContext.Options.FinallyScope)) {
 				Error (255, "Cannot use stackalloc in finally or catch");
 				return null;
 			}
@@ -9657,7 +9655,7 @@ namespace Mono.CSharp {
 		{
 			AnonymousTypeClass anonymous_type;
 
-			if (!ec.IsAnonymousMethodAllowed) {
+			if (ec.HasSet (EmitContext.Options.ConstantScope)) {
 				Report.Error (836, loc, "Anonymous types cannot be used in this expression");
 				return null;
 			}

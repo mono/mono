@@ -109,7 +109,7 @@ namespace Mono.CSharp
 			if (Expr == EmptyExpression.Null)
 				return;
 
-			using (ec.With (EmitContext.Flags.DoFlowAnalysis, true)) {
+			using (ec.With (EmitContext.Options.DoFlowAnalysis, true)) {
 				// Verify that the argument is readable
 				if (ArgType != AType.Out)
 					Expr = Expr.Resolve (ec);

@@ -1,5 +1,9 @@
 2009-08-18  Marek Safar  <marek.safar@gmail.com>
 
+	* *.cs: Removed boolean fields from EmitContext.
+
+2009-08-18  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Add IResolveContext::IsStatic.
 
 2009-08-18  Marek Safar  <marek.safar@gmail.com>

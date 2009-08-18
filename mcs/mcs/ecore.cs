@@ -1232,7 +1232,7 @@ namespace Mono.CSharp {
 
 			Expression converted;
 			
-			using (ec.With (EmitContext.Flags.CheckState, true)) {
+			using (ec.Set (EmitContext.Options.CheckedScope)) {
 				converted = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, source.loc);
 				if (converted == null)
 					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, source.loc);
@@ -1403,7 +1403,7 @@ namespace Mono.CSharp {
 			if (type.IsPointer || child.Type.IsPointer)
 				Error_PointerInsideExpressionTree ();
 
-			return CreateExpressionFactoryCall (ec.CheckState ? "ConvertChecked" : "Convert", args);
+			return CreateExpressionFactoryCall (ec.HasSet (EmitContext.Options.CheckedScope) ? "ConvertChecked" : "Convert", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1950,7 +1950,7 @@ namespace Mono.CSharp {
 			
 			base.Emit (ec);
 
-			if (ec.CheckState){
+			if (ec.HasSet (EmitContext.Options.CheckedScope)){
 				switch (mode){
 				case Mode.I1_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
 				case Mode.I1_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
@@ -2449,7 +2449,7 @@ namespace Mono.CSharp {
 
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
-			if (ec.IsInFieldInitializer)
+			if (ec.HasSet (EmitContext.Options.FieldInitializerScope))
 				Report.Error (236, l,
 					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 					name);
@@ -2766,7 +2766,7 @@ namespace Mono.CSharp {
 
 				Expression left;
 				if (me.IsInstance) {
-					if (ec.IsStatic || ec.IsInFieldInitializer || ec.IsBaseInitializer) {
+					if (ec.IsStatic || ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.BaseInitializer | EmitContext.Options.ConstantScope)) {
 						//
 						// Note that an MemberExpr can be both IsInstance and IsStatic.
 						// An unresolved MethodGroupExpr can contain both kinds of methods
@@ -4823,7 +4823,7 @@ namespace Mono.CSharp {
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
 
 				if (lvalue_instance) {
-					using (ec.With (EmitContext.Flags.DoFlowAnalysis, false)) {
+					using (ec.With (EmitContext.Options.DoFlowAnalysis, false)) {
 						Expression right_side =
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
@@ -4840,7 +4840,7 @@ namespace Mono.CSharp {
 				if (InstanceExpression == null)
 					return null;
 
-				using (ec.Set (EmitContext.Flags.OmitStructFlowAnalysis)) {
+				using (ec.Set (EmitContext.Options.OmitStructFlowAnalysis)) {
 					InstanceExpression.CheckMarshalByRefAccess (ec);
 				}
 			}
@@ -4865,7 +4865,7 @@ namespace Mono.CSharp {
 			
 			if (fb != null) {
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
-				if (!ec.InFixedInitializer && (fe == null || !fe.IsFixed)) {
+				if (!ec.HasSet (EmitContext.Options.FixedInitializerScope) && (fe == null || !fe.IsFixed)) {
 					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
 				}
 
@@ -4952,10 +4952,10 @@ namespace Mono.CSharp {
 
 			if (FieldInfo.IsInitOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
-				if (!ec.IsInFieldInitializer && !ec.IsConstructor)
+				if (!ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.ConstructorScope))
 					return Report_AssignToReadonly (right_side);
 
-				if (ec.IsConstructor) {
+				if (ec.HasSet (EmitContext.Options.ConstructorScope)) {
 					Type ctype = ec.CurrentType;
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
@@ -5093,7 +5093,7 @@ namespace Mono.CSharp {
 			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
 
-			if (is_readonly && !ec.IsConstructor){
+			if (is_readonly && !ec.HasSet (EmitContext.Options.ConstructorScope)){
 				Report_AssignToReadonly (source);
 				return;
 			}
@@ -5175,7 +5175,7 @@ namespace Mono.CSharp {
 			bool need_copy;
 			if (FieldInfo.IsInitOnly){
 				need_copy = true;
-				if (ec.IsConstructor){
+				if (ec.HasSet (EmitContext.Options.ConstructorScope)){
 					if (FieldInfo.IsStatic){
 						if (ec.IsStatic)
 							need_copy = false;
@@ -5754,7 +5754,7 @@ namespace Mono.CSharp {
 					if (!ec.IsInObsoleteScope)
 						mi.CheckObsoleteness (loc);
 
-					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.IsInCompoundAssignment)
+					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (EmitContext.Options.CompoundAssignmentScope))
 						Error_AssignmentEventOnly ();
 					
 					FieldExpr ml = new FieldExpr (mi.BackingField.FieldBuilder, loc);
@@ -5764,8 +5764,8 @@ namespace Mono.CSharp {
 					return ml.ResolveMemberAccess (ec, left, loc, original);
 				}
 			}
-			
-			if (left is This && !ec.IsInCompoundAssignment)			
+
+			if (left is This && !ec.HasSet (EmitContext.Options.CompoundAssignmentScope))			
 				Error_AssignmentEventOnly ();
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
@@ -5842,7 +5842,7 @@ namespace Mono.CSharp {
 			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
 
-			if (!ec.IsInCompoundAssignment) {
+			if (!ec.HasSet (EmitContext.Options.CompoundAssignmentScope)) {
 				Error_CannotAssign ();
 				return null;
 			}
