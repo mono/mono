@@ -1,5 +1,14 @@
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verifier_load_field): We should allow references to
+	fields to be made using the generic type definition. It's up to
+	the loader system to fail invalid ops.
+
+	* verify.c (get_boxable_mono_type): Only uninstantiated GTDs
+	are invalid.
+
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Fix usage of mono_metadata_interfaces_from_typedef_full.
 
 	* metadata-internals.h: Fix declaration of 
