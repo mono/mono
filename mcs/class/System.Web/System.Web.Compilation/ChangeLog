@@ -1,3 +1,22 @@
+2009-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* AspParser.cs: added a constructor which creates an internal
+	parser, nested within the outer one, and adjusts its ILocation
+	members to report correct locations in the outer parser for better
+	error reporting. Inner parser also returns the outer's FileText,
+	if available.
+
+	* AspGenerator.cs: restored part of r138474 reverted in r138657,
+	r138658 and r138659 to fix bug #525104
+	BuilderLocation creates a copy of Location for its own use (since
+	the ILocation passed is actually AspParser, the line numbers
+	change between creating a BuilderLocation and using its Location
+	member).
+	The end of tag, expression and client comment regular expressions
+	now use lazy quantifiers. This fixes bugs #525104 and #517656
+	Client side comment blocks aren't ignored anymore, they are parsed
+	just as the other parts of the document. Fixes bug #524358
+	
 2009-08-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: CodeRenderParser.DoParseExpressions - match

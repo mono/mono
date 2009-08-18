@@ -39,6 +39,8 @@ using System.Web.Configuration;
 using System.IO;
 using System.Web.UI.WebControls;
 
+using _Location = System.Web.Compilation.Location;
+
 namespace System.Web.UI {
 
 	// CAS
@@ -169,7 +171,7 @@ namespace System.Web.UI {
 
 		internal ILocation Location {
 			get { return location; }
-			set { location = value; }
+			set { location = new _Location (value); }
 		}
 	
 		internal ArrayList OtherTags {
@@ -634,7 +636,7 @@ namespace System.Web.UI {
 		{
 			this.parser = parser;
 			if (parser != null)
-				this.location = parser.Location;
+				this.Location = parser.Location;
 
 			this.parentBuilder = parentBuilder;
 			this.type = type;
