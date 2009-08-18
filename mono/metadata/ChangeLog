@@ -1,5 +1,10 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* profiler.c:
+	* class.c: Fix warnings for uninitialized variables.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* icall.c: Fix _NSGetEnviron method declaration warning.
 
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
