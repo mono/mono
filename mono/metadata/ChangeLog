@@ -1,3 +1,8 @@
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_parse_method_signature_full):
+	Gracefully fail bad vararg signatures.
+
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
 	* profiler.c:
