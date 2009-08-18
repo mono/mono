@@ -1,5 +1,10 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* icall.c:
+	* reflection.c: Make bitwise checks explicit.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* debug-helpers.c:
 	* marshal.c: Fix printf warnings.
 
