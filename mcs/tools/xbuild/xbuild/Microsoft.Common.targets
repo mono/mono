@@ -62,13 +62,23 @@
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
 			.mdb
 		</AllowedReferenceRelatedFileExtensions>
+
+		<AssemblySearchPaths Condition="'$(AssemblySearchPaths)' == ''">
+			{CandidateAssemblyFiles};
+			{HintPathFromItem};
+			{TargetFrameworkDirectory};
+			{PkgConfig};
+			{GAC};
+			{RawFileName};
+			$(OutDir)
+		</AssemblySearchPaths>
 	</PropertyGroup>
 
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
-			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{PkgConfig};{GAC};{RawFileName};$(OutDir)"
+			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
