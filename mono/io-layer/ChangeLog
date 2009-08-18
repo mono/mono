@@ -1,5 +1,11 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* wthreads.c: Roll back change for thread-id as it "embraces
+	and extends" the api by passing word-size for thread id on
+	s390 and amd64.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* security.c:
 	* processes.c:
 	* wthreads.c: Be explicit when we are changing word sizes.
