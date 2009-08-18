@@ -47,9 +47,9 @@ namespace Microsoft.Build.BuildEngine {
 		public TaskDatabase ()
 		{
 			assemblyInformation = new Dictionary <string, AssemblyLoadInfo> ();
-			typesByFullName = new Dictionary <string, Type> ();
-			typesByShortName = new Dictionary <string, Type> ();
-			usingTasksByFullName = new Dictionary <string, UsingTaskInfo> ();
+			typesByFullName = new Dictionary <string, Type> (StringComparer.InvariantCultureIgnoreCase);
+			typesByShortName = new Dictionary <string, Type> (StringComparer.InvariantCultureIgnoreCase);
+			usingTasksByFullName = new Dictionary <string, UsingTaskInfo> (StringComparer.InvariantCultureIgnoreCase);
 		}
 		
 		public void RegisterTask (string classname, AssemblyLoadInfo assemblyLoadInfo)
@@ -94,7 +94,7 @@ namespace Microsoft.Build.BuildEngine {
 				if (is_shortname) {
 					// Linear search UsingTaskInfo objects for short name match
 					foreach (UsingTaskInfo ut_info in usingTasksByFullName.Values) {
-						if (String.Compare (ut_info.ShortName, classname) == 0) {
+						if (String.Compare (ut_info.ShortName, classname, true) == 0) {
 							info = ut_info;
 							break;
 						}

@@ -68,10 +68,11 @@ namespace Microsoft.Build.BuildEngine {
 			this.task = task;
 			this.taskElement = taskElement;
 			this.taskType = taskType;
-			values = new Dictionary <string, object> ();
+			values = new Dictionary <string, object> (StringComparer.InvariantCultureIgnoreCase);
 			
 			foreach (KeyValuePair <string, string> de in parameters) {
-				currentProperty = taskType.GetProperty (de.Key);
+				currentProperty = taskType.GetProperty (de.Key, BindingFlags.Public | BindingFlags.Instance
+						| BindingFlags.IgnoreCase);
 				if (currentProperty == null)
 					throw new InvalidProjectFileException (String.Format ("Task does not have property \"{0}\" defined",
 						de.Key));
@@ -129,7 +130,8 @@ namespace Microsoft.Build.BuildEngine {
 				itemName = xmlElement.GetAttribute ("ItemName");
 				propertyName = xmlElement.GetAttribute ("PropertyName");
 				
-				propertyInfo = taskType.GetProperty (taskParameter);
+				propertyInfo = taskType.GetProperty (taskParameter, BindingFlags.Public | BindingFlags.Instance |
+							BindingFlags.IgnoreCase);
 				if (propertyInfo == null)
 					throw new Exception (String.Format (
 						"The parameter '{0}' was not found for the '{1}' task.", taskParameter, taskElement.Name));

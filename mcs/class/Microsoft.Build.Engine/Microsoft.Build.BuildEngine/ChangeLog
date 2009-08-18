@@ -1,3 +1,10 @@
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
+	* BatchingImplBase.cs: Make the item name lookups and metadata be case
+	insensitive.
+	* TaskDatabase.cs: Likewise.
+	* TaskEngine.cs: Make property name looks, case insensitive.
+
 2009-08-09  Miguel de Icaza  <miguel@novell.com>
 
 	* ConsoleLogger.cs: Change the format of the error and warnings
