@@ -86,7 +86,7 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		public MessageFilter AddressFilter {
-			get { return address_filter ?? (address_filter = new EndpointAddressMessageFilter (EndpointAddress)); }
+			get { return address_filter; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");

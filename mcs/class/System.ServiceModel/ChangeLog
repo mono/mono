@@ -1,3 +1,15 @@
+2009-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	Update everything to r140102 which is known to work properly
+	on robozzle and ITV.
+	[Fix bug 531893]
+
+	r: kangaroo
+
+2009-08-11  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: add DefaultOperationInvoker.cs.
+
 2009-08-07  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: add ServiceProxyGenerator.cs.

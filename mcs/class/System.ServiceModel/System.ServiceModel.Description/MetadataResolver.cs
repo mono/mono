@@ -47,17 +47,57 @@ namespace System.ServiceModel.Description
 	[MonoTODO]
 	public static class MetadataResolver
 	{
-		public static ServiceEndpointCollection Resolve (
-				Type contract,
-				EndpointAddress address)
+		static IEnumerable<ContractDescription> ToContracts (Type contract)
 		{
 			if (contract == null)
 				throw new ArgumentNullException ("contract");
+			yield return ContractDescription.GetContract (contract);
+		}
 
-			return ResolveContracts (
-					new ContractDescription [] {ContractDescription.GetContract (contract)},
-					address, 
-					MetadataExchangeClientMode.MetadataExchange);
+		public static IAsyncResult BeginResolve (Type contract, EndpointAddress address, AsyncCallback callback, object asyncState)
+		{
+			return BeginResolve (ToContracts (contract), address, callback, asyncState);
+		}
+
+		public static IAsyncResult BeginResolve (IEnumerable<ContractDescription> contracts, EndpointAddress address, AsyncCallback callback, object asyncState)
+		{
+			return BeginResolve (contracts, address, MetadataExchangeClientMode.MetadataExchange, callback, asyncState);
+		}
+
+		public static IAsyncResult BeginResolve (Type contract, Uri address, MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState)
+		{
+			return BeginResolve (ToContracts (contract), new EndpointAddress (address), mode, callback, asyncState);
+		}
+
+		public static IAsyncResult BeginResolve (IEnumerable<ContractDescription> contracts, EndpointAddress address, MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState)
+		{
+			return BeginResolve (contracts, address, mode, new MetadataExchangeClient (), callback, asyncState);
+		}
+
+		public static IAsyncResult BeginResolve (Type contract, EndpointAddress address, MetadataExchangeClient client, AsyncCallback callback, object asyncState)
+		{
+			return resolver.BeginInvoke (ToContracts (contract), () => client.GetMetadata (address), callback, asyncState);
+		}
+
+		public static IAsyncResult BeginResolve (IEnumerable<ContractDescription> contracts, EndpointAddress address, MetadataExchangeClientMode mode, MetadataExchangeClient client, AsyncCallback callback, object asyncState)
+		{
+			return resolver.BeginInvoke (contracts, () => client.GetMetadataInternal (address, mode), callback, asyncState);
+		}
+
+		delegate ServiceEndpointCollection Resolver (IEnumerable<ContractDescription> contracts, Func<MetadataSet> metadataGetter);
+
+		static readonly Resolver resolver = new Resolver (ResolveContracts);
+
+		public static ServiceEndpointCollection EndResolve (IAsyncResult result)
+		{
+			return resolver.EndInvoke (result);
+		}
+
+		public static ServiceEndpointCollection Resolve (
+				Type contract,
+				EndpointAddress address)
+		{
+			return Resolve (ToContracts (contract), address);
 		}
 
 		public static ServiceEndpointCollection Resolve (
@@ -65,17 +105,14 @@ namespace System.ServiceModel.Description
 				Uri address,
 				MetadataExchangeClientMode mode)
 		{
-			return ResolveContracts (
-					new ContractDescription [] {ContractDescription.GetContract (contract)},
-					address, 
-					mode);
+			return Resolve (ToContracts (contract), address, mode);
 		}
 
 		public static ServiceEndpointCollection Resolve (
 				IEnumerable<ContractDescription> contracts,
 				EndpointAddress address)
 		{
-			return ResolveContracts (contracts, address, MetadataExchangeClientMode.MetadataExchange);
+			return Resolve (contracts, address, new MetadataExchangeClient ());
 		}
 
 		public static ServiceEndpointCollection Resolve (
@@ -83,7 +120,7 @@ namespace System.ServiceModel.Description
 				Uri address,
 				MetadataExchangeClientMode mode)
 		{
-			return ResolveContracts (contracts, address, mode);
+			return Resolve (contracts, new EndpointAddress (address), new MetadataExchangeClient (address, mode));
 		}
 
 		public static ServiceEndpointCollection Resolve (
@@ -94,8 +131,7 @@ namespace System.ServiceModel.Description
 			if (client == null)
 				throw new ArgumentNullException ("client");
 
-			/* FIXME: client is used for what? */
-			return ResolveContracts (contracts, address, MetadataExchangeClientMode.MetadataExchange);
+			return ResolveContracts (contracts, () => client.GetMetadata (address));
 		}
 
 		/* FIXME: What is the mode/client used for here? 
@@ -109,24 +145,12 @@ namespace System.ServiceModel.Description
 			if (client == null)
 				throw new ArgumentNullException ("client");
 
-			return ResolveContracts (contracts, address, mode);
+			return ResolveContracts (contracts, () => new MetadataExchangeClient ().GetMetadata (address, mode));
 		}
 
 		private static ServiceEndpointCollection ResolveContracts (
 				IEnumerable<ContractDescription> contracts,
-				Uri address,
-				MetadataExchangeClientMode mode)
-		{
-			if (address == null)
-				throw new ArgumentNullException ("address");
-
-			return ResolveContracts (contracts, new EndpointAddress (address), mode);
-		}
-
-		private static ServiceEndpointCollection ResolveContracts (
-				IEnumerable<ContractDescription> contracts,
-				EndpointAddress address,
-				MetadataExchangeClientMode mode)
+				Func<MetadataSet> metadataGetter)
 		{
 			if (contracts == null)
 				throw new ArgumentNullException ("contracts");
@@ -135,11 +159,7 @@ namespace System.ServiceModel.Description
 			if (list.Count == 0)
 				throw new ArgumentException ("There must be atleast one ContractDescription", "contracts");
 
-			if (address == null)
-				throw new ArgumentNullException ("address");
-
-			MetadataExchangeClient client = new MetadataExchangeClient (address);
-			MetadataSet metadata = client.GetMetadata ();
+			MetadataSet metadata = metadataGetter ();
 			WsdlImporter importer = new WsdlImporter (metadata);
 			ServiceEndpointCollection endpoints = importer.ImportAllEndpoints ();
 			

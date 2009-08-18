@@ -157,8 +157,10 @@ namespace System.ServiceModel.Dispatcher
 			{
 				int index = 0;
 				foreach (ParameterInfo pi in requestMethodParams)
-					if (!pi.IsOut)
-						parameters [pi.Position] = parts [index++];
+					if (!pi.IsOut) {
+						parameters [index] = parts [index];
+						index++;
+					}
 			}
 		}
 

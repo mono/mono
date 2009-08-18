@@ -34,39 +34,23 @@ namespace System.ServiceModel.Description
 {
 	public class ServiceDebugBehavior : IServiceBehavior
 	{
-		bool inc_details;
-		bool http_help_enabled = true;
-		bool https_help_enabled = true;
-		Uri http_help_url, https_help_url;
-
 		public ServiceDebugBehavior ()
 		{
 		}
 
-		public bool IncludeExceptionDetailInFaults {
-			get { return inc_details; }
-			set { inc_details = value; }
-		}
+		public bool IncludeExceptionDetailInFaults { get; set; }
 
-		public bool HttpHelpPageEnabled {
-			get { return http_help_enabled; }
-			set { http_help_enabled = value; }
-		}
+		public bool HttpHelpPageEnabled { get; set; }
 
-		public Uri HttpHelpPageUrl {
-			get { return http_help_url; }
-			set { http_help_url = value; }
-		}
+		public Uri HttpHelpPageUrl { get; set; }
 
-		public bool HttpsHelpPageEnabled {
-			get { return https_help_enabled; }
-			set { https_help_enabled = value; }
-		}
+		public bool HttpsHelpPageEnabled { get; set; }
 
-		public Uri HttpsHelpPageUrl {
-			get { return https_help_url; }
-			set { https_help_url = value; }
-		}
+		public Uri HttpsHelpPageUrl { get; set; }
+
+		public Binding HttpHelpPageBinding { get; set; }
+
+		public Binding HttpsHelpPageBinding { get; set; }
 
 		void IServiceBehavior.AddBindingParameters (
 			ServiceDescription description,
@@ -90,13 +74,13 @@ namespace System.ServiceModel.Description
 			if (HttpHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpHelpPageUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpChanelDispatcher (description, serviceHostBase, sme, uri);
+					ServiceMetadataExtension.EnsureServiceMetadataHttpChanelDispatcher (description, serviceHostBase, sme, uri, HttpHelpPageBinding);
 			}
 
 			if (HttpsHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("https", HttpsHelpPageUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpsChanelDispatcher (description, serviceHostBase, sme, uri);
+					ServiceMetadataExtension.EnsureServiceMetadataHttpsChanelDispatcher (description, serviceHostBase, sme, uri, HttpsHelpPageBinding);
 			}
 		}
 

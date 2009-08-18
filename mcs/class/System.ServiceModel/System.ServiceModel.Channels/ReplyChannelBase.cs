@@ -59,7 +59,16 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
+		ChannelListenerBase listener;
+
 		public abstract EndpointAddress LocalAddress { get; }
+
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (IChannelListener))
+				return (T) (object) listener;
+			return base.GetProperty<T> ();
+		}
 
 		protected override void OnAbort ()
 		{

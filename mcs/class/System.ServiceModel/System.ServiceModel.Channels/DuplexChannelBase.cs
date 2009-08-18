@@ -36,15 +36,15 @@ namespace System.ServiceModel.Channels
 {
 	internal abstract class DuplexChannelBase : ChannelBase, IDuplexChannel
 	{
-		//ChannelFactoryBase channel_factory_base;
-		//ChannelListenerBase channel_listener_base;
+		ChannelFactoryBase channel_factory_base;
+		ChannelListenerBase channel_listener_base;
 		EndpointAddress local_address;
 		EndpointAddress remote_address;
 		Uri via;
 		
 		public DuplexChannelBase (ChannelFactoryBase factory, EndpointAddress remoteAddress, Uri via) : base (factory)
 		{
-			//channel_factory_base = factory;
+			channel_factory_base = factory;
 			remote_address = remoteAddress;
 			this.via = via;
 			SetupDelegates ();
@@ -52,16 +52,16 @@ namespace System.ServiceModel.Channels
 		
 		public DuplexChannelBase (ChannelListenerBase listener) : base (listener)
 		{
-			//channel_listener_base = listener;
+			channel_listener_base = listener;
 			local_address = new EndpointAddress (listener.Uri);
 			SetupDelegates ();
 		}
 
-		public EndpointAddress LocalAddress {
+		public virtual EndpointAddress LocalAddress {
 			get { return local_address; }
 		}
 
-		public EndpointAddress RemoteAddress {
+		public virtual EndpointAddress RemoteAddress {
 			get { return remote_address; }
 		}
 
@@ -77,6 +77,15 @@ namespace System.ServiceModel.Channels
 			receive_handler = new AsyncReceiveHandler (Receive);
 			wait_handler = new AsyncWaitForMessageHandler (WaitForMessage);
 			try_receive_handler = new TryReceiveHandler (TryReceive);
+		}
+
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (IChannelFactory))
+				return (T) (object) channel_factory_base;
+			if (typeof (T) == typeof (IChannelListener))
+				return (T) (object) channel_listener_base;
+			return base.GetProperty<T> ();
 		}
 
 		// Open

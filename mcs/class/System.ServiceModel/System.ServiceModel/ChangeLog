@@ -1,3 +1,44 @@
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : wildcard action support was not working
+	  for one-way channels.
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : set expected AddressFilter.
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddress.cs : #if !NET_2_1 is removing code too much.
+
+2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : made some properties in duplex context
+	  channel dispatching to internal client.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationContextScope.cs : check null arg.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : return timeouts that are set at
+	  dispatch runtime later than its .ctor(). Provide ListenUri too.
+
+2009-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AllEnums.cs : add AddressFilterMode and SupportedAddressingMode.
+	* ServiceBehaviorAttribute.cs : added missing properties.
+
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientBase.cs : (ChannelBase) now ClientRuntimeChannel demands an
+	  explicit address.
+
+2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : use new IOperationInvoker implementation.
+
 2009-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceRuntimeChannel.cs : change .ctor() args.

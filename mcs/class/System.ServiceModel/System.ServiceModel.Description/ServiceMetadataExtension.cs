@@ -44,7 +44,7 @@ using System.Xml.Schema;
 using WSServiceDescription = System.Web.Services.Description.ServiceDescription;
 using WSMessage = System.Web.Services.Description.Message;
 using SMMessage = System.ServiceModel.Channels.Message;
-
+using WCFBinding = System.ServiceModel.Channels.Binding;
 
 namespace System.ServiceModel.Description
 {
@@ -91,14 +91,25 @@ namespace System.ServiceModel.Description
 			return sme;
 		}
 
-		internal static void EnsureServiceMetadataHttpChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri) {
+		internal static void EnsureServiceMetadataHttpChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		{
+			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpBinding ());
+		}
 
+		internal static void EnsureServiceMetadataHttpsChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		{
+			// same as http now.
+			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpsBinding ());
+		}
+
+		static void EnsureServiceMetadataDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		{
 			if (sme._serviceMetadataChanelDispatchers == null)
 				sme._serviceMetadataChanelDispatchers = new Dictionary<Uri, ChannelDispatcherBase> ();
 			else if (sme._serviceMetadataChanelDispatchers.ContainsKey (uri))
 				return;
 
-			CustomBinding cb = new CustomBinding (new BasicHttpBinding ())
+			CustomBinding cb = new CustomBinding (binding)
 			{
 				Name = ServiceMetadataBehaviorHttpGetBinding,
 			};
@@ -115,10 +126,6 @@ namespace System.ServiceModel.Description
 
 			sme._serviceMetadataChanelDispatchers.Add (uri, channelDispatcher);
 			serviceHostBase.ChannelDispatchers.Add (channelDispatcher);
-		}
-
-		internal static void EnsureServiceMetadataHttpsChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri) {
-			throw new NotImplementedException ();
 		}
 
 		void IExtension<ServiceHostBase>.Attach (ServiceHostBase owner)

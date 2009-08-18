@@ -184,7 +184,7 @@ namespace System.ServiceModel
 			return ! (address1 == address2);
 		}
 
-#if !NET_2_1
+//#if !NET_2_1
 		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			XmlDictionaryReader reader)
@@ -278,7 +278,6 @@ namespace System.ServiceModel
 			AddressingVersion addressingVersion, XmlReader reader)
 		{
 			Uri uri = null;
-			MetadataSet metadata = null;
 			EndpointIdentity identity = null;
 			reader.MoveToContent ();
 			if (reader.LocalName == "Address" && 
@@ -292,6 +291,8 @@ namespace System.ServiceModel
 					addressingVersion.Namespace, reader.LocalName, reader.NamespaceURI));
 
 			reader.MoveToContent ();
+#if !NET_2_1
+			MetadataSet metadata = null;
 			if (reader.LocalName == "Metadata" &&
 			    reader.NamespaceURI == addressingVersion.Namespace &&
 			    !reader.IsEmptyElement) {
@@ -306,16 +307,20 @@ namespace System.ServiceModel
 				// FIXME: implement
 				reader.Skip ();
 			}
+#endif
 
 			if (addressingVersion == AddressingVersion.WSAddressing10 && uri == w3c_anonymous)
 				uri = anonymous_role;
 
+#if NET_2_1
+			return new EndpointAddress (uri, identity);
+#else
 			if (metadata == null)
 				return new EndpointAddress (uri, identity);
 			return new EndpointAddress (uri, identity,
 				AddressHeader.CreateAddressHeader (metadata));
-		}
 #endif
+		}
 
 		public override string ToString ()
 		{

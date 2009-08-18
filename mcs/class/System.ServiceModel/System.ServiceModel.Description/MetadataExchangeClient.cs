@@ -46,21 +46,20 @@ using SMMessage = System.ServiceModel.Channels.Message;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
+	[MonoTODO ("MetadataExchangeClientMode is not considered")]
 	public class MetadataExchangeClient
 	{
 		string scheme;
 
 		EndpointAddress address;
 		SMBinding binding;
+		MetadataExchangeClientMode mode = MetadataExchangeClientMode.MetadataExchange;
 
+		// constructors
+
+		[MonoTODO ("use empty configuration")]
 		public MetadataExchangeClient ()
 		{
-			//FIXME: Look for config element, implementing
-			//	IMetadataExchange contract
-			//	Use Channel<IMetadataExchange> .. ?
-			
-			throw new NotImplementedException ();
 		}
 
 		public MetadataExchangeClient (SMBinding mexBinding)
@@ -81,7 +80,10 @@ namespace System.ServiceModel.Description
 		public MetadataExchangeClient (Uri address, MetadataExchangeClientMode mode)
 		{
 			this.address = new EndpointAddress (address.AbsoluteUri);
+			this.mode = mode;
 		}
+
+		// sync methods
 
 		public MetadataSet GetMetadata ()
 		{
@@ -91,7 +93,7 @@ namespace System.ServiceModel.Description
 		public MetadataSet GetMetadata (EndpointAddress address)
 		{
 			//FIXME: default mode?
-			return GetMetadataInternal (address, MetadataExchangeClientMode.MetadataExchange);
+			return GetMetadataInternal (address, mode);
 		}
 
 		public MetadataSet GetMetadata (Uri address, MetadataExchangeClientMode mode)
@@ -99,7 +101,7 @@ namespace System.ServiceModel.Description
 			return GetMetadataInternal (new EndpointAddress (address.AbsoluteUri), mode);
 		}
 
-		MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
+		internal MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
 		{
 			if (binding == null)
 				binding = MetadataExchangeBindings.CreateMexHttpBinding ();
@@ -126,6 +128,44 @@ namespace System.ServiceModel.Description
 			}
 
 			return MetadataSet.ReadFrom (ret.GetReaderAtBodyContents ());
+		}
+
+		// async methods
+
+		Func<Func<MetadataSet>,MetadataSet> getter;
+
+		void PrepareGetter ()
+		{
+			if (getter == null)
+				getter = new Func<Func<MetadataSet>,MetadataSet> (GetMetadata);
+		}
+
+		public MetadataSet EndGetMetadata (IAsyncResult result)
+		{
+			return getter.EndInvoke (result);
+		}
+
+		MetadataSet GetMetadata (Func<MetadataSet> func)
+		{
+			return func ();
+		}
+
+		public IAsyncResult BeginGetMetadata (AsyncCallback callback, object asyncState)
+		{
+			PrepareGetter ();
+			return getter.BeginInvoke (() => GetMetadata (), callback, asyncState);
+		}
+
+		public IAsyncResult BeginGetMetadata (EndpointAddress address, AsyncCallback callback, object asyncState)
+		{
+			PrepareGetter ();
+			return getter.BeginInvoke (() => GetMetadata (address), callback, asyncState);
+		}
+
+		public IAsyncResult BeginGetMetadata (Uri address, MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState)
+		{
+			PrepareGetter ();
+			return getter.BeginInvoke (() => GetMetadata (address, mode), callback, asyncState);
 		}
 	}
 	

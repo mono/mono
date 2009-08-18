@@ -12,7 +12,7 @@ namespace System.ServiceModel.PeerResolvers
 		public const string Namespace = "http://schemas.microsoft.com/net/2006/05/peer";
 	}
 
-	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed)]
+	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed, CallbackContract = typeof (IPeerConnectorContract))]
 	internal interface IPeerConnectorContract
 	{
 		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
@@ -33,17 +33,7 @@ namespace System.ServiceModel.PeerResolvers
 		[OperationContract (Action = Consts.Namespace + "/Ping", IsOneWay = true)]
 		void Ping ();
 
-		[OperationContract (IsOneWay = true)]
-		void SendMessage (Message msg);
-	}
-
-	[ServiceContract (Namespace = Consts.Namespace, SessionMode = SessionMode.Allowed, CallbackContract = typeof (IPeerConnectorContract))]
-	internal interface IPeerReceiverContract
-	{
-		[OperationContract (Action = Consts.Namespace + "/Connect", IsOneWay = true)]
-		void Connect (ConnectInfo connect);
-
-		[OperationContract (IsOneWay = true)]
+		[OperationContract (Action = "*", IsOneWay = true)]
 		void SendMessage (Message msg);
 	}
 
@@ -80,7 +70,7 @@ namespace System.ServiceModel.PeerResolvers
 	internal class ConnectInfoDC
 	{
 		[DataMember]
-		public PeerNodeAddress PeerNodeAddress { get; set; }
+		public PeerNodeAddress Address { get; set; }
 		[DataMember]
 		public ulong NodeId { get; set; }
 	}
@@ -96,9 +86,9 @@ namespace System.ServiceModel.PeerResolvers
 		[MessageBodyMember (Name = "Connect", Namespace = Consts.Namespace)]
 		ConnectInfoDC dc;
 
-		public PeerNodeAddress PeerNodeAddress {
-			get { return dc.PeerNodeAddress; }
-			set { dc.PeerNodeAddress = value; }
+		public PeerNodeAddress Address {
+			get { return dc.Address; }
+			set { dc.Address = value; }
 		}
 
 		public ulong NodeId {

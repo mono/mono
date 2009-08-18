@@ -31,12 +31,12 @@ namespace System.ServiceModel.Dispatcher
 			DispatchOperation operation = mrc.Operation;
 			Message req = mrc.IncomingMessage;
 			object instance = mrc.InstanceContext.GetServiceInstance(req);
-			object [] parameters;			
+			object [] parameters, outParams;
 			BuildInvokeParams (mrc, out parameters);
 
 			if (operation.Invoker.IsSynchronous) {
-				object result = operation.Invoker.Invoke (instance, parameters);
-				HandleInvokeResult (mrc, parameters, result);
+				object result = operation.Invoker.Invoke (instance, parameters, out outParams);
+				HandleInvokeResult (mrc, outParams, result);
 			} else {// asynchronous
 				InvokeAsynchronous (mrc, instance, parameters);
 			}			
@@ -112,7 +112,7 @@ namespace System.ServiceModel.Dispatcher
 			EnsureValid (operation);
 
 			if (operation.DeserializeRequest) {
-				parameters = operation.Invoker.AllocateParameters ();
+				parameters = operation.Invoker.AllocateInputs ();
 				operation.Formatter.DeserializeRequest (mrc.IncomingMessage, parameters);
 			} else
 				parameters = new object [] { mrc.IncomingMessage };

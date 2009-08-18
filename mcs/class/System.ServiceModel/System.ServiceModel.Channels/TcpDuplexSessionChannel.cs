@@ -69,6 +69,7 @@ namespace System.ServiceModel.Channels
 		bool is_service_side;
 		TcpBinaryFrameManager frame;
 		TcpDuplexSession session; // do not use this directly. Use Session instead.
+		EndpointAddress counterpart_address;
 		
 		public TcpDuplexSessionChannel (ChannelFactoryBase factory, TcpChannelInfo info, EndpointAddress address, Uri via)
 			: base (factory, address, via)
@@ -79,6 +80,7 @@ namespace System.ServiceModel.Channels
 			// make sure to acquire TcpClient here.
 			int explicitPort = Via.Port;
 			client = new TcpClient (Via.Host, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
+			counterpart_address = GetEndpointAddressFromTcpClient (client);
 		}
 		
 		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient client)
@@ -87,10 +89,25 @@ namespace System.ServiceModel.Channels
 			is_service_side = true;
 			this.client = client;
 			this.info = info;
+			counterpart_address = GetEndpointAddressFromTcpClient (client);
 		}
-		
+
+		EndpointAddress GetEndpointAddressFromTcpClient (TcpClient client)
+		{
+			IPEndPoint ep = (IPEndPoint) client.Client.RemoteEndPoint;
+			return new EndpointAddress (new Uri ("net.tcp://" + ep));
+		}
+
 		public MessageEncoder Encoder {
 			get { return info.MessageEncoder; }
+		}
+
+		public override EndpointAddress RemoteAddress {
+			get { return base.RemoteAddress ?? counterpart_address; }
+		}
+
+		public override EndpointAddress LocalAddress {
+			get { return base.LocalAddress ?? counterpart_address; }
 		}
 
 		public IDuplexSession Session {

@@ -568,7 +568,7 @@ namespace System.ServiceModel.Dispatcher
 					}
 				}
 				if (candidate == null)
-					throw new EndpointNotFoundException (String.Format ("The request message has the target '{0}' which is not reachable in this service contract", message.Headers.To));
+					throw new EndpointNotFoundException (String.Format ("The request message has the target '{0}' with action '{1}' which is not reachable in this service contract", message.Headers.To, message.Headers.Action));
 				return candidate;
 			}
 		}

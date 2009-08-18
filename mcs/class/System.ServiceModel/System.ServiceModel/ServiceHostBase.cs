@@ -389,8 +389,8 @@ namespace System.ServiceModel
 
 		}
 
-		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se, BindingParameterCollection commonParams) {
-
+		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se, BindingParameterCollection commonParams)
+		{
 			//User the binding parameters to build the channel listener and Dispatcher
 			IChannelListener lf = BuildListener (se, commonParams);
 			ChannelDispatcher cd = new ChannelDispatcher (
@@ -404,6 +404,7 @@ namespace System.ServiceModel
 				new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
 			endpoint_dispatcher.DispatchRuntime.Type = Description.ServiceType;
 			endpoint_dispatcher.ContractFilter = GetContractFilter (se.Contract);
+			endpoint_dispatcher.AddressFilter = new EndpointAddressMessageFilter (se.Address);
 			endpoint_dispatcher.ChannelDispatcher = cd;
 			cd.Endpoints.Add (endpoint_dispatcher);
 			
@@ -463,7 +464,7 @@ namespace System.ServiceModel
 				od.IsOneWay ?
 				new DispatchOperation (db, od.Name, reqA) :
 				new DispatchOperation (db, od.Name, reqA, resA);
-			bool has_void_reply = false;
+			bool no_serialized_reply = od.IsOneWay;
 			foreach (MessageDescription md in od.Messages) {
 				if (md.Direction == MessageDirection.Input &&
 					md.Body.Parts.Count == 1 &&
@@ -474,25 +475,21 @@ namespace System.ServiceModel
 					if (md.Body.ReturnValue.Type == typeof (Message))
 						o.SerializeReply = false;
 					else if (md.Body.ReturnValue.Type == typeof (void))
-						has_void_reply = true;
+						no_serialized_reply = true;
 				}
 			}
 
 			// Setup Invoker
-			// FIXME: support async method
-			if (od.SyncMethod != null)
-				o.Invoker = new SyncMethodInvoker (od.SyncMethod);
-			else
-				o.Invoker = new AsyncMethodInvoker (od.BeginMethod, od.EndMethod);
+			o.Invoker = new DefaultOperationInvoker (od);
 
 			// Setup Formater
 			o.Formatter = BaseMessagesFormatter.Create (od);
 
-			if (o.Action == "*" && o.ReplyAction == "*") {
+			if (o.Action == "*" && (o.IsOneWay || o.ReplyAction == "*")) {
 				//Signature : Message  (Message)
 				//	    : void  (Message)
 				//FIXME: void (IChannel)
-				if (!o.DeserializeRequest && (!o.SerializeReply || has_void_reply))
+				if (!o.DeserializeRequest && (!o.SerializeReply || no_serialized_reply)) // what is this double-ish check for?
 					db.UnhandledDispatchOperation = o;
 			}
 
@@ -612,6 +609,7 @@ namespace System.ServiceModel
 			Close ();
 		}
 
+		/*
 		class SyncMethodInvoker : IOperationInvoker
 		{
 			readonly MethodInfo _methodInfo;
@@ -692,5 +690,7 @@ namespace System.ServiceModel
 
 			#endregion
 		}
+		*/
 	}
+
 }

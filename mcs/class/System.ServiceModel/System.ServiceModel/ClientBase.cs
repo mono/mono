@@ -398,7 +398,7 @@ namespace System.ServiceModel
 			internal ClientRuntimeChannel Inner {
 				get {
 					if (inner_channel == null)
-						inner_channel = new ClientRuntimeChannel (endpoint, factory, null, null);
+						inner_channel = new ClientRuntimeChannel (endpoint, factory, endpoint.Address, null);
 					return inner_channel;
 				}
 			}
