@@ -1,5 +1,12 @@
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_get_field_idx): Add fixme for broken
+	behavior for types with multiple fields with the same name.
+	I would rather fix it, but have no idea on how to generate
+	such artifact for testing.
+
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verifier_load_field): We should allow references to
 	fields to be made using the generic type definition. It's up to
 	the loader system to fail invalid ops.
