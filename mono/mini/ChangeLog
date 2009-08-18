@@ -9,6 +9,9 @@
 
 2009-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_generic_instances): Add string[] wrapper methods.
+	Add GetGenericValueImpl<string>.
+	
 	* aot-compiler.c (add_generic_instances): Add instances of
 	GenericEqualityComparer<T> for primitive types. Only emit the array
 	wrappers into the mscorlib image.
