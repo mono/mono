@@ -1,5 +1,11 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* security.c:
+	* processes.c:
+	* wthreads.c: Be explicit when we are changing word sizes.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* processes.c: Fix method declaration warnings.
 	* sockets.c: getsockopt() wants socklen_t for size.
 
