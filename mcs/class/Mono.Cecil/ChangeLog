@@ -1,3 +1,8 @@
+2009-08-18  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs: Search GACs specified in the 
+	  MONO_GAC_PREFIX environment variable.
+
 2009-08-06  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/BaseAssemblyResolver.cs:

@@ -37,6 +37,7 @@ namespace Mono.Cecil {
 	public abstract class BaseAssemblyResolver : IAssemblyResolver {
 
 		ArrayList m_directories;
+		string[] m_monoGacPaths;
 
 		public void AddSearchDirectory (string directory)
 		{
@@ -167,20 +168,50 @@ namespace Mono.Cecil {
 			return typeof (object).Assembly.GetType ("System.MonoType", false) != null;
 		}
 
-		static AssemblyDefinition GetAssemblyInGac (AssemblyNameReference reference)
+		string[] MonoGacPaths {
+			get {
+				if (m_monoGacPaths == null)
+					m_monoGacPaths = GetDefaultMonoGacPaths ();
+				return m_monoGacPaths;	
+			}
+		}
+
+		static string[] GetDefaultMonoGacPaths ()
+		{
+			ArrayList paths = new ArrayList ();
+			string s = GetCurrentGacPath ();
+			if (s != null)
+				paths.Add (s);
+			string gacPathsEnv = Environment.GetEnvironmentVariable ("MONO_GAC_PREFIX");
+			if (gacPathsEnv != null && gacPathsEnv.Length > 0) {
+				string[] gacPrefixes = gacPathsEnv.Split (Path.PathSeparator);
+				foreach (string gacPrefix in gacPrefixes) {
+					if (gacPrefix != null && gacPrefix.Length > 0) {
+						string gac = Path.Combine (Path.Combine (Path.Combine (gacPrefix, "lib"), "mono"), "gac");
+						if (Directory.Exists (gac) && !paths.Contains (gac))
+							paths.Add (gac);
+					}
+				}
+			}
+			return (string[]) paths.ToArray (typeof (String));
+		}
+
+		AssemblyDefinition GetAssemblyInGac (AssemblyNameReference reference)
 		{
 			if (reference.PublicKeyToken == null || reference.PublicKeyToken.Length == 0)
 				return null;
 
-			string currentGac = GetCurrentGacPath ();
-			if (currentGac == null)
-				return null;
-
 			if (OnMono ()) {
-				string s = GetAssemblyFile (reference, currentGac);
-				if (File.Exists (s))
-					return AssemblyFactory.GetAssembly (s);
+				foreach (string gacpath in MonoGacPaths) {
+					string s = GetAssemblyFile (reference, gacpath);
+					if (File.Exists (s))
+						return AssemblyFactory.GetAssembly (s);
+				}
 			} else {
+				string currentGac = GetCurrentGacPath ();
+				if (currentGac == null)
+					return null;
+
 				string [] gacs = new string [] {"GAC_MSIL", "GAC_32", "GAC"};
 				for (int i = 0; i < gacs.Length; i++) {
 					string gac = Path.Combine (Directory.GetParent (currentGac).FullName, gacs [i]);
