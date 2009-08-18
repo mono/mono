@@ -35,7 +35,7 @@ bin_SCRIPTS = \
 	$(scripts_rpmhelpers)	\
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
-	mod			\
+	mod$(SCRIPT_SUFFIX)	\
 	mono-test-install
 
 if INSTALL_4_0
@@ -212,6 +212,7 @@ nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv $@.tmp $@
 
+#FIXME: this is not the correct rule for mod.bat.
 mod$(SCRIPT_SUFFIX): mod.in Makefile
 	$(REWRITE1) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
 	mv $@.tmp $@
@@ -220,6 +221,7 @@ $(scripts_1_0): $(SCRIPT_IN) Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv $@.tmp $@
 
+#FIXME: this is not the correct rule for bat files.
 $(scripts_1_0_umask): script_umask.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
 	mv $@.tmp $@
