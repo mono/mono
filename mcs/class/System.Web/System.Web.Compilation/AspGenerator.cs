@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-// Copyright (c) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -42,6 +43,10 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Web.Compilation
 {
 	class BuilderLocation
@@ -52,7 +57,7 @@ namespace System.Web.Compilation
 		public BuilderLocation (ControlBuilder builder, ILocation location)
 		{
 			this.Builder = builder;
-			this.Location = location;
+			this.Location = new Location (location);
 		}
 	}
 
@@ -177,6 +182,33 @@ namespace System.Web.Compilation
 		}
 	}
 
+	enum TextBlockType
+	{
+		Verbatim,
+		Expression,
+		Tag,
+		Comment
+	}
+	
+	sealed class TextBlock
+	{
+		public string Content;
+		public readonly TextBlockType Type;
+		public readonly int Length;
+		
+		public TextBlock (TextBlockType type, string content)
+		{
+			Content = content;
+			Type = type;
+			Length = content.Length;
+		}
+
+		public override string ToString ()
+		{
+			return this.GetType ().FullName + " [" + this.Type + "]";
+		}
+	}
+	
 	class AspGenerator
 	{
 #if NET_2_0
@@ -184,6 +216,25 @@ namespace System.Web.Compilation
 		
 		internal static Regex DirectiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
+		static readonly Regex runatServer = new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/?>",
+							       RegexOptions.Compiled | RegexOptions.Singleline |
+							       RegexOptions.Multiline | RegexOptions.IgnoreCase |
+							       RegexOptions.CultureInvariant);
+		
+		static readonly Regex endOfTag = new Regex (@"</[\w:\.]+\s*?>",
+							    RegexOptions.Compiled | RegexOptions.Singleline |
+							    RegexOptions.Multiline | RegexOptions.IgnoreCase |
+							    RegexOptions.CultureInvariant);
+		
+		static readonly Regex expressionRegex = new Regex (@"<%.*?%>",
+								   RegexOptions.Compiled | RegexOptions.Singleline |
+								   RegexOptions.Multiline | RegexOptions.IgnoreCase |
+								   RegexOptions.CultureInvariant);
+
+		static readonly Regex clientCommentRegex = new Regex (@"<!--(.|\s)*?-->",
+								      RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase |
+								      RegexOptions.CultureInvariant);
+		
 		ParserStack pstack;
 		BuilderLocationStack stack;
 		TemplateParser tparser;
@@ -698,10 +749,6 @@ namespace System.Web.Compilation
 		// The kludge supports only self-closing tags inside attributes.
 		//
 		// KLUDGE WARNING!!
-		static readonly Regex runatServer=new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/>",
-							     RegexOptions.Compiled | RegexOptions.Singleline |
-							     RegexOptions.Multiline | RegexOptions.IgnoreCase |
-							     RegexOptions.CultureInvariant);
 		bool ProcessTagsInAttributes (ILocation location, string tagid, TagAttributes attributes, TagType type)
 		{
 			if (attributes == null || attributes.Count == 0)
@@ -739,7 +786,7 @@ namespace System.Web.Compilation
 
 				TextParsed (location, String.Format (" {0}=\"{1}", key, index > 0 ? value.Substring (0, index) : String.Empty));;
 				FlushText ();
-				ParseAttributeTag (group.Value);
+				ParseAttributeTag (group.Value, location);
 				if (index + length < value.Length)
 					TextParsed (location, value.Substring (index + length) + "\"");
 				else
@@ -756,9 +803,9 @@ namespace System.Web.Compilation
 			return retval;
 		}
 
-		void ParseAttributeTag (string code)
+		void ParseAttributeTag (string code, ILocation location)
 		{
-			AspParser parser = new AspParser ("@@attribute_tag@@", new StringReader (code));
+			AspParser parser = new AspParser ("@@attribute_tag@@", new StringReader (code), location.BeginLine - 1, location as AspParser);
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -947,48 +994,127 @@ namespace System.Web.Compilation
 
 			return Path.GetFullPath (Path.Combine (basedir, filename));
 		}
+
+		delegate bool CheckBlockEnd (string text);
 		
+		bool CheckTagEndNeeded (string text)
+		{
+			return !text.EndsWith ("/>");
+		}
+		
+#if NET_2_0
+		List <TextBlock>
+#else
+		ArrayList
+#endif
+		FindRegexBlocks (Regex rxStart, Regex rxEnd, CheckBlockEnd checkEnd, IList blocks, TextBlockType typeForMatches, bool discardBlocks)
+		{
+#if NET_2_0
+			var ret = new List <TextBlock> ();
+#else
+			ArrayList ret = new ArrayList ();
+#endif
+			
+			foreach (TextBlock block in blocks) {
+				if (block.Type != TextBlockType.Verbatim) {
+					ret.Add (block);
+					continue;
+				}
+
+				int lastIndex = 0, index;
+				MatchCollection matches = rxStart.Matches (block.Content);
+				bool foundMatches = matches.Count > 0;
+				foreach (Match match in matches) {
+					foundMatches = true;
+					index = match.Index;
+					if (lastIndex < index)
+						ret.Add (new TextBlock (TextBlockType.Verbatim, block.Content.Substring (lastIndex, index - lastIndex)));
+
+					string value = match.Value;
+					if (rxEnd != null && checkEnd (value)) {
+						int startFrom = index + value.Length;
+						Match m = rxEnd.Match (block.Content, startFrom);
+						if (m.Success)
+							value += block.Content.Substring (startFrom, m.Index - startFrom) + m.Value;
+					}
+
+					if (!discardBlocks)
+						ret.Add (new TextBlock (typeForMatches, value));
+					lastIndex = index + value.Length;
+				}
+
+				if (lastIndex > 0 && lastIndex < block.Content.Length)
+					ret.Add (new TextBlock (TextBlockType.Verbatim, block.Content.Substring (lastIndex)));
+
+				if (!foundMatches)
+					ret.Add (block);
+			}
+
+			return ret;
+		}
+		
+		IList SplitTextIntoBlocks (string text)
+		{
+#if NET_2_0
+			var ret = new List <TextBlock> ();
+#else
+			ArrayList ret = new ArrayList ();
+#endif
+
+			ret.Add (new TextBlock (TextBlockType.Verbatim, text));
+			ret = FindRegexBlocks (clientCommentRegex, null, null, ret, TextBlockType.Comment, false);
+			ret = FindRegexBlocks (runatServer, endOfTag, CheckTagEndNeeded, ret, TextBlockType.Tag, false);
+			ret = FindRegexBlocks (expressionRegex, null, null, ret, TextBlockType.Expression, false);
+
+			return ret;
+		}
+
 		void TextParsed (ILocation location, string text)
 		{
 			if (ignore_text)
 				return;
 
-			// And again... the first one wins - if we have expressions and server-side
-			// controls together in one block of plain text, tough luck...
-			if (text.IndexOf ("<%") != -1 && !inScript) {
-				if (this.text.Length > 0)
-					FlushText (true);
-				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
-				r.AddChildren (this);
+			if (inScript) {
+				this.text.Append (text);
+				FlushText (true);
 				return;
 			}
-
-			int startIndex = 0, index = 0;
-			Match match;
-			int textLen = text.Length;
-
-			while (index > -1 && startIndex < textLen) {
-				match = runatServer.Match (text, index);
-					
-				if (match.Success) {
-					string value = match.Value;
-					index = match.Index;
-					if (index > startIndex)
-						this.text.Append (text.Substring (startIndex, index - startIndex));
-					ParseAttributeTag (value);
-					index += value.Length;
-					startIndex = index;
-				} else
-					break;
-
-				if (index < textLen)
-					index = text.IndexOf ('<', index);
-				else
-					break;
-			}
 			
-			this.text.Append (text.Substring (startIndex));
-			//PrintLocation (location);
+			IList blocks = SplitTextIntoBlocks (text);
+			foreach (TextBlock block in blocks) {
+				switch (block.Type) {
+					case TextBlockType.Verbatim:
+						this.text.Append (block.Content);
+						break;
+
+					case TextBlockType.Expression:
+						if (this.text.Length > 0)
+							FlushText (true);
+						CodeRenderParser r = new CodeRenderParser (block.Content, stack.Builder, location);
+						r.AddChildren (this);
+						break;
+
+					case TextBlockType.Tag:
+						ParseAttributeTag (block.Content, location);
+						break;
+
+					case TextBlockType.Comment: {
+						this.text.Append ("<!--");
+						FlushText (true);
+						AspParser parser = new AspParser ("@@comment_code@@",
+										  new StringReader (block.Content.Substring (4, block.Length - 7)),
+										  location.BeginLine - 1,
+										  location as AspParser);
+						parser.Error += new ParseErrorHandler (ParseError);
+						parser.TagParsed += new TagParsedHandler (TagParsed);
+						parser.TextParsed += new TextParsedHandler (TextParsed);
+						parser.Parse ();
+						this.text.Append ("-->");
+						FlushText (true);
+						break;
+					}
+				}
+			}
 		}
 
 		void FlushText ()
@@ -1202,7 +1328,7 @@ namespace System.Web.Compilation
 					CheckLanguage (language);
 					string src = (string) attributes ["src"];
 					if (src != null) {
-						if (src == "")
+						if (src.Length == 0)
 							throw new ParseException (Parser,
 								"src cannot be an empty string");
 
@@ -1369,11 +1495,13 @@ namespace System.Web.Compilation
 			string str;
 			ControlBuilder builder;
 			AspGenerator generator;
+			ILocation location;
 			
-			public CodeRenderParser (string str, ControlBuilder builder)
+			public CodeRenderParser (string str, ControlBuilder builder, ILocation location)
 			{
 				this.str = str;
 				this.builder = builder;
+				this.location = location;
 			}
 
 			public void AddChildren (AspGenerator generator)
@@ -1389,7 +1517,7 @@ namespace System.Web.Compilation
 			void DoParseExpressions (string str)
 			{
 				int startIndex = 0, index = 0;
-				Regex codeDirective = new Regex ("(<%(?!@)(?<code>(.|\\s)*?)%>)|(<[\\w:\\.]+.*?runat=[\"']?server[\"']?.*?/>)",
+				Regex codeDirective = new Regex ("(<%(?!@)(?<code>.*?)%>)|(<[\\w:\\.]+.*?runat=[\"']?server[\"']?.*?/>)",
 								 RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 				Match match;
 				int strLen = str.Length;
@@ -1420,7 +1548,7 @@ namespace System.Web.Compilation
 			
 			void DoParse (string str)
 			{
-				AspParser parser = new AspParser ("@@nested_tag@@", new StringReader (str));
+				AspParser parser = new AspParser ("@@code_render@@", new StringReader (str), location.BeginLine - 1, location as AspParser);
 				parser.Error += new ParseErrorHandler (ParseError);
 				parser.TagParsed += new TagParsedHandler (TagParsed);
 				parser.TextParsed += new TextParsedHandler (TextParsed);

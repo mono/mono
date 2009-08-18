@@ -1,3 +1,8 @@
+2009-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: Location property makes a copy of assigned
+	ILocation now.
+
 2009-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: when CreateSubBuilder is called on a builder

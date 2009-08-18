@@ -1,3 +1,8 @@
+2009-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializer.cs: read converters from the config only if
+	explicitly requested.
+
 2009-08-17  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonSerializer.cs: serialize fields before properties.
