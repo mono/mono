@@ -131,7 +131,7 @@ namespace System.Reflection
 			if (type.IsArray) {
 				if (type.GetArrayRank () > 1)
 					return InflateType (type.GetElementType (), method_args).MakeArrayType (type.GetArrayRank ());
-				if (type.ToString ().EndsWith ("[*]")) /*FIXME, the reflection API doesn't offer a way around this*/
+				if (type.ToString ().EndsWith ("[*]", StringComparison.Ordinal)) /*FIXME, the reflection API doesn't offer a way around this*/
 					return InflateType (type.GetElementType (), method_args).MakeArrayType (1);
 				return InflateType (type.GetElementType (), method_args).MakeArrayType ();
 			}
