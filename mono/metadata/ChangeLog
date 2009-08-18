@@ -1,5 +1,9 @@
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
+	* icall.c: Fix _NSGetEnviron method declaration warning.
+
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
 	* icall.c:
 	* reflection.c: Make bitwise checks explicit.
 
