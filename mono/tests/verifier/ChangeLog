@@ -1,3 +1,8 @@
+2009-08-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_generic_type_definition_on_boxing_position.cs: Valid encoding of GTD on
+	box position.
+
 2009-08-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	*unverifiable_ldobj_with_generic_type_definition.il: Regression test for
