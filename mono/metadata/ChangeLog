@@ -1,5 +1,21 @@
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* cil-coff.h: Fix METHOD_HEADER_FORMAT_MASK to be 2 bits and
+	remove METHOD_HEADER_TINY_FORMAT1.
+
+	* reflection.c: Remove reference to METHOD_HEADER_TINY_FORMAT1.
+
+	* metadata.c (mono_metadata_parse_mh_full): Kill tiny format1.
+
+	Both spec and MS uses only 2 bits to enumerate the kind of header.
+	So given that 0x6 and 0x2 are equal under a 2 bits mask, tiny format1
+	is superfluous, only used for tiny headers with odd code lengths.
+
+	This change also make sure that mono doesn't wronly interpret bit 2
+	of fat header flags, which is currently reserved.
+
+2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (do_mono_metadata_parse_type): Do error
 	checking for element types. Don't abort if presented
 	with a broken type kind.
