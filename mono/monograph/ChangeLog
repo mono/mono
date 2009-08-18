@@ -1,3 +1,6 @@
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
+	* monograph.c: Fix printf warnings.
 
 Mon Sep 10 15:03:06 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
