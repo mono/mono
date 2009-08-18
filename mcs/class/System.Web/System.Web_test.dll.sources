@@ -20,6 +20,7 @@ mainsoft/NunitWeb/NunitWeb/BaseWorkerRequest.cs
 mainsoft/NunitWeb/NunitWeb/CustomSection.cs
 mainsoft/NunitWeb/NunitWeb/FakeMembershipProvider.cs
 mainsoft/NunitWeb/NunitWeb/FormRequest.cs
+mainsoft/NunitWeb/NunitWeb/Global.asax.cs
 mainsoft/NunitWeb/NunitWeb/IForeignData.cs
 mainsoft/NunitWeb/NunitWeb/HandlerInvoker.cs
 mainsoft/NunitWeb/NunitWeb/MyHandler.cs
