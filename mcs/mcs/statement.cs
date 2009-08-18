@@ -736,7 +736,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (expr != null)
+			if (expr != null && expr.eclass == ExprClass.Invalid)
 				expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
@@ -1342,7 +1342,7 @@ namespace Mono.CSharp {
 				ec.DefineLocalVariable (Name, builder);
 		}
 
-		public bool IsThisAssigned (EmitContext ec)
+		public bool IsThisAssigned (EmitContext ec, Block block)
 		{
 			if (VariableInfo == null)
 				throw new Exception ();
@@ -1350,7 +1350,7 @@ namespace Mono.CSharp {
 			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
-			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, ec.loc);
+			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, block.StartLocation);
 		}
 
 		public bool IsAssigned (EmitContext ec)
@@ -2194,6 +2194,14 @@ namespace Mono.CSharp {
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			//
+			// Compiler generated scope statements
+			//
+			if (scope_initializers != null) {
+				foreach (Statement s in scope_initializers)
+					s.Resolve (ec);
+			}
+
+			//
 			// This flag is used to notate nested statements as unreachable from the beginning of this block.
 			// For the purposes of this resolution, it doesn't matter that the whole block is unreachable 
 			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
@@ -2630,7 +2638,6 @@ namespace Mono.CSharp {
 				if (child == null)
 					return null;
 				
-				block.ResolveMeta (ec, ParametersCompiled.EmptyReadOnlyParameters);
 				child = child.Resolve (ec);
 				if (child == null)
 					return null;
@@ -2656,10 +2663,11 @@ namespace Mono.CSharp {
 		}
 
 		GenericMethod generic;
-		FlowBranchingToplevel top_level_branching;
 		protected ParametersCompiled parameters;
 		ToplevelParameterInfo[] parameter_info;
 		LocalInfo this_variable;
+		bool resolved;
+		bool unreachable;
 
 		public HoistedVariable HoistedThisVariable;
 
@@ -2814,10 +2822,6 @@ namespace Mono.CSharp {
 			return iterator_storey;
 		}
 
-		public FlowBranchingToplevel TopLevelBranching {
-			get { return top_level_branching; }
-		}
-
 		//
 		// Returns a parameter reference expression for the given name,
 		// or null if there is no such parameter
@@ -2875,16 +2879,57 @@ namespace Mono.CSharp {
 
 		public bool IsThisAssigned (EmitContext ec)
 		{
-			return this_variable == null || this_variable.IsThisAssigned (ec);
+			return this_variable == null || this_variable.IsThisAssigned (ec, this);
 		}
 
-		public bool ResolveMeta (EmitContext ec, ParametersCompiled ip)
+		public bool Resolve (FlowBranching parent, EmitContext rc, ParametersCompiled ip, IMethodData md)
+		{
+			if (resolved)
+				return true;
+
+			resolved = true;
+
+			try {
+				if (!ResolveMeta (rc, ip))
+					return false;
+
+				using (rc.With (EmitContext.Flags.DoFlowAnalysis, true)) {
+					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
+
+					if (!Resolve (rc))
+						return false;
+
+					unreachable = top_level.End ();
+				}
+			} catch (Exception) {
+#if PRODUCTION
+				if (rc.CurrentBlock != null) {
+					Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: Phase Resolve");
+				} else {
+					Report.Error (587, "Internal compiler error: Phase Resolve");
+				}
+#endif
+				throw;
+			}
+
+			if (rc.ReturnType != TypeManager.void_type && !unreachable) {
+				if (rc.CurrentAnonymousMethod == null) {
+					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
+					return false;
+				} else if (!rc.CurrentAnonymousMethod.IsIterator) {
+					Report.Error (1643, rc.CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
+							  rc.CurrentAnonymousMethod.GetSignatureForError ());
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool ResolveMeta (EmitContext ec, ParametersCompiled ip)
 		{
 			int errors = Report.Errors;
 			int orig_count = parameters.Count;
-
-			if (top_level_branching != null)
-				return true;
 
 			if (ip != null)
 				parameters = ip;
@@ -2907,8 +2952,6 @@ namespace Mono.CSharp {
 			}
 
 			ResolveMeta (ec, offset);
-
-			top_level_branching = ec.StartFlowBranching (this);
 
 			return Report.Errors == errors;
 		}
@@ -2937,6 +2980,61 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void Emit (EmitContext ec)
+		{
+			if (Report.Errors > 0)
+				return;
+
+#if PRODUCTION
+			try {
+#endif
+			EmitMeta (ec);
+
+			if (ec.HasReturnLabel)
+				ec.ReturnLabel = ec.ig.DefineLabel ();
+
+			base.Emit (ec);
+
+			ec.Mark (EndLocation);
+
+			if (ec.HasReturnLabel)
+				ec.ig.MarkLabel (ec.ReturnLabel);
+
+			if (ec.return_value != null) {
+				ec.ig.Emit (OpCodes.Ldloc, ec.return_value);
+				ec.ig.Emit (OpCodes.Ret);
+			} else {
+				//
+				// If `HasReturnLabel' is set, then we already emitted a
+				// jump to the end of the method, so we must emit a `ret'
+				// there.
+				//
+				// Unfortunately, System.Reflection.Emit automatically emits
+				// a leave to the end of a finally block.  This is a problem
+				// if no code is following the try/finally block since we may
+				// jump to a point after the end of the method.
+				// As a workaround, we're always creating a return label in
+				// this case.
+				//
+
+				if (ec.HasReturnLabel || !unreachable) {
+					if (ec.ReturnType != TypeManager.void_type)
+						ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+					ec.ig.Emit (OpCodes.Ret);
+				}
+			}
+
+#if PRODUCTION
+			} catch (Exception e){
+				Console.WriteLine ("Exception caught by the compiler while emitting:");
+				Console.WriteLine ("   Block that caused the problem begin at: " + block.loc);
+					
+				Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
+				throw;
+			}
+#endif
+		}
+
 		public override void EmitMeta (EmitContext ec)
 		{
 			parameters.ResolveVariable ();
@@ -2955,12 +3053,6 @@ namespace Mono.CSharp {
 				SymbolWriter.DefineScopeVariable (ae.Storey.ID);
 
 			base.EmitSymbolInfo (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			base.Emit (ec);
-			ec.Mark (EndLocation);
 		}
 	}
 	

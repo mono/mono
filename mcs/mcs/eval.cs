@@ -406,10 +406,9 @@ namespace Mono.CSharp {
 						throw new InternalErrorException ("did not find the the Host method");
 
 					EmitContext ec = method.CreateEmitContext (null);
-					bool unreach;
 
 					try {
-						ec.ResolveTopBlock (null, method.Block, method.ParameterInfo, method, out unreach);
+						method.Block.Resolve (null, ec, method.ParameterInfo, method);
 					} catch (CompletionResult cr){
 						prefix = cr.BaseText;
 						return cr.Result;

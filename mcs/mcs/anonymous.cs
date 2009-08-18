@@ -1299,7 +1299,7 @@ namespace Mono.CSharp {
 			// TODO: Implement clone
 			aec = new EmitContext (
 				ec.ResolveContext, ec.GenericDeclContainer,
-				Location, null, ReturnType,
+				null, ReturnType,
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
@@ -1325,8 +1325,7 @@ namespace Mono.CSharp {
 			if (flags != 0)
 				aec_dispose = aec.Set (flags);
 
-			bool unreachable;
-			bool res = aec.ResolveTopBlock (ec, Block, Block.Parameters, null, out unreachable);
+			bool res = Block.Resolve (ec.CurrentBranching, aec, Block.Parameters, null);
 
 			if (ec.InferReturnType) {
 				aec.ReturnTypeInference.FixAllTypes ();

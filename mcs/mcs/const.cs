@@ -197,7 +197,7 @@ namespace Mono.CSharp {
 			in_transit = true;
 			// TODO: IResolveContext here
 			EmitContext ec = new EmitContext (
-				this, Parent, Location, null, MemberType, ModFlags);
+				this, Parent, null, MemberType, ModFlags);
 			ec.InEnumContext = this is EnumMember;
 			ec.IsAnonymousMethodAllowed = false;
 			value = DoResolveValue (ec);

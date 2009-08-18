@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				EmitContext ec = new EmitContext (
-					this, this.ds, Location, ig, MemberType, ModFlags, false);
+					this, this.ds, ig, MemberType, ModFlags, false);
 
 				ec.CurrentAnonymousMethod = host.Iterator;
 				return ec;

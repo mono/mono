@@ -3840,7 +3840,7 @@ namespace Mono.CSharp {
 		public virtual EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (
-				this, this.ds, Location, ig, MemberType, ModFlags, false);
+				this, this.ds, ig, MemberType, ModFlags, false);
 		}
 
 		protected override bool ResolveMemberType ()
@@ -4495,17 +4495,30 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public ExpressionStatement Resolve (ConstructorBuilder caller_builder, EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
 		{
+			eclass = ExprClass.Value;
+
+			// TODO: ec.GetSignatureForError ()
+			ConstructorBuilder caller_builder = ((Constructor) ec.ResolveContext).ConstructorBuilder;
+
 			if (argument_list != null) {
 				bool dynamic;
+
+				//
+				// Spec mandates that constructor initializer will not have `this' access
+				//
+				ec.IsStatic = true;
 				argument_list.Resolve (ec, out dynamic);
+				ec.IsStatic = false;
+
 				if (dynamic) {
 					SimpleName ctor = new SimpleName (ConstructorBuilder.ConstructorName, loc);
 					return new DynamicInvocation (ctor, argument_list, loc).Resolve (ec) as ExpressionStatement;
 				}
 			}
 
+			type = ec.CurrentType;
 			if (this is ConstructorBaseInitializer) {
 				if (ec.CurrentType.BaseType == null)
 					return this;
@@ -4524,9 +4537,7 @@ namespace Mono.CSharp {
 				// struct D { public D (int a) : this () {}
 				//
 				if (TypeManager.IsStruct (ec.CurrentType) && argument_list == null)
-					return this;
-				
-				type = ec.CurrentType;
+					return this;			
 			}
 
 			base_constructor_group = MemberLookupFinal (
@@ -4542,19 +4553,17 @@ namespace Mono.CSharp {
 			
 			if (base_constructor_group == null)
 				return this;
+
+			if (!ec.IsStatic)
+				base_constructor_group.InstanceExpression = ec.GetThis (loc);
 			
 			ConstructorInfo base_ctor = (ConstructorInfo)base_constructor_group;
-			
+
 			if (base_ctor == caller_builder){
 				Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
 			}
 						
 			return this;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			throw new NotSupportedException ();
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4564,9 +4573,7 @@ namespace Mono.CSharp {
 				return;
 			
 			ec.Mark (loc);
-			if (!ec.IsStatic)
-				base_constructor_group.InstanceExpression = ec.GetThis (loc);
-			
+
 			base_constructor_group.EmitCall (ec, argument_list);
 		}
 
@@ -4793,44 +4800,24 @@ namespace Mono.CSharp {
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
-				if (!block.ResolveMeta (ec, Parameters))
-					block = null;
-
 				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
 					if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
 						Initializer = new GeneratedBaseInitializer (Location);
 
-					//
-					// Spec mandates that Initializers will not have `this' access
-					//
 					if (Initializer != null) {
-						ec.IsStatic = true;
-						ExpressionStatement expr = Initializer.Resolve (ConstructorBuilder, ec);
-						ec.IsStatic = false;
-						block.AddScopeStatement (new StatementExpression (expr));
+						block.AddScopeStatement (new StatementExpression (Initializer));
 					}
 				}
 			}
 
 			Parameters.ApplyAttributes (ConstructorBuilder);
-			
-			SourceMethod source = null;
-			if (block == null)
-				ec.OmitDebuggingInfo = true;
-			else
-				source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
-			bool unreachable = false;
+			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
+
 			if (block != null) {
-				if (!ec.ResolveTopBlock (null, block, Parameters, this, out unreachable))
-					return;
-
-				ec.EmitMeta (block);
-
-				if (Report.Errors > 0)
-					return;
-
-				ec.EmitResolvedTopBlock (block, unreachable);
+				if (block.Resolve (null, ec, Parameters, this)) {
+					block.Emit (ec);
+				}
 			}
 
 			if (source != null)
@@ -4902,7 +4889,7 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (this, Parent, Location, ig_, TypeManager.void_type, ModFlags, true);
+			EmitContext ec = new EmitContext (this, Parent, ig_, TypeManager.void_type, ModFlags, true);
 			ec.CurrentBlock = block;
 			return ec;
 		}
@@ -5203,14 +5190,6 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (DeclSpace parent)
 		{
-			ToplevelBlock block = method.Block;
-
-			EmitContext ec;
-			if (block != null)
-				ec = method.CreateEmitContext (builder.GetILGenerator ());
-			else
-				ec = method.CreateEmitContext (null);
-
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
 
 			if (GenericMethod != null)
@@ -5225,7 +5204,13 @@ namespace Mono.CSharp {
 
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
-			ec.EmitTopBlock (method, block);
+			ToplevelBlock block = method.Block;
+			if (block != null) {
+				EmitContext ec = method.CreateEmitContext (builder.GetILGenerator ());
+				if (block.Resolve (null, ec, method.ParameterInfo, method)) {
+					block.Emit (ec);
+				}
+			}
 
 			if (source != null) {
 				method.EmitExtraSymbolInfo (source);
@@ -5734,7 +5719,7 @@ namespace Mono.CSharp {
 
 		public override void Emit()
 		{
-			EmitContext ec = new EmitContext (this, Parent, Location, null, TypeManager.void_type, ModFlags);
+			EmitContext ec = new EmitContext (this, Parent, null, TypeManager.void_type, ModFlags);
 			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return;
@@ -6469,7 +6454,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (this,
-					method.ds, method.Location, ig, ReturnType,
+					method.ds, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
@@ -7325,7 +7310,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (
-					this, method.Parent, Location, ig, ReturnType,
+					this, method.Parent, ig, ReturnType,
 					method.ModFlags, false);
 			}
 

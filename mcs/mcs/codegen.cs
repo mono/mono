@@ -369,16 +369,6 @@ namespace Mono.CSharp {
 		public bool IsStatic;
 
 		/// <summary>
-		///   Whether the actual created method is static or instance method.
-		///   Althoug the method might be declared as `static', if an anonymous
-		///   method is involved, we might turn this into an instance method.
-		///
-		///   So this reflects the low-level staticness of the method, while
-		///   IsStatic represents the semantic, high-level staticness.
-		/// </summary>
-		//public bool MethodIsStatic;
-
-		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
@@ -398,12 +388,10 @@ namespace Mono.CSharp {
 
 		public Block CurrentBlock;
 
-		public int CurrentFile;
-
 		/// <summary>
 		///   The location where we store the return value.
 		/// </summary>
-		LocalBuilder return_value;
+		public LocalBuilder return_value;
 
 		/// <summary>
 		///   The location where return has to jump to return the
@@ -427,11 +415,6 @@ namespace Mono.CSharp {
 		public AnonymousExpression CurrentAnonymousMethod;
 		
 		/// <summary>
-		///   Location for this EmitContext
-		/// </summary>
-		public Location loc;
-
-		/// <summary>
 		///   Inside an enum definition, we do not resolve enumeration values
 		///   to their enumerations, but rather to the underlying type/value
 		///   This is so EnumVal + EnumValB can be evaluated.
@@ -450,30 +433,14 @@ namespace Mono.CSharp {
 			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
-		/// <summary>
-		///    Whether we are in the resolving stage or not
-		/// </summary>
-		enum Phase {
-			Created,
-			Resolving,
-			Emitting
-		}
-
 		bool isAnonymousMethodAllowed = true;
 
-		Phase current_phase;
 		FlowBranching current_flow_branching;
 
-		static int next_id = 0;
-		int id = ++next_id;
+//		static int next_id = 0;
+//		int id = ++next_id;
 
-		public override string ToString ()
-		{
-			return String.Format ("EmitContext ({0}:{1})", id,
-					      CurrentAnonymousMethod, loc);
-		}
-		
-		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace ds, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ResolveContext = rc;
@@ -490,16 +457,11 @@ namespace Mono.CSharp {
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
-			CurrentBlock = null;
-			CurrentFile = 0;
-			current_phase = Phase.Created;
-
-			loc = l;
 		}
 
-		public EmitContext (IResolveContext rc, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (IResolveContext rc, DeclSpace ds, ILGenerator ig,
 				    Type return_type, int code_flags)
-			: this (rc, ds, l, ig, return_type, code_flags, false)
+			: this (rc, ds, ig, return_type, code_flags, false)
 		{
 		}
 
@@ -711,9 +673,9 @@ namespace Mono.CSharp {
 			return branching;
 		}
 
-		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt)
+		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt, FlowBranching parent)
 		{
-			FlowBranchingToplevel branching = new FlowBranchingToplevel (CurrentBranching, stmt);
+			FlowBranchingToplevel branching = new FlowBranchingToplevel (parent, stmt);
 			current_flow_branching = branching;
 			return branching;
 		}
@@ -754,158 +716,12 @@ namespace Mono.CSharp {
 			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
 		
-		public void EmitMeta (ToplevelBlock b)
-		{
-			b.EmitMeta (this);
-
-			if (HasReturnLabel)
-				ReturnLabel = ig.DefineLabel ();
-		}
-
-		//
-		// Here until we can fix the problem with Mono.CSharp.Switch, which
-		// currently can not cope with ig == null during resolve (which must
-		// be fixed for switch statements to work on anonymous methods).
-		//
-		public void EmitTopBlock (IMethodData md, ToplevelBlock block)
-		{
-			if (block == null)
-				return;
-			
-			bool unreachable;
-			
-			if (ResolveTopBlock (null, block, md.ParameterInfo, md, out unreachable)){
-				if (Report.Errors > 0)
-					return;
-
-				EmitMeta (block);
-
-				current_phase = Phase.Emitting;
-#if PRODUCTION
-				try {
-#endif
-				EmitResolvedTopBlock (block, unreachable);
-#if PRODUCTION
-				} catch (Exception e){
-					Console.WriteLine ("Exception caught by the compiler while emitting:");
-					Console.WriteLine ("   Block that caused the problem begin at: " + block.loc);
-					
-					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
-					throw;
-				}
-#endif
-			}
-		}
-
-		bool resolved;
-		bool unreachable;
-		
-		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
-					     ParametersCompiled ip, IMethodData md, out bool unreachable)
-		{
-			if (resolved) {
-				unreachable = this.unreachable;
-				return true;
-			}
-
-			current_phase = Phase.Resolving;
-			unreachable = false;
-
-			if (!loc.IsNull)
-				CurrentFile = loc.File;
-
-#if PRODUCTION
-			try {
-#endif
-				if (!block.ResolveMeta (this, ip))
-					return false;
-
-				using (this.With (EmitContext.Flags.DoFlowAnalysis, true)) {
-					FlowBranchingToplevel top_level;
-					if (anonymous_method_host != null)
-						top_level = new FlowBranchingToplevel (anonymous_method_host.CurrentBranching, block);
-					else 
-						top_level = block.TopLevelBranching;
-
-					current_flow_branching = top_level;
-					bool ok = block.Resolve (this);
-					current_flow_branching = null;
-
-					if (!ok)
-						return false;
-
-					bool flow_unreachable = top_level.End ();
-					if (flow_unreachable)
-						this.unreachable = unreachable = true;
-				}
-#if PRODUCTION
-			} catch (Exception e) {
-				Console.WriteLine ("Exception caught by the compiler while compiling:");
-				Console.WriteLine ("   Block that caused the problem begin at: " + loc);
-
-				if (CurrentBlock != null){
-					Console.WriteLine ("                     Block being compiled: [{0},{1}]",
-							   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
-				}
-				Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
-				throw;
-			}
-#endif
-
-			if (return_type != TypeManager.void_type && !unreachable) {
-				if (CurrentAnonymousMethod == null) {
-					Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
-					return false;
-				} else if (!CurrentAnonymousMethod.IsIterator) {
-					Report.Error (1643, CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
-						      CurrentAnonymousMethod.GetSignatureForError ());
-					return false;
-				}
-			}
-
-			resolved = true;
-			return true;
-		}
-
 		public Type ReturnType {
 			set {
 				return_type = value;
 			}
 			get {
 				return return_type;
-			}
-		}
-
-		public void EmitResolvedTopBlock (ToplevelBlock block, bool unreachable)
-		{
-			if (block != null)
-				block.Emit (this);
-
-			if (HasReturnLabel)
-				ig.MarkLabel (ReturnLabel);
-
-			if (return_value != null){
-				ig.Emit (OpCodes.Ldloc, return_value);
-				ig.Emit (OpCodes.Ret);
-			} else {
-				//
-				// If `HasReturnLabel' is set, then we already emitted a
-				// jump to the end of the method, so we must emit a `ret'
-				// there.
-				//
-				// Unfortunately, System.Reflection.Emit automatically emits
-				// a leave to the end of a finally block.  This is a problem
-				// if no code is following the try/finally block since we may
-				// jump to a point after the end of the method.
-				// As a workaround, we're always creating a return label in
-				// this case.
-				//
-
-				if (HasReturnLabel || !unreachable) {
-					if (return_type != TypeManager.void_type)
-						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
-					ig.Emit (OpCodes.Ret);
-				}
 			}
 		}
 
@@ -1028,13 +844,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void NeedReturnLabel ()
 		{
-			if (current_phase != Phase.Resolving){
+//			if (current_phase != Phase.Resolving){
 				//
 				// The reason is that the `ReturnLabel' is declared between
 				// resolution and emission
 				// 
-				throw new Exception ("NeedReturnLabel called from Emit phase, should only be called during Resolve");
-			}
+//				throw new Exception ("NeedReturnLabel called from Emit phase, should only be called during Resolve");
+//			}
 			
 			if (!HasReturnLabel)
 				HasReturnLabel = true;

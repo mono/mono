@@ -389,7 +389,7 @@ namespace Mono.CSharp {
 
 			DeclSpace ds = context.GenericDeclContainer;
 			EmitContext ec = new EmitContext (context, ds,
-				Location, null, typeof (Attribute), ds.ModFlags, false);
+				null, typeof (Attribute), ds.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
 
 			ConstructorInfo ctor = ResolveConstructor (ec);
