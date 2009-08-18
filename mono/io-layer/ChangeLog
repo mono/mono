@@ -1,3 +1,8 @@
+2009-08-18  Christian Hergert  <chris@dronelabs.com>
+
+	* processes.c: Fix method declaration warnings.
+	* sockets.c: getsockopt() wants socklen_t for size.
+
 2009-08-04  Miguel de Icaza  <miguel@novell.com>
 
 	* posix.c (_wapi_stdhandle_create): Split this into a new file to
