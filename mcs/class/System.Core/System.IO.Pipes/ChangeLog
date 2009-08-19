@@ -1,0 +1,9 @@
+2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AnonymousPipeClientStream.cs, AnonymousPipeServerStream.cs,
+	  NamedPipeClientStream.cs, NamedPipeServerStream.cs
+	  PipeAccessRights.cs, PipeAccessRule.cs, PipeAuditRule.cs,
+	  PipeDirection.cs, PipeInterfaces.cs, PipeOptions.cs,
+	  PipeSecurity.cs, PipeStream.cs, PipeStreamImpersonationWorker.cs,
+	  PipeTransmissionMode.cs, PipeUnix.cs, PipeWin32.cs :
+	  initial implementation, so far with win32 impl.
