@@ -1,4 +1,4 @@
-// CS0534: `B' does not implement inherited abstract member `A.MyEvent.add'
+// CS0533: `B.MyEvent' hides inherited abstract member `A.MyEvent'
 // Line: 11
 
 using System;
