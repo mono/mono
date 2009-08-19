@@ -1,5 +1,9 @@
 2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* net_2_1_raw_System.Core.dll.sources : now it should be created.
+
+2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Core.dll.sources : added a couple of sys.io.pipes files.
 
 2009-07-20  Jb Evain  <jbevain@novell.com>
