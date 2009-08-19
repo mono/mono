@@ -1,3 +1,7 @@
+2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* RegexMatchTests.cs: Add some explicit numeric group tests.
+
 2009-08-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* RegexMatchTests.cs (RegexTrial0061): New.

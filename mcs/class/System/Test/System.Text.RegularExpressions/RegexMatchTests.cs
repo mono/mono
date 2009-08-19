@@ -159,6 +159,14 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (@"\4400", RegexOptions.ECMAScript, "asdf$0012", "Pass. Group[0]=(4,3)"),//60
 			new RegexTrial (@"(?<2>ab)(?<c>c)(?<d>d)", RegexOptions.None, "abcd", "Pass. Group[0]=(0,4) Group[1]=(2,1) Group[2]=(0,2) Group[3]=(3,1)"),// 61
 			new RegexTrial (@"(?<1>ab)(c)", RegexOptions.None, "abc", "Pass. Group[0]=(0,3) Group[1]=(0,2)(2,1)"),//62
+			new RegexTrial (@"(?<44>a)", RegexOptions.None, "a", "Pass. Group[0]=(0,1) Group[44]=(0,1)"),//63
+			new RegexTrial (@"(?<44>a)(?<8>b)", RegexOptions.None, "ab", "Pass. Group[0]=(0,2) Group[8]=(1,1) Group[44]=(0,1)"),//64
+			new RegexTrial (@"(?<44>a)(?<8>b)(?<1>c)(d)", RegexOptions.None, "abcd", "Pass. Group[0]=(0,4) Group[1]=(2,1)(3,1) Group[8]=(1,1) Group[44]=(0,1)"),//65
+			new RegexTrial (@"(?<44>a)(?<44>b)", RegexOptions.None, "ab", "Pass. Group[0]=(0,2) Group[44]=(0,1)(1,1)"),//66
+			new RegexTrial (@"(?<44>a)\440", RegexOptions.None, "a ", "Pass. Group[0]=(0,2) Group[44]=(0,1)"),//67
+			new RegexTrial (@"(?<44>a)\440", RegexOptions.ECMAScript, "a ", "Fail."),//68
+			new RegexTrial (@"(?<44>a)\440", RegexOptions.None, "aa0", "Fail."),//69
+			new RegexTrial (@"(?<44>a)\440", RegexOptions.ECMAScript, "aa0", "Pass. Group[0]=(0,3) Group[44]=(0,1)"),//70
 		};
 
 		[Test]
@@ -340,5 +348,13 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]	public void RegexTrial0060 () { trials [60].Execute (); }
 		[Test]	public void RegexTrial0061 () { trials [61].Execute (); }
 		[Test]	public void RegexTrial0062 () { trials [62].Execute (); }
+		[Test]	public void RegexTrial0063 () { trials [63].Execute (); }
+		[Test]	public void RegexTrial0064 () { trials [64].Execute (); }
+		[Test]	public void RegexTrial0065 () { trials [65].Execute (); }
+		[Test]	public void RegexTrial0066 () { trials [66].Execute (); }
+		[Test]	public void RegexTrial0067 () { trials [67].Execute (); }
+		[Test]	public void RegexTrial0068 () { trials [68].Execute (); }
+		[Test]	public void RegexTrial0069 () { trials [69].Execute (); }
+		[Test]	public void RegexTrial0070 () { trials [70].Execute (); }
 	}
 }

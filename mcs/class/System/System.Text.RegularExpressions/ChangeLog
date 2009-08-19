@@ -1,5 +1,15 @@
 2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
 
+	Final piece of explicit numeric group support
+	* parser.cs (gap): New.
+	(GetMapping): Return it.
+	(ResolveReferences): Collect explicit numeric groups which may not
+	match their indices.
+	(HandleExplicitNumericGroups): New.  Process the above list to
+	assign appropriate indices, and compute the correct value of 'gap'.
+
+2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
+
 	* syntax.cs (CapturingGroup.Index): Rename from Number to clarify
 	semantics.
 	(CapturingGroup.CompareTo): New.

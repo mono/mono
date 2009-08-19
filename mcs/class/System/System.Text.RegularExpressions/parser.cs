@@ -164,7 +164,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				mapping.Add (name, group.Index);
 			}
 
-			return 1 + num_groups;
+			return gap;
 		}
 
 		// private methods
@@ -1060,6 +1060,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		{
 			int gid = 1;
 			Hashtable dict = new Hashtable ();
+			ArrayList explicit_numeric_groups = null;
 
 			// number unnamed groups
 
@@ -1081,6 +1082,11 @@ namespace System.Text.RegularExpressions.Syntax {
 				if (dict.Contains (group.Name)) {
 					CapturingGroup prev = (CapturingGroup) dict [group.Name];
 					group.Index = prev.Index;
+
+					if (group.Index == gid)
+						gid ++;
+					else if (group.Index > gid)
+						explicit_numeric_groups.Add (group);
 					continue;
 				}
 
@@ -1088,10 +1094,19 @@ namespace System.Text.RegularExpressions.Syntax {
 					int ptr = 0;
 					int group_gid = ParseDecimal (group.Name, ref ptr);
 					if (ptr == group.Name.Length) {
-						// FIXME: Handle non-contiguous groups
 						group.Index = group_gid;
 						dict.Add (group.Name, group);
 						++ num_groups;
+
+						if (group_gid == gid) {
+							gid ++;
+						} else {
+							// all numbers before 'gid' are already in the dictionary.  So, we know group_gid > gid
+							if (explicit_numeric_groups == null)
+								explicit_numeric_groups = new ArrayList (4);
+							explicit_numeric_groups.Add (group);
+						}
+
 						continue;
 					}
 				}
@@ -1105,6 +1120,11 @@ namespace System.Text.RegularExpressions.Syntax {
 				group.Index = gid ++;
 				++ num_groups;
 			}
+
+			gap = gid; // == 1 + num_groups, if explicit_numeric_groups == null
+
+			if (explicit_numeric_groups != null)
+				HandleExplicitNumericGroups (explicit_numeric_groups);
 
 			// resolve references
 
@@ -1128,6 +1148,39 @@ namespace System.Text.RegularExpressions.Syntax {
 					((CaptureAssertion)expr).CapturingGroup = group;
 				else if (expr is BalancingGroup)
 					((BalancingGroup)expr).Balance = group;
+			}
+		}
+
+		private void HandleExplicitNumericGroups (ArrayList explicit_numeric_groups)
+		{
+			int gid = gap;
+			int i = 0;
+			int n_explicit = explicit_numeric_groups.Count;
+
+			explicit_numeric_groups.Sort ();
+
+			// move 'gap' forward to skip over all explicit groups that
+			// turn out to match their index
+			for (; i < n_explicit; ++i) {
+				CapturingGroup g = (CapturingGroup) explicit_numeric_groups [i];
+				if (g.Index > gid)
+					break;
+				if (g.Index == gid)
+					gid ++;
+			}
+
+			gap = gid;
+
+			// re-index all further groups so that the indexes are contiguous
+			int prev = gid;
+			for (; i < n_explicit; ++i) {
+				CapturingGroup g = (CapturingGroup) explicit_numeric_groups [i];
+				if (g.Index == prev) {
+					g.Index = gid - 1;
+				} else {
+					prev = g.Index;
+					g.Index = gid ++;
+				}
 			}
 		}
 
@@ -1170,5 +1223,6 @@ namespace System.Text.RegularExpressions.Syntax {
 		private ArrayList caps;
 		private Hashtable refs;
 		private int num_groups;
+		private int gap;
 	}
 }
