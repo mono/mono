@@ -1,3 +1,14 @@
+2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelLoopState.cs: Take in account that
+	AtomicBoolean is a class.
+
+2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* AtomicBoolean.cs: Turn it into a class
+	* CountdownEvent.cs: Work on cached variable. Make sure
+	count doesn't go under 0.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Watch.cs:

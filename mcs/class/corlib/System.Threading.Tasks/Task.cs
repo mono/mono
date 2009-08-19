@@ -201,7 +201,7 @@ namespace System.Threading.Tasks
 		}
 		
 		internal void ContinueWithCore (Task continuation, TaskContinuationOptions kind,
-		                                          TaskScheduler scheduler, Func<bool> predicate)
+		                                TaskScheduler scheduler, Func<bool> predicate)
 		{
 			// Already set the scheduler so that user can call Wait and that sort of stuff
 			continuation.taskScheduler = scheduler;
@@ -455,22 +455,10 @@ namespace System.Threading.Tasks
 			if (exception != null && !(exception is TaskCanceledException))
 				throw exception;
 		}
-		
-		[MonoTODO ("Refactor")]
+
 		public void Wait (CancellationToken token)
 		{
-			if (scheduler == null)
-				throw new InvalidOperationException ("The Task hasn't been Started and thus can't be waited on");
-			
-			Watch sw = Watch.StartNew ();
-			scheduler.ParticipateUntil (this, delegate { 
-				return token.IsCancellationRequested;
-			});
-			sw.Stop ();
-			
-			if (exception != null && !(exception is TaskCanceledException))
-				throw exception;
-			
+			Wait (null, token);
 		}
 		
 		public bool Wait (TimeSpan ts)
@@ -480,33 +468,29 @@ namespace System.Threading.Tasks
 		
 		public bool Wait (int millisecondsTimeout)
 		{
-			if (scheduler == null)
-				throw new InvalidOperationException ("The Task hasn't been Started and thus can't be waited on");
-			
 			Watch sw = Watch.StartNew ();
-			bool result = scheduler.ParticipateUntil (this, delegate { 
-				return sw.ElapsedMilliseconds >= millisecondsTimeout;
-			});
-			sw.Stop ();
-			
-			if (exception != null && !(exception is TaskCanceledException))
-				throw exception;
-			
-			return !result;
+			return Wait (() => sw.ElapsedMilliseconds >= millisecondsTimeout, null);
 		}
 		
-		[MonoTODO ("Refactor")]
 		public bool Wait (int millisecondsTimeout, CancellationToken token)
+		{
+			Watch sw = Watch.StartNew ();
+			return Wait (() => sw.ElapsedMilliseconds >= millisecondsTimeout, token);
+		}
+
+		bool Wait (Func<bool> stopFunc, CancellationToken? token)
 		{
 			if (scheduler == null)
 				throw new InvalidOperationException ("The Task hasn't been Started and thus can't be waited on");
 			
-			Watch sw = Watch.StartNew ();
 			bool result = scheduler.ParticipateUntil (this, delegate { 
-				return sw.ElapsedMilliseconds >= millisecondsTimeout || token.IsCancellationRequested;
+				if (token.HasValue && token.Value.IsCancellationRequested)
+					throw new OperationCanceledException ("The CancellationToken has had cancellation requested.");
+				
+				
+				return (stopFunc != null) ? stopFunc () : false;
 			});
-			sw.Stop ();
-			
+
 			if (exception != null && !(exception is TaskCanceledException))
 				throw exception;
 			
@@ -576,6 +560,11 @@ namespace System.Threading.Tasks
 		
 		public static int WaitAny (params Task[] tasks)
 		{
+			return WaitAny (tasks, null, null);
+		}
+		
+		static int WaitAny (Task[] tasks, Func<bool> stopFunc, CancellationToken? token)
+		{
 			if (tasks == null)
 				throw new ArgumentNullException ("tasks");
 			if (tasks.Length == 0)
@@ -602,6 +591,12 @@ namespace System.Threading.Tasks
 			
 			// All tasks are supposed to use the same TaskManager
 			tasks[0].scheduler.ParticipateUntil (delegate {
+				if (stopFunc != null && stopFunc ())
+					return true;
+				
+				if (token.HasValue && token.Value.IsCancellationRequested)
+					throw new OperationCanceledException ("The CancellationToken has had cancellation requested.");
+				
 				return numFinished >= 1;
 			});
 			
@@ -617,107 +612,29 @@ namespace System.Threading.Tasks
 		{
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
 			
 			if (millisecondsTimeout == -1)
 				return WaitAny (tasks);
 			
-			int numFinished = 0;
-			int indexFirstFinished = -1;
-			
-			foreach (Task t in tasks) {
-				t.completed += delegate (object sender, EventArgs e) { 
-					int result = Interlocked.Increment (ref numFinished);
-					if (result == 1) {
-						Task target = (Task)sender;
-						indexFirstFinished = Array.FindIndex (tasks, (elem) => elem == target);
-					}
-				};	
-			}
-			
 			Watch sw = Watch.StartNew ();
-			tasks[0].scheduler.ParticipateUntil (delegate {
-				if (sw.ElapsedMilliseconds > millisecondsTimeout)
-					return true;
-				return numFinished >= 1;
-			});
-			sw.Stop ();
-			
-			return indexFirstFinished;
+			return WaitAny (tasks, () => sw.ElapsedMilliseconds > millisecondsTimeout, null);
 		}
-		
-		[MonoTODO ("Refactor")]
+
 		public static int WaitAny (Task[] tasks, int millisecondsTimeout, CancellationToken token)
-		{
+		{			
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
 			
 			if (millisecondsTimeout == -1)
 				return WaitAny (tasks);
 			
-			int numFinished = 0;
-			int indexFirstFinished = -1;
-			
-			foreach (Task t in tasks) {
-				t.completed += delegate (object sender, EventArgs e) { 
-					int result = Interlocked.Increment (ref numFinished);
-					if (result == 1) {
-						Task target = (Task)sender;
-						indexFirstFinished = Array.FindIndex (tasks, (elem) => elem == target);
-					}
-				};	
-			}
-			
 			Watch sw = Watch.StartNew ();
-			tasks[0].scheduler.ParticipateUntil (delegate {
-				if (sw.ElapsedMilliseconds > millisecondsTimeout || token.IsCancellationRequested)
-					return true;
-				return numFinished >= 1;
-			});
-			sw.Stop ();
-			
-			return indexFirstFinished;
+			return WaitAny (tasks, () => sw.ElapsedMilliseconds > millisecondsTimeout, token);
 		}
 		
-		[MonoTODO ("Refactor")]
 		public static int WaitAny (Task[] tasks, CancellationToken token)
-		{
-			if (tasks == null)
-				throw new ArgumentNullException ("tasks");
-			if (tasks.Length == 0)
-				throw new ArgumentException ("tasks is empty", "tasks");
-			
-			int numFinished = 0;
-			int indexFirstFinished = -1;
-			int index = 0;
-			
-			foreach (Task t in tasks) {
-				if (t.IsCompleted) {
-					return index;
-				}
-				t.completed += delegate (object sender, EventArgs e) {
-					int result = Interlocked.Increment (ref numFinished);
-					// Check if we are the first to have finished
-					if (result == 1) {
-						Task target = (Task)sender;
-						indexFirstFinished = Array.FindIndex (tasks, (elem) => elem == target);
-					}
-				};	
-				index++;
-			}
-			
-			// All tasks are supposed to use the same TaskManager
-			tasks[0].scheduler.ParticipateUntil (delegate {
-				if (token.IsCancellationRequested)
-					return true;
-				
-				return numFinished >= 1;
-			});
-			
-			return indexFirstFinished;
+		{			
+			return WaitAny (tasks, null, token);
 		}
 		#endregion
 		

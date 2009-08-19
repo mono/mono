@@ -32,8 +32,8 @@ namespace System.Threading
 	{
 		internal class ExternalInfos
 		{
-			public AtomicBoolean IsStopped;
-			public AtomicBoolean IsBroken;
+			public AtomicBoolean IsStopped = new AtomicBoolean ();
+			public AtomicBoolean IsBroken = new AtomicBoolean ();
 			public volatile bool IsExceptional;
 			public long? LowestBreakIteration;
 		}

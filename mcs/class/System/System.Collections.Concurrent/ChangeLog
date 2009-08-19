@@ -1,3 +1,8 @@
+2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BlockingCollection.cs: Rewrite to use a transaction id
+	based approach. Ported to 4.0 API. Fix GetConsumingEnumerable.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* BlockingCollection.cs: New addition.

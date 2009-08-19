@@ -1,3 +1,7 @@
+2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Task.cs: Refactor Wait methods.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Future.cs: Add static to Factory property

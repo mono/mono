@@ -35,8 +35,9 @@ namespace System.Threading
 		
 		int participants;
 		CountdownEvent cntd;
+		AtomicBoolean cleaned = new AtomicBoolean ();
 		int phase;
-
+		
 		public Barrier (int participants) : this (participants, null)
 		{
 		}
@@ -51,6 +52,7 @@ namespace System.Threading
 		
 		void InitCountdownEvent ()
 		{
+			cleaned = new AtomicBoolean ();
 			cntd = new CountdownEvent (participants);
 		}
 		
@@ -85,42 +87,67 @@ namespace System.Threading
 		
 		public void SignalAndWait ()
 		{
-			SignalAndWait (() => { cntd.Wait (); return true; });
+			SignalAndWait ((c) => { c.Wait (); return true; });
 		}
 		
 		public bool SignalAndWait (int millisecondTimeout)
 		{
-			return SignalAndWait (() => cntd.Wait (millisecondTimeout));
+			return SignalAndWait ((c) => c.Wait (millisecondTimeout));
 		}
 		
 		public bool SignalAndWait (TimeSpan ts)
 		{
-			return SignalAndWait (() => cntd.Wait (ts));
+			return SignalAndWait ((c) => c.Wait (ts));
 		}
 		
 		public bool SignalAndWait (int millisecondTimeout, CancellationToken token)
 		{
-			return SignalAndWait (() => cntd.Wait (millisecondTimeout, token));
+			return SignalAndWait ((c) => c.Wait (millisecondTimeout, token));
 		}
 		
 		public bool SignalAndWait (TimeSpan ts, CancellationToken token)
 		{
-			return SignalAndWait (() => cntd.Wait (ts, token));
+			return SignalAndWait ((c) => c.Wait (ts, token));
 		}
 		
-		bool SignalAndWait (Func<bool> associate)
+		bool SignalAndWait (Func<CountdownEvent, bool> associate)
 		{
 			bool result;
+			AtomicBoolean cl = cleaned;
+			CountdownEvent temp = cntd;
 			
-			if (!cntd.Signal ()) {
-				result = associate ();
+			if (!temp.Signal ()) {
+				result = Wait (associate, temp, cl);
 			} else {
 				result = true;
-				postPhaseAction (this);
+				PostPhaseAction (cl);
 				phase++;
 			}
 			
 			return result;
+		}
+		
+		bool Wait (Func<CountdownEvent, bool> associate, CountdownEvent temp, AtomicBoolean cl)
+		{
+			if (!associate (temp))
+				return false;
+			
+			SpinWait sw = new SpinWait ();
+			while (!cl.Value) {
+				//Console.WriteLine (cleaned);
+				sw.SpinOnce ();
+			}
+			
+			return true;
+		}
+		
+		void PostPhaseAction (AtomicBoolean cl)
+		{
+			postPhaseAction (this);
+			
+			InitCountdownEvent ();
+			
+			cl.Value = true;
 		}
 		
 		public int CurrentPhaseNumber {

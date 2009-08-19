@@ -53,18 +53,18 @@ namespace System.Collections.Concurrent
 				if (i != enumerators.Length - 1)
 					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
 				else
-					enumerators[i] = GetEnumeratorForRange (i * count, source.Count - i * count);
+					enumerators[i] = GetEnumeratorForRange (i * count, source.Count);
 			}
 			
 			return enumerators;
 		}
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int count)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int lastIndex)
 		{
 			if (startIndex >= source.Count)
 			  return GetEmpty ();
 			
-			return GetEnumeratorForRangeInternal (startIndex, count);
+			return GetEnumeratorForRangeInternal (startIndex, lastIndex);
 		}
 
 		IEnumerator<KeyValuePair<long, T>> GetEmpty ()
@@ -72,9 +72,9 @@ namespace System.Collections.Concurrent
 			yield break;
 		  }
 		
-		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int count)
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int lastIndex)
 		{	
-			for (int i = startIndex; i < count; i++) {
+			for (int i = startIndex; i < lastIndex; i++) {
 				yield return new KeyValuePair<long, T> (i, source[i]);
 			}
 		}

@@ -1,3 +1,10 @@
+2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Partitioner.cs: Fix infinite recursion when calling Create
+	with a IList.
+	* Partitionners/ListPartitioner.cs: Fix bad splitting for the
+	last partition.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentQueue.cs:

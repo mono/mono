@@ -47,7 +47,7 @@ namespace System.Threading
 		
 		public bool Signal (int num)
 		{
-			if (num < 0)
+			if (num <= 0)
 				throw new ArgumentOutOfRangeException ("num");
 			
 			Action<int> check = delegate (int value) {
@@ -59,7 +59,7 @@ namespace System.Threading
 			if (!ApplyOperation (-num, check, out newValue))
 				throw new InvalidOperationException ("The event is already set");
 			
-			if (newValue <= 0) {
+			if (newValue == 0) {
 				evt.Set ();
 				return true;
 			}
@@ -91,9 +91,7 @@ namespace System.Threading
 			if (num < 0)
 				throw new ArgumentOutOfRangeException ("num");
 			
-			Action<int> check = delegate (int value) {	};
-			
-			return ApplyOperation (num, check);
+			return ApplyOperation (num, null);
 		}
 		
 		bool ApplyOperation (int num, Action<int> doCheck)
@@ -108,14 +106,14 @@ namespace System.Threading
 			newValue = 0;
 			
 			do {
-				if (IsSet)
+				oldCount = count;
+				if (oldCount == 0)
 					return false;
 				
-				oldCount = count;
 				newValue = oldCount + num;
 				
-				doCheck (newValue);
-				
+				if (doCheck != null)
+					doCheck (newValue);
 			} while (Interlocked.CompareExchange (ref count, newValue, oldCount) != oldCount);
 			
 			return true;
@@ -214,7 +212,7 @@ namespace System.Threading
 			
 		public bool IsSet {
 			get {
-				return count <= 0;
+				return count == 0;
 			}
 		}
 		

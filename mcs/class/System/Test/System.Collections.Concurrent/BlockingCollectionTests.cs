@@ -79,16 +79,16 @@ namespace ParallelFxTests
 		}
 		
 		[TestAttribute]
-		public void RemoveTestCase()
+		public void TakeTestCase()
 		{
 			defaultCollection.Add(1);
 			defaultCollection.Add(2);
 			boundedCollection.Add(1);
 			boundedCollection.Add(2);
 			
-			int value = defaultCollection.Remove();
+			int value = defaultCollection.Take();
 			Assert.AreEqual(1, value, "#1");
-			value = boundedCollection.Remove();
+			value = boundedCollection.Take();
 			Assert.AreEqual(1, value, "#2");
 		}
 		
@@ -131,8 +131,8 @@ namespace ParallelFxTests
 			defaultCollection.CompleteAdding();
 			Assert.IsFalse(defaultCollection.IsCompleted, "#3");
 			
-			defaultCollection.Remove();
-			defaultCollection.Remove();
+			defaultCollection.Take();
+			defaultCollection.Take();
 			
 			Assert.IsTrue(defaultCollection.IsAddingCompleted, "#1");
 			Assert.AreEqual(0, defaultCollection.Count, "#2");
@@ -148,6 +148,7 @@ namespace ParallelFxTests
 			defaultCollection.Add(4);
 			defaultCollection.Add(5);
 			defaultCollection.Add(6);
+			defaultCollection.CompleteAdding ();
 			
 			IEnumerable<int> enumerable = defaultCollection.GetConsumingEnumerable();
 			Assert.IsNotNull(enumerable, "#1");

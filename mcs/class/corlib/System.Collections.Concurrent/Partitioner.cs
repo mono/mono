@@ -36,14 +36,14 @@ namespace System.Collections.Concurrent
 		{
 			IList<TSource> tempIList = source as IList<TSource>;
 			if (tempIList != null)
-				return Create (tempIList);
+				return Create (tempIList, true);
 			
 			return new EnumerablePartitioner<TSource> (source);
 		}
 		
 	  public static OrderablePartitioner<TSource> Create<TSource> (TSource[] source, bool loadBalance)
 		{
-			return Create ((IList<TSource>)source);
+			return Create ((IList<TSource>)source, loadBalance);
 		}
 		
 	  public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> source, bool loadBalance)

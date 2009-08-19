@@ -27,7 +27,7 @@ using System;
 
 namespace System.Threading
 {
-	internal struct AtomicBoolean
+	internal class AtomicBoolean
 	{
 		int flag;
 		const int UnSet = 0;
@@ -47,6 +47,11 @@ namespace System.Threading
 			temp.Value = value;
 			
 			return temp;
+		}
+		
+		public bool TrySet ()
+		{
+			return !Exchange (true);
 		}
 		
 		public bool Exchange (bool newVal)
