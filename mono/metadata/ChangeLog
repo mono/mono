@@ -1,5 +1,11 @@
 2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_method_header): Add work-around to deal
+	with MS broken behavior of emmitting EH section sizes without the
+	header size added.
+
+2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (mono_type_create_from_typespec): Don't allocate image
 	memory until we're sure that we'll need it. This avoids leaking for
 	broken types or duplicated instantiation.
