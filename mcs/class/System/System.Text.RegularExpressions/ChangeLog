@@ -1,5 +1,14 @@
 2009-08-18  Raja R Harinath  <harinath@hurrynot.org>
 
+	Distinguish between the internal index of a group and group number.
+	* Regex.cs (GetGroupIndex): New.
+	(GroupNameFromNumber): Use it.
+	* GroupCollection.cs (.ctor): Introduce 'gap' argument.  It is the
+	index of the first group whose group number differs from its index.
+	(Item.get): Likewise.
+
+2009-08-18  Raja R Harinath  <harinath@hurrynot.org>
+
 	* parser.cs (GetMapping): Extend duplicate check for numeric
 	groups too.
 

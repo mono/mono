@@ -80,7 +80,7 @@ namespace System.Text.RegularExpressions {
 			this.machine = null;
 			this.text_length = 0;
 
-			this.groups = new GroupCollection (1);
+			this.groups = new GroupCollection (1, 1);
 			groups.SetValue (this, 0);
 		}
 
@@ -100,7 +100,7 @@ namespace System.Text.RegularExpressions {
 			this.machine = machine;
 			this.text_length = text_length;
 
-			this.groups = new GroupCollection (n_groups);
+			this.groups = new GroupCollection (n_groups, n_groups);
 			groups.SetValue (this, 0);
 		}
 #endif

@@ -315,7 +315,8 @@ namespace System.Text.RegularExpressions {
 
 		public string GroupNameFromNumber (int i)
 		{
-			if (i < 0 || i > group_count)
+			i = GetGroupIndex (i);
+			if (i < 0)
 				return "";
 
 			return _groupNumberToNameMap [i];
@@ -326,6 +327,15 @@ namespace System.Text.RegularExpressions {
 			if (mapping.Contains (name))
 				return (int) mapping [name];
 
+			return -1;
+		}
+
+		internal int GetGroupIndex (int number)
+		{
+			int gap = group_count + 1;
+			if (number < gap)
+				return number;
+			// FIXME: handle arbitrarily numbered groups here
 			return -1;
 		}
 

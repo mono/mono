@@ -39,11 +39,13 @@ namespace System.Text.RegularExpressions
 	public class GroupCollection: ICollection, IEnumerable
 	{
 		private Group [] list;
+		private int gap;
 
 		/* No public constructor */
-		internal GroupCollection (int n)
+		internal GroupCollection (int n, int gap)
 		{
 			list = new Group [n];
+			this.gap = gap;
 		}
 
 		public int Count {
@@ -60,10 +62,11 @@ namespace System.Text.RegularExpressions
 
 		public Group this [int i] {
 			get {
-				if (i < list.Length && i >= 0)
-					return list [i];
-				else
-					return Group.Fail;
+				if (i >= gap) {
+					Match m = (Match) list [0];
+					i = m == Match.Empty ? -1 : m.Regex.GetGroupIndex (i);
+				}
+				return i < 0 ? Group.Fail : list [i];
 			}
 		}
 
@@ -77,9 +80,9 @@ namespace System.Text.RegularExpressions
 				// The 0th group is the match.
 				Match m = (Match) list [0];
 				if (m != Match.Empty) {
-					int index = m.Regex.GroupNumberFromName (groupName);
-					if (index != -1)
-						return this [index];
+					int number = m.Regex.GroupNumberFromName (groupName);
+					if (number != -1)
+						return this [number];
 				}
 
 				return Group.Fail;
