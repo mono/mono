@@ -1,3 +1,7 @@
+2009-08-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_context_get_int_reg): Handle SP as well.
+
 2009-08-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_instances): Fix the net 1.1 build.
