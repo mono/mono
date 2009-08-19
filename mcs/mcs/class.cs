@@ -3840,7 +3840,7 @@ namespace Mono.CSharp {
 		public virtual EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (
-				this, this.ds, ig, MemberType);
+				this, ig, MemberType);
 		}
 
 		protected override bool ResolveMemberType ()
@@ -4889,7 +4889,7 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (this, Parent, ig_, TypeManager.void_type);
+			EmitContext ec = new EmitContext (this, ig_, TypeManager.void_type);
 			ec.CurrentBlock = block;
 			ec.Set (EmitContext.Options.ConstructorScope);
 			return ec;
@@ -5420,8 +5420,7 @@ namespace Mono.CSharp {
 			if (member_type != null)
 				throw new InternalErrorException ("Multi-resolve");
 
-			IResolveContext rc = GenericMethod == null ? this : (IResolveContext) ds;
-			TypeExpr te = type_name.ResolveAsTypeTerminal (rc, false);
+			TypeExpr te = type_name.ResolveAsTypeTerminal (this, false);
 			if (te == null)
 				return false;
 			
@@ -5720,7 +5719,7 @@ namespace Mono.CSharp {
 
 		public override void Emit()
 		{
-			EmitContext ec = new EmitContext (this, Parent, null, TypeManager.void_type);
+			EmitContext ec = new EmitContext (this, null, TypeManager.void_type);
 			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return;
@@ -6455,7 +6454,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (this,
-					method.ds, ig, ReturnType);
+					ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
@@ -7310,7 +7309,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
 				return new EmitContext (
-					this, method.Parent, ig, ReturnType);
+					this, ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()

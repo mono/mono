@@ -294,12 +294,12 @@ namespace Mono.CSharp {
 				//
 				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null ?
 					ec.CurrentAnonymousMethod.Storey.TypeParameters :
-					ec.GenericDeclContainer.TypeParameters;
+					ec.CurrentTypeParameters;
 
 				TypeArguments targs = new TypeArguments ();
 
 				if (tparams.Length < CountTypeParameters) {
-					TypeParameter[] parent_tparams = ec.GenericDeclContainer.Parent.PartialContainer.TypeParameters;
+					TypeParameter[] parent_tparams = ec.ResolveContext.CurrentTypeDefinition.TypeParameters;
 					for (int i = 0; i < parent_tparams.Length; ++i)
 						targs.Add (new TypeParameterExpr (parent_tparams[i], Location));
 				}
@@ -312,7 +312,8 @@ namespace Mono.CSharp {
 				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
 
-			Expression e = new New (storey_type_expr, null, Location).Resolve (ec);
+			EmitContext rc = new EmitContext (this, null, ec.ReturnType);
+			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
 			e.Emit (ec);
 
 			Instance = new LocalTemporary (storey_type_expr.Type);
@@ -1297,10 +1298,7 @@ namespace Mono.CSharp {
 		public bool Compatible (EmitContext ec)
 		{
 			// TODO: Implement clone
-			aec = new EmitContext (
-				ec.ResolveContext, ec.GenericDeclContainer,
-				null, ReturnType);
-
+			aec = new EmitContext (ec.ResolveContext, null, ReturnType);
 			aec.CurrentAnonymousMethod = this;
 
 			IDisposable aec_dispose = null;

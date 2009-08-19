@@ -7398,7 +7398,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!texpr.CheckAccessLevel (ec.GenericDeclContainer)) {
+				if (!texpr.CheckAccessLevel (ec.ResolveContext)) {
 					Report.SymbolRelatedToPreviousError (member_lookup.Type);
 					ErrorIsInaccesible (loc, TypeManager.CSharpName (member_lookup.Type));
 					return null;

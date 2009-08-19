@@ -278,14 +278,6 @@ namespace Mono.CSharp {
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
-
-		// the declcontainer to lookup for type-parameters.  Should only use LookupGeneric on it.
-		//
-		// FIXME: This is somewhat of a hack.  We don't need a full DeclSpace for this.  We just need the
-		//        current type parameters in scope. IUIC, that will require us to rewrite GenericMethod.
-		//        Maybe we can replace this with a 'LookupGeneric (string)' instead, but we'll have to 
-		//        handle generic method overrides differently
-		DeclSpace GenericDeclContainer { get; }
 	}
 
 	/// <summary>
@@ -408,8 +400,6 @@ namespace Mono.CSharp {
 		//
 		public Expression CurrentInitializerVariable;
 
-		DeclSpace decl_space;
-
 		public ILGenerator ig;
 
 		/// <summary>
@@ -461,16 +451,10 @@ namespace Mono.CSharp {
 
 		public TypeInferenceContext ReturnTypeInference;
 
-//		static int next_id = 0;
-//		int id = ++next_id;
-
-		public EmitContext (IResolveContext rc, DeclSpace ds, ILGenerator ig,
-				    Type return_type)
+		public EmitContext (IResolveContext rc, ILGenerator ig, Type return_type)
 		{
 			this.ResolveContext = rc;
 			this.ig = ig;
-
-			this.decl_space = ds;
 
 			//
 			// The default setting comes from the command line option
@@ -499,11 +483,6 @@ namespace Mono.CSharp {
 
 		public TypeContainer CurrentTypeDefinition {
 			get { return ResolveContext.CurrentTypeDefinition; }
-		}
-
-		// IResolveContext.GenericDeclContainer
-		public DeclSpace GenericDeclContainer {
-			get { return decl_space; }
 		}
 
 		public bool ConstantCheckState {
@@ -904,7 +883,7 @@ namespace Mono.CSharp {
 		}
 
 		public TypeContainer CurrentTypeDefinition {
-			get { throw new InternalErrorException ("No TypeContainer in module context"); }
+			get { return RootContext.ToplevelTypes; }
 		}
 
 		public DeclSpace DeclContainer {

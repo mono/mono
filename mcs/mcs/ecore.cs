@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!te.CheckAccessLevel (ec.GenericDeclContainer)) {
+			if (!te.CheckAccessLevel (ec)) {
 				Report.SymbolRelatedToPreviousError (te.Type);
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
@@ -2883,9 +2883,9 @@ namespace Mono.CSharp {
 			return ResolveAsTypeTerminal (ec, false);
 		}
 
-		public virtual bool CheckAccessLevel (DeclSpace ds)
+		public virtual bool CheckAccessLevel (IResolveContext mc)
 		{
-			return ds.CheckAccessLevel (Type);
+			return mc.CurrentTypeDefinition.CheckAccessLevel (Type);
 		}
 
 		public virtual bool IsClass {

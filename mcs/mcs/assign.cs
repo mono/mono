@@ -486,7 +486,7 @@ namespace Mono.CSharp {
 				//
 
 				// TODO: Use ResolveContext only
-				EmitContext f_ec = new EmitContext (rc, rc.GenericDeclContainer, null, TypeManager.void_type);
+				EmitContext f_ec = new EmitContext (rc, null, TypeManager.void_type);
 				f_ec.CurrentBlock = ec.CurrentBlock;
 
 				EmitContext.Options flags = EmitContext.Options.FieldInitializerScope | EmitContext.Options.ConstructorScope;

@@ -196,8 +196,7 @@ namespace Mono.CSharp {
 
 			in_transit = true;
 			// TODO: IResolveContext here
-			EmitContext ec = new EmitContext (
-				this, Parent, null, MemberType);
+			EmitContext ec = new EmitContext (this, null, MemberType);
 
 			EmitContext.Options opt = EmitContext.Options.ConstantScope;
 			if (this is EnumMember)

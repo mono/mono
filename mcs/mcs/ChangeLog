@@ -1,5 +1,9 @@
 2009-08-19  Marek Safar  <marek.safar@gmail.com>
 
+	* *.cs: Removed IResolveContext::GenericDeclContainer.
+
+2009-08-19  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs, delegate.cs: Changed Delegate to be TypeContainer based.
 
 2009-08-19  Marek Safar  <marek.safar@gmail.com>

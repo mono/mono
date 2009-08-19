@@ -115,10 +115,6 @@ namespace Mono.CSharp {
 
 		public Attribute (string target, ATypeNameExpression expr, Arguments[] args, Location loc, bool nameEscaped)
 		{
-			//LeftExpr = left_expr;
-			//Identifier = identifier;
-			//Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
-
 			this.expression = expr;
 			if (args != null) {
 				PosArguments = args [0];
@@ -395,9 +391,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			DeclSpace ds = context.GenericDeclContainer;
-			EmitContext ec = new EmitContext (context, ds,
-				null, typeof (Attribute));
+			EmitContext ec = new EmitContext (context, null, typeof (Attribute));
 			ec.Set (EmitContext.Options.ConstantScope);
 
 			ConstructorInfo ctor = ResolveConstructor (ec);

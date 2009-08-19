@@ -23,7 +23,7 @@ namespace Mono.CSharp
 			eclass = ExprClass.Type;
 		}
 
-		public override bool CheckAccessLevel (DeclSpace ds)
+		public override bool CheckAccessLevel (IResolveContext ds)
 		{
 			return true;
 		}

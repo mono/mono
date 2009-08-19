@@ -313,11 +313,11 @@ namespace Mono.CSharp {
 				if ((expr == null) || (expr.Type == null))
 					return false;
 
-				if (!ec.GenericDeclContainer.IsAccessibleAs (fn.Type)) {
+				if (!ec.CurrentTypeDefinition.IsAccessibleAs (fn.Type)) {
 					Report.SymbolRelatedToPreviousError (fn.Type);
 					Report.Error (703, loc,
 						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
-						fn.GetSignatureForError (), ec.GenericDeclContainer.GetSignatureForError ());
+						fn.GetSignatureForError (), ec.CurrentTypeDefinition.GetSignatureForError ());
 					return false;
 				}
 
@@ -1166,7 +1166,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public override bool CheckAccessLevel (DeclSpace ds)
+		public override bool CheckAccessLevel (IResolveContext ds)
 		{
 			return true;
 		}
@@ -1399,9 +1399,9 @@ namespace Mono.CSharp {
 			return ConstraintChecker.CheckConstraints (ec, open_type, gen_params, args.Arguments, loc);
 		}
 	
-		public override bool CheckAccessLevel (DeclSpace ds)
+		public override bool CheckAccessLevel (IResolveContext mc)
 		{
-			return ds.CheckAccessLevel (open_type);
+			return mc.CurrentTypeDefinition.CheckAccessLevel (open_type);
 		}
 
 		public override bool IsClass {
@@ -1748,6 +1748,12 @@ namespace Mono.CSharp {
 		{
 			this.return_type = return_type;
 			this.parameters = parameters;
+		}
+
+		public override TypeContainer CurrentTypeDefinition {
+			get {
+				return Parent.CurrentTypeDefinition;
+			}
 		}
 
 		public override TypeParameter[] CurrentTypeParameters {
