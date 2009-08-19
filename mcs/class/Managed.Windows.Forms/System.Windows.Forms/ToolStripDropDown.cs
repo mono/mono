@@ -232,9 +232,12 @@ namespace System.Windows.Forms
 			get { return this.owner_item; }
 			set { this.owner_item = value; 
 				
-				if (this.owner_item != null)
+				if (this.owner_item != null) {
 					if (this.owner_item.Owner != null && this.owner_item.Owner.RenderMode != ToolStripRenderMode.ManagerRenderMode)
 						this.Renderer = this.owner_item.Owner.Renderer;
+
+					Font = owner_item.Font;
+				}
 			}
 		}
 
