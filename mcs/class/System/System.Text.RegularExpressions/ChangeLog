@@ -1,3 +1,16 @@
+2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	Implement some more group number/index distinction
+	* Regex.cs (gap, Gap): New.
+	(Init, InitNewRegex): Update it.
+	(GroupNumberFromName): If the 'name' is beyond the gap, it is an
+	explicit numeric group -- use the name as the group number.
+	(GetGroupIndex): Use a binary search to map a group number to its
+	index when we know that they don't match.
+	(GroupNumbers): Use group number, not group index, for explicit
+	numeric groups.
+	* Match.cs (.ctor): Use the newly introduce 'Regex.Gap'.
+
 2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Regex.cs (group_numbers): New.

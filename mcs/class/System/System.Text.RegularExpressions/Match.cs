@@ -100,7 +100,7 @@ namespace System.Text.RegularExpressions {
 			this.machine = machine;
 			this.text_length = text_length;
 
-			this.groups = new GroupCollection (n_groups, n_groups);
+			this.groups = new GroupCollection (n_groups, regex.Gap);
 			groups.SetValue (this, 0);
 		}
 #endif

@@ -218,6 +218,7 @@ namespace System.Text.RegularExpressions {
 				InitNewRegex();
 			} else {
 				this.group_count = this.machineFactory.GroupCount;
+				this.gap = this.machineFactory.Gap;
 				this.mapping = this.machineFactory.Mapping;
 				this.group_names = this.machineFactory.NamesMapping;
 			}
@@ -229,6 +230,7 @@ namespace System.Text.RegularExpressions {
 			this.machineFactory = CreateMachineFactory (this.pattern, this.roptions);
 			cache.Add (this.pattern, this.roptions, this.machineFactory);
 			this.group_count = machineFactory.GroupCount;
+			this.gap = this.machineFactory.Gap;
 			this.mapping = machineFactory.Mapping;
 			this.group_names = this.machineFactory.NamesMapping;
 		}
@@ -324,19 +326,21 @@ namespace System.Text.RegularExpressions {
 
 		public int GroupNumberFromName (string name)
 		{
-			if (mapping.Contains (name))
-				return (int) mapping [name];
-
-			return -1;
+			if (!mapping.Contains (name))
+				return -1;
+			int i = (int) mapping [name];
+			if (i >= gap)
+				i = Int32.Parse (name);
+			return i;
 		}
 
 		internal int GetGroupIndex (int number)
 		{
-			int gap = group_count + 1;
 			if (number < gap)
 				return number;
-			// FIXME: handle arbitrarily numbered groups here
-			return -1;
+			if (gap > group_count)
+				return -1;
+			return Array.BinarySearch (GroupNumbers, gap, group_count - gap + 1, number);
 		}
 
 		// match methods
@@ -492,6 +496,10 @@ namespace System.Text.RegularExpressions {
 			get { return group_count; }
 		}
 
+		internal int Gap {
+			get { return gap; }
+		}
+
 		// private
 
 		private IMachine CreateMachine ()
@@ -512,9 +520,10 @@ namespace System.Text.RegularExpressions {
 			get {
 				if (group_numbers == null) {
 					group_numbers = new int [1 + group_count];
-					for (int i = 0; i <= group_count; ++i)
+					for (int i = 0; i < gap; ++i)
 						group_numbers [i] = i;
-					// FIXME: needs to handle arbitrarily numbered groups '(?<43>abc)'
+					for (int i = gap; i <= group_count; ++i)
+						group_numbers [i] = Int32.Parse (group_names [i]);
 					return group_numbers;
 				}
 				return group_numbers;
@@ -524,6 +533,7 @@ namespace System.Text.RegularExpressions {
 		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
+		private int gap;
 		private bool refsInitialized;
 		private string [] group_names;
 		private int [] group_numbers;
