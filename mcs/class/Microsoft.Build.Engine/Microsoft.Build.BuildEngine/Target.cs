@@ -183,8 +183,9 @@ namespace Microsoft.Build.BuildEngine {
 			try {
 				result = batchingImpl.Build (this, out executeOnErrors);
 			} catch (Exception e) {
-				LogError ("Error building target {0}: {1}", Name, e.ToString ());
-				throw;
+				LogError ("Error building target {0}: {1}", Name, e.Message);
+				LogMessage (MessageImportance.Low, "Error building target {0}: {1}", Name, e.ToString ());
+				return false;
 			}
 
 			if (executeOnErrors == true)
