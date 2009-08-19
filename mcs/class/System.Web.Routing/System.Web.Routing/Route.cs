@@ -109,6 +109,13 @@ namespace System.Web.Routing
 			
 			foreach (var p in values)
 				rdValues.Add (p.Key, p.Value);
+
+			RouteValueDictionary dataTokens = DataTokens;
+			if (dataTokens != null) {
+				RouteValueDictionary rdDataTokens = rd.DataTokens;
+				foreach (var token in dataTokens)
+					rdDataTokens.Add (token.Key, token.Value);
+			}
 			
 			return rd;
 		}
