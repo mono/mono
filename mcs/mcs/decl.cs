@@ -836,10 +836,6 @@ namespace Mono.CSharp {
 			get { return Parent; }
 		}
 
-		public virtual DeclSpace GenericDeclContainer {
-			get { return DeclContainer; }
-		}
-
 		public bool IsInObsoleteScope {
 			get {
 				if (GetObsoleteAttribute () != null)
@@ -936,10 +932,6 @@ namespace Mono.CSharp {
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
-		}
-
-		public override DeclSpace GenericDeclContainer {
-			get { return this; }
 		}
 
 		/// <summary>

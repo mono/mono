@@ -220,10 +220,6 @@ namespace Mono.CSharp {
 				return tc.Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
 			}
 
-			public DeclSpace GenericDeclContainer {
-				get { return tc.GenericDeclContainer; }
-			}
-
 			#endregion
 		}
 

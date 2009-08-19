@@ -1339,10 +1339,6 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.IsStatic; }
 		}
 
-		public DeclSpace GenericDeclContainer {
-			get { return SlaveDeclSpace; }
-		}
-
 		#endregion
 	}
 }

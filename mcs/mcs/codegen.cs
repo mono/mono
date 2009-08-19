@@ -890,10 +890,6 @@ namespace Mono.CSharp {
 			get { return RootContext.ToplevelTypes; }
 		}
 
-		public DeclSpace GenericDeclContainer {
-			get { return DeclContainer; }
-		}
-
 		public bool IsInObsoleteScope {
 			get { return false; }
 		}
