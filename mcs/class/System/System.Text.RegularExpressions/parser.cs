@@ -155,13 +155,13 @@ namespace System.Text.RegularExpressions.Syntax {
 			mapping.Add ("0", 0);
 			for (int i = 0; i < end; i++) {
 				CapturingGroup group = (CapturingGroup) caps [i];
-				string name = group.Name != null ? group.Name : group.Number.ToString ();
+				string name = group.Name != null ? group.Name : group.Index.ToString ();
 				if (mapping.Contains (name)) {
-					if ((int) mapping [name] != group.Number)
+					if ((int) mapping [name] != group.Index)
 						throw new SystemException ("invalid state");
 					continue;
 				}
-				mapping.Add (name, group.Number);
+				mapping.Add (name, group.Index);
 			}
 
 			return 1 + num_groups;
@@ -1068,7 +1068,7 @@ namespace System.Text.RegularExpressions.Syntax {
 					continue;
 
 				dict.Add (gid.ToString (), group);
-				group.Number = gid ++;
+				group.Index = gid ++;
 				++ num_groups;
 			}
 
@@ -1080,7 +1080,7 @@ namespace System.Text.RegularExpressions.Syntax {
 
 				if (dict.Contains (group.Name)) {
 					CapturingGroup prev = (CapturingGroup) dict [group.Name];
-					group.Number = prev.Number;
+					group.Index = prev.Index;
 					continue;
 				}
 
@@ -1089,7 +1089,7 @@ namespace System.Text.RegularExpressions.Syntax {
 					int group_gid = ParseDecimal (group.Name, ref ptr);
 					if (ptr == group.Name.Length) {
 						// FIXME: Handle non-contiguous groups
-						group.Number = group_gid;
+						group.Index = group_gid;
 						dict.Add (group.Name, group);
 						++ num_groups;
 						continue;
@@ -1102,7 +1102,7 @@ namespace System.Text.RegularExpressions.Syntax {
 
 				dict.Add (gid_s, group);
 				dict.Add (group.Name, group);
-				group.Number = gid ++;
+				group.Index = gid ++;
 				++ num_groups;
 			}
 

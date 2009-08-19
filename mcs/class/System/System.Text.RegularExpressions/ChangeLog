@@ -1,5 +1,12 @@
 2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
 
+	* syntax.cs (CapturingGroup.Index): Rename from Number to clarify
+	semantics.
+	(CapturingGroup.CompareTo): New.
+	* parser.cs, syntax.cs: Update to changes.
+
+2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
+
 	Implement some more group number/index distinction
 	* Regex.cs (gap, Gap): New.
 	(Init, InitNewRegex): Update it.

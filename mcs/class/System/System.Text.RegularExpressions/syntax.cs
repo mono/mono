@@ -287,13 +287,13 @@ namespace System.Text.RegularExpressions.Syntax {
 		private int group_count;
 	}
 
-	class CapturingGroup : Group {
+	class CapturingGroup : Group, IComparable {
 		public CapturingGroup () {
 			this.gid = 0;
 			this.name = null;
 		}
 
-		public int Number {
+		public int Index {
 			get { return gid; }
 			set { gid = value; }
 		}
@@ -317,6 +317,11 @@ namespace System.Text.RegularExpressions.Syntax {
 			return true;
 		}
 
+		public int CompareTo (object other)
+		{
+			return gid - ((CapturingGroup) other).gid;
+		}
+
 		private int gid;
 		private string name;
 	}
@@ -337,7 +342,7 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			LinkRef tail = cmp.NewLink ();
 
-			cmp.EmitBalanceStart (this.Number, balance.Number, this.IsNamed,  tail);
+			cmp.EmitBalanceStart (this.Index, balance.Index, this.IsNamed,  tail);
 
 			int count = Expressions.Count;
 			for (int i = 0; i < count; ++ i) {
@@ -505,7 +510,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				return;
 			}
 
-			int gid = group.Number;
+			int gid = group.Index;
 			LinkRef tail = cmp.NewLink ();
 
 			if (FalseExpression == null) {
@@ -785,7 +790,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		public override void Compile (ICompiler cmp, bool reverse) {
-			cmp.EmitReference (group.Number, ignore, reverse);
+			cmp.EmitReference (group.Index, ignore, reverse);
 		}
 
 		public override void GetWidth (out int min, out int max) {
