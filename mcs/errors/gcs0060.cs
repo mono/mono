@@ -5,6 +5,6 @@ public class Foo<K> {
 }
 
 public class Bar : Foo<Bar.Baz> {
-	private class Baz {
+	internal class Baz {
 	}
 }
