@@ -306,12 +306,10 @@ namespace System.Text.RegularExpressions {
 			return names;
 		}
 
-		public int[] GetGroupNumbers ()
+		public int [] GetGroupNumbers ()
 		{
-			int[] numbers = new int [1 + group_count];
-			for (int i = 0; i <= group_count; ++i)
-				numbers [i] = i;
-			// FIXME: needs to handle arbitrarily numbered groups '(?<43>abc)'
+			int [] numbers = new int [1 + group_count];
+			Array.Copy (GroupNumbers, numbers, 1 + group_count);
 			return numbers;
 		}
 
@@ -509,13 +507,26 @@ namespace System.Text.RegularExpressions {
 				group_names [(int) de.Value] = (string) de.Key;
 			return group_names;
 		}
-		
+
+		private int [] GroupNumbers {
+			get {
+				if (group_numbers == null) {
+					group_numbers = new int [1 + group_count];
+					for (int i = 0; i <= group_count; ++i)
+						group_numbers [i] = i;
+					// FIXME: needs to handle arbitrarily numbered groups '(?<43>abc)'
+					return group_numbers;
+				}
+				return group_numbers;
+			}
+		}
+
 		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
 		private bool refsInitialized;
 		private string [] group_names;
-
+		private int [] group_numbers;
 		
 		// protected members
 

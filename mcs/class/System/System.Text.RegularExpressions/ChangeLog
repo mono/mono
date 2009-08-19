@@ -1,5 +1,11 @@
 2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
 
+	* Regex.cs (group_numbers): New.
+	(GetGroupNumbers): Move array initialization ...
+	(GroupNumbers): ... to new on-demand initializer.
+
+2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
+
 	* Regex.cs (group_names): Rename from _groupNumbersToNameMap.
 	(GetGroupNamesArray): Use an IDictionaryEnumerator to walk the
 	mapping, since both the key and value are used in the loop.
