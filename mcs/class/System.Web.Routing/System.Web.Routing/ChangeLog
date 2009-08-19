@@ -1,3 +1,9 @@
+2009-08-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Route.cs: GetRouteData adds contents of its DataTokens
+	dictionary to the returned RouteData.DataTokens dictionary. Fixes
+	bug #523330. Patch from Dax@daxxfiles.net, thanks!
+
 2009-06-25  Marek Habersack  <mhabersack@novell.com>
 
 	* PatternParser.cs: parameter name lookups must be
