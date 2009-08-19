@@ -72,7 +72,19 @@
 			{RawFileName};
 			$(OutDir)
 		</AssemblySearchPaths>
+
+		<ResolveReferencesDependsOn>
+			BeforeResolveReferences;
+			ResolveProjectReferences;
+			ResolveAssemblyReferences;
+			AfterResolveReferences
+		</ResolveReferencesDependsOn>
 	</PropertyGroup>
+
+	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
+
+	<Target Name="BeforeResolveReferences" />
+	<Target Name="AfterResolveReferences" />
 
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
@@ -159,8 +171,7 @@
 	<PropertyGroup>
 		<CoreBuildDependsOn>
 			PrepareForBuild;
-			ResolveProjectReferences;
-			ResolveAssemblyReferences;
+			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
 			BuildResources;
 			CoreCompile;

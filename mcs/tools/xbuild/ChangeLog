@@ -1,3 +1,11 @@
+2009-08-20  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (ResolveReferences*): Add
+	a *DependsOn property and Before/After hooks. Change output
+	of ResolvedFiles to @(ReferencePath).
+	* xbuild/Microsoft.CSharp.targets (Csc): Use @(ReferencePath)
+	for references.
+
 2009-08-19  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets (ResolveAssemblyReference):
