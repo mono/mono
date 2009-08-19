@@ -1,3 +1,8 @@
+2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (is_valid_method_header): Fix number of clauses
+	and expected size calculation.
+
 2009-08-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_get_field_idx): Add fixme for broken
