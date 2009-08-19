@@ -1,5 +1,10 @@
 2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_Type_GetMethodsByName): Don't leak loader errors.
+	Release memory on failure.
+
+2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class-internals.h: Add mono_metadata_load_generic_param_constraints_full
 	to the internal API.
 
