@@ -1,5 +1,24 @@
 2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class-internals.h: Add mono_metadata_load_generic_param_constraints_full
+	to the internal API.
+
+	* metadata.c (get_constraints): Use a single-linked table as we don't
+	traverse it backward. Fail and return FALSE if only of the contraint types
+	is not found.
+
+	* metadata.c (mono_metadata_load_generic_param_constraints_full): Identical
+	to mono_metadata_load_generic_param_constraints except for having a return value.
+	This has to be done since the later is part of the public API.
+
+	* class.c (mono_class_create_from_typedef): Properly check the loading of constrains
+	and fail the type.
+
+	* loader.c (mono_get_method_from_token): Properly check the loading of constraints
+	and fail the method.
+
+2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_method_header): Add work-around to deal
 	with MS broken behavior of emmitting EH section sizes without the
 	header size added.
