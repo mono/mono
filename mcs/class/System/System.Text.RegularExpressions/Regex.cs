@@ -219,7 +219,7 @@ namespace System.Text.RegularExpressions {
 			} else {
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
-				this._groupNumberToNameMap = this.machineFactory.NamesMapping;
+				this.group_names = this.machineFactory.NamesMapping;
 			}
 		}
 #endif
@@ -230,7 +230,7 @@ namespace System.Text.RegularExpressions {
 			cache.Add (this.pattern, this.roptions, this.machineFactory);
 			this.group_count = machineFactory.GroupCount;
 			this.mapping = machineFactory.Mapping;
-			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
+			this.group_names = this.machineFactory.NamesMapping;
 		}
 
 #if !NET_2_1
@@ -302,7 +302,7 @@ namespace System.Text.RegularExpressions {
 		public string [] GetGroupNames ()
 		{
 			string [] names = new string [1 + group_count];
-			Array.Copy (_groupNumberToNameMap, names, 1 + group_count);
+			Array.Copy (group_names, names, 1 + group_count);
 			return names;
 		}
 
@@ -321,7 +321,7 @@ namespace System.Text.RegularExpressions {
 			if (i < 0)
 				return "";
 
-			return _groupNumberToNameMap [i];
+			return group_names [i];
 		}
 
 		public int GroupNumberFromName (string name)
@@ -503,18 +503,18 @@ namespace System.Text.RegularExpressions {
 
 		private static string [] GetGroupNamesArray (int groupCount, IDictionary mapping) 
 		{
-			string [] groupNumberToNameMap = new string [groupCount + 1];
-			foreach (string name in mapping.Keys) {
-				groupNumberToNameMap [(int) mapping [name]] = name;
-			}
-			return groupNumberToNameMap;
+			string [] group_names = new string [groupCount + 1];
+			IDictionaryEnumerator de = mapping.GetEnumerator ();
+			while (de.MoveNext ())
+				group_names [(int) de.Value] = (string) de.Key;
+			return group_names;
 		}
 		
 		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
 		private bool refsInitialized;
-		private string [] _groupNumberToNameMap;
+		private string [] group_names;
 
 		
 		// protected members

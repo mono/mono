@@ -1,5 +1,11 @@
 2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
 
+	* Regex.cs (group_names): Rename from _groupNumbersToNameMap.
+	(GetGroupNamesArray): Use an IDictionaryEnumerator to walk the
+	mapping, since both the key and value are used in the loop.
+
+2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
+
 	Introduce 'gap' concept into all the variants of regex
 	* arch.cs (IMachineFactory::Gap): New property.
 	* compiler.cs (InterpreterFactory): Update to changes.
