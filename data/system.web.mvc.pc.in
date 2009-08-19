@@ -1,0 +1,4 @@
+Name: System.Web.Mvc
+Description: System.Web.Mvc - ASP.NET MVC
+Version: 1.0.0.0
+Libs: -r:@prefix@/lib/mono/gac/System.Web.Mvc/1.0.0.0__31bf3856ad364e35/System.Web.Mvc.dll
