@@ -2338,18 +2338,18 @@ namespace Mono.CSharp {
 	//
 	public abstract class ATypeNameExpression : FullNamedExpression
 	{
-		public readonly string Name;
+		string name;
 		protected TypeArguments targs;
 
 		protected ATypeNameExpression (string name, Location l)
 		{
-			Name = name;
+			this.name = name;
 			loc = l;
 		}
 
 		protected ATypeNameExpression (string name, TypeArguments targs, Location l)
 		{
-			Name = name;
+			this.name = name;
 			this.targs = targs;
 			loc = l;
 		}
@@ -2380,6 +2380,15 @@ namespace Mono.CSharp {
 			}
 
 			return Name;
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
 		}
 
 		public TypeArguments TypeArguments {

@@ -1,3 +1,8 @@
+2009-08-19  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, iterators.cs, expression.cs, statement.cs, ecore.cs,
+	cs-parser.jay, attribute.cs, codegen.cs: Better error reports.
+
 2009-08-18  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Removed boolean fields from EmitContext.

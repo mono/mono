@@ -35,14 +35,6 @@ namespace Mono.CSharp {
 
 		public static bool CheckContext (EmitContext ec, Location loc)
 		{
-			for (Block block = ec.CurrentBlock; block != null; block = block.Parent) {
-				if (!block.Unsafe)
-					continue;
-
-				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
-				return false;
-			}
-
 			//
 			// We can't use `ec.InUnsafe' here because it's allowed to have an iterator
 			// inside an unsafe class.  See test-martin-29.cs for an example.

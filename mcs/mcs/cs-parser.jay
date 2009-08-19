@@ -635,7 +635,7 @@ global_attributes
 		if ($1 != null) {
 			Attributes attrs = (Attributes)$1;
 			if (global_attrs_enabled) {
-				CodeGen.Assembly.AddAttributes (attrs.Attrs);
+				CodeGen.Assembly.AddAttributes (attrs.Attrs, current_namespace);
 			} else {
 				foreach (Attribute a in attrs.Attrs) {
 					Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
@@ -671,7 +671,7 @@ attribute_sections
 					current_container.Module.AddAttributes (sect);
 					$$ = null;
 				} else if (current_attr_target != null && current_attr_target.Length > 0) {
-					CodeGen.Assembly.AddAttributes (sect);
+					CodeGen.Assembly.AddAttributes (sect, current_namespace);
 					$$ = null;
 				} else {
 					$$ = new Attributes (sect);
@@ -702,7 +702,7 @@ attribute_sections
 					current_container.Module.AddAttributes (sect);
 					$$ = null;
 				} else if (current_attr_target == "assembly") {
-					CodeGen.Assembly.AddAttributes (sect);
+					CodeGen.Assembly.AddAttributes (sect, current_namespace);
 					$$ = null;
 				} else {
 					if (attrs == null)
@@ -791,19 +791,16 @@ attribute
 		}
 
 		Arguments [] arguments = (Arguments []) $3;
-		MemberName left = mname.Left;
-		string identifier = mname.Name;
-
-		Expression left_expr = left == null ? null : left.GetTypeExpression ();
+		ATypeNameExpression expr = mname.GetTypeExpression ();
 
 		if (current_attr_target == String.Empty)
 			$$ = null;
 		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
 			// FIXME: supply "nameEscaped" parameter here.
 			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
 		else
-			$$ = new Attribute (current_attr_target, left_expr, identifier, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
+			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname.Location));
 	  }
 	;
 

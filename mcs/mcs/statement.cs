@@ -4301,10 +4301,14 @@ namespace Mono.CSharp {
 		{
 			Block = b;
 			Block.Unsafe = true;
+			loc = b.StartLocation;
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
+			if (ec.CurrentIterator != null)
+				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
+
 			using (ec.With (EmitContext.Options.UnsafeScope, true))
 				return Block.Resolve (ec);
 		}

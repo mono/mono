@@ -79,11 +79,7 @@ namespace Mono.CSharp {
 	{
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
-
-		// TODO: remove this member
-		public readonly string    Name;
-		public readonly Expression LeftExpr;
-		public readonly string Identifier;
+		readonly ATypeNameExpression expression;
 
 		Arguments PosArguments;
 		Arguments NamedArguments;
@@ -117,11 +113,13 @@ namespace Mono.CSharp {
 		// Cache for parameter-less attributes
 		static PtrHashtable att_cache;
 
-		public Attribute (string target, Expression left_expr, string identifier, Arguments[] args, Location loc, bool nameEscaped)
+		public Attribute (string target, ATypeNameExpression expr, Arguments[] args, Location loc, bool nameEscaped)
 		{
-			LeftExpr = left_expr;
-			Identifier = identifier;
-			Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
+			//LeftExpr = left_expr;
+			//Identifier = identifier;
+			//Name = LeftExpr == null ? identifier : LeftExpr + "." + identifier;
+
+			this.expression = expr;
 			if (args != null) {
 				PosArguments = args [0];
 				NamedArguments = args [1];				
@@ -133,7 +131,7 @@ namespace Mono.CSharp {
 
 		public Attribute Clone ()
 		{
-			Attribute a = new Attribute (ExplicitTarget, LeftExpr, Identifier, null, loc, nameEscaped);
+			Attribute a = new Attribute (ExplicitTarget, expression, null, loc, nameEscaped);
 			a.PosArguments = PosArguments;
 			a.NamedArguments = NamedArguments;
 			return a;
@@ -229,27 +227,21 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
+		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec)
 		{
-			return expr.ResolveAsTypeTerminal (ec, silent);
+			return expr.ResolveAsTypeTerminal (ec, false);
 		}
 
-		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
+		Type ResolvePossibleAttributeType (ATypeNameExpression expr, ref bool is_attr)
 		{
-			TypeExpr te;
-			if (LeftExpr == null) {
-				te = ResolveAsTypeTerminal (new SimpleName (name, Location), context, silent);
-			} else {
-				te = ResolveAsTypeTerminal (new MemberAccess (LeftExpr, name), context, silent);
-			}
-
+			TypeExpr te = ResolveAsTypeTerminal (expr, context);
 			if (te == null)
 				return null;
 
 			Type t = te.Type;
 			if (TypeManager.IsSubclassOf (t, TypeManager.attribute_type)) {
 				is_attr = true;
-			} else if (!silent) {
+			} else {
 				Report.SymbolRelatedToPreviousError (t);
 				Report.Error (616, Location, "`{0}': is not an attribute class", TypeManager.CSharpName (t));
 			}
@@ -261,16 +253,33 @@ namespace Mono.CSharp {
 		/// </summary>
 		void ResolveAttributeType ()
 		{
+			Report.IMessageRecorder msg_recorder = new Report.MessageRecorder ();
+			Report.IMessageRecorder prev_recorder = Report.SetMessageRecorder (msg_recorder);
+			int errors = Report.Errors;
+
 			bool t1_is_attr = false;
-			Type t1 = ResolvePossibleAttributeType (Identifier, true, ref t1_is_attr);
+			Type t1 = ResolvePossibleAttributeType (expression, ref t1_is_attr);
 
 			bool t2_is_attr = false;
-			Type t2 = nameEscaped ? null :
-				ResolvePossibleAttributeType (Identifier + "Attribute", true, ref t2_is_attr);
+			Type t2;
+			ATypeNameExpression expanded = null;
+
+			if (nameEscaped) {
+				t2 = null;
+			} else {
+				expanded = (ATypeNameExpression) expression.Clone (null);
+				expanded.Name += "Attribute";
+
+				t2 = ResolvePossibleAttributeType (expanded, ref t2_is_attr);
+			}
+
+			msg_recorder.EndSession ();
+			Report.SetMessageRecorder (prev_recorder);
+			Report.Errors = errors;
 
 			if (t1_is_attr && t2_is_attr) {
-				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. " +
-					      "Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
+				Report.Error (1614, Location, "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}Attribute'",
+					GetSignatureForError (), expression.GetSignatureForError (), expanded.GetSignatureForError ());
 				resolve_error = true;
 				return;
 			}
@@ -285,13 +294,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (t1 == null && t2 == null)
-				ResolvePossibleAttributeType (Identifier, false, ref t1_is_attr);
-			if (t1 != null)
-				ResolvePossibleAttributeType (Identifier, false, ref t1_is_attr);
-			if (t2 != null)
-				ResolvePossibleAttributeType (Identifier + "Attribute", false, ref t2_is_attr);
-
+			msg_recorder.PrintMessages ();
 			resolve_error = true;
 		}
 
@@ -307,7 +310,7 @@ namespace Mono.CSharp {
 			if (Type != null)
 				return TypeManager.CSharpName (Type);
 
-			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
+			return expression.GetSignatureForError ();
 		}
 
 		public bool HasSecurityAttribute {
@@ -332,6 +335,11 @@ namespace Mono.CSharp {
 				TypeManager.IsEnumType (t) ||
 				t == TypeManager.object_type ||
 				t == TypeManager.type_type;
+		}
+
+		// TODO: Don't use this ambiguous value
+		public string Name {
+			get { return expression.Name; }
 		}
 
 		void ApplyModuleCharSet ()
@@ -1288,9 +1296,9 @@ namespace Mono.CSharp {
 	{
 		public readonly NamespaceEntry ns;
 
-		public GlobalAttribute (NamespaceEntry ns, string target, 
-					Expression left_expr, string identifier, Arguments[] args, Location loc, bool nameEscaped):
-			base (target, left_expr, identifier, args, loc, nameEscaped)
+		public GlobalAttribute (NamespaceEntry ns, string target, ATypeNameExpression expression,
+					Arguments[] args, Location loc, bool nameEscaped):
+			base (target, expression, args, loc, nameEscaped)
 		{
 			this.ns = ns;
 		}
@@ -1335,11 +1343,11 @@ namespace Mono.CSharp {
 			RootContext.ToplevelTypes.NamespaceEntry = null;
 		}
 
-		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec, bool silent)
+		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec)
 		{
 			try {
 				Enter ();
-				return base.ResolveAsTypeTerminal (expr, ec, silent);
+				return base.ResolveAsTypeTerminal (expr, ec);
 			}
 			finally {
 				Leave ();

@@ -6604,7 +6604,7 @@ namespace Mono.CSharp {
 			type = ec.CurrentType;
 
 			if (!IsThisAvailable (ec)) {
-				if (ec.IsStatic) {
+				if (ec.IsStatic && !ec.HasSet (EmitContext.Options.ConstantScope)) {
 					Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
 				} else if (ec.CurrentAnonymousMethod != null) {
 					Report.Error (1673, loc,
@@ -8373,8 +8373,8 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			if (right_side == EmptyExpression.OutAccess) {
-				Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
-					      GetSignatureForError ());
+				Report.Error (206, loc,
+					"A property or indexer may not be passed as an out or ref parameter");
 				return null;
 			}
 

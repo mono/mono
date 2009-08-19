@@ -413,6 +413,11 @@ namespace Mono.CSharp {
 						      TypeManager.CSharpName (class_constraint_type));
 					return false;
 				}
+
+				if (TypeManager.IsDynamicType (class_constraint_type)) {
+					Report.Error (1967, loc, "A constraint cannot be the dynamic type");
+					return false;
+				}
 			}
 
 			if (class_constraint_type != null)

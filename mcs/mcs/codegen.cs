@@ -864,10 +864,10 @@ namespace Mono.CSharp {
 
 	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext
 	{
-		public void AddAttributes (ArrayList attrs)
+		public void AddAttributes (ArrayList attrs, IResolveContext context)
 		{
 			foreach (Attribute a in attrs)
-				a.AttachTo (this, this);
+				a.AttachTo (this, context);
 
 			if (attributes == null) {
 				attributes = new Attributes (attrs);
@@ -939,7 +939,7 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression LookupNamespaceAlias (string name)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		#endregion
@@ -1015,8 +1015,9 @@ namespace Mono.CSharp {
 				Arguments named = new Arguments (1);
 				named.Add (new NamedArgument (new LocatedToken (loc, "SkipVerification"), (new BoolLiteral (true, loc))));
 
-				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly", system_security_permissions,
-					"SecurityPermissionAttribute", new Arguments[] { pos, named }, loc, false);
+				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly",
+					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
+					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (this, this);
 
 				if (g.Resolve () != null) {
@@ -1094,7 +1095,7 @@ namespace Mono.CSharp {
 					case "AssemblyKeyFileAttribute":
 					case "System.Reflection.AssemblyKeyFileAttribute":
 						if (RootContext.StrongNameKeyFile != null) {
-							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
 							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 						} else {
@@ -1107,7 +1108,7 @@ namespace Mono.CSharp {
 					case "AssemblyKeyNameAttribute":
 					case "System.Reflection.AssemblyKeyNameAttribute":
 						if (RootContext.StrongNameKeyContainer != null) {
-							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.SymbolRelatedToPreviousError (a.Location, a.GetSignatureForError ());
 							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 						} else {
