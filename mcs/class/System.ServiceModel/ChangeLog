@@ -1,3 +1,7 @@
+2009-08-19  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: add named pipe files.
+
 2009-08-11  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: add DefaultOperationInvoker.cs.

@@ -855,8 +855,11 @@ System.ServiceModel/MsmqBindingBase.cs
 System.ServiceModel/MsmqException.cs
 System.ServiceModel/MsmqPoisonMessageException.cs
 System.ServiceModel/MsmqTransportSecurity.cs
+System.ServiceModel/NamedPipeTransportSecurity.cs
 System.ServiceModel/NetMsmqBinding.cs
 System.ServiceModel/NetMsmqSecurity.cs
+System.ServiceModel/NetNamedPipeBinding.cs
+System.ServiceModel/NetNamedPipeSecurity.cs
 System.ServiceModel/NetPeerTcpBinding.cs
 System.ServiceModel/NetTcpBinding.cs
 System.ServiceModel/NetTcpSecurity.cs

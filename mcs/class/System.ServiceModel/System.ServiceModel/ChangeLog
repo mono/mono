@@ -1,3 +1,9 @@
+2009-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetNamedPipeBinding.cs, NetNamedPipeSecurity.cs
+	  NamedPipeTransportSecurity.cs : new files.
+	* Dummy.cs : remove above ones.
+
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : wildcard action support was not working
