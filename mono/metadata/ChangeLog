@@ -1,5 +1,10 @@
 2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_method_header): Fix stupid formating
+	mistake.
+
+2009-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_method_header): Fix number of clauses
 	and expected size calculation.
 
