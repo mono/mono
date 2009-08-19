@@ -97,6 +97,11 @@ namespace System.Text.RegularExpressions {
 			get { return pattern[1]; }
 		}
 
+		public int Gap {
+			get { return gap; }
+			set { gap = value; }
+		}
+
 		public IDictionary Mapping {
 			get { return mapping; }
 			set { mapping = value; }
@@ -110,6 +115,7 @@ namespace System.Text.RegularExpressions {
 		private IDictionary mapping;
 		private ushort[] pattern;
 		private string [] namesMapping;
+		private int gap;
 	}
 
 	class PatternCompiler : ICompiler {

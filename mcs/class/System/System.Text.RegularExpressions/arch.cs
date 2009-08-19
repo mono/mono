@@ -110,6 +110,7 @@ namespace System.Text.RegularExpressions {
 		IMachine NewInstance ();
 		IDictionary Mapping { get; set; }
 		int GroupCount { get; }
+		int Gap { get; set; } // Index of first group whose number differs from its index, or 1+GroupCount
 		string [] NamesMapping { get; set; }
 	}
 

@@ -742,6 +742,11 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
+		public int Gap {
+			get { return gap; }
+			set { gap = value; }
+		}
+
 		public IDictionary Mapping {
 			get { return mapping; }
 			set { mapping = value; }
@@ -756,6 +761,7 @@ namespace System.Text.RegularExpressions {
 		private byte[] program;
 		private EvalDelegate eval_del;
 		private string[] namesMapping;
+		private int gap;
 	}
 
 }

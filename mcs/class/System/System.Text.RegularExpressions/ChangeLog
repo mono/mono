@@ -1,3 +1,14 @@
+2009-08-19  Raja R Harinath  <harinath@hurrynot.org>
+
+	Introduce 'gap' concept into all the variants of regex
+	* arch.cs (IMachineFactory::Gap): New property.
+	* compiler.cs (InterpreterFactory): Update to changes.
+	* RxCompiler.cs (RxInterpreterFactory): Likewise.
+	* JvmReMachineFactory.cs: Likewise.
+	* parser.cs (GetMapping): Return the 'gap' index.  Move creation
+	of mapping dictionary ...
+	* Regex.cs (CreateMachineFactory): ... here.  Update to changes.
+
 2009-08-18  Raja R Harinath  <harinath@hurrynot.org>
 
 	Distinguish between the internal index of a group and group number.

@@ -64,5 +64,11 @@ namespace System.Text.RegularExpressions
 		public int GroupCount {
 			get { return _machine.GroupCount; }
 		}
+
+		public int Gap {
+			// FIXME: fix definition once JvmMachine is updated
+			get { return 1 + GroupCount; }
+			set { throw new NotImplementedException ("Gap setter of JvmReMachineFactory should not be called."); }//We must implement the setter of interface but it is not in use
+		}
 	}
 }

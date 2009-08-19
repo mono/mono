@@ -262,7 +262,9 @@ namespace System.Text.RegularExpressions {
 			re.Compile (cmp, (options & RegexOptions.RightToLeft) != 0);
 
 			IMachineFactory machineFactory = cmp.GetMachineFactory ();
-			machineFactory.Mapping = psr.GetMapping ();
+			Hashtable mapping = new Hashtable ();
+			machineFactory.Gap = psr.GetMapping (mapping);
+			machineFactory.Mapping = mapping;
 			machineFactory.NamesMapping = GetGroupNamesArray (machineFactory.GroupCount, machineFactory.Mapping);
 
 			return machineFactory;

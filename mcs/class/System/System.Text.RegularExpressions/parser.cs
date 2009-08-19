@@ -149,9 +149,8 @@ namespace System.Text.RegularExpressions.Syntax {
 			}
 		}
 
-		public IDictionary GetMapping ()
+		public int GetMapping (Hashtable mapping)
 		{
-			Hashtable mapping = new Hashtable ();
 			int end = caps.Count;
 			mapping.Add ("0", 0);
 			for (int i = 0; i < end; i++) {
@@ -165,7 +164,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				mapping.Add (name, group.Number);
 			}
 
-			return mapping;
+			return 1 + num_groups;
 		}
 
 		// private methods
