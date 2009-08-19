@@ -1,3 +1,8 @@
+2009-08-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* constraints-load.il: New test for errors related to loading
+	type and method constraints.
+
 2009-08-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-528055.il: Regression test for #528055.
