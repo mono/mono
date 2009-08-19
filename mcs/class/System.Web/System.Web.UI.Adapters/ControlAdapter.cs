@@ -47,7 +47,12 @@ namespace System.Web.UI.Adapters
 		protected HttpBrowserCapabilities Browser 
 		{
 			get {
-				return Page.Request.Browser;
+				Page page = Page;
+
+				if (page != null)
+					return page.Request.Browser;
+
+				return null;
 			}
 		}
 
@@ -55,14 +60,9 @@ namespace System.Web.UI.Adapters
 		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		protected internal Control Control 
+		protected Control Control 
 		{
-			protected get {
-				return control;
-			}
-			set {
-				control = value;
-			}
+			get { return control; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -70,7 +70,12 @@ namespace System.Web.UI.Adapters
 		protected Page Page 
 		{
 			get {
-				return Control.Page;
+				Control control = Control;
+
+				if (control != null)
+					return control.Page;
+
+				return null;
 			}
 		}
 		
@@ -79,7 +84,12 @@ namespace System.Web.UI.Adapters
 		protected PageAdapter PageAdapter 
 		{
 			get {
-				return Control.Page.PageAdapter;
+				Page page = Page;
+
+				if (page != null)
+					return page.PageAdapter;
+
+				return null;
 			}
 		}
 
@@ -90,6 +100,9 @@ namespace System.Web.UI.Adapters
 
 		protected internal virtual void CreateChildControls ()
 		{
+			Control control = Control;
+			if (control != null)
+				control.CreateChildControls ();
 		}
 
 		protected internal virtual void EndRender (HtmlTextWriter w)
@@ -107,32 +120,50 @@ namespace System.Web.UI.Adapters
 
 		protected internal virtual void OnInit (EventArgs e)
 		{
-			Control.OnInit(e);
+			Control control = Control;
+
+			if (control != null)
+				control.OnInit(e);
 		}
 
 		protected internal virtual void OnLoad (EventArgs e)
 		{
-			Control.OnLoad(e);
+			Control control = Control;
+
+			if (control != null)
+				control.OnLoad(e);
 		}
 
 		protected internal virtual void OnPreRender (EventArgs e)
 		{
-			Control.OnPreRender(e);
+			Control control = Control;
+
+			if (control != null)
+				control.OnPreRender(e);
 		}
 
 		protected internal virtual void OnUnload (EventArgs e)
 		{
-			Control.OnUnload(e);
+			Control control = Control;
+
+			if (control != null)
+				control.OnUnload(e);
 		}
 
 		protected internal virtual void Render (HtmlTextWriter w)
 		{
-			Control.Render (w);
+			Control control = Control;
+
+			if (control != null)
+				control.Render (w);
 		}
 
 		protected internal virtual void RenderChildren (HtmlTextWriter w)
 		{
-			Control.RenderChildren (w);
+			Control control = Control;
+
+			if (control != null)
+				control.RenderChildren (w);
 		}
 
 		protected internal virtual object SaveAdapterControlState ()

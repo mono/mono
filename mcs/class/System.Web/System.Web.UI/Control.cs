@@ -160,7 +160,7 @@ namespace System.Web.UI
 				if (!did_adapter_lookup) {
 					adapter = ResolveAdapter ();
 					if (adapter != null)
-						adapter.Control = this;
+						adapter.control = this;
 					did_adapter_lookup = true;
 				}
 				return adapter;
