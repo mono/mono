@@ -994,6 +994,8 @@ namespace Mono.CSharp {
 					default_parent = TypeManager.value_type;
 				else if (Kind == Kind.Enum)
 					default_parent = TypeManager.enum_type;
+				else if (Kind == Kind.Delegate)
+					default_parent = TypeManager.multicast_delegate_type;
 
 				//
 				// Sets .size to 1 for structs with no instance fields
@@ -1066,7 +1068,7 @@ namespace Mono.CSharp {
 			// Let's do it as soon as possible, since code below can call DefineType() on classes
 			// that depend on us to be populated before they are.
 			//
-			if (!(this is CompilerGeneratedClass))
+			if (!(this is CompilerGeneratedClass) && !(this is Delegate))
 				RootContext.RegisterOrder (this); 
 
 			if (!CheckRecursiveDefinition (this))

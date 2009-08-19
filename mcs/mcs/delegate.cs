@@ -9,7 +9,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001 Ximian, Inc (http://www.ximian.com)
-// Copyright 2003-2008 Novell, Inc (http://www.ximian.com)
+// Copyright 2003-2009 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -20,10 +20,10 @@ using System.Text;
 
 namespace Mono.CSharp {
 
-	/// <summary>
-	///   Holds Delegates
-	/// </summary>
-	public class Delegate : DeclSpace, IMemberContainer
+	//
+	// Delegate container implementation
+	//
+	public class Delegate : TypeContainer
 	{
  		FullNamedExpression ReturnType;
 		public ParametersCompiled      Parameters;
@@ -41,8 +41,6 @@ namespace Mono.CSharp {
 		MethodBase delegate_method;
 		ReturnParameter return_attributes;
 
-		MemberCache member_cache;
-
 		const MethodAttributes mattr = MethodAttributes.Public | MethodAttributes.HideBySig |
 			MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
@@ -51,13 +49,13 @@ namespace Mono.CSharp {
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
-		        Modifiers.UNSAFE |
+			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
 				 int mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
-			: base (ns, parent, name, attrs)
+			: base (ns, parent, name, attrs, Kind.Delegate)
 
 		{
 			this.ReturnType = type;
@@ -80,68 +78,10 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
-		public override TypeParameter[] CurrentTypeParameters {
+		public override AttributeTargets AttributeTargets {
 			get {
-				return base.type_params;
+				return AttributeTargets.Delegate;
 			}
-		}
-
-		public override TypeBuilder DefineType ()
-		{
-			if (TypeBuilder != null)
-				return TypeBuilder;
-
-			if (IsTopLevel) {
-				if (TypeManager.NamespaceClash (Name, Location))
-					return null;
-				
-				ModuleBuilder builder = Module.Builder;
-
-				TypeBuilder = builder.DefineType (
-					Name, TypeAttr, TypeManager.multicast_delegate_type);
-			} else {
-				TypeBuilder builder = Parent.TypeBuilder;
-
-				string name = Name.Substring (1 + Name.LastIndexOf ('.'));
-				TypeBuilder = builder.DefineNestedType (
-					name, TypeAttr, TypeManager.multicast_delegate_type);
-			}
-
-			TypeManager.AddUserType (this);
-
-#if GMCS_SOURCE
-			if (IsGeneric) {
-				string[] param_names = new string [TypeParameters.Length];
-				for (int i = 0; i < TypeParameters.Length; i++)
-					param_names [i] = TypeParameters [i].Name;
-
-				GenericTypeParameterBuilder[] gen_params;
-				gen_params = TypeBuilder.DefineGenericParameters (param_names);
-
-				int offset = CountTypeParameters;
-				if (CurrentTypeParameters != null)
-					offset -= CurrentTypeParameters.Length;
-				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].Define (gen_params [i]);
-
-				if (CurrentTypeParameters != null) {
-					foreach (TypeParameter type_param in CurrentTypeParameters) {
-						if (!type_param.Resolve (this))
-							return null;
-					}
-				}
-
-				Expression current = new SimpleName (
-					MemberName.Basename, TypeParameters, Location);
-				current = current.ResolveAsTypeTerminal (this, false);
-				if (current == null)
-					return null;
-
-				currentType = current.Type;
-			}
-#endif
-
-			return TypeBuilder;
 		}
 
  		public override bool Define ()
@@ -496,7 +436,7 @@ namespace Mono.CSharp {
 
 			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
-		
+
 		// <summary>
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
@@ -540,12 +480,6 @@ namespace Mono.CSharp {
 			return TypeManager.GetFullNameSignature (invoke_method).Replace (".Invoke", "");
 		}
 		
-		public override MemberCache MemberCache {
-			get {
-				return member_cache;
-			}
-		}
-
 		public Expression InstanceExpression {
 			get {
 				return instance_expr;
@@ -569,49 +503,6 @@ namespace Mono.CSharp {
 				return ret_type;
 			}
 		}
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Delegate;
-			}
-		}
-
-		//
-		//   Represents header string for documentation comment.
-		//
-		public override string DocCommentHeader {
-			get { return "T:"; }
-		}
-
-		#region IMemberContainer Members
-
-		string IMemberContainer.Name
-		{
-			get { throw new NotImplementedException (); }
-		}
-
-		Type IMemberContainer.Type
-		{
-			get { throw new NotImplementedException (); }
-		}
-
-		MemberCache IMemberContainer.BaseCache
-		{
-			get { throw new NotImplementedException (); }
-		}
-
-		bool IMemberContainer.IsInterface {
-			get {
-				return false;
-			}
-		}
-
-		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion
 	}
 
 	//

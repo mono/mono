@@ -1,5 +1,9 @@
 2009-08-19  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs, delegate.cs: Changed Delegate to be TypeContainer based.
+
+2009-08-19  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, iterators.cs, expression.cs, statement.cs, ecore.cs,
 	cs-parser.jay, attribute.cs, codegen.cs: Better error reports.
 
