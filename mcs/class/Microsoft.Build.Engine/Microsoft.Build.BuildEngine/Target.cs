@@ -109,11 +109,17 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("buildTask");
 			buildTasks.Remove (buildTask);
 		}
-		
+
 		internal bool Build ()
 		{
-			bool deps;
-			bool result;
+			bool executeOnErrors;
+			return Build (out executeOnErrors);
+		}
+
+		internal bool Build (out bool executeOnErrors)
+		{
+			bool result = false;
+			executeOnErrors = false;
 
 			if (!ConditionParser.ParseAndEvaluate (Condition, Project)) {
 				LogMessage (MessageImportance.Low,
@@ -124,9 +130,14 @@ namespace Microsoft.Build.BuildEngine {
 
 			try {
 				buildState = BuildState.Started;
-				deps = BuildDependencies (GetDependencies ());
+				result = BuildDependencies (GetDependencies (), out executeOnErrors);
 
-				result = deps ? DoBuild () : false;
+				if (!result && executeOnErrors)
+					ExecuteOnErrors ();
+
+				if (result)
+					// deps built fine, do main build
+					result = DoBuild (out executeOnErrors);
 
 				buildState = BuildState.Finished;
 			} catch (Exception e) {
@@ -148,21 +159,24 @@ namespace Microsoft.Build.BuildEngine {
 				deps = new Expression ();
 				deps.Parse (DependsOnTargets, true);
 				targetNames = (string []) deps.ConvertTo (Project, typeof (string []));
-				foreach (string name in targetNames) {
-					t = project.Targets [name.Trim ()];
+				foreach (string dep_name in targetNames) {
+					t = project.Targets [dep_name.Trim ()];
 					if (t == null)
-						throw new InvalidProjectFileException (String.Format ("Target '{0}' not found.", name.Trim ()));
+						throw new InvalidProjectFileException (String.Format (
+								"Target '{0}', a dependency of target '{1}', not found.",
+								dep_name.Trim (), Name));
 					list.Add (t);
 				}
 			}
 			return list;
 		}
 
-		bool BuildDependencies (List <Target> deps)
+		bool BuildDependencies (List <Target> deps, out bool executeOnErrors)
 		{
+			executeOnErrors = false;
 			foreach (Target t in deps) {
 				if (t.BuildState == BuildState.NotStarted)
-					if (!t.Build ())
+					if (!t.Build (out executeOnErrors))
 						return false;
 				if (t.BuildState == BuildState.Started)
 					throw new InvalidProjectFileException ("Cycle in target dependencies detected");
@@ -171,9 +185,9 @@ namespace Microsoft.Build.BuildEngine {
 			return true;
 		}
 		
-		bool DoBuild ()
+		bool DoBuild (out bool executeOnErrors)
 		{
-			bool executeOnErrors;
+			executeOnErrors = false;
 			bool result = true;
 
 			if (BuildTasks.Count == 0)
@@ -183,8 +197,9 @@ namespace Microsoft.Build.BuildEngine {
 			try {
 				result = batchingImpl.Build (this, out executeOnErrors);
 			} catch (Exception e) {
-				LogError ("Error building target {0}: {1}", Name, e.ToString ());
-				throw;
+				LogError ("Error building target {0}: {1}", Name, e.Message);
+				LogMessage (MessageImportance.Low, "Error building target {0}: {1}", Name, e.ToString ());
+				return false;
 			}
 
 			if (executeOnErrors == true)
@@ -196,9 +211,17 @@ namespace Microsoft.Build.BuildEngine {
 		void ExecuteOnErrors ()
 		{
 			foreach (XmlElement onError in onErrorElements) {
-				// FIXME: add condition
 				if (onError.GetAttribute ("ExecuteTargets") == String.Empty)
 					throw new InvalidProjectFileException ("ExecuteTargets attribute is required in OnError element.");
+
+				string on_error_condition = onError.GetAttribute ("Condition");
+				if (!ConditionParser.ParseAndEvaluate (on_error_condition, Project)) {
+					LogMessage (MessageImportance.Low,
+						"OnError for target {0} skipped due to false condition: {1}",
+						Name, on_error_condition);
+					continue;
+				}
+
 				string[] targetsToExecute = onError.GetAttribute ("ExecuteTargets").Split (';');
 				foreach (string t in targetsToExecute)
 					this.project.Targets [t].Build ();

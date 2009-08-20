@@ -21,6 +21,12 @@
 	<PropertyGroup>
 		<OutDir Condition="'$(OutDir)' == ''">$(OutputPath)</OutDir>
 		<OutDir Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">$(OutDir)\</OutDir>
+
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<ConfigurationName Condition="'$(ConfigurationName)' == ''">$(Configuration)</ConfigurationName>
+
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -62,13 +68,35 @@
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
 			.mdb
 		</AllowedReferenceRelatedFileExtensions>
+
+		<AssemblySearchPaths Condition="'$(AssemblySearchPaths)' == ''">
+			{CandidateAssemblyFiles};
+			{HintPathFromItem};
+			{TargetFrameworkDirectory};
+			{PkgConfig};
+			{GAC};
+			{RawFileName};
+			$(OutDir)
+		</AssemblySearchPaths>
+
+		<ResolveReferencesDependsOn>
+			BeforeResolveReferences;
+			ResolveProjectReferences;
+			ResolveAssemblyReferences;
+			AfterResolveReferences
+		</ResolveReferencesDependsOn>
 	</PropertyGroup>
+
+	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
+
+	<Target Name="BeforeResolveReferences" />
+	<Target Name="AfterResolveReferences" />
 
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
 			AssemblyFiles="@(ChildProjectReferences)"
-			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{PkgConfig};{GAC};{RawFileName};$(OutDir)"
+			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
@@ -149,21 +177,41 @@
 	<PropertyGroup>
 		<CoreBuildDependsOn>
 			PrepareForBuild;
-			ResolveProjectReferences;
-			ResolveAssemblyReferences;
+			PreBuildEvent;
+			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
 			BuildResources;
-			CoreCompile;
+			Compile;
 			DeployOutputFiles;
-			_RecordCleanFile
+			_RecordCleanFile;
+			PostBuildEvent
 		</CoreBuildDependsOn>
 	</PropertyGroup>
 
 	<Target
 		Name="CoreBuild"
 		DependsOnTargets="$(CoreBuildDependsOn)"
-		Outputs="$(OutDir)$(AssemblyName)$(TargetExt)"
-	/>
+		Outputs="$(OutDir)$(AssemblyName)$(TargetExt)">
+
+		<OnError ExecuteTargets="_TimestampAfterCompile;PostBuildEvent"
+			Condition=" '$(RunPostBuildEvent)' == 'Always' or '$(RunPostBuildEvent)' == 'OnOutputUpdated'"/>
+	</Target>
+
+	<PropertyGroup>
+		<CompileDependsOn>
+			ResolveReferences;
+			BeforeCompile;
+			_TimestampBeforeCompile;
+			CoreCompile;
+			_TimestampAfterCompile;
+			AfterCompile
+		</CompileDependsOn>
+	</PropertyGroup>
+
+	<Target Name="BeforeCompile" />
+	<Target Name="AfterCompile" />
+
+	<Target Name="Compile" DependsOnTargets="$(CompileDependsOn)"/>
 
 	<Target Name="BuildResources"
 		DependsOnTargets="AssignTargetPaths;SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
@@ -386,6 +434,57 @@
 
 	</Target>
 
+	<!-- Pre/Post BuildEvents -->
+	<PropertyGroup>
+		<PreBuildEventDependsOn />
+	</PropertyGroup>
+
+	<Target Name="PreBuildEvent"
+		Condition="'$(PreBuildEvent)' != ''"
+		DependsOnTargets="$(PreBuildEventDependsOn)">
+
+		<Exec WorkingDirectory="$(OutDir)" Command="$(PreBuildEvent)" />
+	</Target>
+
+	<!-- PostBuildEvent depends on $(RunPostBuildEvent)
+
+		Default: OnBuildSuccess
+		OnBuildSuccess: Run after a successful build
+		OnOutputUpdated: Run only if the output assembly got updates
+		Always: Run always
+	-->
+	<PropertyGroup>
+		<PostBuildEventDependsOn />
+	</PropertyGroup>
+
+	<!-- this gets invoked in two cases, from CoreBuildDependsOn, if the build completes
+	     successfully, OR from OnError in CoreBuild, if the build failed and $(RunPostBuildEvent)
+	     is 'Always' or 'OnOutputUpdated' -->
+	<Target Name="PostBuildEvent"
+		Condition="'$(PostBuildEvent)' != '' and
+			('$(RunPostBuildEvent)' == 'Always' or '$(RunPostBuildEvent)' == 'OnBuildSuccess' or
+			  ('$(RunPostBuildEvent)' == 'OnOutputUpdated' and
+			    '$(_AssemblyModifiedTimeBeforeCompile)' != '$(_AssemblyModifiedTimeAfterCompile)')
+			)"
+		DependsOnTargets="$(PostBuildEventDependsOn)">
+
+		<Exec WorkingDirectory="$(OutDir)" Command="$(PostBuildEvent)" />
+	</Target>
+
+	<!-- Timestamp the output assemblies, required for PostBuildEvent -->
+	<Target Name="_TimestampBeforeCompile" Condition="'$(RunPostBuildEvent)' == 'OnOutputUpdated'">
+		<CreateItem Include="%(IntermediateAssembly.ModifiedTime)">
+			<Output TaskParameter="Include" PropertyName="_AssemblyModifiedTimeBeforeCompile" />
+		</CreateItem>
+	</Target>
+	<Target Name="_TimestampAfterCompile" Condition="'$(RunPostBuildEvent)' == 'OnOutputUpdated'">
+		<CreateItem Include="%(IntermediateAssembly.ModifiedTime)">
+			<Output TaskParameter="Include" PropertyName="_AssemblyModifiedTimeAfterCompile" />
+		</CreateItem>
+	</Target>
+
+
+	<!-- Clean -->
 	<Target Name="_RecordCleanFile"
 		DependsOnTargets="_GetCompileOutputsForClean">
 		<WriteLinesToFile

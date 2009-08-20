@@ -42,7 +42,7 @@ namespace Microsoft.Build.BuildEngine {
 		ITaskHost		hostObject;
 		Target			parentTarget;
 		XmlElement		taskElement;
-		TaskLoggingHelper	logger;
+		TaskLoggingHelper	task_logger;
 	
 		internal BuildTask (XmlElement taskElement, Target parentTarget)
 		{
@@ -88,16 +88,26 @@ namespace Microsoft.Build.BuildEngine {
 			TaskEngine	taskEngine;
 
 			LogTaskStarted ();
+			ITask task = null;
+
+			try {
+				task = InitializeTask ();
+			} catch (Exception e) {
+				LogError ("Error initializing task {0}: {1}", taskElement.LocalName, e.Message);
+				LogMessage (MessageImportance.Low, "Error initializing task {0}: {1}",
+						taskElement.LocalName, e.ToString ());
+				return false;
+			}
 
 			try {
 				taskEngine = new TaskEngine (parentTarget.Project);		
-				taskEngine.Prepare (InitializeTask (), this.taskElement, GetParameters (), this.Type);
+				taskEngine.Prepare (task, this.taskElement, GetParameters (), this.Type);
 				result = taskEngine.Execute ();
 				if (result)
 					taskEngine.PublishOutput ();
 			} catch (Exception e) {
-				logger.LogError ("Error executing task {0}: {1}", taskElement.LocalName, e.Message);
-				logger.LogMessage (MessageImportance.Low,
+				task_logger.LogError ("Error executing task {0}: {1}", taskElement.LocalName, e.Message);
+				task_logger.LogMessage (MessageImportance.Low,
 						"Error executing task {0}: {1}", taskElement.LocalName, e.ToString ());
 				result = false;
 			}
@@ -160,14 +170,33 @@ namespace Microsoft.Build.BuildEngine {
 				parentTarget.Project.FullFileName, taskElement.Name, succeeded);
 			parentTarget.Project.ParentEngine.EventSource.FireTaskFinished (this, tfea);
 		}
+
+		void LogError (string message,
+				     params object[] messageArgs)
+		{
+			BuildErrorEventArgs beea = new BuildErrorEventArgs (
+				null, null, null, 0, 0, 0, 0, String.Format (message, messageArgs),
+				null, null);
+			parentTarget.Project.ParentEngine.EventSource.FireErrorRaised (this, beea);
+		}
 		
+		void LogMessage (MessageImportance importance,
+					string message,
+					params object[] messageArgs)
+		{
+			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
+				String.Format (message, messageArgs), null,
+				null, importance);
+			parentTarget.Project.ParentEngine.EventSource.FireMessageRaised (this, bmea);
+		}
+
 		ITask InitializeTask ()
 		{
 			ITask task;
 			
 			task = (ITask)Activator.CreateInstance (this.Type);
 			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project, 0, 0, ContinueOnError);
-			logger = new TaskLoggingHelper (task);
+			task_logger = new TaskLoggingHelper (task);
 			
 			return task;
 		}

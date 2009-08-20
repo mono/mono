@@ -1581,6 +1581,68 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
 		}
 
+		[Test]
+		public void TestCaseSensitivityOfProjectElements ()
+		{
+			string projectXml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+        <ItemGroup>
+                <Abc Include=""foo"">
+                        <MetaDaTA1>md1</MetaDaTA1>
+                        <METadata2>md2</METadata2>
+                </Abc>
+                <Abc Include=""FOO"">
+                        <MetaDaTA1>MD1 caps</MetaDaTA1>
+                        <METadata2>MD2 caps</METadata2>
+                </Abc>
+                <Abc Include=""hmm"">
+                        <MetaDaTA1>Md1 CAPS</MetaDaTA1>
+                        <METadata2>MD2 CAPS</METadata2>
+                </Abc>
+                <Abc Include=""bar"">
+                        <MeTAdata1>md3</MeTAdata1>
+                        <Metadata2>md4</Metadata2>
+                </Abc>
+        </ItemGroup> 
+        <PropertyGroup><ProP1>ValueProp</ProP1></PropertyGroup>
+	<Target Name=""Main"">
+		<MesSAGE Text=""Full item: @(ABC)""/>
+		<MEssaGE Text=""metadata1 :%(AbC.MetaDATA1) metadata2: %(ABC.MetaDaTa2)""/>
+		<MEssaGE Text=""metadata2 : %(AbC.MetaDAta2)""/>
+		<MEssaGE Text=""Abc identity: %(ABC.IDENTitY)""/>
+		<MEssaGE Text=""prop1 : $(pROp1)""/>
+	</Target>
+</Project>
+";
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (projectXml);
+			bool result = project.Build ("Main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("A1: Build failed");
+			}
+			logger.DumpMessages ();
+
+			logger.CheckLoggedMessageHead ("Full item: foo;FOO;hmm;bar", "#A2");
+			logger.CheckLoggedMessageHead ("metadata1 :md1 metadata2: md2", "#A3");
+			logger.CheckLoggedMessageHead ("metadata1 :MD1 caps metadata2: MD2 caps", "#A4");
+			logger.CheckLoggedMessageHead ("metadata1 :md3 metadata2: md4", "#A5");
+			logger.CheckLoggedMessageHead ("metadata2 : md2", "#A6");
+			logger.CheckLoggedMessageHead ("metadata2 : MD2 caps", "#A7");
+			logger.CheckLoggedMessageHead ("metadata2 : md4", "#A8");
+			logger.CheckLoggedMessageHead ("Abc identity: foo", "#A9");
+			logger.CheckLoggedMessageHead ("Abc identity: hmm", "#A10");
+			logger.CheckLoggedMessageHead ("Abc identity: bar", "#A11");
+			logger.CheckLoggedMessageHead ("prop1 : ValueProp", "#A12");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+		}
+
 		// full solution test
 		//[Test]
 		public void TestBuildSolutionProject ()

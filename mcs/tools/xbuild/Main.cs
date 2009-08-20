@@ -64,9 +64,12 @@ namespace Mono.XBuild.CommandLine {
 		public void Execute ()
 		{
 			bool result = false;
+			bool show_stacktrace = false;
 			
 			try {
 				parameters.ParseArguments (args);
+				show_stacktrace = (parameters.LoggerVerbosity == LoggerVerbosity.Detailed ||
+					parameters.LoggerVerbosity == LoggerVerbosity.Diagnostic);
 				
 				if (parameters.DisplayVersion)
 					ErrorUtilities.ShowVersion (false);
@@ -108,9 +111,6 @@ namespace Mono.XBuild.CommandLine {
 					return;
 				}
 
-				if (projectFile.EndsWith (".sln"))
-					projectFile = GenerateSolutionProject (projectFile);
-
 				project.Load (projectFile);
 				
 				string oldCurrentDirectory = Environment.CurrentDirectory;
@@ -122,11 +122,11 @@ namespace Mono.XBuild.CommandLine {
 			}
 			
 			catch (InvalidProjectFileException ipfe) {
-				ErrorUtilities.ReportError (0, ipfe.Message);
+				ErrorUtilities.ReportError (0, show_stacktrace ? ipfe.ToString () : ipfe.Message);
 			}
 
 			catch (InternalLoggerException ile) {
-				ErrorUtilities.ReportError (0, ile.Message);
+				ErrorUtilities.ReportError (0, show_stacktrace ? ile.ToString () : ile.Message);
 			}
 
 			catch (Exception) {
@@ -140,17 +140,6 @@ namespace Mono.XBuild.CommandLine {
 				Environment.Exit (result ? 0 : 1);
 			}
 
-		}
-
-		string GenerateSolutionProject (string solutionFile)
-		{
-			SolutionParser s = new SolutionParser ();
-			Project p = engine.CreateNewProject ();
-			s.ParseSolution (solutionFile, p);
-			string projectFile = solutionFile + ".proj";
-			p.Save (projectFile);
-
-			return projectFile;
 		}
 	}
 }

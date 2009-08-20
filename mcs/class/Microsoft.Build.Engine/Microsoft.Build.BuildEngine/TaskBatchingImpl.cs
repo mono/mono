@@ -79,8 +79,11 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (Dictionary<string, BuildItemGroup> bucket in buckets) {
 				project.SetBatchedItems (bucket, commonItemsByName);
 				if (ConditionParser.ParseAndEvaluate (buildTask.Condition, project)) {
-					 if (! (retval = buildTask.Execute ()))
+					 retval = buildTask.Execute ();
+					 if (!retval && !buildTask.ContinueOnError) {
+						 executeOnErrors = true;
 						 break;
+					 }
 				}
 			}
 			project.SetBatchedItems (null, null);
