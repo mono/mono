@@ -56,6 +56,25 @@ System.Threading/ReaderWriterLockSlim.cs
 
 System.Linq.Expressions/Extensions.cs
 
+Microsoft.Win32.SafeHandles/SafePipeHandle.cs
+System.IO.Pipes/AnonymousPipeClientStream.cs
+System.IO.Pipes/AnonymousPipeServerStream.cs
+System.IO.Pipes/NamedPipeClientStream.cs
+System.IO.Pipes/NamedPipeServerStream.cs
+System.IO.Pipes/PipeAccessRights.cs
+System.IO.Pipes/PipeAccessRule.cs
+System.IO.Pipes/PipeAuditRule.cs
+System.IO.Pipes/PipeDirection.cs
+System.IO.Pipes/PipeInterfaces.cs
+System.IO.Pipes/PipeOptions.cs
+System.IO.Pipes/PipeSecurity.cs
+System.IO.Pipes/PipeStream.cs
+System.IO.Pipes/PipeStreamImpersonationWorker.cs
+System.IO.Pipes/PipeTransmissionMode.cs
+System.IO.Pipes/PipeUnix.cs
+System.IO.Pipes/PipeWin32.cs
+System.IO/HandleInheritability.cs
+
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/BinaryOperationBinder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/BindingRestrictions.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/CallInfo.cs
