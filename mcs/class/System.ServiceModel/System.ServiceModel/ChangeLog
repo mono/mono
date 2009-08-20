@@ -1,3 +1,12 @@
+2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelFactory.cs, ChannelFactory_1.cs: with static factory
+	  methods, they should close the factory when the channel is closed,
+	  but nonstatic CreateChannel() could be called more than once, so
+	  do not always close it.
+	* ClientRuntimeChannel.cs : take OperationContext.Current into
+	  consideration (it could be created by users).
+
 2009-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetNamedPipeBinding.cs, NetNamedPipeSecurity.cs

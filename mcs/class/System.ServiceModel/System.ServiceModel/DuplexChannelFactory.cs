@@ -223,6 +223,13 @@ namespace System.ServiceModel
 
 		// CreateChannel() factory methods
 
+		static TChannel CreateChannelCore (DuplexChannelFactory<TChannel> cf, Func<DuplexChannelFactory<TChannel>,TChannel> f)
+		{
+			var ch = f (cf);
+			((CommunicationObject) (object) ch).Closed += delegate { cf.Close (); };
+			return ch;
+		}
+
 		public static TChannel CreateChannel (object callbackObject, string endpointConfigurationName)
 		{
 			return CreateChannel (new InstanceContext (callbackObject), endpointConfigurationName);

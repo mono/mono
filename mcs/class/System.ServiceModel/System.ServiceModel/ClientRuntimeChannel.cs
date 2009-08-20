@@ -359,7 +359,7 @@ namespace System.ServiceModel
 		protected override void OnAbort ()
 		{
 			channel.Abort ();
-			if (factory != null)
+			if (factory != null) // ... is it valid?
 				factory.Abort ();
 		}
 
@@ -382,8 +382,6 @@ namespace System.ServiceModel
 		{
 			DateTime start = DateTime.Now;
 			channel.Close (timeout);
-			if (factory != null)
-				factory.Close (timeout - (DateTime.Now - start));
 		}
 
 		protected override IAsyncResult OnBeginOpen (
@@ -573,6 +571,17 @@ namespace System.ServiceModel
 					version, parameters);
 			else
 				msg = (Message) parameters [0];
+
+			if (OperationContext.Current != null) {
+				// CopyHeadersFrom does not work here (brings duplicates -> error)
+				foreach (var mh in OperationContext.Current.OutgoingMessageHeaders) {
+					int x = msg.Headers.FindHeader (mh.Name, mh.Namespace, mh.Actor);
+					if (x >= 0)
+						msg.Headers.RemoveAt (x);
+					msg.Headers.Add ((MessageHeader) mh);
+				}
+				msg.Properties.CopyProperties (OperationContext.Current.OutgoingMessageProperties);
+			}
 
 			if (OutputSession != null)
 				msg.Headers.MessageId = new UniqueId (OutputSession.Id);

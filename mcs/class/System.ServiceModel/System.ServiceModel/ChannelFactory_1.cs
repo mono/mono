@@ -111,14 +111,21 @@ namespace System.ServiceModel
 			return CreateChannel (address, null);
 		}
 
+		static TChannel CreateChannelCore (ChannelFactory<TChannel> cf, Func<ChannelFactory<TChannel>, TChannel> f)
+		{
+			var ch = f (cf);
+			((CommunicationObject) (object) ch).Closed += delegate { cf.Close (); };
+			return ch;
+		}
+
 		public static TChannel CreateChannel (Binding binding, EndpointAddress address)
 		{
-			return new ChannelFactory<TChannel> (binding, address).CreateChannel ();
+			return CreateChannelCore (new ChannelFactory<TChannel> (binding, address), f => f.CreateChannel ());
 		}
 
 		public static TChannel CreateChannel (Binding binding, EndpointAddress address, Uri via)
 		{
-			return new ChannelFactory<TChannel> (binding).CreateChannel (address, via);
+			return CreateChannelCore (new ChannelFactory<TChannel> (binding), f => f.CreateChannel (address, via));
 		}
 
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)
@@ -135,7 +142,7 @@ namespace System.ServiceModel
 
 		protected static TChannel CreateChannel (string endpointConfigurationName)
 		{
-			return new ChannelFactory<TChannel> (endpointConfigurationName).CreateChannel ();
+			return CreateChannelCore (new ChannelFactory<TChannel> (endpointConfigurationName), f => f.CreateChannel ());
 		}
 
 		protected override ServiceEndpoint CreateDescription ()
