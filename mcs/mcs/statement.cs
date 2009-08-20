@@ -5538,6 +5538,9 @@ namespace Mono.CSharp {
 					BindingFlags.Public | BindingFlags.Instance,
 					"MoveNext", null);
 
+				if (move_next_list == null)
+					return false;
+
 				foreach (MemberInfo m in move_next_list){
 					MethodInfo mi = (MethodInfo) m;
 				
