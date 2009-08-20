@@ -1,3 +1,7 @@
+2009-08-20  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Engine.dll.sources: Add tools/xbuild/SolutionParser.cs
+
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
 	* Import.cs (GetFullPath): Use Utilities.FromMSBuildPath .

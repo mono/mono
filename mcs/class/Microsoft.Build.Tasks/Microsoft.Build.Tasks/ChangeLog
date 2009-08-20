@@ -1,3 +1,23 @@
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
+	* TaskLoggingHelperExtensios.cs (.ctor): Mark internal.
+
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
+	* PcFileCache.cs (PackageInfo): Mark internal.
+
+2009-08-18  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs (FindInTargetFramework): Perform case insensitive
+	assembly name comparison. Use the new AssemblyNamesCompatible api.
+	(AssemblyNamesCompatible): Add new overload with a 'ignoreCase' param.
+
+2009-08-17  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs (TargetFrameworkAssemblies..ctor): Make assembly
+	name lookups for target framework assemblies, case insensitive. Helps
+	with cases like "System.configuration", which vs.net is known to emit.
+
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
 	* PcFileCache.cs: New. From monodevelop.
