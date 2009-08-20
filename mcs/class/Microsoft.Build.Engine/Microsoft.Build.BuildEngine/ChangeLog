@@ -1,3 +1,17 @@
+2009-08-21  Ankit Jain  <jankit@novell.com>
+
+	* Engine.cs (EndProjectBuild): Use the @succeeded argument
+	instead of hardcoding 'true'.
+	* Target.cs (Build): Add an overload to return executeOnErrors
+	value for the target executed. If building dependencies fails,
+	and executeOnErrors is true, then execute OnError tasks.
+	Add the new param to ..
+	(BuildDependencies): this, ..
+	(DoBuild): and this.
+	(GetDependencies): Improve error message and variable name.
+	(ExecuteOnErrors): Honor OnError tag's Condition also.
+	* TaskBatchingImpl.cs (Run): Correctly set executeOnErrors param.
+
 2009-08-20  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #532264

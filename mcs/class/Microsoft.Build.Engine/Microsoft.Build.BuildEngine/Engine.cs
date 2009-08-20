@@ -320,8 +320,7 @@ namespace Microsoft.Build.BuildEngine {
 				LogProjectFinished (top_project, succeeded);
 
 			if (currentlyBuildingProjectsStack.Count == 0) {
-				//FIXME: build result
-				LogBuildFinished (true);
+				LogBuildFinished (succeeded);
 				buildStarted = false;
 			}
 		}
