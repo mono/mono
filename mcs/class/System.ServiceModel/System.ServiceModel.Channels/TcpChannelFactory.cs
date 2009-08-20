@@ -69,25 +69,12 @@ namespace System.ServiceModel.Channels
 			Type t = typeof (TChannel);
 			
 			if (t == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, address, via);
+				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, address, targetUri);
 			
 			if (t == typeof (IRequestChannel))
-				return (TChannel) (object) new TcpRequestChannel (this, info, address, via);
+				return (TChannel) (object) new TcpRequestChannel (this, info, address, targetUri);
 
 			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
