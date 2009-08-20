@@ -348,13 +348,40 @@ namespace System.Net.Security
 
 			if (validation_callback != null)
 				s.ServerCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
-					X509Chain chain = null;
-					if (cert is X509Certificate2) {
-						chain = new X509Chain ();
-						chain.Build ((X509Certificate2) cert);
+					X509Chain chain = new X509Chain ();
+					X509Certificate2 x2 = (cert as X509Certificate2);
+					if (x2 == null)
+						x2 = new X509Certificate2 (cert);
+
+					if (!ServicePointManager.CheckCertificateRevocationList)
+						chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+
+					// SSL specific checks (done by Mono.Security.dll SSL/TLS implementation) 
+					SslPolicyErrors errors = SslPolicyErrors.None;
+					foreach (int i in certErrors) {
+						switch (i) {
+						case -2146762490: // CERT_E_PURPOSE
+							errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
+							break;
+						case -2146762481: // CERT_E_CN_NO_MATCH
+							errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
+							break;
+						default:
+							errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+							break;
+						}
 					}
-					// FIXME: SslPolicyErrors is incomplete
-					SslPolicyErrors errors = certErrors.Length > 0 ? SslPolicyErrors.RemoteCertificateChainErrors : SslPolicyErrors.None;
+
+					chain.Build (x2);
+
+					// non-SSL specific X509 checks (i.e. RFC3280 related checks)
+					foreach (X509ChainStatus status in chain.ChainStatus) {
+						if ((status.Status & X509ChainStatusFlags.PartialChain) != 0)
+							errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
+						else
+							errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+					}
+
 					return validation_callback (this, cert, chain, errors);
 				};
 			if (selection_callback != null)
