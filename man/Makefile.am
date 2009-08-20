@@ -49,6 +49,7 @@ man_MANS = \
 	soapsuds.1            \
 	sqlsharp.1            \
 	wsdl.1                \
+	xbuild.1	      \
 	xsd.1
 
 EXTRA_DIST = $(man_MANS)

@@ -1,0 +1,53 @@
+.TH "xbuild" 1
+.SH NAME
+xbuild \- Mono's tool to build MSBuild project files
+.SH SYNOPSIS
+.B xbuild
+[option] [project-file]
+.SH DESCRIPTION
+xbuild can be used to build MSBuild project files. Integrated Development
+Environments like MonoDevelop and "Microsoft Visual Studio .NET" use msbuild
+project file format.
+
+xbuild takes the path of the project or solution file to build, as the main argument.
+If no file is specified then it tries to build any project file in the current
+directory, that has a *proj extension.
+.SH OPTIONS
+.TP
+.B \//target:T1[,TN]
+List of targets to build
+.TP
+.B \//property:Name=Value
+Set or override project properties
+.TP
+.B \//logger:<logger>
+Custom logger to log build events
+.TP
+.B \//verbosity:<level>
+Logger verbosity level : quiet, minimal, normal, detailed, diagnostic
+.TP
+.B \//validate
+Validate the project file against the schema
+.TP
+.B \//validate:<schema>
+Validate the project file against the specified schema
+.TP
+.B \//consoleloggerparameters:<params>
+Parameters for the console logger
+.TP
+.B \//nologo
+Don't show the initial xbuild banner
+.TP
+.B \//help
+Show xbuild usage
+.TP
+.B \//version
+Display xbuild version
+.SH SEE ALSO
+.BR mono(1), mcs(1)
+.SH COPYRIGHT
+Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
+.SH WEB SITE
+Visit: http://www.mono-project.com for details
