@@ -67,11 +67,15 @@ namespace System.ServiceModel.Channels
 
 			public PeerNodeAddress Address { get; private set; }
 			public RemotePeerStatus Status { get; set; }
+			public LocalPeerReceiver Instance { get; set; }
 			public IPeerConnectorClient Channel { get; set; }
 		}
 
 		class LocalPeerReceiver : IPeerConnectorContract
 		{
+			List<PeerNodeAddress> connections = new List<PeerNodeAddress> ();
+			AutoResetEvent connect_handle = new AutoResetEvent (false);
+
 			public LocalPeerReceiver (PeerDuplexChannel owner)
 			{
 				this.owner = owner;
@@ -84,9 +88,20 @@ namespace System.ServiceModel.Channels
 				if (connect == null)
 					throw new ArgumentNullException ("connect");
 				var ch = OperationContext.Current.GetCallbackChannel<IPeerConnectorContract> ();
-				// FIXME: wrong destination
-				// FIXME: check and reject if inappropriate.
-				ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
+
+				connections.Add (connect.Address);
+				// FIXME: check and reject if inappropriate. For example, maximum connection exceeded.
+				using (var octx = new OperationContextScope ((IContextChannel) ch)) {
+					OperationContext.Current.OutgoingMessageHeaders.To = new Uri (Constants.WsaAnonymousUri);
+					ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
+				}
+			}
+
+			internal void WaitForConnectResponse (TimeSpan timeout)
+			{
+Console.WriteLine ("##### Waiting for Welcome or Reject ...");
+				if (!connect_handle.WaitOne (timeout))
+					throw new TimeoutException ();
 			}
 
 			public void Disconnect (DisconnectInfo disconnect)
@@ -99,12 +114,15 @@ namespace System.ServiceModel.Channels
 
 			public void Welcome (WelcomeInfo welcome)
 			{
-				owner.HandleWelcomeResponse (welcome);
+Console.WriteLine ("##### Welcome message received");
+				connect_handle.Set ();
 			}
 
 			public void Refuse (RefuseInfo refuse)
 			{
-				owner.HandleRefuseResponse (refuse);
+				// FIXME: it should not probably actually throw an error.
+				connect_handle.Set ();
+				throw new InvalidOperationException ("Peer connection was refused");
 			}
 
 			public void LinkUtility (LinkUtilityInfo linkUtility)
@@ -119,6 +137,7 @@ namespace System.ServiceModel.Channels
 
 			public void SendMessage (Message msg)
 			{
+Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action);
 				owner.EnqueueMessage (msg);
 			}
 		}
@@ -168,32 +187,19 @@ namespace System.ServiceModel.Channels
 
 		// DuplexChannelBase
 
-		IPeerConnectorClient CreateInnerClient (PeerNodeAddress pna)
+		IPeerConnectorClient CreateInnerClient (RemotePeerConnection conn)
 		{
+			conn.Instance = new LocalPeerReceiver (this);
+
 			// FIXME: pass more setup parameters
 			if (channel_factory == null) {
 				var binding = new NetTcpBinding ();
 				binding.Security.Mode = SecurityMode.None;
-				channel_factory = new ChannelFactory<IPeerConnectorClient> (binding);
+				channel_factory = new DuplexChannelFactory<IPeerConnectorClient> (conn.Instance, binding);
 			}
 
-			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), pna.EndpointAddress.Uri);
+			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), conn.Address.EndpointAddress.Uri);
 		}
-
-		public void HandleWelcomeResponse (WelcomeInfo welcome)
-		{
-			last_connect_response = welcome;
-			connect_handle.Set ();
-		}
-
-		public void HandleRefuseResponse (RefuseInfo refuse)
-		{
-			last_connect_response = refuse;
-			connect_handle.Set ();
-		}
-
-		AutoResetEvent connect_handle = new AutoResetEvent (false);
-		object last_connect_response;
 
 		public override void Send (Message message, TimeSpan timeout)
 		{
@@ -209,21 +215,12 @@ namespace System.ServiceModel.Channels
 
 				if (pc.Status == RemotePeerStatus.None) {
 					pc.Status = RemotePeerStatus.Error; // prepare for cases that it resulted in an error in the middle.
-					var inner = CreateInnerClient (pc.Address);
+					var inner = CreateInnerClient (pc);
 					pc.Channel = inner;
 					inner.Open (timeout - (DateTime.Now - start));
 					inner.OperationTimeout = timeout - (DateTime.Now - start);
 					inner.Connect (new ConnectInfo () { Address = local_node_address, NodeId = (uint) node.NodeId });
-
-					// FIXME: wait for Welcome or Reject and take further action.
-/*
-Console.WriteLine ("WAITING FOR Welcome or Refuse");
-					if (!connect_handle.WaitOne (timeout - (DateTime.Now - start)))
-						throw new TimeoutException ();
-Console.WriteLine ("got signaled");
-					if (last_connect_response is RefuseInfo)
-						throw new CommunicationException ("Peer neighbor connection was refused");
-*/
+					pc.Instance.WaitForConnectResponse (timeout - (DateTime.Now - start));
 					pc.Status = RemotePeerStatus.Connected;
 				}
 
@@ -239,10 +236,6 @@ Console.WriteLine ("got signaled");
 
 		internal void EnqueueMessage (Message message)
 		{
-Console.WriteLine ("###########################");
-var mb = message.CreateBufferedCopy (0x10000);
-Console.WriteLine (mb.CreateMessage ());
-message = mb.CreateMessage ();
 			queue.Enqueue (message);
 			receive_handle.Set ();
 		}
@@ -332,6 +325,10 @@ message = mb.CreateMessage ();
 
 			var se = listener_host.AddServiceEndpoint (typeof (IPeerConnectorContract).FullName, binding, "net.p2p://" + node.MeshId + "/");
 			se.ListenUri = uri;
+
+			// FIXME: remove debugging code
+			listener_host.UnknownMessageReceived += delegate (object obj, UnknownMessageReceivedEventArgs earg) { Console.WriteLine ("%%%%% UNKOWN MESSAGE " + earg.Message); };
+
 			listener_host.Open (timeout - (DateTime.Now - start));
 
 			var nid = new Random ().Next (0, int.MaxValue);

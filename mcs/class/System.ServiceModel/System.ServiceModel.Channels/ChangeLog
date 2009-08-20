@@ -1,5 +1,11 @@
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : ongoing implementation towards get callback
+	  replies on peer connector clients (not working as duplex client
+	  callback is not working yet).
+
+2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : in callback client channels,
 	  OperationContext.IncomingMessageHeaders is null.
 
