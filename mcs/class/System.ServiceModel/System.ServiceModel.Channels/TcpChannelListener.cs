@@ -24,7 +24,6 @@ namespace System.ServiceModel.Channels
 	{
 		BindingContext context;
 		TcpChannelInfo info;
-		IDuplexSession session;
 		TcpListener tcp_listener;
 		
 		public TcpChannelListener (TcpTransportBindingElement source, BindingContext context)
