@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +33,6 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO]
 	public class NamedPipeTransportBindingElement
 		: ConnectionOrientedTransportBindingElement
 	{
@@ -61,14 +60,18 @@ namespace System.ServiceModel.Channels
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (!CanBuildChannelFactory<TChannel> (context))
+				throw new InvalidOperationException (String.Format ("Not supported channel factory type '{0}'", typeof (TChannel)));
+			return new NamedPipeChannelFactory<TChannel> (this, context);
 		}
 
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (!CanBuildChannelListener<TChannel> (context))
+				throw new InvalidOperationException (String.Format ("Not supported channel listener type '{0}'", typeof (TChannel)));
+			return new NamedPipeChannelListener<TChannel> (this, context);
 		}
 
 		public override BindingElement Clone ()
@@ -76,11 +79,9 @@ namespace System.ServiceModel.Channels
 			return new NamedPipeTransportBindingElement (this);
 		}
 
-		// FIXME: IT should not be required, but gmcs borks here.
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return base.GetProperty<T> (context);
 		}
 
 	}

@@ -1,5 +1,9 @@
 2009-08-20  Astushi Enomoto  <atsushi@ximian.com>
 
+	* System.ServiceModel.dll.sources: add more named pipe files.
+
+2009-08-20  Astushi Enomoto  <atsushi@ximian.com>
+
 	* System.ServiceModel_test.dll.sources: add OperationContextTest.cs.
 
 2009-08-19  Astushi Enomoto  <atsushi@ximian.com>

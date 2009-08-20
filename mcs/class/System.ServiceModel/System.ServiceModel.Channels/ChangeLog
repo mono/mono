@@ -1,5 +1,11 @@
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NamedPipeReplyChannel.cs, NamedPipeRequestChannel.cs,
+	  NamedPipeChannelFactory.cs, NamedPipeChannelListener.cs :
+	  ongoing works, not working at all yet.
+
+2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelListener.cs, TcpReplyChannel.cs :
 	  cosmetic cleanup and corrections.
 
