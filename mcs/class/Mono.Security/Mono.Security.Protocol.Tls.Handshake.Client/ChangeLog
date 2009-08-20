@@ -1,3 +1,11 @@
+2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsServerCertificate.cs: If no usage information is available then
+	assume it's ok for SSL since we'll (later) check that the CN contains
+	a host name (that match the server) and such a certificate wouldn't
+	be much useful for anything but SSL/TLS. Fix the new stmp.gmail.com
+	certificate usage failure.
+
 2007-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsServerCertificate.cs: Add support for wilcard (*) when matching
