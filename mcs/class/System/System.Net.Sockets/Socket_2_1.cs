@@ -64,7 +64,15 @@ namespace System.Net.Sockets {
 		 *	These two fields are looked up by name by the runtime, don't change
 		 *  their name without also updating the runtime code.
 		 */
-		private static int ipv4Supported = -1, ipv6Supported = -1;
+		private static int ipv4Supported = -1;
+		/* MonoTouch doesn't support System.Configuration, and the ipv6 check raises an uncatchable exception
+		 * so we unfortunately need to disable ipv6 here.
+		 */
+#if MONOTOUCH
+		private static int ipv6Supported = 0;
+#else
+		private static int ipv6Supported = -1;
+#endif
 
 		static Socket ()
 		{

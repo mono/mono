@@ -1,3 +1,7 @@
+2009-08-20  Geoff Norton  <gnorton@novell.com>
+
+	* Socket_2_1.cs: Disable ipv6 on monotouch.
+
 2009-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Socket_2_1.cs, SocketAsyncEventArgs.cs: A bit more NET_2_1 defines
