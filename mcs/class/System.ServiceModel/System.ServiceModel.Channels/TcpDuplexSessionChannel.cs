@@ -243,19 +243,5 @@ namespace System.ServiceModel.Channels
 				frame.ProcessPreambleAckRecipient ();
 			}
 		}
-		
-		class MyBinaryWriter : BinaryWriter
-		{
-			public MyBinaryWriter (Stream s)
-				: base (s)
-			{
-			}
-			
-			public void WriteBytes (byte [] bytes)
-			{
-				Write7BitEncodedInt (bytes.Length);
-				Write (bytes);
-			}
-		}
 	}
 }
