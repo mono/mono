@@ -1,3 +1,10 @@
+2009-08-20  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: GetSection does not use
+	FindWebConfig to get the virtual path to open configuration for -
+	doing so would make the configuration system ignore <location>
+	sections. Fixes bug #482181
+
 2009-07-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConfigurationManager.cs: avoid possible infinite loop when the

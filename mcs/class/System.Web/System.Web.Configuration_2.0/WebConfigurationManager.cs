@@ -392,16 +392,22 @@ namespace System.Web.Configuration {
 
 		internal static object GetSection (string sectionName, string path, HttpContext context)
 		{
+			// FindWebConfig must not be used here with its result being passed to
+			// OpenWebConfiguration below. The reason is that if we have a request for
+			// ~/somepath/, but FindWebConfig returns ~/ and the ~/web.config contains
+			// <location path="somepath"> then OpenWebConfiguration will NOT return the
+			// contents of <location>, thus leading to bugs (ignored authorization
+			// section for instance)
 			string config_vdir = FindWebConfig (path);
 			if (String.IsNullOrEmpty (config_vdir))
 				config_vdir = "/";
 
-			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, config_vdir)];
+			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, path + '@' + config_vdir)];
 			if (cachedSection != null)
 				return cachedSection;
 
 			HttpRequest req = context != null ? context.Request : null;
-			_Configuration c = OpenWebConfiguration (config_vdir, //path, /* path */
+			_Configuration c = OpenWebConfiguration (path, /* path */
 								 null, /* site */
 					 			 req != null ? VirtualPathUtility.GetDirectory (req.Path) : null, /* locationSubPath */
 								 null, /* server */
