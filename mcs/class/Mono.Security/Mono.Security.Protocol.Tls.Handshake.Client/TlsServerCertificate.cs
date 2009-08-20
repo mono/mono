@@ -177,8 +177,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				return ct.Support (NetscapeCertTypeExtension.CertTypes.SslServer);
 			}
 
-			// certificate isn't valid for SSL server usage
-			return false;
+			// if the CN=host (checked later) then we assume this is meant for SSL/TLS
+			// e.g. the new smtp.gmail.com certificate
+			return true;
 		}
 
 		private void validateCertificates(X509CertificateCollection certificates)
