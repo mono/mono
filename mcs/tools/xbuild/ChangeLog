@@ -1,5 +1,15 @@
 2009-08-20  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #532264.
+	* Main.cs: Dont generate .sln.proj, project.Load can handle
+	.sln directly now. Show stack trace for exceptions if logger
+	verbosity is > normal
+	* SolutionParser.cs (ParseSolution): Add a param for a raise
+	warning delegate. Use Dictionary.TryGetValue, key might not
+	be present.
+
+2009-08-20  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets (ResolveReferences*): Add
 	a *DependsOn property and Before/After hooks. Change output
 	of ResolvedFiles to @(ReferencePath).

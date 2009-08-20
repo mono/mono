@@ -71,6 +71,8 @@ namespace Mono.XBuild.CommandLine {
 	}
 
 
+	internal delegate void RaiseWarningHandler (int errorNumber, string message);
+
 	class SolutionParser {
 		static string[] buildTargets = new string[] { "Build", "Clean", "Rebuild", "Publish" };
 
@@ -90,8 +92,11 @@ namespace Mono.XBuild.CommandLine {
 		static string solutionFolderGuid = "{2150E333-8FDC-42A3-9474-1A3956D46DE8}";
 		static string vcprojGuid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
-		public void ParseSolution (string file, Project p)
+		RaiseWarningHandler RaiseWarning;
+
+		public void ParseSolution (string file, Project p, RaiseWarningHandler RaiseWarning)
 		{
+			this.RaiseWarning = RaiseWarning;
 			AddGeneralSettings (file, p);
 
 			StreamReader reader = new StreamReader (file);
@@ -114,7 +119,7 @@ namespace Mono.XBuild.CommandLine {
 				if (String.Compare (m.Groups [1].Value, vcprojGuid,
 						StringComparison.InvariantCultureIgnoreCase) == 0) {
 					// Ignore vcproj 
-					ErrorUtilities.ReportWarning (0, string.Format("Ignoring vcproj '{0}'.", projectInfo.Name));
+					RaiseWarning (0, string.Format("Ignoring vcproj '{0}'.", projectInfo.Name));
 					m = m.NextMatch ();
 					continue;
 				}
@@ -143,8 +148,8 @@ namespace Mono.XBuild.CommandLine {
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");
 					Guid guid = new Guid (projectReferenceGuid);
-					ProjectInfo info = projectInfos [guid];
-					if (info != null)
+					ProjectInfo info;
+					if (projectInfos.TryGetValue (guid, out info))
 						// ignore if not found
 						projectInfo.Dependencies [guid] = info;
 				}
@@ -184,7 +189,7 @@ namespace Mono.XBuild.CommandLine {
 					case "NestedProjects":
 						break;
 					default:
-						ErrorUtilities.ReportWarning (0, string.Format("Don't know how to handle GlobalSection {0}, Ignoring.", sectionType));
+						RaiseWarning (0, string.Format("Don't know how to handle GlobalSection {0}, Ignoring.", sectionType));
 						break;
 				}
 				globalSectionMatch = globalSectionMatch.NextMatch ();
@@ -238,7 +243,7 @@ namespace Mono.XBuild.CommandLine {
 				ProjectInfo projectInfo;
 				if (!projectInfos.TryGetValue (guid, out projectInfo)) {
 					if (!missingGuids.Contains (guid)) {
-						ErrorUtilities.ReportWarning (0, string.Format("Failed to find project {0}", guid));
+						RaiseWarning (0, string.Format("Failed to find project {0}", guid));
 						missingGuids.Add (guid);
 					}
 					projectConfigurationPlatform = projectConfigurationPlatform.NextMatch ();
@@ -260,7 +265,7 @@ namespace Mono.XBuild.CommandLine {
 				ProjectInfo projectInfo;
 				if (!projectInfos.TryGetValue (guid, out projectInfo)) {
 					if (!missingGuids.Contains (guid)) {
-						ErrorUtilities.ReportWarning (0, string.Format("Failed to find project {0}", guid));
+						RaiseWarning (0, string.Format("Failed to find project {0}", guid));
 						missingGuids.Add (guid);
 					}
 					projectConfigurationPlatformBuild = projectConfigurationPlatformBuild.NextMatch ();

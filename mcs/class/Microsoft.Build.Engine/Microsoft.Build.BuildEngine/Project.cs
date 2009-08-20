@@ -38,6 +38,7 @@ using System.Xml;
 using System.Xml.Schema;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Framework;
+using Mono.XBuild.CommandLine;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Project {
@@ -422,7 +423,20 @@ namespace Microsoft.Build.BuildEngine {
 		public void Load (string projectFileName)
 		{
 			this.fullFileName = Utilities.FromMSBuildPath (Path.GetFullPath (projectFileName));
-			DoLoad (new StreamReader (fullFileName));
+
+			string filename = fullFileName;
+			if (String.Compare (Path.GetExtension (fullFileName), ".sln", true) == 0) {
+				Project tmp_project = ParentEngine.CreateNewProject ();
+				SolutionParser sln_parser = new SolutionParser ();
+				sln_parser.ParseSolution (fullFileName, tmp_project, delegate (int errorNumber, string message) {
+						LogWarning (filename, message);
+					});
+				filename = fullFileName + ".proj";
+				tmp_project.Save (filename);
+				ParentEngine.RemoveLoadedProject (tmp_project);
+			}
+
+			DoLoad (new StreamReader (filename));
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -1089,6 +1103,14 @@ namespace Microsoft.Build.BuildEngine {
 					null, null, MessageImportance.Low);
 
 			ParentEngine.EventSource.FireMessageRaised (this, bmea);
+		}
+
+		void LogWarning (string filename, string message, params object[] messageArgs)
+		{
+			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
+				null, null, filename, 0, 0, 0, 0, String.Format (message, messageArgs),
+				null, null);
+			ParentEngine.EventSource.FireWarningRaised (this, bwea);
 		}
 
 		static string ExtensionsPath {

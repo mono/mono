@@ -1,5 +1,10 @@
 2009-08-20  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #532264
+	* Project.cs (Load): Add support for loading .sln files.
+
+2009-08-20  Ankit Jain  <jankit@novell.com>
+
 	* BuildTask.cs (Execute): Use task_logger only after the task
 	has been initialized. Catch and report task loading errors.
 	* Target.cs (DoBuild): Dont rethrow the exception, and emit
