@@ -35,7 +35,7 @@ namespace System.ServiceModel
 		OperationContext previous;
 
 		public OperationContextScope (IContextChannel channel)
-			: this (new OperationContext (channel))
+			: this (new OperationContext (channel, false))
 		{
 		}
 

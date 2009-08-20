@@ -56,10 +56,16 @@ namespace System.ServiceModel
 		InstanceContext instance_context;
 
 		public OperationContext (IContextChannel channel)
+			: this (channel, true)
+		{
+		}
+
+		internal OperationContext (IContextChannel channel, bool isUserContext)
 		{
 			if (channel == null)
 				throw new ArgumentNullException ("channel");
 			this.channel = channel;
+			IsUserContext = isUserContext;
 		}
 
 		public event EventHandler OperationCompleted;
@@ -113,10 +119,7 @@ namespace System.ServiceModel
 			}
 		}
 
-		[MonoTODO]
-		public bool IsUserContext {
-			get { throw new NotImplementedException (); }
-		}
+		public bool IsUserContext { get; private set; }
 
 		public MessageHeaders OutgoingMessageHeaders {
 			get {

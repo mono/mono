@@ -1,5 +1,10 @@
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationContext.cs, OperationContextScope.cs :
+	  implement IsUserContext.
+
+2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelFactory.cs, ChannelFactory_1.cs: with static factory
 	  methods, they should close the factory when the channel is closed,
 	  but nonstatic CreateChannel() could be called more than once, so
