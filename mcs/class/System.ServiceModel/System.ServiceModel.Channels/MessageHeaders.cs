@@ -127,8 +127,8 @@ namespace System.ServiceModel.Channels
 				MessageHeaderInfo info = l [i];
 
 				if (info.Name == name && info.Namespace == ns) {
-					if (found > 1)
-						throw new ArgumentException ("Found multiple matching headers.");
+					if (found > 0)
+						throw new MessageHeaderException ("Found multiple matching headers.");
 					// When no actors are passed, it never
 					// matches such header that has an
 					// Actor.

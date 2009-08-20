@@ -56,8 +56,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			MessageHeaders headers = m.Headers;
 			// The first header is at 0
-			Assert.AreEqual (0, headers.FindHeader ("Action",
-								"http://www.w3.org/2005/08/addressing"), "#1");
+			Assert.AreEqual (0, headers.FindHeader ("Action", wsa1), "#1");
 
 			// The return value of FindHeader maps to its places in the headers
 			Assert.AreEqual (1, headers.FindHeader ("MyHeader", "bar"), "#2");
@@ -233,7 +232,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		public void WriteHeaderContentsAddressingNone ()
 		{
 			// This Action header is IMO extraneous.
-			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\"><s:Header><Action s:mustUnderstand=\"1\" xmlns=\"http://schemas.microsoft.com/ws/2005/08/addressing/none\">Echo</Action></s:Header><s:Body xmlns=\"http://tempuri.org/\"><Echo xmlns=\"http://tempuri.org/\" /></s:Body></s:Envelope>";
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\"><s:Header><Action s:mustUnderstand=\"1\" xmlns=\"http://schemas.microsoft.com/ws/2005/05/addressing/none\">Echo</Action></s:Header><s:Body><z:anyType i:nil=\"true\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:z=\"http://schemas.microsoft.com/2003/10/Serialization/\"/></s:Body></s:Envelope>";
 			Message m = Message.CreateMessage (MessageVersion.Soap12, "Echo", (object) null);
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = XmlWriter.Create (sw)) {
@@ -389,5 +388,28 @@ namespace MonoTests.System.ServiceModel.Channels
 			MessageHeaders h = new MessageHeaders (MessageVersion.Soap12);
 			h.To = new Uri ("http://localhost:8080");
 		}
+
+		[Test]
+		[ExpectedException (typeof (MessageHeaderException))]
+		public void DuplicateActionFindError ()
+		{
+			MessageHeaders headers = new MessageHeaders (MessageVersion.Default);
+			headers.Add (MessageHeader.CreateHeader ("Action", wsa1, "urn:foo"));
+			headers.Add (MessageHeader.CreateHeader ("Action", wsa1, "urn:bar"));
+			Assert.Fail (String.Format ("Action should not be caught", headers.Action)); // access to Action results in an error. If it does not, then simply assert fail.
+		}
+
+		[Test]
+		[ExpectedException (typeof (MessageHeaderException))]
+		public void CopyHeadersFrom_Merge ()
+		{
+			var h1 = new MessageHeaders (MessageVersion.Default);
+			var h2 = new MessageHeaders (MessageVersion.Default);
+			h1.Add (MessageHeader.CreateHeader ("Action", wsa1, "urn:foo"));
+			h2.Add (MessageHeader.CreateHeader ("Action", wsa1, "urn:bar"));
+			h1.CopyHeadersFrom (h2); // it somehow allow dups!
+			Assert.Fail (String.Format ("Action should not be caught", h1.Action)); // access to Action results in an error. If it does not, then simply assert fail.
+		}
+
 	}
 }
