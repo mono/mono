@@ -1,3 +1,8 @@
+2009-08-21  Ankit Jain  <jankit@novell.com>
+
+	* Makefile.am (man_MANS): Add xbuild.1
+	* xbuild.1: New.
+
 2009-04-09  Jonathan Pryor  <jpryor@novell.com>
 
 	* mdoc-update.1: Document -L, -r options.
