@@ -1091,6 +1091,10 @@ try {
 									 X509Certificate certificate,
 									 X509Chain chain,
 									 SslPolicyErrors sslPolicyErrors) {
+			// honor any exciting callback defined on ServicePointManager
+			if (ServicePointManager.ServerCertificateValidationCallback != null)
+				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
+			// otherwise provide our own
 			if (sslPolicyErrors != SslPolicyErrors.None)
 				throw new InvalidOperationException ("SSL authentication error: " + sslPolicyErrors);
 			return true;

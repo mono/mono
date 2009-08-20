@@ -1,3 +1,8 @@
+2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SmtpClient.cs: Honor ServicePointManager.
+	ServerCertificateValidationCallback when provided
+
 2009-08-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Attachment.cs: set the body encoding for multipart attachments.
