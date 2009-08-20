@@ -1,3 +1,8 @@
+2009-08-21  Ankit Jain  <jankit@novell.com>
+
+	* Makefile.am (man_MANS): Add xbuild.1
+	* xbuild.1: New.
+
 2009-06-12  Jb Evain  <jbevain@novell.com>
 
 	* mcs.1: update the /platform information.
