@@ -75,6 +75,14 @@ namespace System.ServiceModel
 		{
 			session_shutdown_delegate.EndInvoke (result);
 		}
+
+		// base channel overrides.
+
+		protected override void OnOpen (TimeSpan timeout)
+		{
+			// FIXME: add callback listener here to receive callbacks.
+			base.OnOpen (timeout);
+		}
 	}
 #endif
 
@@ -384,14 +392,21 @@ namespace System.ServiceModel
 			channel.Close (timeout);
 		}
 
+		Action<TimeSpan> open_callback;
+
 		protected override IAsyncResult OnBeginOpen (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new SystemException ("INTERNAL ERROR: this should not be called (or not supported yet)");
+			if (open_callback == null)
+				open_callback = new Action<TimeSpan> (OnOpen);
+			return open_callback.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnEndOpen (IAsyncResult result)
 		{
+			if (open_callback == null)
+				throw new InvalidOperationException ("Async open operation has not started");
+			open_callback.EndInvoke (result);
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
