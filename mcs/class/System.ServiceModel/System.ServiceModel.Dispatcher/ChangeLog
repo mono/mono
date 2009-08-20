@@ -1,3 +1,7 @@
+2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : handle unknown message in host event.
+
 2009-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointDispatcher.cs : do not try to create wrong filter.

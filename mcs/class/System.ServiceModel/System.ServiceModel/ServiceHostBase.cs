@@ -67,6 +67,15 @@ namespace System.ServiceModel
 		public event EventHandler<UnknownMessageReceivedEventArgs>
 			UnknownMessageReceived;
 
+		internal void OnUnknownMessageReceived (Message message)
+		{
+			if (UnknownMessageReceived != null)
+				UnknownMessageReceived (this, new UnknownMessageReceivedEventArgs (message));
+			else
+				// FIXME: better be logged
+				throw new EndpointNotFoundException (String.Format ("The request message has the target '{0}' with action '{1}' which is not reachable in this service contract", message.Headers.To, message.Headers.Action));
+		}
+
 		public ReadOnlyCollection<Uri> BaseAddresses {
 			get { return new ReadOnlyCollection<Uri> (base_addresses.InternalItems); }
 		}
