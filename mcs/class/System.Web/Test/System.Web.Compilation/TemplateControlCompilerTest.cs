@@ -216,7 +216,7 @@ namespace MonoTests.System.Web.Compilation {
 		}
 
 		[Test (Description="Bug #524358")]
-		[ExpectedException (typeof (HttpException))]
+		[ExpectedException ("System.Web.Compilation.ParseException")]
 		public void DuplicateControlsInClientComment ()
 		{
 			// Just test if it throws an exception
