@@ -1840,9 +1840,16 @@ namespace System.Web.UI.WebControls
 
 			writer.RenderEndTag ();	// TR
 			writer.RenderEndTag ();	// TABLE
+			
+			writer.RenderEndTag ();	// TD
 
+			if (!vertical && itemSpacing == Unit.Empty && (notLast || (displayChildren && !dynamicChildren))) {
+				writer.AddStyleAttribute ("width", "3px");
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				writer.RenderEndTag ();
+			}
+			
 			// Bottom separator image
-
 			string separatorImg = item.SeparatorImageUrl;
 			if (separatorImg.Length == 0) {
 				if (isDynamicItem)
@@ -1851,22 +1858,20 @@ namespace System.Web.UI.WebControls
 					separatorImg = StaticBottomSeparatorImageUrl;
 			}
 			if (separatorImg.Length > 0) {
+				if (!vertical)
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				writer.AddAttribute ("src", ResolveClientUrl (separatorImg));
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
+				if (!vertical)
+					writer.RenderEndTag (); // TD
 			}
 
-			writer.RenderEndTag ();	// TD
 			if (vertical)
 				writer.RenderEndTag ();	// TR
 
 			if (itemSpacing != Unit.Empty)
 				RenderMenuItemSpacing (writer, itemSpacing, vertical);
-			else if (!vertical && (notLast || (displayChildren && !dynamicChildren))) {
-					writer.AddStyleAttribute ("width", "3px");
-					writer.RenderBeginTag (HtmlTextWriterTag.Td);
-					writer.RenderEndTag ();
-			}
 
 			// Submenu
 
