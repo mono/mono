@@ -196,16 +196,29 @@ namespace System.Web.UI.WebControls
 				items.Clear ();
 
 				for (int n = 1; n < its.Length; n++) {
-					TreeNode item = new TreeNode ();
+					var pair = its [n] as Pair;
+					if (pair == null)
+						throw new InvalidOperationException ("Broken view state (item " + n + ")");
+					
+					TreeNode item;
+					Type type = pair.First as Type;
+
+					if (type == null)
+						item = new TreeNode ();
+					else
+						item = Activator.CreateInstance (pair.First as Type) as TreeNode;
 					Add (item);
-					object ns = its [n];
+					object ns = pair.Second;
 					if (ns != null)
 						((IStateManager) item).LoadViewState (ns);
 				}
 			}
 			else {
 				for (int n = 1; n < its.Length; n++) {
-					Pair pair = (Pair) its [n];
+					var pair = its [n] as Pair;
+					if (pair  == null)
+						throw new InvalidOperationException ("Broken view state " + n + ")");
+					
 					int oi = (int) pair.First;
 					TreeNode node = (TreeNode) items [oi];
 					((IStateManager) node).LoadViewState (pair.Second);
@@ -227,7 +240,8 @@ namespace System.Web.UI.WebControls
 					for (int n = 0; n < items.Count; n++) {
 						TreeNode node = items [n] as TreeNode;
 						object ns = ((IStateManager) node).SaveViewState ();
-						state [n + 1] = ns;
+						Type type = node.GetType ();
+						state [n + 1] = new Pair (type == typeof (TreeNode) ? null : type, ns);
 					}
 				}
 			} else {

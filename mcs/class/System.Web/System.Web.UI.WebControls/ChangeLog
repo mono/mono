@@ -1,3 +1,8 @@
+2009-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeNodeCollection.cs: {Save,Load}ViewState now store/load the
+	type of the node, if node is a of a custom type. Fixes bug #475997
+
 2009-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* ListItem.cs: when tracking view state is turned on after
