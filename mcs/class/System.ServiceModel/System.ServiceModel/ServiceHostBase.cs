@@ -371,7 +371,8 @@ namespace System.ServiceModel
 				b.ApplyDispatchBehavior (Description, this);
 
 			foreach(KeyValuePair<ServiceEndpoint, ChannelDispatcher> val in endPointToDispatcher)
-				ApplyDispatchBehavior(val.Value, val.Key);			
+				foreach (var ed in val.Value.Endpoints)
+					ApplyDispatchBehavior (ed, val.Key);			
 		}
 
 		private void ValidateDescription ()
@@ -382,14 +383,15 @@ namespace System.ServiceModel
 				endPoint.Validate ();
 		}		
 
-		private void ApplyDispatchBehavior (ChannelDispatcher dispatcher, ServiceEndpoint endPoint) {			
+		private void ApplyDispatchBehavior (EndpointDispatcher ed, ServiceEndpoint endPoint)
+		{
 			foreach (IContractBehavior b in endPoint.Contract.Behaviors)
-				b.ApplyDispatchBehavior (endPoint.Contract, endPoint, dispatcher.Endpoints[0].DispatchRuntime);
+				b.ApplyDispatchBehavior (endPoint.Contract, endPoint, ed.DispatchRuntime);
 			foreach (IEndpointBehavior b in endPoint.Behaviors)
-				b.ApplyDispatchBehavior (endPoint, dispatcher.Endpoints [0]);
+				b.ApplyDispatchBehavior (endPoint, ed);
 			foreach (OperationDescription operation in endPoint.Contract.Operations) {
 				foreach (IOperationBehavior b in operation.Behaviors)
-					b.ApplyDispatchBehavior (operation, dispatcher.Endpoints [0].DispatchRuntime.Operations [operation.Name]);
+					b.ApplyDispatchBehavior (operation, ed.DispatchRuntime.Operations [operation.Name]);
 			}
 
 		}
