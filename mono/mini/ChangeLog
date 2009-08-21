@@ -1,5 +1,8 @@
 2009-08-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c: Fix the handling of sp/fp so unwinding through
+	frames without a frame pointer works.
+
         * mini-arm.c (mono_arch_get_global_int_regs): Avoid using V5 as a
         global register in methods with calls, since the calls can go through
         a static rgctx trampoline which doesn't save it.
