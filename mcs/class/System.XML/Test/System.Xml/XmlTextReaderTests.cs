@@ -1295,5 +1295,14 @@ namespace MonoTests.System.Xml
 			xtr.Read ();
 		}
 
+		[Test]
+		public void ParserContextNullNameTable ()
+		{
+			string input = "<?xml version='1.0' encoding='UTF-8'?><plist version='1.0'></plist>";
+			XmlParserContext context = new XmlParserContext (null, null, null, XmlSpace.None); // null NameTable
+			XmlTextReader xtr = new XmlTextReader (input, XmlNodeType.Document, context);
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
 	}
 }

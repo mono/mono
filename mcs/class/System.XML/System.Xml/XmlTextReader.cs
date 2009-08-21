@@ -1833,7 +1833,7 @@ namespace System.Xml
 		{
 			IncrementAttributeToken ();
 			XmlAttributeTokenInfo ati = attributeTokens [currentAttribute];
-			ati.Name = parserContext.NameTable.Add (name);
+			ati.Name = NameTable.Add (name);
 			ati.Prefix = String.Empty;
 			ati.NamespaceURI = String.Empty;
 			IncrementAttributeValueToken ();
