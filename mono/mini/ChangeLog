@@ -1,5 +1,8 @@
 2009-08-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_allocate_vars): Use FP as the frame pointer as
+	was done previously, since using SP causes too many problems.
+
 	* exceptions-arm.c: Fix the handling of sp/fp so unwinding through
 	frames without a frame pointer works.
 
