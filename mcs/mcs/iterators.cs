@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 	public class Yield : ResumableStatement {
 		Expression expr;
 		bool unwind_protect;
-
+		Iterator iterator;
 		int resume_pc;
 
 		public Yield (Expression expr, Location l)
@@ -54,7 +54,7 @@ namespace Mono.CSharp {
 			expr.MutateHoistedGenericType (storey);
 		}
 		
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 			if (!CheckContext (ec, loc))
 				return false;
 
-			Iterator iterator = ec.CurrentIterator;
+			iterator = ec.CurrentIterator;
 			if (expr.Type != iterator.OriginalIteratorType) {
 				expr = Convert.ImplicitConversionRequired (
 					ec, expr, iterator.OriginalIteratorType, loc);
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.MarkYield (ec, expr, resume_pc, unwind_protect, resume_point);
+			iterator.MarkYield (ec, expr, resume_pc, unwind_protect, resume_point);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -93,7 +93,10 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class YieldBreak : ExitStatement {
+	public class YieldBreak : ExitStatement
+	{
+		Iterator iterator;
+
 		public YieldBreak (Location l)
 		{
 			loc = l;
@@ -109,14 +112,15 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		protected override bool DoResolve (EmitContext ec)
+		protected override bool DoResolve (BlockContext ec)
 		{
+			iterator = ec.CurrentIterator;
 			return Yield.CheckContext (ec, loc);
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.EmitYieldBreak (ec.ig, unwind_protect);
+			iterator.EmitYieldBreak (ec.ig, unwind_protect);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -147,7 +151,7 @@ namespace Mono.CSharp {
 			t.iterator = (Iterator) iterator.Clone (clonectx);
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			ec.StartFlowBranching (iterator);
 			bool ok = original_block.Resolve (ec);
@@ -213,7 +217,7 @@ namespace Mono.CSharp {
 					throw new NotSupportedException ();
 				}
 
-				public override bool Resolve (EmitContext ec)
+				public override bool Resolve (BlockContext ec)
 				{
 					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
 					ArrayList init = null;
@@ -317,7 +321,7 @@ namespace Mono.CSharp {
 					throw new NotSupportedException ();
 				}
 
-				public override bool Resolve (EmitContext ec)
+				public override bool Resolve (BlockContext ec)
 				{
 					return true;
 				}
@@ -814,6 +818,7 @@ namespace Mono.CSharp {
 			this.OriginalIteratorType = iterator_type;
 			this.IsEnumerable = is_enumerable;
 			this.Host = host;
+			this.type = method.ReturnType;
 
 			IteratorHost = Block.ChangeToIterator (this, method.Block);
 		}
@@ -837,7 +842,6 @@ namespace Mono.CSharp {
 			IteratorHost.DefineIteratorMembers ();
 
 			eclass = ExprClass.Value;
-			type = ec.ReturnType;
 			return this;
 		}
 

@@ -539,7 +539,7 @@ namespace Mono.CSharp {
 			return p;
 		}
 
-		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
+		public ExpressionStatement CreateExpressionTreeVariable (BlockContext ec)
 		{
 			//
 			// A parameter is not hoisted when used directly as ET
@@ -1151,7 +1151,7 @@ namespace Mono.CSharp {
 			get { return (Parameter) parameters [pos]; }
 		}
 
-		public Expression CreateExpressionTree (EmitContext ec, Location loc)
+		public Expression CreateExpressionTree (BlockContext ec, Location loc)
 		{
 			ArrayList initializers = new ArrayList (Count);
 			foreach (Parameter p in FixedParameters) {

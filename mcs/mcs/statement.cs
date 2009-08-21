@@ -27,7 +27,7 @@ namespace Mono.CSharp {
 		///   Resolves the statement, true means that all sub-statements
 		///   did resolve ok.
 		//  </summary>
-		public virtual bool Resolve (EmitContext ec)
+		public virtual bool Resolve (BlockContext ec)
 		{
 			return true;
 		}
@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 		///   We already know that the statement is unreachable, but we still
 		///   need to resolve it to catch errors.
 		/// </summary>
-		public virtual bool ResolveUnreachable (EmitContext ec, bool warn)
+		public virtual bool ResolveUnreachable (BlockContext ec, bool warn)
 		{
 			//
 			// This conflicts with csc's way of doing this, but IMHO it's
@@ -182,13 +182,13 @@ namespace Mono.CSharp {
 		private EmptyStatement () {}
 		
 		public static readonly EmptyStatement Value = new EmptyStatement ();
-		
-		public override bool Resolve (EmitContext ec)
+
+		public override bool Resolve (BlockContext ec)
 		{
 			return true;
 		}
 
-		public override bool ResolveUnreachable (EmitContext ec, bool warn)
+		public override bool ResolveUnreachable (BlockContext ec, bool warn)
 		{
 			return true;
 		}
@@ -240,7 +240,7 @@ namespace Mono.CSharp {
 				FalseStatement.MutateHoistedGenericType (storey);
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -369,7 +369,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -458,7 +458,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -587,7 +587,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -734,7 +734,7 @@ namespace Mono.CSharp {
 			loc = expr.Location;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (expr != null && expr.eclass == ExprClass.Invalid)
 				expr = expr.ResolveStatement (ec);
@@ -768,14 +768,14 @@ namespace Mono.CSharp {
 	public abstract class ExitStatement : Statement
 	{
 		protected bool unwind_protect;
-		protected abstract bool DoResolve (EmitContext ec);
+		protected abstract bool DoResolve (BlockContext ec);
 
 		public virtual void Error_FinallyClause ()
 		{
 			Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 		}
 
-		public sealed override bool Resolve (EmitContext ec)
+		public sealed override bool Resolve (BlockContext ec)
 		{
 			if (!DoResolve (ec))
 				return false;
@@ -799,7 +799,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 		
-		protected override bool DoResolve (EmitContext ec)
+		protected override bool DoResolve (BlockContext ec)
 		{
 			if (Expr == null) {
 				if (ec.ReturnType == TypeManager.void_type)
@@ -882,8 +882,8 @@ namespace Mono.CSharp {
 		string target;
 		LabeledStatement label;
 		bool unwind_protect;
-		
-		public override bool Resolve (EmitContext ec)
+
+		public override bool Resolve (BlockContext ec)
 		{
 			int errors = Report.Errors;
 			unwind_protect = ec.CurrentBranching.AddGotoOrigin (ec.CurrentBranching.CurrentUsageVector, this);
@@ -979,7 +979,7 @@ namespace Mono.CSharp {
 			// nothing to clone
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			// this flow-branching will be terminated when the surrounding block ends
 			ec.StartFlowBranching (this);
@@ -1020,7 +1020,7 @@ namespace Mono.CSharp {
 			// nothing to clone
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
@@ -1058,7 +1058,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (ec.Switch == null){
 				Report.Error (153, loc, "A goto case is only valid inside a switch statement");
@@ -1131,7 +1131,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (expr == null) {
 				ec.CurrentBranching.CurrentUsageVector.Goto ();
@@ -1187,7 +1187,7 @@ namespace Mono.CSharp {
 
 		bool unwind_protect;
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			int errors = Report.Errors;
 			unwind_protect = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
@@ -1219,7 +1219,7 @@ namespace Mono.CSharp {
 
 		bool unwind_protect;
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			int errors = Report.Errors;
 			unwind_protect = ec.CurrentBranching.AddContinueOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
@@ -2018,7 +2018,7 @@ namespace Mono.CSharp {
 			anonymous_children.Add (b);
 		}
 
-		void DoResolveConstants (EmitContext ec)
+		void DoResolveConstants (BlockContext ec)
 		{
 			if (constants == null)
 				return;
@@ -2080,7 +2080,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected void ResolveMeta (EmitContext ec, int offset)
+		protected void ResolveMeta (BlockContext ec, int offset)
 		{
 			Report.Debug (64, "BLOCK RESOLVE META", this, Parent);
 
@@ -2181,7 +2181,7 @@ namespace Mono.CSharp {
 				Report.Warning (642, 3, s.loc, "Possible mistaken empty statement");
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
 			bool ok = true;
@@ -2288,7 +2288,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public override bool ResolveUnreachable (EmitContext ec, bool warn)
+		public override bool ResolveUnreachable (BlockContext ec, bool warn)
 		{
 			unreachable_shown = true;
 			unreachable = true;
@@ -2671,6 +2671,12 @@ namespace Mono.CSharp {
 
 		public HoistedVariable HoistedThisVariable;
 
+		public bool Resolved {
+			get {
+				return resolved;
+			}
+		}
+
 		//
 		// The parameters for the block.
 		//
@@ -2882,7 +2888,7 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec, this);
 		}
 
-		public bool Resolve (FlowBranching parent, EmitContext rc, ParametersCompiled ip, IMethodData md)
+		public bool Resolve (FlowBranching parent, BlockContext rc, ParametersCompiled ip, IMethodData md)
 		{
 			if (resolved)
 				return true;
@@ -2926,7 +2932,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool ResolveMeta (EmitContext ec, ParametersCompiled ip)
+		bool ResolveMeta (BlockContext ec, ParametersCompiled ip)
 		{
 			int errors = Report.Errors;
 			int orig_count = parameters.Count;
@@ -3679,7 +3685,7 @@ namespace Mono.CSharp {
 			allowed_types = null;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			Expr = Expr.Resolve (ec);
 			if (Expr == null)
@@ -4041,7 +4047,7 @@ namespace Mono.CSharp {
 			code_follows = true;
 		}
 
-		protected void ResolveReachability (EmitContext ec)
+		protected void ResolveReachability (BlockContext ec)
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
@@ -4151,7 +4157,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -4235,7 +4241,7 @@ namespace Mono.CSharp {
 			b.Unchecked = true;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				return Block.Resolve (ec);
@@ -4269,7 +4275,7 @@ namespace Mono.CSharp {
 			b.Unchecked = false;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 			        return Block.Resolve (ec);
@@ -4304,7 +4310,7 @@ namespace Mono.CSharp {
 			loc = b.StartLocation;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (ec.CurrentIterator != null)
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
@@ -4441,7 +4447,7 @@ namespace Mono.CSharp {
 			get { return statement; }
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (!ec.InUnsafe){
 				Expression.UnsafeError (loc);
@@ -4688,7 +4694,7 @@ namespace Mono.CSharp {
 			Block.Emit (ec);
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.With (EmitContext.Options.CatchScope, true)) {
 				if (type_expr != null) {
@@ -4749,7 +4755,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -4829,7 +4835,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			bool ok = true;
 
@@ -4959,7 +4965,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -5121,7 +5127,7 @@ namespace Mono.CSharp {
 			stmt.MutateHoistedGenericType (storey);
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			if (!ResolveVariable (ec))
 				return false;
@@ -5142,7 +5148,7 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		bool ResolveVariable (EmitContext ec)
+		bool ResolveVariable (BlockContext ec)
 		{
 			assign = new SimpleAssign (var, init, loc);
 			assign = assign.ResolveStatement (ec);
@@ -5189,7 +5195,7 @@ namespace Mono.CSharp {
 				{
 				}
 
-				public void ResolveIncrement (EmitContext ec)
+				public void ResolveIncrement (BlockContext ec)
 				{
 					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this));
 					increment.Resolve (ec);
@@ -5234,7 +5240,7 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			public override bool Resolve (EmitContext ec)
+			public override bool Resolve (BlockContext ec)
 			{
 				copy = new TemporaryVariable (for_each.expr.Type, loc);
 				copy.Resolve (ec);
@@ -5390,7 +5396,7 @@ namespace Mono.CSharp {
 					throw new NotImplementedException ();
 				}
 
-				public override bool Resolve (EmitContext ec)
+				public override bool Resolve (BlockContext ec)
 				{
 					current = current.Resolve (ec);
 					if (current == null)
@@ -5702,7 +5708,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			public override bool Resolve (EmitContext ec)
+			public override bool Resolve (BlockContext ec)
 			{
 				enumerator_type = TypeManager.ienumerator_type;
 
@@ -5774,7 +5780,7 @@ namespace Mono.CSharp {
 					throw new NotSupportedException ();
 				}
 
-				public override bool Resolve (EmitContext ec)
+				public override bool Resolve (BlockContext ec)
 				{
 					return parent.ResolveLoop (ec);
 				}
@@ -5807,7 +5813,7 @@ namespace Mono.CSharp {
 					throw new NotSupportedException ();
 				}
 
-				public override bool Resolve (EmitContext ec)
+				public override bool Resolve (BlockContext ec)
 				{
 					bool ok = true;
 
@@ -5871,7 +5877,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			bool ResolveLoop (EmitContext ec)
+			bool ResolveLoop (BlockContext ec)
 			{
 				return loop.Resolve (ec);
 			}
@@ -5913,7 +5919,7 @@ namespace Mono.CSharp {
 			get { return statement; }
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)

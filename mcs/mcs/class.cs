@@ -736,7 +736,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void ResolveFieldInitializers (EmitContext ec)
+		public void ResolveFieldInitializers (BlockContext ec)
 		{
 			if (partial_parts != null) {
 				foreach (TypeContainer part in partial_parts) {
@@ -746,7 +746,7 @@ namespace Mono.CSharp {
 			DoResolveFieldInitializers (ec);
 		}
 
-		void DoResolveFieldInitializers (EmitContext ec)
+		void DoResolveFieldInitializers (BlockContext ec)
 		{
 			if (ec.IsStatic) {
 				if (initialized_static_fields == null)
@@ -4777,8 +4777,6 @@ namespace Mono.CSharp {
 
 			base.Emit ();
 
-			EmitContext ec = CreateEmitContext (null);
-
 			//
 			// If we use a "this (...)" constructor initializer, then
 			// do not emit field initializers, they are initialized in the other constructor
@@ -4786,8 +4784,11 @@ namespace Mono.CSharp {
 			bool emit_field_initializers = ((ModFlags & Modifiers.STATIC) != 0) ||
 				!(Initializer is ConstructorThisInitializer);
 
+			BlockContext bc = new BlockContext (this, block, TypeManager.void_type);
+			bc.Set (EmitContext.Options.ConstructorScope);
+
 			if (emit_field_initializers)
-				Parent.PartialContainer.ResolveFieldInitializers (ec);
+				Parent.PartialContainer.ResolveFieldInitializers (bc);
 
 			if (block != null) {
 				// If this is a non-static `struct' constructor and doesn't have any
@@ -4811,7 +4812,12 @@ namespace Mono.CSharp {
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
 			if (block != null) {
-				if (block.Resolve (null, ec, Parameters, this)) {
+				if (block.Resolve (null, bc, Parameters, this)) {
+					EmitContext ec = CreateEmitContext (null);
+					ec.Set (EmitContext.Options.ConstructorScope);
+
+					ec.ReturnLabel = bc.ReturnLabel;
+					ec.HasReturnLabel = bc.HasReturnLabel;
 					block.Emit (ec);
 				}
 			}
@@ -4886,8 +4892,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (this, ig_, TypeManager.void_type);
-			ec.CurrentBlock = block;
-			ec.Set (EmitContext.Options.ConstructorScope);
 			return ec;
 		}
 
@@ -5204,7 +5208,11 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				EmitContext ec = method.CreateEmitContext (builder.GetILGenerator ());
-				if (block.Resolve (null, ec, method.ParameterInfo, method)) {
+				BlockContext bc = new BlockContext (ec.ResolveContext, block, method.ReturnType);
+				if (block.Resolve (null, bc, method.ParameterInfo, method)) {
+					ec.ReturnLabel = bc.ReturnLabel;
+					ec.HasReturnLabel = bc.HasReturnLabel;
+
 					block.Emit (ec);
 				}
 			}

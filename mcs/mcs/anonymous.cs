@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
 
-			EmitContext rc = new EmitContext (this, null, ec.ReturnType);
+			EmitContext rc = new EmitContext (this, null, TypeManager.void_type);
 			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
 			e.Emit (ec);
 
@@ -1142,9 +1142,9 @@ namespace Mono.CSharp {
 
 			// FIXME: The emitted code isn't very careful about reachability
 			// so, ensure we have a 'ret' at the end
-			if (ec.CurrentBranching != null &&
-			    ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				ec.NeedReturnLabel ();
+			BlockContext bc = ec as BlockContext;
+			if (bc != null && bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				bc.NeedReturnLabel ();
 
 			return this;
 		}
@@ -1222,10 +1222,9 @@ namespace Mono.CSharp {
 
 			public override EmitContext CreateEmitContext (ILGenerator ig)
 			{
-				EmitContext aec = AnonymousMethod.aec;
-				aec.ig = ig;
-				aec.AnonymousStatic = (ModFlags & Modifiers.STATIC) != 0;
-				return aec;
+				EmitContext ec = new EmitContext (this, ig, ReturnType);
+				ec.CurrentAnonymousMethod = AnonymousMethod;
+				return ec;
 			}
 
 			protected override bool ResolveMemberType ()
@@ -1258,7 +1257,6 @@ namespace Mono.CSharp {
 				if (Storey == Parent && Storey.IsGeneric) {
 					AnonymousMethodStorey gstorey = Storey.GetGenericStorey ();
 					if (gstorey != null) {
-						AnonymousMethod.aec.ReturnType = gstorey.MutateType (ReturnType);
 						block.MutateHoistedGenericType (gstorey);
 					}
 				}
@@ -1282,7 +1280,6 @@ namespace Mono.CSharp {
 		protected readonly ToplevelBlock Block;
 
 		public Type ReturnType;
-		protected EmitContext aec;
 
 		protected AnonymousExpression (ToplevelBlock block, Type return_type, Location loc)
 		{
@@ -1298,7 +1295,7 @@ namespace Mono.CSharp {
 		public bool Compatible (EmitContext ec)
 		{
 			// TODO: Implement clone
-			aec = new EmitContext (ec.ResolveContext, null, ReturnType);
+			BlockContext aec = new BlockContext (ec.ResolveContext, Block, ReturnType);
 			aec.CurrentAnonymousMethod = this;
 
 			IDisposable aec_dispose = null;
@@ -1357,6 +1354,7 @@ namespace Mono.CSharp {
 
 		AnonymousMethodMethod method;
 		Field am_cache;
+		string block_name;
 
 		static int unique_id;
 
@@ -1389,8 +1387,13 @@ namespace Mono.CSharp {
 
 		bool Define (EmitContext ec)
 		{
-			if (aec == null && !Compatible (ec))
+			if (!Block.Resolved && !Compatible (ec))
 				return false;
+
+			if (block_name == null) {
+				MemberCore mc = (MemberCore) ec.ResolveContext;
+				block_name = mc.MemberName.Basename;
+			}
 
 			return true;
 		}
@@ -1422,7 +1425,7 @@ namespace Mono.CSharp {
 			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition;
 
 			MemberCore mc = ec.ResolveContext as MemberCore;
-			string name = CompilerGeneratedClass.MakeName (parent != storey ? mc.Name : null,
+			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
 				"m", null, unique_id++);
 
 			MemberName member_name;

@@ -280,6 +280,29 @@ namespace Mono.CSharp {
 		FullNamedExpression LookupNamespaceAlias (string name);
 	}
 
+	//
+	// Block or statement resolving context
+	//
+	public class BlockContext : EmitContext
+	{
+		public BlockContext (IResolveContext mc, ExplicitBlock block, Type returnType)
+			: base (mc, null, returnType)
+		{
+			// TODO: check for null value
+			CurrentBlock = block;
+		}
+
+		//
+		// This method is used during the Resolution phase to flag the
+		// need to define the ReturnLabel
+		//
+		public void NeedReturnLabel ()
+		{
+			if (!HasReturnLabel)
+				HasReturnLabel = true;
+		}
+	}
+
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
@@ -470,7 +493,7 @@ namespace Mono.CSharp {
 			if (return_type == null)
 				throw new ArgumentNullException ("return_type");
 
-			ReturnType = return_type;
+			this.return_type = return_type;
 		}
 
 		public Type CurrentType {
@@ -546,10 +569,8 @@ namespace Mono.CSharp {
 			get { return InUnsafe; }
 		}
 
-		// TODO: Hopefully temporary hack for anonyous methods, ResolveContext != EmitContext
-		public object AnonymousStatic;
 		public bool IsStatic {
-			get { return AnonymousStatic != null ? (bool) AnonymousStatic : ResolveContext.IsStatic; }
+			get { return ResolveContext.IsStatic; }
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -666,9 +687,6 @@ namespace Mono.CSharp {
 		}
 		
 		public Type ReturnType {
-			set {
-				return_type = value;
-			}
 			get {
 				return return_type;
 			}
@@ -786,25 +804,6 @@ namespace Mono.CSharp {
 
 			return return_value;
 		}
-
-		/// <summary>
-		///   This method is used during the Resolution phase to flag the
-		///   need to define the ReturnLabel
-		/// </summary>
-		public void NeedReturnLabel ()
-		{
-//			if (current_phase != Phase.Resolving){
-				//
-				// The reason is that the `ReturnLabel' is declared between
-				// resolution and emission
-				// 
-//				throw new Exception ("NeedReturnLabel called from Emit phase, should only be called during Resolve");
-//			}
-			
-			if (!HasReturnLabel)
-				HasReturnLabel = true;
-		}
-
 
 		public Expression GetThis (Location loc)
 		{

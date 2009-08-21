@@ -31,8 +31,9 @@ namespace Mono.CSharp {
 		{
 			if (ec.IsInProbingMode)
 				return this;
-			
-			Expression args = Parameters.CreateExpressionTree (ec, loc);
+
+			BlockContext bc = new BlockContext (ec.ResolveContext, ec.CurrentBlock.Explicit, TypeManager.void_type);
+			Expression args = Parameters.CreateExpressionTree (bc, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)
 				return null;
@@ -148,7 +149,8 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			Expression args = parameters.CreateExpressionTree (ec, loc);
+			BlockContext bc = new BlockContext (ec.ResolveContext, Block, ReturnType);
+			Expression args = parameters.CreateExpressionTree (bc, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)
 				return null;
@@ -192,7 +194,7 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 		}
 
-		protected override bool DoResolve (EmitContext ec)
+		protected override bool DoResolve (BlockContext ec)
 		{
 			//
 			// When delegate returns void, only expression statements can be used

@@ -1343,7 +1343,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression {
 
-		public virtual ExpressionStatement ResolveStatement (EmitContext ec)
+		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
 			if (e == null)
@@ -5069,8 +5069,7 @@ namespace Mono.CSharp {
 					EmitInstance (ec, false);
 
 				// Optimization for build-in types
-				// TODO: Iterators don't set current container
-				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.ResolveContext.CurrentType) && ec.CurrentIterator == null) {
+				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.ResolveContext.CurrentType)) {
 					LoadFromPtr (ig, type);
 				} else {
 					IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);

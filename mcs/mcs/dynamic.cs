@@ -142,7 +142,8 @@ namespace Mono.CSharp
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (binder.CreateCallSiteBinder (ec, arguments)));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
-			if (s.Resolve (ec)) {
+			BlockContext bc = new BlockContext (ec.ResolveContext, null, TypeManager.void_type);
+			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 				init.Emit (ec);
 			}
