@@ -4058,10 +4058,10 @@
       </method>
     </type>
     <type name="B">
-      <method name="Int32 &lt;M&gt;m__0[X](X)">
+      <method name="Int32 &lt;N&gt;m__1(Int64)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;N&gt;m__1(Int64)">
+      <method name="Int32 &lt;M`1&gt;m__0[X](X)">
         <size>2</size>
       </method>
     </type>
@@ -8171,7 +8171,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;TestClass&gt;m__0(Int32)">
+      <method name="Void &lt;a&gt;m__0(Int32)">
         <size>7</size>
       </method>
     </type>
@@ -11914,7 +11914,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="TDelegate &lt;CreateMethodUnscoped&gt;m__0[TDelegate](System.Object)">
+      <method name="TDelegate &lt;CreateMethodUnscoped`1&gt;m__0[TDelegate](System.Object)">
         <size>7</size>
       </method>
     </type>
@@ -12032,7 +12032,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;TestClass&gt;m__0(Int32)">
+      <method name="Void &lt;a&gt;m__0(Int32)">
         <size>1</size>
       </method>
     </type>
@@ -12105,9 +12105,6 @@
       </method>
     </type>
     <type name="C">
-      <method name="T &lt;Test2&gt;m__0[T](T)">
-        <size>2</size>
-      </method>
       <method name="Int32 &lt;Main&gt;m__1(Int32)">
         <size>16</size>
       </method>
@@ -12116,6 +12113,9 @@
       </method>
       <method name="System.String &lt;Main&gt;m__3(Int32)">
         <size>6</size>
+      </method>
+      <method name="T &lt;Test2`1&gt;m__0[T](T)">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -12552,10 +12552,10 @@
       <method name="Void Main()">
         <size>1</size>
       </method>
-      <method name="TDest &lt;GetUpcaster&gt;m__0[TSource,TDest](TSource)">
+      <method name="TDest &lt;GetUpcaster`2&gt;m__0[TSource,TDest](TSource)">
         <size>12</size>
       </method>
-      <method name="TDest &lt;GetDowncaster&gt;m__1[TSource,TDest](TSource)">
+      <method name="TDest &lt;GetDowncaster`2&gt;m__1[TSource,TDest](TSource)">
         <size>12</size>
       </method>
     </type>
@@ -12654,7 +12654,7 @@
       </method>
     </type>
     <type name="B">
-      <method name="Void &lt;Foo&gt;m__0[T]()">
+      <method name="Void &lt;Foo`1&gt;m__0[T]()">
         <size>7</size>
       </method>
     </type>
@@ -12733,7 +12733,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;Test&gt;m__0[T](T)">
+      <method name="Void &lt;Test`1&gt;m__0[T](T)">
         <size>8</size>
       </method>
     </type>
@@ -12945,9 +12945,6 @@
       <method name="System.Func`1[T] XX[T]()">
         <size>15</size>
       </method>
-      <method name="T &lt;XX&gt;m__2[T]()">
-        <size>10</size>
-      </method>
     </type>
     <type name="Test">
       <method name="Void .ctor()">
@@ -12955,6 +12952,11 @@
       </method>
       <method name="Int32 Main()">
         <size>98</size>
+      </method>
+    </type>
+    <type name="N1">
+      <method name="T &lt;XX`1&gt;m__2[T]()">
+        <size>10</size>
       </method>
     </type>
   </test>
@@ -13229,10 +13231,10 @@
       <method name="Void Main()">
         <size>1</size>
       </method>
-      <method name="Decimal &lt;Average&gt;m__0[TSource](Decimal, Decimal)">
+      <method name="Decimal &lt;Average`1&gt;m__0[TSource](Decimal, Decimal)">
         <size>8</size>
       </method>
-      <method name="Decimal &lt;Average&gt;m__1[TSource](Decimal, Decimal)">
+      <method name="Decimal &lt;Average`1&gt;m__1[TSource](Decimal, Decimal)">
         <size>8</size>
       </method>
     </type>
@@ -13247,9 +13249,6 @@
       </method>
       <method name="Int32 Main()">
         <size>12</size>
-      </method>
-      <method name="Void &lt;Test_3&gt;m__0[T]()">
-        <size>11</size>
       </method>
     </type>
     <type name="Test+D">
@@ -13266,6 +13265,11 @@
         <size>0</size>
       </method>
     </type>
+    <type name="Test">
+      <method name="Void &lt;Test_3`1&gt;m__0[T]()">
+        <size>11</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-anon-43.cs">
     <type name="TestC">
@@ -13278,7 +13282,7 @@
       <method name="Int32 Main()">
         <size>66</size>
       </method>
-      <method name="System.Type &lt;Test&gt;m__0[T]()">
+      <method name="System.Type &lt;Test`1&gt;m__0[T]()">
         <size>11</size>
       </method>
     </type>
@@ -13302,7 +13306,7 @@
       <method name="Void Main()">
         <size>1</size>
       </method>
-      <method name="Void &lt;ThisCausesACrash&gt;m__0[I](System.Object, System.EventArgs)">
+      <method name="Void &lt;ThisCausesACrash`1&gt;m__0[I](System.Object, System.EventArgs)">
         <size>1</size>
       </method>
     </type>
@@ -13318,9 +13322,6 @@
       <method name="Int32 Main()">
         <size>12</size>
       </method>
-      <method name="Void &lt;AnyMethod&gt;m__0[T]()">
-        <size>31</size>
-      </method>
     </type>
     <type name="C+&lt;AnyMethod&gt;c__AnonStorey0`1[T]">
       <method name="Void .ctor()">
@@ -13328,6 +13329,11 @@
       </method>
       <method name="Void &lt;&gt;m__1(System.String)">
         <size>14</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void &lt;AnyMethod`1&gt;m__0[T]()">
+        <size>31</size>
       </method>
     </type>
   </test>
@@ -16063,7 +16069,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>299</size>
+        <size>300</size>
       </method>
       <method name="System.Int64[] GetValues()">
         <size>23</size>
@@ -18418,11 +18424,11 @@
       <method name="Void Foo[T]()">
         <size>14</size>
       </method>
-      <method name="T &lt;Foo&gt;m__0[T](T)">
-        <size>2</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="T &lt;Foo`1&gt;m__0[T](T)">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -20167,7 +20173,7 @@
       <method name="Void Main()">
         <size>1</size>
       </method>
-      <method name="Char &lt;Test&gt;m__0(Char)">
+      <method name="Char &lt;E&gt;m__0(Char)">
         <size>2</size>
       </method>
     </type>
@@ -25340,19 +25346,6 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-257.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>8</size>
-      </method>
-      <method name="Void call(Int32 ByRef)">
-        <size>25</size>
       </method>
     </type>
   </test>
@@ -31945,7 +31938,7 @@
       </method>
     </type>
     <type name="TestClass">
-      <method name="Void &lt;TestClass&gt;m__0(Int32)">
+      <method name="Void &lt;a&gt;m__0(Int32)">
         <size>7</size>
       </method>
     </type>
@@ -38028,7 +38021,7 @@
       </method>
     </type>
     <type name="DelegateInit">
-      <method name="Void &lt;DelegateInit&gt;m__0()">
+      <method name="Void &lt;_print&gt;m__0()">
         <size>11</size>
       </method>
     </type>
@@ -38727,7 +38720,7 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void &lt;X&gt;m__0()">
+      <method name="Void &lt;Print&gt;m__0()">
         <size>11</size>
       </method>
     </type>
@@ -40211,9 +40204,6 @@
       <method name="Int32 Main()">
         <size>19</size>
       </method>
-      <method name="C &lt;C&gt;m__0(Int32)">
-        <size>4</size>
-      </method>
     </type>
     <type name="D">
       <method name="Void .ctor(Object, IntPtr)">
@@ -40227,6 +40217,11 @@
       </method>
       <method name="C EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="C &lt;field&gt;m__0(Int32)">
+        <size>4</size>
       </method>
     </type>
   </test>
@@ -41947,7 +41942,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>27</size>
+        <size>25</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
