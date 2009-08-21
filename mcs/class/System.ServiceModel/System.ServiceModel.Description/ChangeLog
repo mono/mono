@@ -1,3 +1,8 @@
+2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs:
+	  some dependent changes to ServiceHostBase.
+
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializerOperationBehavior.cs : add missing members.
