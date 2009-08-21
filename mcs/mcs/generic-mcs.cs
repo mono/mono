@@ -177,12 +177,12 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public bool DefineType (IResolveContext ec)
+		public bool DefineType (IMemberContext ec)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public bool DefineType (IResolveContext ec, MethodBuilder builder,
+		public bool DefineType (IMemberContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
 			throw new NotImplementedException ();
@@ -193,7 +193,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public bool UpdateConstraints (IResolveContext ec, Constraints new_constraints)
+		public bool UpdateConstraints (IMemberContext ec, Constraints new_constraints)
 		{
 			throw new NotImplementedException ();
 		}
@@ -251,7 +251,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			return null;
 		}
@@ -305,12 +305,12 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public bool CheckConstraints (IResolveContext ec)
+		public bool CheckConstraints (IMemberContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -319,7 +319,7 @@ namespace Mono.CSharp
 			get { throw new NotImplementedException (); }
 		}
 
-		public bool VerifyVariantTypeParameters (IResolveContext rc)
+		public bool VerifyVariantTypeParameters (IMemberContext rc)
 		{
 			throw new NotImplementedException ();
 		}
@@ -401,7 +401,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public bool Resolve (IResolveContext ec)
+		public bool Resolve (IMemberContext ec)
 		{
 			throw new NotImplementedException ();
 		}

@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 				TypeArguments targs = new TypeArguments ();
 
 				if (tparams.Length < CountTypeParameters) {
-					TypeParameter[] parent_tparams = ec.ResolveContext.CurrentTypeDefinition.TypeParameters;
+					TypeParameter[] parent_tparams = ec.MemberContext.CurrentTypeDefinition.TypeParameters;
 					for (int i = 0; i < parent_tparams.Length; ++i)
 						targs.Add (new TypeParameterExpr (parent_tparams[i], Location));
 				}
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 					f_set_expr.InstanceExpression = instace_expr;
 
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
-					if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
+					if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 						a.EmitStatement (ec);
 				}
 			}
@@ -645,7 +645,7 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				ResolveContext rc = new ResolveContext (ec.ResolveContext);
+				ResolveContext rc = new ResolveContext (ec.MemberContext);
 				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc);
 				// This should never fail
 				e = e.Resolve (rc);
@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 			parameter.Parameter.HoistedVariableReference = null;
 
 			Assign a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
-			if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
+			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 				a.EmitStatement (ec);
 
 			parameter.Parameter.HoistedVariableReference = temp;
@@ -823,7 +823,7 @@ namespace Mono.CSharp {
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
 			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), ec.GetThis (field.Location));
-			if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
+			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 				a.EmitStatement (ec);
 		}
 
@@ -1294,7 +1294,7 @@ namespace Mono.CSharp {
 		public bool Compatible (EmitContext ec)
 		{
 			// TODO: Implement clone
-			BlockContext aec = new BlockContext (ec.ResolveContext, Block, ReturnType);
+			BlockContext aec = new BlockContext (ec.MemberContext, Block, ReturnType);
 			aec.CurrentAnonymousMethod = this;
 
 			IDisposable aec_dispose = null;
@@ -1390,7 +1390,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (block_name == null) {
-				MemberCore mc = (MemberCore) ec.ResolveContext;
+				MemberCore mc = (MemberCore) ec.MemberContext;
 				block_name = mc.MemberName.Basename;
 			}
 
@@ -1423,7 +1423,7 @@ namespace Mono.CSharp {
 
 			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition;
 
-			MemberCore mc = ec.ResolveContext as MemberCore;
+			MemberCore mc = ec.MemberContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
 				"m", null, unique_id++);
 
@@ -1531,7 +1531,7 @@ namespace Mono.CSharp {
 			if (is_static) {
 				ig.Emit (OpCodes.Ldnull);
 			} else if (storey != null) {
-				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.ResolveContext));
+				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.MemberContext));
 				if (e != null)
 					e.Emit (ec);
 			} else {

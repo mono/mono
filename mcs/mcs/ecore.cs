@@ -242,7 +242,7 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual FullNamedExpression ResolveAsTypeStep (IResolveContext rc,  bool silent)
+		public virtual FullNamedExpression ResolveAsTypeStep (IMemberContext rc,  bool silent)
 		{
 			if (!silent) {
 				Expression e = Resolve (new ResolveContext (rc));
@@ -257,7 +257,7 @@ namespace Mono.CSharp {
 		// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
 		// same name exists or as a keyword when no type was found
 		// 
-		public virtual TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)
+		public virtual TypeExpr ResolveAsContextualType (IMemberContext rc, bool silent)
 		{
 			return ResolveAsTypeTerminal (rc, silent);
 		}		
@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public virtual TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public virtual TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			TypeExpr te = ResolveAsBaseTerminal (ec, silent);
 			if (te == null)
@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 			return te;
 		}
 	
-		public TypeExpr ResolveAsBaseTerminal (IResolveContext ec, bool silent)
+		public TypeExpr ResolveAsBaseTerminal (IMemberContext ec, bool silent)
 		{
 			int errors = Report.Errors;
 
@@ -2466,7 +2466,7 @@ namespace Mono.CSharp {
 					name);
 		}
 
-		public bool IdenticalNameAndTypeName (IResolveContext mc, Expression resolved_to, Location loc)
+		public bool IdenticalNameAndTypeName (IMemberContext mc, Expression resolved_to, Location loc)
 		{
 			return resolved_to != null && resolved_to.Type != null && 
 				resolved_to.Type.Name == Name &&
@@ -2501,7 +2501,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		FullNamedExpression ResolveNested (IResolveContext ec, Type t)
+		FullNamedExpression ResolveNested (IMemberContext ec, Type t)
 		{
 			if (!TypeManager.IsGenericTypeDefinition (t) && !TypeManager.IsGenericType (t))
 				return null;
@@ -2536,7 +2536,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			int errors = Report.Errors;
 			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, loc, /*ignore_cs0104=*/ false);
@@ -2567,7 +2567,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected virtual void Error_TypeOrNamespaceNotFound (IResolveContext ec)
+		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ec)
 		{
 			if (ec.CurrentType != null) {
 				if (ec.CurrentTypeDefinition != null) {
@@ -2763,7 +2763,7 @@ namespace Mono.CSharp {
 				if (almost_matched_type == null)
 					almost_matched_type = ec.CurrentType;
 
-				string type_name = ec.ResolveContext.CurrentType == null ? null : ec.ResolveContext.CurrentType.Name;
+				string type_name = ec.MemberContext.CurrentType == null ? null : ec.MemberContext.CurrentType.Name;
 				return Error_MemberLookupFailed (ec.CurrentType, null, almost_matched_type, Name,
 					type_name, AllMemberTypes, AllBindingFlags);
 			}
@@ -2850,7 +2850,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			return this;
 		}
@@ -2866,7 +2866,7 @@ namespace Mono.CSharp {
 	///   Expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)
@@ -2881,7 +2881,7 @@ namespace Mono.CSharp {
 			return ResolveAsTypeTerminal (ec, false);
 		}
 
-		public virtual bool CheckAccessLevel (IResolveContext mc)
+		public virtual bool CheckAccessLevel (IMemberContext mc)
 		{
 			return mc.CurrentTypeDefinition.CheckAccessLevel (Type);
 		}
@@ -2914,7 +2914,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected abstract TypeExpr DoResolveAsTypeStep (IResolveContext ec);
+		protected abstract TypeExpr DoResolveAsTypeStep (IMemberContext ec);
 
 		public override bool Equals (object obj)
 		{
@@ -2947,12 +2947,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			return this;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			return this;
 		}
@@ -2973,7 +2973,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Type;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			//
 			// It's null only during mscorlib bootstrap when DefineType
@@ -2994,7 +2994,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			return this;
 		}
@@ -5067,7 +5067,7 @@ namespace Mono.CSharp {
 					EmitInstance (ec, false);
 
 				// Optimization for build-in types
-				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.ResolveContext.CurrentType)) {
+				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.MemberContext.CurrentType)) {
 					LoadFromPtr (ig, type);
 				} else {
 					IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
@@ -6012,7 +6012,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override void Error_TypeOrNamespaceNotFound (IResolveContext ec)
+		protected override void Error_TypeOrNamespaceNotFound (IMemberContext ec)
 		{
 			if (RootContext.Version < LanguageVersion.V_3)
 				base.Error_TypeOrNamespaceNotFound (ec);
@@ -6020,7 +6020,7 @@ namespace Mono.CSharp {
 				Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
 		}
 
-		public override TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)
+		public override TypeExpr ResolveAsContextualType (IMemberContext rc, bool silent)
 		{
 			TypeExpr te = base.ResolveAsContextualType (rc, true);
 			if (te != null)

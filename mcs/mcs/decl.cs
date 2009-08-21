@@ -235,7 +235,7 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore : Attributable, IResolveContext {
+	public abstract class MemberCore : Attributable, IMemberContext {
 		/// <summary>
 		///   Public name
 		/// </summary>

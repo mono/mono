@@ -159,7 +159,7 @@ namespace Mono.CSharp {
 		// types. Type names come from the parent scope but type parameter
 		// names from the container scope.
 		//
-		struct BaseContext : IResolveContext
+		struct BaseContext : IMemberContext
 		{
 			TypeContainer tc;
 
@@ -851,7 +851,7 @@ namespace Mono.CSharp {
 
 			int count = type_bases.Count;
 			TypeExpr [] ifaces = null;
-			IResolveContext base_context = new BaseContext (this);
+			IMemberContext base_context = new BaseContext (this);
 			for (int i = 0, j = 0; i < count; i++){
 				FullNamedExpression fne = (FullNamedExpression) type_bases [i];
 
@@ -4496,7 +4496,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 
 			// TODO: ec.GetSignatureForError ()
-			ConstructorBuilder caller_builder = ((Constructor) ec.ResolveContext).ConstructorBuilder;
+			ConstructorBuilder caller_builder = ((Constructor) ec.MemberContext).ConstructorBuilder;
 
 			if (argument_list != null) {
 				bool dynamic;
@@ -5208,7 +5208,7 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				EmitContext ec = method.CreateEmitContext (builder.GetILGenerator ());
-				BlockContext bc = new BlockContext (ec.ResolveContext, block, method.ReturnType);
+				BlockContext bc = new BlockContext (ec.MemberContext, block, method.ReturnType);
 				if (block.Resolve (null, bc, method.ParameterInfo, method)) {
 					ec.ReturnLabel = bc.ReturnLabel;
 					ec.HasReturnLabel = bc.HasReturnLabel;

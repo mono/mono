@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null && ec.ReturnType == TypeManager.void_type) {
-				MemberCore mc = ec.ResolveContext as MemberCore;
+				MemberCore mc = ec.MemberContext as MemberCore;
 				Report.Error (127, loc, "`{0}': A return keyword must not be followed by any expression when method returns void",
 					mc.GetSignatureForError ());
 			}
@@ -2473,7 +2473,7 @@ namespace Mono.CSharp {
 			    return ec.CurrentIterator.Storey;
 
 			if (am_storey == null) {
-				MemberBase mc = ec.ResolveContext as MemberBase;
+				MemberBase mc = ec.MemberContext as MemberBase;
 				GenericMethod gm = mc == null ? null : mc.GenericMethod;
 
 				//
@@ -3862,7 +3862,7 @@ namespace Mono.CSharp {
 
 			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
 
-			ResolveContext rc = new ResolveContext (ec.ResolveContext);
+			ResolveContext rc = new ResolveContext (ec.MemberContext);
 
 			if (TypeManager.generic_ienumerable_type != null) {
 				Arguments get_value_args = new Arguments (2);
@@ -4424,7 +4424,7 @@ namespace Mono.CSharp {
 
 				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, TypeManager.int_get_offset_to_string_data, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
-				pe.Resolve (new ResolveContext (ec.ResolveContext)).Emit (ec);
+				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
 				ec.ig.Emit (OpCodes.Add);
 				vi.EmitAssign (ec);
@@ -4671,7 +4671,7 @@ namespace Mono.CSharp {
 			if (Name != null) {
 				// TODO: Move to resolve
 				LocalVariableReference lvr = new LocalVariableReference (Block, Name, loc);
-				lvr.Resolve (new ResolveContext (ec.ResolveContext));
+				lvr.Resolve (new ResolveContext (ec.MemberContext));
 				
 #if GMCS_SOURCE
 				// Only to make verifier happy

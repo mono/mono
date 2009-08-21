@@ -463,9 +463,9 @@ namespace Mono.CSharp {
 		// Keep resolved value because field initializers have their own rules
 		//
 		ExpressionStatement resolved;
-		IResolveContext rc;
+		IMemberContext rc;
 
-		public FieldInitializer (FieldBuilder field, Expression expression, IResolveContext rc)
+		public FieldInitializer (FieldBuilder field, Expression expression, IMemberContext rc)
 			: base (new FieldExpr (field, expression.Location), expression, expression.Location)
 		{
 			this.rc = rc;
@@ -485,14 +485,14 @@ namespace Mono.CSharp {
 				// share same costructor (block) but they have they own resolve scope.
 				//
 
-				IResolveContext old = ec.ResolveContext;
-				ec.ResolveContext = rc;
+				IMemberContext old = ec.MemberContext;
+				ec.MemberContext = rc;
 
 				using (ec.Set (ResolveContext.Options.FieldInitializerScope)) {
 					resolved = base.DoResolve (ec) as ExpressionStatement;
 				}
 
-				ec.ResolveContext = old;
+				ec.MemberContext = old;
 			}
 
 			return resolved;

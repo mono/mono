@@ -134,7 +134,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Type Resolve (IResolveContext ec)
+		public override Type Resolve (IMemberContext ec)
 		{
 			if (parameter_type == null)
 				throw new InternalErrorException ("A type of implicit lambda parameter `{0}' is not set",
@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Type Resolve (IResolveContext ec)
+		public override Type Resolve (IMemberContext ec)
 		{
 			if (base.Resolve (ec) == null)
 				return null;
@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Type Resolve (IResolveContext ec)
+		public override Type Resolve (IMemberContext ec)
 		{
 			return InternalType.Arglist;
 		}
@@ -330,7 +330,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public virtual Type Resolve (IResolveContext rc)
+		public virtual Type Resolve (IMemberContext rc)
 		{
 			if (parameter_type != null)
 				return parameter_type;
@@ -1086,7 +1086,7 @@ namespace Mono.CSharp {
 			Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
 		}
 
-		public bool Resolve (IResolveContext ec)
+		public bool Resolve (IMemberContext ec)
 		{
 			if (types != null)
 				return true;

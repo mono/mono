@@ -23,12 +23,12 @@ namespace Mono.CSharp
 			eclass = ExprClass.Type;
 		}
 
-		public override bool CheckAccessLevel (IResolveContext ds)
+		public override bool CheckAccessLevel (IMemberContext ds)
 		{
 			return true;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			return this;
 		}
@@ -142,7 +142,7 @@ namespace Mono.CSharp
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (binder.CreateCallSiteBinder (ec, arguments)));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
-			BlockContext bc = new BlockContext (ec.ResolveContext, null, TypeManager.void_type);
+			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);
 			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 				init.Emit (ec);
@@ -162,7 +162,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			ResolveContext rc = new ResolveContext (ec.ResolveContext);
+			ResolveContext rc = new ResolveContext (ec.MemberContext);
 			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (rc), args, loc).Resolve (rc);
 			if (target != null)
 				target.Emit (ec);

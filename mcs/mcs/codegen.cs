@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// An interface to hold all the information needed in the resolving phase.
 	/// </summary>
-	public interface IResolveContext
+	public interface IMemberContext
 	{
 		//
 		// A scope type context, it can be inflated for generic types
@@ -287,7 +287,7 @@ namespace Mono.CSharp {
 	{
 		FlowBranching current_flow_branching;
 
-		public BlockContext (IResolveContext mc, ExplicitBlock block, Type returnType)
+		public BlockContext (IMemberContext mc, ExplicitBlock block, Type returnType)
 			: base (mc)
 		{
 			if (returnType == null)
@@ -398,7 +398,7 @@ namespace Mono.CSharp {
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
-	public class EmitContext : IResolveContext {
+	public class EmitContext : IMemberContext {
 
 		[Flags]
 		public enum Options
@@ -552,7 +552,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
-		public IResolveContext ResolveContext;
+		public IMemberContext MemberContext;
 
 		/// <summary>
 		///    The current iterator
@@ -563,9 +563,9 @@ namespace Mono.CSharp {
 
 		public TypeInferenceContext ReturnTypeInference;
 
-		public EmitContext (IResolveContext rc, ILGenerator ig, Type return_type)
+		public EmitContext (IMemberContext rc, ILGenerator ig, Type return_type)
 		{
-			this.ResolveContext = rc;
+			this.MemberContext = rc;
 			this.ig = ig;
 
 			//
@@ -587,15 +587,15 @@ namespace Mono.CSharp {
 		}
 
 		public Type CurrentType {
-			get { return ResolveContext.CurrentType; }
+			get { return MemberContext.CurrentType; }
 		}
 
 		public TypeParameter[] CurrentTypeParameters {
-			get { return ResolveContext.CurrentTypeParameters; }
+			get { return MemberContext.CurrentTypeParameters; }
 		}
 
 		public TypeContainer CurrentTypeDefinition {
-			get { return ResolveContext.CurrentTypeDefinition; }
+			get { return MemberContext.CurrentTypeDefinition; }
 		}
 
 		public bool ConstantCheckState {
@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool InUnsafe {
-			get { return HasSet (Options.UnsafeScope) || ResolveContext.IsInUnsafeScope; }
+			get { return HasSet (Options.UnsafeScope) || MemberContext.IsInUnsafeScope; }
 		}
 
 		public bool DoFlowAnalysis {
@@ -647,7 +647,7 @@ namespace Mono.CSharp {
 		public bool IsInObsoleteScope {
 			get {
 				// Disables obsolete checks when probing is on
-				return IsInProbingMode || ResolveContext.IsInObsoleteScope;
+				return IsInProbingMode || MemberContext.IsInObsoleteScope;
 			}
 		}
 
@@ -655,12 +655,12 @@ namespace Mono.CSharp {
 			get { return (flags & Options.ProbingMode) != 0; }
 		}
 
-		bool IResolveContext.IsInUnsafeScope {
+		bool IMemberContext.IsInUnsafeScope {
 			get { return InUnsafe; }
 		}
 
 		public bool IsStatic {
-			get { return ResolveContext.IsStatic; }
+			get { return MemberContext.IsStatic; }
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -829,17 +829,17 @@ namespace Mono.CSharp {
 
 		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 		{
-			return ResolveContext.LookupExtensionMethod (extensionType, name, loc);
+			return MemberContext.LookupExtensionMethod (extensionType, name, loc);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
-			return ResolveContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			return MemberContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
 		public FullNamedExpression LookupNamespaceAlias (string name)
 		{
-			return ResolveContext.LookupNamespaceAlias (name);
+			return MemberContext.LookupNamespaceAlias (name);
 		}
 
 		#endregion
@@ -847,12 +847,12 @@ namespace Mono.CSharp {
 
 	public class ResolveContext : EmitContext
 	{
-		public ResolveContext (IResolveContext mc)
+		public ResolveContext (IMemberContext mc)
 			: base (mc, null, null)
 		{
 		}
 
-		public ResolveContext (IResolveContext mc, Options options)
+		public ResolveContext (IMemberContext mc, Options options)
 			: this (mc)
 		{
 			Set (options);
@@ -860,9 +860,9 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass : Attributable, IResolveContext
+	public abstract class CommonAssemblyModulClass : Attributable, IMemberContext
 	{
-		public void AddAttributes (ArrayList attrs, IResolveContext context)
+		public void AddAttributes (ArrayList attrs, IMemberContext context)
 		{
 			foreach (Attribute a in attrs)
 				a.AttachTo (this, context);

@@ -271,7 +271,7 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		protected static Expression CreateRangeVariableType (ToplevelBlock block, IResolveContext context, LocatedToken name, Expression init)
+		protected static Expression CreateRangeVariableType (ToplevelBlock block, IMemberContext context, LocatedToken name, Expression init)
 		{
 			ArrayList args = new ArrayList (2);
 			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
@@ -409,7 +409,7 @@ namespace Mono.CSharp.Linq
 				result_selector_expr = next.expr;
 				next = next.next;
 			} else {
-				result_selector_expr = CreateRangeVariableType (block, ec.ResolveContext, into_variable,
+				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, into_variable,
 					new SimpleName (into_variable.Value, into_variable.Location));
 			}
 
@@ -519,7 +519,7 @@ namespace Mono.CSharp.Linq
 				result_selector_expr = next.expr;
 				next = next.next;
 			} else {
-				result_selector_expr = CreateRangeVariableType (block, ec.ResolveContext, lt, new SimpleName (lt.Value, lt.Location));
+				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, lt, new SimpleName (lt.Value, lt.Location));
 			}
 
 			LambdaExpression result_selector = new LambdaExpression (lt.Location);

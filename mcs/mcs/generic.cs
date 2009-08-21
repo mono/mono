@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 		///   Resolve the constraints - but only resolve things into Expression's, not
 		///   into actual types.
 		/// </summary>
-		public bool Resolve (IResolveContext ec, TypeParameter tp)
+		public bool Resolve (IMemberContext ec, TypeParameter tp)
 		{
 			if (resolved)
 				return true;
@@ -494,7 +494,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the constraints into actual types.
 		/// </summary>
-		public bool ResolveTypes (IResolveContext ec)
+		public bool ResolveTypes (IMemberContext ec)
 		{
 			if (resolved_types)
 				return true;
@@ -766,7 +766,7 @@ namespace Mono.CSharp {
 		///   Note that we may have circular dependencies on type parameters - this
 		///   is why Resolve() and ResolveType() are separate.
 		/// </summary>
-		public bool ResolveType (IResolveContext ec)
+		public bool ResolveType (IMemberContext ec)
 		{
 			if (constraints != null) {
 				if (!constraints.ResolveTypes (ec)) {
@@ -783,7 +783,7 @@ namespace Mono.CSharp {
 		///   process.  We're called after everything is fully resolved and actually
 		///   register the constraints with SRE and the TypeManager.
 		/// </summary>
-		public bool DefineType (IResolveContext ec)
+		public bool DefineType (IMemberContext ec)
 		{
 			return DefineType (ec, null, null, false);
 		}
@@ -796,7 +796,7 @@ namespace Mono.CSharp {
 		///   The `builder', `implementing' and `is_override' arguments are only
 		///   applicable to method type parameters.
 		/// </summary>
-		public bool DefineType (IResolveContext ec, MethodBuilder builder,
+		public bool DefineType (IMemberContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
 			if (!ResolveType (ec))
@@ -899,7 +899,7 @@ namespace Mono.CSharp {
 		///   check that they're the same.
 		///   con
 		/// </summary>
-		public bool UpdateConstraints (IResolveContext ec, Constraints new_constraints)
+		public bool UpdateConstraints (IMemberContext ec, Constraints new_constraints)
 		{
 			if (type == null)
 				throw new InvalidOperationException ();
@@ -1152,12 +1152,12 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			return this;
 		}
@@ -1166,7 +1166,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public override bool CheckAccessLevel (IResolveContext ds)
+		public override bool CheckAccessLevel (IMemberContext ds)
 		{
 			return true;
 		}
@@ -1238,7 +1238,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
-		public bool Resolve (IResolveContext ec)
+		public bool Resolve (IMemberContext ec)
 		{
 			if (atypes != null)
 				return atypes.Length != 0;
@@ -1365,7 +1365,7 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (type);
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -1394,12 +1394,12 @@ namespace Mono.CSharp {
 		///   Check the constraints; we're called from ResolveAsTypeTerminal()
 		///   after fully resolving the constructed type.
 		/// </summary>
-		public bool CheckConstraints (IResolveContext ec)
+		public bool CheckConstraints (IMemberContext ec)
 		{
 			return ConstraintChecker.CheckConstraints (ec, open_type, gen_params, args.Arguments, loc);
 		}
 	
-		public override bool CheckAccessLevel (IResolveContext mc)
+		public override bool CheckAccessLevel (IMemberContext mc)
 		{
 			return mc.CurrentTypeDefinition.CheckAccessLevel (open_type);
 		}
@@ -1455,7 +1455,7 @@ namespace Mono.CSharp {
 		///   Check the constraints; we're called from ResolveAsTypeTerminal()
 		///   after fully resolving the constructed type.
 		/// </summary>
-		public bool CheckConstraints (IResolveContext ec)
+		public bool CheckConstraints (IMemberContext ec)
 		{
 			for (int i = 0; i < gen_params.Length; i++) {
 				if (!CheckConstraints (ec, i))
@@ -1465,7 +1465,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool CheckConstraints (IResolveContext ec, int index)
+		protected bool CheckConstraints (IMemberContext ec, int index)
 		{
 			Type atype = atypes [index];
 			Type ptype = gen_params [index];
@@ -1561,7 +1561,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected bool CheckConstraint (IResolveContext ec, Type ptype, Expression expr,
+		protected bool CheckConstraint (IMemberContext ec, Type ptype, Expression expr,
 						Type ctype)
 		{
 			if (TypeManager.HasGenericArguments (ctype)) {
@@ -1680,7 +1680,7 @@ namespace Mono.CSharp {
 			return checker.CheckConstraints (ec);
 		}
 
-		public static bool CheckConstraints (IResolveContext ec, Type gt, Type[] gen_params,
+		public static bool CheckConstraints (IMemberContext ec, Type gt, Type[] gen_params,
 						     Type[] atypes, Location loc)
 		{
 			TypeConstraintChecker checker = new TypeConstraintChecker (

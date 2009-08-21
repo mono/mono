@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 		//
  		protected Attributes attributes;
 
-		public void AddAttributes (Attributes attrs, IResolveContext context)
+		public void AddAttributes (Attributes attrs, IMemberContext context)
 		{
 			if (attrs == null)
 				return;
@@ -96,7 +96,7 @@ namespace Mono.CSharp {
 		// A member context for the attribute, it's much easier to hold it here
 		// than trying to pull it during resolve
 		//
-		IResolveContext context;
+		IMemberContext context;
 
 		static readonly AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 		// we use @target field as a list of targets. The attribute
 		// has to be resolved only once but emitted for each target.
 		//
-		public virtual void AttachTo (Attributable target, IResolveContext context)
+		public virtual void AttachTo (Attributable target, IMemberContext context)
 		{
 			if (this.targets == null) {
 				this.targets = new Attributable[] { target };
@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec)
+		protected virtual TypeExpr ResolveAsTypeTerminal (Expression expr, IMemberContext ec)
 		{
 			return expr.ResolveAsTypeTerminal (ec, false);
 		}
@@ -1295,7 +1295,7 @@ namespace Mono.CSharp {
 			this.ns = ns;
 		}
 		
-		public override void AttachTo (Attributable target, IResolveContext context)
+		public override void AttachTo (Attributable target, IMemberContext context)
 		{
 			if (ExplicitTarget == "assembly") {
 				base.AttachTo (CodeGen.Assembly, context);
@@ -1335,7 +1335,7 @@ namespace Mono.CSharp {
 			RootContext.ToplevelTypes.NamespaceEntry = null;
 		}
 
-		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IResolveContext ec)
+		protected override TypeExpr ResolveAsTypeTerminal (Expression expr, IMemberContext ec)
 		{
 			try {
 				Enter ();
@@ -1388,7 +1388,7 @@ namespace Mono.CSharp {
 			Attrs.AddRange (attrs);
 		}
 
-		public void AttachTo (Attributable attributable, IResolveContext context)
+		public void AttachTo (Attributable attributable, IMemberContext context)
 		{
 			foreach (Attribute a in Attrs)
 				a.AttachTo (attributable, context);

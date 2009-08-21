@@ -3216,7 +3216,7 @@ namespace Mono.CSharp {
 			return oper_expr;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			return null;
 		}
@@ -3779,7 +3779,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Expression concat = new Invocation (CreateConcatMemberExpression (), arguments, true);
-			concat = concat.Resolve (new ResolveContext (ec.ResolveContext));
+			concat = concat.Resolve (new ResolveContext (ec.MemberContext));
 			if (concat != null)
 				concat.Emit (ec);
 		}
@@ -3947,7 +3947,7 @@ namespace Mono.CSharp {
 
 					if (size != 0) {
 						// TODO: Should be the checks resolve context sensitive?
-						ResolveContext rc = new ResolveContext (ec.ResolveContext);
+						ResolveContext rc = new ResolveContext (ec.MemberContext);
 						right = ConstantFold.BinaryFold (rc, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
 						if (right == null)
 							return;
@@ -4098,7 +4098,7 @@ namespace Mono.CSharp {
 			type = storey.MutateType (type);
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			return null;
 		}
@@ -7209,7 +7209,7 @@ namespace Mono.CSharp {
 			this.alias = alias;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			if (alias == GlobalAlias) {
 				expr = GlobalRootNamespace.Instance;
@@ -7244,7 +7244,7 @@ namespace Mono.CSharp {
 			return ResolveAsTypeStep (ec, false);
 		}
 
-		protected override void Error_IdentifierNotFound (IResolveContext rc, FullNamedExpression expr_type, string identifier)
+		protected override void Error_IdentifierNotFound (IMemberContext rc, FullNamedExpression expr_type, string identifier)
 		{
 			Report.Error (687, loc,
 				"A namespace alias qualifier `{0}' did not resolve to a namespace or a type",
@@ -7400,7 +7400,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!texpr.CheckAccessLevel (ec.ResolveContext)) {
+				if (!texpr.CheckAccessLevel (ec.MemberContext)) {
 					Report.SymbolRelatedToPreviousError (member_lookup.Type);
 					ErrorIsInaccesible (loc, TypeManager.CSharpName (member_lookup.Type));
 					return null;
@@ -7460,12 +7460,12 @@ namespace Mono.CSharp {
 			return DoResolve (ec, right_side);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
 		{
 			return ResolveNamespaceOrType (ec, silent);
 		}
 
-		public FullNamedExpression ResolveNamespaceOrType (IResolveContext rc, bool silent)
+		public FullNamedExpression ResolveNamespaceOrType (IMemberContext rc, bool silent)
 		{
 			FullNamedExpression expr_resolved = expr.ResolveAsTypeStep (rc, silent);
 
@@ -7537,7 +7537,7 @@ namespace Mono.CSharp {
 			return texpr;
 		}
 
-		protected virtual void Error_IdentifierNotFound (IResolveContext rc, FullNamedExpression expr_type, string identifier)
+		protected virtual void Error_IdentifierNotFound (IMemberContext rc, FullNamedExpression expr_type, string identifier)
 		{
 			Expression member_lookup = MemberLookup (
 				rc.CurrentType, expr_type.Type, expr_type.Type, SimpleName.RemoveGenericArity (identifier),
@@ -8906,7 +8906,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
 			if (lexpr == null)
@@ -8957,7 +8957,7 @@ namespace Mono.CSharp {
 			return left.GetSignatureForError () + dim;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			return ResolveAsBaseTerminal (ec, silent);
 		}		

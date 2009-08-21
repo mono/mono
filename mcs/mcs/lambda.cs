@@ -32,7 +32,7 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return this;
 
-			BlockContext bc = new BlockContext (ec.ResolveContext, ec.CurrentBlock.Explicit, TypeManager.void_type);
+			BlockContext bc = new BlockContext (ec.MemberContext, ec.CurrentBlock.Explicit, TypeManager.void_type);
 			Expression args = Parameters.CreateExpressionTree (bc, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)
@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			BlockContext bc = new BlockContext (ec.ResolveContext, Block, ReturnType);
+			BlockContext bc = new BlockContext (ec.MemberContext, Block, ReturnType);
 			Expression args = parameters.CreateExpressionTree (bc, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)

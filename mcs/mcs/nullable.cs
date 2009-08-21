@@ -34,7 +34,7 @@ namespace Mono.CSharp.Nullable
 			: this (new TypeExpression (type, loc), loc)
 		{ }
 
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			if (TypeManager.generic_nullable_type == null) {
 				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (
@@ -46,7 +46,7 @@ namespace Mono.CSharp.Nullable
 			return ctype.ResolveAsTypeTerminal (ec, false);
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 		{
 			return ResolveAsBaseTerminal (ec, silent);
 		}		

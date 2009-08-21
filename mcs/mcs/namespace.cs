@@ -686,7 +686,7 @@ namespace Mono.CSharp {
 	//
 	// Namespace container as created by the parser
 	//
-	public class NamespaceEntry : IResolveContext {
+	public class NamespaceEntry : IMemberContext {
 
 		class UsingEntry {
 			readonly MemberName name;
@@ -714,7 +714,7 @@ namespace Mono.CSharp {
 				get { return GetSignatureForError (); }
 			}
 
-			public Namespace Resolve (IResolveContext rc)
+			public Namespace Resolve (IMemberContext rc)
 			{
 				if (resolved != null)
 					return resolved;
@@ -749,7 +749,7 @@ namespace Mono.CSharp {
 				this.Location = loc;
 			}
 
-			public virtual FullNamedExpression Resolve (IResolveContext rc)
+			public virtual FullNamedExpression Resolve (IMemberContext rc)
 			{
 				FullNamedExpression fne = GlobalRootNamespace.Instance.GetRootNamespace (Alias);
 				if (fne == null) {
@@ -778,7 +778,7 @@ namespace Mono.CSharp {
 				this.value = name;
 			}
 
-			public override FullNamedExpression Resolve (IResolveContext rc)
+			public override FullNamedExpression Resolve (IMemberContext rc)
 			{
 				if (resolved != null || value == null)
 					return resolved;

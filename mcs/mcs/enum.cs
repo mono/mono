@@ -44,13 +44,13 @@ namespace Mono.CSharp {
 				this.Enum = e;
 			}
 
-			protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+			protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 			{
 				type = Enum.CurrentType != null ? Enum.CurrentType : Enum.TypeBuilder;
 				return this;
 			}
 
-			public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+			public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
 			{
 				return DoResolveAsTypeStep (ec);
 			}
