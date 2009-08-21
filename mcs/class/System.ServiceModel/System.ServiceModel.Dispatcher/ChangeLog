@@ -1,5 +1,9 @@
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcherCollection.cs : remove extra members.
+
+2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs, EndpointDispatcher.cs :
 	  moved some initialization code from ServiceHostBase, to start
 	  reducing dependencies on ServiceHostBase.

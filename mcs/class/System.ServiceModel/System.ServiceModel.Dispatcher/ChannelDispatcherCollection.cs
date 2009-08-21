@@ -41,22 +41,11 @@ namespace System.ServiceModel.Dispatcher
 			_service = service;
 		}
 
-		internal ChannelDispatcherCollection (
-			ChannelDispatcherBase [] listeners)
-			: base (listeners)
-		{
-		}
-
 		protected override void ClearItems ()
 		{			
-			ChannelDispatcherBase[] channels = this.InnerList.ToArray ();
-			base.ClearItems ();
-			foreach (ChannelDispatcherBase c in channels)
+			foreach (ChannelDispatcherBase c in this)
 				c.Detach (_service);
-		}
-
-		internal List<ChannelDispatcherBase> InnerList {
-			get { return Items; }
+			base.ClearItems ();
 		}
 
 		protected override void InsertItem (int index, ChannelDispatcherBase item)
