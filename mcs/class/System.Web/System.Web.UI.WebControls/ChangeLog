@@ -1,5 +1,9 @@
 2009-08-21  Marek Habersack  <mhabersack@novell.com>
 
+	* Menu.cs: separator image is rendered next to the item in
+	horizontal layout and is preceeded by 3px spacer (unless
+	itemSpacing is set) to make output match .NET. Fixes bug #474716
+
 	* TreeNodeCollection.cs: {Save,Load}ViewState now store/load the
 	type of the node, if node is a of a custom type. Fixes bug #475997
 
