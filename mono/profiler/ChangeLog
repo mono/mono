@@ -1,4 +1,7 @@
 2009-08-21  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Changed max depth of call chains to 128.
+
+2009-08-21  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Report all wrapper types.
 
 2009-08-21  Massimiliano Mantione <massi@ximian.com>
