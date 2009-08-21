@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 		//   This routine will attempt to simplify the unary expression when the
 		//   argument is a constant.
 		// </summary>
-		Constant TryReduceConstant (EmitContext ec, Constant e)
+		Constant TryReduceConstant (ResolveContext ec, Constant e)
 		{
 			if (e is EmptyConstantCast)
 				return TryReduceConstant (ec, ((EmptyConstantCast) e).child);
@@ -4327,7 +4327,7 @@ namespace Mono.CSharp {
 			get { return name; }
 		}
 
-		public bool VerifyAssigned (EmitContext ec)
+		public bool VerifyAssigned (ResolveContext ec)
 		{
 			VariableInfo variable_info = local_info.VariableInfo;
 			return variable_info == null || variable_info.IsAssigned (ec, loc);
@@ -4527,7 +4527,7 @@ namespace Mono.CSharp {
 			get { return Parameter; }
 		}
 
-		public bool IsAssigned (EmitContext ec, Location loc)
+		public bool IsAssigned (ResolveContext ec, Location loc)
 		{
 			// HACK: Variables are not captured in probing mode
 			if (ec.IsInProbingMode)
@@ -4545,13 +4545,13 @@ namespace Mono.CSharp {
 			Parameter.HasAddressTaken = true;
 		}
 
-		void SetAssigned (EmitContext ec)
+		void SetAssigned (ResolveContext ec)
 		{
 			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (VariableInfo);
 		}
 
-		bool DoResolveBase (EmitContext ec)
+		bool DoResolveBase (ResolveContext ec)
 		{
 			type = pi.ParameterType;
 			eclass = ExprClass.Variable;

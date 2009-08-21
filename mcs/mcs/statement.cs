@@ -1342,7 +1342,7 @@ namespace Mono.CSharp {
 				ec.DefineLocalVariable (Name, builder);
 		}
 
-		public bool IsThisAssigned (EmitContext ec, Block block)
+		public bool IsThisAssigned (BlockContext ec, Block block)
 		{
 			if (VariableInfo == null)
 				throw new Exception ();
@@ -1353,7 +1353,7 @@ namespace Mono.CSharp {
 			return VariableInfo.TypeInfo.IsFullyInitialized (ec.CurrentBranching, VariableInfo, block.StartLocation);
 		}
 
-		public bool IsAssigned (EmitContext ec)
+		public bool IsAssigned (BlockContext ec)
 		{
 			if (VariableInfo == null)
 				throw new Exception ();
@@ -2883,7 +2883,7 @@ namespace Mono.CSharp {
 			set { flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator; }
 		}
 
-		public bool IsThisAssigned (EmitContext ec)
+		public bool IsThisAssigned (BlockContext ec)
 		{
 			return this_variable == null || this_variable.IsThisAssigned (ec, this);
 		}

@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public static bool CheckContext (EmitContext ec, Location loc)
+		public static bool CheckContext (ResolveContext ec, Location loc)
 		{
 			//
 			// We can't use `ec.InUnsafe' here because it's allowed to have an iterator

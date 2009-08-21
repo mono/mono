@@ -1199,7 +1199,7 @@ namespace Mono.CSharp {
 			Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
 		}
 		
-		protected void Error_CannotModifyIntermediateExpressionValue (EmitContext ec)
+		protected void Error_CannotModifyIntermediateExpressionValue (ResolveContext ec)
 		{
 			Report.SymbolRelatedToPreviousError (type);
 			if (ec.CurrentInitializerVariable != null) {
@@ -3077,7 +3077,7 @@ namespace Mono.CSharp {
 
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
-		public virtual MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
 							       SimpleName original)
 		{
 			//
@@ -3600,7 +3600,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			if (!(left is TypeExpr) &&
@@ -4654,7 +4654,7 @@ namespace Mono.CSharp {
 			get { return constant.DeclaringType; }
 		}
 
-		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc, SimpleName original)
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc, SimpleName original)
 		{
 			constant = TypeManager.GetGenericFieldDefinition (constant);
 
@@ -4767,7 +4767,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			FieldInfo fi = TypeManager.GetGenericFieldDefinition (FieldInfo);
@@ -5745,7 +5745,7 @@ namespace Mono.CSharp {
 				GetSignatureForError ());
 		}
 
-		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			//

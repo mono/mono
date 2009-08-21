@@ -198,7 +198,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Constant TryReduce (EmitContext ec, Type target_type)
+		Constant TryReduce (ResolveContext ec, Type target_type)
 		{
 			if (Type == target_type)
 				return this;

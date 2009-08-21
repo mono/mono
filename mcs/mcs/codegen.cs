@@ -287,6 +287,8 @@ namespace Mono.CSharp {
 	{
 		FlowBranching current_flow_branching;
 
+		public TypeInferenceContext ReturnTypeInference;
+
 		public BlockContext (IMemberContext mc, ExplicitBlock block, Type returnType)
 			: base (mc)
 		{
@@ -507,12 +509,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Options flags;
-
-		//
-		// Holds a varible used during collection or object initialization.
-		//
-		public Expression CurrentInitializerVariable;
+		protected Options flags;
 
 		public ILGenerator ig;
 
@@ -561,8 +558,6 @@ namespace Mono.CSharp {
 			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
-		public TypeInferenceContext ReturnTypeInference;
-
 		public EmitContext (IMemberContext rc, ILGenerator ig, Type return_type)
 		{
 			this.MemberContext = rc;
@@ -598,20 +593,8 @@ namespace Mono.CSharp {
 			get { return MemberContext.CurrentTypeDefinition; }
 		}
 
-		public bool ConstantCheckState {
-			get { return (flags & Options.ConstantCheckState) != 0; }
-		}
-
 		public bool InUnsafe {
 			get { return HasSet (Options.UnsafeScope) || MemberContext.IsInUnsafeScope; }
-		}
-
-		public bool DoFlowAnalysis {
-			get { return (flags & Options.DoFlowAnalysis) != 0; }
-		}
-
-		public bool OmitStructFlowAnalysis {
-			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
 
 		public bool HasSet (Options options)
@@ -677,19 +660,6 @@ namespace Mono.CSharp {
 				else
 					flags &= ~Options.OmitDebuggingInfo;
 			}
-		}
-
-		public bool MustCaptureVariable (LocalInfo local)
-		{
-			if (CurrentAnonymousMethod == null)
-				return false;
-
-			// FIXME: IsIterator is too aggressive, we should capture only if child
-			// block contains yield
-			if (CurrentAnonymousMethod.IsIterator)
-				return true;
-
-			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
 		
 		public Type ReturnType {
@@ -847,6 +817,11 @@ namespace Mono.CSharp {
 
 	public class ResolveContext : EmitContext
 	{
+		//
+		// Holds a varible used during collection or object initialization.
+		//
+		public Expression CurrentInitializerVariable;
+
 		public ResolveContext (IMemberContext mc)
 			: base (mc, null, null)
 		{
@@ -856,6 +831,31 @@ namespace Mono.CSharp {
 			: this (mc)
 		{
 			Set (options);
+		}
+
+		public bool ConstantCheckState {
+			get { return (flags & Options.ConstantCheckState) != 0; }
+		}
+
+		public bool DoFlowAnalysis {
+			get { return (flags & Options.DoFlowAnalysis) != 0; }
+		}
+
+		public bool OmitStructFlowAnalysis {
+			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
+		}
+
+		public bool MustCaptureVariable (LocalInfo local)
+		{
+			if (CurrentAnonymousMethod == null)
+				return false;
+
+			// FIXME: IsIterator is too aggressive, we should capture only if child
+			// block contains yield
+			if (CurrentAnonymousMethod.IsIterator)
+				return true;
+
+			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
 	}
 

@@ -616,7 +616,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		void DoResolveInstanceExpression (EmitContext ec)
+		void DoResolveInstanceExpression (ResolveContext ec)
 		{
 			//
 			// Argument is another delegate

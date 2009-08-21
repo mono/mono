@@ -1419,14 +1419,14 @@ namespace Mono.CSharp
 			this.IsParameter = true;
 		}
 
-		public bool IsAssigned (EmitContext ec)
+		public bool IsAssigned (ResolveContext ec)
 		{
 			return !ec.DoFlowAnalysis ||
 				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
 				ec.CurrentBranching.IsAssigned (this);
 		}
 
-		public bool IsAssigned (EmitContext ec, Location loc)
+		public bool IsAssigned (ResolveContext ec, Location loc)
 		{
 			if (IsAssigned (ec))
 				return true;
@@ -1479,7 +1479,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public void SetAssigned (EmitContext ec)
+		public void SetAssigned (ResolveContext ec)
 		{
 			if (ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (this);
@@ -1494,7 +1494,7 @@ namespace Mono.CSharp
 			is_ever_assigned = true;
 		}
 
-		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
+		public bool IsFieldAssigned (ResolveContext ec, string name, Location loc)
 		{
 			if (!ec.DoFlowAnalysis ||
 				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
@@ -1517,7 +1517,7 @@ namespace Mono.CSharp
 			return vector [Offset + field_idx];
 		}
 
-		public void SetFieldAssigned (EmitContext ec, string name)
+		public void SetFieldAssigned (ResolveContext ec, string name)
 		{
 			if (ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetFieldAssigned (this, name);

@@ -1004,7 +1004,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
+		public Type InferReturnType (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AnonymousMethodBody am;
 			using (ec.Set (EmitContext.Options.ProbingMode | EmitContext.Options.InferReturnType)) {
@@ -1081,7 +1081,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected virtual ParametersCompiled ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
+		protected virtual ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AParametersCollection delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
 
@@ -1165,7 +1165,7 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		protected AnonymousMethodBody CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
+		protected AnonymousMethodBody CompatibleMethod (ResolveContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
 		{
 			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
@@ -1291,7 +1291,7 @@ namespace Mono.CSharp {
 		public abstract bool IsIterator { get; }
 		public abstract AnonymousMethodStorey Storey { get; }
 
-		public bool Compatible (EmitContext ec)
+		public bool Compatible (ResolveContext ec)
 		{
 			// TODO: Implement clone
 			BlockContext aec = new BlockContext (ec.MemberContext, Block, ReturnType);
@@ -1384,7 +1384,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		bool Define (EmitContext ec)
+		bool Define (ResolveContext ec)
 		{
 			if (!Block.Resolved && !Compatible (ec))
 				return false;

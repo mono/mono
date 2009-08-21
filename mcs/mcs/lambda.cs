@@ -52,7 +52,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override ParametersCompiled ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
+		protected override ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, Type delegateType)
 		{
 			if (!TypeManager.IsDelegateType (delegateType))
 				return null;
