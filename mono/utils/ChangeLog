@@ -1,3 +1,9 @@
+2009-08-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-hash.c: When creating a hash table, if the keys are managed
+	objects, assert that we have a hash function.  Remove the
+	rehashing after GC marking.
+
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
 	* strtod.c: Fix warnings for uninitialized variables.
