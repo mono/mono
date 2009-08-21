@@ -281,16 +281,6 @@ namespace System.ServiceModel.Dispatcher
 
 			loop_manager.Start ();
 		}
-
-		bool IsMessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
-		{
-			Uri to = req.Headers.To;
-			if (to == null)
-				return false;
-			if (to.AbsoluteUri == Constants.WsaAnonymousUri)
-				return false;
-			return endpoint.AddressFilter.Match (req) && endpoint.ContractFilter.Match (req);
-		}
 		 
 		void HandleError (Exception ex)
 		{
@@ -298,7 +288,9 @@ namespace System.ServiceModel.Dispatcher
 				if (handler.HandleError (ex))
 					break;
 		}
+	}
 
+		// isolated from ChannelDispatcher
 		class ListenerLoopManager
 		{
 			ChannelDispatcher owner;
@@ -571,7 +563,7 @@ namespace System.ServiceModel.Dispatcher
 			EndpointDispatcher FindEndpointDispatcher (Message message) {
 				EndpointDispatcher candidate = null;
 				for (int i = 0; i < owner.Endpoints.Count; i++) {
-					if (owner.IsMessageMatchesEndpointDispatcher (message, owner.Endpoints [i])) {
+					if (MessageMatchesEndpointDispatcher (message, owner.Endpoints [i])) {
 						var newdis = owner.Endpoints [i];
 						if (candidate == null || candidate.FilterPriority < newdis.FilterPriority)
 							candidate = newdis;
@@ -583,6 +575,15 @@ namespace System.ServiceModel.Dispatcher
 					owner.Host.OnUnknownMessageReceived (message);
 				return candidate;
 			}
+
+			bool MessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
+			{
+				Uri to = req.Headers.To;
+				if (to == null)
+					return false;
+				if (to.AbsoluteUri == Constants.WsaAnonymousUri)
+					return false;
+				return endpoint.AddressFilter.Match (req) && endpoint.ContractFilter.Match (req);
+			}
 		}
-	}
 }

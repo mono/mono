@@ -1,5 +1,10 @@
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : isolated loop manager class from parent,
+	  as well as moved some code from parent.
+
+2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcherCollection.cs : remove extra members.
 
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
