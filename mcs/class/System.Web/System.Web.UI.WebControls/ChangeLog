@@ -1,3 +1,8 @@
+2009-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeNodeCollection.cs: {Save,Load}ViewState now store/load the
+	type of the node, if node is a of a custom type. Fixes bug #475997
+
 2009-06-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Parameter.cs: add new DbType property.
