@@ -28,7 +28,7 @@ namespace Mono.CSharp.Linq
 			this.next = query;
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
+		public override Expression BuildQueryClause (ResolveContext ec, Expression lSide)
 		{
 			return next.BuildQueryClause (ec, lSide);
 		}
@@ -181,7 +181,7 @@ namespace Mono.CSharp.Linq
 			return expr.DoResolve (ec);
 		}
 
-		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide)
+		public virtual Expression BuildQueryClause (ResolveContext ec, Expression lSide)
 		{
 			Arguments args;
 			CreateArguments (ec, out args);
@@ -287,7 +287,7 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
+		public override Expression BuildQueryClause (ResolveContext ec, Expression lSide)
 		{
 			return next.BuildQueryClause (ec, expr);
 		}
@@ -314,7 +314,7 @@ namespace Mono.CSharp.Linq
 			this.type_expr = type;
 		}
 		
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
+		public override Expression BuildQueryClause (ResolveContext ec, Expression lSide)
 		{
 			lSide = CreateQueryExpression (expr, new TypeArguments (type_expr), null);
 			if (next != null)

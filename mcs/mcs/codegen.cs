@@ -646,12 +646,6 @@ namespace Mono.CSharp {
 			get { return MemberContext.IsStatic; }
 		}
 
-		public bool IsVariableCapturingRequired {
-			get {
-				return !IsInProbingMode && (CurrentBranching == null || !CurrentBranching.CurrentUsageVector.IsUnreachable);
-			}
-		}
-
 		public bool OmitDebuggingInfo {
 			get { return (flags & Options.OmitDebuggingInfo) != 0; }
 			set {
@@ -781,20 +775,6 @@ namespace Mono.CSharp {
 			return return_value;
 		}
 
-		public Expression GetThis (Location loc)
-		{
-			This my_this;
-			if (CurrentBlock != null)
-				my_this = new This (CurrentBlock, loc);
-			else
-				my_this = new This (loc);
-
-			if (!my_this.ResolveBase (this))
-				my_this = null;
-
-			return my_this;
-		}
-
 		#region IResolveContext Members
 
 		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
@@ -841,8 +821,29 @@ namespace Mono.CSharp {
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
 		}
 
+		public bool IsVariableCapturingRequired {
+			get {
+				return !IsInProbingMode && (CurrentBranching == null || !CurrentBranching.CurrentUsageVector.IsUnreachable);
+			}
+		}
+
 		public bool OmitStructFlowAnalysis {
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
+		}
+
+		// TODO: Merge with CompilerGeneratedThis
+		public Expression GetThis (Location loc)
+		{
+			This my_this;
+			if (CurrentBlock != null)
+				my_this = new This (CurrentBlock, loc);
+			else
+				my_this = new This (loc);
+
+			if (!my_this.ResolveBase (this))
+				my_this = null;
+
+			return my_this;
 		}
 
 		public bool MustCaptureVariable (LocalInfo local)

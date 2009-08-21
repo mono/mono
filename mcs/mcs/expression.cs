@@ -3562,7 +3562,7 @@ namespace Mono.CSharp {
 			target.right = right.Clone (clonectx);
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (4);
 
@@ -5915,7 +5915,7 @@ namespace Mono.CSharp {
 		//
 		// Resolved the type of the array
 		//
-		bool ResolveArrayType (EmitContext ec)
+		bool ResolveArrayType (ResolveContext ec)
 		{
 			if (requested_base_type == null) {
 				Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
@@ -6496,6 +6496,8 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			if (type == null)
 				type = ec.CurrentType;
+
+			is_struct = type.IsValueType;
 			return this;
 		}
 
@@ -6533,7 +6535,7 @@ namespace Mono.CSharp {
 
 		Block block;
 		VariableInfo variable_info;
-		bool is_struct;
+		protected bool is_struct;
 
 		public This (Block block, Location loc)
 		{
@@ -6583,7 +6585,7 @@ namespace Mono.CSharp {
 			get { return ThisVariable.Instance; }
 		}
 
-		public static bool IsThisAvailable (EmitContext ec)
+		public static bool IsThisAvailable (ResolveContext ec)
 		{
 			if (ec.IsStatic || ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.BaseInitializer | EmitContext.Options.ConstantScope))
 				return false;
@@ -6597,7 +6599,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool ResolveBase (EmitContext ec)
+		public bool ResolveBase (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return true;

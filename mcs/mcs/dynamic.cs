@@ -36,7 +36,7 @@ namespace Mono.CSharp
 
 	interface IDynamicBinder
 	{
-		Expression CreateCallSiteBinder (EmitContext ec, Arguments args);
+		Expression CreateCallSiteBinder (ResolveContext ec, Arguments args);
 	}
 
 	class DynamicExpressionStatement : ExpressionStatement
@@ -139,10 +139,11 @@ namespace Mono.CSharp
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (binder.CreateCallSiteBinder (ec, arguments)));
-			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
 			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);
+
+			Arguments args = new Arguments (1);
+			args.Add (new Argument (binder.CreateCallSiteBinder (bc, arguments)));
+			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
 			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 				init.Emit (ec);
@@ -258,7 +259,7 @@ namespace Mono.CSharp
 			type = TypeManager.bool_type;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (2);
 			MemberAccess binder = GetBinderNamespace (loc);
@@ -292,7 +293,7 @@ namespace Mono.CSharp
 			base.binder = this;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (2);
 			MemberAccess binder = GetBinderNamespace (loc);
@@ -317,7 +318,7 @@ namespace Mono.CSharp
 			this.isSet = isSet;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (2);
 			MemberAccess binder = GetBinderNamespace (loc);
@@ -361,7 +362,7 @@ namespace Mono.CSharp
 			this.type = type;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (member != null ? 5 : 3);
 			MemberAccess binder = GetBinderNamespace (loc);
@@ -423,7 +424,7 @@ namespace Mono.CSharp
 			this.name = name;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (3);
 			MemberAccess binder = GetBinderNamespace (loc);
@@ -463,7 +464,7 @@ namespace Mono.CSharp
 				type = TypeManager.bool_type;
 		}
 
-		public Expression CreateCallSiteBinder (EmitContext ec, Arguments args)
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (3);
 

@@ -821,7 +821,7 @@ namespace Mono.CSharp {
 		///   look for private members and display a useful debugging message if we
 		///   find it.
 		/// </summary>
-		protected Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
+		protected Expression MemberLookupFinal (ResolveContext ec, Type qualifier_type,
 							    Type queried_type, string name,
 							    MemberTypes mt, BindingFlags bf,
 							    Location loc)
@@ -3662,7 +3662,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
 		}
 
-		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
+		protected virtual void Error_InvalidArguments (ResolveContext ec, Location loc, int idx, MethodBase method,
 													Argument a, AParametersCollection expected_par, Type paramType)
 		{
 			ExtensionMethodGroupExpr emg = this as ExtensionMethodGroupExpr;

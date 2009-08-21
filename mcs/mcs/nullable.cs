@@ -516,7 +516,7 @@ namespace Mono.CSharp.Nullable
 			ig.MarkLabel (end_label);
 		}
 
-		Expression LiftExpression (EmitContext ec, Expression expr)
+		Expression LiftExpression (ResolveContext ec, Expression expr)
 		{
 			TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
 			lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);

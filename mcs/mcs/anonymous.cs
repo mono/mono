@@ -822,7 +822,7 @@ namespace Mono.CSharp {
 
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
-			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), ec.GetThis (field.Location));
+			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), new CompilerGeneratedThis (ec.CurrentType, field.Location));
 			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 				a.EmitStatement (ec);
 		}
