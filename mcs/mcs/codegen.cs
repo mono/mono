@@ -285,11 +285,97 @@ namespace Mono.CSharp {
 	//
 	public class BlockContext : EmitContext
 	{
+		FlowBranching current_flow_branching;
+
 		public BlockContext (IResolveContext mc, ExplicitBlock block, Type returnType)
 			: base (mc, null, returnType)
 		{
 			// TODO: check for null value
 			CurrentBlock = block;
+		}
+
+		public override FlowBranching CurrentBranching {
+			get { return current_flow_branching; }
+		}
+
+		// <summary>
+		//   Starts a new code branching.  This inherits the state of all local
+		//   variables and parameters from the current branching.
+		// </summary>
+		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
+		{
+			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
+			return current_flow_branching;
+		}
+
+		// <summary>
+		//   Starts a new code branching for block `block'.
+		// </summary>
+		public FlowBranching StartFlowBranching (Block block)
+		{
+			Set (Options.DoFlowAnalysis);
+
+			current_flow_branching = FlowBranching.CreateBranching (
+				CurrentBranching, FlowBranching.BranchingType.Block, block, block.StartLocation);
+			return current_flow_branching;
+		}
+
+		public FlowBranchingTryCatch StartFlowBranching (TryCatch stmt)
+		{
+			FlowBranchingTryCatch branching = new FlowBranchingTryCatch (CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
+		{
+			FlowBranchingException branching = new FlowBranchingException (CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingLabeled StartFlowBranching (LabeledStatement stmt)
+		{
+			FlowBranchingLabeled branching = new FlowBranchingLabeled (CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingIterator StartFlowBranching (Iterator iterator)
+		{
+			FlowBranchingIterator branching = new FlowBranchingIterator (CurrentBranching, iterator);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt, FlowBranching parent)
+		{
+			FlowBranchingToplevel branching = new FlowBranchingToplevel (parent, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		// <summary>
+		//   Ends a code branching.  Merges the state of locals and parameters
+		//   from all the children of the ending branching.
+		// </summary>
+		public bool EndFlowBranching ()
+		{
+			FlowBranching old = current_flow_branching;
+			current_flow_branching = current_flow_branching.Parent;
+
+			FlowBranching.UsageVector vector = current_flow_branching.MergeChild (old);
+			return vector.IsUnreachable;
+		}
+
+		// <summary>
+		//   Kills the current code branching.  This throws away any changed state
+		//   information and should only be used in case of an error.
+		// </summary>
+		// FIXME: this is evil
+		public void KillFlowBranching ()
+		{
+			current_flow_branching = current_flow_branching.Parent;
 		}
 
 		//
@@ -470,8 +556,6 @@ namespace Mono.CSharp {
 			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
-		FlowBranching current_flow_branching;
-
 		public TypeInferenceContext ReturnTypeInference;
 
 		public EmitContext (IResolveContext rc, ILGenerator ig, Type return_type)
@@ -494,6 +578,10 @@ namespace Mono.CSharp {
 				throw new ArgumentNullException ("return_type");
 
 			this.return_type = return_type;
+		}
+
+		public virtual FlowBranching CurrentBranching {
+			get { return null; }
 		}
 
 		public Type CurrentType {
@@ -579,10 +667,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public FlowBranching CurrentBranching {
-			get { return current_flow_branching; }
-		}
-
 		public bool OmitDebuggingInfo {
 			get { return (flags & Options.OmitDebuggingInfo) != 0; }
 			set {
@@ -591,86 +675,6 @@ namespace Mono.CSharp {
 				else
 					flags &= ~Options.OmitDebuggingInfo;
 			}
-		}
-
-		// <summary>
-		//   Starts a new code branching.  This inherits the state of all local
-		//   variables and parameters from the current branching.
-		// </summary>
-		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
-		{
-			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
-			return current_flow_branching;
-		}
-
-		// <summary>
-		//   Starts a new code branching for block `block'.
-		// </summary>
-		public FlowBranching StartFlowBranching (Block block)
-		{
-			flags |= Options.DoFlowAnalysis;
-
-			current_flow_branching = FlowBranching.CreateBranching (
-				CurrentBranching, FlowBranching.BranchingType.Block, block, block.StartLocation);
-			return current_flow_branching;
-		}
-
-		public FlowBranchingTryCatch StartFlowBranching (TryCatch stmt)
-		{
-			FlowBranchingTryCatch branching = new FlowBranchingTryCatch (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
-		{
-			FlowBranchingException branching = new FlowBranchingException (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingLabeled StartFlowBranching (LabeledStatement stmt)
-		{
-			FlowBranchingLabeled branching = new FlowBranchingLabeled (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingIterator StartFlowBranching (Iterator iterator)
-		{
-			FlowBranchingIterator branching = new FlowBranchingIterator (CurrentBranching, iterator);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt, FlowBranching parent)
-		{
-			FlowBranchingToplevel branching = new FlowBranchingToplevel (parent, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		// <summary>
-		//   Ends a code branching.  Merges the state of locals and parameters
-		//   from all the children of the ending branching.
-		// </summary>
-		public bool EndFlowBranching ()
-		{
-			FlowBranching old = current_flow_branching;
-			current_flow_branching = current_flow_branching.Parent;
-
-			FlowBranching.UsageVector vector = current_flow_branching.MergeChild (old);
-			return vector.IsUnreachable;
-		}
-
-		// <summary>
-		//   Kills the current code branching.  This throws away any changed state
-		//   information and should only be used in case of an error.
-		// </summary>
-		// FIXME: this is evil
-		public void KillFlowBranching ()
-		{
-			current_flow_branching = current_flow_branching.Parent;
 		}
 
 		public bool MustCaptureVariable (LocalInfo local)
