@@ -4486,12 +4486,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Value;
 
@@ -5723,12 +5723,12 @@ namespace Mono.CSharp {
 
 		public override void Emit()
 		{
-			EmitContext ec = new EmitContext (this, null, TypeManager.void_type);
-			Constant c = size_expr.ResolveAsConstant (ec, this);
+			ResolveContext rc = new ResolveContext (this);
+			Constant c = size_expr.ResolveAsConstant (rc, this);
 			if (c == null)
 				return;
 			
-			IntConstant buffer_size_const = c.ImplicitConversionRequired (ec, TypeManager.int32_type, Location) as IntConstant;
+			IntConstant buffer_size_const = c.ImplicitConversionRequired (rc, TypeManager.int32_type, Location) as IntConstant;
 			if (buffer_size_const == null)
 				return;
 

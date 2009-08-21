@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 			// Do nothing
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return null;
 		}
@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			ArrayList results = new ArrayList ();
 
@@ -131,7 +131,7 @@ namespace Mono.CSharp {
 			this.targs = targs;
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			SimpleName original = expr as SimpleName;
 			Expression expr_resolved = expr.Resolve (ec,
@@ -219,7 +219,7 @@ namespace Mono.CSharp {
 			this.loc = l;
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			MemberList members = TypeManager.FindMembers (
 				ec.CurrentInitializerVariable.Type,

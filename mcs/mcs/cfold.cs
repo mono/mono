@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 		///
 		///   Returns null if the expression can not be folded.
 		/// </summary>
-		static public Constant BinaryFold (EmitContext ec, Binary.Operator oper,
+		static public Constant BinaryFold (ResolveContext ec, Binary.Operator oper,
 						     Constant left, Constant right, Location loc)
 		{
 			Constant result = null;

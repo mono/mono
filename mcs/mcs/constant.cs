@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
-		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
+		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
 		{
 			if (value_type == TypeManager.object_type) {
 				value = GetTypedValue ();
@@ -71,12 +71,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Constants are always born in a fully resolved state
 		/// </summary>
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
 
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
 		{
 			if (!expl && IsLiteral && 
 				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
@@ -88,7 +88,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Constant ImplicitConversionRequired (EmitContext ec, Type type, Location loc)
+		public Constant ImplicitConversionRequired (ResolveContext ec, Type type, Location loc)
 		{
 			Constant c = ConvertImplicitly (type);
 			if (c == null)
@@ -161,7 +161,7 @@ namespace Mono.CSharp {
 					"), details: " + v);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
@@ -181,7 +181,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
 		/// </summary>
-		public Constant TryReduce (EmitContext ec, Type target_type, Location loc)
+		public Constant TryReduce (ResolveContext ec, Type target_type, Location loc)
 		{
 			try {
 				return TryReduce (ec, target_type);
@@ -273,7 +273,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
 		{
 			try {
 				ConvertExplicitly (true, target);

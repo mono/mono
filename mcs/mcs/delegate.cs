@@ -441,7 +441,7 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec, Type delegate_type, ref Arguments args, Location loc)
+		public static bool VerifyApplicability (ResolveContext ec, Type delegate_type, ref Arguments args, Location loc)
 		{
 			int arg_count;
 
@@ -541,7 +541,7 @@ namespace Mono.CSharp {
 			return delegate_arguments;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
 
@@ -560,7 +560,7 @@ namespace Mono.CSharp {
 			return e.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			constructor_method = Delegate.GetConstructor (ec.CurrentType, type);
 
@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
 		}
 
-		public static bool ImplicitStandardConversionExists (EmitContext ec, MethodGroupExpr mg, Type target_type)
+		public static bool ImplicitStandardConversionExists (ResolveContext ec, MethodGroupExpr mg, Type target_type)
 		{
 			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
 				return false;
@@ -703,7 +703,7 @@ namespace Mono.CSharp {
 
 		#region IErrorHandler Members
 
-		public bool NoExactMatch (EmitContext ec, MethodBase method)
+		public bool NoExactMatch (ResolveContext ec, MethodBase method)
 		{
 			if (TypeManager.IsGenericMethod (method))
 				return false;
@@ -732,7 +732,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		static public Expression Create (EmitContext ec, MethodGroupExpr mge,
+		static public Expression Create (ResolveContext ec, MethodGroupExpr mge,
 						 Type target_type, Location loc)
 		{
 			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, mge, loc);
@@ -757,7 +757,7 @@ namespace Mono.CSharp {
 			this.loc  = loc; 
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (Arguments == null || Arguments.Count != 1) {
 				Error_InvalidDelegateArgument ();
@@ -816,7 +816,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
 				InstanceExpr.CreateExpressionTree (ec));
@@ -824,7 +824,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Invoke", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (InstanceExpr is EventExpr) {
 				((EventExpr) InstanceExpr).Error_CannotAssign ();

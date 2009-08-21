@@ -1,5 +1,9 @@
 2009-08-21  Marek Safar  <marek.safar@gmail.com>
 
+	* *.cs: Detached ResolveContext from EmitContext.
+
+2009-08-21  Marek Safar  <marek.safar@gmail.com>
+
 	* codegen.cs: Moved flow-analysis to BlockContext.
 
 2009-08-21  Marek Safar  <marek.safar@gmail.com>

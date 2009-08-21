@@ -206,19 +206,19 @@ namespace Mono.CSharp {
 			builder = null;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (this));
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return this;
 		}
@@ -318,7 +318,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
 			return null;
@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 			get { return source; }
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			bool ok = true;
 			source = source.Resolve (ec);
@@ -387,7 +387,7 @@ namespace Mono.CSharp {
 			type = storey.MutateType (type);			
 		}
 
-		protected virtual Expression ResolveConversions (EmitContext ec)
+		protected virtual Expression ResolveConversions (ResolveContext ec)
 		{
 			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
 			if (source == null)
@@ -443,7 +443,7 @@ namespace Mono.CSharp {
 			return t.Equals (source);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = base.DoResolve (ec);
 			if (e == null || e != this)
@@ -473,7 +473,7 @@ namespace Mono.CSharp {
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			// Field initializer can be resolved (fail) many times
 			if (source == null)
@@ -485,17 +485,14 @@ namespace Mono.CSharp {
 				// share same costructor (block) but they have they own resolve scope.
 				//
 
-				// TODO: Use ResolveContext only
-				EmitContext f_ec = new EmitContext (rc, null, TypeManager.void_type);
-				f_ec.CurrentBlock = ec.CurrentBlock;
+				IResolveContext old = ec.ResolveContext;
+				ec.ResolveContext = rc;
 
-				EmitContext.Options flags = EmitContext.Options.FieldInitializerScope | EmitContext.Options.ConstructorScope;
-				if (ec.InUnsafe)
-					flags |= EmitContext.Options.UnsafeScope;
-
-				using (f_ec.Set (flags)) {
-					resolved = base.DoResolve (f_ec) as ExpressionStatement;
+				using (ec.Set (ResolveContext.Options.FieldInitializerScope)) {
+					resolved = base.DoResolve (ec) as ExpressionStatement;
 				}
+
+				ec.ResolveContext = old;
 			}
 
 			return resolved;
@@ -541,12 +538,12 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return new SimpleAssign (target, source).CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (op != Binary.Operator.Addition && op != Binary.Operator.Subtraction)
 				target.Error_AssignmentEventOnly ();
@@ -600,12 +597,12 @@ namespace Mono.CSharp {
 				this.loc = child.Location;
 			}
 
-			public override Expression CreateExpressionTree (EmitContext ec)
+			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				child = child.Resolve (ec);
 				if (child == null)
@@ -621,7 +618,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			original_source = original_source.Resolve (ec);
 			if (original_source == null)
@@ -683,7 +680,7 @@ namespace Mono.CSharp {
 			return base.DoResolve (ec);
 		}
 
-		protected override Expression ResolveConversions (EmitContext ec)
+		protected override Expression ResolveConversions (ResolveContext ec)
 		{
 			Type target_type = target.Type;
 

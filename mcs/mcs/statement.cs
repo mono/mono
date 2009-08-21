@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 			return s;
 		}
 
-		public virtual Expression CreateExpressionTree (EmitContext ec)
+		public virtual Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (834, loc, "A lambda expression with statement body cannot be converted to an expresion tree");
 			return null;
@@ -1361,7 +1361,7 @@ namespace Mono.CSharp {
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (ResolveContext ec)
 		{
 			if (VariableType != null)
 				return true;
@@ -2628,12 +2628,12 @@ namespace Mono.CSharp {
 				this.block = block;
 			}
 
-			public override Expression CreateExpressionTree (EmitContext ec)
+			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ();
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				if (child == null)
 					return null;
@@ -2796,7 +2796,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (statements.Count == 1) {
 				Expression expr = ((Statement) statements[0]).CreateExpressionTree (ec);
@@ -3121,7 +3121,7 @@ namespace Mono.CSharp {
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		public bool ResolveAndReduce (EmitContext ec, Type required_type, bool allow_nullable)
+		public bool ResolveAndReduce (ResolveContext ec, Type required_type, bool allow_nullable)
 		{	
 			Expression e = label.Resolve (ec);
 
@@ -3263,7 +3263,7 @@ namespace Mono.CSharp {
 		// expression that includes any potential conversions to the
 		// integral types or to string.
 		//
-		Expression SwitchGoverningType (EmitContext ec, Expression expr)
+		Expression SwitchGoverningType (ResolveContext ec, Expression expr)
 		{
 			Type t = expr.Type;
 
@@ -3334,7 +3334,7 @@ namespace Mono.CSharp {
 		// It also returns a hashtable with the keys that we will later
 		// use to compute the switch tables
 		//
-		bool CheckSwitch (EmitContext ec)
+		bool CheckSwitch (ResolveContext ec)
 		{
 			bool error = false;
 			Elements = Sections.Count > 10 ? 
@@ -3782,7 +3782,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void ResolveStringSwitchMap (EmitContext ec)
+		void ResolveStringSwitchMap (ResolveContext ec)
 		{
 			FullNamedExpression string_dictionary_type;
 			if (TypeManager.generic_ienumerable_type != null) {
@@ -3862,11 +3862,13 @@ namespace Mono.CSharp {
 
 			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
 
+			ResolveContext rc = new ResolveContext (ec.ResolveContext);
+
 			if (TypeManager.generic_ienumerable_type != null) {
 				Arguments get_value_args = new Arguments (2);
 				get_value_args.Add (new Argument (value));
 				get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
-				Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (ec);
+				Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (rc);
 				if (get_item == null)
 					return;
 
@@ -3878,7 +3880,7 @@ namespace Mono.CSharp {
 				Arguments get_value_args = new Arguments (1);
 				get_value_args.Add (new Argument (value));
 
-				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (ec);
+				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (rc);
 				if (get_item == null)
 					return;
 
@@ -3887,7 +3889,7 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Brfalse, default_target);
 
 				ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
-					new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (ec);
+					new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (rc);
 
 				get_item_int.EmitStatement (ec);
 				get_item_object.Release (ec);
@@ -4397,7 +4399,7 @@ namespace Mono.CSharp {
 				pinned_string.Pinned = true;
 			}
 
-			public StringEmitter Resolve (EmitContext rc)
+			public StringEmitter Resolve (ResolveContext rc)
 			{
 				pinned_string.Resolve (rc);
 
@@ -4422,7 +4424,7 @@ namespace Mono.CSharp {
 
 				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, TypeManager.int_get_offset_to_string_data, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
-				pe.Resolve (ec).Emit (ec);
+				pe.Resolve (new ResolveContext (ec.ResolveContext)).Emit (ec);
 
 				ec.ig.Emit (OpCodes.Add);
 				vi.EmitAssign (ec);
@@ -4669,7 +4671,7 @@ namespace Mono.CSharp {
 			if (Name != null) {
 				// TODO: Move to resolve
 				LocalVariableReference lvr = new LocalVariableReference (Block, Name, loc);
-				lvr.Resolve (ec);
+				lvr.Resolve (new ResolveContext (ec.ResolveContext));
 				
 #if GMCS_SOURCE
 				// Only to make verifier happy
@@ -5599,7 +5601,7 @@ namespace Mono.CSharp {
 				return base_method != m;
 			}
 
-			bool TryType (EmitContext ec, Type t)
+			bool TryType (ResolveContext ec, Type t)
 			{
 				MethodGroupExpr mg = Expression.MemberLookup (
 					ec.CurrentType, t, "GetEnumerator", MemberTypes.Method,
@@ -5684,7 +5686,7 @@ namespace Mono.CSharp {
 				return false;
 			}		
 
-			bool ProbeCollectionType (EmitContext ec, Type t)
+			bool ProbeCollectionType (ResolveContext ec, Type t)
 			{
 				int errors = Report.Errors;
 				for (Type tt = t; tt != null && tt != TypeManager.object_type;){

@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
 
-			EmitContext rc = new EmitContext (this, null, TypeManager.void_type);
+			ResolveContext rc = new ResolveContext (this);
 			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
 			e.Emit (ec);
 
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 					f_set_expr.InstanceExpression = instace_expr;
 
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
-					if (a.Resolve (ec) != null)
+					if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
 						a.EmitStatement (ec);
 				}
 			}
@@ -631,12 +631,12 @@ namespace Mono.CSharp {
 				this.hv = hv;
 			}
 
-			public override Expression CreateExpressionTree (EmitContext ec)
+			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				eclass = ExprClass.Value;
 				type = TypeManager.expression_type_expr.Type;
@@ -645,9 +645,10 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (ec);
+				ResolveContext rc = new ResolveContext (ec.ResolveContext);
+				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc);
 				// This should never fail
-				e = e.Resolve (ec);
+				e = e.Resolve (rc);
 				if (e != null)
 					e.Emit (ec);
 			}
@@ -674,7 +675,7 @@ namespace Mono.CSharp {
 			GetFieldExpression (ec).AddressOf (ec, mode);
 		}
 
-		public Expression CreateExpressionTree (EmitContext ec)
+		public Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return new ExpressionTreeProxy (this);
 		}
@@ -702,7 +703,6 @@ namespace Mono.CSharp {
 					new FieldExpr (field.FieldBuilder, field.Location);
 
 				cached_outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
-				cached_outer_access.Resolve (ec);
 				return cached_outer_access;
 			}
 
@@ -720,7 +720,6 @@ namespace Mono.CSharp {
 					new FieldExpr (field.FieldBuilder, field.Location);
 							
 				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
-				inner_access.Resolve (ec);
 				cached_inner_access.Add (ec.CurrentAnonymousMethod, inner_access);
 			}
 
@@ -749,7 +748,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			protected override Expression ResolveConversions (EmitContext ec)
+			protected override Expression ResolveConversions (ResolveContext ec)
 			{
 				//
 				// Implicit conversion check fails for hoisted type arguments
@@ -782,7 +781,7 @@ namespace Mono.CSharp {
 			parameter.Parameter.HoistedVariableReference = null;
 
 			Assign a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
-			if (a.Resolve (ec) != null)
+			if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
 				a.EmitStatement (ec);
 
 			parameter.Parameter.HoistedVariableReference = temp;
@@ -824,7 +823,7 @@ namespace Mono.CSharp {
 		public void EmitHoistingAssignment (EmitContext ec)
 		{
 			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), ec.GetThis (field.Location));
-			if (a.Resolve (ec) != null)
+			if (a.Resolve (new ResolveContext (ec.ResolveContext)) != null)
 				a.EmitStatement (ec);
 		}
 
@@ -872,7 +871,7 @@ namespace Mono.CSharp {
 		// Returns true if the body of lambda expression can be implicitly
 		// converted to the delegate of type `delegate_type'
 		//
-		public bool ImplicitStandardConversionExists (EmitContext ec, Type delegate_type)
+		public bool ImplicitStandardConversionExists (ResolveContext ec, Type delegate_type)
 		{
 			using (ec.With (EmitContext.Options.InferReturnType, false)) {
 				using (ec.Set (EmitContext.Options.ProbingMode)) {
@@ -881,7 +880,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected Type CompatibleChecks (EmitContext ec, Type delegate_type)
+		protected Type CompatibleChecks (ResolveContext ec, Type delegate_type)
 		{
 			if (TypeManager.IsDelegateType (delegate_type))
 				return delegate_type;
@@ -1022,7 +1021,7 @@ namespace Mono.CSharp {
 		// Returns AnonymousMethod container if this anonymous method
 		// expression can be implicitly converted to the delegate type `delegate_type'
 		//
-		public Expression Compatible (EmitContext ec, Type type)
+		public Expression Compatible (ResolveContext ec, Type type)
 		{
 			Expression am = (Expression) compatibles [type];
 			if (am != null)
@@ -1071,12 +1070,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual Expression CreateExpressionTree (EmitContext ec, Type delegate_type)
+		protected virtual Expression CreateExpressionTree (ResolveContext ec, Type delegate_type)
 		{
 			return CreateExpressionTree (ec);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (1946, loc, "An anonymous method cannot be converted to an expression tree");
 			return null;
@@ -1117,7 +1116,7 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (ec.HasSet (EmitContext.Options.ConstantScope)) {
 				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
@@ -1143,7 +1142,7 @@ namespace Mono.CSharp {
 			// FIXME: The emitted code isn't very careful about reachability
 			// so, ensure we have a 'ret' at the end
 			BlockContext bc = ec as BlockContext;
-			if (bc != null && bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
+			if (bc != null && bc.CurrentBranching != null && bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				bc.NeedReturnLabel ();
 
 			return this;
@@ -1379,7 +1378,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (1945, loc, "An expression tree cannot contain an anonymous method expression");
 			return null;
@@ -1456,7 +1455,7 @@ namespace Mono.CSharp {
 				real_name, member_name, parameters);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass == ExprClass.Invalid) {
 				if (!Define (ec))
@@ -1532,7 +1531,7 @@ namespace Mono.CSharp {
 			if (is_static) {
 				ig.Emit (OpCodes.Ldnull);
 			} else if (storey != null) {
-				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (ec);
+				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.ResolveContext));
 				if (e != null)
 					e.Emit (ec);
 			} else {

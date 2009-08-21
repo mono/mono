@@ -401,7 +401,7 @@ namespace Mono.CSharp {
 			root.RegisterNamespace (this);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}

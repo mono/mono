@@ -27,7 +27,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression CreateExpressionTree (EmitContext ec, Type delegate_type)
+		protected override Expression CreateExpressionTree (ResolveContext ec, Type delegate_type)
 		{
 			if (ec.IsInProbingMode)
 				return this;
@@ -101,7 +101,7 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// Only explicit parameters can be resolved at this point
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			BlockContext bc = new BlockContext (ec.ResolveContext, Block, ReturnType);
 			Expression args = parameters.CreateExpressionTree (bc, loc);
@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return Expr.CreateExpressionTree (ec);
 		}

@@ -453,7 +453,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static Expression ImplicitNulableConversion (EmitContext ec, Expression expr, Type target_type)
+		public static Expression ImplicitNulableConversion (ResolveContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -651,7 +651,7 @@ namespace Mono.CSharp {
 		///  Same as ImplicitStandardConversionExists except that it also looks at
 		///  implicit user defined conversions - needed for overload resolution
 		/// </summary>
-		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool ImplicitConversionExists (ResolveContext ec, Expression expr, Type target_type)
 		{
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
@@ -678,7 +678,7 @@ namespace Mono.CSharp {
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
-		public static bool ImplicitUserConversionExists (EmitContext ec, Type source, Type target)
+		public static bool ImplicitUserConversionExists (ResolveContext ec, Type source, Type target)
 		{
 			return ImplicitUserConversion (ec, new EmptyExpression (source), target, Location.Null) != null;
 		}
@@ -966,7 +966,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  User-defined Implicit conversions
 		/// </summary>
-		static public Expression ImplicitUserConversion (EmitContext ec, Expression source,
+		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source,
 								 Type target, Location loc)
 		{
 			Expression expr = UserDefinedConversion (ec, source, target, loc, false);
@@ -979,7 +979,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  User-defined Explicit conversions
 		/// </summary>
-		static public Expression ExplicitUserConversion (EmitContext ec, Expression source,
+		static public Expression ExplicitUserConversion (ResolveContext ec, Expression source,
 								 Type target, Location loc)
 		{
 			Expression expr = UserDefinedConversion (ec, source, target, loc, true);
@@ -1109,7 +1109,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   User-defined conversions
 		/// </summary>
-		static public Expression UserDefinedConversion (EmitContext ec, Expression source,
+		static public Expression UserDefinedConversion (ResolveContext ec, Expression source,
 								Type target, Location loc,
 								bool look_for_explicit)
 		{
@@ -1163,7 +1163,7 @@ namespace Mono.CSharp {
 		///   `target_type'.  It returns a new expression that can be used
 		///   in a context that expects a `target_type'.
 		/// </summary>
-		static public Expression ImplicitConversion (EmitContext ec, Expression expr,
+		static public Expression ImplicitConversion (ResolveContext ec, Expression expr,
 							     Type target_type, Location loc)
 		{
 			Expression e;
@@ -1193,13 +1193,13 @@ namespace Mono.CSharp {
 		///   This is different from `ImplicitConversion' in that the
 		///   user defined implicit conversions are excluded.
 		/// </summary>
-		static public Expression ImplicitConversionStandard (EmitContext ec, Expression expr,
+		static public Expression ImplicitConversionStandard (ResolveContext ec, Expression expr,
 								     Type target_type, Location loc)
 		{
 			return ImplicitConversionStandard (ec, expr, target_type, loc, false);
 		}
 
-		static Expression ImplicitConversionStandard (EmitContext ec, Expression expr, Type target_type, Location loc, bool explicit_cast)
+		static Expression ImplicitConversionStandard (ResolveContext ec, Expression expr, Type target_type, Location loc, bool explicit_cast)
 		{
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
@@ -1308,7 +1308,7 @@ namespace Mono.CSharp {
 		///   ImplicitConversion.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
-		static public Expression ImplicitConversionRequired (EmitContext ec, Expression source,
+		static public Expression ImplicitConversionRequired (ResolveContext ec, Expression source,
 								     Type target_type, Location loc)
 		{
 			Expression e = ImplicitConversion (ec, source, target_type, loc);
@@ -1734,7 +1734,7 @@ namespace Mono.CSharp {
 		///   Performs an explicit conversion of the expression `expr' whose
 		///   type is expr.Type to `target_type'.
 		/// </summary>
-		static public Expression ExplicitConversionCore (EmitContext ec, Expression expr,
+		static public Expression ExplicitConversionCore (ResolveContext ec, Expression expr,
 								 Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
@@ -1842,7 +1842,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Same as ExplicitConversion, only it doesn't include user defined conversions
 		/// </summary>
-		static public Expression ExplicitConversionStandard (EmitContext ec, Expression expr,
+		static public Expression ExplicitConversionStandard (ResolveContext ec, Expression expr,
 								     Type target_type, Location l)
 		{
 			int errors = Report.Errors;
@@ -1872,7 +1872,7 @@ namespace Mono.CSharp {
 		///   Performs an explicit conversion of the expression `expr' whose
 		///   type is expr.Type to `target_type'.
 		/// </summary>
-		static public Expression ExplicitConversion (EmitContext ec, Expression expr,
+		static public Expression ExplicitConversion (ResolveContext ec, Expression expr,
 			Type target_type, Location loc)
 		{
 			Expression e = ExplicitConversionCore (ec, expr, target_type, loc);

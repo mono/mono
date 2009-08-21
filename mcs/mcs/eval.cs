@@ -1104,7 +1104,7 @@ namespace Mono.CSharp {
 			return name.GetHashCode ();
 		}
 		
-		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			Expression ret = base.DoResolveLValue (ec, right_side);
 			if (ret == null)
@@ -1133,7 +1133,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);

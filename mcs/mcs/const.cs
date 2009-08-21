@@ -195,23 +195,20 @@ namespace Mono.CSharp {
 			}
 
 			in_transit = true;
-			// TODO: IResolveContext here
-			EmitContext ec = new EmitContext (this, null, MemberType);
 
 			EmitContext.Options opt = EmitContext.Options.ConstantScope;
 			if (this is EnumMember)
 				opt |= EmitContext.Options.EnumScope;
 
-			using (ec.Set (opt)) {
-				value = DoResolveValue (ec);
-			}
+			ResolveContext rc = new ResolveContext (this, opt);
+			value = DoResolveValue (rc);
 
 			in_transit = false;
 			resolved = true;
 			return value != null;
 		}
 
-		protected virtual Constant DoResolveValue (EmitContext ec)
+		protected virtual Constant DoResolveValue (ResolveContext ec)
 		{
 			Constant value = initializer.ResolveAsConstant (ec, this);
 			if (value == null)

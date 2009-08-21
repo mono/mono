@@ -22,7 +22,7 @@ namespace Mono.CSharp {
 	// resolve phase
 	//
 	public class UserOperatorCall : Expression {
-		public delegate Expression ExpressionTreeExpression (EmitContext ec, MethodGroupExpr mg);
+		public delegate Expression ExpressionTreeExpression (ResolveContext ec, MethodGroupExpr mg);
 
 		protected readonly Arguments arguments;
 		protected readonly MethodGroupExpr mg;
@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (expr_tree != null)
 				return expr_tree (ec, mg);
@@ -56,7 +56,7 @@ namespace Mono.CSharp {
 			// Nothing to clone
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// We are born fully resolved
@@ -90,18 +90,18 @@ namespace Mono.CSharp {
 			loc = expr.Location;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expr = Expr.Resolve (ec);
 			return Expr;
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return Expr.DoResolveLValue (ec, right_side);
 		}
@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
 		
-		protected Expression ResolveOperator (EmitContext ec, Expression expr)
+		protected Expression ResolveOperator (ResolveContext ec, Expression expr)
 		{
 			eclass = ExprClass.Value;
 
@@ -330,7 +330,7 @@ namespace Mono.CSharp {
 			return ResolveUserType (ec, expr);
 		}
 
-		protected virtual Expression ResolveEnumOperator (EmitContext ec, Expression expr)
+		protected virtual Expression ResolveEnumOperator (ResolveContext ec, Expression expr)
 		{
 			Type underlying_type = TypeManager.GetEnumUnderlyingType (expr.Type);
 			Expression best_expr = ResolvePrimitivePredefinedType (EmptyCast.Create (expr, underlying_type));
@@ -343,12 +343,12 @@ namespace Mono.CSharp {
 			return EmptyCast.Create (this, type);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return CreateExpressionTree (ec, null);
 		}
 
-		Expression CreateExpressionTree (EmitContext ec, MethodGroupExpr user_op)
+		Expression CreateExpressionTree (ResolveContext ec, MethodGroupExpr user_op)
 		{
 			string method_name;
 			switch (Oper) {
@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 			return expr;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (Oper == Operator.AddressOf) {
 				return ResolveAddressOf (ec);
@@ -479,7 +479,7 @@ namespace Mono.CSharp {
 			return expr;
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right)
 		{
 			return null;
 		}
@@ -609,7 +609,7 @@ namespace Mono.CSharp {
 			Expr.MutateHoistedGenericType (storey);
 		}
 
-		Expression ResolveAddressOf (EmitContext ec)
+		Expression ResolveAddressOf (ResolveContext ec)
 		{
 			if (!ec.InUnsafe)
 				UnsafeError (loc);
@@ -673,7 +673,7 @@ namespace Mono.CSharp {
 		//
 		// Perform user-operator overload resolution
 		//
-		protected virtual Expression ResolveUserOperator (EmitContext ec, Expression expr)
+		protected virtual Expression ResolveUserOperator (ResolveContext ec, Expression expr)
 		{
 			CSharp.Operator.OpType op_type;
 			switch (Oper) {
@@ -708,7 +708,7 @@ namespace Mono.CSharp {
 		//
 		// Unary user type overload resolution
 		//
-		Expression ResolveUserType (EmitContext ec, Expression expr)
+		Expression ResolveUserType (ResolveContext ec, Expression expr)
 		{
 			Expression best_expr = ResolveUserOperator (ec, expr);
 			if (best_expr != null)
@@ -785,7 +785,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Error_PointerInsideExpressionTree ();
 			return null;
@@ -844,12 +844,12 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return DoResolve (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -958,7 +958,7 @@ namespace Mono.CSharp {
 				(t.IsPointer && t != TypeManager.void_ptr_type);
 		}
 
-		Expression ResolveOperator (EmitContext ec)
+		Expression ResolveOperator (ResolveContext ec)
 		{
 			type = expr.Type;
 			
@@ -1007,12 +1007,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			
@@ -1172,7 +1172,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec, false);
 			if (probe_type_expr == null)
@@ -1231,7 +1231,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, null,
 				expr.CreateExpressionTree (ec),
@@ -1278,7 +1278,7 @@ namespace Mono.CSharp {
 			return ReducedExpression.Create (new BoolConstant (result, loc), this);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (base.DoResolve (ec) == null)
 				return null;
@@ -1390,7 +1390,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, null,
 				expr.CreateExpressionTree (ec),
@@ -1414,7 +1414,7 @@ namespace Mono.CSharp {
 #endif
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			// Because expr is modified
 			if (eclass != ExprClass.Invalid)
@@ -1486,7 +1486,7 @@ namespace Mono.CSharp {
 			base.MutateHoistedGenericType (storey);
 		}
 	
-		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
+		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
 		{
 			return expr.GetAttributableValue (ec, value_type, out value);
 		}
@@ -1522,12 +1522,12 @@ namespace Mono.CSharp {
 			get { return expr; }
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
@@ -1591,7 +1591,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type t, bool expl)
+			public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type t, bool expl)
 			{
 				Error_ValueCannotBeConvertedCore (ec, loc, t, expl);
 			}
@@ -1606,7 +1606,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
@@ -1614,7 +1614,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
@@ -1700,7 +1700,7 @@ namespace Mono.CSharp {
 				this.ReturnType = return_type;
 			}
 
-			public virtual Expression ConvertResult (EmitContext ec, Binary b)
+			public virtual Expression ConvertResult (ResolveContext ec, Binary b)
 			{
 				b.type = ReturnType;
 
@@ -1726,7 +1726,7 @@ namespace Mono.CSharp {
 				return left == ltype && ltype == rtype;
 			}
 
-			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
+			public virtual bool IsApplicable (ResolveContext ec, Expression lexpr, Expression rexpr)
 			{
 				if (TypeManager.IsEqual (left, lexpr.Type) &&
 					TypeManager.IsEqual (right, rexpr.Type))
@@ -1736,7 +1736,7 @@ namespace Mono.CSharp {
 					Convert.ImplicitConversionExists (ec, rexpr, right);
 			}
 
-			public PredefinedOperator ResolveBetterOperator (EmitContext ec, PredefinedOperator best_operator)
+			public PredefinedOperator ResolveBetterOperator (ResolveContext ec, PredefinedOperator best_operator)
 			{
 				int result = 0;
 				if (left != null && best_operator.left != null) {
@@ -1770,7 +1770,7 @@ namespace Mono.CSharp {
 				ReturnType = TypeManager.string_type;
 			}
 
-			public override Expression ConvertResult (EmitContext ec, Binary b)
+			public override Expression ConvertResult (ResolveContext ec, Binary b)
 			{
 				//
 				// Use original expression for nullable arguments
@@ -1799,7 +1799,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override Expression ConvertResult (EmitContext ec, Binary b)
+			public override Expression ConvertResult (ResolveContext ec, Binary b)
 			{
 				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
 
@@ -1838,7 +1838,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
+			public override bool IsApplicable (ResolveContext ec, Expression lexpr, Expression rexpr)
 			{
 				if (left == null) {
 					if (!lexpr.Type.IsPointer)
@@ -1859,7 +1859,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			public override Expression ConvertResult (EmitContext ec, Binary b)
+			public override Expression ConvertResult (ResolveContext ec, Binary b)
 			{
 				if (left != null) {
 					b.left = EmptyCast.Create (b.left, left);
@@ -2285,7 +2285,7 @@ namespace Mono.CSharp {
 			return t == TypeManager.float_type || t == TypeManager.double_type;
 		}
 
-		Expression ResolveOperator (EmitContext ec)
+		Expression ResolveOperator (ResolveContext ec)
 		{
 			Type l = left.Type;
 			Type r = right.Type;
@@ -2350,7 +2350,7 @@ namespace Mono.CSharp {
 
 		// at least one of 'left' or 'right' is an enumeration constant (EnumConstant or SideEffectConstant or ...)
 		// if 'left' is not an enumeration constant, create one from the type of 'right'
-		Constant EnumLiftUp (EmitContext ec, Constant left, Constant right, Location loc)
+		Constant EnumLiftUp (ResolveContext ec, Constant left, Constant right, Location loc)
 		{
 			switch (oper) {
 			case Operator.BitwiseOr:
@@ -2541,7 +2541,7 @@ namespace Mono.CSharp {
 		//
 		// 7.2.6.2 Binary numeric promotions
 		//
-		public bool DoBinaryOperatorPromotion (EmitContext ec)
+		public bool DoBinaryOperatorPromotion (ResolveContext ec)
 		{
 			Type ltype = left.Type;
 			Type rtype = right.Type;
@@ -2583,7 +2583,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (left == null)
 				return null;
@@ -2681,7 +2681,7 @@ namespace Mono.CSharp {
 			return DoResolveCore (ec, left, right);
 		}
 
-		protected Expression DoResolveCore (EmitContext ec, Expression left_orig, Expression right_orig)
+		protected Expression DoResolveCore (ResolveContext ec, Expression left_orig, Expression right_orig)
 		{
 			Expression expr = ResolveOperator (ec);
 			if (expr == null)
@@ -2708,7 +2708,7 @@ namespace Mono.CSharp {
 		// bool operator == (D x, D y)
 		// bool operator != (D x, D y)
 		//
-		Expression ResolveOperatorDelegate (EmitContext ec, Type l, Type r)
+		Expression ResolveOperatorDelegate (ResolveContext ec, Type l, Type r)
 		{
 			bool is_equality = (oper & Operator.EqualityMask) != 0;
 			if (!TypeManager.IsEqual (l, r) && !TypeManager.IsVariantOf (r, l)) {
@@ -2766,7 +2766,7 @@ namespace Mono.CSharp {
 		//
 		// Enumeration operators
 		//
-		Expression ResolveOperatorEnum (EmitContext ec, bool lenum, bool renum, Type ltype, Type rtype)
+		Expression ResolveOperatorEnum (ResolveContext ec, bool lenum, bool renum, Type ltype, Type rtype)
 		{
 			//
 			// bool operator == (E x, E y);
@@ -2910,7 +2910,7 @@ namespace Mono.CSharp {
 		//
 		// 7.9.6 Reference type equality operators
 		//
-		Binary ResolveOperatorEqualityRerefence (EmitContext ec, Type l, Type r)
+		Binary ResolveOperatorEqualityRerefence (ResolveContext ec, Type l, Type r)
 		{
 			//
 			// operator != (object a, object b)
@@ -3029,7 +3029,7 @@ namespace Mono.CSharp {
 		}
 
 
-		Expression ResolveOperatorPointer (EmitContext ec, Type l, Type r)
+		Expression ResolveOperatorPointer (ResolveContext ec, Type l, Type r)
 		{
 			//
 			// bool operator == (void* x, void* y);
@@ -3068,7 +3068,7 @@ namespace Mono.CSharp {
 		//
 		// Build-in operators method overloading
 		//
-		protected virtual Expression ResolveOperatorPredefined (EmitContext ec, PredefinedOperator [] operators, bool primitives_only, Type enum_type)
+		protected virtual Expression ResolveOperatorPredefined (ResolveContext ec, PredefinedOperator [] operators, bool primitives_only, Type enum_type)
 		{
 			PredefinedOperator best_operator = null;
 			Type l = left.Type;
@@ -3123,7 +3123,7 @@ namespace Mono.CSharp {
 		//
 		// Performs user-operator overloading
 		//
-		protected virtual Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
+		protected virtual Expression ResolveUserOperator (ResolveContext ec, Type l, Type r)
 		{
 			Operator user_oper;
 			if (oper == Operator.LogicalAnd)
@@ -3581,12 +3581,12 @@ namespace Mono.CSharp {
 			return new New (new MemberAccess (binder, "CSharpBinaryOperationBinder", loc), binder_args, loc);
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return CreateExpressionTree (ec, null);
 		}
 
-		Expression CreateExpressionTree (EmitContext ec, MethodGroupExpr method)		
+		Expression CreateExpressionTree (ResolveContext ec, MethodGroupExpr method)		
 		{
 			string method_name;
 			bool lift_arg = false;
@@ -3698,7 +3698,7 @@ namespace Mono.CSharp {
 			Append (right);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Argument arg = arguments [0];
 			return CreateExpressionAddCall (ec, arg, arg.CreateExpressionTree (ec), 1);
@@ -3707,7 +3707,7 @@ namespace Mono.CSharp {
 		//
 		// Creates nested calls tree from an array of arguments used for IL emit
 		//
-		Expression CreateExpressionAddCall (EmitContext ec, Argument left, Expression left_etree, int pos)
+		Expression CreateExpressionAddCall (ResolveContext ec, Argument left, Expression left_etree, int pos)
 		{
 			Arguments concat_args = new Arguments (2);
 			Arguments add_args = new Arguments (3);
@@ -3736,7 +3736,7 @@ namespace Mono.CSharp {
 			return CreateExpressionAddCall (ec, left, expr, pos);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -3779,7 +3779,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Expression concat = new Invocation (CreateConcatMemberExpression (), arguments, true);
-			concat = concat.Resolve (ec);
+			concat = concat.Resolve (new ResolveContext (ec.ResolveContext));
 			if (concat != null)
 				concat.Emit (ec);
 		}
@@ -3804,7 +3804,7 @@ namespace Mono.CSharp {
 			this.is_and = is_and;
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			MethodInfo method = (MethodInfo)mg;
 			type = TypeManager.TypeToCoreType (method.ReturnType);
@@ -3865,13 +3865,13 @@ namespace Mono.CSharp {
 			this.op = op;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Error_PointerInsideExpressionTree ();
 			return null;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
 			
@@ -3946,7 +3946,9 @@ namespace Mono.CSharp {
 						return;
 
 					if (size != 0) {
-						right = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
+						// TODO: Should be the checks resolve context sensitive?
+						ResolveContext rc = new ResolveContext (ec.ResolveContext);
+						right = ConstantFold.BinaryFold (rc, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
 						if (right == null)
 							return;
 					} else {
@@ -4018,7 +4020,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (expr.CreateExpressionTree (ec)));
@@ -4027,7 +4029,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Condition", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = Expression.ResolveBoolean (ec, expr, loc);
 			
@@ -4345,7 +4347,7 @@ namespace Mono.CSharp {
 			local_info.AddressTaken = true;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null)
@@ -4356,7 +4358,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Constant", arg);
 		}
 
-		Expression DoResolveBase (EmitContext ec)
+		Expression DoResolveBase (ResolveContext ec)
 		{
 			type = local_info.VariableType;
 
@@ -4385,7 +4387,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (resolved)
 				return this;
@@ -4402,7 +4404,7 @@ namespace Mono.CSharp {
 			return DoResolveBase (ec);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			ResolveLocalInfo ();
 
@@ -4615,7 +4617,7 @@ namespace Mono.CSharp {
 			// Nothing to clone
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null)
@@ -4636,7 +4638,7 @@ namespace Mono.CSharp {
 		// the type as it is expected, but when we generate the code, we generate
 		// the alternate kind of code.
 		//
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (!DoResolveBase (ec))
 				return null;
@@ -4652,7 +4654,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			if (!DoResolveBase (ec))
 				return null;
@@ -4714,7 +4716,7 @@ namespace Mono.CSharp {
 			this.arguments_resolved = arguments_resolved;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args;
 
@@ -4741,7 +4743,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Call", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			// Don't resolve already resolved expression
 			if (eclass != ExprClass.Invalid)
@@ -4885,7 +4887,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected virtual MethodGroupExpr DoResolveOverload (EmitContext ec)
+		protected virtual MethodGroupExpr DoResolveOverload (ResolveContext ec)
 		{
 			return mg.OverloadResolve (ec, ref arguments, false, loc);
 		}
@@ -5127,12 +5129,12 @@ namespace Mono.CSharp {
 			this.loc = expr.Location;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = ResolveCore (ec);
 			if (e == null)
@@ -5287,7 +5289,7 @@ namespace Mono.CSharp {
 		// [ComImport, CoClass] attributes and must be treated
 		// specially
 		//
-		public Expression CheckComImport (EmitContext ec)
+		public Expression CheckComImport (ResolveContext ec)
 		{
 			if (!type.IsInterface)
 				return null;
@@ -5305,7 +5307,7 @@ namespace Mono.CSharp {
 			return cast.Resolve (ec);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args;
 			if (method == null) {
@@ -5319,7 +5321,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("New", args);
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// The New DoResolve might be called twice when initializing field
@@ -5734,7 +5736,7 @@ namespace Mono.CSharp {
 			Report.Error (248, loc, "Cannot create an array with a negative size");
 		}
 
-		bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims, int child_bounds)
+		bool CheckIndices (ResolveContext ec, ArrayList probe, int idx, bool specified_dims, int child_bounds)
 		{
 			if (specified_dims) { 
 				Expression a = (Expression) arguments [idx];
@@ -5802,7 +5804,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args;
 
@@ -5867,7 +5869,7 @@ namespace Mono.CSharp {
 		Expression first_emit;
 		LocalTemporary first_emit_temp;
 
-		protected virtual Expression ResolveArrayElement (EmitContext ec, Expression element)
+		protected virtual Expression ResolveArrayElement (ResolveContext ec, Expression element)
 		{
 			element = element.Resolve (ec);
 			if (element == null)
@@ -5884,7 +5886,7 @@ namespace Mono.CSharp {
 				ec, element, array_element_type, loc);
 		}
 
-		protected bool ResolveInitializers (EmitContext ec)
+		protected bool ResolveInitializers (ResolveContext ec)
 		{
 			if (initializers == null) {
 				return !expect_initializers;
@@ -5954,7 +5956,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (type != null)
 				return this;
@@ -6318,7 +6320,7 @@ namespace Mono.CSharp {
 				first_emit_temp.Release (ec);
 		}
 
-		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
+		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
 		{
 			if (arguments.Count != 1) {
 				// Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
@@ -6402,7 +6404,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (type != null)
 				return this;
@@ -6438,7 +6440,7 @@ namespace Mono.CSharp {
 		//
 		// Converts static initializer only
 		//
-		void UnifyInitializerElement (EmitContext ec)
+		void UnifyInitializerElement (ResolveContext ec)
 		{
 			for (int i = 0; i < array_data.Count; ++i) {
 				Expression e = (Expression)array_data[i];
@@ -6447,7 +6449,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override Expression ResolveArrayElement (EmitContext ec, Expression element)
+		protected override Expression ResolveArrayElement (ResolveContext ec, Expression element)
 		{
 			element = element.Resolve (ec);
 			if (element == null)
@@ -6489,7 +6491,7 @@ namespace Mono.CSharp {
 			this.type = type;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
 			if (type == null)
@@ -6633,7 +6635,7 @@ namespace Mono.CSharp {
 		//
 		// Called from Invocation to check if the invocation is correct
 		//
-		public override void CheckMarshalByRefAccess (EmitContext ec)
+		public override void CheckMarshalByRefAccess (ResolveContext ec)
 		{
 			if ((variable_info != null) && !(TypeManager.IsStruct (type) && ec.OmitStructFlowAnalysis) &&
 			    !variable_info.IsAssigned (ec)) {
@@ -6643,7 +6645,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (this));
@@ -6653,13 +6655,13 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			ResolveBase (ec);
 			return this;
 		}
 
-		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			if (!ResolveBase (ec))
 				return null;
@@ -6720,12 +6722,12 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
@@ -6780,13 +6782,13 @@ namespace Mono.CSharp {
 		    }
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (1952, loc, "An expression tree cannot contain a method with variable arguments");
 			return null;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
 			type = InternalType.Arglist;
@@ -6832,7 +6834,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
@@ -6840,7 +6842,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -6884,7 +6886,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
+		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
 		{
 			if (TypeManager.ContainsGenericParameters (typearg) &&
 				!TypeManager.IsGenericTypeDefinition (typearg)) {
@@ -6931,7 +6933,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.type_type;
 			typearg = TypeManager.void_type;
@@ -6947,7 +6949,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (member is MethodInfo) {
 				type = TypeManager.methodinfo_type;
@@ -7014,7 +7016,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
@@ -7022,7 +7024,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			bool is_generic = TypeManager.IsGenericType (member.DeclaringType);
 			MethodInfo mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
@@ -7077,7 +7079,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (TypeManager.fieldinfo_type == null)
 				TypeManager.fieldinfo_type = TypeManager.CoreLookupType ("System.Reflection", TypeName, Kind.Class, true);
@@ -7136,13 +7138,13 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Error_PointerInsideExpressionTree ();
 			return null;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
@@ -7237,7 +7239,7 @@ namespace Mono.CSharp {
 			return fne;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return ResolveAsTypeStep (ec, false);
 		}
@@ -7290,7 +7292,7 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
-		Expression DoResolve (EmitContext ec, Expression right_side)
+		Expression DoResolve (ResolveContext ec, Expression right_side)
 		{
 			if (type != null)
 				throw new Exception ();
@@ -7448,12 +7450,12 @@ namespace Mono.CSharp {
 				return me.DoResolve (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return DoResolve (ec, null);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return DoResolve (ec, right_side);
 		}
@@ -7609,13 +7611,13 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				return Expr.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
 				Expr = Expr.Resolve (ec);
@@ -7669,13 +7671,13 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				return Expr.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
 				Expr = Expr.Resolve (ec);
@@ -7733,7 +7735,7 @@ namespace Mono.CSharp {
 			this.Arguments = args;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
 				Expr.CreateExpressionTree (ec));
@@ -7741,7 +7743,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("ArrayIndex", args);
 		}
 
-		Expression MakePointerAccess (EmitContext ec, Type t)
+		Expression MakePointerAccess (ResolveContext ec, Type t)
 		{
 			if (Arguments.Count != 1){
 				Error (196, "A pointer must be indexed by only one value");
@@ -7755,7 +7757,7 @@ namespace Mono.CSharp {
 			return new Indirection (p, loc).Resolve (ec);
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expr = Expr.Resolve (ec);
 			if (Expr == null)
@@ -7789,7 +7791,7 @@ namespace Mono.CSharp {
 			return (new IndexerAccess (this, loc)).Resolve (ec);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			Expr = Expr.Resolve (ec);
 			if (Expr == null)
@@ -7852,17 +7854,17 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return ea.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return DoResolve (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 #if false
 			ExprClass eclass = ea.Expr.eclass;
@@ -8350,7 +8352,7 @@ namespace Mono.CSharp {
 			return isSet ? "set" : "get";
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = Arguments.CreateForExpressionTree (ec, arguments,
 				instance_expr.CreateExpressionTree (ec),
@@ -8359,18 +8361,18 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Call", args);
 		}
 
-		protected virtual void CommonResolve (EmitContext ec)
+		protected virtual void CommonResolve (ResolveContext ec)
 		{
 			indexer_type = instance_expr.Type;
 			current_type = ec.CurrentType;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return ResolveAccessor (ec, null);
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			if (right_side == EmptyExpression.OutAccess) {
 				Report.Error (206, loc,
@@ -8386,7 +8388,7 @@ namespace Mono.CSharp {
 			return ResolveAccessor (ec, right_side);
 		}
 
-		Expression ResolveAccessor (EmitContext ec, Expression right_side)
+		Expression ResolveAccessor (ResolveContext ec, Expression right_side)
 		{
 			CommonResolve (ec);
 
@@ -8597,12 +8599,12 @@ namespace Mono.CSharp {
 			this.args = args;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expression c = CommonResolve (ec);
 
@@ -8617,7 +8619,7 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			Expression c = CommonResolve (ec);
 
@@ -8633,7 +8635,7 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		Expression CommonResolve (EmitContext ec)
+		Expression CommonResolve (ResolveContext ec)
 		{
 			Expression member_lookup;
 			Type current_type = ec.CurrentType;
@@ -8701,7 +8703,7 @@ namespace Mono.CSharp {
 			this.arguments = args;
 		}
 
-		protected override void CommonResolve (EmitContext ec)
+		protected override void CommonResolve (ResolveContext ec)
 		{
 			instance_expr = ec.GetThis (loc);
 
@@ -8709,7 +8711,7 @@ namespace Mono.CSharp {
 			indexer_type = current_type;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			MemberExpr.Error_BaseAccessInExpressionTree (loc);
 			return base.CreateExpressionTree (ec);
@@ -8762,12 +8764,12 @@ namespace Mono.CSharp {
 			loc = Location.Null;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -8805,7 +8807,7 @@ namespace Mono.CSharp {
 			loc = Location.Null;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return null;
 		}
@@ -8815,7 +8817,7 @@ namespace Mono.CSharp {
 			// Do nothing
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.object_type;
 			return this;
@@ -8845,7 +8847,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (source.CreateExpressionTree (ec)));
@@ -8854,7 +8856,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Convert", args);
 		}
 			
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
 			if (oa != null)
@@ -8973,7 +8975,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Error_PointerInsideExpressionTree ();
 			return null;
@@ -8984,7 +8986,7 @@ namespace Mono.CSharp {
 			array.Emit (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// We are born fully resolved
@@ -9028,7 +9030,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
@@ -9069,12 +9071,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			count = count.Resolve (ec);
 			if (count == null)
@@ -9155,7 +9157,7 @@ namespace Mono.CSharp {
 			target.source = source.Clone (clonectx);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			FieldExpr fe = target as FieldExpr;
@@ -9170,7 +9172,7 @@ namespace Mono.CSharp {
 				args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (source == null)
 				return EmptyExpressionStatement.Instance;
@@ -9278,7 +9280,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
@@ -9299,7 +9301,7 @@ namespace Mono.CSharp {
 				target.arguments = arguments.Clone (clonectx);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -9348,7 +9350,7 @@ namespace Mono.CSharp {
 				t.initializers.Add (e.Clone (clonectx));
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			ArrayList expr_initializers = new ArrayList (initializers.Count);
 			foreach (Expression e in initializers) {
@@ -9360,7 +9362,7 @@ namespace Mono.CSharp {
 			return new ImplicitlyTypedArrayCreation ("[]", expr_initializers, loc);
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -9465,18 +9467,18 @@ namespace Mono.CSharp {
 				this.new_instance = newInstance;
 			}
 
-			public override Expression CreateExpressionTree (EmitContext ec)
+			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				// Should not be reached
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				return this;
 			}
 
-			public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+			public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 			{
 				return this;
 			}
@@ -9524,7 +9526,7 @@ namespace Mono.CSharp {
 			target.initializers = (CollectionOrObjectInitializers) initializers.Clone (clonectx);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (base.CreateExpressionTree (ec)));
@@ -9536,7 +9538,7 @@ namespace Mono.CSharp {
 				args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -9646,12 +9648,12 @@ namespace Mono.CSharp {
 			return type;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			AnonymousTypeClass anonymous_type;
 
@@ -9724,7 +9726,7 @@ namespace Mono.CSharp {
 			t.initializer = initializer.Clone (clonectx);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
@@ -9740,7 +9742,7 @@ namespace Mono.CSharp {
 			return Name.GetHashCode ();
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = initializer.Resolve (ec);
 			if (e == null)

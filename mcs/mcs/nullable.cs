@@ -126,17 +126,17 @@ namespace Mono.CSharp.Nullable
 			return new Unwrap (expr, useDefaultValue);
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return expr.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			return DoResolve (ec);
 		}
@@ -258,12 +258,12 @@ namespace Mono.CSharp.Nullable
 				eclass = ExprClass.Value;
 			}
 
-			public override Expression CreateExpressionTree (EmitContext ec)
+			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				return this;
 			}
@@ -291,7 +291,7 @@ namespace Mono.CSharp.Nullable
 			get { return child; }
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			TypeCast child_cast = child as TypeCast;
 			if (child_cast != null) {
@@ -345,7 +345,7 @@ namespace Mono.CSharp.Nullable
 			return ReducedExpression.Create (Create (e.Type, e.Location), e);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
@@ -392,12 +392,12 @@ namespace Mono.CSharp.Nullable
 		{
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return wrap.CreateExpressionTree (ec);
 		}			
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			wrap = Wrap.Create (expr, type);
 			if (wrap == null)
@@ -454,7 +454,7 @@ namespace Mono.CSharp.Nullable
 			unwrap.AddressOf (ec, mode);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (user_operator != null)
 				return user_operator.CreateExpressionTree (ec);
@@ -465,7 +465,7 @@ namespace Mono.CSharp.Nullable
 			return base.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -527,7 +527,7 @@ namespace Mono.CSharp.Nullable
 			return expr;
 		}
 
-		protected override Expression ResolveEnumOperator (EmitContext ec, Expression expr)
+		protected override Expression ResolveEnumOperator (ResolveContext ec, Expression expr)
 		{
 			expr = base.ResolveEnumOperator (ec, expr);
 			if (expr == null)
@@ -537,7 +537,7 @@ namespace Mono.CSharp.Nullable
 			return LiftExpression (ec, expr);
 		}
 
-		protected override Expression ResolveUserOperator (EmitContext ec, Expression expr)
+		protected override Expression ResolveUserOperator (ResolveContext ec, Expression expr)
 		{
 			expr = base.ResolveUserOperator (ec, expr);
 			if (expr == null)
@@ -570,7 +570,7 @@ namespace Mono.CSharp.Nullable
 			this.loc = loc;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (user_operator != null)
 				return user_operator.CreateExpressionTree (ec);
@@ -599,7 +599,7 @@ namespace Mono.CSharp.Nullable
 			return ReducedExpression.Create (c, this);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -829,7 +829,7 @@ namespace Mono.CSharp.Nullable
 			}
 		}
 
-		Expression LiftResult (EmitContext ec, Expression res_expr)
+		Expression LiftResult (ResolveContext ec, Expression res_expr)
 		{
 			TypeExpr lifted_type;
 
@@ -899,7 +899,7 @@ namespace Mono.CSharp.Nullable
 			return res_expr;
 		}
 
-		protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only, Type enum_type)
+		protected override Expression ResolveOperatorPredefined (ResolveContext ec, Binary.PredefinedOperator [] operators, bool primitives_only, Type enum_type)
 		{
 			Expression e = base.ResolveOperatorPredefined (ec, operators, primitives_only, enum_type);
 
@@ -921,7 +921,7 @@ namespace Mono.CSharp.Nullable
 			return e;
 		}
 
-		protected override Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
+		protected override Expression ResolveUserOperator (ResolveContext ec, Type l, Type r)
 		{
 			Expression expr = base.ResolveUserOperator (ec, l, r);
 			if (expr == null)
@@ -949,7 +949,7 @@ namespace Mono.CSharp.Nullable
 			this.loc = loc;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (left.Type == TypeManager.null_type)
 				Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
@@ -974,7 +974,7 @@ namespace Mono.CSharp.Nullable
 			return CreateExpressionFactoryCall ("Coalesce", args);
 		}
 
-		Expression ConvertExpression (EmitContext ec)
+		Expression ConvertExpression (ResolveContext ec)
 		{
 			// TODO: ImplicitConversionExists should take care of this
 			if (left.eclass == ExprClass.MethodGroup)
@@ -1035,7 +1035,7 @@ namespace Mono.CSharp.Nullable
 			return this;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -1122,12 +1122,12 @@ namespace Mono.CSharp.Nullable
 			eclass = ExprClass.Value;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)

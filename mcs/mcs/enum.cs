@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 	
-		protected override Constant DoResolveValue (EmitContext ec)
+		protected override Constant DoResolveValue (ResolveContext ec)
 		{
 			if (ValueExpr != null) {
 				Constant c = ValueExpr.ResolveAsConstant (ec, this);

@@ -98,12 +98,12 @@ namespace Mono.CSharp
 			return f;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (TypeManager.call_site_type == null)
 				TypeManager.call_site_type = TypeManager.CoreLookupType (
@@ -162,7 +162,8 @@ namespace Mono.CSharp
 				}
 			}
 
-			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (ec), args, loc).Resolve (ec);
+			ResolveContext rc = new ResolveContext (ec.ResolveContext);
+			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (rc), args, loc).Resolve (rc);
 			if (target != null)
 				target.Emit (ec);
 

@@ -350,7 +350,7 @@ namespace Mono.CSharp {
 				return parameter_type;
 
 			if (default_expr != null) {
-				EmitContext ec = new EmitContext (rc, null, parameter_type);
+				ResolveContext ec = new ResolveContext (rc);
 				default_expr = default_expr.Resolve (ec);
 				if (default_expr != null) {
 					Constant value = default_expr as Constant;

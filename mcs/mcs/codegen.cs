@@ -283,13 +283,18 @@ namespace Mono.CSharp {
 	//
 	// Block or statement resolving context
 	//
-	public class BlockContext : EmitContext
+	public class BlockContext : ResolveContext
 	{
 		FlowBranching current_flow_branching;
 
 		public BlockContext (IResolveContext mc, ExplicitBlock block, Type returnType)
-			: base (mc, null, returnType)
+			: base (mc)
 		{
+			if (returnType == null)
+				throw new ArgumentNullException ("returnType");
+
+			this.return_type = returnType;
+
 			// TODO: check for null value
 			CurrentBlock = block;
 		}
@@ -515,7 +520,7 @@ namespace Mono.CSharp {
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		Type return_type;
+		protected Type return_type;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
@@ -547,7 +552,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
-		public readonly IResolveContext ResolveContext;
+		public IResolveContext ResolveContext;
 
 		/// <summary>
 		///    The current iterator
@@ -573,9 +578,6 @@ namespace Mono.CSharp {
 			// The constant check state is always set to true
 			//
 			flags |= Options.ConstantCheckState;
-
-			if (return_type == null)
-				throw new ArgumentNullException ("return_type");
 
 			this.return_type = return_type;
 		}
@@ -841,6 +843,20 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+	}
+
+	public class ResolveContext : EmitContext
+	{
+		public ResolveContext (IResolveContext mc)
+			: base (mc, null, null)
+		{
+		}
+
+		public ResolveContext (IResolveContext mc, Options options)
+			: this (mc)
+		{
+			Set (options);
+		}
 	}
 
 

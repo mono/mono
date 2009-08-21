@@ -33,7 +33,7 @@ namespace Mono.CSharp.Linq
 			return next.BuildQueryClause (ec, lSide);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			int counter = QueryBlock.TransparentParameter.Counter;
 
@@ -86,7 +86,7 @@ namespace Mono.CSharp.Linq
 			{
 			}
 
-			protected override MethodGroupExpr DoResolveOverload (EmitContext ec)
+			protected override MethodGroupExpr DoResolveOverload (ResolveContext ec)
 			{
 				mg.CustomErrorHandler = this;
 				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, false, loc);
@@ -102,7 +102,7 @@ namespace Mono.CSharp.Linq
 				return true;
 			}
 
-			public bool NoExactMatch (EmitContext ec, MethodBase method)
+			public bool NoExactMatch (ResolveContext ec, MethodBase method)
 			{
 				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
@@ -170,13 +170,13 @@ namespace Mono.CSharp.Linq
 				t.next = (AQueryClause) next.Clone (clonectx);
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			// Should not be reached
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return expr.DoResolve (ec);
 		}
@@ -292,7 +292,7 @@ namespace Mono.CSharp.Linq
 			return next.BuildQueryClause (ec, expr);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = BuildQueryClause (ec, null);
 			return e.Resolve (ec);

@@ -55,7 +55,7 @@ namespace Mono.CSharp {
 			return GetSignatureForError ();
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			// HACK: avoid referencing mcs internal type
 			if (type == typeof (NullLiteral))
@@ -64,7 +64,7 @@ namespace Mono.CSharp {
 			return base.CreateExpressionTree (ec);
 		}		
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -91,7 +91,7 @@ namespace Mono.CSharp {
 			return "null";
 		}
 
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type t, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type t, bool expl)
 		{
 			if (TypeManager.IsGenericParameter (t)) {
 				Report.Error(403, loc,
@@ -208,7 +208,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.bool_type;
 			return this;
@@ -224,7 +224,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.char_type;
 			return this;
@@ -240,7 +240,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.int32_type;
 			return this;
@@ -271,7 +271,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.uint32_type;
 			return this;
@@ -287,7 +287,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.int64_type;
 			return this;
@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.uint64_type;
 			return this;
@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.float_type;
 			return this;
@@ -337,14 +337,14 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.double_type;
 
 			return this;
 		}
 
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
 		{
 			if (target == TypeManager.float_type) {
 				Error_664 (loc, "float", "f");
@@ -377,7 +377,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.decimal_type;
 			return this;
@@ -393,7 +393,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.string_type;
 

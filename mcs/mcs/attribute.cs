@@ -391,10 +391,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			EmitContext ec = new EmitContext (context, null, typeof (Attribute));
-			ec.Set (EmitContext.Options.ConstantScope);
-
-			ConstructorInfo ctor = ResolveConstructor (ec);
+			ResolveContext rc = new ResolveContext (context, EmitContext.Options.ConstantScope);
+			ConstructorInfo ctor = ResolveConstructor (rc);
 			if (ctor == null) {
 				if (Type is TypeBuilder && 
 				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
@@ -422,7 +420,7 @@ namespace Mono.CSharp {
 					return cb;
 				}
 
-				if (!ResolveNamedArguments (ec)) {
+				if (!ResolveNamedArguments (rc)) {
 					return null;
 				}
 
@@ -439,7 +437,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual ConstructorInfo ResolveConstructor (EmitContext ec)
+		protected virtual ConstructorInfo ResolveConstructor (ResolveContext ec)
 		{
 			if (PosArguments != null) {
 				bool dynamic;
@@ -508,7 +506,7 @@ namespace Mono.CSharp {
 			return constructor;
 		}
 
-		protected virtual bool ResolveNamedArguments (EmitContext ec)
+		protected virtual bool ResolveNamedArguments (ResolveContext ec)
 		{
 			int named_arg_count = NamedArguments.Count;
 
@@ -1265,12 +1263,12 @@ namespace Mono.CSharp {
 			return e.TypeArgument;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			throw new NotImplementedException ();
 		}
@@ -1348,7 +1346,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override ConstructorInfo ResolveConstructor (EmitContext ec)
+		protected override ConstructorInfo ResolveConstructor (ResolveContext ec)
 		{
 			try {
 				Enter ();
@@ -1359,7 +1357,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override bool ResolveNamedArguments (EmitContext ec)
+		protected override bool ResolveNamedArguments (ResolveContext ec)
 		{
 			try {
 				Enter ();

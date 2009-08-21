@@ -360,7 +360,7 @@ namespace Mono.CSharp {
 				this.method = method;
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				Methods = new MethodBase [] { method.MethodBuilder };
 				type = method.Parent.TypeBuilder;
@@ -379,7 +379,7 @@ namespace Mono.CSharp {
 				this.field = field;
 			}
 
-			public override Expression DoResolve (EmitContext ec)
+			public override Expression DoResolve (ResolveContext ec)
 			{
 				FieldInfo = field.FieldBuilder;
 				type = TypeManager.TypeToCoreType (FieldInfo.FieldType);
@@ -828,7 +828,7 @@ namespace Mono.CSharp {
 			return OriginalMethod.GetSignatureForError ();
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			method = new AnonymousMethodMethod (Storey,
 				this, Storey, null, TypeManager.system_boolean_expr,
@@ -869,7 +869,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}

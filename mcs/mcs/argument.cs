@@ -65,7 +65,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual Expression CreateExpressionTree (EmitContext ec)
+		public virtual Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (ArgType == AType.Default)
 				Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
@@ -89,7 +89,7 @@ namespace Mono.CSharp
 			get { return ArgType == AType.Default; }
 		}
 
-		public bool ResolveMethodGroup (EmitContext ec)
+		public bool ResolveMethodGroup (ResolveContext ec)
 		{
 			SimpleName sn = Expr as SimpleName;
 			if (sn != null)
@@ -104,7 +104,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public void Resolve (EmitContext ec)
+		public void Resolve (ResolveContext ec)
 		{
 			if (Expr == EmptyExpression.Null)
 				return;
@@ -166,7 +166,7 @@ namespace Mono.CSharp
 			Name = name;
 		}
 
-		public override Expression CreateExpressionTree (EmitContext ec)
+		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Report.Error (853, Name.Location, "An expression tree cannot contain named argument");
 			return base.CreateExpressionTree (ec);
@@ -265,7 +265,7 @@ namespace Mono.CSharp
 			return all;
 		}
 
-		public static Arguments CreateForExpressionTree (EmitContext ec, Arguments args, params Expression[] e)
+		public static Arguments CreateForExpressionTree (ResolveContext ec, Arguments args, params Expression[] e)
 		{
 			Arguments all = new Arguments ((args == null ? 0 : args.Count) + e.Length);
 			for (int i = 0; i < e.Length; ++i) {
@@ -355,7 +355,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool GetAttributableValue (EmitContext ec, out object[] values)
+		public bool GetAttributableValue (ResolveContext ec, out object[] values)
 		{
 			values = new object [args.Count];
 			for (int j = 0; j < values.Length; ++j) {
@@ -394,7 +394,7 @@ namespace Mono.CSharp
 		//
 		// Returns dynamic when at least one argument is of dynamic type
 		//
-		public void Resolve (EmitContext ec, out bool dynamic)
+		public void Resolve (ResolveContext ec, out bool dynamic)
 		{
 			dynamic = false;
 			foreach (Argument a in args) {

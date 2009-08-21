@@ -2094,7 +2094,7 @@ namespace Mono.CSharp {
 		///   when resolving an Invocation or a DelegateInvocation and the user
 		///   did not explicitly specify type arguments.
 		/// </summary>
-		public static int InferTypeArguments (EmitContext ec, Arguments arguments, ref MethodBase method)
+		public static int InferTypeArguments (ResolveContext ec, Arguments arguments, ref MethodBase method)
 		{
 			ATypeInference ti = ATypeInference.CreateInstance (arguments);
 			Type[] i_args = ti.InferMethodArguments (ec, method);
@@ -2149,7 +2149,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract Type[] InferMethodArguments (EmitContext ec, MethodBase method);
+		public abstract Type[] InferMethodArguments (ResolveContext ec, MethodBase method);
 		public abstract Type[] InferDelegateArguments (MethodBase method);
 	}
 
@@ -2199,7 +2199,7 @@ namespace Mono.CSharp {
 			return context.InferredTypeArguments;
 		}
 
-		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
+		public override Type[] InferMethodArguments (ResolveContext ec, MethodBase method)
 		{
 			Type[] method_generic_args = method.GetGenericArguments ();
 			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);
@@ -2216,7 +2216,7 @@ namespace Mono.CSharp {
 		//
 		// Implements method type arguments inference
 		//
-		bool InferInPhases (EmitContext ec, TypeInferenceContext tic, AParametersCollection methodParameters)
+		bool InferInPhases (ResolveContext ec, TypeInferenceContext tic, AParametersCollection methodParameters)
 		{
 			int params_arguments_start;
 			if (methodParameters.HasParams) {
@@ -2289,7 +2289,7 @@ namespace Mono.CSharp {
 			return DoSecondPhase (ec, tic, ptypes, !fixed_any);
 		}
 
-		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, Type[] methodParameters, bool fixDependent)
+		bool DoSecondPhase (ResolveContext ec, TypeInferenceContext tic, Type[] methodParameters, bool fixDependent)
 		{
 			bool fixed_any = false;
 			if (fixDependent && !tic.FixDependentTypes (ref fixed_any))
@@ -2888,7 +2888,7 @@ namespace Mono.CSharp {
 		//
 		// 26.3.3.6 Output Type Inference
 		//
-		public int OutputTypeInference (EmitContext ec, Expression e, Type t)
+		public int OutputTypeInference (ResolveContext ec, Expression e, Type t)
 		{
 			// If e is a lambda or anonymous method with inferred return type
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
