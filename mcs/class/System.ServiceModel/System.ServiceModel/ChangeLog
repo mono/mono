@@ -1,3 +1,8 @@
+2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : moved some code to channel/endpoint dispatcher
+	  to reduce their dependencies on this type.
+
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : implement async OnBegin/EndOpen like close.

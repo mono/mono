@@ -111,5 +111,83 @@ namespace System.ServiceModel.Dispatcher
 			get { return filter_priority; }
 			set { filter_priority = value; }
 		}
+
+		internal void InitializeServiceEndpoint (ChannelDispatcher channelDispatcher, Type serviceType, ServiceEndpoint se)
+		{
+			this.ContractFilter = GetContractFilter (se.Contract);
+			this.AddressFilter = new EndpointAddressMessageFilter (se.Address);
+			this.ChannelDispatcher = channelDispatcher;
+
+			this.DispatchRuntime.Type = serviceType;
+			
+			//Build the dispatch operations
+			DispatchRuntime db = this.DispatchRuntime;
+			if (se.Contract.CallbackContractType != null) {
+				var ccd = ContractDescriptionGenerator.GetCallbackContract (se.Contract.CallbackContractType);
+				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
+				db.CallbackClientRuntime.CallbackClientType = ccd.ContractType;
+			}
+			foreach (OperationDescription od in se.Contract.Operations)
+				if (!db.Operations.Contains (od.Name))
+					PopulateDispatchOperation (db, od);
+		}
+
+		void PopulateDispatchOperation (DispatchRuntime db, OperationDescription od) {
+			string reqA = null, resA = null;
+			foreach (MessageDescription m in od.Messages) {
+				if (m.Direction == MessageDirection.Input)
+					reqA = m.Action;
+				else
+					resA = m.Action;
+			}
+			DispatchOperation o =
+				od.IsOneWay ?
+				new DispatchOperation (db, od.Name, reqA) :
+				new DispatchOperation (db, od.Name, reqA, resA);
+			bool no_serialized_reply = od.IsOneWay;
+			foreach (MessageDescription md in od.Messages) {
+				if (md.Direction == MessageDirection.Input &&
+					md.Body.Parts.Count == 1 &&
+					md.Body.Parts [0].Type == typeof (Message))
+					o.DeserializeRequest = false;
+				if (md.Direction == MessageDirection.Output &&
+					md.Body.ReturnValue != null) {
+					if (md.Body.ReturnValue.Type == typeof (Message))
+						o.SerializeReply = false;
+					else if (md.Body.ReturnValue.Type == typeof (void))
+						no_serialized_reply = true;
+				}
+			}
+
+			// Setup Invoker
+			o.Invoker = new DefaultOperationInvoker (od);
+
+			// Setup Formater
+			o.Formatter = BaseMessagesFormatter.Create (od);
+
+			if (o.Action == "*" && (o.IsOneWay || o.ReplyAction == "*")) {
+				//Signature : Message  (Message)
+				//	    : void  (Message)
+				//FIXME: void (IChannel)
+				if (!o.DeserializeRequest && (!o.SerializeReply || no_serialized_reply)) // what is this double-ish check for?
+					db.UnhandledDispatchOperation = o;
+			}
+
+			db.Operations.Add (o);
+		}
+
+		MessageFilter GetContractFilter (ContractDescription cd)
+		{
+			List<string> actions = new List<string> ();
+			foreach (var od in cd.Operations)
+				foreach (var md in od.Messages)
+					if (md.Direction == MessageDirection.Input)
+						if (md.Action == "*")
+							return new MatchAllMessageFilter ();
+						else
+							actions.Add (md.Action);
+
+			return new ActionMessageFilter (actions.ToArray ());
+		}
 	}
 }

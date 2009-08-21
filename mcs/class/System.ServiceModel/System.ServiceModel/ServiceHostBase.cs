@@ -404,45 +404,8 @@ namespace System.ServiceModel
 			IChannelListener lf = BuildListener (se, commonParams);
 			ChannelDispatcher cd = new ChannelDispatcher (
 				lf, se.Binding.Name);
-			cd.MessageVersion = se.Binding.MessageVersion;
-			if (cd.MessageVersion == null)
-				cd.MessageVersion = MessageVersion.Default;
-
-			//Attach one EndpointDispacher to the ChannelDispatcher
-			EndpointDispatcher endpoint_dispatcher =
-				new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
-			endpoint_dispatcher.DispatchRuntime.Type = Description.ServiceType;
-			endpoint_dispatcher.ContractFilter = GetContractFilter (se.Contract);
-			endpoint_dispatcher.AddressFilter = new EndpointAddressMessageFilter (se.Address);
-			endpoint_dispatcher.ChannelDispatcher = cd;
-			cd.Endpoints.Add (endpoint_dispatcher);
-			
-			//Build the dispatch operations
-			DispatchRuntime db = endpoint_dispatcher.DispatchRuntime;
-			if (se.Contract.CallbackContractType != null) {
-				var ccd = ContractDescriptionGenerator.GetCallbackContract (se.Contract.CallbackContractType);
-				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
-				db.CallbackClientRuntime.CallbackClientType = ccd.ContractType;
-			}
-			foreach (OperationDescription od in se.Contract.Operations)
-				if (!db.Operations.Contains (od.Name))
-					PopulateDispatchOperation (db, od);
-
+			cd.InitializeServiceEndpoint (Description.ServiceType, se);
 			return cd;
-		}
-
-		private MessageFilter GetContractFilter (ContractDescription contractDescription)
-		{
-			List<string> actions = new List<string> ();
-			foreach (OperationDescription od in contractDescription.Operations)
-				foreach (MessageDescription md in od.Messages)
-					if (md.Direction == MessageDirection.Input)
-						if (md.Action == "*")
-							return new MatchAllMessageFilter ();
-						else
-							actions.Add (md.Action);
-
-			return new ActionMessageFilter (actions.ToArray ());
 		}
 
 		private void AddBindingParameters (BindingParameterCollection commonParams, ServiceEndpoint endPoint) {
@@ -459,50 +422,6 @@ namespace System.ServiceModel
 				foreach (IOperationBehavior b in operation.Behaviors)
 					b.AddBindingParameters (operation, commonParams);
 			}
-		}
-
-		void PopulateDispatchOperation (DispatchRuntime db, OperationDescription od) {
-			string reqA = null, resA = null;
-			foreach (MessageDescription m in od.Messages) {
-				if (m.Direction == MessageDirection.Input)
-					reqA = m.Action;
-				else
-					resA = m.Action;
-			}
-			DispatchOperation o =
-				od.IsOneWay ?
-				new DispatchOperation (db, od.Name, reqA) :
-				new DispatchOperation (db, od.Name, reqA, resA);
-			bool no_serialized_reply = od.IsOneWay;
-			foreach (MessageDescription md in od.Messages) {
-				if (md.Direction == MessageDirection.Input &&
-					md.Body.Parts.Count == 1 &&
-					md.Body.Parts [0].Type == typeof (Message))
-					o.DeserializeRequest = false;
-				if (md.Direction == MessageDirection.Output &&
-					md.Body.ReturnValue != null) {
-					if (md.Body.ReturnValue.Type == typeof (Message))
-						o.SerializeReply = false;
-					else if (md.Body.ReturnValue.Type == typeof (void))
-						no_serialized_reply = true;
-				}
-			}
-
-			// Setup Invoker
-			o.Invoker = new DefaultOperationInvoker (od);
-
-			// Setup Formater
-			o.Formatter = BaseMessagesFormatter.Create (od);
-
-			if (o.Action == "*" && (o.IsOneWay || o.ReplyAction == "*")) {
-				//Signature : Message  (Message)
-				//	    : void  (Message)
-				//FIXME: void (IChannel)
-				if (!o.DeserializeRequest && (!o.SerializeReply || no_serialized_reply)) // what is this double-ish check for?
-					db.UnhandledDispatchOperation = o;
-			}
-
-			db.Operations.Add (o);
 		}
 
 		[MonoTODO]
