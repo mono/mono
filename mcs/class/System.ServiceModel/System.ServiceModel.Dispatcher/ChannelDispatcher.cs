@@ -571,7 +571,7 @@ namespace System.ServiceModel.Dispatcher
 							throw new MultipleFilterMatchesException ();
 					}
 				}
-				if (candidate == null)
+				if (candidate == null && owner.Host != null)
 					owner.Host.OnUnknownMessageReceived (message);
 				return candidate;
 			}
