@@ -166,13 +166,20 @@ namespace System.Web.Compilation
 				return GetParserDependencies (parser);
 			}
 		}
+
+		internal override string LanguageName {
+			get {
+				TParser parser = Parse ();
+				if (parser != null)
+					return GetParserLanguage (parser);
+				return base.LanguageName;
+			}
+		}
 		
 		public override CompilerType CodeCompilerType {
 			get {
-				if (_compilerType == null) {
-					TParser parser = Parse ();
-					_compilerType = GetDefaultCompilerTypeForLanguage (GetParserLanguage (parser));
-				}
+				if (_compilerType == null)
+					_compilerType = GetDefaultCompilerTypeForLanguage (LanguageName);
 
 				return _compilerType;
 			}

@@ -1,3 +1,13 @@
+2009-08-21  Marek Habersack  <mhabersack@novell.com>
+
+	* GenericBuildProvider.cs: added internal property LanguageName
+	override which calls GetParserLanguage to get language name
+	instead of using the application default one.
+
+	* BuildManagerDirectoryBuilder.cs: removed CodeDOM provider cache,
+	provider types are retrieved from build providers while assigning
+	them to groups. Fixes bug #533166
+
 2009-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* AspParser.cs: added a constructor which creates an internal

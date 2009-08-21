@@ -59,7 +59,6 @@ namespace System.Web.Compilation
 		readonly string virtualPathDirectory;
 		CompilationSection compilationSection;
 		Dictionary <string, BuildProvider> buildProviders;
-		Dictionary <string, Type> codeDomProviders;
 		IEqualityComparer <string> dictionaryComparer;
 		StringComparison stringComparer;
 		VirtualPathProvider vpp;
@@ -152,28 +151,7 @@ namespace System.Web.Compilation
 				return false;
 
 			buildProviders.Add (bpPath, buildProvider);
-			AddCodeDomProvider (buildProvider);
 			return true;
-		}
-
-		void AddCodeDomProvider (BuildProvider buildProvider)
-		{
-			if (codeDomProviders == null)
-				codeDomProviders = new Dictionary <string, Type> (dictionaryComparer);
-
-			string language = buildProvider.LanguageName;
-			if (String.IsNullOrEmpty (language))
-				return;
-			
-			if (codeDomProviders.ContainsKey (language))
-				return;
-
-			CompilerType ct = BuildManager.GetDefaultCompilerTypeForLanguage (language, CompilationSection, false);
-			Type type = ct != null ? ct.CodeDomProviderType : null;
-			if (type == null)
-				return;
-			
-			codeDomProviders.Add (language, type);
 		}
 		
 		void AddVirtualDir (VirtualDirectory vdir, BuildProviderCollection bpcoll, Dictionary <string, bool> cache)
@@ -249,6 +227,25 @@ namespace System.Web.Compilation
 			
 			return vpp.GetFile (virtualPath);
 		}
+
+		Type GetBuildProviderCodeDomType (BuildProvider bp)
+		{
+			CompilerType ct = bp.CodeCompilerType;
+			if (ct == null) {
+				string language = bp.LanguageName;
+
+				if (String.IsNullOrEmpty (language))
+					language = CompilationSection.DefaultLanguage;
+
+				ct = BuildManager.GetDefaultCompilerTypeForLanguage (language, CompilationSection, false);
+			}
+
+			Type ret = ct != null ? ct.CodeDomProviderType : null;
+			if (ret == null)
+				throw new HttpException ("Unable to determine code compilation language provider for virtual path '" + bp.VirtualPath + "'.");
+
+			return ret;
+		}
 		
 		void AssignToGroup (BuildProvider buildProvider, List <BuildProviderGroup> groups)
 		{
@@ -259,13 +256,9 @@ namespace System.Web.Compilation
 			string bpVirtualPath = buildProvider.VirtualPath;
 			string bpPath = VirtualPathUtility.GetDirectory (bpVirtualPath);
 			bool canAdd;
-			Type bpCodeDomType;
 
 			if (BuildManager.HasCachedItemNoLock (buildProvider.VirtualPath))
-				return;
-			
-			if (!codeDomProviders.TryGetValue (buildProvider.LanguageName, out bpCodeDomType))
-				bpCodeDomType = null;
+				return;			
 
 			if (buildProvider is ApplicationFileBuildProvider || buildProvider is ThemeDirectoryBuildProvider) {
 				// global.asax and theme directory go into their own assemblies
@@ -273,6 +266,7 @@ namespace System.Web.Compilation
 				myGroup.Standalone = true;
 				InsertGroup (myGroup, groups);
 			} else {
+				Type bpCodeDomType = GetBuildProviderCodeDomType (buildProvider);
 				foreach (BuildProviderGroup group in groups) {
 					if (group.Standalone)
 						continue;
@@ -297,8 +291,8 @@ namespace System.Web.Compilation
 
 						// Different languages go to different assemblies
 						if (bpCodeDomType != null) {
-							Type type;
-							if (codeDomProviders.TryGetValue (bp.LanguageName, out type)) {
+							Type type = GetBuildProviderCodeDomType (bp);
+							if (type != null) {
 								if (type != bpCodeDomType) {
 									canAdd = false;
 									break;
