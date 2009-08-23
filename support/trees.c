@@ -1,5 +1,6 @@
 /* trees.c -- output deflated data using Huffman coding
- * Copyright (C) 1995-2005 Jean-loup Gailly
+ * Copyright (C) 1995-2006 Jean-loup Gailly
+ * detect_data_type() function provided freely by Cosmin Truta, 2006
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -152,7 +153,7 @@ local void send_all_trees OF((deflate_state *s, int lcodes, int dcodes,
                               int blcodes));
 local void compress_block OF((deflate_state *s, ct_data *ltree,
                               ct_data *dtree));
-local void set_data_type  OF((deflate_state *s));
+local int  detect_data_type OF((deflate_state *s));
 local unsigned bi_reverse OF((unsigned value, int length));
 local void bi_windup      OF((deflate_state *s));
 local void bi_flush       OF((deflate_state *s));
@@ -250,11 +251,13 @@ local void tr_static_init()
     if (static_init_done) return;
 
     /* For some embedded targets, global variables are not initialized: */
+#ifdef NO_INIT_GLOBAL_POINTERS
     static_l_desc.static_tree = static_ltree;
     static_l_desc.extra_bits = extra_lbits;
     static_d_desc.static_tree = static_dtree;
     static_d_desc.extra_bits = extra_dbits;
     static_bl_desc.extra_bits = extra_blbits;
+#endif
 
     /* Initialize the mapping length (0..255) -> length code (0..28) */
     length = 0;
@@ -931,8 +934,8 @@ void _tr_flush_block(s, buf, stored_len, eof)
     if (s->level > 0) {
 
         /* Check if the file is binary or text */
-        if (stored_len > 0 && s->strm->data_type == Z_UNKNOWN)
-            set_data_type(s);
+        if (s->strm->data_type == Z_UNKNOWN)
+            s->strm->data_type = detect_data_type(s);
 
         /* Construct the literal and distance trees */
         build_tree(s, (tree_desc *)(&(s->l_desc)));
@@ -1118,24 +1121,45 @@ local void compress_block(s, ltree, dtree)
 }
 
 /* ===========================================================================
- * Set the data type to BINARY or TEXT, using a crude approximation:
- * set it to Z_TEXT if all symbols are either printable characters (33 to 255)
- * or white spaces (9 to 13, or 32); or set it to Z_BINARY otherwise.
+ * Check if the data type is TEXT or BINARY, using the following algorithm:
+ * - TEXT if the two conditions below are satisfied:
+ *    a) There are no non-portable control characters belonging to the
+ *       "black list" (0..6, 14..25, 28..31).
+ *    b) There is at least one printable character belonging to the
+ *       "white list" (9 {TAB}, 10 {LF}, 13 {CR}, 32..255).
+ * - BINARY otherwise.
+ * - The following partially-portable control characters form a
+ *   "gray list" that is ignored in this detection algorithm:
+ *   (7 {BEL}, 8 {BS}, 11 {VT}, 12 {FF}, 26 {SUB}, 27 {ESC}).
  * IN assertion: the fields Freq of dyn_ltree are set.
  */
-local void set_data_type(s)
+local int detect_data_type(s)
     deflate_state *s;
 {
+    /* black_mask is the bit mask of black-listed bytes
+     * set bits 0..6, 14..25, and 28..31
+     * 0xf3ffc07f = binary 11110011111111111100000001111111
+     */
+    unsigned long black_mask = 0xf3ffc07fUL;
     int n;
 
-    for (n = 0; n < 9; n++)
+    /* Check for non-textual ("black-listed") bytes. */
+    for (n = 0; n <= 31; n++, black_mask >>= 1)
+        if ((black_mask & 1) && (s->dyn_ltree[n].Freq != 0))
+            return Z_BINARY;
+
+    /* Check for textual ("white-listed") bytes. */
+    if (s->dyn_ltree[9].Freq != 0 || s->dyn_ltree[10].Freq != 0
+            || s->dyn_ltree[13].Freq != 0)
+        return Z_TEXT;
+    for (n = 32; n < LITERALS; n++)
         if (s->dyn_ltree[n].Freq != 0)
-            break;
-    if (n == 9)
-        for (n = 14; n < 32; n++)
-            if (s->dyn_ltree[n].Freq != 0)
-                break;
-    s->strm->data_type = (n == 32) ? Z_TEXT : Z_BINARY;
+            return Z_TEXT;
+
+    /* There are no "black-listed" or "white-listed" bytes:
+     * this stream either is empty or has tolerated ("gray-listed") bytes only.
+     */
+    return Z_BINARY;
 }
 
 /* ===========================================================================

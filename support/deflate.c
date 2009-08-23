@@ -1,5 +1,5 @@
 /* deflate.c -- compress data using the deflation algorithm
- * Copyright (C) 1995-2005 Jean-loup Gailly.
+ * Copyright (C) 1995-2006 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -52,7 +52,7 @@
 #include "deflate.h"
 
 const char deflate_copyright[] =
-   " deflate 1.2.3 Copyright 1995-2005 Jean-loup Gailly ";
+   " deflate 1.2.3.3 Copyright 1995-2006 Jean-loup Gailly ";
 /*
   If you use the zlib library in a product, an acknowledgment is welcome
   in the documentation of your product. If for some reason you cannot
@@ -481,33 +481,65 @@ int ZEXPORT deflateTune(strm, good_length, max_lazy, nice_length, max_chain)
  * resulting from using fixed blocks instead of stored blocks, which deflate
  * can emit on compressed data for some combinations of the parameters.
  *
- * This function could be more sophisticated to provide closer upper bounds
- * for every combination of windowBits and memLevel, as well as wrap.
- * But even the conservative upper bound of about 14% expansion does not
- * seem onerous for output buffer allocation.
+ * This function could be more sophisticated to provide closer upper bounds for
+ * every combination of windowBits and memLevel.  But even the conservative
+ * upper bound of about 14% expansion does not seem onerous for output buffer
+ * allocation.
  */
 uLong ZEXPORT deflateBound(strm, sourceLen)
     z_streamp strm;
     uLong sourceLen;
 {
     deflate_state *s;
-    uLong destLen;
+    uLong complen, wraplen;
+    Bytef *str;
 
-    /* conservative upper bound */
-    destLen = sourceLen +
-              ((sourceLen + 7) >> 3) + ((sourceLen + 63) >> 6) + 11;
+    /* conservative upper bound for compressed data */
+    complen = sourceLen +
+              ((sourceLen + 7) >> 3) + ((sourceLen + 63) >> 6) + 5;
 
-    /* if can't get parameters, return conservative bound */
+    /* if can't get parameters, return conservative bound plus zlib wrapper */
     if (strm == Z_NULL || strm->state == Z_NULL)
-        return destLen;
+        return complen + 6;
+
+    /* compute wrapper length */
+    s = strm->state;
+    switch (s->wrap) {
+    case 0:                                 /* raw deflate */
+        wraplen = 0;
+        break;
+    case 1:                                 /* zlib wrapper */
+        wraplen = 6 + (s->strstart ? 4 : 0);
+        break;
+    case 2:                                 /* gzip wrapper */
+        wraplen = 18;
+        if (s->gzhead != NULL) {            /* user-supplied gzip header */
+            if (s->gzhead->extra != NULL)
+                wraplen += 2 + s->gzhead->extra_len;
+            str = s->gzhead->name;
+            if (str != NULL)
+                do {
+                    wraplen++;
+                } while (*str++);
+            str = s->gzhead->comment;
+            if (str != NULL)
+                do {
+                    wraplen++;
+                } while (*str++);
+            if (s->gzhead->hcrc)
+                wraplen += 2;
+        }
+        break;
+    default:                                /* for compiler happiness */
+        wraplen = 6;
+    }
 
     /* if not default parameters, return conservative bound */
-    s = strm->state;
     if (s->w_bits != 15 || s->hash_bits != 8 + 7)
-        return destLen;
+        return complen + wraplen;
 
     /* default settings: return tight bound for that case */
-    return compressBound(sourceLen);
+    return compressBound(sourceLen) - 6 + wraplen;
 }
 
 /* =========================================================================

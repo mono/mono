@@ -1,7 +1,7 @@
 /* zlib.h -- interface of the 'zlib' general purpose compression library
-  version 1.2.3, July 18th, 2005
+  version 1.2.3.3, October 2nd, 2006
 
-  Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
+  Copyright (C) 1995-2006 Jean-loup Gailly and Mark Adler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,8 +37,11 @@
 extern "C" {
 #endif
 
-#define ZLIB_VERSION "1.2.3"
-#define ZLIB_VERNUM 0x1230
+#define ZLIB_VERSION "1.2.3.3"
+#define ZLIB_VERNUM 0x1233
+#define ZLIB_VER_MAJOR 1
+#define ZLIB_VER_MINOR 2
+#define ZLIB_VER_REVISION 3
 
 /*
      The 'zlib' compression library provides in-memory compression and
@@ -353,10 +356,14 @@ ZEXTERN int ZEXPORT inflateInit OF((z_streamp strm));
 
      inflateInit returns Z_OK if success, Z_MEM_ERROR if there was not enough
    memory, Z_VERSION_ERROR if the zlib library version is incompatible with the
-   version assumed by the caller.  msg is set to null if there is no error
-   message. inflateInit does not perform any decompression apart from reading
-   the zlib header if present: this will be done by inflate().  (So next_in and
-   avail_in may be modified, but next_out and avail_out are unchanged.)
+   version assumed by the caller, or Z_STREAM_ERROR if the parameters are
+   invalid, such as a null pointer to the structure.  msg is set to null if
+   there is no error message. inflateInit does not perform any decompression
+   apart from possibly reading the zlib header if present: actual decompression
+   will be done by inflate().  (So next_in and avail_in may be modified, but
+   next_out and avail_out are unused and unchanged.)  The current
+   implementation of inflateInit() does not process any header information --
+   that is deferred until inflate() is called.
 */
 
 
@@ -645,9 +652,10 @@ ZEXTERN uLong ZEXPORT deflateBound OF((z_streamp strm,
                                        uLong sourceLen));
 /*
      deflateBound() returns an upper bound on the compressed size after
-   deflation of sourceLen bytes.  It must be called after deflateInit()
-   or deflateInit2().  This would be used to allocate an output buffer
-   for deflation in a single pass, and so would be called before deflate().
+   deflation of sourceLen bytes.  It must be called after deflateInit() or
+   deflateInit2(), and after deflateSetHeader(), if used.  This would be used
+   to allocate an output buffer for deflation in a single pass, and so would be
+   called before deflate().
 */
 
 ZEXTERN int ZEXPORT deflatePrime OF((z_streamp strm,
@@ -726,11 +734,15 @@ ZEXTERN int ZEXPORT inflateInit2 OF((z_streamp strm,
    a crc32 instead of an adler32.
 
      inflateInit2 returns Z_OK if success, Z_MEM_ERROR if there was not enough
-   memory, Z_STREAM_ERROR if a parameter is invalid (such as a null strm). msg
-   is set to null if there is no error message.  inflateInit2 does not perform
-   any decompression apart from reading the zlib header if present: this will
-   be done by inflate(). (So next_in and avail_in may be modified, but next_out
-   and avail_out are unchanged.)
+   memory, Z_VERSION_ERROR if the zlib library version is incompatible with the
+   version assumed by the caller, or Z_STREAM_ERROR if the parameters are
+   invalid, such as a null pointer to the structure.  msg is set to null if
+   there is no error message. inflateInit2 does not perform any decompression
+   apart from possibly reading the zlib header if present: actual decompression
+   will be done by inflate().  (So next_in and avail_in may be modified, but
+   next_out and avail_out are unused and unchanged.)  The current
+   implementation of inflateInit2() does not process any header information --
+   that is deferred until inflate() is called.
 */
 
 ZEXTERN int ZEXPORT inflateSetDictionary OF((z_streamp strm,
@@ -1065,8 +1077,9 @@ ZEXTERN int ZEXPORT uncompress OF((Bytef *dest,   uLongf *destLen,
 
 typedef voidp gzFile;
 
-ZEXTERN gzFile ZEXPORT gzopen  OF((const char *path, const char *mode));
 /*
+ZEXTERN gzFile ZEXPORT gzopen  OF((const char *path, const char *mode));
+
      Opens a gzip (.gz) file for reading or writing. The mode parameter
    is as in fopen ("rb" or "wb") but can also include a compression level
    ("wb9") or a strategy: 'f' for filtered data as in "wb6f", 'h' for
@@ -1180,9 +1193,10 @@ ZEXTERN int ZEXPORT    gzflush OF((gzFile file, int flush));
    degrade compression.
 */
 
+/*
 ZEXTERN z_off_t ZEXPORT    gzseek OF((gzFile file,
                                       z_off_t offset, int whence));
-/*
+
       Sets the starting position for the next gzread or gzwrite on the
    given compressed file. The offset represents a number of bytes in the
    uncompressed data stream. The whence parameter is defined as in lseek(2);
@@ -1205,8 +1219,9 @@ ZEXTERN int ZEXPORT    gzrewind OF((gzFile file));
    gzrewind(file) is equivalent to (int)gzseek(file, 0L, SEEK_SET)
 */
 
-ZEXTERN z_off_t ZEXPORT    gztell OF((gzFile file));
 /*
+ZEXTERN z_off_t ZEXPORT    gztell OF((gzFile file));
+
      Returns the starting position for the next gzread or gzwrite on the
    given compressed file. This position represents a number of bytes in the
    uncompressed data stream.
@@ -1230,7 +1245,8 @@ ZEXTERN int ZEXPORT    gzclose OF((gzFile file));
 /*
      Flushes all pending output if necessary, closes the compressed file
    and deallocates all the (de)compression state. The return value is the zlib
-   error number (see function gzerror below).
+   error number.  Note that once file is close, you cannot call gzerror with
+   file, since its structures have been deallocated.
 */
 
 ZEXTERN const char * ZEXPORT gzerror OF((gzFile file, int *errnum));
@@ -1240,6 +1256,9 @@ ZEXTERN const char * ZEXPORT gzerror OF((gzFile file, int *errnum));
    error occurred in the file system and not in the compression library,
    errnum is set to Z_ERRNO and the application may consult errno
    to get the exact error code.
+
+   The application must not modify the returned string and future calls to
+   this function may invalidate the returned string.
 */
 
 ZEXTERN void ZEXPORT gzclearerr OF((gzFile file));
@@ -1273,9 +1292,10 @@ ZEXTERN uLong ZEXPORT adler32 OF((uLong adler, const Bytef *buf, uInt len));
      if (adler != original_adler) error();
 */
 
+/*
 ZEXTERN uLong ZEXPORT adler32_combine OF((uLong adler1, uLong adler2,
                                           z_off_t len2));
-/*
+
      Combine two Adler-32 checksums into one.  For two sequences of bytes, seq1
    and seq2 with lengths len1 and len2, Adler-32 checksums were calculated for
    each, adler1 and adler2.  adler32_combine() returns the Adler-32 checksum of
@@ -1298,9 +1318,9 @@ ZEXTERN uLong ZEXPORT crc32   OF((uLong crc, const Bytef *buf, uInt len));
      if (crc != original_crc) error();
 */
 
+/*
 ZEXTERN uLong ZEXPORT crc32_combine OF((uLong crc1, uLong crc2, z_off_t len2));
 
-/*
      Combine two CRC-32 check values into one.  For two sequences of bytes,
    seq1 and seq2 with lengths len1 and len2, CRC-32 check values were
    calculated for each, crc1 and crc2.  crc32_combine() returns the CRC-32
@@ -1339,16 +1359,38 @@ ZEXTERN int ZEXPORT inflateBackInit_ OF((z_streamp strm, int windowBits,
         inflateInit2_((strm), (windowBits), ZLIB_VERSION, sizeof(z_stream))
 #define inflateBackInit(strm, windowBits, window) \
         inflateBackInit_((strm), (windowBits), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+                                            ZLIB_VERSION, sizeof(z_stream))
 
+#ifdef _LARGEFILE64_SOURCE
+   ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
+   ZEXTERN off64_t ZEXPORT gzseek64 OF((gzFile, off64_t, int));
+   ZEXTERN off64_t ZEXPORT gztell64 OF((gzFile));
+   ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, off64_t));
+   ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, off64_t));
+#endif
+
+#if _FILE_OFFSET_BITS == 64
+#  define gzopen gzopen64
+#  define gzseek gzseek64
+#  define gztell gztell64
+#  define adler32_combine adler32_combine64
+#  define crc32_combine crc32_combine64
+#else
+   ZEXTERN gzFile ZEXPORT gzopen OF((const char *, const char *));
+   ZEXTERN z_off_t ZEXPORT gzseek OF((gzFile, z_off_t, int));
+   ZEXTERN z_off_t ZEXPORT gztell OF((gzFile));
+   ZEXTERN uLong ZEXPORT adler32_combine OF((uLong, uLong, z_off_t));
+   ZEXTERN uLong ZEXPORT crc32_combine OF((uLong, uLong, z_off_t));
+#endif
 
 #if !defined(ZUTIL_H) && !defined(NO_DUMMY_DECL)
     struct internal_state {int dummy;}; /* hack for buggy compilers */
 #endif
 
 ZEXTERN const char   * ZEXPORT zError           OF((int));
-ZEXTERN int            ZEXPORT inflateSyncPoint OF((z_streamp z));
+ZEXTERN int            ZEXPORT inflateSyncPoint OF((z_streamp));
 ZEXTERN const uLongf * ZEXPORT get_crc_table    OF((void));
+ZEXTERN int            ZEXPORT inflateUndermine OF((z_streamp, int));
 
 #ifdef __cplusplus
 }

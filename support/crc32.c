@@ -1,5 +1,5 @@
 /* crc32.c -- compute the CRC-32 of a data stream
- * Copyright (C) 1995-2005 Mark Adler
+ * Copyright (C) 1995-2006 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  *
  * Thanks to Rodney Brown <rbrown64@csc.com.au> for his contribution of faster
@@ -68,6 +68,12 @@
 local unsigned long gf2_matrix_times OF((unsigned long *mat,
                                          unsigned long vec));
 local void gf2_matrix_square OF((unsigned long *square, unsigned long *mat));
+#ifdef _LARGEFILE64_SOURCE
+   local uLong crc32_combine_(uLong crc1, uLong crc2, off64_t len2);
+#else
+   local uLong crc32_combine_(uLong crc1, uLong crc2, z_off_t len2);
+#endif
+
 
 #ifdef DYNAMIC_CRC_TABLE
 
@@ -367,10 +373,14 @@ local void gf2_matrix_square(square, mat)
 }
 
 /* ========================================================================= */
-uLong ZEXPORT crc32_combine(crc1, crc2, len2)
+local uLong crc32_combine_(crc1, crc2, len2)
     uLong crc1;
     uLong crc2;
+#ifdef _LARGEFILE64_SOURCE
+    off64_t len2;
+#else
     z_off_t len2;
+#endif
 {
     int n;
     unsigned long row;
@@ -421,3 +431,30 @@ uLong ZEXPORT crc32_combine(crc1, crc2, len2)
     crc1 ^= crc2;
     return crc1;
 }
+
+/* ========================================================================= */
+uLong ZEXPORT crc32_combine(crc1, crc2, len2)
+    uLong crc1;
+    uLong crc2;
+    z_off_t len2;
+{
+    return crc32_combine_(crc1, crc2, len2);
+}
+
+#ifdef _LARGEFILE64_SOURCE
+uLong ZEXPORT crc32_combine64(crc1, crc2, len2)
+    uLong crc1;
+    uLong crc2;
+    off64_t len2;
+{
+    return crc32_combine_(crc1, crc2, len2);
+}
+#else
+uLong ZEXPORT crc32_combine64(crc1, crc2, len2)
+    uLong crc1;
+    uLong crc2;
+    z_off_t len2;
+{
+    return crc32_combine_(crc1, crc2, len2);
+}
+#endif

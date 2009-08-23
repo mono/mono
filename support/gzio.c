@@ -1,5 +1,5 @@
 /* gzio.c -- IO on .gz files
- * Copyright (C) 1995-2005 Jean-loup Gailly.
+ * Copyright (C) 1995-2006 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  *
  * Compile this file with -DNO_GZCOMPRESS to avoid the compression code.
@@ -7,9 +7,17 @@
 
 /* @(#) $Id$ */
 
-#include <stdio.h>
+#ifdef _LARGEFILE64_SOURCE
+#  ifndef _LARGEFILE_SOURCE
+#    define _LARGEFILE_SOURCE
+#  endif
+#  ifdef _FILE_OFFSET_BITS
+#    undef _FILE_OFFSET_BITS
+#  endif
+#endif
 
 #include "zutil.h"
+#include <stdio.h>
 
 #ifdef NO_DEFLATE       /* for compatibility with old definition */
 #  define NO_GZCOMPRESS
@@ -40,6 +48,14 @@ extern voidp  malloc OF((uInt size));
 extern void   free   OF((voidpf ptr));
 #endif
 
+#ifdef NO_FSEEKO
+#  define FSEEK fseek
+#  define FTELL ftell
+#else
+#  define FSEEK fseeko
+#  define FTELL ftello
+#endif
+
 #define ALLOC(size) malloc(size)
 #define TRYFREE(p) {if (p) free(p);}
 
@@ -65,15 +81,27 @@ typedef struct gz_stream {
     char     *path;   /* path name for debugging only */
     int      transparent; /* 1 if input file is not a .gz file */
     char     mode;    /* 'w' or 'r' */
+#ifdef _LARGEFILE64_SOURCE
+    off64_t  start;   /* start of compressed data in file (header skipped) */
+    off64_t  in;      /* bytes into deflate or inflate */
+    off64_t  out;     /* bytes out of deflate or inflate */
+#else
     z_off_t  start;   /* start of compressed data in file (header skipped) */
     z_off_t  in;      /* bytes into deflate or inflate */
     z_off_t  out;     /* bytes out of deflate or inflate */
+#endif
     int      back;    /* one character push-back */
     int      last;    /* true if push-back is last character */
 } gz_stream;
 
 
-local gzFile gz_open      OF((const char *path, const char *mode, int  fd));
+local gzFile gz_open      OF((const char *path, const char *mode, int fd,
+                              int use64));
+#ifdef _LARGEFILE64_SOURCE
+local off64_t gz_seek OF((gzFile file, off64_t offset, int whence, int use64));
+#else
+local z_off_t gz_seek OF((gzFile file, z_off_t offset, int whence, int use64));
+#endif
 local int do_flush        OF((gzFile file, int flush));
 local int    get_byte     OF((gz_stream *s));
 local void   check_header OF((gz_stream *s));
@@ -90,10 +118,11 @@ local uLong  getLong      OF((gz_stream *s));
    can be checked to distinguish the two cases (if errno is zero, the
    zlib error is Z_MEM_ERROR).
 */
-local gzFile gz_open (path, mode, fd)
+local gzFile gz_open (path, mode, fd, use64)
     const char *path;
     const char *mode;
     int  fd;
+    int use64;
 {
     int err;
     int level = Z_DEFAULT_COMPRESSION; /* compression level */
@@ -165,12 +194,7 @@ local gzFile gz_open (path, mode, fd)
         s->stream.next_in  = s->inbuf = (Byte*)ALLOC(Z_BUFSIZE);
 
         err = inflateInit2(&(s->stream), -MAX_WBITS);
-        /* windowBits is passed < 0 to tell that there is no zlib header.
-         * Note that in this case inflate *requires* an extra "dummy" byte
-         * after the compressed stream in order to complete decompression and
-         * return Z_STREAM_END. Here the gzip CRC32 ensures that 4 bytes are
-         * present after the compressed stream.
-         */
+        /* windowBits is passed < 0 to tell that there is no zlib header */
         if (err != Z_OK || s->inbuf == Z_NULL) {
             return destroy(s), (gzFile)Z_NULL;
         }
@@ -178,7 +202,8 @@ local gzFile gz_open (path, mode, fd)
     s->stream.avail_out = Z_BUFSIZE;
 
     errno = 0;
-    s->file = fd < 0 ? F_OPEN(path, fmode) : (FILE*)fdopen(fd, fmode);
+    s->file = fd < 0 ? (use64 ? F_OPEN64(path, fmode) : F_OPEN(path, fmode)) :
+              (FILE*)fdopen(fd, fmode);
 
     if (s->file == NULL) {
         return destroy(s), (gzFile)Z_NULL;
@@ -187,7 +212,10 @@ local gzFile gz_open (path, mode, fd)
         /* Write a very simple .gz header:
          */
         fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", gz_magic[0], gz_magic[1],
-             Z_DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, 0 /*xflags*/, OS_CODE);
+             Z_DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, level == 9 ? 2 :
+                            (strategy >= Z_HUFFMAN_ONLY ||
+                             (level != Z_DEFAULT_COMPRESSION && level < 2) ?
+                             4 : 0) /*xflags*/, OS_CODE);
         s->start = 10L;
         /* We use 10L instead of ftell(s->file) to because ftell causes an
          * fflush on some systems. This version of the library doesn't use
@@ -196,7 +224,7 @@ local gzFile gz_open (path, mode, fd)
          */
     } else {
         check_header(s); /* skip the .gz header */
-        s->start = ftell(s->file) - s->stream.avail_in;
+        s->start = FTELL(s->file) - s->stream.avail_in;
     }
 
     return (gzFile)s;
@@ -209,7 +237,17 @@ gzFile ZEXPORT gzopen (path, mode)
     const char *path;
     const char *mode;
 {
-    return gz_open (path, mode, -1);
+    return gz_open (path, mode, -1, 0);
+}
+
+/* ===========================================================================
+     Opens a gzip (.gz) file for reading or writing for 64-bit offsets
+*/
+gzFile ZEXPORT gzopen64 (path, mode)
+    const char *path;
+    const char *mode;
+{
+    return gz_open (path, mode, -1, 1);
 }
 
 /* ===========================================================================
@@ -225,7 +263,7 @@ gzFile ZEXPORT gzdopen (fd, mode)
     if (fd < 0) return (gzFile)Z_NULL;
     sprintf(name, "<fd:%d>", fd); /* for debugging */
 
-    return gz_open (name, mode, fd);
+    return gz_open (name, mode, fd, 0);
 }
 
 /* ===========================================================================
@@ -256,7 +294,7 @@ int ZEXPORT gzsetparams (file, level, strategy)
 /* ===========================================================================
      Read a byte from a gz_stream; update next_in and avail_in. Return EOF
    for end of file.
-   IN assertion: the stream s has been sucessfully opened for reading.
+   IN assertion: the stream s has been successfully opened for reading.
 */
 local int get_byte(s)
     gz_stream *s;
@@ -281,7 +319,7 @@ local int get_byte(s)
     mode to transparent if the gzip magic header is not present; set s->err
     to Z_DATA_ERROR if the magic header is present but the rest of the header
     is incorrect.
-    IN assertion: the stream s has already been created sucessfully;
+    IN assertion: the stream s has already been created successfully;
        s->stream.avail_in is zero for the first time, but may be non-zero
        for concatenated .gz files.
 */
@@ -301,6 +339,7 @@ local void check_header(s)
         if (len) s->inbuf[0] = s->stream.next_in[0];
         errno = 0;
         len = (uInt)fread(s->inbuf + len, 1, Z_BUFSIZE >> len, s->file);
+        if (len == 0) s->z_eof = 1;
         if (len == 0 && ferror(s->file)) s->z_err = Z_ERRNO;
         s->stream.avail_in += len;
         s->stream.next_in = s->inbuf;
@@ -436,7 +475,7 @@ int ZEXPORT gzread (file, buf, len)
                 s->stream.avail_out -= n;
                 s->stream.avail_in  -= n;
             }
-            if (s->stream.avail_out > 0) {
+            if (s->stream.avail_out > 0 && !feof(s->file)) {
                 s->stream.avail_out -=
                     (uInt)fread(next_out, 1, s->stream.avail_out, s->file);
             }
@@ -764,10 +803,17 @@ int ZEXPORT gzflush (file, flush)
       SEEK_END is not implemented, returns error.
       In this version of the library, gzseek can be extremely slow.
 */
-z_off_t ZEXPORT gzseek (file, offset, whence)
+#ifdef _LARGEFILE64_SOURCE
+local off64_t gz_seek (file, offset, whence, use64)
+    gzFile file;
+    off64_t offset;
+#else
+local z_off_t gz_seek (file, offset, whence, use64)
     gzFile file;
     z_off_t offset;
+#endif
     int whence;
+    int use64;
 {
     gz_stream *s = (gz_stream*)file;
 
@@ -816,7 +862,13 @@ z_off_t ZEXPORT gzseek (file, offset, whence)
         s->back = EOF;
         s->stream.avail_in = 0;
         s->stream.next_in = s->inbuf;
-        if (fseek(s->file, offset, SEEK_SET) < 0) return -1L;
+#ifdef _LARGEFILE64_SOURCE
+        if ((use64 ? fseeko64(s->file, offset, SEEK_SET) :
+                     FSEEK(s->file, offset, SEEK_SET)) < 0)
+            return -1L;
+#else
+        if (FSEEK(s->file, offset, SEEK_SET) < 0) return -1L;
+#endif
 
         s->in = s->out = offset;
         return offset;
@@ -852,6 +904,35 @@ z_off_t ZEXPORT gzseek (file, offset, whence)
 }
 
 /* ===========================================================================
+    Define external functions gzseek() and gzseek64() using local gz_seek().
+*/
+z_off_t ZEXPORT gzseek (file, offset, whence)
+    gzFile file;
+    z_off_t offset;
+    int whence;
+{
+    return (z_off_t)gz_seek(file, offset, whence, 0);
+}
+
+#ifdef _LARGEFILE64_SOURCE
+off64_t ZEXPORT gzseek64 (file, offset, whence)
+    gzFile file;
+    off64_t offset;
+    int whence;
+{
+    return gz_seek(file, offset, whence, 1);
+}
+#else
+z_off_t ZEXPORT gzseek64 (file, offset, whence)
+    gzFile file;
+    z_off_t offset;
+    int whence;
+{
+    return gz_seek(file, offset, whence, 0);
+}
+#endif
+
+/* ===========================================================================
      Rewinds input file.
 */
 int ZEXPORT gzrewind (file)
@@ -870,7 +951,7 @@ int ZEXPORT gzrewind (file)
     if (!s->transparent) (void)inflateReset(&s->stream);
     s->in = 0;
     s->out = 0;
-    return fseek(s->file, s->start, SEEK_SET);
+    return FSEEK(s->file, s->start, SEEK_SET);
 }
 
 /* ===========================================================================
@@ -882,6 +963,19 @@ z_off_t ZEXPORT gztell (file)
     gzFile file;
 {
     return gzseek(file, 0L, SEEK_CUR);
+}
+
+/* ===========================================================================
+     64-bit version
+*/
+#ifdef _LARGEFILE64_SOURCE
+off64_t ZEXPORT gztell64 (file)
+#else
+z_off_t ZEXPORT gztell64 (file)
+#endif
+    gzFile file;
+{
+    return gzseek64(file, 0L, SEEK_CUR);
 }
 
 /* ===========================================================================
@@ -971,7 +1065,7 @@ int ZEXPORT gzclose (file)
     return destroy((gz_stream*)file);
 }
 
-#ifdef STDC
+#if defined(STDC) && !defined(_WIN32_WCE)
 #  define zstrerror(errnum) strerror(errnum)
 #else
 #  define zstrerror(errnum) ""

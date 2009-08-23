@@ -1,5 +1,5 @@
 /* zconf.h -- configuration of the zlib compression library
- * Copyright (C) 1995-2005 Jean-loup Gailly.
+ * Copyright (C) 1995-2006 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -11,52 +11,115 @@
 /*
  * If you *really* need a unique prefix for all types and library functions,
  * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
+ * Even better than compiling with -DZ_PREFIX would be to use configure to set
+ * this permanently in zconf.h using "./configure --zprefix".
  */
-#ifdef Z_PREFIX
-#  define deflateInit_          z_deflateInit_
-#  define deflate               z_deflate
-#  define deflateEnd            z_deflateEnd
-#  define inflateInit_          z_inflateInit_
-#  define inflate               z_inflate
-#  define inflateEnd            z_inflateEnd
-#  define deflateInit2_         z_deflateInit2_
-#  define deflateSetDictionary  z_deflateSetDictionary
-#  define deflateCopy           z_deflateCopy
-#  define deflateReset          z_deflateReset
-#  define deflateParams         z_deflateParams
-#  define deflateBound          z_deflateBound
-#  define deflatePrime          z_deflatePrime
-#  define inflateInit2_         z_inflateInit2_
-#  define inflateSetDictionary  z_inflateSetDictionary
-#  define inflateSync           z_inflateSync
-#  define inflateSyncPoint      z_inflateSyncPoint
-#  define inflateCopy           z_inflateCopy
-#  define inflateReset          z_inflateReset
-#  define inflateBack           z_inflateBack
-#  define inflateBackEnd        z_inflateBackEnd
+#ifdef Z_PREFIX     /* may be set to #if 1 by ./configure */
+
+/* all linked symbols */
+#  define _dist_code            z__dist_code
+#  define _length_code          z__length_code
+#  define _tr_align             z__tr_align
+#  define _tr_flush_block       z__tr_flush_block
+#  define _tr_init              z__tr_init
+#  define _tr_stored_block      z__tr_stored_block
+#  define _tr_tally             z__tr_tally
+#  define adler32               z_adler32
+#  define adler32_combine       z_adler32_combine
 #  define compress              z_compress
 #  define compress2             z_compress2
 #  define compressBound         z_compressBound
-#  define uncompress            z_uncompress
-#  define adler32               z_adler32
 #  define crc32                 z_crc32
+#  define crc32_combine         z_crc32_combine
+#  define deflate               z_deflate
+#  define deflateBound          z_deflateBound
+#  define deflateCopy           z_deflateCopy
+#  define deflateEnd            z_deflateEnd
+#  define deflateInit2_         z_deflateInit2_
+#  define deflateInit_          z_deflateInit_
+#  define deflateParams         z_deflateParams
+#  define deflatePrime          z_deflatePrime
+#  define deflateReset          z_deflateReset
+#  define deflateSetDictionary  z_deflateSetDictionary
+#  define deflateSetHeader      z_deflateSetHeader
+#  define deflateTune           z_deflateTune
+#  define deflate_copyright     z_deflate_copyright
 #  define get_crc_table         z_get_crc_table
+#  define gzclearerr            z_gzclearerr
+#  define gzclose               z_gzclose
+#  define gzdirect              z_gzdirect
+#  define gzdopen               z_gzdopen
+#  define gzeof                 z_gzeof
+#  define gzerror               z_gzerror
+#  define gzflush               z_gzflush
+#  define gzgetc                z_gzgetc
+#  define gzgets                z_gzgets
+#  define gzopen                z_gzopen
+#  define gzprintf              z_gzprintf
+#  define gzputc                z_gzputc
+#  define gzputs                z_gzputs
+#  define gzread                z_gzread
+#  define gzrewind              z_gzrewind
+#  define gzseek                z_gzseek
+#  define gzsetparams           z_gzsetparams
+#  define gztell                z_gztell
+#  define gzungetc              z_gzungetc
+#  define gzwrite               z_gzwrite
+#  define inflate               z_inflate
+#  define inflateBack           z_inflateBack
+#  define inflateBackEnd        z_inflateBackEnd
+#  define inflateBackInit_      z_inflateBackInit_
+#  define inflateCopy           z_inflateCopy
+#  define inflateEnd            z_inflateEnd
+#  define inflateGetHeader      z_inflateGetHeader
+#  define inflateInit2_         z_inflateInit2_
+#  define inflateInit_          z_inflateInit_
+#  define inflatePrime          z_inflatePrime
+#  define inflateReset          z_inflateReset
+#  define inflateSetDictionary  z_inflateSetDictionary
+#  define inflateSync           z_inflateSync
+#  define inflateSyncPoint      z_inflateSyncPoint
+#  define inflate_copyright     z_inflate_copyright
+#  define inflate_fast          z_inflate_fast
+#  define inflate_table         z_inflate_table
+#  define uncompress            z_uncompress
 #  define zError                z_zError
+#  define z_errmsg              z_z_errmsg
+#  define zcalloc               z_zcalloc
+#  define zcfree                z_zcfree
+#  define zlibCompileFlags      z_zlibCompileFlags
+#  define zlibVersion           z_zlibVersion
 
-#  define alloc_func            z_alloc_func
-#  define free_func             z_free_func
-#  define in_func               z_in_func
-#  define out_func              z_out_func
+/* all zlib typedefs in zlib.h and zconf.h */
 #  define Byte                  z_Byte
-#  define uInt                  z_uInt
-#  define uLong                 z_uLong
 #  define Bytef                 z_Bytef
+#  define alloc_func            z_alloc_func
 #  define charf                 z_charf
+#  define free_func             z_free_func
+#  define gzFile                z_gzFile
+#  define gz_header             z_gz_header
+#  define gz_headerp            z_gz_headerp
+#  define in_func               z_in_func
 #  define intf                  z_intf
+#  define out_func              z_out_func
+#  define uInt                  z_uInt
 #  define uIntf                 z_uIntf
+#  define uLong                 z_uLong
 #  define uLongf                z_uLongf
-#  define voidpf                z_voidpf
 #  define voidp                 z_voidp
+#  define voidp                 z_voidp
+#  define voidpc                z_voidpc
+#  define voidpc                z_voidpc
+#  define voidpf                z_voidpf
+#  define voidpf                z_voidpf
+#  define z_stream              z_z_stream
+#  define z_streamp             z_z_streamp
+
+/* all zlib structs in zlib.h and zconf.h */
+#  define gz_header_s           z_gz_header_s
+#  define internal_state        z_internal_state
+#  define z_stream_s            z_z_stream_s
+
 #endif
 
 #if defined(__MSDOS__) && !defined(MSDOS)
@@ -243,6 +306,10 @@
 #  endif
 #endif
 
+#ifdef HAVE_VISIBILITY_PRAGMA
+#  define ZEXTERN __attribute__((visibility ("default"))) extern
+#endif
+
 #ifndef ZEXTERN
 #  define ZEXTERN extern
 #endif
@@ -284,14 +351,8 @@ typedef uLong FAR uLongf;
    typedef Byte       *voidp;
 #endif
 
-#if 0           /* HAVE_UNISTD_H -- this line is updated by ./configure */
-#  include <sys/types.h> /* for off_t */
-#  include <unistd.h>    /* for SEEK_* and off_t */
-#  ifdef VMS
-#    include <unixio.h>   /* for off_t */
-#  endif
-#  define z_off_t off_t
-#endif
+#include "zlibdefs.h"       /* created by configure */
+
 #ifndef SEEK_SET
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
 #  define SEEK_CUR        1       /* Seek from current position.  */
@@ -307,9 +368,6 @@ typedef uLong FAR uLongf;
 
 #if defined(__MVS__)
 #  define NO_vsnprintf
-#  ifdef FAR
-#    undef FAR
-#  endif
 #endif
 
 /* MVS linker does not support external names larger than 8 bytes */
