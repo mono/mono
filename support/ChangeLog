@@ -1,3 +1,21 @@
+2009-08-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* deflate.c:
+	* gzio.c:
+	* deflate.h:
+	* zutil.h:
+	* crc32.c:
+	* trees.c:
+	* zconf.h:
+	* inffast.c:
+	* compress.c:
+	* zlib.h:
+	* inftrees.c:
+	* inflate.c:
+	* inflate.h:
+	* adler32.c:
+	* infback.c: updated to 1.2.3.3
+
 2009-07-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: use glib for malloc/free.

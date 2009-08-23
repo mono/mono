@@ -1,5 +1,5 @@
 /* inflate.h -- internal inflate state definition
- * Copyright (C) 1995-2004 Mark Adler
+ * Copyright (C) 1995-2006 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -73,7 +73,7 @@ typedef enum {
         CHECK -> LENGTH -> DONE
  */
 
-/* state maintained between inflate() calls.  Approximately 7K bytes. */
+/* state maintained between inflate() calls.  Approximately 10K bytes. */
 struct inflate_state {
     inflate_mode mode;          /* current inflate mode */
     int last;                   /* true if processing last block */
@@ -112,4 +112,5 @@ struct inflate_state {
     unsigned short lens[320];   /* temporary storage for code lengths */
     unsigned short work[288];   /* work area for code table building */
     code codes[ENOUGH];         /* space for code tables */
+    int sane;                   /* if false, allow invalid distance too far */
 };
