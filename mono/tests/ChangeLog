@@ -1,3 +1,8 @@
+2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* load-exceptions.cs:
+	* load-missing.il: Test for invalid method overrides.
+
 2009-08-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* constraints-load.il: New test for errors related to loading
