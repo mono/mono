@@ -1,5 +1,13 @@
 2009-08-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+
+	* aot-runtime.c aot-compiler.c: Emit exception causes fully so we don't
+	depend on the info MonoMethodHeader which could be missing in IL stripped
+	assemblies.
+
+2009-08-25  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-arm.c (add_general): Fix the passing of 64 bit values on darwin, where
 	they are only 4 byte aligned.
 
