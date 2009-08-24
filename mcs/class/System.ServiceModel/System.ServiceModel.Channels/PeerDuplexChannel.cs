@@ -228,8 +228,8 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 
 				if (message.Headers.MessageId == null)
 					message.Headers.MessageId = new UniqueId ();
-				message.Headers.Add (MessageHeader.CreateHeader ("PeerTo", String.Empty, RemoteAddress));
-				message.Headers.Add (MessageHeader.CreateHeader ("PeerVia", String.Empty, RemoteAddress));
+				message.Headers.Add (MessageHeader.CreateHeader ("PeerTo", Constants.NetPeer, RemoteAddress.Uri));
+				message.Headers.Add (MessageHeader.CreateHeader ("PeerVia", Constants.NetPeer, RemoteAddress.Uri));
 				pc.Channel.SendMessage (message);
 			}
 		}

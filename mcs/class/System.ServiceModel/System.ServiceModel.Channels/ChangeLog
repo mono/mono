@@ -1,5 +1,9 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : fix PeerTo/PeerVia header namespace.
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : check channel state before processing
 	  Send and Receive.
 
