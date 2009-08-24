@@ -1,5 +1,11 @@
 2009-08-24  Ankit Jain  <jankit@novell.com>
 
+	* LibraryPcFileCache.cs: New. From monodevelop.
+	* PcFileCache.cs: Update from monodevelop, see r140528.
+	* AssemblyResolver.cs: Track api changes.
+
+2009-08-24  Ankit Jain  <jankit@novell.com>
+
 	* CreateManifestResourceName.cs (GetResourceIdFromFileName): Spaces
 	in folder names should be converted to '_'.
 
