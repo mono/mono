@@ -206,6 +206,13 @@ namespace System.Windows.Forms
 
 		void textbox_TextChanged (object o, EventArgs e)
 		{
+			// when the focus goes to the add row, the first TextChanged event
+			// should actually add the new row.
+			if (grid.pending_new_row) {
+				grid.pending_new_row = false;
+				grid.AddNewRow ();
+			}
+
 			textbox.IsInEditOrNavigateMode = false;
 		}
 
