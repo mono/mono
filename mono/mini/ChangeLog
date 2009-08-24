@@ -1,3 +1,8 @@
+2009-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (add_general): Fix the passing of 64 bit values on darwin, where
+	they are only 4 byte aligned.
+
 2009-08-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Use FP as the frame pointer as
