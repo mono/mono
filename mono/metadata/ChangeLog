@@ -1,5 +1,10 @@
 2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_vtable_general): Verify
+	if method overrides are valid before processing them.
+
+2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_array_to_lparray): Fix minimal build with
 	cominterop disabled.
 
