@@ -1,5 +1,13 @@
 2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: If we are *not* changing a row
+	already added to the source, and thus we are adding a new 
+	row instead, try to move to the previous row when Esc is
+	pressed -if possible-.
+	Fixes some bits of #322974.
+
+2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGridTextBoxColumn.cs:
 	* DataGrid.cs: Moving the cell to the add row (the last one) should
 	not immediately add a new row - this should happen until the very

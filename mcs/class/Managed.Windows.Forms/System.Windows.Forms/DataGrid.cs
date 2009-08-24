@@ -1872,8 +1872,13 @@ namespace System.Windows.Forms
 			case Keys.Escape:
 				if (is_changing)
 					AbortEditing ();
-				else
+				else {
 					CancelEditing ();
+
+					if (cursor_in_add_row && CurrentRow > 0)
+						CurrentRow--;
+				}
+
 				Edit ();
 				return true;
 				
