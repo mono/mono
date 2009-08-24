@@ -1380,7 +1380,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (VariableType.IsPointer && !ec.InUnsafe)
+			if (VariableType.IsPointer && !ec.IsUnsafe)
 				Expression.UnsafeError (Location);
 
 			return true;
@@ -2086,7 +2086,7 @@ namespace Mono.CSharp {
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
-			using (ec.With (EmitContext.Options.UnsafeScope, ec.InUnsafe | Unsafe)) {
+			using (ec.With (EmitContext.Options.UnsafeScope, ec.IsUnsafe | Unsafe)) {
 				flags |= Flags.VariablesInitialized;
 
 				if (variables != null) {
@@ -4451,7 +4451,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			if (!ec.InUnsafe){
+			if (!ec.IsUnsafe){
 				Expression.UnsafeError (loc);
 				return false;
 			}

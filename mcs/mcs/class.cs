@@ -186,12 +186,12 @@ namespace Mono.CSharp {
 				get { return tc.Parent; }
 			}
 
-			public bool IsInObsoleteScope {
-				get { return tc.IsInObsoleteScope; }
+			public bool IsObsolete {
+				get { return tc.IsObsolete; }
 			}
 
-			public bool IsInUnsafeScope {
-				get { return tc.IsInUnsafeScope; }
+			public bool IsUnsafe {
+				get { return tc.IsUnsafe; }
 			}
 
 			public bool IsStatic {
@@ -1342,7 +1342,7 @@ namespace Mono.CSharp {
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
 					ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (iface.Type);
-					if ((oa != null) && !IsInObsoleteScope)
+					if ((oa != null) && !IsObsolete)
 						AttributeTester.Report_ObsoleteMessage (
 							oa, iface.GetSignatureForError (), Location);
 
@@ -1359,7 +1359,7 @@ namespace Mono.CSharp {
 
 			if (base_type != null) {
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
-				if (obsolete_attr != null && !IsInObsoleteScope)
+				if (obsolete_attr != null && !IsObsolete)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
 
 				GenericTypeExpr ct = base_type as GenericTypeExpr;
@@ -5146,7 +5146,7 @@ namespace Mono.CSharp {
 					parent_method = implementing;
 
 				EmitContext ec = method.CreateEmitContext (null);
-				if (!GenericMethod.DefineType (ec, builder, parent_method, is_override))
+				if (!GenericMethod.DefineType (ec.MemberContext, builder, parent_method, is_override))
 					return false;
 			}
 
@@ -5712,7 +5712,7 @@ namespace Mono.CSharp {
 		{
 			base.DoMemberTypeIndependentChecks ();
 
-			if (!Parent.IsInUnsafeScope)
+			if (!Parent.IsUnsafe)
 				Expression.UnsafeError (Location);
 
 			if (Parent.PartialContainer.Kind != Kind.Struct) {

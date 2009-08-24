@@ -1670,7 +1670,7 @@ namespace Mono.CSharp {
 		protected abstract string GetSignatureForError ();
 		protected abstract void Report_SymbolRelatedToPreviousError ();
 
-		public static bool CheckConstraints (EmitContext ec, MethodBase definition,
+		public static bool CheckConstraints (IMemberContext ec, MethodBase definition,
 						     MethodBase instantiated, Location loc)
 		{
 			MethodConstraintChecker checker = new MethodConstraintChecker (
@@ -1817,7 +1817,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   We're called from MethodData.Define() after creating the MethodBuilder.
 		/// </summary>
-		public bool DefineType (EmitContext ec, MethodBuilder mb,
+		public bool DefineType (IMemberContext ec, MethodBuilder mb,
 					MethodInfo implementing, bool is_override)
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)

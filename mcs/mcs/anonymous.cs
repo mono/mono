@@ -1310,7 +1310,7 @@ namespace Mono.CSharp {
 			if (ec.HasSet (EmitContext.Options.FieldInitializerScope))
 				flags |= EmitContext.Options.FieldInitializerScope;
 
-			if (ec.InUnsafe)
+			if (ec.IsUnsafe)
 				flags |= EmitContext.Options.UnsafeScope;
 
 			// HACK: Flag with 0 cannot be set 

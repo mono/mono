@@ -275,7 +275,7 @@ namespace Mono.CSharp {
 
 			if (!silent) { // && !(te is TypeParameterExpr)) {
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
-				if (obsolete_attr != null && !ec.IsInObsoleteScope) {
+				if (obsolete_attr != null && !ec.IsObsolete) {
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
 				}
 			}
@@ -3093,7 +3093,7 @@ namespace Mono.CSharp {
 				// TODO: Same problem as in class.cs, TypeTerminal does not
 				// always do all necessary checks
 				ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (left.Type);
-				if (oa != null && !ec.IsInObsoleteScope) {
+				if (oa != null && !ec.IsObsolete) {
 					AttributeTester.Report_ObsoleteMessage (oa, left.GetSignatureForError (), loc);
 				}
 
@@ -4469,7 +4469,7 @@ namespace Mono.CSharp {
 			// Check ObsoleteAttribute on the best method
 			//
 			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (the_method);
-			if (oa != null && !ec.IsInObsoleteScope)
+			if (oa != null && !ec.IsObsolete)
 				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
 
 			IMethodData data = TypeManager.GetMethod (the_method);
@@ -4618,7 +4618,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (has_unsafe_arg && !ec.InUnsafe) {
+			if (has_unsafe_arg && !ec.IsUnsafe) {
 				if (!may_fail)
 					UnsafeError (loc);
 				return false;
@@ -4683,7 +4683,7 @@ namespace Mono.CSharp {
 		{
 			IConstant ic = TypeManager.GetConstant (constant);
 			if (ic.ResolveValue ()) {
-				if (!ec.IsInObsoleteScope)
+				if (!ec.IsObsolete)
 					ic.CheckObsoleteness (loc);
 			}
 
@@ -4773,7 +4773,7 @@ namespace Mono.CSharp {
 			FieldInfo fi = TypeManager.GetGenericFieldDefinition (FieldInfo);
 			Type t = fi.FieldType;
 
-			if (t.IsPointer && !ec.InUnsafe) {
+			if (t.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (loc);
 			}
 
@@ -4856,7 +4856,7 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			if (!ec.IsInObsoleteScope) {
+			if (!ec.IsObsolete) {
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
 					f.CheckObsoleteness (loc);
@@ -5516,11 +5516,11 @@ namespace Mono.CSharp {
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
 			}
 
-			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe){
+			if (PropertyInfo.PropertyType.IsPointer && !ec.IsUnsafe){
 				UnsafeError (loc);
 			}
 
-			if (!ec.IsInObsoleteScope) {
+			if (!ec.IsObsolete) {
 				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
 				if (pb != null) {
 					pb.CheckObsoleteness (loc);
@@ -5603,11 +5603,11 @@ namespace Mono.CSharp {
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
 			}
 
-			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe) {
+			if (PropertyInfo.PropertyType.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (loc);
 			}
 
-			if (!ec.IsInObsoleteScope) {
+			if (!ec.IsObsolete) {
 				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
 				if (pb != null) {
 					pb.CheckObsoleteness (loc);
@@ -5757,7 +5757,7 @@ namespace Mono.CSharp {
 				EventField mi = TypeManager.GetEventField (EventInfo);
 
 				if (mi != null) {
-					if (!ec.IsInObsoleteScope)
+					if (!ec.IsObsolete)
 						mi.CheckObsoleteness (loc);
 
 					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (EmitContext.Options.CompoundAssignmentScope))
@@ -5853,7 +5853,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!ec.IsInObsoleteScope) {
+			if (!ec.IsObsolete) {
 				EventField ev = TypeManager.GetEventField (EventInfo);
 				if (ev != null) {
 					ev.CheckObsoleteness (loc);

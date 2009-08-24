@@ -611,7 +611,7 @@ namespace Mono.CSharp {
 
 		Expression ResolveAddressOf (ResolveContext ec)
 		{
-			if (!ec.InUnsafe)
+			if (!ec.IsUnsafe)
 				UnsafeError (loc);
 
 			Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
@@ -855,7 +855,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (!ec.InUnsafe)
+			if (!ec.IsUnsafe)
 				UnsafeError (loc);
 
 			if (!expr.Type.IsPointer) {
@@ -1553,7 +1553,7 @@ namespace Mono.CSharp {
 					return c;
 			}
 
-			if (type.IsPointer && !ec.InUnsafe) {
+			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (loc);
 			} else if (TypeManager.IsDynamicType (expr.Type)) {
 				Arguments arg = new Arguments (1);
@@ -4856,7 +4856,7 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsPointer){
-				if (!ec.InUnsafe){
+				if (!ec.IsUnsafe){
 					UnsafeError (loc);
 					return null;
 				}
@@ -6857,7 +6857,7 @@ namespace Mono.CSharp {
 
 			if (typearg == TypeManager.void_type) {
 				Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
-			} else if (typearg.IsPointer && !ec.InUnsafe){
+			} else if (typearg.IsPointer && !ec.IsUnsafe){
 				UnsafeError (loc);
 			} else if (texpr is DynamicTypeExpr) {
 				Report.Error (1962, QueriedType.Location,
@@ -7165,7 +7165,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!ec.InUnsafe) {
+			if (!ec.IsUnsafe) {
 				Report.Error (233, loc,
 					"`{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
 					TypeManager.CSharpName (type_queried));
@@ -7895,7 +7895,7 @@ namespace Mono.CSharp {
 			}
 
 			type = TypeManager.GetElementType (t);
-			if (type.IsPointer && !ec.InUnsafe) {
+			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ea.Location);
 			}
 
@@ -8433,7 +8433,7 @@ namespace Mono.CSharp {
 			}
 
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
-			if (type.IsPointer && !ec.InUnsafe)
+			if (type.IsPointer && !ec.IsUnsafe)
 				UnsafeError (loc);
 
 			MethodInfo accessor;
@@ -8946,7 +8946,7 @@ namespace Mono.CSharp {
 			if (type == null)
 				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
 
-			if (type.IsPointer && !ec.IsInUnsafeScope){
+			if (type.IsPointer && !ec.IsUnsafe){
 				UnsafeError (loc);
 			}
 

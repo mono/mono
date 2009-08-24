@@ -271,8 +271,8 @@ namespace Mono.CSharp {
 		//
 		TypeContainer CurrentTypeDefinition { get; }
 
-		bool IsInObsoleteScope { get; }
-		bool IsInUnsafeScope { get; }
+		bool IsObsolete { get; }
+		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
@@ -400,7 +400,7 @@ namespace Mono.CSharp {
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
-	public class EmitContext : IMemberContext {
+	public class EmitContext {
 
 		[Flags]
 		public enum Options
@@ -593,10 +593,6 @@ namespace Mono.CSharp {
 			get { return MemberContext.CurrentTypeDefinition; }
 		}
 
-		public bool InUnsafe {
-			get { return HasSet (Options.UnsafeScope) || MemberContext.IsInUnsafeScope; }
-		}
-
 		public bool HasSet (Options options)
 		{
 			return (this.flags & options) == options;
@@ -626,22 +622,6 @@ namespace Mono.CSharp {
 			return new FlagsHandle (this, Options.DoFlowAnalysis | Options.OmitStructFlowAnalysis, newflags);
 		}
 		
-		// IResolveContext.IsInObsoleteScope
-		public bool IsInObsoleteScope {
-			get {
-				// Disables obsolete checks when probing is on
-				return IsInProbingMode || MemberContext.IsInObsoleteScope;
-			}
-		}
-
-		public bool IsInProbingMode {
-			get { return (flags & Options.ProbingMode) != 0; }
-		}
-
-		bool IMemberContext.IsInUnsafeScope {
-			get { return InUnsafe; }
-		}
-
 		public bool IsStatic {
 			get { return MemberContext.IsStatic; }
 		}
@@ -774,28 +754,9 @@ namespace Mono.CSharp {
 
 			return return_value;
 		}
-
-		#region IResolveContext Members
-
-		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
-		{
-			return MemberContext.LookupExtensionMethod (extensionType, name, loc);
-		}
-
-		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
-		{
-			return MemberContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
-		}
-
-		public FullNamedExpression LookupNamespaceAlias (string name)
-		{
-			return MemberContext.LookupNamespaceAlias (name);
-		}
-
-		#endregion
 	}
 
-	public class ResolveContext : EmitContext
+	public class ResolveContext : EmitContext, IMemberContext
 	{
 		//
 		// Holds a varible used during collection or object initialization.
@@ -819,6 +780,10 @@ namespace Mono.CSharp {
 
 		public bool DoFlowAnalysis {
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
+		}
+
+		public bool IsInProbingMode {
+			get { return (flags & Options.ProbingMode) != 0; }
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -858,6 +823,36 @@ namespace Mono.CSharp {
 
 			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
+
+		#region IMemberContext Members
+
+		public bool IsObsolete {
+			get {
+				// Disables obsolete checks when probing is on
+				return IsInProbingMode || MemberContext.IsObsolete;
+			}
+		}
+
+		public bool IsUnsafe {
+			get { return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe; }
+		}
+
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		{
+			return MemberContext.LookupExtensionMethod (extensionType, name, loc);
+		}
+
+		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		{
+			return MemberContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
+		}
+
+		public FullNamedExpression LookupNamespaceAlias (string name)
+		{
+			return MemberContext.LookupNamespaceAlias (name);
+		}
+
+		#endregion
 	}
 
 
@@ -910,11 +905,11 @@ namespace Mono.CSharp {
 			get { return RootContext.ToplevelTypes; }
 		}
 
-		public bool IsInObsoleteScope {
+		public bool IsObsolete {
 			get { return false; }
 		}
 
-		public bool IsInUnsafeScope {
+		public bool IsUnsafe {
 			get { return false; }
 		}
 

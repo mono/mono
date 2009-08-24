@@ -1327,12 +1327,12 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace; }
 		}
 
-		public bool IsInObsoleteScope {
-			get { return SlaveDeclSpace.IsInObsoleteScope; }
+		public bool IsObsolete {
+			get { return SlaveDeclSpace.IsObsolete; }
 		}
 
-		public bool IsInUnsafeScope {
-			get { return SlaveDeclSpace.IsInUnsafeScope; }
+		public bool IsUnsafe {
+			get { return SlaveDeclSpace.IsUnsafe; }
 		}
 
 		public bool IsStatic {

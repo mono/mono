@@ -616,7 +616,7 @@ namespace Mono.CSharp {
 		//
 		// System.Linq.Expressions.ParameterExpression type
 		//
-		public static TypeExpr ResolveParameterExpressionType (EmitContext ec, Location location)
+		public static TypeExpr ResolveParameterExpressionType (IMemberContext ec, Location location)
 		{
 			if (parameter_expr_tree_type != null)
 				return parameter_expr_tree_type;

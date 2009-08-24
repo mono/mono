@@ -836,21 +836,21 @@ namespace Mono.CSharp {
 			get { return Parent; }
 		}
 
-		public bool IsInObsoleteScope {
+		public bool IsObsolete {
 			get {
 				if (GetObsoleteAttribute () != null)
 					return true;
 
-				return Parent == null ? false : Parent.IsInObsoleteScope;
+				return Parent == null ? false : Parent.IsObsolete;
 			}
 		}
 
-		public bool IsInUnsafeScope {
+		public bool IsUnsafe {
 			get {
 				if ((ModFlags & Modifiers.UNSAFE) != 0)
 					return true;
 
-				return Parent == null ? false : Parent.IsInUnsafeScope;
+				return Parent == null ? false : Parent.IsUnsafe;
 			}
 		}
 
@@ -2763,7 +2763,7 @@ namespace Mono.CSharp {
 						const int partial_modifiers = Modifiers.STATIC | Modifiers.UNSAFE;
 						if (method_a.IsPartialDefinition == method_b.IsPartialImplementation) {
 							if ((method_a.ModFlags & partial_modifiers) == (method_b.ModFlags & partial_modifiers) ||
-								method_a.Parent.IsInUnsafeScope && method_b.Parent.IsInUnsafeScope) {
+								method_a.Parent.IsUnsafe && method_b.Parent.IsUnsafe) {
 								if (method_a.IsPartialImplementation) {
 									method_a.SetPartialDefinition (method_b);
 									entries.RemoveAt (i);

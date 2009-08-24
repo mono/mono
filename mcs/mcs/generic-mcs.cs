@@ -344,7 +344,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public bool DefineType (EmitContext ec, MethodBuilder mb,
+		public bool DefineType (IMemberContext ec, MethodBuilder mb,
 					MethodInfo implementing, bool is_override)
 		{
 			throw new NotImplementedException ();

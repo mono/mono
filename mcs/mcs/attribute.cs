@@ -614,7 +614,7 @@ namespace Mono.CSharp {
 					field_infos.Add (fi);
 				}
 
-				if (obsolete_attr != null && !context.IsInObsoleteScope)
+				if (obsolete_attr != null && !context.IsObsolete)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location);
 			}
 

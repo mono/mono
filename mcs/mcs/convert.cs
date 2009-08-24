@@ -1269,7 +1269,7 @@ namespace Mono.CSharp {
 					return new EnumConstant (i, target_type);
 			}
 
-			if (ec.InUnsafe) {
+			if (ec.IsUnsafe) {
 				if (expr_type.IsPointer){
 					if (target_type == TypeManager.void_ptr_type)
 						return EmptyCast.Create (expr, target_type);
@@ -1791,7 +1791,7 @@ namespace Mono.CSharp {
 					return ne;
 			}
 
-			if (ec.InUnsafe){
+			if (ec.IsUnsafe){
 				ne = ExplicitUnsafe (expr, target_type);
 				if (ne != null)
 					return ne;
@@ -1861,7 +1861,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (ec.InUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
+			if (ec.IsUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
 				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);

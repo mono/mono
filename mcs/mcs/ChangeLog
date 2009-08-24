@@ -1,3 +1,7 @@
+2009-08-24  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Only ResolveContext implements IMemberContext.
+
 2009-08-21  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Renamed IResolveContext to IMemberContext.
