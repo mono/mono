@@ -1,3 +1,12 @@
+2009-08-24  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuildProvider.cs: ExtractDependencies checks if the
+	input has already been parsed/compiled and, if yes, adds
+	dependencies from the TemplateParser to the list of the ones
+	extracted locally. Fixes bug #377915
+
+	* GenericBuildProvider.cs: added Parsed property.
+
 2009-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* GenericBuildProvider.cs: added internal property LanguageName

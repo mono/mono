@@ -48,6 +48,10 @@ namespace System.Web.Compilation
 		TextReader _reader;
 		bool _parsed;
 		bool _codeGenerated;
+
+		protected bool Parsed {
+			get { return _parsed; }
+		}
 		
 		protected abstract TParser CreateParser (VirtualPath virtualPath, string physicalPath, TextReader reader, HttpContext context);
 		protected abstract TParser CreateParser (VirtualPath virtualPath, string physicalPath, HttpContext context);
