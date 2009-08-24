@@ -1,11 +1,20 @@
 2009-08-24  Marek Habersack  <mhabersack@novell.com>
 
+	* PageBuildProvider.cs: MapPath now takes a VirtualPath
+	instance. Part of fix for bug #463813
+
+	* BuildManager.cs: public APIs which take virtual path strings as
+	their parameters got internal counterparts accepting a VirtualPath
+	instance in place of string. Part of fix for bug #463813
+
 	* TemplateBuildProvider.cs: ExtractDependencies checks if the
 	input has already been parsed/compiled and, if yes, adds
 	dependencies from the TemplateParser to the list of the ones
 	extracted locally. Fixes bug #377915
 
 	* GenericBuildProvider.cs: added Parsed property.
+	MapPath now takes a VirtualPath instance. Part of fix for bug
+	#463813
 
 2009-08-21  Marek Habersack  <mhabersack@novell.com>
 

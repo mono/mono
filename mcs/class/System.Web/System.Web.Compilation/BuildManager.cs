@@ -467,6 +467,11 @@ namespace System.Web.Compilation {
 		
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
+			return CreateInstanceFromVirtualPath (GetAbsoluteVirtualPath (virtualPath), requiredBaseType);
+		}
+
+		internal static object CreateInstanceFromVirtualPath (VirtualPath virtualPath, Type requiredBaseType)
+		{
 			if (requiredBaseType == null)
 				throw new NullReferenceException (); // This is what MS does, but
 								     // from somewhere else.
@@ -481,7 +486,7 @@ namespace System.Web.Compilation {
 
 			return Activator.CreateInstance (type, null);
 		}
-
+		
 		static void DescribeCompilationError (string format, CompilationException ex, params object[] parms)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -722,8 +727,12 @@ namespace System.Web.Compilation {
 
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
-			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
-			string vpabsolute = vp.Absolute;
+			return GetCompiledAssembly (GetAbsoluteVirtualPath (virtualPath));
+		}
+
+		internal static Assembly GetCompiledAssembly (VirtualPath virtualPath)
+		{
+			string vpabsolute = virtualPath.Absolute;
 			if (is_precompiled) {
 				Type type = GetPrecompiledType (vpabsolute);
 				if (type != null)
@@ -733,18 +742,22 @@ namespace System.Web.Compilation {
 			if (bmci != null)
 				return bmci.BuiltAssembly;
 
-			Build (vp);
+			Build (virtualPath);
 			bmci = GetCachedItem (vpabsolute);
 			if (bmci != null)
 				return bmci.BuiltAssembly;
 			
 			return null;
 		}
-
+		
 		public static Type GetCompiledType (string virtualPath)
 		{
-			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
-			string vpabsolute = vp.Absolute;
+			return GetCompiledType (GetAbsoluteVirtualPath (virtualPath));
+		}
+
+		internal static Type GetCompiledType (VirtualPath virtualPath)
+		{
+			string vpabsolute = virtualPath.Absolute;
 			if (is_precompiled) {
 				Type type = GetPrecompiledType (vpabsolute);
 				if (type != null)
@@ -756,7 +769,7 @@ namespace System.Web.Compilation {
 				return bmci.Type;
 			}
 
-			Build (vp);
+			Build (virtualPath);
 			bmci = GetCachedItem (vpabsolute);
 			if (bmci != null) {
 				ReferenceAssemblyInCompilation (bmci);
@@ -768,13 +781,17 @@ namespace System.Web.Compilation {
 
 		public static string GetCompiledCustomString (string virtualPath)
 		{
-			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
-			string vpabsolute = vp.Absolute;
+			return GetCompiledCustomString (GetAbsoluteVirtualPath (virtualPath));
+		}
+	
+		internal static string GetCompiledCustomString (VirtualPath virtualPath) 
+		{
+			string vpabsolute = virtualPath.Absolute;
 			BuildManagerCacheItem bmci = GetCachedItem (vpabsolute);
 			if (bmci != null)
 				return bmci.CompiledCustomString;
 			
-			Build (vp);
+			Build (virtualPath);
 			bmci = GetCachedItem (vpabsolute);
 			if (bmci != null)
 				return bmci.CompiledCustomString;

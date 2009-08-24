@@ -153,7 +153,12 @@ namespace System.Web.UI
 								    HttpContext context)
 		{
 #if NET_2_0
-			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (IHttpHandler)) as IHttpHandler;
+			bool isFake = false;
+
+			if (!String.IsNullOrEmpty (inputFile))
+				isFake = !inputFile.StartsWith (HttpRuntime.AppDomainAppPath);
+			
+			return BuildManager.CreateInstanceFromVirtualPath (new VirtualPath (virtualPath, inputFile, isFake), typeof (IHttpHandler)) as IHttpHandler;
 #else
 			PageParser pp = new PageParser (virtualPath, inputFile, context);
 			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance ();

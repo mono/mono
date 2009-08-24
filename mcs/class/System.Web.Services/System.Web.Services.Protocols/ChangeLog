@@ -1,3 +1,9 @@
+2009-08-24  Marek Habersack  <mhabersack@novell.com>
+
+	* SoapDocumentationHandler.cs: get rid of the ugly fake virtual
+	path hack when creating the helper page. Part of fix for bug
+	#463813
+
 2009-07-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* LogicalMethodInfo.cs: add CacheDuration property.

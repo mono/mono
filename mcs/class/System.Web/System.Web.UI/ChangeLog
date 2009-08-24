@@ -1,3 +1,11 @@
+2009-08-24  Marek Habersack  <mhabersack@novell.com>
+
+	* PageParser.cs: 2.0 profile takes advantage of the inputFile
+	parameter to GetCompiledPageInstance. A check is made whether the
+	file pointed to by this parameter is inside the application's
+	virtual path and if not, the compilation request is assumed to
+	refer to a fake location. Part of fix for bug #463813
+
 2009-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: Location property makes a copy of assigned

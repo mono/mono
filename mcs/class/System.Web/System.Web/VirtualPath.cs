@@ -181,25 +181,33 @@ namespace System.Web
 		}
 				
 		public VirtualPath (string vpath)
+			: this (vpath, null, false)
+		{
+		}
+		
+		public VirtualPath (string vpath, string baseVirtualDir)
+			: this (vpath, null, false)
+		{
+			CurrentRequestDirectory = baseVirtualDir;
+		}
+
+		public VirtualPath (string vpath, string physicalPath, bool isFake)
 		{
 			IsRooted = VirtualPathUtility.IsRooted (vpath);
 			IsAbsolute = VirtualPathUtility.IsAbsolute (vpath);
 			IsAppRelative = VirtualPathUtility.IsAppRelative (vpath);
-
-			if (StrUtils.StartsWith (vpath, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
-				_physicalPath = vpath.Substring (BuildManager.FAKE_VIRTUAL_PATH_PREFIX.Length);
+			
+			if (isFake) {
+				if (String.IsNullOrEmpty (physicalPath))
+					throw new ArgumentException ("physicalPath");
+				
+				_physicalPath = physicalPath;
 				Original = "~/" + Path.GetFileName (_physicalPath);
 				IsFake = true;
 			} else {
 				Original = vpath;
 				IsFake = false;
 			}
-		}
-
-		public VirtualPath (string vpath, string baseVirtualDir)
-			: this (vpath)
-		{
-			CurrentRequestDirectory = baseVirtualDir;
 		}
 		
 		public bool StartsWith (string s)
@@ -235,7 +243,7 @@ namespace System.Web
 				return GetType ().ToString ();
 
 			if (IsFake)
-				ret += " [fake]";
+				ret += " [fake: " + PhysicalPath + "]";
 			
 			return ret;
 		}

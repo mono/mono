@@ -63,7 +63,7 @@ namespace System.Web.Compilation
 		protected abstract AspGenerator CreateAspGenerator (TParser parser);
 		protected abstract List <string> GetReferencedAssemblies (TParser parser);
 
-		protected virtual string MapPath (string virtualPath)
+		protected virtual string MapPath (VirtualPath virtualPath)
 		{
 			HttpContext ctx = HttpContext.Current;
 			HttpRequest req = ctx != null ? ctx.Request : null;
@@ -84,7 +84,7 @@ namespace System.Web.Compilation
 			if (!IsDirectoryBuilder) {
 				AspGenerator generator = CreateAspGenerator (parser);
 				if (_reader != null)
-					generator.Parse (_reader, MapPath (VirtualPath), true);
+					generator.Parse (_reader, MapPath (VirtualPathInternal), true);
 				else
 					generator.Parse ();
 			}

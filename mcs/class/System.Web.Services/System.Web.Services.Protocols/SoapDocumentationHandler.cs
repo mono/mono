@@ -105,19 +105,7 @@ namespace System.Web.Services.Protocols
 				throw new InvalidOperationException ("Documentation page '" + physPath + "' not found");
 #endif
 
-#if NET_2_0 && !TARGET_JVM
-			// Since BuildManager expects the virtualPath to be mappable into the
-			// application virtual root directory and the WSDL help generator possibly
-			// lives outside the location (by default in $prefix/etc/mono/2.0/), we need
-			// to use a fake virtual path which will be recognized by the page builder
-			// and processed accordingly.
-			// The fake virtual path prefix is defined in
-			// BuildManager.FAKE_VIRTUAL_PATH_PREFIX constant
-			_pageHandler = BuildManager.CreateInstanceFromVirtualPath ("/@@MonoFakeVirtualPath@@" + physPath, typeof (IHttpHandler)) as IHttpHandler;
-#else
 			_pageHandler = PageParser.GetCompiledPageInstance (vpath, physPath, context);
-#endif
-				
 		}
 
 		internal IHttpHandler PageHandler {
