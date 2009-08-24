@@ -1,3 +1,8 @@
+2009-08-24  Ankit Jain  <jankit@novell.com>
+
+	* CreateManifestResourceName.cs (GetResourceIdFromFileName): Spaces
+	in folder names should be converted to '_'.
+
 2009-08-18  Ankit Jain  <jankit@novell.com>
 
 	* TaskLoggingHelperExtensios.cs (.ctor): Mark internal.

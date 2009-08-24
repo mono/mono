@@ -1,3 +1,9 @@
+2009-08-24  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs:
+	* CreateVisualBasicManifestResourceNameTest.cs: Add tests for
+	folder name with spaces in it.
+
 2009-07-23  Ankit Jain  <jankit@novell.com>
 
 	* AssignProjectConfigurationTest.cs: New.
