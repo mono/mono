@@ -4504,7 +4504,7 @@ namespace Mono.CSharp {
 				//
 				// Spec mandates that constructor initializer will not have `this' access
 				//
-				using (ec.Set (EmitContext.Options.BaseInitializer)) {
+				using (ec.Set (ResolveContext.Options.BaseInitializer)) {
 					argument_list.Resolve (ec, out dynamic);
 				}
 
@@ -4785,7 +4785,7 @@ namespace Mono.CSharp {
 				!(Initializer is ConstructorThisInitializer);
 
 			BlockContext bc = new BlockContext (this, block, TypeManager.void_type);
-			bc.Set (EmitContext.Options.ConstructorScope);
+			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (emit_field_initializers)
 				Parent.PartialContainer.ResolveFieldInitializers (bc);
@@ -4814,7 +4814,7 @@ namespace Mono.CSharp {
 			if (block != null) {
 				if (block.Resolve (null, bc, Parameters, this)) {
 					EmitContext ec = CreateEmitContext (null);
-					ec.Set (EmitContext.Options.ConstructorScope);
+					ec.With (EmitContext.Options.ConstructorScope, true);
 
 					ec.ReturnLabel = bc.ReturnLabel;
 					ec.HasReturnLabel = bc.HasReturnLabel;

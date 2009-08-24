@@ -38,7 +38,7 @@ namespace Mono.CSharp
 
 	class ConstraintChecker
 	{
-		public static bool CheckConstraints (EmitContext ec, MethodBase a, MethodBase b, Location loc)
+		public static bool CheckConstraints (ResolveContext ec, MethodBase a, MethodBase b, Location loc)
 		{
 			throw new NotSupportedException ();
 		}

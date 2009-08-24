@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 			used_parent_storeys.Add (new StoreyFieldPair (storey, f));
 		}
 
-		public void CaptureLocalVariable (EmitContext ec, LocalInfo local_info)
+		public void CaptureLocalVariable (ResolveContext ec, LocalInfo local_info)
 		{
 			ec.CurrentBlock.Explicit.HasCapturedVariable = true;
 			if (ec.CurrentBlock.Explicit != local_info.Block.Explicit)
@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 			hoisted_locals.Add (var);
 		}
 
-		public void CaptureParameter (EmitContext ec, ParameterReference param_ref)
+		public void CaptureParameter (ResolveContext ec, ParameterReference param_ref)
 		{
 			ec.CurrentBlock.Explicit.HasCapturedVariable = true;
 			AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
@@ -873,8 +873,8 @@ namespace Mono.CSharp {
 		//
 		public bool ImplicitStandardConversionExists (ResolveContext ec, Type delegate_type)
 		{
-			using (ec.With (EmitContext.Options.InferReturnType, false)) {
-				using (ec.Set (EmitContext.Options.ProbingMode)) {
+			using (ec.With (ResolveContext.Options.InferReturnType, false)) {
+				using (ec.Set (ResolveContext.Options.ProbingMode)) {
 					return Compatible (ec, delegate_type) != null;
 				}
 			}
@@ -1007,7 +1007,7 @@ namespace Mono.CSharp {
 		public Type InferReturnType (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AnonymousMethodBody am;
-			using (ec.Set (EmitContext.Options.ProbingMode | EmitContext.Options.InferReturnType)) {
+			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
 				am = CompatibleMethod (ec, tic, InternalType.Arglist, delegate_type);
 			}
 			
@@ -1118,7 +1118,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			if (ec.HasSet (EmitContext.Options.ConstantScope)) {
+			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
 				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
@@ -1298,20 +1298,20 @@ namespace Mono.CSharp {
 			aec.CurrentAnonymousMethod = this;
 
 			IDisposable aec_dispose = null;
-			EmitContext.Options flags = 0;
-			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
-				flags |= EmitContext.Options.InferReturnType;
+			ResolveContext.Options flags = 0;
+			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
+				flags |= ResolveContext.Options.InferReturnType;
 				aec.ReturnTypeInference = new TypeInferenceContext ();
 			}
 
 			if (ec.IsInProbingMode)
-				flags |= EmitContext.Options.ProbingMode;
+				flags |= ResolveContext.Options.ProbingMode;
 
-			if (ec.HasSet (EmitContext.Options.FieldInitializerScope))
-				flags |= EmitContext.Options.FieldInitializerScope;
+			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope))
+				flags |= ResolveContext.Options.FieldInitializerScope;
 
 			if (ec.IsUnsafe)
-				flags |= EmitContext.Options.UnsafeScope;
+				flags |= ResolveContext.Options.UnsafeScope;
 
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
@@ -1319,7 +1319,7 @@ namespace Mono.CSharp {
 
 			bool res = Block.Resolve (ec.CurrentBranching, aec, Block.Parameters, null);
 
-			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
+			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
 				aec.ReturnTypeInference.FixAllTypes ();
 				ReturnType = aec.ReturnTypeInference.InferredTypeArguments [0];
 			}

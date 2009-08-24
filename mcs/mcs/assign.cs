@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 				return null;
 
 			MemberAccess ma = target as MemberAccess;
-			using (ec.Set (EmitContext.Options.CompoundAssignmentScope)) {
+			using (ec.Set (ResolveContext.Options.CompoundAssignmentScope)) {
 				target = target.Resolve (ec);
 			}
 			

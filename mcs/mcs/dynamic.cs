@@ -301,7 +301,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpConversionKind", loc),
 				is_explicit ? "ExplicitConversion" : "ImplicitConversion", loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (EmitContext.Options.CheckedScope), loc)));
+			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
 				
 			return new New (new MemberAccess (binder, "CSharpConvertBinder", loc), binder_args, loc);
 		}
@@ -474,7 +474,7 @@ namespace Mono.CSharp
 			MemberAccess binder = GetBinderNamespace (loc);
 
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (EmitContext.Options.CheckedScope), loc)));
+			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
 			return new New (new MemberAccess (binder, "CSharpUnaryOperationBinder", loc), binder_args, loc);

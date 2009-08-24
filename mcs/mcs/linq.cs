@@ -199,7 +199,7 @@ namespace Mono.CSharp.Linq
 			return lSide;
 		}
 
-		protected virtual void CreateArguments (EmitContext ec, out Arguments args)
+		protected virtual void CreateArguments (ResolveContext ec, out Arguments args)
 		{
 			args = new Arguments (2);
 
@@ -345,7 +345,7 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		protected override void CreateArguments (EmitContext ec, out Arguments args)
+		protected override void CreateArguments (ResolveContext ec, out Arguments args)
 		{
 			base.CreateArguments (ec, out args);
 
@@ -386,7 +386,7 @@ namespace Mono.CSharp.Linq
 			this.inner_selector = innerSelector;
 		}
 
-		protected override void CreateArguments (EmitContext ec, out Arguments args)
+		protected override void CreateArguments (ResolveContext ec, out Arguments args)
 		{
 			args = new Arguments (4);
 
@@ -507,7 +507,7 @@ namespace Mono.CSharp.Linq
 			this.lt = lt;
 		}
 
-		protected override void CreateArguments (EmitContext ec, out Arguments args)
+		protected override void CreateArguments (ResolveContext ec, out Arguments args)
 		{
 			base.CreateArguments (ec, out args);
 

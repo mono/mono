@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 			// During an enum evaluation, none of the rules are valid
 			// Not sure whether it is bug in csc or in documentation
 			//
-			if (ec.HasSet (EmitContext.Options.EnumScope)){
+			if (ec.HasSet (ResolveContext.Options.EnumScope)){
 				if (left is EnumConstant)
 					left = ((EnumConstant) left).Child;
 				

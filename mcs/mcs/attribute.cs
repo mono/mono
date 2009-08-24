@@ -391,7 +391,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ResolveContext rc = new ResolveContext (context, EmitContext.Options.ConstantScope);
+			ResolveContext rc = new ResolveContext (context, ResolveContext.Options.ConstantScope);
 			ConstructorInfo ctor = ResolveConstructor (rc);
 			if (ctor == null) {
 				if (Type is TypeBuilder && 

@@ -654,7 +654,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Newobj, constructor_method);
 		}
 
-		void Error_ConversionFailed (EmitContext ec, MethodBase method, Expression return_type)
+		void Error_ConversionFailed (ResolveContext ec, MethodBase method, Expression return_type)
 		{
 			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.CurrentType, type);
 			string member_name = delegate_instance_expression != null ?

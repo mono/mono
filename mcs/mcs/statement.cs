@@ -827,7 +827,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (ec.HasSet (EmitContext.Options.InferReturnType)) {
+			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
 				ec.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
 				return true;
 			}
@@ -2054,7 +2054,7 @@ namespace Mono.CSharp {
 
 				ec.CurrentBlock = this;
 				Expression e;
-				using (ec.With (EmitContext.Options.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
+				using (ec.With (ResolveContext.Options.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
 					e = cv.Resolve (ec);
 				}
 				if (e == null)
@@ -2086,7 +2086,7 @@ namespace Mono.CSharp {
 
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
-			using (ec.With (EmitContext.Options.UnsafeScope, ec.IsUnsafe | Unsafe)) {
+			using (ec.With (ResolveContext.Options.UnsafeScope, ec.IsUnsafe | Unsafe)) {
 				flags |= Flags.VariablesInitialized;
 
 				if (variables != null) {
@@ -2313,9 +2313,6 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			Block prev_block = ec.CurrentBlock;
-			ec.CurrentBlock = this;
-
 			if (scope_initializers != null)
 				EmitScopeInitializers (ec);
 
@@ -2324,15 +2321,13 @@ namespace Mono.CSharp {
 
 			if (SymbolWriter.HasSymbolWriter)
 				EmitSymbolInfo (ec);
-
-			ec.CurrentBlock = prev_block;
 		}
 
 		protected void EmitScopeInitializers (EmitContext ec)
 		{
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-			using (ec.Set (EmitContext.Options.OmitDebuggingInfo)) {
+			using (ec.With (EmitContext.Options.OmitDebugInfo, true)) {
 				foreach (Statement s in scope_initializers)
 					s.Emit (ec);
 			}
@@ -2457,7 +2452,7 @@ namespace Mono.CSharp {
 		//
 		// Creates anonymous method storey in current block
 		//
-		public AnonymousMethodStorey CreateAnonymousMethodStorey (EmitContext ec)
+		public AnonymousMethodStorey CreateAnonymousMethodStorey (ResolveContext ec)
 		{
 			//
 			// When referencing a variable in iterator storey from children anonymous method
@@ -2899,7 +2894,7 @@ namespace Mono.CSharp {
 				if (!ResolveMeta (rc, ip))
 					return false;
 
-				using (rc.With (EmitContext.Options.DoFlowAnalysis, true)) {
+				using (rc.With (ResolveContext.Options.DoFlowAnalysis, true)) {
 					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
 
 					if (!Resolve (rc))
@@ -3994,6 +3989,7 @@ namespace Mono.CSharp {
 	public abstract class ExceptionStatement : ResumableStatement
 	{
 		bool code_follows;
+		Iterator iter;
 
 		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
@@ -4007,7 +4003,7 @@ namespace Mono.CSharp {
 
 			if (resume_points != null) {
 				IntConstant.EmitInt (ig, (int) Iterator.State.Running);
-				ig.Emit (OpCodes.Stloc, ec.CurrentIterator.CurrentPC);
+				ig.Emit (OpCodes.Stloc, iter.CurrentPC);
 			}
 
 			ig.BeginExceptionBlock ();
@@ -4017,7 +4013,7 @@ namespace Mono.CSharp {
 
 				// For normal control flow, we want to fall-through the Switch
 				// So, we use CurrentPC rather than the $PC field, and initialize it to an outside value above
-				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.CurrentPC);
+				ig.Emit (OpCodes.Ldloc, iter.CurrentPC);
 				IntConstant.EmitInt (ig, first_resume_pc);
 				ig.Emit (OpCodes.Sub);
 
@@ -4033,7 +4029,7 @@ namespace Mono.CSharp {
 
 			Label start_finally = ec.ig.DefineLabel ();
 			if (resume_points != null) {
-				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
+				ig.Emit (OpCodes.Ldloc, iter.SkipFinally);
 				ig.Emit (OpCodes.Brfalse_S, start_finally);
 				ig.Emit (OpCodes.Endfinally);
 			}
@@ -4049,13 +4045,15 @@ namespace Mono.CSharp {
 			code_follows = true;
 		}
 
-		protected void ResolveReachability (BlockContext ec)
+		public override bool Resolve (BlockContext ec)
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
 			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
 				ec.NeedReturnLabel ();
 
+			iter = ec.CurrentIterator;
+			return true;
 		}
 
 		ArrayList resume_points;
@@ -4176,7 +4174,7 @@ namespace Mono.CSharp {
 			bool ok = Statement.Resolve (ec);
 			ec.EndFlowBranching ();
 
-			ResolveReachability (ec);
+			ok &= base.Resolve (ec);
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -4245,7 +4243,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, false))
+			using (ec.With (ResolveContext.Options.AllCheckStateFlags, false))
 				return Block.Resolve (ec);
 		}
 		
@@ -4279,7 +4277,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			using (ec.With (EmitContext.Options.AllCheckStateFlags, true))
+			using (ec.With (ResolveContext.Options.AllCheckStateFlags, true))
 			        return Block.Resolve (ec);
 		}
 
@@ -4317,14 +4315,13 @@ namespace Mono.CSharp {
 			if (ec.CurrentIterator != null)
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
 
-			using (ec.With (EmitContext.Options.UnsafeScope, true))
+			using (ec.Set (ResolveContext.Options.UnsafeScope))
 				return Block.Resolve (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			using (ec.With (EmitContext.Options.UnsafeScope, true))
-				Block.Emit (ec);
+			Block.Emit (ec);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -4497,7 +4494,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				using (ec.Set (EmitContext.Options.FixedInitializerScope)) {
+				using (ec.Set (ResolveContext.Options.FixedInitializerScope)) {
 					e = e.Resolve (ec);
 				}
 
@@ -4698,7 +4695,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			using (ec.With (EmitContext.Options.CatchScope, true)) {
+			using (ec.With (ResolveContext.Options.CatchScope, true)) {
 				if (type_expr != null) {
 					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
 					if (te == null)
@@ -4768,14 +4765,14 @@ namespace Mono.CSharp {
 
 			if (ok)
 				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
-			using (ec.With (EmitContext.Options.FinallyScope, true)) {
+			using (ec.With (ResolveContext.Options.FinallyScope, true)) {
 				if (!fini.Resolve (ec))
 					ok = false;
 			}
 
 			ec.EndFlowBranching ();
 
-			ResolveReachability (ec);
+			ok &= base.Resolve (ec);
 
 			return ok;
 		}
@@ -4991,7 +4988,7 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 
-			ResolveReachability (ec);
+			ok &= base.Resolve (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5140,7 +5137,7 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 
-			ResolveReachability (ec);
+			ok &= base.Resolve (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5461,7 +5458,7 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			bool GetEnumeratorFilter (EmitContext ec, MethodInfo mi)
+			bool GetEnumeratorFilter (ResolveContext ec, MethodInfo mi)
 			{
 				Type return_type = mi.ReturnType;
 
@@ -5565,7 +5562,7 @@ namespace Mono.CSharp {
 			//
 			// Retrieves a `public T get_Current ()' method from the Type `t'
 			//
-			bool FetchGetCurrent (EmitContext ec, Type t)
+			bool FetchGetCurrent (ResolveContext ec, Type t)
 			{
 				PropertyExpr pe = Expression.MemberLookup (
 					ec.CurrentType, t, "Current", MemberTypes.Property,
@@ -5826,7 +5823,7 @@ namespace Mono.CSharp {
 
 					ec.EndFlowBranching ();
 
-					ResolveReachability (ec);
+					ok &= base.Resolve (ec);
 
 					if (TypeManager.void_dispose_void == null) {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (

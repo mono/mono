@@ -196,9 +196,9 @@ namespace Mono.CSharp {
 
 			in_transit = true;
 
-			EmitContext.Options opt = EmitContext.Options.ConstantScope;
+			ResolveContext.Options opt = ResolveContext.Options.ConstantScope;
 			if (this is EnumMember)
-				opt |= EmitContext.Options.EnumScope;
+				opt |= ResolveContext.Options.EnumScope;
 
 			ResolveContext rc = new ResolveContext (this, opt);
 			value = DoResolveValue (rc);

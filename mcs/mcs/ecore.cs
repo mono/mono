@@ -1230,7 +1230,7 @@ namespace Mono.CSharp {
 
 			Expression converted;
 			
-			using (ec.Set (EmitContext.Options.CheckedScope)) {
+			using (ec.Set (ResolveContext.Options.CheckedScope)) {
 				converted = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, source.loc);
 				if (converted == null)
 					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, source.loc);
@@ -1401,7 +1401,7 @@ namespace Mono.CSharp {
 			if (type.IsPointer || child.Type.IsPointer)
 				Error_PointerInsideExpressionTree ();
 
-			return CreateExpressionFactoryCall (ec.HasSet (EmitContext.Options.CheckedScope) ? "ConvertChecked" : "Convert", args);
+			return CreateExpressionFactoryCall (ec.HasSet (ResolveContext.Options.CheckedScope) ? "ConvertChecked" : "Convert", args);
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -1948,7 +1948,7 @@ namespace Mono.CSharp {
 			
 			base.Emit (ec);
 
-			if (ec.HasSet (EmitContext.Options.CheckedScope)){
+			if (ec.HasSet (EmitContext.Options.CheckedScope)) {
 				switch (mode){
 				case Mode.I1_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
 				case Mode.I1_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;
@@ -2454,9 +2454,9 @@ namespace Mono.CSharp {
 			return new SimpleName (RemoveGenericArity (Name), targs, loc);
 		}
 
-		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
+		public static void Error_ObjectRefRequired (ResolveContext ec, Location l, string name)
 		{
-			if (ec.HasSet (EmitContext.Options.FieldInitializerScope))
+			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope))
 				Report.Error (236, l,
 					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 					name);
@@ -2773,7 +2773,7 @@ namespace Mono.CSharp {
 
 				Expression left;
 				if (me.IsInstance) {
-					if (ec.IsStatic || ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.BaseInitializer | EmitContext.Options.ConstantScope)) {
+					if (ec.IsStatic || ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer | ResolveContext.Options.ConstantScope)) {
 						//
 						// Note that an MemberExpr can be both IsInstance and IsStatic.
 						// An unresolved MethodGroupExpr can contain both kinds of methods
@@ -3133,7 +3133,8 @@ namespace Mono.CSharp {
 				return;
 
 			if (InstanceExpression == EmptyExpression.Null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
+				// FIXME: This should not be here at all
+				SimpleName.Error_ObjectRefRequired (new ResolveContext (ec.MemberContext), loc, GetSignatureForError ());
 				return;
 			}
 
@@ -4830,7 +4831,7 @@ namespace Mono.CSharp {
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
 
 				if (lvalue_instance) {
-					using (ec.With (EmitContext.Options.DoFlowAnalysis, false)) {
+					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
 						Expression right_side =
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
@@ -4847,7 +4848,7 @@ namespace Mono.CSharp {
 				if (InstanceExpression == null)
 					return null;
 
-				using (ec.Set (EmitContext.Options.OmitStructFlowAnalysis)) {
+				using (ec.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
 					InstanceExpression.CheckMarshalByRefAccess (ec);
 				}
 			}
@@ -4872,7 +4873,7 @@ namespace Mono.CSharp {
 			
 			if (fb != null) {
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
-				if (!ec.HasSet (EmitContext.Options.FixedInitializerScope) && (fe == null || !fe.IsFixed)) {
+				if (!ec.HasSet (ResolveContext.Options.FixedInitializerScope) && (fe == null || !fe.IsFixed)) {
 					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
 				}
 
@@ -4959,10 +4960,10 @@ namespace Mono.CSharp {
 
 			if (FieldInfo.IsInitOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
-				if (!ec.HasAny (EmitContext.Options.FieldInitializerScope | EmitContext.Options.ConstructorScope))
+				if (!ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
 					return Report_AssignToReadonly (right_side);
 
-				if (ec.HasSet (EmitContext.Options.ConstructorScope)) {
+				if (ec.HasSet (ResolveContext.Options.ConstructorScope)) {
 					Type ctype = ec.CurrentType;
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
@@ -5096,13 +5097,7 @@ namespace Mono.CSharp {
 		{
 			FieldAttributes fa = FieldInfo.Attributes;
 			bool is_static = (fa & FieldAttributes.Static) != 0;
-			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
-
-			if (is_readonly && !ec.HasSet (EmitContext.Options.ConstructorScope)){
-				Report_AssignToReadonly (source);
-				return;
-			}
 
 			prepared = prepare_for_load;
 			EmitInstance (ec, prepared);
@@ -5760,7 +5755,7 @@ namespace Mono.CSharp {
 					if (!ec.IsObsolete)
 						mi.CheckObsoleteness (loc);
 
-					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (EmitContext.Options.CompoundAssignmentScope))
+					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))
 						Error_AssignmentEventOnly ();
 					
 					FieldExpr ml = new FieldExpr (mi.BackingField.FieldBuilder, loc);
@@ -5771,7 +5766,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (left is This && !ec.HasSet (EmitContext.Options.CompoundAssignmentScope))			
+			if (left is This && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))			
 				Error_AssignmentEventOnly ();
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
@@ -5848,7 +5843,7 @@ namespace Mono.CSharp {
 			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
 
-			if (!ec.HasSet (EmitContext.Options.CompoundAssignmentScope)) {
+			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope)) {
 				Error_CannotAssign ();
 				return null;
 			}
@@ -5945,7 +5940,7 @@ namespace Mono.CSharp {
 			EmitAssign (ec, source, false, false);
 		}
 
-		public override HoistedVariable GetHoistedVariable (EmitContext ec)
+		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
 		{
 			return li.HoistedVariableReference;
 		}
@@ -5996,7 +5991,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool InferType (EmitContext ec, Expression right_side)
+		public bool InferType (ResolveContext ec, Expression right_side)
 		{
 			if (type != null)
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
