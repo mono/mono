@@ -1,5 +1,9 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SecurityHandler.cs : skip callback duplex blocker.
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EndpointDispatcher.cs, ChannelDispatcher.cs : differentiate
 	  service dispatch and callback client dispatch at initialization.
 

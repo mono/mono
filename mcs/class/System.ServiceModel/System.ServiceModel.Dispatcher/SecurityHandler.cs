@@ -12,6 +12,16 @@ namespace System.ServiceModel.Dispatcher
 		protected override bool ProcessRequest (MessageProcessingContext mrc)
 		{
 			DispatchRuntime dispatch_runtime = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
+
+			// FIXME: I doubt this should be done at this "handler" 
+			// layer, especially considering about non-ServiceHost
+			// use of SecurityBindingElement + listener.
+			//
+			// For example there is no way to handle it in duplex
+			// dispatch callbacks.
+			if (dispatch_runtime.ChannelDispatcher == null)
+				return false;
+
 			Message negoResponce = null;
 			// process WS-Trust based negotiation
 			MessageSecurityBindingSupport support =
