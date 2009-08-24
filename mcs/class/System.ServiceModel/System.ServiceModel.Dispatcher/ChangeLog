@@ -1,5 +1,10 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CallbackInstanceContextProvider.cs : new instance context provider
+	  used by duplex client dispatcher.
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecurityHandler.cs : skip callback duplex blocker.
 
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
