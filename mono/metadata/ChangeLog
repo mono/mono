@@ -1,5 +1,10 @@
 2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (verify_class_overrides): Verify if for static
+	and non virtual methods.
+
+2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icaa.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor):
 	Check for errors after retrieving the vtable.
 
