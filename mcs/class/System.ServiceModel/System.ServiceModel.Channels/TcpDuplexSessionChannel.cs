@@ -135,6 +135,8 @@ namespace System.ServiceModel.Channels
 		
 		public override void Send (Message message, TimeSpan timeout)
 		{
+			ThrowIfDisposedOrNotOpen ();
+
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 
@@ -162,6 +164,8 @@ namespace System.ServiceModel.Channels
 		
 		public override Message Receive (TimeSpan timeout)
 		{
+			ThrowIfDisposedOrNotOpen ();
+
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
@@ -187,6 +191,8 @@ namespace System.ServiceModel.Channels
 		
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
+			ThrowIfDisposedOrNotOpen ();
+
 			if (client.Available > 0)
 				return true;
 

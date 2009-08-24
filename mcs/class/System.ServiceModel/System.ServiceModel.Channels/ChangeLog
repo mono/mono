@@ -1,3 +1,8 @@
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : check channel state before processing
+	  Send and Receive.
+
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NamedPipeReplyChannel.cs, NamedPipeRequestChannel.cs,
