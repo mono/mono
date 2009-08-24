@@ -36,56 +36,6 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
-#if NET_2_1
-	internal class DuplexClientRuntimeChannel
-	{
-	}
-#else
-	internal class DuplexClientRuntimeChannel
-		: ClientRuntimeChannel, IDuplexContextChannel
-	{
-		public DuplexClientRuntimeChannel (ServiceEndpoint endpoint,
-			ChannelFactory factory, EndpointAddress remoteAddress, Uri via)
-			: base (endpoint, factory, remoteAddress, via)
-		{
-		}
-
-		public bool AutomaticInputSessionShutdown {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		public InstanceContext CallbackInstance { get; set; }
-
-		Action<TimeSpan> session_shutdown_delegate;
-
-		public void CloseOutputSession (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IAsyncResult BeginCloseOutputSession (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			if (session_shutdown_delegate == null)
-				session_shutdown_delegate = new Action<TimeSpan> (CloseOutputSession);
-			return session_shutdown_delegate.BeginInvoke (timeout, callback, state);
-		}
-
-		public void EndCloseOutputSession (IAsyncResult result)
-		{
-			session_shutdown_delegate.EndInvoke (result);
-		}
-
-		// base channel overrides.
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
-			// FIXME: add callback listener here to receive callbacks.
-			base.OnOpen (timeout);
-		}
-	}
-#endif
-
 	internal class ClientRuntimeChannel
 		: CommunicationObject, IClientChannel
 	{
@@ -153,6 +103,10 @@ namespace System.ServiceModel
 
 		IOutputChannel OutputChannel {
 			get { return channel as IOutputChannel; }
+		}
+
+		internal IDuplexChannel DuplexChannel {
+			get { return channel as IDuplexChannel; }
 		}
 
 		#region IClientChannel
@@ -413,6 +367,8 @@ namespace System.ServiceModel
 		{
 			if (runtime.InteractiveChannelInitializers.Count > 0 && !DidInteractiveInitialization)
 				throw new InvalidOperationException ("The client runtime is assigned interactive channel initializers, and in such case DisplayInitializationUI must be called before the channel is opened.");
+			if (channel.State == CommunicationState.Created)
+				channel.Open (timeout);
 		}
 
 		// IChannel

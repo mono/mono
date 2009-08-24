@@ -1,3 +1,10 @@
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs, DuplexClientRuntimeChannel.cs : split out
+	  from former to latter and implemented most part of listener part.
+	  Make sure to open internal channel at base ClientRuntimeChannel.
+	* ClientProxyGenerator.cs : minimize !NET_2_1 to here.
+
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : some refactoring to reduce weird limitation

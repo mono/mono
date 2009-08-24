@@ -41,7 +41,11 @@ namespace System.ServiceModel
 		public static Type CreateProxyType (Type contractInterface, ContractDescription cd, bool duplex)
 		{
 			string modname = "dummy";
-			Type crtype = duplex ? typeof (DuplexClientRuntimeChannel) : typeof (ClientRuntimeChannel);
+			Type crtype =
+#if !NET_2_1
+				duplex ? typeof (DuplexClientRuntimeChannel) :
+#endif
+				typeof (ClientRuntimeChannel);
 
 			// public class __clientproxy_MyContract : ClientRuntimeChannel, [ContractType]
 			CodeClass c = new CodeModule (modname).CreateClass (

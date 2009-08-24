@@ -611,6 +611,7 @@ System.ServiceModel.Dispatcher/ActionMessageFilterTable.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
 System.ServiceModel.Dispatcher/BaseRequestProcessor.cs
 System.ServiceModel.Dispatcher/BaseRequestProcessorHandler.cs
+System.ServiceModel.Dispatcher/CallbackInstanceContextProvider.cs
 System.ServiceModel.Dispatcher/ChannelDispatcher.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherBase.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherCollection.cs
@@ -813,6 +814,7 @@ System.ServiceModel/DnsEndpointIdentity.cs
 System.ServiceModel/Dummy.cs
 System.ServiceModel/DuplexChannelFactory.cs
 System.ServiceModel/DuplexClientBase.cs
+System.ServiceModel/DuplexClientRuntimeChannel.cs
 System.ServiceModel/EndpointAddress.cs
 System.ServiceModel/EndpointAddress10.cs
 System.ServiceModel/EndpointAddressAugust2004.cs
