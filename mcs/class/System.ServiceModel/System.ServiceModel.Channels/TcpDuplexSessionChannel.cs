@@ -143,8 +143,6 @@ namespace System.ServiceModel.Channels
 			if (!is_service_side) {
 				if (message.Headers.To == null)
 					message.Headers.To = RemoteAddress.Uri;
-				if (message.Headers.ReplyTo == null)
-					message.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
 			} else {
 				if (message.Headers.RelatesTo == null && OperationContext.Current.IncomingMessageHeaders != null)
 					message.Headers.RelatesTo = OperationContext.Current.IncomingMessageHeaders.MessageId;

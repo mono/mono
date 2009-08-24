@@ -1,5 +1,10 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs, TcpRequestChannel.cs,
+	  NamedPipeRequestChannel.cs : no need to add ReplyTo headers.
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs : fix PeerTo/PeerVia header namespace.
 
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>

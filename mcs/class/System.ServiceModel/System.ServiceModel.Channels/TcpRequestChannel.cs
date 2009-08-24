@@ -90,8 +90,6 @@ namespace System.ServiceModel.Channels
 
 			if (input.Headers.To == null)
 				input.Headers.To = RemoteAddress.Uri;
-			if (input.Headers.ReplyTo == null)
-				input.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
 			if (input.Headers.MessageId == null)
 				input.Headers.MessageId = new UniqueId ();
 
