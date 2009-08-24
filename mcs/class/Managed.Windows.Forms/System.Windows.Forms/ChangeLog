@@ -1,5 +1,13 @@
 2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* Control.cs: Remove the ancient code in ResetText, which was setting
+	the internal field to String.Empty, instead of doing it for our Text
+	property, as .net does (which also causes a TextChanged event and all
+	the other related routines).
+	Fixes #531587.
+
+2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNodeCollection.cs: Correctly implement Contains by using a
 	linear search - there's no possible way to use a binary search, since
 	the node instances are not implementing IComparable, nor have a

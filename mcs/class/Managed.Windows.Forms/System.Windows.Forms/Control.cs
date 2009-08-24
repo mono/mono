@@ -4251,7 +4251,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void ResetText() {
-			text = String.Empty;
+			Text = String.Empty;
 		}
 
 		public void ResumeLayout() {
