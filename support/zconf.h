@@ -351,7 +351,10 @@ typedef uLong FAR uLongf;
    typedef Byte       *voidp;
 #endif
 
-#include "zlibdefs.h"       /* created by configure */
+/* not needed
+ * This is created by zlib's configure script to define off_t
+#include "zlibdefs.h"
+*/
 
 #ifndef SEEK_SET
 #  define SEEK_SET        0       /* Seek from beginning of file.  */
