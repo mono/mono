@@ -1,5 +1,11 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : add PeerFlooder header (see comment).
+	  Process PeerTo header to upgrade Message To header. Now mono
+	  service accepts mono client (somehow not true for .NET client).
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs, TcpRequestChannel.cs,
 	  NamedPipeRequestChannel.cs : no need to add ReplyTo headers.
 

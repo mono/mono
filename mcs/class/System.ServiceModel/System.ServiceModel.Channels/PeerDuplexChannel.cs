@@ -138,6 +138,11 @@ Console.WriteLine ("##### Welcome message received");
 			public void SendMessage (Message msg)
 			{
 Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action);
+				int idx = msg.Headers.FindHeader ("PeerTo", Constants.NetPeer);
+				if (idx >= 0)
+					msg.Headers.To = msg.Headers.GetHeader<Uri> (idx);
+				// FIXME: anything to do for PeerVia?
+
 				owner.EnqueueMessage (msg);
 			}
 		}
@@ -230,6 +235,9 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 					message.Headers.MessageId = new UniqueId ();
 				message.Headers.Add (MessageHeader.CreateHeader ("PeerTo", Constants.NetPeer, RemoteAddress.Uri));
 				message.Headers.Add (MessageHeader.CreateHeader ("PeerVia", Constants.NetPeer, RemoteAddress.Uri));
+				// FIXME: it is somehow required to get accepted a bit at .NET service, but no idea why ... 
+				// (.NET client seems to send it according to service trace)
+				message.Headers.Add (MessageHeader.CreateHeader ("FloodMessage", Constants.NetPeer, "PeerFlooder"));
 				pc.Channel.SendMessage (message);
 			}
 		}
