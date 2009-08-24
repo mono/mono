@@ -102,7 +102,7 @@ namespace System.ServiceModel.Dispatcher
 
 			//Attach one EndpointDispacher to the ChannelDispatcher
 			EndpointDispatcher ed = new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
-			ed.InitializeServiceEndpoint (this, serviceType, se);
+			ed.InitializeServiceEndpoint (false, this, serviceType, se);
 			this.Endpoints.Add (ed);
 		}
 

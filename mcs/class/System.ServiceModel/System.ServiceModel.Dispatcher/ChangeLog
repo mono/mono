@@ -1,3 +1,8 @@
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs, ChannelDispatcher.cs : differentiate
+	  service dispatch and callback client dispatch at initialization.
+
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : also made reference to host optional.

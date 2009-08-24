@@ -112,7 +112,7 @@ namespace System.ServiceModel.Dispatcher
 			set { filter_priority = value; }
 		}
 
-		internal void InitializeServiceEndpoint (ChannelDispatcher channelDispatcher, Type serviceType, ServiceEndpoint se)
+		internal void InitializeServiceEndpoint (bool isCallback, ChannelDispatcher channelDispatcher, Type serviceType, ServiceEndpoint se)
 		{
 			this.ContractFilter = GetContractFilter (se.Contract);
 			this.AddressFilter = new EndpointAddressMessageFilter (se.Address);
@@ -122,7 +122,7 @@ namespace System.ServiceModel.Dispatcher
 			
 			//Build the dispatch operations
 			DispatchRuntime db = this.DispatchRuntime;
-			if (se.Contract.CallbackContractType != null) {
+			if (!isCallback && se.Contract.CallbackContractType != null) {
 				var ccd = ContractDescriptionGenerator.GetCallbackContract (se.Contract.CallbackContractType);
 				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
 				db.CallbackClientRuntime.CallbackClientType = ccd.ContractType;
