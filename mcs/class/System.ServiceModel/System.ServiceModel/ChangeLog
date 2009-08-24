@@ -1,5 +1,9 @@
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Constants.cs : p2p constants should rather go here.
+
+2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs, DuplexClientRuntimeChannel.cs : split out
 	  from former to latter and implemented most part of listener part.
 	  Make sure to open internal channel at base ClientRuntimeChannel.

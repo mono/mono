@@ -102,5 +102,8 @@ namespace System.ServiceModel
 		public const string OidNtlmSsp = "1.3.6.1.4.1.311.2.2.10";
 		public const string OidKerberos5 = "1.2.840.48018.1.2.2";
 		public const string OidMIT = "1.2.840.113554.1.2.2";
+
+		// Peer resolvers
+		public const string NetPeer = "http://schemas.microsoft.com/net/2006/05/peer";
 	}
 }
