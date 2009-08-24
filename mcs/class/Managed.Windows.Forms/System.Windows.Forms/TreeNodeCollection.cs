@@ -225,7 +225,7 @@ namespace System.Windows.Forms {
 
 		public bool Contains (TreeNode node)
 		{
-			return (Array.BinarySearch (nodes, node) > 0);
+			return Array.IndexOf (nodes, node, 0, count) != -1;
 		}
 #if NET_2_0
 		public virtual bool ContainsKey (string key)
