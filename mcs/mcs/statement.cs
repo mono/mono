@@ -5513,7 +5513,8 @@ namespace Mono.CSharp {
 					t, MemberTypes.Method,
 					BindingFlags.Public | BindingFlags.Instance,
 					Type.FilterName, "MoveNext");
-				if (move_next_list.Count == 0)
+
+				if (move_next_list == null)
 					return false;
 
 				foreach (MemberInfo m in move_next_list){
