@@ -35,7 +35,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 using System.Xml.XPath;
 #endif
 
@@ -179,7 +179,7 @@ namespace System.Xml
 				return;
 
 			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			// no ReadAttributeValue() in 2.1 profile.
 			WriteString (reader.Value);
 #else
@@ -392,7 +392,7 @@ namespace System.Xml
 				WriteString (localName);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)

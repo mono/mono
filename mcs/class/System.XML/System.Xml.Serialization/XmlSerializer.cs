@@ -37,7 +37,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -120,7 +120,7 @@ namespace System.Xml.Serialization
 			//       debugging pourposes by adding the "nofallback" option.
 			//       For example: MONO_XMLSERIALIZER_THS=0,nofallback
 			
-#if TARGET_JVM
+#if TARGET_JVM || MONOTOUCH
 			string db = null;
 			string th = null;
 			generationThreshold = -1;
@@ -150,7 +150,7 @@ namespace System.Xml.Serialization
 			}
 #endif
 			deleteTempFiles = (db == null || db == "no");
-			
+#if !MONOTOUCH			
 			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
 			if (table != null) 
 			{
@@ -161,6 +161,7 @@ namespace System.Xml.Serialization
 					if (val == "1") deleteTempFiles = false;
 				}
 			}
+#endif
 		}
 
 #region Constructors
@@ -512,7 +513,7 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 		public static Assembly GenerateSerializer (Type[] types, XmlMapping[] mappings)
 		{
 			return GenerateSerializer (types, mappings, null);
@@ -618,7 +619,7 @@ namespace System.Xml.Serialization
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
-#if TARGET_JVM
+#if TARGET_JVM || MONOTOUCH
  		void CheckGeneratedTypes (XmlMapping typeMapping)
  		{
 			throw new NotImplementedException();

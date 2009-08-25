@@ -127,7 +127,7 @@ namespace System.Xml.Serialization
 		{
 			get { return _mapMember.Name; }
 		}
-#if !TARGET_JVM		
+#if !TARGET_JVM	&& !MONOTOUCH
 		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
 			string ret = codeProvider.CreateValidIdentifier (_mapMember.TypeData.FullTypeName);

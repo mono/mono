@@ -35,7 +35,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml.Schema; // only required for NET_2_0
@@ -186,7 +186,7 @@ namespace System.Xml
 		public abstract ReadState ReadState { get; }
 
 #if NET_2_0
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 		}
@@ -414,7 +414,7 @@ namespace System.Xml
 
 		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			return reader;
 #else
 			XmlValidatingReader xvr = null;

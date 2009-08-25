@@ -129,7 +129,7 @@ namespace Mono.Xml.Xsl {
 			
 			public object Compile (XPathNavigator node)
 			{
-#if TARGET_JVM
+#if TARGET_JVM || MONOTOUCH
 				throw new NotImplementedException ();
 #else
 				string suffix = "";

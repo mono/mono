@@ -145,7 +145,7 @@ namespace System.Xml
 			get { return outputMethod; }
 			//set { outputMethod = value; }
 		}
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		[MonoTODO]
 		public NamespaceHandling NamespaceHandling { get; set; }
 #endif

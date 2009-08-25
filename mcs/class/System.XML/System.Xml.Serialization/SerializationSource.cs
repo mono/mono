@@ -34,7 +34,7 @@ using System.Text;
 
 namespace System.Xml.Serialization 
 {
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 	internal abstract class SerializationSource 
 	{
 		Type[] includedTypes;

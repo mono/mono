@@ -18,6 +18,10 @@ ifeq (net_2_0, $(PROFILE))
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 endif
 
+ifeq (monotouch, $(PROFILE))
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/monotouch$(PLATFORM_PATH_SEPARATOR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
+endif
+
 ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
@@ -98,7 +102,7 @@ Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
 	cat $< >>$@
 
-ifneq (2.1, $(FRAMEWORK_VERSION))
+ifneq (net_2_1_raw, $(PROFILE))
 BUILT_SOURCES = System.Xml.XPath/Parser.cs \
 	Mono.Xml.Xsl/PatternParser.cs \
 	Mono.Xml.Xsl/PatternTokenizer.cs

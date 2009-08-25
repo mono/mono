@@ -161,7 +161,7 @@ namespace System.Xml
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public override bool HasValue {
 			get {
 				if (current == null)
@@ -810,7 +810,7 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public override void ResolveEntity ()
 		{
 			throw new NotSupportedException ("Should not happen.");
