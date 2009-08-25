@@ -1,3 +1,8 @@
+2009-08-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_suspend_all_other_threads): Handle 'threads_starting_ip'
+	being NULL.
+
 2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_vtable_general): Verify the resulting vtable
