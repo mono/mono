@@ -2,6 +2,8 @@
 System.Collections.Specialized/NameObjectCollectionBase.cs
 System.Collections.Specialized/NameValueCollection.cs
 System.Collections.Specialized/ProcessStringDictionary.cs
+System.Collections.Specialized/StringCollection.cs
+System.Collections.Specialized/StringEnumerator.cs
 System.ComponentModel.Design/CommandID.cs
 System.ComponentModel.Design/ComponentEventArgs.cs
 System.ComponentModel.Design/ComponentEventHandler.cs
