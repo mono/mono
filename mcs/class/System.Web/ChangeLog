@@ -2,6 +2,7 @@
 
 	* Makefile (TEST_RESOURCE_FILES): added
 	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx
+	Test/mainsoft/NunitWebResources/ConditionalClientComments.aspx
 
 2009-08-18  Marek Habersack  <mhabersack@novell.com>
 

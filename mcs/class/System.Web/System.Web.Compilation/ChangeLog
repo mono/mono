@@ -2,6 +2,8 @@
 
 	* AspGenerator.cs: correctly parse server-side tags nested in
 	client-side ones. Fixes bug #323719
+	Detect IE conditional comments when processing comment blocks in
+	TextParsed. Fixes bug #367273
 
 2009-08-24  Marek Habersack  <mhabersack@novell.com>
 

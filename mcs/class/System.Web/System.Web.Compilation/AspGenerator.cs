@@ -1174,14 +1174,21 @@ namespace System.Web.Compilation
 					case TextBlockType.Comment: {
 						this.text.Append ("<!--");
 						FlushText (true);
-						AspParser parser = new AspParser ("@@comment_code@@",
-										  new StringReader (block.Content.Substring (4, block.Length - 7)),
-										  location.BeginLine - 1,
-										  location as AspParser);
+						string blockToParse = block.Content.Substring (4, block.Length - 7);
+						bool condEndif;
+						if (blockToParse.EndsWith ("<![endif]")) {
+							blockToParse = blockToParse.Substring (0, blockToParse.Length - 9);
+							condEndif = true;
+						} else
+							condEndif = false;
+						
+						AspParser parser = new AspParser ("@@comment_code@@", new StringReader (blockToParse), location.BeginLine - 1, location as AspParser);
 						parser.Error += new ParseErrorHandler (ParseError);
 						parser.TagParsed += new TagParsedHandler (TagParsed);
 						parser.TextParsed += new TextParsedHandler (TextParsed);
 						parser.Parse ();
+						if (condEndif)
+							this.text.Append ("<![endif]");
 						this.text.Append ("-->");
 						FlushText (true);
 						break;

@@ -176,7 +176,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TagsExpressionsAndCommentsInText.aspx \
 	Test/mainsoft/NunitWebResources/NewlineInCodeExpression.aspx \
 	Test/mainsoft/NunitWebResources/DuplicateControlsInClientComment.aspx \
-	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx
+	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx \
+	Test/mainsoft/NunitWebResources/ConditionalClientComments.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
