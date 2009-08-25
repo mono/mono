@@ -422,7 +422,7 @@ namespace System.Data
 			else { 
 				object obj;
 				
-				if (e.Element.GetType() == typeof (DataTable))
+				if (typeof (DataTable).IsAssignableFrom (e.Element.GetType()))
 					obj = new DataTablePropertyDescriptor ((DataTable) e.Element);
 				else // Assume a DataRelation
 					obj = new DataRelationPropertyDescriptor((DataRelation) e.Element);

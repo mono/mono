@@ -1,5 +1,10 @@
 2009-08-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* DataViewManager.cs (CollectionToListChangeEventArgs) : Use IsAssignableFrom 
+	instead of type comparison.
+		
+2009-08-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes #521951
 	* DataViewManager.cs (CollectionToListChangeEventArgs) : Use a corresponding 
 	DataTable/DataRelation obj instead of only DataRelation.
