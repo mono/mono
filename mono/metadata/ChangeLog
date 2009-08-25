@@ -1,3 +1,19 @@
+2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Don't check the fields
+	of generic instances since the context on which they got expanded
+	might lead to false positives.
+
+	Such thing happens when a generic type is inflated in the context
+	of a generic method and the inflated type of a field turns into a
+	generic method argument, which causes the checking code to think
+	it's an invalid class when it's not.
+
+2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_is_valid_in_context): Verify if type
+	is NULL and remove duplicate test.
+
 2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_verifier_verify_class): Check fields for
