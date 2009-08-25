@@ -133,7 +133,6 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			SimpleName original = expr as SimpleName;
 			Expression expr_resolved = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
 				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
