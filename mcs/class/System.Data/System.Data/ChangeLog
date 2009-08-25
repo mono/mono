@@ -1,3 +1,9 @@
+2009-08-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #521951
+	* DataViewManager.cs (CollectionToListChangeEventArgs) : Use a corresponding 
+	DataTable/DataRelation obj instead of only DataRelation.
+	
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #325464 - ToolItems.xsd
