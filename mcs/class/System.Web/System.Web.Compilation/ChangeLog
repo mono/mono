@@ -1,3 +1,8 @@
+2009-08-25  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: correctly parse server-side tags nested in
+	client-side ones. Fixes bug #323719
+
 2009-08-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageBuildProvider.cs: MapPath now takes a VirtualPath

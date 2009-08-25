@@ -35,6 +35,7 @@ mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
+mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs
 System.Web/AppBrowsersTest.cs
 System.Web/HttpBrowserCapabilitiesTest.cs
 System.Web/HttpCacheVaryByContentEncodingsTest.cs
