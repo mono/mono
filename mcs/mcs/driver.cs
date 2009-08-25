@@ -1190,11 +1190,12 @@ namespace Mono.CSharp
 				}
 
 				foreach (string d in value.Split (argument_value_separator)) {
-					if (!Tokenizer.IsValidIdentifier (d)) {
-						Report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", d);
+					string conditional = d.Trim ();
+					if (!Tokenizer.IsValidIdentifier (conditional)) {
+						Report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", conditional);
 						continue;
 					}
-					RootContext.AddConditional (d);
+					RootContext.AddConditional (conditional);
 				}
 				return true;
 			}
