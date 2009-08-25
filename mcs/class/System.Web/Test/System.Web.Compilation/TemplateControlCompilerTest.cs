@@ -60,6 +60,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "TagsExpressionsAndCommentsInText.aspx", "TagsExpressionsAndCommentsInText.aspx");
 			WebTest.CopyResource (GetType (), "NewlineInCodeExpression.aspx", "NewlineInCodeExpression.aspx");
 			WebTest.CopyResource (GetType (), "DuplicateControlsInClientComment.aspx", "DuplicateControlsInClientComment.aspx");
+			WebTest.CopyResource (GetType (), "TagsNestedInClientTag.aspx", "TagsNestedInClientTag.aspx");
 #if NET_2_0
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
@@ -215,6 +216,17 @@ namespace MonoTests.System.Web.Compilation {
 			new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
 		}
 #endif
+
+		[Test (Description="Bug #323719")]
+		public void TagsNestedInClientTag ()
+		{
+			string pageHtml = new WebTest ("TagsNestedInClientTag.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"<script language=""javascript"" src=""/js/test.js"" type=""text/javascript""></script>
+<sometag language=""javascript"" src=""/js/test.js"" type=""text/javascript""></sometag>";
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
 		
 		[Test (Description="Bug #517656")]
 		public void ServerControlInClientSideComment ()

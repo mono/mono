@@ -168,7 +168,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/FullTagsInText.aspx \
 	Test/mainsoft/NunitWebResources/TagsExpressionsAndCommentsInText.aspx \
 	Test/mainsoft/NunitWebResources/NewlineInCodeExpression.aspx \
-	Test/mainsoft/NunitWebResources/DuplicateControlsInClientComment.aspx
+	Test/mainsoft/NunitWebResources/DuplicateControlsInClientComment.aspx \
+	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))

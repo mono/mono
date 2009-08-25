@@ -1,3 +1,8 @@
+2009-08-25  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: correctly parse server-side tags nested in
+	client-side ones. Fixes bug #323719
+
 2009-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* AspParser.cs: added a constructor which creates an internal
