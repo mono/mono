@@ -573,7 +573,10 @@ namespace Mono.Data.Tds.Protocol
 				if (paramType.IsEnum)
 					paramValue = Convert.ChangeType (paramValue,
 						Type.GetTypeCode (paramType));
-				value = paramValue.ToString ();
+				if (paramType == typeof (Double))
+					value = ((Double) paramValue).ToString ("r");
+				else 
+					value = paramValue.ToString ();
 				break;
 			case "nvarchar":
 			case "nchar":
