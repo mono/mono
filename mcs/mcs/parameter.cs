@@ -404,7 +404,7 @@ namespace Mono.CSharp {
 
 			TypeManager.CheckTypeVariance (parameter_type,
 				(modFlags & Parameter.Modifier.ISBYREF) != 0 ? Variance.None : Variance.Contravariant,
-				rc as MemberCore);
+				rc);
 
 			if (TypeManager.IsGenericParameter (parameter_type))
 				return parameter_type;

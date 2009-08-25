@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		#region IResolveContext Members
+		#region IMemberContext Members
 
 		public virtual Type CurrentType {
 			get { return Parent.CurrentType; }

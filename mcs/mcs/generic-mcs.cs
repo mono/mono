@@ -459,7 +459,7 @@ namespace Mono.CSharp
 	
 	partial class TypeManager
 	{
-		public static Variance CheckTypeVariance (Type type, Variance v, MemberCore mc)
+		public static Variance CheckTypeVariance (Type type, Variance v, IMemberContext mc)
 		{
 			return v;
 		}

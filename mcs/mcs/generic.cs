@@ -712,9 +712,9 @@ namespace Mono.CSharp {
 			TypeManager.AddTypeParameter (type, this);
 		}
 
-		public void ErrorInvalidVariance (MemberCore mc, Variance expected)
+		public void ErrorInvalidVariance (IMemberContext mc, Variance expected)
 		{
-			Report.SymbolRelatedToPreviousError (mc);
+// TODO:	Report.SymbolRelatedToPreviousError (mc);
 			string input_variance = Variance == Variance.Contravariant ? "contravariant" : "covariant";
 			string gtype_variance;
 			switch (expected) {
@@ -1901,7 +1901,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static Variance CheckTypeVariance (Type t, Variance expected, MemberCore member)
+		public static Variance CheckTypeVariance (Type t, Variance expected, IMemberContext member)
 		{
 			TypeParameter tp = LookupTypeParameter (t);
 			if (tp != null) {

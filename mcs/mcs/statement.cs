@@ -818,9 +818,8 @@ namespace Mono.CSharp {
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null && ec.ReturnType == TypeManager.void_type) {
-				MemberCore mc = ec.MemberContext as MemberCore;
 				Report.Error (127, loc, "`{0}': A return keyword must not be followed by any expression when method returns void",
-					mc.GetSignatureForError ());
+					ec.GetSignatureForError ());
 			}
 
 			Expr = Expr.Resolve (ec);
@@ -4278,7 +4277,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.With (ResolveContext.Options.AllCheckStateFlags, true))
-			        return Block.Resolve (ec);
+				return Block.Resolve (ec);
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -5681,7 +5680,7 @@ namespace Mono.CSharp {
 				}
 
 				return false;
-			}		
+			}
 
 			bool ProbeCollectionType (ResolveContext ec, Type t)
 			{

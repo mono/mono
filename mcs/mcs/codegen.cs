@@ -275,6 +275,8 @@ namespace Mono.CSharp {
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 
+		string GetSignatureForError ();
+
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
@@ -925,6 +927,11 @@ namespace Mono.CSharp {
 
 		#region IMemberContext Members
 
+		public string GetSignatureForError ()
+		{
+			return MemberContext.GetSignatureForError ();
+		}
+
 		public bool IsObsolete {
 			get {
 				// Disables obsolete checks when probing is on
@@ -990,7 +997,7 @@ namespace Mono.CSharp {
 			return a;
 		}
 
-		#region IResolveContext Members
+		#region IMemberContext Members
 
 		public Type CurrentType {
 			get { return null; }
@@ -1004,8 +1011,9 @@ namespace Mono.CSharp {
 			get { return RootContext.ToplevelTypes; }
 		}
 
-		public DeclSpace DeclContainer {
-			get { return RootContext.ToplevelTypes; }
+		public string GetSignatureForError ()
+		{
+			return "<module>";
 		}
 
 		public bool IsObsolete {

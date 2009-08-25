@@ -295,7 +295,7 @@ namespace Mono.CSharp {
 			retval.AddAssemblyReference (assembly);
 		}
 
-		public override void Error_NamespaceDoesNotExist(Location loc, string name)
+		public override void Error_NamespaceDoesNotExist (Location loc, string name)
 		{
 			Report.Error (400, loc, "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
 				name);
@@ -1309,7 +1309,7 @@ namespace Mono.CSharp {
 			return ns.ToString ();
 		}
 
-		#region IResolveContext Members
+		#region IMemberContext Members
 
 		public Type CurrentType {
 			get { return SlaveDeclSpace.CurrentType; }

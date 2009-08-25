@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 				this.tc = tc;
 			}
 
-			#region IResolveContext Members
+			#region IMemberContext Members
 
 			public Type CurrentType {
 				get { return tc.Parent.CurrentType; }
@@ -196,6 +196,11 @@ namespace Mono.CSharp {
 
 			public bool IsStatic {
 				get { return tc.IsStatic; }
+			}
+
+			public string GetSignatureForError ()
+			{
+				throw new NotImplementedException ();
 			}
 
 			public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
@@ -4813,7 +4818,7 @@ namespace Mono.CSharp {
 
 			if (block != null) {
 				if (block.Resolve (null, bc, Parameters, this)) {
-					EmitContext ec = CreateEmitContext (null);
+					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType);
 					ec.With (EmitContext.Options.ConstructorScope, true);
 
 					ec.ReturnLabel = bc.ReturnLabel;
@@ -4890,9 +4895,7 @@ namespace Mono.CSharp {
 
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
-			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (this, ig_, TypeManager.void_type);
-			return ec;
+			throw new NotImplementedException ();
 		}
 
 		public bool IsExcluded()
@@ -5145,8 +5148,7 @@ namespace Mono.CSharp {
 				if (implementing != null)
 					parent_method = implementing;
 
-				EmitContext ec = method.CreateEmitContext (null);
-				if (!GenericMethod.DefineType (ec.MemberContext, builder, parent_method, is_override))
+				if (!GenericMethod.DefineType (GenericMethod, builder, parent_method, is_override))
 					return false;
 			}
 
@@ -5207,9 +5209,9 @@ namespace Mono.CSharp {
 
 			ToplevelBlock block = method.Block;
 			if (block != null) {
-				EmitContext ec = method.CreateEmitContext (builder.GetILGenerator ());
-				BlockContext bc = new BlockContext (ec.MemberContext, block, method.ReturnType);
+				BlockContext bc = new BlockContext ((IMemberContext) method, block, method.ReturnType);
 				if (block.Resolve (null, bc, method.ParameterInfo, method)) {
+					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator ());
 					ec.ReturnLabel = bc.ReturnLabel;
 					ec.HasReturnLabel = bc.HasReturnLabel;
 
@@ -6068,6 +6070,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public EmitContext CreateEmitContext (ILGenerator ig)
+		{
+			return new EmitContext (this, ig, ReturnType);
+		}
+
 		public bool IsExcluded ()
 		{
 			return false;
@@ -6093,7 +6100,6 @@ namespace Mono.CSharp {
 
 		public abstract ParametersCompiled ParameterInfo { get ; }
 		public abstract Type ReturnType { get; }
-		public abstract EmitContext CreateEmitContext (ILGenerator ig);
 
 		#endregion
 
@@ -6453,12 +6459,6 @@ namespace Mono.CSharp {
 				get {
 					return method;
 				}
-			}
-
-			public override EmitContext CreateEmitContext (ILGenerator ig)
-			{
-				return new EmitContext (this,
-					ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
@@ -7308,12 +7308,6 @@ namespace Mono.CSharp {
 				get {
 					return TypeManager.void_type;
 				}
-			}
-
-			public override EmitContext CreateEmitContext (ILGenerator ig)
-			{
-				return new EmitContext (
-					this, ig, ReturnType);
 			}
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
