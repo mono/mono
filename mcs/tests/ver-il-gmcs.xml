@@ -11724,6 +11724,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-457.cs">
+    <type name="Program">
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
