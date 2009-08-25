@@ -250,10 +250,13 @@ namespace Mono.CSharp {
 		///   Resolve the constraints - but only resolve things into Expression's, not
 		///   into actual types.
 		/// </summary>
-		public bool Resolve (IMemberContext ec, TypeParameter tp)
+		public bool Resolve (MemberCore ec, TypeParameter tp)
 		{
 			if (resolved)
 				return true;
+
+			if (ec == null)
+				return false;
 
 			iface_constraints = new ArrayList (2);	// TODO: Too expensive allocation
 			type_param_constraints = new ArrayList ();
@@ -313,11 +316,11 @@ namespace Mono.CSharp {
 				if ((expr == null) || (expr.Type == null))
 					return false;
 
-				if (!ec.CurrentTypeDefinition.IsAccessibleAs (fn.Type)) {
+				if (!ec.IsAccessibleAs (fn.Type)) {
 					Report.SymbolRelatedToPreviousError (fn.Type);
 					Report.Error (703, loc,
 						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
-						fn.GetSignatureForError (), ec.CurrentTypeDefinition.GetSignatureForError ());
+						fn.GetSignatureForError (), ec.GetSignatureForError ());
 					return false;
 				}
 
@@ -899,7 +902,7 @@ namespace Mono.CSharp {
 		///   check that they're the same.
 		///   con
 		/// </summary>
-		public bool UpdateConstraints (IMemberContext ec, Constraints new_constraints)
+		public bool UpdateConstraints (MemberCore ec, Constraints new_constraints)
 		{
 			if (type == null)
 				throw new InvalidOperationException ();
@@ -1483,8 +1486,15 @@ namespace Mono.CSharp {
 			if (atype.IsGenericParameter) {
 				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
 				if (agc != null) {
-					if (agc is Constraints)
-						((Constraints) agc).Resolve (ec, null);
+					if (agc is Constraints) {
+						// FIXME: No constraints can be resolved here, we are in
+						// completely wrong/different context. This path is hit
+						// when resolving base type of unresolved generic type
+						// with constraints. We are waiting with CheckConsttraints
+						// after type-definition but not in this case
+						if (!((Constraints) agc).Resolve (null, null))
+							return true;
+					}
 					is_class = agc.IsReferenceType;
 					is_struct = agc.IsValueType;
 				} else {
@@ -1846,7 +1856,12 @@ namespace Mono.CSharp {
 							MemberFilter filter, object criteria)
 		{
 			throw new Exception ();
-		}		
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return base.GetSignatureForError () + parameters.GetSignatureForError ();
+		}
 
 		public override MemberCache MemberCache {
 			get {

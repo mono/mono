@@ -1,5 +1,10 @@
 2009-08-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #533912
+	* generic.cs: Use correct context for constraints resolving.
+
+2009-08-25  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #532630
 	* driver.cs: Trim conditional symbols.
 
