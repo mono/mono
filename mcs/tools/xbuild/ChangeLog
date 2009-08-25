@@ -1,3 +1,11 @@
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #533903.
+	* xbuild/Microsoft.Common.targets: Support building projects
+	directly from command line. Builds referenced projects. Honors
+	$(BuildingSolutionFile) and $(BuildingInsideVisualStudio) now.
+	Also, clean referenced projects.
+
 2009-08-21  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #531926
