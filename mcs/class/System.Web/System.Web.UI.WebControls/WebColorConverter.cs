@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
 							return c;
 						}
 
-						throw new Exception(s + " is not a valid color value", e);
+						throw new HttpException(s + " is not a valid color value or name (make sure libgdiplus is installed)");
 					}
 
 					catch (System.OverflowException e) 

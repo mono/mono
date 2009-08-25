@@ -1,3 +1,9 @@
+2009-08-25  Marek Habersack  <mhabersack@novell.com>
+
+	* WebColorConverter.cs: inform the user that the might need to
+	check if libgdiplus is installed when parsing a color name
+	fails. Fixes bug #533749
+
 2009-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Menu.cs: separator image is rendered next to the item in
