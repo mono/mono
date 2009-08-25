@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="constant.cs">
     </Compile>
+    <Compile Include="context.cs" />
     <Compile Include="convert.cs">
     </Compile>
     <Compile Include="dynamic.cs" />

@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="convert.cs">
     </Compile>
+    <Compile Include="context.cs" />
     <Compile Include="dynamic.cs" />
     <Compile Include="eval.cs" />
     <Compile Include="lambda.cs">

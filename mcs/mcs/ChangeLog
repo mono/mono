@@ -1,5 +1,11 @@
 2009-08-25  Marek Safar  <marek.safar@gmail.com>
 
+	* context.cs: New file.
+	
+	* *.exe.sources, *.csproj: Updated.
+
+2009-08-25  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, parameter.cs, decl.cs, statement.cs, namespace.cs,
 	class.cs, generic-mcs.cs, codegen.cs: Add GetSignatureForError to
 	IMembercontext, some small cleanups.
