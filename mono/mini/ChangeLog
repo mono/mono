@@ -1,5 +1,10 @@
 2009-08-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_exception_debug_info): Emit ei->flags too.
+
+	* aot-runtime.c (decode_exception_debug_info): Decode ei->flags from the
+	saved info.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
 
 	* aot-runtime.c aot-compiler.c: Emit exception causes fully so we don't
