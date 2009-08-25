@@ -1,5 +1,10 @@
 2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_vtable_general): Verify the resulting vtable
+	for holes or bad methods. Fixes #525314.
+
+2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (setup_interface_offsets): Don't allocate slot
 	for the same interface multiple times. This creates bubbles
 	that waster space and make vtable verification harder.
