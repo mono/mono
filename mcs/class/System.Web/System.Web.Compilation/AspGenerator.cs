@@ -859,6 +859,17 @@ namespace System.Web.Compilation
 			if (exception != null || !StrUtils.StartsWith (newdir, HttpRuntime.AppDomainAppPath))
 				throw new ParseException (Location, "Files above the application's root directory cannot be included.");
 		}
+
+		string ChopOffTagStart (ILocation location, string content, string tagid)
+		{
+			string tagstart = '<' + tagid;
+			if (content.StartsWith (tagstart)) {
+				TextParsed (location, tagstart);
+				content = content.Substring (tagstart.Length);
+			}
+
+			return content;
+		}
 		
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
@@ -904,7 +915,7 @@ namespace System.Web.Compilation
 				{
 					string plainText = location.PlainText;
 					if (!ProcessTagsInAttributes (location, tagid, attributes, TagType.Tag))
-						TextParsed (location, plainText);
+						TextParsed (location, ChopOffTagStart (location, plainText, tagid));
 				}
 				break;
 			case TagType.Close:
@@ -919,7 +930,7 @@ namespace System.Web.Compilation
 				if (!ProcessTag (location, tagid, attributes, tagtype, out tagIgnored) && !tagIgnored) {
 					string plainText = location.PlainText;
 					if (!ProcessTagsInAttributes (location, tagid, attributes, TagType.SelfClosing))
-						TextParsed (location, plainText);
+						TextParsed (location, ChopOffTagStart (location, plainText, tagid));
 				} else if (stack.Count != count) {
 					CloseControl (tagid);
 				}
@@ -1359,7 +1370,14 @@ namespace System.Web.Compilation
 						Parser.VerbatimID = "script";
 						javascript = true;
 					}
-					TextParsed (location, location.PlainText);
+					string content = location.PlainText;
+					/* HACK, HACK, HACK */
+					if (content.StartsWith ("<script")) {
+						TextParsed (location, "<script");
+						content = content.Substring (7);
+					}
+
+					TextParsed (location, content);
 					return true;
 				}
 			}
