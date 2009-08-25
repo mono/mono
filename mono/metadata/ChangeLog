@@ -1,5 +1,15 @@
 2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (setup_interface_offsets): Don't allocate slot
+	for the same interface multiple times. This creates bubbles
+	that waster space and make vtable verification harder.
+
+	The same interface get a slot multiple times since we need
+	to get the closure of all implemented interfaces, which means
+	the same interface is reported multiple times.
+
+2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_verifier_verify_class): Don't check the fields
 	of generic instances since the context on which they got expanded
 	might lead to false positives.
