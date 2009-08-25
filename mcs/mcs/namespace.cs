@@ -1323,10 +1323,6 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.CurrentTypeParameters; }
 		}
 
-		public DeclSpace DeclContainer {
-			get { return SlaveDeclSpace; }
-		}
-
 		public bool IsObsolete {
 			get { return SlaveDeclSpace.IsObsolete; }
 		}

@@ -832,10 +832,6 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
-		public DeclSpace DeclContainer {
-			get { return Parent; }
-		}
-
 		public bool IsObsolete {
 			get {
 				if (GetObsoleteAttribute () != null)

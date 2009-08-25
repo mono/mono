@@ -182,10 +182,6 @@ namespace Mono.CSharp {
 				get { return tc.Parent.CurrentTypeDefinition; }
 			}
 
-			public DeclSpace DeclContainer {
-				get { return tc.Parent; }
-			}
-
 			public bool IsObsolete {
 				get { return tc.IsObsolete; }
 			}
