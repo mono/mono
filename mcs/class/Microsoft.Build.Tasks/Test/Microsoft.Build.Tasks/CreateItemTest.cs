@@ -199,7 +199,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 					<P1>FooP1</P1>
 					<P2>FooP2</P2>
 					<C>@(IG)</C>
-					<P3>@(Nine)</P3>
+					<P3>@(Nine->'%(Identity)')</P3>
 				</PropertyGroup>
 				<ItemGroup>
 					<Nine Include=""Nine""/>
@@ -247,7 +247,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual ("Eight", include[3].FinalItemSpec, "A#6");
 			Assert.AreEqual ("Nine", include[4].FinalItemSpec, "A#7");
 
-			testLogger.CheckLoggedMessageHead ("C: Abc;FooP1;FooP2;Eight;Nine", "A#10");
+			testLogger.CheckLoggedMessageHead ("C: Abc;FooP1;FooP2;Eight;Nine", "A#9");
 			testLogger.CheckLoggedMessageHead ("items: Abc;FooP1;FooP2;Eight;Nine", "A#10");
 
 		}

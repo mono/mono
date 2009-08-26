@@ -1,5 +1,11 @@
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets: Remove dummy
+	@(_TargetPathItem), since we support item refs with transforms
+	as a property value.
+
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #533903.
 	* xbuild/Microsoft.Common.targets: Support building projects
 	directly from command line. Builds referenced projects. Honors

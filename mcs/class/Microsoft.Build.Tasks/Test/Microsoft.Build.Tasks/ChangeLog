@@ -1,5 +1,10 @@
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
+	* CreateItemTest.cs (TestVariableExpansion): Update test to
+	use a transform with a item reference in a property.
+
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
 	* CreateItemTest.cs (TestVariableExpansion): New.
 	* CreatePropertyTest.cs (TestExecution2): New.
 

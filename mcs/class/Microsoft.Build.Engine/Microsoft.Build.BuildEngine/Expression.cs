@@ -97,7 +97,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 
-			CopyToExpressionCollection (p3);
+			CopyToExpressionCollection (p3, allowItems);
 		}
 
 		void Prepare (List <ArrayList> l, int length)
@@ -106,12 +106,14 @@ namespace Microsoft.Build.BuildEngine {
 				l.Add (null);
 		}
 		
-		void CopyToExpressionCollection (List <ArrayList> lists)
+		void CopyToExpressionCollection (List <ArrayList> lists, bool allowItems)
 		{
 			for (int i = 0; i < lists.Count; i++) {
 				foreach (object o in lists [i]) {
 					if (o is string)
 						expressionCollection.Add (Utilities.Unescape ((string) o));
+					else if (!allowItems && o is ItemReference)
+						expressionCollection.Add (((ItemReference) o).OriginalString);
 					else if (o is IReference)
 						expressionCollection.Add ((IReference) o);
 				}
@@ -122,13 +124,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		ArrayList SplitItems (string text, bool allowItems)
 		{
-			if (!allowItems) {
-				// FIXME: it's probably larger than 1
-				ArrayList l = new ArrayList ();
-				l.Add (text);
-				return l;
-			}
-
 			ArrayList phase1 = new ArrayList ();
 			Match m;
 			m = ItemRegex.Match (text);
@@ -145,7 +140,8 @@ namespace Microsoft.Build.BuildEngine {
 				if (m.Groups [ItemRegex.GroupNumberFromName ("has_separator")].Success)
 					separator = m.Groups [ItemRegex.GroupNumberFromName ("separator")].Value;
 
-				ir = new ItemReference (name, transform, separator, m.Groups [0].Index, m.Groups [0].Length);
+				ir = new ItemReference (text.Substring (m.Groups [0].Index, m.Groups [0].Length),
+						name, transform, separator, m.Groups [0].Index, m.Groups [0].Length);
 				phase1.Add (ir);
 				m = m.NextMatch ();
 			}
