@@ -1,3 +1,7 @@
+2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerNode.cs : use ulong as same as Welcome message value.
+
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Constants.cs : p2p constants should rather go here.

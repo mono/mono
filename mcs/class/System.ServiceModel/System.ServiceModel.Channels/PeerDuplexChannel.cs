@@ -69,12 +69,14 @@ namespace System.ServiceModel.Channels
 			public RemotePeerStatus Status { get; set; }
 			public LocalPeerReceiver Instance { get; set; }
 			public IPeerConnectorClient Channel { get; set; }
+			public ulong NodeId { get; set; }
 		}
 
 		class LocalPeerReceiver : IPeerConnectorContract
 		{
 			List<PeerNodeAddress> connections = new List<PeerNodeAddress> ();
 			AutoResetEvent connect_handle = new AutoResetEvent (false);
+			public event Action<WelcomeInfo> WelcomeReceived;
 
 			public LocalPeerReceiver (PeerDuplexChannel owner)
 			{
@@ -93,7 +95,7 @@ namespace System.ServiceModel.Channels
 				// FIXME: check and reject if inappropriate. For example, maximum connection exceeded.
 				using (var octx = new OperationContextScope ((IContextChannel) ch)) {
 					OperationContext.Current.OutgoingMessageHeaders.To = new Uri (Constants.WsaAnonymousUri);
-					ch.Welcome (new WelcomeInfo () { NodeId = connect.NodeId });
+					ch.Welcome (new WelcomeInfo () { NodeId = owner.node.NodeId });
 				}
 			}
 
@@ -115,6 +117,8 @@ Console.WriteLine ("##### Waiting for Welcome or Reject ...");
 			public void Welcome (WelcomeInfo welcome)
 			{
 Console.WriteLine ("##### Welcome message received");
+				if (WelcomeReceived != null)
+					WelcomeReceived (welcome);
 				connect_handle.Set ();
 			}
 
@@ -195,6 +199,10 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 		IPeerConnectorClient CreateInnerClient (RemotePeerConnection conn)
 		{
 			conn.Instance = new LocalPeerReceiver (this);
+			conn.Instance.WelcomeReceived += delegate (WelcomeInfo welcome) {
+				conn.NodeId = welcome.NodeId;
+				// FIXME: handle referrals
+				};
 
 			// FIXME: pass more setup parameters
 			if (channel_factory == null) {
@@ -338,7 +346,7 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 
 			listener_host.Open (timeout - (DateTime.Now - start));
 
-			var nid = new Random ().Next (0, int.MaxValue);
+			var nid = (ulong) new Random ().Next (0, int.MaxValue);
 			var ea = new EndpointAddress (uri);
 			var pna = new PeerNodeAddress (ea, new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (name).AddressList));
 			local_node_address = pna;

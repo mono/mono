@@ -1,5 +1,11 @@
 2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : in the Welcome response, return the NodeId
+	  of the receiver, not the requestor. It resolved the issue that
+	  .NET client didn't send further messages to mono server.
+
+2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs : remove some comment on [MC-PRCH] behavior.
 	* TcpDuplexSessionChannel.cs, TcpBinaryFrameManager.cs,
 	  TcpReplyChannel.cs, TcpRequestChannel.cs,

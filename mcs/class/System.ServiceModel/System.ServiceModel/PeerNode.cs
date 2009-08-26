@@ -49,7 +49,7 @@ namespace System.ServiceModel
 
 		internal string MeshId { get; private set; }
 
-		internal int NodeId { get; set; }
+		internal ulong NodeId { get; set; }
 
 		internal bool IsOpen {
 			get { return RegisteredId != null; }
