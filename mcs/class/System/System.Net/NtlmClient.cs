@@ -37,22 +37,13 @@ namespace System.Net
 {
 	class NtlmClient : IAuthenticationModule
 	{
-		static Type ntlmAuthType;
 		IAuthenticationModule authObject;
 
-		static NtlmClient ()
-		{
-#if !MONOTOUCH
-			Assembly ass = Assembly.Load (Consts.AssemblyMono_Http);
-			if (ass != null)
-				ntlmAuthType = ass.GetType ("Mono.Http.NtlmClient", false);
-#endif
-		}
-		
 		public NtlmClient ()
 		{
-			if (ntlmAuthType != null)
-				authObject = (IAuthenticationModule) Activator.CreateInstance (ntlmAuthType);
+#if SECURITY_DEP
+			authObject = new Mono.Http.NtlmClient ();
+#endif
 		}
 	
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials) 

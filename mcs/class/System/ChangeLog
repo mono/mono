@@ -1,3 +1,14 @@
+2009-08-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* System.dll.sources:
+	* monotouch_System.dll.sources:
+	* System20.csproj: add Mono.Http/NtmlClient.cs
+
+	* Mono.Http/ChangeLog: New file.
+	* Mono.Http/NtlmClient.cs: copied from Mono.Http.
+	* System.Net/NtlmClient.cs: use Mono.Http.NtmlClient from System
+	instead of dynamically loading the one in Mono.Http.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* System.dll.sources: Adding ParallelFx files.

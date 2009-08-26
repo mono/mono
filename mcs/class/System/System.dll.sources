@@ -28,6 +28,7 @@ Microsoft.Win32/UserPreferenceChangedEventArgs.cs
 Microsoft.Win32/UserPreferenceChangedEventHandler.cs
 Microsoft.Win32/UserPreferenceChangingEventArgs.cs
 Microsoft.Win32/UserPreferenceChangingEventHandler.cs
+Mono.Http/NtlmClient.cs
 System.CodeDom/CodeArgumentReferenceExpression.cs
 System.CodeDom/CodeArrayCreateExpression.cs
 System.CodeDom/CodeArrayIndexerExpression.cs

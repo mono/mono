@@ -236,6 +236,7 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
+    <Compile Include="Mono.Http\NtlmClient.cs" />
     <Compile Include="System.CodeDom.Compiler\GeneratedCodeAttribute.cs" />
     <Compile Include="System.CodeDom\CodeArgumentReferenceExpression.cs" />
     <Compile Include="System.CodeDom\CodeArrayCreateExpression.cs" />
