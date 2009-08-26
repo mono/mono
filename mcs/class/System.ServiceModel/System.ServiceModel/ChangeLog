@@ -1,5 +1,11 @@
 2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SilverlightClientConfigLoader.cs : add (incomplete) binary
+	  encoder support at config layer. see:
+	  http://lists.ximian.com/pipermail/mono-list/2009-August/043245.html
+
+2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerNode.cs : use ulong as same as Welcome message value.
 
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>

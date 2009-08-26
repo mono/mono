@@ -74,11 +74,24 @@ namespace System.ServiceModel
 						reader.ReadStartElement ();
 						for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 							if (reader.NodeType != XmlNodeType.Element ||
-							    reader.LocalName != "basicHttpBinding" ||
 							    reader.IsEmptyElement) {
 								reader.Skip ();
 								continue;
 							}
+							switch (reader.LocalName) {
+							case "customBinding":
+							reader.ReadStartElement ();
+							for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+								if (reader.NodeType != XmlNodeType.Element ||
+								    reader.LocalName != "binding") {
+									reader.Skip ();
+									continue;
+								}
+								ret.Bindings.CustomBinding.Add (ReadCustomBinding (reader));
+							}
+							reader.ReadEndElement ();
+							break;
+							case "basicHttpBinding":
 							reader.ReadStartElement ();
 							for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 								if (reader.NodeType != XmlNodeType.Element ||
@@ -89,6 +102,8 @@ namespace System.ServiceModel
 								ret.Bindings.BasicHttpBinding.Add (ReadBasicHttpBinding (reader));
 							}
 							reader.ReadEndElement ();
+							break;
+							}
 						}
 						reader.ReadEndElement ();
 						break;
@@ -113,6 +128,47 @@ namespace System.ServiceModel
 			// out <configuration>
 
 			return ret;
+		}
+
+		CustomBindingConfiguration ReadCustomBinding (XmlReader reader)
+		{
+			string a;
+			var b = new CustomBindingConfiguration ();
+			if ((a = reader.GetAttribute ("name")) != null)
+				b.Name = a;
+
+			if (!reader.IsEmptyElement) {
+				reader.ReadStartElement ();
+				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+					if (reader.NodeType != XmlNodeType.Element) {
+						reader.Skip ();
+						continue;
+					}
+					switch (reader.LocalName) {
+					// FIXME: binary encoder must be included in 2.1 profile.
+					// Since they are internal only, they have to be specially handled by linker.
+//					case "binaryMessageEncoding":
+//						b.MessageEncoding = new BinaryMessageEncodingBindingElement ();
+//						reader.Skip ();
+//						break;
+					case "textMessageEncoding":
+						b.MessageEncoding = new TextMessageEncodingBindingElement ();
+						reader.Skip ();
+						break;
+					case "httpTransport":
+						b.Transport = new HttpTransportBindingElement ();
+						reader.Skip ();
+						break;
+					case "httpsTransport":
+						b.Transport = new HttpsTransportBindingElement ();
+						reader.Skip ();
+						break;
+					}
+				}
+				reader.ReadEndElement ();
+			}
+			
+			return b;
 		}
 
 		BasicHttpBindingConfiguration ReadBasicHttpBinding (XmlReader reader)
@@ -183,7 +239,7 @@ namespace System.ServiceModel
 				s.Name = name;
 				EndpointConfiguration e = GetEndpointConfiguration (name);
 				s.Address = new EndpointAddress (e.Address);
-				s.Binding = GetConfiguredHttpBinding (e).Binding;
+				s.Binding = GetConfiguredHttpBinding (e).CreateBinding ();
 				return s;
 			}
 
@@ -198,12 +254,12 @@ namespace System.ServiceModel
 				return Client.Endpoints [0];
 			}
 
-			BasicHttpBindingConfiguration GetConfiguredHttpBinding (EndpointConfiguration endpoint)
+			BindingConfiguration GetConfiguredHttpBinding (EndpointConfiguration endpoint)
 			{
 				if (Bindings.BasicHttpBinding.Count == 0)
 					throw new InvalidOperationException ("Binding configuration can be acquired only after loading is done.");
 
-				foreach (var b in Bindings.BasicHttpBinding)
+				foreach (var b in Bindings.All ())
 					if (b.Name == endpoint.BindingConfiguration)
 						return b;
 				return Bindings.BasicHttpBinding [0];
@@ -222,12 +278,29 @@ namespace System.ServiceModel
 			public BindingsConfiguration ()
 			{
 				BasicHttpBinding = new List<BasicHttpBindingConfiguration> ();
+				CustomBinding = new List<CustomBindingConfiguration> ();
 			}
 
 			public IList<BasicHttpBindingConfiguration> BasicHttpBinding { get; private set; }
+			public IList<CustomBindingConfiguration> CustomBinding { get; private set; }
+
+			public IEnumerable<BindingConfiguration> All ()
+			{
+				foreach (var b in BasicHttpBinding)
+					yield return b;
+				foreach (var b in CustomBinding)
+					yield return b;
+			}
 		}
 
-		public class BasicHttpBindingConfiguration
+		public abstract class BindingConfiguration
+		{
+			public string Name { get; set; }
+
+			public abstract Binding CreateBinding ();
+		}
+
+		public class BasicHttpBindingConfiguration : BindingConfiguration
 		{
 			public BasicHttpBindingConfiguration ()
 			{
@@ -235,11 +308,14 @@ namespace System.ServiceModel
 				Security = new BasicHttpSecurityConfiguration (Binding.Security);
 			}
 
-			public BasicHttpBinding Binding { get; private set; }
+			BasicHttpBinding Binding { get; set; }
+
+			public override Binding CreateBinding ()
+			{
+				return Binding;
+			}
 
 			public BasicHttpSecurityConfiguration Security { get; private set; }
-
-			public string Name { get; set; }
 
 			public long MaxBufferPoolSize {
 				get { return Binding.MaxBufferPoolSize; }
@@ -282,6 +358,17 @@ namespace System.ServiceModel
 				get { return Security.Mode; }
 				set { Security.Mode = value; }
 			}
+		}
+
+		public class CustomBindingConfiguration : BindingConfiguration
+		{
+			public override Binding CreateBinding ()
+			{
+				return new CustomBinding (MessageEncoding, Transport);
+			}
+
+			public MessageEncodingBindingElement MessageEncoding { get; set; }
+			public TransportBindingElement Transport { get; set; }
 		}
 
 		public class ClientConfiguration
