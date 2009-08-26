@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -95,6 +96,8 @@ namespace System.ServiceModel.Channels
 				// FIXME: check and reject if inappropriate. For example, maximum connection exceeded.
 				using (var octx = new OperationContextScope ((IContextChannel) ch)) {
 					OperationContext.Current.OutgoingMessageHeaders.To = new Uri (Constants.WsaAnonymousUri);
+					if (!owner.peers.Any (p => p.Address.EndpointAddress.Equals (connect.Address.EndpointAddress)))
+						owner.peers.Add (new RemotePeerConnection (connect.Address));
 					ch.Welcome (new WelcomeInfo () { NodeId = owner.node.NodeId });
 				}
 			}
@@ -217,7 +220,8 @@ namespace System.ServiceModel.Channels
 			// FIXME: give max buffer size
 			var mb = message.CreateBufferedCopy (0x10000);
 
-			foreach (var pc in peers) {
+			for (int i = 0; i < peers.Count; i++) {
+				var pc = peers [i];
 				message = mb.CreateMessage ();
 
 				if (pc.Status == RemotePeerStatus.None) {
