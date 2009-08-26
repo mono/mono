@@ -1,3 +1,12 @@
+2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerDuplexChannel.cs : remove some comment on [MC-PRCH] behavior.
+	* TcpDuplexSessionChannel.cs, TcpBinaryFrameManager.cs,
+	  TcpReplyChannel.cs, TcpRequestChannel.cs,
+	  NamedPipeReplyChannel.cs, NamedPipeRequestChannel.cs:
+	  rename EndRecord handling method to appropriate one.
+	  Write EndRecord from recipient too.
+
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerDuplexChannel.cs : add PeerFlooder header (see comment).

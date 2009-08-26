@@ -231,12 +231,11 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 
 				pc.Channel.OperationTimeout = timeout - (DateTime.Now - start);
 
+				// see [MC-PRCH] 3.2.4.1
 				if (message.Headers.MessageId == null)
 					message.Headers.MessageId = new UniqueId ();
 				message.Headers.Add (MessageHeader.CreateHeader ("PeerTo", Constants.NetPeer, RemoteAddress.Uri));
 				message.Headers.Add (MessageHeader.CreateHeader ("PeerVia", Constants.NetPeer, RemoteAddress.Uri));
-				// FIXME: it is somehow required to get accepted a bit at .NET service, but no idea why ... 
-				// (.NET client seems to send it according to service trace)
 				message.Headers.Add (MessageHeader.CreateHeader ("FloodMessage", Constants.NetPeer, "PeerFlooder"));
 				pc.Channel.SendMessage (message);
 			}

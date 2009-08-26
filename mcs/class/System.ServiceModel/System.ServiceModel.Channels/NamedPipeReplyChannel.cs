@@ -60,8 +60,7 @@ namespace System.ServiceModel.Channels
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			var msg = frame.ReadUnsizedMessage (timeout);
-			// It somehow receives EndRecord now ...
-			frame.ProcessEndRecordRecipient ();
+			frame.ReadEndRecord ();
 			return new NamedPipeRequestContext (this, msg);
 		}
 
@@ -97,7 +96,7 @@ namespace System.ServiceModel.Channels
 
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
-				owner.frame.ProcessEndRecordInitiator ();
+				owner.frame.WriteEndRecord ();
 				owner.server.Close ();
 				owner.server = null;
 			}
@@ -108,12 +107,7 @@ namespace System.ServiceModel.Channels
 			try {
 				DateTime start = DateTime.Now;
 				context = ReceiveRequest (timeout);
-				if (context != null)
-					return true;
-				// received EndRecord, so close the session and return false instead.
-				// (Closing channel here might not be a good idea, but right now I have no better way.)
-				Close (timeout - (DateTime.Now - start));
-				return false;
+				return context != null;
 			} catch (TimeoutException) {
 				context = null;
 				return false;

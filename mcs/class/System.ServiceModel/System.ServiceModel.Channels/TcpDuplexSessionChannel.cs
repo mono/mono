@@ -124,7 +124,7 @@ namespace System.ServiceModel.Channels
 
 		void DiscardSession ()
 		{
-			frame.ProcessEndRecordInitiator ();
+			frame.WriteEndRecord ();
 			session = null;
 		}
 
@@ -150,9 +150,6 @@ namespace System.ServiceModel.Channels
 
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
 			frame.WriteSizedMessage (message);
-			// FIXME: should EndRecord be sent here?
-			//if (is_service_side && client.Available > 0)
-			//	frame.ProcessEndRecordRecipient ();
 		}
 		
 		public override Message Receive ()
@@ -208,9 +205,8 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			if (!is_service_side)
-				if (session != null)
-					session.Close (TimeSpan.FromTicks (0));
+			if (session != null)
+				session.Close (TimeSpan.FromTicks (0));
 
 			if (client != null)
 				client.Close ();
@@ -218,9 +214,8 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (!is_service_side)
-				if (session != null)
-					session.Close (timeout);
+			if (session != null)
+				session.Close (timeout);
 
 			if (client != null)
 				client.Close ();

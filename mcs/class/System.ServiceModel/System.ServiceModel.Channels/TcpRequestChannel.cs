@@ -95,11 +95,10 @@ namespace System.ServiceModel.Channels
 
 			frame.WriteUnsizedMessage (input, timeout - (DateTime.Now - start));
 
-			// It somehow sends EndRecord now ...
-			frame.ProcessEndRecordInitiator ();
+			frame.WriteEndRecord ();
 
 			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));
-			frame.ProcessEndRecordRecipient (); // both
+			frame.ReadEndRecord (); // both
 			return ret;
 		}
 	}

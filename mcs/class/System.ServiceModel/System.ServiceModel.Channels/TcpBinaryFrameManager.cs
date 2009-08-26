@@ -383,13 +383,13 @@ namespace System.ServiceModel.Channels
 			s.Flush ();
 		}
 
-		public void ProcessEndRecordInitiator ()
+		public void WriteEndRecord ()
 		{
 			s.WriteByte (EndRecord); // it is required
 			s.Flush ();
 		}
 
-		public void ProcessEndRecordRecipient ()
+		public void ReadEndRecord ()
 		{
 			int b;
 			if ((b = s.ReadByte ()) != EndRecord)
