@@ -1,5 +1,18 @@
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
+	* Expression.cs: Correctly handle a item reference with transform
+	when allowItems is false. If item ref is ignored, then the transform
+	will get incorrectly matched as a metadata ref.
+	* ItemReference.cs (.ctor): Add a @original_string param.
+
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
+	* Utilities.cs (UnescapeFromXml): New. From md.
+	* BuildProperty.cs (.ctor): Unescape xml codes from the InnerXml
+	of the property element.
+
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
 	* BuildProperty.cs (ConvertToString): New.
 	(ConvertoToITaskItemArray): New. Parse the property value.
 	* PropertyReference.cs (ConvertToString): Use BuildProperty's

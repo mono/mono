@@ -44,11 +44,10 @@
 
 		<!-- creating this as a item to use FullPath on it, to build TargetPath -->
 		<_OutDirItem Include="$(OutDir)"/>
-		<_TargetPathItem Include="@(_OutDirItem->'%(FullPath)\$(AssemblyName)$(TargetExt)')" />
 	</ItemGroup>
 
 	<PropertyGroup>
-		<TargetPath>@(_TargetPathItem)</TargetPath>
+		<TargetPath>@(_OutDirItem->'%(FullPath)\$(AssemblyName)$(TargetExt)')</TargetPath>
 	</PropertyGroup>
 
 	<Target Name="PrepareForBuild">

@@ -39,12 +39,14 @@ namespace Microsoft.Build.BuildEngine {
 		Expression	separator;
 		int		start;
 		int		length;
+		string		original_string;
 		
-		public ItemReference (string itemName, string transform, string separator, int start, int length)
+		public ItemReference (string original_string, string itemName, string transform, string separator, int start, int length)
 		{
 			this.itemName = itemName;
 			this.start = start;
 			this.length = length;
+			this.original_string = original_string;
 
 			if (transform != null) {
 				this.transform = new Expression ();
@@ -88,6 +90,10 @@ namespace Microsoft.Build.BuildEngine {
 			get { return separator; }
 		}
 
+		public string OriginalString {
+			get { return original_string; }
+		}
+
 		public int Start {
 			get { return start; }
 		}
@@ -98,8 +104,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public override string ToString ()
 		{
-			//FIXME: transform
-			return "@" + itemName;
+			return original_string;
 		}
 	}
 }
