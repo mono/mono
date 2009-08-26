@@ -86,5 +86,46 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual ("12", project.EvaluatedProperties ["ValueSetByTask"].Value, "A4");
 			Assert.AreEqual ("12", project.EvaluatedProperties ["ValueSetByTask"].FinalValue, "A5");
 		}
+
+		[Test]
+		public void TestExecution2 () {
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<ItemGroup>
+					<Second Include=""Abc""/>
+					<IG Include=""@(Second)""/></ItemGroup>
+					<PropertyGroup>
+						<C>@(IG)</C>
+					</PropertyGroup>
+					<Target Name='1'>
+						<CreateProperty Value='$(C)' >
+							<Output
+								TaskParameter='Value'
+								PropertyName='Value'
+							/>
+							<Output
+								TaskParameter='ValueSetByTask'
+								PropertyName='ValueSetByTask'
+							/>
+						</CreateProperty>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			Assert.IsTrue (project.Build ("1"), "A1");
+
+			Assert.AreEqual ("Abc", project.EvaluatedProperties["Value"].Value, "A2");
+			Assert.AreEqual ("Abc", project.EvaluatedProperties["Value"].FinalValue, "A3");
+			Assert.AreEqual ("Abc", project.EvaluatedProperties["ValueSetByTask"].Value, "A4");
+			Assert.AreEqual ("Abc", project.EvaluatedProperties["ValueSetByTask"].FinalValue, "A5");
+			Assert.AreEqual ("@(IG)", project.EvaluatedProperties["C"].FinalValue, "A6");
+		}
+
 	}
 }

@@ -41,15 +41,19 @@
 
 	<ItemGroup>
 		<IntermediateAssembly Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)" />
+
+		<!-- creating this as a item to use FullPath on it, to build TargetPath -->
+		<_OutDirItem Include="$(OutDir)"/>
+		<_TargetPathItem Include="@(_OutDirItem->'%(FullPath)\$(AssemblyName)$(TargetExt)')" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<TargetPath Include="$(OutDir)" />
-	</ItemGroup>
+	<PropertyGroup>
+		<TargetPath>@(_TargetPathItem)</TargetPath>
+	</PropertyGroup>
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
-		
+
 		<MakeDir 
 			Directories="$(OutDir);$(IntermediateOutputPath)"
 		/>
@@ -118,12 +122,19 @@
 		Name="AssignProjectConfigurations"
 		Condition="'@(ProjectReference)' != ''">
 
+		<!-- assign configs if building a solution file -->
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
-			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)">
+			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)"
+			Condition="'$(BuildingSolutionFile)' == 'true'">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
+
+		<!-- Else, just -->
+		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true'">
+			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfiguration"/>
+		</CreateItem>
 
 	</Target>
 
@@ -132,12 +143,22 @@
 		Name="ResolveProjectReferences"
 		DependsOnTargets="AssignProjectConfigurations"
 	>
-		<!-- FIXME: don't build if building a .sln, since project ref would already have been built -->
+		<!-- If building from a .sln.proj or from IDE, then referenced projects have already
+		     been built, so just get the target paths -->
 		<MSBuild
 			Projects="@(ProjectReferenceWithConfiguration)"
 			Targets="GetTargetPath"
 			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
-			Condition="'@(ProjectReferenceWithConfiguration)' != ''">
+			Condition="'@(ProjectReferenceWithConfiguration)' != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
+
+			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
+		</MSBuild>
+
+		<!-- Building a project directly, build the referenced the projects also -->
+		<MSBuild
+			Projects="@(ProjectReferenceWithConfiguration)"
+			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
+			Condition="'@(ProjectReferenceWithConfiguration)' != '' and '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' ">
 
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
@@ -370,7 +391,7 @@
 		</Copy>
 	</Target>
 
-	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
+	<Target Name="GetTargetPath" Outputs="$(TargetPath)"/>
 
 	<Target Name="GetCopyToOutputDirectoryItems"
 		Outputs="@(AllItemsFullPathWithTargetPath)"
@@ -496,6 +517,7 @@
 	<PropertyGroup>
 		<CleanDependsOn>
 			BeforeClean;
+			CleanReferencedProjects;
 			CoreClean;
 			AfterClean
 		</CleanDependsOn>
@@ -518,6 +540,18 @@
 		<ReadLinesFromFile File="$(BaseIntermediateOutputPath)$(CleanFile)">
 			<Output TaskParameter="Lines" ItemName="FileWrites"/>
 		</ReadLinesFromFile>
+	</Target>
+
+	<Target Name="CleanReferencedProjects"
+		DependsOnTargets="AssignProjectConfigurations">
+
+		<!-- If building from .sln.proj or from IDE, clean will get handled by them,
+		     else we are building a project directly, from the command line, so
+		     clean the referenced projects -->
+		<MSBuild Projects="@(ProjectReferenceWithConfiguration)"
+			Targets="Clean"
+			Condition=" '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' and '@(ProjectReferenceWithConfiguration)' != ''" />
+
 	</Target>
 
 	<Target Name="Clean" DependsOnTargets="$(CleanDependsOn)"/>

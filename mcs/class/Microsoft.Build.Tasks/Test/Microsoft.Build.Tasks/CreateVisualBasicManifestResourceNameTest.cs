@@ -20,50 +20,50 @@ namespace MonoTests.Microsoft.Build.Tasks
 			string sample_vb_path = Path.Combine ("Test", Path.Combine ("resources", "Sample.vb"));
 			resx_no_culture_files = new string [,] {
 				// With dependent file
-				{ "foo.resx", null, sample_vb_path },
-				{ "foo.resx", "RandomName", sample_vb_path },
+				{ "foo with space.resx", null, sample_vb_path },
+				{ "foo with space.resx", "RandomName", sample_vb_path },
 
-				{ "Test/resources/foo.resx", null, "Sample.vb" },
-				{ "Test/resources/foo.resx", "RandomName", "Sample.vb" },
+				{ "Test/resources/foo with space.resx", null, "Sample.vb" },
+				{ "Test/resources/foo with space.resx", "RandomName", "Sample.vb" },
 
 				// W/o dependent file
-				{ "foo.resx", null, null },
-				{ "foo.resx", "RandomName", null },
+				{ "foo with space.resx", null, null },
+				{ "foo with space.resx", "RandomName", null },
 
-				{ "Test/resources/foo.resx", null, null },
-				{ "Test/resources/foo.resx", "RandomName", null },
+				{ "Test/resources/foo with space.resx", null, null },
+				{ "Test/resources/foo with space.resx", "RandomName", null },
 			};
 
 			resx_with_culture_files = new string [,] {
 				// With dependent file
-				{ "foo.de.resx", null, sample_vb_path },
-				{ "foo.de.resx", "RandomName", sample_vb_path },
+				{ "foo with space.de.resx", null, sample_vb_path },
+				{ "foo with space.de.resx", "RandomName", sample_vb_path },
 
-				{ "Test/resources/foo.de.resx", null, "Sample.vb" },
-				{ "Test/resources/foo.de.resx", "RandomName", "Sample.vb" },
+				{ "Test/resources/foo with space.de.resx", null, "Sample.vb" },
+				{ "Test/resources/foo with space.de.resx", "RandomName", "Sample.vb" },
 
 				// W/o dependent file
-				{ "foo.de.resx", null, null },
-				{ "foo.de.resx", "RandomName", null },
+				{ "foo with space.de.resx", null, null },
+				{ "foo with space.de.resx", "RandomName", null },
 
-				{ "Test/resources/foo.de.resx", null, null },
-				{ "Test/resources/foo.de.resx", "RandomName", null }
+				{ "Test/resources folder/foo with space.de.resx", null, null },
+				{ "Test/resources folder/foo with space.de.resx", "RandomName", null }
 			};
 
 			non_resx_no_culture_files = new string [,] {
-				{ "foo.txt", null, null },
-				{ "foo.txt", "RandomName", null },
+				{ "foo with space.txt", null, null },
+				{ "foo with space.txt", "RandomName", null },
 
-				{ "Test/resources/foo.txt", null, null },
-				{ "Test/resources/foo.txt", "RandomName", null }
+				{ "Test/resources folder/foo with space.txt", null, null },
+				{ "Test/resources folder/foo with space.txt", "RandomName", null }
 			};
 
 			non_resx_with_culture_files = new string [,] {
-				{ "foo.de.txt", null, null },
-				{ "foo.de.txt", "RandomName", null },
+				{ "foo with space.de.txt", null, null },
+				{ "foo with space.de.txt", "RandomName", null },
 
-				{ "Test/resources/foo.de.txt", null, null },
-				{ "Test/resources/foo.de.txt", "RandomName", null }
+				{ "Test/resources folder/foo with space.de.txt", null, null },
+				{ "Test/resources folder/foo with space.de.txt", "RandomName", null }
 			};
 
 		}
@@ -77,8 +77,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				"Mono.Tests.Sample", "Mono.Tests.Sample",
 
 				// W/o dependent file
-				"foo", "foo" ,
-				"foo", "foo"}, null);
+				"foo with space", "foo with space" ,
+				"foo with space", "foo with space"}, null);
 		}
 
 		[Test]
@@ -90,8 +90,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.Mono.Tests.Sample",
 				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.Mono.Tests.Sample",
 				// W/o dependent file
-				"RN1.RN2.foo", "RN1.RN2.foo",
-				"RN1.RN2.foo", "RN1.RN2.foo"},
+				"RN1.RN2.foo with space", "RN1.RN2.foo with space",
+				"RN1.RN2.foo with space", "RN1.RN2.foo with space"},
 				"RN1.RN2");
 		}
 
@@ -103,8 +103,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				 "Mono.Tests.Sample.de", "Mono.Tests.Sample.de",
 				 "Mono.Tests.Sample.de", "Mono.Tests.Sample.de",
 				// W/o dependent file
-				 "foo.de", "foo.de",
-				 "foo.de", "foo.de" }, null);
+				 "foo with space.de", "foo with space.de",
+				 "foo with space.de", "foo with space.de" }, null);
 		}
 
 		[Test]
@@ -115,8 +115,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				 "RN1.RN2.Mono.Tests.Sample.de", "RN1.RN2.Mono.Tests.Sample.de",
 				 "RN1.RN2.Mono.Tests.Sample.de", "RN1.RN2.Mono.Tests.Sample.de",
 				// W/o dependent file
-				 "RN1.RN2.foo.de", "RN1.RN2.foo.de",
-				 "RN1.RN2.foo.de", "RN1.RN2.foo.de"},
+				 "RN1.RN2.foo with space.de", "RN1.RN2.foo with space.de",
+				 "RN1.RN2.foo with space.de", "RN1.RN2.foo with space.de"},
 				 "RN1.RN2");
 		}
 
@@ -124,16 +124,16 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void TestNonResxNoRootNamespaceWithCulture ()
 		{
 			CheckResourceNames (non_resx_with_culture_files, new string [] {
-				Path.Combine ("de", "foo.txt"), Path.Combine ("de", "foo.txt"),
-				Path.Combine ("de", "foo.txt"), Path.Combine ("de", "foo.txt")}, null);
+				Path.Combine ("de", "foo with space.txt"), Path.Combine ("de", "foo with space.txt"),
+				Path.Combine ("de", "foo with space.txt"), Path.Combine ("de", "foo with space.txt")}, null);
 		}
 
 		[Test]
 		public void TestNonResxWithRootNamespaceWithCulture ()
 		{
 			CheckResourceNames (non_resx_with_culture_files, new string [] {
-				Path.Combine ("de", "RN1.RN2.foo.txt"), Path.Combine ("de", "RN1.RN2.foo.txt"),
-				Path.Combine ("de", "RN1.RN2.foo.txt"), Path.Combine ("de", "RN1.RN2.foo.txt")},
+				Path.Combine ("de", "RN1.RN2.foo with space.txt"), Path.Combine ("de", "RN1.RN2.foo with space.txt"),
+				Path.Combine ("de", "RN1.RN2.foo with space.txt"), Path.Combine ("de", "RN1.RN2.foo with space.txt")},
 				"RN1.RN2");
 		}
 
@@ -141,8 +141,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void TestNonResxNoRootNamespaceNoCulture ()
 		{
 			CheckResourceNames (non_resx_no_culture_files, new string [] {
-				"foo.txt", "foo.txt",
-				"foo.txt", "foo.txt"}, null);
+				"foo with space.txt", "foo with space.txt",
+				"foo with space.txt", "foo with space.txt"}, null);
 		}
 
 		[Test]
@@ -150,8 +150,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			CheckResourceNames (non_resx_no_culture_files, new string [] {
 				// With dependent file
-				"RN1.RN2.foo.txt", "RN1.RN2.foo.txt",
-				"RN1.RN2.foo.txt", "RN1.RN2.foo.txt"},
+				"RN1.RN2.foo with space.txt", "RN1.RN2.foo with space.txt",
+				"RN1.RN2.foo with space.txt", "RN1.RN2.foo with space.txt"},
 				"RN1.RN2");
 		}
 

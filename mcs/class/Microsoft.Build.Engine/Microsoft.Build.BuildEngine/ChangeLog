@@ -1,3 +1,11 @@
+2009-08-26  Ankit Jain  <jankit@novell.com>
+
+	* BuildProperty.cs (ConvertToString): New.
+	(ConvertoToITaskItemArray): New. Parse the property value.
+	* PropertyReference.cs (ConvertToString): Use BuildProperty's
+	ConvertToString.
+	(ConvertoToITaskItemArray): Likewise.	
+
 2009-08-21  Ankit Jain  <jankit@novell.com>
 
 	* Engine.cs (EndProjectBuild): Use the @succeeded argument

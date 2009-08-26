@@ -85,6 +85,7 @@ Microsoft.Build.Tasks/ManagedCompiler.cs
 Microsoft.Build.Tasks/Message.cs
 Microsoft.Build.Tasks/MSBuild.cs
 Microsoft.Build.Tasks/PcFileCache.cs
+Microsoft.Build.Tasks/LibraryPcFileCache.cs
 Microsoft.Build.Tasks/ReadLinesFromFile.cs
 Microsoft.Build.Tasks/RegisterAssembly.cs
 Microsoft.Build.Tasks/RemoveDir.cs

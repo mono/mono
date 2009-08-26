@@ -48,7 +48,7 @@ namespace Microsoft.Build.Tasks {
 		TaskLoggingHelper log;
 		StringWriter sw;
 
-		static PcFileCache cache;
+		static LibraryPcFileCache cache;
 
 		public AssemblyResolver ()
 		{
@@ -378,11 +378,11 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		static PcFileCache PcCache  {
+		static LibraryPcFileCache PcCache  {
 			get {
 				if (cache == null) {
-					PcFileCacheContext context = new PcFileCacheContext ();
-					cache = new PcFileCache (context);
+					var context = new PcFileCacheContext ();
+					cache = new LibraryPcFileCache (context);
 					cache.Update ();
 				}
 
@@ -405,19 +405,19 @@ namespace Microsoft.Build.Tasks {
 		}
 	}
 
-	class PcFileCacheContext : IPcFileCacheContext
+	class PcFileCacheContext : IPcFileCacheContext<LibraryPackageInfo>
 	{
 		public static TaskLoggingHelper Log;
 
 		// In the implementation of this method, the host application can extract
 		// information from the pc file and store it in the PackageInfo object
-		public void StoreCustomData (PcFile pcfile, PackageInfo pkg)
+		public void StoreCustomData (PcFile pcfile, LibraryPackageInfo pkg)
 		{
 		}
 
 		// Should return false if the provided package does not have required
 		// custom data
-		public bool IsCustomDataComplete (string pcfile, PackageInfo pkg)
+		public bool IsCustomDataComplete (string pcfile, LibraryPackageInfo pkg)
 		{
 			return true;
 		}
