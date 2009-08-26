@@ -879,6 +879,25 @@ public class TimeSpanTest {
 	{
 		TimeSpan.Parse ("-10675199.02:48:05.4775809");
 	}
+
+	[Test]
+	public void ParseMissingSeconds ()
+	{
+		// as seen in ML for http://resources.esri.com/arcgisserver/apis/silverlight/
+		TimeSpan ts = TimeSpan.Parse ("0:0:.75");
+
+		Assert.AreEqual (0, ts.Days, "Days");
+		Assert.AreEqual (0, ts.Hours, "Hours");
+		Assert.AreEqual (750, ts.Milliseconds, "Milliseconds");
+		Assert.AreEqual (0, ts.Minutes, "Minutes");
+		Assert.AreEqual (0, ts.Seconds, "Seconds");
+		Assert.AreEqual (7500000, ts.Ticks, "Ticks");
+		Assert.AreEqual (0.0000086805555555555555, ts.TotalDays, 0.00000000000000001, "TotalDays");
+		Assert.AreEqual (0.00020833333333333332, ts.TotalHours, 0.00000000000000001, "TotalHours");
+		Assert.AreEqual (750.0, ts.TotalMilliseconds, "TotalMilliseconds");
+		Assert.AreEqual (0.0125, ts.TotalMinutes, "TotalMinutes");
+		Assert.AreEqual (0.75, ts.TotalSeconds, "TotalSeconds");
+	}
 }
 
 }
