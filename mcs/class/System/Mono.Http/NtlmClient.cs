@@ -101,7 +101,7 @@ namespace Mono.Http
 		}
 	}
 
-	public class NtlmClient : IAuthenticationModule
+	class NtlmClient : IAuthenticationModule
 	{
 		static Hashtable cache;
 
