@@ -127,7 +127,26 @@ namespace System.Web.Compilation
 		public int get_token ()
 		{
 			if (hasPutBack) {
-				PutBackItem pbi = putBackBuffer.Pop () as PutBackItem;
+				PutBackItem pbi;
+				if (verbatim) {
+					pbi = putBackBuffer.Pop () as PutBackItem;
+					string value = pbi.Value;
+					switch (value.Length) {
+						case 0:
+							// do nothing, CurrentToken will be used
+							break;
+
+						case 1:
+							pbi = new PutBackItem (String.Empty, pbi.Position, (int)value [0], false);
+							break;
+
+						default:
+							pbi = new PutBackItem (value, pbi.Position, (int)value [0], false);
+							break;
+					}		
+				} else
+					pbi = putBackBuffer.Pop () as PutBackItem;
+				
 				hasPutBack = putBackBuffer.Count > 0;
 				position = pbi.Position;
 				have_value = false;

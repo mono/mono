@@ -79,6 +79,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "LinkInHeadWithEmbeddedExpression.aspx", "LinkInHeadWithEmbeddedExpression.aspx");
 			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
 			WebTest.CopyResource (GetType (), "PreprocessorDirectivesInMarkup.aspx", "PreprocessorDirectivesInMarkup.aspx");
+			WebTest.CopyResource (GetType (), "OneLetterIdentifierInCodeRender.aspx", "OneLetterIdentifierInCodeRender.aspx");
 #endif
 		}
 		
@@ -235,8 +236,17 @@ namespace MonoTests.System.Web.Compilation {
 	<![endif]-->";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
-#endif
+		
+		[Test (Description="Bug #400807")]
+		public void OneLetterIdentifierInCodeRender ()
+		{
+			string pageHtml = new WebTest ("OneLetterIdentifierInCodeRender.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"bDoR called";
 
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+#endif		
 		[Test (Description="Bug #323719")]
 		public void TagsNestedInClientTag ()
 		{

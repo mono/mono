@@ -1,3 +1,7 @@
+2009-08-26  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompilerTest.cs: added test for bug #400807
+
 2009-08-25  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompilerTest.cs: added test for bug #323719

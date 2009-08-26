@@ -1,3 +1,10 @@
+2009-08-26  Marek Habersack  <mhabersack@novell.com>
+
+	* AspTokenizer.cs: when there's put back record and we're in
+	verbatim mode, get_token must be careful with what it returns - it
+	can't return Token.* values, instead it should look at Value and
+	retrieve the next token from it. Fixes bug #400807
+
 2009-08-25  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: correctly parse server-side tags nested in
