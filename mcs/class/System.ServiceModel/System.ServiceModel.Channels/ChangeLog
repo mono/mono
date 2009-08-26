@@ -1,5 +1,12 @@
 2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs : since the channel factory is per instance,
+	  do not reuse factory that is tied to different callback instance.
+	  It resolved the issue that mono callback client didn't receive
+	  messages from the client itself.
+
+2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs : in the Welcome response, return the NodeId
 	  of the receiver, not the requestor. It resolved the issue that
 	  .NET client didn't send further messages to mono server.

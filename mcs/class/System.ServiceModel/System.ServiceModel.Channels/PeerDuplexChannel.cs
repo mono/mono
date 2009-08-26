@@ -101,7 +101,6 @@ namespace System.ServiceModel.Channels
 
 			internal void WaitForConnectResponse (TimeSpan timeout)
 			{
-Console.WriteLine ("##### Waiting for Welcome or Reject ...");
 				if (!connect_handle.WaitOne (timeout))
 					throw new TimeoutException ();
 			}
@@ -116,7 +115,6 @@ Console.WriteLine ("##### Waiting for Welcome or Reject ...");
 
 			public void Welcome (WelcomeInfo welcome)
 			{
-Console.WriteLine ("##### Welcome message received");
 				if (WelcomeReceived != null)
 					WelcomeReceived (welcome);
 				connect_handle.Set ();
@@ -141,7 +139,6 @@ Console.WriteLine ("##### Welcome message received");
 
 			public void SendMessage (Message msg)
 			{
-Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action);
 				int idx = msg.Headers.FindHeader ("PeerTo", Constants.NetPeer);
 				if (idx >= 0)
 					msg.Headers.To = msg.Headers.GetHeader<Uri> (idx);
@@ -156,7 +153,6 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 		}
 
 		IChannelFactory<IDuplexSessionChannel> client_factory;
-		ChannelFactory<IPeerConnectorClient> channel_factory;
 		PeerTransportBindingElement binding;
 		PeerResolver resolver;
 		PeerNode node;
@@ -205,11 +201,9 @@ Console.WriteLine ("##### non-connector message received: " + msg.Headers.Action
 				};
 
 			// FIXME: pass more setup parameters
-			if (channel_factory == null) {
-				var binding = new NetTcpBinding ();
-				binding.Security.Mode = SecurityMode.None;
-				channel_factory = new DuplexChannelFactory<IPeerConnectorClient> (conn.Instance, binding);
-			}
+			var binding = new NetTcpBinding ();
+			binding.Security.Mode = SecurityMode.None;
+			var channel_factory = new DuplexChannelFactory<IPeerConnectorClient> (conn.Instance, binding);
 
 			return channel_factory.CreateChannel (new EndpointAddress ("net.p2p://" + node.MeshId + "/"), conn.Address.EndpointAddress.Uri);
 		}
