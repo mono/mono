@@ -1,3 +1,7 @@
+2009-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpan.cs: Fix parsing when seconds are not specified.
+
 2009-08-14  Marek Safar  <marek.safar@gmail.com>
 
 	* Type.cs: Made IsClass work under compiler context.

@@ -509,7 +509,7 @@ namespace System
 					count++;
 				}
 
-				if (count == 0)
+				if (!optional && (count == 0))
 					formatError = true;
 
 				return res;
