@@ -31,6 +31,8 @@ using System;
 using System.Text;
 using System.Xml;
 
+using Microsoft.Build.Framework;
+
 namespace Microsoft.Build.BuildEngine {
 	public class BuildProperty {
 	
@@ -119,6 +121,22 @@ namespace Microsoft.Build.BuildEngine {
 			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
 
 			parentProject.EvaluatedProperties.AddProperty (evaluated);
+		}
+
+		internal string ConvertToString (Project project)
+		{
+			Expression exp = new Expression ();
+			exp.Parse (Value, true, false);
+
+			return (string) exp.ConvertTo (project, typeof (string));
+		}
+
+		internal ITaskItem[] ConvertToITaskItemArray (Project project)
+		{
+			Expression exp = new Expression ();
+			exp.Parse (Value, true, false);
+
+			return (ITaskItem[]) exp.ConvertTo (project, typeof (ITaskItem[]));
 		}
 
 		internal bool FromXml {

@@ -187,6 +187,71 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		    CheckBuildItem (include [2], "NewItem", additional_metadata, "5", "C");
 		}
 
+		[Test]
+		public void TestVariableExpansion ()
+		{
+		    Engine engine;
+		    Project project;
+
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<PropertyGroup>
+					<P1>FooP1</P1>
+					<P2>FooP2</P2>
+					<C>@(IG)</C>
+					<P3>@(Nine)</P3>
+				</PropertyGroup>
+				<ItemGroup>
+					<Nine Include=""Nine""/>
+					<Eight Include=""Eight""/>
+					<Seven Include=""@(Eight)""/>
+					<Six Include=""@(Seven);$(P3)""/>
+					<Third Include=""Abc""/>
+					<Fourth Include=""$(P2)""/>
+					<Second Include=""@(Third);$(P1);@(Fourth);@(Six)""/>
+					<IG Include=""@(Second)""/>
+				</ItemGroup>
+
+					<Target Name='1'>
+						<CreateItem Include='$(C)' >
+							<Output
+								TaskParameter='Include'
+								ItemName='Items'
+							/>
+						</CreateItem>
+
+						<Message Text=""C: $(C)""/>
+						<Message Text=""items: @(items)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("Items");
+			Assert.AreEqual (5, include.Count, "A2");
+
+			Assert.AreEqual ("Abc", include [0].FinalItemSpec, "A#3");
+			Assert.AreEqual ("FooP1", include[1].FinalItemSpec, "A#4");
+			Assert.AreEqual ("FooP2", include[2].FinalItemSpec, "A#5");
+			Assert.AreEqual ("Eight", include[3].FinalItemSpec, "A#6");
+			Assert.AreEqual ("Nine", include[4].FinalItemSpec, "A#7");
+
+			testLogger.CheckLoggedMessageHead ("C: Abc;FooP1;FooP2;Eight;Nine", "A#10");
+			testLogger.CheckLoggedMessageHead ("items: Abc;FooP1;FooP2;Eight;Nine", "A#10");
+
+		}
+
 		public static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
 		{
 			Assert.AreEqual (name, item.Name, prefix + "#1");

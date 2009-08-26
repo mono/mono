@@ -50,20 +50,13 @@ namespace Microsoft.Build.BuildEngine {
 		public string ConvertToString (Project project)
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
-			return bp != null ? bp.FinalValue : String.Empty;
+			return bp != null ? bp.ConvertToString (project) : String.Empty;
 		}
 
 		public ITaskItem[] ConvertToITaskItemArray (Project project)
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
-			if (bp != null) {
-				List<ITaskItem> list = new List<ITaskItem> ();
-				foreach (string s in bp.FinalValue.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries))
-					list.Add (new TaskItem (s));
-				return list.ToArray ();
-			}
-			else
-				return null;
+			return bp != null ? bp.ConvertToITaskItemArray (project) : null;
 		}
 		
 		public string Name {
