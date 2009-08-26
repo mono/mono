@@ -76,7 +76,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.propertyType = PropertyType.Normal;
 			this.parentProject = parentProject;
 			this.name = propertyElement.Name;
-			this.value = propertyElement.InnerXml;
+			this.value = Utilities.UnescapeFromXml (propertyElement.InnerXml);
 			this.isImported = false;
 		}
 
