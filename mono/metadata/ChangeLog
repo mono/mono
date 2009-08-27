@@ -1,3 +1,8 @@
+2009-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* cominterop.c (cominterop_get_ccw): Applied patch from tom hindle
+	<tom_hindle@sil.org>. Add locking around hash table accesses.
+
 2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_verifier_verify_class): Verify all interface if
