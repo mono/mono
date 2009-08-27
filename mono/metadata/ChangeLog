@@ -1,3 +1,8 @@
+2009-08-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c: Initialize all types during metadata validation so we report
+	errors only detected as part of class initialization.
+
 2009-08-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_method_table): PInvoke requires method to
