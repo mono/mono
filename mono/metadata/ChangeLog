@@ -1,3 +1,8 @@
+2009-08-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Verify all interface if
+	really are interfaces. Fixes #534184.
+
 2009-08-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c: Initialize all types during metadata validation so we report
