@@ -101,7 +101,7 @@ namespace System.IO.Pipes
 		PipeTransmissionMode transmission_mode, read_trans_mode;
 		int buffer_size;
 		SafePipeHandle handle;
-		FileStream stream;
+		Stream stream;
 
 		public override bool CanRead {
 			get { return (direction & PipeDirection.In) != 0; }
@@ -123,7 +123,7 @@ namespace System.IO.Pipes
 
 		public bool IsConnected { get; protected set; }
 
-		private Stream Stream {
+		internal Stream Stream {
 			get {
 				if (!IsConnected)
 					throw new InvalidOperationException ("Pipe is not connected");
@@ -131,6 +131,7 @@ namespace System.IO.Pipes
 					stream = new FileStream (handle.DangerousGetHandle (), CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read) : FileAccess.Write, true, buffer_size, IsAsync);
 				return stream;
 			}
+			set { stream = value; }
 		}
 
 		protected bool IsHandleExposed { get; private set; }

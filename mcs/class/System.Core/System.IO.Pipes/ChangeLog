@@ -1,3 +1,8 @@
+2009-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PipeStream.cs : add set_Stream.
+	* PipeUnix.cs : some impl. code (not really functional).
+
 2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AnonymousPipeClientStream.cs, AnonymousPipeServerStream.cs,

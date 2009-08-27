@@ -14,6 +14,11 @@ ifeq (4.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
+CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
+ifdef CLR_PROFILE
+LIB_MCS_FLAGS += -r:Mono.Posix
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET 2.0+ only assembly

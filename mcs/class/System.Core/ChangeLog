@@ -1,3 +1,7 @@
+2009-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add -r:Mono.Posix on required profiles.
+
 2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.Core.dll.sources : now it should be created.
