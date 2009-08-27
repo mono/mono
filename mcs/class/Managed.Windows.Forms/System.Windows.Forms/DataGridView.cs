@@ -4064,6 +4064,11 @@ namespace System.Windows.Forms {
 
 		protected override void OnDoubleClick (EventArgs e) {
 			base.OnDoubleClick(e);
+
+			Point mouseLocation = this.PointToClient (Control.MousePosition);
+			HitTestInfo hitInfo = HitTest (mouseLocation.X, mouseLocation.Y);
+			if (hitInfo.Type == DataGridViewHitTestType.Cell)
+				OnCellDoubleClick (new DataGridViewCellEventArgs (hitInfo.ColumnIndex, hitInfo.RowIndex));
 		}
 
 		protected virtual void OnEditingControlShowing (DataGridViewEditingControlShowingEventArgs e) {

@@ -1,5 +1,10 @@
 2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fire the CellDoubleClicked event.
+	[Fixes bug #533430]
+
+2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Add support for column DataGridViewAutoSizeColumnMode
 	DisplayedCells and DisplayedCellsExceptHeader.
 	[Fixes bug #533435]
