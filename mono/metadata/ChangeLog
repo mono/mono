@@ -1,3 +1,8 @@
+2009-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (cominterop_get_ccw): Applied patch from tom hindle
+	<tom_hindle@sil.org>. Add locking around hash table accesses.
+
 2009-08-19  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Replace the templates lock with the loader
