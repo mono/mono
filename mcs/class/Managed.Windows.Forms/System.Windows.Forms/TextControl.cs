@@ -2191,10 +2191,17 @@ namespace System.Windows.Forms {
 			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true))
 				return;
 			
-			if (forward)
+			undo.BeginUserAction ("Delete");
+
+			if (forward) {
+				undo.RecordDeleteString (line, pos, line, pos + 1);
 				DeleteChars (line, pos, 1);
-			else
+			} else {
+				undo.RecordDeleteString (line, pos - 1, line, pos);
 				DeleteChars (line, pos - 1, 1);
+			}
+
+			undo.EndUserAction ();
 		}
 
 		// Combine two lines

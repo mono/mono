@@ -1,3 +1,11 @@
+2009-08-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextControl.cs: When removing a simple char, actually record the
+	action in the undo manager. This way we both support undoing the
+	removal of chars using backspace/delete, as well as keeping data
+	integrity when other undo tasks are performed.
+	Fixes #531983.
+
 2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: Remove the ancient code in ResetText, which was setting
