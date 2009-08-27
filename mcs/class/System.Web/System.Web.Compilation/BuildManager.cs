@@ -566,10 +566,16 @@ namespace System.Web.Compilation {
 			if (!VirtualPathUtility.IsRooted (virtualPath)) {
 				HttpContext ctx = HttpContext.Current;
 				HttpRequest req = ctx != null ? ctx.Request : null;
+				
+				if (req != null) {
+					string fileDir = req.FilePath;
+					if (!String.IsNullOrEmpty (fileDir) && String.Compare (fileDir, "/", StringComparison.Ordinal) != 0)
+						fileDir = VirtualPathUtility.GetDirectory (fileDir);
+					else
+						fileDir = "/";
 
-				if (req != null)
-					vp = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (req.FilePath), virtualPath);
-				else
+					vp = VirtualPathUtility.Combine (fileDir, virtualPath);
+				} else
 					throw new HttpException ("No context, cannot map paths.");
 			} else
 				vp = virtualPath;
