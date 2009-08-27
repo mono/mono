@@ -1,3 +1,9 @@
+2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Add support for column DataGridViewAutoSizeColumnMode
+	DisplayedCells and DisplayedCellsExceptHeader.
+	[Fixes bug #533435]
+
 2009-08-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextControl.cs: When removing a simple char, actually record the

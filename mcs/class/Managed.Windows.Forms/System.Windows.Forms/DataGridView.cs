@@ -5951,26 +5951,20 @@ namespace System.Windows.Forms {
 		internal int CalculateColumnCellWidth (int index, DataGridViewAutoSizeColumnMode mode)
 		{
 			int first_row = 0;
+			int last_row = Rows.Count;
 			int result = 0;
-			bool only_visible = false;
+
+			if (mode == DataGridViewAutoSizeColumnMode.DisplayedCells || 
+			    mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader) {
+				first_row = first_row_index;
+				last_row = DisplayedRowCount (true);;
+			}
 			
-			if (mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader || 
-				mode == DataGridViewAutoSizeColumnMode.AllCellsExceptHeader)
-				first_row++;
-			
-			only_visible = (mode == DataGridViewAutoSizeColumnMode.DisplayedCells || mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader);
-			
-			for (int i = first_row; i < Rows.Count; i++) {
+			for (int i = first_row; i < last_row; i++) {
 				if (!Rows[i].Visible)
 					continue;
-				if (only_visible) {
-					Rectangle row_rect = this.GetRowDisplayRectangle (i, false);
-					if (!ClientRectangle.IntersectsWith (row_rect))
-						continue;
-				}
 				
 				int cell_width = Rows[i].Cells[index].PreferredSize.Width;
-
 				result = Math.Max (result, cell_width);
 			}
 			
