@@ -1,3 +1,9 @@
+2009-08-27  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: when HttpRequest.FilePath is '/' in
+	GetAbsoluteVirtualPath, don't try to use
+	VirtualPathUtility.GetDirectory on it. Fixes bug #532679
+
 2009-08-26  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: when there's put back record and we're in
