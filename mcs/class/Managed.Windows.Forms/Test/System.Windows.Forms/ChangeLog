@@ -1,3 +1,7 @@
+2009-08-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBoxTest.cs: Improve the ModifiedTest test.
+
 2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataGridViewCellTest.cs : nunit test upgrade to modern style.

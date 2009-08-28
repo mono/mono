@@ -815,8 +815,61 @@ namespace MonoTests.System.Windows.Forms
 			t.Modified = false;
 			Assert.AreEqual (false, t.Modified, "modified-3");
 
+			// Changes in Text property don't change Modified,
+			// as opposed what the .net docs say
+			t.ModifiedChanged += new EventHandler (TextBox_ModifiedChanged);
+
+			modified_changed_fired = false;
 			t.Text = "TEXT";
 			Assert.AreEqual (false, t.Modified, "modified-4");
+			Assert.AreEqual (false, modified_changed_fired, "modified-4-1");
+
+			t.Modified = true;
+			modified_changed_fired = false;
+			t.Text = "hello";
+			Assert.AreEqual (true, t.Modified, "modified-5");
+			Assert.AreEqual (false, modified_changed_fired, "modified-5-1");
+
+			t.Modified = false;
+			modified_changed_fired = false;
+			t.Text = "hello mono";
+			Assert.AreEqual (false, t.Modified, "modified-6");
+			Assert.AreEqual (false, modified_changed_fired, "modified-6-1");
+
+			// The methods changing the text value, however,
+			// do change Modified
+			t.Modified = true;
+			modified_changed_fired = false;
+			t.AppendText ("a");
+			Assert.AreEqual (false, t.Modified, "modified-7");
+			Assert.AreEqual (true, modified_changed_fired, "modified-7-1");
+
+			t.Modified = true;
+			modified_changed_fired = false;
+			t.Clear ();
+			Assert.AreEqual (false, t.Modified, "modified-8");
+			Assert.AreEqual (true, modified_changed_fired, "modified-8-1");
+
+			t.Text = "a message";
+			t.SelectAll ();
+			t.Modified = false;
+			t.Cut ();
+			Assert.AreEqual (true, t.Modified, "modified-9");
+
+			t.Modified = false;
+			t.Paste ();
+			Assert.AreEqual (true, t.Modified, "modified-10");
+
+			t.Modified = false;
+			t.Undo ();
+			Assert.AreEqual (true, t.Modified, "modified-11");
+		}
+
+		bool modified_changed_fired;
+
+		void TextBox_ModifiedChanged (object sender, EventArgs e)
+		{
+			modified_changed_fired = true;
 		}
 
 		void TextBox_TextChanged (object sender, EventArgs e)
