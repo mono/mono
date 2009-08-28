@@ -613,9 +613,9 @@ namespace MonoTests.System.Windows.Forms
 			ConcreteCollection myCollection;
 			myCollection = new ConcreteCollection();
 			....
-			AssertEquals ("#UniqueID", expected, actual);
+			Assert.AreEqual (expected, actual, "#UniqueID");
 			....
-			Fail ("Message");
+			Assert.Fail ("Message");
 		}
 		*/
 
