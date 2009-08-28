@@ -76,17 +76,26 @@ namespace Microsoft.Build.BuildEngine {
 
 			// Run the task in batches
 			bool retval = true;
-			foreach (Dictionary<string, BuildItemGroup> bucket in buckets) {
-				project.SetBatchedItems (bucket, commonItemsByName);
+			if (buckets.Count > 0) {
+				foreach (Dictionary<string, BuildItemGroup> bucket in buckets) {
+					project.SetBatchedItems (bucket, commonItemsByName);
+					if (ConditionParser.ParseAndEvaluate (buildTask.Condition, project)) {
+						 retval = buildTask.Execute ();
+						 if (!retval && !buildTask.ContinueOnError) {
+							 executeOnErrors = true;
+							 break;
+						 }
+					}
+				}
+				project.SetBatchedItems (null, null);
+			} else {
+				// batched mode, but no values in the corresponding items!
 				if (ConditionParser.ParseAndEvaluate (buildTask.Condition, project)) {
-					 retval = buildTask.Execute ();
-					 if (!retval && !buildTask.ContinueOnError) {
-						 executeOnErrors = true;
-						 break;
-					 }
+					retval = buildTask.Execute ();
+					if (!retval && !buildTask.ContinueOnError)
+						executeOnErrors = true;
 				}
 			}
-			project.SetBatchedItems (null, null);
 
 			return retval;
 		}

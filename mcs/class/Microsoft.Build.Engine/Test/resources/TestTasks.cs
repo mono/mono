@@ -28,6 +28,7 @@
 using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using System.Text;
 
 namespace Foo
 {
@@ -57,6 +58,45 @@ public class OutputTestTask : Task {
 		get { return "some_text"; }
 	}
 }
+
+public class TestTask_TaskItems : Task
+{
+	string output;
+	public override bool Execute () {
+		output = items == null ? "null" : "count: " + items.Length.ToString ();
+		return true;
+	}
+
+	ITaskItem[] items;
+	public ITaskItem[] Property {
+		set { items = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
+public class TestTask_TaskItem : Task
+{
+	string output;
+	public override bool Execute () {
+		output = item == null ? "null" : "not null: " + item.ItemSpec;
+		return true;
+	}
+
+	ITaskItem item;
+	public ITaskItem Property {
+		set { item = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
 
 public class RequiredTestTask_TaskItems : Task {
 	string output;
@@ -125,6 +165,134 @@ public class RequiredTestTask_String : Task
 	}
 }
 
+public class RequiredTestTask_Strings : Task
+{
+	string output;
+	public override bool Execute () {
+		output = property == null ? "null" : property.Length.ToString ();
+		return true;
+	}
+
+	string []property;
+	[Required]
+	public string[] Property {
+		set { property = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_OtherObjectArray : Task
+{
+	string output;
+	public override bool Execute () {
+		output = property == null ? "null" : property.Length.ToString ();
+		return true;
+	}
+
+	OtherClass[] property;
+	[Required]
+	public OtherClass[] Property {
+		set { property = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_OtherObject : Task
+{
+	string output;
+	public override bool Execute () {
+		output = property == null ? "null" : "not null";
+		return true;
+	}
+
+	OtherClass property;
+	[Required]
+	public OtherClass Property {
+		set { property = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_MyTaskItemArray : Task
+{
+	string output;
+	public override bool Execute () {
+		output = property == null ? "null" : property.Length.ToString ();
+		return true;
+	}
+
+	MyTaskItem[] property;
+	[Required]
+	public MyTaskItem[] Property {
+		set { property = value; }
+	}
+
+	[Output]
+	public string Output {
+		get { return output; }
+	}
+}
+
+public class OtherClass
+{
+}
+
+public class MyTaskItem : ITaskItem
+{
+	#region ITaskItem Members
+
+	public System.Collections.IDictionary CloneCustomMetadata () {
+		throw new NotImplementedException ();
+	}
+
+	public void CopyMetadataTo (ITaskItem destinationItem) {
+		throw new NotImplementedException ();
+	}
+
+	public string GetMetadata (string metadataName) {
+		throw new NotImplementedException ();
+	}
+
+	public string ItemSpec {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+
+	public int MetadataCount {
+		get { throw new NotImplementedException (); }
+	}
+
+	public System.Collections.ICollection MetadataNames {
+		get { throw new NotImplementedException (); }
+	}
+
+	public void RemoveMetadata (string metadataName) {
+		throw new NotImplementedException ();
+	}
+
+	public void SetMetadata (string metadataName, string metadataValue) {
+		throw new NotImplementedException ();
+	}
+
+	#endregion
+}
+
 public class RequiredTestTask_IntArray: Task
 {
 	string output;
@@ -164,8 +332,15 @@ public class FalseTestTask : Task {
 }
 
 public class StringTestTask : Task {
+	string output;
+
 	public override bool Execute ()
 	{
+		StringBuilder sb = new StringBuilder ();
+		sb.AppendFormat ("property: {0} ## ", property == null ? "null" : property);
+		sb.AppendFormat ("array: {0}", array == null ? "null" : array.Length.ToString ());
+
+		output = sb.ToString ();
 		return true;
 	}
 
@@ -182,7 +357,12 @@ public class StringTestTask : Task {
 	public string[] Array {
 		get { return array; }
 		set { array = value; }
-	}	
+	}
+
+	[Output]
+	public string OutputString {
+		get { return output; }
+	}
 }
 
 public class PublishTestTask : Task {

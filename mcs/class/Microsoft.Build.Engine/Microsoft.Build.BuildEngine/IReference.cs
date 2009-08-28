@@ -31,8 +31,8 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
 	internal interface IReference {
-		string ConvertToString (Project project);
-		ITaskItem[] ConvertToITaskItemArray (Project project);
+		string ConvertToString (Project project, ExpressionOptions options);
+		ITaskItem[] ConvertToITaskItemArray (Project project, ExpressionOptions options);
 
 		int Start { get; }
 		int End { get; }

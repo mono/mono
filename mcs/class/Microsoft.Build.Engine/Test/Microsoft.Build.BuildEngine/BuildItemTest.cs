@@ -717,6 +717,83 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestSetMetadata5a () {
+			Engine engine;
+			Project project;
+			BuildItemGroup[] groups = new BuildItemGroup[1];
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<A>A</A>
+						<C>@(D)</C>
+					</PropertyGroup>
+					<ItemGroup>
+						<D Include='D'/>
+						<C Include='$(C)'/>
+						<A Include='a;b'>
+							<Md>@(C)</Md>
+						</A>
+						<B Include='$(A)'/>
+					</ItemGroup>
+					<Target Name='main'>
+						<Message Text=""a.md: %(A.Md)""/>
+						<Message Text=""a.md: %(A.Meta)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger = new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+			project.LoadXml (documentString);
+
+			CheckMetadata (project, "A", "Md", new string [] {"@(C)", "@(C)"}, "G1");
+			CheckEvaluatedMetadata (project, "A", "Md", new string[] { "D", "D" }, "G2");
+
+			//@(B)
+			Assert.AreEqual ("A", project.GetEvaluatedItemsByName ("B")[0].FinalItemSpec, "B2");
+
+			project.ItemGroups.CopyTo (groups, 0);
+			/*Broken right now:
+			  CheckBuildItemGroup (groups[0], new string[] {
+				"D", "D",
+				"C", "$(C)",
+				"A", "a;b",
+				"B", "$(A)"
+			}, "H1");*/
+
+			CheckBuildItemGroup (project.GetEvaluatedItemsByName ("C"), new string[] {
+				"C", "D"
+			}, "H2");
+
+			CheckBuildItemGroup (project.GetEvaluatedItemsByName ("C"), new string[] {
+				"C", "D"
+			}, "I");
+
+			project.GetEvaluatedItemsByName ("A")[0].SetMetadata ("Meta", "@(B)");
+
+			Assert.AreEqual (5, project.EvaluatedItems.Count, "A0");
+			Assert.AreEqual (2, project.GetEvaluatedItemsByName ("A").Count, "A7");
+
+			CheckMetadata (project, "A", "Meta", new string[] { "@(B)", "" }, "J");
+
+			if (!project.Build ()) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+			logger.DumpMessages ();
+
+			CheckMetadata (project, "A", "Meta", new string[] { "@(B)", "" }, "K1");
+			CheckEvaluatedMetadata (project, "A", "Meta", new string[] { "", "" }, "K2");
+
+			logger.CheckLoggedMessageHead ("a.md: D", "E10");
+			logger.CheckLoggedMessageHead ("a.md: ", "E11");
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected messages left");
+		}
+
+		[Test]
 		public void TestSetMetadata6 ()
 		{
 			Engine engine;
@@ -847,6 +924,45 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (2, grp.Count, "A1");
 			Assert.AreEqual ("PropValue/abc.txt", grp [0].FinalItemSpec, "A2");
 			Assert.AreEqual ("PropValue/def.txt", grp [1].FinalItemSpec, "A3");
+		}
+
+		void CheckMetadata (Project p, string itemname, string metadataname, string[] values, string prefix)
+		{
+			BuildItemGroup group = p.GetEvaluatedItemsByName (itemname);
+
+			Assert.AreEqual (values.Length, group.Count, "Number of items for itemname " + itemname);
+
+			for (int i = 0; i < values.Length; i++) {
+				Assert.AreEqual (values[i], group [i].GetMetadata (metadataname), prefix + "#" + i.ToString ());
+			}
+		}
+
+		void CheckEvaluatedMetadata (Project p, string itemname, string metadataname, string[] values, string prefix)
+		{
+			BuildItemGroup group = p.GetEvaluatedItemsByName (itemname);
+
+			Assert.AreEqual (values.Length, group.Count, "Number of items for itemname " + itemname);
+
+			for (int i = 0; i < values.Length; i++) {
+				Assert.AreEqual (values[i], group [i].GetEvaluatedMetadata (metadataname), prefix + "#" + i.ToString ());
+			}
+		}
+
+		void CheckBuildItemGroup (BuildItemGroup group, string[] names, string prefix)
+		{
+			try {
+				Assert.AreEqual (group.Count, names.Length / 2, "Number of items in group");
+				for (int i = 0; i < group.Count; i++) {
+					Assert.AreEqual (names[i * 2], group[i].Name, String.Format ("{0}#{1} : item name", prefix, i));
+					Assert.AreEqual (names[(i * 2) + 1], group[i].FinalItemSpec, String.Format ("{0}#{1} : FinalItemSpec", prefix, i));
+				}
+			} catch (AssertionException) {
+				for (int i = 0; i < group.Count; i++) {
+					Console.WriteLine ("group[{0}] = {1}", i, group[i].Name);
+					Console.WriteLine ("group[{0}] = {1}", i, group[i].FinalItemSpec);
+				}
+				throw;
+			}
 		}
 	}
 }

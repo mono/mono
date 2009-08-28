@@ -231,7 +231,8 @@ namespace Microsoft.Build.BuildEngine {
 				else {
 					Expression exp = new Expression ();
 					exp.Parse (str, true);
-					return (bool) exp.ConvertTo (parentTarget.Project, typeof (bool));
+					return (bool) exp.ConvertTo (parentTarget.Project, typeof (bool),
+							ExpressionOptions.ExpandItemRefs);
 				}
 			}
 			set {

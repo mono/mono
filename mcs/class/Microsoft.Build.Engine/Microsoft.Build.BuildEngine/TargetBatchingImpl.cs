@@ -177,11 +177,11 @@ namespace Microsoft.Build.BuildEngine {
 
 			Expression e = new Expression ();
 			e.Parse (inputs, true);
-			inputFiles = (ITaskItem[]) e.ConvertTo (project, typeof (ITaskItem[]));
+			inputFiles = (ITaskItem[]) e.ConvertTo (project, typeof (ITaskItem[]), ExpressionOptions.ExpandItemRefs);
 
 			e = new Expression ();
 			e.Parse (outputs, true);
-			outputFiles = (ITaskItem[]) e.ConvertTo (project, typeof (ITaskItem[]));
+			outputFiles = (ITaskItem[]) e.ConvertTo (project, typeof (ITaskItem[]), ExpressionOptions.ExpandItemRefs);
 
 			if (inputFiles == null || inputFiles.Length == 0)
 				return false;

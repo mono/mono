@@ -185,29 +185,39 @@ namespace Microsoft.Build.BuildEngine {
 			buildItems.Add (buildItem);
 		}
 
+		// In eval phase, any ref'ed item would've already been expanded
+		// or it doesnt exist, so dont expand again
+		// In non-eval, items have _already_ been expanded, so dont expand again
+		// So, ignore @options
 		internal string ConvertToString (Expression transform,
-						 Expression separator)
+						 Expression separator, ExpressionOptions options)
 		{
 			string separatorString;
 			
+			// Item refs are not expanded for separator or transform
 			if (separator == null)
 				separatorString = ";";
 			else
-				separatorString = (string) separator.ConvertTo (parentProject, typeof (string));
+				separatorString = (string) separator.ConvertTo (parentProject, typeof (string),
+								ExpressionOptions.DoNotExpandItemRefs);
 		
 			string[] items = new string [buildItems.Count];
 			int i = 0;
 			foreach (BuildItem bi in  buildItems)
-				items [i++] = bi.ConvertToString (transform);
+				items [i++] = bi.ConvertToString (transform, ExpressionOptions.DoNotExpandItemRefs);
 			return String.Join (separatorString, items);
 		}
 
-		internal ITaskItem[] ConvertToITaskItemArray (Expression transform)
+		// In eval phase, any ref'ed item would've already been expanded
+		// or it doesnt exist, so dont expand again
+		// In non-eval, items have _already_ been expanded, so dont expand again
+		// So, ignore @options
+		internal ITaskItem[] ConvertToITaskItemArray (Expression transform, ExpressionOptions options)
 		{
 			ITaskItem[] array = new ITaskItem [buildItems.Count];
 			int i = 0;
 			foreach (BuildItem item in buildItems)
-				array [i++] = item.ConvertToITaskItem (transform);
+				array [i++] = item.ConvertToITaskItem (transform, ExpressionOptions.DoNotExpandItemRefs);
 			return array;
 		}
 
