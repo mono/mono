@@ -44,6 +44,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (directories.Length == 0)
+				return true;
+
 			bool result = true;
 
 			List <ITaskItem> temporaryDirectoriesCreated = new List  <ITaskItem> ();

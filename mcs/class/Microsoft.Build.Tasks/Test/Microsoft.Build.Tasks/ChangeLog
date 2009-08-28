@@ -1,3 +1,8 @@
+2009-08-28  Ankit Jain  <jankit@novell.com>
+
+	* CopyTest.cs (TestCopy_EmptySources): New.
+	(TestCopy_EmptyDestFolder): New.
+
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
 	* CreateItemTest.cs (TestVariableExpansion): Update test to

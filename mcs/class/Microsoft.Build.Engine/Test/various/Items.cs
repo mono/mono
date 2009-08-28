@@ -160,25 +160,38 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<Prop1>@(Item0)</Prop1>
+					</PropertyGroup>
 					<ItemGroup>
+						<Item0 Include=""Foo""/>
 						<Item1 Include='A;B;C' />
 						<Item2 Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
+						<ItemT0 Include=""@(Item1)"" />
 						<ItemT1 Include=""@(Item1->'%(Identity)')"" />
 						<ItemT2 Include=""@(Item1->'%(Identity)%(Identity)')"" />
 						<ItemT3 Include=""@(Item1->'(-%(Identity)-)')"" />
 						<ItemT4 Include=""@(Item2->'%(Extension)')"" />
 						<ItemT5 Include=""@(Item2->'%(Filename)/%(Extension)')"" />
+						<ItemT6 Include=""@(Item2->'%(Extension)/$(Prop1)')"" />
 					</ItemGroup>
 				</Project>
 			";
 
 			proj.LoadXml (documentString);
 
+			//Assert.IsTrue (proj.Build (), "Build failed");
+
+			Assert.AreEqual ("@(Item0)", proj.EvaluatedProperties["Prop1"].FinalValue, "A0");
+			//Assert.AreEqual ("@(Item2->'%(Extension)/$(Prop1)')", proj.EvaluatedItems [7].FinalItemSpec, "B0");
+
+			CheckItems (proj, "ItemT0", "A1", "A", "B", "C");
 			CheckItems (proj, "ItemT1", "A1", "A", "B", "C");
 			CheckItems (proj, "ItemT2", "A2", "AA", "BB", "CC");
 			CheckItems (proj, "ItemT3", "A3", "(-A-)", "(-B-)", "(-C-)");
 			CheckItems (proj, "ItemT4", "A4", ".txt", ".txt", ".zip", ".zip");
 			CheckItems (proj, "ItemT5", "A5", "B/.txt", "C/.txt", "B/.zip", "C/.zip");
+			CheckItems (proj, "ItemT6", "A6", ".txt/@(Item0)", ".txt/@(Item0)", ".zip/@(Item0)", ".zip/@(Item0)");
 		}
 
 		[Test]
@@ -307,6 +320,323 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		// test item metadata
+		public void TestItems10 ()
+		{
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<Prop1>@(Item0)</Prop1>
+		<Prop2>@(Ref1)</Prop2>
+	</PropertyGroup>
+	<ItemGroup>
+		<Item0 Include=""Foo""/>
+		<Ref1 Include=""File1"" />
+		<IWithM Include=""A"">
+			<Md>@(Item0)</Md>
+			<Md2>$(Prop2)</Md2>
+		</IWithM>
+	</ItemGroup>
+
+	<Target Name=""1"">
+		<Message Text=""IWithM.md: %(IWithM.Md)""/>
+		<Message Text=""IWithM.md2: %(IWithM.Md2)""/>
+
+		<CreateItem Include=""Bar;Xyz"">
+			<Output TaskParameter=""Include"" ItemName=""Item0""/>
+		</CreateItem>
+		
+		<Message Text=""IWithM.md: %(IWithM.Md)""/>
+		<Message Text=""IWithM.md2: %(IWithM.Md2)""/>
+	</Target>
+</Project>
+";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("IWithM.md: Foo", "A1");
+			logger.CheckLoggedMessageHead ("IWithM.md2: File1", "A2");
+
+			logger.CheckLoggedMessageHead ("IWithM.md: Foo", "A3");
+			logger.CheckLoggedMessageHead ("IWithM.md2: File1", "A4");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		// Test Item/prop references in conditions
+		public void TestItems11 () {
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<Prop1>@(Item0)</Prop1>
+	</PropertyGroup>
+	<ItemGroup>
+		<Item0 Include=""Foo""/>
+		<Item1 Include=""@(Item0)""/>
+
+		<CondItem Condition=""'@(Item1)' == '@(Item0)'"" Include=""Equal to item0""/>
+		<CondItem Condition=""'@(Item1)' == 'Foo'"" Include=""Equal to item0's value""/>
+
+		<CondItem1 Condition=""'$(Prop1)' == '@(Item0)'"" Include=""Equal to item0""/>
+		<CondItem1 Condition=""'$(Prop1)' == 'Foo'"" Include=""Equal to item0's value""/>
+	</ItemGroup>
+
+	<Target Name=""1"">
+		<Message Text = ""CondItem: %(CondItem.Identity)""/>
+		<Message Text = ""CondItem1: %(CondItem1.Identity)""/>
+	</Target>
+</Project>
+";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("CondItem: Equal to item0", "A1");
+			logger.CheckLoggedMessageHead ("CondItem: Equal to item0's value", "A2");
+			logger.CheckLoggedMessageHead ("CondItem1: Equal to item0", "A3");
+			logger.CheckLoggedMessageHead ("CondItem1: Equal to item0's value", "A4");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		// test properties and item refs, with dynamic properties/items
+		public void TestItems12 ()
+		{
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<Prop2>@(Ref1)</Prop2>
+	</PropertyGroup>
+	<ItemGroup>
+		<Ref1 Include=""File1"" />
+		<Files Include=""@(Ref1)""/>
+	</ItemGroup>
+
+	<Target Name=""1"">
+		<Message Text=""Prop2: $(Prop2)""/>
+		
+		<Message Text=""Files: @(Files)""/>
+		<CreateItem Include=""foobar"">
+			<Output TaskParameter=""Include"" ItemName=""Ref1""/>
+		</CreateItem>
+		<Message Text=""Files: @(Files)""/>
+
+		<Message Text=""Prop2: $(Prop2)""/>
+		<CreateProperty Value=""NewValue"">
+			<Output TaskParameter=""Value"" PropertyName=""Prop2""/>
+		</CreateProperty>
+		<Message Text=""Prop2: $(Prop2)""/>
+	</Target>
+</Project>
+";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.DumpMessages ();
+			logger.CheckLoggedMessageHead ("Prop2: File1", "A1");
+			logger.CheckLoggedMessageHead ("Files: File1", "A1");
+			logger.CheckLoggedMessageHead ("Files: File1", "A1");
+			logger.CheckLoggedMessageHead ("Prop2: File1;foobar", "A1");
+			logger.CheckLoggedMessageHead ("Prop2: NewValue", "A1");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		// test item refs in properties
+		public void TestItems13 () {
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<Prop1>@(Item0)</Prop1>
+	</PropertyGroup>
+	<ItemGroup>
+		<Item0 Include=""Foo""/>
+		<Item1 Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
+		<Item2 Include=""@(Item1->'%(Extension)/$(Prop1)')"" />
+	</ItemGroup>
+
+	<Target Name='1'>
+		<Message Text=""Item2: @(Item2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Item2: .txt/@(Item0);.txt/@(Item0);.zip/@(Item0);.zip/@(Item0)", "A1");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		public void TestSelfRefrentialItems ()
+		{
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<Prop1>@(Item1);Val</Prop1>
+		<Prop2>@(Item2)</Prop2>
+		<Prop3>@(Item3)</Prop3>
+	</PropertyGroup>
+	<ItemGroup>
+		<Item1 Include=""Item1OldVal""/>
+		<Item1 Include=""@(Item1);$(Prop1)""/>
+
+		<Item2 Include=""Item2OldVal""/>
+		<Item2 Include=""@(Item2->'%(Identity)');$(Prop2)""/>
+
+		<Item3 Include=""Item3OldVal""/>
+		<Item3 Include=""@(Item3, '_');$(Prop3)""/>
+
+		<Item4 Include=""@(Item4)""/>
+	</ItemGroup>
+
+	<Target Name=""1"">
+		<Message Text=""Item1: %(Item1.Identity)""/>
+		<Message Text=""Item2: %(Item2.Identity)""/>
+		<Message Text=""Item3: %(Item3.Identity)""/>
+		<Message Text=""%(Item4.Identity)""/>
+		<Message Text=""Item4: %(Item4.Identity)""/>
+	</Target>
+</Project>
+";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.DumpMessages ();
+			logger.CheckLoggedMessageHead ("Item1: Item1OldVal", "A1");
+			logger.CheckLoggedMessageHead ("Item1: Val", "A2");
+			logger.CheckLoggedMessageHead ("Item2: Item2OldVal", "A3");
+			logger.CheckLoggedMessageHead ("Item3: Item3OldVal", "A4");
+			logger.CheckLoggedMessageHead ("Item4: ", "A5");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		public void TestEmptyItemsWithBatching ()
+		{
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+			<UsingTask TaskName='TestTask_TaskItem' AssemblyFile='Test\resources\TestTasks.dll' />
+			<UsingTask TaskName='TestTask_TaskItems' AssemblyFile='Test\resources\TestTasks.dll' />
+	<Target Name=""1"">
+		<StringTestTask Property=""%(Item4.Identity)"">
+			<Output TaskParameter=""OutputString"" PropertyName=""OutputString""/>
+		</StringTestTask>
+		<Message Text='output1: $(OutputString)'/>
+
+		<StringTestTask Property=""  %(Item4.Identity)"">
+			<Output TaskParameter=""OutputString"" PropertyName=""OutputString""/>
+		</StringTestTask>
+		<Message Text='output2: $(OutputString)'/>
+
+		<StringTestTask Array=""%(Item4.Identity)"">
+			<Output TaskParameter=""OutputString"" PropertyName=""OutputString""/>
+		</StringTestTask>
+		<Message Text='output3: $(OutputString)'/>
+
+		<StringTestTask Array=""  %(Item4.Identity)"">
+			<Output TaskParameter=""OutputString"" PropertyName=""OutputString""/>
+		</StringTestTask>
+		<Message Text='output4: $(OutputString)'/>
+
+
+		<TestTask_TaskItem Property=""%(Item4.Identity)"">
+			<Output TaskParameter=""Output"" PropertyName=""OutputString""/>
+		</TestTask_TaskItem>
+		<Message Text='output5: $(OutputString)'/>
+
+		<TestTask_TaskItem Property=""  %(Item4.Identity)"">
+			<Output TaskParameter=""Output"" PropertyName=""OutputString""/>
+		</TestTask_TaskItem>
+		<Message Text='output6: $(OutputString)'/>
+
+
+		<TestTask_TaskItems Property=""  %(Item4.Identity)"">
+			<Output TaskParameter=""Output"" PropertyName=""OutputString""/>
+		</TestTask_TaskItems>
+		<Message Text='output7: $(OutputString)'/>
+	
+
+		<!-- no space in property -->
+		<TestTask_TaskItems Property=""%(Item4.Identity)"">
+			<Output TaskParameter=""Output"" PropertyName=""OutputString""/>
+		</TestTask_TaskItems>
+		<Message Text='output8: $(OutputString)'/>
+
+	</Target>
+</Project>
+";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.DumpMessages ();
+			logger.CheckLoggedMessageHead ("output1: property: null ## array: null", "A1");
+			logger.CheckLoggedMessageHead ("output2: property:    ## array: null", "A2");
+			logger.CheckLoggedMessageHead ("output3: property: null ## array: null", "A3");
+			logger.CheckLoggedMessageHead ("output4: property: null ## array: null", "A4");
+
+			logger.CheckLoggedMessageHead ("output5: null", "A5");
+			logger.CheckLoggedMessageHead ("output6: null", "A6");
+			logger.CheckLoggedMessageHead ("output7: null", "A7");
+			logger.CheckLoggedMessageHead ("output8: null", "A8");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
 		public void TestItemsInTarget1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -317,6 +647,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
 					<PropertyGroup>
 						<A>A</A>
+						<B>@(A)g</B>
 					</PropertyGroup>
 					<ItemGroup>
 						<A Include='A;B;C' />
@@ -338,6 +669,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						<StringTestTask Property=""@(A,'@(A,'')')"">
 							<Output TaskParameter='Property' PropertyName='P5' />
 						</StringTestTask>
+						<StringTestTask Property=""@(A,'$(B)')"">
+							<Output TaskParameter='Property' PropertyName='P6' />
+						</StringTestTask>
 						<StringTestTask Property=""%(A.Filename)"">
 							<Output TaskParameter='Property' ItemName='I1' />
 						</StringTestTask>
@@ -348,14 +682,20 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				</Project>
 			";
 
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger = new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
 			proj.LoadXml (documentString);
-			Assert.IsTrue (proj.Build ("1"), "A0, Build failed");
+			if (!proj.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("build failed");
+			}
 
 			Assert.AreEqual ("A;B;C", proj.GetEvaluatedProperty ("P1"), "A1");
 			Assert.AreEqual ("ABC", proj.GetEvaluatedProperty ("P2"), "A2");
 			Assert.AreEqual ("A@(A)B@(A)C", proj.GetEvaluatedProperty ("P3"), "A3");
 			Assert.AreEqual ("AABAC", proj.GetEvaluatedProperty ("P4"), "A4");
 			Assert.AreEqual ("@(A,'ABC')", proj.GetEvaluatedProperty ("P5"), "A5");
+			Assert.AreEqual ("A@(A)gB@(A)gC", proj.GetEvaluatedProperty ("P6"), "A6");
 			CheckItems (proj, "I1", "A6", "A", "B", "C");
 			CheckItems (proj, "I2", "A7", "A A", "B B", "C C");
 		}
@@ -474,7 +814,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			CheckItems (proj, "I5", "A5", "A", "Foo    A", "Bar", "A", "B");
 			CheckItems (proj, "I6", "A6", "A", "B", "C", "A");
 			CheckItems (proj, "I7", "A7", "A", "B", "C", "A", "B", "C");
-			CheckItems (proj, "I8", "A8", "abc", "A", "B", "C", "A", "foo");
+			CheckItems(proj, "I8", "A8", "abc", "A", "B", "C", "A", "foo");
 		}
 
 		[Test]
@@ -525,6 +865,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		{
 			Engine engine = new Engine (Consts.BinPath);
 			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger();
+			engine.RegisterLogger(logger);
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -548,11 +891,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						"$(C) $(C)",
 						"@(A);$(C)",
 						"@(A);A;B;C",
-						"@(A) $(C) @(A)"
+						"@(A) $(C) @(A)",
 					}) + "</Project>";
 
 			proj.LoadXml (documentString);
-			Assert.IsTrue (proj.Build ("1"), "Build failed");
+			if (!proj.Build("1")) {
+				logger.DumpMessages();
+				Assert.Fail("Build failed");
+			}
 
 			BuildProperty bp = proj.EvaluatedProperties ["D"];
 			Assert.AreEqual ("$(C);Foo", bp.Value, "B0");

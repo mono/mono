@@ -228,7 +228,8 @@ namespace Microsoft.Build.BuildEngine {
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
 				e.Parse (value, true);
-				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject, typeof (string));
+				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject,
+						typeof (string), ExpressionOptions.ExpandItemRefs);
 			} else
 				evaluatedMetadata [name] = Utilities.Unescape (value);
 				
@@ -267,8 +268,8 @@ namespace Microsoft.Build.BuildEngine {
 			excludeExpr = new Expression ();
 			excludeExpr.Parse (Exclude, true);
 			
-			includes = (string) includeExpr.ConvertTo (project, typeof (string));
-			excludes = (string) excludeExpr.ConvertTo (project, typeof (string));
+			includes = (string) includeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
+			excludes = (string) excludeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
 
 			this.finalItemSpec = includes;
 			
@@ -319,15 +320,22 @@ namespace Microsoft.Build.BuildEngine {
 			big.AddItem (bi);
 		}
 		
-		internal string ConvertToString (Expression transform)
+		// during item's eval phase, any item refs in this item, have either
+		// already been expanded or are non-existant, so expand can be _false_
+		//
+		// during prop's eval phase, this isn't reached, as it parses expressions
+		// with allowItems=false, so no ItemReferences are created at all
+		//
+		// at other times, item refs have already been expanded, so expand: false
+		internal string ConvertToString (Expression transform, ExpressionOptions options)
 		{
-			return GetItemSpecFromTransform (transform);
+			return GetItemSpecFromTransform (transform, options);
 		}
 		
-		internal ITaskItem ConvertToITaskItem (Expression transform)
+		internal ITaskItem ConvertToITaskItem (Expression transform, ExpressionOptions options)
 		{
 			TaskItem taskItem;
-			taskItem = new TaskItem (GetItemSpecFromTransform (transform), evaluatedMetadata);
+			taskItem = new TaskItem (GetItemSpecFromTransform (transform, options), evaluatedMetadata);
 			return taskItem;
 		}
 
@@ -342,21 +350,37 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		string GetItemSpecFromTransform (Expression transform)
+		string GetItemSpecFromTransform (Expression transform, ExpressionOptions options)
 		{
 			StringBuilder sb;
 		
-			if (transform == null)
-				return finalItemSpec;
-			else {
+			if (transform == null) {
+				if (options == ExpressionOptions.ExpandItemRefs) {
+					// With usual code paths, this will never execute,
+					// but letting this be here, incase BI.ConvertTo*
+					// is called directly
+					Expression expr = new Expression ();
+					expr.Parse (finalItemSpec, true);
+
+					return (string) expr.ConvertTo (parent_item_group.ParentProject,
+							typeof (string), ExpressionOptions.ExpandItemRefs);
+				} else {
+					return finalItemSpec;
+				}
+			} else {
+				// Transform, _DONT_ expand itemrefs
 				sb = new StringBuilder ();
 				foreach (object o in transform.Collection) {
 					if (o is string) {
 						sb.Append ((string)o);
 					} else if (o is PropertyReference) {
-						sb.Append (((PropertyReference)o).ConvertToString (parent_item_group.ParentProject));
+						sb.Append (((PropertyReference)o).ConvertToString (
+									parent_item_group.ParentProject,
+									ExpressionOptions.DoNotExpandItemRefs));
 					} else if (o is ItemReference) {
-						sb.Append (((ItemReference)o).ConvertToString (parent_item_group.ParentProject));
+						sb.Append (((ItemReference)o).ConvertToString (
+									parent_item_group.ParentProject,
+									ExpressionOptions.DoNotExpandItemRefs));
 					} else if (o is MetadataReference) {
 						sb.Append (GetMetadata (((MetadataReference)o).MetadataName));
 					}

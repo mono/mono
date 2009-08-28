@@ -51,6 +51,9 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
+			if (files.Length == 0)
+				return true;
+
 			List<ITaskItem> all_files = new List<ITaskItem> ();
 			List<ITaskItem> with_culture = new List<ITaskItem> ();
 			List<ITaskItem> no_culture = new List<ITaskItem> ();

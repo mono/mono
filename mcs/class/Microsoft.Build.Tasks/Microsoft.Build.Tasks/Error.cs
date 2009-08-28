@@ -27,6 +27,8 @@
 
 #if NET_2_0
 
+using System;
+
 namespace Microsoft.Build.Tasks {
 	public sealed class Error : TaskExtension {
 	
@@ -44,7 +46,7 @@ namespace Microsoft.Build.Tasks {
 				Log.LogError (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
 					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					text, null);
+					text ?? String.Empty, null);
 			return false;
 		}
 

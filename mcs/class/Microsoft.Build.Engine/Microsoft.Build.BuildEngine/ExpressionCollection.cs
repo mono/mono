@@ -74,18 +74,18 @@ namespace Microsoft.Build.BuildEngine {
 			objects.Add (s);
 		}
 		
-		public object ConvertTo (Project project, Type type)
+		public object ConvertTo (Project project, Type type, ExpressionOptions options)
 		{
 			if (type.IsArray) {
 				if (type == typeof (ITaskItem[]))
-					return ConvertToITaskItemArray (project);
+					return ConvertToITaskItemArray (project, options);
 				else
-					return ConvertToArray (project, type);
+					return ConvertToArray (project, type, options);
 			} else {
 				if (type == typeof (ITaskItem))
-					return ConvertToITaskItem (project);
+					return ConvertToITaskItem (project, options);
 				else
-					return ConvertToNonArray (project, type);
+					return ConvertToNonArray (project, type, options);
 			}
 		}
 		
@@ -95,23 +95,23 @@ namespace Microsoft.Build.BuildEngine {
 				yield return o;
 		}
 		
-		object ConvertToNonArray (Project project, Type type)
+		object ConvertToNonArray (Project project, Type type, ExpressionOptions options)
 		{
-			return ConvertToObject (ConvertToString (project), type);
+			return ConvertToObject (ConvertToString (project, options), type, options);
 		}
 
-		object ConvertToArray (Project project, Type type)
+		object ConvertToArray (Project project, Type type, ExpressionOptions options)
 		{
-			ITaskItem[] items = ConvertToITaskItemArray (project);
+			ITaskItem[] items = ConvertToITaskItemArray (project, options);
 
 			Type element_type = type.GetElementType ();
 			Array arr = Array.CreateInstance (element_type, items.Length);
 			for (int i = 0; i < arr.Length; i ++)
-				arr.SetValue (ConvertToObject (items [i].ItemSpec, element_type), i);
+				arr.SetValue (ConvertToObject (items [i].ItemSpec, element_type, options), i);
 			return arr;
 		}
 
-		object ConvertToObject (string raw, Type type)
+		object ConvertToObject (string raw, Type type, ExpressionOptions options)
 		{
 			if (type == typeof (bool)) {
 				bool value;
@@ -123,17 +123,17 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (type == typeof (string))
 				return raw;
-			else if (type == typeof (int))
-				return Int32.Parse (raw);
-			else if (type == typeof (uint))
-				return UInt32.Parse (raw);
-			else if (type == typeof (DateTime))
+
+			if (type.IsPrimitive)
+				return Convert.ChangeType (raw, type);
+
+			if (type == typeof (DateTime))
 				return DateTime.Parse (raw);
-			else
-				throw new Exception (String.Format ("Unknown type: {0}", type.ToString ()));
+
+			throw new Exception (String.Format ("Unsupported type: {0}", type));
 		}
 
-		string ConvertToString (Project project)
+		string ConvertToString (Project project, ExpressionOptions options)
 		{
 			StringBuilder sb = new StringBuilder ();
 			
@@ -146,25 +146,26 @@ namespace Microsoft.Build.BuildEngine {
 
 				IReference br = o as IReference;
 				if (br != null)
-					sb.Append (br.ConvertToString (project));
+					sb.Append (br.ConvertToString (project, options));
 				else
 					throw new Exception ("BUG: Invalid type in objects collection.");
 			}
 			return sb.ToString ();
 		}
 
-		ITaskItem ConvertToITaskItem (Project project)
+		ITaskItem ConvertToITaskItem (Project project, ExpressionOptions options)
 		{
 			ITaskItem item;
 			
 			if (objects == null)
 				throw new Exception ("Cannot cast empty expression to ITaskItem.");
 
-			ITaskItem[] items = ConvertToITaskItemArray (project);
-			if (items.Length != 1)
+			ITaskItem[] items = ConvertToITaskItemArray (project, options);
+			if (items.Length > 1)
 				//FIXME: msbuild gives better errors
-				throw new Exception (String.Format ("Too many items: {0}", items.Length));
+				throw new Exception (String.Format ("Exactly one item required, but got: {0}", items.Length));
 
+			if (items.Length == 0) return null;
 			return items [0];
 		}
 		
@@ -175,7 +176,7 @@ namespace Microsoft.Build.BuildEngine {
 		//   PropertyRef concats if it doesn't end in ';'
 		// - string cannot concat with ItemRef unless it is ';'.
 		//   string concats if it ends in ';'
-		ITaskItem[] ConvertToITaskItemArray (Project project)
+		ITaskItem[] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
 			List <ITaskItem> finalItems = new List <ITaskItem> ();
 			
@@ -228,7 +229,7 @@ namespace Microsoft.Build.BuildEngine {
 					prev_can_concat = !(value.Length > 0 && value [value.Length - 1] == ';');
 				}
 
-				AddItemsToArray (finalItems, br.ConvertToITaskItemArray (project), can_concat);
+				AddItemsToArray (finalItems, br.ConvertToITaskItemArray (project, options), can_concat);
 
 				prev = o;
 			}

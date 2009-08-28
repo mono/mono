@@ -1063,7 +1063,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (group != null) {
 				foreach (BuildItem item in group) {
 					if (item.HasMetadata (metadataName))
-						return item.GetMetadata (metadataName);
+						return item.GetEvaluatedMetadata (metadataName);
 				}
 			}
 			return String.Empty;

@@ -1,3 +1,7 @@
+2009-08-29  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs: Add tests for property/item evaluation.
+
 2009-06-12  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs (TestItemsInTarget3a): Add another case for valid whitespace

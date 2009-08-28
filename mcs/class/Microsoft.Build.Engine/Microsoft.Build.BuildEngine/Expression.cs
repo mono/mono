@@ -35,6 +35,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Build.BuildEngine {
+
+	// Properties and items are processed in two ways
+	// 1. Evaluate, Project calls evaluate on all the item and property groups.
+	//    At this time, the items are fully expanded, all item and property
+	//    references are expanded to get the item's value.
+	//    Properties on the other hand, expand property refs, but _not_
+	//    item references.
+	//
+	// 2. After the 'evaluation' phase, this could be when executing a target/task,
+	//    - Items : no expansion required, as they are already at final value
+	//    - Properties: Item references get expanded now, in the context of the
+	//      batching
+	//
+	// The enum ExpressionOptions is for specifying this expansion of item references.
+	//
+	// GroupingCollection.Evaluate, evaluates all properties and then items
+
 	internal class Expression {
 	
 		ExpressionCollection expressionCollection;
@@ -55,6 +72,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		// @split: Split on ';'
 		//	   Eg. Property values don't need to be split
+		//
+		// @allowItems: item refs should not be treated as item refs!
+		//	        it converts them to strings in the final expressionCollection
 		public void Parse (string expression, bool allowItems, bool split)
 		{
 			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
@@ -254,10 +274,15 @@ namespace Microsoft.Build.BuildEngine {
 
 			return phase2;
 		}
-		
+
 		public object ConvertTo (Project project, Type type)
 		{
-			return expressionCollection.ConvertTo (project, type);
+			return ConvertTo (project, type, ExpressionOptions.ExpandItemRefs);
+		}
+
+		public object ConvertTo (Project project, Type type, ExpressionOptions options)
+		{
+			return expressionCollection.ConvertTo (project, type, options);
 		}
 
 		public ExpressionCollection Collection {
@@ -299,6 +324,11 @@ namespace Microsoft.Build.BuildEngine {
 				return metadata_regex;
 			}
 		}
+	}
+
+	enum ExpressionOptions {
+		ExpandItemRefs,
+		DoNotExpandItemRefs
 	}
 }
 

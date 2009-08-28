@@ -1,3 +1,15 @@
+2009-08-28  Ankit Jain  <jankit@novell.com>
+
+	* AssignCulture.cs, AssignTargetPath.cs,
+	CallTarget.cs, CombinePath.cs, Copy.cs,
+	CreateItem.cs, CreateManifestResourceName.cs,
+	Delete.cs, Error.cs, FindUnderPath.cs,
+	GenerateResource.cs, MSBuild.cs, MakeDir.cs,
+	Message.cs, RemoveDir.cs, RemoveDuplicates.cs,
+	ResolveAssemblyReference.cs, Touch.cs,
+	WriteLinesToFiles.cs: Add null checks and array
+	length checks.
+
 2009-08-24  Ankit Jain  <jankit@novell.com>
 
 	* LibraryPcFileCache.cs: New. From monodevelop.

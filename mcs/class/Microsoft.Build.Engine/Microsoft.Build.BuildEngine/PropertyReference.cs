@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2005 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,16 +49,39 @@ namespace Microsoft.Build.BuildEngine {
 			this.length = length;
 		}
 		
-		public string ConvertToString (Project project)
+
+		// when evaluating items: expand: true
+		// all other times, expand: true
+		// so, always true, ignore @options
+		public string ConvertToString (Project project, ExpressionOptions options)
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
-			return bp != null ? bp.ConvertToString (project) : String.Empty;
+			if (bp == null)
+				return String.Empty;
+
+			if (options == ExpressionOptions.DoNotExpandItemRefs)
+				return bp.FinalValue;
+
+			return bp.ConvertToString (project, ExpressionOptions.ExpandItemRefs);
 		}
 
-		public ITaskItem[] ConvertToITaskItemArray (Project project)
+		// when evaluating items: expand: true
+		// all other times, expand: true
+		// so, always true, ignore @options
+		public ITaskItem[] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
-			return bp != null ? bp.ConvertToITaskItemArray (project) : null;
+			if (bp == null)
+				return null;
+
+			if (options == ExpressionOptions.DoNotExpandItemRefs) {
+				List<ITaskItem> list = new List<ITaskItem> ();
+				foreach (string s in bp.FinalValue.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries))
+					list.Add (new TaskItem (s));
+				return list.ToArray ();
+			}
+
+			return bp.ConvertToITaskItemArray (project, ExpressionOptions.ExpandItemRefs);
 		}
 		
 		public string Name {
