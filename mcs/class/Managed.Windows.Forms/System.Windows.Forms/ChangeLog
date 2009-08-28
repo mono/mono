@@ -1,3 +1,13 @@
+2009-08-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBoxBase.cs: Modified should *not* be modified from the Text
+	property, as our new tests show. It should be to false, however, in
+	Append and Clear; and Paste, Cut, Undo, and direct user input should set it
+	to true. Also, as opposed to what the .net docs say -but proven by our
+	tests-, the changes should be generating a ModifiedChanged event
+	(thus we set the property, instead of the field).
+	Fixes #511267.
+
 2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fire the CellDoubleClicked event.
