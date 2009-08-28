@@ -47,6 +47,9 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
+			if (paths.Length == 0)
+				return true;
+
 			List <ITaskItem> combined = new List <ITaskItem> ();
 
 			foreach (ITaskItem path in paths)

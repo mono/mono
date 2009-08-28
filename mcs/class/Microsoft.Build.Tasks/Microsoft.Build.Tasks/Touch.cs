@@ -49,6 +49,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (files.Length == 0)
+				return true;
+
 			bool returnBoolean = false;
 			List <ITaskItem> successfulFiles = new List <ITaskItem> ();
 			Stream stream = null;

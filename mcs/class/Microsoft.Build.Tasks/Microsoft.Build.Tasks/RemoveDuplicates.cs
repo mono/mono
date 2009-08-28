@@ -62,6 +62,7 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 		
+		[Output]
 		public ITaskItem [] Filtered {
 			get { return filtered; }
 			set { filtered = value; }

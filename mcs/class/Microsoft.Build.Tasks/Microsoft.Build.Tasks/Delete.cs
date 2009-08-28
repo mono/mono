@@ -47,6 +47,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (files.Length == 0)
+				return true;
+
 			List <ITaskItem> temporaryDeletedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem file in files) {

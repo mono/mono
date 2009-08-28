@@ -44,6 +44,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (include == null || include.Length == 0)
+				return true;
+
 			List<ITaskItem> output = new List<ITaskItem> ();
 			foreach (ITaskItem item in include) {
 				if (IsExcluded (item))
@@ -63,7 +66,6 @@ namespace Microsoft.Build.Tasks {
 
 			include = output.ToArray ();
 
-			//FIXME: when does this return false?
 			return true;
 		}
 

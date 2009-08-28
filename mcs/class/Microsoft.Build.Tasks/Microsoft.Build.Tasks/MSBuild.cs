@@ -53,6 +53,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (projects.Length == 0)
+				return true;
+
 			string filename;
 			bool result = true;
 			stopOnFirstFailure = false;

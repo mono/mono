@@ -42,6 +42,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (text == null)
+				return true;
+
 			MessageImportance	messageImportance;
 			
 			if (importance == null)

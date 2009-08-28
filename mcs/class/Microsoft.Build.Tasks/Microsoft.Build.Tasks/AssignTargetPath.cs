@@ -47,6 +47,10 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
+			if (files == null || files.Length == 0)
+				//nothing to do
+				return true;
+
 			assignedFiles = new ITaskItem [files.Length];
 			for (int i = 0; i < files.Length; i ++) {
 				string file = files [i].ItemSpec;

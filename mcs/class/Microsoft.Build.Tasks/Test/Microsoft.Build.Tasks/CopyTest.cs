@@ -182,6 +182,68 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CheckCopyBuildItems (project, file_paths, target_path, "A2");
 		}
 
+		[Test]
+		public void TestCopy_EmptySources () {
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Target Name='1'>
+						<Copy SourceFiles='@(NonExistantSourceFiles)' DestinationFolder='$(TargetPath)' SkipUnchangedFiles='true' >
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+					</Target>
+				</Project>
+			";
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+
+			
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+			testLogger.DumpMessages ();
+		}
+
+		[Test]
+		public void TestCopy_EmptyDestFolder () {
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<SFiles Include='foo.txt'><Md>1</Md></SFiles>
+					</ItemGroup>
+					<Target Name='1'>
+						<Copy SourceFiles='@(SFiles)' DestinationFolder='@(NonExistant)' DestinationFiles='@(NonExistant)' SkipUnchangedFiles='true' >
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+					</Target>
+				</Project>
+			";
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+			if (project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build should have failed");
+			}
+		}
+
 		void CheckCopyBuildItems (Project project, string [] source_files, string destination_folder, string prefix)
 		{
 			int num = source_files.Length;

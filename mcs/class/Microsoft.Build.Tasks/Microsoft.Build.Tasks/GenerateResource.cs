@@ -62,12 +62,10 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (sources.Length == 0)
+				return true;
+
 			List  <ITaskItem> temporaryFilesWritten = new List <ITaskItem> ();
-			if (sources.Length != outputResources.Length) {
-				Log.LogErrorFromException (new Exception ("Sources count is different than OutputResources count."));
-				return false;
-			}
-			
 			if (outputResources == null) {
 				foreach (ITaskItem source in sources) {
 					string sourceFile = source.ItemSpec;
@@ -75,6 +73,11 @@ namespace Microsoft.Build.Tasks {
 					CompileResourceFile (sourceFile, outputFile);
 				}
 			} else {
+				if (sources.Length != outputResources.Length) {
+					Log.LogErrorFromException (new Exception ("Sources count is different than OutputResources count."));
+					return false;
+				}
+
 				for (int i = 0; i < sources.Length; i ++) {
 					string sourceFile = sources [i].ItemSpec;
 					string outputFile = outputResources [i].ItemSpec;
