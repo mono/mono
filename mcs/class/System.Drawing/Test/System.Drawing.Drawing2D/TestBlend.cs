@@ -36,7 +36,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class BlendTest : Assertion
+	public class BlendTest
 	{
 		[TearDown]
 		public void TearDown () { }
@@ -49,13 +49,13 @@ namespace MonoTests.System.Drawing.Drawing2D
 		{
 			Blend blend0 = new Blend ();
 
-			AssertEquals ("C#1", 1, blend0.Factors.Length);
-			AssertEquals ("C#2", 1, blend0.Positions.Length);
+			Assert.AreEqual (1, blend0.Factors.Length, "C#1");
+			Assert.AreEqual (1, blend0.Positions.Length, "C#2");
 
 			Blend blend1 = new Blend (1);
 
-			AssertEquals ("C#3", 1, blend1.Factors.Length);
-			AssertEquals ("C#4", 1, blend1.Positions.Length);
+			Assert.AreEqual (1, blend1.Factors.Length, "C#3");
+			Assert.AreEqual (1, blend1.Positions.Length, "C#4");
 		}
 
 		[Test]
@@ -63,8 +63,8 @@ namespace MonoTests.System.Drawing.Drawing2D
 		{
 			Blend blend0 = new Blend ();
 
-			AssertEquals ("P#1", 0, blend0.Factors[0]);
-			AssertEquals ("P#2", 0, blend0.Positions[0]);
+			Assert.AreEqual (0, blend0.Factors[0], "P#1");
+			Assert.AreEqual (0, blend0.Positions[0], "P#2");
 
 			Blend blend1 = new Blend (1);
 			float[] positions = {0.0F, 0.5F, 1.0F};
@@ -72,12 +72,12 @@ namespace MonoTests.System.Drawing.Drawing2D
 			blend1.Factors = factors;
 			blend1.Positions = positions;
 
-			AssertEquals ("P#3", factors[0], blend1.Factors[0]);
-			AssertEquals ("P#4", factors[1], blend1.Factors[1]);
-			AssertEquals ("P#5", factors[2], blend1.Factors[2]);
-			AssertEquals ("P#6", positions[0], blend1.Positions[0]);
-			AssertEquals ("P#7", positions[1], blend1.Positions[1]);
-			AssertEquals ("P#8", positions[2], blend1.Positions[2]);
+			Assert.AreEqual (factors[0], blend1.Factors[0], "P#3");
+			Assert.AreEqual (factors[1], blend1.Factors[1], "P#4");
+			Assert.AreEqual (factors[2], blend1.Factors[2], "P#5");
+			Assert.AreEqual (positions[0], blend1.Positions[0], "P#6");
+			Assert.AreEqual (positions[1], blend1.Positions[1], "P#7");
+			Assert.AreEqual (positions[2], blend1.Positions[2], "P#8");
 		}
 	}
 }

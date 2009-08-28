@@ -1,3 +1,7 @@
+2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestBlend.cs, TestMatrix.cs : nunit test upgrade to modern style.
+
 2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs, LinearGradientBrushTest.cs, TestMatrix.cs:
