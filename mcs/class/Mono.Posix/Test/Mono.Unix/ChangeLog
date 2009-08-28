@@ -1,3 +1,7 @@
+2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UnixEncodingTest.cs : upgrade to modern nunit style.
+
 2009-02-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignalTest.cs: Add tests to check for concurrent
