@@ -14,7 +14,7 @@ using Microsoft.JScript.Vsa;
 namespace MonoTests.Microsoft.JScript {
 
 	[TestFixture]
-	public class VsaItemsTest : Assertion {
+	public class VsaItemsTest {
 
 		public class Site : BaseVsaSite 
 		{}
@@ -44,14 +44,14 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				size = items.Count;
 			} catch (VsaException e) {
-				AssertEquals ("#1", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#1");
 			}
 
 			try {
 				item = items.CreateItem ("itemx", VsaItemType.Code, 
 							 VsaItemFlag.Class);
 			} catch (VsaException e) {
-				AssertEquals ("#2", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#2");
 			}
 		}
 
@@ -72,32 +72,32 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				item = items [-1];
 			} catch (VsaException e) {
-				AssertEquals ("#3", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#3");
 			}
 
 
 			try {
 				item = items [20];
 			} catch (VsaException e) {
-				AssertEquals ("#4", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#4");
 			}
 
 			try {
 				item = items ["IamNotHere"];
 			} catch (VsaException e) {
-				AssertEquals ("#5", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#5");
 			}
 
 			try {
 				items.Remove (20);
 			} catch (VsaException e) {
-				AssertEquals ("#6", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#6");
 			}
 
 			try {
 				items.Remove (-1);
 			} catch (VsaException e) {
-				AssertEquals ("#7", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#7");
 			}
 		}
 
@@ -120,7 +120,7 @@ namespace MonoTests.Microsoft.JScript {
 							  VsaItemType.Reference,
 							  VsaItemFlag.Class);
 			} catch (VsaException e) {
-				AssertEquals ("#8", VsaError.ItemFlagNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemFlagNotSupported, e.ErrorCode, "#8");
 			}
 
 			try {
@@ -128,7 +128,7 @@ namespace MonoTests.Microsoft.JScript {
 							  VsaItemType.Reference,
 							  VsaItemFlag.Module);
 			} catch (VsaException e) {
-				AssertEquals ("#9", VsaError.ItemFlagNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemFlagNotSupported, e.ErrorCode, "#9");
 			}
 
 			try {
@@ -136,7 +136,7 @@ namespace MonoTests.Microsoft.JScript {
 							 VsaItemType.AppGlobal,
 							 VsaItemFlag.Class);
 			} catch (VsaException e) {
-				AssertEquals ("#10", VsaError.ItemFlagNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemFlagNotSupported, e.ErrorCode, "#10");
 			}
 
 			try {
@@ -144,7 +144,7 @@ namespace MonoTests.Microsoft.JScript {
 							 VsaItemType.AppGlobal,
 							 VsaItemFlag.Module);
 			} catch (VsaException e) {
-				AssertEquals ("#11", VsaError.ItemFlagNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemFlagNotSupported, e.ErrorCode, "#11");
 			}
 
 		}
@@ -167,24 +167,24 @@ namespace MonoTests.Microsoft.JScript {
 			items.CreateItem ("item2", VsaItemType.AppGlobal, VsaItemFlag.None);
 			items.CreateItem ("item3", VsaItemType.Code, VsaItemFlag.Module);
 
-			AssertEquals ("#12", 3, items.Count);
+			Assert.AreEqual (3, items.Count, "#12");
 
 			try {
 				item = items [4];
 			} catch (VsaException e) {
-				AssertEquals ("#13", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#13");
 			}
 
 			string ERASED_ITEM = "item2";
 
 			items.Remove (ERASED_ITEM);
 
-			AssertEquals ("#14", 2, items.Count);
+			Assert.AreEqual (2, items.Count, "#14");
 
 			try {
 				item = items [ERASED_ITEM];
 			} catch (VsaException e) {
-				AssertEquals ("#15", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#15");
 			}
 		}
 
@@ -214,19 +214,19 @@ namespace MonoTests.Microsoft.JScript {
 			items.CreateItem ("item10", VsaItemType.Code, VsaItemFlag.Module);
 
 			item = items [2];
-			AssertEquals ("#16", "item3", item.Name);
+			Assert.AreEqual ("item3", item.Name, "#16");
 
 			items.Remove ("item6");
-			AssertEquals ("#17", "item7", items [5].Name);
+			Assert.AreEqual ("item7", items [5].Name, "#17");
 
 			try { 
 				items.Remove ("itemNonExistent");
 			} catch (VsaException e) {
-				AssertEquals ("#18", VsaError.ItemNotFound, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNotFound, e.ErrorCode, "#18");
 			}
 		
 			items.Remove (3);
-			AssertEquals ("#19", "item5", items [3].Name);
+			Assert.AreEqual ("item5", items [3].Name, "#19");
 		}
 
 		[Test]
@@ -249,7 +249,7 @@ namespace MonoTests.Microsoft.JScript {
 						  VsaItemType.Reference, 
 						  VsaItemFlag.None);
 			} catch (VsaException e) {
-				AssertEquals ("#20", VsaError.ItemNameInUse, e.ErrorCode);
+				Assert.AreEqual (VsaError.ItemNameInUse, e.ErrorCode, "#20");
 			}
 		}
 	}

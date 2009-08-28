@@ -1,3 +1,7 @@
+2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* upgraded to modern nunit style.
+
 2003-09-29    <cesar@ciencias.unam.mx>
 
 	* Added VsaItemTest.cs.

@@ -16,7 +16,7 @@ using Microsoft.JScript;
 namespace MonoTests.Microsoft.JScript {
 
 	[TestFixture]
-	public class VsaItemTest : Assertion {
+	public class VsaItemTest {
 
 		[Test]
 		public void IsDirtyOnEngineClosed ()
@@ -37,7 +37,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				bool dirty = item.IsDirty;
 			} catch (VsaException e) {
-				AssertEquals ("#1", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#1");
 			}
 		}
 
@@ -55,13 +55,13 @@ namespace MonoTests.Microsoft.JScript {
 			items = engine.Items;			
 
 			item = items.CreateItem ("item1", VsaItemType.Reference, VsaItemFlag.None);
-			AssertEquals ("#2", true,item.IsDirty);
+			Assert.AreEqual (true,item.IsDirty, "#2");
 
 			item = items.CreateItem ("item2", VsaItemType.AppGlobal, VsaItemFlag.None);
-			AssertEquals ("#3", true, item.IsDirty);
+			Assert.AreEqual (true, item.IsDirty, "#3");
 
 			item = items.CreateItem ("item3", VsaItemType.Code, VsaItemFlag.Module);
-			AssertEquals ("#4", true, item.IsDirty);
+			Assert.AreEqual (true, item.IsDirty, "#4");
 		}
 
 		[Test]
@@ -84,7 +84,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				VsaItemType type = item.ItemType;
 			} catch (VsaException e) {
-				AssertEquals ("#5", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#5");
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				object opt = item.GetOption ("AlwaysGenerateIL");
 			} catch (VsaException e) {
-				AssertEquals ("#6", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#6");
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				item.GetOption ("OptionNotSupportedByThisScriptingEngine");
 			} catch (VsaException e) {
-				AssertEquals ("#7", VsaError.OptionNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.OptionNotSupported, e.ErrorCode, "#7");
 			}
 		}
 
@@ -154,7 +154,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				item.SetOption ("AlwaysGenerateIL", true);
 			} catch (VsaException e) {
-				AssertEquals ("#8", VsaError.EngineClosed, e.ErrorCode);
+				Assert.AreEqual (VsaError.EngineClosed, e.ErrorCode, "#8");
 			}
 		}
 
@@ -176,7 +176,7 @@ namespace MonoTests.Microsoft.JScript {
 			try {
 				item.SetOption ("OptionNotSupportedByThisScriptingEngine", true);
   			} catch (VsaException e) {
-				AssertEquals ("#9", VsaError.OptionNotSupported, e.ErrorCode);
+				Assert.AreEqual (VsaError.OptionNotSupported, e.ErrorCode, "#9");
 			}
 		}					
 	}
