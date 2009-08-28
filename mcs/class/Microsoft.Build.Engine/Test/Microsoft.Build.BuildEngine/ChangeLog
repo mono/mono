@@ -1,3 +1,11 @@
+2009-08-29  Ankit Jain  <jankit@novell.com>
+
+	* BuildItemTest.cs (TestSetMetadata5a): New.
+	* ProjectTest.cs: Add tests for different property types
+	with required attribute. Also, check the values - null or
+	empty array.
+	* TestTasks.cs: Add new tasks for above.
+
 2009-08-18  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestCaseSensitivityOfProjectElements): New.

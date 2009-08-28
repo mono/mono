@@ -49,6 +49,10 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (sourceFiles.Length == 0)
+				// nothing to copy!
+				return true;
+
 			try {
 				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
@@ -57,7 +61,7 @@ namespace Microsoft.Build.Tasks {
 					throw new Exception ("Number of source files is different than number of destination files.");
 				if (destinationFiles != null && destinationFolder != null)
 					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
-				if (destinationFiles != null) {
+				if (destinationFiles != null && destinationFiles.Length > 0) {
 					for (int i = 0; i < sourceFiles.Length; i ++) {
 						ITaskItem sourceItem = sourceFiles [i];
 						ITaskItem destinationItem = destinationFiles [i];

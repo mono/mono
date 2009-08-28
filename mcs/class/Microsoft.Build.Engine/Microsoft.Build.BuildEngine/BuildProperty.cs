@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2005 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +34,7 @@ using System.Text;
 using System.Xml;
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class BuildProperty {
@@ -43,6 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 		string		name;
 		Project		parentProject;
 		PropertyType	propertyType;
+		bool		converting;
 
 		BuildProperty ()
 		{
@@ -116,27 +120,63 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildProperty evaluated = new BuildProperty (Name, Value);
 
+			// In evaluate phase, properties are not expanded
 			Expression exp = new Expression ();
 			exp.Parse (Value, false, false);
-			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
+			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string),
+					ExpressionOptions.DoNotExpandItemRefs);
 
 			parentProject.EvaluatedProperties.AddProperty (evaluated);
 		}
 
-		internal string ConvertToString (Project project)
+		// during property's eval phase, this is never reached, as PropertyReference
+		// handles the eval case
+		//
+		// during item's eval phase, we have expand: true, that's what we
+		// do here..
+		//
+		// during non-eval, expand: true
+		// So, its always true here
+		internal string ConvertToString (Project project, ExpressionOptions options)
 		{
-			Expression exp = new Expression ();
-			exp.Parse (Value, true, false);
+			if (converting) {
+				// found ref to @this while trying to ConvertToString
+				// for @this!
+				return FinalValue;
+			}
 
-			return (string) exp.ConvertTo (project, typeof (string));
+			converting = true;
+			try {
+				Expression exp = new Expression ();
+
+				// in non-evaluation phase, properties are always expanded
+				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs, false);
+				return (string) exp.ConvertTo (project, typeof (string), options);
+			} finally {
+				converting = false;
+			}
 		}
 
-		internal ITaskItem[] ConvertToITaskItemArray (Project project)
+		internal ITaskItem[] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
-			Expression exp = new Expression ();
-			exp.Parse (Value, true, false);
+			if (converting) {
+				// found ref to @this while trying to ConvertToITaskItemArray
+				// for @this!
+				ITaskItem []items = new ITaskItem [1];
+				items [0] = new TaskItem (FinalValue);
+				return items;
+			}
 
-			return (ITaskItem[]) exp.ConvertTo (project, typeof (ITaskItem[]));
+			converting = true;
+			try {
+				Expression exp = new Expression ();
+
+				// in non-evaluation phase, properties are always expanded
+				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs, false);
+				return (ITaskItem[]) exp.ConvertTo (project, typeof (ITaskItem[]), options);
+			} finally {
+				converting = false;
+			}
 		}
 
 		internal bool FromXml {

@@ -69,12 +69,12 @@ namespace Microsoft.Build.BuildEngine {
 			get { return start + length - 1; }
 		}
 
-		public string ConvertToString (Project project)
+		public string ConvertToString (Project project, ExpressionOptions options)
 		{
 			return project.GetMetadataBatched (itemName, metadataName);
 		}
 
-		public ITaskItem [] ConvertToITaskItemArray (Project project)
+		public ITaskItem [] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
 			List<ITaskItem> items = new List<ITaskItem> ();
 			if (IsQualified) {

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 //
 // (C) 2005 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -97,6 +99,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				"<Project></Project>";
 			
 			engine = new Engine (Consts.BinPath);
+
 			DateTime time = DateTime.Now;
 			project = engine.CreateNewProject ();
 			try {
@@ -1524,35 +1527,89 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestRequiredTask_String1 ()
 		{
 			CheckProjectForRequiredTests ("RequiredTestTask_String", "@(NonExistant)",
-				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String");
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String", null);
 		}
 
 		[Test]
 		public void TestRequiredTask_String2 ()
 		{
 			CheckProjectForRequiredTests ("RequiredTestTask_String", "$(NonExistant)",
-				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String");
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String", null);
+		}
+
+		[Test]
+		public void TestRequiredTask_Strings1 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_Strings", "@(NonExistant)",
+				true, "Build failed", "0");
+		}
+
+		[Test]
+		public void TestRequiredTask_Strings2 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_Strings", "$(NonExistant)",
+				true, "Build failed", "0");
+		}
+
+		[Test]
+		public void TestRequiredTask_Strings3 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_Strings", "%(NonExistant.Md)",
+				true, "Build failed", "0");
+		}
+
+		[Test]
+		public void TestRequiredTask_Strings4 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_Strings", "  %(NonExistant.Md)",
+				true, "Build failed", "0");
+		}
+
+		[Test]
+		public void TestRequiredTask_Ints1 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "@(NonExistant)",
+				true, "Build failed", "count: 0");
+		}
+
+		[Test]
+		public void TestRequiredTask_Ints2 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "$(NonExistant)",
+				true, "Build failed", "count: 0");
+		}
+
+		[Test]
+		public void TestRequiredTask_OtherObjectsArray () {
+			CheckProjectForRequiredTests ("RequiredTestTask_OtherObjectArray", "@(NonExistant)",
+				false, "Should've failed: ObjectArray type not supported as a property type", null);
+		}
+
+		[Test]
+		public void TestRequiredTask_OtherObject () {
+			CheckProjectForRequiredTests ("RequiredTestTask_OtherObjectArray", "@(NonExistant)",
+				false, "Should've failed: ObjectArray type not supported as a property type", null);
+		}
+
+		[Test]
+		public void TestRequiredTask_MyTaskItems1 () {
+			CheckProjectForRequiredTests ("RequiredTestTask_MyTaskItemArray", "@(NonExistant)",
+				false, "Should've failed: ObjectArray type not supported as a property type", null);
 		}
 
 		[Test]
 		public void TestRequiredTask_TaskItem1 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItem", "@(NonExistant)",
-				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem");
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem", null);
 		}
 
 		[Test]
 		public void TestRequiredTask_TaskItem2 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItem", "$(NonExistant)",
-				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem");
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem", null);
 		}
 
 		[Test]
 		public void TestRequiredTask_TaskItemArray1 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "@(NonExistant)",
-				true, "Build failed");
+				true, "Build failed", "count: 0");
 
 			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
 			Assert.AreEqual (1, group.Count, "A2");
@@ -1563,7 +1620,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestRequiredTask_TaskItemArray2 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "$(NonExistant)",
-				true, "Build failed");
+				true, "Build failed", "count: 0");
 
 			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
 			Assert.AreEqual (1, group.Count, "A2");
@@ -1574,12 +1631,34 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestRequiredTask_TaskItemArray3 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "$(NonExistant)",
-				true, "Build failed");
+				true, "Build failed", "count: 0");
 
 			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
 			Assert.AreEqual (1, group.Count, "A2");
 			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
 		}
+
+		[Test]
+		public void TestRequiredTask_TaskItemArray4 () {
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "%(NonExistant.Md)",
+				true, "Build failed", "count: 0");
+
+			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
+			Assert.AreEqual (1, group.Count, "A2");
+			Assert.AreEqual ("count: 0", group[0].FinalItemSpec, "A3");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItemArray5 () {
+			// with extra space in prop value
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "  %(NonExistant.Md)",
+				true, "Build failed", "count: 0");
+
+			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
+			Assert.AreEqual (1, group.Count, "A2");
+			Assert.AreEqual ("count: 0", group[0].FinalItemSpec, "A3");
+		}
+
 
 		[Test]
 		public void TestCaseSensitivityOfProjectElements ()
@@ -1761,7 +1840,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
-		Project CheckProjectForRequiredTests (string taskname, string property_arg, bool expected_result, string error_msg)
+		Project CheckProjectForRequiredTests (string taskname, string property_arg, bool expected_result, string error_msg,
+			string expected_output_msg)
 		{
 			string projectString = String.Format (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 				<UsingTask TaskName=""{0}"" AssemblyFile=""Test/resources/TestTasks.dll"" />
@@ -1769,6 +1849,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					<{0} Property=""{1}"">
 						<Output TaskParameter=""Output"" ItemName=""OutItem""/>
 					</{0}>
+					<Message Text='@(OutItem)'/>
 				</Target>
 			</Project>", taskname, property_arg);
 
@@ -1778,9 +1859,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine.RegisterLogger (logger);
 			Project project = engine.CreateNewProject ();
 			project.LoadXml (projectString);
-
 			try {
 				Assert.AreEqual (expected_result, project.Build (), error_msg);
+				if (expected_result) {
+					logger.CheckLoggedMessageHead (expected_output_msg, "A");
+					Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected messages found");
+				}
 			} finally {
 				logger.DumpMessages ();
 			}

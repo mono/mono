@@ -94,6 +94,10 @@ namespace Microsoft.Build.Tasks {
 		//FIXME: make this reusable
 		public override bool Execute ()
 		{
+			if (assemblies == null && assemblyFiles == null)
+				// nothing to resolve
+				return true;
+
 			assembly_resolver.Log = Log;
 			tempResolvedFiles = new List<ITaskItem> ();
 			tempCopyLocalFiles = new Dictionary<string, ITaskItem> ();
@@ -103,6 +107,43 @@ namespace Microsoft.Build.Tasks {
 
 			primaryReferences = new List<PrimaryReference> ();
 			assemblyNameToResolvedRef = new Dictionary<string, ResolvedReference> ();
+
+			ResolveAssemblies ();
+			ResolveAssemblyFiles ();
+
+			alreadyScannedAssemblyNames = new Dictionary<string, string> ();
+
+			// the first element is place holder for parent assembly's dir
+			dependency_search_paths = new List<string> () { String.Empty };
+			dependency_search_paths.AddRange (searchPaths);
+
+			// resolve dependencies
+			foreach (PrimaryReference pref in primaryReferences)
+				ResolveAssemblyFileDependencies (pref.TaskItem, pref.ParentCopyLocal);
+
+			resolvedFiles = tempResolvedFiles.ToArray ();
+			copyLocalFiles = tempCopyLocalFiles.Values.ToArray ();
+			satelliteFiles = tempSatelliteFiles.Values.ToArray ();
+			relatedFiles = tempRelatedFiles.Values.ToArray ();
+			resolvedDependencyFiles = tempResolvedDepFiles.Values.ToArray ();
+
+			tempResolvedFiles.Clear ();
+			tempCopyLocalFiles.Clear ();
+			tempSatelliteFiles.Clear ();
+			tempRelatedFiles.Clear ();
+			tempResolvedDepFiles.Clear ();
+			alreadyScannedAssemblyNames.Clear ();
+			primaryReferences.Clear ();
+			assemblyNameToResolvedRef.Clear ();
+			dependency_search_paths = null;
+
+			return true;
+		}
+
+		void ResolveAssemblies ()
+		{
+			if (assemblies == null || assemblies.Length == 0)
+				return;
 
 			foreach (ITaskItem item in assemblies) {
 				if (!String.IsNullOrEmpty (item.GetMetadata ("SubType"))) {
@@ -133,36 +174,6 @@ namespace Microsoft.Build.Tasks {
 					}
 				}
 			}
-
-			ResolveAssemblyFiles ();
-
-			alreadyScannedAssemblyNames = new Dictionary<string, string> ();
-
-			// the first element is place holder for parent assembly's dir
-			dependency_search_paths = new List<string> () { String.Empty };
-			dependency_search_paths.AddRange (searchPaths);
-
-			// resolve dependencies
-			foreach (PrimaryReference pref in primaryReferences)
-				ResolveAssemblyFileDependencies (pref.TaskItem, pref.ParentCopyLocal);
-
-			resolvedFiles = tempResolvedFiles.ToArray ();
-			copyLocalFiles = tempCopyLocalFiles.Values.ToArray ();
-			satelliteFiles = tempSatelliteFiles.Values.ToArray ();
-			relatedFiles = tempRelatedFiles.Values.ToArray ();
-			resolvedDependencyFiles = tempResolvedDepFiles.Values.ToArray ();
-
-			tempResolvedFiles.Clear ();
-			tempCopyLocalFiles.Clear ();
-			tempSatelliteFiles.Clear ();
-			tempRelatedFiles.Clear ();
-			tempResolvedDepFiles.Clear ();
-			alreadyScannedAssemblyNames.Clear ();
-			primaryReferences.Clear ();
-			assemblyNameToResolvedRef.Clear ();
-			dependency_search_paths = null;
-
-			return true;
 		}
 
 		// Use @search_paths to resolve the reference
@@ -240,6 +251,9 @@ namespace Microsoft.Build.Tasks {
 		//FIXME: Consider CandidateAssemblyFiles also here
 		void ResolveAssemblyFiles ()
 		{
+			if (assemblyFiles == null)
+				return;
+
 			foreach (ITaskItem item in assemblyFiles) {
 				assembly_resolver.ResetSearchLogger ();
 

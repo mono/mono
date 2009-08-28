@@ -1,3 +1,9 @@
+2009-08-29  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs: Add new tasks for different property types
+	with required attribute. Also, emit whether the value was
+	null or a zero length array.
+
 2009-03-26  Jonathan Chambers  <joncham@gmail.com>
 
 	* TestTasks.cs (NamespacedOutputTestTask): New.

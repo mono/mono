@@ -45,6 +45,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (directories.Length == 0)
+				return true;
+
 			List <ITaskItem> temporaryRemovedDirectories = new List <ITaskItem> ();
 			
 			foreach (ITaskItem directory in directories) {

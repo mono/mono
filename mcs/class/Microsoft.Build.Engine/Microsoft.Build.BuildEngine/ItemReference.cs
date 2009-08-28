@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2005 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,6 +50,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.length = length;
 			this.original_string = original_string;
 
+			// Transform and separator are never expanded for item refs
 			if (transform != null) {
 				this.transform = new Expression ();
 				this.transform.Parse (transform, false);
@@ -59,23 +62,26 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		public string ConvertToString (Project project)
+		// when evaluating property, allowItems=false, so,
+		// ItemRef will _not_ get created, so this wont get hit
+		// when evaluating items, expand: true
+		// other cases, expand: true
+		public string ConvertToString (Project project, ExpressionOptions options)
 		{
 			BuildItemGroup group;
 			if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
-				return group.ConvertToString (transform, separator);
+				return group.ConvertToString (transform, separator, options);
 			else
 				return String.Empty;
 		}
 		
-		public ITaskItem [] ConvertToITaskItemArray (Project project)
+		public ITaskItem [] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
 			BuildItemGroup group;
 			if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
-				return group.ConvertToITaskItemArray (transform);
+				return group.ConvertToITaskItemArray (transform, options);
 			else
 				return null;
-
 		}
 
 		public string ItemName {

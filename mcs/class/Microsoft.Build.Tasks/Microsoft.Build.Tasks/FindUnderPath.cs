@@ -46,16 +46,11 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			if (files == null || files.Length == 0)
+				return true;
+
 			List <ITaskItem> temporaryInPath = new List <ITaskItem> ();
 			List <ITaskItem> temporaryOutOfPath = new List <ITaskItem> ();
-			
-			if (path == null) {
-				Log.LogError (null, null, null, BuildEngine.ProjectFileOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
-					"Path attribute must be specified", null);
-				return false;
-			}
 			
 			foreach (ITaskItem file in files) {
 				try {

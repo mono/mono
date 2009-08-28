@@ -1,3 +1,30 @@
+2009-08-29  Ankit Jain  <jankit@novell.com>
+
+	* Expression.cs (ExpressionOptions): New.
+
+	Introduce a ExpressionOptions argument to all ConvertTo*
+	methods. Implement the rule: in evaluation phase, expand
+	all items completely, but dont expand item refs in properties.
+	At other times, expand the item refs in the properties.
+	See comments in Expression.cs, for a full explanation.
+	* BuildItem.cs: Track api changes.
+	* BuildItemGroup.cs: Likewise.
+	* BuildProperty.cs: Track api changes. Handle self-references.
+	* BuildTask.cs: Track api changes.
+	* IReference.cs: Add ExpressionOptions param.
+	* ItemReference.cs: Track api changes.
+	* PropertyReference.cs: Likewise.
+	* MetadataReference.cs: Likewise.
+	* ExpressionCollection.cs: Track api changes. Add support for
+	converting all primitive types and DateTime, instead of a fixed
+	few.
+	* Project.cs (GetMetadataBatched): Use the evaluated metadata.
+	* TaskBatchingImpl.cs: Handle the case when batching is required,
+	but no items are available.
+
+	* TaskEngine.cs: Throw on unsupported types. Correctly handle
+	properties in case of empty values.
+
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
 	* Expression.cs: Correctly handle a item reference with transform

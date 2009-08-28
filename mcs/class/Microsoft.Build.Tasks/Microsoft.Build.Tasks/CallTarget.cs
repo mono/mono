@@ -46,9 +46,11 @@ namespace Microsoft.Build.Tasks {
 			targetOutputs_list = new List<ITaskItem> ();
 		}
 		
-		[MonoTODO]
 		public override bool Execute ()
 		{
+			if (targets == null || targets.Length == 0)
+				return true;
+
 			Hashtable targets_table = new Hashtable ();
 
 			if (!RunEachTargetSeparately) {
