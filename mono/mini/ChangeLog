@@ -1,3 +1,7 @@
+2009-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm-cpp.cpp mini-llvm.c: Update to latest llvm api.
+
 2009-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_exception_debug_info): Emit ei->flags too.
