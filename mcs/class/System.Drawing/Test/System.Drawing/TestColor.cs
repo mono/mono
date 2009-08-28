@@ -39,7 +39,7 @@ namespace MonoTests.System.Drawing {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class ColorTest : Assertion {
+	public class ColorTest {
 
 		[Test]
 		public void TestArgbValues ()
@@ -47,852 +47,852 @@ namespace MonoTests.System.Drawing {
 			Color color;
 
 			color = Color.Transparent;
-			AssertEquals ("#Transparent.A", 0, color.A);
-			AssertEquals ("#Transparent.R", 255, color.R);
-			AssertEquals ("#Transparent.G", 255, color.G);
-			AssertEquals ("#Transparent.B", 255, color.B);
+			Assert.AreEqual (0, color.A, "#Transparent.A");
+			Assert.AreEqual (255, color.R, "#Transparent.R");
+			Assert.AreEqual (255, color.G, "#Transparent.G");
+			Assert.AreEqual (255, color.B, "#Transparent.B");
 
 			color = Color.AliceBlue;
-			AssertEquals ("#AliceBlue.A", 255, color.A);
-			AssertEquals ("#AliceBlue.R", 240, color.R);
-			AssertEquals ("#AliceBlue.G", 248, color.G);
-			AssertEquals ("#AliceBlue.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#AliceBlue.A");
+			Assert.AreEqual (240, color.R, "#AliceBlue.R");
+			Assert.AreEqual (248, color.G, "#AliceBlue.G");
+			Assert.AreEqual (255, color.B, "#AliceBlue.B");
 
 			color = Color.AntiqueWhite;
-			AssertEquals ("#AntiqueWhite.A", 255, color.A);
-			AssertEquals ("#AntiqueWhite.R", 250, color.R);
-			AssertEquals ("#AntiqueWhite.G", 235, color.G);
-			AssertEquals ("#AntiqueWhite.B", 215, color.B);
+			Assert.AreEqual (255, color.A, "#AntiqueWhite.A");
+			Assert.AreEqual (250, color.R, "#AntiqueWhite.R");
+			Assert.AreEqual (235, color.G, "#AntiqueWhite.G");
+			Assert.AreEqual (215, color.B, "#AntiqueWhite.B");
 
 			color = Color.Aqua;
-			AssertEquals ("#Aqua.A", 255, color.A);
-			AssertEquals ("#Aqua.R", 0, color.R);
-			AssertEquals ("#Aqua.G", 255, color.G);
-			AssertEquals ("#Aqua.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Aqua.A");
+			Assert.AreEqual (0, color.R, "#Aqua.R");
+			Assert.AreEqual (255, color.G, "#Aqua.G");
+			Assert.AreEqual (255, color.B, "#Aqua.B");
 
 			color = Color.Aquamarine;
-			AssertEquals ("#Aquamarine.A", 255, color.A);
-			AssertEquals ("#Aquamarine.R", 127, color.R);
-			AssertEquals ("#Aquamarine.G", 255, color.G);
-			AssertEquals ("#Aquamarine.B", 212, color.B);
+			Assert.AreEqual (255, color.A, "#Aquamarine.A");
+			Assert.AreEqual (127, color.R, "#Aquamarine.R");
+			Assert.AreEqual (255, color.G, "#Aquamarine.G");
+			Assert.AreEqual (212, color.B, "#Aquamarine.B");
 
 			color = Color.Azure;
-			AssertEquals ("#Azure.A", 255, color.A);
-			AssertEquals ("#Azure.R", 240, color.R);
-			AssertEquals ("#Azure.G", 255, color.G);
-			AssertEquals ("#Azure.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Azure.A");
+			Assert.AreEqual (240, color.R, "#Azure.R");
+			Assert.AreEqual (255, color.G, "#Azure.G");
+			Assert.AreEqual (255, color.B, "#Azure.B");
 
 			color = Color.Beige;
-			AssertEquals ("#Beige.A", 255, color.A);
-			AssertEquals ("#Beige.R", 245, color.R);
-			AssertEquals ("#Beige.G", 245, color.G);
-			AssertEquals ("#Beige.B", 220, color.B);
+			Assert.AreEqual (255, color.A, "#Beige.A");
+			Assert.AreEqual (245, color.R, "#Beige.R");
+			Assert.AreEqual (245, color.G, "#Beige.G");
+			Assert.AreEqual (220, color.B, "#Beige.B");
 
 			color = Color.Bisque;
-			AssertEquals ("#Bisque.A", 255, color.A);
-			AssertEquals ("#Bisque.R", 255, color.R);
-			AssertEquals ("#Bisque.G", 228, color.G);
-			AssertEquals ("#Bisque.B", 196, color.B);
+			Assert.AreEqual (255, color.A, "#Bisque.A");
+			Assert.AreEqual (255, color.R, "#Bisque.R");
+			Assert.AreEqual (228, color.G, "#Bisque.G");
+			Assert.AreEqual (196, color.B, "#Bisque.B");
 
 			color = Color.Black;
-			AssertEquals ("#Black.A", 255, color.A);
-			AssertEquals ("#Black.R", 0, color.R);
-			AssertEquals ("#Black.G", 0, color.G);
-			AssertEquals ("#Black.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Black.A");
+			Assert.AreEqual (0, color.R, "#Black.R");
+			Assert.AreEqual (0, color.G, "#Black.G");
+			Assert.AreEqual (0, color.B, "#Black.B");
 
 			color = Color.BlanchedAlmond;
-			AssertEquals ("#BlanchedAlmond.A", 255, color.A);
-			AssertEquals ("#BlanchedAlmond.R", 255, color.R);
-			AssertEquals ("#BlanchedAlmond.G", 235, color.G);
-			AssertEquals ("#BlanchedAlmond.B", 205, color.B);
+			Assert.AreEqual (255, color.A, "#BlanchedAlmond.A");
+			Assert.AreEqual (255, color.R, "#BlanchedAlmond.R");
+			Assert.AreEqual (235, color.G, "#BlanchedAlmond.G");
+			Assert.AreEqual (205, color.B, "#BlanchedAlmond.B");
 
 			color = Color.Blue;
-			AssertEquals ("#Blue.A", 255, color.A);
-			AssertEquals ("#Blue.R", 0, color.R);
-			AssertEquals ("#Blue.G", 0, color.G);
-			AssertEquals ("#Blue.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Blue.A");
+			Assert.AreEqual (0, color.R, "#Blue.R");
+			Assert.AreEqual (0, color.G, "#Blue.G");
+			Assert.AreEqual (255, color.B, "#Blue.B");
 
 			color = Color.BlueViolet;
-			AssertEquals ("#BlueViolet.A", 255, color.A);
-			AssertEquals ("#BlueViolet.R", 138, color.R);
-			AssertEquals ("#BlueViolet.G", 43, color.G);
-			AssertEquals ("#BlueViolet.B", 226, color.B);
+			Assert.AreEqual (255, color.A, "#BlueViolet.A");
+			Assert.AreEqual (138, color.R, "#BlueViolet.R");
+			Assert.AreEqual (43, color.G, "#BlueViolet.G");
+			Assert.AreEqual (226, color.B, "#BlueViolet.B");
 
 			color = Color.Brown;
-			AssertEquals ("#Brown.A", 255, color.A);
-			AssertEquals ("#Brown.R", 165, color.R);
-			AssertEquals ("#Brown.G", 42, color.G);
-			AssertEquals ("#Brown.B", 42, color.B);
+			Assert.AreEqual (255, color.A, "#Brown.A");
+			Assert.AreEqual (165, color.R, "#Brown.R");
+			Assert.AreEqual (42, color.G, "#Brown.G");
+			Assert.AreEqual (42, color.B, "#Brown.B");
 
 			color = Color.BurlyWood;
-			AssertEquals ("#BurlyWood.A", 255, color.A);
-			AssertEquals ("#BurlyWood.R", 222, color.R);
-			AssertEquals ("#BurlyWood.G", 184, color.G);
-			AssertEquals ("#BurlyWood.B", 135, color.B);
+			Assert.AreEqual (255, color.A, "#BurlyWood.A");
+			Assert.AreEqual (222, color.R, "#BurlyWood.R");
+			Assert.AreEqual (184, color.G, "#BurlyWood.G");
+			Assert.AreEqual (135, color.B, "#BurlyWood.B");
 
 			color = Color.CadetBlue;
-			AssertEquals ("#CadetBlue.A", 255, color.A);
-			AssertEquals ("#CadetBlue.R", 95, color.R);
-			AssertEquals ("#CadetBlue.G", 158, color.G);
-			AssertEquals ("#CadetBlue.B", 160, color.B);
+			Assert.AreEqual (255, color.A, "#CadetBlue.A");
+			Assert.AreEqual (95, color.R, "#CadetBlue.R");
+			Assert.AreEqual (158, color.G, "#CadetBlue.G");
+			Assert.AreEqual (160, color.B, "#CadetBlue.B");
 
 			color = Color.Chartreuse;
-			AssertEquals ("#Chartreuse.A", 255, color.A);
-			AssertEquals ("#Chartreuse.R", 127, color.R);
-			AssertEquals ("#Chartreuse.G", 255, color.G);
-			AssertEquals ("#Chartreuse.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Chartreuse.A");
+			Assert.AreEqual (127, color.R, "#Chartreuse.R");
+			Assert.AreEqual (255, color.G, "#Chartreuse.G");
+			Assert.AreEqual (0, color.B, "#Chartreuse.B");
 
 			color = Color.Chocolate;
-			AssertEquals ("#Chocolate.A", 255, color.A);
-			AssertEquals ("#Chocolate.R", 210, color.R);
-			AssertEquals ("#Chocolate.G", 105, color.G);
-			AssertEquals ("#Chocolate.B", 30, color.B);
+			Assert.AreEqual (255, color.A, "#Chocolate.A");
+			Assert.AreEqual (210, color.R, "#Chocolate.R");
+			Assert.AreEqual (105, color.G, "#Chocolate.G");
+			Assert.AreEqual (30, color.B, "#Chocolate.B");
 
 			color = Color.Coral;
-			AssertEquals ("#Coral.A", 255, color.A);
-			AssertEquals ("#Coral.R", 255, color.R);
-			AssertEquals ("#Coral.G", 127, color.G);
-			AssertEquals ("#Coral.B", 80, color.B);
+			Assert.AreEqual (255, color.A, "#Coral.A");
+			Assert.AreEqual (255, color.R, "#Coral.R");
+			Assert.AreEqual (127, color.G, "#Coral.G");
+			Assert.AreEqual (80, color.B, "#Coral.B");
 
 			color = Color.CornflowerBlue;
-			AssertEquals ("#CornflowerBlue.A", 255, color.A);
-			AssertEquals ("#CornflowerBlue.R", 100, color.R);
-			AssertEquals ("#CornflowerBlue.G", 149, color.G);
-			AssertEquals ("#CornflowerBlue.B", 237, color.B);
+			Assert.AreEqual (255, color.A, "#CornflowerBlue.A");
+			Assert.AreEqual (100, color.R, "#CornflowerBlue.R");
+			Assert.AreEqual (149, color.G, "#CornflowerBlue.G");
+			Assert.AreEqual (237, color.B, "#CornflowerBlue.B");
 
 			color = Color.Cornsilk;
-			AssertEquals ("#Cornsilk.A", 255, color.A);
-			AssertEquals ("#Cornsilk.R", 255, color.R);
-			AssertEquals ("#Cornsilk.G", 248, color.G);
-			AssertEquals ("#Cornsilk.B", 220, color.B);
+			Assert.AreEqual (255, color.A, "#Cornsilk.A");
+			Assert.AreEqual (255, color.R, "#Cornsilk.R");
+			Assert.AreEqual (248, color.G, "#Cornsilk.G");
+			Assert.AreEqual (220, color.B, "#Cornsilk.B");
 
 			color = Color.Crimson;
-			AssertEquals ("#Crimson.A", 255, color.A);
-			AssertEquals ("#Crimson.R", 220, color.R);
-			AssertEquals ("#Crimson.G", 20, color.G);
-			AssertEquals ("#Crimson.B", 60, color.B);
+			Assert.AreEqual (255, color.A, "#Crimson.A");
+			Assert.AreEqual (220, color.R, "#Crimson.R");
+			Assert.AreEqual (20, color.G, "#Crimson.G");
+			Assert.AreEqual (60, color.B, "#Crimson.B");
 
 			color = Color.Cyan;
-			AssertEquals ("#Cyan.A", 255, color.A);
-			AssertEquals ("#Cyan.R", 0, color.R);
-			AssertEquals ("#Cyan.G", 255, color.G);
-			AssertEquals ("#Cyan.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Cyan.A");
+			Assert.AreEqual (0, color.R, "#Cyan.R");
+			Assert.AreEqual (255, color.G, "#Cyan.G");
+			Assert.AreEqual (255, color.B, "#Cyan.B");
 
 			color = Color.DarkBlue;
-			AssertEquals ("#DarkBlue.A", 255, color.A);
-			AssertEquals ("#DarkBlue.R", 0, color.R);
-			AssertEquals ("#DarkBlue.G", 0, color.G);
-			AssertEquals ("#DarkBlue.B", 139, color.B);
+			Assert.AreEqual (255, color.A, "#DarkBlue.A");
+			Assert.AreEqual (0, color.R, "#DarkBlue.R");
+			Assert.AreEqual (0, color.G, "#DarkBlue.G");
+			Assert.AreEqual (139, color.B, "#DarkBlue.B");
 
 			color = Color.DarkCyan;
-			AssertEquals ("#DarkCyan.A", 255, color.A);
-			AssertEquals ("#DarkCyan.R", 0, color.R);
-			AssertEquals ("#DarkCyan.G", 139, color.G);
-			AssertEquals ("#DarkCyan.B", 139, color.B);
+			Assert.AreEqual (255, color.A, "#DarkCyan.A");
+			Assert.AreEqual (0, color.R, "#DarkCyan.R");
+			Assert.AreEqual (139, color.G, "#DarkCyan.G");
+			Assert.AreEqual (139, color.B, "#DarkCyan.B");
 
 			color = Color.DarkGoldenrod;
-			AssertEquals ("#DarkGoldenrod.A", 255, color.A);
-			AssertEquals ("#DarkGoldenrod.R", 184, color.R);
-			AssertEquals ("#DarkGoldenrod.G", 134, color.G);
-			AssertEquals ("#DarkGoldenrod.B", 11, color.B);
+			Assert.AreEqual (255, color.A, "#DarkGoldenrod.A");
+			Assert.AreEqual (184, color.R, "#DarkGoldenrod.R");
+			Assert.AreEqual (134, color.G, "#DarkGoldenrod.G");
+			Assert.AreEqual (11, color.B, "#DarkGoldenrod.B");
 
 			color = Color.DarkGray;
-			AssertEquals ("#DarkGray.A", 255, color.A);
-			AssertEquals ("#DarkGray.R", 169, color.R);
-			AssertEquals ("#DarkGray.G", 169, color.G);
-			AssertEquals ("#DarkGray.B", 169, color.B);
+			Assert.AreEqual (255, color.A, "#DarkGray.A");
+			Assert.AreEqual (169, color.R, "#DarkGray.R");
+			Assert.AreEqual (169, color.G, "#DarkGray.G");
+			Assert.AreEqual (169, color.B, "#DarkGray.B");
 
 			color = Color.DarkGreen;
-			AssertEquals ("#DarkGreen.A", 255, color.A);
-			AssertEquals ("#DarkGreen.R", 0, color.R);
-			AssertEquals ("#DarkGreen.G", 100, color.G);
-			AssertEquals ("#DarkGreen.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#DarkGreen.A");
+			Assert.AreEqual (0, color.R, "#DarkGreen.R");
+			Assert.AreEqual (100, color.G, "#DarkGreen.G");
+			Assert.AreEqual (0, color.B, "#DarkGreen.B");
 
 			color = Color.DarkKhaki;
-			AssertEquals ("#DarkKhaki.A", 255, color.A);
-			AssertEquals ("#DarkKhaki.R", 189, color.R);
-			AssertEquals ("#DarkKhaki.G", 183, color.G);
-			AssertEquals ("#DarkKhaki.B", 107, color.B);
+			Assert.AreEqual (255, color.A, "#DarkKhaki.A");
+			Assert.AreEqual (189, color.R, "#DarkKhaki.R");
+			Assert.AreEqual (183, color.G, "#DarkKhaki.G");
+			Assert.AreEqual (107, color.B, "#DarkKhaki.B");
 
 			color = Color.DarkMagenta;
-			AssertEquals ("#DarkMagenta.A", 255, color.A);
-			AssertEquals ("#DarkMagenta.R", 139, color.R);
-			AssertEquals ("#DarkMagenta.G", 0, color.G);
-			AssertEquals ("#DarkMagenta.B", 139, color.B);
+			Assert.AreEqual (255, color.A, "#DarkMagenta.A");
+			Assert.AreEqual (139, color.R, "#DarkMagenta.R");
+			Assert.AreEqual (0, color.G, "#DarkMagenta.G");
+			Assert.AreEqual (139, color.B, "#DarkMagenta.B");
 
 			color = Color.DarkOliveGreen;
-			AssertEquals ("#DarkOliveGreen.A", 255, color.A);
-			AssertEquals ("#DarkOliveGreen.R", 85, color.R);
-			AssertEquals ("#DarkOliveGreen.G", 107, color.G);
-			AssertEquals ("#DarkOliveGreen.B", 47, color.B);
+			Assert.AreEqual (255, color.A, "#DarkOliveGreen.A");
+			Assert.AreEqual (85, color.R, "#DarkOliveGreen.R");
+			Assert.AreEqual (107, color.G, "#DarkOliveGreen.G");
+			Assert.AreEqual (47, color.B, "#DarkOliveGreen.B");
 
 			color = Color.DarkOrange;
-			AssertEquals ("#DarkOrange.A", 255, color.A);
-			AssertEquals ("#DarkOrange.R", 255, color.R);
-			AssertEquals ("#DarkOrange.G", 140, color.G);
-			AssertEquals ("#DarkOrange.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#DarkOrange.A");
+			Assert.AreEqual (255, color.R, "#DarkOrange.R");
+			Assert.AreEqual (140, color.G, "#DarkOrange.G");
+			Assert.AreEqual (0, color.B, "#DarkOrange.B");
 
 			color = Color.DarkOrchid;
-			AssertEquals ("#DarkOrchid.A", 255, color.A);
-			AssertEquals ("#DarkOrchid.R", 153, color.R);
-			AssertEquals ("#DarkOrchid.G", 50, color.G);
-			AssertEquals ("#DarkOrchid.B", 204, color.B);
+			Assert.AreEqual (255, color.A, "#DarkOrchid.A");
+			Assert.AreEqual (153, color.R, "#DarkOrchid.R");
+			Assert.AreEqual (50, color.G, "#DarkOrchid.G");
+			Assert.AreEqual (204, color.B, "#DarkOrchid.B");
 
 			color = Color.DarkRed;
-			AssertEquals ("#DarkRed.A", 255, color.A);
-			AssertEquals ("#DarkRed.R", 139, color.R);
-			AssertEquals ("#DarkRed.G", 0, color.G);
-			AssertEquals ("#DarkRed.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#DarkRed.A");
+			Assert.AreEqual (139, color.R, "#DarkRed.R");
+			Assert.AreEqual (0, color.G, "#DarkRed.G");
+			Assert.AreEqual (0, color.B, "#DarkRed.B");
 
 			color = Color.DarkSalmon;
-			AssertEquals ("#DarkSalmon.A", 255, color.A);
-			AssertEquals ("#DarkSalmon.R", 233, color.R);
-			AssertEquals ("#DarkSalmon.G", 150, color.G);
-			AssertEquals ("#DarkSalmon.B", 122, color.B);
+			Assert.AreEqual (255, color.A, "#DarkSalmon.A");
+			Assert.AreEqual (233, color.R, "#DarkSalmon.R");
+			Assert.AreEqual (150, color.G, "#DarkSalmon.G");
+			Assert.AreEqual (122, color.B, "#DarkSalmon.B");
 
 			color = Color.DarkSeaGreen;
-			AssertEquals ("#DarkSeaGreen.A", 255, color.A);
-			AssertEquals ("#DarkSeaGreen.R", 143, color.R);
-			AssertEquals ("#DarkSeaGreen.G", 188, color.G);
-			AssertEquals ("#DarkSeaGreen.B", 139, color.B);
+			Assert.AreEqual (255, color.A, "#DarkSeaGreen.A");
+			Assert.AreEqual (143, color.R, "#DarkSeaGreen.R");
+			Assert.AreEqual (188, color.G, "#DarkSeaGreen.G");
+			Assert.AreEqual (139, color.B, "#DarkSeaGreen.B");
 
 			color = Color.DarkSlateBlue;
-			AssertEquals ("#DarkSlateBlue.A", 255, color.A);
-			AssertEquals ("#DarkSlateBlue.R", 72, color.R);
-			AssertEquals ("#DarkSlateBlue.G", 61, color.G);
-			AssertEquals ("#DarkSlateBlue.B", 139, color.B);
+			Assert.AreEqual (255, color.A, "#DarkSlateBlue.A");
+			Assert.AreEqual (72, color.R, "#DarkSlateBlue.R");
+			Assert.AreEqual (61, color.G, "#DarkSlateBlue.G");
+			Assert.AreEqual (139, color.B, "#DarkSlateBlue.B");
 
 			color = Color.DarkSlateGray;
-			AssertEquals ("#DarkSlateGray.A", 255, color.A);
-			AssertEquals ("#DarkSlateGray.R", 47, color.R);
-			AssertEquals ("#DarkSlateGray.G", 79, color.G);
-			AssertEquals ("#DarkSlateGray.B", 79, color.B);
+			Assert.AreEqual (255, color.A, "#DarkSlateGray.A");
+			Assert.AreEqual (47, color.R, "#DarkSlateGray.R");
+			Assert.AreEqual (79, color.G, "#DarkSlateGray.G");
+			Assert.AreEqual (79, color.B, "#DarkSlateGray.B");
 
 			color = Color.DarkTurquoise;
-			AssertEquals ("#DarkTurquoise.A", 255, color.A);
-			AssertEquals ("#DarkTurquoise.R", 0, color.R);
-			AssertEquals ("#DarkTurquoise.G", 206, color.G);
-			AssertEquals ("#DarkTurquoise.B", 209, color.B);
+			Assert.AreEqual (255, color.A, "#DarkTurquoise.A");
+			Assert.AreEqual (0, color.R, "#DarkTurquoise.R");
+			Assert.AreEqual (206, color.G, "#DarkTurquoise.G");
+			Assert.AreEqual (209, color.B, "#DarkTurquoise.B");
 
 			color = Color.DarkViolet;
-			AssertEquals ("#DarkViolet.A", 255, color.A);
-			AssertEquals ("#DarkViolet.R", 148, color.R);
-			AssertEquals ("#DarkViolet.G", 0, color.G);
-			AssertEquals ("#DarkViolet.B", 211, color.B);
+			Assert.AreEqual (255, color.A, "#DarkViolet.A");
+			Assert.AreEqual (148, color.R, "#DarkViolet.R");
+			Assert.AreEqual (0, color.G, "#DarkViolet.G");
+			Assert.AreEqual (211, color.B, "#DarkViolet.B");
 
 			color = Color.DeepPink;
-			AssertEquals ("#DeepPink.A", 255, color.A);
-			AssertEquals ("#DeepPink.R", 255, color.R);
-			AssertEquals ("#DeepPink.G", 20, color.G);
-			AssertEquals ("#DeepPink.B", 147, color.B);
+			Assert.AreEqual (255, color.A, "#DeepPink.A");
+			Assert.AreEqual (255, color.R, "#DeepPink.R");
+			Assert.AreEqual (20, color.G, "#DeepPink.G");
+			Assert.AreEqual (147, color.B, "#DeepPink.B");
 
 			color = Color.DeepSkyBlue;
-			AssertEquals ("#DeepSkyBlue.A", 255, color.A);
-			AssertEquals ("#DeepSkyBlue.R", 0, color.R);
-			AssertEquals ("#DeepSkyBlue.G", 191, color.G);
-			AssertEquals ("#DeepSkyBlue.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#DeepSkyBlue.A");
+			Assert.AreEqual (0, color.R, "#DeepSkyBlue.R");
+			Assert.AreEqual (191, color.G, "#DeepSkyBlue.G");
+			Assert.AreEqual (255, color.B, "#DeepSkyBlue.B");
 
 			color = Color.DimGray;
-			AssertEquals ("#DimGray.A", 255, color.A);
-			AssertEquals ("#DimGray.R", 105, color.R);
-			AssertEquals ("#DimGray.G", 105, color.G);
-			AssertEquals ("#DimGray.B", 105, color.B);
+			Assert.AreEqual (255, color.A, "#DimGray.A");
+			Assert.AreEqual (105, color.R, "#DimGray.R");
+			Assert.AreEqual (105, color.G, "#DimGray.G");
+			Assert.AreEqual (105, color.B, "#DimGray.B");
 
 			color = Color.DodgerBlue;
-			AssertEquals ("#DodgerBlue.A", 255, color.A);
-			AssertEquals ("#DodgerBlue.R", 30, color.R);
-			AssertEquals ("#DodgerBlue.G", 144, color.G);
-			AssertEquals ("#DodgerBlue.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#DodgerBlue.A");
+			Assert.AreEqual (30, color.R, "#DodgerBlue.R");
+			Assert.AreEqual (144, color.G, "#DodgerBlue.G");
+			Assert.AreEqual (255, color.B, "#DodgerBlue.B");
 
 			color = Color.Firebrick;
-			AssertEquals ("#Firebrick.A", 255, color.A);
-			AssertEquals ("#Firebrick.R", 178, color.R);
-			AssertEquals ("#Firebrick.G", 34, color.G);
-			AssertEquals ("#Firebrick.B", 34, color.B);
+			Assert.AreEqual (255, color.A, "#Firebrick.A");
+			Assert.AreEqual (178, color.R, "#Firebrick.R");
+			Assert.AreEqual (34, color.G, "#Firebrick.G");
+			Assert.AreEqual (34, color.B, "#Firebrick.B");
 
 			color = Color.FloralWhite;
-			AssertEquals ("#FloralWhite.A", 255, color.A);
-			AssertEquals ("#FloralWhite.R", 255, color.R);
-			AssertEquals ("#FloralWhite.G", 250, color.G);
-			AssertEquals ("#FloralWhite.B", 240, color.B);
+			Assert.AreEqual (255, color.A, "#FloralWhite.A");
+			Assert.AreEqual (255, color.R, "#FloralWhite.R");
+			Assert.AreEqual (250, color.G, "#FloralWhite.G");
+			Assert.AreEqual (240, color.B, "#FloralWhite.B");
 
 			color = Color.ForestGreen;
-			AssertEquals ("#ForestGreen.A", 255, color.A);
-			AssertEquals ("#ForestGreen.R", 34, color.R);
-			AssertEquals ("#ForestGreen.G", 139, color.G);
-			AssertEquals ("#ForestGreen.B", 34, color.B);
+			Assert.AreEqual (255, color.A, "#ForestGreen.A");
+			Assert.AreEqual (34, color.R, "#ForestGreen.R");
+			Assert.AreEqual (139, color.G, "#ForestGreen.G");
+			Assert.AreEqual (34, color.B, "#ForestGreen.B");
 
 			color = Color.Fuchsia;
-			AssertEquals ("#Fuchsia.A", 255, color.A);
-			AssertEquals ("#Fuchsia.R", 255, color.R);
-			AssertEquals ("#Fuchsia.G", 0, color.G);
-			AssertEquals ("#Fuchsia.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Fuchsia.A");
+			Assert.AreEqual (255, color.R, "#Fuchsia.R");
+			Assert.AreEqual (0, color.G, "#Fuchsia.G");
+			Assert.AreEqual (255, color.B, "#Fuchsia.B");
 
 			color = Color.Gainsboro;
-			AssertEquals ("#Gainsboro.A", 255, color.A);
-			AssertEquals ("#Gainsboro.R", 220, color.R);
-			AssertEquals ("#Gainsboro.G", 220, color.G);
-			AssertEquals ("#Gainsboro.B", 220, color.B);
+			Assert.AreEqual (255, color.A, "#Gainsboro.A");
+			Assert.AreEqual (220, color.R, "#Gainsboro.R");
+			Assert.AreEqual (220, color.G, "#Gainsboro.G");
+			Assert.AreEqual (220, color.B, "#Gainsboro.B");
 
 			color = Color.GhostWhite;
-			AssertEquals ("#GhostWhite.A", 255, color.A);
-			AssertEquals ("#GhostWhite.R", 248, color.R);
-			AssertEquals ("#GhostWhite.G", 248, color.G);
-			AssertEquals ("#GhostWhite.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#GhostWhite.A");
+			Assert.AreEqual (248, color.R, "#GhostWhite.R");
+			Assert.AreEqual (248, color.G, "#GhostWhite.G");
+			Assert.AreEqual (255, color.B, "#GhostWhite.B");
 
 			color = Color.Gold;
-			AssertEquals ("#Gold.A", 255, color.A);
-			AssertEquals ("#Gold.R", 255, color.R);
-			AssertEquals ("#Gold.G", 215, color.G);
-			AssertEquals ("#Gold.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Gold.A");
+			Assert.AreEqual (255, color.R, "#Gold.R");
+			Assert.AreEqual (215, color.G, "#Gold.G");
+			Assert.AreEqual (0, color.B, "#Gold.B");
 
 			color = Color.Goldenrod;
-			AssertEquals ("#Goldenrod.A", 255, color.A);
-			AssertEquals ("#Goldenrod.R", 218, color.R);
-			AssertEquals ("#Goldenrod.G", 165, color.G);
-			AssertEquals ("#Goldenrod.B", 32, color.B);
+			Assert.AreEqual (255, color.A, "#Goldenrod.A");
+			Assert.AreEqual (218, color.R, "#Goldenrod.R");
+			Assert.AreEqual (165, color.G, "#Goldenrod.G");
+			Assert.AreEqual (32, color.B, "#Goldenrod.B");
 
 			color = Color.Gray;
-			AssertEquals ("#Gray.A", 255, color.A);
-			AssertEquals ("#Gray.R", 128, color.R);
-			AssertEquals ("#Gray.G", 128, color.G);
-			AssertEquals ("#Gray.B", 128, color.B);
+			Assert.AreEqual (255, color.A, "#Gray.A");
+			Assert.AreEqual (128, color.R, "#Gray.R");
+			Assert.AreEqual (128, color.G, "#Gray.G");
+			Assert.AreEqual (128, color.B, "#Gray.B");
 
 			color = Color.Green;
-			AssertEquals ("#Green.A", 255, color.A);
-			AssertEquals ("#Green.R", 0, color.R);
+			Assert.AreEqual (255, color.A, "#Green.A");
+			Assert.AreEqual (0, color.R, "#Green.R");
 			// This test should compare Green.G with 255, but
 			// MS is using a value of 128 for Green.G
-			AssertEquals ("#Green.G", 128, color.G);
-			AssertEquals ("#Green.B", 0, color.B);
+			Assert.AreEqual (128, color.G, "#Green.G");
+			Assert.AreEqual (0, color.B, "#Green.B");
 
 			color = Color.GreenYellow;
-			AssertEquals ("#GreenYellow.A", 255, color.A);
-			AssertEquals ("#GreenYellow.R", 173, color.R);
-			AssertEquals ("#GreenYellow.G", 255, color.G);
-			AssertEquals ("#GreenYellow.B", 47, color.B);
+			Assert.AreEqual (255, color.A, "#GreenYellow.A");
+			Assert.AreEqual (173, color.R, "#GreenYellow.R");
+			Assert.AreEqual (255, color.G, "#GreenYellow.G");
+			Assert.AreEqual (47, color.B, "#GreenYellow.B");
 
 			color = Color.Honeydew;
-			AssertEquals ("#Honeydew.A", 255, color.A);
-			AssertEquals ("#Honeydew.R", 240, color.R);
-			AssertEquals ("#Honeydew.G", 255, color.G);
-			AssertEquals ("#Honeydew.B", 240, color.B);
+			Assert.AreEqual (255, color.A, "#Honeydew.A");
+			Assert.AreEqual (240, color.R, "#Honeydew.R");
+			Assert.AreEqual (255, color.G, "#Honeydew.G");
+			Assert.AreEqual (240, color.B, "#Honeydew.B");
 
 			color = Color.HotPink;
-			AssertEquals ("#HotPink.A", 255, color.A);
-			AssertEquals ("#HotPink.R", 255, color.R);
-			AssertEquals ("#HotPink.G", 105, color.G);
-			AssertEquals ("#HotPink.B", 180, color.B);
+			Assert.AreEqual (255, color.A, "#HotPink.A");
+			Assert.AreEqual (255, color.R, "#HotPink.R");
+			Assert.AreEqual (105, color.G, "#HotPink.G");
+			Assert.AreEqual (180, color.B, "#HotPink.B");
 
 			color = Color.IndianRed;
-			AssertEquals ("#IndianRed.A", 255, color.A);
-			AssertEquals ("#IndianRed.R", 205, color.R);
-			AssertEquals ("#IndianRed.G", 92, color.G);
-			AssertEquals ("#IndianRed.B", 92, color.B);
+			Assert.AreEqual (255, color.A, "#IndianRed.A");
+			Assert.AreEqual (205, color.R, "#IndianRed.R");
+			Assert.AreEqual (92, color.G, "#IndianRed.G");
+			Assert.AreEqual (92, color.B, "#IndianRed.B");
 
 			color = Color.Indigo;
-			AssertEquals ("#Indigo.A", 255, color.A);
-			AssertEquals ("#Indigo.R", 75, color.R);
-			AssertEquals ("#Indigo.G", 0, color.G);
-			AssertEquals ("#Indigo.B", 130, color.B);
+			Assert.AreEqual (255, color.A, "#Indigo.A");
+			Assert.AreEqual (75, color.R, "#Indigo.R");
+			Assert.AreEqual (0, color.G, "#Indigo.G");
+			Assert.AreEqual (130, color.B, "#Indigo.B");
 
 			color = Color.Ivory;
-			AssertEquals ("#Ivory.A", 255, color.A);
-			AssertEquals ("#Ivory.R", 255, color.R);
-			AssertEquals ("#Ivory.G", 255, color.G);
-			AssertEquals ("#Ivory.B", 240, color.B);
+			Assert.AreEqual (255, color.A, "#Ivory.A");
+			Assert.AreEqual (255, color.R, "#Ivory.R");
+			Assert.AreEqual (255, color.G, "#Ivory.G");
+			Assert.AreEqual (240, color.B, "#Ivory.B");
 
 			color = Color.Khaki;
-			AssertEquals ("#Khaki.A", 255, color.A);
-			AssertEquals ("#Khaki.R", 240, color.R);
-			AssertEquals ("#Khaki.G", 230, color.G);
-			AssertEquals ("#Khaki.B", 140, color.B);
+			Assert.AreEqual (255, color.A, "#Khaki.A");
+			Assert.AreEqual (240, color.R, "#Khaki.R");
+			Assert.AreEqual (230, color.G, "#Khaki.G");
+			Assert.AreEqual (140, color.B, "#Khaki.B");
 
 			color = Color.Lavender;
-			AssertEquals ("#Lavender.A", 255, color.A);
-			AssertEquals ("#Lavender.R", 230, color.R);
-			AssertEquals ("#Lavender.G", 230, color.G);
-			AssertEquals ("#Lavender.B", 250, color.B);
+			Assert.AreEqual (255, color.A, "#Lavender.A");
+			Assert.AreEqual (230, color.R, "#Lavender.R");
+			Assert.AreEqual (230, color.G, "#Lavender.G");
+			Assert.AreEqual (250, color.B, "#Lavender.B");
 
 			color = Color.LavenderBlush;
-			AssertEquals ("#LavenderBlush.A", 255, color.A);
-			AssertEquals ("#LavenderBlush.R", 255, color.R);
-			AssertEquals ("#LavenderBlush.G", 240, color.G);
-			AssertEquals ("#LavenderBlush.B", 245, color.B);
+			Assert.AreEqual (255, color.A, "#LavenderBlush.A");
+			Assert.AreEqual (255, color.R, "#LavenderBlush.R");
+			Assert.AreEqual (240, color.G, "#LavenderBlush.G");
+			Assert.AreEqual (245, color.B, "#LavenderBlush.B");
 
 			color = Color.LawnGreen;
-			AssertEquals ("#LawnGreen.A", 255, color.A);
-			AssertEquals ("#LawnGreen.R", 124, color.R);
-			AssertEquals ("#LawnGreen.G", 252, color.G);
-			AssertEquals ("#LawnGreen.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#LawnGreen.A");
+			Assert.AreEqual (124, color.R, "#LawnGreen.R");
+			Assert.AreEqual (252, color.G, "#LawnGreen.G");
+			Assert.AreEqual (0, color.B, "#LawnGreen.B");
 
 			color = Color.LemonChiffon;
-			AssertEquals ("#LemonChiffon.A", 255, color.A);
-			AssertEquals ("#LemonChiffon.R", 255, color.R);
-			AssertEquals ("#LemonChiffon.G", 250, color.G);
-			AssertEquals ("#LemonChiffon.B", 205, color.B);
+			Assert.AreEqual (255, color.A, "#LemonChiffon.A");
+			Assert.AreEqual (255, color.R, "#LemonChiffon.R");
+			Assert.AreEqual (250, color.G, "#LemonChiffon.G");
+			Assert.AreEqual (205, color.B, "#LemonChiffon.B");
 
 			color = Color.LightBlue;
-			AssertEquals ("#LightBlue.A", 255, color.A);
-			AssertEquals ("#LightBlue.R", 173, color.R);
-			AssertEquals ("#LightBlue.G", 216, color.G);
-			AssertEquals ("#LightBlue.B", 230, color.B);
+			Assert.AreEqual (255, color.A, "#LightBlue.A");
+			Assert.AreEqual (173, color.R, "#LightBlue.R");
+			Assert.AreEqual (216, color.G, "#LightBlue.G");
+			Assert.AreEqual (230, color.B, "#LightBlue.B");
 
 			color = Color.LightCoral;
-			AssertEquals ("#LightCoral.A", 255, color.A);
-			AssertEquals ("#LightCoral.R", 240, color.R);
-			AssertEquals ("#LightCoral.G", 128, color.G);
-			AssertEquals ("#LightCoral.B", 128, color.B);
+			Assert.AreEqual (255, color.A, "#LightCoral.A");
+			Assert.AreEqual (240, color.R, "#LightCoral.R");
+			Assert.AreEqual (128, color.G, "#LightCoral.G");
+			Assert.AreEqual (128, color.B, "#LightCoral.B");
 
 			color = Color.LightCyan;
-			AssertEquals ("#LightCyan.A", 255, color.A);
-			AssertEquals ("#LightCyan.R", 224, color.R);
-			AssertEquals ("#LightCyan.G", 255, color.G);
-			AssertEquals ("#LightCyan.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#LightCyan.A");
+			Assert.AreEqual (224, color.R, "#LightCyan.R");
+			Assert.AreEqual (255, color.G, "#LightCyan.G");
+			Assert.AreEqual (255, color.B, "#LightCyan.B");
 
 			color = Color.LightGoldenrodYellow;
-			AssertEquals ("#LightGoldenrodYellow.A", 255, color.A);
-			AssertEquals ("#LightGoldenrodYellow.R", 250, color.R);
-			AssertEquals ("#LightGoldenrodYellow.G", 250, color.G);
-			AssertEquals ("#LightGoldenrodYellow.B", 210, color.B);
+			Assert.AreEqual (255, color.A, "#LightGoldenrodYellow.A");
+			Assert.AreEqual (250, color.R, "#LightGoldenrodYellow.R");
+			Assert.AreEqual (250, color.G, "#LightGoldenrodYellow.G");
+			Assert.AreEqual (210, color.B, "#LightGoldenrodYellow.B");
 
 			color = Color.LightGreen;
-			AssertEquals ("#LightGreen.A", 255, color.A);
-			AssertEquals ("#LightGreen.R", 144, color.R);
-			AssertEquals ("#LightGreen.G", 238, color.G);
-			AssertEquals ("#LightGreen.B", 144, color.B);
+			Assert.AreEqual (255, color.A, "#LightGreen.A");
+			Assert.AreEqual (144, color.R, "#LightGreen.R");
+			Assert.AreEqual (238, color.G, "#LightGreen.G");
+			Assert.AreEqual (144, color.B, "#LightGreen.B");
 
 			color = Color.LightGray;
-			AssertEquals ("#LightGray.A", 255, color.A);
-			AssertEquals ("#LightGray.R", 211, color.R);
-			AssertEquals ("#LightGray.G", 211, color.G);
-			AssertEquals ("#LightGray.B", 211, color.B);
+			Assert.AreEqual (255, color.A, "#LightGray.A");
+			Assert.AreEqual (211, color.R, "#LightGray.R");
+			Assert.AreEqual (211, color.G, "#LightGray.G");
+			Assert.AreEqual (211, color.B, "#LightGray.B");
 
 			color = Color.LightPink;
-			AssertEquals ("#LightPink.A", 255, color.A);
-			AssertEquals ("#LightPink.R", 255, color.R);
-			AssertEquals ("#LightPink.G", 182, color.G);
-			AssertEquals ("#LightPink.B", 193, color.B);
+			Assert.AreEqual (255, color.A, "#LightPink.A");
+			Assert.AreEqual (255, color.R, "#LightPink.R");
+			Assert.AreEqual (182, color.G, "#LightPink.G");
+			Assert.AreEqual (193, color.B, "#LightPink.B");
 
 			color = Color.LightSalmon;
-			AssertEquals ("#LightSalmon.A", 255, color.A);
-			AssertEquals ("#LightSalmon.R", 255, color.R);
-			AssertEquals ("#LightSalmon.G", 160, color.G);
-			AssertEquals ("#LightSalmon.B", 122, color.B);
+			Assert.AreEqual (255, color.A, "#LightSalmon.A");
+			Assert.AreEqual (255, color.R, "#LightSalmon.R");
+			Assert.AreEqual (160, color.G, "#LightSalmon.G");
+			Assert.AreEqual (122, color.B, "#LightSalmon.B");
 
 			color = Color.LightSeaGreen;
-			AssertEquals ("#LightSeaGreen.A", 255, color.A);
-			AssertEquals ("#LightSeaGreen.R", 32, color.R);
-			AssertEquals ("#LightSeaGreen.G", 178, color.G);
-			AssertEquals ("#LightSeaGreen.B", 170, color.B);
+			Assert.AreEqual (255, color.A, "#LightSeaGreen.A");
+			Assert.AreEqual (32, color.R, "#LightSeaGreen.R");
+			Assert.AreEqual (178, color.G, "#LightSeaGreen.G");
+			Assert.AreEqual (170, color.B, "#LightSeaGreen.B");
 
 			color = Color.LightSkyBlue;
-			AssertEquals ("#LightSkyBlue.A", 255, color.A);
-			AssertEquals ("#LightSkyBlue.R", 135, color.R);
-			AssertEquals ("#LightSkyBlue.G", 206, color.G);
-			AssertEquals ("#LightSkyBlue.B", 250, color.B);
+			Assert.AreEqual (255, color.A, "#LightSkyBlue.A");
+			Assert.AreEqual (135, color.R, "#LightSkyBlue.R");
+			Assert.AreEqual (206, color.G, "#LightSkyBlue.G");
+			Assert.AreEqual (250, color.B, "#LightSkyBlue.B");
 
 			color = Color.LightSlateGray;
-			AssertEquals ("#LightSlateGray.A", 255, color.A);
-			AssertEquals ("#LightSlateGray.R", 119, color.R);
-			AssertEquals ("#LightSlateGray.G", 136, color.G);
-			AssertEquals ("#LightSlateGray.B", 153, color.B);
+			Assert.AreEqual (255, color.A, "#LightSlateGray.A");
+			Assert.AreEqual (119, color.R, "#LightSlateGray.R");
+			Assert.AreEqual (136, color.G, "#LightSlateGray.G");
+			Assert.AreEqual (153, color.B, "#LightSlateGray.B");
 
 			color = Color.LightSteelBlue;
-			AssertEquals ("#LightSteelBlue.A", 255, color.A);
-			AssertEquals ("#LightSteelBlue.R", 176, color.R);
-			AssertEquals ("#LightSteelBlue.G", 196, color.G);
-			AssertEquals ("#LightSteelBlue.B", 222, color.B);
+			Assert.AreEqual (255, color.A, "#LightSteelBlue.A");
+			Assert.AreEqual (176, color.R, "#LightSteelBlue.R");
+			Assert.AreEqual (196, color.G, "#LightSteelBlue.G");
+			Assert.AreEqual (222, color.B, "#LightSteelBlue.B");
 
 			color = Color.LightYellow;
-			AssertEquals ("#LightYellow.A", 255, color.A);
-			AssertEquals ("#LightYellow.R", 255, color.R);
-			AssertEquals ("#LightYellow.G", 255, color.G);
-			AssertEquals ("#LightYellow.B", 224, color.B);
+			Assert.AreEqual (255, color.A, "#LightYellow.A");
+			Assert.AreEqual (255, color.R, "#LightYellow.R");
+			Assert.AreEqual (255, color.G, "#LightYellow.G");
+			Assert.AreEqual (224, color.B, "#LightYellow.B");
 
 			color = Color.Lime;
-			AssertEquals ("#Lime.A", 255, color.A);
-			AssertEquals ("#Lime.R", 0, color.R);
-			AssertEquals ("#Lime.G", 255, color.G);
-			AssertEquals ("#Lime.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Lime.A");
+			Assert.AreEqual (0, color.R, "#Lime.R");
+			Assert.AreEqual (255, color.G, "#Lime.G");
+			Assert.AreEqual (0, color.B, "#Lime.B");
 
 			color = Color.LimeGreen;
-			AssertEquals ("#LimeGreen.A", 255, color.A);
-			AssertEquals ("#LimeGreen.R", 50, color.R);
-			AssertEquals ("#LimeGreen.G", 205, color.G);
-			AssertEquals ("#LimeGreen.B", 50, color.B);
+			Assert.AreEqual (255, color.A, "#LimeGreen.A");
+			Assert.AreEqual (50, color.R, "#LimeGreen.R");
+			Assert.AreEqual (205, color.G, "#LimeGreen.G");
+			Assert.AreEqual (50, color.B, "#LimeGreen.B");
 
 			color = Color.Linen;
-			AssertEquals ("#Linen.A", 255, color.A);
-			AssertEquals ("#Linen.R", 250, color.R);
-			AssertEquals ("#Linen.G", 240, color.G);
-			AssertEquals ("#Linen.B", 230, color.B);
+			Assert.AreEqual (255, color.A, "#Linen.A");
+			Assert.AreEqual (250, color.R, "#Linen.R");
+			Assert.AreEqual (240, color.G, "#Linen.G");
+			Assert.AreEqual (230, color.B, "#Linen.B");
 
 			color = Color.Magenta;
-			AssertEquals ("#Magenta.A", 255, color.A);
-			AssertEquals ("#Magenta.R", 255, color.R);
-			AssertEquals ("#Magenta.G", 0, color.G);
-			AssertEquals ("#Magenta.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#Magenta.A");
+			Assert.AreEqual (255, color.R, "#Magenta.R");
+			Assert.AreEqual (0, color.G, "#Magenta.G");
+			Assert.AreEqual (255, color.B, "#Magenta.B");
 
 			color = Color.Maroon;
-			AssertEquals ("#Maroon.A", 255, color.A);
-			AssertEquals ("#Maroon.R", 128, color.R);
-			AssertEquals ("#Maroon.G", 0, color.G);
-			AssertEquals ("#Maroon.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Maroon.A");
+			Assert.AreEqual (128, color.R, "#Maroon.R");
+			Assert.AreEqual (0, color.G, "#Maroon.G");
+			Assert.AreEqual (0, color.B, "#Maroon.B");
 
 			color = Color.MediumAquamarine;
-			AssertEquals ("#MediumAquamarine.A", 255, color.A);
-			AssertEquals ("#MediumAquamarine.R", 102, color.R);
-			AssertEquals ("#MediumAquamarine.G", 205, color.G);
-			AssertEquals ("#MediumAquamarine.B", 170, color.B);
+			Assert.AreEqual (255, color.A, "#MediumAquamarine.A");
+			Assert.AreEqual (102, color.R, "#MediumAquamarine.R");
+			Assert.AreEqual (205, color.G, "#MediumAquamarine.G");
+			Assert.AreEqual (170, color.B, "#MediumAquamarine.B");
 
 			color = Color.MediumBlue;
-			AssertEquals ("#MediumBlue.A", 255, color.A);
-			AssertEquals ("#MediumBlue.R", 0, color.R);
-			AssertEquals ("#MediumBlue.G", 0, color.G);
-			AssertEquals ("#MediumBlue.B", 205, color.B);
+			Assert.AreEqual (255, color.A, "#MediumBlue.A");
+			Assert.AreEqual (0, color.R, "#MediumBlue.R");
+			Assert.AreEqual (0, color.G, "#MediumBlue.G");
+			Assert.AreEqual (205, color.B, "#MediumBlue.B");
 
 			color = Color.MediumOrchid;
-			AssertEquals ("#MediumOrchid.A", 255, color.A);
-			AssertEquals ("#MediumOrchid.R", 186, color.R);
-			AssertEquals ("#MediumOrchid.G", 85, color.G);
-			AssertEquals ("#MediumOrchid.B", 211, color.B);
+			Assert.AreEqual (255, color.A, "#MediumOrchid.A");
+			Assert.AreEqual (186, color.R, "#MediumOrchid.R");
+			Assert.AreEqual (85, color.G, "#MediumOrchid.G");
+			Assert.AreEqual (211, color.B, "#MediumOrchid.B");
 
 			color = Color.MediumPurple;
-			AssertEquals ("#MediumPurple.A", 255, color.A);
-			AssertEquals ("#MediumPurple.R", 147, color.R);
-			AssertEquals ("#MediumPurple.G", 112, color.G);
-			AssertEquals ("#MediumPurple.B", 219, color.B);
+			Assert.AreEqual (255, color.A, "#MediumPurple.A");
+			Assert.AreEqual (147, color.R, "#MediumPurple.R");
+			Assert.AreEqual (112, color.G, "#MediumPurple.G");
+			Assert.AreEqual (219, color.B, "#MediumPurple.B");
 
 			color = Color.MediumSeaGreen;
-			AssertEquals ("#MediumSeaGreen.A", 255, color.A);
-			AssertEquals ("#MediumSeaGreen.R", 60, color.R);
-			AssertEquals ("#MediumSeaGreen.G", 179, color.G);
-			AssertEquals ("#MediumSeaGreen.B", 113, color.B);
+			Assert.AreEqual (255, color.A, "#MediumSeaGreen.A");
+			Assert.AreEqual (60, color.R, "#MediumSeaGreen.R");
+			Assert.AreEqual (179, color.G, "#MediumSeaGreen.G");
+			Assert.AreEqual (113, color.B, "#MediumSeaGreen.B");
 
 			color = Color.MediumSlateBlue;
-			AssertEquals ("#MediumSlateBlue.A", 255, color.A);
-			AssertEquals ("#MediumSlateBlue.R", 123, color.R);
-			AssertEquals ("#MediumSlateBlue.G", 104, color.G);
-			AssertEquals ("#MediumSlateBlue.B", 238, color.B);
+			Assert.AreEqual (255, color.A, "#MediumSlateBlue.A");
+			Assert.AreEqual (123, color.R, "#MediumSlateBlue.R");
+			Assert.AreEqual (104, color.G, "#MediumSlateBlue.G");
+			Assert.AreEqual (238, color.B, "#MediumSlateBlue.B");
 
 			color = Color.MediumSpringGreen;
-			AssertEquals ("#MediumSpringGreen.A", 255, color.A);
-			AssertEquals ("#MediumSpringGreen.R", 0, color.R);
-			AssertEquals ("#MediumSpringGreen.G", 250, color.G);
-			AssertEquals ("#MediumSpringGreen.B", 154, color.B);
+			Assert.AreEqual (255, color.A, "#MediumSpringGreen.A");
+			Assert.AreEqual (0, color.R, "#MediumSpringGreen.R");
+			Assert.AreEqual (250, color.G, "#MediumSpringGreen.G");
+			Assert.AreEqual (154, color.B, "#MediumSpringGreen.B");
 
 			color = Color.MediumTurquoise;
-			AssertEquals ("#MediumTurquoise.A", 255, color.A);
-			AssertEquals ("#MediumTurquoise.R", 72, color.R);
-			AssertEquals ("#MediumTurquoise.G", 209, color.G);
-			AssertEquals ("#MediumTurquoise.B", 204, color.B);
+			Assert.AreEqual (255, color.A, "#MediumTurquoise.A");
+			Assert.AreEqual (72, color.R, "#MediumTurquoise.R");
+			Assert.AreEqual (209, color.G, "#MediumTurquoise.G");
+			Assert.AreEqual (204, color.B, "#MediumTurquoise.B");
 
 			color = Color.MediumVioletRed;
-			AssertEquals ("#MediumVioletRed.A", 255, color.A);
-			AssertEquals ("#MediumVioletRed.R", 199, color.R);
-			AssertEquals ("#MediumVioletRed.G", 21, color.G);
-			AssertEquals ("#MediumVioletRed.B", 133, color.B);
+			Assert.AreEqual (255, color.A, "#MediumVioletRed.A");
+			Assert.AreEqual (199, color.R, "#MediumVioletRed.R");
+			Assert.AreEqual (21, color.G, "#MediumVioletRed.G");
+			Assert.AreEqual (133, color.B, "#MediumVioletRed.B");
 
 			color = Color.MidnightBlue;
-			AssertEquals ("#MidnightBlue.A", 255, color.A);
-			AssertEquals ("#MidnightBlue.R", 25, color.R);
-			AssertEquals ("#MidnightBlue.G", 25, color.G);
-			AssertEquals ("#MidnightBlue.B", 112, color.B);
+			Assert.AreEqual (255, color.A, "#MidnightBlue.A");
+			Assert.AreEqual (25, color.R, "#MidnightBlue.R");
+			Assert.AreEqual (25, color.G, "#MidnightBlue.G");
+			Assert.AreEqual (112, color.B, "#MidnightBlue.B");
 
 			color = Color.MintCream;
-			AssertEquals ("#MintCream.A", 255, color.A);
-			AssertEquals ("#MintCream.R", 245, color.R);
-			AssertEquals ("#MintCream.G", 255, color.G);
-			AssertEquals ("#MintCream.B", 250, color.B);
+			Assert.AreEqual (255, color.A, "#MintCream.A");
+			Assert.AreEqual (245, color.R, "#MintCream.R");
+			Assert.AreEqual (255, color.G, "#MintCream.G");
+			Assert.AreEqual (250, color.B, "#MintCream.B");
 
 			color = Color.MistyRose;
-			AssertEquals ("#MistyRose.A", 255, color.A);
-			AssertEquals ("#MistyRose.R", 255, color.R);
-			AssertEquals ("#MistyRose.G", 228, color.G);
-			AssertEquals ("#MistyRose.B", 225, color.B);
+			Assert.AreEqual (255, color.A, "#MistyRose.A");
+			Assert.AreEqual (255, color.R, "#MistyRose.R");
+			Assert.AreEqual (228, color.G, "#MistyRose.G");
+			Assert.AreEqual (225, color.B, "#MistyRose.B");
 
 			color = Color.Moccasin;
-			AssertEquals ("#Moccasin.A", 255, color.A);
-			AssertEquals ("#Moccasin.R", 255, color.R);
-			AssertEquals ("#Moccasin.G", 228, color.G);
-			AssertEquals ("#Moccasin.B", 181, color.B);
+			Assert.AreEqual (255, color.A, "#Moccasin.A");
+			Assert.AreEqual (255, color.R, "#Moccasin.R");
+			Assert.AreEqual (228, color.G, "#Moccasin.G");
+			Assert.AreEqual (181, color.B, "#Moccasin.B");
 
 			color = Color.NavajoWhite;
-			AssertEquals ("#NavajoWhite.A", 255, color.A);
-			AssertEquals ("#NavajoWhite.R", 255, color.R);
-			AssertEquals ("#NavajoWhite.G", 222, color.G);
-			AssertEquals ("#NavajoWhite.B", 173, color.B);
+			Assert.AreEqual (255, color.A, "#NavajoWhite.A");
+			Assert.AreEqual (255, color.R, "#NavajoWhite.R");
+			Assert.AreEqual (222, color.G, "#NavajoWhite.G");
+			Assert.AreEqual (173, color.B, "#NavajoWhite.B");
 
 			color = Color.Navy;
-			AssertEquals ("#Navy.A", 255, color.A);
-			AssertEquals ("#Navy.R", 0, color.R);
-			AssertEquals ("#Navy.G", 0, color.G);
-			AssertEquals ("#Navy.B", 128, color.B);
+			Assert.AreEqual (255, color.A, "#Navy.A");
+			Assert.AreEqual (0, color.R, "#Navy.R");
+			Assert.AreEqual (0, color.G, "#Navy.G");
+			Assert.AreEqual (128, color.B, "#Navy.B");
 
 			color = Color.OldLace;
-			AssertEquals ("#OldLace.A", 255, color.A);
-			AssertEquals ("#OldLace.R", 253, color.R);
-			AssertEquals ("#OldLace.G", 245, color.G);
-			AssertEquals ("#OldLace.B", 230, color.B);
+			Assert.AreEqual (255, color.A, "#OldLace.A");
+			Assert.AreEqual (253, color.R, "#OldLace.R");
+			Assert.AreEqual (245, color.G, "#OldLace.G");
+			Assert.AreEqual (230, color.B, "#OldLace.B");
 
 			color = Color.Olive;
-			AssertEquals ("#Olive.A", 255, color.A);
-			AssertEquals ("#Olive.R", 128, color.R);
-			AssertEquals ("#Olive.G", 128, color.G);
-			AssertEquals ("#Olive.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Olive.A");
+			Assert.AreEqual (128, color.R, "#Olive.R");
+			Assert.AreEqual (128, color.G, "#Olive.G");
+			Assert.AreEqual (0, color.B, "#Olive.B");
 
 			color = Color.OliveDrab;
-			AssertEquals ("#OliveDrab.A", 255, color.A);
-			AssertEquals ("#OliveDrab.R", 107, color.R);
-			AssertEquals ("#OliveDrab.G", 142, color.G);
-			AssertEquals ("#OliveDrab.B", 35, color.B);
+			Assert.AreEqual (255, color.A, "#OliveDrab.A");
+			Assert.AreEqual (107, color.R, "#OliveDrab.R");
+			Assert.AreEqual (142, color.G, "#OliveDrab.G");
+			Assert.AreEqual (35, color.B, "#OliveDrab.B");
 
 			color = Color.Orange;
-			AssertEquals ("#Orange.A", 255, color.A);
-			AssertEquals ("#Orange.R", 255, color.R);
-			AssertEquals ("#Orange.G", 165, color.G);
-			AssertEquals ("#Orange.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Orange.A");
+			Assert.AreEqual (255, color.R, "#Orange.R");
+			Assert.AreEqual (165, color.G, "#Orange.G");
+			Assert.AreEqual (0, color.B, "#Orange.B");
 
 			color = Color.OrangeRed;
-			AssertEquals ("#OrangeRed.A", 255, color.A);
-			AssertEquals ("#OrangeRed.R", 255, color.R);
-			AssertEquals ("#OrangeRed.G", 69, color.G);
-			AssertEquals ("#OrangeRed.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#OrangeRed.A");
+			Assert.AreEqual (255, color.R, "#OrangeRed.R");
+			Assert.AreEqual (69, color.G, "#OrangeRed.G");
+			Assert.AreEqual (0, color.B, "#OrangeRed.B");
 
 			color = Color.Orchid;
-			AssertEquals ("#Orchid.A", 255, color.A);
-			AssertEquals ("#Orchid.R", 218, color.R);
-			AssertEquals ("#Orchid.G", 112, color.G);
-			AssertEquals ("#Orchid.B", 214, color.B);
+			Assert.AreEqual (255, color.A, "#Orchid.A");
+			Assert.AreEqual (218, color.R, "#Orchid.R");
+			Assert.AreEqual (112, color.G, "#Orchid.G");
+			Assert.AreEqual (214, color.B, "#Orchid.B");
 
 			color = Color.PaleGoldenrod;
-			AssertEquals ("#PaleGoldenrod.A", 255, color.A);
-			AssertEquals ("#PaleGoldenrod.R", 238, color.R);
-			AssertEquals ("#PaleGoldenrod.G", 232, color.G);
-			AssertEquals ("#PaleGoldenrod.B", 170, color.B);
+			Assert.AreEqual (255, color.A, "#PaleGoldenrod.A");
+			Assert.AreEqual (238, color.R, "#PaleGoldenrod.R");
+			Assert.AreEqual (232, color.G, "#PaleGoldenrod.G");
+			Assert.AreEqual (170, color.B, "#PaleGoldenrod.B");
 
 			color = Color.PaleGreen;
-			AssertEquals ("#PaleGreen.A", 255, color.A);
-			AssertEquals ("#PaleGreen.R", 152, color.R);
-			AssertEquals ("#PaleGreen.G", 251, color.G);
-			AssertEquals ("#PaleGreen.B", 152, color.B);
+			Assert.AreEqual (255, color.A, "#PaleGreen.A");
+			Assert.AreEqual (152, color.R, "#PaleGreen.R");
+			Assert.AreEqual (251, color.G, "#PaleGreen.G");
+			Assert.AreEqual (152, color.B, "#PaleGreen.B");
 
 			color = Color.PaleTurquoise;
-			AssertEquals ("#PaleTurquoise.A", 255, color.A);
-			AssertEquals ("#PaleTurquoise.R", 175, color.R);
-			AssertEquals ("#PaleTurquoise.G", 238, color.G);
-			AssertEquals ("#PaleTurquoise.B", 238, color.B);
+			Assert.AreEqual (255, color.A, "#PaleTurquoise.A");
+			Assert.AreEqual (175, color.R, "#PaleTurquoise.R");
+			Assert.AreEqual (238, color.G, "#PaleTurquoise.G");
+			Assert.AreEqual (238, color.B, "#PaleTurquoise.B");
 
 			color = Color.PaleVioletRed;
-			AssertEquals ("#PaleVioletRed.A", 255, color.A);
-			AssertEquals ("#PaleVioletRed.R", 219, color.R);
-			AssertEquals ("#PaleVioletRed.G", 112, color.G);
-			AssertEquals ("#PaleVioletRed.B", 147, color.B);
+			Assert.AreEqual (255, color.A, "#PaleVioletRed.A");
+			Assert.AreEqual (219, color.R, "#PaleVioletRed.R");
+			Assert.AreEqual (112, color.G, "#PaleVioletRed.G");
+			Assert.AreEqual (147, color.B, "#PaleVioletRed.B");
 
 			color = Color.PapayaWhip;
-			AssertEquals ("#PapayaWhip.A", 255, color.A);
-			AssertEquals ("#PapayaWhip.R", 255, color.R);
-			AssertEquals ("#PapayaWhip.G", 239, color.G);
-			AssertEquals ("#PapayaWhip.B", 213, color.B);
+			Assert.AreEqual (255, color.A, "#PapayaWhip.A");
+			Assert.AreEqual (255, color.R, "#PapayaWhip.R");
+			Assert.AreEqual (239, color.G, "#PapayaWhip.G");
+			Assert.AreEqual (213, color.B, "#PapayaWhip.B");
 
 			color = Color.PeachPuff;
-			AssertEquals ("#PeachPuff.A", 255, color.A);
-			AssertEquals ("#PeachPuff.R", 255, color.R);
-			AssertEquals ("#PeachPuff.G", 218, color.G);
-			AssertEquals ("#PeachPuff.B", 185, color.B);
+			Assert.AreEqual (255, color.A, "#PeachPuff.A");
+			Assert.AreEqual (255, color.R, "#PeachPuff.R");
+			Assert.AreEqual (218, color.G, "#PeachPuff.G");
+			Assert.AreEqual (185, color.B, "#PeachPuff.B");
 
 			color = Color.Peru;
-			AssertEquals ("#Peru.A", 255, color.A);
-			AssertEquals ("#Peru.R", 205, color.R);
-			AssertEquals ("#Peru.G", 133, color.G);
-			AssertEquals ("#Peru.B", 63, color.B);
+			Assert.AreEqual (255, color.A, "#Peru.A");
+			Assert.AreEqual (205, color.R, "#Peru.R");
+			Assert.AreEqual (133, color.G, "#Peru.G");
+			Assert.AreEqual (63, color.B, "#Peru.B");
 
 			color = Color.Pink;
-			AssertEquals ("#Pink.A", 255, color.A);
-			AssertEquals ("#Pink.R", 255, color.R);
-			AssertEquals ("#Pink.G", 192, color.G);
-			AssertEquals ("#Pink.B", 203, color.B);
+			Assert.AreEqual (255, color.A, "#Pink.A");
+			Assert.AreEqual (255, color.R, "#Pink.R");
+			Assert.AreEqual (192, color.G, "#Pink.G");
+			Assert.AreEqual (203, color.B, "#Pink.B");
 
 			color = Color.Plum;
-			AssertEquals ("#Plum.A", 255, color.A);
-			AssertEquals ("#Plum.R", 221, color.R);
-			AssertEquals ("#Plum.G", 160, color.G);
-			AssertEquals ("#Plum.B", 221, color.B);
+			Assert.AreEqual (255, color.A, "#Plum.A");
+			Assert.AreEqual (221, color.R, "#Plum.R");
+			Assert.AreEqual (160, color.G, "#Plum.G");
+			Assert.AreEqual (221, color.B, "#Plum.B");
 
 			color = Color.PowderBlue;
-			AssertEquals ("#PowderBlue.A", 255, color.A);
-			AssertEquals ("#PowderBlue.R", 176, color.R);
-			AssertEquals ("#PowderBlue.G", 224, color.G);
-			AssertEquals ("#PowderBlue.B", 230, color.B);
+			Assert.AreEqual (255, color.A, "#PowderBlue.A");
+			Assert.AreEqual (176, color.R, "#PowderBlue.R");
+			Assert.AreEqual (224, color.G, "#PowderBlue.G");
+			Assert.AreEqual (230, color.B, "#PowderBlue.B");
 
 			color = Color.Purple;
-			AssertEquals ("#Purple.A", 255, color.A);
-			AssertEquals ("#Purple.R", 128, color.R);
-			AssertEquals ("#Purple.G", 0, color.G);
-			AssertEquals ("#Purple.B", 128, color.B);
+			Assert.AreEqual (255, color.A, "#Purple.A");
+			Assert.AreEqual (128, color.R, "#Purple.R");
+			Assert.AreEqual (0, color.G, "#Purple.G");
+			Assert.AreEqual (128, color.B, "#Purple.B");
 
 			color = Color.Red;
-			AssertEquals ("#Red.A", 255, color.A);
-			AssertEquals ("#Red.R", 255, color.R);
-			AssertEquals ("#Red.G", 0, color.G);
-			AssertEquals ("#Red.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Red.A");
+			Assert.AreEqual (255, color.R, "#Red.R");
+			Assert.AreEqual (0, color.G, "#Red.G");
+			Assert.AreEqual (0, color.B, "#Red.B");
 
 			color = Color.RosyBrown;
-			AssertEquals ("#RosyBrown.A", 255, color.A);
-			AssertEquals ("#RosyBrown.R", 188, color.R);
-			AssertEquals ("#RosyBrown.G", 143, color.G);
-			AssertEquals ("#RosyBrown.B", 143, color.B);
+			Assert.AreEqual (255, color.A, "#RosyBrown.A");
+			Assert.AreEqual (188, color.R, "#RosyBrown.R");
+			Assert.AreEqual (143, color.G, "#RosyBrown.G");
+			Assert.AreEqual (143, color.B, "#RosyBrown.B");
 
 			color = Color.RoyalBlue;
-			AssertEquals ("#RoyalBlue.A", 255, color.A);
-			AssertEquals ("#RoyalBlue.R", 65, color.R);
-			AssertEquals ("#RoyalBlue.G", 105, color.G);
-			AssertEquals ("#RoyalBlue.B", 225, color.B);
+			Assert.AreEqual (255, color.A, "#RoyalBlue.A");
+			Assert.AreEqual (65, color.R, "#RoyalBlue.R");
+			Assert.AreEqual (105, color.G, "#RoyalBlue.G");
+			Assert.AreEqual (225, color.B, "#RoyalBlue.B");
 
 			color = Color.SaddleBrown;
-			AssertEquals ("#SaddleBrown.A", 255, color.A);
-			AssertEquals ("#SaddleBrown.R", 139, color.R);
-			AssertEquals ("#SaddleBrown.G", 69, color.G);
-			AssertEquals ("#SaddleBrown.B", 19, color.B);
+			Assert.AreEqual (255, color.A, "#SaddleBrown.A");
+			Assert.AreEqual (139, color.R, "#SaddleBrown.R");
+			Assert.AreEqual (69, color.G, "#SaddleBrown.G");
+			Assert.AreEqual (19, color.B, "#SaddleBrown.B");
 
 			color = Color.Salmon;
-			AssertEquals ("#Salmon.A", 255, color.A);
-			AssertEquals ("#Salmon.R", 250, color.R);
-			AssertEquals ("#Salmon.G", 128, color.G);
-			AssertEquals ("#Salmon.B", 114, color.B);
+			Assert.AreEqual (255, color.A, "#Salmon.A");
+			Assert.AreEqual (250, color.R, "#Salmon.R");
+			Assert.AreEqual (128, color.G, "#Salmon.G");
+			Assert.AreEqual (114, color.B, "#Salmon.B");
 
 			color = Color.SandyBrown;
-			AssertEquals ("#SandyBrown.A", 255, color.A);
-			AssertEquals ("#SandyBrown.R", 244, color.R);
-			AssertEquals ("#SandyBrown.G", 164, color.G);
-			AssertEquals ("#SandyBrown.B", 96, color.B);
+			Assert.AreEqual (255, color.A, "#SandyBrown.A");
+			Assert.AreEqual (244, color.R, "#SandyBrown.R");
+			Assert.AreEqual (164, color.G, "#SandyBrown.G");
+			Assert.AreEqual (96, color.B, "#SandyBrown.B");
 
 			color = Color.SeaGreen;
-			AssertEquals ("#SeaGreen.A", 255, color.A);
-			AssertEquals ("#SeaGreen.R", 46, color.R);
-			AssertEquals ("#SeaGreen.G", 139, color.G);
-			AssertEquals ("#SeaGreen.B", 87, color.B);
+			Assert.AreEqual (255, color.A, "#SeaGreen.A");
+			Assert.AreEqual (46, color.R, "#SeaGreen.R");
+			Assert.AreEqual (139, color.G, "#SeaGreen.G");
+			Assert.AreEqual (87, color.B, "#SeaGreen.B");
 
 			color = Color.SeaShell;
-			AssertEquals ("#SeaShell.A", 255, color.A);
-			AssertEquals ("#SeaShell.R", 255, color.R);
-			AssertEquals ("#SeaShell.G", 245, color.G);
-			AssertEquals ("#SeaShell.B", 238, color.B);
+			Assert.AreEqual (255, color.A, "#SeaShell.A");
+			Assert.AreEqual (255, color.R, "#SeaShell.R");
+			Assert.AreEqual (245, color.G, "#SeaShell.G");
+			Assert.AreEqual (238, color.B, "#SeaShell.B");
 
 			color = Color.Sienna;
-			AssertEquals ("#Sienna.A", 255, color.A);
-			AssertEquals ("#Sienna.R", 160, color.R);
-			AssertEquals ("#Sienna.G", 82, color.G);
-			AssertEquals ("#Sienna.B", 45, color.B);
+			Assert.AreEqual (255, color.A, "#Sienna.A");
+			Assert.AreEqual (160, color.R, "#Sienna.R");
+			Assert.AreEqual (82, color.G, "#Sienna.G");
+			Assert.AreEqual (45, color.B, "#Sienna.B");
 
 			color = Color.Silver;
-			AssertEquals ("#Silver.A", 255, color.A);
-			AssertEquals ("#Silver.R", 192, color.R);
-			AssertEquals ("#Silver.G", 192, color.G);
-			AssertEquals ("#Silver.B", 192, color.B);
+			Assert.AreEqual (255, color.A, "#Silver.A");
+			Assert.AreEqual (192, color.R, "#Silver.R");
+			Assert.AreEqual (192, color.G, "#Silver.G");
+			Assert.AreEqual (192, color.B, "#Silver.B");
 
 			color = Color.SkyBlue;
-			AssertEquals ("#SkyBlue.A", 255, color.A);
-			AssertEquals ("#SkyBlue.R", 135, color.R);
-			AssertEquals ("#SkyBlue.G", 206, color.G);
-			AssertEquals ("#SkyBlue.B", 235, color.B);
+			Assert.AreEqual (255, color.A, "#SkyBlue.A");
+			Assert.AreEqual (135, color.R, "#SkyBlue.R");
+			Assert.AreEqual (206, color.G, "#SkyBlue.G");
+			Assert.AreEqual (235, color.B, "#SkyBlue.B");
 
 			color = Color.SlateBlue;
-			AssertEquals ("#SlateBlue.A", 255, color.A);
-			AssertEquals ("#SlateBlue.R", 106, color.R);
-			AssertEquals ("#SlateBlue.G", 90, color.G);
-			AssertEquals ("#SlateBlue.B", 205, color.B);
+			Assert.AreEqual (255, color.A, "#SlateBlue.A");
+			Assert.AreEqual (106, color.R, "#SlateBlue.R");
+			Assert.AreEqual (90, color.G, "#SlateBlue.G");
+			Assert.AreEqual (205, color.B, "#SlateBlue.B");
 
 			color = Color.SlateGray;
-			AssertEquals ("#SlateGray.A", 255, color.A);
-			AssertEquals ("#SlateGray.R", 112, color.R);
-			AssertEquals ("#SlateGray.G", 128, color.G);
-			AssertEquals ("#SlateGray.B", 144, color.B);
+			Assert.AreEqual (255, color.A, "#SlateGray.A");
+			Assert.AreEqual (112, color.R, "#SlateGray.R");
+			Assert.AreEqual (128, color.G, "#SlateGray.G");
+			Assert.AreEqual (144, color.B, "#SlateGray.B");
 
 			color = Color.Snow;
-			AssertEquals ("#Snow.A", 255, color.A);
-			AssertEquals ("#Snow.R", 255, color.R);
-			AssertEquals ("#Snow.G", 250, color.G);
-			AssertEquals ("#Snow.B", 250, color.B);
+			Assert.AreEqual (255, color.A, "#Snow.A");
+			Assert.AreEqual (255, color.R, "#Snow.R");
+			Assert.AreEqual (250, color.G, "#Snow.G");
+			Assert.AreEqual (250, color.B, "#Snow.B");
 
 			color = Color.SpringGreen;
-			AssertEquals ("#SpringGreen.A", 255, color.A);
-			AssertEquals ("#SpringGreen.R", 0, color.R);
-			AssertEquals ("#SpringGreen.G", 255, color.G);
-			AssertEquals ("#SpringGreen.B", 127, color.B);
+			Assert.AreEqual (255, color.A, "#SpringGreen.A");
+			Assert.AreEqual (0, color.R, "#SpringGreen.R");
+			Assert.AreEqual (255, color.G, "#SpringGreen.G");
+			Assert.AreEqual (127, color.B, "#SpringGreen.B");
 
 			color = Color.SteelBlue;
-			AssertEquals ("#SteelBlue.A", 255, color.A);
-			AssertEquals ("#SteelBlue.R", 70, color.R);
-			AssertEquals ("#SteelBlue.G", 130, color.G);
-			AssertEquals ("#SteelBlue.B", 180, color.B);
+			Assert.AreEqual (255, color.A, "#SteelBlue.A");
+			Assert.AreEqual (70, color.R, "#SteelBlue.R");
+			Assert.AreEqual (130, color.G, "#SteelBlue.G");
+			Assert.AreEqual (180, color.B, "#SteelBlue.B");
 
 			color = Color.Tan;
-			AssertEquals ("#Tan.A", 255, color.A);
-			AssertEquals ("#Tan.R", 210, color.R);
-			AssertEquals ("#Tan.G", 180, color.G);
-			AssertEquals ("#Tan.B", 140, color.B);
+			Assert.AreEqual (255, color.A, "#Tan.A");
+			Assert.AreEqual (210, color.R, "#Tan.R");
+			Assert.AreEqual (180, color.G, "#Tan.G");
+			Assert.AreEqual (140, color.B, "#Tan.B");
 
 			color = Color.Teal;
-			AssertEquals ("#Teal.A", 255, color.A);
-			AssertEquals ("#Teal.R", 0, color.R);
-			AssertEquals ("#Teal.G", 128, color.G);
-			AssertEquals ("#Teal.B", 128, color.B);
+			Assert.AreEqual (255, color.A, "#Teal.A");
+			Assert.AreEqual (0, color.R, "#Teal.R");
+			Assert.AreEqual (128, color.G, "#Teal.G");
+			Assert.AreEqual (128, color.B, "#Teal.B");
 
 			color = Color.Thistle;
-			AssertEquals ("#Thistle.A", 255, color.A);
-			AssertEquals ("#Thistle.R", 216, color.R);
-			AssertEquals ("#Thistle.G", 191, color.G);
-			AssertEquals ("#Thistle.B", 216, color.B);
+			Assert.AreEqual (255, color.A, "#Thistle.A");
+			Assert.AreEqual (216, color.R, "#Thistle.R");
+			Assert.AreEqual (191, color.G, "#Thistle.G");
+			Assert.AreEqual (216, color.B, "#Thistle.B");
 
 			color = Color.Tomato;
-			AssertEquals ("#Tomato.A", 255, color.A);
-			AssertEquals ("#Tomato.R", 255, color.R);
-			AssertEquals ("#Tomato.G", 99, color.G);
-			AssertEquals ("#Tomato.B", 71, color.B);
+			Assert.AreEqual (255, color.A, "#Tomato.A");
+			Assert.AreEqual (255, color.R, "#Tomato.R");
+			Assert.AreEqual (99, color.G, "#Tomato.G");
+			Assert.AreEqual (71, color.B, "#Tomato.B");
 
 			color = Color.Turquoise;
-			AssertEquals ("#Turquoise.A", 255, color.A);
-			AssertEquals ("#Turquoise.R", 64, color.R);
-			AssertEquals ("#Turquoise.G", 224, color.G);
-			AssertEquals ("#Turquoise.B", 208, color.B);
+			Assert.AreEqual (255, color.A, "#Turquoise.A");
+			Assert.AreEqual (64, color.R, "#Turquoise.R");
+			Assert.AreEqual (224, color.G, "#Turquoise.G");
+			Assert.AreEqual (208, color.B, "#Turquoise.B");
 
 			color = Color.Violet;
-			AssertEquals ("#Violet.A", 255, color.A);
-			AssertEquals ("#Violet.R", 238, color.R);
-			AssertEquals ("#Violet.G", 130, color.G);
-			AssertEquals ("#Violet.B", 238, color.B);
+			Assert.AreEqual (255, color.A, "#Violet.A");
+			Assert.AreEqual (238, color.R, "#Violet.R");
+			Assert.AreEqual (130, color.G, "#Violet.G");
+			Assert.AreEqual (238, color.B, "#Violet.B");
 
 			color = Color.Wheat;
-			AssertEquals ("#Wheat.A", 255, color.A);
-			AssertEquals ("#Wheat.R", 245, color.R);
-			AssertEquals ("#Wheat.G", 222, color.G);
-			AssertEquals ("#Wheat.B", 179, color.B);
+			Assert.AreEqual (255, color.A, "#Wheat.A");
+			Assert.AreEqual (245, color.R, "#Wheat.R");
+			Assert.AreEqual (222, color.G, "#Wheat.G");
+			Assert.AreEqual (179, color.B, "#Wheat.B");
 
 			color = Color.White;
-			AssertEquals ("#White.A", 255, color.A);
-			AssertEquals ("#White.R", 255, color.R);
-			AssertEquals ("#White.G", 255, color.G);
-			AssertEquals ("#White.B", 255, color.B);
+			Assert.AreEqual (255, color.A, "#White.A");
+			Assert.AreEqual (255, color.R, "#White.R");
+			Assert.AreEqual (255, color.G, "#White.G");
+			Assert.AreEqual (255, color.B, "#White.B");
 
 			color = Color.WhiteSmoke;
-			AssertEquals ("#WhiteSmoke.A", 255, color.A);
-			AssertEquals ("#WhiteSmoke.R", 245, color.R);
-			AssertEquals ("#WhiteSmoke.G", 245, color.G);
-			AssertEquals ("#WhiteSmoke.B", 245, color.B);
+			Assert.AreEqual (255, color.A, "#WhiteSmoke.A");
+			Assert.AreEqual (245, color.R, "#WhiteSmoke.R");
+			Assert.AreEqual (245, color.G, "#WhiteSmoke.G");
+			Assert.AreEqual (245, color.B, "#WhiteSmoke.B");
 
 			color = Color.Yellow;
-			AssertEquals ("#Yellow.A", 255, color.A);
-			AssertEquals ("#Yellow.R", 255, color.R);
-			AssertEquals ("#Yellow.G", 255, color.G);
-			AssertEquals ("#Yellow.B", 0, color.B);
+			Assert.AreEqual (255, color.A, "#Yellow.A");
+			Assert.AreEqual (255, color.R, "#Yellow.R");
+			Assert.AreEqual (255, color.G, "#Yellow.G");
+			Assert.AreEqual (0, color.B, "#Yellow.B");
 
 			color = Color.YellowGreen;
-			AssertEquals ("#YellowGreen.A", 255, color.A);
-			AssertEquals ("#YellowGreen.R", 154, color.R);
-			AssertEquals ("#YellowGreen.G", 205, color.G);
-			AssertEquals ("#YellowGreen.B", 50, color.B);
+			Assert.AreEqual (255, color.A, "#YellowGreen.A");
+			Assert.AreEqual (154, color.R, "#YellowGreen.R");
+			Assert.AreEqual (205, color.G, "#YellowGreen.G");
+			Assert.AreEqual (50, color.B, "#YellowGreen.B");
 		}
 		
 		static bool FloatsAlmostEqual (float v1, float v2)
@@ -904,128 +904,118 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void TestHBSValues ()
 		{
-			AssertEquals ("BrightnessBlack", 0.0f, Color.Black.GetBrightness ());
-			AssertEquals ("BrightnessWhite", 1.0f, Color.White.GetBrightness ());
+			Assert.AreEqual (0.0f, Color.Black.GetBrightness (), "BrightnessBlack");
+			Assert.AreEqual (1.0f, Color.White.GetBrightness (), "BrightnessWhite");
 		
 			Color c1 = Color.FromArgb (0, 13, 45, 7); //just some random color
-			Assert ("Hue1",        FloatsAlmostEqual (110.5263f, c1.GetHue ()));
-			Assert ("Brightness1", FloatsAlmostEqual (0.1019608f, c1.GetBrightness ()));
-			Assert ("Saturation1", FloatsAlmostEqual (0.7307692f, c1.GetSaturation ()));
+			Assert.IsTrue (       FloatsAlmostEqual (110.5263f, c1.GetHue ()), "Hue1");
+			Assert.IsTrue (FloatsAlmostEqual (0.1019608f, c1.GetBrightness ()), "Brightness1");
+			Assert.IsTrue (FloatsAlmostEqual (0.7307692f, c1.GetSaturation ()), "Saturation1");
 	
 			Color c2 = Color.FromArgb (0, 112, 75, 29); //another random color
-			Assert ("Hue2",        FloatsAlmostEqual (33.25302f, c2.GetHue ()));
-			Assert ("Brightness2", FloatsAlmostEqual (0.2764706f, c2.GetBrightness ()));
-			Assert ("Saturation2", FloatsAlmostEqual (0.5886525f, c2.GetSaturation ()));
+			Assert.IsTrue (       FloatsAlmostEqual (33.25302f, c2.GetHue ()), "Hue2");
+			Assert.IsTrue (FloatsAlmostEqual (0.2764706f, c2.GetBrightness ()), "Brightness2");
+			Assert.IsTrue (FloatsAlmostEqual (0.5886525f, c2.GetSaturation ()), "Saturation2");
 		}
 		[Test]
 		public void TestEquals ()
 		{
 			Color color = Color.Red;
 			Color color1 = Color.FromArgb (color.R, color.G, color.B);
-			Assert ("Named color not == unnamed color", !(color == color1));
-			Assert ("Named unnamed color == color not", !(color1 == color));
-			Assert ("Named color != unnamed color", (color != color1));
-			Assert ("Named unnamed color != color not", (color1 != color));
-			Assert ("Named color not equals unnamed color", !color.Equals (color1));
-			Assert ("Named unnamed color equals color not", !color1.Equals (color));
+			Assert.IsTrue (!(color == color1), "Named color not == unnamed color");
+			Assert.IsTrue (!(color1 == color), "Named unnamed color == color not");
+			Assert.IsTrue ((color != color1), "Named color != unnamed color");
+			Assert.IsTrue ((color1 != color), "Named unnamed color != color not");
+			Assert.IsTrue (!color.Equals (color1), "Named color not equals unnamed color");
+			Assert.IsTrue (!color1.Equals (color), "Named unnamed color equals color not");
 			color = Color.FromArgb (0, color1);
-			Assert ("Alpha takes part in comparison", !color.Equals (color1));
+			Assert.IsTrue (!color.Equals (color1), "Alpha takes part in comparison");
 		}
 		[Test]
 		public void TestIsEmpty ()
 		{
 			Color color = Color.Empty;
-			Assert ("Empty color", color.IsEmpty);
-			Assert ("Not empty color", !Color.FromArgb (0, Color.Black).IsEmpty);
+			Assert.IsTrue (color.IsEmpty, "Empty color");
+			Assert.IsTrue (!Color.FromArgb (0, Color.Black).IsEmpty, "Not empty color");
 		}
 
 		[Test]
 		public void IsKnownColor ()
 		{
-			Assert ("KnownColor", Color.FromKnownColor(KnownColor.AliceBlue).IsKnownColor);
-			Assert ("KnownColor", Color.FromName("AliceBlue").IsKnownColor);
-			AssertEquals ("Not KnownColor", false,
-				Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsKnownColor);
+			Assert.IsTrue (Color.FromKnownColor(KnownColor.AliceBlue).IsKnownColor, "KnownColor");
+			Assert.IsTrue (Color.FromName("AliceBlue").IsKnownColor, "KnownColor");
+			Assert.AreEqual (false, Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsKnownColor, "Not KnownColor");
 		}
 
 		[Test]
 		public void IsNamedColor ()
 		{
-			Assert ("NamedColor", Color.AliceBlue.IsNamedColor);
-			Assert ("NamedColor", Color.FromKnownColor(KnownColor.AliceBlue).IsNamedColor);
-			Assert ("NamedColor", Color.FromName("AliceBlue").IsNamedColor);
-			AssertEquals ("Not NamedColor", false,
-				Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsNamedColor);
+			Assert.IsTrue (Color.AliceBlue.IsNamedColor, "NamedColor");
+			Assert.IsTrue (Color.FromKnownColor(KnownColor.AliceBlue).IsNamedColor, "NamedColor");
+			Assert.IsTrue (Color.FromName("AliceBlue").IsNamedColor, "NamedColor");
+			Assert.AreEqual (false, Color.FromArgb (Color.AliceBlue.A, Color.AliceBlue.R, Color.AliceBlue.G, Color.AliceBlue.B).IsNamedColor, "Not NamedColor");
 		}
 
 		[Test]
 		public void IsSystemColor ()
 		{
 			Color c = Color.FromKnownColor (KnownColor.ActiveBorder);
-			Assert ("SystemColor#1", c.IsSystemColor);
-			Assert ("SystemColor#2", Color.FromName("ActiveBorder").IsSystemColor);
-			AssertEquals ("Not SystemColor#1", false,
-				Color.FromArgb (c.A, c.R, c.G, c.B).IsSystemColor);
-			AssertEquals ("Not SystemColor#2", false,
-				Color.FromKnownColor(KnownColor.AliceBlue).IsSystemColor);
-			AssertEquals ("Not SystemColor#3", false,
-				Color.FromName("AliceBlue").IsSystemColor);
+			Assert.IsTrue (c.IsSystemColor, "SystemColor#1");
+			Assert.IsTrue (Color.FromName("ActiveBorder").IsSystemColor, "SystemColor#2");
+			Assert.AreEqual (false, Color.FromArgb (c.A, c.R, c.G, c.B).IsSystemColor, "Not SystemColor#1");
+			Assert.AreEqual (false, Color.FromKnownColor(KnownColor.AliceBlue).IsSystemColor, "Not SystemColor#2");
+			Assert.AreEqual (false, Color.FromName("AliceBlue").IsSystemColor, "Not SystemColor#3");
 		}
 
 		[Test]
 		public void Name ()
 		{
-			AssertEquals ("Color.Name#1", "AliceBlue", Color.AliceBlue.Name);
-			AssertEquals ("Color.Name#2", "ActiveBorder",
-				Color.FromKnownColor (KnownColor.ActiveBorder).Name);
-			AssertEquals ("Color.Name#3", "1122ccff",
-				Color.FromArgb(0x11, 0x22, 0xcc, 0xff).Name);
+			Assert.AreEqual ("AliceBlue", Color.AliceBlue.Name, "Color.Name#1");
+			Assert.AreEqual ("ActiveBorder", Color.FromKnownColor (KnownColor.ActiveBorder).Name, "Color.Name#2");
+			Assert.AreEqual ("1122ccff", Color.FromArgb(0x11, 0x22, 0xcc, 0xff).Name, "Color.Name#3");
 		}
 		[Test]
 		public void GetHashCodeTest ()
 		{
 			Color c = Color.AliceBlue;
-			AssertEquals ("GHC#1", false, Color.FromArgb (c.A, c.R, c.G, c.B).GetHashCode () ==
-				c.GetHashCode ());
-			AssertEquals ("GHC#2", c.GetHashCode (), Color.FromName ("AliceBlue").GetHashCode ());
+			Assert.AreEqual (false, Color.FromArgb (c.A, c.R, c.G, c.B).GetHashCode () == c.GetHashCode (), "GHC#1");
+			Assert.AreEqual (c.GetHashCode (), Color.FromName ("AliceBlue").GetHashCode (), "GHC#2");
 		}
 		[Test]
 		public void ToArgb ()
 		{
-			AssertEquals (0x11cc8833, Color.FromArgb (0x11, 0xcc, 0x88, 0x33).ToArgb());
-			AssertEquals (unchecked((int)0xf1cc8833), Color.FromArgb (0xf1, 0xcc, 0x88, 0x33).ToArgb());
+			Assert.AreEqual (0x11cc8833, Color.FromArgb (0x11, 0xcc, 0x88, 0x33).ToArgb (), "#1");
+			Assert.AreEqual (unchecked((int)0xf1cc8833), Color.FromArgb (0xf1, 0xcc, 0x88, 0x33).ToArgb (), "#2");
 		}
 
 		[Test]
 		public void ToKnownColor ()
 		{
-			AssertEquals ("TKC#1", KnownColor.ActiveBorder, Color.FromName ("ActiveBorder").ToKnownColor ());
-			AssertEquals ("TKC#2", KnownColor.AliceBlue, Color.AliceBlue.ToKnownColor ());
+			Assert.AreEqual (KnownColor.ActiveBorder, Color.FromName ("ActiveBorder").ToKnownColor (), "TKC#1");
+			Assert.AreEqual (KnownColor.AliceBlue, Color.AliceBlue.ToKnownColor (), "TKC#2");
 			KnownColor zero = Color.FromArgb (1, 2, 3, 4).ToKnownColor ();
-			AssertEquals ("TKC#3", (KnownColor)0, zero);
+			Assert.AreEqual ((KnownColor)0, zero, "TKC#3");
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("TS#1", "Color [AliceBlue]", Color.AliceBlue.ToString ());
-			AssertEquals ("TS#2", "Color [ActiveBorder]",
-				Color.FromKnownColor (KnownColor.ActiveBorder).ToString ());
-			AssertEquals ("TS#3", "Color [A=1, R=2, G=3, B=4]",
-				Color.FromArgb(1, 2, 3, 4).ToString ());
-			AssertEquals ("TS#4", "Color [Empty]", Color.Empty.ToString ());
+			Assert.AreEqual ("Color [AliceBlue]", Color.AliceBlue.ToString (), "TS#1");
+			Assert.AreEqual ("Color [ActiveBorder]", Color.FromKnownColor (KnownColor.ActiveBorder).ToString (), "TS#2");
+			Assert.AreEqual ("Color [A=1, R=2, G=3, B=4]", Color.FromArgb(1, 2, 3, 4).ToString (), "TS#3");
+			Assert.AreEqual ("Color [Empty]", Color.Empty.ToString (), "TS#4");
 		}
 
 		[Test]
 		public void Equality ()
 		{
 			Color c = Color.AliceBlue;
-			Assert ("EQ#1", c == Color.FromName ("AliceBlue"));
-			AssertEquals ("EQ#2", false, c == Color.FromArgb (c.A, c.R, c.G, c.B));
-			Assert ("EQ#3", c.Equals (Color.FromName ("AliceBlue")));
-			AssertEquals ("EQ#4", false, c.Equals(Color.FromArgb (c.A, c.R, c.G, c.B)));
-			AssertEquals ("EQ#5", false, c != Color.FromName ("AliceBlue"));
-			Assert("EQ#6", c != Color.FromArgb (c.A, c.R, c.G, c.B));
+			Assert.IsTrue (c == Color.FromName ("AliceBlue"), "EQ#1");
+			Assert.AreEqual (false, c == Color.FromArgb (c.A, c.R, c.G, c.B), "EQ#2");
+			Assert.IsTrue (c.Equals (Color.FromName ("AliceBlue")), "EQ#3");
+			Assert.AreEqual (false, c.Equals(Color.FromArgb (c.A, c.R, c.G, c.B)), "EQ#4");
+			Assert.AreEqual (false, c != Color.FromName ("AliceBlue"), "EQ#5");
+			Assert.IsTrue(c != Color.FromArgb (c.A, c.R, c.G, c.B), "EQ#6");
 		}
 
 		[Test]
@@ -1143,22 +1133,22 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void FromName_Invalid () {
 			Color c = Color.FromName ("OingoBoingo");
-			Assert ("#1", c.IsNamedColor);
-			AssertEquals ("#2", c.ToArgb (), 0);
-			AssertEquals ("#3", c.Name, "OingoBoingo");
+			Assert.IsTrue (c.IsNamedColor, "#1");
+			Assert.AreEqual (c.ToArgb (), 0, "#2");
+			Assert.AreEqual (c.Name, "OingoBoingo", "#3");
 		}
 
 		private void CheckRed (string message, Color color)
 		{
-			AssertEquals ("A", 255, color.A);
-			AssertEquals ("R", 255, color.R);
-			AssertEquals ("G", 0, color.G);
-			AssertEquals ("B", 0, color.B);
-			AssertEquals ("Name", "Red", color.Name);
-			Assert ("IsEmpty", !color.IsEmpty);
-			Assert ("IsKnownColor", color.IsKnownColor);
-			Assert ("IsNamedColor", color.IsNamedColor);
-			Assert ("IsSystemColor", !color.IsSystemColor);
+			Assert.AreEqual (255, color.A, "A");
+			Assert.AreEqual (255, color.R, "R");
+			Assert.AreEqual (0, color.G, "G");
+			Assert.AreEqual (0, color.B, "B");
+			Assert.AreEqual ("Red", color.Name, "Name");
+			Assert.IsTrue (!color.IsEmpty, "IsEmpty");
+			Assert.IsTrue (color.IsKnownColor, "IsKnownColor");
+			Assert.IsTrue (color.IsNamedColor, "IsNamedColor");
+			Assert.IsTrue (!color.IsSystemColor, "IsSystemColor");
 		}
 
 		[Test]
@@ -1219,15 +1209,15 @@ namespace MonoTests.System.Drawing {
 			BinaryFormatter bf = new BinaryFormatter ();
 			MemoryStream ms = new MemoryStream (color_blue);
 			Color color = (Color) bf.Deserialize (ms);
-			AssertEquals ("A", 255, color.A);
-			AssertEquals ("R", 0, color.R);
-			AssertEquals ("G", 0, color.G);
-			AssertEquals ("B", 255, color.B);
-			AssertEquals ("Name", "Blue", color.Name);
-			Assert ("IsEmpty", !color.IsEmpty);
-			Assert ("IsKnownColor", color.IsKnownColor);
-			Assert ("IsNamedColor", color.IsNamedColor);
-			Assert ("IsSystemColor", !color.IsSystemColor);
+			Assert.AreEqual (255, color.A, "A");
+			Assert.AreEqual (0, color.R, "R");
+			Assert.AreEqual (0, color.G, "G");
+			Assert.AreEqual (255, color.B, "B");
+			Assert.AreEqual ("Blue", color.Name, "Name");
+			Assert.IsTrue (!color.IsEmpty, "IsEmpty");
+			Assert.IsTrue (color.IsKnownColor, "IsKnownColor");
+			Assert.IsTrue (color.IsNamedColor, "IsNamedColor");
+			Assert.IsTrue (!color.IsSystemColor, "IsSystemColor");
 		}
 
 		static byte [] color_blue_fromargb = {
@@ -1247,15 +1237,15 @@ namespace MonoTests.System.Drawing {
 			BinaryFormatter bf = new BinaryFormatter ();
 			MemoryStream ms = new MemoryStream (color_blue_fromargb);
 			Color color = (Color) bf.Deserialize (ms);
-			AssertEquals ("A", 255, color.A);
-			AssertEquals ("R", 0, color.R);
-			AssertEquals ("G", 0, color.G);
-			AssertEquals ("B", 255, color.B);
-			AssertEquals ("Name", "ff0000ff", color.Name);
-			Assert ("IsEmpty", !color.IsEmpty);
-			Assert ("IsKnownColor", !color.IsKnownColor);
-			Assert ("IsNamedColor", !color.IsNamedColor);
-			Assert ("IsSystemColor", !color.IsSystemColor);
+			Assert.AreEqual (255, color.A, "A");
+			Assert.AreEqual (0, color.R, "R");
+			Assert.AreEqual (0, color.G, "G");
+			Assert.AreEqual (255, color.B, "B");
+			Assert.AreEqual ("ff0000ff", color.Name, "Name");
+			Assert.IsTrue (!color.IsEmpty, "IsEmpty");
+			Assert.IsTrue (!color.IsKnownColor, "IsKnownColor");
+			Assert.IsTrue (!color.IsNamedColor, "IsNamedColor");
+			Assert.IsTrue (!color.IsSystemColor, "IsSystemColor");
 		}
 
 		static byte [] _serializedV11 = {
@@ -1291,7 +1281,7 @@ namespace MonoTests.System.Drawing {
 				ms.Position = 0;
 
 				c = (Color) formatter.Deserialize (ms);
-				AssertEquals (Color.Green, c);
+				Assert.AreEqual (Color.Green, c, "#1");
 			}
 		}
 
@@ -1300,7 +1290,7 @@ namespace MonoTests.System.Drawing {
 		{
 			// we get BGR than needs to be converted into ARGB
 			Color sc = ColorTranslator.FromWin32 ((int)GDIPlus.Win32GetSysColor (index));
-			AssertEquals (kc.ToString (), Color.FromKnownColor (kc).ToArgb (), sc.ToArgb ());
+			Assert.AreEqual (Color.FromKnownColor (kc).ToArgb (), sc.ToArgb (), kc.ToString ());
 		}
 
 		[Test]

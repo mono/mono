@@ -1,3 +1,8 @@
+2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestColor.cs, TestPoint.cs, TestGraphics.cs, TestSystemBrushes.cs,
+	  TestPens.cs, TestSize.cs, TestSystemPens.cs: nunit test upgrade.
+
 2009-01-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestBitmap.cs: Add test cases for SetResolution

@@ -36,7 +36,7 @@ namespace MonoTests.System.Drawing
 {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class SizeTest : Assertion 
+	public class SizeTest 
 	{
 		Size sz1_1;
 		Size sz1_0;
@@ -57,21 +57,21 @@ namespace MonoTests.System.Drawing
 		public void TestConstructors ()
 		{
 			Size sz_wh = new Size (1, 5);
-			AssertEquals ("C#1", 1, sz_wh.Width);
-			AssertEquals ("C#2", 5, sz_wh.Height);
+			Assert.AreEqual (1, sz_wh.Width, "C#1");
+			Assert.AreEqual (5, sz_wh.Height, "C#2");
 
 			Size sz_pt = new Size (new Point (1, 5));
-			AssertEquals ("C#3", 1, sz_pt.Width);
-			AssertEquals ("C#4", 5, sz_pt.Height);
+			Assert.AreEqual (1, sz_pt.Width, "C#3");
+			Assert.AreEqual (5, sz_pt.Height, "C#4");
 
-			AssertEquals ("C#5", sz_wh, sz_pt);
+			Assert.AreEqual (sz_wh, sz_pt, "C#5");
 		}
 
 		[Test]
 		public void TestEmptyField () 
 		{
 			Size sz = new Size (0, 0);
-			AssertEquals ("EMP#1", sz, Size.Empty);
+			Assert.AreEqual (sz, Size.Empty, "EMP#1");
 		}
 
 		[Test]
@@ -79,43 +79,43 @@ namespace MonoTests.System.Drawing
 		{
 			Size sz = new Size (0, 0);
 	
-			Assert ("P#1", sz.IsEmpty);
-			Assert ("P#2", ! sz1_1.IsEmpty);
-			AssertEquals ("P#3", 1, sz1_0.Width);
-			AssertEquals ("P#4", 1, sz0_1.Height);
+			Assert.IsTrue (sz.IsEmpty, "P#1");
+			Assert.IsTrue (! sz1_1.IsEmpty, "P#2");
+			Assert.AreEqual (1, sz1_0.Width, "P#3");
+			Assert.AreEqual (1, sz0_1.Height, "P#4");
 		}
 
 		[Test]
 		public void TestCeiling ()
 		{
 			SizeF sf = new SizeF (0.5F, 0.6F);
-			AssertEquals ("CL#1", sz1_1, Size.Ceiling (sf));
+			Assert.AreEqual (sz1_1, Size.Ceiling (sf), "CL#1");
 
 			sf = new SizeF (1.0F, 1.0F);
-			AssertEquals ("CL#2", sz1_1, Size.Ceiling (sf));
+			Assert.AreEqual (sz1_1, Size.Ceiling (sf), "CL#2");
 		}
 
 		[Test]
 		public void TestEquals () 
 		{
-			AssertEquals ("EQ#1", sz1_1, sz1_1);
-			AssertEquals ("EQ#2", sz1_1, new Size (1, 1));
-			Assert ("EQ#3", ! sz1_1.Equals (sz1_0));
-			Assert ("EQ#4", ! sz1_1.Equals (sz0_1));
-			Assert ("EQ#5", ! sz1_0.Equals (sz0_1));
+			Assert.AreEqual (sz1_1, sz1_1, "EQ#1");
+			Assert.AreEqual (sz1_1, new Size (1, 1), "EQ#2");
+			Assert.IsTrue (! sz1_1.Equals (sz1_0), "EQ#3");
+			Assert.IsTrue (! sz1_1.Equals (sz0_1), "EQ#4");
+			Assert.IsTrue (! sz1_0.Equals (sz0_1), "EQ#5");
 		}
 
 		[Test]
 		public void TestRound ()
 		{
 			SizeF sf = new SizeF (0.3F, 0.7F);
-			AssertEquals ("CL#1", sz0_1, Size.Round (sf));
+			Assert.AreEqual (sz0_1, Size.Round (sf), "CL#1");
 
 			sf = new SizeF (0.6F, 0.6F);
-			AssertEquals ("CL#2", sz1_1, Size.Round (sf));
+			Assert.AreEqual (sz1_1, Size.Round (sf), "CL#2");
 
 			sf = new SizeF (1.0F, 1.0F);
-			AssertEquals ("CL#3", sz1_1, Size.Round (sf));
+			Assert.AreEqual (sz1_1, Size.Round (sf), "CL#3");
 		}
 
 		
@@ -123,47 +123,47 @@ namespace MonoTests.System.Drawing
 		public void TestTruncate ()
 		{
 			SizeF sf = new SizeF (0.8f, 1.3f);
-			AssertEquals ("TR#1", sz0_1, Size.Truncate (sf));
+			Assert.AreEqual (sz0_1, Size.Truncate (sf), "TR#1");
 
 			sf = new SizeF (1.9f, 1.9f);
-			AssertEquals ("TR#2", sz1_1, Size.Truncate (sf));
+			Assert.AreEqual (sz1_1, Size.Truncate (sf), "TR#2");
 
 			sf = new SizeF (1.0f, 1.0f);
-			AssertEquals ("TR#3", sz1_1, Size.Truncate (sf));
+			Assert.AreEqual (sz1_1, Size.Truncate (sf), "TR#3");
 		}
 
 		[Test]
 		public void TestAddition ()
 		{
-			AssertEquals ("ADD#1", sz1_1, sz1_0 + sz0_1);
-			AssertEquals ("ADD#2", sz1_1, sz1_1 + new Size (0, 0));
+			Assert.AreEqual (sz1_1, sz1_0 + sz0_1, "ADD#1");
+			Assert.AreEqual (sz1_1, sz1_1 + new Size (0, 0), "ADD#2");
 		}
 
 		[Test]
 		public void TestEqualityOp () 
 		{
-			Assert ("EOP#1", sz1_1 == sz1_1);
-			Assert ("EOP#2", sz1_1 == new Size (1, 1));
-			Assert ("EOP#3", ! (sz1_1 == sz1_0));
-			Assert ("EOP#4", ! (sz1_1 == sz0_1));
-			Assert ("EOP#5", ! (sz1_0 == sz0_1));
+			Assert.IsTrue (sz1_1 == sz1_1, "EOP#1");
+			Assert.IsTrue (sz1_1 == new Size (1, 1), "EOP#2");
+			Assert.IsTrue (! (sz1_1 == sz1_0), "EOP#3");
+			Assert.IsTrue (! (sz1_1 == sz0_1), "EOP#4");
+			Assert.IsTrue (! (sz1_0 == sz0_1), "EOP#5");
 		}
 
 		[Test]
 		public void TestInequalityOp () 
 		{
-			Assert ("IOP#1", ! (sz1_1 != sz1_1));
-			Assert ("IOP#2", ! (sz1_1 != new Size (1, 1)));
-			Assert ("IOP#3", sz1_1 != sz1_0);
-			Assert ("IOP#4", sz1_1 != sz0_1);
-			Assert ("IOP#5", sz1_0 != sz0_1);
+			Assert.IsTrue (! (sz1_1 != sz1_1), "IOP#1");
+			Assert.IsTrue (! (sz1_1 != new Size (1, 1)), "IOP#2");
+			Assert.IsTrue (sz1_1 != sz1_0, "IOP#3");
+			Assert.IsTrue (sz1_1 != sz0_1, "IOP#4");
+			Assert.IsTrue (sz1_0 != sz0_1, "IOP#5");
 		}
 	
 		[Test]
 		public void TestSubtraction () 
 		{
-			AssertEquals ("SUB#1", sz1_0, sz1_1 - sz0_1);
-			AssertEquals ("SUB#2", sz0_1, sz1_1 - sz1_0);
+			Assert.AreEqual (sz1_0, sz1_1 - sz0_1, "SUB#1");
+			Assert.AreEqual (sz0_1, sz1_1 - sz1_0, "SUB#2");
 		}
 
 		[Test]
@@ -172,7 +172,7 @@ namespace MonoTests.System.Drawing
 			Point pt1 = new Point (1, 1);
 			Point pt2 = (Point) sz1_1;
 	
-			AssertEquals ("SZ2PT#1", pt1, pt2);
+			Assert.AreEqual (pt1, pt2, "SZ2PT#1");
 		}
 	
 		[Test]
@@ -181,35 +181,35 @@ namespace MonoTests.System.Drawing
 			SizeF sf1 = new SizeF (1.0F, 1.0F);
 			SizeF sf2 = (SizeF) sz1_1;
 
-			AssertEquals ("SZ2SF#1", sf1, sf2);
+			Assert.AreEqual (sf1, sf2, "SZ2SF#1");
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("{Width=1, Height=0}", sz1_0.ToString ());
-			AssertEquals ("{Width=0, Height=0}", Size.Empty.ToString ());
+			Assert.AreEqual (sz1_0.ToString (), "{Width=1, Height=0}");
+			Assert.AreEqual (Size.Empty.ToString (), "{Width=0, Height=0}");
 		}
 
 		[Test]
 		public void GetHashCodeTest ()
 		{
-			AssertEquals (new Size (1, 0).GetHashCode (), sz1_0.GetHashCode ());
+			Assert.AreEqual (new Size (1, 0).GetHashCode (), sz1_0.GetHashCode (), "#1");
 		}
 
 #if NET_2_0
 		[Test]
 		public void AddTest ()
 		{
-			AssertEquals ("ADD#1", sz1_1, Size.Add (sz1_0, sz0_1));
-			AssertEquals ("ADD#2", sz1_1, Size.Add (sz1_1, new Size (0, 0)));
+			Assert.AreEqual (sz1_1, Size.Add (sz1_0, sz0_1), "ADD#1");
+			Assert.AreEqual (sz1_1, Size.Add (sz1_1, new Size (0, 0)), "ADD#2");
 		}
 
 		[Test]
 		public void SubtractTest ()
 		{
-			AssertEquals ("SUB#1", sz1_0, Size.Subtract (sz1_1, sz0_1));
-			AssertEquals ("SUB#2", sz0_1, Size.Subtract (sz1_1, sz1_0));	
+			Assert.AreEqual (sz1_0, Size.Subtract (sz1_1, sz0_1), "SUB#1");
+			Assert.AreEqual (sz0_1, Size.Subtract (sz1_1, sz1_0), "SUB#2");
 		}
 #endif
 

@@ -123,16 +123,16 @@ namespace MonoTests.System.Drawing {
 			Graphics g = Graphics.FromImage (bmp);
 			Region r = new Region ();
 
-			AssertEquals ("DefaultProperties1", r.GetBounds (g), g.ClipBounds);
-			AssertEquals ("DefaultProperties2", CompositingMode.SourceOver, g.CompositingMode);
-			AssertEquals ("DefaultProperties3", CompositingQuality.Default, g.CompositingQuality);
-			AssertEquals ("DefaultProperties4", InterpolationMode.Bilinear, g.InterpolationMode);
-			AssertEquals ("DefaultProperties5", 1, g.PageScale);
-			AssertEquals ("DefaultProperties6", GraphicsUnit.Display, g.PageUnit);
-			AssertEquals ("DefaultProperties7", PixelOffsetMode.Default, g.PixelOffsetMode);
-			AssertEquals ("DefaultProperties8", new Point (0, 0), g.RenderingOrigin);
-			AssertEquals ("DefaultProperties9", SmoothingMode.None, g.SmoothingMode);
-			AssertEquals ("DefaultProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);
+			Assert.AreEqual (r.GetBounds (g), g.ClipBounds, "DefaultProperties1");
+			Assert.AreEqual (CompositingMode.SourceOver, g.CompositingMode, "DefaultProperties2");
+			Assert.AreEqual (CompositingQuality.Default, g.CompositingQuality, "DefaultProperties3");
+			Assert.AreEqual (InterpolationMode.Bilinear, g.InterpolationMode, "DefaultProperties4");
+			Assert.AreEqual (1, g.PageScale, "DefaultProperties5");
+			Assert.AreEqual (GraphicsUnit.Display, g.PageUnit, "DefaultProperties6");
+			Assert.AreEqual (PixelOffsetMode.Default, g.PixelOffsetMode, "DefaultProperties7");
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "DefaultProperties8");
+			Assert.AreEqual (SmoothingMode.None, g.SmoothingMode, "DefaultProperties9");
+			Assert.AreEqual (TextRenderingHint.SystemDefault, g.TextRenderingHint, "DefaultProperties10");
 
 			r.Dispose ();
 		}
@@ -154,15 +154,15 @@ namespace MonoTests.System.Drawing {
 			g.TextRenderingHint = TextRenderingHint.SystemDefault;
 
 			//Clipping set/get tested in clipping functions			
-			AssertEquals ("SetGetProperties2", CompositingMode.SourceCopy, g.CompositingMode);
-			AssertEquals ("SetGetProperties3", CompositingQuality.GammaCorrected, g.CompositingQuality);
-			AssertEquals ("SetGetProperties4", InterpolationMode.HighQualityBilinear, g.InterpolationMode);
-			AssertEquals ("SetGetProperties5", 2, g.PageScale);
-			AssertEquals ("SetGetProperties6", GraphicsUnit.Inch, g.PageUnit);
-			AssertEquals ("SetGetProperties7", PixelOffsetMode.Half, g.PixelOffsetMode);
-			AssertEquals ("SetGetProperties8", new Point (10, 20), g.RenderingOrigin);
-			AssertEquals ("SetGetProperties9", SmoothingMode.AntiAlias, g.SmoothingMode);
-			AssertEquals ("SetGetProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);
+			Assert.AreEqual (CompositingMode.SourceCopy, g.CompositingMode, "SetGetProperties2");
+			Assert.AreEqual (CompositingQuality.GammaCorrected, g.CompositingQuality, "SetGetProperties3");
+			Assert.AreEqual (InterpolationMode.HighQualityBilinear, g.InterpolationMode, "SetGetProperties4");
+			Assert.AreEqual (2, g.PageScale, "SetGetProperties5");
+			Assert.AreEqual (GraphicsUnit.Inch, g.PageUnit, "SetGetProperties6");
+			Assert.AreEqual (PixelOffsetMode.Half, g.PixelOffsetMode, "SetGetProperties7");
+			Assert.AreEqual (new Point (10, 20), g.RenderingOrigin, "SetGetProperties8");
+			Assert.AreEqual (SmoothingMode.AntiAlias, g.SmoothingMode, "SetGetProperties9");
+			Assert.AreEqual (TextRenderingHint.SystemDefault, g.TextRenderingHint, "SetGetProperties10");
 		}
 
 		// Properties
@@ -175,11 +175,11 @@ namespace MonoTests.System.Drawing {
 			g.Clip = new Region (new Rectangle (50, 40, 210, 220));
 			rects = g.Clip.GetRegionScans (new Matrix ());
 
-			AssertEquals ("Clip1", 1, rects.Length);
-			AssertEquals ("Clip2", 50, rects[0].X);
-			AssertEquals ("Clip3", 40, rects[0].Y);
-			AssertEquals ("Clip4", 210, rects[0].Width);
-			AssertEquals ("Clip5", 220, rects[0].Height);
+			Assert.AreEqual (1, rects.Length, "Clip1");
+			Assert.AreEqual (50, rects[0].X, "Clip2");
+			Assert.AreEqual (40, rects[0].Y, "Clip3");
+			Assert.AreEqual (210, rects[0].Width, "Clip4");
+			Assert.AreEqual (220, rects[0].Height, "Clip5");
 		}
 
 		[Test]
@@ -203,22 +203,22 @@ namespace MonoTests.System.Drawing {
 			g.ExcludeClip (new Rectangle (40, 60, 100, 20));
 			rects = g.Clip.GetRegionScans (new Matrix ());
 
-			AssertEquals ("ExcludeClip1", 3, rects.Length);
+			Assert.AreEqual (3, rects.Length, "ExcludeClip1");
 
-			AssertEquals ("ExcludeClip2", 10, rects[0].X);
-			AssertEquals ("ExcludeClip3", 10, rects[0].Y);
-			AssertEquals ("ExcludeClip4", 100, rects[0].Width);
-			AssertEquals ("ExcludeClip5", 50, rects[0].Height);
+			Assert.AreEqual (10, rects[0].X, "ExcludeClip2");
+			Assert.AreEqual (10, rects[0].Y, "ExcludeClip3");
+			Assert.AreEqual (100, rects[0].Width, "ExcludeClip4");
+			Assert.AreEqual (50, rects[0].Height, "ExcludeClip5");
 
-			AssertEquals ("ExcludeClip6", 10, rects[1].X);
-			AssertEquals ("ExcludeClip7", 60, rects[1].Y);
-			AssertEquals ("ExcludeClip8", 30, rects[1].Width);
-			AssertEquals ("ExcludeClip9", 20, rects[1].Height);
+			Assert.AreEqual (10, rects[1].X, "ExcludeClip6");
+			Assert.AreEqual (60, rects[1].Y, "ExcludeClip7");
+			Assert.AreEqual (30, rects[1].Width, "ExcludeClip8");
+			Assert.AreEqual (20, rects[1].Height, "ExcludeClip9");
 
-			AssertEquals ("ExcludeClip10", 10, rects[2].X);
-			AssertEquals ("ExcludeClip11", 80, rects[2].Y);
-			AssertEquals ("ExcludeClip12", 100, rects[2].Width);
-			AssertEquals ("ExcludeClip13", 30, rects[2].Height);
+			Assert.AreEqual (10, rects[2].X, "ExcludeClip10");
+			Assert.AreEqual (80, rects[2].Y, "ExcludeClip11");
+			Assert.AreEqual (100, rects[2].Width, "ExcludeClip12");
+			Assert.AreEqual (30, rects[2].Height, "ExcludeClip13");
 		}
 
 		[Test]
@@ -231,12 +231,12 @@ namespace MonoTests.System.Drawing {
 			g.IntersectClip (new Rectangle (290, 40, 60, 80));
 			rects = g.Clip.GetRegionScans (new Matrix ());
 
-			AssertEquals ("IntersectClip", 1, rects.Length);
+			Assert.AreEqual (1, rects.Length, "IntersectClip");
 
-			AssertEquals ("IntersectClip", 290, rects[0].X);
-			AssertEquals ("IntersectClip", 40, rects[0].Y);
-			AssertEquals ("IntersectClip", 30, rects[0].Width);
-			AssertEquals ("IntersectClip", 70, rects[0].Height);
+			Assert.AreEqual (290, rects[0].X, "IntersectClip");
+			Assert.AreEqual (40, rects[0].Y, "IntersectClip");
+			Assert.AreEqual (30, rects[0].Width, "IntersectClip");
+			Assert.AreEqual (70, rects[0].Height, "IntersectClip");
 		}
 
 		[Test]
@@ -250,12 +250,12 @@ namespace MonoTests.System.Drawing {
 			g.ResetClip ();
 			rects = g.Clip.GetRegionScans (new Matrix ());
 
-			AssertEquals ("ResetClip", 1, rects.Length);
+			Assert.AreEqual (1, rects.Length, "ResetClip");
 
-			AssertEquals ("ResetClip", -4194304, rects[0].X);
-			AssertEquals ("ResetClip", -4194304, rects[0].Y);
-			AssertEquals ("ResetClip", 8388608, rects[0].Width);
-			AssertEquals ("ResetClip", 8388608, rects[0].Height);
+			Assert.AreEqual (-4194304, rects[0].X, "ResetClip");
+			Assert.AreEqual (-4194304, rects[0].Y, "ResetClip");
+			Assert.AreEqual (8388608, rects[0].Width, "ResetClip");
+			Assert.AreEqual (8388608, rects[0].Height, "ResetClip");
 		}
 
 		[Test]
@@ -268,31 +268,31 @@ namespace MonoTests.System.Drawing {
 			// Region
 			g.SetClip (new Region (new Rectangle (50, 40, 210, 220)), CombineMode.Replace);
 			rects = g.Clip.GetRegionScans (new Matrix ());
-			AssertEquals ("SetClip1", 1, rects.Length);
-			AssertEquals ("SetClip2", 50, rects[0].X);
-			AssertEquals ("SetClip3", 40, rects[0].Y);
-			AssertEquals ("SetClip4", 210, rects[0].Width);
-			AssertEquals ("SetClip5", 220, rects[0].Height);
+			Assert.AreEqual (1, rects.Length, "SetClip1");
+			Assert.AreEqual (50, rects[0].X, "SetClip2");
+			Assert.AreEqual (40, rects[0].Y, "SetClip3");
+			Assert.AreEqual (210, rects[0].Width, "SetClip4");
+			Assert.AreEqual (220, rects[0].Height, "SetClip5");
 
 			// RectangleF
 			g = Graphics.FromImage (bmp);
 			g.SetClip (new RectangleF (50, 40, 210, 220));
 			rects = g.Clip.GetRegionScans (new Matrix ());
-			AssertEquals ("SetClip6", 1, rects.Length);
-			AssertEquals ("SetClip7", 50, rects[0].X);
-			AssertEquals ("SetClip8", 40, rects[0].Y);
-			AssertEquals ("SetClip9", 210, rects[0].Width);
-			AssertEquals ("SetClip10", 220, rects[0].Height);
+			Assert.AreEqual (1, rects.Length, "SetClip6");
+			Assert.AreEqual (50, rects[0].X, "SetClip7");
+			Assert.AreEqual (40, rects[0].Y, "SetClip8");
+			Assert.AreEqual (210, rects[0].Width, "SetClip9");
+			Assert.AreEqual (220, rects[0].Height, "SetClip10");
 
 			// Rectangle
 			g = Graphics.FromImage (bmp);
 			g.SetClip (new Rectangle (50, 40, 210, 220));
 			rects = g.Clip.GetRegionScans (new Matrix ());
-			AssertEquals ("SetClip10", 1, rects.Length);
-			AssertEquals ("SetClip11", 50, rects[0].X);
-			AssertEquals ("SetClip12", 40, rects[0].Y);
-			AssertEquals ("SetClip13", 210, rects[0].Width);
-			AssertEquals ("SetClip14", 220, rects[0].Height);
+			Assert.AreEqual (1, rects.Length, "SetClip10");
+			Assert.AreEqual (50, rects[0].X, "SetClip11");
+			Assert.AreEqual (40, rects[0].Y, "SetClip12");
+			Assert.AreEqual (210, rects[0].Width, "SetClip13");
+			Assert.AreEqual (220, rects[0].Height, "SetClip14");
 		}
 
 		[Test]
@@ -331,32 +331,32 @@ namespace MonoTests.System.Drawing {
 
 			g.Restore (state_modified);
 
-			AssertEquals ("SetSaveReset1", CompositingMode.SourceCopy, g.CompositingMode);
-			AssertEquals ("SetSaveReset2", CompositingQuality.GammaCorrected, g.CompositingQuality);
-			AssertEquals ("SetSaveReset3", InterpolationMode.HighQualityBilinear, g.InterpolationMode);
-			AssertEquals ("SetSaveReset4", 2, g.PageScale);
-			AssertEquals ("SetSaveReset5", GraphicsUnit.Inch, g.PageUnit);
-			AssertEquals ("SetSaveReset6", PixelOffsetMode.Half, g.PixelOffsetMode);
-			AssertEquals ("SetSaveReset7", new Point (10, 20), g.RenderingOrigin);
-			AssertEquals ("SetSaveReset8", SmoothingMode.AntiAlias, g.SmoothingMode);
-			AssertEquals ("SetSaveReset9", TextRenderingHint.ClearTypeGridFit, g.TextRenderingHint);
-			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.X);
-			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.Y);
+			Assert.AreEqual (CompositingMode.SourceCopy, g.CompositingMode, "SetSaveReset1");
+			Assert.AreEqual (CompositingQuality.GammaCorrected, g.CompositingQuality, "SetSaveReset2");
+			Assert.AreEqual (InterpolationMode.HighQualityBilinear, g.InterpolationMode, "SetSaveReset3");
+			Assert.AreEqual (2, g.PageScale, "SetSaveReset4");
+			Assert.AreEqual (GraphicsUnit.Inch, g.PageUnit, "SetSaveReset5");
+			Assert.AreEqual (PixelOffsetMode.Half, g.PixelOffsetMode, "SetSaveReset6");
+			Assert.AreEqual (new Point (10, 20), g.RenderingOrigin, "SetSaveReset7");
+			Assert.AreEqual (SmoothingMode.AntiAlias, g.SmoothingMode, "SetSaveReset8");
+			Assert.AreEqual (TextRenderingHint.ClearTypeGridFit, g.TextRenderingHint, "SetSaveReset9");
+			Assert.AreEqual (0, (int) g.ClipBounds.X, "SetSaveReset10");
+			Assert.AreEqual (0, (int) g.ClipBounds.Y, "SetSaveReset10");
 
 			g.Restore (state_default);
 
-			AssertEquals ("SetSaveReset11", CompositingMode.SourceOver, g.CompositingMode);
-			AssertEquals ("SetSaveReset12", CompositingQuality.Default, g.CompositingQuality);
-			AssertEquals ("SetSaveReset13", InterpolationMode.Bilinear, g.InterpolationMode);
-			AssertEquals ("SetSaveReset14", 1, g.PageScale);
-			AssertEquals ("SetSaveReset15", GraphicsUnit.Display, g.PageUnit);
-			AssertEquals ("SetSaveReset16", PixelOffsetMode.Default, g.PixelOffsetMode);
-			AssertEquals ("SetSaveReset17", new Point (0, 0), g.RenderingOrigin);
-			AssertEquals ("SetSaveReset18", SmoothingMode.None, g.SmoothingMode);
-			AssertEquals ("SetSaveReset19", TextRenderingHint.SystemDefault, g.TextRenderingHint);
+			Assert.AreEqual (CompositingMode.SourceOver, g.CompositingMode, "SetSaveReset11");
+			Assert.AreEqual (CompositingQuality.Default, g.CompositingQuality, "SetSaveReset12");
+			Assert.AreEqual (InterpolationMode.Bilinear, g.InterpolationMode, "SetSaveReset13");
+			Assert.AreEqual (1, g.PageScale, "SetSaveReset14");
+			Assert.AreEqual (GraphicsUnit.Display, g.PageUnit, "SetSaveReset15");
+			Assert.AreEqual (PixelOffsetMode.Default, g.PixelOffsetMode, "SetSaveReset16");
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "SetSaveReset17");
+			Assert.AreEqual (SmoothingMode.None, g.SmoothingMode, "SetSaveReset18");
+			Assert.AreEqual (TextRenderingHint.SystemDefault, g.TextRenderingHint, "SetSaveReset19");
 
 			Region r = new Region ();
-			AssertEquals ("SetSaveReset20", r.GetBounds (g), g.ClipBounds);
+			Assert.AreEqual (r.GetBounds (g), g.ClipBounds, "SetSaveReset20");
 
 			g.Dispose ();
 		}
@@ -419,10 +419,10 @@ namespace MonoTests.System.Drawing {
 		{
 			Graphics g = Get (16, 16);
 			RectangleF bounds = g.Clip.GetBounds (g);
-			AssertEquals ("X", 0, bounds.X);
-			AssertEquals ("Y", 0, bounds.Y);
-			AssertEquals ("Width", 16, bounds.Width);
-			AssertEquals ("Height", 16, bounds.Height);
+			Assert.AreEqual (0, bounds.X, "X");
+			Assert.AreEqual (0, bounds.Y, "Y");
+			Assert.AreEqual (16, bounds.Width, "Width");
+			Assert.AreEqual (16, bounds.Height, "Height");
 			Assert.IsTrue (g.Transform.IsIdentity, "Identity");
 			g.Dispose ();
 		}
@@ -434,25 +434,25 @@ namespace MonoTests.System.Drawing {
 			g.TranslateTransform (12.22f, 10.10f);
 			RectangleF bounds = g.Clip.GetBounds (g);
 			Compare ("translate", bounds, g.ClipBounds);
-			AssertEquals ("translate.X", -12.2200003f, bounds.X);
-			AssertEquals ("translate.Y", -10.1000004f, bounds.Y);
-			AssertEquals ("translate.Width", 16, bounds.Width);
-			AssertEquals ("translate.Height", 16, bounds.Height);
+			Assert.AreEqual (-12.2200003f, bounds.X, "translate.X");
+			Assert.AreEqual (-10.1000004f, bounds.Y, "translate.Y");
+			Assert.AreEqual (16, bounds.Width, "translate.Width");
+			Assert.AreEqual (16, bounds.Height, "translate.Height");
 			float[] elements = g.Transform.Elements;
-			AssertEquals ("translate.0", 1, elements[0]);
-			AssertEquals ("translate.1", 0, elements[1]);
-			AssertEquals ("translate.2", 0, elements[2]);
-			AssertEquals ("translate.3", 1, elements[3]);
-			AssertEquals ("translate.4", 12.2200003f, elements[4]);
-			AssertEquals ("translate.5", 10.1000004f, elements[5]);
+			Assert.AreEqual (1, elements[0], "translate.0");
+			Assert.AreEqual (0, elements[1], "translate.1");
+			Assert.AreEqual (0, elements[2], "translate.2");
+			Assert.AreEqual (1, elements[3], "translate.3");
+			Assert.AreEqual (12.2200003f, elements[4], "translate.4");
+			Assert.AreEqual (10.1000004f, elements[5], "translate.5");
 
 			g.ResetTransform ();
 			bounds = g.Clip.GetBounds (g);
 			Compare ("reset", bounds, g.ClipBounds);
-			AssertEquals ("reset.X", 0, bounds.X);
-			AssertEquals ("reset.Y", 0, bounds.Y);
-			AssertEquals ("reset.Width", 16, bounds.Width);
-			AssertEquals ("reset.Height", 16, bounds.Height);
+			Assert.AreEqual (0, bounds.X, "reset.X");
+			Assert.AreEqual (0, bounds.Y, "reset.Y");
+			Assert.AreEqual (16, bounds.Width, "reset.Width");
+			Assert.AreEqual (16, bounds.Height, "reset.Height");
 			Assert.IsTrue (g.Transform.IsIdentity, "Identity");
 			g.Dispose ();
 		}
@@ -779,32 +779,32 @@ namespace MonoTests.System.Drawing {
 			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
 			g.TranslateTransform (3, -3);
 			float[] elements = g.Transform.Elements;
-			AssertEquals ("default.0", 1, elements[0]);
-			AssertEquals ("default.1", 2, elements[1]);
-			AssertEquals ("default.2", 3, elements[2]);
-			AssertEquals ("default.3", 4, elements[3]);
-			AssertEquals ("default.4", -1, elements[4]);
-			AssertEquals ("default.5", 0, elements[5]);
+			Assert.AreEqual (1, elements[0], "default.0");
+			Assert.AreEqual (2, elements[1], "default.1");
+			Assert.AreEqual (3, elements[2], "default.2");
+			Assert.AreEqual (4, elements[3], "default.3");
+			Assert.AreEqual (-1, elements[4], "default.4");
+			Assert.AreEqual (0, elements[5], "default.5");
 
 			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
 			g.TranslateTransform (3, -3, MatrixOrder.Prepend);
 			elements = g.Transform.Elements;
-			AssertEquals ("prepend.0", 1, elements[0]);
-			AssertEquals ("prepend.1", 2, elements[1]);
-			AssertEquals ("prepend.2", 3, elements[2]);
-			AssertEquals ("prepend.3", 4, elements[3]);
-			AssertEquals ("prepend.4", -1, elements[4]);
-			AssertEquals ("prepend.5", 0, elements[5]);
+			Assert.AreEqual (1, elements[0], "prepend.0");
+			Assert.AreEqual (2, elements[1], "prepend.1");
+			Assert.AreEqual (3, elements[2], "prepend.2");
+			Assert.AreEqual (4, elements[3], "prepend.3");
+			Assert.AreEqual (-1, elements[4], "prepend.4");
+			Assert.AreEqual (0, elements[5], "prepend.5");
 
 			g.Transform = new Matrix (1, 2, 3, 4, 5, 6);
 			g.TranslateTransform (3, -3, MatrixOrder.Append);
 			elements = g.Transform.Elements;
-			AssertEquals ("append.0", 1, elements[0]);
-			AssertEquals ("append.1", 2, elements[1]);
-			AssertEquals ("append.2", 3, elements[2]);
-			AssertEquals ("append.3", 4, elements[3]);
-			AssertEquals ("append.4", 8, elements[4]);
-			AssertEquals ("append.5", 3, elements[5]);
+			Assert.AreEqual (1, elements[0], "append.0");
+			Assert.AreEqual (2, elements[1], "append.1");
+			Assert.AreEqual (3, elements[2], "append.2");
+			Assert.AreEqual (4, elements[3], "append.3");
+			Assert.AreEqual (8, elements[4], "append.4");
+			Assert.AreEqual (3, elements[5], "append.5");
 		}
 
 		static Point[] SmallCurve = new Point[3] { new Point (0, 0), new Point (15, 5), new Point (5, 15) };
@@ -1101,7 +1101,7 @@ namespace MonoTests.System.Drawing {
 			Graphics g = Graphics.FromImage (bitmap);
 
 			CheckDefaultProperties ("default", g);
-			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "default.RenderingOrigin");
 
 			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
 			g.CompositingMode = CompositingMode.SourceCopy;
@@ -1122,7 +1122,7 @@ namespace MonoTests.System.Drawing {
 			// things gets reseted after calling BeginContainer
 			CheckDefaultProperties ("BeginContainer", g);
 			// but not everything 
-			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+			Assert.AreEqual (new Point (-1, -1), g.RenderingOrigin, "BeginContainer.RenderingOrigin");
 
 			g.EndContainer (gc);
 			CheckCustomProperties ("EndContainer", g);
@@ -1135,7 +1135,7 @@ namespace MonoTests.System.Drawing {
 			Graphics g = Graphics.FromImage (bitmap);
 
 			CheckDefaultProperties ("default", g);
-			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "default.RenderingOrigin");
 
 			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
 			g.CompositingMode = CompositingMode.SourceCopy;
@@ -1156,7 +1156,7 @@ namespace MonoTests.System.Drawing {
 			// things gets reseted after calling BeginContainer
 			CheckDefaultProperties ("BeginContainer", g);
 			// but not everything 
-			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+			Assert.AreEqual (new Point (-1, -1), g.RenderingOrigin, "BeginContainer.RenderingOrigin");
 
 			g.EndContainer (gc);
 			CheckCustomProperties ("EndContainer", g);
@@ -1170,7 +1170,7 @@ namespace MonoTests.System.Drawing {
 			Graphics g = Graphics.FromImage (bitmap);
 
 			CheckDefaultProperties ("default", g);
-			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "default.RenderingOrigin");
 
 			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
 			g.CompositingMode = CompositingMode.SourceCopy;
@@ -1191,7 +1191,7 @@ namespace MonoTests.System.Drawing {
 			// things gets reseted after calling BeginContainer
 			CheckDefaultProperties ("BeginContainer", g);
 			// but not everything 
-			AssertEquals ("BeginContainer.RenderingOrigin", new Point (-1, -1), g.RenderingOrigin);
+			Assert.AreEqual (new Point (-1, -1), g.RenderingOrigin, "BeginContainer.RenderingOrigin");
 
 			g.EndContainer (gc);
 			CheckCustomProperties ("EndContainer", g);
@@ -1255,12 +1255,12 @@ namespace MonoTests.System.Drawing {
 			Graphics g = Graphics.FromImage (bitmap);
 
 			CheckDefaultProperties ("default", g);
-			AssertEquals ("default.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "default.RenderingOrigin");
 
 			GraphicsState gs1 = g.Save ();
 			// nothing is changed after a save
 			CheckDefaultProperties ("save1", g);
-			AssertEquals ("save1.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "save1.RenderingOrigin");
 
 			g.Clip = new Region (new Rectangle (10, 10, 10, 10));
 			g.CompositingMode = CompositingMode.SourceCopy;
@@ -1286,7 +1286,7 @@ namespace MonoTests.System.Drawing {
 
 			g.Restore (gs1);
 			CheckDefaultProperties ("restored2", g);
-			AssertEquals ("restored2.RenderingOrigin", new Point (0, 0), g.RenderingOrigin);
+			Assert.AreEqual (new Point (0, 0), g.RenderingOrigin, "restored2.RenderingOrigin");
 		}
 
 		[Test]
@@ -2131,14 +2131,14 @@ namespace MonoTests.System.Drawing {
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					Region[] regions = g.MeasureCharacterRanges (null, font, new RectangleF (), null);
-					AssertEquals ("text null", 0, regions.Length);
+					Assert.AreEqual (0, regions.Length, "text null");
 					regions = g.MeasureCharacterRanges (String.Empty, font, new RectangleF (), null);
-					AssertEquals ("text empty", 0, regions.Length);
+					Assert.AreEqual (0, regions.Length, "text empty");
 					// null font is ok with null or empty string
 					regions = g.MeasureCharacterRanges (null, null, new RectangleF (), null);
-					AssertEquals ("text null/null font", 0, regions.Length);
+					Assert.AreEqual (0, regions.Length, "text null/null font");
 					regions = g.MeasureCharacterRanges (String.Empty, null, new RectangleF (), null);
-					AssertEquals ("text empty/null font", 0, regions.Length);
+					Assert.AreEqual (0, regions.Length, "text empty/null font");
 				}
 			}
 		}
@@ -2153,7 +2153,7 @@ namespace MonoTests.System.Drawing {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					// string format without character ranges
 					Region[] regions = g.MeasureCharacterRanges ("Mono", font, new RectangleF (), new StringFormat ());
-					AssertEquals ("empty stringformat", 0, regions.Length);
+					Assert.AreEqual (0, regions.Length, "empty stringformat");
 				}
 			}
 		}
@@ -2190,8 +2190,8 @@ namespace MonoTests.System.Drawing {
 					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);
 					Region[] regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
 
-					AssertEquals ("Length", 2, regions.Length);
-					AssertEquals ("Height", regions[0].GetBounds (g).Height, regions[1].GetBounds (g).Height);
+					Assert.AreEqual (2, regions.Length, "Length");
+					Assert.AreEqual (regions[0].GetBounds (g).Height, regions[1].GetBounds (g).Height, "Height");
 				}
 			}
 		}
@@ -2266,7 +2266,7 @@ namespace MonoTests.System.Drawing {
 					string_format.HotkeyPrefix = HotkeyPrefix.Hide;
 					regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
 					RectangleF bounds_hide = regions[0].GetBounds (g);
-					AssertEquals ("Hide==None", bounds_hide.Width, bounds_show.Width);
+					Assert.AreEqual (bounds_hide.Width, bounds_show.Width, "Hide==None");
 				}
 			}
 		}

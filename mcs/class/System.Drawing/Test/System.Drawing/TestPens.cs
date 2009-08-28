@@ -38,7 +38,7 @@ namespace MonoTests.System.Drawing
 {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class PensTest : Assertion
+	public class PensTest
 	{
 		[SetUp]
 		public void SetUp () { }
@@ -52,21 +52,21 @@ namespace MonoTests.System.Drawing
 			Pen pen1 = Pens.Blue;
 			Pen pen2 = Pens.Blue;
 			
-			AssertEquals ("Equals", true, pen1.Equals (pen2));			
+			Assert.AreEqual (true, pen1.Equals (pen2),  "Equals");
 		}
 
 		[Test]
 		public void TestAliceBlue ()
 		{
 			Pen pen = Pens.AliceBlue;
-			AssertEquals ("P1#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P1#2", pen.Color, Color.AliceBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P1#1");
+			Assert.AreEqual (pen.Color, Color.AliceBlue, "P1#2");
 
 			try {
 				pen.Color = Color.AliceBlue;
-				Fail ("P1#3: must throw ArgumentException");
+				Assert.Fail ("P1#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P1#3", true);
+				Assert.IsTrue (true, "P1#3");
 			}
 		}
 
@@ -74,14 +74,14 @@ namespace MonoTests.System.Drawing
 		public void TestAntiqueWhite ()
 		{
 			Pen pen = Pens.AntiqueWhite;
-			AssertEquals ("P2#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P2#2", pen.Color, Color.AntiqueWhite);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P2#1");
+			Assert.AreEqual (pen.Color, Color.AntiqueWhite, "P2#2");
 
 			try {
 				pen.Color = Color.AntiqueWhite;
-				Fail ("P2#3: must throw ArgumentException");
+				Assert.Fail ("P2#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P2#3", true);
+				Assert.IsTrue (true, "P2#3");
 			}
 		}
 
@@ -89,14 +89,14 @@ namespace MonoTests.System.Drawing
 		public void TestAqua ()
 		{
 			Pen pen = Pens.Aqua;
-			AssertEquals ("P3#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P3#2", pen.Color, Color.Aqua);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P3#1");
+			Assert.AreEqual (pen.Color, Color.Aqua, "P3#2");
 
 			try {
 				pen.Color = Color.Aqua;
-				Fail ("P3#3: must throw ArgumentException");
+				Assert.Fail ("P3#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P3#3", true);
+				Assert.IsTrue (true, "P3#3");
 			}
 		}
 
@@ -104,14 +104,14 @@ namespace MonoTests.System.Drawing
 		public void TestAquamarine ()
 		{
 			Pen pen = Pens.Aquamarine;
-			AssertEquals ("P4#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P4#2", pen.Color, Color.Aquamarine);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P4#1");
+			Assert.AreEqual (pen.Color, Color.Aquamarine, "P4#2");
 
 			try {
 				pen.Color = Color.Aquamarine;
-				Fail ("P4#3: must throw ArgumentException");
+				Assert.Fail ("P4#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P4#3", true);
+				Assert.IsTrue (true, "P4#3");
 			}
 		}
 
@@ -119,14 +119,14 @@ namespace MonoTests.System.Drawing
 		public void TestAzure ()
 		{
 			Pen pen = Pens.Azure;
-			AssertEquals ("P5#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P5#2", pen.Color, Color.Azure);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P5#1");
+			Assert.AreEqual (pen.Color, Color.Azure, "P5#2");
 
 			try {
 				pen.Color = Color.Azure;
-				Fail ("P5#3: must throw ArgumentException");
+				Assert.Fail ("P5#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P5#3", true);
+				Assert.IsTrue (true, "P5#3");
 			}
 		}
 
@@ -134,14 +134,14 @@ namespace MonoTests.System.Drawing
 		public void TestBeige ()
 		{
 			Pen pen = Pens.Beige;
-			AssertEquals ("P6#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P6#2", pen.Color, Color.Beige);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P6#1");
+			Assert.AreEqual (pen.Color, Color.Beige, "P6#2");
 
 			try {
 				pen.Color = Color.Beige;
-				Fail ("P6#3: must throw ArgumentException");
+				Assert.Fail ("P6#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P6#3", true);
+				Assert.IsTrue (true, "P6#3");
 			}
 		}
 
@@ -149,14 +149,14 @@ namespace MonoTests.System.Drawing
 		public void TestBisque ()
 		{
 			Pen pen = Pens.Bisque;
-			AssertEquals ("P7#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P7#2", pen.Color, Color.Bisque);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P7#1");
+			Assert.AreEqual (pen.Color, Color.Bisque, "P7#2");
 
 			try {
 				pen.Color = Color.Bisque;
-				Fail ("P7#3: must throw ArgumentException");
+				Assert.Fail ("P7#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P7#3", true);
+				Assert.IsTrue (true, "P7#3");
 			}
 		}
 
@@ -164,14 +164,14 @@ namespace MonoTests.System.Drawing
 		public void TestBlack ()
 		{
 			Pen pen = Pens.Black;
-			AssertEquals ("P8#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P8#2", pen.Color, Color.Black);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P8#1");
+			Assert.AreEqual (pen.Color, Color.Black, "P8#2");
 
 			try {
 				pen.Color = Color.Black;
-				Fail ("P8#3: must throw ArgumentException");
+				Assert.Fail ("P8#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P8#3", true);
+				Assert.IsTrue (true, "P8#3");
 			}
 		}
 
@@ -179,14 +179,14 @@ namespace MonoTests.System.Drawing
 		public void TestBlanchedAlmond ()
 		{
 			Pen pen = Pens.BlanchedAlmond;
-			AssertEquals ("P9#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P9#2", pen.Color, Color.BlanchedAlmond);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P9#1");
+			Assert.AreEqual (pen.Color, Color.BlanchedAlmond, "P9#2");
 
 			try {
 				pen.Color = Color.BlanchedAlmond;
-				Fail ("P9#3: must throw ArgumentException");
+				Assert.Fail ("P9#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P9#3", true);
+				Assert.IsTrue (true, "P9#3");
 			}
 		}
 
@@ -194,14 +194,14 @@ namespace MonoTests.System.Drawing
 		public void TestBlue ()
 		{
 			Pen pen = Pens.Blue;
-			AssertEquals ("P10#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P10#2", pen.Color, Color.Blue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P10#1");
+			Assert.AreEqual (pen.Color, Color.Blue, "P10#2");
 
 			try {
 				pen.Color = Color.Blue;
-				Fail ("P10#3: must throw ArgumentException");
+				Assert.Fail ("P10#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P10#3", true);
+				Assert.IsTrue (true, "P10#3");
 			}
 		}
 
@@ -209,14 +209,14 @@ namespace MonoTests.System.Drawing
 		public void TestBlueViolet ()
 		{
 			Pen pen = Pens.BlueViolet;
-			AssertEquals ("P11#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P11#2", pen.Color, Color.BlueViolet);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P11#1");
+			Assert.AreEqual (pen.Color, Color.BlueViolet, "P11#2");
 
 			try {
 				pen.Color = Color.BlueViolet;
-				Fail ("P11#3: must throw ArgumentException");
+				Assert.Fail ("P11#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P11#3", true);
+				Assert.IsTrue (true, "P11#3");
 			}
 		}
 
@@ -224,14 +224,14 @@ namespace MonoTests.System.Drawing
 		public void TestBrown ()
 		{
 			Pen pen = Pens.Brown;
-			AssertEquals ("P12#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P12#2", pen.Color, Color.Brown);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P12#1");
+			Assert.AreEqual (pen.Color, Color.Brown, "P12#2");
 
 			try {
 				pen.Color = Color.Brown;
-				Fail ("P12#3: must throw ArgumentException");
+				Assert.Fail ("P12#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P12#3", true);
+				Assert.IsTrue (true, "P12#3");
 			}
 		}
 
@@ -239,14 +239,14 @@ namespace MonoTests.System.Drawing
 		public void TestBurlyWood ()
 		{
 			Pen pen = Pens.BurlyWood;
-			AssertEquals ("P13#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P13#2", pen.Color, Color.BurlyWood);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P13#1");
+			Assert.AreEqual (pen.Color, Color.BurlyWood, "P13#2");
 
 			try {
 				pen.Color = Color.BurlyWood;
-				Fail ("P13#3: must throw ArgumentException");
+				Assert.Fail ("P13#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P13#3", true);
+				Assert.IsTrue (true, "P13#3");
 			}
 		}
 
@@ -254,14 +254,14 @@ namespace MonoTests.System.Drawing
 		public void TestCadetBlue ()
 		{
 			Pen pen = Pens.CadetBlue;
-			AssertEquals ("P14#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P14#2", pen.Color, Color.CadetBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P14#1");
+			Assert.AreEqual (pen.Color, Color.CadetBlue, "P14#2");
 
 			try {
 				pen.Color = Color.CadetBlue;
-				Fail ("P14#3: must throw ArgumentException");
+				Assert.Fail ("P14#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P14#3", true);
+				Assert.IsTrue (true, "P14#3");
 			}
 		}
 
@@ -269,14 +269,14 @@ namespace MonoTests.System.Drawing
 		public void TestChartreuse ()
 		{
 			Pen pen = Pens.Chartreuse;
-			AssertEquals ("P15#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P15#2", pen.Color, Color.Chartreuse);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P15#1");
+			Assert.AreEqual (pen.Color, Color.Chartreuse, "P15#2");
 
 			try {
 				pen.Color = Color.Chartreuse;
-				Fail ("P15#3: must throw ArgumentException");
+				Assert.Fail ("P15#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P15#3", true);
+				Assert.IsTrue (true, "P15#3");
 			}
 		}
 
@@ -284,14 +284,14 @@ namespace MonoTests.System.Drawing
 		public void TestChocolate ()
 		{
 			Pen pen = Pens.Chocolate;
-			AssertEquals ("P16#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P16#2", pen.Color, Color.Chocolate);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P16#1");
+			Assert.AreEqual (pen.Color, Color.Chocolate, "P16#2");
 
 			try {
 				pen.Color = Color.Chocolate;
-				Fail ("P16#3: must throw ArgumentException");
+				Assert.Fail ("P16#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P16#3", true);
+				Assert.IsTrue (true, "P16#3");
 			}
 		}
 
@@ -299,14 +299,14 @@ namespace MonoTests.System.Drawing
 		public void TestCoral ()
 		{
 			Pen pen = Pens.Coral;
-			AssertEquals ("P17#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P17#2", pen.Color, Color.Coral);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P17#1");
+			Assert.AreEqual (pen.Color, Color.Coral, "P17#2");
 
 			try {
 				pen.Color = Color.Coral;
-				Fail ("P17#3: must throw ArgumentException");
+				Assert.Fail ("P17#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P17#3", true);
+				Assert.IsTrue (true, "P17#3");
 			}
 		}
 
@@ -314,14 +314,14 @@ namespace MonoTests.System.Drawing
 		public void TestCornflowerBlue ()
 		{
 			Pen pen = Pens.CornflowerBlue;
-			AssertEquals ("P18#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P18#2", pen.Color, Color.CornflowerBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P18#1");
+			Assert.AreEqual (pen.Color, Color.CornflowerBlue, "P18#2");
 
 			try {
 				pen.Color = Color.CornflowerBlue;
-				Fail ("P18#3: must throw ArgumentException");
+				Assert.Fail ("P18#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P18#3", true);
+				Assert.IsTrue (true, "P18#3");
 			}
 		}
 
@@ -329,14 +329,14 @@ namespace MonoTests.System.Drawing
 		public void TestCornsilk ()
 		{
 			Pen pen = Pens.Cornsilk;
-			AssertEquals ("P19#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P19#2", pen.Color, Color.Cornsilk);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P19#1");
+			Assert.AreEqual (pen.Color, Color.Cornsilk, "P19#2");
 
 			try {
 				pen.Color = Color.Cornsilk;
-				Fail ("P19#3: must throw ArgumentException");
+				Assert.Fail ("P19#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P19#3", true);
+				Assert.IsTrue (true, "P19#3");
 			}
 		}
 
@@ -344,14 +344,14 @@ namespace MonoTests.System.Drawing
 		public void TestCrimson ()
 		{
 			Pen pen = Pens.Crimson;
-			AssertEquals ("P20#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P20#2", pen.Color, Color.Crimson);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P20#1");
+			Assert.AreEqual (pen.Color, Color.Crimson, "P20#2");
 
 			try {
 				pen.Color = Color.Crimson;
-				Fail ("P20#3: must throw ArgumentException");
+				Assert.Fail ("P20#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P20#3", true);
+				Assert.IsTrue (true, "P20#3");
 			}
 		}
 
@@ -359,14 +359,14 @@ namespace MonoTests.System.Drawing
 		public void TestCyan ()
 		{
 			Pen pen = Pens.Cyan;
-			AssertEquals ("P21#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P21#2", pen.Color, Color.Cyan);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P21#1");
+			Assert.AreEqual (pen.Color, Color.Cyan, "P21#2");
 
 			try {
 				pen.Color = Color.Cyan;
-				Fail ("P21#3: must throw ArgumentException");
+				Assert.Fail ("P21#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P21#3", true);
+				Assert.IsTrue (true, "P21#3");
 			}
 		}
 
@@ -374,14 +374,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkBlue ()
 		{
 			Pen pen = Pens.DarkBlue;
-			AssertEquals ("P22#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P22#2", pen.Color, Color.DarkBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P22#1");
+			Assert.AreEqual (pen.Color, Color.DarkBlue, "P22#2");
 
 			try {
 				pen.Color = Color.DarkBlue;
-				Fail ("P22#3: must throw ArgumentException");
+				Assert.Fail ("P22#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P22#3", true);
+				Assert.IsTrue (true, "P22#3");
 			}
 		}
 
@@ -389,14 +389,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkCyan ()
 		{
 			Pen pen = Pens.DarkCyan;
-			AssertEquals ("P23#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P23#2", pen.Color, Color.DarkCyan);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P23#1");
+			Assert.AreEqual (pen.Color, Color.DarkCyan, "P23#2");
 
 			try {
 				pen.Color = Color.DarkCyan;
-				Fail ("P23#3: must throw ArgumentException");
+				Assert.Fail ("P23#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P23#3", true);
+				Assert.IsTrue (true, "P23#3");
 			}
 		}
 
@@ -404,14 +404,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkGoldenrod ()
 		{
 			Pen pen = Pens.DarkGoldenrod;
-			AssertEquals ("P24#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P24#2", pen.Color, Color.DarkGoldenrod);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P24#1");
+			Assert.AreEqual (pen.Color, Color.DarkGoldenrod, "P24#2");
 
 			try {
 				pen.Color = Color.DarkGoldenrod;
-				Fail ("P24#3: must throw ArgumentException");
+				Assert.Fail ("P24#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P24#3", true);
+				Assert.IsTrue (true, "P24#3");
 			}
 		}
 
@@ -419,14 +419,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkGray ()
 		{
 			Pen pen = Pens.DarkGray;
-			AssertEquals ("P25#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P25#2", pen.Color, Color.DarkGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P25#1");
+			Assert.AreEqual (pen.Color, Color.DarkGray, "P25#2");
 
 			try {
 				pen.Color = Color.DarkGray;
-				Fail ("P25#3: must throw ArgumentException");
+				Assert.Fail ("P25#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P25#3", true);
+				Assert.IsTrue (true, "P25#3");
 			}
 		}
 
@@ -434,14 +434,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkGreen ()
 		{
 			Pen pen = Pens.DarkGreen;
-			AssertEquals ("P26#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P26#2", pen.Color, Color.DarkGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P26#1");
+			Assert.AreEqual (pen.Color, Color.DarkGreen, "P26#2");
 
 			try {
 				pen.Color = Color.DarkGreen;
-				Fail ("P26#3: must throw ArgumentException");
+				Assert.Fail ("P26#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P26#3", true);
+				Assert.IsTrue (true, "P26#3");
 			}
 		}
 
@@ -449,14 +449,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkKhaki ()
 		{
 			Pen pen = Pens.DarkKhaki;
-			AssertEquals ("P27#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P27#2", pen.Color, Color.DarkKhaki);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P27#1");
+			Assert.AreEqual (pen.Color, Color.DarkKhaki, "P27#2");
 
 			try {
 				pen.Color = Color.DarkKhaki;
-				Fail ("P27#3: must throw ArgumentException");
+				Assert.Fail ("P27#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P27#3", true);
+				Assert.IsTrue (true, "P27#3");
 			}
 		}
 
@@ -464,14 +464,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkMagenta ()
 		{
 			Pen pen = Pens.DarkMagenta;
-			AssertEquals ("P28#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P28#2", pen.Color, Color.DarkMagenta);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P28#1");
+			Assert.AreEqual (pen.Color, Color.DarkMagenta, "P28#2");
 
 			try {
 				pen.Color = Color.DarkMagenta;
-				Fail ("P28#3: must throw ArgumentException");
+				Assert.Fail ("P28#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P28#3", true);
+				Assert.IsTrue (true, "P28#3");
 			}
 		}
 
@@ -479,14 +479,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkOliveGreen ()
 		{
 			Pen pen = Pens.DarkOliveGreen;
-			AssertEquals ("P29#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P29#2", pen.Color, Color.DarkOliveGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P29#1");
+			Assert.AreEqual (pen.Color, Color.DarkOliveGreen, "P29#2");
 
 			try {
 				pen.Color = Color.DarkOliveGreen;
-				Fail ("P29#3: must throw ArgumentException");
+				Assert.Fail ("P29#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P29#3", true);
+				Assert.IsTrue (true, "P29#3");
 			}
 		}
 
@@ -494,14 +494,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkOrange ()
 		{
 			Pen pen = Pens.DarkOrange;
-			AssertEquals ("P30#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P30#2", pen.Color, Color.DarkOrange);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P30#1");
+			Assert.AreEqual (pen.Color, Color.DarkOrange, "P30#2");
 
 			try {
 				pen.Color = Color.DarkOrange;
-				Fail ("P30#3: must throw ArgumentException");
+				Assert.Fail ("P30#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P30#3", true);
+				Assert.IsTrue (true, "P30#3");
 			}
 		}
 
@@ -509,14 +509,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkOrchid ()
 		{
 			Pen pen = Pens.DarkOrchid;
-			AssertEquals ("P31#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P31#2", pen.Color, Color.DarkOrchid);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P31#1");
+			Assert.AreEqual (pen.Color, Color.DarkOrchid, "P31#2");
 
 			try {
 				pen.Color = Color.DarkOrchid;
-				Fail ("P31#3: must throw ArgumentException");
+				Assert.Fail ("P31#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P31#3", true);
+				Assert.IsTrue (true, "P31#3");
 			}
 		}
 
@@ -524,14 +524,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkRed ()
 		{
 			Pen pen = Pens.DarkRed;
-			AssertEquals ("P32#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P32#2", pen.Color, Color.DarkRed);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P32#1");
+			Assert.AreEqual (pen.Color, Color.DarkRed, "P32#2");
 
 			try {
 				pen.Color = Color.DarkRed;
-				Fail ("P32#3: must throw ArgumentException");
+				Assert.Fail ("P32#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P32#3", true);
+				Assert.IsTrue (true, "P32#3");
 			}
 		}
 
@@ -539,14 +539,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkSalmon ()
 		{
 			Pen pen = Pens.DarkSalmon;
-			AssertEquals ("P33#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P33#2", pen.Color, Color.DarkSalmon);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P33#1");
+			Assert.AreEqual (pen.Color, Color.DarkSalmon, "P33#2");
 
 			try {
 				pen.Color = Color.DarkSalmon;
-				Fail ("P33#3: must throw ArgumentException");
+				Assert.Fail ("P33#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P33#3", true);
+				Assert.IsTrue (true, "P33#3");
 			}
 		}
 
@@ -554,14 +554,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkSeaGreen ()
 		{
 			Pen pen = Pens.DarkSeaGreen;
-			AssertEquals ("P34#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P34#2", pen.Color, Color.DarkSeaGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P34#1");
+			Assert.AreEqual (pen.Color, Color.DarkSeaGreen, "P34#2");
 
 			try {
 				pen.Color = Color.DarkSeaGreen;
-				Fail ("P34#3: must throw ArgumentException");
+				Assert.Fail ("P34#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P34#3", true);
+				Assert.IsTrue (true, "P34#3");
 			}
 		}
 
@@ -569,14 +569,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkSlateBlue ()
 		{
 			Pen pen = Pens.DarkSlateBlue;
-			AssertEquals ("P35#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P35#2", pen.Color, Color.DarkSlateBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P35#1");
+			Assert.AreEqual (pen.Color, Color.DarkSlateBlue, "P35#2");
 
 			try {
 				pen.Color = Color.DarkSlateBlue;
-				Fail ("P35#3: must throw ArgumentException");
+				Assert.Fail ("P35#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P35#3", true);
+				Assert.IsTrue (true, "P35#3");
 			}
 		}
 
@@ -584,14 +584,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkSlateGray ()
 		{
 			Pen pen = Pens.DarkSlateGray;
-			AssertEquals ("P36#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P36#2", pen.Color, Color.DarkSlateGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P36#1");
+			Assert.AreEqual (pen.Color, Color.DarkSlateGray, "P36#2");
 
 			try {
 				pen.Color = Color.DarkSlateGray;
-				Fail ("P36#3: must throw ArgumentException");
+				Assert.Fail ("P36#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P36#3", true);
+				Assert.IsTrue (true, "P36#3");
 			}
 		}
 
@@ -599,14 +599,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkTurquoise ()
 		{
 			Pen pen = Pens.DarkTurquoise;
-			AssertEquals ("P37#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P37#2", pen.Color, Color.DarkTurquoise);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P37#1");
+			Assert.AreEqual (pen.Color, Color.DarkTurquoise, "P37#2");
 
 			try {
 				pen.Color = Color.DarkTurquoise;
-				Fail ("P37#3: must throw ArgumentException");
+				Assert.Fail ("P37#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P37#3", true);
+				Assert.IsTrue (true, "P37#3");
 			}
 		}
 
@@ -614,14 +614,14 @@ namespace MonoTests.System.Drawing
 		public void TestDarkViolet ()
 		{
 			Pen pen = Pens.DarkViolet;
-			AssertEquals ("P38#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P38#2", pen.Color, Color.DarkViolet);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P38#1");
+			Assert.AreEqual (pen.Color, Color.DarkViolet, "P38#2");
 
 			try {
 				pen.Color = Color.DarkViolet;
-				Fail ("P38#3: must throw ArgumentException");
+				Assert.Fail ("P38#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P38#3", true);
+				Assert.IsTrue (true, "P38#3");
 			}
 		}
 
@@ -629,14 +629,14 @@ namespace MonoTests.System.Drawing
 		public void TestDeepPink ()
 		{
 			Pen pen = Pens.DeepPink;
-			AssertEquals ("P39#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P39#2", pen.Color, Color.DeepPink);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P39#1");
+			Assert.AreEqual (pen.Color, Color.DeepPink, "P39#2");
 
 			try {
 				pen.Color = Color.DeepPink;
-				Fail ("P39#3: must throw ArgumentException");
+				Assert.Fail ("P39#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P39#3", true);
+				Assert.IsTrue (true, "P39#3");
 			}
 		}
 
@@ -644,14 +644,14 @@ namespace MonoTests.System.Drawing
 		public void TestDeepSkyBlue ()
 		{
 			Pen pen = Pens.DeepSkyBlue;
-			AssertEquals ("P40#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P40#2", pen.Color, Color.DeepSkyBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P40#1");
+			Assert.AreEqual (pen.Color, Color.DeepSkyBlue, "P40#2");
 
 			try {
 				pen.Color = Color.DeepSkyBlue;
-				Fail ("P40#3: must throw ArgumentException");
+				Assert.Fail ("P40#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P40#3", true);
+				Assert.IsTrue (true, "P40#3");
 			}
 		}
 
@@ -659,14 +659,14 @@ namespace MonoTests.System.Drawing
 		public void TestDimGray ()
 		{
 			Pen pen = Pens.DimGray;
-			AssertEquals ("P41#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P41#2", pen.Color, Color.DimGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P41#1");
+			Assert.AreEqual (pen.Color, Color.DimGray, "P41#2");
 
 			try {
 				pen.Color = Color.DimGray;
-				Fail ("P41#3: must throw ArgumentException");
+				Assert.Fail ("P41#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P41#3", true);
+				Assert.IsTrue (true, "P41#3");
 			}
 		}
 
@@ -674,14 +674,14 @@ namespace MonoTests.System.Drawing
 		public void TestDodgerBlue ()
 		{
 			Pen pen = Pens.DodgerBlue;
-			AssertEquals ("P42#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P42#2", pen.Color, Color.DodgerBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P42#1");
+			Assert.AreEqual (pen.Color, Color.DodgerBlue, "P42#2");
 
 			try {
 				pen.Color = Color.DodgerBlue;
-				Fail ("P42#3: must throw ArgumentException");
+				Assert.Fail ("P42#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P42#3", true);
+				Assert.IsTrue (true, "P42#3");
 			}
 		}
 
@@ -689,14 +689,14 @@ namespace MonoTests.System.Drawing
 		public void TestFirebrick ()
 		{
 			Pen pen = Pens.Firebrick;
-			AssertEquals ("P43#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P43#2", pen.Color, Color.Firebrick);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P43#1");
+			Assert.AreEqual (pen.Color, Color.Firebrick, "P43#2");
 
 			try {
 				pen.Color = Color.Firebrick;
-				Fail ("P43#3: must throw ArgumentException");
+				Assert.Fail ("P43#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P43#3", true);
+				Assert.IsTrue (true, "P43#3");
 			}
 		}
 
@@ -704,14 +704,14 @@ namespace MonoTests.System.Drawing
 		public void TestFloralWhite ()
 		{
 			Pen pen = Pens.FloralWhite;
-			AssertEquals ("P44#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P44#2", pen.Color, Color.FloralWhite);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P44#1");
+			Assert.AreEqual (pen.Color, Color.FloralWhite, "P44#2");
 
 			try {
 				pen.Color = Color.FloralWhite;
-				Fail ("P44#3: must throw ArgumentException");
+				Assert.Fail ("P44#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P44#3", true);
+				Assert.IsTrue (true, "P44#3");
 			}
 		}
 
@@ -719,14 +719,14 @@ namespace MonoTests.System.Drawing
 		public void TestForestGreen ()
 		{
 			Pen pen = Pens.ForestGreen;
-			AssertEquals ("P45#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P45#2", pen.Color, Color.ForestGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P45#1");
+			Assert.AreEqual (pen.Color, Color.ForestGreen, "P45#2");
 
 			try {
 				pen.Color = Color.ForestGreen;
-				Fail ("P45#3: must throw ArgumentException");
+				Assert.Fail ("P45#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P45#3", true);
+				Assert.IsTrue (true, "P45#3");
 			}
 		}
 
@@ -734,14 +734,14 @@ namespace MonoTests.System.Drawing
 		public void TestFuchsia ()
 		{
 			Pen pen = Pens.Fuchsia;
-			AssertEquals ("P46#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P46#2", pen.Color, Color.Fuchsia);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P46#1");
+			Assert.AreEqual (pen.Color, Color.Fuchsia, "P46#2");
 
 			try {
 				pen.Color = Color.Fuchsia;
-				Fail ("P46#3: must throw ArgumentException");
+				Assert.Fail ("P46#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P46#3", true);
+				Assert.IsTrue (true, "P46#3");
 			}
 		}
 
@@ -749,14 +749,14 @@ namespace MonoTests.System.Drawing
 		public void TestGainsboro ()
 		{
 			Pen pen = Pens.Gainsboro;
-			AssertEquals ("P47#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P47#2", pen.Color, Color.Gainsboro);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P47#1");
+			Assert.AreEqual (pen.Color, Color.Gainsboro, "P47#2");
 
 			try {
 				pen.Color = Color.Gainsboro;
-				Fail ("P47#3: must throw ArgumentException");
+				Assert.Fail ("P47#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P47#3", true);
+				Assert.IsTrue (true, "P47#3");
 			}
 		}
 
@@ -764,14 +764,14 @@ namespace MonoTests.System.Drawing
 		public void TestGhostWhite ()
 		{
 			Pen pen = Pens.GhostWhite;
-			AssertEquals ("P48#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P48#2", pen.Color, Color.GhostWhite);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P48#1");
+			Assert.AreEqual (pen.Color, Color.GhostWhite, "P48#2");
 
 			try {
 				pen.Color = Color.GhostWhite;
-				Fail ("P48#3: must throw ArgumentException");
+				Assert.Fail ("P48#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P48#3", true);
+				Assert.IsTrue (true, "P48#3");
 			}
 		}
 
@@ -779,14 +779,14 @@ namespace MonoTests.System.Drawing
 		public void TestGold ()
 		{
 			Pen pen = Pens.Gold;
-			AssertEquals ("P49#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P49#2", pen.Color, Color.Gold);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P49#1");
+			Assert.AreEqual (pen.Color, Color.Gold, "P49#2");
 
 			try {
 				pen.Color = Color.Gold;
-				Fail ("P49#3: must throw ArgumentException");
+				Assert.Fail ("P49#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P49#3", true);
+				Assert.IsTrue (true, "P49#3");
 			}
 		}
 
@@ -794,14 +794,14 @@ namespace MonoTests.System.Drawing
 		public void TestGoldenrod ()
 		{
 			Pen pen = Pens.Goldenrod;
-			AssertEquals ("P50#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P50#2", pen.Color, Color.Goldenrod);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P50#1");
+			Assert.AreEqual (pen.Color, Color.Goldenrod, "P50#2");
 
 			try {
 				pen.Color = Color.Goldenrod;
-				Fail ("P50#3: must throw ArgumentException");
+				Assert.Fail ("P50#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P50#3", true);
+				Assert.IsTrue (true, "P50#3");
 			}
 		}
 
@@ -809,14 +809,14 @@ namespace MonoTests.System.Drawing
 		public void TestGray ()
 		{
 			Pen pen = Pens.Gray;
-			AssertEquals ("P51#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P51#2", pen.Color, Color.Gray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P51#1");
+			Assert.AreEqual (pen.Color, Color.Gray, "P51#2");
 
 			try {
 				pen.Color = Color.Gray;
-				Fail ("P51#3: must throw ArgumentException");
+				Assert.Fail ("P51#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P51#3", true);
+				Assert.IsTrue (true, "P51#3");
 			}
 		}
 
@@ -824,14 +824,14 @@ namespace MonoTests.System.Drawing
 		public void TestGreen ()
 		{
 			Pen pen = Pens.Green;
-			AssertEquals ("P52#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P52#2", pen.Color, Color.Green);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P52#1");
+			Assert.AreEqual (pen.Color, Color.Green, "P52#2");
 
 			try {
 				pen.Color = Color.Green;
-				Fail ("P52#3: must throw ArgumentException");
+				Assert.Fail ("P52#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P52#3", true);
+				Assert.IsTrue (true, "P52#3");
 			}
 		}
 
@@ -839,14 +839,14 @@ namespace MonoTests.System.Drawing
 		public void TestGreenYellow ()
 		{
 			Pen pen = Pens.GreenYellow;
-			AssertEquals ("P53#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P53#2", pen.Color, Color.GreenYellow);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P53#1");
+			Assert.AreEqual (pen.Color, Color.GreenYellow, "P53#2");
 
 			try {
 				pen.Color = Color.GreenYellow;
-				Fail ("P53#3: must throw ArgumentException");
+				Assert.Fail ("P53#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P53#3", true);
+				Assert.IsTrue (true, "P53#3");
 			}
 		}
 
@@ -854,14 +854,14 @@ namespace MonoTests.System.Drawing
 		public void TestHoneydew ()
 		{
 			Pen pen = Pens.Honeydew;
-			AssertEquals ("P54#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P54#2", pen.Color, Color.Honeydew);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P54#1");
+			Assert.AreEqual (pen.Color, Color.Honeydew, "P54#2");
 
 			try {
 				pen.Color = Color.Honeydew;
-				Fail ("P54#3: must throw ArgumentException");
+				Assert.Fail ("P54#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P54#3", true);
+				Assert.IsTrue (true, "P54#3");
 			}
 		}
 
@@ -869,14 +869,14 @@ namespace MonoTests.System.Drawing
 		public void TestHotPink ()
 		{
 			Pen pen = Pens.HotPink;
-			AssertEquals ("P55#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P55#2", pen.Color, Color.HotPink);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P55#1");
+			Assert.AreEqual (pen.Color, Color.HotPink, "P55#2");
 
 			try {
 				pen.Color = Color.HotPink;
-				Fail ("P55#3: must throw ArgumentException");
+				Assert.Fail ("P55#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P55#3", true);
+				Assert.IsTrue (true, "P55#3");
 			}
 		}
 
@@ -884,14 +884,14 @@ namespace MonoTests.System.Drawing
 		public void TestIndianRed ()
 		{
 			Pen pen = Pens.IndianRed;
-			AssertEquals ("P56#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P56#2", pen.Color, Color.IndianRed);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P56#1");
+			Assert.AreEqual (pen.Color, Color.IndianRed, "P56#2");
 
 			try {
 				pen.Color = Color.IndianRed;
-				Fail ("P56#3: must throw ArgumentException");
+				Assert.Fail ("P56#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P56#3", true);
+				Assert.IsTrue (true, "P56#3");
 			}
 		}
 
@@ -899,14 +899,14 @@ namespace MonoTests.System.Drawing
 		public void TestIndigo ()
 		{
 			Pen pen = Pens.Indigo;
-			AssertEquals ("P57#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P57#2", pen.Color, Color.Indigo);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P57#1");
+			Assert.AreEqual (pen.Color, Color.Indigo, "P57#2");
 
 			try {
 				pen.Color = Color.Indigo;
-				Fail ("P57#3: must throw ArgumentException");
+				Assert.Fail ("P57#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P57#3", true);
+				Assert.IsTrue (true, "P57#3");
 			}
 		}
 
@@ -914,14 +914,14 @@ namespace MonoTests.System.Drawing
 		public void TestIvory ()
 		{
 			Pen pen = Pens.Ivory;
-			AssertEquals ("P58#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P58#2", pen.Color, Color.Ivory);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P58#1");
+			Assert.AreEqual (pen.Color, Color.Ivory, "P58#2");
 
 			try {
 				pen.Color = Color.Ivory;
-				Fail ("P58#3: must throw ArgumentException");
+				Assert.Fail ("P58#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P58#3", true);
+				Assert.IsTrue (true, "P58#3");
 			}
 		}
 
@@ -929,14 +929,14 @@ namespace MonoTests.System.Drawing
 		public void TestKhaki ()
 		{
 			Pen pen = Pens.Khaki;
-			AssertEquals ("P59#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P59#2", pen.Color, Color.Khaki);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P59#1");
+			Assert.AreEqual (pen.Color, Color.Khaki, "P59#2");
 
 			try {
 				pen.Color = Color.Khaki;
-				Fail ("P59#3: must throw ArgumentException");
+				Assert.Fail ("P59#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P59#3", true);
+				Assert.IsTrue (true, "P59#3");
 			}
 		}
 
@@ -944,14 +944,14 @@ namespace MonoTests.System.Drawing
 		public void TestLavender ()
 		{
 			Pen pen = Pens.Lavender;
-			AssertEquals ("P60#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P60#2", pen.Color, Color.Lavender);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P60#1");
+			Assert.AreEqual (pen.Color, Color.Lavender, "P60#2");
 
 			try {
 				pen.Color = Color.Lavender;
-				Fail ("P60#3: must throw ArgumentException");
+				Assert.Fail ("P60#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P60#3", true);
+				Assert.IsTrue (true, "P60#3");
 			}
 		}
 
@@ -959,14 +959,14 @@ namespace MonoTests.System.Drawing
 		public void TestLavenderBlush ()
 		{
 			Pen pen = Pens.LavenderBlush;
-			AssertEquals ("P61#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P61#2", pen.Color, Color.LavenderBlush);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P61#1");
+			Assert.AreEqual (pen.Color, Color.LavenderBlush, "P61#2");
 
 			try {
 				pen.Color = Color.LavenderBlush;
-				Fail ("P61#3: must throw ArgumentException");
+				Assert.Fail ("P61#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P61#3", true);
+				Assert.IsTrue (true, "P61#3");
 			}
 		}
 
@@ -974,14 +974,14 @@ namespace MonoTests.System.Drawing
 		public void TestLawnGreen ()
 		{
 			Pen pen = Pens.LawnGreen;
-			AssertEquals ("P62#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P62#2", pen.Color, Color.LawnGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P62#1");
+			Assert.AreEqual (pen.Color, Color.LawnGreen, "P62#2");
 
 			try {
 				pen.Color = Color.LawnGreen;
-				Fail ("P62#3: must throw ArgumentException");
+				Assert.Fail ("P62#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P62#3", true);
+				Assert.IsTrue (true, "P62#3");
 			}
 		}
 
@@ -989,14 +989,14 @@ namespace MonoTests.System.Drawing
 		public void TestLemonChiffon ()
 		{
 			Pen pen = Pens.LemonChiffon;
-			AssertEquals ("P63#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P63#2", pen.Color, Color.LemonChiffon);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P63#1");
+			Assert.AreEqual (pen.Color, Color.LemonChiffon, "P63#2");
 
 			try {
 				pen.Color = Color.LemonChiffon;
-				Fail ("P63#3: must throw ArgumentException");
+				Assert.Fail ("P63#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P63#3", true);
+				Assert.IsTrue (true, "P63#3");
 			}
 		}
 
@@ -1004,14 +1004,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightBlue ()
 		{
 			Pen pen = Pens.LightBlue;
-			AssertEquals ("P64#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P64#2", pen.Color, Color.LightBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P64#1");
+			Assert.AreEqual (pen.Color, Color.LightBlue, "P64#2");
 
 			try {
 				pen.Color = Color.LightBlue;
-				Fail ("P64#3: must throw ArgumentException");
+				Assert.Fail ("P64#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P64#3", true);
+				Assert.IsTrue (true, "P64#3");
 			}
 		}
 
@@ -1019,14 +1019,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightCoral ()
 		{
 			Pen pen = Pens.LightCoral;
-			AssertEquals ("P65#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P65#2", pen.Color, Color.LightCoral);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P65#1");
+			Assert.AreEqual (pen.Color, Color.LightCoral, "P65#2");
 
 			try {
 				pen.Color = Color.LightCoral;
-				Fail ("P65#3: must throw ArgumentException");
+				Assert.Fail ("P65#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P65#3", true);
+				Assert.IsTrue (true, "P65#3");
 			}
 		}
 
@@ -1034,14 +1034,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightCyan ()
 		{
 			Pen pen = Pens.LightCyan;
-			AssertEquals ("P66#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P66#2", pen.Color, Color.LightCyan);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P66#1");
+			Assert.AreEqual (pen.Color, Color.LightCyan, "P66#2");
 
 			try {
 				pen.Color = Color.LightCyan;
-				Fail ("P66#3: must throw ArgumentException");
+				Assert.Fail ("P66#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P66#3", true);
+				Assert.IsTrue (true, "P66#3");
 			}
 		}
 
@@ -1049,14 +1049,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightGoldenrodYellow ()
 		{
 			Pen pen = Pens.LightGoldenrodYellow;
-			AssertEquals ("P67#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P67#2", pen.Color, Color.LightGoldenrodYellow);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P67#1");
+			Assert.AreEqual (pen.Color, Color.LightGoldenrodYellow, "P67#2");
 
 			try {
 				pen.Color = Color.LightGoldenrodYellow;
-				Fail ("P67#3: must throw ArgumentException");
+				Assert.Fail ("P67#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P67#3", true);
+				Assert.IsTrue (true, "P67#3");
 			}
 		}
 
@@ -1064,14 +1064,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightGray ()
 		{
 			Pen pen = Pens.LightGray;
-			AssertEquals ("P68#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P68#2", pen.Color, Color.LightGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P68#1");
+			Assert.AreEqual (pen.Color, Color.LightGray, "P68#2");
 
 			try {
 				pen.Color = Color.LightGray;
-				Fail ("P68#3: must throw ArgumentException");
+				Assert.Fail ("P68#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P68#3", true);
+				Assert.IsTrue (true, "P68#3");
 			}
 		}
 
@@ -1079,14 +1079,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightGreen ()
 		{
 			Pen pen = Pens.LightGreen;
-			AssertEquals ("P69#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P69#2", pen.Color, Color.LightGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P69#1");
+			Assert.AreEqual (pen.Color, Color.LightGreen, "P69#2");
 
 			try {
 				pen.Color = Color.LightGreen;
-				Fail ("P69#3: must throw ArgumentException");
+				Assert.Fail ("P69#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P69#3", true);
+				Assert.IsTrue (true, "P69#3");
 			}
 		}
 
@@ -1094,14 +1094,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightPink ()
 		{
 			Pen pen = Pens.LightPink;
-			AssertEquals ("P70#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P70#2", pen.Color, Color.LightPink);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P70#1");
+			Assert.AreEqual (pen.Color, Color.LightPink, "P70#2");
 
 			try {
 				pen.Color = Color.LightPink;
-				Fail ("P70#3: must throw ArgumentException");
+				Assert.Fail ("P70#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P70#3", true);
+				Assert.IsTrue (true, "P70#3");
 			}
 		}
 
@@ -1109,14 +1109,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightSalmon ()
 		{
 			Pen pen = Pens.LightSalmon;
-			AssertEquals ("P71#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P71#2", pen.Color, Color.LightSalmon);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P71#1");
+			Assert.AreEqual (pen.Color, Color.LightSalmon, "P71#2");
 
 			try {
 				pen.Color = Color.LightSalmon;
-				Fail ("P71#3: must throw ArgumentException");
+				Assert.Fail ("P71#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P71#3", true);
+				Assert.IsTrue (true, "P71#3");
 			}
 		}
 
@@ -1124,14 +1124,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightSeaGreen ()
 		{
 			Pen pen = Pens.LightSeaGreen;
-			AssertEquals ("P72#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P72#2", pen.Color, Color.LightSeaGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P72#1");
+			Assert.AreEqual (pen.Color, Color.LightSeaGreen, "P72#2");
 
 			try {
 				pen.Color = Color.LightSeaGreen;
-				Fail ("P72#3: must throw ArgumentException");
+				Assert.Fail ("P72#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P72#3", true);
+				Assert.IsTrue (true, "P72#3");
 			}
 		}
 
@@ -1139,14 +1139,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightSkyBlue ()
 		{
 			Pen pen = Pens.LightSkyBlue;
-			AssertEquals ("P73#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P73#2", pen.Color, Color.LightSkyBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P73#1");
+			Assert.AreEqual (pen.Color, Color.LightSkyBlue, "P73#2");
 
 			try {
 				pen.Color = Color.LightSkyBlue;
-				Fail ("P73#3: must throw ArgumentException");
+				Assert.Fail ("P73#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P73#3", true);
+				Assert.IsTrue (true, "P73#3");
 			}
 		}
 
@@ -1154,14 +1154,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightSlateGray ()
 		{
 			Pen pen = Pens.LightSlateGray;
-			AssertEquals ("P74#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P74#2", pen.Color, Color.LightSlateGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P74#1");
+			Assert.AreEqual (pen.Color, Color.LightSlateGray, "P74#2");
 
 			try {
 				pen.Color = Color.LightSlateGray;
-				Fail ("P74#3: must throw ArgumentException");
+				Assert.Fail ("P74#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P74#3", true);
+				Assert.IsTrue (true, "P74#3");
 			}
 		}
 
@@ -1169,14 +1169,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightSteelBlue ()
 		{
 			Pen pen = Pens.LightSteelBlue;
-			AssertEquals ("P75#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P75#2", pen.Color, Color.LightSteelBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P75#1");
+			Assert.AreEqual (pen.Color, Color.LightSteelBlue, "P75#2");
 
 			try {
 				pen.Color = Color.LightSteelBlue;
-				Fail ("P75#3: must throw ArgumentException");
+				Assert.Fail ("P75#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P75#3", true);
+				Assert.IsTrue (true, "P75#3");
 			}
 		}
 
@@ -1184,14 +1184,14 @@ namespace MonoTests.System.Drawing
 		public void TestLightYellow ()
 		{
 			Pen pen = Pens.LightYellow;
-			AssertEquals ("P76#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P76#2", pen.Color, Color.LightYellow);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P76#1");
+			Assert.AreEqual (pen.Color, Color.LightYellow, "P76#2");
 
 			try {
 				pen.Color = Color.LightYellow;
-				Fail ("P76#3: must throw ArgumentException");
+				Assert.Fail ("P76#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P76#3", true);
+				Assert.IsTrue (true, "P76#3");
 			}
 		}
 
@@ -1199,14 +1199,14 @@ namespace MonoTests.System.Drawing
 		public void TestLime ()
 		{
 			Pen pen = Pens.Lime;
-			AssertEquals ("P77#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P77#2", pen.Color, Color.Lime);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P77#1");
+			Assert.AreEqual (pen.Color, Color.Lime, "P77#2");
 
 			try {
 				pen.Color = Color.Lime;
-				Fail ("P77#3: must throw ArgumentException");
+				Assert.Fail ("P77#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P77#3", true);
+				Assert.IsTrue (true, "P77#3");
 			}
 		}
 
@@ -1214,14 +1214,14 @@ namespace MonoTests.System.Drawing
 		public void TestLimeGreen ()
 		{
 			Pen pen = Pens.LimeGreen;
-			AssertEquals ("P78#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P78#2", pen.Color, Color.LimeGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P78#1");
+			Assert.AreEqual (pen.Color, Color.LimeGreen, "P78#2");
 
 			try {
 				pen.Color = Color.LimeGreen;
-				Fail ("P78#3: must throw ArgumentException");
+				Assert.Fail ("P78#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P78#3", true);
+				Assert.IsTrue (true, "P78#3");
 			}
 		}
 
@@ -1229,14 +1229,14 @@ namespace MonoTests.System.Drawing
 		public void TestLinen ()
 		{
 			Pen pen = Pens.Linen;
-			AssertEquals ("P79#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P79#2", pen.Color, Color.Linen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P79#1");
+			Assert.AreEqual (pen.Color, Color.Linen, "P79#2");
 
 			try {
 				pen.Color = Color.Linen;
-				Fail ("P79#3: must throw ArgumentException");
+				Assert.Fail ("P79#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P79#3", true);
+				Assert.IsTrue (true, "P79#3");
 			}
 		}
 
@@ -1244,14 +1244,14 @@ namespace MonoTests.System.Drawing
 		public void TestMagenta ()
 		{
 			Pen pen = Pens.Magenta;
-			AssertEquals ("P80#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P80#2", pen.Color, Color.Magenta);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P80#1");
+			Assert.AreEqual (pen.Color, Color.Magenta, "P80#2");
 
 			try {
 				pen.Color = Color.Magenta;
-				Fail ("P80#3: must throw ArgumentException");
+				Assert.Fail ("P80#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P80#3", true);
+				Assert.IsTrue (true, "P80#3");
 			}
 		}
 
@@ -1259,14 +1259,14 @@ namespace MonoTests.System.Drawing
 		public void TestMaroon ()
 		{
 			Pen pen = Pens.Maroon;
-			AssertEquals ("P81#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P81#2", pen.Color, Color.Maroon);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P81#1");
+			Assert.AreEqual (pen.Color, Color.Maroon, "P81#2");
 
 			try {
 				pen.Color = Color.Maroon;
-				Fail ("P81#3: must throw ArgumentException");
+				Assert.Fail ("P81#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P81#3", true);
+				Assert.IsTrue (true, "P81#3");
 			}
 		}
 
@@ -1274,14 +1274,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumAquamarine ()
 		{
 			Pen pen = Pens.MediumAquamarine;
-			AssertEquals ("P82#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P82#2", pen.Color, Color.MediumAquamarine);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P82#1");
+			Assert.AreEqual (pen.Color, Color.MediumAquamarine, "P82#2");
 
 			try {
 				pen.Color = Color.MediumAquamarine;
-				Fail ("P82#3: must throw ArgumentException");
+				Assert.Fail ("P82#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P82#3", true);
+				Assert.IsTrue (true, "P82#3");
 			}
 		}
 
@@ -1289,14 +1289,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumBlue ()
 		{
 			Pen pen = Pens.MediumBlue;
-			AssertEquals ("P83#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P83#2", pen.Color, Color.MediumBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P83#1");
+			Assert.AreEqual (pen.Color, Color.MediumBlue, "P83#2");
 
 			try {
 				pen.Color = Color.MediumBlue;
-				Fail ("P83#3: must throw ArgumentException");
+				Assert.Fail ("P83#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P83#3", true);
+				Assert.IsTrue (true, "P83#3");
 			}
 		}
 
@@ -1304,14 +1304,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumOrchid ()
 		{
 			Pen pen = Pens.MediumOrchid;
-			AssertEquals ("P84#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P84#2", pen.Color, Color.MediumOrchid);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P84#1");
+			Assert.AreEqual (pen.Color, Color.MediumOrchid, "P84#2");
 
 			try {
 				pen.Color = Color.MediumOrchid;
-				Fail ("P84#3: must throw ArgumentException");
+				Assert.Fail ("P84#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P84#3", true);
+				Assert.IsTrue (true, "P84#3");
 			}
 		}
 
@@ -1319,14 +1319,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumPurple ()
 		{
 			Pen pen = Pens.MediumPurple;
-			AssertEquals ("P85#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P85#2", pen.Color, Color.MediumPurple);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P85#1");
+			Assert.AreEqual (pen.Color, Color.MediumPurple, "P85#2");
 
 			try {
 				pen.Color = Color.MediumPurple;
-				Fail ("P85#3: must throw ArgumentException");
+				Assert.Fail ("P85#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P85#3", true);
+				Assert.IsTrue (true, "P85#3");
 			}
 		}
 
@@ -1334,14 +1334,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumSeaGreen ()
 		{
 			Pen pen = Pens.MediumSeaGreen;
-			AssertEquals ("P86#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P86#2", pen.Color, Color.MediumSeaGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P86#1");
+			Assert.AreEqual (pen.Color, Color.MediumSeaGreen, "P86#2");
 
 			try {
 				pen.Color = Color.MediumSeaGreen;
-				Fail ("P86#3: must throw ArgumentException");
+				Assert.Fail ("P86#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P86#3", true);
+				Assert.IsTrue (true, "P86#3");
 			}
 		}
 
@@ -1349,14 +1349,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumSlateBlue ()
 		{
 			Pen pen = Pens.MediumSlateBlue;
-			AssertEquals ("P87#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P87#2", pen.Color, Color.MediumSlateBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P87#1");
+			Assert.AreEqual (pen.Color, Color.MediumSlateBlue, "P87#2");
 
 			try {
 				pen.Color = Color.MediumSlateBlue;
-				Fail ("P87#3: must throw ArgumentException");
+				Assert.Fail ("P87#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P87#3", true);
+				Assert.IsTrue (true, "P87#3");
 			}
 		}
 
@@ -1364,14 +1364,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumSpringGreen ()
 		{
 			Pen pen = Pens.MediumSpringGreen;
-			AssertEquals ("P88#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P88#2", pen.Color, Color.MediumSpringGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P88#1");
+			Assert.AreEqual (pen.Color, Color.MediumSpringGreen, "P88#2");
 
 			try {
 				pen.Color = Color.MediumSpringGreen;
-				Fail ("P88#3: must throw ArgumentException");
+				Assert.Fail ("P88#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P88#3", true);
+				Assert.IsTrue (true, "P88#3");
 			}
 		}
 
@@ -1379,14 +1379,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumTurquoise ()
 		{
 			Pen pen = Pens.MediumTurquoise;
-			AssertEquals ("P89#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P89#2", pen.Color, Color.MediumTurquoise);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P89#1");
+			Assert.AreEqual (pen.Color, Color.MediumTurquoise, "P89#2");
 
 			try {
 				pen.Color = Color.MediumTurquoise;
-				Fail ("P89#3: must throw ArgumentException");
+				Assert.Fail ("P89#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P89#3", true);
+				Assert.IsTrue (true, "P89#3");
 			}
 		}
 
@@ -1394,14 +1394,14 @@ namespace MonoTests.System.Drawing
 		public void TestMediumVioletRed ()
 		{
 			Pen pen = Pens.MediumVioletRed;
-			AssertEquals ("P90#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P90#2", pen.Color, Color.MediumVioletRed);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P90#1");
+			Assert.AreEqual (pen.Color, Color.MediumVioletRed, "P90#2");
 
 			try {
 				pen.Color = Color.MediumVioletRed;
-				Fail ("P90#3: must throw ArgumentException");
+				Assert.Fail ("P90#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P90#3", true);
+				Assert.IsTrue (true, "P90#3");
 			}
 		}
 
@@ -1409,14 +1409,14 @@ namespace MonoTests.System.Drawing
 		public void TestMidnightBlue ()
 		{
 			Pen pen = Pens.MidnightBlue;
-			AssertEquals ("P91#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P91#2", pen.Color, Color.MidnightBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P91#1");
+			Assert.AreEqual (pen.Color, Color.MidnightBlue, "P91#2");
 
 			try {
 				pen.Color = Color.MidnightBlue;
-				Fail ("P91#3: must throw ArgumentException");
+				Assert.Fail ("P91#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P91#3", true);
+				Assert.IsTrue (true, "P91#3");
 			}
 		}
 
@@ -1424,14 +1424,14 @@ namespace MonoTests.System.Drawing
 		public void TestMintCream ()
 		{
 			Pen pen = Pens.MintCream;
-			AssertEquals ("P92#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P92#2", pen.Color, Color.MintCream);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P92#1");
+			Assert.AreEqual (pen.Color, Color.MintCream, "P92#2");
 
 			try {
 				pen.Color = Color.MintCream;
-				Fail ("P92#3: must throw ArgumentException");
+				Assert.Fail ("P92#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P92#3", true);
+				Assert.IsTrue (true, "P92#3");
 			}
 		}
 
@@ -1439,14 +1439,14 @@ namespace MonoTests.System.Drawing
 		public void TestMistyRose ()
 		{
 			Pen pen = Pens.MistyRose;
-			AssertEquals ("P93#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P93#2", pen.Color, Color.MistyRose);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P93#1");
+			Assert.AreEqual (pen.Color, Color.MistyRose, "P93#2");
 
 			try {
 				pen.Color = Color.MistyRose;
-				Fail ("P93#3: must throw ArgumentException");
+				Assert.Fail ("P93#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P93#3", true);
+				Assert.IsTrue (true, "P93#3");
 			}
 		}
 
@@ -1454,14 +1454,14 @@ namespace MonoTests.System.Drawing
 		public void TestMoccasin ()
 		{
 			Pen pen = Pens.Moccasin;
-			AssertEquals ("P94#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P94#2", pen.Color, Color.Moccasin);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P94#1");
+			Assert.AreEqual (pen.Color, Color.Moccasin, "P94#2");
 
 			try {
 				pen.Color = Color.Moccasin;
-				Fail ("P94#3: must throw ArgumentException");
+				Assert.Fail ("P94#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P94#3", true);
+				Assert.IsTrue (true, "P94#3");
 			}
 		}
 
@@ -1469,14 +1469,14 @@ namespace MonoTests.System.Drawing
 		public void TestNavajoWhite ()
 		{
 			Pen pen = Pens.NavajoWhite;
-			AssertEquals ("P95#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P95#2", pen.Color, Color.NavajoWhite);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P95#1");
+			Assert.AreEqual (pen.Color, Color.NavajoWhite, "P95#2");
 
 			try {
 				pen.Color = Color.NavajoWhite;
-				Fail ("P95#3: must throw ArgumentException");
+				Assert.Fail ("P95#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P95#3", true);
+				Assert.IsTrue (true, "P95#3");
 			}
 		}
 
@@ -1484,14 +1484,14 @@ namespace MonoTests.System.Drawing
 		public void TestNavy ()
 		{
 			Pen pen = Pens.Navy;
-			AssertEquals ("P96#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P96#2", pen.Color, Color.Navy);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P96#1");
+			Assert.AreEqual (pen.Color, Color.Navy, "P96#2");
 
 			try {
 				pen.Color = Color.Navy;
-				Fail ("P96#3: must throw ArgumentException");
+				Assert.Fail ("P96#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P96#3", true);
+				Assert.IsTrue (true, "P96#3");
 			}
 		}
 
@@ -1499,14 +1499,14 @@ namespace MonoTests.System.Drawing
 		public void TestOldLace ()
 		{
 			Pen pen = Pens.OldLace;
-			AssertEquals ("P97#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P97#2", pen.Color, Color.OldLace);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P97#1");
+			Assert.AreEqual (pen.Color, Color.OldLace, "P97#2");
 
 			try {
 				pen.Color = Color.OldLace;
-				Fail ("P97#3: must throw ArgumentException");
+				Assert.Fail ("P97#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P97#3", true);
+				Assert.IsTrue (true, "P97#3");
 			}
 		}
 
@@ -1514,14 +1514,14 @@ namespace MonoTests.System.Drawing
 		public void TestOlive ()
 		{
 			Pen pen = Pens.Olive;
-			AssertEquals ("P98#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P98#2", pen.Color, Color.Olive);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P98#1");
+			Assert.AreEqual (pen.Color, Color.Olive, "P98#2");
 
 			try {
 				pen.Color = Color.Olive;
-				Fail ("P98#3: must throw ArgumentException");
+				Assert.Fail ("P98#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P98#3", true);
+				Assert.IsTrue (true, "P98#3");
 			}
 		}
 
@@ -1529,14 +1529,14 @@ namespace MonoTests.System.Drawing
 		public void TestOliveDrab ()
 		{
 			Pen pen = Pens.OliveDrab;
-			AssertEquals ("P99#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P99#2", pen.Color, Color.OliveDrab);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P99#1");
+			Assert.AreEqual (pen.Color, Color.OliveDrab, "P99#2");
 
 			try {
 				pen.Color = Color.OliveDrab;
-				Fail ("P99#3: must throw ArgumentException");
+				Assert.Fail ("P99#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P99#3", true);
+				Assert.IsTrue (true, "P99#3");
 			}
 		}
 
@@ -1544,14 +1544,14 @@ namespace MonoTests.System.Drawing
 		public void TestOrange ()
 		{
 			Pen pen = Pens.Orange;
-			AssertEquals ("P100#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P100#2", pen.Color, Color.Orange);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P100#1");
+			Assert.AreEqual (pen.Color, Color.Orange, "P100#2");
 
 			try {
 				pen.Color = Color.Orange;
-				Fail ("P100#3: must throw ArgumentException");
+				Assert.Fail ("P100#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P100#3", true);
+				Assert.IsTrue (true, "P100#3");
 			}
 		}
 
@@ -1559,14 +1559,14 @@ namespace MonoTests.System.Drawing
 		public void TestOrangeRed ()
 		{
 			Pen pen = Pens.OrangeRed;
-			AssertEquals ("P101#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P101#2", pen.Color, Color.OrangeRed);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P101#1");
+			Assert.AreEqual (pen.Color, Color.OrangeRed, "P101#2");
 
 			try {
 				pen.Color = Color.OrangeRed;
-				Fail ("P101#3: must throw ArgumentException");
+				Assert.Fail ("P101#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P101#3", true);
+				Assert.IsTrue (true, "P101#3");
 			}
 		}
 
@@ -1574,14 +1574,14 @@ namespace MonoTests.System.Drawing
 		public void TestOrchid ()
 		{
 			Pen pen = Pens.Orchid;
-			AssertEquals ("P102#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P102#2", pen.Color, Color.Orchid);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P102#1");
+			Assert.AreEqual (pen.Color, Color.Orchid, "P102#2");
 
 			try {
 				pen.Color = Color.Orchid;
-				Fail ("P102#3: must throw ArgumentException");
+				Assert.Fail ("P102#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P102#3", true);
+				Assert.IsTrue (true, "P102#3");
 			}
 		}
 
@@ -1589,14 +1589,14 @@ namespace MonoTests.System.Drawing
 		public void TestPaleGoldenrod ()
 		{
 			Pen pen = Pens.PaleGoldenrod;
-			AssertEquals ("P103#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P103#2", pen.Color, Color.PaleGoldenrod);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P103#1");
+			Assert.AreEqual (pen.Color, Color.PaleGoldenrod, "P103#2");
 
 			try {
 				pen.Color = Color.PaleGoldenrod;
-				Fail ("P103#3: must throw ArgumentException");
+				Assert.Fail ("P103#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P103#3", true);
+				Assert.IsTrue (true, "P103#3");
 			}
 		}
 
@@ -1604,14 +1604,14 @@ namespace MonoTests.System.Drawing
 		public void TestPaleGreen ()
 		{
 			Pen pen = Pens.PaleGreen;
-			AssertEquals ("P104#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P104#2", pen.Color, Color.PaleGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P104#1");
+			Assert.AreEqual (pen.Color, Color.PaleGreen, "P104#2");
 
 			try {
 				pen.Color = Color.PaleGreen;
-				Fail ("P104#3: must throw ArgumentException");
+				Assert.Fail ("P104#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P104#3", true);
+				Assert.IsTrue (true, "P104#3");
 			}
 		}
 
@@ -1619,14 +1619,14 @@ namespace MonoTests.System.Drawing
 		public void TestPaleTurquoise ()
 		{
 			Pen pen = Pens.PaleTurquoise;
-			AssertEquals ("P105#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P105#2", pen.Color, Color.PaleTurquoise);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P105#1");
+			Assert.AreEqual (pen.Color, Color.PaleTurquoise, "P105#2");
 
 			try {
 				pen.Color = Color.PaleTurquoise;
-				Fail ("P105#3: must throw ArgumentException");
+				Assert.Fail ("P105#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P105#3", true);
+				Assert.IsTrue (true, "P105#3");
 			}
 		}
 
@@ -1634,14 +1634,14 @@ namespace MonoTests.System.Drawing
 		public void TestPaleVioletRed ()
 		{
 			Pen pen = Pens.PaleVioletRed;
-			AssertEquals ("P106#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P106#2", pen.Color, Color.PaleVioletRed);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P106#1");
+			Assert.AreEqual (pen.Color, Color.PaleVioletRed, "P106#2");
 
 			try {
 				pen.Color = Color.PaleVioletRed;
-				Fail ("P106#3: must throw ArgumentException");
+				Assert.Fail ("P106#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P106#3", true);
+				Assert.IsTrue (true, "P106#3");
 			}
 		}
 
@@ -1649,14 +1649,14 @@ namespace MonoTests.System.Drawing
 		public void TestPapayaWhip ()
 		{
 			Pen pen = Pens.PapayaWhip;
-			AssertEquals ("P107#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P107#2", pen.Color, Color.PapayaWhip);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P107#1");
+			Assert.AreEqual (pen.Color, Color.PapayaWhip, "P107#2");
 
 			try {
 				pen.Color = Color.PapayaWhip;
-				Fail ("P107#3: must throw ArgumentException");
+				Assert.Fail ("P107#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P107#3", true);
+				Assert.IsTrue (true, "P107#3");
 			}
 		}
 
@@ -1664,14 +1664,14 @@ namespace MonoTests.System.Drawing
 		public void TestPeachPuff ()
 		{
 			Pen pen = Pens.PeachPuff;
-			AssertEquals ("P108#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P108#2", pen.Color, Color.PeachPuff);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P108#1");
+			Assert.AreEqual (pen.Color, Color.PeachPuff, "P108#2");
 
 			try {
 				pen.Color = Color.PeachPuff;
-				Fail ("P108#3: must throw ArgumentException");
+				Assert.Fail ("P108#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P108#3", true);
+				Assert.IsTrue (true, "P108#3");
 			}
 		}
 
@@ -1679,14 +1679,14 @@ namespace MonoTests.System.Drawing
 		public void TestPeru ()
 		{
 			Pen pen = Pens.Peru;
-			AssertEquals ("P109#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P109#2", pen.Color, Color.Peru);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P109#1");
+			Assert.AreEqual (pen.Color, Color.Peru, "P109#2");
 
 			try {
 				pen.Color = Color.Peru;
-				Fail ("P109#3: must throw ArgumentException");
+				Assert.Fail ("P109#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P109#3", true);
+				Assert.IsTrue (true, "P109#3");
 			}
 		}
 
@@ -1694,14 +1694,14 @@ namespace MonoTests.System.Drawing
 		public void TestPink ()
 		{
 			Pen pen = Pens.Pink;
-			AssertEquals ("P110#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P110#2", pen.Color, Color.Pink);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P110#1");
+			Assert.AreEqual (pen.Color, Color.Pink, "P110#2");
 
 			try {
 				pen.Color = Color.Pink;
-				Fail ("P110#3: must throw ArgumentException");
+				Assert.Fail ("P110#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P110#3", true);
+				Assert.IsTrue (true, "P110#3");
 			}
 		}
 
@@ -1709,14 +1709,14 @@ namespace MonoTests.System.Drawing
 		public void TestPlum ()
 		{
 			Pen pen = Pens.Plum;
-			AssertEquals ("P111#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P111#2", pen.Color, Color.Plum);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P111#1");
+			Assert.AreEqual (pen.Color, Color.Plum, "P111#2");
 
 			try {
 				pen.Color = Color.Plum;
-				Fail ("P111#3: must throw ArgumentException");
+				Assert.Fail ("P111#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P111#3", true);
+				Assert.IsTrue (true, "P111#3");
 			}
 		}
 
@@ -1724,14 +1724,14 @@ namespace MonoTests.System.Drawing
 		public void TestPowderBlue ()
 		{
 			Pen pen = Pens.PowderBlue;
-			AssertEquals ("P112#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P112#2", pen.Color, Color.PowderBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P112#1");
+			Assert.AreEqual (pen.Color, Color.PowderBlue, "P112#2");
 
 			try {
 				pen.Color = Color.PowderBlue;
-				Fail ("P112#3: must throw ArgumentException");
+				Assert.Fail ("P112#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P112#3", true);
+				Assert.IsTrue (true, "P112#3");
 			}
 		}
 
@@ -1739,14 +1739,14 @@ namespace MonoTests.System.Drawing
 		public void TestPurple ()
 		{
 			Pen pen = Pens.Purple;
-			AssertEquals ("P113#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P113#2", pen.Color, Color.Purple);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P113#1");
+			Assert.AreEqual (pen.Color, Color.Purple, "P113#2");
 
 			try {
 				pen.Color = Color.Purple;
-				Fail ("P113#3: must throw ArgumentException");
+				Assert.Fail ("P113#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P113#3", true);
+				Assert.IsTrue (true, "P113#3");
 			}
 		}
 
@@ -1754,14 +1754,14 @@ namespace MonoTests.System.Drawing
 		public void TestRed ()
 		{
 			Pen pen = Pens.Red;
-			AssertEquals ("P114#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P114#2", pen.Color, Color.Red);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P114#1");
+			Assert.AreEqual (pen.Color, Color.Red, "P114#2");
 
 			try {
 				pen.Color = Color.Red;
-				Fail ("P114#3: must throw ArgumentException");
+				Assert.Fail ("P114#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P114#3", true);
+				Assert.IsTrue (true, "P114#3");
 			}
 		}
 
@@ -1769,14 +1769,14 @@ namespace MonoTests.System.Drawing
 		public void TestRosyBrown ()
 		{
 			Pen pen = Pens.RosyBrown;
-			AssertEquals ("P115#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P115#2", pen.Color, Color.RosyBrown);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P115#1");
+			Assert.AreEqual (pen.Color, Color.RosyBrown, "P115#2");
 
 			try {
 				pen.Color = Color.RosyBrown;
-				Fail ("P115#3: must throw ArgumentException");
+				Assert.Fail ("P115#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P115#3", true);
+				Assert.IsTrue (true, "P115#3");
 			}
 		}
 
@@ -1784,14 +1784,14 @@ namespace MonoTests.System.Drawing
 		public void TestRoyalBlue ()
 		{
 			Pen pen = Pens.RoyalBlue;
-			AssertEquals ("P116#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P116#2", pen.Color, Color.RoyalBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P116#1");
+			Assert.AreEqual (pen.Color, Color.RoyalBlue, "P116#2");
 
 			try {
 				pen.Color = Color.RoyalBlue;
-				Fail ("P116#3: must throw ArgumentException");
+				Assert.Fail ("P116#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P116#3", true);
+				Assert.IsTrue (true, "P116#3");
 			}
 		}
 
@@ -1799,14 +1799,14 @@ namespace MonoTests.System.Drawing
 		public void TestSaddleBrown ()
 		{
 			Pen pen = Pens.SaddleBrown;
-			AssertEquals ("P117#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P117#2", pen.Color, Color.SaddleBrown);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P117#1");
+			Assert.AreEqual (pen.Color, Color.SaddleBrown, "P117#2");
 
 			try {
 				pen.Color = Color.SaddleBrown;
-				Fail ("P117#3: must throw ArgumentException");
+				Assert.Fail ("P117#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P117#3", true);
+				Assert.IsTrue (true, "P117#3");
 			}
 		}
 
@@ -1814,14 +1814,14 @@ namespace MonoTests.System.Drawing
 		public void TestSalmon ()
 		{
 			Pen pen = Pens.Salmon;
-			AssertEquals ("P118#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P118#2", pen.Color, Color.Salmon);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P118#1");
+			Assert.AreEqual (pen.Color, Color.Salmon, "P118#2");
 
 			try {
 				pen.Color = Color.Salmon;
-				Fail ("P118#3: must throw ArgumentException");
+				Assert.Fail ("P118#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P118#3", true);
+				Assert.IsTrue (true, "P118#3");
 			}
 		}
 
@@ -1829,14 +1829,14 @@ namespace MonoTests.System.Drawing
 		public void TestSandyBrown ()
 		{
 			Pen pen = Pens.SandyBrown;
-			AssertEquals ("P119#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P119#2", pen.Color, Color.SandyBrown);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P119#1");
+			Assert.AreEqual (pen.Color, Color.SandyBrown, "P119#2");
 
 			try {
 				pen.Color = Color.SandyBrown;
-				Fail ("P119#3: must throw ArgumentException");
+				Assert.Fail ("P119#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P119#3", true);
+				Assert.IsTrue (true, "P119#3");
 			}
 		}
 
@@ -1844,14 +1844,14 @@ namespace MonoTests.System.Drawing
 		public void TestSeaGreen ()
 		{
 			Pen pen = Pens.SeaGreen;
-			AssertEquals ("P120#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P120#2", pen.Color, Color.SeaGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P120#1");
+			Assert.AreEqual (pen.Color, Color.SeaGreen, "P120#2");
 
 			try {
 				pen.Color = Color.SeaGreen;
-				Fail ("P120#3: must throw ArgumentException");
+				Assert.Fail ("P120#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P120#3", true);
+				Assert.IsTrue (true, "P120#3");
 			}
 		}
 
@@ -1859,14 +1859,14 @@ namespace MonoTests.System.Drawing
 		public void TestSeaShell ()
 		{
 			Pen pen = Pens.SeaShell;
-			AssertEquals ("P121#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P121#2", pen.Color, Color.SeaShell);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P121#1");
+			Assert.AreEqual (pen.Color, Color.SeaShell, "P121#2");
 
 			try {
 				pen.Color = Color.SeaShell;
-				Fail ("P121#3: must throw ArgumentException");
+				Assert.Fail ("P121#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P121#3", true);
+				Assert.IsTrue (true, "P121#3");
 			}
 		}
 
@@ -1874,14 +1874,14 @@ namespace MonoTests.System.Drawing
 		public void TestSienna ()
 		{
 			Pen pen = Pens.Sienna;
-			AssertEquals ("P122#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P122#2", pen.Color, Color.Sienna);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P122#1");
+			Assert.AreEqual (pen.Color, Color.Sienna, "P122#2");
 
 			try {
 				pen.Color = Color.Sienna;
-				Fail ("P122#3: must throw ArgumentException");
+				Assert.Fail ("P122#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P122#3", true);
+				Assert.IsTrue (true, "P122#3");
 			}
 		}
 
@@ -1889,14 +1889,14 @@ namespace MonoTests.System.Drawing
 		public void TestSilver ()
 		{
 			Pen pen = Pens.Silver;
-			AssertEquals ("P123#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P123#2", pen.Color, Color.Silver);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P123#1");
+			Assert.AreEqual (pen.Color, Color.Silver, "P123#2");
 
 			try {
 				pen.Color = Color.Silver;
-				Fail ("P123#3: must throw ArgumentException");
+				Assert.Fail ("P123#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P123#3", true);
+				Assert.IsTrue (true, "P123#3");
 			}
 		}
 
@@ -1904,14 +1904,14 @@ namespace MonoTests.System.Drawing
 		public void TestSkyBlue ()
 		{
 			Pen pen = Pens.SkyBlue;
-			AssertEquals ("P124#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P124#2", pen.Color, Color.SkyBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P124#1");
+			Assert.AreEqual (pen.Color, Color.SkyBlue, "P124#2");
 
 			try {
 				pen.Color = Color.SkyBlue;
-				Fail ("P124#3: must throw ArgumentException");
+				Assert.Fail ("P124#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P124#3", true);
+				Assert.IsTrue (true, "P124#3");
 			}
 		}
 
@@ -1919,14 +1919,14 @@ namespace MonoTests.System.Drawing
 		public void TestSlateBlue ()
 		{
 			Pen pen = Pens.SlateBlue;
-			AssertEquals ("P125#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P125#2", pen.Color, Color.SlateBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P125#1");
+			Assert.AreEqual (pen.Color, Color.SlateBlue, "P125#2");
 
 			try {
 				pen.Color = Color.SlateBlue;
-				Fail ("P125#3: must throw ArgumentException");
+				Assert.Fail ("P125#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P125#3", true);
+				Assert.IsTrue (true, "P125#3");
 			}
 		}
 
@@ -1934,14 +1934,14 @@ namespace MonoTests.System.Drawing
 		public void TestSlateGray ()
 		{
 			Pen pen = Pens.SlateGray;
-			AssertEquals ("P126#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P126#2", pen.Color, Color.SlateGray);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P126#1");
+			Assert.AreEqual (pen.Color, Color.SlateGray, "P126#2");
 
 			try {
 				pen.Color = Color.SlateGray;
-				Fail ("P126#3: must throw ArgumentException");
+				Assert.Fail ("P126#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P126#3", true);
+				Assert.IsTrue (true, "P126#3");
 			}
 		}
 
@@ -1949,14 +1949,14 @@ namespace MonoTests.System.Drawing
 		public void TestSnow ()
 		{
 			Pen pen = Pens.Snow;
-			AssertEquals ("P127#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P127#2", pen.Color, Color.Snow);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P127#1");
+			Assert.AreEqual (pen.Color, Color.Snow, "P127#2");
 
 			try {
 				pen.Color = Color.Snow;
-				Fail ("P127#3: must throw ArgumentException");
+				Assert.Fail ("P127#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P127#3", true);
+				Assert.IsTrue (true, "P127#3");
 			}
 		}
 
@@ -1964,14 +1964,14 @@ namespace MonoTests.System.Drawing
 		public void TestSpringGreen ()
 		{
 			Pen pen = Pens.SpringGreen;
-			AssertEquals ("P128#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P128#2", pen.Color, Color.SpringGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P128#1");
+			Assert.AreEqual (pen.Color, Color.SpringGreen, "P128#2");
 
 			try {
 				pen.Color = Color.SpringGreen;
-				Fail ("P128#3: must throw ArgumentException");
+				Assert.Fail ("P128#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P128#3", true);
+				Assert.IsTrue (true, "P128#3");
 			}
 		}
 
@@ -1979,14 +1979,14 @@ namespace MonoTests.System.Drawing
 		public void TestSteelBlue ()
 		{
 			Pen pen = Pens.SteelBlue;
-			AssertEquals ("P129#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P129#2", pen.Color, Color.SteelBlue);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P129#1");
+			Assert.AreEqual (pen.Color, Color.SteelBlue, "P129#2");
 
 			try {
 				pen.Color = Color.SteelBlue;
-				Fail ("P129#3: must throw ArgumentException");
+				Assert.Fail ("P129#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P129#3", true);
+				Assert.IsTrue (true, "P129#3");
 			}
 		}
 
@@ -1994,14 +1994,14 @@ namespace MonoTests.System.Drawing
 		public void TestTan ()
 		{
 			Pen pen = Pens.Tan;
-			AssertEquals ("P130#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P130#2", pen.Color, Color.Tan);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P130#1");
+			Assert.AreEqual (pen.Color, Color.Tan, "P130#2");
 
 			try {
 				pen.Color = Color.Tan;
-				Fail ("P130#3: must throw ArgumentException");
+				Assert.Fail ("P130#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P130#3", true);
+				Assert.IsTrue (true, "P130#3");
 			}
 		}
 
@@ -2009,14 +2009,14 @@ namespace MonoTests.System.Drawing
 		public void TestTeal ()
 		{
 			Pen pen = Pens.Teal;
-			AssertEquals ("P131#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P131#2", pen.Color, Color.Teal);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P131#1");
+			Assert.AreEqual (pen.Color, Color.Teal, "P131#2");
 
 			try {
 				pen.Color = Color.Teal;
-				Fail ("P131#3: must throw ArgumentException");
+				Assert.Fail ("P131#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P131#3", true);
+				Assert.IsTrue (true, "P131#3");
 			}
 		}
 
@@ -2024,14 +2024,14 @@ namespace MonoTests.System.Drawing
 		public void TestThistle ()
 		{
 			Pen pen = Pens.Thistle;
-			AssertEquals ("P132#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P132#2", pen.Color, Color.Thistle);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P132#1");
+			Assert.AreEqual (pen.Color, Color.Thistle, "P132#2");
 
 			try {
 				pen.Color = Color.Thistle;
-				Fail ("P132#3: must throw ArgumentException");
+				Assert.Fail ("P132#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P132#3", true);
+				Assert.IsTrue (true, "P132#3");
 			}
 		}
 
@@ -2039,14 +2039,14 @@ namespace MonoTests.System.Drawing
 		public void TestTomato ()
 		{
 			Pen pen = Pens.Tomato;
-			AssertEquals ("P133#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P133#2", pen.Color, Color.Tomato);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P133#1");
+			Assert.AreEqual (pen.Color, Color.Tomato, "P133#2");
 
 			try {
 				pen.Color = Color.Tomato;
-				Fail ("P133#3: must throw ArgumentException");
+				Assert.Fail ("P133#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P133#3", true);
+				Assert.IsTrue (true, "P133#3");
 			}
 		}
 
@@ -2054,14 +2054,14 @@ namespace MonoTests.System.Drawing
 		public void TestTransparent ()
 		{
 			Pen pen = Pens.Transparent;
-			AssertEquals ("P134#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P134#2", pen.Color, Color.Transparent);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P134#1");
+			Assert.AreEqual (pen.Color, Color.Transparent, "P134#2");
 
 			try {
 				pen.Color = Color.Transparent;
-				Fail ("P134#3: must throw ArgumentException");
+				Assert.Fail ("P134#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P134#3", true);
+				Assert.IsTrue (true, "P134#3");
 			}
 		}
 
@@ -2069,14 +2069,14 @@ namespace MonoTests.System.Drawing
 		public void TestTurquoise ()
 		{
 			Pen pen = Pens.Turquoise;
-			AssertEquals ("P135#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P135#2", pen.Color, Color.Turquoise);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P135#1");
+			Assert.AreEqual (pen.Color, Color.Turquoise, "P135#2");
 
 			try {
 				pen.Color = Color.Turquoise;
-				Fail ("P135#3: must throw ArgumentException");
+				Assert.Fail ("P135#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P135#3", true);
+				Assert.IsTrue (true, "P135#3");
 			}
 		}
 
@@ -2084,14 +2084,14 @@ namespace MonoTests.System.Drawing
 		public void TestViolet ()
 		{
 			Pen pen = Pens.Violet;
-			AssertEquals ("P136#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P136#2", pen.Color, Color.Violet);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P136#1");
+			Assert.AreEqual (pen.Color, Color.Violet, "P136#2");
 
 			try {
 				pen.Color = Color.Violet;
-				Fail ("P136#3: must throw ArgumentException");
+				Assert.Fail ("P136#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P136#3", true);
+				Assert.IsTrue (true, "P136#3");
 			}
 		}
 
@@ -2099,14 +2099,14 @@ namespace MonoTests.System.Drawing
 		public void TestWheat ()
 		{
 			Pen pen = Pens.Wheat;
-			AssertEquals ("P137#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P137#2", pen.Color, Color.Wheat);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P137#1");
+			Assert.AreEqual (pen.Color, Color.Wheat, "P137#2");
 
 			try {
 				pen.Color = Color.Wheat;
-				Fail ("P137#3: must throw ArgumentException");
+				Assert.Fail ("P137#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P137#3", true);
+				Assert.IsTrue (true, "P137#3");
 			}
 		}
 
@@ -2114,14 +2114,14 @@ namespace MonoTests.System.Drawing
 		public void TestWhite ()
 		{
 			Pen pen = Pens.White;
-			AssertEquals ("P138#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P138#2", pen.Color, Color.White);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P138#1");
+			Assert.AreEqual (pen.Color, Color.White, "P138#2");
 
 			try {
 				pen.Color = Color.White;
-				Fail ("P138#3: must throw ArgumentException");
+				Assert.Fail ("P138#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P138#3", true);
+				Assert.IsTrue (true, "P138#3");
 			}
 		}
 
@@ -2129,14 +2129,14 @@ namespace MonoTests.System.Drawing
 		public void TestWhiteSmoke ()
 		{
 			Pen pen = Pens.WhiteSmoke;
-			AssertEquals ("P139#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P139#2", pen.Color, Color.WhiteSmoke);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P139#1");
+			Assert.AreEqual (pen.Color, Color.WhiteSmoke, "P139#2");
 
 			try {
 				pen.Color = Color.WhiteSmoke;
-				Fail ("P139#3: must throw ArgumentException");
+				Assert.Fail ("P139#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P139#3", true);
+				Assert.IsTrue (true, "P139#3");
 			}
 		}
 
@@ -2144,14 +2144,14 @@ namespace MonoTests.System.Drawing
 		public void TestYellow ()
 		{
 			Pen pen = Pens.Yellow;
-			AssertEquals ("P140#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P140#2", pen.Color, Color.Yellow);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P140#1");
+			Assert.AreEqual (pen.Color, Color.Yellow, "P140#2");
 
 			try {
 				pen.Color = Color.Yellow;
-				Fail ("P140#3: must throw ArgumentException");
+				Assert.Fail ("P140#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P140#3", true);
+				Assert.IsTrue (true, "P140#3");
 			}
 		}
 
@@ -2159,14 +2159,14 @@ namespace MonoTests.System.Drawing
 		public void TestYellowGreen ()
 		{
 			Pen pen = Pens.YellowGreen;
-			AssertEquals ("P141#1", pen.PenType, PenType.SolidColor);
-			AssertEquals ("P141#2", pen.Color, Color.YellowGreen);
+			Assert.AreEqual (pen.PenType, PenType.SolidColor, "P141#1");
+			Assert.AreEqual (pen.Color, Color.YellowGreen, "P141#2");
 
 			try {
 				pen.Color = Color.YellowGreen;
-				Fail ("P141#3: must throw ArgumentException");
+				Assert.Fail ("P141#3: must throw ArgumentException");
 			} catch (ArgumentException) {
-				Assert ("P141#3", true);
+				Assert.IsTrue (true, "P141#3");
 			}
 		}
 	}
@@ -2188,9 +2188,9 @@ namespace MonoTests.System.Drawing
 //
 //	Console.WriteLine("\t\t\ttry {");
 //	Console.WriteLine("\t\t\t\tpen.Color = Color." + property.Name + ";");
-//	Console.WriteLine("\t\t\t\tFail (\"P" + count + "#3: must throw ArgumentException\");");
+//	Console.WriteLine("\t\t\t\tAssert.Fail (\"P" + count + "#3: must throw ArgumentException\");");
 //	Console.WriteLine("\t\t\t} catch (ArgumentException) {");
-//	Console.WriteLine("\t\t\t\tAssert (\"P" + count + "#3\", true);");
+//	Console.WriteLine("\t\t\t\tAssert.IsTrue (\"P" + count + "#3\", true);");
 //	Console.WriteLine("\t\t\t}");
 //	Console.WriteLine("\t\t}");
 //	count++;
