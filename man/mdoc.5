@@ -401,6 +401,31 @@ The \fIexception\fR element can contain the following elements:
 \fIsee\fR, and
 \fItypeparamref\fR.
 .TP
+.I <format type="TYPE">XML_TEXT</format>
+The \fI<format/>\fR element is an "escape hatch," for including (possibly XML)
+content that is not valid \fBmdoc\fR(5) content.  It's the moral equivalent of
+\fBperlpod\fR(1) \fI=begin format\fR blocks.
+
+\fITYPE\fR is the mime type of \fIXML_TEXT\fR.  \fBmdoc\fR(5) processors may
+skip \fIformat/>\fR blocks of they use a type that isn't supported.
+
+For example:
+
+.nf
+    <format type="text/html">
+      <table width="100%">
+        <tr><td style="color:red">Hello, world!</td></tr>
+      </table>
+    </format>
+.fi
+
+would cause the embedded HTML \fI<table/>\fR element to be inserted inline
+into the resulting HTML document when \fBmdoc-export-html\fR(1) processes the
+file.  (Likewise, it may be skipped if processed by another program.)
+
+\fIformat/>\fR is intended to simplify importing documentation from existing
+documentation sources.  It should not be relied upon, if at all possible.
+.TP
 .I <list>XML</list>
 Create a list or table of items.  
 .I <list/>
