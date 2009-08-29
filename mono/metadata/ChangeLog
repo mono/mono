@@ -1,3 +1,8 @@
+2009-08-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (verify_typedef_table): Verify for nested types
+	without an entry on the nested class table.
+
 2009-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* cominterop.c (cominterop_get_ccw): Applied patch from tom hindle
