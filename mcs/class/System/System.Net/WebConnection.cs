@@ -464,7 +464,7 @@ namespace System.Net
 
 			data.stream = stream;
 			
-			if (!ExpectContent (data.StatusCode))
+			if (!ExpectContent (data.StatusCode) || data.request.Method == "HEAD")
 				stream.ForceCompletion ();
 
 			data.request.SetResponseData (data);
