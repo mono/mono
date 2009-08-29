@@ -1164,6 +1164,7 @@ System.Security.AccessControl/ObjectAce.cs
 System.Security.AccessControl/ObjectAceFlags.cs
 System.Security.AccessControl/ObjectAuditRule.cs
 System.Security.AccessControl/ObjectSecurity.cs
+System.Security.AccessControl/ObjectSecurity_T.cs
 System.Security.AccessControl/PrivilegeNotHeldException.cs
 System.Security.AccessControl/PropagationFlags.cs
 System.Security.AccessControl/QualifiedAce.cs

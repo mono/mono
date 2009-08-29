@@ -11,6 +11,11 @@ System/TimeZoneInfo.AdjustmentRule.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
+System.IO.MemoryMappedFiles/MemoryMappedFile.cs
+System.IO.MemoryMappedFiles/MemoryMappedFileAccess.cs
+System.IO.MemoryMappedFiles/MemoryMappedFileOptions.cs
+System.IO.MemoryMappedFiles/MemoryMappedFileRights.cs
+System.IO.MemoryMappedFiles/MemoryMappedFileSecurity.cs
 System.Runtime.CompilerServices/DynamicAttribute.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/IStrongBox.cs

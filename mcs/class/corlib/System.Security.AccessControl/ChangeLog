@@ -1,3 +1,7 @@
+2009-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* ObjectSecurity_T.cs: New file, empty stub for new net 4.0 class.
+
 2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* MutexAccessRule.cs:
