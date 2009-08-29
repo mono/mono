@@ -16,7 +16,7 @@ endif
 
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
 ifdef CLR_PROFILE
-LIB_MCS_FLAGS += -r:Mono.Posix
+LIB_MCS_FLAGS += -r:Mono.Posix -unsafe
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
