@@ -1,3 +1,7 @@
+2009-08-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify for duplicated types.
+
 2009-08-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_typedef_table): Verify for nested types
