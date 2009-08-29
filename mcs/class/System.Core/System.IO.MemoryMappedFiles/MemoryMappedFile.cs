@@ -107,12 +107,12 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 		public MemoryMappedViewStream CreateViewStream (long offset, long size) {
-			return CreateViewStream (0, 0, MemoryMappedFileAccess.ReadWrite);
+			return CreateViewStream (offset, size, MemoryMappedFileAccess.ReadWrite);
 		}
 
 		[MonoTODO]
 		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access) {
-			throw new NotImplementedException ();
+			return new MemoryMappedViewStream (stream, offset, size, access);
 		}
 
 		MemoryMappedFile () {
