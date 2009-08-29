@@ -1,3 +1,8 @@
+2009-08-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs: HEAD response does not have a body even if the
+	response is an error. Fixes buf #535102.
+
 2009-08-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs:
