@@ -1,5 +1,7 @@
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* System.Core_test.dll.sources: Add MemoryMappedFileTest.cs.
+
 	* Makefile: Pass -unsafe to gmcs.
 
 2009-08-29  Zoltan Varga  <vargaz@gmail.com>
