@@ -1,3 +1,8 @@
+2009-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* net_4_0_System.Core.dll.sources: Add System.IO.MemoryMappedFiles/*.cs
+	and Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs.
+
 2009-08-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add -r:Mono.Posix on required profiles.

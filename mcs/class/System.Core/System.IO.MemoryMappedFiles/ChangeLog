@@ -1,0 +1,5 @@
+2009-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* MemoryMapped*.cs: New files, stubs for the new MemoryMappedFile
+	apis in net 4.0.
+

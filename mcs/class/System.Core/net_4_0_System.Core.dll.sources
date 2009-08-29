@@ -15,7 +15,7 @@ System.IO.MemoryMappedFiles/MemoryMappedFile.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileAccess.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileOptions.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileRights.cs
-System.IO.MemoryMappedFiles/MemoryMappedFileSecurity.cs
+System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
 System.Runtime.CompilerServices/DynamicAttribute.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/IStrongBox.cs
@@ -62,6 +62,7 @@ System.Threading/ReaderWriterLockSlim.cs
 System.Linq.Expressions/Extensions.cs
 
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs
+Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 System.IO.Pipes/AnonymousPipeClientStream.cs
 System.IO.Pipes/AnonymousPipeServerStream.cs
 System.IO.Pipes/NamedPipeClientStream.cs
