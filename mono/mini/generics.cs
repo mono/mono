@@ -401,6 +401,31 @@ class Tests {
 		return 0;
 	}
 
+	static int cctor_count = 0;
+
+    public abstract class Beta<TChanged> 
+    {		
+        static Beta()
+        {
+			cctor_count ++;
+        }
+    }   
+    
+    public class Gamma<T> : Beta<T> 
+    {   
+        static Gamma()
+        {
+        }
+    }
+
+	// #519336    
+	public static int test_2_generic_class_init_gshared_ctor () {
+		new Gamma<object>();
+		new Gamma<string>();
+
+		return cctor_count;
+	}
+
 	public static Type the_type;
 
 	public void ldvirtftn<T> () {
