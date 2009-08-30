@@ -1,3 +1,7 @@
+2009-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* HashSetTest.cs: Fix warnings.
+
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* HashSetTest.cs (Enumerate_Current): New test, including cases
