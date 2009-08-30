@@ -1,3 +1,7 @@
+2009-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* MD5CngTest.cs: Update to new nunit style.
+
 2008-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CngAlgorithmGroupTest.cs: New. Unit tests.
