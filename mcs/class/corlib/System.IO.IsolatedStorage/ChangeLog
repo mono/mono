@@ -1,3 +1,16 @@
+2009-08-30  Jb Evain  <jbevain@novell.com>
+
+	* IsolatedStorageFileEnumerator.cs
+	* MoonIsolatedStorageFileStream.cs
+	* MoonIsolatedStorageFile.cs
+	* MoonIsolatedStorage.cs
+	* IsolatedStorageScope.cs
+	* IsolatedStorageFileStream.cs
+	* IsolatedStorage.cs
+	* IsolatedStorageFile.cs:
+		Use the traditional net_2_0 version of isolated storage
+		for MonoTouch.
+
 2009-05-27  Jackson Harper  <jackson@ximian.com>
 
 	* MoonIsolatedStorageFile.cs: Allow paths in search patterns.

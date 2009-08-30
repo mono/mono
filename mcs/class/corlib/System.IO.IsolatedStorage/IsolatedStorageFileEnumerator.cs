@@ -28,7 +28,8 @@
 
 using System.Collections;
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
+
 namespace System.IO.IsolatedStorage {
 
 	internal class IsolatedStorageFileEnumerator : IEnumerator {

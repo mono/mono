@@ -43,7 +43,7 @@ namespace System.IO.IsolatedStorage {
 
 		None = 0,
 		User = 1,
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		// Available in Silverlight
 		Application = 32,
 #else
