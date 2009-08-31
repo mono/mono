@@ -837,8 +837,9 @@ namespace System.Configuration
 			SettingsPropertyCollection coll = new SettingsPropertyCollection ();
 			GetPropertyValues (context, coll);
 			foreach (SettingsPropertyValue propertyValue in values) {
-				propertyValue.PropertyValue = propertyValue.Property.DefaultValue;
-				propertyValue.IsDirty = true;
+				// Can't use propertyValue.Property.DefaultValue
+				// as it may cause InvalidCastException (see bug# 532180)
+				propertyValue.PropertyValue = propertyValue.Reset ();
 			}
 			SetPropertyValues (context, values);
 		}

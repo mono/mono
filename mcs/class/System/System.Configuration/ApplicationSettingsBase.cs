@@ -94,12 +94,13 @@ namespace System.Configuration {
 		public void Reset()
 		{
 #if (CONFIGURATION_DEP)
-			foreach (SettingsProvider provider in Providers) {
-				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
-				if (iasp != null)
-					iasp.Reset (Context);
-			}
-
+			// Code bellow is identical to code in Reload().
+			// foreach (SettingsProvider provider in Providers) {
+			//         IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
+			//         if (iasp != null)
+			//		iasp.Reset (Context);
+			// }
+                                                
 			Reload ();
 #endif
 		}
