@@ -105,6 +105,10 @@ namespace Mono.Data.SqlExpressions {
 				// DateTime is always CultureInfo.InvariantCulture
                 o1 = (IComparable) DateTime.Parse ((string)o1, CultureInfo.InvariantCulture);
 			}
+			else if (o2 is DateTime && o1 is string && Thread.CurrentThread.CurrentCulture != CultureInfo.InvariantCulture) {
+				// DateTime is always CultureInfo.InvariantCulture
+				o1 = (IComparable) DateTime.Parse ((string)o1, CultureInfo.InvariantCulture);
+			}
 
 			if (o1.GetType () != o2.GetType ())
 				o2 = (IComparable)Convert.ChangeType (o2, o1.GetType ());

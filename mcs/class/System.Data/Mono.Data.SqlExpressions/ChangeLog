@@ -1,7 +1,7 @@
 2009-07-23  Adam Wendt  <adam@awendtconsulting.com>
 
-       * Comparison.cs (Compare): Parse string if other object is DateTime
-       regardless of which side the DateTime is on.
+	* Comparison.cs (Compare): Parse string if other object is DateTime
+	regardless of which side the DateTime is on.
 
 2008-08-18  Marek Habersack  <mhabersack@novell.com>
 
