@@ -84,26 +84,7 @@ namespace RabbitMQ.Client.Impl
             }
             set
             {
-                if ((value < 2) && (value != 0))
-                {
-                    // We currently interpret channel max as
-                    // *including* channel zero. We also think it
-                    // doesn't make sense to forbid opening of any
-                    // real usable channels, so by our ch0-including
-                    // assumption, the minimum *useful* value for
-                    // channel max is 2.
-                    //
-                    // This code is here to work around OpenAMQ
-                    // 1.2c4's channel max setting of 1.
-                    //
-                    // FIXME: warning? or is there something more
-                    // sensible we can do here?
-                    m_channelMax = 2;
-                }
-                else
-                {
-                    m_channelMax = value;
-                }
+                m_channelMax = value;
             }
         }
 
@@ -192,7 +173,7 @@ namespace RabbitMQ.Client.Impl
         public int Allocate()
         {
             ushort maxChannels = (m_channelMax == 0) ? ushort.MaxValue : m_channelMax;
-            for (int candidate = 1; candidate < maxChannels; candidate++)
+            for (int candidate = 1; candidate <= maxChannels; candidate++)
             {
                 if (!m_sessionMap.ContainsKey(candidate))
                 {

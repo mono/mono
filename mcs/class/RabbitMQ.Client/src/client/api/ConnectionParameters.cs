@@ -71,8 +71,8 @@ namespace RabbitMQ.Client
         /// <summary>Default virtual host (value: "/")</summary>
         public const string DefaultVHost = "/"; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
 
-        /// <summary> Default value for the desired maximum number of
-        /// channels, with zero meaning unlimited (value: 0)</summary>
+        /// <summary> Default value for the desired maximum channel
+        /// number, with zero meaning unlimited (value: 0)</summary>
         public const ushort DefaultChannelMax = 0; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
 
         /// <summary>Default value for the desired maximum frame size,
@@ -115,7 +115,7 @@ namespace RabbitMQ.Client
             set { m_virtualHost = value; }
         }
 
-        /// <summary>Channel-max parameter to ask for (number of channels)</summary>
+        /// <summary>Maximum channel number to ask for</summary>
         public ushort RequestedChannelMax
         {
             get { return m_requestedChannelMax; }

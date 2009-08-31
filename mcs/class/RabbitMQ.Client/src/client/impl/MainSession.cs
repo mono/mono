@@ -81,7 +81,7 @@ namespace RabbitMQ.Client.Impl
         
         private readonly object m_closingLock = new object();
         public delegate void SessionCloseDelegate();
-        public SessionCloseDelegate handler;
+        public SessionCloseDelegate m_handler;
 
         public MainSession(ConnectionBase connection)
             : base(connection, 0)
@@ -115,8 +115,8 @@ namespace RabbitMQ.Client.Impl
         
         public SessionCloseDelegate Handler
         {
-            get { return handler; }
-            set { handler = value; }
+            get { return m_handler; }
+            set { m_handler = value; }
         }
 
         public override void HandleFrame(Frame frame)

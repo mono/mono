@@ -83,13 +83,13 @@ namespace RabbitMQ.Client.Events
                                      IBasicProperties properties,
                                      byte[] body)
         {
-            this.m_consumerTag = consumerTag;
-            this.m_deliveryTag = deliveryTag;
-            this.m_redelivered = redelivered;
-            this.m_exchange = exchange;
-            this.m_routingKey = routingKey;
-            this.m_basicProperties = properties;
-            this.m_body = body;
+            m_consumerTag = consumerTag;
+            m_deliveryTag = deliveryTag;
+            m_redelivered = redelivered;
+            m_exchange = exchange;
+            m_routingKey = routingKey;
+            m_basicProperties = properties;
+            m_body = body;
         }
 
         ///<summary>The consumer tag of the consumer that the message

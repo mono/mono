@@ -74,7 +74,7 @@ namespace RabbitMQ.Client.Exceptions
         : Exception
     {
         ///<summary>Possible explanation for the interruption. May be null.</summary>
-        protected ShutdownEventArgs shutdownReason;
+        protected ShutdownEventArgs m_shutdownReason;
 
         protected OperationInterruptedException() { }
 
@@ -94,11 +94,11 @@ namespace RabbitMQ.Client.Exceptions
                    string.Format("The AMQP operation was interrupted: {0}",
                                  reason))
         {
-            this.shutdownReason = reason;
+            m_shutdownReason = reason;
         }
 
         ///<summary>Retrieves the explanation for the shutdown. May
         ///return null if no explanation is available.</summary>
-        public ShutdownEventArgs ShutdownReason { get { return shutdownReason; } }
+        public ShutdownEventArgs ShutdownReason { get { return m_shutdownReason; } }
     }
 }

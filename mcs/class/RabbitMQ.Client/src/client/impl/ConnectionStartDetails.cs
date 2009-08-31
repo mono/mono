@@ -60,10 +60,10 @@ namespace RabbitMQ.Client.Impl
 {
     public class ConnectionStartDetails
     {
-        public byte versionMajor;
-        public byte versionMinor;
-        public IDictionary serverProperties;
-        public byte[] mechanisms;
-        public byte[] locales;
+        public byte m_versionMajor;
+        public byte m_versionMinor;
+        public IDictionary m_serverProperties;
+        public byte[] m_mechanisms;
+        public byte[] m_locales;
     }
 }

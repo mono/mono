@@ -1131,27 +1131,27 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
     private string m_appId;
     private string m_clusterId;
 
-    private bool contentType_present = false;
-    private bool contentEncoding_present = false;
-    private bool headers_present = false;
-    private bool deliveryMode_present = false;
-    private bool priority_present = false;
-    private bool correlationId_present = false;
-    private bool replyTo_present = false;
-    private bool expiration_present = false;
-    private bool messageId_present = false;
-    private bool timestamp_present = false;
-    private bool type_present = false;
-    private bool userId_present = false;
-    private bool appId_present = false;
-    private bool clusterId_present = false;
+    private bool m_contentType_present = false;
+    private bool m_contentEncoding_present = false;
+    private bool m_headers_present = false;
+    private bool m_deliveryMode_present = false;
+    private bool m_priority_present = false;
+    private bool m_correlationId_present = false;
+    private bool m_replyTo_present = false;
+    private bool m_expiration_present = false;
+    private bool m_messageId_present = false;
+    private bool m_timestamp_present = false;
+    private bool m_type_present = false;
+    private bool m_userId_present = false;
+    private bool m_appId_present = false;
+    private bool m_clusterId_present = false;
 
     public override string ContentType {
       get {
         return m_contentType;
       }
       set {
-        contentType_present = true;
+        m_contentType_present = true;
         m_contentType = value;
       }
     }
@@ -1160,7 +1160,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_contentEncoding;
       }
       set {
-        contentEncoding_present = true;
+        m_contentEncoding_present = true;
         m_contentEncoding = value;
       }
     }
@@ -1169,7 +1169,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_headers;
       }
       set {
-        headers_present = true;
+        m_headers_present = true;
         m_headers = value;
       }
     }
@@ -1178,7 +1178,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_deliveryMode;
       }
       set {
-        deliveryMode_present = true;
+        m_deliveryMode_present = true;
         m_deliveryMode = value;
       }
     }
@@ -1187,7 +1187,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_priority;
       }
       set {
-        priority_present = true;
+        m_priority_present = true;
         m_priority = value;
       }
     }
@@ -1196,7 +1196,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_correlationId;
       }
       set {
-        correlationId_present = true;
+        m_correlationId_present = true;
         m_correlationId = value;
       }
     }
@@ -1205,7 +1205,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_replyTo;
       }
       set {
-        replyTo_present = true;
+        m_replyTo_present = true;
         m_replyTo = value;
       }
     }
@@ -1214,7 +1214,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_expiration;
       }
       set {
-        expiration_present = true;
+        m_expiration_present = true;
         m_expiration = value;
       }
     }
@@ -1223,7 +1223,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_messageId;
       }
       set {
-        messageId_present = true;
+        m_messageId_present = true;
         m_messageId = value;
       }
     }
@@ -1232,7 +1232,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_timestamp;
       }
       set {
-        timestamp_present = true;
+        m_timestamp_present = true;
         m_timestamp = value;
       }
     }
@@ -1241,7 +1241,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_type;
       }
       set {
-        type_present = true;
+        m_type_present = true;
         m_type = value;
       }
     }
@@ -1250,7 +1250,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_userId;
       }
       set {
-        userId_present = true;
+        m_userId_present = true;
         m_userId = value;
       }
     }
@@ -1259,7 +1259,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_appId;
       }
       set {
-        appId_present = true;
+        m_appId_present = true;
         m_appId = value;
       }
     }
@@ -1268,110 +1268,110 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_clusterId;
       }
       set {
-        clusterId_present = true;
+        m_clusterId_present = true;
         m_clusterId = value;
       }
     }
 
-    public override void ClearContentType() { contentType_present = false; }
-    public override void ClearContentEncoding() { contentEncoding_present = false; }
-    public override void ClearHeaders() { headers_present = false; }
-    public override void ClearDeliveryMode() { deliveryMode_present = false; }
-    public override void ClearPriority() { priority_present = false; }
-    public override void ClearCorrelationId() { correlationId_present = false; }
-    public override void ClearReplyTo() { replyTo_present = false; }
-    public override void ClearExpiration() { expiration_present = false; }
-    public override void ClearMessageId() { messageId_present = false; }
-    public override void ClearTimestamp() { timestamp_present = false; }
-    public override void ClearType() { type_present = false; }
-    public override void ClearUserId() { userId_present = false; }
-    public override void ClearAppId() { appId_present = false; }
-    public override void ClearClusterId() { clusterId_present = false; }
+    public override void ClearContentType() { m_contentType_present = false; }
+    public override void ClearContentEncoding() { m_contentEncoding_present = false; }
+    public override void ClearHeaders() { m_headers_present = false; }
+    public override void ClearDeliveryMode() { m_deliveryMode_present = false; }
+    public override void ClearPriority() { m_priority_present = false; }
+    public override void ClearCorrelationId() { m_correlationId_present = false; }
+    public override void ClearReplyTo() { m_replyTo_present = false; }
+    public override void ClearExpiration() { m_expiration_present = false; }
+    public override void ClearMessageId() { m_messageId_present = false; }
+    public override void ClearTimestamp() { m_timestamp_present = false; }
+    public override void ClearType() { m_type_present = false; }
+    public override void ClearUserId() { m_userId_present = false; }
+    public override void ClearAppId() { m_appId_present = false; }
+    public override void ClearClusterId() { m_clusterId_present = false; }
 
     public BasicProperties() {}
     public override int ProtocolClassId { get { return 60; } }
     public override string ProtocolClassName { get { return "basic"; } }
 
     public override void ReadPropertiesFrom(RabbitMQ.Client.Impl.ContentHeaderPropertyReader reader) {
-      contentType_present = reader.ReadPresence();
-      contentEncoding_present = reader.ReadPresence();
-      headers_present = reader.ReadPresence();
-      deliveryMode_present = reader.ReadPresence();
-      priority_present = reader.ReadPresence();
-      correlationId_present = reader.ReadPresence();
-      replyTo_present = reader.ReadPresence();
-      expiration_present = reader.ReadPresence();
-      messageId_present = reader.ReadPresence();
-      timestamp_present = reader.ReadPresence();
-      type_present = reader.ReadPresence();
-      userId_present = reader.ReadPresence();
-      appId_present = reader.ReadPresence();
-      clusterId_present = reader.ReadPresence();
+      m_contentType_present = reader.ReadPresence();
+      m_contentEncoding_present = reader.ReadPresence();
+      m_headers_present = reader.ReadPresence();
+      m_deliveryMode_present = reader.ReadPresence();
+      m_priority_present = reader.ReadPresence();
+      m_correlationId_present = reader.ReadPresence();
+      m_replyTo_present = reader.ReadPresence();
+      m_expiration_present = reader.ReadPresence();
+      m_messageId_present = reader.ReadPresence();
+      m_timestamp_present = reader.ReadPresence();
+      m_type_present = reader.ReadPresence();
+      m_userId_present = reader.ReadPresence();
+      m_appId_present = reader.ReadPresence();
+      m_clusterId_present = reader.ReadPresence();
       reader.FinishPresence();
-      if (contentType_present) { m_contentType = reader.ReadShortstr(); }
-      if (contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
-      if (headers_present) { m_headers = reader.ReadTable(); }
-      if (deliveryMode_present) { m_deliveryMode = reader.ReadOctet(); }
-      if (priority_present) { m_priority = reader.ReadOctet(); }
-      if (correlationId_present) { m_correlationId = reader.ReadShortstr(); }
-      if (replyTo_present) { m_replyTo = reader.ReadShortstr(); }
-      if (expiration_present) { m_expiration = reader.ReadShortstr(); }
-      if (messageId_present) { m_messageId = reader.ReadShortstr(); }
-      if (timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
-      if (type_present) { m_type = reader.ReadShortstr(); }
-      if (userId_present) { m_userId = reader.ReadShortstr(); }
-      if (appId_present) { m_appId = reader.ReadShortstr(); }
-      if (clusterId_present) { m_clusterId = reader.ReadShortstr(); }
+      if (m_contentType_present) { m_contentType = reader.ReadShortstr(); }
+      if (m_contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
+      if (m_headers_present) { m_headers = reader.ReadTable(); }
+      if (m_deliveryMode_present) { m_deliveryMode = reader.ReadOctet(); }
+      if (m_priority_present) { m_priority = reader.ReadOctet(); }
+      if (m_correlationId_present) { m_correlationId = reader.ReadShortstr(); }
+      if (m_replyTo_present) { m_replyTo = reader.ReadShortstr(); }
+      if (m_expiration_present) { m_expiration = reader.ReadShortstr(); }
+      if (m_messageId_present) { m_messageId = reader.ReadShortstr(); }
+      if (m_timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
+      if (m_type_present) { m_type = reader.ReadShortstr(); }
+      if (m_userId_present) { m_userId = reader.ReadShortstr(); }
+      if (m_appId_present) { m_appId = reader.ReadShortstr(); }
+      if (m_clusterId_present) { m_clusterId = reader.ReadShortstr(); }
     }
 
     public override void WritePropertiesTo(RabbitMQ.Client.Impl.ContentHeaderPropertyWriter writer) {
-      writer.WritePresence(contentType_present);
-      writer.WritePresence(contentEncoding_present);
-      writer.WritePresence(headers_present);
-      writer.WritePresence(deliveryMode_present);
-      writer.WritePresence(priority_present);
-      writer.WritePresence(correlationId_present);
-      writer.WritePresence(replyTo_present);
-      writer.WritePresence(expiration_present);
-      writer.WritePresence(messageId_present);
-      writer.WritePresence(timestamp_present);
-      writer.WritePresence(type_present);
-      writer.WritePresence(userId_present);
-      writer.WritePresence(appId_present);
-      writer.WritePresence(clusterId_present);
+      writer.WritePresence(m_contentType_present);
+      writer.WritePresence(m_contentEncoding_present);
+      writer.WritePresence(m_headers_present);
+      writer.WritePresence(m_deliveryMode_present);
+      writer.WritePresence(m_priority_present);
+      writer.WritePresence(m_correlationId_present);
+      writer.WritePresence(m_replyTo_present);
+      writer.WritePresence(m_expiration_present);
+      writer.WritePresence(m_messageId_present);
+      writer.WritePresence(m_timestamp_present);
+      writer.WritePresence(m_type_present);
+      writer.WritePresence(m_userId_present);
+      writer.WritePresence(m_appId_present);
+      writer.WritePresence(m_clusterId_present);
       writer.FinishPresence();
-      if (contentType_present) { writer.WriteShortstr(m_contentType); }
-      if (contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
-      if (headers_present) { writer.WriteTable(m_headers); }
-      if (deliveryMode_present) { writer.WriteOctet(m_deliveryMode); }
-      if (priority_present) { writer.WriteOctet(m_priority); }
-      if (correlationId_present) { writer.WriteShortstr(m_correlationId); }
-      if (replyTo_present) { writer.WriteShortstr(m_replyTo); }
-      if (expiration_present) { writer.WriteShortstr(m_expiration); }
-      if (messageId_present) { writer.WriteShortstr(m_messageId); }
-      if (timestamp_present) { writer.WriteTimestamp(m_timestamp); }
-      if (type_present) { writer.WriteShortstr(m_type); }
-      if (userId_present) { writer.WriteShortstr(m_userId); }
-      if (appId_present) { writer.WriteShortstr(m_appId); }
-      if (clusterId_present) { writer.WriteShortstr(m_clusterId); }
+      if (m_contentType_present) { writer.WriteShortstr(m_contentType); }
+      if (m_contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
+      if (m_headers_present) { writer.WriteTable(m_headers); }
+      if (m_deliveryMode_present) { writer.WriteOctet(m_deliveryMode); }
+      if (m_priority_present) { writer.WriteOctet(m_priority); }
+      if (m_correlationId_present) { writer.WriteShortstr(m_correlationId); }
+      if (m_replyTo_present) { writer.WriteShortstr(m_replyTo); }
+      if (m_expiration_present) { writer.WriteShortstr(m_expiration); }
+      if (m_messageId_present) { writer.WriteShortstr(m_messageId); }
+      if (m_timestamp_present) { writer.WriteTimestamp(m_timestamp); }
+      if (m_type_present) { writer.WriteShortstr(m_type); }
+      if (m_userId_present) { writer.WriteShortstr(m_userId); }
+      if (m_appId_present) { writer.WriteShortstr(m_appId); }
+      if (m_clusterId_present) { writer.WriteShortstr(m_clusterId); }
     }
 
     public override void AppendPropertyDebugStringTo(System.Text.StringBuilder sb) {
       sb.Append("(");
-      sb.Append("content type="); sb.Append(contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
-      sb.Append("content encoding="); sb.Append(contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
-      sb.Append("headers="); sb.Append(headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
-      sb.Append("delivery mode="); sb.Append(deliveryMode_present ? m_deliveryMode.ToString() : "_"); sb.Append(", ");
-      sb.Append("priority="); sb.Append(priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
-      sb.Append("correlation id="); sb.Append(correlationId_present ? (m_correlationId == null ? "(null)" : m_correlationId.ToString()) : "_"); sb.Append(", ");
-      sb.Append("reply to="); sb.Append(replyTo_present ? (m_replyTo == null ? "(null)" : m_replyTo.ToString()) : "_"); sb.Append(", ");
-      sb.Append("expiration="); sb.Append(expiration_present ? (m_expiration == null ? "(null)" : m_expiration.ToString()) : "_"); sb.Append(", ");
-      sb.Append("message id="); sb.Append(messageId_present ? (m_messageId == null ? "(null)" : m_messageId.ToString()) : "_"); sb.Append(", ");
-      sb.Append("timestamp="); sb.Append(timestamp_present ? m_timestamp.ToString() : "_"); sb.Append(", ");
-      sb.Append("type="); sb.Append(type_present ? (m_type == null ? "(null)" : m_type.ToString()) : "_"); sb.Append(", ");
-      sb.Append("user id="); sb.Append(userId_present ? (m_userId == null ? "(null)" : m_userId.ToString()) : "_"); sb.Append(", ");
-      sb.Append("app id="); sb.Append(appId_present ? (m_appId == null ? "(null)" : m_appId.ToString()) : "_"); sb.Append(", ");
-      sb.Append("cluster id="); sb.Append(clusterId_present ? (m_clusterId == null ? "(null)" : m_clusterId.ToString()) : "_");
+      sb.Append("content type="); sb.Append(m_contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
+      sb.Append("content encoding="); sb.Append(m_contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
+      sb.Append("headers="); sb.Append(m_headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
+      sb.Append("delivery mode="); sb.Append(m_deliveryMode_present ? m_deliveryMode.ToString() : "_"); sb.Append(", ");
+      sb.Append("priority="); sb.Append(m_priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
+      sb.Append("correlation id="); sb.Append(m_correlationId_present ? (m_correlationId == null ? "(null)" : m_correlationId.ToString()) : "_"); sb.Append(", ");
+      sb.Append("reply to="); sb.Append(m_replyTo_present ? (m_replyTo == null ? "(null)" : m_replyTo.ToString()) : "_"); sb.Append(", ");
+      sb.Append("expiration="); sb.Append(m_expiration_present ? (m_expiration == null ? "(null)" : m_expiration.ToString()) : "_"); sb.Append(", ");
+      sb.Append("message id="); sb.Append(m_messageId_present ? (m_messageId == null ? "(null)" : m_messageId.ToString()) : "_"); sb.Append(", ");
+      sb.Append("timestamp="); sb.Append(m_timestamp_present ? m_timestamp.ToString() : "_"); sb.Append(", ");
+      sb.Append("type="); sb.Append(m_type_present ? (m_type == null ? "(null)" : m_type.ToString()) : "_"); sb.Append(", ");
+      sb.Append("user id="); sb.Append(m_userId_present ? (m_userId == null ? "(null)" : m_userId.ToString()) : "_"); sb.Append(", ");
+      sb.Append("app id="); sb.Append(m_appId_present ? (m_appId == null ? "(null)" : m_appId.ToString()) : "_"); sb.Append(", ");
+      sb.Append("cluster id="); sb.Append(m_clusterId_present ? (m_clusterId == null ? "(null)" : m_clusterId.ToString()) : "_");
       sb.Append(")");
     }
   }
@@ -1387,22 +1387,22 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
     private AmqpTimestamp m_timestamp;
     private string m_clusterId;
 
-    private bool contentType_present = false;
-    private bool contentEncoding_present = false;
-    private bool headers_present = false;
-    private bool priority_present = false;
-    private bool replyTo_present = false;
-    private bool messageId_present = false;
-    private bool filename_present = false;
-    private bool timestamp_present = false;
-    private bool clusterId_present = false;
+    private bool m_contentType_present = false;
+    private bool m_contentEncoding_present = false;
+    private bool m_headers_present = false;
+    private bool m_priority_present = false;
+    private bool m_replyTo_present = false;
+    private bool m_messageId_present = false;
+    private bool m_filename_present = false;
+    private bool m_timestamp_present = false;
+    private bool m_clusterId_present = false;
 
     public override string ContentType {
       get {
         return m_contentType;
       }
       set {
-        contentType_present = true;
+        m_contentType_present = true;
         m_contentType = value;
       }
     }
@@ -1411,7 +1411,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_contentEncoding;
       }
       set {
-        contentEncoding_present = true;
+        m_contentEncoding_present = true;
         m_contentEncoding = value;
       }
     }
@@ -1420,7 +1420,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_headers;
       }
       set {
-        headers_present = true;
+        m_headers_present = true;
         m_headers = value;
       }
     }
@@ -1429,7 +1429,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_priority;
       }
       set {
-        priority_present = true;
+        m_priority_present = true;
         m_priority = value;
       }
     }
@@ -1438,7 +1438,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_replyTo;
       }
       set {
-        replyTo_present = true;
+        m_replyTo_present = true;
         m_replyTo = value;
       }
     }
@@ -1447,7 +1447,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_messageId;
       }
       set {
-        messageId_present = true;
+        m_messageId_present = true;
         m_messageId = value;
       }
     }
@@ -1456,7 +1456,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_filename;
       }
       set {
-        filename_present = true;
+        m_filename_present = true;
         m_filename = value;
       }
     }
@@ -1465,7 +1465,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_timestamp;
       }
       set {
-        timestamp_present = true;
+        m_timestamp_present = true;
         m_timestamp = value;
       }
     }
@@ -1474,80 +1474,80 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_clusterId;
       }
       set {
-        clusterId_present = true;
+        m_clusterId_present = true;
         m_clusterId = value;
       }
     }
 
-    public override void ClearContentType() { contentType_present = false; }
-    public override void ClearContentEncoding() { contentEncoding_present = false; }
-    public override void ClearHeaders() { headers_present = false; }
-    public override void ClearPriority() { priority_present = false; }
-    public override void ClearReplyTo() { replyTo_present = false; }
-    public override void ClearMessageId() { messageId_present = false; }
-    public override void ClearFilename() { filename_present = false; }
-    public override void ClearTimestamp() { timestamp_present = false; }
-    public override void ClearClusterId() { clusterId_present = false; }
+    public override void ClearContentType() { m_contentType_present = false; }
+    public override void ClearContentEncoding() { m_contentEncoding_present = false; }
+    public override void ClearHeaders() { m_headers_present = false; }
+    public override void ClearPriority() { m_priority_present = false; }
+    public override void ClearReplyTo() { m_replyTo_present = false; }
+    public override void ClearMessageId() { m_messageId_present = false; }
+    public override void ClearFilename() { m_filename_present = false; }
+    public override void ClearTimestamp() { m_timestamp_present = false; }
+    public override void ClearClusterId() { m_clusterId_present = false; }
 
     public FileProperties() {}
     public override int ProtocolClassId { get { return 70; } }
     public override string ProtocolClassName { get { return "file"; } }
 
     public override void ReadPropertiesFrom(RabbitMQ.Client.Impl.ContentHeaderPropertyReader reader) {
-      contentType_present = reader.ReadPresence();
-      contentEncoding_present = reader.ReadPresence();
-      headers_present = reader.ReadPresence();
-      priority_present = reader.ReadPresence();
-      replyTo_present = reader.ReadPresence();
-      messageId_present = reader.ReadPresence();
-      filename_present = reader.ReadPresence();
-      timestamp_present = reader.ReadPresence();
-      clusterId_present = reader.ReadPresence();
+      m_contentType_present = reader.ReadPresence();
+      m_contentEncoding_present = reader.ReadPresence();
+      m_headers_present = reader.ReadPresence();
+      m_priority_present = reader.ReadPresence();
+      m_replyTo_present = reader.ReadPresence();
+      m_messageId_present = reader.ReadPresence();
+      m_filename_present = reader.ReadPresence();
+      m_timestamp_present = reader.ReadPresence();
+      m_clusterId_present = reader.ReadPresence();
       reader.FinishPresence();
-      if (contentType_present) { m_contentType = reader.ReadShortstr(); }
-      if (contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
-      if (headers_present) { m_headers = reader.ReadTable(); }
-      if (priority_present) { m_priority = reader.ReadOctet(); }
-      if (replyTo_present) { m_replyTo = reader.ReadShortstr(); }
-      if (messageId_present) { m_messageId = reader.ReadShortstr(); }
-      if (filename_present) { m_filename = reader.ReadShortstr(); }
-      if (timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
-      if (clusterId_present) { m_clusterId = reader.ReadShortstr(); }
+      if (m_contentType_present) { m_contentType = reader.ReadShortstr(); }
+      if (m_contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
+      if (m_headers_present) { m_headers = reader.ReadTable(); }
+      if (m_priority_present) { m_priority = reader.ReadOctet(); }
+      if (m_replyTo_present) { m_replyTo = reader.ReadShortstr(); }
+      if (m_messageId_present) { m_messageId = reader.ReadShortstr(); }
+      if (m_filename_present) { m_filename = reader.ReadShortstr(); }
+      if (m_timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
+      if (m_clusterId_present) { m_clusterId = reader.ReadShortstr(); }
     }
 
     public override void WritePropertiesTo(RabbitMQ.Client.Impl.ContentHeaderPropertyWriter writer) {
-      writer.WritePresence(contentType_present);
-      writer.WritePresence(contentEncoding_present);
-      writer.WritePresence(headers_present);
-      writer.WritePresence(priority_present);
-      writer.WritePresence(replyTo_present);
-      writer.WritePresence(messageId_present);
-      writer.WritePresence(filename_present);
-      writer.WritePresence(timestamp_present);
-      writer.WritePresence(clusterId_present);
+      writer.WritePresence(m_contentType_present);
+      writer.WritePresence(m_contentEncoding_present);
+      writer.WritePresence(m_headers_present);
+      writer.WritePresence(m_priority_present);
+      writer.WritePresence(m_replyTo_present);
+      writer.WritePresence(m_messageId_present);
+      writer.WritePresence(m_filename_present);
+      writer.WritePresence(m_timestamp_present);
+      writer.WritePresence(m_clusterId_present);
       writer.FinishPresence();
-      if (contentType_present) { writer.WriteShortstr(m_contentType); }
-      if (contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
-      if (headers_present) { writer.WriteTable(m_headers); }
-      if (priority_present) { writer.WriteOctet(m_priority); }
-      if (replyTo_present) { writer.WriteShortstr(m_replyTo); }
-      if (messageId_present) { writer.WriteShortstr(m_messageId); }
-      if (filename_present) { writer.WriteShortstr(m_filename); }
-      if (timestamp_present) { writer.WriteTimestamp(m_timestamp); }
-      if (clusterId_present) { writer.WriteShortstr(m_clusterId); }
+      if (m_contentType_present) { writer.WriteShortstr(m_contentType); }
+      if (m_contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
+      if (m_headers_present) { writer.WriteTable(m_headers); }
+      if (m_priority_present) { writer.WriteOctet(m_priority); }
+      if (m_replyTo_present) { writer.WriteShortstr(m_replyTo); }
+      if (m_messageId_present) { writer.WriteShortstr(m_messageId); }
+      if (m_filename_present) { writer.WriteShortstr(m_filename); }
+      if (m_timestamp_present) { writer.WriteTimestamp(m_timestamp); }
+      if (m_clusterId_present) { writer.WriteShortstr(m_clusterId); }
     }
 
     public override void AppendPropertyDebugStringTo(System.Text.StringBuilder sb) {
       sb.Append("(");
-      sb.Append("content type="); sb.Append(contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
-      sb.Append("content encoding="); sb.Append(contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
-      sb.Append("headers="); sb.Append(headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
-      sb.Append("priority="); sb.Append(priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
-      sb.Append("reply to="); sb.Append(replyTo_present ? (m_replyTo == null ? "(null)" : m_replyTo.ToString()) : "_"); sb.Append(", ");
-      sb.Append("message id="); sb.Append(messageId_present ? (m_messageId == null ? "(null)" : m_messageId.ToString()) : "_"); sb.Append(", ");
-      sb.Append("filename="); sb.Append(filename_present ? (m_filename == null ? "(null)" : m_filename.ToString()) : "_"); sb.Append(", ");
-      sb.Append("timestamp="); sb.Append(timestamp_present ? m_timestamp.ToString() : "_"); sb.Append(", ");
-      sb.Append("cluster id="); sb.Append(clusterId_present ? (m_clusterId == null ? "(null)" : m_clusterId.ToString()) : "_");
+      sb.Append("content type="); sb.Append(m_contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
+      sb.Append("content encoding="); sb.Append(m_contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
+      sb.Append("headers="); sb.Append(m_headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
+      sb.Append("priority="); sb.Append(m_priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
+      sb.Append("reply to="); sb.Append(m_replyTo_present ? (m_replyTo == null ? "(null)" : m_replyTo.ToString()) : "_"); sb.Append(", ");
+      sb.Append("message id="); sb.Append(m_messageId_present ? (m_messageId == null ? "(null)" : m_messageId.ToString()) : "_"); sb.Append(", ");
+      sb.Append("filename="); sb.Append(m_filename_present ? (m_filename == null ? "(null)" : m_filename.ToString()) : "_"); sb.Append(", ");
+      sb.Append("timestamp="); sb.Append(m_timestamp_present ? m_timestamp.ToString() : "_"); sb.Append(", ");
+      sb.Append("cluster id="); sb.Append(m_clusterId_present ? (m_clusterId == null ? "(null)" : m_clusterId.ToString()) : "_");
       sb.Append(")");
     }
   }
@@ -1559,18 +1559,18 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
     private byte m_priority;
     private AmqpTimestamp m_timestamp;
 
-    private bool contentType_present = false;
-    private bool contentEncoding_present = false;
-    private bool headers_present = false;
-    private bool priority_present = false;
-    private bool timestamp_present = false;
+    private bool m_contentType_present = false;
+    private bool m_contentEncoding_present = false;
+    private bool m_headers_present = false;
+    private bool m_priority_present = false;
+    private bool m_timestamp_present = false;
 
     public override string ContentType {
       get {
         return m_contentType;
       }
       set {
-        contentType_present = true;
+        m_contentType_present = true;
         m_contentType = value;
       }
     }
@@ -1579,7 +1579,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_contentEncoding;
       }
       set {
-        contentEncoding_present = true;
+        m_contentEncoding_present = true;
         m_contentEncoding = value;
       }
     }
@@ -1588,7 +1588,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_headers;
       }
       set {
-        headers_present = true;
+        m_headers_present = true;
         m_headers = value;
       }
     }
@@ -1597,7 +1597,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_priority;
       }
       set {
-        priority_present = true;
+        m_priority_present = true;
         m_priority = value;
       }
     }
@@ -1606,56 +1606,56 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_timestamp;
       }
       set {
-        timestamp_present = true;
+        m_timestamp_present = true;
         m_timestamp = value;
       }
     }
 
-    public override void ClearContentType() { contentType_present = false; }
-    public override void ClearContentEncoding() { contentEncoding_present = false; }
-    public override void ClearHeaders() { headers_present = false; }
-    public override void ClearPriority() { priority_present = false; }
-    public override void ClearTimestamp() { timestamp_present = false; }
+    public override void ClearContentType() { m_contentType_present = false; }
+    public override void ClearContentEncoding() { m_contentEncoding_present = false; }
+    public override void ClearHeaders() { m_headers_present = false; }
+    public override void ClearPriority() { m_priority_present = false; }
+    public override void ClearTimestamp() { m_timestamp_present = false; }
 
     public StreamProperties() {}
     public override int ProtocolClassId { get { return 80; } }
     public override string ProtocolClassName { get { return "stream"; } }
 
     public override void ReadPropertiesFrom(RabbitMQ.Client.Impl.ContentHeaderPropertyReader reader) {
-      contentType_present = reader.ReadPresence();
-      contentEncoding_present = reader.ReadPresence();
-      headers_present = reader.ReadPresence();
-      priority_present = reader.ReadPresence();
-      timestamp_present = reader.ReadPresence();
+      m_contentType_present = reader.ReadPresence();
+      m_contentEncoding_present = reader.ReadPresence();
+      m_headers_present = reader.ReadPresence();
+      m_priority_present = reader.ReadPresence();
+      m_timestamp_present = reader.ReadPresence();
       reader.FinishPresence();
-      if (contentType_present) { m_contentType = reader.ReadShortstr(); }
-      if (contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
-      if (headers_present) { m_headers = reader.ReadTable(); }
-      if (priority_present) { m_priority = reader.ReadOctet(); }
-      if (timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
+      if (m_contentType_present) { m_contentType = reader.ReadShortstr(); }
+      if (m_contentEncoding_present) { m_contentEncoding = reader.ReadShortstr(); }
+      if (m_headers_present) { m_headers = reader.ReadTable(); }
+      if (m_priority_present) { m_priority = reader.ReadOctet(); }
+      if (m_timestamp_present) { m_timestamp = reader.ReadTimestamp(); }
     }
 
     public override void WritePropertiesTo(RabbitMQ.Client.Impl.ContentHeaderPropertyWriter writer) {
-      writer.WritePresence(contentType_present);
-      writer.WritePresence(contentEncoding_present);
-      writer.WritePresence(headers_present);
-      writer.WritePresence(priority_present);
-      writer.WritePresence(timestamp_present);
+      writer.WritePresence(m_contentType_present);
+      writer.WritePresence(m_contentEncoding_present);
+      writer.WritePresence(m_headers_present);
+      writer.WritePresence(m_priority_present);
+      writer.WritePresence(m_timestamp_present);
       writer.FinishPresence();
-      if (contentType_present) { writer.WriteShortstr(m_contentType); }
-      if (contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
-      if (headers_present) { writer.WriteTable(m_headers); }
-      if (priority_present) { writer.WriteOctet(m_priority); }
-      if (timestamp_present) { writer.WriteTimestamp(m_timestamp); }
+      if (m_contentType_present) { writer.WriteShortstr(m_contentType); }
+      if (m_contentEncoding_present) { writer.WriteShortstr(m_contentEncoding); }
+      if (m_headers_present) { writer.WriteTable(m_headers); }
+      if (m_priority_present) { writer.WriteOctet(m_priority); }
+      if (m_timestamp_present) { writer.WriteTimestamp(m_timestamp); }
     }
 
     public override void AppendPropertyDebugStringTo(System.Text.StringBuilder sb) {
       sb.Append("(");
-      sb.Append("content type="); sb.Append(contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
-      sb.Append("content encoding="); sb.Append(contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
-      sb.Append("headers="); sb.Append(headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
-      sb.Append("priority="); sb.Append(priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
-      sb.Append("timestamp="); sb.Append(timestamp_present ? m_timestamp.ToString() : "_");
+      sb.Append("content type="); sb.Append(m_contentType_present ? (m_contentType == null ? "(null)" : m_contentType.ToString()) : "_"); sb.Append(", ");
+      sb.Append("content encoding="); sb.Append(m_contentEncoding_present ? (m_contentEncoding == null ? "(null)" : m_contentEncoding.ToString()) : "_"); sb.Append(", ");
+      sb.Append("headers="); sb.Append(m_headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
+      sb.Append("priority="); sb.Append(m_priority_present ? m_priority.ToString() : "_"); sb.Append(", ");
+      sb.Append("timestamp="); sb.Append(m_timestamp_present ? m_timestamp.ToString() : "_");
       sb.Append(")");
     }
   }
@@ -1667,18 +1667,18 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
     private byte m_durable;
     private byte m_broadcast;
 
-    private bool headers_present = false;
-    private bool proxyName_present = false;
-    private bool dataName_present = false;
-    private bool durable_present = false;
-    private bool broadcast_present = false;
+    private bool m_headers_present = false;
+    private bool m_proxyName_present = false;
+    private bool m_dataName_present = false;
+    private bool m_durable_present = false;
+    private bool m_broadcast_present = false;
 
     public System.Collections.IDictionary Headers {
       get {
         return m_headers;
       }
       set {
-        headers_present = true;
+        m_headers_present = true;
         m_headers = value;
       }
     }
@@ -1687,7 +1687,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_proxyName;
       }
       set {
-        proxyName_present = true;
+        m_proxyName_present = true;
         m_proxyName = value;
       }
     }
@@ -1696,7 +1696,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_dataName;
       }
       set {
-        dataName_present = true;
+        m_dataName_present = true;
         m_dataName = value;
       }
     }
@@ -1705,7 +1705,7 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_durable;
       }
       set {
-        durable_present = true;
+        m_durable_present = true;
         m_durable = value;
       }
     }
@@ -1714,56 +1714,56 @@ namespace RabbitMQ.Client.Framing.v0_8qpid {
         return m_broadcast;
       }
       set {
-        broadcast_present = true;
+        m_broadcast_present = true;
         m_broadcast = value;
       }
     }
 
-    public void ClearHeaders() { headers_present = false; }
-    public void ClearProxyName() { proxyName_present = false; }
-    public void ClearDataName() { dataName_present = false; }
-    public void ClearDurable() { durable_present = false; }
-    public void ClearBroadcast() { broadcast_present = false; }
+    public void ClearHeaders() { m_headers_present = false; }
+    public void ClearProxyName() { m_proxyName_present = false; }
+    public void ClearDataName() { m_dataName_present = false; }
+    public void ClearDurable() { m_durable_present = false; }
+    public void ClearBroadcast() { m_broadcast_present = false; }
 
     public TunnelProperties() {}
     public override int ProtocolClassId { get { return 110; } }
     public override string ProtocolClassName { get { return "tunnel"; } }
 
     public override void ReadPropertiesFrom(RabbitMQ.Client.Impl.ContentHeaderPropertyReader reader) {
-      headers_present = reader.ReadPresence();
-      proxyName_present = reader.ReadPresence();
-      dataName_present = reader.ReadPresence();
-      durable_present = reader.ReadPresence();
-      broadcast_present = reader.ReadPresence();
+      m_headers_present = reader.ReadPresence();
+      m_proxyName_present = reader.ReadPresence();
+      m_dataName_present = reader.ReadPresence();
+      m_durable_present = reader.ReadPresence();
+      m_broadcast_present = reader.ReadPresence();
       reader.FinishPresence();
-      if (headers_present) { m_headers = reader.ReadTable(); }
-      if (proxyName_present) { m_proxyName = reader.ReadShortstr(); }
-      if (dataName_present) { m_dataName = reader.ReadShortstr(); }
-      if (durable_present) { m_durable = reader.ReadOctet(); }
-      if (broadcast_present) { m_broadcast = reader.ReadOctet(); }
+      if (m_headers_present) { m_headers = reader.ReadTable(); }
+      if (m_proxyName_present) { m_proxyName = reader.ReadShortstr(); }
+      if (m_dataName_present) { m_dataName = reader.ReadShortstr(); }
+      if (m_durable_present) { m_durable = reader.ReadOctet(); }
+      if (m_broadcast_present) { m_broadcast = reader.ReadOctet(); }
     }
 
     public override void WritePropertiesTo(RabbitMQ.Client.Impl.ContentHeaderPropertyWriter writer) {
-      writer.WritePresence(headers_present);
-      writer.WritePresence(proxyName_present);
-      writer.WritePresence(dataName_present);
-      writer.WritePresence(durable_present);
-      writer.WritePresence(broadcast_present);
+      writer.WritePresence(m_headers_present);
+      writer.WritePresence(m_proxyName_present);
+      writer.WritePresence(m_dataName_present);
+      writer.WritePresence(m_durable_present);
+      writer.WritePresence(m_broadcast_present);
       writer.FinishPresence();
-      if (headers_present) { writer.WriteTable(m_headers); }
-      if (proxyName_present) { writer.WriteShortstr(m_proxyName); }
-      if (dataName_present) { writer.WriteShortstr(m_dataName); }
-      if (durable_present) { writer.WriteOctet(m_durable); }
-      if (broadcast_present) { writer.WriteOctet(m_broadcast); }
+      if (m_headers_present) { writer.WriteTable(m_headers); }
+      if (m_proxyName_present) { writer.WriteShortstr(m_proxyName); }
+      if (m_dataName_present) { writer.WriteShortstr(m_dataName); }
+      if (m_durable_present) { writer.WriteOctet(m_durable); }
+      if (m_broadcast_present) { writer.WriteOctet(m_broadcast); }
     }
 
     public override void AppendPropertyDebugStringTo(System.Text.StringBuilder sb) {
       sb.Append("(");
-      sb.Append("headers="); sb.Append(headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
-      sb.Append("proxy name="); sb.Append(proxyName_present ? (m_proxyName == null ? "(null)" : m_proxyName.ToString()) : "_"); sb.Append(", ");
-      sb.Append("data name="); sb.Append(dataName_present ? (m_dataName == null ? "(null)" : m_dataName.ToString()) : "_"); sb.Append(", ");
-      sb.Append("durable="); sb.Append(durable_present ? m_durable.ToString() : "_"); sb.Append(", ");
-      sb.Append("broadcast="); sb.Append(broadcast_present ? m_broadcast.ToString() : "_");
+      sb.Append("headers="); sb.Append(m_headers_present ? (m_headers == null ? "(null)" : m_headers.ToString()) : "_"); sb.Append(", ");
+      sb.Append("proxy name="); sb.Append(m_proxyName_present ? (m_proxyName == null ? "(null)" : m_proxyName.ToString()) : "_"); sb.Append(", ");
+      sb.Append("data name="); sb.Append(m_dataName_present ? (m_dataName == null ? "(null)" : m_dataName.ToString()) : "_"); sb.Append(", ");
+      sb.Append("durable="); sb.Append(m_durable_present ? m_durable.ToString() : "_"); sb.Append(", ");
+      sb.Append("broadcast="); sb.Append(m_broadcast_present ? m_broadcast.ToString() : "_");
       sb.Append(")");
     }
   }
@@ -5984,9 +5984,9 @@ namespace RabbitMQ.Client.Framing.Impl.v0_8qpid {
       ConnectionTune __rep = __repBase as ConnectionTune;
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
       RabbitMQ.Client.Impl.ConnectionTuneDetails __result = new RabbitMQ.Client.Impl.ConnectionTuneDetails();
-      __result.channelMax = __rep.m_channelMax;
-      __result.frameMax = __rep.m_frameMax;
-      __result.heartbeat = __rep.m_heartbeat;
+      __result.m_channelMax = __rep.m_channelMax;
+      __result.m_frameMax = __rep.m_frameMax;
+      __result.m_heartbeat = __rep.m_heartbeat;
       return __result;
     }
     public override void ConnectionTuneOk(

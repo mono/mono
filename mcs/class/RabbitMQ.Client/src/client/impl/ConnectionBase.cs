@@ -76,7 +76,7 @@ namespace RabbitMQ.Client.Impl
     public abstract class ConnectionBase : IConnection
     {
         ///<summary>Heartbeat frame for transmission. Reusable across connections.</summary>
-        public readonly Frame heartbeatFrame = new Frame(CommonFraming.Constants.FrameHeartbeat,
+        public readonly Frame m_heartbeatFrame = new Frame(CommonFraming.Constants.FrameHeartbeat,
                                                          0,
                                                          new byte[0]);
 
@@ -111,13 +111,13 @@ namespace RabbitMQ.Client.Impl
         public ManualResetEvent m_appContinuation = new ManualResetEvent(false);
         public AutoResetEvent m_heartbeatRead = new AutoResetEvent(false);
         public AutoResetEvent m_heartbeatWrite = new AutoResetEvent(false);
-        public volatile bool closed = false;
+        public volatile bool m_closed = false;
 
-        public Guid id = Guid.NewGuid();
+        public Guid m_id = Guid.NewGuid();
 
         public int m_missedHeartbeats = 0;
         
-        public IList shutdownReport = ArrayList.Synchronized(new ArrayList());
+        public IList m_shutdownReport = ArrayList.Synchronized(new ArrayList());
 
         public ConnectionBase(ConnectionParameters parameters,
                               bool insist,
@@ -334,7 +334,7 @@ namespace RabbitMQ.Client.Impl
         {
             get
             {
-                return shutdownReport;
+                return m_shutdownReport;
             }
         }
 
@@ -476,7 +476,7 @@ namespace RabbitMQ.Client.Impl
         {
             if (!SetCloseReason(reason))
             {
-                if (closed)
+                if (m_closed)
                     throw new AlreadyClosedException(m_closeReason);
                 // We are quiescing, but still allow for server-close
             }
@@ -520,11 +520,11 @@ namespace RabbitMQ.Client.Impl
         {
             try
             {
-                while (!closed)
+                while (!m_closed)
                 {
                     if (!m_heartbeatWrite.WaitOne(Heartbeat * 1000, false))
                     {
-                        WriteFrame(heartbeatFrame);
+                        WriteFrame(m_heartbeatFrame);
                     }
                 }
             } catch (Exception e) {
@@ -541,7 +541,7 @@ namespace RabbitMQ.Client.Impl
         
         public void HeartbeatReadLoop()
         {
-            while (!closed)
+            while (!m_closed)
             {
                 if (!m_heartbeatRead.WaitOne(Heartbeat * 1000, false))
                     m_missedHeartbeats++;
@@ -674,7 +674,7 @@ namespace RabbitMQ.Client.Impl
         public void FinishClose()
         {
             // Notify hearbeat loops that they can leave
-            closed = true;
+            m_closed = true;
             m_heartbeatRead.Set();
             m_heartbeatWrite.Set();
 
@@ -716,7 +716,7 @@ namespace RabbitMQ.Client.Impl
                 m_frameHandler.Timeout = ConnectionCloseTimeout;
                 DateTime startTimeout = DateTime.Now;
                 // Wait for response/socket closure or timeout
-                while (!closed)
+                while (!m_closed)
                 {
                     if ((DateTime.Now - startTimeout).TotalMilliseconds >= ConnectionCloseTimeout)
                     {
@@ -728,7 +728,7 @@ namespace RabbitMQ.Client.Impl
             }
             catch (ObjectDisposedException ode)
             {
-                if (!closed)
+                if (!m_closed)
                     LogCloseError("Connection didn't close cleanly", ode);
             }
             catch (EndOfStreamException eose)
@@ -751,7 +751,7 @@ namespace RabbitMQ.Client.Impl
         public void NotifyReceivedCloseOk()
         {
             TerminateMainloop();
-            closed = true;
+            m_closed = true;
         }
         
         ///<summary>
@@ -835,7 +835,7 @@ namespace RabbitMQ.Client.Impl
         
         public void LogCloseError(String error, Exception ex)
         {
-            shutdownReport.Add(new ShutdownReportEntry(error, ex));
+            m_shutdownReport.Add(new ShutdownReportEntry(error, ex));
         }
         
         public void PrettyPrintShutdownReport()
@@ -942,8 +942,8 @@ namespace RabbitMQ.Client.Impl
             ConnectionStartDetails connectionStart = (ConnectionStartDetails)
                 connectionStartCell.Value;
 
-            AmqpVersion serverVersion = new AmqpVersion(connectionStart.versionMajor,
-                                                        connectionStart.versionMinor);
+            AmqpVersion serverVersion = new AmqpVersion(connectionStart.m_versionMajor,
+                                                        connectionStart.m_versionMinor);
             if (!serverVersion.Equals(Protocol.Version))
             {
                 TerminateMainloop();
@@ -964,15 +964,15 @@ namespace RabbitMQ.Client.Impl
                                            "en_US");
 
             ushort channelMax = (ushort) NegotiatedMaxValue(m_parameters.RequestedChannelMax,
-                                                            connectionTune.channelMax);
+                                                            connectionTune.m_channelMax);
             ChannelMax = channelMax;
 
             uint frameMax = NegotiatedMaxValue(m_parameters.RequestedFrameMax,
-                                               connectionTune.frameMax);
+                                               connectionTune.m_frameMax);
             FrameMax = frameMax;
 
             ushort heartbeat = (ushort) NegotiatedMaxValue(m_parameters.RequestedHeartbeat,
-                                                           connectionTune.heartbeat);
+                                                           connectionTune.m_heartbeat);
             Heartbeat = heartbeat;
 
             m_model0.ConnectionTuneOk(channelMax,
@@ -987,7 +987,7 @@ namespace RabbitMQ.Client.Impl
 
         public override string ToString()
         {
-            return string.Format("Connection({0},{1})", id, Endpoint);
+            return string.Format("Connection({0},{1})", m_id, Endpoint);
         }
     }
 }

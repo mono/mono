@@ -60,19 +60,19 @@ using System.Xml;
 
 namespace RabbitMQ.Client.Apigen {
     public class AmqpClass: AmqpEntity {
-        public ArrayList Methods;
-        public ArrayList Fields;
+        public ArrayList m_Methods;
+        public ArrayList m_Fields;
 
         public AmqpClass(XmlNode n)
             : base(n)
         {
-            Methods = new ArrayList();
+            m_Methods = new ArrayList();
             foreach (XmlNode m in n.SelectNodes("method")) {
-                Methods.Add(new AmqpMethod(m));
+                m_Methods.Add(new AmqpMethod(m));
             }
-            Fields = new ArrayList();
+            m_Fields = new ArrayList();
             foreach (XmlNode f in n.SelectNodes("field")) {
-                Fields.Add(new AmqpField(f));
+                m_Fields.Add(new AmqpField(f));
             }
         }
 
@@ -84,7 +84,7 @@ namespace RabbitMQ.Client.Apigen {
 
         public bool NeedsProperties {
             get {
-                foreach (AmqpMethod m in Methods) {
+                foreach (AmqpMethod m in m_Methods) {
                     if (m.HasContent) return true;
                 }
                 return false;
@@ -92,7 +92,8 @@ namespace RabbitMQ.Client.Apigen {
         }
 
         public AmqpMethod MethodNamed(string name) {
-            foreach (AmqpMethod m in Methods) {
+            foreach (AmqpMethod m in m_Methods)
+            {
                 if (m.Name == name) {
                     return m;
                 }

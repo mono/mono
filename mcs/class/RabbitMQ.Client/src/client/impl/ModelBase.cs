@@ -420,11 +420,11 @@ namespace RabbitMQ.Client.Impl
                 ((ConnectionBase)m_session.Connection).Close(reason);
             }
             ConnectionStartDetails details = new ConnectionStartDetails();
-            details.versionMajor = versionMajor;
-            details.versionMinor = versionMinor;
-            details.serverProperties = serverProperties;
-            details.mechanisms = mechanisms;
-            details.locales = locales;
+            details.m_versionMajor = versionMajor;
+            details.m_versionMinor = versionMinor;
+            details.m_serverProperties = serverProperties;
+            details.m_mechanisms = mechanisms;
+            details.m_locales = locales;
             m_connectionStartCell.Value = details;
             m_connectionStartCell = null;
         }

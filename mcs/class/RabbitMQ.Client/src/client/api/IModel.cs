@@ -697,11 +697,11 @@ namespace RabbitMQ.Client.Impl
     public struct ConnectionTuneDetails
     {
         ///<summary>The peer's suggested channel-max parameter.</summary>
-        public ushort channelMax;
+        public ushort m_channelMax;
         ///<summary>The peer's suggested frame-max parameter.</summary>
-        public uint frameMax;
+        public uint m_frameMax;
         ///<summary>The peer's suggested heartbeat parameter.</summary>
-        public ushort heartbeat;
+        public ushort m_heartbeat;
     }
 }
 

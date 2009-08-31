@@ -107,8 +107,9 @@ namespace RabbitMQ.Client
         ///of this connection.</summary>
         ConnectionParameters Parameters { get; }
 
-        ///<summary>The maximum number of channels this connection
-        ///supports (0 if unlimited).</summary>
+        ///<summary>The maximum channel number this connection
+        ///supports (0 if unlimited). Usable channel numbers
+        ///range from 1 to this number, inclusive.</summary>
         ushort ChannelMax { get; }
 
         ///<summary>The maximum frame size this connection supports (0

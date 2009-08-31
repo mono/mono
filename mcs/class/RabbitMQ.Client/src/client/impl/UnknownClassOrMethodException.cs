@@ -89,7 +89,7 @@ namespace RabbitMQ.Client.Impl
 
         public override string ToString()
         {
-            if (this.m_methodId == 0)
+            if (m_methodId == 0)
             {
                 return base.ToString() + "<" + m_classId + ">";
             }

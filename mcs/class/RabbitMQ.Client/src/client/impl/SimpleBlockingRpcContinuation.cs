@@ -63,22 +63,22 @@ namespace RabbitMQ.Client.Impl
 {
     public class SimpleBlockingRpcContinuation : IRpcContinuation
     {
-        public readonly BlockingCell cell = new BlockingCell();
+        public readonly BlockingCell m_cell = new BlockingCell();
         public SimpleBlockingRpcContinuation() { }
 
         public virtual void HandleCommand(Command cmd)
         {
-            cell.Value = Either.Left(cmd);
+            m_cell.Value = Either.Left(cmd);
         }
 
         public virtual void HandleModelShutdown(ShutdownEventArgs reason)
         {
-            cell.Value = Either.Right(reason);
+            m_cell.Value = Either.Right(reason);
         }
 
         public virtual Command GetReply()
         {
-            Either result = (Either)cell.Value;
+            Either result = (Either)m_cell.Value;
             switch (result.Alternative)
             {
                 case EitherAlternative.Left:

@@ -70,7 +70,7 @@ using System.Net;
 
 namespace RabbitMQ.Client.Impl {
     public class Command {
-        private static readonly byte[] emptyByteArray = new byte[0];
+        private static readonly byte[] m_emptyByteArray = new byte[0];
 
         // EmptyContentBodyFrameSize, 8 = 1 + 2 + 4 + 1
         // - 1 byte of frame type
@@ -84,7 +84,7 @@ namespace RabbitMQ.Client.Impl {
         }
 
         public static void CheckEmptyContentBodyFrameSize() {
-            Frame f = new Frame(CommonFraming.Constants.FrameBody, 0, emptyByteArray);
+            Frame f = new Frame(CommonFraming.Constants.FrameBody, 0, m_emptyByteArray);
             MemoryStream stream = new MemoryStream();
             NetworkBinaryWriter writer = new NetworkBinaryWriter(stream);
             f.WriteTo(writer);
@@ -123,7 +123,7 @@ namespace RabbitMQ.Client.Impl {
 
         public byte[] ConsolidateBody() {
             if (m_bodyN == null) {
-                return (m_body0 == null) ? emptyByteArray : m_body0;
+                return (m_body0 == null) ? m_emptyByteArray : m_body0;
             } else {
                 int totalSize = m_body0.Length;
                 foreach (byte[] fragment in m_bodyN) {

@@ -63,7 +63,7 @@ namespace RabbitMQ.Client.Exceptions
     /// use. </summary>
     public class ChannelAllocationException : Exception
     {
-        private readonly int channel;
+        private readonly int m_channel;
 
         /// <summary>
         /// Indicates that there are no more free channels.
@@ -71,7 +71,7 @@ namespace RabbitMQ.Client.Exceptions
         public ChannelAllocationException()
             : base("The connection cannot support any more channels. Consider creating a new connection") 
         {
-            this.channel = -1;
+            m_channel = -1;
         }
 
         /// <summary>
@@ -81,13 +81,13 @@ namespace RabbitMQ.Client.Exceptions
         public ChannelAllocationException(int channel)
             : base(string.Format("The Requested Channel ({0}) is already in use.", channel))
         {
-            this.channel = channel;
+            m_channel = channel;
         }
 
         ///<summary>Retrieves the channel number concerned; will
         ///return -1 in the case where "no more free channels" is
         ///being signalled, or a non-negative integer when "channel is
         ///in use" is being signalled.</summary>
-        public int Channel { get { return channel; } }
+        public int Channel { get { return m_channel; } }
     }
 }

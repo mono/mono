@@ -59,22 +59,22 @@ using System.Xml;
 
 namespace RabbitMQ.Client.Apigen {
     public class AmqpEntity {
-        public XmlNode node;
+        public XmlNode m_node;
 
         public AmqpEntity(XmlNode n) {
-            this.node = n;
+            m_node = n;
         }
 
         public string GetString(string path) {
-            return Apigen.GetString(node, path);
+            return Apigen.GetString(m_node, path);
         }
 
         public string GetString(string path, string d) {
-            return Apigen.GetString(node, path, d);
+            return Apigen.GetString(m_node, path, d);
         }
 
         public int GetInt(string path) {
-            return Apigen.GetInt(node, path);
+            return Apigen.GetInt(m_node, path);
         }
 
         public string Name {
