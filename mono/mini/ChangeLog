@@ -1,3 +1,7 @@
+2009-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (get_throw_exception): Align the stack on osx.
+
 2009-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp mini-llvm.c: Update to latest llvm api.
