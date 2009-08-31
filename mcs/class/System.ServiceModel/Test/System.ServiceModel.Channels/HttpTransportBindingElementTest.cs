@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -203,6 +204,36 @@ namespace MonoTests.System.ServiceModel.Channels
 		{
 			new BasicHttpBinding ().BuildChannelListener<IReplyChannel> (new BindingParameterCollection ());
 		}
+
+		// when AddressingVersion is None (in MessageVersion), then
+		// EndpointAddress.Uri and via URIs must match.
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void EndpointAddressAndViaMustMatchOnAddressingNone ()
+		{
+			try {
+				var ch = ChannelFactory<IFoo>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ("http://localhost:37564/"), new Uri ("http://localhost:8080/HogeService"));
+				((ICommunicationObject) ch).Close ();
+			} catch (TargetInvocationException) {
+				// we throw this exception so far. Since it is
+				// very internal difference (channel is created
+				// inside ClientRuntimeChannel.ctor() while .NET
+				// does it in ChannelFactory<T>.CreateChannel(),
+				// there is no point of treating it as failure).
+				throw new ArgumentException ();
+			}
+		}
+
+		#region contracts
+
+		[ServiceContract]
+		interface IFoo
+		{
+			[OperationContract]
+			string DoWork (string s1, string s2);
+		}
+
+		#endregion
 
 		#region connection test
 

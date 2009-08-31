@@ -1,3 +1,7 @@
+2009-08-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpChannelFactory.cs : reject URI mismatch cases when required.
+
 2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerDuplexChannel.cs : When received Connect() from neighbor,

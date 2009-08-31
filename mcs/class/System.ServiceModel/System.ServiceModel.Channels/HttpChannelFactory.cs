@@ -68,6 +68,10 @@ namespace System.ServiceModel.Channels
 			if (source.Scheme != address.Uri.Scheme)
 				throw new ArgumentException (String.Format ("Argument EndpointAddress has unsupported URI scheme: {0}", address.Uri.Scheme));
 
+			if (MessageEncoder.MessageVersion.Addressing.Equals (AddressingVersion.None) &&
+			    !address.Uri.Equals (via))
+				throw new ArgumentException (String.Format ("The endpoint address '{0}' and via uri '{1}' must match when the corresponding binding has addressing version in the message version value as None.", address.Uri, via));
+
 			Type t = typeof (TChannel);
 			if (t == typeof (IRequestChannel))
 				return (TChannel) (object) new HttpRequestChannel ((HttpChannelFactory<IRequestChannel>) (object) this, address, via);
