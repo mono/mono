@@ -1,3 +1,7 @@
+2009-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (get_throw_exception): Align the stack on osx.
+
 2009-07-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): When calling a gshared method,
