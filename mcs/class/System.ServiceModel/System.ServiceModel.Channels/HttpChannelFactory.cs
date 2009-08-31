@@ -36,15 +36,14 @@ using System.Text;
 
 namespace System.ServiceModel.Channels
 {
-	internal class HttpChannelFactory<TChannel> : ChannelFactoryBase<TChannel>
+	internal class HttpChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>
 	{
 		// not sure if they are required.
-		HttpTransportBindingElement source;
 		MessageEncoder encoder;
 
 		public HttpChannelFactory (HttpTransportBindingElement source, BindingContext ctx)
+			: base (source, ctx)
 		{
-			this.source = source;
 			foreach (BindingElement be in ctx.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
@@ -65,11 +64,11 @@ namespace System.ServiceModel.Channels
 		{
 			ThrowIfDisposedOrNotOpen ();
 
-			if (source.Scheme != address.Uri.Scheme)
+			if (Source.Scheme != address.Uri.Scheme)
 				throw new ArgumentException (String.Format ("Argument EndpointAddress has unsupported URI scheme: {0}", address.Uri.Scheme));
 
 			if (MessageEncoder.MessageVersion.Addressing.Equals (AddressingVersion.None) &&
-			    !address.Uri.Equals (via))
+			    via != null && !address.Uri.Equals (via))
 				throw new ArgumentException (String.Format ("The endpoint address '{0}' and via uri '{1}' must match when the corresponding binding has addressing version in the message version value as None.", address.Uri, via));
 
 			Type t = typeof (TChannel);

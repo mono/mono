@@ -75,7 +75,13 @@ namespace System.ServiceModel.Channels
 			Message message = result.Message;
 			TimeSpan timeout = result.Timeout;
 			// FIXME: is distination really like this?
-			Uri destination = message.Headers.To ?? Via ?? RemoteAddress.Uri;
+			Uri destination = message.Headers.To;
+			if (destination == null) {
+				if (source.Source.ManualAddressing)
+					throw new InvalidOperationException ("When manual addressing is enabled on the transport, every request messages must be set its destination address.");
+				 else
+				 	destination = Via ?? RemoteAddress.Uri;
+			}
 
 			web_request = HttpWebRequest.Create (destination);
 			web_request.Method = "POST";

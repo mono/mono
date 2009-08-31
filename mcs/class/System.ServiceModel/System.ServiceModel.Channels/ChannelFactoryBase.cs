@@ -34,6 +34,16 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Channels
 {
+	internal abstract class TransportChannelFactoryBase<TChannel> : ChannelFactoryBase<TChannel>
+	{
+		protected TransportChannelFactoryBase (TransportBindingElement source, BindingContext ctx)
+		{
+			Source = source;
+		}
+
+		public TransportBindingElement Source { get; private set; }
+	}
+
 	public abstract class ChannelFactoryBase<TChannel>
 		: ChannelFactoryBase, IChannelFactory<TChannel>
 	{
