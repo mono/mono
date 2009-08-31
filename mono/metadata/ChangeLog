@@ -1,3 +1,8 @@
+2009-08-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (verify_metadata_header): Some very smart
+	obfuscators like to add extra stream headers. Ignore them.
+
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable_general): Verify interfaces with static
