@@ -1,3 +1,11 @@
+2009-08-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CustomizableFileSettingsProvider.cs: reset the property value
+	instead of using the DefaultValue.
+	* SettingsPropertyValue.cs: new Reset() method.
+	* ApplicationSettingsBase.cs: Reset happens in Reload().
+	Patch by Andrew Kurochka that fixes bug #532180.
+
 2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IriParsingElement.cs:

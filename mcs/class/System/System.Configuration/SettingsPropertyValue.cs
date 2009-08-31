@@ -160,6 +160,15 @@ namespace System.Configuration
 			}
 		}
 
+		internal object Reset ()
+		{
+			propertyValue = GetDeserializedDefaultValue ();
+			dirty = true;
+			defaulted = true;
+			needPropertyValue = true;
+			return propertyValue;
+		}
+
 		private object GetDeserializedDefaultValue ()
 		{
 			if (property.DefaultValue == null)

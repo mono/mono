@@ -364,6 +364,25 @@ namespace MonoTests.System.Configuration {
 		{
 			Assert.AreEqual (0, new TestSettings1 ().Providers.Count);
 		}
+
+                class Bug532180 : ApplicationSettingsBase {
+                        [UserScopedSetting]
+                        [DefaultSettingValue("10")]
+                        public int IntSetting {
+                                get { return (int)this["IntSetting"]; }
+                                set { this["IntSetting"] = value; }                               
+                        }
+                }
+
+                [Test] // bug #532180
+                public void DefaultSettingValueAsWithReload() {
+                        Bug532180 settings = new Bug532180();
+                        Assert.AreEqual(10, settings.IntSetting, "A1");
+                        settings.IntSetting = 1;
+                        Assert.AreEqual(1, settings.IntSetting, "A2");
+                        settings.Reload();
+                        Assert.AreEqual(10, settings.IntSetting, "A3");
+                }                        
 	}
 }
 
