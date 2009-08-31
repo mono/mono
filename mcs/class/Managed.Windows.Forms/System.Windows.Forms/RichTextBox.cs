@@ -1745,8 +1745,8 @@ namespace System.Windows.Forms {
 
 
 			if (rtf_cursor_x == 0) {
-				if (newline && rtf_line.ToString ().EndsWith ("\n") == false)
-					rtf_line.Append ("\n");
+				if (newline && rtf_line.ToString ().EndsWith (Environment.NewLine) == false)
+					rtf_line.Append (Environment.NewLine);
 
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
 								newline ? LineEnding.Rich : LineEnding.Wrap);
@@ -1769,8 +1769,8 @@ namespace System.Windows.Forms {
 					line = document.GetLine (rtf_cursor_y);
 					line.ending = LineEnding.Rich;
 
-					if (line.Text.EndsWith ("\n") == false)
-						line.Text += "\n";
+					if (line.Text.EndsWith (Environment.NewLine) == false)
+						line.Text += Environment.NewLine;
 				}
 			}
 
@@ -2006,7 +2006,7 @@ namespace System.Windows.Forms {
 			sb.Append(String.Format("\\deff{0}", fonts.IndexOf(this.Font.Name)));
 
 			// Default Language 
-			sb.Append("\\deflang1033\n");	// FIXME - always 1033?
+			sb.Append("\\deflang1033" + Environment.NewLine);	// FIXME - always 1033?
 
 			// Emit the font table
 			sb.Append("{\\fonttbl");
@@ -2017,7 +2017,8 @@ namespace System.Windows.Forms {
 				sb.Append((string)fonts[i]);		// Font name
 				sb.Append(";}");			// }
 			}
-			sb.Append("}\n");
+			sb.Append("}");
+			sb.Append(Environment.NewLine);
 
 			// Emit the color table (if needed)
 			if ((colors.Count > 1) || ((((Color)colors[0]).R != this.ForeColor.R) || (((Color)colors[0]).G != this.ForeColor.G) || (((Color)colors[0]).B != this.ForeColor.B))) {
@@ -2028,7 +2029,8 @@ namespace System.Windows.Forms {
 					sb.Append(String.Format("\\blue{0}", ((Color)colors[i]).B));
 					sb.Append(";");
 				}
-				sb.Append("}\n");
+				sb.Append("}");
+				sb.Append(Environment.NewLine);
 			}
 
 			sb.Append("{\\*\\generator Mono RichTextBox;}");
@@ -2087,14 +2089,16 @@ namespace System.Windows.Forms {
 				}
 				if (pos >= line.text.Length) {
 					if (line.ending != LineEnding.Wrap) {
-						sb.Append("\\par\n");
+						sb.Append("\\par");
+						sb.Append(Environment.NewLine);
 					}
 				}
 				pos = 0;
 				line_no++;
 			}
 
-			sb.Append("}\n");
+			sb.Append("}");
+			sb.Append(Environment.NewLine);
 
 			return sb;
 		}

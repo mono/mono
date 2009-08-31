@@ -1,3 +1,8 @@
+2009-08-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichText.cs: Remove some unix new line characters and use
+	Environment.NewLine. Fixes part of #511515.
+
 2009-08-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBoxBase.cs: Modified should *not* be modified from the Text
