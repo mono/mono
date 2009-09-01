@@ -122,7 +122,7 @@ namespace Microsoft.Build.BuildEngine {
 		static Token EvaluateToken (Token token, Project context)
 		{
 			Expression oe = new Expression ();
-			oe.Parse (token.Value, true);
+			oe.Parse (token.Value, ParseOptions.AllowItemsMetadataAndSplit);
 			return new Token ((string) oe.ConvertTo (context, typeof (string)), token.Type);
 		}
 	}

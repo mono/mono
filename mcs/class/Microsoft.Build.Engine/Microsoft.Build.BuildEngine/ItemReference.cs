@@ -53,12 +53,12 @@ namespace Microsoft.Build.BuildEngine {
 			// Transform and separator are never expanded for item refs
 			if (transform != null) {
 				this.transform = new Expression ();
-				this.transform.Parse (transform, false);
+				this.transform.Parse (transform, ParseOptions.AllowMetadata | ParseOptions.Split);
 			}
 
 			if (separator != null) {
 				this.separator = new Expression ();
-				this.separator.Parse (separator, false);
+				this.separator.Parse (separator, ParseOptions.Split);
 			}
 		}
 		

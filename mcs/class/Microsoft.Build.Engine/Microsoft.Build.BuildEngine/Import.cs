@@ -81,7 +81,7 @@ namespace Microsoft.Build.BuildEngine {
 			Expression exp;
 
 			exp = new Expression ();
-			exp.Parse (file, false);
+			exp.Parse (file, ParseOptions.Split);
 			return (string) exp.ConvertTo (project, typeof (string));
 		}
 

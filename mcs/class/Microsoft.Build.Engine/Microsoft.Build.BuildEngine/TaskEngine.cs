@@ -225,7 +225,7 @@ namespace Microsoft.Build.BuildEngine {
 			result = null;
 			
 			e = new Expression ();
-			e.Parse (raw, true);
+			e.Parse (raw, ParseOptions.AllowItemsMetadataAndSplit);
 
 			// See rules in comment for 'Prepare'
 			string str = (string) e.ConvertTo (parentProject, typeof (string));

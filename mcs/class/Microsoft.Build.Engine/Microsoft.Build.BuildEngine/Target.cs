@@ -157,7 +157,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (DependsOnTargets != String.Empty) {
 				deps = new Expression ();
-				deps.Parse (DependsOnTargets, true);
+				deps.Parse (DependsOnTargets, ParseOptions.AllowItemsNoMetadataAndSplit);
 				targetNames = (string []) deps.ConvertTo (Project, typeof (string []));
 				foreach (string dep_name in targetNames) {
 					t = project.Targets [dep_name.Trim ()];
@@ -291,7 +291,7 @@ namespace Microsoft.Build.BuildEngine {
 					return new ITaskItem [0];
 
 				Expression e = new Expression ();
-				e.Parse (outputs, true);
+				e.Parse (outputs, ParseOptions.AllowItemsNoMetadataAndSplit);
 
 				return (ITaskItem []) e.ConvertTo (project, typeof (ITaskItem []));
 			}

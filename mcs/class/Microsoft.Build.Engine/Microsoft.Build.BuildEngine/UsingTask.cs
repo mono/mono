@@ -73,7 +73,7 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (AssemblyFile != null) {
 				Expression exp = new Expression ();
 				// FIXME: test it
-				exp.Parse (AssemblyFile, false);
+				exp.Parse (AssemblyFile, ParseOptions.Split);
 				string filename = (string) exp.ConvertTo (project, typeof (string));
 
 				if (Path.IsPathRooted (filename) == false) {
