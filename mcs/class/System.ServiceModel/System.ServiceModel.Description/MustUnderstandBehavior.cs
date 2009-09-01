@@ -52,7 +52,7 @@ namespace System.ServiceModel.Description
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint,
 			EndpointDispatcher dispatcher)
 		{
-			dispatcher.Runtime.ValidateMustUnderstand = validate;
+			dispatcher.DispatchRuntime.ValidateMustUnderstand = validate;
 		}
 
 		void IEndpointBehavior.ApplyClientBehavior (ServiceEndpoint endpoint,

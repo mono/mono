@@ -1,5 +1,9 @@
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MustUnderstandBehavior.cs : fix build.
+
+2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientCredentials.cs, ClientViaBehavior.cs,
 	  MustUnderstandBehavior.cs : implement most of the methods.
 
