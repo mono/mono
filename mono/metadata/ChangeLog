@@ -1,5 +1,9 @@
 2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the typeref table for duplicates.
+
+2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	This reverts r140936 and properly handles interfaces with static methods. The
 	right fix is to ensure vtables without bubles which is an easier to verify
 	constraint. We should avoid such special cases as of the reverted patch as those
