@@ -383,9 +383,15 @@ namespace System.ServiceModel
 		}
 
 		// IExtensibleObject<IContextChannel>
-		[MonoTODO]
+
+		IExtensionCollection<IContextChannel> extensions;
+
 		public IExtensionCollection<IContextChannel> Extensions {
-			get { throw new NotImplementedException (); }
+			get {
+				if (extensions == null)
+					extensions = new ExtensionCollection<IContextChannel> (this);
+				return extensions;
+			}
 		}
 
 		#region Request/Output processing
