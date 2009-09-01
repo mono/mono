@@ -110,16 +110,31 @@ namespace Microsoft.Build.BuildEngine {
 			buildTasks.Remove (buildTask);
 		}
 
-		internal bool Build ()
+		bool Build ()
 		{
-			bool executeOnErrors;
-			return Build (out executeOnErrors);
+			return Build (null);
 		}
 
-		internal bool Build (out bool executeOnErrors)
+		internal bool Build (string built_targets_key)
+		{
+			bool executeOnErrors;
+			return Build (built_targets_key, out executeOnErrors);
+		}
+
+		bool Build (string built_targets_key, out bool executeOnErrors)
 		{
 			bool result = false;
 			executeOnErrors = false;
+
+			// built targets are keyed by the particular set of global
+			// properties. So, a different set could allow a target
+			// to run again
+			built_targets_key = project.GetKeyForTarget (Name);
+			ITaskItem[] outputs;
+			if (project.ParentEngine.BuiltTargetsOutputByName.ContainsKey (built_targets_key)) {
+				LogTargetSkipped ();
+				return true;
+			}
 
 			if (!ConditionParser.ParseAndEvaluate (Condition, Project)) {
 				LogMessage (MessageImportance.Low,
@@ -144,6 +159,9 @@ namespace Microsoft.Build.BuildEngine {
 				LogError ("Error building target {0}: {1}", Name, e.ToString ());
 				return false;
 			}
+
+			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) Outputs.Clone ();
+			project.BuiltTargetKeys.Add (built_targets_key);
 
 			return result;
 		}
@@ -176,7 +194,7 @@ namespace Microsoft.Build.BuildEngine {
 			executeOnErrors = false;
 			foreach (Target t in deps) {
 				if (t.BuildState == BuildState.NotStarted)
-					if (!t.Build (out executeOnErrors))
+					if (!t.Build (null, out executeOnErrors))
 						return false;
 				if (t.BuildState == BuildState.Started)
 					throw new InvalidProjectFileException ("Cycle in target dependencies detected");
@@ -226,6 +244,16 @@ namespace Microsoft.Build.BuildEngine {
 				foreach (string t in targetsToExecute)
 					this.project.Targets [t].Build ();
 			}
+		}
+
+		void LogTargetSkipped ()
+		{
+			BuildMessageEventArgs bmea;
+			bmea = new BuildMessageEventArgs (String.Format (
+						"Target {0} skipped, as it has already been built.", Name),
+					null, null, MessageImportance.Low);
+
+			project.ParentEngine.EventSource.FireMessageRaised (this, bmea);
 		}
 
 		void LogError (string message, params object [] messageArgs)

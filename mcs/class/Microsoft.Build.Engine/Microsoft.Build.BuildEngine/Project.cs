@@ -313,38 +313,30 @@ namespace Microsoft.Build.BuildEngine {
 			return true;
 		}
 
-		bool BuildTarget (string target, IDictionary targetOutputs)
+		bool BuildTarget (string target_name, IDictionary targetOutputs)
 		{
-			if (target == null)
+			if (target_name == null)
 				throw new ArgumentException ("targetNames cannot contain null strings");
 
-			if (!targets.Exists (target)) {
+			if (!targets.Exists (target_name)) {
 				//FIXME: Log this!
-				Console.WriteLine ("Target named '{0}' not found in the project.", target);
+				Console.WriteLine ("Target named '{0}' not found in the project.", target_name);
 				return false;
 			}
 
-			// built targets are keyed by the particular set of global
-			// properties. So, a different set could allow a target
-			// to run again
-			string key = fullFileName + ":" + target + ":" + GlobalPropertiesToString (GlobalProperties);
-			ITaskItem[] outputs;
-			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
-				if (targetOutputs != null)
-					targetOutputs.Add (target, outputs);
-				LogTargetSkipped (target);
-				return true;
-			}
-
-			if (!targets [target].Build ())
+			string key = GetKeyForTarget (target_name);
+			if (!targets [target_name].Build (key))
 				return false;
 
-			ParentEngine.BuiltTargetsOutputByName [key] = (ITaskItem[]) targets [target].Outputs.Clone ();
-			builtTargetKeys.Add (key);
+			ITaskItem[] outputs = ParentEngine.BuiltTargetsOutputByName [key];
 			if (targetOutputs != null)
-				targetOutputs.Add (target, targets [target].Outputs);
-
+				targetOutputs.Add (target_name, outputs);
 			return true;
+		}
+
+		internal string GetKeyForTarget (string target_name)
+		{
+			return fullFileName + ":" + target_name + ":" + GlobalPropertiesToString (GlobalProperties);
 		}
 
 		string GlobalPropertiesToString (BuildPropertyGroup bgp)
@@ -1095,16 +1087,6 @@ namespace Microsoft.Build.BuildEngine {
 			return default (T);
 		}
 
-		void LogTargetSkipped (string targetName)
-		{
-			BuildMessageEventArgs bmea;
-			bmea = new BuildMessageEventArgs (String.Format (
-						"Target {0} skipped, as it has already been built.", targetName),
-					null, null, MessageImportance.Low);
-
-			ParentEngine.EventSource.FireMessageRaised (this, bmea);
-		}
-
 		void LogWarning (string filename, string message, params object[] messageArgs)
 		{
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
@@ -1215,6 +1197,10 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public string Xml {
 			get { return xmlDocument.InnerXml; }
+		}
+
+		internal List<string> BuiltTargetKeys {
+			get { return builtTargetKeys; }
 		}
 
 		internal Dictionary <string, BuildItemGroup> LastItemGroupContaining {

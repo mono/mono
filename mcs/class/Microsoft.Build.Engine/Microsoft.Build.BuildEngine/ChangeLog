@@ -1,5 +1,12 @@
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #534965.
+	* Project.cs (BuildTarget): Move caching of target outputs to ..
+	* Target.cs: .. here. Move LogTargetSkipped also here.
+	Ensure that caching happens for target dependencies also.
+
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
 	* DirectoryScanner.cs (Scan): Ignore empty entries in includes and
 	excludes.
 
