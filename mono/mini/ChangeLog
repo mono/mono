@@ -1,3 +1,8 @@
+2009-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (throw_exception): Fix the previous change by substracting
+	the alignment for the value of sp.
+
 2009-09-01  Geoff Norton  <gnorton@novell.com>
 
 	* mini.c (mono_get_lmf_addr): Fix jit_thread_attach for native to 
