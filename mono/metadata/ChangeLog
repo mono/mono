@@ -1,3 +1,17 @@
+2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	This reverts r140936 and properly handles interfaces with static methods. The
+	right fix is to ensure vtables without bubles which is an easier to verify
+	constraint. We should avoid such special cases as of the reverted patch as those
+	only make the runtime more brittle.
+
+	* class.c (mono_class_setup_vtable_general): Revert previous change that handle
+	static methods on interfaces.
+
+	* class.c (setup_interface_offsets): Use the number of virtual methods when
+	calculating interface offsets instead of the number of methods. This way we
+	avoid bubles on the layout.
+
 2009-08-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_metadata_header): Some very smart
