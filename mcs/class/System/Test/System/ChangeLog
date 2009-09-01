@@ -1,3 +1,7 @@
+2009-09-01  Andres Aragoneses  <aaragoneses@novell.com>
+
+	* UriTest.cs: New tests from #533572.
+
 2009-15-01  Leszek Ciesielski <skolima@gmail.com>
 
 	* UriTest3.cs: test for bug #464235

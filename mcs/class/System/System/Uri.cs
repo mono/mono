@@ -1465,7 +1465,10 @@ namespace System {
 			}
 
 			// 4.a user info
-			pos = uriString.IndexOf ('@', startpos, endpos-startpos);
+			if (unixAbsPath)
+				pos = -1;
+			else
+				pos = uriString.IndexOf ('@', startpos, endpos-startpos);
 			if (pos != -1) {
 				userinfo = uriString.Substring (startpos, pos-startpos);
 				startpos = pos + 1;
