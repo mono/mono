@@ -60,6 +60,7 @@ extern char **environ;
 #undef DEBUG
 
 static guint32 process_wait (gpointer handle, guint32 timeout);
+FILE *open_process_map (int pid, const char *mode);
 
 struct _WapiHandleOps _wapi_process_ops = {
 	NULL,				/* close_shared */
@@ -1903,12 +1904,31 @@ static gboolean match_procname_to_modulename (gchar *procname, gchar *modulename
 	return (FALSE);
 }
 
+FILE *open_process_map (int pid, const char *mode)
+{
+	FILE *fp = NULL;
+	const gchar *proc_path[] = {
+		"/proc/%d/maps",	/* GNU/Linux */
+		"/proc/%d/map",		/* FreeBSD */
+		NULL
+	};
+	int i;
+	gchar *filename;
+
+	for (i = 0; fp == NULL && proc_path [i]; i++) {
+ 		filename = g_strdup_printf (proc_path[i], pid);
+		fp = fopen (filename, mode);
+		g_free (filename);
+	}
+
+	return fp;
+}
+
 gboolean EnumProcessModules (gpointer process, gpointer *modules,
 			     guint32 size, guint32 *needed)
 {
 	struct _WapiHandle_process *process_handle;
 	gboolean ok;
-	gchar *filename = NULL;
 	FILE *fp;
 	GSList *mods = NULL;
 	WapiProcModule *module;
@@ -1922,8 +1942,9 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 	 * token.  (Use 'NULL' as an alternative for the main module
 	 * so that the simple implementation can just return one item
 	 * for now.)  Get the info from /proc/<pid>/maps on linux,
-	 * other systems will have to implement /dev/kmem reading or
-	 * whatever other horrid technique is needed.
+	 * /proc/<pid>/map on FreeBSD, other systems will have to
+	 * implement /dev/kmem reading or whatever other horrid
+	 * technique is needed.
 	 */
 	if (size < sizeof(gpointer)) {
 		return(FALSE);
@@ -1950,8 +1971,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 	{
 		mods = load_modules ();
 #else
-	filename = g_strdup_printf ("/proc/%d/maps", pid);
-	if ((fp = fopen (filename, "r")) == NULL) {
+	if ((fp = open_process_map (pid, "r")) == NULL) {
 		/* No /proc/<pid>/maps so just return the main module
 		 * shortcut for now
 		 */
@@ -1990,8 +2010,6 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 		g_slist_free (mods);
 	}
 
-	g_free (filename);
-	
 	return(TRUE);
 }
 
@@ -2066,7 +2084,6 @@ static guint32 get_module_name (gpointer process, gpointer module,
 	gchar *procname_ext = NULL;
 	glong len;
 	gsize bytes;
-	gchar *filename = NULL;
 	FILE *fp;
 	GSList *mods = NULL;
 	WapiProcModule *found_module;
@@ -2111,8 +2128,7 @@ static guint32 get_module_name (gpointer process, gpointer module,
 	{
 		mods = load_modules ();
 #else
-	filename = g_strdup_printf ("/proc/%d/maps", pid);
-	if ((fp = fopen (filename, "r")) == NULL) {
+	if ((fp = open_process_map (pid, "r")) == NULL) {
 		if (errno == EACCES && module == NULL && base == TRUE) {
 			procname_ext = get_process_name_from_proc (pid);
 		} else {
@@ -2120,7 +2136,6 @@ static guint32 get_module_name (gpointer process, gpointer module,
 			 * for now
 			 */
 			g_free (proc_name);
-			g_free (filename);
 			return(0);
 		}
 	} else {
@@ -2158,7 +2173,6 @@ static guint32 get_module_name (gpointer process, gpointer module,
 		}
 
 		g_slist_free (mods);
-		g_free (filename);
 		g_free (proc_name);
 	}
 
@@ -2222,7 +2236,6 @@ gboolean GetModuleInformation (gpointer process, gpointer module,
 	struct _WapiHandle_process *process_handle;
 	gboolean ok;
 	pid_t pid;
-	gchar *filename = NULL;
 	FILE *fp;
 	GSList *mods = NULL;
 	WapiProcModule *found_module;
@@ -2266,13 +2279,11 @@ gboolean GetModuleInformation (gpointer process, gpointer module,
 		mods = load_modules ();
 #else
 	/* Look up the address in /proc/<pid>/maps */
-	filename = g_strdup_printf ("/proc/%d/maps", pid);
-	if ((fp = fopen (filename, "r")) == NULL) {
+	if ((fp = open_process_map (pid, "r")) == NULL) {
 		/* No /proc/<pid>/maps, so just return failure
 		 * for now
 		 */
 		g_free (proc_name);
-		g_free (filename);
 		return(FALSE);
 	} else {
 		mods = load_modules (fp);
@@ -2299,7 +2310,6 @@ gboolean GetModuleInformation (gpointer process, gpointer module,
 		}
 
 		g_slist_free (mods);
-		g_free (filename);
 		g_free (proc_name);
 	}
 

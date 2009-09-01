@@ -1,3 +1,8 @@
+2009-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c (EnumProcessModules): Applied patch from Romain Tartière
+	(romain@blogreen.org). Fix this on freebsd/OSX. Fixes #533893.
+
 2009-06-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* sockets.c: add the error number to the message so we can figure out
