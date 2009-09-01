@@ -713,10 +713,7 @@ namespace System.Web.UI.WebControls
 				OnSelecting (args);
 				if (args.Cancel)
 					return new ArrayList ();
-
-				if (CanRetrieveTotalRowCount && arguments.RetrieveTotalRowCount)
-					arguments.TotalRowCount = QueryTotalRowCount (paramValues, arguments);
-
+				
 				if (CanPage) {
 					if (StartRowIndexParameterName.Length == 0)
 						throw new InvalidOperationException ("Paging is enabled, but the StartRowIndexParameterName property is not set.");
@@ -731,6 +728,9 @@ namespace System.Web.UI.WebControls
 
 				result = InvokeSelect (SelectMethod, paramValues);
 
+				if (CanRetrieveTotalRowCount && arguments.RetrieveTotalRowCount)
+					arguments.TotalRowCount = QueryTotalRowCount (MergeParameterValues (SelectParameters, null, null), arguments);
+				
 				if (owner.EnableCaching)
 					owner.Cache.SetCachedObject (SelectMethod, SelectParameters, result);
 			}

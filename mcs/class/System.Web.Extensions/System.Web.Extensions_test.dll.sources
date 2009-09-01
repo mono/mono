@@ -19,6 +19,7 @@
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/BaseWorkerRequest.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/FakeMembershipProvider.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/FormRequest.cs
+../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Global.asax.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/IForeignData.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/HandlerInvoker.cs
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/MyHandler.cs
