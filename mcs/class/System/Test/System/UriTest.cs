@@ -23,7 +23,7 @@ namespace MonoTests.System
 		protected bool isWin32 = false;
 
 		[TestFixtureSetUp]
-		public void GetReady () 
+		public void GetReady ()
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
 		}
@@ -45,21 +45,21 @@ namespace MonoTests.System
 
 			uri = new Uri("http://[11:22:33::88]:9090");
 			Print (uri);
-			
+
 			uri = new Uri("http://[::127.11.22.33]:8080");
 			Print (uri);
-			
+
 			uri = new Uri("http://[abcde::127.11.22.33]:8080");
-			Print (uri);			
+			Print (uri);
 			*/
-			
+
 			/*
 			uri = new Uri ("http://www.contoso.com:1234/foo/bar/");
 			Print (uri);
 
 			uri = new Uri ("http://www.contoso.com:1234/foo/bar");
 			Print (uri);
-			
+
 			uri = new Uri ("http://www.contoso.com:1234/");
 			Print (uri);
 
@@ -110,7 +110,7 @@ namespace MonoTests.System
 
 			uri = new Uri("myscheme://127.0.0.1:5");
 			Assert.AreEqual ("myscheme://127.0.0.1:5/", uri.ToString(), "#c1");
-			
+
 			uri = new Uri (@"\\myserver\mydir\mysubdir\myfile.ext");
 			Assert.AreEqual ("/mydir/mysubdir/myfile.ext", uri.AbsolutePath, "#n1");
 			Assert.AreEqual ("file://myserver/mydir/mysubdir/myfile.ext", uri.AbsoluteUri, "#n2");
@@ -135,7 +135,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("file", uri.Scheme, "#n15");
 			Assert.AreEqual (false, uri.UserEscaped, "#n16");
 			Assert.AreEqual ("", uri.UserInfo, "#n17");
-			
+
 			uri = new Uri (new Uri("http://www.contoso.com"), "Hello World.htm", true);
 			Assert.AreEqual ("http://www.contoso.com/Hello World.htm", uri.AbsoluteUri, "#rel1a");
 			Assert.AreEqual (true, uri.UserEscaped, "#rel1b");
@@ -434,7 +434,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("foo", u.Host, "#7a");
 			Assert.AreEqual (UriHostNameType.Dns, u.HostNameType, "#7b");
 			Assert.AreEqual ("file://foo/bar", u.ToString (), "#7c");
-			Assert.AreEqual (true, u.IsUnc, "#7d"); 
+			Assert.AreEqual (true, u.IsUnc, "#7d");
 
 			Assert.AreEqual ("file://foo/bar", new Uri ("file://///foo/bar").ToString(), "#9");
 
@@ -480,7 +480,7 @@ namespace MonoTests.System
 		{
 			new Uri ("http:a");
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
 		public void HttpHostname3 ()
@@ -587,7 +587,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("file", uri.Scheme, "#1c");
 			Assert.AreEqual ("", uri.Host, "#1d");
 			Assert.AreEqual ("c:/tmp/hello.txt", uri.AbsolutePath, "#1e");
-					
+
 			uri = new Uri ("file:////////cygwin/tmp/hello.txt");
 			Assert.AreEqual ("file://cygwin/tmp/hello.txt", uri.ToString (), "#3a");
 			if (isWin32)
@@ -607,7 +607,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("file", uri.Scheme, "#4c");
 			Assert.AreEqual ("mymachine", uri.Host, "#4d");
 			Assert.AreEqual ("/cygwin/tmp/hello.txt", uri.AbsolutePath, "#4e");
-			
+
 			uri = new Uri ("file://///c:/cygwin/tmp/hello.txt");
 			Assert.AreEqual ("file:///c:/cygwin/tmp/hello.txt", uri.ToString (), "#5a");
 			Assert.AreEqual ("c:\\cygwin\\tmp\\hello.txt", uri.LocalPath, "#5b");
@@ -709,30 +709,30 @@ namespace MonoTests.System
 		{
 			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
-			
+
 			Assert.AreEqual (u1.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", "QE1");
 			Assert.AreEqual (u2.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", "QE2");
 		}
-		
+
 		[Test]
 		public void UnixPath () {
 			if (!isWin32)
 				Assert.AreEqual ("file:///cygwin/tmp/hello.txt", new Uri ("/cygwin/tmp/hello.txt").ToString (), "#6a");
 		}
-		
+
 		[Test]
 		public void Unc ()
 		{
 			Uri uri = new Uri ("http://www.contoso.com");
 			Assert.IsTrue (!uri.IsUnc, "#1");
-			
+
 			uri = new Uri ("news:123456@contoso.com");
 			Assert.IsTrue (!uri.IsUnc, "#2");
 
 			uri = new Uri ("file://server/filename.ext");
 			Assert.IsTrue (uri.IsUnc, "#3");
 
-			uri = new Uri (@"\\server\share\filename.ext");			
+			uri = new Uri (@"\\server\share\filename.ext");
 			Assert.IsTrue (uri.IsUnc, "#6");
 
 			uri = new Uri (@"a:\dir\filename.ext");
@@ -750,7 +750,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void FromHex () 
+		public void FromHex ()
 		{
 			Assert.AreEqual (0, Uri.FromHex ('0'), "#1");
 			Assert.AreEqual (9, Uri.FromHex ('9'), "#2");
@@ -801,28 +801,28 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void HexEscape () 
+		public void HexEscape ()
 		{
-			Assert.AreEqual ("%20", Uri.HexEscape (' '), "#1"); 
-			Assert.AreEqual ("%A9", Uri.HexEscape ((char) 0xa9), "#2"); 
-			Assert.AreEqual ("%41", Uri.HexEscape ('A'), "#3"); 
+			Assert.AreEqual ("%20", Uri.HexEscape (' '), "#1");
+			Assert.AreEqual ("%A9", Uri.HexEscape ((char) 0xa9), "#2");
+			Assert.AreEqual ("%41", Uri.HexEscape ('A'), "#3");
 			try {
 				Uri.HexEscape ((char) 0x0369);
 				Assert.Fail ("#4");
 			} catch (ArgumentOutOfRangeException) {}
 		}
 
-        [Test]
-        public void MoreHexEscape()
-        {
-            string url = "http://guyc-2003-sp/wiki/wiki%20document%20library/בד%20יקה.docx";
-            string escapedAbsolutePath = "/wiki/wiki%20document%20library/%D7%91%D7%93%20%D7%99%D7%A7%D7%94.docx";
-            Uri u = new Uri(url);
-            Assert.AreEqual (escapedAbsolutePath, u.AbsolutePath, "Escaped non-english combo");
-        }
+	[Test]
+	public void MoreHexEscape()
+	{
+	    string url = "http://guyc-2003-sp/wiki/wiki%20document%20library/בד%20יקה.docx";
+	    string escapedAbsolutePath = "/wiki/wiki%20document%20library/%D7%91%D7%93%20%D7%99%D7%A7%D7%94.docx";
+	    Uri u = new Uri(url);
+	    Assert.AreEqual (escapedAbsolutePath, u.AbsolutePath, "Escaped non-english combo");
+	}
 
 		[Test]
-		public void HexUnescape () 
+		public void HexUnescape ()
 		{
 			int i = 0;
 			Assert.AreEqual (' ', Uri.HexUnescape ("%20", ref i), "#1");
@@ -853,7 +853,7 @@ namespace MonoTests.System
 		[Category ("NotDotNet")]
 #endif
 		[Test]
-		public void HexUnescapeMultiByte () 
+		public void HexUnescapeMultiByte ()
 		{
 			// Tests from bug 74872
 			// Note: These won't pass exactly with MS.NET, due to differences in the
@@ -874,19 +874,19 @@ namespace MonoTests.System
 			Assert.AreEqual (0xDB40, path [6], "#4");
 			Assert.AreEqual (0xDD00, path [7], "#5");
 			Assert.AreEqual (0x62, path [8], "#6");
-			
+
 			// 2-byte escape sequence, 2 individual characters
 			uri = new Uri ("file:///foo/a%C2%F8b", true);
 			path = uri.LocalPath;
 			Assert.AreEqual (9, path.Length, "#7");
 			Assert.AreEqual (0xC2, path [6], "#8");
-			Assert.AreEqual (0xF8, path [7], "#9");			
+			Assert.AreEqual (0xF8, path [7], "#9");
 		}
 
 		[Test]
-		public void IsHexDigit () 
+		public void IsHexDigit ()
 		{
-			Assert.IsTrue (Uri.IsHexDigit ('a'), "#1");	
+			Assert.IsTrue (Uri.IsHexDigit ('a'), "#1");
 			Assert.IsTrue (Uri.IsHexDigit ('f'), "#2");
 			Assert.IsTrue (!Uri.IsHexDigit ('g'), "#3");
 			Assert.IsTrue (Uri.IsHexDigit ('0'), "#4");
@@ -897,14 +897,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void IsHexEncoding () 
+		public void IsHexEncoding ()
 		{
 			Assert.IsTrue (Uri.IsHexEncoding ("test%a9test", 4), "#1");
 			Assert.IsTrue (!Uri.IsHexEncoding ("test%a9test", 3), "#2");
 			Assert.IsTrue (Uri.IsHexEncoding ("test%a9", 4), "#3");
 			Assert.IsTrue (!Uri.IsHexEncoding ("test%a", 4), "#4");
 		}
-		
+
 		[Test]
 		public void GetLeftPart ()
 		{
@@ -912,7 +912,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("http://", uri.GetLeftPart (UriPartial.Scheme), "#1");
 			Assert.AreEqual ("http://www.contoso.com", uri.GetLeftPart (UriPartial.Authority), "#2");
 			Assert.AreEqual ("http://www.contoso.com/index.htm", uri.GetLeftPart (UriPartial.Path), "#3");
-			
+
 			uri = new Uri ("mailto:user@contoso.com?subject=uri");
 			Assert.AreEqual ("mailto:", uri.GetLeftPart (UriPartial.Scheme), "#4");
 			Assert.AreEqual ("", uri.GetLeftPart (UriPartial.Authority), "#5");
@@ -921,23 +921,23 @@ namespace MonoTests.System
 			uri = new Uri ("nntp://news.contoso.com/123456@contoso.com");
 			Assert.AreEqual ("nntp://", uri.GetLeftPart (UriPartial.Scheme), "#7");
 			Assert.AreEqual ("nntp://news.contoso.com", uri.GetLeftPart (UriPartial.Authority), "#8");
-			Assert.AreEqual ("nntp://news.contoso.com/123456@contoso.com", uri.GetLeftPart (UriPartial.Path), "#9");			
-			
+			Assert.AreEqual ("nntp://news.contoso.com/123456@contoso.com", uri.GetLeftPart (UriPartial.Path), "#9");
+
 			uri = new Uri ("news:123456@contoso.com");
 			Assert.AreEqual ("news:", uri.GetLeftPart (UriPartial.Scheme), "#10");
 			Assert.AreEqual ("", uri.GetLeftPart (UriPartial.Authority), "#11");
-			Assert.AreEqual ("news:123456@contoso.com", uri.GetLeftPart (UriPartial.Path), "#12");			
+			Assert.AreEqual ("news:123456@contoso.com", uri.GetLeftPart (UriPartial.Path), "#12");
 
 			uri = new Uri ("file://server/filename.ext");
 			Assert.AreEqual ("file://", uri.GetLeftPart (UriPartial.Scheme), "#13");
 			Assert.AreEqual ("file://server", uri.GetLeftPart (UriPartial.Authority), "#14");
-			Assert.AreEqual ("file://server/filename.ext", uri.GetLeftPart (UriPartial.Path), "#15");			
+			Assert.AreEqual ("file://server/filename.ext", uri.GetLeftPart (UriPartial.Path), "#15");
 
 			uri = new Uri (@"\\server\share\filename.ext");
 			Assert.AreEqual ("file://", uri.GetLeftPart (UriPartial.Scheme), "#20");
 			Assert.AreEqual ("file://server", uri.GetLeftPart (UriPartial.Authority), "#21");
 			Assert.AreEqual ("file://server/share/filename.ext", uri.GetLeftPart (UriPartial.Path), "#22");
-			
+
 			uri = new Uri ("http://www.contoso.com:8080/index.htm#main");
 			Assert.AreEqual ("http://", uri.GetLeftPart (UriPartial.Scheme), "#23");
 			Assert.AreEqual ("http://www.contoso.com:8080", uri.GetLeftPart (UriPartial.Authority), "#24");
@@ -965,7 +965,7 @@ namespace MonoTests.System
 			Uri b = new Uri ("http://www.gnome.org");
 			Uri n = new Uri (b, "blah#main#start");
 			Assert.AreEqual (n.Fragment, "#main%23start", "#3");
-			
+
 			n = new Uri (b, "blah#main#start", true);
 			Assert.AreEqual (n.Fragment, "#main#start", "#4");
 		}
@@ -1019,10 +1019,10 @@ namespace MonoTests.System
 			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.contoso.com"), "#9");
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName (".www.contoso.com"), "#10");
 			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.contoso.com."), "#11");
-			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.con-toso.com"), "#12");	
-			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.con_toso.com"), "#13");	
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.con,toso.com"), "#14");	
-			
+			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.con-toso.com"), "#12");
+			Assert.AreEqual (UriHostNameType.Dns, Uri.CheckHostName ("www.con_toso.com"), "#13");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www.con,toso.com"), "#14");
+
 			// test IPv6
 			Assert.AreEqual (UriHostNameType.IPv6, Uri.CheckHostName ("11:22:33:44:55:66:77:88"), "#15");
 			Assert.AreEqual (UriHostNameType.IPv6, Uri.CheckHostName ("11::33:44:55:66:77:88"), "#16");
@@ -1059,7 +1059,7 @@ namespace MonoTests.System
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("*.go-mono.com"), "#46");
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www*.go-mono.com"), "#47");
 		}
-		
+
 		[Test]
 		public void IsLoopback ()
 		{
@@ -1191,7 +1191,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void GetHashCodeTest () 
+		public void GetHashCodeTest ()
 		{
 			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
 			Uri uri2 = new Uri ("http://www.contoso.com/index.htm#fragment");
@@ -1247,7 +1247,7 @@ namespace MonoTests.System
 			Uri u = new Uri ("foo", UriKind.Relative);
 			u.GetLeftPart (UriPartial.Path);
 		}
-		
+
 		[Test]
 		public void TestPartialToString ()
 		{
@@ -1257,7 +1257,7 @@ namespace MonoTests.System
 			Assert.AreEqual (new Uri ("foo#dingus?aa", UriKind.Relative).ToString (), "foo#dingus?aa", "#4");
 			Assert.AreEqual (new Uri ("foo?dingus#aa", UriKind.Relative).ToString (), "foo?dingus#aa", "#4");
 		}
-		
+
 		[Test]
 		public void RelativeGetHashCodeTest()
 		{
@@ -1283,30 +1283,30 @@ namespace MonoTests.System
 
 			Assert.AreEqual ("foo/bar/index.htm", uri1.MakeRelative (uri2), "#1");
 			Assert.AreEqual ("../../index.htm", uri2.MakeRelative (uri1), "#2");
-			
+
 			Assert.AreEqual ("../../bar/foo/index.htm", uri2.MakeRelative (uri3), "#3");
 			Assert.AreEqual ("../../foo/bar/index.htm", uri3.MakeRelative (uri2), "#4");
 
 			Assert.AreEqual ("../foo2/index.htm", uri3.MakeRelative (uri4), "#5");
 			Assert.AreEqual ("../foo/index.htm", uri4.MakeRelative (uri3), "#6");
-			
+
 			Assert.AreEqual ("https://www.contoso.com/bar/foo/index.htm?y=1", uri4.MakeRelative (uri5), "#7");
 
 			Assert.AreEqual ("http://www.contoso2.com/bar/foo/index.htm?x=0", uri4.MakeRelative (uri6), "#8");
 
 			Assert.AreEqual ("", uri6.MakeRelative (uri6), "#9");
 			Assert.AreEqual ("foobar.htm", uri6.MakeRelative (uri7), "#10");
-			
+
 			Uri uri10 = new Uri ("mailto:xxx@xxx.com");
 			Uri uri11 = new Uri ("mailto:xxx@xxx.com?subject=hola");
 			Assert.AreEqual ("", uri10.MakeRelative (uri11), "#11");
-			
+
 			Uri uri12 = new Uri ("mailto:xxx@mail.xxx.com?subject=hola");
 			Assert.AreEqual ("mailto:xxx@mail.xxx.com?subject=hola", uri10.MakeRelative (uri12), "#12");
-						
+
 			Uri uri13 = new Uri ("mailto:xxx@xxx.com/foo/bar");
 			Assert.AreEqual ("/foo/bar", uri10.MakeRelative (uri13), "#13");
-			
+
 			Assert.AreEqual ("http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9, uri1.MakeRelative (uri8), "#14");
 		}
 
@@ -1616,10 +1616,10 @@ namespace MonoTests.System
 		public void TestEscapeDataString ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			
+
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
-			
+
 			Assert.AreEqual ("%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				      Uri.EscapeDataString (sb.ToString ()));
 
@@ -1631,7 +1631,7 @@ namespace MonoTests.System
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < 128; i++)
 				sb.Append ((char) i);
-			
+
 			Assert.AreEqual ("%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				Uri.EscapeUriString (sb.ToString ()));
 			Assert.AreEqual ("%C3%A1", Uri.EscapeDataString ("á"));
@@ -1651,7 +1651,7 @@ namespace MonoTests.System
 		}
 
 		// This test doesn't work on Linux, and arguably shouldn't work.
-		// new Uri("file:///tmp/foo/bar").AbsolutePath returns "/tmp/foo/bar" 
+		// new Uri("file:///tmp/foo/bar").AbsolutePath returns "/tmp/foo/bar"
 		// on Linux, as anyone sane would expect.  It *doesn't* under .NET 1.1
 		// Apparently "tmp" is supposed to be a hostname (!)...
 		// Since "correct" behavior would confuse all Linux developers, and having
@@ -1684,7 +1684,7 @@ namespace MonoTests.System
 
 		public static void Print (Uri uri)
 		{
-			Console.WriteLine ("ToString: " + uri.ToString ());	
+			Console.WriteLine ("ToString: " + uri.ToString ());
 
 			Console.WriteLine ("AbsolutePath: " + uri.AbsolutePath);
 			Console.WriteLine ("AbsoluteUri: " + uri.AbsoluteUri);
@@ -1706,12 +1706,126 @@ namespace MonoTests.System
 
 			Console.WriteLine ("Segments:");
 			string [] segments = uri.Segments;
-			if (segments == null) 
+			if (segments == null)
 				Console.WriteLine ("\tNo Segments");
-			else 
-				for (int i = 0; i < segments.Length; i++) 
+			else
+				for (int i = 0; i < segments.Length; i++)
 					Console.WriteLine ("\t" + segments[i]);
 			Console.WriteLine ("");
 		}
+
+//BNC#533572
+#if NET_2_0
+		[Test]
+		public void LocalPath_FileNameWithAtSign1 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "http://thehost" + path;
+			Uri fileUri = new Uri (fullpath);
+
+			Assert.AreEqual (fileUri.UserInfo, String.Empty, "LocalPath_FileNameWithAtSign UserInfo");
+			Assert.AreEqual (fileUri.Host, "thehost", "LocalPath_FileNameWithAtSign Host");
+			Assert.IsFalse (fileUri.IsFile, "LocalPath_FileNameWithAtSign IsFile");
+			Assert.IsTrue (fileUri.IsAbsoluteUri, "LocalPath_FileNameWithAtSign IsAbsUri");
+			Assert.IsFalse (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
+
+			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
+			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape (path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
+			Assert.AreEqual (path, fileUri.AbsolutePath, "LocalPath_FileNameWithAtSign AbsPath");
+			Assert.AreEqual (path, fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+		}
+
+		[Test]
+		public void LocalPath_FileNameWithAtSign2 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "http://user:password@thehost" + path;
+			Uri fileUri = new Uri (fullpath);
+
+			Assert.AreEqual (fileUri.UserInfo, "user:password", "LocalPath_FileNameWithAtSign UserInfo");
+			Assert.AreEqual (fileUri.Host, "thehost", "LocalPath_FileNameWithAtSign Host");
+			Assert.IsFalse (fileUri.IsFile, "LocalPath_FileNameWithAtSign IsFile");
+			Assert.IsTrue (fileUri.IsAbsoluteUri, "LocalPath_FileNameWithAtSign IsAbsUri");
+			Assert.IsFalse (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
+
+			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
+			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape (path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
+			Assert.AreEqual (path, fileUri.AbsolutePath, "LocalPath_FileNameWithAtSign AbsPath");
+			Assert.AreEqual (path, fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+		}
+
+		[Test]
+		public void LocalPath_FileNameWithAtSign3 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "file://" + path;
+			Uri fileUri = new Uri (fullpath);
+
+			Assert.AreEqual (fileUri.UserInfo, String.Empty, "LocalPath_FileNameWithAtSign UserInfo");
+			Assert.AreEqual (fileUri.Host, String.Empty, "LocalPath_FileNameWithAtSign Host");
+			Assert.IsTrue (fileUri.IsFile, "LocalPath_FileNameWithAtSign IsFile");
+			Assert.IsTrue (fileUri.IsAbsoluteUri, "LocalPath_FileNameWithAtSign IsAbsUri");
+			Assert.IsFalse (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
+
+			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
+			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape(path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
+			Assert.AreEqual (path, fileUri.AbsolutePath, "LocalPath_FileNameWithAtSign AbsPath");
+			Assert.AreEqual (path, fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+		}
+
+		[Test]
+		public void LocalPath_FileNameWithAtSign4 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "file://localhost" + path;
+			Uri fileUri = new Uri (fullpath);
+
+			Assert.AreEqual (fileUri.UserInfo, String.Empty, "LocalPath_FileNameWithAtSign UserInfo");
+			Assert.AreEqual (fileUri.Host, "localhost", "LocalPath_FileNameWithAtSign Host");
+			Assert.IsTrue (fileUri.IsFile, "LocalPath_FileNameWithAtSign IsFile");
+			Assert.IsTrue (fileUri.IsAbsoluteUri, "LocalPath_FileNameWithAtSign IsAbsUri");
+			Assert.IsTrue (fileUri.IsUnc, "LocalPath_FileNameWithAtSign IsUnc");
+
+			Assert.AreEqual (fullpath, fileUri.OriginalString, "LocalPath_FileNameWithAtSign OriginalString");
+			Assert.AreEqual (path, new DerivedUri (fullpath).TestUnescape (path), "LocalPath_FileNameWithAtSign ProtectedUnescape");
+			Assert.AreEqual (path, fileUri.AbsolutePath, "LocalPath_FileNameWithAtSign AbsPath");
+			//this test is marked as NotWorking below:
+			//Assert.AreEqual ("\\\\localhost" + path.Replace ("/", "\\"), fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LocalPath_FileNameWithAtSign5 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "file://localhost" + path;
+			Uri fileUri = new Uri (fullpath);
+
+			Assert.AreEqual ("\\\\localhost" + path.Replace ("/", "\\"), fileUri.LocalPath, "LocalPath_FileNameWithAtSign LocalPath");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS.NET seems not to like userinfo in a file:// uri...
+		[ExpectedException (typeof (UriFormatException))]
+		public void LocalPath_FileNameWithAtSign6 ()
+		{
+			string path = "/some/path/file_with_an_@_sign.mp3";
+			string fullpath = "file://user:password@localhost" + path;
+			Uri fileUri = new Uri (fullpath);
+		}
+
+
+		public class DerivedUri : Uri
+		{
+			public DerivedUri (string uriString) : base (uriString)
+			{
+			}
+
+			internal string TestUnescape (string path)
+			{
+				return base.Unescape (path);
+			}
+		}
+#endif
 	}
 }

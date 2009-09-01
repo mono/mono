@@ -1,8 +1,12 @@
+2009-09-01  Andres Aragoneses  <aaragoneses@novell.com>
+
+	* UriTest.cs: New tests from #533572.
+
 2009-06-25  Robert Jordan  <robertj@gmx.net>
 
 	* UriTest.cs: Upgrade to new NUnit style.
 
-2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UriParserTest.cs: Ensure "tcp" is not a registred scheme
 	* UriTest2.cs: Make sure GetComponents and IsBaseOf do not throw
