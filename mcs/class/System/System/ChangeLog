@@ -1,3 +1,8 @@
+2009-09-01  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #533572
+	* Uri.cs (ParseNoExceptions): Don't look for '@' in absolute unix paths.
+
 2009-01-28  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r124869.
