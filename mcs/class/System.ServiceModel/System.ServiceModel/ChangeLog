@@ -1,5 +1,9 @@
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelFactory_1.cs : validate behaviors.
+
+2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : add Extensions.
 
 2009-08-26  Atsushi Enomoto  <atsushi@ximian.com>

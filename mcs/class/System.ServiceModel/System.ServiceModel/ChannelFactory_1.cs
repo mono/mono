@@ -131,6 +131,7 @@ namespace System.ServiceModel
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)
 		{
 			EnsureOpened ();
+			Endpoint.Validate ();
 			Type type = ClientProxyGenerator.CreateProxyType (typeof (TChannel), Endpoint.Contract, false);
 			// in .NET and SL2, it seems that the proxy is RealProxy.
 			// But since there is no remoting in SL2 (and we have
