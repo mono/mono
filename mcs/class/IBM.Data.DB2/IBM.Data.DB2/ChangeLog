@@ -1,0 +1,6 @@
+2009-09-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DB2CLIWrapper.cs: changed libname to 'db2'. Use 'int' instead of
+	'IntPtr' for most of the SQL handles. Only SQLPOINTER is 64 bits in
+	64-bit machines.
+
