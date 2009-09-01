@@ -124,31 +124,33 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint,
 			BindingParameterCollection parameters)
 		{
 			parameters.Add (this);
 		}
 
-		[MonoTODO]
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint,
 			EndpointDispatcher dispatcher)
 		{
-			throw new NotImplementedException ();
+			// documented as to have no effect.
 		}
 
 		[MonoTODO]
-		void IEndpointBehavior.ApplyClientBehavior (
+		public virtual void ApplyClientBehavior (
 			ServiceEndpoint endpoint, ClientRuntime behavior)
 		{
-			//throw new NotImplementedException ();
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+			if (behavior == null)
+				throw new ArgumentNullException ("behavior");
+
+			// FIXME: apply to endpoint when there is not security binding element.
 		}
 
-		[MonoTODO]
 		void IEndpointBehavior.Validate (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			// documented as reserved for future use.
 		}
 	}
 }

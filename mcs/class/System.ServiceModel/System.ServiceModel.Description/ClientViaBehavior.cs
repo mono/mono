@@ -65,7 +65,7 @@ namespace System.ServiceModel.Description
 
 		void IEndpointBehavior.Validate (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
+			// documented as not implemented (!?)
 		}
 	}
 }

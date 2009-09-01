@@ -52,7 +52,7 @@ namespace System.ServiceModel.Description
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint,
 			EndpointDispatcher dispatcher)
 		{
-			throw new NotImplementedException ();
+			dispatcher.Runtime.ValidateMustUnderstand = validate;
 		}
 
 		void IEndpointBehavior.ApplyClientBehavior (ServiceEndpoint endpoint,
@@ -63,7 +63,6 @@ namespace System.ServiceModel.Description
 
 		void IEndpointBehavior.Validate (ServiceEndpoint endpoint)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }
