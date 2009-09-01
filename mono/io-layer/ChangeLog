@@ -1,3 +1,8 @@
+2009-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c (EnumProcessModules): Applied patch from Romain Tartière
+	(romain@blogreen.org). Fix this on freebsd/OSX. Fixes #533893.
+
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
 	* wthreads.c: Roll back change for thread-id as it "embraces
