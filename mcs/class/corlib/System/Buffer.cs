@@ -110,7 +110,7 @@ namespace System {
 				// watch for integer overflow
 				if ((srcOffset > ByteLength (src) - count) || (dstOffset > ByteLength (dst) - count))
 					throw new ArgumentException (Locale.GetText (
-						"Offset and length were out of bounds for the array or count is greater than" + 
+						"Offset and length were out of bounds for the array or count is greater than " + 
 						"the number of elements from index to the end of the source collection."));
 			}
 		}
