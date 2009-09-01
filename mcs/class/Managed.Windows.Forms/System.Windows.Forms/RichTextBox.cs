@@ -1082,7 +1082,9 @@ namespace System.Windows.Forms {
 					}
 
 					for (i = 1; i < document.Lines; i++) {
-						bytes = encoding.GetBytes(document.GetLine(i).text.ToString());
+						// Normalize the new lines to the system ones
+						string line_text = document.GetLine (i).TextWithoutEnding () + Environment.NewLine;
+						bytes = encoding.GetBytes(line_text);
 						data.Write(bytes, 0, bytes.Length);
 					}
 					bytes = encoding.GetBytes(document.GetLine(document.Lines).text.ToString());

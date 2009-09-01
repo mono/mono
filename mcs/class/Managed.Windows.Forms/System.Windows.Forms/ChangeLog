@@ -1,3 +1,10 @@
+2009-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When saving the text to a file using SaveFile use
+	Environment.NewLine to separate the lines. This way we should be
+	saving the files according to the system.
+	Fixes the remaining part of #511515.
+
 2009-08-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichText.cs: Remove some unix new line characters and use
