@@ -57,11 +57,10 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		[Ignore ("seems not valid test yet")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void RejectTwoParametersWhenNotWrapped ()
 		{
-			WebChannelFactory<IBogusService1>.CreateChannel (new WebHttpBinding (), new EndpointAddress ("http://localhost:37564"));
+			new WebChannelFactory<IBogusService1> (new WebHttpBinding (), new Uri ("http://localhost:37564")).CreateChannel ();
 		}
 
 		[ServiceContract]

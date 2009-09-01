@@ -1,3 +1,7 @@
+2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs : on validation, check wrapped parameter style.
+
 2009-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebScriptEnablingBehavior.cs : revert GetQueryStringConverter().

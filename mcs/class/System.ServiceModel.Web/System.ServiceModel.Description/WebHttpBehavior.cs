@@ -126,6 +126,27 @@ namespace System.ServiceModel.Description
 		{
 			if (endpoint == null)
 				throw new ArgumentNullException ("endpoint");
+
+			foreach (var oper in endpoint.Contract.Operations)
+				foreach (var msg in oper.Messages)
+					switch (DefaultBodyStyle) {
+					case WebMessageBodyStyle.Wrapped:
+						continue;
+					case WebMessageBodyStyle.WrappedRequest:
+						if (msg.Direction == MessageDirection.Output)
+							continue;
+						goto case WebMessageBodyStyle.Bare;
+					case WebMessageBodyStyle.WrappedResponse:
+						if (msg.Direction == MessageDirection.Input)
+							continue;
+						goto case WebMessageBodyStyle.Bare;
+					case WebMessageBodyStyle.Bare:
+					default:
+						if (msg.Body.Parts.Count > 1)
+							throw new InvalidOperationException (String.Format ("{0} message on operation '{1}' has multiple parameters which is not allowed when the operation indicates no wrapper element. BodyStyle must be 'wrapped' on the operation WebInvoke/WebGet attribute.", msg.Direction, oper.Name));
+						break;
+					}
+
 			ValidateBinding (endpoint);
 		}
 
