@@ -1,3 +1,11 @@
+2009-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: LoadControlState must call OnTotalRowCountAvailable
+	after restoring the state, so that all parties subscribed to that
+	event are given chance to react accordingly.
+	SetPageProperties should use values stored in
+	PagePropertiesChangingEventArgs arguments after handler returns.
+
 2009-03-03  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: SetPageProperties invoked the

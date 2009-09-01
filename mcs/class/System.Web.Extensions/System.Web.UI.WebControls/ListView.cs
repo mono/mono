@@ -1416,6 +1416,8 @@ namespace System.Web.UI.WebControls
 				_sortDirection = (SortDirection)o;
 			if ((o = state [CSTATE_SORTEXPRESSION]) != null)
 				_sortExpression = (string)o;
+			
+			OnTotalRowCountAvailable (new PageEventArgs (_startRowIndex, _maximumRows, _totalRowCount));
 		}
 	
 		protected override void LoadViewState (object savedState)
@@ -2002,10 +2004,13 @@ namespace System.Web.UI.WebControls
 				if (databind) {
 					var args = new PagePropertiesChangingEventArgs (startRowIndex, maximumRows);
 					OnPagePropertiesChanging (args);
+					_startRowIndex = args.StartRowIndex;
+					_maximumRows = args.MaximumRows;
+					
+				} else {
+					_startRowIndex = startRowIndex;
+					_maximumRows = maximumRows;
 				}
-
-				_startRowIndex = startRowIndex;
-				_maximumRows = maximumRows;
 
 				if (databind)
 					OnPagePropertiesChanged (EventArgs.Empty);
