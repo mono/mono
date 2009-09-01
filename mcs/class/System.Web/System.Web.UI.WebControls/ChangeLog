@@ -1,3 +1,9 @@
+2009-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: ExecuteSelect must call
+	QueryTotalRowCount after executing the select method (that's what
+	.NET does)
+
 2009-08-25  Marek Habersack  <mhabersack@novell.com>
 
 	* WebColorConverter.cs: inform the user that the might need to
