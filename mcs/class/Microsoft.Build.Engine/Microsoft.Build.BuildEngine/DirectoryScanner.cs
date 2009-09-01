@@ -59,8 +59,8 @@ namespace Microsoft.Build.BuildEngine {
 			excludedItems = new Dictionary <string, bool> ();
 			includedItems = new List <string> ();
 			
-			splitInclude = includes.Split (';');
-			splitExclude = excludes.Split (';');
+			splitInclude = includes.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+			splitExclude = excludes.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
 			
 			if (excludes != String.Empty) {
 				foreach (string si in splitExclude) {

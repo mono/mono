@@ -122,7 +122,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			// In evaluate phase, properties are not expanded
 			Expression exp = new Expression ();
-			exp.Parse (Value, false, false);
+			exp.Parse (Value, ParseOptions.None);
 			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string),
 					ExpressionOptions.DoNotExpandItemRefs);
 
@@ -150,7 +150,8 @@ namespace Microsoft.Build.BuildEngine {
 				Expression exp = new Expression ();
 
 				// in non-evaluation phase, properties are always expanded
-				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs, false);
+				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs ?
+							ParseOptions.AllowItems : ParseOptions.None);
 				return (string) exp.ConvertTo (project, typeof (string), options);
 			} finally {
 				converting = false;
@@ -172,7 +173,8 @@ namespace Microsoft.Build.BuildEngine {
 				Expression exp = new Expression ();
 
 				// in non-evaluation phase, properties are always expanded
-				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs, false);
+				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs ?
+							ParseOptions.AllowItems : ParseOptions.None);
 				return (ITaskItem[]) exp.ConvertTo (project, typeof (ITaskItem[]), options);
 			} finally {
 				converting = false;

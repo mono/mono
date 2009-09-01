@@ -1,3 +1,8 @@
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
+	* ResolveAssemblyReference.cs (ResolveReference): targetFrameworkDirectories
+	can be null.
+
 2009-08-28  Ankit Jain  <jankit@novell.com>
 
 	* AssignCulture.cs, AssignTargetPath.cs,

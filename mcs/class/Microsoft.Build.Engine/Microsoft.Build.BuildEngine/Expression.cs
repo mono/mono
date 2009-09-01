@@ -65,18 +65,19 @@ namespace Microsoft.Build.BuildEngine {
 			this.expressionCollection = new ExpressionCollection ();
 		}
 
-		public void Parse (string expression, bool allowItems)
-		{
-			Parse (expression, allowItems, true);
-		}
-
-		// @split: Split on ';'
+		// Split: Split on ';'
 		//	   Eg. Property values don't need to be split
 		//
-		// @allowItems: item refs should not be treated as item refs!
+		// AllowItems: if false, item refs should not be treated as item refs!
 		//	        it converts them to strings in the final expressionCollection
-		public void Parse (string expression, bool allowItems, bool split)
+		//
+		// AllowMetadata: same as AllowItems, for metadata
+		public void Parse (string expression, ParseOptions options)
 		{
+			bool split = (options & ParseOptions.Split) == ParseOptions.Split;
+			bool allowItems = (options & ParseOptions.AllowItems) == ParseOptions.AllowItems;
+			bool allowMd = (options & ParseOptions.AllowMetadata) == ParseOptions.AllowMetadata;
+
 			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
 			expression = expression.Replace ('\\', Path.DirectorySeparatorChar);
 		
@@ -117,7 +118,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 
-			CopyToExpressionCollection (p3, allowItems);
+			CopyToExpressionCollection (p3, allowItems, allowMd);
 		}
 
 		void Prepare (List <ArrayList> l, int length)
@@ -126,7 +127,7 @@ namespace Microsoft.Build.BuildEngine {
 				l.Add (null);
 		}
 		
-		void CopyToExpressionCollection (List <ArrayList> lists, bool allowItems)
+		void CopyToExpressionCollection (List <ArrayList> lists, bool allowItems, bool allowMd)
 		{
 			for (int i = 0; i < lists.Count; i++) {
 				foreach (object o in lists [i]) {
@@ -134,6 +135,9 @@ namespace Microsoft.Build.BuildEngine {
 						expressionCollection.Add (Utilities.Unescape ((string) o));
 					else if (!allowItems && o is ItemReference)
 						expressionCollection.Add (((ItemReference) o).OriginalString);
+					else if (!allowMd && o is MetadataReference) {
+						expressionCollection.Add (((MetadataReference) o).OriginalString);
+					}
 					else if (o is IReference)
 						expressionCollection.Add ((IReference) o);
 				}
@@ -246,7 +250,8 @@ namespace Microsoft.Build.BuildEngine {
 				
 				meta = m.Groups [MetadataRegex.GroupNumberFromName ("meta")].Value;
 				
-				mr = new MetadataReference (name, meta, m.Groups [0].Index, m.Groups [0].Length);
+				mr = new MetadataReference (text.Substring (m.Groups [0].Index, m.Groups [0].Length),
+								name, meta, m.Groups [0].Index, m.Groups [0].Length);
 				phase1.Add (mr);
 				m = m.NextMatch ();
 			}
@@ -324,6 +329,21 @@ namespace Microsoft.Build.BuildEngine {
 				return metadata_regex;
 			}
 		}
+	}
+
+	[Flags]
+	enum ParseOptions {
+		// absence of one of these flags, means
+		// false for that option
+		AllowItems = 0x1,
+		Split = 0x2,
+		AllowMetadata = 0x4,
+
+		None = 0x8, // == no items, no metadata, and no split
+
+		// commonly used options
+		AllowItemsMetadataAndSplit = AllowItems | Split | AllowMetadata,
+		AllowItemsNoMetadataAndSplit = AllowItems | Split
 	}
 
 	enum ExpressionOptions {

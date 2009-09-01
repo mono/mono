@@ -40,9 +40,11 @@ namespace Microsoft.Build.BuildEngine {
 		string		metadataName;
 		int start;
 		int length;
+		string original;
 	
-		public MetadataReference (string itemName, string metadataName, int start, int length)
+		public MetadataReference (string original, string itemName, string metadataName, int start, int length)
 		{
+			this.original = original;
 			this.itemName = itemName;
 			this.metadataName = metadataName;
 			this.start = start;
@@ -127,6 +129,10 @@ namespace Microsoft.Build.BuildEngine {
 				return String.Format ("%({0}.{1})", itemName, metadataName);
 			else
 				return String.Format ("%({0})", metadataName);
+		}
+
+		public string OriginalString {
+			get { return original; }
 		}
 	}
 }

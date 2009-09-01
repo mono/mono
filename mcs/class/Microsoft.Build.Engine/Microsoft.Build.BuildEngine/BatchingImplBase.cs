@@ -106,7 +106,7 @@ namespace Microsoft.Build.BuildEngine {
 		protected void ParseAttribute (string value)
 		{
 			Expression expr = new Expression ();
-			expr.Parse (value, true);
+			expr.Parse (value, ParseOptions.AllowItemsMetadataAndSplit);
 
 			foreach (object o in expr.Collection) {
 				MetadataReference mr = o as MetadataReference;

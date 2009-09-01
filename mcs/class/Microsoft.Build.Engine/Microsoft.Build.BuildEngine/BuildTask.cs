@@ -230,7 +230,7 @@ namespace Microsoft.Build.BuildEngine {
 					return false;
 				else {
 					Expression exp = new Expression ();
-					exp.Parse (str, true);
+					exp.Parse (str, ParseOptions.AllowItemsNoMetadataAndSplit);
 					return (bool) exp.ConvertTo (parentTarget.Project, typeof (bool),
 							ExpressionOptions.ExpandItemRefs);
 				}
