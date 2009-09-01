@@ -39,7 +39,10 @@ namespace System.ServiceModel.Web
 
 		internal IncomingWebRequestContext (OperationContext context)
 		{
-			hp = (HttpRequestMessageProperty) context.IncomingMessageProperties [HttpRequestMessageProperty.Name];
+			if (context.IncomingMessageProperties != null)
+				hp = (HttpRequestMessageProperty) context.IncomingMessageProperties [HttpRequestMessageProperty.Name];
+			else
+				hp = new HttpRequestMessageProperty ();
 		}
 
 		public string Accept {

@@ -1,3 +1,11 @@
+2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebOperationContext.cs : Current is automatically created (even
+	  without WebHttpBehavior or WebChannelFactory).
+	* IncomingWebRequestContext.cs, IncomingWebResponseContext.cs:
+	  WebOperationContext could be created regardless of whether it is
+	  request or not. So do not premise incoming members existence.
+
 2009-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebChannelFactory.cs : added missing constructors.

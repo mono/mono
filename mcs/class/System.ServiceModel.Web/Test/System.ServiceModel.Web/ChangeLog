@@ -1,3 +1,8 @@
+2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebOperationContextTest.cs : new test.
+	* WebInvokeAttributeTest.cs : new test, not working.
+
 2008-04-21  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebServiceHostTest.cs: new testfixture.

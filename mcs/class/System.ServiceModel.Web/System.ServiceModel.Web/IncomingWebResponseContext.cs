@@ -38,7 +38,10 @@ namespace System.ServiceModel.Web
 
 		internal IncomingWebResponseContext (OperationContext context)
 		{
-			hp = (HttpResponseMessageProperty) context.IncomingMessageProperties [HttpResponseMessageProperty.Name];
+			if (context.IncomingMessageProperties != null)
+				hp = (HttpResponseMessageProperty) context.IncomingMessageProperties [HttpResponseMessageProperty.Name];
+			else
+				hp = new HttpResponseMessageProperty ();
 		}
 
 		public long ContentLength {

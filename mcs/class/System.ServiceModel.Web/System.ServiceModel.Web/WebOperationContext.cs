@@ -35,7 +35,16 @@ namespace System.ServiceModel.Web
 	public class WebOperationContext : IExtension<OperationContext>
 	{
 		public static WebOperationContext Current {
-			get { return OperationContext.Current != null ? OperationContext.Current.Extensions.Find<WebOperationContext> () : null; }
+			get {
+				if (OperationContext.Current == null)
+					return null;
+				var ret = OperationContext.Current.Extensions.Find<WebOperationContext> ();
+				if (ret == null) {
+					ret = new WebOperationContext (OperationContext.Current);
+					OperationContext.Current.Extensions.Add (ret);
+				}
+				return ret;
+			}
 		}
 
 		IncomingWebRequestContext incoming_request;

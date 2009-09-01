@@ -1,10 +1,10 @@
 //
-// WebInvokeAttributeTest.cs
+// WebOperationContextTest.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,49 +34,34 @@ using NUnit.Framework;
 
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
-namespace MonoTests.System.ServiceModel.Description
+namespace MonoTests.System.ServiceModel.Web
 {
 	[TestFixture]
-	public class WebInvokeAttributeTest
+	public class WebOperationContextTest
 	{
 		[Test]
-		public void IOperationBehaviorMethods ()
+		public void Current ()
 		{
-			IOperationBehavior oper = new WebInvokeAttribute ();
-			var pl = new BindingParameterCollection ();
-			var od = ContractDescription.GetContract (typeof (TestService)).Operations [0];
-			oper.AddBindingParameters (od, pl);
-			Assert.AreEqual (0, pl.Count, "#1");
-
-			// yeah it really does nothing.
-			oper.AddBindingParameters (null, null);
-
-			oper.ApplyClientBehavior (od, null);
-			oper.ApplyDispatchBehavior (od, null);
-			oper.Validate (od);
+			Assert.IsNull (WebOperationContext.Current, "#1");
+			var binding = new WebHttpBinding ();
+			var address = new EndpointAddress ("http://localhost:37564");
+			var ch = (IContextChannel) WebChannelFactory<IHogeService>.CreateChannel (binding, address);
+			using (var ocs = new OperationContextScope (ch)) {
+				Assert.IsNotNull (WebOperationContext.Current, "#2");
+				Assert.IsNotNull (WebOperationContext.Current.OutgoingRequest, "#3");
+				Assert.IsNotNull (WebOperationContext.Current.IncomingRequest, "#4");
+				Assert.IsNotNull (WebOperationContext.Current.IncomingResponse, "#5");
+				Assert.IsNotNull (WebOperationContext.Current.OutgoingResponse, "#6"); // pointless though.
+			}
+			ch.Close ();
 		}
+	}
 
-		[Test]
-		[Ignore ("seems not valid test yet")]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void RejectTwoParametersWhenNotWrapped ()
-		{
-			WebChannelFactory<IBogusService1>.CreateChannel (new WebHttpBinding (), new EndpointAddress ("http://localhost:37564"));
-		}
-
-		[ServiceContract]
-		public interface TestService
-		{
-			[OperationContract]
-			string TestMethod (string input);
-		}
-
-		[ServiceContract]
-		public interface IBogusService1
-		{
-			[OperationContract]
-			[WebInvoke]
-			string Join (string s1, string s2);
-		}
+	[ServiceContract]
+	public interface IHogeService
+	{
+		[WebGet]
+		[OperationContract]
+		string Join (string s1, string s2);
 	}
 }
