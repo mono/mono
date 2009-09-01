@@ -227,7 +227,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
-				e.Parse (value, true);
+				e.Parse (value, ParseOptions.AllowItemsNoMetadataAndSplit);
 				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject,
 						typeof (string), ExpressionOptions.ExpandItemRefs);
 			} else
@@ -264,9 +264,9 @@ namespace Microsoft.Build.BuildEngine {
 			string includes, excludes;
 
 			includeExpr = new Expression ();
-			includeExpr.Parse (Include, true);
+			includeExpr.Parse (Include, ParseOptions.AllowItemsNoMetadataAndSplit);
 			excludeExpr = new Expression ();
-			excludeExpr.Parse (Exclude, true);
+			excludeExpr.Parse (Exclude, ParseOptions.AllowItemsNoMetadataAndSplit);
 			
 			includes = (string) includeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
 			excludes = (string) excludeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
@@ -360,7 +360,7 @@ namespace Microsoft.Build.BuildEngine {
 					// but letting this be here, incase BI.ConvertTo*
 					// is called directly
 					Expression expr = new Expression ();
-					expr.Parse (finalItemSpec, true);
+					expr.Parse (finalItemSpec, ParseOptions.AllowItemsNoMetadataAndSplit);
 
 					return (string) expr.ConvertTo (parent_item_group.ParentProject,
 							typeof (string), ExpressionOptions.ExpandItemRefs);

@@ -1,3 +1,34 @@
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #534965.
+	* Project.cs (BuildTarget): Move caching of target outputs to ..
+	* Target.cs: .. here. Move LogTargetSkipped also here.
+	Ensure that caching happens for target dependencies also.
+
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
+	* DirectoryScanner.cs (Scan): Ignore empty entries in includes and
+	excludes.
+
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
+	* Expression.cs (ParseOptions): New enum. Replace the bool params
+	of exression.Parse with this. Add option to control expansion of
+	metadata references.
+	(CopyToExpressionCollection): Track api changes.
+	
+	Update all expr.Parse calls to use the new enum.
+	* BuildItem.cs, BuildProperty.cs, BuildTask.cs, Import.cs,
+	Target.cs, TargetBatchingImpl.cs, UsingTask.cs: Track api changes.
+
+	* BatchingImplBase.cs: Track api changes. Allow metadata refs
+	in task attributes.
+	* ConditionFactorExpression.cs: Allow metadata refs in conditions.
+	* ItemReference.cs: Allow metadata in transforms.
+	* TaskEngine.cs: Allow metadata refs.
+
+	* MetadataReference.cs (.ctor): Add a 'original string' param.
+
 2009-08-29  Ankit Jain  <jankit@novell.com>
 
 	* Expression.cs (ExpressionOptions): New.

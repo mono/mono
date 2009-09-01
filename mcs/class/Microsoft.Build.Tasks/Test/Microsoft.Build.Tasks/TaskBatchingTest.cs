@@ -507,6 +507,110 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckEngineEventCounts (testLogger, 1, 1, 2, 2);
 		}
 
+		[Test]
+		// test for metadata refs in properties or items
+		public void TestNoBatching () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<ItemGroup>
+		<item3 Include=""foo""/>
+		<item2 Include=""%(item3.Identity)""/>
+		<item0 Include=""@(item3)""/>
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>%(item0.Identity)</Prop1>
+	</PropertyGroup>
+	<Target Name='1'>
+		<Message Text=""Prop1: $(Prop1)""/>
+		<Message Text=""Item2: @(item2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			testLogger.CheckLoggedMessageHead ("Prop1: %(item0.Identity)", "A1");
+			testLogger.CheckLoggedMessageHead ("Item2: %(item3.Identity)", "A2");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
+		[Test]
+		// test for metadata refs via metadata refs
+		// batching should happen only on basis of the task attributes,
+		// and not the resolved expression values
+		public void TestBatching1 () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<item3 Include=""foo""/>
+		<item2 Include=""%(item3.Identity)""/>
+
+		<item4 Include=""%(item2.Identity);@(item3);@(nonexistant)""/>
+		<item4 Include=""bar""/>
+	</ItemGroup>
+	<Target Name='1'>
+		<Message Text=""Item4: %(item4.Identity)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			testLogger.CheckLoggedMessageHead ("Item4: %(item2.Identity)", "A1");
+			testLogger.CheckLoggedMessageHead ("Item4: foo", "A2");
+			testLogger.CheckLoggedMessageHead ("Item4: bar", "A3");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
+		[Test]
+		// test for metadata refs via metadata refs
+		// batching should happen only on basis of the task attributes,
+		// and not the resolved expression values
+		public void TestConditionalBatching2 () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<item2 Include=""%(item3.Identity)""/>
+		<item4 Include=""%(item2.Identity);@(item3)""/>
+	</ItemGroup>
+	<Target Name='1'>
+		<Message Text=""Item3: %(item2.Identity)"" Condition="" '%(item5.Identity)' == '' ""/>
+		<Message Text=""Item4: %(item4.Identity)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			testLogger.CheckLoggedMessageHead ("Item3: %(item3.Identity)", "A1");
+			testLogger.CheckLoggedMessageHead ("Item4: %(item2.Identity)", "A2");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
 		//Target batching
 
 		[Test]

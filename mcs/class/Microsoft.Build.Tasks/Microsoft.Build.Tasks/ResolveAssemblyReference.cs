@@ -193,6 +193,8 @@ namespace Microsoft.Build.Tasks {
 				if (String.Compare (spath, "{HintPathFromItem}") == 0) {
 					resolved = assembly_resolver.ResolveHintPathReference (item, specific_version);
 				} else if (String.Compare (spath, "{TargetFrameworkDirectory}") == 0) {
+					if (targetFrameworkDirectories == null)
+						continue;
 					foreach (string fpath in targetFrameworkDirectories) {
 						resolved = assembly_resolver.FindInTargetFramework (item,
 								fpath, specific_version);
