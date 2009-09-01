@@ -1,5 +1,10 @@
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
+	* DirectoryScanner.cs (Scan): Ignore empty entries in includes and
+	excludes.
+
+2009-09-01  Ankit Jain  <jankit@novell.com>
+
 	* Expression.cs (ParseOptions): New enum. Replace the bool params
 	of exression.Parse with this. Add option to control expansion of
 	metadata references.
