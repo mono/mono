@@ -1,5 +1,10 @@
 2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_method_table): Check for abstract + final.
+	Fixes #534175.
+
+2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_class_fields): Check for duplicate fields.
 
 2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
