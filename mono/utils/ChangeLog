@@ -1,5 +1,9 @@
 2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mono-sha1.c: Update documentation.
+
+2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mono-md5.c: Update documentation.
 
 2009-09-02  Sebastien Pouliot  <sebastien@ximian.com>
