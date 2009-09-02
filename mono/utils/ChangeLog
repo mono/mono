@@ -1,3 +1,9 @@
+2009-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-dl.c (mono_dl_open): Don't leak module if name is NULL
+	* mono-md5.c (mono_md5_get_digest_from_file): Close 'fp' even on
+	success (just like we do for sha1)
+
 2009-08-21  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-hash.c: When creating a hash table, if the keys are managed
