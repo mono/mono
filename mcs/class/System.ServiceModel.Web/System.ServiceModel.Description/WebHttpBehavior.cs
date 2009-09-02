@@ -83,18 +83,17 @@ namespace System.ServiceModel.Description
 			// endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (something);
 		}
 
-		[MonoTODO ("where should I set reply client formatter?")]
 		public virtual void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 			AddClientErrorInspector (endpoint, clientRuntime);
 
 			foreach (ClientOperation oper in clientRuntime.Operations) {
-				oper.Formatter = GetRequestClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
-				//oper.Formatter = GetReplyClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint); // FIXME: see MonoTODO.
+				var req = GetRequestClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
+				var res = GetReplyClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
+				oper.Formatter = new ClientPairFormatter (req, res);
 			}
 		}
 
-		[MonoTODO ("where should I set reply dispatch formatter?")]
 		public virtual void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
@@ -104,8 +103,52 @@ namespace System.ServiceModel.Description
 			AddServerErrorHandlers (endpoint, endpointDispatcher);
 
 			foreach (DispatchOperation oper in endpointDispatcher.DispatchRuntime.Operations) {
-				oper.Formatter = GetRequestDispatchFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
-				//oper.Formatter = GetReplyDispatchFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint); // FIXME: see MonoTODO.
+				var req = GetRequestDispatchFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
+				var res = GetReplyDispatchFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
+				oper.Formatter = new DispatchPairFormatter (req, res);
+			}
+		}
+
+		internal class ClientPairFormatter : IClientMessageFormatter
+		{
+			public ClientPairFormatter (IClientMessageFormatter request, IClientMessageFormatter reply)
+			{
+				this.request = request;
+				this.reply = reply;
+			}
+
+			IClientMessageFormatter request, reply;
+
+			public Message SerializeRequest (MessageVersion messageVersion, object [] parameters)
+			{
+				return request.SerializeRequest (messageVersion, parameters);
+			}
+
+			public object DeserializeReply (Message message, object [] parameters)
+			{
+				return reply.DeserializeReply (message, parameters);
+			}
+		}
+
+		internal class DispatchPairFormatter : IDispatchMessageFormatter
+		{
+			public DispatchPairFormatter (IDispatchMessageFormatter request, IDispatchMessageFormatter reply)
+			{
+				this.request = request;
+				this.reply = reply;
+			}
+
+			IDispatchMessageFormatter request;
+			IDispatchMessageFormatter reply;
+
+			public void DeserializeRequest (Message message, object [] parameters)
+			{
+				request.DeserializeRequest (message, parameters);
+			}
+
+			public Message SerializeReply (MessageVersion messageVersion, object [] parameters, object result)
+			{
+				return reply.SerializeReply (messageVersion, parameters, result);
 			}
 		}
 

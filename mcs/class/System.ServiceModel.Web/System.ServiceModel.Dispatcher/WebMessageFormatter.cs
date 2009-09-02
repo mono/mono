@@ -171,6 +171,11 @@ namespace System.ServiceModel.Description
 				: base (operation, endpoint, converter, behavior)
 			{
 			}
+
+			public override object DeserializeReply (Message message, object [] parameters)
+			{
+				throw new NotSupportedException ();
+			}
 		}
 
 		internal class ReplyClientFormatter : WebClientMessageFormatter
@@ -178,6 +183,11 @@ namespace System.ServiceModel.Description
 			public ReplyClientFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
 				: base (operation, endpoint, converter, behavior)
 			{
+			}
+
+			public override Message SerializeRequest (MessageVersion messageVersion, object [] parameters)
+			{
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -204,7 +214,7 @@ namespace System.ServiceModel.Description
 			{
 			}
 
-			public Message SerializeRequest (MessageVersion messageVersion, object [] parameters)
+			public virtual Message SerializeRequest (MessageVersion messageVersion, object [] parameters)
 			{
 				if (parameters == null)
 					throw new ArgumentNullException ("parameters");
@@ -248,7 +258,7 @@ namespace System.ServiceModel.Description
 				return ret;
 			}
 
-			public object DeserializeReply (Message message, object [] parameters)
+			public virtual object DeserializeReply (Message message, object [] parameters)
 			{
 				if (parameters == null)
 					throw new ArgumentNullException ("parameters");

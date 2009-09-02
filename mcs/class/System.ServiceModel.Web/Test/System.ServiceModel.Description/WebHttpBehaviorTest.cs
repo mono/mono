@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -9,6 +10,38 @@ using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel.Description
 {
+	public class WebHttpBehaviorExt : WebHttpBehavior
+	{
+		public IClientMessageFormatter DoGetReplyClientFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
+		{
+			return GetReplyClientFormatter (operationDescription, endpoint);
+		}
+
+		public IClientMessageFormatter DoGetRequestClientFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
+		{
+			return GetRequestClientFormatter (operationDescription, endpoint);
+		}
+
+		public IDispatchMessageFormatter DoGetReplyDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
+		{
+			return GetReplyDispatchFormatter (operationDescription, endpoint);
+		}
+
+		public IDispatchMessageFormatter DoGetRequestDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
+		{
+			return GetRequestDispatchFormatter (operationDescription, endpoint);
+		}
+
+		public event Action<ServiceEndpoint, ClientRuntime> ApplyClientBehaviorInvoked;
+
+		public override void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime client)
+		{
+			base.ApplyClientBehavior (endpoint, client);
+			if (ApplyClientBehaviorInvoked != null)
+				ApplyClientBehaviorInvoked (endpoint, client);
+		}
+	}
+
 	[TestFixture]
 	public class WebHttpBehaviorTest
 	{
@@ -19,7 +52,6 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void AddBiningParameters ()
 		{
 			var se = CreateEndpoint ();
@@ -75,12 +107,70 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (0, ed.DispatchRuntime.Operations.Count, "#4-0"); // hmm... really?
 		}
 
+		[Test]
+		public void GetMessageFormatters ()
+		{
+			var se = CreateEndpoint ();
+			var od = se.Contract.Operations [0];
+			var b = new WebHttpBehaviorExt ();
+			Assert.IsNotNull (b.DoGetRequestClientFormatter (od, se), "#1");
+			Assert.IsNotNull (b.DoGetReplyClientFormatter (od, se), "#2");
+			Assert.IsNotNull (b.DoGetRequestDispatchFormatter (od, se), "#3");
+			Assert.IsNotNull (b.DoGetReplyDispatchFormatter (od, se), "#4");
+		}
+
+		[Test]
+		public void RequestClientFormatter ()
+		{
+			var se = CreateEndpoint ();
+			var od = se.Contract.Operations [0];
+			var b = new WebHttpBehaviorExt ();
+			var rcf = b.DoGetRequestClientFormatter (od, se);
+			var msg = rcf.SerializeRequest (MessageVersion.None, new object [] {"foo"});
+			var hp = msg.Properties [HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+			Assert.IsNotNull (hp, "#1");
+			Assert.IsTrue (msg.IsEmpty, "#2");
+			Assert.AreEqual (String.Empty, hp.QueryString, "#3");
+			var mb = msg.CreateBufferedCopy (1000);
+			try {
+				rcf.DeserializeReply (mb.CreateMessage (), new object [0]);
+				Assert.Fail ("It should not support reply deserialization");
+			} catch (NotSupportedException) {
+			}
+		}
+
+		[Test]
+		public void RequestClientFormatter2 ()
+		{
+			var se = CreateEndpoint ();
+			var od = se.Contract.Operations [0];
+			var b = new WebHttpBehaviorExt ();
+			IClientMessageFormatter rcf = null;
+			b.ApplyClientBehaviorInvoked += delegate (ServiceEndpoint e, ClientRuntime cr) {
+				rcf = cr.Operations [0].Formatter;
+			};
+			se.Behaviors.Add (b);
+			var ch = new WebChannelFactory<IMyServiceClient> (se).CreateChannel ();
+			var msg = rcf.SerializeRequest (MessageVersion.None, new object [] {"foo"});
+			var hp = msg.Properties [HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
+			Assert.IsNotNull (hp, "#1");
+			Assert.IsTrue (msg.IsEmpty, "#2");
+			Assert.AreEqual (String.Empty, hp.QueryString, "#3");
+			//var mb = msg.CreateBufferedCopy (1000);
+
+			// TODO: test DeserializeReply too (it is supported unlike above).
+		}
+
 		[ServiceContract]
 		public interface IMyService
 		{
 			[OperationContract]
 			[WebGet]
 			string Echo (string input);
+		}
+
+		public interface IMyServiceClient : IMyService, IClientChannel
+		{
 		}
 
 		public class MyService: IMyService

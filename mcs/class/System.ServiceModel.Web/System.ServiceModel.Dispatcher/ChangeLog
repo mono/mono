@@ -1,5 +1,10 @@
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : override some serialization methods as
+	  prohibited.
+
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebHttpDispatchOperationSelector.cs : use common extension method.
 	* WebMessageFormatter.cs : support WebMessageBodyStyle(.Wrapped*).
 	  Cache serializers.
