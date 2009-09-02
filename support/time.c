@@ -22,7 +22,7 @@ int
 Mono_Posix_Syscall_nanosleep (struct Mono_Posix_Timespec *req,
 		struct Mono_Posix_Timespec *rem)
 {
-	struct timespec _req, _rem, *prem;
+	struct timespec _req, _rem, *prem = NULL;
 	int r;
 
 	if (req == NULL) {

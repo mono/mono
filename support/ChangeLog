@@ -1,3 +1,8 @@
+2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* time.c (Mono_Posix_Syscall_nanosleep): Avoid referencing unitialized
+	memory.
+
 2009-08-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* deflate.c:
