@@ -783,6 +783,9 @@ namespace Mono.CSharp {
 				if (resolved != null || value == null)
 					return resolved;
 
+				if (rc == null)
+					return null;
+
 				resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
 				if (resolved == null) {
 					value = null;

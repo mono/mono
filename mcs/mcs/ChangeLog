@@ -1,3 +1,8 @@
+2009-09-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #535395
+	* namespace.cs: Resolve context can be null.
+
 2009-08-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #533912
