@@ -1,3 +1,12 @@
+2009-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c (parse_public_key): Avoid allocating (and not 
+	freeing) the public key array when it's not requested by the 
+	caller.
+	* threads.c (mono_thread_manage, mono_thread_create_internal, 
+	ves_icall_System_Threading_Thread_Thread_internal): Free 
+	allocated memory on error.
+
 2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* marshal.c (mono_array_to_lparray): Do DISABLE_COM properly.
