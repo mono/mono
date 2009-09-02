@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008,2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Xml;
 
 namespace System.ServiceModel.Description
 {
@@ -80,6 +81,21 @@ namespace System.ServiceModel.Description
 			get { return info; }
 		}
 
+		public WebMessageBodyStyle BodyStyle {
+			get { return info.IsBodyStyleSetExplicitly ? info.BodyStyle : behavior.DefaultBodyStyle; }
+		}
+
+		public bool IsResponseBodyWrapped {
+			get {
+				switch (BodyStyle) {
+				case WebMessageBodyStyle.Wrapped:
+				case WebMessageBodyStyle.WrappedResponse:
+					return true;
+				}
+				return false;
+			}
+		}
+
 		public OperationDescription Operation {
 			get { return operation; }
 		}
@@ -122,6 +138,31 @@ namespace System.ServiceModel.Description
 				if (md.Direction == dir)
 					return md;
 			throw new SystemException ("INTERNAL ERROR: no corresponding message description for the specified direction: " + dir);
+		}
+
+		protected XmlObjectSerializer GetSerializer (WebContentFormat msgfmt)
+		{
+			switch (msgfmt) {
+			case WebContentFormat.Xml:
+				return GetSerializer (ref xml_serializer, t => new DataContractSerializer (t));
+				break;
+			case WebContentFormat.Json:
+				return GetSerializer (ref json_serializer, t => new DataContractJsonSerializer (t));
+				break;
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
+		XmlObjectSerializer xml_serializer, json_serializer;
+
+		XmlObjectSerializer GetSerializer (ref XmlObjectSerializer serializer, Func<Type,XmlObjectSerializer> f)
+		{
+			if (serializer == null) {
+				MessageDescription md = GetMessageDescription (MessageDirection.Output);
+				serializer = f (md.Body.ReturnValue.Type);
+			}
+			return serializer;
 		}
 
 		internal class RequestClientFormatter : WebClientMessageFormatter
@@ -217,24 +258,24 @@ namespace System.ServiceModel.Description
 				if (!message.Properties.ContainsKey (pname))
 					throw new SystemException ("INTERNAL ERROR: it expects WebBodyFormatMessageProperty existence");
 				var wp = (WebBodyFormatMessageProperty) message.Properties [pname];
-				MessageDescription md = GetMessageDescription (MessageDirection.Output);
 
-				XmlObjectSerializer serializer = null;
-				switch (wp.Format) {
-				case WebContentFormat.Xml:
-					serializer = new DataContractSerializer (md.Body.ReturnValue.Type);
-					break;
-				case WebContentFormat.Json:
-					serializer = new DataContractJsonSerializer (md.Body.ReturnValue.Type);
-					break;
-				case WebContentFormat.Raw:
-				default:
-					throw new NotImplementedException ();
-				}
+				var serializer = GetSerializer (wp.Format);
 
 				// FIXME: handle ref/out parameters
 
-				return serializer.ReadObject (message.GetReaderAtBodyContents (), false);
+				var md = GetMessageDescription (MessageDirection.Output);
+
+				var reader = message.GetReaderAtBodyContents ();
+
+				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
+					reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
+
+				var ret = serializer.ReadObject (reader, false);
+
+				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
+					reader.ReadEndElement ();
+
+				return ret;
 			}
 		}
 
@@ -275,11 +316,11 @@ namespace System.ServiceModel.Description
 				XmlObjectSerializer serializer = null;
 				switch (msgfmt) {
 				case WebMessageFormat.Xml:
-					serializer = new DataContractSerializer (md.Body.ReturnValue.Type);
+					serializer = GetSerializer (WebContentFormat.Xml);
 					mediaType = "application/xml";
 					break;
 				case WebMessageFormat.Json:
-					serializer = new DataContractJsonSerializer (md.Body.ReturnValue.Type);
+					serializer = GetSerializer (WebContentFormat.Json);
 					mediaType = "application/json";
 					break;
 				}

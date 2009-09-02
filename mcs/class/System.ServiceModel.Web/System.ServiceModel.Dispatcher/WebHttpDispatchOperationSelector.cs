@@ -55,7 +55,7 @@ namespace System.ServiceModel.Dispatcher
 			table = new UriTemplateTable (endpoint.Address.Uri);
 
 			foreach (OperationDescription od in endpoint.Contract.Operations) {
-				WebAttributeInfo info = GetWebAttributeInfo (od);
+				WebAttributeInfo info = od.GetWebAttributeInfo ();
 				if (info != null)
 					table.KeyValuePairs.Add (new TemplateTablePair (info.BuildUriTemplate (od, null), od));
 			}
@@ -87,20 +87,6 @@ namespace System.ServiceModel.Dispatcher
 						od = p.Value as OperationDescription;
 			}
 			return od != null ? od.Name : String.Empty;
-		}
-
-		WebAttributeInfo GetWebAttributeInfo (OperationDescription od)
-		{
-			foreach (IOperationBehavior ob in od.Behaviors) {
-				WebAttributeInfo info = null;
-				var wg = ob as WebGetAttribute;
-				if (wg != null)
-					return wg.Info;
-				var wi = ob as WebInvokeAttribute;
-				if (wi != null)
-					return wi.Info;
-			}
-			return null;
 		}
 	}
 }
