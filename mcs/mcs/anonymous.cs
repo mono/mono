@@ -1223,6 +1223,11 @@ namespace Mono.CSharp {
 			{
 				EmitContext ec = new EmitContext (this, ig, ReturnType);
 				ec.CurrentAnonymousMethod = AnonymousMethod;
+				if (AnonymousMethod.return_label != null) {
+					ec.HasReturnLabel = true;
+					ec.ReturnLabel = (Label) AnonymousMethod.return_label;
+				}
+
 				return ec;
 			}
 
@@ -1280,6 +1285,8 @@ namespace Mono.CSharp {
 
 		public Type ReturnType;
 
+		object return_label;
+
 		protected AnonymousExpression (ToplevelBlock block, Type return_type, Location loc)
 		{
 			this.ReturnType = return_type;
@@ -1318,6 +1325,9 @@ namespace Mono.CSharp {
 				aec_dispose = aec.Set (flags);
 
 			bool res = Block.Resolve (ec.CurrentBranching, aec, Block.Parameters, null);
+
+			if (aec.HasReturnLabel)
+				return_label = aec.ReturnLabel;
 
 			if (ec.HasSet (ResolveContext.Options.InferReturnType)) {
 				aec.ReturnTypeInference.FixAllTypes ();

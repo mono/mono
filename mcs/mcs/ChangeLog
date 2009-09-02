@@ -1,5 +1,10 @@
 2009-09-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #535448
+	* anonymous.cs, class.cs: Copy return label between all contexts.
+
+2009-09-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #535395
 	* namespace.cs: Resolve context can be null.
 
