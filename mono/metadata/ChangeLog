@@ -9,6 +9,15 @@
 
 2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_fields): Remove duplicated local variable
+	named gklass.
+	Rename gklass to gtd to reflect the fact that it points to the generic
+	type definition.
+	Remove the duplicated call to mono_class_setup_fields on gtd and move
+	the error check to the beginning.
+
+2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_array_to_lparray): Do DISABLE_COM properly.
 	Remove cruft of the previous patch.
 
