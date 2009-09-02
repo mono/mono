@@ -1,3 +1,8 @@
+2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_array_to_lparray): Do DISABLE_COM properly.
+	Remove cruft of the previous patch.
+
 2009-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_method_table): Check for abstract + final.
