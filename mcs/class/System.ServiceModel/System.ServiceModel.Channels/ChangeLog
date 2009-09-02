@@ -1,5 +1,10 @@
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandlerFactory.cs : make use of BuildManager aid. Now it
+	  loads types from system assemblies appropriately.
+
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderBodyWriter.cs : implement OnCreateBufferedCopy()
 	  for XmlReader input.
 

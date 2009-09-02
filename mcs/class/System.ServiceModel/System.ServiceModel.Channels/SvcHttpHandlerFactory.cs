@@ -35,6 +35,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Compilation;
 
 namespace System.ServiceModel.Channels {
 
@@ -87,7 +88,7 @@ namespace System.ServiceModel.Channels {
 			if (parser.Program == null) {
 				//FIXME: Not caching, as parser.TypeName could be
 				//just typename or fully qualified name
-				service_type = GetTypeFromBin (parser.TypeName);
+				service_type = GetTypeFromBinAndConfig (parser.TypeName);
 				/*CachingCompiler.InsertType (
 					service_type, service_type.Assembly.Location, url, 
 					new CacheItemRemovedCallback (RemovedCallback));*/
@@ -98,7 +99,7 @@ namespace System.ServiceModel.Channels {
 			}
 
 			if (parser.Factory != null) {
-				factory_type = GetTypeFromBin (parser.Factory);
+				factory_type = GetTypeFromBinAndConfig (parser.Factory);
 				/*CachingCompiler.InsertType (
 					factory_type, factory_type.Assembly.Location, url, 
 					new CacheItemRemovedCallback (RemovedCallback));*/
@@ -128,22 +129,25 @@ namespace System.ServiceModel.Channels {
 		}
 
 		//FIXME: Service="TypeName,TypeNamespace" not handled
-		Type GetTypeFromBin (string typeName)
+		Type GetTypeFromBinAndConfig (string typeName)
 		{
-			if (!Directory.Exists (PrivateBinPath))
-				throw new HttpException (String.Format ("Type {0} not found.", typeName));
+			string assname = null;
+			int idx = typeName.IndexOf (',');
+			if (idx > 0) {
+				assname = typeName.Substring (idx + 1).Trim ();
+				typeName = typeName.Substring (0, idx);
+			}
 
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			Type result = null;
-			foreach (string dll in binDlls) {
-				Assembly assembly = Assembly.LoadFrom (dll);
-				Type type = assembly.GetType (typeName, false);
+			foreach (Assembly ass in BuildManager.GetReferencedAssemblies ()) {
+				if (assname != null && ass.GetName ().Name != assname)
+					continue;
+				Type type = ass.GetType (typeName, false);
 				if (type != null) {
-					if (result != null) 
+					if (result != null)
 						throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
-
 					result = type;
-				} 
+				}
 			}
 
 			if (result == null)
