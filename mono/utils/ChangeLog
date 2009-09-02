@@ -1,3 +1,7 @@
+2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-md5.c: Update documentation.
+
 2009-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-dl.c (mono_dl_open): Don't leak module if name is NULL
