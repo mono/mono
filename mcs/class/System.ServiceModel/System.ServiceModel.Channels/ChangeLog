@@ -1,5 +1,10 @@
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReaderBodyWriter.cs : implement OnCreateBufferedCopy()
+	  for XmlReader input.
+
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestMessageProperty.cs : fix default values.
 
 2009-08-31  Atsushi Enomoto  <atsushi@ximian.com>

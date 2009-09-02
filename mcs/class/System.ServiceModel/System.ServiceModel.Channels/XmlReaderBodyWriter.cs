@@ -54,8 +54,10 @@ namespace System.ServiceModel.Channels
 		protected override BodyWriter OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
-			if (xml == null)
-				throw new NotSupportedException ();
+			if (xml == null) {
+				xml = reader.ReadOuterXml ();
+				reader = null;
+			}
 			return new XmlReaderBodyWriter (xml);
 		}
 

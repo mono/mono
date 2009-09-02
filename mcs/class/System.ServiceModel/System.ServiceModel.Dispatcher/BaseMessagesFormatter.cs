@@ -305,10 +305,9 @@ namespace System.ServiceModel.Dispatcher
 				this.body = parts;
 			}
 
-			[MonoTODO]
 			protected override BodyWriter OnCreateBufferedCopy (int maxBufferSize)
 			{
-				throw new NotSupportedException ();
+				return new XmlBodyWriter (serializer, body);
 			}
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
