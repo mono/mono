@@ -29,12 +29,18 @@ using System.ComponentModel;
 using System.Reflection;
 
 #if NET_2_0
-
 using System.Collections.Generic;
+#endif
 
 namespace System.Windows.Forms
 {
-	public static class ListBindingHelper 
+
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	static class ListBindingHelper 
 	{
 		public static object GetList (object list)
 		{
@@ -97,12 +103,17 @@ namespace System.Windows.Forms
 			// IEnumerable seems to have higher precedence over IList
 			if (dataSource is IEnumerable) {
 				IEnumerator enumerator = ((IEnumerable) dataSource).GetEnumerator ();
-				if (enumerator.MoveNext ())
+				if (enumerator.MoveNext () && enumerator.Current != null)
 					return enumerator.Current.GetType ();
 
-				if (dataSource is IList || dataSource.GetType () == typeof (IList<>)) {
+				if (dataSource is IList
+#if NET_2_0
+ 					|| dataSource.GetType () == typeof (IList<>)
+#endif
+					) {
 					PropertyInfo property = GetPropertyByReflection (dataSource.GetType (), "Item");
-					return property.PropertyType;
+					if (property != null) // `Item' could be interface-explicit, and thus private
+						return property.PropertyType;
 				}
 
 				// fallback to object
@@ -135,8 +146,11 @@ namespace System.Windows.Forms
 
 			// Take into account only the first property
 			Type property_type = listAccessors [0].PropertyType;
-			if (typeof (IList).IsAssignableFrom (property_type) || 
-				typeof (IList<>).IsAssignableFrom (property_type)) {
+			if (typeof (IList).IsAssignableFrom (property_type)
+#if NET_2_0
+				|| typeof (IList<>).IsAssignableFrom (property_type)
+#endif
+				) {
 
 				PropertyInfo property = GetPropertyByReflection (property_type, "Item");
 				return TypeDescriptor.GetProperties (property.PropertyType);
@@ -186,5 +200,3 @@ namespace System.Windows.Forms
 		}
 	}
 }
-
-#endif

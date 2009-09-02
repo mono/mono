@@ -93,10 +93,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal virtual void SetDataGridView (DataGridView dataGridView) {
-			if (this.DataGridView == null && dataGridView != null) {
-				this.dataGridView = dataGridView;
-				return;
-			}
 			if (dataGridView != this.DataGridView) {
 				this.dataGridView = dataGridView;
 				OnDataGridViewChanged();

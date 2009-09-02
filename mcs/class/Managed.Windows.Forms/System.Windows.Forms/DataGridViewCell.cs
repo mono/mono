@@ -223,7 +223,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataGridViewColumn OwningColumn {
 			get {
-				if (DataGridView == null || columnIndex == -1)
+				if (DataGridView == null || columnIndex < 0 || columnIndex >= DataGridView.Columns.Count)
 					return null;
 					
 				return DataGridView.Columns[columnIndex];
@@ -388,7 +388,16 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual Type ValueType {
-			get { return valueType; }
+			get { 
+				if (valueType == null) {
+					if (DataProperty != null)
+						valueType = DataProperty.PropertyType;
+					else if (OwningColumn != null)
+						valueType = OwningColumn.ValueType;
+				}
+
+				return valueType;
+			}
 			set { valueType = value; }
 		}
 
@@ -716,7 +725,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString () {
-			return String.Format("{0} {RowIndex = {1}, ColumnIndex = {2}}", this.GetType().FullName, RowIndex, columnIndex);
+			return String.Format("{0} {{ ColumnIndex={1}, RowIndex={2} }}", this.GetType().Name, ColumnIndex, RowIndex);
 		}
 
 		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
@@ -878,6 +887,11 @@ namespace System.Windows.Forms {
 				value = e.Value;
 			}
 			
+			if (value == null || (cellStyle != null && value == cellStyle.DataSourceNullValue)) {
+				if (FormattedValueType == typeof (string))
+					return String.Empty;
+			}
+
 			if (FormattedValueType == typeof(string) && value is IFormattable && !String.IsNullOrEmpty (cellStyle.Format))
 				return ((IFormattable) value).ToString (cellStyle.Format, cellStyle.FormatProvider);
 			if (value != null && FormattedValueType.IsAssignableFrom (value.GetType()))
@@ -912,8 +926,11 @@ namespace System.Windows.Forms {
 		protected virtual object GetValue (int rowIndex) {
 			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
-				
-			if (DataProperty != null)
+		
+			if (OwningRow != null && OwningRow.Index == DataGridView.NewRowIndex)
+				return DefaultNewRowValue;
+
+			if (DataProperty != null && OwningRow.DataBoundItem != null)
 				return DataProperty.GetValue (OwningRow.DataBoundItem);
 			
 			if (valuex != null)
@@ -927,9 +944,9 @@ namespace System.Windows.Forms {
 		
 		private PropertyDescriptor DataProperty {
 			get {
-				if (OwningColumn != null && !String.IsNullOrEmpty (OwningColumn.DataPropertyName) && 
-				    OwningRow != null && OwningRow.DataBoundItem != null)
-					return TypeDescriptor.GetProperties (OwningRow.DataBoundItem)[OwningColumn.DataPropertyName];
+				if (OwningColumn != null && OwningColumn.DataColumnIndex != -1 && 
+				    DataGridView != null && DataGridView.DataManager != null)
+					return DataGridView.DataManager.GetItemProperties()[OwningColumn.DataColumnIndex];
 				return null;
 			}
 		}
@@ -1160,11 +1177,11 @@ namespace System.Windows.Forms {
 					if (DataGridView.CellBorderStyle != DataGridViewCellBorderStyle.Single)
 						graphics.DrawLine (pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					break;
+				case DataGridViewAdvancedCellBorderStyle.Outset:
 				case DataGridViewAdvancedCellBorderStyle.Inset:
 					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
-				case DataGridViewAdvancedCellBorderStyle.Outset:
 				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
 					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
@@ -1176,7 +1193,10 @@ namespace System.Windows.Forms {
 				case DataGridViewAdvancedCellBorderStyle.Single:
 					graphics.DrawLine(pen, bounds.X + bounds.Width - 1, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
 					break;
+				case DataGridViewAdvancedCellBorderStyle.Outset:
 				case DataGridViewAdvancedCellBorderStyle.Inset:
+				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
+				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
 					graphics.DrawLine(pen, bounds.X + bounds.Width, bounds.Y, bounds.X + bounds.Width, bounds.Y + bounds.Height - 1);
 					break;
 			}
@@ -1187,14 +1207,21 @@ namespace System.Windows.Forms {
 					if (DataGridView.CellBorderStyle != DataGridViewCellBorderStyle.Single)
 						graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
 					break;
+				case DataGridViewAdvancedCellBorderStyle.Outset:
 				case DataGridViewAdvancedCellBorderStyle.Inset:
+				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
+				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
 					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
 					break;
 			}
 			
 			// Paint the bottom border, if any
 			switch (advancedBorderStyle.Bottom) {
+				case DataGridViewAdvancedCellBorderStyle.Outset:
+				case DataGridViewAdvancedCellBorderStyle.Inset:
 				case DataGridViewAdvancedCellBorderStyle.Single:
+				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
+				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
 					graphics.DrawLine(pen, bounds.X, bounds.Y + bounds.Height - 1, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
 					break;
 			}

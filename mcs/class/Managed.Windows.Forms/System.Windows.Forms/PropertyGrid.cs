@@ -174,7 +174,9 @@ namespace System.Windows.Forms
 								      new PropertyToolBarSeparator (),
 								      propertypages_toolbarbutton});
 			//toolbar.ButtonSize = new System.Drawing.Size (20, 20);
-			toolbar.ItemClicked += new ToolStripItemClickedEventHandler (toolbar_ButtonClick);
+			categorized_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
+			alphabetic_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
+			propertypages_toolbarbutton.Click += new EventHandler (toolbarbutton_clicked);
 #else
 			toolbar.Buttons.AddRange(new ToolBarButton [] {categorized_toolbarbutton,
 								      alphabetic_toolbarbutton,
@@ -898,6 +900,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		private void toolbarbutton_clicked (object o, EventArgs args)
+		{
+			toolbar_Clicked (o as PropertyToolBarButton);
+		}
+#endif
+
 		private void SelectPropertyTab (PropertyTab propertyTab)
 		{
 			if (propertyTab != null && selected_tab != propertyTab) {
@@ -1077,7 +1086,7 @@ namespace System.Windows.Forms
 			return tab;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Never called")]
 		protected void OnComComponentNameChanged(ComponentRenameEventArgs e)
 		{
 			ComponentRenameEventHandler eh = (ComponentRenameEventHandler)(Events [ComComponentNameChangedEvent]);
@@ -1319,41 +1328,37 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Com2Interop.IComPropertyBrowser Interface
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		bool ComponentModel.Com2Interop.IComPropertyBrowser.InPropertySet {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.DropDownDone ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		bool ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4 ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.LoadState (Microsoft.Win32.RegistryKey optRoot)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.SaveState (Microsoft.Win32.RegistryKey optRoot)
 		{
-			throw new NotImplementedException ();
 		}
 
 		static object ComComponentNameChangedEvent = new object ();
@@ -1564,12 +1569,7 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-#if NET_2_0
-		private void toolbar_ButtonClick (object sender, ToolStripItemClickedEventArgs e)
-		{
-			toolbar_Clicked (e.ClickedItem as PropertyToolBarButton);
-		}
-#else
+#if !NET_2_0
 		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e)
 		{
 			toolbar_Clicked (e.Button as PropertyToolBarButton);
@@ -1803,7 +1803,7 @@ namespace System.Windows.Forms
 		}
 
 
-		[MonoTODO ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
+		[MonoInternalNote ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
 		private class SelectedObjectConverter : TypeConverter
 		{
 		}

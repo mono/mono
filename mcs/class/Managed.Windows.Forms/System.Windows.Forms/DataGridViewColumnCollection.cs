@@ -77,9 +77,9 @@ namespace System.Windows.Forms
 
 		public virtual int Add (DataGridViewColumn dataGridViewColumn)
 		{
-			dataGridViewColumn.SetIndex(base.List.Count);
-			dataGridViewColumn.SetDataGridView(dataGridView);
 			int result = base.List.Add(dataGridViewColumn);
+			dataGridViewColumn.SetIndex(result);
+			dataGridViewColumn.SetDataGridView(dataGridView);
 			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewColumn));
 			return result;
 		}
@@ -108,6 +108,8 @@ namespace System.Windows.Forms
 			dataGridView.RemoveEditingRow ();
 			
 			RegenerateSortedList ();
+
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
 
 		bool IList.Contains (object value)
@@ -185,9 +187,9 @@ namespace System.Windows.Forms
 
 		public virtual void Insert (int columnIndex, DataGridViewColumn dataGridViewColumn)
 		{
+			base.List.Insert (columnIndex, dataGridViewColumn);
 			dataGridViewColumn.SetIndex (columnIndex);
 			dataGridViewColumn.SetDataGridView (dataGridView);
-			base.List.Insert (columnIndex, dataGridViewColumn);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewColumn));
 		}
 
@@ -198,6 +200,7 @@ namespace System.Windows.Forms
 
 		public virtual void Remove (DataGridViewColumn dataGridViewColumn)
 		{
+			DataGridView.OnColumnPreRemovedInternal (new DataGridViewColumnEventArgs (dataGridViewColumn));
 			base.List.Remove (dataGridViewColumn);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewColumn));
 		}

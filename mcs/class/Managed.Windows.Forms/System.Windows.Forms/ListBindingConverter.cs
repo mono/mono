@@ -43,7 +43,6 @@ namespace System.Windows.Forms {
 			return base.CanConvertTo (context, destinationType);
 		}
 
-		[MonoTODO]
 		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

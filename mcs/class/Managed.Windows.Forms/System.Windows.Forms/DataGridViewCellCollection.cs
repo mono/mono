@@ -114,10 +114,10 @@ namespace System.Windows.Forms
 
 		public virtual int Add (DataGridViewCell dataGridViewCell)
 		{
-			dataGridViewCell.SetOwningRow (dataGridViewRow);
-			dataGridViewCell.SetColumnIndex (base.List.Count);
-			dataGridViewCell.SetDataGridView (dataGridViewRow.DataGridView);
 			int result = base.List.Add (dataGridViewCell);
+			dataGridViewCell.SetOwningRow (dataGridViewRow);
+			dataGridViewCell.SetColumnIndex (result);
+			dataGridViewCell.SetDataGridView (dataGridViewRow.DataGridView);
 			OnCollectionChanged (new CollectionChangeEventArgs (
 				CollectionChangeAction.Add, dataGridViewCell));
 			return result;
@@ -167,10 +167,10 @@ namespace System.Windows.Forms
 
 		public virtual void Insert (int index, DataGridViewCell dataGridViewCell)
 		{
+			base.List.Insert (index, dataGridViewCell);
 			dataGridViewCell.SetOwningRow (dataGridViewRow);
 			dataGridViewCell.SetColumnIndex (index);
 			dataGridViewCell.SetDataGridView (dataGridViewRow.DataGridView);
-			base.List.Insert (index, dataGridViewCell);
 			OnCollectionChanged (new CollectionChangeEventArgs (
 				CollectionChangeAction.Add, dataGridViewCell));
 		}

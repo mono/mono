@@ -613,9 +613,9 @@ namespace MonoTests.System.Windows.Forms
 			ConcreteCollection myCollection;
 			myCollection = new ConcreteCollection();
 			....
-			AssertEquals ("#UniqueID", expected, actual);
+			Assert.AreEqual (expected, actual, "#UniqueID");
 			....
-			Fail ("Message");
+			Assert.Fail ("Message");
 		}
 		*/
 
@@ -1467,6 +1467,49 @@ namespace MonoTests.System.Windows.Forms
 
 			dgv.Rows[0].Cells[0].ContextMenuStrip = cms2;
 			Assert.AreSame (cms2, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A6");
+		}
+
+
+		[Test]
+		public void TestOnDataGridChangedMethod ()
+		{
+			DataGridView dataGridView1 = new DataGridView ();
+			DataGridView dataGridView2 = new DataGridView ();
+
+			TestHeaderCell testCell = new TestHeaderCell ();
+			Assert.AreEqual (0, testCell.OnDataGridViewChangedInvokeCount, "#1");
+
+			testCell.OnDataGridViewChangedInvokeCount = 0;
+			dataGridView1.TopLeftHeaderCell = testCell;
+			Assert.AreEqual (1, testCell.OnDataGridViewChangedInvokeCount, "#2");
+
+			testCell.OnDataGridViewChangedInvokeCount = 0;
+			dataGridView1.TopLeftHeaderCell = null;
+			Assert.AreEqual (1, testCell.OnDataGridViewChangedInvokeCount, "#3");
+
+			testCell.OnDataGridViewChangedInvokeCount = 0;
+			dataGridView2.TopLeftHeaderCell = testCell;
+			Assert.AreEqual (1, testCell.OnDataGridViewChangedInvokeCount, "#4");
+
+			testCell.OnDataGridViewChangedInvokeCount = 0;
+			dataGridView1.TopLeftHeaderCell = testCell;
+			Assert.AreEqual (1, testCell.OnDataGridViewChangedInvokeCount, "#5");
+
+			testCell.OnDataGridViewChangedInvokeCount = 0;
+			dataGridView1.TopLeftHeaderCell = testCell;
+			Assert.AreEqual (0, testCell.OnDataGridViewChangedInvokeCount, "#6");
+			
+		}
+
+		private class TestHeaderCell : DataGridViewHeaderCell
+		{
+			public int OnDataGridViewChangedInvokeCount = 0;
+
+			protected override void OnDataGridViewChanged ()
+			{
+				OnDataGridViewChangedInvokeCount++;
+				base.OnDataGridViewChanged ();
+			}
 		}
 
 		private class FormattedBaseCell : DataGridViewCell

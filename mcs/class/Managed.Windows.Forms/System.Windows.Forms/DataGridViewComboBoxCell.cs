@@ -46,6 +46,7 @@ namespace System.Windows.Forms {
 		private int maxDropDownItems;
 		private bool sorted;
 		private string valueMember;
+		private DataGridViewComboBoxColumn owningColumnTemlate;
 
 		public DataGridViewComboBoxCell () : base() {
 			autoComplete = true;
@@ -57,6 +58,7 @@ namespace System.Windows.Forms {
 			items = new ObjectCollection(this);
 			maxDropDownItems = 8;
 			sorted = false;
+			owningColumnTemlate = null;
 		}
 
 		[DefaultValue (true)]
@@ -129,11 +131,11 @@ namespace System.Windows.Forms {
 			get {
 				if (DataGridView != null && DataGridView.BindingContext != null 
 				    && DataSource != null && !String.IsNullOrEmpty (ValueMember)) {
-					items.Clear ();
+					items.ClearInternal ();
 					CurrencyManager dataManager = (CurrencyManager) DataGridView.BindingContext[DataSource];
 					if (dataManager != null && dataManager.Count > 0) {
 						foreach (object item in dataManager.List)
-							items.Add (item);
+							items.AddInternal (item);
 					}
 				}
 
@@ -175,6 +177,12 @@ namespace System.Windows.Forms {
 			get { return typeof(string); }
 		}
 
+		// Valid only for template Cells and used as a bridge to push items
+		internal DataGridViewComboBoxColumn OwningColumnTemplate {
+			get { return owningColumnTemlate; }
+			set { owningColumnTemlate = value; }
+		}
+
 		public override object Clone () {
 			DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell) base.Clone();
 			cell.autoComplete = this.autoComplete;
@@ -185,7 +193,7 @@ namespace System.Windows.Forms {
 			cell.displayStyleForCurrentCellOnly = this.displayStyleForCurrentCellOnly;
 			cell.dropDownWidth = this.dropDownWidth;
 			cell.flatStyle = this.flatStyle;
-			cell.items.AddRange(this.items);
+			cell.items.AddRangeInternal(this.items);
 			cell.maxDropDownItems = this.maxDropDownItems;
 			cell.sorted = this.sorted;
 			return cell;
@@ -214,7 +222,30 @@ namespace System.Windows.Forms {
 				editingControl.DisplayMember = DisplayMember;
 			} else {
 				editingControl.Items.AddRange (this.Items);
+				if (FormattedValue != null && editingControl.Items.IndexOf (FormattedValue) != -1)
+					editingControl.SelectedItem = FormattedValue;
 			}
+		}
+
+		internal void SyncItems ()
+		{
+			if (DataSource != null || OwningColumnTemplate == null)
+				return;
+
+			if (OwningColumnTemplate.DataGridView != null) {
+				DataGridViewComboBoxEditingControl editor = OwningColumnTemplate.DataGridView.EditingControl
+									    as DataGridViewComboBoxEditingControl;
+				if (editor != null) {
+					object selectedItem = editor.SelectedItem;
+					editor.Items.Clear ();
+					editor.Items.AddRange (items);
+					if (editor.Items.IndexOf (selectedItem) != -1)
+						editor.SelectedItem = selectedItem;
+				}
+			}
+
+			// Push the new items to the column
+			OwningColumnTemplate.SyncItems (Items);
 		}
 
 		public override bool KeyEntersEditMode (KeyEventArgs e)
@@ -365,15 +396,19 @@ namespace System.Windows.Forms {
 			return button_area;
 		}
 
+		// IMPORTANT: Only call the internal methods from within DataGridViewComboBoxCell
+		// for adding/removing/clearing because the other methods invoke an update of the 
+		// column items collection and you might end up in an endless loop.
+		//
 		[ListBindable (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable {
 
 			private ArrayList list;
+			private DataGridViewComboBoxCell owner;
 
-			//private DataGridViewComboBoxCell owner;
-
-			public ObjectCollection (DataGridViewComboBoxCell owner) {
-				//this.owner = owner;
+			public ObjectCollection (DataGridViewComboBoxCell owner)
+			{
+				this.owner = owner;
 				list = new ArrayList();
 			}
 
@@ -399,26 +434,71 @@ namespace System.Windows.Forms {
 
 			public virtual object this [int index] {
 				get { return list[index]; }
-				set { list[index] = value; }
+				set {
+					ThrowIfOwnerIsDataBound ();
+					list[index] = value;
+				}
 			}
 
-			public int Add (object item) {
-				return list.Add(item);
+			public int Add (object item)
+			{
+				ThrowIfOwnerIsDataBound ();
+				int index = AddInternal (item);
+				SyncOwnerItems ();
+				return index;
+			}
+			
+			internal int AddInternal (object item)
+			{
+				return list.Add (item);
 			}
 
-			public void AddRange (ObjectCollection value) {
-				list.AddRange(value.list);
+			internal void AddRangeInternal (ICollection items)
+			{
+				list.AddRange (items);
 			}
 
-			public void AddRange (params object[] items) {
-				list.AddRange(items);
+			public void AddRange (ObjectCollection value)
+			{
+				ThrowIfOwnerIsDataBound ();
+				AddRangeInternal (value);
+				SyncOwnerItems ();
 			}
 
-			public void Clear () {
-				list.Clear();
+			private void SyncOwnerItems ()
+			{
+				ThrowIfOwnerIsDataBound ();
+				if (owner != null)
+					owner.SyncItems ();
 			}
 
-			public bool Contains (object value) {
+			public void ThrowIfOwnerIsDataBound ()
+			{
+				if (owner != null && owner.DataGridView != null && owner.DataSource != null)
+					throw new ArgumentException ("Cannot modify collection if the cell is data bound.");
+			}
+
+			public void AddRange (params object[] items)
+			{
+				ThrowIfOwnerIsDataBound ();
+				AddRangeInternal (items);
+				SyncOwnerItems ();
+			}
+
+			public void Clear ()
+			{
+				ThrowIfOwnerIsDataBound ();
+				ClearInternal ();
+				SyncOwnerItems ();
+			}
+
+			internal void ClearInternal ()
+			{
+				list.Clear ();
+			}
+
+			public bool Contains (object value)
+			{
 				return list.Contains(value);
 			}
 
@@ -432,26 +512,51 @@ namespace System.Windows.Forms {
 				list.CopyTo (destination, arrayIndex);
 			}
 
-			public IEnumerator GetEnumerator () {
+			public IEnumerator GetEnumerator ()
+			{
 				return list.GetEnumerator();
 			}
 
-			public int IndexOf (object value) {
+			public int IndexOf (object value)
+			{
 				return list.IndexOf(value);
 			}
 
-			public void Insert (int index, object item) {
-				list.Insert(index, item);
+			public void Insert (int index, object item)
+			{
+				ThrowIfOwnerIsDataBound ();
+				InsertInternal (index, item);
+				SyncOwnerItems ();
 			}
 
-			public void Remove (object value) {
-				list.Remove(value);
+			internal void InsertInternal (int index, object item)
+			{
+				list.Insert (index, item);
 			}
 
-			public void RemoveAt (int index) {
-				list.RemoveAt(index);
+			public void Remove (object value)
+			{
+				ThrowIfOwnerIsDataBound ();
+				RemoveInternal (value);
+				SyncOwnerItems ();
 			}
 
+			internal void RemoveInternal (object value)
+			{
+				list.Remove (value);
+			}
+
+			public void RemoveAt (int index)
+			{
+				ThrowIfOwnerIsDataBound ();
+				RemoveAtInternal (index);
+				SyncOwnerItems ();
+			}
+
+			internal void RemoveAtInternal (int index)
+			{
+				list.RemoveAt (index);
+			}
 
 			int IList.Add (object item)
 			{

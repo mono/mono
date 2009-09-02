@@ -79,7 +79,7 @@ namespace System.Windows.Forms {
 		public Type DefaultHeaderCellType {
 			get { return defaultHeaderCellType; }
 			set {
-				if (value.IsSubclassOf(typeof(DataGridViewHeaderCell))) {
+				if (!value.IsSubclassOf(typeof(DataGridViewHeaderCell))) {
 					throw new ArgumentException("Type is not DataGridViewHeaderCell or a derived type.");
 				}
 				defaultHeaderCellType = value;
@@ -95,7 +95,15 @@ namespace System.Windows.Forms {
 		[DefaultValue (false)]
 		public virtual bool Frozen {
 			get { return frozen; }
-			set { frozen = value; }
+			set {
+				if (frozen != value) {
+					frozen = value;
+					if (frozen)
+						SetState (State | DataGridViewElementStates.Frozen);
+					else
+						SetState (State & ~DataGridViewElementStates.Frozen);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -116,7 +124,15 @@ namespace System.Windows.Forms {
 		[DefaultValue (false)]
 		public virtual bool ReadOnly {
 			get { return readOnly; }
-			set { readOnly = value; }
+			set {
+				if (readOnly != value) {
+					readOnly = value;
+					if (readOnly)
+						SetState (State | DataGridViewElementStates.ReadOnly);
+					else
+						SetState (State & ~DataGridViewElementStates.ReadOnly);
+				}
+			}
 		}
 
 		[Browsable (true)]
@@ -126,7 +142,15 @@ namespace System.Windows.Forms {
 					return DataGridView.AllowUserToResizeColumns ? DataGridViewTriState.True : DataGridViewTriState.False;
 				}
 				return resizable; }
-			set { resizable = value; }
+			set {
+				if (value != resizable) {
+					resizable = value;
+					if (resizable == DataGridViewTriState.True)
+						SetState (State | DataGridViewElementStates.Resizable);
+					else
+						SetState (State & ~DataGridViewElementStates.Resizable);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -150,13 +174,28 @@ namespace System.Windows.Forms {
 				return selected;
 			}
 			set {
-				selected = value;
+				if (selected != value) {
+					selected = value;
+
+					if (selected)
+						SetState (State | DataGridViewElementStates.Selected);
+					else
+						SetState (State & ~DataGridViewElementStates.Selected);
+				}
 			}
 		}
 
 		internal bool DisplayedInternal {
 			get { return displayed; }
-			set { displayed = value; }
+			set {
+				if (value != displayed) {
+					displayed = value;
+					if (displayed)
+						SetState (State | DataGridViewElementStates.Displayed);
+					else
+						SetState (State & ~DataGridViewElementStates.Displayed);
+				}
+			}
 		}
 		
 		[Browsable (false)]
@@ -169,7 +208,15 @@ namespace System.Windows.Forms {
 		[DefaultValue (true)]
 		public virtual bool Visible {
 			get { return visible; }
-			set { visible = value; }
+			set {
+				if (visible != value) {
+					visible = value;
+					if (visible)
+						SetState (State | DataGridViewElementStates.Visible);
+					else
+						SetState (State & ~DataGridViewElementStates.Visible);
+				}
+			}
 		}
 
 		public virtual object Clone ()

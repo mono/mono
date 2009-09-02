@@ -22,6 +22,7 @@
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
+//	Ivan N. Zlatev  <contact@i-nz.net>
 
 
 #if NET_2_0
@@ -1161,18 +1162,41 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ColumnCount ()
 		{
-			DataGridView grid = new DataGridView ();
-			Assert.AreEqual (0, grid.ColumnCount, "#A1");
+			DataGridView dgv = new DataGridView ();
+
+			dgv.RowCount = 10;
+			dgv.ColumnCount = 2;
+
+			Assert.AreEqual (10, dgv.RowCount, "A1");
+			Assert.AreEqual (2, dgv.ColumnCount, "A2");
+
+			dgv.ColumnCount = 1;
+
+			Assert.AreEqual (10, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			dgv.ColumnCount = 3;
+
+			Assert.AreEqual (10, dgv.RowCount, "C1");
+			Assert.AreEqual (3, dgv.ColumnCount, "C2");
+
+
+			dgv.ColumnCount = 0;
+
+			Assert.AreEqual (0, dgv.RowCount, "D1");
+			Assert.AreEqual (0, dgv.ColumnCount, "D2");
+
+			Assert.AreEqual (0, dgv.ColumnCount, "E1");
 
 			try {
-				grid.ColumnCount = -1;
-				Assert.Fail ("#B1");
+				dgv.ColumnCount = -1;
+				Assert.Fail ("F1");
 			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNotNull (ex.ParamName, "#B4");
-				Assert.AreEqual ("ColumnCount", ex.ParamName, "#B5");
-				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "F2");
+				Assert.IsNotNull (ex.Message, "F3");
+				Assert.IsNotNull (ex.ParamName, "F4");
+				Assert.AreEqual ("ColumnCount", ex.ParamName, "F5");
+				Assert.IsNull (ex.InnerException, "F6");
 			}
 		}
 
@@ -1186,9 +1210,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[0].GetType ().ToString (), "A1");
 		}
 
+
+		[Test]
+		public void ColumnCountDecrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.ColumnCount = 6;
+			Assert.AreEqual (6, dgv.ColumnCount, "A1");
+
+			dgv.ColumnCount = 3;
+			Assert.AreEqual (3, dgv.ColumnCount, "A2");
+			
+			// Increasing the ColumnCount adds TextBoxColumns, not generic columns
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[0].GetType ().ToString (), "A3");
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[1].GetType ().ToString (), "A4");
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[2].GetType ().ToString (), "A5");
+		}
+
 		private class DataItem
 		{
 			public string Text {
+				get { return String.Empty; }
+			}
+
+			[Browsable (false)]
+			public string NotVisible {
 				get { return String.Empty; }
 			}
 		}
@@ -1498,8 +1544,112 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, dgv.Rows[0].Index, "A3");
 			Assert.AreEqual (1, dgv.Rows[1].Index, "A4");
 			Assert.AreEqual (2, dgv.Rows[2].Index, "A5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "B3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "B4");
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "C1");
+			Assert.AreEqual (1, dgv.ColumnCount, "C2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "C3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "C4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "C5");
+
+			dgv.AllowUserToAddRows = false;
+
+			Assert.AreEqual (5, dgv.RowCount, "D1");
+			Assert.AreEqual (1, dgv.ColumnCount, "D2");
+
+			dgv.RowCount = 1;
+			
+			Assert.AreEqual (1, dgv.RowCount, "E1");
+			Assert.AreEqual (1, dgv.ColumnCount, "E2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "E3");
+
+			dgv.RowCount = 8;
+			
+			Assert.AreEqual (8, dgv.RowCount, "F1");
+			Assert.AreEqual (1, dgv.ColumnCount, "F2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "F3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "F4");
 		}
-		
+
+		[Test]
+		public void RowCountDecrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "A1");
+			Assert.AreEqual (1, dgv.ColumnCount, "A2");
+
+			dgv.RowCount = 3;
+			Assert.AreEqual (3, dgv.RowCount, "A3");
+			Assert.AreEqual (0, dgv.Rows[0].Index, "A4");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "A5");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "A6");
+
+			try {
+				dgv.RowCount = 0;
+				Assert.Fail ("C1");
+			} catch {}
+
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "B3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "B4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "B5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "C1");
+			Assert.AreEqual (1, dgv.ColumnCount, "C2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "C3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "C4");
+
+			dgv.AllowUserToAddRows = false;
+
+			Assert.AreEqual (1, dgv.RowCount, "D1");
+			Assert.AreEqual (1, dgv.ColumnCount, "D2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "D3");
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "E1");
+			Assert.AreEqual (1, dgv.ColumnCount, "E2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "E3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "E4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "E5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "F1");
+			Assert.AreEqual (1, dgv.ColumnCount, "F2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "F3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "F4");
+
+		}
+
 		[Test]
 		public void BindToReadonlyProperty ()
 		{
@@ -1560,6 +1710,120 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Close ();
 			f.Dispose ();
+		}
+
+		[Test]
+		public void ScrollToSelectionSynchronous()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.RowCount = 1000;
+			dgv.CurrentCell = dgv[0, dgv.RowCount -1];		
+			Rectangle rowRect = dgv.GetRowDisplayRectangle (dgv.RowCount - 1, false);
+			Assert.AreEqual (true, dgv.DisplayRectangle.Contains (rowRect), "#01");
+		}
+
+		[Test]
+		public void CurrentCell()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.AllowUserToAddRows = false;
+
+			Assert.IsNull (dgv.CurrentCell, "A1");
+
+			dgv.RowCount = 10;
+			dgv.ColumnCount = 2;
+			Assert.AreEqual (10, dgv.RowCount, "B1");
+			Assert.AreEqual (2, dgv.ColumnCount, "B2");
+			Assert.IsNull (dgv.CurrentCell, "B3");
+
+			dgv.CurrentCell = dgv[1, 9];
+			Assert.IsNotNull (dgv.CurrentCell, "H1");
+			Assert.AreEqual (9, dgv.CurrentCell.RowIndex, "H2");
+			Assert.AreEqual (1, dgv.CurrentCell.ColumnIndex, "H3");
+			
+			dgv.CurrentCell = null;
+			Assert.IsNull (dgv.CurrentCell, "C1");
+
+			dgv.CurrentCell = dgv[1, 9];
+			Assert.IsNotNull (dgv.CurrentCell, "D1");
+			Assert.AreEqual (9, dgv.CurrentCell.RowIndex, "D2");
+			Assert.AreEqual (1, dgv.CurrentCell.ColumnIndex, "D3");
+
+			dgv.RowCount = 9;
+			Assert.IsNotNull (dgv.CurrentCell, "E1");
+			Assert.AreEqual (8, dgv.CurrentCell.RowIndex, "E2");
+			Assert.AreEqual (1, dgv.CurrentCell.ColumnIndex, "E3");
+
+			dgv.CurrentCell = dgv[0, 4];
+			dgv.RowCount = 2;
+			Assert.IsNotNull (dgv.CurrentCell, "F1");
+			Assert.AreEqual (1, dgv.CurrentCell.RowIndex, "F2");
+			Assert.AreEqual (0, dgv.CurrentCell.ColumnIndex, "F3");
+
+			dgv.RowCount = 0;
+			Assert.IsNull (dgv.CurrentCell, "P1");
+
+			dgv.RowCount = 10;
+			Assert.AreEqual (10, dgv.RowCount, "I1");
+			dgv.CurrentCell = dgv[0, 4];
+			dgv.ColumnCount = 0;
+			Assert.AreEqual (0, dgv.RowCount, "I2");
+			Assert.IsNull (dgv.CurrentCell, "I3");
+
+			dgv.RowCount = 0;
+			dgv.ColumnCount = 0;
+			dgv.CreateControl ();
+			dgv.ColumnCount = 2;
+			dgv.RowCount = 3;
+
+			Assert.IsNotNull (dgv.CurrentCell, "G1");
+			Assert.AreEqual (0, dgv.CurrentCell.RowIndex, "G1");
+			Assert.AreEqual (0, dgv.CurrentCell.ColumnIndex, "G1");
+		}
+
+		[Test]
+		public void DataSourceBindingContextDependency ()
+		{
+			List<DataItem> dataList = new List<DataItem> ();
+			dataList.Add (new DataItem ());
+			dataList.Add (new DataItem ());
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = dataList;
+			Assert.IsNull (dgv.BindingContext, "#1");
+			Assert.IsFalse (dgv.IsHandleCreated, "#2");
+			Assert.AreEqual (0, dgv.RowCount, "#3");
+
+			dgv.DataSource = null;
+
+			Form form = new Form ();
+			form.Controls.Add (dgv);
+			dgv.DataSource = dataList;
+
+			Assert.IsNotNull (dgv.BindingContext, "#4");
+			Assert.IsFalse (dgv.IsHandleCreated, "#5");
+			Assert.AreEqual (2, dgv.RowCount, "#6");
+
+			dgv.Dispose ();
+			dgv = new DataGridView ();
+			dgv.DataSource = dataList;
+
+			Assert.IsNull (dgv.BindingContext, "#7");
+			Assert.IsFalse (dgv.IsHandleCreated, "#8");
+			Assert.AreEqual (0, dgv.RowCount, "#9");
+
+			dgv.CreateControl ();
+
+			Assert.IsNull (dgv.BindingContext, "#10");
+			Assert.IsTrue (dgv.IsHandleCreated, "#11");
+			Assert.AreEqual (0, dgv.RowCount, "#12");
+		}
+
+		[Test]
+		public void RowTemplateDataGridView ()
+		{
+			DataGridView gdv = new DataGridView ();
+			Assert.IsNull (gdv.RowTemplate.DataGridView, "#1");
 		}
 	}
 	
@@ -1666,8 +1930,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (2, controls.Count, "#05");
 			}
 		}
-		
-		
 	}
 		
 }

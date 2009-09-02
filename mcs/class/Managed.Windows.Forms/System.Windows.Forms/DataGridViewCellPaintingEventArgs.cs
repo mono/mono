@@ -136,7 +136,7 @@ namespace System.Windows.Forms {
 			Paint (clipBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.Border);
 		}
 			
-		[MonoTODO ("Needs row header cell edit pencil glyph")]
+		[MonoInternalNote ("Needs row header cell edit pencil glyph")]
 		public void PaintContent (Rectangle clipBounds)
 		{
 			Paint (clipBounds, DataGridViewPaintParts.ContentBackground | DataGridViewPaintParts.ContentForeground);

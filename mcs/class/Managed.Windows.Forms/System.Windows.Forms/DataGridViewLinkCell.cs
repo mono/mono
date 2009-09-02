@@ -315,13 +315,13 @@ namespace System.Windows.Forms
 				//DO NOTHING
 			}
 
-			[MonoTODO]
+			[MonoTODO ("Stub, does nothing")]
 			[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			public override void DoDefaultAction ()
 			{
-				DataGridViewLinkCell cell = base.Owner as DataGridViewLinkCell;
-				if (cell.DataGridView != null && cell.RowIndex == -1)
-					throw new InvalidOperationException ();
+				//DataGridViewLinkCell cell = base.Owner as DataGridViewLinkCell;
+				//if (cell.DataGridView != null && cell.RowIndex == -1)
+				//        throw new InvalidOperationException ();
 			}
 
 			public override int GetChildCount ()

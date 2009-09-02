@@ -64,12 +64,7 @@ namespace System.Windows.Forms {
 		[DefaultValue (DataGridViewColumnSortMode.Automatic)]
 		public new DataGridViewColumnSortMode SortMode {
 			get { return base.SortMode; }
-			set {
-				if (DataGridView != null && DataGridView.SelectionMode == DataGridViewSelectionMode.FullRowSelect && value != DataGridViewColumnSortMode.NotSortable) {
-					throw new InvalidOperationException("Value conflicts with DataGridView.SelectionMode.");
-				}
-				base.SortMode = value;
-			}
+			set { base.SortMode = value; }
 		}
 
 		public override string ToString ()
