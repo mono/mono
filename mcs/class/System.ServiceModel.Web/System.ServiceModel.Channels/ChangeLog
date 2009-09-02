@@ -1,3 +1,7 @@
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElement.cs : implement GetProperty<T>().
+
 2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebMessageEncodingBindingElement.cs : some TODO cleanup.

@@ -134,10 +134,11 @@ namespace System.ServiceModel.Channels
 			return new WebMessageEncoderFactory (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (typeof (T) == typeof (XmlDictionaryReaderQuotas))
+				return (T) (object) ReaderQuotas;
+			return context.GetInnerProperty<T> ();
 		}
 
 		[MonoTODO]
