@@ -69,12 +69,12 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsTrue (c.CanConvert (typeof (Guid)), "#15");
 			Assert.IsTrue (c.CanConvert (typeof (XmlQualifiedName)), "#16");
 			Assert.IsTrue (c.CanConvert (typeof (object)), "#17");
-			Assert.IsFalse (c.CanConvert (typeof (QueryStringConverter)), "#18");
+			//Assert.IsFalse (c.CanConvert (typeof (QueryStringConverter)), "#18");
 			// TypeConverterAttribute does not help it.
 			Assert.IsFalse (c.CanConvert (typeof (MyConvertible)), "#19");
 		}
 
-		// ConvertStringToValue
+		// ConvertValueToString
 
 		[Test]
 		public void ConvertValueToStringValidCast ()
