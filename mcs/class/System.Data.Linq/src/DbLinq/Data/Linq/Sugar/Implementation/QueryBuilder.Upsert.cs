@@ -43,12 +43,17 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             public MetaTable Table;
             public readonly IList<ObjectInputParameterExpression> InputParameters = new List<ObjectInputParameterExpression>();
             public readonly IList<ObjectOutputParameterExpression> OutputParameters = new List<ObjectOutputParameterExpression>();
+            public readonly IList<ObjectInputParameterExpression> PKParameters = new List<ObjectInputParameterExpression>();
             public readonly IList<SqlStatement> InputColumns = new List<SqlStatement>();
             public readonly IList<SqlStatement> InputValues = new List<SqlStatement>();
+            public readonly IList<SqlStatement> OutputColumns = new List<SqlStatement>();
             public readonly IList<SqlStatement> OutputValues = new List<SqlStatement>();
             public readonly IList<SqlStatement> OutputExpressions = new List<SqlStatement>();
+            public readonly IList<SqlStatement> AutoPKColumns = new List<SqlStatement>();
             public readonly IList<SqlStatement> InputPKColumns = new List<SqlStatement>();
             public readonly IList<SqlStatement> InputPKValues = new List<SqlStatement>();
+            public readonly IList<SqlStatement> PKColumns = new List<SqlStatement>();
+            public readonly IList<SqlStatement> PKValues = new List<SqlStatement>();
         }
 
         // SQLite:
@@ -103,16 +108,22 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 upsertParameters.InputColumns,
                 upsertParameters.InputValues);
             var insertIdSql = sqlProvider.GetInsertIds(
+                sqlProvider.GetTable(upsertParameters.Table.TableName),
+                upsertParameters.AutoPKColumns,
+                upsertParameters.PKColumns,
+                upsertParameters.PKValues,
+                upsertParameters.OutputColumns,
                 upsertParameters.OutputValues,
                 upsertParameters.OutputExpressions);
-            return new UpsertQuery(queryContext.DataContext, insertSql, insertIdSql, upsertParameters.InputParameters, upsertParameters.OutputParameters);
+            return new UpsertQuery(queryContext.DataContext, insertSql, insertIdSql, upsertParameters.InputParameters, upsertParameters.OutputParameters, upsertParameters.PKParameters);
         }
 
         protected enum ParameterType
         {
             Input,
             InputPK,
-            Output
+            Output,
+            AutoSync
         }
 
         /// <summary>
@@ -134,12 +145,24 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             foreach (var dataMember in upsertParameters.Table.RowType.PersistentDataMembers)
             {
                 var column = sqlProvider.GetColumn(dataMember.MappedName);
-                ParameterType type = GetParameterType(objectToUpsert, dataMember, update);
+                ParameterType type = GetParameterType(objectToUpsert, dataMember, update, update ? AutoSync.OnUpdate : AutoSync.OnInsert);
                 var memberInfo = dataMember.Member;
                 // if the column is generated AND not specified, we may have:
                 // - an explicit generation (Expression property is not null, so we add the column)
                 // - an implicit generation (Expression property is null
                 // in all cases, we want to get the value back
+
+                var getter = (Expression<Func<object, object>>)(o => memberInfo.GetMemberValue(o));
+                var inputParameter = new ObjectInputParameterExpression(
+                    getter,
+                    memberInfo.GetMemberType(), dataMember.Name);
+                if (dataMember.IsPrimaryKey && (! dataMember.IsDbGenerated))
+                {
+                    upsertParameters.PKColumns.Add(column);
+                    upsertParameters.PKParameters.Add(inputParameter);
+                    upsertParameters.PKValues.Add(sqlProvider.GetParameterName(inputParameter.Alias));
+                }
+
                 if (type == ParameterType.Output)
                 {
                     if (dataMember.Expression != null)
@@ -151,16 +174,17 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     var outputParameter = new ObjectOutputParameterExpression(setter,
                                                                               memberInfo.GetMemberType(),
                                                                               dataMember.Name);
+
+                    if ((dataMember.IsPrimaryKey) && (dataMember.IsDbGenerated))
+                        upsertParameters.AutoPKColumns.Add(column);
+
+                    upsertParameters.OutputColumns.Add(column);
                     upsertParameters.OutputParameters.Add(outputParameter);
                     upsertParameters.OutputValues.Add(sqlProvider.GetParameterName(outputParameter.Alias));
                     upsertParameters.OutputExpressions.Add(dataMember.Expression);
                 }
                 else // standard column
                 {
-                    var getter = (Expression<Func<object, object>>)(o => memberInfo.GetMemberValue(o));
-                    var inputParameter = new ObjectInputParameterExpression(
-                        getter,
-                        memberInfo.GetMemberType(), dataMember.Name);
                     if (type == ParameterType.InputPK)
                     {
                         upsertParameters.InputPKColumns.Add(column);
@@ -175,6 +199,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                         upsertParameters.InputValues.Add(sqlProvider.GetParameterName(inputParameter.Alias));
                         upsertParameters.InputParameters.Add(inputParameter);
                     }
+
+                    if (type == ParameterType.AutoSync)
+                    {
+                        var setter = (Expression<Action<object, object>>)((o, v) => memberInfo.SetMemberValue(o, v));
+                        var outputParameter = new ObjectOutputParameterExpression(setter,
+                                                                                  memberInfo.GetMemberType(),
+                                                                                  dataMember.Name);
+                        upsertParameters.OutputColumns.Add(column);
+                        upsertParameters.OutputParameters.Add(outputParameter);
+                        upsertParameters.OutputValues.Add(sqlProvider.GetParameterName(outputParameter.Alias));
+                        upsertParameters.OutputExpressions.Add(dataMember.Expression);
+                    }
                 }
             }
             return upsertParameters;
@@ -187,12 +223,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <param name="dataMember"></param>
         /// <param name="update"></param>
         /// <returns></returns>
-        protected virtual ParameterType GetParameterType(object objectToUpsert, MetaDataMember dataMember, bool update)
+        protected virtual ParameterType GetParameterType(object objectToUpsert, MetaDataMember dataMember, bool update, AutoSync autoSync)
         {
             var memberInfo = dataMember.Member;
             // the deal with columns is:
-            // PK only:  explicit for INSERT, criterion for UPDATE
-            // PK+GEN:   implicit/explicit for INSERT, criterion for UPDATE
+            // PK only:  criterion for INSERT, criterion for UPDATE
+            // PK+GEN:   implicit/criterion for INSERT, criterion for UPDATE
             // GEN only: implicit for both
             // -:        explicit for both
             //
@@ -221,8 +257,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             {
                 if (dataMember.IsDbGenerated)
                     type = ParameterType.Output;
+				else if ((dataMember.AutoSync == AutoSync.Always) || (dataMember.AutoSync == autoSync))
+					type = ParameterType.AutoSync;
                 else
-                    type = ParameterType.Input;
+					type = ParameterType.Input;
             }
             return type;
         }
@@ -259,7 +297,16 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 upsertParameters.OutputValues, upsertParameters.OutputExpressions,
                 upsertParameters.InputPKColumns, upsertParameters.InputPKValues
                 );
-            return new UpsertQuery(queryContext.DataContext, updateSql, "", upsertParameters.InputParameters, upsertParameters.OutputParameters);
+            var insertIdSql = (upsertParameters.OutputValues.Count == 0) ? "" :
+                    sqlProvider.GetInsertIds(
+                sqlProvider.GetTable(upsertParameters.Table.TableName),
+                upsertParameters.AutoPKColumns,
+                upsertParameters.PKColumns,
+                upsertParameters.PKValues,
+                upsertParameters.OutputColumns,
+                upsertParameters.OutputValues,
+                upsertParameters.OutputExpressions);
+            return new UpsertQuery(queryContext.DataContext, updateSql, insertIdSql, upsertParameters.InputParameters, upsertParameters.OutputParameters, upsertParameters.PKParameters);
         }
 
         /// <summary>

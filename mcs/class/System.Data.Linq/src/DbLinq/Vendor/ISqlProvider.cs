@@ -234,7 +234,7 @@ namespace DbLinq.Vendor
         /// <param name="outputParameters">Expected output parameters</param>
         /// <param name="outputExpressions">Expressions (to help generate output parameters)</param>
         /// <returns></returns>
-        SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions);
+        SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> inputPKColumns, IList<SqlStatement> inputPKValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions);
 
         /// <summary>
         /// Builds an update clause

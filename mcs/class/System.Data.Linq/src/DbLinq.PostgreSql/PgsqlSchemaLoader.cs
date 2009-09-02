@@ -147,7 +147,6 @@ namespace DbLinq.PostgreSql
         {
             if (csvString == null || (!csvString.StartsWith("{")) || (!csvString.EndsWith("}")))
                 return null;
-            List<string> list = new List<string>();
             string middle = csvString.Substring(1, csvString.Length - 2);
             string[] parts = middle.Split(',');
             return parts;
@@ -192,7 +191,6 @@ namespace DbLinq.PostgreSql
                     return null;
                 }
 
-                List<DbLinq.Schema.Dbml.Parameter> paramList = new List<Parameter>();
                 for (int i = 0; i < argNames.Length; i++)
                 {
                     DbLinq.Schema.Dbml.Parameter dbml_param = new Parameter();

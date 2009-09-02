@@ -137,6 +137,7 @@
     <Compile Include="Data\Linq\Mapping\AttributedMetaTable.cs" />
     <Compile Include="Data\Linq\Mapping\AttributedMetaType.cs" />
     <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
+    <Compile Include="Data\Linq\Mapping\LambdaMetaAccessor.cs" />
     <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
     <Compile Include="Data\Linq\Mapping\XmlMappingSource.cs" />
     <Compile Include="Data\Linq\RefreshMode.cs" />

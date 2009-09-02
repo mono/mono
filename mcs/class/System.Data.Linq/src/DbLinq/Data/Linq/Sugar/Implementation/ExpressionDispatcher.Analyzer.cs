@@ -48,6 +48,42 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 {
     partial class ExpressionDispatcher
     {
+        public Expression Analyze(ExpressionChain expressions, Expression parameter, BuilderContext builderContext)
+        {
+            Expression tableExpression = parameter;
+
+            Expression last = expressions.Last();
+            IExpressionLanguageParser languageParser = ObjectFactory.Get<IExpressionLanguageParser>();
+            foreach (Expression e in expressions)
+            {
+                if (e == last)
+                    builderContext.IsExternalInExpressionChain = true;
+
+                // write full debug
+#if DEBUG && !MONO_STRICT
+                var log = builderContext.QueryContext.DataContext.Log;
+                if (log != null)
+                    log.WriteExpression(e);
+#endif
+
+                // Convert linq Expressions to QueryOperationExpressions and QueryConstantExpressions 
+                // Query expressions language identification
+                var currentExpression = languageParser.Parse(e, builderContext);
+                // Query expressions query identification 
+                currentExpression = this.Analyze(currentExpression, tableExpression, builderContext);
+
+                if (!builderContext.IsExternalInExpressionChain)
+                {
+                    EntitySetExpression setExpression = currentExpression as EntitySetExpression;
+                    if (setExpression != null)
+                        currentExpression = setExpression.TableExpression;
+                }
+                tableExpression = currentExpression;
+            }
+
+            return tableExpression;
+        }
+
         /// <summary>
         /// Entry point for Analyzis
         /// </summary>
@@ -55,7 +91,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <param name="parameter"></param>
         /// <param name="builderContext"></param>
         /// <returns></returns>
-        public virtual Expression Analyze(Expression expression, Expression parameter, BuilderContext builderContext)
+        protected virtual Expression Analyze(Expression expression, Expression parameter, BuilderContext builderContext)
         {
             return Analyze(expression, new[] { parameter }, builderContext);
         }
@@ -1458,36 +1494,14 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
         protected virtual Expression AnalyzeQueryProvider(QueryProvider queryProvider, BuilderContext builderContext)
         {
-            // TODO: check if the QueryProvider qp belong to DataContext present in builderContext.QueryContext.DataContext
+            // TODO: check if the QueryProvider queryProvider belong to DataContext present in builderContext.QueryContext.DataContext
             // otherwise strange things could happen in the future (I suppose)
 
             // Build a new Context for the query
             ExpressionChain expressions = queryProvider.ExpressionChain;
             Expression tableExpression = CreateTableExpression(queryProvider.ExpressionChain.Expressions[0], builderContext);
-            Expression last = expressions.Last();
-            IExpressionLanguageParser languageParser = ObjectFactory.Get<IExpressionLanguageParser>();
-            foreach (Expression e in expressions)
-            {
-                if (e == last)
-                    builderContext.IsExternalInExpressionChain = true;
 
-                // Convert linq Expressions to QueryOperationExpressions and QueryConstantExpressions 
-                // Query expressions language identification
-                var currentExpression = languageParser.Parse(e, builderContext);
-                // Query expressions query identification 
-                currentExpression = this.Analyze(currentExpression, tableExpression, builderContext);
-
-                if (!builderContext.IsExternalInExpressionChain)
-                {
-                    EntitySetExpression setExpression = currentExpression as EntitySetExpression;
-                    if (setExpression != null)
-                        currentExpression = setExpression.TableExpression;
-                }
-                tableExpression = currentExpression;
-            }
-
-
-            return tableExpression;
+            return this.Analyze(expressions, tableExpression, builderContext);
         }
 
         protected virtual Expression AnalyzeSelectOperation(SelectOperatorType operatorType, IList<Expression> parameters, BuilderContext builderContext)
@@ -1497,7 +1511,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             // types and count.
             builderContext.QueryContext.MaximumDatabaseLoad = true; // all select expression goes to SQL tier
 
-/* */
             var constantExpression = parameters[1] as ConstantExpression;
             QueryProvider queryProvider = constantExpression.Value as QueryProvider;
             if (queryProvider != null)
@@ -1527,30 +1540,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 return firstSelection;
             }
 
-
-/* *
-            var currentSelect = builderContext.CurrentSelect;
-            var nextSelect = new SelectExpression(currentSelect.Parent);
-            builderContext.CurrentSelect = nextSelect;
-
-            // TODO: this is very dirty code, unreliable, unstable, and unlovable
-            var constantExpression = parameters[1] as ConstantExpression;
-            var queryProvider = (QueryProvider)constantExpression.Value;
-            var expressionChain = queryProvider.ExpressionChain;
-            var table = queryProvider.TableType;
-            var queryBuilder = ObjectFactory.Get<QueryBuilder>();
-            var tableExpression = new TableExpression(table,
-                                                      DataMapper.GetTableName(table,
-                                                                              builderContext.QueryContext.DataContext));
-            // /TODO
-            var selectOperandExpression = queryBuilder.BuildSelectExpression(expressionChain, tableExpression, builderContext);
-            builderContext.SelectExpressions.Add(selectOperandExpression);
-       
-            nextSelect = builderContext.CurrentSelect;
-            builderContext.CurrentSelect = currentSelect;
-            currentSelect.NextSelectExpression = nextSelect;
-            currentSelect.NextSelectExpressionOperator = operatorType;
-/*            */
             return Analyze(parameters[0], builderContext);
         }
 

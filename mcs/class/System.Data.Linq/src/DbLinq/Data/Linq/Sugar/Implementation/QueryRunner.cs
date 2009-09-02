@@ -79,7 +79,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                             // the conditions to register and watch an entity are:
                             // - not null (can this happen?)
                             // - registered in the model
-                            if (row != null && selectQuery.DataContext.Mapping.GetTable(row.GetType()) != null)
+                            if (row != null && selectQuery.DataContext.ObjectTrackingEnabled && 
+                                    selectQuery.DataContext.Mapping.GetTable(row.GetType()) != null)
                             {
                                 row = (T)selectQuery.DataContext.Register(row);
                             }
@@ -224,27 +225,27 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 // the second reads output parameters
                 if (!string.IsNullOrEmpty(insertQuery.IdQuerySql.ToString()))
                 {
-                    var outputCommand = dbCommand.Command.Connection.CreateCommand();
+                    var outputCommandTransaction = new ParameterizedQuery(dataContext, insertQuery.IdQuerySql, insertQuery.PrimaryKeyParameters);
+                    outputCommandTransaction.Target = target;
+
+                    var outputCommand = outputCommandTransaction.GetCommandTransactional(false);
 
                     // then run commands
-                    outputCommand.Transaction = dbCommand.Command.Transaction;
-                    outputCommand.CommandText = insertQuery.IdQuerySql.ToString();
+                    outputCommand.Command.Transaction = dbCommand.Command.Transaction;
 
                     // log second command
-                    dataContext.WriteLog(outputCommand);
+                    dataContext.WriteLog(outputCommand.Command);
 
-                    using (var dataReader = outputCommand.ExecuteReader())
+                    using (var dataReader = outputCommand.Command.ExecuteReader())
                     {
-                        // TODO: check if this is needed
-                        dataReader.Read();
+                        if (! dataReader.Read())
+                            throw new InvalidOperationException("Could not retrieve data for inserted row on " + target.GetType());
 
-                        for (int outputParameterIndex = 0;
-                             outputParameterIndex < insertQuery.OutputParameters.Count;
-                             outputParameterIndex++)
+                        int outputParameterIndex = 0;
+                        for (IEnumerator<ObjectOutputParameterExpression> output = insertQuery.OutputParameters.GetEnumerator(); output.MoveNext(); ++outputParameterIndex)
                         {
-                            var outputParameter = insertQuery.OutputParameters[outputParameterIndex];
                             var outputDbParameter = dataReader.GetValue(outputParameterIndex);
-                            SetOutputParameterValue(target, outputParameter, outputDbParameter);
+                            SetOutputParameterValue(target, output.Current, outputDbParameter);
                         }
                     }
                 }

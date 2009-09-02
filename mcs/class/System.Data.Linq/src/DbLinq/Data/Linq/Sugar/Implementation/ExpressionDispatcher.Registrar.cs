@@ -516,11 +516,49 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                                                           ParameterExpression mappingContextParameter)
         {
             var propertyReaderLambda = DataRecordReader.GetPropertyReader(columnType);
-            Expression invoke = Expression.Invoke(propertyReaderLambda, dataRecordParameter,
-                                                  mappingContextParameter, Expression.Constant(valueIndex));
+            Expression invoke = new ParameterBinder().BindParams(propertyReaderLambda,
+                dataRecordParameter, mappingContextParameter, Expression.Constant(valueIndex));
             if (!columnType.IsNullable())
                 invoke = Expression.Convert(invoke, columnType);
             return invoke;
+        }
+    }
+
+    class ParameterBinder
+    {
+        Dictionary<Expression, Expression> map;
+
+        public Expression BindParams(LambdaExpression expr, params Expression[] args)
+        {
+            map = new Dictionary<Expression, Expression>();
+
+            if (expr.Parameters.Count != args.Length)
+                throw new NotImplementedException();
+            for (int i = 0; i < expr.Parameters.Count; ++i)
+                map[expr.Parameters[i]] = args[i];
+            return Visit(expr.Body);
+        }
+
+        Expression Visit(Expression expr)
+        {
+            switch (expr.NodeType)
+            {
+                case ExpressionType.Call:
+                    MethodCallExpression call = expr as MethodCallExpression;
+                    Expression[] new_args = new Expression[call.Arguments.Count];
+                    for (int i = 0; i < new_args.Length; ++i)
+                        new_args[i] = Visit(call.Arguments[i]);
+                    return Expression.Call(call.Object, call.Method, new_args);
+                case ExpressionType.Parameter:
+                    Expression new_expr;
+                    if (map.TryGetValue(expr, out new_expr))
+                        return new_expr;
+                    break;
+                default:
+                    throw new Exception("Can't handle " + expr.NodeType);
+            }
+
+            return expr;
         }
     }
 }

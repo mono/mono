@@ -45,15 +45,21 @@ namespace DbLinq.Data.Linq.Sugar
         public IList<ObjectOutputParameterExpression> OutputParameters { get; private set; }
 
         /// <summary>
+        /// Primary key parameters, to read out the instance in the case of IsDbGenerated and AutoSync parameters
+        /// </summary>
+        public IList<ObjectInputParameterExpression> PrimaryKeyParameters { get; private set; }
+
+        /// <summary>
         /// This statement returns the generated PKs
         /// </summary>
         public SqlStatement IdQuerySql { get; private set; }
 
         public UpsertQuery(DataContext dataContext, SqlStatement sql, SqlStatement idQuerySql, IList<ObjectInputParameterExpression> inputParameters,
-            IList<ObjectOutputParameterExpression> outputParameters)
+            IList<ObjectOutputParameterExpression> outputParameters, IList<ObjectInputParameterExpression> primaryKeyParameters)
             : base(dataContext, sql,inputParameters)
         {
             OutputParameters = outputParameters;
+            PrimaryKeyParameters = primaryKeyParameters;
             IdQuerySql = idQuerySql;
         }
     }

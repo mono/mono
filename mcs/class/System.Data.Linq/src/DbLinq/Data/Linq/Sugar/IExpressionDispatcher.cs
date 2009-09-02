@@ -47,7 +47,7 @@ namespace DbLinq.Data.Linq.Sugar
         /// <param name="parameter"></param>
         /// <param name="builderContext"></param>
         /// <returns></returns>
-        Expression Analyze(Expression expression, Expression parameter, BuilderContext builderContext);
+        Expression Analyze(ExpressionChain expressions, Expression parameter, BuilderContext builderContext);
 
         /// <summary>
         /// Builds the upper select clause

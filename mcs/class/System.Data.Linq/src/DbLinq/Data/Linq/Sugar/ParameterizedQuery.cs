@@ -39,9 +39,9 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.Data.Linq.Sugar
 {
-    internal abstract class ParameterizedQuery : AbstractQuery
+    internal class ParameterizedQuery : AbstractQuery
     {
-        protected ParameterizedQuery(DataContext dataContext, SqlStatement sql, IList<ObjectInputParameterExpression> inputParameters)
+        public ParameterizedQuery(DataContext dataContext, SqlStatement sql, IList<ObjectInputParameterExpression> inputParameters)
             : base(dataContext, sql)
         {
             this.InputParameters = inputParameters;
@@ -52,18 +52,23 @@ namespace DbLinq.Data.Linq.Sugar
         /// </summary>
         public IList<ObjectInputParameterExpression> InputParameters { get; protected set; }
 
-        public override ITransactionalCommand GetCommand()
+        public ITransactionalCommand GetCommandTransactional(bool createTransaction)
         {
-            ITransactionalCommand transactionalCommand = base.GetCommand(true);
+            ITransactionalCommand command = base.GetCommand(createTransaction);
             foreach (var inputParameter in InputParameters)
             {
-                var dbParameter = transactionalCommand.Command.CreateParameter();
+                var dbParameter = command.Command.CreateParameter();
                 dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(inputParameter.Alias);
                 object value = NormalizeDbType(inputParameter.GetValue(Target));
                 dbParameter.SetValue(value, inputParameter.ValueType);
-                transactionalCommand.Command.Parameters.Add(dbParameter);
+                command.Command.Parameters.Add(dbParameter);
             }
-            return transactionalCommand;
+            return command;
+        }
+
+        public override ITransactionalCommand GetCommand()
+        {
+            return GetCommandTransactional(true);
         }
 
         private object NormalizeDbType(object value)

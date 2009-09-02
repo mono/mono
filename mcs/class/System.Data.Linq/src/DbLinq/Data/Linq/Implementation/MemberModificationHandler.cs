@@ -236,6 +236,22 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
+		/// <summary>
+		/// Unregisters an entity.
+		/// This is useful when the DataContext has been disposed
+		/// </summary>
+		/// <param name="entity"></param>
+		public void UnregisterAll()
+		{
+			//Duplicate the list to not modify modifiedEntities
+			var modifiedEntities = new List<object>(modifiedProperties.Keys);
+			foreach (var entity in modifiedEntities)
+			{
+				if (IsNotifying(entity))
+					UnregisterNotification(entity);
+			}
+		}
+
         private void UnregisterNotification(object entity)
         {
             if (!modifiedProperties.ContainsKey(entity))

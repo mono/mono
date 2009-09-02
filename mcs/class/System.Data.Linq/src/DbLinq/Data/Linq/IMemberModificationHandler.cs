@@ -83,5 +83,12 @@ namespace DbLinq.Data.Linq
         /// </summary>
         /// <param name="entity"></param>
         void Unregister(object entity);
+
+		/// <summary>
+		/// Unregisters an entity.
+		/// This is useful when the DataContext has been disposed
+		/// </summary>
+		/// <param name="entity"></param>
+		void UnregisterAll();
     }
 }

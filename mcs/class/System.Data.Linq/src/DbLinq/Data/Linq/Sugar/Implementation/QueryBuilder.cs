@@ -200,32 +200,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         protected Expression BuildExpressionQuery(ExpressionChain expressions, Expression tableExpression, BuilderContext builderContext)
         {
-            var last = expressions.Last();
-            foreach (var expression in expressions)
-            {
-                if (expression == last)
-                    builderContext.IsExternalInExpressionChain = true;
-
-                // write full debug
-#if DEBUG && !MONO_STRICT
-                var log = builderContext.QueryContext.DataContext.Log;
-                if (log != null)
-                    log.WriteExpression(expression);
-#endif
-                // Convert linq Expressions to QueryOperationExpressions and QueryConstantExpressions 
-                // Query expressions language identification
-                var currentExpression = ExpressionLanguageParser.Parse(expression, builderContext);
-                // Query expressions query identification 
-                currentExpression = ExpressionDispatcher.Analyze(currentExpression, tableExpression, builderContext);
-
-                if(! builderContext.IsExternalInExpressionChain)
-                {
-                    EntitySetExpression setExpression = currentExpression as EntitySetExpression;
-                    if (setExpression != null)
-                        currentExpression = setExpression.TableExpression;
-                }
-                tableExpression = currentExpression;
-            }
+            tableExpression = ExpressionDispatcher.Analyze(expressions, tableExpression, builderContext);
             ExpressionDispatcher.BuildSelect(tableExpression, builderContext);
             return tableExpression;
         }

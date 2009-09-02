@@ -407,8 +407,15 @@ namespace DbLinq.Vendor.Implementation
                 if (columnRow.PrimaryKey.HasValue)
                     column.IsPrimaryKey = columnRow.PrimaryKey.Value;
 
-                if (columnRow.Generated.HasValue)
-                    column.IsDbGenerated = columnRow.Generated.Value;
+                bool? generated = (nameAliases != null) ? nameAliases.GetColumnGenerated(columnRow.ColumnName, columnRow.TableName, columnRow.TableSchema) : null;
+                if (!generated.HasValue)
+                    generated = columnRow.Generated;
+                if (generated.HasValue)
+                    column.IsDbGenerated = generated.Value;
+
+                AutoSync? autoSync = (nameAliases != null) ? nameAliases.GetColumnAutoSync(columnRow.ColumnName, columnRow.TableName, columnRow.TableSchema) : null;
+                if (autoSync.HasValue)
+                    column.AutoSync = autoSync.Value;
 
                 // the Expression can originate from two sources:
                 // 1. DefaultValue

@@ -96,6 +96,7 @@ src/DbLinq/Data/Linq/Mapping/AttributedMetaModel.cs
 src/DbLinq/Data/Linq/Mapping/AttributedMetaTable.cs
 src/DbLinq/Data/Linq/Mapping/AttributedMetaType.cs
 src/DbLinq/Data/Linq/Mapping/AttributeMappingSource.cs
+src/DbLinq/Data/Linq/Mapping/LambdaMetaAccessor.cs
 src/DbLinq/Data/Linq/Mapping/MappingContext.cs
 src/DbLinq/Data/Linq/Mapping/XmlMappingSource.cs
 src/DbLinq/Data/Linq/RefreshMode.cs

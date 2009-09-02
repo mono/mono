@@ -71,12 +71,37 @@ namespace DbLinq.Vendor.Implementation
         /// <summary>
         /// Builds the statements that gets back the IDs for the inserted statement
         /// </summary>
+        /// <param name="table"></param>
+        /// <param name="autoPKColumn">Auto-generated PK columns for reference (i.e. AUTO_INCREMENT)</param>
+        /// <param name="inputPKColumns">PK columns for reference</param>
+        /// <param name="inputPKValues">PK values for reference</param>
         /// <param name="outputParameters">Expected output parameters</param>
         /// <param name="outputExpressions">Expressions (to help generate output parameters)</param>
         /// <returns></returns>
-        public virtual SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        public virtual SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> pkColumns, IList<SqlStatement> pkValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
         {
-            return "SELECT @@IDENTITY";
+            if (autoPKColumn.Count == outputParameters.Count)
+                return "SELECT @@IDENTITY";
+
+            var insertIds = new SqlStatementBuilder("SELECT ");
+            insertIds.AppendFormat(" ({0})", SqlStatement.Join(", ", outputColumns));
+            insertIds.Append(" FROM ");
+            insertIds.Append(table);
+            insertIds.Append(" WHERE ");
+            bool valueSet = false;
+            if (autoPKColumn.Count > 0)
+            {
+                insertIds.AppendFormat("{0} = @@IDENTITY", autoPKColumn[0]);
+                valueSet = true;
+            }
+            for (IEnumerator<SqlStatement> column = pkColumns.GetEnumerator(), value = pkValues.GetEnumerator(); column.MoveNext() && value.MoveNext();)
+            {
+                if (valueSet)
+                    insertIds.Append(" AND ");
+                insertIds.AppendFormat("{0} = {1}", column.Current, value.Current);
+                valueSet = true;
+            }
+            return insertIds.ToSqlStatement();
         }
 
         /// <summary>
@@ -101,18 +126,22 @@ namespace DbLinq.Vendor.Implementation
             var updateBuilder = new SqlStatementBuilder("UPDATE ");
             updateBuilder.Append(table);
             updateBuilder.Append(" SET ");
-            for (int inputIndex = 0; inputIndex < inputColumns.Count; inputIndex++)
+            bool valueSet = false;
+            for (IEnumerator<SqlStatement> column = inputColumns.GetEnumerator(), value = inputValues.GetEnumerator(); column.MoveNext() && value.MoveNext(); )
             {
-                if (inputIndex > 0)
+                if (valueSet)
                     updateBuilder.Append(", ");
-                updateBuilder.AppendFormat("{0} = {1}", inputColumns[inputIndex], inputValues[inputIndex]);
+                updateBuilder.AppendFormat("{0} = {1}", column.Current, value.Current);
+                valueSet = true;
             }
             updateBuilder.Append(" WHERE ");
-            for (int pkIndex = 0; pkIndex < inputPKColumns.Count; pkIndex++)
+            valueSet = false;
+            for (IEnumerator<SqlStatement> column = inputPKColumns.GetEnumerator(), value = inputPKValues.GetEnumerator(); column.MoveNext() && value.MoveNext(); )
             {
-                if (pkIndex > 0)
+                if (valueSet)
                     updateBuilder.Append(" AND ");
-                updateBuilder.AppendFormat("{0} = {1}", inputPKColumns[pkIndex], inputPKValues[pkIndex]);
+                updateBuilder.AppendFormat("{0} = {1}", column.Current, value.Current);
+                valueSet = true;
             }
             return updateBuilder.ToSqlStatement();
         }
@@ -132,11 +161,13 @@ namespace DbLinq.Vendor.Implementation
             var deleteBuilder = new SqlStatementBuilder("DELETE FROM ");
             deleteBuilder.Append(table);
             deleteBuilder.Append(" WHERE ");
-            for (int pkIndex = 0; pkIndex < inputPKColumns.Count; pkIndex++)
+            bool valueSet = false;
+            for (IEnumerator<SqlStatement> column = inputPKColumns.GetEnumerator(), value = inputPKValues.GetEnumerator(); column.MoveNext() && value.MoveNext(); )
             {
-                if (pkIndex > 0)
+                if (valueSet)
                     deleteBuilder.Append(" AND ");
-                deleteBuilder.AppendFormat("{0} = {1}", inputPKColumns[pkIndex], inputPKValues[pkIndex]);
+                deleteBuilder.AppendFormat("{0} = {1}", column.Current, value.Current);
+                valueSet = true;
             }
             return deleteBuilder.ToSqlStatement();
         }
@@ -1654,6 +1685,7 @@ namespace DbLinq.Vendor.Implementation
             case "order":
             case "by":
             case "key":
+			case "index":
 
                 return false;
             default:

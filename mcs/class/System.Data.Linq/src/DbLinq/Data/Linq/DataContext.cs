@@ -444,7 +444,7 @@ namespace DbLinq.Data.Linq
             }
         }
 
-        private static IEnumerable<object> GetReferencedObjects(object value)
+        private IEnumerable<object> GetReferencedObjects(object value)
         {
             var values = new EntitySet<object>();
             FillReferencedObjects(value, values);
@@ -452,34 +452,35 @@ namespace DbLinq.Data.Linq
         }
 
         // Breadth-first traversal of an object graph
-        private static void FillReferencedObjects(object value, EntitySet<object> values)
+        private void FillReferencedObjects(object parent, EntitySet<object> values)
         {
-            if (value == null)
+            if (parent == null)
                 return;
-            values.Add(value);
-            var children = new List<object>();
-            foreach (var p in value.GetType().GetProperties())
-            {
-                var type = p.PropertyType.IsGenericType
-                    ? p.PropertyType.GetGenericTypeDefinition()
-                    : null;
-                if (type != null && p.CanRead && type == typeof(EntitySet<>) &&
-                        p.GetGetMethod().GetParameters().Length == 0)
-                {
-                    var set = p.GetValue(value, null);
-                    if (set == null)
-                        continue;
-                    var hasLoadedOrAssignedValues = p.PropertyType.GetProperty("HasLoadedOrAssignedValues");
-                    if (!((bool)hasLoadedOrAssignedValues.GetValue(set, null)))
-                        continue;   // execution deferred; ignore.
-                    foreach (var o in ((IEnumerable)set))
-                        children.Add(o);
+            var children = new Queue<object>();
+			children.Enqueue(parent);
+			while (children.Count > 0)
+			{
+                object value = children.Dequeue();
+                values.Add(value);
+                IEnumerable<MetaAssociation> associationList = Mapping.GetMetaType(value.GetType()).Associations.Where(a => !a.IsForeignKey);
+                if (associationList.Any())
+			    {
+				    foreach (MetaAssociation association in associationList)
+                    {
+                        var memberData = association.ThisMember;
+                        var entitySetValue = memberData.Member.GetMemberValue(value);
+
+                        if (entitySetValue != null)
+                        {
+						    var hasLoadedOrAssignedValues = entitySetValue.GetType().GetProperty("HasLoadedOrAssignedValues");
+						    if (!((bool)hasLoadedOrAssignedValues.GetValue(entitySetValue, null)))
+							    continue;   // execution deferred; ignore.
+						    foreach (var o in ((IEnumerable)entitySetValue))
+							    children.Enqueue(o);
+					    }
+                    }
                 }
-            }
-            foreach (var c in children)
-            {
-                FillReferencedObjects(c, values);
-            }
+			}
         }
 
         private void InsertEntity(object entity, QueryContext queryContext)
@@ -487,7 +488,7 @@ namespace DbLinq.Data.Linq
             var insertQuery = QueryBuilder.GetInsertQuery(entity, queryContext);
             QueryRunner.Insert(entity, insertQuery);
             Register(entity);
-            UpdateReferencedObjects(entity, AutoSync.OnInsert);
+            UpdateReferencedObjects(entity);
             MoveToAllTrackedEntities(entity, true);
         }
 
@@ -502,26 +503,28 @@ namespace DbLinq.Data.Linq
                 QueryRunner.Update(entity, updateQuery, modifiedMembers);
 
                 RegisterUpdateAgain(entity);
-                UpdateReferencedObjects(entity, AutoSync.OnUpdate);
+                UpdateReferencedObjects(entity);
                 MoveToAllTrackedEntities(entity, false);
             }
         }
 
-        private void UpdateReferencedObjects(object root, AutoSync sync)
+        private void UpdateReferencedObjects(object root)
         {
             var metaType = Mapping.GetMetaType(root.GetType());
             foreach (var assoc in metaType.Associations)
             {
                 var memberData = assoc.ThisMember;
-                if (memberData.Association.ThisKey.Any(m => m.AutoSync != sync))
-                    continue;
+				//This is not correct - AutoSyncing applies to auto-updating columns, such as a TimeStamp, not to foreign key associations, which is always automatically synched
+				//Confirmed against default .NET l2sql - association columns are always set, even if AutoSync==AutoSync.Never
+				//if (memberData.Association.ThisKey.Any(m => (m.AutoSync != AutoSync.Always) && (m.AutoSync != sync)))
+                //    continue;
                 var oks = memberData.Association.OtherKey.Select(m => m.StorageMember).ToList();
                 if (oks.Count == 0)
                     continue;
                 var pks = memberData.Association.ThisKey
                     .Select(m => m.StorageMember.GetMemberValue(root))
                     .ToList();
-                if (pks.Count != pks.Count)
+                if (pks.Count != oks.Count)
                     throw new InvalidOperationException(
                         string.Format("Count of primary keys ({0}) doesn't match count of other keys ({1}).",
                             pks.Count, oks.Count));
@@ -791,18 +794,14 @@ namespace DbLinq.Data.Linq
             }
         }
 
+		private static MethodInfo _WhereMethod = typeof(Queryable).GetMethods().First(m => m.Name == "Where");
         private object GetOtherTableQuery(Expression predicate, ParameterExpression parameter, Type otherTableType, IQueryable otherTable)
         {
             //predicate: other.EmployeeID== "WARTH"
             Expression lambdaPredicate = Expression.Lambda(predicate, parameter);
             //lambdaPredicate: other=>other.EmployeeID== "WARTH"
 
-            var whereMethod = typeof(Queryable)
-                              .GetMethods().First(m => m.Name == "Where")
-                              .MakeGenericMethod(otherTableType);
-
-
-            Expression call = Expression.Call(whereMethod, otherTable.Expression, lambdaPredicate);
+			Expression call = Expression.Call(_WhereMethod.MakeGenericMethod(otherTableType), otherTable.Expression, lambdaPredicate);
             //Table[EmployeesTerritories].Where(other=>other.employeeID="WARTH")
 
             return otherTable.Provider.CreateQuery(call);
@@ -821,12 +820,7 @@ namespace DbLinq.Data.Linq
             CurrentTransactionEntities.RegisterToInsert(entity);
         }
 
-        /// <summary>
-        /// Registers an entity for update
-        /// The entity will be updated only if some of its members have changed after the registration
-        /// </summary>
-        /// <param name="entity"></param>
-        internal void RegisterUpdate(object entity)
+        private void DoRegisterUpdate(object entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
@@ -841,6 +835,17 @@ namespace DbLinq.Data.Linq
                 return;
             // register entity
             AllTrackedEntities.RegisterToWatch(entity, identityKey);
+        }
+
+        /// <summary>
+        /// Registers an entity for update
+        /// The entity will be updated only if some of its members have changed after the registration
+        /// </summary>
+        /// <param name="entity"></param>
+        internal void RegisterUpdate(object entity)
+        {
+            DoRegisterUpdate(entity);
+			MemberModificationHandler.Register(entity, Mapping);
         }
 
         /// <summary>
@@ -868,7 +873,7 @@ namespace DbLinq.Data.Linq
         {
             if (!this.objectTrackingEnabled)
                 return;
-            RegisterUpdate(entity);
+            DoRegisterUpdate(entity);
             MemberModificationHandler.Register(entity, entityOriginalState, Mapping);
         }
 
@@ -1027,6 +1032,9 @@ namespace DbLinq.Data.Linq
         {
             //connection closing should not be done here.
             //read: http://msdn2.microsoft.com/en-us/library/bb292288.aspx
+
+			//We own the instance of MemberModificationHandler - we must unregister listeners of entities we attached to
+			MemberModificationHandler.UnregisterAll();
         }
 
         [DbLinqToDo]

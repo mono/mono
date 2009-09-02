@@ -74,6 +74,12 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                  new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) } },
                                  new[] { "connection", "vendor" }, new[] { typeof(IDbConnection), typeof(IVendor) },
                                  context);
+            // ctor taking a connections tring
+            WriteDataContextCtor(writer, schema, contextBaseType,
+                                 new[] { new ParameterDefinition { Name = "connectionString", Type = typeof(string) } ,
+                                 new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) } },
+                                 new[] { "connectionString" }, new[] { typeof(string) },
+                                 context);
         }
     }
 }

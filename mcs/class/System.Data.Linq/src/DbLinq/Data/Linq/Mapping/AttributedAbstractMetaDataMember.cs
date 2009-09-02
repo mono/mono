@@ -36,16 +36,21 @@ namespace DbLinq.Data.Linq.Mapping
 		protected AttributedAbstractMetaDataMember(MemberInfo member, MetaType declaringType, DataAttribute attribute)
 		{
 			memberInfo = member;
+			memberAccessor = LambdaMetaAccessor.Create(member, declaringType.Type);
 			this.declaringType = declaringType;
 			
 			if(attribute.Storage != null)
 			{
 				storageMember = member.DeclaringType.GetSingleMember(attribute.Storage);
+				if (storageMember != null)
+					storageAccessor = LambdaMetaAccessor.Create(storageMember, declaringType.Type);
 			}
 		}
 
         protected MemberInfo memberInfo;
         protected MetaType declaringType;
+		protected MetaAccessor memberAccessor;
+		protected MetaAccessor storageAccessor;
 
         public override MetaType DeclaringType
         {
@@ -84,7 +89,7 @@ namespace DbLinq.Data.Linq.Mapping
 
         public override MetaAccessor MemberAccessor
         {
-            get { throw new NotImplementedException(); }
+            get { return memberAccessor; }
         }
 
         public override string Name
@@ -99,7 +104,7 @@ namespace DbLinq.Data.Linq.Mapping
 
         public override MetaAccessor StorageAccessor
         {
-            get { throw new NotImplementedException(); }
+            get { return storageAccessor; }
         }
 
         public override Type Type

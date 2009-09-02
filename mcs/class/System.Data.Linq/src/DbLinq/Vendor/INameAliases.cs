@@ -57,6 +57,7 @@ namespace DbLinq.Vendor
         /// <param name="schema">An optional schema (or null)</param>
         /// <returns>Member name or null if no alias found</returns>
         string GetColumnMemberAlias(string column, string table, string schema);
+
         /// <summary>
         /// Returns a member type for a given column.
         /// Please note that DbLinq may not handle correctly the forced type
@@ -66,6 +67,25 @@ namespace DbLinq.Vendor
         /// <param name="schema">An optional schema (or null)</param>
         /// <returns>Member type or null if no alias found</returns>
         string GetColumnForcedType(string column, string table, string schema);
+
+        /// <summary>
+        /// Returns whether the given column is generated
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <param name="table">The table to look for (parameter may be ignored depending on implementation)</param>
+        /// <param name="schema">An optional schema (or null)</param>
+        /// <returns>Member type or null if no alias found</returns>
+        bool? GetColumnGenerated(string column, string table, string schema);
+
+
+        /// <summary>
+        /// Returns whether the given column is generated
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <param name="table">The table to look for (parameter may be ignored depending on implementation)</param>
+        /// <param name="schema">An optional schema (or null)</param>
+        /// <returns>Member type or null if no alias found</returns>
+        DbLinq.Schema.Dbml.AutoSync? GetColumnAutoSync(string column, string table, string schema);
 
         string GetDatabaseNameAlias(string databaseName);
         string GetClassNameAlias(string className);

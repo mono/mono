@@ -35,7 +35,7 @@ namespace DbLinq.Sqlite
 #endif
     class SqliteSqlProvider : SqlProvider
     {
-        public override SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        public override SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> inputPKColumns, IList<SqlStatement> inputPKValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
         {
             return "SELECT last_insert_rowid()";
         }

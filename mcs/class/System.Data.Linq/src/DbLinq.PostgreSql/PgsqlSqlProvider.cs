@@ -37,21 +37,27 @@ namespace DbLinq.PostgreSql
 #endif
     class PgsqlSqlProvider : SqlProvider
     {
-        public override SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        public override SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> inputPKColumns, IList<SqlStatement> inputPKValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
         {
-            // no parameters? no need to get them back
+            // No parameters? no need to get them back.
+            
             if (outputParameters.Count == 0)
                 return SqlStatement.Empty;
-            // otherwise we keep track of the new values
-            var insertId = SqlStatement.Format("SELECT {0}",
-                SqlStatement.Join(", ", (from outputExpression in outputExpressions select outputExpression.Replace("nextval(", "currval(", true)).ToArray())
-                );
-            return insertId;
+            
+            // Otherwise we keep track of the new values. Note that we avoid null expressions
+            // that can be present in the passed list (is this a bug above us?)
+            
+            IList<SqlStatement> ids = new List<SqlStatement>();           
+            foreach (SqlStatement outputExpression in outputExpressions) {
+                if (outputExpression != null)
+                    ids.Add(outputExpression.Replace("nextval(", "currval(", true));
+            }
+            return SqlStatement.Format("SELECT {0}", SqlStatement.Join(", ", ids.ToArray()));
         }
 
         public override SqlStatement GetLiteral(DateTime literal)
         {
-            return "'" + literal.ToString("o") + "'";
+            return "'" + literal.ToString("o") + "'::timestamp";
         }        
         
         protected override SqlStatement GetLiteralStringToUpper(SqlStatement a)
@@ -66,9 +72,9 @@ namespace DbLinq.PostgreSql
         
         protected override SqlStatement GetLiteralDateDiff(SqlStatement dateA, SqlStatement dateB)
         {
-            return string.Format("(DATE_PART('Day',{0}-{1})*86400000+DATE_PART('Hour',{0}-{1})*3600000+DATE_PART('Minute',{0}-{1})*60000+DATE_PART('Second',{0}-{1})*1000+DATE_PART('Millisecond',{0}-{1}))::real", dateA, dateB);
+            return string.Format("(EXTRACT(EPOCH FROM ({0}-{1})::interval)*1000)", dateA, dateB);
         }
-                
+                 
         protected override SqlStatement GetLiteralEqual(SqlStatement a, SqlStatement b)
         {
             // PostgreSQL return NULL (and not a boolean) for every comparaison involving

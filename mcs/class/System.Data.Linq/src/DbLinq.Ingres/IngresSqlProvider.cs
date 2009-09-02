@@ -37,7 +37,7 @@ namespace DbLinq.Ingres
 #endif
     class IngresSqlProvider : SqlProvider
     {
-        public override SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        public override SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> inputPKColumns, IList<SqlStatement> inputPKValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
         {
             // no parameters? no need to get them back
             if (outputParameters.Count == 0)
