@@ -197,6 +197,11 @@ namespace System.ServiceModel.Description
 				: base (operation, endpoint, converter, behavior)
 			{
 			}
+
+			public override Message SerializeReply (MessageVersion messageVersion, object [] parameters, object result)
+			{
+				throw new NotSupportedException ();
+			}
 		}
 
 		internal class ReplyDispatchFormatter : WebDispatchMessageFormatter
@@ -204,6 +209,11 @@ namespace System.ServiceModel.Description
 			public ReplyDispatchFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
 				: base (operation, endpoint, converter, behavior)
 			{
+			}
+
+			public override void DeserializeRequest (Message message, object [] parameters)
+			{
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -289,6 +299,36 @@ namespace System.ServiceModel.Description
 			}
 		}
 
+		internal class WrappedBodyWriter : BodyWriter
+		{
+			public WrappedBodyWriter (object value, XmlObjectSerializer serializer, string name, string ns)
+				: base (true)
+			{
+				this.name = name;
+				this.ns = ns;
+				this.value = value;
+				this.serializer = serializer;
+			}
+
+			string name, ns;
+			object value;
+			XmlObjectSerializer serializer;
+
+			protected override BodyWriter OnCreateBufferedCopy (int maxBufferSize)
+			{
+				return new WrappedBodyWriter (value, serializer, name, ns);
+			}
+
+			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
+			{
+				if (name != null)
+					writer.WriteStartElement (name, ns);
+				serializer.WriteObject (writer, value);
+				if (name != null)
+					writer.WriteEndElement ();
+			}
+		}
+
 		internal abstract class WebDispatchMessageFormatter : WebMessageFormatter, IDispatchMessageFormatter
 		{
 			protected WebDispatchMessageFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
@@ -296,7 +336,7 @@ namespace System.ServiceModel.Description
 			{
 			}
 
-			public Message SerializeReply (MessageVersion messageVersion, object [] parameters, object result)
+			public virtual Message SerializeReply (MessageVersion messageVersion, object [] parameters, object result)
 			{
 				try {
 					return SerializeReplyCore (messageVersion, parameters, result);
@@ -337,7 +377,10 @@ namespace System.ServiceModel.Description
 
 				// FIXME: serialize ref/out parameters as well.
 
-				Message ret = Message.CreateMessage (MessageVersion.None, null, result, serializer);
+				string name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
+				string ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
+
+				Message ret = Message.CreateMessage (MessageVersion.None, null, new WrappedBodyWriter (result, serializer, name, ns));
 
 				// Message properties
 
@@ -357,7 +400,7 @@ namespace System.ServiceModel.Description
 				return ret;
 			}
 
-			public void DeserializeRequest (Message message, object [] parameters)
+			public virtual void DeserializeRequest (Message message, object [] parameters)
 			{
 				if (parameters == null)
 					throw new ArgumentNullException ("parameters");
