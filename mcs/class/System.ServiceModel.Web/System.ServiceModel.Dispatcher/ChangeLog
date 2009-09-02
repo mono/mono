@@ -1,5 +1,10 @@
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : it was not returning value with correct
+	  wrapper name/namespace. Fix interop with .NET client.
+
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageFormatter.cs : Made the same prohibition for dispatch
 	  formatters too. Support WebMessageBodyStyle on dispatcher side too.
 

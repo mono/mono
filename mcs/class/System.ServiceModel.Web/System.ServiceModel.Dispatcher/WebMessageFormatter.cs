@@ -144,10 +144,16 @@ namespace System.ServiceModel.Description
 		{
 			switch (msgfmt) {
 			case WebContentFormat.Xml:
-				return GetSerializer (ref xml_serializer, t => new DataContractSerializer (t));
+				if (IsResponseBodyWrapped)
+					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type, p.Name, p.Namespace));
+				else
+					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type));
 				break;
 			case WebContentFormat.Json:
-				return GetSerializer (ref json_serializer, t => new DataContractJsonSerializer (t));
+				if (IsResponseBodyWrapped)
+					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, p.Name));
+				else
+					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
 				break;
 			default:
 				throw new NotImplementedException ();
@@ -156,11 +162,11 @@ namespace System.ServiceModel.Description
 
 		XmlObjectSerializer xml_serializer, json_serializer;
 
-		XmlObjectSerializer GetSerializer (ref XmlObjectSerializer serializer, Func<Type,XmlObjectSerializer> f)
+		XmlObjectSerializer GetSerializer (ref XmlObjectSerializer serializer, Func<MessagePartDescription,XmlObjectSerializer> f)
 		{
 			if (serializer == null) {
 				MessageDescription md = GetMessageDescription (MessageDirection.Output);
-				serializer = f (md.Body.ReturnValue.Type);
+				serializer = f (md.Body.ReturnValue);
 			}
 			return serializer;
 		}
