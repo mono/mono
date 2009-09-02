@@ -138,14 +138,6 @@ namespace Mono.CSharp {
 			get { return loc; }
 		}
 
-		/// <summary>
-		///   Utility wrapper routine for Error, just to beautify the code
-		/// </summary>
-		public void Error (int error, string s)
-		{
-			Report.Error (error, loc, s);
-		}
-
 		// Not nice but we have broken hierarchy.
 		public virtual void CheckMarshalByRefAccess (ResolveContext ec)
 		{

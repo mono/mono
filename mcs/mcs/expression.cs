@@ -616,7 +616,7 @@ namespace Mono.CSharp {
 
 			Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
 			if (Expr == null || Expr.eclass != ExprClass.Variable) {
-				Error (211, "Cannot take the address of the given expression");
+				Report.Error (211, loc, "Cannot take the address of the given expression");
 				return null;
 			}
 
@@ -650,7 +650,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!is_fixed && !ec.HasSet (ResolveContext.Options.FixedInitializerScope)) {
-				Error (212, "You can only take the address of unfixed expression inside of a fixed statement initializer");
+				Report.Error (212, loc, "You can only take the address of unfixed expression inside of a fixed statement initializer");
 			}
 
 			type = TypeManager.GetPointerType (Expr.Type);
@@ -859,12 +859,12 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 
 			if (!expr.Type.IsPointer) {
-				Error (193, "The * or -> operator must be applied to a pointer");
+				Report.Error (193, loc, "The * or -> operator must be applied to a pointer");
 				return null;
 			}
 
 			if (expr.Type == TypeManager.void_ptr_type) {
-				Error (242, "The operation in question is undefined on void pointers");
+				Report.Error (242, loc, "The operation in question is undefined on void pointers");
 				return null;
 			}
 
@@ -999,7 +999,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!IsIncrementableNumber (type)) {
-				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
+				Report.Error (187, loc, "No such operator '" + OperName (mode) + "' defined for type '" +
 					   TypeManager.CSharpName (type) + "'");
 				return null;
 			}
@@ -3876,7 +3876,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			
 			if (left.Type == TypeManager.void_ptr_type) {
-				Error (242, "The operation in question is undefined on void pointers");
+				Report.Error (242, loc, "The operation in question is undefined on void pointers");
 				return null;
 			}
 			
@@ -4060,7 +4060,7 @@ namespace Mono.CSharp {
 					// Check if both can convert implicitl to each other's type
 					//
 					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-						Error (172,
+						Report.Error (172, loc,
 							   "Can not compute type of conditional expression " +
 							   "as `" + TypeManager.CSharpName (true_expr.Type) +
 							   "' and `" + TypeManager.CSharpName (false_expr.Type) +
@@ -5373,19 +5373,16 @@ namespace Mono.CSharp {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
 
 				if ((gc == null) || (!gc.HasConstructorConstraint && !gc.IsValueType)) {
-					Error (304, String.Format (
-						       "Cannot create an instance of the " +
-						       "variable type '{0}' because it " +
-						       "doesn't have the new() constraint",
-						       type));
+					Report.Error (304, loc,
+						"Cannot create an instance of the variable type '{0}' because it doesn't have the new() constraint",
+						TypeManager.CSharpName (type));
 					return null;
 				}
 
 				if ((Arguments != null) && (Arguments.Count != 0)) {
-					Error (417, String.Format (
-						       "`{0}': cannot provide arguments " +
-						       "when creating an instance of a " +
-						       "variable type.", type));
+					Report.Error (417, loc,
+						"`{0}': cannot provide arguments when creating an instance of a variable type",
+						TypeManager.CSharpName (type));
 					return null;
 				}
 
@@ -5780,7 +5777,7 @@ namespace Mono.CSharp {
 				if (o is ArrayList) {
 					ArrayList sub_probe = o as ArrayList;
 					if (idx + 1 >= dimensions){
-						Error (623, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
+						Report.Error (623, loc, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
 					
@@ -6615,13 +6612,13 @@ namespace Mono.CSharp {
 
 			if (!IsThisAvailable (ec)) {
 				if (ec.IsStatic && !ec.HasSet (ResolveContext.Options.ConstantScope)) {
-					Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
+					Report.Error (26, loc, "Keyword `this' is not valid in a static property, static method, or static field initializer");
 				} else if (ec.CurrentAnonymousMethod != null) {
 					Report.Error (1673, loc,
 						"Anonymous methods inside structs cannot access instance members of `this'. " +
 						"Consider copying `this' to a local variable outside the anonymous method and using the local instead");
 				} else {
-					Error (27, "Keyword `this' is not available in the current context");
+					Report.Error (27, loc, "Keyword `this' is not available in the current context");
 				}
 			}
 
@@ -6647,8 +6644,8 @@ namespace Mono.CSharp {
 		{
 			if ((variable_info != null) && !(TypeManager.IsStruct (type) && ec.OmitStructFlowAnalysis) &&
 			    !variable_info.IsAssigned (ec)) {
-				Error (188, "The `this' object cannot be used before all of its " +
-				       "fields are assigned to");
+				Report.Error (188, loc,
+					"The `this' object cannot be used before all of its fields are assigned to");
 				variable_info.SetAssigned (ec);
 			}
 		}
@@ -6741,8 +6738,8 @@ namespace Mono.CSharp {
 			type = TypeManager.runtime_argument_handle_type;
 
 			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) {
-				Error (190, "The __arglist construct is valid only within " +
-				       "a variable argument method");
+				Report.Error (190, loc,
+					"The __arglist construct is valid only within a variable argument method");
 			}
 
 			return this;
@@ -7754,7 +7751,7 @@ namespace Mono.CSharp {
 		Expression MakePointerAccess (ResolveContext ec, Type t)
 		{
 			if (Arguments.Count != 1){
-				Error (196, "A pointer must be indexed by only one value");
+				Report.Error (196, loc, "A pointer must be indexed by only one value");
 				return null;
 			}
 
@@ -8651,9 +8648,9 @@ namespace Mono.CSharp {
 
 			if (!This.IsThisAvailable (ec)) {
 				if (ec.IsStatic) {
-					Error (1511, "Keyword `base' is not available in a static method");
+					Report.Error (1511, loc, "Keyword `base' is not available in a static method");
 				} else {
-					Error (1512, "Keyword `base' is not available in the current context");
+					Report.Error (1512, loc, "Keyword `base' is not available in the current context");
 				}
 				return null;
 			}
@@ -9103,8 +9100,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.HasAny (ResolveContext.Options.CatchScope | ResolveContext.Options.FinallyScope)) {
-				Error (255, "Cannot use stackalloc in finally or catch");
-				return null;
+				Report.Error (255, loc, "Cannot use stackalloc in finally or catch");
 			}
 
 			TypeExpr texpr = t.ResolveAsTypeTerminal (ec, false);

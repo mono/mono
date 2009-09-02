@@ -62,22 +62,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected abstract void DoEmit (EmitContext ec);
 
-		/// <summary>
-		///   Utility wrapper routine for Error, just to beautify the code
-		/// </summary>
-		public void Error (int error, string format, params object[] args)
-		{
-			Error (error, String.Format (format, args));
-		}
-
-		public void Error (int error, string s)
-		{
-			if (!loc.IsNull)
-				Report.Error (error, loc, s);
-			else
-				Report.Error (error, s);
-		}
-
 		public virtual void Emit (EmitContext ec)
 		{
 			ec.Mark (loc);
@@ -741,9 +725,9 @@ namespace Mono.CSharp {
 				if (ec.ReturnType == TypeManager.void_type)
 					return true;
 				
-				Error (126, "An object of a type convertible to `{0}' is required " +
-					   "for the return statement",
-					   TypeManager.CSharpName (ec.ReturnType));
+				Report.Error (126, loc,
+					"An object of a type convertible to `{0}' is required for the return statement",
+					TypeManager.CSharpName (ec.ReturnType));
 				return false;
 			}
 
@@ -1008,7 +992,7 @@ namespace Mono.CSharp {
 
 			Constant c = expr as Constant;
 			if (c == null) {
-				Error (150, "A constant value is expected");
+				Report.Error (150, expr.Location, "A constant value is expected");
 				return false;
 			}
 
@@ -4639,7 +4623,7 @@ namespace Mono.CSharp {
 					type = te.Type;
 
 					if (type != TypeManager.exception_type && !TypeManager.IsSubclassOf (type, TypeManager.exception_type)){
-						Error (155, "The type caught or thrown must be derived from System.Exception");
+						Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 						return false;
 					}
 				} else
