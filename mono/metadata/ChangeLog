@@ -9,6 +9,10 @@
 
 2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c, icall-def.h: Remove some dead code from early SRE changes.
+
+2009-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_fields): Remove duplicated local variable
 	named gklass.
 	Rename gklass to gtd to reflect the fact that it points to the generic
