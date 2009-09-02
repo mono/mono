@@ -1,9 +1,10 @@
 //
-// HttpRequestMessageProperty.cs
+// HttpRequestMessagePropertyTest.cs
 //
-// Author: Atsushi Enomoto (atsushi@ximian.com)
+// Author:
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,42 +26,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Net;
+using System.Collections.ObjectModel;
+using System.Net.Security;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Channels
+namespace MonoTests.System.ServiceModel.Channels
 {
-	public sealed class HttpRequestMessageProperty
+	[TestFixture]
+	public class HttpRequestMessagePropertyTest
 	{
-		public static string Name {
-			get { return "httpRequest"; }
-		}
-
-		WebHeaderCollection headers = new WebHeaderCollection ();
-		string method = "POST", query_string = String.Empty;
-		bool suppress_entity;
-
-		public HttpRequestMessageProperty ()
+		[Test]
+		public void DefaultValues ()
 		{
-		}
-
-		public WebHeaderCollection Headers {
-			get { return headers; }
-		}
-
-		public string Method {
-			get { return method; }
-			set { method = value; }
-		}
-
-		public string QueryString {
-			get { return query_string; }
-			set { query_string = value; }
-		}
-
-		public bool SuppressEntityBody {
-			get { return suppress_entity; }
-			set { suppress_entity = value; }
+			var hp = new HttpRequestMessageProperty ();
+			Assert.AreEqual (String.Empty, hp.QueryString, "#1");
+			Assert.AreEqual ("POST", hp.Method, "#2");
 		}
 	}
 }

@@ -15,6 +15,7 @@ System.ServiceModel.Channels/FaultConverterTest.cs
 System.ServiceModel.Channels/FaultExceptionTest.cs
 System.ServiceModel.Channels/HandlerBodyWriter.cs
 System.ServiceModel.Channels/HandlerTransportBindingElement.cs
+System.ServiceModel.Channels/HttpRequestMessagePropertyTest.cs
 System.ServiceModel.Channels/HttpTransportBindingElementTest.cs
 System.ServiceModel.Channels/InterceptorBindingElement.cs
 System.ServiceModel.Channels/InvalidBindingElement.cs

@@ -1,3 +1,8 @@
+2009-09-02  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources:
+	  add HttpRequestMessagePropertyTest.cs
+
 2009-08-24  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: added 
