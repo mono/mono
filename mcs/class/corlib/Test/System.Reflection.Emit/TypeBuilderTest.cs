@@ -2187,6 +2187,21 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 
+		[Test] //#536243
+		public void CreateTypeThrowsForMethodsWithBadLabels ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			MethodBuilder mb = tb.DefineMethod("F", MethodAttributes.Public, typeof(string), null);
+			ILGenerator il_gen = mb.GetILGenerator ();
+			il_gen.DefineLabel ();
+			il_gen.Emit (OpCodes.Leave, new Label ());
+			try {
+				tb.CreateType ();
+				Assert.Fail ();
+			} catch (ArgumentException) {}
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TestIsDefinedIncomplete ()
