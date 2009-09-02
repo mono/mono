@@ -1,3 +1,8 @@
+2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILGenerator.cs (label_fixup): Check for unmarked labels.
+	Fixes #536243.
+
 2009-08-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBuilder.cs: Mark generic_params internal.
