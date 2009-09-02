@@ -31,7 +31,7 @@ namespace DbMetal.Schema
     /// <summary>
     /// Loads a DbmlRename class from a DBML file
     /// </summary>
-    public static class DbmlRenameLoader
+    static class DbmlRenameLoader
     {
         public static DbmlRename Load(Stream stream)
         {

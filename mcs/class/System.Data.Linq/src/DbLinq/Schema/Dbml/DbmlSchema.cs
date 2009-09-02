@@ -37,12 +37,10 @@ namespace DbLinq.Schema.Dbml
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007", IsNullable = false)]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Database : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Database : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private Connection connectionField;
@@ -368,12 +366,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Connection : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Connection : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string providerField;
@@ -494,12 +490,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum ConnectionMode
+    enum ConnectionMode
     {
 
         /// <remarks/>
@@ -518,12 +512,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Return : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Return : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string typeField;
@@ -578,12 +570,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Parameter : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Parameter : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string nameField;
@@ -704,12 +694,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum ParameterDirection
+    enum ParameterDirection
     {
 
         /// <remarks/>
@@ -728,12 +716,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Function : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Function : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private Parameter[] parameterField;
@@ -976,12 +962,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Type : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Type : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private object[] itemsField;
@@ -1207,12 +1191,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Association : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Association : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string nameField;
@@ -1520,12 +1502,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum AccessModifier
+    enum AccessModifier
     {
 
         /// <remarks/>
@@ -1548,12 +1528,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum MemberModifier
+    enum MemberModifier
     {
 
         /// <remarks/>
@@ -1573,12 +1551,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum Cardinality
+    enum Cardinality
     {
 
         /// <remarks/>
@@ -1594,12 +1570,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Column : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Column : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string nameField;
@@ -2094,12 +2068,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum UpdateCheck
+    enum UpdateCheck
     {
 
         /// <remarks/>
@@ -2112,18 +2084,14 @@ namespace DbLinq.Schema.Dbml
         WhenChanged,
     }
 
-    /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum AutoSync
+    enum AutoSync
     {
-
         /// <remarks/>
         Never,
 
@@ -2144,12 +2112,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum ClassModifier
+    enum ClassModifier
     {
 
         /// <remarks/>
@@ -2165,12 +2131,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class TableFunctionReturn : object, System.ComponentModel.INotifyPropertyChanged
+    partial class TableFunctionReturn : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string memberField;
@@ -2208,12 +2172,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class TableFunctionParameter : object, System.ComponentModel.INotifyPropertyChanged
+    partial class TableFunctionParameter : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string parameterField;
@@ -2300,9 +2262,7 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     enum Version
@@ -2321,12 +2281,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class TableFunction : object, System.ComponentModel.INotifyPropertyChanged
+    partial class TableFunction : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private TableFunctionParameter[] argumentField;
@@ -2431,12 +2389,10 @@ namespace DbLinq.Schema.Dbml
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- partial class Table : object, System.ComponentModel.INotifyPropertyChanged
+    partial class Table : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private Type typeField;
@@ -2621,12 +2577,10 @@ namespace DbLinq.Schema.Dbml
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum SerializationMode
+    enum SerializationMode
     {
 
         /// <remarks/>

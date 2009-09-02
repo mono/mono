@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq.Sqlite_test_mono", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq.Sqlite_test_mono_strict", "DbLinq.Sqlite\Test\DbLinq.Sqlite_test_mono_strict.csproj", "{06413209-2415-4541-8033-D5AAFF778A23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlMetal", "DbMetal\SqlMetal.csproj", "{CC64BF54-481C-4740-8135-E5972531CA7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - Mono Strict|Any CPU = Debug - Mono Strict|Any CPU
@@ -302,6 +304,12 @@ Global
 		{06413209-2415-4541-8033-D5AAFF778A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06413209-2415-4541-8033-D5AAFF778A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06413209-2415-4541-8033-D5AAFF778A23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Debug - Mono Strict|Any CPU.Build.0 = Debug|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC64BF54-481C-4740-8135-E5972531CA7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

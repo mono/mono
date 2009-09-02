@@ -36,7 +36,7 @@ namespace DbMetal.Schema
     /// </summary>
     //[XmlRoot("Database")]
     [XmlRoot("Database", Namespace = "http://schemas.microsoft.com/linqtosql/dbml/2007", IsNullable = false)]
-    public class DbmlRename : INameAliases
+    class DbmlRename : INameAliases
     {
         [XmlNamespaceDeclarations]
         public XmlSerializerNamespaces XmlNamespaceDeclarations { get; set; }

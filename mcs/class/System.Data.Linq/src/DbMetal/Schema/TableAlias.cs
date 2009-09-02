@@ -34,7 +34,10 @@ using DbMetal;
 
 namespace DbMetal.Schema
 {
-    public class TableAlias
+#if !MONO_STRICT
+    public
+#endif
+    class TableAlias
     {
         public class Renamings : INameAliases
         {

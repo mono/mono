@@ -310,6 +310,7 @@
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlHelpers.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlMethods.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlProvider.cs" />
+    <Compile Include="Util\DbmlExtensions.cs" />
     <Compile Include="Util\ExpressionChainEqualityComparer.cs" />
     <Compile Include="Util\ExpressionEqualityComparer.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
@@ -327,6 +328,8 @@
     <Compile Include="Language\Implementation\NoLanguageWords.cs" />
     <Compile Include="Schema\Implementation\NameFormatter.cs" />
     <Compile Include="Util\MemberInfoExtensions.cs" />
+    <Compile Include="Util\Output.cs" />
+    <Compile Include="Util\OutputLevel.cs" />
     <Compile Include="Util\Profiler.cs" />
     <Compile Include="Util\ReflectionExtensions.cs" />
     <Compile Include="Util\ReflectionUtility.cs" />

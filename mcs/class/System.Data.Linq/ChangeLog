@@ -1,5 +1,10 @@
 2009-09-02  Jonathan Pryor  <jpryor@novell.com>
 
+	* src/**/*: Sync with DbLinq r1215.  This fixes the
+	  ../../tools/sqlmetal build.
+
+2009-09-02  Jonathan Pryor  <jpryor@novell.com>
+
 	* src/**/*: Sync with DbLinq r1214.  This integrates several
 	  performance patches from Zoltan Varga, and adds a
 	  DataContextSubclass(string) constructor to sqlmetal output.
