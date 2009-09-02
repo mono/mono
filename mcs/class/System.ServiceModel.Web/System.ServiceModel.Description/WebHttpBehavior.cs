@@ -33,6 +33,24 @@ using System.ServiceModel.Web;
 
 namespace System.ServiceModel.Description
 {
+
+	internal static class WebHttpBehaviorExtensions
+	{
+		public static WebAttributeInfo GetWebAttributeInfo (this OperationDescription od)
+		{
+			foreach (IOperationBehavior ob in od.Behaviors) {
+				WebAttributeInfo info = null;
+				var wg = ob as WebGetAttribute;
+				if (wg != null)
+					return wg.Info;
+				var wi = ob as WebInvokeAttribute;
+				if (wi != null)
+					return wi.Info;
+			}
+			return null;
+		}
+	}
+
 	public class WebHttpBehavior : IEndpointBehavior
 	{
 		public WebHttpBehavior ()
@@ -127,9 +145,11 @@ namespace System.ServiceModel.Description
 			if (endpoint == null)
 				throw new ArgumentNullException ("endpoint");
 
-			foreach (var oper in endpoint.Contract.Operations)
+			foreach (var oper in endpoint.Contract.Operations) {
+				var wai = oper.GetWebAttributeInfo ();
+				var style = wai != null && wai.IsBodyStyleSetExplicitly ? wai.BodyStyle : DefaultBodyStyle;
 				foreach (var msg in oper.Messages)
-					switch (DefaultBodyStyle) {
+					switch (style) {
 					case WebMessageBodyStyle.Wrapped:
 						continue;
 					case WebMessageBodyStyle.WrappedRequest:
@@ -146,6 +166,7 @@ namespace System.ServiceModel.Description
 							throw new InvalidOperationException (String.Format ("{0} message on operation '{1}' has multiple parameters which is not allowed when the operation indicates no wrapper element. BodyStyle must be 'wrapped' on the operation WebInvoke/WebGet attribute.", msg.Direction, oper.Name));
 						break;
 					}
+			}
 
 			ValidateBinding (endpoint);
 		}

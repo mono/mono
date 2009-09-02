@@ -1,3 +1,7 @@
+2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs : BodyStyle is operation specific.
+
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehavior.cs : on validation, check wrapped parameter style.
