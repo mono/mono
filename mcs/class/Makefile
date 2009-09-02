@@ -144,6 +144,7 @@ monotouch_dirs := \
 	System	\
 	System.XML	\
 	System.Core	\
+	System.Json	\
 	System.Xml.Linq
 
 net_3_5_dirs := \

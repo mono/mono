@@ -1,3 +1,7 @@
+2009-09-02  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: include System.Json in monotouch.
+
 2009-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: add System.Json to net_4_0 profile.
