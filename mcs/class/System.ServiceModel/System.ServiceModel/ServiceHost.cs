@@ -137,7 +137,6 @@ namespace System.ServiceModel
 
 		IEnumerable<ContractDescription> GetServiceContractDescriptions () {
 			List<ContractDescription> contracts = new List<ContractDescription> ();
-			Type contractType = null;
 			Dictionary<Type, ServiceContractAttribute> contractAttributes = ContractDescriptionGenerator.GetServiceContractAttributes (service_type);
 			foreach (Type contract in contractAttributes.Keys)
 				contracts.Add( ContractDescriptionGenerator.GetContract (contract, service_type));

@@ -1,5 +1,11 @@
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : on service contract lookup, do not always
+	  expect contract name to match type name.
+	* ServiceHost.cs : remove extra local var.
+
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : fix wrong listenUri argument in
 	  AddServiceEndpoint() call chain.
 

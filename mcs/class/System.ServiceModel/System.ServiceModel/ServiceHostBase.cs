@@ -194,7 +194,7 @@ namespace System.ServiceModel
 			return null;
 		}
 
-		ContractDescription GetContract (string typeName)
+		ContractDescription GetContract (string name)
 		{
 			//FIXME: hack hack hack
 			ImplementedContracts ["IHttpGetHelpPageAndMetadataContract"] =
@@ -203,7 +203,7 @@ namespace System.ServiceModel
 			// FIXME: As long as I tried, *only* IMetadataExchange
 			// is the exception case that does not require full
 			// type name. Hence I treat it as a special case.
-			if (typeName == ServiceMetadataBehavior.MexContractName) {
+			if (name == ServiceMetadataBehavior.MexContractName) {
 				if (!Description.Behaviors.Contains (typeof (ServiceMetadataBehavior)) && Array.IndexOf (Description.ServiceType.GetInterfaces (), typeof (IMetadataExchange)) < 0)
 					throw new InvalidOperationException (
 						"Add ServiceMetadataBehavior to the ServiceHost to add a endpoint for IMetadataExchange contract.");
@@ -217,15 +217,19 @@ namespace System.ServiceModel
 				return null;
 			}
 
-			Type type = PopulateType (typeName);
-			if (type == null)
-				return null;
+			Type type = PopulateType (name);
 
 			foreach (ContractDescription cd in ImplementedContracts.Values) {
 				// FIXME: This check is a negative side effect 
 				// of the above hack.
 				if (cd.ContractType == typeof (IMetadataExchange))
 					continue;
+
+				if (type == null) {
+					if (cd.Name == name)
+						return cd;
+					continue;
+				}
 
 				if (cd.ContractType == type ||
 				    cd.ContractType.IsSubclassOf (type) ||
