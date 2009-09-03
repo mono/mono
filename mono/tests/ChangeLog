@@ -1,3 +1,7 @@
+2009-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs libtest.c: Add a test for #481559.
+
 2009-08-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* load-exceptions.cs:
