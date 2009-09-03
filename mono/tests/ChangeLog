@@ -1,3 +1,7 @@
+2009-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs libtest.c: Add a test for #481559.
+
 2009-07-09  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r137640.
