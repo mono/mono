@@ -1,5 +1,10 @@
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : apply configuration, and if there is still no
+	  endpoint, then add default one.
+
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : another URL to make relative.
 
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>

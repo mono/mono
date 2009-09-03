@@ -107,7 +107,7 @@ namespace System.ServiceModel.Channels {
 			closing = false;
 		}
 
-		void ApplyConfiguration (ServiceHost host)
+		void ApplyConfiguration (ServiceHostBase host)
 		{
 			foreach (ServiceElement service in ConfigUtil.ServicesSection.Services) {
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
@@ -150,14 +150,14 @@ namespace System.ServiceModel.Channels {
 			else
 				host = new ServiceHost (type, baseUri);
 
-#if true
-			//FIXME: Binding: Get from web.config.
-			var se = host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
-				new BasicHttpBinding (), new Uri (path, UriKind.Relative));
-			this.Uri = se.Address.Uri;
-#else
+
 			ApplyConfiguration (host);
-#endif
+			if (host.Description.Endpoints.Count == 0) {
+				//FIXME: Binding: Get from web.config.
+				var se = host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
+					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
+				this.Uri = se.Address.Uri;
+			}
 
 			host.Open ();
 
