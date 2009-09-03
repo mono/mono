@@ -1,3 +1,8 @@
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : fix wrong listenUri argument in
+	  AddServiceEndpoint() call chain.
+
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory_1.cs : validate behaviors.

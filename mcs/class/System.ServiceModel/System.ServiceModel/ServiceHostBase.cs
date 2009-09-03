@@ -160,7 +160,7 @@ namespace System.ServiceModel
 		{
 			Uri uri = new Uri (address, UriKind.RelativeOrAbsolute);
 			return AddServiceEndpoint (
-				implementedContract, binding, uri, uri);
+				implementedContract, binding, uri, listenUri);
 		}
 
 		public ServiceEndpoint AddServiceEndpoint (
