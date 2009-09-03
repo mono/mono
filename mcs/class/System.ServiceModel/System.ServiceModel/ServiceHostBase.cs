@@ -408,39 +408,7 @@ namespace System.ServiceModel
 
 			return new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
 		}
-	}
 
-	partial class DispatcherBuilder
-	{
-		internal ChannelDispatcher BuildChannelDispatcher (Type serviceType, ServiceEndpoint se, BindingParameterCollection commonParams)
-		{
-			//Let all behaviors add their binding parameters
-			AddBindingParameters (commonParams, se);
-			//User the binding parameters to build the channel listener and Dispatcher
-			IChannelListener lf = BuildListener (se, commonParams);
-			ChannelDispatcher cd = new ChannelDispatcher (
-				lf, se.Binding.Name);
-			cd.InitializeServiceEndpoint (serviceType, se);
-			return cd;
-		}
-
-		private void AddBindingParameters (BindingParameterCollection commonParams, ServiceEndpoint endPoint) {
-
-			commonParams.Add (ChannelProtectionRequirements.CreateFromContract (endPoint.Contract));
-
-			foreach (IContractBehavior b in endPoint.Contract.Behaviors)
-				b.AddBindingParameters (endPoint.Contract, endPoint, commonParams);
-			foreach (IEndpointBehavior b in endPoint.Behaviors)
-				b.AddBindingParameters (endPoint, commonParams);
-			foreach (OperationDescription operation in endPoint.Contract.Operations) {
-				foreach (IOperationBehavior b in operation.Behaviors)
-					b.AddBindingParameters (operation, commonParams);
-			}
-		}
-	}
-
-	public abstract partial class ServiceHostBase
-	{
 		[MonoTODO]
 		protected void LoadConfigurationSection (ServiceElement element)
 		{
@@ -456,33 +424,7 @@ namespace System.ServiceModel
 					((ChannelDispatcher) cd).StartLoop ();
 			}
 		}
-	}
 
-	partial class DispatcherBuilder
-	{
-		static IChannelListener BuildListener (ServiceEndpoint se,
-			BindingParameterCollection pl)
-		{
-			Binding b = se.Binding;
-			if (b.CanBuildChannelListener<IReplySessionChannel> (pl))
-				return b.BuildChannelListener<IReplySessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-			if (b.CanBuildChannelListener<IReplyChannel> (pl))
-				return b.BuildChannelListener<IReplyChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-			if (b.CanBuildChannelListener<IInputSessionChannel> (pl))
-				return b.BuildChannelListener<IInputSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-			if (b.CanBuildChannelListener<IInputChannel> (pl))
-				return b.BuildChannelListener<IInputChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-
-			if (b.CanBuildChannelListener<IDuplexChannel> (pl))
-				return b.BuildChannelListener<IDuplexChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-			if (b.CanBuildChannelListener<IDuplexSessionChannel> (pl))
-				return b.BuildChannelListener<IDuplexSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
-			throw new InvalidOperationException ("None of the listener channel types is supported");
-		}
-	}
-
-	public abstract partial class ServiceHostBase
-	{
 		[MonoTODO]
 		protected override sealed void OnAbort ()
 		{
@@ -644,4 +586,52 @@ namespace System.ServiceModel
 		*/
 	}
 
+	partial class DispatcherBuilder
+	{
+		internal ChannelDispatcher BuildChannelDispatcher (Type serviceType, ServiceEndpoint se, BindingParameterCollection commonParams)
+		{
+			//Let all behaviors add their binding parameters
+			AddBindingParameters (commonParams, se);
+			//User the binding parameters to build the channel listener and Dispatcher
+			IChannelListener lf = BuildListener (se, commonParams);
+			ChannelDispatcher cd = new ChannelDispatcher (
+				lf, se.Binding.Name);
+			cd.InitializeServiceEndpoint (serviceType, se);
+			return cd;
+		}
+
+		private void AddBindingParameters (BindingParameterCollection commonParams, ServiceEndpoint endPoint) {
+
+			commonParams.Add (ChannelProtectionRequirements.CreateFromContract (endPoint.Contract));
+
+			foreach (IContractBehavior b in endPoint.Contract.Behaviors)
+				b.AddBindingParameters (endPoint.Contract, endPoint, commonParams);
+			foreach (IEndpointBehavior b in endPoint.Behaviors)
+				b.AddBindingParameters (endPoint, commonParams);
+			foreach (OperationDescription operation in endPoint.Contract.Operations) {
+				foreach (IOperationBehavior b in operation.Behaviors)
+					b.AddBindingParameters (operation, commonParams);
+			}
+		}
+
+		static IChannelListener BuildListener (ServiceEndpoint se,
+			BindingParameterCollection pl)
+		{
+			Binding b = se.Binding;
+			if (b.CanBuildChannelListener<IReplySessionChannel> (pl))
+				return b.BuildChannelListener<IReplySessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			if (b.CanBuildChannelListener<IReplyChannel> (pl))
+				return b.BuildChannelListener<IReplyChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			if (b.CanBuildChannelListener<IInputSessionChannel> (pl))
+				return b.BuildChannelListener<IInputSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			if (b.CanBuildChannelListener<IInputChannel> (pl))
+				return b.BuildChannelListener<IInputChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+
+			if (b.CanBuildChannelListener<IDuplexChannel> (pl))
+				return b.BuildChannelListener<IDuplexChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			if (b.CanBuildChannelListener<IDuplexSessionChannel> (pl))
+				return b.BuildChannelListener<IDuplexSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			throw new InvalidOperationException ("None of the listener channel types is supported");
+		}
+	}
 }
