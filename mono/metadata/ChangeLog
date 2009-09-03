@@ -1,5 +1,10 @@
 2009-09-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_MonoMethod_GetDllImportAttribute): Guard
+	against broken SRE methods.
+
+2009-09-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_type_get_full): Don't call mono_metadata_free_type on
 	a NULL variable. Abort early on failure.
 
