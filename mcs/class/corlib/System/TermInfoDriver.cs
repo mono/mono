@@ -469,14 +469,23 @@ namespace System {
 		void GetCursorPosition ()
 		{
 			int row = 0, col = 0;
+			int b;
 
+			// First, get any data in the input buffer.  Merely reduces the likelyhood of getting an error
+			int inqueue = ConsoleDriver.InternalKeyAvailable (1000);
+			while (inqueue-- > 0){
+				b = stdin.Read ();
+				AddToBuffer (b);
+			}
+
+			// Then try to probe for the cursor coordinates
 			WriteConsole ("\x1b[6n");
 			if (ConsoleDriver.InternalKeyAvailable (1000) <= 0) {
 				noGetPosition = true;
 				return;
 			}
 
-			int b = stdin.Read ();
+			b = stdin.Read ();
 			while (b != '\x1b') {
 				AddToBuffer (b);
 				if (ConsoleDriver.InternalKeyAvailable (100) <= 0)

@@ -1,3 +1,10 @@
+2009-08-14  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs (GetCursorPosition): Before we probe the
+	terminal for the cursor location, read all the pending console
+	input into our internal buffer and then send the cursor location
+	request.
+
 2009-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpan.cs: Fix parsing when seconds are not specified.
