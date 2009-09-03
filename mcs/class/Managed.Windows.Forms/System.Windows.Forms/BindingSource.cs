@@ -194,6 +194,36 @@ namespace System.Windows.Forms {
 			ResetBindings (true);
 		}
 
+		private void ConnectDataSourceEvents (object dataSource)
+		{
+			if (dataSource == null)
+				return;
+			
+			ICurrencyManagerProvider currencyManagerProvider = dataSource as ICurrencyManagerProvider;
+			if (currencyManagerProvider != null && currencyManagerProvider.CurrencyManager != null) {
+				currencyManagerProvider.CurrencyManager.CurrentItemChanged += OnParentCurrencyManagerChanged;
+				currencyManagerProvider.CurrencyManager.MetaDataChanged += OnParentCurrencyManagerChanged;
+			}
+		}
+
+		private void OnParentCurrencyManagerChanged (object sender, EventArgs args)
+		{
+			// Essentially handles chained data sources (e.g. chained BindingSource)
+			ResetList ();
+		}
+
+		private void DisconnectDataSourceEvents (object dataSource)
+		{
+			if (dataSource == null)
+				return;
+
+			ICurrencyManagerProvider currencyManagerProvider = dataSource as ICurrencyManagerProvider;
+			if (currencyManagerProvider != null && currencyManagerProvider.CurrencyManager != null) {
+				currencyManagerProvider.CurrencyManager.CurrentItemChanged -= OnParentCurrencyManagerChanged;
+				currencyManagerProvider.CurrencyManager.MetaDataChanged -= OnParentCurrencyManagerChanged;
+			}
+		}
+
 		void IBindingListChangedHandler (object o, ListChangedEventArgs args)
 		{
 			if (raise_list_changed_events)
@@ -319,7 +349,9 @@ namespace System.Windows.Forms {
 					if (datasource == null)
 						datamember = String.Empty;
 
+					DisconnectDataSourceEvents (datasource);
 					datasource = value;
+					ConnectDataSourceEvents (datasource);
 					ResetList ();
 
 					OnDataSourceChanged (EventArgs.Empty);
