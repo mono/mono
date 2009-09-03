@@ -220,6 +220,14 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void EmitDBNullConstant ()
+		{
+			var lambda = Expression.Lambda<Func<DBNull>> (Expression.Constant (DBNull.Value)).Compile ();
+
+			Assert.AreEqual (DBNull.Value, lambda ());
+		}
+
+		[Test]
 		public void EmitNullString ()
 		{
 			var n = Expression.Lambda<Func<string>> (
