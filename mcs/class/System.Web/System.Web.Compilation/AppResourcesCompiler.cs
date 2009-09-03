@@ -640,7 +640,7 @@ namespace System.Web.Compilation
 				sb.Append (ch);
 			else {
 				sb.Append ('_');
-				if (ch >= '0' && ch <= '9') {
+				if (ch >= '0' && ch <= '9')
 					sb.Append (ch);
 			}
 			
