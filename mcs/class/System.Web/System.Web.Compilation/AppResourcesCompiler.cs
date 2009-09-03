@@ -39,6 +39,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -590,7 +591,7 @@ namespace System.Web.Compilation
 					
 					cmp = new CodeMemberProperty ();
 					cmp.Attributes = MemberAttributes.Public | MemberAttributes.Final | MemberAttributes.Static;
-					cmp.Name = SanitizeResourceName ((string)de.Key);
+					cmp.Name = SanitizeResourceName (provider, (string)de.Key);
 					cmp.HasGet = true;
 					CodePropertyResourceGet (cmp.GetStatements, (string)de.Key, type, classname);
 					cmp.Type = new CodeTypeReference (type);
@@ -606,9 +607,52 @@ namespace System.Web.Compilation
 			unit.Namespaces.Add (ns);
 		}
 
-		string SanitizeResourceName (string name)
+		static bool is_identifier_start_character (int c)
 		{
-			return name.Replace (' ', '_').Replace ('-', '_').Replace ('.', '_');
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter ((char)c);
+		}
+
+		static bool is_identifier_part_character (char c)
+		{
+			if (c >= 'a' && c <= 'z')
+				return true;
+
+			if (c >= 'A' && c <= 'Z')
+				return true;
+
+			if (c == '_' || (c >= '0' && c <= '9'))
+				return true;
+
+			if (c < 0x80)
+				return false;
+
+			return Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
+		}
+		
+		string SanitizeResourceName (CodeDomProvider provider, string name)
+		{
+			if (provider.IsValidIdentifier (name))
+				return provider.CreateEscapedIdentifier (name);
+
+			var sb = new StringBuilder ();
+			char ch = name [0];
+			if (is_identifier_start_character (ch))
+				sb.Append (ch);
+			else {
+				sb.Append ('_');
+				if (ch >= '0' && ch <= '9') {
+					sb.Append (ch);
+			}
+			
+			for (int i = 1; i < name.Length; i++) {
+				ch = name [i];
+				if (is_identifier_part_character (ch))
+					sb.Append (ch);
+				else
+					sb.Append ('_');
+			}
+			
+			return provider.CreateEscapedIdentifier (sb.ToString ());
 		}
 		
 		CodeObjectCreateExpression NewResourceManager (string name, string typename)
