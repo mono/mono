@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels {
 	{
 		Type type;
 		Type factory_type;
-		internal string path;
+		string path;
 		Uri request_url;
 		ServiceHostBase host;
 
@@ -121,15 +121,17 @@ namespace System.ServiceModel.Channels {
 				return;
 
 			//ServiceHost for this not created yet
-			if (factory_type != null)
-				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [0]);
+			var baseUri = new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Path));
+			if (factory_type != null) {
+				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
+			}
 			else
-				host = new ServiceHost (type);
+				host = new ServiceHost (type, baseUri);
 
 #if true
 			//FIXME: Binding: Get from web.config.
 			host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
-				new BasicHttpBinding (), new Uri (path));
+				new BasicHttpBinding (), new Uri (path, UriKind.Relative));
 #else
 			ApplyConfiguration (host);
 #endif

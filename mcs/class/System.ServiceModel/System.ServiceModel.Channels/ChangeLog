@@ -1,3 +1,9 @@
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : use baseAddresses in ServiceHost and make URIs
+	  relative or absolute. new Uri ("/foobar") doesn't work on non-unix
+	  environment.
+
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandlerFactory.cs : make use of BuildManager aid. Now it
