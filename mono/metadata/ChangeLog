@@ -1,3 +1,8 @@
+2009-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_array): Call conv.ovf.i on the array parameter
+	argument, since NEWARR expects a native int. Fixes #481559.
+
 2009-09-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_MonoMethod_GetDllImportAttribute): Guard
