@@ -131,6 +131,19 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
+			case TypeCode.DateTime: {
+				var date = (DateTime) value;
+				var local = ig.DeclareLocal (typeof (DateTime));
+
+				ig.Emit (OpCodes.Ldloca, local);
+				ig.Emit (OpCodes.Ldc_I8, date.Ticks);
+				ig.Emit (OpCodes.Ldc_I4, (int) date.Kind);
+				ig.Emit (OpCodes.Call, typeof (DateTime).GetConstructor (new [] { typeof (long), typeof (DateTimeKind) }));
+				ig.Emit (OpCodes.Ldloc, local);
+
+				return;
+			}
+
 			case TypeCode.String:
 				EmitIfNotNull (ec, c => c.ig.Emit (OpCodes.Ldstr, (string) value));
 				return;

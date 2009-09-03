@@ -1,3 +1,8 @@
+2009-09-03  Jb Evain  <jbevain@novell.com>
+
+	* ConstantExpression.cs (Emit): add support for emitting
+	DateTime constants.
+
 2009-03-05  Jb Evain  <jbevain@novell.com>
 
 	* EmitContext.cs
