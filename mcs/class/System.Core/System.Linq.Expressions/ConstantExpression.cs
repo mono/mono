@@ -144,6 +144,10 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
+			case TypeCode.DBNull:
+				ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value", BindingFlags.Public | BindingFlags.Static));
+				return;
+
 			case TypeCode.String:
 				EmitIfNotNull (ec, c => c.ig.Emit (OpCodes.Ldstr, (string) value));
 				return;

@@ -1,5 +1,9 @@
 2009-09-03  Jb Evain  <jbevain@novell.com>
 
+	* ConstantExpression.cs (Emit): add support to emit DBNull values.
+
+2009-09-03  Jb Evain  <jbevain@novell.com>
+
 	* ConstantExpression.cs (Emit): add support for emitting
 	DateTime constants.
 
