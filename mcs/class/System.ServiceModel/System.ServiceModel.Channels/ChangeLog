@@ -1,5 +1,9 @@
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : another URL to make relative.
+
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandlerFactory.cs : some GetHandler changes.
 	* SvcHttpHandler.cs : significant changes on receiver structure. Now
 	  ProcessRequest() stores pending requests (this might be extraneous,

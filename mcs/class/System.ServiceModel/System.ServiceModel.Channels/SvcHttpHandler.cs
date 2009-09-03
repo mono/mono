@@ -115,7 +115,7 @@ namespace System.ServiceModel.Channels {
 					ServiceEndpoint se = host.AddServiceEndpoint (
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						new Uri (path));
+						new Uri (path, UriKind.Relative));
 					this.Uri = se.Address.Uri;
 				}
 				// behaviors
