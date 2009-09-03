@@ -1,3 +1,8 @@
+2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataColumnPropertyDescriptor.cs, DataView.cs: Not browsable if Hidden.
+	[Fixes the second part of bug #536547]
+
 2009-08-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #521951

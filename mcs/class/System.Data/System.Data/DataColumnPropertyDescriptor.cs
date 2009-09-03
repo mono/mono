@@ -42,6 +42,8 @@ namespace System.Data
 		private bool readOnly = true;
 		private Type componentType = null;
 		private Type propertyType = null;
+		private bool browsable = true;
+
 		//private PropertyInfo prop = null;
 		private int columnIndex = 0;
 
@@ -73,6 +75,11 @@ namespace System.Data
 		public void SetPropertyType (Type type) 
 		{
 			propertyType = type;
+		}
+
+		public void SetBrowsable (bool browsable)
+		{
+			this.browsable = browsable;
 		}
 
 		public override object GetValue (object component) 
@@ -147,6 +154,10 @@ namespace System.Data
 			get {
 				return readOnly;	
 			}
+		}
+
+		public override bool IsBrowsable {
+			get { return browsable && base.IsBrowsable; }
 		}
 
 		public override Type PropertyType {

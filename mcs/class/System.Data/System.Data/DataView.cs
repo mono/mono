@@ -796,6 +796,7 @@ namespace System.Data
 				descriptor.SetComponentType (typeof (System.Data.DataRowView));
 				descriptor.SetPropertyType (dataColumn.DataType);
 				descriptor.SetReadOnly (dataColumn.ReadOnly);
+				descriptor.SetBrowsable (dataColumn.ColumnMapping != MappingType.Hidden);
 				descriptors [d++] = descriptor;
 			}
 			for (int rel = 0; rel < dataTable.ChildRelations.Count; rel ++) {
