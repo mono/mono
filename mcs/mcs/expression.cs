@@ -5733,11 +5733,6 @@ namespace Mono.CSharp {
 			expect_initializers = true;
 		}
 
-		public static void Error_IncorrectArrayInitializer (Location loc)
-		{
-			Report.Error (178, loc, "Invalid rank specifier: expected `,' or `]'");
-		}
-
 		protected override void Error_NegativeArrayIndex (Location loc)
 		{
 			Report.Error (248, loc, "Cannot create an array with a negative size");
@@ -6400,10 +6395,7 @@ namespace Mono.CSharp {
 	{
 		public ImplicitlyTypedArrayCreation (string rank, ArrayList initializers, Location loc)
 			: base (null, rank, initializers, loc)
-		{
-			if (RootContext.Version <= LanguageVersion.ISO_2)
-				Report.FeatureIsNotAvailable (loc, "implicitly typed arrays");
-				
+		{			
 			if (rank.Length > 2) {
 				while (rank [++dimensions] == ',');
 			} else {

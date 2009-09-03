@@ -1651,9 +1651,6 @@ namespace Mono.CSharp {
 
 		public static AnonymousTypeClass Create (TypeContainer parent, ArrayList parameters, Location loc)
 		{
-			if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)
-				Report.FeatureIsNotSupported (loc, "anonymous types");
-
 			string name = ClassNamePrefix + types_counter++;
 
 			SimpleName [] t_args = new SimpleName [parameters.Count];

@@ -3430,6 +3430,9 @@ array_creation_expression
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
+		if (RootContext.Version <= LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
+	  
 		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, GetLocation ($1));
 	  }
 	| new_expr_start error
@@ -3565,7 +3568,7 @@ rank_specifier
 	  }
 	| OPEN_BRACKET error CLOSE_BRACKET
 	  {
-		ArrayCreation.Error_IncorrectArrayInitializer (GetLocation ($1));
+		Report.Error (178, GetLocation ($1), "Invalid rank specifier: expected `,' or `]'");
 		$$ = "[]";
 	  }
 	;
@@ -5134,8 +5137,17 @@ catch_clauses
 	| catch_clauses catch_clause
 	  {
 		ArrayList l = (ArrayList) $1;
-
-		l.Add ($2);
+		
+		Catch c = (Catch) $2;
+		if (((Catch) l [0]).IsGeneral) {
+			Report.Error (1017, c.loc, "Try statement already has an empty catch block");
+		} else {
+			if (c.IsGeneral)
+				l.Insert (0, $2);
+			else
+				l.Add ($2);
+		}
+		
 		$$ = l;
 	  }
 	;

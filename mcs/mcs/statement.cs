@@ -4736,18 +4736,12 @@ namespace Mono.CSharp {
 		{
 			this.Block = block;
 			this.Specific = catch_clauses;
-			this.General = null;
 			this.inside_try_finally = inside_try_finally;
 
-			for (int i = 0; i < catch_clauses.Count; ++i) {
-				Catch c = (Catch) catch_clauses [i];
-				if (c.IsGeneral) {
-					if (i != catch_clauses.Count - 1)
-						Report.Error (1017, c.loc, "Try statement already has an empty catch block");
-					this.General = c;
-					catch_clauses.RemoveAt (i);
-					i--;
-				}
+			Catch c = (Catch) catch_clauses [0];
+			if (c.IsGeneral) {
+				this.General = c;			
+				catch_clauses.RemoveAt (0);
 			}
 
 			loc = l;
