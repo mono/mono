@@ -1,3 +1,10 @@
+2009-09-03  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesCompiler.cs: SanitizeResourceName uses VB/C# rules
+	to attempt to create valid identifiers from resource
+	names. Identifier is also escaped by the CodeDOM provider before
+	returning. Possible fix for bug #536364
+
 2009-08-27  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: when HttpRequest.FilePath is '/' in
