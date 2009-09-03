@@ -21,6 +21,7 @@
 //
 // Author:
 // 	Carlos Alberto Cortez <calberto.cortez@gmail.com>
+//      Ivan Zlatev <contact@i-nz.net>
 //
 
 using System;
@@ -44,39 +45,49 @@ namespace System.Windows.Forms
 	{
 		public static object GetList (object list)
 		{
-			return GetList (list, String.Empty);
+			if (list is IListSource)
+				return ((IListSource) list).GetList ();
+			return list;
 		}
 
 		public static object GetList (object dataSource, string dataMember)
 		{
-			if (dataSource is IListSource)
-				dataSource = ((IListSource) dataSource).GetList ();
-
-			if (dataSource == null)
-				return null;
-
-			if (dataMember == null || dataMember.Length == 0)
+			dataSource = GetList (dataSource);
+			if (dataSource == null || dataMember == null || dataMember.Length == 0)
 				return dataSource;
 
-			if (dataSource is IEnumerable) {
-				IEnumerator e = ((IEnumerable) dataSource).GetEnumerator ();
-				if (e == null || !e.MoveNext () || e.Current == null) {
-					PropertyDescriptorCollection properties = GetListItemProperties (dataSource);
-					if (properties [dataMember] == null)
-						throw new ArgumentException ("dataMember");
-
-					// Weird
-					return null;
-				}
-					
-				dataSource = e.Current;
-			}
-
-			PropertyDescriptor property = GetProperty (dataSource, dataMember);
+			PropertyDescriptor property = GetListItemProperties (dataSource).Find (dataMember, true);
 			if (property == null)
 				throw new ArgumentException ("dataMember");
 
-			return property.GetValue (dataSource);
+			object item = null;
+#if NET_2_0
+			ICurrencyManagerProvider currencyManagerProvider = dataSource as ICurrencyManagerProvider;
+			if (currencyManagerProvider != null && currencyManagerProvider.CurrencyManager != null) {
+				CurrencyManager currencyManager = currencyManagerProvider.CurrencyManager;
+				if (currencyManager != null && currencyManager.Count > 0 && currencyManager.Current != null)
+					item = currencyManager.Current;
+			}
+#endif
+
+			if (item == null) {
+				if (dataSource is IEnumerable) {
+					if (dataSource is IList) {
+						IList list = (IList) dataSource;
+						item = list.Count > 0 ? list[0] : null;
+					} else {
+						IEnumerator e = ((IEnumerable) dataSource).GetEnumerator ();
+						if (e != null && e.MoveNext ())
+							item = e.Current;
+					}
+				} else {
+					item = dataSource;
+				}
+			}
+
+			if (item != null)
+				return property.GetValue (item);
+			return null;
 		}
 
 		public static Type GetListItemType (object list)
@@ -176,15 +187,8 @@ namespace System.Windows.Forms
 
 		static PropertyDescriptor GetProperty (object obj, string property_name)
 		{
-			Attribute [] attrs = new Attribute [] { new BrowsableAttribute (true) };
-
-			PropertyDescriptorCollection properties;
-			if (obj is ICustomTypeDescriptor)
-				properties = ((ICustomTypeDescriptor)obj).GetProperties (attrs);
-			else
-				properties = TypeDescriptor.GetProperties (obj.GetType (), attrs);
-
-			return properties [property_name];
+			return TypeDescriptor.GetProperties (obj, 
+							     new Attribute [] { new BrowsableAttribute (true) })[property_name];
 		}
 
 		// 

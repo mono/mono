@@ -1,3 +1,10 @@
+2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* BindingSource.cs: Implement support for chained data sources.
+	* ListBindingHelper.cs: Add support for ICurrencyManagerProvider and 
+	clean up.
+	[Fixes part of bug #536547]
+
 2009-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When saving the text to a file using SaveFile use
