@@ -31,14 +31,14 @@ using System.Web;
 
 namespace System.ServiceModel.Channels {
 
-	class AspNetRequestContext : HttpRequestContext
+	class AspNetRequestContext : HttpRequestContextBase
 	{
 		HttpContext ctx;
 
 		public AspNetRequestContext (
 			HttpReplyChannel channel,
 			Message msg, HttpContext ctx)
-			: base (channel, msg, null)
+			: base (channel, msg)
 		{
 			this.ctx = ctx;
 		}

@@ -32,39 +32,86 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
-	internal class HttpRequestContext : RequestContext
+	internal class HttpRequestContext : HttpRequestContextBase
 	{
-		Message msg;
 		HttpListenerContext ctx;
-		HttpReplyChannel channel;
 
 		public HttpRequestContext (
 			HttpReplyChannel channel,
 			Message msg, HttpListenerContext ctx)
+			: base (channel, msg)
 		{
-			if (channel == null)
-				throw new ArgumentNullException ("channel");
-			if (msg == null)
-				throw new ArgumentNullException ("msg");
 			if (ctx == null)
 				throw new ArgumentNullException ("ctx");
-			this.channel = channel;
-			this.msg = msg;
 			this.ctx = ctx;
-		}
-
-		public override Message RequestMessage {
-			get { return msg; }
-		}
-
-		public HttpReplyChannel Channel {
-			get { return channel; }
 		}
 
 		public override void Abort ()
 		{
 			ctx.Response.Abort ();
 		}
+
+		protected override void ProcessReply (Message msg, TimeSpan timeout)
+		{
+			if (msg == null)
+				throw new ArgumentNullException ("msg");
+			MemoryStream ms = new MemoryStream ();
+			channel.Encoder.WriteMessage (msg, ms);
+			ctx.Response.ContentType = channel.Encoder.ContentType;
+
+			string pname = HttpResponseMessageProperty.Name;
+			bool suppressEntityBody = false;
+			if (msg.Properties.ContainsKey (pname)) {
+				HttpResponseMessageProperty hp = (HttpResponseMessageProperty) msg.Properties [pname];
+				string contentType = hp.Headers ["Content-Type"];
+				if (contentType != null)
+					ctx.Response.ContentType = contentType;
+				ctx.Response.Headers.Add (hp.Headers);
+				if (hp.StatusCode != default (HttpStatusCode))
+					ctx.Response.StatusCode = (int) hp.StatusCode;
+				ctx.Response.StatusDescription = hp.StatusDescription;
+				if (hp.SuppressEntityBody)
+					suppressEntityBody = true;
+			}
+			if (!suppressEntityBody) {
+				ctx.Response.ContentLength64 = ms.Length;
+				ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
+				ctx.Response.OutputStream.Flush ();
+			}
+		}
+
+		public override void Close (TimeSpan timeout)
+		{
+			ctx.Response.Close ();
+		}
+	}
+
+	internal abstract class HttpRequestContextBase : RequestContext
+	{
+		Message request;
+		internal HttpReplyChannel channel;
+
+		public HttpRequestContextBase (
+			HttpReplyChannel channel,
+			Message request)
+		{
+			if (channel == null)
+				throw new ArgumentNullException ("channel");
+			if (request == null)
+				throw new ArgumentNullException ("request");
+			this.channel = channel;
+			this.request = request;
+		}
+
+		public override Message RequestMessage {
+			get { return request; }
+		}
+
+		public HttpReplyChannel Channel {
+			get { return channel; }
+		}
+
+		protected abstract void ProcessReply (Message msg, TimeSpan timeout);
 
 		public override IAsyncResult BeginReply (
 			Message msg, AsyncCallback callback, object state)
@@ -104,43 +151,9 @@ namespace System.ServiceModel.Channels
 			ProcessReply (msg, timeout);
 		}
 
-		protected virtual void ProcessReply (Message msg, TimeSpan timeout)
-		{
-			if (msg == null)
-				throw new ArgumentNullException ("msg");
-			MemoryStream ms = new MemoryStream ();
-			channel.Encoder.WriteMessage (msg, ms);
-			ctx.Response.ContentType = channel.Encoder.ContentType;
-
-			string pname = HttpResponseMessageProperty.Name;
-			bool suppressEntityBody = false;
-			if (msg.Properties.ContainsKey (pname)) {
-				HttpResponseMessageProperty hp = (HttpResponseMessageProperty) msg.Properties [pname];
-				string contentType = hp.Headers ["Content-Type"];
-				if (contentType != null)
-					ctx.Response.ContentType = contentType;
-				ctx.Response.Headers.Add (hp.Headers);
-				if (hp.StatusCode != default (HttpStatusCode))
-					ctx.Response.StatusCode = (int) hp.StatusCode;
-				ctx.Response.StatusDescription = hp.StatusDescription;
-				if (hp.SuppressEntityBody)
-					suppressEntityBody = true;
-			}
-			if (!suppressEntityBody) {
-				ctx.Response.ContentLength64 = ms.Length;
-				ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
-				ctx.Response.OutputStream.Flush ();
-			}
-		}
-
 		public override void Close ()
 		{
 			Close (channel.DefaultSendTimeout);
-		}
-
-		public override void Close (TimeSpan timeout)
-		{
-			ctx.Response.Close ();
 		}
 	}
 }

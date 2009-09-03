@@ -1,5 +1,11 @@
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AspNetRequestContext.cs, HttpRequestContext.cs :
+	  fix NRE on HttpListenerContext for AspNetRequestContext (mismatch)
+	  by splitting HttpListener-based context out from common code base.
+
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : use baseAddresses in ServiceHost and make URIs
 	  relative or absolute. new Uri ("/foobar") doesn't work on non-unix
 	  environment.
