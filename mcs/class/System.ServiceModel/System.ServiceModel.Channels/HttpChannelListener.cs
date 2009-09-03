@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.ServiceModel;
@@ -108,7 +109,12 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (source, context)
 		{
+			HttpHandler = SvcHttpHandlerFactory.Handlers.Values.First (v => v.Uri.Equals (Uri));
+			if (HttpHandler == null)
+				throw new Exception ("Unexpected internal error: HTTP handler not found for URI " + Uri);
 		}
+
+		internal SvcHttpHandler HttpHandler { get; private set; }
 
 		protected override TChannel CreateChannel (TimeSpan timeout)
 		{

@@ -39,16 +39,36 @@ namespace System.ServiceModel.Channels
 	internal class AspNetReplyChannel : HttpReplyChannel
 	{
 		HttpContext http_context;
+		AspNetChannelListener<IReplyChannel> listener;
 		Uri uri;
 
 		public AspNetReplyChannel (AspNetChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
+			this.listener = listener;
 			uri = listener.Uri;
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
+			try {
+				return TryReceiveRequestCore (timeout, out context);
+			} catch (Exception ex) {
+				// FIXME: log it
+				Console.WriteLine ("AspNetReplyChannel caught an error: " + ex);
+				throw;
+			} finally {
+				listener.HttpHandler.EndRequest (http_context);
+				http_context = null;
+			}
+		}
+
+		bool TryReceiveRequestCore (TimeSpan timeout, out RequestContext context)
+		{
+			context = null;
+			if (!WaitForRequest (timeout))
+				return false;
+
 			Message msg;
 			if (http_context.Request.HttpMethod == "GET") {
 				if (http_context.Request.QueryString ["wsdl"] != null) {
@@ -77,19 +97,11 @@ namespace System.ServiceModel.Channels
 			return true;
 		}
 
-		public HttpContext Context {
-			get { return http_context; }
-			set { http_context = value; }
-		}
-
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
-			// FIXME: we might want to take other approaches.
-			if (timeout.Ticks > int.MaxValue)
-				timeout = TimeSpan.FromDays (20);
-
-			SvcHttpHandler h = SvcHttpHandlerFactory.GetHandler (uri.OriginalString.Replace ("file://", ""));
-			return h.WaitForRequest (this, timeout);
+			if (http_context == null)
+				http_context = listener.HttpHandler.WaitForRequest (timeout);
+			return http_context != null;
 		}
 	}
 }

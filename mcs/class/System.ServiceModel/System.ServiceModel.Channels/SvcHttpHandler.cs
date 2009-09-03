@@ -3,8 +3,9 @@
 //
 // Author:
 //	Ankit Jain  <jankit@novell.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Threading;
 
@@ -43,8 +45,9 @@ namespace System.ServiceModel.Channels {
 		string path;
 		Uri request_url;
 		ServiceHostBase host;
+		Queue<HttpContext> pending = new Queue<HttpContext> ();
+		bool closing;
 
-		AspNetReplyChannel reply_channel;
 		AutoResetEvent wait = new AutoResetEvent (false);
 		AutoResetEvent listening = new AutoResetEvent (false);
 
@@ -60,30 +63,48 @@ namespace System.ServiceModel.Channels {
 			get { return true; }
 		}
 
-		public bool WaitForRequest (AspNetReplyChannel reply_channel, TimeSpan timeout)
-		{
-			this.reply_channel = reply_channel;
-			listening.Set ();
+		public Uri Uri { get; private set; }
 
-			return wait.WaitOne (timeout, false);
+		public HttpContext WaitForRequest (TimeSpan timeout)
+		{
+			DateTime start = DateTime.Now;
+			lock (pending) {
+				if (pending.Count > 0) {
+					var ctx = pending.Dequeue ();
+					if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
+						return WaitForRequest (timeout - (DateTime.Now - start));
+					return ctx;
+				}
+			}
+
+			return wait.WaitOne (timeout - (DateTime.Now - start), false) && !closing ?
+				WaitForRequest (timeout - (DateTime.Now - start)) : null;
 		}
 
 		public void ProcessRequest (HttpContext context)
 		{
 			request_url = context.Request.Url;
 			EnsureServiceHost ();
+			pending.Enqueue (context);
 
-			reply_channel.Context = context;
 			wait.Set ();
 
 			listening.WaitOne ();
-			reply_channel.Context = null;
+		}
+
+		public void EndRequest (HttpContext context)
+		{
+			listening.Set ();
 		}
 
 		public void Close ()
 		{
+			closing = true;
+			listening.Set ();
+			wait.Set ();
 			host.Close ();
 			host = null;
+			closing = false;
 		}
 
 		void ApplyConfiguration (ServiceHost host)
@@ -95,6 +116,7 @@ namespace System.ServiceModel.Channels {
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
 						new Uri (path));
+					this.Uri = se.Address.Uri;
 				}
 				// behaviors
 				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
@@ -117,7 +139,7 @@ namespace System.ServiceModel.Channels {
 
 		void EnsureServiceHost ()
 		{
-			if (reply_channel != null)
+			if (host != null)
 				return;
 
 			//ServiceHost for this not created yet
@@ -130,15 +152,16 @@ namespace System.ServiceModel.Channels {
 
 #if true
 			//FIXME: Binding: Get from web.config.
-			host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
+			var se = host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
 				new BasicHttpBinding (), new Uri (path, UriKind.Relative));
+			this.Uri = se.Address.Uri;
 #else
 			ApplyConfiguration (host);
 #endif
 
 			host.Open ();
 
-			listening.WaitOne ();
+			//listening.WaitOne ();
 		}
 	}
 }

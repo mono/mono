@@ -1,5 +1,16 @@
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandlerFactory.cs : some GetHandler changes.
+	* SvcHttpHandler.cs : significant changes on receiver structure. Now
+	  ProcessRequest() stores pending requests (this might be extraneous,
+	  but maybe useful when it implements async handler). Also removed
+	  reply_channel field as it may become to handle multiple requests.
+	* HttpChannelListener.cs : bind to corresponding SvcHttpHandler.
+	* AspNetReplyChannel.cs : make it receive requests like
+	  HttpReplyChannel (for HttpListener) to make them consistent.
+
+2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AspNetRequestContext.cs, HttpRequestContext.cs :
 	  fix NRE on HttpListenerContext for AspNetRequestContext (mismatch)
 	  by splitting HttpListener-based context out from common code base.

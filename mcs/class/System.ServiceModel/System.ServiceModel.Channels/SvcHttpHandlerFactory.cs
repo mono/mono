@@ -3,8 +3,9 @@
 //
 // Author:
 //	Ankit Jain  <jankit@novell.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Web;
@@ -48,6 +50,11 @@ namespace System.ServiceModel.Channels {
 		public SvcHttpHandlerFactory ()
 		{
 			ServiceHostingEnvironment.InAspNet = true;
+		}
+
+		// FIXME: this should probably be moved to ServiceHostingEnvironment.
+		internal static Dictionary<string, SvcHttpHandler> Handlers {
+			get { return handlers; }
 		}
 
 		public IHttpHandler GetHandler (HttpContext context, string requestType, string url, string pathTranslated)
@@ -70,11 +77,6 @@ namespace System.ServiceModel.Channels {
 		public void ReleaseHandler (IHttpHandler handler)
 		{
 			return;
-		}
-
-		internal static SvcHttpHandler GetHandler (string path)
-		{
-			return handlers [path];
 		}
 
 		void LoadTypeFromSvc (string path, string url, HttpContext context)
@@ -128,7 +130,6 @@ namespace System.ServiceModel.Channels {
 			}
 		}
 
-		//FIXME: Service="TypeName,TypeNamespace" not handled
 		Type GetTypeFromBinAndConfig (string typeName)
 		{
 			string assname = null;
