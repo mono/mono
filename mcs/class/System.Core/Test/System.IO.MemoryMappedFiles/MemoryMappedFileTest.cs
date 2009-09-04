@@ -131,6 +131,30 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 					});
 			}
 		}
+
+		[Test]
+		public unsafe void CreateViewBasic () {
+			var file = MemoryMappedFile.CreateFromFile (File.Open (fname, FileMode.Open));
+
+			using (var v = file.CreateViewAccessor ()) {
+				string s = "";
+
+				// FIXME: Use using
+				var handle = v.SafeMemoryMappedViewHandle;
+				byte *b = null;
+
+				try {
+					handle.AcquirePointer (ref b);
+
+					for (int i = 0; i < 5; ++i)
+						s += (char)b [i];
+				} finally {
+					handle.ReleasePointer ();
+				}
+
+				Assert.AreEqual ("Hello", s);
+			}
+		}
 	}
 }
 

@@ -1,3 +1,7 @@
+2009-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* MemoryMappedFileTest.cs: Add a minimal test for CreateViewAccessor ().
+
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* MemoryMappedFileTest.cs: New file.
