@@ -217,9 +217,8 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		{
 			if (showTrace) {
 				builder.Append ("<hr style=\"color: silver\"/>");
-				builder.AppendFormat ("<strong>Version information: </strong> {0}; ASP.NET Version: {1}</body></html>\r\n",
-						      HttpRuntime.MonoVersionParsed ? "Mono Version: " + HttpRuntime.MonoVersion : HttpRuntime.MonoVersion,
-						      Environment.Version);
+				builder.AppendFormat ("<strong>Version information: </strong> Runtime: <tt>{0}</tt>; ASP.NET Version: <tt>{1}</tt></body></html>\r\n",
+						      HttpRuntime.MonoVersion, Environment.Version);
 			
 				string trace, message;
 				bool haveTrace;
