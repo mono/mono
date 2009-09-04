@@ -1,3 +1,7 @@
+2009-09-04  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Handle a few more key combinations.
+
 2009-08-14  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs (GetCursorPosition): Before we probe the
