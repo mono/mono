@@ -1,3 +1,7 @@
+2009-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Set callbacks.get_runtime_build_info ().
+
 2009-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Pass the start
