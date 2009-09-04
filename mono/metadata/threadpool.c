@@ -12,8 +12,8 @@
 #include <config.h>
 #include <glib.h>
 
-#define THREADS_PER_CPU	10 /* 20 + THREADS_PER_CPU * number of CPUs */
-#define THREAD_EXIT_TIMEOUT 1000
+#define THREADS_PER_CPU	15 /* 20 + THREADS_PER_CPU * number of CPUs */
+#define THREAD_EXIT_TIMEOUT 2000
 
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/tabledefs.h>
@@ -1037,7 +1037,7 @@ start_idle_threads (MonoAsyncResult *data)
 			if (data) 
 				threadpool_jobs_dec ((MonoObject*)data);
 			data = NULL;
-			Sleep (500);
+			SleepEx (500, TRUE);
 		}
 	} while ((needed - existing) > 0);
 

@@ -1,3 +1,9 @@
+2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: make the Sleep() alertable to prevent delays exiting
+	applications that take less than 2s to execute.
+	Bug #524984 fixed.
+
 2009-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_array): Call conv.ovf.i on the array parameter
