@@ -857,23 +857,45 @@ namespace System {
 			bool shift = false;
 			bool ctrl = false;
 
-			if (n == 10) {
+			switch (n){
+			case 10:
 				key = ConsoleKey.Enter;
-			} else if (n == 8 || n == 9 || n == 12 || n == 13 || n == 19) {
+				break;
+			case 0x20:
+				key = ConsoleKey.Spacebar;
+				break;
+			case 45:
+				key = ConsoleKey.Subtract;
+				break;
+			case 43:
+				key = ConsoleKey.Add;
+				break;
+			case 47:
+				key = ConsoleKey.Divide;
+				break;
+			case 42:
+				key = ConsoleKey.Multiply;
+				break;
+			case 8: case 9: case 12: case 13: case 19:
 				/* Values in ConsoleKey */
-			} else if (n >= 1 && n <= 26) {
-				// For Ctrl-a to Ctrl-z.
-				ctrl = true;
-				key = ConsoleKey.A + n - 1;
-			} else if (n == 27) {
+				break;
+			case 27:
 				key = ConsoleKey.Escape;
-			} else if (n >= 'a' && n <= 'z') {
-				key = ConsoleKey.A - 'a' + n;
-			} else if (n >= 'A' && n <= 'Z') {
-				shift = true;
-			} else if (n >= '0' && n <= '9') {
-			} else {
-				key = 0;
+				break;
+				
+			default:
+				if (n >= 1 && n <= 26) {
+					// For Ctrl-a to Ctrl-z.
+					ctrl = true;
+					key = ConsoleKey.A + n - 1;
+				} else if (n >= 'a' && n <= 'z') {
+					key = ConsoleKey.A - 'a' + n;
+				} else if (n >= 'A' && n <= 'Z') {
+					shift = true;
+				} else if (n >= '0' && n <= '9') {
+				} else
+					key = 0;
+				break;
 			}
 
 			return new ConsoleKeyInfo (c, key, shift, alt, ctrl);
