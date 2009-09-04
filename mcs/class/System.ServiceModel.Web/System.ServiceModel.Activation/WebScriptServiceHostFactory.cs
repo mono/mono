@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008,2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,6 +41,8 @@ namespace System.ServiceModel.Activation
 
 		protected override ServiceHost CreateServiceHost (Type serviceType, Uri [] baseAddresses)
 		{
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType");
 			return new WebScriptServiceHost (serviceType, baseAddresses);
 		}
 
@@ -49,6 +51,20 @@ namespace System.ServiceModel.Activation
 			public WebScriptServiceHost (Type serviceType, params Uri [] baseAddresses)
 				: base (serviceType, baseAddresses)
 			{
+				if (serviceType == null)
+					throw new ArgumentNullException ("serviceType");
+			}
+
+			protected override void ApplyConfiguration ()
+			{
+				base.ApplyConfiguration ();
+
+				if (Description.Endpoints.Count > 1)
+					throw new InvalidOperationException ("This service host factory does not allow custom endpoint configuration");
+
+				foreach (Type iface in Description.ServiceType.GetInterfaces ())
+					if (iface.GetCustomAttributes (typeof (ServiceContractAttribute), true).Length > 0)
+						AddServiceEndpoint (iface, new WebHttpBinding (), new Uri (String.Empty, UriKind.Relative));
 			}
 
 			protected override void OnOpening ()
