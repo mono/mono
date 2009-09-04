@@ -1,3 +1,10 @@
+2009-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* MemoryMappedViewAccessor.cs: New net 4.0 class.
+
+	* MemoryMappedViewStream.cs: Move the mmap code to MemoryMappedFile.cs,
+	so it can be used by ViewAccessor as well.
+
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* MemoryMappedViewStream.cs: Implement this for unix.

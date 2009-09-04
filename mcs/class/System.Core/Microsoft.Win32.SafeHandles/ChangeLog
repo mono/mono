@@ -1,3 +1,7 @@
+2009-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* SafeMemoryMappedViewHandle.cs: New net 4.0 file.
+
 2009-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SafePipeHandle.cs : initial code.

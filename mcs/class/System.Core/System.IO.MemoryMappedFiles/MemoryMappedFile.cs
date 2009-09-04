@@ -32,6 +32,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
+using Mono.Unix.Native;
 
 namespace System.IO.MemoryMappedFiles
 {
@@ -115,6 +116,19 @@ namespace System.IO.MemoryMappedFiles
 			return new MemoryMappedViewStream (stream, offset, size, access);
 		}
 
+		public MemoryMappedViewAccessor CreateViewAccessor () {
+			return CreateViewAccessor (0, 0);
+		}
+
+		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size) {
+			return CreateViewAccessor (offset, size, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		[MonoTODO]
+		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access) {
+			return new MemoryMappedViewAccessor (stream, offset, size, access);
+		}
+
 		MemoryMappedFile () {
 		}
 
@@ -128,6 +142,38 @@ namespace System.IO.MemoryMappedFiles
 				throw new NotImplementedException ();
 			}
 		}
+
+		static int pagesize;
+
+		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff, out ulong map_size) {
+			if (pagesize == 0)
+				pagesize = Syscall.getpagesize ();
+
+			long fsize = file.Length;
+
+			if (size == 0 || size > fsize)
+				size = fsize;
+			
+			// Align offset
+			long real_offset = offset & ~(pagesize - 1);
+
+			offset_diff = (int)(offset - real_offset);
+
+			// FIXME: Need to determine the unix fd for the file, Handle is only
+			// equal to it by accident
+			map_size = (ulong)size;
+			map_addr = Syscall.mmap (IntPtr.Zero, map_size, MmapProts.PROT_READ, MmapFlags.MAP_SHARED, (int)file.Handle, real_offset);
+			if (map_addr == (IntPtr)(-1))
+				throw new IOException ("mmap failed for " + file + "(" + offset + ", " + size + ")");
+		}
+
+		internal static void UnmapPosix (IntPtr map_addr, ulong map_size) {
+			int err = Syscall.munmap (map_addr, map_size);
+			if (err != 0)
+				/* This shouldn't happen */
+				throw new IOException ("munmap failed for address " + map_addr + ", size=" + map_size);
+		}
+
 	}
 }
 

@@ -1,5 +1,5 @@
 //
-// MemoryMappedViewStream.cs
+// MemoryMappedViewAccessor.cs
 //
 // Authors:
 //	Zoltan Varga (vargaz@gmail.com)
@@ -30,24 +30,27 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.IO.MemoryMappedFiles
 {
-	public sealed class MemoryMappedViewStream : UnmanagedMemoryStream {
+	public class MemoryMappedViewAccessor : IDisposable {
 
+		object monitor;
 		IntPtr mmap_addr;
 		ulong mmap_size;
-		object monitor;
+		SafeMemoryMappedViewHandle handle;
 
-		internal MemoryMappedViewStream (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
+		internal MemoryMappedViewAccessor (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
 			monitor = new Object ();
 			if (Environment.OSVersion.Platform < PlatformID.Unix)
 				throw new NotImplementedException ("Not implemented on windows.");
 			else
-				CreateStreamPosix (file, offset, size, access);
+				CreatePosix (file, offset, size, access);
 		}
 
-		unsafe void CreateStreamPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
+		unsafe void CreatePosix (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
 			long fsize = file.Length;
 
 			if (size == 0 || size > fsize)
@@ -56,28 +59,21 @@ namespace System.IO.MemoryMappedFiles
 			int offset_diff;
 
 			MemoryMappedFile.MapPosix (file, offset, size, access, out mmap_addr, out offset_diff, out mmap_size);
-			
-			FileAccess faccess;
 
-			switch (access) {
-			case MemoryMappedFileAccess.ReadWrite:
-				faccess = FileAccess.ReadWrite;
-				break;
-			case MemoryMappedFileAccess.Read:
-				faccess = FileAccess.Read;
-				break;
-			case MemoryMappedFileAccess.Write:
-				faccess = FileAccess.Write;
-				break;
-			default:
-				throw new NotImplementedException ("access mode " + access + " not supported.");
-			}
-			Initialize ((byte*)mmap_addr + offset_diff, size, size, faccess);
+			handle = new SafeMemoryMappedViewHandle ((IntPtr)((long)mmap_addr + offset_diff), size);
 		}
-		 
-		protected override void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
+
+		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle {
+			get {
+				return handle;
+			}
+		}
+
+		public void Dispose () {
+			Dispose (true);
+		}
+
+		public void Dispose (bool disposing) {
 			lock (monitor) {
 				if (mmap_addr != (IntPtr)(-1)) {
 					MemoryMappedFile.UnmapPosix (mmap_addr, mmap_size);
@@ -85,7 +81,6 @@ namespace System.IO.MemoryMappedFiles
 				}
 			}
 		}
-
 	}
 }
 
