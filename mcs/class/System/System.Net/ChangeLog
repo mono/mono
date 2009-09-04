@@ -1,3 +1,9 @@
+2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs: if the request has already finished reading, don't
+	throw ObjectDisposedException here, just return as if nothing
+	happened. Fixes bug #312968.
+
 2009-08-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: HEAD response does not have a body even if the
