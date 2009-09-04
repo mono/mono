@@ -1,0 +1,103 @@
+//
+// SafeBuffer.cs
+//
+// Authors:
+//	Zoltan Varga (vargaz@gmail.com)
+//
+// Copyright (C) 2009, Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+#if NET_4_0
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
+
+namespace System.Runtime.InteropServices
+{
+	[CLSCompliant (false)]
+	public abstract class SafeBuffer : SafeHandleZeroOrMinusOneIsInvalid, IDisposable {
+		ulong byte_length;
+		bool inited;
+
+		protected SafeBuffer (bool ownsHandle) : base (ownsHandle) {
+		}
+
+		public void Initialize (ulong numBytes) {
+			byte_length = numBytes;
+			inited = true;
+		}
+
+		public void Initialize (uint numElements, uint sizeOfEachElement) {
+			Initialize (numElements * sizeOfEachElement);
+		}
+
+		public void Initialize<T> (uint numElements) where T : struct {
+			Initialize (numElements, (uint)Marshal.SizeOf (typeof (T)));
+		}
+
+		public unsafe void AcquirePointer (ref byte* pointer) {
+			if (!inited)
+				throw new InvalidOperationException ();
+			bool success = false;
+
+			DangerousAddRef (ref success);
+			if (success)
+				pointer = (byte*)handle;
+		}
+
+		public void ReleasePointer () {
+			if (!inited)
+				throw new InvalidOperationException ();
+			DangerousRelease ();
+		}
+
+		public ulong ByteLength {
+			get {
+				return byte_length;
+			}
+		}
+
+		[MonoTODO]
+		public T Read<T> (ulong byteOffset) where T : struct {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReadArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Write<T> (ulong byteOffset, T value) where T : struct {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
+			throw new NotImplementedException ();
+		}
+	}
+}
+
+#endif

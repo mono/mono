@@ -1,3 +1,7 @@
+2009-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* SafeBuffer.cs: New net 4.0 class.
+
 2009-04-17 Tom Hindle <tom_hindle@sil.org>
 
 	* Marshal.cs: Improved GetExceptionForHR to return real C# exceptions in 
