@@ -1,3 +1,7 @@
+2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OutgoingWebResponseContext.cs : add missing methods.
+
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebOperationContext.cs : Current is automatically created (even

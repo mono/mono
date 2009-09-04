@@ -113,5 +113,22 @@ namespace System.ServiceModel.Web
 			get { return suppress_body; }
 			set { suppress_body = value; }
 		}
+
+		public void SetStatusAsCreated (Uri locationUri)
+		{
+			StatusCode = HttpStatusCode.Created;
+			Location = locationUri.AbsoluteUri;
+		}
+
+		public void SetStatusAsNotFound ()
+		{
+			StatusCode = HttpStatusCode.NotFound;
+		}
+
+		public void SetStatusAsNotFound (string description)
+		{
+			StatusCode = HttpStatusCode.NotFound;
+			StatusDescription = description;
+		}
 	}
 }
