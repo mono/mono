@@ -1,10 +1,7 @@
 2009-09-04  Marek Habersack  <mhabersack@novell.com>
 
-	* HttpRuntime.cs: detect (and parse if possible) real Mono version
-	and make it available via internal, static property
-	MonoVersion. MonoVersionParsed property tells whether
-	Mono.Runtime.GetDisplayName returned string in a format we
-	understood.
+	* HttpRuntime.cs: retrieve real Mono version from the runtime and
+	store it in the MonoVersion internal static property.
 
 	* HttpException.cs: report real Mono version when backtrace is
 	displayed.
