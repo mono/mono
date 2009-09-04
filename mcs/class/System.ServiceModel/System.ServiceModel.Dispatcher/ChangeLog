@@ -1,5 +1,17 @@
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationInvokerHandler.cs, ReplyHandler.cs :
+	  - Eliminate ReplyHandler use. What is does is simple reply, while
+	    it brings inconsistency between sync and async models.
+	    What reply handler used to do are now integrated.
+	  - Support ErrorHandlers and InputSessionShutdownHandlers.
+	    Actually ErrorHandlers were processed at wrong place and they
+	    weren't called where they are expected.
+	* InputOrReplyRequestProcessor.cs : hence eliminated ReplyHandler.
+	* BaseRequestProcessor.cs : add FIXME notes on ErrorHandlers.
+
+2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : remove obsoleted method.
 
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>

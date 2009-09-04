@@ -1,4 +1,5 @@
-﻿using System;
+/*
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel.Channels;
@@ -29,3 +30,4 @@ namespace System.ServiceModel.Dispatcher
 		}
 	}
 }
+*/

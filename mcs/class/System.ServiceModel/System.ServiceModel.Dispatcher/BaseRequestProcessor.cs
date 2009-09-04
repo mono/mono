@@ -26,6 +26,11 @@ namespace System.ServiceModel.Dispatcher
 					process_handlers_chain.ProcessRequestChain (mrc);
 				}
 				catch (Exception e) {
+					// FIXME: this is not really expected use of ChannelDispatcher.ErrorHandlers.
+					// They are now correctly used in process_handler_chain (namely OperationInvokerHandler).
+					// For this kind of "outsider" exceptions are actually left thrown
+					// (and could even cause server loop crash in .NET).
+
 					Console.WriteLine ("Exception " + e.Message + " " + e.StackTrace);
 					mrc.ProcessingException = e;
 					error_handlers_chain.ProcessRequestChain (mrc);

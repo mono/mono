@@ -9,6 +9,13 @@ namespace System.ServiceModel.Dispatcher
 {
 	internal class OperationInvokerHandler : BaseRequestProcessorHandler
 	{
+		IDuplexChannel duplex;
+
+		public OperationInvokerHandler (IChannel channel)
+		{
+			duplex = channel as IDuplexChannel;
+		}
+
 		protected override bool ProcessRequest (MessageProcessingContext mrc)
 		{			
 			RequestContext rc = mrc.RequestContext;
@@ -19,9 +26,14 @@ namespace System.ServiceModel.Dispatcher
 				DoProcessRequest (mrc);
 				if (!operation.Invoker.IsSynchronous)
 					return true;
+				if (!mrc.Operation.IsOneWay)
+					Reply (mrc, true);
 			} catch (TargetInvocationException ex) {
-				mrc.ReplyMessage = BuildExceptionMessage (mrc.IncomingMessage, ex.InnerException, 
+				mrc.ReplyMessage = BuildExceptionMessage (mrc, ex.InnerException, 
 					dispatchRuntime.ChannelDispatcher.IncludeExceptionDetailInFaults);
+				if (!mrc.Operation.IsOneWay)
+					Reply (mrc, true);
+				ProcessCustomErrorHandlers (mrc, ex);
 			}
 			return false;
 		}
@@ -52,13 +64,23 @@ namespace System.ServiceModel.Dispatcher
 							object result;
 							result = operation.Invoker.InvokeEnd (instance, out parameters, res);
 							HandleInvokeResult (mrc, parameters, result);
-							mrc.Reply (true);
+							Reply (mrc, true);
 						} catch (Exception ex) {
-							mrc.ReplyMessage = BuildExceptionMessage (mrc.IncomingMessage, ex, dispatchRuntime.ChannelDispatcher.IncludeExceptionDetailInFaults);
-							mrc.Reply (false);
+							mrc.ReplyMessage = BuildExceptionMessage (mrc, ex, dispatchRuntime.ChannelDispatcher.IncludeExceptionDetailInFaults);
+							if (!mrc.Operation.IsOneWay)
+								Reply (mrc, false);
+							ProcessCustomErrorHandlers (mrc, ex);
 						}				
 					},
 					null);			
+		}
+
+		void Reply (MessageProcessingContext mrc, bool useTimeout)
+		{
+			if (duplex != null)
+				mrc.Reply (duplex, useTimeout);
+			else
+				mrc.Reply (useTimeout);
 		}
 
 		DispatchOperation GetOperation (Message input, DispatchRuntime dispatchRuntime)
@@ -120,8 +142,39 @@ namespace System.ServiceModel.Dispatcher
 			mrc.EventsHandler.BeforeInvoke (operation);
 		}
 
-		Message BuildExceptionMessage (Message req, Exception ex, bool includeDetailsInFault)
-		{			
+		void ProcessCustomErrorHandlers (MessageProcessingContext mrc, Exception ex)
+		{
+			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
+			bool shutdown = false;
+			foreach (var eh in dr.ChannelDispatcher.ErrorHandlers)
+				shutdown |= eh.HandleError (ex);
+			if (shutdown)
+				ProcessSessionErrorShutdown (mrc);
+		}
+
+		void ProcessSessionErrorShutdown (MessageProcessingContext mrc)
+		{
+			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
+			var session = mrc.OperationContext.Channel.InputSession;
+			var dcc = mrc.OperationContext.Channel as IDuplexContextChannel;
+			if (session == null || dcc == null)
+				return;
+			foreach (var h in dr.InputSessionShutdownHandlers)
+				h.ChannelFaulted (dcc);
+		}
+
+		Message BuildExceptionMessage (MessageProcessingContext mrc, Exception ex, bool includeDetailsInFault)
+		{
+			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
+			var cd = dr.ChannelDispatcher;
+			Message msg = null;
+			foreach (var eh in cd.ErrorHandlers)
+				eh.ProvideFault (ex, cd.MessageVersion, ref msg);
+			if (msg != null)
+				return msg;
+
+			var req = mrc.IncomingMessage;
+
 			// FIXME: set correct name
 			FaultCode fc = new FaultCode (
 				"InternalServiceFault",
@@ -131,8 +184,7 @@ namespace System.ServiceModel.Dispatcher
 			if (includeDetailsInFault) {
 				return Message.CreateMessage (req.Version, fc, ex.Message, new ExceptionDetail (ex), req.Headers.Action);
 			}
-			// MS returns: The server was unable to process the request due to an internal error.  For more information about the error, either turn on IncludeExceptionDetailInFaults (either from ServiceBehaviorAttribute or from the &lt;serviceDebug&gt; configuration behavior) on the server in order to send the exception information back to the client, or turn on tracing as per the Microsoft .NET Framework 3.0 SDK documentation and inspect the server trace logs.";
-			//
+
 			string faultString =
 				@"The server was unable to process the request due to an internal error.  The server may be able to return exception details (it depends on the server settings).";
 			return Message.CreateMessage (req.Version, fc, faultString, req.Headers.Action);
