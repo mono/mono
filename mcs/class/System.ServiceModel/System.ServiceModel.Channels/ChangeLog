@@ -1,3 +1,8 @@
+2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : set Uri property based on baseAddresses and
+	  path, to pick those endpoints that are added at custom factories.
+
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs : apply configuration, and if there is still no

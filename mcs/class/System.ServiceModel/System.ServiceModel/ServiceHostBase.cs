@@ -260,7 +260,7 @@ namespace System.ServiceModel
 
 				Uri baseaddr = base_addresses [binding.Scheme];
 
-				if (!baseaddr.AbsoluteUri.EndsWith ("/"))
+				if (!baseaddr.AbsoluteUri.EndsWith ("/") && address.OriginalString.Length > 0) // with empty URI it should not add '/' to possible file name of the absolute URI
 					baseaddr = new Uri (baseaddr.AbsoluteUri + "/");
 				address = new Uri (baseaddr, address);
 			}

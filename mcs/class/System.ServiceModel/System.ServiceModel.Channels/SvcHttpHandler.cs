@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Threading;
 
@@ -112,11 +113,10 @@ namespace System.ServiceModel.Channels {
 			foreach (ServiceElement service in ConfigUtil.ServicesSection.Services) {
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 					// FIXME: consider BindingName as well
-					ServiceEndpoint se = host.AddServiceEndpoint (
+					host.AddServiceEndpoint (
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
 						new Uri (path, UriKind.Relative));
-					this.Uri = se.Address.Uri;
 				}
 				// behaviors
 				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
@@ -152,12 +152,17 @@ namespace System.ServiceModel.Channels {
 
 
 			ApplyConfiguration (host);
-			if (host.Description.Endpoints.Count == 0) {
+			if (host.Description.Endpoints.Count == 0)
 				//FIXME: Binding: Get from web.config.
-				var se = host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
+				host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
 					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
-				this.Uri = se.Address.Uri;
-			}
+
+			var c = host.BaseAddresses;
+			var ba = c.FirstOrDefault (u => u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
+			if (ba != null)
+				this.Uri = new Uri (ba, path);
+			else
+				this.Uri = host.Description.Endpoints [0].Address.Uri;
 
 			host.Open ();
 
