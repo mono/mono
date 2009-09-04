@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Represents schema of Northwind sample database.
+     Used for NUnit testing of SqlMetal functionality.
+     Generated from Mysql via following command:
+     SqlMetal.exe -provider=MySql -database:Northwind -server:localhost -user:LinqUser -password:linq2 -namespace:nwind -dbml:Northwind_from_mysql.dbml -sprocs     
+-->
+
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Northwind" Class="Northwind" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="region" Member="Region">
+    <Type Name="Region">
+      <Column Name="RegionID" Member="RegionID" Storage="regionID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RegionDescription" Member="RegionDescription" Storage="regionDescription" Type="string" DbType="varchar(50)" CanBeNull="false" />
+      <Association Name="territories_ibfk_1" Member="Territories" Type="Territory" OtherKey="RegionID" />
+    </Type>
+  </Table>
+  <Table Name="suppliers" Member="Suppliers">
+    <Type Name="Supplier">
+      <Column Name="SupplierID" Member="SupplierID" Storage="supplierID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="string" DbType="varchar(40)" CanBeNull="false" />
+      <Column Name="ContactName" Member="ContactName" Storage="contactName" Type="string" DbType="varchar(30)" />
+      <Column Name="ContactTitle" Member="ContactTitle" Storage="contactTitle" Type="string" DbType="varchar(30)" />
+      <Column Name="Address" Member="Address" Storage="address" Type="string" DbType="varchar(60)" />
+      <Column Name="City" Member="City" Storage="city" Type="string" DbType="varchar(15)" />
+      <Column Name="Region" Member="Region" Storage="region" Type="string" DbType="varchar(15)" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="string" DbType="varchar(10)" />
+      <Column Name="Country" Member="Country" Storage="country" Type="string" DbType="varchar(15)" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="string" DbType="varchar(24)" />
+      <Column Name="Fax" Member="Fax" Storage="fax" Type="string" DbType="varchar(24)" />
+      <Association Name="products_ibfk_2" Member="Products" Type="Product" OtherKey="SupplierID" />
+    </Type>
+  </Table>
+  <Table Name="shippers" Member="Shippers">
+    <Type Name="Shipper">
+      <Column Name="ShipperID" Member="ShipperID" Storage="shipperID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="string" DbType="varchar(40)" CanBeNull="false" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="string" DbType="varchar(24)" />
+      <Association Name="orders_ibfk_3" Member="Orders" Type="Order" OtherKey="ShipperID" />
+    </Type>
+  </Table>
+  <Table Name="categories" Member="Categories">
+    <Type Name="Category">
+      <Column Name="CategoryID" Member="CategoryID" Storage="categoryID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CategoryName" Member="CategoryName" Storage="categoryName" Type="string" DbType="varchar(15)" CanBeNull="false" />
+      <Column Name="Description" Member="Description" Storage="description" Type="string" DbType="text" />
+      <Column Name="Picture" Member="Picture" Storage="picture" Type="byte[]" DbType="blob" />
+      <Association Name="products_ibfk_1" Member="Products" Type="Product" OtherKey="CategoryID" />
+    </Type>
+  </Table>
+  <Table Name="customers" Member="Customers">
+    <Type Name="Customer">
+      <Column Name="CustomerID" Member="CustomerID" Storage="customerID" Type="string" DbType="varchar(5)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="string" DbType="varchar(40)" CanBeNull="false" />
+      <Column Name="ContactName" Member="ContactName" Storage="contactName" Type="string" DbType="varchar(30)" />
+      <Column Name="ContactTitle" Member="ContactTitle" Storage="contactTitle" Type="string" DbType="varchar(30)" />
+      <Column Name="Address" Member="Address" Storage="address" Type="string" DbType="varchar(60)" />
+      <Column Name="City" Member="City" Storage="city" Type="string" DbType="varchar(15)" />
+      <Column Name="Region" Member="Region" Storage="region" Type="string" DbType="varchar(15)" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="string" DbType="varchar(10)" />
+      <Column Name="Country" Member="Country" Storage="country" Type="string" DbType="varchar(15)" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="string" DbType="varchar(24)" />
+      <Column Name="Fax" Member="Fax" Storage="fax" Type="string" DbType="varchar(24)" />
+      <Association Name="orders_ibfk_1" Member="Orders" Type="Order" OtherKey="CustomerID" />
+    </Type>
+  </Table>
+  <Table Name="employees" Member="Employees">
+    <Type Name="Employee">
+      <Column Name="EmployeeID" Member="EmployeeID" Storage="employeeID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LastName" Member="LastName" Storage="lastName" Type="string" DbType="varchar(20)" CanBeNull="false" />
+      <Column Name="FirstName" Member="FirstName" Storage="firstName" Type="string" DbType="varchar(10)" CanBeNull="false" />
+      <Column Name="Title" Member="Title" Storage="title" Type="string" DbType="varchar(30)" />
+      <Column Name="BirthDate" Member="BirthDate" Storage="birthDate" Type="DateTime?" DbType="datetime" />
+      <Column Name="HireDate" Member="HiredAte" Storage="hiredAte" Type="DateTime?" DbType="datetime" />
+      <Column Name="Address" Member="Address" Storage="address" Type="string" DbType="varchar(60)" />
+      <Column Name="City" Member="City" Storage="city" Type="string" DbType="varchar(15)" />
+      <Column Name="Region" Member="Region" Storage="region" Type="string" DbType="varchar(15)" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="string" DbType="varchar(10)" />
+      <Column Name="Country" Member="Country" Storage="country" Type="string" DbType="varchar(15)" />
+      <Column Name="HomePhone" Member="HomePhone" Storage="homePhone" Type="string" DbType="varchar(24)" />
+      <Column Name="Photo" Member="Photo" Storage="photo" Type="byte[]" DbType="blob" />
+      <Column Name="Notes" Member="Notes" Storage="notes" Type="string" DbType="text" />
+      <Column Name="ReportsTo" Member="ReportsTo" Storage="reportsTo" Type="int?" DbType="int" />
+      <Association Name="employees_ibfk_1" Member="ParentEmployee" Storage="employeesIBFK1" Type="Employee" ThisKey="ReportsTo" IsForeignKey="true" />
+      <Association Name="employees_ibfk_1" Member="Employees" Type="Employee" OtherKey="EmployeeID" />
+      <Association Name="employeeterritories_ibfk_1" Member="EmployeeTerritories" Type="EmployeeTerritory" OtherKey="EmployeeID" />
+      <Association Name="orders_ibfk_2" Member="Orders" Type="Order" OtherKey="EmployeeID" />
+    </Type>
+  </Table>
+  <Table Name="territories" Member="Territories">
+    <Type Name="Territory">
+      <Column Name="TerritoryID" Member="TerritoryID" Storage="territoryID" Type="string" DbType="varchar(20)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TerritoryDescription" Member="TerritoryDescription" Storage="territoryDescription" Type="string" DbType="varchar(50)" CanBeNull="false" />
+      <Column Name="RegionID" Member="RegionID" Storage="regionID" Type="int" DbType="int" CanBeNull="false" />
+      <Association Name="employeeterritories_ibfk_2" Member="EmployeeTerritories" Type="EmployeeTerritory" OtherKey="TerritoryID" />
+      <Association Name="territories_ibfk_1" Member="Region" Storage="territoriesIBFK1" Type="Region" ThisKey="RegionID" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="employeeterritories" Member="EmployeeTerritories">
+    <Type Name="EmployeeTerritory">
+      <Column Name="EmployeeID" Member="EmployeeID" Storage="employeeID" Type="int" DbType="int" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TerritoryID" Member="TerritoryID" Storage="territoryID" Type="string" DbType="varchar(20)" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="employeeterritories_ibfk_1" Member="Employee" Storage="employeeTerritoriesIBFK1" Type="Employee" ThisKey="EmployeeID" IsForeignKey="true" />
+      <Association Name="employeeterritories_ibfk_2" Member="Territory" Storage="employeeTerritoriesIBFK2" Type="Territory" ThisKey="TerritoryID" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="orders" Member="Orders">
+    <Type Name="Order">
+      <Column Name="OrderID" Member="OrderID" Storage="orderID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerID" Member="CustomerID" Storage="customerID" Type="string" DbType="varchar(5)" />
+      <Column Name="EmployeeID" Member="EmployeeID" Storage="employeeID" Type="int?" DbType="int" />
+      <Column Name="OrderDate" Member="OrderDate" Storage="orderDate" Type="DateTime?" DbType="datetime" />
+      <Column Name="RequiredDate" Member="RequiredDate" Storage="requiredDate" Type="DateTime?" DbType="datetime" />
+      <Column Name="ShippedDate" Member="ShippedDate" Storage="shippedDate" Type="DateTime?" DbType="datetime" />
+      <Column Name="ShipVia" Member="ShipVia" Storage="shipVia" Type="int?" DbType="int" />
+      <Column Name="Freight" Member="Freight" Storage="freight" Type="decimal?" DbType="decimal" />
+      <Column Name="ShipName" Member="ShipName" Storage="shipName" Type="string" DbType="varchar(40)" />
+      <Column Name="ShipAddress" Member="ShipAddress" Storage="shipAddress" Type="string" DbType="varchar(60)" />
+      <Column Name="ShipCity" Member="ShipCity" Storage="shipCity" Type="string" DbType="varchar(15)" />
+      <Column Name="ShipRegion" Member="ShipRegion" Storage="shipRegion" Type="string" DbType="varchar(15)" />
+      <Column Name="ShipPostalCode" Member="ShipPostalCode" Storage="shipPostalCode" Type="string" DbType="varchar(10)" />
+      <Column Name="ShipCountry" Member="ShipCountry" Storage="shipCountry" Type="string" DbType="varchar(15)" />
+      <Association Name="order@0020details_ibfk_1" Member="OrderDetails" Type="OrderDetail" OtherKey="OrderID" />
+      <Association Name="orders_ibfk_1" Member="Customer" Storage="ordersIBFK1" Type="Customer" ThisKey="CustomerID" IsForeignKey="true" />
+      <Association Name="orders_ibfk_2" Member="Employee" Storage="ordersIBFK2" Type="Employee" ThisKey="EmployeeID" IsForeignKey="true" />
+      <Association Name="orders_ibfk_3" Member="Shipper" Storage="ordersIBFK3" Type="Shipper" ThisKey="ShipVia" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="products" Member="Products">
+    <Type Name="Product">
+      <Column Name="ProductID" Member="ProductID" Storage="productID" Type="int" DbType="int" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProductName" Member="ProductName" Storage="productName" Type="string" DbType="varchar(40)" CanBeNull="false" />
+      <Column Name="SupplierID" Member="SupplierID" Storage="supplierID" Type="int?" DbType="int" />
+      <Column Name="CategoryID" Member="CategoryID" Storage="categoryID" Type="int?" DbType="int" />
+      <Column Name="QuantityPerUnit" Member="QuantityPeruNit" Storage="quantityPeruNit" Type="string" DbType="varchar(20)" />
+      <Column Name="UnitPrice" Member="UnitPrice" Storage="unitPrice" Type="decimal?" DbType="decimal" />
+      <Column Name="UnitsInStock" Member="UnitsInsToCK" Storage="unitsInsToCK" Type="short?" DbType="smallint(6)" />
+      <Column Name="UnitsOnOrder" Member="UnitsOnOrder" Storage="unitsOnOrder" Type="short?" DbType="smallint(6)" />
+      <Column Name="ReorderLevel" Member="ReorderLevel" Storage="reorderLevel" Type="short?" DbType="smallint(6)" />
+      <Column Name="Discontinued" Member="Discontinued" Storage="discontinued" Type="bool" DbType="bit(1)" CanBeNull="false" />
+      <Association Name="order@0020details_ibfk_2" Member="OrderDetails" Type="OrderDetail" OtherKey="ProductID" />
+      <Association Name="products_ibfk_1" Member="Category" Storage="productsIBFK1" Type="Category" ThisKey="CategoryID" IsForeignKey="true" />
+      <Association Name="products_ibfk_2" Member="Supplier" Storage="productsIBFK2" Type="Supplier" ThisKey="SupplierID" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="order details" Member="OrderDetails">
+    <Type Name="OrderDetail">
+      <Column Name="OrderID" Member="OrderID" Storage="orderID" Type="int" DbType="int" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProductID" Member="ProductID" Storage="productID" Type="int" DbType="int" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UnitPrice" Member="UnitPrice" Storage="unitPrice" Type="decimal" DbType="decimal" CanBeNull="false" />
+      <Column Name="Quantity" Member="Quantity" Storage="quantity" Type="short" DbType="smallint(6)" CanBeNull="false" />
+      <Column Name="Discount" Member="Discount" Storage="discount" Type="float" DbType="float" CanBeNull="false" />
+      <Association Name="order@0020details_ibfk_1" Member="Order" Storage="order0020DetailsIBFK1" Type="Order" ThisKey="OrderID" IsForeignKey="true" />
+      <Association Name="order@0020details_ibfk_2" Member="Product" Storage="order0020DetailsIBFK2" Type="Product" ThisKey="ProductID" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Function Name="getOrderCount" Method="GetOrderCount" IsComposable="true" BodyContainsSelectStatement="true">
+    <Parameter Name="custId" Type="string" DbType="VARCHAR(5)" Direction="In" />
+    <Return Type="int" DbType="int(11)" />
+  </Function>
+  <Function Name="hello0" Method="Hello0" IsComposable="true">
+    <Return Type="string" DbType="char(20) CHARSET latin1" />
+  </Function>
+  <Function Name="hello1" Method="Hello1" IsComposable="true">
+    <Parameter Name="s" Type="string" DbType="CHAR(20)" Direction="In" />
+    <Return Type="string" DbType="char(30) CHARSET latin1" />
+  </Function>
+  <Function Name="hello2" Method="Hello2" IsComposable="true">
+    <Parameter Name="s" Type="string" DbType="CHAR(20)" Direction="In" />
+    <Parameter Name="s2" Type="int" DbType="int" Direction="In" />
+    <Return Type="string" DbType="char(30) CHARSET latin1" />
+  </Function>
+  <Function Name="sp_selOrders" Method="SpSelOrders" IsComposable="false" BodyContainsSelectStatement="true">
+    <Parameter Name="s" Type="string" DbType="CHAR(20)" Direction="In" />
+    <Parameter Name="s2" Type="int" DbType="int" Direction="Out" />
+  </Function>
+  <Function Name="sp_updOrders" Method="SpUpdOrders" IsComposable="false">
+    <Parameter Name="custID" Type="int" DbType="int" Direction="In" />
+    <Parameter Name="prodId" Type="int" DbType="int" Direction="In" />
+  </Function>
+</Database>

@@ -1,5 +1,15 @@
 2009-09-04  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile: Also rsync dblinq2007/examples sources.
+	* build/DbLinq.Sqlite_test_mono_strict.dll.sources: Added; .sources
+	  file to build build/DbLinq.Sqlite_test_mono_strict.dll, the
+	  "end-to-end" unit tests for SQLite using Mono.Data.Sqlite.
+	* build/Makefile: Added; builds all "end-to-end" unit tests.
+	* examples/**/*: Sync with DbLinq r1217; includes sources needed for
+	  end-to-end tests located in 'build'.
+
+2009-09-04  Jonathan Pryor  <jpryor@novell.com>
+
 	* src/**/*: Sync with DbLinq r1217.  This removes a slew of
 	  FieldAccessExceptions when running the DbLinq unit tests.
 

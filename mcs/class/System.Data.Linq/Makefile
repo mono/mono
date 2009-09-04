@@ -55,4 +55,5 @@ RSYNC_EXCLUDES = \
 update-dblinq:
 	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/src/ src/
 	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/tests/ tests/
+	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/examples/ examples/
 
