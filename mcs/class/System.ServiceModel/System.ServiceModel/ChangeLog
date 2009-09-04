@@ -1,3 +1,8 @@
+2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : add AddBaseAddress(). BaseAddresses must be
+	  non-null.
+
 2009-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : move DispatcherBuilder out from ServiceHostBase.

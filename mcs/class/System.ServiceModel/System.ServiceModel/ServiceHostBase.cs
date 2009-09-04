@@ -77,7 +77,11 @@ namespace System.ServiceModel
 		}
 
 		public ReadOnlyCollection<Uri> BaseAddresses {
-			get { return new ReadOnlyCollection<Uri> (base_addresses.InternalItems); }
+			get {
+				if (base_addresses == null)
+					base_addresses = new UriSchemeKeyedCollection ();
+				return new ReadOnlyCollection<Uri> (base_addresses.InternalItems);
+			}
 		}
 
 		internal Uri CreateUri (string sheme, Uri relatieUri) {
@@ -144,6 +148,13 @@ namespace System.ServiceModel
 		public int ManualFlowControlLimit {
 			get { return flow_limit; }
 			set { flow_limit = value; }
+		}
+
+		protected void AddBaseAddress (Uri baseAddress)
+		{
+			if (Description != null)
+				throw new InvalidOperationException ("Base addresses must be added before the service description is initialized");
+			base_addresses.Add (baseAddress);
 		}
 
 		public ServiceEndpoint AddServiceEndpoint (
@@ -282,7 +293,7 @@ namespace System.ServiceModel
 				//base addresses
 				HostElement host = service.Host;
 				foreach (BaseAddressElement baseAddress in host.BaseAddresses) {
-					this.base_addresses.Add (new Uri (baseAddress.BaseAddress));
+					AddBaseAddress (new Uri (baseAddress.BaseAddress));
 				}
 
 				// services

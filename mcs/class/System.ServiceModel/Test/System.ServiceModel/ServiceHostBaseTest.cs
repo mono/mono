@@ -70,6 +70,11 @@ namespace MonoTests.System.ServiceModel
 			public void CallInitializeRuntime () {
 				InitializeRuntime ();
 			}
+
+			public void DoAddBaseAddress (Uri uri)
+			{
+				AddBaseAddress (uri);
+			}
 		}
 
 		[Test]
@@ -252,6 +257,28 @@ namespace MonoTests.System.ServiceModel
 
 			string expected = "Start, IServiceBehavior.Validate, IContractBehavior.Validate, IEndpointBehavior.Validate, IOperationBehavior.ApplyDispatchBehavior, IContractBehavior.Validate, IEndpointBehavior.Validate, IOperationBehavior.ApplyDispatchBehavior, IServiceBehavior.AddBindingParameters, IContractBehavior.AddBindingParameters, IEndpointBehavior.AddBindingParameters, IOperationBehavior.AddBindingParameters, IServiceBehavior.AddBindingParameters, IContractBehavior.AddBindingParameters, IEndpointBehavior.AddBindingParameters, IOperationBehavior.AddBindingParameters, IServiceBehavior.ApplyDispatchBehavior, IContractBehavior.ApplyDispatchBehavior, IEndpointBehavior.ApplyDispatchBehavior, IOperationBehavior.ApplyDispatchBehavior, IContractBehavior.ApplyDispatchBehavior, IEndpointBehavior.ApplyDispatchBehavior, IOperationBehavior.ApplyDispatchBehavior";
 			Assert.AreEqual (expected, st.CurrentStage);
+		}
+
+		[Test]
+		public void AddBaseAddress ()
+		{
+			var host = new Poker ();
+			Assert.AreEqual (0, host.BaseAddresses.Count, "#1");
+			host.DoAddBaseAddress (new Uri ("http://localhost:37564"));
+			Assert.AreEqual (1, host.BaseAddresses.Count, "#1");
+			host.DoAddBaseAddress (new Uri ("net.tcp://localhost:893"));
+			Assert.AreEqual (2, host.BaseAddresses.Count, "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddBaseAddress2 ()
+		{
+			var host = new Poker ();
+			Assert.AreEqual (0, host.BaseAddresses.Count, "#1");
+			host.DoAddBaseAddress (new Uri ("http://localhost:37564"));
+			// http base address is already added.
+			host.DoAddBaseAddress (new Uri ("http://localhost:893"));
 		}
 
 		#region helpers
