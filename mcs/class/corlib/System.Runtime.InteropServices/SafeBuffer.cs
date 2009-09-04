@@ -35,7 +35,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Runtime.InteropServices
 {
-	[CLSCompliant (false)]
 	public abstract class SafeBuffer : SafeHandleZeroOrMinusOneIsInvalid, IDisposable {
 		ulong byte_length;
 		bool inited;
@@ -43,19 +42,23 @@ namespace System.Runtime.InteropServices
 		protected SafeBuffer (bool ownsHandle) : base (ownsHandle) {
 		}
 
+		[CLSCompliant (false)]
 		public void Initialize (ulong numBytes) {
 			byte_length = numBytes;
 			inited = true;
 		}
 
+		[CLSCompliant (false)]
 		public void Initialize (uint numElements, uint sizeOfEachElement) {
 			Initialize (numElements * sizeOfEachElement);
 		}
 
+		[CLSCompliant (false)]
 		public void Initialize<T> (uint numElements) where T : struct {
 			Initialize (numElements, (uint)Marshal.SizeOf (typeof (T)));
 		}
 
+		[CLSCompliant (false)]
 		public unsafe void AcquirePointer (ref byte* pointer) {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -72,27 +75,32 @@ namespace System.Runtime.InteropServices
 			DangerousRelease ();
 		}
 
+		[CLSCompliant (false)]
 		public ulong ByteLength {
 			get {
 				return byte_length;
 			}
 		}
 
+		[CLSCompliant (false)]
 		[MonoTODO]
 		public T Read<T> (ulong byteOffset) where T : struct {
 			throw new NotImplementedException ();
 		}
 
+		[CLSCompliant (false)]
 		[MonoTODO]
 		public void ReadArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
 			throw new NotImplementedException ();
 		}
 
+		[CLSCompliant (false)]
 		[MonoTODO]
 		public void Write<T> (ulong byteOffset, T value) where T : struct {
 			throw new NotImplementedException ();
 		}
 
+		[CLSCompliant (false)]
 		[MonoTODO]
 		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
 			throw new NotImplementedException ();
