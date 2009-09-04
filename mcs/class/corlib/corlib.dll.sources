@@ -416,6 +416,7 @@ System.IO/TextReader.cs
 System.IO/TextWriter.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
+System.IO/UnmanagedMemoryAccessor.cs
 System.IO/UnmanagedMemoryStream.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/MoonIsolatedStorage.cs
