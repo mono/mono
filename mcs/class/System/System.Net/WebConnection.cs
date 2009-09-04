@@ -884,6 +884,9 @@ namespace System.Net
 
 		internal void EndWrite2 (HttpWebRequest request, IAsyncResult result)
 		{
+			if (request.FinishedReading)
+				return;
+
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
@@ -903,6 +906,9 @@ namespace System.Net
 
 		internal bool EndWrite (HttpWebRequest request, IAsyncResult result)
 		{
+			if (request.FinishedReading)
+				return true;
+
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
