@@ -246,9 +246,6 @@ namespace Mono.CSharp {
 
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
 		{
-			if (type == TypeManager.system_void_expr)
-				Report.Error (1536, loc, "Invalid parameter type `void'");
-
 			this.name = name;
 			modFlags = mod;
 			Location = loc;

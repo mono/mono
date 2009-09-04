@@ -1505,7 +1505,7 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  type
+	  parameter_type
 	  IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $4;
@@ -1513,7 +1513,7 @@ fixed_parameter
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
-	  type
+	  parameter_type
 	  IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
 	  {
 		LocatedToken lt = (LocatedToken) $4;
@@ -1522,7 +1522,7 @@ fixed_parameter
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
-	  type
+	  parameter_type
 	  error
 	  {
 	  	Location l = GetLocation ($4);
@@ -1531,7 +1531,7 @@ fixed_parameter
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
-	  type
+	  parameter_type
 	  IDENTIFIER
 	  ASSIGN
 	  constant_expression
@@ -2868,7 +2868,16 @@ simple_type
 	  	Expression.Error_VoidInvalidInTheContext (lexer.Location);
 		$$ = TypeManager.system_void_expr;
 	  }	
-	;		
+	;
+	
+parameter_type
+	: type_expression_or_array
+	| VOID
+	  {
+	  	Report.Error (1536, lexer.Location, "Invalid parameter type `void'");
+		$$ = TypeManager.system_void_expr;
+	  }	
+	;
 
 type_expression_or_array
 	: type_expression
@@ -4081,13 +4090,13 @@ lambda_parameter_list
 	;
 
 lambda_parameter
-	: parameter_modifier type IDENTIFIER
+	: parameter_modifier parameter_type IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 
 		$$ = new Parameter ((FullNamedExpression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
 	  }
-	| type IDENTIFIER
+	| parameter_type IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 
