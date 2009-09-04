@@ -1,5 +1,10 @@
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBaseTest.cs : a few more base address test.
+	  Remove NotWorking marks.
+
+2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBaseTest.cs : added test for AddBaseAddress().
 
 2009-08-20  Atsushi Enomoto  <atsushi@ximian.com>

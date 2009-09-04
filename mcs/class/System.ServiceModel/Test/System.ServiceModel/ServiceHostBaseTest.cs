@@ -201,8 +201,8 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void SpecificActionTest () {
+		public void SpecificActionTest ()
+		{
 			//EndpointDispatcher d = new EndpointDispatcher(
 			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://localhost:8080"));
 			h.AddServiceEndpoint (typeof (Action1Interface), new BasicHttpBinding (), "address");
@@ -236,7 +236,6 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void InitializeRuntimeBehaviors2 () {
 			HostState st = new HostState ();
 			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://localhost:8080"));
@@ -279,6 +278,28 @@ namespace MonoTests.System.ServiceModel
 			host.DoAddBaseAddress (new Uri ("http://localhost:37564"));
 			// http base address is already added.
 			host.DoAddBaseAddress (new Uri ("http://localhost:893"));
+		}
+
+		[Test]
+		public void AddServiceEndpointUri ()
+		{
+			var host = new ServiceHost (typeof (AllActions),
+				new Uri ("http://localhost:37564"));
+			var se = host.AddServiceEndpoint (typeof (AllActions),
+				new BasicHttpBinding (), "/foobar");
+			Assert.AreEqual ("http://localhost:37564/foobar", se.Address.Uri.AbsoluteUri, "#1");
+			Assert.AreEqual ("http://localhost:37564/foobar", se.ListenUri.AbsoluteUri, "#2");
+		}
+
+		[Test]
+		public void AddServiceEndpointUri2 ()
+		{
+			var host = new ServiceHost (typeof (AllActions),
+				new Uri ("http://localhost:37564"));
+			var se = host.AddServiceEndpoint (typeof (AllActions),
+				new BasicHttpBinding (), String.Empty);
+			Assert.AreEqual ("http://localhost:37564/", se.Address.Uri.AbsoluteUri, "#1");
+			Assert.AreEqual ("http://localhost:37564/", se.ListenUri.AbsoluteUri, "#2");
 		}
 
 		#region helpers
