@@ -942,20 +942,22 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
+
+			if (ec.Switch == null) {
+				Report.Error (153, loc, "A goto case is only valid inside a switch statement");
+				return false;
+			}
+
+			if (!ec.Switch.GotDefault) {
+				FlowBranchingBlock.Error_UnknownLabel (loc, "default");
+				return false;
+			}
+
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (ec.Switch == null){
-				Report.Error (153, loc, "A goto case is only valid inside a switch statement");
-				return;
-			}
-
-			if (!ec.Switch.GotDefault){
-				FlowBranchingBlock.Error_UnknownLabel (loc, "default");
-				return;
-			}
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
 		}
 

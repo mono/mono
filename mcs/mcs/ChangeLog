@@ -1,5 +1,9 @@
 2009-09-04  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs, ecore.cs: Removed error reporting from emit code.
+
+2009-09-04  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay, parameter.cs: Moved parser check out of constructor
 
 2009-09-03  Marek Safar  <marek.safar@gmail.com>

@@ -4947,8 +4947,16 @@ namespace Mono.CSharp {
 				return null;
 
 			FieldBase fb = TypeManager.GetField (FieldInfo);
-			if (fb != null)
+			if (fb != null) {
 				fb.SetAssigned ();
+
+				if ((right_side == EmptyExpression.UnaryAddress || right_side == EmptyExpression.OutAccess) &&
+					(fb.ModFlags & Modifiers.VOLATILE) != 0) {
+					Report.Warning (420, 1, loc,
+						"`{0}': A volatile field references will not be treated as volatile",
+						fb.GetSignatureForError ());
+				}
+			}
 
 			if (FieldInfo.IsInitOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
@@ -5149,12 +5157,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			FieldBase f = TypeManager.GetField (FieldInfo);
-			if (f != null){
-				if ((f.ModFlags & Modifiers.VOLATILE) != 0){
-					Report.Warning (420, 1, loc, "`{0}': A volatile field references will not be treated as volatile", 
-							f.GetSignatureForError ());
-				}
-					
+			if (f != null){				
 				if ((mode & AddressOp.Store) != 0)
 					f.SetAssigned ();
 				if ((mode & AddressOp.Load) != 0)
