@@ -4,6 +4,16 @@
 	applications that take less than 2s to execute.
 	Bug #524984 fixed.
 
+2009-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoRuntimeCallbacks): Add a 'get_runtime_build_info' callback.
+
+	* object.c (mono_get_runtime_callbacks): New helper function to return
+	the runtime callbacks.
+
+	* icall.c (ves_icall_Mono_Runtime_GetDisplayName): Use the result of
+	mono_get_runtime_build_info () as the display name.
+	
 2009-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_array): Call conv.ovf.i on the array parameter
