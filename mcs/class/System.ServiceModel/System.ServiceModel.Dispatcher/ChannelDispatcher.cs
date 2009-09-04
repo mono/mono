@@ -281,13 +281,6 @@ namespace System.ServiceModel.Dispatcher
 
 			loop_manager.Start ();
 		}
-		 
-		void HandleError (Exception ex)
-		{
-			foreach (IErrorHandler handler in ErrorHandlers)
-				if (handler.HandleError (ex))
-					break;
-		}
 	}
 
 		// isolated from ChannelDispatcher
