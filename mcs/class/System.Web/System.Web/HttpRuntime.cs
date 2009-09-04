@@ -62,6 +62,9 @@ namespace System.Web {
 		static bool caseInsensitive;
 		static bool runningOnWindows;
 		static bool isunc;
+		static string monoVersion;
+		static bool monoVersionParsed;
+		
 #if TARGET_J2EE
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
 		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
@@ -160,6 +163,27 @@ namespace System.Web {
 						}
 					}
 				}
+			}
+
+			Type monoRuntime = Type.GetType ("Mono.Runtime", false);
+			monoVersion = null;
+			if (monoRuntime != null) {
+				MethodInfo mi = monoRuntime.GetMethod ("GetDisplayName", BindingFlags.Static | BindingFlags.NonPublic);
+				if (mi != null)
+					monoVersion = mi.Invoke (null, new object [0]) as string;
+
+				if (monoVersion != null && monoVersion.Length > 0) {
+					if (monoVersion.StartsWith ("Mono ")) {
+						monoVersionParsed = true;
+						monoVersion = monoVersion.Substring (5);
+					}
+				} else
+					monoVersion = null;
+			}
+
+			if (monoVersion == null) {
+				monoVersionParsed = false;
+				monoVersion = Environment.Version.ToString ();
 			}
 			
 #if !TARGET_J2EE
@@ -737,6 +761,14 @@ namespace System.Web {
 		}
 #endif // #if !TARGET_J2EE
 #endif
+		internal static bool MonoVersionParsed {
+			get { return monoVersionParsed; }
+		}
+
+		internal static string MonoVersion {
+			get { return monoVersion; }
+		}
+		
 		internal static bool RunningOnWindows {
 			get { return runningOnWindows; }
 		}
