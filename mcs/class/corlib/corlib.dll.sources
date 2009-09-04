@@ -754,6 +754,7 @@ System.Runtime.InteropServices/RegistrationServices.cs
 System.Runtime.InteropServices/RuntimeEnvironment.cs
 System.Runtime.InteropServices/SafeArrayRankMismatchException.cs
 System.Runtime.InteropServices/SafeArrayTypeMismatchException.cs
+System.Runtime.InteropServices/SafeBuffer.cs
 System.Runtime.InteropServices/SafeHandle.cs
 System.Runtime.InteropServices/SetWin32ContextInIDispatchAttribute.cs
 System.Runtime.InteropServices/StructLayoutAttribute.cs

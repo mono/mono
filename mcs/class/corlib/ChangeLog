@@ -1,3 +1,7 @@
+2009-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Add System.Runtime.InteropServices/SafeBuffer.cs.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* corlib.dll.sources: Update with moved files.
