@@ -4,6 +4,6 @@
 class X {
 	void Main ()
 	{
-		goto default;
+		goto case 5;
 	}
 }
