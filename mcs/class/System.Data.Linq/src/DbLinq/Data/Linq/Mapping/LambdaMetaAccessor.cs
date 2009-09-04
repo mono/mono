@@ -29,7 +29,10 @@ namespace DbLinq.Data.Linq.Mapping
                 }
 				case MemberTypes.Field:
 					{
-						DynamicMethod m = new DynamicMethod("setter", typeof(void), new Type[] { declaringType, memberType });
+						DynamicMethod m = new DynamicMethod("setter", 
+                            typeof(void), 
+                            new Type[] { declaringType, memberType },
+                            true);
 						ILGenerator cg = m.GetILGenerator();
 					
 						// arg0.<field> = arg1

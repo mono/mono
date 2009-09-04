@@ -1,6 +1,11 @@
+2009-09-04  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Sync with DbLinq r1217.  This removes a slew of
+	  FieldAccessExceptions when running the DbLinq unit tests.
+
 2009-09-02  Jonathan Pryor  <jpryor@novell.com>
 
-	* src/**/*: Sync with DbLinq r1215.  This fixes the
+	* src/**/*: Sync with DbLinq r1216.  This fixes the
 	  ../../tools/sqlmetal build.
 
 2009-09-02  Jonathan Pryor  <jpryor@novell.com>
