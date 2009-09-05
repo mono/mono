@@ -1,3 +1,7 @@
+2009-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* process-stress.cs: New stress test for spawning processes.
+
 2009-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs libtest.c: Add a test for #481559.
