@@ -1,3 +1,14 @@
+2009-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Disable llvm when AOT compiling.
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Add support for 32 bit ->
+	64 bit thunks.
+	(mono_arch_nullify_class_init_trampoline): Read 'buf' instead of 'code'.
+
+	* mini-llvm.c (mono_llvm_emit_method): Add a few missing conversions so a 
+	bootstrap could run.
+
 2009-09-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Set callbacks.get_runtime_build_info ().
