@@ -1,5 +1,8 @@
 2009-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_create_trampoline_code): Align the stack
+	when calling mono_thread_force_interruption_checkpoint ().
+
 	* mini.c (mini_method_compile): Disable llvm when AOT compiling.
 
 	* tramp-amd64.c (mono_arch_patch_callsite): Add support for 32 bit ->
