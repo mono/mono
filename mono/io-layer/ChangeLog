@@ -1,3 +1,10 @@
+2009-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c (CreateProcess): Return false and set the error to
+	ERROR_OUTOFMEMORY when a process handle cannot be created.
+	(ShellExecuteEx): Propagate an ERROR_OUTOFMEMORY error code. Fixes part of
+	#536776.
+
 2009-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c (EnumProcessModules): Applied patch from Romain Tartière
