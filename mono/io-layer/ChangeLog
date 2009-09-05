@@ -1,5 +1,8 @@
 2009-09-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* handles.c (_wapi_handle_real_new): Call _wapi_process_reap () when running
+	out of shared handes. Fixes #536776.
+
 	* processes.c (CreateProcess): Return false and set the error to
 	ERROR_OUTOFMEMORY when a process handle cannot be created.
 	(ShellExecuteEx): Propagate an ERROR_OUTOFMEMORY error code. Fixes part of
