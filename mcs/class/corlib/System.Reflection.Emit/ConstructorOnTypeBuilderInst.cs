@@ -99,13 +99,13 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo[] GetParameters ()
 		{
-			if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext)
+			if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext && !instantiation.generic_type.is_created)
 				throw new NotSupportedException ();
 
 			ParameterInfo [] res = new ParameterInfo [cb.parameters.Length];
 			for (int i = 0; i < cb.parameters.Length; i++) {
 				Type type = instantiation.InflateType (cb.parameters [i]);
-				res [i] = new ParameterInfo (cb.pinfo == null ? null : cb.pinfo [i], type, this, i);
+				res [i] = new ParameterInfo (cb.pinfo == null ? null : cb.pinfo [i], type, this, i + 1);
 			}
 			return res;
 		}

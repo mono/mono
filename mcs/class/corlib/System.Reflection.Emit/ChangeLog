@@ -1,3 +1,8 @@
+2009-09-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConstructorOnTypeBuilderInst.cs (GetParameters): Make it work for
+	finished types.
+
 2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ILGenerator.cs (label_fixup): Check for unmarked labels.
