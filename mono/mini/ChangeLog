@@ -1,5 +1,9 @@
 2009-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Handle unsigned volatile variables
+	correctly by zero extending after loads. Skip methods containing calls
+	to the monitor enter/exit trampolines.
+
 	* tramp-x86.c (mono_arch_create_trampoline_code): Align the stack
 	when calling mono_thread_force_interruption_checkpoint ().
 
