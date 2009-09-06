@@ -55,6 +55,11 @@ namespace System.ServiceModel.Channels
 		{
 			if (msg == null)
 				throw new ArgumentNullException ("msg");
+
+			// FIXME: should this be done here?
+			if (channel.MessageVersion.Addressing.Equals (AddressingVersion.None))
+				msg.Headers.Action = null; // prohibited
+
 			MemoryStream ms = new MemoryStream ();
 			channel.Encoder.WriteMessage (msg, ms);
 			ctx.Response.ContentType = channel.Encoder.ContentType;

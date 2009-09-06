@@ -1,5 +1,10 @@
 2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContractDescriptionGenerator.cs : default action name is prepended
+	  "urn:", and on the other hand do not add extra '/' in such case.
+
+2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContractDescriptionGenerator.cs : end method lookup should be
 	  done against the type that defines begin method.
 

@@ -298,7 +298,7 @@ namespace System.ServiceModel.Description
 
 			if (action == null)
 				action = String.Concat (cd.Namespace, 
-					cd.Namespace.EndsWith ("/") ? "" : "/", cd.Name, "/",
+					cd.Namespace.Length == 0 ? "urn:" : cd.Namespace.EndsWith ("/") ? "" : "/", cd.Name, "/",
 					od.Name, isRequest ? String.Empty : "Response");
 
 			if (mca != null)

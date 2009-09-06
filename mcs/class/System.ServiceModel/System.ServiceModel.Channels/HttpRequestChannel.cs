@@ -92,11 +92,11 @@ namespace System.ServiceModel.Channels
 #endif
 
 			// There is no SOAP Action/To header when AddressingVersion is None.
-			if (message.Version.Addressing == AddressingVersion.None) {
+			if (message.Version.Envelope.Equals (EnvelopeVersion.Soap11) ||
+			    message.Version.Addressing.Equals (AddressingVersion.None)) {
 				if (message.Headers.Action != null) {
-					web_request.Headers ["SOAPAction"] = message.Headers.Action;
+					web_request.Headers ["SOAPAction"] = String.Concat ("\"", message.Headers.Action, "\"");
 					message.Headers.RemoveAll ("Action", message.Version.Addressing.Namespace);
-					if (message.Headers.Action != null) throw new Exception (message.Headers.Action);
 				}
 			}
 

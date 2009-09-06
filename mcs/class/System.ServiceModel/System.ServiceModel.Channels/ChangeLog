@@ -1,3 +1,11 @@
+2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : Fix message version member comparison.
+	  Double-quote SOAPAction. Remove extra Exception.
+	* HttpReplyChannel.cs : ditto for version comparison. Unquote above.
+	* HttpRequestContext.cs : when addressing is None, remove action
+	  from the message.
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs : set Uri property based on baseAddresses and

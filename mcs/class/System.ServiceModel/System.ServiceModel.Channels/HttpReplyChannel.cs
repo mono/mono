@@ -95,11 +95,15 @@ namespace System.ServiceModel.Channels
 
 				msg = Encoder.ReadMessage (
 					ctx.Request.InputStream, maxSizeOfHeaders);
-				if (MessageVersion.Envelope == EnvelopeVersion.Soap11 ||
-				    MessageVersion.Addressing == AddressingVersion.None) {
+
+				if (MessageVersion.Envelope.Equals (EnvelopeVersion.Soap11) ||
+				    MessageVersion.Addressing.Equals (AddressingVersion.None)) {
 					string action = GetHeaderItem (ctx.Request.Headers ["SOAPAction"]);
-					if (action != null)
+					if (action != null) {
+						if (action.Length > 2 && action [0] == '"' && action [action.Length] == '"')
+							action = action.Substring (1, action.Length - 2);
 						msg.Headers.Action = action;
+					}
 				}
 			} else if (ctx.Request.HttpMethod == "GET") {
 				msg = Message.CreateMessage (MessageVersion, null);
