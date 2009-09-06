@@ -269,12 +269,15 @@ namespace System.Windows.Forms
 				
 				// Update the start of each tag
 				while ((tag != null) && (left > 0)) {
+					// Cache tag.Length as is will be indireclty modified
+					// by changes to tag.Start
+					int tag_length = tag.Length;
 					tag.Start -= count - left;
 
-					if (tag.Length > left) {
+					if (tag_length > left) {
 						left = 0;
 					} else {
-						left -= tag.Length;
+						left -= tag_length;
 						tag = tag.Next;
 					}
 

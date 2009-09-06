@@ -1,3 +1,10 @@
+2009-09-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Line.cs: In DeleteCharacters, cache line.Length for every tag, since
+	tag.Start changes will modify it indirectly and then we would end up
+	with wrong values.
+	Fixes #512521.
+
 2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* BindingSource.cs: Implement support for chained data sources.
