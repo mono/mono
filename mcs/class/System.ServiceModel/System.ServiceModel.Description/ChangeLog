@@ -1,3 +1,8 @@
+2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : end method lookup should be
+	  done against the type that defines begin method.
+
 2009-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MustUnderstandBehavior.cs : fix build.

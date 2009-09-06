@@ -1,3 +1,8 @@
+2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : it missed end method argument on
+	  generating end method proxy.
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : URI trailing '/' can be added only when the

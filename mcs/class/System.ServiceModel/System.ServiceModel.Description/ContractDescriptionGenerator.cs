@@ -168,9 +168,10 @@ namespace System.ServiceModel.Description
 				if (oca.AsyncPattern) {
 					if (String.Compare ("Begin", 0, mi.Name,0, 5) != 0)
 						throw new InvalidOperationException ("For async operation contract patterns, the initiator method name must start with 'Begin'.");
-					end = givenContractType.GetMethod ("End" + mi.Name.Substring (5));
+					string endName = "End" + mi.Name.Substring (5);
+					end = mi.DeclaringType.GetMethod (endName);
 					if (end == null)
-						throw new InvalidOperationException ("For async operation contract patterns, corresponding End method is required for each Begin method.");
+						throw new InvalidOperationException (String.Format ("'{0}' method is missing. For async operation contract patterns, corresponding End method is required for each Begin method.", endName));
 					if (GetOperationContractAttribute (end) != null)
 						throw new InvalidOperationException ("Async 'End' method must not have OperationContractAttribute. It is automatically treated as the EndMethod of the corresponding 'Begin' method.");
 				}

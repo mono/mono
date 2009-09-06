@@ -220,7 +220,7 @@ namespace System.ServiceModel
 			CodeVariableReference retValue = null;
 			if (mi.ReturnType == typeof (void))
 				// FIXME: pass appropriate argument.
-				b.Call (m.GetThis (), endProcessMethod, argOperName, paramsRef, asyncResultRef);
+				b.Call (m.GetThis (), endProcessMethod, argMethodInfo, argOperName, paramsRef, asyncResultRef);
 			else {
 				CodeVariableDeclaration retValueDecl = new CodeVariableDeclaration (mi.ReturnType, "retValue");
 				b.CurrentBlock.Add (retValueDecl);
