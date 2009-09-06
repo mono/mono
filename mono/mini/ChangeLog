@@ -4,6 +4,9 @@
 
 2009-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Add a few more missing casts,
+	skip empty phi opcodes.
+	
 	* mini-llvm.c (mono_llvm_emit_method): Handle unsigned volatile variables
 	correctly by zero extending after loads. Skip methods containing calls
 	to the monitor enter/exit trampolines.
