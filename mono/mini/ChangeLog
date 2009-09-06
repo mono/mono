@@ -1,3 +1,7 @@
+2009-09-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.c (needs_stack_frame): OSX requires full frames to keep proper alignment.
+
 2009-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Handle unsigned volatile variables
