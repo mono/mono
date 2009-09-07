@@ -42,7 +42,7 @@ namespace MonoTests.System.IdentityModel.Claims
 		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
 
 		[Test]
-		[Category ("NotWorking")] // X509Chain
+		[Ignore ("not up to date")] // X509Chain
 		public void DefaultValues ()
 		{
 			X509Chain chain = new X509Chain ();
