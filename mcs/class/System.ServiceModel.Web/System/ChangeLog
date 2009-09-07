@@ -1,5 +1,9 @@
 2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTemplate.cs, UriTemplateMatch.cs : add support for wildcard.
+
+2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriTemplate.cs : implement IsEquivalentTo().
 	* UriTemplateEquivalenceComparer.cs : implement.
 

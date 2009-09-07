@@ -190,6 +190,8 @@ namespace System
 
 		// Match
 
+		static readonly char [] slashSep = {'/'};
+
 		public UriTemplateMatch Match (Uri baseAddress, Uri candidate)
 		{
 			CheckBaseAddress (baseAddress);
@@ -215,7 +217,7 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = baseAddress.MakeRelativeUri(candidate).ToString();
+			string cp = baseAddress.MakeRelativeUri(candidate).ToString ();
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
@@ -247,11 +249,17 @@ namespace System
 			int tEnd = template.IndexOf ('?');
 			if (tEnd < 0)
 				tEnd = template.Length;
-
-			if ((cp.Length - c) != (tEnd - i) ||
+			bool wild = (template [tEnd - 1] == '*');
+			if (wild)
+				tEnd--;
+			if (!wild && (cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match
-			
+			if (wild) {
+				c += tEnd - i;
+				foreach (var pe in cp.Substring (c).Split (slashSep, StringSplitOptions.RemoveEmptyEntries))
+					m.WildcardPathSegments.Add (pe);
+			}
 			if (candidate.Query.Length == 0)
 				return m;
 
@@ -290,6 +298,9 @@ namespace System
 
 		ReadOnlyCollection<string> ParsePathTemplate (string template, int index, int end)
 		{
+			int widx = template.IndexOf ('*', index, end);
+			if (widx >= 0 && widx != end - 1)
+				throw new FormatException (String.Format ("Wildcard in UriTemplate is valid only if it is placed at the last part of the path: '{0}'", template));
 			List<string> list = null;
 			int prevEnd = -2;
 			for (int i = index; i <= end; ) {

@@ -1,5 +1,9 @@
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTemplateTest.cs : add test for wildcard.
+
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriTemplateEquivalenceComparerTest.cs : new test.
 
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>

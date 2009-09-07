@@ -78,6 +78,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ConstructorBrokenTemplate3 ()
+		{
+			new UriTemplate ("http://localhost:8080/{foo}/*/baz");
+		}
+
+		[Test]
 		public void ToString ()
 		{
 			Assert.AreEqual ("urn:foo", new UriTemplate ("urn:foo").ToString (), "#1");
@@ -343,6 +350,20 @@ namespace MonoTests.System
 			Assert.AreEqual (2, m.QueryParameters.Count, "#3");
 			Assert.AreEqual ("v", m.QueryParameters ["p2"], "#4");
 			Assert.AreEqual ("vv", m.QueryParameters ["p1"], "#5");
+		}
+
+		[Test]
+		public void MatchWildcard ()
+		{
+			var t = new UriTemplate ("/hoge/*?p1={foo}");
+			var m = t.Match (new Uri ("http://localhost"), new Uri ("http://localhost/hoge/ppp/qqq?p1=v1"));
+			Assert.IsNotNull (m, "#0");
+			Assert.IsNotNull (m.QueryParameters, "#1.0");
+			Assert.AreEqual ("v1", m.QueryParameters ["p1"], "#1");
+			Assert.IsNotNull (m.WildcardPathSegments, "#2.0");
+			Assert.AreEqual (2, m.WildcardPathSegments.Count, "#2");
+			Assert.AreEqual ("ppp", m.WildcardPathSegments [0], "#3");
+			Assert.AreEqual ("qqq", m.WildcardPathSegments [1], "#4");
 		}
 
 		[Test]
