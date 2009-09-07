@@ -67,14 +67,15 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CanExportTest ()
 		{
 			XsdDataContractExporter xdce = new XsdDataContractExporter ();
-			Assert.IsTrue (xdce.CanExport (typeof (int)));
-			Assert.IsTrue (xdce.CanExport (typeof (dc)));
+			Assert.IsTrue (xdce.CanExport (typeof (int)), "#1");
+			Assert.IsTrue (xdce.CanExport (typeof (dc)), "#2");
 
-			//No DataContract/Serializable etc
-			Assert.IsFalse (xdce.CanExport (this.GetType ()));
+			//No DataContract/Serializable etc -> changed in 3.5
+			Assert.IsTrue (xdce.CanExport (this.GetType ()), "#3");
 		}
 
 		[Test]

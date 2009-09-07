@@ -1219,10 +1219,8 @@ namespace MonoTests.System.Runtime.Serialization
 <DummyPlaylist xmlns='http://example.com/schemas/asx'>
         <Entries>
                 <DummyEntry>
-                        <EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-ins
-tance' i:type='PartDummyEntryInfo'/>
-                        <Href>http://vmsservices.example.com:8080/VideoService.s
-vc?crid=45541/part=1/guid=ae968b5d-e4a5-41fe-9b23-ed631b27cd21/</Href>
+                        <EntryInfo xmlns:i='http://www.w3.org/2001/XMLSchema-instance' i:type='PartDummyEntryInfo'/>
+                        <Href>http://vmsservices.example.com:8080/VideoService.svc?crid=45541/part=1/guid=ae968b5d-e4a5-41fe-9b23-ed631b27cd21/</Href>
                 </DummyEntry>
         </Entries>
 </DummyPlaylist>

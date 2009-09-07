@@ -1,3 +1,10 @@
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : fixed wrong EOLs that resulted in
+	  failure in .NET.
+	* XsdDataContractExporterTest.cs : fix test that failed on .NET,
+	  and marked as NotWorking (no proceeding wsdl work yet).
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : add test for [IgnoreDataMember].
