@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using NUnit.Framework;
@@ -47,6 +48,12 @@ namespace MonoTests.System
 		{
 			// it does not raise an error at this state.
 			new UriTemplate (String.Empty);
+		}
+
+		[Test]
+		public void ConstructorNullDictionary ()
+		{
+			new UriTemplate (String.Empty, null);
 		}
 
 		[Test]
@@ -204,6 +211,28 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void BindByNameWithDefaults ()
+		{
+			var d = new Dictionary<string,string> ();
+			d.Add ("Bar", "value1"); // case insensitive
+			d.Add ("FOO", "value2"); // case insensitive
+			var t = new UriTemplate ("/{foo}/{bar}/", d);
+			var u = t.BindByName (new Uri ("http://localhost/"), new NameValueCollection ());
+			Assert.AreEqual ("http://localhost/value2/value1/", u.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BindByNameWithDefaults2 ()
+		{
+			var d = new Dictionary<string,string> ();
+			d.Add ("Bar", "value1"); // case insensitive
+			d.Add ("FOO", "value2"); // case insensitive
+			var t = new UriTemplate ("/{foo}/{bar}/{baz}", d);
+			t.BindByName (new Uri ("http://localhost/"), new NameValueCollection ()); // missing baz
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void BindByPositionNullBaseAddress ()
 		{
@@ -249,6 +278,16 @@ namespace MonoTests.System
 			var t = new UriTemplate ("/{foo}/{bar}/");
 			var u = t.BindByPosition (new Uri ("http://localhost/"), "value1", "value2");
 			Assert.AreEqual ("http://localhost/value1/value2/", u.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))] // it does not allow default values
+		public void BindByPositionWithDefaults ()
+		{
+			var d = new Dictionary<string,string> ();
+			d ["baz"] = "value3";
+			var t = new UriTemplate ("/{foo}/{bar}/{baz}", d);
+			t.BindByPosition (new Uri ("http://localhost/"), "value1", "value2");
 		}
 
 		[Test]
@@ -304,6 +343,18 @@ namespace MonoTests.System
 			Assert.AreEqual (2, m.QueryParameters.Count, "#3");
 			Assert.AreEqual ("v", m.QueryParameters ["p2"], "#4");
 			Assert.AreEqual ("vv", m.QueryParameters ["p1"], "#5");
+		}
+
+		[Test]
+		public void IgnoreTrailingSlash ()
+		{
+			var t = new UriTemplate ("/{foo}/{bar}", true);
+			var n = new NameValueCollection ();
+			Uri baseUri = new Uri ("http://localhost/");
+			Assert.IsNotNull (t.Match (baseUri, new Uri ("http://localhost/v1/v2/")), "#1");
+
+			t = new UriTemplate ("/{foo}/{bar}", false);
+			Assert.IsNull (t.Match (baseUri, new Uri ("http://localhost/v1/v2/")), "#2");
 		}
 
 		[Test]

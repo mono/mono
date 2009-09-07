@@ -42,18 +42,31 @@ namespace System
 		ReadOnlyCollection<string> path, query;
 		Dictionary<string,string> query_params = new Dictionary<string,string> ();
 
-		[MonoTODO ("It needs some rewrite: template bindings should be available only one per segment")]
 		public UriTemplate (string template)
 			: this (template, false)
 		{
 		}
 
+		public UriTemplate (string template, IDictionary<string,string> additionalDefaults)
+			: this (template, false, additionalDefaults)
+		{
+		}
+
 		public UriTemplate (string template, bool ignoreTrailingSlash)
+			: this (template, ignoreTrailingSlash, null)
+		{
+		}
+
+		public UriTemplate (string template, bool ignoreTrailingSlash, IDictionary<string,string> additionalDefaults)
 		{
 			if (template == null)
 				throw new ArgumentNullException ("template");
 			this.template = template;
 			IgnoreTrailingSlash = ignoreTrailingSlash;
+			Defaults = new Dictionary<string,string> (StringComparer.InvariantCultureIgnoreCase);
+			if (additionalDefaults != null)
+				foreach (var pair in additionalDefaults)
+					Defaults.Add (pair.Key, pair.Value);
 
 			string p = template;
 			// Trim scheme, host name and port if exist.
@@ -71,6 +84,8 @@ namespace System
 		}
 
 		public bool IgnoreTrailingSlash { get; private set; }
+
+		public IDictionary<string,string> Defaults { get; private set; }
 
 		public ReadOnlyCollection<string> PathSegmentVariableNames {
 			get { return path; }
@@ -106,7 +121,7 @@ namespace System
 				int e = template.IndexOf ('}', s + 1);
 				sb.Append (template.Substring (src, s - src));
 				string value = parameters [name];
-				if (value == null)
+				if (value == null && !Defaults.TryGetValue (name, out value))
 					throw new ArgumentException (String.Format ("The argument name value collection does not contain value for '{0}'", name), "parameters");
 				sb.Append (value);
 				src = e + 1;
@@ -160,8 +175,14 @@ namespace System
 			if (candidate == null)
 				throw new ArgumentNullException ("candidate");
 
-			if (!baseAddress.AbsoluteUri.EndsWith ("/"))
-				baseAddress = new Uri (baseAddress.AbsoluteUri + "/");
+			var us = baseAddress.LocalPath;
+			if (us [us.Length - 1] != '/')
+				baseAddress = new Uri (baseAddress.GetLeftPart (UriPartial.Path) + '/' + baseAddress.Query, baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+			if (IgnoreTrailingSlash) {
+				us = candidate.LocalPath;
+				if (us.Length > 0 && us [us.Length - 1] != '/')
+					candidate = new Uri (candidate.GetLeftPart (UriPartial.Path) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+			}
 
 			if (Uri.Compare (baseAddress, candidate, UriComponents.StrongAuthority, UriFormat.SafeUnescaped, StringComparison.Ordinal) != 0)
 				return null;
@@ -174,6 +195,9 @@ namespace System
 			var vc = m.BoundVariables;
 
 			string cp = baseAddress.MakeRelativeUri(candidate).ToString();
+			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
+				cp = cp.Substring (0, cp.Length - 1);
+
 			int tEndCp = cp.IndexOf ('?');
 			if (tEndCp >= 0)
 				cp = cp.Substring (0, tEndCp);
@@ -202,6 +226,7 @@ namespace System
 			int tEnd = template.IndexOf ('?');
 			if (tEnd < 0)
 				tEnd = template.Length;
+
 			if ((cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match

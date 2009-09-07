@@ -1,5 +1,10 @@
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTemplateTest.cs :
+	  added tests for IgnoreTrailingSlash and Defaults.
+
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriTemplateTest.cs : fixed a couple of tests to match 3.5 SP1
 	  behavior.
 
