@@ -183,21 +183,22 @@ namespace System.ComponentModel.Design
 			get {
 				if (_designerHost == null)
 					throw new ObjectDisposedException ("DesignSurface");
-				if (this.LoadErrors.Count > 0 || !_isLoaded)
-					throw new InvalidOperationException ("DesignSurface isn't loaded.");
 				
-				
+				if (_designerHost.RootComponent == null || this.LoadErrors.Count > 0)
+					throw new InvalidOperationException ("The DesignSurface isn't loaded.");
+
 				IRootDesigner designer = _designerHost.GetDesigner (_designerHost.RootComponent) as IRootDesigner;
+				if (designer == null)
+					throw new InvalidOperationException ("The DesignSurface isn't loaded.");
+
 				ViewTechnology[] viewTech = designer.SupportedTechnologies;
-				
 				for (int i = 0; i < viewTech.Length; i++) {
 					try { 
 						return designer.GetView (viewTech[i]); 
 					} catch {}
 				}
-				// if this code is reached - there is no supported view technology
-				//
-				throw new NotSupportedException ();
+
+				throw new NotSupportedException ("No supported View Technology found.");
 			}
 		}
 
