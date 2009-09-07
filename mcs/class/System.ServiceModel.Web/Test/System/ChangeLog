@@ -1,5 +1,9 @@
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTemplateEquivalenceComparerTest.cs : new test.
+
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriTemplateTest.cs :
 	  added tests for IgnoreTrailingSlash and Defaults.
 

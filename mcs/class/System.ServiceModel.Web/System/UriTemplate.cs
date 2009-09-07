@@ -181,12 +181,11 @@ namespace System
 
 		// Compare
 
-		[MonoTODO]
 		public bool IsEquivalentTo (UriTemplate other)
 		{
 			if (other == null)
 				throw new ArgumentNullException ("other");
-			return new UriTemplateEquivalenceComparer ().Equals (this, other);
+			return this.template == other.template;
 		}
 
 		// Match

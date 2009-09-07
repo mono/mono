@@ -1,5 +1,10 @@
 2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTemplate.cs : implement IsEquivalentTo().
+	* UriTemplateEquivalenceComparer.cs : implement.
+
+2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UriTemplate.cs : add BindByName() overloads with Dictionary.
 
 2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>

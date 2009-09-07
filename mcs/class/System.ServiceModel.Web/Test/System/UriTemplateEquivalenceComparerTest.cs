@@ -1,10 +1,10 @@
 //
-// UriTemplateEquivalenceComparer.cs
+// UriTemplateEquivalenceComparerTest.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,26 +27,31 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using NUnit.Framework;
 
-namespace System
+namespace MonoTests.System
 {
-	public class UriTemplateEquivalenceComparer : IEqualityComparer<UriTemplate>
+	[TestFixture]
+	public class UriTemplateEquivalenceComparerTest
 	{
-		public UriTemplateEquivalenceComparer ()
+		[Test]
+		public void Compare ()
 		{
-		}
-
-		public bool Equals (UriTemplate x, UriTemplate y)
-		{
-			if (x == null)
-				return y == null;
-			return y != null && x.IsEquivalentTo (y);
-		}
-
-		public int GetHashCode (UriTemplate obj)
-		{
-			// gets string's hash code
-			return obj.ToString ().GetHashCode ();
+			var t1 = new UriTemplate ("urn:foo");
+			var t2 = new UriTemplate ("urn:bar");
+			var t3 = new UriTemplate ("urn:foo", true);
+			var dic = new Dictionary<string,string> ();
+			dic.Add ("foo", "v1");
+			var t4 = new UriTemplate ("urn:foo", dic);
+			var c = new UriTemplateEquivalenceComparer ();
+			Assert.IsFalse (c.Equals (t1, t2), "#1");
+			Assert.IsTrue (c.Equals (t1, t3), "#2");
+			Assert.IsTrue (c.Equals (t1, t4), "#3");
+			Assert.IsTrue (c.Equals (null, null), "#4");
+			Assert.IsFalse (c.Equals (null, t1), "#5");
+			Assert.IsFalse (c.Equals (t1, null), "#6");
 		}
 	}
 }
