@@ -1,3 +1,9 @@
+2009-09-08  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlRoutingModule.cs: store original request path in
+	PostResolveRequestCache and restore it in
+	PostMapRequestHandler. Fixes bug #537089
+
 2009-08-19  Marek Habersack  <mhabersack@novell.com>
 
 	* Route.cs: GetRouteData adds contents of its DataTokens
