@@ -1,7 +1,9 @@
 2009-09-07  Marek Safar  <marek.safar@gmail.com>
 
-	* *.cs: Changed Report class to accept various ouput printers and
-	be an instance class.
+	* *.cs: Changed Report class to accept various output printers and
+	be an instance class. An expression resolver can now use different
+	message reporter for each call and Report.Error can safely throw
+	an exception. Part of ongoing work to turn mcs into proper library.
 
 2009-09-04  Marek Safar  <marek.safar@gmail.com>
 

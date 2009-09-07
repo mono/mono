@@ -89,9 +89,10 @@ The compiler has a number of phases:
 
 * Error reporting
 
-	We should try to use the `Report.Error' and `Report.Warning'
-	classes which are part of the RootContext (there is even a
-	property to access it).
+	Always use `Report::Error' or `Report::Warning' methods of Report
+	class. The actual Report instance is available via local context.
+	An expression error reporting has to be done during Resolve phase,
+	except when it's Emit specific (very rare).
 
 	Error reporting should try to use the same codes that the
 	Microsoft compiler uses (if only so we can track which errors
@@ -106,8 +107,9 @@ The compiler has a number of phases:
 	Put your test case in a file called csNNNN.cs in the
 	mcs/errors directory, and have the first two lines be:
 
-	// csNNNN.cs: This is the description.
+	// csNNNN.cs: This is the error message
 	// Line: XXX
+	// Compiler options: an optional compiler options
 
 	Where `XXX' is the line where the error ocurrs.  We will later
 	use this as a regression test suite for catching errors in the
