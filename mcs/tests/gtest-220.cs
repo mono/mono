@@ -15,11 +15,24 @@ public class A<T1>
 
 class PopQuiz
 {
-	static void Main()
+	static int Main()
 	{
 		A<int>.B<char>.C<bool> o = new A<int>.B<char>.C<bool>();
-		System.Console.WriteLine(o.a.GetType().FullName);
-		System.Console.WriteLine(o.b.GetType().FullName);
-		System.Console.WriteLine(o.c.GetType().FullName);
+		string s = o.a.GetType().FullName;
+		System.Console.WriteLine(s);
+		if (s != "System.Boolean")
+			return 1;
+
+		s = o.b.GetType().FullName;
+		System.Console.WriteLine(s);
+		if (s != "System.Char")
+			return 2;
+		
+		s = o.c.GetType().FullName;
+		System.Console.WriteLine();
+		if (s != "System.Int32")
+			return 3;
+		
+		return 0;
 	}
 }

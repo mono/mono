@@ -6138,8 +6138,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>85</size>
+      <method name="Int32 Main()">
+        <size>145</size>
       </method>
     </type>
   </test>
