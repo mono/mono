@@ -1,5 +1,9 @@
 2009-09-07  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpContext.cs: when creating local resource provider, pass the
+	current file's virtual path to CreateLocalResourceProvider. Fixes
+	bug #536757
+
 	* XmlSiteMapProvider.cs: do not allow the provider to be
 	intialized more than once.
 	Initialize throws if it finds unknown attributes in the
