@@ -494,15 +494,19 @@ namespace System.Web {
 			// we should expire the entries (or just store them in InternalCache?)
 			IResourceProvider rp = null;
 			if (!resource_providers.TryGetValue (key, out rp)) {
-				if (isLocal)
-					rp = provider_factory.CreateLocalResourceProvider (key);
-				else
+				if (isLocal) {
+					HttpContext ctx = HttpContext.Current;
+					HttpRequest req = ctx != null ? ctx.Request : null;
+					rp = provider_factory.CreateLocalResourceProvider (req != null ? req.Path : null);
+				} else
 					rp = provider_factory.CreateGlobalResourceProvider (key);
 				
 				if (rp == null) {
-					if (isLocal)
-						rp = DefaultProviderFactory.CreateLocalResourceProvider (key);
-					else
+					if (isLocal) {
+						HttpContext ctx = HttpContext.Current;
+						HttpRequest req = ctx != null ? ctx.Request : null;
+						rp = DefaultProviderFactory.CreateLocalResourceProvider (req != null ? req.Path : null);
+					} else
 						rp = DefaultProviderFactory.CreateGlobalResourceProvider (key);
 
 					if (rp == null)
