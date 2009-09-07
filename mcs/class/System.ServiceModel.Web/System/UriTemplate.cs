@@ -104,24 +104,46 @@ namespace System
 
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
+			return BindByName (baseAddress, parameters, false);
+		}
+
+		public Uri BindByName (Uri baseAddress, NameValueCollection parameters, bool omitDefaults)
+		{
+			return BindByNameCommon (baseAddress, parameters, null, omitDefaults);
+		}
+
+		public Uri BindByName (Uri baseAddress, Dictionary<string,string> parameters)
+		{
+			return BindByName (baseAddress, parameters, false);
+		}
+
+		public Uri BindByName (Uri baseAddress, Dictionary<string,string> parameters, bool omitDefaults)
+		{
+			return BindByNameCommon (baseAddress, null, parameters, omitDefaults);
+		}
+
+		Uri BindByNameCommon (Uri baseAddress, NameValueCollection nvc, Dictionary<string,string> dic, bool omitDefaults)
+		{
 			CheckBaseAddress (baseAddress);
 
 			int src = 0;
 			StringBuilder sb = new StringBuilder (template.Length);
-			BindByName (ref src, sb, path, parameters);
-			BindByName (ref src, sb, query, parameters);
+			BindByName (ref src, sb, path, nvc, dic, omitDefaults);
+			BindByName (ref src, sb, query, nvc, dic, omitDefaults);
 			sb.Append (template.Substring (src));
 			return new Uri (baseAddress.ToString () + sb.ToString ());
 		}
 
-		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection parameters)
+		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, Dictionary<string,string> dic, bool omitDefaults)
 		{
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
 				sb.Append (template.Substring (src, s - src));
-				string value = parameters [name];
-				if (value == null && !Defaults.TryGetValue (name, out value))
+				string value = nvc != null ? nvc [name] : null;
+				if (dic != null)
+					dic.TryGetValue (name, out value);
+				if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
 					throw new ArgumentException (String.Format ("The argument name value collection does not contain value for '{0}'", name), "parameters");
 				sb.Append (value);
 				src = e + 1;
