@@ -765,7 +765,7 @@ namespace MonoTests.System.Runtime.Serialization
 			using (XmlWriter xw = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (xw, new SerializeNonDCArrayType ());
 			}
-			Assert.AreEqual (@"<SerializeNonDCArrayType xmlns:i=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization""><IPAddresses xmlns:d2p1=""http://schemas.datacontract.org/2004/07/System.Net"" /></SerializeNonDCArrayType>",
+			Assert.AreEqual (@"<SerializeNonDCArrayType xmlns:i=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization""><IPAddresses /></SerializeNonDCArrayType>",
 				sw.ToString ());
 		}
 
@@ -776,7 +776,7 @@ namespace MonoTests.System.Runtime.Serialization
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter xw = XmlWriter.Create (sw, settings)) {
 				SerializeNonDCArrayType obj = new SerializeNonDCArrayType ();
-				obj.IPAddresses = new IPAddress [] {new IPAddress (new byte [] {1, 2, 3, 4})};
+				obj.IPAddresses = new NonDCItem [] {new NonDCItem () { Data = new int [] {1, 2, 3, 4} } };
 				ser.WriteObject (xw, obj);
 			}
 
@@ -787,11 +787,10 @@ namespace MonoTests.System.Runtime.Serialization
 			nsmgr.AddNamespace ("n", "http://schemas.datacontract.org/2004/07/System.Net");
 			nsmgr.AddNamespace ("a", "http://schemas.microsoft.com/2003/10/Serialization/Arrays");
 
-			Assert.AreEqual (1, doc.SelectNodes ("/s:SerializeNonDCArrayType/s:IPAddresses/n:IPAddress", nsmgr).Count, "#1");
-			Assert.AreEqual ("67305985", doc.SelectSingleNode ("/s:SerializeNonDCArrayType/s:IPAddresses/n:IPAddress/n:m_Address", nsmgr).InnerText, "#2");
-			XmlElement el = doc.SelectSingleNode ("/s:SerializeNonDCArrayType/s:IPAddresses/n:IPAddress/n:m_Numbers", nsmgr) as XmlElement;
+			Assert.AreEqual (1, doc.SelectNodes ("/s:SerializeNonDCArrayType/s:IPAddresses/s:NonDCItem", nsmgr).Count, "#1");
+			XmlElement el = doc.SelectSingleNode ("/s:SerializeNonDCArrayType/s:IPAddresses/s:NonDCItem/s:Data", nsmgr) as XmlElement;
 			Assert.IsNotNull (el, "#3");
-			Assert.AreEqual (8, el.SelectNodes ("a:unsignedShort", nsmgr).Count, "#4");
+			Assert.AreEqual (4, el.SelectNodes ("a:int", nsmgr).Count, "#4");
 		}
 
 		[Test]
@@ -1528,7 +1527,12 @@ namespace MonoTests.System.Runtime.Serialization
 	class SerializeNonDCArrayType
 	{
 		[DataMember]
-		public IPAddress [] IPAddresses = new IPAddress [0];
+		public NonDCItem [] IPAddresses = new NonDCItem [0];
+	}
+
+	public class NonDCItem
+	{
+		public int [] Data { get; set; }
 	}
 
 	[DataContract]

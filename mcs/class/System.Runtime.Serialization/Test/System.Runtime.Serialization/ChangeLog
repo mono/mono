@@ -1,5 +1,10 @@
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : fix (here too) bad serialization-
+	  compatibility-dependent test.
+
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : fixed wrong EOLs that resulted in
 	  failure in .NET.
 	* XsdDataContractExporterTest.cs : fix test that failed on .NET,
