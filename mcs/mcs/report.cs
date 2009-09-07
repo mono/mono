@@ -641,9 +641,16 @@ namespace Mono.CSharp {
 		///   Whether to dump a stack trace on errors. 
 		/// </summary>
 		public bool Stacktrace;
+		
+		int warnings, errors;
 
-		public int WarningsCount { get; private set; }
-		public int ErrorsCount { get; private set; }
+		public int WarningsCount {
+			get { return warnings; }
+		}
+		
+		public int ErrorsCount {
+			get { return errors; }
+		}
 
 		protected virtual string FormatText (string txt)
 		{
@@ -660,9 +667,9 @@ namespace Mono.CSharp {
 		public virtual void Print (AbstractMessage msg)
 		{
 			if (msg.IsWarning)
-				++WarningsCount;
+				++warnings;
 			else
-				++ErrorsCount;
+				++errors;
 		}
 
 		protected void Print (AbstractMessage msg, TextWriter output)
