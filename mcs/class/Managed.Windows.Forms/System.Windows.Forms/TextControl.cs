@@ -1989,6 +1989,11 @@ namespace System.Windows.Forms {
 			base_line = line.line_no;
 			old_line_count = lines;
 
+			// Discard chars after any possible -unlikely- end of file
+			int eof_index = s.IndexOf ('\0');
+			if (eof_index != -1)
+				s = s.Substring (0, eof_index);
+
 			break_index = GetLineEnding (s, 0, out ending, LineEnding.Hard | LineEnding.Rich);
 
 			// There are no line feeds in our text to be pasted

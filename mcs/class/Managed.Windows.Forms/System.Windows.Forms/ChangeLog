@@ -1,3 +1,11 @@
+2009-09-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextControl.cs: When inserting new lines, look for the end of file
+	char, and remove chars after it. This is unlikely to happeng either
+	loading a file, pasting text or pressing a char, but can happen using
+	the TextBox.Text property.
+	Fixes #535884.
+
 2009-09-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Line.cs: In DeleteCharacters, cache line.Length for every tag, since
