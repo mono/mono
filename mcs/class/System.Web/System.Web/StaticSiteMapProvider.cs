@@ -214,7 +214,9 @@ namespace System.Web
 				return url;
 
 			string appVPath = HttpRuntime.AppDomainAppVirtualPath;
-
+			if (String.IsNullOrEmpty (appVPath))
+				appVPath = "/";
+			
 			if (VirtualPathUtility.IsAppRelative (url))
 				return VirtualPathUtility.ToAbsolute (url, appVPath, false);
 			else
