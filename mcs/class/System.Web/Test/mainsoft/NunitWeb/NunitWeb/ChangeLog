@@ -1,3 +1,7 @@
+2009-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Tests/TestSiteMapProvider.cs: added
+
 2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* CustomSection.cs: Only enable in the 2.0 profile.

@@ -4,9 +4,10 @@
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Lluis Sanchez Gual (lluis@novell.com)
+//	Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2003 Ben Maurer
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -39,6 +40,7 @@ using System.Configuration.Provider;
 using System.Globalization;
 using System.Text;
 using System.Xml;
+using System.Web.Hosting;
 using System.Web.Util;
 using System.IO;
 
@@ -49,8 +51,7 @@ namespace System.Web
 		static readonly char [] seperators = { ';', ',' };
 		static readonly StringComparison stringComparison = HttpRuntime.RunningOnWindows ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 		
-		bool building;
-		string file;
+		bool initialized;
 		string fileVirtualPath;
 		SiteMapNode root = null;
 		List <FileSystemWatcher> watchers;
@@ -77,9 +78,33 @@ namespace System.Web
 		
 		protected internal override void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
-			base.AddNode (node, parentNode);
+			if (node == null)
+				throw new ArgumentNullException ("node");
+
+			if (parentNode == null)
+				throw new ArgumentNullException ("parentNode");
+
+			SiteMapProvider nodeProvider = node.Provider;
+			if (nodeProvider != this)
+				throw new ArgumentException ("SiteMapNode '" + node + "' cannot be found in current provider, only nodes in the same provider can be added.",
+							     "node");
+
+			SiteMapProvider parentNodeProvider = parentNode.Provider;
+			if (nodeProvider != parentNodeProvider)
+				throw new ArgumentException ("SiteMapNode '" + parentNode + "' cannot be found in current provider, only nodes in the same provider can be added.",
+							     "parentNode");
+
+			AddNodeNoCheck (node, parentNode);
 		}
 
+		void AddNodeNoCheck (SiteMapNode node, SiteMapNode parentNode)
+		{
+			base.AddNode (node, parentNode);
+			SiteMapProvider nodeProvider = node.Provider;
+			if (nodeProvider != this)
+				RegisterChildProvider (nodeProvider.Name, nodeProvider);
+		}
+		
 		protected virtual void AddProvider (string providerName, SiteMapNode parentNode)
 		{
 			if (parentNode == null)
@@ -107,65 +132,195 @@ namespace System.Web
 			ChildProviders.Add (smp);
 		}
 		
-		XmlNode FindStartingNode (string file, string virtualPath, out bool enableLocalization)
+		XmlNode FindStartingNode (string virtualPath, out bool enableLocalization)
 		{
-			if (String.Compare (Path.GetExtension (file), ".sitemap", stringComparison) != 0)
-				throw new InvalidOperationException (
-					String.Format ("The file {0} has an invalid extension, only .sitemap files are allowed in XmlSiteMapProvider.",
-						       String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
-			if (!File.Exists (file))
-				throw new InvalidOperationException (
-					String.Format ("The file '{0}' required by XmlSiteMapProvider does not exist.",
-						       String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
-			
-			XmlDocument d = new XmlDocument ();
-			d.Load (file);
+			XmlDocument d = GetConfigDocument (virtualPath);
+			XmlElement docElement = d.DocumentElement;
 
-			XmlNode enloc = d.DocumentElement.Attributes ["enableLocalization"];
+			if (String.Compare ("siteMap", docElement.Name, StringComparison.Ordinal) != 0)
+				throw new ConfigurationErrorsException ("Top element must be 'siteMap'");
+			
+			XmlNode enloc = docElement.Attributes ["enableLocalization"];
 			if (enloc != null && !String.IsNullOrEmpty (enloc.Value))
 				enableLocalization = (bool) Convert.ChangeType (enloc.Value, typeof (bool));
 			else
 				enableLocalization = false;
-					
-			XmlNode nod = d.DocumentElement ["siteMapNode"];
-			if (nod == null)
-				throw new HttpException ("Invalid site map file: " + Path.GetFileName (file));
 
-			return nod;
+			XmlNodeList childNodes = docElement.ChildNodes;
+			XmlNode node = null;
+			
+			foreach (XmlNode child in childNodes) {
+				if (String.Compare ("siteMapNode", child.Name, StringComparison.Ordinal) != 0)
+					// Only <siteMapNode> is allowed at the top
+					throw new ConfigurationErrorsException ("Only <siteMapNode> elements are allowed at the document top level.");
+				
+				if (node != null)
+					// Only one <siteMapNode> is allowed at the top
+					throw new ConfigurationErrorsException ("Only one <siteMapNode> element is allowed at the document top level.");
+				
+				node = child;
+			}
+			
+			if (node == null)
+				throw new ConfigurationErrorsException ("Missing <siteMapNode> element at the document top level.");
+			
+			return node;
 		}
-		
+
+		XmlDocument GetConfigDocument (string virtualPath)
+		{
+			if (String.IsNullOrEmpty (virtualPath))
+				throw new ArgumentException ("The siteMapFile attribute must be specified on the XmlSiteMapProvider");
+			
+			string file = HostingEnvironment.MapPath (virtualPath);
+			if (file == null)
+				throw new HttpException ("Virtual path '" + virtualPath + "' cannot be mapped to physical path.");
+			
+			if (String.Compare (Path.GetExtension (file), ".sitemap", stringComparison) != 0)
+				throw new InvalidOperationException (String.Format ("The file {0} has an invalid extension, only .sitemap files are allowed in XmlSiteMapProvider.",
+										    String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
+			
+			if (!File.Exists (file))
+				throw new InvalidOperationException (String.Format ("The file '{0}' required by XmlSiteMapProvider does not exist.",
+										    String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
+
+			ResourceKey = Path.GetFileName (file);
+			CreateWatcher (file);
+			
+			XmlDocument d = new XmlDocument ();
+			d.Load (file);
+
+			return d;
+		}
+
 		public override SiteMapNode BuildSiteMap ()
 		{
 			if (root != null)
 				return root;
+			
 			// Whenever you call AddNode, it tries to find dups, and will call this method
 			// Is this a bug in MS??
-			if (building)
-				return null;
-			
 			lock (this_lock) {
-				try {
-					building = true;
-					if (root != null)
-						return root;
+				if (root != null)
+					return root;
 
-					bool enableLocalization;
-					XmlNode node = FindStartingNode (file, fileVirtualPath, out enableLocalization);
-					EnableLocalization = enableLocalization;
-					SiteMapNode builtRoot = BuildSiteMapRecursive (node, EnableLocalization);
+				Clear ();
+				bool enableLocalization;
+				XmlNode node = FindStartingNode (fileVirtualPath, out enableLocalization);
+				EnableLocalization = enableLocalization;
+				BuildSiteMapRecursive (node, null);
 
-					if (builtRoot != root) {
-						root = builtRoot;
-						AddNode (root);
-					}
-				} finally {
-					building = false;
-				}
-				
+				// if (builtRoot != root) {
+				// 	root = builtRoot;
+				// 	AddNode (root);
+				// }
+
 				return root;
 			}
 		}
-		
+
+		SiteMapNode ConvertToSiteMapNode (XmlNode xmlNode)
+		{
+			bool localize = EnableLocalization;
+			string url = GetOptionalAttribute (xmlNode, "url");
+			string title = GetOptionalAttribute (xmlNode, "title");
+			string description = GetOptionalAttribute (xmlNode, "description");
+			string roles = GetOptionalAttribute (xmlNode, "roles");
+			string implicitResourceKey = GetOptionalAttribute (xmlNode, "resourceKey");
+				
+			// var keywordsList = new List <string> ();
+			// if (keywords != null && keywords.Length > 0) {
+			// 	foreach (string s in keywords.Split (seperators)) {
+			// 		string ss = s.Trim ();
+			// 		if (ss.Length > 0)
+			// 			keywordsList.Add (ss);
+			// 	}
+			// }
+				
+			var rolesList = new List <string> ();
+			if (roles != null && roles.Length > 0) {
+				foreach (string s in roles.Split (seperators)) {
+					string ss = s.Trim ();
+					if (ss.Length > 0)
+						rolesList.Add (ss);
+				}
+			}
+
+			url = base.MapUrl (url);
+
+			NameValueCollection attributes = null;
+			NameValueCollection explicitResourceKeys = null;
+			if (localize)
+				CollectLocalizationInfo (xmlNode, ref title, ref description, ref attributes, ref explicitResourceKeys);
+			else
+				foreach (XmlNode att in xmlNode.Attributes)
+					PutInCollection (att.Name, att.Value, ref attributes);
+
+			string key = Guid.NewGuid ().ToString ();
+			return new SiteMapNode (this, key, url, title, description, rolesList.AsReadOnly (),
+						attributes, explicitResourceKeys, implicitResourceKey);		
+		}
+
+		void BuildSiteMapRecursive (XmlNode xmlNode, SiteMapNode parent)
+		{
+			if (xmlNode.Name != "siteMapNode")
+				throw new ConfigurationException ("incorrect element name", xmlNode);
+			
+			string attrValue = GetNonEmptyOptionalAttribute (xmlNode, "provider");
+			if (attrValue != null) {
+				SiteMapProvider provider = SiteMap.Providers [attrValue];
+				if (provider == null)
+					throw new ProviderException ("Provider with name [" + attrValue + "] was not found.");
+
+				provider.ParentProvider = this;
+				SiteMapNode providerRoot = provider.GetRootNodeCore();
+
+				if (parent == null)
+					root = providerRoot;
+				else
+					AddNodeNoCheck (providerRoot, parent);
+				return;
+			}
+
+			attrValue = GetNonEmptyOptionalAttribute (xmlNode, "siteMapFile");
+			if (attrValue != null) {
+				var nvc = new NameValueCollection ();
+				nvc.Add ("siteMapFile", attrValue);
+
+				string description = GetOptionalAttribute (xmlNode, "description");
+				if (!String.IsNullOrEmpty (description))
+					nvc.Add ("description", description);
+
+				string name = MapUrl (attrValue);				
+				var provider = new XmlSiteMapProvider ();
+				provider.Initialize (name, nvc);
+				
+				SiteMapNode providerRoot = provider.GetRootNodeCore ();
+				if (parent == null)
+					root = providerRoot;
+				else
+					AddNodeNoCheck (providerRoot, parent);
+				return;
+			}
+
+			SiteMapNode curNode = ConvertToSiteMapNode (xmlNode);
+			if (parent == null)
+				root = curNode;
+			else
+				AddNodeNoCheck (curNode, parent);
+			
+			XmlNodeList childNodes = xmlNode.ChildNodes;
+			if (childNodes == null || childNodes.Count < 1)
+				return;
+			
+			foreach (XmlNode child in childNodes) {
+				if (child.NodeType != XmlNodeType.Element)
+					continue;
+
+				BuildSiteMapRecursive (child, curNode);
+			}
+		}
+
 		string GetNonEmptyOptionalAttribute (XmlNode n, string name)
 		{
 			return System.Web.Configuration.HandlersUtil.ExtractAttributeValue (name, n, true);
@@ -247,90 +402,6 @@ namespace System.Web
 				PutInCollection (att.Name, value, ref attributes);
 			}
 		}
-		
-		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode, bool localize)
-		{
-			if (xmlNode.Name != "siteMapNode")
-				throw new ConfigurationException ("incorrect element name", xmlNode);
-			
-			string provider = GetNonEmptyOptionalAttribute (xmlNode, "provider");
-			string siteMapFile = GetNonEmptyOptionalAttribute (xmlNode, "siteMapFile");
-			
-			if (provider != null) {
-				SiteMapProvider smp = SiteMap.Providers [provider];
-				if (smp == null)
-					throw new ProviderException ("Provider with name [" + provider + "] was not found.");
-
-				smp.ParentProvider = this;
-				SiteMapNode root = smp.GetRootNodeCore();
-				RegisterChildProvider (provider, smp);
-				
-				return root;
-			} else if (siteMapFile != null) {
-				if (file.Length == 0)
-					throw new InvalidOperationException ("The 'siteMapFile' attribute cannot be an empty string.");
-				string realPath = HttpContext.Current.Request.MapPath (siteMapFile);
-				bool enableLocalization;
-				XmlNode node = FindStartingNode (realPath, siteMapFile, out enableLocalization);
-
-				CreateWatcher (realPath);
-				return BuildSiteMapRecursive (node, enableLocalization);
-			} else {
-				string url = GetOptionalAttribute (xmlNode, "url");
-				string title = GetOptionalAttribute (xmlNode, "title");
-				string description = GetOptionalAttribute (xmlNode, "description");
-				string keywords = GetOptionalAttribute (xmlNode, "keywords");
-				string roles = GetOptionalAttribute (xmlNode, "roles");
-				string implicitResourceKey = GetOptionalAttribute (xmlNode, "resourceKey");
-				
-				ArrayList keywordsList = new ArrayList ();
-				if (keywords != null && keywords.Length > 0) {
-					foreach (string s in keywords.Split (seperators)) {
-						string ss = s.Trim ();
-						if (ss.Length > 0)
-							keywordsList.Add (ss);
-					}
-				}
-				
-				ArrayList rolesList = new ArrayList ();
-				if (roles != null && roles.Length > 0) {
-					foreach (string s in roles.Split (seperators)) {
-						string ss = s.Trim ();
-						if (ss.Length > 0)
-							rolesList.Add (ss);
-					}
-				}
-
-				if (!string.IsNullOrEmpty (url)) {
-					if (UrlUtils.IsRelativeUrl (url))
-						url = UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
-				}
-
-				NameValueCollection attributes = null;
-				NameValueCollection explicitResourceKeys = null;
-				if (localize)
-					CollectLocalizationInfo (xmlNode, ref title, ref description, ref attributes,
-								 ref explicitResourceKeys);
-				else
-					foreach (XmlNode att in xmlNode.Attributes)
-						PutInCollection (att.Name, att.Value, ref attributes);
-
-				string key = Guid.NewGuid ().ToString ();
-				SiteMapNode node = new SiteMapNode (this, key, url, title, description,
-								    ArrayList.ReadOnly (rolesList),
-								    attributes,
-								    explicitResourceKeys,
-								    implicitResourceKey);
-					
-				foreach (XmlNode child in xmlNode.ChildNodes) {
-					if (child.NodeType != XmlNodeType.Element)
-						continue;
-					AddNode (BuildSiteMapRecursive (child, EnableLocalization), node);
-				}
-				
-				return node;
-			}
-		}
 
 		protected override void Clear ()
 		{
@@ -356,12 +427,13 @@ namespace System.Web
 		
 		public override SiteMapNode FindSiteMapNode (string rawUrl)
 		{
-			SiteMapNode node = base.FindSiteMapNode (rawUrl);
+			string url = base.MapUrl (rawUrl);
+			SiteMapNode node = base.FindSiteMapNode (url);
 			if (node != null)
 				return node;
 
 			foreach (SiteMapProvider smp in ChildProviders) {
-				node = smp.FindSiteMapNode (rawUrl);
+				node = smp.FindSiteMapNode (url);
 				if (node != null)
 					return node;
 			}
@@ -386,23 +458,27 @@ namespace System.Web
 
 		public override void Initialize (string name, NameValueCollection attributes)
 		{
-			base.Initialize (name, attributes);
-			fileVirtualPath = attributes ["siteMapFile"];
-			if (String.IsNullOrEmpty (fileVirtualPath))
-				throw new ArgumentException ("The siteMapFile attribute must be specified on the XmlSiteMapProvider.");
+			if (initialized)
+				throw new InvalidOperationException ("XmlSiteMapProvider cannot be initialized twice.");
 
-			HttpContext ctx = HttpContext.Current;
-			HttpRequest req = ctx != null ? ctx.Request : null;
-			
-			if (req != null)
-				file = req.MapPath (fileVirtualPath, HttpRuntime.AppDomainAppVirtualPath, false);
-			else
-				throw new InvalidOperationException ("Request is missing - cannot map paths.");
+			initialized = true;
+			if (attributes != null) {
+				foreach (string key in attributes.AllKeys) {
+					switch (key) {
+						case "siteMapFile":
+							fileVirtualPath = attributes ["siteMapFile"];
+							break;
 
-			if (File.Exists (file)) {
-				ResourceKey = Path.GetFileName (file);
-				CreateWatcher (file);
+						case "description":
+							break;
+
+						default:
+							throw new ConfigurationErrorsException ("The attribute '" + key + "' is unexpected in the configuration of the '" + name + "' provider.");
+					}
+				}
 			}
+			
+			base.Initialize (name, attributes != null ? attributes : new NameValueCollection ());
 		}
 
 		void CreateWatcher (string file)

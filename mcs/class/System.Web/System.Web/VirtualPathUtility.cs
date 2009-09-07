@@ -78,13 +78,13 @@ namespace System.Web {
 			if (IsRooted (relativePath))
 				return Normalize (relativePath);
 
-			if (basePath [basePath.Length - 1] != '/') {
-				if (basePath.Length > 1) {
+			int basePathLen = basePath.Length;
+			if (basePath [basePathLen - 1] != '/') {
+				if (basePathLen > 1) {
 					int lastSlash = basePath.LastIndexOf ('/');
 					if (lastSlash >= 0)
 						basePath = basePath.Substring (0, lastSlash + 1);
-				}
-				else { // "~" only
+				} else { // "~" only
 					basePath += "/";
 				}
 			}

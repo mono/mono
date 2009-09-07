@@ -1,3 +1,17 @@
+2009-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/sub_map_01.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_01.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_02.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_03.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_04.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_05.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_06.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_07.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_08.sitemap
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_09.sitemap
+
 2009-08-25  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added

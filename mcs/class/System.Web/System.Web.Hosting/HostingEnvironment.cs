@@ -145,10 +145,11 @@ namespace System.Web.Hosting {
 				throw new ArgumentNullException ("virtualPath");
 			
 			HttpContext context = HttpContext.Current;
-			if (context == null)
+			HttpRequest req = context == null ? null : context.Request;
+			if (req == null)
 				return null;
 
-			return context.Request.MapPath (virtualPath);
+			return req.MapPath (virtualPath);
 		}
 
 		public static void RegisterObject (IRegisteredObject obj)
