@@ -1,3 +1,8 @@
+2009-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HostingEnvironment.cs: MapPath checks if HttpContext.Request
+	actually exists before using it.
+
 2009-08-26  Marek Habersack  <mhabersack@novell.com>
 
 	* IApplicationHost.cs: added

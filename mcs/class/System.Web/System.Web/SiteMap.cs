@@ -49,6 +49,7 @@ namespace System.Web {
 						throw new InvalidOperationException ("This feature is currently disabled.  Please enable it in the system.web/siteMap section in the web.config file.");
 
 					providers = section.ProvidersInternal;
+					providers.SetReadOnly ();
 					provider = providers[section.DefaultProvider];
 
 					if (provider == null)

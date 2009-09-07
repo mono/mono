@@ -33,6 +33,7 @@
 
 #if NET_2_0
 using System.Collections.Generic;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -69,7 +70,7 @@ namespace System.Web
 							"StaticSiteMapProvider requires that sitemap nodes have unique URLs.",
 							node.Url
 						));
-				
+
 					urlToNode.Add (url, node);
 				}
 				keyToNode.Add (node.Key, node);
@@ -110,7 +111,12 @@ namespace System.Web
 			
 			BuildSiteMap();
 			SiteMapNode node;
-			urlToNode.TryGetValue (MapUrl (rawUrl), out node);
+			if (VirtualPathUtility.IsAppRelative (rawUrl))
+				rawUrl = VirtualPathUtility.ToAbsolute (rawUrl, HttpRuntime.AppDomainAppVirtualPath, false);
+			
+			if (!urlToNode.TryGetValue (rawUrl, out node))
+				return null;
+			
 			return CheckAccessibility (node);
 		}
 
@@ -202,12 +208,17 @@ namespace System.Web
 			return (node != null && IsAccessibleToUser (HttpContext.Current, node)) ? node : null;
 		}
 
-		string MapUrl (string url)
+		internal string MapUrl (string url)
 		{
-			if (VirtualPathUtility.IsAppRelative (url))
-				return VirtualPathUtility.ToAbsolute (url);
-			else
+			if (String.IsNullOrEmpty (url))
 				return url;
+
+			string appVPath = HttpRuntime.AppDomainAppVirtualPath;
+
+			if (VirtualPathUtility.IsAppRelative (url))
+				return VirtualPathUtility.ToAbsolute (url, appVPath, false);
+			else
+				return VirtualPathUtility.ToAbsolute (UrlUtils.Combine (appVPath, url), appVPath, false);
 		}
 	}
 }

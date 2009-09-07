@@ -1,3 +1,7 @@
+2009-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Tests/TestSiteMapProvider.cs: added
+
 2009-07-08  Marek Habersack  <mhabersack@novell.com>
 
 	* WebTest.cs: added new public property - TestBaseDir, to be used

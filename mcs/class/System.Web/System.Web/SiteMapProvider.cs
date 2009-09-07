@@ -74,10 +74,14 @@ namespace System.Web {
 		{
 			if (context == null)
 				return null;
+
+			HttpRequest req = context.Request;
+			if (req == null)
+				return null;
 			
-			SiteMapNode ret = this.FindSiteMapNode (context.Request.RawUrl);
+			SiteMapNode ret = this.FindSiteMapNode (req.RawUrl);
 			if (ret == null)
-				ret = this.FindSiteMapNode (context.Request.Path);
+				ret = this.FindSiteMapNode (req.Path);
 			return ret;
 		}
 

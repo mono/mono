@@ -36,6 +36,7 @@ mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs
+mainsoft/NunitWeb/NunitWeb/Tests/TestSiteMapProvider.cs
 System.Web/AppBrowsersTest.cs
 System.Web/HttpBrowserCapabilitiesTest.cs
 System.Web/HttpCacheVaryByContentEncodingsTest.cs
@@ -518,3 +519,4 @@ System.Web.UI.WebControls/XmlDataSourceCas.cs
 System.Web.Util/TransactionsCas.cs
 System.Web.Util/UrlUtilsTest.cs
 System.Web.Util/WorkItemCas.cs
+System.Web/XmlSiteMapProviderTest.cs

@@ -83,6 +83,16 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config.1.1 \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/sub_map_01.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_01.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_02.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_03.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_04.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_05.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_06.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_07.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_08.sitemap \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_09.sitemap \
 	Test/mainsoft/NunitWebResources/menuclass.aspx \
 	Test/mainsoft/NunitWebResources/FormView.aspx \
 	Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx \

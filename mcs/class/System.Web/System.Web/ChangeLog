@@ -1,3 +1,32 @@
+2009-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: do not allow the provider to be
+	intialized more than once.
+	Initialize throws if it finds unknown attributes in the
+	'attributes' collection.
+	AddNode checks its arguments and throws if they are null or aren't
+	from the same provider.
+	FindStartingNode throws exceptions in several erroneous situations
+	now.
+	Added private method GetConfigDocument which performs several
+	checks on the source .sitemap file and throws exceptions if it
+	finds any errors.
+	BuildSiteMap clears provider state before building the map.
+	BuildSiteMapRecursive correctly deals with custom providers. Fixes
+	bug #465696
+	FindSiteMapNode maps url before searching. Fixes bug #465696
+
+	* VirtualPathUtility.cs: Combine a bit more efficient
+
+	* StaticSiteMapProvider.cs: FindSiteMap node checks if rawUrl is
+	relative to application root and if yes, makes it absolute.
+	MapUrl converts both rooted and not rooted urls to absolute.
+
+	* SiteMapProvider.cs: check if HttpContext.Request exists before
+	using it in FindSiteMapnode
+
+	* SiteMap.cs: Providers collection must be read-only.
+
 2009-09-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: retrieve real Mono version from the runtime and

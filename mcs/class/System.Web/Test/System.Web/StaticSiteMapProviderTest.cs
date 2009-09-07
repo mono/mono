@@ -37,6 +37,8 @@ using System.Diagnostics;
 using MonoTests.SystemWeb.Framework;
 using System.Web.UI;
 
+using Tests;
+
 namespace MonoTests.System.Web {
 	
 	class StaticPoker : StaticSiteMapProvider
@@ -177,6 +179,32 @@ namespace MonoTests.System.Web {
 			Assert.IsTrue (b, "#1");
 		}
 
+		[Test]
+		public void FindSiteMapNode_01 ()
+		{
+			new WebTest (PageInvoker.CreateOnLoad (FindSiteMapNode_01_OnLoad)).Run ();
+		}
+
+		public static void FindSiteMapNode_01_OnLoad (Page p)
+		{
+			var provider = new TestSiteMapProvider ();
+			Assert.IsNotNull (provider.RootNode, "#A1");
+			Assert.AreEqual ("default.aspx", provider.RootNode.Url, "#A1-1");
+
+			SiteMapNode node = provider.FindSiteMapNode ("default.aspx");
+			Assert.IsNull (node, "#A2");
+
+			node = provider.FindSiteMapNode ("/NunitWeb/default.aspx");
+			Assert.IsNotNull (node, "#A3");
+			Assert.AreEqual ("default.aspx", node.Url, "#A3-1");
+			Assert.AreEqual ("Test", node.Title, "#A3-2");
+
+			node = provider.FindSiteMapNode ("~/default.aspx");
+			Assert.IsNotNull (node, "#A4");
+			Assert.AreEqual ("default.aspx", node.Url, "#A4-1");
+			Assert.AreEqual ("Test", node.Title, "#A4-2");
+		}
+		
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
