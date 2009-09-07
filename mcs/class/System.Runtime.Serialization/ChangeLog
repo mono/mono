@@ -1,5 +1,9 @@
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* net_2_1_System.Runtime.Serialization.dll.sources : ditto.
+
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Runtime.Serialization.dll.sources :
 	  added IgnoreDataMemberAttribute.cs.
 
