@@ -7412,8 +7412,16 @@ namespace Mono.CSharp {
 					//
 					// See gtest-172-lib.cs and gtest-172.cs for an example.
 					//
-					ct = new GenericTypeExpr (
-						member_lookup.Type, ct.TypeArguments, loc);
+
+					TypeArguments nested_targs;
+					if (HasTypeArguments) {
+						nested_targs = ct.TypeArguments.Clone ();
+						nested_targs.Add (targs);
+					} else {
+						nested_targs = ct.TypeArguments;
+					}
+
+					ct = new GenericTypeExpr (member_lookup.Type, nested_targs, loc);
 
 					return ct.ResolveAsTypeStep (ec, false);
 				}

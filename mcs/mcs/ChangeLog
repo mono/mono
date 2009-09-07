@@ -1,5 +1,11 @@
 2009-09-07  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #324625
+	* expression.cs, ecore.cs: Create nested generic type expression
+	using declaring and not current type.
+
+2009-09-07  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Changed Report class to accept various output printers and
 	be an instance class. An expression resolver can now use different
 	message reporter for each call and Report.Error can safely throw

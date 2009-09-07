@@ -2487,17 +2487,14 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		FullNamedExpression ResolveNested (IMemberContext ec, Type t)
+		FullNamedExpression ResolveNested (Type t)
 		{
 			if (!TypeManager.IsGenericTypeDefinition (t) && !TypeManager.IsGenericType (t))
 				return null;
 
-			if (ec.CurrentType == null)
-				return null;
-
-			DeclSpace ds = ec.CurrentTypeDefinition;
-			while (ds != null && !IsNestedChild (t, ds.TypeBuilder))
-				ds = ds.Parent;
+			Type ds = t;
+			while (ds != null && !IsNestedChild (t, ds))
+				ds = ds.DeclaringType;
 
 			if (ds == null)
 				return null;
@@ -2506,11 +2503,12 @@ namespace Mono.CSharp {
 
 			int arg_count = targs != null ? targs.Count : 0;
 
-			for (; (ds != null) && ds.IsGeneric; ds = ds.Parent) {
-				if (arg_count + ds.CountTypeParameters == gen_params.Length) {
+			for (; (ds != null) && TypeManager.IsGenericType (ds); ds = ds.DeclaringType) {
+				Type[] gargs = TypeManager.GetTypeArguments (ds);
+				if (arg_count + gargs.Length == gen_params.Length) {
 					TypeArguments new_args = new TypeArguments ();
-					foreach (TypeParameter param in ds.TypeParameters)
-						new_args.Add (new TypeParameterExpr (param, loc));
+					foreach (Type param in gargs)
+						new_args.Add (new TypeExpression (param, loc));
 
 					if (targs != null)
 						new_args.Add (targs);
@@ -2531,7 +2529,7 @@ namespace Mono.CSharp {
 				if (fne.Type == null)
 					return fne;
 
-				FullNamedExpression nested = ResolveNested (ec, fne.Type);
+				FullNamedExpression nested = ResolveNested (fne.Type);
 				if (nested != null)
 					return nested.ResolveAsTypeStep (ec, false);
 
