@@ -95,7 +95,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if (!IsValidEnumType (c.Type)) {
-					Enum.Error_1008 (Location);
+					Enum.Error_1008 (Location, ec.Report);
 					return null;
 				}
 
@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 		{
 			this.base_type = type;
 			int accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, accmods, Location);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
 		}
 
 		public void AddEnumMember (EnumMember em)
@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 			AddConstant (em);
 		}
 
-		public static void Error_1008 (Location loc)
+		public static void Error_1008 (Location loc, Report Report)
 		{
 			Report.Error (1008, loc, "Type byte, sbyte, short, ushort, " +
 				      "int, uint, long or ulong expected");

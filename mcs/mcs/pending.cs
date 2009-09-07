@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 		///   Verifies that any pending abstract methods or interface methods
 		///   were implemented.
 		/// </summary>
-		public bool VerifyPendingMethods ()
+		public bool VerifyPendingMethods (Report Report)
 		{
 			int top = pending_implementations.Length;
 			bool errors = false;

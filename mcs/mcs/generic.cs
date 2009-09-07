@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 		///   Resolve the constraints - but only resolve things into Expression's, not
 		///   into actual types.
 		/// </summary>
-		public bool Resolve (MemberCore ec, TypeParameter tp)
+		public bool Resolve (MemberCore ec, TypeParameter tp, Report Report)
 		{
 			if (resolved)
 				return true;
@@ -302,7 +302,7 @@ namespace Mono.CSharp {
 					if (errors != Report.Errors)
 						return false;
 
-					NamespaceEntry.Error_NamespaceNotFound (loc, ((Expression)obj).GetSignatureForError ());
+					NamespaceEntry.Error_NamespaceNotFound (loc, ((Expression)obj).GetSignatureForError (), Report);
 					return false;
 				}
 
@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool CheckTypeParameterConstraints (Type tparam, ref TypeExpr prevConstraint, ArrayList seen)
+		bool CheckTypeParameterConstraints (Type tparam, ref TypeExpr prevConstraint, ArrayList seen, Report Report)
 		{
 			seen.Add (tparam);
 
@@ -487,7 +487,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (!CheckTypeParameterConstraints (expr.Type, ref prevConstraint, seen))
+				if (!CheckTypeParameterConstraints (expr.Type, ref prevConstraint, seen, Report))
 					return false;
 			}
 
@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the constraints into actual types.
 		/// </summary>
-		public bool ResolveTypes (IMemberContext ec)
+		public bool ResolveTypes (IMemberContext ec, Report r)
 		{
 			if (resolved_types)
 				return true;
@@ -517,7 +517,7 @@ namespace Mono.CSharp {
 				ArrayList seen = new ArrayList ();
 				TypeExpr prev_constraint = class_constraint;
 				foreach (TypeExpr expr in type_param_constraints) {
-					if (!CheckTypeParameterConstraints (expr.Type, ref prev_constraint, seen))
+					if (!CheckTypeParameterConstraints (expr.Type, ref prev_constraint, seen, r))
 						return false;
 					seen.Clear ();
 				}
@@ -632,21 +632,21 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void VerifyClsCompliance ()
+		public void VerifyClsCompliance (Report r)
 		{
 			if (class_constraint_type != null && !AttributeTester.IsClsCompliant (class_constraint_type))
-				Warning_ConstrainIsNotClsCompliant (class_constraint_type, class_constraint.Location);
+				Warning_ConstrainIsNotClsCompliant (class_constraint_type, class_constraint.Location, r);
 
 			if (iface_constraint_types != null) {
 				for (int i = 0; i < iface_constraint_types.Length; ++i) {
 					if (!AttributeTester.IsClsCompliant (iface_constraint_types [i]))
 						Warning_ConstrainIsNotClsCompliant (iface_constraint_types [i],
-							((TypeExpr)iface_constraints [i]).Location);
+							((TypeExpr)iface_constraints [i]).Location, r);
 				}
 			}
 		}
 
-		void Warning_ConstrainIsNotClsCompliant (Type t, Location loc)
+		void Warning_ConstrainIsNotClsCompliant (Type t, Location loc, Report Report)
 		{
 			Report.SymbolRelatedToPreviousError (t);
 			Report.Warning (3024, 1, loc, "Constraint type `{0}' is not CLS-compliant",
@@ -750,7 +750,7 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null) {
-				if (!constraints.Resolve (ds, this)) {
+				if (!constraints.Resolve (ds, this, Report)) {
 					constraints = null;
 					return false;
 				}
@@ -772,7 +772,7 @@ namespace Mono.CSharp {
 		public bool ResolveType (IMemberContext ec)
 		{
 			if (constraints != null) {
-				if (!constraints.ResolveTypes (ec)) {
+				if (!constraints.ResolveTypes (ec, Report)) {
 					constraints = null;
 					return false;
 				}
@@ -910,9 +910,9 @@ namespace Mono.CSharp {
 			if (new_constraints == null)
 				return true;
 
-			if (!new_constraints.Resolve (ec, this))
+			if (!new_constraints.Resolve (ec, this, Report))
 				return false;
-			if (!new_constraints.ResolveTypes (ec))
+			if (!new_constraints.ResolveTypes (ec, Report))
 				return false;
 
 			if (constraints != null) 
@@ -1261,13 +1261,13 @@ namespace Mono.CSharp {
 				atypes[i] = te.Type;
 
 				if (te.Type.IsSealed && te.Type.IsAbstract) {
-					Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
+					ec.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					ok = false;
 				}
 
 				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
-					Report.Error (306, te.Location,
+					ec.Compiler.Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
 					ok = false;
@@ -1446,12 +1446,14 @@ namespace Mono.CSharp {
 		protected readonly Type[] gen_params;
 		protected readonly Type[] atypes;
 		protected readonly Location loc;
+		protected Report Report;
 
-		protected ConstraintChecker (Type[] gen_params, Type[] atypes, Location loc)
+		protected ConstraintChecker (Type[] gen_params, Type[] atypes, Location loc, Report r)
 		{
 			this.gen_params = gen_params;
 			this.atypes = atypes;
 			this.loc = loc;
+			this.Report = r;
 		}
 
 		/// <summary>
@@ -1492,7 +1494,7 @@ namespace Mono.CSharp {
 						// when resolving base type of unresolved generic type
 						// with constraints. We are waiting with CheckConsttraints
 						// after type-definition but not in this case
-						if (!((Constraints) agc).Resolve (null, null))
+						if (!((Constraints) agc).Resolve (null, null, Report))
 							return true;
 					}
 					is_class = agc.IsReferenceType;
@@ -1685,7 +1687,7 @@ namespace Mono.CSharp {
 		{
 			MethodConstraintChecker checker = new MethodConstraintChecker (
 				definition, definition.GetGenericArguments (),
-				instantiated.GetGenericArguments (), loc);
+				instantiated.GetGenericArguments (), loc, ec.Compiler.Report);
 
 			return checker.CheckConstraints (ec);
 		}
@@ -1694,7 +1696,7 @@ namespace Mono.CSharp {
 						     Type[] atypes, Location loc)
 		{
 			TypeConstraintChecker checker = new TypeConstraintChecker (
-				gt, gen_params, atypes, loc);
+				gt, gen_params, atypes, loc, ec.Compiler.Report);
 
 			return checker.CheckConstraints (ec);
 		}
@@ -1704,8 +1706,8 @@ namespace Mono.CSharp {
 			MethodBase definition;
 
 			public MethodConstraintChecker (MethodBase definition, Type[] gen_params,
-							Type[] atypes, Location loc)
-				: base (gen_params, atypes, loc)
+							Type[] atypes, Location loc, Report r)
+				: base (gen_params, atypes, loc, r)
 			{
 				this.definition = definition;
 			}
@@ -1726,8 +1728,8 @@ namespace Mono.CSharp {
 			Type gt;
 
 			public TypeConstraintChecker (Type gt, Type[] gen_params, Type[] atypes,
-						      Location loc)
-				: base (gen_params, atypes, loc)
+						      Location loc, Report r)
+				: base (gen_params, atypes, loc, r)
 			{
 				this.gt = gt;
 			}
@@ -1802,7 +1804,7 @@ namespace Mono.CSharp {
 					if (b == null)
 						b = new Block (null);
 
-					b.Error_AlreadyDeclaredTypeParameter (parameters [i].Location,
+					b.Error_AlreadyDeclaredTypeParameter (Report, parameters [i].Location,
 						type_argument_name, "method parameter");
 				}
 				
@@ -1885,7 +1887,7 @@ namespace Mono.CSharp {
 				if (tp.Constraints == null)
 					continue;
 
-				tp.Constraints.VerifyClsCompliance ();
+				tp.Constraints.VerifyClsCompliance (Report);
 			}
 		}
 	}
@@ -2123,22 +2125,21 @@ namespace Mono.CSharp {
 			return 0;
 		}
 
-		/// <summary>
-		///   Type inference.
-		/// </summary>
-		public static bool InferTypeArguments (AParametersCollection param, ref MethodBase method)
+/*
+		public static bool InferTypeArguments (ResolveContext ec, AParametersCollection param, ref MethodBase method)
 		{
 			if (!TypeManager.IsGenericMethod (method))
 				return true;
 
 			ATypeInference ti = ATypeInference.CreateInstance (DelegateCreation.CreateDelegateMethodArguments (param, Location.Null));
-			Type[] i_args = ti.InferDelegateArguments (method);
+			Type[] i_args = ti.InferDelegateArguments (ec, method);
 			if (i_args == null)
 				return false;
 
 			method = ((MethodInfo) method).MakeGenericMethod (i_args);
 			return true;
 		}
+*/
 	}
 
 	abstract class ATypeInference
@@ -2165,7 +2166,7 @@ namespace Mono.CSharp {
 		}
 
 		public abstract Type[] InferMethodArguments (ResolveContext ec, MethodBase method);
-		public abstract Type[] InferDelegateArguments (MethodBase method);
+//		public abstract Type[] InferDelegateArguments (ResolveContext ec, MethodBase method);
 	}
 
 	//
@@ -2189,7 +2190,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Type[] InferDelegateArguments (MethodBase method)
+/*
+		public override Type[] InferDelegateArguments (ResolveContext ec, MethodBase method)
 		{
 			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (arg_count != pd.Count)
@@ -2208,12 +2210,12 @@ namespace Mono.CSharp {
 				context.LowerBoundInference (arguments [i].Expr.Type, t);
 			}
 
-			if (!context.FixAllTypes ())
+			if (!context.FixAllTypes (ec))
 				return null;
 
 			return context.InferredTypeArguments;
 		}
-
+*/
 		public override Type[] InferMethodArguments (ResolveContext ec, MethodBase method)
 		{
 			Type[] method_generic_args = method.GetGenericArguments ();
@@ -2269,7 +2271,7 @@ namespace Mono.CSharp {
 				//
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
-					if (am.ExplicitTypeInference (tic, method_parameter))
+					if (am.ExplicitTypeInference (ec, tic, method_parameter))
 						--score; 
 					continue;
 				}
@@ -2298,7 +2300,7 @@ namespace Mono.CSharp {
 			// we don't need to call it in cycle
 			//
 			bool fixed_any = false;
-			if (!tic.FixIndependentTypeArguments (ptypes, ref fixed_any))
+			if (!tic.FixIndependentTypeArguments (ec, ptypes, ref fixed_any))
 				return false;
 
 			return DoSecondPhase (ec, tic, ptypes, !fixed_any);
@@ -2307,7 +2309,7 @@ namespace Mono.CSharp {
 		bool DoSecondPhase (ResolveContext ec, TypeInferenceContext tic, Type[] methodParameters, bool fixDependent)
 		{
 			bool fixed_any = false;
-			if (fixDependent && !tic.FixDependentTypes (ref fixed_any))
+			if (fixDependent && !tic.FixDependentTypes (ec, ref fixed_any))
 				return false;
 
 			// If no further unfixed type variables exist, type inference succeeds
@@ -2332,7 +2334,7 @@ namespace Mono.CSharp {
 					t_i = t_i.GetGenericArguments () [0];
 				}
 
-				MethodInfo mi = Delegate.GetInvokeMethod (t_i, t_i);
+				MethodInfo mi = Delegate.GetInvokeMethod (ec.Compiler, t_i, t_i);
 				Type rtype = mi.ReturnType;
 
 #if MS_COMPATIBLE
@@ -2341,7 +2343,7 @@ namespace Mono.CSharp {
 				rtype = g_args[rtype.GenericParameterPosition];
 #endif
 
-				if (tic.IsReturnTypeNonDependent (mi, rtype))
+				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
 					score -= tic.OutputTypeInference (ec, arguments [i].Expr, t_i);
 			}
 
@@ -2517,10 +2519,10 @@ namespace Mono.CSharp {
 			return 1;
 		}
 
-		public bool FixAllTypes ()
+		public bool FixAllTypes (ResolveContext ec)
 		{
 			for (int i = 0; i < unfixed_types.Length; ++i) {
-				if (!FixType (i))
+				if (!FixType (ec, i))
 					return false;
 			}
 			return true;
@@ -2531,7 +2533,7 @@ namespace Mono.CSharp {
 		// a, There is at least one type variable Xj that depends on Xi
 		// b, Xi has a non-empty set of bounds
 		// 
-		public bool FixDependentTypes (ref bool fixed_any)
+		public bool FixDependentTypes (ResolveContext ec, ref bool fixed_any)
 		{
 			for (int i = 0; i < unfixed_types.Length; ++i) {
 				if (unfixed_types[i] == null)
@@ -2540,7 +2542,7 @@ namespace Mono.CSharp {
 				if (bounds[i] == null)
 					continue;
 
-				if (!FixType (i))
+				if (!FixType (ec, i))
 					return false;
 				
 				fixed_any = true;
@@ -2552,7 +2554,7 @@ namespace Mono.CSharp {
 		//
 		// All unfixed type variables Xi which depend on no Xj are fixed
 		//
-		public bool FixIndependentTypeArguments (Type[] methodParameters, ref bool fixed_any)
+		public bool FixIndependentTypeArguments (ResolveContext ec, Type[] methodParameters, ref bool fixed_any)
 		{
 			ArrayList types_to_fix = new ArrayList (unfixed_types);
 			for (int i = 0; i < methodParameters.Length; ++i) {
@@ -2568,7 +2570,7 @@ namespace Mono.CSharp {
 				if (t.IsGenericParameter)
 					continue;
 
-				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 				Type rtype = invoke.ReturnType;
 				if (!rtype.IsGenericParameter && !rtype.IsGenericType)
 					continue;
@@ -2589,7 +2591,7 @@ namespace Mono.CSharp {
 					continue;
 
 				int idx = IsUnfixed (t);
-				if (idx >= 0 && !FixType (idx)) {
+				if (idx >= 0 && !FixType (ec, idx)) {
 					return false;
 				}
 			}
@@ -2601,7 +2603,7 @@ namespace Mono.CSharp {
 		//
 		// 26.3.3.10 Fixing
 		//
-		public bool FixType (int i)
+		public bool FixType (ResolveContext ec, int i)
 		{
 			// It's already fixed
 			if (unfixed_types[i] == null)
@@ -2650,7 +2652,7 @@ namespace Mono.CSharp {
 
 					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
 						if (cbound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (null, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
 								break;
 							}
 
@@ -2658,7 +2660,7 @@ namespace Mono.CSharp {
 						}
 						
 						if (bound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+							if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 								break;
 							}
 
@@ -2670,11 +2672,11 @@ namespace Mono.CSharp {
 					}
 
 					if (bound.Kind == BoundKind.Lower) {
-						if (!Convert.ImplicitConversionExists (null, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
+						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (cbound.Type, Location.Null), bound.Type)) {
 							break;
 						}
 					} else {
-						if (!Convert.ImplicitConversionExists (null, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
+						if (!Convert.ImplicitConversionExists (ec, new TypeExpression (bound.Type, Location.Null), cbound.Type)) {
 							break;
 						}
 					}
@@ -2727,15 +2729,15 @@ namespace Mono.CSharp {
 		// Tests whether all delegate input arguments are fixed and generic output type
 		// requires output type inference 
 		//
-		public bool IsReturnTypeNonDependent (MethodInfo invoke, Type returnType)
+		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodInfo invoke, Type returnType)
 		{
 			if (returnType.IsGenericParameter) {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (returnType.IsGenericType) {
 				if (TypeManager.IsDelegateType (returnType)) {
-					invoke = Delegate.GetInvokeMethod (returnType, returnType);
-					return IsReturnTypeNonDependent (invoke, invoke.ReturnType);
+					invoke = Delegate.GetInvokeMethod (ec.Compiler, returnType, returnType);
+					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
 				}
 					
 				Type[] g_args = returnType.GetGenericArguments ();
@@ -2909,7 +2911,7 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
 			if (ame != null) {
 				Type rt = ame.InferReturnType (ec, this, t);
-				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 
 				if (rt == null) {
 					AParametersCollection pd = TypeManager.GetParameterData (invoke);
@@ -2936,7 +2938,7 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsDelegateType (t))
 					return 0;
 
-				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 				Type rtype = invoke.ReturnType;
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types

@@ -151,6 +151,8 @@ namespace Mono.CSharp
 
 		// A counter to create new class names in interactive mode
 		static int class_count;
+		
+		CompilerContext compiler;
 %}
 
 %token EOF
@@ -425,7 +427,7 @@ extern_alias_directive
 			Report.FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
-			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location);
+			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location, Report);
 		}
 	  }
 	| EXTERN_ALIAS error
@@ -2511,7 +2513,7 @@ opt_enum_base
 			$2 != TypeManager.system_int64_expr && $2 != TypeManager.system_uint64_expr &&
 			$2 != TypeManager.system_int16_expr && $2 != TypeManager.system_uint16_expr &&
 			$2 != TypeManager.system_byte_expr && $2 != TypeManager.system_sbyte_expr)
-			Enum.Error_1008 (GetLocation ($2));
+			Enum.Error_1008 (GetLocation ($2), Report);
 	 
 		$$ = $2;
 	 }
@@ -2856,7 +2858,7 @@ type
 	: type_expression_or_array
 	| VOID
 	  {
-	  	Expression.Error_VoidInvalidInTheContext (lexer.Location);
+	  	Expression.Error_VoidInvalidInTheContext (lexer.Location, Report);
 		$$ = TypeManager.system_void_expr;
 	  }	
 	;
@@ -2865,7 +2867,7 @@ simple_type
 	: type_expression
 	| VOID
 	  {
-	  	Expression.Error_VoidInvalidInTheContext (lexer.Location);
+	  	Expression.Error_VoidInvalidInTheContext (lexer.Location, Report);
 		$$ = TypeManager.system_void_expr;
 	  }	
 	;
@@ -4613,7 +4615,7 @@ variable_type
 	  }
 	| VOID opt_rank_specifier
 	  {
-		Expression.Error_VoidInvalidInTheContext (lexer.Location);
+		Expression.Error_VoidInvalidInTheContext (lexer.Location, Report);
 		$$ = TypeManager.system_void_expr;
 	  }
 	;
@@ -4704,7 +4706,7 @@ statement_expression
 	  {
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
-			((Expression) $1).Error_InvalidExpressionStatement ();
+			Expression.Error_InvalidExpressionStatement (Report, GetLocation ($1));
 			s = EmptyExpressionStatement.Instance;
 		}
 
@@ -5238,7 +5240,7 @@ unchecked_statement
 unsafe_statement
 	: UNSAFE 
 	  {
-		RootContext.CheckUnsafeOption ((Location) $1);
+		RootContext.CheckUnsafeOption ((Location) $1, Report);
 	  } block {
 		$$ = new Unsafe ((Block) $3);
 	  }
@@ -5422,12 +5424,12 @@ first_from_clause
 	: FROM_FIRST IDENTIFIER IN expression
 	  {
 		$$ = new Linq.QueryExpression (current_block, new Linq.QueryStartClause ((Expression)$4));
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $2, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $2, GetLocation ($1));
 	  }
 	| FROM_FIRST type IDENTIFIER IN expression
 	  {
 		$$ = new Linq.QueryExpression (current_block, new Linq.Cast ((FullNamedExpression)$2, (Expression)$5));
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $3, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $3, GetLocation ($1));
 	  }
 	;
 
@@ -5435,19 +5437,19 @@ nested_from_clause
 	: FROM IDENTIFIER IN expression
 	  {
 		$$ = new Linq.QueryExpression (current_block, new Linq.QueryStartClause ((Expression)$4));
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $2, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $2, GetLocation ($1));
 	  }
 	| FROM type IDENTIFIER IN expression
 	  {
 		$$ = new Linq.QueryExpression (current_block, new Linq.Cast ((FullNamedExpression)$2, (Expression)$5));
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $3, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $3, GetLocation ($1));
 	  }
 	;
 	
 from_clause
 	: FROM IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
 	  }
 	  expression
 	  {
@@ -5461,7 +5463,7 @@ from_clause
 	  }	  
 	| FROM type IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
 	  }
 	  expression
 	  {
@@ -5498,7 +5500,7 @@ query_body
 select_or_group_clause
 	: SELECT
 	  {
-	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5512,7 +5514,7 @@ select_or_group_clause
 	  	if (linq_clause_blocks == null)
 	  		linq_clause_blocks = new Stack ();
 	  		
-	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  	linq_clause_blocks.Push (current_block);
 	  }
 	  expression
@@ -5520,7 +5522,7 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  BY expression
 	  {
@@ -5556,7 +5558,7 @@ query_body_clause
 let_clause
 	: LET IDENTIFIER ASSIGN 
 	  {
-	  	current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+	  	current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
 	  }
 	  expression
 	  {
@@ -5573,7 +5575,7 @@ let_clause
 where_clause
 	: WHERE
 	  {
-	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  boolean_expression
 	  {
@@ -5590,7 +5592,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack ();
 	  		
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
 	  }
 	  expression ON
@@ -5598,7 +5600,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
 	  }
 	  expression EQUALS
@@ -5607,7 +5609,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $2, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $2, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5637,7 +5639,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack ();
 	  		
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
 	  }
 	  expression ON
@@ -5645,7 +5647,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
 	  }
 	  expression EQUALS
@@ -5654,7 +5656,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $3, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $3, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5692,7 +5694,7 @@ opt_join_into
 orderby_clause
 	: ORDERBY
 	  {
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  orderings
 	  {
@@ -5710,7 +5712,7 @@ orderings
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  orderings_then_by
 	  {
@@ -5726,7 +5728,7 @@ orderings_then_by
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (current_block, lexer.Location);	 
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);	 
 	 }
 	 then_by
 	 {
@@ -5777,7 +5779,7 @@ opt_query_continuation
 		current_block.SetEndLocation (GetLocation ($1));
 		current_block = current_block.Parent;
 		
-		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $2, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, (LocatedToken) $2, GetLocation ($1));
 	  }
 	  query_body
 	  {
@@ -5927,33 +5929,33 @@ struct OperatorDeclaration {
 	}
 }
 
-static void Error_ExpectingTypeName (Expression expr)
+void Error_ExpectingTypeName (Expression expr)
 {
 	if (expr is Invocation){
 		Report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		expr.Error_InvalidExpressionStatement ();
+		Expression.Error_InvalidExpressionStatement (Report, expr.Location);
 	}
 }
 
-static void Error_ParameterModifierNotValid (string modifier, Location loc)
+void Error_ParameterModifierNotValid (string modifier, Location loc)
 {
 	Report.Error (631, loc, "The parameter modifier `{0}' is not valid in this context",
 			              modifier);
 }
 
-static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
+void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
 {
 	Report.Error (1107, loc, "Duplicate parameter modifier `{0}'",
   		Parameter.GetModifierSignature (mod));
 }
 
-static void Error_TypeExpected (Location loc)
+void Error_TypeExpected (Location loc)
 {
 	Report.Error (1031, loc, "Type expected");
 }
 
-static void Error_NamedArgumentExpected (NamedArgument a)
+void Error_NamedArgumentExpected (NamedArgument a)
 {
 	Report.Error (1738, a.Name.Location, "Named arguments must appear after the positional arguments");
 }
@@ -6169,17 +6171,18 @@ static CSharpParser ()
 	oob_stack = new Stack ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file)
+public CSharpParser (SeekableStreamReader reader, CompilationUnit file, CompilerContext ctx)
 {
 	if (RootContext.EvalMode)
 		undo = new Undo ();
 
 	this.file = file;
+	this.compiler = ctx;
 	current_namespace = new NamespaceEntry (null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file);
+	lexer = new Tokenizer (reader, file, ctx);
 }
 
 public void parse ()
@@ -6208,7 +6211,7 @@ public void parse ()
 		throw new InternalErrorException ("who set it?");
 }
 
-static void CheckToken (int error, int yyToken, string msg, Location loc)
+void CheckToken (int error, int yyToken, string msg, Location loc)
 {
 	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD)
 		Report.Error (error, loc, "{0}: `{1}' is a keyword", msg, GetTokenName (yyToken));
@@ -6242,10 +6245,14 @@ Location GetLocation (object obj)
 	return lexer.Location;
 }
 
+Report Report {
+	get { return compiler.Report; }
+}
+
 void start_block (Location loc)
 {
 	if (current_block == null || parsing_anonymous_method) {
-		current_block = new ToplevelBlock (current_block, current_local_parameters, current_generic_method, loc);
+		current_block = new ToplevelBlock (compiler, current_block, current_local_parameters, current_generic_method, loc);
 		parsing_anonymous_method = false;
 	} else {
 		current_block = new ExplicitBlock (current_block, loc, Location.Null);

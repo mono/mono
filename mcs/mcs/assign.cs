@@ -210,7 +210,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (this));
-			return CreateExpressionFactoryCall ("Constant", args);
+			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
+			ec.Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
 			return null;
 		}
 
@@ -354,13 +354,13 @@ namespace Mono.CSharp {
 			type = target_type;
 
 			if (!(target is IAssignMethod)) {
-				Error_ValueAssignment (loc);
+				Error_ValueAssignment (ec, loc);
 				return null;
 			}
 
 			if ((RootContext.Version == LanguageVersion.ISO_1) &&
 				   (source is MethodGroupExpr)){
-				((MethodGroupExpr) source).ReportUsageError ();
+				((MethodGroupExpr) source).ReportUsageError (ec);
 				return null;
 			}
 
@@ -450,7 +450,7 @@ namespace Mono.CSharp {
 				return e;
 
 			if (CheckEqualAssign (target))
-				Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
+				ec.Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
 
 			return this;
 		}
@@ -546,7 +546,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (op != Binary.Operator.Addition && op != Binary.Operator.Subtraction)
-				target.Error_AssignmentEventOnly ();
+				target.Error_AssignmentEventOnly (ec);
 
 			source = source.Resolve (ec);
 			if (source == null)
@@ -633,7 +633,9 @@ namespace Mono.CSharp {
 				return null;
 
 			if (target is MethodGroupExpr){
-				Error_CannotAssign (((MethodGroupExpr)target).Name, target.ExprClassName);
+				ec.Report.Error (1656, loc,
+					"Cannot assign to `{0}' because it is a `{1}'",
+					((MethodGroupExpr)target).Name, target.ExprClassName);
 				return null;
 			}
 

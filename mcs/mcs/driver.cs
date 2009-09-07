@@ -99,6 +99,8 @@ namespace Mono.CSharp
 		//
 		Encoding encoding;
 
+		readonly CompilerContext ctx;
+
 		static readonly char[] argument_value_separator = new char [] { ';', ',' };
 
 		static public void Reset ()
@@ -106,18 +108,24 @@ namespace Mono.CSharp
 			output_file = null;
 		}
 
-		public Driver ()
+		private Driver (CompilerContext ctx)
 		{
+			this.ctx = ctx;
 			encoding = Encoding.Default;
 		}
 
-		public static Driver Create (string [] args, bool require_files)
+		public static Driver Create (string[] args, bool require_files, ReportPrinter printer)
 		{
-			Driver d = new Driver ();
+			Driver d = new Driver (new CompilerContext (new Report (printer)));
+
 			if (!d.ParseArguments (args, require_files))
 				return null;
 
 			return d;
+		}
+
+		Report Report {
+			get { return ctx.Report; }
 		}
 
 		void ShowTime (string msg)
@@ -148,7 +156,7 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}	       
 	       
-		void tokenize_file (CompilationUnit file)
+		void tokenize_file (CompilationUnit file, CompilerContext ctx)
 		{
 			Stream input;
 
@@ -161,7 +169,7 @@ namespace Mono.CSharp
 
 			using (input){
 				SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
-				Tokenizer lexer = new Tokenizer (reader, file);
+				Tokenizer lexer = new Tokenizer (reader, file, ctx);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -202,8 +210,7 @@ namespace Mono.CSharp
 		
 		void Parse (SeekableStreamReader reader, CompilationUnit file)
 		{
-			CSharpParser parser = new CSharpParser (reader, file);
-			parser.ErrorOutput = Report.Stderr;
+			CSharpParser parser = new CSharpParser (reader, file, ctx);
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
@@ -276,7 +283,7 @@ namespace Mono.CSharp
 				"Options can be of the form -option or /option");
 		}
 
-		static void TargetUsage ()
+		void TargetUsage ()
 		{
 			Report.Error (2019, "Invalid target type for -target. Valid options are `exe', `winexe', `library' or `module'");
 		}
@@ -299,13 +306,13 @@ namespace Mono.CSharp
 		{
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
-			Driver d = Driver.Create (args, true);
+			Driver d = Driver.Create (args, true, new ConsoleReportPrinter ());
 			if (d == null)
 				return 1;
 
-			if (d.Compile () && Report.Errors == 0) {
-				if (Report.Warnings > 0) {
-					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
+			if (d.Compile () && d.Report.Errors == 0) {
+				if (d.Report.Warnings > 0) {
+					Console.WriteLine ("Compilation succeeded - {0} warning(s)", d.Report.Warnings);
 				}
 				Environment.Exit (0);
 				return 0;
@@ -313,31 +320,31 @@ namespace Mono.CSharp
 			
 			
 			Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
-				Report.Errors, Report.Warnings);
+				d.Report.Errors, d.Report.Warnings);
 			Environment.Exit (1);
 			return 1;
 		}
 
-		static public void LoadAssembly (string assembly, bool soft)
+		public void LoadAssembly (string assembly, bool soft)
 		{
 			LoadAssembly (assembly, null, soft);
 		}
 
-		static void Error6 (string name, string log)
+		void Error6 (string name, string log)
 		{
 			if (log != null && log.Length > 0)
 				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
 			Report.Error (6, "cannot find metadata file `{0}'", name);
 		}
 
-		static void Error9 (string type, string filename, string log)
+		void Error9 (string type, string filename, string log)
 		{
 			if (log != null && log.Length > 0)
 				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
 			Report.Error (9, "file `{0}' has invalid `{1}' metadata", filename, type);
 		}
 
-		static void BadAssembly (string filename, string log)
+		void BadAssembly (string filename, string log)
 		{
 			MethodInfo adder_method = AssemblyClass.AddModule_Method;
 
@@ -369,7 +376,7 @@ namespace Mono.CSharp
 			Error9 ("assembly", filename, log);
 		}
 
-		static public void LoadAssembly (string assembly, string alias, bool soft)
+		public void LoadAssembly (string assembly, string alias, bool soft)
 		{
 			Assembly a = null;
 			string total_log = "";
@@ -413,7 +420,7 @@ namespace Mono.CSharp
 				if (alias == null)
 					GlobalRootNamespace.Instance.AddAssemblyReference (a);
 				else
-					GlobalRootNamespace.Instance.DefineRootNamespace (alias, a);
+					GlobalRootNamespace.Instance.DefineRootNamespace (alias, a, ctx);
 
 			} catch (BadImageFormatException f) {
 				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
@@ -424,7 +431,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		static public void LoadModule (string module)
+		public void LoadModule (string module)
 		{
 			Module m = null;
 			string total_log = "";
@@ -485,7 +492,7 @@ namespace Mono.CSharp
 			foreach (DictionaryEntry entry in external_aliases)
 				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
 				
-			GlobalRootNamespace.Instance.ComputeNamespaces ();
+			GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
 		}
 
 		static string [] LoadArgs (string file)
@@ -582,7 +589,7 @@ namespace Mono.CSharp
 			if (first_source == null)
 				first_source = f;
 
-			Location.AddFile (f);
+			Location.AddFile (Report, f);
 		}
 
 		bool ParseArguments (string[] args, bool require_files)
@@ -693,7 +700,7 @@ namespace Mono.CSharp
 			ArrayList cu = Location.SourceFiles;
 			for (int i = 0; i < cu.Count; ++i) {
 				if (tokenize) {
-					tokenize_file ((CompilationUnit) cu [i]);
+					tokenize_file ((CompilationUnit) cu [i], ctx);
 				} else {
 					Parse ((CompilationUnit) cu [i]);
 				}
@@ -802,7 +809,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		static void SetWarningLevel (string s)
+		void SetWarningLevel (string s)
 		{
 			int level = -1;
 
@@ -893,7 +900,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--stacktrace":
-				Report.Stacktrace = true;
+				Report.Printer.Stacktrace = true;
 				return true;
 				
 			case "--linkresource":
@@ -905,7 +912,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				if (embedded_resources == null)
-					embedded_resources = new Resources ();
+					embedded_resources = new Resources (ctx);
 				
 				embedded_resources.Add (false, args [++i], args [i]);
 				return true;
@@ -919,7 +926,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				if (embedded_resources == null)
-					embedded_resources = new Resources ();
+					embedded_resources = new Resources (ctx);
 				
 				embedded_resources.Add (true, args [++i], args [i]);
 				return true;
@@ -1069,7 +1076,7 @@ namespace Mono.CSharp
 		}
 
 #if !SMCS_SOURCE
-		public static string GetPackageFlags (string packages, bool fatal)
+		public static string GetPackageFlags (string packages, bool fatal, Report report)
 		{
 			ProcessStartInfo pi = new ProcessStartInfo ();
 			pi.FileName = "pkg-config";
@@ -1080,7 +1087,7 @@ namespace Mono.CSharp
 			try {
 				p = Process.Start (pi);
 			} catch (Exception e) {
-				Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
+				report.Error (-27, "Couldn't run pkg-config: " + e.Message);
 				if (fatal)
 					Environment.Exit (1);
 				p.Close ();
@@ -1088,14 +1095,14 @@ namespace Mono.CSharp
 			}
 			
 			if (p.StandardOutput == null){
-				Report.Warning (-27, 1, "Specified package did not return any information");
+				report.Warning (-27, 1, "Specified package did not return any information");
 				p.Close ();
 				return null;
 			}
 			string pkgout = p.StandardOutput.ReadToEnd ();
 			p.WaitForExit ();
 			if (p.ExitCode != 0) {
-				Report.Error (-27, "Error running pkg-config. Check the above output.");
+				report.Error (-27, "Error running pkg-config. Check the above output.");
 				if (fatal)
 					Environment.Exit (1);
 				p.Close ();
@@ -1215,7 +1222,7 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				packages = String.Join (" ", value.Split (new Char [] { ';', ',', '\n', '\r'}));
-				string pkgout = GetPackageFlags (packages, true);
+				string pkgout = GetPackageFlags (packages, true, Report);
 				
 				if (pkgout != null){
 					string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
@@ -1231,7 +1238,7 @@ namespace Mono.CSharp
 			case "/res":
 			case "/resource":
 				if (embedded_resources == null)
-					embedded_resources = new Resources ();
+					embedded_resources = new Resources (ctx);
 
 				bool embeded = arg [1] == 'r' || arg [1] == 'R';
 				string[] s = value.Split (argument_value_separator);
@@ -1569,7 +1576,7 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		static void Error_WrongOption (string option)
+		void Error_WrongOption (string option)
 		{
 			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
 		}
@@ -1642,7 +1649,7 @@ namespace Mono.CSharp
 		public bool Compile ()
 		{
 			// TODO: Should be passed to parser as an argument
-			RootContext.ToplevelTypes = new ModuleContainer (RootContext.Unsafe);
+			RootContext.ToplevelTypes = new ModuleContainer (ctx, RootContext.Unsafe);
 
 			Parse ();
 			if (Report.Errors > 0)
@@ -1673,7 +1680,7 @@ namespace Mono.CSharp
 					output_file = first_source + RootContext.TargetExt;
 			}
 
-			if (!CodeGen.Init (output_file, output_file, want_debugging_support))
+			if (!CodeGen.Init (output_file, output_file, want_debugging_support, ctx))
 				return false;
 
 			if (RootContext.Target == Target.Module) {
@@ -1705,10 +1712,10 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("References loaded");
 			
-			if (!TypeManager.InitCoreTypes () || Report.Errors > 0)
+			if (!TypeManager.InitCoreTypes (ctx) || Report.Errors > 0)
 				return false;
 
-			TypeManager.InitOptionalCoreTypes ();
+			TypeManager.InitOptionalCoreTypes (ctx);
 
 			if (timestamps)
 				ShowTime ("   Core Types done");
@@ -1731,7 +1738,7 @@ namespace Mono.CSharp
 			if (Report.Errors == 0 &&
 				RootContext.Documentation != null &&
 				!RootContext.Documentation.OutputDocComment (
-					output_file))
+					output_file, Report))
 				return false;
 
 			//
@@ -1747,7 +1754,7 @@ namespace Mono.CSharp
 			
 			if (RootContext.VerifyClsCompliance) {
 				if (CodeGen.Assembly.IsClsCompliant) {
-					AttributeTester.VerifyModulesClsCompliance ();
+					AttributeTester.VerifyModulesClsCompliance (ctx);
 					TypeManager.LoadAllImportedTypes ();
 				}
 			}
@@ -1851,30 +1858,13 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 			
-			CodeGen.Save (output_file, want_debugging_support);
+			CodeGen.Save (output_file, want_debugging_support, Report);
 			if (timestamps) {
 				ShowTime ("Saved output");
 				ShowTotalTime ("Total");
 			}
 
 			Timer.ShowTimers ();
-			
-			if (Report.ExpectedError != 0) {
-				if (Report.Errors == 0) {
-					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
-						"No other errors reported.");
-					
-					Environment.Exit (2);
-				} else {
-					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
-						"However, other errors were reported.");
-					
-					Environment.Exit (1);
-				}
-				
-				
-				return false;
-			}
 
 #if DEBUGME
 			Console.WriteLine ("Size of strings held: " + DeclSpace.length);
@@ -1906,7 +1896,7 @@ namespace Mono.CSharp
 					null, CallingConventions.Any, argst, null);
 				
 				if (embed_res == null) {
-					Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
+					RootContext.ToplevelTypes.Compiler.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
 				}
 			}
 
@@ -1959,6 +1949,12 @@ namespace Mono.CSharp
 
 
 		IDictionary embedded_resources = new HybridDictionary ();
+		readonly CompilerContext ctx;
+
+		public Resources (CompilerContext ctx)
+		{
+			this.ctx = ctx;
+		}
 
 		public void Add (bool embeded, string file, string name)
 		{
@@ -1968,7 +1964,7 @@ namespace Mono.CSharp
 		public void Add (bool embeded, string file, string name, bool isPrivate)
 		{
 			if (embedded_resources.Contains (name)) {
-				Report.Error (1508, "The resource identifier `{0}' has already been used in this assembly", name);
+				ctx.Report.Error (1508, "The resource identifier `{0}' has already been used in this assembly", name);
 				return;
 			}
 			IResource r = embeded ? 
@@ -1982,7 +1978,7 @@ namespace Mono.CSharp
 		{
 			foreach (IResource r in embedded_resources.Values) {
 				if (!File.Exists (r.FileName)) {
-					Report.Error (1566, "Error reading resource file `{0}'", r.FileName);
+					ctx.Report.Error (1566, "Error reading resource file `{0}'", r.FileName);
 					continue;
 				}
 				
@@ -1997,16 +1993,14 @@ namespace Mono.CSharp
 	public class CompilerCallableEntryPoint : MarshalByRefObject {
 		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
-			Report.Stderr = error;
 			try {
-				Driver d = Driver.Create (args, true);
+				StreamReportPrinter srp = new StreamReportPrinter (error);
+				Driver d = Driver.Create (args, true, srp);
 				if (d == null)
 					return false;
 
-				return d.Compile () && Report.Errors == 0;
-			}
-			finally {
-				Report.Stderr = Console.Error;
+				return d.Compile () && srp.ErrorsCount == 0;
+			} finally {
 				Reset ();
 			}
 		}
@@ -2032,7 +2026,6 @@ namespace Mono.CSharp
 			Driver.Reset ();
 			RootContext.Reset (full_flag);
 			Location.Reset ();
-			Report.Reset ();
 			TypeManager.Reset ();
 			PredefinedAttributes.Reset ();
 			TypeHandle.Reset ();

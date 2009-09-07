@@ -68,7 +68,7 @@ namespace Mono.CSharp
 		public virtual Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (ArgType == AType.Default)
-				Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
+				ec.Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
 
 			return Expr.CreateExpressionTree (ec);
 		}
@@ -168,7 +168,7 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			Report.Error (853, Name.Location, "An expression tree cannot contain named argument");
+			ec.Report.Error (853, Name.Location, "An expression tree cannot contain named argument");
 			return base.CreateExpressionTree (ec);
 		}
 
@@ -284,7 +284,7 @@ namespace Mono.CSharp
 			return all;
 		}
 
-		public void CheckArrayAsAttribute ()
+		public void CheckArrayAsAttribute (CompilerContext ctx)
 		{
 			foreach (Argument arg in args) {
 				// Type is undefined (was error 246)
@@ -292,7 +292,7 @@ namespace Mono.CSharp
 					continue;
 
 				if (arg.Type.IsArray)
-					Report.Warning (3016, 1, arg.Expr.Location, "Arrays as attribute arguments are not CLS-compliant");
+					ctx.Report.Warning (3016, 1, arg.Expr.Location, "Arrays as attribute arguments are not CLS-compliant");
 			}
 		}
 

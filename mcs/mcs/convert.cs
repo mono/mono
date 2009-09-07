@@ -705,8 +705,9 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
 
-			if (TypeManager.IsNullableType (target_type))
+			if (TypeManager.IsNullableType (target_type)) {
 				return ImplicitNulableConversion (null, expr, target_type) != null;
+			}
 
 			// First numeric conversions
 			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
@@ -1053,7 +1054,7 @@ namespace Mono.CSharp {
 		///   Compute the user-defined conversion operator from source_type to target_type.
 		///   `look_for_explicit' controls whether we should also include the list of explicit operators
 		/// </summary>
-		static MethodInfo GetConversionOperator (Type container_type, Expression source, Type target_type, bool look_for_explicit)
+		static MethodInfo GetConversionOperator (CompilerContext ctx, Type container_type, Expression source, Type target_type, bool look_for_explicit)
 		{
 			ArrayList ops = new ArrayList (4);
 
@@ -1061,20 +1062,20 @@ namespace Mono.CSharp {
 
 			if (source_type != TypeManager.decimal_type) {
 				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (container_type, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
+					Expression.MethodLookup (ctx, container_type, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
 					AddConversionOperators (ops, source, target_type, look_for_explicit,
-						Expression.MethodLookup (
+						Expression.MethodLookup (ctx,
 							container_type, source_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
 			if (target_type != TypeManager.decimal_type) {
 				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (container_type, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
+					Expression.MethodLookup (ctx, container_type, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
 					AddConversionOperators (ops, source, target_type, look_for_explicit,
-						Expression.MethodLookup (
+						Expression.MethodLookup (ctx,
 							container_type, target_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
@@ -1131,7 +1132,7 @@ namespace Mono.CSharp {
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
 				method = (MethodInfo) o;
 			} else {
-				method = GetConversionOperator (null, source, target, look_for_explicit);
+				method = GetConversionOperator (RootContext.ToplevelTypes.Compiler, null, source, target, look_for_explicit);
 				if (!(source is Constant))
 					hash.Insert (source_type, target, method);
 			}
@@ -1845,9 +1846,9 @@ namespace Mono.CSharp {
 		static public Expression ExplicitConversionStandard (ResolveContext ec, Expression expr,
 								     Type target_type, Location l)
 		{
-			int errors = Report.Errors;
+			int errors = ec.Report.Errors;
 			Expression ne = ImplicitConversionStandard (ec, expr, target_type, l);
-			if (Report.Errors > errors)
+			if (ec.Report.Errors > errors)
 				return null;
 
 			if (ne != null)

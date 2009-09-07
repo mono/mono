@@ -63,6 +63,8 @@ namespace Mono.CSharp {
 		static Driver driver;
 		static bool inited;
 
+		static CompilerContext ctx = new CompilerContext (new Report (new ConsoleReportPrinter ()));
+
 		/// <summary>
 		///   Optional initialization for the Evaluator.
 		/// </summary>
@@ -105,9 +107,11 @@ namespace Mono.CSharp {
 				if (inited)
 					return new string [0];
 				
-				driver = Driver.Create (args, false);
+				driver = Driver.Create (args, false, new ConsoleReportPrinter ());
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
+
+				RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
 				
 				driver.ProcessDefaultConfig ();
 
@@ -116,6 +120,8 @@ namespace Mono.CSharp {
 					startup_files.Add (file.Path);
 				
 				CompilerCallableEntryPoint.Reset ();
+				RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
+
 				driver.LoadReferences ();
 				RootContext.EvalMode = true;
 				inited = true;
@@ -136,18 +142,18 @@ namespace Mono.CSharp {
 			//
 			// PartialReset should not reset the core types, this is very redundant.
 			//
-			if (!TypeManager.InitCoreTypes ())
+			if (!TypeManager.InitCoreTypes (ctx))
 				throw new Exception ("Failed to InitCoreTypes");
-			TypeManager.InitOptionalCoreTypes ();
+			TypeManager.InitOptionalCoreTypes (ctx);
 			
-			Location.AddFile ("{interactive}");
+			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
 
 			current_debug_name = "interactive" + (count++) + ".dll";
 			if (Environment.GetEnvironmentVariable ("SAVE") != null){
-				CodeGen.Init (current_debug_name, current_debug_name, false);
+				CodeGen.Init (current_debug_name, current_debug_name, false, ctx);
 			} else
-				CodeGen.InitDynamic (current_debug_name);
+				CodeGen.InitDynamic (ctx, current_debug_name);
 		}
 
 		/// <summary>
@@ -244,14 +250,14 @@ namespace Mono.CSharp {
 				object parser_result = parser.InteractiveResult;
 				
 				if (!(parser_result is Class)){
-					int errors = Report.Errors;
+					int errors = ctx.Report.Errors;
 					
 					NamespaceEntry.VerifyAllUsing ();
-					if (errors == Report.Errors)
+					if (errors == ctx.Report.Errors)
 						parser.CurrentNamespace.Extract (using_alias_list, using_list);
 				}
 
-				compiled = CompileBlock (parser_result as Class, parser.undo);
+				compiled = CompileBlock (parser_result as Class, parser.undo, ctx.Report);
 			}
 			
 			return null;
@@ -387,11 +393,11 @@ namespace Mono.CSharp {
 
 				try {
 					RootContext.ResolveTree ();
-					if (Report.Errors != 0)
+					if (ctx.Report.Errors != 0)
 						return null;
 					
 					RootContext.PopulateTypes ();
-					if (Report.Errors != 0)
+					if (ctx.Report.Errors != 0)
 						return null;
 
 					MethodOrOperator method = null;
@@ -487,7 +493,7 @@ namespace Mono.CSharp {
 		//
 		static InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, (CompilationUnit) Location.SourceFiles [0]);
+			Tokenizer tokenizer = new Tokenizer (seekable, (CompilationUnit) Location.SourceFiles [0], ctx);
 			
 			int t = tokenizer.token ();
 			switch (t){
@@ -601,7 +607,7 @@ namespace Mono.CSharp {
 			InputKind kind = ToplevelOrStatement (seekable);
 			if (kind == InputKind.Error){
 				if (mode == ParseMode.ReportErrors)
-					Report.Error (-25, "Detection Parsing Error");
+					ctx.Report.Error (-25, "Detection Parsing Error");
 				partial_input = false;
 				return null;
 			}
@@ -615,8 +621,7 @@ namespace Mono.CSharp {
 			}
 			seekable.Position = 0;
 
-			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0]);
-			parser.ErrorOutput = Report.Stderr;
+			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0], ctx);
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -642,11 +647,11 @@ namespace Mono.CSharp {
 				disable_error_reporting = false;
 			
 			if (disable_error_reporting)
-				Report.DisableReporting ();
+				ctx.Report.DisableReporting ();
 			try {
 				parser.parse ();
 			} finally {
-				if (Report.Errors != 0){
+				if (ctx.Report.Errors != 0){
 					if (mode != ParseMode.ReportErrors  && parser.UnexpectedEOF)
 						partial_input = true;
 
@@ -655,7 +660,7 @@ namespace Mono.CSharp {
 				}
 
 				if (disable_error_reporting)
-					Report.EnableReporting ();
+					ctx.Report.EnableReporting ();
 			}
 			return parser;
 		}
@@ -671,7 +676,7 @@ namespace Mono.CSharp {
 
 		static volatile bool invoking;
 		
-		static CompiledMethod CompileBlock (Class host, Undo undo)
+		static CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
 			RootContext.ResolveTree ();
 			if (Report.Errors != 0){
@@ -712,7 +717,7 @@ namespace Mono.CSharp {
 			RootContext.CloseTypes ();
 
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
-				CodeGen.Save (current_debug_name, false);
+				CodeGen.Save (current_debug_name, false, Report);
 
 			if (host == null)
 				return null;
@@ -865,8 +870,8 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			lock (evaluator_lock){
-				Driver.LoadAssembly (file, false);
-				GlobalRootNamespace.Instance.ComputeNamespaces ();
+				driver.LoadAssembly (file, false);
+				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
 			}
 		}
 
@@ -877,7 +882,7 @@ namespace Mono.CSharp {
 		{
 			lock (evaluator_lock){
 				GlobalRootNamespace.Instance.AddAssemblyReference (a);
-				GlobalRootNamespace.Instance.ComputeNamespaces ();
+				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
 			}
 		}
 		
@@ -980,7 +985,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			string pkgout = Driver.GetPackageFlags (pkg, false);
+			string pkgout = Driver.GetPackageFlags (pkg, false, RootContext.ToplevelTypes.Compiler.Report);
 			if (pkgout == null)
 				return;
 

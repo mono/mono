@@ -170,24 +170,24 @@ namespace Mono.CSharp {
 			target.OptAttributes = null;
 		}
 
-		void Error_InvalidNamedArgument (NamedArgument name)
+		static void Error_InvalidNamedArgument (ResolveContext rc, NamedArgument name)
 		{
-			Report.Error (617, name.Name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
+			rc.Report.Error (617, name.Name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
 				      "must be fields which are not readonly, static, const or read-write properties which are " +
 				      "public and not static",
 			      name.Name.Value);
 		}
 
-		void Error_InvalidNamedArgumentType (NamedArgument name)
+		static void Error_InvalidNamedArgumentType (ResolveContext rc, NamedArgument name)
 		{
-			Report.Error (655, name.Name.Location,
+			rc.Report.Error (655, name.Name.Location,
 				"`{0}' is not a valid named attribute argument because it is not a valid attribute parameter type",
 				name.Name.Value);
 		}
 
-		public static void Error_AttributeArgumentNotValid (Location loc)
+		public static void Error_AttributeArgumentNotValid (ResolveContext rc, Location loc)
 		{
-			Report.Error (182, loc,
+			rc.Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
 		}
@@ -249,29 +249,30 @@ namespace Mono.CSharp {
 		/// </summary>
 		void ResolveAttributeType ()
 		{
-			Report.IMessageRecorder msg_recorder = new Report.MessageRecorder ();
-			Report.IMessageRecorder prev_recorder = Report.SetMessageRecorder (msg_recorder);
-			int errors = Report.Errors;
+			SessionReportPrinter resolve_printer = new SessionReportPrinter ();
+			ReportPrinter prev_recorder = context.Compiler.Report.SetPrinter (resolve_printer);
 
 			bool t1_is_attr = false;
-			Type t1 = ResolvePossibleAttributeType (expression, ref t1_is_attr);
-
 			bool t2_is_attr = false;
-			Type t2;
+			Type t1, t2;
 			ATypeNameExpression expanded = null;
 
-			if (nameEscaped) {
-				t2 = null;
-			} else {
-				expanded = (ATypeNameExpression) expression.Clone (null);
-				expanded.Name += "Attribute";
+			try {
+				t1 = ResolvePossibleAttributeType (expression, ref t1_is_attr);
 
-				t2 = ResolvePossibleAttributeType (expanded, ref t2_is_attr);
+				if (nameEscaped) {
+					t2 = null;
+				} else {
+					expanded = (ATypeNameExpression) expression.Clone (null);
+					expanded.Name += "Attribute";
+
+					t2 = ResolvePossibleAttributeType (expanded, ref t2_is_attr);
+				}
+
+				resolve_printer.EndSession ();
+			} finally {
+				context.Compiler.Report.SetPrinter (prev_recorder);
 			}
-
-			msg_recorder.EndSession ();
-			Report.SetMessageRecorder (prev_recorder);
-			Report.Errors = errors;
 
 			if (t1_is_attr && t2_is_attr) {
 				Report.Error (1614, Location, "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}Attribute'",
@@ -290,7 +291,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			msg_recorder.PrintMessages ();
+			resolve_printer.Merge (prev_recorder);
 			resolve_error = true;
 		}
 
@@ -360,6 +361,10 @@ namespace Mono.CSharp {
 				Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}
 
+		Report Report {
+			get { return context.Compiler.Report; }
+		}
+
 		public CustomAttributeBuilder Resolve ()
 		{
 			if (resolve_error)
@@ -380,7 +385,7 @@ namespace Mono.CSharp {
 
 			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (Type);
 			if (obsolete_attr != null) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location);
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location, Report);
 			}
 
 			if (PosArguments == null && NamedArguments == null) {
@@ -432,7 +437,7 @@ namespace Mono.CSharp {
 				return cb;
 			}
 			catch (Exception) {
-				Error_AttributeArgumentNotValid (Location);
+				Error_AttributeArgumentNotValid (rc, Location);
 				return null;
 			}
 		}
@@ -483,14 +488,14 @@ namespace Mono.CSharp {
 			}
 
 			if (Type == pa.AttributeUsage && (int)pos_values [0] == 0) {
-				Report.Error (591, Location, "Invalid value for argument to `System.AttributeUsage' attribute");
+				ec.Report.Error (591, Location, "Invalid value for argument to `System.AttributeUsage' attribute");
 				return null;
 			}
 
 			if (Type == pa.IndexerName || Type == pa.Conditional) {
 				string v = pos_values [0] as string;
 				if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
-					Report.Error (633, PosArguments [0].Expr.Location,
+					ec.Report.Error (633, PosArguments [0].Expr.Location,
 						"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
 					return null;
 				}
@@ -520,7 +525,7 @@ namespace Mono.CSharp {
 			foreach (NamedArgument a in NamedArguments) {
 				string name = a.Name.Value;
 				if (seen_names.Contains (name)) {
-					Report.Error (643, a.Name.Location, "Duplicate named attribute `{0}' argument", name);
+					ec.Report.Error (643, a.Name.Location, "Duplicate named attribute `{0}' argument", name);
 					continue;
 				}			
 	
@@ -528,31 +533,31 @@ namespace Mono.CSharp {
 
 				a.Resolve (ec);
 
-				Expression member = Expression.MemberLookup (
+				Expression member = Expression.MemberLookup (ec.Compiler,
 					ec.CurrentType, Type, name,
 					MemberTypes.All,
 					BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static,
 					Location);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec.CurrentType, Type, name,
+					member = Expression.MemberLookup (ec.Compiler, ec.CurrentType, Type, name,
 						MemberTypes.All, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static,
 						Location);
 
 					if (member != null) {
-						Report.SymbolRelatedToPreviousError (member.Type);
-						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError ());
+						ec.Report.SymbolRelatedToPreviousError (member.Type);
+						Expression.ErrorIsInaccesible (Location, member.GetSignatureForError (), ec.Report);
 						return false;
 					}
 				}
 
 				if (member == null){
-					Expression.Error_TypeDoesNotContainDefinition (Location, Type, name);
+					Expression.Error_TypeDoesNotContainDefinition (ec, Location, Type, name);
 					return false;
 				}
 				
 				if (!(member is PropertyExpr || member is FieldExpr)) {
-					Error_InvalidNamedArgument (a);
+					Error_InvalidNamedArgument (ec, a);
 					return false;
 				}
 
@@ -562,14 +567,14 @@ namespace Mono.CSharp {
 					PropertyInfo pi = ((PropertyExpr) member).PropertyInfo;
 
 					if (!pi.CanWrite || !pi.CanRead || pi.GetGetMethod ().IsStatic) {
-						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedArgument (a);
+						ec.Report.SymbolRelatedToPreviousError (pi);
+						Error_InvalidNamedArgument (ec, a);
 						return false;
 					}
 
 					if (!IsValidArgumentType (member.Type)) {
-						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedArgumentType (a);
+						ec.Report.SymbolRelatedToPreviousError (pi);
+						Error_InvalidNamedArgumentType (ec, a);
 						return false;
 					}
 
@@ -590,13 +595,13 @@ namespace Mono.CSharp {
 					FieldInfo fi = ((FieldExpr) member).FieldInfo;
 
 					if (fi.IsInitOnly || fi.IsStatic) {
-						Error_InvalidNamedArgument (a);
+						Error_InvalidNamedArgument (ec, a);
 						return false;
 					}
 
 					if (!IsValidArgumentType (member.Type)) {
-						Report.SymbolRelatedToPreviousError (fi);
-						Error_InvalidNamedArgumentType (a);
+						ec.Report.SymbolRelatedToPreviousError (fi);
+						Error_InvalidNamedArgumentType (ec, a);
 						return false;
 					}
 
@@ -615,7 +620,7 @@ namespace Mono.CSharp {
 				}
 
 				if (obsolete_attr != null && !context.IsObsolete)
-					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location);
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, member.GetSignatureForError (), member.Location, Report);
 			}
 
 			prop_info_arr = new PropertyInfo [prop_infos.Count];
@@ -1222,12 +1227,12 @@ namespace Mono.CSharp {
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (Owner.IsClsComplianceRequired ()) {
 				if (PosArguments != null)
-					PosArguments.CheckArrayAsAttribute ();
+					PosArguments.CheckArrayAsAttribute (context.Compiler);
 			
 				if (NamedArguments == null)
 					return;
 
-				NamedArguments.CheckArrayAsAttribute ();
+				NamedArguments.CheckArrayAsAttribute (context.Compiler);
 			}
 		}
 
@@ -1458,11 +1463,12 @@ namespace Mono.CSharp {
 				if (d.Value == null)
 					continue;
 
+				Report report = RootContext.ToplevelTypes.Compiler.Report;
 				foreach (Attribute collision in (ArrayList)d.Value)
-					Report.SymbolRelatedToPreviousError (collision.Location, "");
+					report.SymbolRelatedToPreviousError (collision.Location, "");
 
 				Attribute a = (Attribute)d.Key;
-				Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",
+				report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",
 					a.GetSignatureForError ());
 			}
 		}
@@ -1622,7 +1628,7 @@ namespace Mono.CSharp {
 			return (IFixedBuffer)o;
 		}
 
-		public static void VerifyModulesClsCompliance ()
+		public static void VerifyModulesClsCompliance (CompilerContext ctx)
 		{
 			Module[] modules = GlobalRootNamespace.Instance.Modules;
 			if (modules == null)
@@ -1632,7 +1638,7 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!GetClsCompliantAttributeValue (module, null)) {
-					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute " +
+					ctx.Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute " +
 						      "to match the assembly", module.Name);
 					return;
 				}
@@ -1775,7 +1781,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Common method for Obsolete error/warning reporting.
 		/// </summary>
-		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
+		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc, Report Report)
 		{
 			if (oa.IsError) {
 				Report.Error (619, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
@@ -2068,7 +2074,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			type = TypeManager.CoreLookupType (ns, name, Kind.Class, !canFail);
+			type = TypeManager.CoreLookupType (RootContext.ToplevelTypes.Compiler, ns, name, Kind.Class, !canFail);
 			if (type == null) {
 				type = typeof (PredefinedAttribute);
 				return false;

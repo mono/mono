@@ -41,7 +41,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
-			return CreateExpressionFactoryCall ("Lambda",
+			return CreateExpressionFactoryCall (ec, "Lambda",
 				new TypeArguments (new TypeExpression (delegate_type, loc)),
 				arguments);
 		}
@@ -57,10 +57,10 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsDelegateType (delegateType))
 				return null;
 
-			AParametersCollection d_params = TypeManager.GetDelegateParameters (delegateType);
+			AParametersCollection d_params = TypeManager.GetDelegateParameters (ec, delegateType);
 
 			if (HasExplicitParameters) {
-				if (!VerifyExplicitParameters (delegateType, d_params, ec.IsInProbingMode))
+				if (!VerifyExplicitParameters (ec, delegateType, d_params))
 					return null;
 
 				return Parameters;
@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 			// If L has an implicitly typed parameter list we make implicit parameters explicit
 			// Set each parameter of L is given the type of the corresponding parameter in D
 			//
-			if (!VerifyParameterCompatibility (delegateType, d_params, ec.IsInProbingMode))
+			if (!VerifyParameterCompatibility (ec, delegateType, d_params, ec.IsInProbingMode))
 				return null;
 
 			Type [] ptypes = new Type [Parameters.Count];
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
-			return CreateExpressionFactoryCall ("Lambda",
+			return CreateExpressionFactoryCall (ec, "Lambda",
 				new TypeArguments (new TypeExpression (type, loc)),
 				arguments);
 		}
@@ -206,7 +206,7 @@ namespace Mono.CSharp {
 
 				statement = Expr as ExpressionStatement;
 				if (statement == null)
-					Expr.Error_InvalidExpressionStatement ();
+					Expr.Error_InvalidExpressionStatement (ec);
 
 				return true;
 			}

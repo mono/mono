@@ -106,7 +106,7 @@ namespace Mono.CSharp
 			get { throw new NotImplementedException (); }
 		}		
 
-		public void VerifyClsCompliance ()
+		public void VerifyClsCompliance (Report r)
 		{
 		}
 	}
@@ -451,7 +451,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();		
 		}
 		
-		public bool FixAllTypes ()
+		public bool FixAllTypes (ResolveContext ec)
 		{
 			return false;
 		}

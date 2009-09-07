@@ -81,7 +81,7 @@ namespace Mono.CSharp {
 			if (!expl && IsLiteral && 
 				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
 				(TypeManager.IsPrimitiveType (type) || type == TypeManager.decimal_type)) {
-				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					AsString (), TypeManager.CSharpName (target));
 			} else {
 				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
@@ -167,7 +167,7 @@ namespace Mono.CSharp {
 			args.Add (new Argument (this));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 
-			return CreateExpressionFactoryCall ("Constant", args);
+			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
 
@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 			}
 			catch (OverflowException) {
 				if (ec.ConstantCheckState) {				
-					Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
+					ec.Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
 						GetValue ().ToString (), TypeManager.CSharpName (target_type));
 				} else {
 					Error_ValueCannotBeConverted (ec, loc, target_type, false);
@@ -281,7 +281,7 @@ namespace Mono.CSharp {
 			}
 			catch
 			{
-				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValue ().ToString (), TypeManager.CSharpName (target));
 			}
 		}

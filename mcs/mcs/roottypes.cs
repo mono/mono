@@ -26,7 +26,8 @@ namespace Mono.CSharp
 		// TODO: It'd be so nice to have generics
 		Hashtable anonymous_types;
 		public ModuleBuilder Builder;
-		bool is_unsafe;
+		readonly bool is_unsafe;
+		readonly CompilerContext context;
 
 		bool has_default_charset;
 
@@ -35,10 +36,12 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_targets = new string[] { "module" };
 
-		public ModuleContainer (bool isUnsafe)
+		public ModuleContainer (CompilerContext context, bool isUnsafe)
 			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
 			this.is_unsafe = isUnsafe;
+			this.context = context;
+
 			types = new ArrayList ();
 			anonymous_types = new Hashtable ();
 		}
@@ -92,13 +95,17 @@ namespace Mono.CSharp
 			Builder.SetCustomAttribute (cb);
 		}
 
+		public override CompilerContext Compiler {
+			get { return context; }
+		}
+
 		public override void Emit ()
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
 			if (is_unsafe) {
-				Type t = TypeManager.CoreLookupType ("System.Security", "UnverifiableCodeAttribute", Kind.Class, true);
+				Type t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", Kind.Class, true);
 				if (t != null) {
 					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
 					if (unverifiable_code_ctor != null)
@@ -225,6 +232,12 @@ namespace Mono.CSharp
 
 		public override AttributeTargets AttributeTargets {
 			get { throw new InternalErrorException ("should not be called"); }
+		}
+
+		public override CompilerContext Compiler {
+			get {
+				return PartialContainer.Compiler;
+			}
 		}
 
 		public override string DocCommentHeader {

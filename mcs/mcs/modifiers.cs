@@ -204,7 +204,7 @@ namespace Mono.CSharp {
 		//   Returns the new mask.  Side effect: reports any
 		//   incorrect attributes. 
 		// </summary>
-		public static int Check (int allowed, int mod, int def_access, Location l)
+		public static int Check (int allowed, int mod, int def_access, Location l, Report Report)
 		{
 			int invalid_flags  = (~allowed) & (mod & (Modifiers.TOP - 1));
 			int i;
@@ -213,7 +213,7 @@ namespace Mono.CSharp {
 				int a = mod;
 
 				if ((mod & Modifiers.UNSAFE) != 0){
-					RootContext.CheckUnsafeOption (l);
+					RootContext.CheckUnsafeOption (l, Report);
 				}
 				
 				//
@@ -238,7 +238,7 @@ namespace Mono.CSharp {
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					Report.Error (107, l, "More than one protection modifier specified");
+					Report.Error (107, l, "More than one protection modifier specified", Report);
 				
 				return mod;
 			}
@@ -247,15 +247,15 @@ namespace Mono.CSharp {
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				Error_InvalidModifier (l, Name (i));
+				Error_InvalidModifier (l, Name (i), Report);
 			}
 
 			return allowed & mod;
 		}
 
-		public static void Error_InvalidModifier (Location l, string name)
+		public static void Error_InvalidModifier (Location l, string name, Report Report)
 		{
-			Report.Error (106, l, "The modifier `" + name + "' is not valid for this item");
+			Report.Error (106, l, "The modifier `" + name + "' is not valid for this item", Report);
 		}
 	}
 }

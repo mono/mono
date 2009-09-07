@@ -47,9 +47,9 @@ namespace Mono.CSharp {
 		// handle warning report.
 		//
 		internal static void GenerateTypeDocComment (TypeContainer t,
-			DeclSpace ds)
+			DeclSpace ds, Report Report)
 		{
-			GenerateDocComment (t, ds);
+			GenerateDocComment (t, ds, Report);
 
 			if (t.DefaultStaticConstructor != null)
 				t.DefaultStaticConstructor.GenerateDocComment (t);
@@ -100,7 +100,7 @@ namespace Mono.CSharp {
 			Environment.NewLine + "            ";
 
 		private static XmlNode GetDocCommentNode (MemberCore mc,
-			string name)
+			string name, Report Report)
 		{
 			// FIXME: It could be even optimizable as not
 			// to use XmlDocument. But anyways the nodes
@@ -140,12 +140,12 @@ namespace Mono.CSharp {
 		// handle warning report.
 		//
 		internal static void GenerateDocComment (MemberCore mc,
-			DeclSpace ds)
+			DeclSpace ds, Report Report)
 		{
 			if (mc.DocComment != null) {
 				string name = mc.GetDocCommentName (ds);
 
-				XmlNode n = GetDocCommentNode (mc, name);
+				XmlNode n = GetDocCommentNode (mc, name, Report);
 
 				XmlElement el = n as XmlElement;
 				if (el != null) {
@@ -159,7 +159,7 @@ namespace Mono.CSharp {
 						foreach (XmlNode inc in nl)
 							al.Add (inc);
 						foreach (XmlElement inc in al)
-							if (!HandleInclude (mc, inc))
+							if (!HandleInclude (mc, inc, Report))
 								inc.ParentNode.RemoveChild (inc);
 					}
 
@@ -169,11 +169,11 @@ namespace Mono.CSharp {
 						ds_target = ds;
 
 					foreach (XmlElement see in n.SelectNodes (".//see"))
-						HandleSee (mc, ds_target, see);
+						HandleSee (mc, ds_target, see, Report);
 					foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
-						HandleSeeAlso (mc, ds_target, seealso);
+						HandleSeeAlso (mc, ds_target, seealso ,Report);
 					foreach (XmlElement see in n.SelectNodes (".//exception"))
-						HandleException (mc, ds_target, see);
+						HandleException (mc, ds_target, see, Report);
 				}
 
 				n.WriteTo (RootContext.Documentation.XmlCommentOutput);
@@ -190,7 +190,7 @@ namespace Mono.CSharp {
 		// Processes "include" element. Check included file and
 		// embed the document content inside this documentation node.
 		//
-		private static bool HandleInclude (MemberCore mc, XmlElement el)
+		private static bool HandleInclude (MemberCore mc, XmlElement el, Report Report)
 		{
 			bool keep_include_node = false;
 			string file = el.GetAttribute ("file");
@@ -240,27 +240,27 @@ namespace Mono.CSharp {
 		// Handles <see> elements.
 		//
 		private static void HandleSee (MemberCore mc,
-			DeclSpace ds, XmlElement see)
+			DeclSpace ds, XmlElement see, Report r)
 		{
-			HandleXrefCommon (mc, ds, see);
+			HandleXrefCommon (mc, ds, see, r);
 		}
 
 		//
 		// Handles <seealso> elements.
 		//
 		private static void HandleSeeAlso (MemberCore mc,
-			DeclSpace ds, XmlElement seealso)
+			DeclSpace ds, XmlElement seealso, Report r)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, ds, seealso, r);
 		}
 
 		//
 		// Handles <exception> elements.
 		//
 		private static void HandleException (MemberCore mc,
-			DeclSpace ds, XmlElement seealso)
+			DeclSpace ds, XmlElement seealso, Report r)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, ds, seealso, r);
 		}
 
 		static readonly char [] wsChars =
@@ -270,7 +270,7 @@ namespace Mono.CSharp {
 		// returns a full runtime type name from a name which might
 		// be C# specific type name.
 		//
-		private static Type FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
+		private static Type FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref, Report r)
 		{
 			bool is_array = false;
 			string identifier = name;
@@ -281,14 +281,14 @@ namespace Mono.CSharp {
 					is_array = true;
 				}
 			}
-			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
+			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref, r);
 			if (t != null && is_array)
 				t = Array.CreateInstance (t, 0).GetType ();
 			return t;
 		}
 
 		private static Type FindDocumentedTypeNonArray (MemberCore mc, 
-			string identifier, DeclSpace ds, string cref)
+			string identifier, DeclSpace ds, string cref, Report r)
 		{
 			switch (identifier) {
 			case "int":
@@ -334,13 +334,13 @@ namespace Mono.CSharp {
 			if (index < 0)
 				return null;
 			int warn;
-			Type parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
+			Type parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref, r);
 			if (parent == null)
 				return null;
 			// no need to detect warning 419 here
 			return FindDocumentedMember (mc, parent,
 				identifier.Substring (index + 1),
-				null, ds, out warn, cref, false, null).Member as Type;
+				null, ds, out warn, cref, false, null, r).Member as Type;
 		}
 
 		private static MemberInfo [] empty_member_infos =
@@ -453,13 +453,13 @@ namespace Mono.CSharp {
 		private static FoundMember FindDocumentedMember (MemberCore mc,
 			Type type, string member_name, Type [] param_list, 
 			DeclSpace ds, out int warning_type, string cref,
-			bool warn419, string name_for_error)
+			bool warn419, string name_for_error, Report r)
 		{
 			for (; type != null; type = type.DeclaringType) {
 				MemberInfo mi = FindDocumentedMemberNoNest (
 					mc, type, member_name, param_list, ds,
 					out warning_type, cref, warn419,
-					name_for_error);
+					name_for_error, r);
 				if (mi != null)
 					return new FoundMember (type, mi);
 			}
@@ -470,7 +470,7 @@ namespace Mono.CSharp {
 		private static MemberInfo FindDocumentedMemberNoNest (
 			MemberCore mc, Type type, string member_name,
 			Type [] param_list, DeclSpace ds, out int warning_type, 
-			string cref, bool warn419, string name_for_error)
+			string cref, bool warn419, string name_for_error, Report Report)
 		{
 			warning_type = 0;
 			MemberInfo [] mis;
@@ -485,7 +485,7 @@ namespace Mono.CSharp {
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))
-					Report419 (mc, name_for_error, mis);
+					Report419 (mc, name_for_error, mis, Report);
 				return mis [0];
 			}
 
@@ -496,7 +496,7 @@ namespace Mono.CSharp {
 
 			if (warn419 && mis.Length > 0) {
 				if (IsAmbiguous (mis))
-					Report419 (mc, name_for_error, mis);
+					Report419 (mc, name_for_error, mis, Report);
 				return mis [0];
 			}
 
@@ -554,7 +554,7 @@ namespace Mono.CSharp {
 				((PropertyInfo) mi).PropertyType :
 				null;
 			if (return_type_name != null) {
-				Type returnType = FindDocumentedType (mc, return_type_name, ds, cref);
+				Type returnType = FindDocumentedType (mc, return_type_name, ds, cref, Report);
 				if (returnType == null || returnType != expected) {
 					warning_type = 1581;
 					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute `{0}'", cref);
@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 		// Checks cref attribute.
 		//
 		private static void HandleXrefCommon (MemberCore mc,
-			DeclSpace ds, XmlElement xref)
+			DeclSpace ds, XmlElement xref, Report Report)
 		{
 			string cref = xref.GetAttribute ("cref").Trim (wsChars);
 			// when, XmlReader, "if (cref == null)"
@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 				name = signature;
 				parameters = null;
 			}
-			Normalize (mc, ref name);
+			Normalize (mc, ref name, Report);
 
 			string identifier = GetBodyIdentifierFromName (name);
 
@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < name_elems.Length; i++) {
 				string nameElem = GetBodyIdentifierFromName (name_elems [i]);
 				if (i > 0)
-					Normalize (mc, ref nameElem);
+					Normalize (mc, ref nameElem, Report);
 				if (!Tokenizer.IsValidIdentifier (nameElem)
 					&& nameElem.IndexOf ("operator") < 0) {
 					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
@@ -657,8 +657,8 @@ namespace Mono.CSharp {
 				ArrayList plist = new ArrayList ();
 				for (int i = 0; i < param_list.Length; i++) {
 					string param_type_name = param_list [i].Trim (wsChars);
-					Normalize (mc, ref param_type_name);
-					Type param_type = FindDocumentedType (mc, param_type_name, ds, cref);
+					Normalize (mc, ref param_type_name, Report);
+					Type param_type = FindDocumentedType (mc, param_type_name, ds, cref, Report);
 					if (param_type == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
 							(i + 1).ToString (), cref);
@@ -669,7 +669,7 @@ namespace Mono.CSharp {
 				parameter_types = plist.ToArray (typeof (Type)) as Type [];
 			}
 
-			Type type = FindDocumentedType (mc, name, ds, cref);
+			Type type = FindDocumentedType (mc, name, ds, cref, Report);
 			if (type != null
 				// delegate must not be referenced with args
 				&& (!TypeManager.IsDelegateType (type)
@@ -684,11 +684,11 @@ namespace Mono.CSharp {
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
 				string member_name = name.Substring (period + 1);
-				Normalize (mc, ref member_name);
-				type = FindDocumentedType (mc, typeName, ds, cref);
+				Normalize (mc, ref member_name, Report);
+				type = FindDocumentedType (mc, typeName, ds, cref, Report);
 				int warn_result;
 				if (type != null) {
-					FoundMember fm = FindDocumentedMember (mc, type, member_name, parameter_types, ds, out warn_result, cref, true, name);
+					FoundMember fm = FindDocumentedMember (mc, type, member_name, parameter_types, ds, out warn_result, cref, true, name, Report);
 					if (warn_result > 0)
 						return;
 					if (!fm.IsEmpty) {
@@ -704,7 +704,7 @@ namespace Mono.CSharp {
 			}
 			else {
 				int warn_result;
-				FoundMember fm = FindDocumentedMember (mc, ds.TypeBuilder, name, parameter_types, ds, out warn_result, cref, true, name);
+				FoundMember fm = FindDocumentedMember (mc, ds.TypeBuilder, name, parameter_types, ds, out warn_result, cref, true, name, Report);
 				if (warn_result > 0)
 					return;
 				if (!fm.IsEmpty) {
@@ -782,7 +782,7 @@ namespace Mono.CSharp {
 			return identifier;
 		}
 
-		static void Report419 (MemberCore mc, string member_name, MemberInfo [] mis)
+		static void Report419 (MemberCore mc, string member_name, MemberInfo [] mis, Report Report)
 		{
 			Report.Warning (419, 3, mc.Location, 
 				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
@@ -888,7 +888,7 @@ namespace Mono.CSharp {
 		// that means removal of DOM use.
 		//
 		internal static void OnMethodGenerateDocComment (
-			MethodCore mc, XmlElement el)
+			MethodCore mc, XmlElement el, Report Report)
 		{
 			Hashtable paramTags = new Hashtable ();
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
@@ -911,7 +911,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		private static void Normalize (MemberCore mc, ref string name)
+		private static void Normalize (MemberCore mc, ref string name, Report Report)
 		{
 			if (name.Length > 0 && name [0] == '@')
 				name = name.Substring (1);
@@ -979,7 +979,7 @@ namespace Mono.CSharp {
 		//
 		// Outputs XML documentation comment from tokenized comments.
 		//
-		public bool OutputDocComment (string asmfilename)
+		public bool OutputDocComment (string asmfilename, Report Report)
 		{
 			XmlTextWriter w = null;
 			try {
@@ -995,7 +995,7 @@ namespace Mono.CSharp {
 				w.WriteEndElement (); // assembly
 				w.WriteStartElement ("members");
 				XmlCommentOutput = w;
-				GenerateDocComment ();
+				GenerateDocComment (Report);
 				w.WriteFullEndElement (); // members
 				w.WriteEndElement ();
 				w.WriteWhitespace (Environment.NewLine);
@@ -1013,17 +1013,17 @@ namespace Mono.CSharp {
 		//
 		// Fixes full type name of each documented types/members up.
 		//
-		public void GenerateDocComment ()
+		public void GenerateDocComment (Report r)
 		{
 			TypeContainer root = RootContext.ToplevelTypes;
 
 			if (root.Types != null)
 				foreach (TypeContainer tc in root.Types)
-					DocUtil.GenerateTypeDocComment (tc, null);
+					DocUtil.GenerateTypeDocComment (tc, null, r);
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
-					DocUtil.GenerateDocComment (d, null);
+					DocUtil.GenerateDocComment (d, null, r);
 		}
 	}
 }

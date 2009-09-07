@@ -457,6 +457,10 @@ namespace Mono.CSharp
 			return CurrentUsageVector.IsAssigned (vi, false) || CurrentUsageVector.IsFieldAssigned (vi, field_name);
 		}
 
+		protected static Report Report {
+			get { return RootContext.ToplevelTypes.Compiler.Report; }
+		}
+
 		public void SetAssigned (VariableInfo vi)
 		{
 			CurrentUsageVector.SetAssigned (vi);
@@ -528,7 +532,7 @@ namespace Mono.CSharp
 			return false;
 		}
 		
-		public static void Error_UnknownLabel (Location loc, string label)
+		public static void Error_UnknownLabel (Location loc, string label, Report Report)
 		{
 			Report.Error(159, loc, "The label `{0}:' could not be found within the scope of the goto statement",
 				label);
@@ -696,7 +700,7 @@ namespace Mono.CSharp
 				throw new InternalErrorException ("Shouldn't get here");
 
 			if (Parent == null) {
-				Error_UnknownLabel (goto_stmt.loc, name);
+				Error_UnknownLabel (goto_stmt.loc, name, Report);
 				return false;
 			}
 
@@ -953,7 +957,7 @@ namespace Mono.CSharp
 				int errors = Report.Errors;
 				Parent.AddReturnOrigin (vector, exit_stmt);
 				if (errors == Report.Errors)
-					exit_stmt.Error_FinallyClause ();
+					exit_stmt.Error_FinallyClause (Report);
 			} else {
 				saved_origins = new ReturnOrigin (saved_origins, vector, exit_stmt);
 			}
@@ -1139,23 +1143,24 @@ namespace Mono.CSharp
 		//   A struct's constructor must always assign all fields.
 		//   This method checks whether it actually does so.
 		// </summary>
-		public bool IsFullyInitialized (FlowBranching branching, VariableInfo vi, Location loc)
+		public bool IsFullyInitialized (BlockContext ec, VariableInfo vi, Location loc)
 		{
 			if (struct_info == null)
 				return true;
 
 			bool ok = true;
+			FlowBranching branching = ec.CurrentBranching;
 			for (int i = 0; i < struct_info.Count; i++) {
 				FieldInfo field = struct_info.Fields [i];
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					FieldBase fb = TypeManager.GetField (field);
 					if (fb is Property.BackingField) {
-						Report.Error (843, loc,
+						ec.Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
 							fb.GetSignatureForError ());
 					} else {
-						Report.Error (171, loc,
+						ec.Report.Error (171, loc,
 							"Field `{0}' must be fully assigned before control leaves the constructor",
 							TypeManager.GetFullNameSignature (field));
 					}
@@ -1263,7 +1268,7 @@ namespace Mono.CSharp
 					if (sinfo [i] == null)
 						field_hash.Add (field.Name, ++Length);
 					else if (sinfo [i].InTransit) {
-						Report.Error (523, String.Format (
+						RootContext.ToplevelTypes.Compiler.Report.Error (523, String.Format (
 								      "Struct member `{0}.{1}' of type `{2}' causes " +
 								      "a cycle in the structure layout",
 								      type, field.Name, sinfo [i].Type));
@@ -1431,7 +1436,7 @@ namespace Mono.CSharp
 			if (IsAssigned (ec))
 				return true;
 
-			Report.Error (165, loc,
+			ec.Report.Error (165, loc,
 				      "Use of unassigned local variable `" + Name + "'");
 			ec.CurrentBranching.SetAssigned (this);
 			return false;
@@ -1501,7 +1506,7 @@ namespace Mono.CSharp
 				ec.CurrentBranching.IsFieldAssigned (this, name))
 				return true;
 
-			Report.Error (170, loc,
+			ec.Report.Error (170, loc,
 				      "Use of possibly unassigned field `" + name + "'");
 			ec.CurrentBranching.SetFieldAssigned (this, name);
 			return false;

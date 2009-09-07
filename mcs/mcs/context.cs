@@ -48,6 +48,8 @@ namespace Mono.CSharp
 		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
 		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
+
+		CompilerContext Compiler { get; }
 	}
 
 	//
@@ -282,14 +284,14 @@ namespace Mono.CSharp
 				oldval = ec.flags & mask;
 				ec.flags = (ec.flags & invmask) | (val & mask);
 
-				if ((mask & Options.ProbingMode) != 0)
-					Report.DisableReporting ();
+//				if ((mask & Options.ProbingMode) != 0)
+//					ec.Report.DisableReporting ();
 			}
 
 			public void Dispose ()
 			{
-				if ((invmask & Options.ProbingMode) == 0)
-					Report.EnableReporting ();
+//				if ((invmask & Options.ProbingMode) == 0)
+//					ec.Report.EnableReporting ();
 
 				ec.flags = (ec.flags & invmask) | oldval;
 			}
@@ -336,6 +338,10 @@ namespace Mono.CSharp
 			: this (mc)
 		{
 			flags |= options;
+		}
+
+		public CompilerContext Compiler {
+			get { return MemberContext.Compiler; }
 		}
 
 		public virtual FlowBranching CurrentBranching {
@@ -419,6 +425,12 @@ namespace Mono.CSharp
 		public bool HasAny (Options options)
 		{
 			return (this.flags & options) != 0;
+		}
+
+		public Report Report {
+			get {
+				return Compiler.Report;
+			}
 		}
 
 		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
@@ -543,5 +555,26 @@ namespace Mono.CSharp
 
 			return result;
 		}
+	}
+
+	//
+	// Main compiler context
+	//
+	public class CompilerContext
+	{
+		readonly Report report;
+
+		public CompilerContext (Report report)
+		{
+			this.report = report;
+		}
+
+		public Report Report {
+			get { return report; }
+		}
+
+		//public PredefinedAttributes PredefinedAttributes {
+		//    get { throw new NotImplementedException (); }
+		//}
 	}
 }

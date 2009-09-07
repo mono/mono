@@ -61,9 +61,9 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		internal static void Error_CompileTimeOverflow (Location loc)
+		internal static void Error_CompileTimeOverflow (ResolveContext rc, Location loc)
 		{
-			Report.Error (220, loc, "The operation overflows at compile time in checked mode");
+			rc.Report.Error (220, loc, "The operation overflows at compile time in checked mode");
 		}
 		
 		/// <summary>
@@ -386,7 +386,7 @@ namespace Mono.CSharp {
 						result = new DecimalConstant (res, left.Location);
 					}
 				} catch (OverflowException){
-					Error_CompileTimeOverflow (loc);
+					Error_CompileTimeOverflow (ec, loc);
 				}
 
 				return result;
@@ -506,7 +506,7 @@ namespace Mono.CSharp {
 						throw new Exception ( "Unexepected subtraction input: " + left);
 					}
 				} catch (OverflowException){
-					Error_CompileTimeOverflow (loc);
+					Error_CompileTimeOverflow (ec, loc);
 				}
 
 				return result;
@@ -597,7 +597,7 @@ namespace Mono.CSharp {
 						throw new Exception ( "Unexepected multiply input: " + left);
 					}
 				} catch (OverflowException){
-					Error_CompileTimeOverflow (loc);
+					Error_CompileTimeOverflow (ec, loc);
 				}
 				break;
 
@@ -687,10 +687,10 @@ namespace Mono.CSharp {
 						throw new Exception ( "Unexepected division input: " + left);
 					}
 				} catch (OverflowException){
-					Error_CompileTimeOverflow (loc);
+					Error_CompileTimeOverflow (ec, loc);
 
 				} catch (DivideByZeroException) {
-					Report.Error (020, loc, "Division by constant zero");
+					ec.Report.Error (20, loc, "Division by constant zero");
 				}
 				
 				break;
@@ -770,9 +770,9 @@ namespace Mono.CSharp {
 						throw new Exception ( "Unexepected modulus input: " + left);
 					}
 				} catch (DivideByZeroException){
-					Report.Error (020, loc, "Division by constant zero");
+					ec.Report.Error (20, loc, "Division by constant zero");
 				} catch (OverflowException){
-					Error_CompileTimeOverflow (loc);
+					Error_CompileTimeOverflow (ec, loc);
 				}
 				break;
 
@@ -782,7 +782,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.LeftShift:
 				IntConstant ic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (ic == null){
-					Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
+					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
 				}
 
@@ -798,7 +798,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
+				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 				break;
 
 				//
@@ -807,7 +807,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.RightShift:
 				IntConstant sic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (sic == null){
-					Binary.Error_OperatorCannotBeApplied (left, right, oper, loc); ;
+					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc); ;
 					return null;
 				}
 				int rshift_val = sic.Value;
@@ -822,7 +822,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value >> rshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
+				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 				break;
 
 			case Binary.Operator.Equality:

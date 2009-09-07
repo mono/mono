@@ -443,6 +443,12 @@ namespace Mono.CSharp {
 			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
 
+		protected Report Report {
+			get {
+				return Compiler.Report;
+			}
+		}
+
 		public void SetMemberIsUsed ()
 		{
 			caching_flags |= Flags.IsUsed;
@@ -481,7 +487,7 @@ namespace Mono.CSharp {
 		{
 			ObsoleteAttribute oa = GetObsoleteAttribute ();
 			if (oa != null)
-				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, Report);
 		}
 
 		// Access level of a type.
@@ -812,13 +818,17 @@ namespace Mono.CSharp {
 		internal virtual void GenerateDocComment (DeclSpace ds)
 		{
 			try {
-				DocUtil.GenerateDocComment (this, ds);
+				DocUtil.GenerateDocComment (this, ds, Report);
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
 		}
 
 		#region IMemberContext Members
+
+		public virtual CompilerContext Compiler {
+			get { return Parent.Module.Compiler; }
+		}
 
 		public virtual Type CurrentType {
 			get { return Parent.CurrentType; }
@@ -1426,7 +1436,7 @@ namespace Mono.CSharp {
 					if (tp.Constraints == null)
 						continue;
 
-					tp.Constraints.VerifyClsCompliance ();
+					tp.Constraints.VerifyClsCompliance (Report);
 				}
 			}
 
@@ -2606,7 +2616,7 @@ namespace Mono.CSharp {
  		/// </summary>
  		/// 
 		// TODO: refactor as method is always 'this'
- 		public static void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder)
+ 		public static void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder, Report Report)
  		{
  			EntryType tested_type = (method is Constructor ? EntryType.Constructor : EntryType.Method) | EntryType.Public;
  
@@ -2652,7 +2662,7 @@ namespace Mono.CSharp {
  			}
   		}
 
-		public bool CheckExistingMembersOverloads (MemberCore member, string name, ParametersCompiled parameters)
+		public bool CheckExistingMembersOverloads (MemberCore member, string name, ParametersCompiled parameters, Report Report)
 		{
 			ArrayList entries = (ArrayList)member_hash [name];
 			if (entries == null)

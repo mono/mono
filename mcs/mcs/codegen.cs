@@ -91,13 +91,13 @@ namespace Mono.CSharp {
 		//
 		// Initializes the code generator variables for interactive use (repl)
 		//
-		static public void InitDynamic (string name)
+		static public void InitDynamic (CompilerContext ctx, string name)
 		{
 			current_domain = AppDomain.CurrentDomain;
 			AssemblyName an = Assembly.GetAssemblyName (name, name);
 			
 			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
-			RootContext.ToplevelTypes = new ModuleContainer (true);
+			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
 			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
 			Assembly.Name = Assembly.Builder.GetName ();
 		}
@@ -105,7 +105,7 @@ namespace Mono.CSharp {
 		//
 		// Initializes the code generator variables
 		//
-		static public bool Init (string name, string output, bool want_debugging_support)
+		static public bool Init (string name, string output, bool want_debugging_support, CompilerContext ctx)
 		{
 			FileName = output;
 			AssemblyName an = Assembly.GetAssemblyName (name, output);
@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 					AssemblyName ref_name = a.GetName ();
 					byte [] b = ref_name.GetPublicKeyToken ();
 					if (b == null || b.Length == 0) {
-						Report.Error (1577, "Assembly generation failed " +
+						ctx.Report.Error (1577, "Assembly generation failed " +
 								"-- Referenced assembly '" +
 								ref_name.Name +
 								"' does not have a strong name.");
@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 			catch (ArgumentException) {
 				// specified key may not be exportable outside it's container
 				if (RootContext.StrongNameKeyContainer != null) {
-					Report.Error (1548, "Could not access the key inside the container `" +
+					ctx.Report.Error (1548, "Could not access the key inside the container `" +
 						RootContext.StrongNameKeyContainer + "'.");
 					Environment.Exit (1);
 				}
@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 			}
 			catch (CryptographicException) {
 				if ((RootContext.StrongNameKeyContainer != null) || (RootContext.StrongNameKeyFile != null)) {
-					Report.Error (1548, "Could not use the specified key to strongname the assembly.");
+					ctx.Report.Error (1548, "Could not use the specified key to strongname the assembly.");
 					Environment.Exit (1);
 				}
 				return false;
@@ -170,13 +170,13 @@ namespace Mono.CSharp {
 #if !MS_COMPATIBLE
 				// TODO: We should use SymbolWriter from DefineDynamicModule
 				if (want_debugging_support && !SymbolWriter.Initialize (RootContext.ToplevelTypes.Builder, output)) {
-					Report.Error (40, "Unexpected debug information initialization error `{0}'",
+					ctx.Report.Error (40, "Unexpected debug information initialization error `{0}'",
 						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
 					return false;
 				}
 #endif
 			} catch (ExecutionEngineException e) {
-				Report.Error (40, "Unexpected debug information initialization error `{0}'",
+				ctx.Report.Error (40, "Unexpected debug information initialization error `{0}'",
 					e.Message);
 				return false;
 			}
@@ -184,7 +184,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static public void Save (string name, bool saveDebugInfo)
+		static public void Save (string name, bool saveDebugInfo, Report Report)
 		{
 #if GMCS_SOURCE
 			PortableExecutableKinds pekind;
@@ -537,6 +537,10 @@ namespace Mono.CSharp {
 
 		#region IMemberContext Members
 
+		public CompilerContext Compiler {
+			get { return RootContext.ToplevelTypes.Compiler; }
+		}
+
 		public Type CurrentType {
 			get { return null; }
 		}
@@ -601,7 +605,7 @@ namespace Mono.CSharp {
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
 
-		public AssemblyClass (): base ()
+		public AssemblyClass ()
 		{
 			wrap_non_exception_throws = true;
 		}
@@ -633,6 +637,10 @@ namespace Mono.CSharp {
 		public override bool IsClsComplianceRequired ()
 		{
 			return is_cls_compliant;
+		}
+
+		Report Report {
+			get { return Compiler.Report; }
 		}
 
 		public void Resolve ()

@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   This must be called before parsing/tokenizing any files.
 		// </summary>
-		static public void AddFile (string name)
+		static public void AddFile (Report r, string name)
 		{
 			string path = Path.GetFullPath (name);
 
@@ -225,9 +225,9 @@ namespace Mono.CSharp {
 				int id = (int) source_files [path];
 				string other_name = ((SourceFile) source_list [id - 1]).Name;
 				if (name.Equals (other_name))
-					Report.Warning (2002, 1, "Source file `{0}' specified multiple times", other_name);
+					r.Warning (2002, 1, "Source file `{0}' specified multiple times", other_name);
 				else
-					Report.Warning (2002, 1, "Source filenames `{0}' and `{1}' both refer to the same file: {2}", name, other_name, path);
+					r.Warning (2002, 1, "Source filenames `{0}' and `{1}' both refer to the same file: {2}", name, other_name, path);
 				return;
 			}
 

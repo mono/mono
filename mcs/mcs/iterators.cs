@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 			// inside an unsafe class.  See test-martin-29.cs for an example.
 			//
 			if (!ec.CurrentAnonymousMethod.IsIterator) {
-				Report.Error (1621, loc,
+				ec.Report.Error (1621, loc,
 					      "The yield statement cannot be used inside " +
 					      "anonymous method blocks");
 				return false;
@@ -102,7 +102,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override void Error_FinallyClause ()
+		public override void Error_FinallyClause (Report Report)
 		{
 			Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 		}
@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 			{
 				this.host = host;
 
-				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, ParametersCompiled.EmptyReadOnlyParameters, Location);
+				Block = new ToplevelBlock (Compiler, host.Iterator.Container.Toplevel, ParametersCompiled.EmptyReadOnlyParameters, Location);
 			}
 
 			public override EmitContext CreateEmitContext (ILGenerator ig)
@@ -256,7 +256,7 @@ namespace Mono.CSharp {
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
-						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
+						Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", Kind.Class, true);
 						if (t != null) {
 							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (
 								t, "CompareExchange", loc, TypeManager.int32_type,
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 			{
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Container, ParametersCompiled.EmptyReadOnlyParameters, Location);
+				Block = new ToplevelBlock (Compiler, host.Iterator.Container, ParametersCompiled.EmptyReadOnlyParameters, Location);
 				Block.AddStatement (new DisposeMethodStatement (host.Iterator));
 			}
 		}
@@ -542,7 +542,7 @@ namespace Mono.CSharp {
 
 			name = new MemberName (name, "Current", Location);
 
-			ToplevelBlock get_block = new ToplevelBlock (Location);
+			ToplevelBlock get_block = new ToplevelBlock (Compiler, Location);
 			get_block.AddStatement (new Return (new DynamicFieldExpr (CurrentField, Location), Location));
 				
 			Accessor getter = new Accessor (get_block, 0, null, null, Location);
@@ -561,9 +561,9 @@ namespace Mono.CSharp {
 				ParametersCompiled.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
 
-			reset.Block = new ToplevelBlock (Location);
+			reset.Block = new ToplevelBlock (Compiler, Location);
 
-			Type ex_type = TypeManager.CoreLookupType ("System", "NotSupportedException", Kind.Class, true);
+			Type ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", Kind.Class, true);
 			if (ex_type == null)
 				return;
 
@@ -808,9 +808,9 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		private Iterator (IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
+		private Iterator (CompilerContext ctx, IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
 			: base (
-				new ToplevelBlock (method.Block, ParametersCompiled.EmptyReadOnlyParameters, method.Block.StartLocation),
+				new ToplevelBlock (ctx, method.Block, ParametersCompiled.EmptyReadOnlyParameters, method.Block.StartLocation),
 				TypeManager.bool_type,
 				method.Location)
 		{
@@ -874,7 +874,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static void CreateIterator (IMethodData method, TypeContainer parent, int modifiers)
+		public static void CreateIterator (IMethodData method, TypeContainer parent, int modifiers, CompilerContext ctx)
 		{
 			bool is_enumerable;
 			Type iterator_type;
@@ -884,7 +884,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
-				Report.Error (1624, method.Location,
+				ctx.Report.Error (1624, method.Location,
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
@@ -897,19 +897,19 @@ namespace Mono.CSharp {
 				Parameter p = parameters [i];
 				Parameter.Modifier mod = p.ModFlags;
 				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
-					Report.Error (1623, p.Location,
+					ctx.Report.Error (1623, p.Location,
 						"Iterators cannot have ref or out parameters");
 					return;
 				}
 
 				if (p is ArglistParameter) {
-					Report.Error (1636, method.Location,
+					ctx.Report.Error (1636, method.Location,
 						"__arglist is not allowed in parameter list of iterators");
 					return;
 				}
 
 				if (parameters.Types [i].IsPointer) {
-					Report.Error (1637, p.Location,
+					ctx.Report.Error (1637, p.Location,
 							  "Iterators cannot have unsafe parameters or " +
 							  "yield types");
 					return;
@@ -917,11 +917,11 @@ namespace Mono.CSharp {
 			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0) {
-				Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				ctx.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
 				return;
 			}
 
-			Iterator iter = new Iterator (method, parent, iterator_type, is_enumerable);
+			Iterator iter = new Iterator (ctx, method, parent, iterator_type, is_enumerable);
 			iter.Storey.DefineType ();
 		}
 

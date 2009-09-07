@@ -94,14 +94,14 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type t, bool expl)
 		{
 			if (TypeManager.IsGenericParameter (t)) {
-				Report.Error(403, loc,
+				ec.Report.Error(403, loc,
 					"Cannot convert null to the type parameter `{0}' because it could be a value " +
 					"type. Consider using `default ({0})' instead", t.Name);
 				return;
 			}
 
 			if (TypeManager.IsValueType (t)) {
-				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
+				ec.Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
 					TypeManager.CSharpName(t));
 				return;
 			}
@@ -347,21 +347,21 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
 		{
 			if (target == TypeManager.float_type) {
-				Error_664 (loc, "float", "f");
+				Error_664 (ec, loc, "float", "f");
 				return;
 			}
 
 			if (target == TypeManager.decimal_type) {
-				Error_664 (loc, "decimal", "m");
+				Error_664 (ec, loc, "decimal", "m");
 				return;
 			}
 
 			base.Error_ValueCannotBeConverted (ec, loc, target, expl);
 		}
 
-		static void Error_664 (Location loc, string type, string suffix)
+		static void Error_664 (ResolveContext ec, Location loc, string type, string suffix)
 		{
-			Report.Error (664, loc,
+			ec.Report.Error (664, loc,
 				"Literal of type double cannot be implicitly converted to type `{0}'. Add suffix `{1}' to create a literal of this type",
 				type, suffix);
 		}

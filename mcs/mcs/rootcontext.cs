@@ -157,7 +157,6 @@ namespace Mono.CSharp {
 			
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
-			Report.WarningLevel = 4;
 			Checked = false;
 			Unsafe = false;
 			StdLib = true;
@@ -361,7 +360,7 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitType ();
 
-				if (Report.Errors > 0)
+				if (RootContext.ToplevelTypes.Compiler.Report.Errors > 0)
 					return;
 
 				foreach (TypeContainer tc in type_container_resolve_order)
@@ -422,7 +421,7 @@ namespace Mono.CSharp {
 			return fb;
 		}
 
-		public static void CheckUnsafeOption (Location loc)
+		public static void CheckUnsafeOption (Location loc, Report Report)
 		{
 			if (!Unsafe) {
 				Report.Error (227, loc, 
@@ -431,5 +430,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-	      
-

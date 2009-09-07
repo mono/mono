@@ -407,7 +407,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-#if NET_4_0
+#if NET_4_0 || MS_COMPATIBLE
 	[System.Diagnostics.DebuggerDisplay ("Dynamic type")]
 #endif
 	class DynamicType : Type

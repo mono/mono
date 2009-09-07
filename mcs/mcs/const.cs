@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 
 			Type ttype = MemberType;
 			if (!IsConstantTypeValid (ttype)) {
-				Error_InvalidConstantType (ttype, Location);
+				Error_InvalidConstantType (ttype, Location, Report);
 			}
 
 			// If the constant is private then we don't need any field the
@@ -150,24 +150,24 @@ namespace Mono.CSharp {
 			return new CustomAttributeBuilder (pa.Constructor, args);
 		}
 
-		public static void Error_ExpressionMustBeConstant (Location loc, string e_name)
+		public static void Error_ExpressionMustBeConstant (Location loc, string e_name, Report Report)
 		{
 			Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
 		}
 
-		public static void Error_CyclicDeclaration (MemberCore mc)
+		public static void Error_CyclicDeclaration (MemberCore mc, Report Report)
 		{
 			Report.Error (110, mc.Location, "The evaluation of the constant value for `{0}' involves a circular definition",
 				mc.GetSignatureForError ());
 		}
 
-		public static void Error_ConstantCanBeInitializedWithNullOnly (Type type, Location loc, string name)
+		public static void Error_ConstantCanBeInitializedWithNullOnly (Type type, Location loc, string name, Report Report)
 		{
 			Report.Error (134, loc, "A constant `{0}' of reference type `{1}' can only be initialized with null",
 				name, TypeManager.CSharpName (type));
 		}
 
-		public static void Error_InvalidConstantType (Type t, Location loc)
+		public static void Error_InvalidConstantType (Type t, Location loc, Report Report)
 		{
 			if (TypeManager.IsGenericParameter (t)) {
 				Report.Error (1959, loc,
@@ -187,7 +187,7 @@ namespace Mono.CSharp {
 
 			SetMemberIsUsed ();
 			if (in_transit) {
-				Error_CyclicDeclaration (this);
+				Error_CyclicDeclaration (this, Report);
 				// Suppress cyclic errors
 				value = New.Constantify (MemberType);
 				resolved = true;
@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 			Constant c = value.ConvertImplicitly (MemberType);
 			if (c == null) {
 				if (TypeManager.IsReferenceType (MemberType))
-					Error_ConstantCanBeInitializedWithNullOnly (MemberType, Location, GetSignatureForError ());
+					Error_ConstantCanBeInitializedWithNullOnly (MemberType, Location, GetSignatureForError (), Report);
 				else
 					value.Error_ValueCannotBeConverted (ec, Location, MemberType, false);
 			}
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), loc);
+			AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), loc, RootContext.ToplevelTypes.Compiler.Report);
 		}
 
 		public bool ResolveValue ()

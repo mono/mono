@@ -37,7 +37,7 @@ namespace Mono.CSharp.Nullable
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
 			if (TypeManager.generic_nullable_type == null) {
-				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (
+				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (ec.Compiler,
 					"System", "Nullable`1", Kind.Struct, true);
 			}
 
@@ -337,9 +337,9 @@ namespace Mono.CSharp.Nullable
 			return new LiftedNull (nullable, loc);
 		}
 
-		public static Expression CreateFromExpression (Expression e)
+		public static Expression CreateFromExpression (ResolveContext ec, Expression e)
 		{
-			Report.Warning (458, 2, e.Location, "The result of the expression is always `null' of type `{0}'",
+			ec.Report.Warning (458, 2, e.Location, "The result of the expression is always `null' of type `{0}'",
 				TypeManager.CSharpName (e.Type));
 
 			return ReducedExpression.Create (Create (e.Type, e.Location), e);
@@ -351,7 +351,7 @@ namespace Mono.CSharp.Nullable
 			args.Add (new Argument (this));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 
-			return CreateExpressionFactoryCall ("Constant", args);
+			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -583,16 +583,16 @@ namespace Mono.CSharp.Nullable
 		// with the null literal *outside* of a generics context and
 		// inlines that as true or false.
 		//
-		Expression CreateNullConstant (Expression expr)
+		Expression CreateNullConstant (ResolveContext ec, Expression expr)
 		{
 			// FIXME: Handle side effect constants
 			Constant c = new BoolConstant (Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
-				Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
+				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
 						expr.GetSignatureForError (), c.AsString ());
 			} else {
-				Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
+				ec.Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
 						expr.GetSignatureForError (), c.AsString ());
 			}
 
@@ -605,7 +605,7 @@ namespace Mono.CSharp.Nullable
 				return this;
 
 			if ((Oper & Operator.LogicalMask) != 0) {
-				Error_OperatorCannotBeApplied (left, right);
+				Error_OperatorCannotBeApplied (ec, left, right);
 				return null;
 			}
 
@@ -874,26 +874,26 @@ namespace Mono.CSharp.Nullable
 				left = LiftedNull.Create (right.Type, left.Location);
 
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
+					return LiftedNull.CreateFromExpression (ec, res_expr);
 
 				//
 				// Value types and null comparison
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
-					return CreateNullConstant (right_orig).Resolve (ec);
+					return CreateNullConstant (ec, right_orig).Resolve (ec);
 			}
 
 			if (right_null_lifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
 
 				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
+					return LiftedNull.CreateFromExpression (ec, res_expr);
 
 				//
 				// Value types and null comparison
 				//
 				if (left_unwrap == null || (Oper & Operator.RelationalMask) != 0)
-					return CreateNullConstant (left_orig).Resolve (ec);
+					return CreateNullConstant (ec, left_orig).Resolve (ec);
 			}
 
 			return res_expr;
@@ -952,7 +952,7 @@ namespace Mono.CSharp.Nullable
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (left.Type == TypeManager.null_type)
-				Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
+				ec.Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
 
 			UserCast uc = left as UserCast;
 			Expression conversion = null;
@@ -962,7 +962,7 @@ namespace Mono.CSharp.Nullable
 				Arguments c_args = new Arguments (2);
 				c_args.Add (new Argument (uc.CreateExpressionTree (ec)));
 				c_args.Add (new Argument (left.CreateExpressionTree (ec)));
-				conversion = CreateExpressionFactoryCall ("Lambda", c_args);
+				conversion = CreateExpressionFactoryCall (ec, "Lambda", c_args);
 			}
 
 			Arguments args = new Arguments (3);
@@ -971,7 +971,7 @@ namespace Mono.CSharp.Nullable
 			if (conversion != null)
 				args.Add (new Argument (conversion));
 			
-			return CreateExpressionFactoryCall ("Coalesce", args);
+			return CreateExpressionFactoryCall (ec, "Coalesce", args);
 		}
 
 		Expression ConvertExpression (ResolveContext ec)
@@ -1050,7 +1050,7 @@ namespace Mono.CSharp.Nullable
 
 			Expression e = ConvertExpression (ec);
 			if (e == null) {
-				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
+				Binary.Error_OperatorCannotBeApplied (ec, left, right, "??", loc);
 				return null;
 			}
 

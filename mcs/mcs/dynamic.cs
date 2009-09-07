@@ -33,7 +33,31 @@ namespace Mono.CSharp
 			return this;
 		}
 	}
+/*
+	public class RuntimeExpression : Expression
+	{
+		public RuntimeExpression (Type type)
+		{
+			this.type = type;
+			this.eclass = ExprClass.Value;
+		}
 
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+*/
 	interface IDynamicBinder
 	{
 		Expression CreateCallSiteBinder (ResolveContext ec, Arguments args);
@@ -106,11 +130,11 @@ namespace Mono.CSharp
 		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (TypeManager.call_site_type == null)
-				TypeManager.call_site_type = TypeManager.CoreLookupType (
+				TypeManager.call_site_type = TypeManager.CoreLookupType (ec.Compiler,
 					"System.Runtime.CompilerServices", "CallSite", Kind.Class, true);
 
 			if (TypeManager.generic_call_site_type == null)
-				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (
+				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (ec.Compiler,
 					"System.Runtime.CompilerServices", "CallSite`1", Kind.Class, true);
 
 			eclass = ExprClass.Value;
@@ -134,7 +158,7 @@ namespace Mono.CSharp
 		void EmitCall (EmitContext ec, bool isStatement)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			TypeExpr site_type = CreateSiteType (isStatement, dyn_args_count);
+			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, isStatement, dyn_args_count);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
@@ -177,7 +201,7 @@ namespace Mono.CSharp
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "Microsoft", loc), "CSharp", loc), "RuntimeBinder", loc);
 		}
 
-		TypeExpr CreateSiteType (bool isStatement, int dyn_args_count)
+		TypeExpr CreateSiteType (CompilerContext ctx, bool isStatement, int dyn_args_count)
 		{
 			int default_args = isStatement ? 1 : 2;
 
@@ -202,7 +226,7 @@ namespace Mono.CSharp
 			if (!has_ref_out_argument) {
 				string d_name = isStatement ? "Action`" : "Func`";
 
-				Type t = TypeManager.CoreLookupType ("System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
+				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
 				if (t != null) {
 					if (!isStatement)
 						targs[targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
