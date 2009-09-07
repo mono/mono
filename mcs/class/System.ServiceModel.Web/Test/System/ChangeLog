@@ -1,3 +1,8 @@
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : fixed a couple of tests to match 3.5 SP1
+	  behavior.
+
 2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplateTest.cs : enable query parameter matching test.

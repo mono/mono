@@ -1,3 +1,8 @@
+2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplate.cs : Fixed a couple of parse/match behavior to match
+	  3.5 SP1 (except for Defaults which misses implementation).
+
 2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplate.cs : the rewrite broke query parameter matching.

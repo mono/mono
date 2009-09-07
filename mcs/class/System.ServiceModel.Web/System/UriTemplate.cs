@@ -44,10 +44,16 @@ namespace System
 
 		[MonoTODO ("It needs some rewrite: template bindings should be available only one per segment")]
 		public UriTemplate (string template)
+			: this (template, false)
+		{
+		}
+
+		public UriTemplate (string template, bool ignoreTrailingSlash)
 		{
 			if (template == null)
 				throw new ArgumentNullException ("template");
 			this.template = template;
+			IgnoreTrailingSlash = ignoreTrailingSlash;
 
 			string p = template;
 			// Trim scheme, host name and port if exist.
@@ -63,6 +69,8 @@ namespace System
 			else
 				query = empty_strings;
 		}
+
+		public bool IgnoreTrailingSlash { get; private set; }
 
 		public ReadOnlyCollection<string> PathSegmentVariableNames {
 			get { return path; }
@@ -99,7 +107,7 @@ namespace System
 				sb.Append (template.Substring (src, s - src));
 				string value = parameters [name];
 				if (value == null)
-					throw new FormatException (String.Format ("The argument name value collection does not contain value for '{0}'", name));
+					throw new ArgumentException (String.Format ("The argument name value collection does not contain value for '{0}'", name), "parameters");
 				sb.Append (value);
 				src = e + 1;
 			}
@@ -185,6 +193,8 @@ namespace System
 				if (ce < 0)
 					ce = cp.Length;
 				string value = cp.Substring (c, ce - c);
+				if (value.Length == 0)
+					return null; // empty => mismatch
 				vc [name] = value;
 				m.RelativePathSegments.Add (value);
 				c += value.Length;
@@ -235,13 +245,17 @@ namespace System
 		ReadOnlyCollection<string> ParsePathTemplate (string template, int index, int end)
 		{
 			List<string> list = null;
+			int prevEnd = -2;
 			for (int i = index; i <= end; ) {
 				i = template.IndexOf ('{', i);
 				if (i < 0 || i > end)
 					break;
+				if (i == prevEnd + 1)
+					throw new ArgumentException (String.Format ("The UriTemplate '{0}' contains adjacent templated segments, which is invalid.", template));
 				int e = template.IndexOf ('}', i + 1);
 				if (e < 0 || i > end)
-					break;
+					throw new FormatException (String.Format ("Missing '}' in URI template '{0}'", template));
+				prevEnd = e;
 				if (list == null)
 					list = new List<string> ();
 				i++;

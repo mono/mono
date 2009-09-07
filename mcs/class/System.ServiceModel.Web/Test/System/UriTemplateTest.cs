@@ -50,17 +50,32 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void IgnoreTrailingSlashDefault ()
+		{
+			Assert.IsFalse (new UriTemplate (String.Empty).IgnoreTrailingSlash);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
 		public void ConstructorBrokenTemplate ()
 		{
-			// it does not raise an error at this state.
+			// it used to be allowed but now it isn't in 3.5 SP1.
 			new UriTemplate ("{");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ConstructorBrokenTemplate2 ()
+		{
+			new UriTemplate ("http://localhost:8080/{foo}/{");
 		}
 
 		[Test]
 		public void ToString ()
 		{
 			Assert.AreEqual ("urn:foo", new UriTemplate ("urn:foo").ToString (), "#1");
-			Assert.AreEqual ("{", new UriTemplate ("{").ToString (), "#2");
+			// It used to be allowed but now it isn't in 3.5 SP1.
+			//Assert.AreEqual ("{", new UriTemplate ("{").ToString (), "#2");
 		}
 
 		[Test]
@@ -83,10 +98,11 @@ namespace MonoTests.System
 			Assert.AreEqual ("FOO", t.PathSegmentVariableNames [0], "#4b");
 			Assert.AreEqual (0, t.QueryValueVariableNames.Count, "#4c");
 
-			t = new UriTemplate ("http://localhost:8080/{foo}/{");
-			Assert.AreEqual (1, t.PathSegmentVariableNames.Count, "#5a");
-			Assert.AreEqual ("FOO", t.PathSegmentVariableNames [0], "#5b");
-			Assert.AreEqual (0, t.QueryValueVariableNames.Count, "#5c");
+			// This became invalid in 3.5 SP1
+			//t = new UriTemplate ("http://localhost:8080/{foo}/{");
+			//Assert.AreEqual (1, t.PathSegmentVariableNames.Count, "#5a");
+			//Assert.AreEqual ("FOO", t.PathSegmentVariableNames [0], "#5b");
+			//Assert.AreEqual (0, t.QueryValueVariableNames.Count, "#5c");
 
 			t = new UriTemplate ("http://localhost:8080/hoge?test={foo}&test2={bar}");
 			Assert.AreEqual (0, t.PathSegmentVariableNames.Count, "#6a");
@@ -96,17 +112,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void VariablesInSameSegment ()
 		{
-			var t = new UriTemplate ("http://localhost:8080/{foo}{bar}");
-			Assert.AreEqual (1, t.PathSegmentVariableNames.Count, "#7a");
-			// wow.
-			Assert.AreEqual ("FOO}{BAR", t.PathSegmentVariableNames [0], "#7b");
-			Assert.AreEqual (0, t.QueryValueVariableNames.Count, "#7c");
+			new UriTemplate ("http://localhost:8080/{foo}{bar}");
 		}
 
 		[Test]
+		[Category ("NotDotNet")] //.NET 3.5 SP1 incorrectly matches the port part
 		public void VariablesInNonPathQuery ()
 		{
 			var t = new UriTemplate ("http://localhost:{foo}/");
@@ -147,11 +160,12 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")] // not worthy
 		public void BindByNameFileUriBaseAddress ()
 		{
 			var t = new UriTemplate ("http://localhost:8080/");
-			t.BindByName (new Uri ("file:///"), new NameValueCollection ());
+			var u = t.BindByName (new Uri ("file:///"), new NameValueCollection ());
+			Assert.AreEqual ("file:///http://localhost:8080/", u.ToString ());
 		}
 
 		[Test] // it is allowed.
@@ -164,7 +178,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void BindByNameFileMissingName ()
 		{
 			var t = new UriTemplate ("/{foo}/");
@@ -172,6 +186,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void BindInSameSegment ()
 		{
 			new UriTemplate ("/hoo/{foo}{bar}");
@@ -205,11 +220,11 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")] // not worthy
 		public void BindByPositionFileUriBaseAddress ()
 		{
 			var t = new UriTemplate ("http://localhost:8080/");
-			t.BindByPosition (new Uri ("file:///"));
+			Assert.AreEqual (new Uri ("file:///http://localhost:8080/"), t.BindByPosition (new Uri ("file:///")));
 		}
 
 		[Test] // it is NOT allowed (unlike BindByName)
@@ -247,12 +262,12 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void MatchWrongTemplate ()
 		{
 			var t = new UriTemplate ("/hoo{foo}");
 			var n = new NameValueCollection ();
-			Assert.IsNull (t.Match (new Uri ("http://localhost/"), new Uri ("http://localhost/hooray")), "#1");
+			var m = t.Match (new Uri ("http://localhost/"), new Uri ("http://localhost/hooray"));
+			Assert.AreEqual ("ray", m.BoundVariables ["foo"], "#1");
 			Assert.IsNull (t.Match (new Uri ("http://localhost/"), new Uri ("http://localhost/foobar")), "#2");
 			Assert.IsNull (t.Match (new Uri ("http://localhost/"), new Uri ("http://localhost/hooray/foobar")), "#3");
 			Assert.IsNull (t.Match (new Uri ("http://localhost/"), new Uri ("http://localhost/hoo/ray")), "#4");
