@@ -185,6 +185,7 @@ SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(
 DISTFILES = \
 	ecma.pub		\
 	winfx.pub		\
+	winfx3.pub		\
 	mono.pub		\
 	msfinal.pub		\
 	silverlight.pub		\
