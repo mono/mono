@@ -50,6 +50,9 @@ net_2_0_centum_tests := \
 	class/Microsoft.Build.Framework		\
 	class/Microsoft.Build.Utilities		\
 	class/Microsoft.Build.Engine		\
+	class/System.Runtime.Serialization	\
+	class/System.IdentityModel		\
+	class/System.ServiceModel.Web		\
 	class/Mono.C5
 
 #	class/System.Web.Extensions
