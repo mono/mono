@@ -39,8 +39,9 @@ namespace System.Web.Routing
 	public class UrlRoutingModule : IHttpModule
 	{
 		RouteCollection routes;
-		object module_identity = new object ();
-
+		object module_identity_key = new object ();
+		object original_path_key = new object ();
+		
 		public RouteCollection RouteCollection {
 			get {
 				if (routes == null)
@@ -88,9 +89,13 @@ namespace System.Web.Routing
 				throw new ArgumentNullException ("context");
 
 			// FIXME: find out what it actually does.
-			IHttpHandler h = (IHttpHandler) context.Items [module_identity];
+			IHttpHandler h = (IHttpHandler) context.Items [module_identity_key];
 			if (h != null)
 				context.Handler = h;
+
+			string original_path = context.Items [original_path_key] as string;
+			if (!String.IsNullOrEmpty (original_path))
+				context.RewritePath (original_path);
 		}
 
 		[MonoTODO]
@@ -116,13 +121,12 @@ namespace System.Web.Routing
 			//var vpd = RouteCollection.GetVirtualPath (rc, rd.Values);
 			//context.RewritePath (vpd.VirtualPath);
 
-			// FIXME: use it somewhere.
-			string path = context.Request.Path;
+			context.Items [original_path_key] = context.Request.Path;
 
 			// default handler (forbidden in MVC/DynamicData projects)
 			context.RewritePath ("~/UrlRouting.axd");
 
-			context.Items [module_identity] = http;
+			context.Items [module_identity_key] = http;
 		}
 	}
 }
