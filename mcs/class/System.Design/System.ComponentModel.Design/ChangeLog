@@ -1,3 +1,10 @@
+2009-09-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignSurface.cs: Don't be so strict and allow for the users 
+	to get the View even if the DesignSurface wasn't properly initialized 
+	with a DesignerLoader. MS compatibility.
+	[Fixes bug #537131]
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DesignerActionMethodItem.cs: Fix typo where the action_list
