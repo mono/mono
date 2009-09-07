@@ -20,6 +20,7 @@ System.Runtime.Serialization/ExportOptions.cs
 System.Runtime.Serialization/ExtensionDataObject.cs
 System.Runtime.Serialization/IDataContractSurrogate.cs
 System.Runtime.Serialization/IExtensibleDataObject.cs
+System.Runtime.Serialization/IgnoreDataMemberAttribute.cs
 System.Runtime.Serialization/ImportOptions.cs
 System.Runtime.Serialization/InvalidDataContractException.cs
 System.Runtime.Serialization/KnownTypeAttribute.cs

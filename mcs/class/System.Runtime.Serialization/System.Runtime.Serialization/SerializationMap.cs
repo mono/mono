@@ -571,6 +571,8 @@ namespace System.Runtime.Serialization
 					mt = pi.PropertyType;
 				if (mt == null)
 					continue;
+				if (mi.GetCustomAttributes (typeof (IgnoreDataMemberAttribute), false).Length != 0)
+					continue;
 				l.Add (new DataMemberInfo (mi, new DataMemberAttribute (), null, null));
 			}
 			l.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);

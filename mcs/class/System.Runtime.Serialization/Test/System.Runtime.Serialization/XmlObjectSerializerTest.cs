@@ -1309,8 +1309,34 @@ vc?crid=45541/part=1/guid=ae968b5d-e4a5-41fe-9b23-ed631b27cd21/</Href>
 			Assert.AreEqual ("ONE", out_settings ["one"], "out");
 			out_settings.Clear ();
 		}
- 	}
- 
+
+		[Test]
+		public void IgnoreDataMember ()
+		{
+			var ser = new DataContractSerializer (typeof (MemberIgnored));
+			var sw = new StringWriter ();
+			using (var w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, new MemberIgnored ());
+			}
+			Assert.AreEqual (@"<MemberIgnored xmlns:i=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization""><body><Bar>bar</Bar></body></MemberIgnored>", sw.ToString (), "#1");
+		}
+	}
+
+	[DataContract]
+	public class MemberIgnored
+	{
+		[DataMember]
+		MemberIgnoredBody body = new MemberIgnoredBody ();
+	}
+
+	public class MemberIgnoredBody
+	{
+		[IgnoreDataMember]
+		public string Foo = "foo";
+
+		public string Bar = "bar";
+	}
+
 	public enum Colors {
 		Red, Green, Blue
 	}
