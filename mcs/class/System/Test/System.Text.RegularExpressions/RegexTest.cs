@@ -63,6 +63,12 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			new Regex ("foo", (RegexOptions) Int32.MaxValue);
 		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void InvalidOptions2 ()
+		{
+			new Regex ("foo", RegexOptions.ECMAScript | RegexOptions.RightToLeft);
+		}
 		
 		[Test]
 		public void Unescape ()
@@ -213,6 +219,18 @@ namespace MonoTests.System.Text.RegularExpressions
 			r.Replace ("string", m, 0, 0);
 		}
 
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Replace_InvalidCount ()
+		{
+			Regex.Replace ("foo", "foo|bar", "baz", -4);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Replace_InvalidStart ()
+		{
+			Regex.Replace ("foo", "foo|bar", "baz", 1, -4);
+		}
+
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Split_InputNull1 ()
 		{
@@ -223,6 +241,30 @@ namespace MonoTests.System.Text.RegularExpressions
 		public void Split_InputNull2 ()
 		{
 			Regex.Split (null, "^.*$", RegexOptions.RightToLeft);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Split_InvalidCount ()
+		{
+			Regex.Split (null, "^.*$", -4);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Split_InvalidCount ()
+		{
+			Regex.Split (null, "^.*$", 1, -4);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Escape_Null ()
+		{
+			Regex.Escape (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Unescape_Null ()
+		{
+			Regex.Unescape (null);
 		}
 
 		static string story =

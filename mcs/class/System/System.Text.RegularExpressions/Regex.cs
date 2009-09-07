@@ -97,11 +97,15 @@ namespace System.Text.RegularExpressions {
 		
 		public static string Escape (string str)
 		{
+			if (str == null)
+				throw new ArgumentNullException ("str");
 			return Parser.Escape (str);
 		}
 
 		public static string Unescape (string str)
 		{
+			if (str == null)
+				throw new ArgumentNullException ("str");
 			return Parser.Unescape (str);
 		}
 
@@ -228,7 +232,18 @@ namespace System.Text.RegularExpressions {
 				RegexOptions.RightToLeft |
 				RegexOptions.ECMAScript |
 				RegexOptions.CultureInvariant;
+
+			const RegexOptions ecmaopts =
+				RegexOptions.IgnoreCase |
+				RegexOptions.Multiline |
+#if !NET_2_1
+				RegexOptions.Compiled |
+#endif
+				RegexOptions.ECMAScript;
+
 			if ((options & ~allopts) != 0)
+				throw new ArgumentOutOfRangeException ("options");
+			if ((options & RegexOptions.ECMAScript) != 0 && (options & ~ecmaopts) != 0)
 				throw new ArgumentOutOfRangeException ("options");
 		}
 
@@ -445,6 +460,8 @@ namespace System.Text.RegularExpressions {
 				throw new ArgumentNullException ("evaluator");
 			if (count < -1)
 				throw new ArgumentOutOfRangeException ("count");
+			if (startat < 0 || startat > input.Length)
+				throw new ArgumentOutOfRangeException ("startat");
 
 			BaseMachine m = (BaseMachine)CreateMachine ();
 
@@ -477,6 +494,8 @@ namespace System.Text.RegularExpressions {
 				throw new ArgumentNullException ("replacement");
 			if (count < -1)
 				throw new ArgumentOutOfRangeException ("count");
+			if (startat < 0 || startat > input.Length)
+				throw new ArgumentOutOfRangeException ("startat");
 
 			return CreateMachine ().Replace (this, input, replacement, count, startat);
 		}
@@ -497,6 +516,11 @@ namespace System.Text.RegularExpressions {
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (startat < 0 || startat > input.Length)
+				throw new ArgumentOutOfRangeException ("startat");
+
 			return CreateMachine ().Split (this, input, count, startat);
 		}
 

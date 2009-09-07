@@ -1,5 +1,11 @@
 2009-09-07  Raja R Harinath  <harinath@hurrynot.org>
 
+	* Regex.cs (Escape, Unescape): Add null checks.
+	(validate_options): Add ECMAScript option checks.
+	(Replace, Split): Add a few bounds checks.
+
+2009-09-07  Raja R Harinath  <harinath@hurrynot.org>
+
 	Add some null checks and bounds checks.
 	* Regex.cs (default_startat): New.  Replaces the fragment
 	'RightToLeft ?  input.Length : 0' with a null-safe variant.
