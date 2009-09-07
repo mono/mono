@@ -1,3 +1,8 @@
+2009-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (runtest): Disable aot on some tests which contain loading
+	errors.
+
 2009-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* process-stress.cs: New stress test for spawning processes.
