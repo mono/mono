@@ -44,6 +44,7 @@ namespace System.ServiceModel.Syndication
 		public const string Atom10 = "http://www.w3.org/2005/Atom";
 	}
 
+	[XmlRoot ("service", Namespace = Namespaces.AtomPP)]
 	public class AtomPub10ServiceDocumentFormatter : ServiceDocumentFormatter, IXmlSerializable
 	{
 		public AtomPub10ServiceDocumentFormatter ()

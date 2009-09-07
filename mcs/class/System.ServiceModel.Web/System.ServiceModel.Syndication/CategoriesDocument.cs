@@ -70,7 +70,7 @@ namespace System.ServiceModel.Syndication
 			return doc;
 		}
 
-		public CategoriesDocument ()
+		internal CategoriesDocument ()
 		{
 		}
 

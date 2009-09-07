@@ -36,6 +36,7 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Syndication
 {
+	[XmlRoot ("categories", Namespace = Namespaces.AtomPP)]
 	public class AtomPub10CategoriesDocumentFormatter : CategoriesDocumentFormatter, IXmlSerializable
 	{
 		public AtomPub10CategoriesDocumentFormatter ()

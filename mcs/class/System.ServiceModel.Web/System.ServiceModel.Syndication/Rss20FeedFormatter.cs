@@ -135,7 +135,6 @@ namespace System.ServiceModel.Syndication
 			return c;
 		}
 
-		[MonoTODO ("Find out how feedBaseUri is used")]
 		protected virtual void WriteItem (XmlWriter writer, SyndicationItem item, Uri feedBaseUri)
 		{
 			item.SaveAsRss20 (writer);

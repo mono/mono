@@ -1,3 +1,10 @@
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Rss20FeedFormatter.cs, CategoriesDocument.cs,
+	  AtomPub10ServiceDocumentFormatter_1.cs,
+	  AtomPub10CategoriesDocumentFormatter.cs,
+	  AtomPub10ServiceDocumentFormatter.cs : a couple of corcompare fixes.
+
 2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDocument.cs : remove Utility class. It is not precise

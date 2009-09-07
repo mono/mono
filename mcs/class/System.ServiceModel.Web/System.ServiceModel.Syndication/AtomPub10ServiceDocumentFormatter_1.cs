@@ -30,9 +30,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.Xml.Serialization;
 
 namespace System.ServiceModel.Syndication
 {
+	[XmlRoot ("service", Namespace = Namespaces.AtomPP)]
 	public class AtomPub10ServiceDocumentFormatter<TServiceDocument> : AtomPub10ServiceDocumentFormatter
 		where TServiceDocument : ServiceDocument, new()
 	{
