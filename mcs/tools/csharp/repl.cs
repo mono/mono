@@ -170,7 +170,7 @@ namespace Mono {
 			// cursor position when writing to Stderr.  It also
 			// has the undesirable side effect of making
 			// errors plain, with no coloring.
-			Report.Stderr = Console.Out;
+//			Report.Stderr = Console.Out;
 			SetupConsole ();
 
 			if (isatty)
@@ -618,7 +618,7 @@ namespace Mono {
 				try {
 					string error_string;
 					StringWriter error_output = new StringWriter ();
-					Report.Stderr = error_output;
+//					Report.Stderr = error_output;
 					
 					string line = s.GetString ();
 	

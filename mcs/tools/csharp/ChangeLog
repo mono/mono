@@ -1,3 +1,7 @@
+2009-09-07  Marek Safar  <marek.safar@gmail.com>
+
+	* repl.cs: Disabled Report.Stderr hacking.
+
 2009-04-17  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile: Make this build using csharplib instead of referencing
