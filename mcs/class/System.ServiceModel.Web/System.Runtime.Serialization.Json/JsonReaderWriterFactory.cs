@@ -89,6 +89,8 @@ namespace System.Runtime.Serialization.Json
 
 		static Encoding Detect (Stream source)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
 			Stream stream = source;
 			if (!stream.CanSeek)
 				stream = new BufferedStream (source);

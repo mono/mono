@@ -1,3 +1,7 @@
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderWriterFactory.cs : check null stream (fix test failure).
+
 2009-03-13  Andreia Gaita  <avidigal@novell.com>
 
 	* JsonReader.cs: fix depth calculation
