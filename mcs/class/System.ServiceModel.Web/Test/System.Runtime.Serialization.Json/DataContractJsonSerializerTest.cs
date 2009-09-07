@@ -937,7 +937,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter xw = XmlWriter.Create (sw, settings)) {
 				SerializeNonDCArrayType obj = new SerializeNonDCArrayType ();
-				obj.IPAddresses = new IPAddress [] {new IPAddress (new byte [] {1, 2, 3, 4})};
+				obj.IPAddresses = new NonDCItem [] {new NonDCItem () { Data = new byte [] {1, 2, 3, 4} } };
 				ser.WriteObject (xw, obj);
 			}
 
@@ -949,10 +949,9 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			nsmgr.AddNamespace ("a", "http://schemas.microsoft.com/2003/10/Serialization/Arrays");
 
 			Assert.AreEqual (1, doc.SelectNodes ("/root/IPAddresses/item", nsmgr).Count, "#1");
-			Assert.AreEqual ("67305985", doc.SelectSingleNode ("/root/IPAddresses/item/m_Address", nsmgr).InnerText, "#2");
-			XmlElement el = doc.SelectSingleNode ("/root/IPAddresses/item/m_Numbers", nsmgr) as XmlElement;
+			XmlElement el = doc.SelectSingleNode ("/root/IPAddresses/item/Data", nsmgr) as XmlElement;
 			Assert.IsNotNull (el, "#3");
-			Assert.AreEqual (8, el.SelectNodes ("item", nsmgr).Count, "#4");
+			Assert.AreEqual (4, el.SelectNodes ("item", nsmgr).Count, "#4");
 		}
 
 		[Test]
@@ -1364,7 +1363,12 @@ namespace MonoTests.System.Runtime.Serialization.Json
 	class SerializeNonDCArrayType
 	{
 		[DataMember]
-		public IPAddress [] IPAddresses = new IPAddress [0];
+		public NonDCItem [] IPAddresses = new NonDCItem [0];
+	}
+
+	public class NonDCItem
+	{
+		public byte [] Data { get; set; }
 	}
 
 	[DataContract]

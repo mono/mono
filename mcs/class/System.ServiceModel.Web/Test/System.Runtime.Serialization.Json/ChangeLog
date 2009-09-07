@@ -1,3 +1,9 @@
+2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : fix non-datacontract
+	  serialization test. It depended on IPAddress field internals
+	  (runtime serialization incompatibility).
+
 2009-03-13  Andreia Gaita  <avidigal@novell.com>
 
 	* JsonReaderTest.cs: test for skip and depth (if depth fails, skip is affected)
