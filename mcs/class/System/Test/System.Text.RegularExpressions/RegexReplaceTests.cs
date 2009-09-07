@@ -236,21 +236,5 @@ namespace MonoTests.System.Text.RegularExpressions
 		public void ReplaceTest_102 () { new testcase (@"(?:{1}", @"(\A|((\A|[^\\])([\\]{2})*\((\?([:>=!]|<([=!]|(\w+>))))?))\{\d+(,(\d+)?)?\}", @"r", @"r").Execute (); }
 		[Test] 
 		public void ReplaceTest_103 () { new testcase (@"\({1}", @"(\A|((\A|[^\\])([\\]{2})*\((\?([:>=!]|<([=!]|(\w+>))))?))\{\d+(,(\d+)?)?\}", @"r", @"\({1}").Execute (); }
-
-		[Test, ExpectedException (typeof (ArgumentNullException))]
-		public void Replace_InputNull ()
-		{
-			Regex r = new Regex ("^.*$");
-			MatchEvaluator m = delegate (Match match) {return null;};
-			r.Replace (null, m, 0, 0);
-		}
-
-		[Test, ExpectedException (typeof (ArgumentNullException))]
-		public void Replace_EvaluatorNull ()
-		{
-			Regex r = new Regex ("^.*$");
-			MatchEvaluator m = null;
-			r.Replace ("string", m, 0, 0);
-		}
 	}
 }

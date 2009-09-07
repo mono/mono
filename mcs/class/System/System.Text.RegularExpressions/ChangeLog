@@ -1,3 +1,14 @@
+2009-09-07  Raja R Harinath  <harinath@hurrynot.org>
+
+	Add some null checks and bounds checks.
+	* Regex.cs (default_startat): New.  Replaces the fragment
+	'RightToLeft ?  input.Length : 0' with a null-safe variant.
+	(Replace) <string variant>: Add null checks for argument strings.
+	(Split): Likewise.
+	(.ctor): Likewise.  Validate regex options partially.
+	(Match): Add null check on string arguments, and bounds checks for
+	offset and length arguments.
+
 2009-08-20  Raja R Harinath  <harinath@hurrynot.org>
 
 	Final piece of explicit numeric group support

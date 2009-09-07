@@ -205,10 +205,33 @@ namespace System.Text.RegularExpressions {
 
 		public Regex (string pattern, RegexOptions options)
 		{
+			if (pattern == null)
+				throw new ArgumentNullException ("pattern");
+			validate_options (options);
 			this.pattern = pattern;
 			this.roptions = options;
 			Init ();
 		}
+
+		static void validate_options (RegexOptions options)
+		{
+			const RegexOptions allopts =
+				RegexOptions.None |
+				RegexOptions.IgnoreCase |
+				RegexOptions.Multiline |
+				RegexOptions.ExplicitCapture |
+#if !NET_2_1
+				RegexOptions.Compiled |
+#endif
+				RegexOptions.Singleline |
+				RegexOptions.IgnorePatternWhitespace |
+				RegexOptions.RightToLeft |
+				RegexOptions.ECMAScript |
+				RegexOptions.CultureInvariant;
+			if ((options & ~allopts) != 0)
+				throw new ArgumentOutOfRangeException ("options");
+		}
+
 #if !TARGET_JVM
 		private void Init ()
 		{
@@ -343,11 +366,16 @@ namespace System.Text.RegularExpressions {
 			return Array.BinarySearch (GroupNumbers, gap, group_count - gap + 1, number);
 		}
 
+		int default_startat (string input)
+		{
+			return (RightToLeft && input != null) ? input.Length : 0;
+		}
+
 		// match methods
 		
 		public bool IsMatch (string input)
 		{
-			return IsMatch (input, RightToLeft ? input.Length : 0);
+			return IsMatch (input, default_startat (input));
 		}
 
 		public bool IsMatch (string input, int startat)
@@ -357,22 +385,32 @@ namespace System.Text.RegularExpressions {
 
 		public Match Match (string input)
 		{
-			return Match (input, RightToLeft ? input.Length : 0);
+			return Match (input, default_startat (input));
 		}
 
 		public Match Match (string input, int startat)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (startat < 0 || startat > input.Length)
+				throw new ArgumentOutOfRangeException ("startat");
 			return CreateMachine ().Scan (this, input, startat, input.Length);
 		}
 
 		public Match Match (string input, int startat, int length)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (startat < 0 || startat > input.Length)
+				throw new ArgumentOutOfRangeException ("startat");
+			if (length < 0 || length > input.Length - startat)
+				throw new ArgumentOutOfRangeException ("length");
 			return CreateMachine ().Scan (this, input, startat, startat + length);
 		}
 
 		public MatchCollection Matches (string input)
 		{
-			return Matches (input, RightToLeft ? input.Length : 0);
+			return Matches (input, default_startat (input));
 		}
 
 		public MatchCollection Matches (string input, int startat)
@@ -385,12 +423,12 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, MatchEvaluator evaluator)
 		{
-			return Replace (input, evaluator, Int32.MaxValue, RightToLeft ? input.Length : 0);
+			return Replace (input, evaluator, Int32.MaxValue, default_startat (input));
 		}
 
 		public string Replace (string input, MatchEvaluator evaluator, int count)
 		{
-			return Replace (input, evaluator, count, RightToLeft ? input.Length : 0);
+			return Replace (input, evaluator, count, default_startat (input));
 		}
 
 		class Adapter {
@@ -402,9 +440,11 @@ namespace System.Text.RegularExpressions {
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
 		{
 			if (input == null)
-				throw new ArgumentNullException ("null");
+				throw new ArgumentNullException ("input");
 			if (evaluator == null)
 				throw new ArgumentNullException ("evaluator");
+			if (count < -1)
+				throw new ArgumentOutOfRangeException ("count");
 
 			BaseMachine m = (BaseMachine)CreateMachine ();
 
@@ -421,16 +461,23 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, string replacement)
 		{
-			return Replace (input, replacement, Int32.MaxValue, RightToLeft ? input.Length : 0);
+			return Replace (input, replacement, Int32.MaxValue, default_startat (input));
 		}
 
 		public string Replace (string input, string replacement, int count)
 		{
-			return Replace (input, replacement, count, RightToLeft ? input.Length : 0);
+			return Replace (input, replacement, count, default_startat (input));
 		}
 
 		public string Replace (string input, string replacement, int count, int startat)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (replacement == null)
+				throw new ArgumentNullException ("replacement");
+			if (count < -1)
+				throw new ArgumentOutOfRangeException ("count");
+
 			return CreateMachine ().Replace (this, input, replacement, count, startat);
 		}
 
@@ -438,16 +485,18 @@ namespace System.Text.RegularExpressions {
 
 		public string [] Split (string input)
 		{
-			return Split (input, Int32.MaxValue, RightToLeft ? input.Length : 0);
+			return Split (input, Int32.MaxValue, default_startat (input));
 		}
 
 		public string [] Split (string input, int count)
 		{
-			return Split (input, count, RightToLeft ? input.Length : 0);
+			return Split (input, count, default_startat (input));
 		}
 
 		public string [] Split (string input, int count, int startat)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
 			return CreateMachine ().Split (this, input, count, startat);
 		}
 

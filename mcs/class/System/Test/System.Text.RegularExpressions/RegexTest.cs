@@ -45,6 +45,24 @@ namespace MonoTests.System.Text.RegularExpressions
 			string s = new String(c);
 			Assert.IsTrue (Regex.IsMatch(s, s), "char");
 		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void NullPattern1 ()
+		{
+			new Regex (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void NullPattern2 ()
+		{
+			new Regex (null, RegexOptions.None);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void InvalidOptions1 ()
+		{
+			new Regex ("foo", (RegexOptions) Int32.MaxValue);
+		}
 		
 		[Test]
 		public void Unescape ()
@@ -88,6 +106,123 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert.AreEqual (col [0].Value, "\t");
 			Assert.AreEqual (col [1].Value, "just a text");
 			Assert.AreEqual(col[2].Value, string.Empty);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Match_Null1 ()
+		{
+			new Regex (@"foo").Match (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadStart1 ()
+		{
+			new Regex (@"foo").Match ("foobar", -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadStart2 ()
+		{
+			new Regex (@"foo").Match ("foobar", -1, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadStart3 ()
+		{
+			new Regex (@"foo").Match ("foobar", 7);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadStart4 ()
+		{
+			new Regex (@"foo").Match ("foobar", 7, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadLength1 ()
+		{
+			new Regex (@"foo").Match ("foobar", 5, -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Match_BadLength2 ()
+		{
+			new Regex (@"foo").Match ("foobar", 5, 3);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Matches_Null1 ()
+		{
+			new Regex (@"foo").Matches (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Matches_Null2 ()
+		{
+			new Regex (@"foo").Matches (null, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Matches_Null3 ()
+		{
+			new Regex (@"foo", RegexOptions.RightToLeft).Matches (null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_InputNull ()
+		{
+			Regex r = new Regex ("^.*$");
+			MatchEvaluator m = delegate (Match match) {return null;};
+			r.Replace (null, m, 0, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_InputNull2 ()
+		{
+			Regex r = new Regex ("^.*$");
+			r.Replace (null, "abc", 0, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_InputNull3 ()
+		{
+			Regex r = new Regex ("^.*$", RegexOptions.RightToLeft);
+			MatchEvaluator m = delegate (Match match) {return null;};
+			r.Replace (null, m);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_InputNull4 ()
+		{
+			Regex r = new Regex ("^.*$", RegexOptions.RightToLeft);
+			r.Replace (null, "abc");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_ReplacementNull ()
+		{
+			Regex r = new Regex ("^.*$");
+			r.Replace ("string", (string) null, 0, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Replace_EvaluatorNull ()
+		{
+			Regex r = new Regex ("^.*$");
+			MatchEvaluator m = null;
+			r.Replace ("string", m, 0, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Split_InputNull1 ()
+		{
+			Regex.Split (null, "^.*$");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Split_InputNull2 ()
+		{
+			Regex.Split (null, "^.*$", RegexOptions.RightToLeft);
 		}
 
 		static string story =
