@@ -250,7 +250,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
-		public void Split_InvalidCount ()
+		public void Split_InvalidCount2 ()
 		{
 			Regex.Split (null, "^.*$", 1, -4);
 		}
