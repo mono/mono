@@ -1,3 +1,28 @@
+2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Use inheritance-aware interface offsets. Inherited types use the same offsets
+	of their parents. This reduce offset duplication in case more than one type in
+	the inheritance tree explicitly implements the same interface.
+
+	This also removes a source of vtable bubbles found in #532409. An abstract type
+	isn't required to provide abstract methods to all interfaces it implements, which
+	resulted in a bubble with the previous scheme as the child would get a non-full
+	vtable from its parent. We fail all concrete types with vtable bubbles, so this
+	should be fixed.
+
+	This change causes an increase of 1.7% in vtable memory usage for IronPython pystone but
+	it's expected to not cause any significant increase beyond that.
+
+	* class.c (setup_interface_offsets): Compute super class iface offsets
+	first to force sharing.
+
+	* class.c: Add VTABLE_SELECTOR macro to the vtable debug macros to help
+	dumping only the relevant ones.
+
+	* class.c (mono_class_setup_vtable_general): Give newslot, non final, virtual
+	methods a new slot regardless if they belong to an interface or not. This allows
+	an inherited type to override the iface method separately from the class one.
+
 2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: make the Sleep() alertable to prevent delays exiting
