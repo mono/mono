@@ -1,3 +1,10 @@
+2009-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When processing rtf, don't add a new line if we
+	already have one for that position. This way we avoid overriding by
+	mistake our lines when copying/pasting.
+	Fixes #513030.
+
 2009-09-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextControl.cs: When inserting new lines, look for the end of file

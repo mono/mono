@@ -1744,9 +1744,8 @@ namespace System.Windows.Forms {
 
 			rtf_chars += rtf_line.Length;
 
-
-
-			if (rtf_cursor_x == 0) {
+			// Only add a new line in the document if we need to - reuse otherwise
+			if (rtf_cursor_x == 0 && rtf_cursor_y > document.Lines) {
 				if (newline && rtf_line.ToString ().EndsWith (Environment.NewLine) == false)
 					rtf_line.Append (Environment.NewLine);
 
