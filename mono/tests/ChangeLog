@@ -1,3 +1,8 @@
+2009-09-08  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs libtest.c: Add support to run tests
+	on all x86 and amd64 platforms.
+
 2009-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (runtest): Disable aot on some tests which contain loading
