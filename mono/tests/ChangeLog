@@ -1,3 +1,7 @@
+2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* iface4.cs: Add one more check.
+
 2009-09-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* cominterop.cs libtest.c: Add support to run tests
