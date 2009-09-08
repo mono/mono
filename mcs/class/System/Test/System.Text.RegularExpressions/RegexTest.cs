@@ -222,13 +222,15 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Replace_InvalidCount ()
 		{
-			Regex.Replace ("foo", "foo|bar", "baz", -4);
+			Regex r = new Regex ("foo|bar");
+			r.Replace ("foo",  "baz", -4);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Replace_InvalidStart ()
 		{
-			Regex.Replace ("foo", "foo|bar", "baz", 1, -4);
+			Regex r = new Regex ("foo|bar");
+			r.Replace ("foo", "baz", 1, -4);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
@@ -243,16 +245,18 @@ namespace MonoTests.System.Text.RegularExpressions
 			Regex.Split (null, "^.*$", RegexOptions.RightToLeft);
 		}
 
-		[Test, ExpectedException (typeof (ArgumentNullException))]
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Split_InvalidCount ()
 		{
-			Regex.Split (null, "^.*$", -4);
+			Regex r = new Regex ("^.*$");
+			r.Split ("foo", -4);
 		}
 
-		[Test, ExpectedException (typeof (ArgumentNullException))]
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Split_InvalidCount2 ()
 		{
-			Regex.Split (null, "^.*$", 1, -4);
+			Regex r = new Regex ("^.*$");
+			r.Split ("foo", 1, -4);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
