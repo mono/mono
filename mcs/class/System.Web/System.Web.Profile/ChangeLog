@@ -1,3 +1,11 @@
+2009-09-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileParser.cs: GetProfileGroupType creates type name with
+	"ProfileGroup" prefix instead of "ProfileCommon". Fixes bug
+	#535655
+
+	* ProfileBase.cs: typo fix - renamed CreateSettingsPropery to
+	CreateSettingsProperty
 
 2008-12-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

@@ -1,5 +1,8 @@
 2009-09-08  Marek Habersack  <mhabersack@novell.com>
 
+	* AppCodeCompiler.cs: HaveCustomProfile returns true for profiles
+	which don't contain top-level properties. Fixes bug #535655
+
 	* BuildManager.cs: added IsPrecompiled internal property.
 
 	* AppResourcesCompiler.cs: load precompiled site local and global
