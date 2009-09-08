@@ -61,10 +61,10 @@ namespace System.Web.Profile
 		{
 			string typeName;
 			if (AppCodeCompiler.DefaultAppCodeAssemblyName != null)
-				typeName = String.Concat ("ProfileCommon", groupName, ", ", AppCodeCompiler.DefaultAppCodeAssemblyName);
+				typeName = String.Concat ("ProfileGroup", groupName, ", ", AppCodeCompiler.DefaultAppCodeAssemblyName);
 			else
-				typeName = String.Concat ("ProfileCommon", groupName);
-			
+				typeName = String.Concat ("ProfileGroup", groupName);
+
 			Type profileGroupType = Type.GetType (typeName);
 			if (profileGroupType == null) {
 				//Compiler call

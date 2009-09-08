@@ -76,14 +76,14 @@ namespace System.Web.Profile
 				ProfilePropertySettingsCollection ppsc = pgs.PropertySettings;
 
 				for (int s = 0; s < ppsc.Count; s++) {
-					SettingsProperty settingsProperty = CreateSettingsPropery (pgs, ppsc [s]);
+					SettingsProperty settingsProperty = CreateSettingsProperty (pgs, ppsc [s]);
 					ValidateProperty (settingsProperty, ppsc [s].ElementInformation);
 					properties.Add (settingsProperty);
 				}
 			}
 
 			for (int s = 0; s < ps.Count; s++) {
-				SettingsProperty settingsProperty = CreateSettingsPropery (null, ps [s]);
+				SettingsProperty settingsProperty = CreateSettingsProperty (null, ps [s]);
 				ValidateProperty (settingsProperty, ps [s].ElementInformation);
 				properties.Add (settingsProperty);
 			}
@@ -96,7 +96,7 @@ namespace System.Web.Profile
 						PropertyInfo [] pi = properiesType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 						if (pi.Length > 0)
 							for (int i = 0; i < pi.Length; i++)
-								properties.Add (CreateSettingsPropery (pi [i]));
+								properties.Add (CreateSettingsProperty (pi [i]));
 
 						if (properiesType.BaseType == null || 
 							properiesType.BaseType == typeof (ProfileBase))
@@ -240,7 +240,7 @@ namespace System.Web.Profile
 					elementInfo.Source, elementInfo.LineNumber);
 		}
 
-		static SettingsProperty CreateSettingsPropery (PropertyInfo property)
+		static SettingsProperty CreateSettingsProperty (PropertyInfo property)
 		{
 			SettingsProperty sp = new SettingsProperty (property.Name);
 
@@ -282,7 +282,7 @@ namespace System.Web.Profile
 
 			return sp;
 		}
-		static SettingsProperty CreateSettingsPropery (ProfileGroupSettings pgs, ProfilePropertySettings pps)
+		static SettingsProperty CreateSettingsProperty (ProfileGroupSettings pgs, ProfilePropertySettings pps)
 		{
 			string name = ((pgs == null) ? "" : pgs.Name + ".") + pps.Name;
 			SettingsProperty sp = new SettingsProperty (name);

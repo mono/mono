@@ -614,7 +614,11 @@ namespace System.Web.Compilation
 		{
 			if (ps == null || !ps.Enabled)
 				return false;
-			if (!String.IsNullOrEmpty (ps.Inherits) || (ps.PropertySettings != null && ps.PropertySettings.Count > 0))
+
+			RootProfilePropertySettingsCollection props = ps.PropertySettings;
+			ProfileGroupSettingsCollection groups = props != null ? props.GroupSettings : null;
+			
+			if (!String.IsNullOrEmpty (ps.Inherits) || (props != null && props.Count > 0) || (groups != null && groups.Count > 0))
 				return true;
 
 			return false;
