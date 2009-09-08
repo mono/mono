@@ -1,5 +1,11 @@
 2009-09-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #537402
+	* generic.cs (CheckConstraint): Correctly inflate generic type
+	arguments when checking generic method. 
+
+2009-09-08  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #536463
 	* decl.cs (AddToContainer): Don't report collision between explicit
 	and parameterless non-explicit members.

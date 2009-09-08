@@ -1576,6 +1576,10 @@ namespace Mono.CSharp {
 		protected bool CheckConstraint (IMemberContext ec, Type ptype, Expression expr,
 						Type ctype)
 		{
+			//
+			// All this is needed because we don't have
+			// real inflated type hierarchy
+			//
 			if (TypeManager.HasGenericArguments (ctype)) {
 				Type[] types = TypeManager.GetTypeArguments (ctype);
 
@@ -1586,7 +1590,12 @@ namespace Mono.CSharp {
 
 					if (t.IsGenericParameter) {
 						int pos = t.GenericParameterPosition;
-						t = atypes [pos];
+						if (t.DeclaringMethod == null && this is MethodConstraintChecker) {
+							Type parent = ((MethodConstraintChecker) this).declaring_type;
+							t = parent.GetGenericArguments ()[pos];
+						} else {
+							t = atypes [pos];
+						}
 					}
 					new_args.Add (new TypeExpression (t, loc));
 				}
@@ -1686,7 +1695,7 @@ namespace Mono.CSharp {
 						     MethodBase instantiated, Location loc)
 		{
 			MethodConstraintChecker checker = new MethodConstraintChecker (
-				definition, definition.GetGenericArguments (),
+				definition, instantiated.DeclaringType, definition.GetGenericArguments (),
 				instantiated.GetGenericArguments (), loc, ec.Compiler.Report);
 
 			return checker.CheckConstraints (ec);
@@ -1704,11 +1713,13 @@ namespace Mono.CSharp {
 		protected class MethodConstraintChecker : ConstraintChecker
 		{
 			MethodBase definition;
+			public Type declaring_type;
 
-			public MethodConstraintChecker (MethodBase definition, Type[] gen_params,
+			public MethodConstraintChecker (MethodBase definition, Type declaringType, Type[] gen_params,
 							Type[] atypes, Location loc, Report r)
 				: base (gen_params, atypes, loc, r)
 			{
+				this.declaring_type = declaringType;
 				this.definition = definition;
 			}
 
