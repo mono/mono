@@ -138,6 +138,8 @@ namespace Mono.CSharp {
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
+			ctx = new CompilerContext (new Report (new ConsoleReportPrinter ()));
+			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
 
 			//
 			// PartialReset should not reset the core types, this is very redundant.
