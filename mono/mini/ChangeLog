@@ -1,5 +1,8 @@
 2009-09-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-calls.cs: Remove calls to Console.WriteLine and throws, since those
+	require object model related stuff working.
+
 	* cpu-x86.md mini-x86.c: Remove more unused opcodes.
 
 	* mini-ops.h: Fix OP_BIGMUL instruction descriptions.
