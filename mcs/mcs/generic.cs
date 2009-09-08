@@ -1555,7 +1555,7 @@ namespace Mono.CSharp {
 			if (!gc.HasConstructorConstraint)
 				return true;
 
-			if (TypeManager.IsBuiltinType (atype) || TypeManager.IsValueType (atype))
+			if (TypeManager.IsValueType (atype))
 				return true;
 
 			if (HasDefaultConstructor (atype))

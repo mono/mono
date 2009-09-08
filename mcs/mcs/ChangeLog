@@ -1,6 +1,12 @@
 2009-09-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #537402
+	* generic.cs (CheckConstraint): Don't use buildin types to check for
+	parameterless constructor.
+
+2009-09-08  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #537402
 	* generic.cs (CheckConstraint): Correctly inflate generic type
 	arguments when checking generic method. 
 
