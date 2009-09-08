@@ -1,5 +1,8 @@
 2009-09-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-calls.cs: Move the test_0_float_load_and_store_with_big_offset ()
+	test which depends on structs to objects.cs.
+	
 	* basic-calls.cs: Remove calls to Console.WriteLine and throws, since those
 	require object model related stuff working.
 
