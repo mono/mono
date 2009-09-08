@@ -1,5 +1,9 @@
 2009-09-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-x86.md mini-x86.c: Remove more unused opcodes.
+
+	* mini-ops.h: Fix OP_BIGMUL instruction descriptions.
+
 	* mini-codegen.c (mono_local_regalloc): Validate the cpu description 
 	against the instruction metadata in mini-ops.h. amd64 only for now.
 
