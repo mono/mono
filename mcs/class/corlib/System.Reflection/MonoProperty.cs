@@ -282,6 +282,7 @@ namespace System.Reflection {
 		{
 			if (index == null || index.Length == 0) {
 				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
+#if !MONOTOUCH
 				if (cached_getter == null) {
 					if (!DeclaringType.IsValueType) { //FIXME find a way to build an invoke delegate for value types.
 						MethodInfo method = GetGetMethod (true);
@@ -293,6 +294,7 @@ namespace System.Reflection {
 				} else {
 					return cached_getter (obj);
 				}
+#endif
 			}
 
 			return GetValue (obj, BindingFlags.Default, null, index, null);
