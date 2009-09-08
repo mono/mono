@@ -814,11 +814,13 @@ namespace System.Web.UI.WebControls
 				}
 
 				pagedDataSource.TotalRowCount = totalRowCount;
+				_totalRowCount = totalRowCount;
 				DataKeyArray.Clear ();
 			} else {
 				if (!(dataSource is ICollection))
 					throw new InvalidOperationException ("dataSource does not implement the ICollection interface and dataBinding is false.");
 				pagedDataSource.TotalRowCount = 0;
+				_totalRowCount = -1;
 			}
 
 			pagedDataSource.StartRowIndex = StartRowIndex;
@@ -831,19 +833,19 @@ namespace System.Web.UI.WebControls
 					retList = CreateItemsWithoutGroups (pagedDataSource, dataBinding, InsertItemPosition, DataKeyArray);
 				else
 					retList = CreateItemsInGroups (pagedDataSource, dataBinding, InsertItemPosition, DataKeyArray);
-				
+
 				if (retList == null || retList.Count == 0)
 					emptySet = true;
 
-				if (haveDataToPage)
+				if (haveDataToPage) {
 					// Data source has paged data for us, so we must use its total row
 					// count
-					_totalRowCount = pagedDataSource.DataSourceCount;
-				else if (!emptySet)
+					_totalRowCount = pagedDataSource.TotalRowCount;
+				} else if (!emptySet && _totalRowCount > -1)
 					_totalRowCount = retList.Count;
-				else
+				else if (_totalRowCount > -1)
 					_totalRowCount = 0;
-
+				
 				OnTotalRowCountAvailable (new PageEventArgs (_startRowIndex, _maximumRows, _totalRowCount));
 			} else
 				emptySet = true;
