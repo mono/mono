@@ -1,5 +1,11 @@
 2009-09-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #536463
+	* decl.cs (AddToContainer): Don't report collision between explicit
+	and parameterless non-explicit members.
+
+2009-09-08  Marek Safar  <marek.safar@gmail.com>
+
 	* eval.cs: Reset more static stuff.
 
 2009-09-07  Marek Safar  <marek.safar@gmail.com>

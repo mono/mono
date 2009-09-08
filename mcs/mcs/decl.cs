@@ -958,6 +958,10 @@ namespace Mono.CSharp {
 			if (symbol.EnableOverloadChecks (mc))
 				return true;
 
+			InterfaceMemberBase im = mc as InterfaceMemberBase;
+			if (im != null && im.IsExplicitImpl)
+				return true;
+
 			Report.SymbolRelatedToPreviousError (mc);
 			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {
 				Error_MissingPartialModifier (symbol);
