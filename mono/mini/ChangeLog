@@ -1,3 +1,13 @@
+2009-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Validate the cpu description 
+	against the instruction metadata in mini-ops.h. amd64 only for now.
+
+	* mini-ops.h: Fix some instruction descriptions.
+
+	* mini-ops.h mini-x86.c mini-amd64.c cpu-<ARCH>.md: Remove some
+	unused instructions.
+
 2009-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions.cs: Add a new test.
