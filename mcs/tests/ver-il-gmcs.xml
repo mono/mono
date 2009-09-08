@@ -36156,6 +36156,24 @@
       </method>
     </type>
   </test>
+  <test name="test-726.cs">
+    <type name="CS0102">
+      <method name="System.Object IFoo.Clone()">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CS0102+Clone">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-73.cs">
     <type name="Abstract">
       <method name="Void .ctor()">
