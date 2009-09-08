@@ -1,3 +1,9 @@
+2009-09-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: if total row count has been retrieved from the
+	view, don't reset it to the number of items returned from the data
+	source. Fixes bug #535701
+
 2009-09-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: LoadControlState must call OnTotalRowCountAvailable
