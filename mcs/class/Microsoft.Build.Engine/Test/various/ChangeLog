@@ -1,3 +1,8 @@
+2009-09-08  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs (TestItems5):
+	(TestItems6): Remove 'NotWorking' attribute.
+
 2009-08-29  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs: Add tests for property/item evaluation.

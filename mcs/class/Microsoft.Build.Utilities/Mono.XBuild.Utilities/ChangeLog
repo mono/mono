@@ -1,3 +1,7 @@
+2009-09-08  Ankit Jain  <jankit@novell.com>
+
+	* ReservedNameUtils.cs (RelativeDir): Add a trailing \ .
+
 2007-01-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MonoLocationHelper.cs: Made class internal. It will be removed soon

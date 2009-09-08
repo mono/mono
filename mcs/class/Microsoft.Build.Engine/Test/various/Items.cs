@@ -195,7 +195,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItems5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -216,7 +215,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItems6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
