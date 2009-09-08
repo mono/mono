@@ -1,3 +1,11 @@
+2009-09-08  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: added IsPrecompiled internal property.
+
+	* AppResourcesCompiler.cs: load precompiled site local and global
+	resource assemblies from static constructor. Fixes bugs #536138
+	and #536143
+
 2009-09-03  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: SanitizeResourceName uses VB/C# rules

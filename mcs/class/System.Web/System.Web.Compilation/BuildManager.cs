@@ -319,6 +319,10 @@ namespace System.Web.Compilation {
 			remove { events.RemoveHandler (buildManagerRemoveEntryEvent, value); }
 		}
 		
+		internal static bool IsPrecompiled {
+			get { return is_precompiled; }
+		}
+		
 		static BuildManager ()
 		{
 			if (HttpRuntime.CaseInsensitive)

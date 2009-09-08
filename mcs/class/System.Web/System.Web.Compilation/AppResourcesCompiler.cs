@@ -228,6 +228,46 @@ namespace System.Web.Compilation
 		public Dictionary <string, List <string>> CultureFiles {
 			get { return cultureFiles; }
 		}
+
+		static AppResourcesCompiler ()
+		{
+			if (!BuildManager.IsPrecompiled)
+				return;
+
+			string[] binDirAssemblies = HttpApplication.BinDirectoryAssemblies;
+			if (binDirAssemblies == null || binDirAssemblies.Length == 0)
+				return;
+
+			string name;
+			Assembly asm;
+			foreach (string asmPath in binDirAssemblies) {
+				if (String.IsNullOrEmpty (asmPath))
+					continue;
+				
+				name = Path.GetFileName (asmPath);
+				if (name.StartsWith ("App_LocalResources.", StringComparison.OrdinalIgnoreCase)) {
+					string virtualPath = GetPrecompiledVirtualPath (asmPath);
+					if (String.IsNullOrEmpty (virtualPath))
+						continue;
+
+					asm = LoadAssembly (asmPath);
+					if (asm == null)
+						continue;
+					
+					AddAssemblyToCache (virtualPath, asm);
+					continue;
+				}
+
+				if (String.Compare (name, "App_GlobalResources.dll", StringComparison.OrdinalIgnoreCase) != 0)
+					continue;
+
+				asm = LoadAssembly (asmPath);
+				if (asm == null)
+					continue;
+
+				HttpContext.AppGlobalResourcesAssembly = asm;
+			}
+		}
 		
 		public AppResourcesCompiler (HttpContext context)
 		{
@@ -243,6 +283,34 @@ namespace System.Web.Compilation
 			this.isGlobal = false;
 			this.files = new AppResourceFilesCollection (HttpContext.Current.Request.MapPath (virtualPath));
 			this.cultureFiles = new Dictionary <string, List <string>> ();
+		}
+
+		static Assembly LoadAssembly (string asmPath)
+		{
+			try {
+				return Assembly.LoadFrom (asmPath);
+			} catch (BadImageFormatException) {
+				// ignore
+				return null;
+			}
+		}
+		
+		static string GetPrecompiledVirtualPath (string asmPath)
+		{
+			string compiledFile = Path.ChangeExtension (asmPath, ".compiled");
+			
+			if (!File.Exists (compiledFile))
+				return null;
+
+			var pfile = new PreservationFile (compiledFile);
+			string virtualPath = pfile.VirtualPath;
+			if (String.IsNullOrEmpty (virtualPath))
+				return "/";
+
+			if (virtualPath.EndsWith ("/App_LocalResources/", StringComparison.OrdinalIgnoreCase))
+				virtualPath = virtualPath.Substring (0, virtualPath.Length - 19);
+			
+			return virtualPath;
 		}
 		
 		public Assembly Compile ()
@@ -342,7 +410,7 @@ namespace System.Web.Compilation
 			return cache [path];
 		}
 		
-		void AddAssemblyToCache (string path, Assembly asm)
+		static void AddAssemblyToCache (string path, Assembly asm)
 		{
 			Cache runtimeCache = HttpRuntime.InternalCache;
 			Dictionary <string, Assembly> cache;
