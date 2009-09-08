@@ -88,6 +88,10 @@ namespace System.Web.Compilation {
 		static ReaderWriterLock buildCacheLock;
 #endif
 		static ulong recursionDepth;
+
+		internal static bool IsPrecompiled {
+			get { return is_precompiled; }
+		}
 		
 		internal static event BuildManagerRemoveEntryEventHandler RemoveEntry {
 			add { events.AddHandler (buildManagerRemoveEntryEvent, value); }
