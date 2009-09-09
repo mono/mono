@@ -1,3 +1,17 @@
+2009-09-09  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: Fix behavior when multiple
+	  source directories are provided, e.g. 'mdoc export-html -o o a b c'
+	  with docs located in directories a, b, and c.  Previously this would
+	  be equivalent to running aginst a, b, and c separately, resulting in
+	  o/index.html being continually overwritten (and thus not showing ALL
+	  available types).
+	* Resources/stylesheet.xsl: Make $Index a parameter (as monodocs2html
+	  will create an in-memory index containing all types from all
+	  specified directories), and various changes to cope with $Index no
+	  longer being a file.  Better support files in the global namespace.
+	* Test/html.expected/NoNamespace.html: Fix assembly link.
+
 2009-08-12  Jonathan Pryor <jpryor@novell.com>
 
 	* Test/DocTest-v1.cs: Add a comment which uses <format/>, to test html

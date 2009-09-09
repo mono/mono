@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Xsl;
@@ -17,7 +19,6 @@ using Mono.Options;
 namespace Mono.Documentation {
 
 class MDocToHtmlConverterOptions {
-	public string source;
 	public string dest;
 	public string ext = "html";
 	public string onlytype;
@@ -58,36 +59,29 @@ class MDocToHtmlConverter : MDocCommand {
 				"Export mdoc documentation within DIRECTORIES to HTML.");
 		if (extra == null)
 			return;
-		if (extra.Count == 0)
-			Main2 ();
-		foreach (var source in extra) {
-			opts.source = source;
-			Main2 ();
-		}
+		if (opts.dumptemplate)
+			DumpTemplate ();
+		else
+			ProcessDirectories (extra);
 		opts.onlytype = "ignore"; // remove warning about unused member
 	}
 
 	static MDocToHtmlConverterOptions opts;
 
-	private static void Main2()
+	void ProcessDirectories (List<string> sourceDirectories)
 	{
-		if (opts.dumptemplate) {
-			DumpTemplate();
-			return;
-		}
-		
-		if (opts.source == null || opts.source == "" || opts.dest == null || opts.dest == "")
+		if (sourceDirectories.Count == 0 || opts.dest == null || opts.dest == "")
 			throw new ApplicationException("The source and dest options must be specified.");
 		
 		Directory.CreateDirectory(opts.dest);
-		
+
 		// Load the stylesheets, overview.xml, and resolver
 		
-		XslTransform overviewxsl = LoadTransform("overview.xsl");
-		XslTransform stylesheet = LoadTransform("stylesheet.xsl");
+		XslTransform overviewxsl = LoadTransform("overview.xsl", sourceDirectories);
+		XslTransform stylesheet = LoadTransform("stylesheet.xsl", sourceDirectories);
 		XslTransform template;
 		if (opts.template == null) {
-			template = LoadTransform("defaulttemplate.xsl");
+			template = LoadTransform("defaulttemplate.xsl", sourceDirectories);
 		} else {
 			try {
 				XmlDocument templatexsl = new XmlDocument();
@@ -99,29 +93,31 @@ class MDocToHtmlConverter : MDocCommand {
 			}
 		}
 		
-		XmlDocument overview = new XmlDocument();
-		string overviewSource = opts.source + "/index.xml";
+		XmlDocument overview = GetOverview (sourceDirectories);
 		string overviewDest   = opts.dest + "/index." + opts.ext;
-		overview.Load (overviewSource);
 
 		ArrayList extensions = GetExtensionMethods (overview);
 		
 		// Create the master page
 		XsltArgumentList overviewargs = new XsltArgumentList();
 
-		if (!DestinationIsNewer (overviewSource, overviewDest)) {
+		var regenIndex = sourceDirectories.Any (
+					d => !DestinationIsNewer (Path.Combine (d, "index.xml"), overviewDest));
+		if (regenIndex) {
 			overviewargs.AddParam("ext", "", opts.ext);
 			overviewargs.AddParam("basepath", "", "./");
-			Generate(overview, overviewxsl, overviewargs, opts.dest + "/index." + opts.ext, template);
+			Generate(overview, overviewxsl, overviewargs, opts.dest + "/index." + opts.ext, template, sourceDirectories);
 			overviewargs.RemoveParam("basepath", "");
 		}
 		overviewargs.AddParam("basepath", "", "../");
+		overviewargs.AddParam("Index", "", overview.CreateNavigator ());
 		
 		// Create the namespace & type pages
 		
 		XsltArgumentList typeargs = new XsltArgumentList();
 		typeargs.AddParam("ext", "", opts.ext);
 		typeargs.AddParam("basepath", "", "../");
+		typeargs.AddParam("Index", "", overview.CreateNavigator ());
 		
 		foreach (XmlElement ns in overview.SelectNodes("Overview/Types/Namespace")) {
 			string nsname = ns.GetAttribute("Name");
@@ -134,15 +130,15 @@ class MDocToHtmlConverter : MDocCommand {
 			
 			// Create the NS page
 			string nsDest = opts.dest + "/" + nsname + "/index." + opts.ext;
-			if (!DestinationIsNewer (overviewSource, nsDest) &&
-					!DestinationIsNewer (opts.source + "/ns-" + nsname + ".xml", nsDest)) {
+			if (regenIndex) {
 				overviewargs.AddParam("namespace", "", nsname);
-				Generate(overview, overviewxsl, overviewargs, nsDest, template);
+				Generate(overview, overviewxsl, overviewargs, nsDest, template, sourceDirectories);
 				overviewargs.RemoveParam("namespace", "");
 			}
 			
 			foreach (XmlElement ty in ns.SelectNodes("Type")) {
 				string typefilebase = ty.GetAttribute("Name");
+				string sourceDir    = ty.GetAttribute("SourceDirectory");
 				string typename = ty.GetAttribute("DisplayName");
 				if (typename.Length == 0)
 					typename = typefilebase;
@@ -150,8 +146,9 @@ class MDocToHtmlConverter : MDocCommand {
 				if (opts.onlytype != null && !(nsname + "." + typename).StartsWith(opts.onlytype))
 					continue;
 
-				string typefile = opts.source + "/" + nsname + "/" + typefilebase + ".xml";
-				if (!File.Exists(typefile)) continue;
+				string typefile = CombinePath (sourceDir, nsname, typefilebase + ".xml");
+				if (typefile == null)
+					continue;
 
 				string destfile = opts.dest + "/" + nsname + "/" + typefilebase + "." + opts.ext;
 
@@ -168,7 +165,7 @@ class MDocToHtmlConverter : MDocCommand {
 				
 				Console.WriteLine(nsname + "." + typename);
 				
-				Generate(typexml, stylesheet, typeargs, destfile, template);
+				Generate(typexml, stylesheet, typeargs, destfile, template, sourceDirectories);
 			}
 		}
 	}
@@ -194,7 +191,7 @@ class MDocToHtmlConverter : MDocCommand {
 		}
 	}
 	
-	private static void Generate(XmlDocument source, XslTransform transform, XsltArgumentList args, string output, XslTransform template) {
+	private static void Generate(XmlDocument source, XslTransform transform, XsltArgumentList args, string output, XslTransform template, List<string> sourceDirectories) {
 		using (TextWriter textwriter = new StreamWriter(new FileStream(output, FileMode.Create))) {
 			XmlTextWriter writer = new XmlTextWriter(textwriter);
 			writer.Formatting = Formatting.Indented;
@@ -204,7 +201,7 @@ class MDocToHtmlConverter : MDocCommand {
 			try {
 				XmlDocument intermediate = new XmlDocument();
 				intermediate.PreserveWhitespace = true;
-				intermediate.Load(transform.Transform(source, args, new ManifestResourceResolver(opts.source)));
+				intermediate.Load(transform.Transform(source, args, new ManifestResourceResolver(sourceDirectories.ToArray ()))); // FIXME?
 				template.Transform(intermediate, new XsltArgumentList(), new XhtmlWriter (writer), null);
 			} catch (Exception e) {
 				throw new ApplicationException("An error occured while generating " + output, e);
@@ -212,7 +209,7 @@ class MDocToHtmlConverter : MDocCommand {
 		}
 	}
 	
-	private static XslTransform LoadTransform(string name) {
+	private static XslTransform LoadTransform(string name, List<string> sourceDirectories) {
 		try {
 			XmlDocument xsl = new XmlDocument();
 			xsl.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream(name));
@@ -232,7 +229,7 @@ class MDocToHtmlConverter : MDocCommand {
 			}
 			
 			XslTransform t = new XslTransform();
-			t.Load (xsl, new ManifestResourceResolver (opts.source));
+			t.Load (xsl, new ManifestResourceResolver (sourceDirectories.ToArray ())); // FIXME?
 			
 			return t;
 		} catch (Exception e) {
@@ -249,8 +246,9 @@ class MDocToHtmlConverter : MDocCommand {
 				foreach (XmlNode n in overview.SelectNodes ("//Type")) {
 					string ns = n.ParentNode.Attributes ["Name"].Value;
 					string t  = n.Attributes ["Name"].Value;
+					string sd = n.Attributes ["SourceDirectory"].Value;
 					if (s == ns + "." + t.Replace ("+", ".")) {
-						string f = opts.source + "/" + ns + "/" + t + ".xml";
+						string f = CombinePath (sd, ns, t + ".xml");
 						if (File.Exists (f)) {
 							d = new XmlDocument ();
 							d.Load (f);
@@ -265,6 +263,119 @@ class MDocToHtmlConverter : MDocCommand {
 			return d;
 		};
 		return loader;
+	}
+
+	static string CombinePath (params string[] paths)
+	{
+		if (paths == null)
+			return null;
+		if (paths.Length == 1)
+			return paths [0];
+		var path = Path.Combine (paths [0], paths [1]);
+		for (int i = 2; i < paths.Length; ++i)
+			path = Path.Combine (path, paths [i]);
+		return path;
+	}
+
+	private XmlDocument GetOverview (IEnumerable<string> directories)
+	{
+		var index = new XmlDocument ();
+
+		var overview  = index.CreateElement ("Overview");
+		var assemblies= index.CreateElement ("Assemblies");
+		var types     = index.CreateElement ("Types");
+		var ems       = index.CreateElement ("ExtensionMethods");
+
+		index.AppendChild (overview);
+		overview.AppendChild (assemblies);
+		overview.AppendChild (types);
+		overview.AppendChild (ems);
+
+		bool first = true;
+
+		foreach (var dir in directories) {
+			var indexFile = Path.Combine (dir, "index.xml");
+			try {
+				var doc = new XmlDocument ();
+				doc.Load (indexFile);
+				if (first) {
+					var c = doc.SelectSingleNode ("/Overview/Copyright");
+					var t = doc.SelectSingleNode ("/Overview/Title");
+					var r = doc.SelectSingleNode ("/Overview/Remarks");
+					if (c != null && t != null && r != null) {
+						var e = index.CreateElement ("Copyright");
+						e.InnerXml = c.InnerXml;
+						overview.AppendChild (e);
+
+						e = index.CreateElement ("Title");
+						e.InnerXml = t.InnerXml;
+						overview.AppendChild (e);
+
+						e = index.CreateElement ("Remarks");
+						e.InnerXml = r.InnerXml;
+						overview.AppendChild (e);
+
+						first = false;
+					}
+				}
+				AddAssemblies (assemblies, doc);
+				AddTypes (types, doc, dir);
+				AddChildren (ems, doc, "/Overview/ExtensionMethods");
+			}
+			catch (Exception e) {
+				Message (TraceLevel.Warning, "Could not load documentation index '{0}': {1}",
+						indexFile, e.Message);
+			}
+		}
+
+		return index;
+	}
+
+	static void AddChildren (XmlNode dest, XmlDocument source, string path)
+	{
+		var n = source.SelectSingleNode (path);
+		if (n != null)
+			foreach (XmlNode c in n.ChildNodes)
+				dest.AppendChild (dest.OwnerDocument.ImportNode (c, true));
+	}
+
+	static void AddAssemblies (XmlNode dest, XmlDocument source)
+	{
+		foreach (XmlNode asm in source.SelectNodes ("/Overview/Assemblies/Assembly")) {
+			var n = asm.Attributes ["Name"].Value;
+			var v = asm.Attributes ["Version"].Value;
+			if (dest.SelectSingleNode (string.Format ("Assembly[@Name='{0}'][@Value='{1}']", n, v)) == null) {
+				dest.AppendChild (dest.OwnerDocument.ImportNode (asm, true));
+			}
+		}
+	}
+
+	static void AddTypes (XmlNode dest, XmlDocument source, string sourceDirectory)
+	{
+		var types = source.SelectSingleNode ("/Overview/Types");
+		if (types == null)
+			return;
+		foreach (XmlNode ns in types.ChildNodes) {
+			var n = ns.Attributes ["Name"].Value;
+			var nsd = dest.SelectSingleNode (string.Format ("Namespace[@Name='{0}']", n));
+			if (nsd == null) {
+				nsd = dest.OwnerDocument.CreateElement ("Namespace");
+				AddAttribute (nsd, "Name", n);
+				dest.AppendChild (nsd);
+			}
+			foreach (XmlNode t in ns.ChildNodes) {
+				var c = dest.OwnerDocument.ImportNode (t, true);
+				AddAttribute (c, "SourceDirectory", sourceDirectory);
+				nsd.AppendChild (c);
+			}
+		}
+	}
+
+	static void AddAttribute (XmlNode self, string name, string value)
+	{
+		var a = self.OwnerDocument.CreateAttribute (name);
+		a.Value = value;
+		self.Attributes.Append (a);
 	}
 
 	private static bool DestinationIsNewer (string source, string dest)

@@ -17,7 +17,7 @@
 	<xsl:param name="ext" select="'xml'"/>
 	<xsl:param name="basepath" select="'./'"/>
 	
-	<xsl:variable name="Index" select="document('index.xml', .)"/>
+	<xsl:param name="Index" />
 
 	<!-- The namespace that the current type belongs to. -->
 	<xsl:variable name="mono-docs">http://www.go-mono.com/docs/monodoc.ashx?link=</xsl:variable>
@@ -39,7 +39,17 @@
 		</Title>
 		
 		<CollectionTitle>
-			<a href="{$basepath}index.{$ext}"><xsl:value-of select="AssemblyInfo/AssemblyName"/></a>
+			<xsl:variable name="namespace" select="substring-before (@FullName, @Name)" />
+			<a>
+				<xsl:attribute name="href">
+					<xsl:if test="string-length($namespace)">
+						<xsl:value-of select="$basepath" />
+					</xsl:if>
+					<xsl:text>index.</xsl:text>
+					<xsl:value-of select="$ext" />
+				</xsl:attribute>
+				<xsl:value-of select="AssemblyInfo/AssemblyName" />
+			</a>
 			<xsl:text> : </xsl:text>
 			<a href="index.{$ext}"><xsl:value-of select="$TypeNamespace"/> Namespace</a>
 		</CollectionTitle>
@@ -193,11 +203,20 @@
 		<xsl:param name="type" />
 		<xsl:param name="cref" />
 		<!-- Search for type in the index.xml file. -->
-		<xsl:variable name="typeentry" select="$Index/Overview/Types/Namespace/Type[concat(parent::Namespace/@Name,'.',translate(@Name, '+', '.')) = $type]"/>
+		<xsl:variable name="typeentry">
+			<xsl:call-template name="FindTypeInIndex">
+				<xsl:with-param name="type" select="$type" />
+			</xsl:call-template>
+		</xsl:variable>
 
 		<xsl:choose>
 			<xsl:when test="count($typeentry)">
-				<xsl:value-of select="concat($basepath,$typeentry/parent::Namespace/@Name, '/', $typeentry/@Name)"/>
+				<xsl:if test="string-length ($typeentry/@Namespace)">
+					<xsl:value-of select="$basepath" />
+					<xsl:value-of select="$typeentry/@Namespace" />
+					<xsl:text>/</xsl:text>
+				</xsl:if>
+				<xsl:value-of select="$typeentry/@Name"/>
 				<xsl:text>.</xsl:text>
 				<xsl:value-of select="$ext" />
 				<xsl:if test="string-length ($cref) > 0 and substring ($cref, 1, 2) != 'T:'">
@@ -220,6 +239,25 @@
 			<xsl:otherwise>javascript:alert("Documentation not found.")</xsl:otherwise>
 			<!--<xsl:otherwise>javascript:alert("Documentation not found for <xsl:value-of select="$type"/>.")</xsl:otherwise>-->
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template name="FindTypeInIndex">
+		<xsl:param name="type" />
+
+		<xsl:for-each select="$Index/Types/Namespace/Type">
+			<xsl:variable name="nsp">
+				<xsl:choose>
+					<xsl:when test="string-length (parent::Namespace/@Name) = 0" />
+					<xsl:otherwise>
+						<xsl:value-of select="parent::Namespace/@Name" />
+						<xsl:text>.</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:if test="concat($nsp, translate(@Name, '+', '.')) = $type">
+				<Type Name="{@Name}" Namespace="{parent::Namespace/@Name}" />
+			</xsl:if>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template name="GetActualCref">
