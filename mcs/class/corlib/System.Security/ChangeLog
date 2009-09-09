@@ -1,3 +1,8 @@
+2009-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs, SecurityManager_2_1.cs: Replace existing
+	throw methods (for coreclr) with a single one.
+
 2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs (ThrowSecurityException): Don't include

@@ -101,14 +101,9 @@ namespace System.Security {
 
 		// called by the runtime when CoreCLR is enabled
 
-		private static void FieldAccessException (IntPtr caller, IntPtr field)
+		private static void ThrowException (Exception ex)
 		{
-			throw new FieldAccessException (Locale.GetText ("Field access not allowed."));
-		}
-
-		private static void MethodAccessException (IntPtr caller, IntPtr callee)
-		{
-			throw new MethodAccessException (Locale.GetText ("Method call not allowed."));
+			throw ex;
 		}
 
 		// internal - get called by the class loader

@@ -736,14 +736,11 @@ namespace System.Security {
 			throw new SecurityException (message, an, granted, refused, method, SecurityAction.InheritanceDemand, null, null, null);
 		}
 
-		private static void FieldAccessException (IntPtr caller, IntPtr field)
-		{
-			throw new FieldAccessException (Locale.GetText ("Field access not allowed."));
-		}
+		// called by the runtime when CoreCLR is enabled
 
-		private static void MethodAccessException (IntPtr caller, IntPtr callee)
+		private static void ThrowException (Exception ex)
 		{
-			throw new MethodAccessException (Locale.GetText ("Method call not allowed."));
+			throw ex;
 		}
 
 		// internal - get called by the class loader
