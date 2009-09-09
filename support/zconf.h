@@ -393,5 +393,8 @@ typedef uLong FAR uLongf;
 #ifdef _MSC_VER
 #define NO_FSEEKO 1
 #define NO_vsnprintf 1
+#elif defined(WINDOWS)
+#define NO_FSEEKO 1
 #endif
 #endif /* ZCONF_H */
+
