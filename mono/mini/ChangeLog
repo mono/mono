@@ -1,3 +1,8 @@
+2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.c (mono_arch_emit_call): Don't reduce stack usage by 4
+	if the return value is a small struct passed on regs.
+
 2009-09-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-arm.md mini-arm.c: Remove unused opcodes.
