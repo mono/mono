@@ -1301,7 +1301,7 @@ namespace MonoTests_System.Data
 			}
 			DataTable newTable1 = view.ToTable(false, new string[] { });
 			Assert.AreEqual(10, newTable1.Rows.Count, "#3");
-			
+
 			newTable1 = view.ToTable(true, new string[] {});
 			Assert.AreEqual(3, newTable1.Columns.Count, "#4");
 			Assert.AreEqual(5, newTable1.Rows.Count, "#5");

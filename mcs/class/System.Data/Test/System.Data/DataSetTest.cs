@@ -2245,7 +2245,7 @@ namespace MonoTests.System.Data
 
 			ds.RejectChanges ();
 			parent.Rows [0] ["id"] = "4";
-			
+
 			DataRow childRow =  parent.Rows [0].GetChildRows (relation) [0];
 			Assert.AreEqual (DataRowState.Modified, childRow.RowState, "#RT2 child should be modified");
 			Assert.AreEqual (4, (int) childRow ["parent"], "#RT3 child should point to modified row");
