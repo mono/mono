@@ -35,12 +35,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security 
 {
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 	public
 #endif
 	delegate bool RemoteCertificateValidationCallback (
 		object sender,
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		X509Certificate certificate,
 		X509Chain chain,
 #else

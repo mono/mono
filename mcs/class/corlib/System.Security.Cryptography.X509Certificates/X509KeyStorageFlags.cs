@@ -37,7 +37,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	[ComVisible (true)]
 	public enum X509KeyStorageFlags	{
 		DefaultKeySet = 0,
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// not supported by Silverlight 2.0 (NET_2_1)
 		UserKeySet = 1,
 		MachineKeySet = 2,

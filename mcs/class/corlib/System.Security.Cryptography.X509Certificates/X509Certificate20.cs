@@ -42,7 +42,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
 	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 	public partial class X509Certificate {
 #else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
@@ -180,7 +180,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (contentType) {
 				case X509ContentType.Cert:
 					return x509.RawData;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 				case X509ContentType.Pfx: // this includes Pkcs12
 					// TODO
 					throw new NotSupportedException ();
@@ -274,7 +274,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			byte[] rawData = Load (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 		}

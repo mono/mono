@@ -144,6 +144,8 @@ monotouch_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	System	\
 	System.XML	\
+	Mono.Security	\
+	System	\
 	System.Core	\
 	System.Json	\
 	System.Xml.Linq

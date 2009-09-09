@@ -317,7 +317,7 @@ namespace System.Security.Cryptography {
 		}
 	}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 
 #if NET_2_0
 	[ComVisible (true)]

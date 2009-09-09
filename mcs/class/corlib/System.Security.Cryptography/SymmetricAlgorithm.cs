@@ -44,7 +44,7 @@ namespace System.Security.Cryptography {
 		protected byte[] KeyValue; 
 		protected KeySizes[] LegalBlockSizesValue; 
 		protected KeySizes[] LegalKeySizesValue; 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		// Silverlight 2.0 only supports CBC
 		internal int FeedbackSizeValue;
 		internal CipherMode ModeValue;
@@ -67,7 +67,7 @@ namespace System.Security.Cryptography {
 			m_disposed = false;
 		}
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		// No Finalizer or IDisposable.Dispose in Silverlight 2.0
 		// Documentation makes it "clear" that Clear MUST BE CALLED to zero out sensitive information
 #else		

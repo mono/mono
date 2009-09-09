@@ -50,7 +50,7 @@ namespace Mono.Security.Cryptography {
 		private byte[] temp2;
 		private byte[] workBuff;
 		private byte[] workout;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// Silverlight 2.0 does not support any feedback mode
 		private int FeedBackByte;
 		private int FeedBackIter;
@@ -81,7 +81,7 @@ namespace Mono.Security.Cryptography {
 			temp = new byte [BlockSizeByte];
 			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
 			temp2 = new byte [BlockSizeByte];
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			FeedBackByte = (algo.FeedbackSize >> 3);
 			if (FeedBackByte != 0)
 				FeedBackIter = (int) BlockSizeByte / FeedBackByte;
@@ -185,7 +185,7 @@ namespace Mono.Security.Cryptography {
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// Cipher-FeedBack (CFB)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
@@ -340,7 +340,7 @@ namespace Mono.Security.Cryptography {
 			return total;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && !NET_2_1 || MONOTOUCH
 		RandomNumberGenerator _rng;
 
 		private void Random (byte[] buffer, int start, int length)

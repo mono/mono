@@ -48,6 +48,8 @@ System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
 System.Diagnostics/ThreadWaitReason.cs
 System.IO/MonoSyncFileStream.cs
+System.IO/MonoIO.cs
+System.IO/MonoIOError.cs
 
 System.IO.Compression/CompressionMode.cs
 System.IO.Compression/DeflateStream.cs
@@ -285,6 +287,13 @@ System.Net/UploadValuesCompletedEventArgs.cs
 System.Net/UploadValuesCompletedEventHandler.cs
 System.Net/UploadStringCompletedEventHandler.cs
 System.Net/DownloadStringCompletedEventHandler.cs
+
+System.Security.Cryptography/AsnEncodedDataCollection.cs
+System.Security.Cryptography/AsnEncodedData.cs
+System.Security.Cryptography/AsnEncodedDataEnumerator.cs
+System.Security.Cryptography/OidCollection.cs
+System.Security.Cryptography/Oid.cs
+System.Security.Cryptography/OidEnumerator.cs
 
 System.Security.Cryptography.X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs

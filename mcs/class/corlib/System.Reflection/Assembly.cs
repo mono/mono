@@ -796,7 +796,7 @@ namespace System.Reflection {
 		}
 #endif
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// Code Access Security
 
 		internal void Resolve () 

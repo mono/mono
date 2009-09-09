@@ -247,7 +247,7 @@ namespace System.Net
 			set { _securityProtocol = value; }
 		}
 
-#if NET_2_0 && !MONOTOUCH
+#if NET_2_0
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {

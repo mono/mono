@@ -77,7 +77,7 @@ namespace Mono.Security.Cryptography {
 				return emptySHA1;
 			else if (hash is SHA256)
 				return emptySHA256;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			else if (hash is SHA384)
 				return emptySHA384;
 			else if (hash is SHA512)

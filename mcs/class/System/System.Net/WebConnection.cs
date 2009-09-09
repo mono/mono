@@ -194,6 +194,9 @@ namespace System.Net
 				if (sslStream != null)
 					return;
 
+#if MONOTOUCH && SECURITY_DEP
+				sslStream = typeof (Mono.Security.Protocol.Tls.HttpsClientStream);
+#else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll
 				sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +
 							Consts.AssemblyMono_Security, false);
@@ -204,6 +207,7 @@ namespace System.Net
 
 					throw new NotSupportedException (msg);
 				}
+#endif
 				piClient = sslStream.GetProperty ("SelectedClientCertificate");
 				piServer = sslStream.GetProperty ("ServerCertificate");
 				piTrustFailure = sslStream.GetProperty ("TrustFailure");
