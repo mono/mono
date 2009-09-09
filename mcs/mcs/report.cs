@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 
 	class StreamReportPrinter : ReportPrinter
 	{
-		TextWriter writer;
+		readonly TextWriter writer;
 
 		public StreamReportPrinter (TextWriter writer)
 		{
@@ -822,7 +822,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class ConsoleReportPrinter : ReportPrinter
+	class ConsoleReportPrinter : StreamReportPrinter
 	{
 		static readonly string prefix, postfix;
 
@@ -870,6 +870,16 @@ namespace Mono.CSharp {
 			else
 				prefix = GetBackground (config.Substring (p+1)) + GetForeground (config.Substring (0, p));
 			postfix = "\x001b[0m";
+		}
+
+		public ConsoleReportPrinter ()
+			: base (Console.Error)
+		{
+		}
+
+		public ConsoleReportPrinter (TextWriter writer)
+			: base (writer)
+		{
 		}
 
 		static int NameToCode (string s)
@@ -963,7 +973,6 @@ namespace Mono.CSharp {
 
 		public override void Print (AbstractMessage msg)
 		{
-			Print (msg, Console.Error);
 			base.Print (msg);
 
 			if (Stacktrace)

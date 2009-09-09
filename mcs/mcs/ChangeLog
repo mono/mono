@@ -1,5 +1,10 @@
 2009-09-09  Marek Safar  <marek.safar@gmail.com>
 
+	* eval.cs, report.cs: Use Console.Out for all eval error or warning
+	output.
+
+2009-09-09  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #518707
 	* expression.cs (Is): Optimize only generic parameter type
 	expression probing value type generic parameter.

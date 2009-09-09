@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 		static Driver driver;
 		static bool inited;
 
-		static CompilerContext ctx = new CompilerContext (new Report (new ConsoleReportPrinter ()));
+		static CompilerContext ctx;
 
 		/// <summary>
 		///   Optional initialization for the Evaluator.
@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
-			ctx = new CompilerContext (new Report (new ConsoleReportPrinter ()));
+			ctx = new CompilerContext (new Report (new ConsoleReportPrinter (Console.Out)));
 			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
 
 			//
