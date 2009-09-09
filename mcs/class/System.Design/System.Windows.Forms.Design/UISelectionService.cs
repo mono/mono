@@ -246,12 +246,18 @@ namespace System.Windows.Forms.Design
 
 
 #region Selection
+
 		private bool _selecting = false;
 		private Control _selectionContainer = null;
 		private Point _initialMousePosition;
 		private Rectangle _selectionRectangle;
 		// XXX
 		private ArrayList _selectionFrames = new ArrayList ();
+
+
+		public Rectangle SelectionBounds {
+			get { return _selectionRectangle; }
+		}
 		
 		// container coordinates
 		//
@@ -264,7 +270,7 @@ namespace System.Windows.Forms.Design
 			_initialMousePosition = _prevMousePosition;
 			_selectionRectangle = new Rectangle (x , y, 0, 0);
 		}
-		
+
 		private void SelectionContinue (int x, int y)
 		{
 			// Console.WriteLine ("SelectionContinue");

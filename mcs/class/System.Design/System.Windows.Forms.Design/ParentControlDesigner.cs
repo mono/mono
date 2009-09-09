@@ -152,7 +152,7 @@ namespace System.Windows.Forms.Design
 		// Creates a component from a ToolboxItem, sets its location and size if available and snaps it's
 		// location to the grid.
 		//
-		protected virtual IComponent[] CreateToolCore (ToolboxItem tool, int x, int y, int width,  int height,
+		protected virtual IComponent[] CreateToolCore (ToolboxItem tool, int x, int y, int width, int height,
 								bool hasLocation, bool hasSize)
 		{
 			if (tool == null)
@@ -174,6 +174,11 @@ namespace System.Windows.Forms.Design
 
 				Control control = component as Control;
 				if (control != null) {
+					this.Control.SuspendLayout ();
+					// set parent instead of controls.Add so that it gets serialized for Undo/Redo
+					TypeDescriptor.GetProperties (control)["Parent"].SetValue (control, this.Control);
+					this.Control.SuspendLayout ();
+
 					if (hasLocation)
 						base.SetValue (component, "Location", this.SnapPointToGrid (new Point (x, y)));
 					else
@@ -182,10 +187,6 @@ namespace System.Windows.Forms.Design
 					if (hasSize)
 						base.SetValue (component, "Size", new Size (width, height));
 
-					this.Control.SuspendLayout ();
-					// set parent instead of controls.Add so that it gets serialized for Undo/Redo
-					TypeDescriptor.GetProperties (control)["Parent"].SetValue (control, this.Control);
-					this.Control.SuspendLayout ();
 					this.Control.Refresh ();
 				}
 			}
@@ -470,7 +471,6 @@ namespace System.Windows.Forms.Design
 
 
 #region Design-Time Mouse Drag and Drop
-
 		protected override void OnMouseDragBegin (int x, int y)
 		{
 			// do not call base here because the behaviour is specific for the ControlDesgner (does IUISelectionService.DragBegin)
@@ -511,6 +511,28 @@ namespace System.Windows.Forms.Design
 		{
 			IUISelectionService selectionServ = this.GetService (typeof (IUISelectionService)) as IUISelectionService;
 			if (selectionServ != null) {
+				// If there is a Toolbox component seleted then create it instead of finishing the selection
+				IToolboxService toolBoxService = this.GetService (typeof (IToolboxService)) as IToolboxService;
+				if (!cancel && toolBoxService != null && toolBoxService.GetSelectedToolboxItem () != null) {
+					if (selectionServ.SelectionInProgress) {
+						bool hasSize = selectionServ.SelectionBounds.Width > 0 && 
+							       selectionServ.SelectionBounds.Height > 0;
+						CreateToolCore (toolBoxService.GetSelectedToolboxItem (),
+								selectionServ.SelectionBounds.X,
+								selectionServ.SelectionBounds.Y,
+								selectionServ.SelectionBounds.Width,
+								selectionServ.SelectionBounds.Height,
+								true, hasSize);
+						toolBoxService.SelectedToolboxItemUsed ();
+						cancel = true;
+					} else if (!selectionServ.SelectionInProgress && 
+						   !selectionServ.ResizeInProgress && !selectionServ.DragDropInProgress){
+						CreateTool (toolBoxService.GetSelectedToolboxItem (), _mouseDownPoint);
+						toolBoxService.SelectedToolboxItemUsed ();
+						cancel = true;
+					}
+				}
+
 				if (selectionServ.SelectionInProgress || selectionServ.ResizeInProgress)
 					selectionServ.MouseDragEnd (cancel);
 			}
@@ -523,12 +545,21 @@ namespace System.Windows.Forms.Design
 		}
 #endif
 
+		Point _mouseDownPoint = Point.Empty;
+
+		internal override void OnMouseDown (int x, int y)
+		{
+			_mouseDownPoint.X = x;
+			_mouseDownPoint.Y = y;
+			base.OnMouseDown (x, y);
+		}
+
 		internal override void OnMouseUp ()
 		{
 			base.OnMouseUp ();
-			if (!this.Control.AllowDrop) { // check MouseDragBegin for the reason of having this
+			if (!this.Control.AllowDrop) // check MouseDragBegin for the reason of having this
 				this.Control.AllowDrop = true;
-			}
+			_mouseDownPoint = Point.Empty;
 		}
 
 		internal override void OnMouseMove (int x, int y)
