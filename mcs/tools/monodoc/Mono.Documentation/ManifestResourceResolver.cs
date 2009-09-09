@@ -5,11 +5,11 @@ using System.Xml;
 
 namespace Mono.Documentation {
 	public class ManifestResourceResolver : XmlUrlResolver {
-		private string dir;
+		private string[] dirs;
 
-		public ManifestResourceResolver (string dir)
+		public ManifestResourceResolver (params string[] dirs)
 		{
-			this.dir = dir;
+			this.dirs = (string[]) dirs.Clone ();
 		}
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
@@ -18,9 +18,12 @@ namespace Mono.Documentation {
 				if (s != null)
 					return new Uri ("x-resource:///" + relativeUri);
 			}
-			return base.ResolveUri (
-					new Uri ("file://" + new DirectoryInfo (dir).FullName + "/"), 
-					relativeUri);
+			foreach (var dir in dirs) {
+				if (File.Exists (Path.Combine (dir, relativeUri)))
+					return base.ResolveUri (new Uri ("file://" + new DirectoryInfo (dir).FullName + "/"), 
+							relativeUri);
+			}
+			return base.ResolveUri (baseUri, relativeUri);
 		}
 
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)

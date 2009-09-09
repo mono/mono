@@ -1,3 +1,9 @@
+2009-09-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* Mono.Documentation/ManifestResourceResolver.cs: Allow it to lookup
+	  files located in multiple directories.  Needed so that 'mdoc
+	  export-html' can properly deal with multiple source directories.
+
 2009-08-13  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/provider.cs: Add a RootTree.AddSource(string) method, so that 
