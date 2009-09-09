@@ -826,13 +826,6 @@ namespace System.Data {
 
 			CheckReadOnlyStatus ();
 
-			int oldRecord = Current;
-			CheckChildRows (DataRowAction.Change);
-
-			// apply new state
-			Current = Proposed;
-			Proposed = -1;
-
 			_inChangingEvent = true;
 			try {
 				_table.ChangingDataRow (this, DataRowAction.Change);
@@ -841,6 +834,11 @@ namespace System.Data {
 			}
 
 			DataRowState oldState = RowState;
+
+			int oldRecord = Current;
+			Current = Proposed;
+			Proposed = -1;
+
 
 			//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
 			//be implemented at multiple places.For now, just maintain the index.
@@ -851,7 +849,16 @@ namespace System.Data {
 
 			try {
 				AssertConstraints ();
-
+				
+				// restore previous state to let the cascade update to find the rows 
+				Proposed = Current;
+				Current = oldRecord; 
+				
+				CheckChildRows (DataRowAction.Change);
+				
+				// apply new state
+				Current = Proposed;
+				Proposed = -1;
 			} catch {
 				int proposed = Proposed >= 0 ? Proposed : Current;
 				Current = oldRecord;

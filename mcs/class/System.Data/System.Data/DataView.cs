@@ -1219,7 +1219,12 @@ namespace System.Data
 			DataRow [] rows;
 
 			// Get the index from index collection of the data table.
-			Index index = Table.GetIndex(sortColumns,sortOrder,RowStateFilter,FilterExpression,true);
+			Index index = null;
+			if (sort != string.Empty)
+				index = Table.GetIndex(sortColumns,sortOrder,RowStateFilter,FilterExpression,true);
+			else
+				index = new Index (new Key(Table, columns, sortDirection, RowStateFilter, rowFilterExpr));
+			
 			if (isDistinct)
 				rows = index.GetDistinctRows ();
 			else
