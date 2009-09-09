@@ -1,3 +1,9 @@
+2009-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-arm.md mini-arm.c: Remove unused opcodes.
+
+	* mini-codegen.c: Enable the cpu description validation for arm.
+
 2009-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-calls.cs: Move the test_0_float_load_and_store_with_big_offset ()
