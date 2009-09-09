@@ -269,7 +269,7 @@ namespace Mono.Security.X509 {
 					// BUG: MS BCL 1.0 can't import a key which 
 					// isn't the same size as the one present in
 					// the container.
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 					_dsa = new DSAManaged (dsaParams.Y.Length << 3);
 #else
 					_dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
@@ -370,7 +370,7 @@ namespace Mono.Security.X509 {
 					// isn't the same size as the one present in
 					// the container.
 					int keySize = (rsaParams.Modulus.Length << 3);
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 					_rsa = new RSAManaged (keySize);
 #else
 					_rsa = (RSA) new RSACryptoServiceProvider (keySize);
@@ -548,7 +548,7 @@ namespace Mono.Security.X509 {
 
 		public bool CheckSignature (byte[] hash, string hashAlgorithm, byte[] signature) 
 		{
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			string hashName = GetHashNameFromOID (hashAlgorithm);
 			HashAlgorithm algo = HashAlgorithm.Create (hashName);
 			return PKCS1.Verify_v15 (RSA, algo, hash, signature);

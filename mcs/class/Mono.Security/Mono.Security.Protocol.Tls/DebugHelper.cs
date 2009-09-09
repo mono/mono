@@ -83,13 +83,12 @@ namespace Mono.Security.Protocol.Tls
 			for (int i = index; i < length; i += 16)
 			{
 				int count = (length - i) >= 16 ? 16 : (length - i);
+				string buf = "";
 				for (int j = 0; j < count; j++)
 				{
-#if !MONOTOUCH
-					Debug.Write(buffer[i + j].ToString("x2") + " ");
-#endif
+					buf += buffer[i + j].ToString("x2") + " ";
 				}
-				Debug.WriteLine("");
+				Debug.WriteLine(buf);
 			}
 		}
 	}

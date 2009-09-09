@@ -166,7 +166,7 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			RSA rsa = RSA.Create ();
 			rsa.ImportParameters (rsap);
 #else
@@ -251,7 +251,7 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 			DSA dsa = (DSA)DSA.Create ();
 			dsa.ImportParameters (dsap);
 #else
@@ -444,7 +444,7 @@ namespace Mono.Security.Cryptography {
 				rsap.Modulus = new byte [byteLen];
 				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 				RSA rsa = RSA.Create ();
 				rsa.ImportParameters (rsap);
 #else

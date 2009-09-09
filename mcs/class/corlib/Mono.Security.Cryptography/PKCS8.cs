@@ -272,7 +272,7 @@ namespace Mono.Security.Cryptography {
 				param.InverseQ = Normalize (privateKey [8].Value, keysize2);
 				param.P = Normalize (privateKey [4].Value, keysize2);
 				param.Q = Normalize (privateKey [5].Value, keysize2);
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 				RSA rsa = RSA.Create ();
 				rsa.ImportParameters (param);
 #else
