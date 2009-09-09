@@ -1,3 +1,9 @@
+2009-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c: For CoreCLR throw a SecurityException if an 
+	internal call is defined outside platform code. Reduce code 
+	duplication with existing [Method|Field]AccessException
+
 2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-x86.c (mono_arch_emit_call): Don't reduce stack usage by 4
