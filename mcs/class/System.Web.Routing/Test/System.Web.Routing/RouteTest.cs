@@ -692,6 +692,32 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual("bar", rd.DataTokens["foobar"], "#6-1");
 		}
 
+		[Test (Description = "Bug #537751")]
+		public void GetRouteData32 ()
+		{
+			var r = new Route ("", null);
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (0, rd.Values.Count, "#4");
+		}
+
+		[Test (Description = "Bug #537751")]
+		public void GetRouteData33 ()
+		{
+			var r = new Route (null, null);
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (0, rd.Values.Count, "#4");
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()

@@ -1,3 +1,8 @@
+2009-09-09  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteTest.cs: added two tests for empty and null route URLs (bug
+	#537751)
+
 2009-06-25  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteCollectionTest.cs, RouteTest.cs: added new tests for
