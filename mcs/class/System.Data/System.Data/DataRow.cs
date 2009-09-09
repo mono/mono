@@ -8,6 +8,7 @@
 //   Ville Palo <vi64pa@koti.soon.fi>
 //   Alan Tam Siu Lung <Tam@SiuLung.com>
 //   Sureshkumar T <tsureshkumar@novell.com>
+//   Veerapuram Varadhan <vvaradhan@novell.com>
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002, 2003
@@ -15,7 +16,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -603,8 +604,6 @@ namespace System.Data {
 			_table.ChangingDataRow (this, DataRowAction.Commit);
 			CheckChildRows (DataRowAction.Commit);
 			switch (RowState) {
-			case DataRowState.Unchanged:
-				return;
 			case DataRowState.Added:
 			case DataRowState.Modified:
 				if (Original >= 0)
@@ -827,6 +826,13 @@ namespace System.Data {
 
 			CheckReadOnlyStatus ();
 
+			int oldRecord = Current;
+			CheckChildRows (DataRowAction.Change);
+
+			// apply new state
+			Current = Proposed;
+			Proposed = -1;
+
 			_inChangingEvent = true;
 			try {
 				_table.ChangingDataRow (this, DataRowAction.Change);
@@ -835,10 +841,6 @@ namespace System.Data {
 			}
 
 			DataRowState oldState = RowState;
-
-			int oldRecord = Current;
-			Current = Proposed;
-			Proposed = -1;
 
 			//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
 			//be implemented at multiple places.For now, just maintain the index.
@@ -850,15 +852,6 @@ namespace System.Data {
 			try {
 				AssertConstraints ();
 
-				// restore previous state to let the cascade update to find the rows
-				Proposed = Current;
-				Current = oldRecord;
-
-				CheckChildRows (DataRowAction.Change);
-
-				// apply new state
-				Current = Proposed;
-				Proposed = -1;
 			} catch {
 				int proposed = Proposed >= 0 ? Proposed : Current;
 				Current = oldRecord;
@@ -1280,9 +1273,13 @@ namespace System.Data {
 			// If original is null, then nothing has happened since AcceptChanges
 			// was last called.  We have no "original" to go back to.
 
-			_table.ChangedDataRow (this, DataRowAction.Rollback);
-			CancelEdit ();
+			// Varadhan: Following if may be un-necessary
+			/*if (_inChangingEvent) {
+				_table.ChangedDataRow (this, DataRowAction.Rollback);
+				CancelEdit ();
+			}*/
 
+			Table.ChangingDataRow (this, DataRowAction.Rollback);
 			//TODO : Need to Verify the constraints..
 			switch (RowState) {
 			case DataRowState.Added:
@@ -1303,6 +1300,7 @@ namespace System.Data {
 				this.Validate ();
 				break;
 			}
+			Table.ChangedDataRow (this, DataRowAction.Rollback);
 		}
 
 		/// <summary>

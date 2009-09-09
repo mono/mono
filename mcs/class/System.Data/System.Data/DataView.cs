@@ -645,25 +645,42 @@ namespace System.Data
 			newIndex = IndexOf (args.Row);
 
 			/* ItemAdded */
-			if (args.Action == DataRowAction.Add)
+			if (args.Action == DataRowAction.Add && oldIndex != newIndex)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, newIndex, -1));
 
-			/* ItemChanged or ItemMoved */
+			/* ItemChanged or ItemDeleted */
 			if (args.Action == DataRowAction.Change) {
-				if (oldIndex == newIndex)
+				if (oldIndex != -1 && oldIndex == newIndex)
 					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1));
-				else
-					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex));
+				else if (oldIndex != newIndex) {
+					if (newIndex < 0)
+						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, oldIndex));
+					else
+						OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, oldIndex));
+				}
+			}
+			
+			/* Rollback - ItemAdded or ItemDeleted */
+			if (args.Action == DataRowAction.Rollback) {
+				if (oldIndex < 0 && newIndex > -1)
+					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, newIndex, -1));
+				else if (oldIndex > -1 && newIndex < 0)
+					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, oldIndex));
+				else if (oldIndex != -1 && oldIndex == newIndex)
+					OnListChanged (new ListChangedEventArgs (ListChangedType.ItemChanged, newIndex, -1));
 			}
 		}
 
 		private void OnRowDeleted (object sender, DataRowChangeEventArgs args)
 		{
 			/* ItemDeleted */
-			int newIndex;
+			int newIndex, oldCount;
+			oldCount = Count;
 			newIndex = IndexOf (args.Row);
 			UpdateIndex (true);
-			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
+			/* Fire ListChanged only when the RowFilter is affected */
+			if (oldCount != Count)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
 
 		protected virtual void ColumnCollectionChanged (object sender, CollectionChangeEventArgs e)
@@ -1166,7 +1183,7 @@ namespace System.Data
 
 			DataColumn[] columns;
 			ListSortDirection[] sortDirection = null;
-			if (columnNames.Length != 0) {
+			if (columnNames.Length > 0) {
 				columns = new DataColumn [columnNames.Length];
 				for (int i=0; i < columnNames.Length; ++i)
 					columns [i] = Table.Columns [columnNames [i]];
@@ -1200,7 +1217,9 @@ namespace System.Data
 			}
 
 			DataRow [] rows;
-			Index index = new Index (new Key(Table, columns, sortDirection, RowStateFilter, rowFilterExpr));
+
+			// Get the index from index collection of the data table.
+			Index index = Table.GetIndex(sortColumns,sortOrder,RowStateFilter,FilterExpression,true);
 			if (isDistinct)
 				rows = index.GetDistinctRows ();
 			else
