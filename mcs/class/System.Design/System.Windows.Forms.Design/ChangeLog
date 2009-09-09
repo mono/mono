@@ -1,3 +1,10 @@
+2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ParentControlDesigner.cs, ControlDesigner.cs, UISelectionService.cs, 
+	IUISelectionService.cs: Support IToolboxService control creation via 
+	point-(resize)-click.
+	[Fixes part of bug #537604]
+
 2008-10-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* StringCollectionEditor.cs: Minor fixes. 

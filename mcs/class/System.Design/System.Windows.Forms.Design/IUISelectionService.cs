@@ -51,6 +51,10 @@ namespace System.Windows.Forms.Design
 			get;
 		}
 
+		Rectangle SelectionBounds {
+			get;
+		}
+
 		void MouseDragBegin (Control container, int x, int y);
 		void MouseDragMove (int x, int y);
 		void MouseDragEnd (bool cancel);

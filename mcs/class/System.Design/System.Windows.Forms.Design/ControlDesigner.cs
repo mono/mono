@@ -479,10 +479,10 @@ namespace System.Windows.Forms.Design
 			IUISelectionService uiSelection = this.GetService (typeof (IUISelectionService)) as IUISelectionService;
 
 			if (_mouseDown) {
+				this.OnMouseDragEnd (false);
 				if (uiSelection != null && (uiSelection.SelectionInProgress || uiSelection.ResizeInProgress)) {
 					uiSelection.MouseDragEnd (false);
 				}
-				this.OnMouseDragEnd (false);
 				_mouseDown = false;
 			}
 			else {			  
