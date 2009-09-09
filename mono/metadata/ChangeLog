@@ -1,3 +1,7 @@
+2009-09-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Check for recursive valuetype definitions.
+
 2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Use inheritance-aware interface offsets. Inherited types use the same offsets
