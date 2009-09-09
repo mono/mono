@@ -1362,13 +1362,14 @@ namespace Mono.CSharp {
 			if (constraints != null) {
 				if (constraints.IsReferenceType && TypeManager.IsStruct (d))
 					return CreateConstantResult (ec, false);
-
-				if (constraints.IsValueType && !TypeManager.IsStruct (d))
-					return CreateConstantResult (ec, TypeManager.IsEqual (d, t));
 			}
 
-			if (TypeManager.IsGenericParameter (expr.Type))
+			if (TypeManager.IsGenericParameter (expr.Type)) {
+				if (constraints != null && constraints.IsValueType && expr.Type == t)
+					return CreateConstantResult (ec, true);
+
 				expr = new BoxedCast (expr, d);
+			}
 
 			return this;
 		}

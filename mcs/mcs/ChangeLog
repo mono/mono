@@ -1,4 +1,10 @@
-2009-09-08  Marek Safar  <marek.safar@gmail.com>
+2009-09-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #518707
+	* expression.cs (Is): Optimize only generic parameter type
+	expression probing value type generic parameter.
+
+2009-09-09  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #532571
 	* ecore.cs: Check for simple name type arguments used with
