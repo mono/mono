@@ -68,21 +68,25 @@ namespace System.Web.Routing
 		void Parse ()
 		{
 			string url = Url;
-
-			if (String.IsNullOrEmpty (url))
-				throw new SystemException ("INTERNAL ERROR: it should not try to parse null or empty string");
-			if (url [0] == '~' || url [0] == '/')
-				throw new ArgumentException ("Url must not start with '~' or '/'");
-			if (url.IndexOf ('?') >= 0)
-				throw new ArgumentException ("Url must not contain '?'");
-
+			parameterNames = new Dictionary <string, bool> (StringComparer.OrdinalIgnoreCase);
+			
+			if (!String.IsNullOrEmpty (url)) {
+				if (url [0] == '~' || url [0] == '/')
+					throw new ArgumentException ("Url must not start with '~' or '/'");
+				if (url.IndexOf ('?') >= 0)
+					throw new ArgumentException ("Url must not contain '?'");
+			} else {
+				segments = new PatternSegment [0];
+				tokens = new PatternToken [0];
+				return;
+			}
+			
 			string[] parts = url.Split ('/');
 			int partsCount = segmentCount = parts.Length;
 			var allTokens = new List <PatternToken> ();
 			PatternToken tmpToken;
 			
-			segments = new PatternSegment [partsCount];			
-			parameterNames = new Dictionary <string, bool> (StringComparer.OrdinalIgnoreCase);
+			segments = new PatternSegment [partsCount];
 			
 			for (int i = 0; i < partsCount; i++) {
 				if (haveSegmentWithCatchAll)

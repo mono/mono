@@ -50,7 +50,7 @@ namespace System.Web.Routing
 
 		public string Url {
 			get { return url != null ? url.Url : String.Empty; }
-			set { url = value != null ? new PatternParser (value) : null; }
+			set { url = value != null ? new PatternParser (value) : new PatternParser (String.Empty); }
 		}
 
 		public Route (string url, IRouteHandler routeHandler)
