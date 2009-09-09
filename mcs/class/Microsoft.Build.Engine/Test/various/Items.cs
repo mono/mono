@@ -132,6 +132,120 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		// item with 1. item ref with a separator and 2. another item ref
+		public void TestItems2a () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item0 Include='D'/>
+						<Item1 Include='A;B;C' />
+						<Item2 Include=""@(Item1,'-');@(Item0)"" />
+						<Item3 Include=""@(Item1,'xx')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			CheckItems (proj, "Item2", "A1", "A-B-C", "D");
+			CheckItems (proj, "Item3", "A2", "AxxBxxC");
+		}
+
+		[Test]
+		public void TestInheritedMetadataFromItemRefs () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item0 Include='D'>
+							<MD0>Val0</MD0>
+						</Item0>
+						<Item1 Include='A;@(Item0)' >
+							<MD1>Val1</MD1>
+						</Item1>
+						<Item2 Include=""@(Item1,'-')"" />
+						<Item3 Include=""@(Item1);Z"" />
+					</ItemGroup>
+
+						<Target Name=""Main"">
+		<Message Text=""Item2: %(Item2.Identity) MD0: %(Item2.MD0) MD1: %(Item2.MD1)""/>
+		<Message Text=""Item3: %(Item3.Identity) MD0: %(Item3.MD0) MD1: %(Item3.MD1)""/>
+	</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			CheckItems (proj, "Item2", "A1", "A-D");
+			CheckItems (proj, "Item3", "A2", "A", "D", "Z");
+
+			if (!proj.Build ("Main")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Item2: A-D MD0:  MD1: ", "A4");
+
+			logger.CheckLoggedMessageHead ("Item3: A MD0:  MD1: Val1", "A5");
+			logger.CheckLoggedMessageHead ("Item3: D MD0: Val0 MD1: Val1", "A6");
+			logger.CheckLoggedMessageHead ("Item3: Z MD0:  MD1: ", "A7");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
+		[Test]
+		public void TestInheritedMetadataFromItemRefs2 () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item5 Include='ZZ'>
+							<MD5>Val5</MD5>
+						</Item5>
+
+						<Item0 Include='D'>
+							<MD0>Val0</MD0>
+						</Item0>
+						<Item1 Include='A;@(Item0)' >
+							<MD1>Val1</MD1>
+						</Item1>
+						<Item2 Include=""@(Item1,'-');@(Item5)"" />
+					</ItemGroup>
+
+						<Target Name=""Main"">
+		<Message Text=""Item2: %(Item2.Identity) MD0: %(Item2.MD0) MD1: %(Item2.MD1) MD5: %(Item2.MD5)""/>
+	</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			CheckItems (proj, "Item2", "A1", "A-D", "ZZ");
+
+			if (!proj.Build ("Main")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Item2: A-D MD0:  MD1:  MD5: ", "A4");
+			logger.CheckLoggedMessageHead ("Item2: ZZ MD0:  MD1:  MD5: Val5", "A5");
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
+		[Test]
 		public void TestItems3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -496,6 +610,54 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			}
 
 			logger.CheckLoggedMessageHead ("Item2: .txt/@(Item0);.txt/@(Item0);.zip/@(Item0);.zip/@(Item0)", "A1");
+			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
+		}
+
+		[Test]
+		public void TestMetadataFromItemReferences () {
+			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<ItemGroup>
+		<Item1 Include=""Item1Val1;Item1Val2"">
+			<Item1Md>False</Item1Md>
+		</Item1>
+		<Item2 Include=""Val1;Val2;@(Item1);Val3"">
+			<Name>Random name</Name>
+		</Item2>
+		<Item3 Include=""foo;bar;@(Item2);Last""/>
+	</ItemGroup>
+
+	<Target Name=""Main"">
+		<CreateItem Include=""@(Item3)"">
+			<Output TaskParameter=""Include""  ItemName=""Final""/>
+		</CreateItem>
+
+		<Message Text=""Final: %(Final.Identity) Item1Md: %(Final.Item1Md) Name: %(Final.Name)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			proj.LoadXml (project_xml);
+			engine.RegisterLogger (logger);
+
+			if (!proj.Build ("Main")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			CheckItems (proj, "Final", "Z", "foo", "bar", "Val1", "Val2", "Item1Val1", "Item1Val2", "Val3", "Last");
+
+			logger.CheckLoggedMessageHead ("Final: foo Item1Md:  Name: ", "A1");
+			logger.CheckLoggedMessageHead ("Final: bar Item1Md:  Name: ", "A2");
+			logger.CheckLoggedMessageHead ("Final: Val1 Item1Md:  Name: Random name", "A3");
+			logger.CheckLoggedMessageHead ("Final: Val2 Item1Md:  Name: Random name", "A4");
+			logger.CheckLoggedMessageHead ("Final: Item1Val1 Item1Md: False Name: Random name", "A5");
+			logger.CheckLoggedMessageHead ("Final: Item1Val2 Item1Md: False Name: Random name", "A6");
+			logger.CheckLoggedMessageHead ("Final: Val3 Item1Md:  Name: Random name", "A7");
+			logger.CheckLoggedMessageHead ("Final: Last Item1Md:  Name: ", "A8");
+
 			Assert.AreEqual (0, logger.NormalMessageCount, "unexpected messages found");
 		}
 

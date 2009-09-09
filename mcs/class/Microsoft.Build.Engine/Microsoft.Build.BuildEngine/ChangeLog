@@ -1,3 +1,23 @@
+2009-09-10  Ankit Jain  <jankit@novell.com>
+
+	* BuildItem.cs (Evaluate): Metadata from "Include" should be,
+	preserved, so use ConvertTo ITaskItem, rather than string.
+	Ensure that the new items have the metadata from references _in_
+	Include, and the metadata of _this_ builditem.
+	* DirectoryScanner.cs (Includes): Change to a array of ITaskItem.
+	(MatchedFilenames): Rename to ..
+	(MatchedItems): .. this, and change type of array of ITaskItem.
+	Ensure that metadata of items in Includes are retained in the
+	final matched items.
+
+	* BuildItemGroup.cs (ConvertoToITaskItemArray): Add 'separator'
+	param. If separator is present, then just return a "Join'ed"
+	string as the single task item.
+	* ItemReference.cs: Track api changes.
+
+	* BuildProperty.cs (ConvertToITaskItemArray): Split the value,
+	as we need separate task items.
+
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #534965.

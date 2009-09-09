@@ -1,3 +1,10 @@
+2009-09-10  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs (TestItems2a):
+	(TestInheritedMetadataFromItemRefs):
+	(TestInheritedMetadataFromItemRefs2):
+	(TestMetadataFromItemReferences): New.
+
 2009-09-08  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs (TestItems5):
