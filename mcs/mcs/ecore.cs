@@ -2534,8 +2534,12 @@ namespace Mono.CSharp {
 					return nested.ResolveAsTypeStep (ec, false);
 
 				if (targs != null) {
-					GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
-					return ct.ResolveAsTypeStep (ec, false);
+					if (TypeManager.IsGenericType (fne.Type)) {
+						GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
+						return ct.ResolveAsTypeStep (ec, false);
+					}
+
+					Namespace.Error_TypeArgumentsCannotBeUsed (fne, loc);
 				}
 
 				return fne;

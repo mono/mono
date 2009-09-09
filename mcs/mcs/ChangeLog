@@ -1,5 +1,11 @@
 2009-09-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #532571
+	* ecore.cs: Check for simple name type arguments used with
+	non-generic type.
+
+2009-09-08  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #497421
 	* generic.cs (CheckConstraint): Don't use buildin types to check for
 	parameterless constructor.
