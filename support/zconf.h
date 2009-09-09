@@ -390,4 +390,9 @@ typedef uLong FAR uLongf;
 #   pragma map(inflate_copyright,"INCOPY")
 #endif
 
+#ifdef WINDOWS
+#define NO_FSEEKO 1
+#define NO_vsnprintf 1
+#endif
 #endif /* ZCONF_H */
+
