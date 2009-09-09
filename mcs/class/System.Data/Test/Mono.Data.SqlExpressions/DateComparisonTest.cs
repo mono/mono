@@ -13,7 +13,7 @@ namespace Monotests_Mono.Data.SqlExpressions
 		public void SetUp()
 		{
 			dataSet = new DataSet();
-			dataSet.ReadXml("dateComparisonTest.xml", XmlReadMode.InferSchema);
+			dataSet.ReadXml("Test/Mono.Data.SqlExpressions/dateComparisonTest.xml", XmlReadMode.InferSchema);
 		}
 
 		[Test]
