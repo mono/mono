@@ -1,3 +1,14 @@
+2009-09-10  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #510176
+	* DataView.cs (OnRowChanged/OnRowDeleted): Raise appropriate events iff 
+	view is affected. This silence of the numerous Add/Change events that were
+	getting raised from DataView.
+	(ToTable): Use appropriate index to generated DataTable in case of 
+	RowFilter / Sort conditions.
+	
+	* DataRow.cs (AcceptChanges/RejectChanges): Raise appropriate Changing events
+	
 2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataColumnPropertyDescriptor.cs, DataView.cs: Not browsable if Hidden.
