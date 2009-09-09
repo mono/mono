@@ -1,3 +1,4 @@
+#ifdef MONO_DOES_NOT_NEED_THIS
 /* gzio.c -- IO on .gz files
  * Copyright (C) 1995-2006 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
@@ -1118,3 +1119,4 @@ void ZEXPORT gzclearerr (file)
     s->z_eof = 0;
     clearerr(s->file);
 }
+#endif
