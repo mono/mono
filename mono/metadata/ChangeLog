@@ -1,5 +1,10 @@
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Look for recursive valuetypes only against the
+	type been initialized as this is a lot simpler and works.
+
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Ensure that fields are properly loaded before
 	checking them.
 
