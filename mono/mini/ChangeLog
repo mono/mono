@@ -1,3 +1,8 @@
+2009-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (arch_emit_static_rgctx_trampoline): Don't clobber argument
+	reg r1 on arm.
+
 2009-09-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline) : Call
