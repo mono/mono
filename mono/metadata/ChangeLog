@@ -6,6 +6,11 @@
 
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_field_from_token): Properly handle invalid
+	dynamic tokens.
+
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c (verify_image_file): Skip types that can't be
 	decoded.
 
