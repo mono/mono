@@ -6,6 +6,11 @@
 
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c (verify_image_file): Skip types that can't be
+	decoded.
+
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Look for recursive valuetypes only against the
 	type been initialized as this is a lot simpler and works.
 
