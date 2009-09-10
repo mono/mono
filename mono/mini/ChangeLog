@@ -1,3 +1,11 @@
+2009-09-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline) : Call
+	  mono_cominterop_get_invoke if the delegate target object
+	  is a COM object.
+
+	Code is contributed under MIT/X11 license.
+
 2009-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* method-to-ir.c: For CoreCLR throw a SecurityException if an 

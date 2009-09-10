@@ -1,3 +1,10 @@
+2009-09-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* cominterop.cs : Adding a test for invoking delegates that 
+	  target COM methods.
+
+	Contributed under MIT/X11 license.
+
 2009-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* iface4.cs: Add one more check.
