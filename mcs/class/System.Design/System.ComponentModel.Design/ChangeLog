@@ -1,5 +1,10 @@
 2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DesignSurface.cs: Changing the ISelectionService at run time was a 
+	bad idea, so wrap it inside the extended UISelectionService instead.
+
+2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DesignSurface.cs: Provide the default implementation of the 
 	ISelectionService in the DesignSurface service container.
 	[Fixes bug #538037]
