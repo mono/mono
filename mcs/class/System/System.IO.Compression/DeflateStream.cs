@@ -373,19 +373,25 @@ namespace System.IO.Compression {
 			set { throw new NotSupportedException(); }
 		}
 
-		[DllImport ("MonoPosixHelper")]
+#if MONOTOUCH
+		const string LIBNAME = "__Internal";
+#else
+		const string LIBNAME = "MonoPosixHelper";
+#endif
+
+		[DllImport (LIBNAME)]
 		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport (LIBNAME)]
 		static extern int CloseZStream (IntPtr stream);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport (LIBNAME)]
 		static extern int Flush (IntPtr stream);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport (LIBNAME)]
 		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport (LIBNAME)]
 		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
 	}
 }
