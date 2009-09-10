@@ -79,7 +79,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildItemGroup group;
 			if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
-				return group.ConvertToITaskItemArray (transform, options);
+				return group.ConvertToITaskItemArray (transform, separator, options);
 			else
 				return null;
 		}

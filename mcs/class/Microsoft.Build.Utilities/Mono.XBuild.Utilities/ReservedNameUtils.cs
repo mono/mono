@@ -82,8 +82,13 @@ namespace Mono.XBuild.Utilities {
 				return Path.GetFileNameWithoutExtension (itemSpec);
 			case "extension":
 				return Path.GetExtension (itemSpec);
-			case "relativedir":
-				return Path.GetDirectoryName (itemSpec);
+			case "relativedir": {
+				string dir = Path.GetDirectoryName (itemSpec);
+				if (dir.Length > 0)
+					return dir + "\\";
+				else
+					return dir;
+			}
 			case "directory":
 				return Path.GetDirectoryName (Path.GetFullPath (itemSpec));
 			case "recursivedir":
