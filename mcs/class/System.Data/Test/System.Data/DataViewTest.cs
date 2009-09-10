@@ -669,7 +669,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void CancelEditAndEvents ()
 		{
-			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:3 =====ItemAdded:4 ------5 =====ItemAdded:4 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";
+			string reference = " =====ItemAdded:3 ------4 =====ItemAdded:4 ------5 =====ItemAdded:5 ------6 =====ItemDeleted:5 ------5 =====ItemAdded:5";
 
 			eventWriter = new StringWriter ();
 
