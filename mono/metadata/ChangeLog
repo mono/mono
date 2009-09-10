@@ -6,6 +6,10 @@
 
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	object.c (mono_delegate_ctor_with_method): Guard against null method.
+
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_marshal_get_xappdomain_dispatch): Add an assert
 	that should be replaced with error handling later.
 
