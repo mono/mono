@@ -1,3 +1,9 @@
+2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignSurface.cs: Provide the default implementation of the 
+	ISelectionService in the DesignSurface service container.
+	[Fixes bug #538037]
+
 2009-09-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignSurface.cs: Don't be so strict and allow for the users 

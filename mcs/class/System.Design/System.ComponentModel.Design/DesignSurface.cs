@@ -144,6 +144,9 @@ namespace System.ComponentModel.Design
 			_serviceContainer.AddService (typeof (IExtenderProviderService), (IExtenderProviderService) extenderService);
 			_serviceContainer.AddService (typeof (IExtenderListService), (IExtenderListService) extenderService);
 			_serviceContainer.AddService (typeof (DesignSurface), this);
+
+			SelectionService selectionService = new SelectionService (_serviceContainer);
+			_serviceContainer.AddService (typeof (ISelectionService), (ISelectionService) selectionService);
 		}
 		
 		protected ServiceContainer ServiceContainer {

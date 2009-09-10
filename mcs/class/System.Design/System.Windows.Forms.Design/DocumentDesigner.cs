@@ -289,11 +289,15 @@ namespace System.Windows.Forms.Design
 
 		private void InitializeSelectionService ()
 		{
+			ISelectionService selection = this.GetService (typeof (ISelectionService)) as ISelectionService;
+			if (selection != null && selection is IUISelectionService)
+				return;
+
 			IServiceContainer serviceContainer = this.GetService (typeof (IServiceContainer)) as IServiceContainer;
-			if (serviceContainer.GetService (typeof (ISelectionService)) != null)
+			if (selection != null)
 				serviceContainer.RemoveService (typeof (ISelectionService));
 
-			UISelectionService selection = new UISelectionService (serviceContainer);
+			selection = new UISelectionService (serviceContainer);
 			serviceContainer.AddService (typeof (ISelectionService), (ISelectionService) selection);
 			serviceContainer.AddService (typeof (IUISelectionService), (IUISelectionService) selection);
 
