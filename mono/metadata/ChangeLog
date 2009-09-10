@@ -6,6 +6,10 @@
 
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* marshal.c (mono_delegate_end_invoke): Fix warning.
+
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_field_from_token): Properly handle invalid
 	dynamic tokens.
 
