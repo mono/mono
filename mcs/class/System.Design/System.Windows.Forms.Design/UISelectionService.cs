@@ -38,19 +38,33 @@ using System.Windows.Forms;
 namespace System.Windows.Forms.Design
 {
 	
-	internal class UISelectionService : SelectionService, IUISelectionService
+	internal class UISelectionService : IUISelectionService
 	{
 
 		private IServiceProvider _serviceProvider;
 		private DesignerTransaction _transaction;
+		private ISelectionService _selectionService;
 
-		public UISelectionService (IServiceProvider serviceProvider) : base (serviceProvider)
+		public UISelectionService (IServiceProvider serviceProvider)
 		{
 			if (serviceProvider == null)
 				throw new ArgumentNullException ("serviceProvider");
 
 			_serviceProvider = serviceProvider;
 			_transaction = null;
+
+			_selectionService = serviceProvider.GetService (typeof (ISelectionService)) as ISelectionService;
+			if (_selectionService == null) {
+				IServiceContainer serviceContainer = serviceProvider.GetService (typeof (IServiceContainer)) as IServiceContainer;
+				_selectionService = new SelectionService (serviceContainer);
+				serviceContainer.AddService (typeof (ISelectionService), (ISelectionService) _selectionService);
+			}
+
+			_selectionService.SelectionChanged += new EventHandler (OnSelectionChanged);
+		}
+
+		private ISelectionService SelectionService {
+			get { return _selectionService; }
 		}
 
 		private object GetService (Type service)
@@ -92,11 +106,11 @@ namespace System.Windows.Forms.Design
 			SelectionFrame frame = GetSelectionFrameAt (x, y);
 			
 			if (frame != null && frame.HitTest (x, y)) {
-				this.SetSelectedComponents (new IComponent[] { frame.Control });
+				this.SelectionService.SetSelectedComponents (new IComponent[] { frame.Control });
 				if (_transaction == null) {
 					IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
 					_transaction = host.CreateTransaction ("Resize " + 
-						(this.SelectionCount == 1 ? ((IComponent)this.PrimarySelection).Site.Name : "controls"));
+						(this.SelectionService.SelectionCount == 1 ? ((IComponent)this.SelectionService.PrimarySelection).Site.Name : "controls"));
 				}
 				this.ResizeBegin (x, y);
 			}
@@ -146,12 +160,12 @@ namespace System.Windows.Forms.Design
 			if (_transaction == null) {
 				IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
 				_transaction = host.CreateTransaction ("Move " + 
-								       (this.SelectionCount == 1? ((IComponent)this.PrimarySelection).Site.Name : "controls"));
+								       (this.SelectionService.SelectionCount == 1? ((IComponent)this.SelectionService.PrimarySelection).Site.Name : "controls"));
 			}
 			_dragging = true;
 			_firstMove = true;
-			if (this.PrimarySelection != null)
-				((Control)this.PrimarySelection).DoDragDrop (new ControlDataObject ((Control)this.PrimarySelection), DragDropEffects.All);
+			if (this.SelectionService.PrimarySelection != null)
+				((Control)this.SelectionService.PrimarySelection).DoDragDrop (new ControlDataObject ((Control)this.SelectionService.PrimarySelection), DragDropEffects.All);
 		}
 		
 		// container cordinates
@@ -200,7 +214,7 @@ namespace System.Windows.Forms.Design
 				// Send mouse up message to the primary selection
 				// Else for parentcontroldesigner there is no mouseup event and it doesn't set allow drop back to false
 				//
-				Native.SendMessage (((Control)this.PrimarySelection).Handle, Native.Msg.WM_LBUTTONUP, (IntPtr) 0, (IntPtr) 0);
+				Native.SendMessage (((Control)this.SelectionService.PrimarySelection).Handle, Native.Msg.WM_LBUTTONUP, (IntPtr) 0, (IntPtr) 0);
 				if (_transaction != null) {
 					if (cancel)
 						_transaction.Cancel ();
@@ -216,15 +230,15 @@ namespace System.Windows.Forms.Design
 			bool reparent = false;
 			Control oldParent = null;
 			
-			if (((Control)this.PrimarySelection).Parent != container && !this.GetComponentSelected (container)) {
+			if (((Control)this.SelectionService.PrimarySelection).Parent != container && !this.SelectionService.GetComponentSelected (container)) {
 				reparent = true;
-				oldParent = ((Control)this.PrimarySelection).Parent;
+				oldParent = ((Control)this.SelectionService.PrimarySelection).Parent;
 			}
 			
 			// FIXME: Should check selectionstyle per control to determine if it's locked...
 			// if locked -> don't move
 			//
-			ICollection selection = this.GetSelectedComponents ();
+			ICollection selection = this.SelectionService.GetSelectedComponents ();
 			foreach (Component component in selection) {
 				Control control = component as Control;
 				if (reparent)
@@ -361,7 +375,7 @@ namespace System.Windows.Forms.Design
 			// do not change selection if nothing has changed
 			//
 			if (selectedControls.Count != 0)
-				this.SetSelectedComponents (selectedControls, SelectionTypes.Replace);
+				this.SelectionService.SetSelectedComponents (selectedControls, SelectionTypes.Replace);
 
 			_selectionContainer.Refresh ();
 		}
@@ -384,7 +398,7 @@ namespace System.Windows.Forms.Design
 		{
 			// Console.WriteLine ("ResizeContinue");
 			Rectangle deltaBounds = _selectionFrame.ResizeContinue (x, y);
-			ICollection selection = this.GetSelectedComponents ();
+			ICollection selection = this.SelectionService.GetSelectedComponents ();
 
 			foreach (IComponent component in selection) {
 				if (component is Control) {
@@ -445,10 +459,10 @@ namespace System.Windows.Forms.Design
 		{
 			IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
 
-			if (host == null || !(this.PrimarySelection is Control))
+			if (host == null || !(this.SelectionService.PrimarySelection is Control))
 				 return;
 
-			if ((Control)this.PrimarySelection == container) {
+			if ((Control)this.SelectionService.PrimarySelection == container) {
 				if (_selecting) {
 					Color negativeColor = Color.FromArgb ((byte)~(_selectionContainer.BackColor.R),
 						 (byte)~(_selectionContainer.BackColor.G),
@@ -456,7 +470,7 @@ namespace System.Windows.Forms.Design
 					DrawSelectionRectangle (gfx, _selectionRectangle, negativeColor);
 				}
 			}
-			else if (((Control)this.PrimarySelection).Parent == container) {
+			else if (((Control)this.SelectionService.PrimarySelection).Parent == container) {
 				foreach (SelectionFrame frame in _selectionFrames)
 					frame.OnPaint (gfx);
 			}
@@ -471,10 +485,9 @@ namespace System.Windows.Forms.Design
 		}
 		
 		
-		protected override void OnSelectionChanged ()
+		private void OnSelectionChanged (object sender, EventArgs args)
 		{
-
-			ICollection selection = this.GetSelectedComponents ();
+			ICollection selection = this.SelectionService.GetSelectedComponents ();
 			
 			if (_selectionFrames.Count == 0) {
 				foreach (Component component in selection) {
@@ -502,8 +515,6 @@ namespace System.Windows.Forms.Design
 				else
 					root.Refresh ();
 			}
-			
-			base.OnSelectionChanged ();
 		}
 		
 		private ICollection GetControlsIn (Rectangle rect)

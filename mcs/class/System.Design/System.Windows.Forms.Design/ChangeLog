@@ -1,5 +1,10 @@
 2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DocumentDesigner.cs: Changing the ISelectionService at run time was a 
+	bad idea, so wrap it inside the extended UISelectionService instead.
+
+2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DocumentDesigner.cs: If there is already a ISelectionService registered 
 	in the ServiceContainer but it's not an IUISelectionService (WinForms 
 	specific) then replace it with one.
