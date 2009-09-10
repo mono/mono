@@ -261,18 +261,21 @@ namespace Microsoft.Build.BuildEngine {
 
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
-			string includes, excludes;
+			ITaskItem[] includes;
+			string excludes;
 
 			includeExpr = new Expression ();
 			includeExpr.Parse (Include, ParseOptions.AllowItemsNoMetadataAndSplit);
 			excludeExpr = new Expression ();
 			excludeExpr.Parse (Exclude, ParseOptions.AllowItemsNoMetadataAndSplit);
 			
-			includes = (string) includeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
+			includes = (ITaskItem[]) includeExpr.ConvertTo (project, typeof (ITaskItem[]),
+								ExpressionOptions.ExpandItemRefs);
 			excludes = (string) excludeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
 
-			this.finalItemSpec = includes;
-			
+			this.finalItemSpec = (string) includeExpr.ConvertTo (project, typeof (string),
+							ExpressionOptions.ExpandItemRefs);
+
 			directoryScanner = new DirectoryScanner ();
 			
 			directoryScanner.Includes = includes;
@@ -285,15 +288,20 @@ namespace Microsoft.Build.BuildEngine {
 			
 			directoryScanner.Scan ();
 			
-			foreach (string matchedFile in directoryScanner.MatchedFilenames)
-				AddEvaluatedItem (project, evaluatedTo, matchedFile);
+			foreach (ITaskItem matchedItem in directoryScanner.MatchedItems)
+				AddEvaluatedItem (project, evaluatedTo, matchedItem);
 		}
 		
-		void AddEvaluatedItem (Project project, bool evaluatedTo, string itemSpec)
+		void AddEvaluatedItem (Project project, bool evaluatedTo, ITaskItem taskitem)
 		{
 			BuildItemGroup big;			
 			BuildItem bi = new BuildItem (this);
-			bi.finalItemSpec = itemSpec;
+			bi.finalItemSpec = taskitem.ItemSpec;
+
+			foreach (DictionaryEntry de in taskitem.CloneCustomMetadata ()) {
+				bi.unevaluatedMetadata.Add ((string) de.Key, (string) de.Value);
+				bi.evaluatedMetadata.Add ((string) de.Key, (string) de.Value);
+			}
 
 			project.EvaluatedItemsIgnoringCondition.AddItem (bi);
 

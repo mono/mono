@@ -253,6 +253,8 @@ namespace Microsoft.Build.Utilities
 			} else if (category == "error") {
 				Log.LogError (subcategory, code, null, filename, lineNumber, columnNumber, endLineNumber,
 					endColumnNumber, text, null);
+			} else {
+				Log.LogMessage (singleLine);
 			}
 		}
 		

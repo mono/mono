@@ -212,8 +212,14 @@ namespace Microsoft.Build.BuildEngine {
 		// or it doesnt exist, so dont expand again
 		// In non-eval, items have _already_ been expanded, so dont expand again
 		// So, ignore @options
-		internal ITaskItem[] ConvertToITaskItemArray (Expression transform, ExpressionOptions options)
+		internal ITaskItem[] ConvertToITaskItemArray (Expression transform, Expression separator, ExpressionOptions options)
 		{
+			if (separator != null)
+				// separator present, so return as a single "join'ed" string
+				return new ITaskItem [] {
+					new TaskItem (ConvertToString (transform, separator, options))
+				};
+
 			ITaskItem[] array = new ITaskItem [buildItems.Count];
 			int i = 0;
 			foreach (BuildItem item in buildItems)

@@ -173,8 +173,8 @@ namespace Microsoft.Build.BuildEngine {
 				Expression exp = new Expression ();
 
 				// in non-evaluation phase, properties are always expanded
-				exp.Parse (FinalValue, options == ExpressionOptions.ExpandItemRefs ?
-							ParseOptions.AllowItems : ParseOptions.None);
+				exp.Parse (FinalValue, ParseOptions.Split | (options == ExpressionOptions.ExpandItemRefs ?
+							ParseOptions.AllowItems : ParseOptions.None));
 				return (ITaskItem[]) exp.ConvertTo (project, typeof (ITaskItem[]), options);
 			} finally {
 				converting = false;

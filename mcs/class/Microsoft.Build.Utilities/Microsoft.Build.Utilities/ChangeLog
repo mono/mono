@@ -1,3 +1,8 @@
+2009-09-08  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (LogEventsFromTextOutput): Log message even if its not
+	identified as an error or a warning.
+
 2009-07-28  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask (.ctor): Initialize Timeout value.
