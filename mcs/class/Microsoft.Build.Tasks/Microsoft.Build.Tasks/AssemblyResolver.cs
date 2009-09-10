@@ -47,6 +47,7 @@ namespace Microsoft.Build.Tasks {
 		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
 		StringWriter sw;
+		List<string> search_log;
 
 		static LibraryPcFileCache cache;
 
@@ -58,13 +59,12 @@ namespace Microsoft.Build.Tasks {
 			GatherGacAssemblies ();
 		}
 
-		public StringWriter SearchLogger {
-			get { return sw; }
-		}
-
 		public void ResetSearchLogger ()
 		{
-			sw = new StringWriter ();
+			if (search_log == null)
+				search_log = new List<string> ();
+			else
+				search_log.Clear ();
 		}
 
 		string GetGacPath ()
@@ -133,11 +133,11 @@ namespace Microsoft.Build.Tasks {
 							SearchPath.TargetFrameworkDirectory);
 				}
 
-				SearchLogger.WriteLine ("Considered target framework dir {0}, assembly name '{1}' did not " +
+				LogSearchMessage ("Considered target framework dir {0}, assembly name '{1}' did not " +
 						"match the expected '{2}' (SpecificVersion={3})",
 						framework_dir, pair.Key, key_aname, specific_version);
 			} else {
-				SearchLogger.WriteLine ("Considered target framework dir {0}, assembly named '{1}' not found.",
+				LogSearchMessage ("Considered target framework dir {0}, assembly named '{1}' not found.",
 						framework_dir, key_aname.Name);
 			}
 			return null;
@@ -175,7 +175,7 @@ namespace Microsoft.Build.Tasks {
 						return GetResolvedReference (reference, file, found_aname, true,
 								SearchPath.Directory);
 
-					SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
+					LogSearchMessage ("Considered {0}, but assembly name wasn't compatible.", file);
 				}
 			}
 
@@ -198,7 +198,7 @@ namespace Microsoft.Build.Tasks {
 		{
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
 			if (!gac.ContainsKey (name.Name)) {
-				SearchLogger.WriteLine ("Considered {0}, but could not find in the GAC.",
+				LogSearchMessage ("Considered {0}, but could not find in the GAC.",
 						reference.ItemSpec);
 				return null;
 			}
@@ -210,7 +210,7 @@ namespace Microsoft.Build.Tasks {
 
 				// not found
 				if (specific_version) {
-					SearchLogger.WriteLine ("Considered '{0}', but an assembly with the specific version not found.",
+					LogSearchMessage ("Considered '{0}', but an assembly with the specific version not found.",
 							reference.ItemSpec);
 					return null;
 				}
@@ -240,7 +240,7 @@ namespace Microsoft.Build.Tasks {
 			}
 
 			if (pkg == null) {
-				SearchLogger.WriteLine ("Considered {0}, but could not find in any pkg-config files.",
+				LogSearchMessage ("Considered {0}, but could not find in any pkg-config files.",
 						reference.ItemSpec);
 				return null;
 			}
@@ -260,13 +260,13 @@ namespace Microsoft.Build.Tasks {
 
 			string hintpath = reference.GetMetadata ("HintPath");
 			if (String.IsNullOrEmpty (hintpath)) {
-				SearchLogger.WriteLine ("HintPath attribute not found");
+				LogSearchMessage ("HintPath attribute not found");
 				return null;
 			}
 
 			if (!File.Exists (hintpath)) {
 				log.LogMessage (MessageImportance.Low, "HintPath {0} does not exist.", hintpath);
-				SearchLogger.WriteLine ("Considered {0}, but it does not exist.", hintpath);
+				LogSearchMessage ("Considered {0}, but it does not exist.", hintpath);
 				return null;
 			}
 
@@ -279,7 +279,7 @@ namespace Microsoft.Build.Tasks {
 			if (AssemblyNamesCompatible (name, found, specific_version)) {
 				resolved = GetResolvedReference (reference, hintpath, found, true, SearchPath.HintPath);
 			} else {
-				SearchLogger.WriteLine ("Considered {0}, but assembly name '{1}' did not match the " +
+				LogSearchMessage ("Considered {0}, but assembly name '{1}' did not match the " +
 						"expected '{2}' (SpecificVersion={3})", hintpath, found, name, specific_version);
 				log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
 			}
@@ -294,10 +294,10 @@ namespace Microsoft.Build.Tasks {
 			try {
 				aname = AssemblyName.GetAssemblyName (filename);
 			} catch (FileNotFoundException) {
-				SearchLogger.WriteLine ("Considered '{0}' as a file, but the file does not exist",
+				LogSearchMessage ("Considered '{0}' as a file, but the file does not exist",
 						filename);
 			} catch (BadImageFormatException) {
-				SearchLogger.WriteLine ("Considered '{0}' as a file, but it is an invalid assembly",
+				LogSearchMessage ("Considered '{0}' as a file, but it is an invalid assembly",
 						filename);
 			}
 
@@ -369,6 +369,17 @@ namespace Microsoft.Build.Tasks {
 			ITaskItem new_item = new TaskItem (reference);
 			new_item.ItemSpec = filename;
 			return new ResolvedReference (new_item, aname, copy_local, search_path, reference.ItemSpec);
+		}
+
+		public void LogSearchMessage (string msg, params object [] args)
+		{
+			search_log.Add (String.Format (msg, args));
+		}
+
+		public void LogSearchLoggerMessages ()
+		{
+			foreach (string msg in search_log)
+				log.LogMessage (msg);
 		}
 
 		public TaskLoggingHelper Log {

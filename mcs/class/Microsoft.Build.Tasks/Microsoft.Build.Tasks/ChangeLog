@@ -1,3 +1,12 @@
+2009-09-10  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs: Move the SearchLogger to be a list of
+	strings, so that it can be emitted with correct indentation.
+	(SearchLogger): Remove.
+	(LogSearchMessage): New.
+	(LogSearchLoggerMessages): New.
+	* ResolveAssemblyReference.cs: Track api changes.
+
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
 	* ResolveAssemblyReference.cs (ResolveReference): targetFrameworkDirectories
