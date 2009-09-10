@@ -1,3 +1,9 @@
+2009-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Fix default_platform_check so it can run
+	the runtime coreclr tests (without an infinite recursion when
+	throwing an exception).
+
 2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Look for recursive valuetypes only against the
