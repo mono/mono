@@ -1,3 +1,8 @@
+2009-09-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Ensure that fields are properly loaded before
+	checking them.
+
 2009-09-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* object.c (mono_object_get_virtual_method) : Call 
