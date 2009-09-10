@@ -1,3 +1,8 @@
+2009-09-10  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicControl.cs: implemented several properties.
+	Added code for ResolveColumn method, called from OnInit
+
 2009-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* FieldTemplateFactory.cs: implemented TemplateFolderVirtualPath

@@ -109,6 +109,14 @@ namespace MonoTests.System.Web.DynamicData
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_03.aspx.cs", "ListView_DynamicControl_03.aspx.cs");
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_04.aspx", "ListView_DynamicControl_04.aspx");
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_04.aspx.cs", "ListView_DynamicControl_04.aspx.cs");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_05.aspx", "ListView_DynamicControl_05.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_05.aspx.cs", "ListView_DynamicControl_05.aspx.cs");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_06.aspx", "ListView_DynamicControl_06.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_06.aspx.cs", "ListView_DynamicControl_06.aspx.cs");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_07.aspx", "ListView_DynamicControl_07.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_07.aspx.cs", "ListView_DynamicControl_07.aspx.cs");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_08.aspx", "ListView_DynamicControl_08.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_08.aspx.cs", "ListView_DynamicControl_08.aspx.cs");
 		}
 
 		[TestFixtureTearDown]
@@ -132,7 +140,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (String.Empty, dc.DataFormatString, "#A6");
 			Assert.AreEqual (null, dc.FieldTemplate, "#A7");
 			Assert.AreEqual (true, dc.HtmlEncode, "#A8");
-			Assert.AreEqual (dc, ((IFieldTemplateHost) dc).FormattingOptions, "#A9");
+			Assert.AreEqual (dc, ((IFieldTemplateHost)dc).FormattingOptions, "#A9");
 			Assert.AreEqual (DataBoundControlMode.ReadOnly, dc.Mode, "#A10");
 			Assert.AreEqual (String.Empty, dc.NullDisplayText, "#A11");
 			// Throws NREX on .NET .... (why am I still surprised by this?)
@@ -291,6 +299,15 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (String.Empty, dc.DataField, "#A1");
 			dc.DataField = "MyField";
 			Assert.AreEqual ("MyField", dc.DataField, "#A2");
+
+			dc.DataField = "AnotherField";
+			Assert.AreEqual ("AnotherField", dc.DataField, "#A3");
+
+			dc.DataField = String.Empty;
+			Assert.AreEqual (String.Empty, dc.DataField, "#A4");
+
+			dc.DataField = null;
+			Assert.AreEqual (String.Empty, dc.DataField, "#A5");
 		}
 
 		[Test]
@@ -313,12 +330,114 @@ namespace MonoTests.System.Web.DynamicData
 			var dc = lc.FindChild<DynamicControl> ("FirstName");
 			Assert.IsNotNull (dc, "#A1-1");
 			Assert.IsNotNull (dc.DataField, "#A1-2");
-			Assert.AreEqual("FirstName", dc.DataField, "#A1-3");
+			Assert.AreEqual ("FirstName", dc.DataField, "#A1-3");
 
 			// Column and Table aren't set on DataField assignment...
 			dc.DataField = "Active";
 			Assert.AreEqual ("Active", dc.DataField, "#B1");
 			Assert.AreEqual ("FirstName", dc.Column.Name, "#B1-1");
+
+			dc.DataField = String.Empty;
+			Assert.AreEqual (String.Empty, dc.DataField, "#C1");
+			Assert.AreEqual ("FirstName", dc.Column.Name, "#C1-1");
+
+			dc.DataField = null;
+			Assert.AreEqual (String.Empty, dc.DataField, "#D1");
+			Assert.AreEqual ("FirstName", dc.Column.Name, "#D1-1");
+		}
+
+		[Test]
+		public void DataField_2 ()
+		{
+			var dc = new DynamicControl ();
+
+			dc.DataField = null;
+			Assert.AreEqual (String.Empty, dc.DataField, "#A1");
+
+			var c = dc.Column;
+			Assert.IsNull (c, "#A1-1");
+
+			dc.DataField = "MyField";
+			Assert.AreEqual ("MyField", dc.DataField, "#B1");
+
+			c = dc.Column;
+			Assert.IsNull (c, "#B1-1");
+		}
+
+		[Test]
+		public void DataField_3 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_05.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (DataField_OnLoad_3);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void DataField_OnLoad_3 (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			// System.InvalidOperationException : System.InvalidOperationException: The 'PokerDynamicControl' control 'FirstName' must have a DataField attribute.
+			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
+			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				var c = lc.FindChild<DynamicControl> ("FirstName");
+			}, "#A1");
+		}
+
+		[Test]
+		public void DataField_4 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_06.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (DataField_OnLoad_4);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void DataField_OnLoad_4 (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			// System.InvalidOperationException : System.InvalidOperationException: The table 'EmployeeTable' does not have a column named 'NoSuchColumn'.
+			//   at System.Web.DynamicData.MetaTable.GetColumn(String columnName)
+			//   at System.Web.DynamicData.DynamicControl.ResolveColumn()
+			//   at System.Web.DynamicData.DynamicControl.OnInit(EventArgs e)
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				var dc = lc.FindChild<DynamicControl> ("FirstName");
+			}, "#A1");
+		}
+
+		[Test]
+		public void DataField_5 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_07.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (DataField_OnLoad_5);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void DataField_OnLoad_5 (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			// If Column is intialized before OnInit is run, the column is not resolved - no exception here.
+			var dc = lc.FindChild<DynamicControl> ("FirstName");
+			Assert.IsNotNull (dc, "#A1");
+			Assert.AreEqual ("FirstName", dc.Column.Name, "#A1-1");
 		}
 
 		[Test]
@@ -367,7 +486,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
 		}
 
-		static List <FieldTemplateTestDescription> fieldTemplateReadOnlyColumns = new List <FieldTemplateTestDescription> ()
+		static List<FieldTemplateTestDescription> fieldTemplateReadOnlyColumns = new List<FieldTemplateTestDescription> ()
 		{
 			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
 			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
@@ -408,7 +527,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in fieldTemplateReadOnlyColumns) { 
+			foreach (var entry in fieldTemplateReadOnlyColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1}", counter, columnName));
@@ -527,7 +646,7 @@ namespace MonoTests.System.Web.DynamicData
 				Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
 				Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
 			} finally {
-				
+
 			}
 		}
 
@@ -589,7 +708,7 @@ namespace MonoTests.System.Web.DynamicData
 			}
 		}
 
-		static List <FieldTemplateTestDescription> fieldTemplateNonDefaultColumns = new List <FieldTemplateTestDescription> ()
+		static List<FieldTemplateTestDescription> fieldTemplateNonDefaultColumns = new List<FieldTemplateTestDescription> ()
 		{
 			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/System.Char.ascx"),
 			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/System.Byte.ascx"),
@@ -801,7 +920,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("value", dc.GetAttribute ("MyAttribute"), "#B1");
 
 			// Nice...
-			AssertExtensions.Throws <KeyNotFoundException> (() => {
+			AssertExtensions.Throws<KeyNotFoundException> (() => {
 				dc.GetAttribute ("NoSuchAttribute");
 			}, "#C1");
 		}
@@ -840,8 +959,8 @@ namespace MonoTests.System.Web.DynamicData
 		{
 			var dc = new DynamicControl ();
 
-			Assert.IsNotNull (((IFieldTemplateHost) dc).FormattingOptions, "#A1");
-			Assert.AreEqual (dc, ((IFieldTemplateHost) dc).FormattingOptions, "#A2");
+			Assert.IsNotNull (((IFieldTemplateHost)dc).FormattingOptions, "#A1");
+			Assert.AreEqual (dc, ((IFieldTemplateHost)dc).FormattingOptions, "#A2");
 		}
 
 		[Test]
@@ -993,7 +1112,7 @@ namespace MonoTests.System.Web.DynamicData
 		{
 			var lc = p.FindControl ("ListView1") as ListView;
 			Assert.IsNotNull (lc, "#A1");
-			
+
 			var dc = lc.FindChild<DynamicControl> ("FirstName");
 			Assert.IsNotNull (dc, "#B1");
 			Assert.AreEqual ("FirstName", dc.DataField, "#B1-1");
@@ -1006,7 +1125,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (String.Empty, dc.UIHint, "#C1");
 			dc.UIHint = "MyCustomUIHintTemplate_Text";
 			Assert.AreEqual ("MyCustomUIHintTemplate_Text", dc.UIHint, "#C1-1");
-			
+
 			dc = lc.FindChild<DynamicControl> ("LastName");
 			Assert.IsNotNull (dc, "#D1");
 			Assert.AreEqual ("LastName", dc.DataField, "#D1-1");
@@ -1050,6 +1169,39 @@ namespace MonoTests.System.Web.DynamicData
 
 			// UIHint attribute found on the associated field but overriden in the page
 			Assert.AreEqual ("MyCustomUIHintTemplate_Text", dc.UIHint, "#D1-2");
+		}
+
+		[Test]
+		public void UIHint_2 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_08.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (UIHint_OnLoad_2);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+
+			Assert.IsTrue (p.IndexOf ("<span class=\"field\">LastName</span>: <span class=\"customFieldTemplate\">") != -1, "#Y1");
+			Assert.IsTrue (p.IndexOf ("<span class=\"field\">FirstName</span>: <span class=\"defaultTemplate\">") != -1, "#Y1-1");
+		}
+
+		static void UIHint_OnLoad_2 (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			// Invalid field template name
+			var dc = lc.FindChild<DynamicControl> ("FirstName");
+			Assert.IsNotNull (dc, "#B1");
+			Assert.AreEqual ("NonExistingTemplate", dc.UIHint, "#B1-1");
+
+			// Falls back to the text template
+			Assert.IsNotNull (dc.FieldTemplate, "#C1");
+
+			var ftuc = dc.FieldTemplate as FieldTemplateUserControl;
+			Assert.IsNotNull (ftuc, "#C1-2");
+			Assert.AreEqual ("~/DynamicData/FieldTemplates/Text.ascx", ftuc.AppRelativeVirtualPath, "#C1-3");
 		}
 
 		[Test]

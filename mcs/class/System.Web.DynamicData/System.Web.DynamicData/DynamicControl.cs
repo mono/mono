@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -50,26 +51,23 @@ namespace System.Web.DynamicData
 	{
 		Dictionary <string, string> attributes;
 		
-		public DynamicControl ()
+		public DynamicControl () : this (DataBoundControlMode.ReadOnly)
 		{
 		}
 
-		[MonoTODO]
 		public DynamicControl (DataBoundControlMode mode)
 		{
-			throw new NotImplementedException ();
+			Mode = mode;
+			UIHint = String.Empty;
 		}
 
-		[MonoTODO]
 		[Category ("Behavior")]
 		[DefaultValue (false)]
 		public bool ApplyFormatInEditMode { get; set; }
 
 		[Browsable (false)]
-		[MonoTODO]
 		public MetaColumn Column { get; set; }
 
-		[MonoTODO]
 		[Category ("Behavior")]
 		[DefaultValue (false)]
 		public bool ConvertEmptyStringToNull { get; set; }
@@ -80,7 +78,6 @@ namespace System.Web.DynamicData
 		[CssClassProperty]
 		public virtual string CssClass { get; set; }
 
-		[MonoTODO]
 		[Category ("Data")]
 		[DefaultValue ("")]
 		public string DataField { get; set; }
@@ -111,12 +108,12 @@ namespace System.Web.DynamicData
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		public string NullDisplayText { get; set; }
-
-		[MonoTODO]
+		
 		[Browsable (false)]
-		public virtual MetaTable Table { get; private set; }
+		public virtual MetaTable Table {
+			get { return this.FindMetaTable (); }
+		}
 
-		[MonoTODO]
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		public virtual string UIHint { get; set; }
@@ -146,6 +143,8 @@ namespace System.Web.DynamicData
 			// actions to set the Column property don't affect the other properties
 			// which derive their values from the associated MetaColumn.
 			base.OnInit (e);
+			if (Column == null)
+				ResolveColumn ();
 		}
 
 		protected override void Render (HtmlTextWriter writer)
@@ -154,6 +153,20 @@ namespace System.Web.DynamicData
 			// Why override?
 		}
 
+		void ResolveColumn ()
+		{
+			string dataField = DataField;
+			if (String.IsNullOrEmpty (dataField))
+				throw new InvalidOperationException ("The '" + GetType ().Name + "' control '" + ID + "' must have a DataField attribute.");
+
+			MetaTable table = Table;
+			// And, as it is .NET DynamicData's tradition... no null check!!
+			if (table == null)
+				throw new NullReferenceException ();
+
+			Column = table.GetColumn (dataField);
+		}
+		
 		internal void InternalSetAttributes (Dictionary <string, string> attributes)
 		{
 			this.attributes = attributes;

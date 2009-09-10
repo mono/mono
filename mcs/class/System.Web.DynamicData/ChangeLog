@@ -1,3 +1,15 @@
+2009-09-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added 
+	Test/WebPages/ListView_DynamicControl_05.aspx
+	Test/WebPages/ListView_DynamicControl_05.aspx.cs
+	Test/WebPages/ListView_DynamicControl_06.aspx
+	Test/WebPages/ListView_DynamicControl_06.aspx.cs
+	Test/WebPages/ListView_DynamicControl_07.aspx
+	Test/WebPages/ListView_DynamicControl_07.aspx.cs
+	Test/WebPages/ListView_DynamicControl_08.aspx
+	Test/WebPages/ListView_DynamicControl_08.aspx.cs
+
 2009-07-06  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added new test resources

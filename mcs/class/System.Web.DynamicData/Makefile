@@ -147,6 +147,14 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/ListView_DynamicControl_03.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_03.aspx.cs	\
 	Test/WebPages/ListView_DynamicControl_04.aspx,MonoTests.WebPages.ListView_DynamicControl_04.aspx	\
 	Test/WebPages/ListView_DynamicControl_04.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_04.aspx.cs	\
+	Test/WebPages/ListView_DynamicControl_05.aspx,MonoTests.WebPages.ListView_DynamicControl_05.aspx	\
+	Test/WebPages/ListView_DynamicControl_05.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_05.aspx.cs	\
+	Test/WebPages/ListView_DynamicControl_06.aspx,MonoTests.WebPages.ListView_DynamicControl_06.aspx	\
+	Test/WebPages/ListView_DynamicControl_06.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_06.aspx.cs	\
+	Test/WebPages/ListView_DynamicControl_07.aspx,MonoTests.WebPages.ListView_DynamicControl_07.aspx	\
+	Test/WebPages/ListView_DynamicControl_07.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_07.aspx.cs	\
+	Test/WebPages/ListView_DynamicControl_08.aspx,MonoTests.WebPages.ListView_DynamicControl_08.aspx	\
+	Test/WebPages/ListView_DynamicControl_08.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_08.aspx.cs	\
 	Test/WebPages/Site.css,MonoTests.WebPages.Site.css	\
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\
