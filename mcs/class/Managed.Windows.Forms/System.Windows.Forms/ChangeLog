@@ -1,5 +1,16 @@
 2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* InternalWindowManager.cs: Call Invalidate-Update instead of 
+	Refresh for MS compitability. Note also that Refresh is virtual 
+	and several controls override it in order to provide data refresh 
+	functionallity on top of the redraw and they do not expect this 
+	extra refresh call.
+	* Control.cs: In Refresh Invalidate the control and all children 
+	insead of calling Refresh for each of them.
+	[Fixes bug #538336]
+
+2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: Always set the help panel properties on the 
 	internal control, because they are inherited and can change with 
 	the parent.
