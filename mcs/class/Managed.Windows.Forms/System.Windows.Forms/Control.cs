@@ -4200,14 +4200,8 @@ namespace System.Windows.Forms
 
 		public virtual void Refresh() {
 			if (IsHandleCreated && Visible) {
-				Invalidate();
-				XplatUI.UpdateWindow(window.Handle);
-
-				Control [] controls = child_controls.GetAllControls ();
-				for (int i=0; i < controls.Length; i++) {
-					controls[i].Refresh();
-				}
-				
+				Invalidate(true);
+				Update ();
 			}
 		}
 

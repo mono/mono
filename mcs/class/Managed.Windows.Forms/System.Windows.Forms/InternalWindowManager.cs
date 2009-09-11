@@ -447,7 +447,8 @@ namespace System.Windows.Forms {
 
 		protected virtual void Activate ()
 		{
-			form.Refresh ();
+			form.Invalidate (true);
+			form.Update ();
 		}
 
 		public virtual bool IsActive {
