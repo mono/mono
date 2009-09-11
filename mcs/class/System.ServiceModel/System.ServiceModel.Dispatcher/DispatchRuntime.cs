@@ -108,8 +108,20 @@ namespace System.ServiceModel.Dispatcher
 			get { return endpoint_dispatcher; }
 		}
 
+		// FIXME: this is somewhat compromized solution to workaround
+		// an issue that this runtime-creation-logic could result in
+		// an infinite loop on callback instatiation between 
+		// ClientRuntime, but so far it works by this property...
+		internal bool HasCallbackRuntime {
+			get { return callback_client_runtime != null; }
+		}
+
 		public ClientRuntime CallbackClientRuntime {
-			get { return callback_client_runtime; }
+			get {
+				if (callback_client_runtime == null)
+					callback_client_runtime = new ClientRuntime (EndpointDispatcher.ContractName, EndpointDispatcher.ContractNamespace);
+				return callback_client_runtime;
+			}
 			internal set { callback_client_runtime = value; }
 		}
 

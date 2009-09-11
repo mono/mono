@@ -1,5 +1,14 @@
 2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EndpointDispatcher.cs : AddressFilter is always non-null.
+	* DispatchRuntime.cs : CallbackClientRuntime seems to be created even
+	  for non-callback dispatchers. Fixing this also results in fixes in
+	  couple of nunit regressions.
+	* InputOrReplyRequestProcessor.cs : the change above required fix
+	  here too (it has null check).
+
+2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BaseMessagesFormatter.cs, DefaultOperationInvoker.cs:
 	  Fix the crash that ref parameter in contract methods caused.
 

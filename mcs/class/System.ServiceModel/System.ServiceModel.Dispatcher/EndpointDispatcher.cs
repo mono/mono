@@ -66,6 +66,8 @@ namespace System.ServiceModel.Dispatcher
 			contract_ns = contractNamespace;
 
 			dispatch_runtime = new DispatchRuntime (this);
+
+			this.address_filter = new EndpointAddressMessageFilter (address);
 		}
 
 		public DispatchRuntime DispatchRuntime {
@@ -115,7 +117,6 @@ namespace System.ServiceModel.Dispatcher
 		internal void InitializeServiceEndpoint (bool isCallback, ChannelDispatcher channelDispatcher, Type serviceType, ServiceEndpoint se)
 		{
 			this.ContractFilter = GetContractFilter (se.Contract);
-			this.AddressFilter = new EndpointAddressMessageFilter (se.Address);
 			this.ChannelDispatcher = channelDispatcher;
 
 			this.DispatchRuntime.Type = serviceType;
