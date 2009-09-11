@@ -1,3 +1,7 @@
+2008-09-11  Marek Safar  <marek.safar@gmail.com>
+
+	* library.make: Add NO_BUILD to ignore assembly during build.
+
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* library.make (SNFLAGS): Remove '-R', since it's specific to the

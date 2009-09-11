@@ -81,7 +81,9 @@ GACDIR = $(mono_libdir)
 GACROOT = $(DESTDIR)$(mono_libdir)
 endif
 
+ifndef NO_BUILD
 all-local: $(the_lib) $(extra_targets)
+endif
 
 ifeq ($(LIBRARY_COMPILE),$(BOOT_COMPILE))
 is_boot=true
