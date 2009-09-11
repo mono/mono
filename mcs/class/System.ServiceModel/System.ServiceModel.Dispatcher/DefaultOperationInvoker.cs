@@ -51,7 +51,7 @@ namespace System.ServiceModel.Dispatcher
 				var pi = pl [i];
 				if (!pi.IsOut)
 					il.Add (pi);
-				if (pi.IsOut)
+				if (pi.IsOut || pi.ParameterType.IsByRef)
 					ol.Add (pi);
 			}
 			in_params = il.ToArray ();
@@ -69,7 +69,7 @@ namespace System.ServiceModel.Dispatcher
 
 		public object Invoke (object instance, object [] inputs, out object [] outputs)
 		{
-			var arr = new object [in_params.Length + out_params.Length];
+			var arr = new object [od.SyncMethod.GetParameters ().Length];
 			for (int i = 0; i < in_params.Length; i++)
 				arr [in_params [i].Position] = inputs [i];
 

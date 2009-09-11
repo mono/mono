@@ -1,3 +1,8 @@
+2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BaseMessagesFormatter.cs, DefaultOperationInvoker.cs:
+	  Fix the crash that ref parameter in contract methods caused.
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokerHandler.cs, ReplyHandler.cs :

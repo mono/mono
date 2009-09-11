@@ -129,9 +129,10 @@ namespace System.ServiceModel.Dispatcher
 				if (HasReturnValue (md.Body))
 					parts [0] = result;
 				int index = ParamsOffset (md.Body);
+				int paramsIdx = 0;
 				foreach (ParameterInfo pi in replyMethodParams)
 					if (pi.IsOut || pi.ParameterType.IsByRef)
-						parts [index++] = parameters [pi.Position];
+				parts [index++] = parameters [paramsIdx++];
 			}
 			string action = version.Addressing == AddressingVersion.None ? null : md.Action;
 			return PartsToMessage (md, version, action, parts);
