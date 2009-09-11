@@ -1,3 +1,8 @@
+2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugBehavior.cs : help page enabling properties are true
+	  by default (fix regressions).
+
 2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : default action name is prepended

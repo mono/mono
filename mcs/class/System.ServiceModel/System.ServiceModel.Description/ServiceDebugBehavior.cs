@@ -36,6 +36,8 @@ namespace System.ServiceModel.Description
 	{
 		public ServiceDebugBehavior ()
 		{
+			HttpHelpPageEnabled = true;
+			HttpsHelpPageEnabled = true;
 		}
 
 		public bool IncludeExceptionDetailInFaults { get; set; }
