@@ -1,5 +1,5 @@
-//
-// CSharpInvokeMemberBinder.cs
+﻿//
+// ErrorPrinter.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -27,40 +27,27 @@
 //
 
 using System;
-using System.Dynamic;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	static class Extensions
+	class ErrorPrinter : Compiler.ReportPrinter
 	{
-		public static IList<T> ToReadOnly<T> (this IEnumerable<T> col)
+		public static readonly ErrorPrinter Instance = new ErrorPrinter ();
+
+		private ErrorPrinter ()
 		{
-			return col == null ?
-				new ReadOnlyCollectionBuilder<T> (0) :
-				new ReadOnlyCollectionBuilder<T> (col);
 		}
 
-		public static int HashCode (int h1, int h2, int h3, int h4, int h5)
+		public override bool HasRelatedSymbolSupport {
+			get {
+				return false;
+			}
+		}
+
+		public override void Print (Compiler.AbstractMessage msg)
 		{
-			const int FNV_prime = 16777619;
-			int hash = unchecked ((int) 2166136261);
-
-			hash = (hash ^ h1) * FNV_prime;
-			hash = (hash ^ h2) * FNV_prime;
-			hash = (hash ^ h3) * FNV_prime;
-			hash = (hash ^ h4) * FNV_prime;
-			hash = (hash ^ h5) * FNV_prime;
-
-			hash += hash << 13;
-			hash ^= hash >> 7;
-			hash += hash << 3;
-			hash ^= hash >> 17;
-			hash += hash << 5;
-
-			return hash;
+			throw new RuntimeBinderException (msg.Text);
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2009-09-11  Marek Safar <marek.safar@gmail.com>
+
+	* RuntimeBinderContext.cs, CSharpBinaryOperationBinder.cs,
+	ErrorPrinter.cs, Extensions.cs, CSharpBinder.cs: Binary binder.
+
 2009-08-10  Marek Safar <marek.safar@gmail.com>
 
 	* CSharpInvokeBinder.cs, CSharpGetMemberBinder.cs,

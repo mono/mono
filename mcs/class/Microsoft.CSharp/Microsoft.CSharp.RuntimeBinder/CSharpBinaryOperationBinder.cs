@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -44,6 +45,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			: base (operation)
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
+			if (this.argumentInfo.Count != 2)
+				throw new ArgumentException ("argumentInfo != 2");
+
 			this.is_checked = isChecked;
 			this.is_member_access = isMemberAccess;
 		}
@@ -65,16 +69,43 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return is_member_access;
 			}
 		}
+
+		public override bool Equals (object obj)
+		{
+			var other = obj as CSharpBinaryOperationBinder;
+			return other != null && base.Equals (obj) && other.is_checked == is_checked && other.is_member_access == is_member_access &&
+				other.argumentInfo.SequenceEqual (argumentInfo);
+		}
 		
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				base.GetHashCode (),
+				is_checked.GetHashCode (),
+				is_member_access.GetHashCode (),
+				argumentInfo[0].GetHashCode (), argumentInfo[1].GetHashCode ());
+		}
+
+		Compiler.Binary.Operator GetOperator ()
+		{
+			switch (Operation) {
+			case ExpressionType.Add:
+				return Compiler.Binary.Operator.Addition;
+			default:
+				throw new NotImplementedException (Operation.ToString ());
+			}
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackBinaryOperation (DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();
+			var left = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+			var right = CSharpBinder.CreateCompilerExpression (argumentInfo [1], arg);
+			Compiler.Expression expr = new Compiler.Binary (GetOperator (), left, right);
+
+			if (is_checked)
+				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+
+			return CSharpBinder.Bind (target, expr, errorSuggestion);
 		}
 	}
 }

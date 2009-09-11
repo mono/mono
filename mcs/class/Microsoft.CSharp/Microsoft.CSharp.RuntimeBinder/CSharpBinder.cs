@@ -29,24 +29,104 @@
 using System;
 using System.Dynamic;
 using System.Linq.Expressions;
+using Compiler = Mono.CSharp;
+using System.Reflection;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
 	class CSharpBinder
 	{
+		static ConstructorInfo binder_exception_ctor;
+		static bool compiler_initialized;
+		static object compiler_initializer = new object ();
+		static object resolver = new object ();
+
+		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, DynamicMetaObject errorSuggestion)
+		{
+			Compiler.CompilerContext ctx = new Compiler.CompilerContext (new Compiler.Report (ErrorPrinter.Instance));
+			Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (ctx, true);
+
+			InitializeCompiler (ctx);
+
+			BindingRestrictions restrictions = BindingRestrictions.Empty;
+			Expression res;
+			try {
+				// TODO: ResolveOptions
+				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx));
+
+				// TODO: Static typemanager is not thread-safe
+				lock (resolver) {
+					expr = expr.Resolve (rc);
+				}
+
+				if (expr == null)
+					throw new RuntimeBinderInternalCompilerException ("Expression resolved to null");
+
+				res = expr.MakeExpression ();
+			} catch (RuntimeBinderException e) {
+				if (errorSuggestion != null)
+					return errorSuggestion;
+
+				if (binder_exception_ctor == null)
+					binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
+
+				res = Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (e.Message)));
+			} catch (Exception) {
+				if (errorSuggestion != null)
+					return errorSuggestion;
+
+				throw;
+			}
+
+			return new DynamicMetaObject (res, restrictions);
+		}
+
+		//
+		// Creates mcs expression from dynamic method object
+		//
+		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
+		{
+			if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0)
+				throw new NotImplementedException ();
+
+			return new Compiler.RuntimeValueExpression (value);
+		}
+
+		static void InitializeCompiler (Compiler.CompilerContext ctx)
+		{
+			if (compiler_initialized)
+				return;
+
+			lock (compiler_initializer) {
+				if (compiler_initialized)
+					return;
+
+				// TODO: This smells like pretty big issue
+				AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
+
+				// Add all currently loaded assemblies
+				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
+					Compiler.GlobalRootNamespace.Instance.AddAssemblyReference (a);
+
+				Compiler.TypeManager.InitCoreTypes (ctx);
+				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
+				compiler_initialized = true;
+			}
+		}
+
 		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion, DynamicMetaObject[] args)
 		{
 			return Bind (target, errorSuggestion);
 		}
-		
+
 		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-            return errorSuggestion ??
-                   new DynamicMetaObject(
-                           Expression.Constant(new object ()),
-                           target.Restrictions.Merge(
-                               BindingRestrictions.GetTypeRestriction(
-                                   target.Expression, target.LimitType)));
+			return errorSuggestion ??
+				   new DynamicMetaObject (
+						   Expression.Constant (new object ()),
+						   target.Restrictions.Merge (
+							   BindingRestrictions.GetTypeRestriction (
+								   target.Expression, target.LimitType)));
 		}
 	}
 }

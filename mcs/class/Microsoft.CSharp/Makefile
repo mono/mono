@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.CSharp.dll
 
-LIB_MCS_FLAGS = -r:System.Core.dll
+LIB_MCS_FLAGS = -r:System.Core.dll -r:dmcs.exe
 
 include ../../build/library.make
 
