@@ -170,7 +170,7 @@ net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
-net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI System.Core
+net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI Mono.Posix System.Core
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make
