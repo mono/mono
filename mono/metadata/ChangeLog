@@ -1,5 +1,9 @@
 2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* debug-helpers.c (mono_class_describe_statics): Properly handle vtable failures.
+
+2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cominterop.c (ves_icall_System_ComObject_CreateRCW): Property handle vtable failures.
 
 	* console-unix.c (do_console_cancel_event): Same.
