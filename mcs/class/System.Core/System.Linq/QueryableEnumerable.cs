@@ -100,7 +100,7 @@ namespace System.Linq {
 
 		static Expression TransformQueryable (Expression expression)
 		{
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 			throw new NotImplementedException ();
 #else						
 			return new QueryableTransformer ().Transform (expression);
