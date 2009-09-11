@@ -185,7 +185,7 @@ namespace System.ServiceModel.Channels
 		protected override void OnClose (TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
-			foreach (TChannel ch in Channels)
+			foreach (TChannel ch in new List<TChannel> (Channels)) // they will be removed during iteration, so create another one
 				ch.Close (timeout - (DateTime.Now - start));
 			base.OnClose (timeout - (DateTime.Now - start));
 		}

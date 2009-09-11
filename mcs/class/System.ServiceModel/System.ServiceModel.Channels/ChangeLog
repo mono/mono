@@ -1,3 +1,8 @@
+2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpChannelListener.cs : do not iterate channel list to close
+	  channels which in turn removes them from the list while iteration.
+
 2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestChannel.cs : Fix message version member comparison.
