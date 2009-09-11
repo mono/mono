@@ -1,5 +1,9 @@
 2009-09-11  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs, dynamic.cs: Reset more static variables.
+
+2009-09-11  Marek Safar  <marek.safar@gmail.com>
+
 	* dynamic.cs, expression.cs, rootcontext.cs, namespace.cs, ecore.cs,
 	driver.cs: Introduced Expression::MakeExpression.
 

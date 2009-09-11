@@ -181,6 +181,8 @@ namespace Mono.CSharp
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
 			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);
+			if (ec.HasSet (EmitContext.Options.CheckedScope))
+				bc.Set (ResolveContext.Options.CheckedScope);
 
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (binder.CreateCallSiteBinder (bc, arguments)));
@@ -262,7 +264,7 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
 				TypeContainer parent = CreateSiteContainer ();
-				Delegate d = new Delegate (null, parent, new TypeExpression (rt, loc),
+				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + container_counter++.ToString ("X")),
 					new ParametersCompiled (p), null);
@@ -276,6 +278,12 @@ namespace Mono.CSharp
 
 			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (del_type), loc);
 			return site_type;
+		}
+
+		public static void Reset ()
+		{
+			global_site_container = null;
+			field_counter = container_counter = 0;
 		}
 	}
 
