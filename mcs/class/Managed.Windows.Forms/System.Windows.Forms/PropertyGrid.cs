@@ -457,6 +457,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				splitter.Visible = value;
 				help_panel.Visible = value;
 			}
 		}

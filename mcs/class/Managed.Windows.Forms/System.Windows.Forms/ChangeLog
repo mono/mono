@@ -1,5 +1,9 @@
 2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGrid.cs: Hide the splitter when the help is hidden.
+
+2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* InternalWindowManager.cs: Call Invalidate-Update instead of 
 	Refresh for MS compitability. Note also that Refresh is virtual 
 	and several controls override it in order to provide data refresh 
