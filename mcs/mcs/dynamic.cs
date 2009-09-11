@@ -11,6 +11,10 @@
 using System;
 using System.Collections;
 
+#if NET_4_0
+using System.Dynamic;
+#endif
+
 namespace Mono.CSharp
 {
 	class DynamicTypeExpr : TypeExpr
@@ -33,12 +37,16 @@ namespace Mono.CSharp
 			return this;
 		}
 	}
-/*
-	public class RuntimeExpression : Expression
+
+#if NET_4_0
+	public class RuntimeValueExpression : Expression
 	{
-		public RuntimeExpression (Type type)
+		readonly DynamicMetaObject obj;
+
+		public RuntimeValueExpression (DynamicMetaObject obj)
 		{
-			this.type = type;
+			this.obj = obj;
+			this.type = obj.RuntimeType;
 			this.eclass = ExprClass.Value;
 		}
 
@@ -56,8 +64,17 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+
+		public override System.Linq.Expressions.Expression MakeExpression ()
+		{
+			if (obj.Expression.Type != type)
+				return System.Linq.Expressions.Expression.Convert (obj.Expression, type);
+
+			return obj.Expression;
+		}
 	}
-*/
+#endif
+
 	interface IDynamicBinder
 	{
 		Expression CreateCallSiteBinder (ResolveContext ec, Arguments args);

@@ -17,6 +17,10 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Text;
 
+#if NET_4_0
+	using SLE = System.Linq.Expressions;
+#endif
+
 	//
 	// This is an user operator expression, automatically created during
 	// resolve phase
@@ -2696,6 +2700,18 @@ namespace Mono.CSharp {
 
 			return expr;
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression ()
+		{
+			switch (oper) {
+			case Operator.Addition:
+				return SLE.Expression.Add (left.MakeExpression (), right.MakeExpression ());
+			default:
+				throw new NotImplementedException (oper.ToString ());
+			}
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5562,7 +5578,7 @@ namespace Mono.CSharp {
 
 			ConstructorInfo ci = (ConstructorInfo) method;
 #if MS_COMPATIBLE
-			if (TypeManager.IsGenericType (type))
+			if (TypeManager.IsGenericType (type) && type.IsGenericTypeDefinition)
 				ci = TypeBuilder.GetConstructor (type, ci);
 #endif
 

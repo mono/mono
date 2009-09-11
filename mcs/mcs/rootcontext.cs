@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-	enum LanguageVersion
+	public enum LanguageVersion
 	{
 		ISO_1		= 1,
 		ISO_2		= 2,
@@ -30,14 +30,14 @@ namespace Mono.CSharp {
 		Default		= LanguageVersion.V_4,
 	}
 
-	enum MetadataVersion
+	public enum MetadataVersion
 	{
 		v1,
 		v2,
 		v4
 	}
 
-	class RootContext {
+	public class RootContext {
 
 		//
 		// COMPILER OPTIONS CLASS

@@ -27,11 +27,9 @@ namespace Mono.CSharp
 		Library, Exe, Module, WinExe
 	};
 
-#if GMCS_SOURCE
-	enum Platform {
+	public enum Platform {
 		AnyCPU, X86, X64, IA64
-	};
-#endif
+	}
 	
 	/// <summary>
 	///    The compiler driver.

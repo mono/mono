@@ -18,6 +18,10 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Text;
 
+#if NET_4_0
+	using SLE = System.Linq.Expressions;
+#endif
+
 	/// <remarks>
 	///   The ExprClass class contains the is used to pass the 
 	///   classification of an expression (value, variable, namespace,
@@ -1311,6 +1315,18 @@ namespace Mono.CSharp {
 
 			return texpr;
 		}
+
+#if NET_4_0
+		//
+		// Implemented by all expressions which support conversion from
+		// compiler expression to invokable runtime expression. Used by
+		// dynamic C# binder.
+		//
+		public virtual SLE.Expression MakeExpression ()
+		{
+			throw new NotImplementedException ("MakeExpression for " + GetType ());
+		}
+#endif
 
 		public virtual void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

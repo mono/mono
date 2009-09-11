@@ -1,5 +1,10 @@
 2009-09-11  Marek Safar  <marek.safar@gmail.com>
 
+	* dynamic.cs, expression.cs, rootcontext.cs, namespace.cs, ecore.cs,
+	driver.cs: Introduced Expression::MakeExpression.
+
+2009-09-11  Marek Safar  <marek.safar@gmail.com>
+
 	* eval.cs: Exposed MessageOutput instead of cleaning up eval API.
 
 2009-09-09  Marek Safar  <marek.safar@gmail.com>

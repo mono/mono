@@ -15,7 +15,7 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
-	class RootNamespace : Namespace {
+	public class RootNamespace : Namespace {
 		//
 		// Points to Mono's GetNamespaces method, an
 		// optimization when running on Mono to fetch all the
@@ -224,7 +224,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class GlobalRootNamespace : RootNamespace {
+	public class GlobalRootNamespace : RootNamespace {
 		Module [] modules;
 		ListDictionary root_namespaces;
 
