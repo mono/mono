@@ -8,6 +8,11 @@ LIBRARY = Mono.Posix.dll
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:0618,612
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll /nowarn:0219,0618
 
+ifeq (net_4_0, $(PROFILE))
+USE_BOOT_COMBILE = yes
+LIBRARY_COMPILE = $(BOOT_COMPILE)
+endif
+
 include ../../build/library.make
 
 update-mappings:
