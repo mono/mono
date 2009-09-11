@@ -1,5 +1,11 @@
 2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* socket-io.c: Assert on vtable failure.
+
+	* mono-mlist.c: Assert on vtable failure.
+
+2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c: Assert on vtable failure.
 
 2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
