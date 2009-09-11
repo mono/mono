@@ -64,6 +64,8 @@ namespace Mono.CSharp {
 		static bool inited;
 
 		static CompilerContext ctx;
+		
+		public static TextWriter MessageOutput = Console.Out;
 
 		/// <summary>
 		///   Optional initialization for the Evaluator.
@@ -138,7 +140,13 @@ namespace Mono.CSharp {
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
-			ctx = new CompilerContext (new Report (new ConsoleReportPrinter (Console.Out)));
+			
+			// Workaround for API limitation where full message printer cannot be passed
+			ReportPrinter printer = MessageOutput == Console.Out || MessageOutput == Console.Error ?
+				new ConsoleReportPrinter (MessageOutput) :
+				new StreamReportPrinter (MessageOutput);
+
+			ctx = new CompilerContext (new Report (printer));
 			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
 
 			//
