@@ -251,7 +251,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 			try {
 				h.Open (TimeSpan.FromSeconds (10));
-				Assert.IsTrue (listener.AcceptChannelTried, "#1"); // while it throws NIE ...
+				Assert.IsTrue (listener.BeginAcceptChannelTried, "#1"); // while it throws NIE ...
 				Assert.IsFalse (listener.WaitForChannelTried, "#2");
 				Assert.IsNotNull (ed.DispatchRuntime, "#3");
 				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
@@ -330,6 +330,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			}
 
 			public bool AcceptChannelTried { get; set; }
+			public bool BeginAcceptChannelTried { get; set; }
 
 			public TChannel AcceptChannel ()
 			{
@@ -345,13 +346,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 			public IAsyncResult BeginAcceptChannel (AsyncCallback callback, object state)
 			{
-				AcceptChannelTried = true;
+				BeginAcceptChannelTried = true;
 				throw new NotImplementedException ();
 			}
 
 			public IAsyncResult BeginAcceptChannel (TimeSpan timeout, AsyncCallback callback, object state)
 			{
-				AcceptChannelTried = true;
+				BeginAcceptChannelTried = true;
 				throw new NotImplementedException ();
 			}
 
