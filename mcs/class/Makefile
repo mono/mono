@@ -29,8 +29,8 @@ common_dirs := \
 	System				\
 	System.XML			\
 	Mono.CompilerServices.SymbolWriter \
-	Mono.Posix			\
 	System.Core			\
+	Mono.Posix			\
 	Mono.Security			\
 	System				\
 	System.Security			\

@@ -14,6 +14,11 @@ ifeq (4.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
+ifeq (net_4_0, $(PROFILE))
+USE_BOOT_COMBILE = yes
+LIBRARY_COMPILE = $(BOOT_COMPILE)
+endif
+
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
 ifdef CLR_PROFILE
 LIB_MCS_FLAGS += -r:Mono.Posix -unsafe
