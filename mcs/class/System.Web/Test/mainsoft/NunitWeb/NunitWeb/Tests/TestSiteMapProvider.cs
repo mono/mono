@@ -2,6 +2,7 @@ using System;
 using System.Collections.Specialized;
 using System.Web;
 
+#if NET_2_0
 namespace Tests {
 	public class TestSiteMapProvider : StaticSiteMapProvider {
 		object rootNodeLock = new object();
@@ -33,3 +34,4 @@ namespace Tests {
 		}
 	}
 }
+#endif

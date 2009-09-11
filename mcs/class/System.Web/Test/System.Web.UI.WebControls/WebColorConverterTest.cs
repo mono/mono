@@ -104,7 +104,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(HttpException))]
 		public void MalformatTest1 () 
 		{
 			WebColorConverter	conv;
@@ -166,7 +166,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(HttpException))]
 		public void MalformatTest7 () 
 		{
 			WebColorConverter	conv;
