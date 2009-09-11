@@ -1394,7 +1394,7 @@ namespace System {
 
 #endif
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 		public virtual bool IsEquivalentTo (Type other)
 		{
 			return this == other;

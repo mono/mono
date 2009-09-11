@@ -1268,7 +1268,7 @@ namespace System {
 		public event UnhandledExceptionEventHandler UnhandledException;
 #endif
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 		[MonoTODO]
 		public bool IsHomogenous {
 			get { return true; }
