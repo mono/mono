@@ -1,3 +1,10 @@
+2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Always set the help panel properties on the 
+	internal control, because they are inherited and can change with 
+	the parent.
+	[Fixes bug #525305]
+
 2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* BindingSource.cs: Implement support for chained data sources.
