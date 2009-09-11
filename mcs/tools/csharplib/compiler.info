@@ -62,6 +62,9 @@
                 <parameters />
               </constructor>
             </constructors>
+			<fields>
+              <field name="MessageOutput" attrib="22" fieldtype="System.IO.TextWriter" />
+			</fields>
             <properties>
               <property name="InteractiveBaseClass" attrib="0" ptype="System.Type" params="">
                 <methods>
@@ -290,7 +293,6 @@
           <class name="Report" type="class" base="System.Object" charset="Ansi" layout="Auto">
             <fields>
               <field name="Errors" attrib="22" fieldtype="System.Int32" />
-              <field name="Stderr" attrib="22" fieldtype="System.IO.TextWriter" />
               <field name="Warnings" attrib="22" fieldtype="System.Int32" />
               <field name="WarningsAreErrors" attrib="22" fieldtype="System.Boolean" />
             </fields>
