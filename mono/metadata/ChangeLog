@@ -1,5 +1,17 @@
 2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class-internals.h: Add mono_class_vtable_full function that allows control
+	if an exception should be raised or not.
+
+	* object.c (mono_class_vtable): Call into mono_class_vtable_full. Fix this function
+	to do what its documentation say, that is to return NULL and set exception_type on
+	failure.
+
+	* object.c (mono_class_create_runtime_vtable): Add new raise_on_error parameter
+	and change the code to honor it.
+
+2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Fix typo in error message.
 
 2009-09-10  Sebastien Pouliot  <sebastien@ximian.com>
