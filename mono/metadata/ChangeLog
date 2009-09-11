@@ -1,3 +1,7 @@
+2009-09-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Fix typo in error message.
+
 2009-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Fix default_platform_check so it can run
