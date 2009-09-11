@@ -28,6 +28,7 @@ LIBRARY_NAME = dummy-System.Core.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
+NO_BUILD = yes
 endif
 
 include ../../build/library.make
