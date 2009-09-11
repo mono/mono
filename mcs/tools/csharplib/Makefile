@@ -4,7 +4,13 @@ include ../../build/rules.make
 
 LINKER = $(topdir)/class/lib/$(PROFILE)/monolinker.exe
 
-LOCAL_MCS_FLAGS = -d:GMCS_SOURCE -d:NET_1_1 -d:NET_2_0 -r:System -r:System.Xml
+LOCAL_MCS_FLAGS = -d:GMCS_SOURCE -r:System -r:System.Xml
+
+ifeq (net_4_0, $(PROFILE))
+
+LOCAL_MCS_FLAGS += -r:System.Core.dll
+
+endif
 
 Mono.CSharp.dll.sources: ../../mcs/gmcs.exe.sources Makefile
 	cat ../../mcs/gmcs.exe.sources | grep -v AssemblyInfo.cs  | sed -e 's,^,../../mcs/,' -e 's,mcs/../,,' > Mono.CSharp.dll.sources
