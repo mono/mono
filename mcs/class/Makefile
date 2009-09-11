@@ -29,6 +29,8 @@ common_dirs := \
 	System				\
 	System.XML			\
 	Mono.CompilerServices.SymbolWriter \
+	Mono.Posix			\
+	System.Core			\
 	Mono.Security			\
 	System				\
 	System.Security			\
@@ -43,7 +45,6 @@ common_dirs := \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
-	Mono.Posix			\
 	Accessibility			\
 	Mono.WebBrowser			\
 	Managed.Windows.Forms		\
@@ -98,7 +99,6 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
-	System.Core			\
 	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
