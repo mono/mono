@@ -1,3 +1,8 @@
+2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : partly revert dispatcher builder refactoring
+	  to fix some ServiceHostBaseTest regressions.
+
 2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientProxyGenerator.cs : it missed end method argument on

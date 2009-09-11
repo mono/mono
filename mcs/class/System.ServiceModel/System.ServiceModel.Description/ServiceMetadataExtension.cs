@@ -120,7 +120,7 @@ namespace System.ServiceModel.Description
 				ListenUri = uri,
 			};
 
-			ChannelDispatcher channelDispatcher = serviceHostBase.BuildChannelDispatcher (se);
+			ChannelDispatcher channelDispatcher = serviceHostBase.BuildChannelDispatcher (se, new BindingParameterCollection ());
 
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (serviceHostBase, new HttpGetWsdl (sme, uri)));
 

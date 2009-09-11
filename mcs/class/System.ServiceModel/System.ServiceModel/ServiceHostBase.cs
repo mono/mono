@@ -375,9 +375,14 @@ namespace System.ServiceModel
 			ServiceEndpoint[] endPoints = new ServiceEndpoint[Description.Endpoints.Count];
 			Description.Endpoints.CopyTo (endPoints, 0);
 			foreach (ServiceEndpoint se in endPoints) {
-				ChannelDispatcher channel = BuildChannelDispatcher (se);
-				ChannelDispatchers.Add (channel);				
-				endPointToDispatcher[se] = channel;				
+
+				var commonParams = new BindingParameterCollection ();
+				foreach (IServiceBehavior b in Description.Behaviors)
+					b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
+
+				ChannelDispatcher channel = BuildChannelDispatcher (se, commonParams);
+				ChannelDispatchers.Add (channel);
+				endPointToDispatcher[se] = channel;
 			}
 
 			//After the ChannelDispatchers are created, and attached to the service host
@@ -411,12 +416,8 @@ namespace System.ServiceModel
 
 		}
 
-		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se)
+		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se, BindingParameterCollection commonParams)
 		{
-			var commonParams = new BindingParameterCollection ();
-			foreach (IServiceBehavior b in Description.Behaviors)
-				b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
-
 			return new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
 		}
 
