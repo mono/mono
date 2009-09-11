@@ -432,10 +432,6 @@ namespace System.Windows.Forms
 				return help_panel.BackColor;
 			}
 			set {
-				if (help_panel.BackColor == value) {
-					return;
-				}
-
 				help_panel.BackColor = value;
 			}
 		}
@@ -449,10 +445,6 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (help_panel.ForeColor == value) {
-					return;
-				}
-
 				help_panel.ForeColor = value;
 			}
 		}
@@ -465,10 +457,6 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (help_panel.Visible == value) {
-					return;
-				}
-
 				help_panel.Visible = value;
 			}
 		}

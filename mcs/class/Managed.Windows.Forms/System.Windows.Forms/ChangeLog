@@ -1,3 +1,10 @@
+2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Always set the help panel properties on the 
+	internal control, because they are inherited and can change with 
+	the parent.
+	[Fixes bug #525305]
+
 2009-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When processing rtf, don't add a new line if we
