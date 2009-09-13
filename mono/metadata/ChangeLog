@@ -1,3 +1,12 @@
+2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* domain.c:
+	* object.c:
+	* class-internals.h: renamed waithandle_class to
+	manualresetevent_class.
+	* marshal.c: propagate the exception if a remoting BeginInvoke call
+	fails.
+
 2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: make the Sleep() alertable to prevent delays exiting
