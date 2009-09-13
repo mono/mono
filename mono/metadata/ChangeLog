@@ -1,3 +1,9 @@
+2009-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Don't share instance 
+	methods of vtypes, as they could be incorrectly shared with static methods
+	taking an IntPtr argument.
+
 2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* domain.c:
