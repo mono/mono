@@ -1,3 +1,10 @@
+2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpServerChannelTests.cs:
+	* BaseCalls.cs:
+	* System.Runtime.Remoting.Channels.Tcp/TcpChannelTest.cs: ignore tests
+	that fail on MS.NET.
+
 2009-05-24  Robert Jordan  <robertj@gmx.net>
 
 	* GenericTest.cs: differentiate between "Test(int)" and

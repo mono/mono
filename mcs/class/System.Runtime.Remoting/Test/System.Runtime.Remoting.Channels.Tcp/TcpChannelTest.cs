@@ -161,6 +161,7 @@ namespace MonoTests.Remoting
 		
 		[Test]
 		[Category ("NotWorking")]  // seems to hang - "too many open files" ???
+		[Ignore ("Fails on MS")]
 		public void TestTcpRemoting ()
 		{
 			TcpServerChannel serverChannel = GetServerChannel ("TcpRemotingTest", 9090);
