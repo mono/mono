@@ -511,6 +511,19 @@ namespace MonoTests.System.Text {
 	}
 	
 	[Test]
+	public void NullInCtor ()
+	{
+		StringBuilder sb = null;
+		try {
+			sb = new StringBuilder (null, 10);
+		} catch (Exception e) {
+			Assert.Fail ("Should not throw #01");
+		}
+
+		Assert.IsTrue (sb.Length == 0);
+	}
+
+	[Test]
 	public void SetLength ()
 	{
 		StringBuilder sb = new StringBuilder ("Text");
