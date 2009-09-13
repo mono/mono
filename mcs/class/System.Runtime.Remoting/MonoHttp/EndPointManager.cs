@@ -54,7 +54,7 @@ using System; using System.Net; namespace MonoHttp {
 				}
 			} catch {
 				foreach (string prefix in added) {
-					RemovePrefixInternal (prefix, listener);
+					RemovePrefix (prefix, listener);
 				}
 				throw;
 			}
@@ -109,6 +109,9 @@ using System; using System.Net; namespace MonoHttp {
 				Hashtable p = null;
 				p = (Hashtable) ip_to_endpoints [ep.Address];
 				p.Remove (ep.Port);
+				if (p.Count == 0) {
+					ip_to_endpoints.Remove (ep.Address);
+				}
 				epl.Close ();
 			}
 		}

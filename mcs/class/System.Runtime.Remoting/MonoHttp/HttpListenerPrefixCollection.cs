@@ -74,9 +74,9 @@ using System; using System.Net; namespace MonoHttp {
 		public void Clear ()
 		{
 			listener.CheckDisposed ();
+			prefixes.Clear ();
 			if (listener.IsListening)
 				EndPointManager.RemoveListener (listener);
-			prefixes.Clear ();
 		}
 
 		public bool Contains (string uriPrefix)
@@ -105,7 +105,6 @@ using System; using System.Net; namespace MonoHttp {
 #else
 		object ICollection.SyncRoot { get { return this; } }
 #endif
-
 	
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

@@ -38,7 +38,6 @@ using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Authenticode;
 
 using System; using System.Net; namespace MonoHttp {
-	
 	sealed class EndPointListener : IHttpListenerContextBinder
 	{
 		IPEndPoint endpoint;
@@ -66,6 +65,7 @@ using System; using System.Net; namespace MonoHttp {
 			sock.BeginAccept (OnAccept, this);
 			prefixes = new Hashtable ();
 		}
+
 #if !EMBEDDED_IN_1_0
 		void LoadCertificateAndKey (IPAddress addr, int port)
 		{
@@ -83,6 +83,7 @@ using System; using System.Net; namespace MonoHttp {
 			}
 		}
 #endif
+
 		static void OnAccept (IAsyncResult ares)
 		{
 			EndPointListener epl = (EndPointListener) ares.AsyncState;
@@ -317,6 +318,7 @@ try { raw_uri = new Uri (raw_url); } catch { raw_uri = null; } if (raw_uri != nu
 
 				if (prefixes.ContainsKey (prefix)) {
 					prefixes.Remove (prefix);
+					CheckIfRemove ();
 				}
 			}
 		}
