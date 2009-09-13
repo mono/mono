@@ -35,6 +35,9 @@
 
 using System;
 using System.Collections;
+#if EMBEDDED_IN_1_0
+using System.Collections.Generic;
+#endif
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -73,7 +76,9 @@ using System; using System.Net; namespace MonoHttp
 			restricted.Add ("referer", true);
 			restricted.Add ("transfer-encoding", true);
 			restricted.Add ("user-agent", true);			
-			
+			restricted.Add ("proxy-connection", true);			
+
+			//
 			// see par 14 of RFC 2068 to see which header names
 			// accept multiple values each separated by a comma
 			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
@@ -245,14 +250,25 @@ using System; using System.Net; namespace MonoHttp
 			if (headerName == "") // MS throw nullexception here!
 				throw new ArgumentException ("empty string", "headerName");
 
+			if (!IsHeaderName (headerName))
+				throw new ArgumentException ("Invalid character in header");
+
 			return restricted.ContainsKey (headerName);
 		}
 
 #if EMBEDDED_IN_1_0
-		[MonoNotSupported("")]
 		public static bool IsRestricted (string headerName, bool response)
 		{
-			throw new NotImplementedException ();
+			if (headerName == null || headerName.Length == 0)
+				throw new ArgumentNullException ("headerName");
+
+			if (!IsHeaderName (headerName))
+				throw new ArgumentException ("Invalid character in header");
+
+
+			if (response)
+				return false;
+			return restricted.ContainsKey (headerName);
 		}
 #endif
 
@@ -570,9 +586,7 @@ using System; using System.Net; namespace MonoHttp
 			}
 		}
 
-
-#endif
-#if EMBEDDED_IN_1_0 && !EMBEDDED_IN_1_0
+#if !EMBEDDED_IN_1_0
 		public override void Clear ()
 		{
 			base.Clear ();
@@ -583,6 +597,7 @@ using System; using System.Net; namespace MonoHttp
 		{
 			return(base.GetEnumerator ());
 		}
+#endif
 #endif
 
 		// Internal Methods
@@ -668,31 +683,30 @@ using System; using System.Net; namespace MonoHttp
 		
 		internal static bool IsHeaderName (string name)
 		{
-			// token          = 1*<any CHAR except CTLs or tspecials>
-			// tspecials      = "(" | ")" | "<" | ">" | "@"
-			//                | "," | ";" | ":" | "\" | <">
-			//                | "/" | "[" | "]" | "?" | "="
-			//                | "{" | "}" | SP | HT
-			
 			if (name == null || name.Length == 0)
 				return false;
 
 			int len = name.Length;
 			for (int i = 0; i < len; i++) {			
 				char c = name [i];
-				if (c < 0x20 || c >= 0x7f)
+				if (c > 126 || !allowed_chars [(int) c])
 					return false;
 			}
 			
-			return name.IndexOfAny (tspecials) == -1;
+			return true;
 		}
 
-		private static char [] tspecials = 
-				new char [] {'(', ')', '<', '>', '@',
-					     ',', ';', ':', '\\', '"',
-					     '/', '[', ']', '?', '=',
-					     '{', '}', ' ', '\t'};
-							
+		static bool [] allowed_chars = new bool [126] {
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
+			true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
+			false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, true, false
+			};
 	}
 }
 

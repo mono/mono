@@ -36,18 +36,17 @@ using System.Reflection;
 using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-
 #if !EMBEDDED_IN_1_0
 using Mono.Security.Protocol.Tls;
 #endif
 
 using System; using System.Net; namespace MonoHttp {
-	
+
 	interface IHttpListenerContextBinder {
 		bool BindContext (HttpListenerContext context);
 		void UnbindContext (HttpListenerContext context);
 	}
-	
+
 	sealed class HttpConnection
 	{
 		const int BufferSize = 8192;
@@ -64,6 +63,8 @@ using System; using System.Net; namespace MonoHttp {
 		bool chunked;
 		int chunked_uses;
 		bool context_bound;
+		bool secure;
+		AsymmetricAlgorithm key;
 
 #if EMBEDDED_IN_1_0
 		public HttpConnection (Socket sock, IHttpListenerContextBinder epl)
@@ -83,14 +84,23 @@ using System; using System.Net; namespace MonoHttp {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
+#if EMBEDDED_IN_1_0
+				throw new NotImplementedException ();
+#else
 				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false);
 				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
 				stream = ssl_stream;
-
+#endif
 			}
 			Init ();
 		}
 #endif
+
+		AsymmetricAlgorithm OnPVKSelection (X509Certificate certificate, string targetHost)
+		{
+			return key;
+		}
+
 
 		void Init ()
 		{
@@ -119,7 +129,7 @@ using System; using System.Net; namespace MonoHttp {
 		}
 
 		public bool IsSecure {
-			get { return false; }
+			get { return secure; }
 		}
 
 		public ListenerPrefix Prefix {
@@ -159,6 +169,7 @@ using System; using System.Net; namespace MonoHttp {
 		{
 			// TODO: can we get this stream before reading the input?
 			if (o_stream == null) {
+				HttpListener listener = context.Listener;
 				bool ign = false;// ? true : listener.IgnoreWriteExceptions;
 				o_stream = new ResponseStream (stream, context.Response, ign);
 			}
@@ -173,7 +184,7 @@ using System; using System.Net; namespace MonoHttp {
 			try {
 				nread = stream.EndRead (ares);
 				ms.Write (buffer, 0, nread);
-			} catch (Exception) {
+			} catch (Exception e) {
 				//Console.WriteLine (e);
 				if (ms.Length > 0)
 					SendError ();
@@ -311,7 +322,20 @@ using System; using System.Net; namespace MonoHttp {
 			SendError (context.ErrorMessage, context.ErrorStatus);
 		}
 
+		void Unbind ()
+		{
+			if (context_bound) {
+				epl.UnbindContext (context);
+				context_bound = false;
+			}
+		}
+
 		public void Close ()
+		{
+			Close (false);
+		}
+
+		internal void Close (bool force_close)
 		{
 			if (sock != null) {
 				Stream st = GetResponseStream ();
@@ -320,15 +344,16 @@ using System; using System.Net; namespace MonoHttp {
 			}
 
 			if (sock != null) {
-				if (chunked && context.Response.ForceCloseChunked == false) {
+				if (!force_close && chunked && context.Response.ForceCloseChunked == false) {
 					// Don't close. Keep working.
 					chunked_uses++;
+					Unbind ();
 					Init ();
 					BeginReadRequest ();
 					return;
 				}
 
-				if (context.Response.Headers ["connection"] == "close") {
+				if (force_close || context.Response.Headers ["connection"] == "close") {
 					Socket s = sock;
 					sock = null;
 					try {
@@ -337,14 +362,13 @@ using System; using System.Net; namespace MonoHttp {
 					} finally {
 						s.Close ();
 					}
+					Unbind ();
 				} else {
+					Unbind ();
 					Init ();
 					BeginReadRequest ();
 					return;
 				}
-
-				if (context_bound)
-					epl.UnbindContext (context);
 			}
 		}
 	}
