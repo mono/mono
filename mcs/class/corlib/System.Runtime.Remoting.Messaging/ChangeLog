@@ -1,3 +1,8 @@
+2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AsyncResult.cs: lock when setting the 'completed' field and use the
+	property instead of the 'handle' field.
+
 2008-11-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CADMessages.cs: when the method is generic, return a constructed
