@@ -193,18 +193,21 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
+		[Ignore ("Fails on MS")]
 		public void TestInstanceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInstanceSurrogate());
 		}
 
 		[Test]
+		[Ignore ("Fails on MS")]
 		public void TestAbstractComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetAbstractSurrogate());
 		}
 
 		[Test]
+		[Ignore ("Fails on MS")]
 		public void TestInterfaceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInterfaceSurrogate());

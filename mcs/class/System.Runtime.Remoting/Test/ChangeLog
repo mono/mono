@@ -1,3 +1,28 @@
+2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpServerChannelTests.cs:
+	* BaseCalls.cs:
+	* System.Runtime.Remoting.Channels.Tcp/TcpChannelTest.cs: ignore tests
+	that fail on MS.NET.
+
+2009-05-24  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs: differentiate between "Test(int)" and
+	"Test<int>(int)" to prove that the correct method is invoked.
+
+2009-05-24  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs (TestCrossAppDomainChannel): disable on MS.NET as
+	some generic calls do not seem to be supported anymore. It looks
+	like a bug, though, since the same tests are passing when performed
+	over the TCP channel.
+
+2009-05-24  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs (TestTcpChannel): create a unique channel and
+	unregister it upon termination. Fixes issues that were uncovered
+	by the NUnit upgrade (see Atsushi's changelogs below).
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RemotingServicesTest.cs : mark failing test as NotWorking, and 

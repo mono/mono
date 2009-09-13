@@ -8,6 +8,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -96,7 +97,7 @@ namespace MonoTests.Remoting
 		
 		public int Test (int i)
 		{
-			return i;
+			return i + 500;
 		}
 
 		int INested.Test (int a, int b)
@@ -129,7 +130,7 @@ namespace MonoTests.Remoting
 
 		public int Test (int i)
 		{
-			return i;
+			return i + 500;
 		}
 
 		int INested.Test (int a, int b)
@@ -152,33 +153,51 @@ namespace MonoTests.Remoting
 	[TestFixture]
 	public class GenericTest
 	{
+		// Under MS.NET, INested.Test<V>(V v) isn't supported over the
+		// xappdom channel anymore (as of .NET 3.5). The stacktrace
+		// looks like if INested.Test(int) is invoked in place of
+		// INested.Test<int>(int).
+		[Category("NotDotNet")]
 		[Test]
 		public void TestCrossAppDomainChannel ()
 		{
-			RunTests (GetRemObject <Server<object>> ());
+			RunTests (RegisterAndConnect <Server<object>> ());
 		}
 
 		[Test]
-		[Ignore ("disabled as it got not working by NUnit upgrade to 2.4.8 (applies to .NET too)")]
 		public void TestTcpChannel ()
 		{
-			RunTests (GetRemObjectTcp <Server<object>> ());
+			IDictionary props = new Hashtable ();
+			props ["name"] = Guid.NewGuid ().ToString("N");
+			props ["port"] = 18191;
+			TcpChannel chan = new TcpChannel (props, null, null);
+			ChannelServices.RegisterChannel (chan);
+			
+			try {
+				Register <Server<object>> ("gentcptest.rem");
+				RunTests (Connect <Server<object>> ("tcp://localhost:18191/gentcptest.rem"));
+			} finally {
+				ChannelServices.UnregisterChannel (chan);
+			}
 		}
 
-		static T GetRemObject <T> () where T: MarshalByRefObject
+		static T RegisterAndConnect <T> () where T: MarshalByRefObject
 		{
-			AppDomain d = BaseCallTest.CreateDomain ("Foo");
+			AppDomain d = BaseCallTest.CreateDomain ("GenericTests");
 			return (T) d.CreateInstanceAndUnwrap (
 				typeof (T).Assembly.FullName,
 				typeof (T).FullName);
 		}
 
-		static T GetRemObjectTcp <T> () where T: MarshalByRefObject
+		static void Register <T> (string uri) where T: MarshalByRefObject
 		{
-			new TcpChannel (18191);
 			object obj = Activator.CreateInstance (typeof(T));
-			RemotingServices.Marshal ((MarshalByRefObject)obj, "test.rem");
-			return (T) RemotingServices.Connect (typeof (T), "tcp://localhost:18191/test.rem");
+			RemotingServices.Marshal ((MarshalByRefObject)obj, uri);
+		}
+
+		static T Connect <T> (string uri) where T: MarshalByRefObject
+		{
+			return (T) RemotingServices.Connect (typeof (T), uri);
 		}
 
 		static void RunTests (ServerBase<object> rem)
@@ -200,7 +219,7 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (42, cao.Test (),
 					 "#5a calling INested.Test ()");
 
-			Assert.AreEqual (42, cao.Test (42),
+			Assert.AreEqual (42 + 500, cao.Test (42),
 					 "#5 calling INested.Test (int)");
 
 			Assert.AreEqual (42, cao.Test (21, 21),
@@ -216,7 +235,7 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (42, cao.Test (),
 					 "#9a calling INested.Test ()");
 
-			Assert.AreEqual (42, cao.Test (42),
+			Assert.AreEqual (42 + 500, cao.Test (42),
 					 "#9 calling INested.Test (int)");
 
 			Assert.AreEqual (42, cao.Test (21, 21),
