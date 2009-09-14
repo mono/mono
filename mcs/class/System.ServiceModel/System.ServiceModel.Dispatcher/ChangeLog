@@ -1,3 +1,9 @@
+2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : do not try to wait for channel closer
+	  handle when the loop is not started yet. This fixes lengthy wait
+	  in the nunit tests.
+
 2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointDispatcher.cs : AddressFilter is always non-null.

@@ -365,6 +365,9 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Stop (TimeSpan timeout)
 			{
+				if (loop_thread == null)
+					return;
+
 				loop = false;
 				creator_handle.Set ();
 				handle.Set ();
