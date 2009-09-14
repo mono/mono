@@ -126,7 +126,7 @@ namespace System.ServiceModel.Channels
 			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
 				return (T) (object) this;
 
-			return default (T);
+			return base.GetProperty<T> (context);
 		}
 
 		public PeerSecuritySettings Security {

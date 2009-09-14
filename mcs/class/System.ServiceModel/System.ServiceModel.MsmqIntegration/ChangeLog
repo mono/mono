@@ -1,5 +1,9 @@
 2007-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MsmqIntegrationBindingElement.cs : implemented some parts.
+
+2007-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MsmqIntegrationMessageProperty.cs, MsmqMessage.cs:
 	  cleanup couple of warnings.
 

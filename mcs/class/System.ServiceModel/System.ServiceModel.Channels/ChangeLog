@@ -1,5 +1,10 @@
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElement.cs, PeerTransportBindingElement.cs :
+	  some GetProperty() implementation.
+
+2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : release HttpListener and avoid extra
 	  close process more than once.
 

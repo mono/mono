@@ -59,34 +59,46 @@ namespace System.ServiceModel.MsmqIntegration
 			return (MsmqIntegrationBindingElement) MemberwiseClone ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (typeof (TChannel) == typeof (IOutputChannel))
+				return true;
+			else
+				return false;
 		}
 
 		[MonoTODO]
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (BindingContext context)
 		{
+			if (!CanBuildChannelFactory<TChannel> (context))
+				throw new InvalidOperationException ("MSMQ integration binding element only supports IOutputChannel");
+
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (typeof (TChannel) == typeof (IInputChannel))
+				return true;
+			else
+				return false;
 		}
 
 		[MonoTODO]
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (BindingContext context)
 		{
+			if (!CanBuildChannelListener<TChannel> (context))
+				throw new InvalidOperationException ("MSMQ integration binding element only supports IOutputChannel");
+
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			// http://blogs.msdn.com/drnick/archive/2007/04/10/interfaces-for-getproperty-part-1.aspx
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageVersion.None;
+			return base.GetProperty<T> (context);
 		}
 	}
 }
