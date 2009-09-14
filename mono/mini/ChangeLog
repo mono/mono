@@ -1,3 +1,13 @@
+2009-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_class): Add instances of
+	Array.GetGenericValueImpl as well.
+
+	* Makefile.am (fullaotcheck): Copy and aot more assemblies so linq
+	can be tested too.
+
+	* generics.cs: Add a fullaot linq test.
+
 2009-09-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (arch_emit_static_rgctx_trampoline): Don't clobber argument
