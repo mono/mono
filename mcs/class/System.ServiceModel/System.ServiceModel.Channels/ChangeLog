@@ -1,5 +1,10 @@
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageProperties.cs : fix CopyProperties() behavior to not
+	  clear existing items. Make all properties call this[name].
+
+2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpTransportBindingElement.cs : fix 2.1 build.
 
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>

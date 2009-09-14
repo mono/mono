@@ -1,3 +1,7 @@
+2009-09-14  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources: add MessagePropertiesTest.cs.
+
 2009-09-02  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources:

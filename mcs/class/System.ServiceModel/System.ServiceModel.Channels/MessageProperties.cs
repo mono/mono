@@ -36,13 +36,9 @@ using Pair = System.Collections.Generic.KeyValuePair<string, object>;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO ("it's untested")]
 	public sealed class MessageProperties : IDictionary<string, object>, 
 		ICollection<Pair>, IEnumerable<Pair>, IEnumerable, IDisposable
 	{
-		bool allow_output_batch;
-		MessageEncoder encoder;
-		Uri via;
 		List<Pair> list;
 
 		public MessageProperties ()
@@ -52,23 +48,25 @@ namespace System.ServiceModel.Channels
 
 		public MessageProperties (MessageProperties properties)
 		{
+			list = new List<Pair> ();
 			CopyProperties (properties);
 		}
 
-		[MonoTODO ("This should actually be internal of a property.")]
 		public bool AllowOutputBatching {
-			get { return allow_output_batch; }
-			set { allow_output_batch = value; }
+			get {
+				var obj = this ["AllowOutputBatching"];
+				return obj != null ? (bool) obj : false;
+			}
+			set { this ["AllowOutputBatching"] = value; }
 		}
 
 		public int Count {
 			get { return list.Count; }
 		}
 
-		[MonoTODO ("This should actually be internal of a property.")]
 		public MessageEncoder Encoder {
-			get { return encoder; }
-			set { encoder = value; }
+			get { return (MessageEncoder) this ["Encoder"]; }
+			set { this ["Encoder"] = value; }
 		}
 
 		public bool IsFixedSize {
@@ -111,10 +109,9 @@ namespace System.ServiceModel.Channels
 			get { return new ParameterValueCollection (list); }
 		}
 
-		[MonoTODO ("This should actually be internal of a property.")]
 		public Uri Via {
-			get { return via; }
-			set { via = value; }
+			get { return (Uri) this ["Via"]; }
+			set { this ["Via"] = value; }
 		}
 
 		public void Add (string name, object property)
@@ -137,10 +134,7 @@ namespace System.ServiceModel.Channels
 
 		public void CopyProperties (MessageProperties properties)
 		{
-			list = new List<Pair> (properties.list);
-			allow_output_batch = properties.allow_output_batch;
-			encoder = properties.encoder;
-			via = properties.via;
+			list.AddRange (properties.list);
 		}
 
 		public void Dispose ()

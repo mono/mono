@@ -26,6 +26,7 @@ System.ServiceModel.Channels/MessageEncodingBindingElementTest.cs
 System.ServiceModel.Channels/MessageFaultTest.cs
 System.ServiceModel.Channels/MessageHeaderTest.cs
 System.ServiceModel.Channels/MessageHeadersTest.cs
+System.ServiceModel.Channels/MessagePropertiesTest.cs
 System.ServiceModel.Channels/MessageTest.cs
 System.ServiceModel.Channels/MessageVersionTest.cs
 System.ServiceModel.Channels/MsmqTransportBindingElementTest.cs
