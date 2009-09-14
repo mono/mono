@@ -48,6 +48,9 @@ namespace MonoTests.Common
 		[DynamicDataSortable (true)]
 		public int SortableColumn1 { get; set; }
 
+		[UIHint ("MyCustomUIHintTemplate")]
+		public string CustomUIHintColumn { get; set; }
+
 		public Baz ()
 		{
 			Column1 = 123;

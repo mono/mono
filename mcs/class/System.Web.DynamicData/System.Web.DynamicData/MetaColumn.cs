@@ -406,7 +406,7 @@ namespace System.Web.DynamicData
 			dataTypeReflected = true;
 			MetaModel.GetDataFieldAttribute <DataTypeAttribute> (Attributes, ref dataTypeAttr);
 			if (dataTypeAttr == null && (ColumnType == typeof (string)))
-				return new DataTypeAttribute (DataType.Text);
+				return new DataTypeAttribute (IsLongString ? DataType.MultilineText : DataType.Text);
 
 			return dataTypeAttr;
 		}

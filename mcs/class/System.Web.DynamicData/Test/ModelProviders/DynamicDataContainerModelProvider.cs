@@ -75,7 +75,7 @@ namespace MonoTests.ModelProviders
 			}
 		}
 
-		void ResolveAssociations ()
+		public void ResolveAssociations ()
 		{
 			foreach (var t in Tables) {
 				var table = t as DynamicDataContainerTableProvider <TContext>;

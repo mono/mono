@@ -1,3 +1,8 @@
+2009-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: CreateChildControls calls EnsureDataBound only if
+	we're not in post-back and if data binding is required.
+
 2009-09-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: if total row count has been retrieved from the

@@ -1,3 +1,9 @@
+2009-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/WebPages/ListView_DynamicControl_09.aspx and
+	Test/WebPages/ListView_DynamicControl_09.aspx.cs
+
 2009-09-10  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added 

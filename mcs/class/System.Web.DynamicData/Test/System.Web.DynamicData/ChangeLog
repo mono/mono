@@ -1,3 +1,8 @@
+2009-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* FieldTemplateFactoryTest.cs: implemented tests for
+	BuildVirtualPath, GetFieldTemplateVirtualPath and PreprocessMode.
+
 2009-09-10  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicControlTest.cs: added seveal tests for DataField and UIHint

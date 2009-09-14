@@ -1,3 +1,12 @@
+2009-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaColumn.cs: DataTypeAttribtue created automatically for
+	string columns, must be of type MultilineText for long strings.
+
+	* FieldTemplateFactory.cs: implemented BuildVirtualPath,
+	CreateFieldTemplate, GetFieldTemplateVirtualPath, PreprocessMode
+	and fixed implementation of TemplateFolderVirtualPath.
+
 2009-09-10  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicControl.cs: implemented several properties.

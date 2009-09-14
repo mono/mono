@@ -67,34 +67,12 @@ namespace MonoTests.System.Web.DynamicData
 	[TestFixture]
 	public class DynamicControlTest
 	{
-		sealed class FieldTemplateTestDescription
-		{
-			public string ColumnName { get; private set; }
-			public string ControlVirtualPath { get; private set; }
-			public bool IsNull { get; private set; }
-
-			public FieldTemplateTestDescription (string columnName)
-				: this (columnName, String.Empty, true)
-			{ }
-
-			public FieldTemplateTestDescription (string columnName, string virtualPath)
-				: this (columnName, virtualPath, false)
-			{ }
-
-			public FieldTemplateTestDescription (string columnName, string virtualPath, bool isNull)
-			{
-				ColumnName = columnName;
-				ControlVirtualPath = virtualPath;
-				IsNull = isNull;
-			}
-		}
-
 		[SetUp]
 		public void PerTestSetUp ()
 		{
 			// This is ran before every test
-			CleanUp_FullTypeNameTemplates ();
-			CleanUp_ShortTypeNameTemplates ();
+			FieldTemplatePathTables.CleanUp_FullTypeNameTemplates ();
+			FieldTemplatePathTables.CleanUp_ShortTypeNameTemplates ();
 		}
 
 		[TestFixtureSetUp]
@@ -122,8 +100,8 @@ namespace MonoTests.System.Web.DynamicData
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			CleanUp_FullTypeNameTemplates ();
-			CleanUp_ShortTypeNameTemplates ();
+			FieldTemplatePathTables.CleanUp_FullTypeNameTemplates ();
+			FieldTemplatePathTables.CleanUp_ShortTypeNameTemplates ();
 			WebTest.Unload ();
 		}
 
@@ -486,48 +464,13 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
 		}
 
-		static List<FieldTemplateTestDescription> fieldTemplateReadOnlyColumns = new List<FieldTemplateTestDescription> ()
-		{
-			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Int_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Long_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Bool_Column", "~/DynamicData/FieldTemplates/Boolean.ascx"),
-			new FieldTemplateTestDescription ("String_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Float_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Single_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Double_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Decimal_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("SByte_Column"),
-			new FieldTemplateTestDescription ("UInt_Column"),
-			new FieldTemplateTestDescription ("ULong_Column"),
-			new FieldTemplateTestDescription ("Short_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("UShort_Column"),
-			new FieldTemplateTestDescription ("DateTime_Column", "~/DynamicData/FieldTemplates/DateTime.ascx"),
-			new FieldTemplateTestDescription ("FooEmpty_Column"),
-			new FieldTemplateTestDescription ("Object_Column"),
-			new FieldTemplateTestDescription ("ByteArray_Column"),
-			new FieldTemplateTestDescription ("IntArray_Column"),
-			new FieldTemplateTestDescription ("StringArray_Column"),
-			new FieldTemplateTestDescription ("ObjectArray_Column"),
-			new FieldTemplateTestDescription ("StringList_Column"),
-			new FieldTemplateTestDescription ("Dictionary_Column"),
-			new FieldTemplateTestDescription ("ICollection_Column"),
-			new FieldTemplateTestDescription ("IEnumerable_Column"),
-			new FieldTemplateTestDescription ("ICollectionByte_Column"),
-			new FieldTemplateTestDescription ("IEnumerableByte_Column"),
-			new FieldTemplateTestDescription ("ByteMultiArray_Column"),
-			new FieldTemplateTestDescription ("BoolArray_Column"),
-			new FieldTemplateTestDescription ("MaximumLength_Column4", "~/DynamicData/FieldTemplates/Text.ascx"),
-		};
-
 		static void FieldTemplate_OnLoad (Page p)
 		{
 			var lc = p.FindControl ("ListView3") as ListView;
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in fieldTemplateReadOnlyColumns) {
+			foreach (var entry in FieldTemplatePathTables.FieldTemplateReadOnlyColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1}", counter, columnName));
@@ -570,48 +513,13 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
 		}
 
-		static List<FieldTemplateTestDescription> fieldTemplateEditColumns = new List<FieldTemplateTestDescription> ()
-		{
-			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/Text_Edit.ascx"),
-			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/Integer_Edit.ascx"),
-			new FieldTemplateTestDescription ("Int_Column", "~/DynamicData/FieldTemplates/Integer_Edit.ascx"),
-			new FieldTemplateTestDescription ("Long_Column", "~/DynamicData/FieldTemplates/Integer_Edit.ascx"),
-			new FieldTemplateTestDescription ("Bool_Column", "~/DynamicData/FieldTemplates/Boolean_Edit.ascx"),
-			new FieldTemplateTestDescription ("String_Column", "~/DynamicData/FieldTemplates/Text_Edit.ascx"),
-			new FieldTemplateTestDescription ("Float_Column", "~/DynamicData/FieldTemplates/Decimal_Edit.ascx"),
-			new FieldTemplateTestDescription ("Single_Column", "~/DynamicData/FieldTemplates/Decimal_Edit.ascx"),
-			new FieldTemplateTestDescription ("Double_Column", "~/DynamicData/FieldTemplates/Decimal_Edit.ascx"),
-			new FieldTemplateTestDescription ("Decimal_Column", "~/DynamicData/FieldTemplates/Decimal_Edit.ascx"),
-			new FieldTemplateTestDescription ("SByte_Column"),
-			new FieldTemplateTestDescription ("UInt_Column"),
-			new FieldTemplateTestDescription ("ULong_Column"),
-			new FieldTemplateTestDescription ("Short_Column", "~/DynamicData/FieldTemplates/Integer_Edit.ascx"),
-			new FieldTemplateTestDescription ("UShort_Column"),
-			new FieldTemplateTestDescription ("DateTime_Column", "~/DynamicData/FieldTemplates/DateTime_Edit.ascx"),
-			new FieldTemplateTestDescription ("FooEmpty_Column"),
-			new FieldTemplateTestDescription ("Object_Column"),
-			new FieldTemplateTestDescription ("ByteArray_Column"),
-			new FieldTemplateTestDescription ("IntArray_Column"),
-			new FieldTemplateTestDescription ("StringArray_Column"),
-			new FieldTemplateTestDescription ("ObjectArray_Column"),
-			new FieldTemplateTestDescription ("StringList_Column"),
-			new FieldTemplateTestDescription ("Dictionary_Column"),
-			new FieldTemplateTestDescription ("ICollection_Column"),
-			new FieldTemplateTestDescription ("IEnumerable_Column"),
-			new FieldTemplateTestDescription ("ICollectionByte_Column"),
-			new FieldTemplateTestDescription ("IEnumerableByte_Column"),
-			new FieldTemplateTestDescription ("ByteMultiArray_Column"),
-			new FieldTemplateTestDescription ("BoolArray_Column"),
-			new FieldTemplateTestDescription ("MaximumLength_Column4", "~/DynamicData/FieldTemplates/MultilineText_Edit.ascx"),
-		};
-
 		static void FieldTemplate_OnPreRenderComplete_1 (Page p)
 		{
 			var lc = p.FindControl ("ListView4") as ListView;
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in fieldTemplateEditColumns) {
+			foreach (var entry in FieldTemplatePathTables.FieldTemplateEditColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1})", counter, columnName));
@@ -636,115 +544,16 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void FieldTemplate_2 ()
 		{
-			try {
-				SetUp_FullTypeNameTemplates ();
-				var test = new WebTest ("ListView_DynamicControl_03.aspx");
-				test.Invoker = PageInvoker.CreateOnLoad (FieldTemplate_OnLoad_2);
-				var p = test.Run ();
-				Assert.IsNotNull (test.Response, "#X1");
-				Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
-				Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
-				Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
-			} finally {
+			FieldTemplatePathTables.SetUp_FullTypeNameTemplates (this);
+			var test = new WebTest ("ListView_DynamicControl_03.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (FieldTemplate_OnLoad_2);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
 
-			}
 		}
-
-		static List<string> nonDefaultFullTypeNameTemplates = new List<string> () {
-			"System.Char.ascx",
-			"System.Char.ascx.cs",
-			"System.Byte.ascx",
-			"System.Byte.ascx.cs",
-			"System.Boolean.ascx",
-			"System.Boolean.ascx.cs",
-			"System.Int16.ascx",
-			"System.Int16.ascx.cs",
-			"System.Int32.ascx",
-			"System.Int32.ascx.cs",
-			"System.Int64.ascx",
-			"System.Int64.ascx.cs",
-			"System.String.ascx",
-			"System.String.ascx.cs",
-			"System.UInt16.ascx",
-			"System.UInt16.ascx.cs",
-			"System.UInt32.ascx",
-			"System.UInt32.ascx.cs",
-			"System.UInt64.ascx",
-			"System.UInt64.ascx.cs",
-			"System.SByte.ascx",
-			"System.SByte.ascx.cs",
-			"System.Object.ascx",
-			"System.Object.ascx.cs",
-			"System.Byte[].ascx",
-			"System.Byte[].ascx.cs",
-			"System.Collections.Generic.List`1[System.String].ascx",
-			"System.Collections.Generic.List`1[System.String].ascx.cs",
-			"MonoTests.Common.FooEmpty.ascx",
-			"MonoTests.Common.FooEmpty.ascx.cs",
-			"System.Collections.ICollection.ascx",
-			"System.Collections.ICollection.ascx.cs",
-		};
-
-		void SetUp_FullTypeNameTemplates ()
-		{
-			Type type = GetType ();
-			foreach (string tname in nonDefaultFullTypeNameTemplates)
-				WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault." + tname, TestsSetup.BuildPath ("DynamicData/FieldTemplates/" + tname));
-		}
-
-		void CleanUp_FullTypeNameTemplates ()
-		{
-			string baseDir = WebTest.TestBaseDir;
-			string filePath;
-
-			foreach (string tname in nonDefaultFullTypeNameTemplates) {
-				filePath = Path.Combine (baseDir, TestsSetup.BuildPath ("DynamicData/FieldTemplates/" + tname));
-				try {
-					if (File.Exists (filePath))
-						File.Delete (filePath);
-				} catch {
-					// ignore
-				}
-			}
-		}
-
-		static List<FieldTemplateTestDescription> fieldTemplateNonDefaultColumns = new List<FieldTemplateTestDescription> ()
-		{
-			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/System.Char.ascx"),
-			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/System.Byte.ascx"),
-			new FieldTemplateTestDescription ("Int_Column", "~/DynamicData/FieldTemplates/System.Int32.ascx"),
-			new FieldTemplateTestDescription ("Long_Column", "~/DynamicData/FieldTemplates/System.Int64.ascx"),
-			new FieldTemplateTestDescription ("Bool_Column", "~/DynamicData/FieldTemplates/System.Boolean.ascx"),
-			new FieldTemplateTestDescription ("String_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Float_Column", "~/DynamicData/FieldTemplates/System.String.ascx"),
-			new FieldTemplateTestDescription ("Single_Column", "~/DynamicData/FieldTemplates/System.String.ascx"),
-			new FieldTemplateTestDescription ("Double_Column", "~/DynamicData/FieldTemplates/System.String.ascx"),
-			new FieldTemplateTestDescription ("Decimal_Column", "~/DynamicData/FieldTemplates/System.String.ascx"),
-			new FieldTemplateTestDescription ("SByte_Column", "~/DynamicData/FieldTemplates/System.SByte.ascx"),
-			new FieldTemplateTestDescription ("UInt_Column", "~/DynamicData/FieldTemplates/System.UInt32.ascx"),
-			new FieldTemplateTestDescription ("ULong_Column", "~/DynamicData/FieldTemplates/System.UInt64.ascx"),
-			new FieldTemplateTestDescription ("Short_Column", "~/DynamicData/FieldTemplates/System.Int16.ascx"),
-			new FieldTemplateTestDescription ("UShort_Column", "~/DynamicData/FieldTemplates/System.UInt16.ascx"),
-			new FieldTemplateTestDescription ("DateTime_Column", "~/DynamicData/FieldTemplates/DateTime.ascx"),
-			new FieldTemplateTestDescription ("FooEmpty_Column", "~/DynamicData/FieldTemplates/MonoTests.Common.FooEmpty.ascx"),
-			new FieldTemplateTestDescription ("Object_Column", "~/DynamicData/FieldTemplates/System.Object.ascx"),
-			new FieldTemplateTestDescription ("ByteArray_Column", "~/DynamicData/FieldTemplates/System.Byte[].ascx"),
-			new FieldTemplateTestDescription ("IntArray_Column"),
-			new FieldTemplateTestDescription ("StringArray_Column"),
-			new FieldTemplateTestDescription ("ObjectArray_Column"),
-			new FieldTemplateTestDescription ("StringList_Column"),
-
-			// Doesn't work for some reason
-			//new FieldTemplateTestDescription ("StringList_Column", "~/DynamicData/FieldTemplates/System.Collections.Generic.List`1[System.String].ascx"),
-			new FieldTemplateTestDescription ("Dictionary_Column"),
-			new FieldTemplateTestDescription ("ICollection_Column", "~/DynamicData/FieldTemplates/System.Collections.ICollection.ascx"),
-			new FieldTemplateTestDescription ("IEnumerable_Column"),
-			new FieldTemplateTestDescription ("ICollectionByte_Column"),
-			new FieldTemplateTestDescription ("IEnumerableByte_Column"),
-			new FieldTemplateTestDescription ("ByteMultiArray_Column"),
-			new FieldTemplateTestDescription ("BoolArray_Column"),
-			new FieldTemplateTestDescription ("MaximumLength_Column4", "~/DynamicData/FieldTemplates/System.String.ascx"),
-		};
 
 		static void FieldTemplate_OnLoad_2 (Page p)
 		{
@@ -752,7 +561,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in fieldTemplateNonDefaultColumns) {
+			foreach (var entry in FieldTemplatePathTables.FieldTemplateNonDefaultColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1})", counter, columnName));
@@ -778,7 +587,7 @@ namespace MonoTests.System.Web.DynamicData
 		public void FieldTemplate_3 ()
 		{
 			try {
-				SetUp_ShortTypeNameTemplates ();
+				FieldTemplatePathTables.SetUp_ShortTypeNameTemplates (this);
 				var test = new WebTest ("ListView_DynamicControl_03.aspx");
 				test.Invoker = PageInvoker.CreateOnLoad (FieldTemplate_OnLoad_3);
 				var p = test.Run ();
@@ -791,105 +600,13 @@ namespace MonoTests.System.Web.DynamicData
 			}
 		}
 
-		static List<string> nonDefaultShortTypeNameTemplates = new List<string> () {
-			"Char.ascx",
-			"Char.ascx.cs",
-			"Byte.ascx",
-			"Byte.ascx.cs",
-			"Int16.ascx",
-			"Int16.ascx.cs",
-			"Int32.ascx",
-			"Int32.ascx.cs",
-			"Int64.ascx",
-			"Int64.ascx.cs",
-			"String.ascx",
-			"String.ascx.cs",
-			"UInt16.ascx",
-			"UInt16.ascx.cs",
-			"UInt32.ascx",
-			"UInt32.ascx.cs",
-			"UInt64.ascx",
-			"UInt64.ascx.cs",
-			"SByte.ascx",
-			"SByte.ascx.cs",
-			"Object.ascx",
-			"Object.ascx.cs",
-			"Byte[].ascx",
-			"Byte[].ascx.cs",
-			"FooEmpty.ascx",
-			"FooEmpty.ascx.cs",
-			"ICollection.ascx",
-			"ICollection.ascx.cs",
-		};
-
-		void SetUp_ShortTypeNameTemplates ()
-		{
-			Type type = GetType ();
-			foreach (string tname in nonDefaultShortTypeNameTemplates)
-				WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault." + tname, TestsSetup.BuildPath ("DynamicData/FieldTemplates/" + tname));
-		}
-
-		void CleanUp_ShortTypeNameTemplates ()
-		{
-			string baseDir = WebTest.TestBaseDir;
-			string filePath;
-
-			foreach (string tname in nonDefaultShortTypeNameTemplates) {
-				filePath = Path.Combine (baseDir, TestsSetup.BuildPath ("DynamicData/FieldTemplates/" + tname));
-				try {
-					if (File.Exists (filePath))
-						File.Delete (filePath);
-				} catch {
-					// ignore
-				}
-			}
-		}
-
-		static List<FieldTemplateTestDescription> fieldTemplateNonDefaultShortColumns = new List<FieldTemplateTestDescription> ()
-		{
-			new FieldTemplateTestDescription ("FooEmpty_Column", "~/DynamicData/FieldTemplates/FooEmpty.ascx"),
-			new FieldTemplateTestDescription ("Char_Column", "~/DynamicData/FieldTemplates/Char.ascx"),
-			new FieldTemplateTestDescription ("Byte_Column", "~/DynamicData/FieldTemplates/Byte.ascx"),
-			new FieldTemplateTestDescription ("Int_Column", "~/DynamicData/FieldTemplates/Int32.ascx"),
-			new FieldTemplateTestDescription ("Long_Column", "~/DynamicData/FieldTemplates/Int64.ascx"),
-			new FieldTemplateTestDescription ("Bool_Column", "~/DynamicData/FieldTemplates/Boolean.ascx"),
-			new FieldTemplateTestDescription ("String_Column", "~/DynamicData/FieldTemplates/Text.ascx"),
-			new FieldTemplateTestDescription ("Float_Column", "~/DynamicData/FieldTemplates/String.ascx"),
-			new FieldTemplateTestDescription ("Single_Column", "~/DynamicData/FieldTemplates/String.ascx"),
-			new FieldTemplateTestDescription ("Double_Column", "~/DynamicData/FieldTemplates/String.ascx"),
-			new FieldTemplateTestDescription ("Decimal_Column", "~/DynamicData/FieldTemplates/String.ascx"),
-			new FieldTemplateTestDescription ("SByte_Column", "~/DynamicData/FieldTemplates/SByte.ascx"),
-			new FieldTemplateTestDescription ("UInt_Column", "~/DynamicData/FieldTemplates/UInt32.ascx"),
-			new FieldTemplateTestDescription ("ULong_Column", "~/DynamicData/FieldTemplates/UInt64.ascx"),
-			new FieldTemplateTestDescription ("Short_Column", "~/DynamicData/FieldTemplates/Int16.ascx"),
-			new FieldTemplateTestDescription ("UShort_Column", "~/DynamicData/FieldTemplates/UInt16.ascx"),
-			new FieldTemplateTestDescription ("DateTime_Column", "~/DynamicData/FieldTemplates/DateTime.ascx"),
-			new FieldTemplateTestDescription ("Object_Column", "~/DynamicData/FieldTemplates/Object.ascx"),
-			new FieldTemplateTestDescription ("ByteArray_Column", "~/DynamicData/FieldTemplates/Byte[].ascx"),
-			new FieldTemplateTestDescription ("IntArray_Column"),
-			new FieldTemplateTestDescription ("StringArray_Column"),
-			new FieldTemplateTestDescription ("ObjectArray_Column"),
-			new FieldTemplateTestDescription ("StringList_Column"),
-
-			// Doesn't work for some reason
-			//new FieldTemplateTestDescription ("StringList_Column", "~/DynamicData/FieldTemplates/List`1[System.String].ascx"),
-			new FieldTemplateTestDescription ("Dictionary_Column"),
-			new FieldTemplateTestDescription ("ICollection_Column", "~/DynamicData/FieldTemplates/ICollection.ascx"),
-			new FieldTemplateTestDescription ("IEnumerable_Column"),
-			new FieldTemplateTestDescription ("ICollectionByte_Column"),
-			new FieldTemplateTestDescription ("IEnumerableByte_Column"),
-			new FieldTemplateTestDescription ("ByteMultiArray_Column"),
-			new FieldTemplateTestDescription ("BoolArray_Column"),
-			new FieldTemplateTestDescription ("MaximumLength_Column4", "~/DynamicData/FieldTemplates/String.ascx"),
-		};
-
 		static void FieldTemplate_OnLoad_3 (Page p)
 		{
 			var lc = p.FindControl ("ListView3") as ListView;
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in fieldTemplateNonDefaultShortColumns) {
+			foreach (var entry in FieldTemplatePathTables.FieldTemplateNonDefaultShortColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1})", counter, columnName));
