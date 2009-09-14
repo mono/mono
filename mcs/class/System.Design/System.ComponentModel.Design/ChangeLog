@@ -1,3 +1,9 @@
+2009-09-14  Ivan Zlatev  <contact@i-nz.net>
+
+	* DesignSurface.cs: Prevent a NRE in Flush by cheching if the 
+	designer loader is null.
+	[Fixes bug #538929]
+
 2009-09-10  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignSurface.cs: Changing the ISelectionService at run time was a 

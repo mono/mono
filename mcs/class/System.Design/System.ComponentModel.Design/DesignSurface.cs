@@ -276,7 +276,8 @@ namespace System.ComponentModel.Design
 		
 		public void Flush ()
 		{	   
-			_designerLoader.Flush ();
+			if (_designerLoader != null)
+				_designerLoader.Flush ();
 
 			if (Flushed != null)
 				Flushed (this, EventArgs.Empty);
