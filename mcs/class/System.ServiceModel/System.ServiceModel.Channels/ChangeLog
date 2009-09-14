@@ -1,5 +1,10 @@
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TransportBindingElement.cs : another GetProperty fix, iterate
+	  other binding elements.
+
+2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpTransportBindingElement.cs, PeerTransportBindingElement.cs :
 	  some GetProperty() implementation.
 
