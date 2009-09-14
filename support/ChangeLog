@@ -1,3 +1,7 @@
+2009-09-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* zlib-helper.c: support reverse callbacks within MonoTouch.
+
 2009-08-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* deflate.c:
