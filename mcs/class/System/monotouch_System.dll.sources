@@ -1,6 +1,8 @@
 #include net_2_1_raw_System.dll.sources
 Mono.Http/NtlmClient.cs
 
+MonoTouch/MonoPInvokeCallbackAttribute.cs
+
 System.Collections.Specialized/NameObjectCollectionBase.cs
 System.Collections.Specialized/NameValueCollection.cs
 System.Collections.Specialized/ProcessStringDictionary.cs
