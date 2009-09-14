@@ -31,6 +31,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 
 using SMessage = System.ServiceModel.Channels.Message;
+using MQMessage = System.Messaging.Message;
+using MQMessageType = System.Messaging.MessageType;
 
 namespace System.ServiceModel.MsmqIntegration
 {
@@ -48,104 +50,89 @@ namespace System.ServiceModel.MsmqIntegration
 			throw new NotImplementedException ();
 		}
 
-		AcknowledgeTypes? ack_type;
-		Acknowledgment? ack;
-		Uri adm_queue, dst_queue, res_queue;
-		int? app_specific, body_type;
-		DateTime? arrived_time, sent_time;
-		bool? authenticated;
-		object body;
-		string correlation_id, id, label;
-		byte [] extension, sender_id;
-		MessageType? msg_type;
-		MessagePriority? priority;
-		TimeSpan? ttrq;
+		// not verified / consider queue property filter
+		internal static MsmqIntegrationMessageProperty Get (MQMessage message)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+			var p = new MsmqIntegrationMessageProperty ();
+			p.Id = message.Id;
+			p.Label = message.Label;
+			p.CorrelationId = message.CorrelationId;
+			p.Body = message.Body;
+			p.Extension = message.Extension;
+			p.SenderId = message.SenderId;
 
-		public AcknowledgeTypes? AcknowledgeType {
-			get { return ack_type; }
-			set { ack_type = value; }
+			p.DestinationQueue = CreateUriFromQueue (message.DestinationQueue);
+			if (message.AdministrationQueue != null)
+				p.AdministrationQueue = CreateUriFromQueue (message.AdministrationQueue);
+			if (message.ResponseQueue != null)
+				p.ResponseQueue = CreateUriFromQueue (message.ResponseQueue);
+
+			// FIXME: check property filter in the queue
+			p.AppSpecific = message.AppSpecific;
+			p.ArrivedTime = message.ArrivedTime;
+			p.Authenticated = message.Authenticated;
+			p.Priority = message.Priority;
+			p.SentTime = message.SentTime;
+			p.TimeToReachQueue = message.TimeToReachQueue;
+
+			switch (message.MessageType) {
+			case MQMessageType.Acknowledgment:
+				p.AcknowledgeType = message.AcknowledgeType;
+				p.Acknowledgment = message.Acknowledgment;
+				break;
+			case MQMessageType.Normal:
+			case MQMessageType.Report:
+				// anything to do?
+				break;
+			}
+
+			return p;
 		}
 
-		public Acknowledgment? Acknowledgment {
-			get { return ack; }
+		static Uri CreateUriFromQueue (MessageQueue queue)
+		{
+			// FIXME: implement
+			throw new NotImplementedException ();
 		}
+
+		public AcknowledgeTypes? AcknowledgeType { get; set; }
+
+		public Acknowledgment? Acknowledgment { get; private set; }
 		
-		public Uri AdministrationQueue {
-			get { return adm_queue; }
-			set { adm_queue = value; }
-		}
+		public Uri AdministrationQueue { get; set; }
 
-		public int? AppSpecific {
-			get { return app_specific; }
-			set { app_specific = value; }
-		}
+		public int? AppSpecific { get; set; }
 
-		public DateTime? ArrivedTime {
-			get { return arrived_time; }
-		}
+		public DateTime? ArrivedTime { get; private set; }
 
-		public bool? Authenticated {
-			get { return authenticated; }
-		}
+		public bool? Authenticated { get; private set; }
 
-		public object Body {
-			get { return body; }
-			set { body = value; }
-		}
+		public object Body { get; set; }
 
-		public int? BodyType {
-			get { return body_type; }
-			set { body_type = value; }
-		}
+		public int? BodyType { get; set; }
 
-		public string CorrelationId {
-			get { return correlation_id; }
-			set { correlation_id = value; }
-		}
+		public string CorrelationId { get; set; }
 
-		public Uri DestinationQueue {
-			get { return dst_queue; }
-		}
+		public Uri DestinationQueue { get; private set; }
 
-		public byte [] Extension {
-			get { return extension; }
-			set { extension = value; }
-		}
+		public byte [] Extension { get; set; }
 
-		public string Id {
-			get { return id; }
-		}
+		public string Id { get; private set; }
 
-		public string Label {
-			get { return label; }
-			set { label = value; }
-		}
+		public string Label { get; set; }
 
-		public MessageType? MessageType {
-			get { return msg_type; }
-		}
+		public MessageType? MessageType { get; private set; }
 
-		public MessagePriority? Priority {
-			get { return priority; }
-			set { priority = value; }
-		}
+		public MessagePriority? Priority { get; set; }
 
-		public Uri ResponseQueue {
-			get { return res_queue; }
-			set { res_queue = value; }
-		}
+		public Uri ResponseQueue { get; set; }
 
-		public byte [] SenderId {
-			get { return sender_id; }
-		}
+		public byte [] SenderId { get; private set; }
 
-		public DateTime? SentTime {
-			get { return sent_time; }
-		}
+		public DateTime? SentTime { get; private set; }
 
-		public TimeSpan? TimeToReachQueue {
-			get { return ttrq; }
-			set { ttrq = value; }
-		}
+		public TimeSpan? TimeToReachQueue { get; set; }
 	}
 }

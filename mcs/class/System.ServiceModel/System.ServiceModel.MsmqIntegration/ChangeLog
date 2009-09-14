@@ -1,3 +1,8 @@
+2007-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MsmqIntegrationMessageProperty.cs, MsmqMessage.cs:
+	  cleanup couple of warnings.
+
 2007-07-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MsmqIntegrationMessageProperty.cs MsmqIntegrationBinding.cs

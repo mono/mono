@@ -34,109 +34,99 @@ namespace System.ServiceModel.MsmqIntegration
 	[MessageContract]
 	public sealed class MsmqMessage<T>
 	{
-		AcknowledgeTypes? ack_type;
-		Acknowledgment? ack;
-		Uri adm_queue, dst_queue, res_queue;
-		int? app_specific, body_type;
-		DateTime? arrived_time, sent_time;
-		bool? authenticated;
-		T body;
-		string correlation_id, id, label;
-		byte [] extension, sender_id;
-		MessageType? msg_type;
-		MessagePriority? priority;
-		TimeSpan? ttrq;
+		MsmqIntegrationMessageProperty prop;
 
 		public MsmqMessage (T body)
 		{
-			this.body = body;
+			prop = new MsmqIntegrationMessageProperty ();
+			Body = body;
 		}
 
 		public AcknowledgeTypes? AcknowledgeType {
-			get { return ack_type; }
-			set { ack_type = value; }
+			get { return prop.AcknowledgeType; }
+			set { prop.AcknowledgeType = value; }
 		}
 
 		public Acknowledgment? Acknowledgment {
-			get { return ack; }
+			get { return prop.Acknowledgment; }
 		}
 		
 		public Uri AdministrationQueue {
-			get { return adm_queue; }
-			set { adm_queue = value; }
+			get { return prop.AdministrationQueue; }
+			set { prop.AdministrationQueue = value; }
 		}
 
 		public int? AppSpecific {
-			get { return app_specific; }
-			set { app_specific = value; }
+			get { return prop.AppSpecific; }
+			set { prop.AppSpecific = value; }
 		}
 
 		public DateTime? ArrivedTime {
-			get { return arrived_time; }
+			get { return prop.ArrivedTime; }
 		}
 
 		public bool? Authenticated {
-			get { return authenticated; }
+			get { return prop.Authenticated; }
 		}
 
 		public T Body {
-			get { return body; }
-			set { body = value; }
+			get { return (T) prop.Body; }
+			set { prop.Body = value; }
 		}
 
 		public int? BodyType {
-			get { return body_type; }
-			set { body_type = value; }
+			get { return prop.BodyType; }
+			set { prop.BodyType = value; }
 		}
 
 		public string CorrelationId {
-			get { return correlation_id; }
-			set { correlation_id = value; }
+			get { return prop.CorrelationId; }
+			set { prop.CorrelationId = value; }
 		}
 
 		public Uri DestinationQueue {
-			get { return dst_queue; }
+			get { return prop.DestinationQueue; }
 		}
 
 		public byte [] Extension {
-			get { return extension; }
-			set { extension = value; }
+			get { return prop.Extension; }
+			set { prop.Extension = value; }
 		}
 
 		public string Id {
-			get { return id; }
+			get { return prop.Id; }
 		}
 
 		public string Label {
-			get { return label; }
-			set { label = value; }
+			get { return prop.Label; }
+			set { prop.Label = value; }
 		}
 
 		public MessageType? MessageType {
-			get { return msg_type; }
+			get { return prop.MessageType; }
 		}
 
 		public MessagePriority? Priority {
-			get { return priority; }
-			set { priority = value; }
+			get { return prop.Priority; }
+			set { prop.Priority = value; }
 		}
 
 		public Uri ResponseQueue {
-			get { return res_queue; }
-			set { res_queue = value; }
+			get { return prop.ResponseQueue; }
+			set { prop.ResponseQueue = value; }
 		}
 
 		public byte [] SenderId {
-			get { return sender_id; }
+			get { return prop.SenderId; }
 		}
 
 		public DateTime? SentTime {
-			get { return sent_time; }
+			get { return prop.SentTime; }
 		}
 
 		public TimeSpan? TimeToReachQueue {
-			get { return ttrq; }
-			set { ttrq = value; }
+			get { return prop.TimeToReachQueue; }
+			set { prop.TimeToReachQueue = value; }
 		}
 	}
 }
