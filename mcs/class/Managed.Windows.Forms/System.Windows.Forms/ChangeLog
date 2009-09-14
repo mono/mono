@@ -1,3 +1,7 @@
+2009-09-14  Tom Hindle <tom_hindle@sil.org>
+
+	* ToolStripOverflow.cs: Fixes #536036 by adding null ptr check.
+
 2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Hide the splitter when the help is hidden.
