@@ -89,6 +89,7 @@ namespace System.ServiceModel.Channels
 					((IDisposable) http_listener).Dispose ();
 
 					opened_listeners.Remove (channel_listener.Uri);
+					http_listener = null;
 				}
 			}
 		}
