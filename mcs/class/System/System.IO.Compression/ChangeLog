@@ -1,3 +1,9 @@
+2009-09-14 Jonathan Pryor <jpryor@novell.com>
+
+	* DeflateStream.cs: MonoTouch reverse callbacks need to be static
+	  methods and be annotated with [MonoPInvokeCallback].  Get things
+	  working with these limitations.
+
 2009-07-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* GzipStream.cs: fixed Dispose (bool).

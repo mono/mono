@@ -50,6 +50,8 @@ namespace System.IO.Compression {
 		IntPtr z_stream;
 		byte [] io_buffer;
 
+		GCHandle data;
+
 		public DeflateStream (Stream compressedStream, CompressionMode mode) :
 			this (compressedStream, mode, false, false)
 		{
@@ -68,10 +70,11 @@ namespace System.IO.Compression {
 			if (mode != CompressionMode.Compress && mode != CompressionMode.Decompress)
 				throw new ArgumentException ("mode");
 
+			this.data = GCHandle.Alloc (this);
 			this.base_stream = compressedStream;
 			this.feeder = (mode == CompressionMode.Compress) ? new UnmanagedReadOrWrite (UnmanagedWrite) :
 									   new UnmanagedReadOrWrite (UnmanagedRead);
-			this.z_stream = CreateZStream (mode, gzip, feeder);
+			this.z_stream = CreateZStream (mode, gzip, feeder, GCHandle.ToIntPtr (data));
 			if (z_stream == IntPtr.Zero) {
 				this.base_stream = null;
 				this.feeder = null;
@@ -101,7 +104,24 @@ namespace System.IO.Compression {
 				CheckResult (res, "Dispose");
 			}
 
+			if (data.IsAllocated) {
+				data.Free ();
+				data = new GCHandle ();
+			}
+
 			base.Dispose (disposing);
+		}
+
+#if MONOTOUCH
+		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#endif
+		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
+		{
+			GCHandle s = GCHandle.FromIntPtr (data);
+			var self = s.Target as DeflateStream;
+			if (self == null)
+				return -1;
+			return self.UnmanagedRead (buffer, length);
 		}
 
 		int UnmanagedRead (IntPtr buffer, int length)
@@ -124,6 +144,18 @@ namespace System.IO.Compression {
 				}
 			}
 			return total;
+		}
+
+#if MONOTOUCH
+		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#endif
+		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
+		{
+			GCHandle s = GCHandle.FromIntPtr (data);
+			var self = s.Target as DeflateStream;
+			if (self == null)
+				return -1;
+			return self.UnmanagedWrite (buffer, length);
 		}
 
 		int UnmanagedWrite (IntPtr buffer, int length)
@@ -380,7 +412,7 @@ namespace System.IO.Compression {
 #endif
 
 		[DllImport (LIBNAME)]
-		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder);
+		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
 
 		[DllImport (LIBNAME)]
 		static extern int CloseZStream (IntPtr stream);
