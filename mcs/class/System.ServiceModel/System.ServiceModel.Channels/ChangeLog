@@ -1,5 +1,9 @@
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElement.cs : fix 2.1 build.
+
+2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TransportBindingElement.cs : another GetProperty fix, iterate
 	  other binding elements.
 

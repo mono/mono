@@ -185,10 +185,12 @@ namespace System.ServiceModel.Channels
 		public override T GetProperty<T> (BindingContext context)
 		{
 			// http://blogs.msdn.com/drnick/archive/2007/04/10/interfaces-for-getproperty-part-1.aspx
+#if !NET_2_1
 			if (typeof (T) == typeof (ISecurityCapabilities))
 				throw new NotImplementedException ();
 			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
 				throw new NotImplementedException ();
+#endif
 			if (typeof (T) == typeof (TransferMode))
 				return (T) (object) TransferMode;
 			return base.GetProperty<T> (context);
