@@ -1,3 +1,9 @@
+2009-09-14  Massimiliano Mantione  <massi@ximian.com>
+
+	* mono.1: Updated the profiler documentation, removing the obsolete
+	signal related options and adding the description of the new socket
+	based command interface.
+
 2009-08-21  Ankit Jain  <jankit@novell.com>
 
 	* Makefile.am (man_MANS): Add xbuild.1
