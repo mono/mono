@@ -181,13 +181,9 @@ namespace System.Xml.Linq
 		public void Save (string filename, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
-			if ((options & SaveOptions.DisableFormatting) == 0) {
-				// hacky!
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-				s.IndentChars = String.Empty;
-				s.NewLineChars = String.Empty;
-			}
-			using (XmlWriter w = XmlWriter.Create (filename)) {
+			using (XmlWriter w = XmlWriter.Create (filename, s)) {
 				Save (w);
 			}
 		}

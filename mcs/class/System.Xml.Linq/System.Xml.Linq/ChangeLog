@@ -1,5 +1,10 @@
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XDocument.cs : fix SaveOptions behavior in Save() with filename.
+	  Fixed bug #527421.
+
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XElement.cs : consider default namespace in GetNamespaceOfPrefix().
 	* XNodeReader.cs : 3.5 RTM does not return empty string for undefined
 	  namespace URI with the argument prefix in LookupNamespace().
