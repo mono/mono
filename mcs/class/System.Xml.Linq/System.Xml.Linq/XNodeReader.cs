@@ -300,11 +300,12 @@ namespace System.Xml.Linq
 		public override string LookupNamespace (string prefix)
 		{
 			if (EOF)
-				return String.Empty;
+				return null;
 			XElement el = (node as XElement) ?? node.Parent;
 			if (el == null)
-				return String.Empty;
-			return el.GetNamespaceOfPrefix (prefix).NamespaceName;
+				return null;
+			var xn = el.GetNamespaceOfPrefix (prefix);
+			return xn != XNamespace.None ? xn.NamespaceName : null;
 		}
 
 		public override bool MoveToElement ()

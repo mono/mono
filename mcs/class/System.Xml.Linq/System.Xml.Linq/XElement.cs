@@ -613,7 +613,7 @@ namespace System.Xml.Linq
 		{
 			for (XElement el = this; el != null; el = el.Parent)
 				foreach (XAttribute a in el.Attributes ())
-					if (a.IsNamespaceDeclaration && a.Name.LocalName == prefix)
+					if (a.IsNamespaceDeclaration && (prefix.Length == 0 && a.Name.LocalName == "xmlns" || a.Name.LocalName == prefix))
 						return XNamespace.Get (a.Value);
 			return XNamespace.None; // nothing is declared.
 		}

@@ -187,7 +187,19 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (String.Empty, r.NamespaceURI, "#2");
 			Assert.AreEqual (0, r.Depth, "#3");
 			Assert.IsFalse (r.HasAttributes, "#4");
-			Assert.AreEqual (String.Empty, r.LookupNamespace (String.Empty), "#5");
+		}
+
+		[Test]
+		public void LookupNamespace ()
+		{
+			string xml = @"<Dummy xmlns='http://example.com/schemas/asx' />";
+			XElement element = XElement.Parse (xml);
+			var r = element.CreateReader ();
+			r.Read ();
+			Assert.AreEqual ("http://example.com/schemas/asx", r.LookupNamespace (String.Empty), "#1");
+			Assert.IsNull (r.LookupNamespace ("nonexistent"), "#2");
+			r.Read ();
+			Assert.IsNull (r.LookupNamespace (String.Empty), "#3");
 		}
 	}
 }

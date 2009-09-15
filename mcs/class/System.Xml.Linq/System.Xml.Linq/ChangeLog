@@ -1,5 +1,11 @@
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XElement.cs : consider default namespace in GetNamespaceOfPrefix().
+	* XNodeReader.cs : 3.5 RTM does not return empty string for undefined
+	  namespace URI with the argument prefix in LookupNamespace().
+
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XObject.cs : do not throw AE when target object is not found in
 	  Annotation(). Fixed bug #527887.
 
