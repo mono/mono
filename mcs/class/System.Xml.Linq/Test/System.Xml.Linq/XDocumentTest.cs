@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -52,6 +53,15 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (doc.FirstNode, doc.LastNode, "#7");
 			Assert.AreEqual (XmlNodeType.Document, doc.NodeType, "#8");
 			Assert.AreEqual (doc.FirstNode, doc.Root, "#7");
+		}
+
+		[Test]
+		public void Load2 ()
+		{
+			// https://bugzilla.novell.com/show_bug.cgi?id=496285
+			byte [] bytes = Encoding.UTF8.GetBytes ("<root/>");
+			var reader = new XmlTextReader (new MemoryStream (bytes));
+			var doc = XDocument.Load (reader);
 		}
 
 		[Test]

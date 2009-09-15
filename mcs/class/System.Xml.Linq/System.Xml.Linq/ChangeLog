@@ -1,5 +1,10 @@
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XDocument.cs : XmlReaderSettings on XmlReader may be null.
+	  Fixed bug #496285.
+
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XDocument.cs : fix SaveOptions behavior in Save() with filename.
 	  Fixed bug #527421.
 

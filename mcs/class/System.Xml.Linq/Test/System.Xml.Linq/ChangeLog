@@ -1,5 +1,9 @@
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XDocumentTest.cs : added test for bug #496285.
+
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeReaderTest.cs : Updated test to match the latest linq2xml
 	  and added test for LookupNamespace().
 
