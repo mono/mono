@@ -46,12 +46,14 @@ namespace System.Runtime.Serialization.Json
 			Boolean,
 		}
 
-		StreamWriter output;
+		Stream output;
 		bool close_output;
 		WriteState state;
 		Stack<ElementType> element_kinds = new Stack<ElementType> ();
 		Stack<bool> first_content_flags = new Stack<bool> ();
 		string attr_name, attr_value, runtime_type;
+		Encoding encoding;
+		byte [] encbuf = new byte [1024];
 
 		public JsonWriter (Stream stream, Encoding encoding, bool closeOutput)
 		{
@@ -60,8 +62,13 @@ namespace System.Runtime.Serialization.Json
 
 		public void SetOutput (Stream stream, Encoding encoding, bool ownsStream)
 		{
-			// null stream and encoding will be rejected by StreamWriter.ctor.
-			output = new StreamWriter (stream, encoding);
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+			output = stream;
+			this.encoding = encoding;
+			close_output = ownsStream;
 		}
 
 		void CheckState ()
@@ -190,12 +197,13 @@ namespace System.Runtime.Serialization.Json
 					first_content_flags.Push (false);
 				}
 				else
-					output.Write (',');
+					OutputAsciiChar (',');
 
 				if (element_kinds.Peek () != ElementType.Array) {
-					output.Write ('"');
-					output.Write (localName);
-					output.Write ("\":");
+					OutputAsciiChar ('"');
+					OutputString (localName);
+					OutputAsciiChar ('\"');
+					OutputAsciiChar (':');
 				}
 			}
 
@@ -217,13 +225,13 @@ namespace System.Runtime.Serialization.Json
 				throw new XmlException ("There is no open element to close");
 			switch (element_kinds.Pop ()) {
 			case ElementType.String:
-				output.Write ('"');
+				OutputAsciiChar ('"');
 				break;
 			case ElementType.Array:
-				output.Write (']');
+				OutputAsciiChar (']');
 				break;
 			case ElementType.Object:
-				output.Write ('}');
+				OutputAsciiChar ('}');
 				break;
 			}
 
@@ -271,12 +279,12 @@ namespace System.Runtime.Serialization.Json
 				case "object":
 					element_kinds.Pop ();
 					element_kinds.Push (ElementType.Object);
-					output.Write ('{');
+					OutputAsciiChar ('{');
 					break;
 				case "array":
 					element_kinds.Pop ();
 					element_kinds.Push (ElementType.Array);
-					output.Write ('[');
+					OutputAsciiChar ('[');
 					break;
 				case "number":
 					element_kinds.Pop ();
@@ -309,14 +317,14 @@ namespace System.Runtime.Serialization.Json
 			}
 
 			if (element_kinds.Peek () == ElementType.String)
-				output.Write ('"');
+				OutputAsciiChar ('"');
 
 			first_content_flags.Push (true);
 
 			if (runtime_type != null) {
-				output.Write ("\"__type\":\"");
-				output.Write (runtime_type);
-				output.Write ('\"');
+				OutputString ("\"__type\":\"");
+				OutputString (runtime_type);
+				OutputAsciiChar ('\"');
 				runtime_type = null;
 				first_content_flags.Pop ();
 				first_content_flags.Push (false);
@@ -347,7 +355,7 @@ namespace System.Runtime.Serialization.Json
 					throw new XmlException (String.Format ("Simple content string is allowed only for string, number and boolean types and not for {0} type", element_kinds.Peek ()));
 				}
 
-				output.Write (EscapeStringLiteral (text));
+				OutputString (EscapeStringLiteral (text));
 			}
 		}
 
@@ -476,6 +484,20 @@ namespace System.Runtime.Serialization.Json
 				}
 			}
 			WriteString (text);
+		}
+
+		void OutputAsciiChar (char c)
+		{
+			output.WriteByte ((byte) c);
+		}
+
+		void OutputString (string s)
+		{
+			int size = encoding.GetByteCount (s);
+			if (encbuf.Length < size)
+				encbuf = new byte [size];
+			size = encoding.GetBytes (s, 0, s.Length, encbuf, 0);
+			output.Write (encbuf, 0, size);
 		}
 
 		#endregion

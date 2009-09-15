@@ -1,3 +1,8 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonWriter.cs : use Stream as its output directly and avoid
+	  extraneous preamble output. Fix interop with .NET.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReaderWriterFactory.cs : check null stream (fix test failure).
