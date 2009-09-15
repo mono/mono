@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		internal bool		auto_word_select;
 		internal int		bullet_indent;
 		internal bool		detect_urls;
+		private bool		reuse_line;	// Sometimes we are loading text with already available lines
 		internal int		margin_right;
 		internal float		zoom;
 		private StringBuilder	rtf_line;
@@ -407,7 +408,15 @@ namespace System.Windows.Forms {
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 
 				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
-				InsertRTFFromStream(data, document.selection_start.pos, document.selection_start.line.line_no, out x, out y, out chars);
+				int cursor_x = document.selection_start.pos;
+				int cursor_y = document.selection_start.line.line_no;
+
+				// If we have an empty just added line, tell our code to re-use it
+				// Hackish, but works without touching the heart of the buggy parser.
+				if (cursor_x == 0 && document.GetLine (cursor_y).text.Length == 0)
+					reuse_line = true;
+
+				InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y, out chars);
 				data.Close();
 
 				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * 2, out line, out tag, out sel_start);
@@ -1744,8 +1753,9 @@ namespace System.Windows.Forms {
 
 			rtf_chars += rtf_line.Length;
 
-			// Only add a new line in the document if we need to - reuse otherwise
-			if (rtf_cursor_x == 0 && rtf_cursor_y > document.Lines) {
+			// Try to re-use if we are told so - this usually happens when we are inserting a flow of rtf text
+			// with an already alive line.
+			if (rtf_cursor_x == 0 && !reuse_line) {
 				if (newline && rtf_line.ToString ().EndsWith (Environment.NewLine) == false)
 					rtf_line.Append (Environment.NewLine);
 
@@ -1773,6 +1783,8 @@ namespace System.Windows.Forms {
 					if (line.Text.EndsWith (Environment.NewLine) == false)
 						line.Text += Environment.NewLine;
 				}
+
+				reuse_line = false; // sanity assignment - in this case we have already re-used one line.
 			}
 
 			if (newline) {

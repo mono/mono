@@ -1,3 +1,11 @@
+2009-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When we are inserting a flow of rtf text, and we are
+	*not* loading it from a file, try to re-use a line if already
+	available, since the default behaviour of the parser is to create new
+	lines for the document.
+	This should fix a regressions we found after the last fix for #513030.
+
 2009-09-14  Tom Hindle <tom_hindle@sil.org>
 
 	* ToolStripOverflow.cs: Fixes #536036 by adding null ptr check.
