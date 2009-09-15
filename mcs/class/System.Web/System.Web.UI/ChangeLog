@@ -1,3 +1,9 @@
+2009-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: FindNamespaceInAssembly must catch
+	ReflectionTypeLoadException so that it doesn't break on invalid
+	assemblies.
+
 2009-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: Location property makes a copy of assigned
