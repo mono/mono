@@ -576,7 +576,12 @@ namespace System.Xml.XPath
 
 			switch (type) {
 			case XPathResultType.Number:
-				return (double)result;
+				if (result is double)
+					return (double)result;
+				else if (result is IConvertible)
+					return ((IConvertible) result).ToDouble (CultureInfo.InvariantCulture);
+				else
+					return (double) result; // most likely invalid cast
 			case XPathResultType.Boolean:
 				return ((bool) result) ? 1.0 : 0.0;
 			case XPathResultType.NodeSet:
