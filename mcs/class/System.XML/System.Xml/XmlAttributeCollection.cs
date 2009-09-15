@@ -334,14 +334,6 @@ namespace System.Xml
 			if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
 				return;
 
-			// adding new identical attribute, but 
-			// MS.NET is pity for ID support, so I'm wondering how to correct it...
-			if (ownerElement.IsRooted) {
-				XmlAttribute dup = ownerDocument.GetIdenticalAttribute (node.Value);
-				if (dup != null && dup.OwnerElement != null && dup.OwnerElement.IsRooted)
-					throw new XmlException (String.Format (
-						"ID value {0} already exists in this document.", node.Value));
-			}
 			ownerDocument.AddIdenticalAttribute (node);
 		}
 

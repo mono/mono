@@ -1,3 +1,8 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeCollectionTests.cs : add test for bug #508296 by
+	  Tom Hindle.
+
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReaderTests.cs : added test for null nametable in parser

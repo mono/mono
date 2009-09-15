@@ -223,5 +223,23 @@ namespace MonoTests.System.Xml
 			doc.SelectNodes ("//mynode") [0].Attributes.Append (a);
 			doc.SelectNodes ("//mynode") [0].Attributes.Append (a);
 		}
+
+		[Test]
+		public void AddIdentityDuplicate ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"
+				<!DOCTYPE eticGlossList [<!ELEMENT item (item*)><!ATTLIST item id ID #IMPLIED>]>
+				<group><item></item><item id=""tom""><f/></item></group>");
+			XmlNodeList nodes = doc.SelectNodes ("group/item");
+			int n = 1;
+			foreach (XmlNode node in nodes) {
+				XmlAttribute idAttr = doc.CreateAttribute ("id");
+
+				idAttr.Value = "id";
+				node.Attributes.Append (idAttr);
+				Assert.AreEqual (1, node.Attributes.Count, "#" + n++);
+			}
+		}
 	}
 }

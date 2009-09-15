@@ -1,3 +1,9 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeCollection.cs : removed duplicate ID attribute check
+	  here as this behavior not specifically defined by W3C DOM Level 2
+	  specification. Fixed bug #508296.
+
 2009-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : there still was use of bogus
