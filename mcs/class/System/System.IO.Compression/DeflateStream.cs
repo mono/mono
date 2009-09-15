@@ -34,6 +34,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
+#if MONOTOUCH
+using MonoTouch;
+#endif
+
 namespace System.IO.Compression {
 	public class DeflateStream : Stream
 	{
