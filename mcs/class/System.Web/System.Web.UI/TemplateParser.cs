@@ -620,7 +620,16 @@ namespace System.Web.UI {
 
 		bool FindNamespaceInAssembly (Assembly asm, string namesp)
 		{
-			foreach (Type type in asm.GetTypes ()) {
+			Type[] asmTypes;
+
+			try {
+				asmTypes = asm.GetTypes ();
+			} catch (ReflectionTypeLoadException) {
+				// ignore
+				return false;
+			}
+			
+			foreach (Type type in asmTypes) {
 				if (String.Compare (type.Namespace, namesp, StringComparison.Ordinal) == 0) {
 					namespacesCache.Add (namesp, true);
 					AddAssembly (asm, true);
