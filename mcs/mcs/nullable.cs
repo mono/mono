@@ -86,6 +86,14 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
+#if MS_COMPATIBLE
+			if (UnderlyingType.Module == RootContext.ToplevelTypes.Builder) {
+				ConstructorInfo cinfo = TypeManager.DropGenericTypeArguments (type).GetConstructors ()[0];
+				Constructor = TypeBuilder.GetConstructor (type, cinfo);
+				return;
+			}
+#endif
+
 			Constructor = type.GetConstructor (new Type[] { UnderlyingType });
 		}
 	}
