@@ -1,3 +1,8 @@
+2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DefaultProxyHandler.cs: handle upper and lowercase HTTP_PROXY and
+	the Any address.  Fixes bug #537283.
+
 2009-06-05 Marek Safar <marek.safar@gmail.com>
 
 	* NetConfigurationHandler.cs, DefaultProxyHandler.cs, 
