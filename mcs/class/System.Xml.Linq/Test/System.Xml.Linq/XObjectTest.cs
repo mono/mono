@@ -37,6 +37,12 @@ namespace MonoTests.System.Xml.Linq
 	public class XObjectTest
 	{
 		[Test]
+		public void Annotations ()
+		{
+			Assert.IsNull (new XDocument ().Annotation (typeof (object)));
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ReadFromInitial ()
 		{

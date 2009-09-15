@@ -96,7 +96,7 @@ namespace System.Xml.Linq
 				foreach (object o in annotations)
 					if (o.GetType () == type)
 						return o;
-			throw new ArgumentException ();
+			return null;
 		}
 
 		public IEnumerable<T> Annotations<T> () where T : class

@@ -1,3 +1,8 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XObject.cs : do not throw AE when target object is not found in
+	  Annotation(). Fixed bug #527887.
+
 2009-08-02  Jb Evain  <jbevain@novell.com>
 
 	* XElement.cs: fix the monotouch build.
