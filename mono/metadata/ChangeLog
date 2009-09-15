@@ -1,3 +1,11 @@
+2009-09-15  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_class_init): Always set an exception in a class if
+	vtable setup fails.  Fixes #538577.
+
+	* generic-sharing.c: Raise an exception if mono_class_vtable()
+	returns NULL.
+
 2009-09-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Don't share instance 
