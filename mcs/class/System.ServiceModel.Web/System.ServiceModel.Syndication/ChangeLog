@@ -1,3 +1,7 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SyndicationElementExtension.cs : make it ready for 2.1 build.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Rss20FeedFormatter.cs, CategoriesDocument.cs,

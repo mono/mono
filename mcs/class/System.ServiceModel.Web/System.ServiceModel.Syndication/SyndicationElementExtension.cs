@@ -200,21 +200,24 @@ namespace System.ServiceModel.Syndication
 
 		class XmlReaderReadWriteHandler : ReadWriteHandler
 		{
-			XmlDocument doc = new XmlDocument ();
+			string xml;
 
 			public XmlReaderReadWriteHandler (XmlReader reader)
 			{
-				doc.AppendChild (doc.ReadNode (reader));
+				reader.MoveToContent ();
+				xml = reader.ReadOuterXml ();
 			}
 
 			public override XmlReader GetReader ()
 			{
-				return new XmlNodeReader (doc.FirstChild);
+				var r = XmlReader.Create (new StringReader (xml));
+				r.MoveToContent ();
+				return r;
 			}
 
 			public override void WriteTo (XmlWriter writer)
 			{
-				doc.FirstChild.WriteTo (writer);
+				writer.WriteNode (GetReader (), false);
 			}
 		}
 	}
