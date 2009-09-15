@@ -1,3 +1,7 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehaviorTest.cs : enable working test.
+
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehaviorTest.cs : some message formatters tests.

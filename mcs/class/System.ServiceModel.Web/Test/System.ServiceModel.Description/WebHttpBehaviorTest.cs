@@ -62,7 +62,6 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ApplyDispatchBehavior ()
 		{
 			var se = CreateEndpoint ();
