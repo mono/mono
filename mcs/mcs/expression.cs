@@ -2804,7 +2804,8 @@ namespace Mono.CSharp {
 			// E operator + (E e, U x)
 			//
 			if (!((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0 ||
-				(oper == Operator.Subtraction && lenum) || (oper == Operator.Addition && lenum != renum)))
+				(oper == Operator.Subtraction && lenum) ||
+				(oper == Operator.Addition && (lenum != renum || type != null))))	// type != null for lifted null
 				return null;
 
 			Expression ltemp = left;
@@ -2812,7 +2813,7 @@ namespace Mono.CSharp {
 			Type underlying_type;
 			Expression expr;
 			
-			if ((oper & Operator.ComparisonMask | Operator.BitwiseMask) != 0) {
+			if ((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0) {
 				if (renum) {
 					expr = Convert.ImplicitConversion (ec, left, rtype, loc);
 					if (expr != null) {

@@ -1,3 +1,7 @@
+2009-09-15  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Fixes nullable promotion for enum type variables.
+
 2009-09-11  Marek Safar  <marek.safar@gmail.com>
 
 	* driver.cs, dynamic.cs: Reset more static variables.
