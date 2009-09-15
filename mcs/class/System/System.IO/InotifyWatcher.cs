@@ -547,6 +547,16 @@ namespace System.IO {
 						}
 					}
 
+					if (action == FileAction.Removed && filename == data.Directory) {
+						int idx = parent.children.IndexOf (data);
+						if (idx != -1) {
+							parent.children.RemoveAt (idx);
+							if (!fsw.Pattern.IsMatch (Path.GetFileName (filename))) {
+								continue;
+							}
+						}
+					}
+
 					if (filename != data.Directory && !fsw.Pattern.IsMatch (Path.GetFileName (filename))) {
 						continue;
 					}
