@@ -85,10 +85,27 @@ namespace System.Net.Configuration
 					//MS: presence of valid address URI takes precedence over usesystemdefault
 					if (sysdefault != null && String.Compare (sysdefault, "true", true) == 0) {
 						address = Environment.GetEnvironmentVariable ("http_proxy");
-						if (address != null)
+						if (address == null)
+							address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
+
+						if (address != null) {
 							try {
-								((WebProxy) result).Address = new Uri (address);
-							} catch (UriFormatException) {}
+								Uri uri = new Uri (address);
+								IPAddress ip;
+								if (IPAddress.TryParse (uri.Host, out ip)) {
+									if (IPAddress.Any.Equals (ip)) {
+										UriBuilder builder = new UriBuilder (uri);
+										builder.Host = "127.0.0.1";
+										uri = builder.Uri;
+									} else if (IPAddress.IPv6Any.Equals (ip)) {
+										UriBuilder builder = new UriBuilder (uri);
+										builder.Host = "[::1]";
+										uri = builder.Uri;
+									}
+								}
+								((WebProxy) result).Address = uri;
+							} catch (UriFormatException) { }
+						}
 					}
 					
 					continue;

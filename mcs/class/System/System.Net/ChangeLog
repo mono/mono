@@ -1,3 +1,8 @@
+2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebRequest.cs: handle upper and lowercase HTTP_PROXY and
+	the Any address.  Fixes bug #537283.
+
 2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: if the request has already finished reading, don't

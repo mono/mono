@@ -1,3 +1,8 @@
+2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DefaultProxyHandler.cs: handle upper and lowercase HTTP_PROXY and
+	the Any address.  Fixes bug #537283.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpNetworkElement.cs, SmtpSection.cs : added missing 2,0 stuff.

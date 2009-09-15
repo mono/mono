@@ -300,11 +300,28 @@ namespace System.Net
 		public static IWebProxy GetSystemWebProxy ()
 		{
 			string address = Environment.GetEnvironmentVariable ("http_proxy");
+			if (address == null)
+				address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
+
 			if (address != null) {
 				try {
-					WebProxy p = new WebProxy (address);
-					return p;
-				} catch (UriFormatException) {}
+					if (!address.StartsWith ("http://"))
+						address = "http://" + address;
+					Uri uri = new Uri (address);
+					IPAddress ip;
+					if (IPAddress.TryParse (uri.Host, out ip)) {
+						if (IPAddress.Any.Equals (ip)) {
+							UriBuilder builder = new UriBuilder (uri);
+							builder.Host = "127.0.0.1";
+							uri = builder.Uri;
+						} else if (IPAddress.IPv6Any.Equals (ip)) {
+							UriBuilder builder = new UriBuilder (uri);
+							builder.Host = "[::1]";
+							uri = builder.Uri;
+						}
+					}
+					return new WebProxy (uri);
+				} catch (UriFormatException) { }
 			}
 			return new WebProxy ();
 		}
