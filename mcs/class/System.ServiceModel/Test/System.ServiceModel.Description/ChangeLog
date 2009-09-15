@@ -1,3 +1,9 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugBehaviorTest.cs : it still seems there are some port-
+	  blocking tests that blocks here, so change the port and make sure
+	  it is available. 8080 is anyways likely to interfere with others.
+
 2009-07-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceEndpointTest.cs : new.
