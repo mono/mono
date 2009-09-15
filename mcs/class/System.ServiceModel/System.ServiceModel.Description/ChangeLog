@@ -1,3 +1,7 @@
+2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServiceHelper.cs : remove old code.
+
 2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : reflect ServiceHostBase change.

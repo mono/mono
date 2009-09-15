@@ -598,7 +598,6 @@ System.ServiceModel.Description/TransactedBatchingBehavior.cs
 System.ServiceModel.Description/TypedMessageConverter.cs
 System.ServiceModel.Description/WSTrustMessageConverters.cs
 System.ServiceModel.Description/WSTrustSTSContract.cs
-System.ServiceModel.Description/WebServiceHelper.cs
 System.ServiceModel.Description/WsdlContractConversionContext.cs
 System.ServiceModel.Description/WsdlEndpointConversionContext.cs
 System.ServiceModel.Description/WsdlExporter.cs
