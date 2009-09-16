@@ -101,11 +101,20 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var left = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 			var right = CSharpBinder.CreateCompilerExpression (argumentInfo [1], arg);
 			Compiler.Expression expr = new Compiler.Binary (GetOperator (), left, right);
-
+			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
+			
 			if (is_checked)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
-			return CSharpBinder.Bind (target, expr, errorSuggestion);
+			var restrictions = CreateRestrictionsOnTarget (target).Merge (CreateRestrictionsOnTarget (arg));
+			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
+		}
+
+		static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
+		{
+			return arg.HasValue && arg.Value == null ?
+				BindingRestrictions.GetInstanceRestriction (arg.Expression, null) :
+				BindingRestrictions.GetTypeRestriction (arg.Expression, arg.LimitType);
 		}
 	}
 }

@@ -43,7 +43,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		#region IMemberContext Members
 
 		public Type CurrentType {
-			get { throw new NotImplementedException (); }
+			// null for operators
+			get { return null; }
 		}
 
 		public Compiler.TypeParameter[] CurrentTypeParameters
@@ -52,16 +53,21 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 
 		public Compiler.TypeContainer CurrentTypeDefinition {
-			get { throw new NotImplementedException (); }
+			get {
+				// TODO: only for operators
+				return new Compiler.ModuleContainer (Compiler, true);
+			}
 		}
 
 		public bool IsObsolete {
 			get { throw new NotImplementedException (); }
 		}
 
-		public bool IsUnsafe
-		{
-			get { throw new NotImplementedException (); }
+		public bool IsUnsafe {
+			get {
+				// Always true to pass all unsafe checks
+				return true;
+			}
 		}
 
 		public bool IsStatic {

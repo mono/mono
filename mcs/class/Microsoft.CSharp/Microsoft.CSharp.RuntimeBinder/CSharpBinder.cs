@@ -41,20 +41,20 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object compiler_initializer = new object ();
 		static object resolver = new object ();
 
-		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, DynamicMetaObject errorSuggestion)
+		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
 		{
-			Compiler.CompilerContext ctx = new Compiler.CompilerContext (new Compiler.Report (ErrorPrinter.Instance));
+			var report = new Compiler.Report (ErrorPrinter.Instance) { WarningLevel = 0 };
+			var ctx = new Compiler.CompilerContext (report);
 			Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (ctx, true);
 
 			InitializeCompiler (ctx);
 
-			BindingRestrictions restrictions = BindingRestrictions.Empty;
 			Expression res;
 			try {
 				// TODO: ResolveOptions
 				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx));
 
-				// TODO: Static typemanager is not thread-safe
+				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
 					expr = expr.Resolve (rc);
 				}
@@ -62,7 +62,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (expr == null)
 					throw new RuntimeBinderInternalCompilerException ("Expression resolved to null");
 
-				res = expr.MakeExpression ();
+				res = expr.MakeExpression (new Compiler.BuilderContext ());
 			} catch (RuntimeBinderException e) {
 				if (errorSuggestion != null)
 					return errorSuggestion;
@@ -86,8 +86,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
+			if (info.IsNamed)
+				throw new NotImplementedException ("IsNamed");
+
+			if (value.Value == null)
+				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
+
 			if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0)
-				throw new NotImplementedException ();
+				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
 
 			return new Compiler.RuntimeValueExpression (value);
 		}
@@ -102,7 +108,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 					return;
 
 				// TODO: This smells like pretty big issue
-				AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
+				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
 
 				// Add all currently loaded assemblies
 				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ())

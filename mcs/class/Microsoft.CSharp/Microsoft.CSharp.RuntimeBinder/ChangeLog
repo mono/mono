@@ -1,3 +1,8 @@
+2009-09-16  Marek Safar <marek.safar@gmail.com>
+
+	* RuntimeBinderContext.cs, CSharpBinaryOperationBinder.cs,
+	CSharpBinder.cs: Fully implemented binary Add operator.
+
 2009-09-11  Marek Safar <marek.safar@gmail.com>
 
 	* RuntimeBinderContext.cs, CSharpBinaryOperationBinder.cs,
