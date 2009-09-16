@@ -2428,35 +2428,6 @@ class Tests {
 		return (i == 1) ? 0 : 1;
 	}		
 
-	// bug #485721
-	public static int test_0_try_inside_finally_cmov_opt () {
-		bool Reconect = false;
-
-		object o = new object ();
-
-		try {
-		}
-		catch (Exception ExCon) {
-			if (o != null)
-				Reconect = true;
-
-			try {
-			}
-			catch (Exception Last) {
-			}
-		}
-		finally {
-			if (Reconect == true) {
-				try {
-				}
-				catch (Exception ex) {
-				}
-			}
-		}
-
-		return 0;
-	}
-
 	public static int test_0_inline_throw () {
 		try {
 			inline_throw1 (5);
