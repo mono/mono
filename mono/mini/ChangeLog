@@ -1,5 +1,10 @@
 2009-09-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* jit-icalls.c (mono_class_static_field_address): handle vtable failure
+	properly.
+
+2009-09-14  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (add_generic_class): Add instances of
 	Array.GetGenericValueImpl as well.
 
