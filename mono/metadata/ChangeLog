@@ -1,3 +1,16 @@
+2009-09-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: New function mono_class_is_assignable_from_slow that is safe to be
+	used under mono_class_init context. This functions avoid any code path that
+	calls mono_class_init, which leads it to be slow as some things like the interface
+	bitmap are not available.
+
+	* class.c (verify_class_overrides): Use mono_class_is_assignable_from_slow instead
+	of it's own broken version. Fixes the verifier part of #538588.
+
+	* class-internals.h: Export mono_class_is_assignable_from_slow as part of the internal
+	API.
+
 2009-09-15  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c (mono_class_init): Always set an exception in a class if
