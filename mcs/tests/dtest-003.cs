@@ -21,11 +21,6 @@ class AssertDynamicObject : DynamicMetaObject
 		this.mock = mock;
 	}
 
-	DynamicMetaObject GetFakeMetaObject ()
-	{
-		return GetFakeMetaObject (1);
-	}
-
 	DynamicMetaObject GetFakeMetaObject (object value)
 	{
 		Type t = value == null ? typeof (object) : value.GetType ();
@@ -186,11 +181,6 @@ class Tester : DynamicObjectMock
 	{
 	}
 
-	static void Assert<T> (T expected, T value)
-	{
-		Assert (expected, value, null);
-	}
-
 	static void Assert<T> (T expected, T value, string name)
 	{
 		if (!EqualityComparer<T>.Default.Equals (expected, value)) {
@@ -216,6 +206,8 @@ class Tester : DynamicObjectMock
 				throw new ApplicationException (name + ": Index " + i + ": " + expected[i] + " != " + value[i]);
 		}
 	}
+
+#pragma warning disable 168, 169, 219
 
 	void BinaryAdd_1 (dynamic d, DynamicObjectMock mock)
 	{
@@ -301,6 +293,28 @@ class Tester : DynamicObjectMock
 		};
 
 		d = checked (d + 3);
+	}
+	
+	void BinaryAddChecked_2 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.BinaryOperation = (binder, arg) => {
+			Assert (binder.Operation, ExpressionType.Add, "Operation");
+			Assert (binder.IsChecked, true, "IsChecked");
+			Assert (binder.IsMemberAccess, false, "IsMemberAccess");
+			Assert (binder.ArgumentInfo, new[] {
+				new CSharpArgumentInfo (CSharpArgumentInfoFlags.None, null),
+				new CSharpArgumentInfo (CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.LiteralConstant, null) },
+				"ArgumentInfo");
+
+			Assert (arg, 3, "arg");
+		};
+
+		Func<dynamic> r;
+		checked {
+			r = () => d + 3;
+		}
+		
+		r ();
 	}
 
 	void BinaryAddAssign_1 (dynamic d, DynamicObjectMock mock)
@@ -1360,6 +1374,8 @@ class Tester : DynamicObjectMock
 
 		object x = d || null;
 	}
+	
+#pragma warning restore 168, 169, 219
 
 	static bool RunTest (MethodInfo test)
 	{

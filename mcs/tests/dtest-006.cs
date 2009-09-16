@@ -402,11 +402,11 @@ class Tester
 			int v = int.MaxValue;
 			AssertChecked (() => d + v, 7, "#1");
 
-	//		int? v2 = v;
-		//	AssertChecked (() => d + v2, null, "#2");
+			int? v2 = v;
+			AssertChecked (() => d + v2, null, "#2");
 
-//			MyType v3 = new MyType (int.MaxValue);
-	//		AssertChecked (() => d + v3, new MyType (35), "#3");
+			MyType v3 = new MyType (int.MaxValue);
+			AssertChecked (() => d + v3, new MyType (35), "#3");
 		}
 	}
 	
