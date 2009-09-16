@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -453,7 +454,10 @@ namespace MonoTests.Remoting {
 		{
 			int num_clients = 20;
 			
-			HttpClientChannel clientChannel = new HttpClientChannel ("MultiClientConnection", null);
+			Hashtable options = new Hashtable ();
+			options ["timeout"] = 10000; // 10s
+			options ["name"] = "MultiClientConnection"; // 10s
+			HttpClientChannel clientChannel = new HttpClientChannel (options, null);
 			ChannelServices.RegisterChannel (clientChannel);
 			try {
 			
