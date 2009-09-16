@@ -1,3 +1,8 @@
+2009-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Allow AOT for CEE_LDTOKEN in
+	static synchronized wrappers. Fixes #539500.
+
 2009-09-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* jit-icalls.c (mono_class_static_field_address): handle vtable failure
