@@ -532,6 +532,8 @@ namespace System.ServiceModel.Dispatcher
 					// FIXME: log it.
 					Console.WriteLine (ex);
 				} finally {
+					if (rc != null)
+						rc.Close ();
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
 					if (reply.State != CommunicationState.Closed)
 						ProcessRequestOrInput (reply);

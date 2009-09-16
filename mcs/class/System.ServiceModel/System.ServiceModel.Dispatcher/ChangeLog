@@ -1,3 +1,9 @@
+2009-09-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : make sure to close the request context,
+	  some channels such as http keeps opening it. Patch by Levi Bard.
+	  Fixed bug #533776.
+
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : do not try to wait for channel closer
