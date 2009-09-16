@@ -2427,5 +2427,87 @@ class Tests {
 
 		return (i == 1) ? 0 : 1;
 	}		
+
+	// bug #485721
+	public static int test_0_try_inside_finally_cmov_opt () {
+		bool Reconect = false;
+
+		object o = new object ();
+
+		try {
+		}
+		catch (Exception ExCon) {
+			if (o != null)
+				Reconect = true;
+
+			try {
+			}
+			catch (Exception Last) {
+			}
+		}
+		finally {
+			if (Reconect == true) {
+				try {
+				}
+				catch (Exception ex) {
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	public static int test_0_inline_throw () {
+		try {
+			inline_throw1 (5);
+			return 1;
+		} catch {
+			return 0;
+		}
+	}
+
+	// for llvm, the end bblock is unreachable
+	public static int inline_throw1 (int i) {
+		if (i == 0)
+			throw new Exception ();
+		else
+			return inline_throw2 (i);
+	}
+
+	public static int inline_throw2 (int i) {
+		throw new Exception ();
+	}
+
+	// bug #539550
+	public static int test_0_lmf_filter () {
+		try {
+			// The invoke calls a runtime-invoke wrapper which has a filter clause
+			typeof (Tests).GetMethod ("lmf_filter").Invoke (null, new object [] { });
+		} catch (TargetInvocationException) {
+		}
+		return 0;
+	}
+
+    public static void lmf_filter () {
+        try {
+            Connect ();
+        }
+        catch {
+            throw new NotImplementedException ();
+        }
+    }
+
+    public static void Connect () {
+        Stop ();
+        throw new Exception();
+    }
+
+    public static void Stop () {
+        try {
+            lock (null) {}
+        }
+        catch {
+        }
+    }
 }
 

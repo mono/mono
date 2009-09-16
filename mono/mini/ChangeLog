@@ -1,3 +1,10 @@
+2009-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Store the computed
+	lmf before calling filter clauses as well. Fixes #539550.
+
+	* exceptions.cs: Add a test.
+	
 2009-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (throw_exception): Fix the previous change by substracting
