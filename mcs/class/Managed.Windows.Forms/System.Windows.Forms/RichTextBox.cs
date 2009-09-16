@@ -411,9 +411,10 @@ namespace System.Windows.Forms {
 				int cursor_x = document.selection_start.pos;
 				int cursor_y = document.selection_start.line.line_no;
 
-				// If we have an empty just added line, tell our code to re-use it
+				// The RFT parser by default, when finds our x cursor in 0, it thinks if needs to
+				// add a new line; but in *this* scenario the line is already created, so force it to reuse it.
 				// Hackish, but works without touching the heart of the buggy parser.
-				if (cursor_x == 0 && document.GetLine (cursor_y).text.Length == 0)
+				if (cursor_x == 0)
 					reuse_line = true;
 
 				InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y, out chars);

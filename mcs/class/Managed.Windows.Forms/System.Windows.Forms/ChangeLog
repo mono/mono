@@ -1,3 +1,10 @@
+2009-09-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When SelectedRtf is set, and we are in the 0
+	position in the x axis, force to re-use any already available line,
+	even if it is not empty. This way pasting text into our textbox in the
+	beginning for non empty lines should work fine.
+
 2009-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When we are inserting a flow of rtf text, and we are
