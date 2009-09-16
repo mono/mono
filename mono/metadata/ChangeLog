@@ -1,3 +1,10 @@
+2009-08-19  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Replace the templates lock with the loader
+	lock because of very hard to resolve deadlock issues.
+
+	Backport of r139118.
+
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (free_inflated_method): Call 
