@@ -1,4 +1,4 @@
-2009-09-14  Zoltan Varga  <vargaz@gmail.com>
+2009-09-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* jit-icalls.c (mono_class_static_field_address): handle vtable failure
 	properly.
