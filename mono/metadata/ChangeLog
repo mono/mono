@@ -1,3 +1,8 @@
+2009-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_add_method): Increase the size of the buffer,
+	a leb128 encoding can take up to 5 bytes.
+
 2009-09-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c: New function mono_class_is_assignable_from_slow that is safe to be
