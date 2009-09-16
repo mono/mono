@@ -31,6 +31,9 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Runtime.Remoting.Messaging;
+#if !NET_2_0
+using MonoHttp;
+#endif
 
 namespace System.Runtime.Remoting.Channels.Http
 {
@@ -54,7 +57,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			ContextWithId ctx = (ContextWithId) state;
 			WriteOut (ctx.Context, headers, responseStream);
-			ctx.Context.Connection.Close ();
+			ctx.Context.Response.Close ();
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
@@ -81,7 +84,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		}
 
-		internal void HandleRequest (MonoHttp.HttpListenerContext context)
+		internal void HandleRequest (HttpListenerContext context)
 		{
 			//build the headers
 			ITransportHeaders requestHeaders = new TransportHeaders ();
@@ -119,14 +122,14 @@ namespace System.Runtime.Remoting.Channels.Http
 			switch (proc) {
 			case ServerProcessing.Complete:
 				WriteOut (context, responseHeaders, responseStream);
-				context.Connection.Close ();
+				context.Response.Close ();
 				break;
 
 			case ServerProcessing.Async:
 				break;
 
 			case ServerProcessing.OneWay:
-				context.Connection.Close ();
+				context.Response.Close ();
 				break;
 			}
 
@@ -146,7 +149,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				out responseMsg, out responseHeaders, out responseStream);
 		}
 
-		static void WriteOut (MonoHttp.HttpListenerContext context, ITransportHeaders responseHeaders, Stream responseStream)
+		static void WriteOut (HttpListenerContext context, ITransportHeaders responseHeaders, Stream responseStream)
 		{
 			//header processing taken/modified from HttpRemotingHandler
 			if (responseHeaders != null && responseHeaders["__HttpStatusCode"] != null) {
@@ -189,13 +192,13 @@ namespace System.Runtime.Remoting.Channels.Http
 			static object lockObj = new object ();
 			static int nextId = 0;
 
-			MonoHttp.HttpListenerContext context;
+			HttpListenerContext context;
 			int id;
 
-			public MonoHttp.HttpListenerContext Context { get { return context; } }
+			public HttpListenerContext Context { get { return context; } }
 			public int ID { get { return id; } } 
 			
-			public ContextWithId (MonoHttp.HttpListenerContext context)
+			public ContextWithId (HttpListenerContext context)
 			{
 				this.context = context;
 				lock (lockObj) {

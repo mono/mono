@@ -1,3 +1,11 @@
+2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpClientTransportSink.cs: ensure the response stream is disposed.
+	* HttpServerTransportSink.cs: use the public API of HttpConnection.
+	* RemotingHttpListener.cs: use the public API of HttpConnection
+	instead of hooking into an internal method, possibly cause exception
+	and leave the Connection in an unstable state.
+
 2009-02-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpClientTransportSink.cs: if we get an WebException that does not

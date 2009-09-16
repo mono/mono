@@ -57,11 +57,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			bool isOneWay = RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase);
 			
 			HttpWebRequest request = CreateRequest (headers);
-			
-			Stream targetStream = request.GetRequestStream ();
-			CopyStream (requestStream, targetStream, 1024);
-			targetStream.Close ();
-			
+	
+			using (Stream targetStream = request.GetRequestStream ()) {
+				CopyStream (requestStream, targetStream, 1024);
+			}
+
 			if (!isOneWay) {
 				sinkStack.Push (this, request);
 				request.BeginGetResponse (new AsyncCallback (AsyncProcessResponseCallback), sinkStack);
@@ -89,9 +89,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			//this is only valid after the response is fetched
 			SetConnectionLimit (request);
 
-			Stream responseStream = response.GetResponseStream ();
-			ITransportHeaders responseHeaders = GetHeaders (response);
-			sinkStack.AsyncProcessResponse (responseHeaders, responseStream);
+			using (response) {
+				Stream responseStream = response.GetResponseStream ();
+				ITransportHeaders responseHeaders = GetHeaders (response);
+				sinkStack.AsyncProcessResponse (responseHeaders, responseStream);
+			}
 		}
 
 		public void AsyncProcessResponse (IClientResponseChannelSinkStack sinkStack, object state,

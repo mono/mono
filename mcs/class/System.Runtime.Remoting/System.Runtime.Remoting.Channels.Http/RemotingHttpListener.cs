@@ -33,77 +33,93 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.IO;
+#if !NET_2_0
 using MonoHttp;
+#endif
 
 namespace System.Runtime.Remoting.Channels.Http
 {
-	class RemotingHttpListener : IHttpListenerContextBinder, IDisposable
+	sealed class RemotingHttpListener : IDisposable
 	{
-		IPEndPoint endpoint;
-		Socket sock;
 		HttpServerTransportSink sink;
+		HttpListener listener;
+		int local_port;
 
 		public RemotingHttpListener (IPAddress addr, int port, HttpServerTransportSink sink)
 		{
 			this.sink = sink;
+			bool find_port = false;
+			if (port == 0)
+				find_port = true;
 
-			endpoint = new IPEndPoint (addr, port);
-			sock = new Socket (addr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-			sock.Bind (endpoint);
-			sock.Listen (500);
-			sock.BeginAccept (OnAccept, this);
+			string address = null;
+			if (addr == IPAddress.Any)
+				address = "*";
+#if NET_2_0
+			else if (addr == IPAddress.IPv6Any)
+				address = "*";
+#endif
+			else
+				address = addr.ToString ();
+
+			listener = new HttpListener ();
+			while (true) {
+				Random rnd = null;
+				if (find_port) {
+					if (rnd == null)
+						rnd = new Random ();
+					port = rnd.Next (1025, 65000);
+				}
+				try {
+					listener.Prefixes.Add (String.Format ("http://{0}:{1}/", address, port));
+					listener.Start ();
+					local_port = port;
+					break;
+				} catch (Exception e) {
+					if (!find_port)
+						throw;
+					listener.Prefixes.Clear ();
+					// Port already in use
+				}
+			}
+			listener.BeginGetContext (new AsyncCallback (OnGetContext), null);
 		}
 
 		public int AssignedPort
 		{
-			get { return ((IPEndPoint)sock.LocalEndPoint).Port; }
+			get { return local_port; }
 		}
 
-		//from HttpListener
-		static void OnAccept (IAsyncResult ares)
+		void OnGetContext (IAsyncResult ares)
 		{
-			RemotingHttpListener epl = (RemotingHttpListener)ares.AsyncState;
-			Socket accepted = null;
+			if (listener == null)
+				return; // already disposed
+
+			HttpListenerContext context = null;
 			try {
-				accepted = epl.sock.EndAccept (ares);
+				context = listener.EndGetContext (ares);
+				listener.BeginGetContext (new AsyncCallback (OnGetContext), null);
 			} catch {
-				// Anything to do here?
-			} finally {
-				try {
-					epl.sock.BeginAccept (OnAccept, epl);
-				} catch {
-					if (accepted != null) {
-						try {
-							accepted.Close ();
-						} catch { }
-						accepted = null;
-					}
-				}
+				// Listener was closed
 			}
 
-			if (accepted == null)
-				return;
-
-			HttpConnection conn = new HttpConnection (accepted, epl);
-			conn.BeginReadRequest ();
-		}
-
-		//when the connection's processed headers and the stream, it calls this 
-		public bool BindContext (MonoHttp.HttpListenerContext context)
-		{
-			sink.HandleRequest (context);
-			return true;
-		}
-
-		//when connection's closed, it calls this
-		public void UnbindContext (MonoHttp.HttpListenerContext context)
-		{
-			//do nothing, we should have called Close anyway
+			if (context != null) {
+				try {
+					sink.HandleRequest (context);
+				} catch {
+					try {
+						context.Response.Close ();
+					} catch {}
+				}
+			}
 		}
 
 		public void Dispose ()
 		{
-			sock.Close ();
+			if (listener != null) {
+				listener.Close ();
+				listener = null;
+			}
 		}
 	}
 }
