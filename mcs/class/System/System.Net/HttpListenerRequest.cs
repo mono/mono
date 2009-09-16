@@ -212,6 +212,7 @@ namespace System.Net {
 			int colon = header.IndexOf (':');
 			if (colon == -1 || colon == 0) {
 				context.ErrorMessage = "Bad Request";
+				context.ErrorStatus = 400;
 				return;
 			}
 

@@ -1,5 +1,11 @@
 2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpListenerRequest.cs: add the right status code.
+	* HttpConnection.cs: exception might come from more places when
+	reading the input. Catch all of them.
+
+2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebRequest.cs: handle upper and lowercase HTTP_PROXY and the Any
 	address. Fixes bug #537283.
 
