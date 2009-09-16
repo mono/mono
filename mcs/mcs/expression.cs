@@ -73,6 +73,13 @@ namespace Mono.CSharp {
 			mg.EmitCall (ec, arguments);
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Call ((MethodInfo) mg, Arguments.MakeExpression (arguments, ctx));
+		}
+#endif
+
 		public MethodGroupExpr Method {
 			get { return mg; }
 		}
@@ -454,7 +461,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (Expr.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (Expr));
-				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
 			}
 
 			if (TypeManager.IsNullableType (Expr.Type))
@@ -1026,7 +1033,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (expr.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
-				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
 			}
 
 			eclass = ExprClass.Value;
@@ -2702,11 +2709,15 @@ namespace Mono.CSharp {
 		}
 
 #if NET_4_0
-		public override SLE.Expression MakeExpression ()
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
+			var le = left.MakeExpression (ctx);
+			var re = right.MakeExpression (ctx);
+			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
+
 			switch (oper) {
 			case Operator.Addition:
-				return SLE.Expression.Add (left.MakeExpression (), right.MakeExpression ());
+				return is_checked ? SLE.Expression.AddChecked (le, re) : SLE.Expression.Add (le, re);
 			default:
 				throw new NotImplementedException (oper.ToString ());
 			}
@@ -3801,6 +3812,17 @@ namespace Mono.CSharp {
 			if (concat != null)
 				concat.Emit (ec);
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			if (arguments.Count != 2)
+				throw new NotImplementedException ("arguments.Count != 2");
+
+			var concat = TypeManager.string_type.GetMethod ("Concat", new[] { typeof (object), typeof (object) });
+			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
+		}
+#endif
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -7668,6 +7690,15 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
+				return Expr.MakeExpression (ctx);
+			}
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			Expr.MutateHoistedGenericType (storey);
@@ -8898,6 +8929,13 @@ namespace Mono.CSharp {
 		{
 			return TypeManager.CSharpSignature (method);
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Convert (source.MakeExpression (ctx), type, method);
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

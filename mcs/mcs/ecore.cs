@@ -976,7 +976,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (e.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (e));
-				return new DynamicUnaryConversion ("IsTrue", args, loc);
+				return new DynamicUnaryConversion ("IsTrue", args, loc).Resolve (ec);
 			}
 
 			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, Location.Null);
@@ -1322,7 +1322,7 @@ namespace Mono.CSharp {
 		// compiler expression to invokable runtime expression. Used by
 		// dynamic C# binder.
 		//
-		public virtual SLE.Expression MakeExpression ()
+		public virtual SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			throw new NotImplementedException ("MakeExpression for " + GetType ());
 		}
@@ -1423,6 +1423,15 @@ namespace Mono.CSharp {
 		{
 			return child.GetAttributableValue (ec, value_type, out value);
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return ctx.HasSet (BuilderContext.Options.CheckedScope) ?
+				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type) :
+				SLE.Expression.Convert (child.MakeExpression (ctx), type);
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

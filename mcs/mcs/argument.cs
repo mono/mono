@@ -377,6 +377,26 @@ namespace Mono.CSharp
 			args.Insert (index, arg);
 		}
 
+#if NET_4_0
+		public static System.Linq.Expressions.Expression[] MakeExpression (Arguments args, BuilderContext ctx)
+		{
+			if (args == null || args.Count == 0)
+				return null;
+
+			// TODO: implement
+			if (args.reordered != null)
+				throw new NotImplementedException ();
+
+			var exprs = new System.Linq.Expressions.Expression [args.Count];
+			for (int i = 0; i < exprs.Length; ++i) {
+				Argument a = (Argument) args.args [i];
+				exprs[i] = a.Expr.MakeExpression (ctx);
+			}
+
+			return exprs;
+		}
+#endif
+
 		public void MarkReorderedArgument (NamedArgument a)
 		{
 			//

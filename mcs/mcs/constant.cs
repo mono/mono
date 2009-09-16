@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (t)) {
 				Type real_type = TypeManager.GetEnumUnderlyingType (t);
 				return new EnumConstant (CreateConstant (real_type, v, loc), t);
-			} 
+			}
 			if (v == null && !TypeManager.IsValueType (t))
 				return new EmptyConstantCast (new NullLiteral (loc), t);
 
@@ -260,6 +260,13 @@ namespace Mono.CSharp {
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}
+
+#if NET_4_0
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		{
+			return System.Linq.Expressions.Expression.Constant (GetValue ());
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

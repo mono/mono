@@ -247,84 +247,26 @@ namespace Mono.CSharp {
 			}
 	}
 
-
 	/// <summary>
 	///   An Emit Context is created for each body of code (from methods,
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
-	public class EmitContext {
-
-		[Flags]
-		public enum Options
-		{
-			/// <summary>
-			///   This flag tracks the `checked' state of the compilation,
-			///   it controls whether we should generate code that does overflow
-			///   checking, or if we generate code that ignores overflows.
-			///
-			///   The default setting comes from the command line option to generate
-			///   checked or unchecked code plus any source code changes using the
-			///   checked/unchecked statements or expressions.   Contrast this with
-			///   the ConstantCheckState flag.
-			/// </summary>
-			CheckedScope = 1 << 0,
-
-			/// <summary>
-			///   The constant check state is always set to `true' and cant be changed
-			///   from the command line.  The source code can change this setting with
-			///   the `checked' and `unchecked' statements and expressions. 
-			/// </summary>
-			ConstantCheckState = 1 << 1,
-
-			AllCheckStateFlags = CheckedScope | ConstantCheckState,
-
-			OmitDebugInfo = 1 << 2,
-
-			ConstructorScope = 1 << 3
-		}
-
-		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
-		// it's public so that we can use a struct at the callsite
-		public struct FlagsHandle : IDisposable
-		{
-			EmitContext ec;
-			readonly Options invmask, oldval;
-
-			public FlagsHandle (EmitContext ec, Options flagsToSet)
-				: this (ec, flagsToSet, flagsToSet)
-			{
-			}
-
-			internal FlagsHandle (EmitContext ec, Options mask, Options val)
-			{
-				this.ec = ec;
-				invmask = ~mask;
-				oldval = ec.flags & mask;
-				ec.flags = (ec.flags & invmask) | (val & mask);
-			}
-
-			public void Dispose ()
-			{
-				ec.flags = (ec.flags & invmask) | oldval;
-			}
-		}
-
-		Options flags;
-
+	public class EmitContext : BuilderContext
+	{
 		public ILGenerator ig;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		protected Type return_type;
+		Type return_type;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
 		///   to store structures (used to compute the address of the structure
 		///   value on structure method invocations)
 		/// </summary>
-		public Hashtable temporary_storage;
+		Hashtable temporary_storage;
 
 		/// <summary>
 		///   The location where we store the return value.
@@ -369,17 +311,6 @@ namespace Mono.CSharp {
 			get { return MemberContext.CurrentTypeDefinition; }
 		}
 
-		public bool HasSet (Options options)
-		{
-			return (this.flags & options) == options;
-		}
-
-		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
-		public FlagsHandle With (Options options, bool enable)
-		{
-			return new FlagsHandle (this, options, enable ? options : 0);
-		}
-		
 		public bool IsStatic {
 			get { return MemberContext.IsStatic; }
 		}

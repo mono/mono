@@ -1,3 +1,9 @@
+2009-09-16  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, dynamic.cs, convert.cs, context.cs, anonymous.cs,
+	constant.cs, nullable.cs, expression.cs, literal.cs, ecore.cs,
+	codegen.cs: Dynamic binary operations scaffolding.
+
 2009-09-15  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Fixes nullable promotion for enum type variables.

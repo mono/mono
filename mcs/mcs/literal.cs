@@ -30,7 +30,7 @@ namespace Mono.CSharp {
 	//
 	// Note: C# specification null-literal is NullLiteral of NullType type
 	//
-	class NullLiteral : Constant
+	public class NullLiteral : Constant
 	{
 		//
 		// Default type of null is an object

@@ -65,7 +65,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public override System.Linq.Expressions.Expression MakeExpression ()
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			if (obj.Expression.Type != type)
 				return System.Linq.Expressions.Expression.Convert (obj.Expression, type);
@@ -99,6 +99,7 @@ namespace Mono.CSharp
 
 		readonly Arguments arguments;
 		protected IDynamicBinder binder;
+		Expression binder_expr;
 
 		public DynamicExpressionStatement (IDynamicBinder binder, Arguments args, Location loc)
 		{
@@ -146,6 +147,9 @@ namespace Mono.CSharp
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			if (TypeManager.call_site_type == null)
 				TypeManager.call_site_type = TypeManager.CoreLookupType (ec.Compiler,
 					"System.Runtime.CompilerServices", "CallSite", Kind.Class, true);
@@ -159,6 +163,7 @@ namespace Mono.CSharp
 			if (type == null)
 				type = InternalType.Dynamic;
 
+			binder_expr = binder.CreateCallSiteBinder (ec, arguments);
 			return this;
 		}
 
@@ -180,13 +185,11 @@ namespace Mono.CSharp
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);
-			if (ec.HasSet (EmitContext.Options.CheckedScope))
-				bc.Set (ResolveContext.Options.CheckedScope);
-
 			Arguments args = new Arguments (1);
-			args.Add (new Argument (binder.CreateCallSiteBinder (bc, arguments)));
+			args.Add (new Argument (binder_expr));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
+			
+			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);		
 			if (s.Resolve (bc)) {
 				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 				init.Emit (ec);

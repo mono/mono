@@ -577,4 +577,78 @@ namespace Mono.CSharp
 		//    get { throw new NotImplementedException (); }
 		//}
 	}
+
+	//
+	// Generic code emitter context
+	//
+	public class BuilderContext
+	{
+		[Flags]
+		public enum Options
+		{
+			/// <summary>
+			///   This flag tracks the `checked' state of the compilation,
+			///   it controls whether we should generate code that does overflow
+			///   checking, or if we generate code that ignores overflows.
+			///
+			///   The default setting comes from the command line option to generate
+			///   checked or unchecked code plus any source code changes using the
+			///   checked/unchecked statements or expressions.   Contrast this with
+			///   the ConstantCheckState flag.
+			/// </summary>
+			CheckedScope = 1 << 0,
+
+			/// <summary>
+			///   The constant check state is always set to `true' and cant be changed
+			///   from the command line.  The source code can change this setting with
+			///   the `checked' and `unchecked' statements and expressions. 
+			/// </summary>
+			ConstantCheckState = 1 << 1,
+
+			AllCheckStateFlags = CheckedScope | ConstantCheckState,
+
+			OmitDebugInfo = 1 << 2,
+
+			ConstructorScope = 1 << 3
+		}
+
+		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
+		// it's public so that we can use a struct at the callsite
+		public struct FlagsHandle : IDisposable
+		{
+			BuilderContext ec;
+			readonly Options invmask, oldval;
+
+			public FlagsHandle (BuilderContext ec, Options flagsToSet)
+				: this (ec, flagsToSet, flagsToSet)
+			{
+			}
+
+			internal FlagsHandle (BuilderContext ec, Options mask, Options val)
+			{
+				this.ec = ec;
+				invmask = ~mask;
+				oldval = ec.flags & mask;
+				ec.flags = (ec.flags & invmask) | (val & mask);
+			}
+
+			public void Dispose ()
+			{
+				ec.flags = (ec.flags & invmask) | oldval;
+			}
+		}
+
+		Options flags;
+
+		public bool HasSet (Options options)
+		{
+			return (this.flags & options) == options;
+		}
+
+		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
+		public FlagsHandle With (Options options, bool enable)
+		{
+			return new FlagsHandle (this, options, enable ? options : 0);
+		}
+	}
 }

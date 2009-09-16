@@ -1132,6 +1132,9 @@ namespace Mono.CSharp {
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
 				method = (MethodInfo) o;
 			} else {
+				if (TypeManager.IsDynamicType (source_type))
+					return null;
+
 				method = GetConversionOperator (RootContext.ToplevelTypes.Compiler, null, source, target, look_for_explicit);
 				if (!(source is Constant))
 					hash.Insert (source_type, target, method);

@@ -207,6 +207,13 @@ namespace Mono.CSharp.Nullable
 				LocalVariable.Emit (ec);
 		}
 
+#if NET_4_0
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		{
+			return expr.MakeExpression (ctx);
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);

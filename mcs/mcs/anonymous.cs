@@ -1320,6 +1320,9 @@ namespace Mono.CSharp {
 			if (ec.IsUnsafe)
 				flags |= ResolveContext.Options.UnsafeScope;
 
+			if (ec.HasSet (ResolveContext.Options.CheckedScope))
+				flags |= ResolveContext.Options.CheckedScope;
+
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
 				aec_dispose = aec.Set (flags);
