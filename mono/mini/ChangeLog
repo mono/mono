@@ -3,6 +3,13 @@
 	* jit-icalls.c (mono_class_static_field_address): handle vtable failure
 	properly.
 
+2009-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Store the computed
+	lmf before calling filter clauses as well. Fixes #539550.
+
+	* exceptions.cs: Add a test.
+	
 2009-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_class): Add instances of
