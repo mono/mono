@@ -107,13 +107,13 @@ net_2_0_dirs := \
 	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
+	System.IdentityModel		\
+	System.IdentityModel.Selectors	\
+	System.ServiceModel		\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
-	System.IdentityModel		\
-	System.IdentityModel.Selectors	\
-	System.ServiceModel		\
 	System.ServiceModel.Web		\
 	System.Web.Mvc			\
 	Mono.C5				\

@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: move core WCF assemblies before Sys.Web.Extensions,
+	  which will depend on them.
+
 2009-09-11  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add System.Core to net_4_0_boostrap.
