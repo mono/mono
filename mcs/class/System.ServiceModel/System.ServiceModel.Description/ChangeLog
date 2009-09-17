@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : when its url is requested without
+	  any parameters, it simply returns the WSDL, not the help page.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebServiceHelper.cs : remove old code.

@@ -169,8 +169,12 @@ namespace System.ServiceModel.Description
 			HttpRequestMessageProperty prop = (HttpRequestMessageProperty) req.Properties [HttpRequestMessageProperty.Name];
 
 			NameValueCollection query_string = CreateQueryString (prop.QueryString);
-			if (query_string == null || query_string.AllKeys.Length != 1)
-				return CreateHelpPage (req);
+			if (query_string == null || query_string.AllKeys.Length != 1) {
+				//return CreateHelpPage (req);
+				WSServiceDescription w = GetWsdl ("wsdl");
+				if (w != null)
+					return CreateWsdlMessage (w);
+			}
 
 			if (query_string [null] == "wsdl") {
 				WSServiceDescription wsdl = GetWsdl ("wsdl");
