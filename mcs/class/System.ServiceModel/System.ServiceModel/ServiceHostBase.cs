@@ -502,6 +502,7 @@ namespace System.ServiceModel
 
 		protected override void OnOpened ()
 		{
+			base.OnOpened ();
 		}
 
 		[MonoTODO]

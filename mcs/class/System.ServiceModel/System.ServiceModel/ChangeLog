@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : OnOpened() should not hide events that are
+	  invoked at the base class.
+
 2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : partly revert dispatcher builder refactoring
