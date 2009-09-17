@@ -1,3 +1,7 @@
+2009-09-17  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, ecore.cs: Cannot infer variables from method group.
+
 2009-09-16  Marek Safar  <marek.safar@gmail.com>
 
 	* argument.cs, dynamic.cs, convert.cs, context.cs, anonymous.cs,

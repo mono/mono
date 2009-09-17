@@ -6015,7 +6015,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
 			type = right_side.Type;
-			if (type == TypeManager.null_type || type == TypeManager.void_type || type == InternalType.AnonymousMethod) {
+			if (type == TypeManager.null_type || type == TypeManager.void_type || type == InternalType.AnonymousMethod || type == InternalType.MethodGroup) {
 				ec.Report.Error (815, loc, "An implicitly typed local variable declaration cannot be initialized with `{0}'",
 				              right_side.GetSignatureForError ());
 				return false;

@@ -6453,6 +6453,7 @@ namespace Mono.CSharp {
 
 			if (array_element_type == null || array_element_type == TypeManager.null_type ||
 				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
+				array_element_type == InternalType.MethodGroup ||
 				arguments.Count != dimensions) {
 				Error_NoBestType (ec);
 				return null;
