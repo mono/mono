@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptServiceHostFactory.cs : do tasks in previous change only
+	  if it is done under ASP.NET environment.
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebScriptServiceHostFactory.cs : endpoints are automatically added

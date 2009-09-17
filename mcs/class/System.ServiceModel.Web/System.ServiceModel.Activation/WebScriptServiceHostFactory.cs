@@ -62,9 +62,11 @@ namespace System.ServiceModel.Activation
 				if (Description.Endpoints.Count > 1)
 					throw new InvalidOperationException ("This service host factory does not allow custom endpoint configuration");
 
-				foreach (Type iface in Description.ServiceType.GetInterfaces ())
-					if (iface.GetCustomAttributes (typeof (ServiceContractAttribute), true).Length > 0)
-						AddServiceEndpoint (iface, new WebHttpBinding (), new Uri (String.Empty, UriKind.Relative));
+				if (ServiceHostingEnvironment.AspNetCompatibilityEnabled) {
+					foreach (Type iface in Description.ServiceType.GetInterfaces ())
+						if (iface.GetCustomAttributes (typeof (ServiceContractAttribute), true).Length > 0)
+							AddServiceEndpoint (iface, new WebHttpBinding (), new Uri (String.Empty, UriKind.Relative));
+				}
 			}
 
 			protected override void OnOpening ()
