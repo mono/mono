@@ -1,3 +1,7 @@
+2009-09-17  Andrew Jorgensen  <ajorgensen@novell.com>
+
+	* Makefile.am: Add Info.plist to EXTRA_DIST
+
 2009-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Allow AOT for CEE_LDTOKEN in
