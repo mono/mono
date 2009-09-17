@@ -2923,17 +2923,29 @@ namespace Mono.CSharp {
 				return expr;
 
 			//
-			// TODO: Need to corectly implemented Coumpound Assigment for all operators
 			// Section: 7.16.2
 			//
-			if (Convert.ImplicitConversionExists (ec, left, rtype))
+
+			//
+			// If the return type of the selected operator is implicitly convertible to the type of x
+			//
+			if (Convert.ImplicitConversionExists (ec, expr, ltype))
 				return expr;
 
-			if (!Convert.ImplicitConversionExists (ec, ltemp, rtype))
+			//
+			// Otherwise, if the selected operator is a predefined operator, if the return type of the
+			// selected operator is explicitly convertible to the type of x, and if y is implicitly
+			// convertible to the type of x or the operator is a shift operator, then the operation
+			// is evaluated as x = (T)(x op y), where T is the type of x
+			//
+			expr = Convert.ExplicitConversion (ec, expr, ltype, loc);
+			if (expr == null)
 				return null;
 
-			expr = Convert.ExplicitConversion (ec, expr, rtype, loc);
-			return expr;
+			if (Convert.ImplicitConversionExists (ec, ltemp, ltype))
+				return expr;
+
+			return null;
 		}
 
 		//
