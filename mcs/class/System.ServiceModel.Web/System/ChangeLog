@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTable.cs : do not raise an error when MatchSingle() did
+	  not result in any match. Match methods should reject empty table.
+
 2008-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplate.cs, UriTemplateMatch.cs : add support for wildcard.

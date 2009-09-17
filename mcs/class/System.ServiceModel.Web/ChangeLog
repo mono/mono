@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web_test.dll.sources :
+	  added UriTemplateTableTest.cs.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.Web_test.dll.sources :

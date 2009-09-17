@@ -93,6 +93,8 @@ namespace System
 
 		public Collection<UriTemplateMatch> Match (Uri uri)
 		{
+			if (key_value_pairs.Count == 0)
+				throw new InvalidOperationException ("At least one UriTemplate must exist in the UriTemplateTable.");
 			var c = new Collection<UriTemplateMatch> ();
 			UriTemplateMatch ret = null;
 			foreach (Pair p in key_value_pairs) {
@@ -105,13 +107,15 @@ namespace System
 
 		public UriTemplateMatch MatchSingle (Uri uri)
 		{
+			if (key_value_pairs.Count == 0)
+				throw new InvalidOperationException ("At least one UriTemplate must exist in the UriTemplateTable.");
 			UriTemplateMatch ret = null;
 			foreach (Pair p in key_value_pairs) {
 				ret = p.Key.Match (base_address, uri);
 				if (ret != null)
 					return ret;
 			}
-			throw new UriTemplateMatchException (String.Format ("No template matched for Uri '{0}'", uri));
+			return null;
 		}
 	}
 }
