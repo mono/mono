@@ -202,6 +202,8 @@ namespace System.IO {
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
 
+			if (!Directory.Exists (FullPath))
+				throw new IOException ("Invalid directory");
 			string [] dirs = Directory.GetDirectories (FullPath, searchPattern);
 			string [] files = Directory.GetFiles (FullPath, searchPattern);
 
