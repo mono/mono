@@ -1,5 +1,13 @@
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs, EndpointDispatcher.cs :
+	  when an EndpointDispatcher is added to ChannelDispatcher, its
+	  ChannelDispatcher property is automatically filled. To do this,
+	  create a derived collection type for Endpoints (that's what .NET
+	  does). Remove extra InitializeEndpoint() argument.
+
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* OperationInvokerHandler.cs : make error message a bit verbose.
 
 2009-09-16  Atsushi Enomoto  <atsushi@ximian.com>

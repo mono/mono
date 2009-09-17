@@ -1,3 +1,8 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : add a test to make sure that
+	  EndpointDispatcher.ChannelDispatcher property is filled by Add().
+
 2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : refine AcceptChannel invocation check

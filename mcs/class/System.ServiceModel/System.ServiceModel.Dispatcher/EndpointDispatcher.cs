@@ -114,10 +114,9 @@ namespace System.ServiceModel.Dispatcher
 			set { filter_priority = value; }
 		}
 
-		internal void InitializeServiceEndpoint (bool isCallback, ChannelDispatcher channelDispatcher, Type serviceType, ServiceEndpoint se)
+		internal void InitializeServiceEndpoint (bool isCallback, Type serviceType, ServiceEndpoint se)
 		{
 			this.ContractFilter = GetContractFilter (se.Contract);
-			this.ChannelDispatcher = channelDispatcher;
 
 			this.DispatchRuntime.Type = serviceType;
 			

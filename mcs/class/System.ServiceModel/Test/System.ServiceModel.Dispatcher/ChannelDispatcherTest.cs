@@ -48,8 +48,10 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			h.ChannelDispatchers.Add (cd);
 			Assert.IsNull (st, "#1");
 			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+			Assert.IsNull (ed.ChannelDispatcher, "#1-2");
 			ed.DispatchRuntime.Type = typeof (TestContract);
 			cd.Endpoints.Add (ed);
+			Assert.AreEqual (cd, ed.ChannelDispatcher, "#1-3");
 			cd.MessageVersion = MessageVersion.Default;
 
 			{

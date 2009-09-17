@@ -39,6 +39,42 @@ namespace System.ServiceModel.Dispatcher
 {
 	public class ChannelDispatcher : ChannelDispatcherBase
 	{
+		class EndpointDispatcherCollection : SynchronizedCollection<EndpointDispatcher>
+		{
+			public EndpointDispatcherCollection (ChannelDispatcher owner)
+			{
+				this.owner = owner;
+			}
+
+			ChannelDispatcher owner;
+
+			protected override void ClearItems ()
+			{
+				foreach (var ed in this)
+					ed.ChannelDispatcher = null;
+				base.ClearItems ();
+			}
+
+			protected override void InsertItem (int index, EndpointDispatcher item)
+			{
+				item.ChannelDispatcher = owner;
+				base.InsertItem (index, item);
+			}
+
+			protected virtual void RemoveItem (int index)
+			{
+				if (index < Count)
+					this [index].ChannelDispatcher = null;
+				base.RemoveItem (index);
+			}
+
+			protected virtual void SetItem (int index, EndpointDispatcher item)
+			{
+				item.ChannelDispatcher = owner;
+				base.SetItem (index, item);
+			}
+		}
+
 		ServiceHostBase host;
 
 		string binding_name;		
@@ -91,7 +127,7 @@ namespace System.ServiceModel.Dispatcher
 			// IChannelListener is often a ChannelListenerBase
 			// which implements IDefaultCommunicationTimeouts.
 			this.timeouts = timeouts ?? listener as IDefaultCommunicationTimeouts ?? DefaultCommunicationTimeouts.Instance;
-			endpoints = new SynchronizedCollection<EndpointDispatcher> ();
+			endpoints = new EndpointDispatcherCollection (this);
 		}
 
 		internal void InitializeServiceEndpoint (Type serviceType, ServiceEndpoint se)
@@ -102,8 +138,8 @@ namespace System.ServiceModel.Dispatcher
 
 			//Attach one EndpointDispacher to the ChannelDispatcher
 			EndpointDispatcher ed = new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
-			ed.InitializeServiceEndpoint (false, this, serviceType, se);
 			this.Endpoints.Add (ed);
+			ed.InitializeServiceEndpoint (false, serviceType, se);
 		}
 
 		public string BindingName {

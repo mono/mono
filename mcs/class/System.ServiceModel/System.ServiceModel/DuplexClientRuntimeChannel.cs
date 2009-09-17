@@ -46,7 +46,7 @@ namespace System.ServiceModel
 			var cd = ContractDescription.GetContract (endpoint.Contract.CallbackContractType);
 			var se = new ServiceEndpoint (cd, factory.Endpoint.Binding, remoteAddress);
 			var ed = new EndpointDispatcher (remoteAddress, cd.Name, cd.Namespace);
-			ed.InitializeServiceEndpoint (true, null, null, se);
+			ed.InitializeServiceEndpoint (true, null, se);
 			Runtime.CallbackDispatchRuntime = ed.DispatchRuntime;
 		}
 
