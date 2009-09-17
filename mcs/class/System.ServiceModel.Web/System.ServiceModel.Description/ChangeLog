@@ -1,3 +1,10 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptEnablingBehavior.cs : basic implementation. Create custom
+	  ChannelDispatchers for "/js" and "/jsdebug" like we do for
+	  /wsdl (ServiceMetadataExtension). And they return Javascript
+	  generated from ProxyGenerator in Sys.Web.Extensions.
+
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehavior.cs : now message formatters are pairs of request/

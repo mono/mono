@@ -1,5 +1,9 @@
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : add -r:System.Web.Extensions.dll.
+
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.ServiceModel.Web_test.dll.sources :
 	  added UriTemplateTableTest.cs.
 

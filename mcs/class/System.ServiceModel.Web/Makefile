@@ -7,7 +7,8 @@ LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
-			/r:System.Configuration.dll
+			-r:System.Configuration.dll \
+			-r:System.Web.Extensions.dll
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

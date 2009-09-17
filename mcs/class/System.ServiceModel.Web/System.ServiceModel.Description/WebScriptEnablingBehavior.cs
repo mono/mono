@@ -30,9 +30,32 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
+using System.Web.Script.Services;
 
 namespace System.ServiceModel.Description
 {
+	[ServiceContract (Namespace = "")]
+	internal class InteropScriptService
+	{
+		Type type;
+		string path;
+		bool debug;
+
+		public InteropScriptService (Type type, string path, bool debug)
+		{
+			this.type = type;
+			this.path = path;
+			this.debug = debug;
+		}
+
+		[WebGet (UriTemplate = "*")]
+		[OperationContract]
+		public string Get ()
+		{
+			return ProxyGenerator.GetClientProxyScript (type, path, debug);
+		}
+	}
+
 	public sealed class WebScriptEnablingBehavior : WebHttpBehavior
 	{
 		public WebScriptEnablingBehavior ()
@@ -51,26 +74,97 @@ namespace System.ServiceModel.Description
 		[MonoTODO]
 		protected override void AddClientErrorInspector (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
+			base.AddClientErrorInspector (endpoint, clientRuntime);
 		}
 
 		[MonoTODO]
 		protected override void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
+			base.AddServerErrorHandlers (endpoint, endpointDispatcher);
 		}
 
 		[MonoTODO]
 		public override void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
+			base.ApplyClientBehavior (endpoint, clientRuntime);
 		}
 
 		public override void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
+			base.ApplyDispatchBehavior (endpoint, endpointDispatcher);
+
+			// doing similar to ServiceMetadataExtension
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "/js", false);
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "/jsdebug", true);
+		}
+
+		void BuildScriptDispatcher (ServiceEndpoint endpoint, EndpointDispatcher ed, string subPath, bool debug)
+		{
+			var instance = new InteropScriptService (endpoint.Contract.ContractType, endpoint.Address.Uri.ToString (), debug);
+
+			var cdOrg = ed.ChannelDispatcher;
+			var uri = new Uri (cdOrg.Listener.Uri, subPath);
+			var cd = new ChannelDispatcher (endpoint.Binding.BuildChannelListener<IReplyChannel> (uri), String.Empty);
+			cd.MessageVersion = MessageVersion.None;
+
+			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty));
+
+			var dr = cd.Endpoints [0].DispatchRuntime;
+			var dop = new DispatchOperation (dr, "Get", "*", "*");
+			dop.DeserializeRequest = false;
+			dop.SerializeReply = false;
+			dop.Invoker = new DummyInvoker (instance);
+			dr.UnhandledDispatchOperation = dop;
+			dr.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (cdOrg.Host, instance));
+
+			var host = ed.ChannelDispatcher.Host;
+			host.ChannelDispatchers.Add (cd);
+		}
+
+		class DummyInvoker : IOperationInvoker
+		{
+			InteropScriptService instance;
+
+			public DummyInvoker (InteropScriptService instance)
+			{
+				this.instance = instance;
+			}
+
+			public object [] AllocateInputs ()
+			{
+				return new object [0];
+			}
+
+			public object Invoke (object instance, object [] inputs, out object [] outputs)
+			{
+				outputs = new object [0];
+				var msg = Message.CreateMessage (MessageVersion.None, "*", (object) null);
+				var hp = new HttpResponseMessageProperty ();
+				hp.Headers ["Content-Type"] = "text/javascript";
+				msg.Properties.Add (HttpResponseMessageProperty.Name, hp);
+				msg.Properties.Add (WebMessageEncoder.ScriptPropertyName, this.instance.Get ());
+				return msg;
+			}
+
+			public IAsyncResult InvokeBegin (object instance, object[] inputs, AsyncCallback callback, object state)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public object InvokeEnd (object instance, out object [] outputs, IAsyncResult result)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public bool IsSynchronous {
+				get { return true; }
+			}
 		}
 
 		[MonoTODO]
 		protected override QueryStringConverter GetQueryStringConverter (OperationDescription operationDescription)
 		{
-			throw new NotImplementedException ();
+			return base.GetQueryStringConverter (operationDescription);
 		}
 
 		[MonoTODO ("add non-XmlSerializer-ness check (but where?)")]
