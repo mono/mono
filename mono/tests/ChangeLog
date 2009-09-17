@@ -1,3 +1,8 @@
+2009-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* coreclr-security.cs: Add test cases for arrays (one dimension, 
+	multidimentional and jagged) creation.
+
 2009-09-15  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-type-load-exception.2.il: Test case for vtable setup
