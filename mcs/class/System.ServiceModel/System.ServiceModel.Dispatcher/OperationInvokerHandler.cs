@@ -193,7 +193,7 @@ namespace System.ServiceModel.Dispatcher
 		void EnsureValid (DispatchOperation operation)
 		{
 			if (operation.Invoker == null)
-				throw new InvalidOperationException ("DispatchOperation requires Invoker.");
+				throw new InvalidOperationException ("DispatchOperation '" + operation.Name + "' requires Invoker.");
 			if ((operation.DeserializeRequest || operation.SerializeReply) && operation.Formatter == null)
 				throw new InvalidOperationException ("The DispatchOperation '" + operation.Name + "' requires Formatter, since DeserializeRequest and SerializeReply are not both false.");
 		}		

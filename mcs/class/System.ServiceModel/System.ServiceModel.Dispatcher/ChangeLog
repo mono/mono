@@ -1,3 +1,7 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : make error message a bit verbose.
+
 2009-09-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : make sure to close the request context,
