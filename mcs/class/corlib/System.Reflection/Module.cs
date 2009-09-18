@@ -80,9 +80,11 @@ namespace System.Reflection {
 	
 		public virtual string FullyQualifiedName {
 			get {
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
 				}
+#endif
 				return fqname;
 			}
 		}

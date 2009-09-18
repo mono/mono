@@ -110,6 +110,7 @@ namespace System.Reflection {
 		private string GetCodeBase (bool escaped)
 		{
 			string cb = get_code_base (escaped);
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				// we cannot divulge local file informations
 				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
@@ -117,6 +118,7 @@ namespace System.Reflection {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, file).Demand ();
 				}
 			}
+#endif
 			return cb;
 		}
 
@@ -177,10 +179,12 @@ namespace System.Reflection {
 					return String.Empty;
 
 				string loc = get_location ();
+#if !NET_2_1
 				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
 				}
+#endif
 				return loc;
 			}
 		}

@@ -1,3 +1,7 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs, Module.cs: Avoid imperative CAS checks for NET_2_1
+
 2009-08-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs: Use StringComparison.Ordinal when calling
