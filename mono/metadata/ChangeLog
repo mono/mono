@@ -9,6 +9,13 @@
 
 2009-09-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (verify_class_overrides): Remove useless argument.
+
+	* class.c (mono_class_setup_vtable_general): Move the overrides check to happen
+	before interface enumeration as this is no longer required.
+
+2009-09-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: New function mono_class_is_assignable_from_slow that is safe to be
 	used under mono_class_init context. This functions avoid any code path that
 	calls mono_class_init, which leads it to be slow as some things like the interface
