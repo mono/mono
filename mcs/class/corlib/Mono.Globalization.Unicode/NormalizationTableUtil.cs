@@ -55,10 +55,10 @@ namespace Mono.Globalization.Unicode
 			// since mapToCompositeIndex only holds canonical
 			// mappings, those indexes could be still shorten.
 			int [] compositeStarts = new int [] {
-				0x480, 0x1450, 0x16D0
+				0x480, 0x1410, 0x1670
 				};
 			int [] compositeEnds = new int [] {
-				0x10C0, 0x15D0, 0x2190
+				0x1080, 0x1580, 0x21B0
 				};
 			int [] helperStarts = new int [] {
 				0, 0x900, 0x1D00, 0x2500, 0x3000, 0x3B90,

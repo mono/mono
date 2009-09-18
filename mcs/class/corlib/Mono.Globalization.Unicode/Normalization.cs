@@ -38,7 +38,7 @@ namespace Mono.Globalization.Unicode
 			return charMapIndex [NUtil.MapIdx (cp)];
 		}
 
-		static int GetComposedStringLength (int ch)
+		static int GetNormalizedStringLength (int ch)
 		{
 			int start = charMapIndex [NUtil.MapIdx (ch)];
 			int i = start;
@@ -157,7 +157,7 @@ namespace Mono.Globalization.Unicode
 					if (!CanBePrimaryComposite ((int) sb [i]))
 						break;
 
-				int idx = 0;
+				int idx = 0; // index to mappedChars
 				for (; i < cur; i++) {
 					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], i);
 					if (idx > 0)
@@ -167,12 +167,12 @@ namespace Mono.Globalization.Unicode
 					i = cur;
 					continue;
 				}
-				int ch = GetPrimaryCompositeFromMapIndex (idx);
-				int len = GetComposedStringLength (ch);
-				if (ch == 0 || len == 0)
+				int prim = GetPrimaryCompositeFromMapIndex (idx);
+				int len = GetNormalizedStringLength (prim);
+				if (prim == 0 || len == 0)
 					throw new SystemException ("Internal error: should not happen.");
 				int removed = 0;
-				sb.Insert (i++, (char) ch); // always single character
+				sb.Insert (i++, (char) prim); // always single character
 
 				// handle blocked characters here.
 				while (removed < len) {

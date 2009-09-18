@@ -1,3 +1,10 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Normalization.cs : some renaming for disambiguation.
+	* NormalizationTableUtil.cs : fix some wrong ranges in
+	  mapIdxToComposite. This fixes some Arabic normalization (and more).
+	* normalization-notes.txt : added some notes on the implementation.
+
 2008-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Normalization.cs :
