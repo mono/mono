@@ -1,5 +1,9 @@
 2009-09-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini.c: Add asserts for mono_class_vtable calls that are not meant to fail.
+
+2009-09-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c: Handle failures from mono_class_vtable. Added some
 	comments on some functions that now can fail.
 
