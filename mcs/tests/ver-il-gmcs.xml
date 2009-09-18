@@ -36230,6 +36230,37 @@
       </method>
     </type>
   </test>
+  <test name="test-727.cs">
+    <type name="IDisposableTest.MainClass">
+      <method name="Int32 Main()">
+        <size>113</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="IDisposableTest.Foo">
+      <method name="Void Dispose()">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>57</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-728.cs">
+    <type name="Tests">
+      <method name="Int32 Main()">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-73.cs">
     <type name="Abstract">
       <method name="Void .ctor()">

@@ -314,6 +314,16 @@ class Tester
 		}
 	}
 
+	static void AssertChecked (Action expected, string name)
+	{
+		try {
+			expected ();
+			throw new ApplicationException (name + ": OverflowException expected");
+		} catch (OverflowException) {
+			// passed
+		}
+	}
+
 /*
 	static void Assert<T> (T [] expected, T [] value)
 	{
@@ -354,7 +364,7 @@ class Tester
 		Assert (d + v4, 9m, "#4");
 	}
 
-	void AddTestNullable ()
+	void AddNullableTest ()
 	{
 		dynamic d = 5;
 
@@ -380,7 +390,7 @@ class Tester
 		Assert<decimal?> (d + v4, null, "#4a");
 	}
 	
-	void AddTestEnum ()
+	void AddEnumTest ()
 	{
 		dynamic d = MyEnum.Value_1;
 
@@ -394,7 +404,7 @@ class Tester
 		Assert<MyEnumUlong?> (d2 + (object) null, null, "#3a");
 	}
 	
-	void AddTestChecked ()
+	void AddCheckedTest ()
 	{
 		checked {
 			dynamic d = 5;
@@ -421,6 +431,122 @@ class Tester
 
 		uint? v2 = 4;
 		Assert (d + v2, "foo4", "#2");
+	}
+
+	void AddAssignTest ()
+	{
+		dynamic d = 5;
+
+		int v = 2;
+		d += v;
+		Assert (d, 7, "#1");
+
+		d = 5.0;
+		double v2 = 0.5;
+		d += v2;
+		Assert (d, 5.5, "#1a");
+		d += v;
+		Assert (d, 7.5, "#1b");
+
+		dynamic d3 = new MyType (-7);
+		d3 += new MyType (6);
+		Assert<MyType> (d3, new MyType (-1), "#3");
+
+		d = 5m;
+		decimal v4 = 4m;
+		d += v4;
+		Assert (d, 9m, "#4");
+	}
+
+	void AddAssignNullableTest ()
+	{
+		dynamic d = (int?) 5;
+
+		// For now it's impossible to use nullable compound assignment
+		// due to the way how DLR works. GetType () on nullable object returns
+		// underlying type and not nullable type, that means that
+		// C# binder is initialized with wrong operand type and any operation
+		// fails to resolve
+/*
+		long? v2 = null;
+		d += v2;
+		Assert<int?> (d, null, "#1");
+		d += null;
+		Assert<int?> (d, null, "#1a");
+
+		long? l = (long?) 3;
+		d = l;
+		v2 = -2;
+		d += v2;
+		Assert (d, 3, "#2");
+		d = (int?) -2;
+		d += 1;
+		Assert (d, -1, "#2a");
+
+		MyType? v3 = new MyType (30);
+		d += v3;
+		Assert (d, new MyType (35), "#3");
+		dynamic d3 = new MyType? (new MyType (-7));
+		Assert (d3 + new MyType (6), new MyType (-1), "#3a");
+		Assert<MyType?> (d3 + null, null, "#3b");
+
+		decimal? v4 = 4m;
+		d = 2m;
+		d += v4;
+		Assert (d, 9m, "#4");
+		d += null;
+		Assert<decimal?> (d, null, "#4a");
+ */
+	}
+
+	void AddAssignEnumTest ()
+	{
+		dynamic d = MyEnum.Value_1;
+
+		d = MyEnum.Value_1;
+		d += 1;
+		Assert (d, MyEnum.Value_2, "#2");
+
+		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_1;
+		d2 += (byte) 1;
+		Assert (d2, MyEnumUlong.Value_2, "#3");
+	}
+
+	void AddAssignCheckedTest ()
+	{
+		checked {
+			dynamic d = 5;
+
+			int v = int.MaxValue;
+			AssertChecked (() => { d += v; Assert (d, 0, "#1-"); }, "#1");
+
+//			d = (int?) 3;
+//			int? v2 = v;
+//			AssertChecked (() => { d += v2; Assert (d, 0, "#2-"); }, "#2");
+
+			MyType v3 = new MyType (int.MaxValue);
+			AssertChecked (() => { d += v3; Assert (d, 0, "#3-"); }, "#3");
+		}
+	}
+
+	void AddAssignStringTest ()
+	{
+		dynamic d = "foo";
+		string v = "->";
+		d += v;
+		Assert (d, "foo->", "#1");
+
+		d = "foo";
+		d += 1;
+		Assert (d, "foo1", "#1a");
+
+		d += null;
+		Assert (d, "foo1", "#1b");
+
+		uint? v2 = 4;
+		d = "foo";
+		d += v2;
+		Assert (d, "foo4", "#2");
 	}
 
 /*
