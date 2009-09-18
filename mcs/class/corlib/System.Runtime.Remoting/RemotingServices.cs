@@ -578,13 +578,13 @@ namespace System.Runtime.Remoting
 			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
 		}
-
+#if !NET_2_1
 		internal static object CreateClientProxyForComInterop (Type type)
 		{
 			Mono.Interop.ComInteropProxy proxy = Mono.Interop.ComInteropProxy.CreateProxy (type);
 			return proxy.GetTransparentProxy ();
 		}
-	
+#endif
 		internal static Identity GetIdentityForUri (string uri)
 		{
 			string normUri = GetNormalizedUri (uri);
