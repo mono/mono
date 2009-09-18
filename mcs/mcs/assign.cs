@@ -308,7 +308,7 @@ namespace Mono.CSharp {
 	///   The Assign node takes care of assigning the value of source into
 	///   the expression represented by target.
 	/// </summary>
-	public class Assign : ExpressionStatement {
+	public abstract class Assign : ExpressionStatement {
 		protected Expression target, source;
 
 		protected Assign (Expression target, Expression source, Location loc)
@@ -578,18 +578,11 @@ namespace Mono.CSharp {
 	//
 	// This class is used for compound assignments.
 	//
-	class CompoundAssign : Assign {
-		Binary.Operator op;
-		Expression original_source;
-
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
-			: base (target, source, target.Location)
+	public class CompoundAssign : Assign
+	{
+		// This is just a hack implemented for arrays only
+		public sealed class TargetExpression : Expression
 		{
-			original_source = source;
-			this.op = op;
-		}
-
-		public sealed class TargetExpression : Expression {
 			Expression child;
 			public TargetExpression (Expression child)
 			{
@@ -604,9 +597,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (ResolveContext ec)
 			{
-				child = child.Resolve (ec);
-				if (child == null)
-					return null;
 				type = child.Type;
 				eclass = ExprClass.Value;
 				return this;
@@ -618,10 +608,28 @@ namespace Mono.CSharp {
 			}
 		}
 
+		// Used for underlying binary operator
+		readonly Binary.Operator op;
+		Expression right;
+		Expression left;
+
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
+			: base (target, source, target.Location)
+		{
+			right = source;
+			this.op = op;
+		}
+
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Expression left)
+			: this (op, target, source)
+		{
+			this.left = left;
+		}
+
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			original_source = original_source.Resolve (ec);
-			if (original_source == null)
+			right = right.Resolve (ec);
+			if (right == null)
 				return null;
 
 			MemberAccess ma = target as MemberAccess;
@@ -640,14 +648,17 @@ namespace Mono.CSharp {
 			}
 
 			if (target is EventExpr)
-				return new EventAddOrRemove (target, op, original_source, loc).DoResolve (ec);
+				return new EventAddOrRemove (target, op, right, loc).DoResolve (ec);
 
 			//
 			// Only now we can decouple the original source/target
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, new TargetExpression (target), original_source, true);
+			if (left == null)
+				left = new TargetExpression (target);
+
+			source = new Binary (op, left, right, true);
 
 			// TODO: TargetExpression breaks MemberAccess composition
 			if (target is DynamicMemberBinder) {
@@ -663,12 +674,12 @@ namespace Mono.CSharp {
 				if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {
 					args = new Arguments (2);
 					args.AddRange (targs);
-					args.Add (new Argument (original_source));
+					args.Add (new Argument (right));
 					string method_prefix = op == Binary.Operator.Addition ?
 						Event.AEventAccessor.AddPrefix : Event.AEventAccessor.RemovePrefix;
 
 					Expression invoke = new DynamicInvocation (
-						new MemberAccess (original_source, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
+						new MemberAccess (right, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
 
 					args = new Arguments (1);
 					args.AddRange (targs);
@@ -681,6 +692,15 @@ namespace Mono.CSharp {
 
 			return base.DoResolve (ec);
 		}
+
+#if NET_4_0
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		{
+			var target_object = target.MakeExpression (ctx);
+			var source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
+			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
+		}
+#endif
 
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
@@ -706,13 +726,13 @@ namespace Mono.CSharp {
 				// y is implicitly convertible to the type of x
 				//
 				if ((b.Oper & Binary.Operator.ShiftMask) != 0 ||
-					Convert.ImplicitConversionExists (ec, original_source, target_type)) {
+					Convert.ImplicitConversionExists (ec, right, target_type)) {
 					source = Convert.ExplicitConversion (ec, source, target_type, loc);
 					return this;
 				}
 			}
 
-			original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			right.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;
 		}
 
@@ -720,7 +740,7 @@ namespace Mono.CSharp {
 		{
 			CompoundAssign ctarget = (CompoundAssign) t;
 
-			ctarget.original_source = ctarget.source = source.Clone (clonectx);
+			ctarget.right = ctarget.source = source.Clone (clonectx);
 			ctarget.target = target.Clone (clonectx);
 		}
 	}

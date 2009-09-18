@@ -38,14 +38,24 @@ namespace Mono.CSharp
 		}
 	}
 
-#if NET_4_0
-	public class RuntimeValueExpression : Expression
+	//
+	// Expression created from runtime dynamic object value
+	//
+	public class RuntimeValueExpression : Expression, IAssignMethod
 	{
+#if !NET_4_0
+		public class DynamicMetaObject { public Type RuntimeType; }
+#endif
+
 		readonly DynamicMetaObject obj;
 
-		public RuntimeValueExpression (DynamicMetaObject obj)
+		// When strongly typed expression is required
+		readonly bool typed;
+
+		public RuntimeValueExpression (DynamicMetaObject obj, bool typed)
 		{
 			this.obj = obj;
+			this.typed = typed;
 			this.type = obj.RuntimeType;
 			this.eclass = ExprClass.Value;
 		}
@@ -60,20 +70,40 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		{
+			return this;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
 
+		#region IAssignMethod Members
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+
+#if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			if (obj.Expression.Type != type)
+			if (typed && obj.Expression.Type != type)
 				return System.Linq.Expressions.Expression.Convert (obj.Expression, type);
 
 			return obj.Expression;
 		}
-	}
 #endif
+	}
 
 	interface IDynamicBinder
 	{

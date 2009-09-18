@@ -1,3 +1,7 @@
+2009-09-18  Marek Safar  <marek.safar@gmail.com>
+
+	* dynamic.cs, assign.cs: Dynamic compound assignment.
+
 2009-09-17  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Fixed compound assignment explicit conversion.
