@@ -1,3 +1,10 @@
+2009-09-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r127430.
+
+	* mini.c: Adjust locking order to the new semantics where the loader lock
+	comes first.
+
 2009-06-08  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c

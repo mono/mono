@@ -1,3 +1,18 @@
+2009-09-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r127430.
+
+	* appdomain.c:
+	* generic-sharing.c:
+	* object.c:
+	* reflection.c:  Adjust locking order to the new semantics where the loader lock
+	comes first.
+
+	Backport of r126758/126783.
+
+	* reflection.c (mono_reflection_lookup_dynamic_token): This function might be called without
+	the loader lock which is required to guard MonoImage:tokens.
+
 2009-08-19  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Replace the templates lock with the loader
