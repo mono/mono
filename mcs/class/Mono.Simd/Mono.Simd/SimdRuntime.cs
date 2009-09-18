@@ -27,7 +27,7 @@
 
 using System;
 using System.Reflection;
-
+using System.Text;
 
 namespace Mono.Simd
 {
@@ -48,7 +48,7 @@ namespace Mono.Simd
 		public static AccelMode MethodAccelerationMode (MethodInfo method)
 		{
 			if (method == null)
-				return AccelMode.None;
+				throw new ArgumentNullException ("method");
 			object[] attr = method.GetCustomAttributes (typeof (AccelerationAttribute), false);
 			if (attr.Length == 0)
 				return AccelMode.None;
@@ -60,19 +60,34 @@ namespace Mono.Simd
 			return MethodAccelerationMode (type, method, null);
 		}
 
-		public static AccelMode MethodAccelerationMode (Type type, String method, Type[] signature)
+		public static AccelMode MethodAccelerationMode (Type type, String method, params Type[] signature)
 		{
 			MethodInfo mi = signature == null ? type.GetMethod (method) : type.GetMethod (method, signature);
+			if (mi == null) {
+				if (signature == null) {
+					throw new ArgumentException ("method", String.Format ("Type {0} doesn't have a method '{1}'", type, method));
+				} else {
+					StringBuilder sb = new StringBuilder ();
+					for (int i = 0; i < signature.Length; ++i) {
+						if (i > 0)
+							sb.Append (", ");
+						sb.Append (signature[i]);
+					}
+					throw new ArgumentException ("method", String.Format ("Type {0} doesn't have a method '{1}' with signature {2}", type, method, sb));
+				}
+			}
+				
 			return MethodAccelerationMode (mi);
 		}
 
 		public static bool IsMethodAccelerated (Type type, String method)
-		{			
+		{
 			return (MethodAccelerationMode (type, method, null) & AccelMode) != 0;
 		}
 
-		public static bool IsMethodAccelerated (Type type, String method, Type[] signature)
-		{			
+		public static bool IsMethodAccelerated (Type type, String method, params Type[] signature)
+		{
+			
 			return (MethodAccelerationMode (type, method, signature) & AccelMode) != 0;
 		}
 	}
