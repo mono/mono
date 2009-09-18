@@ -1,3 +1,8 @@
+2009-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_instances): Add more instances of
+	GenericEqualityComparer.
+
 2009-09-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c: Add asserts for mono_class_vtable calls that are not meant to fail.
