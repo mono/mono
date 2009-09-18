@@ -1,3 +1,12 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnvironmentPermissionAttribute.cs, FileIOPermissionAttribute.cs,
+	HostProtectionAttribute.cs, ReflectionPermissionAttribute.cs,
+	SecurityPermissionAttribute.cs, StrongNamePermissionAttribute.cs: 
+	Return a null IPermission for NET_2_1
+	* PermissionSetAttribute.cs: Return null when paring from XML for 
+	NET_2_1
+
 2009-07-30  Marek Safar  <marek.safar@gmail.com> 
 
 	* ReflectionPermission.cs: RestrictedMemberAccess can be set.

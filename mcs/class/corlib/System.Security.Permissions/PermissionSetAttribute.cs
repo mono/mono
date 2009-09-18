@@ -96,6 +96,7 @@ namespace System.Security.Permissions {
 
 		private PermissionSet CreateFromXml (string xml) 
 		{
+#if !NET_2_1
 			SecurityParser sp = new SecurityParser ();
 			try {
 				sp.LoadXml (xml);
@@ -123,6 +124,7 @@ namespace System.Security.Permissions {
 				ps.FromXml (se);
 				return ps;
 			}
+#endif
 			return null;
 		}
 

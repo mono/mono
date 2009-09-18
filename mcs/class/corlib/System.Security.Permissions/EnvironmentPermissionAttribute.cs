@@ -75,6 +75,9 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
+#if NET_2_1
+			return null;
+#else
 			EnvironmentPermission perm = null;
 			if (this.Unrestricted)
 				perm = new EnvironmentPermission (PermissionState.Unrestricted);
@@ -86,6 +89,7 @@ namespace System.Security.Permissions {
 					perm.AddPathList (EnvironmentPermissionAccess.Write, write);
 			}
 			return perm;
+#endif
 		}
 	}
 }

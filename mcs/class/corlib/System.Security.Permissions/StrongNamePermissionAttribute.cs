@@ -72,6 +72,9 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
+#if NET_2_1
+			return null;
+#else
 			if (this.Unrestricted)
 				return new StrongNameIdentityPermission (PermissionState.Unrestricted);
 
@@ -89,6 +92,7 @@ namespace System.Security.Permissions {
 				v = new Version (version);
 
 			return new StrongNameIdentityPermission (blob, name, v);
+#endif
 		}
 	}
 }

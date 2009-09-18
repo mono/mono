@@ -127,10 +127,12 @@ namespace System.Security.Permissions {
 			}
 		}
 #endif
-			 
 		// Methods
 		public override IPermission CreatePermission ()
 		{
+#if NET_2_1
+			return null;
+#else
 			FileIOPermission perm = null;
 			if (this.Unrestricted)
 				perm = new FileIOPermission (PermissionState.Unrestricted);
@@ -146,6 +148,7 @@ namespace System.Security.Permissions {
 					perm.AddPathList (FileIOPermissionAccess.Write, write);
 			}
 			return perm;
+#endif
 		}
 	}
 }	   

@@ -256,12 +256,16 @@ namespace System.Security.Permissions {
 
 		public override IPermission CreatePermission ()
 		{
+#if NET_2_1
+			return null;
+#else
 			SecurityPermission perm = null;
 			if (this.Unrestricted)
 				perm = new SecurityPermission (PermissionState.Unrestricted);
 			else
 				perm = new SecurityPermission (m_Flags);
 			return perm;
+#endif
 		}
 
 		public SecurityPermissionFlag Flags {

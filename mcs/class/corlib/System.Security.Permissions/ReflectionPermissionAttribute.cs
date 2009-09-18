@@ -118,12 +118,16 @@ namespace System.Security.Permissions {
 		// Methods
 		public override IPermission CreatePermission ()
 		{
+#if NET_2_1
+			return null;
+#else
 			ReflectionPermission perm = null;
 			if (this.Unrestricted)
 				perm = new ReflectionPermission (PermissionState.Unrestricted);
 			else
 				perm = new ReflectionPermission (flags);
 			return perm;
+#endif
 		}
 	}
 }
