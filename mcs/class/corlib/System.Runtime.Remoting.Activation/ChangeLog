@@ -1,3 +1,7 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivationServices.cs: Avoid depending on COM stuff for NET_2_1
+
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ActivatorLevel.cs UrlAttribute.cs : [ComVisible], [Serializable].

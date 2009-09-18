@@ -203,11 +203,11 @@ namespace System.Runtime.Remoting.Activation
 
 			if (type.IsContextful)
 				return RemotingServices.CreateClientProxyForContextBound (type, null);
-
+#if !NET_2_1
 			if (type.IsCOMObject) {
 				return RemotingServices.CreateClientProxyForComInterop (type);
 			}
-
+#endif
 			return null;
 		}
 
