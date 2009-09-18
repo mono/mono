@@ -84,7 +84,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		// Creates mcs expression from dynamic method object
 		//
-		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
+		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value, bool typed)
 		{
 			if (info.IsNamed)
 				throw new NotImplementedException ("IsNamed");
@@ -92,10 +92,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (value.Value == null)
 				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
 
-			if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0)
-				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
+			if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
+				if (!typed)
+					throw new NotImplementedException ("weakly typed constant");
 
-			return new Compiler.RuntimeValueExpression (value);
+				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
+			}
+
+			return new Compiler.RuntimeValueExpression (value, typed);
 		}
 
 		static void InitializeCompiler (Compiler.CompilerContext ctx)

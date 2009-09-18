@@ -86,10 +86,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 				argumentInfo[0].GetHashCode (), argumentInfo[1].GetHashCode ());
 		}
 
-		Compiler.Binary.Operator GetOperator ()
+		Compiler.Binary.Operator GetOperator (out bool isCompound)
 		{
+			isCompound = false;
 			switch (Operation) {
 			case ExpressionType.Add:
+				return Compiler.Binary.Operator.Addition;
+			case ExpressionType.AddAssign:
+				isCompound = true;
 				return Compiler.Binary.Operator.Addition;
 			default:
 				throw new NotImplementedException (Operation.ToString ());
@@ -98,10 +102,20 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackBinaryOperation (DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
 		{
-			var left = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			var right = CSharpBinder.CreateCompilerExpression (argumentInfo [1], arg);
-			Compiler.Expression expr = new Compiler.Binary (GetOperator (), left, right);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
+			var left = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target, true);
+			var right = CSharpBinder.CreateCompilerExpression (argumentInfo [1], arg, true);
+			
+			bool is_compound;
+			var oper = GetOperator (out is_compound);
+			Compiler.Expression expr;
+
+			if (is_compound) {
+				var target_expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target, false);
+				expr = new Compiler.CompoundAssign (oper, target_expr, right, left);
+			} else {
+				expr = new Compiler.Binary (oper, left, right);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
+			}
 			
 			if (is_checked)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
