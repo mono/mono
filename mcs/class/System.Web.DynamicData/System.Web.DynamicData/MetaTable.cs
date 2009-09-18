@@ -84,6 +84,7 @@ namespace System.Web.DynamicData
 			ScaffoldTableAttribute attr = null;
 			MetaModel.GetDataFieldAttribute <ScaffoldTableAttribute> (Attributes, ref attr);
 			Scaffold = attr != null ? attr.Scaffold : scaffoldAllTables;
+			DataContextType = provider.DataModel.ContextType;
 			
 			var columns = new List <MetaColumn> ();
 			var primaryKeyColumns = new List <MetaColumn> ();
@@ -125,7 +126,6 @@ namespace System.Web.DynamicData
 			else
 				ForeignKeyColumnsNames = String.Join (",", foreignKeyColumnNames.ToArray ());
 			
-			DataContextType = provider.DataModel.ContextType;
 			HasPrimaryKey = primaryKeyColumns.Count > 0;
 
 			// See http://forums.asp.net/t/1388561.aspx
@@ -564,6 +564,16 @@ namespace System.Web.DynamicData
 			return Provider.GetQuery (context == null ? CreateContext () : context);
 		}
 
+		internal void Init ()
+		{
+			ReadOnlyCollection <MetaColumn> columns = Columns;
+			if (columns == null)
+				return;
+
+			foreach (MetaColumn mc in columns)
+				mc.Init ();
+		}
+		
 		public override string ToString ()
 		{
 			return Name;

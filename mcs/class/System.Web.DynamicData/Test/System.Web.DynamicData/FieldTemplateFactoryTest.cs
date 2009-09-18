@@ -184,6 +184,9 @@ namespace MonoTests.System.Web.DynamicData
 				ftf.CreateFieldTemplate (null, DataBoundControlMode.ReadOnly, "Integer.ascx");
 			}, "#A1");
 
+#if TARGET_DOTNET
+			// Not going to emulate those on Mono. There are limits...
+
 			// ...and again
 			AssertExtensions.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, null);
@@ -198,6 +201,7 @@ namespace MonoTests.System.Web.DynamicData
 			AssertExtensions.Throws<NullReferenceException> (() => {
 				ftf.CreateFieldTemplate (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A4");
+#endif
 		}
 
 		[Test]
@@ -281,6 +285,7 @@ namespace MonoTests.System.Web.DynamicData
 				ftf.GetFieldTemplateVirtualPath (null, DataBoundControlMode.ReadOnly, "Integer.ascx");
 			}, "#A1");
 
+#if TARGET_DOTNET
 			// ...and again
 			AssertExtensions.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
@@ -295,6 +300,7 @@ namespace MonoTests.System.Web.DynamicData
 			AssertExtensions.Throws<NullReferenceException> (() => {
 				ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A4");
+#endif
 		}
 
 		[Test]
@@ -676,6 +682,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#B1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#B1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#B1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#B1-3");
 
 			mc = t.GetColumn ("DateTimeColumn2");
 			Assert.IsNotNull (mc.UIHint, "#B2");
@@ -683,12 +690,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#B2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#B2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "DateTime.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#B2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#B2-6");
 
 			// Date -> maps to Text.ascx, regardless of underlying type and uiHint passed
 			mc = t.GetColumn ("DateColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#C1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#C1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#C1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#C1-3");
 
 			mc = t.GetColumn ("DateColumn2");
 			Assert.IsNotNull (mc.UIHint, "#C2");
@@ -696,11 +705,13 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#C2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#C2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#C2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#C2-6");
 
 			mc = t.GetColumn ("DateColumn3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#C3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#C3-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#C3-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#C3-3");
 
 			mc = t.GetColumn ("DateColumn4");
 			Assert.IsNotNull (mc.UIHint, "#C4");
@@ -708,12 +719,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#C4-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#C4-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#C4-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#C4-6");
 
 			// Time
 			mc = t.GetColumn ("TimeColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#D1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#D1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#D1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#D1-3");
 
 			mc = t.GetColumn ("TimeColumn2");
 			Assert.IsNotNull (mc.UIHint, "#D2");
@@ -721,12 +734,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#D2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#D2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#D2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#D2-6");
 
 			// Duration
 			mc = t.GetColumn ("DurationColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#E1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#E1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#E1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#E1-3");
 
 			mc = t.GetColumn ("DurationColumn2");
 			Assert.IsNotNull (mc.UIHint, "#E2");
@@ -734,12 +749,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#E2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#E2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#E2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#E2-6");
 
 			// PhoneNumber
 			mc = t.GetColumn ("PhoneNumberColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#F1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#F1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#F1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#F1-3");
 
 			mc = t.GetColumn ("PhoneNumberColumn2");
 			Assert.IsNotNull (mc.UIHint, "#F2");
@@ -747,12 +764,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#F2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#F2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#F2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#F2-6");
 
 			// Currency
 			mc = t.GetColumn ("CurrencyColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#G1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#G1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#G1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#G1-3");
 
 			mc = t.GetColumn ("CurrencyColumn2");
 			Assert.IsNotNull (mc.UIHint, "#G2");
@@ -760,12 +779,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#G2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#G2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#G2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#G2-6");
 
 			// Text
 			mc = t.GetColumn ("TextColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#H1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#H1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#H1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#H1-3");
 
 			mc = t.GetColumn ("TextColumn2");
 			Assert.IsNotNull (mc.UIHint, "#H2");
@@ -773,12 +794,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#H2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#H2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#H2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#H2-6");
 
 			// Html
 			mc = t.GetColumn ("HtmlColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#I1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#I1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#I1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#I1-3");
 
 			mc = t.GetColumn ("HtmlColumn2");
 			Assert.IsNotNull (mc.UIHint, "#I2");
@@ -786,12 +809,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#I2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#I2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#I2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#I2-6");
 
 			// MultilineText
 			mc = t.GetColumn ("MultilineTextColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#J1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#J1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#J1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#J1-3");
 
 			mc = t.GetColumn ("MultilineTextColumn2");
 			Assert.IsNotNull (mc.UIHint, "#J2");
@@ -799,12 +824,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#J2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#J2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#J2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#J2-6");
 
 			// EmailAddress
 			mc = t.GetColumn ("EmailAddressColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#K1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#K1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#K1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#K1-3");
 
 			mc = t.GetColumn ("EmailAddressColumn2");
 			Assert.IsNotNull (mc.UIHint, "#K2");
@@ -812,12 +839,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#K2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#K2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#K2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#K2-6");
 
 			// Password
 			mc = t.GetColumn ("PasswordColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#L1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#L1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#L1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#L1-3");
 
 			mc = t.GetColumn ("PasswordColumn2");
 			Assert.IsNotNull (mc.UIHint, "#L2");
@@ -825,12 +854,14 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#L2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#L2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#L2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#L2-6");
 
 			// Url
 			mc = t.GetColumn ("UrlColumn1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#M1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#M1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#M1-2");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#M1-3");
 
 			mc = t.GetColumn ("UrlColumn2");
 			Assert.IsNotNull (mc.UIHint, "#M2");
@@ -838,6 +869,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null), "#M2-3");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, String.Empty), "#M2-4");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Text.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean.ascx"), "#M2-5");
+			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#M2-6");
 		}
 
 		[Test]

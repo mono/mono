@@ -37,6 +37,7 @@ using System.Data.Linq;
 using System.Data.Linq.Mapping;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -45,12 +46,15 @@ using System.Web.UI;
 using System.Web.DynamicData;
 using System.Web.DynamicData.ModelProviders;
 using System.Web.Routing;
+using System.Web.UI.WebControls;
 
 using NUnit.Framework;
 using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
+using MonoTests.DataSource;
+using MonoTests.DataObjects;
 using MonoTests.ModelProviders;
 
 using MetaModel = System.Web.DynamicData.MetaModel;
@@ -70,6 +74,10 @@ namespace MonoTests.System.Web.DynamicData
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
+			Type type = GetType ();
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_10.aspx", "ListView_DynamicControl_10.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_10.aspx.cs", "ListView_DynamicControl_10.aspx.cs");
+
 			dynamicModelProvider = new DynamicDataContainerModelProvider <TestDataContext> ();
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
 		}
@@ -173,7 +181,7 @@ namespace MonoTests.System.Web.DynamicData
 			t = m.Tables[TestDataContext.TableBaz];
 			mc = t.DisplayColumn;
 			Assert.IsNotNull (mc, "#D1");
-			Assert.AreEqual ("PrimaryKeyColumn2", mc.Name, "#D2");
+			Assert.AreEqual ("CustomUIHintColumn", mc.Name, "#D2");
 
 			t = m.Tables[TestDataContext.TableBazNoStrings];
 			mc = t.DisplayColumn;
@@ -234,7 +242,7 @@ namespace MonoTests.System.Web.DynamicData
 			MetaTable t = m.Tables[TestDataContext.TableAssociatedFoo];
 			Assert.IsNotNull (t.ForeignKeyColumnsNames, "#A1");
 			Assert.IsFalse (t.ForeignKeyColumnsNames.Length == 0, "#A2");
-			Assert.AreEqual ("ForeignKeyColumn1,PrimaryKeyColumn1", t.ForeignKeyColumnsNames, "#A3");
+			Assert.AreEqual ("ForeignKeyColumn1,ForeignKeyColumn2,PrimaryKeyColumn1", t.ForeignKeyColumnsNames, "#A3");
 		}
 
 		[Test]
@@ -681,6 +689,48 @@ namespace MonoTests.System.Web.DynamicData
 			ret = t.GetPrimaryKeyValues (foo2);
 			Assert.IsNotNull (ret, "#C1");
 			Assert.AreEqual (0, ret.Count, "#C2");
+		}
+
+		[Test]
+		public void GetPrimaryKeyValues_01 ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_10.aspx");
+			test.Invoker = PageInvoker.CreateOnInit (GetPrimaryKeyValues_01_OnInit);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void GetPrimaryKeyValues_01_OnInit (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			var page = p as TestsBasePage<TestDataContext3>;
+			Assert.IsNotNull (p, "#A1-1");
+
+			page.ItemDataBinding += new EventHandler (GetPrimaryKeyValues_01_ListControl_OnItemDataBinding);
+		}
+
+		static void GetPrimaryKeyValues_01_ListControl_OnItemDataBinding (object sender, EventArgs e)
+		{
+			var dc = sender as DynamicControl;
+			Assert.IsNotNull (dc, "#B1");
+			Assert.AreEqual ("PrimaryKeyColumn2", dc.ID, "#B1-1");
+			Assert.AreEqual (typeof (MetaChildrenColumn), dc.Column.GetType (), "#B1-2");
+
+			var field = dc.FieldTemplate as PokerFieldTemplateUserControl;
+			Assert.IsNotNull (field, "#C1");
+
+			var keyValues = dc.Table.GetPrimaryKeyValues (field.Row);
+			Assert.IsNotNull (keyValues, "#D1");
+			Assert.AreEqual (2, keyValues.Count, "#D1-1");
+			Assert.AreEqual (typeof (string), keyValues[0].GetType (), "#D1-2");
+			Assert.AreEqual ("Marek", (string)keyValues[0], "#D1-3");
+			Assert.AreEqual (typeof (int), keyValues[1].GetType (), "D1-4");
+			Assert.AreEqual (2, (int)keyValues[1], "#D1-5");
 		}
 
 		[Test]

@@ -50,6 +50,13 @@ namespace System.Web.DynamicData
 	public class DynamicControl : Control, IAttributeAccessor, IFieldTemplateHost, IFieldFormattingOptions
 	{
 		Dictionary <string, string> attributes;
+		bool? applyFormatInEditMode;
+		bool? convertEmptyStringToNull;
+		bool? htmlEncode;
+		string dataField = String.Empty;
+		string dataFormatString;
+		string nullDisplayText;
+		string uiHint;
 		
 		public DynamicControl () : this (DataBoundControlMode.ReadOnly)
 		{
@@ -58,19 +65,42 @@ namespace System.Web.DynamicData
 		public DynamicControl (DataBoundControlMode mode)
 		{
 			Mode = mode;
-			UIHint = String.Empty;
+			CssClass = String.Empty;
+			ValidationGroup = String.Empty;
 		}
 
 		[Category ("Behavior")]
 		[DefaultValue (false)]
-		public bool ApplyFormatInEditMode { get; set; }
+		public bool ApplyFormatInEditMode {
+			get {
+				if (applyFormatInEditMode == null) {
+					MetaColumn column = Column;
+					applyFormatInEditMode = column != null ? column.ApplyFormatInEditMode : false;
+				}
+				
+				return (bool)applyFormatInEditMode;
+			}
+			
+			set { applyFormatInEditMode = value; }
+		}
 
 		[Browsable (false)]
 		public MetaColumn Column { get; set; }
 
 		[Category ("Behavior")]
 		[DefaultValue (false)]
-		public bool ConvertEmptyStringToNull { get; set; }
+		public bool ConvertEmptyStringToNull {
+			get {
+				if (convertEmptyStringToNull == null) {
+					MetaColumn column = Column;
+					convertEmptyStringToNull = column != null ? column.ConvertEmptyStringToNull : false;
+				}
+
+				return (bool)convertEmptyStringToNull;
+			}
+			
+			set { convertEmptyStringToNull = value; }
+		}
 
 		[MonoTODO]
 		[Category ("Appearance")]
@@ -80,34 +110,77 @@ namespace System.Web.DynamicData
 
 		[Category ("Data")]
 		[DefaultValue ("")]
-		public string DataField { get; set; }
+		public string DataField {
+			get { return dataField; }
+			
+			set { dataField = value == null ? String.Empty : value; }
+		}
 
-		[MonoTODO]
 		[Category ("Data")]
 		[DefaultValue ("")]
-		public string DataFormatString { get; set; }
+		public string DataFormatString {
+			get {
+				if (dataFormatString == null) {
+					MetaColumn column = Column;
+					if (column != null) {
+						dataFormatString = column.DataFormatString;
+						if (dataFormatString == null)
+							dataFormatString = String.Empty;
+					} else
+						dataFormatString = String.Empty;
+				}
+
+				return dataFormatString;
+			}
+			
+			set { dataFormatString = value == null ? String.Empty : value; }
+		}
 
 		[MonoTODO]
 		[Browsable (false)]
 		public Control FieldTemplate { get; private set; }
 
-		[MonoTODO]
 		[Category ("Behavior")]
 		[DefaultValue (true)]
-		public bool HtmlEncode { get; set; }
+		public bool HtmlEncode {
+			get {
+				if (htmlEncode == null) {
+					MetaColumn column = Column;
+					htmlEncode = column != null ? column.HtmlEncode : true;
+				}
 
-		[MonoTODO]
+				return (bool)htmlEncode;
+			}
+			
+			set { htmlEncode = value; }
+		}
+
 		IFieldFormattingOptions IFieldTemplateHost.FormattingOptions {
-			get { throw new NotImplementedException (); }
+			get { return this; }
 		}
 
 		[MonoTODO]
 		public DataBoundControlMode Mode { get; set; }
 
-		[MonoTODO]
 		[Category ("Behavior")]
 		[DefaultValue ("")]
-		public string NullDisplayText { get; set; }
+		public string NullDisplayText {
+			get {
+				if (nullDisplayText == null) {
+					MetaColumn column = Column;
+					if (column != null) {
+						nullDisplayText = column.NullDisplayText;
+						if (nullDisplayText == null)
+							nullDisplayText = String.Empty;
+					} else
+						nullDisplayText = String.Empty;
+				}
+
+				return nullDisplayText;
+			}
+			
+			set { nullDisplayText = value == null ? String.Empty : value; }
+		}
 		
 		[Browsable (false)]
 		public virtual MetaTable Table {
@@ -116,41 +189,95 @@ namespace System.Web.DynamicData
 
 		[Category ("Behavior")]
 		[DefaultValue ("")]
-		public virtual string UIHint { get; set; }
+		public virtual string UIHint {
+			get {
+				if (uiHint == null) {
+					MetaColumn column = Column;
+					uiHint = column != null ? column.UIHint : String.Empty;
+					if (uiHint == null)
+						uiHint = String.Empty;
+				}
 
-		[MonoTODO]
+				return uiHint;
+			}
+			
+			set { uiHint = value != null ? value : String.Empty; }
+			
+		}
+
 		[Themeable (false)]
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		public virtual string ValidationGroup { get; set; }
+
+		void CreateFieldTemplate ()
+		{
+			MetaColumn column = Column;
+				
+			// Safe as ResolveColumn won't return with a null Column
+			MetaModel model = column.Model;
+			IFieldTemplateFactory ftf = model != null ? model.FieldTemplateFactory : null;
+			IFieldTemplate ft;
+			
+			if (ftf != null) {
+				ft = ftf.CreateFieldTemplate (column, Mode, UIHint);
+				if (ft == null)
+					return;
+			} else
+				return;
+			
+			ft.SetHost (this);
+
+			Control ctl = ft as Control;
+			if (ctl == null)
+				return;
+			
+			FieldTemplate = ctl;
+			Controls.Add (ctl);
+		}
 		
 		public string GetAttribute (string key)
 		{
 			if (attributes == null)
-				return null;
+				return String.Empty;
 
 			string ret;
 			if (attributes.TryGetValue (key, out ret))
 				return ret;
-
-			return null;
+			else
+				// "Compatibility"...
+				throw new KeyNotFoundException ("NoSuchAttribute");
 		}
 
-		[MonoTODO]
 		protected override void OnInit (EventArgs e)
 		{
 			// It seems _all_ the properties are initialized _only_ here. Further user's
 			// actions to set the Column property don't affect the other properties
 			// which derive their values from the associated MetaColumn.
 			base.OnInit (e);
-			if (Column == null)
+			if (Column == null) {
 				ResolveColumn ();
+				Controls.Clear ();
+				CreateFieldTemplate ();
+			}
 		}
 
 		protected override void Render (HtmlTextWriter writer)
 		{
+			string cssClass = CssClass;
+			bool haveCssClass = !String.IsNullOrEmpty (cssClass);
+			
+			if (haveCssClass) {
+				writer.AddAttribute (HtmlTextWriterAttribute.Class, cssClass);
+				writer.RenderBeginTag (HtmlTextWriterTag.Span);
+				writer.Write ("\n\n");
+			}
+			
 			base.Render (writer);
-			// Why override?
+
+			if (haveCssClass) {
+				writer.RenderEndTag ();
+			}
 		}
 
 		void ResolveColumn ()

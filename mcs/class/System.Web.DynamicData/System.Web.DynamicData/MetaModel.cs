@@ -54,7 +54,6 @@ namespace System.Web.DynamicData
 		static Exception registration_exception;
 		static Dictionary<Type, MetaModel> registered_models;
 
-		DataModelProvider provider;
 		string dynamicDataFolderVirtualPath;
 		
 		public static MetaModel Default {
@@ -84,7 +83,10 @@ namespace System.Web.DynamicData
 			if (default_model == null)
 				default_model = this;
 
-			FieldTemplateFactory = new FieldTemplateFactory ();
+			FieldTemplateFactory ftf = new FieldTemplateFactory ();
+			ftf.Initialize (this);
+			FieldTemplateFactory = ftf;
+			
 			Tables = new ReadOnlyCollection<MetaTable> (new MetaTable [0]);
 			VisibleTables = new List<MetaTable> ();
 		}
@@ -227,13 +229,18 @@ namespace System.Web.DynamicData
 
 		void RegisterContextCore (DataModelProvider dataModelProvider, ContextConfiguration configuration)
 		{
+			RegisterModel (dataModelProvider.ContextType, this, configuration);
+			
 			var l = new List<MetaTable> (Tables);
 			foreach (var t in dataModelProvider.Tables)
 				l.Add (new MetaTable (this, t, configuration));
 			
 			Tables = new ReadOnlyCollection<MetaTable> (l);
+
+			foreach (MetaTable t in l)
+				t.Init ();
+			
 			VisibleTables = l;
-			RegisterModel (dataModelProvider.ContextType, this, configuration);
 		}
 
 		static void RegisterModel (Type contextType, MetaModel model, ContextConfiguration configuration)

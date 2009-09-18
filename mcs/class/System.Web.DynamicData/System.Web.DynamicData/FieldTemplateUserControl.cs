@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -44,12 +45,35 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FieldTemplateUserControl : UserControl, IBindableControl, IFieldTemplate
 	{
+		public MetaChildrenColumn ChildrenColumn {
+			get {
+				MetaColumn column = Column;
+				var ret = column as MetaChildrenColumn;
+				if (ret == null) {
+					string name = column == null ? null : column.Name;
+					throw new Exception ("'" + name + "' is not a children column and cannot be used here.");
+				}
+				
+				return ret;
+			}
+		}		
+
 		[MonoTODO]
-		public MetaChildrenColumn ChildrenColumn { get; private set; }
-		[MonoTODO]
-		protected string ChildrenPath { get; private set; }
-		[MonoTODO]
-		public MetaColumn Column { get; private set; }
+		protected string ChildrenPath {
+			get { return ChildrenColumn.GetChildrenListPath (Row); }
+			
+		}
+
+		public MetaColumn Column {
+			get {
+				IFieldTemplateHost host = Host;
+				if (host != null)
+					return host.Column;
+
+				return null;
+			}
+		}
+		
 		[MonoTODO]
 		public virtual Control DataControl { get; private set; }
 		[MonoTODO]
@@ -58,22 +82,65 @@ namespace System.Web.DynamicData
 		public virtual string FieldValueEditString { get; private set; }
 		[MonoTODO]
 		public virtual string FieldValueString { get; private set; }
+
 		[MonoTODO]
-		public MetaForeignKeyColumn ForeignKeyColumn { get; private set; }
+		public MetaForeignKeyColumn ForeignKeyColumn {
+			get {
+				MetaColumn column = Column;
+				var ret = column as MetaForeignKeyColumn;
+				if (ret == null) {
+					string name = column == null ? null : column.Name;
+					throw new Exception ("'" + name + "' is not a foreign key column and cannot be used here.");
+				}
+				
+				return ret;
+			}
+		}
+		
 		[MonoTODO]
-		protected string ForeignKeyPath { get; private set; }
+		protected string ForeignKeyPath {
+			get { return ForeignKeyColumn.GetForeignKeyDetailsPath (Row); }
+		}
+		
 		[MonoTODO]
 		public IFieldFormattingOptions FormattingOptions { get; private set; }
-		[MonoTODO]
+
 		public IFieldTemplateHost Host { get; private set; }
+
 		[MonoTODO]
-		public System.ComponentModel.AttributeCollection MetadataAttributes { get; private set; }
+		public System.ComponentModel.AttributeCollection MetadataAttributes {
+			get {
+				MetaColumn column = Column;
+				if (column == null)
+					return null;
+
+				return column.Attributes;
+			}
+		}
+		
 		[MonoTODO]
-		public DataBoundControlMode Mode { get; private set; }
+		public DataBoundControlMode Mode {
+			get {
+				IFieldTemplateHost host = Host;			
+				return host == null ? DataBoundControlMode.ReadOnly : host.Mode;
+			}
+		}
+		
 		[MonoTODO]
-		public virtual object Row { get; private set; }
+		public virtual object Row {
+			get {
+				Page page = Page;
+				return page == null ? null : page.GetDataItem ();
+			}
+		}
+		
 		[MonoTODO]
-		public MetaTable Table { get; private set; }
+		public MetaTable Table {
+			get {
+				MetaColumn column = Column;
+				return column == null ? null : column.Table;
+			}
+		}
 
 		[MonoTODO]
 		protected string BuildChildrenPath (string path)
@@ -129,10 +196,9 @@ namespace System.Web.DynamicData
 			ExtractValues (dictionary);
 		}
 
-		[MonoTODO]
 		void IFieldTemplate.SetHost (IFieldTemplateHost host)
 		{
-			throw new NotImplementedException ();
+			Host = host;
 		}
 
 		[MonoTODO]

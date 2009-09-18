@@ -143,7 +143,7 @@ namespace System.Web.DynamicData
 			var t = routeData.GetRequiredString ("Table");
 			if (Model == null)
 				throw new InvalidOperationException ("MetaModel must be set to the DynamicDataRoute before retrieving MetaTable");
-			MetaTable mt;
+
 			return Model.GetTable (t);
 		}
 

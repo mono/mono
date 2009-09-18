@@ -502,8 +502,13 @@ namespace MonoTests.System.Web.DynamicData
 			delegates.PreRenderComplete = FieldTemplate_OnPreRenderComplete_1;
 			test.Invoker = new PageInvoker (delegates);
 			var fr = new FormRequest (test.Response, "form1");
+#if TARGET_DOTNET
 			fr.Controls.Add ("ListView4$ctrl0$editMe");
 			fr.Controls["ListView4$ctrl0$editMe"].Value = "Edit";
+#else
+			fr.Controls.Add ("ListView4$ctl01$editMe");
+			fr.Controls["ListView4$ctl01$editMe"].Value = "Edit";
+#endif
 			test.Request = fr;
 			p = test.Run ();
 
@@ -851,6 +856,9 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("CustomFieldTemplate", dc.UIHint, "#D1-2");
 			dc.UIHint = "MyCustomUIHintTemplate_Text";
 			Assert.AreEqual ("MyCustomUIHintTemplate_Text", dc.UIHint, "#D1-3");
+
+			dc.UIHint = null;
+			Assert.AreEqual (String.Empty, dc.UIHint, "#E1");
 		}
 
 		[Test]

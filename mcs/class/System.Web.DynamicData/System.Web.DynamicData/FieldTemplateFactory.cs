@@ -126,7 +126,11 @@ namespace System.Web.DynamicData
 		{
 			// NO checks are made on parameters in .NET, but well "handle" the NREX
 			// throws in the other methods
-			return BuildManager.CreateInstanceFromVirtualPath (GetFieldTemplateVirtualPath (column, mode, uiHint), typeof (IFieldTemplate)) as IFieldTemplate;
+			string virtualPath = GetFieldTemplateVirtualPath (column, mode, uiHint);
+			if (String.IsNullOrEmpty (virtualPath))
+				return null;
+			
+			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (IFieldTemplate)) as IFieldTemplate;
 		}
 
 		public virtual string GetFieldTemplateVirtualPath (MetaColumn column, DataBoundControlMode mode, string uiHint)
@@ -134,7 +138,6 @@ namespace System.Web.DynamicData
 			// NO checks are made on parameters in .NET, but well "handle" the NREX
 			// throws in the other methods
 			DataBoundControlMode newMode = PreprocessMode (column, mode);
-			string templatePath;
 
 			// The algorithm is as follows:
 			//
@@ -161,50 +164,42 @@ namespace System.Web.DynamicData
 
 			DataTypeAttribute attr = column.DataTypeAttribute;
 			bool uiHintPresent = !String.IsNullOrEmpty (uiHint);
-			if (uiHintPresent && uiHint.EndsWith (".ascx", StringComparison.OrdinalIgnoreCase)) {
-				uiHint = uiHint.Substring (0, uiHint.Length - 5);
-				if (uiHint.Length == 0)
-					uiHintPresent = false;
-			}
-			
-			templatePath = null;
-			int step = 1;
+			string templatePath = null;
+			int step = uiHintPresent ? 0 : 1;
 			Type columnType = column.ColumnType;
 
-			if (uiHintPresent)
-				step = 0;
-			else if (attr == null && templatePath == null) {
+			if (!uiHintPresent && attr == null) {
 				if (column is MetaChildrenColumn)
-					templatePath = GetExistingTemplateVirtualPath ("Children", column, mode);
+					templatePath = GetExistingTemplateVirtualPath ("Children", column, newMode);
 				else if (column is MetaForeignKeyColumn)
-					templatePath = GetExistingTemplateVirtualPath ("ForeignKey", column, mode);
+					templatePath = GetExistingTemplateVirtualPath ("ForeignKey", column, newMode);
 			}
-				
+			
 			while (step < 6 && templatePath == null) {
 				switch (step) {
 					case 0:
-						templatePath = GetExistingTemplateVirtualPath (uiHint, column, mode);
+						templatePath = GetExistingTemplateVirtualPath (uiHint, column, newMode);
 						break;
 
 					case 1:
 						if (attr != null)
-							templatePath = GetTemplateForDataType (attr.DataType, attr.GetDataTypeName (), uiHint, column, mode);
+							templatePath = GetTemplateForDataType (attr.DataType, attr.GetDataTypeName (), uiHint, column, newMode);
 						break;
 							
 					case 2:
-						templatePath = GetExistingTemplateVirtualPath (columnType.FullName, column, mode);
+						templatePath = GetExistingTemplateVirtualPath (columnType.FullName, column, newMode);
 						break;
 
 					case 3:
-						templatePath = GetExistingTemplateVirtualPath (columnType.Name, column, mode);
+						templatePath = GetExistingTemplateVirtualPath (columnType.Name, column, newMode);
 						break;
 
 					case 4:
-						templatePath = ColumnTypeToSpecialName (columnType, column, mode);
+						templatePath = ColumnTypeToSpecialName (columnType, column, newMode);
 						break;
 
 					case 5:
-						columnType = GetFallbackType (columnType, column, mode);
+						columnType = GetFallbackType (columnType, column, newMode);
 						if (columnType == null)
 							step = 5;
 						else
@@ -256,15 +251,7 @@ namespace System.Web.DynamicData
 		{
 			switch (dataType) {
 				case DataType.Custom:
-					string ret;
-					if (!String.IsNullOrEmpty (uiHint))
-						ret = GetExistingTemplateVirtualPath (uiHint, column, mode);
-					else
-						ret = null;
-
-					if (ret == null)
-						ret = GetExistingTemplateVirtualPath (customDataType, column, mode);
-					return ret;
+					return GetExistingTemplateVirtualPath (customDataType, column, mode);
 
 				case DataType.DateTime:
 					return GetExistingTemplateVirtualPath ("DateTime", column, mode);

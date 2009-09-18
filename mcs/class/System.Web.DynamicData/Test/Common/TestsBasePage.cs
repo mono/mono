@@ -10,13 +10,17 @@ using MonoTests.DataSource;
 
 namespace MonoTests.Common
 {
-	public class TestsBasePage <DataContextType> : global::System.Web.UI.Page where DataContextType: new()
+	public class TestsBasePage<DataContextType> : global::System.Web.UI.Page where DataContextType : new ()
 	{
 		Type containerType;
 		bool? outsideTestSuite;
 
-		public bool OutsideTestSuite {
-			get {
+		public event EventHandler ItemDataBinding;
+
+		public bool OutsideTestSuite
+		{
+			get
+			{
 				if (outsideTestSuite == null) {
 					object o = WebConfigurationManager.AppSettings["OutsideTestSuite"];
 					string s = o as string;
@@ -29,20 +33,24 @@ namespace MonoTests.Common
 						outsideTestSuite = false;
 				}
 
-				return (bool) outsideTestSuite;
+				return (bool)outsideTestSuite;
 			}
 
-			set {
+			set
+			{
 				outsideTestSuite = value;
 			}
 		}
 
-		public virtual Type ContextType {
+		public virtual Type ContextType
+		{
 			get { return typeof (DataContextType); }
 		}
 
-		public virtual Type ContainerType {
-			get {
+		public virtual Type ContainerType
+		{
+			get
+			{
 				if (containerType == null) {
 					Type genType = typeof (TestDataContainer<>).GetGenericTypeDefinition ();
 					containerType = genType.MakeGenericType (new Type[] { ContextType });
@@ -52,13 +60,14 @@ namespace MonoTests.Common
 			}
 		}
 
-		public virtual string ContainerTypeName {
+		public virtual string ContainerTypeName
+		{
 			get { return ContainerType.AssemblyQualifiedName; }
 		}
 
-		protected virtual IDynamicDataContainer <DataContextType> CreateContainerInstance ()
+		protected virtual IDynamicDataContainer<DataContextType> CreateContainerInstance ()
 		{
-			return Activator.CreateInstance (ContainerType) as IDynamicDataContainer <DataContextType>;
+			return Activator.CreateInstance (ContainerType) as IDynamicDataContainer<DataContextType>;
 		}
 
 		protected virtual void InitializeDataSource (DynamicDataSource ds, string tableName)
@@ -82,6 +91,13 @@ namespace MonoTests.Common
 				if (t != null)
 					t.Invoke (this);
 			}
+		}
+
+		public void Item_DataBinding (object sender, EventArgs args)
+		{
+			EventHandler eh = ItemDataBinding;
+			if (eh != null)
+				eh (sender, args);
 		}
 	}
 }

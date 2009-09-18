@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -46,6 +47,8 @@ namespace System.Web.DynamicData
 		internal MetaChildrenColumn (MetaTable table, ColumnProvider provider)
 			: base (table, provider)
 		{
+			if (table == null)
+				throw new ArgumentNullException ("table");
 		}
 
 		[MonoTODO]
@@ -56,19 +59,30 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string GetChildrenListPath (object row)
 		{
-			throw new NotImplementedException ();
+			return ChildTable.GetActionPath (PageAction.List, row);
 		}
 
 		[MonoTODO]
 		public string GetChildrenPath (string action, object row)
 		{
-			throw new NotImplementedException ();
+			return ChildTable.GetActionPath (action, row);
 		}
 
 		[MonoTODO]
 		public string GetChildrenPath (string action, object row, string path)
 		{
-			throw new NotImplementedException ();
+			return ChildTable.GetActionPath (action, row, path);
+		}
+
+		internal override void Init ()
+		{
+			AssociationProvider association = Provider.Association;
+			ColumnProvider otherColumn = association.ToColumn;
+			string otherColumnName = otherColumn == null ? null : otherColumn.Name;
+			MetaTable childTable = Model.GetTable (association.ToTable.Name, Table.DataContextType);
+			ChildTable = childTable;
+			if (childTable != null && !String.IsNullOrEmpty (otherColumnName))
+				ColumnInOtherTable = childTable.GetColumn (otherColumnName);
 		}
 	}
 }

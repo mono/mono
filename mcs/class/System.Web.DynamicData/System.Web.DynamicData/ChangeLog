@@ -1,3 +1,32 @@
+2009-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: implemented Init - calls Init on all the columns
+	present in this instance.
+
+	* MetaModel.cs: constructor initializes FieldTemplateFactory after
+	it is instantiated.
+	RegisterContextCore first registers the context type, then creates
+	tables and finally calls Init on all the tables.
+
+	* MetaColumn.cs: added internal Init method - called by MetaModel
+	after context is registered and all tables are created and
+	registered.
+
+	* MetaChildrenColumn.cs: implemented ChildTable,
+	ColumnInOtherTable, GetChildrenListPath, GetChildrenPath and added
+	an internal Init method override. MonoTODO attributes stay until I
+	write tests for the class.
+
+	* FieldTemplateUserControl.cs: implemented ChildrenColumn,
+	ChildrenPath, Column, ForeignKeyColumn, ForeignKeyPath,
+	MetadataAttributes, Mode, Row, Table, SetHost
+
+	* FieldTemplateFactory.cs: GetFieldTemplateVirtualPath fixes
+
+	* DynamicControl.cs: implemented ApplyFormatInEditMode,
+	ConvertEmptyStringToNull, DataField, DataFormatString, HtmlEncode,
+	FormattingOptions, NullDisplayText, UIHint, OnInit, Render.
+
 2009-09-15  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaColumn.cs: DataTypeAttribtue created automatically for

@@ -62,7 +62,6 @@ namespace System.Web.DynamicData
 		bool uiHintReflected;
 		
 		string dataFormatString;
-		PropertyDescriptor property;
 		object defaultValue;
 		string description;
 		string displayName;
@@ -495,6 +494,10 @@ namespace System.Web.DynamicData
 			}
 			
 			return displayFormatAttr;
+		}
+
+		internal virtual void Init ()
+		{
 		}
 		
 		AttributeCollection LoadAttributes ()

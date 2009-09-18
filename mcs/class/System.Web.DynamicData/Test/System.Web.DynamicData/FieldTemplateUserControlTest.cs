@@ -76,6 +76,8 @@ namespace MonoTests.System.Web.DynamicData
 			Type type = GetType ();
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_01.aspx", "ListView_DynamicControl_01.aspx");
 			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_01.aspx.cs", "ListView_DynamicControl_01.aspx.cs");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_10.aspx", "ListView_DynamicControl_10.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.ListView_DynamicControl_10.aspx.cs", "ListView_DynamicControl_10.aspx.cs");
 
 			dynamicModelProvider = new DynamicDataContainerModelProvider<TestDataContext> ();
 			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
@@ -189,13 +191,50 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (field.Host, "#C10");
 			Assert.AreEqual (dc, field.Host, "#C10-1");
 			Assert.IsNotNull (field.MetadataAttributes, "#C11");
+			Assert.AreEqual (dc.Column.Attributes, field.MetadataAttributes, "#C11-1");
 			Assert.AreEqual (DataBoundControlMode.ReadOnly, field.Mode, "#C12");
+			Assert.AreEqual (field.Host.Mode, field.Mode, "#C12-1");
 
 			// Failure with the same exception as above
 			//Assert.IsNull (field.Row, "#C13");
 
 			Assert.IsNotNull (field.Table, "#C14");
 			Assert.AreEqual (dc.Table, field.Table, "#C14-1");
+		}
+
+		[Test]
+		public void ChildrenPath ()
+		{
+			var test = new WebTest ("ListView_DynamicControl_10.aspx");
+			test.Invoker = PageInvoker.CreateOnInit (ChildrenPath_OnInit);
+			var p = test.Run ();
+			Assert.IsNotNull (test.Response, "#X1");
+			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
+			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
+		}
+
+		static void ChildrenPath_OnInit (Page p)
+		{
+			var lc = p.FindControl ("ListView1") as ListView;
+			Assert.IsNotNull (lc, "#A1");
+
+			var page = p as TestsBasePage<TestDataContext3>;
+			Assert.IsNotNull (p, "#A1-1");
+
+			page.ItemDataBinding += new EventHandler(ChildrenPath_ListControl_OnDataBound);
+		}
+
+		static void ChildrenPath_ListControl_OnDataBound (object sender, EventArgs e)
+		{
+			var dc = sender as DynamicControl;
+			Assert.IsNotNull (dc, "#B1");
+			Assert.AreEqual ("PrimaryKeyColumn2", dc.ID, "#B1-1");
+			Assert.AreEqual (typeof (MetaChildrenColumn), dc.Column.GetType (), "#B1-2");
+
+			var field = dc.FieldTemplate as PokerFieldTemplateUserControl;
+			Assert.IsNotNull (field, "#C1");
+			Assert.AreEqual ("/NunitWeb/AssociatedBarTable/List.aspx", field.GetChildrenPath (), "#C1-1");
 		}
 	}
 }
