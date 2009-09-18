@@ -1,3 +1,7 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS1.cs: Fix compiler warning for NET_2_1
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoConvert.cs, PKCS8.cs: Adapt to work with only [DSA|RSA]
