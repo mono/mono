@@ -1,3 +1,21 @@
+2009-09-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Since the runtime supports lazy initialization of a type's vtable and this can cause a type
+	to fail, we need to ensure that the vtable is properly initialized at spots were the type must
+	be known to be good.
+
+	* class.c (mono_class_init): Fail array types if their element type fails initialization
+	as well.
+
+	* object.c (mono_class_create_runtime_vtable): Fail array types if their element type fails
+	initialization, additionally we request the element_type vtable to be initialized as well.
+
+	This is fine and should not increase the working set in any meaningful way since it's reasonable
+	to assume	that most code will create an array and eventually populate it, which will require the
+	type's vtable to be initialized.
+
+	* loader.c (field_from_memberref): Add a comment for a possibly useless mono_class_init call.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* normalization-tables.h : regenerated.
