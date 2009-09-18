@@ -1,3 +1,7 @@
+2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* normalization-tables.h : regenerated.
+
 2009-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug.c (mono_debug_add_method): Increase the size of the buffer,
