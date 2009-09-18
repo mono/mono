@@ -1,3 +1,8 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs, ConstructorBuilder.cs, MethodBuilder.cs, 
+	TypeBuilder.cs: Don't process PermissionSet under NET_2_1
+
 2009-09-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConstructorOnTypeBuilderInst.cs (GetParameters): Make it work for

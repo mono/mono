@@ -288,6 +288,7 @@ namespace System.Reflection.Emit
 		/// </summary>
 		internal void AddPermissionRequests (PermissionSet required, PermissionSet optional, PermissionSet refused)
 		{
+#if !NET_2_1
 			if (created)
 				throw new InvalidOperationException ("Assembly was already saved.");
 
@@ -314,6 +315,7 @@ namespace System.Reflection.Emit
 				permissions_refused [0] = new RefEmitPermissionSet (
 					SecurityAction.RequestRefuse, refused.ToXml ().ToString ());
 			}
+#endif
 		}
 
 		internal void EmbedResourceFile (string name, string fileName)

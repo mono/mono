@@ -261,6 +261,7 @@ namespace System.Reflection.Emit
 
 		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
 		{
+#if !NET_2_1
 			if (pset == null)
 				throw new ArgumentNullException ("pset");
 			if ((action == SecurityAction.RequestMinimum) ||
@@ -285,6 +286,7 @@ namespace System.Reflection.Emit
 
 			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
 			attrs |= TypeAttributes.HasSecurity;
+#endif
 		}
 
 #if NET_2_0
