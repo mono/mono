@@ -1,3 +1,8 @@
+2009-09-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Documentation/en/*: Updates to the API. Add some explanation
+	for more methods. Fix the code sample for runtime detection.
+
 2009-08-03  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by

@@ -14,11 +14,9 @@
   </Attributes>
   <Docs>
     <summary>Flags to encode SIMD acceleration requirements.</summary>
-
     <remarks>The AccelMode values are a bitmask that can be used to
     determine the minimum hardware requirements for an operation to be
     hardware accelerated.</remarks>
-
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -109,11 +107,9 @@
         <ReturnType>Mono.Simd.AccelMode</ReturnType>
       </ReturnValue>
       <Docs>
-
         <summary>This operation is accelerated on systems supporting
         AMD's SSE 4A.  This is a limited subset of SSE4 with their own
         operations.</summary>
-
       </Docs>
     </Member>
     <Member MemberName="SSSE3">

@@ -9,7 +9,6 @@
   </Base>
   <Docs>
     <summary>Determines how values are propagaged on initialization.</summary>
-
     <remarks>
 
       This enumeration is used creating new Vectors from existing
@@ -17,17 +16,14 @@
       copied into the target vector. 
 
     </remarks>
-
     <remarks> The core values are the AFromB enumeration, the other
        enumeration values are just common patterns defined in terms of
        the AFromB enumeration values.
     </remarks>
-
   </Docs>
   <Members>
-
-    <Member MemberName="XFromX">
-      <MemberSignature Language="C#" Value="XFromX" />
+    <Member MemberName="ExpandInterleavedXY">
+      <MemberSignature Language="C#" Value="ExpandInterleavedXY" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,11 +32,11 @@
         <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Indicates that the X value is copied from the source X value.</summary>
+        <summary>Helper: Expands interleaving elements (x, y, z, w) into (x, y, x, y).</summary>
       </Docs>
     </Member>
-    <Member MemberName="XFromY">
-      <MemberSignature Language="C#" Value="XFromY" />
+    <Member MemberName="ExpandInterleavedZW">
+      <MemberSignature Language="C#" Value="ExpandInterleavedZW" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -49,11 +45,11 @@
         <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Indicates that the X value is copied from the source Y value.</summary>
+        <summary>Helper: Expands interleaving elements (x, y, z, w) into (z, w, z, w).</summary>
       </Docs>
     </Member>
-    <Member MemberName="XFromZ">
-      <MemberSignature Language="C#" Value="XFromZ" />
+    <Member MemberName="ExpandW">
+      <MemberSignature Language="C#" Value="ExpandW" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,179 +58,9 @@
         <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Indicates that the X value is copied from the source Z value.</summary>
+        <summary>Helper: Fills all the values with the value of W.</summary>
       </Docs>
     </Member>
-    <Member MemberName="XFromW">
-      <MemberSignature Language="C#" Value="XFromW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the X value is copied from the source W value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="YFromX">
-      <MemberSignature Language="C#" Value="YFromX" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Y value is copied from the source X value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="YFromY">
-      <MemberSignature Language="C#" Value="YFromY" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Y value is copied from the source Y value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="YFromZ">
-      <MemberSignature Language="C#" Value="YFromZ" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Y value is copied from the source Z value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="YFromW">
-      <MemberSignature Language="C#" Value="YFromW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Y value is copied from the source W value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ZFromX">
-      <MemberSignature Language="C#" Value="ZFromX" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Z value is copied from the source X value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ZFromY">
-      <MemberSignature Language="C#" Value="ZFromY" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Z value is copied from the source Y value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ZFromZ">
-      <MemberSignature Language="C#" Value="ZFromZ" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Z value is copied from the source Z value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ZFromW">
-      <MemberSignature Language="C#" Value="ZFromW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the Z value is copied from the source W value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="WFromX">
-      <MemberSignature Language="C#" Value="WFromX" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the W value is copied from the source X value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="WFromY">
-      <MemberSignature Language="C#" Value="WFromY" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the W value is copied from the source Y value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="WFromZ">
-      <MemberSignature Language="C#" Value="WFromZ" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the W value is copied from the source Z value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="WFromW">
-      <MemberSignature Language="C#" Value="WFromW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Indicates that the W value is copied from the source W value.</summary>
-      </Docs>
-    </Member>
-
     <Member MemberName="ExpandX">
       <MemberSignature Language="C#" Value="ExpandX" />
       <MemberType>Field</MemberType>
@@ -300,45 +126,6 @@
         <summary>Helper: Expands the z, w values from (x, y, z, w) into (z, z, w, w).</summary>
       </Docs>
     </Member>
-    <Member MemberName="ExpandW">
-      <MemberSignature Language="C#" Value="ExpandW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Helper: Fills all the values with the value of W.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ExpandInterleavedXY">
-      <MemberSignature Language="C#" Value="ExpandInterleavedXY" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Helper: Expands interleaving elements (x, y, z, w) into (x, y, x, y).</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ExpandInterleavedZW">
-      <MemberSignature Language="C#" Value="ExpandInterleavedZW" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>Helper: Expands interleaving elements (x, y, z, w) into (z, w, z, w).</summary>
-      </Docs>
-    </Member>
     <Member MemberName="RotateLeft">
       <MemberSignature Language="C#" Value="RotateLeft" />
       <MemberType>Field</MemberType>
@@ -376,6 +163,214 @@
       </ReturnValue>
       <Docs>
         <summary>Helper: Swaps values.   (x, y, w, z) becomes (w, z, y, x).</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WFromW">
+      <MemberSignature Language="C#" Value="WFromW" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the W value is copied from the source W value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WFromX">
+      <MemberSignature Language="C#" Value="WFromX" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the W value is copied from the source X value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WFromY">
+      <MemberSignature Language="C#" Value="WFromY" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the W value is copied from the source Y value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WFromZ">
+      <MemberSignature Language="C#" Value="WFromZ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the W value is copied from the source Z value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XFromW">
+      <MemberSignature Language="C#" Value="XFromW" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the X value is copied from the source W value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XFromX">
+      <MemberSignature Language="C#" Value="XFromX" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the X value is copied from the source X value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XFromY">
+      <MemberSignature Language="C#" Value="XFromY" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the X value is copied from the source Y value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="XFromZ">
+      <MemberSignature Language="C#" Value="XFromZ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the X value is copied from the source Z value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="YFromW">
+      <MemberSignature Language="C#" Value="YFromW" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Y value is copied from the source W value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="YFromX">
+      <MemberSignature Language="C#" Value="YFromX" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Y value is copied from the source X value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="YFromY">
+      <MemberSignature Language="C#" Value="YFromY" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Y value is copied from the source Y value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="YFromZ">
+      <MemberSignature Language="C#" Value="YFromZ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Y value is copied from the source Z value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZFromW">
+      <MemberSignature Language="C#" Value="ZFromW" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Z value is copied from the source W value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZFromX">
+      <MemberSignature Language="C#" Value="ZFromX" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Z value is copied from the source X value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZFromY">
+      <MemberSignature Language="C#" Value="ZFromY" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Z value is copied from the source Y value.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ZFromZ">
+      <MemberSignature Language="C#" Value="ZFromZ" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.ShuffleSel</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates that the Z value is copied from the source Z value.</summary>
       </Docs>
     </Member>
   </Members>

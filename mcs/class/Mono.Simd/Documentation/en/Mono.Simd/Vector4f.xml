@@ -14,6 +14,21 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Vector4f (float f);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="f">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Vector4f (float x, float y, float z, float w);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -31,7 +46,8 @@
         <param name="z">Z component.</param>
         <param name="w">W component.</param>
         <summary>Creates a vector with four float values.</summary>
-        <remarks></remarks>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -49,448 +65,24 @@
       <Docs>
         <param name="index">The index of the component.</param>
         <summary>Gets/Sets the component's value.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="AddSub">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f AddSub (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>Computes (v1.X - v2.X, v1.Y + v2.Y, v1.Z - v2.Z, v1.W + v2.W).</summary>
-        <returns>The resulting vector.</returns>
-        <remarks>Computes (v1.X - v2.X, v1.Y + v2.Y, v1.Z - v2.Z, v1.W + v2.W).</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE3)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AndNot">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f AndNot (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
-    <Member MemberName="CompareEqual">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareEqual (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>Compares the elements of two vectors for equality.</summary>
-
-        <returns>A new vector with the comparison results.</returns>
-
-        <remarks>Equal components get all their bits set to 1;
-        Unequeal gets the value set to zero.  You can cast the result
-        into a Vector4i and compare the integer properties to
-        -1.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="CompareLessEqual">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareLessEqual (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
+    <Member MemberName="E">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f E { get; }" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Simd.Vector4f</ReturnType>
       </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
       <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareLessThan">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareLessThan (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareNotEqual">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareNotEqual (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareNotLessEqual">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareNotLessEqual (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareNotLessThan">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareNotLessThan (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareOrdered">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareOrdered (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareUnordered">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f CompareUnordered (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="DuplicateHigh">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f DuplicateHigh (Mono.Simd.Vector4f v1);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE3)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="DuplicateLow">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f DuplicateLow (Mono.Simd.Vector4f v1);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE3)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="HorizontalAdd">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f HorizontalAdd (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE3)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="HorizontalSub">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f HorizontalSub (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE3)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="InterleaveHigh">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f InterleaveHigh (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="InterleaveLow">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f InterleaveLow (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="InvSqrt">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f InvSqrt (Mono.Simd.Vector4f v1);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="LoadAligned">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f LoadAligned (ref Mono.Simd.Vector4f v);" />
@@ -543,63 +135,35 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Max (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
+    <Member MemberName="MinusOne">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f MinusOne { get; }" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Simd.Vector4f</ReturnType>
       </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
       <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>Returns a vector with the components set to the largest components of each vector.</summary>
-        <returns></returns>
-        <remarks>Each individual component of the resulting vector is
-        the largest component of each vector.  This is equivalent to
-        using System.Math.Max on each element and returning the
-        resulting vector.</remarks>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Min (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
-      <MemberType>Method</MemberType>
+    <Member MemberName="One">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f One { get; }" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Simd.Vector4f</ReturnType>
       </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
-      </Parameters>
       <Docs>
-        <param name="v1">First vector.</param>
-        <param name="v1">First vector.</param>
-        <summary>Returns a vector with the components set to the largest components of each vector.</summary>
-        <returns></returns>
-        <remarks>Each individual component of the resulting vector is
-        the largest component of each vector.  This is equivalent to
-        using System.Math.Max on each element and returning the
-        resulting vector.</remarks>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="op_Addition">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f op_Addition (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
@@ -616,6 +180,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>Computes the sum of two vectors.</summary>
         <returns>A new vector.</returns>
@@ -642,6 +207,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>Computes the bitwise and of two vectors.</summary>
         <returns>A new vector.</returns>
@@ -670,6 +236,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>Computes the bitwise and of two vectors.</summary>
         <returns>A new vector.</returns>
@@ -698,6 +265,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -708,6 +276,32 @@
           <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
       </Attributes>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool op_Equality (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
+        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
+      </Parameters>
+      <Docs>
+        <param name="v1">To be added.</param>
+        <param name="v2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="op_ExclusiveOr">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f op_ExclusiveOr (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
@@ -724,6 +318,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>Computes the bitwise xor of two vectors.</summary>
         <returns>A new vector.</returns>
@@ -769,10 +364,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -844,10 +439,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -895,10 +490,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -946,10 +541,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -963,6 +558,32 @@
         <summary>Convertion operator.</summary>
         <returns>The casted vector.</returns>
         <remarks>This operator provides explicit casting support.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (Mono.Simd.Vector4f v1, Mono.Simd.Vector4f v2);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
+        <Parameter Name="v2" Type="Mono.Simd.Vector4f" />
+      </Parameters>
+      <Docs>
+        <param name="v1">To be added.</param>
+        <param name="v2">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Multiply">
@@ -980,6 +601,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -1006,6 +628,7 @@
       </Parameters>
       <Docs>
         <param name="v1">First vector.</param>
+        <param name="v2">To be added.</param>
         <param name="v1">First vector.</param>
         <summary>Substracts the values from the second vector from the first.</summary>
         <returns>A new vector.</returns>
@@ -1017,79 +640,228 @@
         </Attribute>
       </Attributes>
     </Member>
-    <Member MemberName="Reciprocal">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Reciprocal (Mono.Simd.Vector4f v1);" />
-      <MemberType>Method</MemberType>
+    <Member MemberName="Pi">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Pi { get; }" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Simd.Vector4f</ReturnType>
       </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-      </Parameters>
       <Docs>
-        <param name="v1">First vector.</param>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="PrefetchNonTemporal">
+      <MemberSignature Language="C#" Value="public static void PrefetchNonTemporal (ref Mono.Simd.Vector4f res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Shuffle">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Shuffle (Mono.Simd.Vector4f v1, Mono.Simd.ShuffleSel sel);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-        <Parameter Name="sel" Type="Mono.Simd.ShuffleSel" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <param name="sel">The operation to perform.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
         <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
-    <Member MemberName="Sqrt">
-      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Sqrt (Mono.Simd.Vector4f v1);" />
+    <Member MemberName="PrefetchNonTemporal">
+      <MemberSignature Language="C#" Value="public static void PrefetchNonTemporal (Mono.Simd.Vector4f* res);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>Mono.Simd.Vector4f</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="v1" Type="Mono.Simd.Vector4f" />
-      </Parameters>
-      <Docs>
-        <param name="v1">First vector.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <Attributes>
         <Attribute>
           <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f*" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporal1stLevelCache">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporal1stLevelCache (ref Mono.Simd.Vector4f res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporal1stLevelCache">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporal1stLevelCache (Mono.Simd.Vector4f* res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f*" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporal2ndLevelCache">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporal2ndLevelCache (ref Mono.Simd.Vector4f res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporal2ndLevelCache">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporal2ndLevelCache (Mono.Simd.Vector4f* res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f*" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporalAllCacheLevels">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporalAllCacheLevels (ref Mono.Simd.Vector4f res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrefetchTemporalAllCacheLevels">
+      <MemberSignature Language="C#" Value="public static void PrefetchTemporalAllCacheLevels (Mono.Simd.Vector4f* res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Simd.Vector4f*" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="StoreAligned">
       <MemberSignature Language="C#" Value="public static void StoreAligned (ref Mono.Simd.Vector4f res, Mono.Simd.Vector4f val);" />
@@ -1144,49 +916,20 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="X">
-      <MemberSignature Language="C#" Value="public float X { set; get; }" />
-      <MemberType>Property</MemberType>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Single</ReturnType>
+        <ReturnType>System.String</ReturnType>
       </ReturnValue>
+      <Parameters />
       <Docs>
-        <summary>The X component.</summary>
-        <value></value>
-        <remarks></remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Y">
-      <MemberSignature Language="C#" Value="public float Y { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Single</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>The Y component.</summary>
-        <value></value>
-        <remarks></remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Z">
-      <MemberSignature Language="C#" Value="public float Z { set; get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Single</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>The Z component.</summary>
-        <value></value>
-        <remarks></remarks>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="W">
@@ -1200,8 +943,76 @@
       </ReturnValue>
       <Docs>
         <summary>The W component.</summary>
-        <value></value>
-        <remarks></remarks>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="X">
+      <MemberSignature Language="C#" Value="public float X { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The X component.</summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Y">
+      <MemberSignature Language="C#" Value="public float Y { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Y component.</summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Z">
+      <MemberSignature Language="C#" Value="public float Z { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>The Z component.</summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Zero">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.Vector4f Zero { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.Vector4f</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
   </Members>

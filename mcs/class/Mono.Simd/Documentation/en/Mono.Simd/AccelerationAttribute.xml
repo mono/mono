@@ -10,7 +10,7 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property, Inherited=false)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.All, Inherited=false)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -36,10 +36,8 @@
       <Docs>
         <param name="mode">The mode to initialize the attribute with.</param>
         <summary>Initializes the attribute with the specified acceleration mode.</summary>
-
         <remarks>This value documents the minimal hardware requirement
         for the feature to be hardware accelerated.</remarks>
-
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -54,7 +52,8 @@
       <Docs>
         <summary>The minimum hardware required to accelerate this operation.</summary>
         <value>The minimum hardware requirements to accelerate this operation.</value>
-        <remarks></remarks>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
   </Members>

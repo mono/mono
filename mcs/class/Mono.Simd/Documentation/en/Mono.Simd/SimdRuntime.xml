@@ -11,61 +11,63 @@
   <Docs>
     <summary>Methods to probe for SIMD support.</summary>
     <remarks>
-    	<para>Helper methods used to probe for features in the SIMD runtime.</para>
-    	<para>Sometimes it is desirable to write code in more than way to take advantage
+      <para>Helper methods used to probe for features in the SIMD runtime.</para>
+      <para>Sometimes it is desirable to write code in more than way to take advantage
     	or features available only on recent machines. This class provides the required introspection
     	capabilities to have such thing detected at runtime.</para>
     </remarks>
-	 <example>
+    <example>
       <para> The following example shows how to detect the feature set and conditionally generate the right code.</para>
-      <code lang="C#"><![CDATA[using System;
-using Mono.Simd;
+      <code lang="C#"><![CDATA[
+	using System;
+	using Mono.Simd;
 
-public class SampleRuntimeDetection {
+	public class SampleRuntimeDetection {
 
-	static bool MinimalSimdSupport ()
-	{
-		return SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Addition") &&
-			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply") &&
-			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "Shuffle");
-	}
+		static bool MinimalSimdSupport ()
+		{
+			return SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Addition") &&
+				   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply") &&
+				   SimdRuntime.IsMethodAccelerated (typeof (VectorOperations), "Shuffle", typeof (Vector4f), typeof (ShuffleSel));
+		}
 
-	static bool EnhancedSimdSupport ()
-	{
-		return SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "HorizontalAdd") &&
-			   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply");
-	}
+		static bool EnhancedSimdSupport ()
+		{
+			return SimdRuntime.IsMethodAccelerated (typeof (VectorOperations), "HorizontalAdd", typeof (Vector4f), typeof (Vector4f)) &&
+				   SimdRuntime.IsMethodAccelerated (typeof (Vector4f), "op_Multiply");
+		}
 
-	static readonly bool basic_support = MinimalSimdSupport ();
-	static readonly bool enhanced_support = EnhancedSimdSupport ();
+		static readonly bool basic_support = MinimalSimdSupport ();
+		static readonly bool enhanced_support = EnhancedSimdSupport ();
 
-	public static float DotProduct (ref Vector4f a, ref Vector4f b)
-	{
-		if (enhanced_support) {
-			Vector4f prod = a * b;
-			prod = Vector4f.HorizontalAdd (prod, prod);
-			prod = Vector4f.HorizontalAdd (prod, prod);
-			return prod.X;
-		} else if (basic_support) {
-			Vector4f prod = a * b;
-			prod += Vector4f.Shuffle (prod, ShuffleSel.XFromZ | ShuffleSel.YFromW);
-			prod += Vector4f.Shuffle (prod, ShuffleSel.XFromY);
-			return prod.X;
-		} else {
-			return a.X * b.X + a.Y * b.Y + a.Z * b.Z  + a.W * b.W;
+		public static float DotProduct (ref Vector4f a, ref Vector4f b)
+		{
+			if (enhanced_support) {
+				Vector4f prod = a * b;
+				prod = prod.HorizontalAdd (prod);
+				prod = prod.HorizontalAdd (prod);
+				return prod.X;
+			} else if (basic_support) {
+				Vector4f prod = a * b;
+				prod += prod.Shuffle (ShuffleSel.XFromZ | ShuffleSel.YFromW);
+				prod += prod.Shuffle (ShuffleSel.XFromY);
+				return prod.X;
+			} else {
+				return a.X * b.X + a.Y * b.Y + a.Z * b.Z  + a.W * b.W;
+			}
+		}
+
+		public static void Main () {
+			Vector4f x = new Vector4f (1, 2, 3, 1);
+			Vector4f y = new Vector4f (5, 6, 7, 1);
+			float res = DotProduct (ref x, ref y);
+			Console.WriteLine ("Dot product of {0} . {1} is {2}", x, y, res);
 		}
 	}
 
-	public static void Main () {
-		Vector4f x = new Vector4f (1, 2, 3, 1);
-		Vector4f y = new Vector4f (5, 6, 7, 1);
-		float res = DotProduct (ref x, ref y);
-		Console.WriteLine (res);
-	}
-}
-
+	
 		]]></code>
-	</example>
+    </example>
   </Docs>
   <Members>
     <Member MemberName="AccelMode">
@@ -79,16 +81,14 @@ public class SampleRuntimeDetection {
       </ReturnValue>
       <Docs>
         <summary>The acceleration mode supported in this system.</summary>
-        <value></value>
-
+        <value>
+        </value>
         <remarks>This value returns the acceleration mode supported in
-	the current configuration.  The value is AccelMode.None on
+	the current configuration. The value is AccelMode.None on
 	systems without SIMD support or runtimes without SIMD support
 	(like .NET) .</remarks>
-
       </Docs>
     </Member>
-
     <Member MemberName="IsMethodAccelerated">
       <MemberSignature Language="C#" Value="public static bool IsMethodAccelerated (Type type, string method);" />
       <MemberType>Method</MemberType>
@@ -102,20 +102,20 @@ public class SampleRuntimeDetection {
         <Parameter Name="type" Type="System.Type" />
         <Parameter Name="method" Type="System.String" />
       </Parameters>
+      <exception cref="T:System.ArgumentException">
+	    <paramref name="method" /> could not be found on <paramref name="type" />
+      </exception>
       <Docs>
         <param name="type">The type to lookup, a Type from Mono.Simd.</param>
         <param name="method">The name of the method.</param>
         <summary>Returns true if the specified method is accelerated on this platform.</summary>
         <returns>True if the method is accelerated.</returns>
-
         <remarks> The method name must be the full name, for example
 	   the C# operator + is actually encoded as op_Addition.  You
 	   must use the underlying name for this lookup.
 	</remarks>
-
       </Docs>
     </Member>
-
     <Member MemberName="IsMethodAccelerated">
       <MemberSignature Language="C#" Value="public static bool IsMethodAccelerated (Type type, string method, Type[] signature);" />
       <MemberType>Method</MemberType>
@@ -128,19 +128,49 @@ public class SampleRuntimeDetection {
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
         <Parameter Name="method" Type="System.String" />
-        <Parameter Name="signature" Type="System.Type[]" />
+        <Parameter Name="signature" Type="System.Type[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
       </Parameters>
+      <exception cref="T:System.ArgumentException">
+	    <paramref name="method" /> with <paramref name="signature" /> could not be found on <paramref name="type" />
+      </exception>
       <Docs>
         <param name="type">The type to lookup, a Type from Mono.Simd.</param>
         <param name="method">The name of the method.</param>
         <param name="signature">The signature for the method.</param>
         <summary>Returns true if the specified method is accelerated on this platform.</summary>
         <returns>True if the method is accelerated.</returns>
-
         <remarks> The method name must be the full name, for example
 	   the C# operator + is actually encoded as op_Addition.  You
 	   must use the underlying name for this lookup.
 	</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MethodAccelerationMode">
+      <MemberSignature Language="C#" Value="public static Mono.Simd.AccelMode MethodAccelerationMode (System.Reflection.MethodInfo method);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Simd.AccelMode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+      </Parameters>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="method" /> was <see langword="null" />.
+      </exception>
+      <Docs>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="MethodAccelerationMode">
@@ -156,6 +186,9 @@ public class SampleRuntimeDetection {
         <Parameter Name="type" Type="System.Type" />
         <Parameter Name="method" Type="System.String" />
       </Parameters>
+      <exception cref="T:System.ArgumentException">
+	    <paramref name="method" /> could not be found on <paramref name="type" />
+      </exception>
       <Docs>
         <param name="type">The type to lookup, a Type from Mono.Simd.</param>
         <param name="method">The name of the method.</param>
@@ -178,8 +211,17 @@ public class SampleRuntimeDetection {
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
         <Parameter Name="method" Type="System.String" />
-        <Parameter Name="signature" Type="System.Type[]" />
+        <Parameter Name="signature" Type="System.Type[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
       </Parameters>
+      <exception cref="T:System.ArgumentException">
+	    <paramref name="method" /> with <paramref name="signature" /> could not be found on <paramref name="type" />
+      </exception>
       <Docs>
         <param name="type">The type to lookup, a Type from Mono.Simd.</param>
         <param name="method">The name of the method.</param>
