@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void CheckProtectedModifier ()
+		protected void CheckProtectedModifier ()
 		{
 			if ((ModFlags & Modifiers.PROTECTED) == 0)
 				return;

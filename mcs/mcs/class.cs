@@ -6448,6 +6448,7 @@ namespace Mono.CSharp {
 				}
 
 				CheckAbstractAndExtern (block != null);
+				CheckProtectedModifier ();
 
 				if (block != null && block.IsIterator)
 					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags, Compiler);
