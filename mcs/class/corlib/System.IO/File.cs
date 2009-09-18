@@ -37,6 +37,8 @@ using System.Text;
 #if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+#endif
+#if NET_2_0 && !NET_2_1
 using System.Security.AccessControl;
 #endif
 
@@ -125,15 +127,16 @@ namespace System.IO
 
 		public static FileStream Create (string path)
 		{
-			return Create (path, 8192, FileOptions.None, null);
+			return Create (path, 8192);
 		}
 
 		public static FileStream Create (string path, int bufferSize)
 		{
-			return Create (path, bufferSize, FileOptions.None, null);
+			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
+				FileShare.None, bufferSize);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MonoTODO ("options not implemented")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
@@ -145,20 +148,11 @@ namespace System.IO
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options,
 						 FileSecurity fileSecurity)
-#else
-		private static FileStream Create (string path, int bufferSize,
-						  FileOptions options,
-						  object fileSecurity)
-#endif
 		{
-#if NET_2_0
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
 				FileShare.None, bufferSize, options);
-#else
-			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
-				FileShare.None, bufferSize);
-#endif
 		}
+#endif
 
 		public static StreamWriter CreateText (string path)
 		{
@@ -202,7 +196,7 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static FileSecurity GetAccessControl (string path)
 		{
 			throw new NotImplementedException ();
@@ -440,7 +434,8 @@ namespace System.IO
 				throw MonoIO.GetException (error);
 			}
 		}
-		
+#endif
+#if NET_2_0 && !NET_2_1
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{

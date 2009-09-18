@@ -1,3 +1,13 @@
+2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Directory.cs: Avoid imperative CAS checks and remove 
+	AccessControl types for NET_2_1
+	* DirectoryInfo.cs: Remove AccessControl types for NET_2_1
+	* File.cs: Remove AccessControl types for NET_2_1
+	* FileInfo.cs: Remove AccessControl types for NET_2_1
+	* FileStream.cs: Remove AccessControl types for NET_2_1
+	* Path.cs: Avoid imperative CAS checks for NET_2_1
+
 2009-09-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DirectoryInfo.cs: throw if FullPath is not a directory.

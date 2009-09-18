@@ -35,7 +35,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 using System.Security.AccessControl;
 #endif
 
@@ -312,7 +312,7 @@ namespace System.IO {
 				throw new ArgumentOutOfRangeException ("searchOption", msg);
 			}
 		}
-
+#if !NET_2_1
 		// access control methods
 
 		[MonoLimitation ("DirectorySecurity isn't implemented")]
@@ -350,6 +350,7 @@ namespace System.IO {
 				throw new ArgumentNullException ("directorySecurity");
 			throw new UnauthorizedAccessException ();
 		}
+#endif
 #endif
 	}
 }

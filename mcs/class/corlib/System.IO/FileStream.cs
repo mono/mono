@@ -39,10 +39,11 @@ using System.Threading;
 
 #if NET_2_0
 using Microsoft.Win32.SafeHandles;
-using System.Security.AccessControl;
-#endif
 #if NET_2_1
 using System.IO.IsolatedStorage;
+#else
+using System.Security.AccessControl;
+#endif
 #endif
 
 namespace System.IO
@@ -141,7 +142,7 @@ namespace System.IO
 		{
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
 			: this (path, mode, access, share, bufferSize, false, options)
 		{
@@ -939,7 +940,7 @@ namespace System.IO
 				GC.SuppressFinalize (this);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();

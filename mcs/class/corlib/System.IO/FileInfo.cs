@@ -36,7 +36,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 using System.Security.AccessControl;
 #endif
 
@@ -93,7 +93,7 @@ namespace System.IO {
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public bool IsReadOnly {
 			get {
 				if (!Exists)
@@ -271,7 +271,7 @@ namespace System.IO {
 #endif
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();
