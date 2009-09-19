@@ -229,14 +229,25 @@ namespace System.Net.NetworkInformation {
 					int headerLength = (bytes [0] & 0xF) << 2;
 					int bodyLength = rc - headerLength;
 
-					if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) // Ping reply to different request. discard it.
+					// Ping reply to different request. discard it.
+					if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) {
+						long t = timeout - rtt;
+						if (t <= 0)
+							return new PingReply (null, new byte [0], options, 0, IPStatus.TimedOut);
+						s.ReceiveTimeout = (int) t;
 						continue;
+					}
 
 					IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
 
 					/* discard ping reply to different request or echo requests if running on same host. */
-					if (recv.Identifier != identifier || recv.Type == 8)
+					if (recv.Identifier != identifier || recv.Type == 8) {
+						long t = timeout - rtt;
+						if (t <= 0)
+							return new PingReply (null, new byte [0], options, 0, IPStatus.TimedOut);
+						s.ReceiveTimeout = (int) t;
 						continue; 
+					}
 
 					return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
 				} while (true);
