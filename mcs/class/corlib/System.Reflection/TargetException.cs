@@ -39,8 +39,11 @@ namespace System.Reflection
 	[ComVisible (true)]
 #endif
 	[Serializable]
-	public class TargetException : ApplicationException
-	{
+#if NET_2_1
+	public class TargetException : Exception {
+#else
+	public class TargetException : ApplicationException {
+#endif
 		public TargetException ()
 			: base (Locale.GetText ("Unable to invoke an invalid target."))
 		{

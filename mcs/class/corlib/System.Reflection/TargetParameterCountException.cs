@@ -39,8 +39,11 @@ namespace System.Reflection
 	[ComVisible (true)]
 #endif
 	[Serializable]
-	public sealed class TargetParameterCountException : ApplicationException
-	{
+#if NET_2_1
+	public sealed class TargetParameterCountException : Exception {
+#else
+	public sealed class TargetParameterCountException : ApplicationException {
+#endif
 		public TargetParameterCountException ()
 			: base (Locale.GetText ("Number of parameter does not match expected count."))
 		{

@@ -38,8 +38,11 @@ namespace System.Reflection
 	[ComVisible (true)]
 #endif
 	[Serializable]
-	public sealed class TargetInvocationException : ApplicationException
-	{
+#if NET_2_1
+	public sealed class TargetInvocationException : Exception {
+#else
+	public sealed class TargetInvocationException : ApplicationException {
+#endif
 		public TargetInvocationException (Exception inner)
 			: base ("Exception has been thrown by the target of an invocation.", inner)
 		{			

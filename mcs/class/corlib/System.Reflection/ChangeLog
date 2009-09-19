@@ -1,3 +1,9 @@
+2009-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TargetException.cs, TargetInvocationException.cs,
+	TargetParameterCountException.cs: Inherit from Exception for 
+	NET_2_1 since ApplicationException does not exists
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs, Module.cs: Avoid imperative CAS checks for NET_2_1
