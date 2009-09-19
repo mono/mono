@@ -190,6 +190,8 @@ namespace System.ServiceModel.Description
 
 			foreach (var oper in endpoint.Contract.Operations) {
 				var wai = oper.GetWebAttributeInfo ();
+				if (wai.Method == "GET")
+					continue;
 				var style = wai != null && wai.IsBodyStyleSetExplicitly ? wai.BodyStyle : DefaultBodyStyle;
 				foreach (var msg in oper.Messages)
 					switch (style) {
