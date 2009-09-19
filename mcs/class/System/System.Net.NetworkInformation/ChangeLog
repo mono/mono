@@ -1,3 +1,8 @@
+2009-09-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: if we receive a packet that is ignored, adjust the
+	timeout. Fixes bug #538013.
+
 2009-05-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Apply patch from Alex Shulgin
