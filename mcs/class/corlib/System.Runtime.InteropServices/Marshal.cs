@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Mono.Interop;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System;
@@ -40,7 +39,13 @@ using System.Threading;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+#if !NET_2_1
 using System.Runtime.InteropServices.ComTypes;
+#endif
+#endif
+
+#if !NET_2_1
+using Mono.Interop;
 #endif
 
 namespace System.Runtime.InteropServices
@@ -203,7 +208,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 #endif
-		
+
+#if !NET_2_1
 		public static object CreateWrapperOfType (object o, Type t)
 		{
 			__ComObject co = o as __ComObject;
@@ -220,6 +226,7 @@ namespace System.Runtime.InteropServices
 
 			return ComInteropProxy.GetProxy (co.IUnknown, t).GetTransparentProxy ();
 		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 #if NET_2_0
@@ -292,6 +299,7 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
+#if !NET_2_1
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -387,6 +395,7 @@ namespace System.Runtime.InteropServices
 
 			return m.GetHINSTANCE ();
 		}
+#endif // !NET_2_1
 
 		[MonoTODO ("SetErrorInfo")]
 		public static int GetHRForException (Exception e)
@@ -402,7 +411,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-
+#if !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -446,12 +455,6 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 #endif
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-#if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-		public static extern int GetLastWin32Error();
 
 		[MonoTODO]
 #if NET_2_0
@@ -647,6 +650,13 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+#endif // !NET_2_1
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
+		public static extern int GetLastWin32Error();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr OffsetOf (Type t, string fieldName);
@@ -825,6 +835,7 @@ namespace System.Runtime.InteropServices
 			return ReleaseInternal (pUnk);
 		}
 
+#if !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseComObjectInternal (object co);
 
@@ -851,6 +862,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
+#endif // !NET_2_1
 
 #if NET_2_0
 		[ComVisible (true)]
@@ -1144,13 +1156,14 @@ namespace System.Runtime.InteropServices
 			return null;
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static int FinalReleaseComObject (object o)
 		{
 			while (ReleaseComObject (o) != 0);
 			return 0;
 		}
-
+#endif
+#if NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Delegate GetDelegateForFunctionPointerInternal (IntPtr ptr, Type t);
 

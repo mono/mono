@@ -1,3 +1,9 @@
+2009-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_bootstrap_corlib.dll.sources, net_2_1_raw_corlib.dll.sources:
+	New. Moonlight specific build files to minimize size and build time.
+	Copied from corlib.dll.sources minus some 4.0 stuff and COM types.
+
 2009-09-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Add System.IO/UnmanagedMemoryAccessor.cs.
