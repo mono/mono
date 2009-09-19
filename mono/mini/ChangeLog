@@ -1,16 +1,18 @@
+2009-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Fix the previous change on 64 bit platforms.
+	
+	* method-to-ir.c: Applied patch from Rodrigo Kumpera. Allow an i8 argument
+	to NEWARR.
+
+	* iltests.il.in: Add a new test.
+
 2009-09-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r127430.
 
 	* mini.c: Adjust locking order to the new semantics where the loader lock
 	comes first.
-
-2009-09-19  Zoltan Varga  <vargaz@gmail.com>
-
-	* method-to-ir.c: Applied patch from Rodrigo Kumpera. Allow an i8 argument
-	to NEWARR.
-
-	* iltests.il.in: Add a new test.
 	
 2009-09-16  Zoltan Varga  <vargaz@gmail.com>
 

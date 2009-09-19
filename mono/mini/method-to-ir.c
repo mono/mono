@@ -8185,6 +8185,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ins->type = STACK_I4;
 				ins->dreg = alloc_ireg (cfg);
 				MONO_ADD_INS (cfg->cbb, ins);
+				mono_decompose_opcode (cfg, ins);
 				*sp = ins;
 			}
 
