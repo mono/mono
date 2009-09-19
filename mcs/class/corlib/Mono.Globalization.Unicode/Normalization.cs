@@ -73,7 +73,11 @@ namespace Mono.Globalization.Unicode
 			if (idx == 0)
 				return 0;
 			while (mappedChars [idx] == startCh) {
+				int prevCB = 0;
+				int combiningClass = 0;
 				for (int i = 1, j = 1; ; i++, j++) {
+					prevCB = combiningClass;
+
 					if (mappedChars [idx + i] == 0)
 						// matched
 						return idx;
@@ -82,26 +86,31 @@ namespace Mono.Globalization.Unicode
 
 					// handle blocked characters here.
 					char curCh;
-					int combiningClass;
-					int nextCB = 0;
+					bool match = false;
 					do {
 						curCh = s != null ?
 							s [start + j] :
 							sb [start + j];
 						combiningClass = GetCombiningClass (curCh);
-						if (++j + start >= charsLength ||
-							combiningClass == 0)
+						if (mappedChars [idx + i] == curCh) {
+							match = true;
 							break;
-						nextCB = GetCombiningClass (
-							s != null ?
-							s [start + j] :
-							sb [start + j]);
-					} while (nextCB > 0 && combiningClass >= nextCB);
-					j--;
-					if (mappedChars [idx + i] == curCh)
-						continue;
-					if (mappedChars [idx + i] > curCh)
-						return 0; // no match
+						}
+						if (combiningClass < prevCB) // blocked. Give up this map entry.
+							break;
+						if (++j + start >= charsLength || combiningClass == 0)
+							break;
+					} while (true);
+
+					if (match)
+						continue; // check next character in the current map entry string.
+					if (prevCB < combiningClass) {
+						j--;
+						if (mappedChars [idx + i] == curCh)
+							continue;
+						//if (mappedChars [idx + i] > curCh)
+						//	return 0; // no match
+					}
 					// otherwise move idx to next item
 					while (mappedChars [i] != 0)
 						i++;
@@ -154,7 +163,7 @@ namespace Mono.Globalization.Unicode
 				int cur = i;
 				// FIXME: It should check "blocked" too
 				for (;i > 0; i--) // this loop does not check sb[0], but regardless of the condition below it should not go under 0.
-					if (!CanBePrimaryComposite ((int) sb [i]))
+					if (GetCombiningClass ((int) sb [i]) == 0)
 						break;
 
 				int idx = 0; // index to mappedChars
@@ -167,29 +176,25 @@ namespace Mono.Globalization.Unicode
 					i = cur;
 					continue;
 				}
+
 				int prim = GetPrimaryCompositeFromMapIndex (idx);
 				int len = GetNormalizedStringLength (prim);
 				if (prim == 0 || len == 0)
-					throw new SystemException ("Internal error: should not happen.");
+					throw new SystemException ("Internal error: should not happen. Input: " + sb);
 				int removed = 0;
 				sb.Insert (i++, (char) prim); // always single character
 
 				// handle blocked characters here.
 				while (removed < len) {
-					if (i + 1 < sb.Length) {
-						int cb = GetCombiningClass (sb [i]);
-						if (cb > 0) {
-							int next = GetCombiningClass (sb [i + 1]);
-							if (next != 0 && cb >= next) {
-								i++;
-								continue;
-							}
-						}
+					if (sb [i] == mappedChars [idx + removed]) {
+						sb.Remove (i, 1);
+						removed++;
+						// otherwise, skip it.
 					}
-					sb.Remove (i, 1);
-					removed++;
+					else
+						i++;
 				}
-				i = cur - 1; // apply recursively
+				i = cur - 1;
 			}
 		}
 
@@ -364,11 +369,10 @@ namespace Mono.Globalization.Unicode
 					
 					// partly copied from Combine()
 					int cur = i;
-					// FIXME: It should check "blocked" too
-					for (;i >= 0; i--)
-						if (!CanBePrimaryComposite ((int) source [i]))
+					for (;i > 0; i--) // this loop does not check sb[0], but regardless of the condition below it should not go under 0.
+						if (GetCombiningClass ((int) source [i]) == 0)
 							break;
-					i++;
+					//i++;
 					// Now i is the "starter"
 					for (; i < cur; i++) {
 						if (GetPrimaryCompositeCharIndex (source, i) != 0)

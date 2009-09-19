@@ -146,7 +146,7 @@ $(UCA_DATA) :
 	mv core.zip common downloaded
 	touch core.zip
 
-$(NORM_TEST) :
+$(NORM_TEST) : downloaded/NormalizationTest.txt
 	wget wget http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
 	mv NormalizationTest.txt downloaded/
 	touch downloaded/NormalizationTest.txt

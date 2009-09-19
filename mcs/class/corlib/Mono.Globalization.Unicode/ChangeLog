@@ -1,3 +1,10 @@
+2009-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Normalization.cs : Handle blocked characters which are not
+	  immediately next to the primary composite character. This fixes
+	  some Arabic string sequence normalization.
+	* Makefile : fix test build.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Normalization.cs : some renaming for disambiguation.

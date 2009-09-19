@@ -4228,6 +4228,22 @@ public class StringTest
 		Assert.AreEqual (s2, s1.Normalize (NormalizationForm.FormC), "#1");
 		Assert.AreEqual (s2, s1.Normalize (NormalizationForm.FormKC), "#2");
 	}
+
+	[Test]
+	public void Normalize3 ()
+	{
+		var s = new string (new char [] { '\u064A', '\u064F', '\u0648', '\u0654', '\u0652', '\u064A', '\u064F', '\u0648', '\u0654' });
+
+		var formC = new string (new char [] { '\u064A', '\u064F', '\u0624', '\u0652', '\u064a', '\u064f', '\u0624' });
+		var formD = new string (new char [] { '\u064A', '\u064F', '\u0648', '\u0652', '\u0654', '\u064a', '\u064f', '\u0648', '\u0654' });
+		var formKC = new string (new char [] { '\u064A', '\u064F', '\u0624', '\u0652', '\u064a', '\u064f', '\u0624' });
+		var formKD = new string (new char [] { '\u064A', '\u064F', '\u0648', '\u0652', '\u0654', '\u064a', '\u064f', '\u0648', '\u0654' });
+
+		Assert.AreEqual (formD, s.Normalize (NormalizationForm.FormD), "#1");
+		Assert.AreEqual (formC, s.Normalize (NormalizationForm.FormC), "#2");
+		Assert.AreEqual (formKD, s.Normalize (NormalizationForm.FormKD), "#3");
+		Assert.AreEqual (formKC, s.Normalize (NormalizationForm.FormKC), "#4");
+	}
 #endif
 }
 

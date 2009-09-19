@@ -1,3 +1,7 @@
+2009-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : add more normalization tests.
+
 2009-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpanTest.cs: Add test case where seconds are not specified.
