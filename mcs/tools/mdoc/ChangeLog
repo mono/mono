@@ -1,3 +1,14 @@
+2009-09-19  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: By request of Edd Dumbill, add
+	  --with-version=VERSION option.  This will generate HTML
+	  documentation for ONLY those types/members which exist within
+	  VERSION.  This makes it easy to generate HTML that will show e.g.
+	  only MonoTouch docs (and not the full class library docs).
+	* Makefile: Add test for 'mdoc export-html --with-version=VERSION'.
+	  Somewhat brain-dead, as it only checks for added types (and not
+	  added members), but better than nothing...
+
 2009-09-09  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Fix behavior when multiple
