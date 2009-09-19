@@ -1,5 +1,7 @@
 2009-09-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Fix the previous change on 64 bit platforms.
+	
 	* method-to-ir.c: Applied patch from Rodrigo Kumpera. Allow an i8 argument
 	to NEWARR.
 
