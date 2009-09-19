@@ -1,3 +1,10 @@
+2009-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Applied patch from Rodrigo Kumpera. Allow an i8 argument
+	to NEWARR.
+
+	* iltests.il.in: Add a new test.
+	
 2009-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_instances): Add more instances of
