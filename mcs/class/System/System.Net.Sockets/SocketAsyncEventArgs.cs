@@ -45,7 +45,7 @@ namespace System.Net.Sockets
 		public IList<ArraySegment<byte>> BufferList {
 			get { return _bufferList; }
 			set {
-				if (Buffer != null)
+				if (Buffer != null && value != null)
 					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
 				_bufferList = value;
 			}

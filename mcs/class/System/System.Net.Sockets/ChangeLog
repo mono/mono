@@ -1,3 +1,8 @@
+2009-09-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SocketAsyncEventArgs.cs: fix check for non-null.
+	Fixes bug #516455.
+
 2009-06-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: turn WSAEINVAL into ArgumentException.
