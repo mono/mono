@@ -1,5 +1,11 @@
 2009-09-19  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/monodocs2html.cs: Add --with-profile=PROFILE
+	  option, which just provides a simple mapping between profile names
+	  like net_3_5 to the versions used in that profile.
+
+2009-09-19  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocs2html.cs: By request of Edd Dumbill, add
 	  --with-version=VERSION option.  This will generate HTML
 	  documentation for ONLY those types/members which exist within
