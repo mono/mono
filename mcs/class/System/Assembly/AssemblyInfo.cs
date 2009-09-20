@@ -54,7 +54,10 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
+#if !NET_2_1
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
+#endif
 
 #if !BOOTSTRAP_WITH_OLDLIB
 	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -72,12 +75,10 @@ using System.Runtime.InteropServices;
 	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 	[assembly: StringFreezing]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 	[assembly: DefaultDependency (LoadHint.Always)]
 #elif NET_1_1
 	[assembly: AssemblyTrademark ("")]
 	[assembly: AssemblyConfiguration ("")]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 	[assembly: TypeLibVersion (1, 10)]
 #elif NET_1_0
 	[assembly: AssemblyTrademark ("")]
