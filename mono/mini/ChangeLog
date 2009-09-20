@@ -1,5 +1,9 @@
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (get_call_info): Return more precise information in
+	ArgInfo->regtype.
+	(dyn_call_supported): Use the information in CallInfo.
+
 	* mini-arm.c: Enable support for returning vtypes in the dyn_call code.
 
 	* mini.c mini-amd64.c: Enable support for returning vtypes in the dyn_call
