@@ -1,5 +1,10 @@
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_runtime_invoke): Add support for enum return values to
+	dyn invoke.
+
+	* mini-amd64.c (mono_arch_get_dyn_call_ret): Ditto.
+
 	* aot-compiler.c (add_wrappers): Add a few restrictions for the use of
 	the dynamic invoke wrappers.
 
