@@ -1,3 +1,7 @@
+2009-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MarshalAsAttribute.cs: Remove VarEnum field for NET_2_1
+
 2009-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Marshal.cs: Avoid depending on COM stuff for NET_2_1

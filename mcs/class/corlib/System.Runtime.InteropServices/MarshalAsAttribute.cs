@@ -52,7 +52,10 @@ namespace System.Runtime.InteropServices {
 #endif	
 		public Type MarshalTypeRef;
 		
+#if !NET_2_1
 		public VarEnum SafeArraySubType;
+#endif
+
 		public int SizeConst;
 		public short SizeParamIndex;
 		public Type SafeArrayUserDefinedSubType;
