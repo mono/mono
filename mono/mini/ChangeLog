@@ -1,5 +1,15 @@
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_create_jit_domain_info): Register a destructor function
+	for the runtime_invoke_hash.
+
+	* mini-amd64.c (mono_arch_get_dyn_call_args): Rename this to 
+	'mono_arch_dyn_call_start'. Pass the pointer to the return value buffer to
+	this function.
+	(mono_arch_get_dyn_call_ret): Rename this to 'mono_arch_dyn_call_finish'. 
+	(dyn_call_supported): Simplify this by using get_call_info ().
+	(mono_arch_dyn_call_free): New destructor function.
+	
 	* generics.cs: Remove a printf.
 
 	* method-to-ir.c (mono_method_to_ir): Allocate some param area for DYN_CALL.
