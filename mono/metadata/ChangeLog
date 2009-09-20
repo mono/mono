@@ -1,3 +1,9 @@
+2009-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke_dynamic): New internal function
+	to return a runtime-invoke wrapper which uses DYN_CALL to call the wrapped
+	method, to be used by full-aot.
+
 2009-09-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Since the runtime supports lazy initialization of a type's vtable and this can cause a type
