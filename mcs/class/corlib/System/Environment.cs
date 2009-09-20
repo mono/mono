@@ -429,10 +429,11 @@ namespace System {
 			} else {
 				dir = InternalGetFolderPath (folder);
 			}
-
+#if !NET_2_1
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dir).Demand ();
 			}
+#endif
 			return dir;
 		}
 

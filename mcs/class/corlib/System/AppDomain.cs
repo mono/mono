@@ -120,10 +120,12 @@ namespace System {
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
@@ -131,10 +133,12 @@ namespace System {
 		public string RelativeSearchPath {
 			get {
 				string path = SetupInformationNoCopy.PrivateBinPath;
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
@@ -146,10 +150,12 @@ namespace System {
 					return null;
 
 				string path = Path.Combine (setup.DynamicBase, setup.ApplicationName);
+#if !NET_2_1
 				if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
 					// we cannot divulge local file informations
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
 				}
+#endif
 				return path;
 			}
 		}
