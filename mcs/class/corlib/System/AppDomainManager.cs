@@ -39,13 +39,9 @@ using System.Threading;
 namespace System {
 
 	[ComVisible (true)]
-#if NET_2_1
-	public class AppDomainManager {
-#else
 	[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 	[SecurityPermission (SecurityAction.InheritanceDemand, Infrastructure = true)]
 	public class AppDomainManager : MarshalByRefObject {
-#endif
 		private ApplicationActivator _activator;
 		private AppDomainManagerInitializationOptions _flags;
 
