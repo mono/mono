@@ -1,3 +1,7 @@
+2009-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* runtime-invoke.cs: Add more tests.
+
 2009-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* coreclr-security.cs: Add test cases for arrays (one dimension, 
