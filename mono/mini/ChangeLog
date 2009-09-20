@@ -1,3 +1,10 @@
+2009-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add OP_DYN_CALL opcode.
+
+	* mini-amd64.c method-to-ir.c: Add infrastructure for making method calls
+	with dynamic arguments lists similar to libffi.
+
 2009-09-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Fix the previous change on 64 bit platforms.
