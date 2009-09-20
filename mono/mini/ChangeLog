@@ -1,5 +1,8 @@
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Implement support for receiving vtypes in registers in
+	the dyn_call code.
+
 	* mini.c mini-amd64.c: Implement partial support for passing vtypes in
 	the dyn_call code.
 
