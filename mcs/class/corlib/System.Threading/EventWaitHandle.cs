@@ -29,9 +29,11 @@
 
 #if NET_2_0
 
-using System.Security.AccessControl;
 using System.IO;
 using System.Runtime.InteropServices;
+#if !NET_2_1
+using System.Security.AccessControl;
+#endif
 
 namespace System.Threading
 {
@@ -63,7 +65,7 @@ namespace System.Threading
 		{
 			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out createdNew);
 		}
-		
+#if !NET_2_1
 		[MonoTODO ("Implement access control")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew,
@@ -77,7 +79,7 @@ namespace System.Threading
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		public static EventWaitHandle OpenExisting (string name)
 		{
 			return(OpenExisting (name, EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify));
@@ -107,7 +109,7 @@ namespace System.Threading
 			
 			return(new EventWaitHandle (handle));
 		}
-		
+#endif
 		public bool Reset ()
 		{
 			CheckDisposed ();
@@ -121,12 +123,13 @@ namespace System.Threading
 			
 			return (NativeEventCalls.SetEvent_internal (Handle));
 		}
-
+#if !NET_2_1
 		[MonoTODO]
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }
 

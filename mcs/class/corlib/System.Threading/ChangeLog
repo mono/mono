@@ -1,3 +1,9 @@
+2009-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventWaitHandle.cs: Remove AccessControl usage for NET_2_1
+	* Mutex.cs: Remove some ctors and AccessControl usage for NET_2_1
+	* NativeEventCalls.cs: Remove AccessControl usage for NET_2_1
+
 2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelLoopState.cs: Take in account that

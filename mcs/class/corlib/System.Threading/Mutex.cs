@@ -33,9 +33,11 @@ using System.Security.Permissions;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
-using System.Security.AccessControl;
 using System.IO;
 using System.Runtime.InteropServices;
+#if !NET_2_1
+using System.Security.AccessControl;
+#endif
 #endif
 
 namespace System.Threading
@@ -54,7 +56,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool ReleaseMutex_internal(IntPtr handle);
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error);
 		
@@ -102,7 +104,7 @@ namespace System.Threading
 			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MonoTODO ("Implement MutexSecurity")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
@@ -159,7 +161,7 @@ namespace System.Threading
 			}
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public void SetAccessControl (MutexSecurity mutexSecurity)
 		{
 			throw new NotImplementedException ();
