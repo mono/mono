@@ -32,6 +32,15 @@ namespace System.Runtime.Versioning {
 
 	public static class VersioningHelper {
 
+		static private int GetDomainId ()
+		{
+#if NET_2_1
+			return 0;
+#else
+			return AppDomain.CurrentDomain.Id;
+#endif
+		}
+
 		static private int GetProcessId ()
 		{
 			// TODO - System.Diagnostics.Process class is located in System.dll
@@ -42,11 +51,11 @@ namespace System.Runtime.Versioning {
 		{
 			if (process && appdomain) {
 				return String.Concat (name, "_", GetProcessId ().ToString (),
-					"_", AppDomain.CurrentDomain.Id.ToString ());
+					"_", GetDomainId ().ToString ());
 			} else if (process) {
 				return String.Concat (name, "_", GetProcessId ().ToString ());
 			} else if (appdomain) {
-				return String.Concat (name, "_", AppDomain.CurrentDomain.Id.ToString ());
+				return String.Concat (name, "_", GetDomainId ().ToString ());
 			}
 			// nothing, return original string
 			return name;
