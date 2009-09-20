@@ -8731,7 +8731,19 @@ namespace Mono.CSharp {
 			else
 				left = ec.GetThis (loc);
 
-			MemberExpr me = (MemberExpr) member_lookup;
+			MemberExpr me = member_lookup as MemberExpr;
+			if (me == null){
+				if (member_lookup is TypeExpression){
+					ec.Report.Error (582, loc, "{0}: Can not reference a type through an expression, try `{1}' instead",
+							 Identifier, member_lookup.GetSignatureForError ());
+				} else {
+					ec.Report.Error (582, loc, "{0}: Can not reference a {1} through an expression", 
+							 Identifier, member_lookup.ExprClassName);
+				}
+				
+				return null;
+			}
+			
 			me = me.ResolveMemberAccess (ec, left, loc, null);
 			if (me == null)
 				return null;

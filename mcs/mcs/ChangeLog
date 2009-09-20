@@ -1,3 +1,10 @@
+2009-09-20  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs: Do not crash when MemberLookup returns something
+	that is not a MemberExpr here.   Report error 582 instead. 
+
+	Fixes #499988.
+
 2009-09-18  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs, class.cs: Check protected property accessors.
