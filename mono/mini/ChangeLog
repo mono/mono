@@ -1,5 +1,10 @@
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Add a few restrictions for the use of
+	the dynamic invoke wrappers.
+
+	* mini-arm.c: Implement OP_DYN_CALL for arm.
+
 	* aot-compiler.c (add_wrappers): Avoid aot-ing runtime invoke wrappers
 	supported by the dynamic runtime invoke wrapper.
 
