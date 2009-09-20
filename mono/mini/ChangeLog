@@ -1,5 +1,7 @@
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* generics.cs: Remove a printf.
+
 	* method-to-ir.c (mono_method_to_ir): Allocate some param area for DYN_CALL.
 
 	* mini-arm.c: Add support for enum return values and passing a few arguments
