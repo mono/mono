@@ -186,11 +186,12 @@ namespace System.IO.Ports
 				return;
 			
 			disposed = true;
-			close_serial (fd);
+			if (close_serial (fd) != 0)
+				ThrowIOException();
 		}
 
 		[DllImport ("MonoPosixHelper", SetLastError = true)]
-		static extern void close_serial (int fd);
+		static extern int close_serial (int fd);
 
 		public override void Close ()
 		{

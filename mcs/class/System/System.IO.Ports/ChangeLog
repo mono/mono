@@ -1,3 +1,7 @@
+2009-09-21 Leszek Ciesielski <skolima@gmail.com>
+
+	* SerialPortStream.cs: Throw exception when errors occur in Close()
+
 2007-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* WinSerialStream.cs: Fix the signature of ClearCommError.
