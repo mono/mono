@@ -1,3 +1,8 @@
+2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Remove System.Net.Mime since
+	System.Runtime.Serialization does not need them anymore
+
 2009-09-14 Jonathan Pryor <jpryor@novell.com>
 
 	* MonoTouch/MonoPInvokeCallbackAttribute.cs: Added.
