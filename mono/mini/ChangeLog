@@ -1,5 +1,9 @@
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_runtime_invoke): Allow string ctors with dyn runtime invoke.
+
+	* aot-compiler.c (add_wrappers): Ditto.
+
 	* mini-arm.c: Implement support for passing vtypes and floats, and increase
 	the size of the param area used by dyn_call to 6 which covers the majority of
 	methods.
