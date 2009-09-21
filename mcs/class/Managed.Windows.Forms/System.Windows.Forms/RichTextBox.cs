@@ -420,7 +420,12 @@ namespace System.Windows.Forms {
 				InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y, out chars);
 				data.Close();
 
-				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * 2, out line, out tag, out sel_start);
+				int nl_length = document.LineEndingLength (XplatUI.RunningOnUnix ? LineEnding.Rich : LineEnding.Hard);
+				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * nl_length, 
+						out line, out tag, out sel_start);
+				if (sel_start >= line.text.Length)
+					sel_start = line.text.Length -1;
+
 				document.SetSelection(line, sel_start);
 				document.PositionCaret(line, sel_start);
 				document.DisplayCaret();
