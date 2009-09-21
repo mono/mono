@@ -1,3 +1,8 @@
+2009-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* net_2_1_raw_System.Runtime.Serialization.dll.sources: Remove 
+	System.Xml/XmlMtomDictionaryWriter.cs
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_System.Runtime.Serialization.dll.sources : ditto.

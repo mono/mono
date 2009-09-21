@@ -82,7 +82,7 @@ namespace System.Xml
 		{
 			return new XmlSimpleDictionaryWriter (writer);
 		}
-
+#if !NET_2_1
 		public static XmlDictionaryWriter CreateMtomWriter (
 			Stream stream, Encoding encoding, int maxSizeInBytes,
 			string startInfo)
@@ -98,7 +98,7 @@ namespace System.Xml
 		{
 			return new XmlMtomDictionaryWriter (stream, encoding, maxSizeInBytes, startInfo, boundary, startUri, writeMessageHeaders, ownsStream);
 		}
-
+#endif
 		public static XmlDictionaryWriter CreateTextWriter (
 			Stream stream)
 		{
