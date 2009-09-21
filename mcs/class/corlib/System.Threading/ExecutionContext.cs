@@ -124,7 +124,7 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)

@@ -75,7 +75,9 @@ namespace System.Security {
 
 			SecurityContext capture = new SecurityContext ();
 			capture._capture = true;
+#if !NET_2_1
 			capture._winid = WindowsIdentity.GetCurrentToken ();
+#endif
 			capture._stack = CompressedStack.Capture ();
 			return capture;
 		}
@@ -124,7 +126,7 @@ namespace System.Security {
 			sc.FlowSuppressed = false;
 			sc.WindowsIdentityFlowSuppressed = false;
 		}
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		// if you got the context then you can use it
 		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]

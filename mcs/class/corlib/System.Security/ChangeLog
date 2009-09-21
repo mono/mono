@@ -1,3 +1,7 @@
+2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Don't use WindowsIdentity under NET_2_1
+
 2009-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs, SecurityManager_2_1.cs: Replace existing

@@ -148,6 +148,7 @@ namespace System.Threading {
 			}
 		}
 
+#if !NET_2_1
 		public static IPrincipal CurrentPrincipal {
 			get {
 				IPrincipal p = null;
@@ -166,6 +167,7 @@ namespace System.Threading {
 				CurrentThread._principal = value;
 			}
 		}
+#endif
 
 		// Looks up the object associated with the current thread
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

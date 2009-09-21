@@ -55,11 +55,6 @@ namespace System.Security.Policy {
 			return false;
 		}
 
-                public PolicyStatement Resolve (Evidence evidence)
-		{
-			return null;
-		}
-
 		internal string ResolveClassName (string className)
 		{
 			return String.Empty;

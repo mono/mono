@@ -84,7 +84,7 @@ namespace System {
 
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress_refonly;
-
+#if !NET_2_1
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -94,7 +94,7 @@ namespace System {
 
 		[ThreadStatic]
 		private static IPrincipal _principal;
-		
+#endif
 		static AppDomain default_domain;
 
 		private AppDomain ()
@@ -174,7 +174,7 @@ namespace System {
 				return getFriendlyName ();
 			}
 		}
-
+#if !NET_2_1
 		public Evidence Evidence {
 			get {
 				// if the host (runtime) hasn't provided it's own evidence...
@@ -222,7 +222,7 @@ namespace System {
 		internal PermissionSet GrantedPermissionSet {
 			get { return _granted; }
 		}
-
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
