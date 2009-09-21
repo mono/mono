@@ -4,6 +4,10 @@
 
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* gen-runtime-invoke.cs: New test generator for runtime invoke tests.
+
+	* Makefile.am (test-runtime-invoke): New test target.
+
 	* runtime-invoke.cs: Add more tests.
 	
 	* runtime-invoke.cs: Add tests for passing/receiving generic instances of
