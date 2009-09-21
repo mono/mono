@@ -41,6 +41,30 @@ If not specified, uses the template produced by \fI\-\-dump\-template\fR.
 .Sp
 See the \fITEMPLATE FORMAT\fR section below for more information.
 .TP
+\fB\-\-with\-profile\fR=\fIPROFILE\fR
+Only process types and members within the .NET profile \fIPROFILE\fR.  
+May be specified multiple times.  If not specified, all types and members,
+regardless of version, are processed.
+.Sp
+Valid profiles are:
+.nf
+	monotouch
+	net_1_0
+	net_1_1
+	net_2_0
+	net_3_0
+	net_3_5
+	net_4_0
+	silverlight
+.fi
+.TP
+\fB\-\-with\-version\fR=\fIVERSION\fR
+Only process types and members within the assembly version \fIVERSION\fR.
+May be specified multiple times.  If not specified, all types and members,
+regardless of version, are processed.
+.Sp
+\fIVERSION\fR is an assembly version, e.g. 2.0.5.0.
+.TP
 \fB\-h\fR, \fB\-?\fR, \fB\-\-help\fR
 Display a help message and exit.
 .SH TEMPLATE FORMAT
