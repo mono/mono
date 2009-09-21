@@ -1,3 +1,7 @@
+2009-09-21 Leszek Ciesielski <skolima@gmail.com>
+
+	* serial.c: return -1 from close() on error
+
 2009-09-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* zlib-helper.c: support reverse callbacks within MonoTouch.
