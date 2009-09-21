@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 using System.Runtime.Hosting;
 using System.Security.Policy;
 #endif
@@ -71,17 +71,20 @@ namespace System
 		bool disallow_code_downloads;
 
 		// those fields also exist in the runtime, so we need dummies in 1.x profile too.
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
+		string [] domain_initializer_args;
+		SecurityElement application_trust_xml;
 #else
 		object _activationArguments;
 		object domain_initializer; // always null
+		object application_trust;
+		object domain_initializer_args;
+		object application_trust_xml;
 #endif
-		string [] domain_initializer_args;
-		SecurityElement application_trust_xml;
 		bool disallow_appbase_probe;
 		byte [] configuration_bytes;
 
@@ -116,7 +119,7 @@ namespace System
 //#endif
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -167,7 +170,7 @@ namespace System
 				application_name = value;
 			}
 		}
-
+#if !NET_2_1
 		public string CachePath {
 			get {
 				return cache_path;
@@ -230,7 +233,7 @@ namespace System
 				license_file = value;
 			}
 		}
-
+#endif
 		[MonoLimitation ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
@@ -240,7 +243,7 @@ namespace System
 				loader_optimization = value;
 			}
 		}
-
+#if !NET_2_1
 		public string PrivateBinPath {
 			get {
 				return private_bin_path;
@@ -355,5 +358,6 @@ namespace System
 			configuration_bytes = value;
 		}
 #endif
+#endif // !NET_2_1
 	}
 }
