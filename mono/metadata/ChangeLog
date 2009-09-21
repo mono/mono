@@ -1,3 +1,8 @@
+2009-09-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_string_ctor_signature): New internal function to
+	return the modified signature used by string ctors.
+
 2009-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke_dynamic): New internal function
