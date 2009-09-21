@@ -1,5 +1,8 @@
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Implement support for passing/receiving
+	longs and receiving floats in the dyn_call code.
+
 	* mini-amd64.c: Implement support for receiving vtypes in registers in
 	the dyn_call code.
 
