@@ -1,6 +1,11 @@
+2009-09-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Console.cs: mark methods/properties that only work on windows.
+	Fixes bug #540593.
+
 2009-09-04  Miguel de Icaza  <miguel@novell.com>
 
- 	* TermInfoDriver.cs: Handle a few more key combinations.
+	* TermInfoDriver.cs: Handle a few more key combinations.
 	
 2009-07-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
@@ -14,7 +19,7 @@
 	bounds.
 
 2009-06-25  Miguel de Icaza  <miguel@novell.com>
- 
+
 	* Array.cs: IList.this needs to throw IndexOutOfRangeException
 	when the index is invalid, not ArgumentOutOfRangeException.
 
