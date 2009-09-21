@@ -521,14 +521,17 @@ namespace System
 
 		public static int BufferHeight {
 			get { return ConsoleDriver.BufferHeight; }
+			[MonoLimitation ("Implemented only on Windows")]
 			set { ConsoleDriver.BufferHeight = value; }
 		}
 
 		public static int BufferWidth {
 			get { return ConsoleDriver.BufferWidth; }
+			[MonoLimitation ("Implemented only on Windows")]
 			set { ConsoleDriver.BufferWidth = value; }
 		}
 
+		[MonoLimitation ("Implemented only on Windows")]
 		public static bool CapsLock {
 			get { return ConsoleDriver.CapsLock; }
 		}
@@ -570,6 +573,7 @@ namespace System
 			get { return ConsoleDriver.LargestWindowWidth; }
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static bool NumberLock {
 			get { return ConsoleDriver.NumberLock; }
 		}
@@ -584,21 +588,25 @@ namespace System
 			set { ConsoleDriver.TreatControlCAsInput = value; }
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static int WindowHeight {
 			get { return ConsoleDriver.WindowHeight; }
 			set { ConsoleDriver.WindowHeight = value; }
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static int WindowLeft {
 			get { return ConsoleDriver.WindowLeft; }
 			set { ConsoleDriver.WindowLeft = value; }
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static int WindowTop {
 			get { return ConsoleDriver.WindowTop; }
 			set { ConsoleDriver.WindowTop = value; }
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static int WindowWidth {
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
@@ -656,6 +664,7 @@ namespace System
 			ConsoleDriver.ResetColor ();
 		}
 
+		[MonoLimitation ("Only works on windows")]
 		public static void SetBufferSize (int width, int height)
 		{
 			ConsoleDriver.SetBufferSize (width, height);

@@ -1,3 +1,8 @@
+2009-09-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Console.cs: mark methods/properties that only work on windows.
+	Fixes bug #540593.
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Remove use of IPrincipal, Evidence and 
