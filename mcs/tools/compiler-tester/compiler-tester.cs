@@ -816,6 +816,7 @@ namespace TestRunner {
 			}
 
 			AppDomain domain = null;
+#if !NET_2_1
 			if (safe_execution) {
 				// Create a new AppDomain, with the current directory as the base.
 				AppDomainSetup setupInfo = new AppDomainSetup ();
@@ -823,13 +824,15 @@ namespace TestRunner {
 				setupInfo.LoaderOptimization = LoaderOptimization.SingleDomain;
 				domain = AppDomain.CreateDomain (Path.GetFileNameWithoutExtension (file), null, setupInfo);
 			}
-
+#endif
 			try {
 				DomainTester tester;
 				try {
+#if !NET_2_1
 					if (domain != null)
 						tester = (DomainTester) domain.CreateInstanceAndUnwrap (typeof (PositiveChecker).Assembly.FullName, typeof (DomainTester).FullName);
 					else
+#endif
 						tester = new DomainTester ();
 
 					if (!tester.Test (file))
