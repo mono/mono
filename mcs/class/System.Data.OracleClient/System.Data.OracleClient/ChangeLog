@@ -1,3 +1,7 @@
+2009-09-20  Daniel Morgan  <monodanmorg@yahoo.com>
+
+	* OracleConnection.cs: implement GetSchema methods
+
 2009-06-04  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OracleParameter.cs: Infer size only for 2.0 profile when only 
