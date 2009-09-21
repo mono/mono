@@ -1,5 +1,11 @@
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Implement support for passing vtypes and floats, and increase
+	the size of the param area used by dyn_call to 6 which covers the majority of
+	methods.
+
+	* mini.c aot-compiler.c: Allow dyn_call for string methods except ctors.
+	
 	* mini-arm.c: Implement support for passing/receiving
 	longs and receiving floats in the dyn_call code.
 
