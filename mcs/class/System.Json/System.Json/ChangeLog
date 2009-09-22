@@ -1,3 +1,11 @@
+2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonValue.cs, JsonReader.cs, JsonPrimitive.cs :
+	  Handle "null" values, as string, so far (haven't tried what .NET
+	  actually does).
+	  Fix array ToString() that missed commas (while Save() worked fine -
+	  it has different serialization logic).
+
 2009-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : consume ',' between items in an array.

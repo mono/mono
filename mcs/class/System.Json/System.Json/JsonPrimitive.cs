@@ -112,6 +112,10 @@ namespace System.Json
 
 		public override JsonType JsonType {
 			get {
+				// FIXME: what should we do for null? Handle it as null so far.
+				if (value == null)
+					return JsonType.String;
+
 				switch (Type.GetTypeCode (value.GetType ())) {
 				case TypeCode.Boolean:
 					return JsonType.Boolean;
@@ -155,9 +159,9 @@ namespace System.Json
 		{
 			switch (JsonType) {
 			case JsonType.String:
-				if (value is string)
+				if (value is string || value == null)
 					return (string) value;
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("GetFormattedString from value type " + value.GetType ());
 			case JsonType.Number:
 				return ((IFormattable) value).ToString ("G", NumberFormatInfo.InvariantInfo);
 			default:

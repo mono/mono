@@ -86,8 +86,13 @@ namespace System.Json
 				break;
 			case JsonType.Array:
 				w.Write ('[');
-				foreach (JsonValue v in ((JsonArray) this))
+				following = false;
+				foreach (JsonValue v in ((JsonArray) this)) {
+					if (following)
+						w.Write (", ");
 					v.SaveInternal (w);
+					following = true;
+				}
 				w.Write (']');
 				break;
 			case JsonType.Boolean:
@@ -118,6 +123,10 @@ namespace System.Json
 
 		internal string EscapeString (string src)
 		{
+			// FIXME: not sure if null is allowed.
+			if (src == null)
+				return null;
+
 			for (int i = 0; i < src.Length; i++)
 				if (src [i] == '"' || src [i] == '\\') {
 					var sb = new StringBuilder ().Append (src, 0, i - 1);
@@ -310,7 +319,7 @@ namespace System.Json
 		public static implicit operator string (JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException ("value");
+				return null;
 			return (string) ((JsonPrimitive) value).Value;
 		}
 

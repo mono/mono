@@ -87,7 +87,8 @@ namespace System.Json
 				return new JsonPrimitive (true);
 			case 'n':
 				Expect ("null");
-				throw JsonError ("INTERNAL ERROR: what should we do for JSON null?");
+				// FIXME: what should we return?
+				return new JsonPrimitive ((string) null);
 			case '"':
 				return new JsonPrimitive (ReadStringLiteral ());
 			default:
