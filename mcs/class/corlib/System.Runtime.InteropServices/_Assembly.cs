@@ -89,7 +89,9 @@ namespace System.Runtime.InteropServices
 
 		string Location { get; }
 
+#if !NET_2_1
 		Evidence Evidence { get; }
+#endif
 
 		object[] GetCustomAttributes (Type attributeType, bool inherit);
 
@@ -129,7 +131,9 @@ namespace System.Runtime.InteropServices
 
 		AssemblyName[] GetReferencedAssemblies ();
 
+#if !NET_2_1
 		bool GlobalAssemblyCache { get; }
+#endif
 
 		event ModuleResolveEventHandler ModuleResolve;
 	}

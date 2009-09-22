@@ -928,7 +928,7 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalUni (string s);
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static IntPtr SecureStringToBSTR (SecureString s)
 		{
 			if (s == null)
