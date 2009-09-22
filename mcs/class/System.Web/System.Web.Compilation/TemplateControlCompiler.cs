@@ -863,19 +863,23 @@ namespace System.Web.Compilation
 			if (rr == null)
 				return false;
 
-			IDictionaryEnumerator ide = rr.GetEnumerator ();
-			if (ide == null)
-				return false;
+			try {
+				IDictionaryEnumerator ide = rr.GetEnumerator ();
+				if (ide == null)
+					return false;
 			
-			string dictKey;
-			while (ide.MoveNext ()) {
-				dictKey = ide.Key as string;
-				if (String.IsNullOrEmpty (dictKey))
-					continue;
-				if (String.Compare (key, dictKey, StringComparison.Ordinal) == 0)
-					return true;
+				string dictKey;
+				while (ide.MoveNext ()) {
+					dictKey = ide.Key as string;
+					if (String.IsNullOrEmpty (dictKey))
+						continue;
+					if (String.Compare (key, dictKey, StringComparison.Ordinal) == 0)
+						return true;
+				}
+			} finally {
+				rr.Close ();
 			}
-
+			
 			return false;
 		}
 		

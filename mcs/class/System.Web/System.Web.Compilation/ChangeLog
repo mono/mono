@@ -1,3 +1,11 @@
+2009-09-22  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: ResourceProviderHasObject needs to
+	close ResourceReader instance obtained from resource provider.
+
+	* DefaultResourceProvider.cs: implemented the ResourceReader
+	property. Fixes bug #520397
+
 2009-09-08  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: HaveCustomProfile returns true for profiles
