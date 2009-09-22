@@ -1,5 +1,11 @@
 2009-09-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* threadpool.c: remove ares_htable. It does not make sense any more
+	since the same objects are now stored in GC-tracked arrays while they are
+	in the queue.
+
+2009-09-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.c: increase the minimum length of the queues to 128.
 	Remove warning.
 
