@@ -68,10 +68,33 @@ namespace System.Web.Compilation
 		
 		string resource;
 		bool isGlobal;
-
+		
 		public IResourceReader ResourceReader {
 			get {
-				return null;
+				Assembly asm;
+				string path;
+					
+				if (isGlobal) {
+					asm = HttpContext.AppGlobalResourcesAssembly;
+					path = resource;
+				} else {
+					asm = GetLocalResourcesAssembly ();
+					path = Path.GetFileName (resource);
+
+					if (String.IsNullOrEmpty (path))
+						return null;
+
+					path += ".resources";
+				}
+							
+				if (asm == null)
+					return null;
+
+				Stream ms = asm.GetManifestResourceStream (path);
+				if (ms == null)
+					return null;
+				
+				return new ResourceReader (ms);
 			}
 		}
 		
@@ -86,29 +109,50 @@ namespace System.Web.Compilation
 
 		public object GetObject (string resourceKey, CultureInfo culture)
 		{
-			if (isGlobal) {
-				if (HttpContext.AppGlobalResourcesAssembly == null)
-					return null;
-				
-				return GetResourceObject (resource, resourceKey, culture, HttpContext.AppGlobalResourcesAssembly);
-			}
+ 			if (String.IsNullOrEmpty (resourceKey))
+				return null;
+			
+			ResourceManager rm = GetResourceManager ();
+			if (rm == null)
+				return null;
 
-			string path = VirtualPathUtility.GetDirectory (resource);
-			Assembly asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
+			return rm.GetObject (resourceKey, culture);
+		}
+
+		Assembly GetLocalResourcesAssembly ()
+		{
+			string path;
+			Assembly asm;
+
+			path = VirtualPathUtility.GetDirectory (resource);
+			asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
 			if (asm == null) {
 				AppResourcesCompiler ac = new AppResourcesCompiler (path);
 				asm = ac.Compile ();
 				if (asm == null)
 					throw new MissingManifestResourceException ("A resource object was not found at the specified virtualPath.");
 			}
-			
-			path = Path.GetFileName (resource);
-			return GetResourceObject (path, resourceKey, culture, asm);
-		}
 
-		static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
+			return asm;
+		}
+		
+		ResourceManager GetResourceManager ()
 		{
-			if (String.IsNullOrEmpty (classKey))
+			string path;
+			Assembly asm;
+
+			if (isGlobal) {
+				asm = HttpContext.AppGlobalResourcesAssembly;
+				path = resource;
+			} else {
+				asm = GetLocalResourcesAssembly ();
+				path = Path.GetFileName (resource);
+
+				if (String.IsNullOrEmpty (path))
+					return null;
+			}
+
+			if (asm == null)
 				return null;
 			
 			ResourceManager rm;
@@ -116,14 +160,14 @@ namespace System.Web.Compilation
 				if (resourceManagerCache == null)
 					resourceManagerCache = new Dictionary <ResourceManagerCacheKey, ResourceManager> ();
 				
-				ResourceManagerCacheKey key = new ResourceManagerCacheKey (classKey, assembly);
+				ResourceManagerCacheKey key = new ResourceManagerCacheKey (path, asm);
 				if (!resourceManagerCache.TryGetValue (key, out rm)) {
-					rm = new ResourceManager (classKey, assembly);
+					rm = new ResourceManager (path, asm);
 					rm.IgnoreCase = true;
 					resourceManagerCache.Add (key, rm);
 				}
 				
-				return rm.GetObject (resourceKey, culture);
+				return rm;
 			} catch (MissingManifestResourceException) {
 				throw;
 			} catch (Exception ex) {
