@@ -1,10 +1,12 @@
 //
-// System.Security.IPermission.cs
+// System.Security.PermissionSet.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors:
+//	Nick Drochak(ndrochak@gol.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) Ximian, Inc. http://www.ximian.com
+// (C) Nick Drochak
+// Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,26 +29,48 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Permissions;
+using System.Security.Policy;
+using System.Text;
+using System.Threading;
 
 namespace System.Security {
 
-#if NET_2_0
-	[ComVisible (true)]
-#endif
-#if NET_2_1
-	public interface IPermission {
-#else
-	public interface IPermission : ISecurityEncodable {
-#endif
-		IPermission Copy ();
+	[Serializable]
+	public class PermissionSet {
 
-		void Demand ();
+		public PermissionSet ()
+		{
+		}
 
-		IPermission Intersect (IPermission target);
+		public PermissionSet (PermissionState state)
+		{
+		}
 
-		bool IsSubsetOf (IPermission target);
+		public PermissionSet (PermissionSet permSet)
+		{
+		}
 
-		IPermission Union (IPermission target);
+		public IPermission AddPermission (IPermission perm)
+		{
+			return perm;
+		}
+
+		public bool IsUnrestricted ()
+		{
+			return true;
+		}
+
+		public PermissionSet Union (PermissionSet other)
+		{
+			return new PermissionSet ();
+		}
 	}
 }

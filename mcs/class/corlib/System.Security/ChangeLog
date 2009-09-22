@@ -1,3 +1,14 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission_2_1.cs: New. Stub to compile NET_2_1
+	* IPermission.cs: Remove ISecurityEncodable for NET_2_1
+	* PermissionSet_2_1.cs: New. Stub to compile NET_2_1
+	* SecurityContext.cs: Remove usage of CompressedStack for NET_2_1
+	* SecurityException_2_1.cs: New, CAS-less version for NET_2_1
+	* SecurityException.cs: Remove NET_2_1 conditions
+	* SecurityFrame.cs: Keep structures (needed by the runtime) but
+	remove SecurityFrame itself for NET_2_1
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityContext.cs: Don't use WindowsIdentity under NET_2_1

@@ -1,11 +1,13 @@
 //
-// System.Security.IPermission.cs
+// System.Security.SecurityException.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors:
+//	Nick Drochak(ndrochak@gol.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// (C) Nick Drochak
+// (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004-2005,2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,26 +29,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-#if NET_2_1
-	public interface IPermission {
-#else
-	public interface IPermission : ISecurityEncodable {
-#endif
-		IPermission Copy ();
+	public class SecurityException : SystemException {
 
-		void Demand ();
 
-		IPermission Intersect (IPermission target);
+		public SecurityException ()
+			: base (Locale.GetText ("A security error has been detected."))
+		{
+			base.HResult = unchecked ((int)0x8013150A);
+		}
 
-		bool IsSubsetOf (IPermission target);
+		public SecurityException (string message) 
+			: base (message)
+		{
+			base.HResult = unchecked ((int)0x8013150A);
+		}
+		
+		public SecurityException (string message, Exception inner) 
+			: base (message, inner)
+		{
+			base.HResult = unchecked ((int)0x8013150A);
+		}
 
-		IPermission Union (IPermission target);
+		public override string ToString ()
+		{
+			return base.ToString ();
+		}
 	}
 }

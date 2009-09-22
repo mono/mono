@@ -1,10 +1,14 @@
 //
-// System.Security.IPermission.cs
+// System.Security.CodeAccessPermission.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors:
+//	Miguel de Icaza (miguel@ximian.com)
+//	Nick Drochak, ndrochak@gol.com
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc. http://www.ximian.com
+// Copyright (C) 2001 Nick Drochak, All Rights Reserved
+// Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,26 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
-
 namespace System.Security {
 
-#if NET_2_0
-	[ComVisible (true)]
-#endif
-#if NET_2_1
-	public interface IPermission {
-#else
-	public interface IPermission : ISecurityEncodable {
-#endif
-		IPermission Copy ();
-
-		void Demand ();
-
-		IPermission Intersect (IPermission target);
-
-		bool IsSubsetOf (IPermission target);
-
-		IPermission Union (IPermission target);
+	public abstract class CodeAccessPermission {
 	}
 }
+

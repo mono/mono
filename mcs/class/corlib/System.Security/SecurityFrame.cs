@@ -53,6 +53,7 @@ namespace System.Security {
 	}
 #pragma warning restore 649	
 
+#if !NET_2_1
 	internal struct SecurityFrame {
 
 		private AppDomain _domain;
@@ -184,4 +185,5 @@ namespace System.Security {
 			return al;
 		}
 	}
+#endif
 }
