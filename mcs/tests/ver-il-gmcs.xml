@@ -15055,10 +15055,10 @@
         <size>115</size>
       </method>
       <method name="Void ArrayIndexTest_3()">
-        <size>229</size>
+        <size>199</size>
       </method>
       <method name="Void ArrayIndexTest_4()">
-        <size>258</size>
+        <size>243</size>
       </method>
       <method name="Void ArrayIndexTest_5()">
         <size>108</size>
@@ -15556,7 +15556,7 @@
         <size>86</size>
       </method>
       <method name="Void NewArrayInitTest()">
-        <size>64</size>
+        <size>92</size>
       </method>
       <method name="Void NewArrayInitTest_2()">
         <size>64</size>
@@ -16054,6 +16054,23 @@
     <type name="Tester">
       <method name="Void EqualTest_15()">
         <size>159</size>
+      </method>
+      <method name="Void ArrayIndexTest_6()">
+        <size>122</size>
+      </method>
+      <method name="Void ArrayIndexTest_7()">
+        <size>128</size>
+      </method>
+      <method name="Void NewArrayBoundsTest_3()">
+        <size>85</size>
+      </method>
+      <method name="Void NewArrayBoundsTest_4()">
+        <size>82</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -36255,6 +36272,16 @@
     <type name="Tests">
       <method name="Int32 Main()">
         <size>25</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-729.cs">
+    <type name="Primes.MainClass">
+      <method name="Int32 Main()">
+        <size>141</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>

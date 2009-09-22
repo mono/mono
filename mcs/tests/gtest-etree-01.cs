@@ -605,6 +605,30 @@ class Tester
 		AssertNodeType (e5, ExpressionType.ArrayIndex);
 		Assert (0, e5.Compile ().Invoke ());
 	}
+	
+	void ArrayIndexTest_6 ()
+	{
+		const ulong max = 3;
+		
+		Expression<Func<int[], int>> e = a => a [max];
+		AssertNodeType (e, ExpressionType.ArrayIndex);
+		Assert (4, e.Compile ().Invoke (new int [] { 1, 2, 3, 4, 5 }));
+	}
+	
+	void ArrayIndexTest_7 ()
+	{
+		const ulong max = uint.MaxValue;
+		
+		Expression<Func<int[], int>> e = a => a [max];
+		AssertNodeType (e, ExpressionType.ArrayIndex);
+		
+		try {
+			e.Compile ().Invoke (new int [0]);
+			throw new ApplicationException ("ArrayIndexTest_7");
+		} catch (System.OverflowException) {
+			// Check whether CheckedConversion was generated
+		}
+	}
 
 	void ArrayLengthTest ()
 	{
@@ -1956,9 +1980,9 @@ class Tester
 	
 	void NewArrayInitTest ()
 	{
-		Expression<Func<int []>> e = () => new int [0];
+		Expression<Func<int []>> e = () => new int [1] { 5 };
 		AssertNodeType (e, ExpressionType.NewArrayInit);
-		Assert (new int [0], e.Compile ().Invoke ());
+		Assert (new int [1] { 5 }, e.Compile ().Invoke ());
 	}	
 	
 	void NewArrayInitTest_2 ()
@@ -2008,7 +2032,22 @@ class Tester
 		Expression<Func<int[,]>> e2 = () => new int [0,0];
 		AssertNodeType (e2, ExpressionType.NewArrayBounds);
 		Assert (new int [0, 0].Length, e2.Compile ().Invoke ().Length);
-	}	
+	}
+	
+	void NewArrayBoundsTest_3 ()
+	{
+		Expression<Func<int []>> e = () => new int [0];
+		AssertNodeType (e, ExpressionType.NewArrayBounds);
+		Assert (0, e.Compile ().Invoke ().Length);
+	}
+
+	void NewArrayBoundsTest_4 ()
+	{
+		const ulong max = ulong.MaxValue;
+		
+		Expression<Func<bool[]>> e = () => new bool [max];
+		AssertNodeType (e, ExpressionType.NewArrayBounds);
+	}
 	
 	void NewTest ()
 	{
