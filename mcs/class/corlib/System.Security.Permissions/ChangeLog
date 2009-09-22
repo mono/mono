@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSetAttribute.cs: Don't create a pset for NET_2_1
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnvironmentPermissionAttribute.cs, FileIOPermissionAttribute.cs,

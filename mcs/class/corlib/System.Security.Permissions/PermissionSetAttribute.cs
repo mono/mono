@@ -131,6 +131,7 @@ namespace System.Security.Permissions {
 		public PermissionSet CreatePermissionSet ()
 		{
 			PermissionSet pset = null;
+#if !NET_2_1
 			if (this.Unrestricted)
 				pset = new PermissionSet (PermissionState.Unrestricted);
 			else {
@@ -157,6 +158,7 @@ namespace System.Security.Permissions {
 				}
 #endif
 			}
+#endif
 			return pset;
 		}
 	}
