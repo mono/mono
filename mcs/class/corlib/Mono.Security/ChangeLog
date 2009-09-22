@@ -1,3 +1,8 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StrongName.cs: Moonlight NET_2_1 cannot depend on machine.config
+	* StrongNameManager_2_1.cs: Minimal version for NET_2_1
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StrongName.cs: Adapt to work with only RSAManaged when built 

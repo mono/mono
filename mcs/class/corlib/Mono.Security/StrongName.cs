@@ -467,8 +467,12 @@ namespace Mono.Security {
 			if (!initialized) {
 				lock (lockObject) {
 					if (!initialized) {
+#if NET_2_1
+						// Moonlight cannot depend on machine.config
+#else
 						string config = Environment.GetMachineConfigPath ();
 						StrongNameManager.LoadConfig (config);
+#endif
 						initialized = true;
 					}
 				}
