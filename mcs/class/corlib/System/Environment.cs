@@ -355,9 +355,11 @@ namespace System {
 		/// </summary>
 		public static string GetEnvironmentVariable (string variable)
 		{
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
+#endif
 			return internalGetEnvironmentVariable (variable);
 		}
 
@@ -376,7 +378,7 @@ namespace System {
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static IDictionary GetEnvironmentVariables ()
 		{
 			StringBuilder sb = null;
