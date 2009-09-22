@@ -1,5 +1,10 @@
 2009-09-22  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs, expression.cs: Fixed null lifted conversion for
+	bitwise enum operations.
+
+2009-09-22  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, ecore.cs: Fixed explicit unsafe coversion of long
 	values in checked context.
 

@@ -888,7 +888,7 @@ namespace Mono.CSharp.Nullable
 			if (left_null_lifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
-				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
 					return LiftedNull.CreateFromExpression (ec, res_expr);
 
 				//
@@ -901,7 +901,7 @@ namespace Mono.CSharp.Nullable
 			if (right_null_lifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
 
-				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask | Operator.BitwiseMask)) != 0)
 					return LiftedNull.CreateFromExpression (ec, res_expr);
 
 				//

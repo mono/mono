@@ -2650,7 +2650,7 @@ namespace Mono.CSharp {
 				if (e != null || ec.Report.Errors != prev_e)
 					return e;
 			} else if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) && !TypeManager.IsDynamicType (left.Type) &&
-					((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue))) {
+					((lc != null && lc.IsDefaultValue && !(lc is NullLiteral)) || (rc != null && rc.IsDefaultValue && !(rc is NullLiteral)))) {
 
 				if ((ResolveOperator (ec)) == null) {
 					Error_OperatorCannotBeApplied (ec, left, right);
@@ -2718,6 +2718,8 @@ namespace Mono.CSharp {
 			switch (oper) {
 			case Operator.Addition:
 				return is_checked ? SLE.Expression.AddChecked (le, re) : SLE.Expression.Add (le, re);
+			case Operator.BitwiseAnd:
+				return SLE.Expression.And (le, re);
 			default:
 				throw new NotImplementedException (oper.ToString ());
 			}
