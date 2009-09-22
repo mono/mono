@@ -1,5 +1,9 @@
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_output_basic_block): Fix ISHR/ISHR_IMM.
+
+	* basic.cs: Add a test.
+
 	* mini-ia64.c (mono_arch_build_imt_thunk): Implement support the virtual
 	generic invokes.
 
