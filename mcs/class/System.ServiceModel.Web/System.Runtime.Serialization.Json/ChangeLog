@@ -1,3 +1,10 @@
+2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonSerializationWriter.cs : output "type" attribute on bool
+	  values too.
+	* JsonSerializationReader.cs : type loading attempt was insufficient
+	  and hence often missed indicated types to deserialize.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonWriter.cs : use Stream as its output directly and avoid

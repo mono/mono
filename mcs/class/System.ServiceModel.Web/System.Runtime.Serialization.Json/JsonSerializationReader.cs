@@ -142,7 +142,17 @@ namespace System.Runtime.Serialization.Json
 				foreach (Type t in serializer.KnownTypes)
 					if (t.FullName == name)
 						return t;
-			return Type.GetType (name, false);
+			var ret = root_type.Assembly.GetType (name, false) ?? Type.GetType (name, false);
+			if (ret != null)
+				return ret;
+			// We probably have to iterate all the existing
+			// assemblies that are loaded in current domain.
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+				ret = ass.GetType (name, false);
+				if (ret != null)
+					return ret;
+			}
+			return null;
 		}
 
 		object ReadInstanceDrivenObject ()

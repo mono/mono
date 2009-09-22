@@ -95,6 +95,8 @@ namespace System.Runtime.Serialization.Json
 				writer.WriteString (((IFormattable) graph).ToString ("G", CultureInfo.InvariantCulture));
 				break;
 			case TypeCode.Boolean:
+				if (always_emit_type)
+					writer.WriteAttributeString ("type", "boolean");
 				if ((bool) graph)
 					writer.WriteString ("true");
 				else
