@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate20.cs: Don't depend on SecureString for NET_2_1
+
 2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Remove code to initialize from an handle

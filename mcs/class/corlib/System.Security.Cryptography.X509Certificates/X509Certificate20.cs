@@ -61,22 +61,26 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password)
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
+#endif
 
 		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (rawData, password, keyStorageFlags);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (rawData, password, keyStorageFlags);
 		}
+#endif
 
 		public X509Certificate (string fileName)
 		{
@@ -88,22 +92,26 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password)
 		{
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
+#endif
 
 		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
+#endif
 
 		public X509Certificate (SerializationInfo info, StreamingContext context)
 		{
@@ -164,12 +172,14 @@ namespace System.Security.Cryptography.X509Certificates {
 			return Export (contentType, pwd);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported. SecureString support is incomplete.")]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
 			byte[] pwd = (password == null) ? null : password.GetBuffer ();
 			return Export (contentType, pwd);
 		}
+#endif
 
 		internal byte[] Export (X509ContentType contentType, byte[] password)
 		{
@@ -247,11 +257,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete")]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Import (rawData, (string)null, keyStorageFlags);
 		}
+#endif
 
 		[ComVisible (false)]
 		public virtual void Import (string fileName)
@@ -268,12 +280,15 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("SecureString support is incomplete, missing KeyStorageFlags support")]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
 			byte[] rawData = Load (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
 		}
+#endif
+
 #if !NET_2_1 || MONOTOUCH
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
