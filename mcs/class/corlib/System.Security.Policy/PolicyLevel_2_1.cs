@@ -45,11 +45,6 @@ namespace System.Security.Policy {
 			return null;
 		}
 
-                public NamedPermissionSet GetNamedPermissionSet (string name)
-		{
-			return null;
-		}
-
 		internal bool IsFullTrustAssembly (Assembly a)
 		{
 			return false;

@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevel_2_1.cs: Remove use of NamedPermissionSet
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevel_2_1.cs: Remove use of PolicyStatement
