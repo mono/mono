@@ -2091,7 +2091,7 @@ namespace Mono.CSharp {
 				case Mode.I8_U4: ig.Emit (OpCodes.Conv_U4); break;
 				case Mode.I8_U8: /* nothing */ break;
 				case Mode.I8_CH: ig.Emit (OpCodes.Conv_U2); break;
-				case Mode.I8_I: /* nothing */ break;
+				case Mode.I8_I: ig.Emit (OpCodes.Conv_U); break;
 
 				case Mode.U8_I1: ig.Emit (OpCodes.Conv_I1); break;
 				case Mode.U8_U1: ig.Emit (OpCodes.Conv_U1); break;
@@ -2101,7 +2101,7 @@ namespace Mono.CSharp {
 				case Mode.U8_U4: ig.Emit (OpCodes.Conv_U4); break;
 				case Mode.U8_I8: /* nothing */ break;
 				case Mode.U8_CH: ig.Emit (OpCodes.Conv_U2); break;
-				case Mode.U8_I: /* nothing */ break;
+				case Mode.U8_I: ig.Emit (OpCodes.Conv_U); break;
 
 				case Mode.CH_I1: ig.Emit (OpCodes.Conv_I1); break;
 				case Mode.CH_U1: ig.Emit (OpCodes.Conv_U1); break;
@@ -2128,7 +2128,7 @@ namespace Mono.CSharp {
 				case Mode.R8_CH: ig.Emit (OpCodes.Conv_U2); break;
 				case Mode.R8_R4: ig.Emit (OpCodes.Conv_R4); break;
 
-				case Mode.I_I8: ig.Emit (OpCodes.Conv_U); break;
+				case Mode.I_I8: ig.Emit (OpCodes.Conv_U8); break;
 				}
 			}
 		}

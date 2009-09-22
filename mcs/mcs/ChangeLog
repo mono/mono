@@ -1,5 +1,10 @@
 2009-09-22  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs, ecore.cs: Fixed explicit unsafe coversion of long
+	values in checked context.
+
+2009-09-22  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs, ecore.cs: Fixed array index constant conversion.
 
 2009-09-20  Miguel de Icaza  <miguel@novell.com>

@@ -1819,25 +1819,32 @@ namespace Mono.CSharp {
 
 				if (expr_type == TypeManager.ushort_type ||
 					expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.uint64_type || expr_type == TypeManager.int64_type ||
 					expr_type == TypeManager.byte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
+
+				if (expr_type == TypeManager.int64_type)
+					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I);
+
+				if (expr_type == TypeManager.uint64_type)
+					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I);
 			}
 
 			if (expr_type.IsPointer){
 				if (target_type == TypeManager.sbyte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
-				else if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
-				else if (target_type == TypeManager.short_type)
+				if (target_type == TypeManager.short_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				else if (target_type == TypeManager.ushort_type)
+				if (target_type == TypeManager.ushort_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
-				else if (target_type == TypeManager.int32_type)
+				if (target_type == TypeManager.int32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				else if (target_type == TypeManager.uint32_type)
+				if (target_type == TypeManager.uint32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
-				else if (target_type == TypeManager.uint64_type || target_type == TypeManager.int64_type)
+				if (target_type == TypeManager.int64_type)
+					return new ConvCast (expr, target_type, ConvCast.Mode.I_I8);
+				if (target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 			}
 			return null;
