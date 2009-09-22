@@ -1,3 +1,8 @@
+2009-09-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WebServiceParser.cs: GetCompiledType uses BuildManager on the
+	2.0 profile. Fixes bug #533166
+
 2009-09-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: FindNamespaceInAssembly must catch

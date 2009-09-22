@@ -57,6 +57,9 @@ namespace System.Web.UI {
 
 		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{
+#if NET_2_0
+			return BuildManager.GetCompiledType (inputFile);
+#else
 			string physPath;
 			HttpRequest req = context != null ? context.Request : null;
 			
@@ -71,6 +74,7 @@ namespace System.Web.UI {
 				return type;
 
 			return WebServiceCompiler.CompileIntoType (parser);
+#endif
 		}
 
 		protected override string DefaultDirectiveName {
