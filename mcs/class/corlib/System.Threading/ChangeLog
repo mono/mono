@@ -1,3 +1,8 @@
+2009-09-22  Jb Evain  <jbevain@novell.com>
+
+	* Timer.cs: MONOTOUCH doesn't support remoting, so do not pass
+	true to exitContext when calling WaitOne on a WaitHandle.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Remove [Get|Set]CompressedStack for NET_2_1

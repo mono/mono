@@ -126,12 +126,20 @@ namespace System.Threading
 							expired = null;
 					}
 				}
+
+				const bool exit_context =
+#if MONOTOUCH
+					false;
+#else
+					true;
+#endif
+
 				if (min_next_run != long.MaxValue) {
 					long diff = min_next_run - Ticks ();
 					if (diff >= 0)
-						change_event.WaitOne ((int)(diff / TimeSpan.TicksPerMillisecond), true);
+						change_event.WaitOne ((int)(diff / TimeSpan.TicksPerMillisecond), exit_context);
 				} else {
-					change_event.WaitOne (Timeout.Infinite, true);
+					change_event.WaitOne (Timeout.Infinite, exit_context);
 				}
 			}
 		}
