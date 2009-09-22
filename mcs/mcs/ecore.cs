@@ -1239,12 +1239,12 @@ namespace Mono.CSharp {
 			// Only positive constants are allowed at compile time
 			//
 			Constant c = converted as Constant;
-			if (c != null) {
-				if (c.IsNegative) {
-					Error_NegativeArrayIndex (ec, source.loc);
-				}
-				return c;
-			}
+			if (c != null && c.IsNegative)
+				Error_NegativeArrayIndex (ec, source.loc);
+
+			// No conversion needed to array index
+			if (converted.Type == TypeManager.int32_type)
+				return converted;
 
 			return new ArrayIndexCast (converted).Resolve (ec);
 		}
@@ -1925,11 +1925,12 @@ namespace Mono.CSharp {
 			U2_I1, U2_U1, U2_I2, U2_CH,
 			I4_I1, I4_U1, I4_I2, I4_U2, I4_U4, I4_U8, I4_CH,
 			U4_I1, U4_U1, U4_I2, U4_U2, U4_I4, U4_CH,
-			I8_I1, I8_U1, I8_I2, I8_U2, I8_I4, I8_U4, I8_U8, I8_CH,
-			U8_I1, U8_U1, U8_I2, U8_U2, U8_I4, U8_U4, U8_I8, U8_CH,
+			I8_I1, I8_U1, I8_I2, I8_U2, I8_I4, I8_U4, I8_U8, I8_CH, I8_I,
+			U8_I1, U8_U1, U8_I2, U8_U2, U8_I4, U8_U4, U8_I8, U8_CH, U8_I,
 			CH_I1, CH_U1, CH_I2,
 			R4_I1, R4_U1, R4_I2, R4_U2, R4_I4, R4_U4, R4_I8, R4_U8, R4_CH,
-			R8_I1, R8_U1, R8_I2, R8_U2, R8_I4, R8_U4, R8_I8, R8_U8, R8_CH, R8_R4
+			R8_I1, R8_U1, R8_I2, R8_U2, R8_I4, R8_U4, R8_I8, R8_U8, R8_CH, R8_R4,
+			I_I8,
 		}
 
 		Mode mode;
@@ -2005,6 +2006,7 @@ namespace Mono.CSharp {
 				case Mode.I8_U4: ig.Emit (OpCodes.Conv_Ovf_U4); break;
 				case Mode.I8_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
 				case Mode.I8_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
+				case Mode.I8_I: ig.Emit (OpCodes.Conv_Ovf_U); break;
 
 				case Mode.U8_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
 				case Mode.U8_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
@@ -2014,6 +2016,7 @@ namespace Mono.CSharp {
 				case Mode.U8_U4: ig.Emit (OpCodes.Conv_Ovf_U4_Un); break;
 				case Mode.U8_I8: ig.Emit (OpCodes.Conv_Ovf_I8_Un); break;
 				case Mode.U8_CH: ig.Emit (OpCodes.Conv_Ovf_U2_Un); break;
+				case Mode.U8_I: ig.Emit (OpCodes.Conv_Ovf_U_Un); break;
 
 				case Mode.CH_I1: ig.Emit (OpCodes.Conv_Ovf_I1_Un); break;
 				case Mode.CH_U1: ig.Emit (OpCodes.Conv_Ovf_U1_Un); break;
@@ -2039,6 +2042,8 @@ namespace Mono.CSharp {
 				case Mode.R8_U8: ig.Emit (OpCodes.Conv_Ovf_U8); break;
 				case Mode.R8_CH: ig.Emit (OpCodes.Conv_Ovf_U2); break;
 				case Mode.R8_R4: ig.Emit (OpCodes.Conv_R4); break;
+
+				case Mode.I_I8: ig.Emit (OpCodes.Conv_Ovf_I8_Un); break;
 				}
 			} else {
 				switch (mode){
@@ -2086,6 +2091,7 @@ namespace Mono.CSharp {
 				case Mode.I8_U4: ig.Emit (OpCodes.Conv_U4); break;
 				case Mode.I8_U8: /* nothing */ break;
 				case Mode.I8_CH: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.I8_I: /* nothing */ break;
 
 				case Mode.U8_I1: ig.Emit (OpCodes.Conv_I1); break;
 				case Mode.U8_U1: ig.Emit (OpCodes.Conv_U1); break;
@@ -2095,6 +2101,7 @@ namespace Mono.CSharp {
 				case Mode.U8_U4: ig.Emit (OpCodes.Conv_U4); break;
 				case Mode.U8_I8: /* nothing */ break;
 				case Mode.U8_CH: ig.Emit (OpCodes.Conv_U2); break;
+				case Mode.U8_I: /* nothing */ break;
 
 				case Mode.CH_I1: ig.Emit (OpCodes.Conv_I1); break;
 				case Mode.CH_U1: ig.Emit (OpCodes.Conv_U1); break;
@@ -2120,6 +2127,8 @@ namespace Mono.CSharp {
 				case Mode.R8_U8: ig.Emit (OpCodes.Conv_U8); break;
 				case Mode.R8_CH: ig.Emit (OpCodes.Conv_U2); break;
 				case Mode.R8_R4: ig.Emit (OpCodes.Conv_R4); break;
+
+				case Mode.I_I8: ig.Emit (OpCodes.Conv_U); break;
 				}
 			}
 		}

@@ -5865,14 +5865,8 @@ namespace Mono.CSharp {
 			if (array_data == null) {
 				args = new Arguments (arguments.Count + 1);
 				args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
-				foreach (Expression a in arguments) {
-					if (arguments.Count == 1) {
-						Constant c = a as Constant;
-						if (c.IsDefaultValue)
-							return CreateExpressionFactoryCall (ec, "NewArrayInit", args);
-					}
+				foreach (Expression a in arguments)
 					args.Add (new Argument (a.CreateExpressionTree (ec)));
-				}
 
 				return CreateExpressionFactoryCall (ec, "NewArrayBounds", args);
 			}
@@ -6382,11 +6376,13 @@ namespace Mono.CSharp {
 			}
 
 			if (array_data == null) {
-				Constant c = (Constant) arguments [0];
-				if (c.IsDefaultValue) {
+				Expression arg = (Expression) arguments[0];
+				object arg_value;
+				if (arg.GetAttributableValue (ec, arg.Type, out arg_value) && arg_value is int && (int)arg_value == 0) {
 					value = Array.CreateInstance (array_element_type, 0);
 					return true;
 				}
+
 				// ec.Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
 				return base.GetAttributableValue (ec, null, out value);
 			}
@@ -9113,6 +9109,8 @@ namespace Mono.CSharp {
 		public ArrayIndexCast (Expression expr)
 			: base (expr, expr.Type)
 		{
+			if (type == TypeManager.int32_type)
+				throw new ArgumentException ("unnecessary conversion");
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -9126,9 +9124,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-				
-			if (type == TypeManager.int32_type)
-				return;
 
 			if (type == TypeManager.uint32_type)
 				ec.ig.Emit (OpCodes.Conv_U);
@@ -9138,6 +9133,11 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
 			else
 				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);
+		}
+
+		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
+		{
+			return child.GetAttributableValue (ec, value_type, out value);
 		}
 	}
 

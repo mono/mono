@@ -1,3 +1,7 @@
+2009-09-22  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, ecore.cs: Fixed array index constant conversion.
+
 2009-09-20  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: Do not crash when MemberLookup returns something
