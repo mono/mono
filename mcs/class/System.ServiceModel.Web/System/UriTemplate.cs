@@ -112,19 +112,23 @@ namespace System
 			return BindByNameCommon (baseAddress, parameters, null, omitDefaults);
 		}
 
-		public Uri BindByName (Uri baseAddress, Dictionary<string,string> parameters)
+		public Uri BindByName (Uri baseAddress, IDictionary<string,string> parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
 		}
 
-		public Uri BindByName (Uri baseAddress, Dictionary<string,string> parameters, bool omitDefaults)
+		public Uri BindByName (Uri baseAddress, IDictionary<string,string> parameters, bool omitDefaults)
 		{
 			return BindByNameCommon (baseAddress, null, parameters, omitDefaults);
 		}
 
-		Uri BindByNameCommon (Uri baseAddress, NameValueCollection nvc, Dictionary<string,string> dic, bool omitDefaults)
+		Uri BindByNameCommon (Uri baseAddress, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults)
 		{
 			CheckBaseAddress (baseAddress);
+
+			// take care of case sensitivity.
+			if (dic != null)
+				dic = new Dictionary<string,string> (dic, StringComparer.OrdinalIgnoreCase);
 
 			int src = 0;
 			StringBuilder sb = new StringBuilder (template.Length);
@@ -134,7 +138,7 @@ namespace System
 			return new Uri (baseAddress.ToString () + sb.ToString ());
 		}
 
-		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, Dictionary<string,string> dic, bool omitDefaults)
+		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults)
 		{
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
@@ -144,7 +148,7 @@ namespace System
 				if (dic != null)
 					dic.TryGetValue (name, out value);
 				if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
-					throw new ArgumentException (String.Format ("The argument name value collection does not contain value for '{0}'", name), "parameters");
+					throw new ArgumentException (String.Format ("The argument name value collection does not contain non-null value for '{0}'", name), "parameters");
 				sb.Append (value);
 				src = e + 1;
 			}

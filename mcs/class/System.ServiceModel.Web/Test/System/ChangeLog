@@ -1,3 +1,8 @@
+2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : add test for case-insensitive comparison in
+	  IDictionary, and test for null-value string in there.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplateTableTest.cs : new test file.

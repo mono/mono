@@ -386,5 +386,28 @@ namespace MonoTests.System
 			Assert.IsNull(t.Match (new Uri ("http://localhost:8000/BlogService"),
 				new Uri ("http://localhost:8000/BlogService/GetData")), "Doesn't match wrong WebGet method");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DictContainsNullValue ()
+		{
+			var t = new UriTemplate ("/id-{foo}/{bar}");
+			var dic = new Dictionary<string,string> ();
+			dic ["foo"] = null;
+			dic ["bar"] = "bbb";
+			t.BindByName (new Uri ("http://localhost:8080"), dic);
+		}
+
+		[Test]
+		public void DictContainsCaseInsensitiveKey ()
+		{
+			var t = new UriTemplate ("/id-{foo}/{bar}");
+			var dic = new Dictionary<string,string> ();
+			dic ["foo"] = "aaa";
+			dic ["Bar"] = "bbb";
+			var uri = t.BindByName (new Uri ("http://localhost:8080"), dic);
+			Assert.AreEqual ("http://localhost:8080/id-aaa/bbb", uri.ToString ());
+		}
+
 	}
 }

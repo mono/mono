@@ -1,3 +1,8 @@
+2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplate.cs : Fix method signatures. Take care of dictionary
+	  case sensitivity.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplateTable.cs : do not raise an error when MatchSingle() did
