@@ -285,8 +285,8 @@ namespace System.Collections.Generic {
 			if (threshold == 0 && table.Length > 0)
 				threshold = 1;
 		}
-		
-		void CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
+
+		void CopyToCheck (Array array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -297,13 +297,55 @@ namespace System.Collections.Generic {
 				throw new ArgumentException ("index larger than largest valid index of array");
 			if (array.Length - index < Count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
+		}
 
+		delegate TRet Transform<TRet> (TKey key, TValue value);
+
+		void Do_CopyTo<TRet, TElem> (TElem [] array, int index, Transform<TRet> transform)
+			where TRet : TElem
+		{
 			for (int i = 0; i < touchedSlots; i++) {
 				if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
-					array [index++] = new KeyValuePair<TKey, TValue> (keySlots [i], valueSlots [i]);
+					array [index++] = transform (keySlots [i], valueSlots [i]);
 			}
 		}
-		
+
+		static KeyValuePair<TKey, TValue> make_pair (TKey key, TValue value)
+		{
+			return new KeyValuePair<TKey, TValue> (key, value);
+		}
+
+		static TKey pick_key (TKey key, TValue value)
+		{
+			return key;
+		}
+
+		static TValue pick_value (TKey key, TValue value)
+		{
+			return value;
+		}
+
+		void CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
+		{
+			CopyToCheck (array, index);
+			Do_CopyTo<KeyValuePair<TKey, TValue>, KeyValuePair<TKey, TValue>> (array, index, make_pair);
+		}
+
+		void Do_ICollectionCopyTo<TRet> (Array array, int index, Transform<TRet> transform)
+		{
+			Type src = typeof (TRet);
+			Type tgt = array.GetType ().GetElementType ();
+
+			try {
+				if ((src.IsPrimitive || tgt.IsPrimitive) && !tgt.IsAssignableFrom (src))
+					throw new Exception (); // we don't care.  it'll get transformed to an ArgumentException below
+
+				Do_CopyTo ((object []) array, index, transform);
+			} catch (Exception e) {
+				throw new ArgumentException ("Cannot copy source collection elements to destination array", "array", e);
+			}
+		}
+
 		private void Resize ()
 		{
 			// From the SDK docs:
@@ -689,41 +731,20 @@ namespace System.Collections.Generic {
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
-			// we want no exception for index==array.Length && Count == 0
-			if (index > array.Length)
-				throw new ArgumentException ("index larger than largest valid index of array");
-			if (array.Length - index < count)
-				throw new ArgumentException ("Destination array cannot hold the requested elements!");
-
 			KeyValuePair<TKey, TValue> [] pairs = array as KeyValuePair<TKey, TValue> [];
 			if (pairs != null) {
 				this.CopyTo (pairs, index);
 				return;
 			}
 
+			CopyToCheck (array, index);
 			DictionaryEntry [] entries = array as DictionaryEntry [];
 			if (entries != null) {
-				for (int i = 0; i < touchedSlots; i++) {
-					if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
-						entries [index++] = new DictionaryEntry (keySlots [i], valueSlots [i]);
-				}
+				Do_CopyTo (entries, index, delegate (TKey key, TValue value) { return new DictionaryEntry (key, value); });
 				return;
 			}
 
-			object [] objects = array as object [];
-			if (objects != null && objects.GetType () == typeof (object [])) {
-				for (int i = 0; i < touchedSlots; i++) {
-					if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
-						objects [index++] = new KeyValuePair<TKey, TValue> (keySlots [i], valueSlots [i]);
-				}
-				return;
-			}
-
-			throw new ArgumentException ("Invalid array type");
+			Do_ICollectionCopyTo<KeyValuePair<TKey, TValue>> (array, index, make_pair);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -913,26 +934,11 @@ namespace System.Collections.Generic {
 				this.dictionary = dictionary;
 			}
 
-			void CopyToCheck (IList array, int index)
-			{
-				if (array == null)
-					throw new ArgumentNullException ("array");
-				if (index < 0)
-					throw new ArgumentOutOfRangeException ("index");
-				// we want no exception for index==array.Length && dictionary.Count == 0
-				if (index > array.Count)
-					throw new ArgumentException ("index larger than largest valid index of array");
-				if (array.Count - index < dictionary.Count)
-					throw new ArgumentException ("Destination array cannot hold the requested elements!");
-			}
 
 			public void CopyTo (TKey [] array, int index)
 			{
-				CopyToCheck ((IList)array, index);
-				for (int i = 0; i < dictionary.touchedSlots; i++) {
-					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
-						array [index++] = dictionary.keySlots [i];
-				}
+				dictionary.CopyToCheck (array, index);
+				dictionary.Do_CopyTo<TKey, TKey> (array, index, pick_key);
 			}
 
 			public Enumerator GetEnumerator ()
@@ -973,13 +979,8 @@ namespace System.Collections.Generic {
 					return;
 				}
 
-				IList list = array;
-				CopyToCheck (list, index);
-
-				for (int i = 0; i < dictionary.touchedSlots; i++) {
-					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
-						list [index++] = dictionary.keySlots [i];
-				}
+				dictionary.CopyToCheck (array, index);
+				dictionary.Do_ICollectionCopyTo<TKey> (array, index, pick_key);
 			}
 
 			IEnumerator IEnumerable.GetEnumerator ()
@@ -1049,27 +1050,10 @@ namespace System.Collections.Generic {
 				this.dictionary = dictionary;
 			}
 
-			void CopyToCheck (IList array, int index)
-			{
-				if (array == null)
-					throw new ArgumentNullException ("array");
-				if (index < 0)
-					throw new ArgumentOutOfRangeException ("index");
-				// we want no exception for index==array.Length && dictionary.Count == 0
-				if (index > array.Count)
-					throw new ArgumentException ("index larger than largest valid index of array");
-				if (array.Count - index < dictionary.Count)
-					throw new ArgumentException ("Destination array cannot hold the requested elements!");
-			}
-
 			public void CopyTo (TValue [] array, int index)
 			{
-				CopyToCheck (array, index);
-
-				for (int i = 0; i < dictionary.touchedSlots; i++) {
-					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
-						array [index++] = dictionary.valueSlots [i];
-				}
+				dictionary.CopyToCheck (array, index);
+				dictionary.Do_CopyTo<TValue, TValue> (array, index, pick_value);
 			}
 
 			public Enumerator GetEnumerator ()
@@ -1110,13 +1094,8 @@ namespace System.Collections.Generic {
 					return;
 				}
 
-				IList list = array;
-				CopyToCheck (list, index);
-
-				for (int i = 0; i < dictionary.touchedSlots; i++) {
-					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
-						list [index++] = dictionary.valueSlots [i];
-				}
+				dictionary.CopyToCheck (array, index);
+				dictionary.Do_ICollectionCopyTo<TValue> (array, index, pick_value);
 			}
 
 			IEnumerator IEnumerable.GetEnumerator ()

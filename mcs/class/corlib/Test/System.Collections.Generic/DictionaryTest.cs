@@ -1101,6 +1101,71 @@ namespace MonoTests.System.Collections.Generic {
 			((IDisposable) e4).Dispose ();
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
 		}
+
+		[Test]
+		public void ICollectionCopyTo ()
+		{
+			var d = new Dictionary<int, string> ();
+
+			ICollection c = d;
+			c.CopyTo (new object [0], 0);
+			c.CopyTo (new string [0], 0);
+			c.CopyTo (new MyClass [0], 0);
+
+			c = d.Keys;
+			c.CopyTo (new object [0], 0);
+			c.CopyTo (new ValueType [0], 0);
+
+			c = d.Values;
+			c.CopyTo (new object [0], 0);
+			c.CopyTo (new MyClass [0], 0);
+
+			d [3] = null;
+
+			c = d.Keys;
+			c.CopyTo (new object [1], 0);
+			c.CopyTo (new ValueType [1], 0);
+
+			c = d.Values;
+			c.CopyTo (new object [1], 0);
+			c.CopyTo (new MyClass [1], 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ICollectionCopyTo_ex1 ()
+		{
+			var d = new Dictionary<int, string> ();
+			ICollection c = d.Keys;
+			c.CopyTo (new string [1], 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ICollectionCopyTo_ex2 ()
+		{
+			var d = new Dictionary<int, string> ();
+			ICollection c = d.Values;
+			c.CopyTo (new int [1], 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ICollectionCopyTo_ex3 ()
+		{
+			var d = new Dictionary<int, string> ();
+			d [3] = "5";
+
+			ICollection c = d.Keys;
+			c.CopyTo (new MyClass [1], 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ICollectionCopyTo_ex4 ()
+		{
+			var d = new Dictionary<int, string> ();
+			d [3] = "5";
+
+			ICollection c = d.Values;
+			c.CopyTo (new MyClass [1], 0);
+		}
 	}
 }
 
