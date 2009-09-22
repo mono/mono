@@ -72,11 +72,14 @@ namespace System.Security.Cryptography {
 			_mode = mode;
 			_disposed = false;
 			if (transform != null) {
-				_workingBlock = new byte [transform.InputBlockSize];
-				if (mode == CryptoStreamMode.Read)
+				if (mode == CryptoStreamMode.Read) {
 					_currentBlock = new byte [transform.InputBlockSize];
-				else if (mode == CryptoStreamMode.Write)
+					_workingBlock = new byte [transform.InputBlockSize];
+				}
+				else if (mode == CryptoStreamMode.Write) {
 					_currentBlock = new byte [transform.OutputBlockSize];
+					_workingBlock = new byte [transform.OutputBlockSize];
+				}
 			}
 		}
 
@@ -212,7 +215,7 @@ namespace System.Security.Cryptography {
 					_transformedCount += transformed;
 				}
 				// compaction
-				if (_transformedPos > _transform.InputBlockSize) {
+				if (_transformedPos > _transform.OutputBlockSize) {
 					Buffer.BlockCopy (_transformedBlock, _transformedPos, _transformedBlock, 0, length);
 					_transformedCount -= _transformedPos;
 					_transformedPos = 0;
@@ -285,12 +288,13 @@ namespace System.Security.Cryptography {
 
 				if (_transform.CanTransformMultipleBlocks) {
 					// get the biggest multiple of InputBlockSize in count (without mul or div)
-					int size = (count & ~(_transform.OutputBlockSize - 1));
-					int rem = (count & (_transform.OutputBlockSize - 1));
+					int size = (count & ~(_transform.InputBlockSize - 1));
+					int rem = (count & (_transform.InputBlockSize - 1));
 					// avoid reallocating memory at each call (reuse same buffer whenever possible)
-					if (_workingBlock.Length < size) {
+					int sizeWorkingBlock = (1 + size / _transform.InputBlockSize) * _transform.OutputBlockSize;
+					if (_workingBlock.Length < sizeWorkingBlock) {
 						Array.Clear (_workingBlock, 0, _workingBlock.Length);
-						_workingBlock = new byte [size];
+						_workingBlock = new byte [sizeWorkingBlock];
 					}
 
 					if (size > 0) {

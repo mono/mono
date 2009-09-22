@@ -1,3 +1,9 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStream.cs: Fix [Input|Output]BlockSize for custom streams.
+	Patches by Santa Marta (via Atsushi).
+	[Fix bug #539288 and #539229]
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RNGCryptoServiceProvider.cs: Remove unneeded SSC from NET_2_1

@@ -1388,5 +1388,162 @@ namespace MonoTests.System.Security.Cryptography {
 			WriteByte (PaddingMode.ISO10126, true);
 #endif
 		}
+
+		class ExpandTransform : ICryptoTransform {
+
+			public bool CanReuseTransform {
+				get { return true; }
+			}
+
+			public bool CanTransformMultipleBlocks {
+				get; private set;
+			}
+
+			public int InputBlockSize {
+				get { return 1; }
+			}
+
+			public int OutputBlockSize {
+				get; private set;
+			}
+
+			public ExpandTransform (bool canTranformMultipleBlocks, int outputBlockSize)
+			{
+				this.CanTransformMultipleBlocks = canTranformMultipleBlocks;
+				this.OutputBlockSize = outputBlockSize;
+			}
+
+			public void Dispose ()
+			{
+			}
+
+			public int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset)
+			{
+				var ret = 0;
+				for (var i = 0; i < inputCount; i++, inputOffset++) {
+					for (var j = 0; j < OutputBlockSize; j++, outputOffset++, ret++) {
+						outputBuffer [outputOffset] = inputBuffer [inputOffset];
+					}
+				}
+				return ret;
+			}
+
+			public byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
+			{
+				var outputBuffer = new byte [inputCount * OutputBlockSize];
+				TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, 0);
+				return outputBuffer;
+			}
+		}
+
+		static string[] expand_values = {
+			"00-01-02-03-04-05-06-07",
+			"00-00-01-01-02-02-03-03-04-04-05-05-06-06-07-07",
+			"00-00-00-01-01-01-02-02-02-03-03-03-04-04-04-05-05-05-06-06-06-07-07-07",
+			"00-00-00-00-01-01-01-01-02-02-02-02-03-03-03-03-04-04-04-04-05-05-05-05-06-06-06-06-07-07-07-07",
+			"00-01-02-03-04-05-06-07",
+			"00-00-01-01-02-02-03-03-04-04-05-05-06-06-07-07",
+			"00-00-00-01-01-01-02-02-02-03-03-03-04-04-04-05-05-05-06-06-06-07-07-07",
+			"00-00-00-00-01-01-01-01-02-02-02-02-03-03-03-03-04-04-04-04-05-05-05-05-06-06-06-06-07-07-07-07"
+		};
+
+		[Test]
+		public void Expand ()
+		{
+			int n = 0;
+			foreach (var transformMultiple in new [] { false, true }) {
+				foreach (var outputBlockSize in new [] { 1, 2, 3, 4 }) {
+					var expantedStream = new MemoryStream ();
+					var inputData = new byte [] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+
+					using (var stream = new CryptoStream (expantedStream, new ExpandTransform (transformMultiple, outputBlockSize), CryptoStreamMode.Write)) {
+						stream.Write (inputData, 0, inputData.Length);
+					}
+					expantedStream.Close ();
+
+					string value = BitConverter.ToString (expantedStream.ToArray ());
+					Assert.AreEqual (expand_values [n++], value);
+				}
+			}
+		}
+
+		class CompressTransform : ICryptoTransform {
+			public bool CanReuseTransform {
+				get { return true; }
+			}
+
+			public bool CanTransformMultipleBlocks {
+				get { return true; }
+			}
+
+			public int InputBlockSize {
+				get; private set;
+			}
+
+			public int OutputBlockSize {
+				get { return 1; }
+			}
+
+			public CompressTransform (int inputBlockSize)
+			{
+				this.InputBlockSize = inputBlockSize;
+			}
+
+			public void Dispose ()
+			{
+			}
+
+			private int bufferedCount = 0;
+
+			public int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset)
+			{
+				var ret = 0;
+				for (var i = 0; i < inputCount; i++, inputOffset++) {
+					if (++bufferedCount == InputBlockSize) {
+						outputBuffer [outputOffset++] = inputBuffer [inputOffset];
+						ret++;
+						bufferedCount = 0;
+					}
+				}
+				return ret;
+			}
+
+			public byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
+			{
+				var outputBuffer = new byte [inputCount * OutputBlockSize];
+				var ret = TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, 0);
+				byte[] result = new byte [ret];
+				Array.Copy (outputBuffer, result, ret);
+				return result;
+			}
+		}
+
+		static string[] compress_values = {
+			"00-01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F",
+			"01-03-05-07-09-0B-0D-0F-11-13-15-17-19-1B-1D-1F",
+			"02-05-08-0B-0E-11-14-17-1A-1D",
+			"03-07-0B-0F-13-17-1B-1F",
+		};
+
+		[Test]
+		public void Compress ()
+		{
+			int n = 0;
+			foreach (var inputBlockSize in new [] { 1, 2, 3, 4 }) {
+				var inputData = new byte [] {
+					0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+					0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+					0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+					0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+				};
+
+				using (var stream = new CryptoStream (new MemoryStream (inputData), new CompressTransform (inputBlockSize), CryptoStreamMode.Read)) {
+					var buffer = new byte [inputData.Length];
+					var ret = stream.Read (buffer, 0, buffer.Length);
+					string value = BitConverter.ToString (buffer, 0, ret);
+					Assert.AreEqual (compress_values [n++], value);
+				}
+			}
+		}
 	}
 }
