@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStreamTest.cs: Convert to newer nunit syntax
+
 2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Add test cases for HMAC URI.
