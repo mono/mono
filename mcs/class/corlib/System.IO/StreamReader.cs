@@ -293,7 +293,7 @@ namespace System.IO {
 					}
 					return 0;
 				}
-
+#if !NET_2_1
 				if (input_buffer [0] == 0 && input_buffer [1] == 0
 					&& input_buffer [2] == 0xfe && input_buffer [3] == 0xff)
 				{
@@ -310,6 +310,7 @@ namespace System.IO {
 					this.encoding = Encoding.Unicode;
 					return 2;
 				}
+#endif
 #endif
 			}
 

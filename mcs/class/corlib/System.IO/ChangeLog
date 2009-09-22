@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StreamReader.cs: Don't use UTF32 under NET_2_1
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Directory.cs: Avoid imperative CAS checks and remove 
