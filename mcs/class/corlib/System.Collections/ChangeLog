@@ -1,3 +1,8 @@
+2009-09-22  Marek Safar  <marek.safar@gmail.com>
+
+	* Queue.cs, Hashtable.cs, SortedList.cs, Stack.cs, ArrayList.cs:
+	Add DebuggerDisplay attribute.
+
 2009-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SortedList.cs: same issue as bug #521750 in System.

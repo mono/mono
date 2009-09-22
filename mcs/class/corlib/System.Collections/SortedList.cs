@@ -43,6 +43,7 @@ namespace System.Collections {
 	[Serializable]
 #if NET_2_0
 	[ComVisible(true)]
+	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]	
 #endif
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {

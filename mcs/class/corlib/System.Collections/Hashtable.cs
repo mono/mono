@@ -41,6 +41,7 @@ namespace System.Collections {
 
 #if NET_2_0
 	[ComVisible(true)]
+	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
 #endif
 	[Serializable]
 #if INSIDE_CORLIB
