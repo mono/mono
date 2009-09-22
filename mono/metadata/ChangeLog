@@ -1,5 +1,10 @@
 2009-09-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* threadpool.c: actually use the minimum number of 'completion ports'
+	(for us is just a potential worker thread).
+
+2009-09-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.c: remove ares_htable. It does not make sense any more
 	since the same objects are now stored in GC-tracked arrays while they are
 	in the queue.
