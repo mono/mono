@@ -44,7 +44,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue (@".\private$\selector-queue-1");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Send (s1);
 			
 			String id = s1.Id;
@@ -60,7 +60,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue(@".\private$\selector-queue-2");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Send (s1);
 			
 			String id = "fail!";
@@ -79,7 +79,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
 			s1.CorrelationId = correlationId;
-			MessageQueue q = MQUtil.GetQueue(@".\private$\selector-queue-3");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Send (s1);
 			
 			Message r1 = q.ReceiveByCorrelationId (correlationId);
@@ -95,7 +95,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
 			s1.CorrelationId = correlationId;
-			MessageQueue q = MQUtil.GetQueue(@".\private$\selector-queue-4");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Send (s1);
 			
 			try {
@@ -110,7 +110,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue(@".\private$\selector-queue-5");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Send (s1);
 			
 			String id = s1.Id;
@@ -127,7 +127,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
 			s1.CorrelationId = correlationId;
-			MessageQueue q = MQUtil.GetQueue(@".\private$\selector-queue-3");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Send (s1);
 			
 			Message r1 = q.ReceiveByCorrelationId (correlationId, new TimeSpan (0, 0, 2));

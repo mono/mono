@@ -1,5 +1,17 @@
 2009-07-20  Michael Barker  <mike@middlesoft.co.uk>
 
+	* AdminTest.cs:  Added support for unique queue names
+	* AsyncPeekTest.cs:  Added support for unique queue names
+	* AsyncReceiveTest.cs:  Added support for unique queue names
+	* BasicMessagingTest.cs:  Added support for unique queue names
+	* MessageEnumeratorTest.cs:  Added support for unique queue names
+	* MQUtil.cs:  Added queue name generation and prepending server names
+	to queue names based on environment variable
+	* PeekTest.cs:  Added support for unique queue names
+	* SelectorTest.cs:  Added support for unique queue names
+	
+2009-07-20  Michael Barker  <mike@middlesoft.co.uk>
+
 	* AdminTest.cs:  Fixed namespace
 	* AsyncPeekTest.cs:  Fixed namespace
 	* AsyncReceiveTest.cs:  Fixed namespace

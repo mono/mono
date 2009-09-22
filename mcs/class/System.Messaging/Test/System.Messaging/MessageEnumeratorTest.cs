@@ -38,7 +38,13 @@ namespace MonoTests.System.Messaging
 	[TestFixture]
 	public class MessageEnumeratorTest {
 		
-		private readonly String qName = @".\private$\testq2";
+		string qName;
+		
+		[SetUp]
+		public void SetUp()
+		{
+			qName = MQUtil.CreateQueueName ();
+		}
 		
 		private void SendMessage (string s) {
 			MessageQueue mq = MQUtil.GetQueue (qName);
@@ -127,7 +133,7 @@ namespace MonoTests.System.Messaging
 		// Not supported with AMQP
 		public void RemoveMessageWithTx ()
 		{
-			MessageQueue q = MQUtil.GetQueue ("testq3");
+			MessageQueue q = MQUtil.GetQueue (qName);
 			
 			q.Formatter = new BinaryMessageFormatter ();
 			q.Send ("foo1");

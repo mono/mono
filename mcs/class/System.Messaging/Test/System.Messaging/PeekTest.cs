@@ -43,7 +43,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\peek-queue-1");
+			MessageQueue mq = MQUtil.GetQueue ();
 			mq.Send (s1);
 			
 			Message r1 = mq.Peek ();
@@ -58,7 +58,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString();
 			Message s1 = new Message(body, new BinaryMessageFormatter());
-			MessageQueue mq = MQUtil.GetQueue(@".\private$\peek-queue-2");
+			MessageQueue mq = MQUtil.GetQueue();
 			mq.Send (s1);
 			
 			Message r1 = mq.Peek (new TimeSpan (0, 0, 2));
@@ -72,7 +72,7 @@ namespace MonoTests.System.Messaging
 		[ExpectedException (typeof (MessageQueueException))]
 		public void PeekNoMessageWithTimeout ()
 		{
-			MessageQueue mq = MQUtil.GetQueue(@".\private$\peek-queue-3");
+			MessageQueue mq = MQUtil.GetQueue();
 			Message r1 = mq.Peek (new TimeSpan (0, 0, 2));
 		}
 		
@@ -81,7 +81,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue (@".\private$\peek-queue-4");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Send (s1);
 			
 			String id = s1.Id;
@@ -98,7 +98,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue (@".\private$\peek-queue-5");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Send (s1);
 			
 			String id = s1.Id;
@@ -116,7 +116,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
-			MessageQueue q = MQUtil.GetQueue (@".\private$\peek-queue-6");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Send (s1);
 			
 			String id = "fail!";
@@ -135,7 +135,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
 			s1.CorrelationId = correlationId;
-			MessageQueue q = MQUtil.GetQueue (@".\private$\peek-queue-7");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Formatter = new BinaryMessageFormatter ();
 			q.Send (s1);
 			
@@ -154,7 +154,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body);
 			String correlationId = Guid.NewGuid() + "\\0";
-			MessageQueue q = MQUtil.GetQueue(@".\private$\peek-queue-8");
+			MessageQueue q = MQUtil.GetQueue();
 			q.Formatter = new BinaryMessageFormatter ();
 			q.Send (s1);
 			
@@ -172,7 +172,7 @@ namespace MonoTests.System.Messaging
 			String body = "Foo-" + DateTime.Now.ToString ();
 			Message s1 = new Message (body, new BinaryMessageFormatter());
 			s1.CorrelationId = correlationId;
-			MessageQueue q = MQUtil.GetQueue (@".\private$\peek-queue-9");
+			MessageQueue q = MQUtil.GetQueue ();
 			q.Formatter = new BinaryMessageFormatter ();
 			q.Send (s1);
 			
@@ -182,6 +182,6 @@ namespace MonoTests.System.Messaging
 			} finally {
 				q.Purge ();
 			}
-		}		
+		}
 	}
 }

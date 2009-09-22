@@ -44,10 +44,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendReceiveBinaryMessage ()
 		{
-			String qName = @"private$\testq";
-			String qPath = @".\" + qName;
-			MessageQueue mq = MQUtil.GetQueue (qPath);
-			Assert.AreEqual(qName, mq.QueueName, "Queue name not set properly");
+			MessageQueue mq = MQUtil.GetQueue ();
 			String s = "Test: " + DateTime.Now;
 			Message m = new Message (s, new BinaryMessageFormatter ());
 			m.CorrelationId = Guid.NewGuid () + "\\0";
@@ -66,9 +63,9 @@ namespace MonoTests.System.Messaging
 			Assert.AreEqual (Acknowledgment.None, m2.Acknowledgment, "Acknowledgment");
 			Assert.AreEqual (m.CorrelationId, m2.CorrelationId, "CorrelationId not set properly");
 			Assert.IsTrue (0 != m2.SenderVersion);
-			// TODO: This is not support on a workgroup installation.
+			// TODO: This is not supported on a workgroup installation.
 			//Assert.IsNotNull (m2.SourceMachine, "SourceMachine is null");
-			Assert.AreEqual (qName, m2.DestinationQueue.QueueName, "Destination Queue not set");
+			Assert.AreEqual (mq.QueueName, m2.DestinationQueue.QueueName, "Destination Queue not set");
 			
 			mq.Close ();
 		}
@@ -76,10 +73,8 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendMessageWithLabel ()
 		{
-			String qName = @".\private$\testq";
+			MessageQueue mq = MQUtil.GetQueue ();
 			String label = "mylabel";
-			MessageQueue mq = MQUtil.GetQueue (qName);
-			Assert.AreEqual (@"private$\testq", mq.QueueName, "Queue name not set properly");
 			String s = "Test: " + DateTime.Now;
 			Message m = new Message (s, new BinaryMessageFormatter ());
 			m.CorrelationId = Guid.NewGuid () + "\\0" ;
@@ -173,11 +168,8 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendReceiveBinaryMessageWithAllPropertiesSet ()
 		{
-			String qName = @"private$\testq";
-			String qPath = @".\" + qName;
-			MessageQueue mq = MQUtil.GetQueue (qPath);
+			MessageQueue mq = MQUtil.GetQueue ();
 			mq.MessageReadPropertyFilter.SetAll ();
-			Assert.AreEqual(qName, mq.QueueName, "Queue name not set properly");
 			
 			MessageQueue adminQ = MQUtil.GetQueue (@".\private$\myadmin");
 			MessageQueue responseQ = MQUtil.GetQueue (@".\private$\myresponse");
@@ -277,7 +269,7 @@ namespace MonoTests.System.Messaging
 		// No supported by Rabbit
 		public void SendPriorityMessages ()
 		{
-			MessageQueue mq = MQUtil.GetQueue ("testpriority");
+			MessageQueue mq = MQUtil.GetQueue ();
 			Message sent1 = new Message ("Highest", new BinaryMessageFormatter ());
 			sent1.Priority = MessagePriority.Highest;
 			Message sent2 = new Message ("Lowest", new BinaryMessageFormatter ());
@@ -298,7 +290,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendReceiveXmlMessage ()
 		{
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\testq");
+			MessageQueue mq = MQUtil.GetQueue ();
 			String s = "Test: " + DateTime.Now;
 			Message m = new Message (s, new XmlMessageFormatter (new Type[] { typeof (string) }));
 			mq.MessageReadPropertyFilter.SetAll();
@@ -316,10 +308,9 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendBinaryText ()
 		{
-			string path = @".\private$\MyQ";
 			string body = "This is a test";
 		   
-			MessageQueue q = MQUtil.GetQueue (path);
+			MessageQueue q = MQUtil.GetQueue ();
 
 			q.Formatter = new BinaryMessageFormatter ();
 
@@ -335,16 +326,14 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendDefaultText ()
 		{
-			string path = @".\private$\MyQ";
 			string body = "This is a test";
 
-			MessageQueue q = MQUtil.GetQueue (path, new XmlMessageFormatter ());
+			MessageQueue q = MQUtil.GetQueue (MQUtil.CreateQueueName (), new XmlMessageFormatter ());
 
 			q.Send (body);
 
 			Message m2 = q.Receive ();
 			XmlMessageFormatter xmlf = (XmlMessageFormatter) q.Formatter;
-			//Assert.AreEqual (typeof (string), xmlf.TargetTypes[0]);
 			Assert.AreEqual (typeof (XmlMessageFormatter), m2.Formatter.GetType ());
 			Assert.AreEqual (body, m2.Body);
 			Assert.AreEqual (0, m2.BodyType);
@@ -353,13 +342,12 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendBinaryObject ()
 		{
-			string path = @".\private$\MyQ";
 			Thingy body = new Thingy ();
 			body.MyProperty1 = 42;
 			body.MyProperty2 = "Something";
 			body.MyProperty3 = "Something else";
 
-			MessageQueue q = MQUtil.GetQueue (path);
+			MessageQueue q = MQUtil.GetQueue ();
 
 			q.Formatter = new BinaryMessageFormatter ();
 
@@ -378,7 +366,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendDefaultObject ()
 		{
-			string path = @".\private$\MyQ";
+			string path = MQUtil.CreateQueueName ();
 			Thingy body = new Thingy();
 			body.MyProperty1 = 42;
 			body.MyProperty2 = "Something";
@@ -403,7 +391,6 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendBinaryMessage ()
 		{
-			string path = @".\private$\MyQ";
 			Thingy body = new Thingy ();
 			body.MyProperty1 = 42;
 			body.MyProperty2 = "Something";
@@ -411,7 +398,7 @@ namespace MonoTests.System.Messaging
 			Message m1 = new Message (body);
 			m1.Formatter = new BinaryMessageFormatter ();
 
-			MessageQueue q = MQUtil.GetQueue (path);
+			MessageQueue q = MQUtil.GetQueue ();
 
 			q.Send (m1);
 
@@ -429,7 +416,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void SendDefaultMessage ()
 		{
-			string path = @".\private$\MyQ";
+			string path = MQUtil.CreateQueueName ();
 			Thingy body = new Thingy ();
 			body.MyProperty1 = 42;
 			body.MyProperty2 = "Something";

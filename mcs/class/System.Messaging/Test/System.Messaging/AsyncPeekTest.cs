@@ -50,7 +50,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginPeek()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-1");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -69,7 +69,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginPeekWithTimeout()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-2");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -86,7 +86,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginPeekWithStateAndTimeout()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-3");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -111,7 +111,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginPeekWithStateAndTimeoutAndCallback()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-4");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -131,7 +131,7 @@ namespace MonoTests.System.Messaging
 		[ExpectedException (typeof (MessageQueueException))]
 		public void BeginPeekWithException()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-5");
+			MessageQueue q = MQUtil.GetQueue ();
 			IAsyncResult result = q.BeginPeek (new TimeSpan (0, 0, 2));
 			result.AsyncWaitHandle.WaitOne ();
 			q.EndPeek (result);

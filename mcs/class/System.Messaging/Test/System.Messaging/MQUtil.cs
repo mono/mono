@@ -35,9 +35,25 @@ namespace MonoTests.System.Messaging
 {
 	public class MQUtil
 	{
+		public static string CreateQueueName ()
+		{
+			string testServer = Environment.GetEnvironmentVariable ("MONO_TEST_RABBITMQ_SERVER");
+			if (testServer == null)
+			{
+				testServer = @".\private$";
+			}
+			
+			return testServer + @"\" + Guid.NewGuid ().ToString ();
+		}
+		
 		public static MessageQueue GetQueue (string path)
 		{
 			return GetQueue (path, false);
+		}
+		
+		public static MessageQueue GetQueue ()
+		{
+			return GetQueue (CreateQueueName ());
 		}
 		
 		public static MessageQueue GetQueue (string path, bool isTransactional)

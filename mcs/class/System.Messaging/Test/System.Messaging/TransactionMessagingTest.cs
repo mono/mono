@@ -46,7 +46,7 @@ namespace MonoTests.System.Messaging
 		{
 			Message sent1 = new Message ("Message 1", new BinaryMessageFormatter ());
 			Message sent2 = new Message ("Message 2", new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-1", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.MessageReadPropertyFilter.SetAll ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			using (MessageQueueTransaction tx = new MessageQueueTransaction ()) {
@@ -76,7 +76,7 @@ namespace MonoTests.System.Messaging
 			String label2 = "label2";
 			Message sent1 = new Message ("Message 1", new BinaryMessageFormatter ());
 			Message sent2 = new Message ("Message 2", new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-2", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.MessageReadPropertyFilter.SetAll ();
 			Assert.IsTrue(mq.Transactional, "Message Queue should be transactional");
 			using (MessageQueueTransaction tx = new MessageQueueTransaction ()) {
@@ -107,7 +107,7 @@ namespace MonoTests.System.Messaging
 		{
 			Message sent1 = new Message ("Message 1", new BinaryMessageFormatter ());
 			Message sent2 = new Message ("Message 2", new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-1", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.MessageReadPropertyFilter.SetAll ();
 			Assert.IsTrue(mq.Transactional, "Message Queue should be transactional");
 			using (MessageQueueTransaction tx = new MessageQueueTransaction ()) {
@@ -126,7 +126,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Message 4";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-4", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			
@@ -146,7 +146,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-5", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			
@@ -167,7 +167,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-6", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			
@@ -180,7 +180,7 @@ namespace MonoTests.System.Messaging
 		public void SendWithTransactionType ()
 		{
 			Message sent1 = new Message ("Message 1");
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-7", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.MessageReadPropertyFilter.SetAll();
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			
@@ -192,7 +192,7 @@ namespace MonoTests.System.Messaging
 		public void SendWithTransactionTypeAndLabel ()
 		{
 			Message sent1 = new Message ("Message 1");
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-8", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.MessageReadPropertyFilter.SetAll();
 			String label = "mylabel";
 			
@@ -208,7 +208,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Message 4";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-9", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -229,7 +229,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-10", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -251,7 +251,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Message 4";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-11", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -267,7 +267,7 @@ namespace MonoTests.System.Messaging
 			String body = "Message 4";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
 			sent1.CorrelationId = correlationId;
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-12", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -290,7 +290,7 @@ namespace MonoTests.System.Messaging
 			String body = "foo-" + DateTime.Now.ToString();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
 			sent1.CorrelationId = correlationId;
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-13", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -314,7 +314,7 @@ namespace MonoTests.System.Messaging
 			String body = "Message 10";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
 			sent1.CorrelationId = correlationId;
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-14", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.Formatter = new BinaryMessageFormatter ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
@@ -329,7 +329,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "Message 11";
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-15", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.Formatter = new BinaryMessageFormatter ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
@@ -350,7 +350,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-16", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.Formatter = new BinaryMessageFormatter ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
@@ -372,7 +372,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-17", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.Formatter = new BinaryMessageFormatter ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
@@ -386,7 +386,7 @@ namespace MonoTests.System.Messaging
 		[ExpectedException (typeof (MessageQueueException))]
 		public void ReceiveWithTransactionTypeAndTimeoutFailure ()
 		{
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-18", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			Message received1 = mq.Receive (new TimeSpan (0, 0, 2), MessageQueueTransactionType.Single);
 		}
@@ -396,7 +396,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-19", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			mq.Formatter = new BinaryMessageFormatter ();
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
@@ -418,7 +418,7 @@ namespace MonoTests.System.Messaging
 		{
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-20", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -434,7 +434,7 @@ namespace MonoTests.System.Messaging
 			String body = "foo-" + DateTime.Now.ToString ();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
 			sent1.CorrelationId = correlationId;
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-21", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;
@@ -455,7 +455,7 @@ namespace MonoTests.System.Messaging
 			String body = "foo-" + DateTime.Now.ToString();
 			Message sent1 = new Message (body, new BinaryMessageFormatter ());
 			sent1.CorrelationId = correlationId;
-			MessageQueue mq = MQUtil.GetQueue (@".\private$\tx-queue-22", true);
+			MessageQueue mq = MQUtil.GetQueue (MQUtil.CreateQueueName (), true);
 			Assert.IsTrue (mq.Transactional, "Message Queue should be transactional");
 			mq.Send (sent1, MessageQueueTransactionType.Single);
 			string id = sent1.Id;

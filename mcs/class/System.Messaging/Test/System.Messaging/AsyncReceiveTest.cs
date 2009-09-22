@@ -58,7 +58,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginReceive()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-receive-1");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -75,7 +75,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginReceiveWithTimeout()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-receive-2");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -90,7 +90,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginReceiveWithStateAndTimeout()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-receive-3");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -113,7 +113,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void BeginReceiveWithStateAndTimeoutAndCallback()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-receive-4");
+			MessageQueue q = MQUtil.GetQueue ();
 			Message s = new Message (new BinaryMessageFormatter ());
 			string body = "foo-" + DateTime.Now.ToString ();
 			s.Body = body;
@@ -131,10 +131,10 @@ namespace MonoTests.System.Messaging
 		[ExpectedException (typeof (MessageQueueException))]
 		public void BeginReceiveWithException()
 		{
-			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-5");
+			MessageQueue q = MQUtil.GetQueue ();
 			IAsyncResult result = q.BeginReceive (new TimeSpan (0, 0, 2));
 			result.AsyncWaitHandle.WaitOne ();
 			q.EndReceive (result);
-		}		
+		}
 	}
 }

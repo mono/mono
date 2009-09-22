@@ -44,7 +44,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void CreateNonTransactionalQueue ()
 		{
-			string qName = @".\private$\admin-queue-1";
+			string qName = MQUtil.CreateQueueName ();
 			Assert.IsFalse (MessageQueue.Exists (qName), "Queue should not exist");
 			MessageQueue q = MessageQueue.Create (qName);
 			Assert.IsFalse (q.Transactional);
@@ -54,7 +54,7 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void CreateTransactionalQueue ()
 		{
-			string qName = @".\private$\admin-queue-2";
+			string qName = MQUtil.CreateQueueName ();
 			Assert.IsFalse (MessageQueue.Exists (qName), "Queue should not exist");
 			MessageQueue q = MessageQueue.Create (qName, true);
 			Assert.IsTrue (q.Transactional, "Queue should be transactional");
@@ -77,10 +77,11 @@ namespace MonoTests.System.Messaging
 			string qName1 = @".\admin-queue-3";
 			string qName2 = @".\admin-queue-4";
 			
-			MessageQueue.Create (qName1);
-			MessageQueue.Create (qName2);
+			MQUtil.GetQueue (qName1);
+			MQUtil.GetQueue (qName2);
 			
 			MessageQueue[] mq = MessageQueue.GetPublicQueues ();
+			Console.WriteLine("Number of queues: {0}", mq.Length);
 			Assert.IsTrue (Contains (mq, "admin-queue-3"), qName1 + " not found");
 			Assert.IsTrue (Contains (mq, "admin-queue-4"), qName2 + " not found");
 		}
@@ -88,9 +89,10 @@ namespace MonoTests.System.Messaging
 		[Test]
 		public void GetQueue ()
 		{
-			MessageQueue q1 = MQUtil.GetQueue(@".\private$\admin-queue-5", true);
+			string qName = MQUtil.CreateQueueName ();
+			MessageQueue q1 = MQUtil.GetQueue(qName, true);
 			Assert.IsTrue (q1.Transactional, "Queue should be transactional");
-			MessageQueue q2 = MQUtil.GetQueue(@".\private$\admin-queue-5", true);
+			MessageQueue q2 = MQUtil.GetQueue(qName, true);
 			Assert.IsTrue (q2.Transactional, "Queue should be transactional");
 		}
 		
@@ -98,7 +100,7 @@ namespace MonoTests.System.Messaging
 		[ExpectedException (typeof (MessageQueueException))]
 		public void PurgeQueue ()
 		{
-			MessageQueue q = MQUtil.GetQueue(@".\private$\purge-queue");
+			MessageQueue q = MQUtil.GetQueue(MQUtil.CreateQueueName ());
 			Message m1 = new Message ("foobar1", new BinaryMessageFormatter ());
 			Message m2 = new Message ("foobar2", new BinaryMessageFormatter ());
 			Message m3 = new Message ("foobar3", new BinaryMessageFormatter ());
@@ -109,22 +111,23 @@ namespace MonoTests.System.Messaging
 			q.Send (m3);
 			q.Send (m4);
 			
-			q.Receive ();			
+			q.Receive ();
 			q.Purge ();
 			q.Receive (new TimeSpan (0, 0, 2));
 		}
-				
+		
 		[Test]
 		public void DeleteQueue ()
 		{
-			MessageQueue q = MQUtil.GetQueue(@".\private$\delete-queue");
+			string qName = MQUtil.CreateQueueName ();
+			MessageQueue q = MQUtil.GetQueue(qName);
 			Message m1 = new Message ("foobar1", new BinaryMessageFormatter ());
 			
 			q.Send (m1);
 			
 			q.Receive ();
-
-			MessageQueue.Delete(@".\private$\delete-queue");
+			
+			MessageQueue.Delete(qName);
 		}
 	}
 }
