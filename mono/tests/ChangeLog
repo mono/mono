@@ -1,6 +1,10 @@
+2009-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain-thread-abort.cs: Add a new test.
+
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
-	* runtime-invoke.cs: Add a test for invoking string ctors. Remove tests wihich
+	* runtime-invoke.cs: Add a test for invoking string ctors. Remove tests which
 	are auto-generated now by gen-runtime-invoke.cs.
 
 2009-09-21  Rodrigo Kumpera  <rkumpera@novell.com>
@@ -14,7 +18,7 @@
 	* Makefile.am (test-runtime-invoke): New test target.
 
 	* runtime-invoke.cs: Add more tests.
-	
+
 	* runtime-invoke.cs: Add tests for passing/receiving generic instances of
 	vtypes.
 
@@ -24,7 +28,7 @@
 
 2009-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* coreclr-security.cs: Add test cases for arrays (one dimension, 
+	* coreclr-security.cs: Add test cases for arrays (one dimension,
 	multidimentional and jagged) creation.
 
 2009-09-15  Mark Probst  <mark.probst@gmail.com>
@@ -40,7 +44,7 @@
 
 2009-09-10  Bill Holmes  <billholmes54@gmail.com>
 
-	* cominterop.cs : Adding a test for invoking delegates that 
+	* cominterop.cs : Adding a test for invoking delegates that
 	  target COM methods.
 
 	Contributed under MIT/X11 license.
