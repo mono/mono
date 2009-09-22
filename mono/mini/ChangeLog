@@ -1,5 +1,8 @@
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_build_imt_thunk): Implement support the virtual
+	generic invokes.
+
 	* mini-exceptions.c (mini_jit_info_table_find): New helper function which
 	searches all the domains of the current thread.
 
