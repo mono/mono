@@ -1,3 +1,10 @@
+2009-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mini_jit_info_table_find): New helper function which
+	searches all the domains of the current thread.
+
+	* exceptions-<ARCH>.c: Use it. Fixes #539394.
+
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-arm.c (mono_arm_throw_exception): Set ctx->ebp to fp instead of sp
