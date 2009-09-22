@@ -1,3 +1,10 @@
+2009-09-22  Mike Feldman and Stephen A. Jazdzewski <steve@jazd.com>
+
+	* XUtil.cs: This patch fixes the '"False" is not a valid boolean
+	value' exception in System.Xml.XmlConverter when using output from
+	System.Linq.XUtil.  XUtil incorrectly uses "False" and "True"
+	instead of "false" and "true" on boolean attributes.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XDocument.cs : XmlReaderSettings on XmlReader may be null.
