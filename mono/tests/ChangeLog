@@ -1,5 +1,7 @@
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Disable filter-stack.cs on ia64.
+
 	* appdomain-thread-abort.cs: Add a new test.
 
 2009-09-21  Zoltan Varga  <vargaz@gmail.com>
