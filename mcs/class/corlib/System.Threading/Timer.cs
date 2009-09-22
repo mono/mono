@@ -129,6 +129,8 @@ namespace System.Threading
 
 				const bool exit_context =
 #if MONOTOUCH
+					// MonoTouch doesn't support remoting,
+					// so avoid calling into the remoting infrastructure.
 					false;
 #else
 					true;
