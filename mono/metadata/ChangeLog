@@ -1,3 +1,9 @@
+2009-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Atomically decrement the reference count and
+	remove the image from the hash tables, to prevent another thread from seeing a
+	dying MonoImage. Fixes #541194.
+
 2009-09-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: actually use the minimum number of 'completion ports'
