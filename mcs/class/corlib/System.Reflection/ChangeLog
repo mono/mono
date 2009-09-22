@@ -1,3 +1,8 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Remove Evidence and GlobalAssemblyCache 
+	properties for NET_2_1
+
 2009-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TargetException.cs, TargetInvocationException.cs,

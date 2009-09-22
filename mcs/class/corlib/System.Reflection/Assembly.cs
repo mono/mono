@@ -31,6 +31,7 @@ using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
 using System.Globalization;
@@ -49,8 +50,11 @@ namespace System.Reflection {
 #endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	public class Assembly : System.Reflection.ICustomAttributeProvider, _Assembly,
-		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
+#if NET_2_1
+	public class Assembly : ICustomAttributeProvider, _Assembly {
+#else
+	public class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+#endif
 
 		internal class ResolveEventHolder {
 			public event ModuleResolveEventHandler ModuleResolve;
@@ -103,9 +107,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string InternalImageRuntimeVersion ();
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool get_global_assembly_cache ();
-
 		// SECURITY: this should be the only caller to icall get_code_base
 		private string GetCodeBase (bool escaped)
 		{
@@ -144,7 +145,7 @@ namespace System.Reflection {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-
+#if !NET_2_1
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			get { return UnprotectedGetEvidence (); }
@@ -163,12 +164,15 @@ namespace System.Reflection {
 			return _evidence;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern bool get_global_assembly_cache ();
+
 		public bool GlobalAssemblyCache {
 			get {
 				return get_global_assembly_cache ();
 			}
 		}
-
+#endif
 		internal bool FromByteArray {
 			set { fromByteArray = value; }
 		}
@@ -493,10 +497,12 @@ namespace System.Reflection {
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
+#if !NET_2_1
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
 				a.Evidence.Merge (securityEvidence);
 			}
+#endif
 			return a;
 		}
 
