@@ -1063,6 +1063,7 @@ namespace System.Threading {
 		}
 #endif
 
+#if !NET_2_1
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
@@ -1102,6 +1103,8 @@ namespace System.Threading {
 		{
 			ExecutionContext.SecurityContext.CompressedStack = stack;
 		}
+
+#endif
 
 #if NET_1_1
 		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

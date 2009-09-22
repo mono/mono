@@ -1,3 +1,7 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Remove [Get|Set]CompressedStack for NET_2_1
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Remove CurrentPrincipal property for NET_2_1
