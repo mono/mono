@@ -1,3 +1,9 @@
+2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_bootstrap_corlib.dll.sources, net_2_1_raw_corlib.dll.sources:
+	Remove more unneeded code and replace some classes with simpler
+	NET_2_1 versions.
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_bootstrap_corlib.dll.sources, net_2_1_raw_corlib.dll.sources:
