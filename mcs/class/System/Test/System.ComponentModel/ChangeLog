@@ -1,3 +1,8 @@
+2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* EnumConverterTests.cs: Add a test to verify behaviour when converting
+	 a 0 flag value.
+
 2009-02-19  Marek Habersack  <mhabersack@novell.com>
 
 	* TypeDescriptorTests.cs: added a test for
