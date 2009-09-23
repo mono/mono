@@ -1,3 +1,8 @@
+2009-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* decompose.c (mono_decompose_vtype_opts): Avoid reading uninitialized memory
+	in the VCALL decomposition code.
+
 2009-09-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Fix the previous change on 64 bit platforms.
