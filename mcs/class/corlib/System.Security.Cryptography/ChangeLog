@@ -1,3 +1,10 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStream.cs: Fix [Input|Output]BlockSize for custom streams.
+	Patches by Santa Marta (via Atsushi).
+	[Fix bug #539288 and #539229]
+	[Backport r142435]
+
 2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Add missing URI for HMAC algorithms.
