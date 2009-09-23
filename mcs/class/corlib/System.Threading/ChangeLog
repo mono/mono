@@ -1,3 +1,9 @@
+2009-09-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: rewritten. It only has one queue now and it is sorted by
+	due time. Before this changes, it was using a lot of CPU when there
+	were a lot of 'future' timers.
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ExecutionContext.cs: Don't use SecurityContext and don't expose
