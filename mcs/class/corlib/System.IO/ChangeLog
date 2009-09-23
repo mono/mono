@@ -1,3 +1,10 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Directory.cs: Don't expose SearchOption in NET_2_1
+	* DirectoryInfo.cs: Don't expose SearchOption in NET_2_1
+	* MonoIO.cs: Don't throw a DriveNotFoundException under NET_2_1 -
+	an IOExpection will be thrown (like the 1.x profile)
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StreamReader.cs: Don't use UTF32 under NET_2_1

@@ -284,7 +284,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static string [] GetDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -317,7 +317,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
