@@ -40,7 +40,9 @@ namespace System.Threading {
 #else
 	internal sealed class ExecutionContext : ISerializable {
 #endif
+#if !NET_2_1
 		private SecurityContext _sc;
+#endif
 		private bool _suppressFlow;
 		private bool _capture;
 
@@ -50,8 +52,10 @@ namespace System.Threading {
 
 		internal ExecutionContext (ExecutionContext ec)
 		{
+#if !NET_2_1
 			if (ec._sc != null)
 				_sc = new SecurityContext (ec._sc);
+#endif
 			_suppressFlow = ec._suppressFlow;
 			_capture = true;
 		}
@@ -69,8 +73,10 @@ namespace System.Threading {
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
+#endif
 			return capture;
 		}
 		
@@ -92,7 +98,7 @@ namespace System.Threading {
 		}
 		
 		// internal stuff
-
+#if !NET_2_1
 		internal SecurityContext SecurityContext {
 			get {
 				if (_sc == null)
@@ -101,7 +107,7 @@ namespace System.Threading {
 			}
 			set { _sc = value; }
 		}
-
+#endif
 		internal bool FlowSuppressed {
 			get { return _suppressFlow; }
 			set { _suppressFlow = value; }
@@ -140,11 +146,13 @@ namespace System.Threading {
 			SecurityContext.Run (executionContext.SecurityContext, callback, state);
 		}
 #endif
+#if !NET_2_1
 		public static AsyncFlowControl SuppressFlow ()
 		{
 			Thread t = Thread.CurrentThread;
 			t.ExecutionContext.FlowSuppressed = true;
 			return new AsyncFlowControl (t, AsyncFlowControlType.Execution);
 		}
+#endif
 	}
 }

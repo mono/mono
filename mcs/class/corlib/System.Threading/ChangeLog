@@ -1,3 +1,13 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ExecutionContext.cs: Don't use SecurityContext and don't expose
+	AsyncFlowControl for NET_2_1
+	* ThreadAbortException.cs: Remove ExceptionState from NET_2_1
+	* Thread.cs: Don't expose ApartmentState and remove Suspend and
+	Resume methods for NET_2_1
+	* ThreadPool.cs: Remove GetAvailableThreads and Unsafe* methods
+	for NET_2_1
+
 2009-09-22  Jb Evain  <jbevain@novell.com>
 
 	* Timer.cs: MONOTOUCH doesn't support remoting, so do not pass

@@ -66,10 +66,11 @@ namespace System.Threading {
 			return true;
 		}
 #endif
-		
+
+#if !NET_2_1		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetAvailableThreads (out int workerThreads, out int completionPortThreads);
-
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void GetMaxThreads (out int workerThreads, out int completionPortThreads);
 			
@@ -156,6 +157,8 @@ namespace System.Threading {
 							    (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
+#if !NET_2_1
+
 #if NET_2_0
 		[CLSCompliant (false)]
 		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
@@ -218,6 +221,8 @@ namespace System.Threading {
 		{
 			throw new NotImplementedException ();
 		}
+
+#endif
 
 #if NET_2_1 && !MONOTOUCH
 		static WaitCallback MoonlightHandler (WaitCallback callback)

@@ -98,7 +98,11 @@ namespace System.Threading {
 		private bool thread_dump_requested;
 		private IntPtr end_stack;
 		private bool thread_interrupt_requested;
+#if NET_2_1
+		private byte apartment_state;
+#else
 		private byte apartment_state = (byte)ApartmentState.Unknown;
+#endif
 		volatile int critical_region_level;
 		private int small_id;
 		private IntPtr manage_callback;
@@ -130,7 +134,7 @@ namespace System.Threading {
 		[ThreadStatic]
 		static ExecutionContext _ec;
 
-		// can be both a ThreadSart and a ParameterizedThreadStart
+		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
 		//private string thread_name=null;
 
@@ -330,6 +334,7 @@ namespace System.Threading {
 			Thread_init ();
 		}
 
+#if !NET_2_1
 #if NET_2_0
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 #endif
@@ -361,6 +366,7 @@ namespace System.Threading {
 #endif
 			}
 		}
+#endif // !NET_2_1
 
 		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		//private static extern int current_lcid ();
@@ -641,6 +647,7 @@ namespace System.Threading {
 			}
 		}
 
+#if !NET_2_1
 		public ThreadPriority Priority {
 			get {
 				return(ThreadPriority.Lowest);
@@ -650,6 +657,7 @@ namespace System.Threading {
 				// FIXME: Implement setter.
 			}
 		}
+#endif
 
 		public ThreadState ThreadState {
 			get {
@@ -666,6 +674,7 @@ namespace System.Threading {
 			Abort_internal (null);
 		}
 
+#if !NET_2_1
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort (object stateInfo) 
 		{
@@ -683,6 +692,7 @@ namespace System.Threading {
 		{
 			Interrupt_internal ();
 		}
+#endif
 
 		// The current thread joins with 'this'. Set ms to 0 to block
 		// until this actually exits.
@@ -702,6 +712,7 @@ namespace System.Threading {
 			return Join_internal(millisecondsTimeout, system_thread_handle);
 		}
 
+#if !NET_2_1
 		public bool Join(TimeSpan timeout)
 		{
 			// LAMESPEC: says to throw ArgumentException too
@@ -712,11 +723,14 @@ namespace System.Threading {
 			}
 			return Join_internal(ms, system_thread_handle);
 		}
+#endif
 
 #if NET_1_1
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void MemoryBarrier ();
 #endif
+
+#if !NET_2_1
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
 
@@ -728,6 +742,7 @@ namespace System.Threading {
 		{
 			Resume_internal ();
 		}
+#endif // !NET_2_1
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void SpinWait_nop ();
@@ -805,6 +820,7 @@ namespace System.Threading {
 				throw new SystemException ("Thread creation failed.");
 		}
 
+#if !NET_2_1
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Suspend_internal();
 
@@ -816,6 +832,7 @@ namespace System.Threading {
 		{
 			Suspend_internal ();
 		}
+#endif // !NET_2_1
 
 		// Closes the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1013,7 +1030,8 @@ namespace System.Threading {
 		{
 			// Managed and native threads are currently bound together.
 		}
-		
+
+#if !NET_2_1
 		public ApartmentState GetApartmentState ()
 		{
 			return (ApartmentState)apartment_state;
@@ -1041,6 +1059,7 @@ namespace System.Threading {
 
 			return true;
 		}
+#endif // !NET_2_1
 		
 		[ComVisible (false)]
 		public override int GetHashCode ()
