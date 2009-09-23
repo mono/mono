@@ -116,7 +116,7 @@ namespace System.ComponentModel
 						// looping indefinitely
 						interrupt = true;
 						foreach (long val in enumValues) {
-							if (val != 0 && ((val & valueLong) == val || val == valueLong)) {
+							if ((val != 0 && ((val & valueLong) == val)) || val == valueLong) {
 								enums.Add (Enum.ToObject (type, val));
 								valueLong &= (~val);
 								interrupt = false;

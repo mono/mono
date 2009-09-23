@@ -1,3 +1,8 @@
+2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* EnumConverterTests.cs: Add a test to verify behaviour when converting
+	 a 0 flag value.
+
 2009-07-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ContainerTest.cs: Added test for bug #522474.

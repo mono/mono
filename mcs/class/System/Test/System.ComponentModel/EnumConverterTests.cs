@@ -482,6 +482,14 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (F2.Dd, enums [1], "#J6");
 			Assert.AreEqual (typeof (F2), enums [2].GetType (), "#J5");
 			Assert.AreEqual ((F2) 5, enums [2], "#J6");
+
+			// Test Flags conversion of enum value 0
+			converter = new EnumConverter (typeof (E3));
+			enums = converter.ConvertTo (null, CultureInfo.InvariantCulture,
+				E3.Aa, typeof (Enum [])) as Enum [];
+			Assert.AreEqual (1, enums.Length, "#H1");
+			Assert.AreEqual (typeof (E3), enums [0].GetType (), "#H2");
+			Assert.AreEqual (E3.Aa, enums[0], "#H3");
 		}
 #endif
 
@@ -872,6 +880,16 @@ namespace MonoTests.System.ComponentModel
 			Bb = 2,
 			Cc = 4,
 			Dd = 8,
+		}
+
+
+		[Flags]
+		enum E3
+		{
+			Aa = 0,
+			Bb = 1,
+			Cc = 2,
+			Dd = 4,
 		}
 
 		enum F : byte
