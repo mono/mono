@@ -302,6 +302,7 @@ namespace System.Net.Sockets
 					s.Close ();
 			}
 			socket = null;
+			access = 0;
 		}
 
 		public override int EndRead (IAsyncResult ar)
