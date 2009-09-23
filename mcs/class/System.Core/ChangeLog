@@ -1,3 +1,8 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Core.dll.sources: Remove some extra classes
+	from NET_2_1
+
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.Core_test.dll.sources: Add MemoryMappedFileTest.cs.

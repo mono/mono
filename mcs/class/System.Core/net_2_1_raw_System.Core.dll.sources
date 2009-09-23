@@ -11,7 +11,6 @@ System/TimeZoneInfo.AdjustmentRule.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
-System.Runtime.CompilerServices/DynamicAttribute.cs
 System.Runtime.CompilerServices/ExecutionScope.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/IStrongBox.cs
@@ -68,18 +67,4 @@ System.Linq.Expressions/UnaryExpression.cs
 System.Collections.Generic/HashSet.cs
 System.Security.Cryptography/Aes.cs
 System.Security.Cryptography/AesManaged.cs
-System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesTransform.cs
-System.Security.Cryptography/CngAlgorithm.cs
-System.Security.Cryptography/CngAlgorithmGroup.cs
-System.Security.Cryptography/MD5Cng.cs
-System.Security.Cryptography/SHA1Cng.cs
-System.Security.Cryptography/SHA256Cng.cs
-System.Security.Cryptography/SHA256CryptoServiceProvider.cs
-System.Security.Cryptography/SHA384Cng.cs
-System.Security.Cryptography/SHA384CryptoServiceProvider.cs
-System.Security.Cryptography/SHA512Cng.cs
-System.Security.Cryptography/SHA512CryptoServiceProvider.cs
-System.Threading/LockRecursionException.cs
-System.Threading/LockRecursionPolicy.cs
-System.Threading/ReaderWriterLockSlim.cs
