@@ -1,3 +1,8 @@
+2009-06-25  Miguel de Icaza  <miguel@novell.com>
+
+	* gc.c: Raise a NullArgumentException if the object passed is
+	null.    
+
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Atomically decrement the reference count and
