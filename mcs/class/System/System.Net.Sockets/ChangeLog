@@ -1,3 +1,10 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket_2_1.cs: Remove NET_2_1 socket policy checks from here.
+	* SocketAsyncEventArgs.cs: Support DnsEndPoint correctly (NET_2_1 but
+	that will be useful for NET_4_0 soon). Add socket policy checks here
+	since it could be called several times to connect to a host.
+
 2009-09-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* NetworkStream.cs: after disposing the stream, CanRead/CanWrite

@@ -39,7 +39,6 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Reflection;
 using System.IO;
 using System.Security;
 using System.Text;
@@ -447,21 +446,12 @@ namespace System.Net.Sockets {
 #if NET_2_1 && !MONOTOUCH
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
-
-			DnsEndPoint dep = (remoteEP as DnsEndPoint);
-			if (dep != null)
-				serial = dep.AsIPEndPoint ().Serialize ();
-			else
-				serial = remoteEP.Serialize ();
 #elif NET_2_0
 			/* TODO: check this for the 1.1 profile too */
 			if (islistening)
 				throw new InvalidOperationException ();
-
-			serial = remoteEP.Serialize ();
-#else
-			serial = remoteEP.Serialize ();
 #endif
+			serial = remoteEP.Serialize ();
 
 			int error = 0;
 
@@ -688,9 +678,7 @@ namespace System.Net.Sockets {
 		}
 
 #if NET_2_1 && !MONOTOUCH
-		static MethodInfo check_socket_policy;
-
-		static void CheckConnect (SocketAsyncEventArgs e, bool checkPolicy)
+		static void CheckConnect (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
 
@@ -698,28 +686,14 @@ namespace System.Net.Sockets {
 				throw new ArgumentNullException ("remoteEP");
 			if (e.BufferList != null)
 				throw new ArgumentException ("Multiple buffers cannot be used with this method.");
-
-			if (!checkPolicy)
-				return;
-
-			e.SocketError = SocketError.AccessDenied;
-			if (check_socket_policy == null) {
-				Type type = Type.GetType ("System.Windows.Browser.Net.CrossDomainPolicyManager, System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
-				check_socket_policy = type.GetMethod ("CheckEndPoint");
-				if (check_socket_policy == null)
-					throw new SecurityException ();
-			}
-			if ((bool) check_socket_policy.Invoke (null, new object [1] { e.RemoteEndPoint }))
-				e.SocketError = SocketError.Success;
 		}
 
-		// only _directly_ used (with false) to download the socket policy
-		internal bool ConnectAsync (SocketAsyncEventArgs e, bool checkPolicy)
+		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			CheckConnect (e, checkPolicy);
+			CheckConnect (e);
 
 			e.DoOperation (SocketAsyncOperation.Connect, this);
 
@@ -727,14 +701,10 @@ namespace System.Net.Sockets {
 			return true;
 		}
 
-		public bool ConnectAsync (SocketAsyncEventArgs e)
-		{
-			return ConnectAsync (e, true);
-		}
-
 		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
 		{
-			CheckConnect (e, true);
+			// exception ordering requires to check before creating the socket (good thing resource wise too)
+			CheckConnect (e);
 
 			Socket s = new Socket (AddressFamily.InterNetwork, socketType, protocolType);
 			e.DoOperation (SocketAsyncOperation.Connect, s);

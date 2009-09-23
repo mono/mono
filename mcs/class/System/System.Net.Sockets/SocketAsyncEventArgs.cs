@@ -29,12 +29,31 @@
 #if NET_2_0
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security;
 using System.Threading;
 
 namespace System.Net.Sockets
 {
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
+#if NET_2_1 && !MONOTOUCH
+		static MethodInfo check_socket_policy;
+
+		static SocketAsyncEventArgs ()
+		{
+			Type type = Type.GetType ("System.Windows.Browser.Net.CrossDomainPolicyManager, System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+			check_socket_policy = type.GetMethod ("CheckEndPoint");
+		}
+
+		static internal bool CheckEndPoint (EndPoint endpoint)
+		{
+			if (check_socket_policy == null)
+				throw new SecurityException ();
+			return ((bool) check_socket_policy.Invoke (null, new object [1] { endpoint }));
+		}
+#endif
+
 		public event EventHandler<SocketAsyncEventArgs> Completed;
 
 		IList <ArraySegment <byte>> _bufferList;
@@ -79,6 +98,14 @@ namespace System.Net.Sockets
 					return curSocket;
 				}
 			}
+		}
+
+		internal bool PolicyRestricted { get; private set; }
+
+		internal SocketAsyncEventArgs (bool policy) : 
+			this ()
+		{
+			PolicyRestricted = policy;
 		}
 #endif
 		
@@ -185,36 +212,70 @@ namespace System.Net.Sockets
 		void ConnectCallback ()
 		{
 			LastOperation = SocketAsyncOperation.Connect;
-#if NET_2_1
-			if (SocketError == SocketError.AccessDenied) {
-				curSocket.Connected = false;
-				OnCompleted (this);
-				return;
-			}
-#endif
-			SocketError = SocketError.Success;
 			SocketError error = SocketError.Success;
-
 			try {
-				if (!curSocket.Blocking) {
-					int success;
-					curSocket.Poll (-1, SelectMode.SelectWrite, out success);
-					SocketError = (SocketError)success;
-					if (success == 0)
-						curSocket.Connected = true;
-					else
-						return;
+#if NET_2_1 && !MONOTOUCH
+				// Connect to the first address that match the host name, like:
+				// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
+				// while skipping entries that do not match the address family
+				DnsEndPoint dep = (RemoteEndPoint as DnsEndPoint);
+				if (dep != null) {
+					IPAddress[] addresses = Dns.GetHostAddresses (dep.Host);
+					foreach (IPAddress addr in addresses) {
+						try {
+							if (curSocket.AddressFamily == addr.AddressFamily) {
+								error = TryConnect (new IPEndPoint (addr, dep.Port));
+								if (error == SocketError.Success)
+									break;
+							}
+						}
+						catch (SocketException) {
+							error = SocketError.AccessDenied;
+						}
+					}
 				} else {
-					curSocket.seed_endpoint = RemoteEndPoint;
-					curSocket.Connect (RemoteEndPoint);
-					curSocket.Connected = true;
+					error = TryConnect (RemoteEndPoint);
 				}
-			} catch (SocketException se){
-				error = se.SocketErrorCode;
+#else
+				error = TryConnect (RemoteEndPoint);
+#endif
 			} finally {
 				SocketError = error;
 				OnCompleted (this);
 			}
+		}
+
+		SocketError TryConnect (EndPoint endpoint)
+		{
+			curSocket.Connected = false;
+			SocketError error = SocketError.Success;
+#if NET_2_1 && !MONOTOUCH
+			// if we're not downloading a socket policy then check the policy
+			if (!PolicyRestricted) {
+				error = SocketError.AccessDenied;
+				if (!CheckEndPoint (endpoint)) {
+					return error;
+				}
+			}
+#endif
+			try {
+				if (!curSocket.Blocking) {
+					int success;
+					curSocket.Poll (-1, SelectMode.SelectWrite, out success);
+					error = (SocketError)success;
+					if (success == 0)
+						curSocket.Connected = true;
+					else
+						return error;
+				} else {
+					curSocket.seed_endpoint = endpoint;
+					curSocket.Connect (endpoint);
+					curSocket.Connected = true;
+				}
+			} catch (SocketException se){
+				error = se.SocketErrorCode;
+			}
+			return error;
 		}
 
 		void SendCallback ()
