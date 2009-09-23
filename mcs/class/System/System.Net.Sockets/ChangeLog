@@ -1,3 +1,8 @@
+2009-09-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* NetworkStream.cs: after disposing the stream, CanRead/CanWrite
+	return false.
+
 2009-09-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SocketAsyncEventArgs.cs: fix check for non-null.
