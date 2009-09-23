@@ -348,6 +348,7 @@ namespace System.Threading
 					list.Capacity = count * 2;
 			}
 
+			/*
 			void PrintList ()
 			{
 				Console.WriteLine ("BEGIN--");
@@ -357,6 +358,7 @@ namespace System.Threading
 				}
 				Console.WriteLine ("END----");
 			}
+			*/
 		}
 	}
 }
