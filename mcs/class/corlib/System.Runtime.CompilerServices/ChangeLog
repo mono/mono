@@ -1,3 +1,7 @@
+2009-09-23  Marek Safar  <marek.safar@gmail.com>
+
+	* MethodImplOptions.cs: Add NoOptimization.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* TypeForwardedFromAttribute.cs: Add BOOTSTRAP_NET_4_0.

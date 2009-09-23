@@ -72,7 +72,10 @@ namespace System.Runtime.CompilerServices {
 		/// <summary>
 		/// </summary>
 		PreserveSig = 128,
-
+		
+#if NET_2_0
+		NoOptimization = 64
+#endif
 	} // MethodImplOptions
 
 } // System.Runtime.CompilerServices
