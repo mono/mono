@@ -222,7 +222,6 @@ System/TermInfoStrings.cs
 System/ThreadStaticAttribute.cs
 System/TimeSpan.cs
 System/TimeZone.cs
-System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
 ../../build/common/MonoTODOAttribute.cs
 System/Type.cs
@@ -301,30 +300,23 @@ System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/Calendar.cs
-System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
 System.Globalization/CalendricalCalculations.cs
 System.Globalization/CharUnicodeInfo.cs
-System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
-System.Globalization/CultureTypes.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DaylightTime.cs
-System.Globalization/DigitShapes.cs
 System.Globalization/GregorianCalendar.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/HebrewCalendar.cs
 System.Globalization/HijriCalendar.cs
-System.Globalization/IdnMapping.cs
 System.Globalization/JapaneseCalendar.cs
-System.Globalization/JulianCalendar.cs
 System.Globalization/KoreanCalendar.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
-System.Globalization/PersianCalendar.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
@@ -339,9 +331,6 @@ System.IO/BufferedStream.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
-System.IO/DriveInfo.cs
-System.IO/DriveNotFoundException.cs
-System.IO/DriveType.cs
 System.IO/EndOfStreamException.cs
 System.IO/File.cs
 System.IO/FileAccess.cs
@@ -364,7 +353,6 @@ System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
 System.IO/Path.cs
 System.IO/PathTooLongException.cs
-System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
 System.IO/Stream.cs
@@ -513,7 +501,6 @@ System.Reflection.Emit/UnmanagedMarshal.cs
 System.Resources/IResourceReader.cs
 System.Resources/IResourceWriter.cs
 System.Resources/MissingManifestResourceException.cs
-System.Resources/MissingSatelliteAssemblyException.cs
 System.Resources/NeutralResourcesLanguageAttribute.cs
 System.Resources/ResourceManager.cs
 System.Resources/ResourceReader.cs
@@ -523,9 +510,6 @@ System.Resources/RuntimeResourceSet.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
-System.Runtime/GCLatencyMode.cs
-System.Runtime/GCSettings.cs
-System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
 System.Runtime.CompilerServices/CallConvCdecl.cs
 System.Runtime.CompilerServices/CallConvFastcall.cs
@@ -858,7 +842,6 @@ System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission_2_1.cs
 System.Security/IPermission.cs
 System.Security/PermissionSet_2_1.cs
-System.Security/SecurityContext.cs
 System.Security/SecurityCriticalAttribute.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException_2_1.cs
@@ -981,8 +964,6 @@ System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
 System.Threading/AbandonedMutexException.cs
-System.Threading/ApartmentState.cs
-System.Threading/AsyncFlowControl.cs
 System.Threading/AutoResetEvent.cs
 System.Threading/ContextCallback.cs
 System.Threading/EventResetMode.cs
@@ -990,7 +971,6 @@ System.Threading/EventWaitHandle.cs
 System.Threading/ExecutionContext.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
-System.Threading/LockRecursionException.cs
 System.Threading/ManualResetEvent.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
@@ -1006,7 +986,6 @@ System.Threading/Thread.cs
 System.Threading/ThreadAbortException.cs
 System.Threading/ThreadInterruptedException.cs
 System.Threading/ThreadPool.cs
-System.Threading/ThreadPriority.cs
 System.Threading/ThreadStart.cs
 System.Threading/ThreadStartException.cs
 System.Threading/ThreadState.cs
