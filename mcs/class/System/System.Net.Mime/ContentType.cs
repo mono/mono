@@ -194,8 +194,12 @@ namespace System.Net.Mime {
 			if (Encoding.ASCII.Equals (enc))
 				return TransferEncoding.SevenBit;
 			else if (Encoding.UTF8.CodePage == enc.CodePage ||
-			    Encoding.Unicode.CodePage == enc.CodePage ||
-			    Encoding.UTF32.CodePage == enc.CodePage)
+#if !NET_2_1
+			    Encoding.Unicode.CodePage == enc.CodePage || Encoding.UTF32.CodePage == enc.CodePage
+#else
+			    Encoding.Unicode.CodePage == enc.CodePage
+#endif
+					 )
 				return TransferEncoding.Base64;
 			else
 				return TransferEncoding.QuotedPrintable;

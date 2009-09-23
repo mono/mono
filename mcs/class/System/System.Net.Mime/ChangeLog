@@ -1,3 +1,7 @@
+2009-09-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* ContentType.cs: Fix the net 2.1 build.
+
 2009-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContentType.cs : when there are especials, quote parameter values.
