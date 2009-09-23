@@ -583,12 +583,15 @@ public class TaiwanCalendar : Calendar {
 		return year;
 	}
 #if NET_2_0
+
+#if !NET_2_1
 	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
 		}
 	}
+#endif
 
 	static DateTime TaiwanMin = new DateTime (1912, 1, 1, 0, 0, 0);
 	static DateTime TaiwanMax = new DateTime (9999, 12, 31, 11, 59, 59);

@@ -705,11 +705,14 @@ public class HebrewCalendar : Calendar {
 			return baseCentury + year - 100;
 	}
 #if NET_2_0
+
+#if !NET_2_1
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.LunisolarCalendar;
 		}
 	}
+#endif
 
 	static DateTime Min = new DateTime (1583, 1, 1, 0, 0, 0);
 	static DateTime Max = new DateTime (2239, 9, 29, 11, 59, 59);

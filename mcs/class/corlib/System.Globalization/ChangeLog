@@ -1,3 +1,13 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Calendar.cs: Don't expose AlgorithmType property in NET_2_1
+	* CultureInfo.cs: Don't expose CultureTypes in NET_2_1
+	* NumberFormatInfo.cs: Don't expose NativeDigits in NET_2_1
+	* GregorianCalendar.cs, HebrewCalendar.cs, HijriCalendar.cs,
+	JapaneseCalendar.cs, KoreanCalendar.cs, TaiwanCalendar.cs,
+	ThaiBuddhistCalendar.cs, UmAlQuraCalendar.cs: Don't expose 
+	AlgorithmType property in NET_2_1
+
 2009-07-26  Miguel de Icaza  <miguel@novell.com>
 
 	* Calendar.cs: Do not add internal abstract methods to the

@@ -550,7 +550,7 @@ namespace System.Globalization {
 			}
 		}
 		
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MonoNotSupported ("We don't have native digit info")]
 		[ComVisible (false)]
 		public string [] NativeDigits {

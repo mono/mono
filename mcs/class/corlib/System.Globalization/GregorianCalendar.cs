@@ -503,12 +503,15 @@ public class GregorianCalendar : Calendar {
 	}
 	
 #if NET_2_0
+
+#if !NET_2_1
 	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
 		}
 	}
+#endif
 
 	static DateTime? Min, Max;
 		

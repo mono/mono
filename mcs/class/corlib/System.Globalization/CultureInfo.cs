@@ -174,7 +174,7 @@ namespace System.Globalization
 			get { return territory; }
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		// FIXME: It is implemented, but would be hell slow.
 		[ComVisible (false)]
 		public CultureTypes CultureTypes {
@@ -402,6 +402,7 @@ namespace System.Globalization
 			return false;
 		}
 
+#if !NET_2_1
 		public static CultureInfo[] GetCultures(CultureTypes types)
 		{
 			bool neutral=((types & CultureTypes.NeutralCultures)!=0);
@@ -421,6 +422,7 @@ namespace System.Globalization
 
 			return infos;
 		}
+#endif
 
 		public override int GetHashCode()
 		{

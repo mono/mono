@@ -933,11 +933,13 @@ public class UmAlQuraCalendar : Calendar {
 		return base.ToFourDigitYear (year);
 	}
 
+#if !NET_2_1
 	public override CalendarAlgorithmType AlgorithmType  {
 		get {
 			return CalendarAlgorithmType.LunarCalendar;
 		}
 	}
+#endif
 
 	static DateTime Min = new DateTime (622, 7, 18, 0, 0, 0);
 	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);

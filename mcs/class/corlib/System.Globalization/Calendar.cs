@@ -134,12 +134,15 @@ public abstract class Calendar
 	bool m_isReadOnly;
 
 #if NET_2_0
+
+#if !NET_2_1
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.Unknown;
 		}
 	}
+#endif
 
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual DateTime MaxSupportedDateTime {

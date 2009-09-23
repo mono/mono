@@ -504,12 +504,15 @@ public class ThaiBuddhistCalendar : Calendar {
 	}
 	
 #if NET_2_0
+
+#if !NET_2_1
 	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
 		}
 	}
+#endif
 
 	static DateTime ThaiMin = new DateTime (1, 1, 1, 0, 0, 0);
 	static DateTime ThaiMax = new DateTime (9999, 12, 31, 11, 59, 59);
