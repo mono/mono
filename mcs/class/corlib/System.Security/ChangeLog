@@ -1,3 +1,8 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityContext.cs: Remove NET_2_1 defines since the type is
+	now unused in NET_2_1 profile
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission_2_1.cs: New. Stub to compile NET_2_1

@@ -39,10 +39,8 @@ namespace System.Security {
 	internal sealed class SecurityContext {
 #endif
 		private bool _capture;
-#if !NET_2_1
 		private IntPtr _winid;
 		private CompressedStack _stack;
-#endif
 		private bool _suppressFlowWindowsIdentity;
 		private bool _suppressFlow;
 
@@ -54,11 +52,9 @@ namespace System.Security {
 		internal SecurityContext (SecurityContext sc)
 		{
 			_capture = true;
-#if !NET_2_1
 			_winid = sc._winid;
 			if (sc._stack != null)
 				_stack = sc._stack.CreateCopy ();
-#endif
 		}
 
 		public SecurityContext CreateCopy ()
@@ -79,10 +75,8 @@ namespace System.Security {
 
 			SecurityContext capture = new SecurityContext ();
 			capture._capture = true;
-#if !NET_2_1
 			capture._winid = WindowsIdentity.GetCurrentToken ();
 			capture._stack = CompressedStack.Capture ();
-#endif
 			return capture;
 		}
 
@@ -97,7 +91,7 @@ namespace System.Security {
 			get { return _suppressFlowWindowsIdentity; }
 			set { _suppressFlowWindowsIdentity = value; }
 		}
-#if !NET_2_1
+
 		internal CompressedStack CompressedStack {
 			get { return _stack; }
 			set { _stack = value; }
@@ -107,7 +101,7 @@ namespace System.Security {
 			get { return _winid; }
 			set { _winid = value; }
 		}
-#endif
+
 		// Suppressing the SecurityContext flow wasn't required before 2.0
 
 		static public bool IsFlowSuppressed ()
@@ -130,7 +124,7 @@ namespace System.Security {
 			sc.FlowSuppressed = false;
 			sc.WindowsIdentityFlowSuppressed = false;
 		}
-#if NET_2_0 && !NET_2_1
+#if NET_2_0
 		// if you got the context then you can use it
 		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
