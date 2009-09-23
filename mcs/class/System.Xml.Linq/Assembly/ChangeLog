@@ -1,3 +1,7 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Don't include APTCA in NET_2_1
+
 2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes

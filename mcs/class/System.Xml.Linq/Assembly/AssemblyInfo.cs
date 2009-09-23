@@ -58,10 +58,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../winfx.pub")]
 #else
 [assembly: AssemblyKeyFile ("../ecma.pub")]
+[assembly: AllowPartiallyTrustedCallers]
 #endif
 
 [assembly: ComVisible (false)]
-[assembly: AllowPartiallyTrustedCallers]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
