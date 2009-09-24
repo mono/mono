@@ -1,3 +1,8 @@
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (InitializeProperties): Set 'MSBuildProjectDefaultTargets'
+	reserved property.
+
 2009-09-10  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs (Evaluate): Metadata from "Include" should be,

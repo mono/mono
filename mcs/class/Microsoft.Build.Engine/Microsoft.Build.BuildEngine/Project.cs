@@ -879,6 +879,7 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
