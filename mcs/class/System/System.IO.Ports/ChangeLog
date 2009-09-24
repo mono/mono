@@ -1,3 +1,8 @@
+2009-09-24  Christian Hoff  <christian_hoff@gmx.net>
+
+	* SerialPort.cs: Do not close the base stream if Dispose is called from
+	the finalizer.
+
 2009-09-21 Leszek Ciesielski <skolima@gmail.com>
 
 	* SerialPortStream.cs: Throw exception when errors occur in Close()

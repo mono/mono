@@ -489,7 +489,7 @@ namespace System.IO.Ports
 
 		public void Close ()
 		{
-			Dispose (false);
+			Dispose (true);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -498,7 +498,9 @@ namespace System.IO.Ports
 				return;
 			
 			is_open = false;
-			stream.Close ();
+			// Do not close the base stream when the finalizer is run; the managed code can still hold a reference to it.
+			if (disposing)
+				stream.Close ();
 			stream = null;
 		}
 
