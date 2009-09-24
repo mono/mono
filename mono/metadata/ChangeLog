@@ -1,3 +1,8 @@
+2009-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_ptr_to_object_conv): Generate an exception instead of
+	aborting when a conversion is not implemented.
+
 2009-09-23  Miguel de Icaza  <miguel@novell.com>
 
 	* verify.c: when comparing culture strings, use g_ascii_strcmp
@@ -8,11 +13,11 @@
 
 	The standard Public Key is 00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00
 	which would have always failed earlier.
-	
+
 2009-06-25  Miguel de Icaza  <miguel@novell.com>
 
 	* gc.c: Raise a NullArgumentException if the object passed is
-	null.    
+	null.
 
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
