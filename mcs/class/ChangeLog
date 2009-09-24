@@ -1,3 +1,7 @@
+2009-09-24  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Removed System.Json from net_4_0 profile.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: move core WCF assemblies before Sys.Web.Extensions,
