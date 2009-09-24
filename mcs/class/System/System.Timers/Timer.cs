@@ -42,6 +42,7 @@ namespace System.Timers
 		double interval;
 		bool autoReset;
 		System.Threading.Timer timer;
+		object _lock = new object ();
 		ISynchronizeInvoke so;
 
 		[Category("Behavior")]
@@ -79,17 +80,21 @@ namespace System.Timers
 		public bool Enabled
 		{
 			get {
-				return timer != null;
+				lock (_lock)
+					return timer != null;
 			}
 			set {
-				if (Enabled == value)
-					return;
+				lock (_lock) {
+					bool enabled = timer != null;
+					if (enabled == value)
+						return;
 
-				if (value) {
-					timer = new System.Threading.Timer (Callback, this, (int)interval, autoReset? (int)interval: 0);
-				} else {
-					timer.Dispose ();
-					timer = null;
+					if (value) {
+						timer = new System.Threading.Timer (Callback, this, (int)interval, autoReset ? (int)interval: 0);
+					} else {
+						timer.Dispose ();
+						timer = null;
+					}
 				}
 			}
 		}
@@ -106,9 +111,11 @@ namespace System.Timers
 				if (value <= 0)
 					throw new ArgumentException ("Invalid value: " + value);
 
-				interval = value;
-				if (timer != null)
-					timer.Change ((int)interval, autoReset? (int)interval: 0);
+				lock (_lock) {
+					interval = value;
+					if (timer != null)
+						timer.Change ((int)interval, autoReset? (int)interval: 0);
+				}
 			}
 		}
 
@@ -164,6 +171,8 @@ namespace System.Timers
 		static void Callback (object state)
 		{
 			Timer timer = (Timer) state;
+			if (timer.Enabled == false)
+				return;
 			ElapsedEventHandler events = timer.Elapsed;
 			if (!timer.autoReset)
 				timer.Enabled = false;
