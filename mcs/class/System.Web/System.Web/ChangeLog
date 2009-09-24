@@ -1,3 +1,8 @@
+2009-09-24  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: added "securityTrimmingEnabled" to the
+	list of supported attributes in Initialize. Fixes bug #541607
+
 2009-09-07  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: when creating local resource provider, pass the

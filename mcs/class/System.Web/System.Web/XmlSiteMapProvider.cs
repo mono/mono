@@ -470,8 +470,9 @@ namespace System.Web
 							break;
 
 						case "description":
+						case "securityTrimmingEnabled":
 							break;
-
+							
 						default:
 							throw new ConfigurationErrorsException ("The attribute '" + key + "' is unexpected in the configuration of the '" + name + "' provider.");
 					}
