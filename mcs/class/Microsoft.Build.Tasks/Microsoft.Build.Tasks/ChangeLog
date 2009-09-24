@@ -1,3 +1,7 @@
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (BuildInParallel): Add missing property.
+
 2009-09-10  Ankit Jain  <jankit@novell.com>
 
 	* AssemblyResolver.cs: Move the SearchLogger to be a list of
