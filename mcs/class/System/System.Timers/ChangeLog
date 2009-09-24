@@ -1,3 +1,7 @@
+2009-09-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: lock access to the 'timer' field. Attemp to fix bug
+	#537921.
 
 Wed Sep 17 11:48:00 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
