@@ -2136,6 +2136,11 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 
+	    [Test]
+		public void TestMissing () {
+			Assert.AreEqual (Type.Missing, Missing.Value);
+		}
+
 		[Test]
 		public void InvokeMember_OutParam ()
 		{
