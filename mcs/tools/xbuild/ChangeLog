@@ -1,3 +1,13 @@
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Create dir for WebApplication.targets .
+	* Microsoft.Common.targets (_ValidateEssentialProperties): New.
+	(BuildDependsOn): Add _ValidateEssentialProperties, temporary.
+	This should actually work via InitialTargets, which will be fixed
+	in a subsequent commit. Add PrepareForRun.
+	(PrepareForRun): New.
+	* xbuild/Microsoft.WebApplication.targets: New.
+
 2009-09-23  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Add 'Rebuild' target.

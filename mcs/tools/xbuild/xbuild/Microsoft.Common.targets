@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" InitialTargets="_ValidateEssentialProperties" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
@@ -49,6 +49,14 @@
 	<PropertyGroup>
 		<TargetPath>@(_OutDirItem->'%(FullPath)\$(AssemblyName)$(TargetExt)')</TargetPath>
 	</PropertyGroup>
+
+	<Target Name="_ValidateEssentialProperties">
+		<!-- If OutDir is specified via the command line, then the earlier check
+		     to add a trailing slash won't have any affect, so error here. -->
+		<Error
+			Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')"
+			Text="OutDir property must end with a slash."/>
+	</Target>
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
@@ -183,6 +191,7 @@
 
 	<PropertyGroup>
 		<BuildDependsOn>
+			_ValidateEssentialProperties;
 			BeforeBuild;
 			CoreBuild;
 			AfterBuild
@@ -202,6 +211,7 @@
 			CopyFilesMarkedCopyLocal;
 			BuildResources;
 			Compile;
+			PrepareForRun;
 			DeployOutputFiles;
 			_RecordCleanFile;
 			PostBuildEvent
@@ -232,6 +242,13 @@
 	<Target Name="AfterCompile" />
 
 	<Target Name="Compile" DependsOnTargets="$(CompileDependsOn)"/>
+
+	<PropertyGroup>
+		<PrepareForRunDependsOn>
+			DeployOutputFiles
+		</PrepareForRunDependsOn>
+	</PropertyGroup>
+	<Target Name="PrepareForRun" DependsOnTargets="$(PrepareForRunDependsOn)"/>
 
 	<Target Name="BuildResources"
 		DependsOnTargets="AssignTargetPaths;SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
