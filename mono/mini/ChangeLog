@@ -1,5 +1,8 @@
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (emit_debug_info_end): Disable this as it doesn't seem to
+	work/required with recent iphone sdk versions.
+
 	* aot-compiler.c (add_wrappers): Generate PtrToStructure wrappers for more
 	structures.
 
