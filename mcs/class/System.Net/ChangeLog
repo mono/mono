@@ -1,3 +1,8 @@
+2009-09-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Net.dll.sources: Substitute System.dll Dns
+	implementation for a ML specific version.
+
 2009-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.Net.dll.sources: Add some existing System.dll

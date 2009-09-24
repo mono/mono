@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+System.Net/Dns_2_1.cs
 System.Net/DnsEndPoint_2_1.cs
 System.Net/HttpWebRequest_2_1.cs
 System.Net/HttpWebResponse_2_1.cs
@@ -21,7 +22,6 @@ System.Net.NetworkInformation/NetworkInterface_2_1.cs
 ../System/System.Net/CookieCollection.cs
 ../System/System.Net/CookieContainer.cs
 ../System/System.Net/CookieException.cs
-../System/System.Net/Dns.cs
 ../System/System.Net/EndPoint.cs
 ../System/System.Net/HttpRequestHeader.cs
 ../System/System.Net/HttpResponseHeader.cs
