@@ -35,13 +35,15 @@ using System.Runtime.Serialization;
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 #endif
 
 namespace System.Collections {
 
 #if NET_2_0
 	[ComVisible(true)]
-	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 #endif
 	[Serializable]
 #if INSIDE_CORLIB
@@ -1006,6 +1008,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if NET_2_0
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
@@ -1058,6 +1064,10 @@ namespace System.Collections {
 		}
 
 		[Serializable]
+#if NET_2_0
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
+#endif
 		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;

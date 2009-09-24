@@ -1,3 +1,9 @@
+2009-09-24  Marek Safar  <marek.safar@gmail.com>
+
+	* Queue.cs, DictionaryEntry.cs, Hashtable.cs,
+	CollectionDebuggerView.cs, Stack.cs, ArrayList.cs: Add nicer debug
+	view for tools which support it.
+
 2009-09-22  Marek Safar  <marek.safar@gmail.com>
 
 	* Queue.cs, Hashtable.cs, SortedList.cs, Stack.cs, ArrayList.cs:

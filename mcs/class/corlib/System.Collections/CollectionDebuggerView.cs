@@ -1,15 +1,10 @@
 //
-// DictionaryEntry.cs
+// CollectionDebuggerView.cs
 //
 // Authors:
-// 	Paolo Molaro  (lupus@ximian.com)
-// 	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) Ximian, Inc.  http://www.ximian.com
-// (C) 2003 Ben Maurer
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -18,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,44 +26,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Runtime.InteropServices;
-
-namespace System.Collections {
-
 #if NET_2_0
-	[ComVisible(true)]
-	[System.Diagnostics.DebuggerDisplay ("{_value}", Name="[{_key}]")]
-#endif
-	[Serializable]
-	public struct DictionaryEntry {
-		private object _key;
-		private object _value;
 
-		public DictionaryEntry (object key, object value)
+using System;
+using System.Diagnostics;
+
+namespace System.Collections
+{
+	//
+	// Custom debugger type proxy to display collections as arrays
+	//
+	sealed class CollectionDebuggerView
+	{
+		readonly ICollection c;
+
+		public CollectionDebuggerView (ICollection col)
 		{
-#if ONLY_1_1
-			if (key == null)
-				throw new ArgumentNullException ("key");
-#endif			
-			_key = key;
-			_value = value;
+			this.c = col;
 		}
 		
-		public object Key {
-			get {return _key;}
-			set {
-#if ONLY_1_1
-				if (value == null)
-					throw new ArgumentNullException ("value");
-#endif				
-				_key = value;
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		public object[] Items {
+			get {
+				// It does not make much sense to browse more than 1k
+				// of items in debug view
+				var o = new object [Math.Min (c.Count, 1024)];
+				c.CopyTo (o, 0);
+				return o;
 			}
-		}
-
-		public object Value {
-			get {return _value;}
-			set {_value = value;}
 		}
 	}
 }
+
+#endif
