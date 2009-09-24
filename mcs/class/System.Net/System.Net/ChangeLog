@@ -1,3 +1,8 @@
+2009-09-24  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Dns_2_1.cs: New. Smaller version of Dns.cs that offers just
+	enough for DnsEndPoint support
+
 2009-09-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsEndPoint_2_1.cs: Remove (now) unneeded method
