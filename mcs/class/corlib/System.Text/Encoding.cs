@@ -463,7 +463,7 @@ public abstract class Encoding
 			case UTF8Encoding.UTF8_CODE_PAGE:
 				return UTF8;
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0
 			case UTF32Encoding.UTF32_CODE_PAGE:
 				return UTF32;
 
@@ -642,7 +642,6 @@ public abstract class Encoding
 
 			UnicodeEncoding.BIG_UNICODE_CODE_PAGE,
 			"unicodefffe", "utf_16be",
-#if !NET_2_1
 #if NET_2_0
 			UTF32Encoding.UTF32_CODE_PAGE,
 			"utf_32", "UTF_32LE", "ucs_4",
@@ -651,6 +650,7 @@ public abstract class Encoding
 			"UTF_32BE",
 #endif
 
+#if !NET_2_1
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
 			"iso_8859_1", "latin1"
 #endif // !NET_2_1
@@ -1065,7 +1065,7 @@ public abstract class Encoding
 		}
 	}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0
 	// Get the standard little-endian UTF-32 encoding object.
 	public static Encoding UTF32
 	{

@@ -1,3 +1,7 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StreamReader.cs: Add back UTF32 under NET_2_1 (for smcs)
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Directory.cs: Don't expose SearchOption in NET_2_1

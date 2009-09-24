@@ -963,6 +963,7 @@ System.Text/SurrogateEncoder.cs
 System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
 System.Text/UTF8Encoding.cs
+System.Text/UTF32Encoding.cs
 System.Threading/AbandonedMutexException.cs
 System.Threading/AutoResetEvent.cs
 System.Threading/ContextCallback.cs

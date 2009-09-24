@@ -1,3 +1,7 @@
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Encoding.cs: Add back UTF32 since it's useful for smcs
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Encoding.cs: Remove UTF32, Latin1 and custom (loaded code)
