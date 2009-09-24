@@ -1,5 +1,8 @@
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Generate PtrToStructure wrappers for more
+	structures.
+
 	* decompose.c (mono_decompose_vtype_opts): Avoid reading uninitialized memory
 	in the VCALL decomposition code.
 
