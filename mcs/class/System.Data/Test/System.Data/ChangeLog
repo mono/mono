@@ -1,3 +1,7 @@
+2009-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+       * DataSetTest2.cs (MergeTest_SameDataSet_536194): Added new.
+       
 2009-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumnTest.cs : try a string comparison fix.

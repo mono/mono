@@ -3466,6 +3466,20 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (1, ds.Tables [0].Columns.Count, "#4"); 	
 			Assert.AreEqual (typeof (string), ds.Tables [0].Columns [0].DataType, "#5");
         	}
+               
+               [Test]
+               public void MergeTest_SameDataSet_536194 ()
+               {
+                       DataSet dataSet = new DataSet ("Test");
+                       
+                       DataTable dataTable = new DataTable("Test");
+                       dataTable.Columns.Add("Test");
+                       dataTable.Rows.Add("Test");
+                       dataSet.Tables.Add(dataTable);
+                       dataSet.Merge(dataTable);
+                       Assert.AreEqual (1, dataSet.Tables.Count, "1");
+               }
+
 #if NET_2_0
 		[Test]	
         	public void LoadTest1 ()

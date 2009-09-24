@@ -37,6 +37,8 @@ namespace System.Data
 				throw new ArgumentNullException("targetSet");
 			if(sourceSet == null)
 				throw new ArgumentNullException("sourceSet");
+			if (sourceSet == targetSet)
+				return;
 
 			bool prevEC = targetSet.EnforceConstraints;
 			targetSet.EnforceConstraints = false;
@@ -54,6 +56,8 @@ namespace System.Data
 				throw new ArgumentNullException("targetSet");
 			if(sourceTable == null)
 				throw new ArgumentNullException("sourceTable");
+			if (sourceTable.DataSet == targetSet)
+				return;
 
 			bool savedEnfoceConstraints = targetSet.EnforceConstraints;
 			targetSet.EnforceConstraints = false;
@@ -75,6 +79,8 @@ namespace System.Data
 				throw new ArgumentNullException("targetTable");
 			if(sourceTable == null)
 				throw new ArgumentNullException("sourceTable");
+			if (sourceTable == targetTable)
+				return;
 
 			bool savedEnforceConstraints = targetTable.EnforceConstraints;
 			targetTable.EnforceConstraints = false;

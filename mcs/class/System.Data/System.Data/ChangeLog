@@ -1,3 +1,9 @@
+2009-09-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	** Fixes #536194 - Patch by Andrew Kurochk <aaki.viper@gmail.com>
+	* MergeManager.cs (Merge*): Do nothing when source and target 
+	datasets are same.
+	
 2009-09-10  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #510176
