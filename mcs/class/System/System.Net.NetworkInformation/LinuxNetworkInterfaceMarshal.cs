@@ -40,6 +40,7 @@ namespace System.Net.NetworkInformation {
 		public IntPtr ifu_dstaddr; 
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
 	struct ifaddrs
 	{
 		public IntPtr  ifa_next;
@@ -50,7 +51,8 @@ namespace System.Net.NetworkInformation {
 		public ifa_ifu ifa_ifu;
 		public IntPtr  ifa_data;
 	}
-	
+
+	[StructLayout(LayoutKind.Sequential)]	
 	struct sockaddr_in
 	{
 		public ushort sin_family;
@@ -58,6 +60,7 @@ namespace System.Net.NetworkInformation {
 		public uint   sin_addr;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
 	struct sockaddr_in6
 	{
 		public ushort   sin6_family;   /* AF_INET6 */
@@ -67,12 +70,14 @@ namespace System.Net.NetworkInformation {
 		public uint     sin6_scope_id; /* scope id (new in RFC2553) */
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
 	struct in6_addr
 	{
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst=16)]
 		public byte[] u6_addr8;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
 	struct sockaddr_ll
 	{
 		public ushort sll_family;

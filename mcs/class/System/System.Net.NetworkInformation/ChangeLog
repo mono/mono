@@ -1,3 +1,8 @@
+2009-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* LinuxNetworkInterfaceMarshal.cs: Add StructLayout attribute to structures, so
+	the aot compiler can generate PtrToStructure wrappers for them.
+
 2009-09-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: if we receive a packet that is ignored, adjust the
