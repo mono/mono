@@ -716,6 +716,12 @@ namespace Microsoft.Build.BuildEngine {
 				XmlReader xmlReader = XmlReader.Create (textReader, settings);
 				xmlDocument.Load (xmlReader);
 
+				if (xmlDocument.DocumentElement.Name == "VisualStudioProject")
+					throw new InvalidProjectFileException (String.Format (
+							"Project file '{0}' is a VS2003 project, which is not " +
+							"supported by xbuild. You need to convert it to msbuild " +
+							"format to build with xbuild.", fullFileName));
+
 				if (xmlDocument.DocumentElement.Name != "Project") {
 					throw new InvalidProjectFileException (String.Format (
 						"The element <{0}> is unrecognized, or not supported in this context.", xmlDocument.DocumentElement.Name));
