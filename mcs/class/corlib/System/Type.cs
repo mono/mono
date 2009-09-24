@@ -55,7 +55,7 @@ namespace System {
 		public static readonly MemberFilter FilterAttribute = new MemberFilter (FilterAttribute_impl);
 		public static readonly MemberFilter FilterName = new MemberFilter (FilterName_impl);
 		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
-		public static readonly object Missing;
+		public static readonly object Missing = System.Reflection.Missing.Value;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
