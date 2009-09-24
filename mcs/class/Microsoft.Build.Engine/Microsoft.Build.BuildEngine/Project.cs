@@ -425,11 +425,17 @@ namespace Microsoft.Build.BuildEngine {
 						LogWarning (filename, message);
 					});
 				filename = fullFileName + ".proj";
-				tmp_project.Save (filename);
-				ParentEngine.RemoveLoadedProject (tmp_project);
+				try {
+					tmp_project.Save (filename);
+					ParentEngine.RemoveLoadedProject (tmp_project);
+					DoLoad (new StreamReader (filename));
+				} finally {
+					if (Environment.GetEnvironmentVariable ("XBUILD_EMIT_SOLUTION") == null)
+						File.Delete (filename);
+				}
+			} else {
+				DoLoad (new StreamReader (filename));
 			}
-
-			DoLoad (new StreamReader (filename));
 		}
 		
 		[MonoTODO ("Not tested")]

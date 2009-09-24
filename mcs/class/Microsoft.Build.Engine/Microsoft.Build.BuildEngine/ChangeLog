@@ -1,5 +1,10 @@
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (Load): Emit the .sln.proj file only if env var
+	XBUILD_EMIT_SOLUTION is set.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (GetKeyForTarget): Make target name, case insensitive.
 
 2009-09-24  Ankit Jain  <jankit@novell.com>
