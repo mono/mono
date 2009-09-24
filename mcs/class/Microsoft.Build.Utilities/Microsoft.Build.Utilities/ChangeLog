@@ -1,3 +1,7 @@
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* TaskLoggingHelper.cs (LogErrorFromException): Add missing overload.
+
 2009-09-10  Ankit Jain  <jankit@novell.com>
 
 	* TaskLoggingHelper.cs (FormatString): Use the unformatted string

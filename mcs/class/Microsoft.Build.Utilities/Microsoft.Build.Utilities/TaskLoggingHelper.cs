@@ -134,6 +134,13 @@ namespace Microsoft.Build.Utilities
 		public void LogErrorFromException (Exception e,
 						   bool showStackTrace)
 		{
+			LogErrorFromException (e, showStackTrace, true, String.Empty);
+		}
+
+		[MonoTODO ("Arguments @showDetail and @file are not honored")]
+		public void LogErrorFromException (Exception e,
+						   bool showStackTrace, bool showDetail, string file)
+		{
 			if (e == null)
 				throw new ArgumentNullException ("e");
 		
