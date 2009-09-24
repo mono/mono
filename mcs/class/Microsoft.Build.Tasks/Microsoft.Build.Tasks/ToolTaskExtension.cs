@@ -81,6 +81,10 @@ namespace Microsoft.Build.Tasks {
 				return defaultValue;
 		}
 
+		protected override bool HasLoggedErrors {
+			get { return Log.HasLoggedErrors; }
+		}
+
 		protected internal Hashtable Bag {
 			get {
 				if (bag == null)

@@ -1,3 +1,7 @@
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (HasLoggedErrors): Add missing property.
+
 2009-09-23  Ankit Jain  <jankit@novell.com>
 
 	* TaskLoggingHelper.cs (LogErrorFromException): Add missing overload.
