@@ -1,3 +1,8 @@
+2009-09-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: no need to wake up the scheduler when removing the next
+	scheduled item.
+
 2009-09-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: rewritten. It only has one queue now and it is sorted by

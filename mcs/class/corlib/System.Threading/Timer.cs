@@ -216,30 +216,32 @@ namespace System.Threading
 
 			public void Remove (Timer timer)
 			{
+				// We do not keep brand new items or those with no due time.
+				if (timer.next_run == 0 || timer.next_run == Int64.MaxValue)
+					return;
+
 				lock (this) {
-					int pos = InternalRemove (timer);
-					if (pos == 0)
-						Monitor.Pulse (this);
+					// If this is the next item due (index = 0), the scheduler will wake up and find nothing.
+					// No need to Pulse ()
+					InternalRemove (timer);
 				}
 			}
 
 			public void Change (Timer timer, long new_next_run)
 			{
 				lock (this) {
-					int pos = -1;
 					// Don't try to remove items that are not initialized or not in the list
 					if (timer.next_run != 0 && timer.next_run != Int64.MaxValue)
-						pos = InternalRemove (timer);
-					int new_pos = -1;
+						InternalRemove (timer);
+
 					if (!timer.disposed) {
 						// We should only change next_run after removing and before adding
 						timer.next_run = new_next_run;
 						Add (timer);
+						// If this timer is next in line, wake up the scheduler
 						if (list.GetByIndex (0) == timer)
-							new_pos = 0;
+							Monitor.Pulse (this);
 					}
-					if (pos == 0 || new_pos == 0)
-						Monitor.Pulse (this);
 				}
 			}
 
@@ -321,12 +323,12 @@ namespace System.Threading
 						if (capacity > 1024 && count > 0 && (capacity / count) > 3)
 							list.Capacity = count * 2;
 
-						int ms_wait = -1;
 						long min_next_run = Int64.MaxValue;
 						if (list.Count > 0)
 							min_next_run = ((Timer) list.GetByIndex (0)).next_run;
 
 						//PrintList ();
+						int ms_wait = -1;
 						if (min_next_run != Int64.MaxValue) {
 							long diff = min_next_run - ticks; 
 							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
