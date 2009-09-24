@@ -1,5 +1,10 @@
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
+	* ReadLinesFromFile.cs (Execute): Don't do anything, if
+	file is non-existant.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
 	* ToolTaskExtension.cs (HasLoggedErrors): Override.
 
 2009-09-23  Ankit Jain  <jankit@novell.com>

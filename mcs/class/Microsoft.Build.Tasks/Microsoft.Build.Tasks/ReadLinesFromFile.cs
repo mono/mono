@@ -46,9 +46,13 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
+			string full_filename = file.GetMetadata ("FullPath");
+			if (!System.IO.File.Exists (full_filename))
+				return true;
+
 			StreamReader streamReader = null;
 			try {
-				streamReader = new StreamReader (file.GetMetadata ("FullPath"));
+				streamReader = new StreamReader (full_filename);
 				List <ITaskItem> temporaryLines = new List <ITaskItem> ();
 
 				string line;
