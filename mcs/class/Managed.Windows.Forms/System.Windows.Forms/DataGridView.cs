@@ -6116,7 +6116,7 @@ namespace System.Windows.Forms {
 						if (!property.IsBrowsable)
 							continue;
 
-						if (IsColumnAlreadyBound (property.DisplayName))
+						if (IsColumnAlreadyBound (property.Name))
 							continue;
 
 						DataGridViewColumn col = CreateColumnByType (property.PropertyType);

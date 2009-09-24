@@ -1,3 +1,8 @@
+2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Compare the name and not displayname of properties 
+	when checking if the column is already bound.
+
 2009-09-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: For SelectedRtf, after inserting the stream, adjust
