@@ -336,7 +336,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal string GetKeyForTarget (string target_name)
 		{
-			return fullFileName + ":" + target_name + ":" + GlobalPropertiesToString (GlobalProperties);
+			// target name is case insensitive
+			return fullFileName + ":" + target_name.ToLower () + ":" + GlobalPropertiesToString (GlobalProperties);
 		}
 
 		string GlobalPropertiesToString (BuildPropertyGroup bgp)

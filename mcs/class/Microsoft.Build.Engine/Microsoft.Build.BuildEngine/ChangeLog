@@ -1,5 +1,9 @@
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (GetKeyForTarget): Make target name, case insensitive.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (InitializeProperties): Set 'MSBuildProjectDefaultTargets'
 	reserved property.
 
