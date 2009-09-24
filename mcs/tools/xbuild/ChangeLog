@@ -1,5 +1,10 @@
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
+	* Parameters.cs (ParseArguments): If no project file is specified,
+	then look for a .sln or *proj file in the current directory.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
 	* Makefile: Create dir for WebApplication.targets .
 	* Microsoft.Common.targets (_ValidateEssentialProperties): New.
 	(BuildDependsOn): Add _ValidateEssentialProperties, temporary.
