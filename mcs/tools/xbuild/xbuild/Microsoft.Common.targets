@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
@@ -503,6 +503,29 @@
 		</CreateItem>
 	</Target>
 
+	<!-- Rebuild -->
+	<PropertyGroup>
+		<RebuildDependsOn>
+			BeforeRebuild;
+			Clean;
+			$(MSBuildProjectDefaultTargets);
+			AfterRebuild;
+		</RebuildDependsOn>
+
+		<RebuildDependsOn Condition="'$(MSBuildProjectDefaultTargets)' == 'Rebuild'">
+			BeforeRebuild;
+			Clean;
+			Build;
+			AfterRebuild;
+		</RebuildDependsOn>
+	</PropertyGroup>
+
+	<Target Name="BeforeRebuild" />
+	<Target Name="AfterRebuild" />
+
+	<Target Name="Rebuild"
+		DependsOnTargets="$(RebuildDependsOn)"
+		Outputs="$(TargetPath)"/>
 
 	<!-- Clean -->
 	<Target Name="_RecordCleanFile"

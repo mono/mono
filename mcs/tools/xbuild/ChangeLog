@@ -1,3 +1,8 @@
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Add 'Rebuild' target.
+	Also, set DefaultTargets to "Build".
+
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Remove dummy
