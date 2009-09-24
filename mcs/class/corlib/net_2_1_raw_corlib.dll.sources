@@ -251,6 +251,7 @@ System.Collections/CaseInsensitiveComparer.cs
 System.Collections/CaseInsensitiveHashCodeProvider.cs
 System.Collections/CollectionBase.cs
 System.Collections/Comparer.cs
+System.Collections/CollectionDebuggerView.cs
 System.Collections/DictionaryBase.cs
 System.Collections/DictionaryEntry.cs
 System.Collections/Hashtable.cs
