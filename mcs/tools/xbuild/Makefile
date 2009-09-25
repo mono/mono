@@ -34,4 +34,6 @@ EXTRA_DISTFILES = \
 	xbuild/Microsoft.Common.targets \
 	xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	xbuild/MSBuild/Microsoft.Build.Core.xsd		\
-	xbuild/Microsoft.VisualBasic.targets
+	xbuild/Microsoft.VisualBasic.targets \
+	xbuild/Microsoft.WebApplication.targets
+
