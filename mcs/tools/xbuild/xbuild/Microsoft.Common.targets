@@ -47,7 +47,9 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<TargetPath>@(_OutDirItem->'%(FullPath)\$(AssemblyName)$(TargetExt)')</TargetPath>
+		<TargetName Condition="'$(TargetName)' == '' ">$(AssemblyName)</TargetName>
+		<TargetFileName Condition="'$(TargetFileName)' == '' ">$(TargetName)$(TargetExt)</TargetFileName>
+		<TargetPath>@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
 	</PropertyGroup>
 
 	<Target Name="_ValidateEssentialProperties">
@@ -60,6 +62,18 @@
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
+
+		<!-- Look for app.config, if $(AppConfig) is specified, then use that. Else look in
+		     @(None) and @(Content) -->
+		<CreateItem Include="$(AppConfig)" Condition="'$(AppConfig)' != ''"
+			AdditionalMetadata="TargetPath=$(TargetFileName).config">
+			<Output TaskParameter="Include" ItemName="AppConfigWithTargetPath" />
+		</CreateItem>
+
+		<FindAppConfigFile PrimaryList="@(None)" SecondaryList="@(Content)" TargetPath="$(TargetFileName).config"
+			Condition="'$(AppConfig)' == ''">
+			<Output TaskParameter="AppConfigFile" ItemName="AppConfigWithTargetPath"/>
+		</FindAppConfigFile>
 
 		<MakeDir 
 			Directories="$(OutDir);$(IntermediateOutputPath)"
@@ -358,7 +372,7 @@
 	</Target>
 
 	<Target Name="DeployOutputFiles"
-		DependsOnTargets="BuildResources;CoreCompile;_CopyDeployFilesToOutputDirectory">
+		DependsOnTargets="BuildResources;CoreCompile;_CopyDeployFilesToOutputDirectory;_CopyAppConfigFile">
 
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
@@ -403,6 +417,17 @@
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
 			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutDir)%(TargetPath)')">
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
+	</Target>
+
+
+	<Target Name="_CopyAppConfigFile" Condition="'@(AppConfigWithTargetPath)' != ''"
+		Inputs="@(AppConfigWithTargetPath)"
+		Outputs="@(AppConfigWithTargetPath->'$(OutDir)%(TargetPath)')">
+
+		<Copy SourceFiles="@(AppConfigWithTargetPath)"
+			DestinationFiles="@(AppConfigWithTargetPath->'$(OutDir)%(TargetPath)')">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 	</Target>

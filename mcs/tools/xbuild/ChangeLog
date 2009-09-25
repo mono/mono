@@ -1,3 +1,10 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #534992.
+	* xbuild/Microsoft.Common.targets: Add support for copying
+	app.config to AssemblyName.config
+	* xbuild/Microsoft.Common.tasks: Add FindAppConfigFile task.
+
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
 	* Parameters.cs (ParseArguments): If no project file is specified,
