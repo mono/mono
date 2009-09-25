@@ -77,7 +77,7 @@ namespace Microsoft.Build.Utilities
 			if (unformatted == null)
 				throw new ArgumentNullException ("unformatted");
 		
-			if (args == null)
+			if (args == null || args.Length == 0)
 				return unformatted;
 			else
 				return String.Format (unformatted, args);
@@ -133,6 +133,13 @@ namespace Microsoft.Build.Utilities
 
 		public void LogErrorFromException (Exception e,
 						   bool showStackTrace)
+		{
+			LogErrorFromException (e, showStackTrace, true, String.Empty);
+		}
+
+		[MonoTODO ("Arguments @showDetail and @file are not honored")]
+		public void LogErrorFromException (Exception e,
+						   bool showStackTrace, bool showDetail, string file)
 		{
 			if (e == null)
 				throw new ArgumentNullException ("e");

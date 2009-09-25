@@ -1,3 +1,16 @@
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (HasLoggedErrors): Add missing property.
+
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* TaskLoggingHelper.cs (LogErrorFromException): Add missing overload.
+
+2009-09-10  Ankit Jain  <jankit@novell.com>
+
+	* TaskLoggingHelper.cs (FormatString): Use the unformatted string
+	even if the args array was empty.
+
 2009-09-08  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (LogEventsFromTextOutput): Log message even if its not

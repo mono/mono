@@ -104,11 +104,22 @@ namespace Mono.XBuild.CommandLine {
 					remainingArguments.Add (s);
 			}
 			if (remainingArguments.Count == 0) {
-				string[] files = Directory.GetFiles (Directory.GetCurrentDirectory (), "*.??proj");
-				if (files.Length > 0)
-					projectFile = files [0];
+				string[] sln_files = Directory.GetFiles (Directory.GetCurrentDirectory (), "*.sln");
+				string[] proj_files = Directory.GetFiles (Directory.GetCurrentDirectory (), "*proj");
+
+				if (sln_files.Length == 0 && proj_files.Length == 0)
+					ErrorUtilities.ReportError (3, "Please specify the project or solution file " +
+							"to build, as none was found in the current directory.");
+
+				if (sln_files.Length + proj_files.Length > 1)
+					ErrorUtilities.ReportError (5, "Please specify the project or solution file " +
+							"to build, as more than one solution or project file was found " +
+							"in the current directory");
+
+				if (sln_files.Length == 1)
+					projectFile = sln_files [0];
 				else
-					ErrorUtilities.ReportError (3, "No .proj file specified and no found in current directory.");
+					projectFile = proj_files [0];
 			} else if (remainingArguments.Count == 1) {
 				projectFile = (string) remainingArguments [0];
 			} else {

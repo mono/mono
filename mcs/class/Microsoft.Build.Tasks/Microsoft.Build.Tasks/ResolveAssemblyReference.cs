@@ -155,7 +155,7 @@ namespace Microsoft.Build.Tasks {
 				ResolvedReference resolved_ref = ResolveReference (item, searchPaths);
 				if (resolved_ref == null) {
 					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
-					Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
+					assembly_resolver.LogSearchLoggerMessages ();
 				} else {
 					Log.LogMessage (MessageImportance.Low,
 							"\tReference {0} resolved to {1}. CopyLocal = {2}",
@@ -188,7 +188,7 @@ namespace Microsoft.Build.Tasks {
 				return null;
 
 			foreach (string spath in search_paths) {
-				assembly_resolver.SearchLogger.WriteLine ("For searchpath {0}", spath);
+				assembly_resolver.LogSearchMessage ("For searchpath {0}", spath);
 
 				if (String.Compare (spath, "{HintPathFromItem}") == 0) {
 					resolved = assembly_resolver.ResolveHintPathReference (item, specific_version);
@@ -210,8 +210,8 @@ namespace Microsoft.Build.Tasks {
 						resolved = assembly_resolver.GetResolvedReference (item, item.ItemSpec, aname, true,
 								SearchPath.RawFileName);
 				} else if (String.Compare (spath, "{CandidateAssemblyFiles}") == 0) {
-					assembly_resolver.SearchLogger.WriteLine (
-							"Warning: {CandidateAssemblyFiles} not supported currently");
+					assembly_resolver.LogSearchMessage (
+							"Warning: {{CandidateAssemblyFiles}} not supported currently");
 				} else if (String.Compare (spath, "{PkgConfig}") == 0) {
 					resolved = assembly_resolver.ResolvePkgConfigReference (item, specific_version);
 				} else {
@@ -272,7 +272,7 @@ namespace Microsoft.Build.Tasks {
 				AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
 				if (aname == null) {
 					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
-					Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
+					assembly_resolver.LogSearchLoggerMessages ();
 					continue;
 				}
 
@@ -376,7 +376,7 @@ namespace Microsoft.Build.Tasks {
 				}
 			} else {
 				Log.LogWarning ("\tReference '{0}' not resolved", aname);
-				Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
+				assembly_resolver.LogSearchLoggerMessages ();
 			}
 
 			return resolved_ref;
@@ -461,11 +461,11 @@ namespace Microsoft.Build.Tasks {
 				return true;
 
 			// we have a name match, but version mismatch!
-			assembly_resolver.SearchLogger.WriteLine ("A conflict was detected between '{0}' and '{1}'",
+			assembly_resolver.LogSearchMessage ("A conflict was detected between '{0}' and '{1}'",
 					key_aname.FullName, found_ref.AssemblyName.FullName);
 
 			if (is_primary == found_ref.IsPrimary) {
-				assembly_resolver.SearchLogger.WriteLine ("Unable to choose between the two. " +
+				assembly_resolver.LogSearchMessage ("Unable to choose between the two. " +
 						"Choosing '{0}' arbitrarily.", found_ref.AssemblyName.FullName);
 				return true;
 			}
@@ -475,7 +475,7 @@ namespace Microsoft.Build.Tasks {
 			// has to be a primary
 			// Prefer a primary reference over a dependency
 
-			assembly_resolver.SearchLogger.WriteLine ("Choosing '{0}' as it is a primary reference.",
+			assembly_resolver.LogSearchMessage ("Choosing '{0}' as it is a primary reference.",
 					found_ref.AssemblyName.FullName);
 
 			Log.LogWarning ("Found a conflict between : '{0}' and '{1}'. Using '{0}' reference.",

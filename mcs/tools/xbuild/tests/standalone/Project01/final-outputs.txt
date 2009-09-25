@@ -5,6 +5,7 @@
 ./Lib1/bin/Release/fr-FR/Lib2.resources.dll
 ./Lib1/bin/Release/Lib1.deploy.txt
 ./Lib1/bin/Release/Lib1.dll
+./Lib1/bin/Release/Lib1.dll.config
 ./Lib1/bin/Release/Lib2.dll
 ./Lib1/bin/Release/Lib2.dll.mdb
 ./Lib1/bin/Release/lib2_folder/Lib2.deploy.txt

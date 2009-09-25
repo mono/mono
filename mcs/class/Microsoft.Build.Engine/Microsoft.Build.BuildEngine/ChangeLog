@@ -1,3 +1,22 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (DoLoad): If a VS2003 project is detected, then throw
+	InvalidProjectFileException with useful error.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (Load): Emit the .sln.proj file only if env var
+	XBUILD_EMIT_SOLUTION is set.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (GetKeyForTarget): Make target name, case insensitive.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (InitializeProperties): Set 'MSBuildProjectDefaultTargets'
+	reserved property.
+
 2009-09-10  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs (Evaluate): Metadata from "Include" should be,

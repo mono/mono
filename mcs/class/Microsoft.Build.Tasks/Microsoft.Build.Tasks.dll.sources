@@ -66,6 +66,7 @@ Microsoft.Build.Tasks.Deployment.ManifestUtilities/WindowClass.cs
 Microsoft.Build.Tasks/Error.cs
 Microsoft.Build.Tasks/Exec.cs
 Microsoft.Build.Tasks/ExtractedClassName.cs
+Microsoft.Build.Tasks/FindAppConfigFile.cs
 Microsoft.Build.Tasks/FindUnderPath.cs
 Microsoft.Build.Tasks/FormatUrl.cs
 Microsoft.Build.Tasks/FormatVersion.cs

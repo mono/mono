@@ -411,6 +411,10 @@ namespace Microsoft.Build.Utilities
 			get { return standardOutputLoggingImportance; }
 		}
 
+		protected virtual bool HasLoggedErrors {
+			get { return Log.HasLoggedErrors; }
+		}
+
 		public virtual int Timeout
 		{
 			get { return timeout; }
