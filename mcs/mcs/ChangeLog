@@ -1,3 +1,7 @@
+2009-09-25  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, ecore.cs: More dynamic binary expressions.
+
 2009-09-22  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs, expression.cs: Fixed null lifted conversion for

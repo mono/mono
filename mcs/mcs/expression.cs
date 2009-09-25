@@ -2720,6 +2720,38 @@ namespace Mono.CSharp {
 				return is_checked ? SLE.Expression.AddChecked (le, re) : SLE.Expression.Add (le, re);
 			case Operator.BitwiseAnd:
 				return SLE.Expression.And (le, re);
+			case Operator.BitwiseOr:
+				return SLE.Expression.Or (le, re);
+			case Operator.Division:
+				return SLE.Expression.Divide (le, re);
+			case Operator.Equality:
+				return SLE.Expression.Equal (le, re);
+			case Operator.ExclusiveOr:
+				return SLE.Expression.ExclusiveOr (le, re);
+			case Operator.GreaterThan:
+				return SLE.Expression.GreaterThan (le, re);
+			case Operator.GreaterThanOrEqual:
+				return SLE.Expression.GreaterThanOrEqual (le, re);
+			case Operator.Inequality:
+				return SLE.Expression.NotEqual (le, re);
+			case Operator.LeftShift:
+				return SLE.Expression.LeftShift (le, re);
+			case Operator.LessThan:
+				return SLE.Expression.LessThan (le, re);
+			case Operator.LessThanOrEqual:
+				return SLE.Expression.LessThanOrEqual (le, re);
+			case Operator.LogicalAnd:
+				return SLE.Expression.AndAlso (le, re);
+			case Operator.LogicalOr:
+				return SLE.Expression.OrElse (le, re);
+			case Operator.Modulus:
+				return SLE.Expression.Modulo (le, re);
+			case Operator.Multiply:
+				return is_checked ? SLE.Expression.MultiplyChecked (le, re) : SLE.Expression.Multiply (le, re);
+			case Operator.RightShift:
+				return SLE.Expression.RightShift (le, re);
+			case Operator.Subtraction:
+				return is_checked ? SLE.Expression.SubtractChecked (le, re) : SLE.Expression.Subtract (le, re);
 			default:
 				throw new NotImplementedException (oper.ToString ());
 			}

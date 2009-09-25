@@ -2345,6 +2345,13 @@ namespace Mono.CSharp {
 			expr.EmitBranchable (ec, target, on_true);
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return orig_expr.MakeExpression (ctx);
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			expr.MutateHoistedGenericType (storey);
