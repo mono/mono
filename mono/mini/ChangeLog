@@ -1,3 +1,12 @@
+2009-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_create_vars): Make the component vars of a long ret
+	variable volatile. Fixes #541577.
+
+	* basic-calls.cs: Add a new test.
+
+	* basic-long.cs: Remove tests which are now in basic-calls.cs.
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c (mono_decompose_vtype_opts): Avoid reading uninitialized memory
