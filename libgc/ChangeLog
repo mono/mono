@@ -1,13 +1,18 @@
+2009-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* solaris_threads.c (GC_get_orig_stack_size): Remove the annoying 'Large stack
+	limit' warning.
+
 2009-07-20  Geoff Norton  <gnorton@novell.com>
 
 	* darwin_stop_world.c: Fix the x86 version guards to use Apple's
 	properly defined macros.
 
 2009-07-02  jonas echterhoff <jonas@unity3d.com>
-	
-	* darwin_stop_world.c: make debugger code compile on 
+
+	* darwin_stop_world.c: make debugger code compile on
 	OS X.
-	
+
 	* pthread_support.c: give mach ports to the debugger instead of pthreads,
 	as those can be iterated over from another executable.
 

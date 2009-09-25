@@ -670,7 +670,7 @@ word GC_get_orig_stack_size() {
     result = (word)rl.rlim_cur & ~(HBLKSIZE-1);
     if (result > MAX_ORIG_STACK_SIZE) {
 	if (!warned) {
-	    WARN("Large stack limit(%ld): only scanning 8 MB\n", result);
+	    /* WARN("Large stack limit(%ld): only scanning 8 MB\n", result); */
 	    warned = 1;
 	}
 	result = MAX_ORIG_STACK_SIZE;
