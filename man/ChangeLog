@@ -1,3 +1,7 @@
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* xbuild.1: Add info about env var XBUILD_EMIT_SOLUTION.
+
 2009-08-21  Ankit Jain  <jankit@novell.com>
 
 	* Makefile.am (man_MANS): Add xbuild.1
