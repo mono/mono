@@ -350,6 +350,7 @@ public class Node : IComparable {
 			nodes.Sort ();
 	}
 
+	[Obsolete("Use PublicUrl")]
 	public string URL {
 		get {
 			if (position < 0)

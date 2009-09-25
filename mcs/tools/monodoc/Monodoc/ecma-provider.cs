@@ -630,7 +630,7 @@ public class EcmaHelpSource : HelpSource {
 				return EcmaDoc.GetCref (d.DocumentElement);
 			XmlElement e = GetDocElement (d, rest);
 			if (e == null)
-				return url;
+				return EcmaDoc.GetCref (d.DocumentElement) + "/" + rest;
 			return EcmaDoc.GetCref (e);
 		}
 		catch (Exception e) {

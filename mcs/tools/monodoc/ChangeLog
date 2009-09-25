@@ -1,3 +1,11 @@
+2009-09-25  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/ecma-provider.cs: Don't return 'null' from GetPublicUrl(),
+	  but instead provide a decent URL even if the url isn't to a single
+	  member, but instead to show all members, e.g. T:System.String/*.
+	* Monodoc/provider.cs: Obsolete Node.URL.  It's too variable for sane
+	  use; use Node.PublicUrl.
+
 2009-09-09  Jonathan Pryor  <jpryor@novell.com>
 
 	* Mono.Documentation/ManifestResourceResolver.cs: Allow it to lookup
