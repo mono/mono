@@ -356,7 +356,10 @@ namespace System.Reflection
 
 			private static bool check_arguments (Type[] types, ParameterInfo[] args) {
 				for (int i = 0; i < types.Length; ++i) {
-					if (!check_type (types [i], args [i].ParameterType))
+					bool match = check_type (types [i], args [i].ParameterType);
+					if (!match && args [i].ParameterType.IsByRef)
+						match = check_type (types [i], args [i].ParameterType.GetElementType ());
+					if (!match)
 						return false;
 				}
 				return true;
