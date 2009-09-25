@@ -328,9 +328,11 @@ namespace Microsoft.Build.BuildEngine {
 			if (!targets [target_name].Build (key))
 				return false;
 
-			ITaskItem[] outputs = ParentEngine.BuiltTargetsOutputByName [key];
-			if (targetOutputs != null)
-				targetOutputs.Add (target_name, outputs);
+			ITaskItem[] outputs;
+			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
+				if (targetOutputs != null)
+					targetOutputs.Add (target_name, outputs);
+			}
 			return true;
 		}
 
