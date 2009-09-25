@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 2009-09-17 Rodrigo Kumpera  <rkumpera@novell.com>
+=======
+2009-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Enabled test that was failing due to regression.
+
+2009-07-10  Zoltan Varga  <vargaz@gmail.com>
+>>>>>>> bd6ddee... * BinderTest.cs: Added SelectMethod/BindToMethod tests for methods
 
 	* ArrayTest.cs: Fix the build.
 

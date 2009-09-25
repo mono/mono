@@ -11,6 +11,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Globalization;
 
 namespace MonoTests.System.Reflection
 {
@@ -204,6 +205,47 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void SelectMethod_ByRef ()
+		{
+			Type type = typeof (ByRefMatch);
+			BindingFlags flags = BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance;
+			MethodBase [] match;
+			Type [] types;
+			MethodBase selected;
+
+			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int) }, null);
+			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int).MakeByRefType () }, null);
+			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
+
+			match = new MethodBase [] { mi_run_ref };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#B1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run_ref, selected, "#B2");
+
+			match = new MethodBase [] { mi_run };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run, selected, "#C1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.IsNull (selected, "#C1");
+
+			match = new MethodBase [] { mi_run, mi_run_ref };
+			types = new Type [] { typeof (int) };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run, selected, "#D1");
+			types = new Type [] { typeof (int).MakeByRefType () };
+			selected = binder.SelectMethod (flags, match, types, null);
+			Assert.AreSame (mi_run_ref, selected, "#D2");
+		}
+
+		[Test]
 		public void ArgNullOnMethod () // see bug 58846. We throwed nullref here.
 		{
 			Type type = typeof (SampleClass);
@@ -221,6 +263,45 @@ namespace MonoTests.System.Reflection
 
 			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [] {null}, null);
 			Assert.IsNotNull (prop);
+		}
+
+		[Test]
+		public void BindToMethod_ByRef ()
+		{
+			Type type = typeof (ByRefMatch);
+			BindingFlags flags = BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance;
+			MethodBase [] match;
+			object [] args = new object [] { 5 };
+			object state;
+			MethodBase selected;
+			CultureInfo culture = CultureInfo.InvariantCulture;
+
+			MethodInfo mi_run = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int) }, null);
+			Assert.IsFalse (mi_run.GetParameters () [0].ParameterType.IsByRef, "#A1");
+			MethodInfo mi_run_ref = type.GetMethod ("Run", flags, binder,
+				new Type [] { typeof (int).MakeByRefType () }, null);
+			Assert.IsTrue (mi_run_ref.GetParameters () [0].ParameterType.IsByRef, "#A2");
+
+			match = new MethodBase [] { mi_run };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#1");
+
+			match = new MethodBase [] { mi_run_ref };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run_ref, selected, "#2");
+
+			match = new MethodBase [] { mi_run, mi_run_ref };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#3");
+
+			match = new MethodBase [] { mi_run_ref, mi_run };
+			selected = binder.BindToMethod (flags, match, ref args, null, culture,
+				null, out state);
+			Assert.AreSame (mi_run, selected, "#4");
 		}
 
 		[Test] // bug #41691
@@ -474,6 +555,175 @@ namespace MonoTests.System.Reflection
             MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
             mi.Invoke (this, new object [] { (long)MyEnum.Zero });
         }
-    }
+
+		class AssertingBinder : Binder {
+
+			public static readonly AssertingBinder Instance = new AssertingBinder ();
+
+			public override FieldInfo BindToField (BindingFlags bindingAttr, FieldInfo [] match, object value, CultureInfo culture)
+			{
+				Assert.IsNotNull (match);
+
+				return Type.DefaultBinder.BindToField (bindingAttr, match, value, culture);
+			}
+
+			public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase [] match, ref object [] args, ParameterModifier [] modifiers, CultureInfo culture, string [] names, out object state)
+			{
+				Assert.IsNotNull (match);
+				Assert.IsNotNull (args);
+
+				return Type.DefaultBinder.BindToMethod (bindingAttr, match, ref args, modifiers, culture, names, out state);
+			}
+
+			public override object ChangeType (object value, Type type, CultureInfo culture)
+			{
+				Assert.IsNotNull (value);
+				Assert.IsNotNull (type);
+
+				return Type.DefaultBinder.ChangeType (value, type, culture);
+			}
+
+			public override void ReorderArgumentArray (ref object [] args, object state)
+			{
+				Assert.IsNotNull (args);
+
+				Type.DefaultBinder.ReorderArgumentArray (ref args, state);
+			}
+
+			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase [] match, Type [] types, ParameterModifier [] modifiers)
+			{
+				Assert.IsNotNull (match);
+				Assert.IsNotNull (types);
+
+				return Type.DefaultBinder.SelectMethod (bindingAttr, match, types, modifiers);
+			}
+
+			public override PropertyInfo SelectProperty (BindingFlags bindingAttr, PropertyInfo [] match, Type returnType, Type [] indexes, ParameterModifier [] modifiers)
+			{
+				Assert.IsNotNull (match);
+
+				return Type.DefaultBinder.SelectProperty (bindingAttr, match, returnType, indexes, modifiers);
+			}
+		}
+
+		class BaseFoo {
+			public void Bar ()
+			{
+			}
+
+			public int Add(int x, int y)
+			{
+				return x + y;	
+			}
+		}
+
+		class Foo : BaseFoo {
+
+			public bool Barred;
+
+			public new void Bar ()
+			{
+				Barred = true;
+			}
+		}
+
+		class ByRefMatch {
+			public void Run (int i)
+			{
+			}
+
+			public void Run (out int i)
+			{
+				i = 0;
+			}
+		}
+
+		[Test] // bug  #471257
+		public void TestCustomBinderNonNullArgs ()
+		{
+			var foo = new Foo ();
+
+			typeof (Foo).InvokeMember (
+				"Bar",
+				BindingFlags.InvokeMethod,
+				AssertingBinder.Instance,
+				foo,
+				null);
+
+			Assert.IsTrue (foo.Barred);
+		}
+
+		class Int32Binder : AssertingBinder
+		{
+			public override object ChangeType(Object value, Type type, CultureInfo ci)
+			{
+				if (value.GetType() == type) {
+					return value;
+				} else if (type.IsPrimitive) {
+					if (type == typeof(Int32))
+						return Convert.ToInt32(value);
+
+					throw new ArgumentException("missing support for primitive: " + type);
+				}
+
+				throw new ArgumentException("Could not ChangeType to " + type.FullName);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof (TargetParameterCountException))]
+		public void TestTargetParameterCountExceptionA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (TargetParameterCountException))]
+		public void TestTargetParameterCountExceptionB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke(new Foo (), 0, null, new object [] {1}, null);
+		}
+
+		[Test]
+		public void TestBindingFlagsA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, new object [] {1, 2}, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void TestBindingFlagsB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, new object [] {1, "2"}, null);
+		}
+
+		[Test]
+		public void TestBindingFlagsExactBindingA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), BindingFlags.ExactBinding, null, new object [] {1, 2}, null);
+		}
+
+		/*
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void TestBindingFlagsExactBindingB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), BindingFlags.ExactBinding, new Int32Binder (), new object [] {1, "2"}, null);
+		}
+		*/
+
+		[Test]
+		public void TestBindingFlagsExactBindingC ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, new Int32Binder (), new object [] {1, "2"}, null);
+		}
+	}
 }
 
