@@ -239,6 +239,8 @@
 
 		<OnError ExecuteTargets="_TimestampAfterCompile;PostBuildEvent"
 			Condition=" '$(RunPostBuildEvent)' == 'Always' or '$(RunPostBuildEvent)' == 'OnOutputUpdated'"/>
+
+		<OnError ExecuteTargets="_RecordCleanFile" />
 	</Target>
 
 	<PropertyGroup>
