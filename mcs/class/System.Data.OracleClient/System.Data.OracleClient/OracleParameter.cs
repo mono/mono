@@ -11,10 +11,12 @@
 //    Tim Coleman <tim@timcoleman.com>
 //    Daniel Moragn <monodanmorg@yahoo.com>
 //    Hubert FONGARNAND <informatique.internet@fiducial.fr>
+//	  Veerapuram Varadhan  <vvaradhan@novell.com>	
 //
 // Copyright (C) Tim Coleman , 2003
 // Copyright (C) Daniel Morgan, 2005, 2008
 // Copyright (C) Hubert FONGARNAND, 2005
+// Copyright (C) Novell Inc, 2009
 //
 // Licensed under the MIT/X11 License.
 //
@@ -160,13 +162,15 @@ namespace System.Data.OracleClient
 			
 			this.value = value;
 			this.size = size;
+			Direction = direction;
+
 			// set sizeSet to true iff value is not-null or non-zero size value
-			if (value != null && value != DBNull.Value && size > 0)
+			if (((value != null && value != DBNull.Value) || Direction == ParameterDirection.Output) && 
+			    size > 0) 			    
 				this.sizeSet = true;
 
 			SourceColumnNullMapping = sourceColumnNullMapping;
 			OracleType = oracleType;
-			Direction = direction;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
 		}
@@ -180,9 +184,12 @@ namespace System.Data.OracleClient
 			
 			this.value = value;
 			this.size = size;
+
+			Direction = direction;
 			
 			// set sizeSet to true iff value is not-null or non-zero size value
-			if (value != null && value != DBNull.Value && size > 0)
+			if (((value != null && value != DBNull.Value) || Direction == ParameterDirection.Output) && 
+			    size > 0) 			    
 				this.sizeSet = true;
 
 			this.isNullable = isNullable;
@@ -190,7 +197,6 @@ namespace System.Data.OracleClient
 			this.scale = scale;
 
 			OracleType = oracleType;
-			Direction = direction;
 			SourceColumn = srcColumn;
 			SourceVersion = srcVersion;
 		}
@@ -228,7 +234,11 @@ namespace System.Data.OracleClient
 #endif
 		ParameterDirection Direction {
 			get { return direction; }
-			set { direction = value; }
+			set { 
+				direction = value; 
+				if (this.size > 0 && direction == ParameterDirection.Output)
+					this.sizeSet = true;
+			}
 		}
 
 #if !NET_2_0
@@ -581,10 +591,6 @@ namespace System.Data.OracleClient
 					bindType = OciDataType.String;
 					indicator = 0;
 					svalue = "\0";
-					// define size for binding
-					bindSize = 30; // a NUMBER is 22 bytes but as a string we need more
-					// allocate memory
-					bytes = new byte [bindSize];
 					// convert value from managed type to type to marshal
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
@@ -603,8 +609,9 @@ namespace System.Data.OracleClient
 						// Get size of buffer
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
 
-						// Fill buffer
-						bytes = new byte [bindSize];
+						// Fill buffer - remove the trailing null byte
+						rsize--;
+						bytes = new byte [rsize];
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 					} 
 					break;

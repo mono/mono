@@ -1,3 +1,10 @@
+2009-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #535889
+	* OracleParameter.cs: In case of OUT param, update sizeSet even if 
+	value is null or DBNull.  Also, use rsize instead of bindSize to 
+	avoid extra allocation.
+	
 2009-09-20  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* OracleConnection.cs: implement GetSchema methods

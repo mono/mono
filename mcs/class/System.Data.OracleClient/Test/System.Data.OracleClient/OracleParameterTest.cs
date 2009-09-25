@@ -376,18 +376,18 @@ namespace MonoTests.System.Data.OracleClient
 		    string createSP =
 			"CREATE OR REPLACE PROCEDURE GetTextValue \n" +
 			"( \n" +
-			"id IN Number(10),\n" +
+			"idParam IN Number(10),\n" +
 			"text OUT varchar2(64) \n" +
 			")\n" +
 			"AS\n" +
 			"BEGIN\n" +
 			"SELECT oratest.text INTO text \n" +
 			"  FROM oratest\n" +
-			"  WHERE oratest.id = id; \n" +
+			"  WHERE oratest.id = idParam; \n" +
 			"END;\n";
 
 		    string insertValue = "INSERT INTO oratest VALUES " +
-			"(424608, \"This is a test for 424908 parameter size bug\", NULL);";
+			"(424908, \"This is a test for 424908 parameter size bug\", NULL);";
 
 		    using (command = conn.CreateCommand ()) {
 			command.CommandText = createSP;
@@ -414,7 +414,7 @@ namespace MonoTests.System.Data.OracleClient
 		    using (command = connection.CreateCommand ()) {
 			
 			OracleParameter id = new OracleParameter ();
-			id.ParameterName = "id";
+			id.ParameterName = "idParam";
 			id.OracleType = OracleType.Number;
 			id.Direction = ParameterDirection.Input;
 			id.Value = 424908;
@@ -451,7 +451,7 @@ namespace MonoTests.System.Data.OracleClient
 
 		    using (command = connection.CreateCommand ()) {
 			OracleParameter id = new OracleParameter ();
-			id.ParameterName = "id";
+			id.ParameterName = "idParam";
 			id.OracleType = OracleType.Number;
 			id.Direction = ParameterDirection.Input;
 			id.Value = 424908;
@@ -472,7 +472,6 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void ParamSize_424908_SizeNotSetError ()
 		{
 
@@ -480,7 +479,7 @@ namespace MonoTests.System.Data.OracleClient
 
 		    using (command = connection.CreateCommand ()) {
 			OracleParameter id = new OracleParameter ();
-			id.ParameterName = "id";
+			id.ParameterName = "idParam";
 			id.OracleType = OracleType.Number;
 			id.Direction = ParameterDirection.Input;
 			id.Value = 424908;
