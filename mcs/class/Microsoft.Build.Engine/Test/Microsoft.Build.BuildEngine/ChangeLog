@@ -1,3 +1,11 @@
+2009-09-26  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestInitialTargetsWithImports):
+	(TestDefaultTargets):
+	(TestDefaultTargetsWithImports):
+	(TestNoDefaultTargetsWithImports):
+	(TestNoDefaultTargets): New tests.
+
 2009-08-29  Ankit Jain  <jankit@novell.com>
 
 	* BuildItemTest.cs (TestSetMetadata5a): New.

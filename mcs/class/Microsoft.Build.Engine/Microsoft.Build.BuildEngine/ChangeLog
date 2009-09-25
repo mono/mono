@@ -1,3 +1,11 @@
+2009-09-26  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs: Get InitialTargets from the imported projects also.
+	The combined list of targets are executed, in the order they were
+	found.
+	DefaultTargets are also read in from imported projects, and the first
+	non-empty DefaultTargets found is used.
+
 2009-09-25  Ankit Jain  <jankit@novell.com>
 
 	* Project.cs (BuildTarget): Handle skipped targets.
