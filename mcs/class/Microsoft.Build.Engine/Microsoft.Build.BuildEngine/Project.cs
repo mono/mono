@@ -770,6 +770,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
+			PrepareForEvaluate ();
 			ProcessElements (xmlDocument.DocumentElement, null);
 			
 			isDirty = false;
@@ -790,6 +791,8 @@ namespace Microsoft.Build.BuildEngine {
 					if (defaultTargets == null || defaultTargets.Length == 0)
 						defaultTargets = attr.Value.Split (new char [] {';', ' '},
 							StringSplitOptions.RemoveEmptyEntries);
+					EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets",
+								DefaultTargets, PropertyType.Reserved));
 					break;
 				}
 			}
@@ -835,7 +838,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		void Evaluate ()
+		void PrepareForEvaluate ()
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
@@ -845,7 +848,10 @@ namespace Microsoft.Build.BuildEngine {
 				RemoveBuiltTargets ();
 
 			InitializeProperties ();
+		}
 
+		void Evaluate ()
+		{
 			groupingCollection.Evaluate ();
 
 			//FIXME: UsingTasks aren't really evaluated. (shouldn't use expressions or anything)
@@ -935,10 +941,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		void AddImport (XmlElement xmlElement, ImportedProject importingProject)
 		{
-			Import import;
-			
-			import = new Import (xmlElement, this, importingProject);
+			// eval all the properties etc till the import
+			Evaluate ();
+
+			Import import = new Import (xmlElement, this, importingProject);
 			Imports.Add (import);
+
+			if (ConditionParser.ParseAndEvaluate (import.Condition, this))
+				import.Evaluate ();
 		}
 		
 		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)

@@ -44,6 +44,7 @@ namespace Microsoft.Build.BuildEngine {
 		GroupingCollection	parentCollection;
 		Project			parentProject;
 		bool			read_only;
+		bool evaluated;
 
 		public BuildItemGroup ()
 			: this (null, null, null, false)
@@ -237,6 +238,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Evaluate ()
 		{
+			if (evaluated)
+				return;
 			foreach (BuildItem bi in buildItems) {
 				if (bi.Condition == String.Empty)
 					bi.Evaluate (parentProject, true);
@@ -245,6 +248,7 @@ namespace Microsoft.Build.BuildEngine {
 					bi.Evaluate (parentProject, ce.BoolEvaluate (parentProject));
 				}
 			}
+			evaluated = true;
 		}		
 
 		internal void ReplaceWith (BuildItem item, List <BuildItem> list)

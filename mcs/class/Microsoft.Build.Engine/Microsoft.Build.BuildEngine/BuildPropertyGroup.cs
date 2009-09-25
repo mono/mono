@@ -44,6 +44,7 @@ namespace Microsoft.Build.BuildEngine {
 		Project			parentProject;
 		List <BuildProperty>	properties;
 		Dictionary <string, BuildProperty>	propertiesByName;
+		bool evaluated;
 
 		public BuildPropertyGroup ()
 			: this (null, null, null, false)
@@ -221,9 +222,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Evaluate ()
 		{
+			if (evaluated)
+				return;
+
 			foreach (BuildProperty bp in properties)
 				if (ConditionParser.ParseAndEvaluate (bp.Condition, parentProject))
 					bp.Evaluate ();
+
+			evaluated = true;
 		}
 		
 		public string Condition {

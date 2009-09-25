@@ -1,5 +1,9 @@
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
+	* TargetTest.cs (TestOverridingTargets): New.
+
+2009-09-26  Ankit Jain  <jankit@novell.com>
+
 	* ProjectTest.cs (TestInitialTargetsWithImports):
 	(TestDefaultTargets):
 	(TestDefaultTargetsWithImports):

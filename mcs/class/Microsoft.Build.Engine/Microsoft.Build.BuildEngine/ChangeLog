@@ -1,5 +1,18 @@
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (Evaluate): Split into this and ..
+	(PrepareForEvaluate): .. this.
+	(AddImport): Evaluate the current set of properties/items etc,
+	before processing the imported project. Honor the Condition
+	for the Import.
+	(ProcessProjectAttributes): Update MSBuildProjectDefaultTargets
+	property.
+	* GroupingCollection.cs (Evaluate): Don't evaluate Imports here.
+	* BuildItemGroup.cs (Evaluate): Evaluate only once.
+	* BuildPropertyGroup.cs (Evaluate): Evaluate only once.
+
+2009-09-26  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs: Get InitialTargets from the imported projects also.
 	The combined list of targets are executed, in the order they were
 	found.
