@@ -1,3 +1,10 @@
+2009-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Add support for byref
+	nullable arguments.
+
+	* object.c (mono_runtime_invoke_array): Ditto.
+
 2009-09-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r127430.

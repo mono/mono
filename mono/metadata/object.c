@@ -3397,7 +3397,9 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 {
 	MonoMethodSignature *sig = mono_method_signature (method);
 	gpointer *pa = NULL;
+	MonoObject *res;
 	int i;
+	gboolean has_byref_nullables = FALSE;
 
 	if (NULL != params) {
 		pa = alloca (sizeof (gpointer) * mono_array_length (params));
@@ -3424,6 +3426,8 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 				if (t->type == MONO_TYPE_VALUETYPE && mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
 					/* The runtime invoke wrapper needs the original boxed vtype, it does handle byref values as well. */
 					pa [i] = mono_array_get (params, MonoObject*, i);
+					if (t->byref)
+						has_byref_nullables = TRUE;
 				} else {
 					/* MS seems to create the objects if a null is passed in */
 					if (!mono_array_get (params, MonoObject*, i))
@@ -3508,7 +3512,23 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		}
 
 		/* obj must be already unboxed if needed */
-		return mono_runtime_invoke (method, obj, pa, exc);
+		res = mono_runtime_invoke (method, obj, pa, exc);
+
+		if (has_byref_nullables) {
+			/* 
+			 * The runtime invoke wrapper already converted byref nullables back,
+			 * and stored them in pa, we just need to copy them back to the
+			 * managed array.
+			 */
+			for (i = 0; i < mono_array_length (params); i++) {
+				MonoType *t = sig->params [i];
+
+				if (t->byref && t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
+					mono_array_setref (params, i, pa [i]);
+			}
+		}
+
+		return res;
 	}
 }
 
