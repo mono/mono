@@ -1,3 +1,10 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks.dll.sources: Added
+	FindAppConfigFile.cs
+	* Microsoft.Build.Tasks_test.dll.sources: Added
+	FindAppConfigFileTest.cs
+
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added

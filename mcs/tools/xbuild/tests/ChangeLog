@@ -1,3 +1,8 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* standalone/Project01: Add app.config to project Lib1.
+	Remove Project01.sln.proj . Update final-outputs.txt .
+
 2009-08-14  Ankit Jain  <jankit@novell.com>
 
 	* standalone/Project01: Update .sln.proj file.

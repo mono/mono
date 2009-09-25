@@ -336,7 +336,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal string GetKeyForTarget (string target_name)
 		{
-			return fullFileName + ":" + target_name + ":" + GlobalPropertiesToString (GlobalProperties);
+			// target name is case insensitive
+			return fullFileName + ":" + target_name.ToLower () + ":" + GlobalPropertiesToString (GlobalProperties);
 		}
 
 		string GlobalPropertiesToString (BuildPropertyGroup bgp)
@@ -424,11 +425,17 @@ namespace Microsoft.Build.BuildEngine {
 						LogWarning (filename, message);
 					});
 				filename = fullFileName + ".proj";
-				tmp_project.Save (filename);
-				ParentEngine.RemoveLoadedProject (tmp_project);
+				try {
+					tmp_project.Save (filename);
+					ParentEngine.RemoveLoadedProject (tmp_project);
+					DoLoad (new StreamReader (filename));
+				} finally {
+					if (Environment.GetEnvironmentVariable ("XBUILD_EMIT_SOLUTION") == null)
+						File.Delete (filename);
+				}
+			} else {
+				DoLoad (new StreamReader (filename));
 			}
-
-			DoLoad (new StreamReader (filename));
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -709,6 +716,12 @@ namespace Microsoft.Build.BuildEngine {
 				XmlReader xmlReader = XmlReader.Create (textReader, settings);
 				xmlDocument.Load (xmlReader);
 
+				if (xmlDocument.DocumentElement.Name == "VisualStudioProject")
+					throw new InvalidProjectFileException (String.Format (
+							"Project file '{0}' is a VS2003 project, which is not " +
+							"supported by xbuild. You need to convert it to msbuild " +
+							"format to build with xbuild.", fullFileName));
+
 				if (xmlDocument.DocumentElement.Name != "Project") {
 					throw new InvalidProjectFileException (String.Format (
 						"The element <{0}> is unrecognized, or not supported in this context.", xmlDocument.DocumentElement.Name));
@@ -879,6 +892,7 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;

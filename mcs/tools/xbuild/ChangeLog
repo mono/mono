@@ -1,3 +1,30 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #534992.
+	* xbuild/Microsoft.Common.targets: Add support for copying
+	app.config to AssemblyName.config
+	* xbuild/Microsoft.Common.tasks: Add FindAppConfigFile task.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Parameters.cs (ParseArguments): If no project file is specified,
+	then look for a .sln or *proj file in the current directory.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Create dir for WebApplication.targets .
+	* Microsoft.Common.targets (_ValidateEssentialProperties): New.
+	(BuildDependsOn): Add _ValidateEssentialProperties, temporary.
+	This should actually work via InitialTargets, which will be fixed
+	in a subsequent commit. Add PrepareForRun.
+	(PrepareForRun): New.
+	* xbuild/Microsoft.WebApplication.targets: New.
+
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Add 'Rebuild' target.
+	Also, set DefaultTargets to "Build".
+
 2009-08-26  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Remove dummy

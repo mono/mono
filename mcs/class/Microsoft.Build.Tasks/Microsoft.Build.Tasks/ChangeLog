@@ -1,3 +1,29 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* FindAppConfigFile.cs: New.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* ReadLinesFromFile.cs (Execute): Don't do anything, if
+	file is non-existant.
+
+2009-09-24  Ankit Jain  <jankit@novell.com>
+
+	* ToolTaskExtension.cs (HasLoggedErrors): Override.
+
+2009-09-23  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (BuildInParallel): Add missing property.
+
+2009-09-10  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs: Move the SearchLogger to be a list of
+	strings, so that it can be emitted with correct indentation.
+	(SearchLogger): Remove.
+	(LogSearchMessage): New.
+	(LogSearchLoggerMessages): New.
+	* ResolveAssemblyReference.cs: Track api changes.
+
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
 	* ResolveAssemblyReference.cs (ResolveReference): targetFrameworkDirectories

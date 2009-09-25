@@ -12,6 +12,7 @@ Microsoft.Build.Tasks/CreatePropertyTest.cs
 Microsoft.Build.Tasks/CscTest.cs
 Microsoft.Build.Tasks/DeleteTest.cs
 Microsoft.Build.Tasks/ErrorTest.cs
+Microsoft.Build.Tasks/FindAppConfigFileTest.cs
 Microsoft.Build.Tasks/GetFrameworkPathTest.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPathTest.cs
 Microsoft.Build.Tasks/MakeDirTest.cs

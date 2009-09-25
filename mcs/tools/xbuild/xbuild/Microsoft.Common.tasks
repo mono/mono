@@ -12,6 +12,7 @@
 	<UsingTask TaskName="Microsoft.Build.Tasks.Delete"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.Error"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.Exec"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<UsingTask TaskName="Microsoft.Build.Tasks.FindAppConfigFile"	AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.FindUnderPath"	AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.GenerateResource"	AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.GetFrameworkPath"	AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

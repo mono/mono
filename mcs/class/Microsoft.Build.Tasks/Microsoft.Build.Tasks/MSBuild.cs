@@ -44,6 +44,7 @@ namespace Microsoft.Build.Tasks {
 		bool		rebaseOutputs;
 		bool		runEachTargetSeparately;
 		bool		stopOnFirstFailure;
+		bool		buildInParallel;
 		ITaskItem []	targetOutputs;
 		string []	targets;
 	
@@ -154,6 +155,11 @@ namespace Microsoft.Build.Tasks {
 		public string [] Targets {
 			get { return targets; }
 			set { targets = value; }
+		}
+
+		public bool BuildInParallel {
+			get { return buildInParallel; }
+			set { buildInParallel = value; }
 		}
 
 		Dictionary<string, string> SplitPropertiesToDictionary ()

@@ -1,3 +1,7 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* FindAppConfigFileTest.cs: New.
+
 2009-09-01  Ankit Jain  <jankit@novell.com>
 
 	* TaskBatchingTest.cs: Add new tests for metadata refs found
