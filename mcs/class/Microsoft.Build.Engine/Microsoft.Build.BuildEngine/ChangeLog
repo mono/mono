@@ -1,5 +1,9 @@
 2009-09-25  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (BuildTarget): Handle skipped targets.
+
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (DoLoad): If a VS2003 project is detected, then throw
 	InvalidProjectFileException with useful error.
 
