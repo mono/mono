@@ -11869,6 +11869,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-463.cs">
+    <type name="STuple`1[Ta]">
+      <method name="Void .ctor(Ta)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
