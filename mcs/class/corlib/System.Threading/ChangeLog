@@ -1,3 +1,13 @@
+2009-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: The Thread class is split up into Thread and
+	InternalThread now.  We have exactly one InternalThread per
+	thread, and at most one Thread per appdomain per thread.  Most
+	data is stored in InternalThread.  All InternalThread objects live
+	in the root domain.
+
+	* Environment.cs: Corlib version bump.
+
 2009-09-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: no need to wake up the scheduler when removing the next
