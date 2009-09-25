@@ -1,3 +1,8 @@
+2009-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (dis_one): Avoid unaligned accesses on platforms where that is
+	a problem.
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_ptr_to_object_conv): Generate an exception instead of
