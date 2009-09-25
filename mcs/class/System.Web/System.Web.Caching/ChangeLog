@@ -1,3 +1,17 @@
+2009-09-26  Marek Habersack  <mhabersack@novell.com>
+
+	* CacheItemPriorityQueue.cs, CacheItem.cs, CacheItemEnumerator.cs:
+	added
+
+	* Cache.cs: factored out CacheItem and CacheItemEnumerator to
+	separate files.
+	Use reader-writer locks instead of Monitor.
+	Added two 3.5sp1 properties - EffectivePrivateBytesLimit and
+	EffectivePercentagePhysicalMemoryLimit.
+	Added support for disabling cache item expiration.
+	One timer is used to expire all timed items (instead of one timer
+	per item). Timed items are kept in a priority queue.
+
 2009-03-03  Marek Habersack  <mhabersack@novell.com>
 
 	* CachedRawResponse.cs: headers are stored in NameValueCollection

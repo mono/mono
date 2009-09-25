@@ -22,7 +22,10 @@ System.Web/BeginEventHandler.cs
 System.Web.Caching/AggregateCacheDependency.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDependency.cs
+System.Web.Caching/CacheItem.cs
+System.Web.Caching/CacheItemEnumerator.cs
 System.Web.Caching/CacheItemPriority.cs
+System.Web.Caching/CacheItemPriorityQueue.cs
 System.Web.Caching/CacheItemRemovedCallback.cs
 System.Web.Caching/CacheItemRemovedReason.cs
 System.Web.Caching/CachedRawResponse.cs
