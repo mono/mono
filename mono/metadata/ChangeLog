@@ -1,3 +1,10 @@
+2009-09-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* appdomain.c|h: Add a mono_domain_try_unload method which is
+	equivalent to mono_domain_unload, except that it returns an exception
+	instead of throwing it. Make mono_domain_unload use the
+	mono_domain_try_unload method to avoid code-duplication.
+
 2009-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (dis_one): Avoid unaligned accesses on platforms where that is
