@@ -1,5 +1,7 @@
 2009-09-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c: Don't run tests with the obsolete treeprop optimization.
+
 	* mini-sparc.c (mono_arch_create_vars): Make the component vars of a long ret
 	variable volatile. Fixes #541577.
 
