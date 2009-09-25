@@ -95,6 +95,65 @@ namespace Microsoft.CSharp.RuntimeBinder
 			case ExpressionType.AddAssign:
 				isCompound = true;
 				return Compiler.Binary.Operator.Addition;
+			case ExpressionType.And:
+				return Compiler.Binary.Operator.BitwiseAnd;
+			case ExpressionType.AndAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.BitwiseAnd;
+			case ExpressionType.Divide:
+				return Compiler.Binary.Operator.Division;
+			case ExpressionType.DivideAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.Division;
+			case ExpressionType.Equal:
+				return Compiler.Binary.Operator.Equality;
+			case ExpressionType.ExclusiveOr:
+				return Compiler.Binary.Operator.ExclusiveOr;
+			case ExpressionType.ExclusiveOrAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.ExclusiveOr;
+			case ExpressionType.GreaterThan:
+				return Compiler.Binary.Operator.GreaterThan;
+			case ExpressionType.GreaterThanOrEqual:
+				return Compiler.Binary.Operator.GreaterThanOrEqual;
+			case ExpressionType.LeftShift:
+				return Compiler.Binary.Operator.LeftShift;
+			case ExpressionType.LeftShiftAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.LeftShift;
+			case ExpressionType.LessThan:
+				return Compiler.Binary.Operator.LessThan;
+			case ExpressionType.LessThanOrEqual:
+				return Compiler.Binary.Operator.LessThanOrEqual;
+			case ExpressionType.Modulo:
+				return Compiler.Binary.Operator.Modulus;
+			case ExpressionType.ModuloAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.Modulus;
+			case ExpressionType.Multiply:
+				return Compiler.Binary.Operator.Multiply;
+			case ExpressionType.MultiplyAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.Multiply;
+			case ExpressionType.NotEqual:
+				return Compiler.Binary.Operator.Inequality;
+			case ExpressionType.Or:
+				return Compiler.Binary.Operator.BitwiseOr;
+			case ExpressionType.OrAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.BitwiseOr;
+			case ExpressionType.OrElse:
+				return Compiler.Binary.Operator.LogicalOr;
+			case ExpressionType.RightShift:
+				return Compiler.Binary.Operator.RightShift;
+			case ExpressionType.RightShiftAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.RightShift;
+			case ExpressionType.Subtract:
+				return Compiler.Binary.Operator.Subtraction;
+			case ExpressionType.SubtractAssign:
+				isCompound = true;
+				return Compiler.Binary.Operator.Subtraction;
 			default:
 				throw new NotImplementedException (Operation.ToString ());
 			}

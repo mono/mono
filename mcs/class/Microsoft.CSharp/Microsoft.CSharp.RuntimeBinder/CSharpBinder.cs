@@ -70,7 +70,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (binder_exception_ctor == null)
 					binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
 
-				res = Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (e.Message)));
+				//
+				// Uses target type to keep expressions composition working
+				//
+				res = Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (e.Message)), target.LimitType);
 			} catch (Exception) {
 				if (errorSuggestion != null)
 					return errorSuggestion;

@@ -1,3 +1,8 @@
+2009-09-25  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpBinaryOperationBinder.cs, CSharpBinder.cs: More dynamic
+	binary expressions.
+
 2009-09-18  Marek Safar <marek.safar@gmail.com>
 
 	* CSharpBinaryOperationBinder.cs, CSharpBinder.cs: Implemented
