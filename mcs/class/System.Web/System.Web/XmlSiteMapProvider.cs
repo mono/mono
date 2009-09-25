@@ -466,7 +466,7 @@ namespace System.Web
 				foreach (string key in attributes.AllKeys) {
 					switch (key) {
 						case "siteMapFile":
-							fileVirtualPath = attributes ["siteMapFile"];
+							fileVirtualPath = base.MapUrl (attributes ["siteMapFile"]);
 							break;
 
 						case "description":

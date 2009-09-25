@@ -218,9 +218,9 @@ namespace System.Web
 				appVPath = "/";
 			
 			if (VirtualPathUtility.IsAppRelative (url))
-				return VirtualPathUtility.ToAbsolute (url, appVPath, false);
+				return VirtualPathUtility.ToAbsolute (url, appVPath, true);
 			else
-				return VirtualPathUtility.ToAbsolute (UrlUtils.Combine (appVPath, url), appVPath, false);
+				return VirtualPathUtility.ToAbsolute (UrlUtils.Combine (appVPath, url), appVPath, true);
 		}
 	}
 }
