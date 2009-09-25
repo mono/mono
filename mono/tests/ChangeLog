@@ -1,3 +1,10 @@
+2009-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* xdomain-threads.c: Test for checking whether Thread is correctly
+	separated between appdomains.
+
+	* Makefile.am: Test added.
+
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly-load-stress.cs: New stress test.

@@ -1,3 +1,14 @@
+2009-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c, mini.h, mini-alpha.c, mini-amd64.c, mini-arm.c,
+	mini-hppa.c, mini-ia64.c, mini-mips.c, mini-ppc.c, mini-s390.c,
+	mini-s390x.c, mini-sparc.c, mini-x86.c: Thread.get_CurrentThread
+	works differently now and we don't handle it in the JIT anymore.
+
+	* mini.c, mini-exceptions.c, mini-posix.c, debug-debugger.c,
+	debug-mini.c, tramp-amd64.c, tramp-x86.c: Changes resulting from
+	the Thread class split.
+
 2009-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c: Don't run tests with the obsolete treeprop optimization.

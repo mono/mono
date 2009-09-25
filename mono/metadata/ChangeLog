@@ -1,3 +1,23 @@
+2009-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* object-internals.h: The Thread class is split up into Thread and
+	InternalThread now.  We have exactly one InternalThread per
+	thread, and at most one Thread per appdomain per thread.  Most
+	data is stored in InternalThread.  All InternalThread objects live
+	in the root domain.
+
+	* class-internals.h: Add internal_thread_class to MonoDefaults.
+
+	* appdomain.c (mono_domain_unload), attach.c (receiver_thread),
+	domain.c, gc.c, icall-def.h, monitor.c, object.c, sgen-gc.c,
+	socket-io.c, threadpool.c, thread-types.h, threads.c: Changes
+	resulting from the split of the Thread class.
+
+	* gc-internal.h: Prototype for new function for checking whether a
+	thread is the finalizer thread.
+
+	* appdomain.c: Corlib version bump.
+
 2009-09-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* appdomain.c|h: Add a mono_domain_try_unload method which is
