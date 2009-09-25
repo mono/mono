@@ -1,3 +1,7 @@
+2009-09-25  Ankit Jain  <jankit@novell.com>
+
+	* FindAppConfigFile.cs: New.
+
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
 	* ReadLinesFromFile.cs (Execute): Don't do anything, if
