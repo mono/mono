@@ -1,3 +1,11 @@
+2009-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* StaticSiteMapProvider.cs: MapUrl must normalize paths. Fixes bug
+	#541969
+
+	* XmlSiteMapProvider.cs: siteMapFile parameter must be mapped in
+	Initialize. Fixes bug #541969
+
 2009-09-24  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: added "securityTrimmingEnabled" to the
