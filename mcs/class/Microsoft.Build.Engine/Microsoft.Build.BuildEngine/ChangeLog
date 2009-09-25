@@ -1,5 +1,9 @@
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
+	* Expression.cs: Allow '-' in item, property and metadata names.
+
+2009-09-26  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (Evaluate): Split into this and ..
 	(PrepareForEvaluate): .. this.
 	(AddImport): Evaluate the current set of properties/items etc,
