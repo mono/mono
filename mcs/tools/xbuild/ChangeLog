@@ -1,3 +1,9 @@
+2009-09-27  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs: Implement support for WebSite projects. These
+	projects lack a project file, so properties like references are read
+	from the .sln file, and targets are generated for build/clean etc.
+
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Remove _ValidateEssentialProperties
