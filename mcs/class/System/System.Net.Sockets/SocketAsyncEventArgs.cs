@@ -82,6 +82,7 @@ namespace System.Net.Sockets
 		public SendPacketsElement[] SendPacketsElements { get; set; }
 		public TransmitFileOptions SendPacketsFlags { get; set; }
 #endif
+		[MonoTODO ("unused property")]
 		public int SendPacketsSendSize { get; set; }
 		public SocketError SocketError { get; set; }
 		public SocketFlags SocketFlags { get; set; }
@@ -124,7 +125,7 @@ namespace System.Net.Sockets
 			SendPacketsElements = null;
 			SendPacketsFlags = TransmitFileOptions.UseDefaultWorkerThread;
 #endif
-			SendPacketsSendSize = 0;
+			SendPacketsSendSize = -1;
 			SocketError = SocketError.Success;
 			SocketFlags = SocketFlags.None;
 			UserToken = null;
@@ -176,15 +177,15 @@ namespace System.Net.Sockets
 					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
 				
 				int buflen = buffer.Length;
-				if (offset < 0 || offset >= buflen)
+				if (offset < 0 || (offset != 0 && offset >= buflen))
 					throw new ArgumentOutOfRangeException ("offset");
 
-				if (count < 0 || count + offset > buflen)
+				if (count < 0 || count > buflen - offset)
 					throw new ArgumentOutOfRangeException ("count");
-			}
 
-			Count = count;
-			Offset = offset;
+				Count = count;
+				Offset = offset;
+			}
 			Buffer = buffer;
 		}
 
