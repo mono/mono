@@ -1,3 +1,23 @@
+2009-09-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c:
+	* class-internals.h:
+	* mono-perfcounters-def.h:
+	* mono-perfcounters.c:
+	-There is a list of idle threads
+	-Each of those idle threads wait on their own WaitHandle instead
+	of all of them using the same semaphore. When a new work item is
+	added, the job is assigned directly to an idle thread or a newly
+	created one if possible and then the handle for that thread is
+	signaled. Compare that to the current approach where all the
+	threads in the pool compete to dequeue a job from the same
+	queue.
+	-New struct ThreadPool that brings together the bunch of static
+	variable for each threadpool (IO and regular).
+	-New performance counters: # of items added and its rate per
+	threadpool. The rate will be used later, perhaps together with
+	other perf. counters, to decide when idle threads should exit.
+
 2009-09-25  Jonathan Chambers  <joncham@gmail.com>
 
 	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Receive_internal): 
