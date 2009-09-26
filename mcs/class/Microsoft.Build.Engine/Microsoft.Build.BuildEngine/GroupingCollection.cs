@@ -183,10 +183,6 @@ namespace Microsoft.Build.BuildEngine {
 						bpg = (BuildPropertyGroup) evaluate_iterator.Value;
 						if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
 							bpg.Evaluate ();
-					} else if (evaluate_iterator.Value is Import) {
-						import = (Import) evaluate_iterator.Value;
-						if (ConditionParser.ParseAndEvaluate (import.Condition, project))
-							import.Evaluate ();
 					}
 
 					// if it wasn't moved by adding anything because of evaluating a Import shift it

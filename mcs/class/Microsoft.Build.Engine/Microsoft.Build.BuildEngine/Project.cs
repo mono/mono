@@ -60,7 +60,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool				isValidated;
 		BuildItemGroupCollection	itemGroups;
 		ImportCollection		imports;
-		string[]			initialTargets;
+		List<string>			initialTargets;
 		Dictionary <string, BuildItemGroup> last_item_group_containing;
 		bool				needToReevaluate;
 		Engine				parentEngine;
@@ -101,6 +101,8 @@ namespace Microsoft.Build.BuildEngine {
 			current_settings = BuildSettings.None;
 
 			builtTargetKeys = new List<string> ();
+			initialTargets = new List<string> ();
+			defaultTargets = new string [0];
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)
@@ -298,7 +300,7 @@ namespace Microsoft.Build.BuildEngine {
 					return false;
 			}
 
-			if (!initialTargetsBuilt && initialTargets != null && initialTargets.Length > 0) {
+			if (!initialTargetsBuilt) {
 				foreach (string target in initialTargets) {
 					if (!BuildTarget (target.Trim (), targetOutputs))
 						return false;
@@ -766,12 +768,9 @@ namespace Microsoft.Build.BuildEngine {
 			if (ParentEngine.DefaultTasksRegistered)
 				taskDatabase.CopyTasks (ParentEngine.DefaultTasks);	
 
-			if (xmlDocument.DocumentElement.GetAttributeNode ("DefaultTargets") != null)
-				defaultTargets = xmlDocument.DocumentElement.GetAttribute ("DefaultTargets").Split (';');
-			else
-				defaultTargets = new string [0];
-			
-			ProcessProjectAttributes (xmlDocument.DocumentElement.Attributes);
+			initialTargets = new List<string> ();
+			defaultTargets = new string [0];
+			PrepareForEvaluate ();
 			ProcessElements (xmlDocument.DocumentElement, null);
 			
 			isDirty = false;
@@ -783,12 +782,17 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (XmlAttribute attr in attributes) {
 				switch (attr.Name) {
 				case "InitialTargets":
-					initialTargets = attr.Value.Split (new char [] {';'},
-							StringSplitOptions.RemoveEmptyEntries);
+					initialTargets.AddRange (attr.Value.Split (
+									new char [] {';', ' '},
+									StringSplitOptions.RemoveEmptyEntries));
 					break;
 				case "DefaultTargets":
-					defaultTargets = attr.Value.Split (new char [] {';'},
+					// first non-empty DefaultTargets found is used
+					if (defaultTargets == null || defaultTargets.Length == 0)
+						defaultTargets = attr.Value.Split (new char [] {';', ' '},
 							StringSplitOptions.RemoveEmptyEntries);
+					EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets",
+								DefaultTargets, PropertyType.Reserved));
 					break;
 				}
 			}
@@ -796,6 +800,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void ProcessElements (XmlElement rootElement, ImportedProject ip)
 		{
+			ProcessProjectAttributes (rootElement.Attributes);
 			foreach (XmlNode xn in rootElement.ChildNodes) {
 				if (xn is XmlElement) {
 					XmlElement xe = (XmlElement) xn;
@@ -833,7 +838,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		void Evaluate ()
+		void PrepareForEvaluate ()
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
@@ -843,7 +848,10 @@ namespace Microsoft.Build.BuildEngine {
 				RemoveBuiltTargets ();
 
 			InitializeProperties ();
+		}
 
+		void Evaluate ()
+		{
 			groupingCollection.Evaluate ();
 
 			//FIXME: UsingTasks aren't really evaluated. (shouldn't use expressions or anything)
@@ -933,10 +941,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		void AddImport (XmlElement xmlElement, ImportedProject importingProject)
 		{
-			Import import;
-			
-			import = new Import (xmlElement, this, importingProject);
+			// eval all the properties etc till the import
+			Evaluate ();
+
+			Import import = new Import (xmlElement, this, importingProject);
 			Imports.Add (import);
+
+			if (ConditionParser.ParseAndEvaluate (import.Condition, this))
+				import.Evaluate ();
 		}
 		
 		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
@@ -978,11 +990,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string DefaultTargets {
 			get {
-				return xmlDocument.DocumentElement.GetAttribute ("DefaultTargets");
+				return String.Join ("; ", defaultTargets);
 			}
 			set {
 				xmlDocument.DocumentElement.SetAttribute ("DefaultTargets", value);
-				defaultTargets = value.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+				if (value != null)
+					defaultTargets = value.Split (new char [] {';', ' '},
+							StringSplitOptions.RemoveEmptyEntries);
 			}
 		}
 
@@ -1177,11 +1191,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string InitialTargets {
 			get {
-				return xmlDocument.DocumentElement.GetAttribute ("InitialTargets");
+				return String.Join ("; ", initialTargets.ToArray ());
 			}
 			set {
+				initialTargets.Clear ();
 				xmlDocument.DocumentElement.SetAttribute ("InitialTargets", value);
-				initialTargets = value.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+				if (value != null)
+					initialTargets.AddRange (value.Split (
+								new char [] {';', ' '}, StringSplitOptions.RemoveEmptyEntries));
 			}
 		}
 
