@@ -1,3 +1,8 @@
+2009-09-27  Ankit Jain  <jankit@novell.com>
+
+	* ConditionParser.cs: Show the condition being parsed in the
+	exception message.
+
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
 	* Expression.cs: Allow '-' in item, property and metadata names.
