@@ -1,3 +1,9 @@
+2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Fix paramater validations and default 
+	values
+	[Backport r142675]
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Socket_2_1.cs: Remove NET_2_1 socket policy checks from here.

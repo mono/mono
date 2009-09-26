@@ -1,3 +1,8 @@
+2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgsTest.cs: New. Unit tests
+	[Backport r142675]
+
 2009-06-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SocketTest.cs: Added tests for argument checks, and improved tests

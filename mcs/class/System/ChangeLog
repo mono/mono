@@ -1,3 +1,8 @@
+2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Add unit tests for SocketAsyncEventArgs
+	[Backport r142675]
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.dll.sources: Remove System.Net.Mime since
