@@ -1,5 +1,9 @@
 2009-09-26  Mark Probst  <mark.probst@gmail.com>
 
+	* NumberFormatter.cs: Remove the _thread field.
+
+2009-09-26  Mark Probst  <mark.probst@gmail.com>
+
 	* Environment.cs: Corlib version bump.
 
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
