@@ -1,3 +1,9 @@
+2009-09-26  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_System.ServiceModel.dll.sources :
+	  added Http[Request|Response]MessageProperty.cs. Looks like our
+	  status pages are based on old 2.0 profile.
+
 2009-09-15  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: remove WebServiceHelper.cs.
