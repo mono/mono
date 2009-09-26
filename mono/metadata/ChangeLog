@@ -1,5 +1,17 @@
 2009-09-26  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: New debug option "xdomain-checks", which scans the
+	whole heap for cross-domain references before each collection.
+
+	* sgen-scan-object.h: The scan action can now use SCAN to scan the
+	object.
+
+	* threadpool-internals.h, threadpool.c: New function
+	mono_thread_pool_is_queue_array() for checking whether a given
+	array is used as a (cross-domain) queue by the thread pool code.
+
+2009-09-26  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: New function mono_gc_scan_for_specific_ref() which
 	searches the whole heap for objects containing a specific
 	reference.  Only for debugging.
