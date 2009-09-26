@@ -1,3 +1,11 @@
+2009-09-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Receive_internal): 
+	Fix typo on Windows build.	
+	(ves_icall_System_Net_Sockets_Socket_Accept_internal): Fix typo on Windows build.
+	
+	Code is contributed under MIT/X11 license.
+
 2009-09-25  Mark Probst  <mark.probst@gmail.com>
 
 	* object-internals.h: The Thread class is split up into Thread and
