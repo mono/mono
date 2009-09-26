@@ -1,6 +1,11 @@
+2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DataSetTypedDataSet.cs: Test for #427769.  Patch by 
+	John Lenz <jlenz2@math.uiuc.edu>.
+	
 2009-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 
-       * DataSetTest2.cs (MergeTest_SameDataSet_536194): Added new.
+        * DataSetTest2.cs (MergeTest_SameDataSet_536194): Added new.
        
 2009-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
