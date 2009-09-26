@@ -120,7 +120,8 @@ namespace System.Threading {
 		internal int managed_id;
 #endif
 
-		internal IPrincipal _principal;
+		internal byte[] _serialized_principal;
+		internal int _serialized_principal_version;
 
 		/* If the current_lcid() isn't known by CultureInfo,
 		 * it will throw an exception which may cause
@@ -156,6 +157,9 @@ namespace System.Threading {
 		object start_obj;
 		private ExecutionContext ec_to_set;
 		#endregion
+
+		IPrincipal principal;
+		int principal_version;
 
 		// the name of local_slots, current_thread and _ec is
 		// important because they are used by the runtime.
@@ -197,23 +201,60 @@ namespace System.Threading {
 			}
 		}
 
+		/*
+		 * These two methods return an array in the target
+		 * domain with the same content as the argument.  If
+		 * the argument is already in the target domain, then
+		 * the argument is returned, otherwise a copy.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static byte[] ByteArrayToRootDomain (byte[] arr);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
+
 #if !NET_2_1
 		public static IPrincipal CurrentPrincipal {
 			get {
-				IPrincipal p = null;
-				InternalThread th = CurrentThread.Internal;
-				lock (th) {
-					p = th._principal;
-					if (p == null) {
-						p = GetDomain ().DefaultPrincipal;
-						th._principal = p;
+				Thread th = CurrentThread;
+
+				if (th.principal_version != th.Internal._serialized_principal_version)
+					th.principal = null;
+
+				if (th.principal != null)
+					return th.principal;
+
+				if (th.Internal._serialized_principal != null) {
+					try {
+						BinaryFormatter bf = new BinaryFormatter ();
+						MemoryStream ms = new MemoryStream (ByteArrayToCurrentDomain (th.Internal._serialized_principal));
+						th.principal = (IPrincipal) bf.Deserialize (ms);
+						th.principal_version = th.Internal._serialized_principal_version;
+						return th.principal;
+					} catch (Exception) {
 					}
 				}
-				return p;
+
+				th.principal = GetDomain ().DefaultPrincipal;
+				th.principal_version = th.Internal._serialized_principal_version;
+				return th.principal;
 			}
 			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
-				CurrentThread.Internal._principal = value;
+				Thread th = CurrentThread;
+
+				++th.Internal._serialized_principal_version;
+				try {
+					BinaryFormatter bf = new BinaryFormatter ();
+					MemoryStream ms = new MemoryStream ();
+					bf.Serialize (ms, value);
+					th.Internal._serialized_principal = ByteArrayToRootDomain (ms.ToArray ());
+				} catch (Exception) {
+					th.Internal._serialized_principal = null;
+				}
+
+				th.principal = value;
+				th.principal_version = th.Internal._serialized_principal_version;
 			}
 		}
 #endif
@@ -866,8 +907,7 @@ namespace System.Threading {
 			if (SecurityManager.SecurityEnabled)
 				ec_to_set = ExecutionContext.Capture ();
 #endif
-			if (CurrentThread.Internal._principal != null)
-				Internal._principal = CurrentThread.Internal._principal;
+			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
 #if NET_2_1 && !MONOTOUCH

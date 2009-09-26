@@ -1,3 +1,9 @@
+2009-09-26  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: Serialize the principal so as not to make it cross
+	appdomains.  Two new internal calls for copying byte arrays
+	between domains.
+
 2009-09-25  Mark Probst  <mark.probst@gmail.com>
 
 	* Thread.cs: The Thread class is split up into Thread and
