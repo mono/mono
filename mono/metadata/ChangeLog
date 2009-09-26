@@ -1,5 +1,9 @@
 2009-09-26  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Warning fixes.
+
+2009-09-26  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: New debug option "xdomain-checks", which scans the
 	whole heap for cross-domain references before each collection.
 
