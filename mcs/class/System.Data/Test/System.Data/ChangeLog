@@ -1,5 +1,10 @@
 2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* DataSetTest2.cs: Don't run test for Bug#536194 on 1.x
+	profile. Fixes 1.x test break.
+	
+2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* DataSetTypedDataSet.cs: Test for #427769.  Patch by 
 	John Lenz <jlenz2@math.uiuc.edu>.
 	
