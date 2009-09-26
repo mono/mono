@@ -39,11 +39,13 @@ namespace Microsoft.Build.BuildEngine {
 	internal class ConditionParser {
 	
 		ConditionTokenizer tokenizer;
+		string conditionStr;
 		
 		ConditionParser (string condition)
 		{
 			tokenizer = new ConditionTokenizer ();
 			tokenizer.Tokenize (condition);
+			conditionStr = condition;
 		}
 		
 		public static bool ParseAndEvaluate (string condition, Project context)
@@ -171,7 +173,7 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (token.Type == TokenType.Not) {
 				e = ParseNotExpression ();
 			} else
-				throw new ExpressionParseException (String.Format ("Unexpected token type {0}.", token.Type));
+				throw new ExpressionParseException (String.Format ("Unexpected token type {0}, while parsing {1}", token.Type, conditionStr));
 			
 			return e;
 		}
@@ -244,7 +246,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (tokenizer.Token.Type != type)
 				throw new ExpressionParseException ("Expected token type of type: " + type + ", got " +
-						tokenizer.Token.Type + " (" + tokenizer.Token.Value + ") .");
+						tokenizer.Token.Type + " (" + tokenizer.Token.Value + "), while parsing " + conditionStr);
 		}
 	}
 }

@@ -1514,9 +1514,218 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			try {
 				Assert.IsTrue (project.Build (), "Build failed");
 
-				Assert.AreEqual (0, logger.CheckHead ("Executing pre target", MessageImportance.Normal), "A1");
-				Assert.AreEqual (0, logger.CheckHead ("Executing boo target", MessageImportance.Normal), "A2");
-				Assert.AreEqual (0, logger.Count, "A3");
+				logger.CheckLoggedMessageHead ("Executing pre target", "A1");
+				logger.CheckLoggedMessageHead ("Executing boo target", "A2");
+
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestInitialTargetsWithImports () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" InitialTargets=""One  "">
+				<Target Name=""One"">
+					<Message Text='Executing Second::One target'/>
+				</Target>
+				<Import Project='third.proj'/>
+			</Project>
+";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (second);
+			}
+
+			string third = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" InitialTargets=""Two"">
+				<Target Name=""Two"">
+					<Message Text='Executing Third::Two target'/>
+				</Target>
+			</Project>
+";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "third.proj")))) {
+				sw.Write (third);
+			}
+
+
+			project.LoadXml (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" InitialTargets=""pre"">
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+				<Import Project='Test/resources/second.proj'/>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Executing pre target", "A1");
+				logger.CheckLoggedMessageHead ("Executing Second::One target", "A2");
+				logger.CheckLoggedMessageHead ("Executing Third::Two target", "A3");
+				logger.CheckLoggedMessageHead ("Executing boo target", "A4");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+				Assert.AreEqual ("pre; One; Two", project.InitialTargets, "List of initial targets");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestDefaultTargets () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (@"<Project DefaultTargets='pre' xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" >
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Executing pre target", "A1");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+				Assert.AreEqual ("pre", project.DefaultTargets, "Default targets");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+
+		[Test]
+		public void TestDefaultTargetsWithImports () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string second = @"<Project DefaultTargets='One' xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""One"">
+					<Message Text='Executing Second::One target'/>
+				</Target>
+			</Project>";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (second);
+			}
+
+			project.LoadXml (@"<Project DefaultTargets='pre' xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" >
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+				<Import Project='Test/resources/second.proj'/>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Executing pre target", "A1");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+				Assert.AreEqual ("pre", project.DefaultTargets, "Default targets");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestNoDefaultTargetsWithImports () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+
+			string second = @"<Project DefaultTargets='; One  ; Two' xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name=""One"">
+					<Message Text='Executing Second::One target'/>
+				</Target>
+				<Target Name=""Two"">
+					<Message Text='Executing Second::Two target'/>
+				</Target>
+
+			</Project>";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (second);
+			}
+
+			project.LoadXml (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" >
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+				<Import Project='Test/resources/second.proj'/>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Executing Second::One target", "A1");
+				logger.CheckLoggedMessageHead ("Executing Second::Two target", "A2");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+				Assert.AreEqual ("One; Two", project.DefaultTargets, "Default targets");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestNoDefaultTargets () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" >
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Executing boo target", "A1");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+
+				Assert.AreEqual ("", project.DefaultTargets, "Default targets");
 			} catch {
 				logger.DumpMessages ();
 				throw;

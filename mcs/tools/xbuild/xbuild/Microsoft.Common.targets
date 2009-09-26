@@ -205,7 +205,6 @@
 
 	<PropertyGroup>
 		<BuildDependsOn>
-			_ValidateEssentialProperties;
 			BeforeBuild;
 			CoreBuild;
 			AfterBuild

@@ -31,6 +31,7 @@ using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
+using System.IO;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
@@ -368,6 +369,55 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				throw;
 			}
+		}
+
+		[Test]
+		public void TestOverridingTargets ()
+		{
+			Engine engine;
+			Project project;
+
+			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name='BeforeBuild'/>
+				<Target Name='AfterBuild'/>
+				<Target Name='Build' DependsOnTargets='BeforeBuild'>
+					<Message Text='Build executing'/>
+					<CallTarget Targets='AfterBuild'/>
+				</Target>
+		</Project>";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (second);
+			}
+
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Target Name='AfterBuild'>
+					<Message Text='Overriding AfterBuild'/>
+				</Target>
+
+				<Import Project='Test/resources/second.proj'/>
+				<Target Name='BeforeBuild'>
+					<Message Text='Overriding BeforeBuild'/>
+				</Target>
+		</Project>";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build ("Build");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Overriding BeforeBuild", "A1");
+			logger.CheckLoggedMessageHead ("Build executing", "A1");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
 		}
 
 	}
