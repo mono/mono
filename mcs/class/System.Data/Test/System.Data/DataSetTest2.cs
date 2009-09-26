@@ -3467,6 +3467,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (typeof (string), ds.Tables [0].Columns [0].DataType, "#5");
         	}
                
+#if NET_2_0
                [Test]
                public void MergeTest_SameDataSet_536194 ()
                {
@@ -3479,6 +3480,7 @@ namespace MonoTests_System.Data
                        dataSet.Merge(dataTable);
                        Assert.AreEqual (1, dataSet.Tables.Count, "1");
                }
+#endif
 
 #if NET_2_0
 		[Test]	

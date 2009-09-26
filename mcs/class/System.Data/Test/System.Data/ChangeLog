@@ -1,5 +1,10 @@
 2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* DataSetTest2.cs: Don't run the test for Bug#536194 in 1.x
+	profile.  Makes build bot go all green on Sys.Data.
+	
+2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* DataSetTypedDataSet.cs: Test for #427769.  Patch by 
 	John Lenz <jlenz2@math.uiuc.edu>.
 	
