@@ -1,3 +1,10 @@
+2009-09-26  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bumped.
+
+	* icall-def.h, threads.c, threads-types.h: New icalls for copying
+	byte arrays between domains.
+
 2009-09-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c:
