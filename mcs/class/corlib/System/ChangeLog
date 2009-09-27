@@ -1,3 +1,8 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TermInfoDriver.cs: avoid segv if the pointer is not properly
+	initialized.
+
 2009-09-26  Mark Probst  <mark.probst@gmail.com>
 
 	* NumberFormatter.cs: Remove the _thread field.
