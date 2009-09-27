@@ -1,3 +1,8 @@
+2009-09-27  Mark Probst  <mark.probst@gmail.com>
+
+	* reflection.c (mono_dynamic_image_free): Deregister the GC root
+	for GenericParamTableEntry.gparam.
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* marshal.c: don't create the handle when calling. It is created later
