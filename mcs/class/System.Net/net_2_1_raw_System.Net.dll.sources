@@ -59,3 +59,6 @@ System.Net.NetworkInformation/NetworkInterface_2_1.cs
 ../System/System.Net/UploadStringCompletedEventArgs.cs
 ../System/System.Net/UploadStringCompletedEventHandler.cs
 ../System/System.Net.NetworkInformation/NetworkAddressChangedEventHandler.cs
+../System/System.Timers/ElapsedEventArgs.cs
+../System/System.Timers/ElapsedEventHandler.cs
+../System/System.Timers/Timer_2_1.cs
