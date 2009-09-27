@@ -109,7 +109,7 @@ typedef uint16_t       gunichar2;
 /*
  * Allocation
  */
-#define g_free                  free
+void g_free (void *ptr);
 static inline gpointer g_realloc (gpointer obj, gsize size) { if (!size) {g_free (obj); return 0;} return  realloc (obj, size);}
 static inline gpointer g_malloc (gsize x) {if (x) return malloc (x); else return 0;}
 static inline gpointer g_malloc0 (gsize x) {if (x) return calloc(1,x); else return 0;}
@@ -468,6 +468,8 @@ typedef struct {
 
 gpointer g_queue_pop_head  (GQueue   *queue);
 void     g_queue_push_head (GQueue   *queue,
+			    gpointer  data);
+void     g_queue_push_tail (GQueue   *queue,
 			    gpointer  data);
 gboolean g_queue_is_empty  (GQueue   *queue);
 GQueue  *g_queue_new       (void);
@@ -860,11 +862,15 @@ glong     g_utf8_strlen        (const gchar *str, gssize max);
 #   define GUINT64_TO_LE(x) (x)
 #   define GUINT16_TO_LE(x) (x)
 #   define GUINT_TO_LE(x)   (x)
+#   define GUINT32_TO_BE(x) GUINT32_SWAP_LE_BE(x)
+#   define GUINT32_FROM_BE(x) GUINT32_SWAP_LE_BE(x)
 #else
 #   define GUINT32_TO_LE(x) GUINT32_SWAP_LE_BE(x)
 #   define GUINT64_TO_LE(x) GUINT64_SWAP_LE_BE(x)
 #   define GUINT16_TO_LE(x) GUINT16_SWAP_LE_BE(x)
 #   define GUINT_TO_LE(x)   GUINT32_SWAP_LE_BE(x)
+#   define GUINT32_TO_BE(x) (x)
+#   define GUINT32_FROM_BE(x) (x)
 #endif
 
 #define GUINT32_FROM_LE(x)  (GUINT32_TO_LE (x))

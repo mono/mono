@@ -1,3 +1,34 @@
+2009-09-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* test/queue.c: new tests.
+	* src/gqueue.c: fixed pop_head.
+
+2009-09-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* src/gqueue.c: add g_queue_push_tail.
+
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* src/glib.h: Add GUINT32_FROM/TO_BE macros.
+
+2009-06-09  Jonathan Chambers <joncham@gmail.com>
+	
+	* CMakeLists.txt: Add start of CMake build.
+	* src/CMakeLists.txt: Add start of CMake build.
+	
+	Contribution is licensed as MIT/X11.
+
+2009-06-02  Bill Holmes  <billholmes54@gmail.com>
+
+	* src/gpath.c (g_find_program_in_path):  While searching on Windows
+	  also try additional suffixes .exe, .cmd, .bat, and.com.
+
+	Contributed under MIT/X11 license.
+
+2009-05-27  Geoff Norton  <gnorton@novell.com>
+
+	* src/gfile-posix.c: Fix g_get_current_dir on amd64
+
 2009-04-22  Jeffrey Stedfast  <fejj@novell.com>
 
 	* src/gtimer-win32.c (g_timer_elapsed): Avoid re-querying freq by
