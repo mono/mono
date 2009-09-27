@@ -1,3 +1,7 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: account for the time spent sending jobs to the queue.
+
 2009-09-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: no need to wake up the scheduler when removing the next
