@@ -1,3 +1,8 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* marshal.c: don't create the handle when calling. It is created later
+	if needed.
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_ptr_to_object_conv): Generate an exception instead of
