@@ -47,9 +47,7 @@ using System.Text;
 #if NET_2_0
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
-#if !NET_2_1
 using System.Timers;
-#endif
 #endif
 
 namespace System.Net.Sockets 
@@ -1112,9 +1110,7 @@ namespace System.Net.Sockets
 				sock = Accept_internal(socket, out error, blocking);
 			} catch (ThreadAbortException) {
 				if (disposed) {
-#if !NET_2_1
 					Thread.ResetAbort ();
-#endif
 					error = (int) SocketError.Interrupted;
 				}
 			} finally {
@@ -1145,9 +1141,7 @@ namespace System.Net.Sockets
 				sock = Accept_internal (socket, out error, blocking);
 			} catch (ThreadAbortException) {
 				if (disposed) {
-#if !NET_2_1
 					Thread.ResetAbort ();
-#endif
 					error = (int)SocketError.Interrupted;
 				}
 			} finally {
@@ -1763,21 +1757,7 @@ namespace System.Net.Sockets
 			seed_endpoint = local_end;
 		}
 
-#if NET_2_0 && !NET_2_1
-		public void Close (int timeout) 
-		{
-			System.Timers.Timer close_timer = new System.Timers.Timer ();
-			close_timer.Elapsed += new ElapsedEventHandler (OnTimeoutClose);
-			close_timer.Interval = timeout * 1000;
-			close_timer.AutoReset = false;
-			close_timer.Enabled = true;
-		}
-
-		private void OnTimeoutClose (object source, ElapsedEventArgs e)
-		{
-			this.Close ();
-		}
-
+#if NET_2_0
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
