@@ -49,9 +49,9 @@ using System.Net.Configuration;
 
 #if NET_2_0
 using System.Collections.Generic;
+using System.Timers;
 #if !NET_2_1
 using System.Net.NetworkInformation;
-using System.Timers;
 #endif
 #endif
 
@@ -227,6 +227,7 @@ namespace System.Net.Sockets {
 							     bool block,
 							     out int error);
 #endif
+#if !NET_2_1
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -245,7 +246,7 @@ namespace System.Net.Sockets {
 				blocking=value;
 			}
 		}
-
+#endif
 		public bool Connected {
 			get { return connected; }
 			internal set { connected = value; }
@@ -422,6 +423,22 @@ namespace System.Net.Sockets {
 			((IDisposable) this).Dispose ();
 		}
 
+#if NET_2_0
+		public void Close (int timeout) 
+		{
+			System.Timers.Timer close_timer = new System.Timers.Timer ();
+			close_timer.Elapsed += new ElapsedEventHandler (OnTimeoutClose);
+			close_timer.Interval = timeout * 1000;
+			close_timer.AutoReset = false;
+			close_timer.Enabled = true;
+		}
+
+		private void OnTimeoutClose (object source, ElapsedEventArgs e)
+		{
+			this.Close ();
+		}
+#endif
+
 		// Connects to the remote address
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Connect_internal(IntPtr sock,
@@ -515,7 +532,7 @@ namespace System.Net.Sockets {
 			return true;
 		}
 #endif
-
+#if !NET_2_1
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
@@ -553,7 +570,7 @@ namespace System.Net.Sockets {
 			
 			return result;
 		}
-
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Receive_internal(IntPtr sock,
 							   byte[] buffer,

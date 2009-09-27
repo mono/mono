@@ -260,6 +260,7 @@ namespace System.Net.Sockets
 			}
 #endif
 			try {
+#if !NET_2_1
 				if (!curSocket.Blocking) {
 					int success;
 					curSocket.Poll (-1, SelectMode.SelectWrite, out success);
@@ -268,7 +269,9 @@ namespace System.Net.Sockets
 						curSocket.Connected = true;
 					else
 						return error;
-				} else {
+				} else
+#endif
+				{
 					curSocket.seed_endpoint = endpoint;
 					curSocket.Connect (endpoint);
 					curSocket.Connected = true;
@@ -344,7 +347,11 @@ namespace System.Net.Sockets
 
 			try {
 				EndPoint ep = RemoteEndPoint;
-				BytesTransferred = curSocket.ReceiveFrom_nochecks (Buffer, Offset, Count, SocketFlags, ref ep);
+				if (Buffer != null) {
+					BytesTransferred = curSocket.ReceiveFrom_nochecks (Buffer, Offset, Count, SocketFlags, ref ep);
+				} else if (BufferList != null) {
+					throw new NotImplementedException ();
+				}
 			} catch (SocketException ex) {
 				SocketError = ex.SocketErrorCode;
 				throw;

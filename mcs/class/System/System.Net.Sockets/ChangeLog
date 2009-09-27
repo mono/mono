@@ -1,3 +1,12 @@
+2009-09-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Don't use Socket.Poll for NET_2_1.
+	Throw NIE for use of BufferList in Receive.
+	* Socket.cs: Move Close(int) to Socket_2_1.cs. Remove NET_2_1
+	defines since the file is not used by Moonlight
+	* Socket_2_1.cs: Add Close(int) from Socket. Define out Poll
+	and Blocking.
+
 2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketAsyncEventArgs.cs: Fix paramater validations and default 
