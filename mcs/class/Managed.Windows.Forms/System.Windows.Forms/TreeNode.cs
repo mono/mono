@@ -1072,11 +1072,8 @@ namespace System.Windows.Forms
 			TreeView tv = TreeView;
 			if (tv == null)
 				return;
-				
-			// Use actual TreeView width to invalidate total prev/new area
-			Rectangle bounds = Bounds;
-			bounds.Width = tv.ClientSize.Width;
-			tv.Invalidate (bounds);
+
+			tv.UpdateNode (this);
 		}
 
 		internal void InvalidateWidth ()
