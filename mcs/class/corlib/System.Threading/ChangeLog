@@ -1,3 +1,7 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: account for the time spent sending jobs to the queue.
+
 2009-09-26  Mark Probst  <mark.probst@gmail.com>
 
 	* Thread.cs: Serialize the principal so as not to make it cross

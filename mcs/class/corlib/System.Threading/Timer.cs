@@ -330,7 +330,7 @@ namespace System.Threading
 						//PrintList ();
 						int ms_wait = -1;
 						if (min_next_run != Int64.MaxValue) {
-							long diff = min_next_run - ticks; 
+							long diff = min_next_run - DateTime.GetTimeMonotonic (); 
 							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
 							if (ms_wait < 0)
 								ms_wait = 0;
