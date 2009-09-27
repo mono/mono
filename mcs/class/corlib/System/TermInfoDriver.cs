@@ -718,10 +718,9 @@ namespace System {
 			if (!inited)
 				Init ();
 
-			if (terminal_size == *native_terminal_size)
+			if (native_terminal_size == null || terminal_size == *native_terminal_size)
 				return;
 
-			terminal_size = *native_terminal_size;
 			if (*native_terminal_size == -1){
 				int c = reader.Get (TermInfoNumbers.Columns);
 				if (c != 0)
@@ -731,6 +730,7 @@ namespace System {
 				if (c != 0)
 					windowHeight = c;
 			} else {
+				terminal_size = *native_terminal_size;
 				windowWidth = terminal_size >> 16;
 				windowHeight = terminal_size & 0xffff;
 			}
