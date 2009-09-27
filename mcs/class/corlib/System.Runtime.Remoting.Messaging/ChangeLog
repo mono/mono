@@ -1,3 +1,8 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AsyncResult.cs: don't create the handle if we know the result is
+	completed.
+
 2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AsyncResult.cs: lock when setting the 'completed' field and use the
