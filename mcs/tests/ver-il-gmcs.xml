@@ -17005,6 +17005,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-29.cs">
+    <type name="My">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>40</size>
+      </method>
+      <method name="Int32 ContentTransferEncoding[T](My)">
+        <size>2</size>
+      </method>
+      <method name="Int32 ContentTransferEncoding(My)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="My">
+      <method name="Void set_ContentTransferEncoding(Boolean)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
