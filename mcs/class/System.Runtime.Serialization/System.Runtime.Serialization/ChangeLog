@@ -1,5 +1,13 @@
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs :
+	  There were some places that ignored possible whitespace nodes.
+	  Fixed sorting of ordered members so that it does not give
+	  incomplete sorting among base/derived types. (should fix #539563.)
+	  Give xml error details in some places.
+
+2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* KnownTypeCollection.cs : (the previous one didn't fix #539563.)
 	  Consider attempts to register the same collection type as it did
 	  before.

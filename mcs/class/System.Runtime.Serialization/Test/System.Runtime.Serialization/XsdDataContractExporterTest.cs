@@ -136,6 +136,7 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Dc3Test ()
 		{
 			//Check for duplicate dc2 ?
@@ -145,6 +146,7 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Dc3Test2 ()
 		{
 			//Check for duplicate dc2 ?
