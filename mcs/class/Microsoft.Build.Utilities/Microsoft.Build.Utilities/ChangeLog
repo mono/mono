@@ -1,3 +1,9 @@
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ExecuteTool): Use LogToolCommand, instead of
+	directly logging.
+	(LogToolCommand): Implement.
+
 2009-09-28  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (ProcessOuputTool): Move logging of tool
