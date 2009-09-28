@@ -1,3 +1,10 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket_2_1.cs: Close(int timeout) blocks up to timeout ms if there's
+	pending data to be written to the socket. If there's no pending data,
+	it closes and returns right away. Instead of using Timer and then
+	doing a 'hard' close(), we set the linger option for the socket.
+
 2009-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketAsyncEventArgs.cs: Don't use Socket.Poll for NET_2_1.
