@@ -484,8 +484,8 @@ namespace System.Web {
 			
 			return true;
 		}
-
-		internal static IResourceProvider GetResourceProvider (string key, bool isLocal)
+		
+		internal static IResourceProvider GetResourceProvider (string virtualPath, bool isLocal)
 		{
 			if (!EnsureProviderFactory ())
 				return null;
@@ -493,27 +493,27 @@ namespace System.Web {
 			// TODO: check if it makes sense to cache the providers and, if yes, maybe
 			// we should expire the entries (or just store them in InternalCache?)
 			IResourceProvider rp = null;
-			if (!resource_providers.TryGetValue (key, out rp)) {
+			if (!resource_providers.TryGetValue (virtualPath, out rp)) {
 				if (isLocal) {
 					HttpContext ctx = HttpContext.Current;
 					HttpRequest req = ctx != null ? ctx.Request : null;
-					rp = provider_factory.CreateLocalResourceProvider (req != null ? req.Path : null);
+					rp = provider_factory.CreateLocalResourceProvider (virtualPath);
 				} else
-					rp = provider_factory.CreateGlobalResourceProvider (key);
+					rp = provider_factory.CreateGlobalResourceProvider (virtualPath);
 				
 				if (rp == null) {
 					if (isLocal) {
 						HttpContext ctx = HttpContext.Current;
 						HttpRequest req = ctx != null ? ctx.Request : null;
-						rp = DefaultProviderFactory.CreateLocalResourceProvider (req != null ? req.Path : null);
+						rp = DefaultProviderFactory.CreateLocalResourceProvider (virtualPath);
 					} else
-						rp = DefaultProviderFactory.CreateGlobalResourceProvider (key);
+						rp = DefaultProviderFactory.CreateGlobalResourceProvider (virtualPath);
 
 					if (rp == null)
 						return null;
 				}
 				
-				resource_providers.Add (key, rp);
+				resource_providers.Add (virtualPath, rp);
 			}
 
 			return rp;

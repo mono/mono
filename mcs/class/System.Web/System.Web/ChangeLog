@@ -1,3 +1,10 @@
+2009-09-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: GetResourceProvider - renamed the 'key' argument
+	to 'virtualPath' in order to reflects its purpose better. Local
+	resource providers are created for the passed virtualPath and not
+	for the current request's path. Fixes bug #542484
+
 2009-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* StaticSiteMapProvider.cs: MapUrl must normalize paths. Fixes bug

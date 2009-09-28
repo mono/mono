@@ -855,7 +855,7 @@ namespace System.Web.Compilation
 
 		bool ResourceProviderHasObject (string key)
 		{
-			IResourceProvider rp = HttpContext.GetResourceProvider (key, true);
+			IResourceProvider rp = HttpContext.GetResourceProvider (InputVirtualPath.Absolute, true);
 			if (rp == null)
 				return false;
 

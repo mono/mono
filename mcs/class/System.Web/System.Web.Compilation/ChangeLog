@@ -1,3 +1,14 @@
+2009-09-28  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: ResourceProviderHasObject calls
+	HttpContext.GetResourceProvider with the current file's path, not
+	current request's. Fixes situations when localized control lives
+	in a master page or user control. Fixes bug #542484
+
+	* BaseCompiler.cs: introduced a helper property InputVirtualPath
+	which returns a VirtualPath object for the current control's
+	virtual path.
+
 2009-09-22  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: ResourceProviderHasObject needs to
