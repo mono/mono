@@ -1,5 +1,11 @@
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* KnownTypeCollection.cs : (the previous one didn't fix #539563.)
+	  Consider attempts to register the same collection type as it did
+	  before.
+
+2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs, KnownTypeCollection.cs : nested use of type
 	  in its members resulted in infinite loop. This hopefully fixes
 	  bug #539563.

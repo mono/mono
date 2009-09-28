@@ -666,8 +666,13 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetCollectionQName (element);
 
-			if (FindUserMap (qname) != null)
-				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
+			var map = FindUserMap (qname);
+			if (map != null) {
+				var cmap = map as CollectionTypeMap;
+				if (cmap == null || cmap.RuntimeType != type)
+					throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
+				return cmap;
+			}
 
 			CollectionTypeMap ret =
 				new CollectionTypeMap (type, element, qname, this);
