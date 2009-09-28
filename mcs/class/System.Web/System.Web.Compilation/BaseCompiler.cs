@@ -67,6 +67,19 @@ namespace System.Web.Compilation
 		protected CodeTypeReferenceExpression mainClassExpr;
 		protected static CodeThisReferenceExpression thisRef = new CodeThisReferenceExpression ();
 
+#if NET_2_0
+		VirtualPath inputVirtualPath;
+		
+		public VirtualPath InputVirtualPath {
+			get {
+				if (inputVirtualPath == null)
+					inputVirtualPath = new VirtualPath (VirtualPathUtility.Combine (parser.BaseVirtualDir, Path.GetFileName (parser.InputFile)));
+
+				return inputVirtualPath;
+			}
+		}
+#endif
+		
 		protected BaseCompiler (TemplateParser parser)
 		{
 			this.parser = parser;
@@ -328,11 +341,7 @@ namespace System.Web.Compilation
 				return;
 			if (!baseType.IsSubclassOf (typeof (System.Web.UI.TemplateControl)))
 				return;
-
-			string arvp = Path.Combine (parser.BaseVirtualDir, Path.GetFileName (parser.InputFile));
-			if (VirtualPathUtility.IsAbsolute (arvp))
-				arvp = VirtualPathUtility.ToAppRelative (arvp);
-
+			
 			CodeTypeReference baseTypeRef = new CodeTypeReference (baseType.FullName);
 			if (parser.BaseTypeIsGlobal)
 				baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
@@ -341,7 +350,7 @@ namespace System.Web.Compilation
 			CodePropertyReferenceExpression arvpProp = new CodePropertyReferenceExpression (cast, "AppRelativeVirtualPath");
 			CodeAssignStatement arvpAssign = new CodeAssignStatement ();
 			arvpAssign.Left = arvpProp;
-			arvpAssign.Right = new CodePrimitiveExpression (VirtualPathUtility.RemoveTrailingSlash (arvp));
+			arvpAssign.Right = new CodePrimitiveExpression (VirtualPathUtility.RemoveTrailingSlash (InputVirtualPath.AppRelative));
 			ctor.Statements.Add (arvpAssign);
 		}
 #endif
