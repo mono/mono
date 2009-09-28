@@ -389,8 +389,6 @@ namespace System.Web.UI.WebControls {
 
 		protected override void OnDataBinding (EventArgs e)
 		{
-			base.OnDataBinding (e);
-
 #if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			PerformDataBinding (list);
@@ -398,7 +396,7 @@ namespace System.Web.UI.WebControls {
 			IEnumerable list = GetData ().ExecuteSelect (DataSourceSelectArguments.Empty);
 			InternalPerformDataBinding (list);
 #endif
-
+			base.OnDataBinding (e);
 		}
 
 #if NET_2_0

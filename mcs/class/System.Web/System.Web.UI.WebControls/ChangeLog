@@ -1,3 +1,10 @@
+2009-09-28  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBoundControl.cs: Initialize sets RequiresDataBinding
+	properly, only when we're not data-bound already, when we aren't
+	in postback or when we are in postback, but with viewstate
+	enabled. Fixes bug #542076
+
 2009-09-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: ExecuteSelect must call
