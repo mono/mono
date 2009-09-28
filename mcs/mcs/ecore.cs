@@ -5270,6 +5270,7 @@ namespace Mono.CSharp {
 		bool is_static;
 
 		bool resolved;
+		TypeArguments targs;
 		
 		LocalTemporary temp;
 		bool prepared;
@@ -5489,51 +5490,31 @@ namespace Mono.CSharp {
 			return t_name_len > 2 && t_name [t_name_len - 2] == '[';
 		}
 
-		override public Expression DoResolve (ResolveContext ec)
+		public override Expression DoResolve (ResolveContext ec)
 		{
 			if (resolved)
 				return this;
 
-			if (getter != null){
-				if (TypeManager.GetParameterData (getter).Count != 0){
-					Error_PropertyNotFound (ec, getter, true);
-					return null;
-				}
-			}
-
-			if (getter == null){
-				//
-				// The following condition happens if the PropertyExpr was
-				// created, but is invalid (ie, the property is inaccessible),
-				// and we did not want to embed the knowledge about this in
-				// the caller routine.  This only avoids double error reporting.
-				//
-				if (setter == null)
-					return null;
-
-				if (InstanceExpression != EmptyExpression.Null) {
-					ec.Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-						TypeManager.GetFullNameSignature (PropertyInfo));
-					return null;
-				}
-			} 
-
 			bool must_do_cs1540_check = false;
-			if (getter != null &&
-			    !IsAccessorAccessible (ec.CurrentType, getter, out must_do_cs1540_check)) {
-				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
-				if (pm != null && pm.HasCustomAccessModifier) {
-					ec.Report.SymbolRelatedToPreviousError (pm);
-					ec.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
-						TypeManager.CSharpSignature (getter));
+			ec.Report.DisableReporting ();
+			bool res = ResolveGetter (ec, ref must_do_cs1540_check);
+			ec.Report.EnableReporting ();
+
+			if (!res) {
+				if (InstanceExpression != null) {
+					Type expr_type = InstanceExpression.Type;
+					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (expr_type, Name, loc);
+					if (ex_method_lookup != null) {
+						ex_method_lookup.ExtensionExpression = InstanceExpression;
+						ex_method_lookup.SetTypeArguments (ec, targs);
+						return ex_method_lookup.DoResolve (ec);
+					}
 				}
-				else {
-					ec.Report.SymbolRelatedToPreviousError (getter);
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter), ec.Report);
-				}
+
+				ResolveGetter (ec, ref must_do_cs1540_check);
 				return null;
 			}
-			
+
 			if (!InstanceResolve (ec, false, must_do_cs1540_check))
 				return null;
 
@@ -5598,6 +5579,11 @@ namespace Mono.CSharp {
 					ec.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
 						GetSignatureForError ());
 				}
+				return null;
+			}
+
+			if (targs != null) {
+				base.SetTypeArguments (ec, targs);
 				return null;
 			}
 
@@ -5712,6 +5698,60 @@ namespace Mono.CSharp {
 				temp.Emit (ec);
 				temp.Release (ec);
 			}
+		}
+
+		bool ResolveGetter (ResolveContext ec, ref bool must_do_cs1540_check)
+		{
+			if (targs != null) {
+				base.SetTypeArguments (ec, targs);
+				return false;
+			}
+
+			if (getter != null) {
+				if (TypeManager.GetParameterData (getter).Count != 0) {
+					Error_PropertyNotFound (ec, getter, true);
+					return false;
+				}
+			}
+
+			if (getter == null) {
+				//
+				// The following condition happens if the PropertyExpr was
+				// created, but is invalid (ie, the property is inaccessible),
+				// and we did not want to embed the knowledge about this in
+				// the caller routine.  This only avoids double error reporting.
+				//
+				if (setter == null)
+					return false;
+
+				if (InstanceExpression != EmptyExpression.Null) {
+					ec.Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
+						TypeManager.GetFullNameSignature (PropertyInfo));
+					return false;
+				}
+			}
+
+			if (getter != null &&
+				!IsAccessorAccessible (ec.CurrentType, getter, out must_do_cs1540_check)) {
+				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
+				if (pm != null && pm.HasCustomAccessModifier) {
+					ec.Report.SymbolRelatedToPreviousError (pm);
+					ec.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
+						TypeManager.CSharpSignature (getter));
+				} else {
+					ec.Report.SymbolRelatedToPreviousError (getter);
+					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter), ec.Report);
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+
+		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
+		{
+			targs = ta;
 		}
 	}
 

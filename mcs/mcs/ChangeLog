@@ -1,3 +1,8 @@
+2009-09-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #542487
+	* ecore.cs: Resolve extension methods hidden by properties.
+
 2009-09-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, ecore.cs: More dynamic binary expressions.
