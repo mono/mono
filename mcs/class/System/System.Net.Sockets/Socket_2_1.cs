@@ -384,7 +384,7 @@ namespace System.Net.Sockets {
 
 		void Linger (IntPtr handle)
 		{
-			if (linger_timeout <= 0 || !connected)
+			if (linger_timeout <= 0)
 				return;
 
 			// We don't want to receive any more data
