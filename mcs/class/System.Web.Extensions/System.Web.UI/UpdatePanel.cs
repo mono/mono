@@ -200,6 +200,9 @@ namespace System.Web.UI
 				_updateMode = value;
 			}
 		}
+
+		// Used by nested panels (see bug #542441)
+		ScriptManager.AlternativeHtmlTextWriter RenderChildrenWriter { get; set; }
 		
 		protected virtual Control CreateContentTemplateContainer ()
 		{
@@ -257,22 +260,52 @@ namespace System.Web.UI
 			writer.RenderEndTag ();
 		}
 
+		UpdatePanel FindParentPanel ()
+		{
+			Control parent = Parent;
+			while (parent != null) {
+				UpdatePanel panel = parent as UpdatePanel;
+				if (panel != null)
+					return panel;
+
+				parent = parent.Parent;
+			}
+
+			return null;
+		}
+		
 		protected override void RenderChildren (HtmlTextWriter writer)
 		{
+			RenderChildrenWriter = null;
+			
 			if (IsInPartialRendering) {
 				ScriptManager.AlternativeHtmlTextWriter altWriter = writer as ScriptManager.AlternativeHtmlTextWriter;
 				if (altWriter == null)
 					altWriter = writer.InnerWriter as ScriptManager.AlternativeHtmlTextWriter;
-				if (altWriter == null)
+				
+				if (altWriter == null) {
+					UpdatePanel parentPanel = FindParentPanel ();
+					if (parentPanel != null)
+						altWriter = parentPanel.RenderChildrenWriter;
+				}
+
+				if (altWriter == null) {
+					Console.WriteLine (Environment.StackTrace);
 					throw new InvalidOperationException ("Internal error. Invalid writer object.");
-					
-				HtmlTextWriter responseOutput = altWriter.ResponseOutput;
-				StringBuilder sb = new StringBuilder ();
-				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
-				base.RenderChildren (w);
-				w.Flush ();
-					
-				ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+				}
+
+				// Used by nested panels (see bug #542441)
+				RenderChildrenWriter = altWriter;
+				try {
+					HtmlTextWriter responseOutput = altWriter.ResponseOutput;
+					StringBuilder sb = new StringBuilder ();
+					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+					base.RenderChildren (w);
+					w.Flush ();
+					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+				} finally {
+					RenderChildrenWriter = null;
+				}
 			} else
 				base.RenderChildren (writer);
 		}
