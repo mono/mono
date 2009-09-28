@@ -1,3 +1,10 @@
+2009-09-28  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ProcessOuputTool): Move logging of tool
+	output from here to ..
+	(ExecuteTool): .. here. As, ProcessOuputTool can be
+	overridden.
+
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (HasLoggedErrors): Add missing property.

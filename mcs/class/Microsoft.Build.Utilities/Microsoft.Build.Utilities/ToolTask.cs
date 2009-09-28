@@ -210,6 +210,7 @@ namespace Microsoft.Build.Utilities
 						Log.LogError (output_str);
 					}
 
+					toolOutput.AppendLine (line);
 					LogEventsFromTextOutput (line, importance);
 				}
 			}
@@ -217,8 +218,6 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
-			toolOutput.AppendLine (singleLine);
-
 			singleLine = singleLine.Trim ();
 			if (singleLine.Length == 0)
 				return;
