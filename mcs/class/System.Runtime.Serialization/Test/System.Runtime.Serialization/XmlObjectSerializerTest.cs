@@ -1262,6 +1262,12 @@ namespace MonoTests.System.Runtime.Serialization
 				new DataContractSerializer(typeof (AsxEntryInfo)).ReadObject (reader);
 		}
 		
+		[Test]
+		public void Bug539563 ()
+		{
+			new DataContractSerializer (typeof (NestedContractType));
+		}
+		
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1603,6 +1609,15 @@ namespace MonoTests.System.Runtime.Serialization
 	{
 		[DataMember]
 		public IList<int> Array { get; set; }
+	}
+
+	[DataContract]
+	public class NestedContractType
+	{
+		[DataMember]
+		public NestedContractType Nested;
+		[DataMember]
+		public string X = "x";
 	}
 }
 

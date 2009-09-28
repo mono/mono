@@ -1,3 +1,8 @@
+2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : Test nested type serialization type
+	  initialization.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : fix (here too) bad serialization-

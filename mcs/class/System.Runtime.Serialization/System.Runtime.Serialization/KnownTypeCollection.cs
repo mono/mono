@@ -746,9 +746,9 @@ namespace System.Runtime.Serialization
 			if (FindUserMap (qname) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
-			SharedContractMap ret =
-				new SharedContractMap (type, qname, this);
+			SharedContractMap ret = new SharedContractMap (type, qname, this);
 			contracts.Add (ret);
+			ret.Initialize ();
 
 			object [] attrs = type.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i++) {

@@ -487,14 +487,18 @@ namespace System.Runtime.Serialization
 			Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
-			Type baseType = type;
+		}
+
+		internal void Initialize ()
+		{
+			Type baseType = RuntimeType;
 			List <DataMemberInfo> members = new List <DataMemberInfo> ();
-			object [] atts = type.GetCustomAttributes (
+			object [] atts = baseType.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
 			while (baseType != null) {
-				QName bqname = knownTypes.GetQName (baseType);
+				QName bqname = KnownTypes.GetQName (baseType);
 					
 				members = GetMembers (baseType, bqname, true);
 				Members.InsertRange (0, members);
