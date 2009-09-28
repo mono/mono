@@ -1,3 +1,10 @@
+2009-09-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Default SocketError.AccessDenied on 
+	Connect in case none of the DnsEndPoint provides an adequate 
+	address (family).
+	[Backport r142746]
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket_2_1.cs: Close(int timeout) blocks up to timeout ms if there's

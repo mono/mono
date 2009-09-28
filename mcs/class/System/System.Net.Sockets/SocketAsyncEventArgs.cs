@@ -213,7 +213,7 @@ namespace System.Net.Sockets
 		void ConnectCallback ()
 		{
 			LastOperation = SocketAsyncOperation.Connect;
-			SocketError error = SocketError.Success;
+			SocketError error = SocketError.AccessDenied;
 			try {
 #if NET_2_1 && !MONOTOUCH
 				// Connect to the first address that match the host name, like:
