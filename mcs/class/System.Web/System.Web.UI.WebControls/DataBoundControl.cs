@@ -137,9 +137,11 @@ namespace System.Web.UI.WebControls {
 		void Initialize ()
 		{
 			Page page = Page;
-			if (page != null) {
+			if (page != null && !IsDataBound) {
 				// LAMESPEC: see the comment above OnPagePreLoad
-				if (!page.IsPostBack || (!IsDataBound && IsViewStateEnabled))
+				if (!page.IsPostBack)
+					RequiresDataBinding = true;
+				else if (IsViewStateEnabled)
 					RequiresDataBinding = true;
 			}
 			
