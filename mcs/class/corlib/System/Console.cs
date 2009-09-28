@@ -86,7 +86,7 @@ namespace System
 				//
 #if NET_2_1
 				// should never happen since Moonlight does not run on windows
-				inputEncoding = outputEncoding = Encoding.GetEncoding (28591);
+				inputEncoding = outputEncoding = Encoding.Default;
 #else			
 				try {
 					inputEncoding = Encoding.GetEncoding (WindowsConsole.GetInputCodePage ());
@@ -95,7 +95,7 @@ namespace System
 				} catch {
 					// FIXME: I18N assemblies are not available when compiling mcs
 					// Use Latin 1 as it is fast and UTF-8 is never used as console code page
-					inputEncoding = outputEncoding = Encoding.GetEncoding (28591);
+					inputEncoding = outputEncoding = Encoding.Default;
 				}
 #endif
 			} else {
