@@ -1991,8 +1991,15 @@ namespace System.Windows.Forms
 #endif
 
 			for (int i = 0; i < items.Count; i++) {
+#if NET_2_0
+				ListViewItem item = virtual_mode ? null : items [i];
+#else
 				ListViewItem item = items [i];
+#endif
+
 				int display_index;
+				int item_y;
+
 #if NET_2_0
 				if (using_groups) {
 					ListViewGroup group = item.Group;
@@ -2003,26 +2010,27 @@ namespace System.Windows.Forms
 					Point group_items_loc = group.items_area_location;
 					display_index = group.starting_item + current_item;
 
-					y = current_item * (item_height + 2) + group_items_loc.Y;
-					SetItemLocation (display_index, 0, y, 0, 0);
+					y = item_y = current_item * (item_height + 2) + group_items_loc.Y;
+					SetItemLocation (display_index, 0, item_y, 0, 0);
 					SetItemAtDisplayIndex (display_index, i);
-					item.SetPosition (new Point (0, y));
 				} else
 #endif
 				{
 					display_index = i;
-					SetItemLocation (i, 0, y, 0, 0);
-#if NET_2_0					
-					item.SetPosition (new Point (0, y));
-#endif					
+					item_y = y;
+					SetItemLocation (i, 0, item_y, 0, 0);
 					y += item_height;
 				}
+
 #if NET_2_0
 				if (!virtual_mode) // Virtual mode sets Layout until draw time
 #endif
 				{
 					item.Layout ();
 					item.DisplayIndex = display_index;
+#if NET_2_0					
+					item.SetPosition (new Point (0, item_y));
+#endif					
 				}
 
 			}
