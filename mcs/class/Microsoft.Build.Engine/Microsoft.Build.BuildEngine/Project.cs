@@ -709,22 +709,19 @@ namespace Microsoft.Build.BuildEngine {
 			try {
 				ParentEngine.RemoveLoadedProject (this);
 	
-				XmlReaderSettings settings = new XmlReaderSettings ();
-	
-				if (SchemaFile != null) {
-					settings.Schemas.Add (null, SchemaFile);
-					settings.ValidationType = ValidationType.Schema;
-					settings.ValidationEventHandler += new ValidationEventHandler (ValidationCallBack);
-				}
-	
-				XmlReader xmlReader = XmlReader.Create (textReader, settings);
-				xmlDocument.Load (xmlReader);
+				xmlDocument.Load (textReader);
 
 				if (xmlDocument.DocumentElement.Name == "VisualStudioProject")
 					throw new InvalidProjectFileException (String.Format (
 							"Project file '{0}' is a VS2003 project, which is not " +
 							"supported by xbuild. You need to convert it to msbuild " +
 							"format to build with xbuild.", fullFileName));
+
+				if (SchemaFile != null) {
+					xmlDocument.Schemas.Add (XmlSchema.Read (
+								new StreamReader (SchemaFile), ValidationCallBack));
+					xmlDocument.Validate (ValidationCallBack);
+				}
 
 				if (xmlDocument.DocumentElement.Name != "Project") {
 					throw new InvalidProjectFileException (String.Format (

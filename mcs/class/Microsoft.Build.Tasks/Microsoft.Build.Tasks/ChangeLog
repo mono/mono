@@ -1,3 +1,11 @@
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* Exec.cs: Write the commands, which can be multiline,
+	to a temporary file, and execute that with "cmd.exe /c"
+	on windows and "sh" on non-windows.
+	(LogToolCommand): Override, and emit the commands instead
+	of the actual args passed to the shell.
+
 2009-09-28  Ankit Jain  <jankit@novell.com>
 
 	* WriteLinesToFiles.cs (Execute): Handle empty list of

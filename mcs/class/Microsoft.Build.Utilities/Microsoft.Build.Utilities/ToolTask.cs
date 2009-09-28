@@ -138,8 +138,8 @@ namespace Microsoft.Build.Utilities
 					arguments = arguments + " " + GetResponseFileSwitch (responseFileName);
 				}
 
-				Log.LogMessage (MessageImportance.Normal, "Tool {0} execution started with arguments: {1} {2}",
-						pathToTool, commandLineCommands, responseFileCommands);
+				LogToolCommand (String.Format ("Tool {0} execution started with arguments: {1} {2}",
+						pathToTool, commandLineCommands, responseFileCommands));
 
 				output = Path.GetTempFileName ();
 				error = Path.GetTempFileName ();
@@ -345,6 +345,7 @@ namespace Microsoft.Build.Utilities
 		[MonoTODO]
 		protected virtual void LogToolCommand (string message)
 		{
+			Log.LogMessage (MessageImportance.Normal, message);
 		}
 		
 		[MonoTODO]
