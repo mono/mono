@@ -1061,9 +1061,18 @@ namespace System.Web.UI
 				writer.WriteLine ("//<![CDATA[");
 				writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
 				if (IsMultiForm)
-					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance($get(\"{0}\"))._updateControls([{1}], [{2}], [{3}], {4});", Page.Form.ClientID, FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
+					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance($get(\"{0}\"))._updateControls([{1}], [{2}], [{3}], {4});",
+							  Page.Form.ClientID,
+							  FormatUpdatePanelIDs (_updatePanels, true),
+							  FormatListIDs (_asyncPostBackControls, true, false),
+							  FormatListIDs (_postBackControls, true, false),
+							  AsyncPostBackTimeout);
 				else
-					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
+					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});",
+							  FormatUpdatePanelIDs (_updatePanels, true),
+							  FormatListIDs (_asyncPostBackControls, true, false),
+							  FormatListIDs (_postBackControls, true, false),
+							  AsyncPostBackTimeout);
 				writer.WriteLine ("//]]");
 				writer.WriteLine ("</script>");
 			}
@@ -1075,21 +1084,29 @@ namespace System.Web.UI
 				return null;
 
 			StringBuilder sb = new StringBuilder ();
-			for (int i = 0; i < list.Count; i++) {
-				sb.AppendFormat ("{0}{1}{2}{0},", useSingleQuote ? "'" : String.Empty, list [i].ChildrenAsTriggers ? "t" : "f", list [i].UniqueID);
+			foreach (UpdatePanel panel in list) {
+				if (!panel.Visible)
+					continue;
+				
+				sb.AppendFormat ("{0}{1}{2}{0},", useSingleQuote ? "'" : String.Empty, panel.ChildrenAsTriggers ? "t" : "f", panel.UniqueID);
 			}
+			
 			if (sb.Length > 0)
 				sb.Length--;
 
 			return sb.ToString ();
 		}
 
-		static string FormatListIDs<T> (List<T> list, bool useSingleQuote) where T : Control {
+		static string FormatListIDs<T> (List<T> list, bool useSingleQuote, bool skipInvisible) where T : Control
+		{
 			if (list == null || list.Count == 0)
 				return null;
 
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < list.Count; i++) {
+				if (skipInvisible && !list [i].Visible)
+					continue;
+				
 				sb.AppendFormat ("{0}{1}{0},", useSingleQuote ? "'" : String.Empty, list [i].UniqueID);
 			}
 			if (sb.Length > 0)
@@ -1255,7 +1272,7 @@ namespace System.Web.UI
 						needsUpdate = true;
 					else
 						needsUpdate = false;
-
+					
 					if (needsUpdate == false) {
 						Control parent = panel.Parent;
 						UpdatePanel parentPanel;
@@ -1270,7 +1287,7 @@ namespace System.Web.UI
 							parent = parent.Parent;
 						}
 					}
-
+					
 					panel.SetInPartialRendering (needsUpdate);
 					if (needsUpdate)
 						RegisterPanelForRefresh (panel);
@@ -1286,11 +1303,11 @@ namespace System.Web.UI
 				foreach (KeyValuePair <string, string> kvp in pageHiddenFields)
 					WriteCallbackOutput (output, hiddenField, kvp.Key, kvp.Value);
 			
-			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
-			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
+			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false, false));
+			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false, false));
 			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
-			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false));
-			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false));
+			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false, true));
+			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false, true));
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
 			if (!IsMultiForm)
 				WriteCallbackOutput (output, pageTitle, null, Page.Title);
@@ -1433,10 +1450,10 @@ namespace System.Web.UI
 			output = ((HtmlTextParser) output).ResponseOutput;
 			HtmlForm form = (HtmlForm) container;
 			HtmlTextWriter writer = new HtmlDropWriter (output);
+			
 			if (form.HasControls ()) {
-				for (int i = 0; i < form.Controls.Count; i++) {
-					form.Controls [i].RenderControl (writer);
-				}
+				foreach (Control control in form.Controls)
+					control.RenderControl (writer);
 			}
 		}
 
