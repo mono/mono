@@ -289,10 +289,8 @@ namespace System.Web.UI
 						altWriter = parentPanel.RenderChildrenWriter;
 				}
 
-				if (altWriter == null) {
-					Console.WriteLine (Environment.StackTrace);
+				if (altWriter == null)
 					throw new InvalidOperationException ("Internal error. Invalid writer object.");
-				}
 
 				// Used by nested panels (see bug #542441)
 				RenderChildrenWriter = altWriter;
