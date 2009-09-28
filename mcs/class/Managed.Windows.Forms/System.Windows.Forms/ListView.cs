@@ -1077,6 +1077,10 @@ namespace System.Windows.Forms
 						throw new NotSupportedException ("CheckBoxes are not"
 							+ " supported in Tile view. Choose a different"
 							+ " view or set CheckBoxes to false.");
+					if (VirtualMode && value == View.Tile)
+						throw new NotSupportedException ("VirtualMode is"
+							+ " not supported in Tile view. Choose a different"
+							+ " view or set ViewMode to false.");
 #endif
 
 					h_scroll.Value = v_scroll.Value = 0;
@@ -1104,6 +1108,10 @@ namespace System.Windows.Forms
 
 				if (!virtual_mode && items.Count > 0)
 					throw new InvalidOperationException ();
+				if (value && view == View.Tile)
+					throw new NotSupportedException ("VirtualMode is"
+						+ " not supported in Tile view. Choose a different"
+						+ " view or set ViewMode to false.");
 
 				virtual_mode = value;
 				Redraw (true);

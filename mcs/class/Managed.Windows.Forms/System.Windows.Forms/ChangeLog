@@ -1,5 +1,10 @@
 2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Tile view and VirtualMode can't be applied together.
+	Patch by Stephen Robinson <mono@esar.org.uk>.
+
+2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When calculating the layout for Details view, don't ask
 	for the items *at all* in case we are in virtual mode. This should
 	re-enable the proper behaviour of virtual mode.
