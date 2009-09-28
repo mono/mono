@@ -1,3 +1,8 @@
+2009-09-28  Ankit Jain  <jankit@novell.com>
+
+	* WriteLinesToFiles.cs (Execute): Handle empty list of
+	lines.
+
 2009-09-25  Ankit Jain  <jankit@novell.com>
 
 	* FindAppConfigFile.cs: New.

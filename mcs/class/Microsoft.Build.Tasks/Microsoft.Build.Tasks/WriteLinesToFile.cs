@@ -50,9 +50,9 @@ namespace Microsoft.Build.Tasks {
 		{
 			try {
 				streamWriter = new StreamWriter (file.GetMetadata ("FullPath"), !overwrite);
-				foreach (ITaskItem line in lines) {
-					streamWriter.WriteLine (line);
-				}
+				if (lines != null)
+					foreach (ITaskItem line in lines)
+						streamWriter.WriteLine (line);
 				return true;
 			}
 			catch (Exception ex) {
