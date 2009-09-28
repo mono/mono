@@ -353,8 +353,15 @@ namespace System.Runtime.Serialization
 			reader.MoveToContent ();
 			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
-			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
-				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, RuntimeType.FullName));
+			else if (!isEmpty && reader.NodeType != XmlNodeType.None) {
+				var li = reader as IXmlLineInfo;
+				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.{4}",
+					reader.NodeType,
+					reader.Name,
+					reader.NamespaceURI,
+					RuntimeType.FullName,
+					li != null && li.HasLineInfo () ? String.Format (" {0}({1},{2})", reader.BaseURI, li.LineNumber, li.LinePosition) : String.Empty));
+			}
 			return res;
 		}
 
@@ -378,7 +385,7 @@ namespace System.Runtime.Serialization
 			object instance = FormatterServices.GetUninitializedObject (RuntimeType);
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
-			int memberInd = -1;
+			int memberInd = -1, ordered = -1;
 			while (!empty && reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
 				int i = 0;
@@ -392,12 +399,13 @@ namespace System.Runtime.Serialization
 						break;
 					}
 				}
-				for (; i < Members.Count; i++) { // ordered
+				for (i = Math.Max (i, ordered); i < Members.Count; i++) { // ordered
 					if (dmi != null)
 						break;
 					if (reader.LocalName == Members [i].XmlName &&
 						reader.NamespaceURI == Members [i].XmlRootNamespace) {
 						memberInd = i;
+						ordered = i;
 						dmi = Members [i];
 						break;
 					}
@@ -409,6 +417,7 @@ namespace System.Runtime.Serialization
 				}
 				SetValue (dmi, instance, deserializer.Deserialize (dmi.MemberType, reader));
 				filled [memberInd] = true;
+				reader.MoveToContent ();
 			}
 			for (int i = 0; i < Members.Count; i++)
 				if (!filled [i] && Members [i].IsRequired)
@@ -420,7 +429,11 @@ namespace System.Runtime.Serialization
 		// For now it could be private.
 		protected Exception MissingRequiredMember (DataMemberInfo dmi, XmlReader reader)
 		{
-			return new ArgumentException (String.Format ("Data contract member {0} is required, but missing in the input XML.", new QName (dmi.XmlName, dmi.XmlNamespace)));
+			var li = reader as IXmlLineInfo;
+			return new ArgumentException (String.Format ("Data contract member {0} for the type {1} is required, but missing in the input XML.{2}",
+				new QName (dmi.XmlName, dmi.XmlNamespace),
+				RuntimeType,
+				li != null && li.HasLineInfo () ? String.Format (" {0}({1},{2})", reader.BaseURI, li.LineNumber, li.LinePosition) : null));
 		}
 
 		// For now it could be private.
@@ -487,14 +500,18 @@ namespace System.Runtime.Serialization
 			Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
-			Type baseType = type;
+		}
+
+		internal void Initialize ()
+		{
+			Type baseType = RuntimeType;
 			List <DataMemberInfo> members = new List <DataMemberInfo> ();
-			object [] atts = type.GetCustomAttributes (
+			object [] atts = baseType.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
 			while (baseType != null) {
-				QName bqname = knownTypes.GetQName (baseType);
+				QName bqname = KnownTypes.GetQName (baseType);
 					
 				members = GetMembers (baseType, bqname, true);
 				Members.InsertRange (0, members);
@@ -503,10 +520,7 @@ namespace System.Runtime.Serialization
 				baseType = baseType.BaseType;
 			}
 
-//			Members.Sort (delegate (
-//				DataMemberInfo d1, DataMemberInfo d2) {
-//					return d1.Order - d2.Order;
-//				});
+			Members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 		}
 
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
@@ -540,14 +554,12 @@ namespace System.Runtime.Serialization
 				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
 			}
 
-			data_members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
-
 			return data_members;
 		}
 
 		public override List<DataMemberInfo> GetMembers ()
 		{
-			return GetMembers (RuntimeType, XmlName, true);
+			return Members;
 		}
 	}
 
@@ -692,6 +704,7 @@ namespace System.Runtime.Serialization
 					add_method.Invoke (instance, new object [] {elem});
 				else
 					throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
+				reader.MoveToContent ();
 			}
 			if (RuntimeType.IsArray)
 				return ((ArrayList)instance).ToArray (element_type);
@@ -967,7 +980,8 @@ namespace System.Runtime.Serialization
 		// Does this make sense? I doubt.
 		public override List<DataMemberInfo> GetMembers ()
 		{
-			return GetMembers (RuntimeType, XmlName, true);
+			return Members;
+			//return GetMembers (RuntimeType, XmlName, true);
 		}
 	}
 
@@ -1141,7 +1155,7 @@ namespace System.Runtime.Serialization
 
 			public int Compare (DataMemberInfo d1, DataMemberInfo d2)
 			{
-				if (d1.Order == -1 || d2.Order == -1)
+				if (d1.Order == d2.Order)
 					return String.CompareOrdinal (d1.XmlName, d2.XmlName);
 
 				return d1.Order - d2.Order;
