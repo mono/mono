@@ -98,7 +98,6 @@ namespace System.Web.Caching
 
 		public CacheItem Dequeue ()
 		{
-			Console.WriteLine ("{0}.Dequeue ()", this);
 			if (root == null)
 				return null;
 
@@ -106,10 +105,8 @@ namespace System.Web.Caching
 			if (root.Left == null && root.Right == null) {
 				ret = root.Data;
 				root = null;
-				if (ret.Disabled) {
-					Console.WriteLine ("\troot disabled, returning null");
+				if (ret.Disabled)
 					return null;
-				}
 				
 				return ret;
 			}
@@ -140,9 +137,6 @@ namespace System.Web.Caching
 			
 				root.Data = last.Data;
 				BubbleDown (root);
-
-				if (ret.Disabled)
-					Console.WriteLine ("\titem {0} disabled, ignoring", ret.ExpiresAt);
 			} while (ret.Disabled);
 			
 			return ret;
