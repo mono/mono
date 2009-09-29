@@ -1,3 +1,7 @@
+2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: fix the check for a time-out return value from 'ping'.
+
 2009-09-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: if we receive a packet that is ignored, adjust the
