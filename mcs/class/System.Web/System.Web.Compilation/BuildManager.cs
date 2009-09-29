@@ -254,7 +254,7 @@ namespace System.Web.Compilation {
 			while (reader.MoveToNextAttribute ()) {
 				string name = reader.Name;
 				if (name == "virtualPath")
-					pc_data.VirtualPath = reader.Value;
+					pc_data.VirtualPath = VirtualPathUtility.RemoveTrailingSlash (reader.Value);
 				else if (name == "assembly")
 					pc_data.AssemblyFileName = reader.Value;
 				else if (name == "type")
@@ -720,7 +720,6 @@ namespace System.Web.Compilation {
 				}
 				return pc_data.Type;
 			}
-			//Console.WriteLine ("VPath not precompiled: {0}", virtualPath);
 			return null;
 		}
 
