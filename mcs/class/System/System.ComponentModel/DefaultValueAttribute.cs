@@ -93,14 +93,19 @@ namespace System.ComponentModel
 
 		public DefaultValueAttribute (Type type, string value)
 		{
-#if NET_2_1
-			throw new NotImplementedException ();
-#else
 			try {
+#if NET_2_1
+				if (type.IsEnum)
+					DefaultValue = Enum.Parse (type, value);
+				else if (type == typeof (TimeSpan))
+					DefaultValue = TimeSpan.Parse (value);
+				else
+					DefaultValue = Convert.ChangeType (value, type, null);
+#else
 				TypeConverter converter = TypeDescriptor.GetConverter (type);
 				DefaultValue = converter.ConvertFromString (null, CultureInfo.InvariantCulture, value);
-			} catch { }
 #endif
+			} catch { }
 		}
 
 #if NET_2_0

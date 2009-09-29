@@ -93,7 +93,7 @@ namespace System.ComponentModel {
 
 				lock (lockobj) {
 					if (async == null)
-						async = new CategoryAttribute ("Asynchrinous");
+						async = new CategoryAttribute ("Asynchronous");
 				}
 				return async;
 			}
@@ -133,7 +133,11 @@ namespace System.ComponentModel {
 
 				lock (lockobj) {
 					if (def == null)
+#if NET_2_1
+						def = new CategoryAttribute ("Default");
+#else
 						def = new CategoryAttribute ();
+#endif
 				}
 				return def;
 			}
@@ -159,7 +163,11 @@ namespace System.ComponentModel {
 
 				lock (lockobj) {
 					if (drag_drop == null)
+#if NET_2_1
+						drag_drop = new CategoryAttribute ("DragDrop");
+#else
 						drag_drop = new CategoryAttribute ("Drag Drop");
+#endif
 				}
 				return drag_drop;
 			}
@@ -237,7 +245,11 @@ namespace System.ComponentModel {
 
 				lock (lockobj) {
 					if (window_style == null)
+#if NET_2_1
+						window_style = new CategoryAttribute ("WindowStyle");
+#else
 						window_style = new CategoryAttribute ("Window Style");
+#endif
 				}
 				return window_style;
 			}
