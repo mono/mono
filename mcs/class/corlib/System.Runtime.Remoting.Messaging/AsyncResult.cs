@@ -157,7 +157,8 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 
 		lock (this) {
 			completed = true;
-			((ManualResetEvent) AsyncWaitHandle).Set ();
+			if (handle != null)
+				((ManualResetEvent) AsyncWaitHandle).Set ();
 		}
 		
 		if (async_callback != null) {
