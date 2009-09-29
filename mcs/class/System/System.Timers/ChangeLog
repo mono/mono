@@ -1,3 +1,7 @@
+2009-09-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Timer_2_1.cs: Removed. No longer needed by Moonlight
+
 2009-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Timer_2_1.cs: New. A smaller, internal subset of Timer for 
