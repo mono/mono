@@ -1,3 +1,8 @@
+2009-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (build_wait_tids): Fix a crash if there is no main thread, like
+	when using --compile-all.
+
 2009-09-27  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata.c (free_generic_class): Unregister the field_objects
