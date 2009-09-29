@@ -1456,6 +1456,13 @@ class Tester
 		Assert (null, e5.Compile ().Invoke (30));
 	}
 	
+	void LeftShiftTest_6 ()
+	{
+		Expression<Func<int, MyTypeImplicitOnly, int>> e = (a, b) => a << b;
+		AssertNodeType (e, ExpressionType.LeftShift);
+		Assert (0x7F0, e.Compile ().Invoke (0xFE, new MyTypeImplicitOnly (3)));
+	}
+	
 	void LessThanTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a < b;
@@ -2429,6 +2436,13 @@ class Tester
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
+	}
+	
+	void RightShiftTest_5 ()
+	{
+		Expression<Func<int, MyTypeImplicitOnly, int>> e = (a, b) => a >> b;
+		AssertNodeType (e, ExpressionType.RightShift);
+		Assert (31, e.Compile ().Invoke (0xFE, new MyTypeImplicitOnly (3)));
 	}
 	
 	void SubtractTest ()

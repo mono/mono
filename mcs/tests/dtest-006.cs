@@ -25,9 +25,6 @@ public struct InverseLogicalOperator
 	}
 }
 
-// TODO: Create a clone which uses +(MyType, int) pattern and an implicit conversion
-// is required to do the user-conversion
-
 public struct MyType
 {
 	int value;
@@ -44,19 +41,14 @@ public struct MyType
 		throw new NotImplementedException ();
 	}
 
-	public static implicit operator int (MyType o)
-	{
-		return o.value;
-	}
-
 	public static bool operator true (MyType a)
 	{
-		return a.value == a;
+		return a.value != 1;
 	}
 
 	public static bool operator false (MyType a)
 	{
-		return a.value != a;
+		return a.value == 0;
 	}
 
 	public static MyType operator + (MyType a, MyType b)
@@ -134,6 +126,21 @@ public struct MyType
 		return a.value > 0;
 	}
 
+	public static int operator ~ (MyType a)
+	{
+		return ~a.value;
+	}
+
+	public static MyType operator ++ (MyType a)
+	{
+		return new MyType (a.value * 2);
+	}
+
+	public static MyType operator -- (MyType a)
+	{
+		return new MyType (a.value / 2);
+	}
+
 	public static int operator >> (MyType a, int b)
 	{
 		return a.value >> b;
@@ -151,7 +158,7 @@ public struct MyType
 	
 	public static MyType operator + (MyType a)
 	{
-		return new MyType (+a.value);
+		return new MyType (334455); // magic number
 	}
 
 	public override string ToString ()
@@ -188,6 +195,11 @@ struct MyTypeImplicitOnly
 	public static implicit operator short (MyTypeImplicitOnly m)
 	{
 		return m.b;
+	}
+
+	public static implicit operator bool (MyTypeImplicitOnly m)
+	{
+		return m.b != 0;
 	}
 }
 
@@ -248,12 +260,16 @@ class Tester
 		double v2 = 0.5;
 		Assert (d + v2, 5.5, "#1a");
 
+		d = new MyType (5);
 		MyType v3 = new MyType (30);
 		Assert (d + v3, new MyType (35), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 + new MyType (6), new MyType (-1), "#3a");
-		Assert (d3 + 11, 4, "#3b");
 
+		d3 = new MyTypeImplicitOnly (6);
+		Assert (d3 + new MyTypeImplicitOnly (11), 17, "#3b");
+
+		d = new MyTypeImplicitOnly (5);
 		decimal v4 = 4m;
 		Assert (d + v4, 9m, "#4");
 	}
@@ -272,12 +288,14 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 + 1, -1, "#2a");
 
+		d = new MyType (5);
 		MyType? v3 = new MyType (30);
 		Assert (d + v3, new MyType (35), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 + new MyType (6), new MyType (-1), "#3a");
 		Assert<MyType?> (d3 + null, null, "#3b");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal? v4 = 4m;
 		Assert (d + v4, 9m, "#4");
 		v4 = null;
@@ -309,8 +327,9 @@ class Tester
 			int? v2 = v;
 			AssertChecked (() => d + v2, null, "#2");
 
+			d = new MyType (3);
 			MyType v3 = new MyType (int.MaxValue);
-			AssertChecked (() => d + v3, new MyType (35), "#3");
+			Assert (new MyType (-2147483646), d + v3, "#3");
 		}
 	}
 	
@@ -415,8 +434,10 @@ class Tester
 			int v = int.MaxValue;
 			AssertChecked (() => { d += v; Assert (d, 0, "#1-"); }, "#1");
 
+			d = new MyType (5);
 			MyType v3 = new MyType (int.MaxValue);
-			AssertChecked (() => { d += v3; Assert (d, 0, "#3-"); }, "#3");
+			d += v3;
+			Assert (d, new MyType (-2147483644), "#3-");
 		}
 	}
 
@@ -459,11 +480,14 @@ class Tester
 		Assert (d & v2, 42, "#2");
 		Assert (d & 0, 0, "#2a");
 
+		d = new MyType (10);
 		MyType v3 = new MyType (30);
 		Assert (d & v3, new MyType (10), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 & new MyType (6), new MyType (0), "#3a");
-		Assert (d3 & 11, 9, "#3b");
+
+		d3 = new MyTypeImplicitOnly (6);
+		Assert (d3 & 11, 2, "#3b");
 	}
 
 	void AndTestEnum ()
@@ -492,8 +516,9 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 & 1, 0, "#2a");
 
+		d = new MyType (22);
 		MyType? v3 = new MyType (30);
-		Assert (d & v3, new MyType (4), "#3");
+		Assert (d & v3, new MyType (22), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 & new MyType (6), new MyType (0), "#3a");
 		Assert<MyType?> (d3 + null, null, "#3b");
@@ -550,8 +575,8 @@ class Tester
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 && new MyType (6), new MyType (0), "#3");
 
-		// This should not compile
-		Assert (d3 && 11, 9, "#3b");
+		d3 = new MyTypeImplicitOnly (5);
+		Assert (d3 && 11, 1, "#3b");
 	}
 
 	void DivideTest ()
@@ -561,14 +586,15 @@ class Tester
 		int v = 2;
 		Assert (d / v, 2, "#1");
 
+		d = new MyType (5);
 		MyType v3 = new MyType (30);
 		Assert (d / v3, new MyType (0), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 + new MyType (6), new MyType (-1), "#3a");
-		Assert (d3 / 11, 0, "#3b");
 
+		d = new MyTypeImplicitOnly (6);
 		decimal v4 = 4m;
-		Assert (d / v4, 1.25m, "#4");
+		Assert (d / v4, 1.5m, "#4");
 	}
 
 	void DivideNullableTest ()
@@ -585,12 +611,14 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 / 1, -2, "#2a");
 
+		d = new MyType (5);
 		MyType? v3 = new MyType (30);
 		Assert (d / v3, new MyType (0), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 / new MyType (6), new MyType (-1), "#3a");
 		Assert<MyType?> (d3 + null, null, "#3b");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal? v4 = 4m;
 		Assert (d / v4, 1.25m, "#4");
 		v4 = null;
@@ -653,8 +681,7 @@ class Tester
 		d = new MyType (30);
 		MyType v3 = new MyType (30);
 		Assert (d == v3, true, "#3");
-		dynamic d3 = new MyType (-7);
-		Assert (d3 == new MyType (6), false, "#3a");
+		dynamic d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 == 11, false, "#3b");
 		
 		d = 2m;
@@ -763,10 +790,13 @@ class Tester
 		Assert (d ^ v2, 20, "#2");
 		Assert (d ^ 0, 42, "#2a");
 
+		d = new MyType (42);
 		MyType v3 = new MyType (30);
 		Assert (d ^ v3, new MyType (52), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 ^ new MyType (6), new MyType (-1), "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 ^ 11, -14, "#3b");
 	}
 
@@ -784,6 +814,7 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 ^ 1, -1, "#2a");
 
+		d = new MyType (5);
 		MyType? v3 = new MyType (30);
 		Assert (d ^ v3, new MyType (27), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
@@ -858,6 +889,8 @@ class Tester
 		Assert (d > v3, false, "#3");
 		dynamic d3 = new MyType (-7);
 		Assert (d3 > new MyType (6), false, "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 > 11, false, "#3b");
 
 		d = 2m;
@@ -929,6 +962,8 @@ class Tester
 		Assert (d >= v3, true, "#3");
 		dynamic d3 = new MyType (-7);
 		Assert (d3 >= new MyType (6), false, "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 >= 11, false, "#3b");
 
 		d = 2m;
@@ -992,10 +1027,10 @@ class Tester
 		Assert<ulong> (d << s, 0x1FC000, "#1b");
 
 		d = 0x7F000;
-		MyType v3 = new MyType (3);
-		Assert (d << v3, new MyType (0x3F8000), "#3");
+		MyTypeImplicitOnly v3 = new MyTypeImplicitOnly (3);
+		Assert (d << v3, 0x3F8000, "#3");
 		dynamic d3 = new MyType (-7);
-		Assert (d3 << new MyType (6), new MyType (-448), "#3a");
+		Assert (d3 << new MyTypeImplicitOnly (6), -448, "#3a");
 		Assert (d3 << 11, -14336, "#3b");
 	}
 
@@ -1014,13 +1049,6 @@ class Tester
 		Assert (d << v2, 0x40000000, "#2");
 		dynamic d2 = (int?) -2;
 		Assert (d2 << 1, -4, "#2a");
-
-		d = 0xFFFFFF;
-		MyType? v3 = new MyType (30);
-		Assert (d << v3, new MyType (-1073741824), "#3");
-		dynamic d3 = new MyType? (new MyType (-7));
-		Assert (d3 << new MyType (6), new MyType (-448), "#3a");
-		Assert<MyType?> (d3 << null, null, "#3b");
 	}
 
 	void LeftShiftAssignTest ()
@@ -1047,12 +1075,6 @@ class Tester
 		dynamic d2 = (int?) -2;
 		d2 <<= 1;
 		Assert (d2, -4, "#2a");
-
-		d = 0xFFFFFF;
-		MyType? v3 = new MyType (30);
-		d <<= v3;
-		Assert (d, new MyType (-1073741824), "#3");
-		dynamic d3 = new MyType? (new MyType (-7));
 	}
 
 	void LessThanTest ()
@@ -1074,6 +1096,8 @@ class Tester
 		Assert (d < v3, false, "#3");
 		dynamic d3 = new MyType (-7);
 		Assert (d3 < new MyType (6), true, "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 < 11, true, "#3b");
 
 		d = 2m;
@@ -1103,6 +1127,8 @@ class Tester
 		Assert (d < v3, false, "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 < new MyType (6), true, "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 < null, false, "#3b");
 
 		d = 4.1m;
@@ -1145,6 +1171,8 @@ class Tester
 		Assert (d <= v3, true, "#3");
 		dynamic d3 = new MyType (-7);
 		Assert (d3 <= new MyType (6), true, "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 <= 11, true, "#3b");
 
 		d = 2m;
@@ -1204,12 +1232,13 @@ class Tester
 		int v = 2;
 		Assert (d % v, 1, "#1");
 
+		d = new MyType (5);
 		MyType v3 = new MyType (30);
 		Assert (d % v3, new MyType (5), "#3");
 		dynamic d3 = new MyType (-7);
-		Assert<MyType> (d3 + new MyType (6), new MyType (-1), "#3a");
-		Assert (d3 % 11, -7, "#3b");
+		Assert<MyType> (d3 % new MyType (6), new MyType (-1), "#3a");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal v4 = 4m;
 		Assert (d % v4, 1m, "#4");
 	}
@@ -1228,12 +1257,14 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 % 1, 0, "#2a");
 
+		d = new MyType (-2);
 		MyType? v3 = new MyType (30);
-		Assert (d % v3, new MyType (5), "#3");
+		Assert (d % v3, new MyType (-2), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 % new MyType (6), new MyType (-1), "#3a");
 		Assert<MyType?> (d3 + null, null, "#3b");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal? v4 = 4m;
 		Assert (d % v4, 1m, "#4");
 		v4 = null;
@@ -1274,11 +1305,11 @@ class Tester
 		double v2 = 0.5;
 		Assert (d * v2, 2.5, "#1a");
 
+		d = new MyType (5);
 		MyType v3 = new MyType (30);
 		Assert (d * v3, new MyType (150), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 * new MyType (6), new MyType (-42), "#3a");
-		Assert (d3 * 11, -77, "#3b");
 
 		decimal v4 = 4m;
 		d = 7.9m;
@@ -1299,12 +1330,14 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 * 1, -2, "#2a");
 
+		d = new MyType (5);
 		MyType? v3 = new MyType (30);
 		Assert (d * v3, new MyType (150), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 * new MyType (6), new MyType (-42), "#3a");
 		Assert<MyType?> (d3 * null, null, "#3b");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal? v4 = 4m;
 		Assert (d * v4, 20m, "#4");
 		v4 = null;
@@ -1322,8 +1355,9 @@ class Tester
 			int? v2 = v;
 			AssertChecked (() => d * v2, null, "#2");
 
+			d = new MyType (4);
 			MyType v3 = new MyType (int.MaxValue);
-			AssertChecked (() => d * v3, new MyType (35), "#3");
+			Assert (d * v3, new MyType (-4), "#3");
 		}
 	}
 
@@ -1360,9 +1394,65 @@ class Tester
 			int v = int.MaxValue;
 			AssertChecked (() => { d *= v; Assert (d, 0, "#1-"); }, "#1");
 
+			d = new MyType (44);
 			MyType v3 = new MyType (int.MaxValue);
-			AssertChecked (() => { d *= v3; Assert (d, 0, "#3-"); }, "#3");
+			d *= v3;
+			Assert (d, new MyType (-44), "#3-");
 		}
+	}
+
+	void Negate ()
+	{
+		dynamic d = -8;
+		Assert (8, -d, "#1");
+		Assert (-8, -(-d), "#1a");
+
+		d = new MyType (-14);
+		Assert (new MyType (14), -d, "#2");
+
+		d = new MyTypeImplicitOnly (4);
+		Assert (-4, -d, "#3");
+
+		d = (uint) 7;
+		Assert (-7, -d, "#4");
+
+		d = double.NegativeInfinity;
+		Assert (double.PositiveInfinity, -d, "#5");
+	}
+
+	void NegateNullable ()
+	{
+		dynamic d = (int?) -8;
+		Assert (8, -d, "#1");
+		Assert (-8, -(-d), "#1a");
+
+		MyType? n1 = new MyType (4);
+		d = n1;
+		Assert (new MyType (-4), -d, "#2");
+
+		MyTypeImplicitOnly? n2 = new MyTypeImplicitOnly (4);
+		d = n2;
+		Assert (-4, -d, "#3");
+
+		d = (sbyte?) 7;
+		Assert (-7, -d, "#4");
+	}
+
+	void NegateChecked ()
+	{
+		checked {
+			dynamic d = int.MinValue;
+			AssertChecked (() => -d, 0, "#1");
+		}
+	}
+
+	void Not ()
+	{
+		dynamic d = true;
+		Assert (false, !d, "#1");
+
+		var de = new MyType (-1);
+		Assert (false, !d, "#2");
 	}
 
 	void NotEqualTest ()
@@ -1384,7 +1474,6 @@ class Tester
 		Assert (d != v3, false, "#3");
 		dynamic d3 = new MyType (-7);
 		Assert (d3 != new MyType (6), true, "#3a");
-		Assert (d3 != 11, true, "#3b");
 
 		d = 2m;
 		decimal v4 = 4m;
@@ -1453,6 +1542,30 @@ class Tester
 		Assert (d != null, true, "#1b");
 	}
 
+	void OnesComplement ()
+	{
+		dynamic d = 7;
+		Assert (-8, ~d, "#1");
+
+		d = new MyType (-1);
+		Assert (0, ~d, "#2");
+
+		d = (ulong) 7;
+		Assert (18446744073709551608, ~d, "#3");
+
+		d = MyEnum.Value_1;
+		Assert ((MyEnum) 254, ~d, "#4");
+	}
+
+	void OnesComplementNullable ()
+	{
+		dynamic d = (int?) 7;
+		Assert (-8, ~d, "#1");
+
+		d = (MyEnum?) MyEnum.Value_1;
+		Assert ((MyEnum) 254, ~d, "#4");
+	}
+
 	void OrTest ()
 	{
 		dynamic d = true;
@@ -1466,10 +1579,13 @@ class Tester
 		Assert (d | v2, 62, "#2");
 		Assert (d | 0, 42, "#2a");
 
+		d = new MyType (42);
 		MyType v3 = new MyType (30);
 		Assert (d | v3, new MyType (62), "#3");
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 | new MyType (6), new MyType (-1), "#3a");
+
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 | 11, -5, "#3b");
 	}
 
@@ -1499,11 +1615,11 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 | 1, -1, "#2a");
 
+		d = new MyType (-2);
 		MyType? v3 = new MyType (30);
-		Assert (d | v3, new MyType (31), "#3");
+		Assert (d | v3, new MyType (-2), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 | new MyType (6), new MyType (-1), "#3a");
-		Assert<MyType?> (d3 + null, null, "#3b");
 	}
 
 	void OrAssignedTest ()
@@ -1557,6 +1673,7 @@ class Tester
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 || new MyType (6), new MyType (-7), "#3");
 
+		d3 = new MyTypeImplicitOnly (-7);
 		Assert (d3 || 11, -7, "#3b");
 	}
 
@@ -1571,11 +1688,10 @@ class Tester
 		Assert<ulong> (d >> s, 0x1FC00, "#1b");
 
 		d = 0x7F000;
-		MyType v3 = new MyType (3);
-		Assert (d >> v3, new MyType (0xFE00), "#3");
+		MyTypeImplicitOnly v3 = new MyTypeImplicitOnly (3);
+		Assert (d >> v3, 0xFE00, "#3");
 		dynamic d3 = new MyType (-7);
-		Assert (d3 >> new MyType (6), new MyType (-1), "#3a");
-		Assert (d3 >> 11, -1, "#3b");
+		Assert (d3 >> new MyTypeImplicitOnly (11), -1, "#3a");
 	}
 
 	void RightShiftNullableTest ()
@@ -1593,13 +1709,6 @@ class Tester
 		Assert (d >> v2, 0, "#2");
 		dynamic d2 = (int?) -200;
 		Assert (d2 >> 1, -100, "#2a");
-
-		d = 0xFFFFFF;
-		MyType? v3 = new MyType (3);
-		Assert (d >> v3, new MyType (0x1FFFFF), "#3");
-		dynamic d3 = new MyType? (new MyType (-7));
-		Assert (d3 >> new MyType (6), new MyType (-1), "#3a");
-		Assert<MyType?> (d3 >> null, null, "#3b");
 	}
 
 	void RightShiftAssignTest ()
@@ -1626,11 +1735,6 @@ class Tester
 		dynamic d2 = (int?) -2;
 		d2 >>= 1;
 		Assert (d2, -1, "#2a");
-
-		d = 0xFFFFFF;
-		MyType? v3 = new MyType (3);
-		d >>= v3;
-		Assert (d, new MyType (0x1FFFFF), "#3");
 	}
 
 	void SubtractTest ()
@@ -1642,12 +1746,13 @@ class Tester
 		double v2 = 0.5;
 		Assert (d - v2, 4.5, "#1a");
 
+		d = new MyType (5);
 		MyType v3 = new MyType (30);
 		Assert (d - v3, new MyType (-25), "#3");
 		dynamic d3 = new MyType (-7);
-		Assert<MyType> (d3 - new MyType (6), new MyType (-13), "#3a");
-		Assert (d3 - 11, -18, "#3b");
+		Assert (d3 - new MyType (6), new MyType (-13), "#3a");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal v4 = 4m;
 		Assert (d - v4, 1m, "#4");
 	}
@@ -1666,12 +1771,14 @@ class Tester
 		dynamic d2 = (int?) -2;
 		Assert (d2 - 1, -3, "#2a");
 
+		d = new MyType (5);
 		MyType? v3 = new MyType (30);
 		Assert (d - v3, new MyType (-25), "#3");
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 - new MyType (6), new MyType (-13), "#3a");
 		Assert<MyType?> (d3 - null, null, "#3b");
 
+		d = new MyTypeImplicitOnly (5);
 		decimal? v4 = 4m;
 		Assert (d - v4, 1m, "#4");
 		v4 = null;
@@ -1703,8 +1810,9 @@ class Tester
 			int? v2 = v;
 			AssertChecked (() => d - v2, null, "#2");
 
+			d = new MyType (5);
 			MyType v3 = new MyType (int.MinValue);
-			AssertChecked (() => d - v3, new MyType (35), "#3");
+			Assert (d - v3, new MyType (-2147483643), "#3");
 		}
 	}
 
@@ -1753,8 +1861,10 @@ class Tester
 			int v = int.MinValue;
 			AssertChecked (() => { d -= v; Assert (d, 0, "#1a"); }, "#1");
 
+			d = new MyType (5);
 			MyType v3 = new MyType (int.MinValue);
-			AssertChecked (() => { d -= v3; Assert (d, 0, "#3a"); }, "#3");
+			d -= v3;
+			Assert (d, new MyType (-2147483643), "#3a");
 		}
 	}
 
@@ -1762,6 +1872,116 @@ class Tester
 	void SubtractAssignmentEvent ()
 	{
 		// IMPLEMENT
+	}
+
+	void UnaryDecrement ()
+	{
+		dynamic d = 3;
+		Assert (3, d--, "#1");
+		Assert (2, d, "#1a");
+
+		d = 3;
+		Assert (2, --d, "#2");
+		Assert (2, d, "#2a");
+
+		d = new MyType (-3);
+		Assert (new MyType (-3), d--, "#3");
+		Assert (new MyType (-1), d, "#3a");
+	}
+
+	void UnaryDecrementCheckedTest ()
+	{
+		checked {
+			dynamic d = int.MinValue;
+
+			AssertChecked (() => { d--; Assert (d, -1073741824, "#1a"); }, "#1");
+
+			d = new MyType (int.MinValue);
+			d--;
+			Assert (d, new MyType (-1073741824), "#2");
+		}
+	}
+
+	void UnaryIncrement ()
+	{
+		dynamic d = 3;
+		Assert (3, d++, "#1");
+		Assert (4, d, "#1a");
+
+		d = 3;
+		Assert (4, ++d, "#2");
+		Assert (4, d, "#2a");
+
+		d = new MyType (-3);
+		Assert (new MyType (-3), d++, "#3");
+		Assert (new MyType (-6), d, "#3a");
+	}
+
+	void UnaryIncrementCheckedTest ()
+	{
+		checked {
+			dynamic d = int.MaxValue;
+
+			AssertChecked (() => { d++; Assert (d, 0, "#1a"); }, "#1");
+
+			d = new MyType (int.MaxValue);
+			d++;
+			Assert (d, new MyType (-2), "#2");
+		}
+	}
+
+	//void UnaryIsFalse ()
+	//{
+	//    dynamic d = this;
+	//    object r = d == null;
+	//    Assert (false, (bool) r, "#1");
+	//    Assert<object> (true, d != null, "#1a");
+	//}
+
+	void UnaryIsTrue ()
+	{
+		dynamic d = true;
+		Assert (3, d ? 3 : 5, "#1");
+
+		d = 4;
+		Assert (false, d < 1, "#2");
+
+		d = new InverseLogicalOperator (true);
+		Assert (1, d ? 1 : -1, "#3");
+	}
+
+	void UnaryPlus ()
+	{
+		dynamic d = -8;
+		Assert (-8, +d, "#1");
+		Assert (-8, +(+d), "#1a");
+
+		d = new MyType (14);
+		Assert (new MyType (334455), +d, "#2");
+
+		d = new MyTypeImplicitOnly (4);
+		Assert (4, +d, "#3");
+
+		d = (uint) 7;
+		Assert<uint> (7, +d, "#4");
+	}
+
+	void UnaryPlusNullable ()
+	{
+		dynamic d = (int?) -8;
+		Assert (-8, +d, "#1");
+		Assert (-8, +(+d), "#1a");
+
+		MyType? n1 = new MyType (4);
+		d = n1;
+		Assert (new MyType (334455), +d, "#2");
+
+		MyTypeImplicitOnly? n2 = new MyTypeImplicitOnly (4);
+		d = n2;
+		Assert (4, +d, "#3");
+
+		d = (sbyte?) 7;
+		Assert (7, +d, "#4");
 	}
 
 #pragma warning restore 169

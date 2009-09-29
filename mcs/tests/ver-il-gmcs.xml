@@ -16088,6 +16088,14 @@
         <size>7</size>
       </method>
     </type>
+    <type name="Tester">
+      <method name="Void LeftShiftTest_6()">
+        <size>155</size>
+      </method>
+      <method name="Void RightShiftTest_5()">
+        <size>152</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
