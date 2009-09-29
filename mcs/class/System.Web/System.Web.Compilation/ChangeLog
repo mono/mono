@@ -1,3 +1,9 @@
+2009-09-30  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: if precompilation file contains virtual path
+	with trailing slash (e.g. for themes), remove the slash. Fixes bug
+	#541271
+
 2009-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: ResourceProviderHasObject calls
