@@ -1,3 +1,9 @@
+2009-09-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Thread.cs: StartSafe: ignore ThreadAbortExceptions.
+
+	Backport of r142847.
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: account for the time spent sending jobs to the queue.
