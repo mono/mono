@@ -854,6 +854,8 @@ namespace System.Threading {
 				} else {
 					((ParameterizedThreadStart) threadstart) (start_obj);
 				}
+			} catch (ThreadAbortException) {
+				// do nothing
 			} catch (Exception ex) {
 				MoonlightUnhandledException (ex);
 			}
