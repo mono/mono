@@ -1,5 +1,7 @@
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_unhandled_exception): Fix a crash if there is no main thread.
+
 	* threads.c (build_wait_tids): Fix a crash if there is no main thread, like
 	when using --compile-all.
 
