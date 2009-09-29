@@ -114,7 +114,7 @@ namespace System.Net {
 		{
 			HttpListenerRequest req = context.Request;
 			ListenerPrefix prefix;
-			HttpListener listener = SearchListener (req.UserHostName, req.RawUrl, out prefix);
+			HttpListener listener = SearchListener (req.UserHostName, req.Url, out prefix);
 			if (listener == null)
 				return false;
 
@@ -131,15 +131,15 @@ namespace System.Net {
 
 			HttpListenerRequest req = context.Request;
 			ListenerPrefix prefix;
-			HttpListener listener = SearchListener (req.UserHostName, req.RawUrl, out prefix);
+			HttpListener listener = SearchListener (req.UserHostName, req.Url, out prefix);
 			if (listener != null)
 				listener.UnregisterContext (context);
 		}
 
-		HttpListener SearchListener (string host, string raw_url, out ListenerPrefix prefix)
+		HttpListener SearchListener (string host, Uri uri, out ListenerPrefix prefix)
 		{
 			prefix = null;
-			if (raw_url == null)
+			if (uri == null)
 				return null;
 
 			//TODO: We should use a ReaderWriterLock between this and the add/remove operations.
@@ -149,13 +149,7 @@ namespace System.Net {
 					host = host.Substring (0, colon);
 			}
 
-			string path;
-			Uri raw_uri;
-			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
-				path = raw_uri.PathAndQuery;
-			else
-				path = HttpUtility.UrlDecode (raw_url);
-			
+			string path = HttpUtility.UrlDecode (uri.AbsolutePath);
 			string path_slash = path [path.Length - 1] == '/' ? path : path + "/";
 			
 			HttpListener best_match = null;
