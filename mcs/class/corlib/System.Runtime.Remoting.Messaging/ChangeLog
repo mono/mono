@@ -1,3 +1,7 @@
+2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AsyncResult.cs: do not create the handle if not needed.
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AsyncResult.cs: don't create the handle if we know the result is
