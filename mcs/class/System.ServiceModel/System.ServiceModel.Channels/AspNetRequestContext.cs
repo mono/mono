@@ -54,7 +54,6 @@ namespace System.ServiceModel.Channels {
 
 		protected override void ProcessReply (Message msg, TimeSpan timeout)
 		{
-Console.WriteLine ("ProcessReply for " + msg.Headers.Action + " with " + Channel.Encoder.GetType ());
 			ctx.Response.ContentType = Channel.Encoder.ContentType;
 			MemoryStream ms = new MemoryStream ();
 			Channel.Encoder.WriteMessage (msg, ms);

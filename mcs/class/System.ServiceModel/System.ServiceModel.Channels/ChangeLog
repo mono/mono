@@ -1,5 +1,9 @@
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AspNetRequestContext.cs : remove CWL.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AspNetReplyChannel.cs, AspNetRequestContext.cs : close HttpContext
 	  only after AspNetRequestContext is closed. Do not close it
 	  immediately after receiving the context. (HttpRuntime destructs it
