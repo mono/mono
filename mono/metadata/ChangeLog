@@ -1,3 +1,12 @@
+2009-09-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* appdomain.c|h: Add a mono_domain_try_unload method which is
+	equivalent to mono_domain_unload, except that it returns an exception
+	instead of throwing it. Make mono_domain_unload use the
+	mono_domain_try_unload method to avoid code-duplication.
+
+	Backport of r142658.
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* marshal.c: don't create the handle when calling. It is created later
