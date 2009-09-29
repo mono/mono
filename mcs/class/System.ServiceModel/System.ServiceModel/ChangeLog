@@ -1,3 +1,8 @@
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : fix wrong parameter number for async
+	  end method with return value.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexClientRuntimeChannel.cs : reflecting EndpointDispatcher change.
