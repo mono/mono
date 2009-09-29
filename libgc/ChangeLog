@@ -1,3 +1,8 @@
+2009-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* solaris_threads.c (GC_thr_daemon): Don't crash if GC_lookup_thread () returns
+	NULL.
+
 2009-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* misc.c (GC_init): Avoid casting an lvalue. Fixes part of #498692.
