@@ -43,6 +43,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 				new ReadOnlyCollectionBuilder<T> (col);
 		}
 
+		public static int HashCode (int h1, int h2, int h3)
+		{
+			const int FNV_prime = 16777619;
+			int hash = unchecked ((int) 2166136261);
+
+			hash = (hash ^ h1) * FNV_prime;
+			hash = (hash ^ h2) * FNV_prime;
+			hash = (hash ^ h3) * FNV_prime;
+
+			hash += hash << 13;
+			hash ^= hash >> 7;
+			hash += hash << 3;
+			hash ^= hash >> 17;
+			hash += hash << 5;
+
+			return hash;
+		}
+
 		public static int HashCode (int h1, int h2, int h3, int h4, int h5)
 		{
 			const int FNV_prime = 16777619;

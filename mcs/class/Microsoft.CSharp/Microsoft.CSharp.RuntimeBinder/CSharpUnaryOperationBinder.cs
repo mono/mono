@@ -31,6 +31,7 @@ using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -57,16 +58,60 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return is_checked;
 			}
 		}
+
+		public override bool Equals (object obj)
+		{
+			var other = obj as CSharpUnaryOperationBinder;
+			return other != null && base.Equals (obj) && other.is_checked == is_checked &&
+				other.argumentInfo.SequenceEqual (argumentInfo);
+		}
 		
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				base.GetHashCode (),
+				is_checked.GetHashCode (),
+				argumentInfo[0].GetHashCode ());
+		}
+
+		Compiler.Unary.Operator GetOperator ()
+		{
+			switch (Operation) {
+			case ExpressionType.Negate:
+				return Compiler.Unary.Operator.UnaryNegation;
+			case ExpressionType.Not:
+				return Compiler.Unary.Operator.LogicalNot;
+			case ExpressionType.OnesComplement:
+				return Compiler.Unary.Operator.OnesComplement;
+			case ExpressionType.UnaryPlus:
+				return Compiler.Unary.Operator.UnaryPlus;
+			default:
+				throw new NotImplementedException (Operation.ToString ());
+			}
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackUnaryOperation (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();
+			Compiler.Expression expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target, true);
+
+			if (Operation == ExpressionType.IsTrue) {
+				expr = new Compiler.BooleanExpression (expr);
+			} else {
+				if (Operation == ExpressionType.Increment)
+					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreIncrement, expr);
+				else if (Operation == ExpressionType.Decrement)
+					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreDecrement, expr);
+				else
+					expr = new Compiler.Unary (GetOperator (), expr);
+
+				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
+
+				if (is_checked)
+					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+			}
+
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
+			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
 		}
 	}
 }

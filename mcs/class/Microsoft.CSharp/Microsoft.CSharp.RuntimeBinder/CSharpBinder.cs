@@ -105,6 +105,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new Compiler.RuntimeValueExpression (value, typed);
 		}
 
+		public static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
+		{
+			return arg.HasValue && arg.Value == null ?
+				BindingRestrictions.GetInstanceRestriction (arg.Expression, null) :
+				BindingRestrictions.GetTypeRestriction (arg.Expression, arg.LimitType);
+		}
+
 		static void InitializeCompiler (Compiler.CompilerContext ctx)
 		{
 			if (compiler_initialized)

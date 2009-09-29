@@ -179,15 +179,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (is_checked)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
-			var restrictions = CreateRestrictionsOnTarget (target).Merge (CreateRestrictionsOnTarget (arg));
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (arg));
 			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
-		}
-
-		static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
-		{
-			return arg.HasValue && arg.Value == null ?
-				BindingRestrictions.GetInstanceRestriction (arg.Expression, null) :
-				BindingRestrictions.GetTypeRestriction (arg.Expression, arg.LimitType);
 		}
 	}
 }
