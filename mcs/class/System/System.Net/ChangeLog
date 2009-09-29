@@ -1,3 +1,8 @@
+2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* EndPointListener.cs: fix matching a listener in presence of a query
+	string or anchor.
+
 2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpListenerRequest.cs: add the right status code.
