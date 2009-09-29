@@ -282,7 +282,7 @@ namespace System.Net.NetworkInformation {
 #pragma warning restore 219
 				
 				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
-				if (!ping.WaitForExit (timeout) || ping.ExitCode == 2)
+				if (!ping.WaitForExit (timeout) || (ping.HasExited && ping.ExitCode == 2))
 					return new PingReply (address, buffer, options, trip_time, IPStatus.TimedOut); 
 
 				if (ping.ExitCode == 1)
