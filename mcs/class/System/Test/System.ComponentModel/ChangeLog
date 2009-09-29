@@ -1,3 +1,7 @@
+2009-09-29  Alan McGovern  <amcgovern@novell.com>
+
+	* CategoryAttributeTest.cs: Added new test file.
+	  
 2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* EnumConverterTests.cs: Add a test to verify behaviour when converting
