@@ -1,5 +1,7 @@
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_output_basic_block): Fix IREM_UN_IMM.
+
 	* mini-sparc.c (mono_arch_allocate_vars): Use mono_class_from_mono_type ()
 	instead of using type->data.klass as the later doesn't work with generics.
 
