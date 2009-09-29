@@ -1,3 +1,10 @@
+2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: fixed the order in which 'completed' and the wait
+	handle, if any, are set.  Fixes bug #542933 and delegate2.exe
+	No need to use the wait_handle field of ASyncCall. Make sure the
+	threadpool is active when adding a job or queueing an idle thread.
+
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_unhandled_exception): Fix a crash if there is no main thread.
