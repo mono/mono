@@ -1727,6 +1727,11 @@ namespace System.Windows.Forms
 		}
 #endif
 
+#if NET_2_0
+		// cache the spacing to let virtualmode compute the positions on the fly
+		int x_spacing;
+		int y_spacing;
+#endif
 		int rows;
 		int cols;
 		int[,] item_index_matrix;
@@ -1812,21 +1817,29 @@ namespace System.Windows.Forms
 			item_control.Visible = true;
 			item_control.Location = Point.Empty;
 			ItemSize = item_size; // Cache item size
+#if NET_2_0
+			this.x_spacing = x_spacing;
+			this.y_spacing = y_spacing;
+#endif
 
 			if (items.Count == 0)
 				return;
 
 			Size sz = item_size;
-#if NET_2_0
-			bool using_groups = UsingGroups;
-#endif
 
 			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
 
 			layout_wd = UseCustomColumnWidth ? cols * custom_column_width : cols * (sz.Width + x_spacing) - x_spacing;
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
+
 #if NET_2_0
-			if (using_groups)
+			if (virtual_mode) { // no actual assignment is needed on items for virtual mode
+				item_control.Size = new Size (layout_wd, layout_ht);
+				return;
+			}
+
+			bool using_groups = UsingGroups;
+			if (using_groups) // the groups layout will override layout_ht
 				CalculateGroupsLayout (sz, y_spacing, 0);
 #endif
 
@@ -1835,9 +1848,10 @@ namespace System.Windows.Forms
 			int display_index = 0;
 
 			for (int i = 0; i < items.Count; i++) {
+				ListViewItem item = items [i];
 #if NET_2_0
 				if (using_groups) {
-					ListViewGroup group = items [i].Group;
+					ListViewGroup group = item.Group;
 					if (group == null)
 						group = groups.DefaultGroup;
 
@@ -1879,19 +1893,12 @@ namespace System.Windows.Forms
 						}
 					}
 				}
-#if NET_2_0
-				if (!virtual_mode) 
-#endif
-				{
-					ListViewItem item = items [i];
-					item.Layout ();
-					item.DisplayIndex = display_index;
+
+				item.Layout ();
+				item.DisplayIndex = display_index;
 #if NET_2_0					
-					item.SetPosition (new Point (x, y));
+				item.SetPosition (new Point (x, y));
 #endif					
-				}
-
-
 			}
 
 			item_control.Size = new Size (layout_wd, layout_ht);
@@ -1990,20 +1997,24 @@ namespace System.Windows.Forms
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
 			int y = header_control.Height;
+			layout_ht = y + (item_height * items.Count);
+			if (items.Count > 0 && grid_lines) // some space for bottom gridline
+				layout_ht += 2;
+
 #if NET_2_0
 			bool using_groups = UsingGroups;
 			if (using_groups) {
+				// Observe that this routines will override our layout_ht value
 				CalculateDetailsGroupItemsCount ();
 				CalculateGroupsLayout (ItemSize, 2, y);
 			}
+
+			if (virtual_mode) // no assgination on items is needed
+				return;
 #endif
 
 			for (int i = 0; i < items.Count; i++) {
-#if NET_2_0
-				ListViewItem item = virtual_mode ? null : items [i];
-#else
 				ListViewItem item = items [i];
-#endif
 
 				int display_index;
 				int item_y;
@@ -2030,31 +2041,21 @@ namespace System.Windows.Forms
 					y += item_height;
 				}
 
-#if NET_2_0
-				if (!virtual_mode) // Virtual mode sets Layout until draw time
-#endif
-				{
-					item.Layout ();
-					item.DisplayIndex = display_index;
+				item.Layout ();
+				item.DisplayIndex = display_index;
 #if NET_2_0					
-					item.SetPosition (new Point (0, item_y));
+				item.SetPosition (new Point (0, item_y));
 #endif					
-				}
-
 			}
-
-			// some space for bottom gridline
-			if (items.Count > 0 && grid_lines)
-				y += 2;
-
-#if NET_2_0
-			if (!using_groups) // With groups it has been previously computed
-#endif
-				layout_ht = y;
 		}
 
 		private void AdjustItemsPositionArray (int count)
 		{
+#if  NET_2_0
+			// In virtual mode we compute the positions on the fly.
+			if (virtual_mode)
+				return;
+#endif
 			if (items_location.Length >= count)
 				return;
 
@@ -2108,20 +2109,60 @@ namespace System.Windows.Forms
 
 		internal Point GetItemLocation (int index)
 		{
-			Point loc = items_location [index];
+			Point loc = Point.Empty;
+#if NET_2_0
+			if (virtual_mode)
+				loc = GetFixedItemLocation (index);
+			else
+#endif
+				loc = items_location [index];
+
 			loc.X -= h_marker; // Adjust to scroll
 			loc.Y -= v_marker;
 
 			return loc;
 		}
 
+#if NET_2_0
+		Point GetFixedItemLocation (int index)
+		{
+			Point loc = Point.Empty;
+
+			switch (view) {
+				case View.LargeIcon:
+				case View.SmallIcon:
+					loc.X = index % cols * (item_size.Width + x_spacing);
+					loc.Y = index / cols * (item_size.Height + y_spacing);
+					break;
+				case View.List:
+					loc.X = index / cols * (item_size.Width + x_spacing);
+					loc.Y = index % cols * (item_size.Height + y_spacing);
+					break;
+				case View.Details:
+					loc.Y = header_control.Height + (index * item_size.Height);
+					break;
+			}
+
+			return loc;
+		}
+#endif
+
 		internal int GetItemIndex (int display_index)
 		{
+#if NET_2_0
+			if (virtual_mode)
+				return display_index; // no reordering in virtual mode.
+#endif
 			return reordered_items_indices [display_index];
 		}
 
 		internal ListViewItem GetItemAtDisplayIndex (int display_index)
 		{
+#if NET_2_0
+			// in virtual mode there's no reordering at all.
+			if (virtual_mode)
+				return items [display_index];
+#endif
 			return items [reordered_items_indices [display_index]];
 		}
 

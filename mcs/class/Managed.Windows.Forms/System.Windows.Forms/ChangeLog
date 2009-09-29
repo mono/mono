@@ -1,3 +1,12 @@
+2009-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: The location of the items should be computed on the fly
+	in virtual mode - that decreased speed overall, but reduces the load
+	time.that decreased speed overall, but reduces the load time. Also,
+	handle the cases where we were using data structures we don't need to
+	use/create for this mode.
+	Fixes part of #467418.
+
 2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Tile view and VirtualMode can't be applied together.
