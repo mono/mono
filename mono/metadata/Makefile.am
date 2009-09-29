@@ -171,7 +171,6 @@ libmonoruntimeinclude_HEADERS = \
 	object.h	\
 	exception.h	\
 	profiler.h	\
-	appdomain.h	\
 	mono-config.h	\
 	debug-helpers.h	\
 	mempool.h
