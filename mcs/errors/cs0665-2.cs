@@ -1,4 +1,4 @@
-// cs0665-2.cs : Assignment in conditional expression is always constant; did you mean to use == instead of = ?
+// Cs0665: Assignment in conditional expression is always constant. Did you mean to use `==' instead ?
 // Line: 10
 // Compiler options: /warnaserror
 
