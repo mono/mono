@@ -1,5 +1,9 @@
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : remove extra field.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AspNetRequestContext.cs : remove CWL.
 
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>

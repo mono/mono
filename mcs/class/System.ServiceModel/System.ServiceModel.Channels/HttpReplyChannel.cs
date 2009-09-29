@@ -39,7 +39,6 @@ namespace System.ServiceModel.Channels
 	{
 		HttpSimpleChannelListener<IReplyChannel> source;
 		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
-		EndpointAddress local_address;
 		RequestContext reqctx;
 
 		public HttpSimpleReplyChannel (HttpSimpleChannelListener<IReplyChannel> listener)
