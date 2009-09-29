@@ -64,7 +64,9 @@ namespace System.ServiceModel.Channels {
 			get { return true; }
 		}
 
-		public Uri Uri { get; private set; }
+		public ServiceHostBase Host {
+			get { return host; }
+		}
 
 		public HttpContext WaitForRequest (TimeSpan timeout)
 		{
@@ -158,11 +160,6 @@ namespace System.ServiceModel.Channels {
 					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
 
 			var c = host.BaseAddresses;
-			var ba = c.FirstOrDefault (u => u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
-			if (ba != null)
-				this.Uri = new Uri (ba, path);
-			else
-				this.Uri = host.Description.Endpoints [0].Address.Uri;
 
 			host.Open ();
 

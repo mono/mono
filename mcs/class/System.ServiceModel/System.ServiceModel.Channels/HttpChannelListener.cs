@@ -109,12 +109,16 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (source, context)
 		{
-			HttpHandler = SvcHttpHandlerFactory.Handlers.Values.First (v => v.Uri.Equals (Uri));
-			if (HttpHandler == null)
-				throw new Exception ("Unexpected internal error: HTTP handler not found for URI " + Uri);
 		}
 
-		internal SvcHttpHandler HttpHandler { get; private set; }
+		SvcHttpHandler http_handler;
+		internal SvcHttpHandler HttpHandler {
+			get {
+				if (http_handler == null)
+					http_handler = SvcHttpHandlerFactory.GetHandlerForListener (this);
+				return http_handler;
+			}
+		}
 
 		protected override TChannel CreateChannel (TimeSpan timeout)
 		{

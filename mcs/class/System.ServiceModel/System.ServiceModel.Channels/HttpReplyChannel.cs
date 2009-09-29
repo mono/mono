@@ -142,6 +142,7 @@ w.Close ();
 				wait = new AutoResetEvent (false);
 				source.Http.BeginGetContext (HttpContextReceived, null);
 			} catch (HttpListenerException e) {
+				// FIXME: does this make sense? I doubt.
 				if (e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
 					while (true) Thread.Sleep (1000); // thread is about to be terminated.
 				throw;

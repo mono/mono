@@ -70,6 +70,7 @@ namespace System.ServiceModel.Channels
 				return false;
 
 			Message msg;
+			// FIXME: remove this hack
 			if (http_context.Request.HttpMethod == "GET") {
 				if (http_context.Request.QueryString ["wsdl"] != null) {
 					msg = Message.CreateMessage (Encoder.MessageVersion,
