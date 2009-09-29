@@ -939,7 +939,7 @@ namespace Microsoft.Build.BuildEngine {
 		void AddImport (XmlElement xmlElement, ImportedProject importingProject)
 		{
 			// eval all the properties etc till the import
-			Evaluate ();
+			groupingCollection.Evaluate (EvaluationType.Property);
 
 			Import import = new Import (xmlElement, this, importingProject);
 			Imports.Add (import);

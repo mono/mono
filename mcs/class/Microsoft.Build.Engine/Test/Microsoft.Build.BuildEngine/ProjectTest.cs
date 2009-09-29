@@ -1550,7 +1550,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				sw.Write (third);
 			}
 
-
 			project.LoadXml (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" InitialTargets=""pre"">
 				<Target Name=""boo"">
 					<Message Text=""Executing boo target""/>
@@ -1731,6 +1730,65 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				throw;
 			}
 		}
+
+		[Test]
+		public void TestPropertiesFromImportedProjects ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<PropertyGroup>
+	  <Prop1>InitialVal</Prop1>
+	</PropertyGroup>
+	<ItemGroup>
+		<Second Include=""$(ThirdProp):Third""/>
+	</ItemGroup>
+
+	<Target Name=""Main"">
+		<Message Text=""Prop1: $(Prop1) FooItem: @(FooItem)""/>
+		<Message Text=""Second: @(Second) ThirdProp: $(ThirdProp)""/>
+	</Target>
+	<Import Project=""third.proj""/>
+</Project>";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (second);
+			}
+
+			string third = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<PropertyGroup>
+	  <ThirdProp>Third Value</ThirdProp>
+	</PropertyGroup>
+</Project>";
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "third.proj")))) {
+				sw.Write (third);
+			}
+
+			project.LoadXml (@"<Project InitialTargets=""Main"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<ItemGroup>
+		<FooItem Include=""$(Prop1):Something""/>
+	</ItemGroup>
+
+	<Import Project=""Test/resources/second.proj""/>
+</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				logger.CheckLoggedMessageHead ("Prop1: InitialVal FooItem: InitialVal:Something", "A1");
+				logger.CheckLoggedMessageHead ("Second: Third Value:Third ThirdProp: Third Value", "A2");
+
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
 
 		[Test]
 		public void TestRequiredTask_String1 ()
