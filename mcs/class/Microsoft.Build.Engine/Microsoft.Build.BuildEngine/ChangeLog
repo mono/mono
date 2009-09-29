@@ -1,3 +1,15 @@
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* GroupingCollection.cs (Evaluate): Mark internal.
+	* Project.cs (AddImport): Only evaluate the properties,
+	till before the import.
+
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (DoLoad): Don't use XmlReader.Create, for loading
+	the project xml, as returned Xml*Reader normalizes the newlines.
+	Instead directly use the TextReader with XmlDocument.Load ().
+
 2009-09-27  Ankit Jain  <jankit@novell.com>
 
 	* ConditionParser.cs: Show the condition being parsed in the

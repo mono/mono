@@ -167,7 +167,7 @@ namespace Microsoft.Build.BuildEngine {
 			Evaluate (EvaluationType.Choose);
 		}
 
-		void Evaluate (EvaluationType type)
+		internal void Evaluate (EvaluationType type)
 		{
 			BuildItemGroup big;
 			BuildPropertyGroup bpg;

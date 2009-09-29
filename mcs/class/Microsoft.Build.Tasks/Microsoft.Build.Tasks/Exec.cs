@@ -48,6 +48,7 @@ namespace Microsoft.Build.Tasks {
 		string		stdErrEncoding;
 		string		stdOutEncoding;
 		string		workingDirectory;
+		string scriptFile;
 		
 		public Exec ()
 		{
@@ -56,11 +57,15 @@ namespace Microsoft.Build.Tasks {
 		
 		protected internal override void AddCommandLineCommands (CommandLineBuilderExtension commandLine)
 		{
+			if (IsRunningOnWindows)
+				commandLine.AppendSwitch ("/c");
+
 			if (!String.IsNullOrEmpty (command)) {
-				string[] commandTable = command.Split (null, 2);
-				string arguments = String.Empty;
-				if (commandTable.Length == 2)
-					commandLine.AppendSwitch (commandTable [1]);
+				scriptFile = Path.GetTempFileName ();
+				using (StreamWriter sw = new StreamWriter (scriptFile)) {
+					sw.Write (command);
+				}
+				commandLine.AppendFileNameIfNotNull (scriptFile);
 			}
 			base.AddCommandLineCommands (commandLine);
 		}
@@ -69,13 +74,18 @@ namespace Microsoft.Build.Tasks {
 						    string responseFileCommands,
 						    string commandLineCommands)
 		{
-			return base.ExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
+			try {
+				return base.ExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
+			} finally {
+				if (scriptFile != null)
+					File.Delete (scriptFile);
+			}
 		}
 
 		[MonoTODO]
 		protected override string GenerateFullPathToTool ()
 		{
-			return command.Split (null, 2) [0];
+			return IsRunningOnWindows ? "cmd.exe" : "sh";
 		}
 		
 		protected override string GetWorkingDirectory ()
@@ -97,6 +107,7 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected override void LogToolCommand (string message)
 		{
+			Log.LogMessage (MessageImportance.Normal, "Executing: " + command);
 		}
 		
 		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
@@ -166,6 +177,14 @@ namespace Microsoft.Build.Tasks {
 			get { return workingDirectory; }
 			set { workingDirectory = value; }
 		}
+
+		static bool IsRunningOnWindows {
+			get {
+				PlatformID pid = Environment.OSVersion.Platform;
+				return ((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
+			}
+		}
+
 	}
 }
 

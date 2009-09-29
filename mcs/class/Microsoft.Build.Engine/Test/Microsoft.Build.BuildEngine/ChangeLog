@@ -1,3 +1,7 @@
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestPropertiesFromImportedProjects): New.
+
 2009-09-26  Ankit Jain  <jankit@novell.com>
 
 	* TargetTest.cs (TestOverridingTargets): New.
