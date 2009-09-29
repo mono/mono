@@ -1,5 +1,12 @@
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AspNetReplyChannel.cs, AspNetRequestContext.cs : close HttpContext
+	  only after AspNetRequestContext is closed. Do not close it
+	  immediately after receiving the context. (HttpRuntime destructs it
+	  and further uses then becomes impossible.)
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AspNetReplyChannel.cs, HttpReplyChannel.cs : add some comments.
 	* SvcHttpHandlerFactory.cs, SvcHttpHandler.cs, HttpChannelListener.cs:
 	  Make sure that AspNetChannelListener is bound to correct

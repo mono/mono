@@ -33,27 +33,31 @@ namespace System.ServiceModel.Channels {
 
 	class AspNetRequestContext : HttpRequestContextBase
 	{
+		AspNetReplyChannel owner;
 		HttpContext ctx;
 
 		public AspNetRequestContext (
-			HttpReplyChannel channel,
+			AspNetReplyChannel channel,
 			Message msg, HttpContext ctx)
 			: base (channel, msg)
 		{
+			this.owner = owner;
 			this.ctx = ctx;
 		}
 
 		public override void Abort ()
 		{
-			throw new NotImplementedException ();
 			//ctx.Response.Abort ();
+			ctx = null;
+			owner.CloseContext ();
 		}
 
 		protected override void ProcessReply (Message msg, TimeSpan timeout)
 		{
+Console.WriteLine ("ProcessReply for " + msg.Headers.Action + " with " + Channel.Encoder.GetType ());
+			ctx.Response.ContentType = Channel.Encoder.ContentType;
 			MemoryStream ms = new MemoryStream ();
 			Channel.Encoder.WriteMessage (msg, ms);
-			ctx.Response.ContentType = Channel.Encoder.ContentType;
 			//ctx.Response.ContentLength64 = ms.Length;
 			ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
 			ctx.Response.OutputStream.Flush ();
@@ -62,7 +66,12 @@ namespace System.ServiceModel.Channels {
 		public override void Close (TimeSpan timeout)
 		{
 			// FIXME: use timeout
-			ctx.Response.Close ();
+			try {
+				ctx.Response.Close ();
+			} finally {
+				ctx = null;
+				owner.CloseContext ();
+			}
 		}
 	}
 }

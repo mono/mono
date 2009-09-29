@@ -49,6 +49,17 @@ namespace System.ServiceModel.Channels
 			uri = listener.Uri;
 		}
 
+		internal void CloseContext ()
+		{
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
+		}
+
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
 			try {
@@ -57,9 +68,6 @@ namespace System.ServiceModel.Channels
 				// FIXME: log it
 				Console.WriteLine ("AspNetReplyChannel caught an error: " + ex);
 				throw;
-			} finally {
-				listener.HttpHandler.EndRequest (http_context);
-				http_context = null;
 			}
 		}
 
