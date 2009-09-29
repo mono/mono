@@ -881,6 +881,17 @@ namespace System.Web {
 			
 			StatusCode = 302;
 			url = ApplyAppPathModifier (url);
+#if NET_2_0
+			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			if (config != null && config.UseFullyQualifiedRedirectUrl) {
+				var ub = new UriBuilder (context.Request.Url);
+				ub.Fragment = null;
+				ub.Password = null;
+				ub.Query = null;
+				ub.UserName = null;
+				url = ub.Uri.ToString ();
+			}
+#endif
 			redirect_location = url;
 
 			// Text for browsers that can't handle location header
