@@ -1,3 +1,8 @@
+2009-09-29  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (Insert): Show project name in case of a cyclic
+	dependency.
+
 2009-09-27  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs: Implement support for WebSite projects. These

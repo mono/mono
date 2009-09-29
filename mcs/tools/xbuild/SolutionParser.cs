@@ -849,7 +849,9 @@ namespace Mono.XBuild.CommandLine {
 				return levels [index];
 
 			if (triedToInsert[index])
-				throw new InvalidOperationException ("Cyclic dependency found in the project dependency graph");
+				throw new InvalidOperationException (String.Format (
+						"Cyclic dependency involving project {0} found in the project dependency graph",
+						allItems [index].Name));
 
 			triedToInsert[index] = true;
 			ProjectInfo insertItem = allItems[index];
