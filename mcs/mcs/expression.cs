@@ -614,6 +614,25 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (oper.ToString ());
 		}
 
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			var expr = Expr.MakeExpression (ctx);
+			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
+
+			switch (Oper) {
+			case Operator.UnaryNegation:
+				return is_checked ? SLE.Expression.NegateChecked (expr) : SLE.Expression.Negate (expr);
+			case Operator.LogicalNot:
+				return SLE.Expression.Not (expr);
+			case Operator.OnesComplement:
+				return SLE.Expression.OnesComplement (expr);
+			default:
+				throw new NotImplementedException (Oper.ToString ());
+			}
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
@@ -940,10 +959,11 @@ namespace Mono.CSharp {
 			expr = e;
 		}
 
-		static string OperName (Mode mode)
+		string OperName ()
 		{
-			return (mode == Mode.PreIncrement || mode == Mode.PostIncrement) ?
-				"++" : "--";
+			return IsDecrement ?
+				Operator.GetName (Operator.OpType.Decrement) :
+				Operator.GetName (Operator.OpType.Increment);
 		}
 
 		/// <summary>
@@ -990,10 +1010,10 @@ namespace Mono.CSharp {
 			MethodGroupExpr mg;
 			string op_name;
 			
-			if (mode == Mode.PreIncrement || mode == Mode.PostIncrement)
-				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
-			else
+			if (IsDecrement)
 				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
+			else
+				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
 
 			mg = MemberLookup (ec.Compiler, ec.CurrentType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 
@@ -1010,7 +1030,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!IsIncrementableNumber (type)) {
-				ec.Report.Error (187, loc, "No such operator '" + OperName (mode) + "' defined for type '" +
+				ec.Report.Error (187, loc, "No such operator '" + OperName () + "' defined for type '" +
 					   TypeManager.CSharpName (type) + "'");
 				return null;
 			}
@@ -1143,11 +1163,36 @@ namespace Mono.CSharp {
 		//
 		string GetOperatorExpressionTypeName ()
 		{
-			if ((mode & Mode.IsDecrement) != 0)
-				return "Decrement";
-
-			return "Increment";
+			return IsDecrement ? "Decrement" : "Increment";
 		}
+
+		bool IsDecrement {
+			get { return (mode & Mode.IsDecrement) != 0; }
+		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			if (method != null)
+				return method.MakeExpression (ctx);
+
+			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
+			var one = SLE.Expression.Constant (1);
+			var left = expr.MakeExpression (ctx);
+
+			SLE.Expression binary;
+			if (IsDecrement) {
+				binary = is_checked ? SLE.Expression.SubtractChecked (left, one) : SLE.Expression.Subtract (left, one);
+			} else {
+				binary = is_checked ? SLE.Expression.AddChecked (left, one) : SLE.Expression.Add (left, one);
+			}
+
+			var target = ((RuntimeValueExpression) expr).MetaObject.Expression;
+			binary = SLE.Expression.Convert (binary, target.Type);
+
+			return SLE.Expression.Assign (target, binary);
+		}
+#endif
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
@@ -1815,7 +1860,7 @@ namespace Mono.CSharp {
 			{
 				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
 
-				Expression expr_tree_expr = EmptyCast.Create (b.right, TypeManager.int32_type);
+				Expression expr_tree_expr = Convert.ImplicitConversion (ec, b.right, TypeManager.int32_type, b.right.Location);
 
 				int right_mask = left == TypeManager.int32_type || left == TypeManager.uint32_type ? 0x1f : 0x3f;
 
@@ -4073,14 +4118,89 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+
+	//
+	// A boolean-expression is an expression that yields a result
+	// of type bool
+	//
+	public class BooleanExpression : Expression
+	{
+		Expression expr;
+
+		public BooleanExpression (Expression expr)
+		{
+			this.expr = expr;
+			this.loc = expr.Location;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			BooleanExpression target = (BooleanExpression) t;
+			target.expr = expr.Clone (clonectx);
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			// TODO: We should emit IsTrue (v4) instead of direct user operator
+			// call but that would break csc compatibility
+			throw new NotSupportedException ();
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			// A boolean-expression is required to be of a type
+			// that can be implicitly converted to bool or of
+			// a type that implements operator true
+
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return null;
+
+			Assign ass = expr as Assign;
+			if (ass != null && ass.Source is Constant) {
+				ec.Report.Warning (665, 3, expr.Location,
+					"Assignment in conditional expression is always constant. Did you mean to use `==' instead ?");
+			}
+
+			if (expr.Type == TypeManager.bool_type)
+				return expr;
+
+			if (TypeManager.IsDynamicType (expr.Type)) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (expr));
+				return new DynamicUnaryConversion ("IsTrue", args, loc).Resolve (ec);
+			}
+
+			type = TypeManager.bool_type;
+			Expression converted = Convert.ImplicitConversion (ec, expr, type, loc);
+			if (converted != null)
+				return converted;
+
+			//
+			// If no implicit conversion to bool exists, try using `operator true'
+			//
+			converted = GetOperatorTrue (ec, expr, loc);
+			if (converted == null) {
+				expr.Error_ValueCannotBeConverted (ec, loc, type, false);
+				return null;
+			}
+
+			return converted;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Should not be reached");
+		}
+	}
 	
 	/// <summary>
 	///   Implements the ternary conditional operator (?:)
 	/// </summary>
 	public class Conditional : Expression {
 		Expression expr, true_expr, false_expr;
-		
-		public Conditional (Expression expr, Expression true_expr, Expression false_expr)
+
+		public Conditional (BooleanExpression expr, Expression true_expr, Expression false_expr)
 		{
 			this.expr = expr;
 			this.true_expr = true_expr;
@@ -4117,13 +4237,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			expr = Expression.ResolveBoolean (ec, expr, loc);
-			
-			Assign ass = expr as Assign;
-			if (ass != null && ass.Source is Constant) {
-				ec.Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
-			}
-
+			expr = expr.Resolve (ec);
 			true_expr = true_expr.Resolve (ec);
 			false_expr = false_expr.Resolve (ec);
 

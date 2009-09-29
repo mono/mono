@@ -4009,7 +4009,7 @@ conditional_expression
 	: null_coalescing_expression
 	| null_coalescing_expression INTERR expression COLON expression 
 	  {
-		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5);
 	  }
 	;
 
@@ -4177,6 +4177,9 @@ constant_expression
 
 boolean_expression
 	: expression
+	  {
+		$$ = new BooleanExpression ((Expression) $1);
+	  }
 	;
 
 //
@@ -4746,7 +4749,7 @@ if_statement
 	  { 
 		Location l = (Location) $1;
 
-		$$ = new If ((Expression) $3, (Statement) $5, l);
+		$$ = new If ((BooleanExpression) $3, (Statement) $5, l);
 
 		// FIXME: location for warning should be loc property of $5.
 		if ($5 == EmptyStatement.Value)
@@ -4758,7 +4761,7 @@ if_statement
 	  {
 		Location l = (Location) $1;
 
-		$$ = new If ((Expression) $3, (Statement) $5, (Statement) $7, l);
+		$$ = new If ((BooleanExpression) $3, (Statement) $5, (Statement) $7, l);
 
 		// FIXME: location for warning should be loc property of $5 and $7.
 		if ($5 == EmptyStatement.Value)
@@ -4868,7 +4871,7 @@ while_statement
 	: WHILE open_parens_any boolean_expression CLOSE_PARENS embedded_statement
 	  {
 		Location l = (Location) $1;
-		$$ = new While ((Expression) $3, (Statement) $5, l);
+		$$ = new While ((BooleanExpression) $3, (Statement) $5, l);
 	  }
 	;
 
@@ -4878,7 +4881,7 @@ do_statement
 	  {
 		Location l = (Location) $1;
 
-		$$ = new Do ((Statement) $2, (Expression) $5, l);
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, l);
 	  }
 	;
 
@@ -4928,7 +4931,7 @@ for_statement
 	  {
 		Location l = (Location) $1;
 
-		For f = new For ((Statement) $5, (Expression) $6, (Statement) $8, (Statement) $10, l);
+		For f = new For ((Statement) $5, (BooleanExpression) $6, (Statement) $8, (Statement) $10, l);
 
 		current_block.AddStatement (f);
 
@@ -5579,7 +5582,7 @@ where_clause
 	  }
 	  boolean_expression
 	  {
-		$$ = new Linq.Where (current_block.Toplevel, (Expression)$3, GetLocation ($1));
+		$$ = new Linq.Where (current_block.Toplevel, (BooleanExpression)$3, GetLocation ($1));
 
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;

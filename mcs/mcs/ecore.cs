@@ -927,7 +927,7 @@ namespace Mono.CSharp {
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
 		/// </summary>
-		static public Expression GetOperatorTrue (ResolveContext ec, Expression e, Location loc)
+		protected static Expression GetOperatorTrue (ResolveContext ec, Expression e, Location loc)
 		{
 			return GetOperatorTrueOrFalse (ec, e, true, loc);
 		}
@@ -960,41 +960,6 @@ namespace Mono.CSharp {
 			return new UserOperatorCall (operator_group, arguments, null, loc);
 		}
 
-		/// <summary>
-		///   Resolves the expression `e' into a boolean expression: either through
-		///   an implicit conversion, or through an `operator true' invocation
-		/// </summary>
-		public static Expression ResolveBoolean (ResolveContext ec, Expression e, Location loc)
-		{
-			e = e.Resolve (ec);
-			if (e == null)
-				return null;
-
-			if (e.Type == TypeManager.bool_type)
-				return e;
-
-			if (TypeManager.IsDynamicType (e.Type)) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (e));
-				return new DynamicUnaryConversion ("IsTrue", args, loc).Resolve (ec);
-			}
-
-			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, Location.Null);
-
-			if (converted != null)
-				return converted;
-
-			//
-			// If no implicit conversion to bool exists, try using `operator true'
-			//
-			converted = Expression.GetOperatorTrue (ec, e, loc);
-			if (converted == null){
-				e.Error_ValueCannotBeConverted (ec, loc, TypeManager.bool_type, false);
-				return null;
-			}
-			return converted;
-		}
-		
 		public virtual string ExprClassName
 		{
 			get {

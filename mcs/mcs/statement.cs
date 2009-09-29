@@ -133,20 +133,18 @@ namespace Mono.CSharp {
 		public Statement FalseStatement;
 
 		bool is_true_ret;
-		
-		public If (Expression expr, Statement true_statement, Location l)
+
+		public If (Expression bool_expr, Statement true_statement, Location l)
+			: this (bool_expr, true_statement, null, l)
 		{
-			this.expr = expr;
-			TrueStatement = true_statement;
-			loc = l;
 		}
 
-		public If (Expression expr,
+		public If (Expression bool_expr,
 			   Statement true_statement,
 			   Statement false_statement,
 			   Location l)
 		{
-			this.expr = expr;
+			this.expr = bool_expr;
 			TrueStatement = true_statement;
 			FalseStatement = false_statement;
 			loc = l;
@@ -166,44 +164,38 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START IF BLOCK", loc);
 
-			expr = Expression.ResolveBoolean (ec, expr, loc);
-			if (expr == null){
+			expr = expr.Resolve (ec);
+			if (expr == null) {
 				ok = false;
-				goto skip;
-			}
+			} else {
+				//
+				// Dead code elimination
+				//
+				if (expr is Constant) {
+					bool take = !((Constant) expr).IsDefaultValue;
 
-			Assign ass = expr as Assign;
-			if (ass != null && ass.Source is Constant) {
-				ec.Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
-			}
+					if (take) {
+						if (!TrueStatement.Resolve (ec))
+							return false;
 
-			//
-			// Dead code elimination
-			//
-			if (expr is Constant){
-				bool take = !((Constant) expr).IsDefaultValue;
+						if ((FalseStatement != null) &&
+							!FalseStatement.ResolveUnreachable (ec, true))
+							return false;
+						FalseStatement = null;
+					} else {
+						if (!TrueStatement.ResolveUnreachable (ec, true))
+							return false;
+						TrueStatement = null;
 
-				if (take){
-					if (!TrueStatement.Resolve (ec))
-						return false;
+						if ((FalseStatement != null) &&
+							!FalseStatement.Resolve (ec))
+							return false;
+					}
 
-					if ((FalseStatement != null) &&
-					    !FalseStatement.ResolveUnreachable (ec, true))
-						return false;
-					FalseStatement = null;
-				} else {
-					if (!TrueStatement.ResolveUnreachable (ec, true))
-						return false;
-					TrueStatement = null;
-
-					if ((FalseStatement != null) &&
-					    !FalseStatement.Resolve (ec))
-						return false;
+					return true;
 				}
-
-				return true;
 			}
-		skip:
+
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
 			
 			ok &= TrueStatement.Resolve (ec);
@@ -281,8 +273,8 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public Expression expr;
 		public Statement  EmbeddedStatement;
-		
-		public Do (Statement statement, Expression bool_expr, Location l)
+
+		public Do (Statement statement, BooleanExpression bool_expr, Location l)
 		{
 			expr = bool_expr;
 			EmbeddedStatement = statement;
@@ -305,7 +297,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable && !was_unreachable)
 				ec.Report.Warning (162, 2, expr.Location, "Unreachable code detected");
 
-			expr = Expression.ResolveBoolean (ec, expr, loc);
+			expr = expr.Resolve (ec);
 			if (expr == null)
 				ok = false;
 			else if (expr is Constant){
@@ -370,8 +362,8 @@ namespace Mono.CSharp {
 		public Expression expr;
 		public Statement Statement;
 		bool infinite, empty;
-		
-		public While (Expression bool_expr, Statement statement, Location l)
+
+		public While (BooleanExpression bool_expr, Statement statement, Location l)
 		{
 			this.expr = bool_expr;
 			Statement = statement;
@@ -382,9 +374,9 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			expr = Expression.ResolveBoolean (ec, expr, loc);
+			expr = expr.Resolve (ec);
 			if (expr == null)
-				return false;
+				ok = false;
 
 			//
 			// Inform whether we are infinite or not
@@ -495,7 +487,7 @@ namespace Mono.CSharp {
 		bool infinite, empty;
 		
 		public For (Statement init_statement,
-			    Expression test,
+			    BooleanExpression test,
 			    Statement increment,
 			    Statement statement,
 			    Location l)
@@ -517,7 +509,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Test != null){
-				Test = Expression.ResolveBoolean (ec, Test, loc);
+				Test = Test.Resolve (ec);
 				if (Test == null)
 					ok = false;
 				else if (Test is Constant){
@@ -4450,9 +4442,9 @@ namespace Mono.CSharp {
 					//
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
-					converted = new Conditional (new Binary (Binary.Operator.LogicalOr,
+					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
 						new Binary (Binary.Operator.Equality, e, new NullLiteral (loc)),
-						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc))),
+						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc)))),
 							new NullPointer (loc),
 							converted);
 
@@ -5665,7 +5657,7 @@ namespace Mono.CSharp {
 				Statement block = new CollectionForeachStatement (
 					var_type.Type, variable, get_current, statement, loc);
 
-				loop = new While (move_next_expr, block, loc);
+				loop = new While (new BooleanExpression (move_next_expr), block, loc);
 
 
 				bool implements_idisposable = TypeManager.ImplementsInterface (enumerator_type, TypeManager.idisposable_type);

@@ -1788,8 +1788,8 @@ namespace Mono.CSharp {
 					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode),
 					FNV_prime);
 
-				Expression field_to_string = new Conditional (new Binary (Binary.Operator.Inequality,
-					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc)),
+				Expression field_to_string = new Conditional (new BooleanExpression (new Binary (Binary.Operator.Inequality,
+					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc))),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
 					new StringConstant (string.Empty, loc));

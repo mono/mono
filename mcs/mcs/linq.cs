@@ -536,7 +536,7 @@ namespace Mono.CSharp.Linq
 
 	class Where : AQueryClause
 	{
-		public Where (ToplevelBlock block, Expression expr, Location loc)
+		public Where (ToplevelBlock block, BooleanExpression expr, Location loc)
 			: base (block, expr, loc)
 		{
 		}

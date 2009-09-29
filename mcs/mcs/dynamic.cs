@@ -57,7 +57,7 @@ namespace Mono.CSharp
 			this.obj = obj;
 			this.typed = typed;
 			this.type = obj.RuntimeType;
-			this.eclass = ExprClass.Value;
+			this.eclass = ExprClass.Variable;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -103,6 +103,10 @@ namespace Mono.CSharp
 			return obj.Expression;
 		}
 #endif
+
+		public DynamicMetaObject MetaObject {
+			get { return obj; }
+		}
 	}
 
 	interface IDynamicBinder
