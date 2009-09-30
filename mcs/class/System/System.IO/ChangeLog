@@ -1,3 +1,8 @@
+2009-09-30  Marek Habersack  <mhabersack@novell.com>
+
+	* InotifyWatcher.cs: optimized the Renamed event child update loop
+	in the previous commit for directories in ProcessEvents.
+
 2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* InotifyWatcher.cs: fixes bug #322330. Patch by Alexander Kojevnikov.
