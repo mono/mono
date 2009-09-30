@@ -6,7 +6,7 @@ tmpinst = _tmpinst
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
 etctmp = etc
-symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
+symlinks = etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_0
 symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config
