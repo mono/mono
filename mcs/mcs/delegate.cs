@@ -624,6 +624,11 @@ namespace Mono.CSharp {
 			if (delegate_instance_expression != null)
 				return;
 
+			if (method_group.IsStatic) {
+				delegate_instance_expression = null;
+				return;
+			}
+
 			Expression instance = method_group.InstanceExpression;
 			if (instance != null && instance != EmptyExpression.Null) {
 				delegate_instance_expression = instance;
@@ -632,7 +637,7 @@ namespace Mono.CSharp {
 					delegate_instance_expression = new BoxedCast (
 						delegate_instance_expression, TypeManager.object_type);
 				}
-			} else if (!delegate_method.IsStatic && !ec.IsStatic) {
+			} else {
 				delegate_instance_expression = ec.GetThis (loc);
 			}
 		}
