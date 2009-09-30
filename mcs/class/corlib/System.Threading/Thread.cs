@@ -87,10 +87,6 @@ namespace System.Threading {
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
 		private IntPtr synch_cs;
-		private IntPtr serialized_culture_info;
-		private int serialized_culture_info_len;
-		private IntPtr serialized_ui_culture_info;
-		private int serialized_ui_culture_info_len;
 		private bool thread_dump_requested;
 		private IntPtr end_stack;
 		private bool thread_interrupt_requested;
@@ -122,6 +118,9 @@ namespace System.Threading {
 
 		internal byte[] _serialized_principal;
 		internal int _serialized_principal_version;
+
+		internal byte[] serialized_culture_info;
+		internal byte[] serialized_ui_culture_info;
 
 		/* If the current_lcid() isn't known by CultureInfo,
 		 * it will throw an exception which may cause
@@ -462,25 +461,13 @@ namespace System.Threading {
 		private extern static CultureInfo GetCachedCurrentCulture (InternalThread thread);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static byte[] GetSerializedCurrentCulture (InternalThread thread);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void SetCachedCurrentCulture (CultureInfo culture);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void SetSerializedCurrentCulture (InternalThread thread, byte[] culture);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static CultureInfo GetCachedCurrentUICulture (InternalThread thread);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static byte[] GetSerializedCurrentUICulture (InternalThread thread);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void SetCachedCurrentUICulture (CultureInfo culture);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void SetSerializedCurrentUICulture (InternalThread thread, byte[] culture);
 
 		/* FIXME: in_currentculture exists once, but
 		   culture_lock is once per appdomain.  Is it correct
@@ -506,7 +493,7 @@ namespace System.Threading {
 				if (culture != null)
 					return culture;
 
-				byte[] arr = GetSerializedCurrentCulture (Internal);
+				byte[] arr = ByteArrayToCurrentDomain (Internal.serialized_culture_info);
 				if (arr == null) {
 					lock (culture_lock) {
 						Internal.in_currentculture=true;
@@ -568,8 +555,8 @@ namespace System.Threading {
 						if (value.IsReadOnly)
 							value.cached_serialized_form = serialized_form;
 					}
-						
-					SetSerializedCurrentCulture (Internal, serialized_form);
+
+					Internal.serialized_culture_info = ByteArrayToRootDomain (serialized_form);
 				} finally {
 					Internal.in_currentculture = false;
 				}
@@ -587,7 +574,7 @@ namespace System.Threading {
 				if (culture != null)
 					return culture;
 
-				byte[] arr = GetSerializedCurrentUICulture (Internal);
+				byte[] arr = ByteArrayToCurrentDomain (Internal.serialized_ui_culture_info);
 				if (arr == null) {
 					lock (culture_lock) {
 						Internal.in_currentculture=true;
@@ -653,8 +640,8 @@ namespace System.Threading {
 						if (value.IsReadOnly)
 							value.cached_serialized_form = serialized_form;
 					}
-						
-					SetSerializedCurrentUICulture (Internal, serialized_form);
+
+					Internal.serialized_ui_culture_info = ByteArrayToRootDomain (serialized_form);
 				} finally {
 					Internal.in_currentculture = false;
 				}

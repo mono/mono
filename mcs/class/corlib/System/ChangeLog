@@ -1,3 +1,11 @@
+2009-09-30  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: Remove serialized culture icall stuff from
+	InternalThread.  Implement it by using the cross-domain byte array
+	transfer icalls.
+
+	* Environment.cs: Corlib version bump.
+
 2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TermInfoDriver.cs: attempt to fix bug #527487.
