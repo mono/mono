@@ -91,20 +91,50 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public void ReadObjectGraph (BinaryReader reader, bool readHeaders, out object result, out Header[] headers)
 		{
+			BinaryElement elem = (BinaryElement)reader.ReadByte ();
+			ReadObjectGraph (elem, reader, readHeaders, out result, out headers);
+		}
+
+		public void ReadObjectGraph (BinaryElement elem, BinaryReader reader, bool readHeaders, out object result, out Header[] headers)
+		{
 			headers = null;
 
 			// Reads the objects. The first object in the stream is the
 			// root object.
-
-			while (ReadNextObject (reader))
-			{
-				if (readHeaders && (headers == null))
-					headers = (Header[])CurrentObject;
-				else
-					if (_rootObjectID == 0) _rootObjectID = _lastObjectID;
+			bool next = ReadNextObject (elem, reader);
+			if (next) {
+				do {
+					if (readHeaders && (headers == null))
+						headers = (Header[])CurrentObject;
+					else
+						if (_rootObjectID == 0) _rootObjectID = _lastObjectID;
+				} while (ReadNextObject (reader));
 			}
 
 			result = _manager.GetObject (_rootObjectID);
+		}
+
+		bool ReadNextObject (BinaryElement element, BinaryReader reader)
+		{
+			if (element == BinaryElement.End)
+			{
+				_manager.DoFixups();
+
+				_manager.RaiseDeserializationEvent();
+				return false;
+			}
+
+			SerializationInfo info;
+			long objectId;
+
+			ReadObject (element, reader, out objectId, out _lastObject, out info);
+
+			if (objectId != 0) {
+				RegisterObject (objectId, _lastObject, info, 0, null, null);
+				_lastObjectID = objectId;		
+			}
+	
+			return true;
 		}
 
 		public bool ReadNextObject (BinaryReader reader)
