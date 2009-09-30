@@ -1,31 +1,7 @@
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+2009-09-30  Jb Evain  <jbevain@novell.com>
 
-	* MessageProperties.cs : fix CopyProperties() behavior to not
-	  clear existing items. Make all properties call this[name].
-
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HttpTransportBindingElement.cs : fix 2.1 build.
-
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* TransportBindingElement.cs : another GetProperty fix, iterate
-	  other binding elements.
-
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HttpTransportBindingElement.cs, PeerTransportBindingElement.cs :
-	  some GetProperty() implementation.
-
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HttpListenerManager.cs : release HttpListener and avoid extra
-	  close process more than once.
-
-2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* HttpChannelListener.cs : do not iterate channel list to close
-	  channels which in turn removes them from the list while iteration.
+	* HttpRequestChannel.cs: When compiling for MonoTouch, avoid
+	to use any of the remoting features.
 
 2009-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
