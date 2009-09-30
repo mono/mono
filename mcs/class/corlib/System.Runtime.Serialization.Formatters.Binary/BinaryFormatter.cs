@@ -161,20 +161,20 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			// Messages are read using a special static method, which does not use ObjectReader
 			// if it is not needed. This saves time and memory.
 
-			BinaryElement elem = (BinaryElement) reader.PeekChar();
+			BinaryElement elem = (BinaryElement) reader.Read ();
 
 			if (elem == BinaryElement.MethodCall) {
-				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, this);
+				return MessageFormatter.ReadMethodCall (elem, reader, hasHeader, handler, this);
 			}
 			else if (elem == BinaryElement.MethodResponse) {
-				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, this);
+				return MessageFormatter.ReadMethodResponse (elem, reader, hasHeader, handler, null, this);
 			}
 			else {
 				ObjectReader serializer = new ObjectReader (this);
 
 				object result;
 				Header[] headers;
-				serializer.ReadObjectGraph (reader, hasHeader, out result, out headers);
+				serializer.ReadObjectGraph (elem, reader, hasHeader, out result, out headers);
 				if (handler != null) handler(headers);
 				return result;
 			}

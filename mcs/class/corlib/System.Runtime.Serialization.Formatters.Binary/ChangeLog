@@ -1,3 +1,20 @@
+2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* BinaryFormatter.cs: NoCheckDeserialize() was using PeekChar() on a
+	reader when it should only read 1 byte. Also BinaryReader.PeekChar()
+	tries to set the position of hte stream back to where it was before
+	the read, which does not work well with broken Stream
+	implementations like BZip2InputStream (reports CanSeek is true when
+	it really can't seek). Now we do a Read() and then pass the value we
+	read on to the next methods.
+
+	* MessageFormatter.cs: 
+	* ObjectReader.cs: added overloads that take a BinaryElement instead
+	of reading it from the reader. Only for the methods used in
+	NoCheckDeserialize.
+
+	Fixes bug #503435.
+
 2009-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* CodeGenerator.cs: Add synchronization as SRE is not thread safe.
