@@ -1,3 +1,9 @@
+2009-09-29  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpUtility.cs: Do not use CAS Attributes when using MonoTouch.
+
+	Remove unnecesasry using clause.
+
 2009-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: use full url in redirect if
