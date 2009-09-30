@@ -548,10 +548,19 @@ namespace System.IO {
 						}
 
 						if (action == FileAction.RenamedNewName && is_directory) {
+							string renamedOldFullPath = renamed.OldFullPath;
+							string renamedFullPath = renamed.FullPath;
+							int renamedOldFullPathLength = renamedOldFullPath.Length;
+							
 							foreach (InotifyData child in parent.children) {
-								if (child.Directory.StartsWith (renamed.OldFullPath)) {
-									child.Directory = renamed.FullPath +
-										child.Directory.Substring (renamed.OldFullPath.Length);
+									
+								if (child.Directory.StartsWith (renamedOldFullPath
+#if NET_2_0
+												, StringComparison.Ordinal
+#endif
+								    )) {
+									child.Directory = renamedFullPath +
+										child.Directory.Substring (renamedOldFullPathLength);
 								}
 							}
 						}
