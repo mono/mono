@@ -1,3 +1,8 @@
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Emit out marshalling of stringbuilders.
+	Fixes #543133.
+
 2009-09-30  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Try to shorten the new section after a major
