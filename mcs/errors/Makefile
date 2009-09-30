@@ -4,14 +4,7 @@ include ../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-ifeq (net_1_1, $(PROFILE))
-# force this, we don't case if CSC is broken. This also
-# means we can use --options, yay.
-
-MCS = $(with_mono_path) $(INTERNAL_MCS)
-else
 EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll GCS1685-lib.dll
-endif
 
 ilasm = $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
@@ -42,7 +35,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1 net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 
 check: run-mcs-tests 
@@ -87,6 +80,8 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 cecil:
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:../tests/gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS) -verbose
 
+endif
+
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
 
@@ -102,5 +97,3 @@ install-local uninstall-local:
 
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
-
-endif
