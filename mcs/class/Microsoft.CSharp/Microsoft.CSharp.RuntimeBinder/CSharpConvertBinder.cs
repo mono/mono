@@ -30,6 +30,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -63,13 +64,26 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				Type.GetHashCode (),
+				Explicit.GetHashCode (),
+				is_checked.GetHashCode ());
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackConvert (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();
+			var expr = CSharpBinder.CreateCompilerExpression (null, target, true);
+
+			if (Explicit)
+				expr = new Compiler.Cast (new Compiler.TypeExpression (Type, Compiler.Location.Null), expr);
+			else
+				expr = new Compiler.ImplicitCast (expr, Type);
+
+			if (is_checked)
+				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
+
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
+			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
 		}
 	}
 }

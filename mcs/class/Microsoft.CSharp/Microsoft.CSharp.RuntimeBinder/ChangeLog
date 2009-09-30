@@ -1,3 +1,9 @@
+2009-09-30  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpBinaryOperationBinder.cs, CSharpBinder.cs,
+	CSharpUnaryOperationBinder.cs, CSharpConvertBinder.cs: Implicit
+	and explicit conversions implemented.
+
 2009-09-29  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpBinaryOperationBinder.cs, Extensions.cs, CSharpBinder.cs,

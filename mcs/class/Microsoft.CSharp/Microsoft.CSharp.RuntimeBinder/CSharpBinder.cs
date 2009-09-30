@@ -89,13 +89,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value, bool typed)
 		{
-			if (info.IsNamed)
+			if (info != null && info.IsNamed)
 				throw new NotImplementedException ("IsNamed");
 
 			if (value.Value == null)
 				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
 
-			if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
+			if (info != null && (info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
 				if (!typed)
 					throw new NotImplementedException ("weakly typed constant");
 

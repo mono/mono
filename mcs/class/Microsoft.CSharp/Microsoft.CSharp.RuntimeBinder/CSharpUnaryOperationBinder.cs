@@ -69,7 +69,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override int GetHashCode ()
 		{
 			return Extensions.HashCode (
-				base.GetHashCode (),
+				Operation.GetHashCode (),
 				is_checked.GetHashCode (),
 				argumentInfo[0].GetHashCode ());
 		}
