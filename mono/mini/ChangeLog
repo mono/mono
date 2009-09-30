@@ -1,3 +1,7 @@
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c (GEN_TRAMP_SIZE): Increase this by 4.
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_debug_info_end): Disable this as it doesn't seem to
