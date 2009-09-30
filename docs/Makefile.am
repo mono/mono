@@ -101,5 +101,5 @@ $(srcdir)/deploy/.stamp: convert.exe Makefile.am
 extract: $(srcdir)/deploy/.stamp
 
 convert.exe: convert.cs AgilityPack.dll
-	cd $(srcdir) && $(MAKE) PROFILE=net_1_1 -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
+	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
 
