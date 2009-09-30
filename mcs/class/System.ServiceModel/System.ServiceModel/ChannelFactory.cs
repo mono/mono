@@ -112,7 +112,7 @@ namespace System.ServiceModel
 #else
 
 			string contractName = Endpoint.Contract.ConfigurationName;
-			ClientSection client = (ClientSection) ConfigurationManager.GetSection ("system.serviceModel/client");
+			ClientSection client = ConfigUtil.ClientSection;
 			ChannelEndpointElement res = null;
 			foreach (ChannelEndpointElement el in client.Endpoints) {
 				if (el.Contract == contractName && (endpointConfig == el.Name || endpointConfig == "*")) {
@@ -138,7 +138,7 @@ namespace System.ServiceModel
 #if !NET_2_1
 		private void ApplyBehavior (string behaviorConfig)
 		{
-			BehaviorsSection behaviorsSection = (BehaviorsSection) ConfigurationManager.GetSection ("system.serviceModel/behaviors");
+			BehaviorsSection behaviorsSection = ConfigUtil.BehaviorsSection;
 			EndpointBehaviorElement behaviorElement = behaviorsSection.EndpointBehaviors [behaviorConfig];
 			int i = 0;
 			foreach (BehaviorExtensionElement el in behaviorElement) {

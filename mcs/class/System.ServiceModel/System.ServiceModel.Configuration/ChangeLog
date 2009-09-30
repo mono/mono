@@ -1,3 +1,8 @@
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs : use WeConfigurationManager when it is under
+	  ASP.NET environment.
+
 2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IdentityElement.cs, NetPeerTcpBindingElement.cs: implemented
