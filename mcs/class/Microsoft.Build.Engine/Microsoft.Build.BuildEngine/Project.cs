@@ -946,7 +946,7 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 
 			if (Imports.Contains (import)) {
-				LogWarning (importingProject != null ? importingProject.FullFileName : String.Empty,
+				LogWarning (importingProject != null ? importingProject.FullFileName : fullFileName,
 						"A circular reference was found involving the import of {0}. Only" +
 						" the first import of this file will be used, ignoring others.",
 						import.ProjectPath);

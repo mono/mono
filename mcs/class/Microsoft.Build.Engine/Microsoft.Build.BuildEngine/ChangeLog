@@ -1,5 +1,10 @@
 2009-10-01  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (AddImport): Show the correct source file name, when
+	the import is in the main project file.
+
+2009-10-01  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #543299.
 	* Import.cs (.ctor): Evaluate and set EvaluatedProjectPath to
 	the full path of the imported project here itself, instead of ..
