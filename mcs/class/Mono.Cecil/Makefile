@@ -9,7 +9,7 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll -keyfile:$(LIBRARY_SNK)
 
 NO_TEST = yes
 
-ifneq (net_1_1, $(PROFILE))
+ifneq (net_2_0, $(PROFILE))
 NO_INSTALL = yes
 endif
 
