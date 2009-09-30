@@ -1,3 +1,10 @@
+2009-09-26  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport]
+	* TreeNode.cs: When we invalidate a node, make sure we start at
+	0, instead of the node's Bounds.Left, which does not include
+	the +/-, checkbox, or stateimages.
+	[Fixes bug #542481]
+
 2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Compare the name and not displayname of properties 
