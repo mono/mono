@@ -957,6 +957,36 @@ mono_test_marshal_stringbuilder_unicode (gunichar2 *s, int n)
 	return 0;
 }
 
+LIBTEST_API void STDCALL
+mono_test_marshal_stringbuilder_out (char **s)
+{
+	const char m[] = "This is my message.  Isn't it nice?";
+	char *str;
+
+	str = g_malloc (strlen (m) + 1);
+	memcpy (str, m, strlen (m) + 1);
+	
+	*s = str;
+}
+
+LIBTEST_API int STDCALL  
+mono_test_marshal_stringbuilder_out_unicode (gunichar2 **s)
+{
+	const char m[] = "This is my message.  Isn't it nice?";
+	gunichar2 *s2;
+	glong len;
+
+	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
+	
+	len = (len * 2) + 2;
+	*s = g_malloc (len);
+	memcpy (*s, s2, len);
+
+	g_free (s2);
+
+	return 0;
+}
+
 typedef struct {
 #ifndef __GNUC__
     char a;

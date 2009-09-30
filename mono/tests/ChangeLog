@@ -1,3 +1,7 @@
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for #543133.
+
 2009-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs libtest.c: Add a test for #481559.
