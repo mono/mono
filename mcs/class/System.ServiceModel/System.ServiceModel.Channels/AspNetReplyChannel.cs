@@ -40,13 +40,11 @@ namespace System.ServiceModel.Channels
 	{
 		HttpContext http_context;
 		AspNetChannelListener<IReplyChannel> listener;
-		Uri uri;
 
 		public AspNetReplyChannel (AspNetChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.listener = listener;
-			uri = listener.Uri;
 		}
 
 		internal void CloseContext ()
@@ -77,6 +75,7 @@ namespace System.ServiceModel.Channels
 			if (!WaitForRequest (timeout))
 				return false;
 
+Console.WriteLine ("Received HTTP request {0} on channel {1}", http_context.Request.Url, LocalAddress);
 			Message msg;
 			// FIXME: remove this hack
 			if (http_context.Request.HttpMethod == "GET") {

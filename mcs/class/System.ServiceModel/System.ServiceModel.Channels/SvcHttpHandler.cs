@@ -112,6 +112,7 @@ namespace System.ServiceModel.Channels {
 
 		void ApplyConfiguration (ServiceHostBase host)
 		{
+			/*
 			foreach (ServiceElement service in ConfigUtil.ServicesSection.Services) {
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 					// FIXME: consider BindingName as well
@@ -137,6 +138,7 @@ namespace System.ServiceModel.Channels {
 					}
 				}
 			}
+			*/
 		}
 
 		void EnsureServiceHost ()

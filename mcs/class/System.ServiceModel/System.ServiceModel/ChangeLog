@@ -1,5 +1,10 @@
 2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostingEnvironment.cs : use AspNetCompatibilityEnabled as
+	  ASP.NET switch.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactory.cs : use ConfigUtil to get config sections.
 
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>

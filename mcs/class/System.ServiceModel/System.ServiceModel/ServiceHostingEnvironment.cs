@@ -30,20 +30,10 @@ namespace System.ServiceModel {
 
 	public static class ServiceHostingEnvironment {
 
-		static bool aspnet_compatibility;
-		static bool in_aspnet = false;
-		
-		public static bool AspNetCompatibilityEnabled {
-			get { return aspnet_compatibility; }
-		}
+		public static bool AspNetCompatibilityEnabled { get; internal set; }
 
 		public static void EnsureServiceAvailable (string virtualPath)
 		{
-		}
-
-		internal static bool InAspNet {
-			get { return in_aspnet; }
-			set { in_aspnet = value; }
 		}
 	}
 }

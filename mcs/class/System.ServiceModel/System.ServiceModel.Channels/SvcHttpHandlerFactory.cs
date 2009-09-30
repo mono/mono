@@ -49,7 +49,7 @@ namespace System.ServiceModel.Channels {
 
 		public SvcHttpHandlerFactory ()
 		{
-			ServiceHostingEnvironment.InAspNet = true;
+			ServiceHostingEnvironment.AspNetCompatibilityEnabled = true;
 		}
 
 		public static SvcHttpHandler GetHandlerForListener (IChannelListener listener)

@@ -1,3 +1,11 @@
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandlerFactory.cs, HttpTransportBindingElement.cs :
+	  use AspNetCompatibilityEnabled.
+	* SvcHttpHandler.cs : disable ApplyConfiguration(). It should be done
+	  at ServiceHostBase.
+	* AspNetReplyChannel.cs : remove extra field.
+
 2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpReplyChannel.cs : remove extra field.
