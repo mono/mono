@@ -148,7 +148,10 @@ monotouch_dirs := \
 	System	\
 	System.Core	\
 	System.Json	\
-	System.Xml.Linq
+	System.Xml.Linq	\
+	System.Runtime.Serialization	\
+	System.ServiceModel	\
+	System.ServiceModel.Web	\
 
 net_3_5_dirs := \
 	Microsoft.Build.Framework	\
