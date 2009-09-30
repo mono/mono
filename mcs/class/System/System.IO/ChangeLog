@@ -1,3 +1,29 @@
+2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* InotifyWatcher.cs: fixes bug #322330. Patch by Alexander Kojevnikov.
+	This patch fixes the issues reported by the OP and in my previous
+	comment. In particular:
+
+	Hunks 1 and 4 remove the new_name_needed flag, it's not used
+	anywhere and only adds confusion.
+
+	Hunk 2 skips DeleteSelf event for sub-directories, they receive the
+	Delete event anyway.
+
+	Hunk 3 makes sure that we use a combination of Deleted+Created
+	notifications instead of a single Renamed notification, if the watched item
+	has been moved from one directory to another. This is because RenamedEventArgs
+	supports only one directory name: FullPath is always directory+name,
+	OldFullPath is always directory+old_name.
+
+	Hunk 5 updates relevant InotifyData instances with the new directory
+	name.  Without this, notifications always use the original folder names.
+
+	The last hunk may be a bit slow as it needs to iterate on all the
+	InotifyData instances. On the other hand, we are already doing it on the
+	Delete event (lines 560:568) and by default inotify allows only 8192 watches
+	per user.
+
 2009-07-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* InotifyWatcher.cs: when a watched subdirectory is deleted, remove it
