@@ -30,7 +30,7 @@ net_1_1_dirs := \
 	installutil
 
 net_2_0_dirs := \
-	al			\
+	al		\
 	corcompare	\
 	linker		\
 	tuner		\
@@ -43,6 +43,7 @@ net_2_0_dirs := \
 	monop		\
 	xbuild		\
 	resgen		\
+	monodoc		\
 	mdoc		\
 	mono-service	\
 	mono-shlib-cop	\
@@ -60,7 +61,7 @@ net_2_0_dirs := \
 
 net_2_1_dirs := \
 	compiler-tester
-	
+
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_1_1_SUBDIRS := $(net_1_1_dirs)
 net_2_0_bootstrap_SUBDIRS = resgen

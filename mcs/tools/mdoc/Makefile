@@ -13,8 +13,8 @@ LOCAL_MCS_FLAGS = \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
 	/r:System.Web.dll                                                           \
 	/r:ICSharpCode.SharpZipLib.dll                                              \
-	/r:$(topdir)/class/lib/net_1_1/monodoc.dll                                  \
-	/r:$(topdir)/class/lib/net_1_1/Mono.Cecil.dll
+	/r:$(topdir)/class/lib/net_2_0/monodoc.dll                                  \
+	/r:$(topdir)/class/lib/net_2_0/Mono.Cecil.dll
 
 MONODOC_RESOURCES = \
 	../monodoc/Resources/mdoc-html-utils.xsl    \
@@ -42,7 +42,7 @@ EXTRA_DISTFILES = \
 
 PROGRAM = mdoc.exe
 
-$(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(topdir)/class/lib/net_1_1/monodoc.dll
+$(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(topdir)/class/lib/net_2_0/monodoc.dll
 
 include ../../build/executable.make
 
