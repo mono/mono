@@ -47,9 +47,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Add (Import import)
 		{
-			if (!filenames.ContainsKey (import.ProjectPath)) {
+			if (!filenames.ContainsKey (import.EvaluatedProjectPath)) {
 				groupingCollection.Add (import);
-				filenames.Add (import.ProjectPath, null);
+				filenames.Add (import.EvaluatedProjectPath, null);
 			}
 		}
 		
@@ -71,6 +71,11 @@ namespace Microsoft.Build.BuildEngine {
 			while (it.MoveNext ()) {
 				array.SetValue(it.Current, i++);
 			}
+		}
+
+		internal bool Contains (Import import)
+		{
+			return filenames.ContainsKey (import.EvaluatedProjectPath);
 		}
 		
 		public void CopyTo (Import[] array, int index)

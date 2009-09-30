@@ -51,17 +51,16 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (ProjectPath == String.Empty)
 				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
+			evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
+			evaluatedProjectPath = GetFullPath ();
+			if (EvaluatedProjectPath == String.Empty)
+				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
 		}
 
 		// FIXME: condition
 		internal void Evaluate ()
 		{
-			evaluatedProjectPath = EvaluateProjectPath (ProjectPath);
-			string filename = GetFullPath ();
-
-			if (EvaluatedProjectPath == String.Empty)
-				throw new InvalidProjectFileException ("The required attribute \"Project\" is missing from element <Import>.");
-
+			string filename = evaluatedProjectPath;
 			// NOTE: it's a hack to transform Microsoft.CSharp.Targets to Microsoft.CSharp.targets
 			if (Path.HasExtension (filename))
 				filename = Path.ChangeExtension (filename, Path.GetExtension (filename));
