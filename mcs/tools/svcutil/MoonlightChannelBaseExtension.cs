@@ -153,6 +153,21 @@ namespace Mono.ServiceContractTool
 			ctor.BaseConstructorArgs.Add (
 				new CodeArgumentReferenceExpression ("client"));
 			type.Members.Add (ctor);
+
+			// In Client type:
+			// protected override TChannel CreateChannel()
+			var creator = new CodeMemberMethod ();
+			creator.Name = "CreateChannel";
+			creator.Attributes = MemberAttributes.Family | MemberAttributes.Override;
+			creator.ReturnType = gt;
+			creator.Statements.Add (
+				new CodeMethodReturnStatement (
+					new CodeCastExpression (
+						gt,
+						new CodeObjectCreateExpression (
+							new CodeTypeReference (name),
+							new CodeThisReferenceExpression ()))));
+			parentClass.Members.Add (creator);
 		}
 	}
 
@@ -209,6 +224,7 @@ namespace Mono.ServiceContractTool
 			var type = ml_context.ChannelType;
 			var od = context.Operation;
 
+			// BeginXxx() implementation
 			CodeMemberMethod cm = new CodeMemberMethod ();
 			type.Members.Add (cm);
 			cm.Name = "Begin" + od.Name;

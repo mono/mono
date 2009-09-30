@@ -1,3 +1,7 @@
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MoonlightChannelBaseExtension.cs : add CreateChannel() override.
+
 2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MoonlightChannelBaseExtension.cs : fixed a couple of generated
