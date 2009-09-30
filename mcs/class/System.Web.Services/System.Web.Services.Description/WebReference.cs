@@ -42,16 +42,16 @@ namespace System.Web.Services.Description
 	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;
-#if !TARGET_J2EE
+#if !TARGET_J2EE && !MONOTOUCH
 		CodeNamespace _proxyCode;
-#endif
 		ServiceDescriptionImportWarnings _warnings;
+#endif
 		string _protocolName;
 		string _appSettingUrlKey;
 		string _appSettingBaseUrl;
 		StringCollection _validationWarnings;
 		
-#if !TARGET_J2EE
+#if !TARGET_J2EE && !MONOTOUCH
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode)
 		{
 			if (documents == null) throw new ArgumentNullException ("documents");
@@ -94,9 +94,14 @@ namespace System.Web.Services.Description
 			get { return _protocolName; }
 			set { _protocolName = value; }
 		}
-#if !TARGET_J2EE
+#if !TARGET_J2EE && !MONOTOUCH
 		public CodeNamespace ProxyCode {
 			get { return _proxyCode; }
+		}
+
+		public ServiceDescriptionImportWarnings Warnings {
+			get { return _warnings; }
+			set { _warnings = value; }
 		}
 #endif
 		public StringCollection ValidationWarnings {
@@ -106,11 +111,6 @@ namespace System.Web.Services.Description
 			}
 		}
 
-		public ServiceDescriptionImportWarnings Warnings {
-			get { return _warnings; }
-			set { _warnings = value; }
-		}
-		
 		internal void SetValidationWarnings (StringCollection col)
 		{
 			_validationWarnings = col;

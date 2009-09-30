@@ -491,7 +491,11 @@ namespace System.Web.Services.Protocols {
 			xmlImporter.IncludeTypes (Type);
 			soapImporter.IncludeTypes (Type);
 
+#if MONOTOUCH
+			SoapExtensions = new SoapExtensionRuntimeConfig [2][];
+#else
 			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
+#endif
 		}
 
 		internal SoapServiceRoutingStyle RoutingStyle {

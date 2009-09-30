@@ -111,6 +111,7 @@ namespace System.Web.Services.Protocols {
 			return pos;
 		}
 
+#if !MONOTOUCH
 		static void InitializeGlobalExtensions ()
 		{
 			globalExtensions = new ArrayList[2];
@@ -173,7 +174,8 @@ namespace System.Web.Services.Protocols {
 			}
 			return exts;
 		}
-
+#endif
+	
 		internal static SoapExtensionRuntimeConfig[] GetMethodExtensions (LogicalMethodInfo method)
 		{
 			object[] ats = method.GetCustomAttributes (typeof (SoapExtensionAttribute));
