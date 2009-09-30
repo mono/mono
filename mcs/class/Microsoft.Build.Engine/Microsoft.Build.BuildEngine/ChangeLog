@@ -1,3 +1,19 @@
+2009-10-01  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (AddImport): Show the correct source file name, when
+	the import is in the main project file.
+
+2009-10-01  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #543299.
+	* Import.cs (.ctor): Evaluate and set EvaluatedProjectPath to
+	the full path of the imported project here itself, instead of ..
+	(Evaluate): .. here.
+	* ImportCollection.cs (Add): Use import.EvaluatedProjectPath .
+	(Contains): New.
+	* Project.cs (AddImport): Don't process if condition is false.
+	Warn if a circular reference is detected, and ignore the import.
+
 2009-09-29  Ankit Jain  <jankit@novell.com>
 
 	* GroupingCollection.cs (Evaluate): Mark internal.

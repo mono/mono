@@ -1,3 +1,7 @@
+2009-10-01  Ankit Jain  <jankit@novell.com>
+
+	* ImportTest.cs (TestAdd1): Add tests for multiple imports.
+
 2009-09-29  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestPropertiesFromImportedProjects): New.
