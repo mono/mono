@@ -31,6 +31,7 @@ using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
+using System.IO;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
@@ -42,9 +43,27 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestAdd1 ()
 		{
+			string first = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='second.proj'/>
+                                </Project>
+";
+			using (StreamWriter sw = new StreamWriter ("Test/resources/first.proj")) {
+				sw.Write (first);
+			}
+
+			string second = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                </Project>
+";
+			using (StreamWriter sw = new StreamWriter ("Test/resources/second.proj")) {
+				sw.Write (second);
+			}
+
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/Import.csproj'/>
+						<Import Project='Test/resources/first.proj'/>
+						<Import Project='Test/resources/Import.csproj' Condition='false'/>
                                 </Project>
                         ";
 
@@ -53,15 +72,21 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
 
-			Import[] t = new Import [1];
+			Import[] t = new Import [2];
+			Assert.AreEqual (2, project.Imports.Count, "Number of imports");
 			project.Imports.CopyTo (t, 0);
 
+			string base_dir = Path.Combine (Environment.CurrentDirectory, Path.Combine ("Test", "resources"));
+
 			Assert.IsNull (t [0].Condition, "A1");
-			Assert.AreEqual (false, t [0].IsImported, "A2");
-			Assert.AreEqual ("Test/resources/Import.csproj", t [0].ProjectPath, "A3");
-			Assert.IsNotNull (t [0].EvaluatedProjectPath, "A4");
-			// FIXME: why there is no IsNotEmpty () in Mono NUnit?
-			Assert.IsTrue (String.Empty != t [0].EvaluatedProjectPath, "A5");
+
+			Assert.AreEqual (false, t[0].IsImported, "A5");
+			Assert.AreEqual ("Test/resources/first.proj", t[0].ProjectPath, "A6");
+			Assert.AreEqual (Path.Combine (base_dir, "first.proj"), t[0].EvaluatedProjectPath, "A7");
+
+			Assert.AreEqual (true, t[1].IsImported, "A2");
+			Assert.AreEqual ("second.proj", t[1].ProjectPath, "A3");
+			Assert.AreEqual (Path.Combine (base_dir, "second.proj"), t[1].EvaluatedProjectPath, "A4");
 		}
 
 		[Test]

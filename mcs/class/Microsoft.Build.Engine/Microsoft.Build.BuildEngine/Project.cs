@@ -942,10 +942,28 @@ namespace Microsoft.Build.BuildEngine {
 			groupingCollection.Evaluate (EvaluationType.Property);
 
 			Import import = new Import (xmlElement, this, importingProject);
-			Imports.Add (import);
+			if (!ConditionParser.ParseAndEvaluate (import.Condition, this))
+				return;
 
-			if (ConditionParser.ParseAndEvaluate (import.Condition, this))
-				import.Evaluate ();
+			if (Imports.Contains (import)) {
+				LogWarning (importingProject != null ? importingProject.FullFileName : fullFileName,
+						"A circular reference was found involving the import of {0}. Only" +
+						" the first import of this file will be used, ignoring others.",
+						import.ProjectPath);
+
+				return;
+			}
+
+			if (String.Compare (fullFileName, import.EvaluatedProjectPath) == 0) {
+				LogWarning (importingProject != null ? importingProject.FullFileName : fullFileName,
+						"The main project file was imported here, which creates a circular " +
+						"reference. Ignoring this import.");
+
+				return;
+			}
+
+			Imports.Add (import);
+			import.Evaluate ();
 		}
 		
 		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
