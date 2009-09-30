@@ -20,6 +20,7 @@ System.ComponentModel/AsyncCompletedEventHandler.cs
 System.ComponentModel/AsyncOperation.cs
 System.ComponentModel/AsyncOperationManager.cs
 System.ComponentModel/BackgroundWorker.cs
+System.ComponentModel/CancelEventArgs.cs
 System.ComponentModel/CategoryAttribute.cs
 System.ComponentModel/ComponentCollection.cs
 System.ComponentModel/DefaultValueAttribute.cs
@@ -32,8 +33,10 @@ System.ComponentModel/IContainer.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/IEditableObject.cs
 System.ComponentModel/INotifyPropertyChanged.cs
+System.ComponentModel/InvalidEnumArgumentException.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ITypeDescriptorContext.cs
+System.ComponentModel/ListSortDirection.cs
 System.ComponentModel/ProgressChangedEventHandler.cs
 System.ComponentModel/ProgressChangedEventArgs.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
