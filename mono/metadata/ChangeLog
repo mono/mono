@@ -1,3 +1,8 @@
+2009-09-30  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Try to shorten the new section after a major
+	allocation to avoid ever-growing sections.
+
 2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: fixed the order in which 'completed' and the wait
