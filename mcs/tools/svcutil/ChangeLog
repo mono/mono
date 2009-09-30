@@ -1,5 +1,11 @@
 2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Driver.cs, MoonlightChannelBaseExtension.cs, CommandLineOptions.cs:
+	  add experimental -monotouch option to generate proxy that are based
+	  on moonlight but for sync methods.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MoonlightChannelBaseExtension.cs : add CreateChannel() override.
 
 2009-08-10  Atsushi Enomoto  <atsushi@ximian.com>

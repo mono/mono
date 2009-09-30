@@ -72,6 +72,17 @@ namespace Mono.ServiceContractTool
 			}
 		}
 
+		[Option ("Generate MonoTouch client. (This option may vanish.)", "monotouch")]
+		public bool GenerateMonoTouchProxy {
+			// this is a hack. It does not differentiate from GenerateMoonlightProxy on getter.
+			get { return generate_moonlight_proxy; }
+			set {
+				if (!value)
+					return;
+				generate_moonlight_proxy = true;
+			}
+		}
+
 		[Option ("Generate types as internal.", 'i', "internal")]
 		public bool GenerateTypesAsInternal;
 

@@ -75,12 +75,14 @@ namespace Mono.ServiceContractTool
 
 	class MoonlightChannelBaseContractExtension : IContractBehavior, IServiceContractGenerationExtension
 	{
-		public MoonlightChannelBaseContractExtension (MoonlightChannelBaseContext mlContext)
+		public MoonlightChannelBaseContractExtension (MoonlightChannelBaseContext mlContext, bool generateAsync)
 		{
 			ml_context = mlContext;
+			generate_async = generateAsync;
 		}
 
 		MoonlightChannelBaseContext ml_context;
+		bool generate_async;
 
 		// IContractBehavior
 		public void AddBindingParameters (ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
@@ -173,12 +175,14 @@ namespace Mono.ServiceContractTool
 
 	class MoonlightChannelBaseOperationExtension : IOperationBehavior, IOperationContractGenerationExtension
 	{
-		public MoonlightChannelBaseOperationExtension (MoonlightChannelBaseContext mlContext)
+		public MoonlightChannelBaseOperationExtension (MoonlightChannelBaseContext mlContext, bool generateAsync)
 		{
 			ml_context = mlContext;
+			generate_async = generateAsync;
 		}
 
 		MoonlightChannelBaseContext ml_context;
+		bool generate_async;
 
 		// IOperationBehavior
 
@@ -220,6 +224,57 @@ namespace Mono.ServiceContractTool
 		OperationContractGenerationContext context;
 
 		public void Fixup ()
+		{
+			if (generate_async)
+				FixupAsync ();
+			else
+				FixupSync ();
+		}
+
+		public void FixupSync ()
+		{
+			var type = ml_context.ChannelType;
+			var od = context.Operation;
+
+			// sync method implementation
+			CodeMemberMethod cm = new CodeMemberMethod ();
+			type.Members.Add (cm);
+			cm.Name = od.Name;
+			cm.Attributes = MemberAttributes.Public 
+					| MemberAttributes.Final;
+
+			var inArgs = new List<CodeParameterDeclarationExpression > ();
+			var outArgs = new List<CodeParameterDeclarationExpression > ();
+
+			foreach (CodeParameterDeclarationExpression p in context.SyncMethod.Parameters) {
+				inArgs.Add (p);
+				cm.Parameters.Add (p);
+			}
+
+			cm.ReturnType = context.SyncMethod.ReturnType;
+
+			var argsDecl = new CodeVariableDeclarationStatement (
+				typeof (object []),
+				"args",
+				new CodeArrayCreateExpression (typeof (object), inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ()));
+			cm.Statements.Add (argsDecl);
+
+			var args = new List<CodeExpression> ();
+			args.Add (new CodePrimitiveExpression (od.Name));
+			args.Add (new CodeVariableReferenceExpression ("args"));
+
+			CodeExpression call = new CodeMethodInvokeExpression (
+				new CodeBaseReferenceExpression (),
+				"Invoke",
+				args.ToArray ());
+
+			if (cm.ReturnType.BaseType == "System.Void")
+				cm.Statements.Add (new CodeExpressionStatement (call));
+			else
+				cm.Statements.Add (new CodeMethodReturnStatement (new CodeCastExpression (context.SyncMethod.ReturnType, call)));
+		}
+
+		public void FixupAsync ()
 		{
 			var type = ml_context.ChannelType;
 			var od = context.Operation;
