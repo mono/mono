@@ -1,5 +1,14 @@
 2009-09-30  Mark Probst  <mark.probst@gmail.com>
 
+	* assembly.c, domain.c, image.c, metadata-internals.h: Split
+	domain and image unloading into two steps.  We must do this
+	because clearing the domain in SGen requires the class metadata to
+	be intact, but we need to free the mono_g_hash_tables in case a
+	collection occurs during domain unloading and the roots would trip
+	up the GC.
+
+2009-09-30  Mark Probst  <mark.probst@gmail.com>
+
 	* object-internals.h: Remove serialized culture fields from
 	MonoInternalThread.
 
