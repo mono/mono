@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-// Dynamic binary and unary operators tests
+// Dynamic binary operator, unary operators and convert tests
 
 public struct InverseLogicalOperator
 {
@@ -661,6 +661,76 @@ class Tester
 	{
 		checked {
 			// TODO:
+		}
+	}
+
+	void ConvertImplicitTest ()
+	{
+		dynamic d = 3;
+		decimal v1 = d;
+		Assert (3m, v1, "#1");
+
+		d = new MyTypeImplicitOnly (5);
+		int v2 = d;
+		Assert (5, v2, "#2");
+
+		d = (byte) 4;
+		int v3 = d;
+		Assert (4, v3, "#3");
+
+		int[] v4 = new int[] { d };
+		Assert (4, v4[0], "#4");
+
+		d = true;
+		var v5 = new [] { d, 1 };
+		Assert (true, v5[0], "#5");
+		Assert (1, v5[1], "#5a");
+
+		d = "aa";
+		bool b = false;
+		var r = b ? d : "ss";
+		Assert ("ss", r, "#6");
+	}
+
+	int ConvertImplicitReturnTest ()
+	{
+		dynamic d = (byte) 3;
+		return d;
+	}
+
+	IEnumerable<string> ConvertImplicitReturnTest_2 ()
+	{
+		dynamic d = "aaa";
+		yield return d;
+	}
+
+	void ConvertExplicitTest ()
+	{
+		dynamic d = 300;
+		Assert (44, (byte) d, "#1");
+		Assert<byte?> (44, (byte?) d, "#1a");
+
+		d = 3m;
+		Assert (3, d, "#2");
+
+		d = new MyTypeImplicitOnly (5);
+		Assert (5, (int) d, "#3");
+
+		d = new MyTypeExplicit (-2);
+		Assert (-2, (int) d, "#4");
+
+		d = null;
+		Assert (null, (object) d, "#5");
+	}
+
+	void ConvertExplicitCheckedTest ()
+	{
+		checked {
+			dynamic d = 300;
+			AssertChecked (() => (byte) d, 7, "#1");
+
+			d = ulong.MaxValue;
+			AssertChecked<uint?> (() => (uint?) d, 2, "#2");
 		}
 	}
 
