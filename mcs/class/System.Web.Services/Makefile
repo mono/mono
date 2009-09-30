@@ -3,6 +3,16 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
+ifeq (monotouch, $(PROFILE))
+LIB_MCS_FLAGS = \
+	-nowarn:649 -nowarn:169			\
+	-r:$(corlib)				\
+	-r:System.dll				\
+	-r:System.Xml.dll			\
+	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \
+	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
+	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd
+else
 LIB_MCS_FLAGS = \
 	-nowarn:649 -nowarn:169			\
 	-r:$(corlib)				\
@@ -17,6 +27,7 @@ LIB_MCS_FLAGS += \
 	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \
 	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
 	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd
+endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
