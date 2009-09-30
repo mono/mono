@@ -23,7 +23,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1 net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -95,8 +95,7 @@ cecil2:
 	$(TESTER) -mode:pos -files:'*test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log -verbose
 # End	
 
-#test-everything:
-#	$(MAKE) PROFILE=net_2_0 run-test
+endif
 
 clean-local:
 	-rm -fr dir-*
@@ -119,5 +118,3 @@ setup:
 
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll
-	
-endif
