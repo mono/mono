@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,15 +38,114 @@ namespace System.Threading
 #endif
 	public sealed class Timer : MarshalByRefObject, IDisposable
 	{
-		static Scheduler scheduler = Scheduler.Instance;
 #region Timer instance fields
 		TimerCallback callback;
 		object state;
 		long due_time_ms;
 		long period_ms;
-		long next_run; // in ticks. Only 'Scheduler' can change it except for new timers without due time.
+		long next_run; // in ticks
 		bool disposed;
 #endregion
+
+		// timers that expire after FutureTime will be put in future_jobs
+		// 5 seconds seems reasonable, this must be at least 1 second
+		const long FutureTime = 5 * 1000;
+		const long FutureTimeTicks = FutureTime * TimeSpan.TicksPerMillisecond;
+
+#region Timer static fields
+		static Thread scheduler;
+		static Hashtable jobs;
+		static Hashtable future_jobs;
+		static Timer future_checker;
+		static AutoResetEvent change_event;
+		static object locker;
+#endregion
+
+		/* we use a static initializer to avoid race issues with the thread creation */
+		static Timer ()
+		{
+			change_event = new AutoResetEvent (false);
+			jobs = new Hashtable ();
+			future_jobs = new Hashtable ();
+			locker = new object ();
+			scheduler = new Thread (SchedulerThread);
+			scheduler.IsBackground = true;
+			scheduler.Start ();
+		}
+
+		static long Ticks ()
+		{
+			return DateTime.GetTimeMonotonic ();
+		}
+
+		static private void SchedulerThread ()
+		{
+			Thread.CurrentThread.Name = "Timer-Scheduler";
+			while (true) {
+				long min_next_run = long.MaxValue;
+				lock (locker) {
+					ArrayList expired = null;
+					long ticks = Ticks ();
+					bool future_queue_activated = false;
+					foreach (Timer t1 in jobs.Keys) {
+						if (t1.next_run <= ticks) {
+							ThreadPool.QueueUserWorkItem (new WaitCallback (t1.callback), t1.state);
+							if (t1.period_ms == -1 || ((t1.period_ms == 0 | t1.period_ms == Timeout.Infinite) && t1.due_time_ms != Timeout.Infinite)) {
+								t1.next_run = long.MaxValue;
+								if (expired == null)
+									expired = new ArrayList ();
+								expired.Add (t1);
+							} else {
+								t1.next_run = Ticks () + TimeSpan.TicksPerMillisecond * t1.period_ms;
+								// if it expires too late, postpone to future_jobs
+								if (t1.period_ms >= FutureTime) {
+									if (future_jobs.Count == 0)
+										future_queue_activated = true;
+									future_jobs [t1] = t1;
+									if (expired == null)
+										expired = new ArrayList ();
+									expired.Add (t1);
+								}
+							}
+						}
+						if (t1.next_run != long.MaxValue) {
+							min_next_run = Math.Min (min_next_run, t1.next_run);
+						}
+					}
+					if (future_queue_activated) {
+						StartFutureHandler ();
+						min_next_run = Math.Min (min_next_run, future_checker.next_run);
+					}
+					if (expired != null) {
+						int count = expired.Count;
+						for (int i = 0; i < count; ++i) {
+							jobs.Remove (expired [i]);
+						}
+						expired.Clear ();
+						if (count > 50)
+							expired = null;
+					}
+				}
+
+				const bool exit_context =
+#if MONOTOUCH
+					// MonoTouch doesn't support remoting,
+					// so avoid calling into the remoting infrastructure.
+					false;
+#else
+					true;
+#endif
+
+				if (min_next_run != long.MaxValue) {
+					long diff = min_next_run - Ticks ();
+					if (diff >= 0)
+						change_event.WaitOne ((int)(diff / TimeSpan.TicksPerMillisecond), exit_context);
+				} else {
+					change_event.WaitOne (Timeout.Infinite, exit_context);
+				}
+			}
+		}
+
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
 			if (dueTime < -1)
@@ -95,12 +194,103 @@ namespace System.Threading
 			this.callback = callback;
 			this.state = state;
 
-			Change (dueTime, period, true);
+			Change (dueTime, period);
 		}
 
 		public bool Change (int dueTime, int period)
 		{
 			return Change ((long)dueTime, (long)period);
+		}
+
+		// FIXME: handle this inside the scheduler, so no additional timer is ever active
+		static void CheckFuture (object state) {
+			lock (locker) {
+				ArrayList moved = null;
+				long now = Ticks ();
+				foreach (Timer t1 in future_jobs.Keys) {
+					if (t1.next_run <= now + FutureTimeTicks) {
+						if (moved == null)
+							moved = new ArrayList ();
+						moved.Add (t1);
+						jobs [t1] = t1;
+					}
+				}
+				if (moved != null) {
+					int count = moved.Count;
+					for (int i = 0; i < count; ++i) {
+						future_jobs.Remove (moved [i]);
+					}
+					moved.Clear ();
+					change_event.Set ();
+				}
+				// no point in keeping this helper timer running
+				if (future_jobs.Count == 0) {
+					future_checker.Dispose ();
+					future_checker = null;
+				}
+			}
+		}
+
+		static void StartFutureHandler ()
+		{
+			if (future_checker == null)
+				future_checker = new Timer (CheckFuture, null, FutureTime - 500, FutureTime - 500);
+		}
+
+		public bool Change (long dueTime, long period)
+		{
+			if(dueTime > 4294967294)
+				throw new NotSupportedException ("Due time too large");
+
+			if(period > 4294967294)
+				throw new NotSupportedException ("Period too large");
+
+			if (dueTime < -1)
+				throw new ArgumentOutOfRangeException ("dueTime");
+
+			if (period < -1)
+				throw new ArgumentOutOfRangeException ("period");
+
+			if (disposed)
+				return false;
+
+			due_time_ms = dueTime;
+			period_ms = period;
+			long now = Ticks ();
+			if (dueTime == 0) {
+				next_run = now;
+			} else if (dueTime == Timeout.Infinite) {
+				next_run = long.MaxValue;
+			} else {
+				next_run = dueTime * TimeSpan.TicksPerMillisecond + now;
+			}
+			lock (locker) {
+				if (next_run != long.MaxValue) {
+					bool is_future = next_run - now > FutureTimeTicks;
+					Timer t = jobs [this] as Timer;
+					if (t == null) {
+						t = future_jobs [this] as Timer;
+					} else {
+						if (is_future) {
+							future_jobs [this] = this;
+							jobs.Remove (this);
+						}
+					}
+					if (t == null) {
+						if (is_future)
+							future_jobs [this] = this;
+						else
+							jobs [this] = this;
+					}
+					if (is_future)
+						StartFutureHandler ();
+					change_event.Set ();
+				} else {
+					jobs.Remove (this);
+					future_jobs.Remove (this);
+				}
+			}
+			return true;
 		}
 
 		public bool Change (TimeSpan dueTime, TimeSpan period)
@@ -122,53 +312,11 @@ namespace System.Threading
 
 		public void Dispose ()
 		{
-			if (disposed)
-				return;
-
 			disposed = true;
-			scheduler.Remove (this);
-		}
-
-		public bool Change (long dueTime, long period)
-		{
-			return Change (dueTime, period, false);
-		}
-
-		bool Change (long dueTime, long period, bool first)
-		{
-			if(dueTime > 4294967294)
-				throw new NotSupportedException ("Due time too large");
-
-			if(period > 4294967294)
-				throw new NotSupportedException ("Period too large");
-
-			if (dueTime < -1)
-				throw new ArgumentOutOfRangeException ("dueTime");
-
-			if (period < -1)
-				throw new ArgumentOutOfRangeException ("period");
-
-			if (disposed)
-				return false;
-
-			due_time_ms = dueTime;
-			period_ms = period;
-			long nr;
-			if (dueTime == 0) {
-				nr = 0; // Due now
-			} else if (dueTime == Timeout.Infinite) {
-				nr = long.MaxValue;
-				/* No need to call Change () */
-				if (first) {
-					next_run = nr;
-					return true;
-				}
-			} else {
-				nr = dueTime * TimeSpan.TicksPerMillisecond + DateTime.GetTimeMonotonic ();
+			lock (locker) {
+				jobs.Remove (this);
+				future_jobs.Remove (this);
 			}
-
-			scheduler.Change (this, nr);
-			return true;
 		}
 
 		public bool Dispose (WaitHandle notifyObject)
@@ -178,190 +326,6 @@ namespace System.Threading
 			return true;
 		}
 
-		class TimerComparer : IComparer {
-			public int Compare (object x, object y)
-			{
-				if (!(x is Timer))
-					return -1;
-				if (!(y is Timer))
-					return 1;
-				long nr1 = ((Timer) x).next_run;
-				long nr2 = ((Timer) y).next_run;
-				long result = nr1 - nr2;
-				return result > 0 ? 1 : result < 0 ? -1 : 0;
-			}
-
-		}
-
-		class Scheduler {
-			static Scheduler instance;
-			SortedList list;
-
-			static Scheduler ()
-			{
-				instance = new Scheduler ();
-			}
-
-			public static Scheduler Instance {
-				get { return instance; }
-			}
-
-			private Scheduler ()
-			{
-				list = new SortedList (new TimerComparer (), 1024);
-				Thread thread = new Thread (SchedulerThread);
-				thread.IsBackground = true;
-				thread.Start ();
-			}
-
-			public void Remove (Timer timer)
-			{
-				// We do not keep brand new items or those with no due time.
-				if (timer.next_run == 0 || timer.next_run == Int64.MaxValue)
-					return;
-
-				lock (this) {
-					// If this is the next item due (index = 0), the scheduler will wake up and find nothing.
-					// No need to Pulse ()
-					InternalRemove (timer);
-				}
-			}
-
-			public void Change (Timer timer, long new_next_run)
-			{
-				lock (this) {
-					// Don't try to remove items that are not initialized or not in the list
-					if (timer.next_run != 0 && timer.next_run != Int64.MaxValue)
-						InternalRemove (timer);
-
-					if (!timer.disposed) {
-						// We should only change next_run after removing and before adding
-						timer.next_run = new_next_run;
-						Add (timer);
-						// If this timer is next in line, wake up the scheduler
-						if (list.GetByIndex (0) == timer)
-							Monitor.Pulse (this);
-					}
-				}
-			}
-
-			// This should be the only caller to list.Add!
-			void Add (Timer timer)
-			{
-				// Make sure there are no collisions (10000 ticks == 1ms, so we should be safe here)
-				int idx = list.IndexOfKey (timer);
-				if (idx != -1) {
-					while (true) {
-						idx++;
-						timer.next_run++;
-						if (idx >= list.Count)
-							break;
-						Timer t2 = (Timer) list.GetByIndex (idx);
-						if (t2.next_run != timer.next_run)
-							break;
-					}
-				}
-				list.Add (timer, timer);
-				//PrintList ();
-			}
-
-			int InternalRemove (Timer timer)
-			{
-				int idx = list.IndexOfKey (timer);
-				if (idx >= 0)
-					list.RemoveAt (idx);
-				return idx;
-			}
-
-			void SchedulerThread ()
-			{
-				Thread.CurrentThread.Name = "Timer-Scheduler";
-				ArrayList new_time = new ArrayList (512);
-				while (true) {
-					long ticks = DateTime.GetTimeMonotonic ();
-					lock (this) {
-						//PrintList ();
-						int i;
-						int count = list.Count;
-						for (i = 0; i < count; i++) {
-							Timer timer = (Timer) list.GetByIndex (i);
-							if (timer.next_run > ticks)
-								break;
-
-							list.RemoveAt (i);
-							count--;
-							i--;
-							ThreadPool.QueueUserWorkItem (new WaitCallback (timer.callback), timer.state);
-							long period = timer.period_ms;
-							long due_time = timer.due_time_ms;
-							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));
-							if (no_more) {
-								timer.next_run = Int64.MaxValue;
-							} else {
-								timer.next_run = DateTime.GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
-								if (timer.next_run > ticks) {
-									Add (timer); // Safe to add here
-									count++;
-								} else {
-									new_time.Add (timer); // Not safe, add it once we're done
-								}
-							}
-						}
-
-						// Reschedule timers with a new due time
-						count = new_time.Count;
-						for (i = 0; i < count; i++) {
-							Timer timer = (Timer) new_time [i];
-							Add (timer);
-						}
-						new_time.Clear ();
-						ShrinkIfNeeded (new_time, 512);
-
-						// Shrink the list
-						int capacity = list.Capacity;
-						count = list.Count;
-						if (capacity > 1024 && count > 0 && (capacity / count) > 3)
-							list.Capacity = count * 2;
-
-						long min_next_run = Int64.MaxValue;
-						if (list.Count > 0)
-							min_next_run = ((Timer) list.GetByIndex (0)).next_run;
-
-						//PrintList ();
-						int ms_wait = -1;
-						if (min_next_run != Int64.MaxValue) {
-							long diff = min_next_run - DateTime.GetTimeMonotonic (); 
-							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
-							if (ms_wait < 0)
-								ms_wait = 0;
-						}
-
-						// Wait until due time or a timer is changed and moves from/to the first place in the list.
-						Monitor.Wait (this, ms_wait);
-					}
-				}
-			}
-
-			void ShrinkIfNeeded (ArrayList list, int initial)
-			{
-				int capacity = list.Capacity;
-				int count = list.Count;
-				if (capacity > initial && count > 0 && (capacity / count) > 3)
-					list.Capacity = count * 2;
-			}
-
-			/*
-			void PrintList ()
-			{
-				Console.WriteLine ("BEGIN--");
-				for (int i = 0; i < list.Count; i++) {
-					Timer timer = (Timer) list.GetByIndex (i);
-					Console.WriteLine ("{0}: {1}", i, timer.next_run);
-				}
-				Console.WriteLine ("END----");
-			}
-			*/
-		}
 	}
 }
 
