@@ -55,7 +55,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	abstract class AQueryClause : Expression
+	abstract class AQueryClause : ShimExpression
 	{
 		class QueryExpressionAccess : MemberAccess
 		{
@@ -147,33 +147,26 @@ namespace Mono.CSharp.Linq
 
 		// TODO: protected
 		public AQueryClause next;
-		public Expression expr;
 		protected ToplevelBlock block;
 
 		protected AQueryClause (ToplevelBlock block, Expression expr, Location loc)
+			 : base (expr)
 		{
 			this.block = block;
-			this.expr = expr;
 			this.loc = loc;
 		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
+			base.CloneTo (clonectx, target);
+
 			AQueryClause t = (AQueryClause) target;
-			if (expr != null)
-				t.expr = expr.Clone (clonectx);
 
 			if (block != null)
 				t.block = (ToplevelBlock) block.Clone (clonectx);
 
 			if (next != null)
 				t.next = (AQueryClause) next.Clone (clonectx);
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			// Should not be reached
-			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -222,17 +215,7 @@ namespace Mono.CSharp.Linq
 				new QueryExpressionAccess (lSide, MethodName, typeArguments, loc), arguments);
 		}
 
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotSupportedException ();
-		}
-
 		protected abstract string MethodName { get; }
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			// Nothing to mutate
-		}
 
 		public virtual AQueryClause Next {
 			set {
@@ -406,7 +389,7 @@ namespace Mono.CSharp.Linq
 			// When select follows use is as result selector
 			//
 			if (next is Select) {
-				result_selector_expr = next.expr;
+				result_selector_expr = next.Expr;
 				next = next.next;
 			} else {
 				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, into_variable,
@@ -516,7 +499,7 @@ namespace Mono.CSharp.Linq
 			// When select follow use is as result selector
 			//
 			if (next is Select) {
-				result_selector_expr = next.expr;
+				result_selector_expr = next.Expr;
 				next = next.next;
 			} else {
 				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, lt, new SimpleName (lt.Value, lt.Location));

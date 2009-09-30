@@ -2324,6 +2324,47 @@ namespace Mono.CSharp {
 	}
 
 	//
+	// Base of expressions used only to narrow resolve flow
+	//
+	public abstract class ShimExpression : Expression
+	{
+		protected Expression expr;
+
+		protected ShimExpression (Expression expr)
+		{
+			this.expr = expr;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			if (expr == null)
+				return;
+
+			ShimExpression target = (ShimExpression) t;
+			target.expr = expr.Clone (clonectx);
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Missing Resolve call");
+		}
+
+		public Expression Expr {
+			get { return expr; }
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			throw new InternalErrorException ("Missing Resolve call");
+		}
+	}
+
+	//
 	// Unresolved type name expressions
 	//
 	public abstract class ATypeNameExpression : FullNamedExpression

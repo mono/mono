@@ -1,5 +1,10 @@
 2009-09-30  Marek Safar  <marek.safar@gmail.com>
 
+	* linq.cs, convert.cs, assign.cs, expression.cs, ecore.cs: Add
+	ShimExpression, ImplicitCast.
+
+2009-09-30  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #542959
 	* delegate.cs: Emit correct delegate instance variable when there
 	are static and non-static overloads.

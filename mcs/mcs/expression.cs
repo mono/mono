@@ -91,42 +91,22 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ParenthesizedExpression : Expression
+	public class ParenthesizedExpression : ShimExpression
 	{
-		public Expression Expr;
-
 		public ParenthesizedExpression (Expression expr)
+			: base (expr)
 		{
-			Expr = expr;
 			loc = expr.Location;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			Expr = Expr.Resolve (ec);
-			return Expr;
+			return expr.Resolve (ec);
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			return Expr.DoResolveLValue (ec, right_side);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should not happen");
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			ParenthesizedExpression target = (ParenthesizedExpression) t;
-
-			target.Expr = Expr.Clone (clonectx);
+			return expr.DoResolveLValue (ec, right_side);
 		}
 	}
 	
@@ -1555,9 +1535,8 @@ namespace Mono.CSharp {
 	///   FIXME: Cast expressions have an unusual set of parsing
 	///   rules, we need to figure those out.
 	/// </summary>
-	public class Cast : Expression {
+	public class Cast : ShimExpression {
 		Expression target_type;
-		Expression expr;
 			
 		public Cast (Expression cast_type, Expression expr)
 			: this (cast_type, expr, cast_type.Location)
@@ -1565,23 +1544,14 @@ namespace Mono.CSharp {
 		}
 
 		public Cast (Expression cast_type, Expression expr, Location loc)
+			: base (expr)
 		{
 			this.target_type = cast_type;
-			this.expr = expr;
 			this.loc = loc;
 		}
 
 		public Expression TargetType {
 			get { return target_type; }
-		}
-
-		public Expression Expr {
-			get { return expr; }
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -1622,17 +1592,31 @@ namespace Mono.CSharp {
 			return expr;
 		}
 		
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should not happen");
-		}
-
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Cast target = (Cast) t;
 
 			target.target_type = target_type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
+		}
+	}
+
+	public class ImplicitCast : ShimExpression
+	{
+		public ImplicitCast (Expression expr, Type target)
+			: base (expr)
+		{
+			this.loc = expr.Location;
+			this.type = target;
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			expr = expr.Resolve (ec);
+			if (expr != null)
+				expr = Convert.ImplicitConversionRequired (ec, expr, type, loc);
+
+			return expr;
 		}
 	}
 	
@@ -6491,7 +6475,7 @@ namespace Mono.CSharp {
 				e.Emit (ec);
 
 			if (arguments.Count == 1)
-				ig.Emit (OpCodes.Newarr, array_element_type);
+				ig.Emit (OpCodes.Newarr, TypeManager.TypeToReflectionType (array_element_type));
 			else {
 				ig.Emit (OpCodes.Newobj, GetArrayMethod (arguments.Count));
 			}
@@ -9933,35 +9917,23 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class AnonymousTypeParameter : Expression
+	public class AnonymousTypeParameter : ShimExpression
 	{
 		public readonly string Name;
-		Expression initializer;
 
 		public AnonymousTypeParameter (Expression initializer, string name, Location loc)
+			: base (initializer)
 		{
 			this.Name = name;
 			this.loc = loc;
-			this.initializer = initializer;
 		}
 		
 		public AnonymousTypeParameter (Parameter parameter)
+			: base (new SimpleName (parameter.Name, parameter.Location))
 		{
 			this.Name = parameter.Name;
 			this.loc = parameter.Location;
-			this.initializer = new SimpleName (Name, loc);
 		}		
-
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			AnonymousTypeParameter t = (AnonymousTypeParameter) target;
-			t.initializer = initializer.Clone (clonectx);
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
-		}
 
 		public override bool Equals (object o)
 		{
@@ -9976,7 +9948,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			Expression e = initializer.Resolve (ec);
+			Expression e = expr.Resolve (ec);
 			if (e == null)
 				return null;
 
@@ -9999,11 +9971,6 @@ namespace Mono.CSharp {
 		{
 			ec.Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
 				Name, initializer);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("Should not be reached");
 		}
 	}
 }

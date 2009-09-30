@@ -678,11 +678,6 @@ namespace Mono.CSharp {
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
-		public static bool ImplicitUserConversionExists (ResolveContext ec, Type source, Type target)
-		{
-			return ImplicitUserConversion (ec, new EmptyExpression (source), target, Location.Null) != null;
-		}
-
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -980,7 +975,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  User-defined Explicit conversions
 		/// </summary>
-		static public Expression ExplicitUserConversion (ResolveContext ec, Expression source,
+		static Expression ExplicitUserConversion (ResolveContext ec, Expression source,
 								 Type target, Location loc)
 		{
 			Expression expr = UserDefinedConversion (ec, source, target, loc, true);
@@ -1318,6 +1313,12 @@ namespace Mono.CSharp {
 			Expression e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;
+
+			if (TypeManager.IsDynamicType (source.Type)) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (source));
+				return new DynamicConversion (target_type, false, args, loc).Resolve (ec);
+			}
 
 			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;
