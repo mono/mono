@@ -1,3 +1,9 @@
+2009-09-30  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #542959
+	* delegate.cs: Emit correct delegate instance variable when there
+	are static and non-static overloads.
+
 2009-09-29  Marek Safar  <marek.safar@gmail.com>
 
 	* dynamic.cs, linq.cs, anonymous.cs, expression.cs, statement.cs,
