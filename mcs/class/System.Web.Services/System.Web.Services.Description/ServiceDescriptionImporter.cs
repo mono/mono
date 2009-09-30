@@ -41,7 +41,10 @@ using System.Xml.Schema;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
+
+#if !MONOTOUCH
 using Microsoft.CSharp;
+#endif
 
 namespace System.Web.Services.Description {
 	public class ServiceDescriptionImporter {
@@ -53,7 +56,7 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceDescriptionImportStyle style;
 		
-#if NET_2_0
+#if NET_2_0 && !MONOTOUCH
 		CodeGenerationOptions options;
 		CodeDomProvider codeGenerator = new CSharpCodeProvider ();
 		ImportContext context;
@@ -97,7 +100,7 @@ namespace System.Web.Services.Description {
 			set { style = value; }
 		}
 		
-#if NET_2_0
+#if NET_2_0 && !MONOTOUCH
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public CodeGenerationOptions CodeGenerationOptions {
 			get { return options; }
@@ -139,6 +142,7 @@ namespace System.Web.Services.Description {
 				schemas.Add (serviceDescription.Types.Schemas);
 		}
 
+#if !MONOTOUCH
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
 			foreach (ProtocolImporter importer in GetSupportedImporters ()) {
@@ -154,15 +158,16 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (new SoapProtocolImporter ());
-#if NET_2_0
+#if NET_2_0 
 			list.Add (new Soap12ProtocolImporter ());
 #endif
 			list.Add (new HttpGetProtocolImporter ());
 			list.Add (new HttpPostProtocolImporter ());
 			return list;
 		}
+#endif
 		
-#if NET_2_0
+#if NET_2_0 && !MONOTOUCH
 
 		[MonoTODO] // where to use Verbose and Extensions in options?
 		public static StringCollection GenerateWebReferences (
