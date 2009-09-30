@@ -1,7 +1,8 @@
+Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
 System.Web.Services/WebServiceBindingAttribute.cs
 System.Web.Services/WebServiceAttribute.cs
-
 System.Web.Services.Protocols/SoapHttpClientProtocol.cs
 System.Web.Services.Protocols/HttpWebClientProtocol.cs
 System.Web.Services.Protocols/WebClientAsyncResult.cs
