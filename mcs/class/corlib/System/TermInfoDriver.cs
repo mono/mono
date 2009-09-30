@@ -1208,9 +1208,7 @@ namespace System {
 				Init ();
 			}
 
-			if (bufferWidth == 0)
-				CheckWindowDimensions ();
-
+			CheckWindowDimensions ();
 			if (left < 0 || left >= bufferWidth)
 				throw new ArgumentOutOfRangeException ("left", "Value must be positive and below the buffer width.");
 

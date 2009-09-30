@@ -1,3 +1,7 @@
+2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TermInfoDriver.cs: attempt to fix bug #527487.
+
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Console.cs : do not use codepage 28591. It breaks build on
