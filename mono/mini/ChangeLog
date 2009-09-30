@@ -1,5 +1,9 @@
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Add a runtime invoke wrapper which is used by
+	mono_runtime_capture_context () without calling mono_runtime_invoke ().
+	(can_marshal_struct): Skip structures with auto layout.
+
 	* tramp-arm.c (GEN_TRAMP_SIZE): Increase this by 4.
 
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
