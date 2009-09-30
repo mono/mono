@@ -12,7 +12,6 @@ if INSTALL_4_0
 symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config
 endif
 
-etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
@@ -25,13 +24,8 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-build_profiles = net_1_1
+build_profiles = net_2_0 net_3_5
 test_profiles = $(build_profiles)
-
-if INSTALL_2_0
-build_profiles += net_2_0 net_3_5
-test_profiles += net_2_0 net_3_5
-endif
 
 if INSTALL_4_0
 build_profiles += net_4_0
