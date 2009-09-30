@@ -195,8 +195,16 @@ namespace System.ServiceModel.Description
 		static MethodInfo [] GetAllMethods (Type type)
 		{
 			var l = new List<MethodInfo> ();
-			foreach (var t in GetAllInterfaceTypes (type))
+			foreach (var t in GetAllInterfaceTypes (type)) {
+#if MONOTOUCH
+				// The MethodBase[] from t.GetMethods () is cast to a IEnumerable <MethodInfo>
+				// when passed to List<MethodInfo>.AddRange, which in turn casts it to 
+				// ICollection <MethodInfo>.  The full-aot compiler has no idea of this, so
+				// we're going to make it aware.
+				int c = ((ICollection <MethodInfo>) t.GetMethods ()).Count;
+#endif
 				l.AddRange (t.GetMethods ());
+			}
 			return l.ToArray ();
 		}
 
