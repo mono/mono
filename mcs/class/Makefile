@@ -152,6 +152,7 @@ monotouch_dirs := \
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
+	System.Web.Services 
 
 net_3_5_dirs := \
 	Microsoft.Build.Framework	\
