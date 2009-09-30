@@ -20,9 +20,9 @@ topdir := ./$(subst $(space),/,$(patsubst %,..,$(filter-out .,$(subst /,$(space)
 
 VERSION = 0.93
 
-Q=$(if $(V),,@)
+#Q=$(if $(V),,@)
 # echo -e "\\t" does not work on some systems, so use 5 spaces
-Q_MCS=$(if $(V),,@echo "MCS     [$(PROFILE)] $(notdir $(@))";)
+#Q_MCS=$(if $(V),,@echo "MCS     [$(PROFILE)] $(notdir $(@))";)
 
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
