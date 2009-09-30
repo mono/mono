@@ -1,3 +1,7 @@
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for #543133.
+
 2009-09-25  Mark Probst  <mark.probst@gmail.com>
 
 	* xdomain-threads.c: Test for checking whether Thread is correctly
