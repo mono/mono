@@ -1,3 +1,13 @@
+2009-09-30  Mark Probst  <mark.probst@gmail.com>
+
+	* object-internals.h: Remove serialized culture fields from
+	MonoInternalThread.
+
+	* icall-def.h, thread-types.h, threads.c: Remove serialized
+	culture icalls.
+
+	* appdomain.c: Corlib version bump.
+
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Emit out marshalling of stringbuilders.
