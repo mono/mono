@@ -278,6 +278,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		public static object ReadMethodCall (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, BinaryFormatter formatter)
 		{
 			BinaryElement elem = (BinaryElement)reader.ReadByte();	// The element code
+			return ReadMethodCall (elem, reader, hasHeaders, headerHandler, formatter);
+		}
+
+		public static object ReadMethodCall (BinaryElement elem, BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, BinaryFormatter formatter)
+		{
 			if (elem != BinaryElement.MethodCall) throw new SerializationException("Invalid format. Expected BinaryElement.MethodCall, found " +  elem);
 
 			MethodFlags flags = (MethodFlags) reader.ReadInt32();
@@ -381,7 +386,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public static object ReadMethodResponse (BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, IMethodCallMessage methodCallMessage, BinaryFormatter formatter)
 		{
-			BinaryElement elem = (BinaryElement)reader.ReadByte();	// The element code
+			BinaryElement elem = (BinaryElement) reader.ReadByte ();
+			return ReadMethodResponse (elem, reader, hasHeaders, headerHandler, methodCallMessage, formatter);
+		}
+
+		public static object ReadMethodResponse (BinaryElement elem, BinaryReader reader, bool hasHeaders, HeaderHandler headerHandler, IMethodCallMessage methodCallMessage, BinaryFormatter formatter)
+		{
 			if (elem != BinaryElement.MethodResponse) throw new SerializationException("Invalid format. Expected BinaryElement.MethodResponse, found " +  elem);
 
 			MethodFlags flags = (MethodFlags) reader.ReadByte ();
