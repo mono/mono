@@ -36360,6 +36360,39 @@
       </method>
     </type>
   </test>
+  <test name="test-730.cs">
+    <type name="Demo">
+      <method name="Void Test(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 GetPhones()">
+        <size>22</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Demo+D">
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-74.cs">
     <type name="X">
       <method name="Void .ctor()">
