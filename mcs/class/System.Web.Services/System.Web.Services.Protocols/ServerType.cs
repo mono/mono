@@ -216,12 +216,14 @@ namespace System.Web.Services.Protocols
 						if (soap12Protocol == null) soap12Protocol = CreateTypeStubInfo (typeof(Soap12TypeStubInfo));
 						return soap12Protocol;
 #endif
+#if !MONOTOUCH
 					case "HttpGet":
 						if (httpGetProtocol == null) httpGetProtocol = CreateTypeStubInfo (typeof(HttpGetTypeStubInfo));
 						return httpGetProtocol;
 					case "HttpPost":
 						if (httpPostProtocol == null) httpPostProtocol = CreateTypeStubInfo (typeof(HttpPostTypeStubInfo));
 						return httpPostProtocol;
+#endif
 				}
 			}
 			throw new InvalidOperationException ("Protocol " + protocolName + " not supported");

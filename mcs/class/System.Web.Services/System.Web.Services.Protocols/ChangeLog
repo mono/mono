@@ -1,3 +1,12 @@
+2009-09-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Methods.cs: Empty extensions for MonoTouch for now.
+
+	* ServerType.cs: On MonoTouch, we do not support HttpGet or
+	HttpPost variations yet.
+
+	* SoapExtension.cs: Avoid System.Configuration features.
+
 2009-08-24  Marek Habersack  <mhabersack@novell.com>
 
 	* SoapDocumentationHandler.cs: get rid of the ugly fake virtual

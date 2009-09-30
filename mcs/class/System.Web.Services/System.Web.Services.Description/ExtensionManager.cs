@@ -71,14 +71,22 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (Soap12FaultBinding));
 			RegisterExtensionType (typeof (Soap12HeaderBinding));
 			RegisterExtensionType (typeof (Soap12OperationBinding));
+#endif
 
+#if !MONOTOUCH
+			/*
+			 * Currently, the MonoTouch build has not support for
+			 * System.Configuration, so there are no external modules
+			 * defined
+			 */
+#if NET_2_0 
 			foreach (TypeElement el in WebServicesSection.Current.ServiceDescriptionFormatExtensionTypes)
 				RegisterExtensionType (el.Type);
 #else
 			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
 				RegisterExtensionType (type);
 #endif
-				
+#endif
 			CreateExtensionSerializers ();
 		}
 	
@@ -159,7 +167,22 @@ namespace System.Web.Services.Description
 					throw new InvalidOperationException ("XmlFormatExtensionPointAttribute: Member " + at.MemberName + " not found");
 			}
 		}
+
+		/*
+		 * MonoTouch lacks support for configuration
+		 */
+#if MONOTOUCH
+		public static ArrayList BuildExtensionImporters ()
+		{
+			return new ArrayList (0);
+		}
 		
+		public static ArrayList BuildExtensionReflectors ()
+		{
+			return new ArrayList (0);
+		}
+
+#else
 		public static ArrayList BuildExtensionImporters ()
 		{
 #if NET_2_0
@@ -177,7 +200,7 @@ namespace System.Web.Services.Description
 			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
 #endif
 		}
-		
+
 #if NET_2_0
 		public static ArrayList BuildExtensionList (TypeElementCollection exts)
 #else
@@ -188,7 +211,7 @@ namespace System.Web.Services.Description
 			
 			if (exts != null)
 			{
-#if NET_2_0
+#if NET_2_0 
 				foreach (TypeElement econf in exts)
 				{
 					extensionTypes.Add (econf);
@@ -221,6 +244,7 @@ namespace System.Web.Services.Description
 				
 			return extensions;
 		}
+#endif
 	}
 	
 	internal class ExtensionInfo

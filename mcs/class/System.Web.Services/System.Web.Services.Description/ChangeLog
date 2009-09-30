@@ -1,3 +1,15 @@
+2009-09-30  Miguel de Icaza  <miguel@novell.com>
+
+	* ExtensionManager.cs: Initialize the NET_2_0 pieces with
+	MonoTouch, but do not register any of the System.Configuration
+	depending extensions.
+
+	BuildExtensionImporters, BuildExtensionReflectors: empty methods
+	for MOnoTouch.
+
+	* ServiceDescriptionImporter.cs, WebReference.cs: Remove
+	codegeneration features for MonoTouch
+
 2008-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs : /definitions/message/part could omit
