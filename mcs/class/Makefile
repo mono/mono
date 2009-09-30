@@ -29,8 +29,6 @@ common_dirs := \
 	System				\
 	System.XML			\
 	Mono.CompilerServices.SymbolWriter \
-	Mono.Posix			\
-	System.Core			\
 	Mono.Security			\
 	System				\
 	System.Security			\
@@ -45,6 +43,7 @@ common_dirs := \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
+	Mono.Posix			\
 	Accessibility			\
 	Mono.WebBrowser			\
 	Managed.Windows.Forms		\
@@ -99,6 +98,7 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
+	System.Core			\
 	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
@@ -107,13 +107,13 @@ net_2_0_dirs := \
 	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
-	System.IdentityModel		\
-	System.IdentityModel.Selectors	\
-	System.ServiceModel		\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
+	System.IdentityModel		\
+	System.IdentityModel.Selectors	\
+	System.ServiceModel		\
 	System.ServiceModel.Web		\
 	System.Web.Mvc			\
 	Mono.C5				\
@@ -148,7 +148,10 @@ monotouch_dirs := \
 	System	\
 	System.Core	\
 	System.Json	\
-	System.Xml.Linq
+	System.Xml.Linq	\
+	System.Runtime.Serialization	\
+	System.ServiceModel	\
+	System.ServiceModel.Web	\
 
 net_3_5_dirs := \
 	Microsoft.Build.Framework	\
@@ -159,6 +162,7 @@ net_3_5_dirs := \
 
 net_4_0_dirs := \
 	System.Dynamic		\
+	System.Json		\
 	Microsoft.CSharp
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
@@ -169,7 +173,7 @@ net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
-net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI Mono.Posix System.Core
+net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make
