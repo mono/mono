@@ -43,9 +43,10 @@ namespace System.CodeDom
 	{
 		private CodeTypeReferenceCollection baseTypes;
 		private CodeTypeMemberCollection members;
-		private TypeAttributes typeAttributes = TypeAttributes.Public;
+		private TypeAttributes attributes = TypeAttributes.Public;
 		private bool isEnum;
 		private bool isStruct;
+		int populated;
 
 #if NET_2_0
 		bool isPartial;
@@ -83,7 +84,7 @@ namespace System.CodeDom
 
 		public bool IsClass {
 			get {
-				if ( (typeAttributes & TypeAttributes.Interface) != 0 )
+				if ( (attributes & TypeAttributes.Interface) != 0 )
 					return false;
 				if ( isEnum )
 					return false;
@@ -93,7 +94,7 @@ namespace System.CodeDom
 			}
 			set {
 				if ( value ) {
-					typeAttributes &= ~TypeAttributes.Interface;
+					attributes &= ~TypeAttributes.Interface;
 					isEnum = false;
 					isStruct = false;
 				}
@@ -106,7 +107,7 @@ namespace System.CodeDom
 			}
 			set {
 				if ( value ) {
-					typeAttributes &= ~TypeAttributes.Interface;
+					attributes &= ~TypeAttributes.Interface;
 					isEnum = true;
 					isStruct = false;
 				}
@@ -115,11 +116,11 @@ namespace System.CodeDom
 
 		public bool IsInterface {
 			get {
-				return (typeAttributes & TypeAttributes.Interface) != 0;
+				return (attributes & TypeAttributes.Interface) != 0;
 			}
 			set {
 				if ( value ) {
-					typeAttributes |= TypeAttributes.Interface;
+					attributes |= TypeAttributes.Interface;
 					isEnum = false;
 					isStruct = false;
 				}
@@ -132,7 +133,7 @@ namespace System.CodeDom
 			}
 			set {
 				if ( value ) {
-					typeAttributes &= ~TypeAttributes.Interface;
+					attributes &= ~TypeAttributes.Interface;
 					isEnum = false;
 					isStruct = true;
 				}
@@ -152,13 +153,13 @@ namespace System.CodeDom
 
 		public TypeAttributes TypeAttributes {
 			get {
-				return typeAttributes;
+				return attributes;
 			}
 			set {
-				typeAttributes = value;
+				attributes = value;
 #if FALSE
 				/* MS does not seem to do this, so don't I */
-				if ( (typeAttributes & TypeAttributes.Interface) != 0 ) {
+				if ( (attributes & TypeAttributes.Interface) != 0 ) {
 					isEnum = false;
 					isStruct = false;
 				}

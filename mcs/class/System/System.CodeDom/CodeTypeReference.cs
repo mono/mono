@@ -40,13 +40,14 @@ namespace System.CodeDom
 	public class CodeTypeReference : CodeObject
 	{
 		private string baseType;
-		private CodeTypeReference arrayType;
-		private int rank;
+		private CodeTypeReference arrayElementType;
+		private int arrayRank;
 		private bool isInterface;
+		bool needsFixup;
 
 #if NET_2_0
 		CodeTypeReferenceCollection typeArguments;
-		CodeTypeReferenceOptions codeTypeReferenceOption;
+		CodeTypeReferenceOptions referenceOptions;
 #endif
 
 		//
@@ -79,7 +80,7 @@ namespace System.CodeDom
 
 			if (baseType.IsGenericParameter) {
 				this.baseType = baseType.Name;
-				this.codeTypeReferenceOption = CodeTypeReferenceOptions.GenericTypeParameter;
+				this.referenceOptions = CodeTypeReferenceOptions.GenericTypeParameter;
 			}
 			else if (baseType.IsGenericTypeDefinition)
 				this.baseType = baseType.FullName;
@@ -95,27 +96,27 @@ namespace System.CodeDom
 			else
 #endif
 			if (baseType.IsArray) {
-				this.rank = baseType.GetArrayRank ();
-				this.arrayType = new CodeTypeReference (baseType.GetElementType ());
-				this.baseType = arrayType.BaseType;
+				this.arrayRank = baseType.GetArrayRank ();
+				this.arrayElementType = new CodeTypeReference (baseType.GetElementType ());
+				this.baseType = arrayElementType.BaseType;
 			} else {
 				Parse (baseType.FullName);
 			}
 			this.isInterface = baseType.IsInterface;
 		}
 
-		public CodeTypeReference( CodeTypeReference arrayType, int rank )
+		public CodeTypeReference( CodeTypeReference arrayElementType, int arrayRank )
 		{
 			this.baseType = null;
-			this.rank = rank;
-			this.arrayType = arrayType;
+			this.arrayRank = arrayRank;
+			this.arrayElementType = arrayElementType;
 		}
 
 #if NET_2_0
 		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
 #endif
-		public CodeTypeReference( string baseType, int rank )
-			: this (new CodeTypeReference (baseType), rank)
+		public CodeTypeReference( string baseType, int arrayRank )
+			: this (new CodeTypeReference (baseType), arrayRank)
 		{
 		}
 
@@ -123,19 +124,19 @@ namespace System.CodeDom
 		public CodeTypeReference( CodeTypeParameter typeParameter ) :
 			this (typeParameter.Name)
 		{
-			this.codeTypeReferenceOption = CodeTypeReferenceOptions.GenericTypeParameter;
+			this.referenceOptions = CodeTypeReferenceOptions.GenericTypeParameter;
 		}
 
-		public CodeTypeReference( string typeName, CodeTypeReferenceOptions codeTypeReferenceOption ) :
+		public CodeTypeReference( string typeName, CodeTypeReferenceOptions referenceOptions ) :
 			this (typeName)
 		{
-			this.codeTypeReferenceOption = codeTypeReferenceOption;
+			this.referenceOptions = referenceOptions;
 		}
 
-		public CodeTypeReference( Type type, CodeTypeReferenceOptions codeTypeReferenceOption ) :
+		public CodeTypeReference( Type type, CodeTypeReferenceOptions referenceOptions ) :
 			this (type)
 		{
-			this.codeTypeReferenceOption = codeTypeReferenceOption;
+			this.referenceOptions = referenceOptions;
 		}
 
 		public CodeTypeReference( string typeName, params CodeTypeReference[] typeArguments ) :
@@ -154,26 +155,26 @@ namespace System.CodeDom
 		public CodeTypeReference ArrayElementType
 		{
 			get {
-				return arrayType;
+				return arrayElementType;
 			}
 			set {
-				arrayType = value;
+				arrayElementType = value;
 			}
 		}
 		
 		public int ArrayRank {
 			get {
-				return rank;
+				return arrayRank;
 			}
 			set {
-				rank = value;
+				arrayRank = value;
 			}
 		}
 
 		public string BaseType {
 			get {
-				if (arrayType != null && rank > 0) {
-					return arrayType.BaseType;
+				if (arrayElementType != null && arrayRank > 0) {
+					return arrayElementType.BaseType;
 				}
 
 				if (baseType == null)
@@ -267,8 +268,8 @@ namespace System.CodeDom
 					scanPos++;
 				}
 			} else {
-				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
-				rank = args.Length;
+				arrayElementType = new CodeTypeReference (baseType.Substring (0, array_start));
+				arrayRank = args.Length;
 			}
 #else
 			int array_start = baseType.LastIndexOf ('[');
@@ -293,8 +294,8 @@ namespace System.CodeDom
 				}
 			}
 			if (isArray) {
-				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
-				rank = args.Length;
+				arrayElementType = new CodeTypeReference (baseType.Substring (0, array_start));
+				arrayRank = args.Length;
 			} else {
 				this.baseType = baseType;
 			}
@@ -305,10 +306,10 @@ namespace System.CodeDom
 		[ComVisible (false)]
 		public CodeTypeReferenceOptions Options {
 			get {
-				return codeTypeReferenceOption;
+				return referenceOptions;
 			}
 			set {
-				codeTypeReferenceOption = value;
+				referenceOptions = value;
 			}
 		}
 

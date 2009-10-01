@@ -40,8 +40,10 @@ namespace System.CodeDom
 	{
 		private CodeCommentStatementCollection comments;
 		private CodeNamespaceImportCollection imports;
-		private CodeTypeDeclarationCollection types;
+		private CodeNamespaceCollection namespaces;
+		private CodeTypeDeclarationCollection classes;
 		private string name;
+		int populated;
 
 		//
 		// Constructors
@@ -94,12 +96,12 @@ namespace System.CodeDom
 
 		public CodeTypeDeclarationCollection Types {
 			get {
-				if ( types == null ) {
-					types = new CodeTypeDeclarationCollection();
+				if ( classes == null ) {
+					classes = new CodeTypeDeclarationCollection();
 					if ( PopulateTypes != null )
 						PopulateTypes( this, EventArgs.Empty );
 				}
-				return types;
+				return classes;
 			}
 		}
 

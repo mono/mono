@@ -1,3 +1,13 @@
+2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CodeNamespace.cs:
+	* CodeTypeReference.cs:
+	* CodeMemberMethod.cs:
+	* CodeCompileUnit.cs:
+	* CodeNamespaceImportCollection.cs:
+	* CodeTypeDeclaration.cs: renamed/added fields so that we're
+	compatible with MS serialization.
+
 2009-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* CodeTypeReference.cs: generic types specialized on arrays must
