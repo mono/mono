@@ -1,3 +1,8 @@
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceModelConfigurationElementCollection.cs : implement set[this]
+	* ServiceBehaviorElementCollection.cs : remove extra members.
+
 2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigUtil.cs : use WeConfigurationManager when it is under
