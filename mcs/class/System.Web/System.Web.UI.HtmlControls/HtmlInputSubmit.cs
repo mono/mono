@@ -51,7 +51,6 @@ namespace System.Web.UI.HtmlControls {
 		{
 		}
 		
-		[MonoTODO ("why our own version?")]
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			base.RaisePostBackEvent (eventArgument);

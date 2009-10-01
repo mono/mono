@@ -1,3 +1,9 @@
+2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HtmlSelectBuilder.cs: <option> allows the value of the 'selected'
+	attribute to be a boolean or the string "selected", which is treated
+	as "true".
+
 2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HtmlTitle.cs: HtmlTitle allows children that are not
