@@ -233,9 +233,13 @@ namespace System.Web.Compilation {
 					// 3 -> ascx, aspx
 					// 6 -> app_code - nothing to do here
 					// 8 -> global.asax
-					// 9 -> App_GlobalResources - nothing to do?
+					// 9 -> App_GlobalResources - set the assembly for HttpContext
 					if (reader.Name == "resultType" && (val == "2" || val == "3" || val == "8"))
-						LoadPageData (reader);
+						LoadPageData (reader, true);
+					else if (val == "9") {
+						PreCompilationData pd = LoadPageData (reader, false);
+						HttpContext.AppGlobalResourcesAssembly = Assembly.Load (pd.AssemblyFileName);
+					}
 				}
 			}
 		}
@@ -247,7 +251,7 @@ namespace System.Web.Compilation {
 			public Type Type;
 		}
 
-		static void LoadPageData (XmlTextReader reader)
+		static PreCompilationData LoadPageData (XmlTextReader reader, bool store)
 		{
 			PreCompilationData pc_data = new PreCompilationData ();
 
@@ -260,9 +264,12 @@ namespace System.Web.Compilation {
 				else if (name == "type")
 					pc_data.TypeName = reader.Value;
 			}
-			if (precompiled == null)
-				precompiled = new Dictionary<string, PreCompilationData> (comparer);
-			precompiled.Add (pc_data.VirtualPath, pc_data);
+			if (store) {
+				if (precompiled == null)
+					precompiled = new Dictionary<string, PreCompilationData> (comparer);
+				precompiled.Add (pc_data.VirtualPath, pc_data);
+			}
+			return pc_data;
 		}
 
 		static void AddAssembly (Assembly asm, List <Assembly> al)
