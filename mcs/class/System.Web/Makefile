@@ -281,7 +281,7 @@ $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
 System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
-	$(TEST_RUNTIME) $(topdir)/class/lib/net_1_1_bootstrap/culevel.exe -o $@ $^
+	$(TEST_RUNTIME) $(topdir)/class/lib/net_2_0_bootstrap/culevel.exe -o $@ $^
 
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
