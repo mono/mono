@@ -198,51 +198,51 @@ REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
 mono-service: mono-service.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 mono-service2: mono-service.in Makefile
 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	$(REWRITE1_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 #FIXME: this is not the correct rule for mod.bat.
 mod$(SCRIPT_SUFFIX): mod.in Makefile
 	$(REWRITE1) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(scripts_1_0): $(SCRIPT_IN) Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 #FIXME: this is not the correct rule for bat files.
 $(scripts_1_0_umask): script_umask.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(scripts_1_0_compat): $(SCRIPT_IN) Makefile
 	t=`basename $@ $(COMPAT_1_0_SUFFIX)`; $(REWRITE1) -e "s,@exe_name@,$$t,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(scripts_defaults): $(SCRIPT_IN) Makefile
 	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_2_0_SUFFIX)$$,,'`; \
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(scripts_4_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
 	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
-	mv $@.tmp $@
+	mv -f $@.tmp $@
 
 $(MDOC_SUBCOMMANDS): Makefile
 	for script in $(MDOC_SUBCOMMANDS) ; do                  \
