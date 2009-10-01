@@ -1,3 +1,8 @@
+2009-10-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Dictionary.cs (Do_ICollectionCopyTo): Revert 2009-10-01 change.
+	Use BOOTSTRAP_BASIC to hide code from gmcs 2.4.x.
+
 2009-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* Dictionary.cs: cast target array to TRet[] instead of object[] -

@@ -340,7 +340,13 @@ namespace System.Collections.Generic {
 				if ((src.IsPrimitive || tgt.IsPrimitive) && !tgt.IsAssignableFrom (src))
 					throw new Exception (); // we don't care.  it'll get transformed to an ArgumentException below
 
-				Do_CopyTo <TRet, TRet> ((TRet []) array, index, transform);
+#if BOOTSTRAP_BASIC
+				// BOOTSTRAP: gmcs 2.4.x seems to have trouble compiling the alternative
+				throw new Exception ();
+#else
+				Do_CopyTo ((object []) array, index, transform);
+#endif
+
 			} catch (Exception e) {
 				throw new ArgumentException ("Cannot copy source collection elements to destination array", "array", e);
 			}
