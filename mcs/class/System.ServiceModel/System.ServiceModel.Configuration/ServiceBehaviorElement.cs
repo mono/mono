@@ -56,21 +56,24 @@ using System.Diagnostics;
 namespace System.ServiceModel.Configuration
 {
 	public class ServiceBehaviorElement
-		 : NamedServiceModelExtensionCollectionElement<BehaviorExtensionElement>, ICollection<BehaviorExtensionElement>, IEnumerable<BehaviorExtensionElement>, IEnumerable
+		 : NamedServiceModelExtensionCollectionElement<BehaviorExtensionElement>
 	{
-		public ServiceBehaviorElement (string name) {
+		public ServiceBehaviorElement (string name)
+		{
 			Name = name;
 		}
 
 		public ServiceBehaviorElement () {
 		}
 
-		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey) {
+		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		{
 			base.DeserializeElement (reader, serializeCollectionKey);
 		}
 
 		[MonoTODO ("implement using EvaluationContext")]
-		internal override BehaviorExtensionElement DeserializeExtensionElement (string elementName, XmlReader reader) {
+		internal override BehaviorExtensionElement DeserializeExtensionElement (string elementName, XmlReader reader)
+		{
 			//ExtensionElementCollection extensions = ((ExtensionsSection) EvaluationContext.GetSection ("system.serviceModel/extensions")).BehaviorExtensions;
 			ExtensionElementCollection extensions = ConfigUtil.ExtensionsSection.BehaviorExtensions;
 
@@ -83,11 +86,13 @@ namespace System.ServiceModel.Configuration
 			return element;
 		}
 
-		public override void Add (BehaviorExtensionElement element) {
+		public override void Add (BehaviorExtensionElement element)
+		{
 			base.Add (element);
 		}
 
-		public override bool CanAdd (BehaviorExtensionElement element) {
+		public override bool CanAdd (BehaviorExtensionElement element)
+		{
 			return base.CanAdd (element);
 		}
 	}

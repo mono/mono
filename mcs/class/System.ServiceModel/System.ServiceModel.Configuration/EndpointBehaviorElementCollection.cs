@@ -71,6 +71,9 @@ namespace System.ServiceModel.Configuration
 			return ((EndpointBehaviorElement) element).Name;
 		}
 
+		protected override bool ThrowOnDuplicate {
+			get { return true; }
+		}
 	}
 
 }

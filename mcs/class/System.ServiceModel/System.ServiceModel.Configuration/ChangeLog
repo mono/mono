@@ -1,5 +1,14 @@
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceBehaviorElement.cs, EndpointBehaviorElement.cs :
+	  remove extra interfaces.
+	* ServiceModelEnhancedConfigurationElementCollection.cs :
+	  there is no protected constructor.
+	* EndpointBehaviorElementCollection.cs :
+	  add ThrowOnDuplicate.
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceModelConfigurationElementCollection.cs : implement set[this]
 	* ServiceBehaviorElementCollection.cs : remove extra members.
 
