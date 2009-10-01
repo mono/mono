@@ -31,6 +31,7 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
+	$(scripts_mcs)		\
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mod$(SCRIPT_SUFFIX)	\
@@ -52,7 +53,6 @@ scripts_2_0 = \
 	installvst$(SCRIPT_SUFFIX)		\
 	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
-	mcs$(SCRIPT_SUFFIX)			\
 	mjs$(SCRIPT_SUFFIX)			\
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
@@ -126,8 +126,9 @@ scripts_defaults = 		\
 scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
+scripts_mcs = mcs$(SCRIPT_SUFFIX)
 
-CLEANFILES = $(scripts_2_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_mcs) $(scripts_2_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -204,8 +205,12 @@ $(scripts_2_0_umask): script_umask.in Makefile
 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
 	mv -f $@.tmp $@
 
+mcs$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
+	$(REWRITE2) -e "s,@exe_name@,gmcs,g" $(srcdir)/$(SCRIPT_IN) > $@.tmp
+	mv -f $@.tmp $@
+
 $(scripts_defaults): $(SCRIPT_IN) Makefile
-	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE2) -e 's,@exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
