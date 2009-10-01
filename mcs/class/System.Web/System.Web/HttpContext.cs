@@ -55,8 +55,6 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed partial class HttpContext : IServiceProvider {
-		static bool tried_load_global_resx;
-		static Assembly global_resources;
 		internal HttpWorkerRequest WorkerRequest;
 		HttpApplication app_instance;
 		HttpRequest request;
@@ -94,20 +92,7 @@ namespace System.Web {
 			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
 		}
 #else
-		internal static Assembly AppGlobalResourcesAssembly {
-			get {
-				if (!tried_load_global_resx && global_resources == null) {
-					string file = Path.Combine (HttpApplication.BinDirectory, "App_GlobalResources.dll");
-					try {
-						global_resources = Assembly.LoadFrom (file);
-					} catch {
-					}
-					tried_load_global_resx = true;
-				}
-				return global_resources;
-			}
-			set { global_resources = value; }
-		}
+		internal static Assembly AppGlobalResourcesAssembly;
 #endif
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
