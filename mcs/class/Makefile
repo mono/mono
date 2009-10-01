@@ -13,7 +13,7 @@ bootstrap_dirs := \
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System Mono.Security
+basic_SUBDIRS := corlib System System.XML Mono.Security
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
@@ -206,14 +206,14 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
-basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll
+basic_files = gmcs.exe mscorlib.dll System.dll System.Xml.dll System.Core.dll Mono.Security
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:
 	$(MKINSTALLDIRS) $@
 
 $(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/basic/%
+$(monolite_files): lib/monolite/%: lib/net_2_0/%
 	cp -p $< $@
 
 $(basic_files:%=lib/basic/%):
