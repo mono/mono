@@ -1,3 +1,7 @@
+2009-10-02  Ankit Jain  <jankit@novell.com>
+
+	* AppDomainIsolatedTask.cs (BuildEngine): Init 'log'.
+
 2009-09-29  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (ExecuteTool): Use LogToolCommand, instead of

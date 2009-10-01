@@ -1,3 +1,7 @@
+2009-10-02  Ankit Jain  <jankit@novell.com>
+
+	* Expression.cs (Parse): Don't change '/' to '\\', not required.
+
 2009-10-01  Ankit Jain  <jankit@novell.com>
 
 	* Project.cs (AddImport): Show the correct source file name, when
