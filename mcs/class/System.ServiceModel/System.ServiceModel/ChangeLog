@@ -1,5 +1,11 @@
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : fill behaviors first, then add endpoints.
+	  IMetadataExchange requires ServiceMetadataBehaviors, but it may be
+	  filled only from config (which is to be read later).
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactory.cs : MT users should be warned.
 	* ClientBase.cs : make MT-only ChannelBase.Invoke() protected.
 
