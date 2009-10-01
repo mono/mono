@@ -9,7 +9,7 @@ lib_file := $(wildcard ../lib/$(PROFILE)/System.Xml.dll)
 ifndef lib_file
 # In the basic profile, System.Xml.dll is _not_ a dependency of mcs.exe.  So, don't use boot compilation.
 # In other profiles, it _is_ a dependency of mcs.exe.  So, use boot compilation.
-ifneq (basic, $(PROFILE))
+ifeq (basic, $(PROFILE))
 USE_BOOT_COMPILE = yes
 endif
 endif
