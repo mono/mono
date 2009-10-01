@@ -78,7 +78,6 @@ namespace Microsoft.Build.BuildEngine {
 			bool allowItems = (options & ParseOptions.AllowItems) == ParseOptions.AllowItems;
 			bool allowMd = (options & ParseOptions.AllowMetadata) == ParseOptions.AllowMetadata;
 
-			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
 			expression = expression.Replace ('\\', Path.DirectorySeparatorChar);
 		
 			string [] parts;
