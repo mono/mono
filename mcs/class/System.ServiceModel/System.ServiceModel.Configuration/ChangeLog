@@ -1,5 +1,11 @@
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceModelExtensionCollectionElement.cs : add couple of missing
+	  members. Implement Reset() to not clean up items (so far it is
+	  hacky workaround).
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceBehaviorElement.cs, EndpointBehaviorElement.cs :
 	  remove extra interfaces.
 	* ServiceModelEnhancedConfigurationElementCollection.cs :
