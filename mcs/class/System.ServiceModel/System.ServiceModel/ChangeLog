@@ -1,3 +1,8 @@
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : MT users should be warned.
+	* ClientBase.cs : make MT-only ChannelBase.Invoke() protected.
+
 2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostingEnvironment.cs : use AspNetCompatibilityEnabled as
