@@ -563,7 +563,8 @@ namespace System.Collections {
 #else
 				info.AddValue ("Comparer", comparerRef);
 #endif
-			info.AddValue ("HashCodeProvider", hcpRef);
+			if (hcpRef != null)
+				info.AddValue ("HashCodeProvider", hcpRef);
 			info.AddValue ("HashSize", this.table.Length);
 // Create Keys
                         Object [] keys = new Object[inUse];
@@ -602,8 +603,9 @@ namespace System.Collections {
 #else
 			comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
 #endif
-			
-			hcpRef = (IHashCodeProvider) serializationInfo.GetValue ("HashCodeProvider", typeof (object));
+			try {
+				hcpRef = (IHashCodeProvider) serializationInfo.GetValue ("HashCodeProvider", typeof (object));
+			} catch {} // Missing value => null
 			int size = (int) serializationInfo.GetValue ("HashSize", typeof(int));
 			
 			Object [] keys = (Object []) serializationInfo.GetValue("Keys", typeof(Object [] ));
