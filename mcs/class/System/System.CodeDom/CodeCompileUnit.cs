@@ -40,9 +40,9 @@ namespace System.CodeDom
 	public class CodeCompileUnit
 		: CodeObject
 	{
-		private CodeAttributeDeclarationCollection assemblyCustomAttributes;
+		private CodeAttributeDeclarationCollection attributes;
 		private CodeNamespaceCollection namespaces;
-		private StringCollection referencedAssemblies;
+		private StringCollection assemblies;
 
 		//
 		// Constructors
@@ -56,10 +56,10 @@ namespace System.CodeDom
 		//
 		public CodeAttributeDeclarationCollection AssemblyCustomAttributes {
 			get {
-				if ( assemblyCustomAttributes == null )
-					assemblyCustomAttributes = 
+				if ( attributes == null )
+					attributes = 
 						new CodeAttributeDeclarationCollection();
-				return assemblyCustomAttributes;
+				return attributes;
 			}
 		}
 
@@ -73,9 +73,9 @@ namespace System.CodeDom
 
 		public StringCollection ReferencedAssemblies {
 			get {
-				if ( referencedAssemblies == null )
-					referencedAssemblies = new StringCollection();
-				return referencedAssemblies;
+				if ( assemblies == null )
+					assemblies = new StringCollection();
+				return assemblies;
 			}
 		}
 
