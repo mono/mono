@@ -1,3 +1,9 @@
+2009-10-01  Marek Habersack  <mhabersack@novell.com>
+
+	* Dictionary.cs: cast target array to TRet[] instead of object[] -
+	may fail, but otherwise it doesn't compile with 2.4 (e.g. when
+	bootstrapping trunk)
+
 2009-09-22  Raja R Harinath  <harinath@hurrynot.org>
 
 	Ensure that invalid arrays to CopyTo result in ArgumentExceptions.
