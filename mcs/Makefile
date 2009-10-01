@@ -3,7 +3,7 @@ thisdir := .
 SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
 
 basic_SUBDIRS := build jay mcs class tools
-net_2_0_bootstrap_SUBDIRS := build mcs class
+net_2_0_bootstrap_SUBDIRS := build mcs class tools
 net_2_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 net_2_1_bootstrap_SUBDIRS := build mcs class
 net_2_1_raw_SUBDIRS := build mcs class tools
