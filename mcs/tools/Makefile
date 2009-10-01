@@ -1,35 +1,8 @@
 thisdir = tools
 
-net_1_1_dirs := \
-	al			\
-	cilc		\
-	ictool		\
-	mono-xsd	\
-	security	\
-	wsdl		\
-	genxs		\
-	disco		\
-	soapsuds	\
-	browsercaps-updater	\
-	monop		\
-	gacutil		\
-	cil-strip	\
-	resgen		\
-	macpack		\
-	mkbundle	\
-	dtd2rng		\
-	dtd2xsd		\
-	mjs			\
-	prj2make	\
-	mono-service	\
-	monodoc		\
-	mod		\
-	compiler-tester	\
-	installvst		\
-	installutil
-
 net_2_0_dirs := \
 	al		\
+	cilc		\
 	corcompare	\
 	culevel		\
 	linker		\
@@ -57,7 +30,20 @@ net_2_0_dirs := \
 	sqlsharp	\
 	sqlmetal	\
 	gacutil		\
-	svcutil
+	svcutil		\
+	ictool		\
+	genxs		\
+	disco		\
+	soapsuds	\
+	browsercaps-updater	\
+	cil-strip	\
+	macpack		\
+	dtd2rng		\
+	dtd2xsd		\
+	mjs			\
+	prj2make	\
+	mod		\
+	installvst
 
 net_2_1_dirs := \
 	compiler-tester
