@@ -73,6 +73,7 @@ namespace Microsoft.Build.Utilities
 			}
 			set {
 				buildEngine = value;
+				log = new TaskLoggingHelper (this);
 			}
 		}
 
