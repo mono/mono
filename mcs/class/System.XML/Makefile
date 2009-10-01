@@ -12,6 +12,9 @@ ifndef lib_file
 ifeq (basic, $(PROFILE))
 USE_BOOT_COMPILE = yes
 endif
+ifeq (net_2_0_bootstrap, $(PROFILE))
+USE_BOOT_COMPILE = yes
+endif
 endif
 
 ifeq (net_2_0, $(PROFILE))
