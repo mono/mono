@@ -1,3 +1,11 @@
+2009-09-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Call the constructors directly for MonoTouch, instead of using
+	the Activator.CreateInstance.
+
+	I do not see why we need Activator.CreateInstance *at all* in this
+	case, we should just kill that. 
+
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services_test.dll.sources :
