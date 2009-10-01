@@ -1,3 +1,7 @@
+2009-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay, driver.cs: Expose parser exception in verbose mode.
+
 2009-09-30  Marek Safar  <marek.safar@gmail.com>
 
 	* linq.cs, convert.cs, assign.cs, expression.cs, ecore.cs: Add

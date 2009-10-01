@@ -6191,24 +6191,26 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file, Compiler
 public void parse ()
 {
 	eof_token = Token.EOF;
-
+	
 	try {
 		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
+			
+		Tokenizer tokenizer = lexer as Tokenizer;
+		tokenizer.cleanup ();		
 	} catch (Exception e){
 	  	if (e is yyParser.yyUnexpectedEof)
 			UnexpectedEOF = true;
-		else if (yacc_verbose_flag > 0)
-		        Console.WriteLine (e);
+
 		if (e is yyParser.yyException)
 			Report.Error (-25, lexer.Location, "Parsing error");
+		else if (yacc_verbose_flag > 0)
+			throw;	// Used by compiler-tester to test internal errors
 		else 
-		        Report.Error (-32, lexer.Location, "Internal compiler error during parsing, Run with -v for details");
+			Report.Error (589, lexer.Location, "Internal compiler error during parsing");
 	}
-	Tokenizer tokenizer = lexer as Tokenizer;
-	tokenizer.cleanup ();
 
 	if (RootContext.ToplevelTypes.NamespaceEntry != null)
 		throw new InternalErrorException ("who set it?");

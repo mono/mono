@@ -209,12 +209,7 @@ namespace Mono.CSharp
 		void Parse (SeekableStreamReader reader, CompilationUnit file)
 		{
 			CSharpParser parser = new CSharpParser (reader, file, ctx);
-			try {
-				parser.parse ();
-			} catch (Exception ex) {
-				Report.Error(589, parser.Lexer.Location,
-					"Compilation aborted in file `{0}', {1}", file.Name, ex);
-			}
+			parser.parse ();
 		}
 
 		static void OtherFlags ()
@@ -2022,6 +2017,7 @@ namespace Mono.CSharp
 		public static void Reset (bool full_flag)
 		{
 			Driver.Reset ();
+			CSharpParser.yacc_verbose_flag = 0;
 			RootContext.Reset (full_flag);
 			Location.Reset ();
 			TypeManager.Reset ();
