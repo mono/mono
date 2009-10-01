@@ -13,10 +13,6 @@ EXTRA_DISTFILES = \
 	TODO			\
 	*mcs.exe.config
 
-ifeq (1.0, $(FRAMEWORK_VERSION))
-COMPILER_NAME = mcs
-endif
-
 ifeq (2.0, $(FRAMEWORK_VERSION))
 LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
 COMPILER_NAME = gmcs
@@ -44,50 +40,9 @@ CLEAN_FILES += y.output
 	$(topdir)/jay/jay -cvt < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 
-ifeq (net_2_0_bootstrap, $(PROFILE))
-
-all-local $(STD_TARGETS:=-local):
-	@:
-
-all-local: $(PROGRAM) $(PROGRAM).config
-clean-local: clean-program
-clean-program:
-	rm -f $(PROGRAM) $(PROGRAM).config
-
-$(PROGRAM) $(PROGRAM).config: $(dir $(PROGRAM))/.stamp
-
-$(PROGRAM): $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
-	cp $< $@
-
-$(PROGRAM).config: gmcs.exe.config
-	cp $< $@
-
-else
-
-ifeq (net_2_0, $(PROFILE))
-
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/gmcs.exe $(DEBUG_FLAGS)
-
-clean-local: clean-net_2_0_bootstrap
-clean-net_2_0_bootstrap:
-	cd .. && $(MAKE) NO_DIR_CHECK=yes PROFILE=net_2_0_bootstrap clean
-
-bootstrap_libs = mscorlib.dll System.dll System.Xml.dll Mono.CompilerServices.SymbolWriter.dll
-bootstrap_libfiles = $(bootstrap_libs:%=$(topdir)/class/lib/net_2_0_bootstrap/%)
-
-$(bootstrap_libfiles): bootstrap-libs
-	@:
-.PHONY: bootstrap-libs
-bootstrap-libs:
-	cd .. && $(MAKE) NO_DIR_CHECK=yes PROFILE=net_2_0_bootstrap all
-
-$(PROGRAM): $(bootstrap_libfiles)
-endif
-
 KEEP_OUTPUT_FILE_COPY = yes
 
 include ../build/executable.make
-endif
 
 csproj-local:
 	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \

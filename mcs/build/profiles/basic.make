@@ -8,19 +8,19 @@ use_monolite := $(wildcard $(monolite_flag))
 
 ifdef use_monolite
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/monolite/mcs.exe
+BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/monolite/gmcs.exe
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
 endif
 
-MCS = $(with_mono_path) $(INTERNAL_MCS)
+MCS = $(with_mono_path) $(INTERNAL_GMCS)
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:BOOTSTRAP_WITH_OLDLIB
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:BOOTSTRAP_BASIC
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
-FRAMEWORK_VERSION = 1.0
+FRAMEWORK_VERSION = 2.0
 
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
@@ -57,7 +57,7 @@ do-profile-check:
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need a C# compiler installed to build MCS (make sure mcs works from the command line)" 1>&2 ; \
+                echo "*** You need a C# compiler version 2.0 or better installed to build MCS" 1>&2 ; \
                 echo "*** Read INSTALL.txt for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
 
@@ -80,11 +80,29 @@ do-profile-check-monolite: $(depsdir)/.stamp
 
 endif
 
+define PROFILE_CHECK_CSHARP
+class X {
+	// Check installed compiler
+	static void Generic<T> () { }
+
+	static int Main ()
+	{
+		// Check installed mscorlib
+		// Type is included in Mono 2.0+, and .NET 2.0 SP1+
+		object o = typeof (System.Runtime.GCLatencyMode);
+		
+		return 0;
+	}
+}
+endef
+
+export PROFILE_CHECK_CSHARP
+
 $(PROFILE_CS): $(topdir)/build/profiles/basic.make $(depsdir)/.stamp
-	echo 'class X { static int Main () { return 0; } }' > $@
+	echo "$$PROFILE_CHECK_CSHARP" > $@
 
 $(PROFILE_EXE): $(PROFILE_CS)
-	$(BOOTSTRAP_MCS) /out:$@ $<
+	$(BOOTSTRAP_MCS) /warn:0 /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

@@ -5,7 +5,7 @@
 # We do it this way to get assembly version references right.
 #
 BOOTSTRAP_PROFILE = basic
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 
 profile-check: 
@@ -13,7 +13,7 @@ profile-check:
 # Don't build with debug symbols (Mono.CompilerServices.SymbolWriter.dll dependency)
 PLATFORM_DEBUG_FLAGS =
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:BOOTSTRAP_NET_2_0
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0
 FRAMEWORK_VERSION = 2.0
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
