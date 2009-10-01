@@ -296,17 +296,9 @@ namespace System.ServiceModel
 					AddBaseAddress (new Uri (baseAddress.BaseAddress));
 				}
 
-				// services
-				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-					// FIXME: consider BindingName as well
-					ServiceEndpoint se = AddServiceEndpoint (
-						endpoint.Contract,
-						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						endpoint.Address.ToString ());
-				}
 				// behaviors
 				// TODO: use EvaluationContext of ServiceElement.
-				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
+				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
 				if (behavior != null) {
 					for (int i = 0; i < behavior.Count; i++) {
 						BehaviorExtensionElement bxel = behavior [i];
@@ -314,6 +306,15 @@ namespace System.ServiceModel
 						if (b != null)
 							Description.Behaviors.Add (b);
 					}
+				}
+
+				// services
+				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
+					// FIXME: consider BindingName as well
+					ServiceEndpoint se = AddServiceEndpoint (
+						endpoint.Contract,
+						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
+						endpoint.Address.ToString ());
 				}
 			}
 			// TODO: consider commonBehaviors here
