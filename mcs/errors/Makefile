@@ -49,10 +49,6 @@ test-local:
 run-test-local: clean-local
 	$(MAKE) run-mcs-tests
 
-test-everything:
-	$(MAKE) PROFILE=net_1_1 run-test
-	$(MAKE) PROFILE=net_2_0 run-test
-
 ifeq (net_4_0, $(PROFILE))
 COMPILER_NAME = dmcs
 TEST_PATTERN = '*cs*.cs'
@@ -66,13 +62,12 @@ ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*cs*.cs'
 endif
-ifeq (net_1_1, $(PROFILE))
-COMPILER_NAME = mcs
-TEST_PATTERN = 'cs*.cs'
-endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
+
+# Required to test parser correctly
+TESTER_OPTIONS +=-compiler-options:-v
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
