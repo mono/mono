@@ -1,3 +1,9 @@
+2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Hashtable.cs: MS (at least latest and greatest) does not always
+	serialized the HashCodeProvider. Ignoring the error when the field
+	is not found.
+
 2009-09-24  Marek Safar  <marek.safar@gmail.com>
 
 	* Queue.cs, DictionaryEntry.cs, Hashtable.cs,
