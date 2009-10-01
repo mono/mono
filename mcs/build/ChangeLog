@@ -1,3 +1,8 @@
+2009-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	* profiles/*.make, platforms/linux.make: Bootstrap default profile
+	using gmcs.
+
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
 
 	* library.make: Add NO_BUILD to ignore assembly during build.
