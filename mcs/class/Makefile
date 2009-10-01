@@ -206,14 +206,16 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
-basic_files = gmcs.exe mscorlib.dll System.dll System.Xml.dll System.Core.dll Mono.Security
+# What is this used for ?
+
+basic_files = gmcs.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
 
 lib/monolite:
 	$(MKINSTALLDIRS) $@
 
 $(monolite_files): | lib/monolite
-$(monolite_files): lib/monolite/%: lib/net_2_0/%
+$(monolite_files): lib/monolite/%: lib/basic/%
 	cp -p $< $@
 
 $(basic_files:%=lib/basic/%):
