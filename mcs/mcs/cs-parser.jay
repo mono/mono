@@ -514,6 +514,7 @@ qualified_identifier
 	| error
 	  {
 		syntax_error (lexer.Location, "`.' expected");
+		$$ = new MemberName ("<invalid>", lexer.Location);
 	  }
 	;
 
@@ -1401,7 +1402,7 @@ method_header
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
 
-		$$ = null;
+		$$ = method;
 	  }
 	;
 
@@ -1449,23 +1450,39 @@ formal_parameter_list
 	  {
 		if ($1 != null)
 			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
-		$$ = null;
+
+		$$ = new ParametersCompiled (new Parameter[] { (Parameter) $1 } );			
 	  }
 	| fixed_parameters COMMA parameter_array COMMA error
 	  {
 		if ($3 != null)
 			Report.Error (231, ((Parameter) $3).Location, "A params parameter must be the last parameter in a formal parameter list");
-		$$ = null;
+			
+		ArrayList pars_list = (ArrayList) $1;
+		pars_list.Add (new ArglistParameter (GetLocation ($3)));
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+		$$ = new ParametersCompiled (pars, true);
 	  }
 	| arglist_modifier COMMA error
 	  {
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
-		$$ = null;
+
+		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter ((Location) $1) }, true);
 	  }
 	| fixed_parameters COMMA ARGLIST COMMA error 
 	  {
 		Report.Error (257, (Location) $3, "An __arglist parameter must be the last parameter in a formal parameter list");
-		$$ = null;
+		
+		ArrayList pars_list = (ArrayList) $1;
+		pars_list.Add (new ArglistParameter (GetLocation ($3)));
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+		$$ = new ParametersCompiled (pars, true);
 	  }
 	| parameter_array 
 	  {
@@ -1520,7 +1537,7 @@ fixed_parameter
 	  {
 		LocatedToken lt = (LocatedToken) $4;
 		Report.Error (1552, lt.Location, "Array type specifier, [], must appear before parameter name");
-		$$ = null;
+		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -2090,11 +2107,13 @@ conversion_operator_declarator
 	| IMPLICIT error 
 	  {
 	  	Error_SyntaxError (yyToken);
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, null, GetLocation ($1));
 	  }
 	| EXPLICIT error 
 	  {
 	  	Error_SyntaxError (yyToken);
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 	  	$$ = new OperatorDeclaration (Operator.OpType.Explicit, null, GetLocation ($1));
 	  }
 	;
@@ -2506,20 +2525,26 @@ enum_declaration
 	;
 
 opt_enum_base
-	: /* empty */		{ $$ = TypeManager.system_int32_expr; }
+	: /* empty */
+	  {
+		$$ = TypeManager.system_int32_expr;
+	  }
 	| COLON type
 	 {
 		if ($2 != TypeManager.system_int32_expr && $2 != TypeManager.system_uint32_expr &&
 			$2 != TypeManager.system_int64_expr && $2 != TypeManager.system_uint64_expr &&
 			$2 != TypeManager.system_int16_expr && $2 != TypeManager.system_uint16_expr &&
-			$2 != TypeManager.system_byte_expr && $2 != TypeManager.system_sbyte_expr)
+			$2 != TypeManager.system_byte_expr && $2 != TypeManager.system_sbyte_expr) {
 			Enum.Error_1008 (GetLocation ($2), Report);
+			$2 = TypeManager.system_int32_expr;
+		}
 	 
 		$$ = $2;
 	 }
 	| COLON error
 	 {
 	 	Error_TypeExpected (lexer.Location);
+		$$ = TypeManager.system_int32_expr;
 	 }
 	;
 
@@ -5223,6 +5248,7 @@ catch_args
 	| open_parens_any CLOSE_PARENS 
 	  {
 		Report.Error (1015, GetLocation ($1), "A type that derives from `System.Exception', `object', or `string' expected");
+		$$ = null;
 	  }
 	;
 
