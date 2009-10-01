@@ -13,7 +13,7 @@ bootstrap_dirs := \
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML Mono.Security
+basic_SUBDIRS := corlib System System.XML System Mono.Security
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
