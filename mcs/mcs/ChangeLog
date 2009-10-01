@@ -1,5 +1,9 @@
 2009-10-01  Marek Safar  <marek.safar@gmail.com>
 
+	* Makefile: Default is gmcs compiler.
+
+2009-10-01  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Fixed few NRE.
 
 2009-10-01  Marek Safar  <marek.safar@gmail.com>
