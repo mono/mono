@@ -3,7 +3,6 @@ thisdir = tools
 net_1_1_dirs := \
 	al			\
 	cilc		\
-	culevel		\
 	ictool		\
 	mono-xsd	\
 	security	\
@@ -32,6 +31,7 @@ net_1_1_dirs := \
 net_2_0_dirs := \
 	al		\
 	corcompare	\
+	culevel		\
 	linker		\
 	tuner		\
 	csharplib	\
