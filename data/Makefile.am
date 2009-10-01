@@ -1,4 +1,4 @@
-SUBDIRS = net_1_1 net_2_0
+SUBDIRS = net_2_0
 
 if INSTALL_4_0
 SUBDIRS += net_4_0
@@ -12,7 +12,8 @@ EXTRA_DIST =  	\
 	mono.pc.in mint.pc.in dotnet.pc.in dotnet35.pc.in wcf.pc.in monodoc.pc.in \
 	mono-nunit.pc.in mono-cairo.pc.in mono-options.pc.in cecil.pc.in \
 	mono-lineeditor.pc.in system.web.extensions_1.0.pc.in system.web.extensions.design_1.0.pc.in\
-	dtrace-prelink.sh mono.web.pc.in system.web.mvc.pc.in
+	dtrace-prelink.sh mono.web.pc.in system.web.mvc.pc.in \
+	net_1_1/machine.config
 
 pkgconfigdir = $(libdir)/pkgconfig
 
