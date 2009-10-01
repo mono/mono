@@ -13,7 +13,7 @@ bootstrap_dirs := \
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
-basic_SUBDIRS := corlib System System.XML System
+basic_SUBDIRS := corlib System System.XML System Mono.Security
 
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
@@ -165,15 +165,13 @@ net_4_0_dirs := \
 	System.Dynamic		\
 	Microsoft.CSharp
 
-net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-net_1_1_SUBDIRS := $(common_dirs) $(net_1_1_dirs)
-net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
+net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
-net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI Mono.Posix System.Core
+net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Posix System.Core
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make

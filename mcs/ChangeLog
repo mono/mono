@@ -1,3 +1,7 @@
+2009-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Removed net_1_1 bootstrap.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: add some WCF assemblies to centum_tests.

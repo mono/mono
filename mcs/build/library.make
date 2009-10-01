@@ -67,8 +67,8 @@ library_CLEAN_FILES += $(build_lib) $(build_lib:.dll=.pdb)
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
-sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
-SN = $(Q) MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
+sn = $(topdir)/class/lib/basic/sn.exe
+SN = $(Q) MONO_PATH="$(topdir)/class/lib/basic$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q
 endif
 
@@ -201,16 +201,6 @@ endif
 
 ifndef LIBRARY_SNK
 LIBRARY_SNK = $(topdir)/class/mono.snk
-endif
-
-ifdef gacutil
-$(gacutil):
-	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
-endif
-
-ifdef sn
-$(sn):
-	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
 endif
 
 ifdef BUILT_SOURCES

@@ -14,17 +14,15 @@ SN_SOURCES = sn.cs StrongNameManager.cs $(HELPER_SOURCES)
 
 SECURITY_SOURCES = $(HELPER_SOURCES) $(SN_SOURCES) $(SECURITY_PROGRAMS:.exe=.cs) $(SECURITY_PROGRAMS_2_0:.exe=.cs)
 
-ifeq (net_1_1, $(PROFILE))
-SECURITY_TARGETS = $(SECURITY_PROGRAMS)
-else
-SECURITY_TARGETS = $(SECURITY_PROGRAMS_2_0)
+ifeq (net_2_0, $(PROFILE))
+SECURITY_TARGETS = $(SECURITY_PROGRAMS) $(SECURITY_PROGRAMS_2_0)
 endif
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 DISTFILES = README TESTS $(SECURITY_SOURCES)
 
-ifeq (net_1_1_bootstrap, $(PROFILE))
+ifeq (basic, $(PROFILE))
 all-local: $(topdir)/class/lib/$(PROFILE)/sn.exe
 else
 all-local: $(SECURITY_TARGETS)
