@@ -5,11 +5,6 @@
 	configuration section. Patch from Brett Kiefer
 	<brett@fogcreek.com>, thanks! Fixes bug #542846
 
-2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* HttpContext.cs: try to load App_GlobalResouces.dll if it has not
-	been set but it exists in 'bin'.
-
 2009-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: GetResourceProvider - renamed the 'key' argument
