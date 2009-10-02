@@ -75,31 +75,28 @@ namespace System.ServiceModel.Channels
 			if (!WaitForRequest (timeout))
 				return false;
 
-Console.WriteLine ("Received HTTP request {0} on channel {1}", http_context.Request.Url, LocalAddress);
 			Message msg;
-			// FIXME: remove this hack
-			if (http_context.Request.HttpMethod == "GET") {
-				if (http_context.Request.QueryString ["wsdl"] != null) {
-					msg = Message.CreateMessage (Encoder.MessageVersion,
-						"http://schemas.xmlsoap.org/ws/2004/09/transfer/Get");
-					msg.Headers.To = http_context.Request.Url;
-				} else {
-					msg = Message.CreateMessage (Encoder.MessageVersion, null);
-					msg.Headers.To = http_context.Request.Url;
-				}
+			var req = http_context.Request;
+			if (req.HttpMethod == "GET") {
+				msg = Message.CreateMessage (Encoder.MessageVersion, null);
+				msg.Headers.To = req.Url;
 			} else {
 				//FIXME: Do above stuff for HttpContext ?
 				int maxSizeOfHeaders = 0x10000;
 
 				msg = Encoder.ReadMessage (
-					http_context.Request.InputStream, maxSizeOfHeaders);
+					req.InputStream, maxSizeOfHeaders);
 
 				if (Encoder.MessageVersion.Envelope == EnvelopeVersion.Soap11) {
-					string action = GetHeaderItem (http_context.Request.Headers ["SOAPAction"]);
+					string action = GetHeaderItem (req.Headers ["SOAPAction"]);
 					if (action != null)
 						msg.Headers.Action = action;
 				}
 			}
+
+			// FIXME: prop.SuppressEntityBody
+			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (req.HttpMethod, req.Url.Query, req.Headers));
+
 			context = new AspNetRequestContext (this, msg, http_context);
 
 			return true;

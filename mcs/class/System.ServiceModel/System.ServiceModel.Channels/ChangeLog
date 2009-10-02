@@ -1,5 +1,14 @@
 2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs, AspNetReplyChannel.cs, AspNetRequestContext.cs:
+	  asp.net response was not written correctly.
+	  Fill HttpRequestMessageProperty to get handle WSDL requests
+	  processed in ServiceMetadataExtension without NRE.
+	  Remove wrong HttpListenerContext iteration at Abort and Close in
+	  common base class and move it to non-asp derived channel.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : remove unused code.
 
 2009-09-30  Jb Evain  <jbevain@novell.com>

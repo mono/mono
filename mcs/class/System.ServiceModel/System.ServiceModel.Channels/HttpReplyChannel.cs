@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
@@ -47,11 +48,24 @@ namespace System.ServiceModel.Channels
 			this.source = listener;
 		}
 
+		protected override void OnAbort ()
+		{
+			foreach (HttpListenerContext ctx in waiting)
+				ctx.Response.Abort ();
+
+			base.OnAbort ();
+		}
+
 		protected override void OnClose (TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
 			if (reqctx != null)
 				reqctx.Close (timeout);
+
+			// FIXME: consider timeout
+			foreach (HttpListenerContext ctx in waiting)
+				ctx.Response.Close ();
+
 			base.OnClose (timeout - (DateTime.Now - start));
 		}
 
@@ -109,15 +123,7 @@ namespace System.ServiceModel.Channels
 			}
 			msg.Headers.To = ctx.Request.Url;
 			
-			HttpRequestMessageProperty prop =
-				new HttpRequestMessageProperty ();
-			prop.Method = ctx.Request.HttpMethod;
-			prop.QueryString = ctx.Request.Url.Query;
-			if (prop.QueryString.StartsWith ("?"))
-				prop.QueryString = prop.QueryString.Substring (1);
-			// FIXME: prop.SuppressEntityBody
-			prop.Headers.Add (ctx.Request.Headers);
-			msg.Properties.Add (HttpRequestMessageProperty.Name, prop);
+			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctx.Request.HttpMethod, ctx.Request.Url.Query, ctx.Request.Headers));
 /*
 MessageBuffer buf = msg.CreateBufferedCopy (0x10000);
 msg = buf.CreateMessage ();
@@ -164,7 +170,6 @@ w.Close ();
 	internal abstract class HttpReplyChannel : InternalReplyChannelBase
 	{
 		HttpChannelListenerBase<IReplyChannel> source;
-		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
 
 		public HttpReplyChannel (HttpChannelListenerBase<IReplyChannel> listener)
 			: base (listener)
@@ -187,21 +192,6 @@ w.Close ();
 			return ctx;
 		}
 
-		protected override void OnAbort ()
-		{
-			base.OnAbort ();
-			foreach (HttpListenerContext ctx in waiting)
-				ctx.Request.InputStream.Close ();
-		}
-
-		protected override void OnClose (TimeSpan timeout)
-		{
-			base.OnClose (timeout);
-			// FIXME: consider timeout
-			foreach (HttpListenerContext ctx in waiting)
-				ctx.Request.InputStream.Close ();
-		}
-
 		protected override void OnOpen (TimeSpan timeout)
 		{
 		}
@@ -219,6 +209,16 @@ w.Close ();
 				break;
 			}
 			return raw;
+		}
+
+		protected HttpRequestMessageProperty CreateRequestProperty (string method, string query, NameValueCollection headers)
+		{
+			var prop = new HttpRequestMessageProperty ();
+			prop.Method = method;
+			prop.QueryString = query.StartsWith ("?") ? query.Substring (1) : query;
+			// FIXME: prop.SuppressEntityBody
+			prop.Headers.Add (headers);
+			return prop;
 		}
 	}
 }
