@@ -167,9 +167,14 @@ namespace Mono.Documentation {
 				string tk = "T:" + t;
 				if (!ifaces.ContainsKey (tk)) {
 					ifaces.Add (tk, null);
-					XmlDocument d = loader (t);
-					if (d != null)
-						GetInterfaces (ifaces, d, loader);
+					try {
+						XmlDocument d = loader (t);
+						if (d != null)
+							GetInterfaces (ifaces, d, loader);
+					}
+					catch (FileNotFoundException e) {
+						// ignore; interface documentation couldn't be found.
+					}
 				}
 			}
 		}

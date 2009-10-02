@@ -1,3 +1,10 @@
+2009-10-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* Mono.Documentation/XmlDocUtils.cs: GetInterfaces() can throw if the
+	  type we're trying to load can't be found (e.g. if a type implements
+	  an internal interface, there won't be an XML file for that internal
+	  interface).  Ignore the exception.
+
 2009-09-25  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/ecma-provider.cs: Don't return 'null' from GetPublicUrl(),
