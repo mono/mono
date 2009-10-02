@@ -900,6 +900,7 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
@@ -1277,6 +1278,22 @@ namespace Microsoft.Build.BuildEngine {
 		internal static string XmlNamespace {
 			get { return ns; }
 		}
+
+		static string OS {
+			get {
+				PlatformID pid = Environment.OSVersion.Platform;
+				switch ((int)pid) {
+				case 128:
+				case 4:
+					return "Unix";
+				case 6:
+					return "OSX";
+				default:
+					return "Windows_NT";
+				}
+			}
+		}
+
 	}
 }
 
