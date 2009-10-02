@@ -946,10 +946,14 @@ namespace Mono.CSharp {
 					}
 
 					if (!is_params && p.IsOptional) {
-						if (p.DefaultValue == Missing.Value)
+						object value = p.DefaultValue;
+						if (value == Missing.Value) {
 							default_value = EmptyExpression.Null;
-						else
-							default_value = Constant.CreateConstant (types[i], p.DefaultValue, Location.Null);
+						} else if (value == null) {
+							default_value = new NullLiteral (Location.Null);
+						} else {
+							default_value = Constant.CreateConstant (value.GetType (), value, Location.Null);
+						}
 					}
 				}
 

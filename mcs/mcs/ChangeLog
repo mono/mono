@@ -1,3 +1,11 @@
+2009-10-02  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Don't crash on overloads with optional paremeters where
+	arguments count overflows.
+	
+	* parameter.cs: Import optional parameter constants using optional
+	value type.
+
 2009-10-01  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Default is gmcs compiler.

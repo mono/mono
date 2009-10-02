@@ -3817,6 +3817,8 @@ namespace Mono.CSharp {
 						optional_count--;
 						if (arg_count < param_count)
 							param_count--;
+					} else if (arg_count > param_count) {
+						return int.MaxValue - 10000 + args_gap;
 					}
 				} else if (arg_count != param_count) {
 					if (!pd.HasParams)
