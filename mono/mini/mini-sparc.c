@@ -2354,8 +2354,6 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	int size = 0;
 	guint32 *code, *start;
 
-	g_assert (!fail_tramp);
-
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
 		if (item->is_equals) {
@@ -2364,6 +2362,8 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 					item->chunk_size += CMP_SIZE;
 				item->chunk_size += BR_SMALL_SIZE + JUMP_IMM_SIZE;
 			} else {
+				if (fail_tramp)
+					item->chunk_size += 16;
 				item->chunk_size += JUMP_IMM_SIZE;
 #if ENABLE_WRONG_METHOD_CHECK
 				item->chunk_size += CMP_SIZE + BR_SMALL_SIZE + 1;
@@ -2375,15 +2375,19 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 		}
 		size += item->chunk_size;
 	}
-	code = mono_code_manager_reserve (domain->code_mp, size * 4);
+	if (fail_tramp)
+		code = mono_method_alloc_generic_virtual_thunk (domain, size * 4);
+	else
+		code = mono_code_manager_reserve (domain->code_mp, size * 4);
 	start = code;
-
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
 		item->code_target = (guint8*)code;
 		if (item->is_equals) {
-			if (item->check_target_idx) {
-				if (!item->compare_done) {
+			gboolean fail_case = !item->check_target_idx && fail_tramp;
+
+			if (item->check_target_idx || fail_case) {
+				if (!item->compare_done || fail_case) {
 					sparc_set (code, (guint32)item->key, sparc_g5);
 					sparc_cmp (code, MONO_ARCH_IMT_REG, sparc_g5);
 				}
@@ -2394,6 +2398,14 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				sparc_ld (code, sparc_g5, 0, sparc_g5);
 				sparc_jmpl (code, sparc_g5, sparc_g0, sparc_g0);
 				sparc_nop (code);
+
+				if (fail_case) {
+					sparc_patch (item->jmp_code, code);
+					sparc_set (code, fail_tramp, sparc_g5);
+					sparc_jmpl (code, sparc_g5, sparc_g0, sparc_g0);
+					sparc_nop (code);
+					item->jmp_code = NULL;
+				}
 			} else {
 				/* enable the commented code to assert on wrong method */
 #if ENABLE_WRONG_METHOD_CHECK

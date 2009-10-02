@@ -1,3 +1,7 @@
+2009-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_build_imt_thunk): Implement support for fail_tramp.
+
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c: Fix the handling of enums with base type long.
