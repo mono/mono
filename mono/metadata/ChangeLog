@@ -1,3 +1,8 @@
+2009-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: forgot a LeaveCriticalSection when telling the idle
+	threads to die because we're shutting down. delgate5.exe works again.
+
 2009-10-01  Bill Holmes  <billholmes54@gmail.com>
 
 	* cominterop.c (mono_marshal_free_ccw_entry): Updating the
