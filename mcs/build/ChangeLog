@@ -1,3 +1,9 @@
+2009-10-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	* profiles/basic.make (PROFILE_CS): Remove.
+	(PROFILE_CHECK_CSHARP): Move to ...
+	* common/basic-profile-check.cs: ... here.
+
 2009-10-02  Marek Safar  <marek.safar@gmail.com>
 
 	* build/common.cs.in: Disabled 1.x only profiles.

@@ -38,14 +38,13 @@ clean-local: clean-profile
 endif
 
 clean-profile:
-	-rm -f $(PROFILE_CS) $(PROFILE_EXE) $(PROFILE_OUT) $(monolite_flag)
+	-rm -f $(PROFILE_EXE) $(PROFILE_OUT) $(monolite_flag)
 
 post-profile-cleanup:
 	@rm -f $(monolite_flag)
 
-PROFILE_CS  = $(depsdir)/basic-profile-check.cs
-PROFILE_EXE = $(PROFILE_CS:.cs=.exe)
-PROFILE_OUT = $(PROFILE_CS:.cs=.out)
+PROFILE_EXE = $(depsdir)/basic-profile-check.exe
+PROFILE_OUT = $(PROFILE_EXE:.exe=.out)
 
 do-profile-check:
 	@ok=:; \
@@ -80,28 +79,7 @@ do-profile-check-monolite: $(depsdir)/.stamp
 
 endif
 
-define PROFILE_CHECK_CSHARP
-class X {
-	// Check installed compiler
-	static void Generic<T> () { }
-
-	static int Main ()
-	{
-		// Check installed mscorlib
-		// Type is included in Mono 2.0+, and .NET 2.0 SP1+
-		object o = typeof (System.Runtime.GCLatencyMode);
-		
-		return 0;
-	}
-}
-endef
-
-export PROFILE_CHECK_CSHARP
-
-$(PROFILE_CS): $(topdir)/build/profiles/basic.make $(depsdir)/.stamp
-	echo "$$PROFILE_CHECK_CSHARP" > $@
-
-$(PROFILE_EXE): $(PROFILE_CS)
+$(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(BOOTSTRAP_MCS) /warn:0 /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
