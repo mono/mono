@@ -2049,7 +2049,6 @@ namespace System
 			return Concat (s1, s2, s3);
 		}
 
-#if ! BOOTSTRAP_WITH_OLDLIB
 		[CLSCompliant(false)]
 		public static String Concat (Object arg0, Object arg1, Object arg2,
 					     Object arg3, __arglist)
@@ -2087,7 +2086,6 @@ namespace System
 
 			return Concat (s1, s2, s3, s4);			
 		}
-#endif
 
 		public unsafe static String Concat (String str0, String str1)
 		{

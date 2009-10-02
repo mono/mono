@@ -1,3 +1,8 @@
+2009-10-02  Marek Safar  <marek.safar@gmail.com>
+
+	* Array.cs, Decimal.cs, String.cs, Console.cs, _AppDomain.cs,
+	AppDomain.cs: Removed prehistoric mcs workarounds.
+
 2009-09-30  Mark Probst  <mark.probst@gmail.com>
 
 	* Thread.cs: Remove serialized culture icall stuff from

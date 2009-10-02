@@ -136,18 +136,6 @@ namespace System
 		void SetThreadPrincipal (IPrincipal principal);
 		string ToString ();
 
-#if BOOTSTRAP_WITH_OLDLIB
-		// older MCS/corlib returns:
-		// _AppDomain.cs(138) error CS0592: Attribute 'SecurityPermission' is not valid on this declaration type.
-		// It is valid on 'assembly' 'class' 'constructor' 'method' 'struct'  declarations only.
-		event AssemblyLoadEventHandler AssemblyLoad;
-		event ResolveEventHandler AssemblyResolve;
-		event EventHandler DomainUnload;
-		event EventHandler ProcessExit;
-		event ResolveEventHandler ResourceResolve;
-		event ResolveEventHandler TypeResolve;
-		event UnhandledExceptionEventHandler UnhandledException;
-#else
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		event AssemblyLoadEventHandler AssemblyLoad;
 
@@ -168,7 +156,6 @@ namespace System
 
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		event UnhandledExceptionEventHandler UnhandledException;
-#endif
 
 #if NET_1_1
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);

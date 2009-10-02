@@ -1245,24 +1245,6 @@ namespace System {
 
 		// End of methods called from the runtime
 		
-#if BOOTSTRAP_WITH_OLDLIB
-		// older MCS/corlib returns:
-		// _AppDomain.cs(138) error CS0592: Attribute 'SecurityPermission' is not valid on this declaration type.
-		// It is valid on 'assembly' 'class' 'constructor' 'method' 'struct'  declarations only.
-		public event AssemblyLoadEventHandler AssemblyLoad;
-
-		public event ResolveEventHandler AssemblyResolve;
-
-		public event EventHandler DomainUnload;
-
-		public event EventHandler ProcessExit;
-
-		public event ResolveEventHandler ResourceResolve;
-
-		public event ResolveEventHandler TypeResolve;
-
-		public event UnhandledExceptionEventHandler UnhandledException;
-#else
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event AssemblyLoadEventHandler AssemblyLoad;
 
@@ -1283,7 +1265,6 @@ namespace System {
 
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event UnhandledExceptionEventHandler UnhandledException;
-#endif
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 		[MonoTODO]

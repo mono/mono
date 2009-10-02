@@ -147,11 +147,7 @@ namespace System.Reflection.Emit
 
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
-#if BOOTSTRAP_WITH_OLDLIB
-			is_compiler_context = true;
-#else
 			is_compiler_context = (access & COMPILER_ACCESS) != 0;
-#endif
 
 			// remove Mono specific flag to allow enum check to pass
 			access &= ~COMPILER_ACCESS;

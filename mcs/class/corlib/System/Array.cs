@@ -1148,10 +1148,8 @@ namespace System
 			return lb - 1;
 		}
 
-#if !BOOTSTRAP_WITH_OLDLIB
 		/* delegate used to swap array elements */
 		delegate void Swapper (int i, int j);
-#endif
 
 		static Swapper get_swapper (Array array)
 		{
@@ -2321,9 +2319,4 @@ namespace System
 		}
 #endif
 	}
-
-#if BOOTSTRAP_WITH_OLDLIB
-	/* delegate used to swap array elements, keep defined outside Array */
-	delegate void Swapper (int i, int j);
-#endif
 }

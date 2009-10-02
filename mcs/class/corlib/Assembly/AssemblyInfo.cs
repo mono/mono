@@ -64,14 +64,12 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 #endif
 
-#if !BOOTSTRAP_WITH_OLDLIB
-	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-	[assembly: AssemblyDelaySign (true)]
+[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
+[assembly: AssemblyDelaySign (true)]
 #if NET_2_1
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
-#endif
 #endif
 
 #if NET_2_0

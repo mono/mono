@@ -334,7 +334,6 @@ namespace System
 			stdout.Write (format, arg0, arg1, arg2);
 		}
 
-#if ! BOOTSTRAP_WITH_OLDLIB
 		[CLSCompliant (false)]
 		public static void Write (string format, object arg0, object arg1, object arg2, object arg3, __arglist)
 		{
@@ -353,7 +352,6 @@ namespace System
 
 			stdout.Write (String.Format (format, args));
 		}
-#endif
 
 		public static void WriteLine ()
 		{
@@ -447,7 +445,6 @@ namespace System
 			stdout.WriteLine (format, arg0, arg1, arg2);
 		}
 
-#if ! BOOTSTRAP_WITH_OLDLIB
 		[CLSCompliant (false)]
 		public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3, __arglist)
 		{
@@ -466,7 +463,6 @@ namespace System
 
 			stdout.WriteLine (String.Format (format, args));
 		}
-#endif
 
 #if NET2_API && !NET_2_1
 		public static int Read ()

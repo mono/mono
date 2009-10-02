@@ -37,10 +37,7 @@ namespace System.Security.Policy {
 
 		bool Check (Evidence evidence);
 		IMembershipCondition Copy ();
-
-#if !BOOTSTRAP_WITH_OLDLIB
 		bool Equals (object obj);
 		string ToString ();
-#endif
 	}
 }
