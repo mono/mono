@@ -5,7 +5,6 @@
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
 test-xml-027.cs
-test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by default with WrapNonExceptionThrows set to true and conditional compilation symbols are not provided yet.
 
 gtest-230.cs
 gtest-437.cs
