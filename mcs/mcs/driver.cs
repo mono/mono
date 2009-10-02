@@ -1441,7 +1441,6 @@ namespace Mono.CSharp
 				return true;
 
 			case "/platform":
-#if GMCS_SOURCE
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
 				case "anycpu":
 					RootContext.Platform = Platform.AnyCPU;
@@ -1459,7 +1458,7 @@ namespace Mono.CSharp
 					Report.Error (1672, "Invalid platform type for -platform. Valid options are `anycpu', `x86', `x64' or `itanium'");
 					break;
 				}
-#endif
+
 				return true;
 
 				// We just ignore this.
@@ -1524,13 +1523,10 @@ namespace Mono.CSharp
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
 				case "iso-1":
 					RootContext.Version = LanguageVersion.ISO_1;
-					return true;
-					
+					return true;	
 				case "default":
 					RootContext.Version = LanguageVersion.Default;
-#if GMCS_SOURCE					
 					RootContext.AddConditional ("__V2__");
-#endif
 					return true;
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;

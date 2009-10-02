@@ -18,7 +18,7 @@ using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
 
-#if BOOTSTRAP_WITH_OLDLIB || NET_2_1
+#if NET_2_1
 using XmlElement = System.Object;
 #else
 using System.Xml;
@@ -1174,16 +1174,13 @@ namespace Mono.CSharp {
 				t = MemberCache.FindNestedType (name);
 				if (t == null)
 					return null;
-				
+			}
+
 			//
 			// FIXME: This hack is needed because member cache does not work
 			// with nested base generic types, it does only type name copy and
 			// not type construction
 			//
-#if !GMCS_SOURCE
-				return t;
-#endif				
-			}
 
 			// no member cache. Do it the hard way -- reflection
 			for (Type current_type = TypeBuilder;
@@ -1211,11 +1208,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < args.Length; i++)
 					targs [i] = TypeManager.TypeToCoreType (args [i]);
 
-#if GMCS_SOURCE
-				t = t.MakeGenericType (targs);
-#endif
-
-				return t;
+				return t.MakeGenericType (targs);
 			}
 
 			return null;
@@ -2706,13 +2699,12 @@ namespace Mono.CSharp {
 						type_a = parameters.Types [ii];
 						type_b = p_types [ii];
 
-#if GMCS_SOURCE
 						if (TypeManager.IsGenericParameter (type_a) && type_a.DeclaringMethod != null)
 							type_a = typeof (TypeParameter);
 
 						if (TypeManager.IsGenericParameter (type_b) && type_b.DeclaringMethod != null)
 							type_b = typeof (TypeParameter);
-#endif
+
 						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
 							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
 							type_a = null;

@@ -492,11 +492,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < gargs.Length; ++i)
 					gnames[i] = gargs[i].Name;
 
-#if GMCS_SOURCE
 				proxy.DefineGenericParameters (gnames);
-#else
-				throw new NotSupportedException ();
-#endif
 			}
 
 			for (int i = 0; i < param.Count; i++) {

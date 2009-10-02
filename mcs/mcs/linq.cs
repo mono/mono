@@ -110,15 +110,11 @@ namespace Mono.CSharp.Linq
 					Argument a = arguments [0];
 
 					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
-#if GMCS_SOURCE
 						TypeInferenceContext tic = new TypeInferenceContext (TypeManager.GetTypeArguments (source_type));
 						tic.OutputTypeInference (ec, a.Expr, source_type);
 						if (tic.FixAllTypes (ec)) {
 							source_type = TypeManager.DropGenericTypeArguments (source_type).MakeGenericType (tic.InferredTypeArguments);
 						}
-#else
-						throw new NotSupportedException ();
-#endif
 					}
 
 					if (!Convert.ImplicitConversionExists (ec, a.Expr, source_type)) {

@@ -485,7 +485,6 @@ namespace Mono.CSharp {
 		//
 		public Type MutateType (Type type)
 		{
-#if GMCS_SOURCE
 			if (TypeManager.IsGenericType (type))
 				return MutateGenericType (type);
 
@@ -494,7 +493,6 @@ namespace Mono.CSharp {
 
 			if (type.IsArray)
 				return MutateArrayType (type);
-#endif
 			return type;
 		}
 
@@ -503,7 +501,6 @@ namespace Mono.CSharp {
 		//
 		public MethodInfo MutateGenericMethod (MethodInfo method)
 		{
-#if GMCS_SOURCE
 			Type [] t_args = TypeManager.GetGenericArguments (method);
 			if (TypeManager.IsGenericType (method.DeclaringType)) {
 				Type t = MutateGenericType (method.DeclaringType);
@@ -523,14 +520,10 @@ namespace Mono.CSharp {
 				t_args [i] = MutateType (t_args [i]);
 
 			return method.GetGenericMethodDefinition ().MakeGenericMethod (t_args);
-#else
-			throw new NotSupportedException ();
-#endif
 		}
 
 		public ConstructorInfo MutateConstructor (ConstructorInfo ctor)
 		{
-#if GMCS_SOURCE		
 			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
@@ -541,13 +534,12 @@ namespace Mono.CSharp {
 					return (ConstructorInfo) ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
 				}
 			}
-#endif
+
 			return ctor;
 		}
 		
 		public FieldInfo MutateField (FieldInfo field)
 		{
-#if GMCS_SOURCE
 			if (TypeManager.IsGenericType (field.DeclaringType)) {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
@@ -558,11 +550,10 @@ namespace Mono.CSharp {
 					return FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);						
 				}
 			}
-#endif
+
 			return field;
 		}		
 
-#if GMCS_SOURCE
 		protected Type MutateArrayType (Type array)
 		{
 			Type element = TypeManager.GetElementType (array);
@@ -594,7 +585,6 @@ namespace Mono.CSharp {
 
 			return TypeManager.DropGenericTypeArguments (type).MakeGenericType (t_args);
 		}
-#endif
 
 		//
 		// Changes method generic argument (MVAR) to type generic argument (VAR)
@@ -1565,11 +1555,7 @@ namespace Mono.CSharp {
 					t = storey.GetGenericStorey ().MutateType (t);
 				}
 
-#if GMCS_SOURCE
 				delegate_method = TypeBuilder.GetMethod (t, delegate_method);
-#else
-				throw new NotSupportedException ();
-#endif
 			}
 
 			ig.Emit (OpCodes.Ldftn, delegate_method);

@@ -73,11 +73,9 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
 
-#if GMCS_SOURCE
 			// Only to make verifier happy
 			if (TypeManager.IsGenericParameter (type))
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
-#endif
 		}
 
 		public override string ExprClassName {

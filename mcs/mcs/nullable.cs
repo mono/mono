@@ -80,9 +80,7 @@ namespace Mono.CSharp.Nullable
 				// TODO: check for correct overload
 				Constructor c = ((Constructor) tc.InstanceConstructors [0]);
 
-#if GMCS_SOURCE
 				Constructor = TypeBuilder.GetConstructor (type, c.ConstructorBuilder);
-#endif
 				return;
 			}
 

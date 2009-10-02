@@ -858,7 +858,6 @@ namespace Mono.CSharp {
 
 		static string GetSignatureForDoc (Type type)
 		{
-#if GMCS_SOURCE
 			if (TypeManager.IsGenericParameter (type))
 				return (type.DeclaringMethod != null ? "``" : "`") + TypeManager.GenericParameterPosition (type);
 
@@ -874,7 +873,6 @@ namespace Mono.CSharp {
 				g += '}';
 				return g;
 			}
-#endif
 
 			string name = type.FullName != null ? type.FullName : type.Name;
 			return name.Replace ("+", ".").Replace ('&', '@');

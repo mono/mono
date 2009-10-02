@@ -186,7 +186,6 @@ namespace Mono.CSharp {
 
 		static public void Save (string name, bool saveDebugInfo, Report Report)
 		{
-#if GMCS_SOURCE
 			PortableExecutableKinds pekind;
 			ImageFileMachine machine;
 
@@ -209,13 +208,8 @@ namespace Mono.CSharp {
 				machine = ImageFileMachine.I386;
 				break;
 			}
-#endif
 			try {
-#if GMCS_SOURCE
 				Assembly.Builder.Save (Basename (name), pekind, machine);
-#else
-				Assembly.Builder.Save (Basename (name));
-#endif
 			}
 			catch (COMException) {
 				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
@@ -781,11 +775,7 @@ namespace Mono.CSharp {
 				
 			AssemblyName aname = null;
 			try {
-#if GMCS_SOURCE
 				aname = new AssemblyName (assembly_name);
-#else
-				throw new NotSupportedException ();
-#endif
 			} catch (FileLoadException) {
 			} catch (ArgumentException) {
 			}

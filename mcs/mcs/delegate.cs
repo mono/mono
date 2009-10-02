@@ -344,10 +344,9 @@ namespace Mono.CSharp {
 
 			Delegate d = TypeManager.LookupDelegate (delegate_type);
 			if (d != null) {
-#if GMCS_SOURCE
 				if (g_args != null)
 					return TypeBuilder.GetConstructor (dt, d.ConstructorBuilder);
-#endif
+
 				return d.ConstructorBuilder;
 			}
 
@@ -382,7 +381,6 @@ namespace Mono.CSharp {
 			Delegate d = TypeManager.LookupDelegate (delegate_type);
 			MethodInfo invoke;
 			if (d != null) {
-#if GMCS_SOURCE
 				if (g_args != null) {
 					invoke = TypeBuilder.GetMethod (dt, d.InvokeBuilder);
 #if MS_COMPATIBLE
@@ -391,7 +389,6 @@ namespace Mono.CSharp {
 #endif
 					return invoke;
 				}
-#endif
 				return d.InvokeBuilder;
 			}
 

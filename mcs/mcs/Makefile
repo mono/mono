@@ -13,7 +13,6 @@ EXTRA_DISTFILES = \
 	TODO			\
 	*mcs.exe.config
 
-LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
 COMPILER_NAME = gmcs
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
@@ -107,12 +106,6 @@ profile : $(PROGRAM)
 #
 # quick hack target, to quickly develop the gmcs compiler
 # Update manually.
-qh:
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) ../class/lib/net_2_0/gmcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe cs-parser.cs  @gmcs.exe.sources
-	@ cp $(COMPILER_NAME).exe* $(topdir)/class/lib/$(PROFILE)/
-
-pa: cs-parser.cs
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) ../class/lib/net_2_0/gmcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:foo.exe cs-parser.cs foo.cs -main:X  @gmcs.exe.sources
 
 q: cs-parser.cs qh
 	echo 'System.Console.WriteLine ("Hello");' | mono csharp.exe

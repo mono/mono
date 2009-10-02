@@ -333,14 +333,12 @@ namespace Mono.CSharp {
 				return container.MemberCache;
 		}
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter container = builder_to_type_param [t] as TypeParameter;
 
 			if (container != null)
 				return container.MemberCache;
 		}
-#endif
 
 		return TypeHandle.GetMemberCache (t);
 	}
@@ -398,11 +396,7 @@ namespace Mono.CSharp {
 	//
 	public static Type GetReferenceType (Type t)
 	{
-#if GMCS_SOURCE
 		return t.MakeByRefType ();
-#else
-		return GetConstructedType (t, "&");
-#endif
 	}
 
 	//
@@ -431,7 +425,6 @@ namespace Mono.CSharp {
 			return (Type) ret;
 		}
 
-#if GMCS_SOURCE
 		if (t.IsGenericParameter || t.IsGenericType) {
 			int pos = 0;
 			Type result = t;
@@ -462,7 +455,6 @@ namespace Mono.CSharp {
 				return result;
 			}
 		}
-#endif
 
 		type_hash.Insert (t, dim, null);
 		return null;
@@ -599,7 +591,6 @@ namespace Mono.CSharp {
 			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
 	}
 
-#if GMCS_SOURCE
 	private static int GetFullName (Type t, StringBuilder sb)
 	{
 		int pos = 0;
@@ -660,12 +651,6 @@ namespace Mono.CSharp {
 			throw new InternalErrorException ("Generic Type " + t + " doesn't have type arguments");
 		return sb.ToString ();
 	}
-#else
-	public static string GetFullName (Type t)
-	{
-		return t.FullName;
-	}
-#endif
 
 	public static string RemoveGenericArity (string from)
 	{
@@ -1049,7 +1034,7 @@ namespace Mono.CSharp {
 	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					      MemberFilter filter, object criteria)
 	{
-#if MS_COMPATIBLE && GMCS_SOURCE
+#if MS_COMPATIBLE
 		if (t.IsGenericType)
 			t = t.GetGenericTypeDefinition ();
 #endif
@@ -1073,13 +1058,12 @@ namespace Mono.CSharp {
 		// and we can not call FindMembers on this type.
 		//
 		if (
-#if MS_COMPATIBLE && GMCS_SOURCE
+#if MS_COMPATIBLE
 			!t.IsGenericType &&
 #endif
 			t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
 
@@ -1089,7 +1073,6 @@ namespace Mono.CSharp {
 			Timer.StopTimer (TimerType.FindMembers);
 			return list;
 		}
-#endif
 
 		//
 		// Since FindMembers will not lookup both static and instance
@@ -1209,7 +1192,6 @@ namespace Mono.CSharp {
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
 
@@ -1220,7 +1202,6 @@ namespace Mono.CSharp {
 			return tparam.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
-#endif
 
 		if (IsGenericType (t) && (mt == MemberTypes.NestedType)) {
 			//
@@ -1430,7 +1411,7 @@ namespace Mono.CSharp {
 			return tparam.IsSubclassOf (base_type);
 		}
 
-#if MS_COMPATIBLE && GMCS_SOURCE
+#if MS_COMPATIBLE
 		if (type.IsGenericType)
 			type = type.GetGenericTypeDefinition ();
 #endif
@@ -1562,11 +1543,7 @@ namespace Mono.CSharp {
 			
 			AssemblyName aname = null;
 			try {
-#if GMCS_SOURCE
 				aname = new AssemblyName (attr.AssemblyName);
-#else
-				throw new NotSupportedException ();
-#endif
 			} catch (FileLoadException) {
 			} catch (ArgumentException) {
 			}
@@ -1789,9 +1766,7 @@ namespace Mono.CSharp {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
-#if GMCS_SOURCE
 		fb = GetGenericFieldDefinition (fb);
-#endif
 		return (FieldBase) fieldbuilders_to_fields [fb];
 	}
 
@@ -1974,7 +1949,7 @@ namespace Mono.CSharp {
 				base_ifaces = GetInterfaces (t.BaseType);
 			Type[] type_ifaces;
 			if (IsGenericType (t))
-#if MS_COMPATIBLE && GMCS_SOURCE
+#if MS_COMPATIBLE
 				type_ifaces = t.GetGenericTypeDefinition().GetInterfaces ();
 #else
 				type_ifaces = t.GetInterfaces ();
@@ -2178,7 +2153,7 @@ namespace Mono.CSharp {
 			return TypeManager.intptr_type;
 		if (t == typeof (System.UIntPtr))
 			return TypeManager.uintptr_type;
-#if GMCS_SOURCE
+
 		if (t.IsArray) {
 			int dim = t.GetArrayRank ();
 			t = GetElementType (t);
@@ -2192,7 +2167,7 @@ namespace Mono.CSharp {
 			t = GetElementType (t);
 			return t.MakePointerType ();
 		}
-#endif
+
 		return t;
 	}
 
@@ -2298,12 +2273,10 @@ namespace Mono.CSharp {
 		if (a == b)
 			return true;
 
-#if GMCS_SOURCE
 		if (a.IsGenericParameter && b.IsGenericParameter &&
 		    (a.DeclaringMethod != null) && (b.DeclaringMethod != null)) {
 			return a.GenericParameterPosition == b.GenericParameterPosition;
 		}
-#endif
 
 		if (a.IsArray && b.IsArray) {
 			if (a.GetArrayRank () != b.GetArrayRank ())
@@ -2427,52 +2400,31 @@ namespace Mono.CSharp {
 	// while Type.IsGenericParameter is returned if it is supported.
 	public static bool IsGenericParameter (Type type)
 	{
-#if GMCS_SOURCE
 		return type.IsGenericParameter;
-#else
-		return false;
-#endif
 	}
 
 	public static int GenericParameterPosition (Type type)
 	{
-#if GMCS_SOURCE
 		return type.GenericParameterPosition;
-#else
-		throw new InternalErrorException ("should not be called");
-#endif
 	}
 
 	public static bool IsGenericType (Type type)
 	{
-#if GMCS_SOURCE
 		return type.IsGenericType;
-#else
-		return false;
-#endif
 	}
 
 	public static bool IsGenericTypeDefinition (Type type)
 	{
-#if GMCS_SOURCE
 		return type.IsGenericTypeDefinition;
-#else
-		return false;
-#endif
 	}
 
 	public static bool ContainsGenericParameters (Type type)
 	{
-#if GMCS_SOURCE
 		return type.ContainsGenericParameters;
-#else
-		return false;
-#endif
 	}
 
 	public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
 	{
-#if GMCS_SOURCE
 		if (fi.DeclaringType.IsGenericTypeDefinition ||
 		    !fi.DeclaringType.IsGenericType)
 			return fi;
@@ -2485,7 +2437,6 @@ namespace Mono.CSharp {
 		foreach (FieldInfo f in t.GetFields (bf))
 			if (f.MetadataToken == fi.MetadataToken)
 				return f;
-#endif
 
 		return fi;
 	}
@@ -2509,11 +2460,7 @@ namespace Mono.CSharp {
 			//if (a.DeclaringMethod != b.DeclaringMethod &&
 			//    (a.DeclaringMethod == null || b.DeclaringMethod == null))
 			//	return false;
-#if GMCS_SOURCE
 			return a.GenericParameterPosition == b.GenericParameterPosition;
-#else
-			throw new NotSupportedException ();
-#endif
 		}
 
 		if (a.IsArray && b.IsArray) {
@@ -2574,21 +2521,16 @@ namespace Mono.CSharp {
 
 	public static Type DropGenericTypeArguments (Type t)
 	{
-#if GMCS_SOURCE
 		if (!t.IsGenericType)
 			return t;
 		// Micro-optimization: a generic typebuilder is always a generic type definition
 		if (t is TypeBuilder)
 			return t;
 		return t.GetGenericTypeDefinition ();
-#else
-		return t;
-#endif
 	}
 
 	public static MethodBase DropGenericMethodArguments (MethodBase m)
 	{
-#if GMCS_SOURCE
 		if (m.IsGenericMethod)
 		  m = ((MethodInfo) m).GetGenericMethodDefinition ();
 
@@ -2614,23 +2556,17 @@ namespace Mono.CSharp {
 				if (mb.MetadataToken == m.MetadataToken)
 					return mb;
 		}
-#endif
 
 		return m;
 	}
 
 	public static Type[] GetGenericArguments (MethodBase mi)
 	{
-#if GMCS_SOURCE
 		return mi.GetGenericArguments () ?? Type.EmptyTypes;
-#else
-		return Type.EmptyTypes;
-#endif
 	}
 
 	public static Type[] GetTypeArguments (Type t)
 	{
-#if GMCS_SOURCE
 		DeclSpace tc = LookupDeclSpace (t);
 		if (tc != null) {
 			if (!tc.IsGeneric)
@@ -2647,14 +2583,10 @@ namespace Mono.CSharp {
 			return ret;
 		} else
 			return t.GetGenericArguments ();
-#else
-		throw new InternalErrorException ();
-#endif
 	}
 			
 	public static GenericConstraints GetTypeParameterConstraints (Type t)
 	{
-#if GMCS_SOURCE				
 		if (!t.IsGenericParameter)
 			throw new InvalidOperationException ();
 
@@ -2663,9 +2595,6 @@ namespace Mono.CSharp {
 			return tparam.GenericConstraints;
 
 		return ReflectionConstraints.GetConstraints (t);
-#else
-		throw new InternalErrorException ();
-#endif				
 	}
 
 	public static bool HasGenericArguments (Type t)
@@ -2675,7 +2604,6 @@ namespace Mono.CSharp {
 
 	public static int GetNumberOfTypeArguments (Type t)
 	{
-#if GMCS_SOURCE
 		if (t.IsGenericParameter)
 			return 0;
 		DeclSpace tc = LookupDeclSpace (t);
@@ -2683,9 +2611,6 @@ namespace Mono.CSharp {
 			return tc.IsGeneric ? tc.CountTypeParameters : 0;
 		else
 			return t.IsGenericType ? t.GetGenericArguments ().Length : 0;
-#else
-		return 0;
-#endif
 	}
 
 	/// <summary>
@@ -2711,7 +2636,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static bool IsGenericMethodDefinition (MethodBase mb)
 	{
-#if GMCS_SOURCE
 		if (mb.DeclaringType is TypeBuilder) {
 			IMethodData method = (IMethodData) builder_to_method [mb];
 			if (method == null)
@@ -2721,9 +2645,6 @@ namespace Mono.CSharp {
 		}
 
 		return mb.IsGenericMethodDefinition;
-#else
-		return false;
-#endif
 	}
 
 	/// <summary>
@@ -2731,20 +2652,12 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static bool IsGenericMethod (MethodBase mb)
 	{
-#if GMCS_SOURCE
 		return mb.IsGenericMethod;
-#else
-		return false;
-#endif
 	}
 
 	public static bool IsNullableType (Type t)
 	{
-#if GMCS_SOURCE
 		return generic_nullable_type == DropGenericTypeArguments (t);
-#else
-		return false;
-#endif
 	}
 #endregion
 

@@ -1,9 +1,0 @@
-# This file contains test files which cause any type of error.
-
-# This file supports extended syntax
-# csXXXX.cs		: test case causes error
-# csXXXX.cs IGNORE 	: adds test to ignore list
-
-test-xml-027.cs
-test-682.cs Bug #530861
-test-704.cs IGNORE #472845

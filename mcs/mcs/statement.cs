@@ -4585,11 +4585,9 @@ namespace Mono.CSharp {
 				LocalVariableReference lvr = new LocalVariableReference (Block, Name, loc);
 				lvr.Resolve (new ResolveContext (ec.MemberContext));
 				
-#if GMCS_SOURCE
 				// Only to make verifier happy
 				if (TypeManager.IsGenericParameter (lvr.Type))
 					ig.Emit (OpCodes.Unbox_Any, lvr.Type);
-#endif
 
 				Expression source;
 				if (lvr.IsHoisted) {

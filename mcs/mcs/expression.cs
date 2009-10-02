@@ -1445,10 +1445,8 @@ namespace Mono.CSharp {
 			if (do_isinst)
 				ig.Emit (OpCodes.Isinst, type);
 
-#if GMCS_SOURCE
 			if (TypeManager.IsGenericParameter (type) || TypeManager.IsNullableType (type))
 				ig.Emit (OpCodes.Unbox_Any, type);
-#endif
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -5248,10 +5246,8 @@ namespace Mono.CSharp {
 			} else {
 				call_op = OpCodes.Callvirt;
 				
-#if GMCS_SOURCE
 				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
 					ig.Emit (OpCodes.Constrained, instance_expr.Type);
-#endif
 			}
 
 			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
@@ -5643,9 +5639,7 @@ namespace Mono.CSharp {
 
 		bool DoEmitTypeParameter (EmitContext ec)
 		{
-#if GMCS_SOURCE
 			ILGenerator ig = ec.ig;
-//			IMemoryLocation ml;
 
 			MethodInfo ci = TypeManager.activator_create_instance.MakeGenericMethod (
 				new Type [] { type });
@@ -5681,9 +5675,6 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, ci);
 			ig.MarkLabel (label_end);
 			return true;
-#else
-			throw new InternalErrorException ();
-#endif
 		}
 
 		//
@@ -8143,10 +8134,8 @@ namespace Mono.CSharp {
 			} else if (TypeManager.IsStruct (type)){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
-#if GMCS_SOURCE
 			} else if (type.IsGenericParameter) {
 				ig.Emit (OpCodes.Ldelem, type);
-#endif
 			} else if (type.IsPointer)
 				ig.Emit (OpCodes.Ldelem_I);
 			else
@@ -8190,12 +8179,9 @@ namespace Mono.CSharp {
 				has_type_arg = true;
 				is_stobj = true;
 				return OpCodes.Stobj;
-#if GMCS_SOURCE
 			} else if (t.IsGenericParameter) {
 				has_type_arg = true;
 				return OpCodes.Stelem;
-#endif
-
 			} else if (t.IsPointer)
 				return OpCodes.Stelem_I;
 			else

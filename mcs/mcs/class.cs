@@ -957,7 +957,6 @@ namespace Mono.CSharp {
 
 		bool CheckGenericInterfaces (Type[] ifaces)
 		{
-#if GMCS_SOURCE
 			ArrayList already_checked = new ArrayList ();
 
 			for (int i = 0; i < ifaces.Length; i++) {
@@ -980,7 +979,6 @@ namespace Mono.CSharp {
 
 				already_checked.Add (iface);
 			}
-#endif
 
 			return true;
 		}
@@ -1030,7 +1028,6 @@ namespace Mono.CSharp {
 				for (int i = 0; i < TypeParameters.Length; i++)
 					param_names [i] = TypeParameters [i].Name;
 
-#if GMCS_SOURCE
 				GenericTypeParameterBuilder[] gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
 				int offset = CountTypeParameters;
@@ -1044,10 +1041,6 @@ namespace Mono.CSharp {
 
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
-#else
-				nested_gen_params = null;
-				throw new NotSupportedException ();
-#endif
 			}
 
 			return true;
@@ -3847,13 +3840,11 @@ namespace Mono.CSharp {
 
 		protected override bool ResolveMemberType ()
 		{
-#if GMCS_SOURCE
 			if (GenericMethod != null) {
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags);
 				if (!GenericMethod.Define (this))
 					return false;
 			}
-#endif
 
 			return base.ResolveMemberType ();
 		}
@@ -5173,14 +5164,12 @@ namespace Mono.CSharp {
 				return;
 			}
 
-#if GMCS_SOURCE
 			//
 			// Generic method has been already defined to resolve method parameters
 			// correctly when they use type parameters
 			//
 			builder.SetParameters (param.GetEmitTypes ());
 			builder.SetReturnType (method.ReturnType);
-#endif
 			if (builder.Attributes != flags) {
 				try {
 					if (methodbuilder_attrs_field == null)
@@ -5917,7 +5906,6 @@ namespace Mono.CSharp {
 				return false;
 
 			try {
-#if GMCS_SOURCE
 				Type[] required_modifier = null;
 				if ((ModFlags & Modifiers.VOLATILE) != 0) {
 					if (TypeManager.isvolatile_type == null)
@@ -5930,10 +5918,7 @@ namespace Mono.CSharp {
 
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, required_modifier, null, Modifiers.FieldAttr (ModFlags));
-#else
-				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, MemberType, Modifiers.FieldAttr (ModFlags));
-#endif
+
 				// Don't cache inaccessible fields
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
 					Parent.MemberCache.AddMember (FieldBuilder, this);

@@ -369,7 +369,6 @@ namespace Mono.CSharp {
 				return;
 
 			if (TypeManager.IsGenericParameter (Type) && TypeManager.IsGenericParameter (target) && type.Name == target.Name) {
-#if GMCS_SOURCE
 				string sig1 = type.DeclaringMethod == null ?
 					TypeManager.CSharpName (type.DeclaringType) :
 					TypeManager.CSharpSignature (type.DeclaringMethod);
@@ -380,7 +379,6 @@ namespace Mono.CSharp {
 					String.Format (
 						"The generic parameter `{0}' of `{1}' cannot be converted to the generic parameter `{0}' of `{2}' (in the previous ",
 						Type.Name, sig1, sig2));
-#endif
 			} else if (Type.FullName == target.FullName){
 				ec.Report.ExtraInformation (loc,
 					String.Format (
@@ -1631,11 +1629,9 @@ namespace Mono.CSharp {
 		{
 			child.EmitBranchable (ec, label, on_true);
 
-#if GMCS_SOURCE
 			// Only to make verifier happy
 			if (TypeManager.IsGenericParameter (type) && child.IsNull)
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
-#endif
 		}
 
 		public override void EmitSideEffect (EmitContext ec)
@@ -1859,13 +1855,7 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 
 			ILGenerator ig = ec.ig;
-
-#if GMCS_SOURCE
 			ig.Emit (OpCodes.Unbox_Any, type);
-#else			
-			ig.Emit (OpCodes.Unbox, type);
-			LoadFromPtr (ig, type);
-#endif			
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -2149,7 +2139,6 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 
-#if GMCS_SOURCE
 			bool gen = TypeManager.IsGenericParameter (child.Type);
 			if (gen)
 				ec.ig.Emit (OpCodes.Box, child.Type);
@@ -2161,7 +2150,6 @@ namespace Mono.CSharp {
 			
 			if (gen && !forced)
 				return;
-#endif
 			
 			ec.ig.Emit (OpCodes.Castclass, type);
 		}
@@ -3890,7 +3878,6 @@ namespace Mono.CSharp {
 				arg_count = arguments.Count;
 			}
 
-#if GMCS_SOURCE
 			//
 			// 1. Handle generic method using type arguments when specified or type inference
 			//
@@ -3919,7 +3906,6 @@ namespace Mono.CSharp {
 				if (type_arguments != null)
 					return int.MaxValue - 15000;
 			}
-#endif
 
 			//
 			// 2. Each argument has to be implicitly convertible to method parameter
@@ -4479,9 +4465,7 @@ namespace Mono.CSharp {
 					}
 
 					if (gen_override && gen_args != null) {
-#if GMCS_SOURCE
 						best_candidate = ((MethodInfo) best_candidate).MakeGenericMethod (gen_args);
-#endif						
 					}
 				}
 			}
@@ -5250,11 +5234,8 @@ namespace Mono.CSharp {
 		{
 			if (constructed_generic_type == null)
 				return FieldInfo;
-#if GMCS_SOURCE
+
 			return TypeBuilder.GetField (constructed_generic_type, FieldInfo);
-#else
-			throw new NotSupportedException ();
-#endif			
 		}
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
