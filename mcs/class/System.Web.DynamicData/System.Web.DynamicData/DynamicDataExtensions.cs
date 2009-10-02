@@ -72,13 +72,32 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public static void ExpandDynamicWhereParameters (this IDynamicDataSource dataSource)
 		{
+			// http://forums.asp.net/p/1396453/3005197.aspx#3005197
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static IDynamicDataSource FindDataSourceControl (this Control current)
 		{
-			throw new NotImplementedException ();
+			var control = current as BaseDataBoundControl;
+			if (control == null)
+				return null;
+
+			string dataSourceID = control.DataSourceID;
+			if (!String.IsNullOrEmpty (dataSourceID))
+				return control.DataSource as IDynamicDataSource;
+			
+			Control namingContainer = control.NamingContainer;
+			IDynamicDataSource dds;
+			while (namingContainer != null) {
+				dds = namingContainer.FindControl (dataSourceID) as IDynamicDataSource;
+				if (dds != null)
+					return dds;
+
+				namingContainer = namingContainer.NamingContainer;
+			}
+
+			return null;
 		}
 
 		[MonoTODO]

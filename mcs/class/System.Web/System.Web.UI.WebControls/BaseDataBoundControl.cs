@@ -185,17 +185,18 @@ namespace System.Web.UI.WebControls {
 
 		internal Control FindDataSource ()
 		{
-			Control ctrl = null;
+			Control ctrl;
 			Control namingContainer = NamingContainer;
-
+			string dataSourceID = DataSourceID;
+			
 			while (namingContainer != null) {
-				ctrl = namingContainer.FindControl (DataSourceID);
+				ctrl = namingContainer.FindControl (dataSourceID);
 				if (ctrl != null)
-					break;
+					return ctrl;
 				namingContainer = namingContainer.NamingContainer;
 			}
 
-			return ctrl;
+			return null;
 		}
 		
 		protected abstract void PerformSelect ();

@@ -16,6 +16,11 @@
         var provider2 = new DynamicDataContainerModelProvider<TestDataContext3> ();
         provider2.ResolveAssociations ();
         Utils.RegisterContext (provider2, new ContextConfiguration () { ScaffoldAllTables = true }, true);
+
+        var provider3 = new DynamicDataContainerModelProvider<TestDataContext4> ();
+        provider2.ResolveAssociations ();
+        Utils.RegisterContext (provider3, new ContextConfiguration () { ScaffoldAllTables = true }, true);
+        
         routes.Add (new DynamicDataRoute ("{table}/{action}.aspx") {
             Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
             Model = MetaModel.Default

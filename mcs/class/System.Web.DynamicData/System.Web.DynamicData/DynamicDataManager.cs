@@ -76,6 +76,8 @@ namespace System.Web.DynamicData
 				return ret;
 			}
 		}
+
+		Dictionary <IDynamicDataSource, bool> knownDataSources;
 		
 		public DynamicDataManager ()
 		{
@@ -98,7 +100,18 @@ namespace System.Web.DynamicData
 		{
 			base.OnLoad (e);
 
-			// Why override?
+			// http://forums.asp.net/p/1257004/2339034.aspx
+			// http://forums.asp.net/t/1297860.aspx
+			// http://forums.asp.net/p/1396453/3005197.aspx#3005197
+			if (knownDataSources != null) {
+				foreach (var de in knownDataSources) {
+					IDynamicDataSource dds = de.Key;
+					if (dds == null)
+						continue;
+
+					dds.ExpandDynamicWhereParameters ();
+				}
+			}
 		}
 
 		public void RegisterControl (Control control)
@@ -116,24 +129,66 @@ namespace System.Web.DynamicData
 			if (!ControlIsValid (control))
 				throw new Exception ("Controls of type " + control.GetType () + " are not supported.");
 
+			// http://forums.asp.net/p/1257004/2339034.aspx
+			// http://forums.asp.net/p/1383908/2936065.aspx
 			DataBoundControl dbc = control as DataBoundControl;
 			if (dbc != null) {
 				IDynamicDataSource dds = dbc.DataSourceObject as IDynamicDataSource;
 				if (dds == null)
 					return;
 
+				RegisterDataSource (dds);
 				MetaTable table = dds.GetTable ();
 				if (table == null)
 					return;
-			
-				GridView gv = control as GridView;
+
+				if (String.IsNullOrEmpty (dds.Where))
+					dds.AutoGenerateWhereClause = true;
+				else
+					dds.AutoGenerateWhereClause = false;
+
+				Type contextType = dds.ContextType;
+				if (contextType == null)
+					dds.ContextType = table.DataContextType;
+
+				string entityName = dds.EntitySetName;
+				if (String.IsNullOrEmpty (entityName))
+					dds.EntitySetName = table.DataContextPropertyName;
+
+				if (AutoLoadForeignKeys) {
+					var ldds = dds as LinqDataSource;
+					if (ldds != null)
+						ldds.LoadWithForeignKeys (table.EntityType);
+				}
+				
+				var gv = control as GridView;
 				if (gv != null) {
 					gv.ColumnsGenerator = new AutoFieldGenerator (table);
+					return;
+				}
+
+				var dv = control as DetailsView;
+				if (dv != null) {
+					dv.RowsGenerator = new AutoFieldGenerator (table);
 					return;
 				}
 			}
 		}
 
+		void RegisterDataSource (IDynamicDataSource dds)
+		{
+			if (knownDataSources == null) {
+				knownDataSources = new Dictionary <IDynamicDataSource, bool> ();
+				knownDataSources.Add (dds, true);
+				return;
+			}
+			
+			if (knownDataSources.ContainsKey (dds))
+				return;
+
+			knownDataSources.Add (dds, true);
+		}
+		
 		bool ControlIsValid (Control control)
 		{
 			if (control is Repeater) {

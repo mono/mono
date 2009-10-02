@@ -1,3 +1,12 @@
+2009-10-02  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicValidator.cs: initial implementation
+
+	* DynamicDataManager.cs: implemented OnLoad.
+	Better implementation of RegisterControl
+
+	* DynamicDataExtensions.cs: implemented FindDataSourceControl.
+
 2009-09-18  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: implemented Init - calls Init on all the columns

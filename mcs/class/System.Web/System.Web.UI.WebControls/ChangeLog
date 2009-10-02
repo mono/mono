@@ -1,3 +1,10 @@
+2009-10-02  Marek Habersack  <mhabersack@novell.com>
+
+	* GridView.cs: added two 3.5 properties - SelectedPersistedDataKey
+	and IPersistedSelector.DataKey.
+
+	* BaseDataBoundControl.cs: slight optimizations to FindDataSource
+
 2009-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBoundControl.cs: Initialize sets RequiresDataBinding

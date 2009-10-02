@@ -222,10 +222,10 @@ namespace MonoTests.System.Web.DynamicData
 			var page = p as TestsBasePage<TestDataContext3>;
 			Assert.IsNotNull (p, "#A1-1");
 
-			page.ItemDataBinding += new EventHandler(ChildrenPath_ListControl_OnDataBound);
+			page.ItemDataBinding += new EventHandler(ChildrenPath_ListControl_OnItemDataBinding);
 		}
 
-		static void ChildrenPath_ListControl_OnDataBound (object sender, EventArgs e)
+		static void ChildrenPath_ListControl_OnItemDataBinding (object sender, EventArgs e)
 		{
 			var dc = sender as DynamicControl;
 			Assert.IsNotNull (dc, "#B1");

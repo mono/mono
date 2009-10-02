@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEventAttribute ("SelectedIndexChanged")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IPostBackEventHandler, IPostBackContainer
+	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IPostBackEventHandler, IPostBackContainer, IPersistedSelector
 	{
 		Table table;
 		GridViewRowCollection rows;
@@ -923,6 +923,18 @@ namespace System.Web.UI.WebControls
 				} else
 					return null;
 			}
+		}
+
+		[MonoTODO]
+		[BrowsableAttribute(false)]
+		public virtual DataKey SelectedPersistedDataKey {
+			get; set;
+		}
+
+		[MonoTODO]
+		DataKey IPersistedSelector.DataKey {
+			get { return SelectedPersistedDataKey; }
+			set { SelectedPersistedDataKey = value; }
 		}
 		
 		[BindableAttribute (true)]

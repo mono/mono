@@ -159,6 +159,10 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/ListView_DynamicControl_09.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_09.aspx.cs	\
 	Test/WebPages/ListView_DynamicControl_10.aspx,MonoTests.WebPages.ListView_DynamicControl_10.aspx	\
 	Test/WebPages/ListView_DynamicControl_10.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_10.aspx.cs	\
+	Test/WebPages/DynamicValidator_01.aspx,MonoTests.WebPages.DynamicValidator_01.aspx			\
+	Test/WebPages/DynamicValidator_01.aspx.cs,MonoTests.WebPages.DynamicValidator_01.aspx.cs		\
+	Test/WebPages/DynamicValidator_02.aspx,MonoTests.WebPages.DynamicValidator_02.aspx			\
+	Test/WebPages/DynamicValidator_02.aspx.cs,MonoTests.WebPages.DynamicValidator_02.aspx.cs		\
 	Test/WebPages/Site.css,MonoTests.WebPages.Site.css	\
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\

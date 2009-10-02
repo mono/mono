@@ -45,6 +45,7 @@ Common/BazDataTypeDefaultTypes.cs
 Common/BazNoStrings.cs
 Common/BazNoStringsNoPrimary.cs
 Common/BazWithDataTypeAttribute.cs
+Common/BazValidationAttributes.cs
 Common/EmployeesDataContext.cs
 Common/FakeHttpWorkerRequest.cs
 Common/FieldFormattingOptions.cs
@@ -75,11 +76,13 @@ Common/MyDynamicDataRouteHandler.cs
 Common/MyHttpContextWrapper.cs
 Common/MyHttpRequestWrapper.cs
 Common/PokerDynamicControl.cs
+Common/PokerDynamicValidator.cs
 Common/PokerFieldTemplateUserControl.cs
 Common/TestDataColumn.cs
 Common/TestDataContainer.cs
 Common/TestDataContext2.cs
 Common/TestDataContext3.cs
+Common/TestDataContext4.cs
 Common/TestDataContext.cs
 Common/TestDataTable.cs
 Common/TestsBasePage.cs
@@ -111,6 +114,7 @@ System.Web.DynamicData/DynamicDataExtensionsTest.cs
 System.Web.DynamicData/DynamicDataManagerTest.cs
 System.Web.DynamicData/DynamicDataRouteHandlerTest.cs
 System.Web.DynamicData/DynamicDataRouteTest.cs
+System.Web.DynamicData/DynamicValidatorTest.cs
 System.Web.DynamicData/FieldTemplateFactoryTest.cs
 System.Web.DynamicData/FieldTemplateUserControlTest.cs
 System.Web.DynamicData/MetaColumnTest.cs

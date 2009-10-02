@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -47,40 +48,82 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicValidator : BaseValidator
 	{
-		[MonoTODO]
+		IDynamicDataSource dynamicDataSource;
+
+		IDynamicDataSource DynamicDataSource {
+			get {
+				if (dynamicDataSource == null)
+					dynamicDataSource = this.FindDataSourceControl ();
+
+				return dynamicDataSource;
+			}
+		}
+		
 		[Themeable (false)]
 		[Browsable (false)]
 		public MetaColumn Column { get; set; }
 
-		[MonoTODO]
 		[Themeable (false)]
 		[Browsable (false)]
-		public string ColumnName { get; private set; }
+		public string ColumnName {
+			get {
+				// LAMESPEC: returns Column.Name if Column is not null, String.Empty
+				// otherwise
+				MetaColumn column = Column;
+				return column != null ? column.Name : String.Empty;
+			}
+		}
 
-		[MonoTODO]
-		protected virtual Exception ValidationException { get; set; }
+		protected virtual Exception ValidationException { get; set; }		
 
-		[MonoTODO]
 		protected override bool ControlPropertiesValid ()
 		{
-			throw new NotImplementedException ();
+			return base.ControlPropertiesValid () && DynamicDataSource != null;
 		}
 
 		[MonoTODO]
 		protected override bool EvaluateIsValid ()
 		{
-			throw new NotImplementedException ();
+			Exception ex = ValidationException;
+			if (ex != null) {
+				ErrorMessage = HttpUtility.HtmlEncode (ex.Message);
+				return false;
+			}
+
+			string controlToValidate = ControlToValidate;
+			if (String.IsNullOrEmpty (controlToValidate))
+				return true;
+
+			string value = GetControlValidationValue (controlToValidate);
+
+			return true;
 		}
 
-		[MonoTODO]
+		void HandleException (object sender, DynamicValidatorEventArgs args)
+		{
+			if (args == null)
+				return;
+			
+			ValidateException (args.Exception);
+		}
+		
 		protected override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			IDynamicDataSource dds = DynamicDataSource;
+			if (dds != null)
+				dds.Exception += HandleException;
+			
+			base.OnInit (e);
 		}
 
 		[MonoTODO]
 		protected virtual void ValidateException (Exception exception)
 		{
+			// http://forums.asp.net/p/1287649/2478409.aspx#2478409
+			//
+			// The above suggests that IDynamicValidatorException.InnerExceptions is
+			// indexed on column name
+			//
 			throw new NotImplementedException ();
 		}
 	}
