@@ -300,11 +300,9 @@ namespace System.ServiceModel
 				// TODO: use EvaluationContext of ServiceElement.
 				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
 				if (behavior != null) {
-					for (int i = 0; i < behavior.Count; i++) {
-						BehaviorExtensionElement bxel = behavior [i];
-						IServiceBehavior b = (IServiceBehavior) behavior [i].CreateBehavior ();
-						if (b != null)
-							Description.Behaviors.Add (b);
+					foreach (var bxe in behavior) {
+						IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
+						Description.Behaviors.Add (b);
 					}
 				}
 
@@ -315,6 +313,13 @@ namespace System.ServiceModel
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
 						endpoint.Address.ToString ());
+					// endpoint behaviors
+					EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
+					if (epbehavior != null)
+						foreach (var bxe in epbehavior) {
+							IEndpointBehavior b = (IEndpointBehavior) bxe.CreateBehavior ();
+							se.Behaviors.Add (b);
+					}
 				}
 			}
 			// TODO: consider commonBehaviors here

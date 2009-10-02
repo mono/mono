@@ -1,3 +1,8 @@
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : apply endpoint behavior section in config.
+	  Otherwise WebScriptEnablingBehavior won't be created.
+
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : fill behaviors first, then add endpoints.
