@@ -51,10 +51,6 @@ else
 USE_BOOT_COMPILE = yes
 endif
 
-ifeq (net_2_0, $(PROFILE))
-BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
-endif
-
 ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif

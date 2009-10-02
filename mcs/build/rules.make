@@ -40,8 +40,13 @@ INTERNAL_MCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/mcs.ex
 INTERNAL_MBAS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mbas/mbas.exe
 INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/mcs/gmcs.exe
 INTERNAL_ILASM = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
-INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/resgen.exe
 corlib = mscorlib.dll
+
+ifndef BUILD_TOOLS_PROFILE
+BUILD_TOOLS_PROFILE = $(BOOTSTRAP_PROFILE)
+endif
+
+INTERNAL_RESGEN = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
 
 depsdir = $(topdir)/build/deps
 
