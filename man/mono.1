@@ -1517,6 +1517,16 @@ To verify the availability of the probes, run:
 .nf
     dtrace -P mono'$target' -l -c mono
 .fi
+.SH PERMISSIONS
+Mono's Ping implementation for detecting network reachability can
+create the ICMP packets itself without requiring the system ping
+command to do the work.  If you want to enable this on Linux for
+non-root users, you need to give the Mono binary special permissions.
+.PP
+As root, run this command:
+.nf
+   # setcap cap_net_raw=+ep /usr/bin/mono
+.fi
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
