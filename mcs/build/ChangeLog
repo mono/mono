@@ -1,5 +1,9 @@
 2009-10-02  Marek Safar  <marek.safar@gmail.com>
 
+	* build/common.cs.in: Disabled 1.x only profiles.
+
+2009-10-02  Marek Safar  <marek.safar@gmail.com>
+
 	* profiles/net_2_0_bootstrap.make: Make it tools profile only.
 
 2009-10-01  Marek Safar  <marek.safar@gmail.com>

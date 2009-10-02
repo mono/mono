@@ -28,20 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-internal
-#if NET_2_0
-	static
-#else
-	sealed
-#endif
-	class Consts
+static class Consts
 {
-#if !NET_2_0
-	private Consts ()
-	{
-	}
-#endif
-
 	//
 	// Use these assembly version constants to make code more maintainable.
 	//
@@ -81,17 +69,9 @@ internal
 	public const string FxFileVersion = "2.0.50727.1433";
 	public const string VsFileVersion = "8.0.50727.1433";
 #elif NET_1_1
-	// Versions of .NET Framework 1.1 SP1
-	public const string FxVersion = "1.0.5000.0";
-	public const string VsVersion = "7.0.5000.0";
-	public const string FxFileVersion = "1.1.4322.2032";
-	public const string VsFileVersion = "7.10.6001.4";
+	#error Profile NET_1_1 is not supported.
 #elif NET_1_0
-	// Versions of .NET Framework 1.0 SP3
-	public const string FxVersion = "1.0.3300.0";
-	public const string VsVersion = "7.0.3300.0";
-	public const string FxFileVersion = "1.0.3705.6018";
-	public const string VsFileVersion = "7.0.9951.0";
+	#error Profile NET_1_0 is not supported.
 #else
 #error No profile symbols defined.
 #endif
