@@ -1,5 +1,9 @@
 2009-10-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_emit_setret): Emit long return values using OP_LMOVE.
+	(mono_arch_create_vars): Instead of allocating a stack slot by hand, allocate
+	a variable to hold the stack slot used by the int<->float conversion opcodes.
+
 	* mini-sparc.c (mono_arch_build_imt_thunk): Implement support for fail_tramp.
 
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
