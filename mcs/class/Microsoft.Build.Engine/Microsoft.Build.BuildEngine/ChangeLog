@@ -1,3 +1,9 @@
+2009-10-03  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (OS): New.
+	(InitializeProperties): Set 'OS' as a pre-defined property, set to
+	'Windows_NT', 'Unix' or 'OSX' depending on the platform.
+
 2009-10-02  Ankit Jain  <jankit@novell.com>
 
 	* Expression.cs (Parse): Don't change '/' to '\\', not required.
