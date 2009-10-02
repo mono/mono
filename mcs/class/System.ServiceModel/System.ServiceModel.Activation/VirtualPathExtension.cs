@@ -1,10 +1,9 @@
 //
-// ServiceHostingEnvironment.cs
+// VirtualPathExtension.cs
 //
-// Author:
-//	Ankit Jain  <jankit@novell.com>
+// Author: Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,17 +24,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.ServiceModel.Channels;
 
-namespace System.ServiceModel {
-
-	public static class ServiceHostingEnvironment
+namespace System.ServiceModel.Activation
+{
+	public sealed class VirtualPathExtension : IExtension<ServiceHostBase>
 	{
-		internal static bool InAspNet { get; set; }
+		internal VirtualPathExtension (string virtualPath)
+		{
+			VirtualPath = virtualPath;
+		}
 
-		public static bool AspNetCompatibilityEnabled { get; internal set; }
-
-		public static void EnsureServiceAvailable (string virtualPath)
+		public void Attach (ServiceHostBase owner)
 		{
 		}
+
+		public void Detach (ServiceHostBase owner)
+		{
+		}
+
+		public string VirtualPath { get; private set; }
 	}
 }

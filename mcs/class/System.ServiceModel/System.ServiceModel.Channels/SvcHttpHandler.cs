@@ -122,6 +122,7 @@ namespace System.ServiceModel.Channels {
 			}
 			else
 				host = new ServiceHost (type, baseUri);
+			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 
 			/*
 			if (host.Description.Endpoints.Count == 0)

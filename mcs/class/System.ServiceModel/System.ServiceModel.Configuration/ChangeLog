@@ -1,5 +1,10 @@
 2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigUtil.cs : revert the change, to use ServiceHostingEnvironment
+	  internal member again.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceThrottlingElement.cs : implement CreateBehavior().
 
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>

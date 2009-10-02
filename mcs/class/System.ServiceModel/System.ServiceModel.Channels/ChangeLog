@@ -1,5 +1,11 @@
 2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElement.cs, SvcHttpHandlerFactory.cs :
+	  revert the change, to use internal asp.net state again.
+	* SvcHttpHandler.cs : add VirtualPathExtension.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs, AspNetReplyChannel.cs, AspNetRequestContext.cs:
 	  asp.net response was not written correctly.
 	  Fill HttpRequestMessageProperty to get handle WSDL requests

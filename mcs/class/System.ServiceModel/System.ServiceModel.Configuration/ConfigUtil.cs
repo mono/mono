@@ -40,7 +40,7 @@ namespace System.ServiceModel.Configuration
 	{
 		static object GetSection (string name)
 		{
-			if (ServiceHostingEnvironment.AspNetCompatibilityEnabled)
+			if (ServiceHostingEnvironment.InAspNet)
 				return WebConfigurationManager.GetSection (name);
 			else
 				return ConfigurationManager.GetSection (name);
