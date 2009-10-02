@@ -66,7 +66,7 @@ clean-local: cleanup
 
 cleanup:
 	-rm -Rf Test/en.actual Test/html.actual
-	-rm monodocer1.exe*
+	-rm -f monodocer1.exe*
 
 Test/DocTest.dll: 
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest.cs
