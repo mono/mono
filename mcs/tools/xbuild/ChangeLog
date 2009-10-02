@@ -1,3 +1,10 @@
+2009-10-03  Ankit Jain  <jankit@novell.com>
+
+	Fix bug#542461.
+	* xbuild/Microsoft.Common.targets (KeyOriginatorFile): Set to
+	$(AssemblyOriginatorKeyFile), if SignAssembly is true.
+	Use it for satellite assemblies also.
+
 2009-09-29  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs (Insert): Show project name in case of a cyclic

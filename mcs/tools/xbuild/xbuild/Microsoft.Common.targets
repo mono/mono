@@ -50,6 +50,8 @@
 		<TargetName Condition="'$(TargetName)' == '' ">$(AssemblyName)</TargetName>
 		<TargetFileName Condition="'$(TargetFileName)' == '' ">$(TargetName)$(TargetExt)</TargetFileName>
 		<TargetPath>@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
+
+		<KeyOriginatorFile Condition=" '$(SignAssembly)' == 'true' ">$(AssemblyOriginatorKeyFile)</KeyOriginatorFile>
 	</PropertyGroup>
 
 	<Target Name="_ValidateEssentialProperties">
@@ -343,7 +345,9 @@
 
 		<AL
 			Culture = "%(Culture)"
+			DelaySign="$(DelaySign)"
 			EmbedResources = "@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
+			KeyFile="$(KeyOriginatorFile)"
 			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll" >
 			<Output TaskParameter="OutputAssembly" ItemName="FileWrites"/>
 		</AL>
