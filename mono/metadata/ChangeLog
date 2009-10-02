@@ -1,5 +1,9 @@
 2009-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* threadpool.c: one more...
+
+2009-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.c: forgot a LeaveCriticalSection when telling the idle
 	threads to die because we're shutting down. delgate5.exe works again.
 
