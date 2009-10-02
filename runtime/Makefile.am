@@ -71,7 +71,7 @@ clean-local:
 
 endif BUILD_MCS
 
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
 
 # now a misnomer, but it'll go away soon enough.
 if ENABLE_NUNIT_TESTS
@@ -150,12 +150,6 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	$(mkinstalldirs) $(tmpinst)/bin
 	cp mono-wrapper $@
-
-$(tmpinst)/bin/mcs: $(tmpinst)/bin/mono Makefile
-	echo '#! /bin/sh' > $@ ; \
-	r=`pwd`; m=`cd $(mcs_topdir) && pwd`; \
-	echo 'exec "'"$$r/$(tmpinst)/bin/mono"'" "'"$$m/class/lib/net_1_1/mcs.exe"'" "$$@"' >> $@ ; \
-	chmod +x $@
 
 $(tmpinst)/bin/gmcs: $(tmpinst)/bin/mono Makefile
 	echo '#! /bin/sh' > $@ ; \
