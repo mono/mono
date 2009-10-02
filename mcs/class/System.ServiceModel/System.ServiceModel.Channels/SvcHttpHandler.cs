@@ -110,37 +110,6 @@ namespace System.ServiceModel.Channels {
 			closing = false;
 		}
 
-		void ApplyConfiguration (ServiceHostBase host)
-		{
-			/*
-			foreach (ServiceElement service in ConfigUtil.ServicesSection.Services) {
-				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-					// FIXME: consider BindingName as well
-					host.AddServiceEndpoint (
-						endpoint.Contract,
-						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						new Uri (path, UriKind.Relative));
-				}
-				// behaviors
-				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
-				if (behavior != null) {
-					foreach (BehaviorExtensionElement bxel in behavior) {
-						IServiceBehavior b = null;
-						ServiceMetadataPublishingElement meta = bxel as ServiceMetadataPublishingElement;
-						if (meta != null) {
-							ServiceMetadataBehavior smb = meta.CreateBehavior () as ServiceMetadataBehavior;
-							smb.HttpGetUrl = request_url;
-							// FIXME: HTTPS as well
-							b = smb;
-						}
-						if (b != null)
-							host.Description.Behaviors.Add (b);
-					}
-				}
-			}
-			*/
-		}
-
 		void EnsureServiceHost ()
 		{
 			if (host != null)
@@ -154,14 +123,14 @@ namespace System.ServiceModel.Channels {
 			else
 				host = new ServiceHost (type, baseUri);
 
-
-			ApplyConfiguration (host);
+			/*
 			if (host.Description.Endpoints.Count == 0)
 				//FIXME: Binding: Get from web.config.
 				host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
 					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
 
 			var c = host.BaseAddresses;
+			*/
 
 			host.Open ();
 

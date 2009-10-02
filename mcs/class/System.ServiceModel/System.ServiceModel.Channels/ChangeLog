@@ -1,3 +1,7 @@
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : remove unused code.
+
 2009-09-30  Jb Evain  <jbevain@novell.com>
 
 	* HttpRequestChannel.cs: When compiling for MonoTouch, avoid
