@@ -157,8 +157,8 @@ namespace Mono.CSharp {
 			if (v == null && !TypeManager.IsValueType (t))
 				return new EmptyConstantCast (new NullLiteral (loc), t);
 
-			throw new Exception ("Unknown type for constant (" + t +
-					"), details: " + v);
+			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'",
+				v, TypeManager.CSharpName (t));
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
