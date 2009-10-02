@@ -1,3 +1,7 @@
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceThrottlingElement.cs : implement CreateBehavior().
+
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceModelExtensionCollectionElement.cs : add couple of missing

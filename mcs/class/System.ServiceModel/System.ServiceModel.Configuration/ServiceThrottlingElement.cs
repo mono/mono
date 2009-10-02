@@ -60,7 +60,6 @@ namespace System.ServiceModel.Configuration
 		public ServiceThrottlingElement () {
 		}
 
-
 		// Properties
 
 		public override Type BehaviorType {
@@ -104,11 +103,14 @@ namespace System.ServiceModel.Configuration
 			get { return base.Properties; }
 		}
 
-		[MonoTODO]
-		protected internal override object CreateBehavior () {
-			throw new NotImplementedException ();
+		protected internal override object CreateBehavior ()
+		{
+			return new ServiceThrottlingBehavior () {
+				MaxConcurrentCalls = this.MaxConcurrentCalls,
+				MaxConcurrentSessions = this.MaxConcurrentSessions,
+				MaxConcurrentInstances = this.MaxConcurrentInstances,
+				};
 		}
-
 	}
 
 }
