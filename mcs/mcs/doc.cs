@@ -9,7 +9,7 @@
 // Copyright 2004 Novell, Inc.
 //
 //
-#if ! BOOTSTRAP_WITH_OLDLIB
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -30,16 +30,8 @@ namespace Mono.CSharp {
 	//
 	// Support class for XML documentation.
 	//
-#if NET_2_0
-	static
-#else
-	abstract
-#endif
-	public class DocUtil
+	static class DocUtil
 	{
-#if !NET_2_0
-		private DocUtil () {}
-#endif
 		// TypeContainer
 
 		//
@@ -1025,4 +1017,3 @@ namespace Mono.CSharp {
 		}
 	}
 }
-#endif

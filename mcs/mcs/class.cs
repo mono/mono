@@ -22,7 +22,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 
-#if BOOTSTRAP_WITH_OLDLIB || NET_2_1
+#if NET_2_1
 using XmlElement = System.Object;
 #else
 using System.Xml;
@@ -2096,12 +2096,7 @@ namespace Mono.CSharp {
 							if ((f.caching_flags & Flags.IsAssigned) == 0)
 								Report.Warning (169, 3, f.Location, "The private field `{0}' is never used", f.GetSignatureForError ());
 							else {
-#if NET_2_0
-								const int error_code = 414;
-#else
-								const int error_code = 169;
-#endif
-								Report.Warning (error_code, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
+								Report.Warning (414, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
 									f.GetSignatureForError ());
 							}
 							continue;
@@ -5481,14 +5476,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-#if NET_2_0
 			if (a.Type == pa.FixedBuffer) {
 				Report.Error (1716, Location, "Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead");
 				return;
 			}
-#endif
 
-#if !NET_2_0
+#if false
 			if (a.Type == pa.MarshalAs) {
 				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {

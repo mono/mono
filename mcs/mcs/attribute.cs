@@ -687,10 +687,9 @@ namespace Mono.CSharp {
 			if ((targets & AttributeTargets.ReturnValue) != 0)
 				sb.Append ("return, ");
 
-#if NET_2_0
 			if ((targets & AttributeTargets.GenericParameter) != 0)
 				sb.Append ("type parameter, ");
-#endif			
+
 			return sb.Remove (sb.Length - 2, 2).ToString ();
 		}
 
@@ -1025,7 +1024,7 @@ namespace Mono.CSharp {
 		// and ParameterBuilder.SetCustomAttribute() are supposed to handle this attribute.
 		// However, we can't, since it appears that the .NET 1.1 SRE hangs when given a MarshalAsAttribute.
 		//
-#if !NET_2_0
+#if false
 		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
 			UnmanagedType UnmanagedType;
