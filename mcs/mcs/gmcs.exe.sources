@@ -15,6 +15,7 @@ context.cs
 decl.cs
 delegate.cs
 doc.cs
+doc-bootstrap.cs
 driver.cs
 dynamic.cs
 ecore.cs
