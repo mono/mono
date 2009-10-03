@@ -15,6 +15,10 @@ EXTRA_DISTFILES = \
 
 COMPILER_NAME = gmcs
 
+ifeq (net_2_0, $(PROFILE))
+INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
+endif
+
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LOCAL_MCS_FLAGS += -d:SMCS_SOURCE
 COMPILER_NAME = smcs
