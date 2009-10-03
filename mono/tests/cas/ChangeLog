@@ -1,6 +1,10 @@
+2009-10-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* */Makefile.am: Get rid of net 1.1 stuff.
+
 2008-11-11  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* */Makefile.am: Dont compile with --security as this fails under 
+	* */Makefile.am: Dont compile with --security as this fails under
 	Win32 and this is *not* what we want to test here anyway
 
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
