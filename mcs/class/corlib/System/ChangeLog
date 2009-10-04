@@ -1,3 +1,13 @@
+2009-10-04  Mark Probst  <mark.probst@gmail.com>
+
+	* AppDomainSetup.cs: Functionality for serializing a few members
+	to simplify cross-domain copying from within the runtime.
+
+	* AppDomain.cs (CreateDomain): Make AppDomainSetup serialize the
+	necessary members in preparation for the cross-domain copy.
+
+	* Environment.cs: Corlib version bump.
+
 2009-10-02  Marek Safar  <marek.safar@gmail.com>
 
 	* Array.cs, Decimal.cs, String.cs, Console.cs, _AppDomain.cs,

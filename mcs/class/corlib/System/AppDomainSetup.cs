@@ -35,6 +35,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Runtime.Serialization.Formatters.Binary;
 
 #if NET_2_0 && !NET_2_1
 using System.Runtime.Hosting;
@@ -70,23 +71,23 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-		// those fields also exist in the runtime, so we need dummies in 1.x profile too.
 #if NET_2_0 && !NET_2_1
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
 		string [] domain_initializer_args;
-		SecurityElement application_trust_xml;
 #else
 		object _activationArguments;
 		object domain_initializer; // always null
-		object application_trust;
+		[NonSerialized]
+		object application_trust;  // dummy, always null
 		object domain_initializer_args;
-		object application_trust_xml;
 #endif
 		bool disallow_appbase_probe;
 		byte [] configuration_bytes;
+
+		byte [] serialized_non_primitives;
 
 		public AppDomainSetup ()
 		{
@@ -112,8 +113,8 @@ namespace System
 //#if NET_2_0
 			_activationArguments = setup._activationArguments;
 			domain_initializer = setup.domain_initializer;
+			application_trust = setup.application_trust;
 			domain_initializer_args = setup.domain_initializer_args;
-			application_trust_xml = setup.application_trust_xml;
 			disallow_appbase_probe = setup.disallow_appbase_probe;
 			configuration_bytes = setup.configuration_bytes;
 //#endif
@@ -304,13 +305,23 @@ namespace System
 
 #if NET_2_0
 		public ActivationArguments ActivationArguments {
-			get { return _activationArguments; }
+			get {
+				if (_activationArguments != null)
+					return _activationArguments;
+				DeserializeNonPrimitives ();
+				return _activationArguments;
+			}
 			set { _activationArguments = value; }
 		}
 
 		[MonoLimitation ("it needs to be invoked within the created domain")]
 		public AppDomainInitializer AppDomainInitializer {
-			get { return domain_initializer; }
+			get {
+				if (domain_initializer != null)
+					return domain_initializer;
+				DeserializeNonPrimitives ();
+				return domain_initializer;
+			}
 			set { domain_initializer = value; }
 		}
 
@@ -323,21 +334,14 @@ namespace System
 		[MonoNotSupported ("This property exists but not considered.")]
 		public ApplicationTrust ApplicationTrust {
 			get {
-				if (application_trust_xml == null)
-					return null;
+				if (application_trust != null)
+					return application_trust;
+				DeserializeNonPrimitives ();
 				if (application_trust == null)
 					application_trust = new ApplicationTrust ();
 				return application_trust;
 			}
-			set {
-				application_trust = value;
-				if (value != null) {
-					application_trust_xml = value.ToXml ();
-					application_trust.FromXml (application_trust_xml);
-				}
-				else
-					application_trust_xml = null;
-			}
+			set { application_trust = value; }
 		}
 
 		[MonoNotSupported ("This property exists but not considered.")]
@@ -358,6 +362,45 @@ namespace System
 			configuration_bytes = value;
 		}
 #endif
+
+		private void DeserializeNonPrimitives ()
+		{
+#if NET_2_0
+			lock (this) {
+				if (serialized_non_primitives == null)
+					return;
+
+				BinaryFormatter bf = new BinaryFormatter ();
+				MemoryStream ms = new MemoryStream (serialized_non_primitives);
+
+				object [] arr = (object []) bf.Deserialize (ms);
+
+				_activationArguments = (ActivationArguments) arr [0];
+				domain_initializer = (AppDomainInitializer) arr [1];
+				application_trust = (ApplicationTrust) arr [2];
+
+				serialized_non_primitives = null;
+			}
+#endif
+		}
+
+		internal void SerializeNonPrimitives ()
+		{
+#if NET_2_0
+			object [] arr = new object [3];
+
+			arr [0] = _activationArguments;
+			arr [1] = domain_initializer;
+			arr [2] = application_trust;
+
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+
+			bf.Serialize (ms, arr);
+
+			serialized_non_primitives = ms.ToArray ();
+#endif
+		}
 #endif // !NET_2_1
 	}
 }

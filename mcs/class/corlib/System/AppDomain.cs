@@ -903,6 +903,8 @@ namespace System {
 			} else if (info.ConfigurationFile == null)
 				info.ConfigurationFile = "[I don't have a config file]";
 
+			info.SerializeNonPrimitives ();
+
 			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
 			if (securityInfo == null) {
 				// get default domain's Evidence (unless we're are the default!)
