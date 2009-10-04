@@ -1,3 +1,7 @@
+2009-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Replace make_imt_test_.sh with a faster C# version.
+
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add a test for #543133.
