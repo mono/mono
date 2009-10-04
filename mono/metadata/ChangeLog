@@ -1,3 +1,13 @@
+2009-10-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain-internals.h, appdomain.c: The AppDomainSetup is copied
+	into the new domain, instead of referencing the original one.
+
+	* marshal.c, marshal.h: Make mono_marshal_xdomain_copy_value()
+	non-static.
+
+	* appdomain.c: Corlib version bump.
+
 2009-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: one more...
