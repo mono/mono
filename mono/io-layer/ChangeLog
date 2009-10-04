@@ -1,3 +1,7 @@
+2009-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Implement get_process_name_from_proc () on solaris.
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c (load_modules): Applied patch from Thomas Philpot
