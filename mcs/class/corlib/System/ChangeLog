@@ -1,5 +1,11 @@
 2009-10-04  Mark Probst  <mark.probst@gmail.com>
 
+	* AppDomain.cs: Check for static AppDomainInitializer earlier to
+	throw the appropriate exception instead of failing at
+	serialization.
+
+2009-10-04  Mark Probst  <mark.probst@gmail.com>
+
 	* AppDomainSetup.cs: Functionality for serializing a few members
 	to simplify cross-domain copying from within the runtime.
 

@@ -903,6 +903,13 @@ namespace System {
 			} else if (info.ConfigurationFile == null)
 				info.ConfigurationFile = "[I don't have a config file]";
 
+#if NET_2_0 && !NET_2_1
+			if (info.AppDomainInitializer != null) {
+				if (!info.AppDomainInitializer.Method.IsStatic)
+					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
+			}
+#endif
+
 			info.SerializeNonPrimitives ();
 
 			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
@@ -918,9 +925,6 @@ namespace System {
 
 #if NET_2_0 && !NET_2_1
 			if (info.AppDomainInitializer != null) {
-				if (!info.AppDomainInitializer.Method.IsStatic)
-					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
-
 				Loader loader = new Loader (
 					info.AppDomainInitializer.Method.DeclaringType.Assembly.Location);
 				ad.DoCallBack (loader.Load);
