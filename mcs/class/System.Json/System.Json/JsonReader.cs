@@ -279,13 +279,14 @@ namespace System.Json
 				case 'u':
 					ushort cp = 0;
 					for (int i = 0; i < 4; i++) {
+						cp <<= 4;
 						if ((c = ReadChar ()) < 0)
 							throw JsonError ("Incomplete unicode character escape literal");
-						if ('0' >= c && c <= '9')
+						if ('0' <= c && c <= '9')
 							cp += (ushort) (c - '0');
-						if ('A' >= c && c <= 'F')
+						if ('A' <= c && c <= 'F')
 							cp += (ushort) (c - 'A' + 10);
-						if ('a' >= c && c <= 'f')
+						if ('a' <= c && c <= 'f')
 							cp += (ushort) (c - 'a' + 10);
 					}
 					vb.Append ((char) cp);
