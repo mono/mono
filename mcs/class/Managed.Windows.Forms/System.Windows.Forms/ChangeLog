@@ -1,5 +1,12 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TextBox.cs: Process auto completion properly when we are using the
+	internal source provided by ComboBox, and also remove some repeated
+	checks.
+	Fixes #489339.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Structs:
 	* X11Clipboard.cs: Move internal ClipboardStruct from X11Structs to
 	its own file, since it is adding some functionality and thus is not a

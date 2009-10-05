@@ -150,14 +150,7 @@ namespace System.Windows.Forms {
 			// We only support CustomSource by now
 			//
 
-			IList source;
-			if (auto_complete_cb_source == null)
-				source = auto_complete_custom_source;
-			else
-				source = auto_complete_cb_source.Items;
-
-			if (source == null || source.Count == 0)
-				return;
+			IList source = auto_complete_cb_source == null ? auto_complete_custom_source : (IList)auto_complete_cb_source.Items;
 
 			bool append = auto_complete_mode == AutoCompleteMode.Append || auto_complete_mode == AutoCompleteMode.SuggestAppend;
 			bool suggest = auto_complete_mode == AutoCompleteMode.Suggest || auto_complete_mode == AutoCompleteMode.SuggestAppend;
@@ -220,9 +213,11 @@ namespace System.Windows.Forms {
 				if (auto_complete_source == AutoCompleteSource.None || auto_complete_mode == AutoCompleteMode.None)
 					return false;
 
-				// We only support CustomSource by now
-				if (auto_complete_source != AutoCompleteSource.CustomSource || auto_complete_custom_source == null ||
-						auto_complete_custom_source.Count == 0)
+				// We only support CustomSource by now, as well as an internal custom source used by ComboBox
+				if (auto_complete_source != AutoCompleteSource.CustomSource)
+					return false;
+				IList custom_source = auto_complete_cb_source == null ? auto_complete_custom_source : (IList)auto_complete_cb_source.Items;
+				if (custom_source == null || custom_source.Count == 0)
 					return false;
 
 				return true;
