@@ -275,7 +275,7 @@ ifdef DEVEL
 LIB_MCS_FLAGS += -define:DEVEL
 endif
 
-$(build_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
+$(build_lib): $(RESX_RES) $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
 
 $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
