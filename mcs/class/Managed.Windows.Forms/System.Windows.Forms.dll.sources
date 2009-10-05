@@ -799,6 +799,7 @@ System.Windows.Forms/WebBrowserSiteBase.cs
 System.Windows.Forms/Win32DnD.cs
 System.Windows.Forms/WindowsFormsSection.cs
 System.Windows.Forms/WindowsFormsSynchronizationContext.cs
+System.Windows.Forms/X11Clipboard.cs
 System.Windows.Forms/X11DesktopColors.cs
 System.Windows.Forms/X11Dnd.cs
 System.Windows.Forms/X11Keyboard.cs
