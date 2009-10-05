@@ -1,8 +1,3 @@
-2009-10-05  Marek Safar  <marek.safar@gmail.com>
-
-	A fix for bug #544178
-	* codegen.cs: Ignore security attributes for module output.
-
 2009-10-02  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Don't crash on overloads with optional paremeters where
