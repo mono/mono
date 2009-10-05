@@ -1,5 +1,18 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Structs:
+	* X11Clipboard.cs: Move internal ClipboardStruct from X11Structs to
+	its own file, since it is adding some functionality and thus is not a
+	simple struct as before.
+	* XplatUIX11.cs: Add support to store different formats that could
+	have been specified by the user when puting data in the Clipboard -
+	this is important when more than one format is supported (such plain
+	text and rtf text). Update in the needed places, as well as simplify
+	the code.
+	Fixes #489625.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* XplatUIX11.cs: When handling the SelectionRequest event, use
 	SelectionRequestEvent instead of SelectionEvent, so we get the right
 	data for the app asking for clipboard data. Set the member of

@@ -96,7 +96,7 @@ namespace System.Windows.Forms {
 
 		// Clipboard
 		private static IntPtr 		ClipMagic;
-		private static ClipboardStruct	Clipboard;		// Our clipboard
+		private static ClipboardData	Clipboard;		// Our clipboard
 
 		// Communication
 		private static IntPtr		PostAtom;		// PostMessage atom
@@ -256,6 +256,7 @@ namespace System.Windows.Forms {
 			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
 			unattached_timer_list = ArrayList.Synchronized (new ArrayList (3));
 			messageHold = Hashtable.Synchronized (new Hashtable(3));
+			Clipboard = new ClipboardData ();
 			XInitThreads();
 
 			ErrorExceptions = false;
@@ -1708,13 +1709,13 @@ namespace System.Windows.Forms {
 						atoms = new int[5];
 						atom_count = 0;
 
-						if (Clipboard.Item is String) {
+						if (Clipboard.IsSourceText) {
 							atoms[atom_count++] = (int)Atom.XA_STRING;
 							atoms[atom_count++] = (int)OEMTEXT;
 							atoms[atom_count++] = (int)UTF8_STRING;
 							atoms[atom_count++] = (int)UTF16_STRING;
 							atoms[atom_count++] = (int)RICHTEXTFORMAT;
-						} else if (Clipboard.Item is Image) {
+						} else if (Clipboard.IsSourceImage) {
 							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
 							atoms[atom_count++] = (int)Atom.XA_BITMAP;
 						} else {
@@ -1724,34 +1725,41 @@ namespace System.Windows.Forms {
 						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
 								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
 						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-					} else if (Clipboard.Item is string) {
+					} else if (Clipboard.IsSourceText) {
 						IntPtr	buffer;
 						int	buflen;
 
 						buflen = 0;
 
 						// The RTF spec mentions that ascii is enough to contain it
-						if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING ||
-								xevent.SelectionRequestEvent.target == (IntPtr)RICHTEXTFORMAT) {
+						IntPtr target_atom = xevent.SelectionRequestEvent.target;
+						if (target_atom == (IntPtr)Atom.XA_STRING ||
+								target_atom == (IntPtr)RICHTEXTFORMAT) {
 							Byte[] bytes;
 
-							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Source);
+							string source_data = null;
+							if (target_atom == (IntPtr)RICHTEXTFORMAT)
+								source_data = Clipboard.GetRtfText ();
+							if (source_data == null) // fallback to plain text if needed
+								source_data = Clipboard.GetPlainText ();
+
+							bytes = Encoding.ASCII.GetBytes(source_data);
 							buffer = Marshal.AllocHGlobal(bytes.Length);
 							buflen = bytes.Length;
 
 							for (int i = 0; i < buflen; i++) {
 								Marshal.WriteByte(buffer, i, bytes[i]);
 							}
-						} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
+						} else if (target_atom == OEMTEXT) {
 							// FIXME - this should encode into ISO2022
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Source);
+							buffer = Marshal.StringToHGlobalAnsi(Clipboard.GetPlainText ());
 							while (Marshal.ReadByte(buffer, buflen) != 0) {
 								buflen++;
 							}
-						} else if (xevent.SelectionRequestEvent.target == UTF16_STRING) {
+						} else if (target_atom == UTF16_STRING) {
 							Byte [] bytes;
 
-							bytes = Encoding.Unicode.GetBytes ((string)Clipboard.Source);
+							bytes = Encoding.Unicode.GetBytes (Clipboard.GetPlainText ());
 							buffer = Marshal.AllocHGlobal (bytes.Length);
 							buflen = bytes.Length;
 
@@ -1767,7 +1775,7 @@ namespace System.Windows.Forms {
 							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 							Marshal.FreeHGlobal(buffer);
 						}
-					} else if (Clipboard.Item is Image) {
+					} else if (Clipboard.IsSourceImage) {
 						if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
 							// FIXME - convert image and store as property
 						} else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
@@ -1796,8 +1804,8 @@ namespace System.Windows.Forms {
 						if (xevent.SelectionEvent.property != IntPtr.Zero) {
 							TranslatePropertyToClipboard(xevent.SelectionEvent.property);
 						} else {
+							Clipboard.ClearSources ();
 							Clipboard.Item = null;
-							Clipboard.Source = null;
 						}
 					} else {
 						Dnd.HandleSelectionNotifyEvent (ref xevent);
@@ -2652,15 +2660,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
-			Clipboard.Source = obj;
-			Clipboard.Item = obj;
-			Clipboard.Type = type;
 			Clipboard.Converter = converter;
 
 			if (obj != null) {
+				Clipboard.AddSource (type, obj);
 				XSetSelectionOwner(DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
 			} else {
 				// Clearing the selection
+				Clipboard.ClearSources ();
 				XSetSelectionOwner(DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
