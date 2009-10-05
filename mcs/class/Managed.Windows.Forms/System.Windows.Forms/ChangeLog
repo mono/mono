@@ -1,3 +1,11 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListBox.cs: The default instance StringFormat field used to draw our
+	items should use the StringFormatFlags.NoWrap value, so it doesn't try
+	to put in a different line the text that doesn't fit our bounds, but
+	show it partially.
+	Fixes #475581.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CheckedListbox.cs: When executing OnItemClick check that the index
