@@ -2135,8 +2135,8 @@ namespace System.Windows.Forms
 					loc.Y = index / cols * (item_size.Height + y_spacing);
 					break;
 				case View.List:
-					loc.X = index / cols * (item_size.Width + x_spacing);
-					loc.Y = index % cols * (item_size.Height + y_spacing);
+					loc.X = index / rows * (item_size.Width + x_spacing);
+					loc.Y = index % rows * (item_size.Height + y_spacing);
 					break;
 				case View.Details:
 					loc.Y = header_control.Height + (index * item_size.Height);
