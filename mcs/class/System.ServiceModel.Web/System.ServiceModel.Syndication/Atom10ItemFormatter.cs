@@ -184,9 +184,7 @@ namespace System.ServiceModel.Syndication
 						Item.Links.Add (l);
 						continue;
 					case "published":
-						// FIXME: somehow DateTimeOffset causes the runtime crash.
-						reader.ReadElementContentAsString ();
-						// Item.PublishDate = XmlConvert.ToDateTimeOffset (reader.ReadElementContentAsString ());
+						Item.PublishDate = XmlConvert.ToDateTimeOffset (reader.ReadElementContentAsString ());
 						continue;
 					case "rights":
 						Item.Copyright = ReadTextSyndicationContent (reader);
@@ -201,9 +199,7 @@ namespace System.ServiceModel.Syndication
 						Item.Title = ReadTextSyndicationContent (reader);
 						continue;
 					case "updated":
-						// FIXME: somehow DateTimeOffset causes the runtime crash.
-						reader.ReadElementContentAsString ();
-						// Item.LastUpdatedTime = XmlConvert.ToDateTimeOffset (reader.ReadElementContentAsString ());
+						Item.LastUpdatedTime = XmlConvert.ToDateTimeOffset (reader.ReadElementContentAsString ());
 						continue;
 
 					// Atom 1.0 does not specify "content" element, but it is required to distinguish Content property from extension elements.
