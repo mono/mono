@@ -2227,8 +2227,10 @@ namespace System.Windows.Forms {
 				return;
 
 			Invalidate (highlighted_node.Bounds);
-			Invalidate (selected_node.Bounds);
-			Invalidate (focused_node.Bounds);
+			if (selected_node != null)
+				Invalidate (selected_node.Bounds);
+			if (focused_node != null)
+				Invalidate (focused_node.Bounds);
 
 			highlighted_node = selected_node;
 			focused_node = selected_node;

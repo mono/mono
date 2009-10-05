@@ -1,3 +1,11 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When handling the MouseMove event, check if
+	focused_node and selected_node fields are null - usually they are non
+	null, since we have always a selected node, but canceling selection by
+	handling BeforeSelect event leaves the two of them as null.
+	Fixes #470451.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* TreeView.cs: When drawing the node's image, check that the index
