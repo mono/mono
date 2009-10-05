@@ -80,7 +80,7 @@ namespace System.Windows.Forms {
 
 		public string GetRtfText ()
 		{
-			DataFormats.Format format = DataFormats.GetFormat (DataFormats.Text);
+			DataFormats.Format format = DataFormats.GetFormat (DataFormats.Rtf);
 			if (format == null)
 				return null; // FIXME - is RTF not supported on any system?
 

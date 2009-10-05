@@ -1,4 +1,10 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+	* X11Clipboard.cs: Actually look for the RtfText format when calling
+	GetRftText in our clipboard formats list, instead of using the
+	generical Text format.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: Process auto completion properly when we are using the
 	internal source provided by ComboBox, and also remove some repeated
