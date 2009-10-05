@@ -1,4 +1,13 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When removing a tab that was previously selected, set
+	internally the value of selected_index to -1, to avoid trying to
+	access the previous one when trying to set the new one (and was
+	already removed from the collection). This is what .net seems to do
+	too.
+	Fixes #490937.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 	
 	* X11Clipboard.cs: Actually look for the RtfText format when calling
 	GetRftText in our clipboard formats list, instead of using the

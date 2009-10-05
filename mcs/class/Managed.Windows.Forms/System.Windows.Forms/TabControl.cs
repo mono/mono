@@ -1626,9 +1626,14 @@ namespace System.Windows.Forms {
 				// We don't want to raise SelectedIndexChanged until after we
 				// have removed from the collection, so TabCount will be
 				// correct for the user.
-				if (change_index && Count > 0)
-					owner.SelectedIndex--;
-				else if (change_index) {
+				if (change_index && Count > 0) {
+					// Clear the selected index internally, to avoid trying to access the previous
+					// selected tab when setting the new one - this is what .net seems to do
+					int prev_selected_index = owner.SelectedIndex;
+					owner.selected_index = -1;
+
+					owner.SelectedIndex = --prev_selected_index;
+				} else if (change_index) {
 					owner.selected_index = -1;
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 				} else
