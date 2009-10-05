@@ -958,6 +958,9 @@ namespace System.Windows.Forms
 				StopAnimation ();
 				image = null;
 			}
+
+			if (owner != null)
+				owner.Items.Remove (this);
 			
 			base.Dispose (disposing);
 		}

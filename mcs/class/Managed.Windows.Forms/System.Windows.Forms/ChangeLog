@@ -1,3 +1,10 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStrip.cs: When disposing, iterate over the items in reverse
+	order, since disposing the items modifies the collection.
+	* ToolStripItem.cs: Remove from the owner when disposing.
+	Fixes #485769.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* DomainUpDown.cs: When ReadOnly is true, all the text entered by the
