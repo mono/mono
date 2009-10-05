@@ -433,13 +433,19 @@ namespace System.Web.Caching
 			if (timedItems == null)
 				timedItems = new CacheItemPriorityQueue ();
 			
-			if (expirationTimer == null) {
+			if (remaining > 4294967294)
+				// Maximum due time for timer
+				// Item will expire properly anyway, as the timer will be
+				// rescheduled for the item's expiration time once that item is
+				// bubbled to the top of the priority queue.
+				expirationTimerPeriod = 4294967294;
+			else
 				expirationTimerPeriod = remaining;
+			
+			if (expirationTimer == null)
 				expirationTimer = new Timer (new TimerCallback (ExpireItems), null, expirationTimerPeriod, expirationTimerPeriod);
-			} else if (expirationTimerPeriod > remaining) {
-				expirationTimerPeriod = remaining;
+			else if (expirationTimerPeriod > remaining)
 				expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
-			}
 			
 			timedItems.Enqueue (item);
 		}

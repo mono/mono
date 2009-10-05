@@ -1,3 +1,11 @@
+2009-10-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Cache.cs: if item expiration time exceeds the maximum value
+	Timer accepts, use the latter - item will expire properly anyway,
+	as the timer will be rescheduled for the item's expiration time
+	once that item is bubbled to the top of the priority queue. Fixes
+	bug #544171
+
 2009-09-26  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheItemPriorityQueue.cs, CacheItem.cs, CacheItemEnumerator.cs:
