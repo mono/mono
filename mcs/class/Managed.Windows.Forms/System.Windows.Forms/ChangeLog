@@ -1,3 +1,12 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+ 
+	* ListView.cs: In EnsureVisible avoid any direct access to items if we
+	are using virtual mode - otherwise use the bounds stored in a specific
+	item in a given index. This is specially important when using groups
+	or when items are re-arranged, since the position in the items
+	collection can be different than that one being displayed.
+	Fixes the rest of #491978.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: When removing a tab that was previously selected, set
