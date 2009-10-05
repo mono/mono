@@ -700,6 +700,10 @@ namespace Mono.CSharp {
 			
 			AssemblyName an = new AssemblyName ();
 			an.Name = Path.GetFileNameWithoutExtension (name);
+			
+			// Nothing to sign with
+			if (RootContext.Target == Target.Module)
+				return an;
 
 			// note: delay doesn't apply when using a key container
 			if (RootContext.StrongNameKeyContainer != null) {
