@@ -1,3 +1,11 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CheckedListbox.cs: When executing OnItemClick check that the index
+	is different to -1 before trying to retrieve an item using that value.
+	Fixes a ArgumentOutOfRangeException thrown when the horizontal
+	scrollbar was visible but not needed, and then a clicked was received
+	on its area.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
  
 	* ListView.cs: In EnsureVisible avoid any direct access to items if we

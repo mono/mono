@@ -371,7 +371,7 @@ namespace System.Windows.Forms
 
 		internal override void OnItemClick (int index)
 		{			
-			if (CheckOnClick || last_clicked_index == index) {
+			if ((CheckOnClick || last_clicked_index == index) && index > -1) {
 				if (GetItemChecked (index))
 					SetItemCheckState (index, CheckState.Unchecked);
 				else
