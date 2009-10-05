@@ -1137,6 +1137,9 @@ namespace System.Windows.Forms
 				textbox_ctrl.ActivateCaret (false);
 				textbox_ctrl.ShowSelection = false;
 				textbox_ctrl.SelectionLength = 0;
+#if NET_2_0
+				textbox_ctrl.HideAutoCompleteList ();
+#endif
 			}
 
 			base.OnLostFocus (e);

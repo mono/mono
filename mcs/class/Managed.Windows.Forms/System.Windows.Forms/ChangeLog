@@ -1,5 +1,11 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: When losing the focus, if our textbox is not null,
+	close its auto complete list, if any.
+	Fixes part of #489339.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* Control.cs, ContextMenuStrip.cs, ToolStripMenuItem.cs: Only process any 
 	shortchut in ToolStripMenuItem.ProcessCmdKey if the control generating the 
 	event is the same as the owner of the menu item. Also set properly 
