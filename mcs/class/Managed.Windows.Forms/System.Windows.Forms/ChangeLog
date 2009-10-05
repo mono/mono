@@ -1,3 +1,9 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* TreeView.cs: When drawing the node's image, check that the index
+	specified by the node is valid for the ImageList.
+	Fixes #471094.
+
 2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Compare the name and not displayname of properties 
