@@ -1099,11 +1099,11 @@ namespace System.Windows.Forms {
 				case "y":
 				case "yy":
 				case "yyyy":
-					for (int i = 1; i <= 10; i++) {
-						text = PartData.GetText (Value.AddYears (i), format);
-						size = gr.MeasureString (text, font, int.MaxValue, string_format);
-						result = Math.Max (result, size.Width);
-					}
+					// Actually all the allowed year values are between MinDateTime and MaxDateTime,
+					// which are 4 digits always
+					text = PartData.GetText (Value, format);
+					size = gr.MeasureString (text, font, int.MaxValue, string_format);
+					result = Math.Max (result, size.Width);
 					return result;
 				default:
 					return gr.MeasureString (format, font, int.MaxValue, string_format).Width;
