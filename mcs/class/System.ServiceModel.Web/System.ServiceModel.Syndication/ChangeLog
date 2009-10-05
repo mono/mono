@@ -1,3 +1,13 @@
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Atom10FeedFormatter.cs : do not use Atom10ItemFormatter(item)
+	  at ReadItem(). It is only for writing. Patch by David Mitchell.
+
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Atom10ItemFormatter.cs : enable XmlConvert.ToDateTimeOffset(),
+	  patch by David Mitchell.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SyndicationElementExtension.cs : make it ready for 2.1 build.
