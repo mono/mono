@@ -1,3 +1,8 @@
+2009-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_init_internal): Print a useful error message when encountering
+	an old mscorlib, instead of crashing. Fixes #544307.
+
 2009-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (copy_app_domain_setup): Fix a warning.
