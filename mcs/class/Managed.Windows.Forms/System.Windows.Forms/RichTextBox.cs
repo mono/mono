@@ -1017,13 +1017,8 @@ namespace System.Windows.Forms {
 			ScrollToCaret ();
 		}
 
-		[MonoTODO("Make smarter RTF detection?")]
 		public void LoadFile(string path) {
-			if (path.EndsWith(".rtf")) {
-				LoadFile(path, RichTextBoxStreamType.RichText);
-			} else {
-				LoadFile(path, RichTextBoxStreamType.PlainText);
-			}
+			LoadFile (path, RichTextBoxStreamType.RichText);
 		}
 
 		public void LoadFile(string path, RichTextBoxStreamType fileType) {
