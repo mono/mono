@@ -1,5 +1,11 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: When canceling selection in our MouseUp handler,
+	invalidate also the previous selected node bounds.
+	Fixes #464191.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: When handling the MouseMove event, check if
 	focused_node and selected_node fields are null - usually they are non
 	null, since we have always a selected node, but canceling selection by

@@ -2183,6 +2183,8 @@ namespace System.Windows.Forms {
 
 				highlighted_node = focused_node;
 				selected_node = focused_node;
+				if (selected_node != null)
+					Invalidate (selected_node.Bounds);
 			}
 		}
 
