@@ -681,8 +681,12 @@ namespace System.Windows.Forms {
 						break;
 
 					bool is_backspace = m.WParam.ToInt32 () == 8;
-					if (!Char.IsLetterOrDigit ((char)m.WParam) && !is_backspace)
-						break;
+					if (!Char.IsLetterOrDigit ((char)m.WParam) && !is_backspace) {
+						// Update Text and save it before returning
+						base.WndProc (ref m);
+						auto_complete_original_text = Text;
+						return;
+					}
 					
 					if (!is_backspace)
 						Text = auto_complete_original_text;
