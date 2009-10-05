@@ -11918,6 +11918,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-466.cs">
+    <type name="Program">
+      <method name="Boolean Test[T](T)">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -21121,12 +21134,6 @@
   </test>
   <test name="test-106.cs">
     <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void .cctor()">
-        <size>1</size>
-      </method>
       <method name="Int32 F(Int32)">
         <size>27</size>
       </method>
@@ -21136,11 +21143,14 @@
       <method name="Int32 Main()">
         <size>135</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>1</size>
+      </method>
     </type>
     <type name="Test+SimpleDelegate">
-      <method name="Void .ctor(Object, IntPtr)">
-        <size>0</size>
-      </method>
       <method name="Int32 Invoke(Int32)">
         <size>0</size>
       </method>
@@ -21148,6 +21158,9 @@
         <size>0</size>
       </method>
       <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
         <size>0</size>
       </method>
     </type>
