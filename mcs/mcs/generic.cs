@@ -146,19 +146,31 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.attrs = attrs;
 
-			if ((constraints.Length > 0) && !constraints[0].IsInterface) {
-				class_constraint = constraints[0];
-				iface_constraints = new Type[constraints.Length - 1];
-				Array.Copy (constraints, 1, iface_constraints, 0, constraints.Length - 1);
-			} else
-				iface_constraints = constraints;
-
-			if (HasValueTypeConstraint)
+			int interface_constraints_pos = 0;
+			if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0) {
 				base_type = TypeManager.value_type;
-			else if (class_constraint != null)
-				base_type = class_constraint;
-			else
+				interface_constraints_pos = 1;
+			} else if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0) {
+				if (constraints.Length > 0 && constraints[0].IsClass) {
+					class_constraint = base_type = constraints[0];
+					interface_constraints_pos = 1;
+				} else {
+					base_type = TypeManager.object_type;
+				}
+			} else {
 				base_type = TypeManager.object_type;
+			}
+
+			if (constraints.Length > interface_constraints_pos) {
+				if (interface_constraints_pos == 0) {
+					iface_constraints = constraints;
+				} else {
+					iface_constraints = new Type[constraints.Length - interface_constraints_pos];
+					Array.Copy (constraints, interface_constraints_pos, iface_constraints, 0, iface_constraints.Length);
+				}
+			} else {
+				iface_constraints = Type.EmptyTypes;
+			}
 		}
 
 		public override string TypeParameter
