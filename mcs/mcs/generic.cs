@@ -316,14 +316,6 @@ namespace Mono.CSharp {
 				if ((expr == null) || (expr.Type == null))
 					return false;
 
-				if (!ec.IsAccessibleAs (fn.Type)) {
-					Report.SymbolRelatedToPreviousError (fn.Type);
-					Report.Error (703, loc,
-						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
-						fn.GetSignatureForError (), ec.GetSignatureForError ());
-					return false;
-				}
-
 				if (TypeManager.IsGenericParameter (expr.Type))
 					type_param_constraints.Add (expr);
 				else if (expr.IsInterface)
@@ -348,6 +340,13 @@ namespace Mono.CSharp {
 				//
 				if (tp != null && tp.Type.DeclaringMethod != null) {
 					TypeManager.CheckTypeVariance (expr.Type, Variance.Contravariant, ec as MemberCore);
+				}
+
+				if (!ec.IsAccessibleAs (fn.Type)) {
+					Report.SymbolRelatedToPreviousError (fn.Type);
+					Report.Error (703, loc,
+						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
+						fn.GetSignatureForError (), ec.GetSignatureForError ());
 				}
 
 				num_constraints++;
