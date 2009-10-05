@@ -1,3 +1,11 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* DomainUpDown.cs: When ReadOnly is true, all the text entered by the
+	user should use a different handling, trying to use every pressed char
+	as a unique and only one prefix to compare against the items. Also,
+	refactor some input check code to avoid duplication.
+	Fixes #458607.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Form.cs: When calling ProcessCmdKey, just after checking for any
