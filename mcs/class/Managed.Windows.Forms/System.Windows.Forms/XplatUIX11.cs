@@ -1701,7 +1701,7 @@ namespace System.Windows.Forms {
 					sel_event.SelectionEvent.property = IntPtr.Zero;
 
 					// Seems that some apps support asking for supported types
-					if (xevent.SelectionEvent.target == TARGETS) {
+					if (xevent.SelectionRequestEvent.target == TARGETS) {
 						int[]	atoms;
 						int	atom_count;
 
@@ -1721,7 +1721,9 @@ namespace System.Windows.Forms {
 							// FIXME - handle other types
 						}
 
-						XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
+								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 					} else if (Clipboard.Item is string) {
 						IntPtr	buffer;
 						int	buflen;

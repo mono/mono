@@ -1,5 +1,16 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* XplatUIX11.cs: When handling the SelectionRequest event, use
+	SelectionRequestEvent instead of SelectionEvent, so we get the right
+	data for the app asking for clipboard data. Set the member of
+	SelectioneEvent.property to indicate the place where we are storing
+	the information as well - this is specially important for gnome/kde
+	apps using the TARGETS atom to ask for the supported permission before
+	actually asking for a specific format.
+	Fixes #489393.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ToolStrip.cs: When disposing, iterate over the items in reverse
 	order, since disposing the items modifies the collection.
 	* ToolStripItem.cs: Remove from the owner when disposing.
