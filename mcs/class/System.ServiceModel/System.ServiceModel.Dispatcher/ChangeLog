@@ -1,3 +1,9 @@
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : make sure to close, *and* abort channels
+	  in case they failed to close. Also consider close timeouts.
+	  Rename a field to make less confusing.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs, EndpointDispatcher.cs :

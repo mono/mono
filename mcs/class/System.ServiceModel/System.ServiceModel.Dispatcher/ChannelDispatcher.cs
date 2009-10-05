@@ -323,12 +323,13 @@ namespace System.ServiceModel.Dispatcher
 		class ListenerLoopManager
 		{
 			ChannelDispatcher owner;
-			AutoResetEvent handle = new AutoResetEvent (false);
+			AutoResetEvent throttle_wait_handle = new AutoResetEvent (false);
 			AutoResetEvent creator_handle = new AutoResetEvent (false);
 			ManualResetEvent stop_handle = new ManualResetEvent (false);
 			bool loop;
 			Thread loop_thread;
-			TimeSpan open_timeout;
+			DateTime close_started;
+			TimeSpan open_timeout, close_timeout;
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
 
@@ -404,9 +405,11 @@ namespace System.ServiceModel.Dispatcher
 				if (loop_thread == null)
 					return;
 
+				close_started = DateTime.Now;
+				close_timeout = timeout;
 				loop = false;
 				creator_handle.Set ();
-				handle.Set ();
+				throttle_wait_handle.Set (); // break primary loop
 				if (stop_handle != null) {
 					stop_handle.WaitOne (timeout > TimeSpan.Zero ? timeout : TimeSpan.FromTicks (1));
 					stop_handle.Close ();
@@ -424,8 +427,15 @@ namespace System.ServiceModel.Dispatcher
 				foreach (var ch in channels.ToArray ()) {
 					if (ch.State == CommunicationState.Closed)
 						channels.Remove (ch); // zonbie, if exists
-					else
-						ch.Close ();
+					else {
+						try {
+							ch.Close (close_timeout - (DateTime.Now - close_started));
+						} catch (Exception ex) {
+							// FIXME: log it.
+							Console.WriteLine (ex);
+							ch.Abort ();
+						}
+					}
 				}
 			}
 
@@ -460,15 +470,17 @@ namespace System.ServiceModel.Dispatcher
 					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
 						channel_acceptor ();
 						creator_handle.WaitOne (); // released by ChannelAccepted()
-						creator_handle.Reset ();
 					}
 					if (!loop)
 						break;
-					handle.WaitOne (); // released by IChannel.Close()
-					handle.Reset ();
+					throttle_wait_handle.WaitOne (); // released by IChannel.Close()
 				}
-				owner.Listener.Close ();
-				owner.CloseInput ();
+				try {
+					owner.Listener.Close ();
+				} finally {
+					// make sure to close both listener and channels.
+					owner.CloseInput ();
+				}
 			}
 
 			void ChannelAccepted (IChannel ch)
@@ -488,12 +500,12 @@ namespace System.ServiceModel.Dispatcher
 					ch.Faulted += delegate {
 						if (channels.Contains (ch))
 							channels.Remove (ch);
-						handle.Set (); // release loop wait lock.
+						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					ch.Closed += delegate {
 						if (channels.Contains (ch))
 							channels.Remove (ch);
-						handle.Set (); // release loop wait lock.
+						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					};
 				ch.Open ();
