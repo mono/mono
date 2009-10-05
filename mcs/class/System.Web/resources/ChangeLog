@@ -1,3 +1,8 @@
+2009-10-05  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: before using webFrom.Page_Validators,
+	check if they are defined and not null. Fixes bug #542582
+
 2009-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* WebUIValidation_2.0.js: CustomValidatorEvaluateIsValid calls the

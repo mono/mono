@@ -1,3 +1,7 @@
+2009-10-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile ($(the_lib)): fixed a typo in dependency macro
+
 2009-09-07  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added
