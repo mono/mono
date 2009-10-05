@@ -25,3 +25,4 @@ test-416.cs bug #504085
 test-418.cs bug #504085
 test-682.cs bug #530861
 test-704.cs IGNORE #472845
+test-715.cs bug #504085
