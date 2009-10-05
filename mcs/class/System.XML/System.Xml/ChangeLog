@@ -1,3 +1,8 @@
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : fix wrong ToDateTimeOffset loop, based on the
+	  patch by David Mitchell.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAttributeCollection.cs : removed duplicate ID attribute check

@@ -832,12 +832,12 @@ namespace System.Xml {
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string format)
 		{
-			return ToDateTimeOffset (s, format);
+			return DateTimeOffset.ParseExact (s, format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
 		}
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string [] formats)
 		{
-			return ToDateTimeOffset (s, formats);
+			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
 		}
 
 		public static string ToString (DateTimeOffset value)
