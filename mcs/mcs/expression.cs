@@ -3061,7 +3061,9 @@ namespace Mono.CSharp {
 			if (lgen) {
 				if (!TypeManager.IsReferenceType (l))
 					return null;
-				left = new BoxedCast (left, TypeManager.object_type);
+
+				l = TypeManager.object_type;
+				left = new BoxedCast (left, l);
 			} else if (l.IsInterface) {
 				l = TypeManager.object_type;
 			} else if (TypeManager.IsStruct (l)) {
@@ -3071,7 +3073,9 @@ namespace Mono.CSharp {
 			if (rgen) {
 				if (!TypeManager.IsReferenceType (r))
 					return null;
-				right = new BoxedCast (right, TypeManager.object_type);
+
+				r = TypeManager.object_type;
+				right = new BoxedCast (right, r);
 			} else if (r.IsInterface) {
 				r = TypeManager.object_type;
 			} else if (TypeManager.IsStruct (r)) {
