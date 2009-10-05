@@ -2262,7 +2262,16 @@ namespace System.Windows.Forms {
 
 			// Give our menu a shot
 			if (ActiveMenu != null) {
-				return ActiveMenu.ProcessCmdKey(ref msg, keyData);
+				if (ActiveMenu.ProcessCmdKey (ref msg, keyData))
+					return true;
+			}
+
+			// Detect any active ContextMenu for a child control that
+			// can't receive focus (which means: both input and preprocess)
+			if (ActiveTracker != null && ActiveTracker.TopMenu is ContextMenu) {
+				ContextMenu cmenu = ActiveTracker.TopMenu as ContextMenu;
+				if (cmenu.SourceControl != this && cmenu.ProcessCmdKey (ref msg, keyData))
+					return true;
 			}
 
 			if (IsMdiChild) {

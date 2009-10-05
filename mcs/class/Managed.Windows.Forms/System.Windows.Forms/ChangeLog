@@ -1,3 +1,12 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Form.cs: When calling ProcessCmdKey, just after checking for any
+	MainMenu, check if there's an active ContextMenu that is *not* owned
+	by the form - this is needed when a non-focusable control owns a
+	ContextMenu but its ProcessCmdKey method can't be called since it
+	can't receive any input.
+	Fixes #477655.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* RichTextBox.cs: LoadFile(string path) should pass by default
