@@ -1,3 +1,14 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBox.cs: Some code lifting for AutoComplete's support. First,
+	when handling non-navigation keys, save the original Text typed by the
+	user, and don't motify it BEFORE. This was a design mistake, since the
+	re-assignation happens only when navigating the append/suggest list,
+	not while creating the matches. Also, process the Delete key just like 
+	the backspace one. Finally, when handling WM_CHAR, ignore both Escape
+	and Enter keys.
+	Fixes some missing bits of #469967.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* TextBox.cs: When handling WndProc with autocomplete activated,
