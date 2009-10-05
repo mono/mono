@@ -2589,6 +2589,7 @@ namespace System.Windows.Forms
 			set { 
 				if (this.context_menu_strip != value) {
 					this.context_menu_strip = value;
+					value.container = this;
 					OnContextMenuStripChanged (EventArgs.Empty);
 				}
 			}
@@ -5742,6 +5743,7 @@ namespace System.Windows.Forms
 						pt = this.PointToScreen (pt);
 					}
 					
+					context_menu_strip.SetSourceControl (this);
 					context_menu_strip.Show (this, PointToClient (pt));
 					return;
 				}
