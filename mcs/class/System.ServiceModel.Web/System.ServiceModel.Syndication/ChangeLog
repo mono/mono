@@ -1,5 +1,10 @@
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Atom10FeedFormatter.cs : do not use Atom10ItemFormatter(item)
+	  at ReadItem(). It is only for writing. Patch by David Mitchell.
+
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Atom10ItemFormatter.cs : enable XmlConvert.ToDateTimeOffset(),
 	  patch by David Mitchell.
 
