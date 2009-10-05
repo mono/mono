@@ -8,7 +8,6 @@ EXTRA_DISTFILES = \
 	*mcs.sln		\
 	*cs-parser.jay		\
 	*.sources		\
-	generic.cs		\
 	NOTES			\
 	TODO			\
 	*mcs.exe.config
