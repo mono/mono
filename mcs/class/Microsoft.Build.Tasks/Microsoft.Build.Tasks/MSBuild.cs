@@ -104,7 +104,6 @@ namespace Microsoft.Build.Tasks {
 						}
 					}
 				} else {
-					Log.LogError ("Error while building {0}", filename);
 					if (stopOnFirstFailure)
 						break;
 				}

@@ -1,3 +1,12 @@
+2009-10-06  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (Execute): HandleTaskExecutionErrors is called only
+	if exitCode != 0.
+	(ExecuteTool): Move logging of exitcode to HandleTaskExecutionErrors.
+	Remove MonoTODOs.
+	* TaskLoggingHelper.cs (LogMessageFromText): New.
+	(LogMessage): Refactor to use above.
+
 2009-10-02  Ankit Jain  <jankit@novell.com>
 
 	* AppDomainIsolatedTask.cs (BuildEngine): Init 'log'.

@@ -44,8 +44,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			if (text == null)
-				text = String.Empty;
+			if (String.IsNullOrEmpty (text))
+				return true;
+
 			Log.LogWarning (null, code, helpKeyword, BuildEngine.ProjectFileOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,
 				BuildEngine.LineNumberOfTaskNode, BuildEngine.ColumnNumberOfTaskNode,

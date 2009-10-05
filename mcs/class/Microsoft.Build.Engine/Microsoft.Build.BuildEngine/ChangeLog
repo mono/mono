@@ -1,3 +1,10 @@
+2009-10-06  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger: Improve error reporting. Don't count failed task,
+	target or project as another error. Show "errors" after "warnings",
+	more useful to the user.
+	* Project.cs (BuildTarget): Log error instead of using CWL.
+
 2009-10-03  Ankit Jain  <jankit@novell.com>
 
 	* Project.cs (OS): New.

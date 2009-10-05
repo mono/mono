@@ -115,21 +115,22 @@ namespace Microsoft.Build.BuildEngine {
 			if (args.Succeeded == true) {
 				WriteLine ("Build succeeded.");
 			} else {
-				WriteLine ("Build failed.");
+				WriteLine ("Build FAILED.");
 			}
 			if (performanceSummary == true) {
+			}
+
+			if (warnings.Count > 0) {
+				WriteLine (Environment.NewLine + "Warnings:");
+				foreach (string warning in warnings)
+					WriteLine (warning);
+				WriteLine ("");
 			}
 
 			if (errors.Count > 0) {
 				WriteLine ("Errors:");
 				foreach (string error in errors)
 					WriteLine (error);
-			}
-
-			if (warnings.Count > 0) {
-				WriteLine ("Warnings:");
-				foreach (string warning in warnings)
-					WriteLine (warning);
 			}
 
 			if (showSummary == true){
@@ -150,6 +151,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				if (indent == 1)
+					indent --;
 				WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
 							args.Succeeded ? String.Empty : "-- FAILED"));
 				WriteLine (String.Empty);
@@ -158,25 +161,24 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
 		{
-			WriteLine (String.Format ("Target {0}:",args.TargetName));
 			indent++;
+			WriteLine (String.Format ("Target {0}:",args.TargetName));
 		}
 		
 		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
 		{
 			indent--;
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) || !args.Succeeded)
 				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
 					args.TargetName, args.ProjectFile,
 					args.Succeeded ? String.Empty : "-- FAILED"));
-			if (!args.Succeeded)
-				errorCount++;
+
 			WriteLine (String.Empty);
 		}
 		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
 		{
-			if (this.verbosity == LoggerVerbosity.Diagnostic)
+			if (this.verbosity == LoggerVerbosity.Detailed)
 				WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
 			indent++;
 		}
@@ -184,13 +186,11 @@ namespace Microsoft.Build.BuildEngine {
 		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
 		{
 			indent--;
-			if (this.verbosity == LoggerVerbosity.Diagnostic) {
+			if (this.verbosity == LoggerVerbosity.Detailed || !args.Succeeded) {
 				if (args.Succeeded)
 					WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
-				else {
-					WriteLine (String.Format ("Task \"{0}\" execution failed", args.TaskName));
-					errorCount++;
-				}
+				else
+					WriteLine (String.Format ("Task \"{0}\" execution -- FAILED", args.TaskName));
 			}
 		}
 		

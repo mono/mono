@@ -220,10 +220,7 @@ namespace Microsoft.Build.Utilities
 			if (message == null)
 				throw new ArgumentNullException ("message");
 		
-			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
-				FormatString (message, messageArgs), helpKeywordPrefix,
-				null, importance);
-			buildEngine.LogMessageEvent (bmea);
+			LogMessageFromText (FormatString (message, messageArgs), importance);
 		}
 
 		public void LogMessageFromResources (string messageResourceName,
@@ -276,13 +273,18 @@ namespace Microsoft.Build.Utilities
 				stream.Close ();
 			}
 		}
-		
-		[MonoTODO]
+
 		public bool LogMessageFromText (string lineOfText,
 						MessageImportance importance)
 		{
 			if (lineOfText == null)
 				throw new ArgumentNullException ("lineOfText");
+
+			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
+				lineOfText, helpKeywordPrefix,
+				null, importance);
+			buildEngine.LogMessageEvent (bmea);
+
 			return true;
 		}
 

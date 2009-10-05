@@ -106,7 +106,8 @@ namespace Microsoft.Build.Utilities
 			exitCode = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 
-			return HandleTaskExecutionErrors ();
+			// HandleTaskExecutionErrors is called only if exitCode != 0
+			return exitCode == 0 || HandleTaskExecutionErrors ();
 		}
 		
 		[MonoTODO]
@@ -167,9 +168,6 @@ namespace Microsoft.Build.Utilities
 
 				ProcessOutputFile (output, standardOutputLoggingImportance);
 				ProcessOutputFile (error, standardErrorLoggingImportance);
-
-				if (!Log.HasLoggedErrors && exitCode != 0)
-					Log.LogError ("Tool crashed: " + toolOutput.ToString ());
 
 				Log.LogMessage (MessageImportance.Low, "Tool {0} execution finished.", pathToTool);
 				return exitCode;
@@ -325,15 +323,16 @@ namespace Microsoft.Build.Utilities
 			return null;
 		}
 
-		[MonoTODO]
 		protected virtual string GetResponseFileSwitch (string responseFilePath)
 		{
 			return String.Format ("@{0}", responseFilePath);
 		}
 
-		[MonoTODO]
 		protected virtual bool HandleTaskExecutionErrors ()
 		{
+			if (!Log.HasLoggedErrors && exitCode != 0)
+				Log.LogError ("Tool exited with code: {0}. Output: {1}", exitCode, toolOutput.ToString ());
+
 			return ExitCode == 0 && !Log.HasLoggedErrors;
 		}
 
