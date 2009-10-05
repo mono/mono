@@ -37,6 +37,7 @@ namespace System.Windows.Forms.RTF {
 		#region	Local Variables
 		internal const char	EOF = unchecked((char)-1);
 		internal const int	NoParam = -1000000;
+		internal const int	DefaultEncodingCodePage = 1252;
 
 		private TokenClass	rtf_class;
 		private Major		major;
@@ -44,7 +45,7 @@ namespace System.Windows.Forms.RTF {
 		private int		param;
 		private string encoded_text;
 		private Encoding encoding;
-		private int encoding_code_page = 1252;
+		private int encoding_code_page = DefaultEncodingCodePage;
 		private StringBuilder	text_buffer;
 		private Picture picture;
 		private int		line_num;
@@ -381,6 +382,10 @@ SkipCRLF:
 
 			if (CheckCMM (TokenClass.Control, Major.Unicode, Minor.UnicodeAnsiCodepage)) {
 				encoding_code_page = param;
+
+				// fallback to the default one in case we have an invalid value
+				if (encoding_code_page < 0 || encoding_code_page > 65535)
+					encoding_code_page = DefaultEncodingCodePage;
 			}
 
 			if (((this.cur_charset.Flags & CharsetFlags.Read) != 0) && CheckCM(TokenClass.Control, Major.CharSet)) {

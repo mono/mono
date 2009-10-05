@@ -1,3 +1,9 @@
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RTF.cs: If the rtf specified a code page outside the valid values,
+	fallback to the default one.
+	Fixes #503174.
+
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Picture.cs: Don't create a bitmap just to get the dpi.
