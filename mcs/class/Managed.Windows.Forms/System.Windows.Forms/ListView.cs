@@ -2644,7 +2644,7 @@ namespace System.Windows.Forms
 					if (owner.View == View.Details) {
 						bool over_text = item.TextBounds.Contains (pt);
 						if (owner.FullRowSelect) {
-							clicked_item = owner.items [i];
+							clicked_item = item;
 							bool over_item_column = (me.X > owner.Columns[0].X && me.X < owner.Columns[0].X + owner.Columns[0].Width);
 							if (!over_text && over_item_column && owner.MultiSelect)
 								box_selecting = true;

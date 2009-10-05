@@ -1,5 +1,14 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: In our MouseDown handler in ItemControl use the item in
+	the very specific *real* position where the mouse was pressed, using
+	GetItemAtDisplayIndex for that purpose, instead of directly accessing
+	Items - this is specially useful when groups with Details view is
+	used. This is what we do in other places when using groups.
+	Fixes part of #478689.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: For EnsureVisible, adjust the view port bounds based on
 	the existence of the column headers, as well as using this information
 	to adjust the vscrollbar value, so items never get hidden by the
