@@ -212,13 +212,13 @@ namespace System.Web.Caching
 				
 				ci.LastChange = DateTime.Now;
 				if (ci.AbsoluteExpiration != NoAbsoluteExpiration) {
-					int remaining = Math.Max (0, (int)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
-					if (remaining > 4294967294)
+					long remaining = Math.Max (0, (long)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
+					if (remaining > 4294967294L)
 						// Maximum due time for timer
 						// Item will expire properly anyway, as the timer will be
 						// rescheduled for the item's expiration time once that item is
 						// bubbled to the top of the priority queue.
-						remaining = 4294967294;
+						remaining = 4294967294L;
 					ci.Timer = new Timer (new TimerCallback (ItemExpired), ci, remaining, Timeout.Infinite);
 				}
 			} finally {
@@ -325,9 +325,9 @@ namespace System.Web.Caching
 		
 		void ItemExpired(object cacheItem) {
 			CacheItem ci = (CacheItem)cacheItem;
-			int remaining = Math.Max (0, (int)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
-			if (remaining > 4294967294)
-				remaining = 4294967294;
+			long remaining = Math.Max (0, (long)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
+			if (remaining > 4294967294L)
+				remaining = 4294967294L;
 
 			if (remaining <= 0) {
 				ci.Timer.Dispose();
