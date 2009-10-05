@@ -1,5 +1,13 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: For EnsureVisible, adjust the view port bounds based on
+	the existence of the column headers, as well as using this information
+	to adjust the vscrollbar value, so items never get hidden by the
+	column headers.
+	Fixes #478498.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TextBox.cs: Some code lifting for AutoComplete's support. First,
 	when handling non-navigation keys, save the original Text typed by the
 	user, and don't motify it BEFORE. This was a design mistake, since the

@@ -3702,6 +3702,11 @@ namespace System.Windows.Forms
 			Rectangle view_rect = item_control.ClientRectangle;
 			Rectangle bounds = new Rectangle (GetItemLocation (index), ItemSize);
 
+			if (view == View.Details && header_style != ColumnHeaderStyle.None) {
+				view_rect.Y += header_control.Height;
+				view_rect.Height -= header_control.Height;
+			}
+
 			if (view_rect.Contains (bounds))
 				return;
 
@@ -3712,8 +3717,8 @@ namespace System.Windows.Forms
 					h_scroll.Value += (bounds.Right - view_rect.Right);
 			}
 
-			if (bounds.Top < 0)
-				v_scroll.Value += bounds.Top;
+			if (bounds.Top < view_rect.Y)
+				v_scroll.Value += bounds.Top - view_rect.Y;
 			else if (bounds.Bottom > view_rect.Bottom)
 				v_scroll.Value += (bounds.Bottom - view_rect.Bottom);
 		}
