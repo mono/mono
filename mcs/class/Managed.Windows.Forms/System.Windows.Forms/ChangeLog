@@ -1,5 +1,15 @@
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TextBox.cs: Expose IsAutoCompleteAvailable as internal.
+	* ComboBox.cs: If auto complete is being used, it is needed to update
+	the actual value of the combo box, doing it immediately if the user
+	presses Enter, or doing it when our combo box loses focus. Finally,
+	when handling Enter and Escape keys for the combobox, don't try to
+	hide the listbox if it is not visible in the first place. 
+	Fixes part of #489339.
+
+2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: When losing the focus, if our textbox is not null,
 	close its auto complete list, if any.
 	Fixes part of #489339.

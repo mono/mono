@@ -1713,7 +1713,8 @@ namespace System.Windows.Forms
 				
 				case Keys.Enter:	
 				case Keys.Escape:
-					DropDownListBoxFinished ();
+					if (listbox_ctrl != null && listbox_ctrl.Visible)
+						DropDownListBoxFinished ();
 					break;
 					
 				case Keys.Home:
@@ -2292,7 +2293,32 @@ namespace System.Windows.Forms
 				this.owner = owner;
 				ShowSelection = false;
 				HideSelection = false;
+#if NET_2_0
+				owner.LostFocus += OwnerLostFocusHandler;
+#endif
 			}
+
+#if NET_2_0
+			void OwnerLostFocusHandler (object o, EventArgs args)
+			{
+				if (IsAutoCompleteAvailable)
+					owner.Text = Text;
+			}
+
+			protected override void OnKeyDown (KeyEventArgs args)
+			{
+				if (args.KeyCode == Keys.Enter && IsAutoCompleteAvailable)
+					owner.Text = Text;
+
+				base.OnKeyDown (args);
+			}
+
+			internal override void OnAutoCompleteValueSelected (EventArgs args)
+			{
+				base.OnAutoCompleteValueSelected (args);
+				owner.Text = Text;
+			}
+#endif
 
 			internal void SetSelectable (bool selectable)
 			{

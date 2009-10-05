@@ -208,7 +208,7 @@ namespace System.Windows.Forms {
 				auto_complete_listbox.HideListBox (false);
 		}
 
-		bool IsAutoCompleteAvailable {
+		internal bool IsAutoCompleteAvailable {
 			get {
 				if (auto_complete_source == AutoCompleteSource.None || auto_complete_mode == AutoCompleteMode.None)
 					return false;
@@ -324,6 +324,11 @@ namespace System.Windows.Forms {
 			SelectionLength = auto_complete_matches [index].Length - auto_complete_original_text.Length;
 		}
 
+		// this is called when the user selects a value from the autocomplete list
+		// *with* the mouse
+		internal virtual void OnAutoCompleteValueSelected (EventArgs args)
+		{
+		}
 #endif
 
 		private void UpdateAlignment ()
@@ -1047,6 +1052,7 @@ namespace System.Windows.Forms {
 				if (item_idx != -1 && !resizing)
 					HideListBox (true);
 
+				owner.OnAutoCompleteValueSelected (EventArgs.Empty); // internal
 				resizing = false;
 				Capture = false;
 			}
