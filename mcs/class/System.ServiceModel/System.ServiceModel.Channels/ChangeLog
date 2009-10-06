@@ -1,3 +1,8 @@
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandlerFactory.cs : remove todo.
+	* ReplyChannelBase.cs : add comment.
+
 2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpTransportBindingElement.cs, SvcHttpHandlerFactory.cs :

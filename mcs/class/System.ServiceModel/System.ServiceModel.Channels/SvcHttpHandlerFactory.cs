@@ -73,10 +73,9 @@ namespace System.ServiceModel.Channels {
 			return handler;
 		}
 
-		[MonoTODO]
 		public void ReleaseHandler (IHttpHandler handler)
 		{
-			return;
+			// do nothing
 		}
 
 		void LoadTypeFromSvc (string path, string url, HttpContext context)
