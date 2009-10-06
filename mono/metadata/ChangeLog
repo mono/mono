@@ -1,3 +1,8 @@
+2009-10-06  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (set_value): Write barrier fix - we must pass the
+	count, not the size.
+
 2009-10-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain.c (mono_init_internal): Print a useful error message when encountering
