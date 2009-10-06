@@ -1183,7 +1183,7 @@ namespace System
 				return 0;
 			if (this.length == 0)
 				return -1;
-			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, 0, length);
+			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, 0, length, CompareOptions.Ordinal);
 		}
 
 		public int IndexOf (String value, int startIndex)
