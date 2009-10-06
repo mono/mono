@@ -1,3 +1,11 @@
+2009-10-06  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (mono_method_return_message_restore): Handle the case
+	where the argument is an instance of a generic type.  Fixes
+	#544446.
+
+	Backport of r143506.
+
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Emit out marshalling of stringbuilders.

@@ -359,7 +359,8 @@ BASE_TEST_CS_SRC=		\
 	finalizer-wait.cs	\
 	critical-finalizers.cs	\
 	appdomain-thread-abort.cs \
-	w32message.cs
+	w32message.cs	\
+	bug-544446.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
