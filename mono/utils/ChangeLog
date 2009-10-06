@@ -1,8 +1,3 @@
-2009-09-29  Zoltan Varga  <vargaz@gmail.com>
-
-	* mono-compiler.h (MONO_INTERNAL): Disable this on solaris as it produces a
-	millions of warnings during compilation.
-
 2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-sha1.c: Update documentation.

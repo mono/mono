@@ -2103,45 +2103,22 @@ unload_thread_main (void *arg)
  * mono_domain_unload:
  * @domain: The domain to unload
  *
- *  Unloads an appdomain. Follows the process outlined in the comment
- *  for mono_domain_try_unload.
- */
-void
-mono_domain_unload (MonoDomain *domain)
-{
-	MonoObject *exc = NULL;
-	mono_domain_try_unload (domain, &exc);
-	if (exc)
-		mono_raise_exception ((MonoException*)exc);
-}
-
-/*
- * mono_domain_unload:
- * @domain: The domain to unload
- * @exc: Exception information
- *
  *  Unloads an appdomain. Follows the process outlined in:
  *  http://blogs.gotdotnet.com/cbrumme
  *
  *  If doing things the 'right' way is too hard or complex, we do it the 
  *  'simple' way, which means do everything needed to avoid crashes and
  *  memory leaks, but not much else.
- *
- *  It is required to pass a valid reference to the exc argument, upon return
- *  from this function *exc will be set to the exception thrown, if any.
- *
- *  If this method is not called from an icall (embedded scenario for instance),
- *  it must not be called with any managed frames on the stack, since the unload
- *  process could end up trying to abort the current thread.
  */
 void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
+mono_domain_unload (MonoDomain *domain)
 {
 	HANDLE thread_handle;
 	gsize tid;
 	guint32 res;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
+	MonoObject *exc;
 	unload_data thread_data;
 	MonoDomain *caller_domain = mono_domain_get ();
 
@@ -2155,11 +2132,11 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		switch (prev_state) {
 		case MONO_APPDOMAIN_UNLOADING_START:
 		case MONO_APPDOMAIN_UNLOADING:
-			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already being unloaded.");
-			return;
+			mono_raise_exception (mono_get_exception_cannot_unload_appdomain ("Appdomain is already being unloaded."));
+			break;
 		case MONO_APPDOMAIN_UNLOADED:
-			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already unloaded.");
-			return;
+			mono_raise_exception (mono_get_exception_cannot_unload_appdomain ("Appdomain is already unloaded."));
+			break;
 		default:
 			g_warning ("Incalid appdomain state %d", prev_state);
 			g_assert_not_reached ();
@@ -2173,12 +2150,13 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	method = mono_class_get_method_from_name (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1);	
 	g_assert (method);
 
-	mono_runtime_invoke (method, domain->domain, NULL, exc);
-	if (*exc) {
+	exc = NULL;
+	mono_runtime_invoke (method, domain->domain, NULL, &exc);
+	if (exc) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
 		mono_domain_set (caller_domain, FALSE);
-		return;
+		mono_raise_exception ((MonoException*)exc);
 	}
 	mono_domain_set (caller_domain, FALSE);
 
@@ -2217,14 +2195,18 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	CloseHandle (thread_handle);
 
 	if (thread_data.failure_reason) {
+		MonoException *ex;
+
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
 
 		g_warning ("%s", thread_data.failure_reason);
 
-		*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain (thread_data.failure_reason);
+		ex = mono_get_exception_cannot_unload_appdomain (thread_data.failure_reason);
 
 		g_free (thread_data.failure_reason);
 		thread_data.failure_reason = NULL;
+
+		mono_raise_exception (ex);
 	}
 }

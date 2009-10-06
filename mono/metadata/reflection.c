@@ -38,7 +38,6 @@
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/security-core-clr.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/utils/mono-string.h>
 
 #if HAVE_SGEN_GC
 static void* reflection_info_desc = NULL;
@@ -7236,7 +7235,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 
 		while ((klass = mono_class_get_nested_types (parent, &iter))) {
 			if (ignorecase) {
-				if (mono_utf8_strcasecmp (klass->name, mod->data) == 0)
+				if (g_strcasecmp (klass->name, mod->data) == 0)
 					break;
 			} else {
 				if (strcmp (klass->name, mod->data) == 0)

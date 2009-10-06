@@ -219,7 +219,6 @@ do_console_cancel_event (void)
 	MonoMethod *method;
 	MonoMethodMessage *msg;
 	MonoMethod *im;
-	MonoVTable *vtable;
 
 	if (!domain->domain)
 		return;
@@ -233,10 +232,7 @@ do_console_cancel_event (void)
 		g_assert (cancel_handler_field);
 	}
 
-	vtable = mono_class_vtable_full (domain, klass, FALSE);
-	if (vtable == NULL)
-		return;
-	mono_field_static_get_value (vtable, cancel_handler_field, &load_value);
+	mono_field_static_get_value (mono_class_vtable (domain, klass), cancel_handler_field, &load_value);
 	if (load_value == NULL)
 		return;
 

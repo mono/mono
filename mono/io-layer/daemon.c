@@ -110,10 +110,10 @@ static void maybe_exit (void)
 {
 	guint32 i;
 
-	LOGDEBUG ("%s: Seeing if we should exit", __func__);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Seeing if we should exit");
 
 	if(nfds>1) {
-		LOGDEBUG ("%s: Still got clients", __func__);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Still got clients");
 		return;
 	}
 
@@ -124,7 +124,7 @@ static void maybe_exit (void)
 	    i<_wapi_shared_data[0]->num_segments * _WAPI_HANDLES_PER_SEGMENT;
 	    i++) {
 		if(daemon_channel_data->open_handles[i]>0) {
-			LOGDEBUG ("%s: Still got handle references", __func__);
+			LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Still got handle references");
 			_wapi_shared_data[0]->daemon_running=DAEMON_RUNNING;
 			return;
 		}
@@ -150,11 +150,11 @@ static void maybe_exit (void)
 		fds[0].events=POLLIN;
 		fds[0].revents=0;
 		
-		LOGDEBUG ("%s: Last connect check", __func__);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Last connect check");
 
 		if(poll (fds, 1, 0)>0) {
 			/* Someone did connect, so carry on running */
-			LOGDEBUG ("%s: Someone connected", __func__);
+			LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Someone connected");
 
 			_wapi_shared_data[0]->daemon_running=DAEMON_RUNNING;
 			return;
@@ -162,7 +162,7 @@ static void maybe_exit (void)
 	}
 #endif
 	
-	LOGDEBUG ("%s: Byebye", __func__);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Byebye");
 	
 	cleanup ();
 	exit (0);
@@ -176,7 +176,7 @@ static void maybe_exit (void)
  */
 static void signal_handler (int signo)
 {
-	LOGDEBUG ("%s: daemon received signal %d", __func__, signo);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": daemon received signal %d", signo);
 
 	cleanup ();
 	exit (-1);
@@ -286,7 +286,7 @@ static void ref_handle (ChannelData *channel_data, guint32 handle)
 	_wapi_shared_data[segment]->handles[idx].ref++;
 	channel_data->open_handles[handle]++;
 	
-	LOGDEBUG ("%s: handle 0x%x ref now %d (%d this process)", __func__, handle,
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": handle 0x%x ref now %d (%d this process)", handle,
 		  _wapi_shared_data[segment]->handles[idx].ref,
 		  channel_data->open_handles[handle]);
 }
@@ -310,7 +310,9 @@ static gboolean unref_handle (ChannelData *channel_data, guint32 handle)
 	}
 	
 	if (channel_data->open_handles[handle] == 0) {
-                g_warning("%s: unref on %d called when ref was already 0", __func__, handle);
+                g_warning(G_GNUC_PRETTY_FUNCTION
+                          ": unref on %d called when ref was already 0", 
+                          handle);
                 return TRUE;
         }
 
@@ -319,7 +321,8 @@ static gboolean unref_handle (ChannelData *channel_data, guint32 handle)
 	_wapi_shared_data[segment]->handles[idx].ref--;
 	channel_data->open_handles[handle]--;
 	
-	LOGDEBUG ("%s: handle 0x%x ref now %d (%d this process)", __func__, handle,
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION
+		   ": handle 0x%x ref now %d (%d this process)", handle,
 		   _wapi_shared_data[segment]->handles[idx].ref,
 		   channel_data->open_handles[handle]);
 
@@ -332,10 +335,12 @@ static gboolean unref_handle (ChannelData *channel_data, guint32 handle)
 		destroy=TRUE;
 	
 		if (channel_data->open_handles[handle]!=0) {
-			g_warning ("%s: per-process open_handles mismatch, set to %d, should be 0",__func__, channel_data->open_handles[handle]);
+			g_warning (G_GNUC_PRETTY_FUNCTION ": per-process open_handles mismatch, set to %d, should be 0", 
+					channel_data->open_handles[handle]);
 		}
 		
-		LOGDEBUG ("%s: Destroying handle 0x%x", __func__, handle);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Destroying handle 0x%x",
+			   handle);
 
 		/* if this was a file handle, save the device and
 		 * inode numbers so we can scan the share info data
@@ -352,7 +357,9 @@ static gboolean unref_handle (ChannelData *channel_data, guint32 handle)
 						  (gpointer *)&file_handle,
 						  NULL);
 			if (ok == FALSE) {
-				g_warning ("%s: error looking up file handle %x", __func__, handle);
+				g_warning (G_GNUC_PRETTY_FUNCTION
+					   ": error looking up file handle %x",
+					   handle);
 			} else {
 				device = file_handle->device;
 				inode = file_handle->inode;
@@ -459,15 +466,15 @@ static void rem_fd(GIOChannel *channel, ChannelData *channel_data)
 	
 	if(fd == main_sock) {
 		/* We shouldn't be deleting the daemon's fd */
-		g_warning ("%s: Deleting daemon fd!", __func__);
+		g_warning (G_GNUC_PRETTY_FUNCTION ": Deleting daemon fd!");
 		cleanup ();
 		exit (-1);
 	}
 	
-	LOGDEBUG ("%s: Removing client fd %d", __func__, fd);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Removing client fd %d", fd);
 
 	if (channel_data->io_source == 0) {
-		LOGDEBUG ("%s: channel already closed for fd %d", __func__, fd);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": channel already closed for fd %d", fd);
 		return;
 	}
 
@@ -482,7 +489,7 @@ static void rem_fd(GIOChannel *channel, ChannelData *channel_data)
 		handle_count=channel_data->open_handles[i];
 		
 		for(j=0; j<handle_count; j++) {
-			LOGDEBUG ("%s: closing handle 0x%x for client at index %d", __func__, i, g_io_channel_unix_get_fd (channel));
+			LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": closing handle 0x%x for client at index %d", i, g_io_channel_unix_get_fd (channel));
 			/* Ignore the hint to the client to destroy
 			 * the handle private data
 			 */
@@ -557,13 +564,15 @@ static gboolean share_compare (gpointer handle, gpointer user_data)
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_FILE,
 				  (gpointer *)&file_handle, NULL);
 	if (ok == FALSE) {
-		g_warning ("%s: error looking up file handle %p", __func__, handle);
+		g_warning (G_GNUC_PRETTY_FUNCTION
+			   ": error looking up file handle %p", handle);
 		return(FALSE);
 	}
 	
 	if (file_handle->device == sharekey->device &&
 	    file_handle->inode == sharekey->inode) {
-		LOGDEBUG ("%s: found one, handle %p", __func__, handle);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": found one, handle %p",
+			   handle);
 		return(TRUE);
 	} else {
 		return(FALSE);
@@ -575,7 +584,7 @@ static void check_sharing (dev_t device, ino_t inode)
 	ShareKey sharekey;
 	gpointer file_handle;
 	
-	LOGDEBUG ("%s: Checking if anything has (dev 0x%llx, inode %lld) still open", __func__, device, inode);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Checking if anything has (dev 0x%llx, inode %lld) still open", device, inode);
 
 	sharekey.device = device;
 	sharekey.inode = inode;
@@ -587,7 +596,7 @@ static void check_sharing (dev_t device, ino_t inode)
 		/* Delete this share info, as the last handle to it
 		 * has been closed
 		 */
-		LOGDEBUG ("%s: Deleting share data for (dev 0x%llx inode %lld)", __func__, device, inode);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Deleting share data for (dev 0x%llx inode %lld)", device, inode);
 		
 		g_hash_table_remove (file_share_hash, &sharekey);
 	}
@@ -603,7 +612,8 @@ static gboolean process_compare (gpointer handle, gpointer user_data)
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_PROCESS,
 				(gpointer *)&process_handle, NULL);
 	if(ok==FALSE) {
-		g_warning ("%s: error looking up process handle %p", __func__, handle);
+		g_warning (G_GNUC_PRETTY_FUNCTION
+			   ": error looking up process handle %p", handle);
 		return(FALSE);
 	}
 
@@ -629,7 +639,8 @@ static gboolean process_thread_compare (gpointer handle, gpointer user_data)
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				(gpointer *)&thread_handle, NULL);
 	if(ok==FALSE) {
-		g_warning ("%s: error looking up thread handle %p", __func__, handle);
+		g_warning (G_GNUC_PRETTY_FUNCTION
+			   ": error looking up thread handle %p", handle);
 		return(FALSE);
 	}
 
@@ -638,7 +649,7 @@ static gboolean process_thread_compare (gpointer handle, gpointer user_data)
 		 * _wapi_handle_set_signal_state() unless we have
 		 * process-shared pthread support.
 		 */
-		LOGDEBUG ("%s: Set thread handle %p signalled, because its process died", __func__, handle);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Set thread handle %p signalled, because its process died", handle);
 
 		thread_handle->exitstatus=0;
 
@@ -685,7 +696,7 @@ static void process_post_mortem (pid_t pid, int status)
 		 * This may happen if we use Process.EnableRaisingEvents +
 		 * process.Exited event and the parent has finished.
 		 */
-		LOGDEBUG ("%s: Couldn't find handle for process %d!", __func__, pid);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Couldn't find handle for process %d!", pid);
 	} else {
 		/* Signal the handle.  Don't use
 		 * _wapi_handle_set_signal_state() unless we have
@@ -693,7 +704,8 @@ static void process_post_mortem (pid_t pid, int status)
 		 */
 		struct timeval tv;
 		
-		LOGDEBUG ("%s: Set process %d exitstatus to %d", __func__, pid,
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION
+			   ": Set process %d exitstatus to %d", pid,
 			   WEXITSTATUS (status));
 		
 		/* If the child terminated due to the receipt of a signal,
@@ -746,7 +758,7 @@ static void process_died (void)
 	
 	check_processes=FALSE;
 
-	LOGDEBUG ("%s: Reaping processes", __func__);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Reaping processes");
 
 	while(TRUE) {
 		pid=waitpid (-1, &status, WNOHANG);
@@ -759,7 +771,7 @@ static void process_died (void)
 			return;
 		} else {
 			/* pid contains the ID of a dead process */
-			LOGDEBUG ( "%s: process %d reaped", __func__, pid);
+			LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": process %d reaped", pid);
 			process_post_mortem (pid, status);
 		}
 	}
@@ -842,7 +854,7 @@ static void process_new (GIOChannel *channel, ChannelData *channel_data,
 
 	ref_handle (channel_data, handle);
 
-	LOGDEBUG ("%s: returning new handle 0x%x", __func__, handle);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": returning new handle 0x%x", handle);
 
 	resp.type=WapiHandleResponseType_New;
 	resp.u.new.type=type;
@@ -873,7 +885,7 @@ static void process_open (GIOChannel *channel, ChannelData *channel_data,
 	if(shared->type!=WAPI_HANDLE_UNUSED && handle!=0) {
 		ref_handle (channel_data, handle);
 
-		LOGDEBUG ("%s: returning new handle 0x%x", __func__, handle);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": returning new handle 0x%x", handle);
 
 		resp.type=WapiHandleResponseType_Open;
 		resp.u.new.type=shared->type;
@@ -907,7 +919,7 @@ static void process_close (GIOChannel *channel, ChannelData *channel_data,
 	resp.type=WapiHandleResponseType_Close;
 	resp.u.close.destroy=unref_handle (channel_data, handle);
 
-	LOGDEBUG ("%s: unreffing handle 0x%x", __func__, handle);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": unreffing handle 0x%x", handle);
 
 	send_reply (channel, &resp);
 }
@@ -926,7 +938,8 @@ static void process_scratch (GIOChannel *channel, guint32 length)
 	resp.type=WapiHandleResponseType_Scratch;
 	resp.u.scratch.idx=_wapi_handle_scratch_store_internal (length, &resp.u.scratch.remap);
 
-	LOGDEBUG ("%s: allocating scratch index 0x%x", __func__, resp.u.scratch.idx);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": allocating scratch index 0x%x",
+		   resp.u.scratch.idx);
 			
 	send_reply (channel, &resp);
 }
@@ -945,7 +958,8 @@ static void process_scratch_free (GIOChannel *channel, guint32 scratch_idx)
 	resp.type=WapiHandleResponseType_ScratchFree;
 	_wapi_handle_scratch_delete_internal (scratch_idx);
 
-	LOGDEBUG ("%s: deleting scratch index 0x%x", __func__, scratch_idx);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": deleting scratch index 0x%x",
+		   scratch_idx);
 			
 	send_reply (channel, &resp);
 }
@@ -965,11 +979,12 @@ process_process_kill (GIOChannel *channel,
 
 	resp.type = WapiHandleResponseType_ProcessKill;
 
-	LOGDEBUG ("%s: kill (%d, %d)", __func__, process_kill.pid, process_kill.signo);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": kill (%d, %d)",
+		   process_kill.pid, process_kill.signo);
 
 	if (kill (process_kill.pid, process_kill.signo) == -1) {
 		resp.u.process_kill.err = errno;
-		LOGDEBUG ("%s: kill (%d, %d) failed: %d", __func__, process_kill.pid, process_kill.signo, resp.u.process_kill.err);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": kill (%d, %d) failed: %d", process_kill.pid, process_kill.signo, resp.u.process_kill.err);
 	}
 
 	send_reply (channel, &resp);
@@ -1053,7 +1068,7 @@ static void process_process_fork (GIOChannel *channel, ChannelData *channel_data
 			 */
 			process_handle_data->exec_errno=gerr->code;
 		} else {
-			LOGDEBUG ("%s: forking", __func__);
+			LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": forking");
 
 			/* Fork, exec cmd with args and optional env,
 			 * and return the handles with pid and blank
@@ -1105,7 +1120,9 @@ static void process_process_fork (GIOChannel *channel, ChannelData *channel_data
 				}
 
 #ifdef DEBUG
-				LOGDEBUG ("%s: exec()ing [%s] in dir [%s]", __func__, cmd, dir);
+				LOGDEBUG (G_GNUC_PRETTY_FUNCTION
+					   ": exec()ing [%s] in dir [%s]",
+					   cmd, dir);
 				{
 					i=0;
 					while(argv[i]!=NULL) {
@@ -1208,7 +1225,7 @@ static void process_set_share (GIOChannel *channel, ChannelData *channel_data,
 
 	resp.type = WapiHandleResponseType_SetShare;
 	
-	LOGDEBUG ("%s: Setting share for file (dev:0x%llx, ino:%lld) mode 0x%x access 0x%x", __func__, set_share.device, set_share.inode, set_share.sharemode, set_share.access);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Setting share for file (dev:0x%llx, ino:%lld) mode 0x%x access 0x%x", set_share.device, set_share.inode, set_share.sharemode, set_share.access);
 	
 	sharemode_set (set_share.device, set_share.inode, set_share.sharemode,
 		       set_share.access);
@@ -1233,14 +1250,18 @@ static void process_get_or_set_share (GIOChannel *channel,
 	
 	resp.type = WapiHandleResponseType_GetOrSetShare;
 	
-	LOGDEBUG ("%s: Getting share status for file (dev:0x%llx, ino:%lld)", __func__, get_share.device, get_share.inode);
+	LOGDEBUG (G_GNUC_PRETTY_FUNCTION
+		   ": Getting share status for file (dev:0x%llx, ino:%lld)",
+		   get_share.device, get_share.inode);
 
 	resp.u.get_or_set_share.exists = sharemode_get (get_share.device, get_share.inode, &resp.u.get_or_set_share.sharemode, &resp.u.get_or_set_share.access);
 	
 	if (resp.u.get_or_set_share.exists) {
-		LOGDEBUG ("%s: Share mode: 0x%x", __func__, resp.u.get_or_set_share.sharemode);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": Share mode: 0x%x",
+			   resp.u.get_or_set_share.sharemode);
 	} else {
-		LOGDEBUG ("%s: file share info not already known, setting", __func__);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION
+			   ": file share info not already known, setting");
 		sharemode_set (get_share.device, get_share.inode,
 			       get_share.new_sharemode, get_share.new_access);
 	}
@@ -1321,9 +1342,9 @@ static gboolean read_message (GIOChannel *channel, ChannelData *channel_data)
 	}
 
 	if(has_fds==TRUE) {
-		LOGDEBUG ("%s: closing %d", __func__, fds[0]);
-		LOGDEBUG ("%s: closing %d", __func__, fds[1]);
-		LOGDEBUG ("%s: closing %d", __func__, fds[2]);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": closing %d", fds[0]);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": closing %d", fds[1]);
+		LOGDEBUG (G_GNUC_PRETTY_FUNCTION ": closing %d", fds[2]);
 		
 		close (fds[0]);
 		close (fds[1]);
@@ -1355,7 +1376,7 @@ static gboolean fd_activity (GIOChannel *channel, GIOCondition condition,
 		return(FALSE);
 	}
 
-	if(condition & (_IO_PRI)) {
+	if(condition & (G_IO_IN | G_IO_PRI)) {
 		if(fd==main_sock) {
 			int newsock;
 			struct sockaddr addr;
@@ -1363,7 +1384,8 @@ static gboolean fd_activity (GIOChannel *channel, GIOCondition condition,
 			
 			newsock=accept (main_sock, &addr, &addrlen);
 			if(newsock==-1) {
-				g_critical ("%s accept error: %s", __func__, g_strerror (errno));
+				g_critical ("accept error: %s",
+					    g_strerror (errno));
 				cleanup ();
 				exit (-1);
 			}

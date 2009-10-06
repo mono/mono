@@ -10,5 +10,4 @@ _MONO_DEBUGGER__notification_function:
 _MONO_DEBUGGER__debugger_info_ptr:
 		.long	_MONO_DEBUGGER__debugger_info
 _MONO_DEBUGGER__using_debugger:
-		.long	0
-		.long	0
+		.quad	0

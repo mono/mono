@@ -808,7 +808,7 @@ verifier_load_field (VerifyContext *ctx, int token, MonoClass **out_klass, const
 	MonoClass *klass = NULL;
 
 	if (!IS_FIELD_DEF_OR_REF (token) || !token_bounds_check (ctx->image, token)) {
-		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid field token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid field token 0x%x08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 		return NULL;
 	}
 
@@ -1072,7 +1072,7 @@ is_valid_culture (const char *cname)
 
 	found = *cname == 0;
 	for (i = 0; i < G_N_ELEMENTS (valid_cultures); ++i) {
-		if (g_ascii_strcasecmp (valid_cultures [i], cname)) {
+		if (g_strcasecmp (valid_cultures [i], cname)) {
 			found = 1;
 			break;
 		}

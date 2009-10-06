@@ -26,18 +26,17 @@
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
 
-typedef gint (*read_write_func) (guchar *buffer, gint length, void *gchandle);
+typedef gint (*read_write_func) (guchar *buffer, gint length);
 struct _ZStream {
 	z_stream *stream;
 	guchar *buffer;
 	read_write_func func;
-	void *gchandle;
 	guchar compress;
 	guchar eof;
 };
 typedef struct _ZStream ZStream;
 
-ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle);
+ZStream *CreateZStream (gint compress, guchar gzip, read_write_func func);
 gint CloseZStream (ZStream *zstream);
 gint Flush (ZStream *stream);
 gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
@@ -56,7 +55,7 @@ z_free (void *opaque, void *ptr)
 }
 
 ZStream *
-CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
+CreateZStream (gint compress, guchar gzip, read_write_func func)
 {
 	z_stream *z;
 	gint retval;
@@ -86,7 +85,6 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	result = g_new0 (ZStream, 1);
 	result->stream = z;
 	result->func = func;
-	result->gchandle = gchandle;
 	result->compress = compress;
 	result->buffer = g_new (guchar, BUFFER_SIZE);
 	return result;
@@ -128,7 +126,7 @@ write_to_managed (ZStream *stream)
 
 	zs = stream->stream;
 	if (zs->avail_out != BUFFER_SIZE) {
-		n = stream->func (stream->buffer, BUFFER_SIZE - zs->avail_out, stream->gchandle);
+		n = stream->func (stream->buffer, BUFFER_SIZE - zs->avail_out);
 		zs->next_out = stream->buffer;
 		zs->avail_out =  BUFFER_SIZE;
 		if (n < 0)
@@ -164,7 +162,7 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 	zs->avail_out = length;
 	while (zs->avail_out > 0) {
 		if (zs->avail_in == 0) {
-			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
+			n = stream->func (stream->buffer, BUFFER_SIZE);
 			if (n <= 0) {
 				stream->eof = TRUE;
 				break;

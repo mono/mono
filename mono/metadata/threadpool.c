@@ -14,7 +14,6 @@
 
 #define THREADS_PER_CPU	10 /* 20 + THREADS_PER_CPU * number of CPUs */
 #define THREAD_EXIT_TIMEOUT 1000
-#define INITIAL_QUEUE_LENGTH 128
 
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/tabledefs.h>
@@ -78,6 +77,10 @@ static int busy_io_worker_threads;
 static int tp_inited;
 /* started idle threads */
 static int tp_idle_started;
+
+
+/* we use this to store a reference to the AsyncResult to avoid GC */
+static MonoGHashTable *ares_htable = NULL;
 
 static CRITICAL_SECTION ares_lock;
 static CRITICAL_SECTION io_queue_lock;
@@ -240,6 +243,9 @@ get_events_from_list (MonoMList *list)
 static void
 unregister_job (MonoAsyncResult *obj)
 {
+	EnterCriticalSection (&ares_lock);
+	mono_g_hash_table_remove (ares_htable, obj);
+	LeaveCriticalSection (&ares_lock);	
 }
 
 static void
@@ -268,7 +274,6 @@ async_invoke_io_thread (gpointer data)
 	MonoDomain *domain;
 	MonoThread *thread;
 	const gchar *version;
-	int workers_io, min_io;
 
 	thread = mono_thread_current ();
 
@@ -348,22 +353,13 @@ async_invoke_io_thread (gpointer data)
 		}
 
 		if (!data) {
-			workers_io = (int) InterlockedCompareExchange (&io_worker_threads, 0, -1); 
-			min_io = (int) InterlockedCompareExchange (&mono_io_min_worker_threads, 0, -1); 
-	
-			while (!data && workers_io <= min_io) {
-				WaitForSingleObjectEx (io_job_added, INFINITE, TRUE);
-				if (THREAD_WANTS_A_BREAK (thread))
-					mono_thread_interruption_checkpoint ();
-			
-				data = dequeue_job (&io_queue_lock, &async_io_queue);
-				workers_io = (int) InterlockedCompareExchange (&io_worker_threads, 0, -1); 
-				min_io = (int) InterlockedCompareExchange (&mono_io_min_worker_threads, 0, -1); 
+			if (InterlockedDecrement (&io_worker_threads) < 2) {
+				/* If we have pending items, keep the thread alive */
+				if (InterlockedCompareExchange (&pending_io_items, 0, 0) != 0) {
+					InterlockedIncrement (&io_worker_threads);
+					continue;
+				}
 			}
-		}
-	
-		if (!data) {
-			InterlockedDecrement (&io_worker_threads);
 			return;
 		}
 		
@@ -807,6 +803,10 @@ socket_io_init (SocketIOData *data)
 	g_assert (data->pipe [0] != INVALID_SOCKET);
 	closesocket (srv);
 #endif
+	mono_io_max_worker_threads = mono_max_worker_threads / 2;
+	if (mono_io_max_worker_threads < 10)
+		mono_io_max_worker_threads = 10;
+
 	data->sock_to_state = mono_g_hash_table_new_type (g_direct_hash, g_direct_equal, MONO_HASH_VALUE_GC);
 
 	if (data->epoll_disabled) {
@@ -834,7 +834,6 @@ socket_io_add_poll (MonoSocketAsyncResult *state)
 	char msg [1];
 	MonoMList *list;
 	SocketIOData *data = &socket_io_data;
-	int w;
 
 #if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD) || defined(PLATFORM_WIN32) || defined(PLATFORM_SOLARIS)
 	/* select() for connect() does not work well on the Mac. Bug #75436. */
@@ -864,8 +863,7 @@ socket_io_add_poll (MonoSocketAsyncResult *state)
 	LeaveCriticalSection (&data->io_lock);
 	*msg = (char) state->operation;
 #ifndef PLATFORM_WIN32
-	w = write (data->pipe [1], msg, 1);
-	w = w;
+	write (data->pipe [1], msg, 1);
 #else
 	send ((SOCKET) data->pipe [1], msg, 1, 0);
 #endif
@@ -1027,6 +1025,10 @@ mono_async_invoke (MonoAsyncResult *ares)
 		SetEvent ((gpointer)(gsize)ac->wait_event);
 	}
 	mono_monitor_exit ((MonoObject *) ares);
+
+	EnterCriticalSection (&ares_lock);
+	mono_g_hash_table_remove (ares_htable, ares);
+	LeaveCriticalSection (&ares_lock);
 }
 
 static void
@@ -1072,10 +1074,12 @@ mono_thread_pool_init ()
 	if ((int) InterlockedCompareExchange (&tp_inited, 1, 0) == 1)
 		return;
 
+	MONO_GC_REGISTER_ROOT (ares_htable);
 	MONO_GC_REGISTER_ROOT (socket_io_data.sock_to_state);
 	InitializeCriticalSection (&socket_io_data.io_lock);
 	InitializeCriticalSection (&ares_lock);
 	InitializeCriticalSection (&io_queue_lock);
+	ares_htable = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash, NULL, MONO_HASH_KEY_VALUE_GC);
 	job_added = CreateSemaphore (NULL, 0, 0x7fffffff, NULL);
 	g_assert (job_added != NULL);
 	if (g_getenv ("MONO_THREADS_PER_CPU") != NULL) {
@@ -1087,10 +1091,6 @@ mono_thread_pool_init ()
 	cpu_count = mono_cpu_count ();
 	mono_max_worker_threads = 20 + threads_per_cpu * cpu_count;
 	mono_min_worker_threads = cpu_count; /* 1 idle thread per cpu */
-	mono_io_max_worker_threads = mono_max_worker_threads / 2;
-	if (mono_io_max_worker_threads < 16)
-		mono_io_max_worker_threads = 16;
-	mono_io_min_worker_threads = cpu_count;
 
 	async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
 	g_assert (async_call_klass);
@@ -1121,6 +1121,7 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 		LeaveCriticalSection (&ares_lock);
 		return ares;
 	}
+	mono_g_hash_table_insert (ares_htable, ares, ares);
 	LeaveCriticalSection (&ares_lock);
 
 #ifndef DISABLE_SOCKETS
@@ -1242,7 +1243,7 @@ append_job (CRITICAL_SECTION *cs, TPQueue *list, MonoObject *ar)
 	}
 	if (!list->array) {
 		MONO_GC_REGISTER_ROOT (list->array);
-		list->array = mono_array_new_cached (mono_get_root_domain (), mono_defaults.object_class, INITIAL_QUEUE_LENGTH);
+		list->array = mono_array_new_cached (mono_get_root_domain (), mono_defaults.object_class, 16);
 	} else {
 		int count = list->next_elem - list->first_elem;
 		/* slide the array or create a larger one if it's full */
@@ -1295,6 +1296,19 @@ clear_queue (CRITICAL_SECTION *cs, TPQueue *list, MonoDomain *domain)
 	LeaveCriticalSection (cs);
 }
 
+static GSList *clear_ares_htable_entries = NULL;
+
+static void
+check_ares_htable_entry_for_domain (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoObject *obj = key;
+	MonoDomain *domain = user_data;
+
+	g_assert (key == value);
+	if (obj->vtable->domain == domain)
+		clear_ares_htable_entries = g_slist_prepend (clear_ares_htable_entries, obj);
+}
+
 /*
  * Clean up the threadpool of all domain jobs.
  * Can only be called as part of the domain unloading process as
@@ -1306,6 +1320,7 @@ mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	HANDLE sem_handle;
 	int result = TRUE;
 	guint32 start_time = 0;
+	GSList *list;
 
 	g_assert (domain->state == MONO_APPDOMAIN_UNLOADING);
 
@@ -1338,6 +1353,16 @@ mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout)
 
 	domain->cleanup_semaphore = NULL;
 	CloseHandle (sem_handle);
+
+	EnterCriticalSection (&ares_lock);
+	g_assert (!clear_ares_htable_entries);
+	mono_g_hash_table_foreach (ares_htable, check_ares_htable_entry_for_domain, domain);
+	for (list = clear_ares_htable_entries; list; list = list->next)
+		mono_g_hash_table_remove (ares_htable, list->data);
+	g_slist_free (clear_ares_htable_entries);
+	clear_ares_htable_entries = NULL;
+	LeaveCriticalSection (&ares_lock);
+
 	return result;
 }
 
@@ -1358,7 +1383,7 @@ dequeue_job (CRITICAL_SECTION *cs, TPQueue *list)
 	list->first_elem++;
 	count = list->next_elem - list->first_elem;
 	/* reduce the size of the array if it's mostly empty */
-	if (mono_array_length (list->array) > INITIAL_QUEUE_LENGTH && count < (mono_array_length (list->array) / 3)) {
+	if (mono_array_length (list->array) > 16 && count < (mono_array_length (list->array) / 3)) {
 		MonoArray *olda = list->array;
 		MonoArray *newa = mono_array_new_cached (mono_get_root_domain (), mono_defaults.object_class, mono_array_length (list->array) / 2);
 		mono_array_memcpy_refs (newa, 0, list->array, list->first_elem, count);

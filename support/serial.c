@@ -72,11 +72,10 @@ open_serial (char* devfile)
 	return fd;
 }
 
-int
+void
 close_serial (int unix_fd)
 {
-	// Linus writes: do not retry close after EINTR
-	return close (unix_fd);
+	close (unix_fd);
 }
 
 guint32

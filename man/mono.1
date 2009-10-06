@@ -711,17 +711,12 @@ If the value of ARG is
 .B all, 
 a heap snapshot is taken at each collection.  
 .PP
-If the value is an integer
-.B n,
-a snapshot will be taken at the first
-.B n
-collections (like setting
-.B gcd=n
-);
-.PP
-If no additional argument is given to the heap option, the only way to take
-heap snapshots is to requeste them using the runtime socket based command
-interface described below (see "Profiler activity control").
+If the value is signal name or a number (one of SIGUSR1, SIGUSR2 and
+SIGPROF, remembering that SIGPROF is not compatible with the
+statistical profiler), every time the application receives this signal
+a garbage collection is forced and a snapshot is taken. The natural way
+to take a heap snapshot is then using the kill command to deliver the
+appropriate signal to the application.
 .PP
 Heap profiling also enables full allocation profiling (with call
 stacks), and each allocation can be related to its corresponding
@@ -739,9 +734,18 @@ can be further customized with the following options:
 states the number of snapshots that must be dumped (since the application
 starts).  Zero means no dumps at all, -1 means dump at all collections.
 .TP
+\fIgc-commands=FILE\fR, \fIgc-c=FILE\fR or \fIgcc=FILE\fR 
+specify a "command file". The file must contain an integer value in ASCII
+form, and the profiler will stat it at every collection.
+If it has been modified it will interpret its contents as a \fIgcd=N\fR
+option value, and dump the required number of snapshots from that moment
+onwards.
+If the file is present at application startup it takes precedence over an
+eventual \fIgcd=N\fR option.
+.TP
 These options exist because it can happen that the user wants to investigate
-what happens during collections but without forcing a collection using the
-command interface, because forcing a collection alters the program behavior.
+what happens during collections but without forcing a collection using a
+signal, because forcing a collection alters the program behavior.
 Of course it is possible to simply take a snapshot at every collection, but
 in some workloads this is could not be feasible (too much data).
 So we have this "garbage collection dumps" counter to control how many
@@ -765,33 +769,17 @@ the output file name equals to "<program-name>-SUFFIX.mprof".
 .TP
 \fIstart-disabled\fR or \fIsd\fR: start with the profiler inactive.
 .TP
+\fItoggle-signal=<SIGNAL>\fR or \fIts=<SIGNAL>\fR (where <SIGNAL>
+is one of SIGUSR1, SIGUSR2 or SIGPROF): Choose a signal that will be used to
+toggle the profiler activity on and off. This way you can decide to profile
+only portions of the applicatopn lifetime (for instance, you can decide to
+avoid profiling an initial setup phase using \fIsd\fR, and enable the
+profiler later delivering the signal to the application).
+.TP
 \fIforce-accurate-timer\fR (or \fIfac\fR): the profiler by default uses
 rtdsc to acquire timestamps for frequent events, but this can be imprecise;
 using this option you force the use of "gettimeofday" at every event, which
 is more accurate but much slower.
-.TP
-\fIcommand-port=port\fR or \fIcp=port\fR (where port is an integer between
-1024 nd 65535):
-Choose a TCP port where the profiler will listen for user commands.
-The protocol is ASCII based and line oriented (one line per command), and the
-profiler answers with one line containing either "OK" or "ERROR" to each
-received command.
-.PP
-The user can telnet to this port and give commands manually, or a GUI can
-use this facility to control the profiler at runtime.
-.PP
-The available commands are:
-.TP
-\fIenable\fR: Enables the profiler.
-.TP
-\fIdisable\fR: Disables the profiler.
-.TP
-\fIheap-snapshot\fR: Takes a heap snapshot now (forces a full garbage collection).
-.TP
-\fIheap-snapshot-counter=arg\fR: Set the counter of the next heap snapshots
-that must be taken, where arg can be "all" (take a snapshot at every
-collection), "none" (do not take snapshots), or an integer "n" (take a heap
-snapshot for the next "n" collections).
 .ne
 .RE
 .PP

@@ -39,7 +39,6 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-counters.h>
-#include <mono/utils/mono-string.h>
 
 MonoStats mono_stats;
 
@@ -3105,9 +3104,10 @@ print_unimplemented_interface_method_info (MonoClass *class, MonoClass *ic, Mono
 }
 
 static gboolean
-verify_class_overrides (MonoClass *class, MonoMethod **overrides, int onum)
+verify_class_overrides (MonoClass *class, GPtrArray *ifaces, MonoMethod **overrides, int onum)
 {
 	int i;
+	gboolean found;
 
 	for (i = 0; i < onum; ++i) {
 		MonoMethod *decl = overrides [i * 2];
@@ -3127,14 +3127,38 @@ verify_class_overrides (MonoClass *class, MonoMethod **overrides, int onum)
 		}
 
 		if (!(decl->flags & METHOD_ATTRIBUTE_VIRTUAL) || (decl->flags & METHOD_ATTRIBUTE_STATIC)) {
-			if (body->flags & METHOD_ATTRIBUTE_STATIC)
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Cannot override a static method in a base type"));
-			else
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Cannot override a non virtual method in a base type"));
-			return FALSE;
+				if (body->flags & METHOD_ATTRIBUTE_STATIC)
+					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Cannot override a static method in a base type"));
+				else
+					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Cannot override a non virtual method in a base type"));
+				return FALSE;
+			}
+			
+		found = FALSE;
+		/*We can't use mono_class_is_assignable_from since it requires the class to be fully initialized*/
+		if (ifaces) {
+			int j;
+			for (j = 0; j < ifaces->len; j++) {
+				MonoClass *ic = g_ptr_array_index (ifaces, j);
+				if (decl->klass == ic) {
+					found = TRUE;
+					break;
+				}
+			}
 		}
 
-		if (!mono_class_is_assignable_from_slow (decl->klass, class)) {
+		if (!found) {
+			MonoClass *parent = class;
+			while (parent) {
+				if (decl->klass == parent) {
+					found = TRUE;
+					break;
+				}
+				parent = parent->parent;
+			}
+		}
+
+		if (!found) {
 			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Method overrides a class or interface that extended or implemented by this type"));
 			return FALSE;
 		}
@@ -3162,10 +3186,13 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	if (class->vtable)
 		return;
 
-	if (overrides && !verify_class_overrides (class, overrides, onum))
-		return;
-
 	ifaces = mono_class_get_implemented_interfaces (class);
+
+	if (overrides && !verify_class_overrides (class, ifaces, overrides, onum)) {
+		if (ifaces)
+			g_ptr_array_free (ifaces, TRUE);
+		return;
+	}
 
 	if (ifaces) {
 		for (i = 0; i < ifaces->len; i++) {
@@ -3824,16 +3851,6 @@ mono_class_init (MonoClass *class)
 
 	class->init_pending = 1;
 
-	if (class->byval_arg.type == MONO_TYPE_ARRAY || class->byval_arg.type == MONO_TYPE_SZARRAY) {
-		MonoClass *element_class = class->element_class;
-		if (!element_class->inited) 
-			mono_class_init (element_class);
-		if (element_class->exception_type != MONO_EXCEPTION_NONE) {
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-			goto fail;
-		}
-	}
-
 	/* CAS - SecurityAction.InheritanceDemand */
 	if (mono_is_security_manager_active () && class->parent && (class->parent->flags & TYPE_ATTRIBUTE_HAS_SECURITY)) {
 		mono_secman_inheritancedemand_class (class, class->parent);
@@ -3935,10 +3952,8 @@ mono_class_init (MonoClass *class)
 		class->has_cctor = gklass->has_cctor;
 
 		mono_class_setup_vtable (gklass);
-		if (gklass->exception_type) {
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		if (gklass->exception_type)
 			goto fail;
-		}
 
 		class->vtable_size = gklass->vtable_size;
 	} else {
@@ -4026,20 +4041,12 @@ mono_class_init (MonoClass *class)
 		if (class->parent) {
 			/* This will compute class->parent->vtable_size for some classes */
 			mono_class_init (class->parent);
-			if (class->parent->exception_type) {
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-				goto fail;
-			}
-			if (mono_loader_get_last_error ())
+			if (class->parent->exception_type || mono_loader_get_last_error ())
 				goto fail;
 			if (!class->parent->vtable_size) {
 				/* FIXME: Get rid of this somehow */
 				mono_class_setup_vtable (class->parent);
-				if (class->parent->exception_type) {
-					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-					goto fail;
-				}
-				if (mono_loader_get_last_error ())
+				if (class->parent->exception_type || mono_loader_get_last_error ())
 					goto fail;
 			}
 			setup_interface_offsets (class, class->parent->vtable_size);
@@ -5835,7 +5842,7 @@ find_nocase (gpointer key, gpointer value, gpointer user_data)
 	char *name = (char*)key;
 	FindUserData *data = (FindUserData*)user_data;
 
-	if (!data->value && (mono_utf8_strcasecmp (name, (char*)data->key) == 0))
+	if (!data->value && (g_strcasecmp (name, (char*)data->key) == 0))
 		data->value = value;
 }
 
@@ -5904,7 +5911,7 @@ mono_class_from_name_case (MonoImage *image, const char* name_space, const char 
 			continue;
 		n = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAME]);
 		nspace = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAMESPACE]);
-		if (mono_utf8_strcasecmp (n, name) == 0 && mono_utf8_strcasecmp (nspace, name_space) == 0)
+		if (g_strcasecmp (n, name) == 0 && g_strcasecmp (nspace, name_space) == 0)
 			return mono_class_get (image, MONO_TOKEN_TYPE_DEF | i);
 	}
 	return NULL;
@@ -6254,67 +6261,6 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 
 	return mono_class_has_parent (oklass, klass);
 }	
-
-/*Check if @candidate implements the interface @target*/
-static gboolean
-mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
-{
-	int i;
-
-	do {
-		if (candidate == target)
-			return TRUE;
-
-		/*A TypeBuilder can have more interfaces on tb->interfaces than on candidate->interfaces*/
-		if (candidate->image->dynamic && !candidate->wastypebuilder) {
-			MonoReflectionTypeBuilder *tb = candidate->reflection_info;
-			int j;
-			if (tb->interfaces) {
-				for (j = mono_array_length (tb->interfaces) - 1; j >= 0; --j) {
-					MonoReflectionType *iface = mono_array_get (tb->interfaces, MonoReflectionType*, j);
-					MonoClass *iface_class = mono_class_from_mono_type (iface->type);
-					if (iface_class == target || mono_class_implement_interface_slow (target, iface_class))
-						return TRUE;
-				}
-			}
-		} else {
-			/*setup_interfaces don't mono_class_init anything*/
-			mono_class_setup_interfaces (candidate);
-			for (i = 0; i < candidate->interface_count; ++i) {
-				if (candidate->interfaces [i] == target || mono_class_implement_interface_slow (target, candidate->interfaces [i]))
-					return TRUE;
-			}
-		}
-		candidate = candidate->parent;
-	} while (candidate);
-
-	return FALSE;
-}
-
-/*
- * Check if @oklass can be assigned to @klass.
- * This function does the same as mono_class_is_assignable_from but is safe to be used from mono_class_init context.
- */
-gboolean
-mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
-{
-	if (candidate == target)
-		return TRUE;
-	if (target == mono_defaults.object_class)
-		return TRUE;
-
-	/*setup_supertypes don't mono_class_init anything */
-	mono_class_setup_supertypes (candidate);
-	mono_class_setup_supertypes (target);
-
-	if (mono_class_has_parent (candidate, target))
-		return TRUE;
-
-	/*If target is not an interface there is no need to check them.*/
-	if (!MONO_CLASS_IS_INTERFACE (target))
-			return FALSE;
-	return mono_class_implement_interface_slow (target, candidate);
-}
 
 /**
  * mono_class_get_cctor:

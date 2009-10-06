@@ -678,9 +678,7 @@ mono_arch_flush_icache (guint8 *code, gint size)
 }
 
 enum {
-	RegTypeNone,
 	RegTypeGeneral,
-	RegTypeIRegPair,
 	RegTypeBase,
 	RegTypeBaseGen,
 	RegTypeFP,
@@ -700,7 +698,6 @@ typedef struct {
 	int nargs;
 	guint32 stack_usage;
 	guint32 struct_ret;
-	gboolean vtype_retaddr;
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
@@ -713,8 +710,6 @@ typedef struct {
 #define __alignof__(type) G_STRUCT_OFFSET(struct { char c; type x; }, x)
 #endif
 
-#define PARAM_REGS 4
-
 static void inline
 add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 {
@@ -725,7 +720,6 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 			ainfo->regtype = RegTypeBase;
 			*stack_size += 4;
 		} else {
-			ainfo->regtype = RegTypeGeneral;
 			ainfo->reg = *gr;
 		}
 	} else {
@@ -764,7 +758,6 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 			if (i8_align == 8 && ((*gr) & 1))
 				(*gr) ++;
 #endif
-			ainfo->regtype = RegTypeIRegPair;
 			ainfo->reg = *gr;
 		}
 		(*gr) ++;
@@ -781,14 +774,12 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 	guint32 stack_size = 0;
 	CallInfo *cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * n);
 
-	cinfo->nargs = n;
 	gr = ARMREG_R0;
 
 	/* FIXME: handle returning a struct */
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		add_general (&gr, &stack_size, &cinfo->ret, TRUE);
 		cinfo->struct_ret = ARMREG_R0;
-		cinfo->vtype_retaddr = TRUE;
 	}
 
 	n = 0;
@@ -937,35 +928,27 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:
 		case MONO_TYPE_STRING:
-			cinfo->ret.regtype = RegTypeGeneral;
 			cinfo->ret.reg = ARMREG_R0;
 			break;
 		case MONO_TYPE_U8:
 		case MONO_TYPE_I8:
-			cinfo->ret.regtype = RegTypeIRegPair;
 			cinfo->ret.reg = ARMREG_R0;
 			break;
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
-			cinfo->ret.regtype = RegTypeFP;
 			cinfo->ret.reg = ARMREG_R0;
 			/* FIXME: cinfo->ret.reg = ???;
 			cinfo->ret.regtype = RegTypeFP;*/
 			break;
 		case MONO_TYPE_GENERICINST:
 			if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
-				cinfo->ret.regtype = RegTypeGeneral;
 				cinfo->ret.reg = ARMREG_R0;
 				break;
 			}
-			cinfo->ret.regtype = RegTypeStructByAddr;
 			break;
 		case MONO_TYPE_VALUETYPE:
-			cinfo->ret.regtype = RegTypeStructByAddr;
 			break;
 		case MONO_TYPE_TYPEDBYREF:
-			cinfo->ret.regtype = RegTypeStructByAddr;
-			break;
 		case MONO_TYPE_VOID:
 			break;
 		default:
@@ -1205,7 +1188,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		switch (ainfo->regtype) {
 		case RegTypeGeneral:
-		case RegTypeIRegPair:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
@@ -1449,308 +1431,6 @@ gboolean
 mono_arch_is_inst_imm (gint64 imm)
 {
 	return TRUE;
-}
-
-#define DYN_CALL_STACK_ARGS 6
-
-typedef struct {
-	MonoMethodSignature *sig;
-	CallInfo *cinfo;
-} ArchDynCallInfo;
-
-typedef struct {
-	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
-	mgreg_t res, res2;
-	guint8 *ret;
-} DynCallArgs;
-
-static gboolean
-dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
-{
-	int i;
-
-	if (sig->hasthis + sig->param_count > PARAM_REGS + DYN_CALL_STACK_ARGS)
-		return FALSE;
-
-	switch (cinfo->ret.regtype) {
-	case RegTypeNone:
-	case RegTypeGeneral:
-	case RegTypeIRegPair:
-	case RegTypeStructByAddr:
-		break;
-	case RegTypeFP:
-#ifdef ARM_FPU_FPA
-		return FALSE;
-#elif defined(ARM_FPU_VFP)
-		break;
-#else
-		return FALSE;
-#endif
-	default:
-		return FALSE;
-	}
-
-	for (i = 0; i < cinfo->nargs; ++i) {
-		switch (cinfo->args [i].regtype) {
-		case RegTypeGeneral:
-			break;
-		case RegTypeIRegPair:
-			break;
-		case RegTypeBase:
-			if (cinfo->args [i].offset >= (DYN_CALL_STACK_ARGS * sizeof (gpointer)))
-				return FALSE;
-			break;
-		case RegTypeStructByVal:
-			if (cinfo->args [i].reg + cinfo->args [i].vtsize >= PARAM_REGS + DYN_CALL_STACK_ARGS)
-				return FALSE;
-			break;
-		default:
-			return FALSE;
-		}
-	}
-
-	// FIXME: Can't use cinfo only as it doesn't contain info about I8/float */
-	for (i = 0; i < sig->param_count; ++i) {
-		MonoType *t = sig->params [i];
-
-		if (t->byref)
-			continue;
-
-		switch (t->type) {
-		case MONO_TYPE_R4:
-		case MONO_TYPE_R8:
-#ifdef MONO_ARCH_SOFT_FLOAT
-			return FALSE;
-#else
-			break;
-#endif
-			/*
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-			return FALSE;
-			*/
-		default:
-			break;
-		}
-	}
-
-	return TRUE;
-}
-
-MonoDynCallInfo*
-mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
-{
-	ArchDynCallInfo *info;
-	CallInfo *cinfo;
-
-	cinfo = get_call_info (sig, FALSE);
-
-	if (!dyn_call_supported (cinfo, sig)) {
-		g_free (cinfo);
-		return NULL;
-	}
-
-	info = g_new0 (ArchDynCallInfo, 1);
-	// FIXME: Preprocess the info to speed up start_dyn_call ()
-	info->sig = sig;
-	info->cinfo = cinfo;
-	
-	return (MonoDynCallInfo*)info;
-}
-
-void
-mono_arch_dyn_call_free (MonoDynCallInfo *info)
-{
-	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
-
-	g_free (ainfo->cinfo);
-	g_free (ainfo);
-}
-
-void
-mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len)
-{
-	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
-	DynCallArgs *p = (DynCallArgs*)buf;
-	int arg_index, greg, i, j;
-	MonoMethodSignature *sig = dinfo->sig;
-
-	g_assert (buf_len >= sizeof (DynCallArgs));
-
-	p->res = 0;
-	p->ret = ret;
-
-	arg_index = 0;
-	greg = 0;
-
-	if (dinfo->cinfo->vtype_retaddr)
-		p->regs [greg ++] = (mgreg_t)ret;
-
-	if (sig->hasthis)
-		p->regs [greg ++] = (mgreg_t)*(args [arg_index ++]);
-
-	for (i = 0; i < sig->param_count; i++) {
-		MonoType *t = mono_type_get_underlying_type (sig->params [i]);
-		gpointer *arg = args [arg_index ++];
-		ArgInfo *ainfo = &dinfo->cinfo->args [i + sig->hasthis];
-		int slot = -1;
-
-		if (ainfo->regtype == RegTypeGeneral || ainfo->regtype == RegTypeIRegPair || ainfo->regtype == RegTypeStructByVal)
-			slot = ainfo->reg;
-		else if (ainfo->regtype == RegTypeBase)
-			slot = PARAM_REGS + (ainfo->offset / 4);
-		else
-			g_assert_not_reached ();
-
-		if (t->byref) {
-			p->regs [slot] = (mgreg_t)*arg;
-			continue;
-		}
-
-		switch (t->type) {
-		case MONO_TYPE_STRING:
-		case MONO_TYPE_CLASS:  
-		case MONO_TYPE_ARRAY:
-		case MONO_TYPE_SZARRAY:
-		case MONO_TYPE_OBJECT:
-		case MONO_TYPE_PTR:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-			p->regs [slot] = (mgreg_t)*arg;
-			break;
-		case MONO_TYPE_BOOLEAN:
-		case MONO_TYPE_U1:
-			p->regs [slot] = *(guint8*)arg;
-			break;
-		case MONO_TYPE_I1:
-			p->regs [slot] = *(gint8*)arg;
-			break;
-		case MONO_TYPE_I2:
-			p->regs [slot] = *(gint16*)arg;
-			break;
-		case MONO_TYPE_U2:
-		case MONO_TYPE_CHAR:
-			p->regs [slot] = *(guint16*)arg;
-			break;
-		case MONO_TYPE_I4:
-			p->regs [slot] = *(gint32*)arg;
-			break;
-		case MONO_TYPE_U4:
-			p->regs [slot] = *(guint32*)arg;
-			break;
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-			p->regs [slot ++] = (mgreg_t)arg [0];
-			p->regs [slot] = (mgreg_t)arg [1];
-			break;
-		case MONO_TYPE_R4:
-			p->regs [slot] = *(mgreg_t*)arg;
-			break;
-		case MONO_TYPE_R8:
-			p->regs [slot ++] = (mgreg_t)arg [0];
-			p->regs [slot] = (mgreg_t)arg [1];
-			break;
-		case MONO_TYPE_GENERICINST:
-			if (MONO_TYPE_IS_REFERENCE (t)) {
-				p->regs [slot] = (mgreg_t)*arg;
-				break;
-			} else {
-				/* Fall though */
-			}
-		case MONO_TYPE_VALUETYPE:
-			g_assert (ainfo->regtype == RegTypeStructByVal);
-
-			if (ainfo->size == 0)
-				slot = PARAM_REGS + (ainfo->offset / 4);
-			else
-				slot = ainfo->reg;
-
-			for (j = 0; j < ainfo->size + ainfo->vtsize; ++j)
-				p->regs [slot ++] = ((mgreg_t*)arg) [j];
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-	}
-}
-
-void
-mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
-{
-	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
-	MonoMethodSignature *sig = ((ArchDynCallInfo*)info)->sig;
-	guint8 *ret = ((DynCallArgs*)buf)->ret;
-	mgreg_t res = ((DynCallArgs*)buf)->res;
-	mgreg_t res2 = ((DynCallArgs*)buf)->res2;
-
-	switch (mono_type_get_underlying_type (sig->ret)->type) {
-	case MONO_TYPE_VOID:
-		*(gpointer*)ret = NULL;
-		break;
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_CLASS:  
-	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-		*(gpointer*)ret = (gpointer)res;
-		break;
-	case MONO_TYPE_I1:
-		*(gint8*)ret = res;
-		break;
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		*(guint8*)ret = res;
-		break;
-	case MONO_TYPE_I2:
-		*(gint16*)ret = res;
-		break;
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		*(guint16*)ret = res;
-		break;
-	case MONO_TYPE_I4:
-		*(gint32*)ret = res;
-		break;
-	case MONO_TYPE_U4:
-		*(guint32*)ret = res;
-		break;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		/* This handles endianness as well */
-		((gint32*)ret) [0] = res;
-		((gint32*)ret) [1] = res2;
-		break;
-	case MONO_TYPE_GENERICINST:
-		if (MONO_TYPE_IS_REFERENCE (sig->ret)) {
-			*(gpointer*)ret = (gpointer)res;
-			break;
-		} else {
-			/* Fall though */
-		}
-	case MONO_TYPE_VALUETYPE:
-		g_assert (ainfo->cinfo->vtype_retaddr);
-		/* Nothing to do */
-		break;
-#if defined(ARM_FPU_VFP)
-	case MONO_TYPE_R4:
-		*(float*)ret = *(float*)&res;
-		break;
-	case MONO_TYPE_R8: {
-		mgreg_t regs [2];
-
-		regs [0] = res;
-		regs [1] = res2;
-
-		*(double*)ret = *(double*)&regs;
-		break;
-	}
-#endif
-	default:
-		g_assert_not_reached ();
-	}
 }
 
 /*
@@ -2757,7 +2437,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 			} else
 				g_assert_not_reached ();
 		} else {
-			if (ainfo->regtype == RegTypeGeneral || ainfo->regtype == RegTypeIRegPair) {
+			if (ainfo->regtype == RegTypeGeneral) {
 				switch (ainfo->size) {
 				case 1:
 				case 2:
@@ -3382,42 +3062,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				arm_patch (code - 4, start_loop);
 			}
 			ARM_ADD_REG_IMM8 (code, ins->dreg, ARMREG_SP, alloca_waste);
-			break;
-		}
-		case OP_DYN_CALL: {
-			int i;
-			MonoInst *var = cfg->dyn_call_var;
-
-			g_assert (var->opcode == OP_REGOFFSET);
-			g_assert (arm_is_imm12 (var->inst_offset));
-
-			/* lr = args buffer filled by mono_arch_get_dyn_call_args () */
-			ARM_MOV_REG_REG( code, ARMREG_LR, ins->sreg1);
-			/* ip = ftn */
-			ARM_MOV_REG_REG( code, ARMREG_IP, ins->sreg2);
-
-			/* Save args buffer */
-			ARM_STR_IMM (code, ARMREG_LR, var->inst_basereg, var->inst_offset);
-
-			/* Set stack slots using R0 as scratch reg */
-			/* MONO_ARCH_DYN_CALL_PARAM_AREA gives the size of stack space available */
-			for (i = 0; i < DYN_CALL_STACK_ARGS; ++i) {
-				ARM_LDR_IMM (code, ARMREG_R0, ARMREG_LR, (PARAM_REGS + i) * sizeof (gpointer));
-				ARM_STR_IMM (code, ARMREG_R0, ARMREG_SP, i * sizeof (gpointer));
-			}
-
-			/* Set argument registers */
-			for (i = 0; i < PARAM_REGS; ++i)
-				ARM_LDR_IMM (code, i, ARMREG_LR, i * sizeof (gpointer));
-
-			/* Make the call */
-			ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
-			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
-
-			/* Save result */
-			ARM_LDR_IMM (code, ARMREG_IP, var->inst_basereg, var->inst_offset);
-			ARM_STR_IMM (code, ARMREG_R0, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res)); 
-			ARM_STR_IMM (code, ARMREG_R1, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res2)); 
 			break;
 		}
 		case OP_THROW: {
@@ -4281,7 +3925,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				g_print ("Argument %d assigned to register %s\n", pos, mono_arch_regname (inst->dreg));
 		} else {
 			/* the argument should be put on the stack: FIXME handle size != word  */
-			if (ainfo->regtype == RegTypeGeneral || ainfo->regtype == RegTypeIRegPair) {
+			if (ainfo->regtype == RegTypeGeneral) {
 				switch (ainfo->size) {
 				case 1:
 					if (arm_is_imm12 (inst->inst_offset))
