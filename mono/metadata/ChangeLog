@@ -1,5 +1,11 @@
 2009-10-06  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c (mono_method_return_message_restore): Handle the case
+	where the argument is an instance of a generic type.  Fixes
+	#544446.
+
+2009-10-06  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c (set_value): Write barrier fix - we must pass the
 	count, not the size.
 

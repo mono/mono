@@ -1,3 +1,9 @@
+2009-10-06  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-544445.cs: New test.
+
+	* Makefile.am: Test added.
+
 2009-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Replace make_imt_test_.sh with a faster C# version.
