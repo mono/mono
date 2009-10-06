@@ -94,8 +94,8 @@ namespace System.ServiceModel.Description
 			base.ApplyDispatchBehavior (endpoint, endpointDispatcher);
 
 			// doing similar to ServiceMetadataExtension
-			BuildScriptDispatcher (endpoint, endpointDispatcher, "/js", false);
-			BuildScriptDispatcher (endpoint, endpointDispatcher, "/jsdebug", true);
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "js", false);
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "jsdebug", true);
 		}
 
 		void BuildScriptDispatcher (ServiceEndpoint endpoint, EndpointDispatcher ed, string subPath, bool debug)
@@ -103,11 +103,14 @@ namespace System.ServiceModel.Description
 			var instance = new InteropScriptService (endpoint.Contract.ContractType, endpoint.Address.Uri.ToString (), debug);
 
 			var cdOrg = ed.ChannelDispatcher;
-			var uri = new Uri (cdOrg.Listener.Uri, subPath);
-			var cd = new ChannelDispatcher (endpoint.Binding.BuildChannelListener<IReplyChannel> (uri), String.Empty);
+			var baseUriString = endpoint.ListenUri.ToString ();
+			var uri = new Uri (String.Concat (baseUriString, baseUriString [baseUriString.Length - 1] == '/' ? String.Empty : "/", subPath));
+			var listener = endpoint.Binding.BuildChannelListener<IReplyChannel> (uri);
+			var cd = new ChannelDispatcher (listener, String.Empty);
 			cd.MessageVersion = MessageVersion.None;
 
-			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty));
+			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty)
+				{ ContractFilter = new MatchAllMessageFilter () });
 
 			var dr = cd.Endpoints [0].DispatchRuntime;
 			var dop = new DispatchOperation (dr, "Get", "*", "*");
