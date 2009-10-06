@@ -1,3 +1,9 @@
+2009-10-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* StringTest.cs (Contains): Add test for Contains using
+	an Ordinal compare. Bug #535425.
+
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add a test for missing.

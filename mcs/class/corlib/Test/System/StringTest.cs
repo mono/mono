@@ -2283,6 +2283,7 @@ public class StringTest
 		Assert.IsTrue ("ABC".Contains ("ABC"));
 		Assert.IsTrue ("ABC".Contains ("AB"));
 		Assert.IsTrue (!"ABC".Contains ("AD"));
+		Assert.IsTrue (!"encyclopædia".Contains("encyclopaedia"));
 	}
 
 	[Test]
