@@ -605,6 +605,7 @@ public abstract class Encoding
 		return encoding_infos;
 	}
 
+#if !NET_2_1 || MONOTOUCH
 	[ComVisible (false)]
 	public bool IsAlwaysNormalized ()
 	{
@@ -617,6 +618,8 @@ public abstract class Encoding
 		// umm, ASCIIEncoding should have overriden this method, no?
 		return form == NormalizationForm.FormC && this is ASCIIEncoding;
 	}
+#endif // NET_2_1
+
 #endif
 
 	// Table of builtin web encoding names and the corresponding code pages.

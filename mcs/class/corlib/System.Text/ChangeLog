@@ -1,3 +1,8 @@
+2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Encoding.cs: Remove normalization methods for Moonlight
+	[Backport r143536]
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Encoding.cs: Add back UTF32 since it's useful for smcs
