@@ -1,3 +1,9 @@
+2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_corlib.dll.sources: Remove normalization files from
+	Moonlight build
+	[Backport r143539]
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_corlib.dll.sources: Add back UTF32 so smcs can compile
