@@ -1441,6 +1441,7 @@ namespace System
 			return (value == null) || (value.Length == 0);
 		}
 
+#if !NET_2_1 || MONOTOUCH
 		public string Normalize ()
 		{
 			return Normalization.Normalize (this, 0);
@@ -1478,6 +1479,7 @@ namespace System
 				return Normalization.IsNormalized (this, 3);
 			}
 		}
+#endif
 
 		public string Remove (int startIndex)
 		{

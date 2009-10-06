@@ -1,3 +1,8 @@
+2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Remove normalization methods for Moonlight
+	[Backport r143533]
+
 2009-10-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* String.cs (Contains): Use CompareOptions.Ordinal. Fixes bug
