@@ -1,3 +1,9 @@
+2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Use Compare method instead of directly using the
+	decimalCompare internal call.
+	[Backport r143554]
+
 2009-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Enum.cs: Add an internal Value property as a single point to 
