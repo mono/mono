@@ -271,6 +271,10 @@ ifdef MONO_TRACE
 LIB_MCS_FLAGS += -define:TRACE -define:MONO_TRACE
 endif
 
+ifdef PIPELINE_TIMER
+LIB_MCS_FLAGS += -define:PIPELINE_TIMER
+endif
+
 ifdef DEVEL
 LIB_MCS_FLAGS += -define:DEVEL
 endif
