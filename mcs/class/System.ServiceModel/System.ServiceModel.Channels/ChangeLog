@@ -1,5 +1,12 @@
 2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : use file path given by the factory to
+	  construct BaseAddresses. Requests to "test.svc/jsdebug" should
+	  not be handled as request to "jsdebug" file, it's rather an
+	  "argument" to "test.svc".
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs, HttpChannelListener.cs : some significant
 	  rewrite to handle shutdown situation better. The listeners should
 	  not close channels that it opened. Instead, just stop accepting

@@ -135,7 +135,7 @@ namespace System.ServiceModel.Channels {
 				return;
 
 			//ServiceHost for this not created yet
-			var baseUri = new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Path));
+			var baseUri = new Uri (new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Authority)), path);
 			if (factory_type != null) {
 				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
 			}
