@@ -200,7 +200,7 @@ mono_arm_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 	setup_context (&ctx);
 
 	/*printf ("stack in throw: %p\n", esp);*/
-	MONO_CONTEXT_SET_BP (&ctx, esp);
+	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
 	MONO_CONTEXT_SET_SP (&ctx, esp);
 	MONO_CONTEXT_SET_IP (&ctx, eip);
 	memcpy (&ctx.regs, int_regs, sizeof (gulong) * 8);
@@ -371,7 +371,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 	if (prev_ji && (ip > prev_ji->code_start && ((guint8*)ip < ((guint8*)prev_ji->code_start) + prev_ji->code_size)))
 		ji = prev_ji;
 	else
-		ji = mono_jit_info_table_find (domain, ip);
+		ji = mini_jit_info_table_find (domain, ip);
 
 	if (managed)
 		*managed = FALSE;
@@ -430,7 +430,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 		
 		*new_ctx = *ctx;
 
-		if ((ji = mono_jit_info_table_find (domain, (gpointer)(*lmf)->eip))) {
+		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip))) {
 		} else {
 			if (!(*lmf)->method)
 				return (gpointer)-1;

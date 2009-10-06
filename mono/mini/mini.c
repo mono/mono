@@ -2716,9 +2716,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 		target = mono_thread_interruption_request_flag ();
 		break;
-	case MONO_PATCH_INFO_METHOD_RGCTX:
-		target = mono_method_lookup_rgctx (mono_class_vtable (domain, patch_info->data.method->klass), mini_method_get_context (patch_info->data.method)->method_inst);
+	case MONO_PATCH_INFO_METHOD_RGCTX: {
+		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.method->klass);
+		g_assert (vtable);
+
+		target = mono_method_lookup_rgctx (vtable, mini_method_get_context (patch_info->data.method)->method_inst);
 		break;
+	}
 	case MONO_PATCH_INFO_BB_OVF:
 	case MONO_PATCH_INFO_EXC_OVF:
 	case MONO_PATCH_INFO_GOT_OFFSET:
@@ -4256,6 +4260,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 
 			mono_jit_stats.methods_lookups++;
 			vtable = mono_class_vtable (domain, method->klass);
+			g_assert (vtable);
 			mono_runtime_class_init (vtable);
 			return mono_create_ftnptr (target_domain, info->code_start);
 		}
@@ -4396,6 +4401,8 @@ typedef struct {
 	gpointer compiled_method;
 	gpointer runtime_invoke;
 	MonoVTable *vtable;
+	MonoDynCallInfo *dyn_call_info;
+	MonoClass *ret_box_class;
 } RuntimeInvokeInfo;
 
 /**
@@ -4438,7 +4445,6 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		info = g_new0 (RuntimeInvokeInfo, 1);
 
 		invoke = mono_marshal_get_runtime_invoke (method, FALSE);
-		info->runtime_invoke = mono_jit_compile_method (invoke);
 		info->vtable = mono_class_vtable (domain, method->klass);
 		g_assert (info->vtable);
 
@@ -4468,6 +4474,80 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 				info->compiled_method = mono_create_static_rgctx_trampoline (method, info->compiled_method);
 		}
 
+		/*
+		 * We want to avoid AOTing 1000s of runtime-invoke wrappers when running
+		 * in full-aot mode, so we use a slower, but more generic wrapper if
+		 * possible, built on top of the OP_DYN_CALL opcode provided by the JIT.
+		 */
+#ifdef MONO_ARCH_DYN_CALL_SUPPORTED
+		if (mono_aot_only || debug_options.dyn_runtime_invoke) {
+			MonoMethodSignature *sig = mono_method_signature (method);
+			gboolean supported = TRUE;
+			int i;
+
+			if (method->string_ctor)
+				sig = mono_marshal_get_string_ctor_signature (method);
+
+			for (i = 0; i < sig->param_count; ++i) {
+				MonoType *t = sig->params [i];
+
+				if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
+					supported = FALSE;
+			}
+
+			if (method->klass->contextbound || !info->compiled_method)
+				supported = FALSE;
+
+			if (supported)
+				info->dyn_call_info = mono_arch_dyn_call_prepare (sig);
+
+			if (info->dyn_call_info) {
+				switch (sig->ret->type) {
+				case MONO_TYPE_VOID:
+					break;
+				case MONO_TYPE_I1:
+				case MONO_TYPE_U1:
+				case MONO_TYPE_I2:
+				case MONO_TYPE_U2:
+				case MONO_TYPE_I4:
+				case MONO_TYPE_U4:
+				case MONO_TYPE_I:
+				case MONO_TYPE_U:
+				case MONO_TYPE_I8:
+				case MONO_TYPE_U8:
+				case MONO_TYPE_BOOLEAN:
+				case MONO_TYPE_CHAR:
+				case MONO_TYPE_R4:
+				case MONO_TYPE_R8:
+					info->ret_box_class = mono_class_from_mono_type (sig->ret);
+					break;
+				case MONO_TYPE_PTR:
+					info->ret_box_class = mono_defaults.int_class;
+					break;
+				case MONO_TYPE_STRING:
+				case MONO_TYPE_CLASS:  
+				case MONO_TYPE_ARRAY:
+				case MONO_TYPE_SZARRAY:
+				case MONO_TYPE_OBJECT:
+					break;
+				case MONO_TYPE_GENERICINST:
+					if (!MONO_TYPE_IS_REFERENCE (sig->ret))
+						info->ret_box_class = mono_class_from_mono_type (sig->ret);
+					break;
+				case MONO_TYPE_VALUETYPE:
+					info->ret_box_class = mono_class_from_mono_type (sig->ret);
+					break;
+				default:
+					g_assert_not_reached ();
+					break;
+				}
+			}
+		}
+#endif
+
+		if (!info->dyn_call_info)
+			info->runtime_invoke = mono_jit_compile_method (invoke);
+
 		mono_domain_lock (domain);
 		info2 = g_hash_table_lookup (domain_info->runtime_invoke_hash, method);
 		if (info2) {
@@ -4476,7 +4556,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		} else {
 			g_hash_table_insert (domain_info->runtime_invoke_hash, method, info);
 		}
-		mono_domain_unlock (domain);		
+		mono_domain_unlock (domain);
 	}
 
 	runtime_invoke = info->runtime_invoke;
@@ -4486,6 +4566,52 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	 * the helper method in System.Object and not the target class.
 	 */
 	mono_runtime_class_init (info->vtable);
+
+#ifdef MONO_ARCH_DYN_CALL_SUPPORTED
+	if (info->dyn_call_info) {
+		MonoMethodSignature *sig = mono_method_signature (method);
+		gpointer *args;
+		static RuntimeInvokeDynamicFunction dyn_runtime_invoke;
+		int i, pindex;
+		guint8 buf [128];
+		guint8 retval [128];
+
+		if (!dyn_runtime_invoke) {
+			invoke = mono_marshal_get_runtime_invoke_dynamic ();
+			dyn_runtime_invoke = mono_jit_compile_method (invoke);
+		}
+
+		/* Convert the arguments to the format expected by start_dyn_call () */
+		args = g_alloca ((sig->param_count + sig->hasthis) * sizeof (gpointer));
+		pindex = 0;
+		if (sig->hasthis)
+			args [pindex ++] = &obj;
+		for (i = 0; i < sig->param_count; ++i) {
+			MonoType *t = sig->params [i];
+
+			if (t->byref) {
+				args [pindex ++] = &params [i];
+			} else if (MONO_TYPE_IS_REFERENCE (t) || t->type == MONO_TYPE_PTR) {
+				args [pindex ++] = &params [i];
+			} else {
+				args [pindex ++] = params [i];
+			}
+		}
+
+		//printf ("M: %s\n", mono_method_full_name (method, TRUE));
+
+		mono_arch_start_dyn_call (info->dyn_call_info, (gpointer**)args, retval, buf, sizeof (buf));
+
+		dyn_runtime_invoke (buf, exc, info->compiled_method);
+
+		mono_arch_finish_dyn_call (info->dyn_call_info, buf);
+
+		if (info->ret_box_class)
+			return mono_value_box (domain, info->ret_box_class, retval);
+		else
+			return *(MonoObject**)retval;
+	}
+#endif
 
 	return runtime_invoke (obj, params, exc, info->compiled_method);
 }
@@ -4678,9 +4804,11 @@ mini_parse_debug_options (void)
 			debug_options.suspend_on_sigsegv = TRUE;
 		else if (!strcmp (arg, "dont-free-domains"))
 			mono_dont_free_domains = TRUE;
+		else if (!strcmp (arg, "dyn-runtime-invoke"))
+			debug_options.dyn_runtime_invoke = TRUE;
 		else {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'dont-free-domains', 'suspend-on-sigsegv'\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'dont-free-domains', 'suspend-on-sigsegv', 'dyn-runtime-invoke'\n");
 			exit (1);
 		}
 	}
@@ -4730,6 +4858,8 @@ mini_get_addr_from_ftnptr (gpointer descr)
 	return descr;
 #endif
 }	
+
+static void runtime_invoke_info_free (gpointer value);
  
 static void
 mini_create_jit_domain_info (MonoDomain *domain)
@@ -4742,7 +4872,7 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	info->delegate_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->static_rgctx_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	info->runtime_invoke_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, g_free);
+	info->runtime_invoke_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
 
 	domain->runtime_info = info;
 }
@@ -4759,6 +4889,18 @@ dynamic_method_info_free (gpointer key, gpointer value, gpointer user_data)
 	MonoJitDynamicMethodInfo *di = value;
 	mono_code_manager_destroy (di->code_mp);
 	g_free (di);
+}
+
+static void
+runtime_invoke_info_free (gpointer value)
+{
+	RuntimeInvokeInfo *info = (RuntimeInvokeInfo*)value;
+
+#ifdef MONO_ARCH_DYN_CALL_SUPPORTED
+	if (info->dyn_call_info)
+		mono_arch_dyn_call_free (info->dyn_call_info);
+#endif
+	g_free (info);
 }
 
 static void

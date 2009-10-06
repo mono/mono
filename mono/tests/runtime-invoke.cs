@@ -93,15 +93,37 @@ class Tests
 		return 0;
 	}
 
+	public struct Foo
+	{
+		public string ToString2 () {
+			return "FOO";
+		}
+	}
+
+	public static object GetNSObject (IntPtr i) {
+		return i;
+	}
+
+	public static int test_0_vtype_method_sharing () {
+		/* Check sharing of wrappers of vtype methods with static methods having an IntPtr argument */
+		if ((string)(typeof (Foo).GetMethod ("ToString2").Invoke (new Foo (), null)) != "FOO")
+			return 3;
+		object o = typeof (Tests).GetMethod ("GetNSObject").Invoke (null, new object [] { new IntPtr (42) });
+		if (!(o is IntPtr) || ((IntPtr)o != new IntPtr (42)))
+			return 4;
+
+		return 0;
+	}
+
 	public static unsafe int test_0_ptr () {
 		int[] arr = new int [10];
 		fixed (void *p = &arr [5]) {
-			object o = typeof (Tests).GetMethod ("Test").Invoke (null, new object [1] { new IntPtr (p) });
+			object o = typeof (Tests).GetMethod ("data_types_ptr").Invoke (null, new object [1] { new IntPtr (p) });
 			void *p2 = Pointer.Unbox (o);
 			if (new IntPtr (p) != new IntPtr (p2))
 				return 1;
 
-			o = typeof (Tests).GetMethod ("Test").Invoke (null, new object [1] { null });
+			o = typeof (Tests).GetMethod ("data_types_ptr").Invoke (null, new object [1] { null });
 			p2 = Pointer.Unbox (o);
 			if (new IntPtr (p2) != IntPtr.Zero)
 				return 1;
@@ -110,8 +132,50 @@ class Tests
 		return 0;
 	}
 
-    public static unsafe int* Test (int *val) {
-		Console.WriteLine (new IntPtr (val));
+	public static int test_0_string_ctor () {
+		string res = (string)typeof (String).GetConstructor (new Type [] { typeof (char[]) }).Invoke (null, new object [] { new char [] { 'A', 'B', 'C' } });
+		if (res == "ABC")
+			return 0;
+		else
+			return 1;
+	}
+
+	public class Foo<T> {
+		public T t;
+	}
+
+	public static int test_0_ginst_ref () {
+		Foo<string> f = new Foo<string> { t = "A" };
+		Foo<string> f2 = (Foo<string>)typeof (Tests).GetMethod ("data_types_ginst_ref").MakeGenericMethod (new Type [] { typeof (string) }).Invoke (null, new object [] { f });
+		if (f2.t != "A")
+			return 1;
+		else
+			return 0;
+	}
+
+	public static int test_0_ginst_vtype () {
+		FooStruct<string> f = new FooStruct<string> { t = "A" };
+		FooStruct<string> f2 = (FooStruct<string>)typeof (Tests).GetMethod ("data_types_ginst_vtype").MakeGenericMethod (new Type [] { typeof (string) }).Invoke (null, new object [] { f });
+		if (f2.t != "A")
+			return 1;
+		else
+			return 0;
+	}
+
+	public static Foo<T> data_types_ginst_ref<T> (Foo<T> f) {
+		return f;
+	}
+
+	public struct FooStruct<T> {
+		public T t;
+	}
+
+	public static FooStruct<T> data_types_ginst_vtype<T> (FooStruct<T> f) {
+		return f;
+	}
+
+    public static unsafe int* data_types_ptr (int *val) {
+		//Console.WriteLine (new IntPtr (val));
         return val;
     }
 }

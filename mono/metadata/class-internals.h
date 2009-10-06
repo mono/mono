@@ -973,7 +973,7 @@ typedef struct {
 	MonoClass *delegate_class;
 	MonoClass *multicastdelegate_class;
 	MonoClass *asyncresult_class;
-	MonoClass *waithandle_class;
+	MonoClass *manualresetevent_class;
 	MonoClass *typehandle_class;
 	MonoClass *fieldhandle_class;
 	MonoClass *methodhandle_class;
@@ -1238,5 +1238,11 @@ mono_class_setup_interfaces (MonoClass *klass) MONO_INTERNAL;
 
 MonoClassField*
 mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoType *type) MONO_INTERNAL;
+
+MonoVTable*
+mono_class_vtable_full (MonoDomain *domain, MonoClass *class, gboolean raise_on_error) MONO_INTERNAL;
+
+gboolean
+mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */

@@ -616,8 +616,7 @@ Authors:
 %_prefix/lib/mono/2.0/System.ServiceModel.dll
 %_prefix/lib/mono/gac/System.ServiceModel.Web
 %_prefix/lib/mono/2.0/System.ServiceModel.Web.dll
-%_prefix/lib/mono/2.0/svcutil.exe
-%_prefix/lib/mono/2.0/svcutil.exe.mdb
+%_prefix/lib/mono/2.0/svcutil.exe*
 %_libdir/pkgconfig/wcf.pc
 
 %package -n mono-winfxcore
@@ -1006,6 +1005,7 @@ fi
 %_prefix/lib/mono/2.0/Microsoft.VisualBasic.targets
 %_prefix/lib/mono/2.0/MSBuild
 %_prefix/lib/mono/2.0/xbuild.rsp
+%_prefix/lib/mono/xbuild
 # man pages
 %_mandir/man1/cert2spc.1%ext_man
 %_mandir/man1/mono-cil-strip.1%ext_man
@@ -1212,7 +1212,7 @@ export CFLAGS=" $RPM_OPT_FLAGS -DKDE_ASSEMBLIES='\"/opt/kde3/%{_lib}\"' -fno-str
 %configure \
   --with-jit=yes \
   --with-ikvm=yes \
-  --with-moonlight=yes
+  --with-moonlight=no
 make
 
 %install

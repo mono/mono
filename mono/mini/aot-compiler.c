@@ -879,11 +879,11 @@ arch_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp_
 	*tramp_size = 24;
 	code = buf;
 	/* Load rgctx value */
-	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 8);
-	ARM_LDR_REG_REG (code, MONO_ARCH_RGCTX_REG, ARMREG_PC, ARMREG_R1);
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 8);
+	ARM_LDR_REG_REG (code, MONO_ARCH_RGCTX_REG, ARMREG_PC, ARMREG_IP);
 	/* Load branch addr + branch */
-	ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 4);
-	ARM_LDR_REG_REG (code, ARMREG_PC, ARMREG_PC, ARMREG_R1);
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 4);
+	ARM_LDR_REG_REG (code, ARMREG_PC, ARMREG_PC, ARMREG_IP);
 
 	g_assert (code - buf == 16);
 
@@ -1355,7 +1355,9 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 	if (method->wrapper_type) {
 		if (method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
 			char *tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
-			if (mono_marshal_method_from_wrapper (method) != method) {
+			if (strcmp (method->name, "runtime_invoke_dynamic")) {
+				name = mono_aot_wrapper_name (method);
+			} else if (mono_marshal_method_from_wrapper (method) != method) {
 				/* Direct wrapper, encode it normally */
 			} else {
 				name = g_strdup_printf ("(wrapper runtime-invoke):%s (%s)", method->name, tmpsig);
@@ -1706,6 +1708,52 @@ get_runtime_invoke_sig (MonoMethodSignature *sig)
 	return mono_marshal_get_runtime_invoke (m, FALSE);
 }
 
+static gboolean
+can_marshal_struct (MonoClass *klass)
+{
+	MonoClassField *field;
+	gboolean can_marshal = TRUE;
+	gpointer iter = NULL;
+
+	if ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_AUTO_LAYOUT)
+		return FALSE;
+
+	/* Only allow a few field types to avoid asserts in the marshalling code */
+	while ((field = mono_class_get_fields (klass, &iter))) {
+		if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+			continue;
+
+		switch (field->type->type) {
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+		case MONO_TYPE_I:
+		case MONO_TYPE_U:
+		case MONO_TYPE_PTR:
+		case MONO_TYPE_R4:
+		case MONO_TYPE_R8:
+		case MONO_TYPE_STRING:
+			break;
+		case MONO_TYPE_VALUETYPE:
+			if (!can_marshal_struct (mono_class_from_mono_type (field->type)))
+				can_marshal = FALSE;
+			break;
+		default:
+			can_marshal = FALSE;
+			break;
+		}
+	}
+
+	return can_marshal;
+}
+
 static void
 add_wrappers (MonoAotCompile *acfg)
 {
@@ -1751,9 +1799,23 @@ add_wrappers (MonoAotCompile *acfg)
 				skip = TRUE;
 		}
 
-		if (!skip)
+#ifdef MONO_ARCH_DYN_CALL_SUPPORTED
+		if (!method->klass->contextbound) {
+			MonoDynCallInfo *info = mono_arch_dyn_call_prepare (sig);
+
+			if (info) {
+				/* Supported by the dynamic runtime-invoke wrapper */
+				skip = TRUE;
+				g_free (info);
+			}
+		}
+#endif
+
+		if (!skip) {
+			//printf ("%s\n", mono_method_full_name (method, TRUE));
 			add_method (acfg, mono_marshal_get_runtime_invoke (method, FALSE));
-	}
+		}
+ 	}
 
 	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
 #ifdef MONO_ARCH_HAVE_TLS_GET
@@ -1815,6 +1877,15 @@ add_wrappers (MonoAotCompile *acfg)
 
 		/* runtime-invoke used by finalizers */
 		add_method (acfg, mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE));
+
+		/* This is used by mono_runtime_capture_context () */
+		method = mono_get_context_capture_method ();
+		if (method)
+			add_method (acfg, mono_marshal_get_runtime_invoke (method, FALSE));
+
+#ifdef MONO_ARCH_DYN_CALL_SUPPORTED
+		add_method (acfg, mono_marshal_get_runtime_invoke_dynamic ());
+#endif
 
 		/* JIT icall wrappers */
 		/* FIXME: locking */
@@ -1925,38 +1996,9 @@ add_wrappers (MonoAotCompile *acfg)
 		token = MONO_TOKEN_TYPE_DEF | (i + 1);
 		klass = mono_class_get (acfg->image, token);
 
-		if (klass->valuetype && !klass->generic_container && ((klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) != TYPE_ATTRIBUTE_AUTO_LAYOUT)) {
-			gboolean can_marshal = TRUE;
-			gpointer iter = NULL;
-			MonoClassField *field;
-
-			/* Only allow a few field types to avoid asserts in the marshalling code */
-			while ((field = mono_class_get_fields (klass, &iter))) {
-				switch (field->type->type) {
-				case MONO_TYPE_I4:
-				case MONO_TYPE_U4:
-				case MONO_TYPE_I1:
-				case MONO_TYPE_U1:
-				case MONO_TYPE_BOOLEAN:
-				case MONO_TYPE_I2:
-				case MONO_TYPE_U2:
-				case MONO_TYPE_CHAR:
-				case MONO_TYPE_I8:
-				case MONO_TYPE_U8:
-				case MONO_TYPE_PTR:
-				case MONO_TYPE_R4:
-				case MONO_TYPE_R8:
-					break;
-				default:
-					can_marshal = FALSE;
-					break;
-				}
-			}
-
-			if (can_marshal) {
-				add_method (acfg, mono_marshal_get_struct_to_ptr (klass));
-				add_method (acfg, mono_marshal_get_ptr_to_struct (klass));
-			}
+		if (klass->valuetype && !klass->generic_container && can_marshal_struct (klass)) {
+			add_method (acfg, mono_marshal_get_struct_to_ptr (klass));
+			add_method (acfg, mono_marshal_get_ptr_to_struct (klass));
 		}
 	}
 }
@@ -2048,12 +2090,11 @@ add_generic_class (MonoAotCompile *acfg, MonoClass *klass)
 	}
 
 	/* 
-	 * For ICollection<T>, where T is a vtype, add instances of the helper methods
+	 * For ICollection<T>, add instances of the helper methods
 	 * in Array, since a T[] could be cast to ICollection<T>.
 	 */
 	if (klass->image == mono_defaults.corlib && !strcmp (klass->name_space, "System.Collections.Generic") &&
-		(!strcmp(klass->name, "ICollection`1") || !strcmp (klass->name, "IEnumerable`1") || !strcmp (klass->name, "IList`1") || !strcmp (klass->name, "IEnumerator`1")) &&
-		MONO_TYPE_ISSTRUCT (klass->generic_class->context.class_inst->type_argv [0])) {
+		(!strcmp(klass->name, "ICollection`1") || !strcmp (klass->name, "IEnumerable`1") || !strcmp (klass->name, "IList`1") || !strcmp (klass->name, "IEnumerator`1"))) {
 		MonoClass *tclass = mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [0]);
 		MonoClass *array_class = mono_bounded_array_class_get (tclass, 1, FALSE);
 		gpointer iter;
@@ -2085,6 +2126,51 @@ add_generic_class (MonoAotCompile *acfg, MonoClass *klass)
 		}
 
 		g_free (name_prefix);
+
+		/* 
+		 * Add instance of Array.GetGenericValueImpl, which is called by the
+		 * array helper methods.
+		 * managed-to-native wrappers are not shared, so have to generate 
+		 * these for ref types too.
+		 */
+		if (acfg->aot_opts.full_aot) {
+			MonoGenericContext ctx;
+			MonoType *args [16];
+			static MonoMethod *get_method;
+
+			if (get_method == NULL) {
+				MonoClass *array_klass = mono_array_class_get (mono_defaults.int_class, 1)->parent;
+				get_method = mono_class_get_method_from_name (array_klass, "GetGenericValueImpl", 2);
+			}
+
+			if (get_method) {
+				memset (&ctx, 0, sizeof (ctx));
+				args [0] = &tclass->byval_arg;
+				ctx.method_inst = mono_metadata_get_generic_inst (1, args);
+				add_extra_method (acfg, mono_marshal_get_native_wrapper (mono_class_inflate_generic_method (get_method, &ctx), TRUE, TRUE));
+			}
+		}
+	}
+
+	/* Add an instance of GenericComparer<T> which is created dynamically by Comparer<T> */
+	if (klass->image == mono_defaults.corlib && !strcmp (klass->name_space, "System.Collections.Generic") && !strcmp (klass->name, "Comparer`1")) {
+		MonoClass *tclass = mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [0]);
+		MonoClass *icomparable, *gcomparer;
+		MonoGenericContext ctx;
+		MonoType *args [16];
+
+		memset (&ctx, 0, sizeof (ctx));
+
+		icomparable = mono_class_from_name (mono_defaults.corlib, "System", "IComparable`1");
+		g_assert (icomparable);
+		args [0] = &tclass->byval_arg;
+		ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+
+		if (mono_class_is_assignable_from (mono_class_inflate_generic_class (icomparable, &ctx), tclass)) {
+			gcomparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "GenericComparer`1");
+			g_assert (gcomparer);
+			add_generic_class (acfg, mono_class_inflate_generic_class (gcomparer, &ctx));
+		}
 	}
 }
 
@@ -2252,6 +2338,23 @@ add_generic_instances (MonoAotCompile *acfg)
 			args [0] = &mono_defaults.uint64_class->byval_arg;
 			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 			add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx));
+
+			args [0] = &mono_defaults.char_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx));
+
+			args [0] = &mono_defaults.boolean_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx));
+
+			args [0] = &mono_defaults.single_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx));
+
+			args [0] = &mono_defaults.double_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (klass, &ctx));
+
 		}
 
 		/* Emit the array wrapper methods for arrays of primitive types */
@@ -4159,10 +4262,15 @@ mono_aot_wrapper_name (MonoMethod *method)
 
 	switch (method->wrapper_type) {
 	case MONO_WRAPPER_RUNTIME_INVOKE:
+		if (!strcmp (method->name, "runtime_invoke_dynamic"))
+			name = g_strdup_printf ("(wrapper runtime-invoke-dynamic)");
+		else
+			name = g_strdup_printf ("%s (%s)", method->name, tmpsig);
+		break;
 	case MONO_WRAPPER_DELEGATE_INVOKE:
 	case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
 	case MONO_WRAPPER_DELEGATE_END_INVOKE:
-		/* This is a hack to work around the fact that runtime invoke wrappers get assigned to some random class */
+		/* This is a hack to work around the fact that these wrappers get assigned to some random class */
 		name = g_strdup_printf ("%s (%s)", method->name, tmpsig);
 		break;
 	default:

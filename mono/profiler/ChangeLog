@@ -1,3 +1,8 @@
+2009-09-14  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Removed the use of signals to control the
+	profiler and extended the socket based interface to control also
+	heap snapshots.
+
 2009-08-21  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Changed max depth of call chains to 128.
 

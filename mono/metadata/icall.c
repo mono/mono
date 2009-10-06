@@ -72,6 +72,7 @@
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/mono-string.h>
 
 #if defined (PLATFORM_WIN32)
 #include <windows.h>
@@ -948,11 +949,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 	klass = mono_class_from_mono_type (handle);
 	MONO_CHECK_ARG (handle, klass);
 
-	vtable = mono_class_vtable (mono_domain_get (), klass);
-	if (klass->exception_type != MONO_EXCEPTION_NONE)
-		mono_raise_exception (mono_class_get_exception_for_failure (klass));
-
-	MONO_CHECK_ARG (handle, vtable);
+	vtable = mono_class_vtable_full (mono_domain_get (), klass, TRUE);
 
 	/* This will call the type constructor */
 	mono_runtime_class_init (vtable);
@@ -966,7 +963,8 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 	mono_image_check_for_module_cctor (image);
 	if (image->has_module_cctor) {
 		MonoClass *module_klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | 1);
-		mono_runtime_class_init (mono_class_vtable (mono_domain_get (), module_klass));
+		/*It's fine to raise the exception here*/
+		mono_runtime_class_init (mono_class_vtable_full (mono_domain_get (), module_klass, TRUE));
 	}
 }
 
@@ -1803,7 +1801,7 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 
 	vtable = NULL;
 	if (is_static) {
-		vtable = mono_class_vtable (domain, cf->parent);
+		vtable = mono_class_vtable_full (domain, cf->parent, TRUE);
 		if (!vtable->initialized && !(cf->type->attrs & FIELD_ATTRIBUTE_LITERAL))
 			mono_runtime_class_init (vtable);
 	}
@@ -1918,7 +1916,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 	}
 
 	if (cf->type->attrs & FIELD_ATTRIBUTE_STATIC) {
-		MonoVTable *vtable = mono_class_vtable (mono_object_domain (field), cf->parent);
+		MonoVTable *vtable = mono_class_vtable_full (mono_object_domain (field), cf->parent, TRUE);
 		if (!vtable->initialized)
 			mono_runtime_class_init (vtable);
 		mono_field_static_set_value (vtable, cf, v);
@@ -2356,7 +2354,7 @@ ves_icall_MonoType_GetGenericArguments (MonoReflectionType *type)
 	MonoArray *res;
 	MonoClass *klass, *pklass;
 	MonoDomain *domain = mono_object_domain (type);
-	MonoVTable *array_vtable = mono_class_vtable (domain, mono_array_class_get_cached (mono_defaults.systemtype_class, 1));
+	MonoVTable *array_vtable = mono_class_vtable_full (domain, mono_array_class_get_cached (mono_defaults.systemtype_class, 1), TRUE);
 	int i;
 	MONO_ARCH_SAVE_REGS;
 
@@ -3266,7 +3264,7 @@ ves_icall_Type_GetField (MonoReflectionType *type, MonoString *name, guint32 bfl
 	if (type->type->byref)
 		return NULL;
 
-	compare_func = (bflags & BFLAGS_IgnoreCase) ? g_strcasecmp : strcmp;
+	compare_func = (bflags & BFLAGS_IgnoreCase) ? mono_utf8_strcasecmp : strcmp;
 
 handle_parent:
 	if (klass->exception_type != MONO_EXCEPTION_NONE)
@@ -3434,7 +3432,7 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 	}
 
 	domain = ((MonoObject *)type)->vtable->domain;
-	array_vtable = mono_class_vtable (domain, MethodInfo_array);
+	array_vtable = mono_class_vtable_full (domain, MethodInfo_array, TRUE);
 	if (type->type->byref)
 		return mono_array_new_specific (array_vtable, 0);
 	klass = startklass = mono_class_from_mono_type (type->type);
@@ -3442,7 +3440,7 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 	len = 0;
 	if (name != NULL) {
 		mname = mono_string_to_utf8 (name);
-		compare_func = (ignore_case) ? g_strcasecmp : strcmp;
+		compare_func = (ignore_case) ? mono_utf8_strcasecmp : strcmp;
 	}
 
 	/* An optimization for calls made from Delegate:CreateDelegate () */
@@ -3685,7 +3683,7 @@ ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, 
 	klass = startklass = mono_class_from_mono_type (type->type);
 	if (name != NULL) {
 		propname = mono_string_to_utf8 (name);
-		compare_func = (ignore_case) ? g_strcasecmp : strcmp;
+		compare_func = (ignore_case) ? mono_utf8_strcasecmp : strcmp;
 	}
 
 	mono_class_setup_vtable (klass);
@@ -6677,7 +6675,7 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 	MONO_ARCH_SAVE_REGS;
 
 	klass = mono_class_from_mono_type (type->type);
-	vtable = mono_class_vtable (mono_domain_get (), klass);
+	vtable = mono_class_vtable_full (mono_domain_get (), klass, TRUE);
 
 	if (enable) vtable->remote = 1;
 	else vtable->remote = 0;
@@ -6699,7 +6697,7 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 		return (MonoObject *) mono_array_new (domain, klass->element_class, 0);
 	} else {
 		/* Bypass remoting object creation check */
-		return mono_object_new_alloc_specific (mono_class_vtable (domain, klass));
+		return mono_object_new_alloc_specific (mono_class_vtable_full (domain, klass, TRUE));
 	}
 }
 

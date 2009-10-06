@@ -1,3 +1,7 @@
+2009-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* cil-opcodes.xml: Add mono_dyn_call opcode.
+
 2009-07-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	cil-opcodes.xml: Fix naming of stelem and ldelem to be

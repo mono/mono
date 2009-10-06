@@ -45,7 +45,8 @@ STRESS_TESTS_SRC=	\
 	thread-stress.cs	\
 	gc-stress.cs		\
 	exit-stress.cs		\
-	process-stress.cs
+	process-stress.cs	\
+	assembly-load-stress.cs
 
 BASE_TEST_CS_SRC=		\
 	array-init.cs		\
@@ -358,7 +359,8 @@ BASE_TEST_CS_SRC=		\
 	finalizer-wait.cs	\
 	critical-finalizers.cs	\
 	appdomain-thread-abort.cs \
-	w32message.cs
+	w32message.cs	\
+	bug-544446.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
@@ -371,7 +373,7 @@ endif
 endif
 
 if IA64
-TEST_CS_SRC+=async-exc-compilation.cs
+TEST_CS_SRC+=async-exc-compilation.cs filter-stack.cs
 # bug #319249
 PLATFORM_DISABLED_TESTS=exception17.exe
 PLATFORM_DISABLED_TESTS+=winx64structs.exe
@@ -455,6 +457,7 @@ TEST_IL_SRC=			\
 	generic-valuetype-newobj2.2.il	\
 	generic-valuetype-newobj.2.il	\
 	generic-constrained.2.il	\
+	generic-type-load-exception.2.il	\
 	bug-81466.il	\
 	bug457574.il	\
 	bug445361.il	\
@@ -462,6 +465,7 @@ TEST_IL_SRC=			\
 	bug469742.2.il	\
 	bug-528055.il	\
 	constraints-load.il	\
+	array_load_exception.il \
 	bug-481403.il
 
 #	bug-318677.il
@@ -518,7 +522,7 @@ endif
 
 # test_messages fails on the buildbots
 #test: assemblyresolve/test/asm.dll testjit test-type-load test-generic-sharing test_platform test_2_1 test_messages
-test: assemblyresolve/test/asm.dll testjit test-type-load test-generic-sharing test_platform test_2_1
+test: assemblyresolve/test/asm.dll testjit test-type-load test-generic-sharing test_platform test-runtime-invoke test_2_1
 
 assemblyresolve/test/asm.dll:
 	$(MAKE) -C assemblyresolve prereq
@@ -637,6 +641,14 @@ test-type-load: TestDriver.dll
 	@$(MCS) -t:library -out:t.dll $(srcdir)/t-missing.cs
 	@echo "Testing load-exception.exe..."
 	@$(RUNTIME) load-exceptions.exe > load-exceptions.exe.stdout 2> load-exceptions.exe.stderr
+
+# Generated tests for runtime invoke
+EXTRA_DIST += gen-runtime-invoke.cs
+test-runtime-invoke: TestDriver.dll gen-runtime-invoke.exe
+	@$(RUNTIME) gen-runtime-invoke.exe > runtime-invoke.gen.cs
+	@$(MCS) -out:runtime-invoke.gen.exe -r:TestDriver.dll runtime-invoke.gen.cs
+	@echo "Testing runtime-invoke.gen.exe..."
+	@$(RUNTIME) runtime-invoke.gen.exe > runtime-invoke.gen.exe.stdout 2> runtime-invoke.gen.exe.stderr
 
 EXTRA_DIST += test-inline-call-stack-library.cs test-inline-call-stack.cs
 test-inline-call-stack-library.dll: TestDriver.dll $(srcdir)/test-inline-call-stack-library.cs
@@ -780,7 +792,8 @@ test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		generic-sealed-virtual.2.exe generic-system-arrays.2.exe	\
 		generic-stack-traces.2.exe generic-stack-traces2.2.exe		\
 		bug-472600.2.exe bug-473482.2.exe bug-473999.2.exe		\
-		bug-479763.2.exe generic-xdomain.2.exe
+		bug-479763.2.exe generic-xdomain.2.exe				\
+		generic-type-load-exception.2.exe
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
 		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared                $$fn > $$fn.stdout || exit 1;	\

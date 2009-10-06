@@ -1,3 +1,21 @@
+2009-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Implement get_process_name_from_proc () on solaris.
+
+2009-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c (load_modules): Applied patch from Thomas Philpot
+	(tom.philpot@logos.com). Fixes #533893.
+
+2009-09-15  Jeffrey Stedfast  <fejj@novell.com>
+
+	* io.c (CreateFile): In the directory fallback case, use
+	_wapi_open() again so that IOMAP magic happens.
+	(CopyFile): Need to consistently use _wapi_open() here too.
+	(ReplaceFile): Use _wapi_open() here too and get rid of the
+	fallback code that tried re-opening the file w/o O_TRUNC since
+	there's no reason to do that.
+
 2009-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* handles.c (_wapi_handle_real_new): Call _wapi_process_reap () when running

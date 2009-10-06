@@ -158,6 +158,11 @@ typedef struct {
 
 #define domain_jit_info(domain) ((MonoJitDomainInfo*)((domain)->runtime_info))
 
+/* Arch-specific */
+typedef struct {
+	int dummy;
+} MonoDynCallInfo;
+
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
 	for (b = 0; b < n; b++)\
@@ -1028,6 +1033,9 @@ typedef struct {
 	/*Use to implement simd constructors. This is a vector (16 bytes) var.*/
 	MonoInst *simd_ctor_var;
 
+	/* Used to implement dyn_call */
+	MonoInst *dyn_call_var;
+
 	/* Used by AOT */
 	guint32 got_offset;
 } MonoCompile;
@@ -1231,6 +1239,7 @@ typedef struct {
 	gboolean mdb_optimizations;
 	gboolean no_gdb_backtrace;
 	gboolean suspend_on_sigsegv;
+	gboolean dyn_runtime_invoke;
 } MonoDebugOptions;
 
 enum {
@@ -1582,6 +1591,10 @@ gboolean  mono_arch_print_tree			(MonoInst *tree, int arity) MONO_INTERNAL;
 void      mono_arch_emit_call                   (MonoCompile *cfg, MonoCallInst *call) MONO_INTERNAL;
 void      mono_arch_emit_outarg_vt              (MonoCompile *cfg, MonoInst *ins, MonoInst *src) MONO_INTERNAL;
 void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val) MONO_INTERNAL;
+MonoDynCallInfo *mono_arch_dyn_call_prepare     (MonoMethodSignature *sig) MONO_INTERNAL;
+void      mono_arch_dyn_call_free               (MonoDynCallInfo *info) MONO_INTERNAL;
+void      mono_arch_start_dyn_call              (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf, int buf_len) MONO_INTERNAL;
+void      mono_arch_finish_dyn_call             (MonoDynCallInfo *info, guint8 *buf) MONO_INTERNAL;
 MonoInst *mono_arch_emit_inst_for_method        (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args) MONO_INTERNAL;
 void      mono_arch_decompose_opts              (MonoCompile *cfg, MonoInst *ins) MONO_INTERNAL;
 void      mono_arch_decompose_long_opts         (MonoCompile *cfg, MonoInst *ins) MONO_INTERNAL;
@@ -1654,6 +1667,7 @@ void     mono_jit_walk_stack_from_ctx           (MonoStackWalk func, MonoContext
 void     mono_setup_altstack                    (MonoJitTlsData *tls) MONO_INTERNAL;
 void     mono_free_altstack                     (MonoJitTlsData *tls) MONO_INTERNAL;
 gpointer mono_altstack_restore_prot             (mgreg_t *regs, guint8 *code, gpointer *tramp_data, guint8* tramp) MONO_INTERNAL;
+MonoJitInfo* mini_jit_info_table_find           (MonoDomain *domain, char *addr) MONO_INTERNAL;
 
 MonoJitInfo * mono_find_jit_info                (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, MonoContext *new_ctx, char **trace, MonoLMF **lmf, int *native_offset, gboolean *managed) MONO_INTERNAL;
 
