@@ -98,11 +98,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void GridViewInit ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.TemplateUserControl.ascx", "TemplateUserControl.ascx");
-#else
 			WebTest.CopyResource (GetType (), "TemplateUserControl.ascx", "TemplateUserControl.ascx");
-#endif
 		}
 
 		[SetUp]
@@ -223,11 +219,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TemplateControl_Eval ()
 		{
 			// In this test aspx page used as template control
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.EvalTest.aspx", "EvalTest.aspx");
-#else
 			WebTest.CopyResource (GetType (), "EvalTest.aspx", "EvalTest.aspx");
-#endif
 			WebTest t = new WebTest ("EvalTest.aspx");
 			PageDelegates pd = new PageDelegates ();
 			pd.PreRender = _templatePreRender;

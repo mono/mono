@@ -534,23 +534,6 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			CopyResource (typeof (WebTest), "My.ashx", "My.ashx");
 			CopyResource (typeof (WebTest), "Global.asax", "Global.asax");
-#if VISUAL_STUDIO
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.Web.config",
-				"Web.config");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.MyPage.aspx",
-				"MyPage.aspx");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.MyPage.aspx.cs",
-				"MyPage.aspx.cs");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.MyPageWithMaster.aspx",
-				"MyPageWithMaster.aspx");
-			CopyResource (typeof (WebTest),
-				"MonoTests.SystemWeb.Framework.Resources.My.master",
-				"My.master");
-#else
 #if NET_2_0
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 #else
@@ -560,7 +543,6 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest), "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (typeof (WebTest), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
 			CopyResource (typeof (WebTest), "My.master", "My.master");
-#endif
 		}
 #endif
 	}

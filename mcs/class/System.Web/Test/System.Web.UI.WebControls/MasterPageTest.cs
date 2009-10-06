@@ -77,17 +77,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MasterTypeTest1.aspx", "MasterTypeTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MasterTypeTest2.aspx", "MasterTypeTest2.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MyDerived.master", "MyDerived.master");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MyPageWithDerivedMaster.aspx", "MyPageWithDerivedMaster.aspx");
-#else
 			WebTest.CopyResource (GetType (), "MasterTypeTest1.aspx", "MasterTypeTest1.aspx");
 			WebTest.CopyResource (GetType (), "MasterTypeTest2.aspx", "MasterTypeTest2.aspx");
 			WebTest.CopyResource (GetType (), "MyDerived.master", "MyDerived.master");
 			WebTest.CopyResource (GetType (), "MyPageWithDerivedMaster.aspx", "MyPageWithDerivedMaster.aspx");
-#endif
 		}
 
 		[SetUp]

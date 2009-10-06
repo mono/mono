@@ -187,11 +187,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp()]
 		public void FixtureSetup () 
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DataGrid.aspx", "DataGrid.aspx");
-#else
 			WebTest.CopyResource (GetType (), "DataGrid.aspx", "DataGrid.aspx");
-#endif
 		}
 
 		[TestFixtureTearDown()]

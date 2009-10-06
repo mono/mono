@@ -421,21 +421,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Item5");
 			myds.Add ("Item6");
 
-#if VISUAL_STUDIO
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FooterTemplateTest.aspx",
-                                "FooterTemplateTest.aspx");
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewTemplates.aspx",
-                                "DetailsViewTemplates.aspx");
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewDataActions.aspx",
-                                "DetailsViewDataActions.aspx");
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.DetailsViewProperties1.aspx",
-                                "DetailsViewProperties1.aspx");
-#else
 			WebTest.CopyResource (GetType (), "FooterTemplateTest.aspx", "FooterTemplateTest.aspx");
 			WebTest.CopyResource (GetType (), "DetailsViewTemplates.aspx", "DetailsViewTemplates.aspx");
 			WebTest.CopyResource (GetType (), "DetailsViewDataActions.aspx", "DetailsViewDataActions.aspx");
 			WebTest.CopyResource (GetType (), "DetailsViewProperties1.aspx", "DetailsViewProperties1.aspx");
-#endif
 		}
 
 

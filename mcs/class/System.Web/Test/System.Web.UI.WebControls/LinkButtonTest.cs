@@ -91,11 +91,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
-#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
-#endif
 		}
 
 		[Test]

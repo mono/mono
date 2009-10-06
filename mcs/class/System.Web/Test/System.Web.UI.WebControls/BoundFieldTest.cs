@@ -310,7 +310,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(HttpException), "A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.")]
+		[ExpectedException(typeof(HttpException), ExpectedMessage="A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.")]
 		public void BoundField_GetValueNull () {
 			PokerBoundField bf = new PokerBoundField ();
 			SimpleSpreadsheetRow ds = new SimpleSpreadsheetRow (0, null);

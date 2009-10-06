@@ -185,11 +185,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ListControlPage.aspx", "ListControlPage.aspx");
-#else
 			WebTest.CopyResource (GetType (), "ListControlPage.aspx", "ListControlPage.aspx");
-#endif
 		}
 #endif
 

@@ -47,13 +47,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.CrossPagePosting1.aspx", "CrossPagePosting1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.CrossPagePosting2.aspx", "CrossPagePosting2.aspx");
-#else
 			WebTest.CopyResource (GetType (), "CrossPagePosting1.aspx", "CrossPagePosting1.aspx");
 			WebTest.CopyResource (GetType (), "CrossPagePosting2.aspx", "CrossPagePosting2.aspx");
-#endif
 		}
 
 		[SetUp]

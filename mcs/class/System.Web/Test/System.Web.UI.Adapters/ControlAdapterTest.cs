@@ -174,7 +174,9 @@ namespace MonoTests.System.Web.UI.Adapters
 		
 		public static void ConfigCapabilitiesNotCalled_Reset ()
 		{
+#if !TARGET_DOTNET
 			SystemWebTestShim.HttpCapabilitiesBase.GetConfigCapabilities_called = false;
+#endif
 		}
 			
 		private static EventHandler end_request_handler;
@@ -192,8 +194,10 @@ namespace MonoTests.System.Web.UI.Adapters
 		
 			// GetConfigCapabilities() should not have been called because there are no
 			// files in App_Browsers/.
+#if !TARGET_DOTNET
 			Assert.IsFalse (SystemWebTestShim.HttpCapabilitiesBase.GetConfigCapabilities_called,
 				"ConfigCapabilitiesNotCalled #1");
+#endif
 		}
 		
 #region Support classes

@@ -33,10 +33,15 @@ using System.Web.SessionState;
 using System.Text;
 namespace System.Web.Util {
 	
-	internal class UrlUtils {
+#if VISUAL_STUDIO
+	public
+#else
+	internal 
+#endif
+	class UrlUtils {
 
 		// appRoot + SessionID + vpath
-		internal static string InsertSessionId (string id, string path)
+		public static string InsertSessionId (string id, string path)
 		{
 			string dir = GetDirectory (path);
 			if (!dir.EndsWith ("/"))
@@ -55,8 +60,11 @@ namespace System.Web.Util {
 			return Canonic (appvpath + "(" + id + ")/" + path);
 		}
 
-		internal static string GetSessionId (string path)
+		public static string GetSessionId (string path)
 		{
+#if TARGET_DOTNET
+			return null;
+#else
 			if (path == null)
 				return null;
 
@@ -79,9 +87,10 @@ namespace System.Web.Util {
 				return null;
 
 			return path.Substring (2, SessionId.IdLength);
+#endif
 		}
 
-		internal static bool HasSessionId (string path)
+		public static bool HasSessionId (string path)
 		{
 			if (path == null || path.Length < 5)
 				return false;
@@ -89,7 +98,7 @@ namespace System.Web.Util {
 			return (StrUtils.StartsWith (path, "/(") && path.IndexOf (")/") > 2);
 		}
 
-		internal static string RemoveSessionId (string base_path, string file_path)
+		public static string RemoveSessionId (string base_path, string file_path)
 		{
 			// Caller did a GetSessionId first
 			int idx = base_path.IndexOf ("/(");
@@ -157,7 +166,7 @@ namespace System.Web.Util {
 
 		static char [] path_sep = {'\\', '/'};
 		
-		internal static string Canonic (string path)
+		public static string Canonic (string path)
 		{
 			bool isRooted = IsRooted(path);
 			bool endsWithSlash = path.EndsWith("/");
@@ -205,7 +214,7 @@ namespace System.Web.Util {
 			return str;
 		}
 		
-		internal static string GetDirectory (string url)
+		public static string GetDirectory (string url)
 		{
 			url = url.Replace('\\','/');
 			int last = url.LastIndexOf ('/');
@@ -224,7 +233,7 @@ namespace System.Web.Util {
 		}
 
 #if NET_2_0
-		internal static string RemoveDoubleSlashes (string input)
+		public static string RemoveDoubleSlashes (string input)
 		{
 			// MS VirtualPathUtility removes duplicate '/'
 
@@ -257,7 +266,7 @@ namespace System.Web.Util {
 		}
 #endif
 
-		internal static string GetFile (string url)
+		public static string GetFile (string url)
 		{
 			url = url.Replace('\\','/');
 			int last = url.LastIndexOf ('/');
@@ -270,7 +279,7 @@ namespace System.Web.Util {
 			throw new ArgumentException (String.Format ("GetFile: `{0}' does not contain a /", url));
 		}
 		
-		internal static bool IsRooted (string path)
+		public static bool IsRooted (string path)
 		{
 			if (path == null || path.Length == 0)
 				return true;
@@ -282,7 +291,7 @@ namespace System.Web.Util {
 			return false;
 		}
 
-		internal static bool IsRelativeUrl (string path)
+		public static bool IsRelativeUrl (string path)
 		{
 			return (path [0] != '/' && path.IndexOf (':') == -1);
 		}

@@ -128,13 +128,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#else
 			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
 			WebTest.CopyResource (GetType (), "PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#endif
 		}
 
 		[Test]

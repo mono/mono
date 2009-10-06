@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && !TARGET_DOTNET
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -53,11 +53,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		[TestFixtureSetUp]
 		public void SetUpTest ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithAdapter.aspx", "PageWithAdapter.aspx");
-#else
 			WebTest.CopyResource (GetType (), "PageWithAdapter.aspx", "PageWithAdapter.aspx");
-#endif
 		}
 		
 		[SetUp]

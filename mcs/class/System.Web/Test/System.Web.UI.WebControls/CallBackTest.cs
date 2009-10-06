@@ -46,13 +46,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.CallbackTest1.aspx", "CallbackTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.CallbackTest2.aspx", "CallbackTest2.aspx");
-#else
 			WebTest.CopyResource (GetType (), "CallbackTest1.aspx", "CallbackTest1.aspx");
 			WebTest.CopyResource (GetType (), "CallbackTest2.aspx", "CallbackTest2.aspx");
-#endif
 		}
 
 		[SetUp]

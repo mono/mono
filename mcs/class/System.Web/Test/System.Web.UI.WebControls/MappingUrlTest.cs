@@ -47,20 +47,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Mapping.aspx", "Mapping.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Mapping1.aspx", "Mapping1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.WebMapping.config", "Web.config");
-#else
 			WebTest.CopyResource (GetType (), "Mapping.aspx", "Mapping.aspx");
 			WebTest.CopyResource (GetType (), "Mapping1.aspx", "Mapping1.aspx");
 			WebTest.CopyResource (GetType (), "WebMapping.config", "Web.config");
-#endif
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-        [Category ("NotDotNet")]
+		[Category ("NotDotNet")]
 		[Category ("NotWorking")]
 		public void MappingUrl()
 		{

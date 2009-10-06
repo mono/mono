@@ -435,13 +435,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
-#else
+
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
-#endif
 		}
 
 		[Test]

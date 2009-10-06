@@ -65,13 +65,8 @@ namespace MonoTests.System.Web.UI
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-#if DOT_NET
 			WebTest.CopyResource (GetType (), "EventValidationTest1.aspx", "EventValidationTest1.aspx");
 			WebTest.CopyResource (GetType (), "EventValidationTest2.aspx", "EventValidationTest2.aspx");
-#else
-			WebTest.CopyResource (GetType (), "EventValidationTest1.aspx", "EventValidationTest1.aspx");
-			WebTest.CopyResource (GetType (), "EventValidationTest2.aspx", "EventValidationTest2.aspx");
-#endif
 		}
 
 		[SetUp]

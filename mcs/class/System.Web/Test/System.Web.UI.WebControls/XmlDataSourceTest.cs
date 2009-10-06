@@ -87,21 +87,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest.xml", "XMLDataSourceTest.xml");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest.xsl", "XMLDataSourceTest.xsl");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest1.aspx", "XMLDataSourceTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest2.aspx", "XMLDataSourceTest2.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest3.aspx", "XMLDataSourceTest3.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.XMLDataSourceTest4.aspx", "XMLDataSourceTest4.aspx");
-#else
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest.xml", "XMLDataSourceTest.xml");
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest.xsl", "XMLDataSourceTest.xsl");
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest1.aspx", "XMLDataSourceTest1.aspx");
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest2.aspx", "XMLDataSourceTest2.aspx");
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest3.aspx", "XMLDataSourceTest3.aspx");
                         WebTest.CopyResource (GetType (), "XMLDataSourceTest4.aspx", "XMLDataSourceTest4.aspx");
-#endif
 		}
 
 		[Test]

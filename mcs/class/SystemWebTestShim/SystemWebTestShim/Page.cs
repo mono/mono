@@ -35,12 +35,18 @@ namespace SystemWebTestShim {
 	public class Page : Orig.Page {
 #if NET_2_0
 		public new string RawViewState {
+#if TARGET_DOTNET
+			set; private get;
+#else
 			set { base.RawViewState = value; }
+#endif
 		}
 
 		public new void SetContext (HttpContext ctx)
 		{
+#if !TARGET_DOTNET
 			base.SetContext (ctx);
+#endif
 		}
 #endif
 	}

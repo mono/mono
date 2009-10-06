@@ -54,17 +54,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void Set_Up ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme1.skin", "App_Themes/Theme1/Theme1.skin");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithTheme.aspx", "PageWithTheme.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RunTimeSetTheme.aspx", "RunTimeSetTheme.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.aspx", "UrlProperty.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.ascx", "UrlProperty.ascx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
-			
-#else
 			WebTest.CopyResource (GetType (), "Theme1.skin", "App_Themes/Theme1/Theme1.skin");
 			WebTest.CopyResource (GetType (), "WizardTest.skin", "App_Themes/Theme1/WizardTest.skin");
 			WebTest.CopyResource (GetType (), "PageWithStyleSheet.aspx", "PageWithStyleSheet.aspx");
@@ -73,10 +62,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.CopyResource (GetType (), "UrlProperty.aspx", "UrlProperty.aspx");
 			WebTest.CopyResource (GetType (), "UrlProperty.ascx", "UrlProperty.ascx");
 			WebTest.CopyResource (GetType (), "UrlProperty.ascx.cs", "UrlProperty.ascx.cs");
-			
-#endif
 		}
-
 
 		[SetUp]
 		public void SetupTestCase ()

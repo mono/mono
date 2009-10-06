@@ -37,8 +37,10 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Web assembly
 
+#if !TARGET_DOTNET
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+#endif
 
 [assembly: AssemblyTitle("SystemWebTestShim.dll")]
 [assembly: AssemblyCompany("MONO development team")]

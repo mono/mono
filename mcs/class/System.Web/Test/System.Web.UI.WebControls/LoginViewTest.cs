@@ -100,13 +100,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.LoginViewTest1.aspx", "LoginViewTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.WebLogin.config", "Web.config");
-#else
 			WebTest.CopyResource (GetType (), "LoginViewTest1.aspx", "LoginViewTest1.aspx");
 			WebTest.CopyResource (GetType (), "WebLogin.config", "Web.config");
-#endif
 		}
 
 		[Test]

@@ -278,13 +278,8 @@ namespace MonoTests.System.Web.UI
 		[Category ("NunitWeb")]
 		public void NoDoubleOnInitOnRemoveAdd ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoDoubleOnInitOnRemoveAdd.aspx", "NoDoubleOnInitOnRemoveAdd.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoDoubleOnInitOnRemoveAdd.aspx.cs", "NoDoubleOnInitOnRemoveAdd.aspx.cs");
-#else
 			WebTest.CopyResource (GetType (), "NoDoubleOnInitOnRemoveAdd.aspx", "NoDoubleOnInitOnRemoveAdd.aspx");
 			WebTest.CopyResource (GetType (), "NoDoubleOnInitOnRemoveAdd.aspx.cs", "NoDoubleOnInitOnRemoveAdd.aspx.cs");
-#endif
 			WebTest t = new WebTest ("NoDoubleOnInitOnRemoveAdd.aspx");
 			string html = t.Run ();
 
@@ -320,11 +315,7 @@ namespace MonoTests.System.Web.UI
 		[Category ("NunitWeb")]
 		public void ApplyStyleSheetSkin_1 ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme2.skin", "App_Themes/Theme2/Theme2.skin");
-#else
 			WebTest.CopyResource (GetType (), "Theme2.skin", "App_Themes/Theme2/Theme2.skin");
-#endif
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreInit = ApplyStyleSheetSkin_PreInit;
@@ -996,13 +987,8 @@ namespace MonoTests.System.Web.UI
 		[TestFixtureSetUp]
 		public void TestFixtureSetUp ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ResolveUrl.aspx", "ResolveUrl.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ResolveUrl.ascx", "Folder/ResolveUrl.ascx");
-#else
 			WebTest.CopyResource (GetType (), "ResolveUrl.aspx", "ResolveUrl.aspx");
 			WebTest.CopyResource (GetType (), "ResolveUrl.ascx", "Folder/ResolveUrl.ascx");
-#endif
 		}
 
 #endif

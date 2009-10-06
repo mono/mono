@@ -35,8 +35,12 @@ using Orig = System.Web.Configuration.HttpCapabilitiesBase;
 namespace SystemWebTestShim {
 	public class HttpCapabilitiesBase {
 		public static bool GetConfigCapabilities_called {
+#if TARGET_DOTNET
+			get; set;
+#else
 			get { return Orig.GetConfigCapabilities_called; }
 			set { Orig.GetConfigCapabilities_called = value; }
+#endif
 		}
 	}
 }

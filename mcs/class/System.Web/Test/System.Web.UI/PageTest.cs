@@ -119,15 +119,6 @@ namespace MonoTests.System.Web.UI {
 		[TestFixtureSetUp]
 		public void SetUpTest ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageCultureTest.aspx", "PageCultureTest.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithAdapter.aspx", "PageWithAdapter.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RedirectOnError.aspx", "RedirectOnError.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
-#else
 			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
 			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
 			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
@@ -135,7 +126,6 @@ namespace MonoTests.System.Web.UI {
 			WebTest.CopyResource (GetType (), "PageWithAdapter.aspx", "PageWithAdapter.aspx");
 			WebTest.CopyResource (GetType (), "RedirectOnError.aspx", "RedirectOnError.aspx");
 			WebTest.CopyResource (GetType (), "ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
-#endif
 		}
 
 		[Test]

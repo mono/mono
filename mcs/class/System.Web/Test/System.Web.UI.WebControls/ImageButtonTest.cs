@@ -214,11 +214,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void ValidationGroup ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
-#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
-#endif
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
 			string html = HtmlDiff.GetControlFromPageHtml (t.Run ());
@@ -258,11 +254,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category("NunitWeb")]
 		public void RaisePostBackEvent ()
 		{
-#if VISUAL_STUDIO
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
-#else
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
-#endif
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (RaisePostBackEvent_Load);
 			t.Run ();
