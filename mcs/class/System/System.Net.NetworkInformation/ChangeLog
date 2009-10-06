@@ -1,3 +1,10 @@
+2009-10-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* GatewayIPAddressInformationCollection.cs:
+	* IPInterfaceProperties.cs: implement GatewayAddresses for linux.
+	Original patch by Christoph von Wittich.
+	Fixes bug #544640.
+
 2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: fix the check for a time-out return value from 'ping'.
