@@ -47,9 +47,9 @@ namespace System.ServiceModel.Channels {
 		Uri request_url;
 		ServiceHostBase host;
 		Queue<HttpContext> pending = new Queue<HttpContext> ();
-		bool closing;
+		int close_state;
 
-		AutoResetEvent wait = new AutoResetEvent (false);
+		AutoResetEvent process_request_wait = new AutoResetEvent (false);
 		AutoResetEvent listening = new AutoResetEvent (false);
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
@@ -70,18 +70,25 @@ namespace System.ServiceModel.Channels {
 
 		public HttpContext WaitForRequest (TimeSpan timeout)
 		{
+			if (close_state > 0)
+				return null;
 			DateTime start = DateTime.Now;
-			lock (pending) {
-				if (pending.Count > 0) {
-					var ctx = pending.Dequeue ();
-					if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
-						return WaitForRequest (timeout - (DateTime.Now - start));
-					return ctx;
-				}
-			}
 
-			return wait.WaitOne (timeout - (DateTime.Now - start), false) && !closing ?
-				WaitForRequest (timeout - (DateTime.Now - start)) : null;
+			if (close_state > 0)
+				return null;
+			if (pending.Count == 0) {
+				if (!process_request_wait.WaitOne (timeout - (DateTime.Now - start), false) || close_state > 0)
+					return null;
+			}
+			HttpContext ctx;
+			lock (pending) {
+				if (pending.Count == 0)
+					return null;
+				ctx = pending.Dequeue ();
+			}
+			if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
+				return WaitForRequest (timeout - (DateTime.Now - start));
+			return ctx;
 		}
 
 		public void ProcessRequest (HttpContext context)
@@ -89,10 +96,10 @@ namespace System.ServiceModel.Channels {
 			request_url = context.Request.Url;
 			EnsureServiceHost ();
 			pending.Enqueue (context);
+			process_request_wait.Set ();
 
-			wait.Set ();
-
-			listening.WaitOne ();
+			if (close_state == 0)
+				listening.WaitOne ();
 		}
 
 		public void EndRequest (HttpContext context)
@@ -100,14 +107,26 @@ namespace System.ServiceModel.Channels {
 			listening.Set ();
 		}
 
+		// called from SvcHttpHandlerFactory's remove callback (i.e.
+		// unloading asp.net). It closes ServiceHost, then the host
+		// in turn closes the listener and the channels it opened.
+		// The channel listener calls CloseServiceChannel() to stop
+		// accepting further requests on its shutdown.
 		public void Close ()
 		{
-			closing = true;
-			listening.Set ();
-			wait.Set ();
 			host.Close ();
 			host = null;
-			closing = false;
+		}
+
+		// called from AspNetChannelListener.Close() or .Abort().
+		public void CloseServiceChannel ()
+		{
+			if (close_state > 0)
+				return;
+			close_state = 1;
+			process_request_wait.Set ();
+			listening.Set ();
+			close_state = 2;
 		}
 
 		void EnsureServiceHost ()
@@ -124,18 +143,7 @@ namespace System.ServiceModel.Channels {
 				host = new ServiceHost (type, baseUri);
 			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 
-			/*
-			if (host.Description.Endpoints.Count == 0)
-				//FIXME: Binding: Get from web.config.
-				host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
-					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
-
-			var c = host.BaseAddresses;
-			*/
-
 			host.Open ();
-
-			//listening.WaitOne ();
 		}
 	}
 }

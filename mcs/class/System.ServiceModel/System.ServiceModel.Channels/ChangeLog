@@ -1,5 +1,13 @@
 2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs, HttpChannelListener.cs : some significant
+	  rewrite to handle shutdown situation better. The listeners should
+	  not close channels that it opened. Instead, just stop accepting
+	  further requests. Removed blocking mutex on WaitForRequest().
+	  Now xsp shuts down as expected.
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs : lock list when releasing its content contexts.
 	* AspNetReplyChannel.cs : send EndRequest() to handler when it is
 	  closing.
