@@ -1,3 +1,7 @@
+2009-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (DEFAULT_RUNTIME_VERSION): Change this to v2.0.
+
 2009-10-06  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_method_return_message_restore): Handle the case
