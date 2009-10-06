@@ -50,10 +50,10 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
-			foreach (HttpListenerContext ctx in waiting)
-				ctx.Response.Abort ();
-
-			base.OnAbort ();
+			lock (waiting)
+				foreach (HttpListenerContext ctx in waiting)
+					ctx.Response.Abort ();
+			base.OnAbort (); // FIXME: remove it. The base is wrong.
 		}
 
 		protected override void OnClose (TimeSpan timeout)
@@ -63,8 +63,9 @@ namespace System.ServiceModel.Channels
 				reqctx.Close (timeout);
 
 			// FIXME: consider timeout
-			foreach (HttpListenerContext ctx in waiting)
-				ctx.Response.Close ();
+			lock (waiting)
+				foreach (HttpListenerContext ctx in waiting)
+					ctx.Response.Close ();
 
 			base.OnClose (timeout - (DateTime.Now - start));
 		}

@@ -58,6 +58,30 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+		protected override void OnAbort ()
+		{
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			base.OnClose (timeout);
+
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
+		}
+
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
 			try {

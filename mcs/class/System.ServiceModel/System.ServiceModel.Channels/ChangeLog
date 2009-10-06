@@ -1,5 +1,11 @@
 2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : lock list when releasing its content contexts.
+	* AspNetReplyChannel.cs : send EndRequest() to handler when it is
+	  closing.
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandlerFactory.cs : remove todo.
 	* ReplyChannelBase.cs : add comment.
 
