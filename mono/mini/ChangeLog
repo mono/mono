@@ -1,3 +1,8 @@
+2009-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_allocate_vars): Use mono_class_from_mono_type ()
+	instead of using type->data.klass as the later doesn't work with generics.
+
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Add a runtime invoke wrapper which is used by
