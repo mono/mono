@@ -1,3 +1,7 @@
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for #543133.
+
 2009-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly-load-stress.cs: New stress test.
