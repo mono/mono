@@ -1,3 +1,10 @@
+2009-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_class): Add an instance of GenericComparer<T> for
+	each instance of Comparer<T>.
+
+	* generics.cs: Add a new test.
+
 2009-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_class): Only add GetGenericValueImpl wrappers
