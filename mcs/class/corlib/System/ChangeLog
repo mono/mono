@@ -1,3 +1,8 @@
+2009-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Enum.cs: Add an internal Value property as a single point to 
+	call the internal call get_value.
+
 2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Remove normalization methods for Moonlight

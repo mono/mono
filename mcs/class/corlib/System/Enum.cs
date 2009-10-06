@@ -240,47 +240,47 @@ namespace System
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return Convert.ToBoolean (get_value (), provider);
+			return Convert.ToBoolean (Value, provider);
 		}
 
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return Convert.ToByte (get_value (), provider);
+			return Convert.ToByte (Value, provider);
 		}
 
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return Convert.ToChar (get_value (), provider);
+			return Convert.ToChar (Value, provider);
 		}
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			return Convert.ToDateTime (get_value (), provider);
+			return Convert.ToDateTime (Value, provider);
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{	
-			return Convert.ToDecimal (get_value (), provider);
+			return Convert.ToDecimal (Value, provider);
 		}
 
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{	
-			return Convert.ToDouble (get_value (), provider);
+			return Convert.ToDouble (Value, provider);
 		}
 
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return Convert.ToInt16 (get_value (), provider);
+			return Convert.ToInt16 (Value, provider);
 		}
 
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return Convert.ToInt32 (get_value (), provider);
+			return Convert.ToInt32 (Value, provider);
 		}
 
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return Convert.ToInt64 (get_value (), provider);
+			return Convert.ToInt64 (Value, provider);
 		}
 
 #if ONLY_1_1
@@ -289,7 +289,7 @@ namespace System
 #endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return Convert.ToSByte (get_value (), provider);
+			return Convert.ToSByte (Value, provider);
 		}
 #if ONLY_1_1
 #pragma warning restore 3019
@@ -297,14 +297,14 @@ namespace System
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return Convert.ToSingle (get_value (), provider);
+			return Convert.ToSingle (Value, provider);
 		}
 
 		object IConvertible.ToType (Type targetType, IFormatProvider provider)
 		{
 			if (targetType == null)
 				throw new ArgumentNullException ("targetType");
-			return Convert.ToType (get_value (), targetType, provider, false);
+			return Convert.ToType (Value, targetType, provider, false);
 		}
 
 #if ONLY_1_1
@@ -313,7 +313,7 @@ namespace System
 #endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return Convert.ToUInt16 (get_value (), provider);
+			return Convert.ToUInt16 (Value, provider);
 		}
 #if ONLY_1_1
 #pragma warning restore 3019
@@ -325,7 +325,7 @@ namespace System
 #endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return Convert.ToUInt32 (get_value (), provider);
+			return Convert.ToUInt32 (Value, provider);
 		}
 #if ONLY_1_1
 #pragma warning restore 3019
@@ -337,7 +337,7 @@ namespace System
 #endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return Convert.ToUInt64 (get_value (), provider);
+			return Convert.ToUInt64 (Value, provider);
 		}
 #if ONLY_1_1
 #pragma warning restore 3019
@@ -347,6 +347,11 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern object get_value ();
+
+		// wrap the icall into a property so we don't hav to use the icall everywhere
+		private object Value {
+			get { return get_value (); }
+		}
 
 #if NET_2_0
 		[ComVisible (true)]
@@ -710,7 +715,7 @@ namespace System
 			if (format == String.Empty || format == null)
 				format = "G";
 			
-			return Format (this.GetType (), this.get_value (), format);
+			return Format (this.GetType (), this.Value, format);
 		}
 
 #if NET_2_0
@@ -723,7 +728,7 @@ namespace System
 			if (format == String.Empty || format == null) {
 				format = "G";
 			}
-			return Format (this.GetType(), this.get_value (), format);
+			return Format (this.GetType(), this.Value, format);
 		}
 
 #if NET_2_0
