@@ -12,8 +12,6 @@ Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
 Mono.Globalization.Unicode/SimpleCollator.cs
 Mono.Globalization.Unicode/SortKey.cs
 Mono.Globalization.Unicode/SortKeyBuffer.cs
-Mono.Globalization.Unicode/Normalization.cs
-Mono.Globalization.Unicode/NormalizationTableUtil.cs
 Mono/Runtime.cs
 Mono/DataConverter.cs
 Mono.Math/BigInteger.cs
@@ -958,7 +956,6 @@ System.Text/EncoderReplacementFallback.cs
 System.Text/EncoderReplacementFallbackBuffer.cs
 System.Text/Encoding.cs
 System.Text/EncodingInfo.cs
-System.Text/NormalizationForm.cs
 System.Text/StringBuilder.cs
 System.Text/SurrogateEncoder.cs
 System.Text/UnicodeEncoding.cs
