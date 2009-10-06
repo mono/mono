@@ -28,6 +28,7 @@
 //
 #if NET_2_0
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -59,6 +60,7 @@ namespace System.Net.NetworkInformation {
 		protected UnixNetworkInterface iface;
 		List <IPAddress> addresses;
 		IPAddressCollection dns_servers;
+		IPAddressCollection gateways;
 		string dns_suffix;
 		DateTime last_parse;
 		
@@ -71,6 +73,39 @@ namespace System.Net.NetworkInformation {
 		public override IPv6InterfaceProperties GetIPv6Properties ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		void ParseRouteInfo (string iface)
+		{
+			try {
+				gateways = new IPAddressCollection ();
+				using (StreamReader reader = new StreamReader ("/proc/net/route")) {
+					string str;
+					string line;
+					reader.ReadLine (); // Ignore first line
+					while ((line = reader.ReadLine ()) != null) {
+						line = line.Trim ();
+						if (line.Length == 0)
+							continue;
+
+						string [] parts = line.Split ('\t');
+						if (parts.Length < 3)
+							continue;
+						string gw_address = parts [2].Trim ();
+						byte [] ipbytes = new byte [4];  
+						if (gw_address.Length == 8 && iface.Equals (parts [0], StringComparison.OrdinalIgnoreCase)) {
+							for (int i = 0; i < 4; i++) {
+								if (!Byte.TryParse (gw_address.Substring (i * 2, 2), NumberStyles.HexNumber, null, out ipbytes [3 - i]))
+									continue;
+							}
+							IPAddress ip = new IPAddress (ipbytes);
+							if (!ip.Equals (IPAddress.Any))
+								gateways.Add (ip);
+						}
+					}
+				}
+			} catch {
+			}
 		}
 
 		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
@@ -155,12 +190,14 @@ namespace System.Net.NetworkInformation {
 				return dns_suffix;
 			}
 		}
-
-		[MonoTODO ("Always returns an empty collection.")]
+     
 		public override GatewayIPAddressInformationCollection GatewayAddresses {
 			get {
-				// XXX: Pull information from route table.
-				return LinuxGatewayIPAddressInformationCollection.Empty;
+				ParseRouteInfo (this.iface.Name.ToString());
+				if (gateways.Count > 0)
+					return new LinuxGatewayIPAddressInformationCollection (gateways);
+				else
+					return LinuxGatewayIPAddressInformationCollection.Empty;
 			}
 		}
 

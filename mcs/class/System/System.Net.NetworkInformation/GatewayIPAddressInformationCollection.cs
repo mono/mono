@@ -139,6 +139,13 @@ namespace System.Net.NetworkInformation {
 		{
 			this.is_readonly = isReadOnly;
 		}
+
+		public LinuxGatewayIPAddressInformationCollection (IPAddressCollection col)
+		{
+			foreach (IPAddress a in col)
+				Add (new GatewayIPAddressInformationImpl (a));
+			this.is_readonly = true;
+		}
 		
 		public override bool IsReadOnly {
 			get { return is_readonly; }
