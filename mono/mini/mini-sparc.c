@@ -965,7 +965,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 					high->dreg = sparc_i0 + ainfo->reg;
 				}
 				inst->opcode = OP_REGVAR;
-				inst->dreg = sparc_i0 + ainfo->reg;					
+				inst->dreg = sparc_i0 + ainfo->reg;
 				break;
 			case ArgInFloatReg:
 			case ArgInDoubleReg:
@@ -1047,6 +1047,14 @@ mono_arch_create_vars (MonoCompile *cfg)
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
 		}
+	}
+
+	if (!sig->ret->byref && (sig->ret->type == MONO_TYPE_I8 || sig->ret->type == MONO_TYPE_U8)) {
+		MonoInst *low = get_vreg_to_inst (cfg, cfg->ret->dreg + 1);
+		MonoInst *high = get_vreg_to_inst (cfg, cfg->ret->dreg + 2);
+
+		low->flags |= MONO_INST_VOLATILE;
+		high->flags |= MONO_INST_VOLATILE;
 	}
 }
 
@@ -1349,7 +1357,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 		break;
 	case ArgInIRegPair:
-		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg + 2);
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg + 2, val->dreg + 2);
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg + 1, val->dreg + 1);
 		break;
 	case ArgInFReg:
