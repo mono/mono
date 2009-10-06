@@ -512,8 +512,8 @@ namespace System.Web {
 			string open, close;
 			open = close = String.Empty;
 			if ((bool) i.IsWarning) {
-				open = "<font color=\"Red\">";
-				close = "</font>";
+				open = "<span style=\"color:red\">";
+				close = "</span>";
 			}
 
 			string t1, t2;
@@ -524,7 +524,10 @@ namespace System.Web {
 #endif
 			{
 				t1 = i.TimeSinceFirst.ToString ("0.000000");
-				t2 = i.TimeSinceLast.ToString ("0.000000");
+				if (i.TimeSinceLast >= 0.1)
+					t2 = "<span style=\"color:red;font-weight:bold\">" + i.TimeSinceLast.ToString ("0.000000") + "</span>";
+				else
+					t2 = i.TimeSinceLast.ToString ("0.000000");
 			}
 			
 			RenderAltRow (table, pos, open + (string) i.Category + close,
