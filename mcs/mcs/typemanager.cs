@@ -1412,6 +1412,9 @@ namespace Mono.CSharp {
 		}
 
 #if MS_COMPATIBLE
+		if (tparam != pparam)
+			return false;
+
 		if (type.IsGenericType)
 			type = type.GetGenericTypeDefinition ();
 #endif
@@ -1509,11 +1512,21 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Checks whether `extern_type' is friend of the output assembly
+	// Checks whether `invocationAssembly' is same or a friend of the assembly
 	//
-	public static bool IsThisOrFriendAssembly (Assembly assembly)
+	public static bool IsThisOrFriendAssembly (Assembly invocationAssembly, Assembly assembly)
 	{
-		if (assembly == CodeGen.Assembly.Builder)
+		if (assembly == null)
+			throw new ArgumentNullException ("assembly");
+
+		// TODO: This can happen for constants used at assembly level and
+		// predefined members
+		// But there is no way to test for it for now, so it could be abused
+		// elsewhere too.
+		if (invocationAssembly == null)
+			invocationAssembly = CodeGen.Assembly.Builder;
+
+		if (invocationAssembly == assembly)
 			return true;
 
 		if (assembly_internals_vis_attrs.Contains (assembly))
@@ -2748,7 +2761,7 @@ namespace Mono.CSharp {
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (TypeManager.IsThisOrFriendAssembly (mb.DeclaringType.Assembly)) {
+				if (TypeManager.IsThisOrFriendAssembly (invocation_assembly, mb.DeclaringType.Assembly)) {
 					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 						return true;
 				} else {
@@ -2775,7 +2788,7 @@ namespace Mono.CSharp {
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (TypeManager.IsThisOrFriendAssembly (fi.DeclaringType.Assembly)) {
+				if (TypeManager.IsThisOrFriendAssembly (invocation_assembly, fi.DeclaringType.Assembly)) {
 					if ((fa == FieldAttributes.Assembly) ||
 					    (fa == FieldAttributes.FamORAssem))
 						return true;

@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 				return TypeManager.IsPrivateAccessible (invocation_type, mi.DeclaringType) ||
 					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
-			if (TypeManager.IsThisOrFriendAssembly (mi.DeclaringType.Assembly)) {
+			if (TypeManager.IsThisOrFriendAssembly (invocation_type.Assembly, mi.DeclaringType.Assembly)) {
 				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 					return true;
 			} else {
@@ -5237,6 +5237,13 @@ namespace Mono.CSharp {
 
 			return TypeBuilder.GetField (constructed_generic_type, FieldInfo);
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Field (InstanceExpression.MakeExpression (ctx), FieldInfo);
+		}
+#endif
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

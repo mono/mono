@@ -73,10 +73,12 @@ namespace Mono.CSharp {
 
 		public virtual Type LookupTypeReflection (CompilerContext ctx, string name, Location loc, bool must_be_unique)
 		{
-			Type found_type = null;
+			// FIXME: Breaks dynamic
+			Assembly invocation_assembly = CodeGen.Assembly.Builder;
 
+			Type found_type = null;
 			foreach (Assembly a in referenced_assemblies) {
-				Type t = GetTypeInAssembly (a, name);
+				Type t = GetTypeInAssembly (invocation_assembly, a, name);
 				if (t == null)
 					continue;
 
@@ -187,7 +189,7 @@ namespace Mono.CSharp {
  			}
   		}
 
-		protected static Type GetTypeInAssembly (Assembly assembly, string name)
+		protected static Type GetTypeInAssembly (Assembly invocation, Assembly assembly, string name)
 		{
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
@@ -207,7 +209,7 @@ namespace Mono.CSharp {
 			if ((ta == TypeAttributes.NotPublic ||
 			     ta == TypeAttributes.NestedAssembly ||
 			     ta == TypeAttributes.NestedFamANDAssem) &&
-			    !TypeManager.IsThisOrFriendAssembly (t.Assembly))
+			    !TypeManager.IsThisOrFriendAssembly (invocation, t.Assembly))
 				return null;
 
 			return t;
@@ -600,7 +602,8 @@ namespace Mono.CSharp {
 			if (type.DeclaringType != null)
 				return;
 
-			if (type.IsNotPublic && !TypeManager.IsThisOrFriendAssembly (type.Assembly))
+			// TODO: CodeGen.Assembly.Builder is global
+			if (type.IsNotPublic && !TypeManager.IsThisOrFriendAssembly (CodeGen.Assembly.Builder, type.Assembly))
 				return;
 
 			if (external_exmethod_classes == null)
@@ -616,6 +619,9 @@ namespace Mono.CSharp {
 		{
 			ArrayList found = null;
 
+			// TODO: problematic
+			var invocation_assembly = CodeGen.Assembly.Builder;
+
 			if (declspaces != null) {
 				IEnumerator e = declspaces.Values.GetEnumerator ();
 				e.Reset ();
@@ -627,7 +633,7 @@ namespace Mono.CSharp {
 					if ((c.ModFlags & Modifiers.METHOD_EXTENSION) == 0)
 						continue;
 
-					ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name, c != currentClass);
+					ArrayList res = c.MemberCache.FindExtensionMethods (invocation_assembly, extensionType, name, c != currentClass);
 					if (res == null)
 						continue;
 
@@ -643,7 +649,7 @@ namespace Mono.CSharp {
 
 			foreach (Type t in external_exmethod_classes) {
 				MemberCache m = TypeHandle.GetMemberCache (t);
-				ArrayList res = m.FindExtensionMethods (extensionType, name, true);
+				ArrayList res = m.FindExtensionMethods (invocation_assembly, extensionType, name, true);
 				if (res == null)
 					continue;
 
