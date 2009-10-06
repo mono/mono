@@ -1,3 +1,11 @@
+2009-10-06  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-544445.cs: New test.
+
+	* Makefile.am: Test added.
+
+	Backport of r143506.
+
 2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add a test for #543133.
