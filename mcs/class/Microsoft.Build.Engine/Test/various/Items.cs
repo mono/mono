@@ -32,6 +32,8 @@ using System.Text;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
+using System.IO;
+using Microsoft.Build.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
@@ -318,14 +320,17 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
 						<Item Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
-						<ItemT Include=""@(Item->'%(RelativeDir)X/%(Filename)')"" />
+						<ItemT Include=""@(Item->'%(RelativeDir)X\%(Filename)')"" />
 					</ItemGroup>
 				</Project>
 			";
 
 			proj.LoadXml (documentString);
 
-			CheckItems (proj, "ItemT", "A1", @"A\X/B", @"A\X/C", @"B\X/B", @"B\X/C");
+			string dir_a = Path.Combine ("A", "X");
+			string dir_b = Path.Combine ("B", "X");
+			CheckItems (proj, "ItemT", "A1", Path.Combine (dir_a, "B"), Path.Combine (dir_a, "C"),
+								Path.Combine (dir_b, "B"), Path.Combine (dir_b, "C"));
 		}
 
 		[Test]
@@ -1385,6 +1390,48 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			bi = big [0];
 			Assert.AreEqual ("True", bi.GetMetadata ("M"), "A10");
 			Assert.AreEqual ("True", bi.GetEvaluatedMetadata ("M"), "A11");*/
+		}
+
+		[Test]
+		public void TestReservedMetadata ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup><File1 Include=""bar\foo.dll""/></ItemGroup>
+					<Target Name='Main'>
+						<Message Text='file1: @(File1)'/>
+						<Message Text='file1: RootDir: %(File1.RootDir)'/>
+						<Message Text='file1: Directory: %(File1.Directory)'/>
+					</Target>
+				</Project>";
+
+			string projectdir = Path.Combine ("Test", "resources");
+			File.WriteAllText (Path.Combine (projectdir, "test1.proj"), documentString);
+			proj.Load (Path.Combine (projectdir, "test1.proj"));
+			if (!proj.Build ("Main")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+			logger.DumpMessages ();
+
+			logger.CheckLoggedMessageHead ("file1: " + Path.Combine ("bar", "foo.dll"), "A1");
+
+			string path_root = Path.GetPathRoot (Path.GetFullPath (projectdir));
+			logger.CheckLoggedMessageHead ("file1: RootDir: " + path_root, "A2");
+
+			string fullpath = Path.GetFullPath (Path.Combine (projectdir, "bar"));
+			logger.CheckLoggedMessageHead ("file1: Directory: " + fullpath.Substring (path_root.Length) + Path.DirectorySeparatorChar, "A3");
+
+			if (logger.NormalMessageCount != 0) {
+				logger.DumpMessages ();
+				Assert.Fail ("Unexpected extra messages found");
+			}
 		}
 	}
 }

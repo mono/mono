@@ -1,3 +1,9 @@
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs (TestItems5): Fix to work correctly on windows
+	and unix.
+	(TestReservedMetadata): New.
+
 2009-09-10  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs (TestItems2a):

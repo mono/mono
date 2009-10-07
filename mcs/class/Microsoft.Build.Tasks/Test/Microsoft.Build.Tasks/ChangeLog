@@ -1,5 +1,9 @@
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
+	* TestMessageLogger.cs (CheckLoggedAny): New.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
 	* RemoveDuplicatesTest.cs: New.
 
 2009-09-25  Ankit Jain  <jankit@novell.com>
