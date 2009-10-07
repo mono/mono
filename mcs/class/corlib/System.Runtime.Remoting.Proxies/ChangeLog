@@ -1,3 +1,9 @@
+2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* RealProxy.cs: for a custom proxy, retrieve the OutArgs before
+	allowing EndInvoke to proceed because after that, OutArgs will throw
+	because there is no method. Fixes remoting2 and remoting3 tests.
+
 2009-05-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RealProxy.cs: If async dispatch crashes, don't propagate the
