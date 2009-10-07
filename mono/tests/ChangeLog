@@ -1,3 +1,7 @@
+2009-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for marshalling DateTime to unmanaged code.
+
 2009-10-06  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-544445.cs: New test.
