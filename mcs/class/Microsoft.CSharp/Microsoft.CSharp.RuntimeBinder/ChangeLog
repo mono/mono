@@ -1,3 +1,10 @@
+2009-10-07  Marek Safar  <marek.safar@gmail.com>
+
+	* RuntimeBinderContext.cs, CSharpBinaryOperationBinder.cs,
+	CSharpGetMemberBinder.cs, CSharpBinder.cs,
+	CSharpUnaryOperationBinder.cs, CSharpSetMemberBinder.cs: Member
+	access implemented.
+
 2009-09-30  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpBinaryOperationBinder.cs, CSharpBinder.cs,

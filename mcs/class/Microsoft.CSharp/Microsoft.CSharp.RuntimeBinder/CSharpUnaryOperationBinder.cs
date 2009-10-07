@@ -44,6 +44,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			: base (operation)
 		{
 			this.argumentInfo = argumentInfo.ToReadOnly ();
+			if (this.argumentInfo.Count != 1)
+				throw new ArgumentException ("Unary operation requires 1 argument");
+
 			this.is_checked = isChecked;
 		}
 		

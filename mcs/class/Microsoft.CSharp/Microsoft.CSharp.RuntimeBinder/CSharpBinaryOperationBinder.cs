@@ -46,7 +46,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
 			if (this.argumentInfo.Count != 2)
-				throw new ArgumentException ("argumentInfo != 2");
+				throw new ArgumentException ("Binary operation requires 2 arguments");
 
 			this.is_checked = isChecked;
 			this.is_member_access = isMemberAccess;

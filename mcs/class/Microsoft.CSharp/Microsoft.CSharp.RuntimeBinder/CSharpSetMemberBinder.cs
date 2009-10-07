@@ -30,6 +30,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -60,19 +61,41 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpSetMemberBinder;
-			return other != null && base.Equals (obj) && other.callingContext == callingContext && 
+			return other != null && other.Name == Name && other.callingContext == callingContext &&
 				other.argumentInfo.SequenceEqual (argumentInfo);
 		}
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				Name.GetHashCode (),
+				callingContext.GetHashCode (),
+				argumentInfo.GetHashCode ());
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackSetMember (DynamicMetaObject target, DynamicMetaObject value, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();			
+			var source = CSharpBinder.CreateCompilerExpression (argumentInfo[1], value, true);
+			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target, true);
+
+			// Field assignment
+			expr = new Compiler.MemberAccess (expr, Name);
+			expr = new Compiler.SimpleAssign (expr, source);
+
+			// Target type is expecting object
+			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
+
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
+
+			if (target.Value == null) {
+				if (errorSuggestion != null)
+					return errorSuggestion;
+
+				var ex = CSharpBinder.CreateBinderException (target, "SetMember cannot perform binding on `null' value");
+				return new DynamicMetaObject (ex, restrictions);
+			}
+
+			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

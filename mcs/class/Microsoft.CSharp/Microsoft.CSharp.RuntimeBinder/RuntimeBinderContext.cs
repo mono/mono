@@ -34,21 +34,21 @@ namespace Microsoft.CSharp.RuntimeBinder
 	class RuntimeBinderContext : Compiler.IMemberContext
 	{
 		readonly Compiler.CompilerContext ctx;
+		readonly Type currentType;
 
-		public RuntimeBinderContext (Compiler.CompilerContext ctx)
+		public RuntimeBinderContext (Compiler.CompilerContext ctx, Type currentType)
 		{
 			this.ctx = ctx;
+			this.currentType = currentType;
 		}
 
 		#region IMemberContext Members
 
 		public Type CurrentType {
-			// null for operators
-			get { return null; }
+			get { return currentType; }
 		}
 
-		public Compiler.TypeParameter[] CurrentTypeParameters
-		{
+		public Compiler.TypeParameter[] CurrentTypeParameters {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -60,7 +60,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 		}
 
 		public bool IsObsolete {
-			get { throw new NotImplementedException (); }
+			get {
+				// Always true to ignore obsolete attribute checks
+				return true;
+			}
 		}
 
 		public bool IsUnsafe {
@@ -81,7 +84,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public Compiler.ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Mono.CSharp.Location loc)
 		{
-			throw new NotImplementedException ();
+			// No extension method lookup in this context
+			return null;
 		}
 
 		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, Mono.CSharp.Location loc, bool ignore_cs0104)

@@ -34,25 +34,27 @@ using System.Reflection;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	class CSharpBinder
+	static class CSharpBinder
 	{
 		static ConstructorInfo binder_exception_ctor;
-		static bool compiler_initialized;
 		static object compiler_initializer = new object ();
 		static object resolver = new object ();
 
 		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
 		{
-			var report = new Compiler.Report (ErrorPrinter.Instance) { WarningLevel = 0 };
-			var ctx = new Compiler.CompilerContext (report);
-			Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (ctx, true);
+			return Bind (target, expr, null, restrictions, errorSuggestion);
+		}
+
+		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, Type callingType, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
+		{
+			var ctx = CreateDefaultCompilerContext ();
 
 			InitializeCompiler (ctx);
 
 			Expression res;
 			try {
 				// TODO: ResolveOptions
-				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx));
+				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType));
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
@@ -67,13 +69,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (errorSuggestion != null)
 					return errorSuggestion;
 
-				if (binder_exception_ctor == null)
-					binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
-
-				//
-				// Uses target type to keep expressions composition working
-				//
-				res = Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (e.Message)), target.LimitType);
+				res = CreateBinderException (target, e.Message);
 			} catch (Exception) {
 				if (errorSuggestion != null)
 					return errorSuggestion;
@@ -82,6 +78,17 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 
 			return new DynamicMetaObject (res, restrictions);
+		}
+
+		public static Expression CreateBinderException (DynamicMetaObject target, string message)
+		{
+			if (binder_exception_ctor == null)
+				binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
+
+			//
+			// Uses target type to keep expressions composition working
+			//
+			return Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (message)), target.LimitType);
 		}
 
 		//
@@ -99,10 +106,20 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (!typed)
 					throw new NotImplementedException ("weakly typed constant");
 
+				InitializeCompiler (null);
 				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
 			}
 
 			return new Compiler.RuntimeValueExpression (value, typed);
+		}
+
+		static Compiler.CompilerContext CreateDefaultCompilerContext ()
+		{
+			return new Compiler.CompilerContext (
+				new Compiler.Report (ErrorPrinter.Instance) {
+					WarningLevel = 0 
+				}
+			);
 		}
 
 		public static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
@@ -114,11 +131,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		static void InitializeCompiler (Compiler.CompilerContext ctx)
 		{
-			if (compiler_initialized)
+			if (Compiler.TypeManager.object_type != null)
 				return;
 
 			lock (compiler_initializer) {
-				if (compiler_initialized)
+				if (Compiler.TypeManager.object_type != null)
 					return;
 
 				// TODO: This smells like pretty big issue
@@ -128,9 +145,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
 					Compiler.GlobalRootNamespace.Instance.AddAssemblyReference (a);
 
+				if (ctx == null)
+					ctx = CreateDefaultCompilerContext ();
+
+				// FIXME: this is wrong
+				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (ctx, true);
+
 				Compiler.TypeManager.InitCoreTypes (ctx);
 				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
-				compiler_initialized = true;
 			}
 		}
 
