@@ -234,6 +234,8 @@ namespace Mono.CSharp {
 
 	static public void Reset ()
 	{
+		object_type = null;
+
 		InitExpressionTypes ();
 		
 		builder_to_declspace = new PtrHashtable ();

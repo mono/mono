@@ -374,6 +374,15 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+#if NET_4_0
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		{
+			var target_object = target.MakeExpression (ctx);
+			var source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
+			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			source.MutateHoistedGenericType (storey);
@@ -415,7 +424,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class SimpleAssign : Assign {
+	public class SimpleAssign : Assign {
 		public SimpleAssign (Expression target, Expression source)
 			: this (target, source, target.Location)
 		{
@@ -686,15 +695,6 @@ namespace Mono.CSharp {
 
 			return base.DoResolve (ec);
 		}
-
-#if NET_4_0
-		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
-		{
-			var target_object = target.MakeExpression (ctx);
-			var source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
-			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
-		}
-#endif
 
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
