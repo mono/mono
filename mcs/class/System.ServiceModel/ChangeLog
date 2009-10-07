@@ -1,3 +1,8 @@
+2009-10-07  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_System.ServiceModel.dll.sources :
+	  add IHttpCookieContainer.cs.
+
 2009-09-15  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: remove WebServiceHelper.cs.
