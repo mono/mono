@@ -86,5 +86,19 @@ namespace MonoTests.System.ServiceModel.Syndication
 			Assert.IsFalse (feed.Items.GetEnumerator ().MoveNext (), "#4"); // make sure we reset it
 			*/
 		}
+
+		[Test]
+		public void LoadFeed ()
+		{
+			SyndicationFeed.Load (XmlReader.Create (new StringReader ("<feed xmlns=\"http://www.w3.org/2005/Atom\"></feed>")));
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void LoadEntry ()
+		{
+			// entry is not allowed.
+			SyndicationFeed.Load (XmlReader.Create (new StringReader ("<entry xmlns=\"http://www.w3.org/2005/Atom\"></entry>")));
+		}
 	}
 }
