@@ -1,3 +1,7 @@
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGeneratorTest.cs : new test.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDebugBehaviorTest.cs : it still seems there are some port-

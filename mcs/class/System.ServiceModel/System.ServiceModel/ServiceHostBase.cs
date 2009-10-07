@@ -205,42 +205,45 @@ namespace System.ServiceModel
 			return null;
 		}
 
+		ContractDescription mex_contract, help_page_contract;
+
 		ContractDescription GetContract (string name)
 		{
-			//FIXME: hack hack hack
-			ImplementedContracts ["IHttpGetHelpPageAndMetadataContract"] =
-				ContractDescription.GetContract (typeof (IHttpGetHelpPageAndMetadataContract));
-
-			// FIXME: As long as I tried, *only* IMetadataExchange
-			// is the exception case that does not require full
-			// type name. Hence I treat it as a special case.
-			if (name == ServiceMetadataBehavior.MexContractName) {
-				if (!Description.Behaviors.Contains (typeof (ServiceMetadataBehavior)) && Array.IndexOf (Description.ServiceType.GetInterfaces (), typeof (IMetadataExchange)) < 0)
-					throw new InvalidOperationException (
-						"Add ServiceMetadataBehavior to the ServiceHost to add a endpoint for IMetadataExchange contract.");
-					
-				ImplementedContracts [ServiceMetadataBehavior.MexContractName] =
-					ContractDescription.GetContract (typeof (IMetadataExchange));
-
-				foreach (ContractDescription cd in ImplementedContracts.Values)
-					if (cd.ContractType == typeof (IMetadataExchange))
-						return cd;
-				return null;
+			// FIXME: not sure if they should really be special cases.
+			switch (name) {
+			case "IHttpGetHelpPageAndMetadataContract":
+				if (help_page_contract == null)
+					help_page_contract = ContractDescription.GetContract (typeof (IHttpGetHelpPageAndMetadataContract));
+				return help_page_contract;
+			case "IMetadataExchange":
+				// this is certainly looking special (or we may 
+				// be missing something around ServiceMetadataExtension)
+				if (Extensions.Find<ServiceMetadataExtension> () == null)
+					break;
+				if (mex_contract == null)
+					mex_contract = ContractDescription.GetContract (typeof (IMetadataExchange));
+				return mex_contract;
 			}
 
+			// FIXME: probably type-to-contract-name mapping is wrong. 
+			// This "loopup by type name" incorrectly allows
+			// "System.ServiceModel.Description.IMetadataExchange",
+			// but disabling this results in couple of regressions.
+			// So I keep enabling it so far. But it smells wrong.
 			Type type = PopulateType (name);
 
 			foreach (ContractDescription cd in ImplementedContracts.Values) {
-				// FIXME: This check is a negative side effect 
-				// of the above hack.
-				if (cd.ContractType == typeof (IMetadataExchange))
-					continue;
-
 				if (type == null) {
 					if (cd.Name == name)
 						return cd;
 					continue;
 				}
+
+				// FIXME: This check is a negative side effect 
+				// of the above hack. (but it should not still 
+				// skip name-based match). Seealso above FIXMEs.
+				if (cd.ContractType == typeof (IMetadataExchange))
+					continue;
 
 				if (cd.ContractType == type ||
 				    cd.ContractType.IsSubclassOf (type) ||
@@ -296,6 +299,16 @@ namespace System.ServiceModel
 					AddBaseAddress (new Uri (baseAddress.BaseAddress));
 				}
 
+				// behaviors
+				// TODO: use EvaluationContext of ServiceElement.
+				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors [service.BehaviorConfiguration];
+				if (behavior != null) {
+					foreach (var bxe in behavior) {
+						IServiceBehavior b = (IServiceBehavior) bxe.CreateBehavior ();
+						Description.Behaviors.Add (b);
+					}
+				}
+
 				// services
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
 					// FIXME: consider BindingName as well
@@ -303,16 +316,12 @@ namespace System.ServiceModel
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
 						endpoint.Address.ToString ());
-				}
-				// behaviors
-				// TODO: use EvaluationContext of ServiceElement.
-				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
-				if (behavior != null) {
-					for (int i = 0; i < behavior.Count; i++) {
-						BehaviorExtensionElement bxel = behavior [i];
-						IServiceBehavior b = (IServiceBehavior) behavior [i].CreateBehavior ();
-						if (b != null)
-							Description.Behaviors.Add (b);
+					// endpoint behaviors
+					EndpointBehaviorElement epbehavior = ConfigUtil.BehaviorsSection.EndpointBehaviors [endpoint.BehaviorConfiguration];
+					if (epbehavior != null)
+						foreach (var bxe in epbehavior) {
+							IEndpointBehavior b = (IEndpointBehavior) bxe.CreateBehavior ();
+							se.Behaviors.Add (b);
 					}
 				}
 			}
@@ -339,14 +348,6 @@ namespace System.ServiceModel
 				return null;
 
 			return ConfigUtil.ServicesSection.Services [serviceType.FullName];			
-		}
-
-		internal ContractDescription GetContract (string name, string ns)
-		{
-			foreach (ContractDescription d in ImplementedContracts.Values)
-				if (d.Name == name && d.Namespace == ns)
-					return d;
-			return null;
 		}
 
 		protected abstract ServiceDescription CreateDescription (

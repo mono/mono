@@ -219,17 +219,16 @@ namespace System.ServiceModel
 			
 			CodeVariableReference retValue = null;
 			if (mi.ReturnType == typeof (void))
-				// FIXME: pass appropriate argument.
 				b.Call (m.GetThis (), endProcessMethod, argMethodInfo, argOperName, paramsRef, asyncResultRef);
 			else {
 				CodeVariableDeclaration retValueDecl = new CodeVariableDeclaration (mi.ReturnType, "retValue");
 				b.CurrentBlock.Add (retValueDecl);
 				retValue = retValueDecl.Variable;
-				// FIXME: pass appropriate argument.
 				b.Assign (retValue,
 					new CodeCast (mi.ReturnType,
-						b.CallFunc (m.GetThis (), endProcessMethod, argOperName, paramsRef, asyncResultRef)));
+						b.CallFunc (m.GetThis (), endProcessMethod, argMethodInfo, argOperName, paramsRef, asyncResultRef)));
 			}
+			// FIXME: fill out parameters
 			if (retValue != null)
 				b.Return (retValue);
 		}

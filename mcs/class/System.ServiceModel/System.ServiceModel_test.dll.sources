@@ -70,6 +70,7 @@ System.ServiceModel.Description/MetadataResolverTest.cs
 System.ServiceModel.Description/OperationDescriptionTest.cs
 System.ServiceModel.Description/ServiceAuthorizationBehaviorTest.cs
 System.ServiceModel.Description/ServiceCredentialsTest.cs
+System.ServiceModel.Description/ServiceContractGeneratorTest.cs
 System.ServiceModel.Description/ServiceDebugBehaviorTest.cs
 System.ServiceModel.Description/ServiceEndpointTest.cs
 System.ServiceModel.Description/ServiceMetadataBehaviorTest.cs

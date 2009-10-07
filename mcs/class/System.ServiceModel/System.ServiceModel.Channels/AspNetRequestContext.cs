@@ -26,43 +26,67 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Web;
 
 namespace System.ServiceModel.Channels {
 
 	class AspNetRequestContext : HttpRequestContextBase
 	{
+		AspNetReplyChannel channel;
 		HttpContext ctx;
 
 		public AspNetRequestContext (
-			HttpReplyChannel channel,
+			AspNetReplyChannel channel,
 			Message msg, HttpContext ctx)
 			: base (channel, msg)
 		{
+			this.channel = channel;
 			this.ctx = ctx;
 		}
 
 		public override void Abort ()
 		{
-			throw new NotImplementedException ();
 			//ctx.Response.Abort ();
+			ctx = null;
+			channel.CloseContext ();
 		}
 
 		protected override void ProcessReply (Message msg, TimeSpan timeout)
 		{
+			ctx.Response.ContentType = Channel.Encoder.ContentType;
 			MemoryStream ms = new MemoryStream ();
 			Channel.Encoder.WriteMessage (msg, ms);
-			ctx.Response.ContentType = Channel.Encoder.ContentType;
-			//ctx.Response.ContentLength64 = ms.Length;
-			ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
-			ctx.Response.OutputStream.Flush ();
+
+			string pname = HttpResponseMessageProperty.Name;
+			bool suppressEntityBody = false;
+			if (msg.Properties.ContainsKey (pname)) {
+				HttpResponseMessageProperty hp = (HttpResponseMessageProperty) msg.Properties [pname];
+				string contentType = hp.Headers ["Content-Type"];
+				if (contentType != null)
+					ctx.Response.ContentType = contentType;
+				ctx.Response.Headers.Add (hp.Headers);
+				if (hp.StatusCode != default (HttpStatusCode))
+					ctx.Response.StatusCode = (int) hp.StatusCode;
+				ctx.Response.StatusDescription = hp.StatusDescription;
+				if (hp.SuppressEntityBody)
+					suppressEntityBody = true;
+			}
+			if (!suppressEntityBody) {
+				ctx.Response.AddHeader ("Content-Length", ms.Length.ToString (CultureInfo.InvariantCulture));
+				ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
+				ctx.Response.OutputStream.Flush ();
+			}
+			else
+				ctx.Response.SuppressContent = true;
 		}
 
 		public override void Close (TimeSpan timeout)
 		{
-			// FIXME: use timeout
-			ctx.Response.Close ();
+			ctx = null;
+			channel.CloseContext ();
 		}
 	}
 }

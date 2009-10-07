@@ -130,6 +130,9 @@ namespace System.ServiceModel
 
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)
 		{
+#if MONOTOUCH
+			throw new InvalidOperationException ("MonoTouch does not support dynamic proxy code generation. Override this method or its caller to return specific client proxy instance");
+#else
 			EnsureOpened ();
 			Endpoint.Validate ();
 			Type type = ClientProxyGenerator.CreateProxyType (typeof (TChannel), Endpoint.Contract, false);
@@ -139,6 +142,7 @@ namespace System.ServiceModel
 			// that should work either.
 			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address ?? Endpoint.Address, via});
 			return (TChannel) proxy;
+#endif
 		}
 
 		protected static TChannel CreateChannel (string endpointConfigurationName)

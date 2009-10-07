@@ -47,9 +47,9 @@ namespace System.ServiceModel.Channels {
 		Uri request_url;
 		ServiceHostBase host;
 		Queue<HttpContext> pending = new Queue<HttpContext> ();
-		bool closing;
+		int close_state;
 
-		AutoResetEvent wait = new AutoResetEvent (false);
+		AutoResetEvent process_request_wait = new AutoResetEvent (false);
 		AutoResetEvent listening = new AutoResetEvent (false);
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
@@ -64,22 +64,31 @@ namespace System.ServiceModel.Channels {
 			get { return true; }
 		}
 
-		public Uri Uri { get; private set; }
+		public ServiceHostBase Host {
+			get { return host; }
+		}
 
 		public HttpContext WaitForRequest (TimeSpan timeout)
 		{
+			if (close_state > 0)
+				return null;
 			DateTime start = DateTime.Now;
-			lock (pending) {
-				if (pending.Count > 0) {
-					var ctx = pending.Dequeue ();
-					if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
-						return WaitForRequest (timeout - (DateTime.Now - start));
-					return ctx;
-				}
-			}
 
-			return wait.WaitOne (timeout - (DateTime.Now - start), false) && !closing ?
-				WaitForRequest (timeout - (DateTime.Now - start)) : null;
+			if (close_state > 0)
+				return null;
+			if (pending.Count == 0) {
+				if (!process_request_wait.WaitOne (timeout - (DateTime.Now - start), false) || close_state > 0)
+					return null;
+			}
+			HttpContext ctx;
+			lock (pending) {
+				if (pending.Count == 0)
+					return null;
+				ctx = pending.Dequeue ();
+			}
+			if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
+				return WaitForRequest (timeout - (DateTime.Now - start));
+			return ctx;
 		}
 
 		public void ProcessRequest (HttpContext context)
@@ -87,10 +96,10 @@ namespace System.ServiceModel.Channels {
 			request_url = context.Request.Url;
 			EnsureServiceHost ();
 			pending.Enqueue (context);
+			process_request_wait.Set ();
 
-			wait.Set ();
-
-			listening.WaitOne ();
+			if (close_state == 0)
+				listening.WaitOne ();
 		}
 
 		public void EndRequest (HttpContext context)
@@ -98,43 +107,26 @@ namespace System.ServiceModel.Channels {
 			listening.Set ();
 		}
 
+		// called from SvcHttpHandlerFactory's remove callback (i.e.
+		// unloading asp.net). It closes ServiceHost, then the host
+		// in turn closes the listener and the channels it opened.
+		// The channel listener calls CloseServiceChannel() to stop
+		// accepting further requests on its shutdown.
 		public void Close ()
 		{
-			closing = true;
-			listening.Set ();
-			wait.Set ();
 			host.Close ();
 			host = null;
-			closing = false;
 		}
 
-		void ApplyConfiguration (ServiceHostBase host)
+		// called from AspNetChannelListener.Close() or .Abort().
+		public void CloseServiceChannel ()
 		{
-			foreach (ServiceElement service in ConfigUtil.ServicesSection.Services) {
-				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-					// FIXME: consider BindingName as well
-					host.AddServiceEndpoint (
-						endpoint.Contract,
-						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),
-						new Uri (path, UriKind.Relative));
-				}
-				// behaviors
-				ServiceBehaviorElement behavior = ConfigUtil.BehaviorsSection.ServiceBehaviors.Find (service.BehaviorConfiguration);
-				if (behavior != null) {
-					foreach (BehaviorExtensionElement bxel in behavior) {
-						IServiceBehavior b = null;
-						ServiceMetadataPublishingElement meta = bxel as ServiceMetadataPublishingElement;
-						if (meta != null) {
-							ServiceMetadataBehavior smb = meta.CreateBehavior () as ServiceMetadataBehavior;
-							smb.HttpGetUrl = request_url;
-							// FIXME: HTTPS as well
-							b = smb;
-						}
-						if (b != null)
-							host.Description.Behaviors.Add (b);
-					}
-				}
-			}
+			if (close_state > 0)
+				return;
+			close_state = 1;
+			process_request_wait.Set ();
+			listening.Set ();
+			close_state = 2;
 		}
 
 		void EnsureServiceHost ()
@@ -143,30 +135,15 @@ namespace System.ServiceModel.Channels {
 				return;
 
 			//ServiceHost for this not created yet
-			var baseUri = new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Path));
+			var baseUri = new Uri (new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Authority)), path);
 			if (factory_type != null) {
 				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
 			}
 			else
 				host = new ServiceHost (type, baseUri);
-
-
-			ApplyConfiguration (host);
-			if (host.Description.Endpoints.Count == 0)
-				//FIXME: Binding: Get from web.config.
-				host.AddServiceEndpoint (ContractDescription.GetContract (type).Name,
-					new BasicHttpBinding (), new Uri (path, UriKind.Relative));
-
-			var c = host.BaseAddresses;
-			var ba = c.FirstOrDefault (u => u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
-			if (ba != null)
-				this.Uri = new Uri (ba, path);
-			else
-				this.Uri = host.Description.Endpoints [0].Address.Uri;
+			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 
 			host.Open ();
-
-			//listening.WaitOne ();
 		}
 	}
 }

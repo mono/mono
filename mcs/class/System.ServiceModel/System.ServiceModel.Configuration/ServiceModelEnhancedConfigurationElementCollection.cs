@@ -58,6 +58,10 @@ namespace System.ServiceModel.Configuration
 		 : ServiceModelConfigurationElementCollection<TConfigurationElement>,  ICollection,  IEnumerable
 		where TConfigurationElement : ConfigurationElement, new()
 	{
+		internal ServiceModelEnhancedConfigurationElementCollection ()
+		{
+		}
+
 		// Properties
 		[MonoTODO]
 		protected override bool ThrowOnDuplicate {

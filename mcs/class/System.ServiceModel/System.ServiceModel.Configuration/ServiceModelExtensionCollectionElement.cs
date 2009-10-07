@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
@@ -40,10 +41,14 @@ namespace System.ServiceModel.Configuration
 		IEnumerable
 		where TServiceModelExtensionElement : ServiceModelExtensionElement
 	{
+		ConfigurationPropertyCollection properties;
+
 		KeyedByTypeCollection<TServiceModelExtensionElement> _list = new KeyedByTypeCollection<TServiceModelExtensionElement> ();
+		bool is_modified;
 
 		public virtual void Add (TServiceModelExtensionElement element)
 		{
+			is_modified = true;
 			_list.Add (element);
 		}
 		
@@ -53,6 +58,7 @@ namespace System.ServiceModel.Configuration
 
 		public void Clear ()
 		{
+			is_modified = true;
 			_list.Clear ();
 		}
 
@@ -82,7 +88,9 @@ namespace System.ServiceModel.Configuration
 				yield return this [i];
 		}
 
-		public bool Remove (TServiceModelExtensionElement element) {
+		public bool Remove (TServiceModelExtensionElement element)
+		{
+			is_modified = true;
 			return _list.Remove (element.GetType ());
 		}
 
@@ -109,11 +117,12 @@ namespace System.ServiceModel.Configuration
 			}
 		}
 
-		protected override void DeserializeElement (System.Xml.XmlReader reader, bool serializeCollectionKey) {
+		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		{
 			base.DeserializeElement (reader, serializeCollectionKey);
 		}
 
-		protected override bool OnDeserializeUnrecognizedElement (string elementName, System.Xml.XmlReader reader) {
+		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader) {
 			TServiceModelExtensionElement ext= DeserializeExtensionElement (elementName, reader);
 			if (ext == null)
 				return false;
@@ -121,12 +130,57 @@ namespace System.ServiceModel.Configuration
 			return true;
 		}
 
-		internal virtual TServiceModelExtensionElement DeserializeExtensionElement (string elementName, System.Xml.XmlReader reader) {
+		internal virtual TServiceModelExtensionElement DeserializeExtensionElement (string elementName, XmlReader reader) {
 			return null;
 		}
 
 		public int Count {
 			get { return _list.Count; }
+		}
+
+		protected override void Reset (ConfigurationElement parentElement)
+		{
+			base.Reset (parentElement);
+			var parent = (ServiceModelExtensionCollectionElement<TServiceModelExtensionElement>) parentElement;
+
+#if true
+			foreach (var item in parent)
+				Add (item);
+#else // FIXME: no way to call Reset() on item (hence disabled now)
+			// It is based on ConfigurationElementCollection.Reset()
+			for (int n=0; n<parent.Count; n++)
+			{
+				var parentItem = parent [n];
+//				ConfigurationElement item = CreateNewElementInternal (null);
+				var item = (TServiceModelExtensionElement) Activator.CreateInstance (parentItem.GetType ()); // FIXME: there is no assureance on default constructor existence.
+				item.Reset (parentItem);
+				Add (item);
+			}
+#endif
+		}
+
+		protected override bool IsModified ()
+		{
+			return is_modified;
+		}
+
+		protected override void ResetModified ()
+		{
+			is_modified = false;
+		}
+
+		protected void SetIsModified ()
+		{
+			is_modified = true;
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get {
+				if (properties == null) {
+					properties = base.Properties;
+				}
+				return properties;
+			}
 		}
 	}
 }

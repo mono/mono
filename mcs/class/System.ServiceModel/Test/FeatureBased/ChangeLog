@@ -1,3 +1,9 @@
+2008-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestFixtureBase.cs : until I sort out what's causing failure on
+	  channels shutdown, disable concurrent channels here. They block
+	  unit testing themselves.
+
 2008-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestFixtureBase.cs : Fix build.

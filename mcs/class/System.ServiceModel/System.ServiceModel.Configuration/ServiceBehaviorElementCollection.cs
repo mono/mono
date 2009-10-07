@@ -77,18 +77,6 @@ namespace System.ServiceModel.Configuration
 			get { return true; }
 		}
 
-		internal ServiceBehaviorElement Find (string name) {
-			foreach (ServiceBehaviorElement el in this)
-				if (el.Name == name)
-					return el;
-			return null;
-		}
-
-		[MonoTODO]
-		protected override void BaseAdd (ConfigurationElement element) {
-			base.BaseAdd (element);
-		}
-
 		[MonoTODO]
 		protected override void DeserializeElement (
 			XmlReader reader, bool serializeCollectionKey) {

@@ -55,7 +55,7 @@ using System.Xml;
 namespace System.ServiceModel.Configuration
 {
 	public class EndpointBehaviorElement
-		 : NamedServiceModelExtensionCollectionElement<BehaviorExtensionElement>, ICollection<BehaviorExtensionElement>, IEnumerable<BehaviorExtensionElement>, IEnumerable
+		 : NamedServiceModelExtensionCollectionElement<BehaviorExtensionElement>
 	{
 		public EndpointBehaviorElement (string name) {
 			Name = name;

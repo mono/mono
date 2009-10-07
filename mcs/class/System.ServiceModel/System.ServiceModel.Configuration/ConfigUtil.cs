@@ -32,25 +32,40 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Web.Configuration;
 
 namespace System.ServiceModel.Configuration
 {
 	internal static class ConfigUtil
 	{
+		static object GetSection (string name)
+		{
+			if (ServiceHostingEnvironment.InAspNet)
+				return WebConfigurationManager.GetSection (name);
+			else
+				return ConfigurationManager.GetSection (name);
+		}
+
 		public static BindingsSection BindingsSection {
-			get { return (BindingsSection) ConfigurationManager.GetSection ("system.serviceModel/bindings"); }
+			get {
+				return (BindingsSection) GetSection ("system.serviceModel/bindings");
+			}
+		}
+
+		public static ClientSection ClientSection {
+			get { return (ClientSection) GetSection ("system.serviceModel/client"); }
 		}
 
 		public static ServicesSection ServicesSection {
-			get { return (ServicesSection) ConfigurationManager.GetSection ("system.serviceModel/services"); }
+			get { return (ServicesSection) GetSection ("system.serviceModel/services"); }
 		}
 
 		public static BehaviorsSection BehaviorsSection {
-			get { return (BehaviorsSection) ConfigurationManager.GetSection ("system.serviceModel/behaviors"); }
+			get { return (BehaviorsSection) GetSection ("system.serviceModel/behaviors"); }
 		}
 
 		public static ExtensionsSection ExtensionsSection {
-			get { return (ExtensionsSection) ConfigurationManager.GetSection ("system.serviceModel/extensions"); }
+			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
 
 		public static Binding CreateBinding (string binding, string bindingConfiguration)

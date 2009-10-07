@@ -109,12 +109,16 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (source, context)
 		{
-			HttpHandler = SvcHttpHandlerFactory.Handlers.Values.First (v => v.Uri.Equals (Uri));
-			if (HttpHandler == null)
-				throw new Exception ("Unexpected internal error: HTTP handler not found for URI " + Uri);
 		}
 
-		internal SvcHttpHandler HttpHandler { get; private set; }
+		SvcHttpHandler http_handler;
+		internal SvcHttpHandler HttpHandler {
+			get {
+				if (http_handler == null)
+					http_handler = SvcHttpHandlerFactory.GetHandlerForListener (this);
+				return http_handler;
+			}
+		}
 
 		protected override TChannel CreateChannel (TimeSpan timeout)
 		{
@@ -125,6 +129,17 @@ namespace System.ServiceModel.Channels
 				throw new NotImplementedException ();
 
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
+		}
+
+		protected override void OnAbort ()
+		{
+			HttpHandler.CloseServiceChannel ();
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			HttpHandler.CloseServiceChannel ();
+			base.OnClose (timeout);
 		}
 	}
 
@@ -155,14 +170,9 @@ namespace System.ServiceModel.Channels
 			get { return encoder; }
 		}
 
-		protected IList<TChannel> Channels {
-			get { return channels; }
-		}
-
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
 			TChannel ch = CreateChannel (timeout);
-			Channels.Add (ch);
 			return ch;
 		}
 
@@ -185,8 +195,6 @@ namespace System.ServiceModel.Channels
 		protected override void OnClose (TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
-			foreach (TChannel ch in new List<TChannel> (Channels)) // they will be removed during iteration, so create another one
-				ch.Close (timeout - (DateTime.Now - start));
 			base.OnClose (timeout - (DateTime.Now - start));
 		}
 	}

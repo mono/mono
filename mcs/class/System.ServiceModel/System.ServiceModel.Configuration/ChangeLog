@@ -1,3 +1,37 @@
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs : revert the change, to use ServiceHostingEnvironment
+	  internal member again.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceThrottlingElement.cs : implement CreateBehavior().
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceModelExtensionCollectionElement.cs : add couple of missing
+	  members. Implement Reset() to not clean up items (so far it is
+	  hacky workaround).
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceBehaviorElement.cs, EndpointBehaviorElement.cs :
+	  remove extra interfaces.
+	* ServiceModelEnhancedConfigurationElementCollection.cs :
+	  there is no protected constructor.
+	* EndpointBehaviorElementCollection.cs :
+	  add ThrowOnDuplicate.
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceModelConfigurationElementCollection.cs : implement set[this]
+	* ServiceBehaviorElementCollection.cs : remove extra members.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs : use WeConfigurationManager when it is under
+	  ASP.NET environment.
+
 2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IdentityElement.cs, NetPeerTcpBindingElement.cs: implemented

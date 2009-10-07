@@ -40,7 +40,12 @@ namespace System.ServiceModel.Configuration
 
 		public ConfigurationElementType this [int index] {
 			get { return (ConfigurationElementType) base.BaseGet (index); }
-			set { throw new NotImplementedException (); }
+			set {
+				if (Count <= index)
+					throw new ArgumentOutOfRangeException (String.Format ("Index is out of range: {0}", index), "index");
+				BaseRemoveAt (index);
+				BaseAdd (index, value);
+			}
 		}
 
 		public virtual ConfigurationElementType this [object key] {

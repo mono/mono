@@ -3,7 +3,46 @@
 	* OperationContext.cs: Use [ThreadStatic] instead of Thread.
 	GetNamedDataSlot with Thread.[Get|Set]Data since it offers type
 	safety and don't require keeping extra API inside Moonlight
-	[Backport r143620]
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : a couple of refactoring on contract loopup.
+	  Do not push mex contracts to ImplementedContracts.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostingEnvironment.cs : revert the change, to use
+	  internal asp.net state again.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : apply endpoint behavior section in config.
+	  Otherwise WebScriptEnablingBehavior won't be created.
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : fill behaviors first, then add endpoints.
+	  IMetadataExchange requires ServiceMetadataBehaviors, but it may be
+	  filled only from config (which is to be read later).
+
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : MT users should be warned.
+	* ClientBase.cs : make MT-only ChannelBase.Invoke() protected.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostingEnvironment.cs : use AspNetCompatibilityEnabled as
+	  ASP.NET switch.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : use ConfigUtil to get config sections.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : fix wrong parameter number for async
+	  end method with return value.
 
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 

@@ -404,7 +404,7 @@ namespace System.ServiceModel
 			}
 
 #if !NET_2_1 || MONOTOUCH
-			public object Invoke (string methodName, object [] args)
+			protected object Invoke (string methodName, object [] args)
 			{
 				var cd = endpoint.Contract;
 				var od = cd.Operations.Find (methodName);

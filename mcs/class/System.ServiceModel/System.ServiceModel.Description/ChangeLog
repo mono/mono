@@ -1,3 +1,8 @@
+2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : fixed sync client generator that
+	  incorrectly exited in the middle of proxy generator.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : when its url is requested without

@@ -434,7 +434,7 @@ namespace System.ServiceModel.Description
 
 				// For async mode, add EndXxx() too.
 				if (!GenerateAsync)
-					return;
+					continue;
 
 				// EndXxx() implementation
 

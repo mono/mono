@@ -40,13 +40,46 @@ namespace System.ServiceModel.Channels
 	{
 		HttpContext http_context;
 		AspNetChannelListener<IReplyChannel> listener;
-		Uri uri;
 
 		public AspNetReplyChannel (AspNetChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.listener = listener;
-			uri = listener.Uri;
+		}
+
+		internal void CloseContext ()
+		{
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
+		}
+
+		protected override void OnAbort ()
+		{
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			base.OnClose (timeout);
+
+			if (http_context == null)
+				return;
+			try {
+				listener.HttpHandler.EndRequest (http_context);
+			} finally {
+				http_context = null;
+			}
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
@@ -57,9 +90,6 @@ namespace System.ServiceModel.Channels
 				// FIXME: log it
 				Console.WriteLine ("AspNetReplyChannel caught an error: " + ex);
 				throw;
-			} finally {
-				listener.HttpHandler.EndRequest (http_context);
-				http_context = null;
 			}
 		}
 
@@ -70,28 +100,27 @@ namespace System.ServiceModel.Channels
 				return false;
 
 			Message msg;
-			if (http_context.Request.HttpMethod == "GET") {
-				if (http_context.Request.QueryString ["wsdl"] != null) {
-					msg = Message.CreateMessage (Encoder.MessageVersion,
-						"http://schemas.xmlsoap.org/ws/2004/09/transfer/Get");
-					msg.Headers.To = http_context.Request.Url;
-				} else {
-					msg = Message.CreateMessage (Encoder.MessageVersion, null);
-					msg.Headers.To = http_context.Request.Url;
-				}
+			var req = http_context.Request;
+			if (req.HttpMethod == "GET") {
+				msg = Message.CreateMessage (Encoder.MessageVersion, null);
+				msg.Headers.To = req.Url;
 			} else {
 				//FIXME: Do above stuff for HttpContext ?
 				int maxSizeOfHeaders = 0x10000;
 
 				msg = Encoder.ReadMessage (
-					http_context.Request.InputStream, maxSizeOfHeaders);
+					req.InputStream, maxSizeOfHeaders);
 
 				if (Encoder.MessageVersion.Envelope == EnvelopeVersion.Soap11) {
-					string action = GetHeaderItem (http_context.Request.Headers ["SOAPAction"]);
+					string action = GetHeaderItem (req.Headers ["SOAPAction"]);
 					if (action != null)
 						msg.Headers.Action = action;
 				}
 			}
+
+			// FIXME: prop.SuppressEntityBody
+			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (req.HttpMethod, req.Url.Query, req.Headers));
+
 			context = new AspNetRequestContext (this, msg, http_context);
 
 			return true;

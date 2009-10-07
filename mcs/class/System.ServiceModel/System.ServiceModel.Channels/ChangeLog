@@ -1,7 +1,87 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IHttpCookieContainer.cs : new 2.1-only interface (no use).
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : use file path given by the factory to
+	  construct BaseAddresses. Requests to "test.svc/jsdebug" should
+	  not be handled as request to "jsdebug" file, it's rather an
+	  "argument" to "test.svc".
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs, HttpChannelListener.cs : some significant
+	  rewrite to handle shutdown situation better. The listeners should
+	  not close channels that it opened. Instead, just stop accepting
+	  further requests. Removed blocking mutex on WaitForRequest().
+	  Now xsp shuts down as expected.
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : lock list when releasing its content contexts.
+	* AspNetReplyChannel.cs : send EndRequest() to handler when it is
+	  closing.
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandlerFactory.cs : remove todo.
+	* ReplyChannelBase.cs : add comment.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElement.cs, SvcHttpHandlerFactory.cs :
+	  revert the change, to use internal asp.net state again.
+	* SvcHttpHandler.cs : add VirtualPathExtension.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs, AspNetReplyChannel.cs, AspNetRequestContext.cs:
+	  asp.net response was not written correctly.
+	  Fill HttpRequestMessageProperty to get handle WSDL requests
+	  processed in ServiceMetadataExtension without NRE.
+	  Remove wrong HttpListenerContext iteration at Abort and Close in
+	  common base class and move it to non-asp derived channel.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : remove unused code.
+
 2009-09-30  Jb Evain  <jbevain@novell.com>
 
 	* HttpRequestChannel.cs: When compiling for MonoTouch, avoid
 	to use any of the remoting features.
+
+2009-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandlerFactory.cs, HttpTransportBindingElement.cs :
+	  use AspNetCompatibilityEnabled.
+	* SvcHttpHandler.cs : disable ApplyConfiguration(). It should be done
+	  at ServiceHostBase.
+	* AspNetReplyChannel.cs : remove extra field.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : remove extra field.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AspNetRequestContext.cs : remove CWL.
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AspNetReplyChannel.cs, AspNetRequestContext.cs : close HttpContext
+	  only after AspNetRequestContext is closed. Do not close it
+	  immediately after receiving the context. (HttpRuntime destructs it
+	  and further uses then becomes impossible.)
+
+2009-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AspNetReplyChannel.cs, HttpReplyChannel.cs : add some comments.
+	* SvcHttpHandlerFactory.cs, SvcHttpHandler.cs, HttpChannelListener.cs:
+	  Make sure that AspNetChannelListener is bound to correct
+	  SvcHttpHandler, regardless of specific request URI. It is required
+	  for both WSDL requests and RESTful binding requests.
 
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 

@@ -71,6 +71,7 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> ();
 		}
 
+		// FIXME: this is wrong. Implement all of them in each channel.
 		protected override void OnAbort ()
 		{
 			OnClose (TimeSpan.Zero);
