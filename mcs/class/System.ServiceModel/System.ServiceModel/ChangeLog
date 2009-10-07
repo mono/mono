@@ -1,3 +1,10 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OperationContext.cs: Use [ThreadStatic] instead of Thread.
+	GetNamedDataSlot with Thread.[Get|Set]Data since it offers type
+	safety and don't require keeping extra API inside Moonlight
+	[Backport r143620]
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexClientRuntimeChannel.cs : reflecting EndpointDispatcher change.

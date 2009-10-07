@@ -36,15 +36,15 @@ namespace System.ServiceModel
 {
 	public sealed class OperationContext : IExtensibleObject<OperationContext>
 	{
-		// generated guid (no special meaning)
-		const string operation_context_name = "c15795e2-bb44-4cfb-a89c-8529feb170cb";
-		Message incoming_message;
+		[ThreadStatic]
+		static OperationContext current;
 
 		public static OperationContext Current {
-			get { return Thread.GetData (Thread.GetNamedDataSlot (operation_context_name)) as OperationContext; }
-			set { Thread.SetData (Thread.GetNamedDataSlot (operation_context_name), value); }
+			get { return current; }
+			set { current = value; }
 		}
 
+		Message incoming_message;
 #if !NET_2_1
 		EndpointDispatcher dispatcher;
 #endif

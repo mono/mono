@@ -84,5 +84,21 @@ namespace MonoTests.System.ServiceModel
 		interface IFooChannel : IFoo, IClientChannel
 		{
 		}
+
+		[Test]
+		public void Current ()
+		{
+			Assert.IsNull (OperationContext.Current, "Current-1");
+
+			try {
+				var ch = ChannelFactory<IFooChannel>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ("http://localhost:37564"));
+				OperationContext.Current = new OperationContext (ch);
+				Assert.IsNotNull (OperationContext.Current, "Current-2");
+			}
+			finally {
+				OperationContext.Current = null;
+				Assert.IsNull (OperationContext.Current, "Current-3");
+			}
+		}
 	}
 }

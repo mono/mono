@@ -1,3 +1,8 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OperationContextTest.cs: Add test case for OperationContext.Current
+	[Backport r143620]
+
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBaseTest.cs : a few more base address test.
