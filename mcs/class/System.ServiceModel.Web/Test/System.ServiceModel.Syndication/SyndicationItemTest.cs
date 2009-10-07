@@ -128,5 +128,13 @@ namespace MonoTests.System.ServiceModel.Syndication
 		{
 			SyndicationItem.Load (XmlReader.Create (new StringReader ("<dummy />")));
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void LoadFeed ()
+		{
+			// feed is not allowed.
+			SyndicationItem.Load (XmlReader.Create (new StringReader ("<feed />")));
+		}
 	}
 }

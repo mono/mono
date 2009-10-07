@@ -113,6 +113,16 @@ namespace MonoTests.System.ServiceModel.Syndication
 			new SyndicationElementExtension (r);
 		}
 
+		[Test]
+		public void ConstructorXmlReader ()
+		{
+			string xml = "<root xmlns='x'>2</root>";
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			var e = new SyndicationElementExtension (r);
+			Assert.AreEqual ("root", e.OuterName, "#1");
+			Assert.AreEqual ("x", e.OuterNamespace, "#2");
+		}
+
 		XmlWriter GetWriter (StringWriter sw)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();

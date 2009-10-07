@@ -1,3 +1,8 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SyndicationElementExtension.cs : give OuterName and OuterNamespace
+	  for extensions with .ctor(XmlReader).
+
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Atom10FeedFormatter.cs : do not use Atom10ItemFormatter(item)
