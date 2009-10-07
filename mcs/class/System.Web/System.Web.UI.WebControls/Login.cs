@@ -34,6 +34,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Security;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -1340,7 +1341,7 @@ namespace System.Web.UI.WebControls {
 				return false;
 			string url = Page.Request.Url.AbsolutePath;
 			return (String.Compare (defaultLogin, 0, url, url.Length - defaultLogin.Length, defaultLogin.Length,
-				true, CultureInfo.InvariantCulture) == 0);
+				true, Helpers.InvariantCulture) == 0);
 		}
 
 		bool IsLoggedIn ()

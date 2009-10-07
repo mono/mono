@@ -40,7 +40,7 @@ namespace System.Web.Util {
 		internal static string ToUtcTimeString (DateTime dt)
 		{
 			return dt.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ",
-				CultureInfo.InvariantCulture) + "GMT";
+				Helpers.InvariantCulture) + "GMT";
 		}
 	}
 }

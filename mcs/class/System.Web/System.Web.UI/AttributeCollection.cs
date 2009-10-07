@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI {
 
@@ -140,7 +141,7 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
-			if (0 == String.Compare (key, StyleAttribute, true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (key, StyleAttribute, true, Helpers.InvariantCulture)) {
 				CssStyle.Value = value;
 				return;
 			}
@@ -163,7 +164,7 @@ namespace System.Web.UI {
 
 		public void Remove (string key)
 		{
-			if (0 == String.Compare (key, StyleAttribute, true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (key, StyleAttribute, true, Helpers.InvariantCulture)) {
 				CssStyle.Clear ();
 				return;
 			}

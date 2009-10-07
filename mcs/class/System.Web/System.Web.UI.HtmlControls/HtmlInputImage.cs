@@ -35,6 +35,7 @@ using System.Globalization;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -120,14 +121,14 @@ namespace System.Web.UI.HtmlControls {
 				string border = Attributes ["border"];
 				if (border == null)
 					return -1;
-				return Int32.Parse (border, CultureInfo.InvariantCulture);
+				return Int32.Parse (border, Helpers.InvariantCulture);
 			}
 			set {
 				if (value == -1) {
 					Attributes.Remove ("border");
 					return;
 				}
-				Attributes ["border"] = value.ToString (CultureInfo.InvariantCulture);
+				Attributes ["border"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 
@@ -138,8 +139,8 @@ namespace System.Web.UI.HtmlControls {
 
 			if (x != null && x.Length != 0 &&
 					y != null && y.Length != 0) {
-				clicked_x = Int32.Parse (x, CultureInfo.InvariantCulture);
-				clicked_y = Int32.Parse (y, CultureInfo.InvariantCulture);
+				clicked_x = Int32.Parse (x, Helpers.InvariantCulture);
+				clicked_y = Int32.Parse (y, Helpers.InvariantCulture);
 				Page.RegisterRequiresRaiseEvent (this);
 				return true;
 			}

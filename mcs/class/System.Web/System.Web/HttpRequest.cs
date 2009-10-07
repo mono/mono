@@ -624,7 +624,7 @@ namespace System.Web {
 			if (starts_with)
 				return StrUtils.StartsWith (ContentType, ct, true);
 
-			return String.Compare (ContentType, ct, true, CultureInfo.InvariantCulture) == 0;
+			return String.Compare (ContentType, ct, true, Helpers.InvariantCulture) == 0;
 		}
 		
 		public NameValueCollection Form {

@@ -36,6 +36,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -146,7 +147,7 @@ namespace System.Web.UI.WebControls {
 
 				case BulletedListDisplayMode.LinkButton:
 					if (Enabled && item.Enabled)
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (CultureInfo.InvariantCulture)), true));
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (Helpers.InvariantCulture)), true));
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
@@ -207,7 +208,7 @@ namespace System.Web.UI.WebControls {
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 			
-			this.OnClick (new BulletedListEventArgs (int.Parse (eventArgument, CultureInfo.InvariantCulture)));
+			this.OnClick (new BulletedListEventArgs (int.Parse (eventArgument, Helpers.InvariantCulture)));
 		}
 			
 	    [BrowsableAttribute (false)]

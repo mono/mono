@@ -31,6 +31,7 @@ using System.Collections;
 using System.Security.Permissions;
 using System.Web.UI.WebControls;
 using System.Globalization;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls
 {
@@ -49,11 +50,11 @@ namespace System.Web.UI.HtmlControls
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs) 
 		{
-			if (String.Compare (tagName, "option", true, CultureInfo.InvariantCulture) != 0)
+			if (String.Compare (tagName, "option", true, Helpers.InvariantCulture) != 0)
 				return null;
 
 			string selected = attribs ["selected"] as string;
-			if (selected != null && selected.Length > 0 && String.Compare (selected, "selected", true, CultureInfo.InvariantCulture) == 0)
+			if (selected != null && selected.Length > 0 && String.Compare (selected, "selected", true, Helpers.InvariantCulture) == 0)
 				attribs ["selected"] = "true";
 			return typeof (ListItem);
 		}

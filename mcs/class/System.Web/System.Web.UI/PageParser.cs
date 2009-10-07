@@ -173,11 +173,11 @@ namespace System.Web.UI
 			// attribute is processed case-insensitive
 			string enabless = GetString (atts, "EnableSessionState", null);
 			if (enabless != null) {
-				if (String.Compare (enabless, "readonly", true) == 0)
+				if (String.Compare (enabless, "readonly", true, Helpers.InvariantCulture) == 0)
 					enableSessionState = PagesEnableSessionState.ReadOnly;
-				else if (String.Compare (enabless, "true", true) == 0)
+				else if (String.Compare (enabless, "true", true, Helpers.InvariantCulture) == 0)
 					enableSessionState = PagesEnableSessionState.True;
-				else if (String.Compare (enabless, "false", true) == 0)
+				else if (String.Compare (enabless, "false", true, Helpers.InvariantCulture) == 0)
 					enableSessionState = PagesEnableSessionState.False;
 				else
 					ThrowParseException ("Invalid value for enableSessionState: " + enabless);
@@ -325,7 +325,7 @@ namespace System.Web.UI
 				ClientTarget ct = null;
 				
 				if ((ct = sec.ClientTargets [clientTarget]) == null)
-					clientTarget = clientTarget.ToLower (CultureInfo.InvariantCulture);
+					clientTarget = clientTarget.ToLowerInvariant ();
 				
 				if (ct == null && (ct = sec.ClientTargets [clientTarget]) == null) {
 					ThrowParseException (String.Format (
@@ -342,7 +342,7 @@ namespace System.Web.UI
 				if (coll != null) {
 					ct = coll [clientTarget];
 					if (ct == null)
-						ct = coll [clientTarget.ToLower ()];
+						ct = coll [clientTarget.ToLower (Helpers.InvariantCulture)];
 				}
 				
 				if (ct == null) {
@@ -404,7 +404,7 @@ namespace System.Web.UI
 			if (isMasterType || isPreviousPageType) {
 				PageParserFilter pfilter = PageParserFilter;
 				if (pfilter != null)
-					pfilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+					pfilter.PreprocessDirective (directive.ToLowerInvariant (), atts);
 				
 				typeName = GetString (atts, "TypeName", null);
 				virtualPath = GetString (atts, "VirtualPath", null);

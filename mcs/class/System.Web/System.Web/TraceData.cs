@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.UI;
@@ -354,7 +355,7 @@ namespace System.Web {
 
 			if (TraceMode == TraceMode.SortByCategory) {
 				List<InfoTraceData> list = new List<InfoTraceData> (info);
-				list.Sort (delegate (InfoTraceData x, InfoTraceData y) { return String.Compare (x.Category, y.Category); });
+				list.Sort (delegate (InfoTraceData x, InfoTraceData y) { return String.Compare (x.Category, y.Category, StringComparison.Ordinal); });
 				enumerable = list;
 			}
 

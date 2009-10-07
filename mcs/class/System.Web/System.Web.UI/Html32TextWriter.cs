@@ -32,6 +32,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -89,7 +90,7 @@ namespace System.Web.UI
 			    !Enum.IsDefined (typeof (HtmlTextWriterTag), tagKey))
 				return "";
 
-			return tagKey.ToString ().ToLower (CultureInfo.InvariantCulture);
+			return tagKey.ToString ().ToLower (Helpers.InvariantCulture);
 			/* The code below is here just in case we need to split things up
 			switch (tagkey) {
 			case HtmlTextWriterTag.Unknown:

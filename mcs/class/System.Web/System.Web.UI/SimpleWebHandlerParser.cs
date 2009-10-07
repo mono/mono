@@ -29,6 +29,7 @@
 
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
@@ -225,9 +226,9 @@ namespace System.Web.UI
 			if (tagtype != System.Web.Compilation.TagType.Directive)
 				throw new ParseException (location, "Unexpected tag");
 
-			if (tagid == null || tagid.Length == 0 || String.Compare (tagid, DefaultDirectiveName, true) == 0) {
+			if (tagid == null || tagid.Length == 0 || String.Compare (tagid, DefaultDirectiveName, true, Helpers.InvariantCulture) == 0) {
 				AddDefaultDirective (location, attributes);
-			} else if (String.Compare (tagid, "Assembly", true) == 0) {
+			} else if (String.Compare (tagid, "Assembly", true, Helpers.InvariantCulture) == 0) {
 				AddAssemblyDirective (location, attributes);
 			} else {
 				throw new ParseException (location, "Unexpected directive: " + tagid);
@@ -287,8 +288,8 @@ namespace System.Web.UI
 			
 			string d = GetAndRemove (attributes, "debug");
 			if (d != null) {
-				debug = (String.Compare (d, "true", true) == 0);
-				if (debug == false && String.Compare (d, "false", true) != 0)
+				debug = (String.Compare (d, "true", true, Helpers.InvariantCulture) == 0);
+				if (debug == false && String.Compare (d, "false", true, Helpers.InvariantCulture) != 0)
 					throw new ParseException (null, "Invalid value for Debug attribute");
 			} else
 				debug = compConfig.Debug;

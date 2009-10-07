@@ -92,10 +92,10 @@ namespace System.Web.UI
 
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
-			if (String.Compare ("MasterType", directive, true) == 0) {
+			if (String.Compare ("MasterType", directive, StringComparison.OrdinalIgnoreCase) == 0) {
 				PageParserFilter pfilter = PageParserFilter;
 				if (pfilter != null)
-					pfilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+					pfilter.PreprocessDirective (directive.ToLowerInvariant (), atts);
 				
 				string type = GetString (atts, "TypeName", null);
 				if (type != null) {

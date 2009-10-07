@@ -481,7 +481,7 @@ namespace System.Web.Compilation {
 			string filename = GetTempFilePhysicalPath (extension);
 			ICodePragmaGenerator pragmaGenerator;
 			
-			switch (extension.ToLower ()) {
+			switch (extension.ToLowerInvariant ()) {
 				case "cs":
 					pragmaGenerator = new CSharpCodePragmaGenerator ();
 					break;

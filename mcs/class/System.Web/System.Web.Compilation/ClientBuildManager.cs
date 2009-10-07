@@ -39,6 +39,7 @@ using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Hosting;
+using System.Web.Util;
 
 namespace System.Web.Compilation {
 	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
@@ -110,14 +111,14 @@ namespace System.Web.Compilation {
 				if (app_id != null)
 					hashcode ^= Int32.Parse (app_id);
 
-				app_id = hashcode.ToString (CultureInfo.InvariantCulture);
+				app_id = hashcode.ToString (Helpers.InvariantCulture);
 				host = manager.CreateHostWithCheck (app_id, virt_dir, phys_src_dir);
 				cache_path = "";
 				//cache_path = Path.Combine (Path.GetTempPath (),
 					//String.Format ("{0}-temp-aspnet-{1:x}", Environment.UserName, i));
 
 				int hash = virt_dir.GetHashCode () << 5 + phys_src_dir.GetHashCode ();
-				cache_path = Path.Combine (cache_path, hash.ToString (CultureInfo.InvariantCulture));
+				cache_path = Path.Combine (cache_path, hash.ToString (Helpers.InvariantCulture));
 				Directory.CreateDirectory (cache_path);
 				OnAppDomainStarted ();
 				return host;

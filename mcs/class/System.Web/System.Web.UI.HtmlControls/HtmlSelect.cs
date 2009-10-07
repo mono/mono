@@ -341,7 +341,7 @@ namespace System.Web.UI.HtmlControls
 					return (-1);
 				}
 
-				return (Int32.Parse (size, CultureInfo.InvariantCulture));
+				return (Int32.Parse (size, Helpers.InvariantCulture));
 			}
 			set {
 				if (value == -1) {
