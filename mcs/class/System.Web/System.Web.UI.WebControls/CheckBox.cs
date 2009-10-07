@@ -31,6 +31,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 	// CAS
@@ -311,7 +312,7 @@ namespace System.Web.UI.WebControls {
 
 		static bool IsInputOrCommonAttr (string attname)
 		{
-			attname = attname.ToUpper (CultureInfo.InvariantCulture);
+			attname = attname.ToUpper (Helpers.InvariantCulture);
 			switch (attname) {
 			case "VALUE":
 			case "CHECKED":

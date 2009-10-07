@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -65,7 +66,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("cols");
 				else
-					Attributes ["cols"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["cols"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 
@@ -91,7 +92,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("rows");
 				else
-					Attributes ["rows"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["rows"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 

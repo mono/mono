@@ -34,6 +34,7 @@ using System.Globalization;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Security.Permissions;
+using System.Web.Util;
 
 #if NET_2_0
 namespace System.Web.Configuration {
@@ -554,7 +555,7 @@ namespace System.Web {
 				throw CreateCapabilityNotFoundException (key);
 			}
 
-			return (String.Compare (v, "True", true, CultureInfo.InvariantCulture) == 0);
+			return (String.Compare (v, "True", true, Helpers.InvariantCulture) == 0);
 		}
 
 		int ReadInt32 (string key)

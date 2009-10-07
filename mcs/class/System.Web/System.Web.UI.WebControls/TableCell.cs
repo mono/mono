@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -201,11 +202,11 @@ namespace System.Web.UI.WebControls {
 
 			int i = ColumnSpan;
 			if (i > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Colspan, i.ToString (CultureInfo.InvariantCulture), false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Colspan, i.ToString (Helpers.InvariantCulture), false);
 
 			i = RowSpan;
 			if (i > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan, i.ToString (CultureInfo.InvariantCulture), false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Rowspan, i.ToString (Helpers.InvariantCulture), false);
 #if NET_2_0
 			string[] ahci = AssociatedHeaderCellID;
 			if (ahci.Length > 1) {

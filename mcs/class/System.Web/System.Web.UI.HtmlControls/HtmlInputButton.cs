@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -109,7 +110,7 @@ namespace System.Web.UI.HtmlControls {
 #endif
 			}
 			
-			if (String.Compare (Type, "reset", true, CultureInfo.InvariantCulture) != 0)
+			if (String.Compare (Type, "reset", true, Helpers.InvariantCulture) != 0)
 				OnServerClick (EventArgs.Empty);
 			else
 				ResetForm (FindForm ());
@@ -254,7 +255,7 @@ namespace System.Web.UI.HtmlControls {
 			if (Page == null || !CausesValidation)
 				return false;
 
-			CultureInfo inv = CultureInfo.InvariantCulture;
+			CultureInfo inv = Helpers.InvariantCulture;
 			string input_type = Type;
 			if (0 == String.Compare (input_type, "submit", true, inv) &&
 				Page.Validators.Count > 0)
@@ -271,7 +272,7 @@ namespace System.Web.UI.HtmlControls {
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 #if NET_2_0
-			CultureInfo inv = CultureInfo.InvariantCulture;
+			CultureInfo inv = Helpers.InvariantCulture;
 			string input_type = Type;
 			if (0 != String.Compare (input_type, "reset", true, inv) &&
 				((0 == String.Compare (input_type, "submit", true, inv)) ||
@@ -327,7 +328,7 @@ namespace System.Web.UI.HtmlControls {
 			options.ActionUrl = null;
 			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
-			options.ClientSubmit = (0 != String.Compare (Type, "submit", true, CultureInfo.InvariantCulture));
+			options.ClientSubmit = (0 != String.Compare (Type, "submit", true, Helpers.InvariantCulture));
 			options.PerformValidation = CausesValidation && Page != null && Page.Validators.Count > 0;
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;

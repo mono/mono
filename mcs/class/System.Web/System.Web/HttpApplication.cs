@@ -76,6 +76,7 @@ using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
+using System.Web.Util;
 
 #if TARGET_J2EE
 using Mainsoft.Web;
@@ -856,7 +857,7 @@ namespace System.Web {
 			if (custom == null) // Sigh
 				throw new NullReferenceException ();
 
-			if (0 == String.Compare (custom, "browser", true, CultureInfo.InvariantCulture))
+			if (0 == String.Compare (custom, "browser", true, Helpers.InvariantCulture))
 				return context.Request.Browser.Type;
 
 			return null;
@@ -1498,14 +1499,14 @@ namespace System.Web {
 			if (app_culture != null) {
 				prev_app_culture = th.CurrentCulture;
 				CultureInfo new_app_culture = GetThreadCulture (Request, app_culture, autoCulture);
-				if (!new_app_culture.Equals (CultureInfo.InvariantCulture))
+				if (!new_app_culture.Equals (Helpers.InvariantCulture))
 					th.CurrentCulture = new_app_culture;
 			}
 
 			if (appui_culture != null) {
 				prev_appui_culture = th.CurrentUICulture;
 				CultureInfo new_app_culture = GetThreadCulture (Request, appui_culture, autoUICulture);
-				if (!new_app_culture.Equals (CultureInfo.InvariantCulture))
+				if (!new_app_culture.Equals (Helpers.InvariantCulture))
 					th.CurrentUICulture = new_app_culture;
 			}
 

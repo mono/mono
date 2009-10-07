@@ -28,6 +28,7 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
@@ -116,7 +117,7 @@ namespace System.Web.UI {
 
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
-			int cmp = String.Compare ("Register", directive, true);
+			int cmp = String.Compare ("Register", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				string tagprefix = GetString (atts, "TagPrefix", null);
 				if (tagprefix == null || tagprefix.Trim () == "")
@@ -159,7 +160,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			cmp = String.Compare ("Reference", directive, true);
+			cmp = String.Compare ("Reference", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				string vp = null;
 				string page = GetString (atts, "Page", null);

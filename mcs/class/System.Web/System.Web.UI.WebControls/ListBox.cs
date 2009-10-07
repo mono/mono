@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Collections.Specialized;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -160,7 +161,7 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,
 						"multiple", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Size,
-                                        Rows.ToString (CultureInfo.InvariantCulture));
+                                        Rows.ToString (Helpers.InvariantCulture));
 			
 			base.AddAttributesToRender (writer);
 		}

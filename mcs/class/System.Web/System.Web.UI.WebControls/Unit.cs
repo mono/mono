@@ -30,6 +30,7 @@
 using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -238,7 +239,7 @@ namespace System.Web.UI.WebControls {
 				if (unitLen == 1 && input [unitStart] == '%')
 					type = UnitType.Percentage;
 				else {
-					switch (input.Substring (unitStart, unitLen).ToLower (CultureInfo.InvariantCulture)) {
+					switch (input.Substring (unitStart, unitLen).ToLower (Helpers.InvariantCulture)) {
 						case "in": type = UnitType.Inch; break;
 						case "cm": type = UnitType.Cm; break;
 						case "mm": type = UnitType.Mm; break;
@@ -376,7 +377,7 @@ namespace System.Web.UI.WebControls {
 			
 		public override string ToString ()
 		{
-			return ToString (CultureInfo.InvariantCulture);
+			return ToString (Helpers.InvariantCulture);
 		}
 
 #if NET_2_0

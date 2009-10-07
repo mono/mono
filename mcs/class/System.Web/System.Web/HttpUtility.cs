@@ -35,6 +35,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
 using System.Text;
+using System.Web.Util;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -853,7 +854,7 @@ namespace System.Web {
 				if (c == '&') {
 					state = 1;
 					if (have_trailing_digits) {
-						entity.Append (number.ToString (CultureInfo.InvariantCulture));
+						entity.Append (number.ToString (Helpers.InvariantCulture));
 						have_trailing_digits = false;
 					}
 
@@ -893,7 +894,7 @@ namespace System.Web {
 					if (c == ';') {
 						if (number > 65535) {
 							output.Append ("&#");
-							output.Append (number.ToString (CultureInfo.InvariantCulture));
+							output.Append (number.ToString (Helpers.InvariantCulture));
 							output.Append (";");
 						} else {
 							output.Append ((char) number);
@@ -907,7 +908,7 @@ namespace System.Web {
 					} else {
 						state = 2;
 						if (have_trailing_digits) {
-							entity.Append (number.ToString (CultureInfo.InvariantCulture));
+							entity.Append (number.ToString (Helpers.InvariantCulture));
 							have_trailing_digits = false;
 						}
 						entity.Append (c);
@@ -918,7 +919,7 @@ namespace System.Web {
 			if (entity.Length > 0) {
 				output.Append (entity.ToString ());
 			} else if (have_trailing_digits) {
-				output.Append (number.ToString (CultureInfo.InvariantCulture));
+				output.Append (number.ToString (Helpers.InvariantCulture));
 			}
 			return output.ToString ();
 		}
@@ -983,7 +984,7 @@ namespace System.Web {
 					if (s [i] > 159) {
 #endif
 						output.Append ("&#");
-						output.Append (((int) s [i]).ToString (CultureInfo.InvariantCulture));
+						output.Append (((int) s [i]).ToString (Helpers.InvariantCulture));
 						output.Append (";");
 					} else {
 						output.Append (s [i]);

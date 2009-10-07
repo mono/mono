@@ -29,8 +29,10 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Web.Util;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -349,7 +351,7 @@ namespace System.Web.Compilation
 			{
 				source = null;
 				ns = null;
-				if (0 != String.Compare (componentName, tagName, true))
+				if (0 != String.Compare (componentName, tagName, true, Helpers.InvariantCulture))
 					return null;
 
 #if NET_2_0

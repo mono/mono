@@ -35,6 +35,7 @@ using System.Configuration;
 using System.ComponentModel;
 using System.Xml;
 using System.Globalization;
+using System.Web.Util;
 
 #if NET_2_0
 
@@ -223,7 +224,7 @@ namespace System.Web.Configuration {
 		internal bool CheckVerb (string verb)
 		{
 			foreach (string v in Verbs) {
-				if (String.Compare (v, verb, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (v, verb, true, Helpers.InvariantCulture) == 0)
 					return true;
 			}
 			return false;
@@ -232,7 +233,7 @@ namespace System.Web.Configuration {
 		internal bool CheckUser (string user)
 		{
 			foreach (string u in Users) {
-				if (String.Compare (u, user, true, CultureInfo.InvariantCulture) == 0 ||
+				if (String.Compare (u, user, true, Helpers.InvariantCulture) == 0 ||
 				    u == "*" ||
 				    (u == "?" && user == ""))
 					return true;

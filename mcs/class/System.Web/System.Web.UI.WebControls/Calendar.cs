@@ -36,6 +36,7 @@ using System.Drawing;
 using System.Security.Permissions;
 using System.Threading;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 	// CAS
@@ -1147,7 +1148,7 @@ namespace System.Web.UI.WebControls {
 		void WriteCaption (HtmlTextWriter writer)
 		{
 			if (CaptionAlign != TableCaptionAlign.NotSet)
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, CaptionAlign.ToString (Helpers.InvariantCulture));
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Caption);
 			writer.Write (Caption);

@@ -31,6 +31,7 @@ using System.Threading;
 using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 	[TypeConverter  (typeof (FontUnitConverter))]
@@ -103,7 +104,7 @@ namespace System.Web.UI.WebControls {
 				return;
 			}
 
-			switch (value.ToLower (CultureInfo.InvariantCulture)){
+			switch (value.ToLower (Helpers.InvariantCulture)){
 			case "smaller": type = FontSize.Smaller; break;
 			case "larger": type = FontSize.Larger; break;
 			case "xxsmall": type = FontSize.XXSmall; break;

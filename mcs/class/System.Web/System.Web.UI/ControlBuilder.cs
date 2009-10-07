@@ -38,6 +38,7 @@ using System.Web.Compilation;
 using System.Web.Configuration;
 using System.IO;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 
 using _Location = System.Web.Compilation.Location;
 
@@ -706,7 +707,7 @@ namespace System.Web.UI {
 				if (defaultPropertyBuilder == null)
 					childBuilder = CreatePropertyBuilder (tagid, parser, atts);
 				else {
-					if (String.Compare (defaultPropertyBuilder.TagName, tagid, true, CultureInfo.InvariantCulture) == 0) {
+					if (String.Compare (defaultPropertyBuilder.TagName, tagid, true, Helpers.InvariantCulture) == 0) {
 						// The child tag is the same what our default property name. Act as if there was
 						// no default property builder, or otherwise we'll end up with invalid nested
 						// builder call.
@@ -728,7 +729,7 @@ namespace System.Web.UI {
 				return childBuilder;
 			}
 
-			if (String.Compare (tagName, tagid, true, CultureInfo.InvariantCulture) == 0)
+			if (String.Compare (tagName, tagid, true, Helpers.InvariantCulture) == 0)
 				return null;
 			
 			childType = GetChildControlType (tagid, atts);

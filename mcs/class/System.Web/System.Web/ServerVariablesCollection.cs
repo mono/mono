@@ -35,6 +35,7 @@ using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -59,7 +60,7 @@ namespace System.Web
 			//
 			if (standard){
 				sb.Append ("HTTP_");
-				sb.Append (key.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'));
+				sb.Append (key.ToUpper (Helpers.InvariantCulture).Replace ('-', '_'));
 				sb.Append (":");
 			} else {
 				sb.Append (key);
@@ -103,7 +104,7 @@ namespace System.Web
 				if (null != hvalue && hvalue.Length > 0) {
 					hname = HttpWorkerRequest.GetKnownRequestHeaderName (i);
 					if (null != hname && hname.Length > 0)
-						Add ("HTTP_" + hname.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'), hvalue);
+						Add ("HTTP_" + hname.ToUpper (Helpers.InvariantCulture).Replace ('-', '_'), hvalue);
 				}
 			}
 
@@ -115,7 +116,7 @@ namespace System.Web
 					if (hname == null)
 						continue;
 					hvalue = unknown [i][1];
-					Add ("HTTP_" + hname.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'), hvalue);
+					Add ("HTTP_" + hname.ToUpper (Helpers.InvariantCulture).Replace ('-', '_'), hvalue);
 				}
 			}
 		}
@@ -202,7 +203,7 @@ namespace System.Web
 		{
 			if ((name == null) || (this._request == null))
 				return null;
-			name = name.ToUpper (CultureInfo.InvariantCulture);
+			name = name.ToUpper (Helpers.InvariantCulture);
 			switch (name) {
 				case "AUTH_TYPE":
 					if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated)

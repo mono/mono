@@ -30,6 +30,7 @@ using System.Globalization;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -167,7 +168,7 @@ namespace System.Web.UI.WebControls {
 			// find out when they are unchecked.
 			for (int i = 0; i < Items.Count; i++) {
 				if (Items [i].Selected) {
-					check_box.ID = i.ToString (CultureInfo.InvariantCulture);
+					check_box.ID = i.ToString (Helpers.InvariantCulture);
 					Page.RegisterRequiresPostBack (check_box);
 				}
 			}
@@ -223,7 +224,7 @@ namespace System.Web.UI.WebControls {
 			try {
 				string id = postDataKey.Substring (ClientID.Length + 1);
 				if (Char.IsDigit (id [0]))
-					checkbox = Int32.Parse (id, CultureInfo.InvariantCulture);
+					checkbox = Int32.Parse (id, Helpers.InvariantCulture);
 			} catch {
 				return false;
 			}
@@ -351,7 +352,7 @@ namespace System.Web.UI.WebControls {
 		{
 			ListItem item = Items [repeatIndex];
 
-			check_box.ID = repeatIndex.ToString (CultureInfo.InvariantCulture);
+			check_box.ID = repeatIndex.ToString (Helpers.InvariantCulture);
 			check_box.Text = item.Text;
 			check_box.AutoPostBack = AutoPostBack;
 			check_box.Checked = item.Selected;

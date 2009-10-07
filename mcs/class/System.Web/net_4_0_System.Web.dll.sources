@@ -1196,6 +1196,7 @@ System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
 System.Web.Util/FileUtils.cs
 System.Web.Util/ICalls.cs
+System.Web.Util/Helpers.cs
 System.Web.Util/IWebObjectFactory.cs
 System.Web.Util/IWebPropertyAccessor.cs
 System.Web.Util/SearchPattern.cs

@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -93,7 +94,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("border");
 				else
-					Attributes ["border"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["border"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 
@@ -127,7 +128,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("cellpadding");
 				else
-					Attributes ["cellpadding"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["cellpadding"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 
@@ -144,7 +145,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("cellspacing");
 				else
-					Attributes ["cellspacing"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["cellspacing"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 

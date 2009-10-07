@@ -29,6 +29,7 @@
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web {
 
@@ -164,7 +165,7 @@ namespace System.Web {
 				return 0;
 
 			try {
-				return Int32.Parse (s, CultureInfo.InvariantCulture);
+				return Int32.Parse (s, Helpers.InvariantCulture);
 			}
 			catch {
 				return 0;

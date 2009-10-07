@@ -35,7 +35,6 @@ using System.Text;
 namespace System.Web.Util {
 	internal sealed class StrUtils 
 	{
-		static CultureInfo invariant = CultureInfo.InvariantCulture;
 		StrUtils () { }
 		
 		public static bool StartsWith (string str1, string str2)
@@ -53,7 +52,7 @@ namespace System.Web.Util {
 			if (l2 > l1)
 				return false;
 
-			return (0 == String.Compare (str1, 0, str2, 0, l2, ignore_case, invariant));
+			return (0 == String.Compare (str1, 0, str2, 0, l2, ignore_case, Helpers.InvariantCulture));
 		}
 
 		public static bool EndsWith (string str1, string str2)
@@ -71,7 +70,7 @@ namespace System.Web.Util {
 			if (l2 > l1)
 				return false;
 
-			return (0 == String.Compare (str1, l1 - l2, str2, 0, l2, ignore_case, invariant));
+			return (0 == String.Compare (str1, l1 - l2, str2, 0, l2, ignore_case, Helpers.InvariantCulture));
 		}
 
 		public static string EscapeQuotesAndBackslashes (string attributeValue)

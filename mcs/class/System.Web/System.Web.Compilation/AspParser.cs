@@ -524,14 +524,14 @@ namespace System.Web.Compilation
 				token = tokenizer.get_token ();
 			}
 
-			end = end.ToLower (CultureInfo.InvariantCulture);
+			end = end.ToLower (Helpers.InvariantCulture);
 			int repeated = 0;
 			for (int k = 0; k < end.Length; k++)
 				if (end [0] == end [k])
 					repeated++;
 			
 			while (token != Token.EOF){
-				if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
+				if (Char.ToLower ((char) token, Helpers.InvariantCulture) == end [i]){
 					if (++i >= end.Length)
 						break;
 					tmp.Append ((char) token);

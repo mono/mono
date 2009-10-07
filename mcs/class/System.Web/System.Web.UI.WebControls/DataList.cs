@@ -674,7 +674,7 @@ namespace System.Web.UI.WebControls {
 				return false;
 
 			string cn = dlca.CommandName;
-			CultureInfo inv = CultureInfo.InvariantCulture;
+			CultureInfo inv = Helpers.InvariantCulture;
 
 			OnItemCommand (dlca);
 			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {

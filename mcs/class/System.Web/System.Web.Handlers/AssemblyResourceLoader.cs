@@ -139,7 +139,7 @@ namespace System.Web.Handlers {
 			result = GetHexString (encryptor.TransformFinalBlock (bytes, 0, bytes.Length));
 			bytes = null;
 
-			return String.Concat ("d=", result.ToLower (CultureInfo.InvariantCulture));
+			return String.Concat ("d=", result.ToLowerInvariant ());
 		}
 
 		static void DecryptAssemblyResource (string val, out string asmName, out string resName)

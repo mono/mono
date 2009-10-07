@@ -34,6 +34,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Text;
 using System.Xml;
+using System.Web.Util;
 
 #if NET_2_0
 
@@ -209,7 +210,7 @@ namespace System.Web.Configuration {
 				auto = true;
 				if (culture.Length > 5 && culture[4] == ':')
 					return new CultureInfo (culture.Substring (5));
-				return CultureInfo.InvariantCulture;// (0x007f);
+				return Helpers.InvariantCulture;// (0x007f);
 			}
 
 			return new CultureInfo (culture);
@@ -258,7 +259,7 @@ namespace System.Web.Configuration {
 			Encoding encoding = (Encoding)encodingHash [prop];
 			if (encoding == null || encoding.EncodingName != cached_encoding_name) {
 				try {
-					switch (cached_encoding_name.ToLower (CultureInfo.InvariantCulture)) {
+					switch (cached_encoding_name.ToLower (Helpers.InvariantCulture)) {
 					case "utf-16le":
 					case "utf-16":
 					case "ucs-2":

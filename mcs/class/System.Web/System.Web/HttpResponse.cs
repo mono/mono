@@ -515,27 +515,27 @@ namespace System.Web {
 				throw new HttpException ("headers have been already sent");
 			
 #if !TARGET_J2EE
-			if (String.Compare (name, "content-length", true, CultureInfo.InvariantCulture) == 0){
+			if (String.Compare (name, "content-length", true, Helpers.InvariantCulture) == 0){
 				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "content-type", true, CultureInfo.InvariantCulture) == 0){
+			if (String.Compare (name, "content-type", true, Helpers.InvariantCulture) == 0){
 				ContentType = value;
 				return;
 			}
 
 #if !TARGET_J2EE
-			if (String.Compare (name, "transfer-encoding", true, CultureInfo.InvariantCulture) == 0){
+			if (String.Compare (name, "transfer-encoding", true, Helpers.InvariantCulture) == 0){
 				transfer_encoding = value;
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "cache-control", true, CultureInfo.InvariantCulture) == 0){
+			if (String.Compare (name, "cache-control", true, Helpers.InvariantCulture) == 0){
 				user_cache_control = value;
 				return;
 			}
@@ -690,7 +690,7 @@ namespace System.Web {
 			//
 			if (content_length >= 0) {
 				write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderContentLength),
-						   content_length.ToString (CultureInfo.InvariantCulture));
+						   content_length.ToString (Helpers.InvariantCulture));
 			} else if (BufferOutput) {
 				if (final_flush) {					
 					//
@@ -699,7 +699,7 @@ namespace System.Web {
 					//
 					content_length = output_stream.total;
 					write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderContentLength),
-							   content_length.ToString (CultureInfo.InvariantCulture));
+							   content_length.ToString (Helpers.InvariantCulture));
 				} else {
 					//
 					// We are buffering, and this is a flush in the middle.
@@ -1152,13 +1152,13 @@ namespace System.Web {
 				if (value == null || value == "") {
 					Cache.SetCacheability (HttpCacheability.NoCache);
 					user_cache_control = null;
-				} else if (String.Compare (value, "public", true, CultureInfo.InvariantCulture) == 0) {
+				} else if (String.Compare (value, "public", true, Helpers.InvariantCulture) == 0) {
 					Cache.SetCacheability (HttpCacheability.Public);
 					user_cache_control = "public";
-				} else if (String.Compare (value, "private", true, CultureInfo.InvariantCulture) == 0) {
+				} else if (String.Compare (value, "private", true, Helpers.InvariantCulture) == 0) {
 					Cache.SetCacheability (HttpCacheability.Private);
 					user_cache_control = "private";
-				} else if (String.Compare (value, "no-cache", true, CultureInfo.InvariantCulture) == 0) {
+				} else if (String.Compare (value, "no-cache", true, Helpers.InvariantCulture) == 0) {
 					Cache.SetCacheability (HttpCacheability.NoCache);
 					user_cache_control = "no-cache";
 				} else

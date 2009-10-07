@@ -31,6 +31,7 @@ using System.Threading;
 using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -59,7 +60,7 @@ namespace System.Web.UI.WebControls {
 					case ValidationDataType.Date:
 						DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
 						string pattern = dateTimeFormat.ShortDatePattern;
-						string dateorder = (pattern.StartsWith ("y", true, CultureInfo.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, CultureInfo.InvariantCulture) ? "mdy" : "dmy"));
+						string dateorder = (pattern.StartsWith ("y", true, Helpers.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, Helpers.InvariantCulture) ? "mdy" : "dmy"));
 						RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
 						RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString ());
 						break;
@@ -123,7 +124,7 @@ namespace System.Web.UI.WebControls {
 			bool seen_year = false;
 			bool seen_month = false;
 
-			pattern = pattern.ToLower (CultureInfo.InvariantCulture);
+			pattern = pattern.ToLower (Helpers.InvariantCulture);
 
 			for (int i = 0; i < pattern.Length; i ++) {
 				char c = pattern[ i ];

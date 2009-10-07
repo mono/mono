@@ -802,7 +802,7 @@ return true;
 
 				return sb.ToString ();
 			} else if (ob is bool) {
-				return ob.ToString ().ToLower (CultureInfo.InvariantCulture);
+				return ob.ToString ().ToLower (Helpers.InvariantCulture);
 			} else {
 				return ob.ToString ();
 			}
