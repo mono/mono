@@ -1,3 +1,9 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Context.cs: Remove LocalDataStoreSlot-related methods from
+	Moonlight build
+	[Backport r143631]
+
 2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* IDynamicMessageSink.cs
