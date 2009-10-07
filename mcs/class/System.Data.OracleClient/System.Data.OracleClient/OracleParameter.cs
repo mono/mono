@@ -609,8 +609,7 @@ namespace System.Data.OracleClient
 						// Get size of buffer
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
 
-						// Fill buffer - remove the trailing null byte
-						rsize--;
+						// Fill buffer 
 						bytes = new byte [rsize];
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 					} 

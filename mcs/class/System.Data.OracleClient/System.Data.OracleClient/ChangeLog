@@ -1,3 +1,8 @@
+2009-09-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #543207
+	* OracleParameter.cs (Bind): Do not remove the trailing-null-byte.
+	
 2009-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #535889
