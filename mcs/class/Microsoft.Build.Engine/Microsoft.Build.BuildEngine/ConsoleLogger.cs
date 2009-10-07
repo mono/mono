@@ -48,6 +48,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool		showSummary;
 		bool		skipProjectStartedText;
 		List<string> errors, warnings;
+		bool		projectFailed;
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -112,7 +113,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
-			if (args.Succeeded == true) {
+			if (args.Succeeded == true && !projectFailed) {
 				WriteLine ("Build succeeded.");
 			} else {
 				WriteLine ("Build FAILED.");
@@ -157,6 +158,7 @@ namespace Microsoft.Build.BuildEngine {
 							args.Succeeded ? String.Empty : "-- FAILED"));
 				WriteLine (String.Empty);
 			}
+			projectFailed = !args.Succeeded;
 		}
 		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)

@@ -1,3 +1,7 @@
+2009-10-07  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Mark build as failed, if any project failed.
+
 2009-10-06  Ankit Jain  <jankit@novell.com>
 
 	* ConsoleLogger: Improve error reporting. Don't count failed task,
