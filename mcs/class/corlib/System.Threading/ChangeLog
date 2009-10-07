@@ -1,3 +1,9 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Remove LocalDataStoreSlot-related methods from
+	Moonlight build
+	[Backport r143629]
+
 2009-09-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Thread.cs: StartSafe: ignore ThreadAbortExceptions.

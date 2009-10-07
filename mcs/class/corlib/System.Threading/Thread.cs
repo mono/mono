@@ -192,6 +192,7 @@ namespace System.Threading {
 			}
 		}
 
+#if !NET_2_1 || MONOTOUCH
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
 		static Hashtable datastorehash;
 		private static object datastore_lock = new object ();
@@ -264,13 +265,6 @@ namespace System.Threading {
 			slots [slot.slot] = data;
 		}
 
-		public static AppDomain GetDomain() {
-			return AppDomain.CurrentDomain;
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static int GetDomainID();
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void FreeLocalSlotValues (int slot, bool thread_local);
 
@@ -287,6 +281,13 @@ namespace System.Threading {
 				return(slot);
 			}
 		}
+#endif
+		public static AppDomain GetDomain() {
+			return AppDomain.CurrentDomain;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static int GetDomainID();
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void ResetAbort_internal();
