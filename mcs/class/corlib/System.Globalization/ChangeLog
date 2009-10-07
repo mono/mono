@@ -1,3 +1,10 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompareInfo.cs: Don't allow MONO_DISABLE_MANAGED_COLLATION
+	override for Moonlight and move all icalls together so they
+	can be #if-ed out.
+	[Backport r143648]
+
 2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Calendar.cs: Don't expose AlgorithmType property in NET_2_1

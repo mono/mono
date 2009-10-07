@@ -40,12 +40,11 @@ using Mono.Globalization.Unicode;
 
 namespace System.Globalization
 {
-#if NET_2_0
-	[ComVisible (true)]
-#endif
 	[Serializable]
-	public class CompareInfo : IDeserializationCallback
-	{
+#if !NET_2_1 || MONOTOUCH
+	[ComVisible (true)]
+	public class CompareInfo : IDeserializationCallback {
+
 		static readonly bool useManagedCollation =
 			Environment.internalGetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION")
 			!= "yes" && MSCompatUnicodeTable.IsReady;
@@ -53,6 +52,57 @@ namespace System.Globalization
 		internal static bool UseManagedCollation {
 			get { return useManagedCollation; }
 		}
+
+		void IDeserializationCallback.OnDeserialization(object sender)
+		{
+			if (UseManagedCollation) {
+				collator = new SimpleCollator (new CultureInfo (culture));
+			} else {
+				/* This will build the ICU collator, and store
+				 * the pointer in ICU_collator
+				 */
+				try {
+					this.construct_compareinfo (icu_name);
+				} catch {
+				//	ICU_collator=IntPtr.Zero;
+				}
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void construct_compareinfo (string locale);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void free_internal_collator ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int internal_compare (string str1, int offset1,
+						     int length1, string str2,
+						     int offset2, int length2,
+						     CompareOptions options);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void assign_sortkey (object key, string source,
+						    CompareOptions options);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int internal_index (string source, int sindex,
+						   int count, char value,
+						   CompareOptions options,
+						   bool first);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int internal_index (string source, int sindex,
+						   int count, string value,
+						   CompareOptions options,
+						   bool first);
+
+#else
+	public class CompareInfo {
+		internal static bool UseManagedCollation {
+			get { return true; }
+		}
+#endif
 
 		// Keep in synch with MonoCompareInfo in the runtime. 
 		private int culture;
@@ -81,9 +131,6 @@ namespace System.Globalization
 		/* Hide the .ctor() */
 		CompareInfo() {}
 		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void construct_compareinfo (string locale);
-		
 		internal CompareInfo (CultureInfo ci)
 		{
 			this.culture = ci.LCID;
@@ -98,25 +145,21 @@ namespace System.Globalization
 					}
 				}
 			} else {
+#if !NET_2_1 || MONOTOUCH
 				this.icu_name = ci.IcuName;
 				this.construct_compareinfo (icu_name);
+#endif
 			}
 		}
-		
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void free_internal_collator ();
 
 		~CompareInfo ()
 		{
+#if !NET_2_1 || MONOTOUCH
 			free_internal_collator ();
+#endif
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_compare (string str1, int offset1,
-						     int length1, string str2,
-						     int offset2, int length2,
-						     CompareOptions options);
-
+#if !NET_2_1 || MONOTOUCH
 		private int internal_compare_managed (string str1, int offset1,
 						int length1, string str2,
 						int offset2, int length2,
@@ -137,7 +180,16 @@ namespace System.Globalization
 				internal_compare (str1, offset1, length1,
 				str2, offset2, length2, options);
 		}
-
+#else
+		private int internal_compare_switch (string str1, int offset1,
+						int length1, string str2,
+						int offset2, int length2,
+						CompareOptions options)
+		{
+			return collator.Compare (str1, offset1, length1,
+				str2, offset2, length2, options);
+		}
+#endif
 		public virtual int Compare (string string1, string string2)
 		{
 			if (string1 == null) {
@@ -421,10 +473,6 @@ namespace System.Globalization
 		{
 			return(LCID);
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void assign_sortkey (object key, string source,
-						    CompareOptions options);
 		
 		public virtual SortKey GetSortKey(string source)
 		{
@@ -441,6 +489,7 @@ namespace System.Globalization
 				throw new ArgumentException ("Now allowed CompareOptions.", "options");
 			}
 #endif
+#if !NET_2_1 || MONOTOUCH
 			if (UseManagedCollation)
 				return collator.GetSortKey (source, options);
 			SortKey key=new SortKey (culture, source, options);
@@ -452,6 +501,9 @@ namespace System.Globalization
 			assign_sortkey (key, source, options);
 			
 			return(key);
+#else
+			return collator.GetSortKey (source, options);
+#endif
 		}
 
 		public virtual int IndexOf (string source, char value)
@@ -526,12 +578,7 @@ namespace System.Globalization
 					CompareOptions.None));
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_index (string source, int sindex,
-						   int count, char value,
-						   CompareOptions options,
-						   bool first);
-
+#if !NET_2_1 || MONOTOUCH
 		private int internal_index_managed (string s, int sindex,
 			int count, char c, CompareOptions opt,
 			bool first)
@@ -553,6 +600,16 @@ namespace System.Globalization
 				internal_index_managed (s, sindex, count, c, opt, first) :
 				internal_index (s, sindex, count, c, opt, first);
 		}
+#else
+		private int internal_index_switch (string s, int sindex,
+			int count, char c, CompareOptions opt,
+			bool first)
+		{
+			return first ?
+				collator.IndexOf (s, c, sindex, count, opt) :
+				collator.LastIndexOf (s, c, sindex, count, opt);
+		}
+#endif
 
 		public virtual int IndexOf (string source, char value,
 					    int startIndex, int count,
@@ -591,12 +648,7 @@ namespace System.Globalization
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_index (string source, int sindex,
-						   int count, string value,
-						   CompareOptions options,
-						   bool first);
-
+#if !NET_2_1 || MONOTOUCH
 		private int internal_index_managed (string s1, int sindex,
 			int count, string s2, CompareOptions opt,
 			bool first)
@@ -618,6 +670,16 @@ namespace System.Globalization
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, opt, first);
 		}
+#else
+		private int internal_index_switch (string s1, int sindex,
+			int count, string s2, CompareOptions opt,
+			bool first)
+		{
+			return first ?
+				collator.IndexOf (s1, s2, sindex, count, opt) :
+				collator.LastIndexOf (s1, s2, sindex, count, opt);
+		}
+#endif
 
 		public virtual int IndexOf (string source, string value,
 					    int startIndex, int count,
@@ -858,22 +920,6 @@ namespace System.Globalization
 		public override string ToString()
 		{
 			return("CompareInfo - "+culture);
-		}
-
-		void IDeserializationCallback.OnDeserialization(object sender)
-		{
-			if (UseManagedCollation) {
-				collator = new SimpleCollator (new CultureInfo (culture));
-			} else {
-				/* This will build the ICU collator, and store
-				 * the pointer in ICU_collator
-				 */
-				try {
-					this.construct_compareinfo (icu_name);
-				} catch {
-				//	ICU_collator=IntPtr.Zero;
-				}
-			}
 		}
 
 		/* LAMESPEC: not mentioned in the spec, but corcompare
