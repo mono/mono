@@ -22,6 +22,7 @@
 	<UsingTask TaskName="Microsoft.Build.Tasks.MSBuild"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.ReadLinesFromFile"	AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.RemoveDir"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<UsingTask TaskName="Microsoft.Build.Tasks.RemoveDuplicates"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.ResolveAssemblyReference"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.SignFile"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 	<UsingTask TaskName="Microsoft.Build.Tasks.Touch"		AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
