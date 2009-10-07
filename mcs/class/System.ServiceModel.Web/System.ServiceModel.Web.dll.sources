@@ -31,7 +31,6 @@ System.ServiceModel.Dispatcher/JsonQueryStringConverter.cs
 System.ServiceModel.Dispatcher/QueryStringConverter.cs
 System.ServiceModel.Dispatcher/WebHttpDispatchOperationSelector.cs
 System.ServiceModel.Dispatcher/WebMessageFormatter.cs
-System.ServiceModel.Dispatcher/WebScriptJsonQueryStringConverter.cs
 System.ServiceModel.Syndication/Atom10FeedFormatter.cs
 System.ServiceModel.Syndication/Atom10FeedFormatter_1.cs
 System.ServiceModel.Syndication/Atom10ItemFormatter.cs
