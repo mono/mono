@@ -122,13 +122,9 @@ namespace System.ServiceModel.Syndication
 
 		abstract class ReadWriteHandler
 		{
-			public virtual string Name {
-				get { return null; }
-			}
+			public string Name { get; protected set; }
 
-			public virtual string Namespace {
-				get { return null; }
-			}
+			public string Namespace { get; protected set; }
 
 			public virtual XmlReader GetReader ()
 			{
@@ -143,14 +139,13 @@ namespace System.ServiceModel.Syndication
 
 		class DataContractReadWriteHandler : ReadWriteHandler
 		{
-			string name, ns;
 			object extension;
 			XmlObjectSerializer serializer;
 			
 			public DataContractReadWriteHandler (string name, string ns, object extension, XmlObjectSerializer serializer)
 			{
-				this.name = name;
-				this.ns = ns;
+				this.Name = name;
+				this.Namespace = ns;
 				this.extension = extension;
 				this.serializer = serializer;
 
@@ -158,18 +153,10 @@ namespace System.ServiceModel.Syndication
 					this.serializer = new DataContractSerializer (extension.GetType ());
 			}
 
-			public override string Name {
-				get { return name; }
-			}
-
-			public override string Namespace {
-				get { return ns; }
-			}
-
 			public override void WriteTo (XmlWriter writer)
 			{
-				if (name != null) {
-					writer.WriteStartElement (name, ns);
+				if (Name != null) {
+					writer.WriteStartElement (Name, Namespace);
 					serializer.WriteObjectContent (writer, extension);
 					writer.WriteFullEndElement ();
 				}
@@ -205,6 +192,8 @@ namespace System.ServiceModel.Syndication
 			public XmlReaderReadWriteHandler (XmlReader reader)
 			{
 				reader.MoveToContent ();
+				Name = reader.LocalName;
+				Namespace = reader.NamespaceURI;
 				xml = reader.ReadOuterXml ();
 			}
 

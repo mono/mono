@@ -1,3 +1,7 @@
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : copy string literal parser from System.Json.
+
 2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonSerializationWriter.cs : output "type" attribute on bool

@@ -70,7 +70,7 @@ namespace System.ServiceModel.Configuration
 		// Properties
 
 		public override Type BehaviorType {
-			get { return (Type) base [behavior_type]; }
+			get { return typeof (WebScriptEnablingBehavior); }
 		}
 
 		protected internal override object CreateBehavior ()

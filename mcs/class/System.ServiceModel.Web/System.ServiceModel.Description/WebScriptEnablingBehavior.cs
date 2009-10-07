@@ -94,8 +94,8 @@ namespace System.ServiceModel.Description
 			base.ApplyDispatchBehavior (endpoint, endpointDispatcher);
 
 			// doing similar to ServiceMetadataExtension
-			BuildScriptDispatcher (endpoint, endpointDispatcher, "/js", false);
-			BuildScriptDispatcher (endpoint, endpointDispatcher, "/jsdebug", true);
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "js", false);
+			BuildScriptDispatcher (endpoint, endpointDispatcher, "jsdebug", true);
 		}
 
 		void BuildScriptDispatcher (ServiceEndpoint endpoint, EndpointDispatcher ed, string subPath, bool debug)
@@ -103,11 +103,14 @@ namespace System.ServiceModel.Description
 			var instance = new InteropScriptService (endpoint.Contract.ContractType, endpoint.Address.Uri.ToString (), debug);
 
 			var cdOrg = ed.ChannelDispatcher;
-			var uri = new Uri (cdOrg.Listener.Uri, subPath);
-			var cd = new ChannelDispatcher (endpoint.Binding.BuildChannelListener<IReplyChannel> (uri), String.Empty);
+			var baseUriString = endpoint.ListenUri.ToString ();
+			var uri = new Uri (String.Concat (baseUriString, baseUriString [baseUriString.Length - 1] == '/' ? String.Empty : "/", subPath));
+			var listener = endpoint.Binding.BuildChannelListener<IReplyChannel> (uri);
+			var cd = new ChannelDispatcher (listener, String.Empty);
 			cd.MessageVersion = MessageVersion.None;
 
-			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty));
+			cd.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "InteropScriptService", String.Empty)
+				{ ContractFilter = new MatchAllMessageFilter () });
 
 			var dr = cd.Endpoints [0].DispatchRuntime;
 			var dop = new DispatchOperation (dr, "Get", "*", "*");
@@ -175,13 +178,11 @@ namespace System.ServiceModel.Description
 			ValidateBinding (endpoint);
 
 			foreach (var od in endpoint.Contract.Operations) {
-				var wga = od.Behaviors.Find<WebGetAttribute> ();
-				if (wga != null && wga.UriTemplate != null)
+				var wai = od.GetWebAttributeInfo ();
+				if (wai.UriTemplate != null)
 					throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
 				var wia = od.Behaviors.Find<WebInvokeAttribute> ();
 				if (wia != null) {
-					if (wia.UriTemplate != null)
-						throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
 					switch (wia.Method.ToUpper ()) {
 					case "GET":
 					case "POST":
@@ -189,6 +190,13 @@ namespace System.ServiceModel.Description
 					default:
 						throw new InvalidOperationException ("Only GET and POST HTTP methods are valid used for WebScriptEnablingBehavior");
 					}
+				}
+
+				var style = wai != null && wai.IsBodyStyleSetExplicitly ? wai.BodyStyle : DefaultBodyStyle;
+				switch (style) {
+				case WebMessageBodyStyle.Wrapped:
+				case WebMessageBodyStyle.WrappedResponse:
+					throw new NotSupportedException (String.Format ("Operation '{0}' contains WrappedResponse body style which is not allowed for WebScriptEnablingBehavior.", od.Name));
 				}
 			}
 		}

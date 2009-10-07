@@ -55,6 +55,7 @@ namespace System.ServiceModel.Activation
 					throw new ArgumentNullException ("serviceType");
 			}
 
+#if false
 			protected override void ApplyConfiguration ()
 			{
 				base.ApplyConfiguration ();
@@ -68,9 +69,17 @@ namespace System.ServiceModel.Activation
 							AddServiceEndpoint (iface, new WebHttpBinding (), new Uri (String.Empty, UriKind.Relative));
 				}
 			}
+#endif
 
 			protected override void OnOpening ()
 			{
+				if (Description.Endpoints.Count == 0) {
+					if (ImplementedContracts.Count > 1)
+						throw new InvalidOperationException ("WebScriptServiceHostFactory does not allow more than one service contract in the service type");
+					foreach (var pair in ImplementedContracts) // actually one
+						AddServiceEndpoint (pair.Key, new WebHttpBinding (), new Uri (String.Empty, UriKind.Relative));
+				}
+
 				foreach (ServiceEndpoint se in Description.Endpoints)
 					if (se.Behaviors.Find<WebHttpBehavior> () == null)
 						se.Behaviors.Add (new WebScriptEnablingBehavior ());

@@ -635,19 +635,66 @@ namespace System.Runtime.Serialization.Json
 			return '0' <= c && c <= '9';
 		}
 
-		// FIXME: implement
+		StringBuilder vb = new StringBuilder ();
+
 		string ReadStringLiteral ()
 		{
-			StringBuilder sb = new StringBuilder ();
+			vb.Length = 0;
+			while (true) {
+				int c = ReadChar ();
+				if (c < 0)
+					throw XmlError ("JSON string is not closed");
+				if (c == '"')
+					return vb.ToString ();
+				else if (c != '\\') {
+					vb.Append ((char) c);
+					continue;
+				}
 
-			do {
-				int ch = ReadChar ();
-				if (ch < 0)
-					throw XmlError ("Unexpected end of stream in string literal");
-				if (ch == '"')
-					return sb.ToString ();
-				sb.Append ((char) ch);
-			} while (true);
+				// escaped expression
+				c = ReadChar ();
+				if (c < 0)
+					throw XmlError ("Invalid JSON string literal; incomplete escape sequence");
+				switch (c) {
+				case '"':
+				case '\\':
+				case '/':
+					vb.Append (c);
+					break;
+				case 'b':
+					vb.Append ('\x8');
+					break;
+				case 'f':
+					vb.Append ('\f');
+					break;
+				case 'n':
+					vb.Append ('\n');
+					break;
+				case 'r':
+					vb.Append ('\r');
+					break;
+				case 't':
+					vb.Append ('\t');
+					break;
+				case 'u':
+					ushort cp = 0;
+					for (int i = 0; i < 4; i++) {
+						if ((c = ReadChar ()) < 0)
+							throw XmlError ("Incomplete unicode character escape literal");
+						cp *= 16;
+						if ('0' <= c && c <= '9')
+							cp += (ushort) (c - '0');
+						if ('A' <= c && c <= 'F')
+							cp += (ushort) (c - 'A' + 10);
+						if ('a' <= c && c <= 'f')
+							cp += (ushort) (c - 'a' + 10);
+					}
+					vb.Append ((char) cp);
+					break;
+				default:
+					throw XmlError ("Invalid JSON string literal; unexpected escape character");
+				}
+			}
 		}
 
 		int PeekChar ()

@@ -1,3 +1,14 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptEnablingBehavior.cs : validate body style.
+	* WebHttpBehavior.cs : operations could miss WebGet/WebInvoke and
+	  we should not crash by NRE because of missing of those atts.
+
+2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptEnablingBehavior.cs : fix listen uri which used to result
+	  in unexpected relative recalculation against the base uri.
+
 2009-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehavior.cs : parameter Wrapped check in Validate() should

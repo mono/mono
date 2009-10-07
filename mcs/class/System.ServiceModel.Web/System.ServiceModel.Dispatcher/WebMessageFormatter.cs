@@ -293,12 +293,16 @@ namespace System.ServiceModel.Description
 
 				var reader = message.GetReaderAtBodyContents ();
 
-				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
-					reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
+				if (IsResponseBodyWrapped) {
+					if (wp.Format == WebContentFormat.Json)
+						reader.ReadStartElement ("root", String.Empty); // note that the wrapper name is passed to the serializer.
+					else
+						reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
+				}
 
-				var ret = serializer.ReadObject (reader, false);
+				var ret = serializer.ReadObject (reader, true);
 
-				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
+				if (IsResponseBodyWrapped)
 					reader.ReadEndElement ();
 
 				return ret;
@@ -307,25 +311,48 @@ namespace System.ServiceModel.Description
 
 		internal class WrappedBodyWriter : BodyWriter
 		{
-			public WrappedBodyWriter (object value, XmlObjectSerializer serializer, string name, string ns)
+			public WrappedBodyWriter (object value, XmlObjectSerializer serializer, string name, string ns, bool json)
 				: base (true)
 			{
 				this.name = name;
 				this.ns = ns;
 				this.value = value;
 				this.serializer = serializer;
+				this.is_json = json;
 			}
 
+			bool is_json;
 			string name, ns;
 			object value;
 			XmlObjectSerializer serializer;
 
 			protected override BodyWriter OnCreateBufferedCopy (int maxBufferSize)
 			{
-				return new WrappedBodyWriter (value, serializer, name, ns);
+				return new WrappedBodyWriter (value, serializer, name, ns, is_json);
 			}
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
+			{
+				if (is_json)
+					WriteJsonBodyContents (writer);
+				else
+					WriteXmlBodyContents (writer);
+			}
+			
+			void WriteJsonBodyContents (XmlDictionaryWriter writer)
+			{
+				writer.WriteStartElement ("root");
+				if (name != null) {
+					writer.WriteAttributeString ("type", "object");
+					writer.WriteStartElement (name, ns);
+				}
+				serializer.WriteObjectContent (writer, value);
+				if (name != null)
+					writer.WriteEndElement ();
+				writer.WriteEndElement ();
+			}
+
+			void WriteXmlBodyContents (XmlDictionaryWriter writer)
 			{
 				if (name != null)
 					writer.WriteStartElement (name, ns);
@@ -370,23 +397,28 @@ namespace System.ServiceModel.Description
 
 				string mediaType = null;
 				XmlObjectSerializer serializer = null;
+
+				// FIXME: serialize ref/out parameters as well.
+
+				string name = null, ns = null;
+
 				switch (msgfmt) {
 				case WebMessageFormat.Xml:
 					serializer = GetSerializer (WebContentFormat.Xml);
 					mediaType = "application/xml";
+					name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
+					ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
 					break;
 				case WebMessageFormat.Json:
 					serializer = GetSerializer (WebContentFormat.Json);
 					mediaType = "application/json";
+					name = IsResponseBodyWrapped ? md.Body.ReturnValue.Name : null;
+					ns = String.Empty;
 					break;
 				}
 
-				// FIXME: serialize ref/out parameters as well.
-
-				string name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
-				string ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
-
-				Message ret = Message.CreateMessage (MessageVersion.None, null, new WrappedBodyWriter (result, serializer, name, ns));
+				bool json = msgfmt == WebMessageFormat.Json;
+				Message ret = Message.CreateMessage (MessageVersion.None, null, new WrappedBodyWriter (result, serializer, name, ns, json));
 
 				// Message properties
 

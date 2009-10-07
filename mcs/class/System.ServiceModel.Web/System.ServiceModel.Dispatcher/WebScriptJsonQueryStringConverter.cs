@@ -1,10 +1,10 @@
 //
-// WebHttpElement.cs
+// WebScriptJsonQueryStringConverter.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,57 +25,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Configuration;
-using System.Net;
-using System.Net.Security;
-using System.Reflection;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
-using System.ServiceModel.Diagnostics;
-using System.ServiceModel.Dispatcher;
+using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Xml;
 
-namespace System.ServiceModel.Configuration
+namespace System.ServiceModel.Dispatcher
 {
-	[MonoTODO]
-	public sealed partial class WebHttpElement
-		 : BehaviorExtensionElement
+	public class WebScriptJsonQueryStringConverter : JsonQueryStringConverter
 	{
-		// Static Fields
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty behavior_type;
-
-		static WebHttpElement ()
+		public override object ConvertStringToValue (string parameter, Type parameterType)
 		{
-			properties = new ConfigurationPropertyCollection ();
-			behavior_type = new ConfigurationProperty ("",
-				typeof (Type), null, new TypeConverter (), null,
-				ConfigurationPropertyOptions.None);
-
-			properties.Add (behavior_type);
+Console.WriteLine ("!!! parameter {0] type {1}", parameter, parameterType);
+try {
+			var ds = new DataContractJsonSerializer (typeof (Wrapper), new Type [] {parameterType});
+			var w = (Wrapper) ds.ReadObject (new MemoryStream (Encoding.UTF8.GetBytes (parameter)));
+			return w.Value;
+} catch (Exception ex) {
+Console.WriteLine ("Error : " + ex);
+throw;
+}
 		}
 
-		public WebHttpElement ()
+		[DataContract]
+		class Wrapper
 		{
-		}
-
-		public override Type BehaviorType {
-			get { return typeof (WebHttpBehavior); }
-		}
-
-		protected internal override object CreateBehavior ()
-		{
-			return new WebHttpBehavior ();
+			[DataMember (Name = "d")]
+			public object Value;
 		}
 	}
-
 }
