@@ -204,6 +204,7 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (prop, "short");
 		}
 
+#if NET_2_0
 		[Test]
 		public void SelectMethod_ByRef ()
 		{
@@ -244,6 +245,7 @@ namespace MonoTests.System.Reflection
 			selected = binder.SelectMethod (flags, match, types, null);
 			Assert.AreSame (mi_run_ref, selected, "#D2");
 		}
+#endif
 
 		[Test]
 		public void ArgNullOnMethod () // see bug 58846. We throwed nullref here.
@@ -265,6 +267,7 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (prop);
 		}
 
+#if NET_2_0
 		[Test]
 		public void BindToMethod_ByRef ()
 		{
@@ -303,6 +306,7 @@ namespace MonoTests.System.Reflection
 				null, out state);
 			Assert.AreSame (mi_run, selected, "#4");
 		}
+#endif
 
 		[Test] // bug #41691
 		public void BindToMethodNamedArgs ()
