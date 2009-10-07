@@ -145,15 +145,15 @@ namespace System.ServiceModel.Description
 			switch (msgfmt) {
 			case WebContentFormat.Xml:
 				if (IsResponseBodyWrapped)
-					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type, p.Name, p.Namespace));
+					return GetSerializer (ref xml_serializer, b => new DataContractSerializer (b.ReturnValue.Type, b.WrapperName, b.WrapperNamespace));
 				else
-					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type));
+					return GetSerializer (ref xml_serializer, b => new DataContractSerializer (b.ReturnValue.Type));
 				break;
 			case WebContentFormat.Json:
 				if (IsResponseBodyWrapped)
-					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, p.Name));
+					return GetSerializer (ref json_serializer, b => new DataContractJsonSerializer (b.ReturnValue.Type, b.WrapperName));
 				else
-					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
+					return GetSerializer (ref json_serializer, b => new DataContractJsonSerializer (b.ReturnValue.Type));
 				break;
 			default:
 				throw new NotImplementedException ();
@@ -162,11 +162,11 @@ namespace System.ServiceModel.Description
 
 		XmlObjectSerializer xml_serializer, json_serializer;
 
-		XmlObjectSerializer GetSerializer (ref XmlObjectSerializer serializer, Func<MessagePartDescription,XmlObjectSerializer> f)
+		XmlObjectSerializer GetSerializer (ref XmlObjectSerializer serializer, Func<MessageBodyDescription,XmlObjectSerializer> f)
 		{
 			if (serializer == null) {
 				MessageDescription md = GetMessageDescription (MessageDirection.Output);
-				serializer = f (md.Body.ReturnValue);
+				serializer = f (md.Body);
 			}
 			return serializer;
 		}
@@ -293,12 +293,12 @@ namespace System.ServiceModel.Description
 
 				var reader = message.GetReaderAtBodyContents ();
 
-				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
-					reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
+				if (IsResponseBodyWrapped)
+					reader.ReadStartElement ("root", String.Empty); // note that the wrapper name is passed to the serializer.
 
-				var ret = serializer.ReadObject (reader, false);
+				var ret = serializer.ReadObject (reader, true);
 
-				if (IsResponseBodyWrapped && md.Body.WrapperName != null)
+				if (IsResponseBodyWrapped)
 					reader.ReadEndElement ();
 
 				return ret;

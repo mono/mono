@@ -1,5 +1,11 @@
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : also fix wrapped message deserialization.
+	  It should expect FooResponse (body WrapperName), not FooResult
+	  (ReturnValue part Name).
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageFormatter.cs : when they serialize Wrapped message, it
 	  first writes "root" and then the wrapper element.
 
