@@ -1,3 +1,15 @@
+2009-10-07  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: GetSection doesn't perform string +
+	char + string concatenation to generate section cache key (by
+	Gonzalo Paniagua Javier) which gives an enormous performance boost
+	(processing time for mojoportal's default.aspx went down from
+	2.65s to 107ms on average). The key generation is performed
+	without any kind of string operation right now (except for
+	GetHashCode on 3 strings).
+	GetSectionCacheKey is called only once and sectionCache became a
+	dictionary.
+
 2009-08-20  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: GetSection does not use
