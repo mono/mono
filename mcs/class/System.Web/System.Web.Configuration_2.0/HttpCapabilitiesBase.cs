@@ -37,6 +37,57 @@ namespace System.Web.Configuration
 {
 	public partial class HttpCapabilitiesBase: IFilterResolutionService
 	{
+		internal IDictionary capabilities;
+
+		public HttpCapabilitiesBase () { }
+
+		public virtual string this [string key]
+		{
+			get { return capabilities [key] as string; }
+		}
+
+		internal static string GetUserAgentForDetection (HttpRequest request)
+		{
+			string ua = null;
+			if (request.Context.CurrentHandler is System.Web.UI.Page)
+				ua = ((System.Web.UI.Page) request.Context.CurrentHandler).ClientTarget;
+			
+			if (String.IsNullOrEmpty (ua)) {
+				ua = request.ClientTarget;
+
+				if (String.IsNullOrEmpty (ua))
+					ua = request.UserAgent;
+			}
+
+			return ua;
+		}
+
+		static HttpBrowserCapabilities GetHttpBrowserCapabilitiesFromBrowscapini(string ua)
+		{
+			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities();
+			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);
+			return bcap;
+		}
+		
+		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
+		{
+			string ua = GetUserAgentForDetection (request);
+			HttpBrowserCapabilities bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
+			GetConfigCapabilities_called = true;
+			if (HttpApplicationFactory.AppBrowsersFiles.Length > 0)
+				bcap = HttpApplicationFactory.CapabilitiesProcessor.Process(request, bcap.Capabilities);
+			bcap.useragent = ua;
+			bcap.Init ();
+			return bcap;
+		}
+
+		// Used by unit tests to determine whether GetConfigCapabilities was called.
+		static internal bool GetConfigCapabilities_called;
+
+		protected virtual void Init ()
+		{
+		}
+
 		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
 		{
 			throw new NotImplementedException ();
