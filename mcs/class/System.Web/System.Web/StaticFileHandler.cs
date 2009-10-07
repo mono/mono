@@ -67,7 +67,7 @@ namespace System.Web
 					throw new HttpException (404, "Path '" + vpath + "' was not found.", vpath);
 
 				response.ContentType = MimeTypes.GetMimeType (vpath);
-				response.TransmitFile (vf);
+				response.TransmitFile (vf, true);
 				return;
 			}
 #endif
