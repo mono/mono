@@ -52,7 +52,7 @@ do-profile-check: $(depsdir)/.stamp
 	$(MAKE) -s $(PROFILE_OUT) > /dev/null || ok=false; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	if $$ok; then :; else \
-	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
+	    if test -f $(topdir)/class/lib/monolite/gmcs.exe; then \
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
