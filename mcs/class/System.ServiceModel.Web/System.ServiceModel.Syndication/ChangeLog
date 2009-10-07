@@ -1,5 +1,10 @@
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SyndicationVersions.cs :
+	  Handle atom feed as well. Patch by David Mitchell.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SyndicationElementExtension.cs : give OuterName and OuterNamespace
 	  for extensions with .ctor(XmlReader).
 

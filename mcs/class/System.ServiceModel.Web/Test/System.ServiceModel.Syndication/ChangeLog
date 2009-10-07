@@ -1,5 +1,10 @@
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SyndicationItemTest.cs, SyndicationFeedTest.cs : allow atom feed
+	  too. More Load() tests. Patch by David Mitchell.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SyndicationElementExtensionTest.cs : added test for OuterName/ns
 	  with .ctor(XmlReader).
 	* SyndicationItemTest.cs : added failure case for LoadItem() with
