@@ -1,3 +1,8 @@
+2009-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Emit marshalling of DateTime to OLE DATE.
+	Fixes #322934.
+
 2009-10-06  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_method_return_message_restore): Handle the case
