@@ -6385,12 +6385,15 @@ emit_marshal_vtype (EmitMarshalContext *m, int argnum, MonoType *t,
 					MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
-	MonoClass *klass, *date_time_class;
+	MonoClass *klass;
+	static MonoClass *date_time_class;
 	int pos = 0, pos2;
 
 	klass = mono_class_from_mono_type (t);
 
-	date_time_class = mono_class_from_name_cached (mono_defaults.corlib, "System", "DateTime");
+	if (!date_time_class)
+		date_time_class = mono_class_from_name (mono_defaults.corlib, "System", "DateTime");
+	g_assert (date_time_class);
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
