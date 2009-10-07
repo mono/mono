@@ -108,6 +108,18 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			foreach (XmlAttribute attrib in buildTask.TaskElement.Attributes)
 				ParseAttribute (attrib.Value);
+
+			foreach (XmlNode xn in buildTask.TaskElement.ChildNodes) {
+				XmlElement xe = xn as XmlElement;
+				if (xe == null)
+					continue;
+
+				//FIXME: error on any other child
+				if (String.Compare (xe.LocalName, "Output", StringComparison.Ordinal) == 0) {
+					foreach (XmlAttribute attrib in xe.Attributes)
+						ParseAttribute (attrib.Value);
+				}
+			}
 		}
 	}
 

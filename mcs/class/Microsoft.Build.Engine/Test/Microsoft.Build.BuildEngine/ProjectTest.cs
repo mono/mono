@@ -1493,6 +1493,48 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestBatchedMetadataRefInOutput () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""B1""><Name>Bar</Name></Coll1>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<BatchingTestTask Sources=""@(Coll1)"" >
+						<Output TaskParameter=""Output"" ItemName=""AbcItems"" Condition=""'%(Coll1.Name)' == 'Abc'""/>
+						<Output TaskParameter=""Output"" ItemName=""NonAbcItems"" Condition=""'%(Coll1.Name)' != 'Abc'""/>
+					</BatchingTestTask>
+					<Message Text='AbcItems: @(AbcItems)' />
+					<Message Text='NonAbcItems: @(NonAbcItems)' />
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (projectString);
+			bool result = project.Build ("ShowMessage");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("A1: Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("AbcItems: A1;A3", "A2");
+			logger.CheckLoggedMessageHead ("NonAbcItems: A2;B1", "A2");
+
+			if (logger.NormalMessageCount != 0) {
+				logger.DumpMessages ();
+				Assert.Fail ("Unexpected extra messages found");
+			}
+		}
+
+		[Test]
 		public void TestInitialTargets ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
