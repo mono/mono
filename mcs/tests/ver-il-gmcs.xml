@@ -27197,10 +27197,10 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()">
-        <size>118</size>
+        <size>137</size>
       </method>
       <method name="Int32 Main()">
-        <size>303</size>
+        <size>324</size>
       </method>
     </type>
   </test>
