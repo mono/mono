@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls 
 {
@@ -110,7 +111,7 @@ namespace System.Web.UI.HtmlControls
 				if (border == null) {
 					return (-1);
 				} else {
-					return (Int32.Parse (border, CultureInfo.InvariantCulture));
+					return (Int32.Parse (border, Helpers.InvariantCulture));
 				}
 			}
 			set {
@@ -134,7 +135,7 @@ namespace System.Web.UI.HtmlControls
 				if (height == null) {
 					return (-1);
 				} else {
-					return (Int32.Parse (height, CultureInfo.InvariantCulture));
+					return (Int32.Parse (height, Helpers.InvariantCulture));
 				}
 			}
 			set {
@@ -186,7 +187,7 @@ namespace System.Web.UI.HtmlControls
 					return (-1);
 				}
 				else {
-					return (Int32.Parse (width, CultureInfo.InvariantCulture));
+					return (Int32.Parse (width, Helpers.InvariantCulture));
 				}
 			}
 			set {

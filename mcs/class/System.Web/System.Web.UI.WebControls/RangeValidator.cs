@@ -27,6 +27,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 // Modeled after Nikhil Kothari's sample in "ASP Server Controls and Components", pp368
 
@@ -96,8 +97,8 @@ namespace System.Web.UI.WebControls {
 				RegisterExpandoAttribute (ClientID, "maximumvalue", MaximumValue, true);
 #else
 				writer.AddAttribute("evaluationfunction", "RangeValidatorEvaluateIsValid", false); // FIXME - we need to define this in client code
-				writer.AddAttribute("minimumValue", MinimumValue.ToString(CultureInfo.InvariantCulture));
-				writer.AddAttribute("maximumValue", MaximumValue.ToString(CultureInfo.InvariantCulture));
+				writer.AddAttribute("minimumValue", MinimumValue.ToString(Helpers.InvariantCulture));
+				writer.AddAttribute("maximumValue", MaximumValue.ToString(Helpers.InvariantCulture));
 #endif
 			}
 		}

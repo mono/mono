@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -144,7 +145,7 @@ namespace System.Web.UI.HtmlControls {
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			// the Type property can be, indirectly, changed by using the Attributes property
-			if (String.Compare (Type, 0, "password", 0, 8, true, CultureInfo.InvariantCulture) == 0) {
+			if (String.Compare (Type, 0, "password", 0, 8, true, Helpers.InvariantCulture) == 0) {
 				Attributes.Remove ("value");
 			}
 

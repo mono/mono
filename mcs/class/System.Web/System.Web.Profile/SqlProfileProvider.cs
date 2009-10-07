@@ -40,6 +40,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Security;
+using System.Web.Util;
 
 namespace System.Web.Profile
 {
@@ -487,8 +488,8 @@ namespace System.Web.Profile
 				if (pp == null)
 					continue;
 
-				int pos = Int32.Parse (names [i + 2], CultureInfo.InvariantCulture);
-				int len = Int32.Parse (names [i + 3], CultureInfo.InvariantCulture);
+				int pos = Int32.Parse (names [i + 2], Helpers.InvariantCulture);
+				int len = Int32.Parse (names [i + 3], Helpers.InvariantCulture);
 
 				if (len == -1 && !pp.Property.PropertyType.IsValueType) {
 					pp.PropertyValue = null;
@@ -544,7 +545,7 @@ namespace System.Web.Profile
 						}
 					}
 
-					names.Append (pp.Name + ":" + ((propValue != null) ? "S" : "B") + ":" + pos.ToString (CultureInfo.InvariantCulture) + ":" + len.ToString (CultureInfo.InvariantCulture) + ":");
+					names.Append (pp.Name + ":" + ((propValue != null) ? "S" : "B") + ":" + pos.ToString (Helpers.InvariantCulture) + ":" + len.ToString (Helpers.InvariantCulture) + ":");
 
 					if (propValue != null)
 						values.Append (propValue);

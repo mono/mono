@@ -169,7 +169,7 @@ namespace System.Web.Compilation
 			if (tags.Count == 0)
 				return false;
 
-			return 0 == String.Compare (tagid, (string) tags.Peek (), true, CultureInfo.InvariantCulture);
+			return 0 == String.Compare (tagid, (string) tags.Peek (), true, Helpers.InvariantCulture);
 		}
 		
 		public int Count {
@@ -337,7 +337,7 @@ namespace System.Web.Compilation
 			if (matches == null || matches.Count == 0)
 				return null;
 
-			string wantedDirectiveName = tparser.DefaultDirectiveName.ToLower ();
+			string wantedDirectiveName = tparser.DefaultDirectiveName.ToLower (Helpers.InvariantCulture);
 			string directiveName;
 			GroupCollection groups;
 			CaptureCollection ccNames;
@@ -352,7 +352,7 @@ namespace System.Web.Compilation
 				if (String.IsNullOrEmpty (directiveName))
 					continue;
 				
-				if (String.Compare (directiveName.ToLower (), wantedDirectiveName, StringComparison.Ordinal) != 0)
+				if (String.Compare (directiveName.ToLower (Helpers.InvariantCulture), wantedDirectiveName, StringComparison.Ordinal) != 0)
 					continue;
 
 				var loc = new Location (null);
@@ -894,7 +894,7 @@ namespace System.Web.Compilation
 			if (text.Length != 0)
 				FlushText (lastTag == TagType.CodeRender);
 
-			if (0 == String.Compare (tagid, "script", true, CultureInfo.InvariantCulture)) {
+			if (0 == String.Compare (tagid, "script", true, Helpers.InvariantCulture)) {
 				bool in_script = (inScript || ignore_text);
 				if (in_script) {
 					if (ProcessScript (tagtype, attributes))
@@ -1007,7 +1007,7 @@ namespace System.Web.Compilation
 
 			for (int idx = otags.Count - 1; idx >= 0; idx--) {
 				string otagid = (string) otags [idx];
-				if (0 == String.Compare (tagid, otagid, true, CultureInfo.InvariantCulture)) {
+				if (0 == String.Compare (tagid, otagid, true, Helpers.InvariantCulture)) {
 					do {
 						otags.RemoveAt (idx);
 					} while (otags.Count - 1 >= idx);
@@ -1235,15 +1235,15 @@ namespace System.Web.Compilation
 		{
 			ignored = false;
 			if (isApplication) {
-				if (String.Compare (tagid, "object", true, CultureInfo.InvariantCulture) != 0)
+				if (String.Compare (tagid, "object", true, Helpers.InvariantCulture) != 0)
 					throw new ParseException (location, "Invalid tag for application file.");
 			}
 
 			ControlBuilder parent = stack.Builder;
 			ControlBuilder builder = null;
 			if (parent != null && parent.ControlType == typeof (HtmlTable) &&
-			    (String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0 ||
-			     String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0)) {
+			    (String.Compare (tagid, "thead", true, Helpers.InvariantCulture) == 0 ||
+			     String.Compare (tagid, "tbody", true, Helpers.InvariantCulture) == 0)) {
 				ignored = true;
 				return true;
 			}
@@ -1405,8 +1405,8 @@ namespace System.Web.Compilation
 		{
 			ControlBuilder current = stack.Builder;
 			string btag = current.OriginalTagName;
-			if (String.Compare (btag, "tbody", true, CultureInfo.InvariantCulture) != 0 &&
-			    String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0) {
+			if (String.Compare (btag, "tbody", true, Helpers.InvariantCulture) != 0 &&
+			    String.Compare (tagid, "tbody", true, Helpers.InvariantCulture) == 0) {
 				if (!current.ChildrenAsProperties) {
 					try {
 						TextParsed (location, location.PlainText);
@@ -1416,10 +1416,10 @@ namespace System.Web.Compilation
 				return true;
 			}
 
-			if (current.ControlType == typeof (HtmlTable) && String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0)
+			if (current.ControlType == typeof (HtmlTable) && String.Compare (tagid, "thead", true, Helpers.InvariantCulture) == 0)
 				return true;
 			
-			if (0 != String.Compare (tagid, btag, true, CultureInfo.InvariantCulture))
+			if (0 != String.Compare (tagid, btag, true, Helpers.InvariantCulture))
 				return false;
 
 			// if (current is TemplateBuilder)
@@ -1502,7 +1502,7 @@ namespace System.Web.Compilation
 			if (lang == null || lang == "")
 				return;
 
-			if (String.Compare (lang, tparser.Language, true, CultureInfo.InvariantCulture) == 0)
+			if (String.Compare (lang, tparser.Language, true, Helpers.InvariantCulture) == 0)
 				return;
 
 #if NET_2_0

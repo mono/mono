@@ -1,11 +1,10 @@
 //
-// System.Web.UI.PageThemeFileParser
+// System.Web.Util.Helpers
 //
 // Authors:
-//   Chris Toshok (toshok@ximian.com)
+//	Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
-//
+// (C) 2009 Novell, Inc (http://novell.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,44 +26,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
-
 using System;
-using System.Collections;
-using System.IO;
-using System.Web;
-using System.Web.Compilation;
-using System.Web.Util;
+using System.Globalization;
 
-namespace System.Web.UI
+namespace System.Web.Util
 {
-	internal sealed class PageThemeFileParser: UserControlParser
+	class Helpers
 	{
-		internal PageThemeFileParser (VirtualPath virtualPath, string inputFile, HttpContext context)
-		: base (virtualPath, inputFile, context, "System.Web.UI.PageTheme")
-		{
-		}
-		
-		internal override void HandleOptions (object obj)
-		{
-		}
-
-		internal override void AddDirective (string directive, Hashtable atts)
-		{
-			int cmp = String.Compare ("Register", directive, StringComparison.OrdinalIgnoreCase);
-			if (cmp == 0) {
-				base.AddDirective (directive, atts);
-				return;
-			}
-
-			ThrowParseException ("Unknown directive: " + directive);
-		}
-
-		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.PageTheme"; }
-		}
+		public static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
 	}
 }
-
-#endif

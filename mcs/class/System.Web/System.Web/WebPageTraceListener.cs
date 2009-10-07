@@ -34,6 +34,7 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Text;
 using System.Web;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -52,7 +53,7 @@ namespace System.Web
 
 		public override void TraceEvent (TraceEventCache eventCache, string source, TraceEventType severity, int id, string format, params object[] args)
 		{
-			TraceEvent (eventCache, source, severity, id, string.Format (CultureInfo.InvariantCulture, format, args));
+			TraceEvent (eventCache, source, severity, id, string.Format (Helpers.InvariantCulture, format, args));
 		}
 
 		public override void Write (string message)

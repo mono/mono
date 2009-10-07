@@ -67,7 +67,7 @@ namespace System.Web.Util
 
                                 path = Path.Combine (tempdir,
 						     String.Format ("{0}{1}{2}", (prefix != null) ? prefix + "." : "",
-								    num.ToString ("x", CultureInfo.InvariantCulture),
+								    num.ToString ("x", Helpers.InvariantCulture),
 								    (extension != null) ? "." + extension : ""));
                                         
                                 try {

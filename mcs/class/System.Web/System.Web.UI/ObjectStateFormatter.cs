@@ -1001,7 +1001,7 @@ namespace System.Web.UI {
 			{
 				w.Write (PrimaryId);
 				ObjectFormatter.WriteObject (w, o.GetType (), ctx);
-				string v = (string) converter.ConvertTo (null, CultureInfo.InvariantCulture,
+				string v = (string) converter.ConvertTo (null, Helpers.InvariantCulture,
 									 o, typeof (string));
 				base.Write (w, v, ctx);
 			}
@@ -1012,7 +1012,7 @@ namespace System.Web.UI {
 				converter = TypeDescriptor.GetConverter (t);
 				token = r.ReadByte ();
 				string v = (string) base.Read (token, r, ctx);
-				return converter.ConvertFrom (null, CultureInfo.InvariantCulture, v);
+				return converter.ConvertFrom (null, Helpers.InvariantCulture, v);
 			}
 			
 			protected override Type Type {

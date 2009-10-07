@@ -855,7 +855,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			return null;
 
 		NameValueCollection coll = null;
-		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)
+		if (0 == String.Compare (Request.HttpMethod, "POST", true, Helpers.InvariantCulture)
 #if TARGET_J2EE
 			|| !_context.IsServletRequest
 #endif

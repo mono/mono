@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -86,8 +87,8 @@ namespace System.Web.Compilation
 			StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
 			directivesHash = new Hashtable (comparer);
 #else
-			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (CultureInfo.InvariantCulture);
-			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (CultureInfo.InvariantCulture);
+			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (Helpers.InvariantCulture);
+			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (Helpers.InvariantCulture);
 
 			directivesHash = new Hashtable (provider, comparer); 
 #endif

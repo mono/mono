@@ -34,6 +34,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Web.Util;
 
 namespace System.Web.UI {
 
@@ -120,7 +121,7 @@ namespace System.Web.UI {
 			    value.Length >= 3 && String.Compare ("url", 0, value, 0, 3, StringComparison.OrdinalIgnoreCase) != 0)
 #else
 			if (key == "background-image" && 0 != String.Compare ("url", value.Substring (0, 3), true,
-									      CultureInfo.InvariantCulture))
+									      Helpers.InvariantCulture))
 #endif
 				sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode (value));
 			else

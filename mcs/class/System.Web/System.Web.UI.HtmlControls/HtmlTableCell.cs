@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls {
 
@@ -114,7 +115,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("colspan");
 				else
-					Attributes ["colspan"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["colspan"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 
@@ -165,7 +166,7 @@ namespace System.Web.UI.HtmlControls {
 				if (value == -1)
 					Attributes.Remove ("rowspan");
 				else
-					Attributes ["rowspan"] = value.ToString (CultureInfo.InvariantCulture);
+					Attributes ["rowspan"] = value.ToString (Helpers.InvariantCulture);
 			}
 		}
 

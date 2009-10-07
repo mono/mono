@@ -38,6 +38,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
@@ -139,7 +140,7 @@ namespace System.Web.Handlers {
 			result = GetHexString (encryptor.TransformFinalBlock (bytes, 0, bytes.Length));
 			bytes = null;
 
-			return String.Concat ("d=", result.ToLower (CultureInfo.InvariantCulture));
+			return String.Concat ("d=", result.ToLower (Helpers.InvariantCulture));
 		}
 
 		static void DecryptAssemblyResource (string val, out string asmName, out string resName)

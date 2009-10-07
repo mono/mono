@@ -757,7 +757,7 @@ namespace System.Web.UI.WebControls {
 				LinkButton link = new LinkButton ();
 				link.Text = "...";
 				link.CommandName = PageCommandName;
-				link.CommandArgument = start.ToString (CultureInfo.InvariantCulture);
+				link.CommandArgument = start.ToString (Helpers.InvariantCulture);
 				link.CausesValidation = false;
 				res.Controls.Add (link);
 				res.Controls.Add (new LiteralControl ("&nbsp;"));
@@ -765,7 +765,7 @@ namespace System.Web.UI.WebControls {
 
 			for (int i = start; i < end; i++) {
 				Control number = null;
-				string page = (i + 1).ToString (CultureInfo.InvariantCulture);
+				string page = (i + 1).ToString (Helpers.InvariantCulture);
 				if (i != paged.CurrentPageIndex) {
 					LinkButton link = new LinkButton ();
 					link.Text = page;
@@ -789,7 +789,7 @@ namespace System.Web.UI.WebControls {
 				LinkButton link = new LinkButton ();
 				link.Text = "...";
 				link.CommandName = PageCommandName;
-				link.CommandArgument = (end + 1).ToString (CultureInfo.InvariantCulture);
+				link.CommandArgument = (end + 1).ToString (Helpers.InvariantCulture);
 				link.CausesValidation = false;
 				res.Controls.Add (link);
 			}
@@ -1157,7 +1157,7 @@ namespace System.Web.UI.WebControls {
 				return false;
 
 			string cn = de.CommandName;
-			CultureInfo inv = CultureInfo.InvariantCulture;
+			CultureInfo inv = Helpers.InvariantCulture;
 
 			OnItemCommand (de);
 			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {

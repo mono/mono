@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Web.UI;
@@ -748,10 +749,10 @@ namespace System.Web {
 			bool isConfig = false;
 			
 			if (StrUtils.EndsWith (name, "onfig", true)) {
-				if (String.Compare (Path.GetFileName (name), "web.config", true) != 0)
+				if (String.Compare (Path.GetFileName (name), "web.config", true, Helpers.InvariantCulture) != 0)
 					return;
 				isConfig = true;
-			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
+			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true, Helpers.InvariantCulture) != 0)
 				return;
 
 			// {Inotify,FAM}Watcher will notify about events for a directory regardless
@@ -760,7 +761,7 @@ namespace System.Web {
 			// not removing it and instead working around the issue here. Fix for bug
 			// #495011
 			FileSystemWatcher watcher = sender as FileSystemWatcher;
-			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true) == 0 && Directory.Exists (name))
+			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true, Helpers.InvariantCulture) == 0 && Directory.Exists (name))
 				return;
 
 #if NET_2_0

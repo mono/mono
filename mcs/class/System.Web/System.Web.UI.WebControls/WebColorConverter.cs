@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -50,7 +51,7 @@ namespace System.Web.UI.WebControls {
 				}
 
 				if (culture == null) {
-					culture = CultureInfo.InvariantCulture;
+					culture = Helpers.InvariantCulture;
 				}
 
 				if (s[0] == '#') 
@@ -130,7 +131,7 @@ namespace System.Web.UI.WebControls {
 			Color c = (Color) value;
 
 			if (culture == null)
-				culture = CultureInfo.InvariantCulture;
+				culture = Helpers.InvariantCulture;
 
 			string s = c.ToKnownColor ().ToString ();
 			if (s != "0")

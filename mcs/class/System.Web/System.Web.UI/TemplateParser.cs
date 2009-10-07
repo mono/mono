@@ -118,7 +118,6 @@ namespace System.Web.UI {
 #endif
 		bool oc_shared;
 		OutputCacheLocation oc_location;
-		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 #if NET_2_0
 		// Kludge needed to support pre-parsing of the main directive (see
 		// AspNetGenerator.GetRootBuilderType)
@@ -261,7 +260,7 @@ namespace System.Web.UI {
 			if (!fileExists)
 				ThrowParseFileNotFound (src);
 
-			if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
+			if (String.Compare (realpath, inputFile, false, Helpers.InvariantCulture) == 0)
                                 return;
 			
 #if NET_2_0
@@ -321,7 +320,7 @@ namespace System.Web.UI {
 #if NET_2_0
 			var pageParserFilter = PageParserFilter;
 #endif
-			if (String.Compare (directive, DefaultDirectiveName, true) == 0) {
+			if (String.Compare (directive, DefaultDirectiveName, true, Helpers.InvariantCulture) == 0) {
 #if NET_2_0
 				bool allowMainDirective = allowedMainDirectives > 0;
 #else
@@ -335,7 +334,7 @@ namespace System.Web.UI {
 					return;
 				
 				if (pageParserFilter != null)
-					pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+					pageParserFilter.PreprocessDirective (directive.ToLower (Helpers.InvariantCulture), atts);
 #endif
 				
 				mainAttributes = atts;
@@ -344,10 +343,10 @@ namespace System.Web.UI {
 			}
 #if NET_2_0
 			else if (pageParserFilter != null)
-				pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+				pageParserFilter.PreprocessDirective (directive.ToLower (Helpers.InvariantCulture), atts);
 #endif
 				
-			int cmp = String.Compare ("Assembly", directive, true);
+			int cmp = String.Compare ("Assembly", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				string name = GetString (atts, "Name", null);
 				string src = GetString (atts, "Src", null);
@@ -370,7 +369,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			cmp = String.Compare ("Import", directive, true);
+			cmp = String.Compare ("Import", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				string namesp = GetString (atts, "Namespace", null);
 				if (atts.Count > 0)
@@ -380,7 +379,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			cmp = String.Compare ("Implements", directive, true);
+			cmp = String.Compare ("Implements", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				string ifacename = GetString (atts, "Interface", "");
 
@@ -398,7 +397,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			cmp = String.Compare ("OutputCache", directive, true);
+			cmp = String.Compare ("OutputCache", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
 				HttpResponse response = HttpContext.Current.Response;
 				if (response != null)
@@ -415,7 +414,10 @@ namespace System.Web.UI {
 
 				foreach (DictionaryEntry entry in atts) {
 					string key = (string) entry.Key;
-					switch (key.ToLower ()) {
+					if (key == null)
+						continue;
+					
+					switch (key.ToLower (Helpers.InvariantCulture)) {
 						case "duration":
 							oc_duration = Int32.Parse ((string) entry.Value);
 							if (oc_duration < 1)
@@ -449,7 +451,7 @@ namespace System.Web.UI {
 #endif
 						case "varybyparam":
 							oc_param = (string) entry.Value;
-							if (String.Compare (oc_param, "none") == 0)
+							if (String.Compare (oc_param, "none", true, Helpers.InvariantCulture) == 0)
 								oc_param = null;
 							break;
 						case "varybyheader":
@@ -900,7 +902,7 @@ namespace System.Web.UI {
 		{
 			MemberInfo mi = null;
 			bool missing = false;
-			string memberName = name.Trim ().ToLower (CultureInfo.InvariantCulture);
+			string memberName = name.Trim ().ToLower (Helpers.InvariantCulture);
 			Type parent = codeFileBaseClassType;
 
 			if (parent == null)
@@ -1284,7 +1286,7 @@ namespace System.Web.UI {
 				}
 				
 				if (StrUtils.StartsWith (inFile, physPath))
-					className = inputFile.Substring (physPath.Length).ToLower (CultureInfo.InvariantCulture);
+					className = inputFile.Substring (physPath.Length).ToLower (Helpers.InvariantCulture);
 				else
 #endif
 					className = Path.GetFileName (inputFile);

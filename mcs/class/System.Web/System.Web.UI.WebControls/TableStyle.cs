@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -185,11 +186,11 @@ namespace System.Web.UI.WebControls {
 			// note: avoid calling properties multiple times
 			int i = CellPadding;
 			if (i != -1)
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (CultureInfo.InvariantCulture), false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellpadding, i.ToString (Helpers.InvariantCulture), false);
 			
 			i = CellSpacing;
 			if (i != -1) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (CultureInfo.InvariantCulture), false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, i.ToString (Helpers.InvariantCulture), false);
 				if (i == 0) {
 					writer.AddStyleAttribute(HtmlTextWriterStyle.BorderCollapse, "collapse");
 				}
@@ -231,7 +232,7 @@ namespace System.Web.UI.WebControls {
 			} else if (BorderWidth.IsEmpty) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1", false);
 			} else {
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (CultureInfo.InvariantCulture));
+				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (Helpers.InvariantCulture));
 			}
 
 #if !NET_2_0

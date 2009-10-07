@@ -449,7 +449,7 @@ namespace System.Web.Compilation {
 				return; // maybe better to throw an exception here?
 			ICodePragmaGenerator pragmaGenerator;
 			
-			switch (extension.ToLower ()) {
+			switch (extension.ToLowerInvariant ()) {
 				case "cs":
 					pragmaGenerator = new CSharpCodePragmaGenerator ();
 					break;

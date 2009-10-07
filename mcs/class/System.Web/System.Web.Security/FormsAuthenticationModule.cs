@@ -120,7 +120,7 @@ namespace System.Web.Security
 				loginPath = context.Request.MapPath (loginPage);
 			} catch {} // ignore
 
-			context.SkipAuthorization = String.Compare (reqPath, loginPath, HttpRuntime.CaseInsensitive, CultureInfo.InvariantCulture) == 0;
+			context.SkipAuthorization = String.Compare (reqPath, loginPath, HttpRuntime.CaseInsensitive, Helpers.InvariantCulture) == 0;
 			
 #if NET_2_0
 			//TODO: need to check that the handler is System.Web.Handlers.AssemblyResourceLoader type

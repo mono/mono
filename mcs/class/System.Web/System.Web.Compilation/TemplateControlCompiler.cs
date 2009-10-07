@@ -659,13 +659,13 @@ namespace System.Web.Compilation
 		/*
 		static bool InvariantCompare (string a, string b)
 		{
-			return (0 == String.Compare (a, b, false, CultureInfo.InvariantCulture));
+			return (0 == String.Compare (a, b, false, Helpers.InvariantCulture));
 		}
 		*/
 
 		static bool InvariantCompareNoCase (string a, string b)
 		{
-			return (0 == String.Compare (a, b, true, CultureInfo.InvariantCulture));
+			return (0 == String.Compare (a, b, true, Helpers.InvariantCulture));
 		}
 
 		static MemberInfo GetFieldOrProperty (Type type, string name)
@@ -977,7 +977,7 @@ namespace System.Web.Compilation
 			Type type = builder.ControlType;
 			
 			string attvalue = builder.GetAttribute (id);
-			if (id.Length > 2 && id.Substring (0, 2).ToUpper () == "ON"){
+			if (id.Length > 2 && String.Compare (id.Substring (0, 2), "ON", true, Helpers.InvariantCulture) == 0){
 				if (ev_info == null)
 					ev_info = type.GetEvents ();
 
@@ -997,7 +997,7 @@ namespace System.Web.Compilation
 			}
 
 #if NET_2_0
-			if (id.ToLower () == "meta:resourcekey") {
+			if (String.Compare (id, "meta:resourcekey", StringComparison.OrdinalIgnoreCase) == 0) {
 				AssignPropertiesFromResources (builder, attvalue);
 				return;
 			}
@@ -1967,7 +1967,7 @@ namespace System.Web.Compilation
 				return CreateNullableExpression (originalType,
 								 new CodePrimitiveExpression (
 									 Convert.ChangeType (preConverted ? convertedFromAttr : str,
-											     type, CultureInfo.InvariantCulture)),
+											     type, Helpers.InvariantCulture)),
 								 wasNullable);
 
 			if (type == typeof (string [])) {

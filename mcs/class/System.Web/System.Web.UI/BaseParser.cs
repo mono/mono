@@ -33,6 +33,7 @@ using System.IO;
 using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Globalization;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -80,9 +81,9 @@ namespace System.Web.UI
 			hash.Remove (key);
 
 			bool result = false;
-			if (String.Compare (val, "true", true) == 0)
+			if (String.Compare (val, "true", true, Helpers.InvariantCulture) == 0)
 				result = true;
-			else if (String.Compare (val, "false", true) != 0)
+			else if (String.Compare (val, "false", true, Helpers.InvariantCulture) != 0)
 				ThrowParseException ("Invalid value for " + key);
 
 			return result;
