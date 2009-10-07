@@ -1,5 +1,11 @@
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
+	* DirectoryScanner.cs: Handle absolute paths. Fix to work
+	correctly on windows. Change order of adding paths to match
+	msbuild, useful to have.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
 	* TaskBatchingImpl.cs (ParseTaskAttributes): Parse attributes
 	of the 'Output' element also.
 	* TaskEngine.cs (PublishOutput): Honor condition on 'Output' also.

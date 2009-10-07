@@ -41,7 +41,15 @@ namespace Microsoft.Build.BuildEngine {
 		ITaskItem[]	includes;
 		string		excludes;
 		ITaskItem[]	matchedItems;
+
+		static bool _runningOnWindows;
 		
+		static DirectoryScanner ()
+		{
+			PlatformID pid = Environment.OSVersion.Platform;
+			_runningOnWindows =((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
+		}
+
 		public DirectoryScanner ()
 		{
 		}
@@ -88,13 +96,27 @@ namespace Microsoft.Build.BuildEngine {
 					includedItems.Add (include_item);
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
-					separatedPath = name.Split (Path.DirectorySeparatorChar);
+					separatedPath = name.Split (new char [] {Path.DirectorySeparatorChar},
+							StringSplitOptions.RemoveEmptyEntries);
 				} else {
-					separatedPath = name.Split (Path.AltDirectorySeparatorChar);
+					separatedPath = name.Split (new char [] {Path.AltDirectorySeparatorChar},
+							StringSplitOptions.RemoveEmptyEntries);
 				}
 				if (separatedPath.Length == 1 && separatedPath [0] == String.Empty)
 					return;
-				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
+
+				int offset = 0;
+				if (Path.IsPathRooted (name)) {
+					if (!IsRunningOnWindows) {
+						baseDirectory = new DirectoryInfo ("/");
+					} else {
+						baseDirectory = new DirectoryInfo (separatedPath [0]);
+						offset = 1;
+					}
+				}
+
+				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
+
 				foreach (FileInfo fi in fileInfo) {
 					if (!excludedItems.ContainsKey (fi.FullName)) {
 						TaskItem item = new TaskItem (include_item);
@@ -115,13 +137,27 @@ namespace Microsoft.Build.BuildEngine {
 					excludedItems.Add (Path.GetFullPath (name), true);
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
-					separatedPath = name.Split (Path.DirectorySeparatorChar);
+					separatedPath = name.Split (new char [] {Path.DirectorySeparatorChar},
+									StringSplitOptions.RemoveEmptyEntries);
 				} else {
-					separatedPath = name.Split (Path.AltDirectorySeparatorChar);
+					separatedPath = name.Split (new char [] {Path.AltDirectorySeparatorChar},
+									StringSplitOptions.RemoveEmptyEntries);
 				}
 				if (separatedPath.Length == 1 && separatedPath [0] == String.Empty)
 					return;
-				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
+
+				int offset = 0;
+				if (Path.IsPathRooted (name)) {
+					if (IsRunningOnWindows) {
+						// set base dir to drive:, and skip that
+						baseDirectory = new DirectoryInfo (separatedPath [0]);
+						offset = 1;
+					} else {
+						baseDirectory = new DirectoryInfo ("/");
+					}
+				}
+
+				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
 					if (!excludedItems.ContainsKey (fi.FullName))
 						excludedItems.Add (fi.FullName, true);
@@ -156,7 +192,7 @@ namespace Microsoft.Build.BuildEngine {
 					while (currentDirectories.Count > 0)
 					{
 						DirectoryInfo current = currentDirectories.Pop();
-						allDirectories.Add (current);
+						allDirectories.Insert (0, current);
 						foreach (DirectoryInfo dir in current.GetDirectories())
 						{
 							currentDirectories.Push(dir);
@@ -165,8 +201,9 @@ namespace Microsoft.Build.BuildEngine {
 					
 					// No further directories shall be read
 					di = allDirectories.ToArray();					
-				} else
+				} else {
 					di = directory.GetDirectories (input [ptr]);
+				}
 				foreach (DirectoryInfo info in di) {
 					fi = ParseIncludeExclude (input, ptr + 1, info);
 					foreach (FileInfo file in fi)
@@ -199,6 +236,9 @@ namespace Microsoft.Build.BuildEngine {
 			get { return matchedItems; }
 		}
 		
+		static bool IsRunningOnWindows {
+			get { return _runningOnWindows; }
+		}
 	}
 }
 
