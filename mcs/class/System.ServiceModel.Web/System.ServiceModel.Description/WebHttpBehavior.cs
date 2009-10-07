@@ -47,7 +47,7 @@ namespace System.ServiceModel.Description
 				if (wi != null)
 					return wi.Info;
 			}
-			return null;
+			return new WebGetAttribute ().Info; // blank one
 		}
 	}
 

@@ -178,13 +178,11 @@ namespace System.ServiceModel.Description
 			ValidateBinding (endpoint);
 
 			foreach (var od in endpoint.Contract.Operations) {
-				var wga = od.Behaviors.Find<WebGetAttribute> ();
-				if (wga != null && wga.UriTemplate != null)
+				var wai = od.GetWebAttributeInfo ();
+				if (wai.UriTemplate != null)
 					throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
 				var wia = od.Behaviors.Find<WebInvokeAttribute> ();
 				if (wia != null) {
-					if (wia.UriTemplate != null)
-						throw new InvalidOperationException ("UriTemplate must not be used with WebScriptEnablingBehavior");
 					switch (wia.Method.ToUpper ()) {
 					case "GET":
 					case "POST":
@@ -192,6 +190,13 @@ namespace System.ServiceModel.Description
 					default:
 						throw new InvalidOperationException ("Only GET and POST HTTP methods are valid used for WebScriptEnablingBehavior");
 					}
+				}
+
+				var style = wai != null && wai.IsBodyStyleSetExplicitly ? wai.BodyStyle : DefaultBodyStyle;
+				switch (style) {
+				case WebMessageBodyStyle.Wrapped:
+				case WebMessageBodyStyle.WrappedResponse:
+					throw new NotSupportedException (String.Format ("Operation '{0}' contains WrappedResponse body style which is not allowed for WebScriptEnablingBehavior.", od.Name));
 				}
 			}
 		}
