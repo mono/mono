@@ -1,5 +1,11 @@
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
+	* DirectoryScanner.cs: Use Path.GetPathRoot, instead of
+	directly using DirectoryInfo ("z:"), that doesn't return
+	a dir info for "z:".
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
 	* DirectoryScanner.cs: Handle absolute paths. Fix to work
 	correctly on windows. Change order of adding paths to match
 	msbuild, useful to have.

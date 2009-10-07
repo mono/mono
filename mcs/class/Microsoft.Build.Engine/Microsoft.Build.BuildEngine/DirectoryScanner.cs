@@ -107,12 +107,10 @@ namespace Microsoft.Build.BuildEngine {
 
 				int offset = 0;
 				if (Path.IsPathRooted (name)) {
-					if (!IsRunningOnWindows) {
-						baseDirectory = new DirectoryInfo ("/");
-					} else {
-						baseDirectory = new DirectoryInfo (separatedPath [0]);
+					baseDirectory = new DirectoryInfo (Path.GetPathRoot (name));
+					if (IsRunningOnWindows)
+						// skip the "drive:"
 						offset = 1;
-					}
 				}
 
 				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
@@ -148,15 +146,11 @@ namespace Microsoft.Build.BuildEngine {
 
 				int offset = 0;
 				if (Path.IsPathRooted (name)) {
-					if (IsRunningOnWindows) {
-						// set base dir to drive:, and skip that
-						baseDirectory = new DirectoryInfo (separatedPath [0]);
+					baseDirectory = new DirectoryInfo (Path.GetPathRoot (name));
+					if (IsRunningOnWindows)
+						// skip the "drive:"
 						offset = 1;
-					} else {
-						baseDirectory = new DirectoryInfo ("/");
-					}
 				}
-
 				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
 					if (!excludedItems.ContainsKey (fi.FullName))
