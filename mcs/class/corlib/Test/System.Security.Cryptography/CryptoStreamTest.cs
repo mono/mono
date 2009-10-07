@@ -1391,12 +1391,16 @@ namespace MonoTests.System.Security.Cryptography {
 
 		class ExpandTransform : ICryptoTransform {
 
+			private bool can_transform_multiple_blocks;
+			private int output_block_size;
+
 			public bool CanReuseTransform {
 				get { return true; }
 			}
 
 			public bool CanTransformMultipleBlocks {
-				get; private set;
+				get { return can_transform_multiple_blocks; }
+				private set { can_transform_multiple_blocks = value; }
 			}
 
 			public int InputBlockSize {
@@ -1404,7 +1408,8 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 
 			public int OutputBlockSize {
-				get; private set;
+				get { return output_block_size; }
+				private set { output_block_size = value; }
 			}
 
 			public ExpandTransform (bool canTranformMultipleBlocks, int outputBlockSize)
@@ -1419,9 +1424,9 @@ namespace MonoTests.System.Security.Cryptography {
 
 			public int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset)
 			{
-				var ret = 0;
-				for (var i = 0; i < inputCount; i++, inputOffset++) {
-					for (var j = 0; j < OutputBlockSize; j++, outputOffset++, ret++) {
+				int ret = 0;
+				for (int i = 0; i < inputCount; i++, inputOffset++) {
+					for (int j = 0; j < OutputBlockSize; j++, outputOffset++, ret++) {
 						outputBuffer [outputOffset] = inputBuffer [inputOffset];
 					}
 				}
@@ -1430,7 +1435,7 @@ namespace MonoTests.System.Security.Cryptography {
 
 			public byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
 			{
-				var outputBuffer = new byte [inputCount * OutputBlockSize];
+				byte[] outputBuffer = new byte [inputCount * OutputBlockSize];
 				TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, 0);
 				return outputBuffer;
 			}
@@ -1451,12 +1456,12 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Expand ()
 		{
 			int n = 0;
-			foreach (var transformMultiple in new [] { false, true }) {
-				foreach (var outputBlockSize in new [] { 1, 2, 3, 4 }) {
-					var expantedStream = new MemoryStream ();
-					var inputData = new byte [] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+			foreach (bool transformMultiple in new bool [] { false, true }) {
+				foreach (int outputBlockSize in new int [] { 1, 2, 3, 4 }) {
+					MemoryStream expantedStream = new MemoryStream ();
+					byte[] inputData = new byte [] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
 
-					using (var stream = new CryptoStream (expantedStream, new ExpandTransform (transformMultiple, outputBlockSize), CryptoStreamMode.Write)) {
+					using (CryptoStream stream = new CryptoStream (expantedStream, new ExpandTransform (transformMultiple, outputBlockSize), CryptoStreamMode.Write)) {
 						stream.Write (inputData, 0, inputData.Length);
 					}
 					expantedStream.Close ();
@@ -1468,6 +1473,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		class CompressTransform : ICryptoTransform {
+
+			private int input_block_size;
+
 			public bool CanReuseTransform {
 				get { return true; }
 			}
@@ -1477,7 +1485,8 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 
 			public int InputBlockSize {
-				get; private set;
+				get { return input_block_size; }
+				private set { input_block_size = value; }
 			}
 
 			public int OutputBlockSize {
@@ -1497,8 +1506,8 @@ namespace MonoTests.System.Security.Cryptography {
 
 			public int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset)
 			{
-				var ret = 0;
-				for (var i = 0; i < inputCount; i++, inputOffset++) {
+				int ret = 0;
+				for (int i = 0; i < inputCount; i++, inputOffset++) {
 					if (++bufferedCount == InputBlockSize) {
 						outputBuffer [outputOffset++] = inputBuffer [inputOffset];
 						ret++;
@@ -1510,8 +1519,8 @@ namespace MonoTests.System.Security.Cryptography {
 
 			public byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
 			{
-				var outputBuffer = new byte [inputCount * OutputBlockSize];
-				var ret = TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, 0);
+				byte[] outputBuffer = new byte [inputCount * OutputBlockSize];
+				int ret = TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, 0);
 				byte[] result = new byte [ret];
 				Array.Copy (outputBuffer, result, ret);
 				return result;
@@ -1529,17 +1538,17 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Compress ()
 		{
 			int n = 0;
-			foreach (var inputBlockSize in new [] { 1, 2, 3, 4 }) {
-				var inputData = new byte [] {
+			foreach (int inputBlockSize in new int [] { 1, 2, 3, 4 }) {
+				byte[] inputData = new byte [] {
 					0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 					0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 					0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 					0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 				};
 
-				using (var stream = new CryptoStream (new MemoryStream (inputData), new CompressTransform (inputBlockSize), CryptoStreamMode.Read)) {
-					var buffer = new byte [inputData.Length];
-					var ret = stream.Read (buffer, 0, buffer.Length);
+				using (CryptoStream stream = new CryptoStream (new MemoryStream (inputData), new CompressTransform (inputBlockSize), CryptoStreamMode.Read)) {
+					byte[] buffer = new byte [inputData.Length];
+					int ret = stream.Read (buffer, 0, buffer.Length);
 					string value = BitConverter.ToString (buffer, 0, ret);
 					Assert.AreEqual (compress_values [n++], value);
 				}

@@ -1,3 +1,9 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoStreamTest.cs: Make latest test cases compilable using
+	older 2.4 mcs (which does not support automatically implemented 
+	properties and implicitly typed arrays)implicitly typed arrays
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStreamTest.cs: Add (nunit-ized) test cases provided by
