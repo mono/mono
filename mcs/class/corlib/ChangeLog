@@ -1,3 +1,9 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_corlib.dll.sources: Remove System/LocalDataStoreSlot.cs
+	from Moonlight build
+	[Backport r143633]
+
 2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_corlib.dll.sources: Remove normalization files from
