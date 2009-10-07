@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 
 // Dynamic binary operator, unary operators and convert tests
@@ -2065,7 +2064,7 @@ class Tester
 			return true;
 		} catch (Exception e) {
 			Console.WriteLine ("FAILED");
-			Console.WriteLine (e.InnerException.Message);
+			Console.WriteLine (e.ToString ());
 			return false;
 		}
 	}
