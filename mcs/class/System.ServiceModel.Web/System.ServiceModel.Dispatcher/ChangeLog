@@ -1,5 +1,10 @@
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : revert and fix wrapper name change. XML
+	  and JSON have different serialization.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageFormatter.cs : also fix wrapped message deserialization.
 	  It should expect FooResponse (body WrapperName), not FooResult
 	  (ReturnValue part Name).
