@@ -1,5 +1,10 @@
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageFormatter.cs : when they serialize Wrapped message, it
+	  first writes "root" and then the wrapper element.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebMessageFormatter.cs : JSON writer does not support namespace.
 
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>

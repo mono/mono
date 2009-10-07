@@ -327,11 +327,15 @@ namespace System.ServiceModel.Description
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
 			{
-				if (name != null)
+				writer.WriteStartElement ("root");
+				if (name != null) {
+					writer.WriteAttributeString ("type", "object");
 					writer.WriteStartElement (name, ns);
-				serializer.WriteObject (writer, value);
+				}
+				serializer.WriteObjectContent (writer, value);
 				if (name != null)
 					writer.WriteEndElement ();
+				writer.WriteEndElement ();
 			}
 		}
 
