@@ -1,3 +1,7 @@
+2009-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StaticFileHandler.cs: it's the last flush even when a VPP is used.
+
 2009-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: use full url in redirect if
