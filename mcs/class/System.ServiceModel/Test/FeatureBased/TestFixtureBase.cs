@@ -181,6 +181,7 @@ namespace MonoTests.Features
 			smb.HttpGetEnabled = true;
 			smb.HttpGetUrl = new Uri (getMexEndpoint ());
 			host.Description.Behaviors.Add (smb);
+			host.Description.Behaviors.Add (new ServiceThrottlingBehavior () { MaxConcurrentCalls = 1, MaxConcurrentSessions = 1 });
 			if (Configuration.logMessages)
 				host.Description.Behaviors.Add (new LoggerBehavior ());
             return host;
