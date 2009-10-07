@@ -1,3 +1,8 @@
+2009-10-07  Ankit Jain  <jankit@novell.com>
+
+	* ManagedCompiler.cs (HandleTaskExecutionErrors): Log error if
+	required.
+
 2009-10-06  Ankit Jain  <jankit@novell.com>
 
 	* Exec.cs (ExecuteTool): Use DeleteTempFile instead of File.Delete
