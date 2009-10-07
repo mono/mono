@@ -1,10 +1,7 @@
-2009-09-15  Astushi Enomoto  <atsushi@ximian.com>
+2009-10-07  Astushi Enomoto  <atsushi@ximian.com>
 
-	* System.ServiceModel.dll.sources: remove WebServiceHelper.cs.
-
-2009-09-14  Astushi Enomoto  <atsushi@ximian.com>
-
-	* System.ServiceModel_test.dll.sources: add MessagePropertiesTest.cs.
+	* net_2_1_System.ServiceModel.dll.sources :
+	  add IHttpCookieContainer.cs.
 
 2009-09-02  Astushi Enomoto  <atsushi@ximian.com>
 

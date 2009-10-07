@@ -1,3 +1,7 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IHttpCookieContainer.cs : new 2.1-only interface (no use).
+
 2009-09-30  Jb Evain  <jbevain@novell.com>
 
 	* HttpRequestChannel.cs: When compiling for MonoTouch, avoid

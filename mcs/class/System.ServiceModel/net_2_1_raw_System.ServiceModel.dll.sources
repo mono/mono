@@ -79,6 +79,7 @@ System.ServiceModel.Channels/IChannelFactory.cs
 System.ServiceModel.Channels/IDuplexChannel.cs
 System.ServiceModel.Channels/IDuplexSession.cs
 System.ServiceModel.Channels/IDuplexSessionChannel.cs
+System.ServiceModel.Channels/IHttpCookieContainer.cs
 System.ServiceModel.Channels/IInputChannel.cs
 System.ServiceModel.Channels/IInputSession.cs
 System.ServiceModel.Channels/IInputSessionChannel.cs
