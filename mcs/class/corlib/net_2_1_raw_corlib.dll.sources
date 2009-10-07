@@ -159,7 +159,6 @@ System/Lazy.cs
 System/LazyExecutionMode.cs
 System/LoaderOptimization.cs
 System/LoaderOptimizationAttribute.cs
-System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
 System/Math.cs
 System/MemberAccessException.cs
