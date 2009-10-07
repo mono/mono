@@ -370,6 +370,12 @@ namespace System.ServiceModel.Description
 
 				string mediaType = null;
 				XmlObjectSerializer serializer = null;
+
+				// FIXME: serialize ref/out parameters as well.
+
+				string name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
+				string ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
+
 				switch (msgfmt) {
 				case WebMessageFormat.Xml:
 					serializer = GetSerializer (WebContentFormat.Xml);
@@ -378,13 +384,9 @@ namespace System.ServiceModel.Description
 				case WebMessageFormat.Json:
 					serializer = GetSerializer (WebContentFormat.Json);
 					mediaType = "application/json";
+					ns = String.Empty;
 					break;
 				}
-
-				// FIXME: serialize ref/out parameters as well.
-
-				string name = IsResponseBodyWrapped ? md.Body.WrapperName : null;
-				string ns = IsResponseBodyWrapped ? md.Body.WrapperNamespace : null;
 
 				Message ret = Message.CreateMessage (MessageVersion.None, null, new WrappedBodyWriter (result, serializer, name, ns));
 
