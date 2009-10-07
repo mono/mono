@@ -1,3 +1,10 @@
+2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Remove unsafe code duplication in ToCharArray.
+	Define out the unused InternalStrcpy icalls
+	* StringComparer.cs: Seal internal/private inner classes.
+	[Backport r143651]
+
 2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Use Compare method instead of directly using the
