@@ -1,3 +1,13 @@
+2009-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When computing the value for groups height don't use
+	text_size field, since in LargeIcon view it sometimes contains a
+	double height value - use Font.Height directly, and also improve the
+	padding value.
+	* ThemeWin32Classic: The same as above.
+	This way the space between the group header, the line, and the items
+	area is not that big in LargeIcon view.
+
 2009-10-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When retrieving the fixed positions for the items in

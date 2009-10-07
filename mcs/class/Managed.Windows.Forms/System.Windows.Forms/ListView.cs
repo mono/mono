@@ -1924,7 +1924,7 @@ namespace System.Windows.Forms
 		int LayoutGroupHeader (ListViewGroup group, int y_origin, int item_height, int y_spacing, int rows)
 		{
 			Rectangle client_area = ClientRectangle;
-			int header_height = text_size.Height + 10;
+			int header_height = Font.Height + 15; // one line height + some padding
 
 			group.HeaderBounds = new Rectangle (0, y_origin, client_area.Width - v_scroll.Width, header_height);
 			group.items_area_location = new Point (0, y_origin + header_height);

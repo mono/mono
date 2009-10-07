@@ -3179,7 +3179,7 @@ namespace System.Windows.Forms
 			Rectangle header_bounds = group.HeaderBounds;
 			text_bounds.Offset (8, 0);
 			text_bounds.Inflate (-8, 0);
-			Size text_size = control.text_size;
+			int text_height = control.Font.Height + 2; // add a tiny padding between the text and the group line
 
 			Font font = new Font (control.Font, control.Font.Style | FontStyle.Bold);
 			Brush brush = new LinearGradientBrush (new Point (header_bounds.Left, 0), new Point (header_bounds.Left + ListViewGroupLineWidth, 0), 
@@ -3201,8 +3201,8 @@ namespace System.Windows.Forms
 
 			sformat.LineAlignment = StringAlignment.Near;
 			dc.DrawString (group.Header, font, SystemBrushes.ControlText, text_bounds, sformat);
-			dc.DrawLine (pen, header_bounds.Left, header_bounds.Top + text_size.Height, header_bounds.Left + ListViewGroupLineWidth, 
-					header_bounds.Top + text_size.Height);
+			dc.DrawLine (pen, header_bounds.Left, header_bounds.Top + text_height, header_bounds.Left + ListViewGroupLineWidth, 
+					header_bounds.Top + text_height);
 
 			sformat.Dispose ();
 			font.Dispose ();
