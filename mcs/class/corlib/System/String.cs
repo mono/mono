@@ -184,12 +184,9 @@ namespace System
 				CharCopy (dest + destinationIndex, src + sourceIndex, count);
 		}
 
-		public unsafe char[] ToCharArray ()
+		public char[] ToCharArray ()
 		{
-			char[] tmp = new char [length];
-			fixed (char* dest = tmp, src = this)
-				CharCopy (dest, src, length);
-			return tmp;
+			return ToCharArray (0, length);
 		}
 
 		public unsafe char[] ToCharArray (int startIndex, int length)
@@ -3075,7 +3072,7 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);
-
+#if false
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalStrcpy (String dest, int destPos, String src);
 
@@ -3087,7 +3084,7 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalStrcpy (String dest, int destPos, char[] chars, int sPos, int count);
-
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIntern (string str);
 

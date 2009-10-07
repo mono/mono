@@ -145,7 +145,7 @@ namespace System
 	}
 
 	[Serializable]
-	class CultureAwareComparer : StringComparer
+	sealed class CultureAwareComparer : StringComparer
 	{
 		readonly bool _ignoreCase;
 		readonly CompareInfo _compareInfo;
@@ -180,7 +180,7 @@ namespace System
 	}
 
 	[Serializable]
-	internal class OrdinalComparer : StringComparer
+	internal sealed class OrdinalComparer : StringComparer
 	{
 		readonly bool _ignoreCase;
 
