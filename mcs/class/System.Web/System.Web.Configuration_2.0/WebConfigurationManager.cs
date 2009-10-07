@@ -57,7 +57,7 @@ namespace System.Web.Configuration {
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
-		static Hashtable sectionCache = new Hashtable ();
+		static Dictionary <int, object> sectionCache = new Dictionary <int, object> ();
 		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
 		static bool suppressAppReload;
 #else
@@ -109,13 +109,13 @@ namespace System.Web.Configuration {
 			}
 		}
 
-		static Hashtable sectionCache
+		static Dictionary <int, object> sectionCache
 		{
 			get
 			{
-				Hashtable sectionCache = (Hashtable) AppDomain.CurrentDomain.GetData ("sectionCache");
+				Dictionary <int, object> sectionCache = AppDomain.CurrentDomain.GetData ("sectionCache") as Dictionary <int, object>;
 				if (sectionCache == null) {
-					sectionCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
+					sectionCache = new Dictionary <int, object> ();
 					AppDomain.CurrentDomain.SetData ("sectionCache", sectionCache);
 				}
 				return sectionCache;
@@ -402,8 +402,9 @@ namespace System.Web.Configuration {
 			if (String.IsNullOrEmpty (config_vdir))
 				config_vdir = "/";
 
-			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, path + '@' + config_vdir)];
-			if (cachedSection != null)
+			int sectionCacheKey = GetSectionCacheKey (sectionName, path, config_vdir);
+			object cachedSection;
+			if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
 				return cachedSection;
 
 			HttpRequest req = context != null ? context.Request : null;
@@ -426,7 +427,7 @@ namespace System.Web.Configuration {
 				value = collection;
 			}
 
-			AddSectionToCache (GetSectionCacheKey (sectionName, config_vdir), value);
+			AddSectionToCache (sectionCacheKey, value);
 			return value;
 #else
 #if MONOWEB_DEP
@@ -434,7 +435,7 @@ namespace System.Web.Configuration {
 #else
 			object value = null;
 #endif
-			AddSectionToCache (GetSectionCacheKey (sectionName, config_vdir), value);
+			AddSectionToCache (sectionCacheKey, value);
 			return value;
 #endif
 		}
@@ -570,20 +571,24 @@ namespace System.Web.Configuration {
 
 		static void AddSectionToCache (int key, object section)
 		{
-			if (sectionCache [key] != null)
+			object cachedSection;
+			if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
 				return;
 
-			Hashtable tmpTable = (Hashtable) sectionCache.Clone ();
-			if (tmpTable.Contains (key))
+			// Not sure if it wouldn't be better to just use a lock here
+			var tmpTable = new Dictionary <int, object> (sectionCache);
+			if (tmpTable.ContainsKey (key))
 				return;
 
 			tmpTable.Add (key, section);
 			sectionCache = tmpTable;
 		}
 
-		static int GetSectionCacheKey (string sectionName, string path)
+		static int GetSectionCacheKey (string sectionName, string path, string vdir)
 		{
-			return (sectionName != null ? sectionName.GetHashCode () : 0) ^ ((path != null ? path.GetHashCode () : 0) + 37);
+			return (sectionName != null ? sectionName.GetHashCode () : 0) ^
+				((path != null ? path.GetHashCode () : 0) + 37) ^
+				((vdir != null ? vdir.GetHashCode () : 0));
 		}
 
 		
