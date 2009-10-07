@@ -1,3 +1,7 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IHttpCookieContainer.cs : new 2.1-only interface (no use).
+
 2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs : use file path given by the factory to
