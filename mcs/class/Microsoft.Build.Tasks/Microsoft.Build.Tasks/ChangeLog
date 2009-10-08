@@ -1,5 +1,10 @@
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
+	* MSBuild.cs (Execute): Don't share target output items,
+	always create a copy.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
 	* RemoveDuplicates.cs: Use item's ItemSpec as the key.
 
 2009-10-07  Ankit Jain  <jankit@novell.com>
