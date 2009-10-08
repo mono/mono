@@ -7,6 +7,7 @@ namespace Project01
 {
 	class Program
 	{
+		static Lib5.Book b;
 		static void Main (string [] args)
 		{
 			//FIXME: reqd?

@@ -1,14 +1,14 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3653C4D3-60C0-4657-8289-3922D0DFB933}</ProjectGuid>
+    <ProjectGuid>{041F1C17-D792-499B-973E-512E45122B4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lib2</RootNamespace>
-    <AssemblyName>Lib2</AssemblyName>
+    <RootNamespace>Lib5</RootNamespace>
+    <AssemblyName>Lib5</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,7 +18,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,13 +30,18 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Book.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Book.fr-CA.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -58,24 +62,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="InvalidCulture.bar.txt" />
-    <Content Include="lib2_folder\Lib2.deploy.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Lib2.foo.txt" />
+    <EmbeddedResource Include="InvalidCulture.foo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lib4\Lib4.csproj">
-      <Project>{23F291D9-78DF-4133-8CF2-78CE104DDE63}</Project>
-      <Name>Lib4</Name>
-    </ProjectReference>
-    
-    <ProjectReference Include="..\Lib5\Lib5.csproj">
-      <Project>{23F291D9-78DF-4133-8CF2-78CE104DABCD}</Project>
-      <Name>Lib4</Name>
-      <Private>False</Private>
-    </ProjectReference>
-
+    <EmbeddedResource Include="Lib5.foo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lib5.deploy.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

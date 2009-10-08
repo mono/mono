@@ -1,5 +1,11 @@
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
+	* ResolveAssemblyReference.cs: Don't resolve any dependencies for
+	assemblies resolved from {PkgConfig}. Honor parent's CopyLocal for
+	dependencies.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
 	* MSBuild.cs (Execute): Don't share target output items,
 	always create a copy.
 
