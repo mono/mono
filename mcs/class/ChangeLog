@@ -1,15 +1,6 @@
-2009-09-24  Marek Safar  <marek.safar@gmail.com>
+2009-10-08  Jb Evain  <jbevain@novell.com>
 
-	* Makefile: Removed System.Json from net_4_0 profile.
-
-2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* Makefile: move core WCF assemblies before Sys.Web.Extensions,
-	  which will depend on them.
-
-2009-09-11  Marek Safar  <marek.safar@gmail.com>
-
-	* Makefile: Add System.Core to net_4_0_boostrap.
+	* Makefile: build the i18n assemblies on MonoTouch.
 
 2009-09-02  Jb Evain  <jbevain@novell.com>
 

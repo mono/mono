@@ -146,6 +146,7 @@ monotouch_dirs := \
 	System.XML	\
 	Mono.Security	\
 	System	\
+	I18N		\
 	System.Core	\
 	System.Json	\
 	System.Xml.Linq	\
