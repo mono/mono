@@ -152,7 +152,7 @@ namespace Microsoft.Build.Tasks {
 				}
 
 				Log.LogMessage (MessageImportance.Low, "Primary Reference {0}", item.ItemSpec);
-				ResolvedReference resolved_ref = ResolveReference (item, searchPaths);
+				ResolvedReference resolved_ref = ResolveReference (item, searchPaths, true);
 				if (resolved_ref == null) {
 					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
 					assembly_resolver.LogSearchLoggerMessages ();
@@ -167,7 +167,8 @@ namespace Microsoft.Build.Tasks {
 							resolved_ref.FoundInSearchPathAsString);
 
 					if (TryAddNewReference (tempResolvedFiles, resolved_ref) &&
-						!IsFromGacOrTargetFramework (resolved_ref)) {
+						!IsFromGacOrTargetFramework (resolved_ref) &&
+						resolved_ref.FoundInSearchPath != SearchPath.PkgConfig) {
 						primaryReferences.Add (new PrimaryReference (
 								resolved_ref.TaskItem,
 								resolved_ref.TaskItem.GetMetadata ("CopyLocal")));
@@ -177,7 +178,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		// Use @search_paths to resolve the reference
-		ResolvedReference ResolveReference (ITaskItem item, IEnumerable<string> search_paths)
+		ResolvedReference ResolveReference (ITaskItem item, IEnumerable<string> search_paths, bool set_copy_local)
 		{
 			ResolvedReference resolved = null;
 			bool specific_version;
@@ -224,7 +225,7 @@ namespace Microsoft.Build.Tasks {
 					break;
 			}
 
-			if (resolved != null)
+			if (resolved != null && set_copy_local)
 				SetCopyLocal (resolved.TaskItem, resolved.CopyLocal.ToString ());
 
 			return resolved;
@@ -289,7 +290,8 @@ namespace Microsoft.Build.Tasks {
 				FindAndAddRelatedFiles (item.ItemSpec, copy_local);
 				FindAndAddSatellites (item.ItemSpec, copy_local);
 
-				if (FindDependencies && !IsFromGacOrTargetFramework (rr))
+				if (FindDependencies && !IsFromGacOrTargetFramework (rr) &&
+						rr.FoundInSearchPath != SearchPath.PkgConfig)
 					primaryReferences.Add (new PrimaryReference (item, copy_local));
 			}
 		}
@@ -319,7 +321,8 @@ namespace Microsoft.Build.Tasks {
 					ResolvedReference resolved_ref = ResolveDependencyByAssemblyName (
 							aname, asm.FullName, parent_copy_local);
 
-					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref))
+					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref)
+							&& resolved_ref.FoundInSearchPath != SearchPath.PkgConfig)
 						dependencies.Enqueue (resolved_ref.TaskItem.ItemSpec);
 				}
 				alreadyScannedAssemblyNames.Add (asm.FullName, String.Empty);
@@ -342,9 +345,8 @@ namespace Microsoft.Build.Tasks {
 
 			ITaskItem item = new TaskItem (aname.FullName);
 			item.SetMetadata ("SpecificVersion", "false");
-			resolved_ref = ResolveReference (item, dependency_search_paths);
+			resolved_ref = ResolveReference (item, dependency_search_paths, false);
 
-			string copy_local = "false";
 			if (resolved_ref != null) {
 				Log.LogMessage (MessageImportance.Low, "\tReference {0} resolved to {1}.",
 					aname, resolved_ref.TaskItem.ItemSpec);
@@ -355,11 +357,11 @@ namespace Microsoft.Build.Tasks {
 
 				if (resolved_ref.FoundInSearchPath == SearchPath.Directory) {
 					// override CopyLocal with parent's val
-					resolved_ref.TaskItem.SetMetadata ("CopyLocal", parent_copy_local);
+					SetCopyLocal (resolved_ref.TaskItem, parent_copy_local);
 
 					Log.LogMessage (MessageImportance.Low,
 							"\tThis is CopyLocal {0} as parent item has this value",
-							copy_local);
+							parent_copy_local);
 
 					if (TryAddNewReference (tempResolvedFiles, resolved_ref)) {
 						FindAndAddRelatedFiles (resolved_ref.TaskItem.ItemSpec, parent_copy_local);
@@ -368,9 +370,8 @@ namespace Microsoft.Build.Tasks {
 				} else {
 					//gac or tgtfmwk
 					Log.LogMessage (MessageImportance.Low,
-							"\tThis is CopyLocal {0} as it is in the gac," +
-							"target framework directory or provided by a package.",
-							copy_local);
+							"\tThis is CopyLocal false as it is in the gac," +
+							"target framework directory or provided by a package.");
 
 					TryAddNewReference (tempResolvedFiles, resolved_ref);
 				}
