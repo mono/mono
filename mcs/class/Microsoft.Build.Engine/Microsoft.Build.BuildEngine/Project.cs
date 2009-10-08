@@ -321,8 +321,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException ("targetNames cannot contain null strings");
 
 			if (!targets.Exists (target_name)) {
-				//FIXME: Log this!
-				Console.WriteLine ("Target named '{0}' not found in the project.", target_name);
+				LogError (fullFileName, "Target named '{0}' not found in the project.", target_name);
 				return false;
 			}
 
@@ -1139,6 +1138,15 @@ namespace Microsoft.Build.BuildEngine {
 				null, null, filename, 0, 0, 0, 0, String.Format (message, messageArgs),
 				null, null);
 			ParentEngine.EventSource.FireWarningRaised (this, bwea);
+		}
+
+		void LogError (string filename, string message,
+				     params object[] messageArgs)
+		{
+			BuildErrorEventArgs beea = new BuildErrorEventArgs (
+				null, null, filename, 0, 0, 0, 0, String.Format (message, messageArgs),
+				null, null);
+			ParentEngine.EventSource.FireErrorRaised (this, beea);
 		}
 
 		static string ExtensionsPath {

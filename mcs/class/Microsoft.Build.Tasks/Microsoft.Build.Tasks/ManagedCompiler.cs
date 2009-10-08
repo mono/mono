@@ -134,6 +134,9 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected override bool HandleTaskExecutionErrors ()
 		{
+			if (!Log.HasLoggedErrors && ExitCode != 0)
+				Log.LogError ("Compiler crashed with code: {0}.", ExitCode);
+
 			return ExitCode == 0 && !Log.HasLoggedErrors;
 		}
 		

@@ -1,3 +1,7 @@
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.tasks: Add RemoveDuplicates task.
+
 2009-10-03  Ankit Jain  <jankit@novell.com>
 
 	Fix bug#542461.

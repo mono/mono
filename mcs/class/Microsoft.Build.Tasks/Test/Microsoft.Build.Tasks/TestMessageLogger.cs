@@ -192,6 +192,13 @@ namespace MonoTests.Microsoft.Build.Tasks
 				Assert.AreEqual (expected, actual, id);
 		}
 
+		public void CheckLoggedAny (string expected, MessageImportance importance, string id)
+		{
+			int res = CheckAny (expected, importance);
+			if (res != 0)
+				Assert.Fail ("{0}: Expected message '{1}' was not emitted.", id, expected);
+		}
+
 
 	}
 

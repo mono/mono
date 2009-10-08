@@ -91,11 +91,14 @@ namespace Microsoft.Build.Tasks {
 					foreach (DictionaryEntry de in outputs) {
 						ITaskItem [] array = (ITaskItem []) de.Value;
 						foreach (ITaskItem item in array) {
+							// DONT share items!
+							ITaskItem new_item = new TaskItem (item);
+
 							// copy the metadata from original @project to here
 							// CopyMetadataTo does _not_ overwrite
-							first_item.CopyMetadataTo (item);
+							first_item.CopyMetadataTo (new_item);
 
-							outputItems.Add (item);
+							outputItems.Add (new_item);
 
 							//FIXME: Correctly rebase output paths to be relative to the
 							//	 calling project
@@ -104,7 +107,6 @@ namespace Microsoft.Build.Tasks {
 						}
 					}
 				} else {
-					Log.LogError ("Error while building {0}", filename);
 					if (stopOnFirstFailure)
 						break;
 				}
