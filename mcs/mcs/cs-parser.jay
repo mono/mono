@@ -1863,7 +1863,7 @@ accessor_body
 	  }
 	| error
 	  {
-	  	Error_SyntaxError (1043, yyToken);
+	  	Error_SyntaxError (1043, yyToken, "Invalid accessor body");
 	  	$$ = null;
 	  }
 	;
@@ -3602,9 +3602,9 @@ rank_specifier
 	  {
 		$$ = "[" + (string) $2 + "]";
 	  }
-	| OPEN_BRACKET error CLOSE_BRACKET
+	| OPEN_BRACKET error
 	  {
-		Report.Error (178, GetLocation ($1), "Invalid rank specifier: expected `,' or `]'");
+	  	Error_SyntaxError (178, yyToken, "Invalid rank specifier");
 		$$ = "[]";
 	  }
 	;
@@ -4416,7 +4416,7 @@ block
 	  opt_statement_list block_end
 	  {
 		$$ = $4;
-          }
+	  }
 	;
 
 block_end 
@@ -6345,10 +6345,10 @@ public NamespaceEntry CurrentNamespace {
 
 void Error_SyntaxError (int token)
 {
-	Error_SyntaxError (0, token);
+	Error_SyntaxError (0, token, "Unexpected symbol");
 }
 
-void Error_SyntaxError (int error_code, int token)
+void Error_SyntaxError (int error_code, int token, string msg)
 {
 	string symbol = GetSymbolName (token);
 	string expecting = GetExpecting ();
@@ -6361,10 +6361,10 @@ void Error_SyntaxError (int error_code, int token)
 	}
 	
 	if (expecting != null)
-		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}', expecting {1}", 
-			symbol, expecting);	  
+		Report.Error (error_code, lexer.Location, "{2} `{0}', expecting {1}", 
+			symbol, expecting, msg);	  
 	else
-		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}'", symbol);
+		Report.Error (error_code, lexer.Location, "{1} `{0}'", symbol, msg);
 }
 
 string GetExpecting ()
@@ -6409,7 +6409,7 @@ string GetExpecting ()
 			sb.Append ("or ");
 		sb.Append ('`');
 		sb.Append (names [i]);
-		sb.Append (last ? "'" : "', ");
+		sb.Append (last ? "'" : count < 3 ? "' " : "', ");
 	}
 	return sb.ToString ();
 }
