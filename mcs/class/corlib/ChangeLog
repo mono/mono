@@ -1,3 +1,7 @@
+2009-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (AOT_IN_PROFILES): Enable this in the net 2.0/4.0 profile.
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_corlib.dll.sources: Remove System/LocalDataStoreSlot.cs
@@ -13,7 +17,7 @@
 	* net_2_1_raw_corlib.dll.sources: Add back UTF32 so smcs can compile
 	more source files.
 
-2009-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
+2009-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_bootstrap_corlib.dll.sources: Simply include net_2_1_raw*
 
