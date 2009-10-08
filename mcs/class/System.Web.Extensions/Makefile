@@ -48,6 +48,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Web.Services.dll	\
 	-r:System.Configuration.dll	\
 	-r:System.EnterpriseServices.dll \
+	-r:System.ServiceModel.dll	\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
 

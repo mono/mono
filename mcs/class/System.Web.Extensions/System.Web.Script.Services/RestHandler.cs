@@ -120,7 +120,7 @@ namespace System.Web.Script.Services
 						new ReadOnlySessionWrapperHandler (handler) : new SessionWrapperHandler (handler);
 			}
 			else
-				if (mi.WebMethod.EnableSession)
+				if (mi.EnableSession)
 					return new SessionWrapperHandler (handler);
 
 			return handler;
@@ -136,19 +136,13 @@ namespace System.Web.Script.Services
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
 			response.ContentType =
-				_logicalMethodInfo.ScriptMethod.ResponseFormat == ResponseFormat.Json ?
+				_logicalMethodInfo.ResponseFormat == ResponseFormat.Json ?
 				"application/json" : "text/xml";
 			response.Cache.SetCacheability (HttpCacheability.Private);
 			response.Cache.SetMaxAge (TimeSpan.Zero);
 
-			IDictionary<string, object> @params =
-				"GET".Equals (request.RequestType, StringComparison.OrdinalIgnoreCase)
-				? GetNameValueCollectionDictionary (request.QueryString) :
-				(IDictionary<string, object>) JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal
-				(new StreamReader (request.InputStream, request.ContentEncoding));
-			
 			try {
-				_logicalMethodInfo.Invoke (@params, response.Output);
+				_logicalMethodInfo.Invoke (request, response);
 			}
 			catch (TargetInvocationException e) {
 				response.AddHeader ("jsonerror", "true");
@@ -157,16 +151,6 @@ namespace System.Web.Script.Services
 				JavaScriptSerializer.DefaultSerializer.Serialize (new ExceptionSerializer (e.GetBaseException ()), response.Output);
 				response.End ();
 			}
-		}
-
-		IDictionary <string, object> GetNameValueCollectionDictionary (NameValueCollection nvc)
-		{
-			var ret = new Dictionary <string, object> ();
-
-			for (int i = nvc.Count - 1; i >= 0; i--)
-				ret.Add (nvc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (nvc.Get (i)));
-
-			return ret;
 		}
 		
 		#endregion

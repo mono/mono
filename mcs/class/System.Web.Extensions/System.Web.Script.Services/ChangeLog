@@ -1,3 +1,11 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LogicalTypeInfo.cs, RestHandler.cs : add support for WCF proxy
+	  generator. Make LogicalTypeInfo and LogicalMethodInfo abstract
+	  and create sets of derivation for asmx and WCF. Large part of the
+	  code still lives in abstract class, being reduced dependency on
+	  ScriptServiceAttribute.
+
 2009-08-15  Marek Habersack  <mhabersack@novell.com>
 
 	* LogicalTypeInfo.cs: make sure JavaScriptSerializer instance used

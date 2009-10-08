@@ -1,0 +1,4 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProxyGeneratorTest.cs : new test, for WCF AJAX interop.
+
