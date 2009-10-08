@@ -1,3 +1,12 @@
+2009-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: When doing a call which might be remote from
+	shared generic code to other shared code with open type arguments,
+	get the remoting invoke wrapper from the RGCTX and do an indirect
+	call to it.
+
+	Backport of r137640.
+
 2009-10-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_emit_setret): Emit long return values using OP_LMOVE.

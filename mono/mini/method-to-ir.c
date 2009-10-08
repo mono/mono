@@ -2195,11 +2195,16 @@ mono_emit_rgctx_calli (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **ar
 }
 
 static MonoInst*
+emit_get_rgctx_method (MonoCompile *cfg, int context_used, MonoMethod *cmethod, int rgctx_type);
+
+static MonoInst*
 mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature *sig,
 							MonoInst **args, MonoInst *this, MonoInst *imt_arg)
 {
+	gboolean might_be_remote;
 	gboolean virtual = this != NULL;
 	gboolean enable_for_aot = TRUE;
+	int context_used;
 	MonoCallInst *call;
 
 	if (method->string_ctor) {
@@ -2211,11 +2216,24 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		sig = ctor_sig;
 	}
 
+	might_be_remote = this && sig->hasthis &&
+		(method->klass->marshalbyref || method->klass == mono_defaults.object_class) &&
+		!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) && !MONO_CHECK_THIS (this);
+
+	context_used = mono_method_check_context_used (method);
+	if (might_be_remote && context_used) {
+		MonoInst *addr;
+
+		g_assert (cfg->generic_sharing_context);
+
+		addr = emit_get_rgctx_method (cfg, context_used, method, MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK);
+
+		return mono_emit_calli (cfg, sig, args, addr);
+	}
+
 	call = mono_emit_call_args (cfg, sig, args, FALSE, virtual);
 
-	if (this && sig->hasthis && 
-	    (method->klass->marshalbyref || method->klass == mono_defaults.object_class) && 
-	    !(method->flags & METHOD_ATTRIBUTE_VIRTUAL) && !MONO_CHECK_THIS (this)) {
+	if (might_be_remote) {
 		if (mono_method_check_context_used (method)) {
 			g_assert (cfg->generic_sharing_context);
 			return NULL;
