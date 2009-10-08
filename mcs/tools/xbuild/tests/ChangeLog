@@ -1,3 +1,10 @@
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* standalone/Project1: Add a new Lib5 project, and add
+	private references to various projects.
+	Update final-outputs.txt .
+	* standalone/Project01/Lib5/*: New.
+
 2009-09-25  Ankit Jain  <jankit@novell.com>
 
 	* standalone/Project01: Add app.config to project Lib1.

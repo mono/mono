@@ -2,18 +2,15 @@ using System;
 using System.Resources;
 using System.Reflection;
 
-namespace Lib2
+namespace Lib5
 {
 	public class Book
 	{
 		string name;
-		Lib4.Class1 c1;
-		Lib5.Book b;
 
 		public Book ()
 		{
 			name = GetDefaultName ();
-			b = new Lib5.Book ();
 		}
 
 		public string Name {
@@ -24,7 +21,7 @@ namespace Lib2
 		static string GetDefaultName ()
 		{
 			return new ResourceManager (
-				"Lib2.Book", Assembly.GetExecutingAssembly ())
+				"Lib5.Book", Assembly.GetExecutingAssembly ())
 				.GetString ("defaultName");
 		}
 	}
@@ -47,7 +44,7 @@ namespace Lib2
 		static string GetDefaultName ()
 		{
 			return new ResourceManager (
-				"Lib2.Publisher", Assembly.GetExecutingAssembly ())
+				"Lib5.Publisher", Assembly.GetExecutingAssembly ())
 				.GetString ("defaultName");
 		}
 	}
