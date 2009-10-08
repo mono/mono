@@ -1,3 +1,8 @@
+2009-10-08  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, constant.cs: Optimize decimal constants which fit
+	to long range.
+
 2009-10-07  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs: Reset object_type.

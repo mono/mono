@@ -144,6 +144,7 @@ namespace Mono.CSharp {
 	//
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
+	public static ConstructorInfo void_decimal_ctor_long_arg;
 
 	static PtrHashtable builder_to_declspace;
 
@@ -276,7 +277,8 @@ namespace Mono.CSharp {
 		ienumerator_getcurrent = null;
 
 		void_decimal_ctor_five_args =
-		void_decimal_ctor_int_arg = null;
+		void_decimal_ctor_int_arg =
+		void_decimal_ctor_long_arg = null;
 
 		isvolatile_type = null;
 			

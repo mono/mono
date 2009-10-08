@@ -1670,29 +1670,38 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			int [] words = Decimal.GetBits (Value);
+			int [] words = decimal.GetBits (Value);
 			int power = (words [3] >> 16) & 0xff;
 
-			if (power == 0 && Value <= int.MaxValue && Value >= int.MinValue)
-			{
-				if (TypeManager.void_decimal_ctor_int_arg == null) {
-					TypeManager.void_decimal_ctor_int_arg = TypeManager.GetPredefinedConstructor (
-						TypeManager.decimal_type, loc, TypeManager.int32_type);
+			if (power == 0) {
+				if (Value <= int.MaxValue && Value >= int.MinValue) {
+					if (TypeManager.void_decimal_ctor_int_arg == null) {
+						TypeManager.void_decimal_ctor_int_arg = TypeManager.GetPredefinedConstructor (
+							TypeManager.decimal_type, loc, TypeManager.int32_type);
 
-					if (TypeManager.void_decimal_ctor_int_arg == null)
-						return;
+						if (TypeManager.void_decimal_ctor_int_arg == null)
+							return;
+					}
+
+					IntConstant.EmitInt (ig, (int) Value);
+					ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
+					return;
 				}
 
-				IntConstant.EmitInt (ig, (int)Value);
-				ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
-				return;
-			}
+				if (Value <= long.MaxValue && Value >= long.MinValue) {
+					if (TypeManager.void_decimal_ctor_long_arg == null) {
+						TypeManager.void_decimal_ctor_long_arg = TypeManager.GetPredefinedConstructor (
+							TypeManager.decimal_type, loc, TypeManager.int64_type);
 
-			
-			//
-			// FIXME: we could optimize this, and call a better 
-			// constructor
-			//
+						if (TypeManager.void_decimal_ctor_long_arg == null)
+							return;
+					}
+
+					LongConstant.EmitLong (ig, (long) Value);
+					ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_long_arg);
+					return;
+				}
+			}
 
 			IntConstant.EmitInt (ig, words [0]);
 			IntConstant.EmitInt (ig, words [1]);
