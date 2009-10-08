@@ -1,3 +1,7 @@
+2009-10-08  Jb Evain  <jbevain@novell.com>
+
+	* LambdaExpression.cs (Compile): use the interpreter on MonoTouch.
+
 2009-09-03  Jb Evain  <jbevain@novell.com>
 
 	* ConstantExpression.cs (Emit): add support to emit DBNull values.
