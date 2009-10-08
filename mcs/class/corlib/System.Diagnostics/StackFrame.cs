@@ -139,6 +139,32 @@ namespace System.Diagnostics {
 #endif
                         return fileName;
                 }
+
+		internal string GetSecureFileName ()
+		{
+			string filename = "<filename unknown>";
+			if (fileName == null)
+				return filename;
+#if !NET_2_1 || MONOTOUCH
+			try {
+				filename = GetFileName ();
+			}
+			catch (SecurityException) {
+				// CAS check failure
+			}
+#else
+			// Silverlight always return <filename unknown> but that's not very useful for debugging
+			// OTOH we do not want to share any details about the original file system (even if they
+			// are likely available in the debugging symbols files)
+			try {
+				filename = Path.GetFileName (fileName);
+			}
+			catch (ArgumentException) {
+				// e.g. invalid chars in filename
+			}
+#endif
+			return filename;
+		}
                 
                 public virtual int GetILOffset()
                 {
@@ -183,18 +209,7 @@ namespace System.Diagnostics {
 			}
 
 			sb.Append (Locale.GetText (" in file:line:column "));
-
-			if (fileName == null) {
-				sb.Append (Locale.GetText ("<filename unknown>"));
-			} else {
-				try {
-					sb.Append (GetFileName ());
-				}
-				catch (SecurityException) {
-					sb.Append (Locale.GetText ("<filename unknown>"));
-				}
-			}
-
+			sb.Append (GetSecureFileName ());
 			sb.AppendFormat (":{0}:{1}", lineNumber, columnNumber);
 			return sb.ToString ();
 		}

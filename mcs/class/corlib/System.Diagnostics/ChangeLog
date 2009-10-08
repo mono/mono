@@ -1,3 +1,12 @@
+2009-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrame.cs: Introduce a new GetSecureFileName method that
+	will deal with CAS (regular framework) and will remove the path
+	(for Moonlight) on a stack frame.
+	* StackTrace.cs: Use the new StackFrame.GetSecureFileName to
+	simplify logic
+	[Backport r143802]
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrame.cs: Avoid imperative CAS checks for NET_2_1

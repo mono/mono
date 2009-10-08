@@ -232,17 +232,10 @@ namespace System.Diagnostics {
 
 				if (debug_info) {
 					// we were asked for debugging informations
-					try {
-						// but that doesn't mean we have the debug information available
-						string fname = frame.GetFileName ();
-						if ((fname != null) && (fname.Length > 0))
-							sb.AppendFormat (debuginfo, fname, frame.GetFileLineNumber ());
-					}
-					catch (SecurityException) {
-						// don't leak information (about the filename) if the security 
-						// manager doesn't allow it (but don't loop on this exception)
-						debug_info = false;
-					}
+					// but that doesn't mean we have the debug information available
+					string fname = frame.GetSecureFileName ();
+					if (fname != "<filename unknown>")
+						sb.AppendFormat (debuginfo, fname, frame.GetFileLineNumber ());
 				}
 			}
 			return sb.ToString ();
