@@ -80,7 +80,7 @@ namespace System.Linq.Expressions {
 
 		public Delegate Compile ()
 		{
-#if TARGET_JVM
+#if TARGET_JVM || MONOTOUCH
 			System.Linq.jvm.Interpreter inter =
 				new System.Linq.jvm.Interpreter (this);
 			inter.Validate ();
