@@ -64,7 +64,7 @@ namespace System.Runtime.Serialization.Json
 		}
 
 		public DataContractJsonSerializer (Type type, string rootName, IEnumerable<Type> knownTypes)
-			: this (type, rootName, knownTypes, int.MaxValue, false, null, true)
+			: this (type, rootName, knownTypes, int.MaxValue, false, null, false)
 		{
 		}
 

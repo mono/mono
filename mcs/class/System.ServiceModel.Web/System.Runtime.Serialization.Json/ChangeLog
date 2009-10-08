@@ -1,3 +1,12 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs, JsonSerializationWriter.cs:
+	  alwaysEmitTypeInformation is  false by default. It is for __type
+	  attribute, not for type attribute. __type name is always with ":#".
+	* TypeMap.cs : sort members in default typemap (it is ordered).
+	  Uncomment EmitDefaultValue.
+	* JsonWriter.cs : handle "null" string (it is somewhat messy).
+
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : copy string literal parser from System.Json.

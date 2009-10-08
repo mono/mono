@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -84,6 +85,7 @@ namespace System.Runtime.Serialization.Json
 			foreach (var pi in type.GetProperties ())
 				if (pi.CanRead && pi.CanWrite)
 					l.Add (new TypeMapProperty (pi, null));
+			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
 		}
 
@@ -211,10 +213,9 @@ namespace System.Runtime.Serialization.Json
 			get { return dma == null ? mi.Name : dma.Name ?? mi.Name; }
 		}
 
-		// FIXME: Fill 3.5 member in s.r.serialization.
-//		public bool EmitDefaultValue {
-//			get { return dma != null && dma.EmitDefaultValue; }
-//		}
+		public bool EmitDefaultValue {
+			get { return dma != null && dma.EmitDefaultValue; }
+		}
 
 		public bool IsRequired {
 			get { return dma != null && dma.IsRequired; }

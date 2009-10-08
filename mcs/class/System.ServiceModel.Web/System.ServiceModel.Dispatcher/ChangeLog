@@ -1,5 +1,10 @@
 2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebMessageEncoder.cs : use alwaysEmitTypeInformation to output
+	  object __type.
+
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonQueryStringConverter.cs : add custom body name support (used.
 	  for AJAX). Handle string value (in very LAMESPEC way).
 	* WebMessageFormatter.cs : add custom body name support.

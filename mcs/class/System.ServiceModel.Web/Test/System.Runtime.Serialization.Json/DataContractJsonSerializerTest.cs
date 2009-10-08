@@ -1225,6 +1225,36 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.IsTrue (s.IndexOf ("/Bar/:/bar/") > 0, "#2-2");
 			Assert.IsFalse (s.IndexOf ("/Baz/:/baz/") > 0, "#2-3");
 		}
+
+		[Test]
+		public void AlwaysEmitTypeInformation ()
+		{
+			var ms = new MemoryStream ();
+			var ds = new DataContractJsonSerializer (typeof (string), "root", null, 10, false, null, true);
+			ds.WriteObject (ms, "foobar");
+			var s = Encoding.UTF8.GetString (ms.ToArray ());
+			Assert.AreEqual ("\"foobar\"", s, "#1");
+		}
+
+		[Test]
+		public void AlwaysEmitTypeInformation2 ()
+		{
+			var ms = new MemoryStream ();
+			var ds = new DataContractJsonSerializer (typeof (TestData), "root", null, 10, false, null, true);
+			ds.WriteObject (ms, new TestData () { Foo = "foo"});
+			var s = Encoding.UTF8.GetString (ms.ToArray ());
+			Assert.AreEqual (@"{""__type"":""TestData:#MonoTests.System.Runtime.Serialization.Json"",""Bar"":null,""Foo"":""foo""}", s, "#1");
+		}
+
+		[Test]
+		public void AlwaysEmitTypeInformation3 ()
+		{
+			var ms = new MemoryStream ();
+			var ds = new DataContractJsonSerializer (typeof (TestData), "root", null, 10, false, null, false);
+			ds.WriteObject (ms, new TestData () { Foo = "foo"});
+			var s = Encoding.UTF8.GetString (ms.ToArray ());
+			Assert.AreEqual (@"{""Bar"":null,""Foo"":""foo""}", s, "#1");
+		}
 	}
 
 	public class TestData

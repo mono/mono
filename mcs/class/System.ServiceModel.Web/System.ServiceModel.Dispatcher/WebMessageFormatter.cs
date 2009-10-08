@@ -156,8 +156,9 @@ namespace System.ServiceModel.Description
 					return GetSerializer (ref xml_serializer, p => new DataContractSerializer (p.Type));
 				break;
 			case WebContentFormat.Json:
+				// FIXME: after name argument they are hack
 				if (IsResponseBodyWrapped)
-					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, BodyName ?? p.Name));
+					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, BodyName ?? p.Name, null, 0x100000, false, null, true));
 				else
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
 				break;
