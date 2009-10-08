@@ -1,3 +1,4 @@
+
 2009-07-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SortedList.cs: the IComparar.Compare arguments were reversed.
@@ -8,10 +9,15 @@
 	* SortedList.cs: Handle Count == 0 in CopyTo correcly
 	* SortedDictionary.cs: Handle Count == 0 in CopyTo correcly
 
+2009-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* SortedList.cs: Add version checking to the Key/Value enumerators +
+	implement support for Reset (). Fixes #483985.
+
 2007-11-15  Roei Erez  <roeie@mainsoft.com>
 
 	* Stack.cs: Performance improvement in the case where the stack is popped
-	untill empty. Changed the condition for resizing the array, and instead of
+	until empty. Changed the condition for resizing the array, and instead of
 	check for zero size, check if the inner array is null.
 
 2007-11-15  Jb Evain  <jbevain@novell.com>

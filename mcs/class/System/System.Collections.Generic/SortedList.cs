@@ -806,6 +806,119 @@ namespace System.Collections.Generic
 			}
 		}
 
+		[Serializable]
+		public struct KeyEnumerator : IEnumerator <TKey>, IDisposable {
+			const int NOT_STARTED = -2;
+			
+			// this MUST be -1, because we depend on it in move next.
+			// we just decr the size, so, 0 - 1 == FINISHED
+			const int FINISHED = -1;
+			
+			SortedList <TKey, TValue> l;
+			int idx;
+			int ver;
+			
+			internal KeyEnumerator (SortedList<TKey, TValue> l)
+			{
+				this.l = l;
+				idx = NOT_STARTED;
+				ver = l.modificationCount;
+			}
+			
+			public void Dispose ()
+			{
+				idx = NOT_STARTED;
+			}
+			
+			public bool MoveNext ()
+			{
+				if (ver != l.modificationCount)
+					throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+				
+				if (idx == NOT_STARTED)
+					idx = l.Count;
+				
+				return idx != FINISHED && -- idx != FINISHED;
+			}
+			
+			public TKey Current {
+				get {
+					if (idx < 0)
+						throw new InvalidOperationException ();
+					
+					return l.KeyAt (l.Count - 1 - idx);
+				}
+			}
+			
+			void IEnumerator.Reset ()
+			{
+				if (ver != l.modificationCount)
+					throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+				
+				idx = NOT_STARTED;
+			}
+			
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+		}
+
+		[Serializable]
+		public struct ValueEnumerator : IEnumerator <TValue>, IDisposable {
+			const int NOT_STARTED = -2;
+			
+			// this MUST be -1, because we depend on it in move next.
+			// we just decr the size, so, 0 - 1 == FINISHED
+			const int FINISHED = -1;
+			
+			SortedList <TKey, TValue> l;
+			int idx;
+			int ver;
+			
+			internal ValueEnumerator (SortedList<TKey, TValue> l)
+			{
+				this.l = l;
+				idx = NOT_STARTED;
+				ver = l.modificationCount;
+			}
+			
+			public void Dispose ()
+			{
+				idx = NOT_STARTED;
+			}
+			
+			public bool MoveNext ()
+			{
+				if (ver != l.modificationCount)
+					throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+				
+				if (idx == NOT_STARTED)
+					idx = l.Count;
+				
+				return idx != FINISHED && -- idx != FINISHED;
+			}
+			
+			public TValue Current {
+				get {
+					if (idx < 0)
+						throw new InvalidOperationException ();
+					
+					return l.ValueAt (l.Count - 1 - idx);
+				}
+			}
+			
+			void IEnumerator.Reset ()
+			{
+				if (ver != l.modificationCount)
+					throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+				
+				idx = NOT_STARTED;
+			}
+			
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+		}
 
 		private class ListKeys : IList<TKey>, ICollection, IEnumerable {
 
@@ -884,8 +997,8 @@ namespace System.Collections.Generic
 
 			public virtual IEnumerator<TKey> GetEnumerator ()
 			{
-				for (int i = 0; i < host.Count; ++i)
-					yield return host.KeyAt (i);
+				/* We couldn't use yield as it does not support Reset () */
+				return new KeyEnumerator (host);
 			}
 
 			//
@@ -1009,8 +1122,8 @@ namespace System.Collections.Generic
 
 			public virtual IEnumerator<TValue> GetEnumerator ()
 			{
-				for (int i = 0; i < host.Count; ++i)
-					yield return host.ValueAt (i);
+				/* We couldn't use yield as it does not support Reset () */
+				return new ValueEnumerator (host);
 			}
 
 			//
