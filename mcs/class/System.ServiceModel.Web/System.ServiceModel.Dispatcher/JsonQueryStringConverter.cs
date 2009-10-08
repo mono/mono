@@ -40,6 +40,8 @@ namespace System.ServiceModel.Dispatcher
 	{
 		DataContractJsonSerializer serializer = new DataContractJsonSerializer (typeof (object));
 
+		internal string CustomWrapperName { get; set; }
+
 		public override bool CanConvert (Type type)
 		{
 			// almost copy from QueryStringConverter, except that DBNull and XmlQualifiedName are supported
@@ -79,8 +81,15 @@ namespace System.ServiceModel.Dispatcher
 			// the target type in JSON context.
 
 			switch (Type.GetTypeCode (parameterType)) {
-			//case TypeCode.String:
-			//	return parameter;
+			case TypeCode.String:
+				// LAMESPEC LAMESPEC LAMESPEC: we cannot give "foo" as the string value input (even if they are escaped as %22!)
+				if (parameter == null)
+					return null;
+				if (parameter.Length > 1 && parameter [0] == '"' && parameter [parameter.Length - 1] == '"')
+					return parameter.Substring (1, parameter.Length - 2);
+				else if (parameter [0] != '"')
+					return parameter;
+				break;
 			case TypeCode.Char:
 				return parameter != null ? Char.Parse (parameter): default (char);
 			case TypeCode.SByte:

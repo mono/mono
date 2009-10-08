@@ -55,6 +55,10 @@ namespace System.ServiceModel.Description
 			this.converter = converter;
 			this.behavior = behavior;
 			ApplyWebAttribute ();
+			// This is a hack for WebScriptEnablingBehavior
+			var jqc = converter as JsonQueryStringConverter;
+			if (jqc != null)
+				BodyName = jqc.CustomWrapperName;
 		}
 
 		void ApplyWebAttribute ()
@@ -72,6 +76,8 @@ namespace System.ServiceModel.Description
 
 			template = info.BuildUriTemplate (Operation, GetMessageDescription (MessageDirection.Input));
 		}
+
+		public string BodyName { get; set; }
 
 		public WebHttpBehavior Behavior {
 			get { return behavior; }
@@ -92,7 +98,7 @@ namespace System.ServiceModel.Description
 				case WebMessageBodyStyle.WrappedResponse:
 					return true;
 				}
-				return false;
+				return BodyName != null;
 			}
 		}
 
@@ -151,7 +157,7 @@ namespace System.ServiceModel.Description
 				break;
 			case WebContentFormat.Json:
 				if (IsResponseBodyWrapped)
-					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, p.Name));
+					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, BodyName ?? p.Name));
 				else
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
 				break;
@@ -341,15 +347,13 @@ namespace System.ServiceModel.Description
 			
 			void WriteJsonBodyContents (XmlDictionaryWriter writer)
 			{
-				writer.WriteStartElement ("root");
 				if (name != null) {
+					writer.WriteStartElement ("root");
 					writer.WriteAttributeString ("type", "object");
-					writer.WriteStartElement (name, ns);
 				}
-				serializer.WriteObjectContent (writer, value);
+				serializer.WriteObject (writer, value);
 				if (name != null)
 					writer.WriteEndElement ();
-				writer.WriteEndElement ();
 			}
 
 			void WriteXmlBodyContents (XmlDictionaryWriter writer)
@@ -412,7 +416,7 @@ namespace System.ServiceModel.Description
 				case WebMessageFormat.Json:
 					serializer = GetSerializer (WebContentFormat.Json);
 					mediaType = "application/json";
-					name = IsResponseBodyWrapped ? md.Body.ReturnValue.Name : null;
+					name = IsResponseBodyWrapped ? (BodyName ?? md.Body.ReturnValue.Name) : null;
 					ns = String.Empty;
 					break;
 				}
@@ -460,7 +464,8 @@ namespace System.ServiceModel.Description
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
 					string name = p.Name.ToUpperInvariant ();
-					parameters [i] = match.BoundVariables [name];
+					var str = match.BoundVariables [name];
+					parameters [i] = Converter.ConvertStringToValue (str, p.Type);
 				}
 			}
 		}

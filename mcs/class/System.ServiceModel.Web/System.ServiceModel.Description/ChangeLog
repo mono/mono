@@ -1,3 +1,8 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptEnablingBehavior.cs : use JsonQueryStringConverter, with
+	  "d" wrapper name. Allow only WrappedRequest.
+
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebScriptEnablingBehavior.cs : validate body style.
