@@ -53,6 +53,7 @@ using System.Configuration.Assemblies;
 #if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using System.Text;
 #endif
 
 namespace System {
@@ -499,14 +500,6 @@ namespace System {
 		// NET 3.5 method
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes) {
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false, assemblyAttributes);
-		}
-#endif
-
-#if NET_2_1
-		// TODO: the last parameter is ignored for now
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, bool emitSymbolInfo)
-		{
-			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
 		}
 #endif
 
@@ -1081,7 +1074,14 @@ namespace System {
 
 		public override string ToString ()
 		{
+#if !NET_2_1 || MONOTOUCH
 			return getFriendlyName ();
+#else
+			StringBuilder sb = new StringBuilder ("Name:");
+			sb.AppendLine (FriendlyName);
+			sb.AppendLine ("There are no context policies.");
+			return sb.ToString ();
+#endif
 		}
 
 		private static void ValidateAssemblyName (string name)

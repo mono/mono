@@ -1,3 +1,10 @@
+2009-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Remove NET_2_1 specific DefineDynamicAssembly(
+	AssemblyName,AssemblyBuilderAccess,bool) since it is not part
+	of SL. Provide a ToString implementation similar to Silverlight
+	for Moonlight (and without directly using an icall)
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Remove unsafe code duplication in ToCharArray.
