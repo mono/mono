@@ -45,12 +45,20 @@ namespace System.Linq
 			Throw
 		}
 
-		class PredicateOf<T> {
+		static class PredicateOf<T> {
 			public static readonly Func<T, bool> Always = (t) => true;
 		}
 
-		class Function<T> {
+		static class Function<T> {
 			public static readonly Func<T, T> Identity = (t) => t;
+		}
+		
+		static class EmptyOf<T> {
+			public static readonly T[] Instance = new T [0];
+		}
+		
+		static class ReadOnlyCollectionOf<T> {
+			public static readonly ReadOnlyCollection<T> Empty = new ReadOnlyCollection<T> (EmptyOf<T>.Instance);
 		}
 
 		#region Aggregate
@@ -540,7 +548,7 @@ namespace System.Linq
 
 		public static IEnumerable<TResult> Empty<TResult> ()
 		{
-			return new TResult [0];
+			return EmptyOf<TResult>.Instance;
 		}
 
 		#endregion
@@ -2284,10 +2292,6 @@ namespace System.Linq
 		}
 
 		#endregion
-
-		class ReadOnlyCollectionOf<T> {
-			public static readonly ReadOnlyCollection<T> Empty = new ReadOnlyCollection<T> (new T [0]);
-		}
 
 		internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource> (this IEnumerable<TSource> source)
 		{

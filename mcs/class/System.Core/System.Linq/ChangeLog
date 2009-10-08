@@ -1,3 +1,7 @@
+2009-10-08  Marek Safar  <marek.safar@gmail.com>
+
+	* Enumerable.cs (Empty): Optimized allocation.
+
 2009-08-07  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs (Skip): Optimized and fixed int.MaxValue overflow.
