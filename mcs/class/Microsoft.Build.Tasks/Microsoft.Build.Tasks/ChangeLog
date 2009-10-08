@@ -1,3 +1,24 @@
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Don't share target output items,
+	always create a copy.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* RemoveDuplicates.cs: Use item's ItemSpec as the key.
+
+2009-10-07  Ankit Jain  <jankit@novell.com>
+
+	* ManagedCompiler.cs (HandleTaskExecutionErrors): Log error if
+	required.
+
+2009-10-06  Ankit Jain  <jankit@novell.com>
+
+	* Exec.cs (ExecuteTool): Use DeleteTempFile instead of File.Delete
+	(HandleTaskExecutionErrors): Log error, if required.
+	* MSBuild.cs: Don't log error.
+	* Warning.cs: Don't log if @text is empty.
+
 2009-09-29  Ankit Jain  <jankit@novell.com>
 
 	* Exec.cs: Write the commands, which can be multiline,

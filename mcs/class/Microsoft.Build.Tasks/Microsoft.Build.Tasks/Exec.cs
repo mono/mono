@@ -78,7 +78,7 @@ namespace Microsoft.Build.Tasks {
 				return base.ExecuteTool (pathToTool, responseFileCommands, commandLineCommands);
 			} finally {
 				if (scriptFile != null)
-					File.Delete (scriptFile);
+					DeleteTempFile (scriptFile);
 			}
 		}
 
@@ -95,6 +95,9 @@ namespace Microsoft.Build.Tasks {
 		
 		protected override bool HandleTaskExecutionErrors ()
 		{
+			if (ExitCode != 0)
+				Log.LogError ("Command '{0}' exited with code: {1}.", Command, ExitCode);
+
 			return ExitCode == 0 || ignoreExitCode;
 		}
 		

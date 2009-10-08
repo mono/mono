@@ -1,3 +1,32 @@
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* DirectoryScanner.cs: Use Path.GetPathRoot, instead of
+	directly using DirectoryInfo ("z:"), that doesn't return
+	a dir info for "z:".
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* DirectoryScanner.cs: Handle absolute paths. Fix to work
+	correctly on windows. Change order of adding paths to match
+	msbuild, useful to have.
+
+2009-10-08  Ankit Jain  <jankit@novell.com>
+
+	* TaskBatchingImpl.cs (ParseTaskAttributes): Parse attributes
+	of the 'Output' element also.
+	* TaskEngine.cs (PublishOutput): Honor condition on 'Output' also.
+
+2009-10-07  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Mark build as failed, if any project failed.
+
+2009-10-06  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger: Improve error reporting. Don't count failed task,
+	target or project as another error. Show "errors" after "warnings",
+	more useful to the user.
+	* Project.cs (BuildTarget): Log error instead of using CWL.
+
 2009-10-03  Ankit Jain  <jankit@novell.com>
 
 	* Project.cs (OS): New.

@@ -77,20 +77,20 @@ namespace Mono.XBuild.Utilities {
 			case "fullpath":
 				return Path.GetFullPath (itemSpec);
 			case "rootdir":
-				return Path.GetPathRoot (itemSpec);
+				if (Path.IsPathRooted (itemSpec))
+					return Path.GetPathRoot (itemSpec);
+				else
+					return Path.GetPathRoot (Environment.CurrentDirectory);
 			case "filename":
 				return Path.GetFileNameWithoutExtension (itemSpec);
 			case "extension":
 				return Path.GetExtension (itemSpec);
-			case "relativedir": {
-				string dir = Path.GetDirectoryName (itemSpec);
-				if (dir.Length > 0)
-					return dir + "\\";
-				else
-					return dir;
-			}
+			case "relativedir":
+				return WithTrailingSlash (Path.GetDirectoryName (itemSpec));
 			case "directory":
-				return Path.GetDirectoryName (Path.GetFullPath (itemSpec));
+				string fullpath = Path.GetFullPath (itemSpec);
+				return WithTrailingSlash (
+					 Path.GetDirectoryName (fullpath).Substring (Path.GetPathRoot (fullpath).Length));
 			case "recursivedir":
 				// FIXME: how to handle this?
 				return String.Empty;
@@ -120,6 +120,14 @@ namespace Mono.XBuild.Utilities {
 			default:
 				throw new ArgumentException ("Invalid reserved metadata name");
 			}
+		}
+
+		static string WithTrailingSlash (string path)
+		{
+			if (path.Length > 0)
+				return path + Path.DirectorySeparatorChar;
+			else
+				return path;
 		}
 	}
 }

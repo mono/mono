@@ -160,6 +160,9 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidProjectFileException ("Only one of ItemName and PropertyName attributes can be specified.");
 				if (xmlElement.GetAttribute ("TaskParameter") == String.Empty)
 					throw new InvalidProjectFileException ("TaskParameter attribute must be specified.");
+
+				if (!ConditionParser.ParseAndEvaluate (xmlElement.GetAttribute ("Condition"), parentProject))
+					continue;
 					
 				taskParameter = xmlElement.GetAttribute ("TaskParameter");
 				itemName = xmlElement.GetAttribute ("ItemName");

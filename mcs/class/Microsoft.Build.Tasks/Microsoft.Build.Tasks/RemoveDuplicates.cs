@@ -47,12 +47,12 @@ namespace Microsoft.Build.Tasks {
 			if (inputs == null || inputs.Length == 0)
 				return true;
 
-			Dictionary <ITaskItem, object> items = new Dictionary <ITaskItem, object> ();
+			Dictionary <string, ITaskItem> items = new Dictionary <string, ITaskItem> ();
 			List <ITaskItem> list = new List <ITaskItem> ();
 
 			foreach (ITaskItem item in inputs) {
-				if (!items.ContainsKey (item)) {
-					items.Add (item, null);
+				if (!items.ContainsKey (item.ItemSpec)) {
+					items.Add (item.ItemSpec, item);
 					list.Add (item);
 				}
 			}

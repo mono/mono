@@ -18,6 +18,7 @@ Microsoft.Build.Tasks/GetFrameworkSdkPathTest.cs
 Microsoft.Build.Tasks/MakeDirTest.cs
 Microsoft.Build.Tasks/ManagedCompilerTest.cs
 Microsoft.Build.Tasks/MessageTest.cs
+Microsoft.Build.Tasks/RemoveDuplicatesTest.cs
 Microsoft.Build.Tasks/RemoveDirTest.cs
 Microsoft.Build.Tasks/ResolveAssemblyReferenceTest.cs
 Microsoft.Build.Tasks/TestEngine.cs
