@@ -36,9 +36,9 @@ namespace Mono.Tools {
 
 		static private void Help () 
 		{
-			Console.WriteLine ("Usage: certmgr [action] [object type] [options] store [filename]");
-			Console.WriteLine ("   or: certmgr -list [object type] [options] store");
-			Console.WriteLine ("   or: certmgr -del [object type] [options] store certhash");
+			Console.WriteLine ("Usage: certmgr [action] [object-type] [options] store [filename]");
+			Console.WriteLine ("   or: certmgr -list object-type [options] store");
+			Console.WriteLine ("   or: certmgr -del object-type [options] store certhash");
 			Console.WriteLine ("   or: certmgr -ssl [options] url");
 			Console.WriteLine ();
 			Console.WriteLine ("actions");
@@ -492,8 +492,11 @@ namespace Mono.Tools {
 			ObjectType type = ObjectType.None;
 
 			int n = 1;
-			if (action != Action.Ssl)
-				type = GetObjectType (args [n++]);
+			if (action != Action.Ssl) {
+				type = GetObjectType (args [n]);
+				if (type != ObjectType.None)
+					n++;
+			}
 			
 			bool verbose = (GetCommand (args [n]) == "V");
 			if (verbose)
