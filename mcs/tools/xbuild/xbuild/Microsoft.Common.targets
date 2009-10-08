@@ -402,10 +402,10 @@
 
 	<Target Name="_CopyDeployFilesToOutputDirectory"
 		DependsOnTargets="GetCopyToOutputDirectoryItems;
-			_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways;
-			CopyDeployFilesToOutputDirectoryPreserveNewest"/>
+			_CopyDeployFilesToOutputDirectoryAlways;
+			_CopyDeployFilesToOutputDirectoryPreserveNewest"/>
 
-	<Target Name="CopyDeployFilesToOutputDirectoryPreserveNewest"
+	<Target Name="_CopyDeployFilesToOutputDirectoryPreserveNewest"
 		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
 		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
 		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutDir)%(TargetPath)')">
@@ -417,7 +417,7 @@
 	</Target>
 
 	<!-- Copy if newer -->
-	<Target Name="_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways"
+	<Target Name="_CopyDeployFilesToOutputDirectoryAlways"
 		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
 
 		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
@@ -443,11 +443,13 @@
 		Outputs="@(AllItemsFullPathWithTargetPath)"
 		DependsOnTargets="AssignTargetPaths">
 
-		<!-- FIXME: handle .vcproj -->
+		<!-- FIXME: handle .vcproj
+		     FIXME: Private ProjectReferences are honored only in 3.5
+		-->
 		<MSBuild
 			Projects="@(ProjectReference)"
 			Targets="GetCopyToOutputDirectoryItems"
-			Condition="'@(ProjectReference)' != ''">
+			Condition="'@(ProjectReference)' != '' and '%(ProjectReference.Private)' != 'false'">
 
 			<Output TaskParameter="TargetOutputs" ItemName="AllChildProjectItemsWithTargetPath"/>
 		</MSBuild>

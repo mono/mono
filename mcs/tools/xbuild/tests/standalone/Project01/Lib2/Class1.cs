@@ -8,10 +8,12 @@ namespace Lib2
 	{
 		string name;
 		Lib4.Class1 c1;
+		Lib5.Book b;
 
 		public Book ()
 		{
 			name = GetDefaultName ();
+			b = new Lib5.Book ();
 		}
 
 		public string Name {
