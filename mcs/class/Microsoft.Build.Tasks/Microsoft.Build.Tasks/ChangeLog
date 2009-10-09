@@ -1,3 +1,8 @@
+2009-10-09  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #545703.
+	* Exec.cs (Command): On unix, change CRLF to CR.
+
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* ResolveAssemblyReference.cs: Don't resolve any dependencies for

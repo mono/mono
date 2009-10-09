@@ -127,7 +127,11 @@ namespace Microsoft.Build.Tasks {
 		[Required]
 		public string Command {
 			get { return command; }
-			set { command = value; }
+			set {
+				command = value;
+				if (Path.DirectorySeparatorChar == '/')
+					command = command.Replace ("\r\n", "\n");
+			}
 		}
 
 		public bool IgnoreExitCode {
