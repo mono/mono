@@ -1,5 +1,9 @@
 2009-10-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (parse_debug_options): Add a 'gdb' option.
+
+	* mini.c (mini_parse_debug_options): Add a 'gdb' option.
+
 	* image-writer.c: Add support for emitting the image into a memory buffer.
 
 	* dwarfwriter.c: Add support for sharing one IL file between multiple images.
