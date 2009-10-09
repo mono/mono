@@ -438,8 +438,10 @@ namespace I18N.CJK
 						wide = true;
 					else if (bytes [i] == 0x28)
 						wide = false;
-					else
-						throw new ArgumentException ("Unexpected ISO-2022-JP escape sequence.");
+					else {
+						ret += 2;
+						continue;
+					}
 					i++;
 					if (bytes [i] == 0x42)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
@@ -448,7 +450,7 @@ namespace I18N.CJK
 					else if (bytes [i] == 0x49)
 						m = ISO2022JPMode.JISX0201;
 					else
-						throw new ArgumentException (String.Format ("Unexpected ISO-2022-JP escape sequence. Ended with 0x{0:X04}", bytes [i]));
+						ret += 3;
 				}
 			}
 			return ret;
@@ -457,7 +459,7 @@ namespace I18N.CJK
 		private int ToChar (int value)
 		{
 			value <<= 1;
-			return value + 1 >= convert.jisx0208ToUnicode.Length ?
+			return value + 1 >= convert.jisx0208ToUnicode.Length  || value < 0 ?
 				-1 :
 				((int) (convert.jisx0208ToUnicode [value])) |
 					(((int) (convert.jisx0208ToUnicode [value + 1])) << 8);
@@ -523,8 +525,11 @@ namespace I18N.CJK
 						wide = true;
 					else if (bytes [i] == 0x28)
 						wide = false;
-					else
-						throw new ArgumentException ("Unexpected ISO-2022-JP escape sequence.");
+					else {
+						chars [charIndex++] = '\x1B';
+						chars [charIndex++] = (char) bytes [i];
+						continue;
+					}
 					i++;
 					if (bytes [i] == 0x42)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
@@ -532,8 +537,11 @@ namespace I18N.CJK
 						m = ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x49)
 						m = ISO2022JPMode.JISX0201;
-					else
-						throw new ArgumentException (String.Format ("Unexpected ISO-2022-JP escape sequence. Ended with 0x{0:X04}", bytes [i]));
+					else {
+						chars [charIndex++] = '\x1B';
+						chars [charIndex++] = (char) bytes [i - 1];
+						chars [charIndex++] = (char) bytes [i];
+					}
 				}
 			}
 
