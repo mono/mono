@@ -1,3 +1,7 @@
+2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* I18N.CJK.Test.cs : added test for iso-2022-jp wrong esc sequences.
+
 2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* I18N.CJK.Test.cs : added test for bug #491799.
