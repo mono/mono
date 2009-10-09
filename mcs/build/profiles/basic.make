@@ -81,7 +81,7 @@ do-profile-check-monolite: $(depsdir)/.stamp
 endif
 
 $(PROFILE_CS): $(topdir)/build/profiles/basic.make $(depsdir)/.stamp
-	echo 'class X { static int Main () { return 0; } }' > $@
+	echo 'class X { static int Main () { try { System.Activator.CreateInstance ("mscorlib", "System.Runtime.CompilerServices.CompilerGeneratedAttribute"); return 1; } catch { return 0; } } }' > $@
 
 $(PROFILE_EXE): $(PROFILE_CS)
 	$(BOOTSTRAP_MCS) /out:$@ $<
