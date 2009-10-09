@@ -1,3 +1,13 @@
+2009-10-09  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c, object-internals.h, object.c: Move code for
+	transferring an object to a different domain (via
+	serialization/remoting) to object.c.
+
+	* object.c (call_unhandled_exception_delegate): If the exception
+	is in a different domain than the delegate, transfer the exception
+	to that domain.
+
 2009-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_vtype): Emit marshalling of DateTime to OLE DATE.
