@@ -1,3 +1,8 @@
+2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	 * ChannelDispatcher.cs : OnOpened/OnOpening constraints related
+	   changes were required here too. Actually it simplified code.
+
 2009-10-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokerHandler.cs : a bit more explaining message.

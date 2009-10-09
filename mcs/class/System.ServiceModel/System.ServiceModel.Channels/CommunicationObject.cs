@@ -233,14 +233,16 @@ namespace System.ServiceModel.Channels
 
 		void ProcessOpened ()
 		{
-			state = CommunicationState.Opened;
 			OnOpened ();
+			if (state != CommunicationState.Opened) {
+				throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpened method that does not call base OnOpened method.", this.GetType ()));
+				state = CommunicationState.Faulted;
+			}
 		}
 
 		protected virtual void OnOpened ()
 		{
-			// This means, if this method is overriden, then
-			// Opened event is surpressed.
+			state = CommunicationState.Opened;
 			if (Opened != null)
 				Opened (this, new EventArgs ());
 		}
@@ -248,12 +250,16 @@ namespace System.ServiceModel.Channels
 		void ProcessOpening ()
 		{
 			ThrowIfDisposedOrImmutable ();
-			state = CommunicationState.Opening;
 			OnOpening ();
+			if (state != CommunicationState.Opening) {
+				throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpening method that does not call base OnOpening method.", this.GetType ()));
+				state = CommunicationState.Faulted;
+			}
 		}
 
 		protected virtual void OnOpening ()
 		{
+			state = CommunicationState.Opening;
 			// This means, if this method is overriden, then
 			// Opening event is surpressed.
 			if (Opening != null)

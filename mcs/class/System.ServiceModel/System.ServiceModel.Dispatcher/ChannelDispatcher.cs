@@ -296,20 +296,22 @@ namespace System.ServiceModel.Dispatcher
 			if (Host == null || MessageVersion == null)
 				throw new InvalidOperationException ("Service host is not attached to this ChannelDispatcher.");
 
-			loop_manager = new ListenerLoopManager (this, timeout);
+			loop_manager.Setup (timeout);
 		}
 
-		[MonoTODO ("what to do here?")]
 		protected override void OnOpening ()
 		{
+			base.OnOpening ();
+			loop_manager = new ListenerLoopManager (this);
 		}
 
 		protected override void OnOpened ()
 		{
-			loop_manager.Setup ();
+			base.OnOpened ();
+			StartLoop ();
 		}
 
-		internal void StartLoop ()
+		void StartLoop ()
 		{
 			// FIXME: not sure if it should be filled here.
 			if (ServiceThrottle == null)
@@ -329,20 +331,19 @@ namespace System.ServiceModel.Dispatcher
 			bool loop;
 			Thread loop_thread;
 			DateTime close_started;
-			TimeSpan open_timeout, close_timeout;
+			TimeSpan close_timeout;
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
 
-			public ListenerLoopManager (ChannelDispatcher owner, TimeSpan openTimeout)
+			public ListenerLoopManager (ChannelDispatcher owner)
 			{
 				this.owner = owner;
-				open_timeout = openTimeout;
 			}
 
-			public void Setup ()
+			public void Setup (TimeSpan openTimeout)
 			{
 				if (owner.Listener.State != CommunicationState.Opened)
-					owner.Listener.Open (open_timeout);
+					owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
 				foreach (var ed in owner.Endpoints)

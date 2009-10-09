@@ -218,8 +218,12 @@ namespace System.ServiceModel
 			case "IMetadataExchange":
 				// this is certainly looking special (or we may 
 				// be missing something around ServiceMetadataExtension)
-				if (Extensions.Find<ServiceMetadataExtension> () == null)
-					break;
+				// FIXME: this check breaks initialization by configuration
+				// (as ApplyConfiguration() processes all <endpoint> elements
+				// before ServiceMetadataBehavior.ApplyDispatchBehavior()).
+				// So, disable it so far. (it is mostly harmless).
+				//if (Extensions.Find<ServiceMetadataExtension> () == null)
+				//	break;
 				if (mex_contract == null)
 					mex_contract = ContractDescription.GetContract (typeof (IMetadataExchange));
 				return mex_contract;
@@ -430,12 +434,6 @@ namespace System.ServiceModel
 
 		void DoOpen (TimeSpan timeout)
 		{
-			foreach (var cd in ChannelDispatchers) {
-				cd.Open (timeout);
-				// This is likely hack.
-				if (cd is ChannelDispatcher)
-					((ChannelDispatcher) cd).StartLoop ();
-			}
 		}
 
 		[MonoTODO]
@@ -483,8 +481,10 @@ namespace System.ServiceModel
 
 		protected override sealed void OnOpen (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
 			InitializeRuntime ();
-			DoOpen (timeout);
+			foreach (var cd in ChannelDispatchers)
+				cd.Open (timeout - (DateTime.Now - start));
 		}
 
 		protected override void OnEndClose (IAsyncResult result)

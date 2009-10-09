@@ -1,3 +1,8 @@
+2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : OnOpening() and OnOpened() require calls
+	  to base methods. This resulted in not a few changes everywhere.
+
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IHttpCookieContainer.cs : new 2.1-only interface (no use).

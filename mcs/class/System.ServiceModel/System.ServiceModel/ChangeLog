@@ -1,3 +1,12 @@
+2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstanceContext.cs : new constraints on CommunicationObject
+	  required calls to base methods.
+	* ChannelFactory.cs : ditto. Actually changed timing to call
+	  Open() on the internal factory.
+	* ServiceHostBase.cs : removed DoOpen() which is almost extra now.
+	  Added temporary IMetadataExchange workaround.
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OperationContext.cs: Use [ThreadStatic] instead of Thread.
