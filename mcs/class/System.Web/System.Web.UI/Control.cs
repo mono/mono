@@ -42,6 +42,7 @@ using System.Web;
 using System.Web.Util;
 using System.Globalization;
 #if NET_2_0
+using System.Collections.Generic;
 using System.Web.UI.Adapters;
 using System.IO;
 #endif
@@ -86,6 +87,11 @@ namespace System.Web.UI
 		const int unload_mask = 1 << 5;
 		/* */
 
+#if NET_2_0
+		[ThreadStatic]
+		static Dictionary <Type, bool> loadViewStateByIDCache;
+		bool? loadViewStateByID;
+#endif
 		string uniqueID;
 		string _userId;
 		ControlCollection _controls;
@@ -296,7 +302,12 @@ namespace System.Web.UI
 		}
 
 		protected bool LoadViewStateByID {
-			get { return false; }
+			get {
+				if (loadViewStateByID == null)
+					loadViewStateByID = IsLoadViewStateByID ();
+
+				return (bool)loadViewStateByID;
+			}
 		}
 #endif
 
@@ -633,6 +644,34 @@ namespace System.Web.UI
 				_controls [i].NullifyUniqueID ();
 		}
 
+#if NET_2_0
+		bool IsLoadViewStateByID ()
+		{
+			if (loadViewStateByIDCache == null)
+				loadViewStateByIDCache = new Dictionary <Type, bool> ();
+
+			bool ret;
+			Type myType = GetType ();
+			if (loadViewStateByIDCache.TryGetValue (myType, out ret))
+				return ret;
+
+			System.ComponentModel.AttributeCollection attrs = TypeDescriptor.GetAttributes (myType);
+			if (attrs != null || attrs.Count > 0) {
+				ret = false;
+				foreach (Attribute attr in attrs) {
+					if (attr is ViewStateModeByIdAttribute) {
+						ret = true;
+						break;
+					}
+				}
+			} else
+				ret = false;
+			
+			loadViewStateByIDCache.Add (myType, ret);
+			return ret;
+		}
+#endif
+		
 		protected internal virtual void AddedControl (Control control, int index)
 		{
 			ResetControlsCache ();
@@ -655,9 +694,25 @@ namespace System.Web.UI
 
 			if ((stateMask & (VIEWSTATE_LOADED | LOADED)) != 0) {
 				if (pendingVS != null) {
-					object vs = pendingVS [index];
+					object vs;
+					bool byId = LoadViewStateByID;
+					string id;
+					
+					if (byId) {
+						control.EnsureID ();
+						id = control.ID;
+						vs = pendingVS [id];
+					} else {
+						id = null;
+						vs = pendingVS [index];
+					}
+					
 					if (vs != null) {
-						pendingVS.Remove (index);
+						if (byId)
+							pendingVS.Remove (id);
+						else
+							pendingVS.Remove (index);
+						
 						if (pendingVS.Count == 0)
 							pendingVS = null;
 
@@ -1610,26 +1665,23 @@ namespace System.Web.UI
 			}
 #endif
 
-			ArrayList controlList = null;
 			ArrayList controlStates = null;
-			
-			int idx = -1;
+			bool byId = LoadViewStateByID;
 			if (HasControls ()) {
 				int len = _controls.Count;
 				for (int i = 0; i < len; i++) {
 					Control ctrl = _controls [i];
 					object ctrlState = ctrl.SaveViewStateRecursive ();
-					idx++;
 					if (ctrlState == null)
 						continue;
 
-					if (controlList == null) {
-						controlList = new ArrayList ();
+					if (controlStates == null)
 						controlStates = new ArrayList ();
-					}
-
-					controlList.Add (idx);
-					controlStates.Add (ctrlState);
+					if (byId) {
+						ctrl.EnsureID ();
+						controlStates.Add (new Pair (ctrl.ID, ctrlState));
+					} else
+						controlStates.Add (new Pair (i, ctrlState));
 				}
 			}
 
@@ -1643,7 +1695,7 @@ namespace System.Web.UI
 			if (IsViewStateEnabled)
 				thisState = SaveViewState ();
 
-			if (thisState == null && controlList == null && controlStates == null) {
+			if (thisState == null && controlStates == null) {
 				if (trace != null) {
 #if MONO_TRACE
 					trace.Write ("control", "End SaveViewStateRecursive " + _userId + " " + type_name + " saved nothing");
@@ -1662,7 +1714,7 @@ namespace System.Web.UI
 #if NET_2_0
 			thisState = new object[] { thisState, thisAdapterViewState };
 #endif
-			return new Triplet (thisState, controlList, controlStates);
+			return new Pair (thisState, controlStates);
 		}
 
 		internal void LoadViewStateRecursive (object savedState)
@@ -1678,7 +1730,7 @@ namespace System.Web.UI
 				trace.Write ("control", String.Concat ("LoadViewStateRecursive ", _userId, " ", type_name));
 			}
 #endif
-			Triplet savedInfo = (Triplet) savedState;
+			Pair savedInfo = (Pair) savedState;
 #if NET_2_0
 			object[] controlAndAdapterViewStates = (object [])savedInfo.First;
 			if (Adapter != null)
@@ -1688,22 +1740,46 @@ namespace System.Web.UI
 			LoadViewState (savedInfo.First);
 #endif
 
-			ArrayList controlList = savedInfo.Second as ArrayList;
-			if (controlList == null)
+			ArrayList controlStates = savedInfo.Second as ArrayList;
+			if (controlStates == null)
 				return;
-			ArrayList controlStates = savedInfo.Third as ArrayList;
-			int nControls = controlList.Count;
-			for (int i = 0; i < nControls; i++) {
-				int k = (int) controlList [i];
-				if (k < Controls.Count && controlStates != null) {
-					Control c = Controls [k];
-					c.LoadViewStateRecursive (controlStates [i]);
-				}
-				else {
-					if (pendingVS == null)
-						pendingVS = new Hashtable ();
 
-					pendingVS [k] = controlStates [i];
+			int nControls = controlStates.Count;
+			bool byId = LoadViewStateByID;
+			for (int i = 0; i < nControls; i++) {
+				Pair p = controlStates [i] as Pair;
+				if (p == null)
+					continue;
+
+				if (byId) {
+					string id = (string)p.First;
+					bool found = false;
+					
+					foreach (Control c in Controls) {
+						c.EnsureID ();
+						if (c.ID == id) {
+							found = true;
+							c.LoadViewStateRecursive (p.Second);
+							break;
+						}
+					}
+
+					if (!found) {
+						if (pendingVS == null)
+							pendingVS = new Hashtable ();
+						pendingVS [id] = p.Second;
+					}
+				} else {
+					int k = (int) p.First;
+					if (k < Controls.Count) {
+						Control c = Controls [k];
+						c.LoadViewStateRecursive (p.Second);
+					} else {
+						if (pendingVS == null)
+							pendingVS = new Hashtable ();
+
+						pendingVS [k] = p.Second;
+					}
 				}
 			}
 

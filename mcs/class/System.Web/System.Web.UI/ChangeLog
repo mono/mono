@@ -1,3 +1,8 @@
+2009-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: implemented the LoadViewStateByID property as well
+	as saving/restoring the view state by control's ID.
+
 2009-09-22  Marek Habersack  <mhabersack@novell.com>
 
 	* WebServiceParser.cs: GetCompiledType uses BuildManager on the
