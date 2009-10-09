@@ -58,10 +58,12 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddCommandLineCommands (CommandLineBuilderExtension commandLine)
 		{
 			if (IsRunningOnWindows)
-				commandLine.AppendSwitch ("/c");
+				commandLine.AppendSwitch ("/q /c");
 
 			if (!String.IsNullOrEmpty (command)) {
 				scriptFile = Path.GetTempFileName ();
+				if (IsRunningOnWindows)
+					scriptFile = scriptFile + ".bat";
 				using (StreamWriter sw = new StreamWriter (scriptFile)) {
 					sw.Write (command);
 				}
@@ -127,7 +129,11 @@ namespace Microsoft.Build.Tasks {
 		[Required]
 		public string Command {
 			get { return command; }
-			set { command = value; }
+			set {
+				command = value;
+				if (Path.DirectorySeparatorChar == '/')
+					command = command.Replace ("\r\n", "\n");
+			}
 		}
 
 		public bool IgnoreExitCode {
