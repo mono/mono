@@ -204,7 +204,7 @@ class MonoSupport(object):
     def run_hook(self):
         if os.access ("xdb.s", os.F_OK):
             os.remove ("xdb.s")
-        gdb.execute ("set environment MONO_XDEBUG 1")
+        gdb.execute ("set environment MONO_XDEBUG gdb")
         
     def stop_hook(self):
         # Called when the program is stopped
