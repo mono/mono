@@ -1,5 +1,10 @@
 2009-10-09  Mark Probst  <mark.probst@gmail.com>
 
+	* threads.c (ves_icall_System_Threading_Thread_GetAbortExceptionState):
+	Fix warning.
+
+2009-10-09  Mark Probst  <mark.probst@gmail.com>
+
 	* threads.c, object-internals.h, object.c: Move code for
 	transferring an object to a different domain (via
 	serialization/remoting) to object.c.
