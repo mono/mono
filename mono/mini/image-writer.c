@@ -1367,7 +1367,7 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 	fseek (file, secth [SECT_DEBUG_LINE].sh_offset, SEEK_SET);
 	if (sections [SECT_DEBUG_LINE])
 		fwrite (sections [SECT_DEBUG_LINE]->data, sections [SECT_DEBUG_LINE]->cur_offset, 1, file);
-	fseek (file, secth [SECT_DEBUG_LINE].sh_offset, SEEK_SET);
+	fseek (file, secth [SECT_DEBUG_LOC].sh_offset, SEEK_SET);
 	if (sections [SECT_DEBUG_LOC])
 		fwrite (sections [SECT_DEBUG_LOC]->data, sections [SECT_DEBUG_LOC]->cur_offset, 1, file);
 	fseek (file, secth [SECT_SHSTRTAB].sh_offset, SEEK_SET);
