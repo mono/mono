@@ -1,5 +1,11 @@
 2009-10-09  Ankit Jain  <jankit@novell.com>
 
+	* Exec.cs (AddCommandLineCommands): Add '/q' for cmd.exe, to
+	turn 'echo off'. And make sure the script file on windows, has
+	a '.bat' extension, otherwise cmd.exe opens it in a text editor.
+
+2009-10-09  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #545703.
 	* Exec.cs (Command): On unix, change CRLF to CR.
 

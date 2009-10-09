@@ -58,10 +58,12 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddCommandLineCommands (CommandLineBuilderExtension commandLine)
 		{
 			if (IsRunningOnWindows)
-				commandLine.AppendSwitch ("/c");
+				commandLine.AppendSwitch ("/q /c");
 
 			if (!String.IsNullOrEmpty (command)) {
 				scriptFile = Path.GetTempFileName ();
+				if (IsRunningOnWindows)
+					scriptFile = scriptFile + ".bat";
 				using (StreamWriter sw = new StreamWriter (scriptFile)) {
 					sw.Write (command);
 				}
