@@ -158,7 +158,9 @@ namespace Microsoft.Build.BuildEngine {
 							args.Succeeded ? String.Empty : "-- FAILED"));
 				WriteLine (String.Empty);
 			}
-			projectFailed = !args.Succeeded;
+			if (!projectFailed)
+				// no project has failed yet, so update the flag
+				projectFailed = !args.Succeeded;
 		}
 		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
