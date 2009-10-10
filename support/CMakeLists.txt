@@ -39,7 +39,7 @@ set(MPH_UNIX_SOURCE
 
 if(PLATFORM_WIN32)
 set(MPH_SOURCE ${MPH_C_SOURCE})
-set(MPH_LIBS)
+set(MPH_LIBS ${GLIB_LIBS})
 else()
 set(MPH_SOURCE ${MPH_C_SOURCE} ${MPH_UNIX_SOURCE})
 set(MPH_LIBS ${GLIB_LIBS})
@@ -79,10 +79,10 @@ set(ZLIB_SOURCES
 	zutil.h)
 
 if(HAVE_ZLIB)
-set(Z_SOURCE  zlib_macros.c)
+set(Z_SOURCE  zlib-helper.c)
 set(Z_LIBS  -lz)
 else()
-set(Z_SOURCE  zlib_macros.c ${ZLIB_SOURCES})
+set(Z_SOURCE  zlib-helper.c ${ZLIB_SOURCES})
 set(Z_LIBS)
 endif()
 
