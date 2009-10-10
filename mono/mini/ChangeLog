@@ -1,3 +1,8 @@
+2009-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_trampoline_xdebug_info): Implement this for the
+	gdb mode.
+
 2009-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (parse_debug_options): Add a 'gdb' option.
