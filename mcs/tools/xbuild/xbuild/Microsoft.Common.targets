@@ -161,21 +161,26 @@
 
 	</Target>
 
+	<!-- Split projects into 2 lists
+		ProjectReferenceWithConfigurationExistent: Projects existent on disk
+		ProjectReferenceWithConfigurationNonExistent: Projects non-existent on disk -->
 
-	<Target
-		Name="ResolveProjectReferences"
-		DependsOnTargets="AssignProjectConfigurations"
-	>
-		<!-- Build only project files that can be found on disk, ignore others -->
+	<Target Name="SplitProjectReferencesByExistent"
+		DependsOnTargets="AssignProjectConfigurations">
 
-		<CreateItem Include="@(ProjectReferenceWithConfiguration)">
+		<CreateItem Include="@(ProjectReferenceWithConfiguration)" Condition="'@(ProjectReferenceWithConfiguration)' != ''">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationExistent"
 				Condition="Exists ('%(ProjectReferenceWithConfiguration.Identity)')"/>
 
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationNonExistent"
 				Condition="!Exists ('%(ProjectReferenceWithConfiguration.Identity)')"/>
 		</CreateItem>
+	</Target>
 
+	<Target
+		Name="ResolveProjectReferences"
+		DependsOnTargets="SplitProjectReferencesByExistent"
+	>
 		<!-- If building from a .sln.proj or from IDE, then referenced projects have already
 		     been built, so just get the target paths -->
 		<MSBuild
@@ -196,7 +201,6 @@
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
 
-		<!-- Emit warning about missing project files -->
 		<Warning Text="Referenced Project %(ProjectReferenceWithConfigurationNonExistent.Identity) not found, ignoring."
 			 Condition="'@(ProjectReferenceWithConfigurationNonExistent)' != ''"/>
 	</Target>
@@ -455,7 +459,7 @@
 
 	<Target Name="GetCopyToOutputDirectoryItems"
 		Outputs="@(AllItemsFullPathWithTargetPath)"
-		DependsOnTargets="AssignTargetPaths">
+		DependsOnTargets="AssignTargetPaths;SplitProjectReferencesByExistent">
 
 		<!-- FIXME: handle .vcproj
 		     FIXME: Private ProjectReferences are honored only in 3.5
