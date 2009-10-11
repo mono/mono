@@ -1,3 +1,7 @@
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (Load): Add argument checks.
+
 2009-10-11  Ankit Jain  <jankit@novell.com>
 
 	* ConsoleLogger.cs (no_colors): Rename to ..

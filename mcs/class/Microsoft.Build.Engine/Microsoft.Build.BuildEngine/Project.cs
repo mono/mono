@@ -418,6 +418,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void Load (string projectFileName)
 		{
+			if (String.IsNullOrEmpty (projectFileName))
+				throw new ArgumentNullException ("projectFileName");
+
+			if (!File.Exists (projectFileName))
+				throw new ArgumentException (String.Format ("Project file {0} not found", projectFileName),
+						"projectFileName");
+
 			this.fullFileName = Utilities.FromMSBuildPath (Path.GetFullPath (projectFileName));
 
 			string filename = fullFileName;
