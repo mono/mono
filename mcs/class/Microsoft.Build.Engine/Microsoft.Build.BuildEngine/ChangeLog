@@ -1,3 +1,9 @@
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Use ColorSetter and ColorResetter .
+	Support 'XBUILD_COLORS' to set colors for errors, warnings,
+	events and messages.
+
 2009-10-10  Ankit Jain  <jankit@novell.com>
 
 	* ConsoleLogger.cs (ProjectFinishedHandler): Once projectFailed

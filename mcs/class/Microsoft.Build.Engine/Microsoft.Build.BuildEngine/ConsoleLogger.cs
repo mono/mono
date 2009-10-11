@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
 using System.Security;
+using System.Text;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
@@ -49,6 +50,10 @@ namespace Microsoft.Build.BuildEngine {
 		bool		skipProjectStartedText;
 		List<string> errors, warnings;
 		bool		projectFailed;
+		ConsoleColor errorColor, warningColor, eventColor, messageColor, highMessageColor;
+		ColorSetter colorSet;
+		ColorResetter colorReset;
+		bool no_message_color, no_colors;
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -60,7 +65,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 		
-		// FIXME: what about colorSet and colorReset?
 		public ConsoleLogger (LoggerVerbosity verbosity,
 				      WriteHandler write,
 				      ColorSetter colorSet,
@@ -79,6 +83,93 @@ namespace Microsoft.Build.BuildEngine {
 			this.skipProjectStartedText = false;
 			errors = new List<string> ();
 			warnings = new List<string> ();
+			this.colorSet = colorSet;
+			this.colorReset = colorReset;
+
+			//defaults
+			errorColor = ConsoleColor.DarkRed;
+			warningColor = ConsoleColor.DarkYellow;
+			eventColor = ConsoleColor.DarkCyan;
+			messageColor = ConsoleColor.DarkGray;
+			highMessageColor = ConsoleColor.White;
+
+			// if message color is not set via the env var,
+			// then don't use any color for it.
+			no_message_color = true;
+
+			no_colors = true;
+			if (colorSet == null || colorReset == null)
+				return;
+
+			// color support
+			string config = Environment.GetEnvironmentVariable ("XBUILD_COLORS");
+			if (config != null && config != "disable") {
+				no_colors = false;
+				string [] pairs = config.Split (new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string pair in pairs) {
+					string [] parts = pair.Split (new char[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+					if (parts.Length != 2)
+						continue;
+
+					if (parts [0] == "errors")
+						TryParseConsoleColor (parts [1], ref errorColor);
+					else if (parts [0] == "warnings")
+						TryParseConsoleColor (parts [1], ref warningColor);
+					else if (parts [0] == "events")
+						TryParseConsoleColor (parts [1], ref eventColor);
+					else if (parts [0] == "messages") {
+						if (TryParseConsoleColor (parts [1], ref messageColor)) {
+							highMessageColor = GetBrightColorFor (messageColor);
+							no_message_color = false;
+						}
+					}
+				}
+			}
+		}
+
+		bool TryParseConsoleColor (string color_str, ref ConsoleColor color)
+		{
+			switch (color_str.ToLower ()) {
+			case "black": color = ConsoleColor.Black; break;
+
+			case "blue": color = ConsoleColor.DarkBlue; break;
+			case "green": color = ConsoleColor.DarkGreen; break;
+			case "cyan": color = ConsoleColor.DarkCyan; break;
+			case "red": color = ConsoleColor.DarkRed; break;
+			case "magenta": color = ConsoleColor.DarkMagenta; break;
+			case "yellow": color = ConsoleColor.DarkYellow; break;
+			case "grey": color = ConsoleColor.DarkGray; break;
+
+			case "brightgrey": color = ConsoleColor.Gray; break;
+			case "brightblue": color = ConsoleColor.Blue; break;
+			case "brightgreen": color = ConsoleColor.Green; break;
+			case "brightcyan": color = ConsoleColor.Cyan; break;
+			case "brightred": color = ConsoleColor.Red; break;
+			case "brightmagenta": color = ConsoleColor.Magenta; break;
+			case "brightyellow": color = ConsoleColor.Yellow; break;
+
+			case "white":
+			case "brightwhite": color = ConsoleColor.White; break;
+			default: return false;
+			}
+
+			return true;
+		}
+
+		ConsoleColor GetBrightColorFor (ConsoleColor color)
+		{
+			switch (color) {
+			case ConsoleColor.DarkBlue: return ConsoleColor.Blue;
+			case ConsoleColor.DarkGreen: return ConsoleColor.Green;
+			case ConsoleColor.DarkCyan: return ConsoleColor.Cyan;
+			case ConsoleColor.DarkRed: return ConsoleColor.Red;
+			case ConsoleColor.DarkMagenta: return ConsoleColor.Magenta;
+			case ConsoleColor.DarkYellow: return ConsoleColor.Yellow;
+			case ConsoleColor.DarkGray: return ConsoleColor.Gray;
+			case ConsoleColor.Gray: return ConsoleColor.White;
+
+			default: return color;
+			}
 		}
 		
 		public void ApplyParameter (string parameterName,
@@ -123,15 +214,19 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (warnings.Count > 0) {
 				WriteLine (Environment.NewLine + "Warnings:");
+				SetColor (warningColor);
 				foreach (string warning in warnings)
 					WriteLine (warning);
+				ResetColor ();
 				WriteLine ("");
 			}
 
 			if (errors.Count > 0) {
 				WriteLine ("Errors:");
+				SetColor (errorColor);
 				foreach (string error in errors)
 					WriteLine (error);
+				ResetColor ();
 			}
 
 			if (showSummary == true){
@@ -145,7 +240,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
+			SetColor (eventColor);
 			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile, args.TargetNames));
+			ResetColor ();
 			WriteLine (String.Empty);
 		}
 		
@@ -154,8 +251,10 @@ namespace Microsoft.Build.BuildEngine {
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
 				if (indent == 1)
 					indent --;
+				SetColor (eventColor);
 				WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
 							args.Succeeded ? String.Empty : "-- FAILED"));
+				ResetColor ();
 				WriteLine (String.Empty);
 			}
 			if (!projectFailed)
@@ -166,24 +265,32 @@ namespace Microsoft.Build.BuildEngine {
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
 		{
 			indent++;
+			SetColor (eventColor);
 			WriteLine (String.Format ("Target {0}:",args.TargetName));
+			ResetColor ();
 		}
 		
 		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
 		{
-			indent--;
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) || !args.Succeeded)
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) || !args.Succeeded) {
+				SetColor (eventColor);
 				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
 					args.TargetName, args.ProjectFile,
 					args.Succeeded ? String.Empty : "-- FAILED"));
+				ResetColor ();
+			}
+			indent--;
 
 			WriteLine (String.Empty);
 		}
 		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
 		{
-			if (this.verbosity == LoggerVerbosity.Detailed)
+			if (this.verbosity == LoggerVerbosity.Detailed) {
+				SetColor (eventColor);
 				WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
+				ResetColor ();
+			}
 			indent++;
 		}
 		
@@ -191,25 +298,36 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			indent--;
 			if (this.verbosity == LoggerVerbosity.Detailed || !args.Succeeded) {
+				SetColor (eventColor);
 				if (args.Succeeded)
 					WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
 				else
 					WriteLine (String.Format ("Task \"{0}\" execution -- FAILED", args.TaskName));
+				ResetColor ();
 			}
 		}
 		
 		public void MessageHandler (object sender, BuildMessageEventArgs args)
 		{
 			if (IsMessageOk (args)) {
-				WriteLine (args.Message);
+				if (no_message_color) {
+					WriteLine (args.Message);
+				} else {
+					SetColor (args.Importance == MessageImportance.High ? highMessageColor : messageColor);
+					WriteLine (args.Message);
+					ResetColor ();
+				}
 			}
 		}
 		
 		public void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
 			string msg = FormatWarningEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+				SetColor (warningColor);
 				WriteLineWithoutIndent (msg);
+				ResetColor ();
+			}
 			warnings.Add (msg);
 			warningCount++;
 		}
@@ -217,8 +335,11 @@ namespace Microsoft.Build.BuildEngine {
 		public void ErrorHandler (object sender, BuildErrorEventArgs args)
 		{
 			string msg = FormatErrorEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) 
+			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) {
+				SetColor (errorColor);
 				WriteLineWithoutIndent (msg);
+				ResetColor ();
+			}
 			errors.Add (msg);
 			errorCount++;
 		}
@@ -230,9 +351,16 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private void WriteLine (string message)
 		{
-			for (int i = 0; i < indent; i++)
-				Console.Write ('\t');
-			writeHandler (message);
+			if (indent > 0) {
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < indent; i++)
+					sb.Append ('\t');
+				sb.Append (message);
+
+				writeHandler (sb.ToString ());
+			} else {
+				writeHandler (message);
+			}
 		}
 		
 		private void WriteLineWithoutIndent (string message)
@@ -243,6 +371,18 @@ namespace Microsoft.Build.BuildEngine {
 		private void WriteHandlerFunction (string message)
 		{
 			Console.WriteLine (message);
+		}
+
+		void SetColor (ConsoleColor color)
+		{
+			if (!no_colors)
+				colorSet (color);
+		}
+
+		void ResetColor ()
+		{
+			if (!no_colors)
+				colorReset ();
 		}
 		
 		private void ParseParameters ()
