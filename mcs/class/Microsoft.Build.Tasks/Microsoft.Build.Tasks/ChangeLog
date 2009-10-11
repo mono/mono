@@ -1,3 +1,7 @@
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Handle build errors.
+
 2009-10-09  Ankit Jain  <jankit@novell.com>
 
 	* Exec.cs (AddCommandLineCommands): Add '/q' for cmd.exe, to

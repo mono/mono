@@ -1,3 +1,7 @@
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Add reference to Microsoft.Build.Engine .
+
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added
