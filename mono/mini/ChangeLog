@@ -1,3 +1,11 @@
+2009-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Emit a symbol for the method which
+	can be used to set breakpoints in gdb.
+
+	* image-writer.c (bin_writer_emit_writeout): Add support for setting the text
+	segment to an absolute address.
+
 2009-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_trampoline_xdebug_info): Implement this for the
