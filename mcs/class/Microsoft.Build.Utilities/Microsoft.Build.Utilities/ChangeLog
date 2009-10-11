@@ -1,3 +1,9 @@
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ExecuteTool): Don't set toolOutput to null.
+	(HandleTaskExecutionErrors): toolOutput can be null.
+	Set toolOutput to null here.
+
 2009-10-06  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (Execute): HandleTaskExecutionErrors is called only
