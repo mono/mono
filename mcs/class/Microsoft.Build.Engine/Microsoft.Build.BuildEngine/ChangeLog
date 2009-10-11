@@ -1,5 +1,11 @@
 2009-10-11  Ankit Jain  <jankit@novell.com>
 
+	* ConsoleLogger.cs (no_colors): Rename to ..
+	(use_colors): .. this. Fix the case when XBUILD_COLORS
+	is not set.
+
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
 	* ConsoleLogger.cs: Use ColorSetter and ColorResetter .
 	Support 'XBUILD_COLORS' to set colors for errors, warnings,
 	events and messages.

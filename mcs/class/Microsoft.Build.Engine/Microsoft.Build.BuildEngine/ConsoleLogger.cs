@@ -53,7 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 		ConsoleColor errorColor, warningColor, eventColor, messageColor, highMessageColor;
 		ColorSetter colorSet;
 		ColorResetter colorReset;
-		bool no_message_color, no_colors;
+		bool no_message_color, use_colors;
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -97,31 +97,37 @@ namespace Microsoft.Build.BuildEngine {
 			// then don't use any color for it.
 			no_message_color = true;
 
-			no_colors = true;
+			use_colors = false;
 			if (colorSet == null || colorReset == null)
 				return;
 
 			// color support
 			string config = Environment.GetEnvironmentVariable ("XBUILD_COLORS");
-			if (config != null && config != "disable") {
-				no_colors = false;
-				string [] pairs = config.Split (new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
-				foreach (string pair in pairs) {
-					string [] parts = pair.Split (new char[] {'='}, StringSplitOptions.RemoveEmptyEntries);
-					if (parts.Length != 2)
-						continue;
+			if (config == null) {
+				use_colors = true;
+				return;
+			}
 
-					if (parts [0] == "errors")
-						TryParseConsoleColor (parts [1], ref errorColor);
-					else if (parts [0] == "warnings")
-						TryParseConsoleColor (parts [1], ref warningColor);
-					else if (parts [0] == "events")
-						TryParseConsoleColor (parts [1], ref eventColor);
-					else if (parts [0] == "messages") {
-						if (TryParseConsoleColor (parts [1], ref messageColor)) {
-							highMessageColor = GetBrightColorFor (messageColor);
-							no_message_color = false;
-						}
+			if (config == "disable")
+				return;
+
+			use_colors = true;
+			string [] pairs = config.Split (new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			foreach (string pair in pairs) {
+				string [] parts = pair.Split (new char[] {'='}, StringSplitOptions.RemoveEmptyEntries);
+				if (parts.Length != 2)
+					continue;
+
+				if (parts [0] == "errors")
+					TryParseConsoleColor (parts [1], ref errorColor);
+				else if (parts [0] == "warnings")
+					TryParseConsoleColor (parts [1], ref warningColor);
+				else if (parts [0] == "events")
+					TryParseConsoleColor (parts [1], ref eventColor);
+				else if (parts [0] == "messages") {
+					if (TryParseConsoleColor (parts [1], ref messageColor)) {
+						highMessageColor = GetBrightColorFor (messageColor);
+						no_message_color = false;
 					}
 				}
 			}
@@ -375,13 +381,13 @@ namespace Microsoft.Build.BuildEngine {
 
 		void SetColor (ConsoleColor color)
 		{
-			if (!no_colors)
+			if (use_colors)
 				colorSet (color);
 		}
 
 		void ResetColor ()
 		{
-			if (!no_colors)
+			if (use_colors)
 				colorReset ();
 		}
 		
