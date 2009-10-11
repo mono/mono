@@ -166,25 +166,39 @@
 		Name="ResolveProjectReferences"
 		DependsOnTargets="AssignProjectConfigurations"
 	>
+		<!-- Build only project files that can be found on disk, ignore others -->
+
+		<CreateItem Include="@(ProjectReferenceWithConfiguration)">
+			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationExistent"
+				Condition="Exists ('%(ProjectReferenceWithConfiguration.Identity)')"/>
+
+			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationNonExistent"
+				Condition="!Exists ('%(ProjectReferenceWithConfiguration.Identity)')"/>
+		</CreateItem>
+
 		<!-- If building from a .sln.proj or from IDE, then referenced projects have already
 		     been built, so just get the target paths -->
 		<MSBuild
-			Projects="@(ProjectReferenceWithConfiguration)"
+			Projects="@(ProjectReferenceWithConfigurationExistent)"
 			Targets="GetTargetPath"
-			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
-			Condition="'@(ProjectReferenceWithConfiguration)' != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
+			Properties="%(ProjectReferenceWithConfigurationExistent.SetConfiguration); %(ProjectReferenceWithConfigurationExistent.SetPlatform)"
+			Condition="'@(ProjectReferenceWithConfigurationExistent)' != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
 
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
 
 		<!-- Building a project directly, build the referenced the projects also -->
 		<MSBuild
-			Projects="@(ProjectReferenceWithConfiguration)"
-			Properties="%(ProjectReferenceWithConfiguration.SetConfiguration); %(ProjectReferenceWithConfiguration.SetPlatform)"
-			Condition="'@(ProjectReferenceWithConfiguration)' != '' and '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' ">
+			Projects="@(ProjectReferenceWithConfigurationExistent)"
+			Properties="%(ProjectReferenceWithConfigurationExistent.SetConfiguration); %(ProjectReferenceWithConfigurationExistent.SetPlatform)"
+			Condition="'@(ProjectReferenceWithConfigurationExistent)' != '' and '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' ">
 
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
+
+		<!-- Emit warning about missing project files -->
+		<Warning Text="Referenced Project %(ProjectReferenceWithConfigurationNonExistent.Identity) not found, ignoring."
+			 Condition="'@(ProjectReferenceWithConfigurationNonExistent)' != ''"/>
 	</Target>
 
 	<Target Name = "CopyFilesMarkedCopyLocal">
@@ -447,9 +461,9 @@
 		     FIXME: Private ProjectReferences are honored only in 3.5
 		-->
 		<MSBuild
-			Projects="@(ProjectReference)"
+			Projects="@(ProjectReferenceWithConfigurationExistent)"
 			Targets="GetCopyToOutputDirectoryItems"
-			Condition="'@(ProjectReference)' != '' and '%(ProjectReference.Private)' != 'false'">
+			Condition="'@(ProjectReferenceWithConfigurationExistent)' != '' and '%(ProjectReferenceWithConfigurationExistent.Private)' != 'false'">
 
 			<Output TaskParameter="TargetOutputs" ItemName="AllChildProjectItemsWithTargetPath"/>
 		</MSBuild>
@@ -619,9 +633,9 @@
 		<!-- If building from .sln.proj or from IDE, clean will get handled by them,
 		     else we are building a project directly, from the command line, so
 		     clean the referenced projects -->
-		<MSBuild Projects="@(ProjectReferenceWithConfiguration)"
+		<MSBuild Projects="@(ProjectReferenceWithConfigurationExistent)"
 			Targets="Clean"
-			Condition=" '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' and '@(ProjectReferenceWithConfiguration)' != ''" />
+			Condition=" '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' and '@(ProjectReferenceWithConfigurationExistent)' != ''" />
 
 	</Target>
 
