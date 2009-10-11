@@ -1,3 +1,10 @@
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs: Add support for emitting messages in color.
+	Taking relevant code from mcs/report.cs . Using ANSI
+	color codes here instead of Console.ForegroundColor
+	because of a bug in Console.
+
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Don't get list of files

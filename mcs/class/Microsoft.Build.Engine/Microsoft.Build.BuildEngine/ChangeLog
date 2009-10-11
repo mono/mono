@@ -1,3 +1,21 @@
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs (no_colors): Rename to ..
+	(use_colors): .. this. Fix the case when XBUILD_COLORS
+	is not set.
+
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Use ColorSetter and ColorResetter .
+	Support 'XBUILD_COLORS' to set colors for errors, warnings,
+	events and messages.
+
+2009-10-10  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs (ProjectFinishedHandler): Once projectFailed
+	becomes true, don't reset it. We are looking for "atleast one
+	project failed".
+
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* DirectoryScanner.cs: Use Path.GetPathRoot, instead of
