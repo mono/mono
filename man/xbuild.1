@@ -48,6 +48,36 @@ Display xbuild version
 .I "XBUILD_EMIT_SOLUTION"
 If this variable is set, then the project file generated from a solution
 file is emitted.
+.TP
+.I "XBUILD_COLORS"
+If this variable is set, it contains a string of the form
+"type=foreground,type=.." that specifies which color to use to display
+errors/warnings etc on some terminals. Type here can be:
+
+.nf
+	errors, warnings, messages or events
+
+	events: These are project/target/task start and end event
+	        messages.
+.fi
+
+.Sp
+The possible colors for foreground are:
+.B black, red, brightred, green, brightgreen, yellow, brightyellow,
+blue, brightblue, magenta, brightmagenta, cyan, brightcyan, grey,
+white and brightwhite.
+
+.Sp
+For example, you could set this variable from your shell:
+.nf
+	export XBUILD_COLORS
+	XBUILD_COLORS=errors=brightred,warnings=blue
+.fi
+.Sp
+
+You can disable the built-in color scheme by setting this variable to
+"disable".
+
 .SH SEE ALSO
 .BR mono(1), mcs(1)
 .SH COPYRIGHT

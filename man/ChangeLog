@@ -1,3 +1,7 @@
+2009-10-11  Ankit Jain  <jankit@novell.com>
+
+	* xbuild.1: Add info about env var XBUILD_COLORS.
+
 2009-09-24  Ankit Jain  <jankit@novell.com>
 
 	* xbuild.1: Add info about env var XBUILD_EMIT_SOLUTION.
