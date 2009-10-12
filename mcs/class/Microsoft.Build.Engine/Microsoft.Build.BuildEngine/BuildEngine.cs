@@ -39,8 +39,9 @@ namespace Microsoft.Build.BuildEngine {
 		bool	continueOnError;
 		int	lineNumberOfTaskNode;
 		Project project;
+		string taskfile;
 		
-		public BuildEngine (Engine engine, Project project, int column, int line,
+		public BuildEngine (Engine engine, Project project, string taskfile, int column, int line,
 				    bool continueOnError)
 		{
 			this.engine = engine;
@@ -48,6 +49,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.columnNumberOfTaskNode = column;
 			this.continueOnError = continueOnError;
 			this.lineNumberOfTaskNode = line;
+			this.taskfile = taskfile;
 		}
 	
 		// Initiates a build of a project file. If the build is
@@ -110,7 +112,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string ProjectFileOfTaskNode {
-			get { return project.FullFileName; }
+			get { return taskfile; }
 		}
 		
 	}

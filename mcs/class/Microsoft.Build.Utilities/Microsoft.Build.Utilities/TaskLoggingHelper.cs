@@ -101,7 +101,7 @@ namespace Microsoft.Build.Utilities
 				throw new ArgumentNullException ("message");
 				
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
-				null, null, null, 0, 0, 0, 0, FormatString (message, messageArgs),
+				null, null, buildEngine.ProjectFileOfTaskNode, 0, 0, 0, 0, FormatString (message, messageArgs),
 				helpKeywordPrefix, null);
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
@@ -149,7 +149,7 @@ namespace Microsoft.Build.Utilities
 			if (showStackTrace == true)
 				sb.Append (e.StackTrace);
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (
-				null, null, null, 0, 0, 0, 0, sb.ToString (),
+				null, null, buildEngine.ProjectFileOfTaskNode, 0, 0, 0, 0, sb.ToString (),
 				e.HelpLink, e.Source);
 			buildEngine.LogErrorEvent (beea);
 			hasLoggedErrors = true;
@@ -293,7 +293,7 @@ namespace Microsoft.Build.Utilities
 		{
 			// FIXME: what about all the parameters?
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
-				null, null, null, 0, 0, 0, 0, FormatString (message, messageArgs),
+				null, null, buildEngine.ProjectFileOfTaskNode, 0, 0, 0, 0, FormatString (message, messageArgs),
 				helpKeywordPrefix, null);
 			buildEngine.LogWarningEvent (bwea);
 		}

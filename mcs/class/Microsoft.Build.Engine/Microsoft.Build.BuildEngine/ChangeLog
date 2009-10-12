@@ -1,5 +1,27 @@
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
+	* Target.cs (TargetFile): New. Gives the name of the file
+	containing the target definition.
+	* BuildEngine.cs (.ctor): Add a 'taskfile' parameters, and
+	return this for ProjectFileOfTaskNode.
+	* BuildTask.cs (LogTaskStarted):
+	(LogTaskFinished): Use parentTarget.ProjectFileOfTaskNode for
+	the event.
+	(InitializeTask): Set BuildEngine's task file to parent target's
+	TargetFile.
+	* Engine.cs (LogProjectStarted): Incase of default targets, set
+	TargetNames to String.Empty .
+	* TargetBatchingImpl.cs (LogTargetStarted):
+	(LogTargetFinished): Use target.TargetFile for the event.
+
+	* ConsoleLogger.cs: Keep a stack of project/target/task being
+	executed. And corresponding list of errors and warnings.
+	(EventsToString): Stringifies the current "stack", to be used
+	as key to the table of errors/warnings and for show messages
+	at the end of the build.
+
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (Load): Add argument checks.
 
 2009-10-11  Ankit Jain  <jankit@novell.com>

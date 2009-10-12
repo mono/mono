@@ -159,15 +159,17 @@ namespace Microsoft.Build.BuildEngine {
 		
 		void LogTaskStarted ()
 		{
-			TaskStartedEventArgs tsea = new TaskStartedEventArgs ("Task started.", null, parentTarget.Project.FullFileName,
-				parentTarget.Project.FullFileName, taskElement.Name);
+			TaskStartedEventArgs tsea = new TaskStartedEventArgs ("Task started.", null,
+					parentTarget.Project.FullFileName,
+					parentTarget.TargetFile, taskElement.Name);
 			parentTarget.Project.ParentEngine.EventSource.FireTaskStarted (this, tsea);
 		}
 		
 		void LogTaskFinished (bool succeeded)
 		{
-			TaskFinishedEventArgs tfea = new TaskFinishedEventArgs ("Task finished.", null, parentTarget.Project.FullFileName,
-				parentTarget.Project.FullFileName, taskElement.Name, succeeded);
+			TaskFinishedEventArgs tfea = new TaskFinishedEventArgs ("Task finished.", null,
+					parentTarget.Project.FullFileName,
+					parentTarget.TargetFile, taskElement.Name, succeeded);
 			parentTarget.Project.ParentEngine.EventSource.FireTaskFinished (this, tfea);
 		}
 
@@ -195,7 +197,8 @@ namespace Microsoft.Build.BuildEngine {
 			ITask task;
 			
 			task = (ITask)Activator.CreateInstance (this.Type);
-			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project, 0, 0, ContinueOnError);
+			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project,
+						parentTarget.TargetFile, 0, 0, ContinueOnError);
 			task_logger = new TaskLoggingHelper (task);
 			
 			return task;

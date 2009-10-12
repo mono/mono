@@ -1,5 +1,10 @@
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
+	* ResolveAssemblyReference.cs: Remove unnecessary tab in the warning
+	messages.
+
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
 	* MSBuild.cs (Execute): Handle build errors.
 
 2009-10-09  Ankit Jain  <jankit@novell.com>
