@@ -432,11 +432,9 @@ namespace System.Web.UI {
 										t,
 										converter != null ? converter.CanConvertFrom (t) : false));
 #endif
-						if (converter == null ||
-						    !converter.CanConvertTo (typeof (string)) ||
-						    !converter.CanConvertFrom (t)) {
+						if (converter == null || !converter.CanConvertTo (typeof (string)))
 							fmt = binaryObjectFormatter;
-						} else {
+						else {
 							typeConverterFormatter.Converter = converter;
 							fmt = typeConverterFormatter;
 						}
