@@ -1,3 +1,7 @@
+2009-10-13  Marek Habersack  <mhabersack@novell.com>
+
+	* WebColorConverterTest.cs: added test for bug #546173
+
 2009-03-17  Marek Habersack  <mhabersack@novell.com>
 
 	* UnitTest.cs: added a test for equality with Unit.Empty
