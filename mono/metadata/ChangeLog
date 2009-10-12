@@ -1,3 +1,7 @@
+2009-10-12  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c, process.c: A few missing write barriers.
+
 2009-10-12  Joel W. Reed <joelwreed@gmail.com>
 
 	* mono-perfcounters.c, mono-perfcounters-def.h: Add
