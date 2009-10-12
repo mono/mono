@@ -1,3 +1,8 @@
+2009-10-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* Splitter.cs: Adjust offsets when more than one splitter is
+	present in a control.  Fixes bug 509472.
+
 2009-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When computing the value for groups height don't use
