@@ -1,3 +1,8 @@
+2009-10-12  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: make sure to construct correct physical path
+	for every precompiled key in FixVirtualPaths. Fixes bug #546053
+
 2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BuildManager.cs: load/set the global resources assembly for
