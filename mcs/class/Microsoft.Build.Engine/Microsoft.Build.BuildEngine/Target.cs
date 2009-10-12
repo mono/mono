@@ -300,6 +300,14 @@ namespace Microsoft.Build.BuildEngine {
 			get { return project; }
 		}
 
+		internal string TargetFile {
+			get {
+				if (importedProject != null)
+					return importedProject.FullFileName;
+				return project != null ? project.FullFileName : String.Empty;
+			}
+		}
+
 		internal List<BuildTask> BuildTasks {
 			get { return buildTasks; }
 		}

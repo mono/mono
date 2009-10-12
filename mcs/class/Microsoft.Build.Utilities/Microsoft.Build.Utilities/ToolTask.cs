@@ -180,7 +180,6 @@ namespace Microsoft.Build.Utilities
 
 				DeleteTempFile (output);
 				DeleteTempFile (error);
-				toolOutput = null;
 			}
 		}
 
@@ -331,7 +330,9 @@ namespace Microsoft.Build.Utilities
 		protected virtual bool HandleTaskExecutionErrors ()
 		{
 			if (!Log.HasLoggedErrors && exitCode != 0)
-				Log.LogError ("Tool exited with code: {0}. Output: {1}", exitCode, toolOutput.ToString ());
+				Log.LogError ("Tool exited with code: {0}. Output: {1}", exitCode,
+						toolOutput != null ? toolOutput.ToString () : String.Empty);
+			toolOutput = null;
 
 			return ExitCode == 0 && !Log.HasLoggedErrors;
 		}

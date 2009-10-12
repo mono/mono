@@ -180,9 +180,22 @@ namespace Mono.XBuild.CommandLine {
 			}
 
 			foreach (ProjectInfo projectInfo in projectInfos.Values) {
+				string filename = Path.Combine (solutionDir,
+							projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar));
+
+				if (!File.Exists (filename)) {
+					RaiseWarning (0, String.Format ("Project file {0} referenced in the solution file, " +
+								"not found. Ignoring.", filename));
+					continue;
+				}
+
 				Project currentProject = p.ParentEngine.CreateNewProject ();
-				currentProject.Load (Path.Combine (solutionDir,
-							projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar)));
+				try {
+					currentProject.Load (filename);
+				} catch (InvalidProjectFileException e) {
+					RaiseWarning (0, e.Message);
+					continue;
+				}
 
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");

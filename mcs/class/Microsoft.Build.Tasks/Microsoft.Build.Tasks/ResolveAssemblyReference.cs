@@ -154,7 +154,7 @@ namespace Microsoft.Build.Tasks {
 				Log.LogMessage (MessageImportance.Low, "Primary Reference {0}", item.ItemSpec);
 				ResolvedReference resolved_ref = ResolveReference (item, searchPaths, true);
 				if (resolved_ref == null) {
-					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
+					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
 					assembly_resolver.LogSearchLoggerMessages ();
 				} else {
 					Log.LogMessage (MessageImportance.Low,
@@ -272,7 +272,7 @@ namespace Microsoft.Build.Tasks {
 
 				AssemblyName aname = assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec);
 				if (aname == null) {
-					Log.LogWarning ("\tReference '{0}' not resolved", item.ItemSpec);
+					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
 					assembly_resolver.LogSearchLoggerMessages ();
 					continue;
 				}
@@ -376,7 +376,7 @@ namespace Microsoft.Build.Tasks {
 					TryAddNewReference (tempResolvedFiles, resolved_ref);
 				}
 			} else {
-				Log.LogWarning ("\tReference '{0}' not resolved", aname);
+				Log.LogWarning ("Reference '{0}' not resolved", aname);
 				assembly_resolver.LogSearchLoggerMessages ();
 			}
 

@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -80,7 +81,12 @@ namespace Microsoft.Build.Tasks {
 				Directory.SetCurrentDirectory (Path.GetDirectoryName (filename));
 				outputs = new Hashtable ();
 
-				result = BuildEngine.BuildProjectFile (filename, targets, global_properties, outputs);
+				try {
+					result = BuildEngine.BuildProjectFile (filename, targets, global_properties, outputs);
+				} catch (InvalidProjectFileException e) {
+					Log.LogError ("Error building project {0}: {1}", filename, e.Message);
+					result = false;
+				}
 
 				if (result) {
 					// Metadata from the first item for the project file is copied
