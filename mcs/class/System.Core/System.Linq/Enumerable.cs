@@ -1960,10 +1960,8 @@ namespace System.Linq
 		static TR Sum<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> selector)
 		{
 			TR total = default (TR);
-			long counter = 0;
 			foreach (var element in source) {
 				total = selector (total, element);
-				++counter;
 			}
 
 			return total;
