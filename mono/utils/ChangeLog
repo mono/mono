@@ -1,3 +1,10 @@
+2009-10-12  Joel W. Reed <joelwreed@gmail.com>
+
+	* mono-networkinterfaces.c, mono-networkinterfaces.h: Read
+	network statistics from "/proc/net/dev" for performance counters.
+
+	Code is contributed under MIT/X11 license.
+
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h (MONO_INTERNAL): Disable this on solaris as it produces a
