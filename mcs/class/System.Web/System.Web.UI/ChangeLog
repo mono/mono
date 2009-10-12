@@ -1,3 +1,9 @@
+2009-10-12  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectStateFormatter.cs: if a type is associated with a type
+	converter, do not check if the converter can convert FROM the type
+	in question, as this is implied. Fixes bug #545979
+
 2009-10-09  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: implemented the LoadViewStateByID property as well
