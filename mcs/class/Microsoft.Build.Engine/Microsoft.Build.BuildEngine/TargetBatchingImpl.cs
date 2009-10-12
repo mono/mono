@@ -244,7 +244,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			TargetStartedEventArgs tsea;
 			string projectFile = project.FullFileName;
-			tsea = new TargetStartedEventArgs (String.Format ("Target {0} started.", target.Name), null, target.Name, projectFile, null);
+			tsea = new TargetStartedEventArgs (String.Format ("Target {0} started.", target.Name), null,
+					target.Name, projectFile, target.TargetFile);
 			target.Engine.EventSource.FireTargetStarted (this, tsea);
 		}
 
@@ -252,7 +253,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			TargetFinishedEventArgs tfea;
 			string projectFile = project.FullFileName;
-			tfea = new TargetFinishedEventArgs (String.Format ("Target {0} finished.", target.Name), null, target.Name, projectFile, null, succeeded);
+			tfea = new TargetFinishedEventArgs (String.Format ("Target {0} finished.", target.Name), null,
+					target.Name, projectFile, target.TargetFile, succeeded);
 			target.Engine.EventSource.FireTargetFinished (this, tfea);
 		}
 

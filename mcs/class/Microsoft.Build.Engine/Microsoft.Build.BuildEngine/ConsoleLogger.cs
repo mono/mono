@@ -54,6 +54,11 @@ namespace Microsoft.Build.BuildEngine {
 		ColorSetter colorSet;
 		ColorResetter colorReset;
 		bool no_message_color, use_colors;
+
+		List<BuildStatusEventArgs> events;
+		Dictionary<string, List<string>> errorsTable;
+		Dictionary<string, List<string>> warningsTable;
+		string current_events_string;
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -85,6 +90,10 @@ namespace Microsoft.Build.BuildEngine {
 			warnings = new List<string> ();
 			this.colorSet = colorSet;
 			this.colorReset = colorReset;
+
+			events = new List<BuildStatusEventArgs> ();
+			errorsTable = new Dictionary<string, List<string>> ();
+			warningsTable = new Dictionary<string, List<string>> ();
 
 			//defaults
 			errorColor = ConsoleColor.DarkRed;
@@ -206,6 +215,8 @@ namespace Microsoft.Build.BuildEngine {
 			WriteLine (String.Format ("Build started {0}.", args.Timestamp));
 			WriteLine ("__________________________________________________");
 			buildStart = args.Timestamp;
+
+			PushEvent (args);
 		}
 		
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
@@ -221,17 +232,37 @@ namespace Microsoft.Build.BuildEngine {
 			if (warnings.Count > 0) {
 				WriteLine (Environment.NewLine + "Warnings:");
 				SetColor (warningColor);
-				foreach (string warning in warnings)
-					WriteLine (warning);
+
+				WriteLine (String.Empty);
+				foreach (KeyValuePair<string, List<string>> pair in warningsTable) {
+					if (!String.IsNullOrEmpty (pair.Key))
+						WriteLine (pair.Key);
+
+					string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
+					foreach (string msg in pair.Value)
+						WriteLine (String.Format ("{0}{1}", indent_str, msg));
+
+					WriteLine (String.Empty);
+				}
+
 				ResetColor ();
-				WriteLine ("");
 			}
 
 			if (errors.Count > 0) {
 				WriteLine ("Errors:");
 				SetColor (errorColor);
-				foreach (string error in errors)
-					WriteLine (error);
+
+				WriteLine (String.Empty);
+				foreach (KeyValuePair<string, List<string>> pair in errorsTable) {
+					if (!String.IsNullOrEmpty (pair.Key))
+						WriteLine (pair.Key);
+
+					string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
+					foreach (string msg in pair.Value)
+						WriteLine (String.Format ("{0}{1}", indent_str, msg));
+
+					WriteLine (String.Empty);
+				}
 				ResetColor ();
 			}
 
@@ -242,14 +273,17 @@ namespace Microsoft.Build.BuildEngine {
 				WriteLine (String.Empty);
 				WriteLine (String.Format ("Time Elapsed {0}", timeElapsed));
 			} 
+			PopEvent ();
 		}
 
 		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
 			SetColor (eventColor);
-			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile, args.TargetNames));
+			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
+						String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
 			ResetColor ();
 			WriteLine (String.Empty);
+			PushEvent (args);
 		}
 		
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
@@ -266,6 +300,8 @@ namespace Microsoft.Build.BuildEngine {
 			if (!projectFailed)
 				// no project has failed yet, so update the flag
 				projectFailed = !args.Succeeded;
+
+			PopEvent ();
 		}
 		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
@@ -274,6 +310,7 @@ namespace Microsoft.Build.BuildEngine {
 			SetColor (eventColor);
 			WriteLine (String.Format ("Target {0}:",args.TargetName));
 			ResetColor ();
+			PushEvent (args);
 		}
 		
 		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
@@ -288,6 +325,7 @@ namespace Microsoft.Build.BuildEngine {
 			indent--;
 
 			WriteLine (String.Empty);
+			PopEvent ();
 		}
 		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
@@ -298,6 +336,7 @@ namespace Microsoft.Build.BuildEngine {
 				ResetColor ();
 			}
 			indent++;
+			PushEvent (args);
 		}
 		
 		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
@@ -311,6 +350,7 @@ namespace Microsoft.Build.BuildEngine {
 					WriteLine (String.Format ("Task \"{0}\" execution -- FAILED", args.TaskName));
 				ResetColor ();
 			}
+			PopEvent ();
 		}
 		
 		public void MessageHandler (object sender, BuildMessageEventArgs args)
@@ -335,6 +375,12 @@ namespace Microsoft.Build.BuildEngine {
 				ResetColor ();
 			}
 			warnings.Add (msg);
+
+			List<string> list = null;
+			if (!warningsTable.TryGetValue (EventsAsString, out list))
+				warningsTable [EventsAsString] = list = new List<string> ();
+			list.Add (msg);
+
 			warningCount++;
 		}
 		
@@ -347,6 +393,11 @@ namespace Microsoft.Build.BuildEngine {
 				ResetColor ();
 			}
 			errors.Add (msg);
+
+			List<string> list = null;
+			if (!errorsTable.TryGetValue (EventsAsString, out list))
+				errorsTable [EventsAsString] = list = new List<string> ();
+			list.Add (msg);
 			errorCount++;
 		}
 		
@@ -367,6 +418,41 @@ namespace Microsoft.Build.BuildEngine {
 			} else {
 				writeHandler (message);
 			}
+		}
+
+		void PushEvent (BuildStatusEventArgs args)
+		{
+			events.Add (args);
+			current_events_string = null;
+		}
+
+		void PopEvent ()
+		{
+			events.RemoveAt (events.Count - 1);
+			current_events_string = null;
+		}
+
+		string EventsToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			for (int i = 0; i < events.Count; i ++) {
+				BuildStatusEventArgs args = events [i];
+				ProjectStartedEventArgs pargs = args as ProjectStartedEventArgs;
+				if (pargs != null) {
+					sb.AppendFormat ("{0} ({1}) ->\n", pargs.ProjectFile,
+							String.IsNullOrEmpty (pargs.TargetNames) ?
+								"default targets" :
+								pargs.TargetNames);
+					continue;
+				}
+
+				TargetStartedEventArgs targs = args as TargetStartedEventArgs;
+				if (targs != null)
+					sb.AppendFormat ("({0} target) ->\n", targs.TargetName);
+			}
+
+			return sb.ToString ();
 		}
 		
 		private void WriteLineWithoutIndent (string message)
@@ -496,6 +582,14 @@ namespace Microsoft.Build.BuildEngine {
 				parameters = value;
 				if (parameters != String.Empty)
 					ParseParameters ();
+			}
+		}
+
+		string EventsAsString {
+			get {
+				if (current_events_string == null)
+					current_events_string = EventsToString ();
+				return current_events_string;
 			}
 		}
 		

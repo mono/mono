@@ -1,3 +1,18 @@
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: For referenced projects,
+	when trying to get the deploy items, ensure that the split
+	lists of project references are available.
+	(SplitProjectReferencesByExistent): New.
+	Set DependsOnTargets appropriately.
+
+2009-10-12  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs: Handle non-existing project files, and
+	project file load errors. Raise warnings instead of failing.
+	* xbuild/Microsoft.Common.targets: Handle non-existant
+	Project references, skip instead of failing.
+
 2009-10-11  Ankit Jain  <jankit@novell.com>
 
 	* Main.cs: Add support for emitting messages in color.
