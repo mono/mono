@@ -1,3 +1,7 @@
+2009-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Process.cs (Dispose): Close the async output/error readers. Fixes #545429.
+
 2009-07-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ProcessStartInfo.cs: HaveEnvVars is enabled by just using the

@@ -1378,7 +1378,7 @@ namespace System.Diagnostics {
 			internal int error;
 			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
 			public object ares;
-
+			public int EndCalled;
 
 			// These fields are not in SocketAsyncResult
 			Process process;
@@ -1476,6 +1476,10 @@ namespace System.Diagnostics {
 						return wait_handle;
 					}
 				}
+			}
+
+			public void Close () {
+				stream.Close ();
 			}
 		}
 
@@ -1582,6 +1586,13 @@ namespace System.Diagnostics {
 				// dispose all managed resources.
 				if(disposing) {
 					// Do stuff here
+					lock (this) {
+						/* These have open FileStreams on the pipes we are about to close */
+						if (async_output != null)
+							async_output.Close ();
+						if (async_error != null)
+							async_error.Close ();
+					}
 				}
 				
 				// Release unmanaged resources
