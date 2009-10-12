@@ -885,6 +885,7 @@ namespace System.Web {
 			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
 			if (config != null && config.UseFullyQualifiedRedirectUrl) {
 				var ub = new UriBuilder (context.Request.Url);
+				ub.Path = url;
 				ub.Fragment = null;
 				ub.Password = null;
 				ub.Query = null;

@@ -1,3 +1,8 @@
+2009-10-12  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: actually _use_ the url passed to Redirect when
+	fully qualified redirect url is requested, doh. Fixes bug #542846
+
 2009-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StaticFileHandler.cs: it's the last flush even when a VPP is used.
