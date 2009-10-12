@@ -24,19 +24,41 @@
 //
 //
 
+using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Web.UI.WebControls {
 
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class WebColorConverter : ColorConverter {
+	public class WebColorConverter : ColorConverter
+	{
+#if NET_2_0
+		static Dictionary <string, bool> knownColorNames;
+#else
+		static Hashtable knownColorNames;
+#endif
 
+		static WebColorConverter ()
+		{
+#if NET_2_0
+			knownColorNames = new Dictionary <string, bool> (StringComparer.Ordinal);
+#else
+			knownColorNames = new Hashtable (StringComparer.Ordinal);
+#endif
+
+			foreach (string name in Enum.GetNames (typeof (KnownColor)))
+				knownColorNames.Add (name, true);
+		}
+		
 		// Converts from string to Color
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value) 
 		{
@@ -97,8 +119,19 @@ namespace System.Web.UI.WebControls {
 					{
 						Color c;
 
+						// Bug #546173
+						switch (s.ToLower (CultureInfo.InvariantCulture)) {
+							case "captiontext":
+								s = "ActiveCaptionText";
+								break;
+
+							case "background":
+								s = "Desktop";
+								break;
+						}
+						
 						c = Color.FromName(s);
-						if ((c.A != 0) || (c.R != 0) || (c.G != 0) || (c.B != 0)) 
+						if (knownColorNames.ContainsKey (c.Name) || (c.A != 0) || (c.R != 0) || (c.G != 0) || (c.B != 0)) 
 						{
 							return c;
 						}
