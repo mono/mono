@@ -1594,11 +1594,13 @@ namespace System.Diagnostics {
 				if(disposing) {
 					// Do stuff here
 					lock (this) {
+#if NET_2_0
 						/* These have open FileStreams on the pipes we are about to close */
 						if (async_output != null)
 							async_output.Close ();
 						if (async_error != null)
 							async_error.Close ();
+#endif
 					}
 				}
 				
