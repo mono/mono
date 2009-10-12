@@ -1,3 +1,10 @@
+2009-10-13  Marek Habersack  <mhabersack@novell.com>
+
+	* WebColorConverter.cs: don't use a dictionary to check for valid
+	color names, use Color.IsKnownColor instead. Update for bug
+	#546173 fix.
+	Added more CSS2 color name mappings.
+
 2009-10-12  Marek Habersack  <mhabersack@novell.com>
 
 	* WebColorConverter.cs: when converting from color name, check if

@@ -175,5 +175,127 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(Color.FromArgb(255, 254, 254, 254), conv.ConvertFrom(null, null, "garbage"), "M7");
 		}
 
+		[Test (Description="Bug #546173")]
+		public void NamedColorsCSS2 ()
+		{
+			WebColorConverter wcc = new WebColorConverter ();
+			Color c;
+
+			c = (Color)wcc.ConvertFrom (null, null, "ActiveBorder");
+			Assert.IsTrue (c.IsKnownColor, "#A1");
+			Assert.AreEqual ("ActiveBorder", c.Name, "#A1-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ActiveCaption");
+			Assert.IsTrue (c.IsKnownColor, "#A2");
+			Assert.AreEqual ("ActiveCaption", c.Name, "#A2-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "AppWorkspace");
+			Assert.IsTrue (c.IsKnownColor, "#A3");
+			Assert.AreEqual ("AppWorkspace", c.Name, "#A3-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "Background");
+			Assert.IsTrue (c.IsKnownColor, "#A4");
+			Assert.AreEqual ("Desktop", c.Name, "#A1-4");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ButtonFace");
+			Assert.IsTrue (c.IsKnownColor, "#A5");
+			Assert.AreEqual ("Control", c.Name, "#A5-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ButtonHighlight");
+			Assert.IsTrue (c.IsKnownColor, "#A6");
+			Assert.AreEqual ("ControlLightLight", c.Name, "#A6-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ButtonShadow");
+			Assert.IsTrue (c.IsKnownColor, "#A7");
+			Assert.AreEqual ("ControlDark", c.Name, "#A7-1");
+			
+			c = (Color)wcc.ConvertFrom (null, null, "ButtonText");
+			Assert.IsTrue (c.IsKnownColor, "#A8");
+			Assert.AreEqual ("ControlText", c.Name, "#A8-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "CaptionText");
+			Assert.IsTrue (c.IsKnownColor, "#A9");
+			Assert.AreEqual ("ActiveCaptionText", c.Name, "#A9-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "GrayText");
+			Assert.IsTrue (c.IsKnownColor, "#A10");
+			Assert.AreEqual ("GrayText", c.Name, "#A10-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "Highlight");
+			Assert.IsTrue (c.IsKnownColor, "#A11");
+			Assert.AreEqual ("Highlight", c.Name, "#A11-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "HighlightText");
+			Assert.IsTrue (c.IsKnownColor, "#A12");
+			Assert.AreEqual ("HighlightText", c.Name, "#A12-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "InactiveBorder");
+			Assert.IsTrue (c.IsKnownColor, "#A13");
+			Assert.AreEqual ("InactiveBorder", c.Name, "#A13-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "InactiveCaption");
+			Assert.IsTrue (c.IsKnownColor, "#A14");
+			Assert.AreEqual ("InactiveCaption", c.Name, "#A14-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "InactiveCaptionText");
+			Assert.IsTrue (c.IsKnownColor, "#A15");
+			Assert.AreEqual ("InactiveCaptionText", c.Name, "#A15-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "InfoBackground");
+			Assert.IsTrue (c.IsKnownColor, "#A16");
+			Assert.AreEqual ("Info", c.Name, "#A16-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "InfoText");
+			Assert.IsTrue (c.IsKnownColor, "#A17");
+			Assert.AreEqual ("InfoText", c.Name, "#A17-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "Menu");
+			Assert.IsTrue (c.IsKnownColor, "#A18");
+			Assert.AreEqual ("Menu", c.Name, "#A18-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "MenuText");
+			Assert.IsTrue (c.IsKnownColor, "#A19");
+			Assert.AreEqual ("MenuText", c.Name, "#A19-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ScrollBar");
+			Assert.IsTrue (c.IsKnownColor, "#A20");
+			Assert.AreEqual ("ScrollBar", c.Name, "#A20-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ThreeDDarkShadow");
+			Assert.IsTrue (c.IsKnownColor, "#A21");
+			Assert.AreEqual ("ControlDarkDark", c.Name, "#A21-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ThreeDFace");
+			Assert.IsTrue (c.IsKnownColor, "#A22");
+			Assert.AreEqual ("Control", c.Name, "#A22-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ThreeDHighlight");
+			Assert.IsTrue (c.IsKnownColor, "#A23");
+			Assert.AreEqual ("ControlLight", c.Name, "#A23-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "ThreeDLightShadow");
+			Assert.IsTrue (c.IsKnownColor, "#A24");
+			Assert.AreEqual ("ControlLightLight", c.Name, "#A24-1");
+
+			Exception ex = null;
+			try {
+				c = (Color)wcc.ConvertFrom (null, null, "ThreeDShadow");
+			} catch (Exception e) {
+				ex = e;
+			}			
+			Assert.IsNotNull (ex, "#A25");
+
+			c = (Color)wcc.ConvertFrom (null, null, "Window");
+			Assert.IsTrue (c.IsKnownColor, "#A26");
+			Assert.AreEqual ("Window", c.Name, "#A26-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "WindowFrame");
+			Assert.IsTrue (c.IsKnownColor, "#A27");
+			Assert.AreEqual ("WindowFrame", c.Name, "#A27-1");
+
+			c = (Color)wcc.ConvertFrom (null, null, "WindowText");
+			Assert.IsTrue (c.IsKnownColor, "#A28");
+			Assert.AreEqual ("WindowText", c.Name, "#A28-1");
+		}
 	}
 }
