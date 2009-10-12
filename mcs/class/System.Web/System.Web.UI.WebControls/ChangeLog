@@ -1,3 +1,14 @@
+2009-10-12  Marek Habersack  <mhabersack@novell.com>
+
+	* WebColorConverter.cs: when converting from color name, check if
+	the returned color's name is a member of the
+	System.Drawing.KnownColor enumeration to test for error condition,
+	as some colors might be #000000. Preserve the old error check as a
+	fallback only. 
+	Map "captiontext" and "background" color names to
+	"ActiveCaptionText" and "Desktop", respectively, before passing
+	them to Color.FromName (). Fixes bug #546173
+
 2009-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBoundControl.cs: Initialize sets RequiresDataBinding
