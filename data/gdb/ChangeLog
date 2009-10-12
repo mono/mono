@@ -1,3 +1,9 @@
+2009-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Update this to gdb 7.0.
+
+	* mono-gdbinit: Removed, no longer needed.
+
 2009-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py (MonoSupport.run_hook): Set MONO_XDEBUG to 'gdb' to activate

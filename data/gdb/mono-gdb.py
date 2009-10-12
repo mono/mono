@@ -4,15 +4,10 @@
 #
 
 #
-# This is a mono support mode for a python-enabled gdb:
-# http://sourceware.org/gdb/wiki/PythonGdb
+# This is a mono support mode for gdb 7.0 and later
 # Usage:
-# - copy/symlink this file, plus mono-gdbinit to the directory where the mono 
-#   executable lives.
-# - run mono under gdb, or attach to a mono process using gdb
-# - Type 'xdb' in gdb to load/reload the debugging info emitted by the runtime.
-# - The debug info is emitted to a file called xdb.s in the current working directory.
-#   When attaching to a mono process, make sure you are in the same directory.
+# - copy/symlink this file to the directory where the mono executable lives.
+# - run mono under gdb, or attach to a mono process started with --debug=gdb using gdb.
 #
 
 import os
@@ -196,52 +191,8 @@ def register_csharp_printers(obj):
 
 register_csharp_printers (gdb.current_objfile())
 
-class MonoSupport(object):
-
-    def __init__(self):
-        self.s_size = 0
-
-    def run_hook(self):
-        if os.access ("xdb.s", os.F_OK):
-            os.remove ("xdb.s")
-        gdb.execute ("set environment MONO_XDEBUG gdb")
-        
-    def stop_hook(self):
-        # Called when the program is stopped
-        # Need to recompile+reload the xdb.s file if needed
-        # FIXME: Need to detect half-written files created when the child is
-        # interrupted while executing the xdb.s writing code
-        # FIXME: Handle appdomain unload
-        if os.access ("xdb.s", os.F_OK):
-            new_size = os.stat ("xdb.s").st_size
-            if new_size > self.s_size:
-                sofile = "xdb.so"
-                gdb.execute ("shell as -o xdb.o xdb.s && ld -shared -o %s xdb.o" % sofile)
-                # FIXME: This prints messages which couldn't be turned off
-                gdb.execute ("add-symbol-file %s 0" % sofile)
-                self.s_size = new_size
-
-class RunHook (gdb.Command):
-    def __init__ (self):
-        super (RunHook, self).__init__ ("hook-run", gdb.COMMAND_NONE,
-                                        gdb.COMPLETE_COMMAND, pre_hook_of="run")
-
-    def invoke(self, arg, from_tty):
-        mono_support.run_hook ()
+gdb.execute ("set environment MONO_XDEBUG gdb")
 
 print "Mono support loaded."
 
-mono_support = MonoSupport ()
 
-# This depends on the changes in gdb-python.diff to work
-#RunHook ()
-
-# Register our hooks
-# This currently cannot be done from python code
-
-exec_file = gdb.current_objfile ().filename
-# FIXME: Is there a way to detect symbolic links ?
-if os.stat (exec_file).st_size != os.lstat (exec_file).st_size:
-    exec_file = os.readlink (exec_file)
-exec_dir = os.path.dirname (exec_file)
-gdb.execute ("source %s/%s-gdbinit" % (exec_dir, os.path.basename (exec_file)))
