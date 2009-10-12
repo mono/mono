@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			knownColorNames = new Dictionary <string, bool> (StringComparer.Ordinal);
 #else
-			knownColorNames = new Hashtable (StringComparer.Ordinal);
+			knownColorNames = new Hashtable ();
 #endif
 
 			foreach (string name in Enum.GetNames (typeof (KnownColor)))
