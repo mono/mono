@@ -12,7 +12,8 @@ EXTRA_DIST =  	\
 	mono.pc.in mint.pc.in dotnet.pc.in dotnet35.pc.in wcf.pc.in monodoc.pc.in \
 	mono-nunit.pc.in mono-cairo.pc.in mono-options.pc.in cecil.pc.in \
 	mono-lineeditor.pc.in system.web.extensions_1.0.pc.in system.web.extensions.design_1.0.pc.in\
-	dtrace-prelink.sh mono.web.pc.in system.web.mvc.pc.in
+	dtrace-prelink.sh mono.web.pc.in system.web.mvc.pc.in \
+	gdb/mono-gdb.py
 
 pkgconfigdir = $(libdir)/pkgconfig
 
@@ -34,3 +35,6 @@ DISTCLEANFILES= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-
 mono_DATA =  config \
 	     browscap.ini
 
+gdbdir = $(bindir)
+
+gdb_DATA = gdb/mono-gdb.py
