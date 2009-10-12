@@ -1,0 +1,66 @@
+2009-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (MonoSupport.run_hook): Set MONO_XDEBUG to 'gdb' to activate
+	the GDB support mode in the runtime.
+
+2009-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (MonoClassPrinter.to_string): Add a MonoClass* pretty
+	printer.
+
+2009-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (MonoMethodPrinter.to_string): Add a MonoMethod* pretty
+	printer.
+
+2009-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Update to the latest archer api.
+
+2009-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (ObjectPrinter.__init__): Update to latest archer api.
+
+2009-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* test-xdb.py: New file, tester script for xdb.
+
+	* mono-gdb.py (stringify_class_name): Handle classes without a namespace
+	correctly.
+	
+	* mono-gdb.py: Update after the changes to dwarfwriter.c.
+
+2009-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Handle superclasses in the pretty printer.
+
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (StringPrinter.to_string): Fix support for non-ascii characters.
+
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Update for the latest python API on the archer branch.
+
+2009-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Remove the --64 argument to as, it is not needed.
+	
+	* mono-gdb.py (stringify_class_name): Helper function to print base types
+	using their short name. Also add a prototype implementation of registering
+	the hooks from python code instead of needing the mono-gdbinit file.
+
+	* gdb-python.diff: Changes against the gdb archer branch at 
+	http://sourceware.org/gdb/wiki/PythonGdb to fix some problems/add functionality.
+	
+2009-02-03  Geoff Norton  <gnorton@novell.com>
+
+	* mono-gdbinit: Hook into backtrace as hook-stop seems to crash gdb
+	* mono-gdb.py: Find the gdbinit name from the executable name instead of
+	hardcoding mono
+
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py mono-gdbinit: Support files to help debugging mono/mono apps
+	using a python enabled gdb.
+

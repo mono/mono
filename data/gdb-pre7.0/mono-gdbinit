@@ -1,0 +1,20 @@
+# Loaded by mono-gdb.py
+
+# FIXME: According to gdb docs, this is called _before_ anything is printed
+# Got broken by this patch:
+# http://sourceware.org/ml/gdb-patches/2008-09/msg00193.html
+# FIXME: This seems to cause crashes inside gdb
+#define hook-stop
+#	   python mono_support.stop_hook ()
+#end
+define hook-backtrace
+	   python mono_support.stop_hook ()
+end
+
+define hook-run
+	   python mono_support.run_hook ()
+end
+
+define xdb
+	   python mono_support.stop_hook ()
+end
