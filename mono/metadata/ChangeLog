@@ -1,5 +1,17 @@
 2009-10-12  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c, object.h, icall.c: Write barriers do the copying now,
+	as well, so no need for an additional memcpy.
+
+	* sgen-gc.c: Lock when storing remsets.  Do the memory
+	copying/moving in the write barriers.
+
+	* null-gc.c, boehm-gc.c: Write barriers must copy here, too.
+
+	* reflection.c: Added an assert.
+
+2009-10-12  Mark Probst  <mark.probst@gmail.com>
+
 	* threads.c, process.c: A few missing write barriers.
 
 2009-10-12  Joel W. Reed <joelwreed@gmail.com>
