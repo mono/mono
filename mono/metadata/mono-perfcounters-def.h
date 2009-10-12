@@ -119,3 +119,7 @@ PERFCTR_COUNTER(SECURITY_LCHECKS, "# Link Time Checks", "", NumberOfItems32, sec
 PERFCTR_COUNTER(SECURITY_PERCTIME, "% Time in RT checks", "", RawFraction, security_time)
 PERFCTR_COUNTER(SECURITY_SWDEPTH, "Stack Walk Depth", "", NumberOfItems32, security_depth)
 
+PERFCTR_CAT(NETWORK, "Network Interface", "", MultiInstance, NetworkInterface, NETWORK_BYTESRECSEC)
+PERFCTR_COUNTER(NETWORK_BYTESRECSEC, "Bytes Received/sec", "", RateOfCountsPerSecond64, unused)
+PERFCTR_COUNTER(NETWORK_BYTESSENTSEC, "Bytes Sent/sec", "", RateOfCountsPerSecond64, unused)
+PERFCTR_COUNTER(NETWORK_BYTESTOTALSEC, "Bytes Total/sec", "", RateOfCountsPerSecond64, unused)
