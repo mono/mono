@@ -133,12 +133,18 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
-			HttpHandler.CloseServiceChannel ();
+			HttpHandler.UnregisterListener (this);
+		}
+
+		protected override void OnOpen (TimeSpan timeout)
+		{
+			base.OnOpen (timeout);
+			HttpHandler.RegisterListener (this);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			HttpHandler.CloseServiceChannel ();
+			HttpHandler.UnregisterListener (this);
 			base.OnClose (timeout);
 		}
 	}

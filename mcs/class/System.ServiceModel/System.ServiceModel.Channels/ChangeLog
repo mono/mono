@@ -1,5 +1,14 @@
 2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs, AspNetReplyChannel.cs, HttpChannelListener.cs:
+	  significant rewrite to cooperate wcf handler and asp.net handler
+	  to not mix multiple WCF listener within the asp.net handler.
+	  So far it mostly works when 1) there are no ChannelDispatchers
+	  that have an identical listen Uri and 2) MaxConcurrentSessions is
+	  1 (must be explicitly set).
+
+2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CommunicationObject.cs : give better state error description.
 
 2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>

@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 using System.Threading;
@@ -39,18 +40,35 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels {
 
+	internal class WcfListenerInfo
+	{
+		public WcfListenerInfo ()
+		{
+			Pending = new List<HttpContext> ();
+		}
+
+		public IChannelListener Listener { get; set; }
+		public AutoResetEvent ProcessRequestHandle { get; set; }
+		public List<HttpContext> Pending { get; private set; }
+	}
+
+	internal class WcfListenerInfoCollection : KeyedCollection<IChannelListener,WcfListenerInfo>
+	{
+		protected override IChannelListener GetKeyForItem (WcfListenerInfo info)
+		{
+			return info.Listener;
+		}
+	}
+
 	internal class SvcHttpHandler : IHttpHandler
 	{
 		Type type;
 		Type factory_type;
 		string path;
-		Uri request_url;
 		ServiceHostBase host;
-		Queue<HttpContext> pending = new Queue<HttpContext> ();
+		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
+		Dictionary<HttpContext,AutoResetEvent> wcf_wait_handles = new Dictionary<HttpContext,AutoResetEvent> ();
 		int close_state;
-
-		AutoResetEvent process_request_wait = new AutoResetEvent (false);
-		AutoResetEvent listening = new AutoResetEvent (false);
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
 		{
@@ -68,43 +86,63 @@ namespace System.ServiceModel.Channels {
 			get { return host; }
 		}
 
-		public HttpContext WaitForRequest (TimeSpan timeout)
+		public HttpContext WaitForRequest (IChannelListener listener, TimeSpan timeout)
 		{
 			if (close_state > 0)
 				return null;
 			DateTime start = DateTime.Now;
 
-			if (close_state > 0)
+			if (listeners [listener].Pending.Count == 0)
+				listeners [listener].ProcessRequestHandle.WaitOne (timeout, false);
+
+			if (listeners [listener].Pending.Count == 0)
 				return null;
-			if (pending.Count == 0) {
-				if (!process_request_wait.WaitOne (timeout - (DateTime.Now - start), false) || close_state > 0)
-					return null;
-			}
-			HttpContext ctx;
-			lock (pending) {
-				if (pending.Count == 0)
-					return null;
-				ctx = pending.Dequeue ();
-			}
-			if (ctx.AllErrors != null && ctx.AllErrors.Length > 0)
-				return WaitForRequest (timeout - (DateTime.Now - start));
+
+			var ctx = listeners [listener].Pending [0];
+			listeners [listener].Pending.RemoveAt (0);
 			return ctx;
+		}
+
+		IChannelListener FindBestMatchListener (HttpContext ctx)
+		{
+			// Select the best-match listener.
+			IChannelListener best = null;
+			string rel = null;
+			foreach (var li in listeners) {
+				var l = li.Listener;
+				if (l.Uri.Equals (ctx.Request.Url)) {
+					best = l;
+					break;
+				}
+			}
+			// FIXME: the matching must be better-considered.
+			foreach (var li in listeners) {
+				var l = li.Listener;
+				if (!ctx.Request.Url.ToString ().StartsWith (l.Uri.ToString (), StringComparison.Ordinal))
+					continue;
+				if (best == null)
+					best = l;
+			}
+			return best;
 		}
 
 		public void ProcessRequest (HttpContext context)
 		{
-			request_url = context.Request.Url;
 			EnsureServiceHost ();
-			pending.Enqueue (context);
-			process_request_wait.Set ();
 
-			if (close_state == 0)
-				listening.WaitOne ();
+			var l = FindBestMatchListener (context);
+			listeners [l].Pending.Add (context);
+			listeners [l].ProcessRequestHandle.Set ();
+			var wait = new AutoResetEvent (false);
+			wcf_wait_handles [context] = wait;
+			wait.WaitOne ();
 		}
 
-		public void EndRequest (HttpContext context)
+		public void EndRequest (IChannelListener listener, HttpContext context)
 		{
-			listening.Set ();
+			var wait = wcf_wait_handles [context];
+			wcf_wait_handles.Remove (context);
+			wait.Set ();
 		}
 
 		// called from SvcHttpHandlerFactory's remove callback (i.e.
@@ -118,15 +156,16 @@ namespace System.ServiceModel.Channels {
 			host = null;
 		}
 
-		// called from AspNetChannelListener.Close() or .Abort().
-		public void CloseServiceChannel ()
+		public void RegisterListener (IChannelListener listener)
 		{
-			if (close_state > 0)
-				return;
-			close_state = 1;
-			process_request_wait.Set ();
-			listening.Set ();
-			close_state = 2;
+			listeners.Add (new WcfListenerInfo () {
+				Listener = listener,
+				ProcessRequestHandle = new AutoResetEvent (false) });
+		}
+
+		public void UnregisterListener (IChannelListener listener)
+		{
+			listeners.Remove (listener);
 		}
 
 		void EnsureServiceHost ()

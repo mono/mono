@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
 			if (http_context == null)
 				return;
 			try {
-				listener.HttpHandler.EndRequest (http_context);
+				listener.HttpHandler.EndRequest (listener, http_context);
 			} finally {
 				http_context = null;
 			}
@@ -63,7 +63,7 @@ namespace System.ServiceModel.Channels
 			if (http_context == null)
 				return;
 			try {
-				listener.HttpHandler.EndRequest (http_context);
+				listener.HttpHandler.EndRequest (listener, http_context);
 			} finally {
 				http_context = null;
 			}
@@ -76,7 +76,7 @@ namespace System.ServiceModel.Channels
 			if (http_context == null)
 				return;
 			try {
-				listener.HttpHandler.EndRequest (http_context);
+				listener.HttpHandler.EndRequest (listener, http_context);
 			} finally {
 				http_context = null;
 			}
@@ -129,7 +129,7 @@ namespace System.ServiceModel.Channels
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
 			if (http_context == null)
-				http_context = listener.HttpHandler.WaitForRequest (timeout);
+				http_context = listener.HttpHandler.WaitForRequest (listener, timeout);
 			return http_context != null;
 		}
 	}
