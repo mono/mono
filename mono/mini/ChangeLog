@@ -1,3 +1,9 @@
+2009-10-13  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debugger_trampoline_compiled): Add
+	`const guint8 *trampoline' argument; send both the old and the new
+	notification.
+
 2009-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_xdebug_info): Group methods into groups of 10 to
