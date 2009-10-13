@@ -78,6 +78,7 @@ namespace Microsoft.Build.Tasks {
 		List<ITaskItem> tempResolvedFiles;
 		List<PrimaryReference> primaryReferences;
 		Dictionary<string, string> alreadyScannedAssemblyNames;
+		Dictionary<string, string> conflictWarningsCache;
 
 		//FIXME: construct and use a graph of the dependencies, useful across projects
 
@@ -107,6 +108,7 @@ namespace Microsoft.Build.Tasks {
 
 			primaryReferences = new List<PrimaryReference> ();
 			assemblyNameToResolvedRef = new Dictionary<string, ResolvedReference> ();
+			conflictWarningsCache = new Dictionary<string, string> ();
 
 			ResolveAssemblies ();
 			ResolveAssemblyFiles ();
@@ -135,6 +137,7 @@ namespace Microsoft.Build.Tasks {
 			alreadyScannedAssemblyNames.Clear ();
 			primaryReferences.Clear ();
 			assemblyNameToResolvedRef.Clear ();
+			conflictWarningsCache.Clear ();
 			dependency_search_paths = null;
 
 			return true;
@@ -479,11 +482,20 @@ namespace Microsoft.Build.Tasks {
 			assembly_resolver.LogSearchMessage ("Choosing '{0}' as it is a primary reference.",
 					found_ref.AssemblyName.FullName);
 
-			Log.LogWarning ("Found a conflict between : '{0}' and '{1}'. Using '{0}' reference.",
-					found_ref.AssemblyName.FullName,
-					key_aname.FullName);
+			LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
 
 			return true;
+		}
+
+		// conflict b/w @main and @conflicting, picking @main
+		void LogConflictWarning (string main, string conflicting)
+		{
+			string key = main + ":" + conflicting;
+			if (!conflictWarningsCache.ContainsKey (key)) {
+				Log.LogWarning ("Found a conflict between : '{0}' and '{1}'. Using '{0}' reference.",
+						main, conflicting);
+				conflictWarningsCache [key] = key;
+			}
 		}
 
 		bool IsCopyLocal (ITaskItem item)
