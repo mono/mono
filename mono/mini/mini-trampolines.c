@@ -292,7 +292,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 	addr = mono_compile_method (m);
 	g_assert (addr);
 
-	mono_debugger_trampoline_compiled (m, addr);
+	mono_debugger_trampoline_compiled (code, m, addr);
 
 	if (generic_virtual_method_inst) {
 		vtable_slot = mono_arch_get_vcall_slot_addr (code, (gpointer*)regs);
@@ -406,7 +406,7 @@ mono_generic_virtual_remoting_trampoline (gssize *regs, guint8 *code, MonoMethod
 	addr = mono_compile_method (m);
 	g_assert (addr);
 
-	mono_debugger_trampoline_compiled (m, addr);
+	mono_debugger_trampoline_compiled (NULL, m, addr);
 
 	return addr;
 }
@@ -623,7 +623,7 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, gpointer *tramp_data, guin
 			delegate->method_ptr = mono_compile_method (method);
 			if (delegate->method_code)
 				*delegate->method_code = delegate->method_ptr;
-			mono_debugger_trampoline_compiled (method, delegate->method_ptr);
+			mono_debugger_trampoline_compiled (NULL, method, delegate->method_ptr);
 		}
 	}
 
@@ -641,7 +641,7 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, gpointer *tramp_data, guin
 	m = mono_marshal_get_delegate_invoke (invoke, delegate);
 	code = mono_compile_method (m);
 	delegate->invoke_impl = mono_get_addr_from_ftnptr (code);
-	mono_debugger_trampoline_compiled (m, delegate->invoke_impl);
+	mono_debugger_trampoline_compiled (NULL, m, delegate->invoke_impl);
 
 #ifdef __mono_ppc64__
 	// FIXME:
