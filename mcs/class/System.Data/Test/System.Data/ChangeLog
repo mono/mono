@@ -1,3 +1,7 @@
+2009-10-13  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DataSetTest2.cs (Bug537229_BinFormatSerializer_Test): Added new.
+	
 2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DataSetTest2.cs: Don't run test for Bug#536194 on 1.x
