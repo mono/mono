@@ -1,3 +1,8 @@
+2009-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Group methods into groups of 10 to
+	avoid registering 1 symbol file per method with gdb.
+
 2009-10-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* aot-compiler.c : Fix the MSVC builds
