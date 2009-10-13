@@ -189,7 +189,18 @@ def register_csharp_printers(obj):
 
     obj.pretty_printers.append (lookup_pretty_printer)
 
+# This command will flush the debugging info collected by the runtime
+class XdbCommand (gdb.Command):
+    def __init__ (self):
+        super (XdbCommand, self).__init__ ("xdb", gdb.COMMAND_NONE,
+                                           gdb.COMPLETE_COMMAND)
+
+    def invoke(self, arg, from_tty):
+        gdb.execute ("call mono_xdebug_flush ()")
+
 register_csharp_printers (gdb.current_objfile())
+
+XdbCommand ()
 
 gdb.execute ("set environment MONO_XDEBUG gdb")
 

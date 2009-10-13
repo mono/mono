@@ -1,3 +1,7 @@
+2009-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Add an 'xdb' command to flush the debugging info.
+
 2009-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py: Update this to gdb 7.0.
