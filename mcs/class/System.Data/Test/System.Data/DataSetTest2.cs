@@ -3,8 +3,10 @@
 //   Erez Lotan       <erezl@mainsoft.com>
 //   Oren Gurfinkel   <oreng@mainsoft.com>
 //   Ofer Borstein
+//   Veerapuram Varadhan  <vvaradhan@novell.com>
 //
 // Copyright (c) 2004 Mainsoft Co.
+// Copyright (c) 2009 Novell Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +35,8 @@ using System.IO;
 using System.Data;
 using MonoTests.System.Data.Utils;
 using System.Xml;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests_System.Data
 {
@@ -3580,5 +3584,67 @@ namespace MonoTests_System.Data
 			}
 		}
 #endif
+		private void AssertDataTableValues (DataTable dt)
+		{
+			Assert.AreEqual ("data1", dt.Rows[0]["_ID"], "1");
+			Assert.AreEqual ("data2", dt.Rows[0]["#ID"], "2");
+			Assert.AreEqual ("data3", dt.Rows[0]["%ID"], "2");
+			Assert.AreEqual ("data4", dt.Rows[0]["$ID"], "2");
+			Assert.AreEqual ("data5", dt.Rows[0][":ID"], "2");
+			Assert.AreEqual ("data6", dt.Rows[0][".ID"], "2");
+			Assert.AreEqual ("data7", dt.Rows[0]["ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["*ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["+ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["-ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["~ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["@ID"], "2");
+			Assert.AreEqual ("data8", dt.Rows[0]["&ID"], "2");
+
+		}
+
+		[Test]	
+        	public void Bug537229_BinFormatSerializer_Test ()
+        	{
+			DataSet ds = new DataSet ();
+			DataTable dt = new DataTable ();
+                        ds.Tables.Add (dt);
+                        dt.Columns.Add ("_ID", typeof(String));
+                        dt.Columns.Add ("#ID", typeof(String));
+                        dt.Columns.Add ("%ID", typeof(String));
+                        dt.Columns.Add ("$ID", typeof(String));
+                        dt.Columns.Add (":ID", typeof(String));
+                        dt.Columns.Add (".ID", typeof(String));
+                        dt.Columns.Add ("ID", typeof(String));
+                        dt.Columns.Add ("*ID", typeof(String));
+                        dt.Columns.Add ("+ID", typeof(String));
+                        dt.Columns.Add ("-ID", typeof(String));
+                        dt.Columns.Add ("~ID", typeof(String));
+                        dt.Columns.Add ("@ID", typeof(String));
+                        dt.Columns.Add ("&ID", typeof(String));
+                        DataRow row = dt.NewRow ();
+                        row["#ID"] = "data2";
+                        row["%ID"] = "data3";
+                        row["$ID"] = "data4";
+                        row["ID"] = "data7";
+                        row[":ID"] = "data5";
+                        row[".ID"] = "data6";
+                        row["_ID"] = "data1";
+                        row["*ID"] = "data8";
+                        row["+ID"] = "data8";
+                        row["-ID"] = "data8";
+                        row["~ID"] = "data8";
+                        row["@ID"] = "data8";
+                        row["&ID"] = "data8";
+                        dt.Rows.Add (row);
+
+			AssertDataTableValues (dt);
+
+                        MemoryStream mstm=new MemoryStream();
+                        BinaryFormatter bfmt=new BinaryFormatter();
+                        bfmt.Serialize(mstm,dt);
+                        MemoryStream mstm2=new MemoryStream(mstm.ToArray());
+                        DataTable vdt=(DataTable)bfmt.Deserialize(mstm2);
+			AssertDataTableValues (vdt);
+		}
 	}
 }
