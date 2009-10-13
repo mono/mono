@@ -1,3 +1,9 @@
+2009-10-13  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #537229
+	* XmlDiffLoader (LoadColumnAttributes/Children): Decode column names in 
+	case if they are encoded.
+	
 2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes part of #427769 - Patch by John Lenz <jlenz2@math.uiuc.edu>
