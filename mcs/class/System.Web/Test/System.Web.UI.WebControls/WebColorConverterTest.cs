@@ -104,7 +104,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(HttpException))]
+		[ExpectedException(typeof(Exception))]
 		public void MalformatTest1 () 
 		{
 			WebColorConverter	conv;
@@ -166,7 +166,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[ExpectedException(typeof(HttpException))]
+		[ExpectedException(typeof(Exception))]
 		public void MalformatTest7 () 
 		{
 			WebColorConverter	conv;
@@ -181,7 +181,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebColorConverter wcc = new WebColorConverter ();
 			Color c;
 
-			c = (Color)wcc.ConvertFrom (null, null, "ActiveBorder");
+			c = (Color)wcc.ConvertFrom (null, null, " ActiveBorder ");
 			Assert.IsTrue (c.IsKnownColor, "#A1");
 			Assert.AreEqual ("ActiveBorder", c.Name, "#A1-1");
 
@@ -297,5 +297,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (c.IsKnownColor, "#A28");
 			Assert.AreEqual ("WindowText", c.Name, "#A28-1");
 		}
+		
+		[Test]
+		public void RoundTrip ()
+		{
+			WebColorConverter wcc = new WebColorConverter ();
+			
+			Color c = (Color) wcc.ConvertFrom(null, null, " captiontext ");
+			Assert.AreEqual ("ActiveCaptionText", wcc.ConvertTo (null, null, c, typeof (string)), "#1");
+		}		
 	}
 }
