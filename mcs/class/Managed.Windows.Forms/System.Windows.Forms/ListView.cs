@@ -1153,6 +1153,29 @@ namespace System.Windows.Forms
 					return 0;
 				
 				Size item_size = ItemSize;
+#if NET_2_0
+				// In virtual mode we always have fixed positions, and we can infer the positon easily
+				if (virtual_mode) {
+					int first = 0;
+					switch (view) {
+						case View.Details:
+							first = v_marker / item_size.Height;
+							break;
+						case View.LargeIcon:
+						case View.SmallIcon:
+							first = (v_marker / (item_size.Height + y_spacing)) * cols;
+							break;
+						case View.List:
+							first = (h_marker / (item_size.Width * x_spacing)) * rows;
+							break;
+					}
+
+					if (first >= items.Count)
+						first = items.Count;
+
+					return first;
+				}
+#endif
 				for (int i = 0; i < items.Count; i++) {
 					Rectangle item_rect = new Rectangle (GetItemLocation (i), item_size);
 					if (item_rect.Right >= 0 && item_rect.Bottom >= 0)
@@ -2256,6 +2279,11 @@ namespace System.Windows.Forms
 				return result;
 			}
 
+#if NET_2_0
+			if (virtual_mode)
+				return GetFixedAdjustedIndex (key);
+#endif
+
 			ItemMatrixLocation item_matrix_location = items_matrix_location [FocusedItem.DisplayIndex];
 			int row = item_matrix_location.Row;
 			int col = item_matrix_location.Col;
@@ -2308,6 +2336,49 @@ namespace System.Windows.Forms
 
 			return items [adjusted_index].DisplayIndex;
 		}
+
+#if NET_2_0
+		// Used for virtual mode, where items *cannot* be re-arranged
+		int GetFixedAdjustedIndex (Keys key)
+		{
+			int result;
+
+			switch (key) {
+				case Keys.Left:
+					if (view == View.List)
+						result = focused_item_index - rows;
+					else
+						result = focused_item_index - 1;
+					break;
+				case Keys.Right:
+					if (view == View.List)
+						result = focused_item_index + rows;
+					else
+						result = focused_item_index + 1;
+					break;
+				case Keys.Up:
+					if (view != View.List)
+						result = focused_item_index - cols;
+					else
+						result = focused_item_index - 1;
+					break;
+				case Keys.Down:
+					if (view != View.List)
+						result = focused_item_index + cols;
+					else
+						result = focused_item_index + 1;
+					break;
+				default:
+					return -1;
+
+			}
+
+			if (result < 0 || result >= items.Count)
+				result = focused_item_index;
+
+			return result;
+		}
+#endif
 
 		ListViewItem selection_start;
 

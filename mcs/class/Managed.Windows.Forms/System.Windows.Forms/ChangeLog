@@ -1,3 +1,13 @@
+2009-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: For virtual mode, when navigating the items using keyboard,
+	don't use the matrix of positions, and instead calculate the positions
+	based on the number of cols and rows, taking advantage of the fixed
+	positions of items. Use the same idea to implement FirstVisibleIndex,
+	so we avoid iterating over all the items. Patch by Stephen Robinson
+	mono at esar.org.uk.
+	Fixes part of #467418.
+
 2009-10-12  Dick Porter  <dporter@codicesoftware.com>
 
 	* Splitter.cs: Adjust offsets when more than one splitter is
