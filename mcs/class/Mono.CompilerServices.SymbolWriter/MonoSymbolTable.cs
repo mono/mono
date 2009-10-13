@@ -336,7 +336,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public override string ToString ()
 		{
 			return String.Format ("[LocalVariable {0}:{1}:{2}]",
-					      Name, Index, BlockIndex);
+					      Name, Index, BlockIndex - 1);
 		}
 	}
 
