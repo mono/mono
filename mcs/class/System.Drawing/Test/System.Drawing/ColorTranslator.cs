@@ -76,6 +76,9 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFFFFF").ToArgb (), "#FFFFFF");
 			Assert.AreEqual (305419896, ColorTranslator.FromHtml ("#12345678").ToArgb (), "#12345678");
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFFFFFFF").ToArgb (), "#FFFFFFFF");
+			
+			Assert.AreEqual (Color.White, ColorTranslator.FromHtml ("#FFFFFF"), "used to resolve to some KnownColor");
+			Assert.AreEqual (Color.White, ColorTranslator.FromHtml ("0xFFFFFF"), "used to resolve to some KnownColor");
 		}
 
 		[Test]
