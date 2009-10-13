@@ -1,3 +1,9 @@
+2009-10-13  Bill Holmes  <billholmes54@gmail.com>
+
+	* aot-compiler.c : Fix the MSVC builds
+
+	Code is contributed under MIT/X11 license.
+
 2009-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_trampoline_xdebug_info): Implement this for the
