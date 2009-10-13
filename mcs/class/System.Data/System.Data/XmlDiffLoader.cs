@@ -238,7 +238,7 @@ namespace System.Data {
 				case XmlSchema.Namespace:
 					continue;
 				}
-				DataColumn c = Table.Columns [reader.LocalName];
+				DataColumn c = Table.Columns [XmlHelper.Decode (reader.LocalName)];
 				if (c == null ||
 					c.ColumnMapping != MappingType.Attribute)					continue;
 				if (c.Namespace == null && reader.NamespaceURI == String.Empty ||
@@ -268,9 +268,9 @@ namespace System.Data {
 			{
 				if (reader.NodeType != XmlNodeType.Element) { reader.Read (); continue; }
 				
-				if (Table.Columns.Contains (reader.LocalName)) 
+				string colName = XmlHelper.Decode (reader.LocalName);
+				if (Table.Columns.Contains (colName)) 
 				{
-					string colName = reader.LocalName;
 					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadString ());
 					
 					if (loadType == DataRowVersion.Current) Row [colName] = data;
