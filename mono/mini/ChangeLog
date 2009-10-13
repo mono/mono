@@ -1,31 +1,36 @@
-2009-10-13  Zoltan Varga  <vargaz@gmail.com>
+2009-10-13  Martin Baulig  <martin@ximian.com>
 
-	* aot-compiler.c (mono_save_xdebug_info): Group methods into groups of 10 to
-	avoid registering 1 symbol file per method with gdb.
+	* debug-mini.c (mono_debugger_trampoline_compiled): Add
+	`const guint8 *trampoline' argument; send both the old and the new
+	notification.
 
-2009-10-13  Bill Holmes  <billholmes54@gmail.com>
+2009-09-30  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-compiler.c : Fix the MSVC builds
+	* aot-compiler.c (add_wrappers): Add a runtime invoke wrapper which is used by
+	mono_runtime_capture_context () without calling mono_runtime_invoke ().
+	(can_marshal_struct): Skip structures with auto layout.
 
-	Code is contributed under MIT/X11 license.
+	* tramp-arm.c (GEN_TRAMP_SIZE): Increase this by 4.
 
-2009-10-13  Mark Probst  <mark.probst@gmail.com>
+2009-10-02  Zoltan Varga  <vargaz@gmail.com>
 
-	* method-to-ir.c: Use the managed array allocator method if
-	available.
+	* mini-sparc.c (mono_arch_emit_setret): Emit long return values using OP_LMOVE.
+	(mono_arch_create_vars): Instead of allocating a stack slot by hand, allocate
+	a variable to hold the stack slot used by the int<->float conversion opcodes.
 
-2009-10-11  Zoltan Varga  <vargaz@gmail.com>
+	* mini-sparc.c (mono_arch_build_imt_thunk): Implement support for fail_tramp.
 
-	* aot-compiler.c (mono_save_xdebug_info): Emit a symbol for the method which
-	can be used to set breakpoints in gdb.
+2009-10-04  Zoltan Varga  <vargaz@gmail.com>
 
-	* image-writer.c (bin_writer_emit_writeout): Add support for setting the text
-	segment to an absolute address.
+	* aot-compiler.c (add_generic_class): Only add GetGenericValueImpl wrappers
+	when using full-aot.
 
-2009-10-10  Zoltan Varga  <vargaz@gmail.com>
+2009-10-06  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-compiler.c (mono_save_trampoline_xdebug_info): Implement this for the
-	gdb mode.
+	* aot-compiler.c (add_generic_class): Add an instance of GenericComparer<T> for
+	each instance of Comparer<T>.
+
+	* generics.cs: Add a new test.
 
 2009-10-09  Zoltan Varga  <vargaz@gmail.com>
 
@@ -41,33 +46,34 @@
 	new JIT debugging interface in GDB 7.0. It can be turned on by setting
 	MONO_XDEBUG to 'gdb'.
 
-2009-10-06  Zoltan Varga  <vargaz@gmail.com>
+2009-10-10  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-compiler.c (add_generic_class): Add an instance of GenericComparer<T> for
-	each instance of Comparer<T>.
+	* aot-compiler.c (mono_save_trampoline_xdebug_info): Implement this for the
+	gdb mode.
 
-	* generics.cs: Add a new test.
+2009-10-11  Zoltan Varga  <vargaz@gmail.com>
 
-2009-10-04  Zoltan Varga  <vargaz@gmail.com>
+	* aot-compiler.c (mono_save_xdebug_info): Emit a symbol for the method which
+	can be used to set breakpoints in gdb.
 
-	* aot-compiler.c (add_generic_class): Only add GetGenericValueImpl wrappers
-	when using full-aot.
+	* image-writer.c (bin_writer_emit_writeout): Add support for setting the text
+	segment to an absolute address.
 
-2009-10-02  Zoltan Varga  <vargaz@gmail.com>
+2009-10-13  Mark Probst  <mark.probst@gmail.com>
 
-	* mini-sparc.c (mono_arch_emit_setret): Emit long return values using OP_LMOVE.
-	(mono_arch_create_vars): Instead of allocating a stack slot by hand, allocate
-	a variable to hold the stack slot used by the int<->float conversion opcodes.
+	* method-to-ir.c: Use the managed array allocator method if
+	available.
 
-	* mini-sparc.c (mono_arch_build_imt_thunk): Implement support for fail_tramp.
+2009-10-13  Bill Holmes  <billholmes54@gmail.com>
 
-2009-09-30  Zoltan Varga  <vargaz@gmail.com>
+	* aot-compiler.c : Fix the MSVC builds
 
-	* aot-compiler.c (add_wrappers): Add a runtime invoke wrapper which is used by
-	mono_runtime_capture_context () without calling mono_runtime_invoke ().
-	(can_marshal_struct): Skip structures with auto layout.
+	Code is contributed under MIT/X11 license.
 
-	* tramp-arm.c (GEN_TRAMP_SIZE): Increase this by 4.
+2009-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Group methods into groups of 10 to
+	avoid registering 1 symbol file per method with gdb.
 
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
