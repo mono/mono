@@ -1,3 +1,8 @@
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* TaskLoggingHelper.cs:
+	* ToolTask.cs: Fix warnings.
+
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
 	* TaskLoggingHelper.cs: Use the buildEngine.ProjectFileOfTaskNode

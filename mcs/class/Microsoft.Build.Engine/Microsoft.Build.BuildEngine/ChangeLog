@@ -1,3 +1,11 @@
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* DirectoryScanner.cs:
+	* ExpressionCollection.cs:
+	* GroupingCollection.cs:
+	* Project.cs:
+	* Target.cs: Fix warnings.
+
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
 	* Target.cs (TargetFile): New. Gives the name of the file

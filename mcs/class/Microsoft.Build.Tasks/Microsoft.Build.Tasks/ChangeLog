@@ -1,5 +1,9 @@
 2009-10-13  Ankit Jain  <jankit@novell.com>
 
+	* ResolveAssemblyReference.cs: Fix warnings.
+
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
 	* ResolveAssemblyReference.cs: Log only unique conflict warnings.
 
 2009-10-12  Ankit Jain  <jankit@novell.com>

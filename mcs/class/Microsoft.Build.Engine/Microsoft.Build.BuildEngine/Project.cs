@@ -99,6 +99,7 @@ namespace Microsoft.Build.BuildEngine {
 			fullFileName = String.Empty;
 			timeOfLastDirty = DateTime.Now;
 			current_settings = BuildSettings.None;
+			encoding = null;
 
 			builtTargetKeys = new List<string> ();
 			initialTargets = new List<string> ();

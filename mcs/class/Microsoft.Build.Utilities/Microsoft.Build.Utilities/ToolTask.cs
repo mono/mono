@@ -48,7 +48,6 @@ namespace Microsoft.Build.Utilities
 		int			exitCode;
 		int			timeout;
 		string			toolPath;
-		Process			process;
 		Encoding		responseFileEncoding;
 		MessageImportance	standardErrorLoggingImportance;
 		MessageImportance	standardOutputLoggingImportance;
@@ -77,6 +76,7 @@ namespace Microsoft.Build.Utilities
 			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
+			this.environmentOverride = new StringDictionary ();
 		}
 
 		static ToolTask ()

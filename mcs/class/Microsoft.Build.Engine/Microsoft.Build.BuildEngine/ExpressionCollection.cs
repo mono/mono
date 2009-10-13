@@ -155,8 +155,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		ITaskItem ConvertToITaskItem (Project project, ExpressionOptions options)
 		{
-			ITaskItem item;
-			
 			if (objects == null)
 				throw new Exception ("Cannot cast empty expression to ITaskItem.");
 

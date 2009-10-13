@@ -130,7 +130,6 @@ namespace Microsoft.Build.BuildEngine {
 			// properties. So, a different set could allow a target
 			// to run again
 			built_targets_key = project.GetKeyForTarget (Name);
-			ITaskItem[] outputs;
 			if (project.ParentEngine.BuiltTargetsOutputByName.ContainsKey (built_targets_key)) {
 				LogTargetSkipped ();
 				return true;

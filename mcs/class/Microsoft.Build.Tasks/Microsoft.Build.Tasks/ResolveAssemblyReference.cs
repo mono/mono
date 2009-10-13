@@ -498,20 +498,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		bool IsCopyLocal (ITaskItem item)
-		{
-			return Boolean.Parse (item.GetMetadata ("CopyLocal"));
-		}
-
-		bool IsFromTargetFramework (string filename)
-		{
-			foreach (string fpath in targetFrameworkDirectories)
-				if (filename.StartsWith (fpath))
-					return true;
-
-			return false;
-		}
-
 		bool IsFromGacOrTargetFramework (ResolvedReference rr)
 		{
 			return rr.FoundInSearchPath == SearchPath.Gac ||
