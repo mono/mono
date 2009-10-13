@@ -1,3 +1,8 @@
+2009-10-13  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Use the managed array allocator method if
+	available.
+
 2009-10-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_xdebug_info): Emit a symbol for the method which

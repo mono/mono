@@ -1,5 +1,17 @@
 2009-10-12  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c, object-internals.h: New function for computing the
+	size of an array, factored out of mono_array_new_full().  Use
+	SGen's functions for allocating arrays and vectors.
+
+	* sgen-gc.c, gc-internal.h: Special functions for allocating
+	arrays and vectors without race conditions.  A managed array
+	allocator method.
+
+	* boehm-gc.c, null-gc.c: Don't provide a managed array allocator.
+
+2009-10-12  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c, object.h, icall.c: Write barriers do the copying now,
 	as well, so no need for an additional memcpy.
 
