@@ -1,3 +1,7 @@
+2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : give better state error description.
+
 2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CommunicationObject.cs : OnOpening() and OnOpened() require calls

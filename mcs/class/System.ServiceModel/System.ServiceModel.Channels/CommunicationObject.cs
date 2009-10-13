@@ -290,7 +290,7 @@ namespace System.ServiceModel.Channels
 				throw new CommunicationObjectFaultedException ();
 			case CommunicationState.Opening:
 			case CommunicationState.Opened:
-				throw new InvalidOperationException (String.Format ("The communication object {0} is not at created state.", GetType ()));
+				throw new InvalidOperationException (String.Format ("The communication object {0} is not at created state but at {1} state.", GetType (), State));
 			}
 		}
 
