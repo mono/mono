@@ -1,3 +1,9 @@
+2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: TopItem setter should set the value as the top, not
+	only ensuring its visibility.
+	Fixes part of #543773.
+
 2009-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: For virtual mode, when navigating the items using keyboard,

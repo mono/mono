@@ -1044,7 +1044,8 @@ namespace System.Windows.Forms
 				if (value == null || value.ListView != this)
 					return;
 
-				EnsureVisible (value.Index);
+				// Take advantage this property is only valid for Details view.
+				SetScrollValue (v_scroll, item_size.Height * value.Index);
 			}
 #endif
 		}
@@ -1375,23 +1376,28 @@ namespace System.Windows.Forms
 			text_size.Height += 2;
 		}
 
-		private void Scroll (ScrollBar scrollbar, int delta)
+		private void SetScrollValue (ScrollBar scrollbar, int val)
 		{
-			if (delta == 0 || !scrollbar.Visible)
-				return;
-
 			int max;
 			if (scrollbar == h_scroll)
 				max = h_scroll.Maximum - item_control.Width;
 			else
 				max = v_scroll.Maximum - item_control.Height;
 
-			int val = scrollbar.Value + delta;
 			if (val > max)
 				val = max;
 			else if (val < scrollbar.Minimum)
 				val = scrollbar.Minimum;
+
 			scrollbar.Value = val;
+		}
+
+		private void Scroll (ScrollBar scrollbar, int delta)
+		{
+			if (delta == 0 || !scrollbar.Visible)
+				return;
+
+			SetScrollValue (scrollbar, scrollbar.Value + delta);
 		}
 
 		private void CalculateScrollBars ()
