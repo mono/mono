@@ -10,9 +10,11 @@
 
 using System;
 using System.Collections;
+using System.Reflection.Emit;
 
 #if NET_4_0
 using System.Dynamic;
+using SLE = System.Linq.Expressions;
 #endif
 
 namespace Mono.CSharp
@@ -41,7 +43,7 @@ namespace Mono.CSharp
 	//
 	// Expression created from runtime dynamic object value
 	//
-	public class RuntimeValueExpression : Expression, IAssignMethod
+	public class RuntimeValueExpression : Expression, IDynamicAssign
 	{
 #if !NET_4_0
 		public class DynamicMetaObject { public Type RuntimeType; }
@@ -49,13 +51,9 @@ namespace Mono.CSharp
 
 		readonly DynamicMetaObject obj;
 
-		// When strongly typed expression is required
-		readonly bool typed;
-
-		public RuntimeValueExpression (DynamicMetaObject obj, bool typed)
+		public RuntimeValueExpression (DynamicMetaObject obj)
 		{
 			this.obj = obj;
-			this.typed = typed;
 			this.type = obj.RuntimeType;
 			this.eclass = ExprClass.Variable;
 		}
@@ -95,12 +93,14 @@ namespace Mono.CSharp
 		#endregion
 
 #if NET_4_0
-		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
-			if (typed && obj.Expression.Type != type)
-				return System.Linq.Expressions.Expression.Convert (obj.Expression, type);
-
 			return obj.Expression;
+		}
+
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Convert (obj.Expression, type);
 		}
 #endif
 
@@ -112,6 +112,17 @@ namespace Mono.CSharp
 	interface IDynamicBinder
 	{
 		Expression CreateCallSiteBinder (ResolveContext ec, Arguments args);
+	}
+
+	//
+	// Extends standard assignment interface for expressions
+	// supported by dynamic resolver
+	//
+	interface IDynamicAssign : IAssignMethod
+	{
+#if NET_4_0
+		SLE.Expression MakeAssignExpression (BuilderContext ctx);
+#endif
 	}
 
 	class DynamicExpressionStatement : ExpressionStatement
@@ -203,18 +214,21 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitCall (ec, false);
+			EmitCall (ec);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			EmitCall (ec, true);
+			// All C# created payloads require to have object convertible
+			// return type even if we know it won't be used
+			EmitCall (ec);
+			ec.ig.Emit (OpCodes.Pop);
 		}
 
-		void EmitCall (EmitContext ec, bool isStatement)
+		void EmitCall (EmitContext ec)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, isStatement, dyn_args_count);
+			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, dyn_args_count);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
@@ -257,9 +271,9 @@ namespace Mono.CSharp
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "Microsoft", loc), "CSharp", loc), "RuntimeBinder", loc);
 		}
 
-		TypeExpr CreateSiteType (CompilerContext ctx, bool isStatement, int dyn_args_count)
+		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count)
 		{
-			int default_args = isStatement ? 1 : 2;
+			const int default_args = 2;
 
 			bool has_ref_out_argument = false;
 			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
@@ -280,20 +294,15 @@ namespace Mono.CSharp
 
 			TypeExpr del_type = null;
 			if (!has_ref_out_argument) {
-				string d_name = isStatement ? "Action`" : "Func`";
-
-				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
+				Type t = TypeManager.CoreLookupType (ctx, "System", "Func`" + (dyn_args_count + default_args), Kind.Delegate, false);
 				if (t != null) {
-					if (!isStatement)
-						targs[targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
-
+					targs[targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
 					del_type = new GenericTypeExpr (t, new TypeArguments (targs), loc);
 				}
 			}
 
 			// No appropriate predefined delegate found
 			if (del_type == null) {
-				Type rt = isStatement ? TypeManager.void_type : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
@@ -301,7 +310,7 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
 				TypeContainer parent = CreateSiteContainer ();
-				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (rt, loc),
+				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (TypeManager.TypeToReflectionType (type), loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + container_counter++.ToString ("X")),
 					new ParametersCompiled (p), null);
@@ -424,7 +433,10 @@ namespace Mono.CSharp
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			EmitStatement (ec);
+			if (leave_copy)
+				Emit (ec);
+			else
+				EmitStatement (ec);
 		}
 
 		#endregion
@@ -531,7 +543,10 @@ namespace Mono.CSharp
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			EmitStatement (ec);
+			if (leave_copy)
+				Emit (ec);
+			else
+				EmitStatement (ec);
 		}
 
 		#endregion

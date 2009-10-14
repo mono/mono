@@ -18,6 +18,7 @@ namespace Mono.CSharp {
 	using System.Text;
 
 #if NET_4_0
+	using System.Linq;
 	using SLE = System.Linq.Expressions;
 #endif
 
@@ -1021,24 +1022,9 @@ namespace Mono.CSharp {
 #if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			if (method != null)
-				return method.MakeExpression (ctx);
-
-			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
-			var one = SLE.Expression.Constant (1);
-			var left = expr.MakeExpression (ctx);
-
-			SLE.Expression binary;
-			if (IsDecrement) {
-				binary = is_checked ? SLE.Expression.SubtractChecked (left, one) : SLE.Expression.Subtract (left, one);
-			} else {
-				binary = is_checked ? SLE.Expression.AddChecked (left, one) : SLE.Expression.Add (left, one);
-			}
-
 			var target = ((RuntimeValueExpression) expr).MetaObject.Expression;
-			binary = SLE.Expression.Convert (binary, target.Type);
-
-			return SLE.Expression.Assign (target, binary);
+			var source = SLE.Expression.Convert (operation.MakeExpression (ctx), target.Type);
+			return SLE.Expression.Assign (target, source);
 		}
 #endif
 
@@ -1064,8 +1050,12 @@ namespace Mono.CSharp {
 
 			type = expr.Type;
 
-			// Use itself at the top of the stack
-			operation = new EmptyExpression (type);
+			if (expr is RuntimeValueExpression) {
+				operation = expr;
+			} else {
+				// Use itself at the top of the stack
+				operation = new EmptyExpression (type);
+			}
 
 			//
 			// 1. Check predefined types
@@ -7963,7 +7953,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements array access 
 	/// </summary>
-	public class ArrayAccess : Expression, IAssignMethod, IMemoryLocation {
+	public class ArrayAccess : Expression, IDynamicAssign, IMemoryLocation {
 		//
 		// Points to our "data" repository
 		//
@@ -8313,6 +8303,22 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if NET_4_0
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.ArrayAccess (
+				ea.Expr.MakeExpression (ctx),
+				Arguments.MakeExpression (ea.Arguments, ctx));
+		}
+
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.ArrayIndex (
+				ea.Expr.MakeExpression (ctx),
+				Arguments.MakeExpression (ea.Arguments, ctx));
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
@@ -8323,7 +8329,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Expressions that represent an indexer call.
 	/// </summary>
-	public class IndexerAccess : Expression, IAssignMethod
+	public class IndexerAccess : Expression, IDynamicAssign
 	{
 		class IndexerMethodGroupExpr : MethodGroupExpr
 		{
@@ -8604,6 +8610,11 @@ namespace Mono.CSharp {
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
+		}
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
@@ -8663,15 +8674,28 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public override void Emit (EmitContext ec)
-		{
-			Emit (ec, false);
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpSignature (get != null ? get : set, false);
 		}
+
+#if NET_4_0
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		{
+			var value = new[] { set_expr.MakeExpression (ctx) };
+			var args = Arguments.MakeExpression (arguments, ctx).Concat (value);
+
+			return SLE.Expression.Block (
+					SLE.Expression.Call (instance_expr.MakeExpression (ctx), set, args),
+					value [0]);
+		}
+
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			var args = Arguments.MakeExpression (arguments, ctx);
+			return SLE.Expression.Call (instance_expr.MakeExpression (ctx), get, args);
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

@@ -23,6 +23,7 @@ namespace Mono.CSharp
 	{
 		public enum AType : byte
 		{
+			None = 0,
 			Ref = 1,			// ref modifier used
 			Out = 2,			// out modifier used
 			Default = 3,		// argument created from default parameter value

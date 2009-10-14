@@ -377,7 +377,22 @@ namespace Mono.CSharp {
 #if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			var target_object = target.MakeExpression (ctx);
+			var tassign = target as IDynamicAssign;
+			if (tassign == null)
+				throw new InternalErrorException (target.GetType () + " does not support dynamic assignment");
+
+			var target_object = tassign.MakeAssignExpression (ctx);
+
+			//
+			// Some hacking is needed as DLR does not support void type and requires
+			// always have object convertible return type to support caching and chaining
+			//
+			// We do this by introducing an explicit block which returns RHS value when
+			// available or null
+			//
+			if (target_object.NodeType == System.Linq.Expressions.ExpressionType.Block)
+				return target_object;
+
 			var source_object = System.Linq.Expressions.Expression.Convert (source.MakeExpression (ctx), target_object.Type);
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}

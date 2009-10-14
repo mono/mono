@@ -4727,7 +4727,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariableReference {
+	public class FieldExpr : MemberExpr, IDynamicAssign, IMemoryLocation, IVariableReference {
 		public FieldInfo FieldInfo;
 		readonly Type constructed_generic_type;
 		VariableInfo variable_info;
@@ -5239,6 +5239,11 @@ namespace Mono.CSharp {
 		}
 
 #if NET_4_0
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		{
+			return MakeExpression (ctx);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Field (InstanceExpression.MakeExpression (ctx), FieldInfo);
@@ -5260,7 +5265,8 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : MemberExpr, IAssignMethod {
+	public class PropertyExpr : MemberExpr, IDynamicAssign
+	{
 		public readonly PropertyInfo PropertyInfo;
 		MethodInfo getter, setter;
 		bool is_static;
@@ -5401,6 +5407,18 @@ namespace Mono.CSharp {
 				is_static = setter.IsStatic;
 			}
 		}
+
+#if NET_4_0
+		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), setter);
+		}
+
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), getter);
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

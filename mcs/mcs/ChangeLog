@@ -1,5 +1,10 @@
 2009-10-14  Marek Safar  <marek.safar@gmail.com>
 
+	* argument.cs, dynamic.cs, assign.cs, expression.cs, ecore.cs:
+	Implement dynamic expressions assignment.
+
+2009-10-14  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Build underlying expression when resolving unary
 	mutators.
 
