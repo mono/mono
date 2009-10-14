@@ -1,5 +1,10 @@
 2009-10-14  Massimiliano Mantione  <massi@ximian.com>
 
+	* mini-exceptions.c (mono_find_jit_info):
+	Also check that a jit info has been found (fixes a profiler crash).
+
+2009-10-14  Massimiliano Mantione  <massi@ximian.com>
+
 	* mini.c (mono_codegen):
 	Call mono_profiler_code_buffer_new with correct code address.
 
