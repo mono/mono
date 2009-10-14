@@ -1,3 +1,10 @@
+2009-10-14  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Don't use a managed array
+	allocator in shared generic code for open classes, because we
+	can't get those classes' vtables.  We need to make managed
+	allocators not depend on the vtable at compile-time to solve this.
+
 2009-10-13  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debugger_trampoline_compiled): Add
