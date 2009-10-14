@@ -1,3 +1,9 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* DbConnection.cs: Throw NotImplementedException fom
+	  DbConnection.DbProviderFactory, as DbProviderFactories isn't
+	  included in the MonoTouch profile.
+
 2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DbDataAdapter.cs (IDbDataAdapter.get_*Command): For non 2.0 profile, do not 

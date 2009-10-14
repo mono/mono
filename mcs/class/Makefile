@@ -153,7 +153,11 @@ monotouch_dirs := \
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
-	System.Web.Services 
+	System.Web.Services	\
+	Mono.Data.Tds	\
+	System.Transactions	\
+	System.Data	\
+	Mono.Data.Sqlite
 
 net_3_5_dirs := \
 	Microsoft.Build.Framework	\

@@ -1,3 +1,8 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* SqlConnection.cs: Remove EnterpriseServices dependency from the
+	  MonoTouch profile.
+
 2009-08-17  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #525306

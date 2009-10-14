@@ -30,7 +30,10 @@ LIB_MCS_FLAGS +=	\
 	-r:rt.dll				\
 	-r:J2SE.Helpers.dll			\
 	$(OTHER_LIB_MCS_FLAGS)
-
+else ifeq (monotouch, $(PROFILE))
+LIB_MCS_FLAGS += \
+	-r:Mono.Data.Tds.dll \
+	-r:System.Transactions.dll
 else
 LIB_MCS_FLAGS += \
 	-r:System.EnterpriseServices.dll 	\

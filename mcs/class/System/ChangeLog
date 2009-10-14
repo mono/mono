@@ -1,17 +1,7 @@
-2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
-	* System_test.dll.sources: Add unit tests for SocketAsyncEventArgs
-	[Backport r142675]
-
-2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* net_2_1_raw_System.dll.sources: Remove System.Net.Mime since
-	System.Runtime.Serialization does not need them anymore
-
-2009-09-14 Jonathan Pryor <jpryor@novell.com>
-
-	* MonoTouch/MonoPInvokeCallbackAttribute.cs: Added.
-	* monotouch_System.dll.sources: Include MonoPInvokeCallbackAttribute.
+	* monotouch_System.dll.sources: Add lots of additional .NET 2.0
+	  functionality to the MonoTouch profile.
 
 2009-08-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

@@ -1,3 +1,7 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile (VALID_PROFILE): Add monotouch.
+
 2006-03-03  Ankit Jain  <jankit@novell.com>
 
 	* System.Transactions_test.dll.sources: New.

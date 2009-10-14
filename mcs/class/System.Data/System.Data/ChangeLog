@@ -1,14 +1,8 @@
-2009-09-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
-	** Fixes part of #427769 - Patch by John Lenz <jlenz2@math.uiuc.edu>
-	* DataSet.cs: XML serialization improvements to be compatible with MS impl.
-	
-2009-09-15  Veerapuram Varadhan  <vvaradhan@novell.com>
-	
-	** Fixes #536194 - Patch by Andrew Kurochk <aaki.viper@gmail.com>
-	* MergeManager.cs (Merge*): Do nothing when source and target 
-	datasets are same.
-	
+	* XmlSchemaDataImporter.cs: Remove DbProviderFactories dependency in
+	  the MonoTouch profile.
+
 2009-09-10  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #510176
