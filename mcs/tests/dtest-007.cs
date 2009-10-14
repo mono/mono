@@ -113,8 +113,10 @@ class Tester
 		Assert (22, d.IntValue, "#1");
 		d.Prop = 19;
 		Assert (19, d.Prop, "#1a");
+
+		d.Prop = byte.MaxValue;
 		d.Prop++;
-		Assert (20, d.Prop, "#1b");
+		Assert (0, d.Prop, "#1b");
 
 		d.StringStatic = "no";
 		Assert ("no", d.StringStatic, "#2");
@@ -149,8 +151,8 @@ class Tester
 		Assert<uint> (1000, d2[2], "#3");
 		d2[2]++;
 		Assert<uint> (2002, d2[2], "#3a");
-//		d2[i:1] = 3;
-	//	Assert<uint> (3, d2[1], "#3b");
+		d2[i:1] = 3;
+		Assert<uint> (3, d2[1], "#3b");
 		
 		uint r = d2 [1] = 200;
 		Assert<uint> (200, r, "#4");
