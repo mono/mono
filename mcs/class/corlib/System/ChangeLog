@@ -1,3 +1,12 @@
+2009-10-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Exception.cs: Use StackFrame.GetSecureFileName to display (or 
+	not) the file names (and paths). Don't serialize Source for
+	Moonlight.
+	* ValueType.cs: Change InternalEquals (icall) visibility to 
+	private since it is not used elsewhere outside the type.
+	[Backport r144104]
+
 2009-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Remove NET_2_1 specific DefineDynamicAssembly(
