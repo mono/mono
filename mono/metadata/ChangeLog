@@ -1,3 +1,8 @@
+2009-10-14  Massimiliano Mantione  <massi@ximian.com>
+
+	* profiler.c, profiler.h, profiler-private.h:
+	Added support for different ways of getting call chains in stat mode.
+
 2009-10-12  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c, object-internals.h: New function for computing the
