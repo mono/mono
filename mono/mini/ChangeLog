@@ -1,3 +1,8 @@
+2009-10-14  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c (mono_codegen):
+	Call mono_profiler_code_buffer_new with correct code address.
+
 2009-10-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (mono_main): Change the date in the copyright.
