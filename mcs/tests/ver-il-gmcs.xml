@@ -29279,13 +29279,13 @@
         <size>89</size>
       </method>
       <method name="Int32 TestPtrAdd()">
-        <size>87</size>
+        <size>86</size>
       </method>
       <method name="Int32 TestPtrAssign()">
         <size>198</size>
       </method>
       <method name="Int32 TestPtrArithmetic()">
-        <size>227</size>
+        <size>226</size>
       </method>
       <method name="Int32 TestMultiple()">
         <size>93</size>
@@ -29301,7 +29301,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>171</size>
+        <size>170</size>
       </method>
     </type>
   </test>
@@ -35500,7 +35500,7 @@
         <size>3</size>
       </method>
       <method name="Void Foo(Byte*, Byte*)">
-        <size>46</size>
+        <size>42</size>
       </method>
     </type>
   </test>
@@ -35946,7 +35946,7 @@
         <size>68</size>
       </method>
       <method name="Void CharCopy(Char*, Char*, Int32)">
-        <size>35</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()">
         <size>58</size>
@@ -36437,6 +36437,21 @@
       </method>
       <method name="Void .ctor(Object, IntPtr)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-731.cs">
+    <type name="C">
+      <method name="Int32 Main()">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>

@@ -1,4 +1,4 @@
-// No array static/dynamic initilizers should be produced in this test
+// No array static/dynamic initializers should be produced in this test
 
 using System;
 using System.Reflection;
