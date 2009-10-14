@@ -1,5 +1,10 @@
 2009-10-14  Massimiliano Mantione  <massi@ximian.com>
 
+	* mini-posix.c (sigprof_signal_handler):
+	Implemented support for building stat call chans in different ways.
+
+2009-10-14  Massimiliano Mantione  <massi@ximian.com>
+
 	* mini-exceptions.c (mono_find_jit_info):
 	Also check that a jit info has been found (fixes a profiler crash).
 
