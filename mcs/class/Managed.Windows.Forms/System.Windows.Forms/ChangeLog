@@ -1,5 +1,12 @@
 2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When retrieving the top item, take into account the
+	offset represented by the header control, to retrieve the proper
+	value. Patch by Christoph von Wittich (Christoph at ApiViewer.de)
+	Fixes the remaining bits of #543773.
+
+2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: TopItem setter should set the value as the top, not
 	only ensuring its visibility.
 	Fixes part of #543773.

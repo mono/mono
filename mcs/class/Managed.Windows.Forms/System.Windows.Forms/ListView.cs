@@ -1027,9 +1027,10 @@ namespace System.Windows.Forms
 					return this.items [0];
 				// do a hit test for the scrolled position
 				else {
+					int header_offset = header_control.Height;
 					for (int i = 0; i < items.Count; i++) {
 						Point item_loc = GetItemLocation (i);
-						if (item_loc.X >= 0 && item_loc.Y >= 0)
+						if (item_loc.X >= 0 && item_loc.Y - header_offset >= 0)
 							return items [i];
 					}
 					return null;
