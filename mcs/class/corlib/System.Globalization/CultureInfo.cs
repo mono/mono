@@ -402,7 +402,7 @@ namespace System.Globalization
 			return false;
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static CultureInfo[] GetCultures(CultureTypes types)
 		{
 			bool neutral=((types & CultureTypes.NeutralCultures)!=0);
