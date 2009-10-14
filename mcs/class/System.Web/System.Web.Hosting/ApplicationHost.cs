@@ -27,10 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Configuration;
 using System.IO;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web.Hosting {
 
@@ -192,9 +194,6 @@ namespace System.Web.Hosting {
 
 			setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, bindirPath);
 			setup.PrivateBinPathProbe = "*";
-			setup.ShadowCopyFiles = "true";
-			setup.ShadowCopyDirectories = setup.PrivateBinPath;
-
 			string dynamic_dir = null;
 			string user = Environment.UserName;
 			int tempDirTag = 0;
@@ -263,7 +262,23 @@ namespace System.Web.Hosting {
 #endif
 			appdomain.SetData (MonoHostedDataKey, "yes");
 			
+			appdomain.DoCallBack (SetHostingEnvironment);
 			return appdomain.CreateInstanceAndUnwrap (hostType.Module.Assembly.FullName, hostType.FullName);
+		}
+
+		static void SetHostingEnvironment ()
+		{
+			bool shadow_copy_enabled = true;
+			HostingEnvironmentSection he = WebConfigurationManager.GetWebApplicationSection ("system.web/hostingEnvironment") as HostingEnvironmentSection;
+			if (he != null)
+				shadow_copy_enabled = he.ShadowCopyBinAssemblies;
+
+			if (shadow_copy_enabled) {
+				AppDomain current = AppDomain.CurrentDomain;
+				AppDomainSetup setup = current.SetupInformation;
+				setup.ShadowCopyFiles = "true";
+				setup.ShadowCopyDirectories = setup.PrivateBinPath;
+			}
 		}
 	}
 }
