@@ -1,3 +1,8 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* monotouch_System.dll.sources: Add lots of additional .NET 2.0
+	  functionality to the MonoTouch profile.
+
 2009-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Add unit tests for SocketAsyncEventArgs

@@ -1254,12 +1254,14 @@ namespace System.Data
 				if (e == null)
 					continue;
 				
+#if !MONOTOUCH
 				if (e.LocalName == "Connections") {
 					providerName = ((XmlElement)e.FirstChild).GetAttribute ("Provider");
 					connString = ((XmlElement)e.FirstChild).GetAttribute ("AppSettingsPropertyName");
 					provider = DbProviderFactories.GetFactory (providerName);
 					continue;
 				}
+#endif // !MONOTOUCH
 				// #325464 debugging
 				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
 				

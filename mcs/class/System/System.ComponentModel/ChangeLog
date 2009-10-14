@@ -1,3 +1,10 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* TypeConverter_2_1.cs: Skip this type in the MonoTouch profile;
+	  MonoTouch will be using the 2.0 version of TypeConverter.
+	* ComponentCollection.cs, PropertyDescriptor.cs: MonoTouch uses the
+	  .NET 2.0 versions of these types.
+
 2009-09-29  Alan McGovern  <amcgovern@novell.com>
 
 	* DefaultValueAttribute.cs: Implement the cctor which takes

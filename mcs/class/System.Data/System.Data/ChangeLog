@@ -1,3 +1,8 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlSchemaDataImporter.cs: Remove DbProviderFactories dependency in
+	  the MonoTouch profile.
+
 2009-10-13  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #537229
