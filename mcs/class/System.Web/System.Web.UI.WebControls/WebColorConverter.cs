@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
+//	Marek Safar     (marek.safar@gmail.com) 
 //
 //
 
@@ -30,9 +31,6 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
-#if NET_2_0
-using System.Collections.Generic;
-#endif
 
 namespace System.Web.UI.WebControls {
 
@@ -44,127 +42,11 @@ namespace System.Web.UI.WebControls {
 		// Converts from string to Color
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value) 
 		{
-			if (value is string) 
-			{
-				string	s;
-
-				s = ((string)value).Trim();
-				if (s.Length == 0) 
-				{
-					return Color.Empty;
-				}
-
-				if (culture == null) {
-					culture = Helpers.InvariantCulture;
-				}
-
-				if (s[0] == '#') 
-				{
-					// Hex
-
-					// MS throws a generic exception, wrapping the specific exception, who knows why...
-					try 
-					{
-						if (s.Length == 7) 
-						{
-							int	v;
-							v = Int32.Parse(s.Substring(1), NumberStyles.HexNumber, culture);
-
-							return Color.FromArgb(255, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff);
-						} 
-						else 
-						{
-							return Color.FromArgb(Int32.Parse(s.Substring(1), NumberStyles.HexNumber, culture));
-						}
-					}
-
-					catch (FormatException e) 
-					{
-						throw new Exception(s + "is not a valid color value", e);
-					}
-					catch (System.OverflowException e) 
-					{
-						throw new Exception(s + " is not a valid color value", e);
-					}
-				} 
-				else 
-				{
-					// Name or decimal
-					int	n = 0;
-
-					try 
-					{
-						n = Int32.Parse(s, NumberStyles.Integer, culture);
-					}
-
-					catch (FormatException e) 
-					{
-						Color c;
-
-						// Bug #546173
-						switch (s.ToLower (CultureInfo.InvariantCulture)) {
-							case "background":
-								s = "Desktop";
-								break;
-
-							case "buttonface":
-							case "threedface":
-								s = "Control";
-								break;
-
-							case "buttonhighlight":
-							case "threedlightshadow":
-								s = "ControlLightLight";
-								break;
-
-							case "buttonshadow":
-								s = "ControlDark";
-								break;
-
-							case "buttontext":
-								s = "ControlText";
-								break;
-								
-							case "captiontext":
-								s = "ActiveCaptionText";
-								break;
-
-							case "infobackground":
-								s = "Info";
-								break;
-
-							case "threeddarkshadow":
-								s = "ControlDarkDark";
-								break;
-
-							case "threedhighlight":
-								s = "ControlLight";
-								break;
-								
-						}
-						
-						c = Color.FromName(s);
-						if (c.IsKnownColor || (c.A != 0) || (c.R != 0) || (c.G != 0) || (c.B != 0)) 
-						{
-							return c;
-						}
-
-						throw new Exception(s + " is not a valid color value", e);
-					}
-
-					catch (System.OverflowException e) 
-					{
-						throw new Exception(s + " is not a valid color value", e);
-					}
-
-					catch 
-					{
-						throw;
-					}
-
-					return Color.FromArgb(n);
-				}
+			if (value is string) {
+				string	s = ((string)value).Trim();
+				return ColorTranslator.FromHtml (s);
 			}
+			
 			return base.ConvertFrom (context, culture, value);
 		}
 
