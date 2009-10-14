@@ -1037,6 +1037,15 @@ namespace Mono.CSharp {
 
 		Expression ResolveOperator (ResolveContext ec)
 		{
+			type = expr.Type;
+
+			if (expr is RuntimeValueExpression) {
+				operation = expr;
+			} else {
+				// Use itself at the top of the stack
+				operation = new EmptyExpression (type);
+			}
+
 			//
 			// The operand of the prefix/postfix increment decrement operators
 			// should be an expression that is classified as a variable,
@@ -1046,15 +1055,6 @@ namespace Mono.CSharp {
 				expr = expr.ResolveLValue (ec, expr);
 			} else {
 				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
-			}
-
-			type = expr.Type;
-
-			if (expr is RuntimeValueExpression) {
-				operation = expr;
-			} else {
-				// Use itself at the top of the stack
-				operation = new EmptyExpression (type);
 			}
 
 			//
