@@ -1,4 +1,4 @@
-// cs0187.cs: No such operator '++' defined for type 'X'
+// CS0023: The `++' operator cannot be applied to operand of type `X'
 // Line: 9
 
 class X {

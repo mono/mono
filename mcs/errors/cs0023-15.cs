@@ -1,4 +1,4 @@
-// cs0187.cs: No such operator '++' defined for type 'object'
+// CS0023: The `++' operator cannot be applied to operand of type `object'
 // Line: 9
 
 using System;
