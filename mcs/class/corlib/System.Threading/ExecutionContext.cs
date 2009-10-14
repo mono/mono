@@ -40,7 +40,7 @@ namespace System.Threading {
 #else
 	internal sealed class ExecutionContext : ISerializable {
 #endif
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		private SecurityContext _sc;
 #endif
 		private bool _suppressFlow;
@@ -52,7 +52,7 @@ namespace System.Threading {
 
 		internal ExecutionContext (ExecutionContext ec)
 		{
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			if (ec._sc != null)
 				_sc = new SecurityContext (ec._sc);
 #endif
@@ -73,7 +73,7 @@ namespace System.Threading {
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
 #endif
@@ -98,7 +98,7 @@ namespace System.Threading {
 		}
 		
 		// internal stuff
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		internal SecurityContext SecurityContext {
 			get {
 				if (_sc == null)
@@ -130,7 +130,7 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)
@@ -146,7 +146,7 @@ namespace System.Threading {
 			SecurityContext.Run (executionContext.SecurityContext, callback, state);
 		}
 #endif
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static AsyncFlowControl SuppressFlow ()
 		{
 			Thread t = Thread.CurrentThread;

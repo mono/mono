@@ -43,8 +43,11 @@ using System.Collections.Generic;
 
 namespace System.Web {
 
+#if !MONOTOUCH
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#endif
+
 	public sealed class HttpUtility {
 		#region Fields
 	

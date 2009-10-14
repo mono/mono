@@ -85,7 +85,7 @@ namespace System {
 
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress_refonly;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -122,7 +122,7 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 #endif
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
@@ -175,7 +175,7 @@ namespace System {
 				return getFriendlyName ();
 			}
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public Evidence Evidence {
 			get {
 				// if the host (runtime) hasn't provided it's own evidence...
@@ -249,7 +249,7 @@ namespace System {
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 
 #if NET_2_0
 		[Obsolete ("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
@@ -293,6 +293,7 @@ namespace System {
 			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
+#if !NET_2_1
 		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
 			return Activator.CreateComInstanceFrom (assemblyName, typeName);
@@ -304,6 +305,7 @@ namespace System {
 		{
 			return Activator.CreateComInstanceFrom (assemblyFile, typeName, hashValue ,hashAlgorithm);
 		}
+#endif
 #endif
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
@@ -696,7 +698,7 @@ namespace System {
 			assembly.FromByteArray = true;
 			return assembly;
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
@@ -851,7 +853,7 @@ namespace System {
 			return _process_guid;
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
@@ -1303,7 +1305,7 @@ namespace System {
 		}
 #endif
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
@@ -1388,7 +1390,7 @@ namespace System {
 		}
 #endif
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		public int ExecuteAssemblyByName (string assemblyName)
 		{
 			// critical code in SL that we're not calling in ML

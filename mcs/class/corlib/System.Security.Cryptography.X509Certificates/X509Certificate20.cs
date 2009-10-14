@@ -61,7 +61,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password)
 		{
@@ -74,7 +74,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -92,7 +92,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password)
 		{
@@ -105,7 +105,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (fileName, password, keyStorageFlags);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -172,7 +172,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return Export (contentType, pwd);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported. SecureString support is incomplete.")]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
@@ -257,7 +257,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete")]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -280,7 +280,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("SecureString support is incomplete, missing KeyStorageFlags support")]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{

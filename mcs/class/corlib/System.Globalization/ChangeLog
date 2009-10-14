@@ -1,3 +1,7 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* CultureInfo.cs: Re-add GetCultures() to the MonoTouch profile.
+
 2009-10-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CultureInfo.cs: Refactor to reduce unsafe methods/scope.

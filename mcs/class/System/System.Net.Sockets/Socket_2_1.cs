@@ -227,7 +227,7 @@ namespace System.Net.Sockets {
 							     bool block,
 							     out int error);
 #endif
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -561,7 +561,7 @@ namespace System.Net.Sockets {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		/* This overload is needed as the async Connect method
 		 * also needs to check the socket error status, but
 		 * getsockopt(..., SO_ERROR) clears the error.
