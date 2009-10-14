@@ -1,3 +1,9 @@
+2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStrip.cs: Even if we are not exactly a MenuStrip instance, close
+	any ToolStripDropDownItem when receiving a mouse down event in an
+	empty area.
+
 2009-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* DateTimePicker.cs: Call Focus in HideMonthCalendar to avoid
