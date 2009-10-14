@@ -219,10 +219,9 @@ namespace System
 							else
 								sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
 
-							string fileName = frame.GetFileName ();
-							if (fileName != null)
-								sb.AppendFormat ("in {0}:{1} ", fileName, frame.GetFileLineNumber ());
-							}
+							sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (), 
+								frame.GetFileLineNumber ());
+						}
 					}
 					stack_trace = sb.ToString ();
 				}
@@ -288,7 +287,11 @@ namespace System
 			info.AddValue ("RemoteStackTraceString", _remoteStackTraceString);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
 			info.AddValue ("HResult", hresult);
+#if !NET_2_1 || MONOTOUCH
 			info.AddValue ("Source", Source);
+#else
+			info.AddValue ("Source", null);
+#endif
 			info.AddValue ("ExceptionMethod", null);
 #if NET_2_0
 			info.AddValue ("Data", _data, typeof (IDictionary));

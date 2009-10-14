@@ -49,7 +49,7 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static bool InternalEquals (object o1, object o2, out object[] fields);
+		private extern static bool InternalEquals (object o1, object o2, out object[] fields);
 
 		// This is also used by RuntimeHelpers
 		internal static bool DefaultEquals (object o1, object o2)
