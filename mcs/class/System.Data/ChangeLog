@@ -1,3 +1,7 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* monotouch_System.Data.dll.sources: Added.
+
 2009-08-17  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* System.Data_test.dll.sources: Added

@@ -38,7 +38,7 @@ using System.Reflection;
 
 namespace System.ComponentModel {
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 	public class ComponentCollection
 	{
 	}
