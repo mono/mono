@@ -262,10 +262,13 @@ namespace System.Web.Hosting {
 #endif
 			appdomain.SetData (MonoHostedDataKey, "yes");
 			
+#if NET_2_0
 			appdomain.DoCallBack (SetHostingEnvironment);
+#endif
 			return appdomain.CreateInstanceAndUnwrap (hostType.Module.Assembly.FullName, hostType.FullName);
 		}
 
+#if NET_2_0
 		static void SetHostingEnvironment ()
 		{
 			bool shadow_copy_enabled = true;
@@ -280,5 +283,6 @@ namespace System.Web.Hosting {
 				setup.ShadowCopyDirectories = setup.PrivateBinPath;
 			}
 		}
+#endif
 	}
 }
