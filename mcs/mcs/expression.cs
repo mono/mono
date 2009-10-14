@@ -922,100 +922,18 @@ namespace Mono.CSharp {
 		}
 
 		Mode mode;
-		bool is_expr = false;
-		bool recurse = false;
+		bool is_expr, recurse;
 
 		Expression expr;
 
-		//
-		// This is expensive for the simplest case.
-		//
-		UserOperatorCall method;
+		// Holds the real operation
+		Expression operation;
 
 		public UnaryMutator (Mode m, Expression e)
 		{
 			mode = m;
 			loc = e.Location;
 			expr = e;
-		}
-
-		string OperName ()
-		{
-			return IsDecrement ?
-				Operator.GetName (Operator.OpType.Decrement) :
-				Operator.GetName (Operator.OpType.Increment);
-		}
-
-		/// <summary>
-		///   Returns whether an object of type `t' can be incremented
-		///   or decremented with add/sub (ie, basically whether we can
-		///   use pre-post incr-decr operations on it, but it is not a
-		///   System.Decimal, which we require operator overloading to catch)
-		/// </summary>
-		static bool IsIncrementableNumber (Type t)
-		{
-			return (t == TypeManager.sbyte_type) ||
-				(t == TypeManager.byte_type) ||
-				(t == TypeManager.short_type) ||
-				(t == TypeManager.ushort_type) ||
-				(t == TypeManager.int32_type) ||
-				(t == TypeManager.uint32_type) ||
-				(t == TypeManager.int64_type) ||
-				(t == TypeManager.uint64_type) ||
-				(t == TypeManager.char_type) ||
-				(TypeManager.IsSubclassOf (t, TypeManager.enum_type)) ||
-				(t == TypeManager.float_type) ||
-				(t == TypeManager.double_type) ||
-				(t.IsPointer && t != TypeManager.void_ptr_type);
-		}
-
-		Expression ResolveOperator (ResolveContext ec)
-		{
-			type = expr.Type;
-			
-			//
-			// The operand of the prefix/postfix increment decrement operators
-			// should be an expression that is classified as a variable,
-			// a property access or an indexer access
-			//
-			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
-				expr = expr.ResolveLValue (ec, expr);
-			} else {
-				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
-			}
-
-			//
-			// Step 1: Perform Operator Overload location
-			//
-			MethodGroupExpr mg;
-			string op_name;
-			
-			if (IsDecrement)
-				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
-			else
-				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
-
-			mg = MemberLookup (ec.Compiler, ec.CurrentType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
-
-			if (mg != null) {
-				Arguments args = new Arguments (1);
-				args.Add (new Argument (expr));
-				mg = mg.OverloadResolve (ec, ref args, false, loc);
-				if (mg == null)
-					return null;
-
-				method = new UserOperatorCall (mg, args, null, loc);
-				Convert.ImplicitConversionRequired (ec, method, type, loc);
-				return this;
-			}
-
-			if (!IsIncrementableNumber (type)) {
-				ec.Report.Error (187, loc, "No such operator '" + OperName () + "' defined for type '" +
-					   TypeManager.CSharpName (type) + "'");
-				return null;
-			}
-
-			return this;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1044,68 +962,6 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
-		//
-		// Loads the proper "1" into the stack based on the type, then it emits the
-		// opcode for the operation requested
-		//
-		void LoadOneAndEmitOp (EmitContext ec, Type t)
-		{
-			//
-			// Measure if getting the typecode and using that is more/less efficient
-			// that comparing types.  t.GetTypeCode() is an internal call.
-			//
-			ILGenerator ig = ec.ig;
-						     
-			if (t == TypeManager.uint64_type || t == TypeManager.int64_type)
-				LongConstant.EmitLong (ig, 1);
-			else if (t == TypeManager.double_type)
-				ig.Emit (OpCodes.Ldc_R8, 1.0);
-			else if (t == TypeManager.float_type)
-				ig.Emit (OpCodes.Ldc_R4, 1.0F);
-			else if (t.IsPointer){
-				Type et = TypeManager.GetElementType (t);
-				int n = GetTypeSize (et);
-				
-				if (n == 0)
-					ig.Emit (OpCodes.Sizeof, et);
-				else {
-					IntConstant.EmitInt (ig, n);
-					ig.Emit (OpCodes.Conv_I);
-				}
-			} else 
-				ig.Emit (OpCodes.Ldc_I4_1);
-
-			//
-			// Now emit the operation
-			//
-
-			Binary.Operator op = (mode & Mode.IsDecrement) != 0 ? Binary.Operator.Subtraction : Binary.Operator.Addition;
-			Binary.EmitOperatorOpcode (ec, op, t);
-
-			if (t == TypeManager.sbyte_type){
-				if (ec.HasSet (EmitContext.Options.CheckedScope))
-					ig.Emit (OpCodes.Conv_Ovf_I1);
-				else
-					ig.Emit (OpCodes.Conv_I1);
-			} else if (t == TypeManager.byte_type){
-				if (ec.HasSet (EmitContext.Options.CheckedScope))
-					ig.Emit (OpCodes.Conv_Ovf_U1);
-				else
-					ig.Emit (OpCodes.Conv_U1);
-			} else if (t == TypeManager.short_type){
-				if (ec.HasSet (EmitContext.Options.CheckedScope))
-					ig.Emit (OpCodes.Conv_Ovf_I2);
-				else
-					ig.Emit (OpCodes.Conv_I2);
-			} else if (t == TypeManager.ushort_type || t == TypeManager.char_type){
-				if (ec.HasSet (EmitContext.Options.CheckedScope))
-					ig.Emit (OpCodes.Conv_Ovf_U2);
-				else
-					ig.Emit (OpCodes.Conv_U2);
-			}
-			
-		}
-
 		void EmitCode (EmitContext ec, bool is_expr)
 		{
 			recurse = true;
@@ -1122,10 +978,9 @@ namespace Mono.CSharp {
 			//
 			if (recurse) {
 				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement || mode == Mode.PostDecrement));
-				if (method == null)
-					LoadOneAndEmitOp (ec, expr.Type);
-				else
-					ec.ig.Emit (OpCodes.Call, (MethodInfo)method.Method);
+
+				operation.Emit (ec);
+
 				recurse = false;
 				return;
 			}
@@ -1148,6 +1003,19 @@ namespace Mono.CSharp {
 
 		bool IsDecrement {
 			get { return (mode & Mode.IsDecrement) != 0; }
+		}
+
+		//
+		//   Returns whether an object of type `t' can be incremented
+		//   or decremented with add/sub (ie, basically whether we can
+		//   use pre-post incr-decr operations on it, but it is not a
+		//   System.Decimal, which we require operator overloading to catch)
+		//
+		static bool IsPredefinedOperator (Type t)
+		{
+			return (TypeManager.IsPrimitiveType (t) && t != TypeManager.bool_type) ||
+				TypeManager.IsEnumType (t) ||
+				t.IsPointer && t != TypeManager.void_ptr_type;
 		}
 
 #if NET_4_0
@@ -1179,6 +1047,76 @@ namespace Mono.CSharp {
 			UnaryMutator target = (UnaryMutator) t;
 
 			target.expr = expr.Clone (clonectx);
+		}
+
+		Expression ResolveOperator (ResolveContext ec)
+		{
+			//
+			// The operand of the prefix/postfix increment decrement operators
+			// should be an expression that is classified as a variable,
+			// a property access or an indexer access
+			//
+			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
+				expr = expr.ResolveLValue (ec, expr);
+			} else {
+				ec.Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
+			}
+
+			type = expr.Type;
+
+			// Use itself at the top of the stack
+			operation = new EmptyExpression (type);
+
+			//
+			// 1. Check predefined types
+			//
+			if (IsPredefinedOperator (type)) {
+				// TODO: Move to IntConstant once I get rid of int32_type
+				var one = new IntConstant (1, loc);
+
+				// TODO: Cache this based on type when using EmptyExpression in
+				// context cache
+				Binary.Operator op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
+				operation = new Binary (op, operation, one);
+				operation = operation.Resolve (ec);
+				if (operation.Type != type)
+					operation = Convert.ExplicitNumericConversion (operation, type);
+
+				return this;
+			}
+
+			//
+			// Step 2: Perform Operator Overload location
+			//
+			MethodGroupExpr mg;
+			string op_name;
+
+			if (IsDecrement)
+				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
+			else
+				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
+
+			mg = MemberLookup (ec.Compiler, ec.CurrentType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+
+			if (mg != null) {
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (expr));
+				mg = mg.OverloadResolve (ec, ref args, false, loc);
+				if (mg == null)
+					return null;
+
+				args[0].Expr = operation;
+				operation = new UserOperatorCall (mg, args, null, loc);
+				operation = Convert.ImplicitConversionRequired (ec, operation, type, loc);
+				return this;
+			}
+
+			string name = IsDecrement ?
+				Operator.GetName (Operator.OpType.Decrement) :
+				Operator.GetName (Operator.OpType.Increment);
+
+			Unary.Error_OperatorCannotBeApplied (ec, loc, name, type);
+			return null;
 		}
 	}
 
