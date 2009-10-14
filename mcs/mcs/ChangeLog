@@ -1,3 +1,7 @@
+2009-10-14  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Emit enum array initializer using binary blob.
+
 2009-10-08  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, constant.cs: Optimize decimal constants which fit

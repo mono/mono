@@ -6185,12 +6185,13 @@ namespace Mono.CSharp {
 			byte [] element;
 			int count = array_data.Count;
 
-			if (TypeManager.IsEnumType (array_element_type))
-				array_element_type = TypeManager.GetEnumUnderlyingType (array_element_type);
-			
-			factor = GetTypeSize (array_element_type);
+			Type element_type = array_element_type;
+			if (TypeManager.IsEnumType (element_type))
+				element_type = TypeManager.GetEnumUnderlyingType (element_type);
+
+			factor = GetTypeSize (element_type);
 			if (factor == 0)
-				throw new Exception ("unrecognized type in MakeByteBlob: " + array_element_type);
+				throw new Exception ("unrecognized type in MakeByteBlob: " + element_type);
 
 			data = new byte [(count * factor + 3) & ~3];
 			int idx = 0;
@@ -6208,7 +6209,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (array_element_type == TypeManager.int64_type){
+				if (element_type == TypeManager.int64_type){
 					if (!(v is Expression)){
 						long val = (long) v;
 						
@@ -6217,7 +6218,7 @@ namespace Mono.CSharp {
 							val = (val >> 8);
 						}
 					}
-				} else if (array_element_type == TypeManager.uint64_type){
+				} else if (element_type == TypeManager.uint64_type){
 					if (!(v is Expression)){
 						ulong val = (ulong) v;
 
@@ -6226,7 +6227,7 @@ namespace Mono.CSharp {
 							val = (val >> 8);
 						}
 					}
-				} else if (array_element_type == TypeManager.float_type) {
+				} else if (element_type == TypeManager.float_type) {
 					if (!(v is Expression)){
 						element = BitConverter.GetBytes ((float) v);
 							
@@ -6235,7 +6236,7 @@ namespace Mono.CSharp {
 						if (!BitConverter.IsLittleEndian)
 							System.Array.Reverse (data, idx, 4);
 					}
-				} else if (array_element_type == TypeManager.double_type) {
+				} else if (element_type == TypeManager.double_type) {
 					if (!(v is Expression)){
 						element = BitConverter.GetBytes ((double) v);
 
@@ -6246,28 +6247,28 @@ namespace Mono.CSharp {
 						if (!BitConverter.IsLittleEndian)
 							System.Array.Reverse (data, idx, 8);
 					}
-				} else if (array_element_type == TypeManager.char_type){
+				} else if (element_type == TypeManager.char_type){
 					if (!(v is Expression)){
 						int val = (int) ((char) v);
 						
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (array_element_type == TypeManager.short_type){
+				} else if (element_type == TypeManager.short_type){
 					if (!(v is Expression)){
 						int val = (int) ((short) v);
 					
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (array_element_type == TypeManager.ushort_type){
+				} else if (element_type == TypeManager.ushort_type){
 					if (!(v is Expression)){
 						int val = (int) ((ushort) v);
 					
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
-				} else if (array_element_type == TypeManager.int32_type) {
+				} else if (element_type == TypeManager.int32_type) {
 					if (!(v is Expression)){
 						int val = (int) v;
 					
@@ -6276,7 +6277,7 @@ namespace Mono.CSharp {
 						data [idx+2] = (byte) ((val >> 16) & 0xff);
 						data [idx+3] = (byte) (val >> 24);
 					}
-				} else if (array_element_type == TypeManager.uint32_type) {
+				} else if (element_type == TypeManager.uint32_type) {
 					if (!(v is Expression)){
 						uint val = (uint) v;
 					
@@ -6285,22 +6286,22 @@ namespace Mono.CSharp {
 						data [idx+2] = (byte) ((val >> 16) & 0xff);
 						data [idx+3] = (byte) (val >> 24);
 					}
-				} else if (array_element_type == TypeManager.sbyte_type) {
+				} else if (element_type == TypeManager.sbyte_type) {
 					if (!(v is Expression)){
 						sbyte val = (sbyte) v;
 						data [idx] = (byte) val;
 					}
-				} else if (array_element_type == TypeManager.byte_type) {
+				} else if (element_type == TypeManager.byte_type) {
 					if (!(v is Expression)){
 						byte val = (byte) v;
 						data [idx] = (byte) val;
 					}
-				} else if (array_element_type == TypeManager.bool_type) {
+				} else if (element_type == TypeManager.bool_type) {
 					if (!(v is Expression)){
 						bool val = (bool) v;
 						data [idx] = (byte) (val ? 1 : 0);
 					}
-				} else if (array_element_type == TypeManager.decimal_type){
+				} else if (element_type == TypeManager.decimal_type){
 					if (!(v is Expression)){
 						int [] bits = Decimal.GetBits ((decimal) v);
 						int p = idx;
@@ -6319,10 +6320,11 @@ namespace Mono.CSharp {
 							data [p++] = (byte) (nbits [j] >> 24);
 						}
 					}
-				} else
-					throw new Exception ("Unrecognized type in MakeByteBlob: " + array_element_type);
+				} else {
+					throw new Exception ("Unrecognized type in MakeByteBlob: " + element_type);
+				}
 
-                                idx += factor;
+				idx += factor;
 			}
 
 			return data;
@@ -6482,7 +6484,7 @@ namespace Mono.CSharp {
 			// the static initializer will initialize at least 25% of array values.
 			// NOTE: const_initializers_count does not contain default constant values.
 			if (const_initializers_count >= 4 && const_initializers_count * 4 > (array_data.Count) &&
-				TypeManager.IsPrimitiveType (array_element_type)) {
+				(TypeManager.IsPrimitiveType (array_element_type) || TypeManager.IsEnumType (array_element_type))) {
 				EmitStaticInitializers (ec);
 
 				if (!only_constant_initializers)
@@ -7349,12 +7351,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			int size = GetTypeSize (type_queried);
-
-			if (size == 0)
-				ec.ig.Emit (OpCodes.Sizeof, type_queried);
-			else
-				IntConstant.EmitInt (ec.ig, size);
+			ec.ig.Emit (OpCodes.Sizeof, type_queried);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -9298,7 +9295,6 @@ namespace Mono.CSharp {
 			Constant c = count as Constant;
 			if (c != null && c.IsNegative) {
 				ec.Report.Error (247, loc, "Cannot use a negative size with stackalloc");
-				return null;
 			}
 
 			if (ec.HasAny (ResolveContext.Options.CatchScope | ResolveContext.Options.FinallyScope)) {
