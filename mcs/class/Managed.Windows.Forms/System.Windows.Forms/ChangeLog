@@ -1,5 +1,13 @@
 2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ToolStripDropDownItem.cs: When assigning a new
+	ToolStripDropDownMenu, let it know we are its OwnerItem. This way the
+	Capture duties performed by Application/ToolStripManager are handled
+	nicely and we don't end up in an inconsisten stat.
+	Fixes #492815.
+
+2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ToolStrip.cs: Even if we are not exactly a MenuStrip instance, close
 	any ToolStripDropDownItem when receiving a mouse down event in an
 	empty area.
