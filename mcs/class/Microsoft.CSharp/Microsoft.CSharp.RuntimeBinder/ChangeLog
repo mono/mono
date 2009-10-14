@@ -1,3 +1,11 @@
+2009-10-14  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpBinaryOperationBinder.cs, CSharpGetIndexBinder.cs,
+	CSharpGetMemberBinder.cs, CSharpArgumentInfo.cs, CSharpBinder.cs,
+	CSharpUnaryOperationBinder.cs, CSharpConvertBinder.cs,
+	CSharpSetIndexBinder.cs, CSharpSetMemberBinder.cs: Index setters
+	implemented.
+
 2009-10-07  Marek Safar  <marek.safar@gmail.com>
 
 	* RuntimeBinderContext.cs, CSharpBinaryOperationBinder.cs,

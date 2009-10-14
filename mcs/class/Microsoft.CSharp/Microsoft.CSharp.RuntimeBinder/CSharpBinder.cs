@@ -31,6 +31,7 @@ using System.Dynamic;
 using System.Linq.Expressions;
 using Compiler = Mono.CSharp;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -94,23 +95,33 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		// Creates mcs expression from dynamic method object
 		//
-		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value, bool typed)
+		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
-			if (info != null && info.IsNamed)
-				throw new NotImplementedException ("IsNamed");
-
 			if (value.Value == null)
 				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
 
 			if (info != null && (info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
-				if (!typed)
-					throw new NotImplementedException ("weakly typed constant");
-
 				InitializeCompiler (null);
 				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
 			}
 
-			return new Compiler.RuntimeValueExpression (value, typed);
+			return new Compiler.RuntimeValueExpression (value);
+		}
+
+		public static Compiler.Arguments CreateCompilerArguments (IEnumerable<CSharpArgumentInfo> info, DynamicMetaObject[] args)
+		{
+			var res = new Compiler.Arguments (args.Length);
+			int pos = 0;
+			foreach (var item in info) {
+				var expr = CreateCompilerExpression (item, args [pos]);
+				if (item.IsNamed) {
+					res.Add (new Compiler.NamedArgument (new Compiler.LocatedToken (Compiler.Location.Null, item.Name), expr));
+				} else {
+					res.Add (new Compiler.Argument (expr, item.ArgumentModifier));
+				}
+			}
+
+			return res;
 		}
 
 		static Compiler.CompilerContext CreateDefaultCompilerContext ()
@@ -127,6 +138,15 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return arg.HasValue && arg.Value == null ?
 				BindingRestrictions.GetInstanceRestriction (arg.Expression, null) :
 				BindingRestrictions.GetTypeRestriction (arg.Expression, arg.LimitType);
+		}
+
+		public static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject[] args)
+		{
+			var res = CreateRestrictionsOnTarget (args[0]);
+			for (int i = 1; i < args.Length; ++i)
+				res = res.Merge (CreateRestrictionsOnTarget (args[i]));
+
+			return res;
 		}
 
 		static void InitializeCompiler (Compiler.CompilerContext ctx)

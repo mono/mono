@@ -30,6 +30,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -43,6 +44,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.flags = flags;
 			this.name = name;
 		}
+
+		internal Compiler.Argument.AType ArgumentModifier {
+			get {
+				if ((flags & CSharpArgumentInfoFlags.IsRef) != 0)
+					return Compiler.Argument.AType.Ref;
+
+				if ((flags & CSharpArgumentInfoFlags.IsOut) != 0)
+					return Compiler.Argument.AType.Out;
+
+				return Compiler.Argument.AType.None;
+			}
+		}
+
+		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
+		{
+			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.Name;
+			return new CallInfo (Math.Max (0, argumentInfo.Count () - skipCount), named);
+		}
 		
 		public override bool Equals (object obj)
 		{
@@ -53,7 +72,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public CSharpArgumentInfoFlags Flags {
 			get { return flags; }
 		}
-		
+
 		public override int GetHashCode ()
 		{
 			return EqualityComparer<string>.Default.GetHashCode (name) ^ flags.GetHashCode ();
@@ -65,12 +84,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public string Name {
 			get { return name; }
-		}
-		
-		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
-		{
-			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.Name;
-			return new CallInfo (Math.Max (0, argumentInfo.Count () - skipCount), named);
 		}
 	}
 }

@@ -30,6 +30,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -60,19 +61,34 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpGetIndexBinder;
-			return other != null && base.Equals (obj) && other.callingContext == callingContext && 
+			return other != null && other.callingContext == callingContext &&
 				other.argumentInfo.SequenceEqual (argumentInfo);
 		}
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				callingContext.GetHashCode (),
+				argumentInfo.GetHashCode (),
+				GetType().GetHashCode ());
 		}
 		
-		[MonoTODO]
 		public override DynamicMetaObject FallbackGetIndex (DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
 		{
-			throw new NotImplementedException ();
+			if (argumentInfo.Count != indexes.Length + 1) {
+				if (errorSuggestion == null)
+					throw new NotImplementedException ();
+
+				return errorSuggestion;
+			}
+
+			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
+			expr = new Compiler.ElementAccess (expr, args);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);	// TODO: ReturnType replace
+
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (indexes));
+			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

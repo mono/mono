@@ -72,7 +72,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackConvert (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
-			var expr = CSharpBinder.CreateCompilerExpression (null, target, true);
+			var expr = CSharpBinder.CreateCompilerExpression (null, target);
 
 			if (Explicit)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (Type, Compiler.Location.Null), expr);

@@ -75,17 +75,15 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackSetMember (DynamicMetaObject target, DynamicMetaObject value, DynamicMetaObject errorSuggestion)
 		{
-			var source = CSharpBinder.CreateCompilerExpression (argumentInfo[1], value, true);
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target, true);
+			var source = CSharpBinder.CreateCompilerExpression (argumentInfo[1], value);
+			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 
 			// Field assignment
 			expr = new Compiler.MemberAccess (expr, Name);
 			expr = new Compiler.SimpleAssign (expr, source);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr); // TODO: ReturnType replace
 
-			// Target type is expecting object
-			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
-
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (value));
 
 			if (target.Value == null) {
 				if (errorSuggestion != null)
