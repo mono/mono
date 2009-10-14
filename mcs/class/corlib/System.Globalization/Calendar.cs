@@ -135,7 +135,7 @@ public abstract class Calendar
 
 #if NET_2_0
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
 		get {

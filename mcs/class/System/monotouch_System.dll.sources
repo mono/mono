@@ -29,6 +29,7 @@ System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/ISynchronizeInvoke.cs
+System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/InvalidEnumArgumentException.cs
 System.ComponentModel/NotifyParentPropertyAttribute.cs
 System.ComponentModel/PropertyDescriptor.cs
@@ -337,3 +338,8 @@ System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
 System.Security.Authentication/SslProtocols.cs
 System.Security.Authentication/InvalidCredentialException.cs
+
+System.Timers/ElapsedEventArgs.cs
+System.Timers/ElapsedEventHandler.cs
+System.Timers/Timer.cs
+System.Timers/TimersDescriptionAttribute.cs

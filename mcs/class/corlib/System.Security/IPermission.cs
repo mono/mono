@@ -34,7 +34,7 @@ namespace System.Security {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 	public interface IPermission {
 #else
 	public interface IPermission : ISecurityEncodable {

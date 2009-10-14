@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.Serialization.Formatters.Binary;
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 using System.Runtime.Hosting;
 using System.Security.Policy;
 #endif
@@ -71,7 +71,7 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
@@ -120,7 +120,7 @@ namespace System
 //#endif
 		}
 
-#if NET_2_0 && !NET_2_1
+#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -171,7 +171,7 @@ namespace System
 				application_name = value;
 			}
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public string CachePath {
 			get {
 				return cache_path;
@@ -244,7 +244,7 @@ namespace System
 				loader_optimization = value;
 			}
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public string PrivateBinPath {
 			get {
 				return private_bin_path;

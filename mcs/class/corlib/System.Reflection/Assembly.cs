@@ -145,7 +145,7 @@ namespace System.Reflection {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			get { return UnprotectedGetEvidence (); }

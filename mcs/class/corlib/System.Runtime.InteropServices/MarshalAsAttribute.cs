@@ -52,7 +52,7 @@ namespace System.Runtime.InteropServices {
 #endif	
 		public Type MarshalTypeRef;
 		
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public VarEnum SafeArraySubType;
 #endif
 

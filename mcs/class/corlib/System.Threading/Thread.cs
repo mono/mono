@@ -212,7 +212,7 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static IPrincipal CurrentPrincipal {
 			get {
 				Thread th = CurrentThread;
@@ -422,7 +422,7 @@ namespace System.Threading {
 			internal_thread = it;
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 #if NET_2_0
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 #endif
@@ -718,7 +718,7 @@ namespace System.Threading {
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public ThreadPriority Priority {
 			get {
 				return(ThreadPriority.Lowest);
@@ -745,7 +745,7 @@ namespace System.Threading {
 			Abort_internal (Internal, null);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort (object stateInfo) 
 		{
@@ -783,7 +783,7 @@ namespace System.Threading {
 			return Join_internal(Internal, millisecondsTimeout, Internal.system_thread_handle);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public bool Join(TimeSpan timeout)
 		{
 			// LAMESPEC: says to throw ArgumentException too
@@ -801,7 +801,7 @@ namespace System.Threading {
 		public extern static void MemoryBarrier ();
 #endif
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
 
@@ -909,7 +909,7 @@ namespace System.Threading {
 				throw new SystemException ("Thread creation failed.");
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Suspend_internal(InternalThread thread);
 
@@ -1106,7 +1106,7 @@ namespace System.Threading {
 			// Managed and native threads are currently bound together.
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public ApartmentState GetApartmentState ()
 		{
 			return (ApartmentState)Internal.apartment_state;
@@ -1157,7 +1157,7 @@ namespace System.Threading {
 		}
 #endif
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
