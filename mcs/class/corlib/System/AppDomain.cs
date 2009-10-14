@@ -122,7 +122,7 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 #endif
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;

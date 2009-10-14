@@ -1,3 +1,7 @@
+2009-10-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* AppDomain.cs: Re-add BaseDirectory in the MonoTouch profile.
+
 2009-10-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Exception.cs: Use StackFrame.GetSecureFileName to display (or 
