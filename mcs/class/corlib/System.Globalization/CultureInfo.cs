@@ -320,14 +320,14 @@ namespace System.Globalization
 			}
 		}
 
-		public unsafe virtual TextInfo TextInfo
+		public virtual TextInfo TextInfo
 		{
 			get {
 				if (textInfo == null) {
 					if (!constructed) Construct ();
 					lock (this) {
 						if(textInfo == null) {
-							textInfo = new TextInfo (this, cultureID, textinfo_data, m_isReadOnly);
+							textInfo = CreateTextInfo (m_isReadOnly);
 						}
 					}
 				}
@@ -685,7 +685,7 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool internal_is_lcid_neutral (int lcid, out bool is_neutral);
 
-		private unsafe void ConstructInvariant (bool read_only)
+		private void ConstructInvariant (bool read_only)
 		{
 			cultureID = InvariantCultureId;
 
@@ -699,7 +699,7 @@ namespace System.Globalization
 				dateTimeInfo = (DateTimeFormatInfo) dateTimeInfo.Clone ();
 			}
 
-			textInfo=new TextInfo (this, cultureID, this.textinfo_data,read_only);
+			textInfo = CreateTextInfo (read_only);
 
 			m_name=String.Empty;
 			displayname=
@@ -709,6 +709,11 @@ namespace System.Globalization
 			iso2lang="iv";
 			icu_name="en_US_POSIX";
 			win3lang="IVL";
+		}
+
+		private unsafe TextInfo CreateTextInfo (bool readOnly)
+		{
+			return new TextInfo (this, cultureID, this.textinfo_data, readOnly);
 		}
 
 		public CultureInfo (int culture) : this (culture, true) {}
