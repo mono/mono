@@ -1,3 +1,7 @@
+2009-10-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CultureInfo.cs: Refactor to reduce unsafe methods/scope.
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompareInfo.cs: Don't allow MONO_DISABLE_MANAGED_COLLATION
