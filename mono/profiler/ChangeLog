@@ -1,4 +1,9 @@
 2009-10-14  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Removed MAX_STATISTICAL_CALL_CHAIN_DEPTH
+	definition (it belongs to the runtime), and implemented	support for
+	different strategies for building call chains in stat mode.
+
+2009-10-14  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Removed useless "domain" parameter from
 	write_statistical_hit, and consequentely removed a call to
 	mono_thread_current from write_statistical_data_block (which sometimes

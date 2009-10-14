@@ -1,5 +1,11 @@
 2009-10-14  Massimiliano Mantione  <massi@ximian.com>
 
+	* profiler.h: Put here the definition of
+	MONO_PROFILER_MAX_STAT_CALL_CHAIN_DEPTH
+	(and fix the build...).
+
+2009-10-14  Massimiliano Mantione  <massi@ximian.com>
+
 	* profiler.c, profiler.h, profiler-private.h:
 	Added support for different ways of getting call chains in stat mode.
 
