@@ -1,3 +1,9 @@
+2009-10-14  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (per_profile_dirs): New.  List of subdirs that build
+	per-profile tools.
+	(net_2_0_dirs, net_4_0_dirs): Use it.
+
 2009-07-02  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build the linker and the tuner in the net_2_0 profile.

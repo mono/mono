@@ -1,38 +1,40 @@
 thisdir = tools
 
-net_2_0_dirs := \
+per_profile_dirs = \
 	al		\
-	cilc		\
-	corcompare	\
-	culevel		\
+	compiler-tester	\
 	linker		\
 	tuner		\
 	csharplib	\
 	csharp		\
-	mono-xsd	\
-	wsdl		\
-	mono-xmltool	\
-	compiler-tester	\
-	monop		\
-	xbuild		\
-	resgen		\
-	monodoc		\
-	mdoc		\
-	mono-service	\
-	mono-shlib-cop	\
+	culevel		\
+	gacutil		\
+	genxs		\
 	mkbundle	\
+	monop		\
+	mono-service	\
+	mono-xsd	\
+	monodoc		\
+	resgen		\
+	wsdl
+
+net_2_0_dirs := \
+	$(per_profile_dirs) \
+	cilc		\
+	corcompare	\
+	mono-xmltool	\
+	xbuild		\
+	mdoc		\
+	mono-shlib-cop	\
 	sgen		\
-	security	\
 	mconfig		\
 	installutil	\
 	nunitreport	\
 	pdb2mdb		\
 	sqlsharp	\
 	sqlmetal	\
-	gacutil		\
 	svcutil		\
 	ictool		\
-	genxs		\
 	disco		\
 	soapsuds	\
 	browsercaps-updater	\
@@ -40,7 +42,7 @@ net_2_0_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
-	mjs			\
+	mjs		\
 	prj2make	\
 	mod		\
 	installvst
@@ -54,7 +56,7 @@ net_2_0_SUBDIRS := $(net_2_0_dirs)
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 net_2_1_SUBDIRS := $(net_2_1_dirs)
 net_4_0_bootstrap_SUBDIRS = resgen culevel
-net_4_0_SUBDIRS := $(net_2_0_dirs)
+net_4_0_SUBDIRS := $(per_profile_dirs)
 
 SUBDIRS = $(net_1_1_SUBDIRS) $(net_2_0_SUBDIRS) $(net_2_1_SUBDIRS)
 
