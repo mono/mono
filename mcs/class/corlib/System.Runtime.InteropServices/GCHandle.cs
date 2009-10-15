@@ -7,7 +7,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -57,6 +57,9 @@ namespace System.Runtime.InteropServices
 
 		private GCHandle(object value, GCHandleType type)
 		{
+			// MS does not crash/throw on (most) invalid GCHandleType values (except -1)
+			if ((type < GCHandleType.Weak) || (type > GCHandleType.Pinned))
+				type = GCHandleType.Normal;
 			handle = GetTargetHandle (value, 0, type);
 		}
 
@@ -74,6 +77,8 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
+				if (!IsAllocated)
+					throw new InvalidOperationException (Locale.GetText ("Handle is not allocated"));
 				return GetTarget (handle);
 			} 
 			set

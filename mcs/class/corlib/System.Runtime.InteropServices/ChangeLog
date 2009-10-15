@@ -1,3 +1,7 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GCHandle.cs: Add missing validations
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* _Assembly.cs: Remove Evidence and GlobalAssemblyCache 

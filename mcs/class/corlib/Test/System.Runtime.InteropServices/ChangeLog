@@ -1,3 +1,7 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GCHandleTest.cs: Add more test cases for validations
+
 2009-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* GCHandleTest.cs: Add a test for null GC handles with type 
