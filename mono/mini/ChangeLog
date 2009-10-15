@@ -1,3 +1,7 @@
+2009-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_op_imm_to_op): Handle OP_AND/OR/XOR_IMM.
+
 2009-10-13  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debugger_trampoline_compiled): Add
