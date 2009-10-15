@@ -1,3 +1,8 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GCHandle.cs: Add missing validations
+	[Backport r144204]
+
 2009-03-05  Tom Hindle <tom_hindle@sil.org>
 	
 	* Marshal.cs: Implemented GenerateGuidForType

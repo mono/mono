@@ -1,3 +1,8 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GCHandleTest.cs: Add more test cases for validations
+	[Backport up to r144204]
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MarshalTest.cs: Added tests for GetHINSTANCE. Improved existing

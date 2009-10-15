@@ -4,7 +4,7 @@
 // Authors:
 // 	Paolo Molaro (lupus@ximian.com)
 //
-// (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2005, 2009 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -14,21 +14,39 @@ using System.Runtime.InteropServices;
 namespace MonoTests.System.Runtime.InteropServices
 {
 	[TestFixture]
-	public class GCHandleTest : Assertion
+	public class GCHandleTest
 	{
 		static GCHandle handle;
 
 		[Test]
-		public void DefaultZeroValue ()
+		public void DefaultZeroValue_Allocated ()
 		{
-			AssertEquals (false, handle.IsAllocated);
+			Assert.IsFalse (handle.IsAllocated, "IsAllocated");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void DefaultZeroValue_Target ()
+		{
+			Assert.IsNull (handle.Target, "Target");
 		}
 
 		[Test]
 		public void AllocNull ()
 		{
-			IntPtr ptr = (IntPtr)GCHandle.Alloc(null);
-			GCHandle gch = (GCHandle)ptr;
+			IntPtr ptr = (IntPtr) GCHandle.Alloc (null);
+			Assert.IsFalse (ptr == IntPtr.Zero, "ptr");
+			GCHandle gch = (GCHandle) ptr;
+			Assert.IsTrue (gch.IsAllocated, "IsAllocated");
+			Assert.IsNull (gch.Target, "Target");
+		}
+
+		[Test]
+		public void AllocNullWeakTrack ()
+		{
+			GCHandle gch = GCHandle.Alloc (null, GCHandleType.WeakTrackResurrection);
+			Assert.IsTrue (gch.IsAllocated, "IsAllocated");
+			Assert.IsNull (gch.Target, "Target");
 		}
 
 		[Test]
@@ -76,10 +94,33 @@ namespace MonoTests.System.Runtime.InteropServices
 			GCHandle handle = GCHandle.Alloc (null, GCHandleType.Pinned);
 			try {
 				IntPtr ptr = handle.AddrOfPinnedObject();
-				AssertEquals (new IntPtr (0), ptr);
+				Assert.AreEqual (new IntPtr (0), ptr);
 			}
 			finally {
 				handle.Free();
+			}
+		}
+
+		[Test]
+		[Ignore ("throw non-catchable ExecutionEngineException")]
+		[ExpectedException (typeof (ExecutionEngineException))]
+		public void AllocMinusOne ()
+		{
+			// -1 is a special value used by the mono runtime
+			// looks like it's special too in MS CLR (since it will crash)
+			GCHandle.Alloc (null, (GCHandleType) (-1));
+		}
+
+		[Test]
+		public void AllocInvalidType ()
+		{
+			GCHandle gch = GCHandle.Alloc (null, (GCHandleType) Int32.MinValue);
+			try {
+				Assert.IsTrue (gch.IsAllocated, "IsAllocated");
+				Assert.IsNull (gch.Target, "Target");
+			}
+			finally {
+				gch.Free ();
 			}
 		}
 	}
