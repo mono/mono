@@ -1,5 +1,11 @@
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs,
+	  ServiceMetadataExtension.cs : reduce extra args, static isn't
+	  required here. Add FIXME comments.
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs : before fixing lots of wrong code,
 	  add primitive help page support to make sure base_uri is bogus.
 

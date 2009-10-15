@@ -82,7 +82,7 @@ namespace System.ServiceModel.Description
 			get { return owner; }
 		}
 
-		internal static ServiceMetadataExtension EnsureServiceMetadataExtension (ServiceDescription description, ServiceHostBase serviceHostBase) {
+		internal static ServiceMetadataExtension EnsureServiceMetadataExtension (ServiceHostBase serviceHostBase) {
 			ServiceMetadataExtension sme = serviceHostBase.Extensions.Find<ServiceMetadataExtension> ();
 			if (sme == null) {
 				sme = new ServiceMetadataExtension ();
@@ -91,22 +91,22 @@ namespace System.ServiceModel.Description
 			return sme;
 		}
 
-		internal static void EnsureServiceMetadataHttpChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		internal void EnsureServiceMetadataHttpChanelDispatcher (Uri uri, WCFBinding binding)
 		{
-			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpBinding ());
+			EnsureServiceMetadataDispatcher (uri, binding ?? MetadataExchangeBindings.CreateMexHttpBinding ());
 		}
 
-		internal static void EnsureServiceMetadataHttpsChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		internal void EnsureServiceMetadataHttpsChanelDispatcher (Uri uri, WCFBinding binding)
 		{
 			// same as http now.
-			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpsBinding ());
+			EnsureServiceMetadataDispatcher (uri, binding ?? MetadataExchangeBindings.CreateMexHttpsBinding ());
 		}
 
-		static void EnsureServiceMetadataDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		void EnsureServiceMetadataDispatcher (Uri uri, WCFBinding binding)
 		{
-			if (sme._serviceMetadataChanelDispatchers == null)
-				sme._serviceMetadataChanelDispatchers = new Dictionary<Uri, ChannelDispatcherBase> ();
-			else if (sme._serviceMetadataChanelDispatchers.ContainsKey (uri))
+			if (_serviceMetadataChanelDispatchers == null)
+				_serviceMetadataChanelDispatchers = new Dictionary<Uri, ChannelDispatcherBase> ();
+			else if (_serviceMetadataChanelDispatchers.ContainsKey (uri))
 				return;
 
 			CustomBinding cb = new CustomBinding (binding)
@@ -120,12 +120,12 @@ namespace System.ServiceModel.Description
 				ListenUri = uri,
 			};
 
-			ChannelDispatcher channelDispatcher = serviceHostBase.BuildChannelDispatcher (se, new BindingParameterCollection ());
+			ChannelDispatcher channelDispatcher = owner.BuildChannelDispatcher (se, new BindingParameterCollection ());
 
-			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (serviceHostBase, new HttpGetWsdl (serviceHostBase.Description, sme, uri)));
+			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, new HttpGetWsdl (owner.Description, this, uri)));
 
-			sme._serviceMetadataChanelDispatchers.Add (uri, channelDispatcher);
-			serviceHostBase.ChannelDispatchers.Add (channelDispatcher);
+			_serviceMetadataChanelDispatchers.Add (uri, channelDispatcher);
+			owner.ChannelDispatchers.Add (channelDispatcher);
 		}
 
 		void IExtension<ServiceHostBase>.Attach (ServiceHostBase owner)

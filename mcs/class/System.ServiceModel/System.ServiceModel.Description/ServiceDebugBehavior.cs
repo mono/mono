@@ -67,7 +67,7 @@ namespace System.ServiceModel.Description
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			ServiceMetadataExtension sme = ServiceMetadataExtension.EnsureServiceMetadataExtension (description, serviceHostBase);
+			ServiceMetadataExtension sme = ServiceMetadataExtension.EnsureServiceMetadataExtension (serviceHostBase);
 
 			foreach (ChannelDispatcher dispatcher in serviceHostBase.ChannelDispatchers)
 				if (IncludeExceptionDetailInFaults) // may be set also in ServiceBehaviorAttribute
@@ -76,13 +76,15 @@ namespace System.ServiceModel.Description
 			if (HttpHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpHelpPageUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpChanelDispatcher (description, serviceHostBase, sme, uri, HttpHelpPageBinding);
+					// FIXME: wrong. It should add help page
+					sme.EnsureServiceMetadataHttpChanelDispatcher (uri, HttpHelpPageBinding);
 			}
 
 			if (HttpsHelpPageEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("https", HttpsHelpPageUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpsChanelDispatcher (description, serviceHostBase, sme, uri, HttpsHelpPageBinding);
+					// FIXME: wrong. It should add help page
+					sme.EnsureServiceMetadataHttpsChanelDispatcher (uri, HttpsHelpPageBinding);
 			}
 		}
 
