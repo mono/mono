@@ -122,7 +122,7 @@ namespace System.ServiceModel.Description
 
 			ChannelDispatcher channelDispatcher = serviceHostBase.BuildChannelDispatcher (se, new BindingParameterCollection ());
 
-			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (serviceHostBase, new HttpGetWsdl (sme, uri)));
+			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (serviceHostBase, new HttpGetWsdl (serviceHostBase.Description, sme, uri)));
 
 			sme._serviceMetadataChanelDispatchers.Add (uri, channelDispatcher);
 			serviceHostBase.ChannelDispatchers.Add (channelDispatcher);
@@ -149,6 +149,7 @@ namespace System.ServiceModel.Description
 
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract
 	{
+		ServiceDescription description;
 		ServiceMetadataExtension metadata_extn;
 		Uri base_uri;
 
@@ -157,8 +158,9 @@ namespace System.ServiceModel.Description
 		Dictionary <string, XmlSchema> schemas = 
 			new Dictionary<string, XmlSchema> ();
 
-		public HttpGetWsdl (ServiceMetadataExtension metadata_extn, Uri base_uri)
+		public HttpGetWsdl (ServiceDescription description, ServiceMetadataExtension metadata_extn, Uri base_uri)
 		{
+			this.description = description;
 			this.metadata_extn = metadata_extn;
 			this.base_uri = base_uri;
 			GetMetadata (metadata_extn.Owner);
@@ -224,11 +226,45 @@ namespace System.ServiceModel.Description
 			return query_string;
 		}
 
+		// It is returned for ServiceDebugBehavior.Http(s)HelpPageUrl.
+		// They may be empty, and for such case the help page URL is
+		// simply the service endpoint URL (foobar.svc).
+		//
+		// Note that if there is also ServiceMetadataBehavior that
+		// lacks Http(s)GetUrl, then it is also mapped to the same
+		// URL, but it requires "?wsdl" parameter and .NET somehow
+		// differentiates those requests.
+		//
+		// If both Http(s)HelpPageUrl and Http(s)GetUrl exist, then
+		// requests to the service endpoint URL (foobar.svc) results
+		// in an xml output with empty string (non-WF XML error).
+
 		SMMessage CreateHelpPage (SMMessage request)
 		{
-			//FIXME Check for ServiceDebugBehavior.HttpHelpPage
-			//else do what? Check
-			throw new NotImplementedException ();
+			var helpBody = description.Behaviors.Find<ServiceMetadataBehavior> () != null ?
+				String.Format (@"
+<p>To create client proxy source, run:</p>
+<p><code>svcutil <a href='{0}'>{0}</a></code></p>
+<!-- FIXME: add client proxy usage (that required decent ServiceContractGenerator implementation, so I leave it yet.) -->
+", new Uri (base_uri.ToString () + "?wsdl")) : // this Uri.ctor() is nasty, but there is no other way to add "?wsdl" (!!) / FIXME: base_uri passed from the .ctor is totally wrong.
+				String.Format (@"
+<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.", description.Name);
+
+			var html = String.Format (@"
+<html>
+<head>
+<title>Service {0}</title>
+</head>
+<body>
+{1}
+</body>
+</html>", description.Name, helpBody);
+
+			var m = SMMessage.CreateMessage (MessageVersion.None, "", XmlReader.Create (new StringReader (html)));
+			var rp = new HttpResponseMessageProperty ();
+			rp.Headers ["Content-Type"] = "text/html";
+			m.Properties.Add (HttpResponseMessageProperty.Name, rp);
+			return m;
 		}
 
 		SMMessage CreateWsdlMessage (WSServiceDescription wsdl)

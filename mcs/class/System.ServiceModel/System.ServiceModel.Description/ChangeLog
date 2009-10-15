@@ -1,3 +1,8 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : before fixing lots of wrong code,
+	  add primitive help page support to make sure base_uri is bogus.
+
 2009-10-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs : fixed sync client generator that
