@@ -55,6 +55,9 @@ namespace System.Runtime.CompilerServices
 
 		public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle)
 		{
+			if ((array == null) || (fldHandle.Value == IntPtr.Zero))
+				throw new ArgumentNullException ();
+
 			InitializeArray (array, fldHandle.Value);
 		}
 
@@ -92,6 +95,9 @@ namespace System.Runtime.CompilerServices
 
 		public static void RunClassConstructor (RuntimeTypeHandle type)
 		{
+			if (type.Value == IntPtr.Zero)
+				throw new ArgumentException ("Handle is not initialized.", "type");
+
 			RunClassConstructor (type.Value);
 		}
 
