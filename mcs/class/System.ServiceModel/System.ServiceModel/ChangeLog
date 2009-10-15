@@ -1,3 +1,11 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientRuntimeChannel.cs: Remove the WaitOne 'emitContext' 
+	overloads from the Moonlight build. Directly call WaitHandle.
+	WaitAll from WaitOne(int) (since the overloads are not always
+	present)
+	[Backport r144198]
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OperationContext.cs: Use [ThreadStatic] instead of Thread.

@@ -148,7 +148,7 @@ namespace System.ServiceModel
 
 			public override bool WaitOne (int millisecondsTimeout)
 			{
-				return WaitOne (millisecondsTimeout, false);
+				return WaitHandle.WaitAll (ResultWaitHandles, millisecondsTimeout);
 			}
 
 			WaitHandle [] ResultWaitHandles {
@@ -160,6 +160,7 @@ namespace System.ServiceModel
 				}
 			}
 
+#if !NET_2_1 || MONOTOUCH
 			public override bool WaitOne (int millisecondsTimeout, bool exitContext)
 			{
 				return WaitHandle.WaitAll (ResultWaitHandles, millisecondsTimeout, exitContext);
@@ -169,6 +170,7 @@ namespace System.ServiceModel
 			{
 				return WaitHandle.WaitAll (ResultWaitHandles, timeout, exitContext);
 			}
+#endif
 		}
 
 		class DisplayUIAsyncResult : IAsyncResult
