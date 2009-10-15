@@ -1,3 +1,9 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : make sure to release wait lock.
+	* HttpChannelListener.cs : session channels are not supported, so
+	  remove relevant NIEs.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequestChannel.cs (WaitEnd): Neither Moonlight nor MonoTouch

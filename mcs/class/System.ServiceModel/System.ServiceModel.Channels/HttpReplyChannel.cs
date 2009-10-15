@@ -147,13 +147,17 @@ w.Close ();
 			try {
 				wait = new AutoResetEvent (false);
 				source.Http.BeginGetContext (HttpContextReceived, null);
+				return wait.WaitOne (timeout, false);
 			} catch (HttpListenerException e) {
 				// FIXME: does this make sense? I doubt.
 				if (e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
 					while (true) Thread.Sleep (1000); // thread is about to be terminated.
 				throw;
-			} catch (ObjectDisposedException) { return false; }
-			return wait.WaitOne (timeout, false);
+			} catch (ObjectDisposedException) {
+				return false;
+			} finally {
+				wait = null;
+			}
 		}
 
 		void HttpContextReceived (IAsyncResult result)

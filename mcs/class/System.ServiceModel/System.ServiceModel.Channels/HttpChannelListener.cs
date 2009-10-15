@@ -66,9 +66,6 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new HttpSimpleReplyChannel ((HttpSimpleChannelListener<IReplyChannel>) (object) this);
-			// FIXME: session channel support
-			if (typeof (TChannel) == typeof (IReplySessionChannel))
-				throw new NotImplementedException ();
 
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
@@ -89,8 +86,7 @@ namespace System.ServiceModel.Channels
 			if (State == CommunicationState.Closed)
 				return;
 			base.OnClose (timeout);
-			// FIXME: it is said that channels are not closed
-			// when the channel listener is closed.
+			// The channels are kept open when the creator channel listener is closed.
 			// http://blogs.msdn.com/drnick/archive/2006/03/22/557642.aspx
 			httpChannelManager.Stop (false);
 		}
@@ -124,9 +120,6 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new AspNetReplyChannel ((AspNetChannelListener<IReplyChannel>) (object) this);
-			// FIXME: session channel support
-			if (typeof (TChannel) == typeof (IReplySessionChannel))
-				throw new NotImplementedException ();
 
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
