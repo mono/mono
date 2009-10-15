@@ -1,3 +1,10 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientRuntimeChannel.cs: Remove the WaitOne 'emitContext' 
+	overloads from the Moonlight build. Directly call WaitHandle.
+	WaitAll from WaitOne(int) (since the overloads are not always
+	present)
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : fix relative URI construction for
