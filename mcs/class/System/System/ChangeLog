@@ -1,3 +1,8 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : do not reject relative short name URI when uriKind is
+	  RelativeOrAbsolute.
+
 2009-09-01  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #533572

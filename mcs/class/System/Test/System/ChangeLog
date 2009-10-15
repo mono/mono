@@ -1,3 +1,8 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest3.cs : added test for parsing short name with
+	  RelativeOrAbsolute mode.
+
 2009-09-01  Andres Aragoneses  <aaragoneses@novell.com>
 
 	* UriTest.cs: New tests from #533572.

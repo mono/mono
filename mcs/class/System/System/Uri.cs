@@ -1367,7 +1367,7 @@ namespace System {
 				}
 			}
 			
-			if (len <= 1 && (kind != UriKind.Relative))
+			if (len <= 1 && (kind == UriKind.Absolute))
 				return "Absolute URI is too short";
 
 			int pos = 0;

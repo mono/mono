@@ -601,6 +601,12 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void ParseShortNameAsRelativeOrAbsolute ()
+		{
+			new Uri ("x", UriKind.RelativeOrAbsolute);
+		}
+
 		private class TolerantUriParser : GenericUriParser
 		{
 			private const GenericUriParserOptions DefaultOptions
