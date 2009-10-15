@@ -413,6 +413,22 @@ namespace Mono.CSharp {
 			Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", name);
 		}
 
+		public void Error_TypeArgumentsCannotBeUsed (Report report, Location loc)
+		{
+			// Better message for possible generic expressions
+			if (eclass == ExprClass.MethodGroup || eclass == ExprClass.Type) {
+				if (this is TypeExpr)
+					report.SymbolRelatedToPreviousError (type);
+
+				string name = eclass == ExprClass.Type ? ExprClassName : "method";
+				report.Error (308, loc, "The non-generic {0} `{1}' cannot be used with the type arguments",
+					name, GetSignatureForError ());
+			} else {
+				report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
+					ExprClassName, GetSignatureForError ());
+			}
+		}
+
 		protected virtual void Error_TypeDoesNotContainDefinition (ResolveContext ec, Type type, string name)
 		{
 			Error_TypeDoesNotContainDefinition (ec, loc, type, name);
@@ -2574,7 +2590,7 @@ namespace Mono.CSharp {
 						return ct.ResolveAsTypeStep (ec, false);
 					}
 
-					Namespace.Error_TypeArgumentsCannotBeUsed (fne, loc);
+					fne.Error_TypeArgumentsCannotBeUsed (ec.Compiler.Report, loc);
 				}
 
 				return fne;
@@ -2624,7 +2640,7 @@ namespace Mono.CSharp {
 			if (targs != null) {
 				FullNamedExpression retval = ec.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
-					Namespace.Error_TypeArgumentsCannotBeUsed (retval, loc);
+					retval.Error_TypeArgumentsCannotBeUsed (ec.Compiler.Report, loc);
 					return;
 				}
 			}
@@ -2698,23 +2714,35 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
-					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+					e = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+
 					if (right_side != null) {
-						return var.ResolveLValue (ec, right_side);
+						e = e.ResolveLValue (ec, right_side);
 					} else {
 						ResolveFlags rf = ResolveFlags.VariableOrValue;
 						if (intermediate)
 							rf |= ResolveFlags.DisableFlowAnalysis;
-						return var.Resolve (ec, rf);
+
+						e = e.Resolve (ec, rf);
 					}
+
+					if (targs != null && e != null)
+						e.Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
+
+					return e;
 				}
 
-				Expression expr = current_block.Toplevel.GetParameterReference (Name, loc);
-				if (expr != null) {
+				e = current_block.Toplevel.GetParameterReference (Name, loc);
+				if (e != null) {
 					if (right_side != null)
-						return expr.ResolveLValue (ec, right_side);
+						e = e.ResolveLValue (ec, right_side);
+					else
+						e = e.Resolve (ec);
 
-					return expr.Resolve (ec);
+					if (targs != null && e != null)
+						e.Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
+
+					return e;
 				}
 			}
 			
@@ -4279,7 +4307,7 @@ namespace Mono.CSharp {
 							}
 						} else {
 							if (type_arguments != null && !TypeManager.IsGenericMethod (best_candidate)) {
-								Namespace.Error_TypeArgumentsCannotBeUsed (best_candidate, loc);
+								Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
 								return null;
 							}
 						}

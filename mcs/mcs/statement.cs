@@ -4996,7 +4996,7 @@ namespace Mono.CSharp {
 		{
 			ec.Report.SymbolRelatedToPreviousError (expr.Type);
 			ec.Report.Error (1674, expr.Location, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-				expr.GetSignatureForError ());
+				TypeManager.CSharpName (expr.Type));
 		}
 
 		protected override void EmitPreTryBody (EmitContext ec)

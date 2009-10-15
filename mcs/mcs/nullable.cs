@@ -603,10 +603,10 @@ namespace Mono.CSharp.Nullable
 
 			if ((Oper & Operator.EqualityMask) != 0) {
 				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
-						expr.GetSignatureForError (), c.AsString ());
+					TypeManager.CSharpName (expr.Type), c.AsString ());
 			} else {
 				ec.Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
-						expr.GetSignatureForError (), c.AsString ());
+					TypeManager.CSharpName (expr.Type), c.AsString ());
 			}
 
 			return ReducedExpression.Create (c, this);

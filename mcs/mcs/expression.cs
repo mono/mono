@@ -3133,7 +3133,7 @@ namespace Mono.CSharp {
 
 				if (best_operator == null) {
 					ec.Report.Error (34, loc, "Operator `{0}' is ambiguous on operands of type `{1}' and `{2}'",
-						OperName (oper), left.GetSignatureForError (), right.GetSignatureForError ());
+						OperName (oper), TypeManager.CSharpName (l), TypeManager.CSharpName (r));
 
 					best_operator = po;
 					break;
@@ -4188,7 +4188,7 @@ namespace Mono.CSharp {
 				} else {
 					ec.Report.Error (173, loc,
 						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
-						true_expr.GetSignatureForError (), false_expr.GetSignatureForError ());
+						TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
 					return null;
 				}
 			}			
@@ -4289,6 +4289,11 @@ namespace Mono.CSharp {
 		public HoistedVariable GetHoistedVariable (EmitContext ec)
 		{
 			return GetHoistedVariable (ec.CurrentAnonymousMethod);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return Name;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -7654,7 +7659,7 @@ namespace Mono.CSharp {
 				if (expr_type == null)
 					return;
 
-				Namespace.Error_TypeArgumentsCannotBeUsed (expr_type, loc);
+				expr_type.Error_TypeArgumentsCannotBeUsed (rc.Compiler.Report, loc);
 				return;
 			}
 

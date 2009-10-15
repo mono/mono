@@ -413,7 +413,7 @@ namespace Mono.CSharp {
 			if (name.IndexOf ('`') > 0) {
 				FullNamedExpression retval = Lookup (RootContext.ToplevelTypes.Compiler, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
-					Error_TypeArgumentsCannotBeUsed (retval, loc);
+					retval.Error_TypeArgumentsCannotBeUsed (Report, loc);
 					return;
 				}
 			} else {
@@ -433,29 +433,6 @@ namespace Mono.CSharp {
 			RootContext.ToplevelTypes.Compiler.Report.SymbolRelatedToPreviousError (t);
 			RootContext.ToplevelTypes.Compiler.Report.Error (305, loc, "Using the generic type `{0}' requires `{1}' type argument(s)",
 				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
-		}
-
-		public static void Error_TypeArgumentsCannotBeUsed (FullNamedExpression expr, Location loc)
-		{
-			if (expr is TypeExpr) {
-				RootContext.ToplevelTypes.Compiler.Report.SymbolRelatedToPreviousError (expr.Type);
-				Error_TypeArgumentsCannotBeUsed (loc, "type", expr.GetSignatureForError ());
-			} else {
-				RootContext.ToplevelTypes.Compiler.Report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
-					expr.ExprClassName, expr.GetSignatureForError ());
-			}
-		}
-
-		public static void Error_TypeArgumentsCannotBeUsed (MethodBase mi, Location loc)
-		{
-			RootContext.ToplevelTypes.Compiler.Report.SymbolRelatedToPreviousError (mi);
-			Error_TypeArgumentsCannotBeUsed (loc, "method", TypeManager.CSharpSignature (mi));
-		}
-
-		static void Error_TypeArgumentsCannotBeUsed (Location loc, string type, string name)
-		{
-			RootContext.ToplevelTypes.Compiler.Report.Error(308, loc, "The non-generic {0} `{1}' cannot be used with the type arguments",
-				type, name);
 		}
 
 		public override string GetSignatureForError ()

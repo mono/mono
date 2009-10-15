@@ -1,3 +1,8 @@
+2009-10-15  Marek Safar  <marek.safar@gmail.com>
+
+	* nullable.cs, expression.cs, statement.cs, namespace.cs, ecore.cs:
+	Reject variable used with type arguments.
+
 2009-10-14  Marek Safar  <marek.safar@gmail.com>
 
 	* argument.cs, dynamic.cs, assign.cs, expression.cs, ecore.cs:
