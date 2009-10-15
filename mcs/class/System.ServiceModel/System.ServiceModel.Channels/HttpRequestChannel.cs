@@ -333,18 +333,16 @@ w.Close ();
 			public void WaitEnd ()
 			{
 				if (!IsCompleted) {
-
-					const bool exit_context =
-#if MONOTOUCH
-						false; // MonoTouch doesn't support any remoting feature
-#else
-						true;
-#endif
-
 					// FIXME: Do we need to use the timeout? If so, what happens when the timeout is reached.
 					// Is the current request cancelled and an exception thrown? If so we need to pass the
 					// exception to the Complete () method and allow the result to complete 'normally'.
-					if (!wait.WaitOne (Timeout, exit_context))
+#if NET_2_1 || MONOTOUCH
+					// neither Moonlight nor MonoTouch supports contexts (WaitOne default to false)
+					bool result = wait.WaitOne (Timeout);
+#else
+					bool result = wait.WaitOne (Timeout, true);
+#endif
+					if (!result)
 						throw new TimeoutException ();
 				}
 				if (error != null)

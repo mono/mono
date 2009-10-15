@@ -1,3 +1,10 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequestChannel.cs (WaitEnd): Neither Moonlight nor MonoTouch
+	support contexts so we call the non-overloaded WaitOne method 
+	(which defaults to false).
+	[Backport r144200]
+
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IHttpCookieContainer.cs : new 2.1-only interface (no use).
