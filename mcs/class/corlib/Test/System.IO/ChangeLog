@@ -1,3 +1,8 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnmanagedMemoryStreamTest.cs: Add more test cases to cover all
+	validations
+
 2009-06-25  Robert Jordan  <robertj@gmx.net>
 
 	* BinaryReaderTest.cs, BinaryWriterTest.cs, BufferedStreamTest.cs,
