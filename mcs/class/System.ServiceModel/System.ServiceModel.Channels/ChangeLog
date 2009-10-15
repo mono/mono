@@ -1,3 +1,9 @@
+2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequestChannel.cs (WaitEnd): Neither Moonlight nor MonoTouch
+	support contexts so we call the non-overloaded WaitOne method 
+	(which defaults to false).
+
 2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs, AspNetReplyChannel.cs, HttpChannelListener.cs:
