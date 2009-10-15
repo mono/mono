@@ -430,3 +430,13 @@ System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
 System.Security.Authentication/SslProtocols.cs
 System.Security.Authentication/InvalidCredentialException.cs
+
+System.Threading/Semaphore.cs
+System.Threading/SemaphoreFullException.cs
+System.Threading/ThreadExceptionEventArgs.cs
+System.Threading/ThreadExceptionEventHandler.cs
+
+System.Security.AccessControl/SemaphoreAccessRule.cs
+System.Security.AccessControl/SemaphoreAuditRule.cs
+System.Security.AccessControl/SemaphoreRights.cs
+System.Security.AccessControl/SemaphoreSecurity.cs
