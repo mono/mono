@@ -85,6 +85,74 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.AreEqual (FooClass.counter, 1);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RunClassConstructor_Default ()
+		{
+			RuntimeTypeHandle rth = new RuntimeTypeHandle ();
+			Assert.AreEqual (IntPtr.Zero, rth.Value, "Value");
+			RuntimeHelpers.RunClassConstructor (rth);
+		}
+
+		static RuntimeTypeHandle handle;
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RunClassConstructor_Uninitialized ()
+		{
+			RuntimeHelpers.RunClassConstructor (handle);
+		}
+
+		class Thrower {
+			static Thrower ()
+			{
+				throw new NotFiniteNumberException ();
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeInitializationException))]
+		public void RunClassConstructor_Throw ()
+		{
+			RuntimeHelpers.RunClassConstructor (typeof (Thrower).TypeHandle);
+		}
+
+		class Fielder {
+			public byte [] array = new byte [1];
+		}
+
+		static RuntimeFieldHandle rfh = typeof (Fielder).GetField ("array").FieldHandle;
+		static RuntimeFieldHandle static_rfh;
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void InitializeArray_Null ()
+		{
+			RuntimeHelpers.InitializeArray (null, rfh);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void InitializeArray_Default ()
+		{
+			RuntimeFieldHandle h = new RuntimeFieldHandle ();
+			RuntimeHelpers.InitializeArray (new Fielder ().array, h);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void InitializeArray_Uninitialized ()
+		{
+			RuntimeHelpers.InitializeArray (new Fielder ().array, static_rfh);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void InitializeArray ()
+		{
+			RuntimeHelpers.InitializeArray (new Fielder ().array, rfh);
+		}
+
 #if NET_1_1
 		public void TestGetHashCode ()
 		{
