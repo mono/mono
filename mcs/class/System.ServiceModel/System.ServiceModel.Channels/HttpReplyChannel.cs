@@ -123,7 +123,7 @@ namespace System.ServiceModel.Channels
 				msg = Message.CreateMessage (MessageVersion, null);
 			}
 			msg.Headers.To = ctx.Request.Url;
-			
+			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctx.Request.HttpMethod, ctx.Request.Url.Query, ctx.Request.Headers));
 /*
 MessageBuffer buf = msg.CreateBufferedCopy (0x10000);

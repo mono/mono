@@ -119,6 +119,7 @@ namespace System.ServiceModel.Channels
 			}
 
 			// FIXME: prop.SuppressEntityBody
+			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (req.HttpMethod, req.Url.Query, req.Headers));
 
 			context = new AspNetRequestContext (this, msg, http_context);
