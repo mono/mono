@@ -1,3 +1,7 @@
+2009-10-15  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: add Semaphore to MonoTouch.
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* monotouch_System.dll.sources: Add lots of additional .NET 2.0
