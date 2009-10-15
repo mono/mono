@@ -1,5 +1,10 @@
 2009-10-15  Marek Safar  <marek.safar@gmail.com>
 
+	* dynamic.cs, expression.cs, ecore.cs, delegate.cs: Check return
+	type in VerifyArgumentsCompat.
+
+2009-10-15  Marek Safar  <marek.safar@gmail.com>
+
 	* nullable.cs, expression.cs, statement.cs, namespace.cs, ecore.cs:
 	Reject variable used with type arguments.
 

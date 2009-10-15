@@ -257,8 +257,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			ResolveContext rc = new ResolveContext (ec.MemberContext);
-			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (rc), args, loc).Resolve (rc);
+			Expression target = new DelegateInvocation (new MemberAccess (site_field_expr, "Target", loc).Resolve (bc), args, loc).Resolve (bc);
 			if (target != null)
 				target.Emit (ec);
 

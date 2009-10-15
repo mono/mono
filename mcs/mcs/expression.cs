@@ -4983,14 +4983,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
-			if (type.IsPointer){
-				if (!ec.IsUnsafe){
-					UnsafeError (ec, loc);
-					return null;
-				}
-			}
-			
+		
 			//
 			// Only base will allow this invocation to happen.
 			//
@@ -5231,6 +5224,22 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 		}
 
+#if NET_4_0
+		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodInfo mi, Arguments args)
+		{
+			SLE.Expression expr = SLE.Expression.Call (instance.MakeExpression (ctx), mi,
+				Arguments.MakeExpression (args, ctx));
+
+			if (mi.ReturnType == typeof (void)) {
+				expr = SLE.Expression.Block (
+					expr,
+					SLE.Expression.Default (typeof (object)));
+			}
+
+			return expr;
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			mg.MutateHoistedGenericType (storey);
@@ -5240,113 +5249,6 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-/*
-	//
-	// It's either a cast or delegate invocation
-	//
-	public class InvocationOrCast : ExpressionStatement
-	{
-		Expression expr;
-		Expression argument;
-
-		public InvocationOrCast (Expression expr, Expression argument)
-		{
-			this.expr = expr;
-			this.argument = argument;
-			this.loc = expr.Location;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotSupportedException ("ET");
-		}
-
-		public override Expression DoResolve (ResolveContext ec)
-		{
-			Expression e = ResolveCore (ec);
-			if (e == null)
-				return null;
-
-			return e.Resolve (ec);
-		}
-
-		Expression ResolveCore (EmitContext ec)
-		{
-			//
-			// First try to resolve it as a cast.
-			//
-			TypeExpr te = expr.ResolveAsBaseTerminal (ec, true);
-			if (te != null) {
-				return new Cast (te, argument, loc);
-			}
-
-			//
-			// This can either be a type or a delegate invocation.
-			// Let's just resolve it and see what we'll get.
-			//
-			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
-			if (expr == null)
-				return null;
-
-			//
-			// Ok, so it's a Cast.
-			//
-			if (expr.eclass == ExprClass.Type || expr.eclass == ExprClass.TypeParameter) {
-				return new Cast (expr, argument, loc);
-			}
-
-			if (expr.eclass == ExprClass.Namespace) {
-				expr.Error_UnexpectedKind (null, "type", loc);
-				return null;
-			}			
-
-			//
-			// It's a delegate invocation.
-			//
-			if (!TypeManager.IsDelegateType (expr.Type)) {
-				Error (149, "Method name expected");
-				return null;
-			}
-
-			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (argument, Argument.AType.Expression));
-			return new DelegateInvocation (expr, args, loc);
-		}
-
-		public override ExpressionStatement ResolveStatement (EmitContext ec)
-		{
-			Expression e = ResolveCore (ec);
-			if (e == null)
-				return null;
-
-			ExpressionStatement s = e as ExpressionStatement;
-			if (s == null) {
-				Error_InvalidExpressionStatement ();
-				return null;
-			}
-
-			return s.ResolveStatement (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Cannot happen");
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			throw new Exception ("Cannot happen");
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			InvocationOrCast target = (InvocationOrCast) t;
-
-			target.expr = expr.Clone (clonectx);
-			target.argument = argument.Clone (clonectx);
-		}
-	}
-*/
 
 	/// <summary>
 	///    Implements the new expression 

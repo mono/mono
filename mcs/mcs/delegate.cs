@@ -434,44 +434,6 @@ namespace Mono.CSharp {
 			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
 
-		// <summary>
-		//  Verifies whether the invocation arguments are compatible with the
-		//  delegate's target method
-		// </summary>
-		public static bool VerifyApplicability (ResolveContext ec, Type delegate_type, ref Arguments args, Location loc)
-		{
-			int arg_count;
-
-			if (args == null)
-				arg_count = 0;
-			else
-				arg_count = args.Count;
-
-			MethodBase mb = GetInvokeMethod (ec.Compiler, ec.CurrentType, delegate_type);
-			MethodGroupExpr me = new MethodGroupExpr (new MemberInfo [] { mb }, delegate_type, loc);
-			
-			AParametersCollection pd = TypeManager.GetParameterData (mb);
-
-			int pd_count = pd.Count;
-
-			bool params_method = pd.HasParams;
-			bool is_params_applicable = false;
-			bool is_applicable = me.IsApplicable (ec, ref args, arg_count, ref mb, ref is_params_applicable) == 0;
-			if (args != null)
-				arg_count = args.Count;
-
-			if (!is_applicable && !params_method && arg_count != pd_count) {
-				ec.Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-					TypeManager.CSharpName (delegate_type), arg_count.ToString ());
-				return false;
-			}
-
-			return me.VerifyArgumentsCompat (
-					ec, ref args, arg_count, mb, 
-					is_params_applicable || (!is_applicable && params_method),
-					false, loc);
-		}
-		
 		public static string FullDelegateDesc (MethodBase invoke_method)
 		{
 			return TypeManager.GetFullNameSignature (invoke_method).Replace (".Invoke", "");
@@ -800,22 +762,25 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class DelegateInvocation : ExpressionStatement {
-
+	//
+	// Invocation converted to delegate Invoke call
+	//
+	class DelegateInvocation : ExpressionStatement
+	{
 		readonly Expression InstanceExpr;
-		Arguments  Arguments;
+		Arguments arguments;
 		MethodInfo method;
 		
 		public DelegateInvocation (Expression instance_expr, Arguments args, Location loc)
 		{
 			this.InstanceExpr = instance_expr;
-			this.Arguments = args;
+			this.arguments = args;
 			this.loc = loc;
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			Arguments args = Arguments.CreateForExpressionTree (ec, Arguments,
+			Arguments args = Arguments.CreateForExpressionTree (ec, this.arguments,
 				InstanceExpr.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall (ec, "Invoke", args);
@@ -832,13 +797,32 @@ namespace Mono.CSharp {
 			if (del_type == null)
 				return null;
 			
-			if (!Delegate.VerifyApplicability (ec, del_type, ref Arguments, loc))
-				return null;
-
 			method = Delegate.GetInvokeMethod (ec.Compiler, ec.CurrentType, del_type);
+			MethodBase mb = method;
+			var me = new MethodGroupExpr (new [] { mb }, del_type, loc);
+			me.InstanceExpression = InstanceExpr;
+			
+			AParametersCollection pd = TypeManager.GetParameterData (mb);
+			int pd_count = pd.Count;
+
+			int arg_count = arguments == null ? 0 : arguments.Count;
+
+			bool params_method = pd.HasParams;
+			bool is_params_applicable = false;
+			bool is_applicable = me.IsApplicable (ec, ref arguments, arg_count, ref mb, ref is_params_applicable) == 0;
+			if (arguments != null)
+				arg_count = arguments.Count;
+
+			if (!is_applicable && !params_method && arg_count != pd_count) {
+				ec.Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
+					TypeManager.CSharpName (del_type), arg_count.ToString ());
+			} else {
+				me.VerifyArgumentsCompat (ec, ref arguments, arg_count, mb,
+					is_params_applicable || (!is_applicable && params_method), false, loc);
+			}
+
 			type = TypeManager.TypeToCoreType (method.ReturnType);
 			eclass = ExprClass.Value;
-			
 			return this;
 		}
 
@@ -848,7 +832,7 @@ namespace Mono.CSharp {
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
 			//
-			Invocation.EmitCall (ec, false, InstanceExpr, method, Arguments, loc);
+			Invocation.EmitCall (ec, false, InstanceExpr, method, arguments, loc);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -861,13 +845,20 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 		}
 
+#if NET_4_0
+		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
+		{
+			return Invocation.MakeExpression (ctx, InstanceExpr, method, arguments);
+		}
+#endif
+
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			method = storey.MutateGenericMethod (method);
 			type = storey.MutateType (type);
 
-			if (Arguments != null)
-				Arguments.MutateHoistedGenericType (storey);
+			if (arguments != null)
+				arguments.MutateHoistedGenericType (storey);
 
 			InstanceExpr.MutateHoistedGenericType (storey);
 		}

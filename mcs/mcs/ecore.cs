@@ -4550,7 +4550,7 @@ namespace Mono.CSharp {
 			int a_idx = 0, a_pos = 0;
 			Argument a = null;
 			ArrayList params_initializers = null;
-			bool has_unsafe_arg = false;
+			bool has_unsafe_arg = method is MethodInfo ? ((MethodInfo) method).ReturnType.IsPointer : false;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = arguments [a_idx];
