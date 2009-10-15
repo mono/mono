@@ -1,3 +1,9 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : on opening the host, check service endpoints
+	  to make sure if there is at least one "non-mex" endpoint.
+	  Fix couple of typos.
+
 2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InstanceContext.cs : new constraints on CommunicationObject

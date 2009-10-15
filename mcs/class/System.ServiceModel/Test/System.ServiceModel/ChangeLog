@@ -1,3 +1,8 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBaseTest.cs : add test for checking non-mex contract
+	  existence.
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OperationContextTest.cs: Add test case for OperationContext.Current

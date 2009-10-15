@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
@@ -84,16 +85,17 @@ namespace System.ServiceModel
 			}
 		}
 
-		internal Uri CreateUri (string sheme, Uri relatieUri) {
-			Uri baseUri = base_addresses.Contains (sheme) ? base_addresses [sheme] : null;
+		internal Uri CreateUri (string scheme, Uri relativeUri) {
+			Uri baseUri = base_addresses.Contains (scheme) ? base_addresses [scheme] : null;
 
-			if (relatieUri == null)
+			if (relativeUri == null)
 				return baseUri;
-			if (relatieUri.IsAbsoluteUri)
-				return relatieUri;
+			if (relativeUri.IsAbsoluteUri)
+				return relativeUri;
 			if (baseUri == null)
 				return null;
-			return new Uri (baseUri, relatieUri);
+			var s = relativeUri.ToString ();
+			return new Uri (baseUri, s.Length > 0 && s [0] == '/' ? '.' + s : s);
 		}
 
 		public ChannelDispatcherCollection ChannelDispatchers {
@@ -217,13 +219,14 @@ namespace System.ServiceModel
 				return help_page_contract;
 			case "IMetadataExchange":
 				// this is certainly looking special (or we may 
-				// be missing something around ServiceMetadataExtension)
-				// FIXME: this check breaks initialization by configuration
-				// (as ApplyConfiguration() processes all <endpoint> elements
-				// before ServiceMetadataBehavior.ApplyDispatchBehavior()).
-				// So, disable it so far. (it is mostly harmless).
-				//if (Extensions.Find<ServiceMetadataExtension> () == null)
-				//	break;
+				// be missing something around ServiceMetadataExtension).
+				// It seems .NET WCF has some "infrastructure"
+				// endpoints. .NET ServiceHost fails to Open()
+				// if it was added only IMetadataExchange 
+				// endpoint (and you'll see the word
+				// "infrastructure" in the exception message).
+				if (Description.Behaviors.Find<ServiceMetadataBehavior> () == null)
+					break;
 				if (mex_contract == null)
 					mex_contract = ContractDescription.GetContract (typeof (IMetadataExchange));
 				return mex_contract;
@@ -406,7 +409,10 @@ namespace System.ServiceModel
 				b.Validate (Description, this);
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
-		}		
+
+			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract) == null)
+				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange contract) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
+		}
 
 		private void ApplyDispatchBehavior (EndpointDispatcher ed, ServiceEndpoint endPoint)
 		{

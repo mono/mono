@@ -302,6 +302,24 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual ("http://localhost:37564/", se.ListenUri.AbsoluteUri, "#2");
 		}
 
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AddServiceEndpointOnlyMex ()
+		{
+			var host = new ServiceHost (typeof (AllActions),
+				new Uri ("http://localhost:37564"));
+			host.Description.Behaviors.Add (new ServiceMetadataBehavior ());
+			host.AddServiceEndpoint ("IMetadataExchange",
+				new BasicHttpBinding (), "/wsdl");
+			host.Open ();
+			try {
+				// to make sure that throwing IOE from here does not count.
+				host.Close ();
+			} catch {
+			}
+			Assert.Fail ("should not open");
+		}
+
 		#region helpers
 
 		public enum Stage
