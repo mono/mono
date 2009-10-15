@@ -1,5 +1,11 @@
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : fix relative URI construction for
+	  ServiceMetadataExtension. It should create URI like
+	  http://localhost/test.svc/wsdl, not http://localhost/wsdl .
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : on opening the host, check service endpoints
 	  to make sure if there is at least one "non-mex" endpoint.
 	  Fix couple of typos.

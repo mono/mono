@@ -85,7 +85,8 @@ namespace System.ServiceModel
 			}
 		}
 
-		internal Uri CreateUri (string scheme, Uri relativeUri) {
+		internal Uri CreateUri (string scheme, Uri relativeUri)
+		{
 			Uri baseUri = base_addresses.Contains (scheme) ? base_addresses [scheme] : null;
 
 			if (relativeUri == null)
@@ -95,7 +96,13 @@ namespace System.ServiceModel
 			if (baseUri == null)
 				return null;
 			var s = relativeUri.ToString ();
-			return new Uri (baseUri, s.Length > 0 && s [0] == '/' ? '.' + s : s);
+			if (s.Length == 0)
+				return baseUri;
+			var l = baseUri.LocalPath;
+			if (l.Length > 0 && l [l.Length - 1] != '/')
+				return new Uri (String.Concat (baseUri.ToString (), "/", relativeUri.ToString ()));
+			else
+				return new Uri (baseUri, relativeUri);
 		}
 
 		public ChannelDispatcherCollection ChannelDispatchers {
