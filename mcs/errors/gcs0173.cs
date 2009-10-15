@@ -1,4 +1,4 @@
-// CS0173: Type of conditional expression cannot be determined because there is no implicit conversion between `lambda expression' and `lambda expression'
+// CS0173: Type of conditional expression cannot be determined because there is no implicit conversion between `anonymous method' and `anonymous method'
 // Line: 11
 
 using System;
