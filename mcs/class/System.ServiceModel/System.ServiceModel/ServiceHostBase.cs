@@ -99,10 +99,12 @@ namespace System.ServiceModel
 			if (s.Length == 0)
 				return baseUri;
 			var l = baseUri.LocalPath;
-			if (l.Length > 0 && l [l.Length - 1] != '/')
-				return new Uri (String.Concat (baseUri.ToString (), "/", relativeUri.ToString ()));
+			var r = relativeUri.ToString ();
+
+			if (l.Length > 0 && l [l.Length - 1] != '/' && r [0] != '/')
+				return new Uri (String.Concat (baseUri.ToString (), "/", r));
 			else
-				return new Uri (baseUri, relativeUri);
+				return new Uri (String.Concat (baseUri.ToString (), r));
 		}
 
 		public ChannelDispatcherCollection ChannelDispatchers {

@@ -1,3 +1,7 @@
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : eliminate possible '/' + '/foo' combination.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientRuntimeChannel.cs: Remove the WaitOne 'emitContext' 
