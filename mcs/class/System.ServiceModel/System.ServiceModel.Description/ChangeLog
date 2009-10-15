@@ -1,5 +1,10 @@
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceMetadataExtension.cs : when serviceDebug and serviceMetadata
+	  shares the same URL, both of them must be set, not being skipped.
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs,
 	  ServiceMetadataExtension.cs : Now HelpPage is differentiated from
 	  wsdl page. The help page now outputs correct URL (for WSDL).

@@ -93,6 +93,13 @@ namespace System.ServiceModel.Description
 
 		internal void EnsureChannelDispatcher (bool isMex, string scheme, Uri uri, WCFBinding binding)
 		{
+			if (instance == null)
+				instance = new HttpGetWsdl (owner.Description, this);
+			if (isMex)
+				instance.WsdlUrl = uri;
+			else
+				instance.HelpUrl = uri;
+
 			if (dispatchers == null)
 				dispatchers = new Dictionary<Uri, ChannelDispatcher> ();
 			else if (dispatchers.ContainsKey (uri))
@@ -109,13 +116,6 @@ namespace System.ServiceModel.Description
 			};
 
 			ChannelDispatcher channelDispatcher = owner.BuildChannelDispatcher (se, new BindingParameterCollection ());
-
-			if (instance == null)
-				instance = new HttpGetWsdl (owner.Description, this);
-			if (isMex)
-				instance.WsdlUrl = uri;
-			else
-				instance.HelpUrl = uri;
 
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
