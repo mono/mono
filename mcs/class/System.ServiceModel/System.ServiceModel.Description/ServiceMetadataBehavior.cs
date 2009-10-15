@@ -96,13 +96,13 @@ namespace System.ServiceModel.Description
 			if (HttpGetEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpGetUrl);
 				if (uri != null)
-					sme.EnsureServiceMetadataHttpChanelDispatcher (uri, HttpGetBinding);
+					sme.EnsureChannelDispatcher (true, "http", uri, HttpGetBinding);
 			}
 
 			if (HttpsGetEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("https", HttpsGetUrl);
 				if (uri != null)
-					sme.EnsureServiceMetadataHttpsChanelDispatcher (uri, HttpsGetBinding);
+					sme.EnsureChannelDispatcher (true, "https", uri, HttpsGetBinding);
 			}
 		}
 

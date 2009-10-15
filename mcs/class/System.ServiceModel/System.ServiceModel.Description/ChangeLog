@@ -1,6 +1,12 @@
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs,
+	  ServiceMetadataExtension.cs : Now HelpPage is differentiated from
+	  wsdl page. The help page now outputs correct URL (for WSDL).
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugBehavior.cs, ServiceMetadataBehavior.cs,
 	  ServiceMetadataExtension.cs : reduce extra args, static isn't
 	  required here. Add FIXME comments.
 
