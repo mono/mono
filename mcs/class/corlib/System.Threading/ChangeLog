@@ -1,3 +1,7 @@
+2009-10-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: looks like any negative value is treated as Infinite.
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Remove LocalDataStoreSlot-related methods from

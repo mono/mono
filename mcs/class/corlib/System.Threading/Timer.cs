@@ -156,7 +156,7 @@ namespace System.Threading
 			long nr;
 			if (dueTime == 0) {
 				nr = 0; // Due now
-			} else if (dueTime == Timeout.Infinite) {
+			} else if (dueTime < 0) { // Infinite == -1
 				nr = long.MaxValue;
 				/* No need to call Change () */
 				if (first) {
