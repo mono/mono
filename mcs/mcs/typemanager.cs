@@ -2126,7 +2126,8 @@ namespace Mono.CSharp {
 	{
 		if (RootContext.StdLib || t.Module != typeof (object).Module)
 			return t;
-
+			
+		// TODO: GetTypeCode returns underlying type for enums !!
 		TypeCode tc = Type.GetTypeCode (t);
 
 		switch (tc){

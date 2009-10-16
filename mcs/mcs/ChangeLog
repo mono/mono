@@ -1,5 +1,10 @@
 2009-10-16  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, rootcontext.cs: Clear -nostdlib flag when object
+	is imported.
+
+2009-10-16  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #493523, #507067
 	* convert.cs, nullable.cs, expression.cs: Do implicit and explicit
 	standard nullable conversion using underlying standard conversion

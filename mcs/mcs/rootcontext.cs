@@ -291,19 +291,23 @@ namespace Mono.CSharp {
 			helper_classes.Add (helper_class);
 		}
 		
-		static public void PopulateCoreType (TypeContainer root, string name)
+		static public DeclSpace PopulateCoreType (TypeContainer root, string name)
 		{
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
 			// Core type was imported
 			if (ds == null)
-				return;
+				return null;
 
 			ds.Define ();
+			return ds;
 		}
 		
 		static public void BootCorlib_PopulateCoreTypes ()
 		{
-			PopulateCoreType (root, "System.Object");
+			// Clear -nostdlib flag when object type is imported
+			if (PopulateCoreType (root, "System.Object") == null)
+				RootContext.StdLib = true;
+
 			PopulateCoreType (root, "System.ValueType");
 			PopulateCoreType (root, "System.Attribute");
 			PopulateCoreType (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
