@@ -17,10 +17,6 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Text;
 
-#if NET_4_0
-	using SLE = System.Linq.Expressions;
-#endif
-
 	//
 	// This is an user operator expression, automatically created during
 	// resolve phase
@@ -72,13 +68,6 @@ namespace Mono.CSharp {
 		{
 			mg.EmitCall (ec, arguments);
 		}
-
-#if NET_4_0
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
-		{
-			return SLE.Expression.Call ((MethodInfo) mg, Arguments.MakeExpression (arguments, ctx));
-		}
-#endif
 
 		public MethodGroupExpr Method {
 			get { return mg; }
@@ -461,7 +450,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (Expr.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (Expr));
-				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
 			}
 
 			if (TypeManager.IsNullableType (Expr.Type))
@@ -727,7 +716,7 @@ namespace Mono.CSharp {
 
 			Type[] predefined = predefined_operators [(int) Oper];
 			foreach (Type t in predefined) {
-				Expression oper_expr = Convert.UserDefinedConversion (ec, expr, t, expr.Location, false);
+				Expression oper_expr = Convert.UserDefinedConversion (ec, expr, t, expr.Location, false, false);
 				if (oper_expr == null)
 					continue;
 
@@ -1033,7 +1022,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (expr.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
-				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
+				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).DoResolve (ec);
 			}
 
 			eclass = ExprClass.Value;
@@ -2650,7 +2639,7 @@ namespace Mono.CSharp {
 				if (e != null || ec.Report.Errors != prev_e)
 					return e;
 			} else if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) && !TypeManager.IsDynamicType (left.Type) &&
-					((lc != null && lc.IsDefaultValue && !(lc is NullLiteral)) || (rc != null && rc.IsDefaultValue && !(rc is NullLiteral)))) {
+					((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue))) {
 
 				if ((ResolveOperator (ec)) == null) {
 					Error_OperatorCannotBeApplied (ec, left, right);
@@ -2707,56 +2696,6 @@ namespace Mono.CSharp {
 
 			return expr;
 		}
-
-#if NET_4_0
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
-		{
-			var le = left.MakeExpression (ctx);
-			var re = right.MakeExpression (ctx);
-			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
-
-			switch (oper) {
-			case Operator.Addition:
-				return is_checked ? SLE.Expression.AddChecked (le, re) : SLE.Expression.Add (le, re);
-			case Operator.BitwiseAnd:
-				return SLE.Expression.And (le, re);
-			case Operator.BitwiseOr:
-				return SLE.Expression.Or (le, re);
-			case Operator.Division:
-				return SLE.Expression.Divide (le, re);
-			case Operator.Equality:
-				return SLE.Expression.Equal (le, re);
-			case Operator.ExclusiveOr:
-				return SLE.Expression.ExclusiveOr (le, re);
-			case Operator.GreaterThan:
-				return SLE.Expression.GreaterThan (le, re);
-			case Operator.GreaterThanOrEqual:
-				return SLE.Expression.GreaterThanOrEqual (le, re);
-			case Operator.Inequality:
-				return SLE.Expression.NotEqual (le, re);
-			case Operator.LeftShift:
-				return SLE.Expression.LeftShift (le, re);
-			case Operator.LessThan:
-				return SLE.Expression.LessThan (le, re);
-			case Operator.LessThanOrEqual:
-				return SLE.Expression.LessThanOrEqual (le, re);
-			case Operator.LogicalAnd:
-				return SLE.Expression.AndAlso (le, re);
-			case Operator.LogicalOr:
-				return SLE.Expression.OrElse (le, re);
-			case Operator.Modulus:
-				return SLE.Expression.Modulo (le, re);
-			case Operator.Multiply:
-				return is_checked ? SLE.Expression.MultiplyChecked (le, re) : SLE.Expression.Multiply (le, re);
-			case Operator.RightShift:
-				return SLE.Expression.RightShift (le, re);
-			case Operator.Subtraction:
-				return is_checked ? SLE.Expression.SubtractChecked (le, re) : SLE.Expression.Subtract (le, re);
-			default:
-				throw new NotImplementedException (oper.ToString ());
-			}
-		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -2849,8 +2788,7 @@ namespace Mono.CSharp {
 			// E operator + (E e, U x)
 			//
 			if (!((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0 ||
-				(oper == Operator.Subtraction && lenum) ||
-				(oper == Operator.Addition && (lenum != renum || type != null))))	// type != null for lifted null
+				(oper == Operator.Subtraction && lenum) || (oper == Operator.Addition && lenum != renum)))
 				return null;
 
 			Expression ltemp = left;
@@ -2858,7 +2796,7 @@ namespace Mono.CSharp {
 			Type underlying_type;
 			Expression expr;
 			
-			if ((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0) {
+			if ((oper & Operator.ComparisonMask | Operator.BitwiseMask) != 0) {
 				if (renum) {
 					expr = Convert.ImplicitConversion (ec, left, rtype, loc);
 					if (expr != null) {
@@ -2957,29 +2895,17 @@ namespace Mono.CSharp {
 				return expr;
 
 			//
+			// TODO: Need to corectly implemented Coumpound Assigment for all operators
 			// Section: 7.16.2
 			//
-
-			//
-			// If the return type of the selected operator is implicitly convertible to the type of x
-			//
-			if (Convert.ImplicitConversionExists (ec, expr, ltype))
+			if (Convert.ImplicitConversionExists (ec, left, rtype))
 				return expr;
 
-			//
-			// Otherwise, if the selected operator is a predefined operator, if the return type of the
-			// selected operator is explicitly convertible to the type of x, and if y is implicitly
-			// convertible to the type of x or the operator is a shift operator, then the operation
-			// is evaluated as x = (T)(x op y), where T is the type of x
-			//
-			expr = Convert.ExplicitConversion (ec, expr, ltype, loc);
-			if (expr == null)
+			if (!Convert.ImplicitConversionExists (ec, ltemp, rtype))
 				return null;
 
-			if (Convert.ImplicitConversionExists (ec, ltemp, ltype))
-				return expr;
-
-			return null;
+			expr = Convert.ExplicitConversion (ec, expr, rtype, loc);
+			return expr;
 		}
 
 		//
@@ -3858,17 +3784,6 @@ namespace Mono.CSharp {
 			if (concat != null)
 				concat.Emit (ec);
 		}
-
-#if NET_4_0
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
-		{
-			if (arguments.Count != 2)
-				throw new NotImplementedException ("arguments.Count != 2");
-
-			var concat = TypeManager.string_type.GetMethod ("Concat", new[] { typeof (object), typeof (object) });
-			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
-		}
-#endif
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5647,7 +5562,7 @@ namespace Mono.CSharp {
 
 			ConstructorInfo ci = (ConstructorInfo) method;
 #if MS_COMPATIBLE
-			if (TypeManager.IsGenericType (type) && type.IsGenericTypeDefinition)
+			if (TypeManager.IsGenericType (type))
 				ci = TypeBuilder.GetConstructor (type, ci);
 #endif
 
@@ -5899,8 +5814,14 @@ namespace Mono.CSharp {
 			if (array_data == null) {
 				args = new Arguments (arguments.Count + 1);
 				args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
-				foreach (Expression a in arguments)
+				foreach (Expression a in arguments) {
+					if (arguments.Count == 1) {
+						Constant c = a as Constant;
+						if (c.IsDefaultValue)
+							return CreateExpressionFactoryCall (ec, "NewArrayInit", args);
+					}
 					args.Add (new Argument (a.CreateExpressionTree (ec)));
+				}
 
 				return CreateExpressionFactoryCall (ec, "NewArrayBounds", args);
 			}
@@ -6410,13 +6331,11 @@ namespace Mono.CSharp {
 			}
 
 			if (array_data == null) {
-				Expression arg = (Expression) arguments[0];
-				object arg_value;
-				if (arg.GetAttributableValue (ec, arg.Type, out arg_value) && arg_value is int && (int)arg_value == 0) {
+				Constant c = (Constant) arguments [0];
+				if (c.IsDefaultValue) {
 					value = Array.CreateInstance (array_element_type, 0);
 					return true;
 				}
-
 				// ec.Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
 				return base.GetAttributableValue (ec, null, out value);
 			}
@@ -6495,7 +6414,6 @@ namespace Mono.CSharp {
 
 			if (array_element_type == null || array_element_type == TypeManager.null_type ||
 				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
-				array_element_type == InternalType.MethodGroup ||
 				arguments.Count != dimensions) {
 				Error_NoBestType (ec);
 				return null;
@@ -7733,15 +7651,6 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
-#if NET_4_0
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
-		{
-			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
-				return Expr.MakeExpression (ctx);
-			}
-		}
-#endif
-
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			Expr.MutateHoistedGenericType (storey);
@@ -8761,19 +8670,7 @@ namespace Mono.CSharp {
 			else
 				left = ec.GetThis (loc);
 
-			MemberExpr me = member_lookup as MemberExpr;
-			if (me == null){
-				if (member_lookup is TypeExpression){
-					ec.Report.Error (582, loc, "{0}: Can not reference a type through an expression, try `{1}' instead",
-							 Identifier, member_lookup.GetSignatureForError ());
-				} else {
-					ec.Report.Error (582, loc, "{0}: Can not reference a {1} through an expression", 
-							 Identifier, member_lookup.ExprClassName);
-				}
-				
-				return null;
-			}
-			
+			MemberExpr me = (MemberExpr) member_lookup;
 			me = me.ResolveMemberAccess (ec, left, loc, null);
 			if (me == null)
 				return null;
@@ -8985,13 +8882,6 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (method);
 		}
 
-#if NET_4_0
-		public override SLE.Expression MakeExpression (BuilderContext ctx)
-		{
-			return SLE.Expression.Convert (source.MakeExpression (ctx), type, method);
-		}
-#endif
-
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			source.MutateHoistedGenericType (storey);
@@ -9143,8 +9033,6 @@ namespace Mono.CSharp {
 		public ArrayIndexCast (Expression expr)
 			: base (expr, expr.Type)
 		{
-			if (type == TypeManager.int32_type)
-				throw new ArgumentException ("unnecessary conversion");
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -9158,6 +9046,9 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
+				
+			if (type == TypeManager.int32_type)
+				return;
 
 			if (type == TypeManager.uint32_type)
 				ec.ig.Emit (OpCodes.Conv_U);
@@ -9167,11 +9058,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
 			else
 				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);
-		}
-
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			return child.GetAttributableValue (ec, value_type, out value);
 		}
 	}
 
