@@ -11931,6 +11931,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-467.cs">
+    <type name="S">
+      <method name="Int32 Main()">
+        <size>79</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="A op_Implicit(S)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-468.cs">
+    <type name="TS">
+      <method name="Nullable`1 get_v()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>43</size>
+      </method>
+      <method name="Nullable`1 op_Implicit(TS)">
+        <size>7</size>
+      </method>
+      <method name="TS op_Implicit(Nullable`1)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -16546,6 +16585,26 @@
       </method>
       <method name="T Value[T]()">
         <size>76</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-20.cs">
+    <type name="S">
+      <method name="Int32 Main()">
+        <size>215</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="A op_Implicit(S)">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -36452,6 +36511,33 @@
     <type name="&lt;PrivateImplementationDetails&gt;">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-732.cs">
+    <type name="C">
+      <method name="Int32 Foo(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
       </method>
     </type>
   </test>
