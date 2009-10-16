@@ -1,3 +1,7 @@
+2009-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_extra_methods): Remove some asserts which are not needed.
+
 2009-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_op_imm_to_op): Handle OP_AND/OR/XOR_IMM.
