@@ -85,7 +85,11 @@ namespace System.ServiceModel.Dispatcher
 			get { return inspectors; }
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if NET_2_1
+		public KeyedCollection<string,ClientOperation> Operations {
+			get { return operations; }
+		}
+#else
 		public SynchronizedKeyedCollection<string,ClientOperation> Operations {
 			get { return operations; }
 		}

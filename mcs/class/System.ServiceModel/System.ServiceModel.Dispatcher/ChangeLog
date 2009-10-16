@@ -1,5 +1,10 @@
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientOperation.cs, ClientRuntime.cs : another couple of changes
+	  are required to not use non-SL types.
+
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntime.cs : enable Operations property on monotouch.
 	  Hopefully it will enable us to build WebHttpBinding.
 
