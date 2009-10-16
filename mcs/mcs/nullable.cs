@@ -387,9 +387,12 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
+	//
+	// Generic lifting expression, supports all S/S? -> T/T? cases
+	//
 	public class Lifted : Expression, IMemoryLocation
 	{
-		Expression expr, wrap, null_value;
+		Expression expr, null_value;
 		Unwrap unwrap;
 
 		public Lifted (Expression expr, Unwrap unwrap, Type type)
@@ -407,22 +410,33 @@ namespace Mono.CSharp.Nullable
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			return wrap.CreateExpressionTree (ec);
+			return expr.CreateExpressionTree (ec);
 		}			
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			wrap = Wrap.Create (expr, type);
-			if (wrap == null)
-				return null;
-
 			//
-			// It's null when lifted conversion is transparent
+			// It's null when lifting non-nullable type
 			//
-			if (unwrap == null)
-				return wrap;
+			if (unwrap == null) {
+				// S -> T? is wrap only
+				if (TypeManager.IsNullableType (type))
+					return Wrap.Create (expr, type);
 
-			null_value = LiftedNull.Create (type, loc);
+				// S -> T can be simplified
+				return expr;
+			}
+
+			// Wrap target for T?
+			if (TypeManager.IsNullableType (type)) {
+				expr = Wrap.Create (expr, type);
+				if (expr == null)
+					return null;
+
+				null_value = LiftedNull.Create (type, loc);
+			} else {
+				null_value = new NullLiteral (type, loc);
+			}
 
 			eclass = ExprClass.Value;
 			return this;
@@ -437,12 +451,12 @@ namespace Mono.CSharp.Nullable
 			unwrap.EmitCheck (ec);
 			ig.Emit (OpCodes.Brfalse, is_null_label);
 
-			wrap.Emit (ec);
+			expr.Emit (ec);
+
 			ig.Emit (OpCodes.Br, end_label);
-
 			ig.MarkLabel (is_null_label);
-			null_value.Emit (ec);
 
+			null_value.Emit (ec);
 			ig.MarkLabel (end_label);
 		}
 

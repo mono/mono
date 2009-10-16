@@ -1,3 +1,10 @@
+2009-10-16  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #493523, #507067
+	* convert.cs, nullable.cs, expression.cs: Do implicit and explicit
+	standard nullable conversion using underlying standard conversion
+	and not full conversion.
+
 2009-10-15  Marek Safar  <marek.safar@gmail.com>
 
 	* dynamic.cs, expression.cs, ecore.cs, delegate.cs: Check return

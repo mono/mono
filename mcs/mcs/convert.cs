@@ -463,33 +463,44 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.null_type)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
-			Type target = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (target_type)[0]);
-			Expression e;
+			// S -> T?
+			Type t_el = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (target_type)[0]);
 
 			// S? -> T?
-			if (TypeManager.IsNullableType (expr_type)) {
-				Type etype = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (expr_type)[0]);
+			if (TypeManager.IsNullableType (expr_type))
+				expr_type = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (expr_type)[0]);
 
-				if (ec == null)
-					return ImplicitConversionExists (ec, new EmptyExpression (etype), target) ? EmptyExpression.Null : null;
+			//
+			// Predefined implicit identity or implicit numeric conversion
+			// has to exist between underlying type S and underlying type T
+			//
 
-				Expression unwrap = Nullable.Unwrap.Create (expr);
-				e = ImplicitConversion (ec, unwrap, target, expr.Location);
-				if (e == null)
-					return null;
+			// Handles probing
+			if (ec == null) {
+				if (expr_type == t_el)
+					return EmptyExpression.Null;
 
-				return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
+				return ImplicitNumericConversion (null, expr_type, t_el);
 			}
 
-			// S -> T?
-			if (ec == null)
-				return ImplicitConversionExists (ec, expr, target) ? EmptyExpression.Null : null;
+			Expression unwrap;
+			if (expr_type != expr.Type)
+				unwrap = Nullable.Unwrap.Create (expr);
+			else
+				unwrap = expr;
 
-			e = ImplicitConversion (ec, expr, target, expr.Location);
-			if (e != null)
-				return Nullable.Wrap.Create (e, target_type);
+			Expression conv = expr_type == t_el ? unwrap : ImplicitNumericConversion (unwrap, expr_type, t_el);
+			if (conv == null)
+				return null;
 
-			return null;
+			if (expr_type != expr.Type)
+				return new Nullable.Lifted (conv, unwrap, target_type).Resolve (ec);
+
+			// Do constant optimization for S -> T?
+			if (unwrap is Constant)
+				conv = ((Constant) unwrap).ConvertImplicitly (t_el);
+
+			return Nullable.Wrap.Create (conv, target_type);
 		}
 
 		/// <summary>
@@ -965,11 +976,7 @@ namespace Mono.CSharp {
 		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source,
 								 Type target, Location loc)
 		{
-			Expression expr = UserDefinedConversion (ec, source, target, loc, false);
-			if (expr != null && !TypeManager.IsEqual (expr.Type, target))
-				expr = ImplicitConversionStandard (ec, expr, target, loc);
-
-			return expr;
+			return UserDefinedConversion (ec, source, target, loc, false, true);
 		}
 
 		/// <summary>
@@ -978,11 +985,7 @@ namespace Mono.CSharp {
 		static Expression ExplicitUserConversion (ResolveContext ec, Expression source,
 								 Type target, Location loc)
 		{
-			Expression expr = UserDefinedConversion (ec, source, target, loc, true);
-			if (expr != null && !TypeManager.IsEqual (expr.Type, target))
-				expr = ExplicitConversionStandard (ec, expr, target, loc);
-
-			return expr;
+			return UserDefinedConversion (ec, source, target, loc, true, true);
 		}
 
 		static void AddConversionOperators (ArrayList list,
@@ -1105,12 +1108,13 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   User-defined conversions
 		/// </summary>
-		static public Expression UserDefinedConversion (ResolveContext ec, Expression source,
+		public static Expression UserDefinedConversion (ResolveContext ec, Expression source,
 								Type target, Location loc,
-								bool look_for_explicit)
+								bool look_for_explicit, bool return_convert)
 		{
 			Type source_type = source.Type;
 			MethodInfo method = null;
+			Expression expr = null;
 
 			object o;
 			DoubleHash hash;
@@ -1131,30 +1135,79 @@ namespace Mono.CSharp {
 					return null;
 
 				method = GetConversionOperator (RootContext.ToplevelTypes.Compiler, null, source, target, look_for_explicit);
-				if (!(source is Constant))
-					hash.Insert (source_type, target, method);
 			}
 
-			if (method == null)
-				return null;
+			if (method != null) {
+				Type most_specific_source = TypeManager.GetParameterData (method).Types[0];
 
-			Type most_specific_source = TypeManager.GetParameterData (method).Types [0];
+				//
+				// This will do the conversion to the best match that we
+				// found.  Now we need to perform an implict standard conversion
+				// if the best match was not the type that we were requested
+				// by target.
+				//
+				if (look_for_explicit) {
+					ReportPrinter temp = new SessionReportPrinter ();
+					ReportPrinter prev = ec.Report.SetPrinter (temp);
 
-			//
-			// This will do the conversion to the best match that we
-			// found.  Now we need to perform an implict standard conversion
-			// if the best match was not the type that we were requested
-			// by target.
-			//
-			if (look_for_explicit)
-				source = ExplicitConversionStandard (ec, source, most_specific_source, loc);
-			else
-				source = ImplicitConversionStandard (ec, source, most_specific_source, loc);
+					expr = ExplicitConversionStandard (ec, source, most_specific_source, loc);
 
-			if (source == null)
-				return null;
+					ec.Report.SetPrinter (prev);
+					if (temp.ErrorsCount != 0)
+						expr = null;
+				} else {
+					if (ImplicitStandardConversionExists (source, most_specific_source))
+						expr = ImplicitConversionStandard (ec, source, most_specific_source, loc);
+					else
+						expr = null;
+				}
+			}
 
-			return new UserCast (method, source, loc).DoResolve (ec);
+			if (expr == null) {
+				bool nullable = false;
+
+				if (TypeManager.IsNullableType (source_type)) {
+					source = Nullable.Unwrap.Create (source);
+					nullable = true;
+				}
+
+				Type target_underlying;
+				if (TypeManager.IsNullableType (target)) {
+					target_underlying = TypeManager.GetTypeArguments (target)[0];
+					nullable = true;
+				} else {
+					// No implicit conversion S? -> T for non-reference type T
+					if (!look_for_explicit && !TypeManager.IsReferenceType (target))
+						nullable = false;
+
+					target_underlying = target;
+				}
+
+				if (nullable) {
+					expr = UserDefinedConversion (ec, source, target_underlying, loc, look_for_explicit, return_convert);
+
+					// Do result expression lifting only when it's needed
+					if (expr != null && (!look_for_explicit || TypeManager.IsReferenceType (target)))
+						expr = new Nullable.Lifted (expr, source, target).Resolve (ec);
+
+					return expr;
+				}
+			} else {
+				expr = new UserCast (method, expr, loc).DoResolve (ec);
+
+				if (return_convert && !TypeManager.IsEqual (expr.Type, target)) {
+					if (look_for_explicit) {
+						expr = ExplicitConversionStandard (ec, expr, target, loc);
+					} else {
+						expr = ImplicitConversionStandard (ec, expr, target, loc);
+					}
+				}
+			}
+
+			if (!(source is Constant))
+				hash.Insert (source_type, target, method);
+
+			return expr;
 		}
 
 		/// <summary>
@@ -1917,10 +1970,9 @@ namespace Mono.CSharp {
 				if (ImplicitBoxingConversionExists (e, target_type, out use_class_cast))
 					return new BoxedCast (expr, target_type);
 				
-				e = ExplicitConversion (ec, e, target_type, loc);
+				e = ExplicitConversionCore (ec, e, target_type, loc);
 				if (e != null)
-					e = EmptyCast.Create (e, target_type);
-				return e;
+					return EmptyCast.Create (e, target_type);
 			}
 			
 			e = ExplicitUserConversion (ec, expr, target_type, loc);
