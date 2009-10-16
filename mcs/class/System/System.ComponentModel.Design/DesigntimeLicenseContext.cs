@@ -38,21 +38,20 @@ namespace System.ComponentModel.Design
 {
 	public class DesigntimeLicenseContext : LicenseContext
 	{
-		private Hashtable keys = new Hashtable ();
+		internal Hashtable keys = new Hashtable ();
 
 		public DesigntimeLicenseContext()
 		{
 		}
 
-		public override string GetSavedLicenseKey (Type type,
-							   Assembly resourceAssembly)
+		public override string GetSavedLicenseKey (Type type, Assembly resourceAssembly)
 		{
-			return (string)keys[type];
+			return (string) keys [type];
 		}
 
 		public override void SetSavedLicenseKey (Type type, string key)
 		{
-			keys[type] = key;
+			keys [type] = key;
 		}
 
 		public override LicenseUsageMode UsageMode {

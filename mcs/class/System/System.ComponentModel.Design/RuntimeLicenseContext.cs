@@ -5,10 +5,12 @@
 //   Ivan Hamilton (ivan@chimerical.com.au)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Carlo Kok  (ck@remobjects.com)
 //
 // (C) 2004 Ivan Hamilton
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
+// (C) 2009 Carlo Kok
 //
 
 //
@@ -35,26 +37,73 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Collections;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.ComponentModel.Design
 {
 	internal class RuntimeLicenseContext : LicenseContext
 	{
-		private Hashtable keys = new Hashtable ();
+		private Hashtable keys;
 
-		public RuntimeLicenseContext () : base()
+		public RuntimeLicenseContext () : base ()
 		{
 		}
 
-		public override string GetSavedLicenseKey (Type type,
-							   Assembly resourceAssembly)
+		void LoadKeys ()
 		{
-			return (string) keys [type];
+			if (keys != null)
+				return;
+			keys = new Hashtable ();
+
+			Assembly asm = Assembly.GetEntryAssembly ();
+			if (asm != null)
+				LoadAssemblyLicenses (asm);
+			else {
+				foreach (Assembly asmnode in AppDomain.CurrentDomain.GetAssemblies ()) {
+					if (String.Compare (asmnode.GetName().Name, "App_Licenses", true) == 0)
+						LoadAssemblyLicenses (asmnode);
+				}
+			}
+		}
+
+		void LoadAssemblyLicenses (Assembly asm)
+		{
+			string asmname = Path.GetFileName (asm.Location);
+			string resourcename = asmname + ".licenses";
+			try {
+				foreach (string name in asm.GetManifestResourceNames ()) {
+					if (name != resourcename)
+						continue;
+					using (Stream stream = asm.GetManifestResourceStream (name)) {
+						BinaryFormatter formatter = new BinaryFormatter ();
+						object[] res = formatter.Deserialize (stream) as object[];
+						if (String.Compare ((string) res[0], asmname, true) == 0) {
+							Hashtable table = (Hashtable) res[1];
+							foreach (DictionaryEntry et in table)
+							keys.Add(et.Key, et.Value);
+						}
+					}
+				}
+
+			} catch (InvalidCastException) {
+			}
+		}
+
+		public override string GetSavedLicenseKey (Type type, Assembly resourceAssembly)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			LoadKeys ();
+			return (string) keys [type.AssemblyQualifiedName];
 		}
 
 		public override void SetSavedLicenseKey (Type type, string key)
 		{
-			keys [type] = key;
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			LoadKeys ();
+			keys [type.AssemblyQualifiedName] = key;
 		}
 	}
 }

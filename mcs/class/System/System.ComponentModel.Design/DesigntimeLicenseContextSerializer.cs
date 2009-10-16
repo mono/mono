@@ -4,9 +4,11 @@
 // Authors:
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Carlo Kok  (ck@remobjects.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
+// (C) 2009 Carlo Kok
 //
 
 //
@@ -31,6 +33,8 @@
 //
 
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections;
 
 namespace System.ComponentModel.Design
 {
@@ -41,12 +45,19 @@ namespace System.ComponentModel.Design
 		{
 		}
 
-		[MonoTODO]
-		public static void Serialize (Stream o,
-					      string cryptoKey,
-					      DesigntimeLicenseContext context)
+		public static void Serialize (Stream o, string cryptoKey, DesigntimeLicenseContext context)
 		{
-			throw new NotImplementedException();
+			object [] lData = new object [2];
+			lData [0] = cryptoKey;
+			Hashtable lNewTable = new Hashtable ();
+			foreach (DictionaryEntry et in context.keys) {
+				lNewTable.Add (((Type) et.Key).AssemblyQualifiedName, et.Value);
+			}
+			lData[1] = lNewTable;
+
+			BinaryFormatter lFormatter = new BinaryFormatter ();
+			lFormatter.Serialize (o, lData);
 		}
+	
 	}
 }
