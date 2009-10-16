@@ -45,7 +45,8 @@ net_2_0_dirs := \
 	mjs		\
 	prj2make	\
 	mod		\
-	installvst
+	installvst	\
+	lc
 
 net_2_1_dirs := \
 	compiler-tester
