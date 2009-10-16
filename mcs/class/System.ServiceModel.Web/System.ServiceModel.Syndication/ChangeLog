@@ -1,3 +1,9 @@
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Rss20FeedFormatter.cs, Rss20ItemFormatter.cs : handle other text
+	  nodes than text (cdata, whitespaces etc.) and make sure to proceed
+	  the reader when they are skipped. Fixed bug #546965 and #546959.
+
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SyndicationVersions.cs :
