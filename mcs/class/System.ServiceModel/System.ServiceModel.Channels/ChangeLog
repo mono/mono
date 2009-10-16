@@ -1,5 +1,10 @@
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelListenerBase.cs : add Properties property to add arbitrary
+	  properties handy (only inside this assembly).
+
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs : fix warning.
 
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>

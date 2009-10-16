@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Web;
@@ -105,7 +106,22 @@ namespace System.ServiceModel.Description
 			else if (dispatchers.ContainsKey (uri))
 				return;
 
-			binding = binding ?? (scheme == "https" ? MetadataExchangeBindings.CreateMexHttpsBinding () : MetadataExchangeBindings.CreateMexHttpBinding ());
+			if (binding == null) {
+				switch (scheme) {
+				case "http":
+					binding = MetadataExchangeBindings.CreateMexHttpBinding ();
+					break;
+				case "https":
+					binding = MetadataExchangeBindings.CreateMexHttpsBinding ();
+					break;
+				case "net.tcp":
+					binding = MetadataExchangeBindings.CreateMexTcpBinding ();
+					break;
+				case "net.pipe":
+					binding = MetadataExchangeBindings.CreateMexNamedPipeBinding ();
+					break;
+				}
+			}
 
 			CustomBinding cb = new CustomBinding (binding) { Name = ServiceMetadataBehaviorHttpGetBinding };
 			cb.Elements.Find<MessageEncodingBindingElement> ().MessageVersion = MessageVersion.None;
@@ -115,7 +131,11 @@ namespace System.ServiceModel.Description
 				ListenUri = uri,
 			};
 
-			ChannelDispatcher channelDispatcher = owner.BuildChannelDispatcher (se, new BindingParameterCollection ());
+			var channelDispatcher = new DispatcherBuilder ().BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
+			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
+			var listener = channelDispatcher.Listener as ChannelListenerBase;
+			if (listener != null)
+				listener.Properties.Add (isMex ? MetadataPublishingKind.Wsdl : MetadataPublishingKind.Help);
 
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
@@ -139,6 +159,17 @@ namespace System.ServiceModel.Description
 	{
 		[OperationContract (Action = "*", ReplyAction = "*")]
 		SMMessage Get (SMMessage req);
+	}
+
+	// It is used to identify which page to serve when a channel dispatcher 
+	// has a listener to an relatively empty URI (conflicting with the 
+	// target service endpoint)
+	//
+	// Can't be enum as it is for GetProperty<T> ().
+	internal class MetadataPublishingKind
+	{
+		public static MetadataPublishingKind Wsdl = new MetadataPublishingKind ();
+		public static MetadataPublishingKind Help = new MetadataPublishingKind ();
 	}
 
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract

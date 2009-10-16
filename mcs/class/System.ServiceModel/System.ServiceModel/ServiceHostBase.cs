@@ -397,7 +397,7 @@ namespace System.ServiceModel
 				foreach (IServiceBehavior b in Description.Behaviors)
 					b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
 
-				ChannelDispatcher channel = BuildChannelDispatcher (se, commonParams);
+				var channel = new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
 				ChannelDispatchers.Add (channel);
 				endPointToDispatcher[se] = channel;
 			}
@@ -434,11 +434,6 @@ namespace System.ServiceModel
 					b.ApplyDispatchBehavior (operation, ed.DispatchRuntime.Operations [operation.Name]);
 			}
 
-		}
-
-		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se, BindingParameterCollection commonParams)
-		{
-			return new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
 		}
 
 		[MonoTODO]

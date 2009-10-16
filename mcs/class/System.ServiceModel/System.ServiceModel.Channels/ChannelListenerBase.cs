@@ -37,6 +37,7 @@ namespace System.ServiceModel.Channels
 		IDefaultCommunicationTimeouts
 	{
 		IDefaultCommunicationTimeouts timeouts;
+		KeyedByTypeCollection<object> properties;
 
 		protected ChannelListenerBase ()
 			: this (DefaultCommunicationTimeouts.Instance)
@@ -83,9 +84,17 @@ namespace System.ServiceModel.Channels
 			get { return timeouts.SendTimeout; }
 		}
 
+		internal KeyedByTypeCollection<object> Properties {
+			get {
+				if (properties == null)
+					properties = new KeyedByTypeCollection<object> ();
+				return properties;
+			}
+		}
+
 		public virtual T GetProperty<T> () where T : class
 		{
-			return null;
+			return properties != null ? properties.Find<T> () : null;
 		}
 
 		public IAsyncResult BeginWaitForChannel (

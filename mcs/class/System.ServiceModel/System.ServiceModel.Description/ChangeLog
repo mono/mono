@@ -1,3 +1,9 @@
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : Handle all predefined mex bindings.
+	  Use DispatcherBuilder directly. Add mex listener property to
+	  distinguish the listener from http channel listeners later.
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : when serviceDebug and serviceMetadata

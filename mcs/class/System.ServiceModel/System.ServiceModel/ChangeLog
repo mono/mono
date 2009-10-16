@@ -1,3 +1,7 @@
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : removed internal dispatcher builder method.
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : eliminate possible '/' + '/foo' combination.
