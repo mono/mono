@@ -61,14 +61,14 @@ namespace System.ServiceModel.Dispatcher
 				base.InsertItem (index, item);
 			}
 
-			protected virtual void RemoveItem (int index)
+			protected override void RemoveItem (int index)
 			{
 				if (index < Count)
 					this [index].ChannelDispatcher = null;
 				base.RemoveItem (index);
 			}
 
-			protected virtual void SetItem (int index, EndpointDispatcher item)
+			protected override void SetItem (int index, EndpointDispatcher item)
 			{
 				item.ChannelDispatcher = owner;
 				base.SetItem (index, item);
@@ -565,8 +565,10 @@ namespace System.ServiceModel.Dispatcher
 					FaultCode fc = new FaultCode ("DestinationUnreachable", version.Addressing.Namespace);
 					Message res = Message.CreateMessage (version, fc, "error occured", rc.RequestMessage.Headers.Action);
 					rc.Reply (res);
+				} catch (Exception e) {
+					// FIXME: log it
+					Console.WriteLine ("Error on sending DestinationUnreachable fault message: " + e);
 				}
-				catch (Exception e) { }
 			}
 
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)

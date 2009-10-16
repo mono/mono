@@ -1,5 +1,9 @@
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : fix warnings.
+
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientOperation.cs, ClientRuntime.cs : another couple of changes
 	  are required to not use non-SL types.
 
