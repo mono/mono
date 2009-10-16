@@ -56,7 +56,8 @@ net_2_0_dirs := \
 	sqlsharp	\
 	sqlmetal	\
 	gacutil		\
-	svcutil
+	svcutil		\
+	lc
 
 net_2_1_dirs := \
 	compiler-tester
