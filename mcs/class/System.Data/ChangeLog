@@ -1,3 +1,7 @@
+2009-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile: Avoid else ifeq which is not recognized by some make versions.
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* monotouch_System.Data.dll.sources: Added.
