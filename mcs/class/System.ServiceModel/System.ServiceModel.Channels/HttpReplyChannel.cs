@@ -150,7 +150,7 @@ w.Close ();
 				return wait.WaitOne (timeout, false);
 			} catch (HttpListenerException e) {
 				// FIXME: does this make sense? I doubt.
-				if (e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
+				if ((uint) e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
 					while (true) Thread.Sleep (1000); // thread is about to be terminated.
 				throw;
 			} catch (ObjectDisposedException) {

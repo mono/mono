@@ -1,3 +1,7 @@
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : fix warning.
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpReplyChannel.cs, AspNetReplyChannel.cs : set Via property.
