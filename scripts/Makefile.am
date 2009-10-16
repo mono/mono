@@ -67,6 +67,7 @@ scripts_2_0 = \
 	gmcs$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
 	ilasm2$(SCRIPT_SUFFIX)			\
+	lc$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mkbundle2$(SCRIPT_SUFFIX)		\
 	mdoc$(SCRIPT_SUFFIX)                    \
