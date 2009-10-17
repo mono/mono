@@ -32,19 +32,15 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-#endif
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-#endif
 	[Serializable]
 #if INSIDE_CORLIB
 	public
@@ -101,9 +97,7 @@ namespace System.Collections {
 		private IComparer comparerRef;
 		private SerializationInfo serializationInfo;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		private IEqualityComparer equalityComparer;
-#endif
 
 		private static readonly int [] primeTbl = {
 			11,
@@ -148,9 +142,7 @@ namespace System.Collections {
 
 		public Hashtable () : this (0, 1.0f) {}
 
-#if NET_2_0
 		[Obsolete ("Please use Hashtable(int, float, IEqualityComparer) instead")]
-#endif
 		public Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
 			if (capacity<0)
 				throw new ArgumentOutOfRangeException ("capacity", "negative capacity");
@@ -198,15 +190,10 @@ namespace System.Collections {
 			threshold = source.threshold;
 			hcpRef = source.hcpRef;
 			comparerRef = source.comparerRef;
-
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 			equalityComparer = source.equalityComparer;
-#endif
 		}
 			
-#if NET_2_0
 		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
-#endif
 		public Hashtable (int capacity,
 		                  IHashCodeProvider hcp,
 		                  IComparer comparer)
@@ -214,9 +201,7 @@ namespace System.Collections {
 		{
 		}
 
-#if NET_2_0
 		[Obsolete ("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")]
-#endif
 		public Hashtable (IDictionary d, float loadFactor,
 		                  IHashCodeProvider hcp, IComparer comparer)
 			: this (d!=null ? d.Count : 0,
@@ -243,17 +228,13 @@ namespace System.Collections {
 		{
 		}
 
-#if NET_2_0
 		[Obsolete ("Please use Hashtable(IDictionary, IEqualityComparer) instead")]
-#endif
 		public Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
 		                 : this (d, 1.0f, hcp, comparer)
 		{
 		}
 
-#if NET_2_0
 		[Obsolete ("Please use Hashtable(IEqualityComparer) instead")]
-#endif
 		public Hashtable (IHashCodeProvider hcp, IComparer comparer)
 		                 : this (1, 1.0f, hcp, comparer)
 		{
@@ -264,7 +245,6 @@ namespace System.Collections {
 			serializationInfo = info;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public Hashtable (IDictionary d, IEqualityComparer equalityComparer) : this (d, 1.0f, equalityComparer)
 		{
 		}
@@ -286,15 +266,12 @@ namespace System.Collections {
 		{
 			this.equalityComparer = equalityComparer;
 		}
-#endif
 
 		//
 		// Properties
 		//
 
-#if NET_2_0
 		[Obsolete ("Please use EqualityComparer property.")]
-#endif
 		protected IComparer comparer {
 			set {
 				comparerRef = value;
@@ -304,9 +281,7 @@ namespace System.Collections {
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Please use EqualityComparer property.")]
-#endif
 		protected IHashCodeProvider hcp {
 			set {
 				hcpRef = value;
@@ -316,13 +291,11 @@ namespace System.Collections {
 			}
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		protected IEqualityComparer EqualityComparer {
 			get {
 				return equalityComparer;
 			}
 		}
-#endif
 
 		// ICollection
 
@@ -469,9 +442,7 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public virtual void Clear ()
 		{
 			for (int i = 0;i<table.Length;i++) {
@@ -494,9 +465,7 @@ namespace System.Collections {
 			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
@@ -558,14 +527,10 @@ namespace System.Collections {
 
 			info.AddValue ("LoadFactor", loadFactor);
 			info.AddValue ("Version", modificationCount);
-#if NET_2_0
 			if (equalityComparer != null)
 				info.AddValue ("KeyComparer", equalityComparer);
 			else
 				info.AddValue ("Comparer", comparerRef);
-#else
-				info.AddValue ("Comparer", comparerRef);
-#endif
 			if (hcpRef != null)
 				info.AddValue ("HashCodeProvider", hcpRef);
 			info.AddValue ("HashSize", this.table.Length);
@@ -580,21 +545,16 @@ namespace System.Collections {
 			info.AddValue ("Keys", keys);
 			info.AddValue ("Values", values);
 
-#if NET_2_0
 			info.AddValue ("equalityComparer", equalityComparer);
-#endif
 		}
 
-#if NET_2_0
 		[MonoTODO ("Serialize equalityComparer")]
-#endif
 		public virtual void OnDeserialization (object sender)
 		{
 			if (serializationInfo == null) return;
 
 			loadFactor = (float) serializationInfo.GetValue ("LoadFactor", typeof(float));
 			modificationCount = (int) serializationInfo.GetValue ("Version", typeof(int));
-#if NET_2_0
 			try {
 				equalityComparer = (IEqualityComparer) serializationInfo.GetValue ("KeyComparer", typeof (object));
 			} catch {
@@ -603,9 +563,6 @@ namespace System.Collections {
 			
 			if (equalityComparer == null)
 				comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
-#else
-			comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
-#endif
 			try {
 				hcpRef = (IHashCodeProvider) serializationInfo.GetValue ("HashCodeProvider", typeof (object));
 			} catch {} // Missing value => null
@@ -648,10 +605,8 @@ namespace System.Collections {
 		/// <summary>Returns the hash code for the specified key.</summary>
 		protected virtual int GetHash (Object key)
 		{
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (equalityComparer != null)
 				return equalityComparer.GetHashCode (key);
-#endif
 			if (hcpRef == null)
 				return key.GetHashCode ();
 			
@@ -666,10 +621,8 @@ namespace System.Collections {
 		{
 			if (key == KeyMarker.Removed)
 				return false;
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (equalityComparer != null)
 				return equalityComparer.Equals (item, key);
-#endif
 			if (comparerRef == null)
 				return item.Equals (key);
 			
@@ -1010,10 +963,8 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-#if NET_2_0
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-#endif
 		private class HashKeys : ICollection, IEnumerable {
 
 			private Hashtable host;
@@ -1066,10 +1017,8 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-#if NET_2_0
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-#endif
 		private class HashValues : ICollection, IEnumerable {
 
 			private Hashtable host;

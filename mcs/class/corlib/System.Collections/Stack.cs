@@ -34,11 +34,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
 	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
 	[System.Diagnostics.DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-#endif
 	[Serializable]
 #if INSIDE_CORLIB
 	public

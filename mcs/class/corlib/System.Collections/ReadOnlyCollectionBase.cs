@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Serializable]
 	public abstract class ReadOnlyCollectionBase : ICollection, IEnumerable {
 
@@ -45,18 +43,10 @@ namespace System.Collections {
 		private ArrayList list;
 		
 		// public instance properties
-		public
-#if NET_2_0
-		virtual
-#endif		
-		int Count { get { return InnerList.Count; } }
+		public virtual int Count { get { return InnerList.Count; } }
 		
 		// Public Instance Methods
-		public
-#if NET_2_0
-		virtual
-#endif		
-		IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
+		public virtual IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		
 		// Protected Instance Constructors
 		protected ReadOnlyCollectionBase() {
@@ -66,10 +56,8 @@ namespace System.Collections {
 		// Protected Instance Properties
 		protected ArrayList InnerList {get { return this.list; } }
 		
-#if NET_2_0
 		// ICollection/IEnumerable methods
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-#endif
 
 		void ICollection.CopyTo(Array array, int index) {
 			lock (InnerList) { InnerList.CopyTo(array, index); }

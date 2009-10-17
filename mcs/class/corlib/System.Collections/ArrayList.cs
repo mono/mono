@@ -30,11 +30,9 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
-#if NET_2_0
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
-#endif
 	[Serializable]
 #if INSIDE_CORLIB
 	public
@@ -2498,11 +2496,7 @@ namespace System.Collections
 
 		#region Fields
 
-#if NET_2_0
 		private const int DefaultInitialCapacity = 4;
-#else
-		private const int DefaultInitialCapacity = 16;
-#endif
 		
 		/// <summary>
 		/// Number of items in the list.
@@ -2519,9 +2513,7 @@ namespace System.Collections
 		/// </summary>
 		private int _version;
 
-#if NET_2_0		
 		private static readonly object [] EmptyArray = new object [0]; 
-#endif		
 
 		#endregion
 		
@@ -2533,11 +2525,7 @@ namespace System.Collections
 		/// </summary>
 		public ArrayList()
 		{
-#if NET_2_0
 			_items = EmptyArray;
-#else
-			_items = new object[DefaultInitialCapacity];
-#endif
 		}		
 
 		/// <summary>

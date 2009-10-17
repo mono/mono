@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections
 {
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Serializable]
 #if INSIDE_CORLIB
 	public
@@ -82,12 +80,7 @@ namespace System.Collections
 			}
 		}
 
-#if NET_1_1
-		public
-#else
-		internal
-#endif
-		static CaseInsensitiveComparer DefaultInvariant {
+		public static CaseInsensitiveComparer DefaultInvariant {
 			get {
 				return defaultInvariantComparer;
 			}

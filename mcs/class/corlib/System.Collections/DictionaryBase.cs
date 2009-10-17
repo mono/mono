@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Serializable]
 	public abstract class DictionaryBase : IDictionary, ICollection, IEnumerable {
 
@@ -156,14 +154,9 @@ namespace System.Collections {
 
 		object IDictionary.this [object key] {
 			get {
-#if NET_2_0
 				object value = hashtable [key];
 				OnGet (key, value);
 				return value;
-#else
-				OnGet (key, hashtable [key]);
-				return hashtable [key];
-#endif
 			}
 			set {
 				OnValidate (key, value);
@@ -206,25 +199,19 @@ namespace System.Collections {
 
 		void IDictionary.Remove (object key)
 		{
-#if NET_2_0
 			if (!hashtable.Contains (key))
 				return;
-#endif
 
 			object value = hashtable [key];
 			OnValidate (key, value);
 			OnRemove (key, value);
 			hashtable.Remove (key);
-#if NET_2_0
 			try {
 				OnRemoveComplete (key, value);
 			} catch {
 				hashtable [key] = value;
 				throw;
 			}
-#else
-			OnRemoveComplete (key, value);
-#endif
 		}
 
 		bool IDictionary.Contains (object key)

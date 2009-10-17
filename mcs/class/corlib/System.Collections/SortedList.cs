@@ -41,10 +41,8 @@ namespace System.Collections {
 	///  and by index.
 	/// </summary>
 	[Serializable]
-#if NET_2_0
 	[ComVisible(true)]
 	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]	
-#endif
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {
 
@@ -208,13 +206,6 @@ namespace System.Collections {
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
 				}
-#if NET_1_0
-				else if (current > defaultCapacity && value < current) {
-                                        Slot [] newTable = new Slot [defaultCapacity];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
-                                }
-#endif
 				else if (value > inUse) {
                                         Slot [] newTable = new Slot [value];
                                         Array.Copy (table, newTable, inUse);

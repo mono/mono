@@ -36,10 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
-
 	public interface IComparer {
 		int Compare (object x, object y);
 	}

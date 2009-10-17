@@ -34,9 +34,7 @@ using System.Security.Permissions;
 
 namespace System.Collections
 {
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Serializable]
 #if INSIDE_CORLIB
 	public
@@ -46,12 +44,7 @@ namespace System.Collections
 	sealed class Comparer : IComparer, ISerializable {
 
 		public static readonly Comparer Default = new Comparer ();
-#if NET_1_1
-		public
-#else
-		internal
-#endif
-		static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
+		public static readonly Comparer DefaultInvariant = new Comparer (CultureInfo.InvariantCulture);
 
 		// This field was introduced for MS kompatibility. see bug #77701
 		CompareInfo m_compareInfo;
@@ -61,12 +54,7 @@ namespace System.Collections
 			//LAMESPEC: This seems to be encoded at runtime while CaseInsensitiveComparer does at creation
 		}
 
-#if NET_1_1
-		public
-#else
-		internal
-#endif
-		Comparer (CultureInfo culture)
+		public Comparer (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");

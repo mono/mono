@@ -36,10 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
-#if NET_2_0
 	[ComVisible(true)]
 	[System.Diagnostics.DebuggerDisplay ("{_value}", Name="[{_key}]")]
-#endif
 	[Serializable]
 	public struct DictionaryEntry {
 		private object _key;
@@ -47,10 +45,6 @@ namespace System.Collections {
 
 		public DictionaryEntry (object key, object value)
 		{
-#if ONLY_1_1
-			if (key == null)
-				throw new ArgumentNullException ("key");
-#endif			
 			_key = key;
 			_value = value;
 		}
@@ -58,10 +52,6 @@ namespace System.Collections {
 		public object Key {
 			get {return _key;}
 			set {
-#if ONLY_1_1
-				if (value == null)
-					throw new ArgumentNullException ("value");
-#endif				
 				_key = value;
 			}
 		}
