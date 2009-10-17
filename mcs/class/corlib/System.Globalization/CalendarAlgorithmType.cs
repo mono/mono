@@ -27,12 +27,9 @@
 
 using System;
 
-#if NET_2_0
 namespace System.Globalization
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
-#endif
 	public enum CalendarAlgorithmType
 	{
 		Unknown = 0,
@@ -42,4 +39,3 @@ namespace System.Globalization
 	}
 
 }
-#endif

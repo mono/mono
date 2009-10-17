@@ -32,15 +32,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics.SymbolStore
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct SymbolToken 
 	{
 
@@ -58,7 +54,6 @@ namespace System.Diagnostics.SymbolStore
 			return ((SymbolToken) obj).GetToken() == _val;
 		}
 
-#if NET_2_0
 		public bool Equals (SymbolToken obj)
 		{
 			return(obj.GetToken () == _val);
@@ -74,7 +69,6 @@ namespace System.Diagnostics.SymbolStore
 		{
 			return !a.Equals (b);
 		}
-#endif
 
 		public override int GetHashCode()
 		{

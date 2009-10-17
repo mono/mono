@@ -31,16 +31,11 @@
 //
 
 using System.Reflection;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics.SymbolStore
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface ISymbolWriter {
 		void Close ();
 		void CloseMethod ();

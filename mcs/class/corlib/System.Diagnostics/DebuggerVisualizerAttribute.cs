@@ -34,12 +34,8 @@ using System.Runtime.InteropServices;
 namespace System.Diagnostics
 {
 	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly, AllowMultiple=true)]
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class DebuggerVisualizerAttribute : Attribute
-#else
-	internal sealed class DebuggerVisualizerAttribute : Attribute
-#endif
 	{
 		private string description;
 		private string visualizerSourceName;

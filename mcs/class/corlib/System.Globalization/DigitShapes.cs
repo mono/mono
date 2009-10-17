@@ -23,7 +23,6 @@
 
 namespace System.Globalization {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[Serializable]
 	public enum DigitShapes {
@@ -31,5 +30,4 @@ namespace System.Globalization {
 		None = 1,
 		NativeNational = 2
 	}
-#endif
 }

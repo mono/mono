@@ -42,11 +42,9 @@ using System.Runtime.InteropServices;
 /// <see cref="N:CalendricalCalculations"/> namespace.
 /// </para>
 /// </remarks>
-#if NET_2_0
 [System.Runtime.InteropServices.ComVisible(true)]
-#endif
 [Serializable]
-[MonoTODO ("Serialization format not compatible with.NET")]
+[MonoLimitation ("Serialization format not compatible with.NET")]
 public class TaiwanCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the
@@ -376,13 +374,11 @@ public class TaiwanCalendar : Calendar {
 		return era;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -422,13 +418,11 @@ public class TaiwanCalendar : Calendar {
 		return 12;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetWeekOfYear (DateTime time, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		return base.GetWeekOfYear (time, rule, firstDayOfWeek);
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the year of the specified
@@ -582,7 +576,6 @@ public class TaiwanCalendar : Calendar {
 		M_CheckYE(year, ref era);
 		return year;
 	}
-#if NET_2_0
 
 #if !NET_2_1
 	[ComVisible (false)]
@@ -609,8 +602,6 @@ public class TaiwanCalendar : Calendar {
 			return TaiwanMax;
 		}
 	}
-#endif
-	
 } // class TaiwanCalendar
 	
 } // namespace System.Globalization

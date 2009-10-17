@@ -34,10 +34,8 @@ using System.Runtime.InteropServices;
 namespace System.Collections
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible(true)]
 	[Obsolete ("Please use StringComparer instead.")]
-#endif
 #if INSIDE_CORLIB
 	public
 #else

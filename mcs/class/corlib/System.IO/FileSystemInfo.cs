@@ -41,9 +41,7 @@ namespace System.IO {
 	
 	[Serializable]
 	[FileIOPermission (SecurityAction.InheritanceDemand, Unrestricted = true)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 #if NET_2_1
 	public abstract class FileSystemInfo {
 #else

@@ -34,10 +34,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Configuration.Assemblies {
 
-#if NET_2_0
 	[Serializable]
 	[ComVisible (true)]
-#endif
 	public enum AssemblyHashAlgorithm {
 		None = 0,
 		MD5 = 32771,

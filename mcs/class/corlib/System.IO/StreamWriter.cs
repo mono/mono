@@ -34,16 +34,12 @@
 using System.Text;
 using System;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 	
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class StreamWriter : TextWriter {
 
 		private Encoding internalEncoding;

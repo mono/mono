@@ -113,9 +113,7 @@ namespace System.Globalization
 
 #pragma warning disable 169		
 		private int win32LCID;	// Unused, but MS.NET serializes this
-#if NET_2_0
 		private string m_name; // Unused, but MS.NET serializes this
-#endif
 #pragma warning restore 169
 
 		[NonSerialized]
@@ -482,13 +480,11 @@ namespace System.Globalization
 		public virtual SortKey GetSortKey(string source,
 						  CompareOptions options)
 		{
-#if NET_2_0
 			switch (options) {
 			case CompareOptions.Ordinal:
 			case CompareOptions.OrdinalIgnoreCase:
 				throw new ArgumentException ("Now allowed CompareOptions.", "options");
 			}
-#endif
 #if !NET_2_1 || MONOTOUCH
 			if (UseManagedCollation)
 				return collator.GetSortKey (source, options);
@@ -903,7 +899,6 @@ namespace System.Globalization
 					       value, options, false));
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public static bool IsSortable (char ch)
 		{
@@ -915,7 +910,6 @@ namespace System.Globalization
 		{
 			return MSCompatUnicodeTable.IsSortable (text);
 		}
-#endif
 
 		public override string ToString()
 		{
@@ -933,11 +927,9 @@ namespace System.Globalization
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public virtual string Name {
 			get { return icu_name; }
 		}
-#endif
 	}
 }

@@ -36,10 +36,8 @@
 namespace System.Globalization {
 
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[System.Serializable]
-#endif
 	[Flags]
 	public enum CompareOptions {
 		None = 0,
@@ -51,9 +49,7 @@ namespace System.Globalization {
 
 		StringSort = 0x20000000,
 		Ordinal = 0x40000000,
-#if NET_2_0
 		OrdinalIgnoreCase = 0x10000000
-#endif
 	} // CompareOptions
 
 } // System.Globalization

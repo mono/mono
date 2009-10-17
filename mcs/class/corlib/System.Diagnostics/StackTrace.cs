@@ -41,9 +41,7 @@ using System.Threading;
 namespace System.Diagnostics {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[MonoTODO ("Serialized objects are not compatible with .NET")]
 	public class StackTrace {
 
@@ -143,19 +141,13 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if ONLY_1_1
-		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
-#endif
 		public StackTrace (StackFrame frame)
 		{
 			this.frames = new StackFrame [1];
 			this.frames [0] = frame;
 		}
 
-#if ONLY_1_1
-		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
-#endif
-		[MonoTODO ("Not possible to create StackTraces from other threads")]
+		[MonoLimitation ("Not possible to create StackTraces from other threads")]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
 			throw new NotImplementedException ();
@@ -176,14 +168,8 @@ namespace System.Diagnostics {
 			return frames [index];
 		}
 
-#if NET_2_0
 		[ComVisibleAttribute (false)]
-		public virtual
-#else
-		// used for CAS implementation (before Fx 2.0)
-		internal
-#endif
-		StackFrame[] GetFrames ()
+		public virtual StackFrame[] GetFrames ()
 		{
 			return frames;
 		}

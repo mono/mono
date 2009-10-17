@@ -54,10 +54,8 @@ using System.Runtime.InteropServices;
 /// </para>
 /// </remarks>
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
-[MonoTODO ("Serialization format not compatible with .NET")]
+[MonoLimitation ("Serialization format not compatible with .NET")]
 public class HijriCalendar : Calendar {
 	/// <summary>
 	/// Constructor.
@@ -93,18 +91,6 @@ public class HijriCalendar : Calendar {
 			return new int[] { HijriEra }; 
 		}
 	}
-
-#if NET_1_1
-	[MonoTODO ("Not supported")]
-	public int HijriAdjustment {
-		get {
-			throw new NotImplementedException ();
-		}
-		set {
-			throw new NotImplementedException ();
-		}
-	}
-#endif
 
 	// FIXME: [MonoTODO ("Add call into operating system")]
 	public override int TwoDigitYearMax 
@@ -758,13 +744,11 @@ public class HijriCalendar : Calendar {
 		return HijriEra;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -941,8 +925,6 @@ public class HijriCalendar : Calendar {
 		return base.ToFourDigitYear (year);
 	}
 
-#if NET_2_0
-
 #if !NET_2_1
 	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType  {
@@ -968,8 +950,6 @@ public class HijriCalendar : Calendar {
 			return Max;
 		}
 	}
-#endif
-	
 } // class HijriCalendar
 	
 } // namespace System.Globalization

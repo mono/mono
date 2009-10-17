@@ -33,9 +33,7 @@ using System.Runtime.Serialization;
 namespace System.IO.IsolatedStorage
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
         public class IsolatedStorageException : Exception
 	{
 		public IsolatedStorageException ()

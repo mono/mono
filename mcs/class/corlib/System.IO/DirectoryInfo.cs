@@ -35,16 +35,14 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 using System.Security.AccessControl;
 #endif
 
 namespace System.IO {
 	
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DirectoryInfo : FileSystemInfo {
 
 		private string current;
@@ -244,7 +242,7 @@ namespace System.IO {
 			return OriginalPath;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
 			switch (searchOption) {

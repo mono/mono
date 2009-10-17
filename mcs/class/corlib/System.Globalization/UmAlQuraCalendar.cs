@@ -33,8 +33,6 @@
 // - HijriEra->UmAlQuraEra.
 //
 
-#if NET_2_0
-
 namespace System.Globalization {
 
 using System;
@@ -751,12 +749,10 @@ public class UmAlQuraCalendar : Calendar {
 		return UmAlQuraEra;
 	}
 
-#if NET_2_0
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -959,5 +955,3 @@ public class UmAlQuraCalendar : Calendar {
 } // class HijriCalendar
 	
 } // namespace System.Globalization
-
-#endif

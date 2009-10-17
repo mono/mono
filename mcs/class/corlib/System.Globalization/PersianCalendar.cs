@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Globalization {
 
 using System;
@@ -66,9 +64,7 @@ using System.Runtime.InteropServices;
 /// on the mean tropical year, not the mean March equinoctial year.
 /// </para>
 /// </remarks>
-#if NET_2_0
 [Serializable]
-#endif
 public class PersianCalendar : Calendar {
 	/// <summary>
 	/// Constructor.
@@ -501,12 +497,10 @@ public class PersianCalendar : Calendar {
 		return PersianEra;
 	}
 
-#if NET_2_0
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -703,7 +697,6 @@ public class PersianCalendar : Calendar {
 			return baseCentury + year - 100;
 	}
 
-#if NET_2_0
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.SolarCalendar;
@@ -724,9 +717,6 @@ public class PersianCalendar : Calendar {
 			return PersianMax;
 		}
 	}
-#endif
 } // class PersianCalendar
 	
 } // namespace System.Globalization
-
-#endif

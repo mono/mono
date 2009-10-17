@@ -37,20 +37,16 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Threading;
 
-#if NET_2_0
 using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
 #else
 using System.Security.AccessControl;
 #endif
-#endif
 
 namespace System.IO
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FileStream : Stream
 	{
 		// construct from handle
@@ -142,7 +138,7 @@ namespace System.IO
 		{
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
 			: this (path, mode, access, share, bufferSize, false, options)
 		{
@@ -198,11 +194,8 @@ namespace System.IO
 				throw new ArgumentException ("Path is empty");
 			}
 
-#if NET_2_0
 			// ignore the Inheritable flag
 			share &= ~FileShare.Inheritable;
-
-#endif
 
 			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
@@ -225,11 +218,7 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
 			}
 
-#if NET_2_0
 			if (share < FileShare.None || share > (FileShare.ReadWrite | FileShare.Delete)) {
-#else
-			if (share < FileShare.None || share > FileShare.ReadWrite) {
-#endif
 #if NET_2_1
 				if (anonymous)
 					throw new IsolatedStorageException ("Enum value for FileShare was out of legal range.");
@@ -424,9 +413,7 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Use SafeFileHandle instead")]
-#endif
 		public virtual IntPtr Handle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
@@ -435,7 +422,6 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0
 		public virtual SafeFileHandle SafeFileHandle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
@@ -451,7 +437,6 @@ namespace System.IO
 				return ret;
 			}
 		}
-#endif
 
 		// methods
 
@@ -849,13 +834,6 @@ namespace System.IO
 			//MonoIO.Flush (handle);
 		}
 
-#if !NET_2_0
-		public override void Close ()
-		{
-			Dispose (true);
-		}
-#endif
-
 		public virtual void Lock (long position, long length)
 		{
 			if (handle == MonoIO.InvalidHandle)
@@ -908,11 +886,7 @@ namespace System.IO
 			Dispose (false);
 		}
 
-#if NET_2_0
 		protected override void Dispose (bool disposing)
-#else
-		protected virtual void Dispose (bool disposing)
-#endif
 		{
 			if (handle != MonoIO.InvalidHandle) {
 				FlushBuffer ();
@@ -940,7 +914,7 @@ namespace System.IO
 				GC.SuppressFinalize (this);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();
@@ -1130,9 +1104,7 @@ namespace System.IO
 		private string name = "[Unknown]";	// name of file.
 
 		IntPtr handle;				// handle to underlying file
-#if NET_2_0
 		SafeFileHandle safeHandle;              // set only when using one of the
 							// constructors taking SafeFileHandle
-#endif
 	}
 }

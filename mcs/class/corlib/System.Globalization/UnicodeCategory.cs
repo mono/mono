@@ -33,10 +33,8 @@
 
 namespace System.Globalization {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[System.Serializable]
-#endif
 	public enum UnicodeCategory {
 		UppercaseLetter         =  0,
 		LowercaseLetter         =  1,

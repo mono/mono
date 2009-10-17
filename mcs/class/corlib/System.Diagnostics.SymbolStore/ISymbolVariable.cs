@@ -30,15 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics.SymbolStore
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface ISymbolVariable {
 		int AddressField1 {get; }
 		int AddressField2 {get; }

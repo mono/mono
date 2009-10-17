@@ -40,9 +40,7 @@ using System.Runtime.InteropServices;
 namespace System.IO
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 #if NET_2_1
 	public abstract class Stream : IDisposable
 #else
@@ -70,14 +68,12 @@ namespace System.IO
 			get;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public virtual bool CanTimeout {
 			get {
 				return false;
 			}
 		}
-#endif
 
 		public abstract long Length
 		{
@@ -91,7 +87,6 @@ namespace System.IO
 		}
 
 
-#if NET_2_0
 		// 2.0 version of Dispose.
 		public void Dispose ()
 		{
@@ -136,22 +131,8 @@ namespace System.IO
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		// 1.1 version of Close
-		public virtual void Close ()
-		{
-			// nothing
-		}
 
-		void IDisposable.Dispose ()
-		{
-			Close ();
-		}
-#endif
-
-#if NET_2_0
 		[Obsolete ("CreateWaitHandle is due for removal.  Use \"new ManualResetEvent(false)\" instead.")]
-#endif
 		protected virtual WaitHandle CreateWaitHandle()
 		{
 			return new ManualResetEvent (false);

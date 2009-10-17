@@ -47,9 +47,7 @@ namespace System.IO.IsolatedStorage {
 	// much as a directory
 
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	// FIXME: Further limit the assertion when imperative Assert is implemented
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
@@ -66,9 +64,7 @@ namespace System.IO.IsolatedStorage {
 			switch (scope) {
 			case IsolatedStorageScope.User:
 			case IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
-#if NET_2_0
 			case IsolatedStorageScope.Machine:
-#endif
 				break;
 			default:
 				string msg = Locale.GetText ("Invalid scope, only User, User|Roaming and Machine are valid");
@@ -162,7 +158,6 @@ namespace System.IO.IsolatedStorage {
 			storageFile.PostInit ();
 			return storageFile;
 		}
-#if NET_2_0
 		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, object applicationIdentity)
 		{
 			Demand (scope);
@@ -232,7 +227,7 @@ namespace System.IO.IsolatedStorage {
 			storageFile.PostInit ();
 			return storageFile;
 		}
-#endif
+
 		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByUser)]
 		public static IsolatedStorageFile GetUserStoreForAssembly ()
 		{
@@ -282,10 +277,8 @@ namespace System.IO.IsolatedStorage {
 				} else {
 					root = Environment.InternalGetFolderPath (Environment.SpecialFolder.ApplicationData);
 				}
-#if NET_2_0
 			} else if ((scope & IsolatedStorageScope.Machine) != 0) {
 				root = Environment.InternalGetFolderPath (Environment.SpecialFolder.CommonApplicationData);
-#endif
 			}
 
 			if (root == null) {
@@ -316,7 +309,6 @@ namespace System.IO.IsolatedStorage {
 				return IsolatedStorageContainment.DomainIsolationByRoamingUser;
 			case IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
 				return IsolatedStorageContainment.AssemblyIsolationByRoamingUser;
-#if NET_2_0
 			case IsolatedStorageScope.Application | IsolatedStorageScope.User:
 				return IsolatedStorageContainment.ApplicationIsolationByUser;
 			case IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly | IsolatedStorageScope.Machine:
@@ -327,7 +319,6 @@ namespace System.IO.IsolatedStorage {
 				return IsolatedStorageContainment.ApplicationIsolationByMachine;
 			case IsolatedStorageScope.Application | IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
 				return IsolatedStorageContainment.ApplicationIsolationByRoamingUser;
-#endif
 			default:
 				// unknown ?!?! then ask for maximum (unrestricted)
 				return IsolatedStorageContainment.UnrestrictedIsolatedStorage;
@@ -375,12 +366,9 @@ namespace System.IO.IsolatedStorage {
 		{
 			string root = GetIsolatedStorageRoot (Scope);
 			string dir = null;
-#if NET_2_0
 			if (_applicationIdentity != null) {
 				dir = String.Format ("a{0}{1}", SeparatorInternal, GetNameFromIdentity (_applicationIdentity));
-			} else
-#endif
-			if (_domainIdentity != null) {
+			} else if (_domainIdentity != null) {
 				dir = String.Format ("d{0}{1}{0}{2}", SeparatorInternal,
 					GetNameFromIdentity (_domainIdentity), GetNameFromIdentity (_assemblyIdentity));
 			} else if (_assemblyIdentity != null) {

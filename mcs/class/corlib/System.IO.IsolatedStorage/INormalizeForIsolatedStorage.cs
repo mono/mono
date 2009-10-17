@@ -31,9 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.IO.IsolatedStorage {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface INormalizeForIsolatedStorage {
 
 		object Normalize ();

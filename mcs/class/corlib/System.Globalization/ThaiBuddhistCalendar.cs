@@ -41,10 +41,8 @@ using System.Runtime.InteropServices;
 /// </para>
 /// </remarks>
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
-[MonoTODO ("Serialization format not compatible with.NET")]
+[MonoLimitation ("Serialization format not compatible with.NET")]
 public class ThaiBuddhistCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the
@@ -324,13 +322,11 @@ public class ThaiBuddhistCalendar : Calendar {
 		return era;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetLeapMonth (int year, int era)
 	{
 		return 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -364,13 +360,11 @@ public class ThaiBuddhistCalendar : Calendar {
 		return 12;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetWeekOfYear (DateTime time, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		return base.GetWeekOfYear (time, rule, firstDayOfWeek);
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the year of the specified
@@ -503,8 +497,6 @@ public class ThaiBuddhistCalendar : Calendar {
 		return base.ToFourDigitYear (year);
 	}
 	
-#if NET_2_0
-
 #if !NET_2_1
 	[ComVisible (false)]
 	public override CalendarAlgorithmType AlgorithmType {
@@ -530,7 +522,6 @@ public class ThaiBuddhistCalendar : Calendar {
 			return ThaiMax;
 		}
 	}
-#endif
 } // class ThaiBuddhistCalendar
 	
 } // namespace System.Globalization

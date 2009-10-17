@@ -32,9 +32,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Globalization
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
-#endif
 	[Serializable]
 	public class RegionInfo
 	{
@@ -56,9 +54,7 @@ namespace System.Globalization
 			}
 		}
 
-#if NET_2_0
 		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
-#endif
 
 #pragma warning disable 649
 		int regionId;
@@ -73,16 +69,9 @@ namespace System.Globalization
 
 		public RegionInfo (int culture)
 		{
-#if NET_2_0
 			if (!GetByTerritory (CultureInfo.GetCultureInfo (culture)))
 				throw new ArgumentException (
 					String.Format ("Region ID {0} (0x{0:X4}) is not a supported region.", culture), "culture");
-#else
-			if (!construct_internal_region_from_lcid (culture))
-				throw new ArgumentException (
-					String.Format ("Region ID {0} (0x{0:X4}) is not a " +
-							"supported region.", culture), "culture");
-#endif
 		}
 
 		public RegionInfo (string name)
@@ -104,7 +93,6 @@ namespace System.Globalization
 #endif
 		}
 
-#if NET_2_0
 		bool GetByTerritory (CultureInfo ci)
 		{
 			if (ci == null)
@@ -114,22 +102,14 @@ namespace System.Globalization
 			this.lcid = ci.LCID;
 			return construct_internal_region_from_name (ci.Territory.ToUpperInvariant ());
 		}
-#endif		
-
-#if !NET_2_0
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool construct_internal_region_from_lcid (int lcid);
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_region_from_name (string name);
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string CurrencyEnglishName {
 			get { return currencyEnglishName; }
 		}
-#endif
 
 		public virtual string CurrencySymbol {
 			get { return currencySymbol; }
@@ -144,12 +124,10 @@ namespace System.Globalization
 			get { return englishName; }
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual int GeoId {
 			get { return regionId; }
 		}
-#endif
 
 		public virtual bool IsMetric {
 			get {
@@ -167,7 +145,6 @@ namespace System.Globalization
 			get { return isoCurrencySymbol; }
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string NativeName {
 			get { return DisplayName; }
@@ -178,7 +155,6 @@ namespace System.Globalization
 		public virtual string CurrencyNativeName {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public virtual string Name {
 			get { return iso2Name; }
@@ -199,7 +175,6 @@ namespace System.Globalization
 		//
 		// methods
 
-#if NET_2_0
 		public override bool Equals (object value)
 		{
 			RegionInfo other = value as RegionInfo;
@@ -210,17 +185,6 @@ namespace System.Globalization
 		{
 			return (int) (0x80000000 + (regionId << 3) + regionId); // it i still based on regionId
 		}
-#else
-		public override bool Equals (object value)
-		{
-			RegionInfo other = value as RegionInfo;
-			return other != null && regionId == other.regionId;
-		}
-
-		public override int GetHashCode () {
-			return regionId;
-		}
-#endif
 
 		public override string ToString ()
 		{

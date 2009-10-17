@@ -31,21 +31,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics {
 	
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DebuggableAttribute : System.Attribute {
 
 		private bool JITTrackingEnabledFlag;
 		private bool JITOptimizerDisabledFlag;
-#if NET_2_0
 		[Flags]
 		[ComVisible (true)]
 		public enum DebuggingModes {
@@ -62,7 +57,6 @@ namespace System.Diagnostics {
 		public DebuggingModes DebuggingFlags {
 			get { return debuggingModes; }
 		}
-#endif
 
 		// Public Instance Constructors
 		public DebuggableAttribute(bool isJITTrackingEnabled, bool isJITOptimizerDisabled)
@@ -70,24 +64,19 @@ namespace System.Diagnostics {
 			JITTrackingEnabledFlag = isJITTrackingEnabled;
 			JITOptimizerDisabledFlag = isJITOptimizerDisabled;
 
-#if NET_2_0
 			if (isJITTrackingEnabled) 
 				debuggingModes |= DebuggingModes.Default;
 			
 			if (isJITOptimizerDisabled) 
                                debuggingModes |= DebuggingModes.DisableOptimizations;
-#endif
 		}
 
-#if NET_2_0
 		public DebuggableAttribute(DebuggingModes modes) 
 		{
 			debuggingModes = modes;
 			JITTrackingEnabledFlag = (debuggingModes & DebuggingModes.Default) != 0;
 			JITOptimizerDisabledFlag = (debuggingModes & DebuggingModes.DisableOptimizations) != 0;
 		}
-#endif
-		
 		
 		// Public Instance Properties
 		public bool IsJITTrackingEnabled { get { return JITTrackingEnabledFlag; } }

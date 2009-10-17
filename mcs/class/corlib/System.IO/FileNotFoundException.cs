@@ -32,17 +32,12 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FileNotFoundException : IOException {
 
 		const int Result = unchecked ((int)0x80131621);
@@ -106,7 +101,6 @@ namespace System.IO {
 		public override string Message {
 			get {
 				if (base.message == null) {
-#if NET_2_0
 					if (fileName != null) {
 						string message = string.Format (CultureInfo.CurrentCulture,
 							"Could not load file or assembly '{0}' or one of"
@@ -114,13 +108,6 @@ namespace System.IO {
 							+ " file specified.", fileName);
 						return message;
 					}
-#else
-					string file = fileName == null ? "(null)" : fileName;
-					string message = string.Format (CultureInfo.CurrentCulture,
-						"File or assembly name {0}, or one of its dependencies,"
-						+ " was not found.", file);
-					return message;
-#endif
 				}
 				return base.message;
 			}
@@ -140,11 +127,7 @@ namespace System.IO {
 
 			if (fileName != null && fileName.Length > 0) {
 				sb.Append (Environment.NewLine);
-#if NET_2_0
 				sb.AppendFormat ("File name: '{0}'", fileName);
-#else
-				sb.AppendFormat ("File name: \"{0}\"", fileName);
-#endif
 			}
 
 			if (this.InnerException != null)

@@ -30,10 +30,7 @@
 //
 
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics
 {
@@ -41,9 +38,7 @@ namespace System.Diagnostics
                          AttributeTargets.Constructor |
 			 AttributeTargets.Method, Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DebuggerStepThroughAttribute : Attribute
 	{
 		public DebuggerStepThroughAttribute ()

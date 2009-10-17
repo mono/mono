@@ -37,15 +37,12 @@ using System.Runtime.InteropServices;
 namespace System.Globalization {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public class StringInfo {
 		public StringInfo()
 		{
 		}
 
-#if NET_2_0
 		string s;
 		int length;
 
@@ -122,7 +119,6 @@ namespace System.Globalization {
 			}
 			return s.Substring (start, idx - start);
 		}
-#endif
 
 		public static string GetNextTextElement(string str)
 		{
@@ -144,13 +140,9 @@ namespace System.Globalization {
 				throw new ArgumentNullException("string is null");
 			}
 
-#if NET_2_0
 			if(index >= str.Length)
 				return 0;
 			if(index < 0)
-#else
-			if(index < 0 || index >= str.Length)
-#endif
 				throw new ArgumentOutOfRangeException ("Index is not valid");
 
 			/* Find the next base character, surrogate

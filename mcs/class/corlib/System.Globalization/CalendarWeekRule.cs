@@ -39,10 +39,8 @@ namespace System.Globalization
 	/// <summary>
 	/// The System.Globalization.CalendarWeekRule enumeration
 	/// </summary>
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[System.Serializable]
-#endif
 	public enum CalendarWeekRule
 	{
 		FirstDay = 0,

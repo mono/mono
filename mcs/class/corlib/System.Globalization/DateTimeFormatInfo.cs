@@ -37,7 +37,6 @@ using System.Threading;
 
 namespace System.Globalization
 {
-#if NET_2_0
 	[Flags]
 	enum DateTimeFormatFlags {
 		Unused,
@@ -46,12 +45,9 @@ namespace System.Globalization
 		By,
 		Microsoft
 	}
-#endif
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
 		private static readonly string MSG_READONLY = "This instance is read only";
 		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
@@ -65,10 +61,8 @@ namespace System.Globalization
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
 //		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
-#if NET_2_0
 		static readonly string [] INVARIANT_SHORT_DAY_NAMES =
 			new string [7] {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
-#endif
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
 		private const string _RoundtripPattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
@@ -121,14 +115,12 @@ namespace System.Globalization
 		private string[] m_abbrevEnglishEraNames;
 		private string[] m_dateWords;
 		private int[] optionalCalendars;
-#if NET_2_0
 		private string[] m_superShortDayNames;
 		private string[] genitiveMonthNames;
 		private string[] m_genitiveAbbreviatedMonthNames;
 		private string[] leapYearMonthNames;
 		private DateTimeFormatFlags formatFlags;
 		private string m_name; // Unused, but MS.NET serializes this
-#endif
 #pragma warning restore 169
 
 		internal DateTimeFormatInfo(bool read_only)
@@ -167,11 +159,9 @@ namespace System.Globalization
 			dayNames = INVARIANT_DAY_NAMES;
 			abbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
 			monthNames = INVARIANT_MONTH_NAMES;
-#if NET_2_0
 			m_genitiveAbbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
 			genitiveMonthNames = INVARIANT_MONTH_NAMES;
 			shortDayNames = INVARIANT_SHORT_DAY_NAMES;
-#endif
 		}
 
 		public DateTimeFormatInfo() : this (false)
@@ -773,22 +763,21 @@ namespace System.Globalization
 			return null;
 		}
 
-#if NET_2_0
-		[MonoTODO ("Returns only the English month abbreviated names")]
+		[MonoLimitation ("Returns only the English month abbreviated names")]
 		[ComVisible (false)]
 		public string [] AbbreviatedMonthGenitiveNames {
 			get { return m_genitiveAbbreviatedMonthNames; }
 			set { m_genitiveAbbreviatedMonthNames = value; }
 		}
 
-		[MonoTODO ("Returns only the English moth names")]
+		[MonoLimitation ("Returns only the English month names")]
 		[ComVisible (false)]
 		public string [] MonthGenitiveNames {
 			get { return genitiveMonthNames; }
 			set { genitiveMonthNames = value; }
 		}
 
-		[MonoTODO ("Returns an empty string as if the calendar name wasn't available")]
+		[MonoLimitation ("Returns an empty string as if the calendar name wasn't available")]
 		[ComVisible (false)]
 		public string NativeCalendarName {
 			get { return String.Empty; }
@@ -863,6 +852,5 @@ namespace System.Globalization
 				throw new ArgumentException ("format", "Format specifier is invalid");
 			}
 		}
-#endif
 	}
 }

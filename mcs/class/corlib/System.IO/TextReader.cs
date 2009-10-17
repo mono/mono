@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 namespace System.IO {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 #if NET_2_1
 	public abstract class TextReader : IDisposable {
 #else
@@ -57,11 +55,7 @@ namespace System.IO {
 			Dispose(true);
 		}
 
-#if NET_2_0
 		public void Dispose ()
-#else
-		void System.IDisposable.Dispose()
-#endif			
 		{
 			Dispose(true);
 		}

@@ -36,13 +36,8 @@ using System.Runtime.InteropServices;
 /// The class serves as a base class for calendar classes.
 /// </remarks>
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
-public abstract class Calendar
-#if NET_2_0
-	: ICloneable
-#endif
+public abstract class Calendar : ICloneable
 {
 	/// <value>An protected integer property that gives the number of
 	/// days in a week. It might be overridden.</value>
@@ -133,8 +128,6 @@ public abstract class Calendar
 	[NonSerialized]
 	bool m_isReadOnly;
 
-#if NET_2_0
-
 #if !NET_2_1 || MONOTOUCH
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
@@ -182,9 +175,7 @@ public abstract class Calendar
 				return i;
 		return 0;
 	}
-#endif
 
-#if NET_2_0
 	[ComVisible (false)]
 	public bool IsReadOnly {
 		get { return m_isReadOnly; }
@@ -199,16 +190,6 @@ public abstract class Calendar
 		c.m_isReadOnly = true;
 		return c;
 	}
-#else
-	internal bool IsReadOnly {
-		get { return false; }
-	}
-
-	internal static Calendar ReadOnly (Calendar source)
-	{
-		return source;
-	}
-#endif
 
 	internal void CheckReadOnly ()
 	{
@@ -1047,9 +1028,7 @@ public abstract class Calendar
 		}
 	}
 
-#if NET_2_0
 	internal int m_currentEraValue; // Unused, by MS serializes this
-#endif
 
 } // class Calendar
 	

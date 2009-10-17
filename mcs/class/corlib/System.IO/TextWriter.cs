@@ -32,16 +32,12 @@
 
 using System.Text;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 #if NET_2_1
 	public abstract class TextWriter : IDisposable {
 #else
@@ -95,7 +91,6 @@ namespace System.IO {
 				GC.SuppressFinalize (this);
 			}
 		}
-#if NET_2_0
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -103,12 +98,6 @@ namespace System.IO {
 			// If we are explicitly disposed, we can avoid finalization.
 			GC.SuppressFinalize (this);
 		}
-#else
-		void System.IDisposable.Dispose () {
-			Dispose (true);
-		}
-#endif
-
 
                 public virtual void Flush()
 		{

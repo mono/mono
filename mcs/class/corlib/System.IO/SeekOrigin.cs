@@ -32,9 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 
@@ -42,9 +40,7 @@ namespace System.IO {
 	/// <summary>
 	/// </summary>
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum SeekOrigin : int {
 
 		/// <summary>

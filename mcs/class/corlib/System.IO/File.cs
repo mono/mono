@@ -34,33 +34,18 @@
 
 using System;
 using System.Text;
-#if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-#endif
-#if NET_2_0 && !NET_2_1
+
+#if !NET_2_1
 using System.Security.AccessControl;
 #endif
 
 namespace System.IO
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	public
-#if NET_2_0
-	static
-#else
-	sealed
-#endif
-	class File
+	public static class File
 	{
-
-#if !NET_2_0
-		private File () {}
-#endif
-
-#if NET_2_0
 		public static void AppendAllText (string path, string contents)
 		{
 			using (TextWriter w = new StreamWriter (path, true)) {
@@ -74,7 +59,6 @@ namespace System.IO
 				w.Write (contents);
 			}
 		}
-#endif
 
 		public static StreamWriter AppendText (string path)
 		{
@@ -136,15 +120,15 @@ namespace System.IO
 				FileShare.None, bufferSize);
 		}
 
-#if NET_2_0 && !NET_2_1
-		[MonoTODO ("options not implemented")]
+#if !NET_2_1
+		[MonoLimitation ("FileOptions are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
 			return Create (path, bufferSize, options, null);
 		}
 		
-		[MonoTODO ("options and fileSecurity not implemented")]
+		[MonoLimitation ("FileOptions and FileSecurity are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options,
 						 FileSecurity fileSecurity)
@@ -196,7 +180,7 @@ namespace System.IO
 			return MonoIO.ExistsFile (path, out error);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static FileSecurity GetAccessControl (string path)
 		{
 			throw new NotImplementedException ();
@@ -233,14 +217,10 @@ namespace System.IO
 			CheckPathExceptions (path);
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
-#if NET_2_0
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
 					return DefaultLocalFileTime;
 				else
 					throw new IOException (path);
-#else
-				throw CreatePartOfPathNotFoundException (path);
-#endif
 			}
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
@@ -257,14 +237,10 @@ namespace System.IO
 			CheckPathExceptions (path);
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
-#if NET_2_0
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
 					return DefaultLocalFileTime;
 				else
 					throw new IOException (path);
-#else
-				throw CreatePartOfPathNotFoundException (path);
-#endif
 			}
 			return DateTime.FromFileTime (stat.LastAccessTime);
 		}
@@ -281,14 +257,10 @@ namespace System.IO
 			CheckPathExceptions (path);
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
-#if NET_2_0
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
 					return DefaultLocalFileTime;
 				else
 					throw new IOException (path);
-#else
-				throw CreatePartOfPathNotFoundException (path);
-#endif
 			}
 			return DateTime.FromFileTime (stat.LastWriteTime);
 		}
@@ -326,11 +298,7 @@ namespace System.IO
 			string DirName;
 			DirName = Path.GetDirectoryName (destFileName);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-#if NET_2_0
 				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path."));
-#else
-				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path '{0}'.", destFileName));
-#endif
 
 			if (!MonoIO.MoveFile (sourceFileName, destFileName, out error)) {
 				if (error == MonoIOError.ERROR_ALREADY_EXISTS)
@@ -373,7 +341,6 @@ namespace System.IO
 			return new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 		}
 
-#if NET_2_0
 		public static void Replace (string sourceFileName,
 					    string destinationFileName,
 					    string destinationBackupFileName)
@@ -434,8 +401,8 @@ namespace System.IO
 				throw MonoIO.GetException (error);
 			}
 		}
-#endif
-#if NET_2_0 && !NET_2_1
+
+#if !NET_2_1
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{
@@ -514,17 +481,8 @@ namespace System.IO
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
 		}
 
-#if !NET_2_0
-		private static IOException CreatePartOfPathNotFoundException (string path)
-		{
-			string msg = Locale.GetText ("Part of the path \"{0}\" could not be found.", path);
-			return new IOException (msg);
-		}
-#endif		
-
 		#endregion
 
-#if NET_2_0
 		//
 		// The documentation for this method is most likely wrong, it
 		// talks about doing a "binary read", but the remarks say
@@ -655,6 +613,5 @@ namespace System.IO
 			// handling this exception to work properly.
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
-#endif
 	}
 }

@@ -30,22 +30,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics 
 {
 
 	[Serializable]
 	[AttributeUsage(
-#if NET_2_0
 		AttributeTargets.Class |
-#endif
 		AttributeTargets.Method, AllowMultiple = true)]
-#if NET_2_0
+
 	[ComVisible (true)]
-#endif
 	public sealed class ConditionalAttribute : System.Attribute 
 	{
 

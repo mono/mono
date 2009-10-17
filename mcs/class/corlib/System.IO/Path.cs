@@ -48,21 +48,11 @@ using System.Text;
 
 namespace System.IO {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public static class Path {
 
 		[Obsolete ("see GetInvalidPathChars and GetInvalidFileNameChars methods.")]
 		public static readonly char[] InvalidPathChars;
-#else
-	public sealed class Path {
-
-		private Path ()
-		{
-		}
-
-		public static readonly char[] InvalidPathChars;
-#endif
 		public static readonly char AltDirectorySeparatorChar;
 		public static readonly char DirectorySeparatorChar;
 		public static readonly char PathSeparator;
@@ -497,7 +487,6 @@ namespace System.IO {
 				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar));
 		}
 
-#if NET_2_0
 		public static char[] GetInvalidFileNameChars ()
 		{
 			// return a new array as we do not want anyone to be able to change the values
@@ -545,7 +534,7 @@ namespace System.IO {
 
 			return sb.ToString ();
 		}
-#endif
+
 		// private class methods
 
 		private static int findExtension (string path)
@@ -569,17 +558,8 @@ namespace System.IO {
 			AltDirectorySeparatorChar = MonoIO.AltDirectorySeparatorChar;
 
 			PathSeparator = MonoIO.PathSeparator;
-#if NET_2_0
 			// this copy will be modifiable ("by design")
 			InvalidPathChars = GetInvalidPathChars ();
-#else
-			if (Environment.IsRunningOnWindows) {
-				InvalidPathChars = new char [15] { '\x00', '\x08', '\x10', '\x11', '\x12', '\x14', '\x15', '\x16',
-					'\x17', '\x18', '\x19', '\x22', '\x3C', '\x3E', '\x7C' };
-			} else {
-				InvalidPathChars = new char [1] { '\x00' };
-			}
-#endif
 			// internal fields
 
 			DirectorySeparatorStr = DirectorySeparatorChar.ToString ();

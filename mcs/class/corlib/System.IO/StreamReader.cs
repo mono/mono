@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System.IO {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class StreamReader : TextReader {
 
 		const int DefaultBufferSize = 1024;
@@ -216,11 +214,9 @@ namespace System.IO {
 			}
 		}
 
-#if NET_2_0
 		public bool EndOfStream {
 			get { return Peek () < 0; }
 		}
-#endif
 
 		public override void Close ()
 		{
@@ -265,13 +261,6 @@ namespace System.IO {
 				if (count < 2)
 					return 0;
 
-#if !NET_2_0
-				if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe){
-					this.encoding = Encoding.Unicode;
-					return 2;
-				}
-#endif
-
 				if (input_buffer [0] == 0xfe && input_buffer [1] == 0xff){
 					this.encoding = Encoding.BigEndianUnicode;
 					return 2;
@@ -285,7 +274,6 @@ namespace System.IO {
 					return 3;
 				}
 
-#if NET_2_0
 				if (count < 4) {
 					if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe && input_buffer [2] != 0) {
 						this.encoding = Encoding.Unicode;
@@ -310,7 +298,6 @@ namespace System.IO {
 					this.encoding = Encoding.Unicode;
 					return 2;
 				}
-#endif
 			}
 
 			return 0;

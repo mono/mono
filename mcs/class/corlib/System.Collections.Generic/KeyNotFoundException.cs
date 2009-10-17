@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -48,4 +47,3 @@ namespace System.Collections.Generic {
 			: base (info, context) {}
 	}
 }
-#endif

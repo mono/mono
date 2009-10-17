@@ -43,14 +43,9 @@ using System.Text;
 namespace System.Globalization {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[MonoTODO ("IDeserializationCallback isn't implemented.")]
-	public class TextInfo: IDeserializationCallback
-#if NET_2_0
-		, ICloneable
-#endif
+	public class TextInfo: IDeserializationCallback, ICloneable
 	{
 		[StructLayout (LayoutKind.Sequential)]
 		struct Data {
@@ -61,11 +56,10 @@ namespace System.Globalization {
 			public byte list_sep;
 		}
 
-#if NET_2_0
 		string m_listSeparator;
 		bool m_isReadOnly;
 		string customCultureName;
-#endif
+
 #pragma warning disable 169
 		[NonSerialized]
 		int m_nDataItem;
@@ -85,9 +79,7 @@ namespace System.Globalization {
 
 		internal unsafe TextInfo (CultureInfo ci, int lcid, void* data, bool read_only)
 		{
-#if NET_2_0
 			this.m_isReadOnly = read_only;
-#endif
 			this.m_win32LangID = lcid;
 			this.ci = ci;
 			if (data != null)
@@ -111,7 +103,6 @@ namespace System.Globalization {
 			}
 		}
 
-#if NET_2_0
 		private TextInfo (TextInfo textInfo)
 		{
 			m_win32LangID = textInfo.m_win32LangID;
@@ -123,7 +114,6 @@ namespace System.Globalization {
 			handleDotI = textInfo.handleDotI;
 			data = textInfo.data;
 		}
-#endif
 
 		public virtual int ANSICodePage
 		{
@@ -139,19 +129,12 @@ namespace System.Globalization {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
-		public
-#else
-		// we need it to fully implement System.Collection.CaseInsensitiveHashCodeProvider
-		internal
-#endif
-		int LCID {
+		public int LCID {
 			get { return m_win32LangID; }
 		}
 
 		public virtual string ListSeparator {
-#if NET_2_0
 			get {
 				if (m_listSeparator == null)
 					m_listSeparator = ((char) data.list_sep).ToString ();
@@ -159,11 +142,6 @@ namespace System.Globalization {
 			}
 			[ComVisible (false)]
 			set { m_listSeparator = value; }
-#else
-			get {
-				return ((char) data.list_sep).ToString ();
-			}
-#endif
 		}
 
 		public virtual int MacCodePage
@@ -180,7 +158,6 @@ namespace System.Globalization {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public string CultureName {
 			get {
@@ -233,7 +210,7 @@ namespace System.Globalization {
 				}
 			}
 		}
-#endif
+
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -499,7 +476,6 @@ namespace System.Globalization {
 			return tmp;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public static TextInfo ReadOnly (TextInfo textInfo)
 		{
@@ -510,7 +486,6 @@ namespace System.Globalization {
 			ti.m_isReadOnly = true;
 			return ti;
 		}
-#endif
 
 		/* IDeserialization interface */
 		[MonoTODO]
@@ -519,13 +494,11 @@ namespace System.Globalization {
 			// FIXME: we need to re-create "data" in order to get most properties working
 		}
 
-#if NET_2_0
 		/* IClonable */
 		[ComVisible (false)]
 		public virtual object Clone ()
 		{
 			return new TextInfo (this);
 		}
-#endif
 	}
 }

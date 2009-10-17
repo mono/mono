@@ -31,10 +31,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 
@@ -42,10 +39,8 @@ namespace System.IO {
 	/// <summary>
 	/// </summary>
 	[Flags]
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum FileAccess : int {
 
 		/// <summary>

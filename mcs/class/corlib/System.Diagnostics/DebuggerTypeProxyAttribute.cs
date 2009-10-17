@@ -29,21 +29,13 @@
 //
 
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics {
 
-#if NET_2_0
 	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly, AllowMultiple = true)]
 	[ComVisible (true)]
 	public sealed class DebuggerTypeProxyAttribute : Attribute
-#else
-	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly)]
-	internal sealed class DebuggerTypeProxyAttribute : Attribute
-#endif
 	{
 
 		string proxy_type_name;

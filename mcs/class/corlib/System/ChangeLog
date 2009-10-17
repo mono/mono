@@ -8,6 +8,9 @@
 
 	Improve one MonoTODO;   Implement one MonoTODO/Niex.
 
+	Ran a textual diff on the resulting assembly to validate that the
+	restul is the same on NET_2_0
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* AppDomain.cs: Re-add BaseDirectory in the MonoTouch profile.

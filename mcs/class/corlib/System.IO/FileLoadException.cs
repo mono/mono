@@ -33,17 +33,12 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.IO {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FileLoadException : IOException {
 
 		// Fields

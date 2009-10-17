@@ -42,31 +42,18 @@ using System.Collections;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
-#if NET_2_0 && !NET_2_1
-using System.Security.AccessControl;
-#endif
-#if NET_2_0
 using System.Runtime.InteropServices;
+
+#if !NET_2_1
+using System.Security.AccessControl;
 #endif
 
 namespace System.IO
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	public
-#if NET_2_0
-	static
-#else
-	sealed
-#endif
-	class Directory
+	public static class Directory
 	{
 
-#if !NET_2_0
-		private Directory () {}
-#endif
-		
 		public static DirectoryInfo CreateDirectory (string path)
 		{
 			if (path == null)
@@ -81,10 +68,8 @@ namespace System.IO
 			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
 
-#if NET_2_0
 			if (File.Exists(path))
 				throw new IOException ("Cannot create " + path + " because a file with the same name already exists.");
-#endif
 			
 			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
 			// but v1.1 throws ArgumentException.
@@ -94,8 +79,8 @@ namespace System.IO
 			return CreateDirectoriesInternal (path);
 		}
 
-#if NET_2_0 && !NET_2_1
-		[MonoTODO ("DirectorySecurity not implemented")]
+#if !NET_2_1
+		[MonoLimitation ("DirectorySecurity not implemented")]
 		public static DirectoryInfo CreateDirectory (string path, DirectorySecurity directorySecurity)
 		{
 			return(CreateDirectory (path));
@@ -284,7 +269,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static string [] GetDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -317,7 +302,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -412,7 +397,7 @@ namespace System.IO
 				throw MonoIO.GetException (error);
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
 		{
 			throw new NotImplementedException ();
@@ -534,7 +519,7 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{

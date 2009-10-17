@@ -33,17 +33,12 @@ using System.Globalization;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-#endif
 
 namespace System.IO.IsolatedStorage {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class IsolatedStorageFileStream : FileStream {
 
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
@@ -153,7 +148,6 @@ namespace System.IO.IsolatedStorage {
 			get {return base.CanWrite;}
 		}
 
-#if NET_2_0
 		public override SafeFileHandle SafeFileHandle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			get {
@@ -163,7 +157,6 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[Obsolete ("Use SafeFileHandle - once available")]
-#endif
 		public override IntPtr Handle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			get {
@@ -194,12 +187,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			return base.BeginWrite (buffer, offset, numBytes, userCallback, stateObject);
 		}
-#if !NET_2_0
-		public override void Close ()
-		{
-			base.Close ();
-		}
-#endif
+
 		public override int EndRead (IAsyncResult asyncResult)
 		{
 			return base.EndRead (asyncResult);

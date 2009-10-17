@@ -39,22 +39,17 @@ namespace System.Globalization {
 	/// <summary>
 	/// </summary>
 	[Flags]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[System.Serializable]
-#endif
 	public enum CultureTypes {
 		NeutralCultures = 1,
 		SpecificCultures = 2,
 		InstalledWin32Cultures = 4,
 		AllCultures = 7,
-#if NET_2_0
 		UserCustomCulture = 8,
 		ReplacementCultures = 16,
 		WindowsOnlyCultures = 32,
 		FrameworkCultures = 64,
-		
-#endif
 	} // CultureTypes
 
 } // System.Globalization

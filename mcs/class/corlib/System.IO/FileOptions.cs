@@ -36,11 +36,7 @@ namespace System.IO
 	[Flags]
 	[Serializable]
 	[ComVisible(true)]
-#if NET_2_0
 	public enum FileOptions
-#else
-	internal enum FileOptions
-#endif
 	{
 		None = 0,
 		Encrypted = 0x4000,

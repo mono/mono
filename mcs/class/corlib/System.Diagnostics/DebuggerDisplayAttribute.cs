@@ -29,10 +29,7 @@
 //
 
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics {
 
@@ -43,12 +40,8 @@ namespace System.Diagnostics {
 				 AttributeTargets.Delegate |
 				 AttributeTargets.Property |
 				 AttributeTargets.Assembly, AllowMultiple=true)]	
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class DebuggerDisplayAttribute : Attribute
-#else
-	internal sealed class DebuggerDisplayAttribute : Attribute
-#endif
 	{
 		string value, type, name;
 		string target_type_name;

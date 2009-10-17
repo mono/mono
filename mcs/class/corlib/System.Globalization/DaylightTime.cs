@@ -29,9 +29,7 @@
 
 namespace System.Globalization
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	[Serializable]
 	public class DaylightTime
 	{

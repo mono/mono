@@ -39,10 +39,8 @@ using System.Runtime.InteropServices;
 namespace System.IO
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	[MonoTODO ("Serialization format not compatible with .NET")]
+	[MonoLimitation ("Serialization format not compatible with .NET")]
 	public class MemoryStream : Stream
 	{
 		bool canWrite;
@@ -209,11 +207,7 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0
 		protected override void Dispose (bool disposing)
-#else
-		public override void Close ()
-#endif
 		{
 			streamClosed = true;
 			expandable = false;

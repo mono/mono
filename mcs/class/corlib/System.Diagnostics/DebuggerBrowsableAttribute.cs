@@ -30,19 +30,13 @@
 
 using System;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Diagnostics {
 
 	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]	
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class DebuggerBrowsableAttribute : Attribute
-#else
-	internal sealed class DebuggerBrowsableAttribute : Attribute
-#endif
 	{
 		DebuggerBrowsableState state;
 

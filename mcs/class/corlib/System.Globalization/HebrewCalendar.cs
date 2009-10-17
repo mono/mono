@@ -44,10 +44,7 @@ using System.Runtime.InteropServices;
 /// </para>
 /// </remarks>
 [Serializable]
-#if NET_2_0
-[ComVisible (true)]
-#endif
-[MonoTODO ("Serialization format not compatible with.NET")]
+[MonoLimitation ("Serialization format not compatible with.NET")]
 public class HebrewCalendar : Calendar {
 	/// <summary>
 	/// Constructor.
@@ -503,12 +500,10 @@ public class HebrewCalendar : Calendar {
 		return HebrewEra;
 	}
 
-#if NET_2_0
 	public override int GetLeapMonth (int year, int era)
 	{
 		return IsLeapMonth (year, 7, era) ? 7 : 0;
 	}
-#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the month of the specified
@@ -704,8 +699,6 @@ public class HebrewCalendar : Calendar {
 		else
 			return baseCentury + year - 100;
 	}
-#if NET_2_0
-
 #if !NET_2_1
 	public override CalendarAlgorithmType AlgorithmType {
 		get {
@@ -728,8 +721,6 @@ public class HebrewCalendar : Calendar {
 			return Max;
 		}
 	}
-#endif
-
 } // class HebrewCalendar
 	
 } // namespace System.Globalization
