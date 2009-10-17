@@ -44,10 +44,8 @@ using Mono.Security;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
-#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 #if NET_2_1
@@ -193,14 +191,12 @@ namespace System.Reflection {
 			}
 		}
 
-#if NET_1_1
 		[ComVisible (false)]
 		public virtual string ImageRuntimeVersion {
 			get {
 				return InternalImageRuntimeVersion ();
 			}
 		}
-#endif
 
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -210,13 +206,6 @@ namespace System.Reflection {
 
 			UnitySerializationHolder.GetAssemblyData (this, info, context);
 		}
-
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
 
 		public virtual bool IsDefined (Type attributeType, bool inherit)
 		{
@@ -296,11 +285,7 @@ namespace System.Reflection {
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
 			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
 				if (fromByteArray)
-#if NET_2_0
 					throw new FileNotFoundException (info.FileName);
-#else
-					return null;
-#endif
 
 				string filename = Path.Combine (Path.GetDirectoryName (Location),
 											info.FileName);
@@ -313,14 +298,10 @@ namespace System.Reflection {
 			if (data == (IntPtr) 0)
 				return null;
 			else {
-#if NET_2_0
 				UnmanagedMemoryStream stream;
 				unsafe {
 					stream = new UnmanagedMemoryStream ((byte*) data, size);
 				}
-#else
-				IntPtrStream stream = new IntPtrStream (data, size);
-#endif
 				/* 
 				 * The returned pointer points inside metadata, so
 				 * we have to increase the refcount of the module, and decrease
@@ -506,8 +487,6 @@ namespace System.Reflection {
 			return a;
 		}
 
-#if NET_1_1
-
 		[MonoTODO("This overload is not currently implemented")]
 		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -533,7 +512,6 @@ namespace System.Reflection {
 		{
 			return LoadFile (path, null);
 		}
-#endif
 
 		public static Assembly Load (String assemblyString)
 		{
@@ -571,7 +549,6 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);
@@ -589,11 +566,7 @@ namespace System.Reflection {
 			
 			return LoadFrom (assemblyFile, true);
 		}
-#endif
 
-#if NET_2_0
-		[Obsolete ("")]
-#endif
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -614,9 +587,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
-#if NET_2_0
-		[Obsolete ("")]
-#endif
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
@@ -778,8 +748,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO ("Always returns zero")]
+		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public long HostContext {
 			get { return 0; }
@@ -804,7 +773,6 @@ namespace System.Reflection {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-#endif
 
 #if !NET_2_1 || MONOTOUCH
 		// Code Access Security
