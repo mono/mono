@@ -355,8 +355,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO("implement this")]
-		public bool Validate()
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public bool Validate ()
 		{
 			throw new NotImplementedException();
 		}

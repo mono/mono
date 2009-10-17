@@ -320,7 +320,7 @@ namespace System.Windows.Forms {
 		private IntPtr XdndActionMove;
 		private IntPtr XdndActionLink;
 		//private IntPtr XdndActionPrivate;
-		//private IntPtr XdndActionList;
+		private IntPtr XdndActionList;
 		//private IntPtr XdndActionDescription;
 		//private IntPtr XdndActionAsk;
 
@@ -840,7 +840,7 @@ namespace System.Windows.Forms {
 			// Copy is implicitly allowed
 			Control source_control = MwfWindow (source);
 			if (source_control == null)
-				allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5) | DragDropEffects.Copy;
+				allowed = EffectsFromX11Source (source, xevent.ClientMessageEvent.ptr5) | DragDropEffects.Copy;
 			else
 				allowed = drag_data.AllowedEffects;
 
@@ -965,18 +965,40 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private DragDropEffects EffectFromAction (IntPtr action)
+		private DragDropEffects EffectsFromX11Source (IntPtr source, IntPtr action_atom)
 		{
 			DragDropEffects allowed = DragDropEffects.None;
+			IntPtr type, count, remaining, data = IntPtr.Zero;
+			int format;
 
-			if (action == XdndActionCopy)
-				allowed = DragDropEffects.Copy;
-			else if (action == XdndActionMove)
-				allowed |= DragDropEffects.Move;
-			if (action == XdndActionLink)
-				allowed |= DragDropEffects.Link;
+			XplatUIX11.XGetWindowProperty (display, source, XdndActionList,
+					IntPtr.Zero, new IntPtr (32), false, (IntPtr) Atom.AnyPropertyType,
+					out type, out format, out count, out remaining, ref data);
+
+			int intptr_size = Marshal.SizeOf (typeof (IntPtr));
+			for (int i = 0; i < count.ToInt32 (); i++) {
+				IntPtr current_atom = Marshal.ReadIntPtr (data, i * intptr_size);
+				allowed |= EffectFromAction (current_atom);
+			}
+
+			// if source is not providing the action list, use the
+			// default action passed in the x11 dnd position message
+			if (allowed == DragDropEffects.None)
+				allowed = EffectFromAction (action_atom);
 
 			return allowed;
+		}
+
+		private DragDropEffects EffectFromAction (IntPtr action)
+		{
+			if (action == XdndActionCopy)
+				return DragDropEffects.Copy;
+			else if (action == XdndActionMove)
+				return DragDropEffects.Move;
+			if (action == XdndActionLink)
+				return DragDropEffects.Link;
+
+			return DragDropEffects.None;
 		}
 
 		private IntPtr ActionFromEffect (DragDropEffects effect)
@@ -1184,7 +1206,7 @@ namespace System.Windows.Forms {
 			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
 			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
 			//XdndActionPrivate = XplatUIX11.XInternAtom (display, "XdndActionPrivate", false);
-			//XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
+			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
 			//XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
 			//XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
 

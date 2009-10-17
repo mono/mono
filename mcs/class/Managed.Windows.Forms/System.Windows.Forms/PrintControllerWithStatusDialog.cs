@@ -40,7 +40,6 @@ namespace System.Windows.Forms
 
 		#region Public Constructors
 
-		[MonoTODO("Localize Dialog Title")]
 		public PrintControllerWithStatusDialog(PrintController underlyingController) {
 			this.underlyingController = underlyingController;
 			dialog = new PrintingDialog();

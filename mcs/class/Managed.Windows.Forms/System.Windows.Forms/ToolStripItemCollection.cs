@@ -29,6 +29,7 @@
 
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms.Layout;
 
@@ -187,17 +188,17 @@ namespace System.Windows.Forms
 			base.CopyTo (array, index);
 		}
 
-		[MonoTODO ()]
+		[MonoTODO ("searchAllChildren parameter isn't used")]
 		public ToolStripItem[] Find (string key, bool searchAllChildren)
 		{
-			if (key == null)
+			if (key == null || key.Length == 0)
 				throw new ArgumentNullException ("key");
 
-			ArrayList al = new ArrayList ();
+			List<ToolStripItem> list = new List<ToolStripItem> ();
 
 			foreach (ToolStripItem tsi in this) {
-				if (tsi.Name == key) {
-					al.Add (tsi);
+				if (String.Compare (tsi.Name, key, true) == 0) {
+					list.Add (tsi);
 
 					if (searchAllChildren) {
 						// TODO: tsi does not have an items property yet..
@@ -205,7 +206,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			return (ToolStripItem[])al.ToArray ();
+			return list.ToArray ();
 		}
 
 		public int IndexOf (ToolStripItem value)

@@ -64,7 +64,9 @@ namespace System.Windows.Forms {
 
 			print_preview = new PrintPreviewControl();
 			print_preview.Location = new Point (0, toolbar.Location.Y + toolbar.Size.Height);
-			print_preview.Dock = DockStyle.Fill;
+			print_preview.Size = new Size (ClientSize.Width, ClientSize.Height - toolbar.Bottom);
+			print_preview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			print_preview.TabStop = false;
 			Controls.Add (print_preview);
 			print_preview.Show ();
 		}
@@ -83,7 +85,7 @@ namespace System.Windows.Forms {
 			MenuItem mi;
 			mag_menu = new ContextMenu ();
 
-			ToolBar toolbar = new ToolBar();
+			ToolBar toolbar = new PrintToolBar();
 			ToolBarButton print = new ToolBarButton();
 			ToolBarButton zoom = new ToolBarButton();
 			ToolBarButton separator1 = new ToolBarButton();
@@ -105,6 +107,7 @@ namespace System.Windows.Forms {
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.ShowToolTips = true;
 			toolbar.DropDownArrows = true;
+			toolbar.TabStop = true;
 			toolbar.Buttons.AddRange(new ToolBarButton[] { print, zoom, separator1, 
 														   one_page, two_page, three_page, four_page, six_page, separator2 });
 			toolbar.ButtonClick += new ToolBarButtonClickEventHandler (OnClickToolBarButton);
@@ -187,7 +190,7 @@ namespace System.Windows.Forms {
 			/* close button */
 			close.Location = new Point(196, 2);
 			close.Size = new Size(50, 20);
-			close.TabIndex = 2;
+			close.TabIndex = 0;
 			close.FlatStyle = FlatStyle.Popup;
 			close.Text = "Close";
 			close.Click += new EventHandler (CloseButtonClicked);
@@ -200,6 +203,117 @@ namespace System.Windows.Forms {
 //			MinimumSize = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width, 220);
 
 			return toolbar;
+		}
+
+		class PrintToolBar : ToolBar
+		{
+			bool left_pressed;
+
+			public int GetNext (int pos)
+			{
+				// Select the next button that is *not* a separator
+				while (++pos < items.Length && items [pos].Button.Style == ToolBarButtonStyle.Separator)
+					;
+
+				return pos;
+			}
+
+			public int GetPrev (int pos)
+			{
+				// Select the previous button that is *not* a separator
+				while (--pos > -1 && items [pos].Button.Style == ToolBarButtonStyle.Separator)
+					;
+
+				return pos;
+			}
+
+			void SelectNextOnParent (bool forward)
+			{
+				ContainerControl container = Parent as ContainerControl;
+				if (container != null && container.ActiveControl != null)
+					container.SelectNextControl (container.ActiveControl, forward, true, true, true);
+			}
+
+			protected override void OnGotFocus (EventArgs args)
+			{
+				base.OnGotFocus (args);
+
+				// Select either the last one or the first one, depending on the direction
+				CurrentItem = (Control.ModifierKeys & Keys.Shift) != 0 || left_pressed ? GetPrev (items.Length) : 0;
+				left_pressed = false;
+			}
+
+			// We need to handle Left/Right for our controls by ourselves, as opposed to
+			// Tab
+			protected override bool ProcessDialogKey (Keys keyData)
+			{
+				switch ((keyData & Keys.KeyCode)) {
+					case Keys.Left:
+						left_pressed = true; // Simulate Tab+Alt if focus goes to our buttons
+						SelectNextOnParent (false);
+						return true;
+					case Keys.Right:
+						SelectNextOnParent (true);
+						return true;
+				}
+
+				return base.ProcessDialogKey (keyData);
+			}
+
+			void NavigateItems (Keys key)
+			{
+				bool forward = true;
+				switch ((key & Keys.KeyCode)) {
+					case Keys.Left:
+						forward = false;
+						break;
+					case Keys.Right:
+						forward = true;
+						break;
+					case Keys.Tab:
+						forward = (Control.ModifierKeys & Keys.Shift) == 0;
+						break;
+				}
+
+				int pos = forward ? GetNext (CurrentItem) : GetPrev (CurrentItem);
+				if (pos < 0 || pos >= items.Length) { // go to the prev/next control
+					CurrentItem = -1;
+					SelectNextOnParent (forward);
+					return;
+				}
+				
+				CurrentItem = pos;
+			}
+
+			bool OnDropDownButton {
+				get {
+					return CurrentItem != -1 && items [CurrentItem].Button.Style == ToolBarButtonStyle.DropDownButton;
+				}
+			}
+
+			internal override bool InternalPreProcessMessage (ref Message msg)
+			{
+				Keys key = (Keys)msg.WParam.ToInt32 ();
+				switch (key) {
+					// Up/Down keys are processed only if we are
+					// on a dropdown button, and ignored otherwise.
+					case Keys.Up:
+					case Keys.Down:
+						if (OnDropDownButton)
+							break; // process base impl.
+						return true;
+					case Keys.Left:
+					case Keys.Right:
+					case Keys.Tab:
+						if (OnDropDownButton)
+							((ContextMenu)(items [CurrentItem].Button.DropDownMenu)).Hide ();
+
+						NavigateItems (key);
+						return true;
+				}
+
+				return base.InternalPreProcessMessage (ref msg);
+			}
 		}
 
 		void CloseButtonClicked (object sender, EventArgs e)
@@ -855,7 +969,7 @@ namespace System.Windows.Forms {
 			set { base.WindowState = value; }
 		}
 
-		[MonoTODO("Throw InvalidPrinterException")]
+		[MonoInternalNote ("Throw InvalidPrinterException")]
 		protected override void CreateHandle() {
 
 //			if (this.Document != null && !this.Document.PrinterSettings.IsValid) {

@@ -318,7 +318,19 @@ namespace System.Windows.Forms
 		}
 		
 #if NET_2_0
-		static object UIATextChangedEvent = new object ();
+		bool uiaHasFocus = false;
+		internal bool UIAHasFocus {
+			get { return UIAHasFocus; }
+			set {
+				uiaHasFocus = value;
+				EventHandler eh = 
+					(EventHandler) (value ? Events [UIAGotFocusEvent] : Events [UIALostFocusEvent]);
+				if (eh != null)
+					eh (this, EventArgs.Empty);
+			}
+		}		
+
+                static object UIATextChangedEvent = new object ();
 		
 		internal event EventHandler UIATextChanged {
 			add { Events.AddHandler (UIATextChangedEvent, value); }
@@ -331,8 +343,22 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
-#endif
 
+
+		static object UIAGotFocusEvent = new object ();
+		static object UIALostFocusEvent = new object ();
+		
+		internal event EventHandler UIAGotFocus {
+			add { Events.AddHandler (UIAGotFocusEvent, value); }
+			remove { Events.RemoveHandler (UIAGotFocusEvent, value); }
+		}
+		
+		internal event EventHandler UIALostFocus {
+			add { Events.AddHandler (UIALostFocusEvent, value); }
+			remove { Events.RemoveHandler (UIALostFocusEvent, value); }
+		}
+#endif
+		
 		#endregion Internal Methods
 		
 		#region methods

@@ -409,8 +409,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		[DefaultValue(null)]
+		[MonoTODO ("Stub, does nothing")]
+		[DefaultValue (null)]
 		[Editor ("System.Windows.Forms.Design.DataMemberListEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string DataMember {
 			get {
@@ -423,8 +423,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		[DefaultValue(null)]
+		[MonoTODO ("Stub, does nothing")]
+		[DefaultValue (null)]
 #if NET_2_0
 		[AttributeProvider (typeof (IListSource))]
 #else
@@ -483,8 +483,9 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		[MonoTODO]
-		public void BindToDataAndErrors(object newDataSource, string newDataMember) {
+		[MonoTODO ("Stub, does nothing")]
+		public void BindToDataAndErrors (object newDataSource, string newDataMember)
+		{
 			datasource = newDataSource;
 			datamember = newDataMember;
 			// FIXME - finish
@@ -540,8 +541,9 @@ namespace System.Windows.Forms {
 			GetErrorProperty(control).Padding = padding;
 		}
 
-		[MonoTODO]
-		public void UpdateBinding() {
+		[MonoTODO ("Stub, does nothing")]
+		public void UpdateBinding ()
+		{
 		}
 		#endregion	// Public Instance Methods
 

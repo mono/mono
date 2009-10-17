@@ -2071,7 +2071,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#region TreeView
-		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]
+		[MonoInternalNote ("Use the sizing information provided by the VisualStyles API.")]
 		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)
 		{
 			if (!RenderClientAreas) {

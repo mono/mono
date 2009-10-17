@@ -51,6 +51,7 @@ namespace System.Windows.Forms
 		private int splitter_increment;
 		private Rectangle splitter_rectangle;
 		private Rectangle splitter_rectangle_moving;
+		private Rectangle splitter_rectangle_before_move;
 		private bool splitter_fixed;
 		private bool splitter_dragging;
 		private int splitter_prev_move;
@@ -425,7 +426,7 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		[DefaultValue (1)]
-		[MonoTODO ("Not implemented.")]
+		[MonoTODO ("Stub, never called")]
 		public int SplitterIncrement {
 			get { return this.splitter_increment; }
 			set { this.splitter_increment = value; }
@@ -457,7 +458,7 @@ namespace System.Windows.Forms
 
 		[DispId (-516)]
 		[DefaultValue (true)]
-		[MonoTODO ("Special focus semantics not implemented")]
+		[MonoTODO ("Stub, never called")]
 		new public bool TabStop {
 			get { return false; }
 			set { }
@@ -499,7 +500,6 @@ namespace System.Windows.Forms
 			return new SplitContainerTypedControlCollection (this);
 		}
 
-		[MonoTODO ("Special focus semantics not implemented")]
 		protected override void OnGotFocus (EventArgs e)
 		{
 			base.OnGotFocus (e);
@@ -580,13 +580,11 @@ namespace System.Windows.Forms
 			base.OnRightToLeftChanged (e);
 		}
 
-		[MonoTODO ("Special focus semantics not implemented")]
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
 			return base.ProcessDialogKey (keyData);
 		}
 
-		[MonoTODO ("Special focus semantics not implemented")]
 		protected override bool ProcessTabKey (bool forward)
 		{
 			return base.ProcessTabKey (forward);
@@ -598,7 +596,6 @@ namespace System.Windows.Forms
 			base.ScaleControl (factor, specified);
 		}
 		
-		[MonoTODO ("Special focus semantics not implemented")]
 		protected override void Select (bool directed, bool forward)
 		{
 			base.Select (directed, forward);
@@ -632,6 +629,7 @@ namespace System.Windows.Forms
 		{
 			splitter_prev_move = orientation == Orientation.Vertical ? location.X : location.Y;
 			splitter_rectangle_moving = splitter_rectangle;
+			splitter_rectangle_before_move = splitter_rectangle;
 		}
 
 		private void SplitterMove (Point location)
@@ -693,8 +691,15 @@ namespace System.Windows.Forms
 		private void SplitterEndMove (Point location, bool cancel)
 		{
 			if (!cancel) {
-				splitter_rectangle = splitter_rectangle_moving;
-				UpdateSplitter ();
+				// Prevent updating the splitter distance if the user changes it in e.g. the
+				// DoubleClick handler, but no delta move has happened in our drag-handling. 
+				// We don't compare to splitter_rectangle for exactly that reason here 
+				// (if it gets changed externally) and compare to a cached value.
+				// 
+				if (splitter_rectangle_before_move != splitter_rectangle_moving) {
+					splitter_rectangle = splitter_rectangle_moving;
+					UpdateSplitter ();
+				}
 			}
 			SplitterEventArgs args = new SplitterEventArgs (location.X, location.Y, 
 									splitter_rectangle.X, splitter_rectangle.Y);

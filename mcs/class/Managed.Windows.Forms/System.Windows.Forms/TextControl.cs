@@ -1989,6 +1989,11 @@ namespace System.Windows.Forms {
 			base_line = line.line_no;
 			old_line_count = lines;
 
+			// Discard chars after any possible -unlikely- end of file
+			int eof_index = s.IndexOf ('\0');
+			if (eof_index != -1)
+				s = s.Substring (0, eof_index);
+
 			break_index = GetLineEnding (s, 0, out ending, LineEnding.Hard | LineEnding.Rich);
 
 			// There are no line feeds in our text to be pasted
@@ -2191,10 +2196,17 @@ namespace System.Windows.Forms {
 			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true))
 				return;
 			
-			if (forward)
+			undo.BeginUserAction ("Delete");
+
+			if (forward) {
+				undo.RecordDeleteString (line, pos, line, pos + 1);
 				DeleteChars (line, pos, 1);
-			else
+			} else {
+				undo.RecordDeleteString (line, pos - 1, line, pos);
 				DeleteChars (line, pos - 1, 1);
+			}
+
+			undo.EndUserAction ();
 		}
 
 		// Combine two lines

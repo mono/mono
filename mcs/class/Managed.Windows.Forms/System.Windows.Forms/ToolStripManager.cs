@@ -177,14 +177,14 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		[MonoTODO ("Not implemented")]
+		[MonoTODO ("Stub, does nothing")]
 		public static void LoadSettings (Form targetForm)
 		{
 			if (targetForm == null)
 				throw new ArgumentNullException ("targetForm");
 		}
 
-		[MonoTODO ("Not implemented")]
+		[MonoTODO ("Stub, does nothing")]
 		public static void LoadSettings (Form targetForm, string key)
 		{
 			if (targetForm == null)

@@ -137,7 +137,6 @@ namespace System.Windows.Forms
 			MouseMove += new MouseEventHandler (OnMouseMoveLB);
 			MouseUp += new MouseEventHandler (OnMouseUpLB);
 			MouseWheel += new MouseEventHandler (OnMouseWheelLB);
-			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
 			LostFocus += new EventHandler (OnLostFocus);
@@ -1205,6 +1204,17 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN) {
+				if (ProcessKeyMessage (ref m))
+					m.Result = IntPtr.Zero;
+				else {
+					HandleKeyDown ((Keys)m.WParam.ToInt32 ());
+					DefWndProc (ref m);
+				}
+
+				return;
+			}
+
 			base.WndProc (ref m);
 		}
 
@@ -1335,7 +1345,8 @@ namespace System.Windows.Forms
 					rect.Width += hscrollbar.Value;
 				}
 
-				OnDrawItem (new DrawItemEventArgs (dc, Font, rect, i, state, ForeColor, BackColor));
+				Color fore_color = (state & DrawItemState.Selected) != 0 ? ThemeEngine.Current.ColorHighlightText : ForeColor;
+				OnDrawItem (new DrawItemEventArgs (dc, Font, rect, i, state, fore_color, BackColor));
 			}
 		}
 
@@ -1649,17 +1660,17 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		internal void OnKeyDownLB (object sender, KeyEventArgs e)
+		internal void HandleKeyDown (Keys key)
 		{
 			int new_item = -1;
 			
 			if (Items.Count == 0)
 				return;
 
-			if (KeySearch (e.KeyCode))
+			if (KeySearch (key))
 				return;
 
-			switch (e.KeyCode) {
+			switch (key) {
 				
 				case Keys.ControlKey:
 					ctrl_pressed = true;
@@ -2198,7 +2209,7 @@ namespace System.Windows.Forms
 				show = true;
 				hscrollbar.Maximum = canvas_size.Width;
 				hscrollbar.LargeChange = Math.Max (0, items_area.Width);
-			} else if (horizontal_scrollbar) {
+			} else if (scroll_always_visible && horizontal_scrollbar) {
 				show = true;
 				enabled = false;
 				hscrollbar.Maximum = 0;

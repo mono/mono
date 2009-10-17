@@ -162,15 +162,21 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Static Methods
-		public static IntPtr CreateHBitmap16Bit(Bitmap bitmap, Color background){
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public static IntPtr CreateHBitmap16Bit (Bitmap bitmap, Color background)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr CreateHBitmapColorMask(Bitmap bitmap, IntPtr monochromeMask){
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public static IntPtr CreateHBitmapColorMask (Bitmap bitmap, IntPtr monochromeMask)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap){
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public static IntPtr CreateHBitmapTransparencyMask (Bitmap bitmap)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -454,7 +460,7 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.CPDrawScrollButton (graphics, rectangle, button, state);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		private static bool DSFNotImpl = false;
 		public static void DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor) {
 			if (!DSFNotImpl) {

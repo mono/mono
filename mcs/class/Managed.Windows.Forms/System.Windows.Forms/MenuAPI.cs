@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void Deactivate ()
+		internal void Deactivate ()
 		{
 			bool redrawbar = (keynav_state != KeyNavState.Idle) && (TopMenu is MainMenu); 
 
@@ -680,6 +680,13 @@ namespace System.Windows.Forms {
 
 		public bool ProcessKeys (ref Message msg, Keys keyData)
 		{
+			// We should process Alt+key only if we don't have an active menu,
+			// and hide it otherwise.
+			if ((keyData & Keys.Alt) == Keys.Alt && active) {
+				Deactivate ();
+				return false;
+			}
+
 			// If we get Alt-F4, Windows will ignore it because we have a capture,
 			// release the capture and the program will exit.  (X11 doesn't care.)
 			if ((keyData & Keys.Alt) == Keys.Alt && (keyData & Keys.F4) == Keys.F4) {
@@ -784,7 +791,7 @@ namespace System.Windows.Forms {
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
 					}
-				} else {
+				} else if (!(CurrentMenu is ContextMenu)) { // ContextMenu root remains active.
 					HideSubPopups (CurrentMenu, TopMenu);
 					if (CurrentMenu.parent_menu != null)
 						CurrentMenu = CurrentMenu.parent_menu;

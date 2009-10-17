@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		internal bool		auto_word_select;
 		internal int		bullet_indent;
 		internal bool		detect_urls;
+		private bool		reuse_line;	// Sometimes we are loading text with already available lines
 		internal int		margin_right;
 		internal float		zoom;
 		private StringBuilder	rtf_line;
@@ -229,7 +230,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[DefaultValue (false)]
 		public bool EnableAutoDragDrop {
 			get { return enable_auto_drag_drop; }
@@ -274,7 +275,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public RichTextBoxLanguageOptions LanguageOption {
@@ -302,7 +303,6 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
 		public string RedoActionName {
 			get {
 				return document.undo.RedoActionName;
@@ -310,7 +310,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -322,7 +322,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(0)]
 		[Localizable(true)]
-		[MonoTODO("Teach TextControl.RecalculateLine to consider the right margin as well")]
+		[MonoTODO ("Stub, does nothing")]
+		[MonoInternalNote ("Teach TextControl.RecalculateLine to consider the right margin as well")]
 		public int RightMargin {
 			get {
 				return margin_right;
@@ -407,10 +408,24 @@ namespace System.Windows.Forms {
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 
 				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
-				InsertRTFFromStream(data, document.selection_start.pos, document.selection_start.line.line_no, out x, out y, out chars);
+				int cursor_x = document.selection_start.pos;
+				int cursor_y = document.selection_start.line.line_no;
+
+				// The RFT parser by default, when finds our x cursor in 0, it thinks if needs to
+				// add a new line; but in *this* scenario the line is already created, so force it to reuse it.
+				// Hackish, but works without touching the heart of the buggy parser.
+				if (cursor_x == 0)
+					reuse_line = true;
+
+				InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y, out chars);
 				data.Close();
 
-				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * 2, out line, out tag, out sel_start);
+				int nl_length = document.LineEndingLength (XplatUI.RunningOnUnix ? LineEnding.Rich : LineEnding.Hard);
+				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * nl_length, 
+						out line, out tag, out sel_start);
+				if (sel_start >= line.text.Length)
+					sel_start = line.text.Length -1;
+
 				document.SetSelection(line, sel_start);
 				document.PositionCaret(line, sel_start);
 				document.DisplayCaret();
@@ -487,7 +502,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color SelectionBackColor {
@@ -499,7 +514,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool SelectionBullet {
 			get {
 				return false;
@@ -512,7 +527,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionCharOffset {
 			get {
 				return 0;
@@ -641,7 +656,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionHangingIndent {
 			get {
 				return 0;
@@ -654,7 +669,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionIndent {
 			get {
 				return 0;
@@ -679,7 +694,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool SelectionProtected {
 			get {
 				return false;
@@ -692,7 +707,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionRightIndent {
 			get {
 				return 0;
@@ -704,7 +719,7 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int[] SelectionTabs {
 			get {
 				return new int[0];
@@ -732,7 +747,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool ShowSelectionMargin {
 			get {
 				return false;
@@ -1077,7 +1092,9 @@ namespace System.Windows.Forms {
 					}
 
 					for (i = 1; i < document.Lines; i++) {
-						bytes = encoding.GetBytes(document.GetLine(i).text.ToString());
+						// Normalize the new lines to the system ones
+						string line_text = document.GetLine (i).TextWithoutEnding () + Environment.NewLine;
+						bytes = encoding.GetBytes(line_text);
 						data.Write(bytes, 0, bytes.Length);
 					}
 					bytes = encoding.GetBytes(document.GetLine(document.Lines).text.ToString());
@@ -1185,7 +1202,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		[MonoTODO("Determine when to call this")]
+		[MonoTODO ("Stub, never called")]
 		protected virtual void OnImeChange(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ImeChangeEvent]);
 			if (eh != null)
@@ -1349,7 +1366,7 @@ namespace System.Windows.Forms {
 			remove { base.QueryContinueDrag -= value; }
 		}
 
-		[MonoTODO("Currently does not ever fire")]
+		[MonoTODO ("Event never raised")]
 		public event EventHandler SelectionChanged {
 			add { Events.AddHandler (SelectionChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectionChangedEvent, value); }
@@ -1419,7 +1436,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Add QuadJust support for justified alignment")]
+		[MonoInternalNote ("Add QuadJust support for justified alignment")]
 		private void HandleControl(RTF.RTF rtf) {
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
@@ -1737,11 +1754,11 @@ namespace System.Windows.Forms {
 
 			rtf_chars += rtf_line.Length;
 
-
-
-			if (rtf_cursor_x == 0) {
-				if (newline && rtf_line.ToString ().EndsWith ("\n") == false)
-					rtf_line.Append ("\n");
+			// Try to re-use if we are told so - this usually happens when we are inserting a flow of rtf text
+			// with an already alive line.
+			if (rtf_cursor_x == 0 && !reuse_line) {
+				if (newline && rtf_line.ToString ().EndsWith (Environment.NewLine) == false)
+					rtf_line.Append (Environment.NewLine);
 
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
 								newline ? LineEnding.Rich : LineEnding.Wrap);
@@ -1764,9 +1781,11 @@ namespace System.Windows.Forms {
 					line = document.GetLine (rtf_cursor_y);
 					line.ending = LineEnding.Rich;
 
-					if (line.Text.EndsWith ("\n") == false)
-						line.Text += "\n";
+					if (line.Text.EndsWith (Environment.NewLine) == false)
+						line.Text += Environment.NewLine;
 				}
+
+				reuse_line = false; // sanity assignment - in this case we have already re-used one line.
 			}
 
 			if (newline) {
@@ -1922,7 +1941,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Emit unicode and other special characters properly")]
+		[MonoInternalNote ("Emit unicode and other special characters properly")]
 		private void EmitRTFText(StringBuilder rtf, string text) {
 			rtf.Append(text);
 		}
@@ -2001,7 +2020,7 @@ namespace System.Windows.Forms {
 			sb.Append(String.Format("\\deff{0}", fonts.IndexOf(this.Font.Name)));
 
 			// Default Language 
-			sb.Append("\\deflang1033\n");	// FIXME - always 1033?
+			sb.Append("\\deflang1033" + Environment.NewLine);	// FIXME - always 1033?
 
 			// Emit the font table
 			sb.Append("{\\fonttbl");
@@ -2012,7 +2031,8 @@ namespace System.Windows.Forms {
 				sb.Append((string)fonts[i]);		// Font name
 				sb.Append(";}");			// }
 			}
-			sb.Append("}\n");
+			sb.Append("}");
+			sb.Append(Environment.NewLine);
 
 			// Emit the color table (if needed)
 			if ((colors.Count > 1) || ((((Color)colors[0]).R != this.ForeColor.R) || (((Color)colors[0]).G != this.ForeColor.G) || (((Color)colors[0]).B != this.ForeColor.B))) {
@@ -2023,7 +2043,8 @@ namespace System.Windows.Forms {
 					sb.Append(String.Format("\\blue{0}", ((Color)colors[i]).B));
 					sb.Append(";");
 				}
-				sb.Append("}\n");
+				sb.Append("}");
+				sb.Append(Environment.NewLine);
 			}
 
 			sb.Append("{\\*\\generator Mono RichTextBox;}");
@@ -2082,14 +2103,16 @@ namespace System.Windows.Forms {
 				}
 				if (pos >= line.text.Length) {
 					if (line.ending != LineEnding.Wrap) {
-						sb.Append("\\par\n");
+						sb.Append("\\par");
+						sb.Append(Environment.NewLine);
 					}
 				}
 				pos = 0;
 				line_no++;
 			}
 
-			sb.Append("}\n");
+			sb.Append("}");
+			sb.Append(Environment.NewLine);
 
 			return sb;
 		}

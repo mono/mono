@@ -150,7 +150,7 @@ namespace System.Windows.Forms {
 			return String.Empty;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		protected override void UpdateIsBinding ()
 		{
 		}

@@ -314,10 +314,12 @@ namespace System.Windows.Forms
 					TreeView.OnBeforeCheck (args);
 				if (!args.Cancel) {
 					check = value;
-					if (TreeView != null) {
+
+					// TreeView can become null after OnAfterCheck, this the double null check
+					if (TreeView != null)
 						TreeView.OnAfterCheck (new TreeViewEventArgs (this, check_reason));
+					if (TreeView != null)
 						TreeView.UpdateNode (this);
-					}
 				}
 				check_reason = TreeViewAction.Unknown;
 			}
@@ -1061,6 +1063,19 @@ namespace System.Windows.Forms
 
 		internal bool NeedsWidth {
 			get { return width == -1; }
+		}
+
+		internal void Invalidate ()
+		{
+			// invalidate width first so Bounds retrieves 
+			// the updated value (we don't use it here however)
+			width = -1;
+
+			TreeView tv = TreeView;
+			if (tv == null)
+				return;
+
+			tv.UpdateNode (this);
 		}
 
 		internal void InvalidateWidth ()

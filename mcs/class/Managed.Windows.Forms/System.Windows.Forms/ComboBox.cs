@@ -76,8 +76,9 @@ namespace System.Windows.Forms
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
-		private int drop_down_height;
 		private FlatStyle flat_style;
+		private int drop_down_height;
+		const int default_drop_down_height = 106;
 #endif
 
 		[ComVisible(true)]
@@ -104,7 +105,7 @@ namespace System.Windows.Forms
 			border_style = BorderStyle.None;
 
 #if NET_2_0
-			drop_down_height = 106;
+			drop_down_height = default_drop_down_height;
 			flat_style = FlatStyle.Standard;
 #endif
 
@@ -390,6 +391,9 @@ namespace System.Windows.Forms
 				if (value < 1)
 					throw new ArgumentOutOfRangeException ("DropDownHeight", "DropDownHeight must be greater than 0.");
 					
+				if (value == drop_down_height)
+					return;
+
 				drop_down_height = value;
 				IntegralHeight = false;
 			}
@@ -453,6 +457,7 @@ namespace System.Windows.Forms
 					textbox_ctrl.KeyPress += new KeyPressEventHandler (OnTextKeyPress);
 					textbox_ctrl.Click += new EventHandler (OnTextBoxClick);
 					textbox_ctrl.ContextMenu = ContextMenu;
+					textbox_ctrl.TopMargin = 1; // since we don't have borders, adjust manually the top
 
 					if (IsHandleCreated == true)
 						Controls.AddImplicit (textbox_ctrl);
@@ -1392,9 +1397,10 @@ namespace System.Windows.Forms
 					break;
 				goto case Msg.WM_CHAR;
 			case Msg.WM_CHAR:
-				if (textbox_ctrl != null)
+				// Call our own handler first and send the message to the TextBox if still needed
+				if (!ProcessKeyMessage (ref m) && textbox_ctrl != null)
 					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
-				break;
+				return;
 			case Msg.WM_MOUSELEAVE:
 				Point location = PointToClient (Control.MousePosition);
 				if (ClientRectangle.Contains (location))
@@ -2076,7 +2082,7 @@ namespace System.Windows.Forms
 			{
 				int idx;
 
-				idx = AddItem (item);
+				idx = AddItem (item, false);
 				owner.UpdatedItems ();
 				return idx;
 			}
@@ -2087,8 +2093,11 @@ namespace System.Windows.Forms
 					throw new ArgumentNullException ("items");
 
 				foreach (object mi in items)
-					AddItem (mi);
-					
+					AddItem (mi, true);
+
+				if (owner.sorted)
+					Sort ();
+				
 				owner.UpdatedItems ();
 			}
 
@@ -2163,7 +2172,7 @@ namespace System.Windows.Forms
 				owner.BeginUpdate ();
 				
 				if (owner.Sorted)
-					AddItem (item);
+					AddItem (item, false);
 				else {
 					object_items.Insert (index, item);
 #if NET_2_0
@@ -2210,12 +2219,14 @@ namespace System.Windows.Forms
 			#endregion Public Methods
 
 			#region Private Methods
-			private int AddItem (object item)
+			private int AddItem (object item, bool suspend)
 			{
+				// suspend means do not sort as we put new items in, we will do a
+				// big sort at the end
 				if (item == null)
 					throw new ArgumentNullException ("item");
 
-				if (owner.Sorted) {
+				if (owner.Sorted && !suspend) {
 					int index = 0;
 					foreach (object o in object_items) {
 						if (String.Compare (item.ToString (), o.ToString ()) < 0) {
@@ -2250,7 +2261,10 @@ namespace System.Windows.Forms
 			internal void AddRange (IList items)
 			{
 				foreach (object mi in items)
-					AddItem (mi);
+					AddItem (mi, false);
+				
+				if (owner.sorted)
+					Sort ();
 				
 				owner.UpdatedItems ();
 			}
@@ -2491,16 +2505,18 @@ namespace System.Windows.Forms
 			internal void CalcListBoxArea ()
 			{
 				int width, height;
-				bool show_scrollbar = false;
+				bool show_scrollbar;
 
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 					Rectangle area = owner.listbox_area;
 					width = area.Width;
 					height = area.Height;
+					show_scrollbar = owner.Items.Count * owner.ItemHeight > height;
 
 					// No calculation needed
 					if (height <= 0 || width <= 0)
 						return;
+
 				}
 				else { // DropDown or DropDownList
 					
@@ -2512,12 +2528,21 @@ namespace System.Windows.Forms
 						for (int i = 0; i < count; i++) {
 							height += owner.GetItemHeight (i);
 						}
+
+						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 						
 					} else	{
 #if NET_2_0
-						height = owner.DropDownHeight;
+						if (owner.DropDownHeight == default_drop_down_height) { // ignore DropDownHeight
+							height = owner.ItemHeight * count;
+							show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
+						} else {
+							height = owner.DropDownHeight;
+							show_scrollbar = (count * owner.ItemHeight) > height;
+						}
 #else		
 						height = owner.ItemHeight * count;
+						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 #endif
 					}
 				}
@@ -2525,8 +2550,7 @@ namespace System.Windows.Forms
 				page_size = Math.Max (height / owner.ItemHeight, 1);
 
 				ComboBoxStyle dropdown_style = owner.DropDownStyle;
-				if ((dropdown_style != ComboBoxStyle.Simple && owner.Items.Count <= owner.MaxDropDownItems)
-					|| (dropdown_style == ComboBoxStyle.Simple && owner.Items.Count * owner.ItemHeight < height)) {
+				if (!show_scrollbar) {
 
 					if (vscrollbar_ctrl != null)
 						vscrollbar_ctrl.Visible = false;
@@ -2555,7 +2579,7 @@ namespace System.Windows.Forms
 					if (large < 1)
 						large = 1;
 					vscrollbar_ctrl.LargeChange = large;
-					show_scrollbar = vscrollbar_ctrl.Visible = true;
+					vscrollbar_ctrl.Visible = true;
 
 					int hli = HighlightedIndex;
 					if (hli > 0) {

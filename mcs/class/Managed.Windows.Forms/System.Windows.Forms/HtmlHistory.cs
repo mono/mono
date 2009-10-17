@@ -65,7 +65,7 @@ namespace System.Windows.Forms
 			get { return webHost.Navigation.HistoryCount; }
 		}
 
-		[MonoTODO ("Needs implementation")]
+		[MonoTODO ("Not supported, will throw NotSupportedException")]
 		public object DomHistory {
 			get { throw new NotSupportedException ("Retrieving a reference to an mshtml interface is not supported. Sorry."); } 
 		}

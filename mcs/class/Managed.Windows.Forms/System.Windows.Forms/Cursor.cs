@@ -191,7 +191,8 @@ namespace System.Windows.Forms {
 				return rect;
 			}
 
-			[MonoTODO("First need to add ability to set cursor clip rectangle to XplatUI drivers to implement this property")]
+			[MonoTODO ("Stub, does nothing")]
+			[MonoInternalNote ("First need to add ability to set cursor clip rectangle to XplatUI drivers to implement this property")]
 			set {
 				;
 			}

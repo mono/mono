@@ -42,6 +42,7 @@ namespace System.Windows.Forms
 			private string		name;
 			private int		id;
 			private Format		next;
+			internal bool		is_serializable;
 
 			public Format (string name, int id)
 			{
@@ -161,6 +162,17 @@ namespace System.Windows.Forms
 
 		private static object lock_object = new object ();
 		private static bool initialized;
+
+		// we don't want to force the creation of a new format
+		internal static bool ContainsFormat (int id)
+		{
+			lock (lock_object) {
+				if (!initialized)
+					Init ();
+
+				return Format.Find (id) != null;
+			}
+		}
 
 		public static Format GetFormat (int id)
 		{

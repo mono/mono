@@ -213,9 +213,9 @@ namespace System.Windows.Forms {
 			}
 		}
 #if NET_2_0
+		[MonoTODO ("Stub, does nothing")]
 		public static void UpdateBinding (BindingContext newBindingContext, Binding binding)
 		{
-			throw new NotImplementedException ();
 		}
 #endif
 		#endregion	// Protected Instance Methods
@@ -252,7 +252,7 @@ namespace System.Windows.Forms {
 		#endregion	// ICollection Interfaces
 
 		#region IEnumerable Interfaces
-		[MonoTODO ("our enumerator is slightly different.  in MS's implementation the Values are WeakReferences to the managers.")]
+		[MonoInternalNote ("our enumerator is slightly different.  in MS's implementation the Values are WeakReferences to the managers.")]
 		IEnumerator IEnumerable.GetEnumerator() {
 			return managers.GetEnumerator ();
 		}

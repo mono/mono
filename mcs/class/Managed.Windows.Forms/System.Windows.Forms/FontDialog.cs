@@ -900,7 +900,7 @@ namespace System.Windows.Forms
 				case Keys.Down:
 				case Keys.PageDown:
 				case Keys.PageUp:
-					fontListBox.OnKeyDownLB (sender, e);
+					fontListBox.HandleKeyDown (e.KeyCode);
 					break;
 			}
 		}
@@ -913,7 +913,7 @@ namespace System.Windows.Forms
 				case Keys.Down:
 				case Keys.PageDown:
 				case Keys.PageUp:
-					fontstyleListBox.OnKeyDownLB (sender, e);
+					fontstyleListBox.HandleKeyDown (e.KeyCode);
 					break;
 			}
 		}
@@ -926,7 +926,7 @@ namespace System.Windows.Forms
 				case Keys.Down:
 				case Keys.PageDown:
 				case Keys.PageUp:
-					fontsizeListBox.OnKeyDownLB (sender, e);
+					fontsizeListBox.HandleKeyDown (e.KeyCode);
 					break;
 			}
 		}

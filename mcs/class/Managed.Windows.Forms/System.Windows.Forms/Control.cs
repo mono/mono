@@ -323,17 +323,18 @@ namespace System.Windows.Forms
 				return base.GetHelpTopic (out fileName);
 			}
 
-			[MonoTODO ("Implement this")]
-			public void NotifyClients(AccessibleEvents accEvent) {
-				throw new NotImplementedException();
+			[MonoTODO ("Stub, does nothing")]
+			public void NotifyClients (AccessibleEvents accEvent)
+			{
 			}
 
-			[MonoTODO ("Implement this")]
-			public void NotifyClients(AccessibleEvents accEvent, int childID) {
+			[MonoTODO ("Stub, does nothing")]
+			public void NotifyClients (AccessibleEvents accEvent, int childID)
+			{
 			}
 
 #if NET_2_0
-			[MonoTODO ("Implement this")]
+			[MonoTODO ("Stub, does nothing")]
 			public void NotifyClients (AccessibleEvents accEvent, int objectID, int childID)
 			{
 			}
@@ -2087,7 +2088,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		[MonoTODO]
+		[MonoTODO ("Stub, value is not used")]
 		public static bool CheckForIllegalCrossThreadCalls 
 		{
 			get {
@@ -2589,7 +2590,8 @@ namespace System.Windows.Forms
 			set { 
 				if (this.context_menu_strip != value) {
 					this.context_menu_strip = value;
-					value.container = this;
+					if (value != null)
+						value.container = this;
 					OnContextMenuStripChanged (EventArgs.Empty);
 				}
 			}
@@ -4243,7 +4245,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void ResetText() {
-			text = String.Empty;
+			Text = String.Empty;
 		}
 
 		public void ResumeLayout() {

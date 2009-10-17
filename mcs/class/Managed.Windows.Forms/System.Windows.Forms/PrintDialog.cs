@@ -229,7 +229,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub, not implemented")]
+		[MonoTODO ("Stub, not implemented, will always use default dialog")]
 		[DefaultValue (false)]
 		public bool UseEXDialog {
 			get { return use_ex_dialog; }

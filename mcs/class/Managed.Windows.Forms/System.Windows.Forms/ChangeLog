@@ -1,10 +1,854 @@
-2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
-	* ToolStripDropDownItem.cs: When assigning a new
-	ToolStripDropDownMenu, let it know we are its OwnerItem. This way the
-	Capture duties performed by Application/ToolStripManager are handled
-	nicely and we don't end up in an inconsisten stat.
-	Fixes #492815.
+[merge -r 132698:142738 from trunk to 2-4 branch. Some changes were already
+there, so also keep this Changelog sane]
+
+	2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When calculating the layout for Details view, don't ask
+		for the items *at all* in case we are in virtual mode. This should
+		re-enable the proper behaviour of virtual mode.
+
+		2009-10-17  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+		* ToolBar.cs, ToolBarButton.cs: Add new UIA events to know
+		when a button gets focus, firing the events from the ToolBar.
+		r: jpobst
+
+		2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: When calculating the height of the ComboListBox,
+		specially for the 2.0 profile, use MaxDropDownItems if the
+		DropDownHeight property hasn't been set, and use the later if it has
+		been set. This way we support both properties.
+		Fixes #493308.
+
+		2009-10-17 Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* XplatUIX11.cs, X11Clipboard.cs: Text and Rtf formats must be
+		separated, and we cannot fallback on Text if Rtf is requested but not
+		present.
+		* Clipboard.cs: Actually use the format specified by our user when
+		putting data.
+
+		2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* XplatUIX11.cs: When handling the SelectionRequest event, use
+		SelectionRequestEvent instead of SelectionEvent, so we get the right
+		data for the app asking for clipboard data. Set the member of
+		SelectioneEvent.property to indicate the place where we are storing
+		the information as well - this is specially important for gnome/kde
+		apps using the TARGETS atom to ask for the supported permission before
+		actually asking for a specific format.
+		Fixes #489393.
+
+		2009-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+		* ToolStripDrowDown.cs: Remove some hardcoded values and assumptions.
+		* ToolStripDropDownButton.cs: This should use a ToolStripDropDownMenu,
+		not a ToolStripDropDown.
+		* ToolStripItem.cs: Don't use the item margins on a ToolStripDropDown.
+
+		2009-09-26  Jonathan Pobst  <monkey@jpobst.com>
+
+		* TreeNode.cs: When we invalidate a node, make sure we start at
+		0, instead of the node's Bounds.Left, which does not include
+		the +/-, checkbox, or stateimages.
+		[Fixes bug #542481]
+
+		2009-09-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Compare the name and not displayname of properties 
+		when checking if the column is already bound.
+
+		2009-09-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichTextBox.cs: For SelectedRtf, after inserting the stream, adjust
+		the position of the caret by adding the needed chars represented by the new line chars,
+		according to the system, using rich *or* hard new lines as needed. Also do a
+		check to be sure we don't move the cursor position beyond the limits
+		of our text. This should avoid problems with text being pasted,
+		regarding the position of the caret.
+
+		2009-09-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichTextBox.cs: When SelectedRtf is set, and we are in the 0
+		position in the x axis, force to re-use any already available line,
+		even if it is not empty. This way pasting text into our textbox in the
+		beginning for non empty lines should work fine.
+
+		2009-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichTextBox.cs: When we are inserting a flow of rtf text, and we are
+		*not* loading it from a file, try to re-use a line if already
+		available, since the default behaviour of the parser is to create new
+		lines for the document.
+		This should fix a regressions we found after the last fix for #513030.
+
+		2009-09-14  Tom Hindle <tom_hindle@sil.org>
+
+		* ToolStripOverflow.cs: Fixes #536036 by adding null ptr check.
+
+		2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* PropertyGrid.cs: Hide the splitter when the help is hidden.
+
+		2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* InternalWindowManager.cs: Call Invalidate-Update instead of 
+		Refresh for MS compitability. Note also that Refresh is virtual 
+		and several controls override it in order to provide data refresh 
+		functionallity on top of the redraw and they do not expect this 
+		extra refresh call.
+		* Control.cs: In Refresh Invalidate the control and all children 
+		insead of calling Refresh for each of them.
+		[Fixes bug #538336]
+
+		2009-09-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* PropertyGrid.cs: Always set the help panel properties on the 
+		internal control, because they are inherited and can change with 
+		the parent.
+		[Fixes bug #525305]
+
+		2009-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichTextBox.cs: When processing rtf, don't add a new line if we
+		already have one for that position. This way we avoid overriding by
+		mistake our lines when copying/pasting.
+		Fixes #513030.
+
+		2009-09-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextControl.cs: When inserting new lines, look for the end of file
+		char, and remove chars after it. This is unlikely to happeng either
+		loading a file, pasting text or pressing a char, but can happen using
+		the TextBox.Text property.
+		Fixes #535884.
+
+		2009-09-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* Line.cs: In DeleteCharacters, cache line.Length for every tag, since
+		tag.Start changes will modify it indirectly and then we would end up
+		with wrong values.
+		Fixes #512521.
+
+		2009-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* BindingSource.cs: Implement support for chained data sources.
+		* ListBindingHelper.cs: Add support for ICurrencyManagerProvider and 
+		clean up.
+		[Fixes part of bug #536547]
+
+		2009-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichTextBox.cs: When saving the text to a file using SaveFile use
+		Environment.NewLine to separate the lines. This way we should be
+		saving the files according to the system.
+		Fixes the remaining part of #511515.
+
+		2009-08-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RichText.cs: Remove some unix new line characters and use
+		Environment.NewLine. Fixes part of #511515.
+
+		2009-08-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextBoxBase.cs: Modified should *not* be modified from the Text
+		property, as our new tests show. It should be to false, however, in
+		Append and Clear; and Paste, Cut, Undo, and direct user input should set it
+		to true. Also, as opposed to what the .net docs say -but proven by our
+		tests-, the changes should be generating a ModifiedChanged event
+		(thus we set the property, instead of the field).
+		Fixes #511267.
+
+		2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Fire the CellDoubleClicked event.
+		[Fixes bug #533430]
+
+		2009-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Add support for column DataGridViewAutoSizeColumnMode
+		DisplayedCells and DisplayedCellsExceptHeader.
+		[Fixes bug #533435]
+
+		2009-08-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextControl.cs: When removing a simple char, actually record the
+		action in the undo manager. This way we both support undoing the
+		removal of chars using backspace/delete, as well as keeping data
+		integrity when other undo tasks are performed.
+		Fixes #531983.
+
+		2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* Control.cs: Remove the ancient code in ResetText, which was setting
+		the internal field to String.Empty, instead of doing it for our Text
+		property, as .net does (which also causes a TextChanged event and all
+				the other related routines).
+		Fixes #531587.
+
+		2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TreeNodeCollection.cs: Correctly implement Contains by using a
+		linear search - there's no possible way to use a binary search, since
+		the node instances are not implementing IComparable, nor have a
+		specific order.
+		Fixes #529927.
+
+		2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: If we are *not* changing a row
+		already added to the source, and thus we are adding a new 
+		row instead, try to move to the previous row when Esc is
+		pressed -if possible-.
+		Fixes some bits of #322974.
+
+		2009-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGridTextBoxColumn.cs:
+		* DataGrid.cs: Moving the cell to the add row (the last one) should
+		not immediately add a new row - this should happen until the very
+		first change happens in that textbox.
+		Fixes part of #322974.
+
+		2009-08-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripDropDown.cs: When assigning the owner item, use its Font as
+		well.
+
+		2009-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripItem.cs: When the owner changes its Font, call the
+		OnFontChanged event, so we let our users know that we likely have a
+		new font - since Font is an ambient property.
+		* ToolStripDropDownItem.cs: When our Font changes, propagate that
+		information to our DropDown control, if any.
+		Fixes #531515.
+
+		2009-08-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: 
+		* ThemeWin32Classic.cs: When the user clicks on a new cell, we should reset any
+		previous selection, just like .net does. Also, in the cases where a
+		cell is being edited and it keeps the selected status, use the normal
+		colors for it, and use the selected colors for the rest of the columns of
+		that row.
+		Fixes the remaining bits of #323051.
+
+		2009-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: When getting ProcessKeyPreview fired, call Edit() if we
+		are not editing already - so the edition is actually active on our
+		column style textbox. Also, it seems the code handling process the
+		grid keys is repeated, but instead of removing it, just comment it for
+		now.
+		Fixes part of #323051.
+
+		2009-08-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* AsyncMethodResult.cs: Store a exception field in case the called
+		method actually caused an exception. This way we can throw it later.
+		* XplatUIDriver.cs: Check if the async method result has an exception
+		- throw it if needed. 
+		The idea is that Control.Invoke throws the exception from the thread
+		that called it, not the main MWF thread. 
+		Patch by Tom Spink <tspink@gmail.com>. Fixes #497175.
+
+		2009-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: In mouse move we need to shift the selection in case
+		the pointer is on the row headers.
+		Fixes #323052.
+
+		2009-08-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* SplitContainer.cs: Avoid updating the splitter distance if it hasn't 
+		moved. Updating the distance was causing a re-layout which was resetting 
+		the clicks counter and preventing DoubleClick from every firing.
+		[Fixes bug #521387]
+
+		2009-08-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: When a new TableStyle is added, don't create new
+		columns for it unless it is empty - this is the correct way to both
+		respect the columns if they were provided by our user, or create them
+		for him in case the column collection is empty.
+		Fixes #323111.
+
+		2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* DataGrid.cs: Actually call BindColumns in the handler for
+		ListManager.MetaDataChanged, since the current code is already taking
+		into account the scenario when a custom table style is used - this was
+		confusing us before, and that's why we commented the call to
+		BindColumns. Also call CallAreasAndInvalidate, to properly reflect the
+		changes as needed.
+		Fixes #465021.
+
+		2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: When setting the data source, if we have a user
+		provided table style available, force a complete bind in case the
+		column styles for that table style is empty.
+
+		2009-08-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridViewCell.cs: Handle null and DBNull values.
+
+		2009-08-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+		* ListBindingHelper.cs: Fix the 1.0 build by making this type available
+		under that profile.
+
+		2009-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* CurrencyManager.cs: Remove duplicate code.
+
+		2009-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs, DataGridViewCell.cs, DataGridViewColumn.cs: 
+		Massive population performance boost. From seconds to ms.
+		[Fixes bug #528887]
+
+		2009-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: When handling mouse down on a column, don't do any sort
+		even if the list supports it if we are empty. This way we avoid an exc
+		sorting the empty list, and keep the UI compatible with .net.
+
+		2009-08-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: In Edit () check we have any row before trying to use
+		the current row. Fixes a IOOR exc with an empty data grid.
+
+		2009-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGridColumnStyle.cs: Don't call CheckValidDataSource when setting
+		the owner DataGrid - even if this seems to be the right thing to do,
+		.net is not doind this check at this point, but in later operations.
+		Fixes #465019.
+
+		2009-07-28  Mike Gorse  <mgorse@novell.com>
+
+		* ToolStripMenuItem.cs: Added UIA CheckOnClickChanged event.
+
+		2009-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* Application.cs: Make FilterMessage internal for 1.1. Fixes the 1.1 build.
+
+		2009-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* XplatUIX11.cs:
+		* XplatUIWin32.cs: We need to filter the messages using
+		Application.FilterMessage for our DoEvents implementations. Observe
+		that I don't like the idea of XplatUI call the upper level Application
+		class, but at this point is easier and simpler to do this call - based
+		on the fact it's only one simple call.
+		Fixes #516735.
+
+		2009-07-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TreeNodeCollection.cs: When removing the selected node, set the
+		SelectedNode value of TreeView to null if there aren't more nodes left - 
+		this is better than to clear the selected node in Clear, since we need
+		to handle the situation in the Remove methods as well.
+		Fixes #525002.
+
+		2009-07-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripItemCollection.cs: Find should do a case insensitive
+		search, and should throw an ArgumentNullException if the parameter is
+		an empty string.
+
+		2009-07-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* PropertyGrid.cs: Use click handlers for each ToolStripButton instead
+		of using a global handler for the ToolStrip. This way the buttons can
+		be recovered and can have its PerformClick method called properly.
+		Fixes #522454.
+
+		2009-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* X11Dnd.cs: Implement support for XdndActionList, so we can get the
+		complete list of the supported actions in the drag source, and use the
+		action passed in the Position message only as a fallback. This will
+		help us with dnd operations with non winforms apps.
+		Fixes #402158.
+
+		2009-07-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripItemCollection.cs: Use a List<> instead of an ArrayList in
+		Find. This should fix the exception we were getting when trying to
+		convert the ArrayList to an array of objects (since we were losing the
+				type parameter).
+		Fixes #519944.
+
+		2009-07-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* RadioButton.cs: Setting Checked when none of the sibligs is checked
+		should happen *not* in GotFocus, but in the Enter event. This is
+		specially important since we should get that Checked behaviour even if
+		no handle is created yet - and thus, no actual GotFocus call happens at
+		the time.
+		Fixes #520764.
+
+		2009-07-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: Adjust manually the top border for out internal
+		ComboBox, since removing the border from it leaves it without any
+		margin. This is not noticeable in a default ComboBox, but it is in an
+		instance shown on top of ToolStrip.
+		Fixes the remaining part of #507462.
+
+		2009-07-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextBoxBase.cs: Expose the margin top width as a property, to keep
+		the code clean.
+		* ToolStripTextBox.cs: Since we are actually using no border in the
+		default TextBox impl, and we are drawing the border ourselves, we need
+		to manually set the top margin.
+		Fixes part of #507462.
+
+		2009-07-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* PrintPreviewDialog.cs: Record when left was pressed, so we can
+		simulate Tab+Alt when moving the focus throughout our buttons and
+		controls.
+		Fixes the remaining bits of #509142.
+
+		2009-07-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TabControl.cs: When computing the width of each tab page, use the
+		page's Font instead of the tab control one.
+		Fixes #514368.
+
+		2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* MenuAPI.cs: When handling the Keys.Left key, don't close the menu if
+		the current menu is specifically a ContextMenu (this is what .net does
+				as well). This way we also avoid a crash caused by MenuTracker trying
+		to use the menu when it was already hidden.
+
+		2009-07-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* PrintPreviewDialog.cs: Remove the code used to handle the
+		DropDown menu, since we are now doing it by default in ToolBar, and
+		just call the base impl as needed.Also, deactivate the dropdown menu
+		before moving the focus to a different button in our toolbar, as .net
+		does.
+		* ContextMenu.cs:
+		* MenuAPI.cs: Make as internal the needed bits to deactivate a
+		ContextMenu, and also to keep some beauty in our api.
+
+		2009-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolBar.cs: When handling the key down message, if we are on a
+		drop down button, either show the DropDownMenu or pass the key to its
+		ProcessCmdKey method as needed.
+		Fixes the remaining bits of #509985.
+
+		2009-06-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolBar.cs: Isolate the event logic related to OnButtonClick. Also
+		set current_item when navigating with the keyboard, so we can use it
+		properly later. Finally, handle both Enter and Space to fire
+		OnButtonClick *only*, without any other impact, as .net does.
+		Fixes part of #509985.
+
+		2009-06-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* MenuAPI.cs: Close any active menu when we get a simple Alt.
+		Fixes #509299.
+
+		2009-06-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolBar.cs: In OnButtonClick only change the Pushed value for
+		buttons with toogle style. We were previously doing it for
+		DropDownButton's buttons, but that's not what .net is doing.
+		Fixes #510030.
+
+		2009-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+		* XplatUICarbon.cs : support multi-byte text input.
+		Fixed bug #501276.
+
+		2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* ListBox.cs: When creating DrawItemEventArgs, pass either
+		Theme.ColorHighlightText or ForeColor depending on the selected state
+		of our item, as .net does.
+		Fixes #512115.
+
+		2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: When handling WM_CHAR, process the message first, and
+		send it to the textbox only if it wasn't handled.
+		Fixes #507459.
+
+		2009-06-18  Jonathan Pobst  <monkey@jpobst.com>
+
+		* ComboBox.cs: Only do my big sort at the end of AddRange if
+		the combobox is actually set to Sorted.
+
+		2009-06-18 Tom Hindle <tom_hindle@sil.org>
+
+		* XplatUIX11.cs: Enabled Text to coexist with custom data formats.
+		Fixes #511849.
+
+		2009-06-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListBox.cs: When calculating the scrollbars for non MultiColumn
+		mode, force the use of the horizontal scrollbar only if
+		ScrollAlwaysVisible is true as well.
+		Fixes #513029.
+
+		2009-06-17  Jonathan Pobst  <monkey@jpobst.com>
+
+		* ComboBox.cs: When using AddRange on a sorted combobox, don't
+		try to use our inefficient sorted insert method, just append
+		it and sort the whole thing at then end.
+		[Fixes bug #511247]
+
+		2009-06-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolBar.cs: Expose as internal the code used to show a dropdown menu.
+		* PrintPreviewDialog.cs: Handle the down/up arrow keys for our
+		DropDown element.
+		Fixes #509152.
+
+		2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Scrolling fixes.
+		[Fixes bug #512816]
+
+		2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs, DataGridViewRowCollection.cs: Clean up a bit and 
+		optimize for batch adding rows.
+
+		2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Avoid calling ReBind twice during the initial data 
+		binding.
+		[Fixes bug #512807]
+
+		2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Suppress invalidation during data binding.
+		[Fixes part of bug #512807]
+
+		2009-06-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* PrintPreviewDialog.cs: Tune the navigation among the buttons and
+		controls that are part of our ToolBar, so we can mimic the behaviour
+		observed in .Net, by handling also the arrow keys and doing the
+		preprocess for them too.
+		Fixes the remaining bits of #509142.
+
+		2009-06-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolBar.cs: Expose the current item as internal.
+		* PrintPreviewDialog.cs: Tune the TabStop property for
+		PrintPreviewControl/ToolBar so we match the .net scenario regarding
+		Tab navigation. Also implement support to navigate throughout the
+		items in the ToolBar.
+		Fixes #509142.
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridViewComboBoxCell.cs, DataGridViewComboBoxColumn.cs: 
+		Implement items syncing in the non-databound scenario.
+		[Fixes bug #494031]
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridView.cs: Call OnCellValidating and OnCellValidated and 
+		handle the Cancel accordingly.
+		[Fixes bug #506838]
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridViewBand.cs: Fix a typo in DefaultHeaderCellType.
+		[Fixes bug #506796]
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* DataGridViewColumnCollection.cs, DataGridViewRowCollection.cs, 
+		DataGridView.cs: Fire CollectionChangeAction.Refresh collection 
+		changed when Clearing the collections so that the DataGridView 
+		can know and reset the current cell.
+		[Fixes bug #492549]
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* BindingSource.cs: In ResetBindings use the ListChangedEventArgs ctor 
+		with the PropertyDescriptor parameter instead of index, because the 
+		latter will set some irelevant indices. Fixes a bug uncovered by recent
+		fix to ListChangedEventArgs.
+
+		2009-06-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* DataObject.cs: When looking for any specific format, do a case
+		insensitive search, as .net does.
+		Fixes #509199.
+
+		2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+		* CurrencyManager.cs: In AllowNew firstly check if the list is a 
+		IBindingList and proxy to AllowNew. IBindingList has slightly differet 
+		logic and eventhough it's an IList IsReadOnly should not be used in this 
+		case as it might be True but AllowNew could be True as well.
+		Fixes a bug uncovered by a fix to the Array class.
+
+		2009-06-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListBindingHelper.cs: In GetListItemType do a null check when
+		looking for IList.Item, since the impl could be explicit, and thus
+		private. Fix by Florent Fayolle (p.ricca at odyssee-ingenierie.com).
+		Fixes the remaining part of #507120
+
+		2009-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataObject.cs: Map StringFormat/Text/UnicodeText formats properly,
+		to match them in all the cases, as this is exactly what .net does.
+		Fixes #510728.
+
+		2009-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListBindingHelper.cs: In GetListItemType handle gracefully the case
+		where an instance of IEnumerator returns a null value for its Current
+		property. Fix by Florent Fayolle (p.ricca at odyssee-ingenierie.com).
+		Fixes #507120.
+
+		2009-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: Properly detect whether we need to use our vertical
+		scrollbar or not, specially for DropDownList/DropDown styles,
+		depending on the value of DropDownHeight.
+		Fixes #508541.
+
+		2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* ToolTip.cs: Call the base implementation in Dispose, but do it
+		before anything else to avoid a regression. This way we do the default
+		routines related to any System.ComponentModel.Container.
+		Fixes #508586.
+
+		2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* Clipboard.cs:
+		* XplatUIX11.cs:
+		* DataFormats.cs: Implement support for serializable types in our
+		clipboard.
+		Fixes #357642.
+
+		2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ColorDialog.cs: Actually add the help button to the form, so it can
+		be visible.
+		Fixes #478555.
+
+		2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* PrintPreviewDialog.cs: Don't use Dock.Fill for the
+		PrintPreviewControl, since it will be hidden in the top by our
+		toolbar. Use manual location and anchoring instead.
+		Fixes #474889.
+
+		2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* FileDialog.cs: When saving the size of the dialog, use the
+		ClientSize instead of Size, so we have always the same size for the
+		form. Patch by Alex Shulgin.
+		Fixes #503064.
+
+		2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* MessageBox.cs: When showing the dialog call XplatUI.AudibleAlert to
+		show a beep, similar to what .net does. 
+		Fixes #473725.
+
+		2009-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ContainerControl.cs:
+		* MenuStrip.cs
+		* ToolStrip.cs: Implicit mnemonic processing should happen for every
+		ToolStrip child, not only for MenuStrip, so we are going to do that in
+		ToolStrip.ProcessMnemonic, where we already had that exactly
+		functionality, but we are only just checking that either this instance
+		is a ToolStripDropDownMenu instance or Alt has been pressed. Finally
+		remove the extra code, since we are not going to use it now.
+		Fixes the remaining bits of #503663.
+
+		2009-05-21  Neville Gao  <nevillegao@gmail.com>
+
+		* ContextMenu.cs: Cleaned up UIA properties.
+
+		2009-05-20  Dick Porter  <dick@acm.org>
+
+		* XplatUICarbon.cs: Add more locking around MessageQueue
+		manipulations.
+
+		2009-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* DateTimePicker.cs: Call Focus in HideMonthCalendar to avoid
+		duplication of code, as well as actually getting the focus back in
+		*any* scenario where the drop down is closed.
+
+		2009-05-18 Tom Hindle <tom_hindle@sil.org>
+		* ScrollableControl.cs: Ignore setting properties HScroll and 
+		VScroll when AutoScroll is true.
+		[Fixes bug #500213]
+
+		2009-05-18  Jonathan Pobst  <monkey@jpobst.com>
+
+		* ToolStripRenderer.cs: Apply patch from Thomas Goldstein to make
+		disabled graphics look closer to the ones that .Net produces.
+		[Fixes bug #473660]
+
+		2009-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DateTimePicker.cs: When calculating the max width for the year part,
+		use the current value, since *all* the possible values are exactly a 4
+		digits number. This way we avoid a ArgumentOutOfRangeException trying
+		to check against different values.
+		Fixes #500917.
+
+		2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* MessageBox.cs: When handling ProcessDialogChar, check that
+		CancelButton is not null before trying to use it, to avoid a null ref
+		exception. We don't need to do that on the ok/yes buttons, since they
+		always exist.
+		Fixes #503935.
+
+		2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* ListBox.cs: Handle the key down event in WndProc instead of doing it
+		in an event handler, as we need to avoid any operation in case
+		the user has handled it in its own OnKeyDown handler, and this can't
+		be achieved since our handler would be the first one always.
+		* FontDialog.cs: Update the calls since our method handling key down
+		has been renamed.
+		Fixes #503469.
+
+		2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* Application.cs: We should dismiss the active ToolStrip when we
+		receive a WM_SYSKEYDOWN message, instead of WM_SYSKEYUP, so the next
+		keyboard short cut can be properly processed by another menu item.
+		Fixes part of #503663.
+
+		2009-05-13  Andreia Gaita  <avidigal@novell.com>
+
+		* HtmlDocument.cs: If the objects are strings, wrap them in ""
+
+		2009-05-13  Andreia Gaita  <avidigal@novell.com>
+
+		* HtmlDocument.cs: Fix InvokeScript call (duh).
+
+		2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextBox.cs: Expose IsAutoCompleteAvailable as internal.
+		* ComboBox.cs: If auto complete is being used, it is needed to update
+		the actual value of the combo box, doing it immediately if the user
+		presses Enter, or doing it when our combo box loses focus. Finally,
+		when handling Enter and Escape keys for the combobox, don't try to
+		hide the listbox if it is not visible in the first place. 
+		Fixes part of #489339.
+
+		2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripDropDownMenu.cs: Use the height returned by
+		ToolStripItem.GetPreferredHeight to calculate our own height.
+
+		2009-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* TreeNode.cs: When setting Checked, do a double null check, since the
+		current node can still get a null parent handling
+		TreeView.OnAfterCheck.
+		Fixes #502567.
+
+		2009-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* Control.cs: When assigning ContextMenu, do a null check before
+		assigning its container field.
+
+		2009-05-08  Brad Taylor  <brad@getcoded.net>
+
+		* DateTimePicker.cs: Add a UIA-specific property to ensure that if
+		is_checkbox_checked is changed, we won't break.
+
+		2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+		* ToolStripItem.cs: Prevent NRE when our holder is a
+		ToolStripDropDownButton and we get Select()ed.
+
+		2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* ToolStripControlHost.cs: DefaultSize must return the current size of
+		the Control, not the value returned by GetPreferredSize. Also connect
+		a handle to the control Resize event, and use it to fire
+		OnHostedControlReize.
+		Fixes the remaining bits of #483146.
+
+		2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolStripDropDown.cs: When performing the layout, use
+		ToolStripItem.GetPreferredSize ().Height instead of
+		ToolStripItem.Height, since we are already using it that way in this
+		same method.
+		Fixes part of ##483146.
+
+		2009-05-08  Brad Taylor  <brad@getcoded.net>
+
+		* DateTimePicker.cs: Wrap UIA specific code in NET_2_0 wrappers.  Send
+		OnUIASelectionChanged when ShowCheckbox is true and the checkbox
+		recieves focus.  Part of fix for #502029.
+
+		2009-05-06  Mike Gorse  <mgorse@novell.com>
+
+		* FileDialog.cs: Add UIAFocusedItemChanged to PopupButtonPanel.
+		Add PerformClick and PerformDoubleClick to PopupButton.
+		Fixes #499851.
+
+		2009-05-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+		* TabControl.cs: call Focus() to emit GotFocus event at the
+		proper time when SelectionIndex changes. Fixes #499887.
+
+		2009-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* MonthCalendar.cs: In SetBoundsCore always do the bounds check to
+		have valid values, even if BoundSpecified is not including
+		Size/Height/Width - this is useful when we are in a control using Dock
+		or Anchor.
+		Fixes part of #483146.
+
+		2009-04-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: When losing the focus, if our textbox is not null,
+		close its auto complete list, if any.
+		Fixes part of #489339.
+
+		2009-04-27  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+		* ListView.cs: Make OnColumnClick +internal to be used by a11y.
+
+		2009-04-27  Brad Taylor  <brad@getcoded.net>
+
+		* ToolStripButton.cs: Emit an internal event when CheckOnClick is
+		changed.
+
+		2009-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+		* ToolStripDropDownItem.cs: When assigning a new
+		ToolStripDropDownMenu, let it know we are its OwnerItem. This way the
+		Capture duties performed by Application/ToolStripManager are handled
+		nicely and we don't end up in an inconsisten stat.
+		Fixes #492815.
 
 2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
@@ -39226,5 +40070,4 @@
 	  XplatUIDriver.cs, XplatUIStructs.cs, XplatUIWin32.cs,
 	  XplatUIX11.cs, lang.cs:
 	  - Initial check-in
-
 

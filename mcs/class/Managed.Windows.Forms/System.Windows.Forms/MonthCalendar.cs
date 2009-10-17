@@ -1125,31 +1125,27 @@ namespace System.Windows.Forms {
 #endif
 		
 		// i think this is overriden to not allow the control to be changed to an arbitrary size
-		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) {
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height ||
-				(specified & BoundsSpecified.Width) == BoundsSpecified.Width ||
-				(specified & BoundsSpecified.Size) == BoundsSpecified.Size) {
-				// only allow sizes = default size to be set
-				Size min_size = DefaultSize;
-				Size max_size = new Size (
-					DefaultSize.Width + SingleMonthSize.Width + calendar_spacing.Width,
-					DefaultSize.Height + SingleMonthSize.Height + calendar_spacing.Height);
-				int x_mid_point = (max_size.Width + min_size.Width)/2;
-				int y_mid_point = (max_size.Height + min_size.Height)/2;
-				if (width < x_mid_point) {
-					width = min_size.Width;
-				} else {
-					width = max_size.Width;
-				}
-				if (height < y_mid_point) {
-					height = min_size.Height;
-				} else {
-					height = max_size.Height;
-				}
-				base.SetBoundsCore (x, y, width, height, specified);
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
+		{
+			// only allow sizes = default size to be set
+			Size default_size = DefaultSize;
+			Size min_size = default_size;
+			Size max_size = new Size (default_size.Width + SingleMonthSize.Width + calendar_spacing.Width,
+					default_size.Height + SingleMonthSize.Height + calendar_spacing.Height);
+			int x_mid_point = (max_size.Width + min_size.Width)/2;
+			int y_mid_point = (max_size.Height + min_size.Height)/2;
+
+			if (width < x_mid_point) {
+				width = min_size.Width;
 			} else {
-				base.SetBoundsCore (x, y, width, height, specified);
+				width = max_size.Width;
 			}
+			if (height < y_mid_point) {
+				height = min_size.Height;
+			} else {
+				height = max_size.Height;
+			}
+			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
 		protected override void WndProc (ref Message m) {

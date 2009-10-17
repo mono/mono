@@ -126,7 +126,7 @@ namespace System.Windows.Forms
 		{
 			this.displayed_items.Clear ();
 
-			if (this.OwnerItem != null)
+			if (this.OwnerItem != null && this.OwnerItem.Parent != null)
 				foreach (ToolStripItem tsi in this.OwnerItem.Parent.Items)
 					if (tsi.Placement == ToolStripItemPlacement.Overflow && tsi.Available && !(tsi is ToolStripSeparator)) {
 						this.displayed_items.AddNoOwnerOrLayout (tsi);

@@ -223,7 +223,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DefaultValue (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -671,7 +671,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Pressed { get { return this.is_pressed; } }
 
-		[MonoTODO ("Stub, not implemented")]
+		[MonoTODO ("RTL not implemented")]
 		[Localizable (true)]
 		public virtual RightToLeft RightToLeft {
 			get { return this.right_to_left; }
@@ -859,7 +859,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DragDropEffects DoDragDrop (Object data, DragDropEffects allowedEffects)
 		{
@@ -924,11 +924,11 @@ namespace System.Windows.Forms
 		{
 			if (!this.is_selected && this.CanSelect) {
 				this.is_selected = true;
-			
-				if (this.Parent != null) {	
+				
+				if (this.Parent != null) {
 					if (this.Visible && this.Parent.Focused && this is ToolStripControlHost)
 						(this as ToolStripControlHost).Focus ();
-					
+						
 					this.Invalidate ();
 					this.Parent.NotifySelectedChanged (this);
 				}
@@ -1176,6 +1176,7 @@ namespace System.Windows.Forms
 		protected internal virtual void OnOwnerFontChanged (EventArgs e)
 		{
 			this.CalculateAutoSize ();
+			OnFontChanged (EventArgs.Empty);
 		}
 		
 		protected virtual void OnPaint (PaintEventArgs e)
@@ -1351,7 +1352,7 @@ namespace System.Windows.Forms
 			remove {Events.RemoveHandler (DoubleClickEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event DragEventHandler DragDrop {
@@ -1359,7 +1360,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (DragDropEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event DragEventHandler DragEnter {
@@ -1367,7 +1368,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (DragEnterEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler DragLeave {
@@ -1375,7 +1376,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (DragLeaveEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event DragEventHandler DragOver {
@@ -1393,7 +1394,7 @@ namespace System.Windows.Forms
 			remove {Events.RemoveHandler (ForeColorChangedEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event GiveFeedbackEventHandler GiveFeedback {
@@ -1446,13 +1447,13 @@ namespace System.Windows.Forms
 			remove {Events.RemoveHandler (PaintEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
 			add { Events.AddHandler (QueryAccessibilityHelpEvent, value); }
 			remove { Events.RemoveHandler (QueryAccessibilityHelpEvent, value); }
 		}
 
-		[MonoTODO ("Not raised")]
+		[MonoTODO ("Event never raised")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event QueryContinueDragEventHandler QueryContinueDrag {
@@ -1861,7 +1862,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return true;
+					return false;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
@@ -1875,7 +1876,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return true;
+					return false;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
