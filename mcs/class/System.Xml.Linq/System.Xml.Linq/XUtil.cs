@@ -51,6 +51,9 @@ namespace System.Xml.Linq
 				return (string) o;
 			case TypeCode.DateTime:
 				return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.RoundtripKind);
+			case TypeCode.Boolean:
+				// Valid XML values are `true' and `false', not `True' and `False' that boolean returns
+				return o.ToString().ToLower();
 			default:
 				return o.ToString ();
 			}
