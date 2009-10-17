@@ -33,12 +33,7 @@ using System;
 namespace Microsoft.Win32
 {
 	[Flags]
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	enum RegistryValueOptions {
+	public enum RegistryValueOptions {
 		None,
 		DoNotExpandEnvironmentNames,
 	}

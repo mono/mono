@@ -30,18 +30,13 @@
 #if !NET_2_1
 
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace Microsoft.Win32
 {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum RegistryHive
 	{
 		

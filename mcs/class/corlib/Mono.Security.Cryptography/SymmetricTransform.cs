@@ -69,14 +69,12 @@ namespace Mono.Security.Cryptography {
 			} else {
 				rgbIV = (byte[]) rgbIV.Clone ();
 			}
-#if NET_2_0
 			// compare the IV length with the "currently selected" block size and *ignore* IV that are too big
 			if (rgbIV.Length < BlockSizeByte) {
 				string msg = Locale.GetText ("IV is too small ({0} bytes), it should be {1} bytes long.",
 					rgbIV.Length, BlockSizeByte);
 				throw new CryptographicException (msg);
 			}
-#endif
 			// mode buffers
 			temp = new byte [BlockSizeByte];
 			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
@@ -265,11 +263,7 @@ namespace Mono.Security.Cryptography {
 			} else if (KeepLastBlock) {
 #endif
 				if (0 > len + BlockSizeByte) {
-#if NET_2_0
 					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
-#else
-					throw new IndexOutOfRangeException (Locale.GetText ("Overflow"));
-#endif
 				}
 			} else {
 				if (0 > len) {
@@ -340,7 +334,7 @@ namespace Mono.Security.Cryptography {
 			return total;
 		}
 
-#if NET_2_0 && !NET_2_1 || MONOTOUCH
+#if !NET_2_1 || MONOTOUCH
 		RandomNumberGenerator _rng;
 
 		private void Random (byte[] buffer, int start, int length)
@@ -376,10 +370,8 @@ namespace Mono.Security.Cryptography {
 			total += BlockSizeByte;
 #else
 			switch (algo.Padding) {
-#if NET_2_0
 			case PaddingMode.ANSIX923:
 			case PaddingMode.ISO10126:
-#endif
 			case PaddingMode.PKCS7:
 				// we need to add an extra block for padding
 				total += BlockSizeByte;
@@ -423,7 +415,6 @@ namespace Mono.Security.Cryptography {
 			InternalTransformBlock (res, full, BlockSizeByte, res, full);
 #else
 			switch (algo.Padding) {
-#if NET_2_0
 			case PaddingMode.ANSIX923:
 				// XX 00 00 00 00 00 00 07 (zero + padding length)
 				res [res.Length - 1] = padding;
@@ -439,7 +430,6 @@ namespace Mono.Security.Cryptography {
 				// the last padded block will be transformed in-place
 				InternalTransformBlock (res, full, BlockSizeByte, res, full);
 				break;
-#endif // NET_2_0
 			case PaddingMode.PKCS7:
 				// XX 07 07 07 07 07 07 07 (padding length)
 				for (int i = res.Length; --i >= (res.Length - padding);) 
@@ -495,7 +485,6 @@ namespace Mono.Security.Cryptography {
 			total -= padding;
 #else
 			switch (algo.Padding) {
-#if NET_2_0
 			case PaddingMode.ANSIX923:
 				if ((padding == 0) || (padding > BlockSizeByte))
 					ThrowBadPaddingException (algo.Padding, padding, -1);
@@ -519,11 +508,6 @@ namespace Mono.Security.Cryptography {
 				}
 				total -= padding;
 				break;
-#else
-			case PaddingMode.PKCS7:
-				total -= padding;
-				break;
-#endif // NET_2_0
 			case PaddingMode.None:	// nothing to do - it's a multiple of block size
 			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
 				break;

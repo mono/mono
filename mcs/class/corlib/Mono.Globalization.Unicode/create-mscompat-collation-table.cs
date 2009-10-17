@@ -4194,10 +4194,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 
 			// *Letter
 			if (0xFE70 <= i && i < 0xFE7C // ARABIC LIGATURES B
-#if NET_2_0
 				|| 0x0501 <= i && i <= 0x0510 // CYRILLIC KOMI
 				|| 0xFA30 <= i && i < 0xFA70 // CJK COMPAT
-#endif
 			)
 				return true;
 

@@ -38,19 +38,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
-
-#if NET_2_0
 using System.Security.AccessControl;
-#endif
 
 namespace Microsoft.Win32
 {
 	/// <summary>
 	///	Wrapper class for Windows Registry Entry.
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class RegistryKey : MarshalByRefObject, IDisposable 
 	{
 		//
@@ -205,7 +200,6 @@ namespace Microsoft.Win32
 			RegistryApi.SetValue (this, name, value);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public void SetValue (string name, object value, RegistryValueKind valueKind)
 		{
@@ -222,7 +216,6 @@ namespace Microsoft.Win32
 
 			RegistryApi.SetValue (this, name, value, valueKind);
 		}
-#endif
 
 		/// <summary>
 		///	Open the sub key specified, for read access.
@@ -269,7 +262,6 @@ namespace Microsoft.Win32
 				RegistryValueOptions.None);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public object GetValue (string name, object defaultValue, RegistryValueOptions options)
 		{
@@ -283,7 +275,6 @@ namespace Microsoft.Win32
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		/// <summary>
 		///	Create a sub key.
@@ -299,7 +290,6 @@ namespace Microsoft.Win32
 			return RegistryApi.CreateSubKey (this, subkey);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck)
 		{
@@ -311,7 +301,6 @@ namespace Microsoft.Win32
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		/// <summary>
 		///	Delete the specified subkey.
@@ -403,7 +392,6 @@ namespace Microsoft.Win32
 			RegistryApi.DeleteValue (this, name, throwOnMissingValue);
 		}
 
-#if NET_2_0
 		public RegistrySecurity GetAccessControl ()
 		{
 			throw new NotImplementedException ();
@@ -413,7 +401,6 @@ namespace Microsoft.Win32
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		
 		/// <summary>
@@ -445,7 +432,6 @@ namespace Microsoft.Win32
 			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
 		{
@@ -462,7 +448,6 @@ namespace Microsoft.Win32
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		
 		/// <summary>
@@ -518,22 +503,13 @@ namespace Microsoft.Win32
 		private void AssertKeyNameNotNull (string subKeyName)
 		{
 			if (subKeyName == null)
-#if NET_2_0
 				throw new ArgumentNullException ("name");
-#else
-				throw new ArgumentNullException ("subkey");
-#endif
 		}
 
 		private void AssertKeyNameLength (string name)
 		{
-#if NET_2_0
 			if (name.Length > 255)
 				throw new ArgumentException ("Name of registry key cannot be greater than 255 characters");
-#else
-			if (name.Length >= 255)
-				throw new ArgumentException ("Name of registry key cannot be greater than or equal to 255 characters");
-#endif
 		}
 
 		/// <summary>

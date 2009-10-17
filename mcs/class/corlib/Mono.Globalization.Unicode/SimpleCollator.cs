@@ -402,10 +402,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				if (x != 0)
 					i = x;
 			}
-#if NET_2_0
 			if ((opt & COpt.OrdinalIgnoreCase) != 0)
 				i = textInfo.ToLower ((char) i);
-#endif
 			if ((opt & COpt.IgnoreCase) != 0)
 				i = textInfo.ToLower ((char) i);
 			if ((opt & COpt.IgnoreKanaType) != 0)
@@ -743,7 +741,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 
-#if NET_2_0
 		private int CompareOrdinalIgnoreCase (string s1, int idx1, int len1,
 			string s2, int idx2, int len2)
 		{
@@ -760,7 +757,6 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return len1 == len2 ? 0 :
 				len1 == min ? - 1 : 1;
 		}
-#endif
 
 		public unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
@@ -771,10 +767,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				return 0;
 			if (options == CompareOptions.Ordinal)
 				return CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
-#if NET_2_0
 			if (options == CompareOptions.OrdinalIgnoreCase)
 				return CompareOrdinalIgnoreCase (s1, idx1, len1, s2, idx2, len2);
-#endif
 
 #if false // stable easy version, depends on GetSortKey().
 			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
@@ -1468,10 +1462,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		{
 			if (opt == CompareOptions.Ordinal)
 				return IndexOfOrdinal (s, target, start, length);
-#if NET_2_0
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				return IndexOfOrdinalIgnoreCase (s, target, start, length);
-#endif
 			if (opt == CompareOptions.None) {
 				bool testWasUnable;
 				int ret = QuickIndexOf (s, target, start, length, out testWasUnable);
@@ -1520,7 +1512,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
-#if NET_2_0
 		int IndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
@@ -1544,7 +1535,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			}
 			return -1;
 		}
-#endif
 
 		// char
 
@@ -1557,10 +1547,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		{
 			if (opt == CompareOptions.Ordinal)
 				return IndexOfOrdinal (s, target, start, length);
-#if NET_2_0
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				return IndexOfOrdinalIgnoreCase (s, target, start, length);
-#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1609,7 +1597,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
-#if NET_2_0
 		int IndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
 		{
 			int end = start + length;
@@ -1619,7 +1606,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					return i;
 			return -1;
 		}
-#endif
 
 		// Searches target byte[] keydata
 		unsafe int IndexOfSortKey (string s, int start, int length, byte* sortkey, char target, int ti, bool noLv4, ref Context ctx)
@@ -1716,10 +1702,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		{
 			if (opt == CompareOptions.Ordinal)
 				return LastIndexOfOrdinal (s, target, start, length);
-#if NET_2_0
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				return LastIndexOfOrdinalIgnoreCase (s, target, start, length);
-#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1764,7 +1748,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
-#if NET_2_0
 		int LastIndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
@@ -1792,7 +1775,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			}
 			return -1;
 		}
-#endif		
 
 		// char
 
@@ -1805,10 +1787,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		{
 			if (opt == CompareOptions.Ordinal)
 				return LastIndexOfOrdinal (s, target, start, length);
-#if NET_2_0
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				return LastIndexOfOrdinalIgnoreCase (s, target, start, length);
-#endif
 			byte* alwaysMatchFlags = stackalloc byte [16];
 			byte* neverMatchFlags = stackalloc byte [16];
 			byte* targetSortKey = stackalloc byte [4];
@@ -1862,7 +1842,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
-#if NET_2_0
 		int LastIndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
 		{
 			if (s.Length == 0)
@@ -1874,7 +1853,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					return i;
 			return -1;
 		}
-#endif		
 
 		// Searches target byte[] keydata
 		unsafe int LastIndexOfSortKey (string s, int start, int orgStart, int length, byte* sortkey, int ti, bool noLv4, ref Context ctx)

@@ -46,15 +46,7 @@ namespace Mono.Security {
 #else
 	public
 #endif
-#if NET_2_0
 	static class ASN1Convert {
-#else
-	sealed class ASN1Convert {
-
-		private ASN1Convert ()
-		{
-		}
-#endif
 		// RFC3280, section 4.2.1.5
 		// CAs conforming to this profile MUST always encode certificate
 		// validity dates through the year 2049 as UTCTime; certificate validity
@@ -182,9 +174,6 @@ namespace Mono.Security {
 			// to support both UTCTime and GeneralizedTime (and not so common format)
 			string mask = null;
 			int year;
-#if !NET_2_0
-			bool utc = true;
-#endif
 			switch (t.Length) {
 				case 11:
 					// illegal format, still it's supported for compatibility
@@ -215,19 +204,9 @@ namespace Mono.Security {
 					t = String.Format ("{0}{1}{2}{3}{4}:{5}{6}", century, t.Substring (0, 12), sign, 
 						t[13], t[14], t[15], t[16]);
 					mask = "yyyyMMddHHmmsszzz";
-#if !NET_2_0
-					utc = false;
-#endif
 					break;
 			}
-#if NET_2_0
 			return DateTime.ParseExact (t, mask, null, DateTimeStyles.AdjustToUniversal);
-#else
-			DateTime result = DateTime.ParseExact (t, mask, null);
-			if (utc)
-				return result;
-			return result.ToUniversalTime ();
-#endif
 		}
 	}
 }

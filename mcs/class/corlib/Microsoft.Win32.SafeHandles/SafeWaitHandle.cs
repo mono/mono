@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Threading;
@@ -51,5 +49,3 @@ namespace Microsoft.Win32.SafeHandles {
 
 	}
 }
-
-#endif

@@ -278,13 +278,12 @@ namespace Mono.Security.X509 {
 				}
 				return _dsa; 
 			}
-#if NET_2_0
+
 			set {
 				_dsa = value;
 				if (value != null)
 					_rsa = null;
 			}
-#endif
 		}
 
 		public X509ExtensionCollection Extensions {
@@ -379,13 +378,12 @@ namespace Mono.Security.X509 {
 				}
 				return _rsa; 
 			}
-#if NET_2_0
+
 			set {
 				if (value != null)
 					_dsa = null;
 				_rsa = value;
 			}
-#endif
 		}
 	        
 		public virtual byte[] RawData {

@@ -476,23 +476,13 @@ namespace Mono.Security.Cryptography {
 		// internal for Mono 1.0.x in order to preserve public contract
 		// they are public for Mono 1.1.x (for 1.2) as the API isn't froze ATM
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool UseKeyBlinding {
+		public bool UseKeyBlinding {
 			get { return keyBlinding; }
 			// you REALLY shoudn't touch this (true is fine ;-)
 			set { keyBlinding = value; }
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool IsCrtPossible {
+		public bool IsCrtPossible {
 			// either the key pair isn't generated (and will be 
 			// generated with CRT parameters) or CRT is (or isn't)
 			// possible (in case the key was imported)

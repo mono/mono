@@ -27,21 +27,12 @@
 
 #if !NET_2_1
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace Microsoft.Win32
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	enum RegistryValueKind {
+	public enum RegistryValueKind {
 		Unknown,
 		String,
 		ExpandString,

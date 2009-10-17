@@ -199,7 +199,6 @@ namespace Microsoft.Win32
 			return obj;
 		}
 
-#if NET_2_0
 		//
 		// This version has to do extra checking, make sure that the requested
 		// valueKind matches the type of the value being stored
@@ -247,7 +246,6 @@ namespace Microsoft.Win32
 				GenerateException (result);
 			}
 		}
-#endif
 	
 		public void SetValue (RegistryKey rkey, string name, object value)
 		{
@@ -538,13 +536,7 @@ namespace Microsoft.Win32
 
 		public string ToString (RegistryKey rkey)
 		{
-#if NET_2_0
 			return rkey.Name;
-#else			
-			IntPtr handle = GetHandle (rkey);
-			
-			return String.Format ("{0} [0x{1:X}]", rkey.Name, handle.ToInt32 ());
-#endif
 		}
 
 		/// <summary>
