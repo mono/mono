@@ -1,3 +1,8 @@
+2009-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EqualityComparer.cs: Seal internal classes
+	[Backport r144308]
+
 2009-09-22  Raja R Harinath  <harinath@hurrynot.org>
 
 	Ensure that invalid arrays to CopyTo result in ArgumentExceptions.
