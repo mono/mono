@@ -666,7 +666,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tc.DeselectTab ("Three");
 			Assert.AreEqual (0, tc.SelectedIndex, "A8");		
-}
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]

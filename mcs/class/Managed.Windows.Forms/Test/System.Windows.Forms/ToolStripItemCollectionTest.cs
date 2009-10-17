@@ -115,6 +115,44 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Find ()
+		{
+			ToolStripItemCollection coll = new ToolStrip ().Items;
+
+			ToolStripItem item1 = new ToolStripLabel ("alpha");
+			item1.Name = "alpha";
+			ToolStripItem item2 = new ToolStripLabel ("beta");
+			item2.Name = "beta";
+			ToolStripItem item3 = new ToolStripLabel ("Alpha");
+			item3.Name = "Alpha";
+
+			coll.Add (item1);
+			coll.Add (item2);
+			coll.Add (item3);
+
+			ToolStripItem [] res = coll.Find ("alpha", true);
+			Assert.AreEqual (2, res.Length, "#A1");
+
+			res = coll.Find ("Beta", true);
+			Assert.AreEqual (1, res.Length, "#B1");
+
+			res = coll.Find ("DoesntExist", true);
+			Assert.AreEqual (0, res.Length, "#C1");
+
+			try {
+				coll.Find (null, true);
+				Assert.Fail ("#D1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				coll.Find (String.Empty, true);
+				Assert.Fail ("#E1");
+			} catch (ArgumentNullException) {
+			}
+		}
+
+		[Test]
 		public void Insert_Owned ()
 		{
 			ToolStrip toolStrip = CreateToolStrip ();

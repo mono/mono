@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Data;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -35,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class GridColumnStylesCollectionTest : TestHelper
+	public class GridColumnStylesCollectionTest : TestHelper
 	{
 		private bool eventhandled;
 		private object Element;
@@ -81,6 +82,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (CollectionChangeAction.Add, Action, "A2");
 			Assert.AreEqual (elem2, Element, "A3");
 			
+		}
+
+		// The idea of this test is to have a complete DataGrid system
+		// and assert that the Add method of the colleciton is _not_ forcing a 
+		// call to the protected CheckValidSource method in the new column style class.
+		// Bug #465019.
+		[Test]
+		public void TestAddWithBindingContext ()
+		{
+			DataGrid datagrid = new DataGrid ();
+			datagrid.BindingContext = new BindingContext ();
+			DataTable table = new DataTable ();
+			datagrid.DataSource = table;
+
+			DataGridTableStyle ts = new DataGridTableStyle ();
+			datagrid.TableStyles.Add (ts);
+
+			DataGridTextBoxColumn col1 = new DataGridTextBoxColumn ();
+			col1.MappingName = "Column1"; // Not valid mapping
+			ts.GridColumnStyles.Add (col1);
+
+			// More important: we should _not_ throw an exc here.
+			Assert.AreEqual (ts, col1.DataGridTableStyle, "#A1");
+			Assert.AreEqual (1, ts.GridColumnStyles.Count, "#A2");
 		}
 
 		[Test]

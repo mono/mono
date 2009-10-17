@@ -1,3 +1,108 @@
+2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+[merge -r 132698:142738 from trunk]
+
+	2009-08-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+	* TextBoxTest.cs: Improve the ModifiedTest test.
+
+	2009-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataGridViewCellTest.cs : nunit test upgrade to modern style.
+
+	2009-08-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripDropDownItemTest.cs: New test file.
+
+	2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGridTest.cs: Don't use DataGrid.Rows.Add() for our latest test,
+	since it is 2.0. Use DataGrid.NewRow() instead.
+
+	2009-08-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGridTest.cs: New test for the interaction between DataSource and
+	TableStyles.
+
+	2009-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* GridColumnStylesCollectionTest.cs: New test for #465019. Also make
+	public the test class, so it is *actually* loaded by nunit.
+
+	2009-07-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripItemCollectionTest.cs: New test for Find.
+
+	2009-07-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RadioButtonTest.cs: Update the Checked test to not depend on
+	Form.Show, since we need to check the same behaviour even if no handle
+	has been created yet.
+
+	2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewTest.cs: Duplicate test label fix.
+
+	2009-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataObjectTest.cs: New assertions for the text functionality.
+
+	2009-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelperTest.cs: New assertion for GetListItemType, as well
+	as a new helper collection class.
+
+	2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ClipboardTest.cs: New test for serializable types.
+
+	2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripDropDownTest.cs: New test to assure the Height atfer
+	calculating the layout depends on ToolStripItem.GetPreferredHeight.
+
+	2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripControlHost.cs: New tests for DefaultSize and
+	OnHostedControlResize members.
+
+	2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: Improve test, and remove the
+	NotWorking attribute. Also remove the 'var' keywords, doh!
+
+	2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: Simplify test.
+
+	2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: Add yet another non-passing test
+	(wors in MS.NET).
+
+	2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: add tests for Owner and OwnerItem.
+
+	2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: more accurate test, and fix build
+	(namespace clash).
+
+	2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: Add a test for GetCurrentParent
+	(passes on MS.NET). Related to a11y bugs #485524 and #479397.
+
+	2009-05-04  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* TabControlTest.cs: More accurate test for bug#499887 showing
+	the SelectedIndex at the moment of the event (passes on MS.NET).
+
+	2009-04-30  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* TabControlTest.cs: Added test for bug#499887.
+
 2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
         * ToolStripMenuItemTest.cs: Add a test for a NRE bug.

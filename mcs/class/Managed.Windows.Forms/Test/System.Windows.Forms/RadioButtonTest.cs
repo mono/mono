@@ -67,7 +67,6 @@ namespace MonoTests.System.Windows.Forms
 			event_received = false;
 
 			f.ActiveControl = rb;
-			f.Show ();
 
 			Assert.AreEqual (true, event_received, "#D1");
 			Assert.AreEqual (true, rb.Checked, "#D2");
