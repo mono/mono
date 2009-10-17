@@ -38,25 +38,17 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum PlatformID
 	{
 		Win32S = 0,
 		Win32Windows = 1,
 		Win32NT = 2,
-#if NET_1_1 || NET_2_0
 		WinCE = 3,
-#endif
-#if NET_2_0
 		Unix = 4,
-#endif
-#if NET_2_0 || NET_2_1
 		// Since NET 3.5 SP1 or silverlight
 		Xbox = 5,
 		MacOSX = 6,
-#endif
 	}
 }

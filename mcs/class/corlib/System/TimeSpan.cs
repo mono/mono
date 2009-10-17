@@ -35,13 +35,8 @@ using System.Text;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct TimeSpan : IComparable
-#if NET_2_0
-		, IComparable<TimeSpan>, IEquatable <TimeSpan>
-#endif
+	public struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable <TimeSpan>
 	{
 		public static readonly TimeSpan MaxValue = new TimeSpan (long.MaxValue);
 		public static readonly TimeSpan MinValue = new TimeSpan (long.MinValue);
@@ -222,7 +217,6 @@ namespace System
 			return Compare (this, (TimeSpan) value);
 		}
 
-#if NET_2_0
 		public int CompareTo (TimeSpan value)
 		{
 			return Compare (this, value);
@@ -232,7 +226,6 @@ namespace System
 		{
 			return obj._ticks == _ticks;
 		}
-#endif
 
 		public TimeSpan Duration ()
 		{
@@ -334,7 +327,6 @@ namespace System
 			return p.Execute ();
 		}
 
-#if NET_2_0
 		public static bool TryParse (string s, out TimeSpan result)
 		{
 			try {
@@ -345,7 +337,6 @@ namespace System
 				return false;
 			}
 		}
-#endif
 
 		public TimeSpan Subtract (TimeSpan ts)
 		{

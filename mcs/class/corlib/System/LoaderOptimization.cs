@@ -31,23 +31,19 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum LoaderOptimization
 	{
 		NotSpecified = 0,
 		SingleDomain = 1,
 		MultiDomain = 2,
 		MultiDomainHost = 3,
-#if NET_2_0
+
 		[Obsolete]
-#endif
 		DomainMask = 3,
-#if NET_2_0
+
 		[Obsolete]
-#endif
 		DisallowBindings = 4
 	}
 }

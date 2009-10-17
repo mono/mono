@@ -45,10 +45,8 @@ using System.Runtime.Remoting.Activation;
 namespace System 
 {
 	[ClassInterface (ClassInterfaceType.None)]
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Activator))]
-#endif
 	public sealed class Activator : _Activator
 	{
 		const BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
@@ -76,7 +74,6 @@ namespace System
 			throw new NotImplementedException();
 		}
 
-#if NET_1_1
 		[MonoTODO("Mono does not support COM")]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
 		                                                  byte []hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -92,7 +89,6 @@ namespace System
 
 			throw new NotImplementedException();
 		}
-#endif
 
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
@@ -153,7 +149,6 @@ namespace System
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("no ClickOnce in mono")]
 		public static ObjectHandle CreateInstance (ActivationContext activationContext)
 		{
@@ -204,26 +199,19 @@ namespace System
 				throw new ArgumentNullException ("domain");
 			return domain.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
 		}
-#endif
 #endif // !NET_2_1
 
-#if NET_2_0
 		public static T CreateInstance <T> ()
 		{
 			return (T) CreateInstance (typeof (T));
 		}
-#endif
 
 		public static object CreateInstance (Type type)
 		{
 			return CreateInstance (type, false);
 		}
 
-#if NET_2_0
 		public static object CreateInstance (Type type, params object [] args)
-#else
-		public static object CreateInstance (Type type, object [] args)
-#endif
 		{
 			return CreateInstance (type, args, new object [0]);
 		}
@@ -244,10 +232,9 @@ namespace System
 		{
 			CheckType (type);
 
-#if NET_2_0
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
-#endif
+
 			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
 			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
 			if ((bindingAttr & _accessFlags) == 0)
@@ -306,10 +293,10 @@ namespace System
 		public static object CreateInstance (Type type, bool nonPublic)
 		{ 
 			CheckType (type);
-#if NET_2_0
+
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
-#endif
+
 			CheckAbstractType (type);
 
 			ConstructorInfo ctor;
@@ -353,11 +340,7 @@ namespace System
 		{
 			if (type.IsAbstract) {
 				string msg = Locale.GetText ("Cannot create an abstract class '{0}'.", type.FullName);
-#if NET_2_0
 				throw new MissingMethodException (msg);
-#else
-				throw new MemberAccessException (msg);
-#endif
 			}
 		}
 
@@ -383,7 +366,6 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object CreateInstanceInternal (Type type);
 
-#if NET_1_1
 		void _Activator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -404,6 +386,5 @@ namespace System
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

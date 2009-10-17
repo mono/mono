@@ -45,9 +45,7 @@ namespace System {
 
 	[AttributeUsage (AttributeTargets.Enum, Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FlagsAttribute : Attribute {
 
 		// No methods.

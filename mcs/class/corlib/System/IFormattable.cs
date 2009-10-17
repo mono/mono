@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
         [ComVisible(true)]
-#endif
 	public interface IFormattable {
 		string ToString (string format, IFormatProvider formatProvider);
 	}

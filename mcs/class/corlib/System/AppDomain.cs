@@ -50,19 +50,15 @@ using System.Security.Policy;
 using System.Security.Principal;
 using System.Configuration.Assemblies;
 
-#if NET_2_0
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
-#endif
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible (true)]
 #if !NET_2_1
 	[ComDefaultInterface (typeof (_AppDomain))]
-#endif
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 #if NET_2_1
@@ -116,7 +112,7 @@ namespace System {
 			}
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[MonoTODO]
 		public ApplicationTrust ApplicationTrust {
 			get { throw new NotImplementedException (); }
@@ -251,9 +247,7 @@ namespace System {
 
 #if !NET_2_1 || MONOTOUCH
 
-#if NET_2_0
 		[Obsolete ("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void AppendPrivatePath (string path)
 		{
@@ -275,18 +269,14 @@ namespace System {
 			setup.PrivateBinPath = pp + path;
 		}
 
-#if NET_2_0
 		[Obsolete ("AppDomain.ClearPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearPrivatePath ()
 		{
 			SetupInformationNoCopy.PrivateBinPath = String.Empty;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use AppDomainSetup.ShadowCopyDirectories")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearShadowCopyPath ()
 		{
@@ -299,13 +289,11 @@ namespace System {
 			return Activator.CreateComInstanceFrom (assemblyName, typeName);
 		}
 
-#if NET_1_1
 		public ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
 			byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			return Activator.CreateComInstanceFrom (assemblyFile, typeName, hashValue ,hashAlgorithm);
 		}
-#endif
 #endif
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
@@ -483,7 +471,6 @@ namespace System {
 			return ab;
 		}
 
-#if NET_2_0
 		// NET 3.5 method
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
@@ -503,7 +490,6 @@ namespace System {
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes) {
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false, assemblyAttributes);
 		}
-#endif
 
 		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
@@ -545,11 +531,7 @@ namespace System {
 		int ExecuteAssemblyInternal (Assembly a, string[] args)
 		{
 			if (a.EntryPoint == null)
-#if NET_2_0
 				throw new MissingMethodException ("Entry point not found in assembly '" + a.FullName + "'.");
-#else
-				throw new COMException ("Unspecified error.", -2147467259);
-#endif
 			return ExecuteAssembly (a, args);
 		}
 
@@ -715,9 +697,7 @@ namespace System {
 			_granted = ps.PermissionSet;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use AppDomainSetup.SetCachePath")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetCachePath (string path)
 		{
@@ -734,18 +714,14 @@ namespace System {
 			_principal = null;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use AppDomainSetup.ShadowCopyFiles")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyFiles()
 		{
 			SetupInformationNoCopy.ShadowCopyFiles = "true";
 		}
 
-#if NET_2_0
 		[Obsolete ("Use AppDomainSetup.ShadowCopyDirectories")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyPath (string path)
 		{
@@ -898,7 +874,7 @@ namespace System {
 			} else if (info.ConfigurationFile == null)
 				info.ConfigurationFile = "[I don't have a config file]";
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 			if (info.AppDomainInitializer != null) {
 				if (!info.AppDomainInitializer.Method.IsStatic)
 					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
@@ -918,7 +894,7 @@ namespace System {
 			else
 				ad._evidence = new Evidence (securityInfo);	// copy
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 			if (info.AppDomainInitializer != null) {
 				Loader loader = new Loader (
 					info.AppDomainInitializer.Method.DeclaringType.Assembly.Location);
@@ -934,7 +910,7 @@ namespace System {
 			return ad;
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[Serializable]
 		class Loader {
 
@@ -976,7 +952,7 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, CreateDomainSetup (appBasePath, appRelativeSearchPath, shadowCopyFiles));
 		}
 		
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
 		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
 		{
@@ -998,12 +974,7 @@ namespace System {
 			if (shadowCopyFiles)
 				info.ShadowCopyFiles = "true";
 			else
-#if NET_2_0
 				info.ShadowCopyFiles = "false";
-#else
-				info.ShadowCopyFiles = null;
-#endif
-
 
 			return info;
 		}
@@ -1028,9 +999,7 @@ namespace System {
 		}
 
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptAppDomain, Cer.MayFail)]
-#endif
 		public static void Unload (AppDomain domain)
 		{
 			if (domain == null)
@@ -1043,18 +1012,14 @@ namespace System {
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public extern void SetData (string name, object data);
 
-#if NET_2_0
-		[MonoTODO]
+		[MonoLimitation ("The permission field is ignored")]
 		public void SetData (string name, object data, IPermission permission)
 		{
-			throw new NotImplementedException ();
+			SetData (name, data);
 		}
-#endif
 
 #if !NET_2_1
-#if NET_2_0
 		[Obsolete ("Use AppDomainSetup.DynamicBase")]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetDynamicBase (string path)
 		{
@@ -1062,13 +1027,11 @@ namespace System {
 		}
 #endif // !NET_2_1
 
-#if NET_2_0
 		[Obsolete ("AppDomain.GetCurrentThreadId has been deprecated"
 			+ " because it does not provide a stable Id when managed"
 			+ " threads are running on fibers (aka lightweight"
 			+ " threads). To get a stable identifier for a managed"
 			+ " thread, use the ManagedThreadId property on Thread.'")]
-#endif
 		public static int GetCurrentThreadId ()
 		{
 			return Thread.CurrentThreadId;
@@ -1131,7 +1094,7 @@ namespace System {
 		private Assembly DoAssemblyResolve (string name, bool refonly)
 		{
 			ResolveEventHandler del;
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 			if (refonly)
 				del = ReflectionOnlyAssemblyResolve;
 			else
@@ -1281,7 +1244,6 @@ namespace System {
 		}
 #endif
 
-#if NET_2_0
         #pragma warning disable 649
 		private AppDomainManager _domain_manager;
         #pragma warning restore 649
@@ -1290,9 +1252,8 @@ namespace System {
 		public AppDomainManager DomainManager {
 			get { return _domain_manager; }
 		}
-#endif
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if (!NET_2_1 || MONOTOUCH)
 
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
@@ -1385,7 +1346,7 @@ namespace System {
 		}
 #endif
 
-#if NET_1_1 && !NET_2_1
+#if !NET_2_1
 		void _AppDomain.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

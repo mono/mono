@@ -33,13 +33,8 @@ namespace System
 {
 	[CLSCompliant(false)]
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct SByte : IFormattable, IConvertible, IComparable
-#if NET_2_0
-		, IComparable<SByte>, IEquatable <SByte>
-#endif
+	public struct SByte : IFormattable, IConvertible, IComparable, IComparable<SByte>, IEquatable <SByte>
 	{
 		public const sbyte MinValue = -128;
 		public const sbyte MaxValue = 127;
@@ -76,7 +71,6 @@ namespace System
 			return m_value;
 		}
 
-#if NET_2_0
 		public int CompareTo (sbyte value)
 		{
 			if (m_value == value)
@@ -91,7 +85,6 @@ namespace System
 		{
 			return obj == m_value;
 		}
-#endif
 
 		internal static bool Parse (string s, bool tryParse, out sbyte result, out Exception exc)
 		{
@@ -214,7 +207,6 @@ namespace System
 			return res;
 		}
 
-#if NET_2_0
 		[CLSCompliant(false)]
 		public static bool TryParse (string s, out sbyte result) 
 		{
@@ -241,7 +233,6 @@ namespace System
 			result = (sbyte)tmpResult;
 			return true;
 		}
-#endif
 
 		public override string ToString ()
 		{

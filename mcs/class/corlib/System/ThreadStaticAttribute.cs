@@ -35,9 +35,7 @@ namespace System
 {
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ThreadStaticAttribute : Attribute
 	{
 		// Constructors

@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.Serialization.Formatters.Binary;
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if(!NET_2_1 || MONOTOUCH)
 using System.Runtime.Hosting;
 using System.Security.Policy;
 #endif
@@ -46,9 +46,7 @@ namespace System
 {
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 #if NET_2_1
 	public sealed class AppDomainSetup
 #else
@@ -71,7 +69,7 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if (!NET_2_1 || MONOTOUCH)
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
@@ -110,17 +108,15 @@ namespace System
 			loader_optimization = setup.loader_optimization;
 			disallow_binding_redirects = setup.disallow_binding_redirects;
 			disallow_code_downloads = setup.disallow_code_downloads;
-//#if NET_2_0
 			_activationArguments = setup._activationArguments;
 			domain_initializer = setup.domain_initializer;
 			application_trust = setup.application_trust;
 			domain_initializer_args = setup.domain_initializer_args;
 			disallow_appbase_probe = setup.disallow_appbase_probe;
 			configuration_bytes = setup.configuration_bytes;
-//#endif
 		}
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if (!NET_2_1 || MONOTOUCH)
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -146,12 +142,7 @@ namespace System
 					// Under Windows prepend "//" to indicate it's a local file
 					appBase = "//" + appBase;
 				}
-#if NET_2_0
 			} else {
-#else
-			// under 1.x the ":" gets a special treatment - but it doesn't make sense outside Windows
-			} else if (!Environment.IsRunningOnWindows || (appBase.IndexOf (':') == -1)) {
-#endif
 				appBase = Path.GetFullPath (appBase);
 			}
 
@@ -283,7 +274,6 @@ namespace System
 			}
 		}
 
-#if NET_1_1
 		public bool DisallowBindingRedirects {
 			get {
 				return disallow_binding_redirects;
@@ -301,9 +291,7 @@ namespace System
 				disallow_code_downloads = value;
 			}
 		}
-#endif
 
-#if NET_2_0
 		public ActivationArguments ActivationArguments {
 			get {
 				if (_activationArguments != null)
@@ -361,11 +349,9 @@ namespace System
 		{
 			configuration_bytes = value;
 		}
-#endif
 
 		private void DeserializeNonPrimitives ()
 		{
-#if NET_2_0
 			lock (this) {
 				if (serialized_non_primitives == null)
 					return;
@@ -381,12 +367,10 @@ namespace System
 
 				serialized_non_primitives = null;
 			}
-#endif
 		}
 
 		internal void SerializeNonPrimitives ()
 		{
-#if NET_2_0
 			object [] arr = new object [3];
 
 			arr [0] = _activationArguments;
@@ -399,7 +383,6 @@ namespace System
 			bf.Serialize (ms, arr);
 
 			serialized_non_primitives = ms.ToArray ();
-#endif
 		}
 #endif // !NET_2_1
 	}

@@ -33,17 +33,11 @@
 
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	[MonoTODO ("Serialization needs tests")]
 	[Serializable]
 	public struct RuntimeTypeHandle : ISerializable
 	{
@@ -82,7 +76,6 @@ namespace System
 			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public override bool Equals (object obj)
 		{
@@ -135,6 +128,5 @@ namespace System
 
 			return Type.GetTypeFromHandle (this).Module.ModuleHandle;
 		}
-#endif
 	}
 }

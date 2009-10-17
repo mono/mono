@@ -37,9 +37,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FormatException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131537);

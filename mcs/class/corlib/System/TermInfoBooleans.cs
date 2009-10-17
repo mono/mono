@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 
 // These values are taken from 'man 5 terminfo' and /usr/include/term.h.
 // They are the indexes for the boolean capabilities in a terminfo file.
@@ -73,5 +72,4 @@ namespace System {
 		Last
 	}
 }
-#endif
 

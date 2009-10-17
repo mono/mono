@@ -32,20 +32,13 @@ using System.Runtime.Serialization;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
-	public sealed class OperatingSystem : ICloneable
-#if NET_2_0
-		, ISerializable
-#endif
+	public sealed class OperatingSystem : ICloneable, ISerializable
 	{
 		private System.PlatformID _platform;
 		private Version _version;
-#if NET_2_0
 		private string _servicePack = String.Empty;
-#endif
 
 		public OperatingSystem (PlatformID platform, Version version)
 		{
@@ -69,7 +62,6 @@ namespace System {
 			}
 		}
 
-#if NET_2_0
 		public string ServicePack {
 			get { return _servicePack; }
 		}
@@ -77,21 +69,18 @@ namespace System {
 		public string VersionString {
 			get { return ToString (); }
 		}
-#endif
 
 		public object Clone ()
 		{
 			return new OperatingSystem (_platform, _version);
 		}
 
-#if NET_2_0
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("_platform", _platform);
 			info.AddValue ("_version", _version);
 			info.AddValue ("_servicePack", _servicePack);
 		}
-#endif
 
 		public override string ToString ()
 		{
@@ -107,13 +96,15 @@ namespace System {
 			case (int) System.PlatformID.Win32Windows:
 				str = "Microsoft Windows 98";
 				break;
-#if NET_1_1
+
 			case (int) System.PlatformID.WinCE:
 				str = "Microsoft Windows CE";
 				break;
-#endif
-			case 4: /* PlatformID.Unix */
-			case 128: /* reported for 1.1 mono */
+
+			case 4:
+				/* PlatformID.Unix */
+			case 128:
+				/* reported for 1.1 mono */
 				str = "Unix";
 				break;
 			case 5:

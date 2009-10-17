@@ -31,21 +31,13 @@
 //
 
 using System.Globalization;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct Single : IComparable, IFormattable, IConvertible
-#if NET_2_0
-		, IComparable <float>, IEquatable <float>
-#endif
+	public struct Single : IComparable, IFormattable, IConvertible, IComparable <float>, IEquatable <float>
 	{
 		public const float Epsilon = 1.4e-45f;
 		public const float MaxValue =  3.40282346638528859e38f;
@@ -105,7 +97,6 @@ namespace System
 			return (value == m_value);
 		}
 
-#if NET_2_0
 		public int CompareTo (float value)
 		{
 			if (IsPositiveInfinity (m_value) && IsPositiveInfinity (value))
@@ -141,7 +132,6 @@ namespace System
 
 			return obj == m_value;
 		}
-#endif
 
 		public unsafe override int GetHashCode ()
 		{
@@ -154,9 +144,7 @@ namespace System
 			return (f == PositiveInfinity || f == NegativeInfinity);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static bool IsNaN (float f)
 		{
 #pragma warning disable 1718
@@ -211,7 +199,6 @@ namespace System
 
 			return (float) parsed_value;
 		}
-#if NET_2_0
 		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out float result)
 		{
 			double parsed_value;
@@ -231,7 +218,7 @@ namespace System
 		{
 			return TryParse (s, NumberStyles.Any, null, out result);
 		}
-#endif
+
 		public override string ToString ()
 		{
 			return NumberFormatter.NumberToString (m_value, null);
@@ -303,17 +290,10 @@ namespace System
 			return System.Convert.ToInt64 (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
@@ -327,40 +307,19 @@ namespace System
 			return System.Convert.ToType (m_value, targetType, provider, false);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 	}
 }

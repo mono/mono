@@ -44,34 +44,25 @@
 
 using System.Globalization;
 using System.Runtime.Serialization;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public unsafe struct IntPtr : ISerializable
 	{
 		private void *m_value;
 
 		public static readonly IntPtr Zero;
 
-#if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif
 		public IntPtr (int value)
 		{
 			m_value = (void *) value;
 		}
 
-#if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif
 		public IntPtr (long value)
 		{
 			/* FIXME: Needs to figure the exact check which works on all architectures */
@@ -86,9 +77,7 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-#if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif
 		unsafe public IntPtr (void *value)
 		{
 			m_value = value;
@@ -101,9 +90,7 @@ namespace System
 		}
 
 		public static int Size {
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 			get {
 				return sizeof (void *);
 			}
@@ -130,17 +117,13 @@ namespace System
 			return (int) m_value;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public int ToInt32 ()
 		{
 			return (int) m_value;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public long ToInt64 ()
 		{
 			// pointer to long conversion is done using conv.u8 by the compiler
@@ -151,9 +134,7 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		unsafe public void *ToPointer ()
 		{
 			return m_value;
@@ -164,10 +145,7 @@ namespace System
 			return ToString (null);
 		}
 
-#if NET_2_0
-		public
-#endif
-		string ToString (string format)
+		public string ToString (string format)
 		{
 			if (Size == 4)
 				return ((int) m_value).ToString (format);
@@ -175,41 +153,31 @@ namespace System
 				return ((long) m_value).ToString (format);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static bool operator == (IntPtr value1, IntPtr value2)
 		{
 			return (value1.m_value == value2.m_value);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static bool operator != (IntPtr value1, IntPtr value2)
 		{
 			return (value1.m_value != value2.m_value);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif
 		public static explicit operator IntPtr (int value)
 		{
 			return new IntPtr (value);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif
 		public static explicit operator IntPtr (long value)
 		{
 			return new IntPtr (value);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
-#endif		
 		[CLSCompliant (false)]
 		unsafe public static explicit operator IntPtr (void *value)
 		{

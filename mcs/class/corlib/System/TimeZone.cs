@@ -48,9 +48,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class TimeZone
 	{
 		// Fields
@@ -112,36 +110,22 @@ namespace System
 
 		public virtual DateTime ToLocalTime (DateTime time)
 		{
-#if NET_2_0
 			if (time.Kind == DateTimeKind.Local)
 				return time;
-#endif
 
 			TimeSpan utcOffset = GetUtcOffset (time);
 			if (utcOffset.Ticks > 0) {
 				if (DateTime.MaxValue - utcOffset < time)
-#if NET_2_0
 					return DateTime.SpecifyKind (DateTime.MaxValue, DateTimeKind.Local);
-#else
-					return DateTime.MaxValue;
-#endif
 			} else if (utcOffset.Ticks < 0) {
 				if (time.Ticks + utcOffset.Ticks < DateTime.MinValue.Ticks)
-#if NET_2_0
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
-#else
-					return DateTime.MinValue;
-#endif
 			}
 
 			DateTime local = time.Add (utcOffset);
 			DaylightTime dlt = GetDaylightChanges (time.Year);
 			if (dlt.Delta.Ticks == 0)
-#if NET_2_0
 				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-#else
-				return local;
-#endif
 
 			// FIXME: check all of the combination of
 			//	- basis: local-based or UTC-based
@@ -150,50 +134,28 @@ namespace System
 
 			// PST should work fine here.
 			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
-#if NET_2_0
 				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-#else
-				return local;
-#endif
 
 			TimeSpan localOffset = GetUtcOffset (local);
-#if NET_2_0
 			return DateTime.SpecifyKind (time.Add (localOffset), DateTimeKind.Local);
-#else
-			return time.Add (localOffset);
-#endif
 		}
 
 		public virtual DateTime ToUniversalTime (DateTime time)
 		{
-#if NET_2_0
 			if (time.Kind == DateTimeKind.Utc)
 				return time;
-#endif
 
 			TimeSpan offset = GetUtcOffset (time);
 
 			if (offset.Ticks < 0) {
 				if (DateTime.MaxValue + offset < time)
-#if NET_2_0
 					return DateTime.SpecifyKind (DateTime.MaxValue, DateTimeKind.Utc);
-#else
-					return DateTime.MaxValue;
-#endif
 			} else if (offset.Ticks > 0) {
 				if (DateTime.MinValue + offset > time)
-#if NET_2_0
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
-#else
-					return DateTime.MinValue;
-#endif
 			}
 
-#if NET_2_0
 			return DateTime.SpecifyKind (new DateTime (time.Ticks - offset.Ticks), DateTimeKind.Utc);
-#else
-			return new DateTime (time.Ticks - offset.Ticks);
-#endif		
 		}
 
 		//

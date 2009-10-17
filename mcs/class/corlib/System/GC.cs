@@ -31,27 +31,12 @@
 //
 
 using System.Runtime.CompilerServices;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System
 {
-	public
-#if NET_2_0
-	static
-#else
-	sealed
-#endif
-	class GC
+	public static class GC
 	{
-
-#if !NET_2_0
-		private GC ()
-		{
-		}
-#endif
 
 		public extern static int MaxGeneration {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -71,12 +56,10 @@ namespace System
 			InternalCollect (generation);
 		}
 
-#if NET_2_0
 		[MonoDocumentationNote ("mode parameter ignored")]
 		public static void Collect (int generation, GCCollectionMode mode) {
 			Collect (generation);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetGeneration (object obj);
@@ -92,25 +75,20 @@ namespace System
 		public extern static long GetTotalMemory (bool forceFullCollection);
 
 		/* this icall has weird semantics check the docs... */
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void KeepAlive (object obj);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void ReRegisterForFinalize (object obj);
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void SuppressFinalize (object obj);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void WaitForPendingFinalizers ();
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int CollectionCount (int generation);
@@ -125,6 +103,5 @@ namespace System
 		public static void RemoveMemoryPressure (long bytesAllocated) {
 			RecordPressure (-bytesAllocated);
 		}
-#endif
 	}
 }

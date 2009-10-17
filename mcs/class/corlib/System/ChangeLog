@@ -1,3 +1,13 @@
+2009-10-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Jumbo patch to drop support for pre-NET_2_0 code:
+
+	Remove ONLY_1_1 code
+	Remove NET_1_0 only code
+	Remove NET_2_0 defines assuming the value is true.
+
+	Improve one MonoTODO;   Implement one MonoTODO/Niex.
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* AppDomain.cs: Re-add BaseDirectory in the MonoTouch profile.

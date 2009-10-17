@@ -38,9 +38,7 @@ using System.Text;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class BadImageFormatException : SystemException
 	{
 		const int Result = unchecked ((int)0x8007000B);
@@ -94,21 +92,10 @@ namespace System
 		{
 			get {
 				if (base.message == null) {
-#if NET_2_0
 					return string.Format (CultureInfo.CurrentCulture,
 						"Could not load file or assembly '{0}' or one of"
 						+ " its dependencies. An attempt was made to load"
 						+ " a program with an incorrect format.", fileName);
-#else
-					if (fileName == null) {
-						return "Format of the executable (.exe) or library"
-							+ " (.dll) is invalid.";
-					} else {
-						return string.Format (CultureInfo.CurrentCulture,
-							"The format of the file '{0}' is invalid.",
-							FileName);
-					}
-#endif
 				}
 				return base.Message;
 			}
@@ -143,11 +130,7 @@ namespace System
 
 			if (fileName != null && fileName.Length > 0) {
 				sb.Append (Environment.NewLine);
-#if NET_2_0
 				sb.AppendFormat ("File name: '{0}'", fileName);
-#else
-				sb.AppendFormat ("File name: \"{0}\"", fileName);
-#endif
 			}
 
 			if (this.InnerException != null)

@@ -38,9 +38,7 @@ namespace System
 	/// </summary>
 	[AttributeUsage (AttributeTargets.All)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class CLSCompliantAttribute : Attribute
 	{
 		bool is_compliant;

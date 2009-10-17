@@ -28,8 +28,6 @@
  */
 
 
-#if NET_2_0 // Introduced by .NET 3.5 for 2.0 mscorlib
-
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -851,4 +849,3 @@ namespace System
 		}
 	}
 }
-#endif

@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ApplicationException : Exception
 	{
 		const int Result = unchecked ((int)0x80131600);

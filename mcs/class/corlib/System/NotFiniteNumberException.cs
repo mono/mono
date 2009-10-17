@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class NotFiniteNumberException : ArithmeticException
 	{
 		const int Result = unchecked ((int)0x80131528);
@@ -86,13 +84,11 @@ namespace System
 			offending_number = info.GetDouble ("OffendingNumber");
 		}
 
-#if NET_2_0
 		public NotFiniteNumberException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 			HResult = Result;
 		}
-#endif
 
 		// Properties
 		public double OffendingNumber {

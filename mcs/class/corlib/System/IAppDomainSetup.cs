@@ -37,9 +37,7 @@ namespace System {
 
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("27FFF232-A7A8-40DD-8D4A-734AD59fCD41")]
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public interface IAppDomainSetup {
 
 		string ApplicationBase { get; set; }

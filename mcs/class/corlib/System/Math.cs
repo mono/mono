@@ -32,24 +32,12 @@
 //
 
 using System.Runtime.CompilerServices;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System
 {
-#if NET_2_0
 	public static class Math
 	{
-#else
-	public sealed class Math
-	{
-		private Math ()
-		{
-		}
-#endif
-
 		public const double E = 2.7182818284590452354;
 		public const double PI = 3.14159265358979323846;
 
@@ -97,7 +85,6 @@ namespace System
 			return (short)((value < 0)? -value: value);
 		}
 
-#if NET_2_0
 		public static decimal Ceiling (decimal d)
 		{
 			decimal result = Floor(d);
@@ -106,7 +93,6 @@ namespace System
 			}
 			return result;
 		}
-#endif
 
 		public static double Ceiling (double a)
 		{
@@ -120,7 +106,6 @@ namespace System
 		// The following methods are defined in ECMA specs but they are
 		// not implemented in MS.NET. However, they are in MS.NET 1.1
 
-#if (!NET_1_0)
 		public static long BigMul (int a, int b)
 		{
 			return ((long)a * (long)b);
@@ -137,7 +122,6 @@ namespace System
 			result = (a % b);
 			return (long)(a / b);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Floor (double d);
@@ -160,25 +144,19 @@ namespace System
 			return (result == -0)? 0: result;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static byte Max (byte val1, byte val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static decimal Max (decimal val1, decimal val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static double Max (double val1, double val2)
 		{
 			if (Double.IsNaN (val1) || Double.IsNaN (val2)) {
@@ -187,9 +165,7 @@ namespace System
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static float Max (float val1, float val2)
 		{
 			if (Single.IsNaN (val1) || Single.IsNaN (val2)) {
@@ -198,85 +174,65 @@ namespace System
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static int Max (int val1, int val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static long Max (long val1, long val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static sbyte Max (sbyte val1, sbyte val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static short Max (short val1, short val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static uint Max (uint val1, uint val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static ulong Max (ulong val1, ulong val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static ushort Max (ushort val1, ushort val2)
 		{
 			return (val1 > val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static byte Min (byte val1, byte val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static decimal Min (decimal val1, decimal val2)
 		{
 			return (val1 < val2)? val1: val2;
  		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static double Min (double val1, double val2)
 		{
 			if (Double.IsNaN (val1) || Double.IsNaN (val2)) {
@@ -285,9 +241,7 @@ namespace System
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static float Min (float val1, float val2)
 		{
 			if (Single.IsNaN (val1) || Single.IsNaN (val2)) {
@@ -296,60 +250,46 @@ namespace System
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static int Min (int val1, int val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static long Min (long val1, long val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static sbyte Min (sbyte val1, sbyte val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static short Min (short val1, short val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
-		[CLSCompliant (false)]
+ 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+ 		[CLSCompliant (false)]
 		public static uint Min (uint val1, uint val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static ulong Min (ulong val1, ulong val2)
 		{
 			return (val1 < val2)? val1: val2;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[CLSCompliant (false)]
 		public static ushort Min (ushort val1, ushort val2)
 		{
@@ -375,7 +315,6 @@ namespace System
 			return Decimal.Round (d, decimals);
 		}
 
-#if NET_2_0
 		public static decimal Round (decimal d, MidpointRounding mode)
 		{
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
@@ -402,7 +341,6 @@ namespace System
 		{
 			return Decimal.Round (d, decimals, mode);
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Round (double a);
@@ -419,7 +357,6 @@ namespace System
 		private extern static double Round2 (double value, int digits, bool away_from_zero);
 
 
-#if NET_2_0
 		public static double Round (double value, MidpointRounding mode)
 		{
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
@@ -463,7 +400,6 @@ namespace System
 		{
 			return Decimal.Floor (d);
 		}
-#endif
 
 		public static int Sign (decimal value)
 		{
@@ -556,9 +492,7 @@ namespace System
 		public extern static double Pow (double x, double y);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public extern static double Sqrt (double d);
 	}
 }

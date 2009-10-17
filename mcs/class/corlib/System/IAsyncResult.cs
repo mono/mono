@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public interface IAsyncResult
 	{
 		object AsyncState

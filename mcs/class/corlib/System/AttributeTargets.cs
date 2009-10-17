@@ -35,10 +35,8 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	[Flags]
 	public enum AttributeTargets
 	{
@@ -57,14 +55,9 @@ namespace System {
 		Delegate = 0x00001000,
 		ReturnValue = 0x00002000,
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		GenericParameter = 0x00004000,
 		All = Assembly | Module | Class | Struct | Enum | Constructor |
 			Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue | GenericParameter
-#else
-		All = Assembly | Module | Class | Struct | Enum | Constructor |
-			Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue
-#endif
 	}
 }
 

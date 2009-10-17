@@ -42,10 +42,8 @@ namespace System {
 
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
-#endif
 	public abstract class Type : MemberInfo, IReflect, _Type {
 		
 		internal RuntimeTypeHandle _impl;
@@ -378,9 +376,7 @@ namespace System {
 			get {return MemberTypes.TypeInfo;}
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		override
-#endif
 		public abstract Module Module {get;}
 	
 		public abstract string Namespace {get;}
@@ -391,17 +387,11 @@ namespace System {
 			}
 		}
 
-#if NET_2_0
 		public virtual RuntimeTypeHandle TypeHandle {
 			get { return default (RuntimeTypeHandle); }
 		}
-#else
-		public abstract RuntimeTypeHandle TypeHandle {get;}
-#endif
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public ConstructorInfo TypeInitializer {
 			get {
 				return GetConstructorImpl (
@@ -448,11 +438,7 @@ namespace System {
 		public static Type GetType(string typeName)
 		{
 			if (typeName == null)
-#if NET_2_0
 				throw new ArgumentNullException ("TypeName");
-#else
-				throw new ArgumentNullException ("className");
-#endif
 
 			return internal_from_name (typeName, false, false);
 		}
@@ -460,11 +446,7 @@ namespace System {
 		public static Type GetType(string typeName, bool throwOnError)
 		{
 			if (typeName == null)
-#if NET_2_0
 				throw new ArgumentNullException ("TypeName");
-#else
-				throw new ArgumentNullException ("className");
-#endif
 
 			Type type = internal_from_name (typeName, throwOnError, false);
 			if (throwOnError && type == null)
@@ -476,11 +458,7 @@ namespace System {
 		public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
 		{
 			if (typeName == null)
-#if NET_2_0
 				throw new ArgumentNullException ("TypeName");
-#else
-				throw new ArgumentNullException ("className");
-#endif
 
 			Type t = internal_from_name (typeName, throwOnError, ignoreCase);
 			if (throwOnError && t == null)
@@ -545,13 +523,9 @@ namespace System {
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{
 			if (handle.Value == IntPtr.Zero)
-#if NET_2_0
 				// This is not consistent with the other GetXXXFromHandle methods, but
 				// MS.NET seems to do this
 				return null;
-#else
-				throw new ArgumentException ("The handle is invalid.");
-#endif
 
 			return internal_from_handle (handle.Value);
 		}
@@ -583,11 +557,7 @@ namespace System {
 		public static RuntimeTypeHandle GetTypeHandle (object o)
 		{
 			if (o == null)
-#if NET_2_0
 				throw new ArgumentNullException ();
-#else
-				throw new ArgumentNullException ("o");
-#endif
 
 			return o.GetType().TypeHandle;
 		}
@@ -603,9 +573,7 @@ namespace System {
 			return base.GetType ();
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null || c == this)
@@ -646,9 +614,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif		
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
 			InterfaceMapping res;
 			if (interfaceType == null)
@@ -970,26 +936,20 @@ namespace System {
 			return typeof (MarshalByRefObject).IsAssignableFrom (this);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
 			return GetConstructor (BindingFlags.Public|BindingFlags.Instance, null, CallingConventions.Any, types, null);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       Type[] types, ParameterModifier[] modifiers)
 		{
 			return GetConstructor (bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public ConstructorInfo GetConstructor (BindingFlags bindingAttr, Binder binder,
 						       CallingConventions callConvention,
 						       Type[] types, ParameterModifier[] modifiers)
@@ -1005,17 +965,13 @@ namespace System {
 			return GetConstructorImpl (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public ConstructorInfo[] GetConstructors ()
 		{
 			return GetConstructors (BindingFlags.Public | BindingFlags.Instance);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
 		public virtual MemberInfo[] GetDefaultMembers ()
@@ -1171,7 +1127,6 @@ namespace System {
 			}
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public virtual Type[] GetGenericArguments ()
 		{
 			throw new NotSupportedException ();
@@ -1392,7 +1347,6 @@ namespace System {
 			return attrs;
 		}			
 
-#endif
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 		public virtual bool IsEquivalentTo (Type other)

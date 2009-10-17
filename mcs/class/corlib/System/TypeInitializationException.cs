@@ -37,9 +37,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class TypeInitializationException : SystemException
 	{
 		string type_name;

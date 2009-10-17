@@ -92,12 +92,6 @@ namespace System
 					del = Delegate.CreateDelegate (dt, tt, methodName);
 				}
 
-#if !NET_2_0				
-				if (!del.Method.IsPublic)
-					throw new SerializationException (Locale.GetText (
-						"Serialization will not deserialize delegates to non-public methods."));
-#endif				
-
 				return del;
 			}
 		}

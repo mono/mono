@@ -37,17 +37,10 @@ namespace System
 	[AttributeUsage (AttributeTargets.All)]
 	[Serializable]
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Attribute))]
-#endif
-
-#if NET_1_1
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	public abstract class Attribute : _Attribute {
-#else
-	public abstract class Attribute {
-#endif
 		protected Attribute ()
 		{
 		}
@@ -315,14 +308,12 @@ namespace System
 				mtype != MemberTypes.NestedType)
 				throw new NotSupportedException (Locale.GetText (
 					"Element is not a constructor, method, property, event, type or field."));
-#if NET_2_0
 			// MS ignores the inherit param in PropertyInfo's ICustomAttributeProvider 
 			// implementation, but not in the Attributes, so directly get the attributes
 			// from MonoCustomAttrs instead of going throught the PropertyInfo's 
 			// ICustomAttributeProvider
 			if (mtype == MemberTypes.Property)
 				return MonoCustomAttrs.IsDefined (element, attributeType, inherit);
-#endif
 			return ((MemberInfo) element).IsDefined (attributeType, inherit);
 		}
 
@@ -371,7 +362,6 @@ namespace System
 			return ValueType.DefaultEquals (this, obj);
 		}
 
-#if NET_1_1
 		void _Attribute.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -392,6 +382,5 @@ namespace System
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

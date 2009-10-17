@@ -100,14 +100,7 @@ using System.Runtime.InteropServices;
 namespace System {
   
 //	[CLSCompliant(false)]
-#if NET_2_0
 	public static class Convert {
-#else
-	public sealed class Convert {
-		private Convert ()
-		{
-		}
-#endif
 
 		// Fields
 		public static readonly object DBNull = System.DBNull.Value;
@@ -143,11 +136,7 @@ namespace System {
 				return new byte[0];
 			}
 
-#if NET_2_0
 			return InternalFromBase64String (s, true);
-#else
-			return InternalFromBase64String (s, false);
-#endif
 		}
 
 		public static TypeCode GetTypeCode (object value)
@@ -217,7 +206,6 @@ namespace System {
 			return (new ASCIIEncoding ().GetString (outArr));
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public static string ToBase64String (byte[] inArray, Base64FormattingOptions options)
 		{
@@ -290,9 +278,6 @@ namespace System {
 			} while (b.Length > 0);
 			return sb;
 		}
-#endif
-
-
 		
 		// ========== Boolean Conversions ========== //
 	

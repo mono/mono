@@ -163,7 +163,6 @@ namespace System
 				vt = (short)VarEnum.VT_BOOL;
 				lVal = ((bool)obj) ? -1 : 0;
 			}
-#if NET_2_0
 			else if (t == typeof (BStrWrapper))
 			{
 				vt = (short)VarEnum.VT_BSTR;
@@ -179,7 +178,6 @@ namespace System
 				vt = (short)VarEnum.VT_DISPATCH;
 				pdispVal = Marshal.GetIDispatchForObject(((DispatchWrapper)obj).WrappedObject);
 			}
-#endif
 			else
 			{
 				try 

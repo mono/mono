@@ -37,10 +37,8 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
+	[Serializable]
 	public class DuplicateWaitObjectException : ArgumentException
 	{
 		const int Result = unchecked ((int)0x80131529);
@@ -64,13 +62,11 @@ namespace System
 			HResult = Result;
 		}
 
-#if NET_2_0
 		public DuplicateWaitObjectException (string message, Exception innerException)
 			: base(message, innerException)
 		{
 			HResult = Result;
 		}
-#endif
 
 		protected DuplicateWaitObjectException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

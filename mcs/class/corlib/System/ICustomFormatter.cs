@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
         [ComVisible(true)]
-#endif
 	public interface ICustomFormatter {
 		string Format (string format, object arg, IFormatProvider formatProvider);
 	}

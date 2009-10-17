@@ -337,11 +337,7 @@ namespace System
 						     ParameterModifier[] modifiers,
 						     CultureInfo culture, string[] namedParameters)
 		{
-#if NET_2_0
 			const string bindingflags_arg = "bindingFlags";
-#else
-			const string bindingflags_arg = "invokeAttr";
-#endif
 
 
 			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
@@ -435,10 +431,8 @@ namespace System
 			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
 				FieldInfo f = GetField (name, invokeAttr);
 				if (f != null) {
-#if NET_2_0
 					if (args == null)
 						throw new ArgumentNullException ("providedArgs");
-#endif
 					if ((args == null) || args.Length != 1)
 						throw new ArgumentException ("Only the field value can be specified to set a field value.", bindingflags_arg);
 					f.SetValue (target, args [0]);
@@ -638,7 +632,6 @@ namespace System
 			return getFullName (false, false);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type [] GetGenericArguments ();
 
@@ -677,7 +670,6 @@ namespace System
 
 			return res;
 		}
-#endif
 
 		private MethodBase CheckMethodSecurity (MethodBase mb)
 		{

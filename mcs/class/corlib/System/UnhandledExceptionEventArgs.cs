@@ -30,17 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 using System.Runtime.InteropServices;
 
 namespace System 
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class UnhandledExceptionEventArgs : EventArgs
 	{
 		private object exception;
@@ -53,18 +49,14 @@ namespace System
 		}
 
 		public object ExceptionObject {
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 			get {
 				return exception;
 			}
 		}
 
 		public bool IsTerminating {
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 			get {
 				return m_isTerminating;
 			}

@@ -31,9 +31,7 @@
 
 namespace System
 {
-#if NET_2_0
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public delegate void AssemblyLoadEventHandler (object sender, AssemblyLoadEventArgs args);
 }

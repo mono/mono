@@ -27,8 +27,6 @@
 
 // Net 3.5 type
 
-#if NET_2_0
-
 namespace System
 {
 	[Serializable]
@@ -38,5 +36,3 @@ namespace System
 		Optimized = 2
 	}
 }
-
-#endif

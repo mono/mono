@@ -33,13 +33,8 @@ namespace System
 {
 	[Serializable]
 	[CLSCompliant (false)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct UInt16 : IFormattable, IConvertible, IComparable
-#if NET_2_0
-		, IComparable<UInt16>, IEquatable <UInt16>
-#endif
+	public struct UInt16 : IFormattable, IConvertible, IComparable, IComparable<UInt16>, IEquatable <UInt16>
 	{
 		public const ushort MaxValue = 0xffff;
 		public const ushort MinValue = 0;
@@ -70,7 +65,6 @@ namespace System
 			return m_value;
 		}
 
-#if NET_2_0
 		public int CompareTo (ushort value)
 		{
 			return m_value - value;
@@ -80,8 +74,6 @@ namespace System
 		{
 			return obj == m_value;
 		}
-#endif
-
 
 		[CLSCompliant (false)]
 		public static ushort Parse (string s, IFormatProvider provider)
@@ -111,7 +103,6 @@ namespace System
 			return Parse (s, NumberStyles.Number, null);
 		}
 
-#if NET_2_0
 		[CLSCompliant(false)]
 		public static bool TryParse (string s, out ushort result) 
 		{
@@ -133,7 +124,6 @@ namespace System
 			result = (ushort)tmpResult;
 			return true;
 		}
-#endif
 
 		public override string ToString ()
 		{
@@ -224,40 +214,18 @@ namespace System
 			return System.Convert.ToType (m_value, targetType, provider, false);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return m_value;
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
-
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
 	}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 }

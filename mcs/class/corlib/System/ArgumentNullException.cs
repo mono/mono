@@ -37,9 +37,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ArgumentNullException : ArgumentException
 	{
 		const int Result = unchecked ((int)0x80004003);
@@ -63,13 +61,11 @@ namespace System
 			HResult = Result;
 		}
 
-#if NET_2_0
 		public ArgumentNullException (string message, Exception innerException)
 		: base (message, innerException)
 		{
 			HResult = Result;
 		}
-#endif
 
 		protected ArgumentNullException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

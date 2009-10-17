@@ -36,9 +36,7 @@ using System.Runtime.InteropServices;
 namespace System 
 {
 	[CLSCompliant (false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct TypedReference 
 	{
 #pragma warning disable 169

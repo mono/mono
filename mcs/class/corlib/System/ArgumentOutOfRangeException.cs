@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ArgumentOutOfRangeException : ArgumentException
 	{
 		const int Result = unchecked ((int)0x80131502);
@@ -79,13 +77,11 @@ namespace System
 			actual_value = info.GetString ("ActualValue");
 		}
 
-#if NET_2_0
 		public ArgumentOutOfRangeException (string message, Exception innerException)
 		: base (message, innerException)
 		{
 			HResult = Result;
 		}
-#endif
 
 		// Properties
 		public virtual object ActualValue {

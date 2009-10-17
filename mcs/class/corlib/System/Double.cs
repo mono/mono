@@ -34,21 +34,13 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System {
 	
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct Double : IComparable, IFormattable, IConvertible
-#if NET_2_0
-		, IComparable <double>, IEquatable <double>
-#endif
+	public struct Double : IComparable, IFormattable, IConvertible, IComparable <double>, IEquatable <double>
 	{
 		public const double Epsilon = 4.9406564584124650e-324;
 		public const double MaxValue =  1.7976931348623157e308;
@@ -105,7 +97,6 @@ namespace System {
 			return (value == m_value);
 		}
 
-#if NET_2_0
 		public int CompareTo (double value)
 		{
 			if (IsPositiveInfinity(m_value) && IsPositiveInfinity(value))
@@ -142,7 +133,6 @@ namespace System {
 
 			return obj == m_value;
 		}
-#endif
 
 		public override unsafe int GetHashCode ()
 		{
@@ -155,9 +145,7 @@ namespace System {
 			return (d == PositiveInfinity || d == NegativeInfinity);
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static bool IsNaN (double d)
 		{
 #pragma warning disable 1718
@@ -227,13 +215,11 @@ namespace System {
 					exc = new FormatException ();
 				return false;
 			}
-#if NET_2_0
 			// yes it's counter intuitive (buggy?) but even TryParse actually throws in this case
 			if ((style & NumberStyles.AllowHexSpecifier) != 0) {
 				string msg = Locale.GetText ("Double doesn't support parsing with '{0}'.", "AllowHexSpecifier");
 				throw new ArgumentException (msg);
 			}
-#endif
 			if (style > NumberStyles.Any) {
 				if (!tryParse)
 					exc = new ArgumentException();
@@ -496,12 +482,12 @@ namespace System {
 
 			return true;
 		}
-#if NET_2_0
+
 		public static bool TryParse (string s, out double result)
 		{
 			return TryParse (s, NumberStyles.Any, null, out result);
 		}
-#endif
+
 		public override string ToString ()
 		{
 			return NumberFormatter.NumberToString (m_value, null);
@@ -581,57 +567,27 @@ namespace System {
 			return System.Convert.ToInt64 (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return System.Convert.ToSingle (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
-
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
-
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 	}
 }

@@ -36,9 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct RuntimeArgumentHandle
 	{
 		internal IntPtr args;

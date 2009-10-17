@@ -33,14 +33,8 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-#if NET_2_0
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
-#else
-	[AttributeUsage (AttributeTargets.Field)]
-#endif
 	public sealed class NonSerializedAttribute : Attribute
 	{
 		public NonSerializedAttribute ()

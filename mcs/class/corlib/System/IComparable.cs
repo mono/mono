@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public interface IComparable {
 		int CompareTo (object obj);
 	}
@@ -45,7 +43,7 @@ namespace System {
 	public interface IComparable <in T> {
 		int CompareTo (T other);
 	}
-#elif NET_2_0
+#else
 	public interface IComparable <T> {
 		int CompareTo (T other);
 	}

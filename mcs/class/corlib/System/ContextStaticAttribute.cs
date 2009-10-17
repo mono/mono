@@ -38,9 +38,7 @@ namespace System
 	/// </summary>
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ContextStaticAttribute : Attribute
 	{
 		public ContextStaticAttribute ()

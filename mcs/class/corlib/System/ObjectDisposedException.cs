@@ -37,9 +37,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ObjectDisposedException : InvalidOperationException
 	{
 		// Does not override the HResult from InvalidOperationException
@@ -62,12 +60,10 @@ namespace System
 			msg = message;
 		}
 
-#if NET_2_0
 		public ObjectDisposedException (string message, Exception innerException)
 			: base(message, innerException)
 		{
 		}
-#endif
 
 		protected ObjectDisposedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

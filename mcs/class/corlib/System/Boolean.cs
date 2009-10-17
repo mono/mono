@@ -49,13 +49,8 @@ namespace System
 	/// Represents the boolean values of logical true and false.
 	/// </summary>
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-	public struct Boolean : IComparable, IConvertible
-#if NET_2_0
-		, IComparable <bool>, IEquatable <bool>
-#endif
+	public struct Boolean : IComparable, IConvertible, IComparable <bool>, IEquatable <bool>
 	{
 		/// <value>
 		/// The String representation of Boolean False
@@ -127,7 +122,6 @@ namespace System
 			return m_value ? value : !value;
 		}
 
-#if NET_2_0
 		public int CompareTo (bool value)
 		{
 			if (m_value == value)
@@ -139,7 +133,6 @@ namespace System
 		{
 			return m_value == obj;
 		}
-#endif
 
 		/// <summary>
 		/// Generates a hashcode for this object.
@@ -187,7 +180,6 @@ namespace System
 				"Value is not equivalent to either TrueString or FalseString."));
 		}
 
-#if NET_2_0
 		public static bool TryParse (string value, out bool result)
 		{
 			result = false;
@@ -208,7 +200,6 @@ namespace System
 
 			return false;
 		}
-#endif
 
 		/// <summary>
 		/// Returns a string representation of this Boolean object.
@@ -280,17 +271,10 @@ namespace System
 			return System.Convert.ToInt64 (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
@@ -302,40 +286,19 @@ namespace System
 			return ToString ();
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 	}
 }

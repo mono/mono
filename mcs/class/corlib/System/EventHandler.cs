@@ -33,8 +33,6 @@
 
 namespace System {
 
-#if NET_2_0
-
 	[Serializable]
 #if NET_4_0
 	public delegate void EventHandler <in TEventArgs> (object sender, TEventArgs e) where TEventArgs : EventArgs;
@@ -44,7 +42,6 @@ namespace System {
 
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public delegate void EventHandler (object sender, EventArgs e);
 
 }

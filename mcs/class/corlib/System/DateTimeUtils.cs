@@ -27,11 +27,7 @@ using System.Globalization;
 using System.Text;
 
 namespace System {
-	internal 
-#if NET_2_0
-	static
-#endif
-	class DateTimeUtils {
+	internal static class DateTimeUtils {
 		public static int CountRepeat (string fmt, int p, char c)
 		{
 			int l = fmt.Length;
@@ -124,13 +120,11 @@ namespace System {
 			case 'M':
 				pattern = dfi.MonthDayPattern;
 				break;
-#if NET_2_0
 			case 'o':
 			case 'O':
 				pattern = dfi.RoundtripPattern;
 				use_invariant = true;
 				break;
-#endif
 			case 'r':
 			case 'R':
 				pattern = dfi.RFC1123Pattern;
@@ -176,16 +170,12 @@ namespace System {
 			return pattern;
 		}
 
-#if NET_2_0
 		public static string ToString (DateTime dt, string format, DateTimeFormatInfo dfi)
 		{
 			return ToString (dt, null, format, dfi);
 		}
 
 		public static string ToString (DateTime dt, TimeSpan? utc_offset, string format, DateTimeFormatInfo dfi)
-#else
-		public static string ToString (DateTime dt, string format, DateTimeFormatInfo dfi)
-#endif
 		{
 			// the length of the format is usually a good guess of the number
 			// of chars in the result. Might save us a few bytes sometimes
@@ -236,11 +226,9 @@ namespace System {
 					tokLen = DateTimeUtils.CountRepeat (format, i, ch);
 					DateTimeUtils.ZeroPad (result, dt.Second, tokLen == 1 ? 1 : 2);
 					break;
-#if NET_2_0
 				case 'F':
 					omitZeros = true;
 					goto case 'f';
-#endif
 				case 'f':
 					// fraction of second, to same number of
 					// digits as there are f's
@@ -279,9 +267,7 @@ namespace System {
 					// timezone. t = +/-h; tt = +/-hh; ttt+=+/-hh:mm
 					tokLen = DateTimeUtils.CountRepeat (format, i, ch);
 					TimeSpan offset = 
-#if NET_2_0
 						utc_offset ?? 
-#endif
 						TimeZone.CurrentTimeZone.GetUtcOffset (dt);
 
 					if (offset.Ticks >= 0)
@@ -303,7 +289,6 @@ namespace System {
 						break;
 					}
 					break;
-#if NET_2_0
 				case 'K': // 'Z' (UTC) or zzz (Local)
 					tokLen = 1;
 
@@ -319,7 +304,6 @@ namespace System {
 					} else if (dt.Kind == DateTimeKind.Utc)
 						result.Append ('Z');
 					break;
-#endif
 				//
 				// Date tokens
 				//

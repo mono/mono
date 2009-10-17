@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable, AttributeUsage (AttributeTargets.Class)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class AttributeUsageAttribute : Attribute
 	{
 		AttributeTargets valid_on;

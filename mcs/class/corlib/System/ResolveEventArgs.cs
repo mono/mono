@@ -34,9 +34,7 @@ using System.Reflection;
 
 namespace System
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ResolveEventArgs : EventArgs
 	{
 		private string m_Name;

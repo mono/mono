@@ -38,9 +38,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class InvalidCastException : SystemException
 	{
 		const int Result = unchecked ((int)0x80004002);
@@ -64,13 +62,11 @@ namespace System
 			HResult = Result;
 		}
 
-#if NET_2_0
 		public InvalidCastException(string message, int errorCode)
 			: base(message)
 		{
 			HResult = errorCode;
 		}
-#endif
 
 		protected InvalidCastException (SerializationInfo info, StreamingContext context)
 			: base (info, context)

@@ -57,9 +57,7 @@ namespace System
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct 
 		| AttributeTargets.Enum | AttributeTargets.Delegate, 
 		Inherited=false, AllowMultiple=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class SerializableAttribute : Attribute
 	{
 	}

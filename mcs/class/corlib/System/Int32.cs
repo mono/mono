@@ -33,13 +33,8 @@ using System.Threading;
 namespace System {
 	
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-	public struct Int32 : IFormattable, IConvertible, IComparable
-#if NET_2_0
-		, IComparable<Int32>, IEquatable <Int32>
-#endif
+	public struct Int32 : IFormattable, IConvertible, IComparable, IComparable<Int32>, IEquatable <Int32>
 	{
 
 		public const int MaxValue = 0x7fffffff;
@@ -78,7 +73,6 @@ namespace System {
 			return m_value;
 		}
 
-#if NET_2_0
 		public int CompareTo (int value)
 		{
 			if (m_value == value)
@@ -93,7 +87,6 @@ namespace System {
 		{
 			return obj == m_value;
 		}
-#endif
 
 		internal static bool ProcessTrailingWhitespace (bool tryParse, string s, int position, ref Exception exc)
 		{
@@ -693,17 +686,10 @@ namespace System {
 			return System.Convert.ToInt64 (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
@@ -717,40 +703,19 @@ namespace System {
 			return System.Convert.ToType (m_value, targetType, provider, false);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 	}
 }

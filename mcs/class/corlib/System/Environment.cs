@@ -42,18 +42,9 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-#if NET_2_0
 	public static class Environment {
-#else
-	public sealed class Environment {
 
-		private Environment ()
-		{
-		}
-#endif
 		/*
 		 * This is the version number of the corlib-runtime interface. When
 		 * making changes to this interface (by changing the layout
@@ -65,19 +56,12 @@ namespace System {
 		 */
 		private const int mono_corlib_version = 86;
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public enum SpecialFolder
-		{	// TODO: Determine if these windoze style folder identifiers 
-			//       have unix/linux counterparts
-#if NET_2_0
+		{	
 			MyDocuments = 0x05,
-#endif
-#if NET_1_1
 			Desktop = 0x00,
 			MyComputer = 0x11,
-#endif
 			Programs = 0x02,
 			Personal = 0x05,
 			Favorites = 0x06,
@@ -138,10 +122,7 @@ namespace System {
 			set;
 		}
 
-#if NET_1_1
-		static
-#endif
-		public extern bool HasShutdownStarted
+		static public extern bool HasShutdownStarted
 		{
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
@@ -378,7 +359,7 @@ namespace System {
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public static IDictionary GetEnvironmentVariables ()
 		{
 			StringBuilder sb = null;
@@ -503,11 +484,10 @@ namespace System {
 			}
 
 			switch (folder) {
-#if NET_1_1
 			// MyComputer is a virtual directory
 			case SpecialFolder.MyComputer:
 				return String.Empty;
-#endif
+
 			// personal == ~
 			case SpecialFolder.Personal:
 #if MONOTOUCH
@@ -521,9 +501,7 @@ namespace System {
 			//use FDO's DATA_HOME. This is *NOT* synced
 			case SpecialFolder.LocalApplicationData:
 				return data;
-#if NET_1_1
 			case SpecialFolder.Desktop:
-#endif
 			case SpecialFolder.DesktopDirectory:
 				return ReadXdgUserDir (config, home, "XDG_DESKTOP_DIR", "Desktop");
 
@@ -564,7 +542,7 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void internalBroadcastSettingChange ();
 
@@ -686,13 +664,13 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 #endif
-#if NET_2_0
+
 		public static extern int ProcessorCount {
 			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;			
 		}
-#endif
+
 		// private methods
 
 		internal static bool IsRunningOnWindows {

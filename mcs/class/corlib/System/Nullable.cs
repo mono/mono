@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -190,4 +188,3 @@ namespace System
 #pragma warning restore 169
 	}
 }
-#endif

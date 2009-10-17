@@ -27,7 +27,6 @@
 
 using System.Runtime.Serialization;
 
-#if NET_2_0
 
 namespace System
 {
@@ -62,4 +61,3 @@ namespace System
 	}
 }
 
-#endif

@@ -33,18 +33,13 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System {
 
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class Object {
 
 		// <summary>
@@ -73,9 +68,7 @@ namespace System {
 		// <summary>
 		//   Initializes a new instance of the object class.
 		// </summary>
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 		public Object ()
 		{
 		}
@@ -83,9 +76,7 @@ namespace System {
 		// <summary>
 		//   Object destructor. 
 		// </summary>
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		~Object ()
 		{
 		}
@@ -127,9 +118,7 @@ namespace System {
 		//   Tests whether a is equal to b.
 		//   Can not figure out why this even exists
 		// </summary>
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static bool ReferenceEquals (object objA, object objB)
 		{
 			return (objA == objB);

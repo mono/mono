@@ -38,19 +38,13 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
 	public struct Char : IComparable, IConvertible, IComparable <char>, IEquatable <char>
-#else
-	public struct Char : IComparable, IConvertible
-#endif
 	{
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
@@ -105,7 +99,6 @@ namespace System
 			return ((char) obj) == m_value;
 		}
 
-#if NET_2_0
 		public int CompareTo (char value)
 		{
 			if (m_value == value)
@@ -170,7 +163,6 @@ namespace System
 			CheckParameter (s, index);
 			return index + 1 < s.Length && IsSurrogatePair (s [index], s [index + 1]);
 		}
-#endif
 
 		public override int GetHashCode ()
 		{
@@ -239,7 +231,6 @@ namespace System
 			return IsDigit (s[index]);
 		}
 
-#if NET_2_0
 		public static bool IsHighSurrogate (char c)
 		{
 			return c >= '\uD800' && c <= '\uDBFF';
@@ -250,7 +241,6 @@ namespace System
 			CheckParameter (s, index);
 			return IsHighSurrogate (s [index]);
 		}
-#endif
 
 		public static bool IsLetter (char c)
 		{
@@ -293,7 +283,6 @@ namespace System
 			return IsLower (s[index]);
 		}
 
-#if NET_2_0
 		public static bool IsLowSurrogate (char c)
 		{
 			return c >= '\uDC00' && c <= '\uDFFF';
@@ -304,7 +293,6 @@ namespace System
 			CheckParameter (s, index);
 			return IsLowSurrogate (s [index]);
 		}
-#endif
 
 		public static bool IsNumber (char c)
 		{
@@ -402,11 +390,7 @@ namespace System
 					return true;
 				// FIXME: (char)0x205F Medium Mathematical Space has wrong category in 2.0 Profile
 				// Remove the if NET_2_0 case once the error is corrected
-#if NET_2_0
 				return  c >= (char)0x09 && c <= (char)0x0d || c == (char)0x85 || c == (char)0x205F;
-#else
-				return  c >= (char)0x09 && c <= (char)0x0d || c == (char)0x85;
-#endif
 			}
 		}
 
@@ -426,7 +410,6 @@ namespace System
 					Locale.GetText ("The value of index is less than zero, or greater than or equal to the length of s."));
 		}
 
-#if NET_2_0
 		public static bool TryParse (string s, out char result)
 		{
 			if (s == null || s.Length != 1) {
@@ -437,7 +420,6 @@ namespace System
 			result = s [0];
 			return true;
 		}
-#endif
 
 		public static char Parse (string s)
 		{
@@ -456,11 +438,7 @@ namespace System
 			return CultureInfo.CurrentCulture.TextInfo.ToLower (c);
 		}
 
-#if NET_2_0
 		public static char ToLowerInvariant (char c)
-#else
-		internal static char ToLowerInvariant (char c)
-#endif
 		{
 			unsafe {
 				if (c <= ((char)0x24cf))
@@ -487,11 +465,7 @@ namespace System
 			return CultureInfo.CurrentCulture.TextInfo.ToUpper (c);
 		}
 
-#if NET_2_0
 		public static char ToUpperInvariant (char c)
-#else
-		internal static char ToUpperInvariant (char c)
-#endif
 		{
 			unsafe {
 				if (c <= ((char)0x24e9))
@@ -586,57 +560,29 @@ namespace System
 			return System.Convert.ToInt64 (m_value);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			throw new InvalidCastException ();
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 	}
 }

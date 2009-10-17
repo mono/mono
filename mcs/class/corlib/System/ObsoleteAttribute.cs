@@ -40,9 +40,7 @@ namespace System
 		AttributeTargets.Interface | AttributeTargets.Delegate,
 		Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ObsoleteAttribute : Attribute
 	{
 		private string _message;

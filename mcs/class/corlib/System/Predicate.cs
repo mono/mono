@@ -31,7 +31,7 @@ namespace System
 {
 #if NET_4_0
 	public delegate bool Predicate <in T> (T obj);
-#elif NET_2_0
+#else
 	public delegate bool Predicate <T> (T obj);
 #endif	
 }

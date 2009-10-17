@@ -38,9 +38,7 @@ namespace System
 	///   of arguments
 	/// </summary>
 	[AttributeUsage (AttributeTargets.Parameter)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ParamArrayAttribute : Attribute
 	{
 		public ParamArrayAttribute ()

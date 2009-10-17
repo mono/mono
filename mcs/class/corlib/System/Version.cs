@@ -32,12 +32,8 @@ using System.Runtime.InteropServices;
 namespace System {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class Version : ICloneable, IComparable, IComparable<Version>, IEquatable<Version> {
-#else
-	public sealed class Version : ICloneable, IComparable {
-#endif
 		int _Major, _Minor, _Build, _Revision;
 
 		private const int UNDEFINED = -1;
@@ -151,7 +147,6 @@ namespace System {
 				return _Revision;
 			}
 		}
-#if NET_2_0
 		public short MajorRevision {
 			get {
 				return (short)(_Revision >> 16);
@@ -163,7 +158,7 @@ namespace System {
 				return (short)_Revision;
 			}
 		}
-#endif
+
 		public object Clone ()
 		{
 			if (_Build == -1)
@@ -190,10 +185,7 @@ namespace System {
 			return this.Equals (obj as Version);
 		}
 
-#if NET_2_0
-		public
-#endif
-		int CompareTo (Version value)
+		public int CompareTo (Version value)
 		{
 			if (value == null)
 				return 1;
@@ -221,10 +213,7 @@ namespace System {
 			return 0;
 		}
 
-#if NET_2_0
-		public
-#endif
-		bool Equals (Version obj)
+		public bool Equals (Version obj)
 		{
 			return ((obj != null) &&
 			    (obj._Major == _Major) &&

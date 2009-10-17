@@ -64,10 +64,7 @@ namespace System
 		internal static IntComparer   int_comparer = new IntComparer ();
 		internal static LongComparer  long_comparer = new LongComparer ();
 		
-		internal class SByteComparer : IComparer
-#if NET_2_0
-	, System.Collections.Generic.IComparer<sbyte>
-#endif
+		internal class SByteComparer : IComparer, System.Collections.Generic.IComparer<sbyte>
 		{
 			public int Compare (object x, object y)
 			{
@@ -83,10 +80,7 @@ namespace System
 			}
 		}
 		
-		internal class ShortComparer : IComparer
-#if NET_2_0
-	, System.Collections.Generic.IComparer<short>
-#endif
+		internal class ShortComparer : IComparer, System.Collections.Generic.IComparer<short>
 	  	{
 			public int Compare (object x, object y)
 			{
@@ -102,10 +96,7 @@ namespace System
 			}
 		}
 		
-		internal class IntComparer : IComparer 
-#if NET_2_0
-	, System.Collections.Generic.IComparer<int>
-#endif
+		internal class IntComparer : IComparer, System.Collections.Generic.IComparer<int>
 		  {
 			public int Compare (object x, object y)
 			{
@@ -131,10 +122,7 @@ namespace System
 			}
 		}
 
-		internal class LongComparer : IComparer
-#if NET_2_0
-	, System.Collections.Generic.IComparer<long>
-#endif
+		internal class LongComparer : IComparer, System.Collections.Generic.IComparer<long>
 		{
 			public int Compare (object x, object y)
 			{
@@ -223,9 +211,7 @@ namespace System
 	};
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable
 	{
 		protected Enum ()
@@ -283,17 +269,10 @@ namespace System
 			return Convert.ToInt64 (Value, provider);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return Convert.ToSByte (Value, provider);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
@@ -307,41 +286,20 @@ namespace System
 			return Convert.ToType (Value, targetType, provider, false);
 		}
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (Value, provider);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return Convert.ToUInt32 (Value, provider);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
-#if ONLY_1_1
-#pragma warning disable 3019
-		[CLSCompliant (false)]
-#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (Value, provider);
 		}
-#if ONLY_1_1
-#pragma warning restore 3019
-#endif
 
 		// <-- End IConvertible methods
 
@@ -353,9 +311,7 @@ namespace System
 			get { return get_value (); }
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static Array GetValues (Type enumType)
 		{
 			if (enumType == null)
@@ -369,9 +325,7 @@ namespace System
 			return (Array) info.values.Clone ();
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static string[] GetNames (Type enumType)
 		{
 			if (enumType == null)
@@ -385,7 +339,6 @@ namespace System
 			return (string []) info.names.Clone ();
 		}
 
-#if NET_2_0
 		//
 		// The faster, non-boxing version.   It must use the special MonoEnumInfo.xxx_comparers
 		// to ensure that we are perfoming bitwise compares, and not signed compares.
@@ -429,28 +382,8 @@ namespace System
 			// This should never happen
 			return Array.BinarySearch (values, value);
 		}
-#else
-		static int FindPosition (object value, Array values)
-		{
-			IComparer ic = null;
-
-			if (values is int[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
-			if (values is short[])
-				return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
-			if (values is sbyte [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
-			if (values is long [])
-				return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
-
-			return Array.BinarySearch (values, value);
-
-		}
-#endif
 	
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static string GetName (Type enumType, object value)
 		{
 			if (enumType == null)
@@ -469,9 +402,7 @@ namespace System
 			return (i >= 0) ? info.names [i] : null;
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static bool IsDefined (Type enumType, object value)
 		{
 			if (enumType == null)
@@ -503,9 +434,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Type get_underlying_type (Type enumType);
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static Type GetUnderlyingType (Type enumType)
 		{
 			if (enumType == null)
@@ -517,9 +446,7 @@ namespace System
 			return get_underlying_type (enumType);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static object Parse (Type enumType, string value)
 		{
 			// Note: Parameters are checked in the other overload
@@ -575,9 +502,7 @@ namespace System
 
 		private static char [] split_char = { ',' };
 
-#if NET_2_0
-		[ComVisible (true)]
-#endif
+		[ComVisible(true)]
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
 			if (enumType == null)
@@ -617,13 +542,6 @@ namespace System
 			}
 
 			// is 'value' a number?
-#if !NET_2_0
-			try {
-				return ToObject (enumType, Convert.ChangeType (value, typeCode));
-			} catch (FormatException) {
-				throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
-			}
-#else
 			switch (typeCode) {
 			case TypeCode.SByte:
 				sbyte sb;
@@ -669,7 +587,6 @@ namespace System
 				break;
 			}
 			throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
-#endif
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -702,9 +619,7 @@ namespace System
 			return ToString ("G");
 		}
 
-#if NET_2_0
 		[Obsolete("Provider is ignored, just use ToString")]
-#endif
 		public string ToString (IFormatProvider provider)
 		{
 			return ToString ("G", provider);
@@ -718,9 +633,7 @@ namespace System
 			return Format (this.GetType (), this.Value, format);
 		}
 
-#if NET_2_0
 		[Obsolete("Provider is ignored, just use ToString")]
-#endif
 		public string ToString (String format, IFormatProvider provider)
 		{
 			// provider is not used for Enums
@@ -731,74 +644,56 @@ namespace System
 			return Format (this.GetType(), this.Value, format);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static object ToObject (Type enumType, byte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static object ToObject (Type enumType, short value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static object ToObject (Type enumType, int value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static object ToObject (Type enumType, long value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object ToObject (Type enumType, object value);
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, sbyte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, ushort value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, uint value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		[CLSCompliant (false)]
 		public static object ToObject (Type enumType, ulong value)
 		{
@@ -993,9 +888,7 @@ namespace System
 			return retVal;
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static string Format (Type enumType, object value, string format)
 		{
 			if (enumType == null)

@@ -40,17 +40,10 @@ using System.Security.Permissions;
 namespace System
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible(true)]
 	[ComDefaultInterface (typeof (_Exception))]
 	[ClassInterface (ClassInterfaceType.None)]
-#else
-	[ClassInterface (ClassInterfaceType.AutoDual)]
-#endif
-	public class Exception : ISerializable 
-#if NET_2_0
-	, _Exception
-#endif
+	public class Exception : ISerializable, _Exception
 	{
 #pragma warning disable 169, 649
 		#region Sync with object-internals.h
@@ -95,14 +88,11 @@ namespace System
 			source              = info.GetString ("Source");
 			inner_exception     = (Exception) info.GetValue ("InnerException", typeof (Exception));
 
-#if NET_2_0
 			try {
 				_data = (IDictionary) info.GetValue ("Data", typeof (IDictionary));
 			} catch (SerializationException) {
 				// member did not exist in .NET 1.x
 			}
-#endif
-
 		}
 
 		public Exception (string message, Exception innerException)
@@ -146,11 +136,7 @@ namespace System
 		public virtual string Message {
 			get {
 				if (message == null)
-#if NET_2_0
 					message = string.Format (Locale.GetText ("Exception of type '{0}' was thrown."),
-#else
-					message = string.Format (Locale.GetText ("Exception of type {0} was thrown."),
-#endif
 						ClassName);
 
 				return message;
@@ -158,9 +144,6 @@ namespace System
 		}
 
 		public virtual string Source {
-#if ONLY_1_1
-			[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
-#endif
 			get {
 				if (source == null) {
 					StackTrace st = new StackTrace (this, true);
@@ -231,9 +214,6 @@ namespace System
 		}
 
 		public MethodBase TargetSite {
-#if ONLY_1_1
-			[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
-#endif
 			get {
 				StackTrace st = new StackTrace (this, true);
 				if (st.FrameCount > 0)
@@ -243,7 +223,6 @@ namespace System
 			}
 		}
 
-#if NET_2_0
 		public virtual IDictionary Data {
 			get {
 				if (_data == null) {
@@ -253,7 +232,6 @@ namespace System
 				return _data;
 			}
 		}
-#endif
 
 		public virtual Exception GetBaseException ()
 		{
@@ -270,9 +248,6 @@ namespace System
 			return this;
 		}
 
-#if ONLY_1_1
-		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
@@ -293,14 +268,9 @@ namespace System
 			info.AddValue ("Source", null);
 #endif
 			info.AddValue ("ExceptionMethod", null);
-#if NET_2_0
 			info.AddValue ("Data", _data, typeof (IDictionary));
-#endif
 		}
 
-#if ONLY_1_1
-		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
-#endif
 		public override string ToString ()
 		{
 			System.Text.StringBuilder result = new System.Text.StringBuilder (ClassName);
@@ -343,7 +313,6 @@ namespace System
 			sb.Append (".");
 			sb.Append (mi.Name);
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (mi.IsGenericMethod) {
 				Type[] gen_params = mi.GetGenericArguments ();
 				sb.Append ("[");
@@ -354,7 +323,7 @@ namespace System
 				}
 				sb.Append ("]");
 			}
-#endif
+
 			sb.Append (" (");
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
@@ -373,7 +342,6 @@ namespace System
 			sb.Append (")");
 		}
 
-#if NET_2_0
 		//
 		// The documentation states that this is available in 1.x,
 		// but it was not available (MemberRefing this would fail)
@@ -384,6 +352,5 @@ namespace System
 		{
 			return base.GetType ();
 		}
-#endif
 	}
 }

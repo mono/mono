@@ -32,19 +32,9 @@ using System.Text;
 namespace System
 {
 	public
-#if NET_2_0
 	static
-#else
-	sealed
-#endif
 	class BitConverter
 	{
-#if !NET_2_0
-		private BitConverter ()
-		{
-		}
-#endif
-
 		static readonly bool SwappedWordsInDouble = DoubleWordsAreSwapped ();
 		public static readonly bool IsLittleEndian = AmILittleEndian ();
 
@@ -166,11 +156,7 @@ namespace System
 		unsafe static void PutBytes (byte *dst, byte[] src, int start_index, int count)
 		{
 			if (src == null)
-#if NET_2_0
 				throw new ArgumentNullException ("value");
-#else
-				throw new ArgumentNullException ("byteArray");
-#endif
 
 			if (start_index < 0 || (start_index > src.Length - 1))
 				throw new ArgumentOutOfRangeException ("startIndex", "Index was"
@@ -404,11 +390,9 @@ namespace System
 			// It makes a small difference when start_index is
 			// outside the range and length==0. 
 			if (startIndex < 0 || startIndex >= value.Length) {
-#if NET_2_0
 				// special (but valid) case (e.g. new byte [0])
 				if ((startIndex == 0) && (value.Length == 0))
 					return String.Empty;
-#endif
 				throw new ArgumentOutOfRangeException ("startIndex", "Index was"
 					+ " out of range. Must be non-negative and less than the"
 					+ " size of the collection.");
