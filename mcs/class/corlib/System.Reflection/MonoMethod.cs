@@ -42,20 +42,62 @@ namespace System.Reflection {
 	
 	internal struct MonoMethodInfo 
 	{
-		internal Type parent;
-		internal Type ret;
+		private Type parent;
+		private Type ret;
 		internal MethodAttributes attrs;
 		internal MethodImplAttributes iattrs;
-		internal CallingConventions callconv;
+		private CallingConventions callconv;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
+		static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			internal static extern ParameterInfo[] get_parameter_info (IntPtr handle, MemberInfo member);
+		internal static MonoMethodInfo GetMethodInfo (IntPtr handle)
+		{
+			MonoMethodInfo info;
+			MonoMethodInfo.get_method_info (handle, out info);
+			return info;
+		}
+
+		internal static Type GetDeclaringType (IntPtr handle)
+		{
+			return GetMethodInfo (handle).parent;
+		}
+
+		internal static Type GetReturnType (IntPtr handle)
+		{
+			return GetMethodInfo (handle).ret;
+		}
+
+		internal static MethodAttributes GetAttributes (IntPtr handle)
+		{
+			return GetMethodInfo (handle).attrs;
+		}
+
+		internal static CallingConventions GetCallingConvention (IntPtr handle)
+		{
+			return GetMethodInfo (handle).callconv;
+		}
+
+		internal static MethodImplAttributes GetMethodImplementationFlags (IntPtr handle)
+		{
+			return GetMethodInfo (handle).iattrs;
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
+		static extern ParameterInfo[] get_parameter_info (IntPtr handle, MemberInfo member);
+
+		static internal ParameterInfo[] GetParametersInfo (IntPtr handle, MemberInfo member)
+		{
+			return get_parameter_info (handle, member);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
+
+		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
+		{
+			return new ParameterInfo (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
+		}
 	};
 	
 	/*
@@ -92,32 +134,30 @@ namespace System.Reflection {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override ParameterInfo ReturnParameter {
 			get {
-				return new ParameterInfo (ReturnType, this, MonoMethodInfo.get_retval_marshal (mhandle));
+				return MonoMethodInfo.GetReturnParameterInfo (this);
 			}
 		}
 #endif
 
 		public override Type ReturnType {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.ret;
+				return MonoMethodInfo.GetReturnType (mhandle);
 			}
 		}
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { 
 			get {
-				return new ParameterInfo (ReturnType, this, MonoMethodInfo.get_retval_marshal (mhandle));
+				return MonoMethodInfo.GetReturnParameterInfo (this);
 			}
 		}
 		
-		public override MethodImplAttributes GetMethodImplementationFlags() {
-			MonoMethodInfo info;
-			MonoMethodInfo.get_method_info (mhandle, out info);
-			return info.iattrs;
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
+			return MonoMethodInfo.GetMethodImplementationFlags (mhandle);
 		}
 
-		public override ParameterInfo[] GetParameters() {
-			return MonoMethodInfo.get_parameter_info (mhandle, this);
+		public override ParameterInfo[] GetParameters ()
+		{
+			return MonoMethodInfo.GetParametersInfo (mhandle, this);
 		}
 
 		/*
@@ -189,17 +229,13 @@ namespace System.Reflection {
 		}
 		public override MethodAttributes Attributes { 
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.attrs;
+				return MonoMethodInfo.GetAttributes (mhandle);
 			} 
 		}
 
 		public override CallingConventions CallingConvention { 
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.callconv;
+				return MonoMethodInfo.GetCallingConvention (mhandle);
 			}
 		}
 		
@@ -210,9 +246,7 @@ namespace System.Reflection {
 		}
 		public override Type DeclaringType {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.parent;
+				return MonoMethodInfo.GetDeclaringType (mhandle);
 			}
 		}
 		public override string Name {
@@ -243,8 +277,7 @@ namespace System.Reflection {
 
 			/* MS.NET doesn't report MethodImplAttribute */
 
-			MonoMethodInfo info;
-			MonoMethodInfo.get_method_info (mhandle, out info);
+			MonoMethodInfo info = MonoMethodInfo.GetMethodInfo (mhandle);
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				count ++;
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0)
@@ -406,14 +439,14 @@ namespace System.Reflection {
 		Type reftype;
 #pragma warning restore 649		
 		
-		public override MethodImplAttributes GetMethodImplementationFlags() {
-			MonoMethodInfo info;
-			MonoMethodInfo.get_method_info (mhandle, out info);
-			return info.iattrs;
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
+			return MonoMethodInfo.GetMethodImplementationFlags (mhandle);
 		}
 
-		public override ParameterInfo[] GetParameters() {
-			return MonoMethodInfo.get_parameter_info (mhandle, this);
+		public override ParameterInfo[] GetParameters ()
+		{
+			return MonoMethodInfo.GetParametersInfo (mhandle, this);
 		}
 
 		/*
@@ -485,17 +518,13 @@ namespace System.Reflection {
 		}
 		public override MethodAttributes Attributes { 
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.attrs;
+				return MonoMethodInfo.GetAttributes (mhandle);
 			} 
 		}
 
 		public override CallingConventions CallingConvention { 
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.callconv;
+				return MonoMethodInfo.GetCallingConvention (mhandle);
 			}
 		}
 		
@@ -506,9 +535,7 @@ namespace System.Reflection {
 		}
 		public override Type DeclaringType {
 			get {
-				MonoMethodInfo info;
-				MonoMethodInfo.get_method_info (mhandle, out info);
-				return info.parent;
+				return MonoMethodInfo.GetDeclaringType (mhandle);
 			}
 		}
 		public override string Name {
