@@ -1,3 +1,7 @@
+2009-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EqualityComparer.cs: Seal internal classes
+
 2009-10-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Dictionary.cs (Do_ICollectionCopyTo): Revert 2009-10-01 change.
