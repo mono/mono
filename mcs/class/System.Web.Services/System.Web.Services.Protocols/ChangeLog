@@ -1,3 +1,13 @@
+2009-10-16  Miguel de Icaza  <miguel@novell.com>
+
+	* ServerType.cs: Do not use Activator.CreateInstance, use the call
+	directly. 
+
+2009-10-02  Miguel de Icaza  <miguel@novell.com>
+
+	* ServerType.cs: Refactored all of this code to not use
+	Activator.CreateInstance. 
+
 2009-09-30  Miguel de Icaza  <miguel@novell.com>
 
 	* Methods.cs: Empty extensions for MonoTouch for now.

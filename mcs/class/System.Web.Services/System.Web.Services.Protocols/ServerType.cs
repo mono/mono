@@ -202,7 +202,6 @@ namespace System.Web.Services.Protocols
 			get { return logicalMethods; }
 		}
 
-#if MONOTOUCH
 		internal TypeStubInfo GetTypeStub (string protocolName)
 		{
 			lock (this)
@@ -222,42 +221,23 @@ namespace System.Web.Services.Protocols
 						soap12Protocol.Initialize ();
 					}
 					return soap12Protocol;
+#if !MONOTOUCH
+				case "HttpGet":
+					if (httpGetProtocol == null){
+						httpGetProtocol = new HttpGetTypeStubInfo (this);
+						httpGetProtocol.Initialize ();
+					}
+					return httpGetProtocol;
+				case "HttpPost":
+					if (httpPostProtocol == null){
+						httpPostProtocol = new HttpPostTypeStubInfo (this);
+						httpPostProtocol.Initialize ();
+					}
+					return httpPostProtocol;
 				}
+#endif
 				throw new InvalidOperationException ("Protocol " + protocolName + " not supported");
 			}
-		}
-#else
-		internal TypeStubInfo GetTypeStub (string protocolName)
-		{
-			lock (this)
-			{
-				switch (protocolName)
-				{
-					case "Soap": 
-						if (soapProtocol == null) soapProtocol = CreateTypeStubInfo (typeof(SoapTypeStubInfo));
-						return soapProtocol;
-#if NET_2_0
-					case "Soap12": 
-						if (soap12Protocol == null) soap12Protocol = CreateTypeStubInfo (typeof(Soap12TypeStubInfo));
-						return soap12Protocol;
-#endif
-					case "HttpGet":
-						if (httpGetProtocol == null) httpGetProtocol = CreateTypeStubInfo (typeof(HttpGetTypeStubInfo));
-						return httpGetProtocol;
-					case "HttpPost":
-						if (httpPostProtocol == null) httpPostProtocol = CreateTypeStubInfo (typeof(HttpPostTypeStubInfo));
-						return httpPostProtocol;
-				}
-			}
-			throw new InvalidOperationException ("Protocol " + protocolName + " not supported");
-		}
-#endif
-
-		TypeStubInfo CreateTypeStubInfo (Type type)
-		{
-			TypeStubInfo tsi = (TypeStubInfo) Activator.CreateInstance (type, new object[] {this});
-			tsi.Initialize ();
-			return tsi;
 		}
 		
 		internal string GetWebServiceLiteralNamespace (string baseNamespace)
