@@ -36,7 +36,9 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+#if !MONOTOUCH
 using System.Web.Services.Description;
+#endif
 
 namespace System.Web.Services.Protocols
 {

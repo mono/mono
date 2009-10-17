@@ -32,12 +32,14 @@
 using System.Collections;
 using System.IO;
 using System.Web.Services.Protocols;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Net;
 using System.Text.RegularExpressions;
+#if !MONOTOUCH
+using System.Web.Services.Description;
+#endif
 
 namespace System.Web.Services.Discovery {
 	public class DiscoveryClientProtocol : HttpWebClientProtocol {
