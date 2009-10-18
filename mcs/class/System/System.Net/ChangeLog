@@ -1,3 +1,8 @@
+2009-10-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionStream.cs: add 3 missing DoCallback() calls in
+	EndRead/EndWrite.
+
 2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* EndPointListener.cs: fix matching a listener in presence of a query
