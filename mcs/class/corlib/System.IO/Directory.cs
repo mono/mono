@@ -44,7 +44,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 using System.Security.AccessControl;
 #endif
 
@@ -79,7 +79,7 @@ namespace System.IO
 			return CreateDirectoriesInternal (path);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoLimitation ("DirectorySecurity not implemented")]
 		public static DirectoryInfo CreateDirectory (string path, DirectorySecurity directorySecurity)
 		{
@@ -89,7 +89,7 @@ namespace System.IO
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, path).Demand ();
 			}
@@ -251,7 +251,7 @@ namespace System.IO
 			string result = MonoIO.GetCurrentDirectory (out error);
 			if (error != MonoIOError.ERROR_SUCCESS)
 				throw MonoIO.GetException (error);
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
 			}
@@ -269,7 +269,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static string [] GetDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -302,7 +302,7 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -397,7 +397,7 @@ namespace System.IO
 				throw MonoIO.GetException (error);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
 		{
 			throw new NotImplementedException ();
@@ -519,7 +519,7 @@ namespace System.IO
 			return result;
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
