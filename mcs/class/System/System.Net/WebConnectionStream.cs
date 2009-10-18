@@ -400,6 +400,7 @@ namespace System.Net
 					nextReadCalled = true;
 					cnc.Close (true);
 					result.SetCompleted (false, exc);
+					result.DoCallback ();
 					throw;
 				}
 
@@ -571,10 +572,12 @@ namespace System.Net
 				throw result.Exception;
 
 			try {
-				cnc.EndWrite (request, result.InnerAsyncResult);
+				cnc.EndWrite2 (request, result.InnerAsyncResult);
 				result.SetCompleted (false, 0);
+				result.DoCallback ();
 			} catch (Exception e) {
 				result.SetCompleted (false, e);
+				result.DoCallback ();
 				throw;
 			} finally {
 				if (sendChunked) {
