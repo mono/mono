@@ -60,7 +60,6 @@ namespace MonoTests.System.Reflection
 	{
 #if NET_2_0
 		[Test] // GetMethodFromHandle (RuntimeMethodHandle)
-		[Category ("NotWorking")]
 		public void GetMethodFromHandle1_Handle_Generic ()
 		{
 			G<string> instance = new G<string> ();
@@ -99,7 +98,35 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void GetMethodFromHandle ()
+		{
+			Type t = typeof (object);
+			RuntimeMethodHandle rmh = t.GetConstructor (Type.EmptyTypes).MethodHandle;
+			MethodBase mb = MethodBase.GetMethodFromHandle (rmh);
+			Assert.IsNotNull (mb, "#1");
+			Assert.AreEqual (t, mb.DeclaringType, "#2");
+			Assert.AreEqual (".ctor", mb.Name, "#3");
+			ParameterInfo [] parameters = mb.GetParameters ();
+			Assert.IsNotNull (parameters, "#4");
+			Assert.AreEqual (0, parameters.Length, "#5");
+		}
+
 #if NET_2_0
+		[Test]
+		public void GetMethodFromHandle_NonGenericType_DeclaringTypeZero ()
+		{
+			Type t = typeof (object);
+			RuntimeMethodHandle rmh = t.GetConstructor (Type.EmptyTypes).MethodHandle;
+			MethodBase mb = MethodBase.GetMethodFromHandle (rmh, new RuntimeTypeHandle ());
+			Assert.IsNotNull (mb, "#1");
+			Assert.AreEqual (t, mb.DeclaringType, "#2");
+			Assert.AreEqual (".ctor", mb.Name, "#3");
+			ParameterInfo [] parameters = mb.GetParameters ();
+			Assert.IsNotNull (parameters, "#4");
+			Assert.AreEqual (0, parameters.Length, "#5");
+		}
+
 		[Test] // GetMethodFromHandle (RuntimeMethodHandle, RuntimeTypeHandle)
 		public void GetMethodFromHandle2_DeclaringType_Zero ()
 		{
@@ -190,7 +217,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		public void GetMethodFromHandle_Handle_Generic_Method_On_Generic_Class ()
-	    {
+		{
 			MethodInfo mi = typeof (Generic<>).GetMethod ("GenericFoo");
 			RuntimeMethodHandle handle = mi.MethodHandle;
 			MethodBase res;
@@ -239,7 +266,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		public void GetMethodFromHandle_Handle_Method_On_Generic_Class ()
-	    {
+		{
 			MethodInfo mi = typeof (Generic<>).GetMethod ("Foo");
 			RuntimeMethodHandle handle = mi.MethodHandle;
 			MethodBase res;
