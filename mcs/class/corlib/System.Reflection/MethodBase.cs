@@ -46,17 +46,24 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static MethodBase GetCurrentMethod ();
 
-		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle) {
-			if (handle.Value == IntPtr.Zero)
+		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
+		{
+			return GetMethodFromIntPtr (handle.Value, IntPtr.Zero);
+		}
+
+		static MethodBase GetMethodFromIntPtr (IntPtr handle, IntPtr declaringType)
+		{
+			if (handle == IntPtr.Zero)
 				throw new ArgumentException ("The handle is invalid.");
-			MethodBase res = GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+			MethodBase res = GetMethodFromHandleInternalType (handle, declaringType);
 			if (res == null)
 				throw new ArgumentException ("The handle is invalid.");			
 			return res;
 		}
 
-		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
-			MethodBase res = GetMethodFromHandleNoGenericCheck (handle);
+		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle)
+		{
+			MethodBase res = GetMethodFromIntPtr (handle.Value, IntPtr.Zero);
 #if NET_2_0
 			Type t = res.DeclaringType;
 			if (t.IsGenericType || t.IsGenericTypeDefinition)
@@ -70,14 +77,9 @@ namespace System.Reflection {
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (false)]
-		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType)
+		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle, RuntimeTypeHandle declaringType)
 		{
-			if (handle.Value == IntPtr.Zero)
-				throw new ArgumentException ("The handle is invalid.");
-			MethodBase res = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
-			if (res == null)
-				throw new ArgumentException ("The handle is invalid.");
-			return res;
+			return GetMethodFromIntPtr (handle.Value, declaringType.Value);
 		}
 #endif
 

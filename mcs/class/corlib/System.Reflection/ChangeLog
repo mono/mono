@@ -1,5 +1,12 @@
 2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* MethodBase.cs: Reduce code duplication and the number of direct
+	calls to icalls (affecting the number of SecuritySafeCritical in
+	Moonlight)
+	[Backport r144335]
+
+2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Assembly.cs: Use UnmanagedMemoryStream (instead of IntPtrStream)
 	in every profile
 
