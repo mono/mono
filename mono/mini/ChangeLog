@@ -1,3 +1,8 @@
+2009-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (can_marshal_struct): Allow some System.dll structs to be
+	marshalled. Fixes #541623.
+
 2009-10-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_extra_methods): Remove some asserts which are not needed.
