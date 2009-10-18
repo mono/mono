@@ -81,7 +81,7 @@ namespace System.Resources
 			Reader = new ResourceReader (stream);
 		}
 
-		internal ResourceSet (IntPtrStream stream)
+		internal ResourceSet (UnmanagedMemoryStream stream)
 		{
 			Table = new Hashtable ();
 			Reader = new ResourceReader (stream);

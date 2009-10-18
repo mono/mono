@@ -1,3 +1,11 @@
+2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Remove System.IO.IntPtrStream since it can
+	be replaced by (public in 2.0+) UnmanagedMemoryStream
+	* net_2_1_raw_corlib.dll.sources: Remove System.IO.IntPtrStream 
+	since it can be replaced by UnmanagedMemoryStream
+	[Backport r144322]
+
 2009-10-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_corlib.dll.sources: Remove System/LocalDataStoreSlot.cs

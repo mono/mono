@@ -454,12 +454,10 @@ namespace System.Resources
 				// current position so that the returned
 				// Stream represents a single object stream.
 				long slen = reader.ReadInt32();
-				IntPtrStream basePtrStream = reader.BaseStream as IntPtrStream;
+				UnmanagedMemoryStream basePtrStream = reader.BaseStream as UnmanagedMemoryStream;
 				unsafe {
 					if (basePtrStream != null) {
-						byte* addr = (byte*) basePtrStream.BaseAddress.ToPointer ();
-						addr += basePtrStream.Position;
-						return new UnmanagedMemoryStream ((byte*) (void*) addr, slen);
+						return new UnmanagedMemoryStream (basePtrStream.PositionPointer, slen);
 					} else {
 						IntPtr ptr = Marshal.AllocHGlobal ((int) slen);
 						byte* addr = (byte*) ptr.ToPointer ();

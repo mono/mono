@@ -1,3 +1,8 @@
+2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Use UnmanagedMemoryStream (instead of IntPtrStream)
+	in every profile
+
 2009-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoMethod.cs: Reduce code duplication and the number of direct

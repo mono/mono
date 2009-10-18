@@ -1,3 +1,8 @@
+2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnmanagedMemoryStream.cs: Allow the use under NET_1_1 so we can
+	remove the internal IntPtrStream from every profile.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnmanagedMemoryStream.cs: Fix some and add missing validations

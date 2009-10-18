@@ -30,16 +30,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
 namespace System.IO
 {
+#if NET_2_0
 	[CLSCompliantAttribute(false)]
 	public class UnmanagedMemoryStream : Stream
+#else
+	internal class UnmanagedMemoryStream : Stream
+#endif
 	{
 		long length;
 		bool closed;
@@ -236,8 +238,12 @@ namespace System.IO
 			//This method performs no action for this class
 			//but is included as part of the Stream base class
 		}
-		 
+
+#if NET_2_0		 
 		protected override void Dispose (bool disposing)
+#else
+		public override void Close ()
+#endif
 		{
 			if (closed)
 				return;
@@ -320,5 +326,4 @@ namespace System.IO
 #endregion
 	}
 }
-#endif
 
