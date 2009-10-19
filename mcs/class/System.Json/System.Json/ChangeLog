@@ -1,7 +1,3 @@
-2009-10-19  Jb Evain  <jbevain@novell.com>
-
-	* JsonObject.cs, JsonArray.cs: backport r142424 and r143432.
-
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : \uXXXX parser was totally wrong, giving wrong #.

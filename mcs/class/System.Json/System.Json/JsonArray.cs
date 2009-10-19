@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -81,7 +80,7 @@ namespace System.Json
 			if (list != null)
 				list.AddRange (items);
 			else
-				source = source.Concat (items);
+				source = new MergedEnumerable<JsonValue> (source, items);
 		}
 
 		public void AddRange (JsonValue [] items)
