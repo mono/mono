@@ -39,17 +39,12 @@ namespace Mono.CSharp
 	using System.Reflection;
 	using System.Collections;
 	using System.Text;
-
-#if NET_2_0
 	using System.Collections.Generic;
-#endif
 	
 	internal class CSharpCodeGenerator
 		: CodeGenerator
 	{
-#if NET_2_0
 		IDictionary <string, string> providerOptions;
-#endif
 		
 		// It is used for beautiful "for" syntax
 		bool dont_write_semicolon;
@@ -62,7 +57,6 @@ namespace Mono.CSharp
 			dont_write_semicolon = false;
 		}
 
-#if NET_2_0
 		public CSharpCodeGenerator (IDictionary <string, string> providerOptions)
 		{
 			this.providerOptions = providerOptions;
@@ -71,7 +65,6 @@ namespace Mono.CSharp
 		protected IDictionary <string, string> ProviderOptions {
 			get { return providerOptions; }
 		}
-#endif
 		
 		//
 		// Properties
@@ -272,10 +265,8 @@ namespace Mono.CSharp
 				Output.Write ('.');
 			};
 			Output.Write (GetSafeName (expression.MethodName));
-#if NET_2_0
 			if (expression.TypeArguments.Count > 0)
 				Output.Write (GetTypeArguments (expression.TypeArguments));
-#endif
 		}
 
 		protected override void GenerateEventReferenceExpression (CodeEventReferenceExpression expression)
@@ -561,9 +552,7 @@ namespace Mono.CSharp
 		{
 			Output.WriteLine ();
 			Output.WriteLine ("#line default");
-#if NET_2_0
 			Output.WriteLine ("#line hidden");
-#endif
 		}
 
 		protected override void GenerateEvent (CodeMemberEvent eventRef, CodeTypeDeclaration declaration)
@@ -631,16 +620,10 @@ namespace Mono.CSharp
 		protected override void GenerateEntryPointMethod (CodeEntryPointMethod method, 
 								  CodeTypeDeclaration declaration)
 		{
-#if NET_2_0
 			OutputAttributes (method.CustomAttributes, null, false);
-#endif
 
 			Output.Write ("public static ");
-#if NET_2_0
 			OutputType (method.ReturnType);
-#else
-			Output.Write ("void");
-#endif
 			Output.Write (" Main()");
 			OutputStartBrace ();
 			Indent++;
@@ -685,17 +668,13 @@ namespace Mono.CSharp
 			}
 			output.Write (GetSafeName (method.Name));
 
-#if NET_2_0
 			GenerateGenericsParameters (method.TypeParameters);
-#endif
 
 			output.Write ('(');
 			OutputParameters (method.Parameters);
 			output.Write (')');
 
-#if NET_2_0
 			GenerateGenericsConstraints (method.TypeParameters);
-#endif
 
 			if (IsAbstract (attributes) || declaration.IsInterface)
 				output.WriteLine (';');
@@ -833,9 +812,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-#if NET_2_0
 			OutputAttributes (constructor.CustomAttributes, null, false);
-#endif
 
 			Output.Write ("static " + GetSafeName (CurrentTypeName) + "()");
 			OutputStartBrace ();
@@ -856,9 +833,7 @@ namespace Mono.CSharp
 
 				output.Write (GetSafeName (declaration.Name));
 
-#if NET_2_0
 				GenerateGenericsParameters (declaration.TypeParameters);
-#endif
 
 				IEnumerator enumerator = declaration.BaseTypes.GetEnumerator ();
 				if (enumerator.MoveNext ()) {
@@ -875,9 +850,7 @@ namespace Mono.CSharp
 					}
 				}
 
-#if NET_2_0
 				GenerateGenericsConstraints (declaration.TypeParameters);
-#endif
 				OutputStartBrace ();
 				++Indent;
 			} else {
@@ -957,17 +930,13 @@ namespace Mono.CSharp
 
 		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool inline)
 		{
-#if NET_2_0
 			bool params_set = false;
-#endif
 
 			foreach (CodeAttributeDeclaration att in attributes) {
-#if NET_2_0
 				if (att.Name == "System.ParamArrayAttribute") {
 					params_set = true;
 					continue;
 				}
-#endif
 
 				GenerateAttributeDeclarationsStart (attributes);
 				if (prefix != null) {
@@ -982,7 +951,6 @@ namespace Mono.CSharp
 				}
 			}
 
-#if NET_2_0
 			if (params_set) {
 				if (prefix != null)
 					Output.Write (prefix);
@@ -992,7 +960,6 @@ namespace Mono.CSharp
 				else
 					Output.WriteLine ();
 			}
-#endif
 		}
 
 		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
@@ -1037,7 +1004,6 @@ namespace Mono.CSharp
 			}
 		}
 
-#if NET_2_0
 
 		// Note: this method should in fact be private as in .NET 2.0, the 
 		// CSharpCodeGenerator no longer derives from CodeGenerator but we
@@ -1090,7 +1056,6 @@ namespace Mono.CSharp
 					break;
 			}
 		}
-#endif
 
 		private void OutputTypeAttributes (CodeTypeDeclaration declaration)
 		{
@@ -1105,7 +1070,6 @@ namespace Mono.CSharp
 				case TypeAttributes.NestedPrivate:
 					output.Write ("private ");
 					break;
-#if NET_2_0
 				case TypeAttributes.NotPublic:
 				case TypeAttributes.NestedFamANDAssem:
 				case TypeAttributes.NestedAssembly:
@@ -1117,36 +1081,29 @@ namespace Mono.CSharp
 				case TypeAttributes.NestedFamORAssem:
 					output.Write ("protected internal ");
 					break;
-#endif
 			}
 
 			if (declaration.IsStruct) {
-#if NET_2_0
 				if (declaration.IsPartial) {
 					output.Write ("partial ");
 				}
-#endif
 				output.Write ("struct ");
 			} else if (declaration.IsEnum) {
 				output.Write ("enum ");
 			} else {
 				if ((attributes & TypeAttributes.Interface) != 0) {
-#if NET_2_0
 					if (declaration.IsPartial) {
 						output.Write ("partial ");
 					}
-#endif
 					output.Write ("interface ");
 				} else {
 					if ((attributes & TypeAttributes.Sealed) != 0)
 						output.Write ("sealed ");
 					if ((attributes & TypeAttributes.Abstract) != 0)
 						output.Write ("abstract ");
-#if NET_2_0
 					if (declaration.IsPartial) {
 						output.Write ("partial ");
 					}
-#endif
 					output.Write ("class ");
 				}
 			}
@@ -1169,7 +1126,6 @@ namespace Mono.CSharp
 		{
 			if (e.Value is char) {
 				this.GenerateCharValue ((char) e.Value);
-#if NET_2_0
 			} else if (e.Value is ushort) {
 				ushort uc = (ushort) e.Value;
 				Output.Write (uc.ToString(CultureInfo.InvariantCulture));
@@ -1184,7 +1140,6 @@ namespace Mono.CSharp
 			} else if (e.Value is sbyte) {
 				sbyte sb = (sbyte) e.Value;
 				Output.Write (sb.ToString(CultureInfo.InvariantCulture));
-#endif
 			} else {
 				base.GeneratePrimitiveExpression (e);
 			}
@@ -1218,19 +1173,11 @@ namespace Mono.CSharp
 					break;
 				case '\u2028':
 					Output.Write ("\\u");
-#if NET_2_0
 					Output.Write (((int) c).ToString ("X4", CultureInfo.InvariantCulture));
-#else
-					Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
-#endif
 					break;
 				case '\u2029':
 					Output.Write ("\\u");
-#if NET_2_0
 					Output.Write (((int) c).ToString ("X4", CultureInfo.InvariantCulture));
-#else
-					Output.Write (((int) c).ToString (CultureInfo.InvariantCulture));
-#endif
 					break;
 				default:
 					Output.Write (c);
@@ -1295,10 +1242,8 @@ namespace Mono.CSharp
     
 		protected override string GetTypeOutput (CodeTypeReference type)
 		{
-#if NET_2_0
 			if ((type.Options & CodeTypeReferenceOptions.GenericTypeParameter) != 0)
 				return type.BaseType;
-#endif
 
 			string typeOutput = null;
 
@@ -1350,7 +1295,6 @@ namespace Mono.CSharp
 				case "system.void":
 					typeOutput = "void";
 					break;
-#if NET_2_0
 				case "system.byte":
 					typeOutput = "byte";
 					break;
@@ -1375,9 +1319,7 @@ namespace Mono.CSharp
 				case "system.uint64":
 					typeOutput = "ulong";
 					break;
-#endif
 				default:
-#if NET_2_0
 					StringBuilder sb = new StringBuilder (baseType.Length);
 					if (type.Options == CodeTypeReferenceOptions.GlobalReference) {
 						sb.Append ("global::");
@@ -1427,10 +1369,6 @@ namespace Mono.CSharp
 					}
 
 					typeOutput = sb.ToString ();
-#else
-					typeOutput = GetSafeName (baseType);
-					typeOutput = typeOutput.Replace ('+', '.');
-#endif
 					break;
 			}
 			return typeOutput;
@@ -1443,8 +1381,7 @@ namespace Mono.CSharp
 
                 static bool is_identifier_part_character (char c)
                 {
-                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c)
-;
+                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
                 }
 		
 		protected override bool IsValidIdentifier (string identifier)
@@ -1473,7 +1410,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-#if NET_2_0
 		protected override void GenerateDirectives (CodeDirectiveCollection directives)
 		{
 			foreach (CodeDirective d in directives) {
@@ -1610,7 +1546,6 @@ namespace Mono.CSharp
 
 			sb.Append ('>');
 		}
-#endif
 
 #if false
 		//[MonoTODO]
@@ -1652,9 +1587,7 @@ namespace Mono.CSharp
 			"namespace",
 			"object","bool","byte","float","uint","char","ulong","ushort",
 			"decimal","int","sbyte","short","double","long","string","void",
-#if NET_2_0
 			"partial", "yield", "where"
-#endif
 		};
 	}
 }
