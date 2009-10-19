@@ -150,6 +150,7 @@ namespace System.Web.Services.Discovery {
 					refe = new DiscoveryDocumentReference ();
 					AddDiscoReferences (doc);
 				}
+#if !MONOTOUCH
 				else if (ServiceDescription.CanRead (reader))
 				{
 					ServiceDescription wsdl = ServiceDescription.Read (reader);
@@ -160,6 +161,7 @@ namespace System.Web.Services.Discovery {
 					refe.Url = url;
 					((ContractReference)refe).ResolveInternal (this, wsdl);
 				}
+#endif
 				else
 				{
 					XmlSchema schema = XmlSchema.Read (reader, null);
