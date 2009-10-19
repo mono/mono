@@ -1,3 +1,10 @@
+2009-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mini_jit_info_table_find): New helper function which
+	searches all the domains of the current thread.
+
+	* exceptions-<ARCH>.c: Use it. Fixes #539394.
+
 2009-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_op_imm_to_op): Handle OP_AND/OR/XOR_IMM.
