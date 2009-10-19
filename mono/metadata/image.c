@@ -49,8 +49,9 @@ static GHashTable *loaded_images_refonly_hash;
 
 static gboolean debug_assembly_unload = FALSE;
 
-#define mono_images_lock() EnterCriticalSection (&images_mutex)
-#define mono_images_unlock() LeaveCriticalSection (&images_mutex)
+#define mono_images_lock() if (mutex_inited) EnterCriticalSection (&images_mutex)
+#define mono_images_unlock() if (mutex_inited) LeaveCriticalSection (&images_mutex)
+static gboolean mutex_inited;
 static CRITICAL_SECTION images_mutex;
 
 /* returns offset relative to image->raw_data */
@@ -127,7 +128,9 @@ mono_images_init (void)
 	loaded_images_hash = g_hash_table_new (g_str_hash, g_str_equal);
 	loaded_images_refonly_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-	debug_assembly_unload = getenv ("MONO_DEBUG_ASSEMBLY_UNLOAD") != NULL;
+	debug_assembly_unload = g_getenv ("MONO_DEBUG_ASSEMBLY_UNLOAD") != NULL;
+
+	mutex_inited = TRUE;
 }
 
 /**
@@ -142,6 +145,8 @@ mono_images_cleanup (void)
 
 	g_hash_table_destroy (loaded_images_hash);
 	g_hash_table_destroy (loaded_images_refonly_hash);
+
+	mutex_inited = FALSE;
 }
 
 /**
@@ -1342,8 +1347,27 @@ mono_image_close (MonoImage *image)
 
 	g_return_if_fail (image != NULL);
 
-	if (InterlockedDecrement (&image->ref_count) > 0)
+	/* 
+	 * Atomically decrement the refcount and remove ourselves from the hash tables, so
+	 * register_image () can't grab an image which is being closed.
+	 */
+	mono_images_lock ();
+
+	if (InterlockedDecrement (&image->ref_count) > 0) {
+		mono_images_unlock ();
 		return;
+	}
+
+	loaded_images = image->ref_only ? loaded_images_refonly_hash : loaded_images_hash;
+	image2 = g_hash_table_lookup (loaded_images, image->name);
+	if (image == image2) {
+		/* This is not true if we are called from mono_image_open () */
+		g_hash_table_remove (loaded_images, image->name);
+	}
+	if (image->assembly_name && (g_hash_table_lookup (loaded_images, image->assembly_name) == image))
+		g_hash_table_remove (loaded_images, (char *) image->assembly_name);	
+
+	mono_images_unlock ();
 
 #ifdef PLATFORM_WIN32
 	if (image->is_module_handle && image->has_entry_point) {
@@ -1382,22 +1406,12 @@ mono_image_close (MonoImage *image)
 		image->references = NULL;
 	}
 
-	mono_images_lock ();
-	loaded_images = image->ref_only ? loaded_images_refonly_hash : loaded_images_hash;
-	image2 = g_hash_table_lookup (loaded_images, image->name);
-	if (image == image2) {
-		/* This is not true if we are called from mono_image_open () */
-		g_hash_table_remove (loaded_images, image->name);
-	}
-	if (image->assembly_name && (g_hash_table_lookup (loaded_images, image->assembly_name) == image))
-		g_hash_table_remove (loaded_images, (char *) image->assembly_name);	
-
 #ifdef PLATFORM_WIN32
+	mono_images_lock ();
 	if (image->is_module_handle && !image->has_entry_point)
 		FreeLibrary ((HMODULE) image->raw_data);
-#endif
-
 	mono_images_unlock ();
+#endif
 
 	if (image->raw_buffer_used) {
 		if (image->raw_data != NULL)
