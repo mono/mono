@@ -234,8 +234,8 @@ namespace System.Web.Services.Protocols
 						httpPostProtocol.Initialize ();
 					}
 					return httpPostProtocol;
-				}
 #endif
+				}
 				throw new InvalidOperationException ("Protocol " + protocolName + " not supported");
 			}
 		}
