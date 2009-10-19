@@ -39,6 +39,8 @@ namespace System.Web.Configuration {
 
 	public sealed class SessionStateSection : ConfigurationSection
 	{
+		internal static readonly string DefaultSqlConnectionString = "data source=localhost;Integrated Security=SSPI";
+		
 		static ConfigurationProperty allowCustomSqlDatabaseProp;
 		static ConfigurationProperty cookielessProp;
 		static ConfigurationProperty cookieNameProp;
@@ -75,7 +77,7 @@ namespace System.Web.Configuration {
 			sqlCommandTimeoutProp = new ConfigurationProperty ("sqlCommandTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30),
 									   PropertyHelper.TimeSpanSecondsOrInfiniteConverter, null,
 									   ConfigurationPropertyOptions.None);
-			sqlConnectionStringProp = new ConfigurationProperty ("sqlConnectionString", typeof (string), "data source=localhost;Integrated Security=SSPI");
+			sqlConnectionStringProp = new ConfigurationProperty ("sqlConnectionString", typeof (string), DefaultSqlConnectionString);
 			stateConnectionStringProp = new ConfigurationProperty ("stateConnectionString", typeof (string), "tcpip=loopback:42424");
 			stateNetworkTimeoutProp = new ConfigurationProperty ("stateNetworkTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (10),
 									     PropertyHelper.TimeSpanSecondsOrInfiniteConverter,

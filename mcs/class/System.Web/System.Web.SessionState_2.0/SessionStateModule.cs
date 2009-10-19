@@ -118,39 +118,43 @@ namespace System.Web.SessionState
 		}
 
 		[EnvironmentPermission (SecurityAction.Assert, Read = "MONO_XSP_STATIC_SESSION")]
-		public void Init (HttpApplication app) {
-
+		public void Init (HttpApplication app)
+		{
 			config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 
 			ProviderSettings settings;
 			switch (config.Mode) {
-			case SessionStateMode.Custom:
-				settings = config.Providers [config.CustomProvider];
-				if (settings == null)
-					throw new HttpException (String.Format ("Cannot find '{0}' provider.", config.CustomProvider));
-				break;
-			case SessionStateMode.Off:
-				return;
+				case SessionStateMode.Custom:
+					settings = config.Providers [config.CustomProvider];
+					if (settings == null)
+						throw new HttpException (String.Format ("Cannot find '{0}' provider.", config.CustomProvider));
+					break;
+				case SessionStateMode.Off:
+					return;
 #if TARGET_J2EE
-			default:
-				config = new SessionStateSection ();
-				config.Mode = SessionStateMode.Custom;
-				config.CustomProvider = "ServletSessionStateStore";
-				config.SessionIDManagerType = "Mainsoft.Web.SessionState.ServletSessionIDManager";
-				config.Providers.Add (new ProviderSettings ("ServletSessionStateStore", "Mainsoft.Web.SessionState.ServletSessionStateStoreProvider"));
-				goto case SessionStateMode.Custom;
+				default:
+					config = new SessionStateSection ();
+					config.Mode = SessionStateMode.Custom;
+					config.CustomProvider = "ServletSessionStateStore";
+					config.SessionIDManagerType = "Mainsoft.Web.SessionState.ServletSessionIDManager";
+					config.Providers.Add (new ProviderSettings ("ServletSessionStateStore", "Mainsoft.Web.SessionState.ServletSessionStateStoreProvider"));
+					goto case SessionStateMode.Custom;
 #else
-			case SessionStateMode.InProc:
-				settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
-				break;
-			case SessionStateMode.SQLServer:
-			//settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
-			//break;
-			default:
-				throw new NotImplementedException (String.Format ("The mode '{0}' is not implemented.", config.Mode));
-			case SessionStateMode.StateServer:
-				settings = new ProviderSettings (null, typeof (SessionStateServerHandler).AssemblyQualifiedName);
-				break;
+				case SessionStateMode.InProc:
+					settings = new ProviderSettings (null, typeof (SessionInProcHandler).AssemblyQualifiedName);
+					break;
+
+				case SessionStateMode.SQLServer:
+					settings = new ProviderSettings (null, typeof (SessionSQLServerHandler).AssemblyQualifiedName);
+					break;
+
+				case SessionStateMode.StateServer:
+					settings = new ProviderSettings (null, typeof (SessionStateServerHandler).AssemblyQualifiedName);
+					break;
+
+				default:
+					throw new NotImplementedException (String.Format ("The mode '{0}' is not implemented.", config.Mode));
+			
 #endif
 			}
 
