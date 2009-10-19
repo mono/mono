@@ -1,3 +1,13 @@
+2009-10-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c (mono_assembly_load_reference): Fix leak when 'status'
+	code is known. (parse_public_key) Remove duplicate (unneeded) NULL
+	check since 'pubkey' can't be NULL at this stage
+	* icall.c (ves_icall_System_Array_FastCopy): Add comment about
+	the check. (ves_icall_Type_GetInterfaceMapData) Remove duplicate
+	initialization of 'iter'
+	[Backport r144403]
+
 2009-10-13  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h (MonoDebuggerEvent): Renamed
