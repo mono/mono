@@ -417,6 +417,12 @@ namespace Mono.CSharp {
 		if (type_hash.Lookup (t, dim, out ret))
 			return (Type) ret;
 
+		if (IsDynamicType (t)) {
+			// FIXME: this is more like not supported with SRE
+			// An example: var v = new [] { d, 1 }; int i = v [0];
+			throw new NotImplementedException ("dynamic arrays");
+		}
+
 		ret = t.Module.GetType (t.ToString () + dim);
 		if (ret != null) {
 			type_hash.Insert (t, dim, ret);

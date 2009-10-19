@@ -13,6 +13,7 @@
 namespace Mono.CSharp {
 	using System;
 	using System.Collections;
+	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
@@ -5225,9 +5226,15 @@ namespace Mono.CSharp {
 		}
 
 #if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return MakeExpression (ctx, mg.InstanceExpression, (MethodInfo) mg, arguments);
+		}
+
 		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodInfo mi, Arguments args)
 		{
-			SLE.Expression expr = SLE.Expression.Call (instance.MakeExpression (ctx), mi,
+			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
+			SLE.Expression expr = SLE.Expression.Call (instance_expr, mi,
 				Arguments.MakeExpression (args, ctx));
 
 			if (mi.ReturnType == typeof (void)) {
@@ -5708,8 +5715,10 @@ namespace Mono.CSharp {
 		int num_arguments = 0;
 		protected int dimensions;
 		protected readonly string rank;
+		Expression first_emit;
+		LocalTemporary first_emit_temp;
 
-		protected ArrayList array_data;
+		protected List<Expression> array_data;
 
 		IDictionary bounds;
 
@@ -5842,7 +5851,7 @@ namespace Mono.CSharp {
 			args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
 			if (array_data != null) {
 				for (int i = 0; i < array_data.Count; ++i) {
-					Expression e = (Expression) array_data [i];
+					Expression e = array_data [i];
 					if (e == null)
 						e = Convert.ImplicitConversion (ec, (Expression) initializers [i], array_element_type, loc);
 
@@ -5873,11 +5882,7 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
-
 		}
-
-		Expression first_emit;
-		LocalTemporary first_emit_temp;
 
 		protected virtual Expression ResolveArrayElement (ResolveContext ec, Expression element)
 		{
@@ -5906,7 +5911,7 @@ namespace Mono.CSharp {
 			// We use this to store all the date values in the order in which we
 			// will need to store them in the byte blob later
 			//
-			array_data = new ArrayList ();
+			array_data = new List<Expression> ();
 			bounds = new System.Collections.Specialized.HybridDictionary ();
 			
 			if (arguments != null)
@@ -6164,6 +6169,21 @@ namespace Mono.CSharp {
 
 			return data;
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			var initializers = new SLE.Expression [array_data.Count];
+			for (var i = 0; i < initializers.Length; i++) {
+				if (array_data [i] == null)
+					initializers [i] = SLE.Expression.Default (array_element_type);
+				else
+					initializers [i] = array_data [i].MakeExpression (ctx);
+			}
+
+			return SLE.Expression.NewArrayInit (array_element_type, initializers);
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

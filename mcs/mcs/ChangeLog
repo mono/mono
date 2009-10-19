@@ -1,3 +1,7 @@
+2009-10-19  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, expression.cs: Dynamic array initializer.
+
 2009-10-16  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, rootcontext.cs: Clear -nostdlib flag when object
