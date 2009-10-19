@@ -157,6 +157,8 @@ System/GCNotificationStatus.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs
+System/IObservable.cs
+System/IObserver.cs
 System/ICloneable.cs
 System/IComparable.cs
 System/IEquatable.cs
@@ -1458,6 +1460,7 @@ System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
 System.Threading/WaitHandleCannotBeOpenedException.cs
 System.Threading/WaitOrTimerCallback.cs
+System.Collections.Generic/CollectionDebuggerView.cs
 System.Collections.Generic/Dictionary.cs
 System.Collections.Generic/ICollection.cs
 System.Collections.Generic/IEnumerable.cs

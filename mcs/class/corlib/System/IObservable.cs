@@ -1,15 +1,10 @@
 //
-// System.EventHandler.cs
+// IObservable.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
-//   Marek Safar (marek.safar@gmail.com)
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -18,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,12 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System {
+#if NET_4_0
 
-	[Serializable]
-	public delegate void EventHandler <TEventArgs> (object sender, TEventArgs e) where TEventArgs : EventArgs;
-
-	[Serializable]
-	[System.Runtime.InteropServices.ComVisible (true)]
-	public delegate void EventHandler (object sender, EventArgs e);
+namespace System
+{
+	public interface IObservable<out T>
+	{
+		IDisposable Subscribe (IObserver<T> observer);
+	}
 }
+
+#endif
