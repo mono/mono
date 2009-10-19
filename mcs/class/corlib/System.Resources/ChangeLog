@@ -1,3 +1,7 @@
+2009-10-19  Jb Evain  <jbevain@novell.com>
+
+	* ResourceReader.cs: fix the build.
+
 2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceReader.cs, ResourceSet.cs, RuntimeResourceSet.cs: Use 

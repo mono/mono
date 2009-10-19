@@ -454,7 +454,7 @@ namespace System.Resources
 				// current position so that the returned
 				// Stream represents a single object stream.
 				long slen = reader.ReadInt32();
-				UnmanagedMemoryStream basePtrStream = reader.BaseStream as IntPtrStream;
+				UnmanagedMemoryStream basePtrStream = reader.BaseStream as UnmanagedMemoryStream;
 				unsafe {
 					if (basePtrStream != null) {
 						return new UnmanagedMemoryStream (basePtrStream.PositionPointer, slen);
