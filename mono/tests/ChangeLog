@@ -1,3 +1,7 @@
+2009-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c pinvoke2.cs: Add a test for #548276.
+
 2009-10-16  Bill Holmes  <billholmes54@gmail.com>
 
 	* cominterop.cs : Adding a test for 547030. 
