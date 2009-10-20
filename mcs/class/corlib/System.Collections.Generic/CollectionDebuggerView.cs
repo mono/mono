@@ -54,4 +54,25 @@ namespace System.Collections.Generic
 			}
 		}
 	}
+	
+	sealed class CollectionDebuggerView<T, U>
+	{
+		readonly ICollection<KeyValuePair<T, U>> c;
+
+		public CollectionDebuggerView (ICollection<KeyValuePair<T, U>> col)
+		{
+			this.c = col;
+		}
+
+		[DebuggerBrowsable (DebuggerBrowsableState.RootHidden)]
+		public KeyValuePair<T, U>[] Items {
+			get {
+				// It does not make much sense to browse more than 1k
+				// of items in debug view
+				var o = new KeyValuePair<T, U> [Math.Min (c.Count, 1024)];
+				c.CopyTo (o, 0);
+				return o;
+			}
+		}
+	}	
 }
