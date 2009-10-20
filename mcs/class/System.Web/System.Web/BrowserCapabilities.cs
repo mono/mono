@@ -5,7 +5,7 @@
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
+// (c) 2003-2009 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -36,16 +36,9 @@ using System.Web.UI;
 using System.Security.Permissions;
 using System.Web.Util;
 
-#if NET_2_0
-namespace System.Web.Configuration {
+namespace System.Web.Configuration
+{
 	public partial class HttpCapabilitiesBase
-#else
-
-namespace System.Web {
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class HttpBrowserCapabilities : HttpCapabilitiesBase
-#endif
 	{
 		const int HaveActiveXControls = 1; // 1;
 		const int HaveAdapters = 2;
@@ -189,12 +182,6 @@ namespace System.Web {
 		Version [] clrVersions;
 		internal string useragent;
 
-#if !NET_2_0
-		public HttpBrowserCapabilities ()
-		{
-		}
-#endif
-
 		public bool ActiveXControls {
 			get {
 				if (!Get (HaveActiveXControls)) {
@@ -251,7 +238,7 @@ namespace System.Web {
 				return browser;
 			}
 		}
-#if NET_2_0
+
 		ArrayList browsers = null;
 		public ArrayList Browsers {
 			get {
@@ -276,7 +263,7 @@ namespace System.Web {
 			}
 			return false;
 		}
-#endif
+
 		public bool CDF {
 			get {
 				if (!Get (HaveCDF)) {
@@ -352,9 +339,8 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
+
 		[Obsolete]
-#endif
 		public bool JavaScript {
 			get {
 				if (!Get (HaveJavaScript)) {
@@ -499,7 +485,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_1_1
 		public Version [] GetClrVersions ()
 		{
 			if (clrVersions == null)
@@ -507,7 +492,6 @@ namespace System.Web {
 
 			return clrVersions;
 		}
-#endif
 
 		void InternalGetClrVersions ()
 		{
@@ -537,11 +521,7 @@ namespace System.Web {
 			
 			if (list == null || list.Count == 0) {
 				clrVersion = new Version ();
-#if NET_2_0
 				clrVersions = null;
-#else
-				clrVersions = new Version [1] { clrVersion };
-#endif
 			} else {
 				list.Sort ();
 				clrVersions = (Version []) list.ToArray (typeof (Version));
@@ -611,7 +591,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		ArrayList ReadArrayList (string key) 
 		{
 			ArrayList v = (ArrayList)this.capabilities [key];
@@ -621,7 +600,7 @@ namespace System.Web {
 
 			return v;
 		}
-#endif
+
 		Exception CreateCapabilityNotFoundException (string key) {
 			return new ArgumentNullException (String.Format ("browscaps.ini does not contain a definition for capability {0} for userAgent {1}", key, Browser));
 		}

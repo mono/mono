@@ -7,7 +7,7 @@
 //
 // (c) 2002 Patrik Torstensson
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,9 +43,7 @@ namespace System.Web
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-#endif
 	public class HttpException : ExternalException
 	{
 		const string DEFAULT_DESCRIPTION_TEXT = "Error processing request.";
@@ -86,25 +84,18 @@ namespace System.Web
 			this.description = description;
 		}
 		
-#if NET_2_0
-		protected
-#else
-		internal
-#endif
-		HttpException (SerializationInfo info, StreamingContext context)
+		protected HttpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			http_code = info.GetInt32 ("_httpCode");
 		}
 
-#if NET_2_0
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 			info.AddValue ("_httpCode", http_code);
 		}
-#endif
 
 		public HttpException (int httpCode, string message, int hr) 
 			: base (message, hr)
@@ -378,11 +369,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				builder.Append ("Compiler ");
 			
 			builder.Append ("Error Message: </strong>");
-#if NET_2_0
 			builder.AppendFormat ("<code>{0}</code></p>", errorMessage);
-#else
-			builder.AppendFormat ("<blockquote><pre>{0}</pre></blockquote></p>", errorMessage);
-#endif
 
 			StringBuilder longCodeVersion = null;
 			

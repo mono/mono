@@ -4,7 +4,7 @@
 // Author:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com
 //
-// (c) 2005 Novell, Inc. (http://www.novell.com)
+// (c) 2005-2009 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +29,10 @@
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace System.Web {
-
-	class OutputFilterStream : Stream {
+namespace System.Web
+{
+	sealed class OutputFilterStream : Stream
+	{
 		HttpResponseStream stream;
 
 		public OutputFilterStream (HttpResponseStream stream)

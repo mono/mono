@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,9 +32,10 @@ using System.Collections;
 using System.Text;
 using System.Web.Configuration;
 
-namespace System.Web {
-
-	internal abstract class BaseResponseHeader {
+namespace System.Web
+{
+	abstract class BaseResponseHeader
+	{
 		string headerValue;
 		
 		public string Value {
@@ -44,12 +45,9 @@ namespace System.Web {
 	  
 		static bool headerCheckingEnabled;
 		
-		static BaseResponseHeader () {
-#if NET_2_0
+		static BaseResponseHeader ()
+		{
 			HttpRuntimeSection section = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
-#else
-			HttpRuntimeConfig section = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
-#endif
 			headerCheckingEnabled = section == null || section.EnableHeaderChecking;
 		}
 

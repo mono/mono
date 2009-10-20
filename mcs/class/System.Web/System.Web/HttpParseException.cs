@@ -5,7 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,21 +30,16 @@
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-#endif
-	public sealed class HttpParseException : HttpException {
-
+	public sealed class HttpParseException : HttpException
+	{
 		int line;
 		string virtualPath;
-		
-#if NET_2_0
 		ParserErrorCollection errors = new ParserErrorCollection ();
-#endif
 
 		internal HttpParseException (string message, string virtualPath, int line)
 			: base (message)
@@ -53,7 +48,6 @@ namespace System.Web {
 			this.line = line;
 		}
 		
-#if NET_2_0
 		HttpParseException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
                 {
@@ -94,7 +88,6 @@ namespace System.Web {
 			info.AddValue ("_parserErrors", errors);
 			info.AddValue ("_line", line);
 		}
-#endif
 
 		public string FileName {
 			get { return virtualPath; }
@@ -104,7 +97,6 @@ namespace System.Web {
 			get { return line; }
 		}
 		
-#if NET_2_0
 		public string VirtualPath {
 			get { return virtualPath; }
 		}
@@ -112,7 +104,6 @@ namespace System.Web {
 		public ParserErrorCollection ParserErrors {
 			get { return errors; }
 		}
-#endif
 	}
 }
 

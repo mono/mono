@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,39 +32,30 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpCookieCollection : NameObjectCollectionBase {
-
+	public sealed class HttpCookieCollection : NameObjectCollectionBase
+	{
 		private bool auto_fill = false;
 
 		[Obsolete ("Don't use this constructor, use the (bool, bool) one, as it's more clear what it does")]
-		internal HttpCookieCollection (HttpResponse Response, bool ReadOnly)
-#if NET_2_0
-			: base (StringComparer.OrdinalIgnoreCase)
-#endif
+		internal HttpCookieCollection (HttpResponse Response, bool ReadOnly) : base (StringComparer.OrdinalIgnoreCase)
 		{
 			auto_fill = Response != null;
 			IsReadOnly = ReadOnly;
 		}
 
-		internal HttpCookieCollection (bool auto_fill, bool read_only)
-#if NET_2_0
-			: base (StringComparer.OrdinalIgnoreCase)
-#endif
+		internal HttpCookieCollection (bool auto_fill, bool read_only) : base (StringComparer.OrdinalIgnoreCase)
 		{
 			this.auto_fill = auto_fill;
 			IsReadOnly = read_only;
 		}
 
-		internal HttpCookieCollection (string cookies)
-#if NET_2_0
-			: base (StringComparer.OrdinalIgnoreCase)
-#endif
+		internal HttpCookieCollection (string cookies) : base (StringComparer.OrdinalIgnoreCase)
 		{
-			if (cookies == null || cookies == "")
+			if (String.IsNullOrEmpty (cookies))
 				return;
 
 			string[] cookie_components = cookies.Split (';');
@@ -83,10 +74,7 @@ namespace System.Web {
 			}
 		}
 
-		public HttpCookieCollection ()
-#if NET_2_0
-			: base (StringComparer.OrdinalIgnoreCase)
-#endif
+		public HttpCookieCollection () : base (StringComparer.OrdinalIgnoreCase)
 		{
 		}
 

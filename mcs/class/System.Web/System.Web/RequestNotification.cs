@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 namespace System.Web 
 {
 	[FlagsAttribute]
@@ -48,4 +47,3 @@ namespace System.Web
 		SendResponse = 0x20000000
 	}
 }
-#endif

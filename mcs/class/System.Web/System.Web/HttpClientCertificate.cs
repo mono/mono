@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,29 +31,23 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class HttpClientCertificate : NameValueCollection {
-
+	public class HttpClientCertificate : NameValueCollection
+	{
 		HttpWorkerRequest hwr;
 		int flags;
 		DateTime from;
 		DateTime until;
 
-
 		internal HttpClientCertificate (HttpWorkerRequest hwr)
 		{
-#if NET_2_0
 			// we don't check hwr for null so we end up throwing a 
 			// NullReferenceException just like MS implementation
 			// if the public ctor for HttpRequest is used
-#else
-			if (hwr == null)
-				throw new ArgumentNullException ("hwr");
-#endif
 			this.hwr = hwr;
 			flags = GetIntNoPresense ("CERT_FLAGS");
 			if (IsPresent) {
@@ -64,7 +58,6 @@ namespace System.Web {
 				until = from;
 			}
 		}
-
 
 		public byte[] BinaryIssuer {
 			get { return hwr.GetClientCertificateBinaryIssuer (); }

@@ -28,11 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web {
-#if !NET_2_0
-	[Serializable]
-#endif
-        public enum HttpValidationStatus {
+namespace System.Web
+{
+        public enum HttpValidationStatus
+	{
                 Invalid = 0x1,
                 IgnoreThisRequest,
                 Valid

@@ -4,7 +4,7 @@
 // Author(s):
 //  Jackson Harper (jackson@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,19 +31,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-#if NET_2_0
-using System.Collections.Generic;
-#endif
-
-namespace System.Web {
-
-	class InfoTraceData
+namespace System.Web
+{
+	sealed class InfoTraceData
 	{
 		public string Category;
 		public string Message;
@@ -63,35 +60,27 @@ namespace System.Web {
 		}
 	}
 
-	class ControlTraceData
+	sealed class ControlTraceData
 	{
 		public string ControlId;
 		public Type Type;
 		public int RenderSize;
 		public int ViewstateSize;
 		public int Depth;
-#if NET_2_0
 		public int ControlstateSize;
-#endif
 
-#if NET_2_0
 		public ControlTraceData (string controlId, Type type, int renderSize, int viewstateSize, int controlstateSize, int depth)
-#else
-		public ControlTraceData (string controlId, Type type, int renderSize, int viewstateSize, int depth)
-#endif
 		{
 			this.ControlId = controlId;
 			this.Type = type;
 			this.RenderSize = renderSize;
 			this.ViewstateSize = viewstateSize;
 			this.Depth = depth;
-#if NET_2_0
 			this.ControlstateSize = controlstateSize;
-#endif
 		}
 	}
 
-	class NameValueTraceData
+	sealed class NameValueTraceData
 	{
 		public string Name;
 		public string Value;
@@ -103,28 +92,17 @@ namespace System.Web {
 		}
 	}
 	
-	internal class TraceData {
-
+	sealed class TraceData
+	{
 		bool is_first_time;
 		DateTime first_time;
 		double prev_time;
-
-#if NET_2_0
 		Queue <InfoTraceData> info;
 		Queue <ControlTraceData> control_data;
 		Queue <NameValueTraceData> cookie_data;
 		Queue <NameValueTraceData> header_data;
 		Queue <NameValueTraceData> servervar_data;
 		Hashtable ctrl_cs;
-#else
-		Queue info;
-		Queue control_data;
-		Queue cookie_data;
-		Queue header_data;
-		Queue servervar_data;
-		//DataTable viewstate_data;
-#endif
-		
 		string request_path;
 		string session_id;
 		DateTime request_time;
@@ -137,19 +115,11 @@ namespace System.Web {
 
 		public TraceData ()
 		{
-#if NET_2_0
 			info = new Queue <InfoTraceData> ();
 			control_data = new Queue <ControlTraceData> ();
 			cookie_data = new Queue <NameValueTraceData> ();
 			header_data = new Queue <NameValueTraceData> ();
 			servervar_data = new Queue <NameValueTraceData> ();
-#else
-			info = new Queue ();
-			control_data = new Queue ();
-			cookie_data = new Queue ();
-			header_data = new Queue ();
-			servervar_data = new Queue ();
-#endif
 
 			/* TODO
 			viewstate_data = new DataTable ();
@@ -236,18 +206,12 @@ namespace System.Web {
 			return res.Replace (" ", "&nbsp;");
 		}
 		
-#if NET_2_0
 		public void AddControlTree (Page page, Hashtable ctrl_vs, Hashtable ctrl_cs, Hashtable sizes)
-#else
-		public void AddControlTree (Page page, Hashtable ctrl_vs, Hashtable sizes)
-#endif
 		{
 			this.page = page;
 			this.ctrl_vs = ctrl_vs;
 			this.sizes = sizes;
-#if NET_2_0
 			this.ctrl_cs = ctrl_cs;
-#endif
 			AddControl (page, 0);
 		}
 
@@ -261,9 +225,7 @@ namespace System.Web {
 					c.GetType (),
 					GetRenderSize (c),
 					GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null),
-#if NET_2_0
 					GetViewStateSize (c, (ctrl_cs != null) ? ctrl_cs [c] : null),
-#endif
 					control_pos));
 			
 			if (c.HasControls ()) {
@@ -350,7 +312,6 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Category", "Message", "From First(s)", "From Lasts(s)"));
 			
 			int pos = 0;
-#if NET_2_0
 			IEnumerable<InfoTraceData> enumerable = info;
 
 			if (TraceMode == TraceMode.SortByCategory) {
@@ -361,10 +322,6 @@ namespace System.Web {
 
 			foreach (InfoTraceData i in enumerable)
 				RenderTraceInfoRow (table, i, pos++);
-#else
-			foreach (object o in info)
-				RenderTraceInfoRow (table, o as InfoTraceData, pos++);
-#endif
 			table.RenderControl (output);
 		}
 		
@@ -382,19 +339,12 @@ namespace System.Web {
 						String.Format ("ViewState Size (total: {0} bytes)(excluding children)",
 								page_vs_size)
 #endif
-#if NET_2_0
 						,"ControlState Size (excluding children)"
-#endif
 							));
 			
 			int pos = 0;
-#if NET_2_0
 			foreach (ControlTraceData r in control_data)
 				RenderControlTraceDataRow (table, r, pos++);
-#else
-			foreach (object o in control_data)
-				RenderControlTraceDataRow (table, o as ControlTraceData, pos++);
-#endif
 			table.RenderControl (output);
 		}
 
@@ -409,11 +359,7 @@ namespace System.Web {
 				prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
 			RenderAltRow (table, pos, prefix + r.ControlId,
 				      r.Type.ToString (), r.RenderSize.ToString (),
-#if NET_2_0
-					  r.ViewstateSize.ToString (), r.ControlstateSize.ToString ());
-#else
-				      r.ViewstateSize.ToString ());
-#endif
+				      r.ViewstateSize.ToString (), r.ControlstateSize.ToString ());
 		}
 		
 		void RenderCookies (HtmlTextWriter output)
@@ -424,13 +370,8 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value", "Size"));
 			
 			int pos = 0;
-#if NET_2_0
 			foreach (NameValueTraceData r in cookie_data)
 				RenderCookieDataRow (table, r, pos++);
-#else
-			foreach (object o in cookie_data)
-				RenderCookieDataRow (table, o as NameValueTraceData, pos++);
-#endif		
 			
 			table.RenderControl (output);
 		}
@@ -452,19 +393,8 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value"));
 			
 			int pos = 0;
-#if NET_2_0
 			foreach (NameValueTraceData r in header_data)
 				RenderAltRow (table, pos++, r.Name, r.Value);
-#else
-			NameValueTraceData r;
-			foreach (object o in header_data) {
-				r = o as NameValueTraceData;
-				if (r == null)
-					continue;
-				
-				RenderAltRow (table, pos++, r.Name, r.Value);
-			}
-#endif
 			table.RenderControl (output);
 		}
 		
@@ -476,19 +406,8 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value"));
 			
 			int pos = 0;
-#if NET_2_0
 			foreach (NameValueTraceData r in servervar_data)
 				RenderAltRow (table, pos++, r.Name, r.Value);
-#else
-			NameValueTraceData r;
-			foreach (object o in servervar_data) {
-				r = o as NameValueTraceData;
-				if (r == null)
-					continue;
-				
-				RenderAltRow (table, pos++, r.Name, r.Value);
-			}
-#endif			
 			table.RenderControl (output);
 		}
 

@@ -28,11 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web {
-#if !NET_2_0
-	[Serializable]
-#endif
-	public enum HttpCacheability {
+namespace System.Web
+{
+	public enum HttpCacheability
+	{
 		NoCache = 0x1,
 		Private,
 		Server,

@@ -47,9 +47,7 @@ namespace System.Web
 		{
 		}
 
-#if NET_2_0
 		HttpCacheVaryByContentEncodings vary_by_content_encodings = new HttpCacheVaryByContentEncodings ();
-#endif
 		HttpCacheVaryByHeaders vary_by_headers = new HttpCacheVaryByHeaders ();
 		HttpCacheVaryByParams vary_by_params = new HttpCacheVaryByParams ();
 		ArrayList validation_callbacks;
@@ -82,13 +80,11 @@ namespace System.Web
 		bool set_no_store;
 		bool set_no_transform;
 		bool valid_until_expires;
-#if NET_2_0
 		bool omit_vary_star;
 		
 		public HttpCacheVaryByContentEncodings VaryByContentEncodings {
 			get { return vary_by_content_encodings; }
 		}
-#endif
 
 		public HttpCacheVaryByHeaders VaryByHeaders {
 			get { return vary_by_headers; }
@@ -119,15 +115,8 @@ namespace System.Web
 			get { return validation_callbacks; }
 		}
 
-		// always false in 1.x
 		internal bool OmitVaryStar {
-			get {
-#if NET_2_0
-				return omit_vary_star;
-#else
-				return false;
-#endif
-			}
+			get { return omit_vary_star; }
 		}
 
 		internal bool ValidUntilExpires {
@@ -422,11 +411,9 @@ namespace System.Web
 				etag = etagsb.ToString ();
 		}
 
-#if NET_2_0
 		public void SetOmitVaryStar (bool omit)
 		{
 			omit_vary_star = omit;
 		}
-#endif
 	}
 }

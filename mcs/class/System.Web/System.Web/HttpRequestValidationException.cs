@@ -5,7 +5,7 @@
 //   	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,20 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-#endif
-	public sealed class HttpRequestValidationException : HttpException {
-
-#if NET_2_0
+	public sealed class HttpRequestValidationException : HttpException
+	{
 		public HttpRequestValidationException ()
 		{
 		}
@@ -54,11 +49,7 @@ namespace System.Web {
 			: base (message, innerException)
 		{
 		}
-#else
-		internal HttpRequestValidationException (string msg) : base (msg)
-		{
-		}
-#endif
+
 		internal override string Description {
 			get {
 				return  "Request validation detected a potentially dangerous input value " +
@@ -75,4 +66,4 @@ namespace System.Web {
 		}
 	}
 }
-#endif
+

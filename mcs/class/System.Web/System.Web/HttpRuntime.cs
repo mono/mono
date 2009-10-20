@@ -1,11 +1,12 @@
 //
 // System.Web.HttpRuntime.cs 
 // 
-// Author:
+// Authors:
 //	Miguel de Icaza (miguel@novell.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,18 +48,17 @@ using Mono.Web.Util;
 using System.Threading;
 #if TARGET_J2EE
 using Mainsoft.Web;
-#endif
-
-#if NET_2_0 && !TARGET_JVM
+#else
 using System.CodeDom.Compiler;
 using System.Web.Compilation;
 #endif
 
-namespace System.Web {
-	
+namespace System.Web
+{	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpRuntime {
+	public sealed class HttpRuntime
+	{
 		static bool caseInsensitive;
 		static bool runningOnWindows;
 		static bool isunc;
@@ -118,16 +118,10 @@ namespace System.Web {
 		static WaitCallback do_RealProcessRequest;
 		static Exception initialException;
 		static bool firstRun;
-		
-#if NET_2_0
 		static bool assemblyMappingEnabled;
 		static object assemblyMappingLock = new object ();
 		static object appOfflineLock = new object ();
-#endif
 		
-#if ONLY_1_1
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-#endif
 		public HttpRuntime ()
 		{
 
@@ -137,11 +131,7 @@ namespace System.Web {
 		static HttpRuntime ()
 		{
 			PlatformID pid = Environment.OSVersion.Platform;
-			runningOnWindows = ((int) pid != 128
-#if NET_2_0
-					    && pid != PlatformID.Unix && pid != PlatformID.MacOSX
-#endif
-			);
+			runningOnWindows = ((int) pid != 128 && pid != PlatformID.Unix && pid != PlatformID.MacOSX);
 
 			if (runningOnWindows) {
 				caseInsensitive = true;
@@ -177,7 +167,6 @@ namespace System.Web {
 			
 #if !TARGET_J2EE
 			firstRun = true;
-#if NET_2_0
 			try {
 				WebConfigurationManager.Init ();
 #if MONOWEB_DEP
@@ -186,7 +175,6 @@ namespace System.Web {
 			} catch (Exception ex) {
 				initialException = ex;
 			}
-#endif
 
 			// The classes in whose constructors exceptions may be thrown, should be handled the same way QueueManager
 			// and TraceManager are below. The constructors themselves MUST NOT throw any exceptions - we MUST be sure
@@ -360,7 +348,6 @@ namespace System.Web {
 		}
 
 #if !TARGET_J2EE
-#if NET_2_0
 		static readonly string[] app_offline_files = {"app_offline.htm", "App_Offline.htm", "APP_OFFLINE.HTM"};
 		static string app_offline_file;
 		
@@ -471,7 +458,6 @@ namespace System.Web {
 			}
 		}
 #endif
-#endif
 		
 		static void RealProcessRequest (object o)
 		{
@@ -498,9 +484,7 @@ namespace System.Web {
 			bool error = false;
 #if !TARGET_J2EE
 			if (firstRun) {
-#if NET_2_0
 				SetupOfflineWatch ();
-#endif
 				firstRun = false;
 				if (initialException != null) {
 					FinishWithException (req, new HttpException ("Initial exception", initialException));
@@ -508,10 +492,8 @@ namespace System.Web {
 				}
 			}
 
-#if NET_2_0
 			if (AppIsOffline (context))
 				return;
-#endif
 #endif
 			
 			//
@@ -681,7 +663,6 @@ namespace System.Web {
 			HttpApplication.requests_total_counter.Increment ();
 		}
 
-#if NET_2_0 
 #if !TARGET_J2EE
 		static internal void WritePreservationFile (Assembly asm, string genericNameBase)
 		{
@@ -749,7 +730,7 @@ namespace System.Web {
 			}
 		}
 #endif // #if !TARGET_J2EE
-#endif
+
 		internal static string MonoVersion {
 			get { return monoVersion; }
 		}
@@ -764,19 +745,11 @@ namespace System.Web {
 
 		internal static bool IsDebuggingEnabled {
 			get {
-#if NET_2_0
 				CompilationSection cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 				if (cs != null)
 					return cs.Debug;
 
 				return false;
-#else
-				try {
-					return CompilationConfiguration.GetInstance (HttpContext.Current).Debug;
-				} catch {
-					return false;
-				}
-#endif
 			}
 		}
 		

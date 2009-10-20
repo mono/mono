@@ -6,7 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2002
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +30,13 @@
 
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-#endif
-	public sealed class HttpUnhandledException : HttpException {
-
-#if NET_2_0
+	public sealed class HttpUnhandledException : HttpException
+	{
 		public HttpUnhandledException ()
 		{
 		}
@@ -53,11 +50,5 @@ namespace System.Web {
 			: base (message, innerException)
 		{
 		}
-#else
-		internal HttpUnhandledException (string message, Exception innerException)
-			: base (message, innerException)
-		{
-		}
-#endif
 	}
 }

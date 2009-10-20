@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua (gonzalo@ximian.com)
 //    
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -82,8 +82,8 @@ using System.Web.Util;
 using Mainsoft.Web;
 #endif
 	
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -159,7 +159,6 @@ namespace System.Web {
 
 		static string binDirectory;
 		
-#if NET_2_0
 #if TARGET_J2EE
 		const string initialization_exception_key = "System.Web.HttpApplication.initialization_exception";
 		static Exception initialization_exception {
@@ -170,7 +169,6 @@ namespace System.Web {
 		static Exception initialization_exception;
 #endif
 		bool removeConfigurationFromCache;
-#endif
 		bool fullInitComplete = false;
 		
 		//
@@ -202,17 +200,10 @@ namespace System.Web {
 				if (modcoll != null)
 					return;
 				
-#if NET_2_0
 				HttpModulesSection modules;
 				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
-#else
-				ModulesConfiguration modules;
-
-				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
-#endif
-
 				HttpContext saved = HttpContext.Current;
-				HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest ("", "", new StringWriter()));
+				HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest (String.Empty, String.Empty, new StringWriter()));
 				modcoll = modules.LoadModules (this);
 				HttpContext.Current = saved;
 
@@ -237,11 +228,9 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		internal static Exception InitializationException {
 			get { return initialization_exception; }
 		}
-#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -346,18 +335,10 @@ namespace System.Web {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		public ISite Site {
-#else
-		public virtual ISite Site {
-#endif
-			get {
-				return isite;
-			}
+			get { return isite; }
 
-			set {
-				isite = value;
-			}
+			set { isite = value; }
 		}
 
 		[Browsable (false)]
@@ -549,7 +530,6 @@ namespace System.Web {
 			UpdateRequestCache += new EventHandler (invoker.Invoke);
 		}
 
-#if NET_2_0
 		static object PostAuthenticateRequestEvent = new object ();
 		public event EventHandler PostAuthenticateRequest
 		{
@@ -795,8 +775,6 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
 			PostLogRequest += new EventHandler (invoker.Invoke);
 		}
-
-#endif
 		
 		internal event EventHandler DefaultAuthentication;
 
@@ -889,14 +867,13 @@ namespace System.Web {
 				}
 			}
 			stop_processing = true;
-#if NET_2_0
+
 			// we want to remove configuration from the cache in case of 
 			// invalid resource not exists to prevent DOS attack.
 			HttpException httpEx = e as HttpException;
 			if (httpEx != null && httpEx.GetHttpCode () == 404) {
 				removeConfigurationFromCache = true;
 			}
-#endif
 		}
 		
 		//
@@ -1110,9 +1087,8 @@ namespace System.Web {
 					context.Handler = null;
 					factory = null;
 				}
-#if NET_2_0
 				context.PopHandler ();
-#endif
+
 				// context = null; -> moved to PostDone
 				pipeline = null;
 				current_ai = null;
@@ -1178,9 +1154,7 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
-#if NET_2_0
 			context.MapRequestHandlerDone = false;
-#endif
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
 			if (eventHandler != null) {
@@ -1202,28 +1176,26 @@ namespace System.Web {
 					yield return stop;
 			StopTimer ();
 
-#if NET_2_0
 			StartTimer ("PostAuthenticateRequest");
 			eventHandler = Events [PostAuthenticateRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#endif
+
 			StartTimer ("AuthorizeRequest");
 			eventHandler = Events [AuthorizeRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#if NET_2_0
+
 			StartTimer ("PostAuthorizeRequest");
 			eventHandler = Events [PostAuthorizeRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#endif
 
 			StartTimer ("ResolveRequestCache");
 			eventHandler = Events [ResolveRequestCacheEvent];
@@ -1232,7 +1204,6 @@ namespace System.Web {
 					yield return stop;
 			StopTimer ();
 
-#if NET_2_0
 			StartTimer ("PostResolveRequestCache");
 			eventHandler = Events [PostResolveRequestCacheEvent];
 			if (eventHandler != null)
@@ -1248,7 +1219,6 @@ namespace System.Web {
 					yield return stop;
 			StopTimer ();
 			context.MapRequestHandlerDone = true;
-#endif
 			
 			StartTimer ("GetHandler");
 			// Obtain the handler for the request.
@@ -1256,9 +1226,7 @@ namespace System.Web {
 			try {
 				handler = GetHandler (context, context.Request.CurrentExecutionFilePath);
 				context.Handler = handler;
-#if NET_2_0
 				context.PushHandler (handler);
-#endif
 			} catch (FileNotFoundException fnf){
 #if TARGET_JVM
 				Console.WriteLine ("$$$$$$$$$$:Sys.Web Pipeline");
@@ -1280,14 +1248,12 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
-#if NET_2_0
 			StartTimer ("PostMapRequestHandler");
 			eventHandler = Events [PostMapRequestHandlerEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#endif
 
 			StartTimer ("AcquireRequestState");
 			eventHandler = Events [AcquireRequestStateEvent];
@@ -1297,7 +1263,6 @@ namespace System.Web {
 			}
 			StopTimer ();
 			
-#if NET_2_0
 			StartTimer ("PostAcquireRequestState");
 			eventHandler = Events [PostAcquireRequestStateEvent];
 			if (eventHandler != null){
@@ -1305,7 +1270,6 @@ namespace System.Web {
 					yield return stop;
 			}
 			StopTimer ();
-#endif
 			
 			//
 			// From this point on, we need to ensure that we call
@@ -1326,14 +1290,12 @@ namespace System.Web {
 			bool doProcessHandler = false;
 #endif
 			
-#if NET_2_0
 			IHttpHandler ctxHandler = context.Handler;
 			if (ctxHandler != null && handler != ctxHandler) {
 				context.PopHandler ();
 				handler = ctxHandler;
 				context.PushHandler (handler);
 			}
-#endif
 
 			StartTimer ("ProcessRequest");
 			try {
@@ -1400,14 +1362,12 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
-#if NET_2_0
 			StartTimer ("PostReleaseRequestState");
 			eventHandler = Events [PostReleaseRequestStateEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#endif
 
 			StartTimer ("Filter");
 			if (context.Error == null)
@@ -1421,7 +1381,6 @@ namespace System.Web {
 					yield return stop;
 			StopTimer ();
 
-#if NET_2_0
 			StartTimer ("PostUpdateRequestCache");
 			eventHandler = Events [PostUpdateRequestCacheEvent];
 			if (eventHandler != null)
@@ -1442,7 +1401,7 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-#endif
+
 			StartTimer ("PipelineDone");
 			PipelineDone ();
 			StopTimer ();
@@ -1451,7 +1410,6 @@ namespace System.Web {
 
 		internal CultureInfo GetThreadCulture (HttpRequest request, CultureInfo culture, bool isAuto)
 		{
-#if NET_2_0
 			if (!isAuto)
 				return culture;
 			CultureInfo ret = null;
@@ -1466,32 +1424,17 @@ namespace System.Web {
 				ret = culture;
 			
 			return ret;
-#else
-			return culture;
-#endif
 		}
 
 
 		void PreStart ()
 		{
-#if NET_2_0
 			GlobalizationSection cfg;
 			cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
 			app_culture = cfg.GetCulture ();
 			autoCulture = cfg.IsAutoCulture;
 			appui_culture = cfg.GetUICulture ();
 			autoUICulture = cfg.IsAutoUICulture;
-#else
-			GlobalizationConfiguration cfg;
-			cfg = GlobalizationConfiguration.GetInstance (null);
-			if (cfg != null) {
-				app_culture = cfg.Culture;
-				autoCulture = false; // to hush the warning
-				appui_culture = cfg.UICulture;
-				autoUICulture = false; // to hush the warning
-			}
-#endif
-
 #if !TARGET_J2EE
 			context.StartTimeoutTimer ();
 #endif
@@ -1517,12 +1460,11 @@ namespace System.Web {
 
 		void PostDone ()
 		{
-#if NET_2_0
 			if (removeConfigurationFromCache) {
 				WebConfigurationManager.RemoveConfigurationFromCache (context);
 				removeConfigurationFromCache = false;
 			}
-#endif
+
 			Thread th = Thread.CurrentThread;
 #if !TARGET_JVM
 			if (Thread.CurrentPrincipal != prev_user)
@@ -1557,9 +1499,7 @@ namespace System.Web {
 			try {
 				InitOnce (true);
 			} catch (Exception e) {
-#if NET_2_0
 				initialization_exception = e;
-#endif
 				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
 				PipelineDone ();
 				return;
@@ -1602,13 +1542,8 @@ namespace System.Web {
 				return ret;
 
 			bool allowCache;
-#if NET_2_0
 			HttpHandlersSection httpHandlersSection = WebConfigurationManager.GetSection ("system.web/httpHandlers", req.Path, req.Context) as HttpHandlersSection;
 			ret = httpHandlersSection.LocateHandler (verb, url, out allowCache);
-#else
-			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
-			ret = factory_config.LocateHandler (verb, url, out allowCache);
-#endif
 
 			IHttpHandler handler = ret as IHttpHandler;
 			if (allowCache && handler != null && handler.IsReusable)
@@ -1734,15 +1669,7 @@ namespace System.Web {
 			if (!context.IsCustomErrorEnabledUnsafe)
 				return false;
 			
-#if NET_2_0
-			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");
-#else
-			CustomErrorsConfig config = null;
-			try {
-				config = (CustomErrorsConfig) context.GetConfig ("system.web/customErrors");
-			} catch { }
-#endif
-			
+			CustomErrorsSection config = (CustomErrorsSection)WebConfigurationManager.GetSection ("system.web/customErrors");			
 			if (config == null) {
 				if (context.ErrorPage != null)
 					return RedirectErrorPage (context.ErrorPage);
@@ -1750,12 +1677,8 @@ namespace System.Web {
 				return false;
 			}
 			
-#if NET_2_0
 			CustomError err = config.Errors [context.Response.StatusCode.ToString()];
 			string redirect = err == null ? null : err.Redirect;
-#else
-			string redirect =  config [context.Response.StatusCode];
-#endif
 			if (redirect == null) {
 				redirect = context.ErrorPage;
 				if (redirect == null)
@@ -1833,7 +1756,6 @@ namespace System.Web {
 					return type;
 			}
 
-#if NET_2_0
 			IList tla = System.Web.Compilation.BuildManager.TopLevelAssemblies;
 			if (tla != null && tla.Count > 0) {
 				foreach (Assembly asm in tla) {
@@ -1844,7 +1766,6 @@ namespace System.Web {
 						return type;
 				}
 			}
-#endif
 
 			Exception loadException = null;
 			try {

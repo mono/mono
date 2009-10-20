@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
+// (C) 2003-2009 Novell, Inc (http://novell.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,28 +30,17 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Web
 {
-	class MimeTypes
+	sealed class MimeTypes
 	{
-#if NET_2_0
 		static Dictionary <string, string> mimeTypes;
-#else
-		static Hashtable mimeTypes;
-#endif
 		
 		static MimeTypes ()
 		{
-#if NET_2_0
-			mimeTypes = new Dictionary <string, string> (StringComparer.InvariantCultureIgnoreCase);
-#else
-			mimeTypes = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						   CaseInsensitiveComparer.DefaultInvariant);
-#endif
+			mimeTypes = new Dictionary <string, string> (StringComparer.OrdinalIgnoreCase);
 			mimeTypes.Add ("323", "text/h323");
 			mimeTypes.Add ("3dmf", "x-world/x-3dmf");
 			mimeTypes.Add ("3dm", "x-world/x-3dmf");
@@ -551,13 +540,8 @@ namespace System.Web
 			string result = null;
 			int dot = fileName.LastIndexOf ('.');
 
-			if (dot != -1 && fileName.Length > dot + 1) {
-#if NET_2_0
+			if (dot != -1 && fileName.Length > dot + 1)
 				mimeTypes.TryGetValue (fileName.Substring (dot + 1), out result);
-#else
-				result = mimeTypes [fileName.Substring (dot + 1)] as string;
-#endif
-			}
 			
 			if (result == null)
 				result = "application/octet-stream";

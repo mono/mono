@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -36,9 +35,10 @@ using System.Configuration.Provider;
 using System.Configuration;
 using System.Web.Configuration;
 
-namespace System.Web {
-	public static class SiteMap {
-	
+namespace System.Web
+{
+	public static class SiteMap
+	{
 		static void Init ()
 		{
 			lock (locker) {
@@ -113,5 +113,5 @@ namespace System.Web {
 		static object locker = new object ();
 	}
 }
-#endif
+
 

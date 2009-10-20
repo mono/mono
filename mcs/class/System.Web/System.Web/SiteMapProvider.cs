@@ -6,7 +6,7 @@
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Specialized;
@@ -40,8 +39,10 @@ using System.Web.Util;
 using System.Globalization;
 using System.Web.Configuration;
 
-namespace System.Web {
-	public abstract class SiteMapProvider : ProviderBase {
+namespace System.Web
+{
+	public abstract class SiteMapProvider : ProviderBase
+	{
 		static readonly object siteMapResolveEvent = new object ();
 		
 		internal object this_lock = new object ();
@@ -309,5 +310,5 @@ namespace System.Web {
 		}
 	}
 }
-#endif
+
 

@@ -5,8 +5,9 @@
 // Author:
 //	Miguel de Icaza (miguel@novell.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,11 +43,12 @@ using System.Security.Permissions;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
-namespace System.Web {
-	
+namespace System.Web
+{	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed partial class HttpResponse {
+	public sealed partial class HttpResponse
+	{
 		internal HttpWorkerRequest WorkerRequest;
 		internal HttpResponseStream output_stream;
 		internal bool buffer = true;
@@ -99,11 +101,8 @@ namespace System.Web {
 		// Session State
 		//
 		string app_path_mod;
-		
-#if NET_2_0
 		bool is_request_being_redirected;
 		Encoding headerEncoding;
-#endif
 
 		internal HttpResponse ()
 		{
@@ -137,11 +136,7 @@ namespace System.Web {
 			get {
 				if (!version_header_checked && version_header == null) {
 					version_header_checked = true;
-#if NET_2_0
 					HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
-#else
-					HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
-#endif
 					if (config != null && config.EnableVersionHeader)
 						version_header = Environment.Version.ToString (3);
 				}
@@ -287,7 +282,7 @@ namespace System.Web {
 				output_stream.Filter = value;
 			}
 		}
-#if NET_2_0
+
 		public Encoding HeaderEncoding {
 			get {
 				if (headerEncoding == null) {
@@ -314,11 +309,7 @@ namespace System.Web {
 			}
 		}
 
-		public
-#else
-		internal
-#endif
-		NameValueCollection Headers {
+		public NameValueCollection Headers {
 			get {
 				if (headers == null)
 					headers = new NameValueCollection ();
@@ -336,11 +327,11 @@ namespace System.Web {
 				return WorkerRequest.IsClientConnected ();
 			}
 		}
-#if NET_2_0
+
 		public bool IsRequestBeingRedirected {
 			get { return is_request_being_redirected; }
 		}
-#endif
+
 		public TextWriter Output {
 			get {
 				if (writer == null)
@@ -376,23 +367,13 @@ namespace System.Web {
 
 				string s = value.Substring (0, p);
 				
-#if NET_2_0
 				if (!Int32.TryParse (s, out status_code))
 					throw new HttpException ("Invalid format for the Status property");
-#else
-						    
-				try {
-					status_code = Int32.Parse (s);
-				} catch {
-					throw new HttpException ("Invalid format for the Status property");
-				}
-#endif
 				
 				status_description = value.Substring (p+1);
 			}
 		}
 
-#if NET_2_0
 		// We ignore the two properties on Mono as they are for use with IIS7, but there is
 		// no point in throwing PlatformNotSupportedException. We might find a use for them
 		// some day.
@@ -405,7 +386,6 @@ namespace System.Web {
 			get;
 			set;
 		}
-#endif
 		
 		public int StatusCode {
 			get {
@@ -447,7 +427,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("Not implemented")]
 		public void AddCacheDependency (CacheDependency[] dependencies)
 		{
@@ -459,7 +438,7 @@ namespace System.Web {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
+
 		[MonoTODO("Currently does nothing")]
 		public void AddCacheItemDependencies (ArrayList cacheKeys)
 		{
@@ -478,14 +457,13 @@ namespace System.Web {
 				return;
 			FileDependenciesArray.AddRange (filenames);
 		}
-#if NET_2_0
+
 		public void AddFileDependencies (string[] filenames)
 		{
 			if (filenames == null || filenames.Length == 0)
 				return;
 			FileDependenciesArray.AddRange (filenames);
 		}
-#endif		
 
 		public void AddFileDependency (string filename)
 		{
@@ -565,13 +543,9 @@ namespace System.Web {
 			}
 
 			bool cookieless = false;
-#if NET_2_0
 			SessionStateSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/sessionState") as SessionStateSection;
 			cookieless = SessionStateModule.IsCookieLess (context, config);
-#else
-			SessionConfig config = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;
-			cookieless = config.CookieLess;
-#endif
+
 			if (!cookieless)
 				return virtualPath;
 
@@ -637,12 +611,10 @@ namespace System.Web {
 			closed = true;
 		}
 
-#if NET_2_0
 		public void DisableKernelCache ()
 		{
 			// does nothing in Mono
 		}
-#endif
 		
 		public void End ()
 		{
@@ -870,15 +842,12 @@ namespace System.Web {
 			if (headers_sent)
 				throw new HttpException ("Headers have already been sent");
 
-#if NET_2_0
 			is_request_being_redirected = true;
-#endif
 			ClearHeaders ();
 			ClearContent ();
 			
 			StatusCode = 302;
 			url = ApplyAppPathModifier (url);
-#if NET_2_0
 			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
 			if (config != null && config.UseFullyQualifiedRedirectUrl) {
 				var ub = new UriBuilder (context.Request.Url);
@@ -889,7 +858,6 @@ namespace System.Web {
 				ub.UserName = null;
 				url = ub.Uri.ToString ();
 			}
-#endif
 			redirect_location = url;
 
 			// Text for browsers that can't handle location header
@@ -899,9 +867,7 @@ namespace System.Web {
 			
 			if (endResponse)
 				End ();
-#if NET_2_0
 			is_request_being_redirected = false;
-#endif
 		}
 
 		public static void RemoveOutputCacheItem (string path)
@@ -1033,7 +999,7 @@ namespace System.Web {
 			output_stream.ApplyFilter (false);
 			Flush ();
 		}
-#if NET_2_0
+
 		public void WriteSubstitution (HttpResponseSubstitutionCallback callback)
 		{
 			// Emulation of .NET behavior
@@ -1061,7 +1027,7 @@ namespace System.Web {
 			
 			cached_response.SetData (callback);
 		}
-#endif
+
 		//
 		// Like WriteFile, but never buffers, so we manually Flush here
 		//
@@ -1082,7 +1048,6 @@ namespace System.Web {
 			Flush (final_flush);
 		}
 
-#if NET_2_0
 		public void TransmitFile (string filename, long offset, long length)
 		{
 			output_stream.WriteFile (filename, offset, length);
@@ -1118,7 +1083,6 @@ namespace System.Web {
 					Flush (true);
 			}
 		}
-#endif
 		
 #region Session state support
 		internal void SetAppPathModifier (string app_modifier)

@@ -6,7 +6,7 @@
 //   Jackson Harper (jackson@ximian.com)
 //
 // (C) 2002 2003, Patrik Torstensson
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,14 +33,13 @@ using System.Collections;
 using System.Security.Permissions;
 using System.Web.UI;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class TraceContext {
-#if NET_2_0
+	public sealed class TraceContext
+	{
 		static readonly object traceFinishedEvent = new object ();
-#endif
 		
 		HttpContext _Context;
 		TraceManager _traceManager;
@@ -50,19 +49,14 @@ namespace System.Web {
 		bool data_saved;
 		bool _haveTrace;
 		Hashtable view_states;
-#if NET_2_0
 		Hashtable control_states;
-#endif
-		Hashtable sizes;
-		
-#if NET_2_0
+		Hashtable sizes;		
 		EventHandlerList events = new EventHandlerList ();
 		
 		public event TraceContextEventHandler TraceFinished {
 			add { events.AddHandler (traceFinishedEvent, value); }
 			remove { events.AddHandler (traceFinishedEvent, value); }
 		}
-#endif
 
 		public TraceContext (HttpContext Context)
 		{
@@ -158,11 +152,7 @@ namespace System.Web {
 
 			SetRequestDetails ();
 			if (_Context.Handler is Page)
-#if NET_2_0
 				data.AddControlTree ((Page) _Context.Handler, view_states, control_states, sizes);
-#else
-				data.AddControlTree ((Page) _Context.Handler, view_states, sizes);
-#endif
 
 			AddCookies ();
 			AddHeaders ();
@@ -179,14 +169,12 @@ namespace System.Web {
 			view_states [ctrl] = vs;
 		}
 
-#if NET_2_0
 		internal void SaveControlState (Control ctrl, object vs) {
 			if (control_states == null)
 				control_states = new Hashtable ();
 
 			control_states [ctrl] = vs;
 		}
-#endif
 
 		internal void SaveSize (Control ctrl, int size)
 		{

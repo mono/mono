@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
+// (c) Copyright 2004-2009 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,14 +40,14 @@ using System.Web.Util;
 using System.Web.Compilation;
 #if TARGET_J2EE
 using vmw.common;
-#endif
-
-#if NET_2_0 && !TARGET_J2EE
+#else
 using System.CodeDom.Compiler;
 #endif
 
-namespace System.Web {
-	class HttpApplicationFactory {
+namespace System.Web
+{
+	sealed class HttpApplicationFactory
+	{
 		object this_lock = new object ();
 		
 		// Initialized in InitType
@@ -82,12 +82,10 @@ namespace System.Web {
 		static ArrayList watchers = new ArrayList();
 		static object watchers_lock = new object();
 		static bool app_shutdown = false;
-#if NET_2_0
 		static bool app_disabled = false;
 		static string[] app_browsers_files = new string[0];
 		static string[] default_machine_browsers_files = new string[0];
 		static string[] app_mono_machine_browsers_files = new string[0];
-#endif
 		Stack available = new Stack ();
 		object next_free;
 		Stack available_for_end = new Stack ();
@@ -317,12 +315,7 @@ namespace System.Web {
 				} else {
 					evt.AddEventHandler (target, Delegate.CreateDelegate (
 								     evt.EventHandlerType, app,
-#if NET_2_0
-								     method
-#else
-								     method.Name
-#endif
-							     ));
+								     method));
 				}
 			}
 			
@@ -401,9 +394,7 @@ namespace System.Web {
 				if (!needs_init)
 					return;
 
-#if NET_2_0
 				try {
-#endif
 					string physical_app_path = HttpRuntime.AppDomainAppPath;
 					string app_file = null;
 					
@@ -414,11 +405,7 @@ namespace System.Web {
 							app_file = null;
 					}
 			
-#if !NET_2_0
-					WebConfigurationSettings.Init (context);
-#endif
-		
-#if NET_2_0 && !TARGET_J2EE
+#if !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
 
@@ -458,19 +445,13 @@ namespace System.Web {
 					}
 #endif
 
-#if NET_2_0
 					app_type = BuildManager.GetPrecompiledApplicationType ();
-#endif
 					if (app_type == null && app_file != null) {
 #if TARGET_J2EE
 						app_file = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute("~/" + Path.GetFileName(app_file));
 						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
 #else
-#if NET_2_0
 						app_type = BuildManager.GetCompiledType ("~/" + Path.GetFileName (app_file));
-#else
-						app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
-#endif
 #endif
 						if (app_type == null) {
 							string msg = String.Format ("Error compiling application file ({0}).", app_file);
@@ -497,7 +478,6 @@ namespace System.Web {
 #endif
 					
 					needs_init = false;
-#if NET_2_0
 				} catch (Exception) {
 					if (BuildManager.CodeAssemblies != null)
 						BuildManager.CodeAssemblies.Clear ();
@@ -507,12 +487,6 @@ namespace System.Web {
 						WebConfigurationManager.ExtraAssemblies.Clear ();
 					throw;
 				}
-#endif
-				
-				//
-				// Now init the settings
-				//
-
 			}
 		}
 
@@ -542,8 +516,7 @@ namespace System.Web {
 					if (factory.app_start_needed) {
 						foreach (string dir in HttpApplication.BinDirs)
 							WatchLocationForRestart (dir, "*.dll");
-#if NET_2_0
-									// Restart if the App_* directories are created...
+						// Restart if the App_* directories are created...
 			                        WatchLocationForRestart (".", "App_Code");
 			                        WatchLocationForRestart (".", "App_Browsers");
 			                        WatchLocationForRestart (".", "App_GlobalResources");
@@ -551,7 +524,6 @@ namespace System.Web {
 			                        WatchLocationForRestart ("App_Code", "*", true);
 			                        WatchLocationForRestart ("App_Browsers", "*");
 			                        WatchLocationForRestart ("App_GlobalResources", "*");
-#endif
 			                        app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
 						return app;
@@ -660,7 +632,6 @@ namespace System.Web {
 			}
 	        }
 
-#if NET_2_0
 		internal static bool ApplicationDisabled {
 			get { return app_disabled; }
 			set { app_disabled = value; }
@@ -692,7 +663,6 @@ namespace System.Web {
 				return capabilities_processor;
 			}
 		}
-#endif
 		
 		internal static void DisableWatchers ()
 		{
@@ -716,13 +686,7 @@ namespace System.Web {
 		{
 			lock (watchers_lock) {
 				foreach (FileSystemWatcher watcher in watchers) {
-					if (
-#if NET_2_0
-						String.Compare (watcher.Path, virtualPath, StringComparison.Ordinal) != 0 || String.Compare (watcher.Filter, filter, StringComparison.Ordinal) != 0
-#else
-						String.Compare (watcher.Path, virtualPath) != 0 || String.Compare (watcher.Filter, filter) != 0
-#endif
-					)
+					if (String.Compare (watcher.Path, virtualPath, StringComparison.Ordinal) != 0 || String.Compare (watcher.Filter, filter, StringComparison.Ordinal) != 0)
 						continue;
 					
 					watcher.EnableRaisingEvents = enable;
@@ -764,7 +728,6 @@ namespace System.Web {
 			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true, Helpers.InvariantCulture) == 0 && Directory.Exists (name))
 				return;
 
-#if NET_2_0
 			// We re-enable suppression here since WebConfigurationManager will disable
 			// it after save is done. WebConfigurationManager is called twice by
 			// Configuration - just after opening the target file and just after closing
@@ -773,7 +736,6 @@ namespace System.Web {
 			// change notification.
 			if (isConfig && WebConfigurationManager.SuppressAppReload (true))
 				return;
-#endif
 			
 	        	lock (watchers_lock) {
 				if(app_shutdown)

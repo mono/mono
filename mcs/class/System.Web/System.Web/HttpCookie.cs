@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +32,8 @@ using System.Text;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	[Flags]
 	internal enum CookieFlags : byte {
 		Secure = 1,
@@ -206,7 +206,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		public bool HttpOnly {
 			get {
 				return (flags & CookieFlags.HttpOnly) == CookieFlags.HttpOnly;
@@ -219,21 +218,18 @@ namespace System.Web {
 					flags &= ~CookieFlags.HttpOnly;
 			}
 		}
-#endif
 
 		/*
 		 * simple utility class that just overrides ToString
 		 * to get the desired behavior for
 		 * HttpCookie.Values
 		 */
-		class CookieNVC : NameValueCollection
+		sealed class CookieNVC : NameValueCollection
 		{
-#if NET_2_0
 			public CookieNVC ()
 				: base (StringComparer.OrdinalIgnoreCase)
 			{
 			}
-#endif
 
 			public override string ToString ()
 			{

@@ -6,6 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2003-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -33,7 +34,7 @@ using System.Reflection;
 namespace System.Web
 {
 	delegate void NoParamsDelegate ();
-	class NoParamsInvoker
+	sealed class NoParamsInvoker
 	{
 		EventHandler faked;
 		NoParamsDelegate real;
@@ -44,12 +45,7 @@ namespace System.Web
 				real = (NoParamsDelegate) Delegate.CreateDelegate (
 					typeof (NoParamsDelegate), method);
 			else
-				real = (NoParamsDelegate) Delegate.CreateDelegate (
-#if NET_2_0
-						typeof (NoParamsDelegate), o, method);
-#else
-						typeof (NoParamsDelegate), o, method.Name);
-#endif
+				real = (NoParamsDelegate) Delegate.CreateDelegate (typeof (NoParamsDelegate), o, method);
 			 faked = new EventHandler (InvokeNoParams);
 		}
 

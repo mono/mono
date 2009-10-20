@@ -4,7 +4,7 @@
 // Authors:
 //   	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// (c) 2005 Novell, Inc. (http://www.novell.com)
+// (c) 2005-2009 Novell, Inc. (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,9 +35,8 @@ namespace System.Web
 	{
 		bool got_id;
 		int id;
-#if NET_2_0
+
 		public WebROCollection () : base (StringComparer.OrdinalIgnoreCase) { }
-#endif
 		public bool GotID {
 			get { return got_id; }
 		}

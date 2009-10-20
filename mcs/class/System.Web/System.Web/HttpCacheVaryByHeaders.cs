@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,12 +31,12 @@
 using System.Collections;
 using System.Security.Permissions;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpCacheVaryByHeaders {
-
+	public sealed class HttpCacheVaryByHeaders
+	{
 		/* I would have much rather seen this class just use the
 		 * Hashtable, and have the getter/setters for the builtin
 		 * fields just manipulate that Hashtable, but that doesn't
@@ -69,12 +69,7 @@ namespace System.Web {
 		internal HttpCacheVaryByHeaders ()
 		{
 			/* the field names are meant to be case insensitive */
-#if NET_2_0
 			fields = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			fields = new Hashtable(CaseInsensitiveHashCodeProvider.Default,
-					       CaseInsensitiveComparer.Default);
-#endif
 		}
 
 		internal string[] GetHeaderNames (bool omitVaryStar)

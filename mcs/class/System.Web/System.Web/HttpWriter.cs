@@ -6,7 +6,7 @@
 //	Miguel de Icaza (miguel@novell.com)
 //
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,11 +34,12 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 	
-namespace System.Web {
-	
+namespace System.Web
+{	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpWriter : TextWriter {
+	public sealed class HttpWriter : TextWriter
+	{
 		HttpResponseStream output_stream;
 		HttpResponse response;
 		Encoding encoding;

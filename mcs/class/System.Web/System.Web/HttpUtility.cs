@@ -7,7 +7,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
@@ -37,18 +38,31 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 
-#if NET_2_0
-using System.Collections.Generic;
-#endif
-
 namespace System.Web {
 
 #if !MONOTOUCH
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #endif
-
-	public sealed class HttpUtility {
+	public sealed class HttpUtility
+	{
+		sealed class HttpQSCollection : NameValueCollection
+		{
+			public override string ToString ()
+			{
+				int count = Count;
+				if (count == 0)
+					return "";
+				StringBuilder sb = new StringBuilder ();
+				string [] keys = AllKeys;
+				for (int i = 0; i < count; i++) {
+					sb.AppendFormat ("{0}={1}&", keys [i], this [keys [i]]);
+				}
+				if (sb.Length > 0)
+					sb.Length--;
+				return sb.ToString ();
+			}
+		}
 		#region Fields
 	
 		static Hashtable entities;
@@ -409,11 +423,7 @@ namespace System.Web {
 				e = Encoding.UTF8;
 
 			long len = s.Length;
-#if NET_2_0
 			var bytes = new List <byte> ();
-#else
-			ArrayList bytes = new ArrayList ();
-#endif
 			int xchar;
 			char ch;
 			
@@ -443,11 +453,7 @@ namespace System.Web {
 					WriteCharBytes (bytes, ch, e);
 			}
 			
-#if NET_2_0
 			byte[] buf = bytes.ToArray ();
-#else
-			byte[] buf = (byte[])bytes.ToArray (typeof (byte));
-#endif
 			bytes = null;
 			return e.GetString (buf);
 			
@@ -1005,7 +1011,6 @@ namespace System.Web {
 				output.Write (HtmlEncode (s));
 		}
 
-#if NET_1_1
 		public static string UrlPathEncode (string s)
 		{
 			if (s == null || s.Length == 0)
@@ -1013,18 +1018,15 @@ namespace System.Web {
 
 			MemoryStream result = new MemoryStream ();
 			int length = s.Length;
-            for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++) {
 				UrlPathEncodeChar (s [i], result);
 			}
 			return Encoding.ASCII.GetString (result.ToArray ());
 		}
 		
-		static void UrlPathEncodeChar (char c, Stream result) {
-#if NET_2_0
+		static void UrlPathEncodeChar (char c, Stream result)
+		{
 			if (c < 33 || c > 126) {
-#else
-			if (c > 127) {
-#endif
 				byte [] bIn = Encoding.UTF8.GetBytes (c.ToString ());
 				for (int i = 0; i < bIn.Length; i++) {
 					result.WriteByte ((byte) '%');
@@ -1041,25 +1043,6 @@ namespace System.Web {
 			}
 			else
 				result.WriteByte ((byte) c);
-		}
-#endif
-
-#if NET_2_0
-		class HttpQSCollection : NameValueCollection {
-			public override string ToString ()
-			{
-				int count = Count;
-				if (count == 0)
-					return "";
-				StringBuilder sb = new StringBuilder ();
-				string [] keys = AllKeys;
-				for (int i = 0; i < count; i++) {
-					sb.AppendFormat ("{0}={1}&", keys [i], this [keys [i]]);
-				}
-				if (sb.Length > 0)
-					sb.Length--;
-				return sb.ToString ();
-			}
 		}
 
 		public static NameValueCollection ParseQueryString (string query)
@@ -1081,8 +1064,7 @@ namespace System.Web {
 			NameValueCollection result = new HttpQSCollection ();
 			ParseQueryString (query, encoding, result);
 			return result;
-		} 				
-#endif
+		}
 
 		internal static void ParseQueryString (string query, Encoding encoding, NameValueCollection result)
 		{

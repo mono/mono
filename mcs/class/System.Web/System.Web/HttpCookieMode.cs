@@ -26,12 +26,8 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web
 {
-#if !NET_2_0
-        [Serializable]
-#endif
         public enum HttpCookieMode
         {
                 UseUri = 0,
@@ -40,4 +36,4 @@ namespace System.Web
                 UseDeviceProfile = 3,
         }
 }
-#endif
+

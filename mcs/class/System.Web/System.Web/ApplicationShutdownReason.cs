@@ -4,6 +4,8 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 //
+// Copyright (C) 2004-2009 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -23,10 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web
 {
         public enum ApplicationShutdownReason
@@ -46,11 +46,10 @@ namespace System.Web
                 HttpRuntimeClose = 12,
                 InitializationError = 13,
                 MaxRecompilationsReached = 14
-
-		#if NET_3_5
+#if NET_3_5
 		, BuildManagerChange = 15
-		#endif 		
+#endif 		
         }
 }
-#endif
+
 

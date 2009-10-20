@@ -143,11 +143,9 @@ namespace System.Web
 			}
 		}
 
-#if NET_2_0
 		public override System.Collections.IEnumerator GetEnumerator () {
 			LoadInfo ();
 			return base.GetEnumerator ();
 		}
-#endif
 	}
 }

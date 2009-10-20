@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,24 +29,21 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Web.UI;
-using System.Collections.Specialized;
 
-#if NET_2_0
-using System.Collections.Generic;
-#endif
-
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ComVisible (false)]
-	public abstract partial class HttpWorkerRequest {
-
+	public abstract partial class HttpWorkerRequest
+	{
 		public delegate void EndOfSendNotification (HttpWorkerRequest wr, object extraData);
 
 		public const int HeaderCacheControl = 0;
@@ -109,31 +106,16 @@ namespace System.Web {
 		public const int ReasonCacheSecurity = 3;
 		public const int ReasonClientDisconnect = 4;
 		public const int ReasonDefault = 0;
-
-#if NET_2_0
 		static readonly Dictionary <string, int> RequestHeaderIndexer;
 		static readonly Dictionary <string, int> ResponseHeaderIndexer;
-#else
-		static readonly Hashtable RequestHeaderIndexer;
-		static readonly Hashtable ResponseHeaderIndexer;
-#endif
 		
 		static HttpWorkerRequest ()
 		{
-#if NET_2_0
-			RequestHeaderIndexer = new Dictionary <string, int> (StringComparer.OrdinalIgnoreCase);
-#else
-			RequestHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(RequestHeaderMaximum);
-#endif
-			
+			RequestHeaderIndexer = new Dictionary <string, int> (StringComparer.OrdinalIgnoreCase);			
 			for (int i = 0; i < RequestHeaderMaximum; i++)
 				RequestHeaderIndexer.Add (GetKnownRequestHeaderName(i), i);
 
-#if NET_2_0
 			ResponseHeaderIndexer = new Dictionary <string, int> (StringComparer.OrdinalIgnoreCase);
-#else
-			ResponseHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(ResponseHeaderMaximum);
-#endif
 			for (int i = 0; i < ResponseHeaderMaximum; i++)
 				ResponseHeaderIndexer.Add (GetKnownResponseHeaderName(i), i);
 		}
@@ -156,7 +138,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		public virtual Guid RequestTraceIdentifier {
 			get { return Guid.Empty; }
 		}
@@ -164,7 +145,6 @@ namespace System.Web {
 		public virtual string RootWebConfigPath {
 			get { return null; }
 		}
-#endif
 
 		public virtual void CloseConnection ()
 		{
@@ -214,7 +194,7 @@ namespace System.Web {
 		{
 			return null;
 		}
-#if NET_2_0
+
 		public virtual int GetPreloadedEntityBody (byte[] buffer, int offset)
 		{
 			return 0;
@@ -224,7 +204,7 @@ namespace System.Web {
 		{
 			return 0;
 		}
-#endif
+
 		public virtual string GetProtocol ()
 		{
 			if (IsSecure ())
@@ -257,12 +237,12 @@ namespace System.Web {
 		{
 			return null;
 		}
-#if NET_2_0
+
 		public virtual int GetTotalEntityBodyLength ()
 		{
 			return 0;
 		}
-#endif
+
 		public virtual string GetUnknownRequestHeader (string name)
 		{
 			return null;
@@ -315,7 +295,7 @@ namespace System.Web {
 		{
 			return 0;
 		}
-#if NET_2_0
+
 		public virtual int ReadEntityBody (byte [] buffer, int offset, int size)
 		{
 			return 0;
@@ -325,7 +305,7 @@ namespace System.Web {
 		{
 			SendCalculatedContentLength ((int)contentLength);
 		}
-#endif
+
 		public virtual void SendCalculatedContentLength (int contentLength)
 		{
 			// apparently does nothing in MS.NET
@@ -370,15 +350,9 @@ namespace System.Web {
 		
 		public static int GetKnownRequestHeaderIndex (string header)
 		{
-#if NET_2_0
 			int index;
 			if (RequestHeaderIndexer.TryGetValue (header, out index))
 				return index;
-#else
-			object index = RequestHeaderIndexer[header];
-			if (index != null)
-				return (int)index;
-#endif
 
 			return -1;
 		}
@@ -433,15 +407,9 @@ namespace System.Web {
 
 		public static int GetKnownResponseHeaderIndex (string header)
 		{
-#if NET_2_0
 			int index;
 			if (ResponseHeaderIndexer.TryGetValue (header, out index))
 				return index;
-#else
-			object index = ResponseHeaderIndexer[header];
-			if (index != null)
-				return (int)index;
-#endif
 
 			return -1;
 		}

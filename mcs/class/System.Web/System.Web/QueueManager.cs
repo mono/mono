@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003,2004 Novell, Inc (http://www.novell.com)
+// (C) 2003-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -37,7 +37,7 @@ using System.Web.Configuration;
 
 namespace System.Web
 {
-	class QueueManager
+	sealed class QueueManager
 	{
 		// keep the defaults in sync with the ones in HttpRuntimeSection.cs
 		int minFree = 8;
@@ -53,15 +53,9 @@ namespace System.Web
 			Exception ex = null;
 			
 			try {
-#if NET_2_0
 				HttpRuntimeSection config;
 
 				config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
-#else
-				HttpRuntimeConfig config;
-
-				config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
-#endif
 				minFree = config.MinFreeThreads;
 				minLocalFree = config.MinLocalRequestFreeThreads;
 				queueLimit = config.AppRequestQueueLimit;

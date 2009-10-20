@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,24 +32,20 @@ using System.Collections;
 using System.Security.Permissions;
 using System.Text;
 
-namespace System.Web {
+namespace System.Web
+{
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpCacheVaryByParams {
-
+	public sealed class HttpCacheVaryByParams
+	{
 		bool ignore_parms;
 		Hashtable parms;
 
 		internal HttpCacheVaryByParams ()
 		{
 			/* the parameter names are meant to be case insensitive */
-#if NET_2_0
 			parms = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			parms = new Hashtable(CaseInsensitiveHashCodeProvider.Default,
-					      CaseInsensitiveComparer.Default);
-#endif
 		}
 
 		internal string[] GetParamNames ()

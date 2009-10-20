@@ -28,11 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web {
-#if !NET_2_0
-	[Serializable]
-#endif
-	public enum ProcessShutdownReason {
+namespace System.Web 
+{
+	public enum ProcessShutdownReason 
+	{
 		None,
 		Unexpected,
 		RequestsLimit,

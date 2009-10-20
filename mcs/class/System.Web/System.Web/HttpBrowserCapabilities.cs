@@ -5,7 +5,7 @@
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Security.Permissions;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -59,4 +58,3 @@ namespace System.Web
 	}
 }
 
-#endif

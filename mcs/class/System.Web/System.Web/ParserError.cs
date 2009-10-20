@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,12 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Runtime.Serialization;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	[Serializable]
 	public sealed class ParserError
 	{
@@ -69,4 +68,3 @@ namespace System.Web {
 	}
 }
 
-#endif

@@ -8,7 +8,7 @@
 // Authors:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
+// (c) 2003-2009 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -257,8 +257,6 @@ namespace System.Web
 			defaultCaps.Add ("win16", "False");
 			defaultCaps.Add ("win32", "False");
 			defaultCaps.Add ("win64", "False");
-
-#if NET_2_0
 			defaultCaps.Add ("adapters", new Hashtable ());
 			defaultCaps.Add ("cancombineformsindeck", "False");
 			defaultCaps.Add ("caninitiatevoicecall", "False");
@@ -341,7 +339,6 @@ namespace System.Web
 			defaultCaps.Add ("supportsuncheck", "True");
 			defaultCaps.Add ("supportsxmlhttp", "False");
 			defaultCaps.Add ("type", "Unknown");
-#endif
 		}
 		
 		public static Hashtable GetCapabilities (string userAgent)

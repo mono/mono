@@ -37,12 +37,8 @@ using Microsoft.Win32;
 
 namespace System.Web {
 
-#if NET_2_0
-	public
-#endif
-	static class VirtualPathUtility
+	public static class VirtualPathUtility
 	{
-#if NET_2_0
 		static bool monoSettingsVerifyCompatibility;
 		static bool runningOnWindows;
 		
@@ -57,7 +53,6 @@ namespace System.Web {
 				// ignore
 			}
 		}
-#endif
 		
 		public static string AppendTrailingSlash (string virtualPath)
 		{
@@ -482,7 +477,6 @@ namespace System.Web {
 			if (path == null)
 				return false;
 
-#if NET_2_0
 			bool doValidate = true;
 			if (runningOnWindows) {
 				try {
@@ -499,7 +493,7 @@ namespace System.Web {
 
 			if (!doValidate)
 				return true;
-#endif
+
 			return path.IndexOfAny (invalidVirtualPathChars) == -1;
 		}
 	}

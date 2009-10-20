@@ -8,7 +8,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,11 +42,12 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Globalization;
 
-namespace System.Web {
-	
+namespace System.Web
+{	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed partial class HttpRequest {
+	public sealed partial class HttpRequest
+	{
 		HttpWorkerRequest worker_request;
 		HttpContext context;
 		WebROCollection query_string_nvc;
@@ -95,16 +96,11 @@ namespace System.Web {
 		// Validations
 		bool validate_cookies, validate_query_string, validate_form;
 		bool checked_cookies, checked_query_string, checked_form;
-
-#if NET_2_0
 		static readonly UrlMappingCollection urlMappings;
-#endif
-		
 		readonly static char [] queryTrimChars = {'?'};
 		
 		static HttpRequest ()
 		{
-#if NET_2_0
 			try {
 				UrlMappingsSection ums = WebConfigurationManager.GetWebApplicationSection ("system.web/urlMappings") as UrlMappingsSection;
 				if (ums != null && ums.IsEnabled) {
@@ -115,7 +111,6 @@ namespace System.Web {
 			} catch {
 				// unlikely to happen
 			}
-#endif
 			
 			host_addresses = GetLocalHostAddresses ();
 		}
@@ -152,13 +147,7 @@ namespace System.Web {
 					else
 						query = worker_request.GetQueryString();
 					
-					BuildUrlComponents (
-#if NET_2_0
-						ApplyUrlMapping (worker_request.GetUriPath ()),
-#else
-						worker_request.GetUriPath (),
-#endif
-						query);
+					BuildUrlComponents (ApplyUrlMapping (worker_request.GetUriPath ()), query);
 				}
 				return url_components;
 			}
@@ -177,7 +166,6 @@ namespace System.Web {
 				url_components.Query = query.TrimStart (queryTrimChars);
 		}
 
-#if NET_2_0
 		internal string ApplyUrlMapping (string url)
 		{
 			if (urlMappings == null)
@@ -212,7 +200,6 @@ namespace System.Web {
 
 			return url_components.Path;
 		}
-#endif
 
 		string [] SplitHeader (int header_index)
 		{
@@ -238,7 +225,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 #if !TARGET_JVM
 		public WindowsIdentity LogonUserIdentity {
 			get { throw new NotImplementedException (); }
@@ -254,7 +240,6 @@ namespace System.Web {
 				anonymous_id = value;
 			}
 		}
-#endif
 
 		public string ApplicationPath {
 			get {
@@ -278,7 +263,6 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0		
 		internal bool BrowserMightHaveSpecialWriter {
 			get {
 				return (browser_capabilities != null 
@@ -292,7 +276,6 @@ namespace System.Web {
 					|| HttpApplicationFactory.AppBrowsersFiles.Length > 0);
 			}
 		}
-#endif
 
 		public HttpClientCertificate ClientCertificate {
 			get {
@@ -425,13 +408,11 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		public string AppRelativeCurrentExecutionFilePath {
 			get {
 				return VirtualPathUtility.ToAppRelative (CurrentExecutionFilePath);
 			}
 		}
-#endif
 
 		public string FilePath {
 			get {
@@ -439,13 +420,7 @@ namespace System.Web {
 					return "/"; // required for 2.0
 
 				if (file_path == null)
-					file_path = UrlUtils.Canonic (
-#if NET_2_0
-						ApplyUrlMapping (worker_request.GetFilePath ())
-#else
-						worker_request.GetFilePath ()
-#endif
-					);
+					file_path = UrlUtils.Canonic (ApplyUrlMapping (worker_request.GetFilePath ()));
 
 				return file_path;
 			}
@@ -736,12 +711,7 @@ namespace System.Web {
 			//
 			int content_length = ContentLength;
 			int content_length_kb = content_length / 1024;
-			
-#if NET_2_0
 			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
-#else
-			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
-#endif
 			if (content_length_kb > config.MaxRequestLength)
 				throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
 
@@ -936,19 +906,10 @@ namespace System.Web {
 						// use only if it's already been instantiated, so that we can't go into endless
 						// recursion in some scenarios
 						path = UrlComponents.Path;
-					} else {
-#if NET_2_0
+					} else
 						path = ApplyUrlMapping (worker_request.GetUriPath ());
-#else
-						path = worker_request.GetUriPath ();
-#endif
-					}
-						
-#if NET_2_0
+					
 					unescaped_path = Uri.UnescapeDataString (path);
-#else
-					unescaped_path = HttpUtility.UrlDecode (path);
-#endif
 				}
 				
 				return unescaped_path;
@@ -1309,13 +1270,8 @@ namespace System.Web {
 				client_target = value;
 			}
 		}
-
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool IsLocal {
+		
+		public bool IsLocal {
 			get {
 				string address = worker_request.GetRemoteAddress ();
 
@@ -1484,15 +1440,9 @@ namespace System.Web {
 		{
 			try {
 				string hostName = System.Net.Dns.GetHostName ();
-#if NET_2_0
 				System.Net.IPAddress [] ipaddr = System.Net.Dns.GetHostAddresses (hostName);
-#else
-				System.Net.IPAddress [] ipaddr = System.Net.Dns.GetHostByName (hostName).AddressList;
-#endif
 				return ipaddr;
-			}
-			catch
-			{
+			} catch {
 				return new System.Net.IPAddress[0];
 			}
 		}

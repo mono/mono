@@ -25,14 +25,15 @@ using System.IO;
 using System.Security.Permissions;
 using System.Web.UI;
 
-namespace System.Web {
-
+namespace System.Web
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable {
+	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable
+	{
 		Hashtable _Objects;
 
-		class StaticItem {
+		sealed class StaticItem {
 			object this_lock = new object();
 			
 			Type type;
@@ -117,12 +118,10 @@ namespace System.Web {
 			get { return false; }
 		}
 
-#if NET_2_0
 		[MonoTODO ("Not implemented")]
 		public bool NeverAccessed {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public object SyncRoot {
 			get { return this; }
@@ -150,11 +149,7 @@ namespace System.Web {
 			_Objects [name] = obj;
 		}
 
-#if NET_2_0
 		public void Serialize (BinaryWriter writer)
-#else
-		internal void Serialize (BinaryWriter writer)
-#endif
 		{
 			writer.Write (_Objects.Count);
 			foreach (string key in _Objects.Keys) {
@@ -163,11 +158,7 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0
 		public static HttpStaticObjectsCollection Deserialize (BinaryReader reader)
-#else
-		internal static HttpStaticObjectsCollection Deserialize (BinaryReader reader)
-#endif
 		{
 			HttpStaticObjectsCollection result = new HttpStaticObjectsCollection ();
 			for (int i = reader.ReadInt32 (); i > 0; i--)

@@ -4,7 +4,7 @@
 // Author(s):
 //  Jackson Harper (jackson@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -33,12 +33,10 @@ using System;
 using System.Collections;
 using System.Web.Configuration;
 
-namespace System.Web {
-
-	internal class TraceManager {
-#if !NET_2_0
-		static string traceConfigPath = "system.web/trace";
-#endif
+namespace System.Web
+{
+	sealed class TraceManager
+	{
 		bool enabled = false;
 		bool local_only = true;
 		bool page_output = false;
@@ -53,14 +51,10 @@ namespace System.Web {
 		public TraceManager ()
 		{
 			try {
-#if NET_2_0
 				mode = TraceMode.SortByTime;
 				TraceSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/trace") as TraceSection;
 				if (config == null)
 					config = new TraceSection ();
-#else
-				TraceConfig config = (TraceConfig) HttpContext.GetAppConfig (traceConfigPath);
-#endif
 
 				if (config == null)
 					return;
@@ -68,14 +62,10 @@ namespace System.Web {
 				enabled = config.Enabled;
 				local_only = config.LocalOnly;
 				page_output = config.PageOutput;
-#if NET_2_0
 				if (config.TraceMode == TraceDisplayMode.SortByTime)
 					mode = TraceMode.SortByTime;
 				else
 					mode = TraceMode.SortByCategory;
-#else
-				mode = config.TraceMode;
-#endif
 				request_limit = config.RequestLimit;
 			} catch (Exception ex) {
 				initialException = ex;

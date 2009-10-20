@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -54,7 +55,6 @@ namespace System.Web
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
 
-#if NET_2_0
 			if (HostingEnvironment.HaveCustomVPP) {
 				VirtualFile vf = null;
 				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
@@ -70,7 +70,6 @@ namespace System.Web
 				response.TransmitFile (vf, true);
 				return;
 			}
-#endif
 			
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);

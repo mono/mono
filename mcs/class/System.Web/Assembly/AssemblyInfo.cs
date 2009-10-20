@@ -5,6 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
+// (C) 2003-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -64,20 +65,14 @@ using System.Web.UI;
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
-#if NET_2_0
 [assembly: InternalsVisibleTo ("System.Web.Extensions, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo ("System.Web.DynamicData, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 
 #endif
-#endif
 
-#if NET_2_0
 [assembly: InternalsVisibleTo ("SystemWebTestShim, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
-#endif
 
 // Resources
-
-#if NET_2_0
 
 [assembly: WebResource ("TreeView_noexpand.gif", "image/gif")]
 [assembly: WebResource ("TreeView_dash.gif", "image/gif")]
@@ -117,15 +112,8 @@ using System.Web.UI;
 [assembly: WebResource ("file.gif", "image/gif")]
 [assembly: WebResource ("folder.gif", "image/gif")]
 [assembly: WebResource ("computer.gif", "image/gif")]
-
 [assembly: WebResource ("TreeView.js", "text/javascript")]
 [assembly: WebResource ("Menu.js", "text/javascript")]
 [assembly: WebResource ("GridView.js", "text/javascript")]
 [assembly: WebResource ("webform.js", "text/javascript")]
-#endif
-
-#if NET_2_0
 [assembly: WebResource ("WebUIValidation_2.0.js", "text/javascript")]
-#else
-[assembly: WebResource ("WebUIValidation.js", "text/javascript")]
-#endif
