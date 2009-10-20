@@ -4262,6 +4262,16 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	/* uses ->valuetype, which is initialized by mono_class_setup_parent above */
 	mono_class_setup_mono_type (class);
 
+	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_UNICODE_CLASS)
+		class->unicode = 1;
+
+#if PLATFORM_WIN32
+	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_AUTO_CLASS)
+		class->unicode = 1;
+#endif
+
+	class->cast_class = class->element_class = class;
+
 	if (!class->enumtype) {
 		if (!mono_metadata_interfaces_from_typedef_full (
 			    image, type_token, &interfaces, &icount, context)){
@@ -4273,16 +4283,6 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 		class->interfaces = interfaces;
 		class->interface_count = icount;
 	}
-
-	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_UNICODE_CLASS)
-		class->unicode = 1;
-
-#if PLATFORM_WIN32
-	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_AUTO_CLASS)
-		class->unicode = 1;
-#endif
-
-	class->cast_class = class->element_class = class;
 
 	/*g_print ("Load class %s\n", name);*/
 
