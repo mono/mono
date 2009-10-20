@@ -37,6 +37,7 @@ namespace Mono.Security.Protocol.Tls
 		#region Fields
 
 		private SslServerStream sslStream;
+		private bool request_client_certificate;
 		private bool			clientCertificateRequired;
 
 		#endregion
@@ -53,6 +54,10 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.clientCertificateRequired; }
 		}
 
+		public bool RequestClientCertificate {
+			get { return request_client_certificate; }
+		}
+
 		#endregion
 
 		#region Constructors
@@ -61,11 +66,13 @@ namespace Mono.Security.Protocol.Tls
 			SslServerStream			stream,
 			SecurityProtocolType	securityProtocolType,
 			X509Certificate			serverCertificate,
-			bool					clientCertificateRequired)
+			bool					clientCertificateRequired,
+			bool					requestClientCertificate)
 			: base(securityProtocolType)
 		{
 			this.sslStream					= stream;
 			this.clientCertificateRequired	= clientCertificateRequired;
+			this.request_client_certificate	= requestClientCertificate;
 
 			// Convert the System.Security cert to a Mono Cert
 			MonoX509.X509Certificate cert = new MonoX509.X509Certificate(serverCertificate.GetRawCertData());
