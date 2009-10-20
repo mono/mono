@@ -1,3 +1,9 @@
+2009-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_create_from_typedef): Initialize class->element_class
+	before the interfaces to avoid crashes later if class initialization fails.
+	Fixes #548417.
+
 2009-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* assembly.c (mono_assembly_load_reference): Fix leak when 'status'
