@@ -230,9 +230,11 @@ namespace System.Threading
 			public void Change (Timer timer, long new_next_run)
 			{
 				lock (this) {
-					// Don't try to remove items that are not initialized or not in the list
-					if (timer.next_run != 0 && timer.next_run != Int64.MaxValue)
-						InternalRemove (timer);
+					InternalRemove (timer);
+					if (new_next_run == Int64.MaxValue) {
+						timer.next_run = new_next_run;
+						return;
+					}
 
 					if (!timer.disposed) {
 						// We should only change next_run after removing and before adding
@@ -251,9 +253,14 @@ namespace System.Threading
 				// Make sure there are no collisions (10000 ticks == 1ms, so we should be safe here)
 				int idx = list.IndexOfKey (timer);
 				if (idx != -1) {
+					bool up = (Int64.MaxValue - timer.next_run) > 20000 ? true : false;
 					while (true) {
 						idx++;
-						timer.next_run++;
+						if (up)
+							timer.next_run++;
+						else
+							timer.next_run--;
+
 						if (idx >= list.Count)
 							break;
 						Timer t2 = (Timer) list.GetByIndex (idx);
@@ -299,12 +306,7 @@ namespace System.Threading
 								timer.next_run = Int64.MaxValue;
 							} else {
 								timer.next_run = DateTime.GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
-								if (timer.next_run > ticks) {
-									Add (timer); // Safe to add here
-									count++;
-								} else {
-									new_time.Add (timer); // Not safe, add it once we're done
-								}
+								new_time.Add (timer);
 							}
 						}
 
