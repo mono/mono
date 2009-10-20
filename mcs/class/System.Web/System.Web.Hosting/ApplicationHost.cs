@@ -224,6 +224,11 @@ namespace System.Web.Hosting {
 			//
 			string domain_id = (virtualDir.GetHashCode () + 1 ^ physicalDir.GetHashCode () + 2 ^ tempDirTag).ToString ("x");
 
+			// This is used by mod_mono's fail-over support
+			string domain_id_suffix = Environment.GetEnvironmentVariable ("__MONO_DOMAIN_ID_SUFFIX");
+			if (domain_id_suffix != null && domain_id_suffix.Length > 0)
+				domain_id += domain_id_suffix;
+			
 			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;
 			setup.CachePath = dynamic_dir;
@@ -253,6 +258,7 @@ namespace System.Web.Hosting {
 			appdomain.SetData (".hostingInstallDir", Path.GetDirectoryName (typeof (Object).Assembly.CodeBase));
 #if NET_2_0
 			appdomain.SetData ("DataDirectory", Path.Combine (physicalDir, "App_Data"));
+			HostingEnvironment.SetIsHosted (false);
 #endif
 			appdomain.SetData (MonoHostedDataKey, "yes");
 			
@@ -272,9 +278,8 @@ namespace System.Web.Hosting {
 
 			if (shadow_copy_enabled) {
 				AppDomain current = AppDomain.CurrentDomain;
-				AppDomainSetup setup = current.SetupInformation;
-				setup.ShadowCopyFiles = "true";
-				setup.ShadowCopyDirectories = setup.PrivateBinPath;
+				current.SetShadowCopyFiles ();
+				current.SetShadowCopyPath (current.SetupInformation.PrivateBinPath);
 			}
 		}
 #endif
