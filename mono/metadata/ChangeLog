@@ -1,3 +1,7 @@
+2009-10-20  Marek Safar  <marek.safar@gmail.com>
+
+	* domain.c: Bump 4.0 version.
+
 2009-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* assembly.c (mono_assembly_load_reference): Fix leak when 'status'
