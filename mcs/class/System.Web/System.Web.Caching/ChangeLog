@@ -1,3 +1,15 @@
+2009-10-20  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: keysCache and entriesToInvalidate
+	dictionaries are allocated only when they are
+	required. BuildManager's RemoveEntry envent is subscribed to only
+	if cache actually has some entries.
+	Added support for post-cache substitution.
+
+	* CachedRawResponse.cs: data is stored in a list of DataItem
+	instances instead of just in a single buffer. This enables support
+	for post-cache substitution.
+
 2009-10-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Cache.cs: if item expiration time exceeds the maximum value

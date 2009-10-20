@@ -1,3 +1,8 @@
+2009-10-20  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: implemented the WriteSubstitution method,
+	thus enabling post-cache substitution.
+
 2009-10-12  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: actually _use_ the url passed to Redirect when
