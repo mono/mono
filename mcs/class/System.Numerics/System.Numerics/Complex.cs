@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2009 Novell, Inc.
 //
@@ -13,13 +14,14 @@
 // string ToString (string format)
 // string ToString (IFormatProvider)
 //
-// Acos, Asin, Atan, Conjugate, Equals, Exp, Log, Log10, Pow, Reciprocal, Sqrt, Tan, Tanh, 
+// Acos, Asin, Atan, Exp, Log, Log10, Pow, Sqrt
 
 using System;
 
 namespace System.Numerics {
 
-	public struct Complex {
+	public struct Complex : IEquatable<Complex>
+	{
 		double real, imaginary;
 
 		public static readonly Complex ImaginaryOne = new Complex (0, 1);
@@ -143,6 +145,7 @@ namespace System.Numerics {
 			return new Complex (value, 0);
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator Complex (sbyte value)
 		{
 			return new Complex (value, 0);
@@ -153,16 +156,19 @@ namespace System.Numerics {
 			return new Complex (value, 0);
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator Complex (ushort value)
 		{
 			return new Complex (value, 0);
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator Complex (uint value)
 		{
 			return new Complex (value, 0);
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator Complex (ulong value)
 		{
 			return new Complex (value, 0);
@@ -183,35 +189,63 @@ namespace System.Numerics {
 			return String.Format ("({0:G}, {1:G})", real, imaginary);
 		}
 
-		public double Abs (Complex value)
+		public static double Abs (Complex value)
 		{
-			return Math.Sqrt (imaginary * imaginary + real * real);
+			return Math.Sqrt (value.imaginary * value.imaginary + value.real * value.real);
+		}
+		
+		public static Complex Conjugate (Complex value)
+		{
+			return new Complex (value.real, -value.imaginary);
 		}
 
-		public Complex Cos (Complex value)
+		public static Complex Cos (Complex value)
 		{
 			return new Complex (Math.Cos (value.real) * Math.Cosh (value.imaginary),
 					    -Math.Sin (value.real)  * Math.Sinh (value.imaginary));
 		}
 
-		public Complex Cosh (Complex value)
+		public static Complex Cosh (Complex value)
 		{
 			return new Complex (Math.Cosh (value.real) * Math.Cos (value.imaginary),
 					    -Math.Sinh (value.real)  * Math.Sin (value.imaginary));
 		}
+		
+		public static Complex Negate (Complex value)
+		{
+			return -value;
+		}
 
-		public Complex Sin (Complex value)
+		public static Complex Sin (Complex value)
 		{
 			return new Complex (Math.Sin (value.real) * Math.Cosh (value.imaginary),
 					    Math.Cos (value.real)  * Math.Sinh (value.imaginary));
 		}
 		
-		public Complex Sinh (Complex value)
+		public static Complex Sinh (Complex value)
 		{
 			return new Complex (Math.Sinh (value.real) * Math.Cos (value.imaginary),
 					    Math.Cosh (value.real)  * Math.Sin (value.imaginary));
 		}
-
+		
+		public static Complex Reciprocal (Complex value)
+		{
+			if (value == Zero)
+				return value;
+				
+			return One / value;
+		}
+		
+		public static Complex Tan (Complex value)
+		{
+			return Sin (value) / Cos (value);
+		}
+		
+		public static Complex Tanh (Complex value)
+		{
+			return Sinh (value) / Cosh (value);
+		}
+		
 		public override int GetHashCode ()
 		{
 			return real.GetHashCode () ^ imaginary.GetHashCode ();
