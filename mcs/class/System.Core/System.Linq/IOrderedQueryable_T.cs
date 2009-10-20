@@ -1,3 +1,12 @@
+//
+// IOrderedQueryable.cs
+//
+// Authors:
+//  Alejandro Serrano "Serras" (trupill@yahoo.es)
+//	Marek Safar  <marek.safar@gmail.com>
+//
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -15,17 +24,15 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Authors:
-//        Alejandro Serrano "Serras" (trupill@yahoo.es)
-//
-
-using System;
-using System.Collections.Generic;
 
 namespace System.Linq {
-
+#if NET_4_0
+	public interface IOrderedQueryable<out T> : IOrderedQueryable, IQueryable<T>
+#else
 	public interface IOrderedQueryable<T> : IOrderedQueryable, IQueryable<T>
+#endif
 	{
 	}
 }
