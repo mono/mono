@@ -79,7 +79,9 @@ namespace System.Threading {
 		private UIntPtr static_data; /* GC-tracked */
 		private IntPtr jit_data;
 		private IntPtr lock_data;
-		Context current_appcontext;
+		/* current System.Runtime.Remoting.Contexts.Context instance
+		   keep as an object to avoid triggering its class constructor when not needed */
+		private object current_appcontext;
 		internal int stack_size;
 		private IntPtr appdomain_refs;
 		private int interruption_requested;

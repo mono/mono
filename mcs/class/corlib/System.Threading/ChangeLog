@@ -1,3 +1,8 @@
+2009-10-20  Jb Evain  <jbevain@novell.com>
+
+	* Thread.cs: change type of the current_appcontext field to object
+	to avoid triggering static constructors unless explicitely required.
+
 2009-10-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: looks like any negative value is treated as Infinite.
