@@ -1,3 +1,9 @@
+2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ApplicationHost.cs: set the shadow copy options calling the methods
+	in AppDomain, instead of setting them in a copy of the setup
+	information.
+
 2009-10-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ApplicationHost.cs: use shadowCopyBinAssemblies from
