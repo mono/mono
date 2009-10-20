@@ -1,5 +1,9 @@
 2009-10-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_create_from_typedef): Initialize class->element_class
+	before the interfaces to avoid crashes later if class initialization fails.
+	Fixes #548417.
+
 	* marshal.c (emit_marshal_vtype): Implement byref marshalling of DateTime.
 	Fixes #548276.
 
