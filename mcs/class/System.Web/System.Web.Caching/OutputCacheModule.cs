@@ -3,8 +3,9 @@
 //
 // Authors:
 //  Jackson Harper (jackson@ximian.com)
+//  Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// (C) 2003-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,11 +29,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.IO;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
-using System.Collections;
 using System.Web.Compilation;
 
 #if NET_2_0
@@ -63,11 +65,6 @@ namespace System.Web.Caching {
 		{
 			context.ResolveRequestCache += new EventHandler(OnResolveRequestCache);
 			context.UpdateRequestCache += new EventHandler(OnUpdateRequestCache);
-#if NET_2_0
-			keysCache = new Dictionary <string, string> ();
-			entriesToInvalidate = new Dictionary <string, string> ();
-			BuildManager.RemoveEntry += new BuildManagerRemoveEntryEventHandler (OnBuildManagerRemoveEntry);
-#endif
 			response_removed = new CacheItemRemovedCallback (OnRawResponseRemoved);
 		}
 
@@ -83,9 +80,15 @@ namespace System.Web.Caching {
 					return;
 				
 				keysCache.Remove (entry);
-				if (context == null && !entriesToInvalidate.ContainsKey (entry)) {
-					entriesToInvalidate.Add (entry, cacheValue);
-					return;
+				if (context == null) {
+					if (entriesToInvalidate == null) {
+						entriesToInvalidate = new Dictionary <string, string> (StringComparer.Ordinal);
+						entriesToInvalidate.Add (entry, cacheValue);
+						return;
+					} else if (!entriesToInvalidate.ContainsKey (entry)) {
+						entriesToInvalidate.Add (entry, cacheValue);
+						return;
+					}
 				}
 			}
 
@@ -116,7 +119,7 @@ namespace System.Web.Caching {
 #if NET_2_0
 			lock (keysCacheLock) {
 				string invValue;
-				if (entriesToInvalidate.TryGetValue (vary_key, out invValue) && String.Compare (invValue, key, StringComparison.Ordinal) == 0) {
+				if (entriesToInvalidate != null && entriesToInvalidate.TryGetValue (vary_key, out invValue) && String.Compare (invValue, key, StringComparison.Ordinal) == 0) {
 					context.Cache.Remove (vary_key);
 					context.InternalCache.Remove (key);
 					entriesToInvalidate.Remove (vary_key);
@@ -158,15 +161,37 @@ namespace System.Web.Caching {
 					return;
 				}
 			}
+
+			HttpResponse response = context.Response;			
+			response.ClearContent ();
+			IList cachedData = c.GetData ();
+			if (cachedData != null) {
+				Encoding outEnc = WebEncoding.ResponseEncoding;
+				
+				foreach (CachedRawResponse.DataItem d in cachedData) {
+					if (d.Length > 0) {
+						response.BinaryWrite (d.Buffer, 0, (int)d.Length);
+						continue;
+					}
+
+#if NET_2_0
+					if (d.Callback == null)
+						continue;
+
+					string s = d.Callback (context);
+					if (s == null || s.Length == 0)
+						continue;
+
+					byte[] bytes = outEnc.GetBytes (s);
+					response.BinaryWrite (bytes, 0, bytes.Length);
+#endif
+				}
+			}
 			
-			context.Response.ClearContent ();
-			context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
-
-			context.Response.ClearHeaders ();
-			context.Response.SetCachedHeaders (c.Headers);
-
-			context.Response.StatusCode = c.StatusCode;
-			context.Response.StatusDescription = c.StatusDescription;
+			response.ClearHeaders ();
+			response.SetCachedHeaders (c.Headers);
+			response.StatusCode = c.StatusCode;
+			response.StatusDescription = c.StatusDescription;
 				
 			app.CompleteRequest ();
 		}
@@ -179,7 +204,6 @@ namespace System.Web.Caching {
 			if (context.Response.IsCached && context.Response.StatusCode == 200 && 
 			    !context.Trace.IsEnabled)
 				DoCacheInsert (context);
-
 		}
 
 		void DoCacheInsert (HttpContext context)
@@ -239,7 +263,11 @@ namespace System.Web.Caching {
 #if NET_2_0
 			if (cacheKey != null) {
 				lock (keysCacheLock) {
-					if (!keysCache.ContainsKey (cacheKey))
+					if (keysCache == null) {
+						BuildManager.RemoveEntry += new BuildManagerRemoveEntryEventHandler (OnBuildManagerRemoveEntry);
+						keysCache = new Dictionary <string, string> (StringComparer.Ordinal);
+						keysCache.Add (cacheKey, cacheValue);
+					} else if (!keysCache.ContainsKey (cacheKey))
 						keysCache.Add (cacheKey, cacheValue);
 				}
 			}
