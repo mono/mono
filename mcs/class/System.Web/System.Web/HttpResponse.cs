@@ -843,11 +843,8 @@ namespace System.Web {
 					app_instance.TriggerPreSendRequestContent ();
 			}
 
-			if (IsCached) {
-				MemoryStream ms = output_stream.GetData ();
-				cached_response.ContentLength = (int) ms.Length;
-				cached_response.SetData (ms.GetBuffer ());
-			}
+			if (IsCached)
+				cached_response.SetData (output_stream.GetData ());
 
 			if (WorkerRequest != null)
 				output_stream.Flush (WorkerRequest, final_flush);
@@ -1037,10 +1034,32 @@ namespace System.Web {
 			Flush ();
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public void WriteSubstitution (HttpResponseSubstitutionCallback callback)
 		{
-			throw new NotImplementedException ();
+			// Emulation of .NET behavior
+			if (callback == null)
+				throw new NullReferenceException ();
+
+			object target = callback.Target;
+			if (target != null && target.GetType () == typeof (Control))
+				throw new ArgumentException ("callback");
+
+			string s = callback (context);
+			if (!IsCached) {
+				Write (s);
+				return;
+			}
+
+			Cache.Cacheability = HttpCacheability.Server;
+			Flush ();
+			if (WorkerRequest == null)
+				Write (s); // better this than nothing
+			else {
+				byte[] bytes = WebEncoding.ResponseEncoding.GetBytes (s);
+				WorkerRequest.SendResponseFromMemory (bytes, bytes.Length);
+			}
+			
+			cached_response.SetData (callback);
 		}
 #endif
 		//
