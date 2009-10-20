@@ -49,8 +49,8 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public HttpListener Http {
-			get {  return httpChannelManager.HttpListener; }
+		public HttpListenerManager<TChannel> ListenerManager {
+			get {  return httpChannelManager; }
 		}
 
 		object creator_lock = new object ();

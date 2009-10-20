@@ -27,7 +27,9 @@
 //
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Description;
 using System.Text;
+using System.Threading;
 using System.Net;
 
 namespace System.ServiceModel.Channels
@@ -38,6 +40,10 @@ namespace System.ServiceModel.Channels
 		static Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> registered_channels;
 		HttpSimpleChannelListener<TChannel> channel_listener;
 		HttpListener http_listener;
+		MetadataPublishingInfo mex_info;
+		HttpGetWsdl wsdl_instance;
+		AutoResetEvent wait_http_ctx = new AutoResetEvent (false);
+		List<HttpListenerContext> pending = new List<HttpListenerContext> ();
 
 		static HttpListenerManager ()
 		{
@@ -45,9 +51,12 @@ namespace System.ServiceModel.Channels
 			registered_channels = new Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> ();
 		}
 
-		public HttpListenerManager (HttpSimpleChannelListener<TChannel> channel_listener)
+		public HttpListenerManager (HttpSimpleChannelListener<TChannel> channelListener)
 		{
-			this.channel_listener = channel_listener;
+			this.channel_listener = channelListener;
+			// FIXME: this cast should not be required, but current JIT somehow causes an internal error.
+			mex_info = ((IChannelListener) channelListener).GetProperty<MetadataPublishingInfo> ();
+			wsdl_instance = mex_info != null ? mex_info.Instance : null;
 		}
 
 		public void Open (TimeSpan timeout)
@@ -69,6 +78,14 @@ namespace System.ServiceModel.Channels
 
 				http_listener = opened_listeners [channel_listener.Uri];
 				registered_channels [channel_listener.Uri].Add (channel_listener);
+
+				// make sure to fill wsdl_instance among other 
+				// listeners. It is somewhat hacky way, but 
+				// otherwise there is no assured way to do it.
+				if (wsdl_instance != null) {
+					foreach (var l in registered_channels [channel_listener.Uri])
+						l.ListenerManager.wsdl_instance = wsdl_instance;
+				}
 			}
 		}
 
@@ -89,14 +106,97 @@ namespace System.ServiceModel.Channels
 					((IDisposable) http_listener).Dispose ();
 
 					opened_listeners.Remove (channel_listener.Uri);
+					try {
+						foreach (var ctx in pending)
+							ctx.Response.Abort ();
+					} catch (Exception ex) {
+						// FIXME: log it
+						Console.WriteLine ("error during HTTP channel listener shutdown: " + ex);
+					}
 					http_listener = null;
 				}
 			}
 		}
 
-		public HttpListener HttpListener
+		// Do not directly handle retrieved HttpListenerContexts when
+		// the listener received ones.
+		// Instead, iterate every listeners to find the most-likely-
+		// matching one and immediately handle the listener context.
+		// If the listener is not requesting a context right now, then
+		// store it in *each* listener's queue.
+
+		public void GetHttpContextAsync (Action<HttpListenerContext> callback)
 		{
-			get { return http_listener; }
+			lock (pending) {
+				foreach (var pctx in pending) {
+					if (FilterHttpContext (pctx)) {
+						callback (pctx);
+						return;
+					}
+				}
+			}
+			HttpListenerContext ctx;
+			http_listener.BeginGetContext (delegate (IAsyncResult result) {
+				ctx = http_listener.EndGetContext (result);
+				DispatchHttpListenerContext (ctx);
+			}, null);
+			wait_http_ctx.WaitOne ();
+			lock (pending) {
+				ctx = pending.Count > 0 ? pending [0] : null;
+				if (ctx != null)
+					pending.Remove (ctx);
+			}
+			callback (ctx);
 		}
-	}	
+
+		void DispatchHttpListenerContext (HttpListenerContext ctx)
+		{
+			if (wsdl_instance == null) {
+				pending.Add (ctx);
+				wait_http_ctx.Set ();
+				return;
+			}
+			foreach (var l in registered_channels [channel_listener.Uri]) {
+				var lm = l.ListenerManager;
+				if (lm.FilterHttpContext (ctx)) {
+					lm.pending.Add (ctx);
+					lm.wait_http_ctx.Set ();
+					return;
+				}
+			}
+			pending.Add (ctx);
+			wait_http_ctx.Set ();
+		}
+
+		bool FilterHttpContext (HttpListenerContext ctx)
+		{
+			if (ctx.Request.HttpMethod.ToUpper () != "GET")
+				return mex_info == null;
+
+			if (wsdl_instance == null)
+				return true;
+			if (channel_listener.State != CommunicationState.Opened)
+				return true;
+
+			var cmpflag = UriComponents.HttpRequestUrl ^ UriComponents.Query;
+			var fmtflag = UriFormat.SafeUnescaped;
+
+			if (Uri.Compare (ctx.Request.Url, wsdl_instance.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
+				if (mex_info == null)
+					return false; // Do not handle this at normal dispatcher.
+				if (ctx.Request.QueryString [null] == "wsdl")
+					return mex_info.IsMex; // wsdl dispatcher should handle this.
+				if (!wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
+					return true; // in case help URL is not equivalent to WSDL URL, it anyways returns WSDL regardless of ?wsdl existence.
+			}
+			if (Uri.Compare (ctx.Request.Url, wsdl_instance.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
+				// Do not handle this at normal dispatcher.
+				// Do return true otherwise, even if it is with "?wsdl".
+				// (It must be handled above if applicable.)
+				return mex_info != null;
+			}
+
+			return mex_info == null;
+		}
+	}
 }

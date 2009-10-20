@@ -92,10 +92,9 @@ namespace System.ServiceModel.Description
 			return sme;
 		}
 
+		// FIXME: distinguish HTTP and HTTPS in the Url properties.
 		internal void EnsureChannelDispatcher (bool isMex, string scheme, Uri uri, WCFBinding binding)
 		{
-			if (instance == null)
-				instance = new HttpGetWsdl (owner.Description, this);
 			if (isMex)
 				instance.WsdlUrl = uri;
 			else
@@ -135,8 +134,7 @@ namespace System.ServiceModel.Description
 			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
 			var listener = channelDispatcher.Listener as ChannelListenerBase;
 			if (listener != null)
-				listener.Properties.Add (isMex ? MetadataPublishingKind.Wsdl : MetadataPublishingKind.Help);
-
+				listener.Properties.Add (new MetadataPublishingInfo () { IsMex = isMex, Instance = instance });
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
 			dispatchers.Add (uri, channelDispatcher);
@@ -146,6 +144,7 @@ namespace System.ServiceModel.Description
 		void IExtension<ServiceHostBase>.Attach (ServiceHostBase owner)
 		{
 			this.owner = owner;
+			instance = new HttpGetWsdl (this);
 		}
 
 		void IExtension<ServiceHostBase>.Detach (ServiceHostBase owner)
@@ -166,16 +165,17 @@ namespace System.ServiceModel.Description
 	// target service endpoint)
 	//
 	// Can't be enum as it is for GetProperty<T> ().
-	internal class MetadataPublishingKind
+	internal class MetadataPublishingInfo
 	{
-		public static MetadataPublishingKind Wsdl = new MetadataPublishingKind ();
-		public static MetadataPublishingKind Help = new MetadataPublishingKind ();
+		public bool IsMex { get; set; }
+		public HttpGetWsdl Instance { get; set; }
+		//public static MetadataPublishingKind Wsdl = new MetadataPublishingKind ();
+		//public static MetadataPublishingKind Help = new MetadataPublishingKind ();
 	}
 
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract
 	{
-		ServiceDescription description;
-		ServiceMetadataExtension metadata_extn;
+		ServiceMetadataExtension ext;
 		bool initialized;
 
 		Dictionary <string,WSServiceDescription> wsdl_documents = 
@@ -183,10 +183,9 @@ namespace System.ServiceModel.Description
 		Dictionary <string, XmlSchema> schemas = 
 			new Dictionary<string, XmlSchema> ();
 
-		public HttpGetWsdl (ServiceDescription description, ServiceMetadataExtension metadata_extn)
+		public HttpGetWsdl (ServiceMetadataExtension ext)
 		{
-			this.description = description;
-			this.metadata_extn = metadata_extn;
+			this.ext = ext;
 		}
 
 		public Uri HelpUrl { get; set; }
@@ -195,7 +194,7 @@ namespace System.ServiceModel.Description
 		void EnsureMetadata ()
 		{
 			if (!initialized) {
-				GetMetadata (metadata_extn.Owner);
+				GetMetadata ();
 				initialized = true;
 			}
 		}
@@ -278,14 +277,14 @@ namespace System.ServiceModel.Description
 
 		SMMessage CreateHelpPage (SMMessage request)
 		{
-			var helpBody = description.Behaviors.Find<ServiceMetadataBehavior> () != null ?
+			var helpBody = ext.Owner.Description.Behaviors.Find<ServiceMetadataBehavior> () != null ?
 				String.Format (@"
 <p>To create client proxy source, run:</p>
 <p><code>svcutil <a href='{0}'>{0}</a></code></p>
 <!-- FIXME: add client proxy usage (that required decent ServiceContractGenerator implementation, so I leave it yet.) -->
 ", new Uri (WsdlUrl.ToString () + "?wsdl")) : // this Uri.ctor() is nasty, but there is no other way to add "?wsdl" (!!)
 				String.Format (@"
-<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.", description.Name);
+<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.", ext.Owner.Description.Name);
 
 			var html = String.Format (@"
 <html>
@@ -295,7 +294,7 @@ namespace System.ServiceModel.Description
 <body>
 {1}
 </body>
-</html>", description.Name, helpBody);
+</html>", ext.Owner.Description.Name, helpBody);
 
 			var m = SMMessage.CreateMessage (MessageVersion.None, "", XmlReader.Create (new StringReader (html)));
 			var rp = new HttpResponseMessageProperty ();
@@ -314,9 +313,9 @@ namespace System.ServiceModel.Description
 			return SMMessage.CreateMessage (MessageVersion.None, "", XmlReader.Create (ms));
 		}
 
-		void GetMetadata (ServiceHostBase host)
+		void GetMetadata ()
 		{
-			MetadataSet metadata = metadata_extn.Metadata;
+			MetadataSet metadata = ext.Metadata;
 			int xs_i = 0, wsdl_i = 0;
 
 			//Dictionary keyed by namespace

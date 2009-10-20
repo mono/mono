@@ -146,8 +146,10 @@ w.Close ();
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
 				wait = new AutoResetEvent (false);
-				source.Http.BeginGetContext (HttpContextReceived, null);
-				return wait.WaitOne (timeout, false);
+				source.ListenerManager.GetHttpContextAsync (HttpContextAcquired);
+				if (wait != null) // in case callback is done before WaitOne() here.
+					return wait.WaitOne (timeout, false);
+				return waiting.Count > 0;
 			} catch (HttpListenerException e) {
 				// FIXME: does this make sense? I doubt.
 				if ((uint) e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
@@ -160,15 +162,15 @@ w.Close ();
 			}
 		}
 
-		void HttpContextReceived (IAsyncResult result)
+		void HttpContextAcquired (HttpListenerContext ctx)
 		{
-			if (State == CommunicationState.Closing || State == CommunicationState.Closed)
-				return;
 			if (wait == null)
 				throw new InvalidOperationException ("WaitForRequest operation has not started");
-			waiting.Add (source.Http.EndGetContext (result));
-			wait.Set ();
+			if (State == CommunicationState.Opened && ctx != null)
+				waiting.Add (ctx);
+			var wait_ = wait;
 			wait = null;
+			wait_.Set ();
 		}
 	}
 

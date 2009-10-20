@@ -1,3 +1,8 @@
+2009-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : restructure internal channel property
+	  so that http channels can cope with it.
+
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : Handle all predefined mex bindings.
