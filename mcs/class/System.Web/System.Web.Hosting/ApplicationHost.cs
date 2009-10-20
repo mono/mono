@@ -278,9 +278,8 @@ namespace System.Web.Hosting {
 
 			if (shadow_copy_enabled) {
 				AppDomain current = AppDomain.CurrentDomain;
-				AppDomainSetup setup = current.SetupInformation;
-				setup.ShadowCopyFiles = "true";
-				setup.ShadowCopyDirectories = setup.PrivateBinPath;
+				current.SetShadowCopyFiles ();
+				current.SetShadowCopyPath (current.SetupInformation.PrivateBinPath);
 			}
 		}
 #endif
