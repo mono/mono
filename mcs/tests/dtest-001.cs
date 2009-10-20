@@ -11,7 +11,7 @@ class C
 	}
 	
 	public dynamic a;
-	public dynamic[] a2;
+	// FIXME: public dynamic[] a2;
 	public const dynamic c = default (dynamic);
 	
 	public dynamic Prop { set; get; }

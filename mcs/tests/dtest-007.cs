@@ -40,6 +40,15 @@ class Class
 		set { }
 		get { return 823; }
 	}
+
+	internal string Method (string value)
+	{
+		return value;
+	}
+
+	public static void GenericVoid<T> (T i)
+	{
+	}
 }
 
 class Tester
@@ -84,6 +93,17 @@ class Tester
 	{
 		dynamic d = null;
 		AssertError (() => { var v = d[1]; }, "#1");
+	}
+
+	void InvokeTest ()
+	{
+		Func<string, string> f = new Class().Method;
+		dynamic d = f;
+		Assert ("bar", d ("bar"), "#1");
+
+		Action<bool> f2 = Class.GenericVoid;
+		d = f2;
+		Assert<object> (null, d (true), "#2");
 	}
 
 	void MemberGetTest ()
