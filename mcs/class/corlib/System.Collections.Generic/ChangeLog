@@ -1,3 +1,8 @@
+2009-10-20  Marek Safar <marek.safar@gmail.com>
+	
+	* List.cs, CollectionDebuggerView.cs, KeyValuePair.cs, Dictionary.cs
+	Improve debugging experience.
+
 2009-10-19  Marek Safar <marek.safar@gmail.com>
 	
 	* CollectionDebuggerView.cs: New file.

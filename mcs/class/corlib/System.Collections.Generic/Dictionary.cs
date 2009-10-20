@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Sureshkumar T (tsureshkumar@novell.com)
-//	Marek Safar (marek.safar@seznam.cz) (stubs)
+//	Marek Safar (marek.safar@gmail.com)
 //	Ankit Jain (radical@corewars.org)
 //	David Waite (mass@akuma.org)
 //	Juraj Skripsky (js@hotfeet.ch)
@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections.Generic {
 
@@ -54,6 +55,8 @@ namespace System.Collections.Generic {
 
 	[ComVisible(false)]
 	[Serializable]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 		IDictionary,
 		ICollection,
@@ -929,6 +932,8 @@ namespace System.Collections.Generic {
 
 		// This collection is a read only collection
 		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]		
 		public sealed class KeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> dictionary;
 
@@ -1045,6 +1050,8 @@ namespace System.Collections.Generic {
 
 		// This collection is a read only collection
 		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]		
 		public sealed class ValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable {
 			Dictionary<TKey, TValue> dictionary;
 

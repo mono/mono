@@ -31,10 +31,11 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections.Generic {
 	[Serializable]
+	[DebuggerDisplay ("{value}", Name="[{key}]")]	
 	public struct KeyValuePair<TKey,TValue> {
 		private TKey key;
 		private TValue value;
