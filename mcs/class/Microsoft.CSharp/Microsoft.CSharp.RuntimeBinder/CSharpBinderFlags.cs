@@ -1,5 +1,5 @@
 //
-// CSharpCallFlags.cs
+// CSharpBinderFlags.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -31,10 +31,17 @@ using System;
 namespace Microsoft.CSharp.RuntimeBinder
 {
 	[Flags]
-	public enum CSharpCallFlags
+	public enum CSharpBinderFlags
 	{
-		None				= 0,
-		SimpleNameCall		= 1,
-		SpecialNames		= 2
+		None					= 0,
+		CheckedContext			= 1,
+		InvokeSimpleName		= 1 << 1,
+		InvokeSpecialName		= 1 << 2,
+		BinaryOperationLogical	= 1 << 3,
+		ConvertExplicit			= 1 << 4,
+		ConvertArrayIndex		= 1 << 5,
+		ResultIndexed			= 1 << 6,		
+		ValueFromCompoundAssignment = 1 << 7,
+		ResultDiscarded			= 1 << 8
 	}
 }

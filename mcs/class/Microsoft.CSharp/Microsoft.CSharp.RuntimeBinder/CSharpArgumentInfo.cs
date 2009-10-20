@@ -34,15 +34,20 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpArgumentInfo
+	public sealed class CSharpArgumentInfo
 	{
-		CSharpArgumentInfoFlags flags;
-		string name;
+		readonly CSharpArgumentInfoFlags flags;
+		readonly string name;
 		
-		public CSharpArgumentInfo (CSharpArgumentInfoFlags flags, string name)
+		CSharpArgumentInfo (CSharpArgumentInfoFlags flags, string name)
 		{
 			this.flags = flags;
 			this.name = name;
+		}
+		
+		public static CSharpArgumentInfo Create (CSharpArgumentInfoFlags flags, string name)
+		{
+			return new CSharpArgumentInfo (flags, name);
 		}
 
 		internal Compiler.Argument.AType ArgumentModifier {
@@ -59,30 +64,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		internal static CallInfo CreateCallInfo (IEnumerable<CSharpArgumentInfo> argumentInfo, int skipCount)
 		{
-			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.Name;
+			var named = from arg in argumentInfo.Skip (skipCount) where arg.IsNamed select arg.name;
 			return new CallInfo (Math.Max (0, argumentInfo.Count () - skipCount), named);
 		}
 		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpArgumentInfo;
-			return other != null && other.name == name && other.flags == flags;
-		}
-
-		public CSharpArgumentInfoFlags Flags {
+		internal CSharpArgumentInfoFlags Flags {
 			get { return flags; }
 		}
 
-		public override int GetHashCode ()
-		{
-			return EqualityComparer<string>.Default.GetHashCode (name) ^ flags.GetHashCode ();
-		}
-		
 		internal bool IsNamed {
 			get { return (flags & CSharpArgumentInfoFlags.NamedArgument) != 0; }
 		}
 
-		public string Name {
+		internal string Name {
 			get { return name; }
 		}
 	}

@@ -34,42 +34,16 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpConvertBinder : ConvertBinder
+	class CSharpConvertBinder : ConvertBinder
 	{
-		bool is_checked;
+		readonly CSharpBinderFlags flags;
 
-		public CSharpConvertBinder (Type type, CSharpConversionKind conversionKind, bool isChecked)
-			: base (type, conversionKind == CSharpConversionKind.ExplicitConversion)
+		public CSharpConvertBinder (Type type, CSharpBinderFlags flags)
+			: base (type, flags == CSharpBinderFlags.ConvertExplicit)
 		{
-			this.is_checked = isChecked;
-		}
-		
-		public CSharpConversionKind ConversionKind {
-			get {
-				return Explicit ? CSharpConversionKind.ExplicitConversion : CSharpConversionKind.ImplicitConversion;
-			}
-		}		
-		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpConvertBinder;
-			return other != null && other.Type == Type && other.Explicit == Explicit && other.is_checked == is_checked;
+			this.flags = flags;
 		}
 
-		public bool IsChecked {
-			get {
-				return is_checked;
-			}
-		}
-		
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				Type.GetHashCode (),
-				Explicit.GetHashCode (),
-				is_checked.GetHashCode ());
-		}
-		
 		public override DynamicMetaObject FallbackConvert (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
 			var expr = CSharpBinder.CreateCompilerExpression (null, target);
@@ -79,7 +53,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			else
 				expr = new Compiler.ImplicitCast (expr, Type);
 
-			if (is_checked)
+			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);

@@ -34,7 +34,7 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpGetMemberBinder : GetMemberBinder
+	class CSharpGetMemberBinder : GetMemberBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
@@ -52,12 +52,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Type CallingContext {
-			get {
-				return callingContext;
-			}
-		}
-		
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpGetMemberBinder;
@@ -72,7 +66,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				callingContext.GetHashCode (),
 				argumentInfo.GetHashCode ());
 		}
-
+		
 		public override DynamicMetaObject FallbackGetMember (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);

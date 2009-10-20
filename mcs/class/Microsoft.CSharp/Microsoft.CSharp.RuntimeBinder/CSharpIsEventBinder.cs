@@ -33,7 +33,7 @@ using System.Linq;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpIsEventBinder : DynamicMetaObjectBinder
+	class CSharpIsEventBinder : DynamicMetaObjectBinder
 	{
 		Type callingContext;
 		string name;
@@ -50,12 +50,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 		
-		public Type CallingContext {
-			get {
-				return callingContext;
-			}
-		}
-		
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpIsEventBinder;
@@ -66,11 +60,5 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			return base.GetHashCode ();
 		}
-		
-		public string Name {
-			get {
-				return name;
-			}
-		}		
 	}
 }

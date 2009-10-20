@@ -100,9 +100,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (value.Value == null)
 				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
 
-			if (info != null && (info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
-				InitializeCompiler (null);
-				return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
+			if (info != null) {
+				if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
+					InitializeCompiler (null);
+					return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
+				}
+
+				if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
+					return new Compiler.TypeExpression ((Type) value.Value, Compiler.Location.Null);
 			}
 
 			return new Compiler.RuntimeValueExpression (value);
@@ -142,6 +147,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject[] args)
 		{
+			if (args.Length == 0)
+				return BindingRestrictions.Empty;
+
 			var res = CreateRestrictionsOnTarget (args[0]);
 			for (int i = 1; i < args.Length; ++i)
 				res = res.Merge (CreateRestrictionsOnTarget (args[i]));

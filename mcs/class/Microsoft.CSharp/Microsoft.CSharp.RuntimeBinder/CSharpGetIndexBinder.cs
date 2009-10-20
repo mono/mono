@@ -34,7 +34,7 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpGetIndexBinder : GetIndexBinder
+	class CSharpGetIndexBinder : GetIndexBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
@@ -52,12 +52,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Type CallingContext {
-			get {
-				return callingContext;
-			}
-		}
-		
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpGetIndexBinder;

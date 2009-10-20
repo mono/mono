@@ -1,3 +1,7 @@
+2009-10-20  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Update to the latest API.
+
 2009-10-14  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpBinaryOperationBinder.cs, CSharpGetIndexBinder.cs,

@@ -34,7 +34,7 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpSetIndexBinder : SetIndexBinder
+	class CSharpSetIndexBinder : SetIndexBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
@@ -49,12 +49,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public IList<CSharpArgumentInfo> ArgumentInfo {
 			get {
 				return argumentInfo;
-			}
-		}
-
-		public Type CallingContext {
-			get {
-				return callingContext;
 			}
 		}
 		

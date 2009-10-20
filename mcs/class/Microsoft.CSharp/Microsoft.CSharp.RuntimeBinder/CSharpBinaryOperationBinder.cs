@@ -36,20 +36,19 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpBinaryOperationBinder : BinaryOperationBinder
+	class CSharpBinaryOperationBinder : BinaryOperationBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
-		bool is_checked, is_member_access;
+		readonly CSharpBinderFlags flags;
 		
-		public CSharpBinaryOperationBinder (ExpressionType operation, bool isChecked, bool isMemberAccess, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpBinaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (operation)
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
 			if (this.argumentInfo.Count != 2)
 				throw new ArgumentException ("Binary operation requires 2 arguments");
 
-			this.is_checked = isChecked;
-			this.is_member_access = isMemberAccess;
+			this.flags = flags;
 		}
 		
 		public IList<CSharpArgumentInfo> ArgumentInfo {
@@ -58,22 +57,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public bool IsChecked {
-			get {
-				return is_checked;
-			}
-		}
-		
-		public bool IsMemberAccess {
-			get {
-				return is_member_access;
-			}
-		}
-
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpBinaryOperationBinder;
-			return other != null && base.Equals (obj) && other.is_checked == is_checked && other.is_member_access == is_member_access &&
+			return other != null && base.Equals (obj) && other.flags == flags &&
 				other.argumentInfo.SequenceEqual (argumentInfo);
 		}
 		
@@ -81,9 +68,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			return Extensions.HashCode (
 				Operation.GetHashCode (),
-				is_checked.GetHashCode (),
-				is_member_access.GetHashCode (),
-				argumentInfo[0].GetHashCode (), argumentInfo[1].GetHashCode ());
+				flags.GetHashCode (),
+				argumentInfo [0].GetHashCode (), argumentInfo [1].GetHashCode ());
 		}
 
 		Compiler.Binary.Operator GetOperator (out bool isCompound)
@@ -176,7 +162,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
 			}
 			
-			if (is_checked)
+			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (arg));

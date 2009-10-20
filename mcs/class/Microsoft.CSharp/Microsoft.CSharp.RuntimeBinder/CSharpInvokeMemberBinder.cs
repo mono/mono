@@ -30,17 +30,18 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpInvokeMemberBinder : InvokeMemberBinder
+	class CSharpInvokeMemberBinder : InvokeMemberBinder
 	{
-		CSharpCallFlags flags;
+		readonly CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		IList<Type> typeArguments;
 		Type callingContext;
 		
-		public CSharpInvokeMemberBinder (CSharpCallFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpInvokeMemberBinder (CSharpBinderFlags flags, string name, Type callingContext, IEnumerable<Type> typeArguments, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (name, false, CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
 		{
 			this.flags = flags;
@@ -54,29 +55,22 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return argumentInfo;
 			}
 		}
-
-		public Type CallingContext {
-			get {
-				return callingContext;
-			}
-		}
 		
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpInvokeMemberBinder;
-			return other != null && base.Equals (obj) && other.flags == flags && other.callingContext == callingContext && 
+			return other != null && other.Name == Name && other.flags == flags && other.callingContext == callingContext && 
 				other.argumentInfo.SequenceEqual (argumentInfo) && other.typeArguments.SequenceEqual (typeArguments);
 		}
 
-		public CSharpCallFlags Flags {
-			get {
-				return flags;
-			}
-		}
-		
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Extensions.HashCode (
+				flags.GetHashCode (),
+				callingContext.GetHashCode (),
+				argumentInfo.GetHashCode (),
+				typeArguments.GetHashCode (),
+				Name.GetHashCode ());
 		}
 		
 		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
@@ -90,6 +84,18 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
 			return CSharpBinder.Bind (target, errorSuggestion, args);
+/*			
+			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
+			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
+
+			expr = new Compiler.MemberAccess (expr, Name, null, Compiler.Location.Null);
+			expr = new Compiler.Invocation (expr, c_args);
+
+			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (
+				CSharpBinder.CreateRestrictionsOnTarget (args));
+
+			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
+*/
 		}
 		
 		public IList<Type> TypeArguments {

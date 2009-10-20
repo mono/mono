@@ -60,6 +60,16 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			return hash;
 		}
+		
+		public static int HashCode (int h1, int h2)
+		{
+			return HashCode (h1, h2, 0, 0);
+		}
+
+		public static int HashCode (int h1, int h2, int h3, int h4)
+		{
+			return HashCode (h1, h2, h3, 0);
+		}
 
 		public static int HashCode (int h1, int h2, int h3, int h4, int h5)
 		{

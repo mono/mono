@@ -35,19 +35,19 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	public class CSharpUnaryOperationBinder : UnaryOperationBinder
+	class CSharpUnaryOperationBinder : UnaryOperationBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
-		bool is_checked;
+		readonly CSharpBinderFlags flags;
 		
-		public CSharpUnaryOperationBinder (ExpressionType operation, bool isChecked, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpUnaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (operation)
 		{
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 			if (this.argumentInfo.Count != 1)
 				throw new ArgumentException ("Unary operation requires 1 argument");
 
-			this.is_checked = isChecked;
+			this.flags = flags;
 		}
 		
 		public IList<CSharpArgumentInfo> ArgumentInfo {
@@ -55,17 +55,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return argumentInfo;
 			}
 		}
-
-		public bool IsChecked {
-			get {
-				return is_checked;
-			}
-		}
-
+		
 		public override bool Equals (object obj)
 		{
 			var other = obj as CSharpUnaryOperationBinder;
-			return other != null && base.Equals (obj) && other.is_checked == is_checked &&
+			return other != null && base.Equals (obj) && other.flags == flags &&
 				other.argumentInfo.SequenceEqual (argumentInfo);
 		}
 		
@@ -73,7 +67,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			return Extensions.HashCode (
 				Operation.GetHashCode (),
-				is_checked.GetHashCode (),
+				flags.GetHashCode (),
 				argumentInfo[0].GetHashCode ());
 		}
 
@@ -109,7 +103,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);  // TODO: ReturnType replace
 
-				if (is_checked)
+				if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 			}
 
