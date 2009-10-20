@@ -31,12 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections.Generic
 {
@@ -47,6 +46,8 @@ namespace System.Collections.Generic
 	/// </summary>
 	[Serializable]
 	[ComVisible(false)]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class SortedList<TKey, TValue> : IDictionary<TKey, TValue>, 
 		IDictionary,
 		ICollection,
@@ -807,7 +808,7 @@ namespace System.Collections.Generic
 		}
 
 		[Serializable]
-		public struct KeyEnumerator : IEnumerator <TKey>, IDisposable {
+		struct KeyEnumerator : IEnumerator <TKey>, IDisposable {
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.
@@ -864,7 +865,7 @@ namespace System.Collections.Generic
 		}
 
 		[Serializable]
-		public struct ValueEnumerator : IEnumerator <TValue>, IDisposable {
+		struct ValueEnumerator : IEnumerator <TValue>, IDisposable {
 			const int NOT_STARTED = -2;
 			
 			// this MUST be -1, because we depend on it in move next.
@@ -1173,5 +1174,3 @@ namespace System.Collections.Generic
 	} // SortedList
 
 } // System.Collections.Generic
-
-#endif

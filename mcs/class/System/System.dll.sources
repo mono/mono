@@ -1010,4 +1010,7 @@ System.Runtime.InteropServices.ComTypes/TYMED.cs
 System/IUriData.cs
 System/UriData.cs
 System.Collections.Concurrent/BlockingCollection.cs
+
 ../corlib/System.Threading/AtomicBoolean.cs
+../corlib/System.Collections/CollectionDebuggerView.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs

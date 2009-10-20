@@ -30,15 +30,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Diagnostics;
 
 namespace System.Collections.Generic
 {
 	[Serializable, ComVisible (false)]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class LinkedList <T> : ICollection <T>, ICollection, ISerializable, IDeserializationCallback
 	{
 		const string DataArrayKey = "DataArray";
@@ -499,4 +501,3 @@ namespace System.Collections.Generic
 		}
 	}
 }
-#endif

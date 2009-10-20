@@ -32,13 +32,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Collections;
+using System.Diagnostics;
 
 namespace System.Collections.Generic
 {
 	[Serializable]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class SortedDictionary<TKey,TValue> : IDictionary<TKey,TValue>, ICollection<KeyValuePair<TKey,TValue>>, IEnumerable<KeyValuePair<TKey,TValue>>, IDictionary, ICollection, IEnumerable
 	{
 		class Node : RBTree.Node {
@@ -376,6 +378,8 @@ namespace System.Collections.Generic
 		#endregion
 
 		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 		public sealed class ValueCollection : ICollection<TValue>,
 			IEnumerable<TValue>, ICollection, IEnumerable
 		{
@@ -509,6 +513,8 @@ namespace System.Collections.Generic
 		}
 
 		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 		public sealed class KeyCollection : ICollection<TKey>,
 			IEnumerable<TKey>, ICollection, IEnumerable
 		{
@@ -700,4 +706,3 @@ namespace System.Collections.Generic
 		}
 	}
 }
-#endif

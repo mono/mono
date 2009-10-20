@@ -90,3 +90,5 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 
+../corlib/System.Collections/CollectionDebuggerView.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs
