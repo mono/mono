@@ -33,7 +33,6 @@ using System;
 namespace System.Diagnostics.Contracts
 {
 	[ConditionalAttribute("CONTRACTS_FULL")]
-	[ConditionalAttribute("CONTRACTS_PRECONDITIONS")]
 	[AttributeUsageAttribute (AttributeTargets.Class | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Parameter | AttributeTargets.Delegate)]
 	public sealed class PureAttribute : Attribute
 	{
