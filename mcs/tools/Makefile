@@ -59,7 +59,7 @@ net_2_1_SUBDIRS := $(net_2_1_dirs)
 net_4_0_bootstrap_SUBDIRS = resgen culevel
 net_4_0_SUBDIRS := $(per_profile_dirs)
 
-SUBDIRS = $(net_1_1_SUBDIRS) $(net_2_0_SUBDIRS) $(net_2_1_SUBDIRS)
+SUBDIRS = $(basic_SUBDIRS) $(net_2_0_bootstrap_SUBDIRS) $(net_2_0_SUBDIRS) $(net_2_1_SUBDIRS)
 
 include ../build/rules.make
 
