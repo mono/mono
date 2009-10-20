@@ -168,6 +168,7 @@ net_3_5_dirs := \
 
 net_4_0_dirs := \
 	System.Dynamic		\
+	System.Numerics		\
 	Microsoft.CSharp
 
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
