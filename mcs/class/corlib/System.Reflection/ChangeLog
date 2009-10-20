@@ -1,3 +1,9 @@
+2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoProperty.cs: Reduce code duplication and the number of direct
+	calls to icalls (affecting the number of SecuritySafeCritical in
+	Moonlight)
+
 2009-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoEvent.cs: Reduce code duplication and the number of direct
