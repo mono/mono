@@ -41,7 +41,7 @@ static class Consts
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 	public const string FxVersion = "4.0.0.0";
-	public const string FxFileVersion = "4.0.20506.1";
+	public const string FxFileVersion = "4.0.21006.1";
 	
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "10.0.0.0"; // TODO:
