@@ -49,35 +49,26 @@ namespace System.Threading
 #endregion
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
-			if (dueTime < -1)
-				throw new ArgumentOutOfRangeException ("dueTime");
-
-			if (period < -1)
-				throw new ArgumentOutOfRangeException ("period");
-
 			Init (callback, state, dueTime, period);
 		}
 
 		public Timer (TimerCallback callback, object state, long dueTime, long period)
 		{
-			if (dueTime < -1)
-				throw new ArgumentOutOfRangeException ("dueTime");
-
-			if (period < -1)
-				throw new ArgumentOutOfRangeException ("period");
-
 			Init (callback, state, dueTime, period);
 		}
 
 		public Timer (TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
-			: this (callback, state, (long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds)
 		{
+			Init (callback, state, (long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds);
 		}
 
 		[CLSCompliant(false)]
 		public Timer (TimerCallback callback, object state, uint dueTime, uint period)
-			: this (callback, state, (long) dueTime, (long) period)
 		{
+			// convert all values to long - with a special case for -1 / 0xffffffff
+			long d = (dueTime == UInt32.MaxValue) ? Timeout.Infinite : (long) dueTime;
+			long p = (period == UInt32.MaxValue) ? Timeout.Infinite : (long) period;
+			Init (callback, state, d, p);
 		}
 
 #if NET_2_0
@@ -100,24 +91,21 @@ namespace System.Threading
 
 		public bool Change (int dueTime, int period)
 		{
-			return Change ((long)dueTime, (long)period);
+			return Change (dueTime, period, false);
 		}
 
 		public bool Change (TimeSpan dueTime, TimeSpan period)
 		{
-			return Change ((long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds);
+			return Change ((long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds, false);
 		}
 
 		[CLSCompliant(false)]
 		public bool Change (uint dueTime, uint period)
 		{
-			if (dueTime > Int32.MaxValue)
-				throw new NotSupportedException ("Due time too large");
-
-			if (period > Int32.MaxValue)
-				throw new NotSupportedException ("Period too large");
-
-			return Change ((long) dueTime, (long) period);
+			// convert all values to long - with a special case for -1 / 0xffffffff
+			long d = (dueTime == UInt32.MaxValue) ? Timeout.Infinite : (long) dueTime;
+			long p = (period == UInt32.MaxValue) ? Timeout.Infinite : (long) period;
+			return Change (d, p, false);
 		}
 
 		public void Dispose ()
@@ -134,18 +122,21 @@ namespace System.Threading
 			return Change (dueTime, period, false);
 		}
 
+		const long MaxValue = UInt32.MaxValue - 1;
+
 		bool Change (long dueTime, long period, bool first)
 		{
-			if(dueTime > 4294967294)
-				throw new NotSupportedException ("Due time too large");
+			if (dueTime > MaxValue)
+				throw new ArgumentOutOfRangeException ("Due time too large");
 
-			if(period > 4294967294)
-				throw new NotSupportedException ("Period too large");
+			if (period > MaxValue)
+				throw new ArgumentOutOfRangeException ("Period too large");
 
-			if (dueTime < -1)
+			// Timeout.Infinite == -1, so this accept everything greater than -1
+			if (dueTime < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("dueTime");
 
-			if (period < -1)
+			if (period < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("period");
 
 			if (disposed)
@@ -173,27 +164,28 @@ namespace System.Threading
 
 		public bool Dispose (WaitHandle notifyObject)
 		{
+			if (notifyObject == null)
+				throw new ArgumentNullException ("notifyObject");
 			Dispose ();
 			NativeEventCalls.SetEvent_internal (notifyObject.Handle);
 			return true;
 		}
 
-		class TimerComparer : IComparer {
+		sealed class TimerComparer : IComparer {
 			public int Compare (object x, object y)
 			{
-				if (!(x is Timer))
+				Timer tx = (x as Timer);
+				if (tx == null)
 					return -1;
-				if (!(y is Timer))
+				Timer ty = (y as Timer);
+				if (ty == null)
 					return 1;
-				long nr1 = ((Timer) x).next_run;
-				long nr2 = ((Timer) y).next_run;
-				long result = nr1 - nr2;
+				long result = tx.next_run - ty.next_run;
 				return result > 0 ? 1 : result < 0 ? -1 : 0;
 			}
-
 		}
 
-		class Scheduler {
+		sealed class Scheduler {
 			static Scheduler instance;
 			SortedList list;
 
