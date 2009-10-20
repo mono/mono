@@ -1,3 +1,7 @@
+2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimerTest.cs: Add more validation tests
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelTests.cs: Remove While test case.

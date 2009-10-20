@@ -1,3 +1,11 @@
+2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Timer.cs: Always call Init from every constructors to avoid 
+	duplicate checks. Fix validations on different dueTime and period
+	(ctor and Change methods). Seal private TimerComparer class and
+	avoid multiple (identical) casts in its Compare method. Seal 
+	private Scheduler class.
+
 2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Timer.cs: make sure we don't insert 2 timers with the same key.

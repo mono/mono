@@ -216,5 +216,108 @@ namespace MonoTests.System.Threading {
 			Bucket b = foo as Bucket;
 			Interlocked.Increment (ref b.count);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DisposeNullWaitHandle ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Dispose (null);
+			}
+		}
+
+		[Test]
+		public void Change_IntInt_Infinite ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change ((int)Timeout.Infinite, (int)Timeout.Infinite);
+			}
+		}
+
+		[Test]
+		public void Change_IntInt_MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (Int32.MaxValue, Int32.MaxValue);
+			}
+		}
+
+		[Test]
+		public void Change_UIntUInt_Infinite ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (unchecked ((uint) Timeout.Infinite), unchecked ((uint) Timeout.Infinite));
+			}
+		}
+
+		[Test]
+		public void Change_UIntUInt_MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				// UInt32.MaxValue == Timeout.Infinite == 0xffffffff
+				t.Change (UInt32.MaxValue, UInt32.MaxValue);
+			}
+		}
+
+		[Test]
+		public void Change_LongLong_Infinite ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change ((long) Timeout.Infinite, (long) Timeout.Infinite);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Change_LongLong_MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (Int64.MaxValue, Int64.MaxValue);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Change_LongLong_UInt32MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				// not identical to (long)-1
+				t.Change ((long)UInt32.MaxValue, (long)UInt32.MaxValue);
+			}
+		}
+
+		[Test]
+		public void Change_LongLong_UInt32MaxValueMinusOne ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				// not identical to (long)-1
+				t.Change ((long) UInt32.MaxValue - 1, (long) UInt32.MaxValue -1);
+			}
+		}
+
+		[Test]
+		public void Change_TimeSpanTimeSpan_Infinite ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (new TimeSpan (-1), new TimeSpan (-1));
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Change_TimeSpanTimeSpan_MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (TimeSpan.MaxValue, TimeSpan.MaxValue);
+			}
+		}
+
+		[Test]
+		public void Change_TimeSpanTimeSpan_UInt32MaxValue ()
+		{
+			using (Timer t = new Timer (DoNothing, null, 0, 0)) {
+				t.Change (new TimeSpan (UInt32.MaxValue), new TimeSpan (UInt32.MaxValue));
+			}
+		}
 	}
 }
