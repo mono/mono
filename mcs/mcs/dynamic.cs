@@ -270,6 +270,16 @@ namespace Mono.CSharp
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "Microsoft", loc), "CSharp", loc), "RuntimeBinder", loc);
 		}
 
+		public static MemberAccess GetBinderClass (Location loc)
+		{
+			return new MemberAccess (GetBinderNamespace (loc), "Binder", loc);
+		}
+
+		public static MemberAccess GetBinderFlagsClass (Location loc)
+		{
+			return new MemberAccess (GetBinderNamespace (loc), "CSharpBinderFlags", loc);
+		}
+
 		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count)
 		{
 			const int default_args = 2;
@@ -356,12 +366,12 @@ namespace Mono.CSharp
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (2);
-			MemberAccess binder = GetBinderNamespace (loc);
+			MemberAccess binder = GetBinderClass (loc);
 
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
-			return new New (new MemberAccess (binder, "CSharpIsEventBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, "IsEvent", loc), binder_args);
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -390,14 +400,22 @@ namespace Mono.CSharp
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (2);
-			MemberAccess binder = GetBinderNamespace (loc);
+			MemberAccess binder = GetBinderClass (loc);
 
+			Expression flags;
+			if (is_explicit) {
+				flags = new MemberAccess (GetBinderFlagsClass (loc), "ConvertExplicit");
+			} else {
+				flags = new IntLiteral (0, loc);
+			}
+
+			binder_args.Add (new Argument (flags));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpConversionKind", loc),
-				is_explicit ? "ExplicitConversion" : "ImplicitConversion", loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
+
+			// TODO: dynamic
+			//binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
 				
-			return new New (new MemberAccess (binder, "CSharpConvertBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, "Convert", loc), binder_args);
 		}
 	}
 
@@ -414,13 +432,14 @@ namespace Mono.CSharp
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (2);
-			MemberAccess binder = GetBinderNamespace (loc);
+			Arguments binder_args = new Arguments (3);
+			MemberAccess binder = GetBinderClass (loc);
 
+			binder_args.Add (new Argument (new IntLiteral (0, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
-			return new New (new MemberAccess (binder, isSet ? "CSharpSetIndexBinder" : "CSharpGetIndexBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, isSet ? "SetIndex" : "GetIndex", loc), binder_args);
 		}
 
 		#region IAssignMethod Members
@@ -462,23 +481,21 @@ namespace Mono.CSharp
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (member != null ? 5 : 3);
-			MemberAccess binder = GetBinderNamespace (loc);
+			MemberAccess binder = GetBinderClass (loc);
 			bool is_member_access = member is MemberAccess;
 
 			string call_flags;
 			if (!is_member_access && member is SimpleName) {
-				call_flags = "SimpleNameCall";
+				call_flags = "InvokeSimpleName";
 				is_member_access = true;
 			} else {
 				call_flags = "None";
 			}
 
-			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (binder, "CSharpCallFlags", loc), call_flags, loc)));
+			binder_args.Add (new Argument (new MemberAccess (GetBinderFlagsClass (loc), call_flags, loc)));
 
 			if (is_member_access)
 				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
-
-			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
@@ -493,6 +510,8 @@ namespace Mono.CSharp
 				binder_args.Add (new Argument (new NullLiteral (loc)));
 			}
 
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
+
 			Expression real_args;
 			if (args == null) {
 				// Cannot be null because .NET trips over
@@ -503,8 +522,8 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (real_args));
 
-			return new New (new MemberAccess (binder,
-				is_member_access ? "CSharpInvokeMemberBinder" : "CSharpInvokeBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder,
+				is_member_access ? "InvokeMember" : "Invoke", loc), binder_args);
 		}
 	}
 
@@ -523,14 +542,15 @@ namespace Mono.CSharp
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (3);
-			MemberAccess binder = GetBinderNamespace (loc);
+			Arguments binder_args = new Arguments (4);
+			MemberAccess binder = GetBinderClass (loc);
 
+			binder_args.Add (new Argument (new IntLiteral (0, loc)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
-			return new New (new MemberAccess (binder, isSet ? "CSharpSetMemberBinder" : "CSharpGetMemberBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, isSet ? "SetMember" : "GetMember", loc), binder_args);
 		}
 
 		#region IAssignMethod Members
@@ -571,13 +591,19 @@ namespace Mono.CSharp
 			MemberAccess sle = new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
 
-			MemberAccess binder = GetBinderNamespace (loc);
+			MemberAccess binder = GetBinderClass (loc);
+			Expression flags;
+			if (ec.HasSet (ResolveContext.Options.CheckedScope)) {
+				flags = new MemberAccess (GetBinderFlagsClass (loc), "CheckedContext");
+			} else {
+				flags = new IntLiteral (0, loc);
+			}
 
+			binder_args.Add (new Argument (flags));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
-			return new New (new MemberAccess (binder, "CSharpUnaryOperationBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, "UnaryOperation", loc), binder_args);
 		}
 	}
 }

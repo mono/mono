@@ -3599,21 +3599,24 @@ namespace Mono.CSharp {
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (4);
+			Arguments binder_args = new Arguments (3);
 
 			MemberAccess sle = new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
 
-			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
+			MemberAccess binder = DynamicExpressionStatement.GetBinderClass (loc);
+			Expression flags;
+			if (ec.HasSet (ResolveContext.Options.CheckedScope)) {
+				flags = new MemberAccess (DynamicExpressionStatement.GetBinderFlagsClass (loc), "CheckedContext");
+			} else {
+				flags = new IntLiteral (0, loc);
+			}
 
+			binder_args.Add (new Argument (flags));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
-			binder_args.Add (new Argument (new BoolLiteral (ec.HasSet (ResolveContext.Options.CheckedScope), loc)));
-
-			bool member_access = left is DynamicMemberBinder || right is DynamicMemberBinder;
-			binder_args.Add (new Argument (new BoolLiteral (member_access, loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
-			return new New (new MemberAccess (binder, "CSharpBinaryOperationBinder", loc), binder_args, loc);
+			return new Invocation (new MemberAccess (binder, "BinaryOperation", loc), binder_args);
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)

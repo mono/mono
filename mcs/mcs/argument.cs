@@ -260,7 +260,7 @@ namespace Mono.CSharp
 
 				dargs.Add (new Argument (info_flags));
 				dargs.Add (new Argument (new StringLiteral (named_value, loc)));
-				all.Add (new New (new MemberAccess (binder, "CSharpArgumentInfo", loc), dargs, loc));
+				all.Add (new Invocation (new MemberAccess (new MemberAccess (binder, "CSharpArgumentInfo", loc), "Create", loc), dargs));
 			}
 
 			return all;

@@ -1,3 +1,7 @@
+2009-10-20  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, dynamic.cs, expression.cs: Latest API update.
+
 2009-10-19  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, expression.cs: Dynamic array initializer.
