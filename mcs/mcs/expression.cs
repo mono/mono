@@ -3604,19 +3604,15 @@ namespace Mono.CSharp {
 			MemberAccess sle = new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
 
-			MemberAccess binder = DynamicExpressionStatement.GetBinderClass (loc);
-			Expression flags;
-			if (ec.HasSet (ResolveContext.Options.CheckedScope)) {
-				flags = new MemberAccess (DynamicExpressionStatement.GetBinderFlagsClass (loc), "CheckedContext");
-			} else {
-				flags = new IntLiteral (0, loc);
-			}
+			int flags = 0;
+			if (ec.HasSet (ResolveContext.Options.CheckedScope))
+				flags = (int) CSharpBinderFlags.CheckedContext;
 
-			binder_args.Add (new Argument (flags));
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (flags, loc), TypeManager.binder_flags)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
-			return new Invocation (new MemberAccess (binder, "BinaryOperation", loc), binder_args);
+			return new Invocation (DynamicExpressionStatement.GetBinder ("BinaryOperation", loc), binder_args);
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)

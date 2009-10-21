@@ -100,6 +100,8 @@ namespace Mono.CSharp {
 	//
 	public static Type call_site_type;
 	public static Type generic_call_site_type;
+	public static TypeExpr binder_type;
+	public static Type binder_flags;
 
 	// 
 	// Expressions representing the internal types.  Used during declaration
