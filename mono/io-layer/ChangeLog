@@ -1,5 +1,9 @@
 2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* sockets.[ch]: fix function definition.
+
+2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* sockets.[ch]: added TransmitFile implementation.
 
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
