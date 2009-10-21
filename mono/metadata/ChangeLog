@@ -1,5 +1,9 @@
 2009-10-22  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Use our portable semaphore #defines.
+
+2009-10-22  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: A debug option for dumping the heap layout to a file
 	after each collection.
 
