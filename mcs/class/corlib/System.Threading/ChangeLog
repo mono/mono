@@ -1,3 +1,9 @@
+2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WaitHandle.cs: Add missing validations for 'millisecondsTimeout'
+	in Wait[One|Any|All]. Also call the overloaded (bool) methods for
+	WaitAll to reduce code duplication.
+
 2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Timer.cs: Always call Init from every constructors to avoid 

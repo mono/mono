@@ -1,3 +1,7 @@
+2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Add System.Threading/WaitHandleTest.cs
+
 2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Remove System.IO.IntPtrStream since it can

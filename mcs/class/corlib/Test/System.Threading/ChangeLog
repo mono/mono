@@ -1,3 +1,8 @@
+2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WaitHandleTest.cs: New. Add test cases for Wait[One|All|Any]
+	methods overloads (at least the one present in Silverlight 2)
+
 2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimerTest.cs: Add more validation tests
