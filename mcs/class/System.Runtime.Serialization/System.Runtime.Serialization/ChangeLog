@@ -1,3 +1,8 @@
+2009-10-21  Jb Evain  <jbevain@novell.com>
+
+	* SerializationMap.cs, KnownTypeCollection.cs: avoid using LINQ
+	on arrays as MonoTouch has issues with them.
+
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs :

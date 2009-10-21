@@ -680,10 +680,19 @@ namespace System.Runtime.Serialization
 			return ret;
 		}
 
+		static bool TypeImplementsIDictionary (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
+					return true;
+
+			return false;
+		}
+
 		// it also supports contract-based dictionary.
 		private DictionaryTypeMap RegisterDictionary (Type type)
 		{
-			if (!type.GetInterfaces ().Any (t => t == typeof (IDictionary) || t.FullName.StartsWith ("System.Collections.Generic.IDictionary")))
+			if (!TypeImplementsIDictionary (type))
 				return null;
 
 			var cdca = GetAttribute<CollectionDataContractAttribute> (type);
