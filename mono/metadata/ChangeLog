@@ -1,3 +1,10 @@
+2009-10-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_delegate_compatibility): Properly verify delegate creation of static
+	methods. Fixes #543021.
+
+	Backport of r144534.
+
 2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* icall-def.h:
