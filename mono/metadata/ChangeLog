@@ -10,6 +10,10 @@
 
 2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* socket-io.[ch]: fix VS build.
+
+2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* icall-def.h:
 	* socket-io.[ch]: implemented SendFile.
 
