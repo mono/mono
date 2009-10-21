@@ -1,3 +1,13 @@
+2009-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Special case the array generic iface
+	wrappers and Array.GetGenericValueImpl ().
+
+	* aot-compiler.c: Avoid emitting some wrappers which are not needed anymore
+	because of the change above.
+
+	* generics.cs: Add a test for full aot + generic array ifaces.
+
 2009-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* aot-compiler.c (emit_plt): Remove duplicate 'debug_sym' variable 
