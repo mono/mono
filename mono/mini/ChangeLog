@@ -1,5 +1,8 @@
 2009-10-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_method): Fix support for the IList<T> wrappers,
+	which have a different name.
+
 	* aot-runtime.c (mono_aot_get_method): Special case the array generic iface
 	wrappers and Array.GetGenericValueImpl ().
 
