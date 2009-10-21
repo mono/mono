@@ -1,3 +1,7 @@
+2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* sockets.[ch]: added TransmitFile implementation.
+
 2009-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Implement get_process_name_from_proc () on solaris.
