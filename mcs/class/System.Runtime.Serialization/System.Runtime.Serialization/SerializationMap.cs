@@ -626,8 +626,7 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
-			var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
-				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+			var icoll = GetGenericCollectionInterface (RuntimeType);
 			if (icoll != null) {
 				if (RuntimeType.IsInterface) {
 					add_method = RuntimeType.GetMethod ("Add", icoll.GetGenericArguments ());
@@ -642,6 +641,15 @@ namespace System.Runtime.Serialization
 						add_method = type.GetMethod ("Add", icoll.GetGenericArguments ());
 				}
 			}
+		}
+
+		static Type GetGenericCollectionInterface (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>))
+					return iface;
+
+			return null;
 		}
 
 		public override bool OutputXsiType {
@@ -673,8 +681,7 @@ namespace System.Runtime.Serialization
 			if (RuntimeType.IsArray)
 				return new ArrayList ();
 			if (RuntimeType.IsInterface) {
-				var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
-					iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+				var icoll = GetGenericCollectionInterface (RuntimeType);
 				if (icoll != null)
 					return Activator.CreateInstance (typeof (List<>).MakeGenericType (RuntimeType.GetGenericArguments () [0])); // List<T>
 				else // non-generic
@@ -778,8 +785,7 @@ namespace System.Runtime.Serialization
 			key_type = typeof (object);
 			value_type = typeof (object);
 
-			var idic = RuntimeType.GetInterfaces ().FirstOrDefault (
-				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>));
+			var idic = GetGenericDictionaryInterface (RuntimeType);
 			if (idic != null) {
 				var imap = RuntimeType.GetInterfaceMap (idic);
 				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
@@ -798,6 +804,15 @@ namespace System.Runtime.Serialization
 			item_qname = GetItemQName ();
 			key_qname = GetKeyQName ();
 			value_qname = GetValueQName ();
+		}
+
+		static Type GetGenericDictionaryInterface (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>))
+					return iface;
+
+			return null;
 		}
 
 		string ContractNamespace {
