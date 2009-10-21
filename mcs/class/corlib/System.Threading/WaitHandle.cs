@@ -111,6 +111,10 @@ namespace System.Threading
 		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
 		{
 			CheckArray (waitHandles, true);
+			// check negative - except for -1 (which is Timeout.Infinite)
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
 			try {
 				if (exitContext) SynchronizationAttribute.ExitContext ();
 				return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
@@ -160,6 +164,10 @@ namespace System.Threading
 					  bool exitContext)
 		{
 			CheckArray (waitHandles, false);
+			// check negative - except for -1 (which is Timeout.Infinite)
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
 			try {
 				if (exitContext) SynchronizationAttribute.ExitContext ();
 				return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
@@ -331,6 +339,10 @@ namespace System.Threading
 		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext)
 		{
 			CheckDisposed ();
+			// check negative - except for -1 (which is Timeout.Infinite)
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
 			bool release = false;
 			try {
 				if (exitContext)
@@ -385,19 +397,12 @@ namespace System.Threading
 
 		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout)
 		{
-			CheckArray (waitHandles, true);
-			return WaitAll_internal (waitHandles, millisecondsTimeout, false);
+			return WaitAll (waitHandles, millisecondsTimeout, false);
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles, TimeSpan timeout)
 		{
-			CheckArray (waitHandles, true);
-			long ms = (long) timeout.TotalMilliseconds;
-			
-			if (ms < -1 || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout");
-
-			return (WaitAll_internal (waitHandles, (int) ms, false));
+			return WaitAll (waitHandles, timeout, false);
 		}
 		
 #else

@@ -1,3 +1,10 @@
+2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WaitHandle.cs: Add missing validations for 'millisecondsTimeout'
+	in Wait[One|Any|All]. Also call the overloaded (bool) methods for
+	WaitAll to reduce code duplication.
+	[Backport r144529]
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WaitHandle.cs: implemented SignalAndWait.
