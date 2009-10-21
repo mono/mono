@@ -353,15 +353,8 @@ namespace System.Runtime.Serialization
 			reader.MoveToContent ();
 			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
-			else if (!isEmpty && reader.NodeType != XmlNodeType.None) {
-				var li = reader as IXmlLineInfo;
-				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.{4}",
-					reader.NodeType,
-					reader.Name,
-					reader.NamespaceURI,
-					RuntimeType.FullName,
-					li != null && li.HasLineInfo () ? String.Format (" {0}({1},{2})", reader.BaseURI, li.LineNumber, li.LinePosition) : String.Empty));
-			}
+			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
+				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, RuntimeType.FullName));
 			return res;
 		}
 
@@ -385,7 +378,7 @@ namespace System.Runtime.Serialization
 			object instance = FormatterServices.GetUninitializedObject (RuntimeType);
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			bool [] filled = new bool [Members.Count];
-			int memberInd = -1, ordered = -1;
+			int memberInd = -1;
 			while (!empty && reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
 				int i = 0;
@@ -399,13 +392,12 @@ namespace System.Runtime.Serialization
 						break;
 					}
 				}
-				for (i = Math.Max (i, ordered); i < Members.Count; i++) { // ordered
+				for (; i < Members.Count; i++) { // ordered
 					if (dmi != null)
 						break;
 					if (reader.LocalName == Members [i].XmlName &&
 						reader.NamespaceURI == Members [i].XmlRootNamespace) {
 						memberInd = i;
-						ordered = i;
 						dmi = Members [i];
 						break;
 					}
@@ -417,7 +409,6 @@ namespace System.Runtime.Serialization
 				}
 				SetValue (dmi, instance, deserializer.Deserialize (dmi.MemberType, reader));
 				filled [memberInd] = true;
-				reader.MoveToContent ();
 			}
 			for (int i = 0; i < Members.Count; i++)
 				if (!filled [i] && Members [i].IsRequired)
@@ -429,11 +420,7 @@ namespace System.Runtime.Serialization
 		// For now it could be private.
 		protected Exception MissingRequiredMember (DataMemberInfo dmi, XmlReader reader)
 		{
-			var li = reader as IXmlLineInfo;
-			return new ArgumentException (String.Format ("Data contract member {0} for the type {1} is required, but missing in the input XML.{2}",
-				new QName (dmi.XmlName, dmi.XmlNamespace),
-				RuntimeType,
-				li != null && li.HasLineInfo () ? String.Format (" {0}({1},{2})", reader.BaseURI, li.LineNumber, li.LinePosition) : null));
+			return new ArgumentException (String.Format ("Data contract member {0} is required, but missing in the input XML.", new QName (dmi.XmlName, dmi.XmlNamespace)));
 		}
 
 		// For now it could be private.
@@ -500,18 +487,14 @@ namespace System.Runtime.Serialization
 			Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
-		}
-
-		internal void Initialize ()
-		{
-			Type baseType = RuntimeType;
+			Type baseType = type;
 			List <DataMemberInfo> members = new List <DataMemberInfo> ();
-			object [] atts = baseType.GetCustomAttributes (
+			object [] atts = type.GetCustomAttributes (
 				typeof (DataContractAttribute), false);
 			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
 
 			while (baseType != null) {
-				QName bqname = KnownTypes.GetQName (baseType);
+				QName bqname = knownTypes.GetQName (baseType);
 					
 				members = GetMembers (baseType, bqname, true);
 				Members.InsertRange (0, members);
@@ -520,7 +503,10 @@ namespace System.Runtime.Serialization
 				baseType = baseType.BaseType;
 			}
 
-			Members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
+//			Members.Sort (delegate (
+//				DataMemberInfo d1, DataMemberInfo d2) {
+//					return d1.Order - d2.Order;
+//				});
 		}
 
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
@@ -554,12 +540,14 @@ namespace System.Runtime.Serialization
 				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
 			}
 
+			data_members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
+
 			return data_members;
 		}
 
 		public override List<DataMemberInfo> GetMembers ()
 		{
-			return Members;
+			return GetMembers (RuntimeType, XmlName, true);
 		}
 	}
 
@@ -626,8 +614,7 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
-			var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
-				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+			var icoll = GetGenericCollectionInterface (RuntimeType);
 			if (icoll != null) {
 				if (RuntimeType.IsInterface) {
 					add_method = RuntimeType.GetMethod ("Add", icoll.GetGenericArguments ());
@@ -642,6 +629,15 @@ namespace System.Runtime.Serialization
 						add_method = type.GetMethod ("Add", icoll.GetGenericArguments ());
 				}
 			}
+		}
+
+		static Type GetGenericCollectionInterface (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>))
+					return iface;
+
+			return null;
 		}
 
 		public override bool OutputXsiType {
@@ -673,8 +669,7 @@ namespace System.Runtime.Serialization
 			if (RuntimeType.IsArray)
 				return new ArrayList ();
 			if (RuntimeType.IsInterface) {
-				var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
-					iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+				var icoll = GetGenericCollectionInterface (RuntimeType);
 				if (icoll != null)
 					return Activator.CreateInstance (typeof (List<>).MakeGenericType (RuntimeType.GetGenericArguments () [0])); // List<T>
 				else // non-generic
@@ -704,7 +699,6 @@ namespace System.Runtime.Serialization
 					add_method.Invoke (instance, new object [] {elem});
 				else
 					throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
-				reader.MoveToContent ();
 			}
 			if (RuntimeType.IsArray)
 				return ((ArrayList)instance).ToArray (element_type);
@@ -778,8 +772,7 @@ namespace System.Runtime.Serialization
 			key_type = typeof (object);
 			value_type = typeof (object);
 
-			var idic = RuntimeType.GetInterfaces ().FirstOrDefault (
-				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>));
+			var idic = GetGenericDictionaryInterface (RuntimeType);
 			if (idic != null) {
 				var imap = RuntimeType.GetInterfaceMap (idic);
 				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
@@ -798,6 +791,15 @@ namespace System.Runtime.Serialization
 			item_qname = GetItemQName ();
 			key_qname = GetKeyQName ();
 			value_qname = GetValueQName ();
+		}
+
+		static Type GetGenericDictionaryInterface (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>))
+					return iface;
+
+			return null;
 		}
 
 		string ContractNamespace {
@@ -980,8 +982,7 @@ namespace System.Runtime.Serialization
 		// Does this make sense? I doubt.
 		public override List<DataMemberInfo> GetMembers ()
 		{
-			return Members;
-			//return GetMembers (RuntimeType, XmlName, true);
+			return GetMembers (RuntimeType, XmlName, true);
 		}
 	}
 
@@ -1155,7 +1156,7 @@ namespace System.Runtime.Serialization
 
 			public int Compare (DataMemberInfo d1, DataMemberInfo d2)
 			{
-				if (d1.Order == d2.Order)
+				if (d1.Order == -1 || d2.Order == -1)
 					return String.CompareOrdinal (d1.XmlName, d2.XmlName);
 
 				return d1.Order - d2.Order;

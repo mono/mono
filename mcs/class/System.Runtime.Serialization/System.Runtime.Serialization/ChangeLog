@@ -1,22 +1,7 @@
-2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+2009-10-21  Jb Evain  <jbevain@novell.com>
 
-	* SerializationMap.cs :
-	  There were some places that ignored possible whitespace nodes.
-	  Fixed sorting of ordered members so that it does not give
-	  incomplete sorting among base/derived types. (should fix #539563.)
-	  Give xml error details in some places.
-
-2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* KnownTypeCollection.cs : (the previous one didn't fix #539563.)
-	  Consider attempts to register the same collection type as it did
-	  before.
-
-2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* SerializationMap.cs, KnownTypeCollection.cs : nested use of type
-	  in its members resulted in infinite loop. This hopefully fixes
-	  bug #539563.
+	* SerializationMap.cs, KnownTypeCollection.cs: avoid using LINQ
+	on arrays as MonoTouch has issues with them.
 
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 

@@ -666,13 +666,8 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetCollectionQName (element);
 
-			var map = FindUserMap (qname);
-			if (map != null) {
-				var cmap = map as CollectionTypeMap;
-				if (cmap == null || cmap.RuntimeType != type)
-					throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
-				return cmap;
-			}
+			if (FindUserMap (qname) != null)
+				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));
 
 			CollectionTypeMap ret =
 				new CollectionTypeMap (type, element, qname, this);
@@ -680,10 +675,19 @@ namespace System.Runtime.Serialization
 			return ret;
 		}
 
+		static bool TypeImplementsIDictionary (Type type)
+		{
+			foreach (var iface in type.GetInterfaces ())
+				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
+					return true;
+
+			return false;
+		}
+
 		// it also supports contract-based dictionary.
 		private DictionaryTypeMap RegisterDictionary (Type type)
 		{
-			if (!type.GetInterfaces ().Any (t => t == typeof (IDictionary) || t.FullName.StartsWith ("System.Collections.Generic.IDictionary")))
+			if (!TypeImplementsIDictionary (type))
 				return null;
 
 			var cdca = GetAttribute<CollectionDataContractAttribute> (type);
@@ -751,9 +755,9 @@ namespace System.Runtime.Serialization
 			if (FindUserMap (qname) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
-			SharedContractMap ret = new SharedContractMap (type, qname, this);
+			SharedContractMap ret =
+				new SharedContractMap (type, qname, this);
 			contracts.Add (ret);
-			ret.Initialize ();
 
 			object [] attrs = type.GetCustomAttributes (typeof (KnownTypeAttribute), true);
 			for (int i = 0; i < attrs.Length; i++) {
