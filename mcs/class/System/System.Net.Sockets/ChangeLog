@@ -1,3 +1,7 @@
+2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: implement *SendFile().
+
 2009-09-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketAsyncEventArgs.cs: Default SocketError.AccessDenied on 
