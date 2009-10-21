@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Dynamic;
 using System.Linq.Expressions;
 using Microsoft.CSharp.RuntimeBinder;
+using System.Runtime.CompilerServices;
 
 enum Enum
 {
@@ -186,7 +187,7 @@ class Tester : DynamicObjectMock
 		if (!EqualityComparer<T>.Default.Equals (expected, value)) {
 			if (!string.IsNullOrEmpty (name))
 				name += ": ";
-			throw new ApplicationException (name + expected + " != " + value);
+			throw new ApplicationException (name + "Expected " + expected + " != " + value);
 		}
 	}
 
@@ -207,11 +208,19 @@ class Tester : DynamicObjectMock
 		}
 	}
 
-	static void AssertArgument (object obj, CSharpArgumentInfo[] value, string name)
+	static FieldInfo flags = typeof (CSharpArgumentInfo).GetField ("flags", BindingFlags.NonPublic | BindingFlags.Instance);
+
+	static void AssertArgument (CallSiteBinder obj, CSharpArgumentInfo[] expected, string name)
 	{
-		/*
-		CSharpArgumentInfo[] expected = obj.ArgumentInfo;
-		*/
+		var ai = obj.GetType ().GetField ("argumentInfo", BindingFlags.NonPublic | BindingFlags.Instance);
+		IList<CSharpArgumentInfo> values = (IList<CSharpArgumentInfo>) ai.GetValue (obj);
+		if (values.Count != expected.Length)
+			throw new ApplicationException (name + ": Array length does not match " + values.Count + " != " + expected.Length);
+
+		for (int i = 0; i < expected.Length; i++)
+		{
+			Assert (flags.GetValue (expected[i]), flags.GetValue (values[i]), "flags");
+		}
 	}
 
 #pragma warning disable 168, 169, 219
