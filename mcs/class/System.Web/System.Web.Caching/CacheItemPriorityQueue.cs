@@ -28,6 +28,7 @@
 //
 using System;
 using System.Text;
+using System.Threading;
 
 namespace System.Web.Caching
 {
@@ -62,91 +63,137 @@ namespace System.Web.Caching
 		Node firstParent;
 		Node lastParent;
 
+#if SYSTEMCORE_DEP
+		ReaderWriterLockSlim queueLock;
+#endif
+
+		public CacheItemPriorityQueue ()
+		{
+#if SYSTEMCORE_DEP
+			queueLock = new ReaderWriterLockSlim ();
+#endif
+		}
+		
 		public void Enqueue (CacheItem item)
 		{
 			if (item == null)
 				return;
 
-			Node node = new Node (item);
-			if (root == null) {
-				root = lastAdded = lastParent = firstParent = node;
-				return;
-			}
-
-			if (lastParent.Left != null && lastParent.Right != null) {
-				lastParent = lastParent.Next;
-				if (lastParent == null) {
-					lastParent = firstParent = firstParent.Left;
-					lastAdded = null;
+#if SYSTEMCORE_DEP
+			bool locked = false;
+			try {
+				queueLock.EnterWriteLock ();
+				locked = true;
+#endif
+				Node node = new Node (item);
+				if (root == null) {
+					root = lastAdded = lastParent = firstParent = node;
+					return;
 				}
-			}
 
-			node.Parent = lastParent;			
-			if (lastParent.Left == null)
-				lastParent.Left = node;
-			else
-				lastParent.Right = node;
+				if (lastParent.Left != null && lastParent.Right != null) {
+					lastParent = lastParent.Next;
+					if (lastParent == null) {
+						lastParent = firstParent = firstParent.Left;
+						lastAdded = null;
+					}
+				}
 
-			if (lastAdded != null) {
-				lastAdded.Next = node;
-				node.Prev = lastAdded;
-			}
+				node.Parent = lastParent;			
+				if (lastParent.Left == null)
+					lastParent.Left = node;
+				else
+					lastParent.Right = node;
+
+				if (lastAdded != null) {
+					lastAdded.Next = node;
+					node.Prev = lastAdded;
+				}
 			
-			lastAdded = node;
-			BubbleUp (node);
+				lastAdded = node;
+				BubbleUp (node);
+#if SYSTEMCORE_DEP
+			} finally {
+				if (locked)
+					queueLock.ExitWriteLock ();
+			}
+#endif
 		}
 
 		public CacheItem Dequeue ()
 		{
-			if (root == null)
-				return null;
-
-			CacheItem ret;
-			if (root.Left == null && root.Right == null) {
-				ret = root.Data;
-				root = null;
-				if (ret.Disabled)
+			CacheItem ret = null;
+#if SYSTEMCORE_DEP
+			bool locked = false;
+			try {
+				queueLock.EnterWriteLock ();
+				locked = true;
+#endif
+				if (root == null)
 					return null;
-				
-				return ret;
-			}
 
-			ret = root.Data;
-			do {
-				Node last = lastAdded;
-				if (last == null)
-					return null;
+			
+				if (root.Left == null && root.Right == null) {
+					ret = root.Data;
+					root = null;
+					if (ret.Disabled)
+						return null;
 				
-				if (last.Prev == null) {
-					Node parent = last.Parent;
-					while (true) {
-						if (parent.Next == null)
-							break;
-						parent = parent.Next;
-					}
-					lastAdded = parent;
-				} else {
-					lastAdded = last.Prev;
-					lastAdded.Next = null;
+					return ret;
 				}
 
-				if (last.Parent.Left == last)
-					last.Parent.Left = null;
-				else
-					last.Parent.Right = null;
+				ret = root.Data;
+				do {
+					Node last = lastAdded;
+					if (last == null)
+						return null;
+				
+					if (last.Prev == null) {
+						Node parent = last.Parent;
+						while (true) {
+							if (parent.Next == null)
+								break;
+							parent = parent.Next;
+						}
+						lastAdded = parent;
+					} else {
+						lastAdded = last.Prev;
+						lastAdded.Next = null;
+					}
+
+					if (last.Parent.Left == last)
+						last.Parent.Left = null;
+					else
+						last.Parent.Right = null;
 			
-				root.Data = last.Data;
-				BubbleDown (root);
-			} while (ret.Disabled);
-			
+					root.Data = last.Data;
+					BubbleDown (root);
+				} while (ret.Disabled);
+#if SYSTEMCORE_DEP
+			} finally {
+				if (locked)
+					queueLock.ExitWriteLock ();
+			}
+#endif
 			return ret;
 		}
 
 		public CacheItem Peek ()
 		{
-			if (root == null)
-				return null;
-
+#if SYSTEMCORE_DEP
+			bool locked = false;
+			try {
+				queueLock.EnterReadLock ();
+				locked = true;
+#endif
+				if (root == null)
+					return null;
+#if SYSTEMCORE_DEP
+			} finally {
+				if (locked)
+					queueLock.ExitReadLock ();
+			}
+#endif
 			return root.Data;
 		}
 		
