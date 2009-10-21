@@ -1194,7 +1194,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (source.type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
-				return new DynamicConversion (TypeManager.int32_type, false, args, loc).Resolve (ec);
+				return new DynamicConversion (TypeManager.int32_type, CSharpBinderFlags.ConvertArrayIndex, args, loc).Resolve (ec);
 			}
 
 			Expression converted;

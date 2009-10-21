@@ -1370,7 +1370,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (source.Type)) {
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (source));
-				return new DynamicConversion (target_type, false, args, loc).Resolve (ec);
+				return new DynamicConversion (target_type, 0, args, loc).Resolve (ec);
 			}
 
 			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);

@@ -1512,7 +1512,7 @@ namespace Mono.CSharp {
 			} else if (TypeManager.IsDynamicType (expr.Type)) {
 				Arguments arg = new Arguments (1);
 				arg.Add (new Argument (expr));
-				return new DynamicConversion (type, true, arg, loc).Resolve (ec);
+				return new DynamicConversion (type, CSharpBinderFlags.ConvertExplicit, arg, loc).Resolve (ec);
 			}
 
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
@@ -1530,17 +1530,25 @@ namespace Mono.CSharp {
 
 	public class ImplicitCast : ShimExpression
 	{
-		public ImplicitCast (Expression expr, Type target)
+		bool arrayAccess;
+
+		public ImplicitCast (Expression expr, Type target, bool arrayAccess)
 			: base (expr)
 		{
 			this.loc = expr.Location;
 			this.type = target;
+			this.arrayAccess = arrayAccess;
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
-			if (expr != null)
+			if (expr == null)
+				return null;
+
+			if (arrayAccess)
+				expr = ConvertExpressionToArrayIndex (ec, expr);
+			else
 				expr = Convert.ImplicitConversionRequired (ec, expr, type, loc);
 
 			return expr;
@@ -9114,29 +9122,30 @@ namespace Mono.CSharp {
 	public class ArrayIndexCast : TypeCast
 	{
 		public ArrayIndexCast (Expression expr)
-			: base (expr, expr.Type)
+			: base (expr, TypeManager.int32_type)
 		{
-			if (type == TypeManager.int32_type)
-				throw new ArgumentException ("unnecessary conversion");
+			if (expr.Type == TypeManager.int32_type)
+				throw new ArgumentException ("unnecessary array index conversion");
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			Arguments args = new Arguments (2);
-			args.Add (new Argument (child.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOf (new TypeExpression (TypeManager.int32_type, loc), loc)));
-			return CreateExpressionFactoryCall (ec, "ConvertChecked", args);
+			using (ec.Set (ResolveContext.Options.CheckedScope)) {
+				return base.CreateExpressionTree (ec);
+			}
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
 
-			if (type == TypeManager.uint32_type)
+			var expr_type = child.Type;
+
+			if (expr_type == TypeManager.uint32_type)
 				ec.ig.Emit (OpCodes.Conv_U);
-			else if (type == TypeManager.int64_type)
+			else if (expr_type == TypeManager.int64_type)
 				ec.ig.Emit (OpCodes.Conv_Ovf_I);
-			else if (type == TypeManager.uint64_type)
+			else if (expr_type == TypeManager.uint64_type)
 				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
 			else
 				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);

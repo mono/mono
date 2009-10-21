@@ -1,5 +1,10 @@
 2009-10-21  Marek Safar  <marek.safar@gmail.com>
 
+	* dynamic.cs, convert.cs, expression.cs, ecore.cs: Wrap array index
+	conversion.
+
+2009-10-21  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, dynamic.cs, expression.cs: Don't resolve runtime
 	binder flags.
 

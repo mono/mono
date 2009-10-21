@@ -416,13 +416,13 @@ namespace Mono.CSharp
 
 	class DynamicConversion : DynamicExpressionStatement, IDynamicBinder
 	{
-		bool is_explicit;
+		CSharpBinderFlags flags;
 
-		public DynamicConversion (Type targetType, bool isExplicit, Arguments args, Location loc)
+		public DynamicConversion (Type targetType, CSharpBinderFlags flags, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			type = targetType;
-			is_explicit = isExplicit;
+			this.flags = flags;
 			base.binder = this;
 		}
 
@@ -430,9 +430,7 @@ namespace Mono.CSharp
 		{
 			Arguments binder_args = new Arguments (2);
 
-			var flags = ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
-			if (is_explicit)
-				flags |= CSharpBinderFlags.ConvertExplicit;
+			flags |= ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
 
 			binder_args.Add (new Argument (new EnumConstant (new IntConstant ((int) flags, loc), TypeManager.binder_flags)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
