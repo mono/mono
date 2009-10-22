@@ -573,9 +573,6 @@ class Tester
 
 		dynamic d3 = new MyType (-7);
 		Assert<MyType> (d3 && new MyType (6), new MyType (0), "#3");
-
-		d3 = new MyTypeImplicitOnly (5);
-		Assert (d3 && 11, 1, "#3b");
 	}
 
 	void DivideTest ()
@@ -731,6 +728,14 @@ class Tester
 			d = ulong.MaxValue;
 			AssertChecked<uint?> (() => (uint?) d, 2, "#2");
 		}
+	}
+	
+	void ConvertArray ()
+	{
+		dynamic idx = (uint) 1;
+		var arr = new int [5];
+		arr [idx] = 2;
+		Assert (2, arr [idx], "#1");
 	}
 
 	void EqualTest ()
@@ -1740,10 +1745,7 @@ class Tester
 		Assert (d || d, true, "#2");
 
 		dynamic d3 = new MyType (-7);
-		Assert<MyType> (d3 || new MyType (6), new MyType (-7), "#3");
-
-		d3 = new MyTypeImplicitOnly (-7);
-		Assert (d3 || 11, -7, "#3b");
+		Assert<MyType> (d3 || new MyType (6), new MyType (-1), "#3");
 	}
 
 	void RightShiftTest ()

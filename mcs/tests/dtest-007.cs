@@ -49,6 +49,11 @@ class Class
 	public static void GenericVoid<T> (T i)
 	{
 	}
+
+	public static int StaticMethod (params int[] i)
+	{
+		return i [0] * i.Length;
+	}
 }
 
 class Tester
@@ -106,6 +111,15 @@ class Tester
 		Assert<object> (null, d (true), "#2");
 	}
 
+	void InvokeMember ()
+	{
+//		dynamic d = new Class ();
+//		Assert ("vv", d.Method ("vv"), "#1");
+
+		dynamic d = 2;
+		Assert (2, Class.StaticMethod (d), "#2");
+	}
+
 	void MemberGetTest ()
 	{
 		dynamic d = new Class ();
@@ -129,6 +143,7 @@ class Tester
 	void MemberSetTest ()
 	{
 		dynamic d = new Class ();
+
 		d.IntValue = 22;
 		Assert (22, d.IntValue, "#1");
 		d.Prop = 19;
