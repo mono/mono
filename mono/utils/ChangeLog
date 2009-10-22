@@ -1,5 +1,9 @@
 2009-10-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mono-compiler.h: Add MONO_DEPRECATED.
+
+2009-10-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mono-error.c, mono-error.h, mono-error-internal.h: New error handling
 	structures and functions.
 
