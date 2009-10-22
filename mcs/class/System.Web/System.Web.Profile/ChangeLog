@@ -1,3 +1,11 @@
+2009-10-22  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileBase.cs: put named entries into SettingProperty's
+	Attributes collection based on custom attributes decorating the
+	associated profile property.
+
+	* CustomProviderDataAttribute.cs: implemented IsDefaultAttribute
+
 2009-09-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ProfileParser.cs: GetProfileGroupType creates type name with

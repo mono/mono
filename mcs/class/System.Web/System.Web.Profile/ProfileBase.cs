@@ -244,7 +244,7 @@ namespace System.Web.Profile
 		{
 			SettingsProperty sp = new SettingsProperty (property.Name);
 
-			Attribute [] attributes = (Attribute [])property.GetCustomAttributes (typeof (SettingsSerializeAsAttribute), false);
+			Attribute [] attributes = (Attribute [])property.GetCustomAttributes (false);
 			SettingsAttributeDictionary attDict = new SettingsAttributeDictionary();
 			sp.SerializeAs = SettingsSerializeAs.ProviderSpecific;
 			sp.PropertyType = property.PropertyType;
@@ -253,24 +253,22 @@ namespace System.Web.Profile
 			sp.ThrowOnErrorSerializing = true;
 
 			for (int i = 0; i < attributes.Length; i++) {
-				if (attributes [i] is DefaultSettingValueAttribute)
+				if (attributes [i] is DefaultSettingValueAttribute) {
 					sp.DefaultValue = ((DefaultSettingValueAttribute) attributes [i]).Value;
-
-				else if (attributes [i] is SettingsProviderAttribute) {
+				} else if (attributes [i] is SettingsProviderAttribute) {
 					Type providerType = HttpApplication.LoadType (((SettingsProviderAttribute) attributes [i]).ProviderTypeName);
 					sp.Provider = (SettingsProvider) Activator.CreateInstance (providerType);
 					sp.Provider.Initialize (null, null);
-				}
-
-				else if (attributes [i] is SettingsSerializeAsAttribute)
+				} else if (attributes [i] is SettingsSerializeAsAttribute) {
 					sp.SerializeAs = ((SettingsSerializeAsAttribute) attributes [i]).SerializeAs;
-
-				else if (
-					attributes [i] is SettingsAllowAnonymousAttribute ||
-					attributes [i] is ApplicationScopedSettingAttribute ||
-					attributes [i] is UserScopedSettingAttribute ||
-					attributes [i] is SettingsDescriptionAttribute  ||
-					attributes [i] is SettingAttribute)
+				} else if (attributes [i] is SettingsAllowAnonymousAttribute) {
+					sp.Attributes ["AllowAnonymous"] = ((SettingsAllowAnonymousAttribute) attributes [i]).Allow;
+				} else if (attributes [i] is CustomProviderDataAttribute) {
+					sp.Attributes ["CustomProviderData"] = ((CustomProviderDataAttribute) attributes [i]).CustomProviderData;
+				} else if (attributes [i] is ApplicationScopedSettingAttribute ||
+					   attributes [i] is UserScopedSettingAttribute ||
+					   attributes [i] is SettingsDescriptionAttribute  ||
+					   attributes [i] is SettingAttribute)
 					attDict.Add (attributes [i].GetType (), attributes [i]);
 			}
 
