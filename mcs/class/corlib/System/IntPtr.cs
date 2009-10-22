@@ -199,5 +199,27 @@ namespace System
 		{
 			return value.m_value;
 		}
+
+#if NET_4_0
+		public static IntPtr Add (IntPtr pointer, int offset)
+		{
+			return (IntPtr) (unchecked (((byte *) pointer) + offset));
+		}
+
+		public static IntPtr Subtract (IntPtr pointer, int offset)
+		{
+			return (IntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+
+		public static IntPtr operator + (IntPtr pointer, int offset)
+		{
+			return (IntPtr) (unchecked (((byte *) pointer) + offset));
+		}
+
+		public static IntPtr operator - (IntPtr pointer, int offset)
+		{
+			return (IntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+#endif
 	}
 }

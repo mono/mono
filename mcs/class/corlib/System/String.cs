@@ -2535,6 +2535,99 @@ namespace System
 			}
 		}
 
+#if NET_4_0
+		public static bool IsNullOrWhiteSpace (string value)
+		{
+			if (value == null)
+				return true;
+			foreach (char c in value)
+				if (!Char.IsWhiteSpace (c))
+					return false;
+			return true;
+		}
+
+		[ComVisible(false)]
+		public static string Concat (IEnumerable<string> values)
+		{
+			if (values == null)
+				throw new ArgumentNullException ("values");
+
+			var stringList = new List<string> ();
+			int len = 0;
+			foreach (var v in values){
+				if (v == null)
+					continue;
+				len += v.Length;
+				stringList.Add (v);
+			}
+			return ConcatInternal (stringList.ToArray (), len);
+		}
+
+		[ComVisibleAttribute(false)]
+		public static string Concat<T> (IEnumerable<T> values)
+		{
+			if (values == null)
+				throw new ArgumentNullException ("values");
+
+			var stringList = new List<string> ();
+			int len = 0;
+			foreach (var v in values){
+				string sr = v.ToString ();
+				len += sr.Length;
+				stringList.Add (sr);
+			}
+			return ConcatInternal (stringList.ToArray (), len);
+		}
+
+		[ComVisibleAttribute(false)]
+		public static string Join (string separator, IEnumerable<string> values)
+		{
+			if (separator == null)
+				return Concat (values);
+			
+			if (values == null)
+				throw new ArgumentNullException ("values");
+			
+			var stringList = new List<string> ();
+			foreach (var v in values)
+				stringList.Add (v);
+
+			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
+		}
+
+		[ComVisibleAttribute(false)]
+		public static string Join (string separator, params object [] values)
+		{
+			if (separator == null)
+				return Concat (values);
+			
+			if (values == null)
+				throw new ArgumentNullException ("values");
+
+			var strCopy = new string [values.Length];
+			int i = 0;
+			foreach (var v in values)
+				strCopy [i++] = v.ToString ();
+
+			return JoinUnchecked (separator, strCopy, 0, strCopy.Length);
+		}
+		
+		[ComVisible (false)]
+		public static string Join<T> (string separator, IEnumerable<T> values)
+		{
+			if (separator == null)
+				return Concat<T> (values);
+				
+			if (values == null)
+				throw new ArgumentNullException ("values");
+			
+			var stringList = new List<string> ();
+			foreach (var v in values)
+				stringList.Add (v.ToString ());
+
+			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
+		}
+#endif
 		internal unsafe int GetCaseInsensitiveHashCode ()
 		{
 			fixed (char * c = this) {

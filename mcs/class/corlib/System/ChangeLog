@@ -1,3 +1,11 @@
+2009-10-22  Miguel de Icaza  <miguel@novell.com>
+
+	*  String.cs (IsNullOrWhiteSpace, Concat, Join): New 4.0 methods. 
+
+	* IntPtr.cs (Add, Subtract): New 4.0 methods.
+
+	* Tuple.cs: Updated signature.
+
 2009-10-19  Marek Safar  <marek.safar@gmail.com>
 
 	* IObservable.cs, IObserver.cs: New files.
