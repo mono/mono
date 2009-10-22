@@ -234,10 +234,17 @@ public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 			// make sure to fill wsdl_instance among other 
 			// listeners. It is somewhat hacky way, but 
 			// otherwise there is no assured way to do it.
-			if (wsdl_instance != null) {
+			var wsdl = wsdl_instance;
+			if (wsdl == null)
 				foreach (var l in registered_channels [channel_listener.Uri])
-					l.GetProperty<HttpListenerManager> ().wsdl_instance = wsdl_instance;
+					if ((wsdl = l.GetProperty<HttpListenerManager> ().wsdl_instance) != null)
+						break;
+			if (wsdl != null) {
+				foreach (var l in registered_channels [channel_listener.Uri])
+					l.GetProperty<HttpListenerManager> ().wsdl_instance = wsdl;
+				Console.WriteLine ("wsdl is NOT null");
 			}
+			else Console.WriteLine ("wsdl is NULL");
 		}
 
 		public void Stop (bool abort)
@@ -308,6 +315,9 @@ public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 			wait_http_ctx.Set ();
 		}
 
+		const UriComponents cmpflag = UriComponents.HttpRequestUrl ^ UriComponents.Query;
+		const UriFormat fmtflag = UriFormat.SafeUnescaped;
+
 		internal bool FilterHttpContext (HttpContextInfo ctx)
 		{
 			if (ctx.HttpMethod.ToUpper () != "GET")
@@ -318,14 +328,11 @@ public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 			if (channel_listener.State != CommunicationState.Opened)
 				return true;
 
-			var cmpflag = UriComponents.HttpRequestUrl ^ UriComponents.Query;
-			var fmtflag = UriFormat.SafeUnescaped;
-
 			if (wsdl_instance.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
 				if (mex_info == null)
 					return false; // Do not handle this at normal dispatcher.
 				if (ctx.QueryString [null] == "wsdl")
-					return mex_info.IsMex; // wsdl dispatcher should handle this.
+					return mex_info.SupportsMex; // wsdl dispatcher should handle this.
 				if (!wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
 					return true; // in case help URL is not equivalent to WSDL URL, it anyways returns WSDL regardless of ?wsdl existence.
 			}

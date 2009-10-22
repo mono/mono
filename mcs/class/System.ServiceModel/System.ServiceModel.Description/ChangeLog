@@ -1,5 +1,12 @@
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceMetadataExtension.cs : channelDispatchers is keyed by URL,
+	  so it might have been skipped when the URLs are the same for wsdl
+	  and help. So, differentiate flags for mex and help, not to be
+	  exclusive. This fixes random-ish EndpointNotFound for WSDLs.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs : A few fixes for no-wsdl case: fix
 	  wrong html template, and do not throw NRE for the lack of WsdlUrl.
 

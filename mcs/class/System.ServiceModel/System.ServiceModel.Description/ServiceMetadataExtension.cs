@@ -102,8 +102,14 @@ namespace System.ServiceModel.Description
 
 			if (dispatchers == null)
 				dispatchers = new Dictionary<Uri, ChannelDispatcher> ();
-			else if (dispatchers.ContainsKey (uri))
+			else if (dispatchers.ContainsKey (uri)) {
+				var info = dispatchers [uri].Listener.GetProperty<MetadataPublishingInfo> ();
+				if (isMex)
+					info.SupportsMex = true;
+				else
+					info.SupportsHelp = true;
 				return;
+			}
 
 			if (binding == null) {
 				switch (scheme) {
@@ -134,7 +140,7 @@ namespace System.ServiceModel.Description
 			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
 			var listener = channelDispatcher.Listener as ChannelListenerBase;
 			if (listener != null)
-				listener.Properties.Add (new MetadataPublishingInfo () { IsMex = isMex, Instance = instance });
+				listener.Properties.Add (new MetadataPublishingInfo () { SupportsMex = isMex, SupportsHelp = !isMex, Instance = instance });
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
 			dispatchers.Add (uri, channelDispatcher);
@@ -167,10 +173,9 @@ namespace System.ServiceModel.Description
 	// Can't be enum as it is for GetProperty<T> ().
 	internal class MetadataPublishingInfo
 	{
-		public bool IsMex { get; set; }
+		public bool SupportsMex { get; set; }
+		public bool SupportsHelp { get; set; }
 		public HttpGetWsdl Instance { get; set; }
-		//public static MetadataPublishingKind Wsdl = new MetadataPublishingKind ();
-		//public static MetadataPublishingKind Help = new MetadataPublishingKind ();
 	}
 
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract

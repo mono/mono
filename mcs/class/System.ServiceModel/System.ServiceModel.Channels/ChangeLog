@@ -1,5 +1,10 @@
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : dependent fix to ServiceMetadataExtension
+	  changes.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs, HttpReplyChannel.cs, AspNetReplyChannel.cs,
 	  HttpChannelListener.cs, HttpListenerManager.cs :
 	  Similar refactoring on ASP.NET side to the previous one.
