@@ -1,3 +1,8 @@
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WeakReferenceTest.cs: New. Basic test cases
+	[Backport r144681]
+
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add a test for missing.
