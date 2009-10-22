@@ -242,9 +242,7 @@ public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 			if (wsdl != null) {
 				foreach (var l in registered_channels [channel_listener.Uri])
 					l.GetProperty<HttpListenerManager> ().wsdl_instance = wsdl;
-				Console.WriteLine ("wsdl is NOT null");
 			}
-			else Console.WriteLine ("wsdl is NULL");
 		}
 
 		public void Stop (bool abort)
