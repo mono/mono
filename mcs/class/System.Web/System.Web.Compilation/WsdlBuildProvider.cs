@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Services.Description;
+using System.Web.Services.Discovery;
 using System.Xml.Serialization;
 using System.Web.Util;
 
@@ -67,40 +68,25 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		string GetNamespace ()
-		{
-			var vp = new System.Web.VirtualPath (VirtualPath);
-			string vpDirectory = vp.Directory;
-			string path;
-			
-			if (StrUtils.StartsWith (vpDirectory, "/App_Code/"))
-				path = vpDirectory.Substring (10);
-			else if (StrUtils.StartsWith (vpDirectory, "/App_WebReferences/"))
-				path = vpDirectory.Substring (19);
-			else
-				path = vpDirectory;
-
-			path = path.Replace ("/", ".");
-			if (path.EndsWith ("."))
-				return path.Substring (0, path.Length - 1);
-
-			return path;
-		}
-		
 		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
 		{
 			CodeCompileUnit unit = new CodeCompileUnit ();
-			CodeNamespace proxyCode = new CodeNamespace (GetNamespace ());
-			unit.Namespaces.Add (proxyCode);			
+			CodeNamespace proxyCode = new CodeNamespace ();
+			unit.Namespaces.Add (proxyCode);	
 
-			ServiceDescription description = ServiceDescription.Read (OpenReader ());
-			ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
-				
-			importer.AddServiceDescription (description, null, null);
-			importer.Style = ServiceDescriptionImportStyle.Client;
-			importer.CodeGenerator = assemblyBuilder.CodeDomProvider;
-			importer.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateNewAsync;
-			importer.Import (proxyCode, unit);
+			var description = ServiceDescription.Read (OpenReader ());
+			var discCollection = new DiscoveryClientDocumentCollection () {
+					{VirtualPath, description}
+				};
+			
+			var webref = new WebReferenceCollection () {
+					new WebReference (discCollection, proxyCode)
+				};
+
+			var options = new WebReferenceOptions ();
+			options.Style = ServiceDescriptionImportStyle.Client;
+			ServiceDescriptionImporter.GenerateWebReferences (webref, assemblyBuilder.CodeDomProvider, unit, options);
+
 			assemblyBuilder.AddCodeCompileUnit (unit);
 		}
 	}
