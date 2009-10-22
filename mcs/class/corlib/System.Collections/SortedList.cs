@@ -32,6 +32,7 @@
 
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections {
 
@@ -42,7 +43,8 @@ namespace System.Collections {
 	/// </summary>
 	[Serializable]
 	[ComVisible(true)]
-	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]	
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {
 
@@ -53,7 +55,7 @@ namespace System.Collections {
 			internal Object value;
 		}
 
-		private readonly static int INITIAL_SIZE = 16;
+		const int INITIAL_SIZE = 16;
 
 		private enum EnumeratorMode : int { KEY_MODE = 0, VALUE_MODE, ENTRY_MODE }
 

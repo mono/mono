@@ -300,6 +300,7 @@ System.Collections/Queue.cs
 System.Collections/ReadOnlyCollectionBase.cs
 System.Collections/SortedList.cs
 System.Collections/Stack.cs
+System.Collections/StructuralComparisons.cs
 System.Configuration.Assemblies/AssemblyHash.cs
 System.Configuration.Assemblies/AssemblyHashAlgorithm.cs
 System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
