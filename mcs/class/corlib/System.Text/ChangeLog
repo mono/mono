@@ -1,3 +1,7 @@
+2009-10-22  Miguel de Icaza  <miguel@novell.com>
+
+	* StringBuilder.cs (Text): Add new 4.0 method.
+
 2009-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Encoding.cs: Remove normalization methods for Moonlight
