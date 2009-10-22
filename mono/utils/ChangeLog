@@ -1,3 +1,10 @@
+2009-10-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-error.c, mono-error.h, mono-error-internal.h: New error handling
+	structures and functions.
+
+	* Makefile.am: Add new files.
+
 2009-10-12  Joel W. Reed <joelwreed@gmail.com>
 
 	* mono-networkinterfaces.c, mono-networkinterfaces.h: Read
