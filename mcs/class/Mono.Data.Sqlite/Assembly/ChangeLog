@@ -1,3 +1,7 @@
+2009-10-22  Jonathan Pryor  <jpryor@novell.com>
+
+	* AssemblyInfo.cs: Use Consts.FxVersion when building for MONOTOUCH.
+
 2004-04-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Added
