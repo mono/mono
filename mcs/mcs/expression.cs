@@ -3612,11 +3612,14 @@ namespace Mono.CSharp {
 			MemberAccess sle = new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
 
-			int flags = 0;
+			CSharpBinderFlags flags = 0;
 			if (ec.HasSet (ResolveContext.Options.CheckedScope))
-				flags = (int) CSharpBinderFlags.CheckedContext;
+				flags = CSharpBinderFlags.CheckedContext;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (flags, loc), TypeManager.binder_flags)));
+			if ((oper & Operator.LogicalMask) != 0)
+				flags |= CSharpBinderFlags.BinaryOperationLogical;
+
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), TypeManager.binder_flags)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
@@ -4045,27 +4048,19 @@ namespace Mono.CSharp {
 	// A boolean-expression is an expression that yields a result
 	// of type bool
 	//
-	public class BooleanExpression : Expression
+	public class BooleanExpression : ShimExpression
 	{
-		Expression expr;
-
 		public BooleanExpression (Expression expr)
+			: base (expr)
 		{
-			this.expr = expr;
 			this.loc = expr.Location;
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			BooleanExpression target = (BooleanExpression) t;
-			target.expr = expr.Clone (clonectx);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			// TODO: We should emit IsTrue (v4) instead of direct user operator
 			// call but that would break csc compatibility
-			throw new NotSupportedException ();
+			return base.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -4080,7 +4075,7 @@ namespace Mono.CSharp {
 
 			Assign ass = expr as Assign;
 			if (ass != null && ass.Source is Constant) {
-				ec.Report.Warning (665, 3, expr.Location,
+				ec.Report.Warning (665, 3, loc,
 					"Assignment in conditional expression is always constant. Did you mean to use `==' instead ?");
 			}
 
@@ -4108,11 +4103,6 @@ namespace Mono.CSharp {
 			}
 
 			return converted;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("Should not be reached");
 		}
 	}
 	

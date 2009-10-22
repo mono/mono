@@ -196,7 +196,7 @@ namespace Mono.CSharp
 		Expression binder_expr;
 
 		// Used by BinderFlags
-		CSharpBinderFlags flags;
+		protected CSharpBinderFlags flags;
 
 		public DynamicExpressionStatement (IDynamicBinder binder, Arguments args, Location loc)
 		{
@@ -279,20 +279,18 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitCall (ec);
+			EmitCall (ec,  false);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			flags = CSharpBinderFlags.ResultDiscarded;
-
-			EmitCall (ec);
+			EmitCall (ec, true);
 		}
 
-		void EmitCall (EmitContext ec)
+		void EmitCall (EmitContext ec, bool isStatement)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, dyn_args_count);
+			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, dyn_args_count, isStatement);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
@@ -339,9 +337,8 @@ namespace Mono.CSharp
 			return new MemberAccess (TypeManager.binder_type, name, loc);
 		}
 
-		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count)
+		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count, bool is_statement)
 		{
-			bool is_statement = (flags & CSharpBinderFlags.ResultDiscarded) != 0;
 			int default_args = is_statement ? 1 : 2;
 
 			bool has_ref_out_argument = false;
@@ -451,13 +448,11 @@ namespace Mono.CSharp
 
 	class DynamicConversion : DynamicExpressionStatement, IDynamicBinder
 	{
-		CSharpBinderFlags flags;
-
 		public DynamicConversion (Type targetType, CSharpBinderFlags flags, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			type = targetType;
-			this.flags = flags;
+			base.flags = flags;
 			base.binder = this;
 		}
 
@@ -575,6 +570,12 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (real_args));
 
 			return new Invocation (GetBinder (is_member_access ? "InvokeMember" : "Invoke", loc), binder_args);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			flags = CSharpBinderFlags.ResultDiscarded;
+			base.EmitStatement (ec);
 		}
 	}
 

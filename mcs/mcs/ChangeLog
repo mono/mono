@@ -1,5 +1,10 @@
 2009-10-22  Marek Safar  <marek.safar@gmail.com>
 
+	* dynamic.cs, expression.cs: Pass logical binary flag to dynamic
+	resolver.
+
+2009-10-22  Marek Safar  <marek.safar@gmail.com>
+
 	* dynamic.cs, ecore.cs: Dynamic invocation with void return type.
 
 2009-10-21  Marek Safar  <marek.safar@gmail.com>
