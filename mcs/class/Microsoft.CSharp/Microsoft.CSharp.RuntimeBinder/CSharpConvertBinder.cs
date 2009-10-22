@@ -51,7 +51,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (Explicit)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (Type, Compiler.Location.Null), expr);
 			else
-				expr = new Compiler.ImplicitCast (expr, Type);
+				expr = new Compiler.ImplicitCast (expr, Type, false);
 
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
