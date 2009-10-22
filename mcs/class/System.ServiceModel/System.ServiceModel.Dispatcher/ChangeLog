@@ -1,3 +1,8 @@
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : disable concurrent channel acceptance
+	  until it gets working fine.
+
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : fix warnings.
