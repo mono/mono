@@ -1,5 +1,7 @@
-2009-10-22  Sebastien Pouliot  <sebastien@ximian.com> 
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* EventWaitHandleTest.cs: New. Test case for EventResetMode 
+	validation
 	* MonitorTest.cs: Mark existing tests as "NotWorking" since they
 	fail in MS FX2 (maybe they worked in 1.x?). Add more test cases
 	to validate the TryEnter and Wait overloaded methods.

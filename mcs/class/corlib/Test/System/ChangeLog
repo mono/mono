@@ -1,8 +1,11 @@
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WeakReferenceTest.cs: New. Basic test cases
+
 2009-10-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* StringTest.cs (Contains): Add test for Contains using
 	an Ordinal compare. Bug #535425.
-
 
 2009-09-24  Zoltan Varga  <vargaz@gmail.com>
 

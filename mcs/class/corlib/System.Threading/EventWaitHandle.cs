@@ -44,26 +44,34 @@ namespace System.Threading
 		{
 			Handle = handle;
 		}
+
+		private bool IsManualReset (EventResetMode mode)
+		{
+			if ((mode < EventResetMode.AutoReset) || (mode > EventResetMode.ManualReset))
+				throw new ArgumentException ("mode");
+			return (mode == EventResetMode.ManualReset);
+		}
 		
 		public EventWaitHandle (bool initialState, EventResetMode mode)
 		{
 			bool created;
-			
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, null, out created);
+			bool manual = IsManualReset (mode);
+			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, null, out created);
 		}
 		
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name)
 		{
 			bool created;
-			
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out created);
+			bool manual = IsManualReset (mode);
+			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out created);
 		}
 		
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out createdNew);
+			bool manual = IsManualReset (mode);
+			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
 #if !NET_2_1
 		[MonoTODO ("Implement access control")]
@@ -71,7 +79,8 @@ namespace System.Threading
 					string name, out bool createdNew,
 					EventWaitHandleSecurity eventSecurity)
 		{
-			Handle = NativeEventCalls.CreateEvent_internal ((mode == EventResetMode.ManualReset), initialState, name, out createdNew);
+			bool manual = IsManualReset (mode);
+			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
 		
 		[MonoTODO]
