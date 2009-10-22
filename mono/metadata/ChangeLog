@@ -1,3 +1,17 @@
+2009-10-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
+	a MonoError parameter.
+
+	* class.h: Mark mono_class_inflate_generic_type deprecated, add new mono_class_inflate_generic_type_checked
+	version that can does proper error handling.
+
+	* class.c (inflate_generic_type): Add a MonoError parameter. Don't assert on error, use new mono error machinery.
+
+	* class.c (mono_class_inflate_generic_type_with_mempool): Add new MonoError parameter.
+
+	* class.c, generics-sharing.c: Changes to handle mono_class_inflate_generic_type_with_mempool new signature.
+
 2009-10-20  Zoltan Varga  <vargaz@gmail.com>
 
         * debug-helpers.c (dis_one): Fix the disassembly of empty strings when
