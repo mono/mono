@@ -2,6 +2,7 @@
 
 	* aot-runtime.c (mono_aot_get_method): Avoid asserting if a array generic
 	iface wrapper is not found.
+	(mono_aot_get_method): Ditto for GetGenericValueImpl.
 
 2009-10-21  Zoltan Varga  <vargaz@gmail.com>
 
