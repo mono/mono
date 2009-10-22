@@ -533,7 +533,7 @@ namespace System.IO
 		}
 
 		public static string ReadAllText (string path)
-		{
+			{
 			return ReadAllText (path, Encoding.UTF8Unmarked);
 		}
 
@@ -613,5 +613,95 @@ namespace System.IO
 			// handling this exception to work properly.
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
+
+#if NET_4_0
+		public static IEnumerable<string> ReadLines (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+
+			using (StreamReader reader = File.OpenText (path)) {
+				string s;
+				while ((s = reader.ReadLine ()) != null)
+					yield return s;
+			}
+		}
+
+		public static IEnumerable<string> ReadLines (string path, Encoding encoding)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+
+			using (StreamReader reader = new StreamReader (path, encoding)) {
+				string s;
+				while ((s = reader.ReadLine ()) != null)
+					yield return s;
+			}
+		}
+
+		public static void AppendAllLines (string path, IEnumerable<string> contents)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (contents == null)
+				return;
+
+			using (TextWriter w = new StreamWriter (path, true)) {
+				foreach (var line in contents)
+					w.Write (line);
+			}
+		}
+
+		public static void AppendAllLines (string path, IEnumerable<string> contents, Encoding encoding)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (contents == null)
+				return;
+
+			using (TextWriter w = new StreamWriter (path, true, encoding)) {
+				foreach (var line in contents)
+					w.Write (line);
+			}
+		}
+
+		public static void WriteAllLines (string path, IEnumerable<string> contents)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (contents == null)
+				return;
+
+			using (TextWriter w = new StreamWriter (path, false)) {
+				foreach (var line in contents)
+					w.Write (line);
+			}
+		}
+
+		public static void WriteAllLines (string path, IEnumerable<string> contents, Encoding encoding)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (contents == null)
+				return;
+
+			using (TextWriter w = new StreamWriter (path, false, encoding)) {
+				foreach (var line in contents)
+					w.Write (line);
+			}
+		}
+#endif
 	}
 }

@@ -720,5 +720,40 @@ namespace System.IO {
 
 			return String.Compare (subset, slast, path, slast, subset.Length - slast) == 0;
 		}
+
+#if NET_4_0
+		public static string Combine (params string [] paths)
+		{
+			if (paths == null)
+				throw new ArgumentNullException ("paths");
+
+			int l = 0;
+			bool need_sep = false;
+			foreach (var s in paths){
+				if (s == null)
+					throw new ArgumentNullException ("One of the paths contains a null value", "paths");
+				if (s.IndexOfAny (InvalidPathChars) != -1)
+					throw new ArgumentException ("Illegal characters in path.");
+				if (l == 0 && s.Length > 0){
+					char p1end = s [s.Length - 1];
+					if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar){
+						need_sep = true;
+						l += DirectorySeparatorStr.Length;
+					}
+				}
+				l += s.Length;
+			}
+			var ret = new StringBuilder (l);
+			l = 0;
+			foreach (var s in paths){
+				ret.Append (s);
+				if (l == 0 && need_sep)
+					ret.Append (DirectorySeparatorStr);
+				l = 1;
+			}
+
+			return ret.ToString ();
+		}
+#endif
 	}
 }

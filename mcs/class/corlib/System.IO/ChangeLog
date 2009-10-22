@@ -1,3 +1,12 @@
+2009-10-21  Miguel de Icaza  <miguel@novell.com>
+
+	* BinaryWriter.cs, BinaryReader.cs: 4.0 signature update.
+
+	* File.cs (ReadLines, AppendAllLines, WriteAllLines): Add
+	IEnumerable methods.
+
+	* Path.cs (Combine): add the params overload. 
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnmanagedMemoryStream.cs: Fix some and add missing validations
