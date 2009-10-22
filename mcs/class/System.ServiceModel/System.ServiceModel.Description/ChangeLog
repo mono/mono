@@ -1,3 +1,8 @@
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : A few fixes for no-wsdl case: fix
+	  wrong html template, and do not throw NRE for the lack of WsdlUrl.
+
 2009-10-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : restructure internal channel property

@@ -284,7 +284,7 @@ namespace System.ServiceModel.Description
 <!-- FIXME: add client proxy usage (that required decent ServiceContractGenerator implementation, so I leave it yet.) -->
 ", new Uri (WsdlUrl.ToString () + "?wsdl")) : // this Uri.ctor() is nasty, but there is no other way to add "?wsdl" (!!)
 				String.Format (@"
-<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.", ext.Owner.Description.Name);
+<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.</p>", ext.Owner.Description.Name);
 
 			var html = String.Format (@"
 <html>
@@ -315,6 +315,9 @@ namespace System.ServiceModel.Description
 
 		void GetMetadata ()
 		{
+			if (WsdlUrl == null)
+				return;
+
 			MetadataSet metadata = ext.Metadata;
 			int xs_i = 0, wsdl_i = 0;
 
