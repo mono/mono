@@ -1,3 +1,7 @@
+2009-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* class.c: fix typo.
+
 2009-10-22  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
@@ -14,8 +18,8 @@
 
 2009-10-20  Zoltan Varga  <vargaz@gmail.com>
 
-        * debug-helpers.c (dis_one): Fix the disassembly of empty strings when
-        NO_UNALIGNED_ACCESS is defined.
+	* debug-helpers.c (dis_one): Fix the disassembly of empty strings when
+	NO_UNALIGNED_ACCESS is defined.
 
 2009-10-22  Zoltan Varga  <vargaz@gmail.com>
 
