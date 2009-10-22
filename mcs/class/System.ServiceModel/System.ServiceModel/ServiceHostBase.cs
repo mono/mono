@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
@@ -84,16 +85,26 @@ namespace System.ServiceModel
 			}
 		}
 
-		internal Uri CreateUri (string sheme, Uri relatieUri) {
-			Uri baseUri = base_addresses.Contains (sheme) ? base_addresses [sheme] : null;
+		internal Uri CreateUri (string scheme, Uri relativeUri)
+		{
+			Uri baseUri = base_addresses.Contains (scheme) ? base_addresses [scheme] : null;
 
-			if (relatieUri == null)
+			if (relativeUri == null)
 				return baseUri;
-			if (relatieUri.IsAbsoluteUri)
-				return relatieUri;
+			if (relativeUri.IsAbsoluteUri)
+				return relativeUri;
 			if (baseUri == null)
 				return null;
-			return new Uri (baseUri, relatieUri);
+			var s = relativeUri.ToString ();
+			if (s.Length == 0)
+				return baseUri;
+			var l = baseUri.LocalPath;
+			var r = relativeUri.ToString ();
+
+			if (l.Length > 0 && l [l.Length - 1] != '/' && r [0] != '/')
+				return new Uri (String.Concat (baseUri.ToString (), "/", r));
+			else
+				return new Uri (String.Concat (baseUri.ToString (), r));
 		}
 
 		public ChannelDispatcherCollection ChannelDispatchers {
@@ -217,8 +228,13 @@ namespace System.ServiceModel
 				return help_page_contract;
 			case "IMetadataExchange":
 				// this is certainly looking special (or we may 
-				// be missing something around ServiceMetadataExtension)
-				if (Extensions.Find<ServiceMetadataExtension> () == null)
+				// be missing something around ServiceMetadataExtension).
+				// It seems .NET WCF has some "infrastructure"
+				// endpoints. .NET ServiceHost fails to Open()
+				// if it was added only IMetadataExchange 
+				// endpoint (and you'll see the word
+				// "infrastructure" in the exception message).
+				if (Description.Behaviors.Find<ServiceMetadataBehavior> () == null)
 					break;
 				if (mex_contract == null)
 					mex_contract = ContractDescription.GetContract (typeof (IMetadataExchange));
@@ -381,7 +397,7 @@ namespace System.ServiceModel
 				foreach (IServiceBehavior b in Description.Behaviors)
 					b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
 
-				ChannelDispatcher channel = BuildChannelDispatcher (se, commonParams);
+				var channel = new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
 				ChannelDispatchers.Add (channel);
 				endPointToDispatcher[se] = channel;
 			}
@@ -402,7 +418,10 @@ namespace System.ServiceModel
 				b.Validate (Description, this);
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
 				endPoint.Validate ();
-		}		
+
+			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract) == null)
+				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange contract) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
+		}
 
 		private void ApplyDispatchBehavior (EndpointDispatcher ed, ServiceEndpoint endPoint)
 		{
@@ -417,11 +436,6 @@ namespace System.ServiceModel
 
 		}
 
-		internal ChannelDispatcher BuildChannelDispatcher (ServiceEndpoint se, BindingParameterCollection commonParams)
-		{
-			return new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
-		}
-
 		[MonoTODO]
 		protected void LoadConfigurationSection (ServiceElement element)
 		{
@@ -430,12 +444,6 @@ namespace System.ServiceModel
 
 		void DoOpen (TimeSpan timeout)
 		{
-			foreach (var cd in ChannelDispatchers) {
-				cd.Open (timeout);
-				// This is likely hack.
-				if (cd is ChannelDispatcher)
-					((ChannelDispatcher) cd).StartLoop ();
-			}
 		}
 
 		[MonoTODO]
@@ -483,8 +491,10 @@ namespace System.ServiceModel
 
 		protected override sealed void OnOpen (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
 			InitializeRuntime ();
-			DoOpen (timeout);
+			foreach (var cd in ChannelDispatchers)
+				cd.Open (timeout - (DateTime.Now - start));
 		}
 
 		protected override void OnEndClose (IAsyncResult result)

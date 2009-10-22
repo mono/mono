@@ -78,7 +78,7 @@ namespace System.ServiceModel.Description
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase) {
 
-			ServiceMetadataExtension sme = ServiceMetadataExtension.EnsureServiceMetadataExtension (description, serviceHostBase);
+			ServiceMetadataExtension sme = ServiceMetadataExtension.EnsureServiceMetadataExtension (serviceHostBase);
 
 			//Find ChannelDispatcher for Mex, and add a MexInstanceContextProvider
 			//to it
@@ -96,13 +96,13 @@ namespace System.ServiceModel.Description
 			if (HttpGetEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("http", HttpGetUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpChanelDispatcher (description, serviceHostBase, sme, uri, HttpGetBinding);
+					sme.EnsureChannelDispatcher (true, "http", uri, HttpGetBinding);
 			}
 
 			if (HttpsGetEnabled) {
 				Uri uri = serviceHostBase.CreateUri ("https", HttpsGetUrl);
 				if (uri != null)
-					ServiceMetadataExtension.EnsureServiceMetadataHttpsChanelDispatcher (description, serviceHostBase, sme, uri, HttpsGetBinding);
+					sme.EnsureChannelDispatcher (true, "https", uri, HttpsGetBinding);
 			}
 		}
 

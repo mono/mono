@@ -123,7 +123,7 @@ namespace System.ServiceModel.Channels
 				msg = Message.CreateMessage (MessageVersion, null);
 			}
 			msg.Headers.To = ctx.Request.Url;
-			
+			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctx.Request.HttpMethod, ctx.Request.Url.Query, ctx.Request.Headers));
 /*
 MessageBuffer buf = msg.CreateBufferedCopy (0x10000);
@@ -146,25 +146,32 @@ w.Close ();
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
 				wait = new AutoResetEvent (false);
-				source.Http.BeginGetContext (HttpContextReceived, null);
+				source.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
+				if (wait != null) // in case callback is done before WaitOne() here.
+					return wait.WaitOne (timeout, false);
+				return waiting.Count > 0;
 			} catch (HttpListenerException e) {
 				// FIXME: does this make sense? I doubt.
-				if (e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
+				if ((uint) e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
 					while (true) Thread.Sleep (1000); // thread is about to be terminated.
 				throw;
-			} catch (ObjectDisposedException) { return false; }
-			return wait.WaitOne (timeout, false);
+			} catch (ObjectDisposedException) {
+				return false;
+			} finally {
+				wait = null;
+			}
 		}
 
-		void HttpContextReceived (IAsyncResult result)
+		void HttpContextAcquired (HttpContextInfo ctx)
 		{
-			if (State == CommunicationState.Closing || State == CommunicationState.Closed)
-				return;
 			if (wait == null)
 				throw new InvalidOperationException ("WaitForRequest operation has not started");
-			waiting.Add (source.Http.EndGetContext (result));
-			wait.Set ();
+			var sctx = (HttpListenerContextInfo) ctx;
+			if (State == CommunicationState.Opened && ctx != null)
+				waiting.Add (sctx.Source);
+			var wait_ = wait;
 			wait = null;
+			wait_.Set ();
 		}
 	}
 

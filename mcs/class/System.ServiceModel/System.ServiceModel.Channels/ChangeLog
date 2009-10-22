@@ -1,9 +1,84 @@
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : remove CWLs.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs : move back previous listener selector code in
+	  ProcessRequest(). Unlike HttpListener, ASP.NET does not refine
+	  and differentiate requests to deeper paths (such as /jsdebug), so
+	  we need such refinement here.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : dependent fix to ServiceMetadataExtension
+	  changes.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs, HttpReplyChannel.cs, AspNetReplyChannel.cs,
+	  HttpChannelListener.cs, HttpListenerManager.cs :
+	  Similar refactoring on ASP.NET side to the previous one.
+	  Added ASP.NET implementation of HttpListenerManager and use some
+	  part of it in SvcHttpHandler (ASP.NET stack does not fully make use
+	  of the manager yet).
+	  Rewrote AspNetReplyChannel to become almost the same as
+	  HttpSimpleReplyChannel, to hopefully unify them later.
+	  Now it dispatches requests to *.svc for wsdl, help and SOAP as long
+	  as ServiceThrottle has MaxConcurrentSessions=1. Also REST calls
+	  are still broken.
+
+2009-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs, HttpChannelListener.cs, HttpListenerManager.cs:
+	  Refactoring on listener manager to correctly handle wsdl and help
+	  requests for such case that they conflict in addressing. Now it
+	  can correctly distinguish service calls, WSDL requests and help
+	  requests when all of them point to "http://localhost/foo.svc"
+	  (which is very common case that the user does not change Http*Url).
+
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelListenerBase.cs : add Properties property to add arbitrary
+	  properties handy (only inside this assembly).
+
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : fix warning.
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs, AspNetReplyChannel.cs : set Via property.
+
+2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : make sure to release wait lock.
+	* HttpChannelListener.cs : session channels are not supported, so
+	  remove relevant NIEs.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequestChannel.cs (WaitEnd): Neither Moonlight nor MonoTouch
 	support contexts so we call the non-overloaded WaitOne method 
 	(which defaults to false).
-	[Backport r144200]
+
+2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SvcHttpHandler.cs, AspNetReplyChannel.cs, HttpChannelListener.cs:
+	  significant rewrite to cooperate wcf handler and asp.net handler
+	  to not mix multiple WCF listener within the asp.net handler.
+	  So far it mostly works when 1) there are no ChannelDispatchers
+	  that have an identical listen Uri and 2) MaxConcurrentSessions is
+	  1 (must be explicitly set).
+
+2009-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : give better state error description.
+
+2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : OnOpening() and OnOpened() require calls
+	  to base methods. This resulted in not a few changes everywhere.
 
 2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 

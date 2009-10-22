@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Web;
@@ -54,9 +55,9 @@ namespace System.ServiceModel.Description
 
 		MetadataSet metadata;
 		ServiceHostBase owner;
-		Dictionary<Uri, ChannelDispatcherBase> _serviceMetadataChanelDispatchers;
-		
-		[MonoTODO]
+		Dictionary<Uri, ChannelDispatcher> dispatchers;
+		HttpGetWsdl instance;
+
 		public ServiceMetadataExtension ()
 		{
 		}
@@ -82,7 +83,7 @@ namespace System.ServiceModel.Description
 			get { return owner; }
 		}
 
-		internal static ServiceMetadataExtension EnsureServiceMetadataExtension (ServiceDescription description, ServiceHostBase serviceHostBase) {
+		internal static ServiceMetadataExtension EnsureServiceMetadataExtension (ServiceHostBase serviceHostBase) {
 			ServiceMetadataExtension sme = serviceHostBase.Extensions.Find<ServiceMetadataExtension> ();
 			if (sme == null) {
 				sme = new ServiceMetadataExtension ();
@@ -91,28 +92,43 @@ namespace System.ServiceModel.Description
 			return sme;
 		}
 
-		internal static void EnsureServiceMetadataHttpChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
+		// FIXME: distinguish HTTP and HTTPS in the Url properties.
+		internal void EnsureChannelDispatcher (bool isMex, string scheme, Uri uri, WCFBinding binding)
 		{
-			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpBinding ());
-		}
+			if (isMex)
+				instance.WsdlUrl = uri;
+			else
+				instance.HelpUrl = uri;
 
-		internal static void EnsureServiceMetadataHttpsChanelDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
-		{
-			// same as http now.
-			EnsureServiceMetadataDispatcher (description, serviceHostBase, sme, uri, binding ?? MetadataExchangeBindings.CreateMexHttpsBinding ());
-		}
-
-		static void EnsureServiceMetadataDispatcher (ServiceDescription description, ServiceHostBase serviceHostBase, ServiceMetadataExtension sme, Uri uri, WCFBinding binding)
-		{
-			if (sme._serviceMetadataChanelDispatchers == null)
-				sme._serviceMetadataChanelDispatchers = new Dictionary<Uri, ChannelDispatcherBase> ();
-			else if (sme._serviceMetadataChanelDispatchers.ContainsKey (uri))
+			if (dispatchers == null)
+				dispatchers = new Dictionary<Uri, ChannelDispatcher> ();
+			else if (dispatchers.ContainsKey (uri)) {
+				var info = dispatchers [uri].Listener.GetProperty<MetadataPublishingInfo> ();
+				if (isMex)
+					info.SupportsMex = true;
+				else
+					info.SupportsHelp = true;
 				return;
+			}
 
-			CustomBinding cb = new CustomBinding (binding)
-			{
-				Name = ServiceMetadataBehaviorHttpGetBinding,
-			};
+			if (binding == null) {
+				switch (scheme) {
+				case "http":
+					binding = MetadataExchangeBindings.CreateMexHttpBinding ();
+					break;
+				case "https":
+					binding = MetadataExchangeBindings.CreateMexHttpsBinding ();
+					break;
+				case "net.tcp":
+					binding = MetadataExchangeBindings.CreateMexTcpBinding ();
+					break;
+				case "net.pipe":
+					binding = MetadataExchangeBindings.CreateMexNamedPipeBinding ();
+					break;
+				}
+			}
+
+			CustomBinding cb = new CustomBinding (binding) { Name = ServiceMetadataBehaviorHttpGetBinding };
 			cb.Elements.Find<MessageEncodingBindingElement> ().MessageVersion = MessageVersion.None;
 
 			ServiceEndpoint se = new ServiceEndpoint (ContractDescription.GetContract (typeof (IHttpGetHelpPageAndMetadataContract)), cb, new EndpointAddress (uri))
@@ -120,23 +136,26 @@ namespace System.ServiceModel.Description
 				ListenUri = uri,
 			};
 
-			ChannelDispatcher channelDispatcher = serviceHostBase.BuildChannelDispatcher (se, new BindingParameterCollection ());
+			var channelDispatcher = new DispatcherBuilder ().BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
+			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
+			var listener = channelDispatcher.Listener as ChannelListenerBase;
+			if (listener != null)
+				listener.Properties.Add (new MetadataPublishingInfo () { SupportsMex = isMex, SupportsHelp = !isMex, Instance = instance });
+			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
-			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (serviceHostBase, new HttpGetWsdl (sme, uri)));
-
-			sme._serviceMetadataChanelDispatchers.Add (uri, channelDispatcher);
-			serviceHostBase.ChannelDispatchers.Add (channelDispatcher);
+			dispatchers.Add (uri, channelDispatcher);
+			owner.ChannelDispatchers.Add (channelDispatcher);
 		}
 
 		void IExtension<ServiceHostBase>.Attach (ServiceHostBase owner)
 		{
 			this.owner = owner;
+			instance = new HttpGetWsdl (this);
 		}
 
-		[MonoTODO]
 		void IExtension<ServiceHostBase>.Detach (ServiceHostBase owner)
 		{
-			throw new NotImplementedException ();
+			this.owner = null;
 		}
 	}
 
@@ -147,30 +166,54 @@ namespace System.ServiceModel.Description
 		SMMessage Get (SMMessage req);
 	}
 
+	// It is used to identify which page to serve when a channel dispatcher 
+	// has a listener to an relatively empty URI (conflicting with the 
+	// target service endpoint)
+	//
+	// Can't be enum as it is for GetProperty<T> ().
+	internal class MetadataPublishingInfo
+	{
+		public bool SupportsMex { get; set; }
+		public bool SupportsHelp { get; set; }
+		public HttpGetWsdl Instance { get; set; }
+	}
+
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract
 	{
-		ServiceMetadataExtension metadata_extn;
-		Uri base_uri;
+		ServiceMetadataExtension ext;
+		bool initialized;
 
 		Dictionary <string,WSServiceDescription> wsdl_documents = 
 			new Dictionary<string, WSServiceDescription> ();
 		Dictionary <string, XmlSchema> schemas = 
 			new Dictionary<string, XmlSchema> ();
 
-		public HttpGetWsdl (ServiceMetadataExtension metadata_extn, Uri base_uri)
+		public HttpGetWsdl (ServiceMetadataExtension ext)
 		{
-			this.metadata_extn = metadata_extn;
-			this.base_uri = base_uri;
-			GetMetadata (metadata_extn.Owner);
+			this.ext = ext;
 		}
-		
+
+		public Uri HelpUrl { get; set; }
+		public Uri WsdlUrl { get; set; }
+
+		void EnsureMetadata ()
+		{
+			if (!initialized) {
+				GetMetadata ();
+				initialized = true;
+			}
+		}
+
 		public SMMessage Get (SMMessage req)
 		{
+			EnsureMetadata ();
+
 			HttpRequestMessageProperty prop = (HttpRequestMessageProperty) req.Properties [HttpRequestMessageProperty.Name];
 
 			NameValueCollection query_string = CreateQueryString (prop.QueryString);
 			if (query_string == null || query_string.AllKeys.Length != 1) {
-				//return CreateHelpPage (req);
+				if (HelpUrl != null && Uri.Compare (req.Headers.To, HelpUrl, UriComponents.HttpRequestUrl ^ UriComponents.Query, UriFormat.UriEscaped, StringComparison.Ordinal) == 0)
+					return CreateHelpPage (req);
 				WSServiceDescription w = GetWsdl ("wsdl");
 				if (w != null)
 					return CreateWsdlMessage (w);
@@ -224,11 +267,45 @@ namespace System.ServiceModel.Description
 			return query_string;
 		}
 
+		// It is returned for ServiceDebugBehavior.Http(s)HelpPageUrl.
+		// They may be empty, and for such case the help page URL is
+		// simply the service endpoint URL (foobar.svc).
+		//
+		// Note that if there is also ServiceMetadataBehavior that
+		// lacks Http(s)GetUrl, then it is also mapped to the same
+		// URL, but it requires "?wsdl" parameter and .NET somehow
+		// differentiates those requests.
+		//
+		// If both Http(s)HelpPageUrl and Http(s)GetUrl exist, then
+		// requests to the service endpoint URL (foobar.svc) results
+		// in an xml output with empty string (non-WF XML error).
+
 		SMMessage CreateHelpPage (SMMessage request)
 		{
-			//FIXME Check for ServiceDebugBehavior.HttpHelpPage
-			//else do what? Check
-			throw new NotImplementedException ();
+			var helpBody = ext.Owner.Description.Behaviors.Find<ServiceMetadataBehavior> () != null ?
+				String.Format (@"
+<p>To create client proxy source, run:</p>
+<p><code>svcutil <a href='{0}'>{0}</a></code></p>
+<!-- FIXME: add client proxy usage (that required decent ServiceContractGenerator implementation, so I leave it yet.) -->
+", new Uri (WsdlUrl.ToString () + "?wsdl")) : // this Uri.ctor() is nasty, but there is no other way to add "?wsdl" (!!)
+				String.Format (@"
+<p>Service metadata publishing for {0} is not enabled. Service administrators can enable it by adding &lt;serviceMetadata&gt; element in the host configuration (web.config in ASP.NET), or ServiceMetadataBehavior object to the Behaviors collection of the service host's ServiceDescription.</p>", ext.Owner.Description.Name);
+
+			var html = String.Format (@"
+<html>
+<head>
+<title>Service {0}</title>
+</head>
+<body>
+{1}
+</body>
+</html>", ext.Owner.Description.Name, helpBody);
+
+			var m = SMMessage.CreateMessage (MessageVersion.None, "", XmlReader.Create (new StringReader (html)));
+			var rp = new HttpResponseMessageProperty ();
+			rp.Headers ["Content-Type"] = "text/html";
+			m.Properties.Add (HttpResponseMessageProperty.Name, rp);
+			return m;
 		}
 
 		SMMessage CreateWsdlMessage (WSServiceDescription wsdl)
@@ -241,9 +318,12 @@ namespace System.ServiceModel.Description
 			return SMMessage.CreateMessage (MessageVersion.None, "", XmlReader.Create (ms));
 		}
 
-		void GetMetadata (ServiceHostBase host)
+		void GetMetadata ()
 		{
-			MetadataSet metadata = metadata_extn.Metadata;
+			if (WsdlUrl == null)
+				return;
+
+			MetadataSet metadata = ext.Metadata;
 			int xs_i = 0, wsdl_i = 0;
 
 			//Dictionary keyed by namespace
@@ -275,7 +355,7 @@ namespace System.ServiceModel.Description
 				wsdl_strings [wsdl.TargetNamespace] = key;
 			}
 			
-			string base_url = base_uri.ToString ();
+			string base_url = WsdlUrl.ToString ();
 			foreach (WSServiceDescription wsdl in wsdl_documents.Values) {
 				foreach (Import import in wsdl.Imports) {
 					if (!String.IsNullOrEmpty (import.Location))
@@ -299,6 +379,7 @@ namespace System.ServiceModel.Description
 		
 		WSServiceDescription GetWsdl (string which)
 		{
+			EnsureMetadata ();
 			WSServiceDescription wsdl;
 			wsdl_documents.TryGetValue (which, out wsdl);
 			return wsdl;
@@ -306,6 +387,7 @@ namespace System.ServiceModel.Description
 		
 		XmlSchema GetXmlSchema (string which)
 		{
+			EnsureMetadata ();
 			XmlSchema schema;
 			schemas.TryGetValue (which, out schema);
 			return schema;

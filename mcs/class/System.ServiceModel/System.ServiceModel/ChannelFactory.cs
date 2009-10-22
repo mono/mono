@@ -336,12 +336,14 @@ namespace System.ServiceModel
 
 		protected override void OnOpening ()
 		{
+			base.OnOpening ();
 			OpenedChannelFactory = CreateFactory ();
-			OpenedChannelFactory.Open ();
 		}
 
 		protected override void OnOpened ()
 		{
+			base.OnOpened ();
+			OpenedChannelFactory.Open ();
 		}
 	}
 

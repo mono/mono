@@ -61,14 +61,14 @@ namespace System.ServiceModel.Dispatcher
 				base.InsertItem (index, item);
 			}
 
-			protected virtual void RemoveItem (int index)
+			protected override void RemoveItem (int index)
 			{
 				if (index < Count)
 					this [index].ChannelDispatcher = null;
 				base.RemoveItem (index);
 			}
 
-			protected virtual void SetItem (int index, EndpointDispatcher item)
+			protected override void SetItem (int index, EndpointDispatcher item)
 			{
 				item.ChannelDispatcher = owner;
 				base.SetItem (index, item);
@@ -296,20 +296,22 @@ namespace System.ServiceModel.Dispatcher
 			if (Host == null || MessageVersion == null)
 				throw new InvalidOperationException ("Service host is not attached to this ChannelDispatcher.");
 
-			loop_manager = new ListenerLoopManager (this, timeout);
+			loop_manager.Setup (timeout);
 		}
 
-		[MonoTODO ("what to do here?")]
 		protected override void OnOpening ()
 		{
+			base.OnOpening ();
+			loop_manager = new ListenerLoopManager (this);
 		}
 
 		protected override void OnOpened ()
 		{
-			loop_manager.Setup ();
+			base.OnOpened ();
+			StartLoop ();
 		}
 
-		internal void StartLoop ()
+		void StartLoop ()
 		{
 			// FIXME: not sure if it should be filled here.
 			if (ServiceThrottle == null)
@@ -329,20 +331,19 @@ namespace System.ServiceModel.Dispatcher
 			bool loop;
 			Thread loop_thread;
 			DateTime close_started;
-			TimeSpan open_timeout, close_timeout;
+			TimeSpan close_timeout;
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
 
-			public ListenerLoopManager (ChannelDispatcher owner, TimeSpan openTimeout)
+			public ListenerLoopManager (ChannelDispatcher owner)
 			{
 				this.owner = owner;
-				open_timeout = openTimeout;
 			}
 
-			public void Setup ()
+			public void Setup (TimeSpan openTimeout)
 			{
 				if (owner.Listener.State != CommunicationState.Opened)
-					owner.Listener.Open (open_timeout);
+					owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
 				foreach (var ed in owner.Endpoints)
@@ -459,15 +460,11 @@ namespace System.ServiceModel.Dispatcher
 
 				// FIXME: use WaitForChannel() for (*only* for) transacted channel listeners.
 				// http://social.msdn.microsoft.com/Forums/en-US/wcf/thread/3faa4a5e-8602-4dbe-a181-73b3f581835e
-				
-				//FIXME: The logic here should be somewhat different as follows:
-				//1. Get the message
-				//2. Get the appropriate EndPointDispatcher that can handle the message
-				//   which is done using the filters (AddressFilter, ContractFilter).
-				//3. Let the appropriate endpoint handle the request.
 
 				while (loop) {
-					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
+					// FIXME: enable throttling and allow more than one connection to process at a time.
+					while (loop && channels.Count < 1) {
+//					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
 						channel_acceptor ();
 						creator_handle.WaitOne (); // released by ChannelAccepted()
 					}
@@ -564,8 +561,10 @@ namespace System.ServiceModel.Dispatcher
 					FaultCode fc = new FaultCode ("DestinationUnreachable", version.Addressing.Namespace);
 					Message res = Message.CreateMessage (version, fc, "error occured", rc.RequestMessage.Headers.Action);
 					rc.Reply (res);
+				} catch (Exception e) {
+					// FIXME: log it
+					Console.WriteLine ("Error on sending DestinationUnreachable fault message: " + e);
 				}
-				catch (Exception e) { }
 			}
 
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)
