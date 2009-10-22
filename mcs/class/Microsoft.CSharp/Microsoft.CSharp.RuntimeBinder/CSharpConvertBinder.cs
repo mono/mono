@@ -39,7 +39,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		readonly CSharpBinderFlags flags;
 
 		public CSharpConvertBinder (Type type, CSharpBinderFlags flags)
-			: base (type, flags == CSharpBinderFlags.ConvertExplicit)
+			: base (type, (flags & CSharpBinderFlags.ConvertExplicit) != 0)
 		{
 			this.flags = flags;
 		}
@@ -51,13 +51,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (Explicit)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (Type, Compiler.Location.Null), expr);
 			else
-				expr = new Compiler.ImplicitCast (expr, Type, false);
+				expr = new Compiler.ImplicitCast (expr, Type, (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
 
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
-			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, restrictions, errorSuggestion);
 		}
 	}
 }

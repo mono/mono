@@ -45,28 +45,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
-		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpGetIndexBinder;
-			return other != null && other.callingContext == callingContext &&
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				callingContext.GetHashCode (),
-				argumentInfo.GetHashCode (),
-				GetType().GetHashCode ());
-		}
-		
+			
 		public override DynamicMetaObject FallbackGetIndex (DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
 		{
 			if (argumentInfo.Count != indexes.Length + 1) {
@@ -79,10 +58,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
 			expr = new Compiler.ElementAccess (expr, args);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);	// TODO: ReturnType replace
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (indexes));
-			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

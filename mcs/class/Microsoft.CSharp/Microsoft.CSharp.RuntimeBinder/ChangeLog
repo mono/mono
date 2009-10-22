@@ -1,3 +1,7 @@
+2009-10-22  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Cleanup the old API.
+
 2009-10-20  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Update to the latest API.

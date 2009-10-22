@@ -48,21 +48,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
 		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpInvokeBinder;
-			return other != null && other.flags == flags && other.callingContext == callingContext && 
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				flags.GetHashCode (),
-				callingContext.GetHashCode (),
-				argumentInfo.GetHashCode ());
-		}
-
 		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
@@ -72,7 +57,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (
 				CSharpBinder.CreateRestrictionsOnTarget (args));
 
-			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

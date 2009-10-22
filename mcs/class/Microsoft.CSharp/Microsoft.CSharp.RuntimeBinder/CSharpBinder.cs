@@ -41,12 +41,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 		static object compiler_initializer = new object ();
 		static object resolver = new object ();
 
-		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
+		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
 		{
-			return Bind (target, expr, null, restrictions, errorSuggestion);
+			return Bind (binder, expr, null, restrictions, errorSuggestion);
 		}
 
-		public static DynamicMetaObject Bind (DynamicMetaObject target, Compiler.Expression expr, Type callingType, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
+		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, Type callingType, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
 		{
 			var ctx = CreateDefaultCompilerContext ();
 
@@ -70,7 +70,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (errorSuggestion != null)
 					return errorSuggestion;
 
-				res = CreateBinderException (target, e.Message);
+				res = CreateBinderException (binder, e.Message);
 			} catch (Exception) {
 				if (errorSuggestion != null)
 					return errorSuggestion;
@@ -81,7 +81,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new DynamicMetaObject (res, restrictions);
 		}
 
-		public static Expression CreateBinderException (DynamicMetaObject target, string message)
+		public static Expression CreateBinderException (DynamicMetaObjectBinder binder, string message)
 		{
 			if (binder_exception_ctor == null)
 				binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
@@ -89,7 +89,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			//
 			// Uses target type to keep expressions composition working
 			//
-			return Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (message)), target.LimitType);
+			return Expression.Throw (Expression.New (binder_exception_ctor, Expression.Constant (message)), binder.ReturnType);
 		}
 
 		//

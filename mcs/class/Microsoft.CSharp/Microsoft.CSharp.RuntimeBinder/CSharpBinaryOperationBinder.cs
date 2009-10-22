@@ -50,27 +50,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			this.flags = flags;
 		}
-		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpBinaryOperationBinder;
-			return other != null && base.Equals (obj) && other.flags == flags &&
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-		
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				Operation.GetHashCode (),
-				flags.GetHashCode (),
-				argumentInfo [0].GetHashCode (), argumentInfo [1].GetHashCode ());
-		}
 
 		Compiler.Binary.Operator GetOperator (out bool isCompound)
 		{
@@ -82,7 +61,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 				isCompound = true;
 				return Compiler.Binary.Operator.Addition;
 			case ExpressionType.And:
-				return Compiler.Binary.Operator.BitwiseAnd;
+				return (flags & CSharpBinderFlags.BinaryOperationLogical) != 0 ?
+					Compiler.Binary.Operator.LogicalAnd : Compiler.Binary.Operator.BitwiseAnd;
 			case ExpressionType.AndAssign:
 				isCompound = true;
 				return Compiler.Binary.Operator.BitwiseAnd;
@@ -124,7 +104,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 			case ExpressionType.NotEqual:
 				return Compiler.Binary.Operator.Inequality;
 			case ExpressionType.Or:
-				return Compiler.Binary.Operator.BitwiseOr;
+				return (flags & CSharpBinderFlags.BinaryOperationLogical) != 0 ?
+					Compiler.Binary.Operator.LogicalOr : Compiler.Binary.Operator.BitwiseOr;
 			case ExpressionType.OrAssign:
 				isCompound = true;
 				return Compiler.Binary.Operator.BitwiseOr;
@@ -166,7 +147,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (arg));
-			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, restrictions, errorSuggestion);
 		}
 	}
 }

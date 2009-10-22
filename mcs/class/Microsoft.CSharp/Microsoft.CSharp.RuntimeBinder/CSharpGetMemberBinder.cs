@@ -46,32 +46,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
 		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpGetMemberBinder;
-			return other != null && other.Name == Name && other.callingContext == callingContext && 
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				Name.GetHashCode (),
-				callingContext.GetHashCode (),
-				argumentInfo.GetHashCode ());
-		}
-		
 		public override DynamicMetaObject FallbackGetMember (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
 		{
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 			expr = new Compiler.MemberAccess (expr, Name);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr); // TODO: ReturnType replace
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
 
@@ -79,11 +58,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (errorSuggestion != null)
 					return errorSuggestion;
 
-				var ex = CSharpBinder.CreateBinderException (target, "GetMember cannot perform binding on `null' value");
+				var ex = CSharpBinder.CreateBinderException (this, "GetMember cannot perform binding on `null' value");
 				return new DynamicMetaObject (ex, restrictions);
 			}
 
-			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

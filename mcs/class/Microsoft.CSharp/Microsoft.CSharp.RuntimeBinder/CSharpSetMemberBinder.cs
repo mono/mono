@@ -46,36 +46,15 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
 		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpSetMemberBinder;
-			return other != null && other.Name == Name && other.callingContext == callingContext &&
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				Name.GetHashCode (),
-				callingContext.GetHashCode (),
-				argumentInfo.GetHashCode ());
-		}
-		
 		public override DynamicMetaObject FallbackSetMember (DynamicMetaObject target, DynamicMetaObject value, DynamicMetaObject errorSuggestion)
 		{
-			var source = CSharpBinder.CreateCompilerExpression (argumentInfo[1], value);
+			var source = CSharpBinder.CreateCompilerExpression (argumentInfo [1], value);
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 
 			// Field assignment
 			expr = new Compiler.MemberAccess (expr, Name);
 			expr = new Compiler.SimpleAssign (expr, source);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr); // TODO: ReturnType replace
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (value));
 
@@ -83,11 +62,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (errorSuggestion != null)
 					return errorSuggestion;
 
-				var ex = CSharpBinder.CreateBinderException (target, "SetMember cannot perform binding on `null' value");
+				var ex = CSharpBinder.CreateBinderException (this, "SetMember cannot perform binding on `null' value");
 				return new DynamicMetaObject (ex, restrictions);
 			}
 
-			return CSharpBinder.Bind (target, expr, callingContext, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
 		}
 	}
 }

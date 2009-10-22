@@ -49,27 +49,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			this.flags = flags;
 		}
-		
-		public IList<CSharpArgumentInfo> ArgumentInfo {
-			get {
-				return argumentInfo;
-			}
-		}
-		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpUnaryOperationBinder;
-			return other != null && base.Equals (obj) && other.flags == flags &&
-				other.argumentInfo.SequenceEqual (argumentInfo);
-		}
-		
-		public override int GetHashCode ()
-		{
-			return Extensions.HashCode (
-				Operation.GetHashCode (),
-				flags.GetHashCode (),
-				argumentInfo[0].GetHashCode ());
-		}
+	
 
 		Compiler.Unary.Operator GetOperator ()
 		{
@@ -101,14 +81,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 				else
 					expr = new Compiler.Unary (GetOperator (), expr);
 
-				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);  // TODO: ReturnType replace
+				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
 				if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 			}
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
-			return CSharpBinder.Bind (target, expr, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, restrictions, errorSuggestion);
 		}
 	}
 }
