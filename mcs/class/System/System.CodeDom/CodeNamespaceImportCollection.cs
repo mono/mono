@@ -76,7 +76,11 @@ namespace System.CodeDom
 				return (CodeNamespaceImport)data[index];
 			}
 			set {
+				CodeNamespaceImport oldImport = (CodeNamespaceImport) data [index];
+				CodeNamespaceImport newImport = (CodeNamespaceImport) value;
+				keys.Remove (oldImport.Namespace);
 				data[index] = value;
+				keys [newImport.Namespace] = newImport;
 			}
 		}
 
@@ -90,7 +94,7 @@ namespace System.CodeDom
 			}
 
 			if (!keys.ContainsKey (value.Namespace)) {
-				keys [value.Namespace] = value.Namespace;
+				keys [value.Namespace] = value;
 				data.Add (value);
 			}
 		}
@@ -108,12 +112,13 @@ namespace System.CodeDom
 
 		void IList.Clear ()
 		{
-			data.Clear ();
+			Clear ();
 		}
 		
 		public void Clear ()
 		{
 			data.Clear ();
+			keys.Clear ();
 		}
 
 		// IList implementation
@@ -134,13 +139,14 @@ namespace System.CodeDom
 				return data[index];
 			}
 			set {
-				data[index] = value;
+				this [index] = (CodeNamespaceImport) value;
 			}
 		}
 
 		int IList.Add( object value )
 		{
-			return data.Add( value );
+			Add ((CodeNamespaceImport) value);
+			return data.Count - 1;
 		}
 		
 		bool IList.Contains( object value )
@@ -156,16 +162,34 @@ namespace System.CodeDom
 		void IList.Insert( int index, object value )
 		{
 			data.Insert( index, value );
+			CodeNamespaceImport import = (CodeNamespaceImport) value;
+			keys [import.Namespace] = import;
 		}
 
 		void IList.Remove( object value )
 		{
+			string ns = ((CodeNamespaceImport)value).Namespace;
 			data.Remove( value );
+			foreach (CodeNamespaceImport import in data) {
+				if (import.Namespace == ns) {
+					keys [ns] = import;
+					return;
+				}
+			}
+			keys.Remove (ns);
 		}
 		
 		void IList.RemoveAt( int index )
 		{
+			string ns = this [index].Namespace;
 			data.RemoveAt( index );
+			foreach (CodeNamespaceImport import in data) {
+				if (import.Namespace == ns) {
+					keys [ns] = import;
+					return;
+				}
+			}
+			keys.Remove (ns);
 		}
 
 		// ICollection implementation

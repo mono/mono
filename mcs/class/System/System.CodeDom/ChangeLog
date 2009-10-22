@@ -1,3 +1,8 @@
+2009-10-22 Lluis Sanchez Gual <lluis@novell.com>
+
+	* CodeNamespaceImportCollection.cs: Properly update the internal
+	keys hashtable when there are changes in the items.
+
 2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CodeNamespace.cs:
