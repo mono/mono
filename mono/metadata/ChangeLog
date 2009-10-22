@@ -1,5 +1,9 @@
 2009-10-22  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Shorten sections whenever possible.
+
+2009-10-22  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Use our portable semaphore #defines.
 
 2009-10-22  Mark Probst  <mark.probst@gmail.com>
