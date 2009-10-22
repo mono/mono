@@ -1,3 +1,8 @@
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Monitor.cs: Fix validations for TryEnter and Wait. Reduce 
+	duplicated code between overloads.
+
 2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WaitHandle.cs: Add missing validations for 'millisecondsTimeout'
