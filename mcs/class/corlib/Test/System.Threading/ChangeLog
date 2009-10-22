@@ -1,3 +1,9 @@
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventWaitHandleTest.cs: New. Test case for EventResetMode 
+	validation
+	[Backport r144681]
+
 2009-10-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MonitorTest.cs: Mark existing tests as "NotWorking" since they
