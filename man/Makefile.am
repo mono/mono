@@ -11,6 +11,7 @@ man_MANS = \
 	genxs.1               \
 	httpcfg.1             \
 	ilasm.1               \
+	lc.1                  \
 	macpack.1             \
 	makecert.1            \
 	mconfig.1             \

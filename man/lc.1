@@ -1,0 +1,87 @@
+.\" 
+.\" lc manual page.
+.\" (C) 2009 Carlo Kok
+.\"  
+.\" Author:
+.\"   Carlo Kok (ck@remobjects.com)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH lc "Mono 2.6"
+.SH NAME
+lc \- Mono License Compiler
+.SH SYNOPSIS
+.PP
+.B lc -c filename -t targetassembly [-i reference...] [-v] [-o outputpath] [-nologo]
+.SH DESCRIPTION
+\fIlc\fP tool is a license compiler for Mono. It's used to convert a 
+licenses.licx file to a resource that can be embedded into an executable. 
+.PP
+When using commercial components for .NET they often require a license
+resource at runtime to make sure the developer was licensed to use this 
+control. The most common way of making sure the component was properly
+licensed is by using license resources. At compile time the developer
+uses the \fIlc\fP tool to convert a licenses.licx file to a 
+programname.exe.resources file and embed that as a managed resource 
+during compilation.
+.SH RUNTIME OPTIONS
+The following options are available:
+.TP
+\fB--complist=filename\fR, \fB-c filename\fR
+This option is used to specify the input file, the licenses.licx file
+to create a license reesource for. This option is required. The license 
+compiler will read each line in this file and try to load the types
+specified on that line.
+.TP
+\fB--target=assemblyname\fR, \fB-t targetassembly\fR
+full assembly name with file extension for the target assembly. The
+license compiler uses this as a key when compiling the licenses. It
+has to match the assembly the resource will be embedded in. This option
+is required.
+.TP
+\fB--load=reference\fR, \fB-i reference\fR
+Assembly reference to load before trying to compile a license. This
+option is needed for assemblies where the references are not in the 
+gac. Compilers should pass all references to the license compiler.
+.TP
+\fB--verbose,\fR, \fB-v\fR
+Gives more verbose output about the license compiling process.
+.TP
+\fB--help\fR, \fB-h\fR
+Displays usage instructions.
+.TP
+\fB--output=path\fR, \fB-o path\fR
+Target path file the licenses resource. By default the license
+compiler emits the resource in the current directory. The filename
+will always match the target assembly passed to --target with .licenses 
+added.
+.TP
+\fB--nologo\fR
+Do not emit the "Mono License Compiler" logo  on stdout while compilng.
+
+.SH LICENSE FILES
+The format for the license files (licenses.licx) is the following:
+.nf
+	# comment
+	namespace.type, assemblyname
+	namespace.type, full-assemblyname
+.fi
+.Sp
+All lines starting with a # are ignored. the first form requires
+that the assembly was loaded through the --load,-i option but
+does not require the full assembly name, only the first part.
+
+The second form requires the full assembly name including locale,
+version and publickeytoken.
+
+.SH MAILING LISTS
+Mailing lists are listed at the
+http://www.mono-project.com/Mailing_Lists
+.SH WEB SITE
+http://www.mono-project.com
+.SH SEE ALSO
+.PP
+mono(1), mcs(1)
+
