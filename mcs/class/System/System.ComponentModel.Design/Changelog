@@ -1,3 +1,7 @@
+2009-10-21  Carlo Kok  <ck@remobjects.com>
+
+	* RuntimeLicenseContext.cs: Support for the resourceAssembly parameter.
+
 2009-10-12  Carlo Kok  <ck@remobjects.com>
 
 	* DesigntimeLicenseContextSerializer.cs: Properly serialize licenses.
