@@ -509,9 +509,10 @@ namespace System.Text {
 		}
 
 #if NET_4_0
-		public void Clear ()
+		public StringBuilder Clear ()
 		{
 			_length = 0;
+			return this;
 		}
 #endif
 
