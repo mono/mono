@@ -47,7 +47,11 @@ using System.Runtime.ConstrainedExecution;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
+#if !MONOTOUCH
 [assembly: AssemblyVersion("2.0.0.0")]
+#else   // !MONOTOUCH
+[assembly: AssemblyVersion(Consts.FxVersion)]
+#endif  // !MONOTOUCH
 #if !PLATFORM_COMPACTFRAMEWORK
 [assembly: AssemblyFileVersion("1.0.61.0")]
 #endif
