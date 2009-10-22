@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,10 +39,9 @@ namespace System.Web.Profile
 			this.customProviderData = customProviderData;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public override bool IsDefaultAttribute ()
 		{
-			throw new NotImplementedException ();
+			return String.IsNullOrEmpty (CustomProviderData);
 		}
 
 		public string CustomProviderData {
