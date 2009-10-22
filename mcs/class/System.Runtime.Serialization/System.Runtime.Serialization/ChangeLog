@@ -1,3 +1,9 @@
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : partly revert previous sorting fix in
+	  Sep.28th. Do not sort and mix members in base and derived types.
+	  Fixed bug #546238.
+
 2009-10-21  Jb Evain  <jbevain@novell.com>
 
 	* SerializationMap.cs, KnownTypeCollection.cs: avoid using LINQ
