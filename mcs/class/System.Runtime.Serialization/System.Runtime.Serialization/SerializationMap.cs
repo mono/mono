@@ -514,13 +514,12 @@ namespace System.Runtime.Serialization
 				QName bqname = KnownTypes.GetQName (baseType);
 					
 				members = GetMembers (baseType, bqname, true);
+				members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 				Members.InsertRange (0, members);
 				members.Clear ();
 
 				baseType = baseType.BaseType;
 			}
-
-			Members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 		}
 
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
