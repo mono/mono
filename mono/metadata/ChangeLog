@@ -1,3 +1,7 @@
+2009-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* class.c: fix typo.
+
 2009-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_string_builder_to_utf16): Applied patch from
