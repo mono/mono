@@ -1,3 +1,8 @@
+2009-10-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WsdlBuildProvider.cs: a different way to generate code from
+	wsdl. Code is generated in the top-level namespace to match .NET
+
 2009-10-12  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: make sure to construct correct physical path
