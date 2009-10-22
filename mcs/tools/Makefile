@@ -36,6 +36,7 @@ net_2_0_dirs := \
 	al			\
 	corcompare	\
 	csharp		\
+	lc		\
 	mono-xsd	\
 	wsdl		\
 	compiler-tester	\
