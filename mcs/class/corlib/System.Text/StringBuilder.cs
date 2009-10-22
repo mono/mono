@@ -508,7 +508,13 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_2_0
+#if NET_4_0
+		public void Clear ()
+		{
+			_length = 0;
+		}
+#endif
+
 		[ComVisible (false)]
 		public StringBuilder AppendLine ()
 		{
@@ -520,7 +526,6 @@ namespace System.Text {
 		{
 			return Append (value).Append (System.Environment.NewLine);
 		}
-#endif
 
 		public StringBuilder AppendFormat (string format, params object[] args)
 		{
@@ -732,7 +737,6 @@ namespace System.Text {
 			_cached_str = null;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public void CopyTo (int sourceIndex, char [] destination, int destinationIndex, int count)
 		{
@@ -768,6 +772,5 @@ namespace System.Text {
 				_maxCapacity = Int32.MaxValue;
 			Capacity = info.GetInt32 ("Capacity");
 		}
-#endif
 	}
 }       

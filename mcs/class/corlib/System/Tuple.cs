@@ -44,7 +44,7 @@ namespace System
 			 T6 item6,
 			 T7 item7,
 			 T8 item8) {
-			return new Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> (item1, item2, item3, item4, item5, item6, item7, item8);
+			return new Tuple<T1, T2, T3, T4, T5, T6, T7, T8> (item1, item2, item3, item4, item5, item6, item7, item8);
 		}
 
 		public static Tuple<T1, T2, T3, T4, T5, T6, T7> Create<T1, T2, T3, T4, T5, T6, T7>
