@@ -101,12 +101,15 @@ namespace System.ServiceModel.Channels {
 
 		IChannelListener FindBestMatchListener (HttpContext ctx)
 		{
-/*
+			var actx = new AspNetHttpContextInfo (ctx);
+
 			// Select the best-match listener.
 			IChannelListener best = null;
 			string rel = null;
 			foreach (var li in listeners) {
 				var l = li.Listener;
+				if (!l.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
+					continue;
 				if (l.Uri.Equals (ctx.Request.Url)) {
 					best = l;
 					break;
@@ -115,18 +118,21 @@ namespace System.ServiceModel.Channels {
 			// FIXME: the matching must be better-considered.
 			foreach (var li in listeners) {
 				var l = li.Listener;
+				if (!l.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
+					continue;
 				if (!ctx.Request.Url.ToString ().StartsWith (l.Uri.ToString (), StringComparison.Ordinal))
 					continue;
 				if (best == null)
 					best = l;
 			}
 			return best;
-*/
+/*
 			var actx = new AspNetHttpContextInfo (ctx);
 			foreach (var i in listeners)
 				if (i.Listener.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
 					return i.Listener;
 			throw new InvalidOperationException ();
+*/
 		}
 
 		public void ProcessRequest (HttpContext context)

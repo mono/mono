@@ -1,5 +1,12 @@
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : move back previous listener selector code in
+	  ProcessRequest(). Unlike HttpListener, ASP.NET does not refine
+	  and differentiate requests to deeper paths (such as /jsdebug), so
+	  we need such refinement here.
+
+2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : dependent fix to ServiceMetadataExtension
 	  changes.
 
