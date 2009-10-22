@@ -1,3 +1,9 @@
+2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Add System/WeakReferenceTest and
+	System.Threading/EventWaitHandleTest.cs
+	[Backport r144681]
+
 2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Add System.Threading/WaitHandleTest.cs

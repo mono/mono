@@ -349,6 +349,7 @@ System.Text/UTF8EncodingTest.cs
 System.Text/UTF32EncodingTest.cs
 System.Threading/AutoResetEventTest.cs
 System.Threading/CompressedStackTest.cs
+System.Threading/EventWaitHandleTest.cs
 System.Threading/ExecutionContextTest.cs
 System.Threading/MonitorTest.cs
 System.Threading/MutexTest.cs
@@ -366,6 +367,7 @@ System/UInt64Test.cs
 System/UIntPtrTest.cs
 System/VersionTest.cs
 System/ValueTypeTest.cs
+System/WeakReferenceTest.cs
 System/ActivatorCas.cs
 System/AppDomainCas.cs
 System/BadImageFormatExceptionCas.cs
