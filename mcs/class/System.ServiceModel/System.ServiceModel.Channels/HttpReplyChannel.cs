@@ -146,7 +146,7 @@ w.Close ();
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
 				wait = new AutoResetEvent (false);
-				source.ListenerManager.GetHttpContextAsync (HttpContextAcquired);
+				source.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
 				if (wait != null) // in case callback is done before WaitOne() here.
 					return wait.WaitOne (timeout, false);
 				return waiting.Count > 0;
@@ -162,12 +162,13 @@ w.Close ();
 			}
 		}
 
-		void HttpContextAcquired (HttpListenerContext ctx)
+		void HttpContextAcquired (HttpContextInfo ctx)
 		{
 			if (wait == null)
 				throw new InvalidOperationException ("WaitForRequest operation has not started");
+			var sctx = (HttpListenerContextInfo) ctx;
 			if (State == CommunicationState.Opened && ctx != null)
-				waiting.Add (ctx);
+				waiting.Add (sctx.Source);
 			var wait_ = wait;
 			wait = null;
 			wait_.Set ();

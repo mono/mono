@@ -86,17 +86,13 @@ namespace System.ServiceModel.Channels {
 			get { return host; }
 		}
 
-		public HttpContext WaitForRequest (IChannelListener listener, TimeSpan timeout)
+		public HttpContext WaitForRequest (IChannelListener listener)
 		{
 			if (close_state > 0)
 				return null;
-			DateTime start = DateTime.Now;
 
 			if (listeners [listener].Pending.Count == 0)
-				listeners [listener].ProcessRequestHandle.WaitOne (timeout, false);
-
-			if (listeners [listener].Pending.Count == 0)
-				return null;
+				listeners [listener].ProcessRequestHandle.WaitOne ();
 
 			var ctx = listeners [listener].Pending [0];
 			listeners [listener].Pending.RemoveAt (0);
@@ -105,6 +101,7 @@ namespace System.ServiceModel.Channels {
 
 		IChannelListener FindBestMatchListener (HttpContext ctx)
 		{
+/*
 			// Select the best-match listener.
 			IChannelListener best = null;
 			string rel = null;
@@ -124,17 +121,27 @@ namespace System.ServiceModel.Channels {
 					best = l;
 			}
 			return best;
+*/
+			var actx = new AspNetHttpContextInfo (ctx);
+			foreach (var i in listeners)
+				if (i.Listener.GetProperty<HttpListenerManager> ().FilterHttpContext (actx))
+					return i.Listener;
+			throw new InvalidOperationException ();
 		}
 
 		public void ProcessRequest (HttpContext context)
 		{
 			EnsureServiceHost ();
 
-			var l = FindBestMatchListener (context);
-			listeners [l].Pending.Add (context);
-			listeners [l].ProcessRequestHandle.Set ();
 			var wait = new AutoResetEvent (false);
-			wcf_wait_handles [context] = wait;
+			var l = FindBestMatchListener (context);
+			var i = listeners [l];
+			lock (i) {
+				i.Pending.Add (context);
+				wcf_wait_handles [context] = wait;
+				i.ProcessRequestHandle.Set ();
+			}
+
 			wait.WaitOne ();
 		}
 
@@ -183,6 +190,9 @@ namespace System.ServiceModel.Channels {
 			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 
 			host.Open ();
+
+			// Not precise, but it needs some wait time to have all channels start requesting. And it is somehow required.
+			Thread.Sleep (500);
 		}
 	}
 }

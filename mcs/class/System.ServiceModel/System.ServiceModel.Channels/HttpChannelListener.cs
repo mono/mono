@@ -41,16 +41,10 @@ namespace System.ServiceModel.Channels
 	internal class HttpSimpleChannelListener<TChannel> : HttpChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
-		HttpListenerManager<TChannel> httpChannelManager;
-
 		public HttpSimpleChannelListener (HttpTransportBindingElement source,
 			BindingContext context)
 			: base (source, context)
 		{
-		}
-
-		public HttpListenerManager<TChannel> ListenerManager {
-			get {  return httpChannelManager; }
 		}
 
 		object creator_lock = new object ();
@@ -70,31 +64,9 @@ namespace System.ServiceModel.Channels
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
 
-		protected override void OnOpen (TimeSpan timeout)
+		protected override HttpListenerManager CreateListenerManager ()
 		{
-			base.OnOpen (timeout);
-			StartListening (timeout);
-		}
-
-		protected override void OnAbort ()
-		{
-			httpChannelManager.Stop (true);
-		}
-
-		protected override void OnClose (TimeSpan timeout)
-		{
-			if (State == CommunicationState.Closed)
-				return;
-			base.OnClose (timeout);
-			// The channels are kept open when the creator channel listener is closed.
-			// http://blogs.msdn.com/drnick/archive/2006/03/22/557642.aspx
-			httpChannelManager.Stop (false);
-		}
-
-		void StartListening (TimeSpan timeout)
-		{
-			httpChannelManager = new HttpListenerManager<TChannel> (this);
-			httpChannelManager.Open (timeout);
+			return new HttpSimpleListenerManager (this);
 		}
 	}
 
@@ -107,13 +79,8 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		SvcHttpHandler http_handler;
 		internal SvcHttpHandler HttpHandler {
-			get {
-				if (http_handler == null)
-					http_handler = SvcHttpHandlerFactory.GetHandlerForListener (this);
-				return http_handler;
-			}
+			get { return ((AspNetListenerManager) ListenerManager).Source; }
 		}
 
 		protected override TChannel CreateChannel (TimeSpan timeout)
@@ -124,21 +91,9 @@ namespace System.ServiceModel.Channels
 			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
 
-		protected override void OnAbort ()
+		protected override HttpListenerManager CreateListenerManager ()
 		{
-			HttpHandler.UnregisterListener (this);
-		}
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
-			base.OnOpen (timeout);
-			HttpHandler.RegisterListener (this);
-		}
-
-		protected override void OnClose (TimeSpan timeout)
-		{
-			HttpHandler.UnregisterListener (this);
-			base.OnClose (timeout);
+			return new AspNetListenerManager (this);
 		}
 	}
 
@@ -149,6 +104,7 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		List<TChannel> channels = new List<TChannel> ();
 		MessageEncoder encoder;
+		HttpListenerManager httpChannelManager;
 
 		public HttpChannelListenerBase (HttpTransportBindingElement source,
 			BindingContext context)
@@ -163,6 +119,10 @@ namespace System.ServiceModel.Channels
 			}
 			if (encoder == null)
 				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
+		}
+
+		public HttpListenerManager ListenerManager {
+			get {  return httpChannelManager; }
 		}
 
 		public MessageEncoder MessageEncoder {
@@ -182,19 +142,28 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		protected override void OnAbort ()
-		{
-			OnClose (TimeSpan.Zero);
-		}
+		protected abstract HttpListenerManager CreateListenerManager ();
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+			httpChannelManager = CreateListenerManager ();
+			Properties.Add (httpChannelManager);
+			httpChannelManager.Open (timeout);
+		}
+
+		protected override void OnAbort ()
+		{
+			httpChannelManager.Stop (true);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
-			base.OnClose (timeout - (DateTime.Now - start));
+			if (State == CommunicationState.Closed)
+				return;
+			base.OnClose (timeout);
+			// The channels are kept open when the creator channel listener is closed.
+			// http://blogs.msdn.com/drnick/archive/2006/03/22/557642.aspx
+			httpChannelManager.Stop (false);
 		}
 	}
 }

@@ -38,8 +38,10 @@ namespace System.ServiceModel.Channels
 {
 	internal class AspNetReplyChannel : HttpReplyChannel
 	{
-		HttpContext http_context;
 		AspNetChannelListener<IReplyChannel> listener;
+		List<HttpContext> waiting = new List<HttpContext> ();
+		HttpContext http_context;
+		AutoResetEvent wait;
 
 		public AspNetReplyChannel (AspNetChannelListener<IReplyChannel> listener)
 			: base (listener)
@@ -58,28 +60,28 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+		void ShutdownPendingRequests ()
+		{
+			lock (waiting)
+				foreach (HttpContext ctx in waiting)
+					try {
+						listener.HttpHandler.EndRequest (listener, ctx);
+					} catch {
+					}
+		}
+
 		protected override void OnAbort ()
 		{
-			if (http_context == null)
-				return;
-			try {
-				listener.HttpHandler.EndRequest (listener, http_context);
-			} finally {
-				http_context = null;
-			}
+			ShutdownPendingRequests ();
+			CloseContext ();
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
 			base.OnClose (timeout);
 
-			if (http_context == null)
-				return;
-			try {
-				listener.HttpHandler.EndRequest (listener, http_context);
-			} finally {
-				http_context = null;
-			}
+			ShutdownPendingRequests ();
+			CloseContext ();
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
@@ -96,14 +98,23 @@ namespace System.ServiceModel.Channels
 		bool TryReceiveRequestCore (TimeSpan timeout, out RequestContext context)
 		{
 			context = null;
-			if (!WaitForRequest (timeout))
+			if (waiting.Count == 0 && !WaitForRequest (timeout))
+				return false;
+			lock (waiting) {
+				if (waiting.Count > 0) {
+					http_context = waiting [0];
+					waiting.RemoveAt (0);
+				}
+			}
+			if (http_context == null) 
+				// Though as long as this instance is used
+				// synchronously, it should not happen.
 				return false;
 
 			Message msg;
 			var req = http_context.Request;
 			if (req.HttpMethod == "GET") {
 				msg = Message.CreateMessage (Encoder.MessageVersion, null);
-				msg.Headers.To = req.Url;
 			} else {
 				//FIXME: Do above stuff for HttpContext ?
 				int maxSizeOfHeaders = 0x10000;
@@ -119,6 +130,7 @@ namespace System.ServiceModel.Channels
 			}
 
 			// FIXME: prop.SuppressEntityBody
+			msg.Headers.To = req.Url;
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (req.HttpMethod, req.Url.Query, req.Headers));
 
@@ -127,11 +139,44 @@ namespace System.ServiceModel.Channels
 			return true;
 		}
 
+		/*
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
 			if (http_context == null)
 				http_context = listener.HttpHandler.WaitForRequest (listener, timeout);
 			return http_context != null;
+		}
+		*/
+
+		public override bool WaitForRequest (TimeSpan timeout)
+		{
+Console.WriteLine ("Enter AspNetReplyChannel.WaitForRequest");
+			if (wait != null)
+				throw new InvalidOperationException ("Another wait operation is in progress");
+			try {
+				wait = new AutoResetEvent (false);
+				listener.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
+				if (wait != null) // in case callback is done before WaitOne() here.
+					return wait.WaitOne (timeout, false);
+Console.WriteLine ("Exit AspNetReplyChannel.WaitForRequest");
+				return waiting.Count > 0;
+			} finally {
+				wait = null;
+			}
+		}
+
+		void HttpContextAcquired (HttpContextInfo ctx)
+		{
+Console.WriteLine ("Enter HttpContextAcquired: {0}", ctx != null ? ctx.RequestUrl : null);
+			if (wait == null)
+				throw new InvalidOperationException ("WaitForRequest operation has not started");
+			var sctx = (AspNetHttpContextInfo) ctx;
+			if (State == CommunicationState.Opened && ctx != null)
+				waiting.Add (sctx.Source);
+			var wait_ = wait;
+			wait = null;
+			wait_.Set ();
+Console.WriteLine ("Exit HttpContextAcquired: {0}", ctx != null ? ctx.RequestUrl : null);
 		}
 	}
 }
