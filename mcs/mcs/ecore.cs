@@ -1683,6 +1683,11 @@ namespace Mono.CSharp {
 			this.Child = child;
 			type = enum_type;
 		}
+
+		protected EnumConstant ()
+			: base (Location.Null)
+		{
+		}
 		
 		public override Expression DoResolve (ResolveContext ec)
 		{

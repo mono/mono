@@ -160,6 +160,33 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Binder flag dynamic constant, the value is combination of
+		// flags known at resolve stage and flags known only at emit
+		// stage
+		//
+		protected class BinderFlags : EnumConstant
+		{
+			DynamicExpressionStatement statement;
+			CSharpBinderFlags flags;
+
+			public BinderFlags (CSharpBinderFlags flags, DynamicExpressionStatement statement)
+				: base ()
+			{
+				this.flags = flags;
+				this.statement = statement;
+			}
+
+			public override Expression DoResolve (ResolveContext ec)
+			{
+				Child = new IntConstant ((int) (flags | statement.flags), statement.loc);
+
+				type = TypeManager.binder_flags;
+				eclass = Child.eclass;
+				return this;
+			}
+		}
+
 		static StaticDataClass global_site_container;
 		static int field_counter;
 		static int container_counter;
@@ -167,6 +194,9 @@ namespace Mono.CSharp
 		readonly Arguments arguments;
 		protected IDynamicBinder binder;
 		Expression binder_expr;
+
+		// Used by BinderFlags
+		CSharpBinderFlags flags;
 
 		public DynamicExpressionStatement (IDynamicBinder binder, Arguments args, Location loc)
 		{
@@ -254,10 +284,9 @@ namespace Mono.CSharp
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			// All C# created payloads require to have object convertible
-			// return type even if we know it won't be used
+			flags = CSharpBinderFlags.ResultDiscarded;
+
 			EmitCall (ec);
-			ec.ig.Emit (OpCodes.Pop);
 		}
 
 		void EmitCall (EmitContext ec)
@@ -312,7 +341,8 @@ namespace Mono.CSharp
 
 		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count)
 		{
-			const int default_args = 2;
+			bool is_statement = (flags & CSharpBinderFlags.ResultDiscarded) != 0;
+			int default_args = is_statement ? 1 : 2;
 
 			bool has_ref_out_argument = false;
 			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
@@ -333,15 +363,20 @@ namespace Mono.CSharp
 
 			TypeExpr del_type = null;
 			if (!has_ref_out_argument) {
-				Type t = TypeManager.CoreLookupType (ctx, "System", "Func`" + (dyn_args_count + default_args), Kind.Delegate, false);
+				string d_name = is_statement ? "Action`" : "Func`";
+
+				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
 				if (t != null) {
-					targs[targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
+					if (!is_statement)
+						targs [targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
+
 					del_type = new GenericTypeExpr (t, new TypeArguments (targs), loc);
 				}
 			}
 
 			// No appropriate predefined delegate found
 			if (del_type == null) {
+				Type rt = is_statement ? TypeManager.void_type : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
@@ -432,7 +467,7 @@ namespace Mono.CSharp
 
 			flags |= ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntConstant ((int) flags, loc), TypeManager.binder_flags)));
+			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			return new Invocation (GetBinder ("Convert", loc), binder_args);
 		}
@@ -453,7 +488,7 @@ namespace Mono.CSharp
 		{
 			Arguments binder_args = new Arguments (3);
 
-			binder_args.Add (new Argument (new IntLiteral (0, loc)));
+			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
@@ -501,15 +536,15 @@ namespace Mono.CSharp
 			Arguments binder_args = new Arguments (member != null ? 5 : 3);
 			bool is_member_access = member is MemberAccess;
 
-			int call_flags;
+			CSharpBinderFlags call_flags;
 			if (!is_member_access && member is SimpleName) {
-				call_flags = (int) CSharpBinderFlags.InvokeSimpleName;
+				call_flags = CSharpBinderFlags.InvokeSimpleName;
 				is_member_access = true;
 			} else {
 				call_flags = 0;
 			}
 
-			binder_args.Add (new Argument (new EnumConstant (new IntConstant (call_flags, loc), TypeManager.binder_flags)));
+			binder_args.Add (new Argument (new BinderFlags (call_flags, this)));
 
 			if (is_member_access)
 				binder_args.Add (new Argument (new StringLiteral (member.Name, member.Location)));
@@ -560,7 +595,7 @@ namespace Mono.CSharp
 		{
 			Arguments binder_args = new Arguments (4);
 
-			binder_args.Add (new Argument (new IntLiteral (0, loc)));
+			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
@@ -608,7 +643,7 @@ namespace Mono.CSharp
 
 			var flags = ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntConstant ((int) flags, loc), TypeManager.binder_flags)));
+			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
