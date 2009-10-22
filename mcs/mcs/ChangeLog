@@ -1,5 +1,11 @@
 2009-10-22  Marek Safar  <marek.safar@gmail.com>
 
+	* argument.cs: Use literal flag for real literals only.
+
+	* dynamic.cs: Use correct return type for custom delegates.
+
+2009-10-22  Marek Safar  <marek.safar@gmail.com>
+
 	* dynamic.cs, expression.cs: Pass logical binary flag to dynamic
 	resolver.
 

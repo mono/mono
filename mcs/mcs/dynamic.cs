@@ -381,7 +381,7 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
 				TypeContainer parent = CreateSiteContainer ();
-				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (TypeManager.TypeToReflectionType (type), loc),
+				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (TypeManager.TypeToReflectionType (rt), loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + container_counter++.ToString ("X")),
 					new ParametersCompiled (p), null);

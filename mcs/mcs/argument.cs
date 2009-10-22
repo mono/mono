@@ -227,8 +227,8 @@ namespace Mono.CSharp
 				const string info_flags_enum = "CSharpArgumentInfoFlags";
 				Expression info_flags = new IntLiteral (0, loc);
 
-				if (a.Expr is Constant) {
-					// Any constant is emitted as a literal
+				var constant = a.Expr as Constant;
+				if (constant != null && constant.IsLiteral) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "LiteralConstant", loc));
 				} else if (a.ArgType == Argument.AType.Ref) {
