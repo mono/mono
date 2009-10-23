@@ -464,10 +464,13 @@ namespace System.Configuration {
 			if (String.IsNullOrEmpty (streamName))
 				return true;
 
-			if (!File.Exists (streamName))
+			Stream stream = null;
+			try {
+				stream = stream = system.Host.OpenStreamForRead (streamName);
+			} catch {
 				return false;
+			}
 
-			Stream stream = stream = system.Host.OpenStreamForRead (streamName);
 			using (XmlTextReader reader = new ConfigXmlTextReader (stream, streamName)) {
 				ReadConfigFile (reader, streamName);
 			}
