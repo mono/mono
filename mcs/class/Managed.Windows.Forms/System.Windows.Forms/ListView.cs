@@ -5854,6 +5854,7 @@ namespace System.Windows.Forms
 				ListViewItem retval = args.Item;
 				retval.Owner = owner;
 				retval.DisplayIndex = displayIndex;
+				retval.Layout ();
 
 				return retval;
 			}

@@ -1,5 +1,16 @@
 2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When retrieving an item in virtual mode, as part of the
+	process calculate its layout, instead of trying to do it later.
+	* ListViewItem.cs: There's no need to try to infer whether we need to
+	compute layout or not anymore - we just do it every time we are
+	returning an item.
+	This way we should be fixing View changes with cached items, which
+	were storing the previous value, and not updating their contents
+	properly.
+
+2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ColumnHeader.cs: Remove the double linear search in the Index
 	property, by removing the call to Contains, which is not needed.
 	Also, Columns collection can never be null.
