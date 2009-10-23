@@ -12,36 +12,25 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-#if CODEPLEX_40
-using System.Dynamic;
-using System.Dynamic.Utils;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting;
+#if CLR2
+using Microsoft.Scripting.Ast;
 using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
+#else
+using System.Linq.Expressions;
 #endif
-using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
-
-
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Dynamic;
+using System.Dynamic.Utils;
+using System.Runtime.CompilerServices;
+
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// Represents an object with members that can be dynamically added and removed at runtime.
     /// </summary>
@@ -1030,11 +1019,7 @@ namespace Microsoft.Scripting {
     }
 }
 
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
 
     //
     // Note: these helpers are kept as simple wrappers so they have a better 

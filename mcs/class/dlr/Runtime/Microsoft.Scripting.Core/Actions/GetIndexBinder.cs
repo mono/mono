@@ -12,20 +12,10 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
 
     /// <summary>
     /// Represents the dynamic get index operation at the call site, providing the binding semantic and the details about the operation.

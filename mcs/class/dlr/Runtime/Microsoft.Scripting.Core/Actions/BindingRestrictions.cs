@@ -12,29 +12,20 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast;
+#else
+using System.Linq.Expressions;
+#endif
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
-#endif
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
 
-
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
 
     /// <summary>
     /// Represents a set of binding restrictions on the <see cref="DynamicMetaObject"/>under which the dynamic binding is valid.

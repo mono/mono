@@ -12,14 +12,8 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     /// <summary>
     /// An interface to represent values of runtime variables.
     /// </summary>

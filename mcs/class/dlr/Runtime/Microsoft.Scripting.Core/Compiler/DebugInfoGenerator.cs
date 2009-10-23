@@ -13,36 +13,27 @@
  *
  * ***************************************************************************/
 
-#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
-#if CODEPLEX_40
-using ILGenerator = System.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
+#if CLR2
+using Microsoft.Scripting.Ast;
+using Microsoft.Scripting.Ast.Compiler;
 #else
-using ILGenerator = Microsoft.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
-#endif
+using System.Linq.Expressions;
+using System.Linq.Expressions.Compiler;
 #endif
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
-#if CODEPLEX_40
-using System.Linq.Expressions;
-#else
-using Microsoft.Linq.Expressions;
+
+namespace System.Runtime.CompilerServices {
+#if CLR2 || SILVERLIGHT
+    using ILGenerator = OffsetTrackingILGenerator;
 #endif
 
-#if CODEPLEX_40
-namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     /// <summary>
     /// Generates debug information for lambdas in an expression tree.
     /// </summary>

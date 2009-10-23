@@ -12,21 +12,16 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if CODEPLEX_40
+using System;
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 using System.Reflection;
 using System.Reflection.Emit;
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions.Compiler {
+#if CLR2
+namespace Microsoft.Scripting.Ast.Compiler {
 #else
-namespace Microsoft.Linq.Expressions.Compiler {
+namespace System.Linq.Expressions.Compiler {
 #endif
     internal static partial class DelegateHelpers {
         private const MethodAttributes CtorAttributes = MethodAttributes.RTSpecialName | MethodAttributes.HideBySig | MethodAttributes.Public;

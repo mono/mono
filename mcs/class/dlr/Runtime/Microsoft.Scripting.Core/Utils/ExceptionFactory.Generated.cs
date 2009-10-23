@@ -12,13 +12,13 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+using System;
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
 
     internal static partial class Strings {
@@ -1510,6 +1510,209 @@ namespace Microsoft.Linq.Expressions {
 
     internal static partial class Error {
         /// <summary>
+        /// ArgumentException with message like "Argument count must be greater than number of named arguments."
+        /// </summary>
+        internal static Exception ArgCntMustBeGreaterThanNameCnt() {
+            return new ArgumentException(Strings.ArgCntMustBeGreaterThanNameCnt);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "reducible nodes must override Expression.Reduce()"
+        /// </summary>
+        internal static Exception ReducibleMustOverrideReduce() {
+            return new ArgumentException(Strings.ReducibleMustOverrideReduce);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "node cannot reduce to itself or null"
+        /// </summary>
+        internal static Exception MustReduceToDifferent() {
+            return new ArgumentException(Strings.MustReduceToDifferent);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "cannot assign from the reduced node type to the original node type"
+        /// </summary>
+        internal static Exception ReducedNotCompatible() {
+            return new ArgumentException(Strings.ReducedNotCompatible);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Setter must have parameters."
+        /// </summary>
+        internal static Exception SetterHasNoParams() {
+            return new ArgumentException(Strings.SetterHasNoParams);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Property cannot have a managed pointer type."
+        /// </summary>
+        internal static Exception PropertyCannotHaveRefType() {
+            return new ArgumentException(Strings.PropertyCannotHaveRefType);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Indexing parameters of getter and setter must match."
+        /// </summary>
+        internal static Exception IndexesOfSetGetMustMatch() {
+            return new ArgumentException(Strings.IndexesOfSetGetMustMatch);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Accessor method should not have VarArgs."
+        /// </summary>
+        internal static Exception AccessorsCannotHaveVarArgs() {
+            return new ArgumentException(Strings.AccessorsCannotHaveVarArgs);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Accessor indexes cannot be passed ByRef."
+        /// </summary>
+        internal static Exception AccessorsCannotHaveByRefArgs() {
+            return new ArgumentException(Strings.AccessorsCannotHaveByRefArgs);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Bounds count cannot be less than 1"
+        /// </summary>
+        internal static Exception BoundsCannotBeLessThanOne() {
+            return new ArgumentException(Strings.BoundsCannotBeLessThanOne);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "type must not be ByRef"
+        /// </summary>
+        internal static Exception TypeMustNotBeByRef() {
+            return new ArgumentException(Strings.TypeMustNotBeByRef);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Type doesn't have constructor with a given signature"
+        /// </summary>
+        internal static Exception TypeDoesNotHaveConstructorForTheSignature() {
+            return new ArgumentException(Strings.TypeDoesNotHaveConstructorForTheSignature);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Count must be non-negative."
+        /// </summary>
+        internal static Exception CountCannotBeNegative() {
+            return new ArgumentException(Strings.CountCannotBeNegative);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "arrayType must be an array type"
+        /// </summary>
+        internal static Exception ArrayTypeMustBeArray() {
+            return new ArgumentException(Strings.ArrayTypeMustBeArray);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Setter should have void type."
+        /// </summary>
+        internal static Exception SetterMustBeVoid() {
+            return new ArgumentException(Strings.SetterMustBeVoid);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Property type must match the value type of setter"
+        /// </summary>
+        internal static Exception PropertyTyepMustMatchSetter() {
+            return new ArgumentException(Strings.PropertyTyepMustMatchSetter);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Both accessors must be static."
+        /// </summary>
+        internal static Exception BothAccessorsMustBeStatic() {
+            return new ArgumentException(Strings.BothAccessorsMustBeStatic);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Static method requires null instance, non-static method requires non-null instance."
+        /// </summary>
+        internal static Exception OnlyStaticMethodsHaveNullInstance() {
+            return new ArgumentException(Strings.OnlyStaticMethodsHaveNullInstance);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Property cannot have a void type."
+        /// </summary>
+        internal static Exception PropertyTypeCannotBeVoid() {
+            return new ArgumentException(Strings.PropertyTypeCannotBeVoid);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Can only unbox from an object or interface type to a value type."
+        /// </summary>
+        internal static Exception InvalidUnboxType() {
+            return new ArgumentException(Strings.InvalidUnboxType);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Argument must not have a value type."
+        /// </summary>
+        internal static Exception ArgumentMustNotHaveValueType() {
+            return new ArgumentException(Strings.ArgumentMustNotHaveValueType);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "must be reducible node"
+        /// </summary>
+        internal static Exception MustBeReducible() {
+            return new ArgumentException(Strings.MustBeReducible);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Default body must be supplied if case bodies are not System.Void."
+        /// </summary>
+        internal static Exception DefaultBodyMustBeSupplied() {
+            return new ArgumentException(Strings.DefaultBodyMustBeSupplied);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "MethodBuilder does not have a valid TypeBuilder"
+        /// </summary>
+        internal static Exception MethodBuilderDoesNotHaveTypeBuilder() {
+            return new ArgumentException(Strings.MethodBuilderDoesNotHaveTypeBuilder);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Type must be derived from System.Delegate"
+        /// </summary>
+        internal static Exception TypeMustBeDerivedFromSystemDelegate() {
+            return new ArgumentException(Strings.TypeMustBeDerivedFromSystemDelegate);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Argument type cannot be void"
+        /// </summary>
+        internal static Exception ArgumentTypeCannotBeVoid() {
+            return new ArgumentException(Strings.ArgumentTypeCannotBeVoid);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Label type must be System.Void if an expression is not supplied"
+        /// </summary>
+        internal static Exception LabelMustBeVoidOrHaveExpression() {
+            return new ArgumentException(Strings.LabelMustBeVoidOrHaveExpression);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Type must be System.Void for this label argument"
+        /// </summary>
+        internal static Exception LabelTypeMustBeVoid() {
+            return new ArgumentException(Strings.LabelTypeMustBeVoid);
+        }
+
+        /// <summary>
+        /// ArgumentException with message like "Quoted expression must be a lambda"
+        /// </summary>
+        internal static Exception QuotedExpressionMustBeLambda() {
+            return new ArgumentException(Strings.QuotedExpressionMustBeLambda);
+        }
+
+        /// <summary>
         /// ArgumentException with message like "Variable '{0}' uses unsupported type '{1}'. Reference types are not supported for variables."
         /// </summary>
         internal static Exception VariableMustNotBeByRef(object p0, object p1) {
@@ -2452,20 +2655,6 @@ namespace Microsoft.Linq.Expressions {
         /// </summary>
         internal static Exception MustRewriteWithoutMethod(object p0, object p1) {
             return new InvalidOperationException(Strings.MustRewriteWithoutMethod(p0, p1));
-        }
-
-        /// <summary>
-        /// ArgumentNullException with message like "The value null is not of type '{0}' and cannot be used in this collection."
-        /// </summary>
-        internal static Exception InvalidNullValue(object p0) {
-            return new ArgumentNullException(Strings.InvalidNullValue(p0));
-        }
-
-        /// <summary>
-        /// ArgumentException with message like "The value '{0}' is not of type '{1}' and cannot be used in this collection."
-        /// </summary>
-        internal static Exception InvalidObjectType(object p0, object p1) {
-            return new ArgumentException(Strings.InvalidObjectType(p0, p1));
         }
 
         /// <summary>

@@ -12,15 +12,14 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Diagnostics;
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Represents a label, which can be placed in any <see cref="Expression"/> context. If

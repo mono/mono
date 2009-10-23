@@ -13,21 +13,17 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast;
+using Microsoft.Scripting.Utils;
+#else
+using System.Linq.Expressions;
+#endif
 
 using System.Collections.Generic;
-#if CODEPLEX_40
-using System.Linq.Expressions;
-#else
-using Microsoft.Linq.Expressions;
-#endif
 
-#if CODEPLEX_40
 namespace System.Dynamic.Utils {
-#else
-namespace Microsoft.Scripting.Utils {
-#endif
     // Miscellaneous helpers that don't belong anywhere else
     internal static class Helpers {
 

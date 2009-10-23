@@ -12,24 +12,19 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
 
     /// <summary>
@@ -225,8 +220,8 @@ namespace Microsoft.Linq.Expressions {
         /// <returns>A <see cref="ParameterExpression" /> node with the specified name and type.</returns>
         public static ParameterExpression Variable(Type type, string name) {
             ContractUtils.RequiresNotNull(type, "type");
-            ContractUtils.Requires(type != typeof(void), "type", Strings.ArgumentCannotBeOfTypeVoid);
-            ContractUtils.Requires(!type.IsByRef, "type", Strings.TypeMustNotBeByRef);
+            if (type == typeof(void)) throw Error.ArgumentCannotBeOfTypeVoid();
+            if (type.IsByRef) throw Error.TypeMustNotBeByRef();
             return ParameterExpression.Make(type, name, false);
         }
     }

@@ -12,25 +12,19 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.Generic;
-#if CODEPLEX_40
-using System.Linq.Expressions;
+#if CLR2
+using Microsoft.Scripting.Ast;
 #else
-using Microsoft.Linq.Expressions;
+using System.Linq.Expressions;
 #endif
-
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+
 namespace System.Dynamic.Utils {
-#else
-namespace Microsoft.Scripting.Utils {
-#endif
 
     // Like ReadOnlyCollection<T>: wraps an IDictionary<K, V> in a read-only wrapper
     internal sealed class ReadOnlyDictionary<K, V> : IDictionary<K, V> {

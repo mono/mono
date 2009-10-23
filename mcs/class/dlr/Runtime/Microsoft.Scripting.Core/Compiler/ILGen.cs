@@ -12,40 +12,26 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
-#if CODEPLEX_40
-using ILGenerator = System.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
-#else
-using ILGenerator = Microsoft.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
-#endif
-#endif
-
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
-
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions.Compiler {
+#if CLR2
+namespace Microsoft.Scripting.Ast.Compiler {
 #else
-namespace Microsoft.Linq.Expressions.Compiler {
+namespace System.Linq.Expressions.Compiler {
+#endif
+#if CLR2 || SILVERLIGHT
+    using ILGenerator = OffsetTrackingILGenerator;
 #endif
 
     internal static class ILGen {
@@ -322,7 +308,7 @@ namespace Microsoft.Linq.Expressions.Compiler {
             ContractUtils.RequiresNotNull(paramTypes, "paramTypes");
 
             ConstructorInfo ci = type.GetConstructor(paramTypes);
-            ContractUtils.Requires(ci != null, "type", Strings.TypeDoesNotHaveConstructorForTheSignature);
+            if (ci == null) throw Error.TypeDoesNotHaveConstructorForTheSignature();
             il.EmitNew(ci);
         }
 
@@ -929,7 +915,7 @@ namespace Microsoft.Linq.Expressions.Compiler {
         internal static void EmitArray(this ILGenerator il, Type elementType, int count, Action<int> emit) {
             ContractUtils.RequiresNotNull(elementType, "elementType");
             ContractUtils.RequiresNotNull(emit, "emit");
-            ContractUtils.Requires(count >= 0, "count", Strings.CountCannotBeNegative);
+            if (count < 0) throw Error.CountCannotBeNegative();
 
             il.EmitInt(count);
             il.Emit(OpCodes.Newarr, elementType);
@@ -950,7 +936,7 @@ namespace Microsoft.Linq.Expressions.Compiler {
         /// </summary>
         internal static void EmitArray(this ILGenerator il, Type arrayType) {
             ContractUtils.RequiresNotNull(arrayType, "arrayType");
-            ContractUtils.Requires(arrayType.IsArray, "arrayType", Strings.ArrayTypeMustBeArray);
+            if (!arrayType.IsArray) throw Error.ArrayTypeMustBeArray();
 
             int rank = arrayType.GetArrayRank();
             if (rank == 1) {

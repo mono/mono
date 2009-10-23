@@ -12,14 +12,8 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
 
     /// <summary>
     /// Holds a reference to a value.

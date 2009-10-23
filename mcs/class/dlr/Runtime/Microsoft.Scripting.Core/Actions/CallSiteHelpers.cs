@@ -12,15 +12,9 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.Reflection;
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     /// <summary>
     /// Class that contains helper methods for DLR CallSites.
     /// </summary>
@@ -48,11 +42,7 @@ namespace Microsoft.Runtime.CompilerServices {
             }
 
             //Filter out the helper methods.
-#if CODEPLEX_40
             if (mb.DeclaringType == typeof(System.Dynamic.UpdateDelegates)) {
-#else
-            if (mb.DeclaringType == typeof(Microsoft.Scripting.UpdateDelegates)) {
-#endif
                 return true;
             }
 

@@ -12,39 +12,30 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
-#if CODEPLEX_40
-using ILGenerator = System.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
+#if CLR2
+using Microsoft.Scripting.Ast;
+using Microsoft.Scripting.Ast.Compiler;
 #else
-using ILGenerator = Microsoft.Linq.Expressions.Compiler.OffsetTrackingILGenerator;
-#endif
-#endif
-
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.SymbolStore;
-#if CODEPLEX_40
 using System.Linq.Expressions;
 using System.Linq.Expressions.Compiler;
-#else
-using Microsoft.Linq.Expressions;
-using Microsoft.Linq.Expressions.Compiler;
 #endif
-using System.Reflection;
-using System.Reflection.Emit;
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.SymbolStore;
+using System.Reflection;
+using System.Reflection.Emit;
+
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
+#if CLR2 || SILVERLIGHT
+    using ILGenerator = OffsetTrackingILGenerator;
 #endif
+
     /// <summary>
     /// Generator of PDB debugging information for expression trees.
     /// </summary>

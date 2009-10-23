@@ -12,24 +12,19 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Emits or clears a sequence point for debug information.

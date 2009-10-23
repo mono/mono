@@ -12,26 +12,19 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Utils;
+#else
+using System.Diagnostics.Contracts;
+#endif
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if !MICROSOFT_SCRIPTING_CORE
-using System.Diagnostics.Contracts;
-#endif
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
 
-
-#if CODEPLEX_40
 namespace System.Dynamic.Utils {
-#else
-namespace Microsoft.Scripting.Utils {
-#endif
     internal static class CollectionExtensions {
         /// <summary>
         /// Wraps the provided enumerable into a ReadOnlyCollection{T}
@@ -40,7 +33,7 @@ namespace Microsoft.Scripting.Utils {
         /// changed after creation. The exception is if the enumerable is
         /// already a ReadOnlyCollection{T}, in which case we just return it.
         /// </summary>
-#if !MICROSOFT_SCRIPTING_CORE
+#if !CLR2
         [Pure]
 #endif
         internal static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> enumerable) {
@@ -84,7 +77,7 @@ namespace Microsoft.Scripting.Utils {
             return h;
         }
 
-#if !MICROSOFT_SCRIPTING_CORE
+#if !CLR2
         [Pure]
 #endif
         internal static bool ListEquals<T>(this ICollection<T> first, ICollection<T> second) {

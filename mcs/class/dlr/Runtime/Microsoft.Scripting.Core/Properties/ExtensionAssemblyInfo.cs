@@ -13,11 +13,7 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

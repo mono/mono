@@ -13,29 +13,21 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Represents the initialization of a list.
@@ -98,21 +90,21 @@ namespace Microsoft.Linq.Expressions {
 
     public partial class Expression {
         /// <summary>
-        /// Creates an <see cref="Microsoft.Linq.Expressions.ElementInit">ElementInit</see> expression that represents the initialization of a list.
+        /// Creates an <see cref="T:ElementInit">ElementInit</see> expression that represents the initialization of a list.
         /// </summary>
         /// <param name="addMethod">The <see cref="MethodInfo"/> for the list's Add method.</param>
         /// <param name="arguments">An array containing the Expressions to be used to initialize the list.</param>
-        /// <returns>The created <see cref="Microsoft.Linq.Expressions.ElementInit">ElementInit</see> expression.</returns>
+        /// <returns>The created <see cref="T:ElementInit">ElementInit</see> expression.</returns>
         public static ElementInit ElementInit(MethodInfo addMethod, params Expression[] arguments) {
             return ElementInit(addMethod, arguments as IEnumerable<Expression>);
         }
 
         /// <summary>
-        /// Creates an <see cref="Microsoft.Linq.Expressions.ElementInit">ElementInit</see> expression that represents the initialization of a list.
+        /// Creates an <see cref="T:ElementInit">ElementInit</see> expression that represents the initialization of a list.
         /// </summary>
         /// <param name="addMethod">The <see cref="MethodInfo"/> for the list's Add method.</param>
         /// <param name="arguments">An <see cref="IEnumerable{T}"/> containing <see cref="Expression"/> elements to initialize the list.</param>
-        /// <returns>The created <see cref="Microsoft.Linq.Expressions.ElementInit">ElementInit</see> expression.</returns>
+        /// <returns>The created <see cref="T:ElementInit">ElementInit</see> expression.</returns>
         public static ElementInit ElementInit(MethodInfo addMethod, IEnumerable<Expression> arguments) {
             ContractUtils.RequiresNotNull(addMethod, "addMethod");
             ContractUtils.RequiresNotNull(arguments, "arguments");

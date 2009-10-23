@@ -12,18 +12,12 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.Generic;
-#if CODEPLEX_40
-using System.Dynamic.Utils;
-using System.Linq.Expressions;
+#if CLR2
+using Microsoft.Scripting.Ast;
 #else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
+using System.Linq.Expressions;
 #endif
-using System.Reflection;
 
 #if SILVERLIGHT
 using System.Core;
@@ -31,11 +25,11 @@ using System.Core;
 using System.Runtime.Remoting;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+using System.Dynamic.Utils;
+using System.Reflection;
+
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// Represents the dynamic binding and a binding logic of an object participating in the dynamic binding.
     /// </summary>

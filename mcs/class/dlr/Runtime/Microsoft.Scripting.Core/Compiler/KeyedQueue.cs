@@ -12,24 +12,17 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.Collections.Generic;
-#if CODEPLEX_40
-using System.Linq.Expressions;
-#else
-using Microsoft.Linq.Expressions;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions.Compiler {
+#if CLR2
+namespace Microsoft.Scripting.Ast.Compiler {
 #else
-namespace Microsoft.Linq.Expressions.Compiler {
+namespace System.Linq.Expressions.Compiler {
 #endif
     
     /// <summary>

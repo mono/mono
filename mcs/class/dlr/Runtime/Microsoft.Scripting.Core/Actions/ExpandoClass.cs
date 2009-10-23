@@ -13,27 +13,13 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Diagnostics;
-#if CODEPLEX_40
-using System.Linq.Expressions;
 using System.Dynamic.Utils;
-#else
-using Microsoft.Linq.Expressions;
-using Microsoft.Scripting.Utils;
-#endif
 using System.Text;
 
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// Represents a dynamically assigned class.  Expando objects which share the same 
     /// members will share the same class.  Classes are dynamically assigned as the

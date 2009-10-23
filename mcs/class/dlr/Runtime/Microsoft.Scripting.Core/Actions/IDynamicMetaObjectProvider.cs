@@ -12,20 +12,14 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-#if CODEPLEX_40
+#if CLR2
+using Microsoft.Scripting.Ast;
+#else
 using System.Linq.Expressions;
-#else
-using Microsoft.Linq.Expressions;
 #endif
 
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// Represents a dynamic object, that can have its operations bound at runtime.
     /// </summary>

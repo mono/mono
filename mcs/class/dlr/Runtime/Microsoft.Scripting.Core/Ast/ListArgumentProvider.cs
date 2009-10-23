@@ -13,25 +13,15 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Text;
-#if CODEPLEX_40
-using System.Linq.Expressions;
 using System.Dynamic.Utils;
-#else
-using Microsoft.Linq.Expressions;
-using Microsoft.Scripting.Utils;
-#endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Provides a wrapper around an IArgumentProvider which exposes the argument providers

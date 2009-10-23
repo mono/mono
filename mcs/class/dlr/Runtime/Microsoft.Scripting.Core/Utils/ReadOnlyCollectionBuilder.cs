@@ -12,28 +12,21 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-#if CODEPLEX_40
-using System.Dynamic.Utils;
-using System.Linq.Expressions;
+#if CLR2
+using Microsoft.Scripting.Ast;
 #else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
+using System.Linq.Expressions;
 #endif
-
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Dynamic.Utils;
+
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     /// <summary>
     /// The builder for read only collection.
     /// </summary>

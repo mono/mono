@@ -12,25 +12,13 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.ComponentModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting;
-using Microsoft.Linq.Expressions;
-#endif
 using System.Collections.Generic;
 
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
 
     // Conceptually these are instance methods on CallSite<T> but
     // we don't want users to see them

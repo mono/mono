@@ -16,7 +16,7 @@
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
     <BaseAddress>866123776</BaseAddress>
-    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(ProgramFiles)\Microsoft Silverlight\3.0.40624.0</SilverlightPath>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(ProgramFiles)\Microsoft Silverlight\3.0.40818.0\</SilverlightPath>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">

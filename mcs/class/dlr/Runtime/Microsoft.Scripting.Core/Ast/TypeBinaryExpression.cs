@@ -12,24 +12,19 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Represents an operation between an expression and a type. 
@@ -200,7 +195,7 @@ namespace Microsoft.Linq.Expressions {
         public static TypeBinaryExpression TypeIs(Expression expression, Type type) {
             RequiresCanRead(expression, "expression");
             ContractUtils.RequiresNotNull(type, "type");
-            ContractUtils.Requires(!type.IsByRef, "type", Strings.TypeMustNotBeByRef);
+            if (type.IsByRef) throw Error.TypeMustNotBeByRef();
 
             return new TypeBinaryExpression(expression, type, ExpressionType.TypeIs);
         }
@@ -214,7 +209,7 @@ namespace Microsoft.Linq.Expressions {
         public static TypeBinaryExpression TypeEqual(Expression expression, Type type) {
             RequiresCanRead(expression, "expression");
             ContractUtils.RequiresNotNull(type, "type");
-            ContractUtils.Requires(!type.IsByRef, "type", Strings.TypeMustNotBeByRef);
+            if (type.IsByRef) throw Error.TypeMustNotBeByRef();
 
             return new TypeBinaryExpression(expression, type, ExpressionType.TypeEqual);
         }

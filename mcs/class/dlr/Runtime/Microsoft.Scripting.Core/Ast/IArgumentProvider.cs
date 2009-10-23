@@ -13,18 +13,15 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Text;
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
+    using Microsoft.Scripting.Utils;
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Provides an internal interface for accessing the arguments that multiple tree

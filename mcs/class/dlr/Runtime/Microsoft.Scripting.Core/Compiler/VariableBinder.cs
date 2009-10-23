@@ -12,26 +12,20 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions.Compiler {
+#if CLR2
+namespace Microsoft.Scripting.Ast.Compiler {
 #else
-namespace Microsoft.Linq.Expressions.Compiler {
+namespace System.Linq.Expressions.Compiler {
 #endif
     /// <summary>
     /// Determines if variables are closed over in nested lambdas and need to

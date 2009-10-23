@@ -12,27 +12,18 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
 
-
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
     /// <summary>
     /// Represents calling a constructor and initializing one or more members of the new object.
@@ -76,13 +67,13 @@ namespace Microsoft.Linq.Expressions {
         }
 
         ///<summary>Gets the expression that represents the constructor call.</summary>
-        ///<returns>A <see cref="T:Microsoft.Linq.Expressions.NewExpression" /> that represents the constructor call.</returns>
+        ///<returns>A <see cref="T:System.Linq.Expressions.NewExpression" /> that represents the constructor call.</returns>
         public NewExpression NewExpression {
             get { return _newExpression; }
         }
 
         ///<summary>Gets the bindings that describe how to initialize the members of the newly created object.</summary>
-        ///<returns>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of <see cref="T:Microsoft.Linq.Expressions.MemberBinding" /> objects which describe how to initialize the members.</returns>
+        ///<returns>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of <see cref="T:System.Linq.Expressions.MemberBinding" /> objects which describe how to initialize the members.</returns>
         public ReadOnlyCollection<MemberBinding> Bindings {
             get { return _bindings; }
         }
@@ -160,24 +151,24 @@ namespace Microsoft.Linq.Expressions {
     }
 
     public partial class Expression {
-        ///<summary>Creates a <see cref="T:Microsoft.Linq.Expressions.MemberInitExpression" />.</summary>
-        ///<returns>A <see cref="T:Microsoft.Linq.Expressions.MemberInitExpression" /> that has the <see cref="P:Microsoft.Linq.Expressions.Expression.NodeType" /> property equal to <see cref="F:Microsoft.Linq.Expressions.ExpressionType.MemberInit" /> and the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.NewExpression" /> and <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.Bindings" /> properties set to the specified values.</returns>
-        ///<param name="newExpression">A <see cref="T:Microsoft.Linq.Expressions.NewExpression" /> to set the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.NewExpression" /> property equal to.</param>
-        ///<param name="bindings">An array of <see cref="T:Microsoft.Linq.Expressions.MemberBinding" /> objects to use to populate the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.Bindings" /> collection.</param>
+        ///<summary>Creates a <see cref="T:System.Linq.Expressions.MemberInitExpression" />.</summary>
+        ///<returns>A <see cref="T:System.Linq.Expressions.MemberInitExpression" /> that has the <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property equal to <see cref="F:System.Linq.Expressions.ExpressionType.MemberInit" /> and the <see cref="P:System.Linq.Expressions.MemberInitExpression.NewExpression" /> and <see cref="P:System.Linq.Expressions.MemberInitExpression.Bindings" /> properties set to the specified values.</returns>
+        ///<param name="newExpression">A <see cref="T:System.Linq.Expressions.NewExpression" /> to set the <see cref="P:System.Linq.Expressions.MemberInitExpression.NewExpression" /> property equal to.</param>
+        ///<param name="bindings">An array of <see cref="T:System.Linq.Expressions.MemberBinding" /> objects to use to populate the <see cref="P:System.Linq.Expressions.MemberInitExpression.Bindings" /> collection.</param>
         ///<exception cref="T:System.ArgumentNullException">
         ///<paramref name="newExpression" /> or <paramref name="bindings" /> is null.</exception>
-        ///<exception cref="T:System.ArgumentException">The <see cref="P:Microsoft.Linq.Expressions.MemberBinding.Member" /> property of an element of <paramref name="bindings" /> does not represent a member of the type that <paramref name="newExpression" />.Type represents.</exception>
+        ///<exception cref="T:System.ArgumentException">The <see cref="P:System.Linq.Expressions.MemberBinding.Member" /> property of an element of <paramref name="bindings" /> does not represent a member of the type that <paramref name="newExpression" />.Type represents.</exception>
         public static MemberInitExpression MemberInit(NewExpression newExpression, params MemberBinding[] bindings) {
             return MemberInit(newExpression, (IEnumerable<MemberBinding>)bindings);
         }
 
-        ///<summary>Creates a <see cref="T:Microsoft.Linq.Expressions.MemberInitExpression" />.</summary>
-        ///<returns>A <see cref="T:Microsoft.Linq.Expressions.MemberInitExpression" /> that has the <see cref="P:Microsoft.Linq.Expressions.Expression.NodeType" /> property equal to <see cref="F:Microsoft.Linq.Expressions.ExpressionType.MemberInit" /> and the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.NewExpression" /> and <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.Bindings" /> properties set to the specified values.</returns>
-        ///<param name="newExpression">A <see cref="T:Microsoft.Linq.Expressions.NewExpression" /> to set the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.NewExpression" /> property equal to.</param>
-        ///<param name="bindings">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains <see cref="T:Microsoft.Linq.Expressions.MemberBinding" /> objects to use to populate the <see cref="P:Microsoft.Linq.Expressions.MemberInitExpression.Bindings" /> collection.</param>
+        ///<summary>Creates a <see cref="T:System.Linq.Expressions.MemberInitExpression" />.</summary>
+        ///<returns>A <see cref="T:System.Linq.Expressions.MemberInitExpression" /> that has the <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property equal to <see cref="F:System.Linq.Expressions.ExpressionType.MemberInit" /> and the <see cref="P:System.Linq.Expressions.MemberInitExpression.NewExpression" /> and <see cref="P:System.Linq.Expressions.MemberInitExpression.Bindings" /> properties set to the specified values.</returns>
+        ///<param name="newExpression">A <see cref="T:System.Linq.Expressions.NewExpression" /> to set the <see cref="P:System.Linq.Expressions.MemberInitExpression.NewExpression" /> property equal to.</param>
+        ///<param name="bindings">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains <see cref="T:System.Linq.Expressions.MemberBinding" /> objects to use to populate the <see cref="P:System.Linq.Expressions.MemberInitExpression.Bindings" /> collection.</param>
         ///<exception cref="T:System.ArgumentNullException">
         ///<paramref name="newExpression" /> or <paramref name="bindings" /> is null.</exception>
-        ///<exception cref="T:System.ArgumentException">The <see cref="P:Microsoft.Linq.Expressions.MemberBinding.Member" /> property of an element of <paramref name="bindings" /> does not represent a member of the type that <paramref name="newExpression" />.Type represents.</exception>
+        ///<exception cref="T:System.ArgumentException">The <see cref="P:System.Linq.Expressions.MemberBinding.Member" /> property of an element of <paramref name="bindings" /> does not represent a member of the type that <paramref name="newExpression" />.Type represents.</exception>
         public static MemberInitExpression MemberInit(NewExpression newExpression, IEnumerable<MemberBinding> bindings) {
             ContractUtils.RequiresNotNull(newExpression, "newExpression");
             ContractUtils.RequiresNotNull(bindings, "bindings");

@@ -12,21 +12,14 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
+#if CLR2
+using Microsoft.Scripting.Utils;
+#endif
 
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
-
 using System.Threading;
 
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     internal static partial class UpdateDelegates {
 
         //

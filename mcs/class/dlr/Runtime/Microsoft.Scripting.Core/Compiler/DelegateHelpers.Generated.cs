@@ -12,29 +12,20 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic;
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting;
-using Microsoft.Scripting.Utils;
-#endif
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
 
-
-#if CODEPLEX_40
-namespace System.Linq.Expressions.Compiler {
+#if CLR2
+namespace Microsoft.Scripting.Ast.Compiler {
+    using Microsoft.Scripting.Utils;
 #else
-namespace Microsoft.Linq.Expressions.Compiler {
+namespace System.Linq.Expressions.Compiler {
 #endif
     internal static partial class DelegateHelpers {
         private static TypeInfo _DelegateCache = new TypeInfo();

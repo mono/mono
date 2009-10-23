@@ -8,21 +8,13 @@
 // "In Project Suppression File". 
 // You do not need to add suppressions to this file manually. 
 
-#if CODEPLEX_40
 //UnhandledExpressionType is used by System.Linq.Expressions.OldExpressionVisitor 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Error.#UnhandledExpressionType(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Strings.#UnhandledExpressionType(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Error.#InvalidNullValue(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Error.#InvalidObjectType(System.Object,System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Error.#HomogenousAppDomainRequired()")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Linq.Expressions.Strings.#HomogenousAppDomainRequired")]
-#else
-//UnhandledExpressionType is used by Microsoft.Linq.Expressions.OldExpressionVisitor 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Error.#UnhandledExpressionType(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Strings.#UnhandledExpressionType(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Error.#InvalidNullValue(System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Error.#InvalidObjectType(System.Object,System.Object)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Error.#HomogenousAppDomainRequired()")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Linq.Expressions.Strings.#HomogenousAppDomainRequired")]
+#if CLR2
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#UnhandledExpressionType(System.Object)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Strings.#UnhandledExpressionType(System.Object)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#InvalidNullValue(System.Object)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#InvalidObjectType(System.Object,System.Object)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#HomogenousAppDomainRequired()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Strings.#HomogenousAppDomainRequired")]
 #endif
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes", Scope = "member", Target = "System.Runtime.CompilerServices.StrongBox`1.#System.Runtime.CompilerServices.IStrongBox.Value")]

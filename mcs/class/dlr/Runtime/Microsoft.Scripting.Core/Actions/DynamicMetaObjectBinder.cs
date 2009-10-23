@@ -12,25 +12,14 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-#if CODEPLEX_40
-using System.Dynamic.Utils;
+#if CLR2
+using Microsoft.Scripting.Ast;
+using Microsoft.Scripting.Ast.Compiler;
+#else
 using System.Linq.Expressions;
 using System.Linq.Expressions.Compiler;
-#else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
-using Microsoft.Linq.Expressions.Compiler;
 #endif
-using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
-
 
 #if SILVERLIGHT
 using System.Core;
@@ -38,11 +27,12 @@ using System.Core;
 using System.Runtime.Remoting;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Dynamic.Utils;
+using System.Runtime.CompilerServices;
+
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// The dynamic call site binder that participates in the <see cref="DynamicMetaObject"/> binding protocol.
     /// </summary>
@@ -76,7 +66,7 @@ namespace Microsoft.Scripting {
         /// <param name="returnLabel">A LabelTarget used to return the result of the dynamic binding.</param>
         /// <returns>
         /// An Expression that performs tests on the dynamic operation arguments, and
-        /// performs the dynamic operation if hte tests are valid. If the tests fail on
+        /// performs the dynamic operation if the tests are valid. If the tests fail on
         /// subsequent occurrences of the dynamic operation, Bind will be called again
         /// to produce a new <see cref="Expression"/> for the new argument types.
         /// </returns>

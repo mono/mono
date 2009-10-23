@@ -12,28 +12,21 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast;
+#else
+using System.Linq.Expressions;
+#endif
+#if SILVERLIGHT
+using System.Core;
+#endif
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
-#endif
 
-#if SILVERLIGHT
-using System.Core;
-#endif //SILVERLIGHT
-
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
 
     /// <summary>
     /// Describes arguments in the dynamic binding process.
@@ -77,7 +70,7 @@ namespace Microsoft.Scripting {
 
             var argNameCol = argNames.ToReadOnly();
 
-            ContractUtils.Requires(argCount >= argNameCol.Count, "argCount", Strings.ArgCntMustBeGreaterThanNameCnt);
+            if (argCount < argNameCol.Count) throw Error.ArgCntMustBeGreaterThanNameCnt();
             ContractUtils.RequiresNotNullItems(argNameCol, "argNames");
 
             _argCount = argCount;

@@ -12,37 +12,28 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-using System.Linq.Expressions.Compiler;
-#else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions.Compiler;
-#endif
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using System.Runtime.CompilerServices;
-#if !CODEPLEX_40
-using Microsoft.Runtime.CompilerServices;
-#endif
-
 
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-namespace Microsoft.Linq.Expressions {
+namespace System.Linq.Expressions {
 #endif
+    using Compiler;
+
     /// <summary>
     /// Creates a <see cref="LambdaExpression"/> node.
     /// This captures a block of code that is similar to a .NET method body.
@@ -170,7 +161,7 @@ namespace Microsoft.Linq.Expressions {
             ContractUtils.RequiresNotNull(method, "method");
             ContractUtils.Requires(method.IsStatic, "method");
             var type = method.DeclaringType as TypeBuilder;
-            ContractUtils.Requires(type != null, "method", Strings.MethodBuilderDoesNotHaveTypeBuilder);
+            if (type == null) throw Error.MethodBuilderDoesNotHaveTypeBuilder();
 
             LambdaCompiler.Compile(this, method, debugInfoGenerator);
         }
@@ -593,7 +584,7 @@ namespace Microsoft.Linq.Expressions {
         /// <param name="typeArgs">An array of Type objects that specify the type arguments for the System.Func delegate type.</param>
         /// <returns>The type of a System.Func delegate that has the specified type arguments.</returns>
         public static Type GetFuncType(params Type[] typeArgs) {
-            ContractUtils.Requires(ValidateTryGetFuncActionArgs(typeArgs), "typeArgs", Strings.TypeMustNotBeByRef);
+            if (!ValidateTryGetFuncActionArgs(typeArgs)) throw Error.TypeMustNotBeByRef();
 
             Type result = DelegateHelpers.GetFuncType(typeArgs);
             if (result == null) {
@@ -623,7 +614,7 @@ namespace Microsoft.Linq.Expressions {
         /// <param name="typeArgs">An array of Type objects that specify the type arguments for the System.Action delegate type.</param>
         /// <returns>The type of a System.Action delegate that has the specified type arguments.</returns>
         public static Type GetActionType(params Type[] typeArgs) {
-            ContractUtils.Requires(ValidateTryGetFuncActionArgs(typeArgs), "typeArgs", Strings.TypeMustNotBeByRef);
+            if (!ValidateTryGetFuncActionArgs(typeArgs)) throw Error.TypeMustNotBeByRef();
 
             Type result = DelegateHelpers.GetActionType(typeArgs);
             if (result == null) {

@@ -12,17 +12,11 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.ComponentModel;
 using System.Diagnostics;
 
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
 
     /// <summary>
     /// This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.

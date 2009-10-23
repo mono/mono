@@ -12,24 +12,18 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast;
+#else
+using System.Linq.Expressions;
+#endif
 
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
-#endif
 using System.Reflection;
 
-#if CODEPLEX_40
 namespace System.Dynamic {
-#else
-namespace Microsoft.Scripting {
-#endif
     /// <summary>
     /// Provides a simple class that can be inherited from to create an object with dynamic behavior
     /// at runtime.  Subclasses can override the various binder methods (GetMember, SetMember, Call, etc...)
@@ -586,13 +580,15 @@ namespace Microsoft.Scripting {
             }
 
             /// <summary>
-            /// Returns our Expression converted to our known LimitType
+            /// Returns our Expression converted to DynamicObject
             /// </summary>
             private Expression GetLimitedSelf() {
-                if (TypeUtils.AreEquivalent(Expression.Type, LimitType)) {
+                // Convert to DynamicObject rather than LimitType, because
+                // the limit type might be non-public.
+                if (TypeUtils.AreEquivalent(Expression.Type, typeof(DynamicObject))) {
                     return Expression;
                 }
-                return Expression.Convert(Expression, LimitType);
+                return Expression.Convert(Expression, typeof(DynamicObject));
             }
 
             private new DynamicObject Value {

@@ -12,33 +12,25 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast;
+#else
+using System.Linq.Expressions;
+#endif
+#if SILVERLIGHT
+using System.Core;
+#endif
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic;
 using System.Dynamic.Utils;
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting;
-using Microsoft.Scripting.Utils;
-using Microsoft.Linq.Expressions;
-#endif
 using System.Threading;
 using System.Reflection;
 
-#if SILVERLIGHT
-using System.Core;
-#endif //SILVERLIGHT
-
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     /// <summary>
     /// Class responsible for runtime binding of the dynamic operations on the dynamic call site.
     /// </summary>
@@ -147,7 +139,7 @@ namespace Microsoft.Runtime.CompilerServices {
             //
             // finally produce the new rule if we need to
             //
-#if !MICROSOFT_SCRIPTING_CORE && !SILVERLIGHT
+#if !CLR2 && !SILVERLIGHT
             // We cannot compile rules in the heterogeneous app domains since they
             // may come from less trusted sources
             // Silverlight always uses a homogenous appdomain, so we don’t need this check

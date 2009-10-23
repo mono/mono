@@ -12,27 +12,21 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
-using System.Collections.Generic;
-using System.Diagnostics;
-#if CODEPLEX_40
-using System.Linq.Expressions;
+#if CLR2
+using Microsoft.Scripting.Ast;
 #else
-using Microsoft.Linq.Expressions;
+using System.Linq.Expressions;
 #endif
-using System.Reflection;
-
 #if SILVERLIGHT
 using System.Core;
 #endif
 
-#if CODEPLEX_40
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+
 namespace System.Dynamic.Utils {
-#else
-namespace Microsoft.Scripting.Utils {
-#endif
 
     internal static class TypeUtils {
         private const BindingFlags AnyStatic = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -155,7 +149,7 @@ namespace Microsoft.Scripting.Utils {
 
         internal static bool AreEquivalent(Type t1, Type t2)
         {
-#if MICROSOFT_SCRIPTING_CORE || SILVERLIGHT
+#if CLR2 || SILVERLIGHT
             return t1 == t2;
 #else
             return t1 == t2 || t1.IsEquivalentTo(t2);

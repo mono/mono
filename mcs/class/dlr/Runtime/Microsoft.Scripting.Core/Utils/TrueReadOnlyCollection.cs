@@ -12,22 +12,12 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
-
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
-#else
-using Microsoft.Scripting.Utils;
-#endif
 
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
     sealed class TrueReadOnlyCollection<T> : ReadOnlyCollection<T> {
         /// <summary>
         /// Creates instnace of TrueReadOnlyCollection, wrapping passed in array.

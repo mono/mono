@@ -13,20 +13,12 @@
  *
  * ***************************************************************************/
 
-#if CODEPLEX_40
 using System;
-#else
-using System; using Microsoft;
-#endif
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-#if CODEPLEX_40
 namespace System.Dynamic.Utils {
-#else
-namespace Microsoft.Scripting.Utils {
-#endif
     /// <summary>
     /// Provides a dictionary-like object used for caches which holds onto a maximum
     /// number of elements specified at construction time.

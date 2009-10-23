@@ -12,22 +12,17 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
+#if CLR2
+using Microsoft.Scripting.Ast.Compiler;
+#else
+using System.Linq.Expressions.Compiler;
+#endif
 
 using System.ComponentModel;
 using System.Diagnostics;
-#if CODEPLEX_40
-using System.Linq.Expressions.Compiler;
-#else
-using Microsoft.Linq.Expressions.Compiler;
-#endif
 
-#if CODEPLEX_40
 namespace System.Runtime.CompilerServices {
-#else
-namespace Microsoft.Runtime.CompilerServices {
-#endif
 
     /// <summary>
     /// This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.

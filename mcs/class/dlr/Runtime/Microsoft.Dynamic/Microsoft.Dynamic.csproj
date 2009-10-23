@@ -1,37 +1,41 @@
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20624</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D4AE44AD-07B9-41DC-BB3B-1FDCDE3C987D}</ProjectGuid>
+    <ProjectGuid>{EB66B766-6354-4208-A3D4-AACBDCB5C3B3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RootNamespace>System.Dynamic</RootNamespace>
+    <RootNamespace>Microsoft.Scripting</RootNamespace>
     <AssemblyName>Microsoft.Dynamic</AssemblyName>
-<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.XML</DocumentationFile>
+    <WarningsNotAsErrors>1685,618,649</WarningsNotAsErrors>
     <NoWarn>1591</NoWarn>
 <AssemblyOriginatorKeyFile>$(SolutionDir)\Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
+    <BaseAddress>859832320</BaseAddress>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <Silverlight3Path>$(ProgramFiles)\Microsoft Silverlight\3.0.40818.0</Silverlight3Path>
+    <Silverlight4Path>..\..\Utilities\Silverlight\v4-x86fre</Silverlight4Path>
+
+    <!-- The following two lines prevent csc.rsp and Microsoft.NETFramework.props from adding additional assembly references -->
+    <NoConfig>true</NoConfig>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\fxcop\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
+    <DefineConstants>TRACE;CLR2;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRules>-Microsoft.Usage#CA2209;+!Microsoft.Design#CA1012;-!Microsoft.Design#CA2210;+!Microsoft.Design#CA1040;+!Microsoft.Design#CA1005;+!Microsoft.Design#CA1020;-!Microsoft.Design#CA1021;+!Microsoft.Design#CA1010;+!Microsoft.Design#CA1011;+!Microsoft.Design#CA1009;+!Microsoft.Design#CA1050;+!Microsoft.Design#CA1026;+!Microsoft.Design#CA1019;+!Microsoft.Design#CA1031;+!Microsoft.Design#CA1047;+!Microsoft.Design#CA1000;+!Microsoft.Design#CA1048;+!Microsoft.Design#CA1051;+!Microsoft.Design#CA1002;+!Microsoft.Design#CA1061;+!Microsoft.Design#CA1006;+!Microsoft.Design#CA1046;+!Microsoft.Design#CA1045;+!Microsoft.Design#CA1065;+!Microsoft.Design#CA1038;+!Microsoft.Design#CA1008;+!Microsoft.Design#CA1028;+!Microsoft.Design#CA1064;-!Microsoft.Design#CA1004;+!Microsoft.Design#CA1035;+!Microsoft.Design#CA1063;+!Microsoft.Design#CA1032;+!Microsoft.Design#CA1023;+!Microsoft.Design#CA1033;+!Microsoft.Design#CA1039;+!Microsoft.Design#CA1016;+!Microsoft.Design#CA1014;+!Microsoft.Design#CA1017;+!Microsoft.Design#CA1018;+!Microsoft.Design#CA1027;+!Microsoft.Design#CA1059;+!Microsoft.Design#CA1060;+!Microsoft.Design#CA1034;+!Microsoft.Design#CA1013;+!Microsoft.Design#CA1036;+!Microsoft.Design#CA1044;+!Microsoft.Design#CA1041;+!Microsoft.Design#CA1025;+!Microsoft.Design#CA1052;+!Microsoft.Design#CA1053;+!Microsoft.Design#CA1057;+!Microsoft.Design#CA1058;+!Microsoft.Design#CA1001;+!Microsoft.Design#CA1049;+!Microsoft.Design#CA1054;+!Microsoft.Design#CA1056;+!Microsoft.Design#CA1055;+!Microsoft.Design#CA1030;+!Microsoft.Design#CA1003;+!Microsoft.Design#CA1007;+!Microsoft.Design#CA1043;+!Microsoft.Design#CA1024;+!Microsoft.Globalization#CA1301;+!Microsoft.Globalization#CA1302;+!Microsoft.Globalization#CA1308;+!Microsoft.Globalization#CA1306;+!Microsoft.Globalization#CA1304;+!Microsoft.Globalization#CA1305;+!Microsoft.Globalization#CA2101;+!Microsoft.Globalization#CA1300;+!Microsoft.Globalization#CA1307;+!Microsoft.Globalization#CA1309;+!Microsoft.Interoperability#CA1403;+!Microsoft.Interoperability#CA1406;+!Microsoft.Interoperability#CA1413;+!Microsoft.Interoperability#CA1402;+!Microsoft.Interoperability#CA1407;+!Microsoft.Interoperability#CA1404;+!Microsoft.Interoperability#CA1410;+!Microsoft.Interoperability#CA1411;+!Microsoft.Interoperability#CA1405;+!Microsoft.Interoperability#CA1409;+!Microsoft.Interoperability#CA1415;+!Microsoft.Interoperability#CA1408;+!Microsoft.Interoperability#CA1414;+!Microsoft.Interoperability#CA1412;+!Microsoft.Interoperability#CA1400;+!Microsoft.Interoperability#CA1401;+!Microsoft.Maintainability#CA1506;+!Microsoft.Maintainability#CA1502;+!Microsoft.Maintainability#CA1501;+!Microsoft.Maintainability#CA1505;+!Microsoft.Maintainability#CA1504;+!Microsoft.Maintainability#CA1500;+!Microsoft.Mobility#CA1600;+!Microsoft.Mobility#CA1601;-!Microsoft.Naming#CA1702;+!Microsoft.Naming#CA1700;+!Microsoft.Naming#CA1712;+!Microsoft.Naming#CA1713;+!Microsoft.Naming#CA1714;+!Microsoft.Naming#CA1709;-!Microsoft.Naming#CA1704;+!Microsoft.Naming#CA1708;+!Microsoft.Naming#CA1715;-!Microsoft.Naming#CA1710;+!Microsoft.Naming#CA1720;+!Microsoft.Naming#CA1707;+!Microsoft.Naming#CA1722;-!Microsoft.Naming#CA1711;+!Microsoft.Naming#CA1716;+!Microsoft.Naming#CA1717;+!Microsoft.Naming#CA1725;+!Microsoft.Naming#CA1719;+!Microsoft.Naming#CA1721;+!Microsoft.Naming#CA1701;+!Microsoft.Naming#CA1703;+!Microsoft.Naming#CA1724;-!Microsoft.Naming#CA1726;+!Microsoft.Performance#CA1809;+!Microsoft.Performance#CA1811;+!Microsoft.Performance#CA1812;+!Microsoft.Performance#CA1813;+!Microsoft.Performance#CA1823;+!Microsoft.Performance#CA1800;+!Microsoft.Performance#CA1805;+!Microsoft.Performance#CA1810;+!Microsoft.Performance#CA1824;+!Microsoft.Performance#CA1822;+!Microsoft.Performance#CA1815;+!Microsoft.Performance#CA1814;+!Microsoft.Performance#CA1819;+!Microsoft.Performance#CA1821;+!Microsoft.Performance#CA1804;+!Microsoft.Performance#CA1820;+!Microsoft.Performance#CA1802;+!Microsoft.Portability#CA1901;+!Microsoft.Portability#CA1900;+!Microsoft.Reliability#CA2001;+!Microsoft.Reliability#CA2002;+!Microsoft.Reliability#CA2003;+!Microsoft.Reliability#CA2004;+!Microsoft.Reliability#CA2006;+!Microsoft.Security#CA2116;+!Microsoft.Security#CA2117;+!Microsoft.Security#CA2105;+!Microsoft.Security#CA2115;+!Microsoft.Security#CA2102;+!Microsoft.Security#CA2104;+!Microsoft.Security#CA2122;+!Microsoft.Security#CA2114;+!Microsoft.Security#CA2123;+!Microsoft.Security#CA2111;+!Microsoft.Security#CA2108;+!Microsoft.Security#CA2107;+!Microsoft.Security#CA2103;+!Microsoft.Security#CA2118;+!Microsoft.Security#CA2109;+!Microsoft.Security#CA2119;+!Microsoft.Security#CA2106;+!Microsoft.Security#CA2112;+!Microsoft.Security#CA2120;+!Microsoft.Security#CA2121;+!Microsoft.Security#CA2126;+!Microsoft.Security#CA2124;+!Microsoft.Security#CA2127;+!Microsoft.Security#CA2128;+!Microsoft.Security#CA2129;+!Microsoft.Usage#CA2243;+!Microsoft.Usage#CA2236;+!Microsoft.Usage#CA1816;+!Microsoft.Usage#CA2227;+!Microsoft.Usage#CA2213;+!Microsoft.Usage#CA2216;+!Microsoft.Usage#CA2214;+!Microsoft.Usage#CA2222;+!Microsoft.Usage#CA1806;+!Microsoft.Usage#CA2217;+!Microsoft.Usage#CA2212;+!Microsoft.Usage#CA2219;+!Microsoft.Usage#CA2201;+!Microsoft.Usage#CA2228;+!Microsoft.Usage#CA2221;+!Microsoft.Usage#CA2220;+!Microsoft.Usage#CA2240;+!Microsoft.Usage#CA2229;+!Microsoft.Usage#CA2238;+!Microsoft.Usage#CA2207;+!Microsoft.Usage#CA2208;+!Microsoft.Usage#CA2235;+!Microsoft.Usage#CA2237;+!Microsoft.Usage#CA2232;+!Microsoft.Usage#CA2223;+!Microsoft.Usage#CA2211;+!Microsoft.Usage#CA2233;+!Microsoft.Usage#CA2225;+!Microsoft.Usage#CA2226;+!Microsoft.Usage#CA2231;+!Microsoft.Usage#CA2224;+!Microsoft.Usage#CA2218;+!Microsoft.Usage#CA2234;+!Microsoft.Usage#CA2239;+!Microsoft.Usage#CA2200;+!Microsoft.Usage#CA1801;+!Microsoft.Usage#CA2242;+!Microsoft.Usage#CA2205;+!Microsoft.Usage#CA2230</CodeAnalysisRules>
-    <NoWarn>
-    </NoWarn>
+    <CodeAnalysisRules>-Microsoft.Usage#CA2209;+!Microsoft.Design#CA1012;-!Microsoft.Design#CA2210;+!Microsoft.Design#CA1040;+!Microsoft.Design#CA1005;+!Microsoft.Design#CA1020;-!Microsoft.Design#CA1021;+!Microsoft.Design#CA1010;-!Microsoft.Design#CA1011;+!Microsoft.Design#CA1009;+!Microsoft.Design#CA1050;+!Microsoft.Design#CA1026;+!Microsoft.Design#CA1019;+!Microsoft.Design#CA1031;+!Microsoft.Design#CA1047;-!Microsoft.Design#CA1000;+!Microsoft.Design#CA1048;-!Microsoft.Design#CA1051;-!Microsoft.Design#CA1002;+!Microsoft.Design#CA1061;-!Microsoft.Design#CA1006;+!Microsoft.Design#CA1046;+!Microsoft.Design#CA1045;+!Microsoft.Design#CA1065;+!Microsoft.Design#CA1038;+!Microsoft.Design#CA1008;+!Microsoft.Design#CA1028;+!Microsoft.Design#CA1064;-!Microsoft.Design#CA1004;+!Microsoft.Design#CA1035;-!Microsoft.Design#CA1063;+!Microsoft.Design#CA1032;+!Microsoft.Design#CA1023;-!Microsoft.Design#CA1033;+!Microsoft.Design#CA1039;+!Microsoft.Design#CA1016;+!Microsoft.Design#CA1014;+!Microsoft.Design#CA1017;+!Microsoft.Design#CA1018;+!Microsoft.Design#CA1027;+!Microsoft.Design#CA1059;+!Microsoft.Design#CA1060;+!Microsoft.Design#CA1034;+!Microsoft.Design#CA1013;+!Microsoft.Design#CA1036;+!Microsoft.Design#CA1044;+!Microsoft.Design#CA1041;+!Microsoft.Design#CA1025;+!Microsoft.Design#CA1052;+!Microsoft.Design#CA1053;+!Microsoft.Design#CA1057;+!Microsoft.Design#CA1058;+!Microsoft.Design#CA1001;+!Microsoft.Design#CA1049;+!Microsoft.Design#CA1054;+!Microsoft.Design#CA1056;+!Microsoft.Design#CA1055;+!Microsoft.Design#CA1030;+!Microsoft.Design#CA1003;-!Microsoft.Design#CA1007;+!Microsoft.Design#CA1043;-!Microsoft.Design#CA1024;+!Microsoft.Globalization#CA1301;+!Microsoft.Globalization#CA1302;-!Microsoft.Globalization#CA1308;+!Microsoft.Globalization#CA1306;+!Microsoft.Globalization#CA1304;-!Microsoft.Globalization#CA1305;+!Microsoft.Globalization#CA2101;+!Microsoft.Globalization#CA1300;-!Microsoft.Globalization#CA1307;+!Microsoft.Globalization#CA1309;+!Microsoft.Interoperability#CA1403;+!Microsoft.Interoperability#CA1406;+!Microsoft.Interoperability#CA1413;+!Microsoft.Interoperability#CA1402;+!Microsoft.Interoperability#CA1407;+!Microsoft.Interoperability#CA1404;+!Microsoft.Interoperability#CA1410;+!Microsoft.Interoperability#CA1411;+!Microsoft.Interoperability#CA1405;+!Microsoft.Interoperability#CA1409;+!Microsoft.Interoperability#CA1415;+!Microsoft.Interoperability#CA1408;+!Microsoft.Interoperability#CA1414;+!Microsoft.Interoperability#CA1412;+!Microsoft.Interoperability#CA1400;+!Microsoft.Interoperability#CA1401;+!Microsoft.Maintainability#CA1506;+!Microsoft.Maintainability#CA1502;+!Microsoft.Maintainability#CA1501;+!Microsoft.Maintainability#CA1505;+!Microsoft.Maintainability#CA1504;+!Microsoft.Maintainability#CA1500;+!Microsoft.Mobility#CA1600;+!Microsoft.Mobility#CA1601;-!Microsoft.Naming#CA1702;+!Microsoft.Naming#CA1700;+!Microsoft.Naming#CA1712;+!Microsoft.Naming#CA1713;+!Microsoft.Naming#CA1714;+!Microsoft.Naming#CA1709;-!Microsoft.Naming#CA1704;+!Microsoft.Naming#CA1708;+!Microsoft.Naming#CA1715;-!Microsoft.Naming#CA1710;-!Microsoft.Naming#CA1720;+!Microsoft.Naming#CA1707;+!Microsoft.Naming#CA1722;-!Microsoft.Naming#CA1711;+!Microsoft.Naming#CA1716;+!Microsoft.Naming#CA1717;+!Microsoft.Naming#CA1725;+!Microsoft.Naming#CA1719;-!Microsoft.Naming#CA1721;-!Microsoft.Naming#CA1701;-!Microsoft.Naming#CA1703;+!Microsoft.Naming#CA1724;-!Microsoft.Naming#CA1726;+!Microsoft.Performance#CA1809;-!Microsoft.Performance#CA1811;+!Microsoft.Performance#CA1812;+!Microsoft.Performance#CA1813;+!Microsoft.Performance#CA1823;+!Microsoft.Performance#CA1800;-!Microsoft.Performance#CA1805;+!Microsoft.Performance#CA1810;+!Microsoft.Performance#CA1824;-!Microsoft.Performance#CA1822;+!Microsoft.Performance#CA1815;+!Microsoft.Performance#CA1814;+!Microsoft.Performance#CA1819;+!Microsoft.Performance#CA1821;+!Microsoft.Performance#CA1804;+!Microsoft.Performance#CA1820;+!Microsoft.Performance#CA1802;+!Microsoft.Portability#CA1901;+!Microsoft.Portability#CA1900;+!Microsoft.Reliability#CA2001;+!Microsoft.Reliability#CA2002;+!Microsoft.Reliability#CA2003;+!Microsoft.Reliability#CA2004;+!Microsoft.Reliability#CA2006;+!Microsoft.Security#CA2116;+!Microsoft.Security#CA2117;+!Microsoft.Security#CA2105;+!Microsoft.Security#CA2115;+!Microsoft.Security#CA2102;+!Microsoft.Security#CA2104;+!Microsoft.Security#CA2122;+!Microsoft.Security#CA2114;+!Microsoft.Security#CA2123;+!Microsoft.Security#CA2111;+!Microsoft.Security#CA2108;+!Microsoft.Security#CA2107;+!Microsoft.Security#CA2103;+!Microsoft.Security#CA2118;+!Microsoft.Security#CA2109;+!Microsoft.Security#CA2119;+!Microsoft.Security#CA2106;+!Microsoft.Security#CA2112;+!Microsoft.Security#CA2120;+!Microsoft.Security#CA2121;+!Microsoft.Security#CA2126;+!Microsoft.Security#CA2124;+!Microsoft.Security#CA2127;+!Microsoft.Security#CA2128;+!Microsoft.Security#CA2129;+!Microsoft.Usage#CA2243;+!Microsoft.Usage#CA2236;+!Microsoft.Usage#CA1816;+!Microsoft.Usage#CA2227;+!Microsoft.Usage#CA2213;+!Microsoft.Usage#CA2216;+!Microsoft.Usage#CA2214;+!Microsoft.Usage#CA2222;+!Microsoft.Usage#CA1806;+!Microsoft.Usage#CA2217;+!Microsoft.Usage#CA2212;+!Microsoft.Usage#CA2219;+!Microsoft.Usage#CA2201;+!Microsoft.Usage#CA2228;+!Microsoft.Usage#CA2221;+!Microsoft.Usage#CA2220;+!Microsoft.Usage#CA2240;+!Microsoft.Usage#CA2229;+!Microsoft.Usage#CA2238;+!Microsoft.Usage#CA2207;+!Microsoft.Usage#CA2208;+!Microsoft.Usage#CA2235;+!Microsoft.Usage#CA2237;+!Microsoft.Usage#CA2232;+!Microsoft.Usage#CA2223;+!Microsoft.Usage#CA2211;+!Microsoft.Usage#CA2233;+!Microsoft.Usage#CA2225;+!Microsoft.Usage#CA2226;+!Microsoft.Usage#CA2231;+!Microsoft.Usage#CA2224;+!Microsoft.Usage#CA2218;+!Microsoft.Usage#CA2234;+!Microsoft.Usage#CA2239;+!Microsoft.Usage#CA2200;+!Microsoft.Usage#CA1801;+!Microsoft.Usage#CA2242;+!Microsoft.Usage#CA2205;+!Microsoft.Usage#CA2230</CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,97 +43,470 @@
     <Optimize>false</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\Debug\</OutputPath>
 <DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
-    <DefineConstants>DEBUG;TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;CLR2;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <NoWarn>
-    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
 <OutputPath>$(SolutionDir)\..\Bin\Release\</OutputPath>
-<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.XML</DocumentationFile>
-    <DefineConstants>TRACE;$(SignedSym);MICROSOFT_DYNAMIC;CLR2</DefineConstants>
+<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
+    <DefineConstants>TRACE;CLR2;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <BaseAddress>1929379840</BaseAddress>
-    <NoWarn>
-    </NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+<OutputPath>$(SolutionDir)\..\Bin\Silverlight Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;CLR2;$(SignedSym)</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <NoStdLib>true</NoStdLib>
+<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
+    <NoWarn>1591,618</NoWarn>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <SilverlightBuild>true</SilverlightBuild>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(Silverlight3Path)</SilverlightPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight Release|AnyCPU' ">
+<OutputPath>$(SolutionDir)\..\Bin\Silverlight Release\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;CLR2;$(SignedSym)</DefineConstants>
+<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1591,618</NoWarn>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SilverlightBuild>true</SilverlightBuild>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(Silverlight3Path)</SilverlightPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'V4 Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+<OutputPath>$(SolutionDir)\..\Bin\Debug\</OutputPath>
+<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE;CLR4;$(SignedSym)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'V4 Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+<OutputPath>$(SolutionDir)\..\Bin\Release\</OutputPath>
+<DocumentationFile>$(OutputPath)\Microsoft.Dynamic.xml</DocumentationFile>
+    <DefineConstants>TRACE;CLR4;$(SignedSym)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight 4 Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+<OutputPath>$(SolutionDir)\..\Bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;CLR4;$(SignedSym)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591,618</NoWarn>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NoStdLib>true</NoStdLib>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <SilverlightBuild>true</SilverlightBuild>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(Silverlight4Path)</SilverlightPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight 4 Release|AnyCPU' ">
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+<OutputPath>$(SolutionDir)\..\Bin\Release\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;CLR4;$(SignedSym)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NoWarn>1591,618</NoWarn>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <SilverlightBuild>true</SilverlightBuild>
+    <SilverlightPath Condition="'$(SilverlightPath)' == ''">$(Silverlight4Path)</SilverlightPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" />
+    <Compile Include="..\..\Hosts\Silverlight\SilverlightVersion.cs" Condition=" '$(SilverlightBuild)' == 'true' ">
+      <Link>Properties\SilverlightVersion.cs</Link>
+    </Compile>
+    <Compile Include="Actions\Calls\ActualArguments.cs" />
+    <Compile Include="Actions\Calls\ApplicableCandidate.cs" />
+    <Compile Include="Actions\Calls\ArgBuilder.cs" />
+    <Compile Include="Actions\Calls\ArgumentBinding.cs" />
+    <Compile Include="Actions\Calls\BindingResult.cs" />
+    <Compile Include="Actions\Calls\BindingTarget.cs" />
+    <Compile Include="Actions\Calls\ByRefReturnBuilder.cs" />
+    <Compile Include="Actions\Calls\CallFailure.cs" />
+    <Compile Include="Actions\Calls\CallFailureReason.cs" />
+    <Compile Include="Actions\Calls\CandidateSet.cs" />
+    <Compile Include="Actions\Calls\ConversionResult.cs" />
+    <Compile Include="Actions\Calls\DefaultArgBuilder.cs" />
+    <Compile Include="Actions\Calls\DefaultOverloadResolver.cs" />
+    <Compile Include="Actions\Calls\InstanceBuilder.cs" />
+    <Compile Include="Actions\Calls\KeywordArgBuilder.cs" />
+    <Compile Include="Actions\Calls\KeywordConstructorReturnBuilder.cs" />
+    <Compile Include="Actions\Calls\MethodCandidate.cs" />
+    <Compile Include="Actions\Calls\NarrowingLevel.cs" />
+    <Compile Include="Actions\Calls\OutArgBuilder.cs" />
+    <Compile Include="Actions\Calls\OverloadResolver.cs" />
+    <Compile Include="Actions\Calls\OverloadResolverFactory.cs" />
+    <Compile Include="Actions\Calls\ParameterMapping.cs" />
+    <Compile Include="Actions\Calls\ParameterWrapper.cs" />
+    <Compile Include="Actions\Calls\ParamsArgBuilder.cs" />
+    <Compile Include="Actions\Calls\ParamsDictArgBuilder.cs" />
+    <Compile Include="Actions\Calls\ReferenceArgBuilder.cs" />
+    <Compile Include="Actions\Calls\RestrictedArguments.cs" />
+    <Compile Include="Actions\Calls\ReturnBuilder.cs" />
+    <Compile Include="Actions\Calls\ReturnReferenceArgBuilder.cs" />
+    <Compile Include="Actions\Calls\SimpleArgBuilder.cs" />
+    <Compile Include="Actions\Calls\TypeInferer.cs" />
+    <Compile Include="Actions\ConversionResultKind.cs" />
+    <Compile Include="Actions\DefaultBinder.Operations.cs" />
+    <Compile Include="Actions\Interceptor.cs" />
+    <Compile Include="Actions\DynamicSiteHelper.cs" />
+    <Compile Include="Actions\ExtensionBinaryOperationBinder.cs" />
+    <Compile Include="Actions\ExtensionUnaryOperationBinder.cs" />
+    <Compile Include="Actions\MemberRequestKind.cs" />
+    <Compile Include="Actions\OperationBinder.cs" />
+    <Compile Include="Actions\OperationMetaObject.cs" />
+    <Compile Include="Ast\FinallyFlowControlExpression.cs" />
+    <Compile Include="Ast\FlowControlRewriter.cs" />
+    <Compile Include="Ast\SourceFileInformation.cs" />
+    <Compile Include="Ast\SkipInterpretExpression.cs" />
+    <Compile Include="Ast\VariableDictionaryExpression.cs" />
+    <Compile Include="Ast\NewArrayExpression.cs" />
+    <Compile Include="Ast\NewExpression.cs" />
+    <Compile Include="Ast\UnaryExpression.cs" />
+    <Compile Include="ComInterop\ArgBuilder.cs" />
+    <Compile Include="ComInterop\BoolArgBuilder.cs" />
+    <Compile Include="ComInterop\BoundDispEvent.cs" />
+    <Compile Include="ComInterop\CollectionExtensions.cs" />
+    <Compile Include="ComInterop\ComBinder.cs" />
+    <Compile Include="ComInterop\ComBinderHelpers.cs" />
+    <Compile Include="ComInterop\ComClassMetaObject.cs" />
+    <Compile Include="ComInterop\ComDispIds.cs" />
+    <Compile Include="ComInterop\ComEventDesc.cs" />
+    <Compile Include="ComInterop\ComEventSink.cs" />
+    <Compile Include="ComInterop\ComEventSinkProxy.cs" />
+    <Compile Include="ComInterop\ComEventSinksContainer.cs" />
+    <Compile Include="ComInterop\ComFallbackMetaObject.cs" />
+    <Compile Include="ComInterop\ComHresults.cs" />
+    <Compile Include="ComInterop\ComInterop.cs" />
+    <Compile Include="ComInterop\ComInvokeAction.cs" />
+    <Compile Include="ComInterop\ComInvokeBinder.cs" />
+    <Compile Include="ComInterop\ComMetaObject.cs" />
+    <Compile Include="ComInterop\ComMethodDesc.cs" />
+    <Compile Include="ComInterop\ComObject.cs" />
+    <Compile Include="ComInterop\ComParamDesc.cs" />
+    <Compile Include="ComInterop\ComRuntimeHelpers.cs" />
+    <Compile Include="ComInterop\ComType.cs" />
+    <Compile Include="ComInterop\ComTypeClassDesc.cs" />
+    <Compile Include="ComInterop\ComTypeDesc.cs" />
+    <Compile Include="ComInterop\ComTypeEnumDesc.cs" />
+    <Compile Include="ComInterop\ComTypeLibDesc.cs" />
+    <Compile Include="ComInterop\ComTypeLibInfo.cs" />
+    <Compile Include="ComInterop\ComTypeLibMemberDesc.cs" />
+    <Compile Include="ComInterop\ConversionArgBuilder.cs" />
+    <Compile Include="ComInterop\ConvertArgBuilder.cs" />
+    <Compile Include="ComInterop\ConvertibleArgBuilder.cs" />
+    <Compile Include="ComInterop\CurrencyArgBuilder.cs" />
+    <Compile Include="ComInterop\DateTimeArgBuilder.cs" />
+    <Compile Include="ComInterop\DispatchArgBuilder.cs" />
+    <Compile Include="ComInterop\DispCallable.cs" />
+    <Compile Include="ComInterop\DispCallableMetaObject.cs" />
+    <Compile Include="ComInterop\ErrorArgBuilder.cs" />
+    <Compile Include="ComInterop\Errors.cs" />
+    <Compile Include="ComInterop\ExcepInfo.cs" />
+    <Compile Include="ComInterop\Helpers.cs" />
+    <Compile Include="ComInterop\IDispatchComObject.cs" />
+    <Compile Include="ComInterop\IDispatchMetaObject.cs" />
+    <Compile Include="ComInterop\IPseudoComObject.cs" />
+    <Compile Include="ComInterop\NullArgBuilder.cs" />
+    <Compile Include="ComInterop\SimpleArgBuilder.cs" />
+    <Compile Include="ComInterop\SplatCallSite.cs" />
+    <Compile Include="ComInterop\StringArgBuilder.cs" />
+    <Compile Include="ComInterop\TypeEnumMetaObject.cs" />
+    <Compile Include="ComInterop\TypeLibInfoMetaObject.cs" />
+    <Compile Include="ComInterop\TypeLibMetaObject.cs" />
+    <Compile Include="ComInterop\TypeUtils.cs" />
+    <Compile Include="ComInterop\UnknownArgBuilder.cs" />
+    <Compile Include="ComInterop\VarEnumSelector.cs" />
+    <Compile Include="ComInterop\Variant.cs" />
+    <Compile Include="ComInterop\VariantArgBuilder.cs" />
+    <Compile Include="ComInterop\VariantArray.cs" />
+    <Compile Include="ComInterop\VariantBuilder.cs" />
+    <Compile Include="Generation\FieldBuilderExpression.cs" />
+    <Compile Include="Hosting\Shell\ICommandDispatcher.cs" />
+    <Compile Include="Hosting\Shell\Remote\ConsoleRestartManager.cs" />
+    <Compile Include="Hosting\Shell\Remote\RemoteCommandDispatcher.cs" />
+    <Compile Include="Hosting\Shell\Remote\RemoteConsoleCommandLine.cs" />
+    <Compile Include="Hosting\Shell\Remote\RemoteConsoleHost.cs" />
+    <Compile Include="Hosting\Shell\Remote\RemoteRuntimeServer.cs" />
+    <Compile Include="Interpreter\LightDelegateCreator.cs" />
+    <Compile Include="Interpreter\LightLambda.Generated.cs" />
+    <Compile Include="Interpreter\Interpreter.cs" />
+    <Compile Include="Interpreter\DynamicInstructions.Generated.cs" />
+    <Compile Include="Interpreter\DynamicInstructions.cs" />
+    <Compile Include="Interpreter\LightLambdaClosureVisitor.cs" />
+    <Compile Include="Interpreter\LightLambda.cs" />
+    <Compile Include="Interpreter\Instruction.cs" />
+    <Compile Include="Interpreter\LightCompiler.cs" />
+    <Compile Include="Interpreter\RuntimeVariables.cs" />
+    <Compile Include="Interpreter\InterpretedFrame.cs" />
+    <Compile Include="Interpreter\LastFaultingLineExpression.cs" />
+    <Compile Include="Math\BigIntegerV2.cs" />
+    <Compile Include="Math\BigIntegerV4.cs" />
+    <Compile Include="Runtime\BindingRestrictionsHelpers.cs" />
+    <Compile Include="Runtime\DynamicDelegateCreator.cs" />
+    <Compile Include="Runtime\DynamicNull.cs" />
+    <Compile Include="Runtime\Generator.cs" />
+    <Compile Include="Ast\GeneratorExpression.cs" />
+    <Compile Include="Ast\GeneratorRewriter.cs" />
+    <Compile Include="Ast\SymbolConstantExpression.cs" />
+    <Compile Include="Actions\Calls\Candidate.cs" />
+    <Compile Include="Ast\YieldExpression.cs" />
+    <Compile Include="Generation\DelegateHelpers.cs" />
+    <Compile Include="Generation\DelegateHelpers.Generated.cs" />
+    <Compile Include="Generation\AssemblyGen.cs" />
+    <Compile Include="Generation\ConstantCheck.cs" />
+    <Compile Include="Generation\DynamicILGen.cs" />
+    <Compile Include="Generation\ILGen.cs" />
+    <Compile Include="Generation\KeyedQueue.cs" />
+    <Compile Include="Generation\Snippets.cs" />
+    <Compile Include="Generation\TypeGen.cs" />
+    <Compile Include="Actions\BinderHelpers.cs" />
+    <Compile Include="Actions\ComboActionRewriter.cs" />
+    <Compile Include="Actions\ComboBinder.cs" />
+    <Compile Include="Actions\ConditionalBuilder.cs" />
+    <Compile Include="Actions\DefaultBinder.Conversions.cs" />
+    <Compile Include="Actions\DefaultBinder.DeleteMember.cs" />
+    <Compile Include="Actions\DefaultBinder.GetMember.cs" />
+    <Compile Include="Actions\DefaultBinder.Invoke.cs" />
+    <Compile Include="Actions\DefaultBinder.MethodCalls.cs" />
+    <Compile Include="Actions\DefaultBinder.SetMember.cs" />
+    <Compile Include="Actions\DefaultBinder.cs" />
+    <Compile Include="Actions\NoSideEffectsAttribute.cs" />
+    <Compile Include="Actions\OperatorInfo.cs" />
+    <Compile Include="Ast\BinaryExpression.cs" />
+    <Compile Include="Ast\Block.cs" />
+    <Compile Include="Ast\ConstantExpression.cs" />
+    <Compile Include="Ast\EmptyStatements.cs" />
+    <Compile Include="Ast\LambdaBuilder.cs" />
+    <Compile Include="Ast\LambdaParameterRewriter.cs" />
+    <Compile Include="Ast\LoopStatement.cs" />
+    <Compile Include="Ast\MethodCallExpression.cs" />
+    <Compile Include="Ast\TryStatementBuilder.cs" />
+    <Compile Include="MultiRuntimeAwareAttribute.cs" />
+    <Compile Include="PerfTrack.cs" />
+    <Compile Include="Runtime\CompilerContext.cs" />
+    <Compile Include="Runtime\DynamicLanguageProviderAttribute.cs" />
+    <Compile Include="Runtime\IConvertibleMetaObject.cs" />
+    <Compile Include="Runtime\ICustomScriptCodeData.cs" />
+    <Compile Include="Runtime\IRestrictedMetaObject.cs" />
+    <Compile Include="Runtime\LegacyScriptCode.cs" />
+    <Compile Include="Runtime\MetaObjectExtensions.cs" />
+    <Compile Include="Runtime\RestrictedMetaObject.cs" />
+    <Compile Include="Runtime\SavableScriptCode.cs" />
+    <Compile Include="Runtime\TokenizerBuffer.cs" />
+    <Compile Include="Generation\MethodSignatureInfo.cs" />
+    <Compile Include="Hosting\Shell\BasicConsole.cs" />
+    <Compile Include="Hosting\Shell\CommandLine.cs" />
+    <Compile Include="Hosting\Shell\ConsoleHost.cs" />
+    <Compile Include="Hosting\Shell\ConsoleHostOptions.cs" />
+    <Compile Include="Hosting\Shell\ConsoleHostOptionsParser.cs" />
+    <Compile Include="Hosting\Shell\ConsoleOptions.cs" />
+    <Compile Include="Hosting\Shell\IConsole.cs" />
+    <Compile Include="Hosting\Shell\OptionsParser.cs" />
+    <Compile Include="Hosting\Shell\Style.cs" />
+    <Compile Include="Hosting\Shell\SuperConsole.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Math\Complex64.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\AmbiguousFileNameException.cs" />
+    <Compile Include="Runtime\BinderOps.cs" />
+    <Compile Include="Runtime\CallTypes.cs" />
+    <Compile Include="Runtime\Cast.Generated.cs" />
+    <Compile Include="Runtime\Cast.cs" />
+    <Compile Include="Runtime\CodeDomCodeGen.cs" />
+    <Compile Include="Runtime\DefaultLanguageContext.cs" />
+    <Compile Include="Runtime\DelegateInfo.cs" />
+    <Compile Include="Runtime\DelegateSignatureInfo.cs" />
+    <Compile Include="Runtime\ISlice.cs" />
+    <Compile Include="Runtime\IdDispenser.cs" />
+    <Compile Include="Runtime\LanguageBoundTextContentProvider.cs" />
+    <Compile Include="Runtime\LocalsDictionary.cs" />
+    <Compile Include="Runtime\PositionTrackingWriter.cs" />
+    <Compile Include="Runtime\ReturnFixer.cs" />
+    <Compile Include="Runtime\SourceStringContentProvider.cs" />
+    <Compile Include="Utils\CacheDict.cs" />
+    <Compile Include="Utils\CollectionExtensions.cs" />
+    <Compile Include="Utils\CopyOnWriteList.cs" />
+    <Compile Include="Utils\DynamicUtils.cs" />
+    <Compile Include="Utils\EnumUtils.cs" />
+    <Compile Include="Utils\ListEqualityComparer.cs" />
+    <Compile Include="Utils\MathUtils.cs" />
+    <Compile Include="Utils\MonitorUtils.cs" />
+    <Compile Include="Utils\Publisher.cs" />
+    <Compile Include="Utils\ReadOnlyDictionary.cs" />
+    <Compile Include="Utils\ReferenceEqualityComparer.cs" />
+    <Compile Include="Utils\ReflectedCaller.Generated.cs" />
+    <Compile Include="Utils\ReflectedCaller.cs" />
+    <Compile Include="Utils\HashSet.cs" />
+    <Compile Include="Utils\SynchronizedDictionary.cs" />
+    <Compile Include="Utils\ThreadLocal.cs" />
+    <Compile Include="Utils\TypeExtensions.cs" />
+    <Compile Include="Utils\TypeUtils.cs" />
+    <Compile Include="Utils\ValueArray.cs" />
+    <Compile Include="Utils\WeakCollection.cs" />
+    <Compile Include="Utils\WeakDictionary.cs" />
+    <Compile Include="Utils\WeakHandle.cs" />
+    <Compile Include="DebugOptions.cs" />
+    <Compile Include="SpecSharp.cs" />
+    <Compile Include="MutableTuple.cs" />
+    <Compile Include="Actions\ActionBinder.cs" />
+    <Compile Include="Actions\Argument.cs" />
+    <Compile Include="Actions\ArgumentType.cs" />
+    <Compile Include="Actions\BoundMemberTracker.cs" />
+    <Compile Include="Actions\CallSignature.cs" />
+    <Compile Include="Actions\ConstructorTracker.cs" />
+    <Compile Include="Actions\CustomTracker.cs" />
+    <Compile Include="Actions\ErrorInfo.cs" />
+    <Compile Include="Actions\EventTracker.cs" />
+    <Compile Include="Actions\ExtensionMethodTracker.cs" />
+    <Compile Include="Actions\ExtensionPropertyTracker.cs" />
+    <Compile Include="Actions\FieldTracker.cs" />
+    <Compile Include="Actions\MemberGroup.cs" />
+    <Compile Include="Actions\MemberTracker.cs" />
+    <Compile Include="Actions\MethodGroup.cs" />
+    <Compile Include="Actions\MethodTracker.cs" />
+    <Compile Include="Actions\NamespaceTracker.cs" />
+    <Compile Include="Actions\NestedTypeTracker.cs" />
+    <Compile Include="Actions\PropertyTracker.cs" />
+    <Compile Include="Actions\ReflectedPropertyTracker.cs" />
+    <Compile Include="Actions\TopNamespaceTracker.cs" />
+    <Compile Include="Actions\TrackerTypes.cs" />
+    <Compile Include="Actions\TypeGroup.cs" />
+    <Compile Include="Actions\TypeTracker.cs" />
+    <Compile Include="Ast\DebugStatement.cs" />
+    <Compile Include="Ast\IfStatementBuilder.cs" />
+    <Compile Include="Ast\IfStatementTest.cs" />
+    <Compile Include="Generation\CompilerHelpers.cs" />
+    <Compile Include="Generation\IExpressionSerializable.cs" />
+    <Compile Include="Generation\ParameterInfoWrapper.cs" />
+    <Compile Include="Generation\ToDiskRewriter.cs" />
+    <Compile Include="Runtime\AssemblyTypeNames.cs" />
+    <Compile Include="Runtime\BaseSymbolDictionary.cs" />
+    <Compile Include="Runtime\BinderType.cs" />
+    <Compile Include="Runtime\CallTargets.cs" />
+    <Compile Include="Runtime\CustomSymbolDictionary.cs" />
+    <Compile Include="Runtime\DlrCachedCodeAttribute.cs" />
+    <Compile Include="Runtime\DocumentationAttribute.cs" />
+    <Compile Include="Runtime\DynamicRuntimeHostingProvider.cs" />
+    <Compile Include="Runtime\DynamicStackFrame.cs" />
+    <Compile Include="Runtime\ExceptionHelpers.cs" />
+    <Compile Include="Runtime\ExplicitConversionMethodAttribute.cs" />
+    <Compile Include="Runtime\Extensible.cs" />
+    <Compile Include="Runtime\ExtensionTypeAttribute.cs" />
+    <Compile Include="Runtime\ExtraKeyEnumerator.cs" />
+    <Compile Include="Runtime\IMembersList.cs" />
+    <Compile Include="Runtime\ImplicitConversionMethodAttribute.cs" />
+    <Compile Include="Runtime\ModuleChangeEventArgs.cs" />
+    <Compile Include="Runtime\ModuleChangeEventType.cs" />
+    <Compile Include="Runtime\NullTextContentProvider.cs" />
+    <Compile Include="Runtime\OperationFailed.cs" />
+    <Compile Include="Runtime\OperatorSlotAttribute.cs" />
+    <Compile Include="Runtime\PropertyMethodAttribute.cs" />
+    <Compile Include="Runtime\ReflectionCache.cs" />
+    <Compile Include="Runtime\ScriptingRuntimeHelpers.cs" />
+    <Compile Include="Runtime\StaticExtensionMethodAttribute.cs" />
+    <Compile Include="Runtime\SymbolDictionary.cs" />
+    <Compile Include="Runtime\TransformDictEnumerator.cs" />
+    <Compile Include="Runtime\Uninitialized.cs" />
+    <Compile Include="Utils\ArrayUtils.cs" />
+    <Compile Include="Utils\AssemblyQualifiedTypeName.cs" />
+    <Compile Include="Utils\Assert.cs" />
+    <Compile Include="Utils\CheckedDictionaryEnumerator.cs" />
+    <Compile Include="Utils\CollectionUtils.cs" />
+    <Compile Include="Utils\ContractUtils.cs" />
+    <Compile Include="Utils\DictionaryUnionEnumerator.cs" />
+    <Compile Include="Utils\ExceptionFactory.Generated.cs" />
+    <Compile Include="Utils\ExceptionUtils.cs" />
+    <Compile Include="Utils\IOUtils.cs" />
+    <Compile Include="Utils\ReflectionUtils.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
+    <Compile Include="Utils\TextStream.cs" />
+    <Compile Include="IValueEquality.cs" />
+    <Compile Include="KeyboardInterruptException.cs" />
+    <Compile Include="SourceFileContentProvider.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(SilverlightBuild)' != 'true' ">
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Numerics" Condition=" '$(TargetFrameworkVersion)' == 'v4.0' " />
+    <Reference Include="System.Core" Condition=" '$(TargetFrameworkVersion)' == 'v4.0' " />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(SilverlightBuild)' == 'true' ">
+    <Reference Include="mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" >
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SilverlightPath)\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" >
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SilverlightPath)\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SilverlightPath)\System.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Scripting.Core\Microsoft.Scripting.Core.csproj">
+    <ProjectReference Include="..\Microsoft.Scripting.Core\Microsoft.Scripting.Core.csproj" Condition="'$(TargetFrameworkVersion)' != 'v4.0'">
       <Project>{2AE75F5A-CD1F-4925-9647-AF4D1C282FB4}</Project>
       <Name>Microsoft.Scripting.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Scripting.Core\Microsoft.Scripting.ExtensionAttribute.csproj">
+    <ProjectReference Include="..\Microsoft.Scripting.Core\Microsoft.Scripting.ExtensionAttribute.csproj" Condition="'$(TargetFrameworkVersion)' != 'v4.0'">
       <Project>{8B0F1074-750E-4D64-BF23-A1E0F54261E5}</Project>
       <Name>Microsoft.Scripting.ExtensionAttribute</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Scripting\Microsoft.Scripting.csproj">
+      <Project>{02FF0909-F5AD-48CF-A86A-345E721B7E40}</Project>
+      <Name>Microsoft.Scripting</Name>
+    </ProjectReference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Remoting" Condition=" '$(SilverlightBuild)' != 'true' " />
+    <Reference Include="System.Xml" Condition=" '$(SilverlightBuild)' != 'true' " />
+    <Reference Include="System.Numerics" Condition="'$(TargetFrameworkVersion)' == 'v4.0'" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConvertArgBuilder.cs" />
-    <Compile Include="Properties\GlobalSuppressions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ArgBuilder.cs" />
-    <Compile Include="Assert.cs" />
-    <Compile Include="BoolArgBuilder.cs" />
-    <Compile Include="BoundDispEvent.cs" />
-    <Compile Include="CollectionExtensions.cs" />
-    <Compile Include="ComBinder.cs" />
-    <Compile Include="ComBinderHelpers.cs" />
-    <Compile Include="ComDispIds.cs" />
-    <Compile Include="ComEventDesc.cs" />
-    <Compile Include="ComEventSink.cs" />
-    <Compile Include="ComEventSinkProxy.cs" />
-    <Compile Include="ComEventSinksContainer.cs" />
-    <Compile Include="ComFallbackMetaObject.cs" />
-    <Compile Include="ComHresults.cs" />
-    <Compile Include="ComInterop.cs" />
-    <Compile Include="ComInvokeAction.cs" />
-    <Compile Include="ComInvokeBinder.cs" />
-    <Compile Include="ComMetaObject.cs" />
-    <Compile Include="ComMethodDesc.cs" />
-    <Compile Include="ComObject.cs" />
-    <Compile Include="ComRuntimeHelpers.cs" />
-    <Compile Include="ComTypeClassDesc.cs" />
-    <Compile Include="ComTypeDesc.cs" />
-    <Compile Include="ComTypeEnumDesc.cs" />
-    <Compile Include="ComTypeLibDesc.cs" />
-    <Compile Include="ContractUtils.cs" />
-    <Compile Include="ConversionArgBuilder.cs" />
-    <Compile Include="ConvertibleArgBuilder.cs" />
-    <Compile Include="CurrencyArgBuilder.cs" />
-    <Compile Include="DateTimeArgBuilder.cs" />
-    <Compile Include="DispatchArgBuilder.cs" />
-    <Compile Include="DispCallable.cs" />
-    <Compile Include="DispCallableMetaObject.cs" />
-    <Compile Include="Errors.cs" />
-    <Compile Include="ErrorArgBuilder.cs" />
-    <Compile Include="ExcepInfo.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="IDispatchComObject.cs" />
-    <Compile Include="IDispatchMetaObject.cs" />
-    <Compile Include="NullArgBuilder.cs" />
-    <Compile Include="SimpleArgBuilder.cs" />
-    <Compile Include="SplatCallSite.cs" />
-    <Compile Include="StringArgBuilder.cs" />
-    <Compile Include="TypeUtils.cs" />
-    <Compile Include="UnknownArgBuilder.cs" />
-    <Compile Include="VarEnumSelector.cs" />
-    <Compile Include="Variant.cs" />
-    <Compile Include="VariantArgBuilder.cs" />
-    <Compile Include="VariantArray.cs" />
-    <Compile Include="VariantBuilder.cs" />
+    <Content Include="Microsoft.Scripting.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Hosting\Providers\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" Condition=" '$(SilverlightTreeBuild)' != 'true' " />
 </Project>

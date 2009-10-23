@@ -12,21 +12,17 @@
  *
  *
  * ***************************************************************************/
-using System; using Microsoft;
 
-
+using System;
 using System.Diagnostics;
-#if CODEPLEX_40
 using System.Dynamic.Utils;
+
+#if CLR2
+namespace Microsoft.Scripting.Ast {
 #else
-using Microsoft.Scripting.Utils;
+namespace System.Linq.Expressions {
 #endif
 
-#if CODEPLEX_40
-namespace System.Linq.Expressions {
-#else
-namespace Microsoft.Linq.Expressions {
-#endif
     internal enum AnalyzeTypeIsResult {
         KnownFalse,
         KnownTrue,
