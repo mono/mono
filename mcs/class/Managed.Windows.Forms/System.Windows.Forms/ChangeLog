@@ -1,3 +1,10 @@
+2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ColumnHeader.cs: When calculating the width and height of the
+	column, try to expand to the right and use all the free space if we
+	are the last column *and* the resize mode is set to -2/header content.
+	Fixes #544716.
+
 2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When retrieving the top item, take into account the
