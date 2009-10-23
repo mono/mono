@@ -1560,20 +1560,6 @@ namespace Mono.CSharp {
 	//
 	public class DefaultValueExpression : Expression
 	{
-		sealed class DefaultValueNullLiteral : NullLiteral
-		{
-			public DefaultValueNullLiteral (DefaultValueExpression expr)
-				: base (expr.type, expr.loc)
-			{
-			}
-
-			public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type t, bool expl)
-			{
-				Error_ValueCannotBeConvertedCore (ec, loc, t, expl);
-			}
-		}
-
-
 		Expression expr;
 
 		public DefaultValueExpression (Expression expr, Location loc)
@@ -1606,7 +1592,7 @@ namespace Mono.CSharp {
 				return new NullLiteral (Location).ConvertImplicitly (type);
 
 			if (TypeManager.IsReferenceType (type))
-				return new DefaultValueNullLiteral (this);
+				return new NullConstant (type, loc);
 
 			Constant c = New.Constantify (type);
 			if (c != null)

@@ -264,7 +264,7 @@ namespace Mono.CSharp {
 #if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			return System.Linq.Expressions.Expression.Constant (GetValue ());
+			return System.Linq.Expressions.Expression.Constant (GetValue (), type);
 		}
 #endif
 
@@ -1835,9 +1835,119 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool IsNull {
+			get {
+				return IsDefaultValue;
+			}
+		}
+
 		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 		{
 			return null;
+		}
+	}
+
+	//
+	// Null constant can have its own type, think of `default (Foo)'
+	//
+	public class NullConstant : Constant
+	{
+		public NullConstant (Type type, Location loc)
+			: base (loc)
+		{
+			eclass = ExprClass.Value;
+			this.type = type;
+		}
+
+		public override string AsString ()
+		{
+			return GetSignatureForError ();
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldnull);
+
+			// Only to make verifier happy
+			if (TypeManager.IsGenericParameter (type))
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+		}
+
+		public override string ExprClassName {
+			get {
+				return GetSignatureForError ();
+			}
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return "null";
+		}
+
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type targetType)
+		{
+			if (targetType.IsPointer) {
+				if (IsLiteral || this is NullPointer)
+					return new EmptyConstantCast (new NullPointer (loc), targetType);
+
+				return null;
+			}
+
+			// Exlude internal compiler types
+			if (targetType == InternalType.AnonymousMethod)
+				return null;
+
+			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))
+				return null;
+
+			if (TypeManager.IsReferenceType (targetType))
+				return new NullConstant (targetType, loc);
+
+			if (TypeManager.IsNullableType (targetType))
+				return Nullable.LiftedNull.Create (targetType, loc);
+
+			return null;
+		}
+
+		public override Constant ConvertImplicitly (Type targetType)
+		{
+			return ConvertExplicitly (false, targetType);
+		}
+
+		public override object GetValue ()
+		{
+			return null;
+		}
+
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		public override bool IsDefaultValue {
+			get { return true; }
+		}
+
+		public override bool IsNegative {
+			get { return false; }
+		}
+
+		public override bool IsNull {
+			get { return true; }
+		}
+
+		public override bool IsZeroInteger {
+			get { return true; }
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
 		}
 	}
 
@@ -1846,7 +1956,6 @@ namespace Mono.CSharp {
 	///   used by BitwiseAnd to ensure that the second expression is invoked
 	///   regardless of the value of the left side.  
 	/// </summary>
-	
 	public class SideEffectConstant : Constant {
 		public Constant value;
 		Expression side_effect;

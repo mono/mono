@@ -25,6 +25,9 @@ namespace Mono.CSharp {
 		// On success, the types of `lc' and `rc' on output will always match,
 		// and the pair will be one of:
 		//
+		// TODO: BinaryFold should be called as an optimization step only,
+		// error checking here is weak
+		//		
 		static bool DoBinaryNumericPromotions (ref Constant left, ref Constant right)
 		{
 			Type ltype = left.Type;
@@ -826,24 +829,18 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Equality:
-				if (left is NullLiteral){
-					if (right is NullLiteral)
-						return new BoolConstant (true, left.Location);
-					else if (right is StringConstant)
+				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
+					if (left.IsNull || right.IsNull) {
+						return ReducedExpression.Create (
+							new BoolConstant (left.IsNull == right.IsNull, left.Location),
+							new Binary (oper, left, right));
+					}
+
+					if (left is StringConstant && right is StringConstant)
 						return new BoolConstant (
-							((StringConstant) right).Value == null, left.Location);
-				} else if (right is NullLiteral) {
-					if (left is NullLiteral)
-						return new BoolConstant (true, left.Location);
-					else if (left is StringConstant)
-						return new BoolConstant (
-							((StringConstant) left).Value == null, left.Location);
-				}
-				if (left is StringConstant && right is StringConstant){
-					return new BoolConstant (
-						((StringConstant) left).Value ==
-						((StringConstant) right).Value, left.Location);
-					
+							((StringConstant) left).Value == ((StringConstant) right).Value, left.Location);
+
+					return null;
 				}
 
 				if (!DoBinaryNumericPromotions (ref left, ref right))
@@ -874,24 +871,18 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
-				if (left is NullLiteral) {
-					if (right is NullLiteral)
-						return new BoolConstant (false, left.Location);
-					else if (right is StringConstant)
+				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
+					if (left.IsNull || right.IsNull) {
+						return ReducedExpression.Create (
+							new BoolConstant (left.IsNull != right.IsNull, left.Location),
+							new Binary (oper, left, right));
+					}
+
+					if (left is StringConstant && right is StringConstant)
 						return new BoolConstant (
-							((StringConstant) right).Value != null, left.Location);
-				} else if (right is NullLiteral) {
-					if (left is NullLiteral)
-						return new BoolConstant (false, left.Location);
-					else if (left is StringConstant)
-						return new BoolConstant (
-							((StringConstant) left).Value != null, left.Location);
-				}
-				if (left is StringConstant && right is StringConstant){
-					return new BoolConstant (
-						((StringConstant) left).Value !=
-						((StringConstant) right).Value, left.Location);
-					
+							((StringConstant) left).Value != ((StringConstant) right).Value, left.Location);
+
+					return null;
 				}
 
 				if (!DoBinaryNumericPromotions (ref left, ref right))

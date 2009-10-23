@@ -1,5 +1,10 @@
 2009-10-23  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs, nullable.cs, expression.cs, literal.cs, cfold.cs:
+	Separate NullConstant from NullLiteral.
+
+2009-10-23  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, eval.cs, decl.cs, roottypes.cs, context.cs,
 	anonymous.cs, expression.cs, rootcontext.cs, ecore.cs, class.cs,
 	flowanalysis.cs, cs-parser.jay, driver.cs, codegen.cs: Split

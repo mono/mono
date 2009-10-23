@@ -435,7 +435,7 @@ namespace Mono.CSharp.Nullable
 
 				null_value = LiftedNull.Create (type, loc);
 			} else {
-				null_value = new NullLiteral (type, loc);
+				null_value = new NullConstant (type, loc);
 			}
 
 			eclass = ExprClass.Value;
