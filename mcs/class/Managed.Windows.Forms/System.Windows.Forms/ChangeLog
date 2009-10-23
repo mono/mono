@@ -1,5 +1,11 @@
 2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ColumnHeader.cs: Remove the double linear search in the Index
+	property, by removing the call to Contains, which is not needed.
+	Also, Columns collection can never be null.
+
+2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ColumnHeader.cs: When calculating the width and height of the
 	column, try to expand to the right and use all the free space if we
 	are the last column *and* the resize mode is set to -2/header content.

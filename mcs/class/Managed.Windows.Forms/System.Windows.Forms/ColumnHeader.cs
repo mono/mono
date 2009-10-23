@@ -265,10 +265,9 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public int Index {
 			get {
-				if (owner != null && owner.Columns != null
-				    && owner.Columns.Contains (this)) {
+				if (owner != null)
 					return owner.Columns.IndexOf (this);
-				}
+
 				return -1;
 			}
 		}
