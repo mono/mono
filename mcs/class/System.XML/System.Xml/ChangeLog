@@ -1,3 +1,7 @@
+2009-10-23  Andreia Gaita  <avidigal@novell.com>
+
+	* XmlConvert.cs: make ToUri static, fixes #548918 (moon)
+
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : fix wrong ToDateTimeOffset loop, based on the
