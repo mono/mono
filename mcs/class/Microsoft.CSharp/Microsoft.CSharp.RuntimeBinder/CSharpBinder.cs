@@ -104,7 +104,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (value.LimitType == typeof (object))
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 
-				return new Compiler.NullLiteral (Compiler.Location.Null);
+				return new Compiler.NullConstant (value.LimitType, Compiler.Location.Null);
 			}
 
 			if (info != null) {
