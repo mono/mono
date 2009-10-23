@@ -412,6 +412,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (10, col.Width);
 		}
 
+		// Ensure the last column is using all the free space to the right
+		[Test]
+		public void Width_AutoResize_Expand ()
+		{
+			ListView lv = new ListView ();
+			lv.BeginUpdate ();
+			lv.View = View.Details;
+			ColumnHeader col1 = new ColumnHeader ("One");
+			ColumnHeader col2 = new ColumnHeader ("Two");
+			lv.Columns.AddRange (new ColumnHeader [] { col1, col2 });
+			lv.EndUpdate ();
+
+			col1.Width = 10;
+			col2.Width = 10;
+			Assert.AreEqual (10, col1.Width, "#A1");
+			Assert.AreEqual (10, col2.Width, "#A2");
+
+			// Need to create the handle in order to actually use the auto size feature
+			lv.CreateControl ();
+
+			col2.Width = -2;
+			Assert.AreEqual (true, col2.Width == lv.ClientRectangle.Width - col1.Width, "#B1");
+		}
+
 #if NET_2_0
 		public void ColumnReordered (object sender, ColumnReorderedEventArgs  e)
 		{
