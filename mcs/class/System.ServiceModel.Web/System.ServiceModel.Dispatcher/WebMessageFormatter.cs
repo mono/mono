@@ -26,7 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -157,9 +158,11 @@ namespace System.ServiceModel.Description
 				break;
 			case WebContentFormat.Json:
 				// FIXME: after name argument they are hack
+#if !NET_2_1 || MONOTOUCH
 				if (IsResponseBodyWrapped)
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, BodyName ?? p.Name, null, 0x100000, false, null, true));
 				else
+#endif
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type));
 				break;
 			default:
@@ -204,6 +207,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
+#if !NET_2_1
 		internal class RequestDispatchFormatter : WebDispatchMessageFormatter
 		{
 			public RequestDispatchFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
@@ -229,6 +233,7 @@ namespace System.ServiceModel.Description
 				throw new NotSupportedException ();
 			}
 		}
+#endif
 
 		internal abstract class WebClientMessageFormatter : WebMessageFormatter, IClientMessageFormatter
 		{
@@ -243,7 +248,7 @@ namespace System.ServiceModel.Description
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (messageVersion);
 
-				var c = new NameValueCollection ();
+				var c = new Dictionary<string,string> ();
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
 
@@ -252,7 +257,7 @@ namespace System.ServiceModel.Description
 
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
-					string name = p.Name.ToUpperInvariant ();
+					string name = p.Name.ToUpper (CultureInfo.InvariantCulture);
 					if (UriTemplate.PathSegmentVariableNames.Contains (name) ||
 					    UriTemplate.QueryValueVariableNames.Contains (name))
 						c.Add (name, parameters [i] != null ? Converter.ConvertValueToString (parameters [i], parameters [i].GetType ()) : null);
@@ -269,9 +274,10 @@ namespace System.ServiceModel.Description
 				var hp = new HttpRequestMessageProperty ();
 				hp.Method = Info.Method;
 
-				// FIXME: isn't it always null?
+#if !NET_2_1
 				if (WebOperationContext.Current != null)
 					WebOperationContext.Current.OutgoingRequest.Apply (hp);
+#endif
 				// FIXME: set hp.SuppressEntityBody for some cases.
 				ret.Properties.Add (HttpRequestMessageProperty.Name, hp);
 
@@ -333,10 +339,12 @@ namespace System.ServiceModel.Description
 			object value;
 			XmlObjectSerializer serializer;
 
+#if !NET_2_1
 			protected override BodyWriter OnCreateBufferedCopy (int maxBufferSize)
 			{
 				return new WrappedBodyWriter (value, serializer, name, ns, is_json);
 			}
+#endif
 
 			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
 			{
@@ -367,6 +375,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
+#if !NET_2_1
 		internal abstract class WebDispatchMessageFormatter : WebMessageFormatter, IDispatchMessageFormatter
 		{
 			protected WebDispatchMessageFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
@@ -470,5 +479,6 @@ namespace System.ServiceModel.Description
 				}
 			}
 		}
+#endif
 	}
 }

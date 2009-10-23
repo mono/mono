@@ -90,8 +90,10 @@ namespace System.ServiceModel.Dispatcher
 				else if (parameter [0] != '"')
 					return parameter;
 				break;
+#if !NET_2_1
 			case TypeCode.Char:
 				return parameter != null ? Char.Parse (parameter): default (char);
+#endif
 			case TypeCode.SByte:
 				return parameter != null ? SByte.Parse (parameter, CultureInfo.InvariantCulture): default (sbyte);
 			case TypeCode.Byte:
@@ -172,7 +174,7 @@ namespace System.ServiceModel.Dispatcher
 					parameter.ToString ();
 				StringBuilder sb = new StringBuilder (s);
 				sb.Replace ("\"", "\\\"");
-				sb.Insert (0, '\"');
+				sb.Insert (0, "\"");
 				sb.Append ('\"');
 				return sb.ToString ();
 			default:

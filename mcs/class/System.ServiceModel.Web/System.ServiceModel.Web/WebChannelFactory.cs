@@ -39,23 +39,30 @@ namespace System.ServiceModel.Web
 {
 	public class WebChannelFactory<TChannel> : ChannelFactory<TChannel>
 	{
+#if !NET_2_1
 		public WebChannelFactory ()
 			: base ()
 		{
 		}
 
-		public WebChannelFactory (Type serviceType)
+		public WebChannelFactory(Binding binding)
+			: base(binding)
+		{
+		}
+
+		public WebChannelFactory(ServiceEndpoint endpoint)
+			: base(endpoint)
+		{
+		}
+#endif
+
+		public WebChannelFactory(Type serviceType)
 			: base (serviceType)
 		{
 		}
 
 		public WebChannelFactory (string configurationName)
 			: base (configurationName)
-		{
-		}
-
-		public WebChannelFactory (Binding binding)
-			: base (binding)
 		{
 		}
 
@@ -75,15 +82,12 @@ namespace System.ServiceModel.Web
 		{
 		}
 
-		public WebChannelFactory (ServiceEndpoint endpoint)
-			: base (endpoint)
-		{
-		}
-
 		protected override void OnOpening ()
 		{
+#if !NET_2_1
 			if (Endpoint.Behaviors.Find<WebHttpBehavior> () == null)
 				Endpoint.Behaviors.Add (new WebHttpBehavior ());
+#endif
 
 			if (Endpoint.Binding == null)
 				Endpoint.Binding = new WebHttpBinding ();

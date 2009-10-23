@@ -38,6 +38,16 @@ namespace System.ServiceModel.Description
 	{
 		public static WebAttributeInfo GetWebAttributeInfo (this OperationDescription od)
 		{
+#if NET_2_1
+			var mi = od.BeginMethod ?? od.SyncMethod;
+			var atts = mi.GetCustomAttributes (typeof (WebGetAttribute), true);
+			if (atts.Length == 1)
+				return ((WebGetAttribute) atts [0]).Info;
+			atts = mi.GetCustomAttributes (typeof (WebInvokeAttribute), true);
+			if (atts.Length == 1)
+				return ((WebInvokeAttribute) atts [0]).Info;
+			return null;
+#else
 			foreach (IOperationBehavior ob in od.Behaviors) {
 				WebAttributeInfo info = null;
 				var wg = ob as WebGetAttribute;
@@ -48,10 +58,14 @@ namespace System.ServiceModel.Description
 					return wi.Info;
 			}
 			return new WebGetAttribute ().Info; // blank one
+#endif
 		}
 	}
 
-	public class WebHttpBehavior : IEndpointBehavior
+	public class WebHttpBehavior
+#if !NET_2_1
+	 : IEndpointBehavior
+#endif
 	{
 		public WebHttpBehavior ()
 		{
@@ -77,23 +91,29 @@ namespace System.ServiceModel.Description
 			// clientRuntime.MessageInspectors.Add (something);
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		protected virtual void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			// endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (something);
 		}
+#endif
 
 		public virtual void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 			AddClientErrorInspector (endpoint, clientRuntime);
-
+#if NET_2_1 && !MONOTOUCH
+			throw new NotSupportedException ("Due to the lack of ClientRuntime.Operations, Silverlight cannot support this binding.");
+#else
 			foreach (ClientOperation oper in clientRuntime.Operations) {
 				var req = GetRequestClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
 				var res = GetReplyClientFormatter (endpoint.Contract.Operations.Find (oper.Name), endpoint);
 				oper.Formatter = new ClientPairFormatter (req, res);
 			}
+#endif
 		}
 
+#if !NET_2_1
 		public virtual void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
@@ -108,6 +128,7 @@ namespace System.ServiceModel.Description
 				oper.Formatter = new DispatchPairFormatter (req, res);
 			}
 		}
+#endif
 
 		internal class ClientPairFormatter : IClientMessageFormatter
 		{
@@ -130,6 +151,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
+#if !NET_2_1
 		internal class DispatchPairFormatter : IDispatchMessageFormatter
 		{
 			public DispatchPairFormatter (IDispatchMessageFormatter request, IDispatchMessageFormatter reply)
@@ -156,6 +178,7 @@ namespace System.ServiceModel.Description
 		{
 			return new WebHttpDispatchOperationSelector (endpoint);
 		}
+#endif
 
 		protected virtual QueryStringConverter GetQueryStringConverter (OperationDescription operationDescription)
 		{
@@ -167,20 +190,24 @@ namespace System.ServiceModel.Description
 			return new WebMessageFormatter.ReplyClientFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
 
+#if !NET_2_1
 		protected virtual IDispatchMessageFormatter GetReplyDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return new WebMessageFormatter.ReplyDispatchFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
+#endif
 
 		protected virtual IClientMessageFormatter GetRequestClientFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return new WebMessageFormatter.RequestClientFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
 
+#if !NET_2_1
 		protected virtual IDispatchMessageFormatter GetRequestDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return new WebMessageFormatter.RequestDispatchFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
+#endif
 
 		[MonoTODO ("check UriTemplate validity")]
 		public virtual void Validate (ServiceEndpoint endpoint)

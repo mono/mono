@@ -32,7 +32,12 @@ using System.Xml;
 
 namespace System.ServiceModel
 {
-	public class WebHttpBinding : Binding, IBindingRuntimePreferences
+	public class WebHttpBinding
+#if NET_2_1
+        : Binding
+#else
+        : Binding, IBindingRuntimePreferences
+#endif
 	{
 		public WebHttpBinding ()
 			: this (WebHttpSecurityMode.None)
@@ -62,6 +67,11 @@ namespace System.ServiceModel
 		// This can be changed only using <synchronousReceive> configuration element.
 		bool receive_synchronously;
 
+		public EnvelopeVersion EnvelopeVersion {
+			get { return EnvelopeVersion.None; }
+		}
+
+#if !NET_2_1
 		public bool AllowCookies {
 			get { return t.AllowCookies; }
 			set { t.AllowCookies = value; }
@@ -70,10 +80,6 @@ namespace System.ServiceModel
 		public bool BypassProxyOnLocal {
 			get { return t.BypassProxyOnLocal; }
 			set { t.BypassProxyOnLocal = value; }
-		}
-
-		public EnvelopeVersion EnvelopeVersion {
-			get { return EnvelopeVersion.None; }
 		}
 
 		public HostNameComparisonMode HostNameComparisonMode {
@@ -86,6 +92,22 @@ namespace System.ServiceModel
 			set { t.MaxBufferPoolSize = value; }
 		}
 
+		public TransferMode TransferMode {
+			get { return t.TransferMode; }
+			set { t.TransferMode = value; }
+		}
+
+		public bool UseDefaultWebProxy {
+			get { return t.UseDefaultWebProxy; }
+			set { t.UseDefaultWebProxy = value; }
+		}
+
+		public Uri ProxyAddress {
+			get { return t.ProxyAddress; }
+			set { t.ProxyAddress = value; }
+		}
+#endif
+
 		public int MaxBufferSize {
 			get { return t.MaxBufferSize; }
 			set { t.MaxBufferSize = value; }
@@ -96,15 +118,12 @@ namespace System.ServiceModel
 			set { t.MaxReceivedMessageSize = value; }
 		}
 
-		public Uri ProxyAddress {
-			get { return t.ProxyAddress; }
-			set { t.ProxyAddress = value; }
-		}
-
+#if !NET_2_1
 		public XmlDictionaryReaderQuotas ReaderQuotas {
 			get { return quotas; }
 			set { quotas = value; }
 		}
+#endif
 
 		public override string Scheme {
 			get { return Security.Mode != WebHttpSecurityMode.None ? Uri.UriSchemeHttps : Uri.UriSchemeHttp; }
@@ -112,16 +131,6 @@ namespace System.ServiceModel
 
 		public WebHttpSecurity Security {
 			get { return security; }
-		}
-
-		public TransferMode TransferMode {
-			get { return t.TransferMode; }
-			set { t.TransferMode = value; }
-		}
-
-		public bool UseDefaultWebProxy {
-			get { return t.UseDefaultWebProxy; }
-			set { t.UseDefaultWebProxy = value; }
 		}
 
 		public Encoding WriteEncoding {
@@ -136,14 +145,18 @@ namespace System.ServiceModel
 		public override BindingElementCollection CreateBindingElements ()
 		{
 			WebMessageEncodingBindingElement m = new WebMessageEncodingBindingElement (WriteEncoding);
+#if !NET_2_1
 			if (ReaderQuotas != null)
 				ReaderQuotas.CopyTo (m.ReaderQuotas);
+#endif
 
 			return new BindingElementCollection (new BindingElement [] { m, t.Clone () });
 		}
 
+#if !NET_2_1
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
 			get { return receive_synchronously; }
 		}
+#endif
 	}
 }

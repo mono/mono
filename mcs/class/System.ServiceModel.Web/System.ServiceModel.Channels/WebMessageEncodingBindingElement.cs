@@ -34,7 +34,11 @@ using System.Xml;
 namespace System.ServiceModel.Channels
 {
 	public sealed class WebMessageEncodingBindingElement
+#if NET_2_1
+		: MessageEncodingBindingElement
+#else
 		: MessageEncodingBindingElement, IWsdlExportExtension
+#endif
 	{
 		Encoding write_encoding;
 		XmlDictionaryReaderQuotas reader_quotas;
@@ -53,7 +57,9 @@ namespace System.ServiceModel.Channels
 			if (writeEncoding == null)
 				throw new ArgumentNullException ("writeEncoding");
 			WriteEncoding = writeEncoding;
+#if !NET_2_1
 			reader_quotas = new XmlDictionaryReaderQuotas ();
+#endif
 		}
 
 		// Properties
@@ -108,6 +114,7 @@ namespace System.ServiceModel.Channels
 			return base.BuildChannelFactory<TChannel> (context);
 		}
 
+#if !NET_2_1
 		[MonoTODO ("Why is it overriden?")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
@@ -123,6 +130,7 @@ namespace System.ServiceModel.Channels
 			context.RemainingBindingElements.Add (this);
 			return base.BuildChannelListener<TChannel> (context);
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{
@@ -141,6 +149,7 @@ namespace System.ServiceModel.Channels
 			return context.GetInnerProperty<T> ();
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter, WsdlContractConversionContext context)
 		{
@@ -152,5 +161,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }
