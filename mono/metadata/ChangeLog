@@ -1,3 +1,8 @@
+2009-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_inflate_generic_type_with_mempool): Clear the error
+	object since not all paths lead to callees initing it.
+
 2009-10-23  Alp Toker  <alp@nuanti.com>
 
 	Fix embedding API breakage from r144688. mono-compiler.h is an internal
