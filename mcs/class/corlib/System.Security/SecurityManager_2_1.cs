@@ -32,6 +32,8 @@
 #if NET_2_1 && !MONOTOUCH
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 
 namespace System.Security {
@@ -45,9 +47,11 @@ namespace System.Security {
 
 	internal static class SecurityManager {
 
-		// note: CAS (not CoreCLR) related
-		public static bool SecurityEnabled {
-			get { return false; }
+		// note: this let us differentiate between running in the browser (w/CoreCLR) and 
+		// running on the desktop (e.g. smcs compiling stuff)
+		extern public static bool SecurityEnabled {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		internal static IPermission CheckPermissionSet (Assembly a, PermissionSet ps, bool noncas)
