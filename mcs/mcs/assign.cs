@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			if (resolved == null) {
 				//
 				// Field initializers are tricky for partial classes. They have to
-				// share same costructor (block) but they have they own resolve scope.
+				// share same constructor (block) but they have they own resolve scope.
 				//
 
 				IMemberContext old = ec.MemberContext;

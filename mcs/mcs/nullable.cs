@@ -74,7 +74,7 @@ namespace Mono.CSharp.Nullable
 			Value = value_pi.GetGetMethod (false);
 
 			// When compiling corlib
-			if (type.Module == RootContext.ToplevelTypes.Builder) {
+			if (TypeManager.IsBeingCompiled (type)) {
 				TypeContainer tc = TypeManager.LookupGenericTypeContainer (type);
 				
 				// TODO: check for correct overload
@@ -85,7 +85,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 #if MS_COMPATIBLE
-			if (UnderlyingType.Module == RootContext.ToplevelTypes.Builder) {
+			if (TypeManager.IsBeingCompiled (UnderlyingType)) {
 				ConstructorInfo cinfo = TypeManager.DropGenericTypeArguments (type).GetConstructors ()[0];
 				Constructor = TypeBuilder.GetConstructor (type, cinfo);
 				return;
