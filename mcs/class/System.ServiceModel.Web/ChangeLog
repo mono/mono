@@ -1,3 +1,8 @@
+2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* monotouch_System.ServiceModel.Web.dll.sources:
+	  adding experimental WebHttpBinding stuff.
+
 2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.Web_test.dll.sources :
