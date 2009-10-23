@@ -506,7 +506,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (method.DeclaringType);
 				if (t != method.DeclaringType) {
 					method = (MethodInfo) TypeManager.DropGenericMethodArguments (method);
-					if (method.Module == Module.Builder)
+					if (TypeManager.IsBeingCompiled (method))
 						method = TypeBuilder.GetMethod (t, method);
 					else
 						method = (MethodInfo) MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
@@ -528,7 +528,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
 					ctor = (ConstructorInfo) TypeManager.DropGenericMethodArguments (ctor);
-					if (ctor.Module == Module.Builder)
+					if (TypeManager.IsBeingCompiled (ctor))
 						return TypeBuilder.GetConstructor (t, ctor);
 						
 					return (ConstructorInfo) ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
@@ -544,7 +544,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
 					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
-					if (field.Module == Module.Builder)
+					if (TypeManager.IsBeingCompiled (field))
 						return TypeBuilder.GetField (t, field);
 
 					return FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);						

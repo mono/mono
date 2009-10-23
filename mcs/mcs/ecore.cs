@@ -1743,7 +1743,7 @@ namespace Mono.CSharp {
 			//
 			// This works only sometimes
 			//
-			if (type.Module == RootContext.ToplevelTypes.Builder)
+			if (TypeManager.IsBeingCompiled (type))
 				return Child.GetValue ();
 #endif
 

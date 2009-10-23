@@ -1638,7 +1638,7 @@ namespace Mono.CSharp
 		public bool Compile ()
 		{
 			// TODO: Should be passed to parser as an argument
-			RootContext.ToplevelTypes = new ModuleContainer (ctx, RootContext.Unsafe);
+			RootContext.ToplevelTypes = new ModuleCompiled (ctx, RootContext.Unsafe);
 
 			Parse ();
 			if (Report.Errors > 0)

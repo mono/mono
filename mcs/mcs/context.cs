@@ -320,6 +320,9 @@ namespace Mono.CSharp
 
 		public ResolveContext (IMemberContext mc)
 		{
+			if (mc == null)
+				throw new ArgumentNullException ();
+
 			MemberContext = mc;
 
 			//

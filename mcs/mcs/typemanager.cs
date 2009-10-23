@@ -333,7 +333,7 @@ namespace Mono.CSharp {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
-		if (t.Module == RootContext.ToplevelTypes.Builder) {
+		if (IsBeingCompiled (t)) {
 			DeclSpace container = (DeclSpace)builder_to_declspace [t];
 			if (container != null)
 				return container.MemberCache;
@@ -790,7 +790,7 @@ namespace Mono.CSharp {
 			return t;
 
 		// TODO: All predefined imported types have to have correct signature
-		if (t.Module != RootContext.ToplevelTypes.Builder)
+		if (!IsBeingCompiled (t))
 			return t;
 
 		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
@@ -1238,6 +1238,14 @@ namespace Mono.CSharp {
 		return cache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
+	//
+	// Return true for SRE dynamic/unclosed members
+	//
+	public static bool IsBeingCompiled (MemberInfo mi)
+	{
+		return mi.Module.Assembly == RootContext.ToplevelTypes.Module.Assembly;
+	}
+
 	public static bool IsBuiltinType (Type t)
 	{
 		t = TypeToCoreType (t);
@@ -1285,7 +1293,7 @@ namespace Mono.CSharp {
 		if (t != object_type)
 			return false;
 
-		if (t.Module == RootContext.ToplevelTypes.Builder)
+		if (IsBeingCompiled (t))
 			return false;
 
 		PredefinedAttribute pa = PredefinedAttributes.Get.Dynamic;

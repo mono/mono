@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 			AssemblyName an = Assembly.GetAssemblyName (name, name);
 			
 			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
-			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
+			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
 			Assembly.Name = Assembly.Builder.GetName ();
 		}

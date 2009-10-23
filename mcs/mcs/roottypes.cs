@@ -19,25 +19,55 @@ using System.Runtime.InteropServices;
 namespace Mono.CSharp
 {
 	//
-	// Compiled top-level types
+	// Module container, it can be used as a top-level type
 	//
-	public sealed class ModuleContainer : TypeContainer
+	public class ModuleContainer : TypeContainer
 	{
-		// TODO: It'd be so nice to have generics
-		Hashtable anonymous_types;
-		public ModuleBuilder Builder;
-		readonly bool is_unsafe;
-		readonly CompilerContext context;
-
-		bool has_default_charset;
-
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
 
+		protected Assembly assembly;
+
+		public ModuleContainer (Assembly assembly)
+			: base (null, null, MemberName.Null, null, Kind.Root)
+		{
+			this.assembly = assembly;
+		}
+
+		public Assembly Assembly {
+			get { return assembly; }
+		}
+
+		// FIXME: Remove this evil one day
+		public ModuleCompiled Compiled {
+			get { return (ModuleCompiled) this; }
+		}
+
+		public override ModuleContainer Module {
+			get {
+				return this;
+			}
+		}
+	}
+
+	//
+	// Compiled top-level types
+	//
+	public class ModuleCompiled : ModuleContainer
+	{
+		// TODO: It'd be so nice to have generics
+		Hashtable anonymous_types;
+		readonly bool is_unsafe;
+		readonly CompilerContext context;
+
+		ModuleBuilder builder;
+
+		bool has_default_charset;
+
 		static readonly string[] attribute_targets = new string[] { "module" };
 
-		public ModuleContainer (CompilerContext context, bool isUnsafe)
-			: base (null, null, MemberName.Null, null, Kind.Root)
+		public ModuleCompiled (CompilerContext context, bool isUnsafe)
+			: base (null)
 		{
 			this.is_unsafe = isUnsafe;
 			this.context = context;
@@ -92,7 +122,18 @@ namespace Mono.CSharp
 				}
 			}
 
-			Builder.SetCustomAttribute (cb);
+			builder.SetCustomAttribute (cb);
+		}
+
+		public ModuleBuilder Builder {
+			get {
+				return builder;
+			}
+
+			set {
+				builder = value;
+				assembly = builder.Assembly;
+			}
 		}
 
 		public override CompilerContext Compiler {
@@ -109,7 +150,7 @@ namespace Mono.CSharp
 				if (t != null) {
 					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
 					if (unverifiable_code_ctor != null)
-						Builder.SetCustomAttribute (new CustomAttributeBuilder (unverifiable_code_ctor, new object [0]));
+						builder.SetCustomAttribute (new CustomAttributeBuilder (unverifiable_code_ctor, new object [0]));
 				}
 			}
 		}
@@ -153,12 +194,6 @@ namespace Mono.CSharp
 		public override bool IsClsComplianceRequired ()
 		{
 			return true;
-		}
-
-		public override ModuleContainer Module {
-			get {
-				return this;
-			}
 		}
 
 		protected override bool AddMemberType (DeclSpace ds)

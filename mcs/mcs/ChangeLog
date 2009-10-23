@@ -1,3 +1,10 @@
+2009-10-23  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, eval.cs, decl.cs, roottypes.cs, context.cs,
+	anonymous.cs, expression.cs, rootcontext.cs, ecore.cs, class.cs,
+	flowanalysis.cs, cs-parser.jay, driver.cs, codegen.cs: Split
+	ModuleContainer. Add common unclosed member check routine.
+
 2009-10-22  Marek Safar  <marek.safar@gmail.com>
 
 	* argument.cs: Use literal flag for real literals only.

@@ -1007,7 +1007,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					ModuleBuilder builder = Module.Builder;
+					ModuleBuilder builder = Module.Compiled.Builder;
 					TypeBuilder = builder.DefineType (
 						Name, TypeAttr, default_parent, type_size);
 				} else {
@@ -3545,7 +3545,7 @@ namespace Mono.CSharp {
 				// which has InternalsVisibleTo
 				//
 				if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					return TypeManager.IsThisOrFriendAssembly (Parent.Module.Builder.Assembly, base_method.DeclaringType.Assembly);
+					return TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, base_method.DeclaringType.Assembly);
 				} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
 					//
 					// if it's not "protected internal", it must be "protected"

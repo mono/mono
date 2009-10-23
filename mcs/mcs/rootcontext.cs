@@ -108,7 +108,7 @@ namespace Mono.CSharp {
 		//
 		// Contains the parsed tree
 		//
-		static ModuleContainer root;
+		static ModuleCompiled root;
 
 		//
 		// This hashtable contains all of the #definitions across the source code
@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 			return AllDefines.Contains (value);
 		}
 
-		static public ModuleContainer ToplevelTypes {
+		static public ModuleCompiled ToplevelTypes {
 			get { return root; }
 			set { root = value; }
 		}

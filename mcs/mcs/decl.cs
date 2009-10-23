@@ -585,7 +585,7 @@ namespace Mono.CSharp {
 					switch (pAccess) {
 					case AccessLevel.Internal:
 						if (al == AccessLevel.Private || al == AccessLevel.Internal)
-							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Builder.Assembly, p.Assembly);
+							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						
 						break;
 						
@@ -613,10 +613,10 @@ namespace Mono.CSharp {
 						if (al == AccessLevel.Protected)
 							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
 						else if (al == AccessLevel.Internal)
-							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Builder.Assembly, p.Assembly);
+							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						else if (al == AccessLevel.ProtectedOrInternal)
 							same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
-								TypeManager.IsThisOrFriendAssembly (Parent.Module.Builder.Assembly, p.Assembly);
+								TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						
 						break;
 						
@@ -1113,7 +1113,7 @@ namespace Mono.CSharp {
 				return true;
 
 			case TypeAttributes.NotPublic:
-				return TypeManager.IsThisOrFriendAssembly (Module.Builder.Assembly, check_type.Assembly);
+				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
 				
 			case TypeAttributes.NestedPublic:
 				return CheckAccessLevel (check_type.DeclaringType);
@@ -1129,15 +1129,15 @@ namespace Mono.CSharp {
 				return FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
-				return TypeManager.IsThisOrFriendAssembly (Module.Builder.Assembly, check_type.Assembly) && 
+				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly) && 
 					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamORAssem:
 				return FamilyAccessible (tb, check_type) ||
-					TypeManager.IsThisOrFriendAssembly (Module.Builder.Assembly, check_type.Assembly);
+					TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
 
 			case TypeAttributes.NestedAssembly:
-				return TypeManager.IsThisOrFriendAssembly (Module.Builder.Assembly, check_type.Assembly);
+				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
 			}
 
 			throw new NotImplementedException (check_attr.ToString ());

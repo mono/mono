@@ -5043,7 +5043,7 @@ namespace Mono.CSharp {
 				return false;
 
 			method = TypeManager.DropGenericMethodArguments (method);
-			if (method.DeclaringType.Module == RootContext.ToplevelTypes.Builder) {
+			if (TypeManager.IsBeingCompiled (method)) {
 				IMethodData md = TypeManager.GetMethod (method);
 				if (md != null)
 					return md.IsExcluded ();
@@ -9719,7 +9719,7 @@ namespace Mono.CSharp {
 
 		AnonymousTypeClass CreateAnonymousType (ResolveContext ec, ArrayList parameters)
 		{
-			AnonymousTypeClass type = parent.Module.GetAnonymousType (parameters);
+			AnonymousTypeClass type = parent.Module.Compiled.GetAnonymousType (parameters);
 			if (type != null)
 				return type;
 
@@ -9733,7 +9733,7 @@ namespace Mono.CSharp {
 			if (ec.Report.Errors == 0)
 				type.CloseType ();
 
-			parent.Module.AddAnonymousType (type);
+			parent.Module.Compiled.AddAnonymousType (type);
 			return type;
 		}
 

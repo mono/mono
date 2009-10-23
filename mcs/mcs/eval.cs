@@ -113,7 +113,7 @@ namespace Mono.CSharp {
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 
-				RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
+				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				
 				driver.ProcessDefaultConfig ();
 
@@ -122,7 +122,7 @@ namespace Mono.CSharp {
 					startup_files.Add (file.Path);
 				
 				CompilerCallableEntryPoint.Reset ();
-				RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
+				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 
 				driver.LoadReferences ();
 				RootContext.EvalMode = true;
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 				new StreamReportPrinter (MessageOutput);
 
 			ctx = new CompilerContext (new Report (printer));
-			RootContext.ToplevelTypes = new ModuleContainer (ctx, true);
+			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 
 			//
 			// PartialReset should not reset the core types, this is very redundant.
