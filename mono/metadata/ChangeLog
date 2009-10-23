@@ -1,3 +1,8 @@
+2009-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-config.c: ignore UTF-8 BOM and report parser errors.
+	Fixes bug #549108.
+
 2009-10-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* class.c: fix typo.
