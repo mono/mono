@@ -1,5 +1,10 @@
 2009-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Replace calls to mono_class_inflate_generic_type with
+	mono_class_inflate_generic_type_checked. Fixes #480005.
+
+2009-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_inflate_generic_type_with_mempool): Clear the error
 	object since not all paths lead to callees initing it.
 
