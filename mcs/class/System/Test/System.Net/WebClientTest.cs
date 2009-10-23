@@ -2034,6 +2034,27 @@ namespace MonoTests.System.Net
 		}
 #endif
 
+#if NET_2_0
+		[Test]
+		public void GetWebRequestOverriding ()
+		{
+			GetWebRequestOverridingTestClass testObject = new GetWebRequestOverridingTestClass ();
+			testObject.DownloadData ("http://www.mono-project.com");
+
+			Assert.IsTrue (testObject.overridedCodeRan, "Overrided code wasn't called");
+		}
+		
+		class GetWebRequestOverridingTestClass : WebClient
+		{
+			internal bool overridedCodeRan = false;
+			protected override WebRequest GetWebRequest(Uri address)
+			{
+				overridedCodeRan = true;
+				return base.GetWebRequest (address);
+			}
+		}
+#endif
+
 		static byte [] EchoRequestHandler (Socket socket)
 		{
 			MemoryStream ms = new MemoryStream ();
