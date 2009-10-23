@@ -1,3 +1,7 @@
+2009-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_if_conversion): Avoid running deadce if it is disabled.
+
 2009-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_prolog): Disable aot for methods with save_lmf
