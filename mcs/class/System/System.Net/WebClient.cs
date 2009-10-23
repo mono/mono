@@ -938,7 +938,7 @@ namespace System.Net
 		
 		WebRequest SetupRequest (Uri uri)
 		{
-			WebRequest request = WebRequest.Create (uri);
+			WebRequest request = GetWebRequest (uri);
 #if NET_2_0
 			if (Proxy != null)
 				request.Proxy = Proxy;
@@ -1553,7 +1553,7 @@ namespace System.Net
 #endif
 		WebRequest GetWebRequest (Uri address)
 		{
-			return SetupRequest (address);
+			return WebRequest.Create (address);
 		}
 
 #if NET_2_0
