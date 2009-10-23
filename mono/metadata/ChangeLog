@@ -1,3 +1,11 @@
+2009-10-23  Alp Toker  <alp@nuanti.com>
+
+	Fix embedding API breakage from r144688. mono-compiler.h is an internal
+	header and should not be shipped:
+
+	* class.h: Back out MONO_DEPRECATED change. Currently depends on config.h
+	which is specific to the mono build. Not going to work.
+
 2009-10-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-manager.c: Report if core-clr is active from

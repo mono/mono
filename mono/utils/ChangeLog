@@ -1,3 +1,11 @@
+2009-10-23  Alp Toker  <alp@nuanti.com>
+
+	Fix embedding API breakage from r144688. mono-compiler.h is an internal
+	header and should not be shipped:
+
+	* Makefile.am: Include newly added public header mono-error.h in HEADERS so
+	it gets installed.
+
 2009-10-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile.am: Fix make dist.
