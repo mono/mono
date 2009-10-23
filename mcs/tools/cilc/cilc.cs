@@ -1,5 +1,5 @@
 // cilc -- a CIL-to-C binding generator
-// Copyright (C) 2003, 2004, 2005, 2006, 2007 Alp Toker <alp@atoker.com>
+// Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009 Alp Toker <alp@atoker.com>
 // Licensed under the terms of the MIT License
 
 using System;
@@ -19,6 +19,8 @@ public class cilc
 	static string target_dir;
 
 	static ArrayList funcs_done = new ArrayList ();
+
+	static bool disable_glib = false;
 
 	public static int Main (string[] args)
 	{
@@ -475,9 +477,14 @@ public class cilc
 
 		H.WriteLine ();
 
-		H.WriteLine ("#ifdef __cplusplus");
-		H.WriteLine ("extern \"C\" {", false);
-		H.WriteLine ("#endif /* __cplusplus */");
+		if (disable_glib) {
+			H.WriteLine ("#ifdef __cplusplus");
+			H.WriteLine ("extern \"C\" {", false);
+			H.WriteLine ("#endif /* __cplusplus */");
+		} else {
+			H.WriteLine ("G_BEGIN_DECLS");
+		}
+
 		H.WriteLine ();
 
 		C.WriteLine ("#include \"" + fname + ".h" + "\"");
@@ -505,9 +512,15 @@ public class cilc
 			EnumGen (t);
 
 		H.WriteLine ();
-		H.WriteLine ("#ifdef __cplusplus");
-		H.WriteLine ("}", false);
-		H.WriteLine ("#endif /* __cplusplus */");
+
+		if (disable_glib) {
+			H.WriteLine ("#ifdef __cplusplus");
+			H.WriteLine ("}", false);
+			H.WriteLine ("#endif /* __cplusplus */");
+		} else {
+			H.WriteLine ("G_END_DECLS");
+		}
+
 		H.WriteLine ();
 
 		H.WriteLine ("#endif /* " + H_id + " */");
@@ -558,9 +571,6 @@ public class cilc
 
 		Type[] ifaces;
 		ifaces = t.GetInterfaces ();
-
-		H.WriteLine ("G_BEGIN_DECLS");
-		H.WriteLine ();
 
 		{
 			string NS = NsToC (ns).ToUpper ();
@@ -824,9 +834,6 @@ public class cilc
 		C.WriteLine ();
 		C.WriteLine ("return object_type;");
 		C.WriteLine ("}");
-
-		H.WriteLine ();
-		H.WriteLine ("G_END_DECLS");
 	}
 
 	static bool TypeIsGObject (Type t)

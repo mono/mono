@@ -1,3 +1,7 @@
+2009-10-23  Alp Toker  <alp@nuanti.com>
+
+	* cilc.cs: Introduce and start to make use of disable_glib.
+
 2007-03-13  Alp Toker  <alp@atoker.com>
 
 	* cilc.exe.sources:
