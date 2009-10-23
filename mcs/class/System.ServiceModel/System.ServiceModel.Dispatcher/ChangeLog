@@ -1,40 +1,7 @@
-2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* ChannelDispatcher.cs, EndpointDispatcher.cs :
-	  when an EndpointDispatcher is added to ChannelDispatcher, its
-	  ChannelDispatcher property is automatically filled. To do this,
-	  create a derived collection type for Endpoints (that's what .NET
-	  does). Remove extra InitializeEndpoint() argument.
-
-2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* OperationInvokerHandler.cs : make error message a bit verbose.
-
-2009-09-16  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* ChannelDispatcher.cs : make sure to close the request context,
-	  some channels such as http keeps opening it. Patch by Levi Bard.
-	  Fixed bug #533776.
-
-2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* ChannelDispatcher.cs : do not try to wait for channel closer
-	  handle when the loop is not started yet. This fixes lengthy wait
-	  in the nunit tests.
-
-2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* EndpointDispatcher.cs : AddressFilter is always non-null.
-	* DispatchRuntime.cs : CallbackClientRuntime seems to be created even
-	  for non-callback dispatchers. Fixing this also results in fixes in
-	  couple of nunit regressions.
-	* InputOrReplyRequestProcessor.cs : the change above required fix
-	  here too (it has null check).
-
-2009-09-11  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* BaseMessagesFormatter.cs, DefaultOperationInvoker.cs:
-	  Fix the crash that ref parameter in contract methods caused.
+       * ClientRuntime.cs : enable Operations property on monotouch.
+         Hopefully it will enable us to build WebHttpBinding.
 
 2009-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
