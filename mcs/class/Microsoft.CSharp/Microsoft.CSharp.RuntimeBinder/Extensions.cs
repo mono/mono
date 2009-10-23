@@ -38,9 +38,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 	{
 		public static IList<T> ToReadOnly<T> (this IEnumerable<T> col)
 		{
-			return col == null ?
-				new ReadOnlyCollectionBuilder<T> (0) :
-				new ReadOnlyCollectionBuilder<T> (col);
+			return col == null ? 
+				null : new ReadOnlyCollectionBuilder<T> (col);
 		}
 	}
 }

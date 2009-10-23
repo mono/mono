@@ -54,8 +54,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public Compiler.TypeContainer CurrentTypeDefinition {
 			get {
-				// TODO: only for operators
-				return new Compiler.ModuleContainer (Compiler, true);
+				// For operators and methods
+				return new Compiler.ModuleContainer (currentType.Assembly);
 			}
 		}
 

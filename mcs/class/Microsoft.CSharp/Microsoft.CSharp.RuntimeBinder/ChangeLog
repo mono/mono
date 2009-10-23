@@ -1,3 +1,8 @@
+2009-10-23  Marek Safar  <marek.safar@gmail.com>
+
+	* RuntimeBinderContext.cs, Extensions.cs, CSharpBinder.cs: More
+	literal and constant work.
+
 2009-10-22  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Cleanup the old API.

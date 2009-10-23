@@ -43,7 +43,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
 		{
-			return Bind (binder, expr, null, restrictions, errorSuggestion);
+			// Not ideal but fixes possible NRE during resolve accessibility checking
+			var callingType = typeof (CSharpBinder);
+
+			return Bind (binder, expr, callingType, restrictions, errorSuggestion);
 		}
 
 		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, Type callingType, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
@@ -97,8 +100,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 		//
 		public static Compiler.Expression CreateCompilerExpression (CSharpArgumentInfo info, DynamicMetaObject value)
 		{
-			if (value.Value == null)
-				return new Compiler.NullLiteral (value.LimitType, Compiler.Location.Null);
+			if (value.Value == null) {
+				if (value.LimitType == typeof (object))
+					return new Compiler.NullLiteral (Compiler.Location.Null);
+
+				return new Compiler.NullLiteral (Compiler.Location.Null);
+			}
 
 			if (info != null) {
 				if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
@@ -118,7 +125,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var res = new Compiler.Arguments (args.Length);
 			int pos = 0;
 			foreach (var item in info) {
-				var expr = CreateCompilerExpression (item, args [pos]);
+				var expr = CreateCompilerExpression (item, args [pos++]);
 				if (item.IsNamed) {
 					res.Add (new Compiler.NamedArgument (new Compiler.LocatedToken (Compiler.Location.Null, item.Name), expr));
 				} else {
@@ -177,7 +184,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 					ctx = CreateDefaultCompilerContext ();
 
 				// FIXME: this is wrong
-				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleContainer (ctx, true);
+				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleCompiled (ctx, true);
 
 				Compiler.TypeManager.InitCoreTypes (ctx);
 				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
