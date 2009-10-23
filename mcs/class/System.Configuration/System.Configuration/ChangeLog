@@ -1,3 +1,8 @@
+2009-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Configuration.cs: make this work again with bundled configuration
+	files. Fixes bug #495957. Patch from Tor Lillqvist.
+
 2009-07-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConfigurationElement.cs: don't skip xml nodes when reading 2
