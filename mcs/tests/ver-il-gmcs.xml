@@ -15225,7 +15225,7 @@
         <size>54</size>
       </method>
       <method name="Void ConstantTest_4()">
-        <size>54</size>
+        <size>44</size>
       </method>
       <method name="Void ConstantTest_5()">
         <size>59</size>
@@ -15291,7 +15291,7 @@
         <size>101</size>
       </method>
       <method name="Void ConvertTest_12()">
-        <size>166</size>
+        <size>156</size>
       </method>
       <method name="Void ConvertTest_13()">
         <size>86</size>
@@ -15354,7 +15354,7 @@
         <size>167</size>
       </method>
       <method name="Void EqualTest_8()">
-        <size>126</size>
+        <size>116</size>
       </method>
       <method name="Void EqualTest_9()">
         <size>146</size>
@@ -15519,7 +15519,7 @@
         <size>169</size>
       </method>
       <method name="Void ListInitTest()">
-        <size>414</size>
+        <size>404</size>
       </method>
       <method name="Void ListInitTest_2()">
         <size>292</size>
@@ -15744,7 +15744,7 @@
         <size>167</size>
       </method>
       <method name="Void NotEqualTest_8()">
-        <size>126</size>
+        <size>116</size>
       </method>
       <method name="Void NotEqualTest_9()">
         <size>146</size>
@@ -15861,7 +15861,7 @@
         <size>144</size>
       </method>
       <method name="Void TypeAsTest_3()">
-        <size>95</size>
+        <size>85</size>
       </method>
       <method name="Void TypeIsTest()">
         <size>103</size>
@@ -15870,7 +15870,7 @@
         <size>103</size>
       </method>
       <method name="Void TypeIsTest_3()">
-        <size>95</size>
+        <size>85</size>
       </method>
       <method name="Void TypeIsTest_5()">
         <size>74</size>
@@ -16252,7 +16252,7 @@
         <size>56</size>
       </method>
       <method name="Int32 Main()">
-        <size>360</size>
+        <size>350</size>
       </method>
     </type>
   </test>
@@ -16281,7 +16281,7 @@
         <size>3</size>
       </method>
       <method name="Int32 Main()">
-        <size>594</size>
+        <size>564</size>
       </method>
     </type>
     <type name="EmptyDelegate">
