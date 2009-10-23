@@ -1,3 +1,10 @@
+2009-10-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-manager.c: Report if core-clr is active from
+	ves_icall_System_Security_SecurityManager_get_SecurityEnabled
+	to allow Moonlight BCL to behave appropriately (both in browser
+	and outside, e.g. smcs)
+
 2009-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-config.c: ignore UTF-8 BOM and report parser errors.
