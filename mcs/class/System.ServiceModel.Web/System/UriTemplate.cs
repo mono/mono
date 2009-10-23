@@ -32,6 +32,10 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Text;
 
+#if NET_2_1
+using NameValueCollection = System.Object;
+#endif
+
 namespace System
 {
 	public class UriTemplate
@@ -102,6 +106,7 @@ namespace System
 
 		// Bind
 
+#if !NET_2_1
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
@@ -111,6 +116,7 @@ namespace System
 		{
 			return BindByNameCommon (baseAddress, parameters, null, omitDefaults);
 		}
+#endif
 
 		public Uri BindByName (Uri baseAddress, IDictionary<string,string> parameters)
 		{
@@ -144,7 +150,11 @@ namespace System
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
 				sb.Append (template.Substring (src, s - src));
+#if NET_2_1
+				string value = null;
+#else
 				string value = nvc != null ? nvc [name] : null;
+#endif
 				if (dic != null)
 					dic.TryGetValue (name, out value);
 				if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
@@ -204,11 +214,11 @@ namespace System
 
 			var us = baseAddress.LocalPath;
 			if (us [us.Length - 1] != '/')
-				baseAddress = new Uri (baseAddress.GetLeftPart (UriPartial.Path) + '/' + baseAddress.Query, baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+				baseAddress = new Uri (baseAddress.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + baseAddress.Query, baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
 			if (IgnoreTrailingSlash) {
 				us = candidate.LocalPath;
 				if (us.Length > 0 && us [us.Length - 1] != '/')
-					candidate = new Uri (candidate.GetLeftPart (UriPartial.Path) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+					candidate = new Uri(candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
 			}
 
 			if (Uri.Compare (baseAddress, candidate, UriComponents.StrongAuthority, UriFormat.SafeUnescaped, StringComparison.Ordinal) != 0)
@@ -342,7 +352,7 @@ namespace System
 				string pname = pair [0];
 				string pvalue = pair [1];
 				if (pvalue.Length >= 2 && pvalue [0] == '{' && pvalue [pvalue.Length - 1] == '}') {
-					string ptemplate = pvalue.Substring (1, pvalue.Length - 2).ToUpperInvariant ();
+					string ptemplate = pvalue.Substring (1, pvalue.Length - 2).ToUpper (CultureInfo.InvariantCulture);
 					query_params.Add (pname, ptemplate);
 					if (list == null)
 						list = new List<string> ();

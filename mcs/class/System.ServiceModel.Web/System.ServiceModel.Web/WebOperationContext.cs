@@ -30,10 +30,19 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
+#if NET_2_1
+using IncomingWebRequestContext = System.Object;
+using OutgoingWebResponseContext = System.Object;
+#endif
+
 namespace System.ServiceModel.Web
 {
-	public class WebOperationContext : IExtension<OperationContext>
+	public class WebOperationContext
+#if !NET_2_1
+	 : IExtension<OperationContext>
+#endif
 	{
+#if !NET_2_1
 		public static WebOperationContext Current {
 			get {
 				if (OperationContext.Current == null)
@@ -46,6 +55,7 @@ namespace System.ServiceModel.Web
 				return ret;
 			}
 		}
+#endif
 
 		IncomingWebRequestContext incoming_request;
 		IncomingWebResponseContext incoming_response;
@@ -56,15 +66,20 @@ namespace System.ServiceModel.Web
 		{
 			if (operation == null)
 				throw new ArgumentNullException ("operation");
-			incoming_request = new IncomingWebRequestContext (operation);
-			incoming_response = new IncomingWebResponseContext (operation);
+
 			outgoing_request = new OutgoingWebRequestContext ();
+			incoming_response = new IncomingWebResponseContext (operation);
+#if !NET_2_1
+			incoming_request = new IncomingWebRequestContext (operation);
 			outgoing_response = new OutgoingWebResponseContext ();
+#endif
 		}
 
+#if !NET_2_1
 		public IncomingWebRequestContext IncomingRequest {
 			get { return incoming_request; }
 		}
+#endif
 
 		public IncomingWebResponseContext IncomingResponse {
 			get { return incoming_response; }
@@ -74,9 +89,11 @@ namespace System.ServiceModel.Web
 			get { return outgoing_request; }
 		}
 
+#if !NET_2_1
 		public OutgoingWebResponseContext OutgoingResponse {
 			get { return outgoing_response; }
 		}
+#endif
 
 		public void Attach (OperationContext context)
 		{

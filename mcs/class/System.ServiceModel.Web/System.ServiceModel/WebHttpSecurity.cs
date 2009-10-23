@@ -31,19 +31,21 @@ namespace System.ServiceModel
 	{
 		internal WebHttpSecurity ()
 		{
+			// there is no public constructor for transport ...
+#if !NET_2_1
+			Transport = new BasicHttpBinding ().Security.Transport;
+#endif
 		}
 
 		WebHttpSecurityMode mode;
-		// there is no publicly exposed constructor for transport ...
-		HttpTransportSecurity transport = new BasicHttpBinding ().Security.Transport;
 
 		public WebHttpSecurityMode Mode {
 			get { return mode; }
 			set { mode = value; }
 		}
 
-		public HttpTransportSecurity Transport {
-			get { return transport; }
-		}
+#if !NET_2_1
+		public HttpTransportSecurity Transport { get; private set; }
+#endif
 	}
 }

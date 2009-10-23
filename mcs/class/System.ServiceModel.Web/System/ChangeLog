@@ -1,3 +1,8 @@
+2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplate.cs, UriTemplateMatchException.cs, UriTemplateMatch.cs:
+	  Add experimental monotouch build.
+
 2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplate.cs : Fix method signatures. Take care of dictionary

@@ -54,6 +54,7 @@ namespace System.Runtime.Serialization.Json
 		string attr_name, attr_value, runtime_type;
 		Encoding encoding;
 		byte [] encbuf = new byte [1024];
+		bool no_string_yet = true, is_null;
 
 		public JsonWriter (Stream stream, Encoding encoding, bool closeOutput)
 		{
@@ -225,7 +226,13 @@ namespace System.Runtime.Serialization.Json
 				throw new XmlException ("There is no open element to close");
 			switch (element_kinds.Pop ()) {
 			case ElementType.String:
-				OutputAsciiChar ('"');
+				if (!is_null) {
+					if (no_string_yet)
+						OutputAsciiChar ('"');
+					OutputAsciiChar ('"');
+				}
+				no_string_yet = true;
+				is_null = false;
 				break;
 			case ElementType.Array:
 				OutputAsciiChar (']');
@@ -314,10 +321,9 @@ namespace System.Runtime.Serialization.Json
 			if (element_kinds.Peek () == ElementType.None) {
 				element_kinds.Pop ();
 				element_kinds.Push (ElementType.String);
+				no_string_yet = true;
+				is_null = false;
 			}
-
-			if (element_kinds.Peek () == ElementType.String)
-				OutputAsciiChar ('"');
 
 			first_content_flags.Push (true);
 
@@ -345,9 +351,18 @@ namespace System.Runtime.Serialization.Json
 
 			if (state == WriteState.Attribute)
 				attr_value += text;
-			else {
+			else if (text == null) {
+				no_string_yet = false;
+				is_null = true;
+				OutputString ("null");
+			} else {
 				switch (element_kinds.Peek ()) {
 				case ElementType.String:
+					if (no_string_yet) {
+						OutputAsciiChar ('"');
+						no_string_yet = false;
+					}
+					break;
 				case ElementType.Number:
 				case ElementType.Boolean:
 					break;

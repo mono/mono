@@ -46,17 +46,17 @@ namespace System.ServiceModel.Web
 
 		public long ContentLength {
 			get {
-				string s = hp.Headers.Get ("Content-Length");
+				string s = hp.Headers ["Content-Length"];
 				return s != null ? long.Parse (s, CultureInfo.InvariantCulture) : 0;
 			}
 		}
 
 		public string ContentType {
-			get { return hp.Headers.Get ("Content-Type"); }
+			get { return hp.Headers ["Content-Type"]; }
 		}
 
 		public string ETag {
-			get { return hp.Headers.Get ("ETag"); }
+			get { return hp.Headers ["ETag"]; }
 		}
 
 		public WebHeaderCollection Headers {
@@ -64,7 +64,7 @@ namespace System.ServiceModel.Web
 		}
 
 		public string Location {
-			get { return hp.Headers.Get ("Location"); }
+			get { return hp.Headers ["Location"]; }
 		}
 
 		public HttpStatusCode StatusCode {

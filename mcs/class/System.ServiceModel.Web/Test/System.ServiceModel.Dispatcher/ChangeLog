@@ -1,3 +1,8 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonQueryStringConverterTest.cs : added some string deserialization
+	  test. It just proved .NET is too lame.
+
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonQueryStringConverterTest.cs : comment out one cosmetic case

@@ -29,6 +29,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
+#if NET_2_1
+using NameValueCollection = System.Collections.Generic.Dictionary<string,string>;
+#endif
+
 namespace System
 {
 	public class UriTemplateMatch

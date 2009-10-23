@@ -1,3 +1,29 @@
+2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Rss20FeedFormatter.cs, Rss20ItemFormatter.cs : handle other text
+	  nodes than text (cdata, whitespaces etc.) and make sure to proceed
+	  the reader when they are skipped. Fixed bug #546965 and #546959.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SyndicationVersions.cs :
+	  Handle atom feed as well. Patch by David Mitchell.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SyndicationElementExtension.cs : give OuterName and OuterNamespace
+	  for extensions with .ctor(XmlReader).
+
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Atom10FeedFormatter.cs : do not use Atom10ItemFormatter(item)
+	  at ReadItem(). It is only for writing. Patch by David Mitchell.
+
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Atom10ItemFormatter.cs : enable XmlConvert.ToDateTimeOffset(),
+	  patch by David Mitchell.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SyndicationElementExtension.cs : make it ready for 2.1 build.

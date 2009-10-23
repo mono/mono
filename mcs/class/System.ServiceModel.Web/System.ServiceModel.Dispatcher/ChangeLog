@@ -1,3 +1,42 @@
+2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonQueryStringConverter.cs
+	  QueryStringConverter.cs
+	  WebMessageFormatter.cs : add experimental monotouch build.
+
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncoder.cs : use alwaysEmitTypeInformation to output
+	  object __type.
+
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonQueryStringConverter.cs : add custom body name support (used.
+	  for AJAX). Handle string value (in very LAMESPEC way).
+	* WebMessageFormatter.cs : add custom body name support.
+	  Slightly changed reply serialization.
+	  Convert deserialized values using QueryStringConverter.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageFormatter.cs : revert and fix wrapper name change. XML
+	  and JSON have different serialization.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageFormatter.cs : also fix wrapped message deserialization.
+	  It should expect FooResponse (body WrapperName), not FooResult
+	  (ReturnValue part Name).
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageFormatter.cs : when they serialize Wrapped message, it
+	  first writes "root" and then the wrapper element.
+
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageFormatter.cs : JSON writer does not support namespace.
+
 2009-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebMessageFormatter.cs : it was not returning value with correct

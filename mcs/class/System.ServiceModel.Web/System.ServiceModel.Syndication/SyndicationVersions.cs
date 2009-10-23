@@ -37,12 +37,18 @@ namespace System.ServiceModel.Syndication
 {
 	public static class SyndicationVersions
 	{
+		private enum ReaderKind
+		{
+			Item,
+			Feed,
+		}
+
 		public const string Atom10 = "Atom10";
 		public const string Rss20 = "Rss20";
 
 		const string AtomNamespace ="http://www.w3.org/2005/Atom";
 
-		static string DetectVersion (XmlReader reader)
+		static string DetectVersion (XmlReader reader, ReaderKind kind)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
@@ -51,7 +57,8 @@ namespace System.ServiceModel.Syndication
 				throw new XmlException ("An element is expected for syndication item");
 			if (reader.IsStartElement ("rss", String.Empty) && reader.GetAttribute ("version") == "2.0")
 				return SyndicationVersions.Rss20;
-			if (reader.IsStartElement ("entry", AtomNamespace))
+			if ((kind == ReaderKind.Item && reader.IsStartElement ("entry", AtomNamespace)) ||
+			    (kind == ReaderKind.Feed && reader.IsStartElement("feed", AtomNamespace)))
 				return SyndicationVersions.Atom10;
 			else if (reader.IsStartElement ("item", String.Empty))
 				return SyndicationVersions.Rss20;
@@ -61,7 +68,7 @@ namespace System.ServiceModel.Syndication
 
 		internal static TSyndicationFeed LoadFeed<TSyndicationFeed> (XmlReader reader) where TSyndicationFeed : SyndicationFeed, new()
 		{
-			switch (DetectVersion (reader)) {
+			switch (DetectVersion (reader, ReaderKind.Feed)) {
 			case SyndicationVersions.Atom10:
 				Atom10FeedFormatter af = new Atom10FeedFormatter<TSyndicationFeed> ();
 				af.ReadFrom (reader);
@@ -76,7 +83,7 @@ namespace System.ServiceModel.Syndication
 
 		internal static TSyndicationItem LoadItem<TSyndicationItem> (XmlReader reader) where TSyndicationItem : SyndicationItem, new()
 		{
-			switch (DetectVersion (reader)) {
+			switch (DetectVersion (reader, ReaderKind.Item)) {
 			case SyndicationVersions.Atom10:
 				Atom10ItemFormatter af = new Atom10ItemFormatter<TSyndicationItem> ();
 				af.ReadFrom (reader);

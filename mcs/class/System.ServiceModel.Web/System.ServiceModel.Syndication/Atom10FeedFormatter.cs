@@ -106,9 +106,9 @@ namespace System.ServiceModel.Syndication
 
 		protected virtual SyndicationItem ReadItem (XmlReader reader, SyndicationFeed feed)
 		{
-			SyndicationItem item = feed.CreateItem ();
-			new Atom10ItemFormatter (item).ReadFrom (reader);
-			return item;
+			Atom10ItemFormatter formatter = new Atom10ItemFormatter ();
+			formatter.ReadFrom (reader);
+			return formatter.Item;
 		}
 
 		protected virtual IEnumerable<SyndicationItem> ReadItems (XmlReader reader, SyndicationFeed feed, out bool areAllItemsRead)

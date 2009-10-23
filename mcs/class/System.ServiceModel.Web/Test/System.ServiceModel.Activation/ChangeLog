@@ -1,0 +1,8 @@
+2009-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptServiceHostFactoryTest.cs : add tests for contract and
+	  wrapped validity.
+
+2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptServiceHostFactoryTest.cs : new test.
