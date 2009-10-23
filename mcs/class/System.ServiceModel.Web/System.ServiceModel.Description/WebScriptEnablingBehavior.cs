@@ -164,10 +164,9 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-		[MonoTODO]
 		protected override QueryStringConverter GetQueryStringConverter (OperationDescription operationDescription)
 		{
-			return base.GetQueryStringConverter (operationDescription);
+			return new JsonQueryStringConverter () { CustomWrapperName = "d"};
 		}
 
 		[MonoTODO ("add non-XmlSerializer-ness check (but where?)")]
@@ -193,11 +192,8 @@ namespace System.ServiceModel.Description
 				}
 
 				var style = wai != null && wai.IsBodyStyleSetExplicitly ? wai.BodyStyle : DefaultBodyStyle;
-				switch (style) {
-				case WebMessageBodyStyle.Wrapped:
-				case WebMessageBodyStyle.WrappedResponse:
-					throw new NotSupportedException (String.Format ("Operation '{0}' contains WrappedResponse body style which is not allowed for WebScriptEnablingBehavior.", od.Name));
-				}
+				if (style != WebMessageBodyStyle.WrappedRequest)
+					throw new NotSupportedException (String.Format ("WebScriptEnableBehavior only allows WrappedRequest body style, but operation '{0}' uses {1}.", od.Name, style));
 			}
 		}
 	}

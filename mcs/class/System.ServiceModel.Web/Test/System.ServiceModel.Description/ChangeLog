@@ -1,3 +1,7 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptEnablingBehaviorTest.cs : new test.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpBehaviorTest.cs : enable working test.

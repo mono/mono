@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -57,9 +58,11 @@ namespace System.Runtime.Serialization.Json
 			if (atts.Length == 1)
 				return CreateTypeMap (type, (DataContractAttribute) atts [0]);
 
+#if !NET_2_1
 			atts = type.GetCustomAttributes (typeof (SerializableAttribute), false);
 			if (atts.Length == 1)
 				return CreateTypeMap (type, null);
+#endif
 
 			if (IsPrimitiveType (type))
 				return null;
@@ -84,16 +87,17 @@ namespace System.Runtime.Serialization.Json
 			foreach (var pi in type.GetProperties ())
 				if (pi.CanRead && pi.CanWrite)
 					l.Add (new TypeMapProperty (pi, null));
+			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
 		}
 
 		static bool IsCollection (Type type)
 		{
-			if (type.GetInterface ("System.Collections.IList") != null)
+			if (type.GetInterface ("System.Collections.IList", false) != null)
 				return true;
-			if (type.GetInterface ("System.Collections.Generic.IList`1") != null)
+			if (type.GetInterface ("System.Collections.Generic.IList`1", false) != null)
 				return true;
-			if (type.GetInterface ("System.Collections.Generic.ICollection`1") != null)
+			if (type.GetInterface ("System.Collections.Generic.ICollection`1", false) != null)
 				return true;
 			return false;
 		}
@@ -113,7 +117,7 @@ namespace System.Runtime.Serialization.Json
 					DataMemberAttribute dma = (DataMemberAttribute) atts [0];
 					members.Add (new TypeMapField (fi, dma));
 				} else {
-					if (fi.GetCustomAttributes (typeof (NonSerializedAttribute), false).Length > 0)
+					if (fi.GetCustomAttributes (typeof (IgnoreDataMemberAttribute), false).Length > 0)
 						continue;
 					members.Add (new TypeMapField (fi, null));
 				}
@@ -211,10 +215,9 @@ namespace System.Runtime.Serialization.Json
 			get { return dma == null ? mi.Name : dma.Name ?? mi.Name; }
 		}
 
-		// FIXME: Fill 3.5 member in s.r.serialization.
-//		public bool EmitDefaultValue {
-//			get { return dma != null && dma.EmitDefaultValue; }
-//		}
+		public bool EmitDefaultValue {
+			get { return dma != null && dma.EmitDefaultValue; }
+		}
 
 		public bool IsRequired {
 			get { return dma != null && dma.IsRequired; }

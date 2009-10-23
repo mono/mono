@@ -145,6 +145,7 @@ namespace System.Runtime.Serialization.Json
 			var ret = root_type.Assembly.GetType (name, false) ?? Type.GetType (name, false);
 			if (ret != null)
 				return ret;
+#if !NET_2_1 // how to do that in ML?
 			// We probably have to iterate all the existing
 			// assemblies that are loaded in current domain.
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
@@ -152,6 +153,7 @@ namespace System.Runtime.Serialization.Json
 				if (ret != null)
 					return ret;
 			}
+#endif
 			return null;
 		}
 
@@ -239,9 +241,12 @@ namespace System.Runtime.Serialization.Json
 			reader.ReadStartElement ();
 			object ret;
 			if (typeof (IList).IsAssignableFrom (collectionType)) {
-				IList c = collectionType.IsArray ?
-					new ArrayList () :
-					(IList) Activator.CreateInstance (collectionType);
+#if NET_2_1
+				Type listType = collectionType.IsArray ? typeof (List<>).MakeGenericType (elementType) : null;
+#else
+				Type listType = collectionType.IsArray ? typeof (ArrayList) : null;
+#endif
+				IList c = (IList) Activator.CreateInstance (listType ?? collectionType);
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
@@ -249,7 +254,11 @@ namespace System.Runtime.Serialization.Json
 					object elem = ReadObject (et ?? typeof (object));
 					c.Add (elem);
 				}
+#if NET_2_1
+				ret = c;
+#else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
+#endif
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});

@@ -56,6 +56,8 @@ namespace System.ServiceModel.Web
 
 		protected override void OnOpening ()
 		{
+			base.OnOpening ();
+
 			foreach (Uri baseAddress in BaseAddresses) {
 				bool found = false;
 				foreach (ServiceEndpoint se in Description.Endpoints)

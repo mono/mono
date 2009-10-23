@@ -1,3 +1,8 @@
+2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : added test for
+	  alwaysEmitTypeInformation argument.
+
 2009-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : fix non-datacontract

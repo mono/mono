@@ -5,6 +5,7 @@ System.ServiceModel.Activation/WebScriptServiceHostFactoryTest.cs
 System.ServiceModel.Channels/WebBodyFormatMessagePropertyTest.cs
 System.ServiceModel.Channels/WebMessageEncodingBindingElementTest.cs
 System.ServiceModel.Description/WebHttpBehaviorTest.cs
+System.ServiceModel.Description/WebScriptEnablingBehaviorTest.cs
 System.ServiceModel.Dispatcher/JsonQueryStringConverterTest.cs
 System.ServiceModel.Dispatcher/QueryStringConverterTest.cs
 System.ServiceModel.Dispatcher/WebHttpDispatchOperationSelectorTest.cs

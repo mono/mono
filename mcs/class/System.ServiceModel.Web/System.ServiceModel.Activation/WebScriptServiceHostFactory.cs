@@ -73,6 +73,8 @@ namespace System.ServiceModel.Activation
 
 			protected override void OnOpening ()
 			{
+				base.OnOpening ();
+
 				if (Description.Endpoints.Count == 0) {
 					if (ImplementedContracts.Count > 1)
 						throw new InvalidOperationException ("WebScriptServiceHostFactory does not allow more than one service contract in the service type");
