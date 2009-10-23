@@ -1,3 +1,7 @@
+2009-10-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (modules.exe): Depend on TestDriver.dll too.
+
 2009-10-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c pinvoke2.cs: Add a test for #548276.
