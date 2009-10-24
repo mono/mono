@@ -1,3 +1,8 @@
+2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrame.cs: Relax GetSecureFileName when the coreclr is not 
+	active (i.e. show full path when compiling with smcs)
+
 2009-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrame.cs: Introduce a new GetSecureFileName method that
