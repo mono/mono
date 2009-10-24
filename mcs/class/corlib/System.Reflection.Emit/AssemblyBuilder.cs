@@ -152,6 +152,13 @@ namespace System.Reflection.Emit
 			// remove Mono specific flag to allow enum check to pass
 			access &= ~COMPILER_ACCESS;
 
+#if NET_2_1 && !MONOTOUCH
+			// only "Run" is supported by Silverlight
+			// however SMCS requires more than this but runs outside the CoreCLR sandbox
+			if (SecurityManager.SecurityEnabled && (access != AssemblyBuilderAccess.Run))
+				throw new ArgumentException ("access");
+#endif
+
 #if NET_2_0
 			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,

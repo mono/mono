@@ -2185,6 +2185,35 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (tb.Name + "[System.Int32]", t2.MakeGenericType (typeof (int)).GetMethod ("foo").Invoke (null, null).GetType ().ToString ());
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Static_GetConstructor_TypeNull ()
+		{
+			ConstructorInfo ci = typeof (object).GetConstructor (Type.EmptyTypes);
+			// null is non-generic (from exception message)
+			TypeBuilder.GetConstructor (null, ci);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Static_GetConstructor_TypeGeneric ()
+		{
+			Type t = typeof (List<>).MakeGenericType (typeof (int));
+			ConstructorInfo ci = typeof (object).GetConstructor (Type.EmptyTypes);
+			// type is not 'TypeBuilder' (from exception message)
+			TypeBuilder.GetConstructor (t, ci);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Static_GetConstructor_TypeBuilderGeneric_ConstructorInfoNull ()
+		{
+			TypeBuilder tb = module.DefineType ("XXX");
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
+			Type fooOfT = tb.MakeGenericType (typeParams [0]);
+			TypeBuilder.GetConstructor (fooOfT, null);
+		}
 #endif
 
 		[Test] //#536243

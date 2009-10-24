@@ -1767,11 +1767,14 @@ namespace System.Reflection.Emit
 
 		public static ConstructorInfo GetConstructor (Type type, ConstructorInfo constructor)
 		{
+			if (type == null)
+				throw new ArgumentException ("Type is not generic", "type");
+
 			ConstructorInfo res = type.GetConstructor (constructor);
 			if (res == null)
-				throw new System.Exception ("constructor not found");
-			else
-				return res;
+				throw new ArgumentException ("constructor not found");
+
+			return res;
 		}
 
 		static bool IsValidGetMethodType (Type type)

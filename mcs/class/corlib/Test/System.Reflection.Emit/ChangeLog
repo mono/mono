@@ -1,3 +1,7 @@
+2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TypeBuilderTest.cs: Validation test cases for GetConstructor
+
 2009-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Test for #536243.

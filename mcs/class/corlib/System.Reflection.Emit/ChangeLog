@@ -1,3 +1,10 @@
+2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: For Silverlight only AssemblyBuilderAccess.Run
+	is supported (browser-side) but we still allow other values when
+	compiling (e.g. smcs) outside the browser (wo coreclr)
+	* TypeBuilder.cs (GetConstructor): Fix validations
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs, ConstructorBuilder.cs, MethodBuilder.cs, 
