@@ -1,3 +1,8 @@
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.[ch]: added hooks for thread start/finish and item
+	processing begin/end. For monotouch use only.
+
 2009-10-06  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_method_return_message_restore): Handle the case
