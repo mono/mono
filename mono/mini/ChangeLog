@@ -1,5 +1,7 @@
 2009-10-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (xdebug_end_emit): Remove so stray debug code.
+
 	* branch-opts.c (mono_if_conversion): Avoid running deadce if it is disabled.
 
 2009-10-22  Zoltan Varga  <vargaz@gmail.com>
