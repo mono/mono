@@ -1,5 +1,11 @@
 2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	marshal.c: BeginInvoke cannot be called on multicast delegates with
+	multiple targets. Fixes bug #574426.
+	Backported from trunk.
+
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.[ch]: added hooks for thread start/finish and item
 	processing begin/end. For monotouch use only.
 
