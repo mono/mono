@@ -1,3 +1,7 @@
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DeflateStreamTest.cs: test from bug #549492.
+
 2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DeflateStreamTest.cs: Improved CanRead, CanSeek and CanWrite tests.
