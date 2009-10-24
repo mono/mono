@@ -268,7 +268,35 @@ namespace MonoTests.System.IO.Compression
 
 		static byte [] compressed_data = { 0xf3, 0x48, 0xcd, 0xc9, 0xc9,
 			0xe7, 0x02, 0x00 };
+
+
+		[Test]
+		public void JunkAtTheEnd ()
+		{
+			// Write a deflated stream, then some additional data...
+			using (MemoryStream ms = new MemoryStream())
+			{
+				// The compressed stream
+				using (DeflateStream stream = new DeflateStream(ms, CompressionMode.Compress, true))
+				{
+					stream.WriteByte(1);
+					stream.Flush();
+				}
+				// Junk
+				ms.WriteByte(2);
+
+				ms.Position = 0;
+				// Reading: this should not hang
+				using (DeflateStream stream = new DeflateStream(ms, CompressionMode.Decompress))
+				{
+					byte[] buffer  = new byte[512];
+					int len = stream.Read(buffer, 0, buffer.Length);
+					Console.WriteLine(len == 1);
+				}
+			}
+		}
 	}
 }
 
 #endif
+
