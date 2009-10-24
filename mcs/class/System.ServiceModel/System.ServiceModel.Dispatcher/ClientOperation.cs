@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -39,7 +40,11 @@ namespace System.ServiceModel.Dispatcher
 	public sealed class ClientOperation
 	{
 		internal class ClientOperationCollection :
+#if NET_2_1
+			KeyedCollection<string, ClientOperation>
+#else
 			SynchronizedKeyedCollection<string, ClientOperation>
+#endif
 		{
 			protected override string GetKeyForItem (ClientOperation o)
 			{
