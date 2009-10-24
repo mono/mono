@@ -1,5 +1,7 @@
 2009-10-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (mono_thread_get_name): New helper function.
+
 	* reflection.c (resolve_object): Set handle_class for strings too.
 	(mono_reflection_create_custom_attr_data_args): New helper function to decode
 	a cattr blob into a set of arrays and structures without creating the custom
