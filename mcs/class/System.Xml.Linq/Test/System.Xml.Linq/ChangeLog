@@ -2,15 +2,6 @@
 
 	* XDocumentTest.cs : added test for bug #496285.
 
-2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XNodeReaderTest.cs : Updated test to match the latest linq2xml
-	  and added test for LookupNamespace().
-
-2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XObjectTest.cs : added test for #527887.
-
 2009-07-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReaderTest.cs : test Prefix on default namespace.

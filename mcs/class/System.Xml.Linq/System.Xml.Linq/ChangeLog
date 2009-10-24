@@ -1,30 +1,7 @@
-2009-09-22  Mike Feldman and Stephen A. Jazdzewski <steve@jazd.com>
-
-	* XUtil.cs: This patch fixes the '"False" is not a valid boolean
-	value' exception in System.Xml.XmlConverter when using output from
-	System.Linq.XUtil.  XUtil incorrectly uses "False" and "True"
-	instead of "false" and "true" on boolean attributes.
-
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XDocument.cs : XmlReaderSettings on XmlReader may be null.
 	  Fixed bug #496285.
-
-2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XDocument.cs : fix SaveOptions behavior in Save() with filename.
-	  Fixed bug #527421.
-
-2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XElement.cs : consider default namespace in GetNamespaceOfPrefix().
-	* XNodeReader.cs : 3.5 RTM does not return empty string for undefined
-	  namespace URI with the argument prefix in LookupNamespace().
-
-2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* XObject.cs : do not throw AE when target object is not found in
-	  Annotation(). Fixed bug #527887.
 
 2009-08-02  Jb Evain  <jbevain@novell.com>
 
