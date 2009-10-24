@@ -1,3 +1,8 @@
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: stop trying to decompress when we get Z_STREAM_END.
+	Patch by Ives Bastide. Fixes bug #549942.
+
 2009-09-21 Leszek Ciesielski <skolima@gmail.com>
 
 	* serial.c: return -1 from close() on error
