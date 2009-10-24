@@ -71,6 +71,8 @@ System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/HtmlizedException.cs
 System.ServiceModel.Channels/HttpChannelFactory.cs
 System.ServiceModel.Channels/HttpRequestChannel.cs
+System.ServiceModel.Channels/HttpRequestMessageProperty.cs
+System.ServiceModel.Channels/HttpResponseMessageProperty.cs
 System.ServiceModel.Channels/HttpTransportBindingElement.cs
 System.ServiceModel.Channels/HttpsTransportBindingElement.cs
 System.ServiceModel.Channels/IBindingRuntimePreferences.cs
