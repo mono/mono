@@ -1,3 +1,8 @@
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: do not test the st_mode field for shadow-copies.
+	Fixes bug #545276.
+
 2009-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-config.c: ignore UTF-8 BOM and report parser errors.
