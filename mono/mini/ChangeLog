@@ -1,3 +1,7 @@
+2009-10-24  Mark Probst  <mark.probst@gmail.com>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Fix build.
+
 2009-10-24  Zoltan Varga  <vargaz@gmail.com>
 
     	* mini-exceptions.c (mini_jit_info_table_find): Add an 'out_domain' argument
