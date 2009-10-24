@@ -174,8 +174,12 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 		}
 
 		status = inflate (stream->stream, Z_SYNC_FLUSH);
-		if (status != Z_OK && status != Z_STREAM_END)
+		if (status == Z_STREAM_END) {
+			stream->eof = TRUE;
+			break;
+		} else if (status != Z_OK) {
 			return status;
+		}
 	}
 	return length - zs->avail_out;
 }
