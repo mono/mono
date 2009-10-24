@@ -1,5 +1,11 @@
 2009-10-24  Zoltan Varga  <vargaz@gmail.com>
 
+    	* mini-exceptions.c (mini_jit_info_table_find): Add an 'out_domain' argument
+    	which will contain the domain where the method was found.
+
+    	* exceptions-<ARCH>.c mini-exceptions.c: Update callers of
+    	mini_jit_info_table_find ().
+
 	* aot-compiler.c (xdebug_end_emit): Remove so stray debug code.
 
 	* branch-opts.c (mono_if_conversion): Avoid running deadce if it is disabled.
