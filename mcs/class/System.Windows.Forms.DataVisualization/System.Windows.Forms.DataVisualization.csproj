@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{73F9BAEA-A04B-4254-A736-D3B8B9947340}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Windows.Forms.DataVisualization.Charting</RootNamespace>
+    <AssemblyName>System.Windows.Forms.DataVisualization</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="common\MonoTODOAttribute.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnchorStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnnotationPathPoint.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnnotationPathPointCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AnovaResult.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AreaAlignmentOrientations.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AreaAlignmentStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ArrowAnnotation.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ArrowStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisArrowStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisEnabled.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisName.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisScaleBreakStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AxisType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\BorderSkinStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\BreakLineStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\CalloutStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Chart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartArea.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\AntiAliasingStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartColorPalette.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartDashStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElement.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElementCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartElementType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartHatchStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartImageAlignmentStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartImageFormat.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartImageWrapMode.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartNamedElement.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartNamedElementCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ChartValueType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\CompareMethod.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataPoint.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataPointCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataPointCustomProperties.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\DateRangeType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\DateTimeIntervalType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Docking.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\FinancialFormula.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\GradientStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\GridTickTypes.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\IDataPointFilter.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\IntervalAutoMode.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\IntervalType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LabelAlignmentStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LabelAutoFitStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LabelCalloutStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LabelMarkStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LabelOutsidePlotAreaStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendCellColumnType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendCellType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendImageStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendItemOrder.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendSeparatorStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LegendTableStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LightStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\LineAnchorCapStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\PointSortOrder.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ScrollBarButtonStyles.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ScrollBarButtonType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\ScrollType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\SerializationContents.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\SerializationFormat.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\Series.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\SeriesChartType.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\SeriesCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\StartFromZero.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextAntiAliasingQuality.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextOrientation.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextStyle.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TickMarkStyle.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
