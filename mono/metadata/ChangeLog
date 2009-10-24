@@ -1,5 +1,10 @@
 2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* appdomain.c: do not test the st_mode field for shadow-copies.
+	Fixes bug #545276.
+
+2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.[ch]: added hooks for thread start/finish and item
 	processing begin/end. For monotouch use only.
 
