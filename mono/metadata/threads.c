@@ -1155,7 +1155,7 @@ ves_icall_System_Threading_Thread_GetDomainID (void)
  * caller.
  */
 gunichar2*
-mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
+mono_thread_get_name (MonoThread *this_obj, guint32 *name_len)
 {
 	gunichar2 *res;
 
