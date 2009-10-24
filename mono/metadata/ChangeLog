@@ -1,3 +1,16 @@
+2009-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Set handle_class for strings too.
+	(mono_reflection_create_custom_attr_data_args): New helper function to decode
+	a cattr blob into a set of arrays and structures without creating the custom
+	attributes themselves.
+	(create_custom_attr_data): Simplify using create_custom_attr_data_args.
+
+	* mono-debug.c (mono_debug_il_offset_from_address): New helper function.
+
+	* debug-mono-symfile.c (mono_debug_symfile_get_line_numbers): New helper
+	function.
+
 2009-10-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Replace calls to mono_class_inflate_generic_type with
