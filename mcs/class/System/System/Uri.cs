@@ -112,7 +112,7 @@ namespace System {
 
 		// Constructors		
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 		public Uri (string uriString) : this (uriString, UriKind.Absolute) 
 		{
 		}
@@ -1381,7 +1381,7 @@ namespace System {
 				// It must be Unix file path or Windows UNC
 				if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 					ParseAsUnixAbsoluteFilePath (uriString);
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 					isAbsoluteUri = false;
 #else
 					if (kind == UriKind.Relative)
