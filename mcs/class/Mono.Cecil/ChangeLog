@@ -1,6 +1,13 @@
+2009-10-25  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs
+	  Mono.Cecil/StructureReader.cs
+	  Mono.Cecil.Metadata/MetadataWriter.cs:
+		update .net 4.0 version to beta 2.
+
 2009-08-18  Michael Hutchinson  <mhutchinson@novell.com>
 
-	* Mono.Cecil/BaseAssemblyResolver.cs: Search GACs specified in the 
+	* Mono.Cecil/BaseAssemblyResolver.cs: Search GACs specified in the
 	  MONO_GAC_PREFIX environment variable.
 
 2009-08-06  Jb Evain  <jbevain@novell.com>

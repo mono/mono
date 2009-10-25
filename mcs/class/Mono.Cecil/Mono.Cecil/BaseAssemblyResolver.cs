@@ -152,7 +152,7 @@ namespace Mono.Cecil {
 				else if (reference.Version.ToString () == "2.0.0.0")
 					path = Path.Combine (path, "v2.0.50727");
 				else if (reference.Version.ToString () == "4.0.0.0")
-					path = Path.Combine (path, "v4.0.20506");
+					path = Path.Combine (path, "v4.0.21006");
 				else
 					throw new NotSupportedException ("Version not supported: " + reference.Version);
 			}
