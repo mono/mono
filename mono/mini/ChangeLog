@@ -1,3 +1,8 @@
+2009-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Avoid asserting if a array generic
+	iface wrapper is not found.
+
 2009-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Fix support for the IList<T> wrappers,
