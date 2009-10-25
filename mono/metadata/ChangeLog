@@ -1,3 +1,8 @@
+2009-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Call mono_profiler_thread_start () later after
+	signalling start_notify.
+
 2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: do not test the st_mode field for shadow-copies.
