@@ -88,6 +88,12 @@ namespace MonoTests.System.Threading
 	[TestFixture]
 	public class ThreadTest
 	{
+		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
+		TimeSpan SmallNegative = new TimeSpan (-2);	// between 0 and -1.0 (infinite) ms
+		TimeSpan Negative = new TimeSpan (-20000);	// really negative
+		TimeSpan MaxValue = TimeSpan.FromMilliseconds ((long) Int32.MaxValue);
+		TimeSpan TooLarge = TimeSpan.FromMilliseconds ((long) Int32.MaxValue + 1);
+
 		static bool is_win32;
 		static bool is_mono;
 
@@ -228,7 +234,27 @@ namespace MonoTests.System.Threading
 		public void TestCtor1()
 		{
 			C1Test test1 = new C1Test();
-			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
+			Thread t = new Thread (new ThreadStart (test1.TestMethod));
+
+			Assert.IsTrue (t.CurrentCulture.IsReadOnly, "CurrentCulture.IsReadOnly");
+			Assert.IsFalse (t.IsAlive, "IsAlive");
+			Assert.IsFalse (t.IsBackground, "IsBackground");
+			Assert.IsNull (t.Name, "Name");
+			Assert.AreEqual (ThreadState.Unstarted, t.ThreadState, "ThreadState");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // we're not sharing (read-only) CultureInfo
+		public void CultureInfo_Shared_Across_Threads ()
+		{
+			Thread t = new Thread (TestCtor1);
+			Assert.AreSame (t.CurrentCulture, t.CurrentUICulture, "Culture");
+
+			Assert.AreSame (t.CurrentCulture, CultureInfo.CurrentCulture, "CultureInfo.CurrentCulture");
+			Assert.AreSame (t.CurrentUICulture, CultureInfo.CurrentUICulture, "CultureInfo.CurrentUICulture");
+
+			Assert.AreSame (t.CurrentCulture, Thread.CurrentThread.CurrentCulture, "Thread.CurrentThread.CurrentCulture");
+			Assert.AreSame (t.CurrentUICulture, Thread.CurrentThread.CurrentUICulture, "Thread.CurrentThread.CurrentUICulture");
 		}
 
 		[Test] // bug #325566
@@ -477,6 +503,24 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void Name ()
+		{
+			Thread t = new Thread (new ThreadStart (Name));
+			Assert.IsNull (t.Name, "Name-1");
+			t.Name = null;
+			Assert.IsNull (t.Name, "Name-2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReName ()
+		{
+			Thread t = new Thread (new ThreadStart (ReName));
+			t.Name = "a";
+			t.Name = "b";
+		}
+
+		[Test]
 		public void TestNestedThreads1()
 		{
 			C3Test test1 = new C3Test();
@@ -516,6 +560,70 @@ namespace MonoTests.System.Threading
 				thread1.Abort();
 				thread2.Abort();
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Join_Int32_Negative ()
+		{
+			// -1 is Timeout.Infinite
+			Thread.CurrentThread.Join (-2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Join_TimeSpan_Negative ()
+		{
+			Thread.CurrentThread.Join (Negative);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Join_TimeSpan_TooLarge ()
+		{
+			Thread.CurrentThread.Join (TooLarge);
+		}
+
+		[Test]
+		public void Join_TimeSpan_SmallNegative ()
+		{
+			Thread.CurrentThread.Join (SmallNegative);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Sleep_Int32_Negative ()
+		{
+			// -1 is Timeout.Infinite
+			Thread.Sleep (-2);
+		}
+
+		[Test]
+		public void Sleep_TimeSpan_SmallNegative ()
+		{
+			Thread.Sleep (SmallNegative);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Sleep_TimeSpan_Negative ()
+		{
+			Thread.Sleep (Negative);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Sleep_TimeSpan_TooLarge ()
+		{
+			Thread.Sleep (TooLarge);
+		}
+
+		[Test]
+		public void SpinWait ()
+		{
+			// no exception for negative numbers
+			Thread.SpinWait (Int32.MinValue);
+			Thread.SpinWait (0);
 		}
 
 		[Test]

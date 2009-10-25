@@ -1,3 +1,7 @@
+2009-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Fix validations for Join and Sleep overloads
+
 2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventWaitHandle.cs: Add validation on the EventResetMode 

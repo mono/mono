@@ -391,22 +391,21 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Sleep_internal(int ms);
 
-		public static void Sleep(int millisecondsTimeout) {
-			if((millisecondsTimeout<0) && (millisecondsTimeout != Timeout.Infinite)) {
-				throw new ArgumentException("Negative timeout");
-			}
-			Sleep_internal(millisecondsTimeout);
+		public static void Sleep (int millisecondsTimeout)
+		{
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Negative timeout");
+
+			Sleep_internal (millisecondsTimeout);
 		}
 
-		public static void Sleep(TimeSpan timeout) {
-			// LAMESPEC: says to throw ArgumentException too
-			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
-			
-			if(ms < 0 || ms > Int32.MaxValue) {
-				throw new ArgumentOutOfRangeException("Timeout out of range");
-			}
+		public static void Sleep (TimeSpan timeout)
+		{
+			long ms = (long) timeout.TotalMilliseconds;
+			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
 
-			Sleep_internal(ms);
+			Sleep_internal ((int) ms);
 		}
 
 		// Returns the system thread handle
@@ -779,22 +778,20 @@ namespace System.Threading {
 
 		public bool Join(int millisecondsTimeout)
 		{
-			if (millisecondsTimeout != Timeout.Infinite && millisecondsTimeout < 0)
-				throw new ArgumentException ("Timeout less than zero", "millisecondsTimeout");
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Timeout less than zero");
 
-			return Join_internal(Internal, millisecondsTimeout, Internal.system_thread_handle);
+			return Join_internal (Internal, millisecondsTimeout, Internal.system_thread_handle);
 		}
 
 #if !NET_2_1 || MONOTOUCH
 		public bool Join(TimeSpan timeout)
 		{
-			// LAMESPEC: says to throw ArgumentException too
-			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
-			
-			if(ms < 0 || ms > Int32.MaxValue) {
-				throw new ArgumentOutOfRangeException("timeout out of range");
-			}
-			return Join_internal(Internal, ms, Internal.system_thread_handle);
+			long ms = (long) timeout.TotalMilliseconds;
+			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
+
+			return Join_internal (Internal, (int) ms, Internal.system_thread_handle);
 		}
 #endif
 

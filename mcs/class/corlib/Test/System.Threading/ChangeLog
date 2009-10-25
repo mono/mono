@@ -1,3 +1,8 @@
+2009-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ThreadTest.cs: Add test cases for Current[UI]Culture (not 
+	working), Name, Join, Sleep and SpinWait
+
 2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventWaitHandleTest.cs: New. Test case for EventResetMode 
