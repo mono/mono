@@ -1,3 +1,8 @@
+2009-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Fix validations for Join and Sleep overloads
+	[Backport r144824]
+
 2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventWaitHandleTest.cs: New. Test case for EventResetMode 
