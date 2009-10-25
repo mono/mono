@@ -1,5 +1,7 @@
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (start_wrapper): Avoid an assert if thread_start_args () is NULL.
+
 	* threads.c (start_wrapper): Call mono_profiler_thread_start () later after
 	signalling start_notify.
 
