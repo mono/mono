@@ -287,8 +287,14 @@ namespace System.Reflection {
 				if (fromByteArray)
 					throw new FileNotFoundException (info.FileName);
 
-				string filename = Path.Combine (Path.GetDirectoryName (Location),
-											info.FileName);
+				string location = Path.GetDirectoryName (Location);
+				string filename = Path.Combine (location, info.FileName);
+#if NET_2_1 && !MONOTOUCH
+				// we don't control the content of 'info.FileName' so we want to make sure we keep to ourselves
+				filename = Path.GetFullPath (filename);
+				if (!filename.StartsWith (location))
+					throw new SecurityException ("non-rooted access to manifest resource");
+#endif
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			}
 
@@ -422,30 +428,20 @@ namespace System.Reflection {
 
 		public Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-			return GetSatelliteAssembly (culture, null);
+			return GetSatelliteAssembly (culture, null, true);
 		}
 
 		public Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			if (culture == null)
-				throw new ArgumentException ("culture");
-
-			AssemblyName aname = GetName (true);
-			if (version != null)
-				aname.Version = version;
-
-			aname.CultureInfo = culture;
-			aname.Name = aname.Name + ".resources";
-			Assembly assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
-			if (assembly != null)
-				return assembly;
-
-			// Try the assembly directory
-			string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
-			return LoadFrom (fullName);
+			return GetSatelliteAssembly (culture, version, true);
 		}
 
 		internal Assembly GetSatelliteAssemblyNoThrow (CultureInfo culture, Version version)
+		{
+			return GetSatelliteAssembly (culture, version, false);
+		}
+
+		private Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
 		{
 			if (culture == null)
 				throw new ArgumentException ("culture");
@@ -461,9 +457,20 @@ namespace System.Reflection {
 				return assembly;
 
 			// Try the assembly directory
-			string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
-			if (!File.Exists (fullName))
+			string location = Path.GetDirectoryName (Location);
+			string fullName = Path.Combine (location, Path.Combine (culture.Name, aname.Name + ".dll"));
+#if NET_2_1 && !MONOTOUCH
+			// it's unlikely that culture.Name or aname.Name could contain stuff like ".." but...
+			fullName = Path.GetFullPath (fullName);
+			if (!fullName.StartsWith (location)) {
+				if (throwOnError)
+					throw new SecurityException ("non-rooted access to satellite assembly");
 				return null;
+			}
+#endif
+			if (!throwOnError && !File.Exists (fullName))
+				return null;
+
 			return LoadFrom (fullName);
 		}
 		

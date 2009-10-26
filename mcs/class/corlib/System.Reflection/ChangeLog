@@ -1,3 +1,10 @@
+2009-10-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Share code between GetSatelliteAssembly and 
+	GetSatelliteAssemblyNoThrow. For Moonlight ensure both 
+	GetManifestResourceStream and GetSatelliteAssembly don't load
+	anything "below" the assembly path.
+
 2009-10-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoProperty.cs: Reduce code duplication and the number of direct
