@@ -256,6 +256,33 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(int64_1, Interlocked.Read(ref int64));
 			Assert.AreEqual(int64_1, int64);
 		}
+
+		[Test]
+		public void CompareExchange_Generic ()
+		{
+			object a = null;
+			Assert.IsNull (Interlocked.CompareExchange<object> (ref a, a, a), "null,null,null");
+			object b = new object ();
+			Assert.IsNull (Interlocked.CompareExchange<object> (ref a, a, b), "null,non-null,non-null");
+			Assert.IsNull (Interlocked.CompareExchange<object> (ref a, b, a), "null,non-null,null");
+			Assert.AreSame (b, Interlocked.CompareExchange<object> (ref a, b, b), "null,null,non-null");
+
+			Assert.AreSame (b, Interlocked.CompareExchange<object> (ref b, a, a), "non-null,null,null");
+			Assert.AreSame (b, Interlocked.CompareExchange<object> (ref b, a, b), "non-null,null,non-null");
+			Assert.AreSame (b, Interlocked.CompareExchange<object> (ref b, b, a), "non-null,non-null,null");
+			Assert.AreSame (b, Interlocked.CompareExchange<object> (ref b, b, b), "non-null,non-null,non-null");
+		}
+
+		[Test]
+		public void Exchange_Generic ()
+		{
+			object a = null;
+			Assert.IsNull (Interlocked.Exchange<object> (ref a, a), "null,null");
+			object b = new object ();
+			Assert.IsNull (Interlocked.Exchange<object> (ref a, b), "null,non-null");
+			Assert.AreSame (b, Interlocked.Exchange<object> (ref b, a), "non-null,null");
+			Assert.AreSame (b, Interlocked.Exchange<object> (ref b, b), "non-null,non-null");
+		}
 #endif
 	}
 }
