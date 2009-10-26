@@ -1,3 +1,9 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* shared.c: Add an alternative implementation using shared memory instead of
+	files. This fixes problems where the mono process would spin up the disk
+	every x secs on laptops. Fixes #434566, #415373 and #321949.
+
 2009-10-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* sockets.[ch]: fix function definition.
