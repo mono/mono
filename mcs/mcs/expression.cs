@@ -2599,22 +2599,6 @@ namespace Mono.CSharp {
 					ec, oper, lc, rc, loc);
 				if (e != null || ec.Report.Errors != prev_e)
 					return e;
-			} else if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) && !TypeManager.IsDynamicType (left.Type) &&
-					((lc != null && lc.IsDefaultValue && !(lc is NullLiteral)) || (rc != null && rc.IsDefaultValue && !(rc is NullLiteral)))) {
-
-				if ((ResolveOperator (ec)) == null) {
-					Error_OperatorCannotBeApplied (ec, left, right);
-					return null;
-				}
-
-				//
-				// The result is a constant with side-effect
-				//
-				Constant side_effect = rc == null ?
-					new SideEffectConstant (lc, right, loc) :
-					new SideEffectConstant (rc, left, loc);
-
-				return ReducedExpression.Create (side_effect, this);
 			}
 
 			// Comparison warnings
@@ -3139,6 +3123,25 @@ namespace Mono.CSharp {
 				return null;
 
 			Expression expr = best_operator.ConvertResult (ec, this);
+
+			//
+			// Optimize &/&& constant expressions with 0 value
+			//
+			if (oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) {
+				Constant rc = right as Constant;
+				Constant lc = left as Constant;
+				if ((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue)) {
+					//
+					// The result is a constant with side-effect
+					//
+					Constant side_effect = rc == null ?
+						new SideEffectConstant (lc, right, loc) :
+						new SideEffectConstant (rc, left, loc);
+
+					return ReducedExpression.Create (side_effect, expr);
+				}
+			}
+
 			if (enum_type == null)
 				return expr;
 

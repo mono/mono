@@ -1,3 +1,8 @@
+2009-10-26  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Move binary expression optimization at the end of
+	resolve.
+
 2009-10-23  Marek Safar  <marek.safar@gmail.com>
 
 	* constant.cs, nullable.cs, expression.cs, literal.cs, cfold.cs:
