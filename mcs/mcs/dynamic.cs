@@ -131,6 +131,9 @@ namespace Mono.CSharp
 		}
 	}
 
+	//
+	// Creates dynamic binder expression
+	//
 	interface IDynamicBinder
 	{
 		Expression CreateCallSiteBinder (ResolveContext ec, Arguments args);
@@ -147,6 +150,9 @@ namespace Mono.CSharp
 #endif
 	}
 
+	//
+	// Base dynamic expression statement creator
+	//
 	class DynamicExpressionStatement : ExpressionStatement
 	{
 		class StaticDataClass : CompilerGeneratedClass
@@ -371,7 +377,9 @@ namespace Mono.CSharp
 				}
 			}
 
-			// No appropriate predefined delegate found
+			//
+			// Create custom delegate when no appropriate predefined one is found
+			//
 			if (del_type == null) {
 				Type rt = is_statement ? TypeManager.void_type : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
