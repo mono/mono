@@ -2903,6 +2903,16 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		public void IsInstanceOfType_Null ()
+		{
+			Assert.IsFalse (typeof (int).IsInstanceOfType (null), "int");
+			Assert.IsFalse (typeof (object).IsInstanceOfType (null), "object");
+#if NET_2_0
+			Assert.IsFalse (typeof (int?).IsInstanceOfType (null), "int?");
+#endif
+		}
+
+		[Test]
 		public void ByrefType ()
 		{
 			Type foo_type = typeof (Foo<>);
