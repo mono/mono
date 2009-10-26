@@ -470,7 +470,7 @@ size_t GC_get_total_bytes GC_PROTO(())
 
 int GC_get_suspend_signal GC_PROTO(())
 {
-#if defined(SIG_SUSPEND) && defined(GC_PTHREADS)
+#if defined(SIG_SUSPEND) && defined(GC_PTHREADS) && !defined(GC_MACOSX_THREADS)
 	return SIG_SUSPEND;
 #else
 	return -1;
