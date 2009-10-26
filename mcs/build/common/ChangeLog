@@ -1,3 +1,8 @@
+2009-10-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Consts.cs.in: Update SL2 FX version to the second (and last)
+	released version.
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Consts.cs.in: Add BOOTSTRAP_NET_4_0.
