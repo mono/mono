@@ -468,6 +468,15 @@ size_t GC_get_total_bytes GC_PROTO(())
     return ((size_t) WORDS_TO_BYTES(GC_words_allocd+GC_words_allocd_before_gc));
 }
 
+int GC_get_suspend_signal GC_PROTO(())
+{
+#ifdef SIG_SUSPEND
+	return SIG_SUSPEND;
+#else
+	return -1;
+#endif
+}
+
 GC_bool GC_is_initialized = FALSE;
 
 void GC_init()

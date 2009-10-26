@@ -1,3 +1,8 @@
+2009-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* misc.c (GC_get_suspend_signal): New API function to return the suspend signal
+	used by libgc.
+
 2009-07-20  Geoff Norton  <gnorton@novell.com>
 
 	* darwin_stop_world.c: Fix the x86 version guards to use Apple's

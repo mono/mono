@@ -1,3 +1,8 @@
+2009-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-posix.c (add_signal_handler): Delay the GC suspend signal while
+	executing a SIGSEGV handler on an altstack, since libgc can't handle that.
+
 2009-10-24  Zoltan Varga  <vargaz@gmail.com>
 
     	* mini-exceptions.c (mini_jit_info_table_find): Add an 'out_domain' argument
