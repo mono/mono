@@ -1,3 +1,10 @@
+2009-10-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileBase.cs: CreateSettingsProperty sets the returned
+	property's DefaultValue to String.Empty if no default is specified
+	through the DefaultSettingValue attribute and the associated
+	property type is String.
+
 2009-10-22  Marek Habersack  <mhabersack@novell.com>
 
 	* ProfileBase.cs: put named entries into SettingProperty's
