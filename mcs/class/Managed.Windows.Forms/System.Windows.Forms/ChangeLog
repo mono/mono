@@ -1,3 +1,11 @@
+2009-10-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When setting Text and data source is being used, if the
+	passed value is not matching any of the items in the source, don't
+	pass it to GetItemText, since it's useless, as GetItemText expects a
+	valid item.
+	Fixes #546009.
+
 2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When retrieving an item in virtual mode, as part of the
