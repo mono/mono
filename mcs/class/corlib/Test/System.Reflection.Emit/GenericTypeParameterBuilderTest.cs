@@ -6,8 +6,6 @@
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Threading;
@@ -350,9 +348,11 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (gparam.IsGenericTypeDefinition, "#10");
 		}
 
-		[Test]
+#if !NET_4_0
 		[Category ("NotDotNet")]
-		public void GetAttributeFlagsImplWorksUnderCompilerContext ()
+#endif
+		[Test]
+		public void GetAttributeFlagsImpl ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave  | (AssemblyBuilderAccess)0x800);
 			TypeBuilder tb = module.DefineType ("ns.type", TypeAttributes.Public);
@@ -362,5 +362,3 @@ namespace MonoTests.System.Reflection.Emit
 		}
 	}
 }
-
-#endif

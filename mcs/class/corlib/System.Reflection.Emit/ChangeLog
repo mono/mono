@@ -1,3 +1,7 @@
+2009-10-27  Marek Safar  <marek.safar@gmail.com>
+
+	* GenericTypeParameterBuilder.cs: Attributes work under NET_4_0.
+
 2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: For Silverlight only AssemblyBuilderAccess.Run
