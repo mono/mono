@@ -1,3 +1,31 @@
+2009-10-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_emit_prolog): Load the current got address,
+	not the mscorlib one before calling mono_get_lmf_addr.
+
+	* tramp-ppc.c (mono_arch_create_trampoline_code_full): Fix the storing
+	of the ip to the LMF.
+
+	* method-to-ir.c (mono_method_to_ir): Fix the handling of the
+	immediate in the op->op_imm optimization.
+
+	* mini-ppc.c: Add a 'vtregs' field to ArgInfo to make the code easier to
+	understand. VTypes now work, but are not abi compliant, as they are
+	split into 4 byte parts instead of 8.
+	(emit_memcpy): Fix the unrolled case to work on the PS3.
+
+	* mini-ppc.c (get_delegate_invoke_impl): Fix this for the PS3.
+
+	* aot-compiler.c (mono_compile_assembly): Make the autoreg option
+	the default when static linking.
+
+	* mini-ppc.c (mono_arch_emit_prolog): Fix handling of I8 arguments.
+
+	* aot-compiler.c: Add an autoreg option to automatically register
+	statically linked aot modules using ELF .ctors.
+
+	* genmdesc.pl: Add __ppc64__ to allowed defines.
+
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-posix.c (add_signal_handler): Delay the GC suspend signal while
