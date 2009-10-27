@@ -1,3 +1,38 @@
+2009-10-14  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #385028
+	* DbDataAdapter.cs (GetInsertCommand): New overload added to workaround 
+	columns with DEFAULT values.
+	
+2009-10-14  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #385029
+	* DbDataAdapter.cs (set_DataAdapter): Register for the RowUpdatingEventHandlers.
+	
+2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DbDataAdapter.cs (IDbDataAdapter.get_*Command): For non 2.0 profile, do not 
+	implement these properties and related changes.
+	
+2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* DbDataAdapter.cs (set_DeleteCommand): Code cleanup.
+	
+2009-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* DbDataAdapter.cs (*Command properties): Don't call IDbDataAdapter.*Command, 
+	as provider specific DbDataAdapters would have its own implementation.
+	
+2009-07-27  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DbCommandBuilder.cs (CreateUpdateCommand): Don't set Nullable 
+	property "Original_*" fields.
+	
+2009-07-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	* DbCommandBuilder.cs (Create*Command): Fill up the missing pieces from 
+	SqlCommandBuilder version of Create*Commands that fixes the failing tests.
+	
 2009-07-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* DbCommandBuilder.cs (CreateDeleteCommand, CreateUpdateCommand): Add the 

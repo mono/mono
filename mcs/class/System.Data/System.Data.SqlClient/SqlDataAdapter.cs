@@ -5,11 +5,12 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
+//	 Veerapuram Varadhan  (vvaradhan@novell.com)
 //
 // (C) Ximian, Inc 2002
 // Copyright (C) 2002 Tim Coleman
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,17 +41,24 @@ namespace System.Data.SqlClient {
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.SqlDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
-	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, ICloneable
+
+#if NET_2_0	
+	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
+#else
+	public sealed class SqlDataAdapter :  DbDataAdapter, IDbDataAdapter
+#endif
 	{
 		#region Fields
 
 #if !NET_2_0
 		bool disposed;
 #endif
-		SqlCommand deleteCommand;
-		SqlCommand insertCommand;
-		SqlCommand selectCommand;
-		SqlCommand updateCommand;
+#if ONLY_1_0 || ONLY_1_1
+		SqlCommand _selectCommand;
+		SqlCommand _insertCommand;
+		SqlCommand _updateCommand;
+		SqlCommand _deleteCommand;		
+#endif
 #if NET_2_0
 		int updateBatchSize;
 #endif
@@ -89,9 +97,25 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand DeleteCommand {
-			get { return deleteCommand; }
-			set { deleteCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand DeleteCommand {
+			get { 
+#if NET_2_0
+				return (SqlCommand)base.DeleteCommand; 
+#else
+				return _deleteCommand;
+#endif
+			}
+			set { 
+#if NET_2_0
+				base.DeleteCommand = value; 
+#else
+				_deleteCommand = value;
+#endif
+			}
 		}
 
 #if !NET_2_0
@@ -99,9 +123,25 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand InsertCommand {
-			get { return insertCommand; }
-			set { insertCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand InsertCommand {
+			get { 
+#if NET_2_0				
+				return (SqlCommand)base.InsertCommand; 
+#else
+				return _insertCommand;
+#endif
+			}
+			set { 
+#if NET_2_0				
+				base.InsertCommand = value; 
+#else
+				_insertCommand = value;
+#endif
+			}
 		}
 
 #if !NET_2_0
@@ -109,9 +149,25 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand SelectCommand {
-			get { return selectCommand; }
-			set { selectCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand SelectCommand {
+			get { 
+#if NET_2_0
+				return (SqlCommand)base.SelectCommand; 
+#else
+				return _selectCommand;
+#endif
+			}
+			set { 
+#if NET_2_0
+				base.SelectCommand = value; 
+#else
+				_selectCommand = value;
+#endif
+			}
 		}
 
 #if !NET_2_0
@@ -119,29 +175,44 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new SqlCommand UpdateCommand {
-			get { return updateCommand; }
-			set { updateCommand = value; }
+		public
+#if ONLY_1_1
+		new 
+#endif 
+		SqlCommand UpdateCommand {
+			get { 
+#if NET_2_0
+				return (SqlCommand)base.UpdateCommand; 
+#else
+				return _updateCommand;
+#endif
+			}
+			set { 
+#if NET_2_0
+				base.UpdateCommand = value; 
+#else
+				_updateCommand = value;
+#endif
+			}
 		}
-
-		IDbCommand IDbDataAdapter.DeleteCommand {
-			get { return DeleteCommand; }
-			set { DeleteCommand = (SqlCommand) value; }
-		}
-
-		IDbCommand IDbDataAdapter.InsertCommand {
-			get { return InsertCommand; }
-			set { InsertCommand = (SqlCommand) value; }
-		}
-
+		
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
 			set { SelectCommand = (SqlCommand) value; }
 		}
-
+		
+		IDbCommand IDbDataAdapter.InsertCommand {
+			get { return InsertCommand; }
+			set { InsertCommand = (SqlCommand) value; }
+		}
+		
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
 			set { UpdateCommand = (SqlCommand) value; }
+		}
+		IDbCommand IDbDataAdapter.DeleteCommand {
+			get { return DeleteCommand; }
+			set { DeleteCommand = (SqlCommand) value; }
 		}
 
 #if NET_2_0
@@ -196,11 +267,13 @@ namespace System.Data.SqlClient {
 				RowUpdating (this, (SqlRowUpdatingEventArgs) value);
 		}
 
+#if NET_2_0		
 		[MonoTODO]
 		object ICloneable.Clone()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 #if NET_2_0
 		// All the batch methods, should be implemented, if supported,

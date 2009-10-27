@@ -70,7 +70,7 @@ namespace System.Data.SqlClient {
 		DataRowVersion sourceVersion;
 		SqlCompareOptions compareInfo;
 		int localeId;
-		Object sqlValue;
+		Type sqlType;
 		bool typeChanged;
 #if NET_2_0
 		bool sourceColumnNullMapping;
@@ -454,7 +454,11 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
 		object Value {
-			get { return metaParameter.RawValue; }
+			get {
+				if (sqlType != null)
+					return GetSqlValue (metaParameter.RawValue);
+				return metaParameter.RawValue;
+			}
 			set {
 				if (!isTypeSet) {
 #if NET_2_0
@@ -463,6 +467,11 @@ namespace System.Data.SqlClient {
 					if (value != null && value != DBNull.Value)
 						InferSqlType (value);
 #endif
+				}
+
+				if (value is INullable) {
+					sqlType = value.GetType ();
+					value = SqlTypeToFrameworkType (value);
 				}
 				metaParameter.RawValue = value;
 			}
@@ -484,11 +493,10 @@ namespace System.Data.SqlClient {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object SqlValue {
-			get { return sqlValue; }
+			get {
+				return GetSqlValue (metaParameter.RawValue);
+			}
 			set {
-				sqlValue = value;
-				if (value is INullable)
-					value = SqlTypeToFrameworkType (value);
 				Value = value;
 			}
 		}
@@ -873,6 +881,96 @@ namespace System.Data.SqlClient {
 			return tdsValue;
 		}
 
+		// TODO: Code copied from SqlDataReader, need a better approach
+		object GetSqlValue (object value)
+		{		
+			if (value == null)
+				return value;
+			switch (sqlDbType) {
+			case SqlDbType.BigInt:
+				if (value == DBNull.Value)
+					return SqlInt64.Null;
+				return (SqlInt64) ((long) value);
+			case SqlDbType.Binary:
+			case SqlDbType.Image:
+			case SqlDbType.VarBinary:
+			case SqlDbType.Timestamp:
+				if (value == DBNull.Value)
+					return SqlBinary.Null;
+				return (SqlBinary) (byte[]) value;
+			case SqlDbType.Bit:
+				if (value == DBNull.Value)
+					return SqlBoolean.Null;
+				return (SqlBoolean) ((bool) value);
+			case SqlDbType.Char:
+			case SqlDbType.NChar:
+			case SqlDbType.NText:
+			case SqlDbType.NVarChar:
+			case SqlDbType.Text:
+			case SqlDbType.VarChar:
+				if (value == DBNull.Value)
+					return SqlString.Null;
+
+				string str;
+				Type type = value.GetType ();
+				if (type == typeof (char))
+					str = value.ToString ();
+				else if (type == typeof (char[]))
+					str = new String ((char[])value);
+				else
+					str = ((string)value);
+					return (SqlString) str;
+			case SqlDbType.DateTime:
+			case SqlDbType.SmallDateTime:
+				if (value == DBNull.Value)
+					return SqlDateTime.Null;
+				return (SqlDateTime) ((DateTime) value);
+			case SqlDbType.Decimal:
+				if (value == DBNull.Value)
+					return SqlDecimal.Null;
+				if (value is TdsBigDecimal)
+					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				return (SqlDecimal) ((decimal) value);
+			case SqlDbType.Float:
+				if (value == DBNull.Value)
+					return SqlDouble.Null;
+				return (SqlDouble) ((double) value);
+			case SqlDbType.Int:
+				if (value == DBNull.Value)
+					return SqlInt32.Null;
+				return (SqlInt32) ((int) value);
+			case SqlDbType.Money:
+			case SqlDbType.SmallMoney:
+				if (value == DBNull.Value)
+					return SqlMoney.Null;
+				return (SqlMoney) ((decimal) value);
+			case SqlDbType.Real:
+				if (value == DBNull.Value)
+					return SqlSingle.Null;
+				return (SqlSingle) ((float) value);
+			case SqlDbType.UniqueIdentifier:
+				if (value == DBNull.Value)
+					return SqlGuid.Null;
+				return (SqlGuid) ((Guid) value);
+			case SqlDbType.SmallInt:
+				if (value == DBNull.Value)
+					return SqlInt16.Null;
+				return (SqlInt16) ((short) value);
+			case SqlDbType.TinyInt:
+				if (value == DBNull.Value)
+					return SqlByte.Null;
+				return (SqlByte) ((byte) value);
+#if NET_2_0
+			case SqlDbType.Xml:
+				if (value == DBNull.Value)
+					return SqlXml.Null;
+				return (SqlXml) value;
+#endif
+			default:
+				throw new NotImplementedException ("Type '" + sqlDbType + "' not implemented.");
+			}
+		}
+
 		object SqlTypeToFrameworkType (object value)
 		{
 			if (!(value is INullable)) // if the value is not SqlType
@@ -905,6 +1003,15 @@ namespace System.Data.SqlClient {
 				return ((SqlBinary) value).Value;
 			}
 
+#if NET_2_0
+			if (typeof (SqlBytes) == type) {
+				return ((SqlBytes) value).Value;
+			}
+
+			if (typeof (SqlChars) == type) {
+				return ((SqlChars) value).Value;
+			}
+#endif
 			if (typeof (SqlBoolean) == type) {
 				return ((SqlBoolean) value).Value;
 			}

@@ -1,14 +1,43 @@
+2009-10-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** As part of fix for #385028
+	* SqlCommandBuilder.cs (RowUpdatingHandler): For 2.0 profile, call the 
+	base version of the handler.
+
 2009-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #526794
 	* SqlParameter.cs (ConvertToFrameworkType): For zero-length strings, 
 	return String.Empty.
 	
+2009-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlParameter.cs (GetSqlValue): Simplify handling of SqlValue and SqlTypes.
+        (SqlTypeToFramworkType): Added support for SqlChars and SqlBytes types.
+	
 2009-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommand.cs: Ensure connection is closed if CloseConnection
 	behavior is set, and reader could not be created.
 
+2009-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* More clean up of fix for #522624/#507663
+	* SqlCommandBuilder.cs: Appropriately handle rowUpdatingHandler and
+	more cleanup for 2.0 profile.
+
+2009-07-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDataReader.cs: Added new schema fields to the schema row. 
+	Fixes a failing provider test.
+
+2009-07-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Fixes #507663
+	* SqlCommandBuilder.cs: From 2.0 onwards, use base's 
+	implementation for handling auto-generated commands.
+	* SqlDataAdapter.cs: -- ditto --
+       
 2009-05-08  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #497715
