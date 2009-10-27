@@ -1,3 +1,10 @@
+2009-10-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectStateFormatter.cs: do not use a type converter to
+	serialize an object if the converter is an instance of
+	TypeConverter itself - its reported capability of converting to
+	string is not useful here.
+
 2009-10-12  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatter.cs: if a type is associated with a type
