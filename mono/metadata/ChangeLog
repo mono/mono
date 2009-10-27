@@ -1,3 +1,8 @@
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_ptr): Allow pointers to blittable structures.
+	Fixes #469217.
+
 2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	marshal.c: BeginInvoke cannot be called on multicast delegates with
