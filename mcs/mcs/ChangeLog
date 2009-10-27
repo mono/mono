@@ -1,3 +1,10 @@
+2009-10-27  Marek Safar  <marek.safar@gmail.com>
+
+	* constant.cs, nullable.cs: Create nullable-null as LiftedNull
+	constant.
+	
+	* class.cs: Allow nullable binary user operators.
+
 2009-10-26  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Move binary expression optimization at the end of

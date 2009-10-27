@@ -154,8 +154,13 @@ namespace Mono.CSharp {
 				Type real_type = TypeManager.GetEnumUnderlyingType (t);
 				return new EnumConstant (CreateConstant (real_type, v, loc), t);
 			}
-			if (v == null && !TypeManager.IsValueType (t))
-				return new EmptyConstantCast (new NullLiteral (loc), t);
+			if (v == null) {
+				if (TypeManager.IsNullableType (t))
+					return Nullable.LiftedNull.Create (t, loc);
+
+				if (TypeManager.IsReferenceType (t))
+					return new NullConstant (t, loc);
+			}
 
 			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'",
 				v, TypeManager.CSharpName (t));

@@ -337,10 +337,10 @@ namespace Mono.CSharp.Nullable
 	//
 	// Represents null literal lifted to nullable type
 	//
-	public class LiftedNull : EmptyConstantCast, IMemoryLocation
+	public class LiftedNull : NullConstant, IMemoryLocation
 	{
 		private LiftedNull (Type nullable_type, Location loc)
-			: base (new NullLiteral (loc), nullable_type)
+			: base (nullable_type, loc)
 		{
 			eclass = ExprClass.Value;
 		}
@@ -356,15 +356,6 @@ namespace Mono.CSharp.Nullable
 				TypeManager.CSharpName (e.Type));
 
 			return ReducedExpression.Create (Create (e.Type, e.Location), e);
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			Arguments args = new Arguments (2);
-			args.Add (new Argument (this));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-
-			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
 		public override void Emit (EmitContext ec)

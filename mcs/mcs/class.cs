@@ -7897,15 +7897,16 @@ namespace Mono.CSharp {
 					}
 				}
 				
-			} else {
+			} else if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
 				// Checks for Binary operators
-				
-				if (first_arg_type != declaring_type &&
-				    Parameters.Types [1] != declaring_type){
-					Report.Error (
-						563, Location,
-						"One of the parameters of a binary operator must " +
-						"be the containing type");
+
+				var second_arg_type = ParameterTypes [1];
+				if (TypeManager.IsNullableType (second_arg_type))
+					second_arg_type = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (second_arg_type) [0]);
+
+				if (!TypeManager.IsEqual (second_arg_type, declaring_type)) {
+					Report.Error (563, Location,
+						"One of the parameters of a binary operator must be the containing type");
 					return false;
 				}
 			}
