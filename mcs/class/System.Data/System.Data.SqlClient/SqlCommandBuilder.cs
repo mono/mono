@@ -818,6 +818,9 @@ namespace System.Data.SqlClient
 
 		void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs args)
 		{
+#if NET_2_0
+			base.RowUpdatingHandler (args);
+#else
 			if (args.Command != null)
 				return;
 			try {
@@ -836,6 +839,7 @@ namespace System.Data.SqlClient
 				args.Errors = e;
 				args.Status = UpdateStatus.ErrorsOccurred;
 			}
+#endif
 		}
 
 #if NET_2_0

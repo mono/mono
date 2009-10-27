@@ -1,3 +1,11 @@
+2009-10-28  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #385028/#385029
+	* DbCommandBuilder.cs (CreateInsertCommand): Workaround for inserting 
+	DEFAULT values to non-null-columns.
+	(GetInsertCommand): New overload added to handle above workaround.
+	(set_DataAdapter): Register for the RowUpdatingEventHandlers.
+	 
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* DbConnection.cs: Throw NotImplementedException fom

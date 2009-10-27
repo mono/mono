@@ -256,7 +256,7 @@ namespace System.Data.Common {
 			return _deleteCommand;
 		}
 
-		private DbCommand CreateInsertCommand (bool option)
+		private DbCommand CreateInsertCommand (bool option, DataRow row)
 		{
 			if (QuotedTableName == String.Empty)
 				return null;
@@ -285,10 +285,20 @@ namespace System.Data.Common {
 					parameter = CreateParameter (_insertCommand, parmIndex++, schemaRow);			
 				parameter.SourceVersion = DataRowVersion.Current;
 				ApplyParameterInfo (parameter, schemaRow, StatementType.Insert, false);
-				//parameter.IsNullable = (bool) schemaRow ["AllowDBNull"];
 				
 				columns.Append (GetQuotedString (parameter.SourceColumn));
-				values.Append (parameter.ParameterName);
+
+				// Workaround for columns that may have a default/bound value and for now, 
+				// the framework, don't provide a mechanism to read these values yet
+				// AllowDBNull and DataRow is used to workaround #385028 by using DEFAULT 
+				string colName = schemaRow ["ColumnName"] as string;
+				bool allowDBNull = !schemaRow.IsNull ("AllowDBNull") & (bool) schemaRow ["AllowDBNull"];
+				if (!allowDBNull && row != null &&
+				    (row [colName] == DBNull.Value || row [colName] == null)) {
+					values.Append ("DEFAULT");
+				} else {
+					values.Append (parameter.ParameterName);
+				}
 			}
 
 			sql = String.Format ("{0} ({1}) VALUES ({2})", command, columns.ToString (), values.ToString ());
@@ -464,7 +474,10 @@ namespace System.Data.Common {
 		[Browsable (false)]
 		public DbDataAdapter DataAdapter {
 			get { return _dbDataAdapter; }
-			set {  if (value != null) _dbDataAdapter = value; }
+			set {  if (value != null) 
+				SetRowUpdatingHandler (value);
+				_dbDataAdapter = value; 
+			}
 		}
 
 		[DefaultValue ("")]
@@ -562,14 +575,19 @@ namespace System.Data.Common {
 
 		public DbCommand GetInsertCommand ()
 		{
-			return GetInsertCommand (false);
+			return GetInsertCommand (false, null);
 		}
 
 		public DbCommand GetInsertCommand (bool option)
 		{
+			return GetInsertCommand (option, null);
+		}
+
+		internal DbCommand GetInsertCommand (bool option, DataRow row)
+		{
 			BuildCache (true);
 			if (_insertCommand == null || option)
-				return CreateInsertCommand (option);
+				return CreateInsertCommand (option, row);
 			return _insertCommand;
 		}
 
@@ -636,7 +654,7 @@ namespace System.Data.Common {
 			try {
 				switch (args.StatementType) {
 				case StatementType.Insert:
-					args.Command = GetInsertCommand ();
+					args.Command = GetInsertCommand (false, args.Row);
 					break;
 				case StatementType.Update:
 					args.Command = GetUpdateCommand ();
