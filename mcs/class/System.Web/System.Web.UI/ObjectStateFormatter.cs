@@ -433,7 +433,13 @@ namespace System.Web.UI {
 										t,
 										converter != null ? converter.CanConvertFrom (t) : false));
 #endif
-						if (converter == null || !converter.CanConvertTo (typeof (string)))
+						// Do not use the converter if it's an instance of
+						// TypeConverter itself - it reports it is able to
+						// convert to string, but it's only a conversion
+						// consisting of a call to ToString() with no
+						// reverse conversion supported. This leads to
+						// problems when deserializing the object.
+						if (converter == null || converter.GetType () == typeof (TypeConverter) || !converter.CanConvertTo (typeof (string)))
 							fmt = binaryObjectFormatter;
 						else {
 							typeConverterFormatter.Converter = converter;
