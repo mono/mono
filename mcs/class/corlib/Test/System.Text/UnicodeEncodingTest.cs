@@ -233,5 +233,29 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (encoding.GetString (littleEndianBytes), bigEndianString, "BOM #7");
 			Assert.AreEqual (encoding.GetString (bigEndianBytes), littleEndianString, "BOM #8");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetString_Odd_Count_0 ()
+		{
+			byte [] array = new byte [3];
+			string s = Encoding.Unicode.GetString (array, 0, 3);
+			Assert.AreEqual (0, (int) s [0], "0");
+
+			Assert.AreEqual (2, s.Length, "Length");
+			Assert.AreEqual (65533, (int) s [1], "1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetString_Odd_Count_ff ()
+		{
+			byte [] array = new byte [3] { 0xff, 0xff, 0xff };
+			string s = Encoding.Unicode.GetString (array, 0, 3);
+			Assert.AreEqual (65535, (int) s [0], "0");
+
+			Assert.AreEqual (2, s.Length, "Length");
+			Assert.AreEqual (65533, (int) s [1], "1");
+		}
 	}
 }
