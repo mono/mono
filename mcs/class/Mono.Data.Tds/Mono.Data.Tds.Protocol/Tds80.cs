@@ -61,7 +61,7 @@ namespace Mono.Data.Tds.Protocol {
 			throw new NotImplementedException ();
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
 			throw new NotImplementedException ();
 		}

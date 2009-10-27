@@ -414,6 +414,7 @@ namespace Mono.Data.Tds.Protocol
 			this.tdsVersion = tdsVersion;
 			this.packetSize = packetSize;
 			this.dataSource = dataSource;
+			this.columns = new TdsDataColumnCollection ();
 
 			comm = new TdsComm (dataSource, port, packetSize, timeout, tdsVersion);
 		}
@@ -1441,7 +1442,7 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		protected abstract TdsDataColumnCollection ProcessColumnInfo ();
+		protected abstract void ProcessColumnInfo ();
 
 		protected void ProcessColumnNames ()
 		{
@@ -1706,7 +1707,8 @@ namespace Mono.Data.Tds.Protocol
 			case TdsPacketSubType.ColumnInfo:      // TDS 4.2
 			case TdsPacketSubType.ColumnMetadata:  // TDS 7.0
 			case TdsPacketSubType.RowFormat:       // TDS 5.0
-				columns = ProcessColumnInfo ();
+				Columns.Clear ();
+				ProcessColumnInfo ();
 				break;
 			case TdsPacketSubType.ColumnDetail:
 				ProcessColumnDetail ();

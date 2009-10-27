@@ -631,9 +631,8 @@ namespace Mono.Data.Tds.Protocol
 			//return ColumnValues [0].ToString ();
 		}
 
-		protected override TdsDataColumnCollection ProcessColumnInfo ()
+		protected override void ProcessColumnInfo ()
 		{
-			TdsDataColumnCollection result = new TdsDataColumnCollection ();
 			int numColumns = Comm.GetTdsShort ();
 			for (int i = 0; i < numColumns; i += 1) {
 				byte[] flagData = new byte[4];
@@ -685,7 +684,7 @@ namespace Mono.Data.Tds.Protocol
 				string columnName = Comm.GetString (Comm.GetByte ());
 
 				TdsDataColumn col = new TdsDataColumn ();
-				result.Add (col);
+				Columns.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
@@ -710,7 +709,6 @@ namespace Mono.Data.Tds.Protocol
 				col ["BaseTableName"] = tableName;
 #endif
 			}
-			return result;
 		}
 
 		public override void Unprepare (string statementId)

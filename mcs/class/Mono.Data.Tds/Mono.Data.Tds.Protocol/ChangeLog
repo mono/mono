@@ -1,3 +1,10 @@
+2009-10-28  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	** Fixes #381151 - NRE
+	* Tds.cs (ProcessColumnInfo): Use Columns instead of creating a new list.
+	* TdsDataColumnCollection.cs (Clear, Add): New utility methods 
+	* Tdsxx.cs: ProcessColumnInfo definition changes.
+	
 2009-08-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Fixes **522465 - based on the work by basheer.islam@gmail.com
