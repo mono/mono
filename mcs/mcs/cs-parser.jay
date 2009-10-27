@@ -3474,7 +3474,7 @@ array_creation_expression
 	| new_expr_start error
 	  {
 		Report.Error (1526, GetLocation ($1), "A new expression requires () or [] after type");
-		$$ = null;
+		$$ = new ArrayCreation ((FullNamedExpression) $1, "[]", null, GetLocation ($1));
 	  }
 	;
 
