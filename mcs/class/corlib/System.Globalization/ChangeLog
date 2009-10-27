@@ -1,3 +1,8 @@
+2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TextInfo.cs: Avoid allocating zero-length strings in ToLower 
+	and ToUpper methods
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* CultureInfo.cs: Re-add GetCultures() to the MonoTouch profile.

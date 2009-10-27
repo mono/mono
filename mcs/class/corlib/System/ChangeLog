@@ -1,3 +1,10 @@
+2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Remove unused (and unneeded) internal call defs.
+	Reduce duplication (and fix test) for Concat (object,object).
+	Avoid allocating zero-length strings in the cases where the
+	FX does not do so.
+
 2009-10-22  Miguel de Icaza  <miguel@novell.com>
 
 	*  String.cs (IsNullOrWhiteSpace, Concat, Join): New 4.0 methods. 

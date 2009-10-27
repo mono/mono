@@ -1,3 +1,9 @@
+2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnicodeEncodingTest.cs: Add test cases with an odd number of 
+	bytes being used in GetString (it does not crash but it does not
+	work like MS FX either).
+
 2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StringBuilderTest.cs: new test.

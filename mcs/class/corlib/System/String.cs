@@ -1483,6 +1483,8 @@ namespace System
 
 			if (totalWidth < this.length)
 				return this;
+			if (this.Length == 0)
+				return String.Empty;
 
 			String tmp = InternalAllocateStr (totalWidth);
 
@@ -1723,6 +1725,9 @@ namespace System
 
 		public unsafe String ToLowerInvariant ()
 		{
+			if (length == 0)
+				return String.Empty;
+
 			string tmp = InternalAllocateStr (length);
 			fixed (char* source = &start_char, dest = tmp) {
 
@@ -1756,6 +1761,9 @@ namespace System
 
 		public unsafe String ToUpperInvariant ()
 		{
+			if (length == 0)
+				return String.Empty;
+
 			string tmp = InternalAllocateStr (length);
 			fixed (char* source = &start_char, dest = tmp) {
 
@@ -1934,34 +1942,9 @@ namespace System
 			return arg0.ToString ();
 		}
 
-		public unsafe static String Concat (Object arg0, Object arg1)
+		public static String Concat (Object arg0, Object arg1)
 		{
-			string s1, s2;
-
-			s1 = (arg0 != null) ? arg0.ToString () : null;
-			s2 = (arg1 != null) ? arg1.ToString () : null;
-			
-			if (s1 == null) {
-				if (s2 == null)
-					return String.Empty;
-				else
-					return s2;
-			} else if (s2 == null)
-				return s1;
-
-			String tmp = InternalAllocateStr (s1.Length + s2.Length);
-			if (s1.Length != 0) {
-				fixed (char *dest = tmp, src = s1) {
-					CharCopy (dest, src, s1.length);
-				}
-			}
-			if (s2.Length != 0) {
-				fixed (char *dest = tmp, src = s2) {
-					CharCopy (dest + s1.Length, src, s2.length);
-				}
-			}
-
-			return tmp;
+			return Concat ((arg0 != null) ? arg0.ToString () : null, (arg1 != null) ? arg1.ToString () : null);
 		}
 
 		public static String Concat (Object arg0, Object arg1, Object arg2)
@@ -2146,8 +2129,6 @@ namespace System
 					len += strings[i].length;
 				}
 			}
-			if (len == 0)
-				return String.Empty;
 
 			return ConcatInternal (strings, len);
 		}
@@ -2163,14 +2144,15 @@ namespace System
 				if (s != null)
 					len += s.length;
 			}
-			if (len == 0)
-				return String.Empty;
 
 			return ConcatInternal (values, len);
 		}
 
 		private static unsafe String ConcatInternal (String[] values, int length)
 		{
+			if (length == 0)
+				return String.Empty;
+
 			String tmp = InternalAllocateStr (length);
 
 			fixed (char* dest = tmp) {
@@ -3034,42 +3016,12 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);
 
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
-
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern String InternalReplace (String oldValue, string newValue, CompareInfo comp);
-
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern void InternalCopyTo (int sIndex, char[] dest, int destIndex, int count);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String[] InternalSplit (char[] separator, int count, int options);
 
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern String InternalTrim (char[] chars, int typ);
-
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern int InternalLastIndexOfAny (char [] anyOf, int sIndex, int count);
-
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern String InternalPad (int width, char chr, bool right);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);
-#if false
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalStrcpy (String dest, int destPos, String src);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalStrcpy (String dest, int destPos, char[] chars);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalStrcpy (String dest, int destPos, String src, int sPos, int count);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void InternalStrcpy (String dest, int destPos, char[] chars, int sPos, int count);
-#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIntern (string str);
 

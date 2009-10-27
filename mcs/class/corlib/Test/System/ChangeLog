@@ -1,3 +1,8 @@
+2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringTest.cs: Add test case for methods that can return
+	empty strings.
+
 2009-10-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TypeTest.cs: New. Add test cases for IsInstanceOfType

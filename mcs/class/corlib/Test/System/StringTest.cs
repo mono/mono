@@ -4246,6 +4246,49 @@ public class StringTest
 		Assert.AreEqual (formKC, s.Normalize (NormalizationForm.FormKC), "#4");
 	}
 #endif
+	[Test]
+	public void Emptiness ()
+	{
+		// note: entries using AreEqual are in reality AreNotSame on MS FX
+		// but I prefer Mono implementation ;-) and it minimize the changes
+		Assert.AreSame (String.Empty, "", "Empty");
+
+		Assert.AreSame (String.Empty, String.Concat ((object) null), "Concat(null)");
+		Assert.AreSame (String.Empty, String.Concat ((object) String.Empty), "Concat(empty)");
+		Assert.AreSame (String.Empty, String.Concat ((object) String.Empty, (object) String.Empty), "Concat(object,object)");
+		Assert.AreSame (String.Empty, String.Concat (String.Empty, String.Empty), "Concat(string,string)");
+		Assert.AreEqual (String.Empty, String.Concat (String.Empty, String.Empty, String.Empty), "Concat(string,string,string)");
+		Assert.AreEqual (String.Empty, String.Concat ((object) null, (object) (object) null, (object) null, (object) null), "Concat(null,null,null,null)-object");
+		Assert.AreSame (String.Empty, String.Concat ((string) null, (string) (string) null, (string) null, (string) null), "Concat(null,null,null,null)-string");
+		Assert.AreNotSame (String.Empty, String.Concat (String.Empty, String.Empty, String.Empty, String.Empty), "Concat(string,string,string,string)");
+		Assert.AreEqual (String.Empty, String.Concat (new object [] { String.Empty, String.Empty }), "Concat(object[])");
+		Assert.AreEqual (String.Empty, String.Concat (new string [] { String.Empty, String.Empty }), "Concat(string[])");
+
+		Assert.AreNotSame (String.Empty, String.Copy (String.Empty), "Copy");
+
+		Assert.AreEqual (String.Empty, "".Insert (0, String.Empty), "Insert(Empty)");
+		Assert.AreEqual (String.Empty, String.Empty.Insert (0, ""), "Empty.Insert");
+
+		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0), "PadLeft(int)");
+		Assert.AreNotSame (String.Empty, String.Empty.PadLeft (0, '.'), "PadLeft(int.char)");
+		Assert.AreSame (String.Empty, String.Empty.PadRight (0), "PadRight(int)");
+		Assert.AreSame (String.Empty, String.Empty.PadRight (0, '.'), "PadRight(int.char)");
+
+		Assert.AreSame (String.Empty, "".Substring (0), "Substring(int)");
+		Assert.AreSame (String.Empty, "ab".Substring (1, 0), "Substring(int,int)");
+
+		Assert.AreSame (String.Empty, "".ToLower (), "ToLower");
+		Assert.AreSame (String.Empty, "".ToUpper (), "ToUpper");
+		Assert.AreSame (String.Empty, "".ToLower (CultureInfo.CurrentCulture), "ToLower(CultureInfo)");
+		Assert.AreSame (String.Empty, "".ToUpper (CultureInfo.CurrentCulture), "ToUpper(CultureInfo)");
+		Assert.AreSame (String.Empty, "".ToLowerInvariant (), "ToLowerInvariant");
+		Assert.AreSame (String.Empty, "".ToUpperInvariant (), "ToUpperInvariant");
+
+		Assert.AreSame (String.Empty, "".Trim (), "Trim()");
+		Assert.AreSame (String.Empty, "a".Trim ('a'), "Trim(char)");
+		Assert.AreSame (String.Empty, "a".TrimEnd ('a'), "TrimEnd(char)");
+		Assert.AreSame (String.Empty, "a".TrimStart ('a'), "TrimStart(char)");
+	}
 }
 
 }

@@ -436,6 +436,9 @@ namespace System.Globalization {
 			if (str == null)
 				throw new ArgumentNullException ("str");
 
+			if (str.Length == 0)
+				return String.Empty;
+
 			string tmp = String.InternalAllocateStr (str.Length);
 			fixed (char* source = str, dest = tmp) {
 
@@ -460,6 +463,9 @@ namespace System.Globalization {
 			// ToUpper() just as character conversion.
 			if (str == null)
 				throw new ArgumentNullException ("str");
+
+			if (str.Length == 0)
+				return String.Empty;
 
 			string tmp = String.InternalAllocateStr (str.Length);
 			fixed (char* source = str, dest = tmp) {
