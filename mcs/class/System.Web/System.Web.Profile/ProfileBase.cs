@@ -243,9 +243,10 @@ namespace System.Web.Profile
 		static SettingsProperty CreateSettingsProperty (PropertyInfo property)
 		{
 			SettingsProperty sp = new SettingsProperty (property.Name);
-
 			Attribute [] attributes = (Attribute [])property.GetCustomAttributes (false);
 			SettingsAttributeDictionary attDict = new SettingsAttributeDictionary();
+			bool defaultAssigned = false;
+			
 			sp.SerializeAs = SettingsSerializeAs.ProviderSpecific;
 			sp.PropertyType = property.PropertyType;
 			sp.IsReadOnly = false;
@@ -255,6 +256,7 @@ namespace System.Web.Profile
 			for (int i = 0; i < attributes.Length; i++) {
 				if (attributes [i] is DefaultSettingValueAttribute) {
 					sp.DefaultValue = ((DefaultSettingValueAttribute) attributes [i]).Value;
+					defaultAssigned = true;
 				} else if (attributes [i] is SettingsProviderAttribute) {
 					Type providerType = HttpApplication.LoadType (((SettingsProviderAttribute) attributes [i]).ProviderTypeName);
 					sp.Provider = (SettingsProvider) Activator.CreateInstance (providerType);
@@ -278,11 +280,15 @@ namespace System.Web.Profile
 			if (sp.Attributes ["AllowAnonymous"] == null)
 				sp.Attributes ["AllowAnonymous"] = false;
 
+			if (!defaultAssigned && sp.PropertyType is string && sp.DefaultValue == null)
+				sp.DefaultValue = String.Empty;
+			
 			return sp;
 		}
+		
 		static SettingsProperty CreateSettingsProperty (ProfileGroupSettings pgs, ProfilePropertySettings pps)
 		{
-			string name = ((pgs == null) ? "" : pgs.Name + ".") + pps.Name;
+			string name = ((pgs == null) ? String.Empty : pgs.Name + ".") + pps.Name;
 			SettingsProperty sp = new SettingsProperty (name);
 
 			sp.Attributes.Add ("AllowAnonymous", pps.AllowAnonymous);
