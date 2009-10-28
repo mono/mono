@@ -1,3 +1,10 @@
+2009-10-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ButtonBase.cs: Usually the click routines are handled in Control,
+	but in this class we are handling it ourselved, thus we need to have
+	the same calls, and we were missing the call to MouseClick.
+	Patch by Eric Petit <surfzoid@gmail.com>.
+
 2009-10-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When setting Text and data source is being used, if the
