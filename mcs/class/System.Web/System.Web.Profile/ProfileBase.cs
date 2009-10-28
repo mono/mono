@@ -280,7 +280,7 @@ namespace System.Web.Profile
 			if (sp.Attributes ["AllowAnonymous"] == null)
 				sp.Attributes ["AllowAnonymous"] = false;
 
-			if (!defaultAssigned && sp.PropertyType is string && sp.DefaultValue == null)
+			if (!defaultAssigned && sp.PropertyType == typeof (string) && sp.DefaultValue == null)
 				sp.DefaultValue = String.Empty;
 			
 			return sp;
