@@ -262,7 +262,9 @@ namespace Mono.CSharp
 			//
 			InferReturnType = 1 << 23,
 
-			OmitDebuggingInfo = 1 << 24
+			OmitDebuggingInfo = 1 << 24,
+
+			ExpressionTreeConversion = 1 << 25
 		}
 
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements

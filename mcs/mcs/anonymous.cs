@@ -238,11 +238,11 @@ namespace Mono.CSharp {
 			if (ec.CurrentBlock.Explicit != local_info.Block.Explicit)
 				AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 
-			if (local_info.HoistedVariableReference != null)
+			if (local_info.HoistedVariant != null)
 				return;
 
 			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
-			local_info.HoistedVariableReference = var;
+			local_info.HoistedVariant = var;
 
 			if (hoisted_locals == null)
 				hoisted_locals = new ArrayList ();
@@ -262,7 +262,7 @@ namespace Mono.CSharp {
 				hoisted_params = new ArrayList (2);
 
 			HoistedVariable expr = new HoistedParameter (this, param_ref);
-			param_ref.Parameter.HoistedVariableReference = expr;
+			param_ref.Parameter.HoistedVariant = expr;
 			hoisted_params.Add (expr);
 		}
 
@@ -612,11 +612,16 @@ namespace Mono.CSharp {
 
 	public abstract class HoistedVariable
 	{
-		class ExpressionTreeProxy : Expression
+		//
+		// Hoisted version of variable references used in expression
+		// tree has to be delayed until we know its location. The variable
+		// doesn't know its location until all stories are calculated
+		//
+		class ExpressionTreeVariableReference : Expression
 		{
 			readonly HoistedVariable hv;
 
-			public ExpressionTreeProxy (HoistedVariable hv)
+			public ExpressionTreeVariableReference (HoistedVariable hv)
 			{
 				this.hv = hv;
 			}
@@ -665,9 +670,9 @@ namespace Mono.CSharp {
 			GetFieldExpression (ec).AddressOf (ec, mode);
 		}
 
-		public Expression CreateExpressionTree (ResolveContext ec)
+		public Expression CreateExpressionTree ()
 		{
-			return new ExpressionTreeProxy (this);
+			return new ExpressionTreeVariableReference (this);
 		}
 
 		public void Emit (EmitContext ec)
@@ -767,14 +772,14 @@ namespace Mono.CSharp {
 			//
 			// Remove hoisted redirection to emit assignment from original parameter
 			//
-			HoistedVariable temp = parameter.Parameter.HoistedVariableReference;
-			parameter.Parameter.HoistedVariableReference = null;
+			HoistedVariable temp = parameter.Parameter.HoistedVariant;
+			parameter.Parameter.HoistedVariant = null;
 
 			Assign a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
 			if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
 				a.EmitStatement (ec);
 
-			parameter.Parameter.HoistedVariableReference = temp;
+			parameter.Parameter.HoistedVariant = temp;
 		}
 
 		public override void EmitSymbolInfo ()
@@ -832,6 +837,30 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousMethodExpression : Expression
 	{
+		//
+		// Special conversion for nested expression tree lambdas
+		//
+		class Quote : ShimExpression
+		{
+			public Quote (Expression expr)
+				: base (expr)
+			{
+			}
+
+			public override Expression CreateExpressionTree (ResolveContext ec)
+			{
+				var args = new Arguments (1);
+				args.Add (new Argument (expr.CreateExpressionTree (ec)));
+				return CreateExpressionFactoryCall (ec, "Quote", args);
+			}
+
+			public override Expression DoResolve (ResolveContext ec)
+			{
+				type = expr.Type;
+				return this;
+			}
+		}
+
 		ListDictionary compatibles;
 		public ToplevelBlock Block;
 
@@ -996,9 +1025,11 @@ namespace Mono.CSharp {
 
 		public Type InferReturnType (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
-			AnonymousMethodBody am;
+			AnonymousExpression am;
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
-				am = CompatibleMethod (ec, tic, InternalType.Arglist, delegate_type);
+				am = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
+				if (am != null)
+					am = am.Compatible (ec);
 			}
 			
 			if (am == null)
@@ -1043,21 +1074,53 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
+			var body = CompatibleMethodBody (ec, null, return_type, delegate_type);
+			if (body == null)
+				return null;
+
+			bool etree_conversion = delegate_type != type;
+
 			try {
-				int errors = ec.Report.Errors;
-				am = CompatibleMethod (ec, null, return_type, delegate_type);
-				if (am != null && delegate_type != type && errors == ec.Report.Errors)
-					am = CreateExpressionTree (ec, delegate_type);
+				if (etree_conversion) {
+					if (ec.HasSet (ResolveContext.Options.ExpressionTreeConversion)) {
+						//
+						// Nested expression tree lambda use same scope as parent
+						// lambda, this also means no variable capturing between this
+						// and parent scope
+						//
+						am = body.Compatible (ec, ec.CurrentAnonymousMethod);
 
-				if (!ec.IsInProbingMode)
-					compatibles.Add (type, am == null ? EmptyExpression.Null : am);
+						//
+						// Quote nested expression tree
+						//
+						if (am != null)
+							am = new Quote (am);
+					} else {
+						int errors = ec.Report.Errors;
 
-				return am;
-			} catch (CompletionResult){
+						using (ec.Set (ResolveContext.Options.ExpressionTreeConversion)) {
+							am = body.Compatible (ec);
+						}
+
+						//
+						// Rewrite expressions into expression tree when targeting Expression<T>
+						//
+						if (am != null && errors == ec.Report.Errors)
+							am = CreateExpressionTree (ec, delegate_type);
+					}
+				} else {
+					am = body.Compatible (ec);
+				}
+			} catch (CompletionResult) {
 				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}
+			
+			if (!ec.IsInProbingMode)
+				compatibles.Add (type, am == null ? EmptyExpression.Null : am);
+
+			return am;
 		}
 
 		protected virtual Expression CreateExpressionTree (ResolveContext ec, Type delegate_type)
@@ -1155,7 +1218,7 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		protected AnonymousMethodBody CompatibleMethod (ResolveContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
+		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
 		{
 			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
@@ -1163,11 +1226,8 @@ namespace Mono.CSharp {
 
 			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
 
-			AnonymousMethodBody anonymous = CompatibleMethodFactory (return_type, delegate_type, p, b);
-			if (!anonymous.Compatible (ec))
-				return null;
+			return CompatibleMethodFactory (return_type, delegate_type, p, b);
 
-			return anonymous;
 		}
 
 		protected virtual AnonymousMethodBody CompatibleMethodFactory (Type return_type, Type delegate_type, ParametersCompiled p, ToplevelBlock b)
@@ -1268,10 +1328,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		//
-		// The block that makes up the body for the anonymous method
-		//
-		protected readonly ToplevelBlock Block;
+		readonly ToplevelBlock block;
 
 		public Type ReturnType;
 
@@ -1280,7 +1337,7 @@ namespace Mono.CSharp {
 		protected AnonymousExpression (ToplevelBlock block, Type return_type, Location loc)
 		{
 			this.ReturnType = return_type;
-			this.Block = block;
+			this.block = block;
 			this.loc = loc;
 		}
 
@@ -1288,11 +1345,16 @@ namespace Mono.CSharp {
 		public abstract bool IsIterator { get; }
 		public abstract AnonymousMethodStorey Storey { get; }
 
-		public bool Compatible (ResolveContext ec)
+		public AnonymousExpression Compatible (ResolveContext ec)
+		{
+			return Compatible (ec, this);
+		}
+
+		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae)
 		{
 			// TODO: Implement clone
 			BlockContext aec = new BlockContext (ec.MemberContext, Block, ReturnType);
-			aec.CurrentAnonymousMethod = this;
+			aec.CurrentAnonymousMethod = ae;
 
 			IDisposable aec_dispose = null;
 			ResolveContext.Options flags = 0;
@@ -1313,6 +1375,9 @@ namespace Mono.CSharp {
 			if (ec.HasSet (ResolveContext.Options.CheckedScope))
 				flags |= ResolveContext.Options.CheckedScope;
 
+			if (ec.HasSet (ResolveContext.Options.ExpressionTreeConversion))
+				flags |= ResolveContext.Options.ExpressionTreeConversion;
+
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
 				aec_dispose = aec.Set (flags);
@@ -1331,7 +1396,7 @@ namespace Mono.CSharp {
 				aec_dispose.Dispose ();
 			}
 
-			return res;
+			return res ? this : null;
 		}
 
 		public void SetHasThisAccess ()
@@ -1347,6 +1412,16 @@ namespace Mono.CSharp {
 				b = b.Parent == null ? null : b.Parent.Explicit;
 			}
 		}
+
+		//
+		// The block that makes up the body for the anonymous method
+		//
+		public ToplevelBlock Block {
+			get {
+				return block;
+			}
+		}
+
 	}
 
 	public class AnonymousMethodBody : AnonymousExpression
@@ -1389,7 +1464,7 @@ namespace Mono.CSharp {
 
 		bool Define (ResolveContext ec)
 		{
-			if (!Block.Resolved && !Compatible (ec))
+			if (!Block.Resolved && Compatible (ec) == null)
 				return false;
 
 			if (block_name == null) {

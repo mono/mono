@@ -836,7 +836,7 @@ namespace Mono.CSharp {
 				new MemberName ("MoveNext", Location),
 				ParametersCompiled.EmptyReadOnlyParameters);
 
-			if (!Compatible (ec))
+			if (Compatible (ec) == null)
 				return null;
 
 			IteratorHost.DefineIteratorMembers ();

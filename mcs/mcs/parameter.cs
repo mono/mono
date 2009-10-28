@@ -243,7 +243,7 @@ namespace Mono.CSharp {
 		LocalVariableReference expr_tree_variable;
 		static TypeExpr parameter_expr_tree_type;
 
-		public HoistedVariable HoistedVariableReference;
+		HoistedVariable hoisted_variant;
 
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
 		{
@@ -436,6 +436,18 @@ namespace Mono.CSharp {
 			get { return (modFlags & Modifier.This) != 0; }
 		}
 
+		//
+		// Hoisted parameter variant
+		//
+		public HoistedVariable HoistedVariant {
+			get {
+				return hoisted_variant;
+			}
+			set {
+				hoisted_variant = value;
+			}
+		}
+
 		public Modifier ModFlags {
 			get { return modFlags & ~Modifier.This; }
 		}
@@ -541,11 +553,6 @@ namespace Mono.CSharp {
 
 		public ExpressionStatement CreateExpressionTreeVariable (BlockContext ec)
 		{
-			//
-			// A parameter is not hoisted when used directly as ET
-			//
-			HoistedVariableReference = null;
-
 			if ((modFlags & Modifier.ISBYREF) != 0)
 				ec.Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
 

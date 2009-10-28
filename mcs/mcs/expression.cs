@@ -4421,7 +4421,7 @@ namespace Mono.CSharp {
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
 		{
-			return local_info.HoistedVariableReference;
+			return local_info.HoistedVariant;
 		}
 
 		//		
@@ -4467,7 +4467,7 @@ namespace Mono.CSharp {
 		{
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null)
-				return hv.CreateExpressionTree (ec);
+				return hv.CreateExpressionTree ();
 
 			Arguments arg = new Arguments (1);
 			arg.Add (new Argument (this));
@@ -4616,7 +4616,7 @@ namespace Mono.CSharp {
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
 		{
-			return pi.Parameter.HoistedVariableReference;
+			return pi.Parameter.HoistedVariant;
 		}
 
 		//
@@ -4678,15 +4678,16 @@ namespace Mono.CSharp {
 
 			Block b = ec.CurrentBlock;
 			while (b != null) {
+				b = b.Toplevel;
 				IParameterData[] p = b.Toplevel.Parameters.FixedParameters;
 				for (int i = 0; i < p.Length; ++i) {
 					if (p [i] != Parameter)
 						continue;
 
 					//
-					// Skip closest anonymous method parameters
+					// Don't capture parameters inside same top level block
 					//
-					if (b == ec.CurrentBlock && !am.IsIterator)
+					if (b == am.Block && !am.IsIterator)
 						return true;
 
 					if (IsRef) {
@@ -4695,20 +4696,18 @@ namespace Mono.CSharp {
 							Name, am.ContainerType);
 					}
 
-					b = null;
-					break;
+					if (pi.Parameter.HasAddressTaken)
+						AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
+
+					if (ec.IsVariableCapturingRequired && !b.Toplevel.IsExpressionTree) {
+						AnonymousMethodStorey storey = pi.Block.CreateAnonymousMethodStorey (ec);
+						storey.CaptureParameter (ec, this);
+					}
+
+					return true;
 				}
 
-				if (b != null)
-					b = b.Toplevel.Parent;
-			}
-
-			if (pi.Parameter.HasAddressTaken)
-				AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, this, loc);
-
-			if (ec.IsVariableCapturingRequired) {
-				AnonymousMethodStorey storey = pi.Block.CreateAnonymousMethodStorey (ec);
-				storey.CaptureParameter (ec, this);
+				b = b.Parent;
 			}
 
 			return true;
@@ -4737,7 +4736,7 @@ namespace Mono.CSharp {
 		{
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null)
-				return hv.CreateExpressionTree (ec);
+				return hv.CreateExpressionTree ();
 
 			return Parameter.ExpressionTreeVariableReference ();
 		}
@@ -4834,22 +4833,11 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			Arguments args;
-
-			//
-			// Special conversion for nested expression trees
-			//
-			if (TypeManager.DropGenericTypeArguments (type) == TypeManager.expression_type) {
-				args = new Arguments (1);
-				args.Add (new Argument (this));
-				return CreateExpressionFactoryCall (ec, "Quote", args);
-			}
-
 			Expression instance = mg.IsInstance ?
 				mg.InstanceExpression.CreateExpressionTree (ec) :
 				new NullLiteral (loc);
 
-			args = Arguments.CreateForExpressionTree (ec, arguments,
+			var args = Arguments.CreateForExpressionTree (ec, arguments,
 				instance,
 				mg.CreateExpressionTree (ec));
 

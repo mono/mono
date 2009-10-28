@@ -6063,7 +6063,7 @@ namespace Mono.CSharp {
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
 		{
-			return li.HoistedVariableReference;
+			return li.HoistedVariant;
 		}
 
 		public override bool IsFixed {

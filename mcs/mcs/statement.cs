@@ -1176,7 +1176,7 @@ namespace Mono.CSharp {
 		public readonly Block Block;
 
 		public VariableInfo VariableInfo;
-		public HoistedVariable HoistedVariableReference;
+		HoistedVariable hoisted_variant;
 
 		[Flags]
 		enum Flags : byte {
@@ -1216,7 +1216,7 @@ namespace Mono.CSharp {
 
 		public void ResolveVariable (EmitContext ec)
 		{
-			if (HoistedVariableReference != null)
+			if (HoistedVariant != null)
 				return;
 
 			if (builder == null) {
@@ -1250,6 +1250,18 @@ namespace Mono.CSharp {
 		{
 			if (builder != null)
 				ec.DefineLocalVariable (Name, builder);
+		}
+
+		//
+		// Hoisted local variable variant
+		//
+		public HoistedVariable HoistedVariant {
+			get {
+				return hoisted_variant;
+			}
+			set {
+				hoisted_variant = value;
+			}
 		}
 
 		public bool IsThisAssigned (BlockContext ec, Block block)
@@ -1410,7 +1422,8 @@ namespace Mono.CSharp {
 		public ToplevelBlock Toplevel; // TODO: Use Explicit
 
 		[Flags]
-		public enum Flags : byte {
+		public enum Flags
+		{
 			Unchecked = 1,
 			BlockUsed = 2,
 			VariablesInitialized = 4,
@@ -1418,8 +1431,10 @@ namespace Mono.CSharp {
 			Unsafe = 16,
 			IsIterator = 32,
 			HasCapturedVariable = 64,
-			HasCapturedThis = 128
+			HasCapturedThis = 1 << 7,
+			IsExpressionTree = 1 << 8
 		}
+
 		protected Flags flags;
 
 		public bool Unchecked {
@@ -2793,6 +2808,13 @@ namespace Mono.CSharp {
 			set { flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator; }
 		}
 
+		//
+		// Block has been converted to expression tree
+		//
+		public bool IsExpressionTree {
+			get { return (flags & Flags.IsExpressionTree) != 0; }
+		}
+
 		public bool IsThisAssigned (BlockContext ec)
 		{
 			return this_variable == null || this_variable.IsThisAssigned (ec, this);
@@ -2804,6 +2826,9 @@ namespace Mono.CSharp {
 				return true;
 
 			resolved = true;
+
+			if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
+				flags |= Flags.IsExpressionTree;
 
 			try {
 				if (!ResolveMeta (rc, ip))

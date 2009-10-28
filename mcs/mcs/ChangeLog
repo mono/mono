@@ -1,3 +1,11 @@
+2009-10-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #550404
+	
+	* parameter.cs, iterators.cs, context.cs, anonymous.cs,
+	expression.cs, statement.cs, ecore.cs: Quote any nested expression
+	tree.
+
 2009-10-27  Marek Safar  <marek.safar@gmail.com>
 
 	* constant.cs, nullable.cs: Create nullable-null as LiftedNull
