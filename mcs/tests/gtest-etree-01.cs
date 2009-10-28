@@ -1679,8 +1679,10 @@ class Tester
 	{
 		string s = "localvar";
 		Expression<Func<string>> e9 = () => s;
+		s = "changed";
+
 		AssertNodeType (e9, ExpressionType.MemberAccess);
-		Assert ("localvar", e9.Compile ().Invoke ());
+		Assert ("changed", e9.Compile ().Invoke ());
 	}
 	
 	void MemberInitTest ()
@@ -2400,6 +2402,15 @@ class Tester
 		Assert (2, e.Compile ().Invoke ().Compile ().Invoke ());
 	}
 
+	void QuoteTest_2 ()
+	{
+		Expression<Func<string, Expression<Func<string>>>> e = (string s) => () => s;
+		AssertNodeType (e, ExpressionType.Quote);
+		
+		// Blocked by https://bugzilla.novell.com/show_bug.cgi?id=550722
+		//Assert ("data", e.Compile ().Invoke ("data").Compile ().Invoke ());
+	}
+	
 	void RightShiftTest ()
 	{
 		Expression<Func<ulong, short, ulong>> e = (ulong a, short b) => a >> b;

@@ -15549,7 +15549,7 @@
         <size>63</size>
       </method>
       <method name="Void MemberAccessTest_9()">
-        <size>80</size>
+        <size>91</size>
       </method>
       <method name="Void MemberInitTest()">
         <size>302</size>
@@ -16126,33 +16126,6 @@
       <method name="Void LambdaTest()">
         <size>89</size>
       </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey2">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey3">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey4">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey5">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey6">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester">
       <method name="Void EqualTest_15()">
         <size>159</size>
       </method>
@@ -16181,6 +16154,34 @@
       <method name="Void RightShiftTest_5()">
         <size>152</size>
       </method>
+      <method name="Void QuoteTest_2()">
+        <size>63</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey5">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
     </type>
   </test>
   <test name="gtest-etree-02.cs">
@@ -16191,8 +16192,16 @@
       <method name="Void Foo[T](System.Linq.Expressions.Expression`1[System.Func`2[T,T]])">
         <size>1</size>
       </method>
-      <method name="Void Main()">
-        <size>129</size>
+      <method name="System.String Param(System.String)">
+        <size>114</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>157</size>
+      </method>
+    </type>
+    <type name="M+&lt;Param&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
