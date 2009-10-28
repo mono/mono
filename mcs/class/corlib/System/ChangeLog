@@ -1,3 +1,9 @@
+2009-10-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MarshalByRefObject.cs: In InitializeLifetimeService, if a lease
+	exists for the object return it, instead of always creating
+	a new one. Fixes bug #544357.
+
 2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Remove unused (and unneeded) internal call defs.
