@@ -4685,9 +4685,9 @@ namespace Mono.CSharp {
 						continue;
 
 					//
-					// Don't capture parameters inside same top level block
+					// Don't capture local parameters
 					//
-					if (b == am.Block && !am.IsIterator)
+					if (b == ec.CurrentBlock.Toplevel && !am.IsIterator)
 						return true;
 
 					if (IsRef) {
