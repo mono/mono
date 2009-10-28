@@ -389,6 +389,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override void OnDataBinding (EventArgs e)
 		{
+			base.OnDataBinding (e);
 #if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			PerformDataBinding (list);
@@ -396,7 +397,6 @@ namespace System.Web.UI.WebControls {
 			IEnumerable list = GetData ().ExecuteSelect (DataSourceSelectArguments.Empty);
 			InternalPerformDataBinding (list);
 #endif
-			base.OnDataBinding (e);
 		}
 
 #if NET_2_0
@@ -439,32 +439,34 @@ namespace System.Web.UI.WebControls {
 				Items.Clear ();
 
 			string format = DataTextFormatString;
-			if (format == "")
+			if (format.Length == 0)
 				format = null;
 
 			string text_field = DataTextField;
 			string value_field = DataValueField;
+
+			if (text_field.Length == 0)
+				text_field = null;
+			if (value_field.Length == 0)
+				value_field = null;
+			
 			ListItemCollection coll = Items;
 			foreach (object container in dataSource) {
 				string text;
 				string val;
 
 				text = val = null;
-				if (text_field != "") {
+				if (text_field != null)
 					text = DataBinder.GetPropertyValue (container, text_field, format);
-				}
-
-				if (value_field != "") {
+				
+				if (value_field != null)
 					val = DataBinder.GetPropertyValue (container, value_field).ToString ();
-				}
-				else if (text_field == "") {
+				else if (text_field == null) {
 					text = val = container.ToString ();
 					if (format != null)
 						text = String.Format (format, container);
-				}
-				else if (text != null) {
+				} else if (text != null)
 					val = text;
-				}
 
 				if (text == null)
 					text = val;
