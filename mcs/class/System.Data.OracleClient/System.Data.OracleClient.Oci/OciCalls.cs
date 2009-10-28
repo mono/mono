@@ -1153,7 +1153,7 @@ namespace System.Data.OracleClient.Oci
 			[MarshalAs (UnmanagedType.U4)] out int rsize)
 		{
 			#if TRACE
-			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
+			Trace.WriteLineIf(traceOci, "OCIUnicodeToCharSet", "OCI");
 			#endif
 
 			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);

@@ -1,3 +1,7 @@
+2009-10-27	Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* OciCalls.cs: Wrong function name in trace.
+
 2009-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Fixes #480377
