@@ -1,3 +1,11 @@
+2009-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Move code to deal with 'anonymous' filenames
+	into two methods (returning the path, fullpath or only the 
+	filename). Default Moonlight to anonymous (not only for isolated
+	storage) unless the coreclr is disable (e.g. smcs)
+	[Backport r144945]
+
 2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnmanagedMemoryStream.cs: Allow the use under NET_1_1 so we can

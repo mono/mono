@@ -41,6 +41,7 @@ using System.Threading;
 using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
+using System.Security;
 #else
 using System.Security.AccessControl;
 #endif
@@ -100,7 +101,13 @@ namespace System.IO
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
+#if NET_2_1 && !MONOTOUCH
+			// default the browser to 'all' anonymous files and let other usage (like smcs) with 'normal'
+			// (i.e. non-anonymous except for isolated storage) files and paths
+			this.anonymous = SecurityManager.SecurityEnabled;
+#else
 			this.anonymous = false;
+#endif
 
 			InitBuffer (bufferSize, noBuffering);
 
@@ -245,8 +252,7 @@ namespace System.IO
 			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Access to the path '{0}' is denied.");
-				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
-				throw new UnauthorizedAccessException (String.Format (msg, fname));
+				throw new UnauthorizedAccessException (String.Format (msg, GetSecureFileName (path, false)));
 			}
 
 			/* Append streams can't be read (see FileMode
@@ -272,6 +278,7 @@ namespace System.IO
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
 #if NET_2_1
+					// don't use GetSecureFileName for the directory name
 					throw new IsolatedStorageException (String.Format (msg, fname));
 #else
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
@@ -283,7 +290,7 @@ namespace System.IO
 					mode != FileMode.CreateNew && !File.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
-				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
+				string fname = GetSecureFileName (path);
 #if NET_2_1
 				throw new IsolatedStorageException (String.Format (msg, fname));
 #else
@@ -302,8 +309,7 @@ namespace System.IO
 			this.handle = MonoIO.Open (path, mode, access, share, options, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (path), error);
 			}
 
 			this.access = access;
@@ -390,8 +396,7 @@ namespace System.IO
 				length = MonoIO.GetLength (handle, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
-					string fname = (anonymous) ? Path.GetFileName (name) : name;
-					throw MonoIO.GetException (fname, error);
+					throw MonoIO.GetException (GetSecureFileName (name), error);
 				}
 
 				return(length);
@@ -658,8 +663,7 @@ namespace System.IO
 				MonoIO.Write (handle, src, offset, count, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
-					string fname = (anonymous) ? Path.GetFileName (name) : name;
-					throw MonoIO.GetException (fname, error);
+					throw MonoIO.GetException (GetSecureFileName (name), error);
 				}
 				
 				buf_start += count;
@@ -799,8 +803,7 @@ namespace System.IO
 
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (name), error);
 			}
 			
 			return(buf_start);
@@ -827,8 +830,7 @@ namespace System.IO
 			MonoIO.SetLength (handle, value, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (name), error);
 			}
 
 			if (Position > value)
@@ -875,8 +877,7 @@ namespace System.IO
 			MonoIO.Lock (handle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (name), error);
 			}
 		}
 
@@ -896,8 +897,7 @@ namespace System.IO
 			MonoIO.Unlock (handle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (name), error);
 			}
 		}
 
@@ -923,8 +923,7 @@ namespace System.IO
 					MonoIO.Close (handle, out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
 						// don't leak the path information for isolated storage
-						string fname = (anonymous) ? Path.GetFileName (name) : name;
-						throw MonoIO.GetException (fname, error);
+						throw MonoIO.GetException (GetSecureFileName (name), error);
 					}
 
 					handle = MonoIO.InvalidHandle;
@@ -1007,8 +1006,7 @@ namespace System.IO
 						     out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
 						// don't leak the path information for isolated storage
-						string fname = (anonymous) ? Path.GetFileName (name) : name;
-						throw MonoIO.GetException (fname, error);
+						throw MonoIO.GetException (GetSecureFileName (name), error);
 					}
 				}
 				st.Write (buf, 0, buf_length);
@@ -1030,8 +1028,7 @@ namespace System.IO
 						     out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
 						// don't leak the path information for isolated storage
-						string fname = (anonymous) ? Path.GetFileName (name) : name;
-						throw MonoIO.GetException (fname, error);
+						throw MonoIO.GetException (GetSecureFileName (name), error);
 					}
 				}
 				MonoIO.Write (handle, buf, 0,
@@ -1039,8 +1036,7 @@ namespace System.IO
 
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
-					string fname = (anonymous) ? Path.GetFileName (name) : name;
-					throw MonoIO.GetException (fname, error);
+					throw MonoIO.GetException (GetSecureFileName (name), error);
 				}
 			}
 
@@ -1076,8 +1072,7 @@ namespace System.IO
 				amount = 0; // might not be needed, but well...
 			} else if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : name;
-				throw MonoIO.GetException (fname, error);
+				throw MonoIO.GetException (GetSecureFileName (name), error);
 			}
 			
 			/* Check for read error */
@@ -1108,6 +1103,17 @@ namespace System.IO
 			buf_start = 0;
 			buf_offset = buf_length = 0;
 			buf_dirty = false;
+		}
+
+		private string GetSecureFileName (string filename)
+		{
+			return (anonymous) ? Path.GetFileName (filename) : Path.GetFullPath (filename);
+		}
+
+		private string GetSecureFileName (string filename, bool full)
+		{
+			return (anonymous) ? Path.GetFileName (filename) : 
+				(full) ? Path.GetFullPath (filename) : filename;
 		}
 
 		// fields
