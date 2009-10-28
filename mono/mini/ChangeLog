@@ -1,3 +1,8 @@
+2009-10-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-posix.c (add_signal_handler): Use
+	mono_gc_get_suspend_signal() instead of GC_get_suspend_signal().
+
 2009-10-28 Jerry Maine <crashfourit@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by

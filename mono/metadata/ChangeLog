@@ -1,3 +1,9 @@
+2009-10-28  Mark Probst  <mark.probst@gmail.com>
+
+	* gc-internal.h, boehm-gc, sgen-gc.c, null-gc: Add
+	mono_gc_get_suspend_signal(), which returns the suspend signal
+	number used by the GC.
+
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (start_wrapper): Avoid an assert if thread_start_args () is NULL.
