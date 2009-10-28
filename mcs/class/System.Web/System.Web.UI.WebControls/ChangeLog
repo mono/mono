@@ -1,3 +1,9 @@
+2009-10-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ListControl.cs: OnDataBinding must call base implementation
+	before performing the binding, so that DataSource can be assigned
+	from within the handler.
+
 2009-10-13  Marek Safar  <marek.safar@novell.com>
 
 	* WebColorConverter.cs: Delegate ConvertFrom to
