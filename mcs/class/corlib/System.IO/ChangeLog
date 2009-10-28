@@ -1,3 +1,10 @@
+2009-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Move code to deal with 'anonymous' filenames
+	into two methods (returning the path, fullpath or only the 
+	filename). Default Moonlight to anonymous (not only for isolated
+	storage) unless the coreclr is disable (e.g. smcs)
+
 2009-10-21  Miguel de Icaza  <miguel@novell.com>
 
 	* BinaryWriter.cs, BinaryReader.cs: 4.0 signature update.
