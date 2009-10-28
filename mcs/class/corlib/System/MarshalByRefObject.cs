@@ -92,7 +92,10 @@ namespace System
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual object InitializeLifetimeService ()
 		{
-			return new System.Runtime.Remoting.Lifetime.Lease();
+			if (_identity != null && _identity.Lease != null)
+				return _identity.Lease;
+			else
+				return new System.Runtime.Remoting.Lifetime.Lease();
 		}
 
 #if NET_2_0
