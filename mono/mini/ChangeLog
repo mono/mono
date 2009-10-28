@@ -1,3 +1,14 @@
+2009-10-28 Jerry Maine <crashfourit@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* mini-x86.c (mono_arch_cpu_enumerate_simd_versions): Added code to detect
+	sse4a for simd intrinsics.
+
+	* mini-amd64.c (mono_arch_cpu_enumerate_simd_versions): Added code to detect
+	sse4a for simd intrinsics.
+
 2009-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* ir-emit.h method-to-ir.c: Change a few _IMM macros to assign to inst_imm
