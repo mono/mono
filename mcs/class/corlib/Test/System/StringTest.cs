@@ -4280,9 +4280,10 @@ public class StringTest
 		Assert.AreSame (String.Empty, "".ToUpper (), "ToUpper");
 		Assert.AreSame (String.Empty, "".ToLower (CultureInfo.CurrentCulture), "ToLower(CultureInfo)");
 		Assert.AreSame (String.Empty, "".ToUpper (CultureInfo.CurrentCulture), "ToUpper(CultureInfo)");
+#if NET_2_0
 		Assert.AreSame (String.Empty, "".ToLowerInvariant (), "ToLowerInvariant");
 		Assert.AreSame (String.Empty, "".ToUpperInvariant (), "ToUpperInvariant");
-
+#endif
 		Assert.AreSame (String.Empty, "".Trim (), "Trim()");
 		Assert.AreSame (String.Empty, "a".Trim ('a'), "Trim(char)");
 		Assert.AreSame (String.Empty, "a".TrimEnd ('a'), "TrimEnd(char)");
