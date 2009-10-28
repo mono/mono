@@ -32,6 +32,7 @@
 
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -53,7 +54,9 @@ namespace Mono.Data.SqlExpressions {
 			
 			Token.IS, "is",
 			Token.IN, "in",
+			Token.NOT_IN, "not in",
 			Token.LIKE, "like",
+			Token.NOT_LIKE, "not like",
 			
 			Token.COUNT, "count",
 			Token.SUM, "sum",
@@ -207,13 +210,63 @@ namespace Mono.Data.SqlExpressions {
 			sb.Append (Current ());
 
 			char next;
+			string ret;
 			while ((next = Next ()) == '_' || Char.IsLetterOrDigit (next) || next == '\\') {
 				sb.Append (ProcessEscapes (next));				
 				if (!MoveNext ())
 					break;
 			}
+			ret = sb.ToString ();
+			if (String.Compare (ret,
+					    "not",
+#if NET_2_0
+					    StringComparison.OrdinalIgnoreCase
+#else
+					    true, CultureInfo.InvariantCulture
+#endif
+			    ) == 0) {
+				int savedPos = pos;
+				while (Char.IsWhiteSpace ((next = Next ()))) {
+					if (!MoveNext ()) {
+						pos = savedPos;
+						return ret;
+					}
+				}
+				MoveNext ();
+				
+				string target;
+				switch (Current ()) {
+					case 'i':
+					case 'I':
+						target = "in";
+						break;
 
-			return sb.ToString ();
+					case 'l':
+					case 'L':
+						target = "like";
+						break;
+					
+					default:
+						pos = savedPos;
+						return ret;
+				}
+
+				int tlen = target.Length;
+				int idx = 1;
+				while (tlen-- > 0 && Char.IsLetter ((next = Next ()))) {
+					if (target [idx++] != Char.ToLowerInvariant (next)) {
+						pos = savedPos;
+						return ret;
+					}
+					MoveNext ();
+				}
+
+				sb.Append (' ');
+				sb.Append (target);
+				ret = sb.ToString ();
+			}
+
+			return ret;
 		}
 
 		private int ParseIdentifier ()

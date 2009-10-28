@@ -1,3 +1,10 @@
+2009-10-28  Marek Habersack  <mhabersack@novell.com>
+
+	* Tokenizer.cs, Parser.jay: a work around for 3 reduce/reduce
+	conflicts (use of 'NOT LIKE' and 'NOT IN' which would previously
+	be ignored because of the conflicts). The grammar still has 6 more
+	of those - the real fix is to rewrite it.
+
 2009-07-23  Adam Wendt  <adam@awendtconsulting.com>
 
 	* Comparison.cs (Compare): Parse string if other object is DateTime
