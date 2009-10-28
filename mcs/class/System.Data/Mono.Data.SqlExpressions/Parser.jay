@@ -71,7 +71,7 @@ namespace Mono.Data.SqlExpressions {
 
 %token DOT COMMA
 
-%token IS IN LIKE
+%token IS IN NOT_IN LIKE NOT_LIKE
 
 %token COUNT SUM AVG MAX MIN STDEV VAR
 %token IIF SUBSTRING ISNULL LEN TRIM CONVERT
@@ -335,9 +335,9 @@ LikePredicate
 	{
 		$$ = new Like ((IExpression)$1, (IExpression)$3);
 	}
-	| StringExpr NOT LIKE StringExpr
+	| StringExpr NOT_LIKE StringExpr
 	{
-		$$ = new Negation (new Like ((IExpression)$1, (IExpression)$4));
+		$$ = new Negation (new Like ((IExpression)$1, (IExpression)$3));
 	}
 	;
 
@@ -346,9 +346,9 @@ InPredicate
 	{
 		$$ = new In ((IExpression)$1, (IList)$3);
 	}
-	| ArithExpr NOT IN InPredicateValue
+	| ArithExpr NOT_IN InPredicateValue
 	{
-		$$ = new Negation (new In ((IExpression)$1, (IList)$4));
+		$$ = new Negation (new In ((IExpression)$1, (IList)$3));
 	}
 	;
 
