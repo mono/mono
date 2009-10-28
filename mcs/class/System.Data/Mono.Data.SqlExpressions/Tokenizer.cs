@@ -254,7 +254,13 @@ namespace Mono.Data.SqlExpressions {
 				int tlen = target.Length;
 				int idx = 1;
 				while (tlen-- > 0 && Char.IsLetter ((next = Next ()))) {
-					if (target [idx++] != Char.ToLowerInvariant (next)) {
+					char lc;
+#if NET_2_0
+					lc = Char.ToLowerInvariant (next);
+#else
+					lc = Char.ToLower (next);
+#endif
+					if (target [idx++] != lc) {
 						pos = savedPos;
 						return ret;
 					}
