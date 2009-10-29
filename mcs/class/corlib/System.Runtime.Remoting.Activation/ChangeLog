@@ -1,6 +1,6 @@
-2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+2009-10-29  Jb Evain  <jbevain@novell.com>
 
-	* ActivationServices.cs: Avoid depending on COM stuff for NET_2_1
+	* ActivationServices.cs: avoid a static constructor.
 
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
