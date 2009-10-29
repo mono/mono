@@ -349,6 +349,12 @@ namespace System.Data.OracleClient.Oci
 				byte csfrm);
 
 			[DllImport ("oci")]
+			internal static extern int OCILobCharSetForm (IntPtr svchp, 
+				IntPtr errhp,
+				IntPtr locp,
+				out byte csfrm);
+			
+			[DllImport ("oci")]
 			internal static extern int OCINlsGetInfo (IntPtr hndl,
 				IntPtr errhp,
 				[In][Out] byte[] bufp,
@@ -969,6 +975,17 @@ namespace System.Data.OracleClient.Oci
 				piece, ctxp, cbfp, csid, csfrm);
 		}
 
+		internal static int OCILobCharSetForm (IntPtr svchp, 
+			IntPtr errhp,
+			IntPtr locp,
+			out byte csfrm)
+		{
+			#if TRACE
+			Trace.WriteLineIf(traceOci, "OCILobCharSetForm", "OCI");
+			#endif
+			return OciNativeCalls.OCILobCharSetForm (svchp, errhp, locp, out csfrm);			
+		}
+		
 		internal static int OCINlsGetInfo (IntPtr hndl,
 			IntPtr errhp,
 			ref byte[] bufp,
