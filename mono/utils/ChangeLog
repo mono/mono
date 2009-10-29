@@ -1,3 +1,7 @@
+2009-10-29  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-hash.c (mono_g_hash_mark): Don't use SET_NODE_KEY/VALUE here.
+
 2009-10-23  Alp Toker  <alp@nuanti.com>
 
 	Fix embedding API breakage from r144688. mono-compiler.h is an internal
