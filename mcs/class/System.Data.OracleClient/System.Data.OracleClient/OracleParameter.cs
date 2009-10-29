@@ -683,6 +683,7 @@ namespace System.Data.OracleClient
 						bindValue = lobLocator.Handle;
 						lobLocator.ErrorHandle = connection.ErrorHandle;
 						lobLocator.Service = statement.Service;
+						lobLocator.Environment = connection.Environment;
 						useRef = true;
 					}
 					break;
@@ -735,6 +736,7 @@ namespace System.Data.OracleClient
 						bindValue = lobLocator.Handle;
 						lobLocator.ErrorHandle = connection.ErrorHandle;
 						lobLocator.Service = connection.ServiceContext;
+						lobLocator.Environment = connection.Environment;
 						useRef = true;
 					}
 					break;

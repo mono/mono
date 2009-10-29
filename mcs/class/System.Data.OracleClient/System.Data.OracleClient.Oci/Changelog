@@ -1,4 +1,17 @@
-2009-10-27	Joerg Rosenkranz  <joergr@voelcker.com>
+2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #321718
+	* OciCalls.cs: Add stub for OCILobCharSetForm to get the charset
+	form associated with a CLOB/NCLOB.
+
+	* OciLobLocator.cs: Add Environment handle property that is
+	required to call OCILobCharSetForm and pass the output value to
+	OCILobRead. 
+
+	* OciDefineHandler.cs: Update Environment property of
+	OCILobLocator.
+
+2009-10-27 Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* OciCalls.cs: Wrong function name in trace.
 

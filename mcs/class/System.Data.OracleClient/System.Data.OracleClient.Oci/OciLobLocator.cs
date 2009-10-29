@@ -27,6 +27,7 @@ namespace System.Data.OracleClient.Oci {
 		bool disposed = false;
 		OciErrorHandle errorHandle;
 		OciServiceHandle service;
+		OciEnvironmentHandle environment;
 		OciDataType type;
 
 		#endregion // Fields
@@ -55,6 +56,11 @@ namespace System.Data.OracleClient.Oci {
 		public OciDataType LobType {	
 			get { return type; }
 			set { type = value; }
+		}
+		
+		public OciEnvironmentHandle Environment {
+			get { return environment; }
+			set { environment = value; }
 		}
 		
 		#endregion // Properties
@@ -164,12 +170,22 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint amount = count;
+			byte csfrm = 0; 
 
 			// Character types are UTF-16, so amount of characters is 1/2
 			// the amount of bytes
-			if (!binary) 
+			if (!binary) {
 				amount /= 2;
-
+				status = OciCalls.OCILobCharSetForm (environment, 
+				             ErrorHandle, 
+				             this, 
+				             out csfrm);
+				if (status != 0) {
+					OciErrorInfo info = ErrorHandle.HandleError ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+			}
+			
 			status = OciCalls.OCILobRead (Service,
 						ErrorHandle,
 						this,
@@ -180,7 +196,7 @@ namespace System.Data.OracleClient.Oci {
 						IntPtr.Zero,
 						IntPtr.Zero,
 						1000,  // OCI_UCS2ID
-						0);    // Ignored if csid is specified as above
+						csfrm);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
