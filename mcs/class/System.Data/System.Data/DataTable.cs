@@ -2757,8 +2757,8 @@ namespace System.Data {
 				if (rowsCount == 0)
 					continue;
 				BitArray nullBits = new BitArray (rowsCount);
-				Array recordArray = Array.CreateInstance (Rows[0][j].GetType (), recordsCount);
 				DataColumn column = Columns [j];
+				Array recordArray = Array.CreateInstance (column.DataType, recordsCount);
 				for (int k = 0, l = 0; k < Rows.Count; k++, l++) {
 					DataRowVersion version;
 					DataRow dr = Rows[k];
