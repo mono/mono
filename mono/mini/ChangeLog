@@ -1,3 +1,11 @@
+2009-10-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Use EMIT_NEW_LOAD_MEMBASE_TYPE to
+	load vtypes instead if OP_LOADV_MEMBASE in the implementation of
+	CONSTRAINED. Fixes #550964.
+
+	* generics.cs: Add a test.
+
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-posix.c (add_signal_handler): Delay the GC suspend signal while
