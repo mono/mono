@@ -855,17 +855,28 @@ namespace System.Data
 
 		private void AddParentKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
-			if (currentTable.PrimaryKey != null)
+			// check existing primary key
+			if (currentTable.Table.PrimaryKey.Length > 0)
+				throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", currentTable.Table.TableName));
+
+			if (currentTable.PrimaryKey != null) {
+				// fill pk column info and return
+				col.ColumnName = currentTable.PrimaryKey.ColumnName;
+				col.ColumnMapping = currentTable.PrimaryKey.ColumnMapping;
+				col.Namespace = currentTable.PrimaryKey.Namespace;
+				col.DataType = currentTable.PrimaryKey.DataType;
+				col.AutoIncrement = currentTable.PrimaryKey.AutoIncrement;
+				col.AllowDBNull = currentTable.PrimaryKey.AllowDBNull;
+				
+				ImportColumnMetaInfo (el, el.QualifiedName, col);
 				return;
+			}
 
 			// check name identity
 			string name = XmlHelper.Decode (parent.QualifiedName.Name) + "_Id";
 			int count = 0;
 			while (currentTable.ContainsColumn (name))
 				name = String.Format ("{0}_{1}", name, count++);
-			// check existing primary key
-			if (currentTable.Table.PrimaryKey.Length > 0)
-				throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", currentTable.Table.TableName));
 
 			col.ColumnName = name;
 			col.ColumnMapping = MappingType.Hidden;
@@ -873,8 +884,8 @@ namespace System.Data
 			col.DataType = typeof (int);
 			col.AutoIncrement = true;
 			col.AllowDBNull = false;
-
 			ImportColumnMetaInfo (el, el.QualifiedName, col);
+			
 			AddColumn (col);
 			currentTable.PrimaryKey = col;
 		}
