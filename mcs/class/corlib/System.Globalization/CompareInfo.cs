@@ -252,7 +252,7 @@ namespace System.Globalization
 			return(internal_compare_switch (string1, offset1,
 						 string1.Length-offset1,
 						 string2, offset2,
-						 string2.Length-offset1,
+						 string2.Length-offset2,
 						 options));
 		}
 

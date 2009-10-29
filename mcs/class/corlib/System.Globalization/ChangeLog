@@ -1,3 +1,9 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompareInfo.cs: Fix bug in length calculation in one of the (too
+	many) Compare overloads
+	[Partial backport of r145023]
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : Fixed bug #462957. With empty target string it
