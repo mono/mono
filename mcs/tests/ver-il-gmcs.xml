@@ -3177,7 +3177,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>500</size>
+        <size>501</size>
       </method>
     </type>
     <type name="Mapper`2[A,R]">
@@ -14386,7 +14386,7 @@
         <size>83</size>
       </method>
       <method name="Void ConvertTest_3()">
-        <size>93</size>
+        <size>108</size>
       </method>
       <method name="Void ConvertTest_4()">
         <size>102</size>
@@ -14431,7 +14431,7 @@
         <size>83</size>
       </method>
       <method name="Void ConvertCheckedTest_3()">
-        <size>93</size>
+        <size>1</size>
       </method>
       <method name="Void ConvertCheckedTest_4()">
         <size>102</size>
@@ -23649,7 +23649,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>32</size>
+        <size>36</size>
       </method>
     </type>
     <type name="Blah">
