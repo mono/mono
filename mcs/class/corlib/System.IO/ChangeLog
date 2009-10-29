@@ -1,3 +1,8 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Reduce code duplication by merging FillBuffer 
+	with FillBufferToStream
+
 2009-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStream.cs: Move code to deal with 'anonymous' filenames

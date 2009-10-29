@@ -704,7 +704,7 @@ namespace System.IO
 
 			if (buf_dirty) {
 				MemoryStream ms = new MemoryStream ();
-				FlushBufferToStream (ms);
+				FlushBuffer (ms);
 				ms.Write (array, offset, numBytes);
 				offset = 0;
 				numBytes = (int) ms.Length;
@@ -970,11 +970,12 @@ namespace System.IO
 			return(count);
 		}
 
-		void FlushBufferToStream (Stream st)
+		void FlushBuffer (Stream st)
 		{
 			if (buf_dirty) {
+				MonoIOError error;
+
 				if (CanSeek == true) {
-					MonoIOError error;
 					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
@@ -983,7 +984,17 @@ namespace System.IO
 						throw MonoIO.GetException (GetSecureFileName (name), error);
 					}
 				}
-				st.Write (buf, 0, buf_length);
+				if (st == null) {
+					MonoIO.Write (handle, buf, 0,
+						      buf_length, out error);
+
+					if (error != MonoIOError.ERROR_SUCCESS) {
+						// don't leak the path information for isolated storage
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+					}
+				} else {
+					st.Write (buf, 0, buf_length);
+				}
 			}
 
 			buf_start += buf_offset;
@@ -993,41 +1004,18 @@ namespace System.IO
 
 		private void FlushBuffer ()
 		{
-			if (buf_dirty) {
-				MonoIOError error;
-				
-				if (CanSeek == true) {
-					MonoIO.Seek (handle, buf_start,
-						     SeekOrigin.Begin,
-						     out error);
-					if (error != MonoIOError.ERROR_SUCCESS) {
-						// don't leak the path information for isolated storage
-						throw MonoIO.GetException (GetSecureFileName (name), error);
-					}
-				}
-				MonoIO.Write (handle, buf, 0,
-					      buf_length, out error);
-
-				if (error != MonoIOError.ERROR_SUCCESS) {
-					// don't leak the path information for isolated storage
-					throw MonoIO.GetException (GetSecureFileName (name), error);
-				}
-			}
-
-			buf_start += buf_offset;
-			buf_offset = buf_length = 0;
-			buf_dirty = false;
+			FlushBuffer (null);
 		}
 
 		private void FlushBufferIfDirty ()
 		{
 			if (buf_dirty)
-				FlushBuffer ();
+				FlushBuffer (null);
 		}
 
 		private void RefillBuffer ()
 		{
-			FlushBuffer();
+			FlushBuffer (null);
 			
 			buf_length = ReadData (handle, buf, 0,
 					       buf_size);
