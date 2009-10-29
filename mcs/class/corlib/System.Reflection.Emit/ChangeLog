@@ -1,3 +1,10 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleBuilder.cs: Add missing 'className' validations in GetType
+	* TypeBuilder.cs: Add missing 'names' validations in 
+	DefineGenericParameters
+	[Backport r145013]
+
 2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: For Silverlight only AssemblyBuilderAccess.Run
