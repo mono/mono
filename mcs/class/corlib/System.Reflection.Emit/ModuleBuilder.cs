@@ -384,7 +384,13 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif		
-		public override Type GetType (string className, bool throwOnError, bool ignoreCase) {
+		public override Type GetType (string className, bool throwOnError, bool ignoreCase)
+		{
+			if (className == null)
+				throw new ArgumentNullException ("className");
+			if (className.Length == 0)
+				throw new ArgumentException ("className");
+
 			int subt;
 			string orig = className;
 			string modifiers;

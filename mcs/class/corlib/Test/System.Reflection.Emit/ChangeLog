@@ -1,3 +1,8 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleBuilderTest.cs: Add test cases for GetType overloads
+	* TypeBuilderTest.cs: Remove NotWorking from two DefineGenericParameters test case.
+
 2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TypeBuilderTest.cs: Validation test cases for GetConstructor
