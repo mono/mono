@@ -1213,6 +1213,160 @@ public class CompareInfoTest
 		Assert.IsTrue ("aaaa".StartsWith ("A", StringComparison.OrdinalIgnoreCase));
 	}
 #endif
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void IsPrefix_SourceNull ()
+	{
+		invariant.IsPrefix (null, "b");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void IsPrefix_PrefixNull ()
+	{
+		invariant.IsPrefix ("a", null, CompareOptions.None);
+	}
+
+	[Test]
+	public void IsPrefix_PrefixEmpty ()
+	{
+		Assert.IsTrue (invariant.IsPrefix ("a", String.Empty));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IsPrefix_CompareOptions_Invalid ()
+	{
+		invariant.IsPrefix ("a", "b", (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IsPrefix_CompareOptions_StringSort ()
+	{
+		invariant.IsPrefix ("a", "b", CompareOptions.StringSort);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void IsSuffix_SourceNull ()
+	{
+		invariant.IsSuffix (null, "b");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void IsSuffix_SuffixNull ()
+	{
+		invariant.IsSuffix ("a", null, CompareOptions.None);
+	}
+
+	[Test]
+	public void IsSuffix_PrefixEmpty ()
+	{
+		Assert.IsTrue (invariant.IsSuffix ("a", String.Empty));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IsSuffix_CompareOptions_Invalid ()
+	{
+		invariant.IsSuffix ("a", "b", (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IsSuffix_CompareOptions_StringSort ()
+	{
+		invariant.IsSuffix ("a", "b", CompareOptions.StringSort);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Compare_String_String_CompareOptions_Invalid ()
+	{
+		// validation of CompareOptions is made before null checks
+		invariant.Compare (null, null, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	public void Compare_String_String_CompareOptions_StringSort ()
+	{
+		// StringSort is valid for Compare only
+		Assert.AreEqual (-1, invariant.Compare ("a", "b", CompareOptions.StringSort));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Compare_String_Int_String_Int_CompareOptions_Invalid ()
+	{
+		invariant.Compare (null, 0, null, 0, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Compare_String_Int_Int_String_Int_Int_CompareOptions_Invalid ()
+	{
+		invariant.Compare (null, 0, 0, null, 0, 0, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IndexOf_String_Char_Int_Int_CompareOptions_Invalid ()
+	{
+		invariant.IndexOf ("a", 'a', 0, 1, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IndexOf_String_Char_Int_Int_CompareOptions_StringSort ()
+	{
+		invariant.IndexOf ("a", 'a', 0, 1, CompareOptions.StringSort);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IndexOf_String_String_Int_Int_CompareOptions_Invalid ()
+	{
+		invariant.IndexOf ("a", "a", 0, 1, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IndexOf_String_String_Int_Int_CompareOptions_StringSort ()
+	{
+		invariant.IndexOf ("a", "a", 0, 1, CompareOptions.StringSort);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void LastIndexOf_String_Char_Int_Int_CompareOptions_Invalid ()
+	{
+		invariant.LastIndexOf ("a", 'a', 0, 1, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void LastIndexOf_String_Char_Int_Int_CompareOptions_StringSort ()
+	{
+		invariant.LastIndexOf ("a", 'a', 0, 1, CompareOptions.StringSort);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void LastIndexOf_String_String_Int_Int_CompareOptions_Invalid ()
+	{
+		invariant.LastIndexOf ("a", "a", 0, 1, (CompareOptions) Int32.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void LastIndexOf_String_String_Int_Int_CompareOptions_StringSort ()
+	{
+		invariant.LastIndexOf ("a", "a", 0, 1, CompareOptions.StringSort);
+	}
 }
 
 }
+
