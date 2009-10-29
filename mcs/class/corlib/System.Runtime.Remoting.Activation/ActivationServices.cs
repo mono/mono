@@ -44,7 +44,16 @@ namespace System.Runtime.Remoting.Activation
 {
 	internal class ActivationServices
 	{
-		static IActivator _constructionActivator = new ConstructionLevelActivator ();
+		static IActivator _constructionActivator;
+
+		static IActivator ConstructionActivator {
+			get {
+				if (_constructionActivator == null)
+					_constructionActivator = new ConstructionLevelActivator ();
+
+				return _constructionActivator;
+			}
+		}
 
 		public static IMessage Activate (RemotingProxy proxy, ConstructionCall ctorCall)
 		{
@@ -106,7 +115,7 @@ namespace System.Runtime.Remoting.Activation
 			if (!type.IsContextful) 
 			{
 				// Must be a remote activated object
-				ctorCall.Activator = new AppDomainLevelActivator (activationUrl, _constructionActivator);
+				ctorCall.Activator = new AppDomainLevelActivator (activationUrl, ConstructionActivator);
 				ctorCall.IsContextOk = false;	// It'll be activated in a remote context
 				return ctorCall;
 			}
@@ -114,7 +123,7 @@ namespace System.Runtime.Remoting.Activation
 			// It is a CBO. Need collect context properties and
 			// check if a new context is needed.
 
-			IActivator activatorChain = _constructionActivator;
+			IActivator activatorChain = ConstructionActivator;
 			activatorChain = new ContextLevelActivator (activatorChain);
 
 			ArrayList attributes = new ArrayList ();
