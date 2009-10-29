@@ -2206,13 +2206,17 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Static_GetConstructor_TypeBuilderGeneric_ConstructorInfoNull ()
 		{
 			TypeBuilder tb = module.DefineType ("XXX");
 			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
 			Type fooOfT = tb.MakeGenericType (typeParams [0]);
-			TypeBuilder.GetConstructor (fooOfT, null);
+			try {
+				TypeBuilder.GetConstructor (fooOfT, null);
+				Assert.Fail ("Expected NullReferenceException");
+			}
+			catch (NullReferenceException) {
+			}
 		}
 #endif
 
@@ -9512,7 +9516,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DefineGenericParameters_Names_Empty ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
@@ -9530,7 +9533,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DefineGenericParameters_Names_Null ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
