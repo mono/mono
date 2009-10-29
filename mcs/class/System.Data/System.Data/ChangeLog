@@ -1,5 +1,12 @@
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	** Fixes 332875 - based on analysis by Ben Martin <ben@trustorm.com.au>
+	* XmlSchemaDataImporter.cs (AddParentKeyColumn): If a table already has a 
+	PrimaryKey column defined, when called again, fill the PKCol data into the 
+	passed DataColumn and return.
+	
+2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes #550960 - Patch by Stefano <stefano.sapienti@apsystems.it>
 	* DataTable.cs (BinarySerialize): Use datatype from DataColumn 
 	instead of value of the column.
