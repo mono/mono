@@ -476,16 +476,6 @@ namespace System.Data.OracleClient
 						svalue = svalue.ToString () + '\0';
 					}
 
-					// set bind length to size of data
-					//bindSize = (size + 1) * 4;
-					if (direction == ParameterDirection.Input)
-						bindSize = Encoding.UTF8.GetMaxByteCount (svalue.Length);
-					else
-						bindSize = Encoding.UTF8.GetMaxByteCount (size + 1);
-
-					// allocate memory based on bind length
-					bytes = new byte [bindSize];				
-
 					if (direction == ParameterDirection.Input ||
 						direction == ParameterDirection.InputOutput) {
 						
@@ -494,8 +484,13 @@ namespace System.Data.OracleClient
 						rsize = 0;
 						// Get size of buffer
 						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+
+						// allocate memory based on oracle returned length
+						bytes = new byte [rsize];
+
 						// Fill buffer
 						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+						bindSize = bytes.Length;
 					}
 					break;
 				case OciDataType.Date:

@@ -1,5 +1,11 @@
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	** Fixes #322695
+	* OracleParameter.cs: Use oracle returned rsize instead of 
+	MAXBYTECOUNT.  Reduces the size of allocated buffer.
+	
+2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes #321718
 	* OracleParameter.cs: Update Environment handle in OciLobLocator.
 	
