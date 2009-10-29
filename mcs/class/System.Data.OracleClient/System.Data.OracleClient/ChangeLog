@@ -1,3 +1,8 @@
+2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #321718
+	* OracleParameter.cs: Update Environment handle in OciLobLocator.
+	
 2009-09-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #543207

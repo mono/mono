@@ -338,6 +338,7 @@ namespace System.Data.OracleClient.Oci
 			value = lobLocator.Handle;
 			lobLocator.ErrorHandle = connection.ErrorHandle;
 			lobLocator.Service = connection.ServiceContext;
+			lobLocator.Environment = connection.Environment;
 
 			status = OciCalls.OCIDefineByPosPtr (Parent,
 							out handle,
