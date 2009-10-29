@@ -401,6 +401,22 @@ class Tests {
 		return 0;
 	}
 
+	enum MyEnumUlong : ulong {
+		Value_2 = 2
+	}
+
+	public static int test_0_regress_550964_constrained_enum_long () {
+        MyEnumUlong a = MyEnumUlong.Value_2;
+        MyEnumUlong b = MyEnumUlong.Value_2;
+
+        return Pan (a, b) ? 0 : 1;
+	}
+
+    static bool Pan<T> (T a, T b)
+    {
+        return a.Equals (b);
+    }
+
 	static int cctor_count = 0;
 
     public abstract class Beta<TChanged> 
