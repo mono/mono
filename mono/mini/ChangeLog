@@ -1,5 +1,9 @@
 2009-10-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Fix % 1. Fixes #550970.
+
+	* basic.cs: Add a test.
+
 	* method-to-ir.c (mono_method_to_ir): Use EMIT_NEW_LOAD_MEMBASE_TYPE to
 	load vtypes instead if OP_LOADV_MEMBASE in the implementation of
 	CONSTRAINED. Fixes #550964.
