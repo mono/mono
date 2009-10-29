@@ -1941,8 +1941,20 @@ namespace Mono.CSharp {
 			Type target_type, Location loc)
 		{
 			Expression e = ExplicitConversionCore (ec, expr, target_type, loc);
-			if (e != null)
+			if (e != null) {
+				//
+				// Don't eliminate explicit precission casts
+				//
+				if (e == expr) {
+					if (target_type == TypeManager.float_type)
+						return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+					
+					if (target_type == TypeManager.double_type)
+						return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				}
+					
 				return e;
+			}
 
 			Type expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {

@@ -1,3 +1,8 @@
+2009-10-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #550580	
+	* convert.cs: Don't eliminate explicit precission casts.
+
 2009-10-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #550404
