@@ -1,3 +1,9 @@
+2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #550960 - Patch by Stefano <stefano.sapienti@apsystems.it>
+	* DataTable.cs (BinarySerialize): Use datatype from DataColumn 
+	instead of value of the column.
+	
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* XmlSchemaDataImporter.cs: Remove DbProviderFactories dependency in
