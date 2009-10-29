@@ -1,3 +1,9 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompareInfo.cs: Add/fix CompareOptions validations. Reduce code
+	duplication in Compare methods (wrt CompareOptions). Fix 
+	calculation bug	in Compare(string,int.string,int,CompareOptions).
+
 2009-10-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TextInfo.cs: Avoid allocating zero-length strings in ToLower 

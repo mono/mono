@@ -103,6 +103,12 @@ namespace System.Globalization
 			get { return true; }
 		}
 #endif
+		const CompareOptions ValidCompareOptions_NoStringSort =
+			CompareOptions.None | CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace |
+			CompareOptions.IgnoreSymbols | CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth |
+			CompareOptions.OrdinalIgnoreCase | CompareOptions.Ordinal;
+
+		const CompareOptions ValidCompareOptions = ValidCompareOptions_NoStringSort | CompareOptions.StringSort;
 
 		// Keep in synch with MonoCompareInfo in the runtime. 
 		private int culture;
@@ -190,26 +196,15 @@ namespace System.Globalization
 #endif
 		public virtual int Compare (string string1, string string2)
 		{
-			if (string1 == null) {
-				if (string2 == null)
-					return 0;
-				return -1;
-			}
-			if (string2 == null)
-				return 1;
-				
-			/* Short cut... */
-			if(string1.Length == 0 && string2.Length == 0)
-				return(0);
-
-			return(internal_compare_switch (string1, 0, string1.Length,
-						 string2, 0, string2.Length,
-						 CompareOptions.None));
+			return Compare (string1, string2, CompareOptions.None);
 		}
 
 		public virtual int Compare (string string1, string string2,
 					    CompareOptions options)
 		{
+			if ((options & ValidCompareOptions) != options)
+				throw new ArgumentException ("options");
+
 			if (string1 == null) {
 				if (string2 == null)
 					return 0;
@@ -230,46 +225,16 @@ namespace System.Globalization
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2)
 		{
-			if (string1 == null) {
-				if (string2 == null)
-					return 0;
-				return -1;
-			}
-			if (string2 == null)
-				return 1;
-
-			/* Not in the spec, but ms does these short
-			 * cuts before checking the offsets (breaking
-			 * the offset >= string length specified check
-			 * in the process...)
-			 */
-			if ((string1.Length == 0 || offset1 == string1.Length) &&
-				(string2.Length == 0 || offset2 == string2.Length))
-				return(0);
-
-			if(offset1 < 0 || offset2 < 0) {
-				throw new ArgumentOutOfRangeException ("Offsets must not be less than zero");
-			}
-			
-			if(offset1 > string1.Length) {
-				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
-			}
-			
-			if(offset2 > string2.Length) {
-				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
-			}
-			
-			return(internal_compare_switch (string1, offset1,
-						 string1.Length-offset1,
-						 string2, offset2,
-						 string2.Length-offset2,
-						 CompareOptions.None));
+			return Compare (string1, offset1, string2, offset2, CompareOptions.None);
 		}
 
 		public virtual int Compare (string string1, int offset1,
 					    string string2, int offset2,
 					    CompareOptions options)
 		{
+			if ((options & ValidCompareOptions) != options)
+				throw new ArgumentException ("options");
+
 			if (string1 == null) {
 				if (string2 == null)
 					return 0;
@@ -302,7 +267,7 @@ namespace System.Globalization
 			return(internal_compare_switch (string1, offset1,
 						 string1.Length-offset1,
 						 string2, offset2,
-						 string2.Length-offset1,
+						 string2.Length-offset2,
 						 options));
 		}
 
@@ -310,51 +275,7 @@ namespace System.Globalization
 					    int length1, string string2,
 					    int offset2, int length2)
 		{
-			if (string1 == null) {
-				if (string2 == null)
-					return 0;
-				return -1;
-			}
-			if (string2 == null)
-				return 1;
-
-			/* Not in the spec, but ms does these short
-			 * cuts before checking the offsets (breaking
-			 * the offset >= string length specified check
-			 * in the process...)
-			 */
-			if((string1.Length == 0 ||
-				offset1 == string1.Length ||
-				length1 == 0) &&
-				(string2.Length == 0 ||
-				offset2 == string2.Length ||
-				length2 == 0))
-				return(0);
-
-			if(offset1 < 0 || length1 < 0 ||
-			   offset2 < 0 || length2 < 0) {
-				throw new ArgumentOutOfRangeException ("Offsets and lengths must not be less than zero");
-			}
-			
-			if(offset1 > string1.Length) {
-				throw new ArgumentOutOfRangeException ("Offset1 is greater than or equal to the length of string1");
-			}
-			
-			if(offset2 > string2.Length) {
-				throw new ArgumentOutOfRangeException ("Offset2 is greater than or equal to the length of string2");
-			}
-			
-			if(length1 > string1.Length-offset1) {
-				throw new ArgumentOutOfRangeException ("Length1 is greater than the number of characters from offset1 to the end of string1");
-			}
-			
-			if(length2 > string2.Length-offset2) {
-				throw new ArgumentOutOfRangeException ("Length2 is greater than the number of characters from offset2 to the end of string2");
-			}
-			
-			return(internal_compare_switch (string1, offset1, length1,
-						 string2, offset2, length2,
-						 CompareOptions.None));
+			return Compare (string1, offset1, length1, string2, offset2, length2, CompareOptions.None);
 		}
 
 		public virtual int Compare (string string1, int offset1,
@@ -362,6 +283,9 @@ namespace System.Globalization
 					    int offset2, int length2,
 					    CompareOptions options)
 		{
+			if ((options & ValidCompareOptions) != options)
+				throw new ArgumentException ("options");
+
 			if (string1 == null) {
 				if (string2 == null)
 					return 0;
@@ -620,9 +544,8 @@ namespace System.Globalization
 			if(count<0 || (source.Length - startIndex) < count) {
 				throw new ArgumentOutOfRangeException ("count");
 			}
-			if((options & CompareOptions.StringSort)!=0) {
-				throw new ArgumentException ("StringSort is not a valid CompareOption for this method");
-			}
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 			
 			if(count==0) {
 				return(-1);
@@ -693,6 +616,8 @@ namespace System.Globalization
 			if(count<0 || (source.Length - startIndex) < count) {
 				throw new ArgumentOutOfRangeException ("count");
 			}
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 			if(value.Length==0) {
 				return(0);
 			}
@@ -718,6 +643,9 @@ namespace System.Globalization
 			if(prefix == null) {
 				throw new ArgumentNullException("prefix");
 			}
+
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 
 			if (UseManagedCollation)
 				return collator.IsPrefix (source, prefix, options);
@@ -745,6 +673,9 @@ namespace System.Globalization
 			if(suffix == null) {
 				throw new ArgumentNullException("suffix");
 			}
+
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 
 			if (UseManagedCollation)
 				return collator.IsSuffix (source, suffix, options);
@@ -846,9 +777,8 @@ namespace System.Globalization
 			if(count < 0 || (startIndex - count) < -1) {
 				throw new ArgumentOutOfRangeException("count");
 			}
-			if((options & CompareOptions.StringSort)!=0) {
-				throw new ArgumentException ("StringSort is not a valid CompareOption for this method");
-			}
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 			
 			if(count==0) {
 				return(-1);
@@ -886,6 +816,8 @@ namespace System.Globalization
 			if(count < 0 || (startIndex - count) < -1) {
 				throw new ArgumentOutOfRangeException("count");
 			}
+			if ((options & ValidCompareOptions_NoStringSort) != options)
+				throw new ArgumentException ("options");
 			if(count == 0) {
 				return(-1);
 			}

@@ -1,3 +1,7 @@
+2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompareInfoTest.cs: Add test cases to validate parameters
+
 2009-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Convert all tests to new-style nunit classes/methods.	
