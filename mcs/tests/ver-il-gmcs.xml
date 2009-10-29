@@ -3177,7 +3177,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>483</size>
+        <size>484</size>
       </method>
     </type>
     <type name="Mapper`2[A,R]">
@@ -35257,11 +35257,11 @@
   </test>
   <test name="test-679.cs">
     <type name="Program">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
       <method name="Int32 Main()">
         <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
