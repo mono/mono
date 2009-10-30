@@ -305,14 +305,14 @@ class Tester
 	{
 		dynamic d = MyEnum.Value_1;
 
-		// CSC: Invalid System.InvalidOperationException
-		Assert (d + null, null, "#1");
-
-		Assert (d + 1, MyEnum.Value_2, "#2");
+		Assert (d + 1, MyEnum.Value_2, "#1");
 
 		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_1;
-		Assert (d2 + (byte) 1, MyEnumUlong.Value_2, "#3");
-		Assert<MyEnumUlong?> (d2 + (object) null, null, "#3a");
+		Assert (d2 + (byte) 1, MyEnumUlong.Value_2, "#2");
+		Assert<MyEnumUlong?> (d2 + (object) null, null, "#2a");
+		
+		// CSC: Invalid System.InvalidOperationException
+		Assert<MyEnum?> (d + null, null, "#1");
 	}
 	
 	void AddCheckedTest ()
@@ -1860,14 +1860,14 @@ class Tester
 	{
 		dynamic d = MyEnum.Value_1;
 
+		Assert<MyEnum> (d - 1, 0, "#1");
+
+		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_2;
+		Assert (d2 - (byte) 1, MyEnumUlong.Value_1, "#2");
+		Assert<MyEnumUlong?> (d2 - (object) null, null, "#2a");
+		
 		// CSC: Invalid System.InvalidOperationException
-		Assert (d - null, null, "#1");
-
-		Assert (d - 1, MyEnum.Value_2, "#2");
-
-		dynamic d2 = (MyEnumUlong?) MyEnumUlong.Value_1;
-		Assert (d2 - (byte) 1, MyEnumUlong.Value_2, "#3");
-		Assert<MyEnumUlong?> (d2 - (object) null, null, "#3a");
+		Assert<MyEnum?> (d - null, null, "#3");
 	}
 
 	void SubtractCheckedTest ()

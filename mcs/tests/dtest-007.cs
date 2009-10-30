@@ -150,8 +150,14 @@ class Tester
 		Assert (19, d.Prop, "#1a");
 
 		d.Prop = byte.MaxValue;
+		Assert (byte.MaxValue, d.Prop++, "#1b");
+		Assert (1, ++d.Prop, "#1c");
 		d.Prop++;
-		Assert (0, d.Prop, "#1b");
+		Assert (2, d.Prop, "#1d");
+		
+		//FIXME: 
+		//d.Prop += 5;
+		//Assert (7, d.Prop, "#1e");
 
 		d.StringStatic = "no";
 		Assert ("no", d.StringStatic, "#2");
