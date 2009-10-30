@@ -157,10 +157,43 @@ namespace System.Runtime.Serialization.Json
 			return IsStartObject ((XmlReader) reader);
 		}
 
+#if NET_2_1
+		Stream QuoteJsonKeys (Stream stream) {
+			TextReader r = new StreamReader (stream, Encoding.UTF8);
+			string s = r.ReadToEnd ();
+			r.Close ();
+
+			int pos = s.IndexOf (":");
+			while (pos > 0) {
+				int i = pos-1;
+				for (; i >=0 && Char.IsWhiteSpace (s[i]); i--) {}
+				int end = i + 1;
+				for (; i > 0 && !Char.IsWhiteSpace (s[i-1]) && s[i-1] != ',' && s[i-1] != '{' && s[i-1] != '}' && s[i-1] != ']'; i--) {}
+				if (s[i] != '"') {
+					s = s.Insert (i, "\"");
+					s = s.Insert (end+1, "\"");
+					end += 2;
+					pos += 2;
+				}
+				pos = s.IndexOf (":", pos + 1);
+			}
+
+			MemoryStream ms = new MemoryStream ();
+			StreamWriter tw = new StreamWriter (ms, Encoding.UTF8);
+			tw.Write (s);
+			tw.Flush ();
+			ms.Seek (0, SeekOrigin.Begin);
+			ms.Position = 0;
+			return ms;
+		}
+#endif
+
 		public override object ReadObject (Stream stream)
 		{
 #if NET_2_1
-			return ReadObject(JsonReaderWriterFactory.CreateJsonReader(stream, XmlDictionaryReaderQuotas.Max));
+			using (Stream json = QuoteJsonKeys (stream)) {
+				return ReadObject(JsonReaderWriterFactory.CreateJsonReader(json, XmlDictionaryReaderQuotas.Max));
+			}
 #else
 			return ReadObject (JsonReaderWriterFactory.CreateJsonReader (stream, new XmlDictionaryReaderQuotas ()));
 #endif

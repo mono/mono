@@ -1,3 +1,8 @@
+2009-10-30  Andreia Gaita  <avidigal@novell.com>
+
+	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
+	the data to fix the quotes before passing it to the deserializer
+
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializer.cs
