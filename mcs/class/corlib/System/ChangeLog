@@ -1,3 +1,8 @@
+2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoType.cs: Don't pass null value to icalls 
+	GetCorrespondingInflated[Constructor|Method]
+
 2009-10-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: In InitializeLifetimeService, if a lease
