@@ -156,13 +156,27 @@ namespace System.Windows.Forms
 			else
 				column_rect.Height = ThemeEngine.Current.ListViewGetHeaderHeight (null, ThemeEngine.Current.DefaultFont);
 
-			if (width >= 0)
+			column_rect.Width = 0;
+
+			if (width >= 0) // manual width
 				column_rect.Width = width;
-			else if (Index != -1) {
+			else if (Index != -1) { // automatic width, either -1 or -2
+				// try to expand if we are the last column
+				bool expand_to_right = Index == owner.Columns.Count - 1 && width == -2;
+				Rectangle visible_area = owner.ClientRectangle;
+
 				column_rect.Width = owner.GetChildColumnSize (Index).Width;
 				width = column_rect.Width;
-			} else
-				column_rect.Width = 0;
+
+				// expand only if we have free space to the right
+				if (expand_to_right && column_rect.X + column_rect.Width < visible_area.Width) {
+					width = visible_area.Width - column_rect.X;
+					if (owner.v_scroll.Visible)
+						width -= owner.v_scroll.Width;
+
+					column_rect.Width = width;
+				}
+			}
 		}
 
 		internal void SetListView (ListView list_view)
@@ -251,10 +265,9 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public int Index {
 			get {
-				if (owner != null && owner.Columns != null
-				    && owner.Columns.Contains (this)) {
+				if (owner != null)
 					return owner.Columns.IndexOf (this);
-				}
+
 				return -1;
 			}
 		}

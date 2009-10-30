@@ -740,12 +740,6 @@ namespace System.Windows.Forms
 				
 			Rectangle rect;
 
-#if NET_2_0
-			// Call Layout if bounds haven't been computed.
-			// since we can get different item instances at each invocation
-			if (owner.VirtualMode && bounds == Rectangle.Empty)
-				Layout ();
-#endif
 			switch (portion) {
 			case ItemBoundsPortion.Icon:
 				rect = icon_rect;

@@ -62,6 +62,7 @@ namespace System.Windows.Forms {
 		private int			split_requested;	// If the user requests a position before we have ever laid out the doc
 		private int 			splitter_prev_move;
 		private Rectangle 		splitter_rectangle_moving;
+		private int			moving_offset;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -266,25 +267,38 @@ namespace System.Windows.Forms {
 
 				int widths = 0;
 				int heights = 0;
+				int vert_offset = 0;
+				int horiz_offset = 0;
 				foreach (Control c in this.Parent.Controls) {
 					if (c != affected) {
 						switch (c.Dock) {
 						case DockStyle.Left:
 						case DockStyle.Right:
 							widths += c.Width;
+
+							if (c.Location.X < this.Location.X)
+								vert_offset += c.Width;
 							break;
 						case DockStyle.Top:
 						case DockStyle.Bottom:
 							heights += c.Height;
+
+							if (c.Location.Y < this.Location.Y)
+								horiz_offset += c.Height;
 							break;
 						}
 					}
 				}
 
-				if (horizontal)
+				if (horizontal) {
+					moving_offset = horiz_offset;
+
 					return Parent.ClientSize.Height - heights - MinExtra;
-				else
+				} else {
+					moving_offset = vert_offset;
+
 					return Parent.ClientSize.Width - widths - MinExtra;
+				}
 			}
 		}
 		
@@ -448,8 +462,8 @@ namespace System.Windows.Forms {
 			int delta = currentMove - splitter_prev_move;
 			Rectangle prev_location = splitter_rectangle_moving;
 			bool moved = false;
-			int min = this.MinSize;
-			int max = max_size;
+			int min = this.MinSize + moving_offset;
+			int max = max_size + moving_offset;
 
 			if (horizontal) {
 				if (splitter_rectangle_moving.Y + delta > min && splitter_rectangle_moving.Y + delta < max) {

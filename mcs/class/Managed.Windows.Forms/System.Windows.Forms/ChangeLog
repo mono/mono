@@ -1,3 +1,85 @@
+2009-10-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+[merge -r 142756:144751 from trunk, which basically contains ListView related
+bug fixes, specially large speed ups for VirtualMode].
+
+	2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving an item in virtual mode, as part of the
+		process calculate its layout, instead of trying to do it later.
+		* ListViewItem.cs: There's no need to try to infer whether we need to
+		compute layout or not anymore - we just do it every time we are
+		returning an item.
+		This way we should be fixing View changes with cached items, which
+		were storing the previous value, and not updating their contents
+		properly.
+
+	2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+		* ColumnHeader.cs: Remove the double linear search in the Index
+		property, by removing the call to Contains, which is not needed.
+		Also, Columns collection can never be null.
+
+	2009-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ColumnHeader.cs: When calculating the width and height of the
+		column, try to expand to the right and use all the free space if we
+		are the last column *and* the resize mode is set to -2/header content.
+		Fixes #544716.
+
+	2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the top item, take into account the
+		offset represented by the header control, to retrieve the proper
+		value. Patch by Christoph von Wittich (Christoph at ApiViewer.de)
+		Fixes the remaining bits of #543773.
+
+	2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+		* ListView.cs: TopItem setter should set the value as the top, not
+		only ensuring its visibility.
+		Fixes part of #543773.
+
+	2009-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: For virtual mode, when navigating the items using keyboard,
+		don't use the matrix of positions, and instead calculate the positions
+		based on the number of cols and rows, taking advantage of the fixed
+		positions of items. Use the same idea to implement FirstVisibleIndex,
+		so we avoid iterating over all the items. Patch by Stephen Robinson
+		mono at esar.org.uk.
+		Fixes part of #467418.
+
+	2009-10-12  Dick Porter  <dporter@codicesoftware.com>
+
+		* Splitter.cs: Adjust offsets when more than one splitter is
+		present in a control.  Fixes bug 509472.
+
+	2009-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When computing the value for groups height don't use
+		text_size field, since in LargeIcon view it sometimes contains a
+		double height value - use Font.Height directly, and also improve the
+		padding value.
+		* ThemeWin32Classic: The same as above.
+		This way the space between the group header, the line, and the items
+		area is not that big in LargeIcon view.
+
+	2009-10-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the fixed positions for the items in
+		virtual mode, use the row value to compute the coords of the item,
+		instead of the col value, as opposed to SmallIcon/LargeIcon views.
+
+	2009-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: The location of the items should be computed on the fly
+		in virtual mode - that decreased speed overall, but reduces the load
+		time.that decreased speed overall, but reduces the load time. Also,
+		handle the cases where we were using data structures we don't need to
+		use/create for this mode.
+		Fixes part of #467418.
+
 2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 [merge -r 132698:142738 from trunk to 2-4 branch. Some changes were already
