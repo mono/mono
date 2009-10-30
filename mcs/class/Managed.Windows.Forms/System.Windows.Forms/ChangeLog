@@ -1,3 +1,11 @@
+2009-10-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBoxBase.cs: When returning the preferred height, and we are
+	supposed to be borderless, return the TopMargin value - usually in
+	borderless mode it has a value of 0, but in the ToolStrip controls we
+	need to set the margin manually.
+	Fixes #551214.
+
 2009-10-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolTip.cs: ShowAlways works at the form level, not at the control
