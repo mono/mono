@@ -363,7 +363,7 @@ namespace Mono.CSharp {
 				if (o != null)
 					return (LocalBuilder) o;
 			}
-			return ig.DeclareLocal (t);
+			return ig.DeclareLocal (TypeManager.TypeToReflectionType (t));
 		}
 
 		public void FreeTemporaryLocal (LocalBuilder b, Type t)

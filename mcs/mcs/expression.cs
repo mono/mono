@@ -909,7 +909,69 @@ namespace Mono.CSharp {
 	/// classes (indexers require temporary access;  overloaded require method)
 	///
 	/// </remarks>
-	public class UnaryMutator : ExpressionStatement {
+	public class UnaryMutator : ExpressionStatement
+	{
+		class DynamicPostMutator : Expression, IAssignMethod
+		{
+			LocalTemporary temp;
+			Expression expr;
+
+			public DynamicPostMutator (Expression expr)
+			{
+				this.expr = expr;
+				this.loc = expr.Location;
+			}
+
+			public override Expression CreateExpressionTree (ResolveContext ec)
+			{
+				throw new NotImplementedException ("ET");
+			}
+
+			public override Expression DoResolve (ResolveContext rc)
+			{
+				type = expr.Type;
+				eclass = expr.eclass;
+				return this;
+			}
+
+			public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+			{
+				expr.DoResolveLValue (ec, right_side);
+				return DoResolve (ec);
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				temp.Emit (ec);
+			}
+
+			public void Emit (EmitContext ec, bool leave_copy)
+			{
+				throw new NotImplementedException ();
+			}
+
+			//
+			// Emits target assignment using unmodified source value
+			//
+			public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+			{
+				//
+				// Allocate temporary variable to keep original value before it's modified
+				//
+				temp = new LocalTemporary (type);
+				expr.Emit (ec);
+				temp.Store (ec);
+
+				((IAssignMethod) expr).EmitAssign (ec, source, false, prepare_for_load);
+
+				if (leave_copy)
+					Emit (ec);
+
+				temp.Release (ec);
+				temp = null;
+			}
+		}
+
 		[Flags]
 		public enum Mode : byte {
 			IsIncrement    = 0,
@@ -951,16 +1013,23 @@ namespace Mono.CSharp {
 				return null;
 
 			if (TypeManager.IsDynamicType (expr.Type)) {
+				//
+				// Handle postfix unary operators using local
+				// temporary variable
+				//
+				if ((mode & Mode.IsPost) != 0)
+					expr = new DynamicPostMutator (expr);
+
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
-				return new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc).Resolve (ec);
+				return new SimpleAssign (expr, new DynamicUnaryConversion (GetOperatorExpressionTypeName (), args, loc)).Resolve (ec);
 			}
-
-			eclass = ExprClass.Value;
 
 			if (TypeManager.IsNullableType (expr.Type))
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
+			eclass = ExprClass.Value;
+			type = expr.Type;
 			return ResolveOperator (ec);
 		}
 
@@ -1038,8 +1107,6 @@ namespace Mono.CSharp {
 
 		Expression ResolveOperator (ResolveContext ec)
 		{
-			type = expr.Type;
-
 			if (expr is RuntimeValueExpression) {
 				operation = expr;
 			} else {
@@ -7327,12 +7394,13 @@ namespace Mono.CSharp {
 
 			Type expr_type = expr_resolved.Type;
 			if (TypeManager.IsDynamicType (expr_type)) {
-				Arguments args = new Arguments (2);
+				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr_resolved.Resolve (ec)));
+				expr = new DynamicMemberBinder (Name, args, loc);
 				if (right_side != null)
-					args.Add (new Argument (right_side));
+					return expr.DoResolveLValue (ec, right_side);
 
-				return new DynamicMemberBinder (right_side != null, Name, args, loc).Resolve (ec);
+				return expr.Resolve (ec);
 			}
 
 			if (expr_type.IsPointer || expr_type == TypeManager.void_type ||
@@ -8421,18 +8489,19 @@ namespace Mono.CSharp {
 			bool dynamic;
 			arguments.Resolve (ec, out dynamic);
 			if (dynamic || TypeManager.IsDynamicType (indexer_type)) {
-				int additional = right_side == null ? 1 : 2;
-				Arguments args = new Arguments (arguments.Count + additional);
+				Arguments args = new Arguments (arguments.Count + 1);
 				if (is_base_indexer) {
 					ec.Report.Error (1972, loc, "The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
 				} else {
 					args.Add (new Argument (instance_expr));
 				}
 				args.AddRange (arguments);
-				if (right_side != null)
-					args.Add (new Argument (right_side));
 
-				return new DynamicIndexBinder (right_side != null, args, loc).Resolve (ec);
+				var expr = new DynamicIndexBinder (args, loc);
+				if (right_side != null)
+					return expr.ResolveLValue (ec, right_side);
+
+				return expr.Resolve (ec);
 			}
 
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);

@@ -253,23 +253,33 @@ namespace Mono.CSharp
 			if (eclass != ExprClass.Invalid)
 				return this;
 
+			if (DoResolveCore (ec))
+				binder_expr = binder.CreateCallSiteBinder (ec, arguments);
+
+			return this;
+		}
+
+		protected bool DoResolveCore (ResolveContext rc)
+		{
+			int errors = rc.Report.Errors;
+
 			if (TypeManager.call_site_type == null)
-				TypeManager.call_site_type = TypeManager.CoreLookupType (ec.Compiler,
+				TypeManager.call_site_type = TypeManager.CoreLookupType (rc.Compiler,
 					"System.Runtime.CompilerServices", "CallSite", Kind.Class, true);
 
 			if (TypeManager.generic_call_site_type == null)
-				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (ec.Compiler,
+				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (rc.Compiler,
 					"System.Runtime.CompilerServices", "CallSite`1", Kind.Class, true);
 
 			if (TypeManager.binder_type == null) {
-				var t = TypeManager.CoreLookupType (ec.Compiler,
+				var t = TypeManager.CoreLookupType (rc.Compiler,
 					"Microsoft.CSharp.RuntimeBinder", "Binder", Kind.Class, true);
 				if (t != null)
 					TypeManager.binder_type = new TypeExpression (t, Location.Null);
 			}
 
 			if (TypeManager.binder_flags == null) {
-				TypeManager.binder_flags = TypeManager.CoreLookupType (ec.Compiler,
+				TypeManager.binder_flags = TypeManager.CoreLookupType (rc.Compiler,
 					"Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags", Kind.Enum, true);
 			}
 
@@ -278,31 +288,29 @@ namespace Mono.CSharp
 			if (type == null)
 				type = InternalType.Dynamic;
 
-			// TODO: If any core type fails to load, skip this ?
-			binder_expr = binder.CreateCallSiteBinder (ec, arguments);
-			return this;
+			return rc.Report.Errors == errors;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitCall (ec,  false);
+			EmitCall (ec, binder_expr, arguments,  false);
 		}
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			EmitCall (ec, true);
+			EmitCall (ec, binder_expr, arguments, true);
 		}
 
-		void EmitCall (EmitContext ec, bool isStatement)
+		protected void EmitCall (EmitContext ec, Expression binder, Arguments arguments, bool isStatement)
 		{
 			int dyn_args_count = arguments == null ? 0 : arguments.Count;
-			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, dyn_args_count, isStatement);
+			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, arguments, dyn_args_count, isStatement);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type).FieldBuilder, loc);
 
 			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
 			Arguments args = new Arguments (1);
-			args.Add (new Argument (binder_expr));
+			args.Add (new Argument (binder));
 			StatementExpression s = new StatementExpression (new SimpleAssign (site_field_expr, new Invocation (new MemberAccess (site_type, "Create"), args)));
 			
 			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);		
@@ -343,7 +351,7 @@ namespace Mono.CSharp
 			return new MemberAccess (TypeManager.binder_type, name, loc);
 		}
 
-		TypeExpr CreateSiteType (CompilerContext ctx, int dyn_args_count, bool is_statement)
+		TypeExpr CreateSiteType (CompilerContext ctx, Arguments arguments, int dyn_args_count, bool is_statement)
 		{
 			int default_args = is_statement ? 1 : 2;
 
@@ -476,18 +484,14 @@ namespace Mono.CSharp
 		}
 	}
 
-	class DynamicIndexBinder : DynamicExpressionStatement, IDynamicBinder, IAssignMethod
+	class DynamicIndexBinder : DynamicMemberAssignable
 	{
-		readonly bool isSet;
-
-		public DynamicIndexBinder (bool isSet, Arguments args, Location loc)
-			: base (null, args, loc)
+		public DynamicIndexBinder (Arguments args, Location loc)
+			: base (args, loc)
 		{
-			base.binder = this;
-			this.isSet = isSet;
 		}
 
-		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+		protected override Expression CreateCallSiteBinder (ResolveContext ec, Arguments args, bool isSet)
 		{
 			Arguments binder_args = new Arguments (3);
 
@@ -497,23 +501,6 @@ namespace Mono.CSharp
 
 			return new Invocation (GetBinder (isSet ? "SetIndex" : "GetIndex", loc), binder_args);
 		}
-
-		#region IAssignMethod Members
-
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
-		{
-			if (leave_copy)
-				Emit (ec);
-			else
-				EmitStatement (ec);
-		}
-
-		#endregion
 	}
 
 	class DynamicInvocation : DynamicExpressionStatement, IDynamicBinder
@@ -587,20 +574,17 @@ namespace Mono.CSharp
 		}
 	}
 
-	class DynamicMemberBinder : DynamicExpressionStatement, IDynamicBinder, IAssignMethod
+	class DynamicMemberBinder : DynamicMemberAssignable
 	{
-		readonly bool isSet;
 		readonly string name;
 
-		public DynamicMemberBinder (bool isSet, string name, Arguments args, Location loc)
-			: base (null, args, loc)
+		public DynamicMemberBinder (string name, Arguments args, Location loc)
+			: base (args, loc)
 		{
-			base.binder = this;
-			this.isSet = isSet;
 			this.name = name;
 		}
 
-		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+		protected override Expression CreateCallSiteBinder (ResolveContext ec, Arguments args, bool isSet)
 		{
 			Arguments binder_args = new Arguments (4);
 
@@ -610,6 +594,43 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
 
 			return new Invocation (GetBinder (isSet ? "SetMember" : "GetMember", loc), binder_args);
+		}
+	}
+
+	//
+	// Any member binder which can be source and target of assignment
+	//
+	abstract class DynamicMemberAssignable : DynamicExpressionStatement, IDynamicBinder, IAssignMethod
+	{
+		Expression setter;
+		Arguments setter_args;
+
+		protected DynamicMemberAssignable (Arguments args, Location loc)
+			: base (null, args, loc)
+		{
+			base.binder = this;
+		}
+
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+		{
+			//
+			// DoResolve always uses getter
+			//
+			return CreateCallSiteBinder (ec, args, false);
+		}
+
+		protected abstract Expression CreateCallSiteBinder (ResolveContext ec, Arguments args, bool isSet);
+
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			if (DoResolveCore (rc)) {
+				setter_args = new Arguments (Arguments.Count + 1);
+				setter_args.AddRange (Arguments);
+				setter_args.Add (new Argument (right_side));
+				setter = CreateCallSiteBinder (rc, setter_args, true);
+			}
+
+			return this;
 		}
 
 		#region IAssignMethod Members
@@ -621,10 +642,7 @@ namespace Mono.CSharp
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			if (leave_copy)
-				Emit (ec);
-			else
-				EmitStatement (ec);
+			EmitCall (ec, setter, setter_args, !leave_copy);
 		}
 
 		#endregion

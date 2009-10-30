@@ -1,3 +1,8 @@
+2009-10-30  Marek Safar  <marek.safar@gmail.com>
+
+	* dynamic.cs, convert.cs, assign.cs, constant.cs, expression.cs,
+	codegen.cs: Unary mutator on dynamic member access expression.
+
 2009-10-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #550580	

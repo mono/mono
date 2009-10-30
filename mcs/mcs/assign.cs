@@ -686,7 +686,7 @@ namespace Mono.CSharp {
 				Arguments args = new Arguments (2);
 				args.AddRange (targs);
 				args.Add (new Argument (source));
-				source = new DynamicMemberBinder (true, ma.Name, args, loc).Resolve (ec);
+				source = new DynamicMemberBinder (ma.Name, args, loc).ResolveLValue (ec, right);
 
 				// Handles possible event addition/subtraction
 				if (op == Binary.Operator.Addition || op == Binary.Operator.Subtraction) {

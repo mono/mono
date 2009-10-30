@@ -757,7 +757,7 @@ namespace Mono.CSharp {
 						return true;
 				}
 
-				if (value == 0 && expr is IntLiteral && TypeManager.IsEnumType (target_type))
+				if (value == 0 && TypeManager.IsEnumType (target_type))
 					return true;
 			}
 

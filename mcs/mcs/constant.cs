@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 #if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			return System.Linq.Expressions.Expression.Constant (GetValue (), type);
+			return System.Linq.Expressions.Expression.Constant (GetTypedValue (), type);
 		}
 #endif
 
