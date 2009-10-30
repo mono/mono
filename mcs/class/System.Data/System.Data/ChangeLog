@@ -1,3 +1,13 @@
+2009-10-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes 448296
+	* DataTable (Clear): Do not raise TableClearing/Cleared events as 
+	they will be raised from DataRowCollection.Clear().  New utility methods 
+	for raising TableClearing/TableCleared events from outside DataTable.  
+	Don't manually reset indexes as ResetIndexes is called from 
+	DataRowCollection.Clear
+	* DataRowCollection (Clear): Raise TableClearing/Cleared events accordingly.
+	
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes 332875 - based on analysis by Ben Martin <ben@trustorm.com.au>

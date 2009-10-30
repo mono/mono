@@ -258,7 +258,19 @@ namespace System.Data {
 			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
 			OnRowChanging (e);
 		}
-
+		
+		internal void ClearingDataTable () 
+		{
+			DataTableClearEventArgs e = new DataTableClearEventArgs (this);
+			OnTableClearing (e);
+		}
+		
+		internal void ClearedDataTable ()
+		{
+			DataTableClearEventArgs e = new DataTableClearEventArgs (this);
+			OnTableCleared (e);			
+		}
+		
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
@@ -773,12 +785,8 @@ namespace System.Data {
 		/// </summary>
 		public void Clear ()
 		{
-			DataTableClearing ();
 			// Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
-			foreach (Index index in Indexes)
-				index.Reset ();
-			DataTableCleared ();
 		}
 
 		// defined in the NET_2_0 profile
