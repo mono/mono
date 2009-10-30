@@ -1,3 +1,8 @@
+2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MethodBuilder.cs: Add missing 'names' validations in 
+	DefineGenericParameters
+
 2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleBuilder.cs: Add missing 'className' validations in GetType

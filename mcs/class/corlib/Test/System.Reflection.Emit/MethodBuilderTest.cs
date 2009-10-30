@@ -944,6 +944,51 @@ namespace MonoTests.System.Reflection.Emit
 			MethodInfo mopen = m.MakeGenericMethod (m.GetGenericArguments ());
 			Assert.IsFalse (mopen.IsGenericMethodDefinition);
 		}
+
+		[Test]
+		public void DefineGenericParameters_Names_Empty ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public);
+
+			try {
+				mb.DefineGenericParameters (new string [0]);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Value does not fall within the expected range
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void DefineGenericParameters_Names_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public);
+
+			try {
+				mb.DefineGenericParameters ((string []) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("names", ex.ParamName, "#A5");
+			}
+
+			try {
+				mb.DefineGenericParameters ("K", null, "V");
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("names", ex.ParamName, "#B5");
+			}
+		}
 #endif
 	}
 }

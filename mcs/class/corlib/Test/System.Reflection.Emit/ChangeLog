@@ -1,3 +1,8 @@
+2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MethodBuilderTest.cs: Add (copy from TypeBuilderTest) test 
+	cases for two DefineGenericParameters
+
 2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleBuilderTest.cs: Add test cases for GetType overloads
