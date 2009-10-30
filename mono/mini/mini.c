@@ -5430,9 +5430,9 @@ mini_cleanup (MonoDomain *domain)
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
 
-	mono_runtime_cleanup (domain);
-
 	mono_profiler_shutdown ();
+
+	mono_runtime_cleanup (domain);
 
 	mono_icall_cleanup ();
 

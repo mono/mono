@@ -1,3 +1,8 @@
+2009-10-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_cleanup): Call profiler shutdown before shutting down the
+	runtime. Fixes #551228.
+
 2009-10-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_output_basic_block): Fix % 1. Fixes #550970.
