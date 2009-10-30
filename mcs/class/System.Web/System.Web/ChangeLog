@@ -1,3 +1,15 @@
+2009-10-30  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: added internal property ClientFilePath, which
+	may have a different value than FilePath when virtual path has
+	been rewritten, but the caller specified that the client paths
+	should still be constructed using the original url.
+
+	* HttpContext.cs: RewritePath always sets Request.FilePath,
+	Request.ClientFilePath is set only when setClientFilePath is
+	true. This makes client urls work correctly when url rewriting is
+	being used.
+
 2009-10-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: implemented the WriteSubstitution method,
