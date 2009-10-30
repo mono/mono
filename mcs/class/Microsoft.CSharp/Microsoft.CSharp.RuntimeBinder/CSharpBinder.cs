@@ -104,7 +104,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (value.LimitType == typeof (object))
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 
-				return new Compiler.NullConstant (value.LimitType, Compiler.Location.Null);
+				InitializeCompiler (null);
+				return Compiler.Constant.CreateConstant (value.LimitType, null, Compiler.Location.Null);
 			}
 
 			if (info != null) {
@@ -124,6 +125,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			var res = new Compiler.Arguments (args.Length);
 			int pos = 0;
+
+			// enumerates over args
 			foreach (var item in info) {
 				var expr = CreateCompilerExpression (item, args [pos++]);
 				if (item.IsNamed) {
@@ -131,6 +134,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 				} else {
 					res.Add (new Compiler.Argument (expr, item.ArgumentModifier));
 				}
+
+				if (pos == args.Length)
+					break;
 			}
 
 			return res;
@@ -189,21 +195,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 				Compiler.TypeManager.InitCoreTypes (ctx);
 				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
 			}
-		}
-
-		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion, DynamicMetaObject[] args)
-		{
-			return Bind (target, errorSuggestion);
-		}
-
-		public static DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
-		{
-			return errorSuggestion ??
-				   new DynamicMetaObject (
-						   Expression.Constant (new object ()),
-						   target.Restrictions.Merge (
-							   BindingRestrictions.GetTypeRestriction (
-								   target.Expression, target.LimitType)));
 		}
 	}
 }

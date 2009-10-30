@@ -56,10 +56,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (2), indexes);
+			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
 			expr = new Compiler.ElementAccess (expr, args);
 
-			var source = CSharpBinder.CreateCompilerExpression (argumentInfo[1], value);
+			var source = CSharpBinder.CreateCompilerExpression (argumentInfo [indexes.Length + 1], value);
 			expr = new Compiler.SimpleAssign (expr, source);
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
