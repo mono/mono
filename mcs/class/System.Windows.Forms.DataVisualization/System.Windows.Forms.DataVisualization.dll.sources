@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
 System.Windows.Forms.DataVisualization.Charting/AnchorStyle.cs
 System.Windows.Forms.DataVisualization.Charting/AnnotationPathPoint.cs
 System.Windows.Forms.DataVisualization.Charting/AnnotationPathPointCollection.cs
@@ -19,7 +20,6 @@ System.Windows.Forms.DataVisualization.Charting/BreakLineStyle.cs
 System.Windows.Forms.DataVisualization.Charting/CalloutStyle.cs
 System.Windows.Forms.DataVisualization.Charting/Chart.cs
 System.Windows.Forms.DataVisualization.Charting/ChartArea.cs
-System.Windows.Forms.DataVisualization.Charting/ChartAreaCollection.cs
 System.Windows.Forms.DataVisualization.Charting/ChartColorPalette.cs
 System.Windows.Forms.DataVisualization.Charting/ChartDashStyle.cs
 System.Windows.Forms.DataVisualization.Charting/ChartElement.cs
@@ -41,7 +41,6 @@ System.Windows.Forms.DataVisualization.Charting/DateTimeIntervalType.cs
 System.Windows.Forms.DataVisualization.Charting/Docking.cs
 System.Windows.Forms.DataVisualization.Charting/FinancialFormula.cs
 System.Windows.Forms.DataVisualization.Charting/GradientStyle.cs
-System.Windows.Forms.DataVisualization.Charting/Grid.cs
 System.Windows.Forms.DataVisualization.Charting/GridTickTypes.cs
 System.Windows.Forms.DataVisualization.Charting/IDataPointFilter.cs
 System.Windows.Forms.DataVisualization.Charting/IntervalAutoMode.cs
@@ -73,6 +72,4 @@ System.Windows.Forms.DataVisualization.Charting/StartFromZero.cs
 System.Windows.Forms.DataVisualization.Charting/TextAntiAliasingQuality.cs
 System.Windows.Forms.DataVisualization.Charting/TextOrientation.cs
 System.Windows.Forms.DataVisualization.Charting/TextStyle.cs
-System.Windows.Forms.DataVisualization.Charting/TickMark.cs
 System.Windows.Forms.DataVisualization.Charting/TickMarkStyle.cs
-System.Windows.Forms.DataVisualization.Charting/ToolTipEventArgs.cs
