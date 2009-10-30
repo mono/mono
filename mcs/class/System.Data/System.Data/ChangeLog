@@ -1,12 +1,19 @@
 2009-10-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* DataTable.cs: Reuse old utility methods for raising DataTable 
+	clearing/cleared events.
+	* DataRowCollection.cs (Clear): Raise DataTable clearing/cleared 
+	events only for non 1.x profiles.  Fixes broken 1.x build.
+	
+2009-10-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes 448296
-	* DataTable (Clear): Do not raise TableClearing/Cleared events as 
+	* DataTable.cs (Clear): Do not raise TableClearing/Cleared events as 
 	they will be raised from DataRowCollection.Clear().  New utility methods 
 	for raising TableClearing/TableCleared events from outside DataTable.  
 	Don't manually reset indexes as ResetIndexes is called from 
 	DataRowCollection.Clear
-	* DataRowCollection (Clear): Raise TableClearing/Cleared events accordingly.
+	* DataRowCollection.cs (Clear): Raise TableClearing/Cleared events accordingly.
 	
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 

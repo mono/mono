@@ -259,18 +259,6 @@ namespace System.Data {
 			OnRowChanging (e);
 		}
 		
-		internal void ClearingDataTable () 
-		{
-			DataTableClearEventArgs e = new DataTableClearEventArgs (this);
-			OnTableClearing (e);
-		}
-		
-		internal void ClearedDataTable ()
-		{
-			DataTableClearEventArgs e = new DataTableClearEventArgs (this);
-			OnTableCleared (e);			
-		}
-		
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
@@ -788,10 +776,6 @@ namespace System.Data {
 			// Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
 		}
-
-		// defined in the NET_2_0 profile
-		partial void DataTableClearing ();
-		partial void DataTableCleared ();
 
 		/// <summary>
 		/// Clones the structure of the DataTable, including
@@ -2995,7 +2979,7 @@ namespace System.Data {
 				TableCleared (this, e);
 		}
 
-		partial void DataTableCleared ()
+		internal void DataTableCleared ()
 		{
 			OnTableCleared (new DataTableClearEventArgs (this));
 		}
@@ -3006,7 +2990,7 @@ namespace System.Data {
 				TableClearing (this, e);
 		}
 
-		partial void DataTableClearing ()
+		internal void DataTableClearing ()
 		{
 			OnTableClearing (new DataTableClearEventArgs (this));
 		}
