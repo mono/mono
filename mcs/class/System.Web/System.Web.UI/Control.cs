@@ -1461,12 +1461,13 @@ namespace System.Web.UI
 				return relativeUrl;
 
 			HttpContext context = Context;
-			if (context != null && context.Request != null) {
+			HttpRequest req = context != null ? context.Request : null;
+			if (req != null) {
 				string templateSourceDirectory = TemplateSourceDirectory;
 				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
 					return relativeUrl;
 
-				string basePath = context.Request.FilePath;
+				string basePath = req.ClientFilePath;
 
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
 					basePath = VirtualPathUtility.GetDirectory (basePath, false);

@@ -603,7 +603,7 @@ namespace System.Web
 		{
 			int qmark = path.IndexOf ('?');
 			if (qmark != -1)
-				RewritePath (path.Substring (0, qmark), "", path.Substring (qmark + 1), rebaseClientPath);
+				RewritePath (path.Substring (0, qmark), String.Empty, path.Substring (qmark + 1), rebaseClientPath);
 			else
 				RewritePath (path, null, null, rebaseClientPath);
 		}
@@ -617,34 +617,38 @@ namespace System.Web
 
 			bool pathRelative = VirtualPathUtility.IsAppRelative (filePath);
 			bool pathAbsolute = pathRelative ? false : VirtualPathUtility.IsAbsolute (filePath);
+			HttpRequest req = Request;
+			
 			if (pathRelative || pathAbsolute) {
 				bool needSubstring = false;
 
 				if (pathRelative && filePath.Length > 1)
 					needSubstring = true;
 
-				string bvd = Request.BaseVirtualDir;
+				string bvd = req.BaseVirtualDir;
 				if (bvd.Length > 1)
 					bvd += "/";
 
 				string canonizedFilePath = VirtualPathUtility.Canonize (filePath);
 				filePath = VirtualPathUtility.Combine (bvd, needSubstring ? canonizedFilePath.Substring (2) : canonizedFilePath);
 			} else 
-				filePath = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (Request.FilePath), filePath);
+				filePath = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (req.FilePath), filePath);
 			
 			if (!StrUtils.StartsWith (filePath, HttpRuntime.AppDomainAppVirtualPath))
 				throw new HttpException (404, "The virtual path '" + HttpUtility.HtmlEncode (filePath) + "' maps to another application.", filePath);
 			
-			Request.SetCurrentExePath (filePath);
+			req.SetCurrentExePath (filePath);
+			req.SetFilePath (filePath);
+
 			if (setClientFilePath)
-				Request.SetFilePath (filePath);
+				req.ClientFilePath = filePath;
 			
 			// A null pathInfo or queryString is ignored and previous values remain untouched
 			if (pathInfo != null)
-				Request.SetPathInfo (pathInfo);
+				req.SetPathInfo (pathInfo);
 
 			if (queryString != null)
-				Request.QueryStringRaw = queryString;
+				req.QueryStringRaw = queryString;
 		}
 
 #region internals

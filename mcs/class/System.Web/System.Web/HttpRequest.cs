@@ -5,6 +5,7 @@
 // Author:
 //	Miguel de Icaza (miguel@novell.com)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 
 //
@@ -63,7 +64,7 @@ namespace System.Web
 		// On-demand computed values
 		//
 		HttpBrowserCapabilities browser_capabilities;
-		string file_path, base_virtual_dir, root_virtual_dir;
+		string file_path, base_virtual_dir, root_virtual_dir, client_file_path;
 		string content_type;
 		int content_length = -1;
 		Encoding encoding;
@@ -425,7 +426,27 @@ namespace System.Web
 				return file_path;
 			}
 		}
+		
+		internal string ClientFilePath {
+			get {
+				if (client_file_path == null) {
+					if (worker_request == null)
+						return "/";
+					
+					return UrlUtils.Canonic (ApplyUrlMapping (worker_request.GetFilePath ()));
+				}
+				
+				return client_file_path;
+			}
 
+			set {
+				if (value == null || value.Length == 0)
+					client_file_path = null;
+				else
+					client_file_path = value;
+			}
+		}
+		
 		internal string BaseVirtualDir {
 			get {
 				if (base_virtual_dir == null){
