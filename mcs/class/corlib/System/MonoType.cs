@@ -251,11 +251,15 @@ namespace System
 
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
                 {
+			if (fromNoninstanciated == null)
+				throw new ArgumentNullException ("fromNoninstanciated");
                         return GetCorrespondingInflatedMethod (fromNoninstanciated);
                 }
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
+			if (fromNoninstanciated == null)
+				throw new ArgumentNullException ("fromNoninstanciated");
                         return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
 
