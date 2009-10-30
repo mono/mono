@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -265,13 +265,16 @@ namespace System.Web.UI.HtmlControls
 #if NET_2_0
 			string customAction = Attributes ["action"];
 #endif
-			
+			Page p = Page;
+			HttpRequest req = p != null ? p.Request : null;
+			if (req == null)
+				throw new HttpException ("No current request, cannot continue rendering.");
 #if !TARGET_J2EE
 #if NET_2_0
 			if (String.IsNullOrEmpty (customAction)) {
 #endif
-				string file_path = Page.Request.FilePath;
-				string current_path = Page.Request.CurrentExecutionFilePath;
+				string file_path = req.ClientFilePath;
+				string current_path = req.CurrentExecutionFilePath;
 				if (file_path == current_path) {
 					// Just the filename will do
 					action = UrlUtils.GetFile (file_path);
@@ -309,12 +312,12 @@ namespace System.Web.UI.HtmlControls
 			} else
 				action = customAction;
 #endif
-			action += Page.Request.QueryStringRaw;
+			action += req.QueryStringRaw;
 #else
 			// Allow the page to transform action to a portlet action url
 			if (String.IsNullOrEmpty (customAction)) {
-				string queryString = Page.Request.QueryStringRaw;
-				action = CreateActionUrl (VirtualPathUtility.ToAppRelative (Page.Request.CurrentExecutionFilePath) +
+				string queryString = req.QueryStringRaw;
+				action = CreateActionUrl (VirtualPathUtility.ToAppRelative (req.CurrentExecutionFilePath) +
 					(string.IsNullOrEmpty (queryString) ? string.Empty : "?" + queryString));
 			}
 			else
@@ -334,7 +337,7 @@ namespace System.Web.UI.HtmlControls
 #if NET_2_0
 			if (String.IsNullOrEmpty (customAction))
 #endif
-				w.WriteAttribute ("action", action, true);
+				w.WriteAttribute ("action", ResolveClientUrl (action), true);
 
 			/*
 			 * This is a hack that guarantees the ID is set properly for HtmlControl to
