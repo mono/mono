@@ -593,11 +593,16 @@ namespace System.Reflection.Emit
 		{
 			if (names == null)
 				throw new ArgumentNullException ("names");
+			if (names.Length == 0)
+				throw new ArgumentException ("names");
 
 			generic_params = new GenericTypeParameterBuilder [names.Length];
-			for (int i = 0; i < names.Length; i++)
-				generic_params [i] = new GenericTypeParameterBuilder (
-					type, this, names [i], i);
+			for (int i = 0; i < names.Length; i++) {
+				string item = names [i];
+				if (item == null)
+					throw new ArgumentNullException ("names");
+				generic_params [i] = new GenericTypeParameterBuilder (type, this, item, i);
+			}
 
 			return generic_params;
 		}
