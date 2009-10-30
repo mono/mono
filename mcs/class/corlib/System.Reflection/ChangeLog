@@ -1,3 +1,9 @@
+2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoMethod.cs: Remove CAS check in MonoCMethod.Invoke (just 
+	like it was done for MonoMethod.Invoke sister method)
+	[Backport r145101]
+
 2009-10-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Share code between GetSatelliteAssembly and 
