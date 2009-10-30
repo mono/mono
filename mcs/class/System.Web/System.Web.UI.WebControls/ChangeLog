@@ -1,3 +1,9 @@
+2009-10-30  Marek Habersack  <mhabersack@novell.com>
+
+	* PasswordRecovery.cs: mail message replacements should include <%
+	Password %> and <% UserName %> and matching should be
+	case-insensitive. Fixes bug #545370
+
 2009-10-28  Marek Habersack  <mhabersack@novell.com>
 
 	* ListControl.cs: OnDataBinding must call base implementation
