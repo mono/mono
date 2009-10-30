@@ -794,9 +794,11 @@ namespace System.Web.UI.WebControls
 			string messageText = "Please return to the site and log in using the following information.\n" +
 				"User Name: <%USERNAME%>\nPassword: <%PASSWORD%>";
 
-			ListDictionary dictionary = new ListDictionary ();
+			ListDictionary dictionary = new ListDictionary (StringComparer.OrdinalIgnoreCase);
 			dictionary.Add ("<%USERNAME%>", username);
+			dictionary.Add ("<% UserName %>", username);
 			dictionary.Add ("<%PASSWORD%>", password);
+			dictionary.Add ("<% Password %>", password);
 
 			MailMessage message = null;
 			
