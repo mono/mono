@@ -475,12 +475,14 @@ namespace System.Reflection {
 						throw new ArgumentException ("parameters do not match signature");
 			}
 
+#if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				// sadly Attributes doesn't tell us which kind of security action this is so
 				// we must do it the hard way - and it also means that we can skip calling
 				// Attribute (which is another an icall)
 				SecurityManager.ReflectedLinkDemandInvoke (this);
 			}
+#endif
 
 #if NET_2_0
 			if (obj == null && DeclaringType.ContainsGenericParameters)
