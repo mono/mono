@@ -1,3 +1,10 @@
+2009-10-29  Chris Toshok  <toshok@ximian.com>
+
+	* TypeMap.cs (Deserialize): use
+	FormatterServices.GetUninitializedObject instead of
+	Activator.CreateInstance, since we shouldn't be invoking the
+	default ctor.
+
 2009-10-30  Andreia Gaita  <avidigal@novell.com>
 
 	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
