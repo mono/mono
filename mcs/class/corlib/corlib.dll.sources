@@ -1108,6 +1108,8 @@ System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
 System.Security/SecurityManager_2_1.cs
+System.Security/SecurityRuleSet.cs
+System.Security/SecurityRulesAttribute.cs
 System.Security/SecuritySafeCriticalAttribute.cs
 System.Security/SecurityState.cs
 System.Security/SecurityTransparentAttribute.cs

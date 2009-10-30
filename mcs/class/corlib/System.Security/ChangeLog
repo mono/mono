@@ -1,3 +1,7 @@
+2009-10-30	Marek Safar  <marek.safar@gmail.com>
+
+	* SecurityRuleSet.cs, SecurityRulesAttribute.cs: Implemented.
+
 2009-10-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager_2_1.cs: Return to duty for SecurityEnabled, it
