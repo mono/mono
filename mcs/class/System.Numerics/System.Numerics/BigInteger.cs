@@ -20,7 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
-namespace Microsoft.Scripting.Math {
+namespace System.Numerics {
     /// <summary>
     /// arbitrary precision integers
     /// </summary>
