@@ -1,3 +1,8 @@
+2009-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BinaryCommon.cs: Disable MONO_REFLECTION_SERIALIZER override 
+	for Moonlight plugin.
+
 2009-09-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BinaryFormatter.cs: NoCheckDeserialize() was using PeekChar() on a
