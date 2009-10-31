@@ -1,3 +1,9 @@
+2009-10-31  Miguel de Icaza  <miguel@novell.com>
+
+	* threads.c: refactor the code that initializes the
+	thread_start_args into a reusable function and use this in the two
+	methods that start up threads.
+
 2009-10-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (mono_domain_try_unload): Applied patch from Romain Tartière.
