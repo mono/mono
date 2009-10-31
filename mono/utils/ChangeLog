@@ -1,3 +1,8 @@
+2009-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-proclib.c: hz is only multiplied by the number of cpus when
+	requesting "_Total".
+
 2009-10-12  Joel W. Reed <joelwreed@gmail.com>
 
 	* mono-networkinterfaces.c, mono-networkinterfaces.h: Read
