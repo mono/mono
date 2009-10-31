@@ -767,6 +767,9 @@ predef_writable_counter (ImplVtable *vtable, MonoBoolean only_value, MonoCounter
 		case COUNTER_ASPNET_REQ_TOTAL:
 			sample->rawValue = mono_perfcounters->aspnet_requests;
 			return TRUE;
+		case COUNTER_ASPNET_EXEC_TIME:
+			sample->rawValue = mono_perfcounters->aspnet_exec_time;
+			return TRUE;
 		}
 		break;
 	}
@@ -785,6 +788,7 @@ predef_writable_update (ImplVtable *vtable, MonoBoolean do_incr, gint64 value)
 		switch (id) {
 		case COUNTER_ASPNET_REQ_Q: ptr = &mono_perfcounters->aspnet_requests_queued; break;
 		case COUNTER_ASPNET_REQ_TOTAL: ptr = &mono_perfcounters->aspnet_requests; break;
+		case COUNTER_ASPNET_EXEC_TIME: ptr = &mono_perfcounters->aspnet_exec_time; break;
 		}
 		break;
 	}
@@ -1212,12 +1216,14 @@ get_cpu_instances (void)
 	void **buf = NULL;
 	int i, count;
 	MonoArray *array;
-	count = mono_cpu_count ();
+
+	count = mono_cpu_count () + 1; /* +1 for "_Total" */
 	buf = g_new (void*, count);
 	for (i = 0; i < count; ++i)
-		buf [i] = GINT_TO_POINTER (i);
+		buf [i] = GINT_TO_POINTER (i - 1); /* -1 => _Total */
 	array = get_string_array (buf, count, FALSE);
 	g_free (buf);
+	mono_array_setref (array, 0, mono_string_new (mono_domain_get (), "_Total"));
 	return array;
 }
 

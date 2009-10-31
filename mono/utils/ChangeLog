@@ -1,3 +1,8 @@
+2009-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-proclib.c: hz is only multiplied by the number of cpus when
+	requesting "_Total".
+
 2009-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h (MONO_INTERNAL): Disable this on solaris as it produces a
