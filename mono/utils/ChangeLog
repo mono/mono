@@ -1,3 +1,8 @@
+2009-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-proclib.c: hz is only multiplied by the number of cpus when
+	requesting "_Total".
+
 2009-10-29  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-hash.c (mono_g_hash_mark): Don't use SET_NODE_KEY/VALUE here.

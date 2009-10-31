@@ -1,3 +1,8 @@
+2009-10-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-perfcounters.c: add the "_Total" instance for CPU counters.
+	Until now, we only had the per-cpu(core) counters.
+
 2009-10-28  Mark Probst  <mark.probst@gmail.com>
 
 	* gc-internal.h, boehm-gc, sgen-gc.c, null-gc: Add
