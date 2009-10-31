@@ -1,0 +1,2 @@
+The BigInteger class comes from the DLR 0.92, and it has been modified to build with Mono.
+The code is licensed under the MS-PL license

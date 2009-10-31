@@ -1,3 +1,9 @@
+2009-10-31  Miguel de Icaza  <miguel@novell.com>
+
+	* Add BigInteger.cs from the DLR 0.92, the patch in the directory
+	above this one contains the patch against the original
+	BigIntegerv2.cs source code.
+
 2009-10-20  Marek Safar <marek.safar@gmail.com>
 
 	* ChangeLog: Added

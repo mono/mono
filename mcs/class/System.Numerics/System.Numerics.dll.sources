@@ -1,3 +1,4 @@
 ../../build/common/Consts.cs
 Assembly/AssemblyInfo.cs
 System.Numerics/Complex.cs
+System.Numerics/BigInteger.cs

@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Numerics.dll
-LIB_MCS_FLAGS = 
+LIB_MCS_FLAGS = -r:System.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
