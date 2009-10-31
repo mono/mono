@@ -1,5 +1,7 @@
 2009-10-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-perfcounters.c (predef_writable_update): Fix the 2.4 build.
+
 	* appdomain.c (mono_domain_try_unload): Applied patch from Romain Tartière.
 	Fix returning when WaitForSingleObjectEx returns WAIT_IO_COMPLETION.
 
