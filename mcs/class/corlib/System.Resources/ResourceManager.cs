@@ -294,9 +294,11 @@ namespace System.Resources
 
 		private string GetResourceFilePath (CultureInfo culture)
 		{
+#if !NET_2_1 || MONOTOUCH
 			if (resourceDir != null)
 				return Path.Combine (resourceDir, GetResourceFileName (culture));
 			else
+#endif
 				return GetResourceFileName (culture);
 		}
 		
