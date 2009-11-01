@@ -587,7 +587,7 @@ mono_llvm_vcall_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8 *
 		*vtable_slot = mono_get_addr_from_ftnptr (addr);
 	  }
 
-	mono_debugger_trampoline_compiled (m, addr);
+	mono_debugger_trampoline_compiled (code, m, addr);
 
 	return addr;
 }
