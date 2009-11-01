@@ -1,3 +1,8 @@
+2009-11-01  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Keep track of the reason for a major collection and
+	write it to the heap-dump file.
+
 2009-10-31  Miguel de Icaza  <miguel@novell.com>
 
 	* threads.c: refactor the code that initializes the
