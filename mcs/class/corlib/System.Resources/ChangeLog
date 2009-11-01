@@ -1,3 +1,8 @@
+2009-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceManager.cs (GetResourceFilePath): Don't use 
+	'resourceDir' which should always be null for Moonlight
+
 2009-10-19  Jb Evain  <jbevain@novell.com>
 
 	* ResourceReader.cs: fix the build.
