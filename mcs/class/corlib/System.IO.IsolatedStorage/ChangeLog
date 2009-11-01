@@ -1,3 +1,9 @@
+2009-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MoonIsolatedStorageFile.cs: Add new CheckSearchPattern 
+	validation method. Fix GetDirectoryNames to behave like 
+	GetFileNames wrt searchPattern
+
 2009-08-30  Jb Evain  <jbevain@novell.com>
 
 	* IsolatedStorageFileEnumerator.cs
