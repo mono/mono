@@ -1,3 +1,7 @@
+2009-11-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Parallel.cs: Added fix for Bug #536919.
+
 2009-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Fix validations for Join and Sleep overloads
