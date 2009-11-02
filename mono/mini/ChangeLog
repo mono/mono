@@ -1,5 +1,7 @@
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_get_llvm_imt_trampoline): Implement this for x86.
+
 	* mini.c (mini_init): Avoid using the IMT trampoline in the LLVM case.
 
 	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add a static rgctx trampoline
