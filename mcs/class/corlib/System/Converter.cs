@@ -31,7 +31,7 @@ namespace System
 {
 #if NET_4_0
 	public delegate TOutput Converter <in TInput, out TOutput> (TInput input);
-#elif NET_2_0
+#else
 	public delegate TOutput Converter <TInput, TOutput> (TInput input);
 #endif
 }

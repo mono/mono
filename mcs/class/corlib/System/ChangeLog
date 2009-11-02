@@ -1,3 +1,7 @@
+2009-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* More NET_2_0 define removal, assume that it is now always true. 
+
 2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoType.cs: Don't pass null value to icalls 

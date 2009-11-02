@@ -33,10 +33,8 @@ using System.Runtime.InteropServices;
 
 namespace System {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum DayOfWeek {
 
 		Sunday,

@@ -31,7 +31,7 @@ namespace System
 {
 #if NET_4_0
 	public delegate int Comparison <in T> (T x, T y);
-#elif NET_2_0
+#else
 	public delegate int Comparison <T> (T x, T y);
 #endif	
 }

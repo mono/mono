@@ -589,7 +589,6 @@ namespace System {
 			return res;
 		}
 
-#if NET_2_0
 		public static bool TryParse (string s, out int result) 
 		{
 			Exception exc;
@@ -612,7 +611,6 @@ namespace System {
 
 			return true;
 		}
-#endif
 
 		public override string ToString ()
 		{
