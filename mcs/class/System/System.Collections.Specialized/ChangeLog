@@ -1,3 +1,7 @@
+2009-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* Copy some collections from WindowsBase here for 4.0 support.
+
 2009-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* NameValueCollection.cs (AsSingleString): Avoid the allocation of

@@ -1,5 +1,9 @@
+2009-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* ISet.cs: Added new interface.
+
 2009-10-20  Marek Safar <marek.safar@gmail.com>
-	
+
 	* SortedList.cs, LinkedList.cs, Queue.cs, Stack.cs,
 	SortedDictionary.cs: Improve debugging experience.
 

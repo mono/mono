@@ -48,7 +48,8 @@ namespace System {
 			: base (message)
 		{
 		}
-#if NET_2_1
+
+#if NET_2_1 || NET_4_0
 		public UriFormatException (string message, Exception exception)
 			: base (message, exception)
 		{

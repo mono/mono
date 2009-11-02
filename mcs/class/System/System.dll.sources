@@ -140,6 +140,7 @@ System.CodeDom.Compiler/LanguageOptions.cs
 System.CodeDom.Compiler/TempFileCollection.cs
 System.CodeDom/FieldDirection.cs
 System.CodeDom/MemberAttributes.cs
+System.Collections.Generic/ISet.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
 System.Collections.Generic/RBTree.cs
@@ -147,13 +148,19 @@ System.Collections.Generic/Queue.cs
 System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/Stack.cs
+System.Collections.ObjectModel/ObservableCollection.cs
+System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
 System.Collections.Specialized/CollectionsUtil.cs
 System.Collections.Specialized/HybridDictionary.cs
 System.Collections.Specialized/IOrderedDictionary.cs
+System.Collections.Specialized/INotifyCollectionChanged.cs
 System.Collections.Specialized/ListDictionary.cs
 System.Collections.Specialized/NameObjectCollectionBase.cs
 System.Collections.Specialized/NameValueCollection.cs
+System.Collections.Specialized/NotifyCollectionChangedEventArgs.cs
+System.Collections.Specialized/NotifyCollectionChangedAction.cs
+System.Collections.Specialized/NotifyCollectionChangedEventHandler.cs
 System.Collections.Specialized/OrderedDictionary.cs
 System.Collections.Specialized/ProcessStringDictionary.cs
 System.Collections.Specialized/StringCollection.cs
@@ -1014,3 +1021,4 @@ System.Collections.Concurrent/BlockingCollection.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 ../corlib/System.Collections/CollectionDebuggerView.cs
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
+

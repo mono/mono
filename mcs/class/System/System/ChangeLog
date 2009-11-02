@@ -1,3 +1,7 @@
+2009-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* UriFormatException.cs: .NET 4.0 API
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : do not reject relative short name URI when uriKind is
