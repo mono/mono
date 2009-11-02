@@ -1,3 +1,9 @@
+2009-11-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs (set_CurrentUICulture): Delay setting in_currentculture
+	to true until after the null check and the return statement.
+	[Backport r145215]
+
 2009-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WaitHandle.cs: Add missing validations for 'millisecondsTimeout'

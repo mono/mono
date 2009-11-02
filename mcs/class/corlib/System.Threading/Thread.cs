@@ -543,8 +543,6 @@ namespace System.Threading {
 			}
 			
 			set {
-				in_currentculture = true;
-				
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
@@ -552,6 +550,7 @@ namespace System.Threading {
 				if (culture == value)
 					return;
 
+				in_currentculture = true;
 				try {
 					SetCachedCurrentUICulture (value);
 
