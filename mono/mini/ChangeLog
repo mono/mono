@@ -1,5 +1,10 @@
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Disable llvm for methods with an lmf here to
+	speed things up.
+
+	* mini-llvm.c (mono_llvm_emit_method): Add support for OP_LOCALLOC.
+
 	* tramp-x86.c (mono_arch_get_llvm_imt_trampoline): Implement this for x86.
 
 	* mini.c (mini_init): Avoid using the IMT trampoline in the LLVM case.
