@@ -1,0 +1,179 @@
+<Type Name="ObjectMirror" FullName="Mono.Debugger.ObjectMirror">
+  <TypeSignature Language="C#" Value="public class ObjectMirror : Mono.Debugger.Value" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Value</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents an object in the debuggee.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Address">
+      <MemberSignature Language="C#" Value="public long Address { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Domain">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.AppDomainMirror Domain { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.AppDomainMirror</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetValue (Mono.Debugger.FieldInfoMirror field);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Value</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Debugger.FieldInfoMirror" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValues">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Value[] GetValues (System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt; fields);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Value[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="fields">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeMethod">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Value InvokeMethod (Mono.Debugger.ThreadMirror thread, Mono.Debugger.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt; arguments);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Value</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="thread" Type="Mono.Debugger.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="thread">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="arguments">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsCollected">
+      <MemberSignature Language="C#" Value="public bool IsCollected { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.FieldInfoMirror field, Mono.Debugger.Value value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Debugger.FieldInfoMirror" />
+        <Parameter Name="value" Type="Mono.Debugger.Value" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetValues">
+      <MemberSignature Language="C#" Value="public void SetValues (System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt; fields, Mono.Debugger.Value[] values);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt;" />
+        <Parameter Name="values" Type="Mono.Debugger.Value[]" />
+      </Parameters>
+      <Docs>
+        <param name="fields">To be added.</param>
+        <param name="values">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror Type { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

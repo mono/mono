@@ -1,3 +1,7 @@
+2009-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile: Add Mono.Debugger.Soft.
+
 2009-10-30  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add System.Windows.Forms.DataVisualization

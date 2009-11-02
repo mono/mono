@@ -90,6 +90,7 @@ common_dirs := \
 	OpenSystem.C			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
+	Mono.Debugger.Soft		\
 	SystemWebTestShim
 
 net_1_1_dirs :=		\
