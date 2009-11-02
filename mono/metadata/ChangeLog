@@ -1,3 +1,18 @@
+2009-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-mono-symfile.c (check_line): Fix the handling of IL offset 0.
+
+	* threads.c (mono_thread_attach): Call the profiler thread start callback.
+
+	* object-internals.h (_MonoThreadInternal): Add a 'flags' field.
+
+	* threads.c (build_wait_tids): Ignore threads which have the DONT_MANAGE
+	flag set.
+
+	* profiler.c: Add new profiler callbacks for runtime invoke.
+
+	* object.c (mono_runtime_invoke): Call the runtime invoke callbacks.
+
 2009-11-01  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Keep track of the reason for a major collection and
