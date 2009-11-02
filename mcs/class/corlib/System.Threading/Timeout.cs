@@ -31,17 +31,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Threading {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public static class Timeout {
-#else
-	public sealed class Timeout {
-
-		private Timeout ()
-		{
-		}
-#endif
-
 		public const int Infinite=-1;
 	}
 }

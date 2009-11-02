@@ -34,36 +34,19 @@
 using System;
 using System.Runtime.CompilerServices;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading 
 {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
- 	public sealed class AutoResetEvent :
-#if NET_2_0
-	EventWaitHandle
-#else
-	WaitHandle 
-#endif
+ 	public sealed class AutoResetEvent : EventWaitHandle
 	{
 		// Constructor
-#if NET_2_0
 		public AutoResetEvent (bool initialState)
 			: base(initialState, EventResetMode.AutoReset)
 		{
 		}
-#else
-		public AutoResetEvent(bool initialState) {
-			bool created;
-			
-			Handle = NativeEventCalls.CreateEvent_internal(false,initialState,null, out created);
-		}
-#endif
 
 		// Methods
 
@@ -71,7 +54,7 @@ namespace System.Threading
  * the Set and Reset methods that have moved to EventWaitHandle in the
  * 2.0 profile
  */
-#if ONLY_1_1 || BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0
 		public bool Set() {
 			CheckDisposed ();
 			

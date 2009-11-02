@@ -37,12 +37,8 @@ using System.Security.Permissions;
 
 namespace System.Threading {
 
-#if NET_2_0
 	[Serializable]
 	public sealed class CompressedStack : ISerializable {
-#else
-	public class CompressedStack {
-#endif
 		private ArrayList _list;
 
 		internal CompressedStack (int length)
@@ -57,23 +53,13 @@ namespace System.Threading {
 				_list = (ArrayList) cs._list.Clone ();
 		}
 
-#if NET_2_0
 		[ComVisibleAttribute (false)]
-		public
-#else
-		internal
-#endif
-		CompressedStack CreateCopy ()
+		public CompressedStack CreateCopy ()
 		{
 			return new CompressedStack (this);
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static CompressedStack Capture ()
+		public static CompressedStack Capture ()
 		{
 			CompressedStack cs = new CompressedStack (0);
 			cs._list = SecurityFrame.GetStack (1);
@@ -110,7 +96,6 @@ namespace System.Threading {
 			return cs;
 		}
 
-#if NET_2_0
 		[MonoTODO ("incomplete")]
 		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -137,9 +122,8 @@ namespace System.Threading {
 					t.SetCompressedStack (original);
 			}
 		}
-#endif
-		// internal stuff
 
+		// internal stuff
 		internal bool Equals (CompressedStack cs)
 		{
 			if (IsEmpty ())

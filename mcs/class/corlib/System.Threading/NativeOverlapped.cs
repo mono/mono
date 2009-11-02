@@ -34,19 +34,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct NativeOverlapped {
-#if NET_2_0
 		public IntPtr EventHandle;
 		public IntPtr InternalHigh;
 		public IntPtr InternalLow;
-#else
-		public int EventHandle;
-		public int InternalHigh;
-		public int InternalLow;
-#endif
 		public int OffsetHigh;
 		public int OffsetLow;
 

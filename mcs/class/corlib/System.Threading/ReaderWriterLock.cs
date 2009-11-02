@@ -34,20 +34,14 @@
 //
 
 using System.Collections;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
-#endif
+
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class ReaderWriterLock: CriticalFinalizerObject
-#else
-	public sealed class ReaderWriterLock
-#endif
 	{
 		private int seq_num = 1;
 		private int state;
@@ -61,31 +55,22 @@ namespace System.Threading
 			writer_queue = new LockQueue (this);
 			reader_locks = new Hashtable ();
 
-#if NET_2_0
 			GC.SuppressFinalize (this);
-#endif
 		}
 
-#if NET_2_0
-		[MonoTODO]
 		~ReaderWriterLock ()
 		{
 		}
-#endif
 
 		public bool IsReaderLockHeld {
-#if NET_2_0
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 			get {
 				lock (this) return reader_locks.ContainsKey (Thread.CurrentThreadId);
 			}
 		}
 
 		public bool IsWriterLockHeld {
-#if NET_2_0
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 			get {
 				lock (this) return (state < 0 && Thread.CurrentThreadId == writer_lock_owner);
 			}
@@ -214,9 +199,7 @@ namespace System.Threading
 			return cookie;
 		}
 		
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public void ReleaseReaderLock()
 		{
 			lock (this) {
@@ -250,9 +233,7 @@ namespace System.Threading
 				writer_queue.Pulse ();
 		}
 
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public void ReleaseWriterLock()
 		{
 			lock (this) {

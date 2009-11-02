@@ -38,11 +38,7 @@ namespace System.Threading {
 		Security
 	}
 
-#if NET_2_0
 	public struct AsyncFlowControl : IDisposable {
-#else
-	internal struct AsyncFlowControl : IDisposable {
-#endif
 		private Thread _t;
 		private AsyncFlowControlType _type;
 

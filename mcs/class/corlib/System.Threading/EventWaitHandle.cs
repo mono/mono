@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.IO;
 using System.Runtime.InteropServices;
 #if !NET_2_1
@@ -141,5 +139,3 @@ namespace System.Threading
 #endif
 	}
 }
-
-#endif

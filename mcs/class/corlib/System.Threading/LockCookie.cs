@@ -30,17 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
-#else
-	[Serializable]
-#endif
 	public struct LockCookie
 	{
 		internal int ThreadId;
@@ -61,7 +55,6 @@ namespace System.Threading
 			WriterLocks = writer_locks;
 		}
 
-#if NET_2_0
 		public override int GetHashCode ()
 		{
 			return(base.GetHashCode ());
@@ -96,8 +89,6 @@ namespace System.Threading
 		{
 			return !a.Equals (b);
 		}
-#endif
-
 	}
 }
 

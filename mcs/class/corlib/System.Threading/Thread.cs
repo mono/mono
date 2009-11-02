@@ -39,19 +39,11 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Security;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System.Threading {
 
-#if NET_2_0
 	internal class InternalThread : CriticalFinalizerObject {
-#else
-	internal class InternalThread {
-#endif
-
 #pragma warning disable 169, 414, 649
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
@@ -114,9 +106,7 @@ namespace System.Threading {
 		#endregion
 #pragma warning restore 169, 414, 649
 
-#if NET_2_0
 		internal int managed_id;
-#endif
 
 		internal byte[] _serialized_principal;
 		internal int _serialized_principal_version;
@@ -136,23 +126,16 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Thread_free_internal(IntPtr handle);
 
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		~InternalThread() {
-				Thread_free_internal(system_thread_handle);
+			Thread_free_internal(system_thread_handle);
 		}
 	}
 
 	[ClassInterface (ClassInterfaceType.None)]
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Thread))]
 	public sealed class Thread : CriticalFinalizerObject, _Thread {
-#else
-	public sealed class Thread : _Thread {
-#endif
-
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
 		object start_obj;
@@ -180,9 +163,7 @@ namespace System.Threading {
 		private MulticastDelegate threadstart;
 		//private string thread_name=null;
 
-#if NET_2_0
 		private static int _managed_id_counter;
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void ConstructInternalThread ();
@@ -265,9 +246,7 @@ namespace System.Threading {
 		private extern static InternalThread CurrentInternalThread_internal();
 
 		public static Thread CurrentThread {
-#if NET_2_0
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 			get {
 				if (current_thread == null)
 					current_thread = new Thread (CurrentInternalThread_internal ());
@@ -424,9 +403,7 @@ namespace System.Threading {
 		}
 
 #if !NET_2_1 || MONOTOUCH
-#if NET_2_0
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
-#endif
 		public ApartmentState ApartmentState {
 			get {
 				if ((ThreadState & ThreadState.Stopped) != 0)
@@ -435,24 +412,8 @@ namespace System.Threading {
 				return (ApartmentState)Internal.apartment_state;
 			}
 
-			set	{
-#if NET_2_0
+			set {
 				TrySetApartmentState (value);
-#else
-				/* Only throw this exception when
-				 * changing the state of another
-				 * thread.  See bug 324338
-				 */
-				if ((this != CurrentThread) &&
-				    (ThreadState & ThreadState.Unstarted) == 0)
-					throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
-
-				if (value != ApartmentState.STA && value != ApartmentState.MTA)
-					throw new ArgumentOutOfRangeException ("value is not a valid apartment state.");
-
-				if ((ApartmentState)Internal.apartment_state == ApartmentState.Unknown)
-					Internal.apartment_state = (byte)value;
-#endif
 			}
 		}
 #endif // !NET_2_1
@@ -803,9 +764,7 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
 
-#if NET_2_0
 		[Obsolete ("")]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Resume () 
 		{
@@ -817,9 +776,7 @@ namespace System.Threading {
 		private extern static void SpinWait_nop ();
 
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static void SpinWait (int iterations) 
 		{
 			if (iterations < 0)
@@ -874,28 +831,17 @@ namespace System.Threading {
 		{
 			current_thread = this;
 
-#if NET_2_0
 			if (threadstart is ThreadStart) {
 				((ThreadStart) threadstart) ();
 			} else {
 				((ParameterizedThreadStart) threadstart) (start_obj);
 			}
-#else
-			((ThreadStart) threadstart) ();
-#endif
 		}
 
 		public void Start() {
 			// propagate informations from the original thread to the new thread
-#if NET_2_0
 			if (!ExecutionContext.IsFlowSuppressed ())
 				ec_to_set = ExecutionContext.Capture ();
-#else
-			// before 2.0 this was only used for security (mostly CAS) so we
-			// do this only if the security manager is active
-			if (SecurityManager.SecurityEnabled)
-				ec_to_set = ExecutionContext.Capture ();
-#endif
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
@@ -911,9 +857,7 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Suspend_internal(InternalThread thread);
 
-#if NET_2_0
 		[Obsolete ("")]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Suspend ()
 		{
@@ -1022,7 +966,6 @@ namespace System.Threading {
 		
 #endif
 
-#if NET_2_0
 		private static int GetNewManagedId() {
 			return Interlocked.Increment(ref _managed_id_counter);
 		}
@@ -1145,15 +1088,6 @@ namespace System.Threading {
 			start_obj = parameter;
 			Start ();
 		}
-#else
-		internal ExecutionContext ExecutionContext {
-			get {
-				if (_ec == null)
-					_ec = new ExecutionContext ();
-				return _ec;
-			}
-		}
-#endif
 
 #if !NET_2_1 || MONOTOUCH
 		// NOTE: This method doesn't show in the class library status page because

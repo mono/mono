@@ -32,24 +32,14 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Contexts;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
 	public static class Monitor
 	{
-#else
-	public sealed class Monitor
-	{
-		private Monitor () {}
-#endif
-
 		// Grabs the mutex on object 'obj', with a maximum
 		// wait time 'ms' but doesn't block - if it can't get
 		// the lock it returns false, true if it can
@@ -63,9 +53,7 @@ namespace System.Threading
 		public extern static void Enter(object obj);
 
 		// Releases the mutex on object 'obj'
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void Exit(object obj);
 

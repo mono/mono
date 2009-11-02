@@ -38,26 +38,13 @@ using System.Security.Permissions;
 
 namespace System.Threading {
 
-#if NET_2_0
 	public static class ThreadPool {
-#else
-	public sealed class ThreadPool {
-
-		private ThreadPool ()
-		{
-			/* nothing to do */
-		}
-#endif
-
-#if NET_2_0
 		[Obsolete("This method is obsolete, use BindHandle(SafeHandle) instead")]
-#endif
 		public static bool BindHandle (IntPtr osHandle)
 		{
 			return true;
 		}
 
-#if NET_2_0
 		public static bool BindHandle (SafeHandle osHandle)
 		{
 			if (osHandle == null)
@@ -65,7 +52,6 @@ namespace System.Threading {
 			
 			return true;
 		}
-#endif
 
 #if !NET_2_1		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -82,12 +68,10 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static extern bool SetMinThreads (int workerThreads, int completionPortThreads);
 
-#if NET_2_0
-		[MonoTODO("The max number of threads cannot be decremented.")]
+		[MonoTODO("The max number of threads cannot be decreased.")]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static extern bool SetMaxThreads (int workerThreads, int completionPortThreads);
-#endif
 			
 		public static bool QueueUserWorkItem (WaitCallback callBack)
 		{
@@ -159,13 +143,11 @@ namespace System.Threading {
 
 #if !NET_2_1
 
-#if NET_2_0
 		[CLSCompliant (false)]
 		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)

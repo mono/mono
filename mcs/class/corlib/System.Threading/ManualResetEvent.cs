@@ -33,38 +33,18 @@
 
 using System;
 using System.Runtime.CompilerServices;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading 
 {
-
-#if NET_2_0
 	[ComVisible (true)]
-#endif
- 	public sealed class ManualResetEvent :
-#if NET_2_0
-	EventWaitHandle
-#else
-	WaitHandle 
-#endif
+ 	public sealed class ManualResetEvent : EventWaitHandle
 	{
 		// Constructor
-#if NET_2_0
 		public ManualResetEvent (bool initialState)
 			: base(initialState, EventResetMode.ManualReset)
 		{
 		}
-#else
-		public ManualResetEvent (bool initialState)
-		{
-			bool created;
-			
-			Handle = NativeEventCalls.CreateEvent_internal (true, initialState, null, out created);
-		}
-#endif
 
 		// Methods
 
@@ -72,7 +52,7 @@ namespace System.Threading
  * wants to use the Set method that has moved to EventWaitHandle in
  * the 2.0 profile
  */
-#if ONLY_1_1 || BOOTSTRAP_NET_2_0
+#if BOOTSTRAP_NET_2_0
 		public bool Set()
 		{
 			CheckDisposed ();

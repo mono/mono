@@ -30,19 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading
 {
 	// 'unsafe' wasn't in the spec, but the compiler insists because of
 	// the pointer.
-#if NET_2_0
 	[ComVisible (true)]
-#else
-	[Serializable]
-#endif
 	[CLSCompliant(false)]
 	public unsafe delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped *pOVERLAP);
 }

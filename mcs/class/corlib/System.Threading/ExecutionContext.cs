@@ -35,11 +35,7 @@ using System.Security.Permissions;
 namespace System.Threading {
 
 	[Serializable]
-#if NET_2_0
 	public sealed class ExecutionContext : ISerializable {
-#else
-	internal sealed class ExecutionContext : ISerializable {
-#endif
 #if !NET_2_1 || MONOTOUCH
 		private SecurityContext _sc;
 #endif
@@ -130,7 +126,8 @@ namespace System.Threading {
 
 			ec.FlowSuppressed = false;
 		}
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+
+#if !NET_2_1 || MONOTOUCH
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)
@@ -145,8 +142,7 @@ namespace System.Threading {
 
 			SecurityContext.Run (executionContext.SecurityContext, callback, state);
 		}
-#endif
-#if !NET_2_1 || MONOTOUCH
+
 		public static AsyncFlowControl SuppressFlow ()
 		{
 			Thread t = Thread.CurrentThread;

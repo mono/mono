@@ -37,27 +37,20 @@ using System.Security.Permissions;
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class Overlapped
 	{
 		IAsyncResult ares;
 		int offsetL;
 		int offsetH;
 		int evt;
-
-#if NET_2_0
 		IntPtr evt_ptr;
-#endif
 
 		public Overlapped ()
 		{
 		}
 
-#if NET_2_0
 		[Obsolete ("Not 64bit compatible.  Please use the constructor that takes IntPtr for the event handle", false)]
-#endif
 		public Overlapped(int offsetLo, int offsetHi, int hEvent, IAsyncResult ar)
 		{
 			offsetL = offsetLo;
@@ -66,7 +59,6 @@ namespace System.Threading
 			ares = ar;
 		}
 
-#if NET_2_0
 		public Overlapped (int offsetLo, int offsetHi, IntPtr hEvent,
 				   IAsyncResult ar)
 		{
@@ -75,7 +67,6 @@ namespace System.Threading
 			evt_ptr = hEvent;
 			ares = ar;
 		}
-#endif
 
 		[CLSCompliant(false)]
 		unsafe public static void Free (NativeOverlapped *nativeOverlappedPtr)
@@ -95,33 +86,22 @@ namespace System.Threading
 			Overlapped result = new Overlapped ();
 			result.offsetL = nativeOverlappedPtr->OffsetLow;
 			result.offsetH = nativeOverlappedPtr->OffsetHigh;
-#if NET_2_0
 			result.evt = (int)nativeOverlappedPtr->EventHandle;
-#else
-			result.evt = nativeOverlappedPtr->EventHandle;
-#endif
 			return result;
 		}
 
 		[CLSCompliant(false)]
-#if NET_2_0
 		[Obsolete ("Use Pack(iocb, userData) instead", false)]
-#endif
 		[MonoTODO ("Security - we need to propagate the call stack")]
 		unsafe public NativeOverlapped *Pack (IOCompletionCallback iocb)
 		{
 			NativeOverlapped *result = (NativeOverlapped *) Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			result->OffsetLow = offsetL;
 			result->OffsetHigh = offsetH;
-#if NET_2_0
 			result->EventHandle = (IntPtr)evt;
-#else
-			result->EventHandle = evt;
-#endif
 			return result;
 		}
 
-#if NET_2_0
 		[CLSCompliant (false)]
 		[ComVisible (false)]
 		[MonoTODO ("handle userData")]
@@ -133,12 +113,9 @@ namespace System.Threading
 			result->EventHandle = evt_ptr;
 			return(result);
 		}
-#endif
 		
 		[CLSCompliant(false)]
-#if NET_2_0
 		[Obsolete ("Use UnsafePack(iocb, userData) instead", false)]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		unsafe public NativeOverlapped *UnsafePack (IOCompletionCallback iocb)
 		{
@@ -146,29 +123,24 @@ namespace System.Threading
 			return Pack (iocb);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		[CLSCompliant (false)]
 		unsafe public NativeOverlapped *UnsafePack (IOCompletionCallback iocb, object userData)
 		{
 			return Pack (iocb, userData);
 		}
-#endif
 
 		public IAsyncResult AsyncResult {
 			get { return ares; }
 			set { ares = value; }
 		}
 
-#if NET_2_0
 		[Obsolete ("Not 64bit compatible.  Use EventHandleIntPtr instead.", false)]
-#endif
 		public int EventHandle {
 			get { return evt; }
 			set { evt = value; }
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public IntPtr EventHandleIntPtr 
 		{
@@ -179,7 +151,6 @@ namespace System.Threading
 				evt_ptr = value;
 			}
 		}
-#endif
 
 		public int OffsetHigh {
 			get { return offsetH; }

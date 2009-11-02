@@ -32,17 +32,12 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ThreadAbortException : SystemException
 	{
 		private ThreadAbortException () : base ("Thread was being aborted")

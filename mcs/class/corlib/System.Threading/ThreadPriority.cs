@@ -32,20 +32,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading {
 
 
 	/// <summary>
 	/// </summary>
-#if NET_2_0
 	[Serializable]
 	[ComVisible (true)]
-#endif
 	public enum ThreadPriority {
 
 		/// <summary>

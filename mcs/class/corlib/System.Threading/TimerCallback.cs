@@ -30,14 +30,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Threading
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public delegate void TimerCallback(object state);
 }
