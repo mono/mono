@@ -1,3 +1,8 @@
+2009-11-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Return false if
+	the agent is not enabled.
+
 2009-11-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* exceptions-x86.c: hopefully last change to fix the windows build.
