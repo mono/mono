@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.IO;
 
 using Mono.Cecil;
@@ -58,6 +59,8 @@ namespace Mono.Linker.Steps {
 
 			CopyConfigFileIfNeeded (assembly, directory);
 
+			Console.WriteLine ("Output {0} : {1}", assembly, Annotations.GetAction (assembly));
+
 			switch (Annotations.GetAction (assembly)) {
 			case AssemblyAction.Link:
 				SaveSymbols (assembly);
@@ -65,6 +68,11 @@ namespace Mono.Linker.Steps {
 				break;
 			case AssemblyAction.Copy:
 				CopyAssembly (GetOriginalAssemblyFileInfo (assembly), directory);
+				break;
+			case AssemblyAction.Delete:
+				var target = GetAssemblyFileName (assembly, directory);
+				if (File.Exists (target))
+					File.Delete (target);
 				break;
 			}
 		}
@@ -86,6 +94,11 @@ namespace Mono.Linker.Steps {
 			if (!File.Exists (config))
 				return;
 
+			string target = Path.GetFullPath (GetConfigFile (GetAssemblyFileName (assembly, directory)));
+
+			if (config == target)
+				return;
+
 			File.Copy (config, GetConfigFile (GetAssemblyFileName (assembly, directory)), true);
 		}
 
@@ -101,7 +114,11 @@ namespace Mono.Linker.Steps {
 
 		static void CopyAssembly (FileInfo fi, string directory)
 		{
-			File.Copy (fi.FullName, Path.Combine (directory, fi.Name), true);
+			string target = Path.GetFullPath (Path.Combine (directory, fi.Name));
+			if (fi.FullName == target)
+				return;
+
+			File.Copy (fi.FullName, target, true);
 		}
 
 		static string GetAssemblyFileName (AssemblyDefinition assembly, string directory)
