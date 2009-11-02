@@ -1,3 +1,14 @@
+2009-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Avoid using the IMT trampoline in the LLVM case.
+
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add a static rgctx trampoline
+	if needed.
+	(mono_create_llvm_imt_trampoline): New function to create a trampoline which
+	sets the IMT argument and makes a virtual call.
+
+	* mini-llvm.c: Enable interface calls using the llvm imt trampoline.
+
 2009-11-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (llvm_sources): Enable the llvm option since it no longer breaks
