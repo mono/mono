@@ -1,3 +1,39 @@
+2009-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	Merge the soft debugger branch.
+
+	* debugger-agent.h debugger-agent.c: New files containing the soft
+	mode debugger module.
+
+	* method-to-ir.c (mono_method_to_ir): Generate OP_SEQ_POINT opcodes
+	at the appropriate locations.
+
+	* mini-<ARCH>.c (mono_arch_output_basic_block): Handle OP_SEQ_POINT
+	opcode.
+
+	* mini-<ARCH>.c: Add new arch-specific functions to set/clear breakpoints,
+	enable/disable single stepping.
+
+	* exceptions-<ARCH>.c (mono_arch_find_jit_info_ext): New stack unwinding api
+	which returns all information in a StackFrameInfo structure, and can handle the
+	LMF frames added by the debugger.
+
+	* mini-<ARCH>.h (MonoLMFExt): New structure containing additional information
+	about an LMF frame.
+
+	* mini-exceptions.c (mono_jit_walk_stack_from_ctx_in_thread): New stack
+	walker function which works on a specific thread and passes a StackFrameInfo
+	structure to its callback.
+
+	* mini.c (mini_init): Initialize the debugger agent.
+
+	* aot-compiler.c aot-runtime.c: Add soft-debug support.
+
+	* mini-ops.h: Add OP_SEQ_POINT opcode.
+
+	* driver.c (mono_main): Add new '--debugger-agent' option for passing
+	arguments to the debugger agent.
+
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Disable llvm for methods with an lmf here to
