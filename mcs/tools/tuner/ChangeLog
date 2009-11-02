@@ -1,3 +1,7 @@
+2009-11-02  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Tuner/MoonlightAssemblyStep.cs: adapt to the MT linker merge.
+
 2009-09-16  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Mono.Tuner/MoonlightA11yDescriptorGenerator.cs: Sort the
