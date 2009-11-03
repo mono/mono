@@ -40,10 +40,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	[CLSCompliant(false)]
 	public unsafe sealed class Pointer : ISerializable {
 		void *data;

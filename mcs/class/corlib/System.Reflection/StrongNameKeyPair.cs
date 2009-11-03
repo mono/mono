@@ -40,20 +40,13 @@ using Mono.Security.Cryptography;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 [Serializable]
-public class StrongNameKeyPair 
-#if NET_2_0
-	: ISerializable, IDeserializationCallback
-#endif
+public class StrongNameKeyPair : ISerializable, IDeserializationCallback
 {		
 	private byte[] _publicKey;
 	private string _keyPairContainer;
-#if NET_2_0	
 	private bool _keyPairExported;
-#endif
 	private byte[] _keyPairArray;
 	
 	[NonSerialized]
@@ -94,7 +87,6 @@ public class StrongNameKeyPair
 		_keyPairContainer = keyPairContainer;
 		GetRSA ();
 	}
-#if NET_2_0
 	protected StrongNameKeyPair (SerializationInfo info, StreamingContext context)
 	{
 		_publicKey = (byte []) info.GetValue ("_publicKey", typeof (byte []));
@@ -114,7 +106,7 @@ public class StrongNameKeyPair
 	void IDeserializationCallback.OnDeserialization (object sender)
 	{
 	}
-#endif
+
 	private RSA GetRSA ()
 	{
 		if (_rsa != null) return _rsa;

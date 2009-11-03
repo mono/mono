@@ -33,12 +33,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
-#else
-	[AttributeUsage (AttributeTargets.Assembly)]
-#endif
 	public sealed class AssemblyDescriptionAttribute : Attribute
 	{
 		// Field

@@ -38,9 +38,7 @@ namespace System.Reflection {
 
 	/// <summary>
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Flags]
 	[Serializable]
 	public enum AssemblyNameFlags {
@@ -55,14 +53,10 @@ namespace System.Reflection {
 		/// </summary>
 		PublicKey = 1,
 
-#if NET_1_1
 		Retargetable = 256,
-#endif
 
-#if NET_2_0
 		EnableJITcompileOptimizer = 0x4000,
 		EnableJITcompileTracking = 0x8000
-#endif
 	} // AssemblyNameFlags
 
 } // System.Reflection

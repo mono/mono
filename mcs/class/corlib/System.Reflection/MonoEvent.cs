@@ -59,12 +59,8 @@ namespace System.Reflection {
 		}
 	}
 
-#if NET_2_0
 	[Serializable]
 	internal sealed class MonoEvent: EventInfo, ISerializable
-#else
-	internal sealed class MonoEvent: EventInfo
-#endif
 	{
 #pragma warning disable 169
 		IntPtr klass;
@@ -101,7 +97,6 @@ namespace System.Reflection {
 			return null;
 		}
 
-#if NET_2_0
 		public override MethodInfo[] GetOtherMethods (bool nonPublic)
 		{
 			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
@@ -122,7 +117,6 @@ namespace System.Reflection {
 			}
 			return res;
 		}
-#endif
 
 		public override Type DeclaringType {
 			get {
@@ -162,13 +156,11 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_2_0
 		// ISerializable
 		public void GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
 				ToString(), MemberTypes.Event);
 		}
-#endif
 	}
 }

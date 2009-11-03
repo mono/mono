@@ -33,10 +33,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_MethodInfo))]
-#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class MethodInfo: MethodBase, _MethodInfo {
@@ -46,22 +44,12 @@ namespace System.Reflection {
 		protected MethodInfo() {
 		}
 
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
 
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
 
-#if NET_2_0
 		public virtual Type ReturnType {
 			get { return null; }
 		}
-#else
-		public abstract Type ReturnType { get; }
-#endif
 
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
@@ -96,7 +84,6 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (true)]
 		public virtual MethodInfo GetGenericMethodDefinition ()
 		{
@@ -138,6 +125,5 @@ namespace System.Reflection {
 				throw new NotSupportedException ();
 			}
 		}
-#endif
 	}
 }

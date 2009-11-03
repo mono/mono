@@ -30,17 +30,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Flags]
 	[Serializable]
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-	public
-#else
-	internal
-#endif
-	enum PortableExecutableKinds {
+	public enum PortableExecutableKinds {
 		NotAPortableExecutableImage = 0,
 		ILOnly = 1,
 		Required32Bit = 2,

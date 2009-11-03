@@ -31,10 +31,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
-#endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	public class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
@@ -112,51 +110,31 @@ namespace System.Reflection
 
 		public bool IsIn {
 			get {
-#if NET_2_0
 				return (Attributes & ParameterAttributes.In) != 0;
-#else
-				return (AttrsImpl & ParameterAttributes.In) != 0;
-#endif
 			}
 		}
 
 		public bool IsLcid {
 			get {
-#if NET_2_0
 				return (Attributes & ParameterAttributes.Lcid) != 0;
-#else
-				return (AttrsImpl & ParameterAttributes.Lcid) != 0;
-#endif
 			}
 		}
 
 		public bool IsOptional {
 			get {
-#if NET_2_0
 				return (Attributes & ParameterAttributes.Optional) != 0;
-#else
-				return (AttrsImpl & ParameterAttributes.Optional) != 0;
-#endif
 			}
 		}
 
 		public bool IsOut {
 			get {
-#if NET_2_0
 				return (Attributes & ParameterAttributes.Out) != 0;
-#else
-				return (AttrsImpl & ParameterAttributes.Out) != 0;
-#endif
 			}
 		}
 
 		public bool IsRetval {
 			get {
-#if NET_2_0
 				return (Attributes & ParameterAttributes.Retval) != 0;
-#else
-				return (AttrsImpl & ParameterAttributes.Retval) != 0;
-#endif
 			}
 		}
 
@@ -172,12 +150,7 @@ namespace System.Reflection
 			get {return PositionImpl;}
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public
-#else
-		internal
-#endif
-		extern int MetadataToken {
+		public extern int MetadataToken {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
@@ -226,8 +199,6 @@ namespace System.Reflection
 			return attrs;
 		}			
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern Type[] GetTypeModifiers (bool optional);
 
@@ -251,9 +222,7 @@ namespace System.Reflection
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
-#if NET_1_1
 		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -274,6 +243,5 @@ namespace System.Reflection
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

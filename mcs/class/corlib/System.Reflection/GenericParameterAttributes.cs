@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 namespace System.Reflection
 {
 	[Flags]
@@ -51,4 +50,3 @@ namespace System.Reflection
 		ReferenceTypeConstraint | NotNullableValueTypeConstraint | DefaultConstructorConstraint
 	}
 }
-#endif

@@ -99,7 +99,6 @@ namespace System.Reflection {
 			get { return scopename; }
 		}
 
-#if NET_2_0
 		public ModuleHandle ModuleHandle {
 			get {
 				return new ModuleHandle (_impl);
@@ -121,7 +120,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int GetMDStreamVersion (IntPtr module_handle);
-#endif
 	
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
 		{
@@ -208,7 +206,6 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetMethods () : new MethodInfo [0];
 		}
 
-#if NET_2_0
 		public MethodInfo[] GetMethods (BindingFlags bindingFlags) {
 			if (IsResource ())
 				return new MethodInfo [0];
@@ -225,7 +222,6 @@ namespace System.Reflection {
 			Type globalType = GetGlobalType ();
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
-#endif
 	
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) 
@@ -248,25 +244,19 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public virtual Type GetType(string className) 
 		{
 			return GetType (className, false, false);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif	
 		public virtual Type GetType(string className, bool ignoreCase) 
 		{
 			return GetType (className, false, ignoreCase);
 		}
 	
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public virtual Type GetType(string className, bool throwOnError, bool ignoreCase) 
 		{
 			if (className == null)
@@ -305,7 +295,6 @@ namespace System.Reflection {
 			}
 		}
 
-#if NET_2_0
 		public Guid ModuleVersionId {
 			get {
 				return GetModuleVersionId ();
@@ -315,10 +304,8 @@ namespace System.Reflection {
 		public void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
 			ModuleHandle.GetPEKind (out peKind, out machine);
 		}
-#endif
   		
 
-#if NET_2_0
 		private Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
 			if (error == ResolveTokenError.OutOfRange)
 				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
@@ -416,7 +403,6 @@ namespace System.Reflection {
 			else
 				return res;
 		}
-#endif
 
 		internal static Type MonoDebugger_ResolveType (Module module, int token)
 		{

@@ -32,18 +32,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 	[Serializable]
-#endif
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class EventInfo : MemberInfo, _EventInfo {
-#if NET_2_0
 		AddEventAdapter cached_add_event;
-#else
-		object placeholder;
-#endif
 
 		public abstract EventAttributes Attributes {get;}
 
@@ -71,18 +65,11 @@ namespace System.Reflection {
 		protected EventInfo() {
 		}
 
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public void AddEventHandler (object target, Delegate handler)
 		{
-#if NET_2_0
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
 				if (add == null)
@@ -98,12 +85,6 @@ namespace System.Reflection {
 			//if (target == null && is_instance)
 			//	throw new TargetException ("Cannot add a handler to a non static event with a null target");
 			cached_add_event (target, handler);
-#else
-			MethodInfo add = GetAddMethod ();
-			if (add == null)
-				throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
-			add.Invoke (target, new object [] {handler});
-#endif
 		}
 
 		public MethodInfo GetAddMethod() {
@@ -119,7 +100,6 @@ namespace System.Reflection {
 		}
 		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
 
-#if NET_2_0
 		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
 			// implemented by the derived class
 			return new MethodInfo [0];
@@ -128,7 +108,6 @@ namespace System.Reflection {
 		public MethodInfo[] GetOtherMethods () {
 			return GetOtherMethods (false);
 		}
-#endif		
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
@@ -160,7 +139,6 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
-#if NET_2_0
 		delegate void AddEventAdapter (object _this, Delegate dele);
 		delegate void AddEvent<T, D> (T _this, D dele);
 		delegate void StaticAddEvent<D> (D dele);
@@ -217,6 +195,5 @@ namespace System.Reflection {
 			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
 		}
-#endif
 	}
 }

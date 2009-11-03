@@ -26,17 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class LocalVariableInfo {
 		#region Sync with reflection.h
 		internal Type type;
@@ -75,4 +71,3 @@ namespace System.Reflection {
 
 }
 
-#endif

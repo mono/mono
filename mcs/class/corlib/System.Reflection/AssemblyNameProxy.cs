@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class AssemblyNameProxy : MarshalByRefObject
 	{
 		// Constructor

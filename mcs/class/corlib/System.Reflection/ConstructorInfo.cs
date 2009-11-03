@@ -33,39 +33,24 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ConstructorInfo))]	
-#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class ConstructorInfo : MethodBase, _ConstructorInfo {
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static readonly string ConstructorName = ".ctor";
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static readonly string TypeConstructorName = ".cctor";
 
 		protected ConstructorInfo() {
 		}
 		
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Constructor;}
 		}
-
-#if ONLY_1_1
-		public new Type GetType ()
-		{
-			return base.GetType ();
-		}
-#endif
 
 		[DebuggerStepThrough]
 		[DebuggerHidden]

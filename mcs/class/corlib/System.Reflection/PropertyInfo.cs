@@ -34,10 +34,8 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_PropertyInfo))]
-#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class PropertyInfo : MemberInfo, _PropertyInfo {
@@ -104,8 +102,6 @@ namespace System.Reflection {
 		
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 		public virtual Type[] GetOptionalCustomModifiers () {
 			return Type.EmptyTypes;
 		}
@@ -123,7 +119,6 @@ namespace System.Reflection {
 		public virtual object GetRawConstantValue() {
 			throw new NotImplementedException ();
 		}
-#endif
 
 		void _PropertyInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

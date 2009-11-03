@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public class TypeDelegator : Type {
 		protected Type typeImpl;
@@ -103,9 +101,7 @@ namespace System.Reflection {
 			return typeImpl.GetConstructor (bindingAttr, binder, callConvention, types, modifiers);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public override ConstructorInfo[] GetConstructors( BindingFlags bindingAttr)
 		{
 			return typeImpl.GetConstructors (bindingAttr);
@@ -156,9 +152,7 @@ namespace System.Reflection {
 			return typeImpl.GetInterface (name, ignoreCase);
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public override InterfaceMapping GetInterfaceMap( Type interfaceType)
 		{
 			return typeImpl.GetInterfaceMap (interfaceType);
@@ -254,13 +248,11 @@ namespace System.Reflection {
 			return typeImpl.IsValueType;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override int MetadataToken {
 			get {
 				return typeImpl.MetadataToken;
 			}
 		}
-#endif
 
 	}
 }

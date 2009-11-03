@@ -34,24 +34,17 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
-	public sealed class Missing
-#if NET_2_0
-			: ISerializable
-#endif
+	public sealed class Missing : ISerializable
 	{
 		public static readonly Missing Value = new Missing ();
 
 		internal Missing () {}
 
-#if NET_2_0
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 		}
-#endif
 	}
 }

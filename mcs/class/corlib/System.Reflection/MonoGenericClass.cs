@@ -39,8 +39,6 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 namespace System.Reflection
 {
 	/*
@@ -830,4 +828,3 @@ namespace System.Reflection
 	}
 }
 
-#endif

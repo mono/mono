@@ -131,13 +131,11 @@ namespace System.Reflection {
 			return get_base_definition (this);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override ParameterInfo ReturnParameter {
 			get {
 				return MonoMethodInfo.GetReturnParameterInfo (this);
 			}
 		}
-#endif
 
 		public override Type ReturnType {
 			get {
@@ -194,10 +192,8 @@ namespace System.Reflection {
 			}
 #endif
 
-#if NET_2_0
 			if (ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on types or methods for which ContainsGenericParameters is true.");
-#endif
 
 			Exception exc;
 			object o = null;
@@ -207,10 +203,8 @@ namespace System.Reflection {
 				// from the exceptions thrown by the called method (which need to be
 				// wrapped in TargetInvocationException).
 				o = InternalInvoke (obj, parameters, out exc);
-#if NET_2_0
 			} catch (ThreadAbortException) {
 				throw;
-#endif
 #if NET_2_1
 			} catch (MethodAccessException) {
 				throw;
@@ -302,11 +296,7 @@ namespace System.Reflection {
 
 		static bool ShouldPrintFullName (Type type) {
 			return type.IsClass && (!type.IsPointer ||
-#if NET_2_0
  				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested));
-#else
-				!type.GetElementType ().IsPrimitive);
-#endif
 		}
 
 		public override string ToString () {
@@ -318,7 +308,6 @@ namespace System.Reflection {
 				sb.Append (retType.Name);
 			sb.Append (" ");
 			sb.Append (Name);
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (IsGenericMethod) {
 				Type[] gen_params = GetGenericArguments ();
 				sb.Append ("[");
@@ -329,7 +318,6 @@ namespace System.Reflection {
 				}
 				sb.Append ("]");
 			}
-#endif
 			sb.Append ("(");
 			ParameterInfo[] p = GetParameters ();
 			for (int i = 0; i < p.Length; ++i) {
@@ -360,16 +348,11 @@ namespace System.Reflection {
 		// ISerializable
 		public void GetObjectData(SerializationInfo info, StreamingContext context) 
 		{
-#if NET_2_0
 			Type[] genericArguments = IsGenericMethod && !IsGenericMethodDefinition
 				? GetGenericArguments () : null;
 			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method, genericArguments);
-#else
-			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
-#endif
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
 		{
 			if (methodInstantiation == null)
@@ -422,13 +405,10 @@ namespace System.Reflection {
 				return DeclaringType.ContainsGenericParameters;
 			}
 		}
-#endif
 
-#if NET_2_0
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);
 		}
-#endif
 	}
 	
 	internal class MonoCMethod : ConstructorInfo, ISerializable
@@ -484,10 +464,8 @@ namespace System.Reflection {
 			}
 #endif
 
-#if NET_2_0
 			if (obj == null && DeclaringType.ContainsGenericParameters)
 				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");
-#endif
 
 			if ((invokeAttr & BindingFlags.CreateInstance) != 0 && DeclaringType.IsAbstract) {
 				throw new MemberAccessException (String.Format ("Cannot create an instance of {0} because it is an abstract class", DeclaringType));
@@ -560,11 +538,9 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_2_0
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);
 		}
-#endif
 
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();

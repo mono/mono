@@ -39,10 +39,8 @@ namespace System.Reflection {
 
 	/// <summary>
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	[Flags]
 	public enum TypeAttributes {
 
@@ -162,7 +160,6 @@ namespace System.Reflection {
 		/// </summary>
 		HasSecurity = 262144,
 
-#if NET_2_0
 		/// <summary>
 		/// </summary>
 		CustomFormatClass = 0x30000,
@@ -170,7 +167,6 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		CustomFormatMask = 0xc00000
-#endif
 	} // TypeAttributes
 
 } // System.Reflection

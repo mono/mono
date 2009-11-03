@@ -64,10 +64,8 @@ namespace System.Reflection {
 		
 	}
 
-#if NET_2_0
 	internal delegate object GetterAdapter (object _this);
 	internal delegate R Getter<T,R> (T _this);
-#endif
 
 	[Serializable]
 	internal class MonoProperty : PropertyInfo, ISerializable {
@@ -76,9 +74,7 @@ namespace System.Reflection {
 		internal IntPtr prop;
 		MonoPropertyInfo info;
 		PInfo cached;
-#if NET_2_0
 		GetterAdapter cached_getter;
-#endif
 
 #pragma warning restore 649
 
@@ -212,7 +208,6 @@ namespace System.Reflection {
 		}
 
 
-#if NET_2_0
 		delegate object GetterAdapter (object _this);
 		delegate R Getter<T,R> (T _this);
 		delegate R StaticGetter<R> ();
@@ -287,7 +282,6 @@ namespace System.Reflection {
 
 			return GetValue (obj, BindingFlags.Default, null, index, null);
 		}
-#endif
 
 		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
 		{
@@ -333,8 +327,6 @@ namespace System.Reflection {
 			return PropertyType.ToString () + " " + Name;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 		public override Type[] GetOptionalCustomModifiers () {
 			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, true);
 			if (types == null)
@@ -348,7 +340,6 @@ namespace System.Reflection {
 				return Type.EmptyTypes;
 			return types;
 		}
-#endif
 
 		// ISerializable
 		public void GetObjectData (SerializationInfo info, StreamingContext context) 

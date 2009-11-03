@@ -35,10 +35,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_MethodBase))]
-#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class MethodBase: MemberInfo, _MethodBase {
@@ -64,24 +62,20 @@ namespace System.Reflection {
 		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle)
 		{
 			MethodBase res = GetMethodFromIntPtr (handle.Value, IntPtr.Zero);
-#if NET_2_0
 			Type t = res.DeclaringType;
 			if (t.IsGenericType || t.IsGenericTypeDefinition)
 				throw new ArgumentException ("Cannot resolve method because it's declared in a generic class.");
-#endif
 			return res;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle);
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (false)]
 		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle, RuntimeTypeHandle declaringType)
 		{
 			return GetMethodFromIntPtr (handle.Value, declaringType.Value);
 		}
-#endif
 
 		public abstract MethodImplAttributes GetMethodImplementationFlags();
 

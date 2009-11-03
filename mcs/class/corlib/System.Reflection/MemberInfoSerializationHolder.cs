@@ -44,9 +44,8 @@ namespace System.Reflection
 		readonly string		_memberSignature;
 		readonly MemberTypes	_memberType;
 		readonly Type		_reflectedType;
-#if NET_2_0
 		readonly Type[]          _genericArguments;
-#endif
+
 		MemberInfoSerializationHolder(SerializationInfo info, StreamingContext ctx)
 		{
 			string assemblyName;
@@ -59,7 +58,6 @@ namespace System.Reflection
 			_memberSignature = info.GetString("Signature");
 			_memberType = (MemberTypes) info.GetInt32("MemberType");
 
-#if NET_2_0
 			try {
 				_genericArguments = null;
 
@@ -69,7 +67,7 @@ namespace System.Reflection
 			} catch (SerializationException) {
 				// expected (old NET_1_0 protocol)
 			}
-#endif
+
 			// Load type
 			Assembly asm = Assembly.Load(assemblyName);
 
@@ -81,10 +79,7 @@ namespace System.Reflection
 			Serialize (info, name, klass, signature, type, null);
 		}
 
-#if NET_2_0
-		public
-#endif
-		static void Serialize(SerializationInfo info, String name, Type klass, String signature, MemberTypes type, Type[] genericArguments)
+		public static void Serialize(SerializationInfo info, String name, Type klass, String signature, MemberTypes type, Type[] genericArguments)
 		{
 			info.SetType( typeof(MemberInfoSerializationHolder));
 
@@ -94,9 +89,7 @@ namespace System.Reflection
 			info.AddValue("Name", name, typeof(String));
 			info.AddValue("Signature", signature, typeof(String));
 			info.AddValue("MemberType",(int)type);
-#if NET_2_0
 			info.AddValue("GenericArguments", genericArguments, typeof (Type[]));
-#endif
 		}
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -125,7 +118,6 @@ namespace System.Reflection
 					for (int i = 0; i < methods.Length; i++) 
 						if ((methods[i]).ToString().Equals(_memberSignature)) 
 							return methods[i];
-#if NET_2_0
 						else if (_genericArguments != null &&
 							methods[i].IsGenericMethod &&
 							methods[i].GetGenericArguments().Length == _genericArguments.Length) {
@@ -135,7 +127,6 @@ namespace System.Reflection
 							if (mi.ToString() == _memberSignature)
 								return mi;
 						}
-#endif
 
 					throw new SerializationException (String.Format ("Could not find method '{0}' in type '{1}'", _memberSignature, _reflectedType));
 

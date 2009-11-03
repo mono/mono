@@ -49,10 +49,8 @@ namespace System.Reflection {
 // a.	Uniform Resource Identifiers (URI): Generic Syntax
 //	http://www.ietf.org/rfc/rfc2396.txt
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
-#endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
@@ -70,11 +68,7 @@ namespace System.Reflection {
 		byte[] keyToken;
 		AssemblyVersionCompatibility versioncompat;
 		Version version;
-#if NET_2_0
 		ProcessorArchitecture processor_architecture = ProcessorArchitecture.None;
-#else
-		int processor_architecture;
-#endif
 		#endregion
 #pragma warning restore 169		
 		
@@ -84,7 +78,6 @@ namespace System.Reflection {
 			versioncompat = AssemblyVersionCompatibility.SameMachine;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern bool ParseName (AssemblyName aname, string assemblyName);
 		
@@ -98,10 +91,8 @@ namespace System.Reflection {
 			if (!ParseName (this, assemblyName))
 				throw new FileLoadException ("The assembly name is invalid.");
 		}
-#endif
 		
-#if NET_2_0
-		[MonoTODO ("Not used, as the values are too limited;  Mono supports more")]
+		[MonoLimitation ("Not used, as the values are too limited;  Mono supports more")]
 		public ProcessorArchitecture ProcessorArchitecture {
 			get {
 				return processor_architecture;
@@ -110,7 +101,6 @@ namespace System.Reflection {
 				processor_architecture = value;
 			}
 		}
-#endif
 
 		internal AssemblyName (SerializationInfo si, StreamingContext sc)
 		{
@@ -158,11 +148,7 @@ namespace System.Reflection {
 		public string FullName {
 			get {
 				if (name == null)
-#if NET_2_0
 					return string.Empty;
-#else
-					return null;
-#endif
 				StringBuilder fname = new StringBuilder ();
 				fname.Append (name);
 				if (Version != null) {
@@ -245,7 +231,6 @@ namespace System.Reflection {
 			else if (publicKey == null)
 				return null;
 			else {
-#if NET_2_0
 				if (publicKey.Length == 0)
 					return new byte [0];
 
@@ -254,17 +239,9 @@ namespace System.Reflection {
 
 				keyToken = ComputePublicKeyToken ();
 				return keyToken;
-#else
-				if (publicKey.Length == 0)
-					return null;
-
-				keyToken = ComputePublicKeyToken ();
-				return keyToken;
-#endif
 			}
 		}
 
-#if NET_2_0
 		private bool IsPublicKeyValid {
 			get {
 				// check for ECMA key
@@ -302,11 +279,9 @@ namespace System.Reflection {
 				return false;
 			}
 		}
-#endif
 
 		private byte [] InternalGetPublicKeyToken ()
 		{
-#if NET_2_0
 			if (keyToken != null)
 				return keyToken;
 
@@ -320,29 +295,6 @@ namespace System.Reflection {
 				throw new  SecurityException ("The public key is not valid.");
 
 			return ComputePublicKeyToken ();
-#else
-			if ((Flags & AssemblyNameFlags.PublicKey) != 0) {
-				if (publicKey == null)
-					return null;
-				if (publicKey.Length == 0)
-					return new byte [0];
-			}
-
-			if (keyToken != null && publicKey == null)
-				return keyToken;
-
-			if (publicKey == null)
-				return null;
-
-			if (publicKey.Length == 0)
-				return new byte [0];
-
-			if (keyToken != null && keyToken.Length == 0)
-				return ComputePublicKeyToken ();
-
-			keyToken = ComputePublicKeyToken ();
-			return keyToken;
-#endif
 		}
 
 		private byte [] ComputePublicKeyToken ()
@@ -356,7 +308,6 @@ namespace System.Reflection {
 			return token;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static bool ReferenceMatchesDefinition (AssemblyName reference, AssemblyName definition)
 		{
@@ -368,18 +319,13 @@ namespace System.Reflection {
 				return false;
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void SetPublicKey (byte[] publicKey) 
 		{
-#if NET_2_0
 			if (publicKey == null)
 				flags ^= AssemblyNameFlags.PublicKey;
 			else
 				flags |= AssemblyNameFlags.PublicKey;
-#else
-			flags |= AssemblyNameFlags.PublicKey;
-#endif
 			this.publicKey = publicKey;
 		}
 

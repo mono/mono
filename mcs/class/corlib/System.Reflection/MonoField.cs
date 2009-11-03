@@ -154,16 +154,12 @@ namespace System.Reflection {
 				ToString(), MemberTypes.Field);
 		}
 
-#if NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern object GetRawConstantValue ();
-#endif
 
 		void CheckGeneric () {
-#if NET_2_0
 			if (DeclaringType.ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on fields with types for which Type.ContainsGenericParameters is true.");
-#endif
 	    }
 	}
 }
