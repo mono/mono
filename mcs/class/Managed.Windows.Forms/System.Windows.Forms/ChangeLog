@@ -1,5 +1,12 @@
 2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControl.cs: In OnKeyDown call the base implementation first -
+	this way we let the user tell us whether we should handle the key or
+	not.
+	Fixes #543717.
+
+2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: Implement removal of rows the Correct Way by creating a
 	copy of the indexes, as any direct write access to the source will cause to
 	reset the entire selection - also, do the linear de-selection in
