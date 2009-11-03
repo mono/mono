@@ -468,9 +468,16 @@ namespace System.Reflection {
 
 			aname.CultureInfo = culture;
 			aname.Name = aname.Name + ".resources";
-			Assembly assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
-			if (assembly != null)
-				return assembly;
+			Assembly assembly;
+
+			try {
+				assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
+				if (assembly != null)
+					return assembly;
+			} catch (FileNotFoundException) {
+				assembly = null;
+				// ignore
+			}
 
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);

@@ -1,3 +1,10 @@
+2009-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* Assembly.cs: GetSatelliteAssembly must catch
+	AppDomain.LoadSatellite FileNotFoundException and attempt to load
+	satellites from subdirectories of current assembly's
+	directory. Fixes bug #548768
+
 2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoMethod.cs: Remove CAS check in MonoCMethod.Invoke (just 

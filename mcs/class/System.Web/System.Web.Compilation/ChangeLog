@@ -1,3 +1,12 @@
+2009-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesCompiler.cs: put default culture resources in a
+	separate collection, exposed by the DefaultCultureFiles property.
+
+	* AppResourcesAssemblyBuilder.cs: compile the default assembly
+	before the satellite ones. Use the default assembly as template
+	for generation of the satellite ones.
+
 2009-10-22  Marek Habersack  <mhabersack@novell.com>
 
 	* WsdlBuildProvider.cs: a different way to generate code from
