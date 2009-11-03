@@ -44,7 +44,7 @@ using System.Web.Configuration;
 
 namespace System.Web.Compilation
 {
-	internal class AppResourcesAssemblyBuilder
+	class AppResourcesAssemblyBuilder
 	{
 		CompilationSection config;
 		CompilerInfo ci;
@@ -95,18 +95,13 @@ namespace System.Web.Compilation
 		public void Build (CodeCompileUnit unit)
 		{
 			Dictionary <string, List <string>> cultures = appResourcesCompiler.CultureFiles;
-			string defaultAssemblyKey = AppResourcesCompiler.DefaultCultureKey;
+			List <string> defaultCultureFiles = appResourcesCompiler.DefaultCultureFiles;
+			
+			if (defaultCultureFiles != null)
+				BuildDefaultAssembly (defaultCultureFiles, unit);
 			
 			foreach (KeyValuePair <string, List <string>> kvp in cultures)
-				BuildAssembly (kvp.Key, kvp.Value, defaultAssemblyKey, unit);
-		}
-
-		void BuildAssembly (string cultureName, List <string> files, string defaultAssemblyKey, CodeCompileUnit unit)
-		{
-			if (String.Compare (cultureName, defaultAssemblyKey, StringComparison.Ordinal) == 0)
-				BuildDefaultAssembly (files, unit);
-			else
-				BuildSatelliteAssembly (cultureName, files);
+				BuildSatelliteAssembly (kvp.Key, kvp.Value);
 		}
 
 		void BuildDefaultAssembly (List <string> files, CodeCompileUnit unit)
@@ -128,19 +123,16 @@ namespace System.Web.Compilation
 			if (results == null)
 				return;
 			
-			Assembly ret = null;
-			
 			if (results.NativeCompilerReturnValue == 0) {
-				ret = results.CompiledAssembly;
-				BuildManager.TopLevelAssemblies.Add (ret);
-				mainAssembly = ret;
+				mainAssembly = results.CompiledAssembly;
+				BuildManager.TopLevelAssemblies.Add (mainAssembly);
 			} else {
 				if (HttpContext.Current.IsCustomErrorEnabled)
 					throw new ApplicationException ("An error occurred while compiling global resources.");
 				throw new CompilationException (null, results.Errors, null);
 			}
 			
-			HttpRuntime.WritePreservationFile (ret, canonicAssemblyName);
+			HttpRuntime.WritePreservationFile (mainAssembly, canonicAssemblyName);
 			HttpRuntime.EnableAssemblyMapping (true);
 		}
 
@@ -156,7 +148,9 @@ namespace System.Web.Compilation
 			sb.Append ("/c:\"" + cultureName + "\" ");
 			sb.Append ("/t:lib ");
 			sb.Append ("/out:\"" + assemblyPath + "\" ");
-
+			if (mainAssembly != null)
+				sb.Append ("/template:\"" + mainAssembly.Location + "\" ");
+			
 			string responseFilePath = assemblyPath + ".response";
 			using (FileStream fs = File.OpenWrite (responseFilePath)) {
 				using (StreamWriter sw = new StreamWriter (fs)) {

@@ -93,6 +93,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_07.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_08.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_09.sitemap \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.resx \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.fr-FR.resx \
 	Test/mainsoft/NunitWebResources/menuclass.aspx \
 	Test/mainsoft/NunitWebResources/FormView.aspx \
 	Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx \
@@ -188,7 +190,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/DuplicateControlsInClientComment.aspx \
 	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx \
 	Test/mainsoft/NunitWebResources/ConditionalClientComments.aspx \
-	Test/mainsoft/NunitWebResources/OneLetterIdentifierInCodeRender.aspx
+	Test/mainsoft/NunitWebResources/OneLetterIdentifierInCodeRender.aspx \
+	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

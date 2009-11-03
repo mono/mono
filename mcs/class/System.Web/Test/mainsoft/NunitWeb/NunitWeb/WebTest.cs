@@ -535,6 +535,8 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest), "My.ashx", "My.ashx");
 			CopyResource (typeof (WebTest), "Global.asax", "Global.asax");
 #if NET_2_0
+			CopyResource (typeof (WebTest), "Common.resx", "App_GlobalResources/Common.resx");
+			CopyResource (typeof (WebTest), "Common.fr-FR.resx", "App_GlobalResources/Common.fr-FR.resx");
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 #else
 			CopyResource (typeof (WebTest), "Web.mono.config.1.1", "Web.config");
