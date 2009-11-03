@@ -1095,9 +1095,7 @@ namespace System.Threading {
 		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#if NET_2_0
 		[Obsolete ("see CompressedStack class")]
-#endif
 #if NET_1_1
 		public
 #else
@@ -1117,9 +1115,7 @@ namespace System.Threading {
 		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#if NET_2_0
 		[Obsolete ("see CompressedStack class")]
-#endif
 #if NET_1_1
 		public
 #else
