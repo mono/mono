@@ -29,16 +29,13 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public abstract class Encoder
 {
 
 	// Constructor.
 	protected Encoder() {}
 
-#if NET_2_0
 	EncoderFallback fallback = new EncoderReplacementFallback ();
 	EncoderFallbackBuffer fallback_buffer;
 
@@ -61,7 +58,6 @@ public abstract class Encoder
 			return fallback_buffer;
 		}
 	}
-#endif
 
 	// Get the number of bytes needed to encode a buffer.
 	public abstract int GetByteCount(char[] chars, int index,
@@ -71,7 +67,6 @@ public abstract class Encoder
 	public abstract int GetBytes(char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex, bool flush);
 
-#if NET_2_0
 	[CLSCompliant (false)]
 	[ComVisible (false)]
 	public unsafe virtual int GetByteCount (char* chars, int count, bool flush)
@@ -170,7 +165,6 @@ public abstract class Encoder
 		if (byteCount < 0)
 			throw new ArgumentOutOfRangeException ("byteCount");
 	}
-#endif
 }; // class Encoder
 
 }; // namespace System.Text

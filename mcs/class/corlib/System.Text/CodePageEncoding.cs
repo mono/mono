@@ -90,11 +90,9 @@ namespace System.Text
 		}
 
 		private int codePage;
-#if NET_2_0
 		private bool isReadOnly;
 		private EncoderFallback encoderFallback;
 		private DecoderFallback decoderFallback;
-#endif
 		private Encoding realObject;
 
 		private CodePageEncoding (SerializationInfo info, StreamingContext context)
@@ -104,7 +102,6 @@ namespace System.Text
 
 			this.codePage = (int) info.GetValue ("m_codePage", typeof (int));
 
-#if NET_2_0
 			try {
 				this.isReadOnly = (bool) info.GetValue ("m_isReadOnly", typeof (bool));
 				this.encoderFallback = (EncoderFallback) info.GetValue ("encoderFallback", typeof (EncoderFallback));
@@ -113,7 +110,6 @@ namespace System.Text
 				// .NET Framework 1.x has no fallbacks
 				this.isReadOnly = true;
 			}
-#endif
 		}
 
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -126,13 +122,11 @@ namespace System.Text
 			if (this.realObject == null) {
 				Encoding encoding = Encoding.GetEncoding (this.codePage);
 
-#if NET_2_0
 				if (!this.isReadOnly) {
 					encoding = (Encoding) encoding.Clone ();
 					encoding.EncoderFallback = this.encoderFallback;
 					encoding.DecoderFallback = this.decoderFallback;
 				}
-#endif
 
 				this.realObject = encoding;
 			}

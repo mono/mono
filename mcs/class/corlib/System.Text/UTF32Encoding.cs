@@ -31,8 +31,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_2_0
-
 namespace System.Text
 {
 
@@ -469,7 +467,6 @@ public sealed class UTF32Encoding : Encoding
 
 	} // class UTF32Decoder
 	
-#if NET_2_0
 	[CLSCompliantAttribute(false)]
 	public unsafe override int GetByteCount (char *chars, int count)
 	{
@@ -477,14 +474,7 @@ public sealed class UTF32Encoding : Encoding
 			throw new ArgumentNullException ("chars");
 		return count * 4;
 	}
-#else
-	public override byte [] GetBytes (String s)
-	{
-		return base.GetBytes (s);
-	}
-#endif
 
-#if NET_2_0
 	// a bunch of practically missing implementations (but should just work)
 
 	public override int GetByteCount (string s)
@@ -524,10 +514,6 @@ public sealed class UTF32Encoding : Encoding
 	{
 		return base.GetEncoder ();
 	}
-#endif
-
 }; // class UTF32Encoding
 
 }; // namespace System.Text
-
-#endif

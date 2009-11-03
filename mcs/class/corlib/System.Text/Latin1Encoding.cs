@@ -40,7 +40,6 @@ internal class Latin1Encoding : Encoding
 		// Nothing to do here.
 	}
 
-#if NET_2_0
 	public override bool IsSingleByte {
 		get { return true; }
 	}
@@ -49,7 +48,6 @@ internal class Latin1Encoding : Encoding
 	{
 		return form == NormalizationForm.FormC;
 	}
-#endif
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
@@ -79,8 +77,6 @@ internal class Latin1Encoding : Encoding
 	public override int GetBytes (char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
 	{
-#if NET_2_0
-// well, yes, I know this #if is ugly, but I think it is the simplest switch.
 		EncoderFallbackBuffer buffer = null;
 		char [] fallback_chars = null;
 		return GetBytes (chars, charIndex, charCount, bytes,
@@ -92,7 +88,6 @@ internal class Latin1Encoding : Encoding
 		      ref EncoderFallbackBuffer buffer,
 		      ref char [] fallback_chars)
 	{
-#endif
 		if (chars == null) {
 			throw new ArgumentNullException ("chars");
 		}
@@ -120,7 +115,6 @@ internal class Latin1Encoding : Encoding
 			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
 				bytes [byteIndex++] = (byte)(ch - 0xFEE0);
 			} else {
-#if NET_2_0
 				if (buffer == null)
 					buffer = EncoderFallback.CreateFallbackBuffer ();
 				if (Char.IsSurrogate (ch) && count > 1 &&
@@ -135,9 +129,6 @@ internal class Latin1Encoding : Encoding
 				byteIndex += GetBytes (fallback_chars, 0, 
 					fallback_chars.Length, bytes, byteIndex,
 					ref buffer, ref fallback_chars);
-#else
-				bytes [byteIndex++] = (byte)'?';
-#endif
 			}
 		}
 		return charCount;
@@ -147,8 +138,6 @@ internal class Latin1Encoding : Encoding
 	public override int GetBytes (String s, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
 	{
-#if NET_2_0
-// I know this #if is ugly, but I think it is the simplest switch.
 		EncoderFallbackBuffer buffer = null;
 		char [] fallback_chars = null;
 		return GetBytes (s, charIndex, charCount, bytes, byteIndex,
@@ -160,7 +149,6 @@ internal class Latin1Encoding : Encoding
 		      ref EncoderFallbackBuffer buffer,
 		      ref char [] fallback_chars)
 	{
-#endif
 		if (s == null) {
 			throw new ArgumentNullException ("s");
 		}
@@ -188,8 +176,6 @@ internal class Latin1Encoding : Encoding
 			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
 				bytes [byteIndex++] = (byte)(ch - 0xFEE0);
 			} else {
-
-#if NET_2_0
 				if (buffer == null)
 					buffer = EncoderFallback.CreateFallbackBuffer ();
 				if (Char.IsSurrogate (ch) && count > 1 &&
@@ -204,9 +190,6 @@ internal class Latin1Encoding : Encoding
 				byteIndex += GetBytes (fallback_chars, 0, 
 					fallback_chars.Length, bytes, byteIndex,
 					ref buffer, ref fallback_chars);
-#else
-				bytes [byteIndex++] = (byte)'?';
-#endif
 			}
 		}
 		return charCount;

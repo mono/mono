@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || NET_2_0_BOOTSTRAP
-
 namespace System.Text
 {
 	// This EncoderFallbackBuffer is simple. It ignores the input buffers.
@@ -101,4 +99,3 @@ namespace System.Text
 	}
 }
 
-#endif

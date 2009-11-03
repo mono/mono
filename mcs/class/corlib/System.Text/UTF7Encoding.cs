@@ -31,10 +31,8 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
-[MonoTODO ("Serialization format not compatible with .NET")]
+[MonoLimitation ("Serialization format not compatible with .NET")]
 #if ECMA_COMPAT
 internal
 #else
@@ -109,7 +107,6 @@ class UTF7Encoding : Encoding
 		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 
-#if NET_2_0
 	[ComVisible (false)]
 	public override int GetHashCode ()
 	{
@@ -127,7 +124,6 @@ class UTF7Encoding : Encoding
 			EncoderFallback.Equals (e.EncoderFallback) &&
 			DecoderFallback.Equals (e.DecoderFallback);
 	}
-#endif
 
 	// Internal version of "GetByteCount" that can handle
 	// a rolling state between calls.
@@ -674,7 +670,6 @@ class UTF7Encoding : Encoding
 
 	} // class UTF7Encoder
 
-#if NET_2_0
 	// a bunch of practically missing implementations (but should just work)
 
 	[CLSCompliantAttribute (false)]
@@ -722,8 +717,6 @@ class UTF7Encoding : Encoding
 	{
 		return base.GetString (bytes, index, count);
 	}
-
-#endif
 
 }; // class UTF7Encoding
 

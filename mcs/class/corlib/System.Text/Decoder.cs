@@ -29,16 +29,13 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public abstract class Decoder
 {
 
 	// Constructor.
 	protected Decoder () {}
 
-#if NET_2_0
 	DecoderFallback fallback = new DecoderReplacementFallback ();
 	DecoderFallbackBuffer fallback_buffer;
 
@@ -61,7 +58,6 @@ public abstract class Decoder
 			return fallback_buffer;
 		}
 	}
-#endif
 
 	// Get the number of characters needed to decode a buffer.
 	public abstract int GetCharCount (byte[] bytes, int index, int count);
@@ -70,7 +66,6 @@ public abstract class Decoder
 	public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount,
 								 char[] chars, int charIndex);
 
-#if NET_2_0
 	[ComVisible (false)]
 	public virtual int GetCharCount (byte [] bytes, int index, int count, bool flush)
 	{
@@ -199,8 +194,6 @@ public abstract class Decoder
 		if (byteCount < 0)
 			throw new ArgumentOutOfRangeException ("byteCount");
 	}
-#endif
-
 }; // class Decoder
 
 }; // namespace System.Text

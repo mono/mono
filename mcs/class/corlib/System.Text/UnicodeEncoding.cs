@@ -32,10 +32,8 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
-[MonoTODO ("Serialization format not compatible with .NET")]
+[MonoLimitation ("Serialization format not compatible with .NET")]
 public class UnicodeEncoding : Encoding
 {
 	// Magic numbers used by Windows for Unicode.
@@ -62,18 +60,13 @@ public class UnicodeEncoding : Encoding
 	{
 	}
 
-#if NET_2_0
-	public
-#endif
-	UnicodeEncoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidBytes)
+	public UnicodeEncoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidBytes)
 		: base ((bigEndian ? BIG_UNICODE_CODE_PAGE : UNICODE_CODE_PAGE))
 	{
-#if NET_2_0
 		if (throwOnInvalidBytes)
 			SetFallbackInternal (null, new DecoderExceptionFallback ());
 		else
 			SetFallbackInternal (null, new DecoderReplacementFallback ("\uFFFD"));
-#endif
 
 		this.bigEndian = bigEndian;
 		this.byteOrderMark = byteOrderMark;
@@ -120,7 +113,6 @@ public class UnicodeEncoding : Encoding
 		return s.Length * 2;
 	}
 
-#if NET_2_0
 	[CLSCompliantAttribute (false)]
 	[ComVisible (false)]
 	public unsafe override int GetByteCount (char* chars, int count)
@@ -132,7 +124,6 @@ public class UnicodeEncoding : Encoding
 
 		return count * 2;
 	}
-#endif
 
 	// Get the bytes that result from encoding a character buffer.
 	public unsafe override int GetBytes (char [] chars, int charIndex, int charCount,
@@ -166,21 +157,6 @@ public class UnicodeEncoding : Encoding
 				return GetBytesInternal (charPtr + charIndex, charCount, bytePtr + byteIndex, byteCount);
 	}
 
-#if !NET_2_0
-	public override byte [] GetBytes (String s)
-	{
-		if (s == null)
-			throw new ArgumentNullException ("s");
-
-		int byteCount = GetByteCount (s);
-		byte [] bytes = new byte [byteCount];
-
-		GetBytes (s, 0, s.Length, bytes, 0);
-
-		return bytes;
-	}
-#endif
-
 	public unsafe override int GetBytes (String s, int charIndex, int charCount,
 										byte [] bytes, int byteIndex)
 	{
@@ -213,7 +189,6 @@ public class UnicodeEncoding : Encoding
 				return GetBytesInternal (charPtr + charIndex, charCount, bytePtr + byteIndex, byteCount);
 	}
 
-#if NET_2_0
 	[CLSCompliantAttribute (false)]
 	[ComVisible (false)]
 	public unsafe override int GetBytes (char* chars, int charCount,
@@ -230,7 +205,6 @@ public class UnicodeEncoding : Encoding
 
 		return GetBytesInternal (chars, charCount, bytes, byteCount);
 	}
-#endif
 
 	private unsafe int GetBytesInternal (char* chars, int charCount,
 										byte* bytes, int byteCount)
@@ -259,7 +233,6 @@ public class UnicodeEncoding : Encoding
 		return count / 2;
 	}
 
-#if NET_2_0
 	[CLSCompliantAttribute (false)]
 	[ComVisible (false)]
 	public unsafe override int GetCharCount (byte* bytes, int count)
@@ -271,7 +244,6 @@ public class UnicodeEncoding : Encoding
 
 		return count / 2;
 	}
-#endif
 
 	// Get the characters that result from decoding a byte buffer.
 	public unsafe override int GetChars (byte [] bytes, int byteIndex, int byteCount,
@@ -305,7 +277,6 @@ public class UnicodeEncoding : Encoding
 				return GetCharsInternal (bytePtr + byteIndex, byteCount, charPtr + charIndex, charCount);
 }
 
-#if NET_2_0
 	[CLSCompliantAttribute (false)]
 	[ComVisible (false)]
 	public unsafe override int GetChars (byte* bytes, int byteCount,
@@ -322,7 +293,6 @@ public class UnicodeEncoding : Encoding
 
 		return GetCharsInternal (bytes, byteCount, chars, charCount);
 	}
-#endif
 
 	// Decode a buffer of bytes into a string.
 	[ComVisible (false)]

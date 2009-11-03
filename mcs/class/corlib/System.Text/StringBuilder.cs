@@ -43,14 +43,9 @@ using System.Runtime.InteropServices;
 namespace System.Text {
 	
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
-        [MonoTODO ("Serialization format not compatible with .NET")]
-	public sealed class StringBuilder
-#if NET_2_0
-		: ISerializable
-#endif
+        [MonoLimitation ("Serialization format not compatible with .NET")]
+	public sealed class StringBuilder : ISerializable
 	{
 		private int _length;
 		private string _str;
