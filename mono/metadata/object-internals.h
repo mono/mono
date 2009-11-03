@@ -309,6 +309,10 @@ typedef struct {
 	MonoString *internal_method_name;
 } MonoStackFrame;
 
+typedef enum {
+	MONO_THREAD_FLAG_DONT_MANAGE = 1, // Don't wait for or abort this thread
+} MonoThreadFlags;
+
 struct _MonoThread {
 	MonoObject  obj;
 	int         lock_thread_id; /* to be used as the pre-shifted thread id in thin locks */
@@ -355,7 +359,7 @@ struct _MonoThread {
 	 * when a new field is added to the unmanaged MonoThread structure.
 	 */
 	gpointer interrupt_on_stop;
-	gpointer unused3;
+	gsize    flags;
 	gpointer unused4;
 	gpointer unused5;
 	gpointer unused6;
