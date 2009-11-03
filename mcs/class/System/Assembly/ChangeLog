@@ -1,3 +1,9 @@
+2009-11-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Open up the internals to System.Net.dll (which
+	needs Uri.IsDefaultPort) for NET_2_1 and remove it for 
+	System.ComponentModel.DataAnnotations (again for NET_2_1)
+
 2009-09-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove ComCompatibleVersion and 
