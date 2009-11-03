@@ -209,13 +209,13 @@ namespace System.Web.Compilation
 		}
 		
 		const string cachePrefix = "@@LocalResourcesAssemblies";
-		public const string DefaultCultureKey = ".:!DefaultCulture!:.";
 		
 		bool isGlobal;
 		AppResourceFilesCollection files;
 		string tempDirectory;
 		string virtualPath;
 		Dictionary <string, List <string>> cultureFiles;
+		List <string> defaultCultureFiles;
 		
 		string TempDirectory {
 			get {
@@ -229,6 +229,10 @@ namespace System.Web.Compilation
 			get { return cultureFiles; }
 		}
 
+		public List <string> DefaultCultureFiles {
+			get { return defaultCultureFiles; }
+		}
+		
 		static AppResourcesCompiler ()
 		{
 			if (!BuildManager.IsPrecompiled)
@@ -457,16 +461,20 @@ namespace System.Web.Compilation
 				resfile = arfi.Info.FullName;
 			if (!String.IsNullOrEmpty (resfile)) {
 				string culture = IsFileCultureValid (resfile);
-				if (culture == null)
-					culture = DefaultCultureKey;
-				
 				List <string> cfiles;
-				if (cultureFiles.ContainsKey (culture))
-					cfiles = cultureFiles [culture];
-				else {
-					cfiles = new List <string> (1);
-					cultureFiles [culture] = cfiles;
+				if (culture != null) {
+					if (cultureFiles.ContainsKey (culture))
+						cfiles = cultureFiles [culture];
+					else {
+						cfiles = new List <string> (1);
+						cultureFiles [culture] = cfiles;
+					}
+				} else {
+					if (defaultCultureFiles == null)
+						defaultCultureFiles = new List <string> ();
+					cfiles = defaultCultureFiles;
 				}
+				
 				cfiles.Add (resfile);
 			}
 				
