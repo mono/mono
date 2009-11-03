@@ -33,59 +33,43 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[AttributeUsage (AttributeTargets.Assembly, Inherited=false)]
-#else
-	[AttributeUsage (AttributeTargets.Assembly)]
-#endif
 	public sealed class AssemblyFlagsAttribute : Attribute
 	{
 		// Field
 		private uint flags;
 		
 		// Constructor
-#if NET_2_0
 		[Obsolete("")]
-#endif
 		[CLSCompliant (false)]
 		public AssemblyFlagsAttribute (uint flags)
 		{
 			this.flags = flags;
 		}
 
-#if NET_1_1
-#if NET_2_0
 		[Obsolete("")]
-#endif
 		public AssemblyFlagsAttribute (int assemblyFlags)
 		{
 			this.flags = (uint)assemblyFlags;
 		}
-#endif
 
-#if NET_2_0
 		public AssemblyFlagsAttribute (AssemblyNameFlags assemblyFlags)
 		{
 			this.flags = (uint)assemblyFlags;
 		}
-#endif
 
 		// Property
-#if NET_2_0
 		[Obsolete("")]
-#endif
  		[CLSCompliant (false)]
 		public uint Flags
 		{
 			get { return flags; }
 		}
 
-#if NET_1_1
 		public int AssemblyFlags
 		{
 			get { return (int)flags; }
 		}
-#endif
 	}
 }

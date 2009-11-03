@@ -146,7 +146,6 @@ namespace System.Reflection
 
 					throw new SerializationException (String.Format ("Could not find property '{0}' in type '{1}'", _memberName, _reflectedType));
 
-#if NET_2_0
 				case MemberTypes.Event:
 					EventInfo ei = _reflectedType.GetEvent (_memberName, DefaultBinding);
 
@@ -154,7 +153,6 @@ namespace System.Reflection
 						return ei;
 
 					throw new SerializationException (String.Format ("Could not find event '{0}' in type '{1}'", _memberName, _reflectedType));
-#endif
 
 				default:
 					throw new SerializationException (String.Format ("Unhandled MemberType {0}",  _memberType));

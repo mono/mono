@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections.Generic;
@@ -35,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class MethodBody {
 #pragma warning disable 649
 		#region Sync with reflection.h
@@ -90,5 +87,4 @@ namespace System.Reflection {
 
 }
 
-#endif
 

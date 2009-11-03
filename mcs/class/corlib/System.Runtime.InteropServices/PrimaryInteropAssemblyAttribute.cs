@@ -33,13 +33,9 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[AttributeUsage (AttributeTargets.Assembly, Inherited=false
-#if NET_2_0
 		, AllowMultiple = true
-#endif
 	)]
 	public sealed class PrimaryInteropAssemblyAttribute : Attribute
 	{

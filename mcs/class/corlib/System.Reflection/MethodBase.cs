@@ -198,7 +198,6 @@ namespace System.Reflection {
 			throw new Exception ("Method is not a builder method");
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (true)]
 		public virtual Type [] GetGenericArguments ()
 		{
@@ -222,9 +221,7 @@ namespace System.Reflection {
 				return false;
 			}
 		}
-#endif
 
-#if NET_2_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
 
@@ -235,7 +232,6 @@ namespace System.Reflection {
 		public virtual MethodBody GetMethodBody () {
 			throw new NotSupportedException ();
 		}
-#endif
 
 		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

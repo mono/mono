@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 #if NET_2_1
 	public sealed class TargetInvocationException : Exception {
