@@ -90,7 +90,6 @@ common_dirs := \
 	OpenSystem.C			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
-	Mono.Debugger.Soft		\
 	SystemWebTestShim
 
 net_1_1_dirs :=		\
@@ -122,7 +121,8 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets       		\
-	WindowsBase
+	WindowsBase			\
+	Mono.Debugger.Soft
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
