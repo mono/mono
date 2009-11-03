@@ -31,6 +31,9 @@ namespace Mono.Debugger
 		}
 
 		// The standard output of the process is available normally through Process
+		public StreamReader StandardOutput { get; set; }
+		public StreamReader StandardError { get; set; }
+
 		public Process Process {
 			get {
 				return process;

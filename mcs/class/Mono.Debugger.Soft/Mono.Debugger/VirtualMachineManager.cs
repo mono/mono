@@ -90,6 +90,11 @@ namespace Mono.Debugger
 
 			VirtualMachine vm = new VirtualMachine (p, conn);
 
+			if (options != null && options.RedirectStandardOutput) {
+				vm.StandardOutput = p.StandardOutput;
+				vm.StandardError = p.StandardError;
+			}
+
 			conn.EventHandler = new EventHandler (vm);
 
 			vm.connect ();
@@ -100,26 +105,41 @@ namespace Mono.Debugger
 		/*
 		 * Wait for a virtual machine to connect at the specified address.
 		 */
-		public static VirtualMachine Listen (IPEndPoint endpoint) {
-			if (endpoint == null)
-				throw new ArgumentNullException ("endpoint");
+		public static VirtualMachine Listen (IPAddress address, int debugger_port, int console_port) {
+			if (address == null)
+				throw new ArgumentNullException ("address");
 
-			Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			socket.Bind (endpoint);
-			socket.Listen (1000);
+			IPEndPoint dbg_ep = new IPEndPoint (address, debugger_port);
+			IPEndPoint con_ep = new IPEndPoint (address, console_port);
 
+			Socket con_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			Socket dbg_sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			con_sock.Bind (con_ep);
+			dbg_sock.Bind (dbg_ep);
+			con_sock.Listen (1000);
+			dbg_sock.Listen (1000);
+
+			return Listen (con_sock, dbg_sock);
+		}
+
+		public static VirtualMachine Listen (Socket con_sock, Socket dbg_sock) {
 			/* 
 			 * FIXME: This might block forever.
 			 */
-			Socket accepted = socket.Accept ();
+			Socket con_accepted = con_sock.Accept ();
+			Socket dbg_accepted = dbg_sock.Accept ();
 
-			socket.Disconnect (false);
-			socket.Close ();
+			con_sock.Disconnect (false);
+			dbg_sock.Disconnect (false);
+			con_sock.Close ();
+			dbg_sock.Close ();
 
-			Connection conn = new Connection (accepted);
+			Connection conn = new Connection (dbg_accepted);
 
 			VirtualMachine vm = new VirtualMachine (null, conn);
 
+			vm.StandardOutput = new StreamReader (new NetworkStream (con_accepted));
+			vm.StandardError = null;
 			conn.EventHandler = new EventHandler (vm);
 
 			vm.connect ();
