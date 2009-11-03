@@ -1,3 +1,9 @@
+2009-11-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): For icall wrappers, add an
+	explicit this argument to the call signature.
+	(mono_marshal_get_icall_wrapper): Ditto.
+
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_methods): Only give a slot for virtual methods
