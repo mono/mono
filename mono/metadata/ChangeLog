@@ -1,3 +1,7 @@
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verifier_inflate_type): Return the inflated type on success.
+
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-mono-symfile.c (check_line): Fix the handling of IL offset 0.
