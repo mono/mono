@@ -1,3 +1,10 @@
+2009-11-02 Jonathan Chambers <joncham@novell.com>
+
+	* exceptions-x86.c (win32_handle_stack_overflow): Fix parameters
+	to mono_arch_find_jit_info_ext.
+	
+	Code contributed under MIT/X11 license.
+
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c: Add support for filtering events by assemblies.
