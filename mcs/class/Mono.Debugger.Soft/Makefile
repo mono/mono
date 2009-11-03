@@ -3,7 +3,6 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
-LIBRARY_PACKAGE = none
 
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:Mono.Cecil.dll /r:System.Core.dll /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfile:$(LIBRARY_SNK)
 
