@@ -40,10 +40,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ParameterBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ParameterBuilder : _ParameterBuilder {
 
@@ -63,11 +61,9 @@ namespace System.Reflection.Emit {
 			position = pos;
 			attrs = attributes;
 			methodb = mb;
-#if NET_2_0
 			if (mb is DynamicMethod)
 				table_idx = 0;
 			else
-#endif
 				table_idx = mb.get_next_table_index (this, 0x08, true);
 		}
 
@@ -135,16 +131,12 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-#if NET_2_0
 		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-#endif
 		public virtual void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
 			marshal_info = unmanagedMarshal;
 			attrs |= ParameterAttributes.HasFieldMarshal;

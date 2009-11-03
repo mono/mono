@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct OpCode {
 
 		internal byte op1, op2;
@@ -76,12 +74,10 @@ namespace System.Reflection.Emit {
 			return v.op1 == op1 && v.op2 == op2;
 		}
 
-#if NET_2_0
 		public bool Equals (OpCode obj)
 		{
 			return obj.op1 == op1 && obj.op2 == op2;
 		}
-#endif
 
 		public override string ToString ()
 		{
@@ -145,7 +141,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		public static bool operator == (OpCode a, OpCode b)
 		{
 			return a.op1 == b.op1 && a.op2 == b.op2;
@@ -155,6 +150,5 @@ namespace System.Reflection.Emit {
 		{
 			return a.op1 != b.op1 || a.op2 != b.op2;
 		}
-#endif
 	}
 } 

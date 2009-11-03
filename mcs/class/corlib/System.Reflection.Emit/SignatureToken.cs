@@ -33,11 +33,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Signature.
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
-#else
-	[Serializable]
-#endif
 	public struct SignatureToken {
 
 		internal int tokValue;
@@ -70,7 +66,6 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-#if NET_2_0
 		public bool Equals (SignatureToken obj)
 		{
 			return (this.tokValue == obj.tokValue);
@@ -85,7 +80,6 @@ namespace System.Reflection.Emit {
 		{
 			return !Equals (a, b);
 		}
-#endif
 
 		/// <summary>
 		///  Tests whether the given object is an instance of

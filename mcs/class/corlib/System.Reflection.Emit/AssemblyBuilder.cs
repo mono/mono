@@ -90,10 +90,8 @@ namespace System.Reflection.Emit
 		}
 	}
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_AssemblyBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
 #pragma warning disable 169, 414
@@ -159,12 +157,10 @@ namespace System.Reflection.Emit
 				throw new ArgumentException ("access");
 #endif
 
-#if NET_2_0
 			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 					"Argument value {0} is not valid.", (int) access),
 					"access");
-#endif
 
 #if NET_4_0
 			if ((access & AssemblyBuilderAccess.RunAndCollect) == AssemblyBuilderAccess.RunAndCollect)
@@ -238,21 +234,17 @@ namespace System.Reflection.Emit
 			}
 		}
 
-#if NET_1_1
 		/* This is to keep signature compatibility with MS.NET */
 		public override string ImageRuntimeVersion {
 			get {
 				return base.ImageRuntimeVersion;
 			}
 		}
-#endif
 
-#if NET_2_0
 		[MonoTODO]
 		public override bool ReflectionOnly {
 			get { return base.ReflectionOnly; }
 		}
-#endif
 
 		public void AddResourceFile (string name, string fileName)
 		{
@@ -364,7 +356,6 @@ namespace System.Reflection.Emit
 			resources [p].data = blob;
 		}
 
-#if NET_2_0
 		internal void AddTypeForwarder (Type t) {
 			if (t == null)
 				throw new ArgumentNullException ("t");
@@ -378,7 +369,6 @@ namespace System.Reflection.Emit
 				type_forwarders = arr;
 			}
 		}
-#endif
 
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
@@ -783,7 +773,6 @@ namespace System.Reflection.Emit
 			}
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		ModuleBuilder manifest_module;
 
 		//
@@ -795,14 +784,9 @@ namespace System.Reflection.Emit
 				manifest_module = DefineDynamicModule ("Default Dynamic Module");
 			return manifest_module;
 		}
-#endif
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MonoLimitation ("No support for PE32+ assemblies for AMD64 and IA64")]
 		public 
-#else
-		internal
-#endif
 		void Save (string assemblyFileName, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
 			this.peKind = portableExecutableKind;
@@ -929,11 +913,9 @@ namespace System.Reflection.Emit
 					flags |= ((uint) data [pos + 2]) << 16;
 					flags |= ((uint) data [pos + 3]) << 24;
 
-#if NET_2_0
 					// ignore PublicKey flag if assembly is not strongnamed
 					if (sn == null)
 						flags &= ~(uint) AssemblyNameFlags.PublicKey;
-#endif
 				}
 			}
 
@@ -948,9 +930,7 @@ namespace System.Reflection.Emit
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute ( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

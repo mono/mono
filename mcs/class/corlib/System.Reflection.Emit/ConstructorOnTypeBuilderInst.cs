@@ -31,8 +31,6 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 namespace System.Reflection.Emit
 {
 	/*
@@ -182,4 +180,3 @@ namespace System.Reflection.Emit
 	}
 }
 
-#endif

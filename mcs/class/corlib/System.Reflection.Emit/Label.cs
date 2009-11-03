@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public struct Label {
 		internal int label;
@@ -56,7 +54,6 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-#if NET_2_0
 		public bool Equals (Label obj)
 		{
 			return (label == obj.label);
@@ -69,7 +66,6 @@ namespace System.Reflection.Emit {
 		public static bool operator != (Label a, Label b) {
 			return !(a == b);
 		}
-#endif
 
 		public override int GetHashCode () {
 			return label.GetHashCode ();

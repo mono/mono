@@ -42,10 +42,8 @@ using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
 
@@ -199,12 +197,7 @@ namespace System.Reflection.Emit {
 			return DefineGlobalMethod (name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		public
-#else
-		internal
-#endif
-		MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers)
+		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -289,9 +282,7 @@ namespace System.Reflection.Emit {
 			return (TypeBuilder) name_cache [name];
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			return DefineType (name, attr, parent, interfaces, PackingSize.Unspecified, TypeBuilder.UnspecifiedTypeSize);
 		}
@@ -323,16 +314,12 @@ namespace System.Reflection.Emit {
 			return eb;
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public override Type GetType( string className) {
 			return GetType (className, false, false);
 		}
 		
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public override Type GetType( string className, bool ignoreCase) {
 			return GetType (className, false, ignoreCase);
 		}
@@ -381,9 +368,7 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif		
 		public override Type GetType (string className, bool throwOnError, bool ignoreCase)
 		{
 			if (className == null)
@@ -462,9 +447,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
@@ -555,7 +538,6 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public void DefineManifestResource (string name, Stream stream, ResourceAttributes attribute) {
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -580,7 +562,6 @@ namespace System.Reflection.Emit {
 			resources [p].attrs = attribute;
 			resources [p].stream = stream;
 		}
-#endif
 
 		[MonoTODO]
 		public void SetSymCustomAttribute (string name, byte[] data)
@@ -612,9 +593,7 @@ namespace System.Reflection.Emit {
 			return GetMethodToken (GetArrayMethod (arrayClass, methodName, callingConvention, returnType, parameterTypes));
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public MethodToken GetConstructorToken (ConstructorInfo con)
 		{
 			if (con == null)

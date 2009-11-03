@@ -33,9 +33,7 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Represents the Token returned by the metadata to represent a Event.
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public struct EventToken {
 
@@ -71,7 +69,6 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-#if NET_2_0
 		public bool Equals (EventToken obj)
 		{
 			return (this.tokValue == obj.tokValue);
@@ -86,7 +83,6 @@ namespace System.Reflection.Emit {
 		{
 			return !Equals (a, b);
 		}
-#endif
 
 		/// <summary>
 		///  Tests whether the given object is an instance of

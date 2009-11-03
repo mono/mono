@@ -42,10 +42,8 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_MethodBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
 	{
@@ -71,11 +69,7 @@ namespace System.Reflection.Emit
 		private CallingConventions call_conv;
 		private bool init_locals = true;
 		private IntPtr generic_container;
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		internal GenericTypeParameterBuilder[] generic_params;
-#else
-		private Object generic_params; /* so offsets are the same */
-#endif
 		private Type[] returnModReq;
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
@@ -122,11 +116,9 @@ namespace System.Reflection.Emit
 			charset = nativeCharset;
 		}
 
-#if NET_2_0
 		public override bool ContainsGenericParameters {
 			get { throw new NotSupportedException (); }
 		}
-#endif
 
 		public bool InitLocals {
 			get {return init_locals;}
@@ -339,12 +331,8 @@ namespace System.Reflection.Emit
 		internal void fixup ()
 		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
-#if NET_2_0
 				// do not allow zero length method body on MS.NET 2.0 (and higher)
 				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null || code.Length == 0))
-#else
-				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null))
-#endif
 					throw new InvalidOperationException (
 									     String.Format ("Method '{0}.{1}' does not have a method body.",
 											    DeclaringType.FullName, Name));
@@ -431,11 +419,9 @@ namespace System.Reflection.Emit
 				case "System.Runtime.InteropServices.PreserveSigAttribute":
 					iattrs |= MethodImplAttributes.PreserveSig;
 					return;
-#if NET_2_0
 				case "System.Runtime.CompilerServices.SpecialNameAttribute":
 					attrs |= MethodAttributes.SpecialName;
 					return;
-#endif
 				case "System.Security.SuppressUnmanagedCodeSecurityAttribute":
 					attrs |= MethodAttributes.HasSecurity;
 					break;
@@ -452,9 +438,7 @@ namespace System.Reflection.Emit
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
 		{
 			if (con == null)
@@ -500,9 +484,7 @@ namespace System.Reflection.Emit
 #endif
 		}
 
-#if NET_2_0
 		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-#endif
 		public void SetMarshal (UnmanagedMarshal unmanagedMarshal)
 		{
 			RejectIfCreated ();
@@ -553,7 +535,6 @@ namespace System.Reflection.Emit
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern MethodInfo MakeGenericMethod (params Type [] typeArguments);
 
@@ -639,7 +620,6 @@ namespace System.Reflection.Emit
 				return base.Module;
 			}
 		}
-#endif
 
 		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

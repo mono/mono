@@ -26,10 +26,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum PEFileKinds {
 		Dll = 1,
 		ConsoleApplication = 2,

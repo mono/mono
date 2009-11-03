@@ -39,10 +39,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_EventBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class EventBuilder : _EventBuilder {
 #pragma warning disable 169, 414
@@ -110,13 +108,11 @@ namespace System.Reflection.Emit {
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 			RejectIfCreated ();
-#if NET_2_0
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
 				attrs |= EventAttributes.SpecialName;
 				return;
 			}
-#endif
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
@@ -128,9 +124,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");

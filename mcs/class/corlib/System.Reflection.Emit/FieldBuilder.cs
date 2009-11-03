@@ -39,10 +39,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_FieldBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
 	
@@ -165,11 +163,9 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.NonSerializedAttribute") {
 				attrs |= FieldAttributes.NotSerialized;
 				return;
-#if NET_2_0
 			} else if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
 				attrs |= FieldAttributes.SpecialName;
 				return;
-#endif
 			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
 				attrs |= FieldAttributes.HasFieldMarshal;
 				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
@@ -187,17 +183,13 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			RejectIfCreated ();
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-#if NET_2_0
 		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-#endif
 		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
 			RejectIfCreated ();
 			marshal_info = unmanagedMarshal;
@@ -230,13 +222,11 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("Unable to change after type has been created.");
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Module Module {
 			get {
 				return base.Module;
 			}
 		}
-#endif
 
 		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

@@ -42,30 +42,15 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_LocalBuilder))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
-#if NET_2_0
 	public sealed class LocalBuilder : LocalVariableInfo, _LocalBuilder {
-#else
-	public sealed class LocalBuilder : _LocalBuilder {
-#endif
 
-#if NET_2_0
 		// Some fields are already defined in LocalVariableInfo
 		#region Sync with reflection.h
 		private string name;
 		#endregion
-#else
-		#region Sync with reflection.h
-		private Type type;
-		internal bool is_pinned;
-		internal ushort position;
-		private string name;
-		#endregion
-#endif
 		
 		internal ILGenerator ilgen;
 		int startOffset;
@@ -89,17 +74,13 @@ namespace System.Reflection.Emit {
 			SetLocalSymInfo (name, 0, 0);
 		}
 
-#if NET_2_0
-		override
-#endif
-		public Type LocalType
+		public override Type LocalType
 		{
 			get {
 				return type;
 			}
 		}
 
-#if NET_2_0
 		public override bool IsPinned
 		{
 			get {
@@ -113,7 +94,6 @@ namespace System.Reflection.Emit {
 				return position;
 			}
 		}
-#endif
 
 		internal static int Mono_GetLocalIndex (LocalBuilder builder)
 		{

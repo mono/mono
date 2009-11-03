@@ -39,10 +39,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_SignatureHelper))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class SignatureHelper : _SignatureHelper {
 		internal enum SignatureHelperType {
@@ -85,7 +83,6 @@ namespace System.Reflection.Emit {
 			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_LOCAL);
 		}
 
-#if NET_2_0
 		public static SignatureHelper GetLocalVarSigHelper ()
 		{
 			return new SignatureHelper (null, SignatureHelperType.HELPER_LOCAL);
@@ -100,7 +97,6 @@ namespace System.Reflection.Emit {
 		{
 			return GetMethodSigHelper (null, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
 		}
-#endif
 
 		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions callingConvention, Type returnType)
 		{
@@ -141,7 +137,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0
 		//
 		// Appends the given type array @t into the @array passed at
 		// position @pos.   If there is no array, it gets created
@@ -250,7 +245,6 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void AddArgument (Type clsArgument)
 		{

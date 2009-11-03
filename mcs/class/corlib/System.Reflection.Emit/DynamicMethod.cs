@@ -31,7 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 
 using System;
 using System.Reflection;
@@ -42,9 +41,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DynamicMethod : MethodInfo {
 
 #pragma warning disable 169, 414
@@ -440,4 +437,3 @@ namespace System.Reflection.Emit {
 	}
 }
 
-#endif

@@ -206,7 +206,6 @@ namespace System.Reflection.Emit
 			return false;
 		}
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override bool ContainsGenericParameters {
 			get { return elementType.ContainsGenericParameters; }
 		}
@@ -251,7 +250,6 @@ namespace System.Reflection.Emit
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get { throw new NotSupportedException (); }
 		}
-#endif
 
 		public override Assembly Assembly {
 			get { return elementType.Assembly; }
@@ -387,7 +385,6 @@ namespace System.Reflection.Emit
 			return elementName + "&";
 		}
 
-#if NET_2_0
 		public override Type MakeArrayType ()
 		{
 			throw new ArgumentException ("Cannot create an array type of a byref type");
@@ -407,7 +404,6 @@ namespace System.Reflection.Emit
 		{
 			throw new ArgumentException ("Cannot create a pointer type of a byref type");
 		}
-#endif
 	}
 
 

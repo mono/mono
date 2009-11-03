@@ -34,9 +34,7 @@ namespace System.Reflection.Emit {
 	///  Represents the Token returned by the metadata to represent a Type.
 	/// </summary>
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public struct TypeToken {
 
 		internal int tokValue;
@@ -69,7 +67,6 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-#if NET_2_0
 		public bool Equals (TypeToken obj)
 		{
 			return (this.tokValue == obj.tokValue);
@@ -84,7 +81,6 @@ namespace System.Reflection.Emit {
 		{
 			return !Equals (a, b);
 		}
-#endif
 
 		/// <summary>
 		///  Tests whether the given object is an instance of

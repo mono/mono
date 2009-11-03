@@ -32,8 +32,6 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 namespace System.Reflection.Emit
 {
 	/*
@@ -75,7 +73,6 @@ namespace System.Reflection.Emit
 			return TypeBuilder.GetMethod (instantiation, evt.remove_method);
 		}
 
-#if NET_2_0
 		public override MethodInfo[] GetOtherMethods (bool nonPublic)
 		{
 			if (evt.other_methods == null)
@@ -90,7 +87,6 @@ namespace System.Reflection.Emit
 			ar.CopyTo (res, 0);
 			return res;
 		}
-#endif
 
 		public override Type DeclaringType {
 			get { return instantiation; }
@@ -120,5 +116,3 @@ namespace System.Reflection.Emit
 		}
 	}
 }
-
-#endif

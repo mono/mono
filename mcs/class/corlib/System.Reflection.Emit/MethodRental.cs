@@ -31,10 +31,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_MethodRental))]
-#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class MethodRental : _MethodRental {
 

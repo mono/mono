@@ -32,20 +32,15 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
   [Flags]
   public enum AssemblyBuilderAccess
   {
     Run = 1,
     Save = 2,
-    RunAndSave = 3
-#if NET_2_0
-	,
-	ReflectionOnly = 6
-#endif
+    RunAndSave = 3,
+    ReflectionOnly = 6
 #if NET_4_0
 	,
 	RunAndCollect = 9

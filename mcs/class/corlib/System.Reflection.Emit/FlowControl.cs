@@ -32,10 +32,8 @@ namespace System.Reflection.Emit {
 	/// <summary>
 	///  Describes how an instruction alters the flow of control.
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum FlowControl {
 
 		/// <summary>
@@ -73,9 +71,7 @@ namespace System.Reflection.Emit {
 		/// <summary>
 		///  Annotation for ann.phi instruction.
 		/// </summary>
-#if NET_2_0
 		[Obsolete ("This API has been deprecated.")]
-#endif
 		Phi = 6,
 
 		/// <summary>
