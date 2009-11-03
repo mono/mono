@@ -1,5 +1,10 @@
 2009-11-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* exceptions-x86.c: hopefully last change to fix the windows build.
+	This one courtesy of Jonathan Chambers.
+
+2009-11-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* debugger-agent.c: remove unused function.
 
 2009-11-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
