@@ -1,3 +1,10 @@
+2009-11-03  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs (CheckWindowDimensions) Avoid extra checks, as
+	the condition was always checked previously.
+
+	(WriteSpecialKey): Actually write the tab character.
+	
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* More NET_2_0 define removal, assume that it is now always true. 
