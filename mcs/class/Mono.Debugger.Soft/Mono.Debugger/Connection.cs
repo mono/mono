@@ -175,6 +175,12 @@ namespace Mono.Debugger
 		}
 	}
 
+	class AssemblyModifier : Modifier {
+		public long[] Assemblies {
+			get; set;
+		}
+	}
+
 	public enum ErrorCode {
 		NONE = 0,
 		INVALID_OBJECT = 20,
@@ -254,7 +260,8 @@ namespace Mono.Debugger
 			THREAD_ONLY = 3,
 			LOCATION_ONLY = 7,
 			EXCEPTION_ONLY = 8,
-			STEP = 10
+			STEP = 10,
+			ASSEMBLY_ONLY = 11
 		}
 
 		enum CmdVM {
@@ -1493,6 +1500,12 @@ namespace Mono.Debugger
 					} else if (mod is ExceptionModifier) {
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
 						w.WriteId ((mod as ExceptionModifier).Type);
+					} else if (mod is AssemblyModifier) {
+						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);
+						var amod = (mod as AssemblyModifier);
+						w.WriteInt (amod.Assemblies.Length);
+						foreach (var id in amod.Assemblies)
+							w.WriteId (id);
 					} else {
 						throw new NotImplementedException ();
 					}

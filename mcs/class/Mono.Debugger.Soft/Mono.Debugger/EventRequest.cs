@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mono.Debugger
 {
@@ -11,6 +12,7 @@ namespace Mono.Debugger
 		protected SuspendPolicy suspend;
 		protected int count;
 		protected ThreadMirror thread;
+		protected IList<AssemblyMirror> assembly_filter;
 
 		internal EventRequest (VirtualMachine vm, EventType etype) {
 			this.vm = vm;
@@ -74,6 +76,21 @@ namespace Mono.Debugger
 			}
 		}
 
+		public IList<AssemblyMirror> AssemblyFilter {
+			get {
+				return assembly_filter;
+			}
+			set {
+				CheckDisabled ();
+				if (value != null) {
+					foreach (var ass in value)
+						if (ass == null)
+							throw new ArgumentException ("one of the elements of the array is null.");
+				}
+				assembly_filter = value;
+			}
+		}
+
 		/*
 		 * Every time an EventRequest object is enabled, a new JDWP event request
 		 * is created, and the event request's id changes.
@@ -84,11 +101,13 @@ namespace Mono.Debugger
 					mods.Add (new CountModifier () { Count = Count });
 				if (Thread != null)
 					mods.Add (new ThreadModifier () { Thread = Thread.Id });
+				if (AssemblyFilter != null)
+					mods.Add (new AssemblyModifier () { Assemblies = AssemblyFilter.Select (x => x.Id ).ToArray () });
 				id = vm.conn.EnableEvent (EventType, suspend, mods);
 				SetEnabled (id);
 			}
 		}
-
+				
 		public virtual void Enable () {
 			SendReq (new List<Modifier> ());
 		}

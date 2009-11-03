@@ -1,0 +1,6 @@
+2009-11-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* EventRequest.cs (AssemblyFilter): New property to filter
+	events based on a list of assemblies.
+
+	* Connection.cs: Add assembly filters to the protocol implementation.
