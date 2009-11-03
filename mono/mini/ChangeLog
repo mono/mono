@@ -1,5 +1,7 @@
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add an assert.
+
 	* simd-intrinsics.c (simd_intrinsic_emit_setter): Fix a warning.
 
 	* aot-runtime.c (mono_aot_get_method): Refactor some code into a new helper
