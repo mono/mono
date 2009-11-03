@@ -16,6 +16,10 @@ namespace Mono.Debugger
 			get; set;
 		}
 
+		public bool RedirectStandardError {
+			get; set;
+		}
+
 		public string AgentArgs {
 			get; set;
 		}
@@ -63,6 +67,8 @@ namespace Mono.Debugger
 			start_info.UseShellExecute = false;
 			if (options != null && options.RedirectStandardOutput)
 				start_info.RedirectStandardOutput = true;
+			if (options != null && options.RedirectStandardError)
+				start_info.RedirectStandardError = true;
 			Process p = Process.Start (start_info);
 			bool exited = false;
 			/* Handle the debuggee exiting so we don't block in Accept () forever */
@@ -90,10 +96,11 @@ namespace Mono.Debugger
 
 			VirtualMachine vm = new VirtualMachine (p, conn);
 
-			if (options != null && options.RedirectStandardOutput) {
+			if (options != null && options.RedirectStandardOutput)
 				vm.StandardOutput = p.StandardOutput;
+			
+			if (options != null && options.RedirectStandardError)
 				vm.StandardError = p.StandardError;
-			}
 
 			conn.EventHandler = new EventHandler (vm);
 
