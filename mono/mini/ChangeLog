@@ -1,4 +1,11 @@
-2009-11-02 Jonathan Chambers <joncham@novell.com>
+2009-11-02 Jonathan Chambers <joncham@gmail.com>
+
+	* mini-x86.c: Put soft debugger functions behind a 
+	#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED.
+	
+	Code contributed under MIT/X11 license.
+
+2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
 	* exceptions-x86.c (win32_handle_stack_overflow): Fix parameters
 	to mono_arch_find_jit_info_ext.
