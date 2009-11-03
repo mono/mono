@@ -4,7 +4,7 @@
 // Authors:
 //      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2008 Novell, Inc (http://www.novell.com)
+// (C) 2008-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Web;
 
@@ -36,7 +35,7 @@ namespace System.Web.Compilation
 {
 	internal delegate void BuildManagerRemoveEntryEventHandler (BuildManagerRemoveEntryEventArgs args);
 
-	internal class BuildManagerRemoveEntryEventArgs : EventArgs
+	class BuildManagerRemoveEntryEventArgs : EventArgs
 	{
 		public string EntryName {
 			get;
@@ -55,4 +54,4 @@ namespace System.Web.Compilation
 		}
 	}
 }
-#endif
+

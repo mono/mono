@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.CodeDom.Compiler;
 using System.Reflection;
@@ -62,12 +61,12 @@ namespace System.Web.Compilation
 			}
 				
 			if (BuiltAssembly != null) {
-				sb.Append ((first ? "" : "; ") + "assembly: " + BuiltAssembly.ToString ());
+				sb.Append ((first ? String.Empty : "; ") + "assembly: " + BuiltAssembly.ToString ());
 				first = false;
 			}
 
 			if (!String.IsNullOrEmpty (VirtualPath)) {
-				sb.Append ((first ? "" : "; ") + "virtualPath: " + VirtualPath);
+				sb.Append ((first ? String.Empty : "; ") + "virtualPath: " + VirtualPath);
 				first = false;
 			}
 
@@ -78,4 +77,3 @@ namespace System.Web.Compilation
 	}
 }
 
-#endif

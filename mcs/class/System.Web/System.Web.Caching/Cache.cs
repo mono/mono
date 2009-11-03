@@ -30,10 +30,8 @@
 
 using System.Threading;
 using System.Collections;
-using System.Security.Permissions;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
+using System.Security.Permissions;
 using System.Web.Configuration;
 
 namespace System.Web.Caching
@@ -44,23 +42,12 @@ namespace System.Web.Caching
 	{
 		public static readonly DateTime NoAbsoluteExpiration = DateTime.MaxValue;
 		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
-		
-#if NET_2_0 && SYSTEMCORE_DEP
 		ReaderWriterLockSlim cacheLock;
-#else
-		ReaderWriterLock cacheLock;
-#endif
-
-#if NET_2_0
 		Dictionary <string, CacheItem> cache;
-#else
-		Hashtable cache;
-#endif
 		CacheItemPriorityQueue timedItems;
 		Timer expirationTimer;
 		long expirationTimerPeriod = 0;
 		Cache dependencyCache;
-#if NET_2_0
 		bool? disableExpiration;
 		long privateBytesLimit = -1;
 		long percentagePhysicalMemoryLimit = -1;
@@ -118,25 +105,11 @@ namespace System.Web.Caching
 				return percentagePhysicalMemoryLimit;
 			}
 		}
-#else
-		bool DisableExpiration {
-			get { return false; }
-		}		
-#endif
 		
 		public Cache ()
 		{
-#if NET_2_0 && SYSTEMCORE_DEP
 			cacheLock = new ReaderWriterLockSlim ();
-#else
-			cacheLock = new ReaderWriterLock ();
-#endif
-
-#if NET_2_0
 			cache = new Dictionary <string, CacheItem> (StringComparer.Ordinal);
-#else
-			cache = new Hashtable ();
-#endif
 		}
 
 		public int Count {
@@ -154,14 +127,8 @@ namespace System.Web.Caching
 				return null;
 			
 			CacheItem ret;
-#if NET_2_0
 			if (cache.TryGetValue (key, out ret))
 				return ret;
-#else
-			ret = cache [key] as CacheItem;
-			if (ret != null)
-				return ret;
-#endif
 			return null;
 		}
 
@@ -171,14 +138,8 @@ namespace System.Web.Caching
 				return null;
 
 			CacheItem ret = null;
-#if NET_2_0
 			if (!cache.TryGetValue (key, out ret))
 				return null;
-#else
-			ret = cache [key] as CacheItem;
-			if (ret == null)
-				return null;
-#endif
 			ret.Disabled = true;
 			cache.Remove (key);
 			
@@ -192,11 +153,7 @@ namespace System.Web.Caching
 
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterWriteLock ();
-#else
-				cacheLock.AcquireWriterLock (-1);
-#endif
 				locked = true;
 				CacheItem it = GetCacheItem (key);
 
@@ -204,13 +161,8 @@ namespace System.Web.Caching
 					return it.Value;
 				Insert (key, value, dependencies, absoluteExpiration, slidingExpiration, priority, onRemoveCallback, false);
 			} finally {
-				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
+				if (locked)
 					cacheLock.ExitWriteLock ();
-#else
-					cacheLock.ReleaseWriterLock ();
-#endif
-				}
 			}
 				
 			return null;
@@ -220,33 +172,18 @@ namespace System.Web.Caching
 		{
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterUpgradeableReadLock ();
-#else
-				cacheLock.AcquireReaderLock (-1);
-#endif
 				locked = true;
 				CacheItem it = GetCacheItem (key);
 				if (it == null)
 					return null;
 				
 				if (it.Dependency != null && it.Dependency.HasChanged) {
-#if !NET_2_0
-					LockCookie lc = default (LockCookie);
-#endif
 					try {
-#if NET_2_0
 						cacheLock.EnterWriteLock ();
-#else
-						lc = cacheLock.UpgradeToWriterLock (-1);
-#endif
 						Remove (it.Key, CacheItemRemovedReason.DependencyChanged, false);
 					} finally {
-#if NET_2_0
 						cacheLock.ExitWriteLock ();
-#else
-						cacheLock.DowngradeFromWriterLock (ref lc);
-#endif
 					}
 					
 					return null;
@@ -266,22 +203,11 @@ namespace System.Web.Caching
 						}
 					
 					} else if (DateTime.Now >= it.AbsoluteExpiration) {
-#if !NET_2_0
-						LockCookie lc = default (LockCookie);
-#endif
 						try {
-#if NET_2_0
 							cacheLock.EnterWriteLock ();
-#else
-							lc = cacheLock.UpgradeToWriterLock (-1);
-#endif
 							Remove (key, CacheItemRemovedReason.Expired, false);
 						} finally {
-#if NET_2_0
 							cacheLock.ExitWriteLock ();
-#else
-							cacheLock.DowngradeFromWriterLock (ref lc);
-#endif
 						}
 
 						return null;
@@ -291,11 +217,7 @@ namespace System.Web.Caching
 				return it.Value;
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitUpgradeableReadLock ();
-#else
-					cacheLock.ReleaseReaderLock ();
-#endif
 				}
 			}
 		}
@@ -354,11 +276,7 @@ namespace System.Web.Caching
 			
 			try {
 				if (doLock) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.EnterWriteLock ();
-#else
-					cacheLock.AcquireWriterLock (-1);
-#endif
 					locked = true;
 				}
 				
@@ -367,11 +285,7 @@ namespace System.Web.Caching
 					SetItemTimeout (ci, absoluteExpiration, slidingExpiration, ci.OnRemoveCallback, null, false);
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitWriteLock ();
-#else
-					cacheLock.ReleaseWriterLock ();
-#endif
 				}
 			}
 		}
@@ -394,11 +308,7 @@ namespace System.Web.Caching
 			bool locked = false;
 			try {
 				if (doLock) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.EnterWriteLock ();
-#else
-					cacheLock.AcquireWriterLock (-1);
-#endif
 					locked = true;
 				}
 				
@@ -415,11 +325,7 @@ namespace System.Web.Caching
 					EnqueueTimedItem (ci);
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitWriteLock ();
-#else
-					cacheLock.ReleaseWriterLock ();
-#endif
 				}
 			}
 		}
@@ -461,22 +367,14 @@ namespace System.Web.Caching
 			bool locked = false;
 			try {
 				if (doLock) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.EnterWriteLock ();
-#else
-					cacheLock.AcquireWriterLock (-1);
-#endif
 					locked = true;
 				}
 				
 				it = RemoveCacheItem (key);
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitWriteLock ();
-#else
-					cacheLock.ReleaseWriterLock ();
-#endif
 				}
 			}
 
@@ -486,9 +384,7 @@ namespace System.Web.Caching
 					t.Dispose ();
 				
 				if (it.Dependency != null) {
-#if NET_2_0
 					it.Dependency.SetCache (null);
-#endif
 					it.Dependency.DependencyChanged -= new EventHandler (OnDependencyChanged);
 					it.Dependency.Dispose ();
 				}
@@ -517,11 +413,7 @@ namespace System.Web.Caching
 			CacheItemRemovedReason reason = CacheItemRemovedReason.Removed;
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterReadLock ();
-#else
-				cacheLock.AcquireReaderLock (-1);
-#endif
 				locked = true;
 				foreach (string key in cache.Keys) {
 					CacheItem item = GetCacheItem (key);
@@ -538,11 +430,7 @@ namespace System.Web.Caching
 				}
 			}  finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitReadLock ();
-#else
-					cacheLock.ReleaseReaderLock ();
-#endif
 				}
 			}
 		}
@@ -552,25 +440,13 @@ namespace System.Web.Caching
 			ArrayList list = new ArrayList ();
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterReadLock ();
-#else
-				cacheLock.AcquireReaderLock (-1);
-#endif
 				locked = true;
-#if NET_2_0
 				foreach (CacheItem it in cache.Values)
 					list.Add (it);
-#else
-				list.AddRange (cache.Values);
-#endif
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitReadLock ();
-#else
-					cacheLock.ReleaseReaderLock ();
-#endif
 				}
 			}
 			
@@ -629,20 +505,11 @@ namespace System.Web.Caching
 			IList list;
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterWriteLock ();
-#else
-				cacheLock.AcquireWriterLock (-1);
-#endif
 				locked = true;
-#if NET_2_0
 				list = new List <CacheItem> ();
 				foreach (CacheItem it in cache.Values)
 					list.Add (it);
-#else
-				list = new ArrayList ();
-				((ArrayList)list).AddRange (cache.Values);
-#endif
 			
 				foreach (CacheItem it in list) {
 					if (it.Dependency != null && it.Dependency.HasChanged)
@@ -650,11 +517,7 @@ namespace System.Web.Caching
 				}
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitWriteLock ();
-#else
-					cacheLock.ReleaseWriterLock ();
-#endif
 				}
 			}
 		}
@@ -663,11 +526,7 @@ namespace System.Web.Caching
 		{
 			bool locked = false;
 			try {
-#if NET_2_0 && SYSTEMCORE_DEP
 				cacheLock.EnterReadLock ();
-#else
-				cacheLock.AcquireReaderLock (-1);
-#endif
 				locked = true;
 				CacheItem it = GetCacheItem (key);
 
@@ -677,11 +536,7 @@ namespace System.Web.Caching
 				return it.LastChange;
 			} finally {
 				if (locked) {
-#if NET_2_0 && SYSTEMCORE_DEP
 					cacheLock.ExitReadLock ();
-#else
-					cacheLock.ReleaseReaderLock ();
-#endif
 				}
 			}
 		}

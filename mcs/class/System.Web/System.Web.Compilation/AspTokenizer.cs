@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2003-2009 Novell, Inc (http://novell.com)
 //
 
 //
@@ -49,9 +51,8 @@ namespace System.Web.Compilation
 
 	class AspTokenizer
 	{
-#if NET_2_0
 		const int CHECKSUM_BUF_SIZE = 8192;
-#endif
+
 		class PutBackItem
 		{
 			public readonly string Value;
@@ -85,7 +86,6 @@ namespace System.Web.Compilation
 		int unget_value;
 		string val;
 		Stack putBackBuffer;
-#if NET_2_0
 		MD5 checksum;
 		char[] checksum_buf = new char [CHECKSUM_BUF_SIZE];
 		int checksum_buf_pos = -1;
@@ -93,7 +93,6 @@ namespace System.Web.Compilation
 		public MD5 Checksum {
 			get { return checksum; }
 		}
-#endif
 		
 		public AspTokenizer (TextReader reader)
 		{
@@ -185,7 +184,6 @@ namespace System.Web.Compilation
 			col--;
 		}
 
-#if NET_2_0
 		void TransformNextBlock (int count, bool final)
 		{
 			byte[] input = Encoding.UTF8.GetBytes (checksum_buf, 0, count);
@@ -213,7 +211,7 @@ namespace System.Web.Compilation
 			} else
 				TransformNextBlock (checksum_buf_pos + 1, true);
 		}
-#endif
+
 		int read_char ()
 		{
 			int c;
@@ -222,16 +220,12 @@ namespace System.Web.Compilation
 				have_unget = false;
 			} else {
 				c = sr.Read ();
-#if NET_2_0
 				UpdateChecksum (c);
-#endif
 			}
 
 			if (c == '\r' && sr.Peek () == '\n') {
 				c = sr.Read ();
-#if NET_2_0
 				UpdateChecksum (c);
-#endif
 				position++;
 			}
 

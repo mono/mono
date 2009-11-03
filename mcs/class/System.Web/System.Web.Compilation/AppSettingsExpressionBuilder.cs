@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.CodeDom;
@@ -38,12 +37,12 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Reflection;
 
-namespace System.Web.Compilation {
-
+namespace System.Web.Compilation
+{
 	[ExpressionEditor("System.Web.UI.Design.AppSettingsExpressionEditor, " + Consts.AssemblySystem_Design)]
 	[ExpressionPrefix("AppSettings")]
-	public class AppSettingsExpressionBuilder : ExpressionBuilder {
-
+	public class AppSettingsExpressionBuilder : ExpressionBuilder
+	{
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
 			return GetAppSetting (entry.Expression.Trim ());
@@ -80,7 +79,6 @@ namespace System.Web.Compilation {
 			}
 		}
 
-
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
 			Type type = entry.DeclaringType;
@@ -100,4 +98,4 @@ namespace System.Web.Compilation {
 
 }
 
-#endif
+

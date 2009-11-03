@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -50,7 +48,8 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
 
-namespace System.Web.Compilation {
+namespace System.Web.Compilation
+{
 	public sealed class BuildManager
 	{
 		internal const string FAKE_VIRTUAL_PATH_PREFIX = "/@@MonoFakeVirtualPath@@";
@@ -1206,4 +1205,4 @@ namespace System.Web.Compilation {
 		}
 	}
 }
-#endif
+

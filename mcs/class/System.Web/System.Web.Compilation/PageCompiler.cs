@@ -30,6 +30,7 @@
 using System;
 using System.CodeDom;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -37,10 +38,7 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Util;
-#if NET_2_0
-using System.Collections.Generic;
 using System.Web.Profile;
-#endif
 
 namespace System.Web.Compilation
 {
@@ -59,36 +57,27 @@ namespace System.Web.Compilation
 		{
 			base.CreateStaticFields ();
 			
-			CodeMemberField fld = new CodeMemberField (
-#if NET_2_0
-				typeof (object),
-#else
-				typeof (ArrayList),
-#endif
-				"__fileDependencies");
+			CodeMemberField fld = new CodeMemberField (typeof (object), "__fileDependencies");
 			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
 			fld.InitExpression = new CodePrimitiveExpression (null);
 			mainClass.Members.Add (fld);
 
-#if NET_2_0
 			if (pageParser.OutputCache) {
 				fld = new CodeMemberField (typeof (OutputCacheParameters), "__outputCacheSettings");
 				fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
 				fld.InitExpression = new CodePrimitiveExpression (null);
 				mainClass.Members.Add (fld);
 			}
-#endif
 		}
 		
 		protected override void CreateConstructor (CodeStatementCollection localVars,
 							   CodeStatementCollection trueStmt)
 		{
-#if NET_2_0
 			if (!String.IsNullOrEmpty (pageParser.MasterPageFile))
 				// This is here just to trigger master page build, so that its type
 				// is available when compiling the page itself.
 				BuildManager.GetCompiledType (pageParser.MasterPageFile);
-#endif
+
 			if (pageParser.ClientTarget != null) {
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (thisRef, "ClientTarget");
@@ -108,7 +97,6 @@ namespace System.Web.Compilation
 					trueStmt = new CodeStatementCollection ();
 
 				CodeAssignStatement assign;
-#if NET_2_0
 				localVars.Add (
 					new CodeVariableDeclarationStatement (
 						typeof (string[]),
@@ -136,24 +124,6 @@ namespace System.Web.Compilation
 					new CodeExpression[] {dependencies}
 				);
 				assign = new CodeAssignStatement (GetMainClassFieldReferenceExpression ("__fileDependencies"), getDepsCall);
-#else
-				localVars.Add (new CodeVariableDeclarationStatement (
-						typeof (ArrayList),
-						"dependencies")
-				);
-
-				CodeVariableReferenceExpression dependencies = new CodeVariableReferenceExpression ("dependencies");
-				trueStmt.Add (
-					new CodeAssignStatement (dependencies, new CodeObjectCreateExpression (typeof (ArrayList), new CodeExpression[] {new CodePrimitiveExpression (depsCount)}))
-				);
-
-				CodeMethodInvokeExpression invoke;
-				for (int i = 0; i < depsCount; i++) {
-					invoke = new CodeMethodInvokeExpression (dependencies, "Add", new CodeExpression[] {new CodePrimitiveExpression (deps [i])});
-					trueStmt.Add (invoke);
-				}
-				assign = new CodeAssignStatement (GetMainClassFieldReferenceExpression ("__fileDependencies"), dependencies);
-#endif
 
 				trueStmt.Add (assign);
 			}
@@ -168,30 +138,24 @@ namespace System.Web.Compilation
 			
 			if (pageParser.EnableSessionState) {
 				cref = new CodeTypeReference (typeof (IRequiresSessionState));
-#if NET_2_0
 				if (partialClass != null)
 					partialClass.BaseTypes.Add (cref);
 				else
-#endif
 					mainClass.BaseTypes.Add (cref);
 			}
 			
 			if (pageParser.ReadOnlySessionState) {
 				cref = new CodeTypeReference (typeof (IReadOnlySessionState));
-#if NET_2_0
 				if (partialClass != null)
 					partialClass.BaseTypes.Add (cref);					
 				else
-#endif
 					mainClass.BaseTypes.Add (cref);
 			}
 
-#if NET_2_0
 			if (pageParser.Async)
 				mainClass.BaseTypes.Add (new CodeTypeReference (typeof (System.Web.IHttpAsyncHandler)));
 			
 			mainClass.BaseTypes.Add (new CodeTypeReference (typeof (System.Web.IHttpHandler)));
-#endif
 		}
 
 		void CreateGetTypeHashCode () 
@@ -232,17 +196,6 @@ namespace System.Web.Compilation
 			string contentType = pageParser.ContentType;
 			if (contentType != null)
 				method.Statements.Add (CreatePropertyAssign ("ContentType", contentType));
-
-#if !NET_2_0
-			if (pageParser.OutputCache) {
-				CodeMethodReferenceExpression init = new CodeMethodReferenceExpression (null,
-						"InitOutputCache");
-				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init,
-						OutputCacheParams ());
-				method.Statements.Add (invoke);
-
-			}
-#endif
 			
 			int lcid = pageParser.LCID;
 			if (lcid != -1)
@@ -282,7 +235,6 @@ namespace System.Web.Compilation
                                 method.Statements.Add (stmt);
                         }
 
-#if NET_2_0
 			if (!pageParser.EnableEventValidation) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
                                 CodePropertyReferenceExpression prop;
@@ -300,21 +252,17 @@ namespace System.Web.Compilation
 				stmt.Right = new CodePrimitiveExpression (pageParser.MaintainScrollPositionOnPostBack);
 				method.Statements.Add (stmt);
 			}
-#endif
 		}
 
-#if NET_2_0
 		protected override void AddStatementsToConstructor (CodeConstructor ctor)
 		{
 			base.AddStatementsToConstructor (ctor);
 			if (pageParser.OutputCache)
 				OutputCacheParamsBlock (ctor);
 		}
-#endif
 		
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
-#if NET_2_0
 			AddStatementsFromDirective (method);
 			ILocation directiveLocation = pageParser.DirectiveLocation;
 
@@ -340,18 +288,14 @@ namespace System.Web.Compilation
 
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
 			method.Statements.Add (AddLinePragma (new CodeExpressionStatement (expr), directiveLocation));
-#endif
 		}
 
 		protected override void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
 			base.PrependStatementsToFrameworkInitialize (method);
-#if NET_2_0
 			if (pageParser.StyleSheetTheme != null)
 				method.Statements.Add (CreatePropertyAssign ("StyleSheetTheme", pageParser.StyleSheetTheme));
-#endif
 		}
-
 		
 		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
@@ -364,34 +308,20 @@ namespace System.Web.Compilation
 				CodeFieldReferenceExpression fileDependencies = GetMainClassFieldReferenceExpression ("__fileDependencies");
 
 				method.Statements.Add (
-#if NET_2_0
 					new CodeMethodInvokeExpression (
 						thisRef,
 						"AddWrappedFileDependencies",
 						new CodeExpression[] {fileDependencies})
-#else
-					new CodeAssignStatement (
-						new CodeFieldReferenceExpression (thisRef, "FileDependencies"),
-						fileDependencies
-					)
-#endif
 				);
 
 			}
 
-#if NET_2_0
 			if (pageParser.OutputCache) {
 				CodeMethodReferenceExpression init = new CodeMethodReferenceExpression (thisRef, "InitOutputCache");
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init, GetMainClassFieldReferenceExpression ("__outputCacheSettings"));
 				method.Statements.Add (invoke);
 			}
-#endif
 
-#if ONLY_1_1
-			AddStatementsFromDirective (method);
-#endif
-			
-#if NET_1_1
 			if (pageParser.ValidateRequest) {
 				CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression ();
                                 CodePropertyReferenceExpression prop;
@@ -399,10 +329,8 @@ namespace System.Web.Compilation
 				expr.Method = new CodeMethodReferenceExpression (prop, "ValidateInput");
 				method.Statements.Add (expr);
 			}
-#endif
 		}
 
-#if NET_2_0
 		CodeAssignStatement AssignOutputCacheParameter (CodeVariableReferenceExpression variable, string propName, object value)
 		{
 			var ret = new CodeAssignStatement ();
@@ -467,21 +395,7 @@ namespace System.Web.Compilation
 
 			method.Statements.Add (cond);
 		}
-#else
-		CodeExpression[] OutputCacheParams ()
-		{
-			return new CodeExpression [] {
-				new CodePrimitiveExpression (pageParser.OutputCacheDuration),
-				new CodePrimitiveExpression (pageParser.OutputCacheVaryByHeader),
-				new CodePrimitiveExpression (pageParser.OutputCacheVaryByCustom),
-				new CodeSnippetExpression (typeof (OutputCacheLocation).ToString () +
-						"." + pageParser.OutputCacheLocation.ToString ()),
-				new CodePrimitiveExpression (pageParser.OutputCacheVaryByParam)
-				};
-		}
-#endif
-		
-#if NET_2_0
+
 		void CreateStronglyTypedProperty (Type type, string name)
 		{
 			if (type == null)
@@ -501,27 +415,20 @@ namespace System.Web.Compilation
 
 			AddReferencedAssembly (type.Assembly);
 		}
-#endif
 		
 		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 
-#if NET_2_0
 			CreateProfileProperty ();
 			CreateStronglyTypedProperty (pageParser.MasterType, "Master");
 			CreateStronglyTypedProperty (pageParser.PreviousPageType, "PreviousPage");
-#endif
-			
 			CreateGetTypeHashCode ();
 
-#if NET_2_0
 			if (pageParser.Async)
 				CreateAsyncMethods ();
-#endif
 		}
 
-#if NET_2_0
 		void CreateAsyncMethods ()
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -590,7 +497,6 @@ namespace System.Web.Compilation
 			method.Statements.Add (invoke);
 			mainClass.Members.Add (method);
 		}
-#endif
 		
 		public static Type CompilePageType (PageParser pageParser)
 		{
@@ -599,5 +505,3 @@ namespace System.Web.Compilation
 		}
 	}
 }
-
-

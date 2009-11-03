@@ -59,10 +59,7 @@ namespace System.Web.Compilation
 		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
-#if NET_2_0
 			CreateProfileProperty ();
-#endif
-			
 			ProcessObjects (parser.RootBuilder);
 		}
 

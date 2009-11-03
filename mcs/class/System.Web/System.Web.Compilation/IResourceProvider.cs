@@ -29,7 +29,6 @@
 using System.Resources;
 using System.Globalization;
 
-#if NET_2_0
 namespace System.Web.Compilation
 {
         public interface IResourceProvider
@@ -38,4 +37,4 @@ namespace System.Web.Compilation
                 IResourceReader ResourceReader { get; }
         }
 }
-#endif
+

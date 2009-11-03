@@ -30,6 +30,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -37,21 +38,14 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Web.Compilation;
 
-#if NET_2_0
-using System.Collections.Generic;
-#endif
-
-namespace System.Web.Caching {
-	
-	internal sealed class OutputCacheModule : IHttpModule
+namespace System.Web.Caching
+{	
+	sealed class OutputCacheModule : IHttpModule
 	{
 		CacheItemRemovedCallback response_removed;
-		
-#if NET_2_0
 		static object keysCacheLock = new object ();
 		Dictionary <string, string> keysCache;
 		Dictionary <string, string> entriesToInvalidate;
-#endif
 		
 		public OutputCacheModule ()
 		{
@@ -68,7 +62,6 @@ namespace System.Web.Caching {
 			response_removed = new CacheItemRemovedCallback (OnRawResponseRemoved);
 		}
 
-#if NET_2_0
 		void OnBuildManagerRemoveEntry (BuildManagerRemoveEntryEventArgs args)
 		{
 			string entry = args.EntryName;
@@ -96,7 +89,6 @@ namespace System.Web.Caching {
 			if (!String.IsNullOrEmpty (cacheValue))
 				context.InternalCache.Remove (cacheValue);
 		}
-#endif
 
 		void OnResolveRequestCache (object o, EventArgs args)
 		{
@@ -116,7 +108,6 @@ namespace System.Web.Caching {
 			if (c == null)
 				return;
 
-#if NET_2_0
 			lock (keysCacheLock) {
 				string invValue;
 				if (entriesToInvalidate != null && entriesToInvalidate.TryGetValue (vary_key, out invValue) && String.Compare (invValue, key, StringComparison.Ordinal) == 0) {
@@ -126,7 +117,6 @@ namespace System.Web.Caching {
 					return;
 				}
 			}
-#endif
 			
 			ArrayList callbacks = c.Policy.ValidationCallbacks;
 			if (callbacks != null && callbacks.Count > 0) {
@@ -174,7 +164,6 @@ namespace System.Web.Caching {
 						continue;
 					}
 
-#if NET_2_0
 					if (d.Callback == null)
 						continue;
 
@@ -184,7 +173,6 @@ namespace System.Web.Caching {
 
 					byte[] bytes = outEnc.GetBytes (s);
 					response.BinaryWrite (bytes, 0, bytes.Length);
-#endif
 				}
 			}
 			
@@ -213,9 +201,7 @@ namespace System.Web.Caching {
 			CachedVaryBy varyby = context.Cache [vary_key] as CachedVaryBy;
 			CachedRawResponse prev = null;
 			bool lookup = true;
-#if NET_2_0
 			string cacheKey = null, cacheValue = null;
-#endif
 			
 			if (varyby == null) {
 				string path = context.Request.MapPath (vary_key);
@@ -228,9 +214,7 @@ namespace System.Web.Caching {
 							      Cache.NoSlidingExpiration,
 							      CacheItemPriority.Normal, null);
 				lookup = false;
-#if NET_2_0
 				cacheKey = vary_key;
-#endif
 			} 
 
 			key = varyby.CreateKey (vary_key, context);
@@ -254,13 +238,10 @@ namespace System.Web.Caching {
 								      CacheItemPriority.Normal, response_removed);
 					c.VaryBy = varyby;
 					varyby.ItemList.Add (key);
-#if NET_2_0
 					cacheValue = key;
-#endif
 				}
 			}
 			
-#if NET_2_0
 			if (cacheKey != null) {
 				lock (keysCacheLock) {
 					if (keysCache == null) {
@@ -271,7 +252,6 @@ namespace System.Web.Caching {
 						keysCache.Add (cacheKey, cacheValue);
 				}
 			}
-#endif
 		}
 
 		static void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)

@@ -36,9 +36,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Web.Caching
 {
@@ -48,9 +46,7 @@ namespace System.Web.Caching
 		{
 			public readonly byte[] Buffer;
 			public readonly long Length;
-#if NET_2_0
 			public readonly HttpResponseSubstitutionCallback Callback;
-#endif
 			
 			public DataItem (byte[] buffer, long length)
 			{
@@ -58,12 +54,10 @@ namespace System.Web.Caching
 				Length = length;
 			}
 
-#if NET_2_0
 			public DataItem (HttpResponseSubstitutionCallback callback) : this (null, 0)
 			{
 				Callback = callback;
 			}
-#endif
 		}
 		
 		HttpCachePolicy policy;
@@ -72,21 +66,12 @@ namespace System.Web.Caching
 		string status_desc;
 		int content_length;
 		NameValueCollection headers;
-#if NET_2_0
 		List <DataItem> data;
-#else
-		ArrayList data;
-#endif
 
 		IList Data {
 			get {
-				if (data == null) {
-#if NET_2_0
+				if (data == null)
 					data = new List <DataItem> ();
-#else
-					data = new ArrayList ();
-#endif
-				}
 
 				return data;
 			}
@@ -134,7 +119,6 @@ namespace System.Web.Caching
 			Data.Add (new DataItem (ms.GetBuffer (), ms.Length));
 		}
 
-#if NET_2_0
 		public void SetData (HttpResponseSubstitutionCallback callback)
 		{
 			if (callback == null)
@@ -142,7 +126,6 @@ namespace System.Web.Caching
 
 			Data.Add (new DataItem (callback));
 		}
-#endif
 		
 		public IList GetData ()
 		{

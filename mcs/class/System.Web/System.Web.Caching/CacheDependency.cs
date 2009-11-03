@@ -30,22 +30,15 @@ using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
-#if NET_2_0
 using System.Text;
-#endif
 
 namespace System.Web.Caching
 {
-#if NET_2_0
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class CacheDependency: IDisposable {
-#else
-	// CAS - no InheritanceDemand here as the class is sealed
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class CacheDependency: IDisposable {
-#endif
+	public class CacheDependency: IDisposable
+	{
 		static readonly object dependencyChangedEvent = new object ();
 		string[] cachekeys;
 		CacheDependency dependency;
@@ -53,10 +46,8 @@ namespace System.Web.Caching
 		Cache cache;
 		FileSystemWatcher[] watchers;
 		bool hasChanged;
-#if NET_2_0
 		bool used;
 		DateTime utcLastModified;
-#endif
 		object locker = new object ();
 		EventHandlerList events = new EventHandlerList ();
 		
@@ -65,11 +56,9 @@ namespace System.Web.Caching
 			remove { events.RemoveHandler (dependencyChangedEvent, value); }
 		}
 		
-#if NET_2_0
 		public CacheDependency (): this (null, null, null, DateTime.Now)
 		{
 		}
-#endif
 		
 		public CacheDependency (string filename): this (new string[] { filename }, null, null, DateTime.Now)
 		{
@@ -131,12 +120,9 @@ namespace System.Web.Caching
 				dependency.DependencyChanged += new EventHandler (OnChildDependencyChanged);
 			this.start = start;
 
-#if NET_2_0
 			FinishInit ();
-#endif
 		}
 
-#if NET_2_0
 		public virtual string GetUniqueID ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -152,7 +138,6 @@ namespace System.Web.Caching
 					sb.AppendFormat ("_{0}", key);
 			return sb.ToString ();
 		}
-#endif
 		
 		void OnChanged (object sender, FileSystemEventArgs args)
 		{
@@ -164,9 +149,7 @@ namespace System.Web.Caching
 			if (DateTime.Now < start)
 				return false;
 			hasChanged = true;
-#if NET_2_0
 			utcLastModified = DateTime.UtcNow;
-#endif
 			DisposeWatchers ();
 			
 			if (cache != null)
@@ -192,20 +175,13 @@ namespace System.Web.Caching
 			DependencyDispose ();
 		}
 
-#if NET_2_0
 		internal virtual void DependencyDisposeInternal ()
 		{
 		}
-#endif
 		
-#if NET_2_0
-		protected virtual
-#endif
-		void DependencyDispose () 
+		protected virtual void DependencyDispose () 
 		{
-#if NET_2_0
 			DependencyDisposeInternal ();
-#endif
 			DisposeWatchers ();
 			if (dependency != null) {
 				dependency.DependencyChanged -= new EventHandler (OnChildDependencyChanged);
@@ -218,12 +194,9 @@ namespace System.Web.Caching
 		internal void SetCache (Cache c)
 		{
 			cache = c;
-#if NET_2_0
 			used = c != null;
-#endif
 		}
 		
-#if NET_2_0
 		protected internal void FinishInit () 
 		{
 			utcLastModified = DateTime.UtcNow;
@@ -248,7 +221,6 @@ namespace System.Web.Caching
 		{
 			this.utcLastModified = utcLastModified;
 		}
-#endif
 		
 		public bool HasChanged {
 			get {
@@ -287,14 +259,9 @@ namespace System.Web.Caching
 			EventHandler eh = events [dependencyChangedEvent] as EventHandler;
 			if (eh != null)
 				eh (sender, e);
-		}
-		
-#if NET_2_0
-		protected
-#else
-		internal
-#endif
-		void NotifyDependencyChanged (object sender, EventArgs e) 
+		}		
+
+		protected void NotifyDependencyChanged (object sender, EventArgs e) 
 		{
 			OnDependencyChanged (sender, e);
 		}

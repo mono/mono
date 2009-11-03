@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -43,7 +43,7 @@ using System.Web.Util;
 
 namespace System.Web.Compilation
 {
-	internal abstract class TemplateBuildProvider : GenericBuildProvider <TemplateParser>
+	abstract class TemplateBuildProvider : GenericBuildProvider <TemplateParser>
 	{
 		delegate void ExtractDirectiveDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp);
 		
@@ -369,4 +369,3 @@ namespace System.Web.Compilation
 		}
 	}
 }
-#endif

@@ -44,12 +44,8 @@ namespace System.Web.Compilation
 	abstract class BaseCompiler
 	{
 		const string DEFAULT_NAMESPACE = "ASP";
-
-#if NET_2_0
 		internal static Guid HashMD5 = new Guid(0x406ea660, 0x64cf, 0x4c82, 0xb6, 0xf0, 0x42, 0xd4, 0x81, 0x72, 0xa7, 0x99);
-		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic |
-						  BindingFlags.Instance;
-#endif
+		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 		TemplateParser parser;
 		CodeDomProvider provider;
@@ -57,17 +53,14 @@ namespace System.Web.Compilation
 		CodeCompileUnit unit;
 		CodeNamespace mainNS;
 		CompilerParameters compilerParameters;
-#if NET_2_0
 		bool isRebuilding = false;
 		protected Hashtable partialNameOverride = new Hashtable();
 		protected CodeTypeDeclaration partialClass;
 		protected CodeTypeReferenceExpression partialClassExpr;
-#endif
 		protected CodeTypeDeclaration mainClass;
 		protected CodeTypeReferenceExpression mainClassExpr;
 		protected static CodeThisReferenceExpression thisRef = new CodeThisReferenceExpression ();
 
-#if NET_2_0
 		VirtualPath inputVirtualPath;
 		
 		public VirtualPath InputVirtualPath {
@@ -78,7 +71,6 @@ namespace System.Web.Compilation
 				return inputVirtualPath;
 			}
 		}
-#endif
 		
 		protected BaseCompiler (TemplateParser parser)
 		{
@@ -130,13 +122,7 @@ namespace System.Web.Compilation
 			if (parser != null && !parser.LinePragmasOn)
 				return true;
 			
-			return String.Compare (fileName, "@@inner_string@@",
-#if NET_2_0
-					    StringComparison.OrdinalIgnoreCase
-#else
-					    true
-#endif
-			) == 0;
+			return String.Compare (fileName, "@@inner_string@@", StringComparison.OrdinalIgnoreCase) == 0;
 		}
 		
 		internal CodeStatement AddLinePragma (CodeStatement statement, int line, string fileName)
@@ -181,8 +167,6 @@ namespace System.Web.Compilation
 		internal void ConstructType ()
 		{
 			unit = new CodeCompileUnit ();
-
-#if NET_2_0
 			byte[] md5checksum = parser.MD5Checksum;
 
 			if (md5checksum != null) {
@@ -213,23 +197,18 @@ namespace System.Web.Compilation
 				partialClass.TypeAttributes = TypeAttributes.Public;
 				partialNS.Types.Add (partialClass);
 			}
-#endif
 
 			string mainclasstype = parser.ClassName;
 			string mainns = DEFAULT_NAMESPACE;
-
-#if NET_2_0
 			int maindot = mainclasstype.LastIndexOf ('.');
 			if (maindot != -1) {
 				mainns = mainclasstype.Substring (0, maindot);
 				mainclasstype = mainclasstype.Substring (maindot + 1);
 			}
-#endif
 
 			mainNS = new CodeNamespace (mainns);
 			mainClass = new CodeTypeDeclaration (mainclasstype);
 			CodeTypeReference baseTypeRef;
-#if NET_2_0
 			if (partialClass != null) {
 				baseTypeRef = new CodeTypeReference (parser.PartialClassName);
 				baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
@@ -238,9 +217,6 @@ namespace System.Web.Compilation
 				if (parser.BaseTypeIsGlobal)
 					baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
 			}
-#else
-			baseTypeRef = new CodeTypeReference (parser.BaseType.FullName);
-#endif
 			mainClass.BaseTypes.Add (baseTypeRef);
 
 			mainClassExpr = new CodeTypeReferenceExpression (mainns + "." + mainclasstype);
@@ -268,7 +244,6 @@ namespace System.Web.Compilation
 				}
 			}
 
-#if NET_2_0
 			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			if (al != null && al.Count > 0) {
 				foreach (object o in al) {
@@ -290,7 +265,7 @@ namespace System.Web.Compilation
 						refAsm.Add (asmName);
 				}
 			}
-#endif
+
 			// Late-bound generators specifics (as for MonoBASIC/VB.NET)
 			unit.UserData["RequireVariableDeclaration"] = parser.ExplicitOn;
 			unit.UserData["AllowLateBound"] = !parser.StrictOn;
@@ -309,10 +284,8 @@ namespace System.Web.Compilation
 		{
 			CodeTypeReference mainClassTypeRef;
 			mainClassTypeRef = new CodeTypeReference (mainNS.Name + "." + mainClass.Name);
-
-#if NET_2_0
 			mainClassTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
-#endif
+
 			return new CodeFieldReferenceExpression (
 				new CodeTypeReferenceExpression (mainClassTypeRef), fieldName);
 		}
@@ -328,7 +301,6 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (fld);
 		}
 
-#if NET_2_0
 		void AssignAppRelativeVirtualPath (CodeConstructor ctor)
 		{
 			if (String.IsNullOrEmpty (parser.InputFile))
@@ -353,7 +325,6 @@ namespace System.Web.Compilation
 			arvpAssign.Right = new CodePrimitiveExpression (VirtualPathUtility.RemoveTrailingSlash (InputVirtualPath.AppRelative));
 			ctor.Statements.Add (arvpAssign);
 		}
-#endif
 		
 		protected virtual void CreateConstructor (CodeStatementCollection localVars,
 							  CodeStatementCollection trueStmt)
@@ -365,9 +336,7 @@ namespace System.Web.Compilation
 			if (localVars != null)
 				ctor.Statements.AddRange (localVars);
 
-#if NET_2_0
 			AssignAppRelativeVirtualPath (ctor);
-#endif
 
 			CodeFieldReferenceExpression initialized = GetMainClassFieldReferenceExpression ("__initialized");
 			
@@ -414,7 +383,6 @@ namespace System.Web.Compilation
 		{
 		}
 
-#if NET_2_0
 		void InternalCreatePageProperty (string retType, string name, string contextProperty)
 		{
 			CodeMemberProperty property = new CodeMemberProperty ();
@@ -449,7 +417,6 @@ namespace System.Web.Compilation
 				retType = "System.Web.Profile.DefaultProfile";
 			InternalCreatePageProperty (retType, "Profile", "Profile");
 		}
-#endif
 		
 		protected virtual void AddInterfaces ()
 		{
@@ -643,7 +610,6 @@ namespace System.Web.Compilation
 			CodeDomProvider ret = null;
 			par = null;
 			
-#if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
 			
@@ -661,16 +627,6 @@ namespace System.Web.Compilation
 				par.CompilerOptions = comp.CompilerOptions;
 				par.WarningLevel = comp.WarningLevel;
 			}
-#else
-			CompilationConfiguration config;
-
-			config = CompilationConfiguration.GetInstance (context);
-			ret = config.GetProvider (lang);
-
-			par = new CompilerParameters ();
-			par.CompilerOptions = config.GetCompilerOptions (lang);
-			par.WarningLevel = config.GetWarningLevel (lang);
-#endif
 			tempdir = config.TempDirectory;
 
 			return ret;
@@ -693,10 +649,6 @@ namespace System.Web.Compilation
 			if (Provider == null)
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
-
-#if !NET_2_0
-			compiler = provider.CreateCompiler ();
-#endif
 
 			CompilerParameters parameters = CompilerParameters;
 			parameters.IncludeDebugInformation = parser.Debug;
@@ -729,7 +681,6 @@ namespace System.Web.Compilation
 			results.TempFiles.Delete ();
 			Type mainClassType = assembly.GetType (MainClassType, true);
 
-#if NET_2_0
 			if (parser.IsPartial) {
 				// With the partial classes, we need to make sure we
 				// don't have any methods that should have not been
@@ -744,7 +695,6 @@ namespace System.Web.Compilation
 					return GetCompiledType ();
 				}
 			}
-#endif
 
 			return mainClassType;
 		}
@@ -758,7 +708,6 @@ namespace System.Web.Compilation
 			}
 		}
 		
-#if NET_2_0
 		internal bool IsRebuildingPartial
 		{
 			get { return isRebuilding; }
@@ -818,7 +767,6 @@ namespace System.Web.Compilation
 
 			return rebuild;
 		}
-#endif
 
 		internal CodeDomProvider Provider {
 			get { return provider; }
@@ -845,7 +793,6 @@ namespace System.Web.Compilation
 			get { return unit; }
 		}
 
-#if NET_2_0
 		internal CodeTypeDeclaration DerivedType {
 			get { return mainClass; }
 		}
@@ -857,7 +804,6 @@ namespace System.Web.Compilation
 				return partialClass;
 			}
 		}
-#endif
 
 		internal TemplateParser Parser {
 			get { return parser; }

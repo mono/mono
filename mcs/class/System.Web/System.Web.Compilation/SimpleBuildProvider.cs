@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -40,7 +40,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation
 {
-	internal abstract class SimpleBuildProvider : GenericBuildProvider <SimpleWebHandlerParser>
+	abstract class SimpleBuildProvider : GenericBuildProvider <SimpleWebHandlerParser>
 	{
 		bool _parsed;
 		bool _needLoadFromBin;
@@ -151,4 +151,3 @@ namespace System.Web.Compilation
 		}
 	}
 }
-#endif

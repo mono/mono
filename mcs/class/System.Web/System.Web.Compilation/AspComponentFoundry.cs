@@ -29,30 +29,21 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Web.Util;
-
-#if NET_2_0
-using System.Collections.Generic;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
-#endif
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
-	internal class AspComponentFoundry
+	class AspComponentFoundry
 	{
 		Hashtable foundries;
-#if NET_2_0
 		Dictionary <string, AspComponent> components;
-#else
-		Hashtable components;
-#endif
-
-#if NET_2_0
 		Dictionary <string, AspComponent> Components {
 			get {
 				if (components == null)
@@ -60,32 +51,14 @@ namespace System.Web.Compilation
 				return components;
 			}
 		}
-#else
-		Hashtable Components {
-			get {
-				if (components == null)
-					components = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
-				return components;
-			}
-		}
-#endif
 		
 		public AspComponentFoundry ()
 		{
-#if NET_2_0
 			foundries = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			foundries = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						   CaseInsensitiveComparer.DefaultInvariant);
-#endif
-
 			Assembly sw = typeof (AspComponentFoundry).Assembly;
 			RegisterFoundry ("asp", sw, "System.Web.UI.WebControls");
 			RegisterFoundry ("", "object", typeof (System.Web.UI.ObjectTag));
-
-#if NET_2_0
 			RegisterConfigControls ();
-#endif
 		}
 
 		public AspComponent GetComponent (string tagName)
@@ -94,14 +67,9 @@ namespace System.Web.Compilation
 				return null;
 			
 			if (components != null) {
-#if NET_2_0
 				AspComponent ret;
 				if (components.TryGetValue (tagName, out ret))
 					return ret;
-#else
-				if (components.Contains (tagName))
-					return components [tagName] as AspComponent;
-#endif
 			}
 
 			string foundryName, tag;
@@ -158,11 +126,7 @@ namespace System.Web.Compilation
 				return null;
 			
 			AspComponent ret = new AspComponent (type, ns, prefix, source, foundry.FromConfig);
-#if NET_2_0
 			Dictionary <string, AspComponent> components = Components;
-#else
-			Hashtable components = Components;
-#endif
 			components.Add (tagName, ret);
 			return ret;
 		}
@@ -197,7 +161,6 @@ namespace System.Web.Compilation
 			InternalRegister (foundryName, foundry, fromConfig);
 		}
 
-#if NET_2_0
 		public void RegisterFoundry (string foundryName, string tagName, string source)
 		{
 			RegisterFoundry (foundryName, tagName, source, false);
@@ -255,7 +218,6 @@ namespace System.Web.Compilation
 								 true);
 			}
 		}
-#endif
 		
 		void InternalRegister (string foundryName, Foundry foundry, bool fromConfig)
 		{
@@ -326,8 +288,6 @@ namespace System.Web.Compilation
 		{
 			string tagName;
 			Type type;
-
-#if NET_2_0
 			string source;
 
 			public bool FromWebConfig {
@@ -339,7 +299,6 @@ namespace System.Web.Compilation
 				this.tagName = tagName;
 				this.source = source;
 			}
-#endif
 			
 			public TagNameFoundry (string tagName, Type type)
 			{
@@ -354,15 +313,12 @@ namespace System.Web.Compilation
 				if (0 != String.Compare (componentName, tagName, true, Helpers.InvariantCulture))
 					return null;
 
-#if NET_2_0
 				source = this.source;
-#endif
 				return LoadType ();
 			}
 
 			Type LoadType ()
 			{
-#if NET_2_0
 				if (type != null)
 					return type;
 
@@ -388,9 +344,6 @@ namespace System.Web.Compilation
 					BuildManager.AddToReferencedAssemblies (type.Assembly);
 				}
 				return type;
-#else
-				return type;
-#endif
 			}
 			
 			public string TagName {
@@ -402,46 +355,39 @@ namespace System.Web.Compilation
 		{
 			string nameSpace;
 			Assembly assembly;
-#if NET_2_0
 			string assemblyName;
 			Dictionary <string, Assembly> assemblyCache;
-#endif
 			
 			public AssemblyFoundry (Assembly assembly, string nameSpace)
 			{
 				this.assembly = assembly;
 				this.nameSpace = nameSpace;
-#if NET_2_0
+
 				if (assembly != null)
 					this.assemblyName = assembly.FullName;
 				else
 					this.assemblyName = null;
-#endif
 			}
 
-#if NET_2_0
 			public AssemblyFoundry (string assemblyName, string nameSpace)
 			{
 				this.assembly = null;
 				this.nameSpace = nameSpace;
 				this.assemblyName = assemblyName;
 			}
-#endif
 			
 			public override Type GetType (string componentName, out string source, out string ns)
 			{
 				source = null;
 				ns = nameSpace;
-				
-#if NET_2_0
+
 				if (assembly == null && assemblyName != null)
 					assembly = GetAssemblyByName (assemblyName, true);
-#endif
+
 				string typeName = String.Concat (nameSpace, ".", componentName);
 				if (assembly != null)
 					return assembly.GetType (typeName, false, true);
 
-#if NET_2_0
 				IList tla = BuildManager.TopLevelAssemblies;
 				if (tla != null && tla.Count > 0) {
 					Type ret = null;
@@ -453,11 +399,10 @@ namespace System.Web.Compilation
 							return ret;
 					}
 				}
-#endif
+
 				return null;
 			}
 
-#if NET_2_0
 			Assembly GetAssemblyByName (string name, bool throwOnMissing)
 			{
 				if (assemblyCache == null)
@@ -489,7 +434,6 @@ namespace System.Web.Compilation
 				assemblyCache.Add (name, assembly);
 				return assembly;
 			}
-#endif
 		}
 
 		class CompoundFoundry : Foundry
@@ -501,12 +445,7 @@ namespace System.Web.Compilation
 			public CompoundFoundry (string tagPrefix)
 			{
 				this.tagPrefix = tagPrefix;
-#if NET_2_0
 				tagnames = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-				tagnames = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-							  CaseInsensitiveComparer.DefaultInvariant);
-#endif
 			}
 
 			public void Add (Foundry foundry)
@@ -519,10 +458,9 @@ namespace System.Web.Compilation
 				TagNameFoundry tn = (TagNameFoundry) foundry;
 				string tagName = tn.TagName;
 				if (tagnames.Contains (tagName)) {
-#if NET_2_0
 					if (tn.FromWebConfig)
 						return;
-#endif
+
 					string msg = String.Format ("{0}:{1} already registered.", tagPrefix, tagName);
 					throw new ApplicationException (msg);
 				}

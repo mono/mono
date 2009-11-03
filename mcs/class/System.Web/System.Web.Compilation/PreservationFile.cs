@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +51,7 @@ namespace System.Web.Compilation
 	//
 	// http://msdn.microsoft.com/msdnmag/issues/07/01/cuttingedge/default.aspx?loc=&fig=true#fig3
 	//
-	internal class PreservationFile
+	class PreservationFile
 	{
 		string _filePath;
 		string _assembly;
@@ -234,4 +234,4 @@ namespace System.Web.Compilation
                 }
 	}
 }
-#endif
+

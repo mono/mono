@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,12 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
-namespace System.Web.Compilation {
-
-	public sealed class ResourceExpressionFields {
-
+namespace System.Web.Compilation
+{
+	public sealed class ResourceExpressionFields
+	{
 		internal ResourceExpressionFields (string classKey, string resourceKey)
 		{
 			this.classKey = classKey;
@@ -58,4 +56,3 @@ namespace System.Web.Compilation {
 
 }
 
-#endif

@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System.CodeDom;
 using System.Web.UI;
 
@@ -57,5 +57,5 @@ namespace System.Web.Compilation
 	}
 	
 }
-#endif // NET_2_0
+
 

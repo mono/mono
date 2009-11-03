@@ -79,10 +79,6 @@ namespace System.Web.Compilation
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
 
-#if !NET_2_0
-			Compiler = provider.CreateCompiler ();
-#endif
-
 			CompilerParameters compilerParameters;
 			CompilerParameters = compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
 			compilerParameters.IncludeDebugInformation = parser.Debug;

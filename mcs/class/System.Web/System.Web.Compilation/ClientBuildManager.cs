@@ -5,7 +5,7 @@
 //	Chris Toshok (toshok@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -41,8 +40,10 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Util;
 
-namespace System.Web.Compilation {
-	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
+namespace System.Web.Compilation
+{
+	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable
+	{
 		static readonly object appDomainShutdownEvent = new object ();
 		static readonly object appDomainStartedEvent = new object ();
 		static readonly object appDomainUnloadedEvent = new object ();
@@ -343,5 +344,5 @@ namespace System.Web.Compilation {
 	}
 
 }
-#endif
+
 

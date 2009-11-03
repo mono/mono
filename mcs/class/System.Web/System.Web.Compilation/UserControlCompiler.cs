@@ -55,13 +55,11 @@ namespace System.Web.Compilation
 				AddOutputCacheAttribute ();
 		}
 
-#if NET_2_0
 		protected internal override void CreateMethods ()
 		{
 			base.CreateMethods ();
 			CreateProfileProperty ();
 		}
-#endif
 		
 		void AddOutputCacheAttribute ()
 		{
@@ -82,14 +80,12 @@ namespace System.Web.Compilation
 
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
-#if NET_2_0
 			if (parser.MasterPageFile != null) {
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
 				CodeExpression ct = new CodePrimitiveExpression (parser.MasterPageFile);
 				method.Statements.Add (AddLinePragma (new CodeAssignStatement (prop, ct), parser.DirectiveLocation));
 			}
-#endif
 		}
 	}
 }

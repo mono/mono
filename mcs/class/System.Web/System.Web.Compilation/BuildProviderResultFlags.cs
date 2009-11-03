@@ -28,7 +28,6 @@
 
 using System.Resources;
 
-#if NET_2_0
 
 namespace System.Web.Compilation
 {
@@ -39,4 +38,4 @@ namespace System.Web.Compilation
                 ShutdownAppDomainOnChange = 1
         }
 }
-#endif
+

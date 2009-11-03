@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.Compilation
 {
         public sealed class ImplicitResourceKey
@@ -62,4 +61,4 @@ namespace System.Web.Compilation
 		}
         }
 }
-#endif
+

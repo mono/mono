@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,10 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
-namespace System.Web.Compilation {
-
+namespace System.Web.Compilation
+{
 	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class BuildProviderAppliesToAttribute : Attribute
 	{
@@ -49,4 +47,4 @@ namespace System.Web.Compilation {
 
 }
 
-#endif
+

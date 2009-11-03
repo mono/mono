@@ -42,9 +42,7 @@ namespace System.Web.Compilation
 						"ClassName", "ClientTarget", "CodePage",
 						"CompilerOptions", "ContentType", "Culture", "Debug",
 						"Description",
-#if NET_2_0
 						"EnableEventValidation", "MaintainScrollPositionOnPostBack",
-#endif
 						"EnableSessionState", "EnableViewState",
 						"EnableViewStateMac", "ErrorPage", "Explicit",
 						"Inherits", "Language", "LCID", "ResponseEncoding",
@@ -71,10 +69,8 @@ namespace System.Web.Compilation
 
 		static string [] application_atts = { "description", "inherits", "codebehind" };
 
-#if NET_2_0
 		static string [] mastertype_atts = { "virtualpath", "typename" };
 		static string [] previouspagetype_atts = { "virtualpath", "typename" };
-#endif
 		
 		static Directive ()
 		{
@@ -83,107 +79,55 @@ namespace System.Web.Compilation
 		
 		static void InitHash ()
 		{
-#if NET_2_0
 			StringComparer comparer = StringComparer.InvariantCultureIgnoreCase;
 			directivesHash = new Hashtable (comparer);
-#else
-			CaseInsensitiveHashCodeProvider provider = new CaseInsensitiveHashCodeProvider (Helpers.InvariantCulture);
-			CaseInsensitiveComparer comparer =  new CaseInsensitiveComparer (Helpers.InvariantCulture);
-
-			directivesHash = new Hashtable (provider, comparer); 
-#endif
 
 			// Use Hashtable 'cause is O(1) in Contains (ArrayList is O(n))
-#if NET_2_0
 			Hashtable valid_attributes = new Hashtable (comparer);
-#else
-			Hashtable valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in page_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("PAGE", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in control_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("CONTROL", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in import_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("IMPORT", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in implements_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("IMPLEMENTS", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in register_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("REGISTER", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in assembly_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("ASSEMBLY", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in outputcache_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("OUTPUTCACHE", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in reference_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("REFERENCE", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("WEBSERVICE", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			// same attributes as webservice
 			foreach (string att in webservice_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("WEBHANDLER", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
-#else
-			valid_attributes = new Hashtable (provider, comparer);
-#endif
 			foreach (string att in application_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("APPLICATION", valid_attributes);
 
-#if NET_2_0
 			valid_attributes = new Hashtable (comparer);
 			foreach (string att in mastertype_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("MASTERTYPE", valid_attributes);
@@ -195,7 +139,6 @@ namespace System.Web.Compilation
 			valid_attributes = new Hashtable (comparer);
 			foreach (string att in previouspagetype_atts) valid_attributes.Add (att, null);
 			directivesHash.Add ("PREVIOUSPAGETYPE", valid_attributes);
-#endif
 		}
 		
 		Directive () { }
