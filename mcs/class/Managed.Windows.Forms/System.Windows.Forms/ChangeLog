@@ -1,3 +1,10 @@
+2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGridTextBoxColumn.cs:
+	* DataGrid.cs: Don't use this add-pending behaviour to try to add a
+	new row until we have the first input char - it was helping us to fix
+	other issues we have/had, but it's not matching .net.
+
 2009-10-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBoxBase.cs: When returning the preferred height, and we are
