@@ -1,5 +1,12 @@
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_methods): Only give a slot for virtual methods
+	of interfaces. Fixes IKVM.
+
+	* class.c (mono_class_setup_vtable_general): Improve debug spew.
+
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verifier_inflate_type): Return the inflated type on success.
 
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
