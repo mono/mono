@@ -59,8 +59,6 @@ namespace Mono.Linker.Steps {
 
 			CopyConfigFileIfNeeded (assembly, directory);
 
-			Console.WriteLine ("Output {0} : {1}", assembly, Annotations.GetAction (assembly));
-
 			switch (Annotations.GetAction (assembly)) {
 			case AssemblyAction.Link:
 				SaveSymbols (assembly);

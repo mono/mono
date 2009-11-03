@@ -96,7 +96,6 @@ namespace Mono.Linker {
 		{
 			while (_steps.Count > 0) {
 				IStep step = (IStep) _steps [0];
-				Console.WriteLine ("Processing {0}", step.GetType ());
 				step.Process (context);
 				_steps.Remove (step);
 			}
