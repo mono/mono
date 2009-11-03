@@ -1,3 +1,7 @@
+2009-11-04  Lluis Sanchez  <lluis@novell.com>
+
+	* VirtualMachineManager.cs: Properly redirect standard output.
+
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* EventRequest.cs (AssemblyFilter): New property to filter
