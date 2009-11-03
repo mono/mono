@@ -1,5 +1,13 @@
 2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: Implement removal of rows the Correct Way by creating a
+	copy of the indexes, as any direct write access to the source will cause to
+	reset the entire selection - also, do the linear de-selection in
+	reverse order to avoid any index mismatch in the source, due to out of
+	synchronization removing the rows.
+
+2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGridTextBoxColumn.cs:
 	* DataGrid.cs: Don't use this add-pending behaviour to try to add a
 	new row until we have the first input char - it was helping us to fix
