@@ -6,6 +6,13 @@
 
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (fieldref_encode_signature): Add new field_image parameter
+	to indicate which assembly to use when resolving a custom-mod.
+
+	Fixes handling of volatile fields used across assemblies as reported in #551513.
+
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c: Improve error messages.
 
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
