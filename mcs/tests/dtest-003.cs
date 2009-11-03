@@ -262,7 +262,7 @@ class Tester : DynamicObjectMock
 			Assert (binder.Operation, ExpressionType.Add, "Operation");
 			AssertArgument (binder, new[] {
 			    CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
-			    CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.LiteralConstant, null)	// CSC bug?
+			    CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null)
 			}, "ArgumentInfo");
 
 			Assert (arg, Enum.A, "arg");
@@ -872,7 +872,7 @@ class Tester : DynamicObjectMock
 			AssertArgument (binder, new[] {
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null),
-				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.NamedArgument | CSharpArgumentInfoFlags.UseCompileTimeType | CSharpArgumentInfoFlags.LiteralConstant, "name")	// CSC bug?
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.NamedArgument | CSharpArgumentInfoFlags.UseCompileTimeType, "name")
 			}, "ArgumentInfo");
 
 			Assert ((IList<object>) args, new object[] { typeof (bool), -1 }, "args");
@@ -880,7 +880,7 @@ class Tester : DynamicObjectMock
 
 		d (typeof (bool), name:-1);
 	}
-
+	
 	void InvokeMember_1 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.InvokeMemberOperation = (binder, args) => {
@@ -1033,7 +1033,7 @@ class Tester : DynamicObjectMock
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.LiteralConstant | CSharpArgumentInfoFlags.UseCompileTimeType, null),
 				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null),
-				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.LiteralConstant | CSharpArgumentInfoFlags.UseCompileTimeType, null)
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null)
 			}, "ArgumentInfo");
 
 			Assert ((IList<object>) args, new object[] { 2, 3 }, "args");

@@ -7,6 +7,7 @@ using Microsoft.CSharp.RuntimeBinder;
 // Dynamic member lookup tests
 
 delegate void D ();
+delegate void D2 (decimal d);
 
 class Class
 {
@@ -14,6 +15,15 @@ class Class
 	internal string StringStatic = "hi";
 
 	public const decimal Decimal = -0.3m;
+
+	public Class ()
+	{
+	}
+
+	public Class (sbyte extra)
+	{
+		IntValue = extra;
+	}
 
 	uint s = 77;
 	protected internal uint this[byte i] {
@@ -46,6 +56,12 @@ class Class
 		return value;
 	}
 
+	public void MethodInOut (ref int refValue, out string outValue)
+	{
+		refValue = 3;
+		outValue = "4";
+	}
+
 	public static void GenericVoid<T> (T i)
 	{
 	}
@@ -58,9 +74,6 @@ class Class
 
 class Tester
 {
-	delegate void EmptyDelegate ();
-	delegate int IntDelegate ();
-
 	static void Assert<T> (T expected, T value, string name)
 	{
 		if (!EqualityComparer<T>.Default.Equals (expected, value)) {
@@ -108,16 +121,31 @@ class Tester
 
 		Action<bool> f2 = Class.GenericVoid;
 		d = f2;
-		Assert<object> (null, d (true), "#2");
+		d (true);
 	}
 
 	void InvokeMember ()
 	{
-//		dynamic d = new Class ();
-//		Assert ("vv", d.Method ("vv"), "#1");
+		dynamic d = new Class ();
+		Assert ("vv", d.Method ("vv"), "#1");
 
-		dynamic d = 2;
+		var arg1 = 1;
+		var arg2 = "a";
+		d.MethodInOut (ref arg1, out arg2);
+
+		d = 2;
 		Assert (2, Class.StaticMethod (d), "#2");
+	}
+
+	void InvokeConstructor ()
+	{
+		dynamic d = (sbyte) 8;
+		var r = new Class (d);
+		Assert (8, r.IntValue, "#1");
+
+		D2 method = (decimal e) => { };
+		d = method;
+		var r2 = new D2 (d);
 	}
 
 	void MemberGetTest ()
