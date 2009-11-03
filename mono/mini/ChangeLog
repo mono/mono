@@ -1,3 +1,11 @@
+2009-11-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Refactor some code into a new helper
+	function mono_aot_get_array_helper_from_wrapper ().
+
+	* aot-compiler.c (add_generic_class): Refactor the code a bit, really emit
+	array helper methods.
+
 2009-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Avoid asserting if a array generic
