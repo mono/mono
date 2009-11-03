@@ -1,0 +1,402 @@
+<Type Name="VirtualMachine" FullName="Mono.Debugger.VirtualMachine">
+  <TypeSignature Language="C#" Value="public class VirtualMachine : Mono.Debugger.Mirror" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents a connection to a debuggee.</summary>
+    <remarks>
+      <format type="text/html">
+        <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jpda/jdi/com/sun/jdi/VirtualMachine.html">JDI Documentation</a>
+      </format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ClearAllBreakpoints">
+      <MemberSignature Language="C#" Value="public void ClearAllBreakpoints ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBreakpointRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.MethodMirror method, long il_offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.BreakpointEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="il_offset" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="method">
+        </param>
+        <param name="il_offset">To be added.</param>
+        <param name="location">
+        </param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMethodEntryRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodEntryEventRequest CreateMethodEntryRequest ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.MethodEntryEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateMethodExitRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodExitEventRequest CreateMethodExitRequest ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.MethodExitEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateStepRequest">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.StepEventRequest CreateStepRequest (Mono.Debugger.ThreadMirror thread);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.StepEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="thread" Type="Mono.Debugger.ThreadMirror" />
+      </Parameters>
+      <Docs>
+        <param name="thread">
+        </param>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateValue">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.PrimitiveValue CreateValue (object value);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.PrimitiveValue</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableEvents">
+      <MemberSignature Language="C#" Value="public void EnableEvents (Mono.Debugger.EventType[] events);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="events" Type="Mono.Debugger.EventType[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="events">
+        </param>
+        <summary>
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndPoint">
+      <MemberSignature Language="C#" Value="public System.Net.EndPoint EndPoint { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.EndPoint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+        </summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Exit">
+      <MemberSignature Language="C#" Value="public void Exit (int exitCode);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exitCode" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="exitCode">
+        </param>
+        <summary>
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextEvent">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Event GetNextEvent ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Event</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextEvent">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Event GetNextEvent (int timeout);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Event</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">
+        </param>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextEvent&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public T GetNextEvent&lt;T&gt; () where T : Mono.Debugger.Event;" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <typeparam name="T">
+        </typeparam>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetThreads">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.ThreadMirror&gt; GetThreads ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.ThreadMirror&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Process">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.Process Process { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.Process</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+        </summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resume">
+      <MemberSignature Language="C#" Value="public void Resume ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RootDomain">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.AppDomainMirror RootDomain { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.AppDomainMirror</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+        </summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetBreakpoint">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.BreakpointEventRequest SetBreakpoint (Mono.Debugger.MethodMirror method, long il_offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.BreakpointEventRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="il_offset" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="method">
+        </param>
+        <param name="il_offset">
+        </param>
+        <summary>
+        </summary>
+        <returns>
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Suspend">
+      <MemberSignature Language="C#" Value="public void Suspend ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+        </summary>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

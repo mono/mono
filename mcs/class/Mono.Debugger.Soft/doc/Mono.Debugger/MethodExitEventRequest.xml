@@ -1,0 +1,17 @@
+<Type Name="MethodExitEventRequest" FullName="Mono.Debugger.MethodExitEventRequest">
+  <TypeSignature Language="C#" Value="public sealed class MethodExitEventRequest : Mono.Debugger.EventRequest" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.EventRequest</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Request for MethodExit events.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members />
+</Type>

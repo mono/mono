@@ -1,0 +1,17 @@
+<Type Name="Value" FullName="Mono.Debugger.Value">
+  <TypeSignature Language="C#" Value="public abstract class Value : Mono.Debugger.Mirror" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Represents a value in the debuggee.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members />
+</Type>
