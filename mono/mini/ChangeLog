@@ -1,3 +1,9 @@
+2009-11-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* debugger-agent.c: add #ifdefs for a few header files.
+	* mini-x86.h: disable the soft debugger in windows.
+	Step 1 of 2 to make this compile on windows with gcc.
+
 2009-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	Merge the soft debugger branch.
