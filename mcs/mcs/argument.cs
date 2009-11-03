@@ -27,7 +27,7 @@ namespace Mono.CSharp
 			Ref = 1,			// ref modifier used
 			Out = 2,			// out modifier used
 			Default = 3,		// argument created from default parameter value
-			DynamicStatic = 4	// static argument for dynamic binding
+			DynamicTypeName = 4	// System.Type argument for dynamic binding
 		}
 
 		public readonly AType ArgType;
@@ -237,7 +237,7 @@ namespace Mono.CSharp
 				} else if (a.ArgType == Argument.AType.Out) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsOut", loc));
-				} else if (a.ArgType == Argument.AType.DynamicStatic) {
+				} else if (a.ArgType == Argument.AType.DynamicTypeName) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc));
 				}

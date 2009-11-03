@@ -1,3 +1,8 @@
+2009-11-03  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, dynamic.cs, expression.cs, delegate.cs: Dynamic
+	constructor arguments.
+
 2009-10-30  Marek Safar  <marek.safar@gmail.com>
 
 	* dynamic.cs, convert.cs, assign.cs, constant.cs, expression.cs,

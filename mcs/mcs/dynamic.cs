@@ -65,7 +65,7 @@ namespace Mono.CSharp
 	//
 	// Expression created from runtime dynamic object value
 	//
-	public class RuntimeValueExpression : Expression, IDynamicAssign
+	public class RuntimeValueExpression : Expression, IDynamicAssign, IMemoryLocation
 	{
 #if !NET_4_0
 		public class DynamicMetaObject { public Type RuntimeType; }
@@ -78,6 +78,11 @@ namespace Mono.CSharp
 			this.obj = obj;
 			this.type = obj.RuntimeType;
 			this.eclass = ExprClass.Variable;
+		}
+
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -481,6 +486,27 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			return new Invocation (GetBinder ("Convert", loc), binder_args);
+		}
+	}
+
+	class DynamicConstructorBinder : DynamicExpressionStatement, IDynamicBinder
+	{
+		public DynamicConstructorBinder (Type type, Arguments args, Location loc)
+			: base (null, args, loc)
+		{
+			this.type = type;
+			base.binder = this;
+		}
+
+		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
+		{
+			Arguments binder_args = new Arguments (3);
+
+			binder_args.Add (new Argument (new BinderFlags (0, this)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+
+			return new Invocation (GetBinder ("InvokeConstructor", loc), binder_args);
 		}
 	}
 

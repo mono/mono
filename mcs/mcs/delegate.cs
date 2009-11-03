@@ -745,7 +745,9 @@ namespace Mono.CSharp {
 
 			method_group = e as MethodGroupExpr;
 			if (method_group == null) {
-				if (!TypeManager.IsDelegateType (e.Type)) {
+				if (TypeManager.IsDynamicType (e.Type)) {
+					e = Convert.ImplicitConversionRequired (ec, e, type, loc);
+				} else if (!TypeManager.IsDelegateType (e.Type)) {
 					e.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup | ResolveFlags.Type, loc);
 					return null;
 				}

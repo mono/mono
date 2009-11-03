@@ -919,6 +919,7 @@ namespace Mono.CSharp {
 			public DynamicPostMutator (Expression expr)
 			{
 				this.expr = expr;
+				this.type = expr.Type;
 				this.loc = expr.Location;
 			}
 
@@ -929,7 +930,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (ResolveContext rc)
 			{
-				type = expr.Type;
 				eclass = expr.eclass;
 				return this;
 			}
@@ -4964,7 +4964,7 @@ namespace Mono.CSharp {
 							args = new Arguments (1);
 
 						if (mg.IsStatic) {
-							args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicStatic));
+							args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicTypeName));
 						} else {
 							MemberAccess ma = expr as MemberAccess;
 							if (ma != null)
@@ -5503,8 +5503,8 @@ namespace Mono.CSharp {
 				Arguments.Resolve (ec, out dynamic);
 
 				if (dynamic) {
-					Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec)));
-					return new DynamicInvocation (new SimpleName (ConstructorInfo.ConstructorName, loc), Arguments, type, loc).Resolve (ec);
+					Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
+					return new DynamicConstructorBinder (type, Arguments, loc).Resolve (ec);
 				}
 			}
 
@@ -5717,6 +5717,13 @@ namespace Mono.CSharp {
 				target.Arguments = Arguments.Clone (clonectx);
 			}
 		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.New ((ConstructorInfo) method, Arguments.MakeExpression (Arguments, ctx));
+		}
+#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
