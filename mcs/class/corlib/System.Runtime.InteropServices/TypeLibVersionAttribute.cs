@@ -30,13 +30,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if (NET_1_1||NET_2_0)
-
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, 
 			Inherited = false)]
 	public sealed class TypeLibVersionAttribute : Attribute
@@ -60,5 +56,4 @@ namespace System.Runtime.InteropServices
 	}
 }
 
-#endif
 

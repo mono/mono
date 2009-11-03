@@ -30,9 +30,7 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
-#endif
 	[ComImport]
 	[Guid ("0000000f-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
@@ -47,11 +45,7 @@ namespace System.Runtime.InteropServices
 		void BindToObject (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riidResult, [MarshalAs (UnmanagedType.Interface)] out object ppvResult);
 		void BindToStorage (UCOMIBindCtx pbc, UCOMIMoniker pmkToLeft, [In] ref Guid riid, [MarshalAs (UnmanagedType.Interface)] out object ppvObj);
 		void Reduce (UCOMIBindCtx pbc, int dwReduceHowFar, ref UCOMIMoniker ppmkToLeft, out UCOMIMoniker ppmkReduced);
-#if NET_2_0
 		void ComposeWith (UCOMIMoniker pmkRight, [MarshalAs (UnmanagedType.Bool)] bool fOnlyIfNotGeneric, out UCOMIMoniker ppmkComposite);
-#else
-		void ComposeWith (UCOMIMoniker pmkRight, [MarshalAs (UnmanagedType.LPWStr)] bool fOnlyIfNotGeneric, out UCOMIMoniker ppmkComposite);
-#endif
 		void Enum ([MarshalAs(UnmanagedType.Bool)] bool fForward, out UCOMIEnumMoniker ppenumMoniker);
 		void IsEqual (UCOMIMoniker pmkOtherMoniker);
 		void Hash (out int pdwHash);

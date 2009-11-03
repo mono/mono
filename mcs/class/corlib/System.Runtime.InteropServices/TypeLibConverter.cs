@@ -34,9 +34,7 @@ using System.Reflection.Emit;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Guid ("f1c3bf79-c3e4-11d3-88e7-00902754c43a")]
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class TypeLibConverter : ITypeLibConverter
@@ -46,9 +44,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO ("implement")]
-#if NET_2_0
 		[return: MarshalAs (UnmanagedType.Interface)]
-#endif
 		public object ConvertAssemblyToTypeLib (Assembly assembly, string strTypeLibName, TypeLibExporterFlags flags, ITypeLibExporterNotifySink notifySink)
 		{
 			throw new NotImplementedException ();

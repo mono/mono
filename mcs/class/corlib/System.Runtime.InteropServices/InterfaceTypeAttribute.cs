@@ -32,9 +32,7 @@
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[AttributeUsage(AttributeTargets.Interface, Inherited=false)]
 	public sealed class InterfaceTypeAttribute : Attribute {
 		

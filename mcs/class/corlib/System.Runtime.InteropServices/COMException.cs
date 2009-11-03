@@ -32,9 +32,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.InteropServices {
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public class COMException : ExternalException {
 
 	public COMException () 

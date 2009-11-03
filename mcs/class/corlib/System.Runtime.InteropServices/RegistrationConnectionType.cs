@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Runtime.InteropServices
@@ -21,4 +19,3 @@ namespace System.Runtime.InteropServices
 		Surrogate = 8
 	}
 }
-#endif

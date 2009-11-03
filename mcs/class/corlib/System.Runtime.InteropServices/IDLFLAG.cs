@@ -32,11 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
-#else
-	[ComVisible (false)]
-#endif
 	[Flags, Serializable]
 	public enum IDLFLAG
 	{

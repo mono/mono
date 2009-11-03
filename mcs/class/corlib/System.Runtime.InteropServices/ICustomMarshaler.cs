@@ -32,9 +32,7 @@
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface ICustomMarshaler {
 		void CleanUpManagedData (object ManagedObj);
 		void CleanUpNativeData (IntPtr pNativeData);

@@ -32,9 +32,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter | 
 			 AttributeTargets.ReturnValue, Inherited=false)]
 	public sealed class MarshalAsAttribute : Attribute {
@@ -42,14 +40,10 @@ namespace System.Runtime.InteropServices {
 		public UnmanagedType ArraySubType;
 		public string MarshalCookie;
 
-#if NET_2_0
 		[ComVisible(true)]
-#endif	
 		public string MarshalType;
 
-#if NET_2_0
 		[ComVisible(true)]
-#endif	
 		public Type MarshalTypeRef;
 		
 #if !NET_2_1 || MONOTOUCH
@@ -59,9 +53,7 @@ namespace System.Runtime.InteropServices {
 		public int SizeConst;
 		public short SizeParamIndex;
 		public Type SafeArrayUserDefinedSubType;
-#if NET_2_0
 		public int IidParameterIndex;
-#endif
 
 		public MarshalAsAttribute (short unmanagedType) {
 			utype = (UnmanagedType)unmanagedType;

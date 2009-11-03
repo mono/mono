@@ -27,14 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.Reflection;
 
 namespace System.Runtime.InteropServices {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("993634C4-E47A-32CC-BE08-85F567DC27D6")]
@@ -52,4 +48,3 @@ namespace System.Runtime.InteropServices {
 	}
 }
 
-#endif

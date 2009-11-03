@@ -33,9 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
 	public sealed class TypeLibFuncAttribute : Attribute
 	{

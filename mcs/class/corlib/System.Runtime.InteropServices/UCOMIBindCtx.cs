@@ -28,9 +28,7 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
-#endif
 	[ComImport]
 	[Guid ("0000000e-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]

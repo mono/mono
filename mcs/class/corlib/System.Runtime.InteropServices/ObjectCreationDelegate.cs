@@ -33,8 +33,6 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-	#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	public delegate IntPtr ObjectCreationDelegate (IntPtr aggregator);
 }

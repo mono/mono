@@ -39,9 +39,7 @@ namespace System.Runtime.InteropServices {
 		AttributeTargets.Method | AttributeTargets.Property |
 		AttributeTargets.Field | AttributeTargets.Interface |
 		AttributeTargets.Delegate, Inherited=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ComVisibleAttribute : Attribute {
 
 		private bool Visible = false;

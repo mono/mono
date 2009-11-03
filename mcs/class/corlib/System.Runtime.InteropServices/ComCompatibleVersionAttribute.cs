@@ -30,15 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if (NET_1_1)
-
 namespace System.Runtime.InteropServices
 {
 	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, 
 			Inherited = false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ComCompatibleVersionAttribute : Attribute
 	{
 		private int major;
@@ -71,5 +67,3 @@ namespace System.Runtime.InteropServices
 		}
 	}
 }
-
-#endif

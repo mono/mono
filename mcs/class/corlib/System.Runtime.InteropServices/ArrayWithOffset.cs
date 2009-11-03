@@ -33,10 +33,8 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[Serializable]
 	[ComVisible (true)]
-#endif
 	public struct ArrayWithOffset {
 		object array;
 		int offset;
@@ -63,7 +61,6 @@ namespace System.Runtime.InteropServices {
 			return obj.array == array && obj.offset == offset;
 		}
 
-#if NET_2_0
 		public static bool operator == (ArrayWithOffset a, ArrayWithOffset b)
 		{
 			return a.Equals (b);
@@ -73,7 +70,6 @@ namespace System.Runtime.InteropServices {
 		{
 			return !a.Equals (b);
 		}
-#endif
 
 		public override int GetHashCode ()
 		{

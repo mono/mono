@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Runtime.InteropServices
@@ -25,4 +23,3 @@ namespace System.Runtime.InteropServices
 		public string WrappedObject { get { return _value; } }
 	}
 }
-#endif

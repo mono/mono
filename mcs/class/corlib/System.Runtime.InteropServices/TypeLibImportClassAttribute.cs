@@ -34,9 +34,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[AttributeUsage(AttributeTargets.Interface, Inherited=false)]
 	public sealed class TypeLibImportClassAttribute : Attribute {
 		private string _importClass;

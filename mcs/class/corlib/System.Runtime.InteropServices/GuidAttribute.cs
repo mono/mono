@@ -32,9 +32,7 @@
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 			AttributeTargets.Struct | AttributeTargets.Enum | 
 			AttributeTargets.Interface | AttributeTargets.Delegate,

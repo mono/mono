@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_1_1
-
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -17,9 +15,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("FFCC1B5D-ECB8-38DD-9B01-3DC8ABC2AA5F")]
 	[TypeLibImportClass (typeof (MethodInfo))]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface _MethodInfo
 	{
 		bool Equals (object other);
@@ -100,4 +96,3 @@ namespace System.Runtime.InteropServices
 		ICustomAttributeProvider ReturnTypeCustomAttributes {get;}
 	}
 }
-#endif

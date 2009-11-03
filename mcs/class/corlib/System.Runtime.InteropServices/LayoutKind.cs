@@ -35,9 +35,7 @@
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[Serializable]
 	public enum LayoutKind {
 		Sequential = 0,

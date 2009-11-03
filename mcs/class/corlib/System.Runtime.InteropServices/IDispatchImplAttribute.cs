@@ -33,10 +33,8 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, 
 			 AllowMultiple = false, Inherited = false)]
 	public sealed class IDispatchImplAttribute : Attribute

@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_1_1
-
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -17,9 +15,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("F59ED4E4-E68F-3218-BD77-061AA82824BF")]
 	[TypeLibImportClass (typeof (PropertyInfo))]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface _PropertyInfo
 	{
 		bool Equals (object other);
@@ -86,4 +82,3 @@ namespace System.Runtime.InteropServices
 		Type ReflectedType {get;}
 	}
 }
-#endif

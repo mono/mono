@@ -30,11 +30,7 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
-#else
-	[ComVisible (false)]
-#endif
 	[Serializable]
 	public enum FUNCKIND
 	{

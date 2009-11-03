@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_1_1
-
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -17,9 +15,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("8A7C1442-A9FB-366B-80D8-4939FFA6DBE0")]
 	[TypeLibImportClass (typeof (FieldInfo))]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface _FieldInfo
 	{
 		bool Equals (object other);
@@ -43,9 +39,6 @@ namespace System.Runtime.InteropServices
 
 		object GetValue (object obj);
 
-#if !NET_2_0
-		[CLSCompliant (false)]
-#endif
 		object GetValueDirect (TypedReference obj);
 
 		bool IsDefined (Type attributeType, bool inherit);
@@ -54,9 +47,6 @@ namespace System.Runtime.InteropServices
 
 		void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
-#if !NET_2_0
-		[CLSCompliant (false)]
-#endif
 		void SetValueDirect (TypedReference obj, object value);
 
 		string ToString ();
@@ -100,4 +90,3 @@ namespace System.Runtime.InteropServices
 		Type ReflectedType {get;}
 	}
 }
-#endif

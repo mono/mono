@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_2_0
-
 using System;
 using System.Runtime.Serialization;
 
@@ -26,4 +24,3 @@ namespace System.Runtime.InteropServices
 		public CharSet CharSet { get { return _set; } }
 	}
 }
-#endif

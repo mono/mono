@@ -32,9 +32,7 @@
 namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ComRegisterFunctionAttribute : Attribute
 	{
 		public ComRegisterFunctionAttribute ()

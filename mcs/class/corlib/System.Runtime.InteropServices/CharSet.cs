@@ -35,10 +35,8 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[Serializable]
 	[ComVisible (true)]
-#endif
 	public enum CharSet {
 		None = 1,
 		Ansi = 2,

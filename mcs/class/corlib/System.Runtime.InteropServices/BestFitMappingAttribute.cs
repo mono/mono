@@ -36,9 +36,7 @@ namespace System.Runtime.InteropServices {
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | 
 			 AttributeTargets.Struct | AttributeTargets.Interface,
 			 Inherited=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class BestFitMappingAttribute : Attribute {
 		bool bfm;
 		

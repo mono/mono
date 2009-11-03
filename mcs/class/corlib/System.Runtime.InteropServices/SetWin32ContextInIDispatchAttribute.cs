@@ -30,16 +30,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if (NET_2_0 || NET_1_1)
-
 using System;
 
 namespace System.Runtime.InteropServices 
 {
-#if NET_2_0
 	[Obsolete]
 	[ComVisible(true)]	
-#endif
 	[AttributeUsage (AttributeTargets.Assembly, Inherited = false)]
 	public sealed class SetWin32ContextInIDispatchAttribute : Attribute
 	{
@@ -48,5 +44,3 @@ namespace System.Runtime.InteropServices
 		}
 	}
 }
-
-#endif

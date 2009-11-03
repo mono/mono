@@ -33,9 +33,7 @@ using System;
 
 namespace System.Runtime.InteropServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[AttributeUsage (AttributeTargets.Parameter, Inherited=false)]
 	public sealed class InAttribute : Attribute {
 		public InAttribute () {

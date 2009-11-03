@@ -36,9 +36,7 @@ using System.Reflection;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ExtensibleClassFactory
 	{
 		static Hashtable hashtable;

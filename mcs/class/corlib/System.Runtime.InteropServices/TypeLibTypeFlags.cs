@@ -29,9 +29,7 @@
 //
 
 namespace System.Runtime.InteropServices {
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	[Flags] [Serializable]
 	public enum TypeLibTypeFlags {
 		FAppObject = 1,

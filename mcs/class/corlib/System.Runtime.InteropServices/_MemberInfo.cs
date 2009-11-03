@@ -16,9 +16,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("f7102fa9-cabb-3a74-a6da-b4567ef1b079")]
 	[TypeLibImportClass (typeof (MemberInfo))]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface _MemberInfo
 	{
 		bool Equals (object other);

@@ -30,10 +30,8 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public enum IDispatchImplType
 	{

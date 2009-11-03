@@ -35,9 +35,7 @@ namespace System.Runtime.InteropServices {
 	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Field |
 			 AttributeTargets.Parameter | AttributeTargets.ReturnValue,
 			 Inherited=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ComAliasNameAttribute : Attribute
 	{
 		string val;

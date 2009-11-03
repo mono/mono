@@ -30,16 +30,12 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Obsolete]
 	[ComImport]
-#endif
 	[Guid("00020402-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMITypeLib { 
-#if NET_2_0
 		[PreserveSig]
-#endif
 		int GetTypeInfoCount ();
 		void GetTypeInfo (int index, out UCOMITypeInfo ppTI);
 		void GetTypeInfoType (int index, out TYPEKIND pTKind);
@@ -50,9 +46,7 @@ namespace System.Runtime.InteropServices
 		[return: MarshalAs (UnmanagedType.Bool)]
 		bool IsName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal);
 		void FindName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal, [Out, MarshalAs (UnmanagedType.LPArray)] UCOMITypeInfo[] ppTInfo, [Out, MarshalAs (UnmanagedType.LPArray)] int[] rgMemId, ref short pcFound);
-#if NET_2_0
 		[PreserveSig]
-#endif
 		void ReleaseTLibAttr (IntPtr pTLibAttr);
 	}
 }

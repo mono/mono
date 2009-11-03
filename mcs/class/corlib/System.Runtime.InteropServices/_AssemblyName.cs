@@ -32,9 +32,7 @@
 using System.Reflection;
 
 namespace System.Runtime.InteropServices {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("B42B6AAC-317E-34D5-9FA9-093BB4160C50")]

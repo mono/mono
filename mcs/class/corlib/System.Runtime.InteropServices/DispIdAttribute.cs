@@ -33,9 +33,7 @@ namespace System.Runtime.InteropServices {
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property |
 			 AttributeTargets.Field | AttributeTargets.Event,
 			 Inherited=false)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DispIdAttribute : Attribute
 	{
 		int id;

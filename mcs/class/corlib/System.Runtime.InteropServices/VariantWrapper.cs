@@ -30,15 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if (NET_2_0 || NET_1_1)
-
 using System;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public sealed class VariantWrapper
 	{
 		private object _wrappedObject;
@@ -57,5 +53,3 @@ namespace System.Runtime.InteropServices
 		}
 	}
 }
-
-#endif

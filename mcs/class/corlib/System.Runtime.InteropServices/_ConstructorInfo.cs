@@ -17,9 +17,7 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("E9A19478-9646-3679-9B10-8411AE1FD57D")]
 	[TypeLibImportClass (typeof (ConstructorInfo))]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface _ConstructorInfo
 	{
 		bool Equals (object other);

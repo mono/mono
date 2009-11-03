@@ -28,7 +28,6 @@
 //
 using System;
 
-#if NET_2_0
 
 namespace System.Runtime.InteropServices {
 
@@ -37,4 +36,3 @@ namespace System.Runtime.InteropServices {
 		public AllowReversePInvokeCallsAttribute () { }
 	}
 }
-#endif

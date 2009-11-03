@@ -32,10 +32,8 @@ using System;
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Serializable]
 	[ComVisible (true)]
-#endif
 	public sealed class DispatchWrapper
 	{
 		object wrappedObject;

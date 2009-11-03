@@ -1,3 +1,7 @@
+2009-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* Jumbo NET_2_0 removal patch.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GCHandle.cs: Add missing validations

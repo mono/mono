@@ -30,9 +30,7 @@
 
 namespace System.Runtime.InteropServices
 {
-#if NET_2_0
 	[Serializable, ComVisible(true)]
-#endif
 	public sealed class UnknownWrapper
 	{
 		private object InternalObject;

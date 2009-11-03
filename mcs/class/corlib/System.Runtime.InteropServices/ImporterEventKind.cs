@@ -32,9 +32,7 @@
 namespace System.Runtime.InteropServices
 {
 	
-#if NET_2_0
 	[ComVisible(true)]
-#endif	
 	[Serializable] public enum ImporterEventKind
 	{
 		NOTIF_TYPECONVERTED = 0,
