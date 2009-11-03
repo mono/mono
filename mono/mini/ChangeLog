@@ -1,5 +1,7 @@
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* simd-intrinsics.c (simd_intrinsic_emit_setter): Fix a warning.
+
 	* aot-runtime.c (mono_aot_get_method): Refactor some code into a new helper
 	function mono_aot_get_array_helper_from_wrapper ().
 
@@ -19,25 +21,25 @@
 
 2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
-	* mini-amd64.c: Put soft debugger functions behind a 
+	* mini-amd64.c: Put soft debugger functions behind a
 	#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED.
-	
+
 	* mini-amd64.h: disable the soft debugger in windows.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
-	* mini-x86.c: Put soft debugger functions behind a 
+	* mini-x86.c: Put soft debugger functions behind a
 	#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
 	* exceptions-x86.c (win32_handle_stack_overflow): Fix parameters
 	to mono_arch_find_jit_info_ext.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
