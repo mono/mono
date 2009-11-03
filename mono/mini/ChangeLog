@@ -1,3 +1,14 @@
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (load_simd_vreg): Add extra argument to signal if
+	the value was loaded from memory.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_setter): Store back to memory if
+	the value was loader from there.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_shuffle): Fail correctly for Shuffle
+	without constant swizzle.
+
 2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
 	* mini-amd64.c: Put soft debugger functions behind a 
