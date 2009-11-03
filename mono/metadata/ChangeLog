@@ -6,6 +6,10 @@
 
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c: Improve error messages.
+
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_methods): Only give a slot for virtual methods
 	of interfaces. Fixes IKVM.
 
