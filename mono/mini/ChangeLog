@@ -1,5 +1,14 @@
 2009-11-02 Jonathan Chambers <joncham@gmail.com>
 
+	* mini-amd64.c: Put soft debugger functions behind a 
+	#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED.
+	
+	* mini-amd64.h: disable the soft debugger in windows.
+	
+	Code contributed under MIT/X11 license.
+
+2009-11-02 Jonathan Chambers <joncham@gmail.com>
+
 	* mini-x86.c: Put soft debugger functions behind a 
 	#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED.
 	
