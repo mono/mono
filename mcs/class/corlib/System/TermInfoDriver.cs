@@ -356,8 +356,10 @@ namespace System {
 				break;
 			case ConsoleKey.Tab:
 				int n = 8 - (cursorLeft % 8);
-				for (int i = 0; i < n; i++)
+				for (int i = 0; i < n; i++){
 					IncrementX ();
+				}
+				WriteConsole ("\t");
 				break;
 			case ConsoleKey.Clear:
 				WriteConsole (clear);
