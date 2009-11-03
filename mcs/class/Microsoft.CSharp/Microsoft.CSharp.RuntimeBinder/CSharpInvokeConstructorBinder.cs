@@ -1,5 +1,5 @@
 //
-// CSharpInvokeBinder.cs
+// CSharpInvokeConstructorBinder.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -34,33 +34,37 @@ using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	class CSharpInvokeBinder : InvokeBinder
+	class CSharpInvokeConstructorBinder : DynamicMetaObjectBinder
 	{
-		readonly CSharpBinderFlags flags;
 		IList<CSharpArgumentInfo> argumentInfo;
 		Type callingContext;
-		
-		public CSharpInvokeBinder (CSharpBinderFlags flags, Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (CSharpArgumentInfo.CreateCallInfo (argumentInfo, 1))
+		Type target_return_type;
+
+		public CSharpInvokeConstructorBinder (Type callingContext, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			this.flags = flags;
 			this.callingContext = callingContext;
 			this.argumentInfo = argumentInfo.ToReadOnly ();
 		}
-		
-		public override DynamicMetaObject FallbackInvoke (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
-		{
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
-			expr = new Compiler.Invocation (expr, c_args);
 
-			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
+		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
+		{
+			var type = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+			target_return_type = type.Type;
+
+			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
+
+			Compiler.Expression expr = new Compiler.New (type, c_args, Compiler.Location.Null);
 
 			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (
 				CSharpBinder.CreateRestrictionsOnTarget (args));
 
-			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
+			return CSharpBinder.Bind (this, expr, callingContext, restrictions, null);
+		}
+
+		public override Type ReturnType {
+			get {
+				return target_return_type;
+			}
 		}
 	}
 }

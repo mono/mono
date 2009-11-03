@@ -60,13 +60,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public override DynamicMetaObject FallbackInvokeMember (DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
 		{
-			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
 			var t_args = typeArguments == null ?
 				null :
 				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (l, Compiler.Location.Null)).ToArray ());
 
-			expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
+			Compiler.Expression expr;
+			if ((flags & CSharpBinderFlags.InvokeSimpleName) != 0) {
+				expr = new Compiler.SimpleName (Name, t_args, Compiler.Location.Null);
+			} else {
+				expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
+				expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
+			}
+
 			expr = new Compiler.Invocation (expr, c_args);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)

@@ -31,6 +31,7 @@ using System.Dynamic;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -63,7 +64,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 		
 		public static CallSiteBinder InvokeConstructor (CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			throw new NotImplementedException ();
+			// What are flags for here
+			return new CSharpInvokeConstructorBinder (context, argumentInfo);
 		}
 		
 		public static CallSiteBinder InvokeMember (CSharpBinderFlags flags, string name, IEnumerable<Type> typeArguments, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
