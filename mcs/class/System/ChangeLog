@@ -1,3 +1,9 @@
+2009-11-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Remove build/common/*.cs files
+	since this will confuse other assemblies (e.g. System.Net.dll)
+	to select mscorlib or System.dll version of the internal types
+
 2009-10-15  Jb Evain  <jbevain@novell.com>
 
 	* monotouch_System.dll.sources: add Semaphore to MonoTouch.
