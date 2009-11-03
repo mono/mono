@@ -1,3 +1,12 @@
+2009-11-03  Miguel de Icaza  <miguel@novell.com>
+
+	* FileStream.cs: Check the return value of MonoIO.Write and handle
+	short-writes as those can happen when a FileStream is used on top
+	of a pipe on Unix.
+
+	Fixes bug: #531613, this should be backported to 2-4 and 2-6 after
+	some testing.
+
 2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStream.cs: Reduce code duplication by merging FillBuffer 

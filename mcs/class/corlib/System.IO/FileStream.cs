@@ -644,13 +644,16 @@ namespace System.IO
 				MonoIOError error;
 
 				FlushBuffer ();
-
-				MonoIO.Write (handle, src, offset, count, out error);
-				if (error != MonoIOError.ERROR_SUCCESS) {
-					// don't leak the path information for isolated storage
-					throw MonoIO.GetException (GetSecureFileName (name), error);
-				}
+				int wcount = count;
 				
+				while (wcount > 0){
+					int n = MonoIO.Write (handle, src, offset, wcount, out error);
+					if (error != MonoIOError.ERROR_SUCCESS)
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+					
+					wcount -= n;
+					offset += n;
+				} 
 				buf_start += count;
 			} else {
 
@@ -985,12 +988,16 @@ namespace System.IO
 					}
 				}
 				if (st == null) {
-					MonoIO.Write (handle, buf, 0,
-						      buf_length, out error);
-
-					if (error != MonoIOError.ERROR_SUCCESS) {
-						// don't leak the path information for isolated storage
-						throw MonoIO.GetException (GetSecureFileName (name), error);
+					int wcount = buf_length;
+					int offset = 0;
+					while (wcount > 0){
+						int n = MonoIO.Write (handle, buf, 0, buf_length, out error);
+						if (error != MonoIOError.ERROR_SUCCESS) {
+							// don't leak the path information for isolated storage
+							throw MonoIO.GetException (GetSecureFileName (name), error);
+						}
+						wcount -= n;
+						offset += n;
 					}
 				} else {
 					st.Write (buf, 0, buf_length);
