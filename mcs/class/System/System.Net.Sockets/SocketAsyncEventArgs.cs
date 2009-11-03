@@ -257,6 +257,7 @@ namespace System.Net.Sockets
 				if (!CheckEndPoint (endpoint)) {
 					return error;
 				}
+				error = SocketError.Success;
 			}
 #endif
 			try {
