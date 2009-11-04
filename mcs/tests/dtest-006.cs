@@ -218,7 +218,7 @@ enum MyEnumUlong : ulong
 class Tester
 {
 	delegate void EmptyDelegate ();
-	delegate int IntDelegate ();
+	event Action ev_assign;
 
 	static void Assert<T> (T expected, T value, string name)
 	{
@@ -460,10 +460,12 @@ class Tester
 		Assert (d, "foo4", "#2");
 	}
 
-	// TODO:
-	void AddAssignmentEvent ()
+	void AddAssignEvent ()
 	{
-		// IMPLEMENT
+		dynamic d = null;
+		
+		// FIXME: Will have to special case events
+		// ev_assign += d;
 	}
 
 	void AndTest ()
@@ -1458,6 +1460,11 @@ class Tester
 		decimal v4 = 4m;
 		d *= v4;
 		Assert (d, 20m, "#4");
+		
+		int i = 3;
+		d = 5;
+		i *= d;
+		Assert (i, 15, "#5");
 	}
 
 	void MultiplyAssignCheckedTest ()
@@ -1939,10 +1946,14 @@ class Tester
 		}
 	}
 
-	// TODO:
-	void SubtractAssignmentEvent ()
+	void SubtractAssignEvent ()
 	{
-		// IMPLEMENT
+		Action print = () => { Console.WriteLine ("foo"); };
+		dynamic d = print;
+		
+		// FIXME: Will have to special case events
+		//ev_assign -= d;
+		//ev_assign ();
 	}
 
 	void UnaryDecrement ()

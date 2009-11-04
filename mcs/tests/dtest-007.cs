@@ -148,6 +148,20 @@ class Tester
 		var r2 = new D2 (d);
 	}
 
+	event Func<int> e;
+	int field;
+	void IsEvent ()
+	{
+		dynamic d = this;
+		d.e += new Func<int> (() => 3);
+		
+		// FIXME:
+		//Assert (3, d.e (), "#1");
+		
+		d.field += 5;
+		Assert (5, d.field, "#2");
+	}
+
 	void MemberGetTest ()
 	{
 		dynamic d = new Class ();
@@ -183,9 +197,8 @@ class Tester
 		d.Prop++;
 		Assert (2, d.Prop, "#1d");
 		
-		//FIXME: 
-		//d.Prop += 5;
-		//Assert (7, d.Prop, "#1e");
+		d.Prop += 5;
+		Assert (7, d.Prop, "#1e");
 
 		d.StringStatic = "no";
 		Assert ("no", d.StringStatic, "#2");
