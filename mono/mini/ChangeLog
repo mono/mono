@@ -1,5 +1,8 @@
 2009-11-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_save_xdebug_info): Bump the threshold for flushing
+	debug info to 100 because 10 still slows down gdb too much.
+
 	* method-to-ir.c (mono_method_to_ir): Avoid rethrowing thread abort exceptions
 	inside runtime invoke wrappers. This avoids the need to call ResetAbort () on
 	them in the wrappers.
