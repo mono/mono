@@ -5869,6 +5869,8 @@ namespace Mono.CSharp {
 
 			if (EventInfo.DeclaringType == ec.CurrentType ||
 			    TypeManager.IsNestedChildOf(ec.CurrentType, EventInfo.DeclaringType)) {
+					
+				// TODO: Breaks dynamic binder as currect context fields are imported and not compiled
 				EventField mi = TypeManager.GetEventField (EventInfo);
 
 				if (mi != null) {

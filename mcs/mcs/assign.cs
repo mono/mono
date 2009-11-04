@@ -678,7 +678,6 @@ namespace Mono.CSharp {
 
 			source = new Binary (op, left, right, true);
 
-			// TODO: TargetExpression breaks MemberAccess composition
 			if (target is DynamicMemberBinder) {
 				Arguments targs = ((DynamicMemberBinder) target).Arguments;
 				source = source.Resolve (ec);
@@ -696,7 +695,7 @@ namespace Mono.CSharp {
 					string method_prefix = op == Binary.Operator.Addition ?
 						Event.AEventAccessor.AddPrefix : Event.AEventAccessor.RemovePrefix;
 
-					Expression invoke = new DynamicInvocation (
+					var invoke = DynamicInvocation.CreateSpecialNameInvoke (
 						new MemberAccess (right, method_prefix + ma.Name, loc), args, loc).Resolve (ec);
 
 					args = new Arguments (1);
@@ -739,6 +738,12 @@ namespace Mono.CSharp {
 					source = Convert.ExplicitConversion (ec, source, target_type, loc);
 					return this;
 				}
+			}
+
+			if (TypeManager.IsDynamicType (source.Type)) {
+				Arguments arg = new Arguments (1);
+				arg.Add (new Argument (source));
+				return new SimpleAssign (target, new DynamicConversion (target_type, CSharpBinderFlags.ConvertExplicit, arg, loc), loc).Resolve (ec);
 			}
 
 			right.Error_ValueCannotBeConverted (ec, loc, target_type, false);

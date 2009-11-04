@@ -204,7 +204,7 @@ namespace Mono.CSharp
 
 		readonly Arguments arguments;
 		protected IDynamicBinder binder;
-		Expression binder_expr;
+		protected Expression binder_expr;
 
 		// Used by BinderFlags
 		protected CSharpBinderFlags flags;
@@ -431,25 +431,28 @@ namespace Mono.CSharp
 	class DynamicEventCompoundAssign : DynamicExpressionStatement, IDynamicBinder
 	{
 		string name;
-		ExpressionStatement assignment;
-		ExpressionStatement invoke;
+		Statement condition;
 
 		public DynamicEventCompoundAssign (string name, Arguments args, ExpressionStatement assignment, ExpressionStatement invoke, Location loc)
 			: base (null, args, loc)
 		{
 			this.name = name;
-			this.assignment = assignment;
-			this.invoke = invoke;
 			base.binder = this;
 
 			// Used by += or -= only
 			type = TypeManager.bool_type;
+
+			condition = new If (
+				new Binary (Binary.Operator.Equality, this, new BoolLiteral (true, loc)),
+				new StatementExpression (invoke), new StatementExpression (assignment),
+				loc);
 		}
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (2);
+			Arguments binder_args = new Arguments (3);
 
+			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 
@@ -458,12 +461,7 @@ namespace Mono.CSharp
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			Statement cond = new If (
-				new Binary (Binary.Operator.Equality, this, new BoolLiteral (true, loc)),
-				new StatementExpression (invoke),
-				new StatementExpression (assignment),
-				loc);
-			cond.Emit (ec);
+			condition.Emit (ec);
 		}
 	}
 
@@ -547,6 +545,13 @@ namespace Mono.CSharp
 			this.type = type;
 		}
 
+		public static DynamicInvocation CreateSpecialNameInvoke (ATypeNameExpression member, Arguments args, Location loc)
+		{
+			return new DynamicInvocation (member, args, loc) {
+				flags = CSharpBinderFlags.InvokeSpecialName
+			};
+		}
+
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
 			Arguments binder_args = new Arguments (member != null ? 5 : 3);
@@ -595,7 +600,7 @@ namespace Mono.CSharp
 
 		public override void EmitStatement (EmitContext ec)
 		{
-			flags = CSharpBinderFlags.ResultDiscarded;
+			flags |= CSharpBinderFlags.ResultDiscarded;
 			base.EmitStatement (ec);
 		}
 	}
@@ -656,7 +661,26 @@ namespace Mono.CSharp
 				setter = CreateCallSiteBinder (rc, setter_args, true);
 			}
 
+			eclass = ExprClass.Variable;
 			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// It's null for ResolveLValue used without assignment
+			if (binder_expr == null)
+				EmitCall (ec, setter, Arguments, false);
+			else
+				base.Emit (ec);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			// It's null for ResolveLValue used without assignment
+			if (binder_expr == null)
+				EmitCall (ec, setter, Arguments, true);
+			else
+				base.EmitStatement (ec);
 		}
 
 		#region IAssignMethod Members

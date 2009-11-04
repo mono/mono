@@ -5061,6 +5061,9 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsSpecialMethod (method))
 				return false;
 
+			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName))
+				return false;
+
 			ec.Report.SymbolRelatedToPreviousError (method);
 			ec.Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",
 				TypeManager.CSharpSignature (method, true));
