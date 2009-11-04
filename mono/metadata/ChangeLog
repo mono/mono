@@ -1,4 +1,11 @@
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Replace calls to mono_class_inflate_generic_type with
+	mono_class_inflate_generic_type_checked. Fixes #480005.
+
+	Backport of r144759 and r145284.
+
+2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
  
      * class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
      a MonoError parameter.
