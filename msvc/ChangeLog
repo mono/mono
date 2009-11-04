@@ -1,3 +1,9 @@
+2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	- Add kumpera's mono-error stuff to hopefully fix the build.
+
+	Backport of r144696 by Jonathan Pobst  <monkey@jpobst.com>
+
 2009-09-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* libtest.vcproj: Add toplevel include directory for config.h.
