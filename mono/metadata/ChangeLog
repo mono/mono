@@ -1,3 +1,18 @@
+2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+ 
+     * class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
+     a MonoError parameter.
+ 
+     * class-internals.h: Add new mono_class_inflate_generic_type_checked version that can does proper error handling.
+ 
+     * class.c (inflate_generic_type): Add a MonoError parameter. Don't assert on error, use new mono error machinery.
+ 
+     * class.c (mono_class_inflate_generic_type_with_mempool): Add new MonoError parameter.
+ 
+     * class.c, generics-sharing.c: Changes to handle mono_class_inflate_generic_type_with_mempool new signature.
+
+	Backport of r144688 and r144755.
+
 2009-11-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* string-icalls.c|h: Remove string internal calls that are not 
