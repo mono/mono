@@ -1,3 +1,12 @@
+2009-11-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* string-icalls.c|h: Remove string internal calls that are not 
+	used anymore by the class libraries.
+	* icall.c: Remove System_Reflection_FieldInfo_internal_from_handle
+	which is not used in the class librairies.
+	* icall-def.h: Update tables.
+	[Backport r145416]
+
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (fieldref_encode_signature): If field_image is NULL then
