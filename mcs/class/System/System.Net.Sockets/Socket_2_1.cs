@@ -423,14 +423,16 @@ namespace System.Net.Sockets {
 				closed = true;
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
+				Thread th = blocking_thread;
+				if (th != null) {
+					th.Abort ();
+					blocking_thread = null;
+				}
+
 				Linger (x);
 				//DateTime start = DateTime.UtcNow;
 				Close_internal (x, out error);
 				//Console.WriteLine ("Time spent in Close_internal: {0}ms", (DateTime.UtcNow - start).TotalMilliseconds);
-				if (blocking_thread != null) {
-					blocking_thread.Abort ();
-					blocking_thread = null;
-				}
 				if (error != 0)
 					throw new SocketException (error);
 			}
