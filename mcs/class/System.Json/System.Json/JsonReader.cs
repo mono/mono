@@ -259,7 +259,7 @@ namespace System.Json
 				case '"':
 				case '\\':
 				case '/':
-					vb.Append (c);
+					vb.Append ((char) c);
 					break;
 				case 'b':
 					vb.Append ('\x8');
