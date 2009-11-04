@@ -1,3 +1,8 @@
+2009-11-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Bump the threshold for flushing
+	debug info to 100 because 10 still slows down gdb too much.
+
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (load_simd_vreg): Add extra argument to signal if
