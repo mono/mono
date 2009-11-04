@@ -1,5 +1,11 @@
 2009-11-04 Jonathan Chambers <joncham@gmail.com>
 
+	* simd-intrinsics.c (simd_intrinsic_emit_setter): Unfix my fix.
+	
+	Code contributed under MIT/X11 license.
+
+2009-11-04 Jonathan Chambers <joncham@gmail.com>
+
 	* simd-intrinsics.c (simd_intrinsic_emit_setter): Fix windows build.
 	
 	Code contributed under MIT/X11 license.
