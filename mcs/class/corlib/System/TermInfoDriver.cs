@@ -359,8 +359,10 @@ namespace System {
 				break;
 			case ConsoleKey.Tab:
 				int n = 8 - (cursorLeft % 8);
-				for (int i = 0; i < n; i++)
+				for (int i = 0; i < n; i++){
 					IncrementX ();
+				}
+				WriteConsole ("\t");
 				break;
 			case ConsoleKey.Clear:
 				WriteConsole (clear);
@@ -713,11 +715,11 @@ namespace System {
 			}
 		}
 
+		//
+		// Requries that caller calls Init () if not !inited.
+		//
 		unsafe void CheckWindowDimensions ()
 		{
-			if (!inited)
-				Init ();
-
 			if (native_terminal_size == null || terminal_size == *native_terminal_size)
 				return;
 
