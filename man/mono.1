@@ -109,6 +109,13 @@ precompiled with AOT.
 .I write-symbols
 Instructs the AOT compiler to emit debug symbol information.
 .TP
+.I soft-debug
+This instructs the compiler to generate sequence point checks that
+allow Mono's soft debugger to debug applications even on systems where
+it is not possible to set breakpoints or to single step (certain
+hardware configurations like the cell phones and video gaming
+consoles). 
+.TP
 .I static
 Create an ELF object file (.o) which can be statically linked into an executable
 when embedding the mono runtime. When this option is used, the object file needs to
