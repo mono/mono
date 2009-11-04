@@ -8,6 +8,10 @@
 
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Improve error message.
+
+2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (fieldref_encode_signature): If field_image is NULL then
 	the token is already properly encoded. Fixs 4.0 build.
 
