@@ -1,3 +1,10 @@
+2009-11-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * mono-error.c, mono-error.h, mono-error-internal.h: New error handling
+    structures and functions.
+
+    * Makefile.am: Add new files.
+
 2009-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-proclib.c: hz is only multiplied by the number of cpus when
