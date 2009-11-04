@@ -8,6 +8,13 @@
 
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.h: Move mono_class_inflate_generic_type_checked...
+
+	* class-internals.h: to here and make it internal. We don't want to
+	further expose MonoGenericContext. 
+
+2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): Improve error message.
 
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
