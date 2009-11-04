@@ -1,3 +1,7 @@
+2009-11-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Add a test for 539394. Convert to using the TestRunner.
+
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* interface-with-static-method.il: New test for an interface with static
