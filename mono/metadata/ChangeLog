@@ -1,5 +1,14 @@
 2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (fieldref_encode_signature): Add new field_image parameter
+	to indicate which assembly to use when resolving a custom-mod.
+
+	Fixes handling of volatile fields used across assemblies as reported in #551513.
+
+	Backport of r145337.
+
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_methods): Only give a slot for virtual methods
 	of interfaces. Fixes IKVM.
 
