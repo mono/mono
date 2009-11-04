@@ -1618,7 +1618,7 @@ static guint32
 fieldref_encode_signature (MonoDynamicImage *assembly, MonoImage *field_image, MonoType *type)
 {
 	SigBuffer buf;
-	guint32 idx, i;
+	guint32 idx, i, token;
 
 	if (!assembly->save)
 		return 0;
@@ -1629,12 +1629,20 @@ fieldref_encode_signature (MonoDynamicImage *assembly, MonoImage *field_image, M
 	/* encode custom attributes before the type */
 	if (type->num_mods) {
 		for (i = 0; i < type->num_mods; ++i) {
-			MonoClass *class = mono_class_get (field_image, type->modifiers [i].token);
+			if (field_image) {
+				MonoClass *class = mono_class_get (field_image, type->modifiers [i].token);
+				g_assert (class);
+				token = mono_image_typedef_or_ref (assembly, &class->byval_arg);
+			} else {
+				token = type->modifiers [i].token;
+			}
+
 			if (type->modifiers [i].required)
 				sigbuffer_add_byte (&buf, MONO_TYPE_CMOD_REQD);
 			else
 				sigbuffer_add_byte (&buf, MONO_TYPE_CMOD_OPT);
-			sigbuffer_add_value (&buf, mono_image_typedef_or_ref (assembly, &class->byval_arg));
+
+			sigbuffer_add_value (&buf, token);
 		}
 	}
 	encode_type (assembly, type, &buf);
@@ -2948,10 +2956,10 @@ mono_image_get_generic_field_token (MonoDynamicImage *assembly, MonoReflectionFi
 	/* FIXME: We should do this in one place when a fieldbuilder is created */
 	if (fb->modreq || fb->modopt) {
 		custom = add_custom_modifiers (assembly, fb->type->type, fb->modreq, fb->modopt);
-		sig = fieldref_encode_signature (assembly, (MonoImage*)assembly, custom);
+		sig = fieldref_encode_signature (assembly, NULL, custom);
 		g_free (custom);
 	} else {
-		sig = fieldref_encode_signature (assembly, (MonoImage*)assembly, fb->type->type);
+		sig = fieldref_encode_signature (assembly, NULL, fb->type->type);
 	}
 
 	parent = create_generic_typespec (assembly, (MonoReflectionTypeBuilder *) fb->typeb);
