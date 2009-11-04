@@ -152,17 +152,10 @@ namespace System.ServiceModel.Channels
 				resstr = res.GetResponseStream ();
 			} catch (WebException we) {
 				res = we.Response;
-#if NET_2_1 // debug
-				Console.WriteLine (we);
-#endif
 				try {
 					// The response might contain SOAP fault. It might not.
 					resstr = res.GetResponseStream ();
 				} catch (WebException we2) {
-#if NET_2_1 // debug
-					Console.WriteLine (we2);
-#endif
-
 					channelResult.Complete (we2);
 					return;
 				}
