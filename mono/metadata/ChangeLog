@@ -1,3 +1,8 @@
+2009-11-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* locales.c (construct_number_format): Check if the number index is
+	valid before trying to use it, if not, just return.
+	
 2009-11-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Don't reset abort exceptions,
