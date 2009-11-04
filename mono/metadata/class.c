@@ -1698,9 +1698,14 @@ mono_class_setup_methods (MonoClass *class)
 		}
 	}
 
-	if (MONO_CLASS_IS_INTERFACE (class))
-		for (i = 0; i < class->method.count; ++i)
-			methods [i]->slot = i;
+	if (MONO_CLASS_IS_INTERFACE (class)) {
+		int slot = 0;
+		/*Only assign slots to virtual methods as interfaces are allowed to have static methods.*/
+		for (i = 0; i < class->method.count; ++i) {
+			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL)
+				methods [i]->slot = slot++;
+		}
+	}
 
 	/* Needed because of the double-checking locking pattern */
 	mono_memory_barrier ();
@@ -3238,7 +3243,10 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 		for (i = 0; i < parent->interface_offsets_count; i++) {
 			MonoClass *parent_interface = parent->interfaces_packed [i];
 			int interface_offset = mono_class_interface_offset (class, parent_interface);
-			
+			/*FIXME this is now dead code as this condition will never hold true.
+			Since interface offsets are inherited then the offset of an interface implemented
+			by a parent will never be the out of it's vtable boundary.
+			*/
 			if (interface_offset >= parent->vtable_size) {
 				int parent_interface_offset = mono_class_interface_offset (parent, parent_interface);
 				int j;
@@ -3537,7 +3545,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 		printf ("VTable %s (vtable entries = %d, interfaces = %d)\n", mono_type_full_name (&class->byval_arg), 
 			class->vtable_size, icount); 
 
-		for (i = 0; i < class->vtable_size; ++i) {
+		for (i = 0; i < cur_slot; ++i) {
 			MonoMethod *cm;
 	       
 			cm = vtable [i];
@@ -3556,15 +3564,15 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				ic = class->interfaces [i];
 				printf ("  slot offset: %03d, method count: %03d, iid: %03d %s\n",  
 					mono_class_interface_offset (class, ic),
-					ic->method.count, ic->interface_id, mono_type_full_name (&ic->byval_arg));
+					count_virtual_methods (ic), ic->interface_id, mono_type_full_name (&ic->byval_arg));
 			}
 
 			for (k = class->parent; k ; k = k->parent) {
 				for (i = 0; i < k->interface_count; i++) {
 					ic = k->interfaces [i]; 
-					printf ("  slot offset: %03d, method count: %03d, iid: %03d %s\n",  
+					printf ("  parent slot offset: %03d, method count: %03d, iid: %03d %s\n",  
 						mono_class_interface_offset (class, ic),
-						ic->method.count, ic->interface_id, mono_type_full_name (&ic->byval_arg));
+						count_virtual_methods (ic), ic->interface_id, mono_type_full_name (&ic->byval_arg));
 				}
 			}
 		}

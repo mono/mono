@@ -1,3 +1,12 @@
+2009-11-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_methods): Only give a slot for virtual methods
+	of interfaces. Fixes IKVM.
+
+	* class.c (mono_class_setup_vtable_general): Improve debug spew.
+
+	Backport of r145307.
+
 2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-mono-symfile.c (check_line): Fix the handling of IL offset 0.
