@@ -60,8 +60,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 			expr = new Compiler.ElementAccess (expr, args);
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (indexes));
-			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
+			binder.AddRestrictions (indexes);
+
+			return binder.Bind (callingContext, target);
 		}
 	}
 }

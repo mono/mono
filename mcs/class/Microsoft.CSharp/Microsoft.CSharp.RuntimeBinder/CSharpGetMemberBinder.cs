@@ -52,17 +52,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 			expr = new Compiler.MemberAccess (expr, Name);
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
 
-			if (target.Value == null) {
-				if (errorSuggestion != null)
-					return errorSuggestion;
-
-				var ex = CSharpBinder.CreateBinderException (this, "GetMember cannot perform binding on `null' value");
-				return new DynamicMetaObject (ex, restrictions);
-			}
-
-			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
+			return binder.Bind (callingContext, target);
 		}
 	}
 }

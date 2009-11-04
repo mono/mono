@@ -30,6 +30,7 @@ using System;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using Compiler = Mono.CSharp;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
@@ -44,21 +45,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 			this.callingContext = callingContext;
 		}
 		
-		[MonoTODO]
-		public sealed override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
+		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
 		{
-			throw new NotImplementedException ();
+			var ctx = CSharpBinder.CreateDefaultCompilerContext ();
+			CSharpBinder.InitializeCompiler (ctx);
+
+			var expr = Compiler.Expression.MemberLookup (ctx, callingContext, callingContext, name, Compiler.Location.Null);
+
+			var binder = new CSharpBinder (
+				this, new Compiler.BoolConstant (expr is Compiler.EventExpr, Compiler.Location.Null), null);
+
+			binder.AddRestrictions (target);
+			return binder.Bind (callingContext, target);
 		}
-		
-		public override bool Equals (object obj)
-		{
-			var other = obj as CSharpIsEventBinder;
-			return other != null && name == other.name && other.callingContext == callingContext;
-		}
-		
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
+
+		public override Type ReturnType {
+			get {
+				return typeof (bool);
+			}
 		}
 	}
 }

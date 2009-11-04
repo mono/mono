@@ -53,12 +53,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
 
-			Compiler.Expression expr = new Compiler.New (type, c_args, Compiler.Location.Null);
+			var binder = new CSharpBinder (
+				this, new Compiler.New (type, c_args, Compiler.Location.Null), null);
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (
-				CSharpBinder.CreateRestrictionsOnTarget (args));
+			binder.AddRestrictions (target);
+			binder.AddRestrictions (args);
 
-			return CSharpBinder.Bind (this, expr, callingContext, restrictions, null);
+			return binder.Bind (callingContext, target);
 		}
 
 		public override Type ReturnType {

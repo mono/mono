@@ -35,21 +35,59 @@ using System.Collections.Generic;
 
 namespace Microsoft.CSharp.RuntimeBinder
 {
-	static class CSharpBinder
+	class CSharpBinder
 	{
 		static ConstructorInfo binder_exception_ctor;
 		static object compiler_initializer = new object ();
 		static object resolver = new object ();
 
-		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
+		DynamicMetaObjectBinder binder;
+		Compiler.Expression expr;
+		BindingRestrictions restrictions;
+		DynamicMetaObject errorSuggestion;
+
+		public CSharpBinder (DynamicMetaObjectBinder binder, Compiler.Expression expr, DynamicMetaObject errorSuggestion)
+		{
+			this.binder = binder;
+			this.expr = expr;
+			this.restrictions = BindingRestrictions.Empty;
+			this.errorSuggestion = errorSuggestion;
+		}
+
+		public Compiler.ResolveContext.Options ResolveOptions { get; set; }
+
+		public void AddRestrictions (DynamicMetaObject arg)
+		{
+			restrictions.Merge (CreateRestrictionsOnTarget (arg));
+		}
+
+		public void AddRestrictions (DynamicMetaObject[] args)
+		{
+			restrictions.Merge (CreateRestrictionsOnTarget (args));
+		}
+
+		public DynamicMetaObject Bind (Type callingType, DynamicMetaObject target)
+		{
+			if (target.Value == null) {
+				if (errorSuggestion != null)
+					return errorSuggestion;
+
+				var ex = CreateBinderException ("Cannot perform member binding on `null' value");
+				return new DynamicMetaObject (ex, restrictions);
+			}
+
+			return Bind (callingType);
+		}
+
+		public DynamicMetaObject Bind ()
 		{
 			// Not ideal but fixes possible NRE during resolve accessibility checking
 			var callingType = typeof (CSharpBinder);
 
-			return Bind (binder, expr, callingType, restrictions, errorSuggestion);
+			return Bind (callingType);
 		}
 
-		public static DynamicMetaObject Bind (DynamicMetaObjectBinder binder, Compiler.Expression expr, Type callingType, BindingRestrictions restrictions, DynamicMetaObject errorSuggestion)
+		DynamicMetaObject Bind (Type callingType)
 		{
 			var ctx = CreateDefaultCompilerContext ();
 
@@ -58,7 +96,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			Expression res;
 			try {
 				// TODO: ResolveOptions
-				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType));
+				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
@@ -73,7 +111,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (errorSuggestion != null)
 					return errorSuggestion;
 
-				res = CreateBinderException (binder, e.Message);
+				res = CreateBinderException (e.Message);
 			} catch (Exception) {
 				if (errorSuggestion != null)
 					return errorSuggestion;
@@ -84,7 +122,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new DynamicMetaObject (res, restrictions);
 		}
 
-		public static Expression CreateBinderException (DynamicMetaObjectBinder binder, string message)
+		Expression CreateBinderException (string message)
 		{
 			if (binder_exception_ctor == null)
 				binder_exception_ctor = typeof (RuntimeBinderException).GetConstructor (new[] { typeof (string) });
@@ -142,7 +180,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return res;
 		}
 
-		static Compiler.CompilerContext CreateDefaultCompilerContext ()
+		public static Compiler.CompilerContext CreateDefaultCompilerContext ()
 		{
 			return new Compiler.CompilerContext (
 				new Compiler.Report (ErrorPrinter.Instance) {
@@ -151,7 +189,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			);
 		}
 
-		public static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
+		static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)
 		{
 			return arg.HasValue && arg.Value == null ?
 				BindingRestrictions.GetInstanceRestriction (arg.Expression, null) :
@@ -170,7 +208,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return res;
 		}
 
-		static void InitializeCompiler (Compiler.CompilerContext ctx)
+		public static void InitializeCompiler (Compiler.CompilerContext ctx)
 		{
 			if (Compiler.TypeManager.object_type != null)
 				return;

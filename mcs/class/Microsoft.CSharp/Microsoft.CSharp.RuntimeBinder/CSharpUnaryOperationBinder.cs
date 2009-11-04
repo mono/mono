@@ -87,8 +87,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 			}
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target);
-			return CSharpBinder.Bind (this, expr, restrictions, errorSuggestion);
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
+
+			return binder.Bind ();
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2009-11-04  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpIsEventBinder.cs: Dynamic events implementation.
+	
+	* *.cs: Make CSharpBinder instance and share common checks.
+
 2009-11-03  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpInvokeConstructorBinder.cs: Dynamic constructors.

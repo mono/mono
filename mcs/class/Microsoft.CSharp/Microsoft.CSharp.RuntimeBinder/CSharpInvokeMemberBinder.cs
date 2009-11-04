@@ -78,10 +78,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (
-				CSharpBinder.CreateRestrictionsOnTarget (args));
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
+			binder.AddRestrictions (args);
 
-			return CSharpBinder.Bind (this, expr, callingContext, restrictions, errorSuggestion);
+			if ((flags & CSharpBinderFlags.InvokeSpecialName) != 0)
+				binder.ResolveOptions |= Compiler.ResolveContext.Options.InvokeSpecialName;
+
+			return binder.Bind (callingContext, target);
 		}
 	}
 }

@@ -140,14 +140,18 @@ namespace Microsoft.CSharp.RuntimeBinder
 				expr = new Compiler.CompoundAssign (oper, target_expr, right, left);
 			} else {
 				expr = new Compiler.Binary (oper, left, right);
-				expr = new Compiler.Cast (new Compiler.TypeExpression (typeof (object), Compiler.Location.Null), expr);
 			}
+
+			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 			
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
 
-			var restrictions = CSharpBinder.CreateRestrictionsOnTarget (target).Merge (CSharpBinder.CreateRestrictionsOnTarget (arg));
-			return CSharpBinder.Bind (this, expr, restrictions, errorSuggestion);
+			var binder = new CSharpBinder (this, expr, errorSuggestion);
+			binder.AddRestrictions (target);
+			binder.AddRestrictions (arg);
+
+			return binder.Bind ();
 		}
 	}
 }
