@@ -1,3 +1,9 @@
+2009-11-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Avoid rethrowing thread abort exceptions
+	inside runtime invoke wrappers. This avoids the need to call ResetAbort () on
+	them in the wrappers.
+
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add an assert.
