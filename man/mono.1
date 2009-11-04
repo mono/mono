@@ -148,6 +148,38 @@ The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
 .TP
+\fB--debugger-agent=[options]\fR 
+This instructs the Mono runtime to connect the debugger engine to a
+user interface (the debugger agent) will control the Mono process.
+This option is typically used by IDEs, like the MonoDevelop IDE.
+.PP
+The
+configuration is specified using one of more of the following options:
+.RS
+.ne 8
+.TP
+.I transport=transport_name
+.Sp
+This is used to specify the transport that the debugger will use to
+communicate.   It must be specified and currently requires this to
+be 'dt_socket'. 
+.TP
+.I address=host:port
+.Sp
+Use this option to specify the IP address where your debugger agent is
+listening to.
+.TP
+.I loglevel=LEVEL
+.Sp
+Specifies the diagnostics log level for 
+.TP
+.I logfile=filename
+.Sp
+Used to specify the file where the log will be stored, it defaults to
+standard output.
+.ne
+.RE
+.TP
 \fB--desktop\fR
 Configures the virtual machine to be better suited for desktop
 applications.  Currently this sets the GC system to avoid expanding
