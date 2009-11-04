@@ -1,19 +1,8 @@
-2009-09-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+2009-10-23  Alexandre Gomes  <alexmipego@gmail.com>
 
-	* EndPointListener.cs: fix matching a listener in presence of a query
-	string or anchor.
-
-2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* HttpListenerRequest.cs: add the right status code.
-	* HttpConnection.cs: exception might come from more places when
-	reading the input. Catch all of them.
-
-2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* WebRequest.cs: handle upper and lowercase HTTP_PROXY and the Any
-	address. Fixes bug #537283.
-
+	* WebClient.cs: Fixed GetWebRequest overriding problems, bug: 
+	  https://bugzilla.novell.com/show_bug.cgi?id=549580
+	  
 2009-09-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: if the request has already finished reading, don't
