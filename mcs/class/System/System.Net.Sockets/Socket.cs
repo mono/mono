@@ -3724,12 +3724,13 @@ namespace System.Net.Sockets
 				closed = true;
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
-				Close_internal (x, out error);
-				if (blocking_thread != null) {
-					blocking_thread.Abort ();
+				Thread th = blocking_thread;
+				if (th != null) {
+					th.Abort ();
 					blocking_thread = null;
 				}
 
+				Close_internal (x, out error);
 				if (error != 0)
 					throw new SocketException (error);
 			}
