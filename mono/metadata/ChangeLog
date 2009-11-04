@@ -1,3 +1,8 @@
+2009-11-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Don't reset abort exceptions,
+	since that loses the abort state. Fixes #539394.
+
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): For icall wrappers, add an
