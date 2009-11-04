@@ -149,8 +149,9 @@ specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
 .TP
 \fB--debugger-agent=[options]\fR 
-This instructs the Mono runtime to connect the debugger engine to a
-user interface (the debugger agent) will control the Mono process.
+This instructs the Mono runtime to
+start a debugging agent inside the Mono runtime and connect it to a
+client user interface will control the Mono process.
 This option is typically used by IDEs, like the MonoDevelop IDE.
 .PP
 The
@@ -166,7 +167,7 @@ be 'dt_socket'.
 .TP
 .I address=host:port
 .Sp
-Use this option to specify the IP address where your debugger agent is
+Use this option to specify the IP address where your debugger client is
 listening to.
 .TP
 .I loglevel=LEVEL
