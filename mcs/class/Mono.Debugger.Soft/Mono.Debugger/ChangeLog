@@ -1,5 +1,7 @@
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* VirtualMachineManager.cs (Listen): Resurrect the old listen method.
+
 	* VirtualMachineManager.cs (Connect): New method to connect to a runtime
 	listening at the provided address.
 
