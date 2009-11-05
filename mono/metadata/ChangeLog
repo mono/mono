@@ -1,5 +1,9 @@
 2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	metadata-verify.c (verify_tables_schema): Fix the error message.
+
+2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c: Change event table schema to use TDOR for event type
 	as this is what it's meant to be.
 
