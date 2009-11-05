@@ -1,3 +1,9 @@
+2009-11-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (dcheck): New target to run the soft-debugger tests.
+
+	* dtest.cs dtest-app.cs: New files containing tests for the soft debugger.
+
 2009-11-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Add a test for 539394. Convert to using the TestRunner.
