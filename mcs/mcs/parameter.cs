@@ -349,51 +349,8 @@ namespace Mono.CSharp {
 			if (pem != null && pem.IsDummy)
 				return parameter_type;
 
-			if (default_expr != null) {
-				ResolveContext ec = new ResolveContext (rc);
-				default_expr = default_expr.Resolve (ec);
-				if (default_expr != null) {
-					Constant value = default_expr as Constant;
-					if (value == null) {
-						if (default_expr != null) {
-							bool is_valid = false;
-							if (default_expr is DefaultValueExpression) {
-								is_valid = true;
-							} else if (default_expr is New && ((New) default_expr).IsDefaultValueType) {
-								is_valid = TypeManager.IsEqual (parameter_type, default_expr.Type) ||
-									 (TypeManager.IsNullableType (parameter_type) &&
-										Convert.ImplicitNulableConversion (ec, default_expr, parameter_type) != EmptyExpression.Null);
-							} else {
-								rc.Compiler.Report.Error (1736, default_expr.Location,
-									"The expression being assigned to optional parameter `{0}' must be a constant or default value",
-									Name);
-								is_valid = true;
-							}
-
-							if (!is_valid) {
-								default_expr = null;								
-								ec.Compiler.Report.Error (1763, Location,
-									"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
-									Name, GetSignatureForError ());
-							}
-						}
-					} else {
-						Constant c = value.ConvertImplicitly (parameter_type);
-						if (c == null) {
-							if (parameter_type == TypeManager.object_type) {
-								rc.Compiler.Report.Error (1763, Location,
-									"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
-									Name, GetSignatureForError ());
-							} else {
-								rc.Compiler.Report.Error (1750, Location,
-									"Optional parameter value `{0}' cannot be converted to parameter type `{1}'",
-									value.GetValue (), GetSignatureForError ());
-							}
-							default_expr = null;
-						}
-					}
-				}
-			}
+			if (default_expr != null)
+				default_expr = ResolveDefaultValue (new ResolveContext (rc));
 
 			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 &&
 				TypeManager.IsSpecialType (parameter_type)) {
@@ -421,6 +378,54 @@ namespace Mono.CSharp {
 			}
 
 			return parameter_type;
+		}
+
+		Expression ResolveDefaultValue (ResolveContext rc)
+		{
+			default_expr = default_expr.Resolve (rc);
+			if (default_expr == null)
+				return null;
+
+			if (!(default_expr is Constant || default_expr is DefaultValueExpression)) {
+				if (TypeManager.IsNullableType (parameter_type)) {
+					rc.Compiler.Report.Error (1770, default_expr.Location,
+						"The expression being assigned to nullable optional parameter `{0}' must be default value",
+						Name);
+				} else {
+					rc.Compiler.Report.Error (1736, default_expr.Location,
+						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+						Name);
+				}
+
+				return null;
+			}
+
+			if (TypeManager.IsEqual (default_expr.Type, parameter_type))
+				return default_expr;
+
+			if (TypeManager.IsNullableType (parameter_type)) {
+				if (Convert.ImplicitNulableConversion (rc, default_expr, parameter_type) != null)
+					return default_expr;
+			} else {
+				var res = Convert.ImplicitConversionStandard (rc, default_expr, parameter_type, default_expr.Location);
+				if (res != null) {
+					if (!default_expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type != TypeManager.string_type) {
+						rc.Compiler.Report.Error (1763, default_expr.Location,
+							"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+							Name, GetSignatureForError ());
+
+						return null;
+					}
+
+					return res;
+				}
+			}
+
+			rc.Compiler.Report.Error (1750, Location,
+				"Optional parameter expression of type `{0}' cannot be converted to parameter type `{1}'",
+				TypeManager.CSharpName (default_expr.Type), GetSignatureForError ());
+
+			return null;
 		}
 
 		public void ResolveVariable (int idx)
@@ -527,7 +532,7 @@ namespace Mono.CSharp {
 					if (default_expr.Type == TypeManager.decimal_type) {
 						builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c));
 					} else {
-						builder.SetConstant (c.GetValue ());
+						builder.SetConstant (c.GetTypedValue ());
 					}
 				}
 			}

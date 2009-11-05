@@ -507,7 +507,7 @@ namespace Mono.CSharp {
 
 		protected override bool HasElementTypeImpl ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters)
@@ -545,7 +545,7 @@ namespace Mono.CSharp {
 		}
 
 		public override string Namespace {
-			get { throw new NotImplementedException (); }
+			get { return UnderlyingSystemType.Namespace; }
 		}
 
 		public override Type UnderlyingSystemType {
@@ -578,6 +578,12 @@ namespace Mono.CSharp {
 
 		public override RuntimeTypeHandle TypeHandle {
 			get { return UnderlyingSystemType.TypeHandle; }
+		}
+
+		public override Type MakeByRefType ()
+		{
+			// TODO: Wrong, hides dynamic type
+			return UnderlyingSystemType.MakeByRefType ();
 		}
 	}
 

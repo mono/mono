@@ -250,7 +250,8 @@ namespace Mono.CSharp
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			throw new NotImplementedException ();
+			ec.Report.Error (1963, loc, "An expression tree cannot contain a dynamic operation");
+			return null;
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
@@ -502,7 +503,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("InvokeConstructor", loc), binder_args);
 		}
@@ -521,7 +522,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder (isSet ? "SetIndex" : "GetIndex", loc), binder_args);
 		}
@@ -590,7 +591,7 @@ namespace Mono.CSharp
 				// Cannot be null because .NET trips over
 				real_args = new ArrayCreation (new MemberAccess (GetBinderNamespace (loc), "CSharpArgumentInfo", loc), "[]", new ArrayList (0), loc);
 			} else {
-				real_args = new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc);
+				real_args = new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc);
 			}
 
 			binder_args.Add (new Argument (real_args));
@@ -622,7 +623,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder (isSet ? "SetMember" : "GetMember", loc), binder_args);
 		}
@@ -654,6 +655,11 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
+			if (right_side == EmptyExpression.OutAccess.Instance) {
+				right_side.DoResolveLValue (rc, this);
+				return null;
+			}
+
 			if (DoResolveCore (rc)) {
 				setter_args = new Arguments (Arguments.Count + 1);
 				setter_args.AddRange (Arguments);
@@ -722,7 +728,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("UnaryOperation", loc), binder_args);
 		}

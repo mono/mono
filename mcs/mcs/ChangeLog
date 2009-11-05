@@ -1,5 +1,12 @@
 2009-11-05  Marek Safar  <marek.safar@gmail.com>
 
+	* parameter.cs: Handle nullable parameter default expression.
+	
+	* argument.cs, dynamic.cs, expression.cs, support.cs, ecore.cs,
+	class.cs, attribute.cs: Check for wrong dynamic arguments.
+
+2009-11-05  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs: Dynamic statements.
 
 2009-11-04  Marek Safar  <marek.safar@gmail.com>

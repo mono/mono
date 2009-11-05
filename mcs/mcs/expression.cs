@@ -3677,7 +3677,7 @@ namespace Mono.CSharp {
 
 			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), TypeManager.binder_flags)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (DynamicExpressionStatement.GetBinder ("BinaryOperation", loc), binder_args);
 		}
@@ -4592,7 +4592,7 @@ namespace Mono.CSharp {
 			ResolveLocalInfo ();
 
 			// is out param
-			if (right_side == EmptyExpression.OutAccess)
+			if (right_side == EmptyExpression.OutAccess.Instance)
 				local_info.Used = true;
 
 			// Infer implicitly typed local variable
@@ -4608,7 +4608,7 @@ namespace Mono.CSharp {
 			if (is_readonly) {
 				int code;
 				string msg;
-				if (right_side == EmptyExpression.OutAccess) {
+				if (right_side == EmptyExpression.OutAccess.Instance) {
 					code = 1657; msg = "Cannot pass `{0}' as a ref or out argument because it is a `{1}'";
 				} else if (right_side == EmptyExpression.LValueMemberAccess) {
 					code = 1654; msg = "Cannot assign to members of `{0}' because it is a `{1}'";
@@ -5656,12 +5656,6 @@ namespace Mono.CSharp {
 
 			if (Emit (ec, v))
 				ec.ig.Emit (OpCodes.Pop);
-		}
-
-		public bool IsDefaultValueType {
-			get {
-				return TypeManager.IsValueType (type) && !HasInitializer && Arguments == null;
-			}
 		}
 
 		public virtual bool HasInitializer {
@@ -6753,7 +6747,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentType.IsClass){
 				if (right_side == EmptyExpression.UnaryAddress)
 					ec.Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
-				else if (right_side == EmptyExpression.OutAccess)
+				else if (right_side == EmptyExpression.OutAccess.Instance)
 					ec.Report.Error (1605, loc, "Cannot pass `this' as a ref or out argument because it is read-only");
 				else
 					ec.Report.Error (1604, loc, "Cannot assign to `this' because it is read-only");
@@ -8478,9 +8472,8 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (right_side == EmptyExpression.OutAccess) {
-				ec.Report.Error (206, loc,
-					"A property or indexer may not be passed as an out or ref parameter");
+			if (right_side == EmptyExpression.OutAccess.Instance) {
+				right_side.DoResolveLValue (ec, this);
 				return null;
 			}
 
@@ -8866,7 +8859,19 @@ namespace Mono.CSharp {
 	public class EmptyExpression : Expression {
 		public static readonly Expression Null = new EmptyExpression ();
 
-		public static readonly EmptyExpression OutAccess = new EmptyExpression ();
+		public class OutAccess : EmptyExpression
+		{
+			public static readonly OutAccess Instance = new OutAccess ();
+
+			public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+			{
+				rc.Report.Error (206, right_side.Location,
+					"A property, indexer or dynamic member access may not be passed as `ref' or `out' parameter");
+
+				return null;
+			}
+		}
+
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();

@@ -447,8 +447,10 @@ namespace Mono.CSharp {
 			if (PosArguments != null) {
 				bool dynamic;
 				PosArguments.Resolve (ec, out dynamic);
-				if (dynamic)
-					throw new NotImplementedException ("dynamic");
+				if (dynamic) {
+					Error_AttributeArgumentNotValid (ec, loc);
+					return null;
+				}
 			}
 
 			MethodGroupExpr mg = MemberLookupFinal (ec, ec.CurrentType,

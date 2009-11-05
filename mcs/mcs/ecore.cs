@@ -564,7 +564,7 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			int errors = ec.Report.Errors;
-			bool out_access = right_side == EmptyExpression.OutAccess;
+			bool out_access = right_side == EmptyExpression.OutAccess.Instance;
 
 			Expression e = DoResolveLValue (ec, right_side);
 
@@ -2329,6 +2329,49 @@ namespace Mono.CSharp {
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			expr.MutateHoistedGenericType (storey);
+		}
+	}
+
+	//
+	// Standard composite pattern
+	//
+	public abstract class CompositeExpression : Expression
+	{
+		Expression expr;
+
+		protected CompositeExpression (Expression expr)
+		{
+			this.expr = expr;
+			this.loc = expr.Location;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			return expr.CreateExpressionTree (ec);
+		}
+
+		public Expression Child {
+			get { return expr; }
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			expr = expr.Resolve (ec);
+			if (expr != null) {
+				type = expr.Type;
+				eclass = expr.eclass;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+		}
+
+		public override bool IsNull {
+			get { return expr.IsNull; }
 		}
 	}
 
@@ -4984,7 +5027,7 @@ namespace Mono.CSharp {
 		Expression Report_AssignToReadonly (ResolveContext ec, Expression right_side)
 		{
 			int i = 0;
-			if (right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess)
+			if (right_side == EmptyExpression.OutAccess.Instance || right_side == EmptyExpression.LValueMemberOutAccess)
 				i += 1;
 			if (IsStatic)
 				i += 2;
@@ -5002,7 +5045,7 @@ namespace Mono.CSharp {
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
 			bool lvalue_instance = !FieldInfo.IsStatic && TypeManager.IsValueType (FieldInfo.DeclaringType);
-			bool out_access = right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess;
+			bool out_access = right_side == EmptyExpression.OutAccess.Instance || right_side == EmptyExpression.LValueMemberOutAccess;
 
 			Expression e = DoResolve (ec, lvalue_instance, out_access);
 
@@ -5013,7 +5056,7 @@ namespace Mono.CSharp {
 			if (fb != null) {
 				fb.SetAssigned ();
 
-				if ((right_side == EmptyExpression.UnaryAddress || right_side == EmptyExpression.OutAccess) &&
+				if ((right_side == EmptyExpression.UnaryAddress || right_side == EmptyExpression.OutAccess.Instance) &&
 					(fb.ModFlags & Modifiers.VOLATILE) != 0) {
 					ec.Report.Warning (420, 1, loc,
 						"`{0}': A volatile field references will not be treated as volatile",
@@ -5041,7 +5084,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (right_side == EmptyExpression.OutAccess &&
+			if (right_side == EmptyExpression.OutAccess.Instance &&
 			    !IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
 				ec.Report.SymbolRelatedToPreviousError (DeclaringType);
 				ec.Report.Warning (197, 1, loc,
@@ -5594,13 +5637,12 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (right_side == EmptyExpression.OutAccess) {
+			if (right_side == EmptyExpression.OutAccess.Instance) {
 				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
 					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
 					    PropertyInfo.Name);
 				} else {
-					ec.Report.Error (206, loc, "A property or indexer `{0}' may not be passed as `ref' or `out' parameter",
-					      GetSignatureForError ());
+					right_side.DoResolveLValue (ec, this);
 				}
 				return null;
 			}

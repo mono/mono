@@ -117,7 +117,7 @@ namespace Mono.CSharp
 
 				// Verify that the argument is writeable
 				if (Expr != null && IsByRef)
-					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
+					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess.Instance);
 
 				if (Expr == null)
 					Expr = EmptyExpression.Null;
@@ -213,7 +213,7 @@ namespace Mono.CSharp
 			this.args.AddRange (args.args);
 		}
 
-		public ArrayList CreateDynamicBinderArguments ()
+		public ArrayList CreateDynamicBinderArguments (ResolveContext rc)
 		{
 			ArrayList all = new ArrayList (args.Count);
 			Location loc = Location.Null;
@@ -242,7 +242,23 @@ namespace Mono.CSharp
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc));
 				}
 
-				if (!TypeManager.IsDynamicType (a.Expr.Type)) {
+				var arg_type = a.Expr.Type;
+
+				if (!TypeManager.IsDynamicType (arg_type)) {
+					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
+					if (mg != null) {
+						rc.Report.Error (1976, a.Expr.Location,
+							"The method group `{0}' cannot be used as an argument of dynamic operation. Consider using parentheses to invoke the method",
+							mg.Name);
+					} else if (arg_type == InternalType.AnonymousMethod) {
+						rc.Report.Error (1977, a.Expr.Location,
+							"An anonymous method or lambda expression cannot be used as an argument of dynamic operation without a cast");
+					} else if (arg_type == TypeManager.void_type || arg_type == InternalType.Arglist || arg_type.IsPointer) {
+						rc.Report.Error (1978, a.Expr.Location,
+							"An expression of type `{0}' cannot be used as an argument of dynamic operation",
+							TypeManager.CSharpName (arg_type));
+					}
+
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc));
 				}

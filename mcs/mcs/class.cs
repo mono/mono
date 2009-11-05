@@ -1168,6 +1168,13 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 					break;
 				}
+
+				if (tc_names [i].Variance != type_params [i].Variance) {
+					Report.SymbolRelatedToPreviousError (PartialContainer.Location, "");
+					Report.Error (1067, Location, "Partial declarations of `{0}' must have the same type parameter variance modifiers",
+						GetSignatureForError ());
+					break;
+				}
 			}
 		}
 
@@ -4432,7 +4439,9 @@ namespace Mono.CSharp {
 			caching_flags |= Flags.PartialDefinitionExists;
 			methodDefinition.partialMethodImplementation = this;
 
+			// Ensure we are always using method declaration parameters
 			for (int i = 0; i < methodDefinition.Parameters.Count; ++i ) {
+				Parameters [i].Name = methodDefinition.Parameters [i].Name;
 				Parameters [i].DefaultValue = methodDefinition.Parameters [i].DefaultValue;
 			}
 
@@ -4501,8 +4510,10 @@ namespace Mono.CSharp {
 				}
 
 				if (dynamic) {
-					SimpleName ctor = new SimpleName (ConstructorBuilder.ConstructorName, loc);
-					return new DynamicInvocation (ctor, argument_list, loc).Resolve (ec) as ExpressionStatement;
+					ec.Report.Error (1975, loc,
+						"The constructor call cannot be dynamically dispatched within constructor initializer");
+
+					return null;
 				}
 			}
 
