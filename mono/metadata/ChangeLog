@@ -16,6 +16,12 @@
 
 2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object-internals.h: Add mono_string_to_utf8_checked.
+
+	* object.c: Implement mono_string_to_utf8_checked.
+
+2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Add missing check for load errors after every
 	call to mono_class_setup_fields
 
