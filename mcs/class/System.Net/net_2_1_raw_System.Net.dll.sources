@@ -1,3 +1,6 @@
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 System.Net/Dns_2_1.cs
 System.Net/DnsEndPoint_2_1.cs

@@ -1,3 +1,10 @@
+2009-11-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* net_2_1_raw_System.Net.dll.sources: Add Consts.cs, Locale.cs and
+	MonoTODOAttribute.cs to the build to fix ambiguous references to
+	those types in corlib and System.dll. This way we'll use our own
+	types.
+
 2009-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.Net.dll.sources: Remove Timer_2_1.cs and 
