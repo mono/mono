@@ -5511,5 +5511,10 @@ mono_debugger_agent_handle_exception (MonoException *ext, MonoContext *ctx)
 {
 }
 
+void
+mono_debugger_agent_handle_unhandled_exception (MonoException *exc, MonoContext *ctx)
+{
+	
+}
 #endif
 
