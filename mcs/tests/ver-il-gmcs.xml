@@ -36560,6 +36560,19 @@
       </method>
     </type>
   </test>
+  <test name="test-734.cs">
+    <type name="M">
+      <method name="Void Run()">
+        <size>19</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-74.cs">
     <type name="X">
       <method name="Void .ctor()">
