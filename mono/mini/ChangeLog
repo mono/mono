@@ -1,5 +1,12 @@
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Don't allow OP_SEQ_POINT in
+	AOT, as it is not implemented yet.
+
+	* mini-x86.c (mono_arch_output_basic_block): Ditto.
+
+2009-11-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (debugger_thread): Call mono_set_is_debugger_attached ()
 	after the client connects/disconnects.
 
