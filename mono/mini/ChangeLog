@@ -1,5 +1,10 @@
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c: Add a 'onuncaught' option to start the debugger agent
+	only on an uncaught exception.
+
+	* mini-exceptions.c: Notify the debugger agent on an uncaught exception.
+
 	* debugger-agent.c: Add a 'launch' option.
 
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
