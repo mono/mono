@@ -1,3 +1,7 @@
+2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* debugger-agent.c: Fix windows build.
+
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (debugger_thread): Call mono_set_is_debugger_attached ()
