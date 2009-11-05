@@ -266,6 +266,12 @@ namespace System.Globalization
 
 		public virtual string Name {
 			get {
+#if NET_2_1 && !MONOTOUCH
+				if (m_name == "zh-CHS")
+					return "zh-Hans";
+				if (m_name == "zh-CHT")
+					return "zh-Hant";
+#endif
 				return(m_name);
 			}
 		}
@@ -488,12 +494,14 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
+#if !NET_2_1 || MONOTOUCH
 			if (IsNeutralCulture) {
 				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 						"a neutral culture. It can not be used in formatting " +
 						"and parsing and therefore cannot be set as the thread's " +
 						"current culture.");
 			}
+#endif
 		}
 
 		public virtual NumberFormatInfo NumberFormat {
@@ -611,6 +619,10 @@ namespace System.Globalization
 			// It is sort of hack to get those new pseudo-alias
 			// culture names that are not supported in good old
 			// Windows.
+#if NET_2_1 && !MONOTOUCH
+			if (locale == "zh-chs" || locale == "zh-cht")
+				return false;
+#endif
 			switch (locale) {
 			case "zh-hans":
 				locale = "zh-chs";
