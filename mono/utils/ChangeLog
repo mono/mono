@@ -1,3 +1,15 @@
+2009-11-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-error-internals.h: Add mono_error_set_argument and mono_error_raise_exception.
+
+	* mono-error.h: Add new MONO_ERROR_ARGUMENT constant for
+	ArgumentException.
+
+	* mono-error.c: Implement mono_error_set_argument, mono_error_raise_exception.
+
+ 	* mono-error.c (mono_error_prepare_exception) Init error_out at the beginning. Add support
+	for MONO_ERROR_ARGUMENT.
+
 2009-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-proclib.c: hz is only multiplied by the number of cpus when
