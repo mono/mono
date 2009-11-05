@@ -51,16 +51,16 @@ run-test-local: clean-local
 
 ifeq (net_4_0, $(PROFILE))
 COMPILER_NAME = dmcs
-TEST_PATTERN = '*cs*.cs'
+TEST_PATTERN = 'v4'
 endif
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
-TEST_PATTERN = '*cs*.cs'
+TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
 endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
-TEST_PATTERN = '*cs*.cs'
+TEST_PATTERN = 'v2'
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
