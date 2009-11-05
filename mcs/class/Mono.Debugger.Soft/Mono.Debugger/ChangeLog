@@ -1,3 +1,8 @@
+2009-11-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachineManager.cs (Connect): New method to connect to a runtime
+	listening at the provided address.
+
 2009-11-04  Lluis Sanchez  <lluis@novell.com>
 
 	* VirtualMachineManager.cs: Properly redirect standard output.
