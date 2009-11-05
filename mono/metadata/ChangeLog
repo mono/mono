@@ -1,3 +1,11 @@
+2009-11-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Diagnostics_Debugger_IsAttached_internal): Call
+	mono_is_debugger_attached () too.
+
+	* mono-debug.c (mono_is_debugger_attached): New helper function.
+	(mono_set_is_debugger_attached): Ditto.
+
 2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c: Add missing check for load errors after every
