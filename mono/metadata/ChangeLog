@@ -1,3 +1,13 @@
+2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_image_add_to_name_cache): Assert on duplicate
+	insertion.
+
+	* reflection.c (mono_reflection_setup_internal_class): Avoid
+	registering a gc root the same MonoClass multiple times.
+	Don't register nested types on the global scope as they should
+	not be available there.
+
 2009-11-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* culture-info-tables.h: regenerated.
