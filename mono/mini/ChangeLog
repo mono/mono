@@ -1,5 +1,8 @@
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (debugger_thread): Call mono_set_is_debugger_attached ()
+	after the client connects/disconnects.
+
 	* debugger-agent.c: Add an 'onthrow' option to start the debugger agent
 	when an exception of a given type is thrown.
 
