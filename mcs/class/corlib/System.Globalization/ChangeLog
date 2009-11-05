@@ -1,3 +1,9 @@
+2009-11-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* CultureInfo.cs: Allow neutral cultures, and fix zh-Hans/zh-Hant
+	- they're stored internally as zh-chs/zh-cht, and only visible as
+	zh-Hans/zh-Hant. zh-CHS/zh-CHS are invalid cultures in SL.
+
 2009-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompareInfo.cs: Add/fix CompareOptions validations. Reduce code
