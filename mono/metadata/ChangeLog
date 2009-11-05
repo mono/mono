@@ -1,3 +1,7 @@
+2009-11-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* debug-helpers.c: avoid g_strdup() in mono_type_full_name().
+
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Replace calls to mono_class_inflate_generic_type with
@@ -6,17 +10,17 @@
 	Backport of r144759 and r145284.
 
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
- 
-     * class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
-     a MonoError parameter.
- 
-     * class-internals.h: Add new mono_class_inflate_generic_type_checked version that can does proper error handling.
- 
-     * class.c (inflate_generic_type): Add a MonoError parameter. Don't assert on error, use new mono error machinery.
- 
-     * class.c (mono_class_inflate_generic_type_with_mempool): Add new MonoError parameter.
- 
-     * class.c, generics-sharing.c: Changes to handle mono_class_inflate_generic_type_with_mempool new signature.
+
+	* class-internals.h: Change signature of mono_class_inflate_generic_type_with_mempool to take
+	a MonoError parameter.
+
+	* class-internals.h: Add new mono_class_inflate_generic_type_checked version that can does proper error handling.
+
+	* class.c (inflate_generic_type): Add a MonoError parameter. Don't assert on error, use new mono error machinery.
+
+	* class.c (mono_class_inflate_generic_type_with_mempool): Add new MonoError parameter.
+
+	* class.c, generics-sharing.c: Changes to handle mono_class_inflate_generic_type_with_mempool new signature.
 
 	Backport of r144688 and r144755.
 
