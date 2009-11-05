@@ -4904,11 +4904,15 @@ namespace Mono.CSharp {
 
 			expr_type = expr.Type;
 
-			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)) {
-				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type) &&
+				Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
+				if (!TypeManager.IsDynamicType (expr_type)) {
 					Using.Error_IsNotConvertibleToIDisposable (ec, expr);
 					return false;
 				}
+
+				expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.idisposable_type, loc);
+				expr_type = expr.Type;
 			}
 
 			local_copy = new TemporaryVariable (expr_type, loc);
@@ -5093,6 +5097,13 @@ namespace Mono.CSharp {
 
 			Expression e = Convert.ImplicitConversionStandard (ec, assign, TypeManager.idisposable_type, var.Location);
 			if (e == null) {
+				if (TypeManager.IsDynamicType (assign.Type)) {
+					e = Convert.ImplicitConversionRequired (ec, assign, TypeManager.idisposable_type, loc);
+					var = new TemporaryVariable (e.Type, loc);
+					assign = new SimpleAssign (var, e, loc).ResolveStatement (ec);
+					return true;
+				}
+
 				Error_IsNotConvertibleToIDisposable (ec, var);
 				return false;
 			}
@@ -5643,6 +5654,10 @@ namespace Mono.CSharp {
 			{
 				enumerator_type = TypeManager.ienumerator_type;
 
+				bool is_dynamic = TypeManager.IsDynamicType (expr.Type);
+				if (is_dynamic)
+					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
+				
 				if (!ProbeCollectionType (ec, expr.Type)) {
 					Error_Enumerator (ec);
 					return false;
@@ -5651,7 +5666,9 @@ namespace Mono.CSharp {
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
 					// Infer implicitly typed local variable from foreach enumerable type
-					var_type = new TypeExpression (get_current.PropertyInfo.PropertyType, var_type.Location);
+					var_type = new TypeExpression (
+						is_dynamic ? InternalType.Dynamic : get_current.PropertyInfo.PropertyType,
+						var_type.Location);
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);
