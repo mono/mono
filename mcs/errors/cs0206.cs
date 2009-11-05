@@ -1,4 +1,4 @@
-// CS0206:  A property or indexer `X.P' may not be passed as `ref' or `out' parameter
+// CS0206: A property, indexer or dynamic member access may not be passed as `ref' or `out' parameter
 // Line: 15
 
 class X {

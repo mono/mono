@@ -1,6 +1,5 @@
-// CS1750: Optional parameter value `a' cannot be converted to parameter type `int'
+// CS1750: Optional parameter expression of type `string' cannot be converted to parameter type `int'
 // Line: 6
-// Compiler options: -langversion:future
 
 public class C
 {

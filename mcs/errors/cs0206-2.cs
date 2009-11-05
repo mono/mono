@@ -1,4 +1,4 @@
-// CS0206: A property or indexer may not be passed as an out or ref parameter
+// CS0206: A property, indexer or dynamic member access may not be passed as `ref' or `out' parameter
 // Line: 22
 
 using System;
