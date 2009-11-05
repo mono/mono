@@ -1,3 +1,11 @@
+2009-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class.c: When CoreCLR is enabled don't call mono_init_com_types
+	if MONO_CLASS_IS_IMPORT return true unless the type reside in 
+	platform (trusted) code. Instead we return a TypeLoadException to
+	be thrown later. This is the exception thrown by Silverlight 2 if
+	a type, inside application (user) code is marked with [ComImport]
+
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Diagnostics_Debugger_IsAttached_internal): Call
