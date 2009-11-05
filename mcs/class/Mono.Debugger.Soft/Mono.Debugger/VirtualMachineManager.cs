@@ -155,6 +155,36 @@ namespace Mono.Debugger
 		}
 
 		/*
+		 * Wait for a virtual machine to connect at the specified address.
+		 */
+		public static VirtualMachine Listen (IPEndPoint endpoint) {
+			if (endpoint == null)
+				throw new ArgumentNullException ("endpoint");
+
+			Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			socket.Bind (endpoint);
+			socket.Listen (1000);
+
+			/* 
+			 * FIXME: This might block forever.
+			 */
+			Socket accepted = socket.Accept ();
+
+			socket.Disconnect (false);
+			socket.Close ();
+
+			Connection conn = new Connection (accepted);
+
+			VirtualMachine vm = new VirtualMachine (null, conn);
+
+			conn.EventHandler = new EventHandler (vm);
+
+			vm.connect ();
+
+			return vm;
+		}
+
+		/*
 		 * Connect to a virtual machine listening at the specified address.
 		 */
 		public static VirtualMachine Connect (IPEndPoint endpoint) {
