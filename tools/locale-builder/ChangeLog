@@ -1,3 +1,8 @@
+2009-11-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Driver.cs: Generate locale data for neutral cultures too. Moonlight
+	requires it.
+	
 2009-05-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README: added (I needed it!)
