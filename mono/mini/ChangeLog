@@ -1,5 +1,10 @@
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c: Implement the 'server' and 'suspend' options supported by
+	the JDWP agent.
+
+2009-11-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (set_breakpoint): Emit a log message.
 
 2009-11-04  Zoltan Varga  <vargaz@gmail.com>
@@ -19,46 +24,46 @@
 2009-11-04 Jonathan Chambers <joncham@gmail.com>
 
 	* debugger-agent.c: Changes to build on windows. Use mono-mutex instead
-	of pthreads directly. 
-	
+	of pthreads directly.
+
 	* mini.c (mono_sigfpe_signal_handler): Changed signature of Windows
 	exception handlers. Pass info argument.
-	
+
 	* mini.h: Adjust signatures of soft debugger functions to pass void*
 	instead of siginfo_t. Adjust SIG_HANDLER_SIGNATURE on Windows.
-	
+
 	* mini-amd64.c (mono_arch_is_single_step_event): Adjust signature to pass void*
 	instead of siginfo_t. Value is EXCEPTION_RECORD on Windows.
 	(mono_arch_is_breakpoint_event): Adjust signature to pass void*
 	instead of siginfo_t. Value is EXCEPTION_RECORD on Windows.
-	
+
 	* mini-amd64.h: Adjust MonoW32ExceptionHandler signature.
-	
+
 	* mini-x86.c (mono_arch_is_single_step_event): Adjust signature to pass void*
 	instead of siginfo_t. Value is EXCEPTION_RECORD on Windows.
 	(mono_arch_is_breakpoint_event): Adjust signature to pass void*
 	instead of siginfo_t. Value is EXCEPTION_RECORD on Windows.
-	
+
 	* mini-x86.h: Adjust MonoW32ExceptionHandler signature.
-	
+
 	* exceptions-x86.c: Adjust W32_SEH_HANDLE_EX for new signature.
-	
+
 	* exceptions-amd64.c: Adjust W32_SEH_HANDLE_EX for new signature.
-	
+
 	* mono-semaphore.h: Skeleton implementation for Windows.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-04 Jonathan Chambers <joncham@gmail.com>
 
 	* simd-intrinsics.c (simd_intrinsic_emit_setter): Unfix my fix.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-04 Jonathan Chambers <joncham@gmail.com>
 
 	* simd-intrinsics.c (simd_intrinsic_emit_setter): Fix windows build.
-	
+
 	Code contributed under MIT/X11 license.
 
 2009-11-04  Zoltan Varga  <vargaz@gmail.com>
