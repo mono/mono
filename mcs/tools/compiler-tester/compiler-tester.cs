@@ -1320,14 +1320,17 @@ namespace TestRunner {
 			}
 
 			Checker checker;
+			bool positive;
 			switch (mode) {
 				case "neg":
 					checker = new NegativeChecker (tester, true);
+					positive = false;
 					break;
 				case "pos":
 					string iltest;
 					GetOption ("il", args, false, out iltest);
 					checker = new PositiveChecker (tester, iltest);
+					positive = true;
 
 					if (iltest != null && GetOption ("update-il", args, false, out temp)) {
 						((PositiveChecker) checker).UpdateVerificationDataFile = true;
@@ -1362,13 +1365,13 @@ namespace TestRunner {
 			ArrayList files = new ArrayList ();
 			switch (test_pattern) {
 			case "v1":
-				files.AddRange (Directory.GetFiles (".", "test*.cs"));
+				files.AddRange (Directory.GetFiles (".", positive ? "test*.cs" : "cs*.cs"));
 				break;
 			case "v2":
-				files.AddRange (Directory.GetFiles (".", "gtest*.cs"));
+				files.AddRange (Directory.GetFiles (".", positive ? "gtest*.cs" : "gcs*.cs"));
 				goto case "v1";
 			case "v4":
-				files.AddRange (Directory.GetFiles (".", "dtest*.cs"));
+				files.AddRange (Directory.GetFiles (".", positive ? "dtest*.cs" : "dcs*.cs"));
 				goto case "v2";
 			default:
 				files.AddRange (Directory.GetFiles (".", test_pattern));
