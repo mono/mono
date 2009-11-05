@@ -1,5 +1,12 @@
 2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c: Add missing check for load errors after every
+	call to mono_class_setup_fields
+
+	Fixes #552282.
+
+2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	metadata-verify.c (verify_tables_schema): Fix the error message.
 
 2009-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
