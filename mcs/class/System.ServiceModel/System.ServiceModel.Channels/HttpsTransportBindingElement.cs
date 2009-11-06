@@ -50,7 +50,11 @@ namespace System.ServiceModel.Channels
 			HttpsTransportBindingElement other)
 			: base (other)
 		{
+#if NET_2_1
+			req_cli_cert = other.req_cli_cert;
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 		public bool RequireClientCertificate {
@@ -66,7 +70,11 @@ namespace System.ServiceModel.Channels
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
+#if NET_2_1
+			return base.BuildChannelFactory <TChannel> (context);
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 #if !NET_2_1

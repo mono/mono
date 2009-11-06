@@ -1,3 +1,8 @@
+2009-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* HttpsTransportBindingElement.cs: Implement basic https transport
+	binding support for Moonlight and MonoTouch
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerManager.cs : remove CWLs.
