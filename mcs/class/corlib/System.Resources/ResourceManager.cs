@@ -41,9 +41,7 @@ using System.IO;
 namespace System.Resources
 {
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ResourceManager
 	{
 		static Hashtable ResourceCache = new Hashtable (); 
@@ -66,9 +64,7 @@ namespace System.Resources
 		/* Recursing through culture parents stops here */
 		private CultureInfo neutral_culture;
 
-#if NET_2_0
 		private UltimateResourceFallbackLocation fallbackLocation;
-#endif
 		
 		static Hashtable GetResourceSets (Assembly assembly, string basename)
 		{
@@ -120,9 +116,6 @@ namespace System.Resources
 			BaseNameField = baseName;
 			MainAssembly = assembly;
 			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
-#if ONLY_1_1
-			CheckBaseName ();
-#endif
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
@@ -148,9 +141,6 @@ namespace System.Resources
 			BaseNameField = baseName;
 			MainAssembly = assembly;
 			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
-#if ONLY_1_1
-			CheckBaseName ();
-#endif
 			resourceSetType = CheckResourceSetType (usingResourceSet, true);
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
@@ -165,9 +155,6 @@ namespace System.Resources
 
 			BaseNameField = baseName;
 			this.resourceDir = resourceDir;
-#if ONLY_1_1
-			CheckBaseName ();
-#endif
 			resourceSetType = CheckResourceSetType (usingResourceSet, false);
 			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
 		}
@@ -312,7 +299,6 @@ namespace System.Resources
 			return null;
 		}
 
-#if NET_2_0
 		[CLSCompliant (false)]
 		[ComVisible (false)]
 		public UnmanagedMemoryStream GetStream (string name)
@@ -331,7 +317,7 @@ namespace System.Resources
 			ResourceSet set = InternalGetResourceSet (culture, true, true);
 			return set.GetStream (name, ignoreCase);
 		}
-#endif
+
 		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool createIfNotExists, bool tryParents)
 		{
 			if (culture == null)
@@ -478,53 +464,18 @@ namespace System.Resources
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO ("the property exists but is not respected")]
 		protected UltimateResourceFallbackLocation FallbackLocation {
 			get { return fallbackLocation; }
 			set { fallbackLocation = value; }
 		}
-#endif
 
-#if ONLY_1_1
-		void CheckBaseName ()
-		{
-			if (BaseNameField.Length <= 10)
-				return;
-
-			CompareInfo c = CultureInfo.InvariantCulture.CompareInfo;
-			if (!c.IsSuffix (BaseNameField, ".resources", CompareOptions.IgnoreCase))
-				return;
-
-			if (MainAssembly != null) {
-				string resourceFileName = GetResourceFileName (
-					CultureInfo.InvariantCulture);
-				Stream s = GetManifestResourceStreamNoCase (
-					MainAssembly, resourceFileName);
-				if (s != null)
-					return;
-			} else {
-				string resourceFile = GetResourceFilePath (
-					CultureInfo.InvariantCulture);
-				if (File.Exists (resourceFile))
-					return;
-			}
-
-			throw new ArgumentException ("ResourceManager base"
-				+ " name should not end in .resources. It"
-				+ " should be similar to MyResources,"
-				+ " which the ResourceManager can convert"
-				+ " into MyResources.<culture>.resources;"
-				+ " for example, MyResources.en-US.resources.");
-		}
-#endif
 
 		MissingManifestResourceException AssemblyResourceMissing (string fileName)
 		{
 			AssemblyName aname = MainAssembly != null ? MainAssembly.GetName ()
 				: null;
 
-#if NET_2_0
 			string manifestName = GetManifestResourceName (fileName);
 			string msg = string.Format ("Could not find any resources " +
 				"appropriate for the specified culture or the " +
@@ -533,20 +484,6 @@ namespace System.Resources
 				"compile time, or that all the satellite assemblies " +
 				"required are loadable and fully signed.",
 				manifestName, aname != null ? aname.Name : string.Empty);
-#else
-			string location = resourceSource != null ? resourceSource.FullName
-				: "<null>";
-			string msg = String.Format ("Could not find any resources " +
-				"appropriate for the specified culture (or " +
-				"the neutral culture) in the given assembly.  " +
-				"Make sure \"{0}\" was correctly embedded or " +
-				"linked into assembly \"{1}\".{2}" +
-				"baseName: {3}  locationInfo: {4}  resource " +
-				"file name: {0}  assembly: {5}", fileName,
-				aname != null ? aname.Name : "", Environment.NewLine,
-				BaseNameField, location, aname != null ? aname.FullName :
-				"");
-#endif
 			throw new MissingManifestResourceException (msg);
 		}
 

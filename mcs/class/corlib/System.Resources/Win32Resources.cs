@@ -236,14 +236,8 @@ internal class Win32VersionResource : Win32Resource {
 	public string[] WellKnownProperties = {
 		"Comments",
 		"CompanyName",
-#if !NET_2_0
-		"FileDescription",
-#endif
 		"FileVersion",
 		"InternalName",
-#if !NET_2_0
-		"LegalCopyright",
-#endif
 		"LegalTrademarks",
 		"OriginalFilename",
 		"ProductName",
@@ -283,21 +277,15 @@ internal class Win32VersionResource : Win32Resource {
 
 		properties = new Hashtable ();
 
-#if NET_2_0
 		string defaultvalue = compilercontext ? string.Empty : " ";
-#else
-		string defaultvalue = " ";
-#endif
 
 		// Well known properties
 		foreach (string s in WellKnownProperties)
 			// The value of properties can't be empty
 			properties [s] = defaultvalue;
 
-#if NET_2_0
 		LegalCopyright = " ";
 		FileDescription = " ";
-#endif
 	}
 
 	public string Version {
@@ -310,11 +298,7 @@ internal class Win32VersionResource : Win32Resource {
 		}
 
 		set {
-#if NET_2_0
 			long[] ver = new long [4] { 0, 0, 0, 0 };
-#else
-			long [] ver = new long [4] { 0, 0xffff, 0xffff, 0xffff };
-#endif
 			if (value != null) {
 				string[] parts = value.Split ('.');
 

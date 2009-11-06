@@ -40,9 +40,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Resources
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class ResourceWriter : IResourceWriter, IDisposable
 	{
 		class TypeByNameObject
@@ -57,11 +55,7 @@ namespace System.Resources
 			}
 		}
 
-#if NET_2_0
 		SortedList resources = new SortedList (StringComparer.OrdinalIgnoreCase);
-#else
-		Hashtable resources = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-#endif
 		Stream stream;
 		
 		public ResourceWriter (Stream stream)
@@ -142,7 +136,6 @@ namespace System.Resources
 			stream = null;
 		}
 
-#if NET_2_0
 		public void AddResourceData (string name, string typeName, byte [] serializedData)
 		{
 			if (name == null)
@@ -155,7 +148,6 @@ namespace System.Resources
 			// shortcut
 			AddResource (name, new TypeByNameObject (typeName, serializedData));
 		}
-#endif
 
 		public void Generate ()
 		{
@@ -182,11 +174,7 @@ namespace System.Resources
 							     Encoding.UTF8);
 
 			resman.Write (typeof (ResourceReader).AssemblyQualifiedName);
-#if NET_2_0
 			resman.Write (typeof (RuntimeResourceSet).FullName);
-#else
-			resman.Write (typeof (ResourceSet).AssemblyQualifiedName);
-#endif
 
 			/* Only space for 32 bits of header len in the
 			 * resource file format
@@ -241,7 +229,6 @@ namespace System.Resources
 				object typeObj = tbn != null ? (object) tbn.TypeName : type;
 
 				/* Keep a list of unique types */
-#if NET_2_0
 				// do not output predefined ones.
 				switch ((type != null && !type.IsEnum) ? Type.GetTypeCode (type) : TypeCode.Empty) {
 				case TypeCode.Decimal:
@@ -272,17 +259,10 @@ namespace System.Resources
 					Write7BitEncodedInt(res_data, (int) PredefinedResourceType.FistCustom + types.IndexOf(typeObj));
 					break;
 				}
-#else
-				if (!types.Contains (typeObj))
-					types.Add (typeObj);
-				/* Write the data section */
-				Write7BitEncodedInt(res_data, types.IndexOf(type));
-#endif
 
 				/* Strangely, Char is serialized
 				 * rather than just written out
 				 */
-#if NET_2_0
 				if (tbn != null)
 					res_data.Write((byte []) tbn.Value);
 				else if (type == typeof (Byte)) {
@@ -343,43 +323,6 @@ namespace System.Resources
 					 */
 					formatter.Serialize (res_data.BaseStream, res_enum.Value);
 				}
-#else
-				if (type == typeof (Byte)) {
-					res_data.Write ((Byte) res_enum.Value);
-				} else if (type == typeof (Decimal)) {
-					res_data.Write ((Decimal) res_enum.Value);
-				} else if (type == typeof (DateTime)) {
-					res_data.Write (((DateTime) res_enum.Value).Ticks);
-				} else if (type == typeof (Double)) {
-					res_data.Write ((Double) res_enum.Value);
-				} else if (type == typeof (Int16)) {
-					res_data.Write ((Int16) res_enum.Value);
-				} else if (type == typeof (Int32)) {
-					res_data.Write ((Int32) res_enum.Value);
-				} else if (type == typeof (Int64)) {
-					res_data.Write ((Int64) res_enum.Value);
-				} else if (type == typeof (SByte)) {
-					res_data.Write ((SByte) res_enum.Value);
-				} else if (type == typeof (Single)) {
-					res_data.Write ((Single) res_enum.Value);
-				} else if (type == typeof (String)) {
-					res_data.Write ((String) res_enum.Value);
-				} else if (type == typeof (TimeSpan)) {
-					res_data.Write (((TimeSpan) res_enum.Value).Ticks);
-				} else if (type == typeof (UInt16)) {
-					res_data.Write ((UInt16) res_enum.Value);
-				} else if (type == typeof (UInt32)) {
-					res_data.Write ((UInt32) res_enum.Value);
-				} else if (type == typeof (UInt64)) {
-					res_data.Write ((UInt64) res_enum.Value);
-				} else {
-					/* non-intrinsic types are
-					 * serialized
-					 */
-					formatter.Serialize (res_data.BaseStream, res_enum.Value);
-				}
-#endif
-
 				count++;
 			}
 
@@ -390,11 +333,7 @@ namespace System.Resources
 			
 			/* now do the ResourceReader header */
 
-#if NET_2_0
 			writer.Write (2);
-#else
-			writer.Write (1);
-#endif
 			writer.Write (resources.Count);
 			writer.Write (types.Count);
 

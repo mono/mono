@@ -37,9 +37,7 @@ namespace System.Resources
 {
 
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class MissingManifestResourceException: SystemException
 	{
 		// Constructors

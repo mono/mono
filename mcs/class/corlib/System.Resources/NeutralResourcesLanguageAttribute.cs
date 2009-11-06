@@ -32,17 +32,14 @@
 
 namespace System.Resources
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly)]
 	public sealed class NeutralResourcesLanguageAttribute : Attribute
 	{
 		
 		string culture;
-#if NET_2_0
 		UltimateResourceFallbackLocation loc;
-#endif
+
 		// Constructors
 		public NeutralResourcesLanguageAttribute (string cultureName) 
 		{
@@ -60,7 +57,6 @@ namespace System.Resources
 			}
 		}
 
-#if NET_2_0
 		public NeutralResourcesLanguageAttribute (string cultureName, UltimateResourceFallbackLocation location)
 		{
 			if(cultureName==null) {
@@ -76,6 +72,5 @@ namespace System.Resources
 				return loc;
 			}  
 		}
-#endif
 	}
 }

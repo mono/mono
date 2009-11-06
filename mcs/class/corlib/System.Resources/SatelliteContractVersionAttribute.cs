@@ -33,9 +33,7 @@
 namespace System.Resources
 {
 	[AttributeUsage (AttributeTargets.Assembly)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SatelliteContractVersionAttribute : Attribute
 	{
 		private Version ver; 

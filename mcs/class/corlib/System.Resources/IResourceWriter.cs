@@ -34,9 +34,7 @@ using System;
 
 namespace System.Resources
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IResourceWriter : IDisposable
 	{
 		void AddResource (string name, byte[] value);
