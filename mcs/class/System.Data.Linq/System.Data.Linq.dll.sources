@@ -18,7 +18,7 @@ src/DbLinq.Ingres/IngresSchemaLoader.StoredProcedures.cs
 src/DbLinq.Ingres/IngresSchemaLoader.Tables.cs
 src/DbLinq.Ingres/IngresSqlProvider.cs
 src/DbLinq.Ingres/IngresVendor.cs
-src/DbLinq.MySql/MysqlDataContext.cs
+src/DbLinq.MySql/MySqlDataContext.cs
 src/DbLinq.MySql/MySqlSchemaLoader.Columns.cs
 src/DbLinq.MySql/MySqlSchemaLoader.Constraints.cs
 src/DbLinq.MySql/MySqlSchemaLoader.cs
