@@ -1,3 +1,10 @@
+2009-11-06  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Makefile: re-enable the tests.  They were disabled in r137153
+	  because they weren't compiling, which was because System.Data.Linq
+	  wasn't listing sqlmetal_net_2_0 as a friend assembly.  (Why this
+	  built before I couldn't tell you...)  Fixed in latest S.D.L.
+
 2009-04-30  Jonathan Pryor <jonpryor@vt.edu>
 
 	* sqlmetal.exe.config: The MySQL provider should use ByteFX.Data's
