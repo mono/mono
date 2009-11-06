@@ -33,11 +33,7 @@ using System.Threading;
 
 namespace System.Security {
 
-#if NET_2_0
 	public sealed class SecurityContext {
-#else
-	internal sealed class SecurityContext {
-#endif
 		private bool _capture;
 		private IntPtr _winid;
 		private CompressedStack _stack;
@@ -124,7 +120,7 @@ namespace System.Security {
 			sc.FlowSuppressed = false;
 			sc.WindowsIdentityFlowSuppressed = false;
 		}
-#if NET_2_0
+
 		// if you got the context then you can use it
 		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
@@ -154,7 +150,7 @@ namespace System.Security {
 					Thread.CurrentPrincipal = original;
 			}
 		}
-#endif
+
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		static public AsyncFlowControl SuppressFlow ()
 		{

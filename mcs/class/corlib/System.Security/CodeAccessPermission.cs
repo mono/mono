@@ -43,9 +43,7 @@ namespace System.Security {
 
 	[Serializable]
 	[SecurityPermission (SecurityAction.InheritanceDemand, ControlEvidence = true, ControlPolicy = true)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[MonoTODO ("CAS support is experimental (and unsupported).")]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
@@ -122,7 +120,6 @@ namespace System.Security {
 			new PermissionSet (this).Deny ();
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -133,17 +130,14 @@ namespace System.Security {
 			CodeAccessPermission cap = (obj as CodeAccessPermission);
 			return (IsSubsetOf (cap) && cap.IsSubsetOf (this));
 		}
-#endif
 
 		public abstract void FromXml (SecurityElement elem);
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}
-#endif
 
 		public abstract IPermission Intersect (IPermission target);
 
@@ -263,14 +257,7 @@ namespace System.Security {
 			case PermissionState.None:
 				break;
 			case PermissionState.Unrestricted:
-#if NET_2_0
 				// unrestricted permissions are possible for identiy permissions
-#else
-				if (!allowUnrestricted) {
-					msg = Locale.GetText ("Unrestricted isn't not allowed for identity permissions.");
-					throw new ArgumentException (msg, "state");
-				}
-#endif
 				break;
 			default:
 				msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);

@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 namespace System.Security {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum SecurityZone {
 		MyComputer = 0x0,
 		Intranet,

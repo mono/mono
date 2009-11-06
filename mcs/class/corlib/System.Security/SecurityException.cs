@@ -40,9 +40,7 @@ using System.Text;
 namespace System.Security {
 
 	[Serializable]
-#if NET_2_0
-	[ComVisible (true)]
-#endif
+ 	[ComVisible (true)]
 	public class SecurityException : SystemException {
 		// Fields
 		string permissionState;
@@ -55,9 +53,6 @@ namespace System.Security {
 		private MethodInfo _method;
 		private Evidence _evidence;
 
-#if !NET_2_0
-	#pragma warning disable 169
-#endif
 		private SecurityAction _action;
 		private object _denyset;
 		private object _permitset;
@@ -65,13 +60,8 @@ namespace System.Security {
 		private string _url;
 		private SecurityZone _zone;
 		
-#if !NET_2_0
-	#pragma warning restore 169
-#endif	
-
 		// Properties
 
-#if NET_2_0
 		[ComVisible (false)]
 		public SecurityAction Action {
 			get { return _action; }
@@ -116,26 +106,15 @@ namespace System.Security {
 			get { return _zone; }
 			set { _zone = value; }
 		}
-#endif
 
-#if NET_2_0
 		[ComVisible (false)]
-		public 
-#else
-		internal
-#endif
-		object Demanded {
+		public object Demanded {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _demanded; }
 			set { _demanded = value; }
 		}
 
-#if NET_2_0
-		public 
-#else
-		internal
-#endif
-		IPermission FirstPermissionThatFailed {
+		public IPermission FirstPermissionThatFailed {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _firstperm; }
 			set { _firstperm = value; }
@@ -144,35 +123,26 @@ namespace System.Security {
 		public string PermissionState {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return permissionState; }
-#if NET_2_0
 			set { permissionState = value; }
-#endif
 		}
 
 		public Type PermissionType {
 			get { return permissionType; }
-#if NET_2_0
 			set { permissionType = value; }
-#endif
 		}
 
-#if NET_1_1
 		public string GrantedSet {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _granted; }
-#if NET_2_0
 			set { _granted = value; }
-#endif
 		}
 
 		public string RefusedSet {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _refused; }
-#if NET_2_0
 			set { _refused = value; }
-#endif
 		}
-#endif
+
 		// Constructors
 
 		public SecurityException ()
@@ -231,12 +201,7 @@ namespace System.Security {
 			_refused = refused.ToString ();
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		SecurityException (string message, object deny, object permitOnly, MethodInfo method, 
+		public SecurityException (string message, object deny, object permitOnly, MethodInfo method, 
 			object demanded, IPermission permThatFailed)
 			: base (message)
 		{
@@ -248,12 +213,7 @@ namespace System.Security {
 			_firstperm = permThatFailed;
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
+		public SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
 			PermissionSet refused, MethodInfo method, SecurityAction action, object demanded, 
 			IPermission permThatFailed, Evidence evidence)
 			: base (message)

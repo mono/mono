@@ -31,15 +31,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Security {
 
-#if NET_2_0
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method | 
 		AttributeTargets.Interface | AttributeTargets.Delegate, 
 		AllowMultiple=true, Inherited=false)]
 	[ComVisible (true)]
-#else
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method |
-			 AttributeTargets.Interface, AllowMultiple=true, Inherited=false)]
-#endif
 	public sealed class SuppressUnmanagedCodeSecurityAttribute : Attribute {
 	}
 }

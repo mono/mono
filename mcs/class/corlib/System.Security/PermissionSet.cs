@@ -46,9 +46,7 @@ namespace System.Security {
 	[Serializable]
 	// Microsoft public key - i.e. only MS signed assembly can inherit from PermissionSet (1.x) or (2.0) FullTrust assemblies
 	[StrongNameIdentityPermission (SecurityAction.InheritanceDemand, PublicKey="002400000480000094000000060200000024000052534131000400000100010007D1FA57C4AED9F0A32E84AA0FAEFD0DE9E8FD6AEC8F87FB03766C834C99921EB23BE79AD9D5DCC1DD9AD236132102900B723CF980957FC4E177108FC607774F29E8320E92EA05ECE4E821C0A5EFE8F1645C4C0C93C1AB99285D622CAA652C1DFAD63D745D6F2DE5F17E5EAF0FC4963D261C8A12436518206DC093344D5AD293")]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[MonoTODO ("CAS support is experimental (and unsupported).")]
 	public class PermissionSet: ISecurityEncodable, ICollection, IEnumerable, IStackWalk, IDeserializationCallback {
 
@@ -86,11 +84,6 @@ namespace System.Security {
 				foreach (IPermission p in permSet.list)
 					list.Add (p);
 			}
-#if !NET_2_0
-			else {
-				state = PermissionState.Unrestricted;
-			}
-#endif
 		}
 
 		internal PermissionSet (string xml)
@@ -116,24 +109,15 @@ namespace System.Security {
 
 		// methods
 
-#if NET_2_0
 		public IPermission AddPermission (IPermission perm)
-#else
-		public virtual IPermission AddPermission (IPermission perm)
-#endif
 		{
 			if ((perm == null) || _readOnly)
 				return perm;
 
 			// we don't add to an unrestricted permission set unless...
 			if (state == PermissionState.Unrestricted) {
-#if NET_2_0
 				// identity permissions can be unrestricted under 2.x
 				{
-#else
-				// we're adding identity permission as they don't support unrestricted
-				if (perm is IUnrestrictedPermission) {
-#endif
 					// we return the union of the permission with unrestricted
 					// which results in a permission of the same type initialized 
 					// with PermissionState.Unrestricted
@@ -155,11 +139,7 @@ namespace System.Security {
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		[SecurityPermission (SecurityAction.Demand, Assertion = true)]
-#if NET_2_0
 		public void Assert ()
-#else
-		public virtual void Assert ()
-#endif
 		{
 			int count = this.Count;
 
@@ -208,11 +188,7 @@ namespace System.Security {
 			}
 		}
 
-#if NET_2_0
 		public void Demand ()
-#else
-		public virtual void Demand ()
-#endif
 		{
 			// Note: SecurityEnabled only applies to CAS permissions
 			// so we're not checking for it (yet)
@@ -289,11 +265,7 @@ namespace System.Security {
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
-#if NET_2_0
 		public void Deny ()
-#else
-		public virtual void Deny ()
-#endif
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
@@ -319,11 +291,9 @@ namespace System.Security {
 
 			if (CodeAccessPermission.IsUnrestricted (et)) {
 				state = PermissionState.Unrestricted;
-#if NET_2_0
 				// no need to continue for an unrestricted permission
 				// because identity permissions now "supports" unrestricted
 				return;
-#endif
 			} else {
 				state = PermissionState.None;
 			}
@@ -345,16 +315,11 @@ namespace System.Security {
 			}
 		}
 
-#if NET_2_0
 		public IEnumerator GetEnumerator ()
-#else
-		public virtual IEnumerator GetEnumerator ()
-#endif
 		{
 			return list.GetEnumerator ();
 		}
 
-#if NET_2_0
 		public bool IsSubsetOf (PermissionSet target)
 		{
 			// if target is empty we must be empty too
@@ -366,44 +331,29 @@ namespace System.Security {
 				return true;
 			if (this.IsUnrestricted ())
 				return false;
-#else
-		public virtual bool IsSubsetOf (PermissionSet target)
-		{
-#endif
+
 			if (this.IsUnrestricted () && ((target == null) || !target.IsUnrestricted ()))
 				return false;
 
 			// if each of our permission is (a) present and (b) a subset of target
 			foreach (IPermission p in list) {
-#if !NET_2_0
-				if (target == null) {
-					if (!p.IsSubsetOf (null))
-						return false;
-				} else
-#endif
-				{
-					// non CAS permissions must be evaluated for unrestricted
-					Type t = p.GetType ();
-					IPermission i = null;
-					if (target.IsUnrestricted () && (p is CodeAccessPermission) && (p is IUnrestrictedPermission)) {
-						i = (IPermission) Activator.CreateInstance (t, psUnrestricted);
-					} else {
-						i = target.GetPermission (t);
-					}
-
-					if (!p.IsSubsetOf (i))
-						return false; // not a subset (condition b)
+				// non CAS permissions must be evaluated for unrestricted
+				Type t = p.GetType ();
+				IPermission i = null;
+				if (target.IsUnrestricted () && (p is CodeAccessPermission) && (p is IUnrestrictedPermission)) {
+					i = (IPermission) Activator.CreateInstance (t, psUnrestricted);
+				} else {
+					i = target.GetPermission (t);
 				}
+				
+				if (!p.IsSubsetOf (i))
+					return false; // not a subset (condition b)
 			}
 			return true;
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
-#if NET_2_0
 		public void PermitOnly ()
-#else
-		public virtual void PermitOnly ()
-#endif
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
@@ -484,11 +434,7 @@ namespace System.Security {
 				}
 				else if (outFormat.StartsWith ("XML")) {
 					string msg = String.Format (Locale.GetText ("Can't convert from {0} to {1}"), inFormat, outFormat);
-#if NET_2_0
 					throw new XmlSyntaxException (msg);
-#else
-					throw new ArgumentException (msg);
-#endif
 				}
 			}
 			else {
@@ -499,11 +445,7 @@ namespace System.Security {
 			throw new SerializationException (String.Format (Locale.GetText ("Unknown output format {0}."), outFormat));
 		}
 
-#if NET_2_0
 		public IPermission GetPermission (Type permClass)
-#else
-		public virtual IPermission GetPermission (Type permClass)
-#endif
 		{
 			if ((permClass == null) || (list.Count == 0))
 				return null;
@@ -516,11 +458,7 @@ namespace System.Security {
 			return null;
 		}
 
-#if NET_2_0
 		public PermissionSet Intersect (PermissionSet other)
-#else
-		public virtual PermissionSet Intersect (PermissionSet other)
-#endif
 		{
 			// no intersection possible
 			if ((other == null) || (other.IsEmpty ()) || (this.IsEmpty ()))
@@ -531,7 +469,6 @@ namespace System.Security {
 				state = PermissionState.Unrestricted;
 
 			PermissionSet interSet = null;
-#if NET_2_0
 			// much simpler with 2.0
 			if (state == PermissionState.Unrestricted) {
 				interSet = new PermissionSet (state);
@@ -543,19 +480,6 @@ namespace System.Security {
 				interSet = new PermissionSet (state);
 				InternalIntersect (interSet, this, other, false);
 			}
-#else
-			interSet = new PermissionSet (state);
-			if (state == PermissionState.Unrestricted) {
-				InternalIntersect (interSet, this, other, true);
-				InternalIntersect (interSet, other, this, true);
-			} else if (this.IsUnrestricted ()) {
-				InternalIntersect (interSet, this, other, true);
-			} else if (other.IsUnrestricted ()) {
-				InternalIntersect (interSet, other, this, true);
-			} else {
-				InternalIntersect (interSet, this, other, false);
-			}
-#endif
 			return interSet;
 		}
 
@@ -568,23 +492,15 @@ namespace System.Security {
 					// add intersection for this type
 					intersect.AddPermission (p.Intersect (i));
 				}
-#if NET_2_0
 				// unrestricted is possible for indentity permissions
 				else if (unrestricted) {
-#else
-				else if (unrestricted && (p is IUnrestrictedPermission)) {
-#endif
 					intersect.AddPermission (p);
 				}
 				// or reject!
 			}
 		}
 
-#if NET_2_0
 		public bool IsEmpty ()
-#else
-		public virtual bool IsEmpty ()
-#endif
 		{
 			// note: Unrestricted isn't empty
 			if (state == PermissionState.Unrestricted)
@@ -600,20 +516,12 @@ namespace System.Security {
 			return true;
 		}
 
-#if NET_2_0
 		public bool IsUnrestricted ()
-#else
-		public virtual bool IsUnrestricted ()
-#endif
 		{
 			return (state == PermissionState.Unrestricted);
 		}
 
-#if NET_2_0
 		public IPermission RemovePermission (Type permClass)
-#else
-		public virtual IPermission RemovePermission (Type permClass)
-#endif
 		{
 			if ((permClass == null) || _readOnly)
 				return null;
@@ -627,25 +535,16 @@ namespace System.Security {
 			return null;
 		}
 
-#if NET_2_0
 		public IPermission SetPermission (IPermission perm)
-#else
-		public virtual IPermission SetPermission (IPermission perm)
-#endif
 		{
 			if ((perm == null) || _readOnly)
 				return perm;
-#if NET_2_0
 			IUnrestrictedPermission u = (perm as IUnrestrictedPermission);
 			if (u == null) {
 				state = PermissionState.None;
 			} else {
 				state = u.IsUnrestricted () ? state : PermissionState.None;
 			}
-#else
-			if (perm is IUnrestrictedPermission)
-				state = PermissionState.None;
-#endif
 			RemovePermission (perm.GetType ());
 			list.Add (perm);
 			return perm;
@@ -671,35 +570,15 @@ namespace System.Security {
 			return se;
 		}
 
-#if NET_2_0
 		public PermissionSet Union (PermissionSet other)
-#else
-		public virtual PermissionSet Union (PermissionSet other)
-#endif
 		{
 			if (other == null)
 				return this.Copy ();
 
 			PermissionSet copy = null;
 			if (this.IsUnrestricted () || other.IsUnrestricted ()) {
-#if NET_2_0
 				// there are no child elements in unrestricted permission sets
 				return new PermissionSet (PermissionState.Unrestricted);
-#else
-				copy = this.Copy ();
-				// so we keep the "right" type (e.g. NamedPermissionSet)
-				copy.Clear ();
-				copy.state = PermissionState.Unrestricted;
-				// copy all permissions that do not implement IUnrestrictedPermission
-				foreach (IPermission p in this.list) {
-					if (!(p is IUnrestrictedPermission))
-						copy.AddPermission (p);
-				}
-				foreach (IPermission p in other.list) {
-					if (!(p is IUnrestrictedPermission))
-						copy.AddPermission (p);
-				}
-#endif
 			} else {
 				copy = this.Copy ();
 				// PermissionState.None -> copy all permissions
@@ -738,7 +617,6 @@ namespace System.Security {
 		{
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -777,7 +655,6 @@ namespace System.Security {
 		{
 			CodeAccessPermission.RevertAssert ();
 		}
-#endif
 
 		// internal
 

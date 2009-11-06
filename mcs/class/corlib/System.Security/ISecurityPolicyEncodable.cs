@@ -32,9 +32,7 @@ using System.Security.Policy;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface ISecurityPolicyEncodable {
 
 		void FromXml (SecurityElement e, PolicyLevel level);

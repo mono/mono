@@ -31,9 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
 	public sealed class AllowPartiallyTrustedCallersAttribute : Attribute {
 

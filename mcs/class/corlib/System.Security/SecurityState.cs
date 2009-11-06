@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Security {
 
 	// available in FX2.0 with service pack 1, including the 2.0 shipped as part of FX3.5
@@ -49,5 +47,4 @@ namespace System.Security {
 	}
 }
 
-#endif
 

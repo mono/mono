@@ -34,9 +34,7 @@ using System.Security.Permissions;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class NamedPermissionSet : PermissionSet {
 
@@ -124,7 +122,6 @@ namespace System.Security {
 			return se;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -147,6 +144,5 @@ namespace System.Security {
 			// description is never part of the hash code
 			return hc;
 		}
-#endif
 	}
 }

@@ -30,11 +30,7 @@ using System.Security.Permissions;
 
 namespace System.Security {
 
-#if NET_2_0
 	internal static class PermissionBuilder {
-#else
-	internal class PermissionBuilder {
-#endif
 		private static object[] psNone = new object [1] { PermissionState.None };
 
 		// can be used to create an empty or an unrestricted permission from any valid type
@@ -89,11 +85,7 @@ namespace System.Security {
 			Type classType = Type.GetType (fullname);
 			if (classType == null) {
 				string msg = Locale.GetText ("Can't create an instance of permission class {0}.");
-#if NET_2_0
 				throw new TypeLoadException (String.Format (msg, fullname));
-#else
-				throw new ArgumentException (String.Format (msg, fullname));
-#endif
 			}
 			IPermission p = Create (classType);
 			p.FromXml (se);

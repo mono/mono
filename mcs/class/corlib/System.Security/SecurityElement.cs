@@ -38,9 +38,7 @@ using Mono.Xml;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class SecurityElement 
 	{
@@ -232,13 +230,11 @@ namespace System.Security {
 			return ((sa == null) ? null : sa.Value);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public SecurityElement Copy ()
 		{
 			return new SecurityElement (this);
 		}
-#endif
 
 		public bool Equal (SecurityElement other)
 		{
@@ -332,12 +328,7 @@ namespace System.Security {
 			return sb.ToString ();
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static SecurityElement FromString (string xml)
+		public static SecurityElement FromString (string xml)
 		{
 			if (xml == null)
 				throw new ArgumentNullException ("xml");
@@ -419,24 +410,13 @@ namespace System.Security {
 		
 		private void ToXml (ref StringBuilder s, int level)
 		{
-#if ! NET_2_0
-			s.Append (' ', level * 3);
-#endif
 			s.Append ("<");
 			s.Append (tag);
 			
 			if (attributes != null) {
-#if NET_2_0
 				s.Append (" ");
-#endif
 				for (int i=0; i < attributes.Count; i++) {
 					SecurityAttribute sa = (SecurityAttribute) attributes [i];
-#if ! NET_2_0
-					s.Append (" ");
-					// all other attributes must align with the first one
-					if (i != 0)
-						s.Append (' ', (level * 3) + tag.Length + 1);
-#endif
 					s.Append (sa.Name)
 					 .Append ("=\"")
 					 .Append (Escape (sa.Value))

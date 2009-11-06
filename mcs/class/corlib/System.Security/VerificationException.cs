@@ -34,9 +34,7 @@ using System.Runtime.Serialization;
 namespace System.Security {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class VerificationException : SystemException {
 	
 		// Constructors

@@ -30,9 +30,7 @@ using System.Security.Policy;
 
 namespace System.Security {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface IEvidenceFactory {
 		Evidence Evidence { get; }
 	}

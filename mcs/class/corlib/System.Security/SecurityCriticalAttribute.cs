@@ -41,7 +41,7 @@ namespace System.Security {
 		}
 	}
 
-#elif NET_2_0
+#else
 
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
