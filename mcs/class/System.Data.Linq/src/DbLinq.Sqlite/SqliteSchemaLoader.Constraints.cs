@@ -73,7 +73,7 @@ namespace DbLinq.Sqlite
             t.TableName = table;
             t.ColumnName = rdr.GetAsString(K_FROM);
 
-            t.ReferencedTableName = rdr.GetAsString(K_TABLE);
+            t.ReferencedTableName = UnquoteSqlName(rdr.GetAsString(K_TABLE));
             t.ReferencedColumnName = rdr.GetAsString(K_TO);
             return t;
 

@@ -69,6 +69,8 @@ namespace DbLinq.Util
 
         public static bool ContainsCase(this string text, string find, bool ignoreCase)
         {
+            if (text == null)
+                return false;
             var comparison = ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
             var endIndex = text.IndexOf(find, 0, comparison);
             return endIndex >= 0;

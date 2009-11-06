@@ -85,6 +85,12 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             return EndAction(() => WriteLine("}"));
         }
 
+        IDisposable WriteBrackets(string endif)
+        {
+            WriteLine("{");
+            return EndAction(() => { WriteLine("}"); WriteLine(endif); });
+        }
+
         /// <summary>
         /// We keep track of namespaces written already once
         /// </summary>
@@ -147,8 +153,14 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                                 bool hasReturnType, Type returnType,
                                                 IList<ParameterDefinition> parameters, IList<string> baseCallParameters)
         {
+            bool monoStrict = baseCallParameters != null && baseCallParameters.Count > 0 &&
+                parameters.Any(p => p.Type == typeof(DbLinq.Vendor.IVendor));
+
             var methodLineBuilder = new StringBuilder(1024);
 
+            if (monoStrict)
+                methodLineBuilder.Append("#if !MONO_STRICT")
+                    .AppendLine();
             methodLineBuilder.Append(GetProtectionSpecifications(specificationDefinition));
             methodLineBuilder.Append(GetDomainSpecifications(specificationDefinition));
             methodLineBuilder.Append(GetInheritanceSpecifications(specificationDefinition));
@@ -171,10 +183,21 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             if (baseCallParameters != null && baseCallParameters.Count > 0)
             {
                 methodLineBuilder.AppendLine();
-                methodLineBuilder.AppendFormat(": base({0})", string.Join(", ", baseCallParameters.ToArray()));
+                bool strictArgs = parameters.Count != baseCallParameters.Count;
+                if (strictArgs)
+                    methodLineBuilder.Append("#if MONO_STRICT")
+                        .AppendLine()
+                        .AppendFormat("\t: base({0})", string.Join(", ", baseCallParameters.Take(parameters.Count).ToArray()))
+                        .AppendLine()
+                        .Append("#else   // MONO_STRICT")
+                        .AppendLine();
+                methodLineBuilder.AppendFormat("\t: base({0})", string.Join(", ", baseCallParameters.ToArray()));
+                if (strictArgs)
+                    methodLineBuilder.AppendLine()
+                        .Append("#endif  // MONO_STRICT");
             }
             WriteLine(methodLineBuilder.ToString());
-            return WriteBrackets();
+            return monoStrict ? WriteBrackets("#endif  // !MONO_STRICT") : WriteBrackets();
         }
 
         public override IDisposable WriteCtor(SpecificationDefinition specificationDefinition, string name,

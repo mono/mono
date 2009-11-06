@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 src/DbLinq.Firebird/FirebirdDataContext.cs
+src/DbLinq.Firebird/FirebirdExpressionTranslator.cs
 src/DbLinq.Firebird/FirebirdSchemaLoader.Columns.cs
 src/DbLinq.Firebird/FirebirdSchemaLoader.Constraints.cs
 src/DbLinq.Firebird/FirebirdSchemaLoader.cs

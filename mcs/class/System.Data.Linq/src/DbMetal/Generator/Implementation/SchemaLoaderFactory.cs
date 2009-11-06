@@ -163,8 +163,10 @@ namespace DbMetal.Generator.Implementation
         private Assembly LocalLoadAssembly(string baseName)
         {
             Assembly assembly = LoadAssembly(baseName, Directory.GetCurrentDirectory());
-            if (assembly == null)
-                assembly = LoadAssembly(baseName, new Uri(Path.GetDirectoryName(Assembly.GetEntryAssembly().CodeBase)).LocalPath);
+            if (assembly == null) {
+                var path = Path.GetDirectoryName(Assembly.GetEntryAssembly().CodeBase);
+                assembly = LoadAssembly(baseName, path);
+            }
             return assembly;
         }
 
@@ -231,8 +233,8 @@ namespace DbMetal.Generator.Implementation
             var configuration = (ProvidersSection)ConfigurationManager.GetSection("providers");
 
             ProvidersSection.ProviderElement element;
-            string errorMsg;
-            if (!configuration.Providers.TryGetProvider(provider, out element, out errorMsg))
+            string errorMsg = null;
+            if (configuration == null || !configuration.Providers.TryGetProvider(provider, out element, out errorMsg))
             {
                 Output.WriteErrorLine(Log, "Failed to load provider {0} : {1}", provider, errorMsg);
                 throw new ApplicationException("Failed to load provider " + provider);

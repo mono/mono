@@ -78,6 +78,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             {
                 WriteClassHeader(writer, table, context);
                 WriteCustomTypes(writer, table, schema, context);
+                WriteClassExtensibilityDeclarations(writer, table, context);
                 WriteClassProperties(writer, table, context);
                 if (context.Parameters.GenerateEqualsAndHash)
                     WriteClassEqualsAndHash(writer, table, context);
@@ -171,6 +172,19 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
         {
             foreach (IImplementation implementation in context.Implementations())
                 implementation.WriteClassHeader(writer, table, context);
+        }
+
+        protected virtual void WriteClassExtensibilityDeclarations(CodeWriter writer, Table table, GenerationContext context)
+        {
+            using (writer.WriteRegion("Extensibility Method Definitions"))
+            {
+                writer.WriteLine("partial void OnCreated();");
+                foreach (var c in table.Type.Columns)
+                {
+                    writer.WriteLine("partial void On{0}Changed();", c.Name);
+                    writer.WriteLine("partial void On{0}Changing({1} value);", c.Name, GetTypeOrExtendedType(writer, c));
+                }
+            }
         }
 
         /// <summary>
@@ -772,6 +786,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                         )
                     ));
                 }
+                writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("OnCreated")));
             }
         }
     }

@@ -94,7 +94,7 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.IsTrue(count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Description("Subquery with nested select")]
@@ -107,7 +107,7 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.IsTrue(count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Description("Subquery with nested entityset")]

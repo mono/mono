@@ -154,6 +154,8 @@ namespace DbLinqTest {
         [Test]
         public void Ctor_ConnectionString_ExtraParameters_Munging()
         {
+            if (Type.GetType("Mono.Runtime", false) != null)
+                Assert.Ignore("Mono's System.Data.Linq is expected to remove DbLinq parameters.");
             DataContext ctx = new DataContext("Server=localhost;User id=test;Database=test;DbLinqProvider=Sqlite;DbLinqConnectionType=Mono.Data.Sqlite.SqliteConnection, Mono.Data.Sqlite");
             Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqProvider"));
             Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqConnectionType"));

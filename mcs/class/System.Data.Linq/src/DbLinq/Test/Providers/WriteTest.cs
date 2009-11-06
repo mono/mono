@@ -481,7 +481,9 @@ dummy text
         }
 
 #if (POSTGRES || INGRES) && !MONO_STRICT
-
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void G11_TwoSequencesInTable()
         {
@@ -520,8 +522,8 @@ dummy text
             {
                 throw e;
             }
-            Assert.AreEqual(Rid.Id, 2);
-            Assert.AreEqual(Rid.Reanr, 23);
+            Assert.AreEqual(2, Rid.Id);
+            Assert.AreEqual(23, Rid.Reanr);
         }
 
 #endif
@@ -541,7 +543,7 @@ dummy text
             db.SubmitChanges();
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
@@ -790,7 +792,7 @@ dummy text
             db.SubmitChanges();
         }
 
-#if !DEBUG && SQLITE
+#if !DEBUG && (SQLITE || POSTGRES)
         [Explicit]
 #endif
         [Test]

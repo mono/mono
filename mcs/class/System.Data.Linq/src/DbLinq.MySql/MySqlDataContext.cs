@@ -23,41 +23,34 @@
 // THE SOFTWARE.
 // 
 #endregion
+using System.Data;
 
-using System.Collections.Generic;
-using System.Linq.Expressions;
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
-using DbLinq.Data.Linq.Sugar.Expressions;
-
-namespace DbLinq.Data.Linq.Sugar.ExpressionMutator.Implementation
+namespace DbLinq.MySql
 {
-    internal class ListInitExpressionMutator : IMutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class MySqlDataContext : DataContext
     {
-        protected ListInitExpression ListInitExpression { get; private set; }
-
-        public Expression Mutate(IList<Expression> operands)
+#if MYSQL_IS_REFERENCED
+        public MySqlDataContext(string connStr)
+            : base(new MySql.Data.MySqlClient.MySqlConnection(connStr), new MySqlVendor())
         {
-            // It's possible that the NewExpression was "optimized away" and 
-            // replaced with a ConstantExpression.
-            // See Test_NUnit_MsSql.ReadTest.C27_SelectEntitySet, 
-            var ne = operands[0] as NewExpression;
-            if (ne != null)
-                return Expression.ListInit(ne, ListInitExpression.Initializers);
-            return ListInitExpression;
         }
-
-        public IEnumerable<Expression> Operands
+#endif
+        public MySqlDataContext(IDbConnection conn)
+#if MONO_STRICT
+            : base(conn)
+#else
+            : base(conn, new MySqlVendor())
+#endif
         {
-            get
-            {
-                yield return ListInitExpression.NewExpression;
-                // TODO: handle initializers
-            }
-        }
-
-        public ListInitExpressionMutator(ListInitExpression expression)
-        {
-            ListInitExpression = expression;
         }
     }
 }

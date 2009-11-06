@@ -32,7 +32,7 @@ namespace DbMetal
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // get the default processor...
             var processor = ObjectFactory.Get<IProcessor>();

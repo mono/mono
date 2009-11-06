@@ -95,7 +95,7 @@ using nwind;
         }
 
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Test]
@@ -109,7 +109,7 @@ using nwind;
         }
 
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Test]
@@ -122,7 +122,7 @@ using nwind;
             Assert.AreEqual(db.Employees.Count(), list.Count);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Test]
@@ -135,7 +135,7 @@ using nwind;
             Assert.AreEqual(db.Orders.Count(), list.Count);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Test]
@@ -148,7 +148,7 @@ using nwind;
             Assert.AreEqual(db.Orders.Count(), list.Count);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Test]

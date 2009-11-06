@@ -9140,3 +9140,5 @@ ALTER TABLE "EmployeeTerritories"
 SELECT setval('"Products_ProductID_seq"', (SELECT max("ProductID")+1 FROM "Products"));
 SELECT setval('"Region_RegionID_seq"', (SELECT max("RegionID")+1 FROM "Region"));
 SELECT setval('"Suppliers_SupplierID_seq"', (SELECT max("SupplierID")+1 FROM "Suppliers"));
+SELECT setval('"Employees_EmployeeID_seq"', (SELECT max("EmployeeID")+1 FROM "Employees"));
+

@@ -31,7 +31,9 @@ using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
 using System.ComponentModel;
+using System.Reflection;
 using DbLinq;
+using DbLinq.Util;
 
 #if MONO_STRICT
 namespace System.Data.Linq
@@ -57,6 +59,12 @@ namespace DbLinq.Data.Linq
                     return source;
                 if (deferredSource != null)
                     return source = deferredSource.ToList();
+                if (nestedQueryPredicate != null && context != null)
+                {
+                    var otherTable = context.GetTable(typeof(TEntity));
+                    var query = (IQueryable<TEntity>) context.GetOtherTableQuery(nestedQueryPredicate, nestedQueryParam, typeof(TEntity), otherTable);
+                    return source = query.ToList();
+                }
                 return source = new List<TEntity>();
             }
         }
@@ -109,6 +117,13 @@ namespace DbLinq.Data.Linq
         {
         }
 
+        DataContext context;
+        internal EntitySet(DataContext context)
+            : this()
+        {
+            this.context = context;
+        }
+
         /// <summary>
         /// entry point for 'foreach' statement.
         /// </summary>
@@ -157,6 +172,34 @@ namespace DbLinq.Data.Linq
             ListChangedEventHandler handler = ListChanged;
             if (!deferred && deferredSource != null && handler != null)
                 handler(this, new ListChangedEventArgs(ListChangedType.ItemAdded, Source.Count - 1));
+        }
+
+        ParameterExpression nestedQueryParam;
+        BinaryExpression nestedQueryPredicate;
+        internal void Add(KeyValuePair<object, MemberInfo> info)
+        {
+            var value = info.Key;
+            var member = info.Value;
+            if (nestedQueryParam == null)
+                nestedQueryParam = Expression.Parameter(typeof(TEntity), "other");
+            var propType = member.GetMemberType();
+            BinaryExpression comp;
+            if (!propType.IsNullable())
+            {
+                comp = Expression.Equal(Expression.Constant(value),
+                        Expression.MakeMemberAccess(nestedQueryParam, member));
+            }
+            else
+            {
+                var valueProp = propType.GetProperty("Value");
+                comp = Expression.Equal(Expression.Constant(value),
+                        Expression.MakeMemberAccess(
+                            Expression.MakeMemberAccess(nestedQueryParam, member),
+                            valueProp));
+            }
+            nestedQueryPredicate = nestedQueryPredicate == null
+                ? comp
+                : Expression.And(nestedQueryPredicate, comp);
         }
 
         [DbLinqToDo]

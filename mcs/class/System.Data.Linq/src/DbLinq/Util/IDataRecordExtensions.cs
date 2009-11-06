@@ -1,4 +1,4 @@
-﻿#region MIT license
+#region MIT license
 // 
 // MIT license
 //
@@ -133,6 +133,13 @@ namespace DbLinq.Util
 
         public static DateTime GetAsDateTime(this IDataRecord dataRecord, int index)
         {
+            // Convert an InvalidCastException (thrown for example by Npgsql when an
+            // operation like "SELECT '2012-'::timestamp - NULL" that is perfectly
+            // legal on PostgreSQL returns a null instead of a DateTime) into the
+            // correct InvalidOperationException.
+
+            if (dataRecord.IsDBNull(index))
+                throw new InvalidOperationException("NULL found where DateTime expected");
             return dataRecord.GetDateTime(index);
         }
 

@@ -17,12 +17,7 @@ using System.Data;
 using System.Data.Linq.Mapping;
 using System.Diagnostics;
 using System.Reflection;
-#if MONO_STRICT
 using System.Data.Linq;
-#else   // MONO_STRICT
-using DbLinq.Data.Linq;
-using DbLinq.Vendor;
-#endif  // MONO_STRICT
 using System.ComponentModel;
 
 namespace nwind
@@ -42,11 +37,7 @@ namespace nwind
 		}
 
 		public Northwind(IDbConnection connection)
-		#if MONO_STRICT
 			: base(connection)
-		#else   // MONO_STRICT
-			: base(connection, new DbLinq.Sqlite.SqliteVendor())
-		#endif  // MONO_STRICT
 		{
 			OnCreated();
 		}
@@ -62,22 +53,6 @@ namespace nwind
 		{
 			OnCreated();
 		}
-
-		#if !MONO_STRICT
-		public Northwind(IDbConnection connection, IVendor vendor)
-			: base(connection, vendor)
-		{
-			OnCreated();
-		}
-		#endif  // !MONO_STRICT
-
-		#if !MONO_STRICT
-		public Northwind(IDbConnection connection, MappingSource mappingSource, IVendor vendor)
-			: base(connection, mappingSource, vendor)
-		{
-			OnCreated();
-		}
-		#endif  // !MONO_STRICT
 
 		public Table<Category> Categories { get { return GetTable<Category>(); } }
 		public Table<Customer> Customers { get { return GetTable<Customer>(); } }
@@ -145,7 +120,7 @@ namespace nwind
 
 		private int _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int CategoryID
 		{
 			get
@@ -171,7 +146,7 @@ namespace nwind
 
 		private string _categoryName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryName", Name = "CategoryName", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_categoryName", Name = "CategoryName", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
 		public string CategoryName
 		{
 			get
@@ -197,7 +172,7 @@ namespace nwind
 
 		private string _description;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_description", Name = "Description", DbType = "ntext", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_description", Name = "Description", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Description
 		{
 			get
@@ -223,7 +198,7 @@ namespace nwind
 
 		private Byte[] _picture;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_picture", Name = "Picture", DbType = "image", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_picture", Name = "Picture", DbType = "image", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public Byte[] Picture
 		{
 			get
@@ -356,7 +331,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Address
 		{
 			get
@@ -382,7 +357,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string City
 		{
 			get
@@ -408,7 +383,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
 		public string CompanyName
 		{
 			get
@@ -434,7 +409,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ContactName
 		{
 			get
@@ -460,7 +435,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ContactTitle
 		{
 			get
@@ -486,7 +461,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Country
 		{
 			get
@@ -512,7 +487,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string CustomerID
 		{
 			get
@@ -538,7 +513,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Fax
 		{
 			get
@@ -564,7 +539,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Phone
 		{
 			get
@@ -590,7 +565,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string PostalCode
 		{
 			get
@@ -616,7 +591,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Region
 		{
 			get
@@ -757,7 +732,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string CustomerID
 		{
 			get
@@ -787,7 +762,7 @@ namespace nwind
 
 		private string _customerTypeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string CustomerTypeID
 		{
 			get
@@ -943,7 +918,7 @@ namespace nwind
 
 		private string _customerDesc;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerDesc", Name = "CustomerDesc", DbType = "ntext", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerDesc", Name = "CustomerDesc", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string CustomerDesc
 		{
 			get
@@ -969,7 +944,7 @@ namespace nwind
 
 		private string _customerTypeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string CustomerTypeID
 		{
 			get
@@ -1116,7 +1091,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Address
 		{
 			get
@@ -1142,7 +1117,7 @@ namespace nwind
 
 		private DateTime? _birthDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_birthDate", Name = "BirthDate", DbType = "datetime", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_birthDate", Name = "BirthDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public DateTime? BirthDate
 		{
 			get
@@ -1168,7 +1143,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string City
 		{
 			get
@@ -1194,7 +1169,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Country
 		{
 			get
@@ -1220,7 +1195,7 @@ namespace nwind
 
 		private int _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int EmployeeID
 		{
 			get
@@ -1246,7 +1221,7 @@ namespace nwind
 
 		private string _extension;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_extension", Name = "Extension", DbType = "nvarchar (4)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_extension", Name = "Extension", DbType = "nvarchar (4)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Extension
 		{
 			get
@@ -1272,7 +1247,7 @@ namespace nwind
 
 		private string _firstName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_firstName", Name = "FirstName", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_firstName", Name = "FirstName", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
 		public string FirstName
 		{
 			get
@@ -1298,7 +1273,7 @@ namespace nwind
 
 		private DateTime? _hireDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_hireDate", Name = "HireDate", DbType = "datetime", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_hireDate", Name = "HireDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public DateTime? HireDate
 		{
 			get
@@ -1324,7 +1299,7 @@ namespace nwind
 
 		private string _homePhone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_homePhone", Name = "HomePhone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_homePhone", Name = "HomePhone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string HomePhone
 		{
 			get
@@ -1350,7 +1325,7 @@ namespace nwind
 
 		private string _lastName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_lastName", Name = "LastName", DbType = "nvarchar (20)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_lastName", Name = "LastName", DbType = "nvarchar (20)", AutoSync = AutoSync.Never)]
 		public string LastName
 		{
 			get
@@ -1376,7 +1351,7 @@ namespace nwind
 
 		private string _notes;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_notes", Name = "Notes", DbType = "ntext", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_notes", Name = "Notes", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Notes
 		{
 			get
@@ -1402,7 +1377,7 @@ namespace nwind
 
 		private Byte[] _photo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photo", Name = "Photo", DbType = "image", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_photo", Name = "Photo", DbType = "image", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public Byte[] Photo
 		{
 			get
@@ -1428,7 +1403,7 @@ namespace nwind
 
 		private string _photoPath;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photoPath", Name = "PhotoPath", DbType = "nvarchar (255)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_photoPath", Name = "PhotoPath", DbType = "nvarchar (255)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string PhotoPath
 		{
 			get
@@ -1454,7 +1429,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string PostalCode
 		{
 			get
@@ -1480,7 +1455,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Region
 		{
 			get
@@ -1506,7 +1481,7 @@ namespace nwind
 
 		private int? _reportsTo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reportsTo", Name = "ReportsTo", DbType = "int", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_reportsTo", Name = "ReportsTo", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public int? ReportsTo
 		{
 			get
@@ -1536,7 +1511,7 @@ namespace nwind
 
 		private string _title;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_title", Name = "Title", DbType = "nvarchar (30)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_title", Name = "Title", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Title
 		{
 			get
@@ -1562,7 +1537,7 @@ namespace nwind
 
 		private string _titleOfCourtesy;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_titleOfCourtesy", Name = "TitleOfCourtesy", DbType = "nvarchar (25)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_titleOfCourtesy", Name = "TitleOfCourtesy", DbType = "nvarchar (25)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string TitleOfCourtesy
 		{
 			get
@@ -1768,7 +1743,7 @@ namespace nwind
 
 		private int _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int EmployeeID
 		{
 			get
@@ -1798,7 +1773,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string TerritoryID
 		{
 			get
@@ -1978,7 +1953,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string CustomerID
 		{
 			get
@@ -2008,7 +1983,7 @@ namespace nwind
 
 		private int? _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "int", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public int? EmployeeID
 		{
 			get
@@ -2038,7 +2013,7 @@ namespace nwind
 
 		private decimal? _freight;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_freight", Name = "Freight", DbType = "money", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_freight", Name = "Freight", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public decimal? Freight
 		{
 			get
@@ -2064,7 +2039,7 @@ namespace nwind
 
 		private DateTime? _orderDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderDate", Name = "OrderDate", DbType = "datetime", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_orderDate", Name = "OrderDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public DateTime? OrderDate
 		{
 			get
@@ -2090,7 +2065,7 @@ namespace nwind
 
 		private int _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "OrderID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_orderID", Name = "OrderID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int OrderID
 		{
 			get
@@ -2116,7 +2091,7 @@ namespace nwind
 
 		private DateTime? _requiredDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_requiredDate", Name = "RequiredDate", DbType = "datetime", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_requiredDate", Name = "RequiredDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public DateTime? RequiredDate
 		{
 			get
@@ -2142,7 +2117,7 @@ namespace nwind
 
 		private string _shipAddress;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipAddress", Name = "ShipAddress", DbType = "nvarchar (60)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipAddress", Name = "ShipAddress", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipAddress
 		{
 			get
@@ -2168,7 +2143,7 @@ namespace nwind
 
 		private string _shipCity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCity", Name = "ShipCity", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipCity", Name = "ShipCity", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipCity
 		{
 			get
@@ -2194,7 +2169,7 @@ namespace nwind
 
 		private string _shipCountry;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCountry", Name = "ShipCountry", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipCountry", Name = "ShipCountry", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipCountry
 		{
 			get
@@ -2220,7 +2195,7 @@ namespace nwind
 
 		private string _shipName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipName", Name = "ShipName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipName", Name = "ShipName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipName
 		{
 			get
@@ -2246,7 +2221,7 @@ namespace nwind
 
 		private DateTime? _shippedDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shippedDate", Name = "ShippedDate", DbType = "datetime", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shippedDate", Name = "ShippedDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public DateTime? ShippedDate
 		{
 			get
@@ -2272,7 +2247,7 @@ namespace nwind
 
 		private string _shipPostalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipPostalCode", Name = "ShipPostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipPostalCode", Name = "ShipPostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipPostalCode
 		{
 			get
@@ -2298,7 +2273,7 @@ namespace nwind
 
 		private string _shipRegion;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipRegion", Name = "ShipRegion", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipRegion", Name = "ShipRegion", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ShipRegion
 		{
 			get
@@ -2324,7 +2299,7 @@ namespace nwind
 
 		private int? _shipVia;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipVia", Name = "ShipVia", DbType = "int", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_shipVia", Name = "ShipVia", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public int? ShipVia
 		{
 			get
@@ -2556,7 +2531,7 @@ namespace nwind
 
 		private float _discount;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discount", Name = "Discount", DbType = "real", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_discount", Name = "Discount", DbType = "real", AutoSync = AutoSync.Never)]
 		public float Discount
 		{
 			get
@@ -2582,7 +2557,7 @@ namespace nwind
 
 		private int _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "OrderID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_orderID", Name = "OrderID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int OrderID
 		{
 			get
@@ -2612,7 +2587,7 @@ namespace nwind
 
 		private int _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "ProductID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_productID", Name = "ProductID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int ProductID
 		{
 			get
@@ -2642,7 +2617,7 @@ namespace nwind
 
 		private short _quantity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantity", Name = "Quantity", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_quantity", Name = "Quantity", DbType = "smallint", AutoSync = AutoSync.Never)]
 		public short Quantity
 		{
 			get
@@ -2668,7 +2643,7 @@ namespace nwind
 
 		private decimal _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never)]
 		public decimal UnitPrice
 		{
 			get
@@ -2836,7 +2811,7 @@ namespace nwind
 
 		private int? _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "int", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public int? CategoryID
 		{
 			get
@@ -2866,7 +2841,7 @@ namespace nwind
 
 		private bool _discontinued;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discontinued", Name = "Discontinued", DbType = "bit", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_discontinued", Name = "Discontinued", DbType = "bit", AutoSync = AutoSync.Never)]
 		public bool Discontinued
 		{
 			get
@@ -2892,7 +2867,7 @@ namespace nwind
 
 		private int _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "ProductID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_productID", Name = "ProductID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int ProductID
 		{
 			get
@@ -2918,7 +2893,7 @@ namespace nwind
 
 		private string _productName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productName", Name = "ProductName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_productName", Name = "ProductName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
 		public string ProductName
 		{
 			get
@@ -2944,7 +2919,7 @@ namespace nwind
 
 		private string _quantityPerUnit;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantityPerUnit", Name = "QuantityPerUnit", DbType = "nvarchar (20)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_quantityPerUnit", Name = "QuantityPerUnit", DbType = "nvarchar (20)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string QuantityPerUnit
 		{
 			get
@@ -2970,7 +2945,7 @@ namespace nwind
 
 		private short? _reorderLevel;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reorderLevel", Name = "ReorderLevel", DbType = "smallint", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_reorderLevel", Name = "ReorderLevel", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public short? ReorderLevel
 		{
 			get
@@ -2996,7 +2971,7 @@ namespace nwind
 
 		private int? _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "int", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public int? SupplierID
 		{
 			get
@@ -3026,7 +3001,7 @@ namespace nwind
 
 		private decimal? _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public decimal? UnitPrice
 		{
 			get
@@ -3052,7 +3027,7 @@ namespace nwind
 
 		private short? _unitsInStock;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsInStock", Name = "UnitsInStock", DbType = "smallint", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_unitsInStock", Name = "UnitsInStock", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public short? UnitsInStock
 		{
 			get
@@ -3078,7 +3053,7 @@ namespace nwind
 
 		private short? _unitsOnOrder;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsOnOrder", Name = "UnitsOnOrder", DbType = "smallint", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_unitsOnOrder", Name = "UnitsOnOrder", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public short? UnitsOnOrder
 		{
 			get
@@ -3266,7 +3241,7 @@ namespace nwind
 
 		private string _regionDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionDescription", Name = "RegionDescription", DbType = "nchar", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_regionDescription", Name = "RegionDescription", DbType = "nchar", AutoSync = AutoSync.Never)]
 		public string RegionDescription
 		{
 			get
@@ -3292,7 +3267,7 @@ namespace nwind
 
 		private int _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "RegionID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_regionID", Name = "RegionID", DbType = "int", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int RegionID
 		{
 			get
@@ -3409,7 +3384,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
 		public string CompanyName
 		{
 			get
@@ -3435,7 +3410,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Phone
 		{
 			get
@@ -3461,7 +3436,7 @@ namespace nwind
 
 		private int _shipperID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipperID", Name = "ShipperID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_shipperID", Name = "ShipperID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int ShipperID
 		{
 			get
@@ -3596,7 +3571,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Address
 		{
 			get
@@ -3622,7 +3597,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string City
 		{
 			get
@@ -3648,7 +3623,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
 		public string CompanyName
 		{
 			get
@@ -3674,7 +3649,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ContactName
 		{
 			get
@@ -3700,7 +3675,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string ContactTitle
 		{
 			get
@@ -3726,7 +3701,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Country
 		{
 			get
@@ -3752,7 +3727,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Fax
 		{
 			get
@@ -3778,7 +3753,7 @@ namespace nwind
 
 		private string _homePage;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_homePage", Name = "HomePage", DbType = "ntext", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_homePage", Name = "HomePage", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string HomePage
 		{
 			get
@@ -3804,7 +3779,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Phone
 		{
 			get
@@ -3830,7 +3805,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string PostalCode
 		{
 			get
@@ -3856,7 +3831,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
 		public string Region
 		{
 			get
@@ -3882,7 +3857,7 @@ namespace nwind
 
 		private int _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
 		public int SupplierID
 		{
 			get
@@ -3999,7 +3974,7 @@ namespace nwind
 
 		private int _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "RegionID", DbType = "int", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_regionID", Name = "RegionID", DbType = "int", AutoSync = AutoSync.Never)]
 		public int RegionID
 		{
 			get
@@ -4029,7 +4004,7 @@ namespace nwind
 
 		private string _territoryDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryDescription", Name = "TerritoryDescription", DbType = "nchar", AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_territoryDescription", Name = "TerritoryDescription", DbType = "nchar", AutoSync = AutoSync.Never)]
 		public string TerritoryDescription
 		{
 			get
@@ -4055,7 +4030,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
 		public string TerritoryID
 		{
 			get

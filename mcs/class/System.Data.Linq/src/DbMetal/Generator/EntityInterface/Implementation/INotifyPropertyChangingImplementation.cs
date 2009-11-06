@@ -38,7 +38,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
             get { return typeof(INotifyPropertyChanging).Name; }
         }
 
-        private const string sendPropertyChangingMethod = "OnPropertyChanging";
+        private const string sendPropertyChangingMethod = "SendPropertyChanging";
 
         /// <summary>
         /// Registers the required namespace
@@ -80,6 +80,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
 
         public override void WritePropertyBeforeSet(CodeWriter writer, DbLinq.Schema.Dbml.Column property, GenerationContext context)
         {
+            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Name + "Changing", "value")));
             writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression(sendPropertyChangingMethod)));
         }
     }

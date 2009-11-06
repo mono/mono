@@ -57,6 +57,10 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+
+#if !DEBUG && (POSTGRES)
+        [Explicit]
+#endif
         [Test]
         public void AnyInternal03()
         {
@@ -151,7 +155,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-
+#if !DEBUG && (POSTGRES)
+        [Explicit]
+#endif
         [Test]
         public void CountInternal03()
         {

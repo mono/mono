@@ -94,7 +94,7 @@ using nwind;
             Assert.IsTrue(q > 0, "Freight sum must be > 0");
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "This sample uses Min to find the Products that have the lowest unit price in each category")]
@@ -188,7 +188,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
             Assert.IsTrue(q > 0, "Max UnitsInStock must be > 0");
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "This sample uses Max to find the Products that have the highest unit price in each category")]
@@ -211,7 +211,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
 
 
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "This sample uses Average to find the average freight of all Orders.")]
@@ -225,7 +225,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
             Assert.IsTrue(q > 0, "Avg orders'freight must be > 0");
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "This sample uses Average to find the average unit price of all Products.")]
@@ -242,7 +242,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
         }
 
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "This sample uses Average to find the Products that have unit price higher than the average unit price of the category for each category.")]

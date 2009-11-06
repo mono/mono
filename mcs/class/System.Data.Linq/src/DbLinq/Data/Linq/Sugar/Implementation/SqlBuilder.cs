@@ -174,6 +174,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             // then converts expression
             if (expression is SpecialExpression)
                 return sqlProvider.GetLiteral(((SpecialExpression)expression).SpecialNodeType, literalOperands);
+            if (expression is EntitySetExpression)
+                expression = ((EntitySetExpression)expression).TableExpression;
             if (expression is TableExpression)
             {
                 var tableExpression = (TableExpression)expression;

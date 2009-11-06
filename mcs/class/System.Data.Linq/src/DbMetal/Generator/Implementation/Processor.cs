@@ -1,4 +1,4 @@
-﻿#region MIT license
+#region MIT license
 // 
 // MIT license
 //
@@ -216,7 +216,7 @@ namespace DbMetal.Generator.Implementation
 
                 parameters.Write(">>> Reading schema from {0} database", schemaLoader.Vendor.VendorName);
                 dbSchema = schemaLoader.Load(parameters.Database, nameAliases,
-                    new NameFormat(parameters.Pluralize, Case.PascalCase, new CultureInfo(parameters.Culture)),
+                    new NameFormat(parameters.Pluralize, GetCase(parameters), new CultureInfo(parameters.Culture)),
                     parameters.Sprocs, parameters.Namespace, parameters.Namespace);
                 dbSchema.Provider = parameters.Provider;
                 dbSchema.Tables.Sort(new LambdaComparer<Table>((x, y) => (x.Type.Name.CompareTo(y.Type.Name))));
@@ -249,6 +249,24 @@ namespace DbMetal.Generator.Implementation
         private void PrintUsage(Parameters parameters)
         {
             parameters.WriteHelp();
+        }
+
+        private Case GetCase(Parameters parameters)
+        {
+            if (String.IsNullOrEmpty(parameters.Case))
+                return Case.PascalCase;
+
+            switch (parameters.Case.ToLowerInvariant())
+            {
+                case "leave":
+                    return Case.Leave;
+                case "camel":
+                    return Case.camelCase;
+                case "pascal":
+                    return Case.PascalCase;
+                default:
+                    return Case.NetCase;
+            }
         }
     }
 }

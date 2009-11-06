@@ -213,7 +213,7 @@ using nwind;
 
 
 
-#if !DEBUG && SQLITE
+#if !DEBUG && (SQLITE || POSTGRES)
         [Explicit]
 #endif
         [Test]
@@ -562,7 +562,7 @@ using nwind;
             Assert.IsTrue(q.Any(r => r == true));
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]

@@ -97,7 +97,7 @@ using nwind;
         }
 
 #if !SQLITE
-#if !DEBUG && (MSSQL && !L2SQL)
+#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
@@ -148,7 +148,7 @@ using nwind;
         }
 #endif
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
@@ -249,7 +249,7 @@ using nwind;
         }
 
 
-#if !DEBUG && (MSSQL && !L2SQL)
+#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
@@ -298,7 +298,7 @@ using nwind;
             //db.SubmitChanges();
         }
 
-#if !DEBUG && (MSSQL && !L2SQL)
+#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]

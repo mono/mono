@@ -98,7 +98,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "OrderBy - Group by. This sample uses Orderby, Max and Group by to find the Products that have the highest unit price in each category, and sorts the group by category id.")]

@@ -424,7 +424,10 @@ namespace DbMetal
         {
             get
             {
-                return Assembly.GetEntryAssembly().GetName().Version;
+                // Assembly.GetEntryAssembly() is null when loading from the 
+                // non-default AppDomain.
+                var a = Assembly.GetEntryAssembly();
+                return a != null ? a.GetName().Version : new Version();
             }
         }
 

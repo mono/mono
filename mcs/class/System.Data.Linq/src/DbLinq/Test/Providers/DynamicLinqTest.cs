@@ -242,6 +242,20 @@ using nwind;
             public static Expression<Func<T, bool>> False<T>() { return f => false; }
         }
 
+        // Test patch from:
+        // http://groups.google.com/group/dblinq/browse_frm/thread/9fa41554044afeaa/4ef1605e020be9fc?lnk=raot#4ef1605e020be9fc
+        [Test]
+        public void DL12_Count_Via_Expression()
+        {
+            var db = CreateDB();
+            IQueryable employees = db.Employees;
+            var employeeCount = (int) employees.Provider.Execute(
+                Expression.Call(typeof(Queryable), "Count",
+                    new Type[]{employees.ElementType},
+                    employees.Expression));
+            Assert.AreEqual(9, employeeCount);
+        }
+
     }
         #endregion
 

@@ -184,6 +184,9 @@ using Id = System.Int32;
 
 #endif
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void F7_ExplicitJoin()
         {
@@ -277,6 +280,9 @@ using Id = System.Int32;
             }
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void F12_ConcatString_2()
         {
@@ -373,6 +379,9 @@ using Id = System.Int32;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "byte[] test")]
         public void F18_ByteArrayAssignmentTest()
         {

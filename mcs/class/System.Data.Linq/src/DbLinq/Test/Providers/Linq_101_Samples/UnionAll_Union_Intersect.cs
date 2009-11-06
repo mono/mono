@@ -45,6 +45,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "Concat - Compound. This sample uses Concat to return a sequence of all Customer and Employee name and phone number mappings.")]
         public void LinqToSqlUnion02()
         {

@@ -65,7 +65,7 @@ using DbLinq.Data.Linq;
     public class ReadTests_Join : TestBase
     {
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "example by Frans Brouma: select all customers that have no orders")]
@@ -90,6 +90,9 @@ using DbLinq.Data.Linq;
             Assert.IsTrue(countPARIS == 1);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void LeftOuterJoin_Suppliers()
         {
@@ -120,6 +123,9 @@ using DbLinq.Data.Linq;
 
         // picrap: commented out, it doesn't build because of db.Orderdetails (again, a shared source file...)
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif                
         [Test(Description = "Problem discovered by Laurent")]
         public void Join_Laurent()
         {
@@ -139,7 +145,7 @@ using DbLinq.Data.Linq;
             Assert.IsTrue(q1.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTests_Join+Northwind1+ExtendedOrder' is not mapped as a Table.
         [Explicit]
 #endif
@@ -161,7 +167,7 @@ using DbLinq.Data.Linq;
 
 
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTests_Join+Northwind1+ExtendedOrder' is not mapped as a Table.
         [Explicit]
 #endif
@@ -181,7 +187,7 @@ using DbLinq.Data.Linq;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTests_Join+Northwind1+ExtendedOrder' is not mapped as a Table.
         [Explicit]
 #endif
@@ -299,6 +305,9 @@ using DbLinq.Data.Linq;
 
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void JoinWhere()
         {
@@ -314,7 +323,7 @@ using DbLinq.Data.Linq;
             var l = custOderInfos.ToList();
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]

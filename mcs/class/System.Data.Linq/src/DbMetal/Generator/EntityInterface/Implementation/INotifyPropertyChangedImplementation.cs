@@ -38,7 +38,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
             get { return typeof(INotifyPropertyChanged).Name; }
         }
 
-        private const string sendPropertyChangedMethod = "OnPropertyChanged";
+        private const string sendPropertyChangedMethod = "SendPropertyChanged";
 
         /// <summary>
         /// Registers the required namespace
@@ -79,6 +79,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
         {
             writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression(sendPropertyChangedMethod,
                                                                                 writer.GetLiteralValue(property.Member))));
+            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Name + "Changed")));
         }
     }
 }

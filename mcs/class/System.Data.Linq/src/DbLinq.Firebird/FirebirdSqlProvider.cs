@@ -25,21 +25,28 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
+
+using DbLinq.Vendor.Implementation;
 
 using DbLinq.Data.Linq.Sql;
-using DbLinq.Util;
-using DbLinq.Vendor.Implementation;
+using DbLinq.Data.Linq.Sugar.Expressions;
+
 
 namespace DbLinq.Firebird
 {
 #if !MONO_STRICT
     public
 #endif
+
     class FirebirdSqlProvider : SqlProvider
     {
+        public override ExpressionTranslator GetTranslator()
+        {
+            return new FirebirdExpressionTranslator();
+        }
+
         public override string GetParameterName(string nameBase)
         {
             return "@" + nameBase;
@@ -52,7 +59,17 @@ namespace DbLinq.Firebird
 
         protected override SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
         {
-            return SqlStatement.Format("CONCAT({0}, {1})", a, b);
+            return SqlStatement.Format("{0} || {1}", a, b);
+        }
+
+        protected override SqlStatement GetLiteralStringToLower(SqlStatement a)
+        {
+            return string.Format("LOWER({0})", a);
+        }
+
+        protected override SqlStatement GetLiteralStringToUpper(SqlStatement a)
+        {
+            return string.Format("UPPER({0})", a);
         }
 
         protected override char SafeNameStartQuote { get { return ' '; } }
@@ -93,6 +110,17 @@ namespace DbLinq.Firebird
                 : string.Format("SELECT FIRST {0}", limit[0].Sql);
             return select.Replace("SELECT", stmt, true);
         }
+
+        public override SqlStatement GetLiteralLimit(SqlStatement select, SqlStatement limit, SqlStatement offset, SqlStatement offsetAndLimit)
+        {
+            string stmt = (limit.Count == 2
+                ? string.Format("SELECT FIRST {0}, LAST {1} SKIP {2}", limit[0].Sql, limit[1].Sql, offset)
+                : string.Format("SELECT FIRST {0} SKIP {1}", limit[0].Sql, offset));
+           //string stmt = string.Format("SELECT FIRST {0} SKIP {1}", limit, offset);
+           
+            return select.Replace("SELECT", stmt, true);
+        }
+
 
         public override SqlStatement GetInsertIds(SqlStatement table, IList<SqlStatement> autoPKColumn, IList<SqlStatement> inputPKColumns, IList<SqlStatement> inputPKValues, IList<SqlStatement> outputColumns, IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
         {
