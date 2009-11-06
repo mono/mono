@@ -38,9 +38,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class MethodCall : IMethodCallMessage, IMethodMessage, IMessage, ISerializable, IInternalMessage, ISerializationRootObject
 	{
 		string _uri;
@@ -52,9 +50,7 @@ namespace System.Runtime.Remoting.Messaging {
 		LogicalCallContext _callContext;
 		ArgInfo _inArgInfo;
 		Identity _targetIdentity;
-#if NET_2_0
 		Type[] _genericArguments;
-#endif
 
 		protected IDictionary ExternalProperties;
 		protected IDictionary InternalProperties;
@@ -148,9 +144,7 @@ namespace System.Runtime.Remoting.Messaging {
 				case "__Args" : _args = (object[]) value; return;
 				case "__CallContext" : _callContext = (LogicalCallContext) value; return;
 				case "__Uri" : _uri = (string) value; return;
-#if NET_2_0
 				case "__GenericArguments" : _genericArguments = (Type[]) value; return;
-#endif
 				default: Properties[key] = value; return;
 			}
 		}
@@ -163,9 +157,7 @@ namespace System.Runtime.Remoting.Messaging {
 			info.AddValue ("__Args", _args);
 			info.AddValue ("__CallContext", _callContext);
 			info.AddValue ("__Uri", _uri);
-#if NET_2_0
 			info.AddValue ("__GenericArguments", _genericArguments);
-#endif
 
 			if (InternalProperties != null) {
 				foreach (DictionaryEntry entry in InternalProperties)
@@ -345,13 +337,11 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 
 
-#if NET_2_0
 			if (_methodBase.IsGenericMethod && _methodBase.ContainsGenericParameters) {
 				if (GenericArguments == null)
 					throw new RemotingException ("The remoting infrastructure does not support open generic methods.");
 				_methodBase = ((MethodInfo) _methodBase).MakeGenericMethod (GenericArguments);
 			}
-#endif
 		}
 
 		Type CastTo (string clientType, Type serverType)
@@ -378,12 +368,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		static string GetTypeNameFromAssemblyQualifiedName (string aqname)
 		{
-#if NET_2_0
 			int p = aqname.IndexOf ("]]");
 			int i = aqname.IndexOf(',', p == -1 ? 0 : p + 2);
-#else
-			int i = aqname.IndexOf(',');
-#endif
 			if (i != -1) aqname = aqname.Substring (0, i).Trim ();
 			return aqname;
 		}
@@ -400,27 +386,6 @@ namespace System.Runtime.Remoting.Messaging {
 			set { _targetIdentity = value; }
 		}
 
-#if !NET_2_0
-		public override string ToString ()
-		{
-			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
-			if (_args != null)
-			{
-				for (int n=0; n<_args.Length; n++)
-				{
-					if (n>0) s+= ", ";
-					if (_args[n] != null) s += _args[n].GetType().Name + " ";
-					s += GetArgName (n);
-					if (_args[n] != null) s += " = {" + _args[n] + "}";
-					else s+=" = {null}";
-				}
-			}
-			s += ")";
-			return s;
-		}
-#endif
-
-#if NET_2_0
 		Type[] GenericArguments {
 			get {
 				if (_genericArguments != null)
@@ -429,6 +394,5 @@ namespace System.Runtime.Remoting.Messaging {
 				return _genericArguments = MethodBase.GetGenericArguments ();
 			}
 		}
-#endif
 	}
 }

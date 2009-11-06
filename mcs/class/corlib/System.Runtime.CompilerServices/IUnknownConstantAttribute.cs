@@ -34,11 +34,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices {
 
 	[Serializable]
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
-			 Inherited=false)]
-#if NET_2_0
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter, Inherited=false)]
 	[ComVisible (true)]
-#endif
 	public sealed class IUnknownConstantAttribute : CustomConstantAttribute
 	{
 		public IUnknownConstantAttribute ()

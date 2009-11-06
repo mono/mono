@@ -35,10 +35,8 @@ namespace System.Security.Cryptography {
 
 		public static byte[] EncodeOID (string str)
 		{
-#if NET_2_0
 			if (str == null)
 				throw new ArgumentNullException ("str");
-#endif
 			char[] delim = { '.' };
 			string[] parts = str.Split (delim);
 			// according to X.208 n is always at least 2

@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
@@ -35,9 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class GacMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
 
 		private readonly int version = 1;
@@ -108,5 +104,3 @@ namespace System.Security.Policy {
 		}
 	}
 }
-
-#endif

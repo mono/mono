@@ -38,9 +38,7 @@ using Mono.Xml;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -52,9 +50,7 @@ namespace System.Security.Permissions {
 		private string name;
 		private bool isUnicodeEncoded;
 		private string xml;
-#if NET_2_0
 		private string hex;
-#endif
 		
 		// Constructor
 		public PermissionSetAttribute (SecurityAction action)
@@ -67,12 +63,10 @@ namespace System.Security.Permissions {
 			get { return file; }
 			set { file = value; }
 		}
-#if NET_2_0
 		public string Hex {
 			get { return hex; }
 			set { hex = value; }
 		}
-#endif
 		public string Name {
 			get { return name; }
 			set { name = value; }
@@ -148,7 +142,6 @@ namespace System.Security.Permissions {
 				else if (xml != null) {
 					pset = CreateFromXml (xml);
 				}
-#if NET_2_0
 				else if (hex != null) {
 					// Unicode isn't supported
 					//Encoding e = ((isUnicodeEncoded) ? System.Text.Encoding.Unicode : System.Text.Encoding.ASCII);
@@ -156,7 +149,6 @@ namespace System.Security.Permissions {
 					byte[] bin = CryptoConvert.FromHex (hex);
 					pset = CreateFromXml (e.GetString (bin, 0, bin.Length));
 				}
-#endif
 			}
 #endif
 			return pset;

@@ -37,9 +37,7 @@ using System.Reflection;
 namespace System.Runtime.Remoting.Metadata {
 
 	[AttributeUsage (AttributeTargets.Field)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SoapFieldAttribute : SoapAttribute
 	{
 		int _order;

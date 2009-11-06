@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class UnionCodeGroup : CodeGroup {
 
 		public UnionCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)

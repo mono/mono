@@ -34,9 +34,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IServerResponseChannelSinkStack
 	{
 		void AsyncProcessResponse (IMessage msg, ITransportHeaders headers, Stream stream);

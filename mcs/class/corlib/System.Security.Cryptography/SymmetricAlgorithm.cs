@@ -34,9 +34,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class SymmetricAlgorithm : IDisposable {
 		protected int BlockSizeValue; 
 		protected byte[] IVValue; 
@@ -56,11 +54,7 @@ namespace System.Security.Cryptography {
 #endif
 		private bool m_disposed;
 
-#if NET_2_0
 		protected SymmetricAlgorithm ()
-#else
-		public SymmetricAlgorithm ()
-#endif
 		{
 			ModeValue = CipherMode.CBC;
 			PaddingValue = PaddingMode.PKCS7;
@@ -122,11 +116,7 @@ namespace System.Security.Cryptography {
 		public virtual int FeedbackSize {
 			get { return this.FeedbackSizeValue; }
 			set {
-#if NET_2_0
 				if ((value <= 0) || (value > this.BlockSizeValue)) {
-#else
-				if (value > this.BlockSizeValue) {
-#endif
 					throw new CryptographicException (
 						Locale.GetText ("feedback size larger than block size"));
 				}
@@ -144,18 +134,11 @@ namespace System.Security.Cryptography {
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("IV");
-#if NET_2_0
 				// 2.0 is stricter for IV length - which is bad for IV-less stream ciphers like RC4
 				if ((value.Length << 3) != this.BlockSizeValue) {
 					throw new CryptographicException (
 						Locale.GetText ("IV length is different than block size"));
 				}
-#else					
-				if ((value.Length << 3) > this.BlockSizeValue) {
-					throw new CryptographicException (
-						Locale.GetText ("IV length cannot be larger than block size"));
-				}
-#endif
 				this.IVValue = (byte[]) value.Clone ();
 			}
 		}

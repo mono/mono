@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class WindowsPrincipal : IPrincipal {
 
 		private WindowsIdentity _identity;
@@ -154,14 +152,13 @@ namespace System.Security.Principal {
 				return IsInRole ((int) role);
 			}
 		}
-#if NET_2_0
 		[MonoTODO ("not implemented")]
 		[ComVisible (false)]
 		public virtual bool IsInRole (SecurityIdentifier sid)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
+
 		private static bool IsPosix {
 			get {
 				int p = (int) Environment.Platform;

@@ -28,27 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Reflection;
-#endif
 
 namespace System.Runtime.CompilerServices
 {
-#if NET_2_0
 	public static class RuntimeHelpers
-#else
-	[Serializable]
-	public sealed class RuntimeHelpers
-#endif
 	{
-#if NET_2_0
 		public delegate void TryCode (Object userData);
 
 		public delegate void CleanupCode (Object userData, bool exceptionThrown);
-#else
-		private RuntimeHelpers () {}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void InitializeArray (Array array, IntPtr fldHandle);
@@ -66,7 +55,6 @@ namespace System.Runtime.CompilerServices
 			get;
 		}
 
-#if NET_1_1
 		public static int GetHashCode (object o) {
 			return Object.InternalGetHashCode (o);
 		}
@@ -85,7 +73,6 @@ namespace System.Runtime.CompilerServices
 			else
 				return Object.Equals (o1, o2);
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object GetObjectValue (object obj);
@@ -101,7 +88,6 @@ namespace System.Runtime.CompilerServices
 			RunClassConstructor (type.Value);
 		}
 
-#if NET_2_0
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
 		{
@@ -152,6 +138,5 @@ namespace System.Runtime.CompilerServices
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern void RunModuleConstructor (IntPtr module);
-#endif
 	}
 }

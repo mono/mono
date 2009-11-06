@@ -35,14 +35,10 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
 			AttributeTargets.Enum | AttributeTargets.Interface,
-#if NET_2_0
 			AllowMultiple=true,
-#endif
 			Inherited=false)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class RequiredAttributeAttribute : Attribute
 	{
 		public RequiredAttributeAttribute (Type requiredContract)

@@ -34,9 +34,7 @@ namespace System.Runtime.Serialization {
 
 	/// <summary>
 	/// Interface for serialization surrogates</summary>
-#if NET_2_0
         [System.Runtime.InteropServices.ComVisibleAttribute (true)]
-#endif
 
 	public interface ISerializationSurrogate {
 

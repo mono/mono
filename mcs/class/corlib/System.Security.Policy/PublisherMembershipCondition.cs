@@ -36,9 +36,7 @@ using Mono.Security.Cryptography;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class PublisherMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;
@@ -56,11 +54,7 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException ("certificate");
 			// needed to match MS implementation
 			if (certificate.GetHashCode () == 0) {
-#if NET_2_0
 				throw new ArgumentException ("certificate");
-#else
-				throw new NullReferenceException ("certificate");
-#endif
 			}
 			x509 = certificate;
 		}

@@ -33,9 +33,7 @@ using System.Runtime.Remoting.Contexts;
 
 namespace System.Runtime.Remoting.Contexts {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IContributeDynamicSink
 	{
 		IDynamicMessageSink GetDynamicSink ();

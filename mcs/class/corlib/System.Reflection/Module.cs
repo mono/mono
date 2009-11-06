@@ -42,10 +42,8 @@ namespace System.Reflection {
 		Other
 	};
 
-#if NET_2_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
-#endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	public class Module : ISerializable, ICustomAttributeProvider, _Module {

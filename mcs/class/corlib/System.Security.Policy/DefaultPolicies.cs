@@ -38,19 +38,9 @@ namespace System.Security.Policy {
 	 *
 	 */
 
-#if NET_2_0
 	internal static class DefaultPolicies {
 
 		public static class ReservedNames {
-#else
-	internal sealed class DefaultPolicies {
-
-		public sealed class ReservedNames {
-
-			internal ReservedNames ()
-			{
-			}
-#endif
 			public const string FullTrust = "FullTrust";
 			public const string LocalIntranet = "LocalIntranet";
 			public const string Internet = "Internet";
@@ -92,10 +82,8 @@ namespace System.Security.Policy {
 		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, " + Consts.AssemblySystem_ServiceProcess;
 		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, " + Consts.AssemblySystem_Data;
 		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, " + Consts.AssemblySystem_Data;
-#if NET_2_0
 		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, " + Consts.AssemblySystem_Security;
 		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, " + Consts.AssemblySystem_Security;
-#endif
 
 		private static Version _fxVersion;
 		private static byte[] _ecmaKey = new byte [16] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -262,10 +250,6 @@ namespace System.Security.Policy {
 
 			// PrintingPermission requires stuff outside corlib (System.Drawing)
 			nps.AddPermission (PermissionBuilder.Create (PrintingPermission ("SafePrinting")));
-#if !NET_2_0
-			// EventLogPermission requires stuff outside corlib (System)
-			nps.AddPermission (PermissionBuilder.Create (EventLogPermission (".", "Instrument")));
-#endif
 			return nps;
 		}
 
@@ -276,11 +260,7 @@ namespace System.Security.Policy {
 
 			IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.None);
 			isfp.UsageAllowed = IsolatedStorageContainment.DomainIsolationByUser;
-#if NET_2_0
 			isfp.UserQuota = 512000;
-#else
-			isfp.UserQuota = 10240;
-#endif
 			nps.AddPermission (isfp);
 
 			nps.AddPermission (new SecurityPermission (SecurityPermissionFlag.Execution));
@@ -321,9 +301,7 @@ namespace System.Security.Policy {
 			nps.AddPermission (new IsolatedStorageFilePermission (PermissionState.Unrestricted));
 			nps.AddPermission (new ReflectionPermission (PermissionState.Unrestricted));
 			nps.AddPermission (new RegistryPermission (PermissionState.Unrestricted));
-#if NET_2_0
 			nps.AddPermission (new KeyContainerPermission (PermissionState.Unrestricted));
-#endif
 
 			// not quite all in this case
 			SecurityPermissionFlag spf = SecurityPermissionFlag.AllFlags;
@@ -345,10 +323,8 @@ namespace System.Security.Policy {
 			nps.AddPermission (PermissionBuilder.Create (ServiceControllerPermissionClass, PermissionState.Unrestricted));
 			nps.AddPermission (PermissionBuilder.Create (OleDbPermissionClass, PermissionState.Unrestricted));
 			nps.AddPermission (PermissionBuilder.Create (SqlClientPermissionClass, PermissionState.Unrestricted));
-#if NET_2_0
 //			nps.AddPermission (PermissionBuilder.Create (DataProtectionPermissionClass, PermissionState.Unrestricted));
 //			nps.AddPermission (PermissionBuilder.Create (StorePermissionClass, PermissionState.Unrestricted));
-#endif
 			return nps;
 		}
 
@@ -361,20 +337,5 @@ namespace System.Security.Policy {
 			return se;
 		}
 
-#if !NET_2_0
-		private static SecurityElement EventLogPermission (string name, string access)
-		{
-			SecurityElement se = new SecurityElement ("IPermission");
-			se.AddAttribute ("class", EventLogPermissionClass);
-			se.AddAttribute ("version", "1");
-
-			SecurityElement child = new SecurityElement ("Machine");
-			child.AddAttribute ("name", name);
-			child.AddAttribute ("access", access);
-
-			se.AddChild (child);
-			return se;
-		}
-#endif		
 	}
 }

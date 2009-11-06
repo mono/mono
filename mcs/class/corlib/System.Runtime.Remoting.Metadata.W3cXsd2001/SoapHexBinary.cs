@@ -38,9 +38,7 @@ using System.Text;
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SoapHexBinary : ISoapXsd
 	{
 		byte[] _value;
@@ -101,11 +99,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 					NumberStyles.HexNumber,
 					CultureInfo.InvariantCulture);
 			} catch (FormatException) {
-#if NET_2_0
 				throw CreateInvalidValueException (value);
-#else
-				return (byte) 0;
-#endif
 			}
 		}
 

@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public class CallConvCdecl {
 	} 
 }

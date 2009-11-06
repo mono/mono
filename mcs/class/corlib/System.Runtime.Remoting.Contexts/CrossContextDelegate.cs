@@ -28,11 +28,6 @@
 
 namespace System.Runtime.Remoting.Contexts {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public delegate void CrossContextDelegate ();
 }

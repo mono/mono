@@ -32,14 +32,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_1_0
-	public class MD5CryptoServiceProvider : MD5 {
-#else
-	#if NET_2_0
 	[ComVisible (true)]
-	#endif
 	public sealed class MD5CryptoServiceProvider : MD5 {
-#endif
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  16;
 		private uint[] _H;

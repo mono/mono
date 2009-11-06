@@ -31,9 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class SHA256Managed : SHA256 {
 
 		private const int BLOCK_SIZE_BYTES =  64;

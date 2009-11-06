@@ -5,7 +5,7 @@
 //   Kazuki Oikawa (kazuki@panicode.com)
 //
 
-#if NET_2_0
+
 namespace System.Runtime.InteropServices.ComTypes
 {
 	[Serializable]
@@ -17,4 +17,4 @@ namespace System.Runtime.InteropServices.ComTypes
 		VAR_DISPATCH = 3
 	}
 }
-#endif
+

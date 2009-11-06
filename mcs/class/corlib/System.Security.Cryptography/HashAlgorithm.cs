@@ -35,16 +35,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class HashAlgorithm : ICryptoTransform {
 
-#if NET_2_0
 		protected internal byte[] HashValue;
-#else
-		protected byte[] HashValue;
-#endif
 		protected int HashSizeValue;
 		protected int State;
 		private bool disposed;
@@ -183,20 +177,12 @@ namespace System.Security.Cryptography {
 
 			if (outputBuffer != null) {
 				if (outputOffset < 0) {
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
-#else
-					throw new IndexOutOfRangeException ("outputBuffer");
-#endif
 				}
 				// ordered to avoid possible integer overflow
 				if (outputOffset > outputBuffer.Length - inputCount) {
-#if NET_2_0
 					throw new ArgumentException ("outputOffset + inputCount", 
 						Locale.GetText ("Overflow"));
-#else
-					throw new IndexOutOfRangeException ("outputBuffer");
-#endif
 				}
 			}
 

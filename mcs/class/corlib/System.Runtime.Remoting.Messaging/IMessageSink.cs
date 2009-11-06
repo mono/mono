@@ -34,14 +34,11 @@ using System.Runtime.Remoting;
 
 namespace System.Runtime.Remoting.Messaging
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-    public interface IMessageSink
-    {
-        IMessage SyncProcessMessage (IMessage msg);
-        IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink);
-        IMessageSink NextSink { get; }
-    }
+	public interface IMessageSink {
+		IMessage SyncProcessMessage (IMessage msg);
+		IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink);
+		IMessageSink NextSink { get; }
+	}
 }
 

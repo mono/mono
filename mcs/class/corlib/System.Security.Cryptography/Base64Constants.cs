@@ -29,16 +29,7 @@
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	internal static class Base64Constants {
-#else
-	internal sealed class Base64Constants {
-
-		private Base64Constants ()
-		{
-			// Never instantiated.
-		}
-#endif
 		// Pre-calculated tables
 
 		public static readonly byte[] EncodeTable = { 

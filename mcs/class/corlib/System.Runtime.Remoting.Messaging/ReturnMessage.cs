@@ -37,9 +37,7 @@ using System.IO;
 
 namespace System.Runtime.Remoting.Messaging 
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IMessage, IInternalMessage 
 	{
 		object[] _outArgs;
@@ -229,28 +227,5 @@ namespace System.Runtime.Remoting.Messaging
 			set { _targetIdentity = value; }
 		}
 
-#if !NET_2_0
-		public override string ToString ()
-		{
-			string s = TypeName.Split(',')[0] + "." + MethodName + " (";
-			if (_exception != null)
-			{
-				s += "Exception)\n" + _exception;
-			}
-			else
-			{
-				for (int n=0; n<OutArgs.Length; n++)
-				{
-					if (n>0) s+= ", ";
-					if (OutArgs[n] != null) s += OutArgs[n].GetType().Name + " ";
-					s += GetOutArgName (n);
-					if (OutArgs[n] != null) s += " = {" + OutArgs[n] + "}";
-					else s+=" = {null}";
-				}
-				s += ")";
-			}
-			return s;
-		}
-#endif
 	}
 }

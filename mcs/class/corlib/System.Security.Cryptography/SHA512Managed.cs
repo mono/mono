@@ -36,9 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public class SHA512Managed : SHA512 {
 
 	private byte[] xBuf;

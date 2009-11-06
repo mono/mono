@@ -38,9 +38,7 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class UrlMembershipCondition : IMembershipCondition, IConstantMembershipCondition {
 
 		private readonly int version = 1;
@@ -52,14 +50,9 @@ namespace System.Security.Policy {
                 {
 			if (url == null)
 				throw new ArgumentNullException ("url");
-#if NET_2_0
 			CheckUrl (url);
 			userUrl = url;
                         this.url = new Url (url);
-#else
-                        this.url = new Url (url);
-			userUrl = this.url.Value;
-#endif
                 }
 
 		internal UrlMembershipCondition (Url url, string userUrl)
@@ -142,16 +135,12 @@ namespace System.Security.Policy {
 			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			
 			string u = e.Attribute ("Url");
-#if NET_2_0
 			if (u != null) {
 				CheckUrl (u);
 				url = new Url (u);
 			} else {
 				url = null;
 			}
-#else
-			url = (u == null) ? null : new Url (u);
-#endif
 			userUrl = u;
 		}
 
@@ -180,7 +169,6 @@ namespace System.Security.Policy {
 
 		// internal stuff
 
-#if NET_2_0
 		internal void CheckUrl (string url)
 		{
 			// In .NET 1.x Url class checked the validity of the 
@@ -196,6 +184,5 @@ namespace System.Security.Policy {
 				throw new ArgumentException (msg, "name");
 			}
 		}
-#endif
         }
 }

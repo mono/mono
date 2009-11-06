@@ -31,20 +31,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage ( AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Struct | AttributeTargets.Constructor |
 		AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
 	[Serializable]
 	public abstract class IsolatedStoragePermissionAttribute : CodeAccessSecurityAttribute {
 
-#if NET_2_0
 		protected IsolatedStoragePermissionAttribute (SecurityAction action)
-#else
-		public IsolatedStoragePermissionAttribute (SecurityAction action)
-#endif
 			: base (action)
 		{
 		}

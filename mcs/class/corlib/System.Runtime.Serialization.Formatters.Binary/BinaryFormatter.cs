@@ -36,24 +36,15 @@ using System.Security.Permissions;
 
 namespace System.Runtime.Serialization.Formatters.Binary {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
-#if NET_2_0
 		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Simple;
-#else
-		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Full;
-#endif
 		private SerializationBinder binder;
 		private StreamingContext context;
 		private ISurrogateSelector surrogate_selector;
 		private FormatterTypeStyle type_format = FormatterTypeStyle.TypesAlways;
-		
-#if NET_1_1
 		private TypeFilterLevel filter_level = TypeFilterLevel.Full;
-#endif
 		
 		public BinaryFormatter()
 		{
@@ -117,16 +108,11 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			}
 		}
 
-#if NET_1_1
-#if !NET_2_0
-		[System.Runtime.InteropServices.ComVisible (false)]
-#endif
 		public TypeFilterLevel FilterLevel 
 		{
 			get { return filter_level; }
 			set { filter_level = value; }
 		}
-#endif
 
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public object Deserialize (Stream serializationStream)

@@ -30,29 +30,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-#endif
 
 namespace System.Runtime.Serialization.Formatters
 {
 	//LAMESPEC: Use of this class??
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class InternalRM
 	{
-#if NET_2_0
-		public
-#else
-		private
-#endif
-		InternalRM ()
+		public InternalRM ()
 		{
 		}
 
-#if NET_2_0
 		[Conditional ("_LOGGING")]
 		public static void InfoSoap (params object[] messages)
 		{
@@ -63,6 +53,5 @@ namespace System.Runtime.Serialization.Formatters
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

@@ -34,9 +34,7 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class PolicyStatement : ISecurityEncodable, ISecurityPolicyEncodable {
 
 		private PermissionSet perms;
@@ -148,7 +146,6 @@ namespace System.Security.Policy {
 			return element;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -167,7 +164,6 @@ namespace System.Security.Policy {
 			// return same hash code if two PolicyStatement are equals
 			return (PermissionSet.GetHashCode () ^ (int) attrs);
 		}
-#endif
 
 		internal static PolicyStatement Empty ()
 		{

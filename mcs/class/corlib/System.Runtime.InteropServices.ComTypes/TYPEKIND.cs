@@ -28,7 +28,7 @@
 // Kazuki Oikawa (kazuki@panicode.com)
 //
 // (C) 2002 Ximian, Inc.
-#if NET_2_0
+
 using System;
 
 namespace System.Runtime.InteropServices.ComTypes
@@ -47,4 +47,4 @@ namespace System.Runtime.InteropServices.ComTypes
 		TKIND_MAX = 8
 	}
 }
-#endif
+

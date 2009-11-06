@@ -33,9 +33,7 @@
 using System;
 
 namespace System.Runtime.Remoting.Metadata {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class SoapAttribute : Attribute
 	{
 		bool _nested;

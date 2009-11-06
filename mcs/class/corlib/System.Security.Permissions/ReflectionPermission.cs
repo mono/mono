@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class ReflectionPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
@@ -63,11 +61,7 @@ namespace System.Security.Permissions {
 		public ReflectionPermissionFlag Flags {
 			get { return flags; }
 			set {
-#if NET_2_0
 				const ReflectionPermissionFlag all_flags = ReflectionPermissionFlag.AllFlags | ReflectionPermissionFlag.RestrictedMemberAccess;
-#else				
-				const ReflectionPermissionFlag all_flags = ReflectionPermissionFlag.AllFlags;
-#endif
 
 				if ((value & all_flags) != value) {
 					string msg = String.Format (Locale.GetText ("Invalid flags {0}"), value);

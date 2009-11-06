@@ -33,18 +33,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public enum PaddingMode {
 		None = 0x1,
 		PKCS7,
 		Zeros,
-#if NET_2_0
 		ANSIX923,
 		ISO10126
-#endif
 	}
 }
 	

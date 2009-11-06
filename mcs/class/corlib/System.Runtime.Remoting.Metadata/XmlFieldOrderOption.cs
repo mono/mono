@@ -31,10 +31,8 @@
 
 namespace System.Runtime.Remoting.Metadata {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[System.Serializable]
-#endif
 	public enum XmlFieldOrderOption
 	{
 		All = 0,

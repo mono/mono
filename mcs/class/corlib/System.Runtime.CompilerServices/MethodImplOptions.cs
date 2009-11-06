@@ -39,14 +39,9 @@ namespace System.Runtime.CompilerServices {
 
 	/// <summary>
 	/// </summary>
-#if !NET_2_0
-	[Flags]
-#endif
-#if NET_2_0
 	[Flags]
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum MethodImplOptions {
 
 		/// <summary>
@@ -73,9 +68,7 @@ namespace System.Runtime.CompilerServices {
 		/// </summary>
 		PreserveSig = 128,
 		
-#if NET_2_0
 		NoOptimization = 64
-#endif
 	} // MethodImplOptions
 
 } // System.Runtime.CompilerServices

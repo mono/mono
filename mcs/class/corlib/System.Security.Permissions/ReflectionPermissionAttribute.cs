@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -87,7 +85,6 @@ namespace System.Security.Permissions {
 			}
 		}
 
-#if NET_2_0
 		public bool RestrictedMemberAccess
 		{
 			get { return ((flags & ReflectionPermissionFlag.RestrictedMemberAccess) == ReflectionPermissionFlag.RestrictedMemberAccess); }
@@ -98,11 +95,8 @@ namespace System.Security.Permissions {
 					flags -= ReflectionPermissionFlag.RestrictedMemberAccess;
 			}
 		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("not enforced in 2.0+")]
-#endif
 		public bool TypeInformation
 		{
 			get { return typeInfo; }

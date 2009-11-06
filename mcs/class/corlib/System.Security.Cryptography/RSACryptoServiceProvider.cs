@@ -38,12 +38,8 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class RSACryptoServiceProvider : RSA, ICspAsymmetricAlgorithm {
-#else
-	public sealed class RSACryptoServiceProvider : RSA {
-#endif
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
 
 		private KeyPairPersistence store;
@@ -154,13 +150,8 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if (NET_2_0)
 		[ComVisible (false)]
-		public 
-#else
-		internal
-#endif
-		bool PublicOnly {
+		public bool PublicOnly {
 			get { return rsa.PublicOnly; }
 		}
 	
@@ -299,14 +290,8 @@ namespace System.Security.Cryptography {
 		{
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
-#if NET_2_0
 			// Fx 2.0 defaults to the SHA-1
 			string hashName = (str == null) ? "SHA1" : GetHashNameFromOID (str);
-#else
-			if (str == null)
-				throw new CryptographicException (Locale.GetText ("No OID specified"));
-			string hashName = GetHashNameFromOID (str);
-#endif
 			HashAlgorithm hash = HashAlgorithm.Create (hashName);
 			return PKCS1.Sign_v15 (this, hash, rgbHash);
 		}
@@ -315,10 +300,8 @@ namespace System.Security.Cryptography {
 		// HashAlgorithm descendant
 		public bool VerifyData (byte[] buffer, object halg, byte[] signature) 
 		{
-#if NET_1_1
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-#endif
 			if (signature == null)
 				throw new ArgumentNullException ("signature");
 
@@ -337,14 +320,8 @@ namespace System.Security.Cryptography {
 				throw new ArgumentNullException ("rgbHash");
 			if (rgbSignature == null)
 				throw new ArgumentNullException ("rgbSignature");
-#if NET_2_0
 			// Fx 2.0 defaults to the SHA-1
 			string hashName = (str == null) ? "SHA1" : GetHashNameFromOID (str);
-#else
-			if (str == null)
-				throw new CryptographicException (Locale.GetText ("No OID specified"));
-			string hashName = GetHashNameFromOID (str);
-#endif
 			HashAlgorithm hash = HashAlgorithm.Create (hashName);
 			return PKCS1.Verify_v15 (this, hash, rgbHash, rgbSignature);
 		}
@@ -376,7 +353,6 @@ namespace System.Security.Cryptography {
 				persisted = true;
 			}
 		}
-#if NET_2_0
 		// ICspAsymmetricAlgorithm
 
 		[MonoTODO ("Always return null")]
@@ -427,7 +403,6 @@ namespace System.Security.Cryptography {
 				}
 			}
 		}
-#endif
 	}
 }
 

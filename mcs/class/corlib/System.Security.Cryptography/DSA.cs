@@ -41,20 +41,11 @@ using Mono.Security;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class DSA : AsymmetricAlgorithm {
 
-#if NET_2_0
 		// Constructor visibility fixed in Fx 2.0
 		protected DSA ()
-#else
-		// LAMESPEC: It says to derive new DSA implemenation from DSA class.
-		// Well it's aint gonna be easy this way.
-		// RSA constructor is public
-		internal DSA ()
-#endif
 		{
 		}
 
@@ -169,12 +160,7 @@ namespace System.Security.Cryptography {
 					sb.Append ("</X>");
 				}
 				else if (includePrivateParameters) {
-#if NET_2_0
 					throw new ArgumentNullException ("X");
-#else
-					throw new CryptographicException (
-						Locale.GetText ("Missing private key informations"));
-#endif
 				}
 
 				sb.Append ("</DSAKeyValue>");

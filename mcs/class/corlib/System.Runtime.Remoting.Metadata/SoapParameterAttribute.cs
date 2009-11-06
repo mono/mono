@@ -34,9 +34,7 @@ using System.Runtime.Remoting.Metadata;
 namespace System.Runtime.Remoting.Metadata {
 
 	[AttributeUsage (AttributeTargets.Parameter)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SoapParameterAttribute : SoapAttribute
 	{
 		public SoapParameterAttribute ()

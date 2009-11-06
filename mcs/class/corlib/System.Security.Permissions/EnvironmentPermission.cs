@@ -35,9 +35,7 @@ using System.Text;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class EnvironmentPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
@@ -344,13 +342,8 @@ namespace System.Security.Permissions {
 		{
 			if (IsUnrestricted ())
 				return String.Empty;
-#if NET_2_0
 			if (list.Count == 0)
 				return String.Empty;
-#else
-			if (list.Count == 0)
-				return null;
-#endif
 			StringBuilder sb = new StringBuilder ();
 			foreach (string path in list) {
 				sb.Append (path);
@@ -362,11 +355,8 @@ namespace System.Security.Permissions {
 			int n = result.Length;
 			if (n > 0)
 				return result.Substring (0, n - 1);
-#if NET_2_0
+
 			return String.Empty;
-#else
-			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
-#endif
 		}
 
 		#endregion // Methods

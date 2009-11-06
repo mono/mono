@@ -35,9 +35,7 @@ namespace System.Runtime.Remoting.Contexts
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class SynchronizationAttribute: ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;
@@ -147,9 +145,7 @@ namespace System.Runtime.Remoting.Contexts
 			}
 		}
 		
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 		public override void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
 			if (_flavor != NOT_SUPPORTED) {
@@ -167,9 +163,7 @@ namespace System.Runtime.Remoting.Contexts
 			return new SynchronizedServerContextSink (nextSink, this);
 		}
 		
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 		public override bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
 			SynchronizationAttribute prop = ctx.GetProperty ("Synchronization") as SynchronizationAttribute;

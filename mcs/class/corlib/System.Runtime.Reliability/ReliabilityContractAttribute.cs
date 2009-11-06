@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
@@ -63,4 +62,4 @@ namespace System.Runtime.Reliability
                 }
         }
 }
-#endif
+

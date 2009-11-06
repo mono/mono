@@ -37,9 +37,7 @@ namespace System.Security.Cryptography {
 	// a.	FIPS PUB 197: Advanced Encryption Standard
 	//	http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class Rijndael : SymmetricAlgorithm {
 
 		public static new Rijndael Create () 
@@ -52,11 +50,7 @@ namespace System.Security.Cryptography {
 			return (Rijndael) CryptoConfig.CreateFromName (algName);
 		}
 
-#if NET_2_0
 		protected Rijndael ()
-#else
-		public Rijndael ()
-#endif
 		{
 			KeySizeValue = 256;
 			BlockSizeValue = 128;

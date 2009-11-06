@@ -41,9 +41,7 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting {
 
 	[ClassInterface(ClassInterfaceType.AutoDual)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class ObjectHandle : MarshalByRefObject, IObjectHandle {
 		private object _wrapped;
 		

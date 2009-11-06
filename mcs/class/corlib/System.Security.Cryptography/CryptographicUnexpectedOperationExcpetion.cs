@@ -34,9 +34,7 @@ using System.Runtime.Serialization;
 namespace System.Security.Cryptography {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class CryptographicUnexpectedOperationException : CryptographicException {
 
 		public CryptographicUnexpectedOperationException ()

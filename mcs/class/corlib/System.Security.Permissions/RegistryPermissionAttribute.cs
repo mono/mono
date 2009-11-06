@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -46,11 +44,9 @@ namespace System.Security.Permissions {
 		private string create;
 		private string read;
 		private string write;
-#if NET_2_0
 		private string changeAccessControl;
 		private string viewAccessControl;
 //		private string viewAndModify;
-#endif
 
 		// Constructor
 		public RegistryPermissionAttribute (SecurityAction action) : base (action)
@@ -58,13 +54,9 @@ namespace System.Security.Permissions {
 		}
 		
 		// Properties
-#if NET_2_0
 		[Obsolete ("use newer properties")]
-#endif
 		public string All {
-#if ! NET_1_0
 			get { throw new NotSupportedException ("All"); }
-#endif
 			set { 
 				create = value; 
 				read = value;
@@ -87,7 +79,6 @@ namespace System.Security.Permissions {
 			set { write = value; }
 		}
 
-#if NET_2_0
 		public string ChangeAccessControl {
 			get { return changeAccessControl; }
 			set { changeAccessControl = value; }
@@ -106,7 +97,7 @@ namespace System.Security.Permissions {
 				write = value;
 			}
 		}
-#endif
+
 		// Methods
 		public override IPermission CreatePermission ()
 		{

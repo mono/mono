@@ -319,9 +319,7 @@ namespace System.Security.Cryptography {
 
 #if !NET_2_1 || MONOTOUCH
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class SHA1CryptoServiceProvider : SHA1 {
 
 		private SHA1Internal sha;

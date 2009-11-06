@@ -37,9 +37,7 @@ namespace System.Runtime.Remoting.Contexts {
 
 	[AttributeUsage (AttributeTargets.Class)]
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class ContextAttribute : Attribute, IContextAttribute, IContextProperty {
 		protected string AttributeName;
 

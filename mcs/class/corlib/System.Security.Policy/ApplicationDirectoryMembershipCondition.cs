@@ -40,9 +40,7 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ApplicationDirectoryMembershipCondition : IConstantMembershipCondition, IMembershipCondition {
 
 		private readonly int version = 1;

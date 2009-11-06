@@ -39,10 +39,9 @@ namespace System.Runtime.Remoting.Metadata {
 	/// <summary>
 	/// </summary>
 	[Flags]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[System.Serializable]
-#endif
+
 	public enum SoapOption {
 
 		/// <summary>

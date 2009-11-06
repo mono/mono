@@ -422,12 +422,10 @@ namespace System.Security.Cryptography {
 			: base (symmAlgo, encryption, iv)
 		{
 			byte[] clonedKey = null;
-#if NET_2_0
 			if (key == null) {
 				key = GetStrongKey ();
 				clonedKey = key; // no need to clone
 			}
-#endif
 			// note: checking (semi-)weak keys also checks valid key length
 			if (DES.IsWeakKey (key) || DES.IsSemiWeakKey (key)) {
 				string msg = Locale.GetText ("This is a known weak, or semi-weak, key.");
@@ -661,9 +659,7 @@ namespace System.Security.Cryptography {
 		}
 	} 
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class DESCryptoServiceProvider : DES {
 	
 		public DESCryptoServiceProvider ()

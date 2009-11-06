@@ -36,9 +36,7 @@ using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.Messaging {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IRemotingFormatter : IFormatter {
 		object Deserialize (Stream serializationStream, HeaderHandler handler);
 		void Serialize (Stream serializationStream, object graph, Header [] headers); 

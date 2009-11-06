@@ -34,17 +34,13 @@ using System;
 using System.Runtime.Remoting.Metadata;
 using System.Runtime.Serialization;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Serialization.Formatters {
 
 	[Serializable]
 	[SoapType()]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ServerFault
 	{
 		string exceptionType;

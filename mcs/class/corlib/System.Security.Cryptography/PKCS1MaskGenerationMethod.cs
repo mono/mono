@@ -36,9 +36,7 @@ namespace System.Security.Cryptography {
 	// a.	PKCS#1: RSA Cryptography Standard 
 	//	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-1/index.html
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class PKCS1MaskGenerationMethod : MaskGenerationMethod {
 
 		private string hashName;

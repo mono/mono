@@ -33,9 +33,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Channels {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface ITransportHeaders
 	{
 		object this [object key] { get; set; }

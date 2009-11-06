@@ -37,9 +37,7 @@ namespace System.Security.Permissions {
 #if NET_2_1
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Flags]
 	[Serializable]
 	public enum SecurityPermissionFlag {

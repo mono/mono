@@ -34,12 +34,8 @@ using System.Runtime.Serialization;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
 	public class PolicyException : SystemException, _Exception {
-#else
-	public class PolicyException : SystemException {
-#endif
 		// Constructors
 		public PolicyException ()
 			: base (Locale.GetText ("Cannot run because of policy."))

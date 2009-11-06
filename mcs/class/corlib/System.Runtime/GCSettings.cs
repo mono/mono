@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime
@@ -48,5 +46,3 @@ namespace System.Runtime
 		}
 	}
 }
-
-#endif

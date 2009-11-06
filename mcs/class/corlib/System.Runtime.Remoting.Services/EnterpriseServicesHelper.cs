@@ -33,25 +33,18 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Proxies;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Remoting.Services 
 {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class EnterpriseServicesHelper
 	{
 		public EnterpriseServicesHelper ()
 		{
 		}
 		
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public static IConstructionReturnMessage CreateConstructionReturnMessage (IConstructionCallMessage ctorMsg, MarshalByRefObject retObj)
 		{
 			return new ConstructionResponse (retObj, null, ctorMsg);

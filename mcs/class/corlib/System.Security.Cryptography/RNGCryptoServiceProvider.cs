@@ -40,14 +40,8 @@ using System.Text;
 
 namespace System.Security.Cryptography {
 	
-#if NET_1_0
-	public class RNGCryptoServiceProvider : RandomNumberGenerator {
-#else
-	#if NET_2_0
 	[ComVisible (true)]
-	#endif
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
-#endif
 		private static object _lock;
 		private IntPtr _handle;
 

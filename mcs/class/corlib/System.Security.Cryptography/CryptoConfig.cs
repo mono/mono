@@ -44,9 +44,7 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public partial      class CryptoConfig {
 
 	static private object lockObject;
@@ -72,14 +70,12 @@ public partial      class CryptoConfig {
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
 	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
-#if NET_2_0
 	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
 	private const string defaultHMACMD5 = defaultNamespace + "HMACMD5";
 	private const string defaultHMACRIPEMD160 = defaultNamespace + "HMACRIPEMD160";
 	private const string defaultHMACSHA256 = defaultNamespace + "HMACSHA256";
 	private const string defaultHMACSHA384 = defaultNamespace + "HMACSHA384";
 	private const string defaultHMACSHA512 = defaultNamespace + "HMACSHA512";
-#endif
 
 	// LAMESPEC: undocumented names in CryptoConfig
 	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform, " + Consts.AssemblySystem_Security;
@@ -88,11 +84,9 @@ public partial      class CryptoConfig {
 	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform, " + Consts.AssemblySystem_Security;
 	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform, " + Consts.AssemblySystem_Security;
 	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform, " + Consts.AssemblySystem_Security;
-#if NET_2_0
 	private const string defaultXmlDecryption = defaultNamespace + "Xml.XmlDecryptionTransform, " + Consts.AssemblySystem_Security;
 	private const string defaultExcC14N = defaultNamespace + "Xml.XmlDsigExcC14NTransform, " + Consts.AssemblySystem_Security;
 	private const string defaultExcC14NWithComments = defaultNamespace + "Xml.XmlDsigExcC14NWithCommentsTransform, " + Consts.AssemblySystem_Security;
-#endif
 
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string defaultX509Data = defaultNamespace + "Xml.KeyInfoX509Data, " + Consts.AssemblySystem_Security;
@@ -106,7 +100,6 @@ public partial      class CryptoConfig {
 	// Oddly OID seems only available for hash algorithms
 	private const string oidSHA1 = "1.3.14.3.2.26";
 	private const string oidMD5 = "1.2.840.113549.2.5";
-#if NET_2_0
 	// changed in 2.0
 	private const string oidSHA256 = "2.16.840.1.101.3.4.2.1";
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2.2";
@@ -117,11 +110,6 @@ public partial      class CryptoConfig {
 	private const string oidDES = "1.3.14.3.2.7";
 	private const string oid3DES = "1.2.840.113549.3.7";
 	private const string oidRC2 = "1.2.840.113549.3.2";
-#else
-	private const string oidSHA256 = "2.16.840.1.101.3.4.1";
-	private const string oidSHA384 = "2.16.840.1.101.3.4.2";
-	private const string oidSHA512 = "2.16.840.1.101.3.4.3";
-#endif
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string oid3DESKeyWrap = "1.2.840.113549.1.9.16.3.6";
 
@@ -166,7 +154,6 @@ public partial      class CryptoConfig {
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string name3DESKeyWrap = "TripleDESKeyWrap";
-#if NET_2_0
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
 	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
@@ -182,7 +169,6 @@ public partial      class CryptoConfig {
 	private const string nameHMACSHA384b = "System.Security.Cryptography.HMACSHA384";
 	private const string nameHMACSHA512a = "HMACSHA512";
 	private const string nameHMACSHA512b = "System.Security.Cryptography.HMACSHA512";
-#endif
 
 	private const string urlXmlDsig = "http://www.w3.org/2000/09/xmldsig#";
 	// LAMESPEC: undocumented URLs in CryptoConfig
@@ -195,7 +181,6 @@ public partial      class CryptoConfig {
 	private const string urlXPath = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 	private const string urlXslt = "http://www.w3.org/TR/1999/REC-xslt-19991116";
 	private const string urlEnveloped = urlXmlDsig + "enveloped-signature";		// no space
-#if NET_2_0
 	private const string urlXmlDecryption = "http://www.w3.org/2002/07/decrypt#XML";
 	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#";
@@ -205,7 +190,6 @@ public partial      class CryptoConfig {
 	private const string urlHMACSHA384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
 	private const string urlHMACSHA512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
 	private const string urlHMACRIPEMD160 = "http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160";
-#endif
 
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string urlX509Data = urlXmlDsig + " X509Data";			// space is required
@@ -214,7 +198,6 @@ public partial      class CryptoConfig {
 	private const string urlKeyValueRSA = urlXmlDsig + " KeyValue/RSAKeyValue";	// space is required
 	private const string urlRetrievalMethod = urlXmlDsig + " RetrievalMethod";	// space is required
 
-#if NET_2_0
 	// new (2.0) X509 certificate extensions
 	private const string oidX509SubjectKeyIdentifier = "2.5.29.14";
 	private const string oidX509KeyUsage = "2.5.29.15";
@@ -229,7 +212,6 @@ public partial      class CryptoConfig {
 	// new (2.0) X509 Chain
 	private const string nameX509Chain = "X509Chain";
 	private const string defaultX509Chain = defaultNamespace + "X509Certificates.X509Chain, " + Consts.AssemblySystem;
-#endif
 
 	static CryptoConfig () 
 	{
@@ -240,11 +222,7 @@ public partial      class CryptoConfig {
 
 	private static void Initialize () 
 	{
-#if NET_2_0
 		Hashtable algorithms = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
-#else
-		Hashtable algorithms = new Hashtable ();
-#endif
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
 		// frlrfSystemSecurityCryptographyCryptoConfigClassTopic.asp
 		algorithms.Add (nameSHA1a, defaultSHA1);
@@ -299,7 +277,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (nameHMACSHA1b, defaultHMAC);
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
-#if NET_2_0
 		algorithms.Add (nameRIPEMD160a, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160b, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160c, defaultRIPEMD160);
@@ -314,7 +291,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (nameHMACSHA384b, defaultHMACSHA384);
 		algorithms.Add (nameHMACSHA512a, defaultHMACSHA512);
 		algorithms.Add (nameHMACSHA512b, defaultHMACSHA512);
-#endif
 
 		// LAMESPEC These URLs aren't documented but (hint) installing the WSDK
 		// add some of the XMLDSIG urls into machine.config (and they make a LOT
@@ -328,7 +304,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (urlXPath, defaultXPath);
 		algorithms.Add (urlXslt, defaultXslt);
 		algorithms.Add (urlEnveloped, defaultEnveloped);
-#if NET_2_0
 		algorithms.Add (urlExcC14N, defaultExcC14N);
 		algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
 		algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
@@ -339,7 +314,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (urlHMACSHA384, defaultHMACSHA384);
 		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
 		algorithms.Add (urlHMACRIPEMD160, defaultHMACRIPEMD160);
-#endif
 		// LAMESPEC: only documentated in ".NET Framework Security" book
 		algorithms.Add (urlX509Data, defaultX509Data);
 		algorithms.Add (urlKeyName, defaultKeyName);
@@ -347,7 +321,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
 		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
 
-#if NET_2_0
 		// note: X.509 extensions aren't part of OID but names
 		algorithms.Add (oidX509SubjectKeyIdentifier, nameX509SubjectKeyIdentifier);
 		algorithms.Add (oidX509KeyUsage, nameX509KeyUsage);
@@ -357,9 +330,6 @@ public partial      class CryptoConfig {
 		algorithms.Add (nameX509Chain, defaultX509Chain);
 
 		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
-#else
-		Hashtable oid = new Hashtable ();
-#endif
 
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
@@ -387,11 +357,9 @@ public partial      class CryptoConfig {
 		// surprise! documented in ".NET Framework Security" book
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
 
-#if NET_2_0
 		oid.Add (nameDESa, oidDES);
 		oid.Add (name3DESb, oid3DES);
 		oid.Add (nameRC2a, oidRC2);
-#endif
 
 		// Add/modify the config as specified by machine.config
 		string config = Environment.GetMachineConfigPath ();
@@ -425,11 +393,7 @@ public partial      class CryptoConfig {
 	}
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-#if NET_2_0
 	public static object CreateFromName (string name, params object[] args)
-#else
-	public static object CreateFromName (string name, object[] args)
-#endif
 	{
 		if (name == null)
 			throw new ArgumentNullException ("name");

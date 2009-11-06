@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method, AllowMultiple=true, Inherited=false)]
@@ -47,13 +45,11 @@ namespace System.Security.Permissions {
 		private string path;
 		private string read;
 		private string write;
-#if NET_2_0
 		private FileIOPermissionAccess allFiles;
 		private FileIOPermissionAccess allLocalFiles;
 		private string changeAccessControl;
 		private string viewAccessControl;
 		//private string viewAndModify;
-#endif
 
 		// Constructor
 		public FileIOPermissionAttribute (SecurityAction action) : base (action)
@@ -61,13 +57,9 @@ namespace System.Security.Permissions {
 		}
 		
 		// Properties
-#if NET_2_0
 		[Obsolete ("use newer properties")]
-#endif
 		public string All {
-#if NET_1_1
 			get { throw new NotSupportedException ("All"); }
-#endif
 			set {
 				append = value; 
 				path = value;
@@ -96,7 +88,6 @@ namespace System.Security.Permissions {
 			set { write = value; }
 		}
 
-#if NET_2_0
 		public FileIOPermissionAccess AllFiles {
 			get { return allFiles; }
 			set { allFiles = value; }
@@ -126,7 +117,6 @@ namespace System.Security.Permissions {
 				write = value;
 			}
 		}
-#endif
 		// Methods
 		public override IPermission CreatePermission ()
 		{

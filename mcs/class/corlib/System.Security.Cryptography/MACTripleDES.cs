@@ -41,9 +41,7 @@ namespace System.Security.Cryptography {
 	//	http://www.itl.nist.gov/fipspubs/fip81.htm
 	
 	// LAMESPEC: MACTripleDES == MAC-CBC using TripleDES (not MAC-CFB).
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class MACTripleDES: KeyedHashAlgorithm {
 	
 		private TripleDES tdes;
@@ -96,13 +94,11 @@ namespace System.Security.Cryptography {
 			Dispose (false);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public PaddingMode Padding {
 			get { return tdes.Padding; }
 			set { tdes.Padding = value; }
 		}
-#endif
 
 		protected override void Dispose (bool disposing) 
 		{

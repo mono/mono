@@ -36,9 +36,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Channels
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class ServerChannelSinkStack : IServerChannelSinkStack, IServerResponseChannelSinkStack
 	{
 		// The stack. It is a chain of ChanelSinkStackEntry.

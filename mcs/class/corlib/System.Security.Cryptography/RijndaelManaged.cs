@@ -44,9 +44,7 @@ namespace System.Security.Cryptography {
 	// b.	Rijndael Specification
 	//	http://csrc.nist.gov/CryptoToolkit/aes/rijndael/Rijndael-ammended.pdf
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class RijndaelManaged : Rijndael {
 		
 		public RijndaelManaged ()
@@ -65,20 +63,12 @@ namespace System.Security.Cryptography {
 		
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-#if NET_2_0
 			return new RijndaelManagedTransform (this, false, rgbKey, rgbIV);
-#else
-			return new RijndaelTransform (this, false, rgbKey, rgbIV);
-#endif
 		}
 		
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-#if NET_2_0
 			return new RijndaelManagedTransform (this, true, rgbKey, rgbIV);
-#else
-			return new RijndaelTransform (this, true, rgbKey, rgbIV);
-#endif
 		}
 	}
 	

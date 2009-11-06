@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class MD5 : HashAlgorithm {
 
 		// Why is it protected when others abstract hash classes are public ?

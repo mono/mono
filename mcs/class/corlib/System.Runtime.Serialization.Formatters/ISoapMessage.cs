@@ -32,17 +32,13 @@
 
 using System.Runtime.Remoting.Messaging;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Serialization.Formatters {
 
 	/// <summary>
 	/// Interface for making SOAP method calls</summary>
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface ISoapMessage {
 
 		/// <summary>

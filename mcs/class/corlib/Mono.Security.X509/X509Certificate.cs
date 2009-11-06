@@ -46,10 +46,8 @@ namespace Mono.Security.X509 {
 
 #if INSIDE_CORLIB
 	internal class X509Certificate : ISerializable {
-#elif NET_2_0
-	public class X509Certificate : ISerializable {
 #else
-	public class X509Certificate {
+	public class X509Certificate : ISerializable {
 #endif
 
 		private ASN1 decoder;
@@ -565,7 +563,6 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-#if INSIDE_CORLIB || NET_2_0
 		public ASN1 GetIssuerName ()
 		{
 			return issuer;
@@ -587,7 +584,6 @@ namespace Mono.Security.X509 {
 			info.AddValue ("raw", m_encodedcert);
 			// note: we NEVER serialize the private key
 		}
-#endif
 
 		static byte[] PEM (string type, byte[] data) 
 		{

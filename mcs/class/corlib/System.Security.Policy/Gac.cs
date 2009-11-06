@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
@@ -34,9 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class GacInstalled : IIdentityPermissionFactory, IBuiltInEvidence {
 
 		public GacInstalled ()
@@ -91,5 +88,3 @@ namespace System.Security.Policy {
 		}
 	}
 }
-
-#endif

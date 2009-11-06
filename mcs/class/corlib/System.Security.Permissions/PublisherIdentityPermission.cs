@@ -34,9 +34,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class PublisherIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 

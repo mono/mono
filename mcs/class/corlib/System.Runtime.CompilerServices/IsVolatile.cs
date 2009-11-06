@@ -31,17 +31,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public static class IsVolatile {
 	}
-#else
-	public sealed class IsVolatile {
-		private IsVolatile ()
-		{
-		}
-	}
-#endif
 }
 
 

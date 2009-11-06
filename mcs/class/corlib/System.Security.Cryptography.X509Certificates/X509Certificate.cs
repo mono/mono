@@ -35,9 +35,7 @@ using System.Text;
 using Mono.Security;
 using Mono.Security.X509;
 
-#if NET_2_0
 using System.Runtime.Serialization;
-#endif
 #if !NET_2_1 || MONOTOUCH
 using Mono.Security.Authenticode;
 #endif
@@ -54,10 +52,8 @@ namespace System.Security.Cryptography.X509Certificates {
 	[Serializable]
 #if NET_2_1
 	public partial class X509Certificate {
-#elif NET_2_0
-	public partial class X509Certificate : IDeserializationCallback, ISerializable {
 #else
-	public class X509Certificate {
+	public partial class X509Certificate : IDeserializationCallback, ISerializable {
 #endif
 		// typedef struct _CERT_CONTEXT {
                 //	DWORD                   dwCertEncodingType;
@@ -111,15 +107,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			try {
 				AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
 				if (a.SigningCertificate != null) {
-#if !NET_2_0
-					// before 2.0 the signing certificate is returned only if the signature is valid
-					if (a.Reason != 0) {
-						string msg = String.Format (Locale.GetText (
-							"Invalid digital signature on {0}, reason #{1}."),
-							filename, a.Reason);
-						throw new COMException (msg);
-					}
-#endif
 					return new X509Certificate (a.SigningCertificate.RawData);
 				}
 			}
@@ -127,23 +114,11 @@ namespace System.Security.Cryptography.X509Certificates {
 				// don't wrap SecurityException into a COMException
 				throw;
 			}
-#if !NET_2_0
-			catch (COMException) {
-				// don't wrap COMException into a COMException
-				throw;
-			}
-#endif
 			catch (Exception e) {
 				string msg = Locale.GetText ("Couldn't extract digital signature from {0}.", filename);
 				throw new COMException (msg, e);
 			}
-#if NET_2_0
 			throw new CryptographicException (Locale.GetText ("{0} isn't signed.", filename));
-#else
-			// if no signature is present return an empty certificate
-			byte[] cert = null; // must not confuse compiler about null ;)
-			return new X509Certificate (cert);
-#endif
 		}
 
 #endif // NET_2_1
@@ -155,11 +130,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal X509Certificate (byte[] data, bool dates) 
 		{
 			if (data != null) {
-#if NET_2_0
 				Import (data, (string)null, X509KeyStorageFlags.DefaultKeySet);
-#else
-				x509 = new Mono.Security.X509.X509Certificate (data);
-#endif
 				hideDates = !dates;
 			}
 		}
@@ -170,10 +141,8 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public X509Certificate (IntPtr handle) 
 		{
-#if NET_2_0
 			if (handle == IntPtr.Zero)
 				throw new ArgumentException ("Invalid handle.");
-#endif
 #if NET_2_1
 			// this works on Windows-only so it's of no use for Moonlight
 			// even more since this ctor is [SecurityCritical]
@@ -200,10 +169,8 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{
-#if NET_2_0
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
-#endif
 
 			if (cert != null) {
 				byte[] data = cert.GetRawCertData ();
@@ -222,13 +189,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				return false;
 			} else {
 				if (other.x509 == null) {
-#if NET_2_0
 					if (x509 == null)
 						return true;
 					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#else
-					return (x509 == null);
-#endif
 				}
 
 				byte[] raw = other.x509.RawData;
@@ -258,10 +221,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		// algorithm used to sign the certificate).
 		public virtual byte[] GetCertHash () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			// we'll hash the cert only once and only if required
 			if ((cachedCertificateHash == null) && (x509 != null)) {
 				SHA1 sha = SHA1.Create ();
@@ -281,16 +242,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (hideDates)
 				return null;
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 
 			return x509.ValidFrom.ToLocalTime ().ToString ();
-#else
-			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
-			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
-			return x509.ValidFrom.ToUniversalTime ().AddHours (-8).ToString ();
-#endif
 		}
 	
 		// strangly there are no DateTime returning function
@@ -298,16 +253,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (hideDates)
 				return null;
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 
 			return x509.ValidUntil.ToLocalTime ().ToString ();
-#else
-			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
-			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
-			return x509.ValidUntil.ToUniversalTime ().AddHours (-8).ToString ();
-#endif
 		}
 	
 		// well maybe someday there'll be support for PGP or SPKI ?
@@ -318,10 +267,8 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public override int GetHashCode ()
 		{
-#if NET_2_0
 			if (x509 == null)
 				return 0;
-#endif
 			// the cert hash may not be (yet) calculated
 			if (cachedCertificateHash == null)
 				GetCertHash();
@@ -334,30 +281,23 @@ namespace System.Security.Cryptography.X509Certificates {
 				return 0;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use the Issuer property.")]
-#endif
 		public virtual string GetIssuerName () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			return x509.IssuerName;
 		}
 	
 		public virtual string GetKeyAlgorithm () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			return x509.KeyAlgorithm;
 		}
 	
 		public virtual byte[] GetKeyAlgorithmParameters () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 
@@ -366,9 +306,6 @@ namespace System.Security.Cryptography.X509Certificates {
 				throw new CryptographicException (Locale.GetText ("Parameters not part of the certificate"));
 
 			return kap;
-#else
-			return x509.KeyAlgorithmParameters;
-#endif
 		}
 	
 		public virtual string GetKeyAlgorithmParametersString () 
@@ -376,24 +313,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			return tostr (GetKeyAlgorithmParameters ());
 		}
 	
-#if NET_2_0
 		[Obsolete ("Use the Subject property.")]
-#endif
 		public virtual string GetName ()
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			return x509.SubjectName;
 		}
 	
 		public virtual byte[] GetPublicKey () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			return x509.PublicKey;
 		}
 	
@@ -404,41 +335,29 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public virtual byte[] GetRawCertData () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 			return x509.RawData;
-#else
-			return ((x509 != null) ? x509.RawData : null);
-#endif
 		}
 	
 		public virtual string GetRawCertDataString () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 			return tostr (x509.RawData);
-#else
-			return ((x509 != null) ? tostr (x509.RawData) : null);
-#endif
 		}
 	
 		public virtual byte[] GetSerialNumber () 
 		{
-#if NET_2_0
 			if (x509 == null)
 				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-#endif
 			return x509.SerialNumber;
 		}
 	
 		public virtual string GetSerialNumberString () 
 		{
 			byte[] sn = GetSerialNumber ();
-#if NET_2_0
 			Array.Reverse (sn);
-#endif
 			return tostr (sn);
 		}
 	
@@ -455,52 +374,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			string nl = Environment.NewLine;
 			StringBuilder sb = new StringBuilder ();
-#if NET_2_0
 			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
 			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
 			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
 			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
 			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, GetCertHashString ());
-#else
-			sb.Append ("CERTIFICATE:");
-			sb.Append (nl);
-			sb.Append ("\tFormat:  ");
-			sb.Append (GetFormat ());
-			if (x509.SubjectName != null) {
-				sb.Append (nl);
-				sb.Append ("\tName:  ");
-				sb.Append (GetName ());
-			}
-			if (x509.IssuerName != null) {
-				sb.Append (nl);
-				sb.Append ("\tIssuing CA:  ");
-				sb.Append (GetIssuerName ());
-			}
-			if (x509.SignatureAlgorithm != null) {
-				sb.Append (nl);
-				sb.Append ("\tKey Algorithm:  ");
-				sb.Append (GetKeyAlgorithm ());
-			}
-			if (x509.SerialNumber != null) {
-				sb.Append (nl);
-				sb.Append ("\tSerial Number:  ");
-				sb.Append (GetSerialNumberString ());
-			}
-			// Note: Algorithm is not spelled right as the actual 
-			// MS implementation (we do exactly the same for the
-			// comparison in the unit tests)
-			if (x509.KeyAlgorithmParameters != null) {
-				sb.Append (nl);
-				sb.Append ("\tKey Alogrithm Parameters:  ");
-				sb.Append (GetKeyAlgorithmParametersString ());
-			}
-			if (x509.PublicKey != null) {
-				sb.Append (nl);
-				sb.Append ("\tPublic Key:  ");
-				sb.Append (GetPublicKeyString ());
-			}
-			sb.Append (nl);
-#endif
 			sb.Append (nl);
 			return sb.ToString ();
 		}

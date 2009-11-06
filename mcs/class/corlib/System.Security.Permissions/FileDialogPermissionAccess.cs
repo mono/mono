@@ -30,9 +30,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Flags]
 	[Serializable]
 	public enum FileDialogPermissionAccess {

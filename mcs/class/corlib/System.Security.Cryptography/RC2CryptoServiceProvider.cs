@@ -41,14 +41,9 @@ namespace System.Security.Cryptography {
 	// a.	IETF RFC2286: A Description of the RC2(r) Encryption Algorithm
 	//	http://www.ietf.org/rfc/rfc2268.txt
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class RC2CryptoServiceProvider : RC2 {
-
-#if NET_2_0
 		private bool _useSalt;
-#endif		
 	
 		public RC2CryptoServiceProvider ()
 		{
@@ -58,11 +53,7 @@ namespace System.Security.Cryptography {
 			get { return base.EffectiveKeySize; }
 			set {
 				if (value != KeySizeValue) {
-#if NET_1_1
 					throw new CryptographicUnexpectedOperationException (
-#else
-					throw new CryptographicException (
-#endif
 						Locale.GetText ("Effective key size must match key size for compatibility"));
 				}
 				base.EffectiveKeySize = value; 
@@ -88,14 +79,12 @@ namespace System.Security.Cryptography {
 		{
 			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		}
-#if NET_2_0
 		[MonoTODO ("Use salt in algorithm")]
 		[ComVisible (false)]
 		public bool UseSalt {
 			get { return _useSalt; }
 			set { _useSalt = value; }
 		}
-#endif
 	}
 	
 	internal class RC2Transform : SymmetricTransform {

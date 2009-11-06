@@ -40,10 +40,7 @@ using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Remoting.Proxies
 {
@@ -55,9 +52,7 @@ namespace System.Runtime.Remoting.Proxies
 	}
 #pragma warning restore 169, 649
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class RealProxy {
 		// other classes visible to the runtime 
 		// derive from this class so keep these locals
@@ -272,9 +267,7 @@ namespace System.Runtime.Remoting.Proxies
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public IConstructionReturnMessage InitializeServerObject(IConstructionCallMessage ctorMsg)
 		{
 			throw new NotImplementedException();

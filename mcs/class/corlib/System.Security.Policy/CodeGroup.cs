@@ -37,9 +37,7 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class CodeGroup {
 		PolicyStatement m_policy;
 		IMembershipCondition m_membershipCondition;
@@ -48,11 +46,7 @@ namespace System.Security.Policy {
 		ArrayList m_children = new ArrayList();
 //		PolicyLevel m_level;
 
-#if NET_2_0
 		protected CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
-#else
-		public CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
-#endif
 		{
 			if (null == membershipCondition)
 				throw new ArgumentNullException ("membershipCondition");

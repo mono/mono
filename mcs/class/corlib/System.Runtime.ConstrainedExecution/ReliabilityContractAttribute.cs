@@ -26,8 +26,6 @@
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.Runtime.ConstrainedExecution
 {
 	[AttributeUsage ((AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
@@ -52,4 +50,3 @@ namespace System.Runtime.ConstrainedExecution
                 }
         }
 }
-#endif

@@ -34,9 +34,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Contexts {
 	
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IContributeServerContextSink
 	{
 		IMessageSink GetServerContextSink (IMessageSink nextSink);

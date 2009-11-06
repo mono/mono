@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ToBase64Transform : ICryptoTransform {
 
 		private bool m_disposed;
@@ -107,15 +105,10 @@ namespace System.Security.Cryptography {
 			if (inputOffset > inputBuffer.Length - inputCount)
 				throw new ArgumentException ("inputOffset", Locale.GetText ("Overflow"));
 			// ordered to avoid possible integer overflow
-#if NET_2_0
 			if (outputOffset < 0)
 				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
 			if (outputOffset > outputBuffer.Length - inputCount)
 				throw new ArgumentException ("outputOffset", Locale.GetText ("Overflow"));
-#else
-			if ((outputOffset < 0) || (outputOffset > outputBuffer.Length - inputCount))
-				throw new IndexOutOfRangeException ("outputOffset");
-#endif
 /// To match MS implementation
 //			if (inputCount != this.InputBlockSize)
 //				throw new CryptographicException (Locale.GetText ("Invalid input length"));

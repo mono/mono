@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Runtime.Versioning {
 
 	public static class VersioningHelper {
@@ -125,5 +123,3 @@ namespace System.Runtime.Versioning {
 		}
 	}
 }
-
-#endif

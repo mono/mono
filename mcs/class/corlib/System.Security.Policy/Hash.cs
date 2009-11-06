@@ -42,12 +42,7 @@ using System.Text;
 namespace System.Security.Policy {
 
 [Serializable]
-#if NET_2_0
 [ComVisible (true)]
-#else
-[MonoTODO ("(1.x) This doesn't match the MS version perfectly.")]
-// but it does seems to works exactly like Fx 2.0 beta 1 (and beta2 too) !?!?!
-#endif
 public sealed class Hash : ISerializable, IBuiltInEvidence {
 
 	private Assembly assembly;
@@ -85,12 +80,10 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 			// Case 2: we don't have a MD5 value precalculated so we either
 			// (a): have an assembly reference - and can calculate the hash; or
 			// (b): have been initialized with a static MD5 value (FX 2.0)
-#if NET_2_0
 			if ((assembly == null) && (_sha1 != null)) {
 				string msg = Locale.GetText ("No assembly data. This instance was initialized with an MSHA1 digest value.");
 				throw new SecurityException (msg);
 			}
-#endif
 			// fully named to avoid conflit between MD5 property and class name
 			HashAlgorithm hash = System.Security.Cryptography.MD5.Create ();
 			_md5 = GenerateHash (hash);
@@ -107,12 +100,10 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 			// Case 2: we don't have a SHA1 value precalculated so we either
 			// (a): have an assembly reference - and can calculate the hash; or
 			// (b): have been initialized with a static MD5 value (FX 2.0)
-#if NET_2_0
 			if ((assembly == null) && (_md5 != null)) {
 				string msg = Locale.GetText ("No assembly data. This instance was initialized with an MD5 digest value.");
 				throw new SecurityException (msg);
 			}
-#endif
 			// fully named to avoid conflit between SHA1 property and class name
 			HashAlgorithm hash = System.Security.Cryptography.SHA1.Create ();
 			_sha1 = GenerateHash (hash);
@@ -160,12 +151,10 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	private byte[] GetData () 
 	{
-#if NET_2_0
 		if ((assembly == null) && (data == null)) {
 			string msg = Locale.GetText ("No assembly data.");
 			throw new SecurityException (msg);
 		}
-#endif
 		if (null == data) {
 			// TODO (Pre-Fx-2.0) we mustn't hash the complete assembly!
 			// ---- Look at ToString (MS version) for what to hash (and what not to)
@@ -198,7 +187,6 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		return 0;
 	}
 
-#if NET_2_0
 	static public Hash CreateMD5 (byte[] md5)
 	{
 		if (md5 == null)
@@ -216,7 +204,6 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 		h._sha1 = sha1;
 		return h;
 	}
-#endif
 }
 
 }

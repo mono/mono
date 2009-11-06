@@ -201,12 +201,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		FormatMask = 15,
 
-#if NET_2_0
 		GenericArguments = 0x8000,
 		NeedsInfoArrayMask = 4 + 8 + 64 + 128 + 0x8000,
-#else
-		NeedsInfoArrayMask = 4 + 8 + 64 + 128,
-#endif
 	}
 
 	internal enum ReturnTypeTag : byte

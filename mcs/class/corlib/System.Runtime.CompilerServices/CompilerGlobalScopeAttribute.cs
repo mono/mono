@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Class)] [Serializable]
-#if NET_2_0
 	[ComVisible(true)]
-#endif
 	public class CompilerGlobalScopeAttribute : Attribute
 	{
 		public CompilerGlobalScopeAttribute ()

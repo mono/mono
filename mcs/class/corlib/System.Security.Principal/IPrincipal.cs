@@ -31,9 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Principal {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface IPrincipal {
 
 		IIdentity Identity {

@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 
 namespace System.Runtime.Remoting {
@@ -41,4 +40,3 @@ namespace System.Runtime.Remoting {
 		RemoteOnly,
 	}
 }
-#endif

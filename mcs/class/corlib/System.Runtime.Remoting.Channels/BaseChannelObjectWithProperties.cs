@@ -35,20 +35,13 @@ using System.Collections;
 namespace System.Runtime.Remoting.Channels
 {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public abstract class BaseChannelObjectWithProperties :
 		IDictionary, ICollection, IEnumerable
 	{
 		Hashtable table;
 		
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		BaseChannelObjectWithProperties ()
+		protected BaseChannelObjectWithProperties ()
 		{
 			table = new Hashtable ();
 		}

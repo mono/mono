@@ -36,19 +36,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices
 {
-#if !NET_2_0
-[Flags] 
-#endif
-#if NET_2_0
- [ComVisible (true)]
- [Serializable]
-#endif
-public enum MethodCodeType
-{
-    IL,
-    Native,
-    OPTIL,
-    Runtime,
-}
+	[ComVisible (true)]
+	[Serializable]
+	public enum MethodCodeType
+	{
+		IL,
+		Native,
+		OPTIL,
+		Runtime,
+	}
 
 } // Namespace

@@ -33,16 +33,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class SHA256 : HashAlgorithm {
 
-#if NET_2_0
 		protected SHA256 ()
-#else
-		public SHA256 ()
-#endif
 		{
 			HashSizeValue = 256;
 		}

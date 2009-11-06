@@ -34,9 +34,7 @@ using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting.Lifetime {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface ISponsor
 	{
 		TimeSpan Renewal (ILease lease);

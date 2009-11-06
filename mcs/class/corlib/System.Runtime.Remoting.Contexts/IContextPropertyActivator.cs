@@ -33,9 +33,7 @@ using System.Runtime.Remoting.Activation;
 
 namespace System.Runtime.Remoting.Contexts {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public interface IContextPropertyActivator
 	{
 		void CollectFromClientContext (IConstructionCallMessage msg);

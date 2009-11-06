@@ -36,9 +36,7 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage(AttributeTargets.Property, Inherited=true)]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class IndexerNameAttribute : Attribute {
 		public IndexerNameAttribute (string indexerName)
 		{

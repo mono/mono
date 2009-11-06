@@ -35,16 +35,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class SHA384 : HashAlgorithm {
 
-#if NET_2_0
 		protected SHA384 ()
-#else
-		public SHA384 ()
-#endif
 		{
 			HashSizeValue = 384;
 		}

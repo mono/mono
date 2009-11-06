@@ -34,12 +34,8 @@ using System.Security;
 
 namespace System.Security.Principal {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public class WindowsImpersonationContext : IDisposable {
-#else
-	public class WindowsImpersonationContext {
-#endif
 
 		private IntPtr _token;
 		private bool undo;
@@ -53,7 +49,6 @@ namespace System.Security.Principal {
 			}
 			undo = false;
 		}
-#if NET_2_0
 		[ComVisible (false)]
 		public void Dispose ()
 		{
@@ -73,14 +68,7 @@ namespace System.Security.Principal {
 				GC.SuppressFinalize (this);
 			}
 		}
-#else
-		~WindowsImpersonationContext ()
-		{
-			if (!undo) {
-				Undo ();
-			}
-		}
-#endif
+
 		public void Undo ()
 		{
 			if (!RevertToSelf ()) {

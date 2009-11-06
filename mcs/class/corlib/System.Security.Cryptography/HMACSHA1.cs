@@ -47,93 +47,6 @@ namespace System.Security.Cryptography {
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E71%2D2000
 
-#if ! NET_2_0
-	public class HMACSHA1: KeyedHashAlgorithm {
-		private HMACAlgorithm hmac;
-		private bool m_disposed;
-	
-		public HMACSHA1 () : this (KeyBuilder.Key (8))
-		{
-		}
-	
-		public HMACSHA1 (byte[] rgbKey) : base ()
-		{
-			hmac = new HMACAlgorithm ("SHA1");
-			HashSizeValue = 160;
-			Key = rgbKey;
-			m_disposed = false;
-		}
-	
-		~HMACSHA1 () 
-		{
-			Dispose (false);
-		}
-	
-		public override byte[] Key {
-			get { return base.Key; }
-			set { 
-				hmac.Key = value; 
-				base.Key = value;
-			}
-		} 
-	
-		public string HashName {
-			get { return hmac.HashName; }
-			set { 
-				// only if its not too late for a change
-				if (State == 0)
-					hmac.HashName = value; 
-			}
-		}
-	
-		protected override void Dispose (bool disposing) 
-		{
-			if (!m_disposed) {
-				if (hmac != null)
-					hmac.Dispose();
-				base.Dispose (disposing);
-				m_disposed = true;
-			}
-		}
-	
-		public override void Initialize ()
-		{
-			if (m_disposed)
-				throw new ObjectDisposedException ("HMACSHA1");
-			// let us throw an exception if hash name is invalid
-			// for HMACSHA1 (obviously this can't be done by the 
-			// generic HMAC class)
-			if (!(hmac.Algo is SHA1)) {
-				string algo = (hmac.Algo == null) ? "none" : hmac.Algo.GetType ().ToString ();
-				string msg = Locale.GetText ("Invalid hash algorithm '{0}', expected '{1}'.");
-				throw new InvalidCastException (String.Format (msg, algo, "SHA1"));
-			}
-			State = 0;
-			hmac.Initialize ();
-		}
-	
-	        protected override void HashCore (byte[] rgb, int ib, int cb)
-		{
-			if (m_disposed)
-				throw new ObjectDisposedException ("HMACSHA1");
-
-			if (State == 0) {
-				Initialize ();
-				State = 1;
-			}
-			hmac.Core (rgb, ib, cb);
-		}
-	
-		protected override byte[] HashFinal ()
-		{
-			if (m_disposed)
-				throw new ObjectDisposedException ("HMACSHA1");
-
-			State = 0;
-			return hmac.Final ();
-		}
-	}
-#else
 	[ComVisible (true)]
 	public class HMACSHA1 : HMAC {
 
@@ -156,5 +69,4 @@ namespace System.Security.Cryptography {
 			Key = key;
 		}
 	}
-#endif
 }

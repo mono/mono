@@ -38,9 +38,7 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
         public sealed class Url: IIdentityPermissionFactory, IBuiltInEvidence {
 
                 private string origin_url;
@@ -76,22 +74,18 @@ namespace System.Security.Policy {
 
 			string url1 = u.Value;
 			string url2 = origin_url;
-#if NET_2_0
 			if (url1.IndexOf (Uri.SchemeDelimiter) < 0)
 				url1 = "file://" + url1;
 			if (url2.IndexOf (Uri.SchemeDelimiter) < 0)
 				url2 = "file://" + url2;
-#endif
 			return (String.Compare (url1, url2, true, CultureInfo.InvariantCulture) == 0);
                 }
 
                 public override int GetHashCode ()
                 {
 			string s = origin_url;
-#if NET_2_0
 			if (s.IndexOf (Uri.SchemeDelimiter) < 0)
 				s = "file://" + s;
-#endif
                         return s.GetHashCode ();
                 }
 
@@ -127,7 +121,6 @@ namespace System.Security.Policy {
 		}
 
 		// internal
-#if NET_2_0
 		private string Prepare (string url) 
 		{
 			if (url == null)
@@ -152,40 +145,5 @@ namespace System.Security.Policy {
 
 			return url;
 		}
-#else
-		private string Prepare (string url) 
-		{
-			if (url == null)
-				throw new ArgumentNullException ("Url");
-			if (url == String.Empty)
-				throw new FormatException (Locale.GetText ("Invalid (empty) Url"));
-
-			int protocolPos = url.IndexOf (Uri.SchemeDelimiter);	// '://'
-			if (protocolPos > 0) {
-				if (url.StartsWith ("file://")) {
-					// convert file url into uppercase
-					url = "file://" + url.Substring (7).ToUpperInvariant ();
-				} else {
-					// add a trailing slash if none (lonely one) is present
-					if (url.LastIndexOf ("/") == protocolPos + 2)
-						url += "/";
-				}
-			} else {
-				// add file scheme (default) and convert url to uppercase
-				url = "file://" + url.ToUpperInvariant ();
-			}
-
-			// don't escape and don't reduce (e.g. '.' and '..')
-			Uri uri = new Uri (url, false, false);
-			if ((uri.Host.IndexOf ('*') < 0) || (uri.Host.Length < 2)) // lone star case
-				url = uri.ToString ();
-			else {
-				string msg = Locale.GetText ("Invalid * character in url");
-				throw new ArgumentException (msg, "name");
-			}
-
-			return url;
-		}
-#endif
        }
 }

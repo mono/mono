@@ -33,9 +33,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class RSAOAEPKeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
 	
 		private RSA rsa;
@@ -70,12 +68,10 @@ namespace System.Security.Cryptography {
 		{
 			if (random == null)
 				random = RandomNumberGenerator.Create ();  // create default
-#if NET_2_0
 			if (rsa == null) {
 				string msg = Locale.GetText ("No RSA key specified");
 				throw new CryptographicUnexpectedOperationException (msg);
 			}
-#endif
 			SHA1 sha1 = SHA1.Create ();
 			return PKCS1.Encrypt_OAEP (rsa, sha1, random, rgbData);
 		}

@@ -30,9 +30,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public interface IIdentityPermissionFactory {
 
 		IPermission CreateIdentityPermission(Evidence evidence);

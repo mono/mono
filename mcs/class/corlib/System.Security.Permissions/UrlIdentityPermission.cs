@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class UrlIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
 		private const int version = 1;
@@ -46,9 +44,7 @@ namespace System.Security.Permissions {
 		{
 			// false == do not allow Unrestricted for Identity Permissions
 			CheckPermissionState (state, false);
-#if NET_2_0
 			url = String.Empty;
-#endif
 		}
 
 		public UrlIdentityPermission (string site)
@@ -58,34 +54,14 @@ namespace System.Security.Permissions {
 			url = site;
 		}
 
-#if NET_2_0
 		public string Url { 
 			get { return url; }
 			set { url = ((value == null) ? String.Empty : value); }
 		}
-#else
-		public string Url { 
-			get { 
-				if (url == null)
-					throw new NullReferenceException ("Url");
-				return url; 
-			}
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("Url");
-				url = value;
-			}
-		}
-#endif
-
 		public override IPermission Copy () 
 		{
 			if (url == null) {
-#if NET_2_0
 				return new UrlIdentityPermission (PermissionState.None);
-#else
-				throw new NullReferenceException ("Url");
-#endif
 			}
 			else
 				return new UrlIdentityPermission (url);
@@ -166,12 +142,8 @@ namespace System.Security.Permissions {
 				else
 					return uip.Copy ();
 			}
-#if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Cannot union two different urls."), "target");
-#else
-			return null;
-#endif
 		}
 
 		// IBuiltInPermission

@@ -34,9 +34,7 @@ using System.Threading;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class PrincipalPermission : IPermission, IUnrestrictedPermission, IBuiltInPermission {
 
@@ -274,7 +272,6 @@ namespace System.Security.Permissions {
 			return union;
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -313,7 +310,6 @@ namespace System.Security.Permissions {
 		{
 			return base.GetHashCode ();
 		}
-#endif
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()

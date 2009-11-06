@@ -27,8 +27,6 @@
 
 // Net 3.5 type
 
-#if NET_2_0
-
 namespace System.Runtime
 {
 	[Serializable]
@@ -39,5 +37,3 @@ namespace System.Runtime
 		LowLatency = 2
 	}
 }
-
-#endif

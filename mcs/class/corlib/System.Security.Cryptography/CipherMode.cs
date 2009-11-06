@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Cryptography {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum CipherMode {
 		CBC = 0x1, // Cipher Block Chaining
 		ECB, // Electronic Codebook

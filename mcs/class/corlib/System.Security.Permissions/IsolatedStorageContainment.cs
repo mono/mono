@@ -36,9 +36,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum IsolatedStorageContainment
 	{
 		None = 0x00,
@@ -48,12 +46,10 @@ namespace System.Security.Permissions {
 		AssemblyIsolationByRoamingUser = 0x60,
 		AdministerIsolatedStorageByUser = 0x70,
 		UnrestrictedIsolatedStorage = 0xF0,
-#if NET_2_0 || BOOTSTRAP_NET_2_0
 		ApplicationIsolationByUser = 0x15,
 		DomainIsolationByMachine = 0x30,
 		AssemblyIsolationByMachine = 0x40,
 		ApplicationIsolationByMachine = 0x45,
 		ApplicationIsolationByRoamingUser = 0x65,
-#endif
 	}
 }

@@ -42,9 +42,7 @@ using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting.Contexts {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class Context 
 	{
 #pragma warning disable 169, 414

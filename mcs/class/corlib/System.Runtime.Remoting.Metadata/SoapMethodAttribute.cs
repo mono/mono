@@ -38,9 +38,7 @@ using System.Runtime.Remoting.Metadata;
 namespace System.Runtime.Remoting.Metadata {
 
 	[AttributeUsage (AttributeTargets.Method)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SoapMethodAttribute : SoapAttribute
 	{
 		string _responseElement;

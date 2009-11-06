@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class SiteIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
@@ -143,12 +141,8 @@ namespace System.Security.Permissions {
 				string s = ((_site.Length < sip._site.Length) ? _site : sip._site);
 				return new SiteIdentityPermission (s);
 			}
-#if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Cannot union two different sites."), "target");
-#else
-			return null;
-#endif
 		}
 
 		// IBuiltInPermission

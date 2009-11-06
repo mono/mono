@@ -36,9 +36,7 @@ namespace System.Runtime.Remoting.Channels
 {
         [Serializable]
 	[MonoTODO ("Serialization format not compatible with .NET")]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class TransportHeaders : ITransportHeaders
 	{
 		Hashtable hash_table;

@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections;
 
 namespace System.Security.Policy {
@@ -113,4 +111,3 @@ namespace System.Security.Policy {
 	}
 }
 
-#endif

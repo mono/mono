@@ -39,9 +39,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class MethodResponse : IMethodReturnMessage, ISerializable, IInternalMessage, ISerializationRootObject
 	{
 		string _methodName;
@@ -346,31 +344,5 @@ namespace System.Runtime.Remoting.Messaging {
 			set { _targetIdentity = value; }
 		}
 
-#if !NET_2_0
-		public override string ToString ()
-		{
-			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
-			if (_exception != null)
-			{
-				s += "Exception\n)" + _exception;
-			}
-			else
-			{
-				if (_args != null)
-				{
-					for (int n=0; n<_args.Length; n++)
-					{
-						if (n>0) s+= ", ";
-						if (_args[n] != null) s += _args[n].GetType().Name + " ";
-						s += GetOutArgName (n);
-						if (_args[n] != null) s += " = {" + _args[n] + "}";
-						else s+=" = {null}";
-					}
-				}
-				s += ")";
-			}
-			return s;
-		}
-#endif
 	}
 }

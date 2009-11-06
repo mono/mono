@@ -30,19 +30,13 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Security.Cryptography {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
 	public class CryptographicException : SystemException, _Exception {
-#else
-	public class CryptographicException : SystemException {
-#endif
 		public CryptographicException ()
 			: base (Locale.GetText ("Error occured during a cryptographic operation."))
 		{

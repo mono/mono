@@ -39,9 +39,7 @@ namespace System.Runtime.Serialization
 {
 [CLSCompliant (false)]
 [Serializable]
-#if NET_2_0
 [System.Runtime.InteropServices.ComVisibleAttribute (true)]
-#endif
 public abstract class Formatter : IFormatter
 {
 	protected Formatter ()

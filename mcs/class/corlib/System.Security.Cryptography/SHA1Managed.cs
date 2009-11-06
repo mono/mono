@@ -38,9 +38,7 @@ namespace System.Security.Cryptography {
 // Mono must provide those two class for binary compatibility.
 // In our case both class are wrappers around a managed internal class SHA1Internal.
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class SHA1Managed : SHA1 {
 
 		private SHA1Internal sha;

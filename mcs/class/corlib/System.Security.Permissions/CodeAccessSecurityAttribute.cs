@@ -34,9 +34,7 @@ namespace System.Security.Permissions {
 #if NET_2_1
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage(
 		AttributeTargets.Assembly 
 		| AttributeTargets.Class 
@@ -49,11 +47,7 @@ namespace System.Security.Permissions {
 	[Serializable]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
-#if NET_2_0
 		protected CodeAccessSecurityAttribute (SecurityAction action) 
-#else
-		public CodeAccessSecurityAttribute (SecurityAction action) 
-#endif
 			: base (action)
 		{
 		}

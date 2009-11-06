@@ -26,8 +26,6 @@
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.Runtime.ConstrainedExecution {
 
 	[Serializable]
@@ -38,4 +36,3 @@ namespace System.Runtime.ConstrainedExecution {
                 WillNotCorruptState = 3
         }
 }
-#endif

@@ -31,18 +31,14 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class MaskGenerationMethod {
 
 		protected MaskGenerationMethod () 
 		{
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public abstract byte[] GenerateMask (byte[] rgbSeed, int cbReturn);
 	}
 }

@@ -33,9 +33,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 	
 		private RSA rsa;
@@ -59,12 +57,8 @@ namespace System.Security.Cryptography {
 	
 		public override void SetKey (AsymmetricAlgorithm key) 
 		{
-#if NET_2_0
 			if (key == null)
 				throw new ArgumentNullException ("key");
-#else
-			// 1.0/1.1 accepted null without an ArgumentNullException!
-#endif
 			rsa = (RSA) key;
 		}
 	

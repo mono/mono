@@ -31,17 +31,13 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
-#endif
 
 namespace System.Security.Permissions {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class RegistryPermission
 		: CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
@@ -52,9 +48,7 @@ namespace System.Security.Permissions {
 		private ArrayList createList;
 		private ArrayList readList;
 		private ArrayList writeList;
-#if NET_2_0
 //		private AccessControlActions _control;
-#endif
 		// Constructors
 
 		public RegistryPermission (PermissionState state)
@@ -73,7 +67,6 @@ namespace System.Security.Permissions {
 			writeList = new ArrayList ();
 			AddPathList (access, pathList);
 		}
-#if NET_2_0
 		public RegistryPermission (RegistryPermissionAccess access, AccessControlActions control, string pathList)
 		{
 			if (!Enum.IsDefined (typeof (AccessControlActions), control)) {
@@ -83,7 +76,7 @@ namespace System.Security.Permissions {
 			_state = PermissionState.None;
 			AddPathList (access, control, pathList);
 		}
-#endif
+
 		// Properties
 
 		// Methods
@@ -116,13 +109,11 @@ namespace System.Security.Permissions {
 					break;
 			}
 		}
-#if NET_2_0
 		[MonoTODO ("(2.0) Access Control isn't implemented")]
 		public void AddPathList (RegistryPermissionAccess access, AccessControlActions control, string pathList) 
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		public string GetPathList (RegistryPermissionAccess access)
 		{
 			switch (access) {
@@ -372,13 +363,8 @@ namespace System.Security.Permissions {
 		{
 			if (IsUnrestricted ())
 				return String.Empty;
-#if NET_2_0
 			if (list.Count == 0)
 				return String.Empty;
-#else
-			if (list.Count == 0)
-				return null;
-#endif
 			StringBuilder sb = new StringBuilder ();
 			foreach (string path in list) {
 				sb.Append (path);
@@ -390,11 +376,7 @@ namespace System.Security.Permissions {
 			int n = result.Length;
 			if (n > 0)
 				return result.Substring (0, n - 1);
-#if NET_2_0
 			return String.Empty;
-#else
-			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
-#endif
 		}
 
 		internal bool KeyIsSubsetOf (IList local, IList target)

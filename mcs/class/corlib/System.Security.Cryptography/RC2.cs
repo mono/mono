@@ -37,9 +37,7 @@ namespace System.Security.Cryptography {
 	// a.	IETF RFC2286: A Description of the RC2(r) Encryption Algorithm
 	//	http://www.ietf.org/rfc/rfc2268.txt
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class RC2 : SymmetricAlgorithm {
 
 		public static new RC2 Create () 
@@ -74,11 +72,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if NET_2_0
 		protected RC2 ()
-#else
-		public RC2 ()
-#endif
 		{
 			KeySizeValue = 128;
 			BlockSizeValue = 64;

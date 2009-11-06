@@ -38,9 +38,7 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class ApplicationDirectory : IBuiltInEvidence {
 		
 		private string directory;
@@ -55,44 +53,7 @@ namespace System.Security.Policy {
 				throw new ArgumentNullException ("name");
 			if (name.Length < 1)
 				throw new FormatException (Locale.GetText ("Empty"));
-#if NET_2_0
 			directory = name;
-#else
-			ThrowOnInvalid (name);
-			// swap directory separators (later it will be too late)
-			name = name.Replace ('\\', '/');
-			// default to file:// scheme is none is specified
-			if (name.IndexOf (':') < 0) {
-				name = String.Format ("{0}{1}{2}", Uri.UriSchemeFile,
-					((name [0] == '/') ? ":/" : Uri.SchemeDelimiter), 
-					name);
-			}
-			try {
-				Uri uri = new Uri (name);
-				// FIXME - *maybe* this can be merged back in corlib's Uri if this
-				// is also required for other security class (and not just this one)
-				directory = uri.Unescape (uri.GetLeftPart (UriPartial.Path), false);
-				if (uri.Scheme == Uri.UriSchemeFile) {
-					string path = uri.Host;
-					if (uri.AbsolutePath.Length > 0) {
-						StringBuilder sb = new StringBuilder (path.ToUpperInvariant ());
-						string[] segs = uri.Segments;
-						for (int i=0; i < segs.Length - 1; i++) {
-							sb.Append (segs [i].ToUpperInvariant ());
-						}
-						sb.Append (segs [segs.Length - 1]);
-						path += uri.AbsolutePath;
-						directory = directory.Replace (path, sb.ToString ());
-					}
-					else
-						directory = directory.Replace (path, path.ToUpperInvariant ());
-				}
-			}
-			catch (FormatException fe) {
-				string msg = String.Format (Locale.GetText ("Invalid directory {0}"), name);
-				throw new ArgumentException (msg, "name", fe);
-			}
-#endif
 		}
 
 		//

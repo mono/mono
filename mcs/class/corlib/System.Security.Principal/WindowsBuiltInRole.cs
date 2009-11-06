@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum WindowsBuiltInRole {
 		Administrator = 544,
 		User = 545,

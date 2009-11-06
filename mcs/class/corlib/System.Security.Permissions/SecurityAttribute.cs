@@ -34,9 +34,7 @@ namespace System.Security.Permissions {
 #if NET_2_1
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage(
 		AttributeTargets.Assembly 
 		| AttributeTargets.Class 
@@ -52,11 +50,7 @@ namespace System.Security.Permissions {
 		private SecurityAction m_Action;
 		private bool m_Unrestricted;
 
-#if NET_2_0
 		protected SecurityAttribute (SecurityAction action) 
-#else
-		public SecurityAttribute (SecurityAction action) 
-#endif
 		{
 			Action = action;
 		}

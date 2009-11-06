@@ -32,9 +32,7 @@
 namespace System.Runtime.Remoting.Channels {
 
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public enum ServerProcessing
 	{
 		Complete = 0,

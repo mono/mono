@@ -361,12 +361,9 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			MethodBase methodBase = null;
 			Type tt = Type.GetType (FullTypeName);
-#if NET_2_0
 			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
 				methodBase = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
-			} else
-#endif
-			{
+			} else {
 				methodBase = MethodBase.GetMethodFromHandle (MethodHandle);
 			}
 			
@@ -374,7 +371,6 @@ namespace System.Runtime.Remoting.Messaging {
 				// The target domain has loaded the type from a different assembly.
 				// We need to locate the correct type and get the method from it
 				Type [] signature = GetSignature (methodBase, true);
-#if NET_2_0
 				if (methodBase.IsGenericMethod) {
 					MethodBase [] methods = tt.GetMethods (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
 					Type [] base_args = methodBase.GetGenericArguments ();
@@ -403,7 +399,7 @@ namespace System.Runtime.Remoting.Messaging {
 					}
 					return methodBase;
 				}
-#endif
+
 				MethodBase mb = tt.GetMethod (methodBase.Name, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, signature, null);
 				if (mb == null)
 					throw new RemotingException ("Method '" + methodBase.Name + "' not found in type '" + tt + "'");

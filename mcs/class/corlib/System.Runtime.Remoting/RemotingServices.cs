@@ -46,17 +46,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Runtime.Remoting.Services;
 using System.Security.Permissions;
-
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization.Formatters;
-#endif
 
 namespace System.Runtime.Remoting
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class RemotingServices 
 	{
 		// Holds the identities of the objects, using uri as index
@@ -84,10 +79,8 @@ namespace System.Runtime.Remoting
 			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
 			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
 			_deserializationFormatter = new BinaryFormatter (null, context);
-#if NET_2_0
 			_serializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
 			_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
-#endif
 			
 			RegisterInternalChannels ();
 			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
@@ -107,9 +100,7 @@ namespace System.Runtime.Remoting
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool IsTransparentProxy (object proxy);
 		
@@ -132,12 +123,10 @@ namespace System.Runtime.Remoting
 						String.Format ("Cannot resolve method {0}:{1}", tt, reqMsg.MethodName));
 			}
 
-#if NET_2_0
 			if (reqMsg.MethodBase.IsGenericMethod) {
 				Type[] genericArguments = reqMsg.MethodBase.GetGenericArguments ();
 				method = ((MethodInfo)method).MakeGenericMethod (genericArguments);
 			}
-#endif
 
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
@@ -189,18 +178,14 @@ namespace System.Runtime.Remoting
 				return InternalExecuteMessage (target, reqMsg);
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 		public static object Connect (Type classToProxy, string url)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, null);
 			return GetRemoteObject (objRef, classToProxy);
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 		public static object Connect (Type classToProxy, string url, object data)
 		{
 			ObjRef objRef = new ObjRef (classToProxy, url, data);
@@ -361,9 +346,7 @@ namespace System.Runtime.Remoting
 			return app_id + Environment.TickCount.ToString("x") + "_" + n + ".rem";
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public static RealProxy GetRealProxy (object proxy)
 		{
 			if (!IsTransparentProxy(proxy)) throw new RemotingException("Cannot get the real proxy from an object that is not a transparent proxy.");
@@ -457,9 +440,7 @@ namespace System.Runtime.Remoting
 
 		[MonoTODO]
 		[Conditional ("REMOTING_PERF")]
-#if NET_2_0
 		[Obsolete ("It existed for only internal use in .NET and unimplemented in mono")]
-#endif
 		public static void LogRemotingStage (int stage)
 		{
 			throw new NotImplementedException ();

@@ -38,10 +38,8 @@ namespace System.Runtime.Remoting.Lifetime {
 
 	/// <summary>
 	/// </summary>
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
-#endif
 	public enum LeaseState {
 
 		/// <summary>

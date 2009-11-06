@@ -39,9 +39,7 @@ namespace System.Security.Cryptography {
 // b.	IETF RFC2898: PKCS #5: Password-Based Cryptography Specification Version 2.0
 //	http://www.rfc-editor.org/rfc/rfc2898.txt
 
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public class PasswordDeriveBytes : DeriveBytes {
 
 	private string HashNameValue;
@@ -84,7 +82,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 		}
 	}
 
-#if NET_2_0
 	public PasswordDeriveBytes (byte[] password, byte[] salt) 
 	{
 		Prepare (password, salt, "SHA1", 100);
@@ -112,7 +109,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 				Locale.GetText ("CspParameters not supported by Mono for PasswordDeriveBytes."));
 		}
 	}
-#endif
 
 	~PasswordDeriveBytes () 
 	{
@@ -125,7 +121,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 		Array.Clear (password, 0, password.Length);
 	}
 
-#if NET_2_0
 	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations) 
 	{
 		if (strPassword == null)
@@ -149,25 +144,6 @@ public class PasswordDeriveBytes : DeriveBytes {
 		IterationCount = iterations;
 		state = 0;
 	}
-#else
-	private void Prepare (string strPassword, byte[] rgbSalt, string strHashName, int iterations)
-	{
-		if (strPassword == null)
-			password = null;
-		else
-			password = Encoding.UTF8.GetBytes (strPassword);
-
-		if (rgbSalt == null)
-			SaltValue = null;
-		else
-			SaltValue = (byte[]) rgbSalt.Clone ();
-
-		HashName = strHashName;
-		IterationCount = iterations;
-		state = 0;
-	}
-#endif
-
 	public string HashName {
 		get { return HashNameValue; } 
 		set {
@@ -205,15 +181,10 @@ public class PasswordDeriveBytes : DeriveBytes {
 				throw new CryptographicException (
 					Locale.GetText ("Can't change this property at this stage"));
 			}
-#if NET_2_0
 			if (value != null)
 				SaltValue = (byte[]) value.Clone ();
 			else
 				SaltValue = null;
-#else
-			// this will cause a NullReferenceException if set to null (like 1.0/1.1)
-			SaltValue = (byte[]) value.Clone ();
-#endif
 		}
 	}
 
@@ -228,19 +199,12 @@ public class PasswordDeriveBytes : DeriveBytes {
 	}
 
 	// note: Key is returned - we can't zeroize it ourselve :-(
-#if NET_2_0
 	[Obsolete ("see Rfc2898DeriveBytes for PKCS#5 v2 support")]
  #pragma warning disable 809
-#endif
 	public override byte[] GetBytes (int cb) 
 	{
-#if NET_2_0
  #pragma warning restore 809
-#else
-		// 1.0/1.1 was a little late at throwing the argument exception ;-)
-		if (password == null)
-			throw new ArgumentNullException ("Password");
-#endif
+
 		if (cb < 1)
 			throw new IndexOutOfRangeException ("cb");
 
@@ -301,11 +265,7 @@ public class PasswordDeriveBytes : DeriveBytes {
 
 	public override void Reset () 
 	{
-#if NET_2_0
 		state = 0;
-#else
-		// note: Reset doesn't change state
-#endif
 		position = 0;
 		hashnumber = 0;
 

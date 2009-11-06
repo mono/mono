@@ -26,12 +26,11 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
-		[Serializable]
-		[ComVisible (false)]
+	[Serializable]
+	[ComVisible (false)]
         public enum CER
         {
                 MayFail = 1,
@@ -39,4 +38,3 @@ namespace System.Runtime.Reliability
                 Success = 2
         }
 }
-#endif

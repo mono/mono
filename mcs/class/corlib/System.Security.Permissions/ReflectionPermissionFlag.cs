@@ -35,20 +35,16 @@ using System.Runtime.InteropServices;
 namespace System.Security.Permissions {
 
 	[Flags]
-#if NET_2_0
 	[ComVisible (true)]
 	[Serializable]
-#endif
 	public enum ReflectionPermissionFlag {
 
 		NoFlags = 0x00000000,
-#if NET_2_0
-		[Obsolete ("not used anymore")]
-#endif
+
+		[Obsolete ("not used anymore")]			
 		TypeInformation = 0x00000001,
 
 		MemberAccess = 0x00000002,
-
 #if NET_4_0
 		[Obsolete]
 #endif
@@ -59,9 +55,7 @@ namespace System.Security.Permissions {
 #endif
 		AllFlags = TypeInformation | MemberAccess | ReflectionEmit,
 
-#if NET_2_0
 		[ComVisible (false)]
 		RestrictedMemberAccess = 0x8
-#endif
 	}
 }

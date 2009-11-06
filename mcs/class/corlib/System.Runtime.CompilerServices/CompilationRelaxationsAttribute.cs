@@ -33,13 +33,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-#if NET_2_0
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | 
 		 AttributeTargets.Class | AttributeTargets.Method)]
 	[ComVisible(true)]
-#else
-	[AttributeUsage (AttributeTargets.Module)]
-#endif
 	[Serializable]
 	public class CompilationRelaxationsAttribute : Attribute
 	{
@@ -49,12 +45,10 @@ namespace System.Runtime.CompilerServices {
 			relax = relaxations;
 		}
 
-#if NET_2_0
 		public CompilationRelaxationsAttribute (CompilationRelaxations relaxations)
 		{
 			relax = (int)relaxations;
 		}
-#endif
 
 		public int CompilationRelaxations {
 			get { return relax; }

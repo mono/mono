@@ -41,14 +41,8 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
 	public sealed class DSACryptoServiceProvider : DSA, ICspAsymmetricAlgorithm {
-#elif NET_1_1
-	public sealed class DSACryptoServiceProvider : DSA {
-#else
- 	public class DSACryptoServiceProvider : DSA {
-#endif
 		private const int PROV_DSS_DH = 13;		// from WinCrypt.h
 
 		private KeyPairPersistence store;
@@ -129,24 +123,13 @@ namespace System.Security.Cryptography {
 			get { return dsa.KeySize; }
 		}
 
-#if !NET_2_0
-		public override KeySizes[] LegalKeySizes {
-			get { return LegalKeySizesValue; }
-		}
-#endif
-
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
 			set { persistKey = value; }
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
-		public 
-#else
-		internal
-#endif
-		bool PublicOnly {
+		public bool PublicOnly {
 			get { return dsa.PublicOnly; }
 		}
 
@@ -270,7 +253,6 @@ namespace System.Security.Cryptography {
 				persisted = true;
 			}
 		}
-#if NET_2_0
 		// ICspAsymmetricAlgorithm
 
 		[MonoTODO ("call into KeyPairPersistence to get details")]
@@ -313,7 +295,6 @@ namespace System.Security.Cryptography {
 				}
 			}
 		}
-#endif
 	}
 }
 

@@ -37,9 +37,7 @@ using Mono.Xml;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class RSA : AsymmetricAlgorithm {
 
 		public static new RSA Create () 
@@ -52,11 +50,7 @@ namespace System.Security.Cryptography {
 			return (RSA) CryptoConfig.CreateFromName (algName);
 		}
 
-#if NET_2_0
 		protected RSA ()
-#else
-		public RSA ()
-#endif
 		{
 		}
 

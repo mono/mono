@@ -34,14 +34,8 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.CompilerServices {
 
 	[Serializable] 
-#if !NET_2_0
-	[CLSCompliant (false)]
-#endif
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
-			 Inherited=false)]
-#if NET_2_0
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter, Inherited=false)]
 	[ComVisible(true)]
-#endif
 	public sealed class DecimalConstantAttribute : Attribute
 	{
 		byte scale;
@@ -50,9 +44,7 @@ namespace System.Runtime.CompilerServices {
 		int mid;
 		int low;
 
-#if NET_2_0
 		[CLSCompliant (false)]
-#endif
 		public DecimalConstantAttribute (byte scale, byte sign, uint hi, uint mid, uint low)
 		{
 			this.scale = scale;
@@ -62,7 +54,6 @@ namespace System.Runtime.CompilerServices {
 			this.low   = (int) low;
 		}
 
-#if NET_2_0
 		public DecimalConstantAttribute (byte scale, byte sign, int hi, int mid, int low)
 		{
 			this.scale = scale;
@@ -71,7 +62,6 @@ namespace System.Runtime.CompilerServices {
 			this.mid   = mid;
 			this.low   = low;
 		}
-#endif
 
 		public Decimal Value {
 			get { return new Decimal (low, mid, hi, sign, scale); }

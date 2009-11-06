@@ -33,9 +33,7 @@ using System;
 
 namespace System.Runtime.Remoting {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class TypeEntry
 	{
 		string assembly_name;

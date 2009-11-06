@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
 	
 		private X509Certificate m_cert;
@@ -45,21 +43,15 @@ namespace System.Security.Policy {
 		{
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
-#if NET_2_0
 			if (cert.GetHashCode () == 0)
 				throw new ArgumentException ("cert");
-#endif
 			m_cert = cert;
 		}
 
 		public X509Certificate Certificate { 
 			get {
 				if (m_cert.GetHashCode () == 0) {
-#if NET_2_0
 					throw new ArgumentException ("m_cert");
-#else
-					throw new NullReferenceException ("m_cert");
-#endif	
 				}
 				return m_cert; 
 			}

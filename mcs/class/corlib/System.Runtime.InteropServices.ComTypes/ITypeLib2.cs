@@ -5,7 +5,6 @@
 //   Kazuki Oikawa (kazuki@panicode.com)
 //
 
-#if NET_2_0
 using System;
 
 namespace System.Runtime.InteropServices.ComTypes
@@ -36,4 +35,3 @@ namespace System.Runtime.InteropServices.ComTypes
 		new int GetTypeInfoCount ();
 	}
 }
-#endif

@@ -41,9 +41,7 @@ namespace System.Security.Cryptography {
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class TripleDESCryptoServiceProvider : TripleDES {
 	
 		public TripleDESCryptoServiceProvider ()
@@ -86,11 +84,9 @@ namespace System.Security.Cryptography {
 		
 		public TripleDESTransform (TripleDES algo, bool encryption, byte[] key, byte[] iv) : base (algo, encryption, iv) 
 		{
-#if NET_2_0
 			if (key == null) {
 				key = GetStrongKey ();
 			}
-#endif
 			// note: checking weak keys also checks valid key length
 			if (TripleDES.IsWeakKey (key)) {
 				string msg = Locale.GetText ("This is a known weak key.");

@@ -36,9 +36,7 @@ namespace System.Security.Cryptography {
 	// LAMESPEC: There seems no way to select a hash algorithm. The default 
 	// algorithm, is SHA1 because the class use the PKCS1MaskGenerationMethod -
 	// which default to SHA1.
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class RSAPKCS1KeyExchangeFormatter: AsymmetricKeyExchangeFormatter
 	{
 		private RSA rsa;
@@ -66,12 +64,10 @@ namespace System.Security.Cryptography {
 		{
 			if (rgbData == null)
 				throw new ArgumentNullException ("rgbData");
-#if NET_2_0
 			if (rsa == null) {
 				string msg = Locale.GetText ("No RSA key specified");
 				throw new CryptographicUnexpectedOperationException (msg);
 			}
-#endif
 			if (random == null)
 				random = RandomNumberGenerator.Create ();  // create default
 			return PKCS1.Encrypt_v15 (rsa, random, rgbData);

@@ -30,18 +30,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class AsymmetricSignatureFormatter {
 
-#if NET_2_0
 		protected AsymmetricSignatureFormatter ()
-#else
-		public AsymmetricSignatureFormatter ()
-#endif
-		{
-		}
+		{		}
 		
 		public abstract void SetHashAlgorithm (string strName);		
 		

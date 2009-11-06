@@ -35,9 +35,7 @@ namespace System.Security.Permissions {
 
 	[Serializable]
 	[SecurityPermission (SecurityAction.InheritanceDemand, ControlEvidence = true, ControlPolicy = true)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission	{
 
 		private const int version = 1;
@@ -48,11 +46,7 @@ namespace System.Security.Permissions {
 		internal bool m_permanentData;
 		internal IsolatedStorageContainment m_allowed;
 
-#if NET_2_0
 		protected IsolatedStoragePermission (PermissionState state)
-#else
-		public IsolatedStoragePermission (PermissionState state)
-#endif
 		{
 			if (CheckPermissionState (state, true) == PermissionState.Unrestricted) {
 				UsageAllowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;

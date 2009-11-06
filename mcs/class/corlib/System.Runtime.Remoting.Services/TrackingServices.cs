@@ -34,15 +34,10 @@
 using System;
 using System.Collections;
 using System.Runtime.Remoting;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Remoting.Services {
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class TrackingServices {
 		static ArrayList _handlers = new ArrayList();
 

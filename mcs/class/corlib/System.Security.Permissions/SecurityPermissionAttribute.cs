@@ -34,9 +34,7 @@ namespace System.Security.Permissions {
 #if NET_2_1
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[AttributeUsage (
 		System.AttributeTargets.Assembly
 		| System.AttributeTargets.Class 
@@ -68,7 +66,6 @@ namespace System.Security.Permissions {
 				}
 			}
 		}
-#if NET_2_0
 		public bool BindingRedirects {
 			get {
 				return ((m_Flags & SecurityPermissionFlag.BindingRedirects) != 0);
@@ -82,7 +79,7 @@ namespace System.Security.Permissions {
 				}
 			}
 		}
-#endif
+
 		public bool ControlAppDomain {
 			get {
 				return ((m_Flags & SecurityPermissionFlag.ControlAppDomain) != 0);
@@ -181,9 +178,7 @@ namespace System.Security.Permissions {
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public bool Infrastructure {
 			get {
 				return ((m_Flags & SecurityPermissionFlag.Infrastructure) != 0);

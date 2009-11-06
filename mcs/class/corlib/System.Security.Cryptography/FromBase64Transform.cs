@@ -33,17 +33,13 @@ using System.Runtime.InteropServices;
 namespace System.Security.Cryptography {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum FromBase64TransformMode : int {
 		IgnoreWhiteSpaces,
 		DoNotIgnoreWhiteSpaces
 	}
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class FromBase64Transform : ICryptoTransform {
 
 		private FromBase64TransformMode mode;

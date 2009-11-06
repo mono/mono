@@ -36,18 +36,14 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class NetCodeGroup : CodeGroup {
 
-#if NET_2_0
 		public static readonly string AbsentOriginScheme = String.Empty;
 		public static readonly string AnyOtherOriginScheme = "*";
 
 		private Hashtable _rules = new Hashtable ();
 		private int _hashcode;
-#endif
 
 		public NetCodeGroup (IMembershipCondition membershipCondition) 
 			: base (membershipCondition, null) 
@@ -73,11 +69,7 @@ namespace System.Security.Policy {
 		}
 
 		public override string PermissionSetName {
-#if NET_2_0
 			get { return "Same site Web"; }
-#else
-			get { return "Same site Web."; }
-#endif
 		}
 
 
@@ -85,7 +77,6 @@ namespace System.Security.Policy {
 		// Public Methods
 		//
 
-#if NET_2_0
 		[MonoTODO ("(2.0) missing validations")]
 		public void AddConnectAccess (string originScheme, CodeConnectAccess connectAccess)
 		{
@@ -115,7 +106,6 @@ namespace System.Security.Policy {
 				// add null to prevent access
 			}
 		}
-#endif
 
 		public override CodeGroup Copy ()
 		{
@@ -130,7 +120,6 @@ namespace System.Security.Policy {
 			return copy;
 		}
 
-#if NET_2_0
 		private bool Equals (CodeConnectAccess[] rules1, CodeConnectAccess[] rules2)
 		{
 			for (int i=0; i < rules1.Length; i++) {
@@ -192,7 +181,6 @@ namespace System.Security.Policy {
 			}
 			return _hashcode;
 		}
-#endif
 
 		public override PolicyStatement Resolve (Evidence evidence)
 		{
@@ -222,12 +210,10 @@ namespace System.Security.Policy {
 			return pst;
 		}
 
-#if NET_2_0
 		public void ResetConnectAccess ()
 		{
 			_rules.Clear ();
 		}
-#endif
 
 		public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence) 
 		{
@@ -250,7 +236,6 @@ namespace System.Security.Policy {
 			return return_group;
 		}
 
-#if NET_2_0
 		[MonoTODO ("(2.0) Add new stuff (CodeConnectAccess) into XML")]
 		protected override void CreateXml (SecurityElement element, PolicyLevel level)
 		{
@@ -262,6 +247,5 @@ namespace System.Security.Policy {
 		{
 			base.ParseXml (e, level);
 		}
-#endif
 	}
 }

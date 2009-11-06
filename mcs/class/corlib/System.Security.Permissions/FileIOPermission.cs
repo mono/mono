@@ -32,23 +32,18 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
-#endif
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class FileIOPermission
                 : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
 
 		private const int version = 1;
 
-#if NET_2_0
 		private static char[] BadPathNameCharacters;
 		private static char[] BadFileNameCharacters;
 
@@ -58,17 +53,6 @@ namespace System.Security.Permissions {
 			BadPathNameCharacters = Path.GetInvalidPathChars ();
 			BadFileNameCharacters = Path.GetInvalidFileNameChars ();
 		}
-#else
-		private static char[] m_badCharacters;
-
-		static FileIOPermission ()
-		{
-			// note: deprecated in 2.0 as InvalidPathChars is an array (i.e. items can be
-			// modified). Anyway we keep our own copy, which should be called by the 
-			// security manager before anyone has the chance to change it.
-			m_badCharacters = (char[]) Path.InvalidPathChars.Clone ();
-		}
-#endif
 
 		private bool m_Unrestricted = false;
 		private FileIOPermissionAccess m_AllFilesAccess = FileIOPermissionAccess.NoAccess;
@@ -116,7 +100,6 @@ namespace System.Security.Permissions {
 			pathList = new ArrayList ();
 		}
 
-#if NET_2_0
 		[MonoTODO ("(2.0) Access Control isn't implemented")]
 		public FileIOPermission (FileIOPermissionAccess access, AccessControlActions control, string path)
 		{
@@ -128,7 +111,6 @@ namespace System.Security.Permissions {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public FileIOPermissionAccess AllFiles {
 			get { return m_AllFilesAccess; } 
@@ -404,7 +386,6 @@ namespace System.Security.Permissions {
 			return result;
 		}
 
-#if NET_2_0
 		[MonoTODO ("(2.0)")]
 		[ComVisible (false)]
 		public override bool Equals (object obj)
@@ -418,7 +399,6 @@ namespace System.Security.Permissions {
 		{
 			return base.GetHashCode ();
 		}
-#endif
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
@@ -459,7 +439,6 @@ namespace System.Security.Permissions {
 
 		internal static void ThrowIfInvalidPath (string path)
 		{
-#if NET_2_0
 			string dir = Path.GetDirectoryName (path);
 			if ((dir != null) && (dir.LastIndexOfAny (BadPathNameCharacters) >= 0)) {
 				string msg = String.Format (Locale.GetText ("Invalid path characters in path: '{0}'"), path);
@@ -471,12 +450,6 @@ namespace System.Security.Permissions {
 				string msg = String.Format (Locale.GetText ("Invalid filename characters in path: '{0}'"), path);
 				throw new ArgumentException (msg, "path");
 			}
-#else
-			if (path.LastIndexOfAny (m_badCharacters) >= 0) {
-				string msg = String.Format (Locale.GetText ("Invalid characters in path: '{0}'"), path);
-				throw new ArgumentException (msg, "path");
-			}
-#endif
 			// LAMESPEC: docs don't say it must be a rooted path, but the MS implementation enforces it, so we will too.
 			if (!Path.IsPathRooted (path)) {
 				string msg = Locale.GetText ("Absolute path information is required.");

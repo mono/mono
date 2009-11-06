@@ -36,9 +36,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 
-#if NET_2_0
-	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
+[System.Runtime.InteropServices.ComVisible (true)]
 public class AsyncResult : IAsyncResult, IMessageSink {
 
 #pragma warning disable 169, 414, 649

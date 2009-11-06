@@ -34,9 +34,7 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting {
 
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public class WellKnownClientTypeEntry : TypeEntry
 	{
 		Type obj_type;

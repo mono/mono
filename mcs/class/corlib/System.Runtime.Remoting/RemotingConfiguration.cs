@@ -42,21 +42,9 @@ using Mono.Xml;
 
 namespace System.Runtime.Remoting
 {	
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public static class RemotingConfiguration
-#else
-	public class RemotingConfiguration
-#endif
 	{
-#if !NET_2_0
-		//
-		// Private constructor: nobody instantiates this.
-		//
-		private RemotingConfiguration ()
-		{
-		}
-#endif
 		
 		static string applicationID = null;
 		static string applicationName = null;
@@ -93,14 +81,12 @@ namespace System.Runtime.Remoting
 			set { applicationName = value; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static CustomErrorsModes CustomErrorsMode
 		{
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
 		public static string ProcessId 
 		{
@@ -115,13 +101,8 @@ namespace System.Runtime.Remoting
 
 		// public methods
 		
-#if NET_2_0
-		[MonoTODO ("Implement ensureSecurity")]
-		public
-#else
-		internal
-#endif
-		static void Configure (string filename, bool ensureSecurity) 
+		[MonoTODO ("ensureSecurity support has not been implemented")]
+		public static void Configure (string filename, bool ensureSecurity) 
 		{
 			lock (channelTemplates) {
 				if (!defaultConfigRead) {
@@ -133,9 +114,8 @@ namespace System.Runtime.Remoting
 					ReadConfigFile (filename);
 			}
 		}
-#if NET_2_0
+
 		[Obsolete ("Use Configure(String,Boolean)")]
-#endif
 		public static void Configure (string filename) 
 		{
 			Configure (filename, false);

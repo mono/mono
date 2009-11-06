@@ -30,16 +30,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class AsymmetricKeyExchangeDeformatter {
-
-#if NET_2_0
 		protected AsymmetricKeyExchangeDeformatter ()
-#else
-		public AsymmetricKeyExchangeDeformatter ()
-#endif
 		{
 		}
 		

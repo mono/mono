@@ -34,12 +34,9 @@ using System.Runtime.Remoting;
 
 namespace System.Runtime.Remoting.Messaging
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
-    public interface IMessageCtrl
-    {
-        void Cancel (int msToCancel);
-    }
+	public interface IMessageCtrl {
+		void Cancel (int msToCancel);
+	}
 }
 

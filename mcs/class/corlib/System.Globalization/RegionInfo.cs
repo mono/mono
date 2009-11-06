@@ -79,18 +79,12 @@ namespace System.Globalization
 			if (name == null)
 				throw new ArgumentNullException ();
 
-#if NET_2_0
 			if (construct_internal_region_from_name (name.ToUpperInvariant ())) {
 				lcid = name.GetHashCode (); // random-ish
 				return;
 			}
 			if (!GetByTerritory (CultureInfo.GetCultureInfo (name)))
 				throw new ArgumentException (String.Format ("Region name {0} is not supported.", name), "name");
-#else
-			if (!construct_internal_region_from_name (name.ToUpperInvariant ()))
-				throw new ArgumentException ("Region name " + name +
-						" is not supported.", "name");
-#endif
 		}
 
 		bool GetByTerritory (CultureInfo ci)

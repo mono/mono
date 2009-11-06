@@ -33,9 +33,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography { 
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class RSAPKCS1KeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
 	
 		private RSA rsa;

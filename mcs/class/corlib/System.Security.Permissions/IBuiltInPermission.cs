@@ -63,13 +63,6 @@ namespace System.Security.Permissions {
 		Security = 6,
 		UI = 7,
 		Principal = 8,
-#if !NET_2_0
-		PublisherIdentity = 9,
-		SiteIdentity = 10,
-		StrongNameIdentity = 11,
-		UrlIdentity = 12,
-		ZoneIdentity = 13,
-#else
 		HostProtection = 9,
 		PublisherIdentity = 10,
 		SiteIdentity = 11,
@@ -78,6 +71,5 @@ namespace System.Security.Permissions {
 		ZoneIdentity = 14,
 		GacIdentity = 15,
 		KeyContainer = 16,
-#endif
 	}
 }

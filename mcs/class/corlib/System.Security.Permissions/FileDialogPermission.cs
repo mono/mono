@@ -31,9 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class FileDialogPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
@@ -121,14 +119,6 @@ namespace System.Security.Permissions {
 		{
 			return (_access == FileDialogPermissionAccess.OpenSave);
 		}
-
-#if !NET_2_0
-		// Same results as base class - so why is it overrided ?
-		public override string ToString () 
-		{
-			return base.ToString ();
-		}
-#endif
 
 		public override SecurityElement ToXml () 
 		{

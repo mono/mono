@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && !NET_2_1 || MONOTOUCH
+#if !NET_2_1 || MONOTOUCH
 
 using System.Runtime.InteropServices;
 
@@ -35,9 +35,7 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// Represents the abstract class from which all implementations of the <see cref="RIPEMD160"/> hash algorithm inherit.
 	/// </summary>
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public abstract class RIPEMD160 : HashAlgorithm {
 		/// <summary>
 		/// Initializes a new instance of <see cref="RIPEMD160"/>.

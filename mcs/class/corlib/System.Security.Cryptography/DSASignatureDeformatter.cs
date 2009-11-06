@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class DSASignatureDeformatter : AsymmetricSignatureDeformatter {
 	
 		private DSA dsa;
@@ -71,12 +69,8 @@ namespace System.Security.Cryptography {
 				// a DSA keypair
 				dsa = (DSA) key;
 			}
-#if NET_2_0
 			else
 				throw new ArgumentNullException ("key");
-#else
-			// null is accepted in 1.0/1.1
-#endif
 		}
 
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature)

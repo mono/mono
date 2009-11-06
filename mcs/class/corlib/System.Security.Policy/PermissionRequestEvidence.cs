@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class PermissionRequestEvidence : IBuiltInEvidence {
 
 		private PermissionSet requested, optional, denied;

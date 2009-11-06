@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Diagnostics;
 
 namespace System.Runtime.Versioning {
@@ -50,4 +48,3 @@ namespace System.Runtime.Versioning {
 	}
 }
 
-#endif

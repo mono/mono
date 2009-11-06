@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class GenericIdentity : IIdentity {
 
 		// field names are serialization compatible with .net

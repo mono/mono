@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	[Serializable]
 	public sealed class ZoneIdentityPermission : CodeAccessPermission, IBuiltInPermission {
 
@@ -82,12 +80,8 @@ namespace System.Security.Permissions {
 
 			if (zone == SecurityZone.NoZone)
 				return zip.Copy ();
-#if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Union impossible"));
-#else
-			return null;
-#endif
 		}
 
 		public override IPermission Intersect (IPermission target)

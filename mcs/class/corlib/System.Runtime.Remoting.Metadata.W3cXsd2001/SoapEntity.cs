@@ -36,9 +36,7 @@ using System;
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
 {
 	[Serializable]
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public sealed class SoapEntity : ISoapXsd
 	{
 		string _value;

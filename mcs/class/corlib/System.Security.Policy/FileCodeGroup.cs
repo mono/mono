@@ -34,9 +34,7 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class FileCodeGroup : CodeGroup {
 
 		private FileIOPermissionAccess m_access;

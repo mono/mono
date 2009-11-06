@@ -35,16 +35,12 @@ using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Channels;
 
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
 namespace System.Runtime.Remoting.Proxies {
 
 	[AttributeUsage (AttributeTargets.Class)]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class ProxyAttribute : Attribute, IContextAttribute
 	{
 		public ProxyAttribute ()
@@ -62,17 +58,13 @@ namespace System.Runtime.Remoting.Proxies {
 			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objRef, serverType));
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public void GetPropertiesForNewContext (IConstructionCallMessage msg)
 		{
 			// Nothing to add
 		}
 
-#if NET_2_0
 		[ComVisible (true)]
-#endif
 		public bool IsContextOK (Context ctx, IConstructionCallMessage msg)
 		{
 			return true;

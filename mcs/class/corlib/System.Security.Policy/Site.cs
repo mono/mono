@@ -38,9 +38,7 @@ using Mono.Security;
 namespace System.Security.Policy {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class Site: IIdentityPermissionFactory, IBuiltInEvidence {
 
 		internal string origin_site;
@@ -143,7 +141,6 @@ namespace System.Security.Policy {
 					continue;
 				foreach (char c in part) {
 					int x = Convert.ToInt32 (c);
-#if NET_2_0
 					bool result = ((x == 33) || (x == 45)	// !-
 						|| (x >= 35 && x <= 41)		// #$%&'()
 						|| (x >= 48 && x <= 57)		// 0-9
@@ -151,13 +148,6 @@ namespace System.Security.Policy {
 						|| (x >= 94 && x <= 95)		// ^_
 						|| (x >= 97 && x <= 123)	// a-z{
 						|| (x >= 125 && x <= 126));	// }~
-#else
-					bool result = ((x == 45)		// -
-						|| (x >= 47 && x <= 57)		// /,0-9
-						|| (x >= 64 && x <= 90)		// @,A-Z
-						|| (x == 95)			// _
-						|| (x >= 97 && x <= 122));	// a-z
-#endif
 					if (!result)
 						return false;
 				}
@@ -174,15 +164,9 @@ namespace System.Security.Policy {
 				return null;
 
 			Uri uri = new Uri (url);
-#if NET_2_0
 			if (uri.Scheme == Uri.UriSchemeFile)
 				return null;
 			string site = uri.Host;
-#else
-			string site = uri.Host;
-			if (site == null)
-				site = uri.AbsoluteUri.ToUpper ();		// strange but true
-#endif
 			return IsValid (site) ? site : null;
 		}
         }

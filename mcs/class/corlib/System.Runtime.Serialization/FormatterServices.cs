@@ -38,9 +38,7 @@ using System.Globalization;
 
 namespace System.Runtime.Serialization
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
-#endif
 	public sealed class FormatterServices
 	{
 		private const BindingFlags fieldFlags = BindingFlags.Public |

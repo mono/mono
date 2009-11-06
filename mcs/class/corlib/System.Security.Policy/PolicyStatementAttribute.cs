@@ -33,9 +33,7 @@ namespace System.Security.Policy {
 
 	[Flags]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum PolicyStatementAttribute {
 		Nothing = 0,
 		Exclusive = 1,

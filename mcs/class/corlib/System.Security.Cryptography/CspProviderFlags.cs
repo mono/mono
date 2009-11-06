@@ -33,20 +33,16 @@ namespace System.Security.Cryptography {
 
 	[Flags]
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public enum CspProviderFlags {
 		UseMachineKeyStore = 1,
 		UseDefaultKeyContainer = 2,
 		UseExistingKey = 8,
-#if NET_2_0
 		NoFlags = 0,
 		NoPrompt = 64,
 		UseArchivableKey = 16,
 		UseNonExportableKey = 4,
 		UseUserProtectedKey = 32
-#endif
 	}
 }
 

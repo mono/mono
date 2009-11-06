@@ -33,9 +33,7 @@ using System.Runtime.InteropServices;
 namespace System.Security.Principal {
 
 	[Serializable]
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public class GenericPrincipal : IPrincipal {
 
 		// field names are serialization compatible with .net

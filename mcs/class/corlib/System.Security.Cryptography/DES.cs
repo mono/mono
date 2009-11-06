@@ -39,18 +39,12 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public abstract class DES : SymmetricAlgorithm {
 
 	private const int keySizeByte = 8;
 
-#if NET_2_0
 	protected DES ()
-#else
-	public DES ()
-#endif
 	{
 		KeySizeValue = 64; 
 		BlockSizeValue = 64; 
@@ -100,10 +94,8 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static bool IsWeakKey (byte[] rgbKey) 
 	{
-#if NET_2_0
 		if (rgbKey == null)
 			throw new CryptographicException (Locale.GetText ("Null Key"));
-#endif
 		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 
@@ -135,10 +127,8 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static bool IsSemiWeakKey (byte[] rgbKey)
 	{
-#if NET_2_0
 		if (rgbKey == null)
 			throw new CryptographicException (Locale.GetText ("Null Key"));
-#endif
 		if (rgbKey.Length != keySizeByte)
 			throw new CryptographicException (Locale.GetText ("Wrong Key Length"));
 

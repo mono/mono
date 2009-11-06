@@ -39,9 +39,7 @@ using System.Security;
 
 namespace System.Security.Cryptography {
 	
-#if NET_2_0
 [ComVisible (true)]
-#endif
 public class SignatureDescription {
 
 	private string _DeformatterAlgorithm;

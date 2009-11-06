@@ -286,15 +286,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private void ReadObjectContent (BinaryReader reader, TypeMetadata metadata, long objectId, out object objectInstance, out SerializationInfo info)
 		{
-#if NET_1_1
 			if (_filterLevel == TypeFilterLevel.Low)
 				objectInstance = FormatterServices.GetSafeUninitializedObject (metadata.Type);
 			else
-#endif
 				objectInstance = FormatterServices.GetUninitializedObject (metadata.Type);
-#if NET_2_0
 			_manager.RaiseOnDeserializingEvent (objectInstance);
-#endif
 				
 			info = metadata.NeedsSerializationInfo ? new SerializationInfo(metadata.Type, new FormatterConverter()) : null;
 
@@ -852,14 +848,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				case TypeTag.RuntimeType:
 				{
 					string name = reader.ReadString ();
-#if NET_2_0
 					// map MS.NET's System.RuntimeType to System.MonoType
 					if (_context.State == StreamingContextStates.Remoting)
 						if (name == "System.RuntimeType")
 							return typeof (MonoType);
 						else if (name == "System.RuntimeType[]")
 							return typeof (MonoType[]);
-#endif
 					Type t = Type.GetType (name);
 					if (t != null)
 						return t;

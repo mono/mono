@@ -27,16 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
-#endif
 
 namespace System.Security.Cryptography {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
 	public sealed class CspParameters {
 
 		private CspProviderFlags _Flags;
@@ -79,7 +75,6 @@ namespace System.Security.Cryptography {
 			set { _Flags = value; }
 		}
 
-#if NET_2_0
 		private SecureString _password;
 		private IntPtr _windowHandle;
 
@@ -116,6 +111,5 @@ namespace System.Security.Cryptography {
 			get { return _windowHandle; }
 			set { _windowHandle = value; }
 		}
-#endif
 	}
 }

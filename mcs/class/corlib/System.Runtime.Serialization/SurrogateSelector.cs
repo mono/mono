@@ -35,9 +35,7 @@ using System.Collections;
 
 namespace System.Runtime.Serialization
 {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
-#endif
 	public class SurrogateSelector : ISurrogateSelector
 	{
 		// Fields

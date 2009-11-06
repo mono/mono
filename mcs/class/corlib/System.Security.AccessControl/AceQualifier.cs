@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Security.AccessControl {
 	public enum AceQualifier {
 		AccessAllowed = 0,
@@ -37,4 +35,3 @@ namespace System.Security.AccessControl {
 	}
 }
 
-#endif

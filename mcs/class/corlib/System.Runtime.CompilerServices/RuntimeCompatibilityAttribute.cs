@@ -30,8 +30,6 @@
 
 using System;
 
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-
 namespace System.Runtime.CompilerServices {
 
 	[Serializable]
@@ -56,4 +54,3 @@ namespace System.Runtime.CompilerServices {
 	}
 }
 
-#endif

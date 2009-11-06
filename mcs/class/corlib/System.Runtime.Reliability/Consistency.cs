@@ -26,12 +26,11 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System.Runtime.InteropServices;
 namespace System.Runtime.Reliability
 {
-		[ComVisible (false)]
-		[Serializable]
+	[ComVisible (false)]
+	[Serializable]
         public enum Consistency
         {
                 MayCorruptAppDomain = 1,
@@ -40,4 +39,3 @@ namespace System.Runtime.Reliability
                 WillNotCorruptState = 3
         }
 }
-#endif
