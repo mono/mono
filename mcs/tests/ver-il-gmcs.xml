@@ -15601,7 +15601,7 @@
         <size>252</size>
       </method>
       <method name="Void NewTest_5()">
-        <size>128</size>
+        <size>180</size>
       </method>
       <method name="Void NotTest()">
         <size>70</size>
