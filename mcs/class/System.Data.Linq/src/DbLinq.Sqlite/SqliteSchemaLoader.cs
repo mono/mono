@@ -45,6 +45,21 @@ namespace DbLinq.Sqlite
 
         public override System.Type DataContextType { get { return typeof(SqliteDataContext); } }
 
+        protected string UnquoteSqlName(string name)
+        {
+            var quotes = new[]{
+                new { Start = "[",  End = "]" },
+                new { Start = "`",  End = "`" },
+                new { Start = "\"", End = "\"" },
+            };
+            foreach (var q in quotes)
+            {
+                if (name.StartsWith(q.Start) && name.EndsWith(q.End))
+                    return name.Substring(q.Start.Length, name.Length - q.Start.Length - q.End.Length);
+            }
+            return name;
+        }
+
         /// <summary>
         /// Gets a usable name for the database.
         /// </summary>

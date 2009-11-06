@@ -125,7 +125,7 @@ namespace DbLinq.Ingres
                 UNION
                 SELECT DISTINCT
 		                c.constraint_type as constraint_type,
-                        p.constraint_name as constraint_name,
+                        squeeze(f.table_name) || '_' || p.constraint_name as constraint_name,
                         f.schema_name as referenced_schema_name,
                         f.table_name as referenced_table_name,
                         f.column_name as referenced_column_name,

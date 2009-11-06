@@ -27,9 +27,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Data.Linq.Mapping;
+using System.Reflection;
 
+using DbLinq.Util;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
+using DbLinq.Data.Linq.Sugar.Implementation;
 
 namespace DbLinq.Data.Linq.Sugar.Expressions
 {
@@ -37,7 +42,7 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// A GroupExpression holds a grouped result
     /// It is usually transparent, except for return value, where it mutates the type to IGrouping
     /// </summary>
-    [DebuggerDisplay("EntityExpression: {TableExpression.Type}")]
+    [DebuggerDisplay("EntitySetExpression: {TableExpression.Type}")]
 #if !MONO_STRICT
     public
 #endif
@@ -45,12 +50,62 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.EntitySet;
 
-        public TableExpression TableExpression { get; set; }
+        TableExpression tableExpression;
 
-        public EntitySetExpression(TableExpression tableExpression, Type entitySetType)
+        public TableExpression TableExpression {
+            get {
+                if (tableExpression != null)
+                    return tableExpression;
+                var entityType = EntitySetType.GetGenericArguments()[0];
+                tableExpression = dispatcher.RegisterAssociation(sourceTable, memberInfo, entityType, builderContext);
+                return tableExpression;
+            }
+            set {
+                tableExpression = value;
+            }
+        }
+
+        BuilderContext builderContext;
+        public Type EntitySetType;
+        ExpressionDispatcher dispatcher;
+        TableExpression sourceTable;
+        MemberInfo memberInfo;
+
+        public List<KeyValuePair<ColumnExpression, MetaDataMember>> Columns = new List<KeyValuePair<ColumnExpression, MetaDataMember>>();
+
+        internal EntitySetExpression(TableExpression sourceTable, MemberInfo memberInfo, Type entitySetType, BuilderContext builderContext, ExpressionDispatcher dispatcher)
             : base(ExpressionType, entitySetType)
         {
-            TableExpression = tableExpression;
+            this.builderContext = builderContext;
+            this.EntitySetType = entitySetType;
+            this.dispatcher = dispatcher;
+            this.sourceTable = sourceTable;
+            this.memberInfo = memberInfo;
+            ParseExpression(sourceTable);
+        }
+
+        private void ParseExpression(TableExpression sourceTable)
+        {
+            // var sourceTable = targetTable.JoinedTable;
+            var entityType = EntitySetType.GetGenericArguments()[0];
+
+            // BUG: This is ignoring External Mappings from XmlMappingSource.
+            var mappingType = builderContext.QueryContext.DataContext.Mapping.GetMetaType(entityType);
+            var foreignKeys = mappingType.Associations.Where(a => a.IsForeignKey && a.OtherType.Type == sourceTable.Type);
+
+            foreach (var fk in foreignKeys)
+            {
+                var oke = fk.OtherKey.GetEnumerator();
+                var tke = fk.ThisKey.GetEnumerator();
+                bool ho, ht;
+                while ((ho = oke.MoveNext()) && (ht = tke.MoveNext()))
+                {
+                    var ok = oke.Current;
+                    var tk = tke.Current;
+                    var column = dispatcher.RegisterColumn(sourceTable, ok.Member, builderContext);
+                    Columns.Add(new KeyValuePair<ColumnExpression, MetaDataMember>(column, tk));
+                }
+            }
         }
 
         public override Expression Mutate(IList<Expression> newOperands)
@@ -58,6 +113,7 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
             if (newOperands.Count != 1)
                 throw Error.BadArgument("S0063: Bad argument count");
             TableExpression = (TableExpression)newOperands[0];
+            // ParseExpression(TableExpression);
             return this;
         }
     }

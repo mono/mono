@@ -3,74 +3,55 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{32824F7E-9260-413C-B174-F3E315936FA7}</ProjectGuid>
+    <ProjectGuid>{B4214704-ED8E-49C2-AC71-7D4992141378}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DbLinq.PostgreSql</RootNamespace>
-    <AssemblyName>DbLinq.PostgreSql</AssemblyName>
+    <RootNamespace>DbMetalSqliteTests</RootNamespace>
+    <AssemblyName>DbMetal_test_sqlite</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\DbLinq.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build.dbg\</OutputPath>
+    <OutputPath>..\..\..\build.dbg\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyKeyFile>..\DbLinq.snk</AssemblyKeyFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\build\</OutputPath>
+    <OutputPath>..\..\..\build\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyKeyFile>..\DbLinq.snk</AssemblyKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DbLinq.ProductInfo.cs">
-      <Link>Properties\DbLinq.ProductInfo.cs</Link>
-    </Compile>
-    <Compile Include="PgsqlSchemaLoader.Columns.cs" />
-    <Compile Include="PgsqlSchemaLoader.Constraints.cs" />
-    <Compile Include="PgsqlSchemaLoader.cs" />
-    <Compile Include="PgsqlDataContext.cs" />
-    <Compile Include="PgsqlSchemaLoader.StoredProcedures.cs" />
-    <Compile Include="PgsqlSchemaLoader.Tables.cs" />
-    <Compile Include="PgsqlSqlProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PgsqlVendor.cs" />
+    <Compile Include="CreateEntitiesFromSqliteDbTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\DbLinq.snk">
-      <Link>Properties\DbLinq.snk</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DbLinq\DbLinq.csproj">
-      <Project>{7950197D-4122-49CB-9FD7-45E666BAFEC2}</Project>
-      <Name>DbLinq</Name>
+    <ProjectReference Include="..\DbMetal.csproj">
+      <Project>{363FF43D-C870-4423-BE50-DAED7793A6D1}</Project>
+      <Name>DbMetal</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -173,119 +173,148 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             var operands = expression.GetOperands().ToList();
             var operarandsToSkip = expression.Method.IsStatic ? 1 : 0;
             var originalParameters = operands.Skip(parameters.Count + operarandsToSkip);
-            var newParameters = parameters.Union(originalParameters);
+            var newParameters = parameters.Union(originalParameters).ToList();
 
-            return AnalyzeCall(expression.Method, newParameters.ToList(), builderContext);
+            return AnalyzeQueryableCall(expression.Method, newParameters, builderContext) ??
+                AnalyzeStringCall(expression.Method, newParameters, builderContext) ??
+                AnalyzeMathCall(expression.Method, newParameters, builderContext) ??
+                AnalyzeUnknownCall(expression, newParameters, builderContext);
         }
 
-        /// <summary>
-        /// Analyzes method call
-        /// </summary>
-        /// <param name="method"></param>
-        /// <param name="parameters"></param>
-        /// <param name="builderContext"></param>
-        /// <returns></returns>
-        protected virtual Expression AnalyzeCall(MethodInfo method, IList<Expression> parameters, BuilderContext builderContext)
+        private Expression AnalyzeQueryableCall(MethodInfo method, IList<Expression> parameters, BuilderContext builderContext)
         {
-            builderContext.CallStack.Push(method);
-            Func<Expression, Expression> popCallStack = r =>
-            {
-                builderContext.CallStack.Pop();
-                return r;
-            };
+            if (!(method.DeclaringType == typeof(Queryable) || method.DeclaringType == typeof(Enumerable)))
+                return null;
+            var popCallStack = PushCallStack(method, builderContext);
             // all methods to handle are listed here:
             // ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/fxref_system.core/html/2a54ce9d-76f2-81e2-95bb-59740c85386b.htm
             string methodName = method.Name;
             switch (methodName)
             {
-                case "Select":
-                    return popCallStack(AnalyzeSelect(parameters, builderContext));
-                case "Where":
-                    return popCallStack(AnalyzeWhere(parameters, builderContext));
-                case "SelectMany":
-                    return popCallStack(AnalyzeSelectMany(parameters, builderContext));
-                case "Join":
-                    return popCallStack(AnalyzeJoin(parameters, builderContext));
-                case "GroupJoin":
-                    return popCallStack(AnalyzeGroupJoin(parameters, builderContext));
-                case "DefaultIfEmpty":
-                    return popCallStack(AnalyzeOuterJoin(parameters, builderContext));
-                case "Distinct":
-                    return popCallStack(AnalyzeDistinct(parameters, builderContext));
-                case "GroupBy":
-                    return popCallStack(AnalyzeGroupBy(parameters, builderContext));
                 case "All":
                     return popCallStack(AnalyzeAll(parameters, builderContext));
                 case "Any":
                     return popCallStack(AnalyzeAny(parameters, builderContext));
                 case "Average":
                     return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Average, parameters, builderContext));
+                case "Concat":
+                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.UnionAll, parameters, builderContext));
+                case "Contains":
+                    return popCallStack(AnalyzeContains(parameters, builderContext));
                 case "Count":
                     return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Count, parameters, builderContext));
+                case "DefaultIfEmpty":
+                    return popCallStack(AnalyzeOuterJoin(parameters, builderContext));
+                case "Distinct":
+                    return popCallStack(AnalyzeDistinct(parameters, builderContext));
+                case "Except":
+                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.Exception, parameters, builderContext));
+                case "First":
+                case "FirstOrDefault":
+                    return popCallStack(AnalyzeScalar(methodName, 1, parameters, builderContext));
+                case "GroupBy":
+                    return popCallStack(AnalyzeGroupBy(parameters, builderContext));
+                case "GroupJoin":
+                    return popCallStack(AnalyzeGroupJoin(parameters, builderContext));
+                case "Intersect":
+                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.Intersection, parameters, builderContext));
+                case "Join":
+                    return popCallStack(AnalyzeJoin(parameters, builderContext));
+                case "Last":
+                    return popCallStack(AnalyzeScalar(methodName, null, parameters, builderContext));
                 case "Max":
                     return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Max, parameters, builderContext));
                 case "Min":
                     return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Min, parameters, builderContext));
-                case "Sum":
-                    return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Sum, parameters, builderContext));
-                case "StartsWith":
-                    return popCallStack(AnalyzeLikeStart(parameters, builderContext));
-                case "EndsWith":
-                    return popCallStack(AnalyzeLikeEnd(parameters, builderContext));
-                case "Contains":
-                    if (typeof(string).IsAssignableFrom(parameters[0].Type))
-                        return popCallStack(AnalyzeLike(parameters, builderContext));
-                    return popCallStack(AnalyzeContains(parameters, builderContext));
-                case "Substring":
-                    return popCallStack(AnalyzeSubString(parameters, builderContext));
-                case "First":
-                case "FirstOrDefault":
-                    return popCallStack(AnalyzeScalar(methodName, 1, parameters, builderContext));
-                case "Single":
-                case "SingleOrDefault":
-                    return popCallStack(AnalyzeScalar(methodName, 2, parameters, builderContext));
-                case "Last":
-                    return popCallStack(AnalyzeScalar(methodName, null, parameters, builderContext));
-                case "Take":
-                    return popCallStack(AnalyzeTake(parameters, builderContext));
-                case "Skip":
-                    return popCallStack(AnalyzeSkip(parameters, builderContext));
-                case "ToUpper":
-                    return popCallStack(AnalyzeToUpper(parameters, builderContext));
-                case "ToLower":
-                    return popCallStack(AnalyzeToLower(parameters, builderContext));
                 case "OrderBy":
                 case "ThenBy":
                     return popCallStack(AnalyzeOrderBy(parameters, false, builderContext));
                 case "OrderByDescending":
                 case "ThenByDescending":
                     return popCallStack(AnalyzeOrderBy(parameters, true, builderContext));
+                case "Select":
+                    return popCallStack(AnalyzeSelect(parameters, builderContext));
+                case "SelectMany":
+                    return popCallStack(AnalyzeSelectMany(parameters, builderContext));
+                case "Single":
+                case "SingleOrDefault":
+                    return popCallStack(AnalyzeScalar(methodName, 2, parameters, builderContext));
+                case "Skip":
+                    return popCallStack(AnalyzeSkip(parameters, builderContext));
+                case "Sum":
+                    return popCallStack(AnalyzeProjectionQuery(SpecialExpressionType.Sum, parameters, builderContext));
+                case "Take":
+                    return popCallStack(AnalyzeTake(parameters, builderContext));
                 case "Union":
                     return popCallStack(AnalyzeSelectOperation(SelectOperatorType.Union, parameters, builderContext));
-                case "Concat":
-                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.UnionAll, parameters, builderContext));
-                case "Intersect":
-                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.Intersection, parameters, builderContext));
-                case "Except":
-                    return popCallStack(AnalyzeSelectOperation(SelectOperatorType.Exception, parameters, builderContext));
-                case "Trim":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Trim, parameters, builderContext));
-                case "TrimStart":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.LTrim, parameters, builderContext));
-                case "TrimEnd":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.RTrim, parameters, builderContext));
-                case "Insert":
-                    return popCallStack(AnalyzeStringInsert(parameters, builderContext));
-                case "Replace":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Replace, parameters, builderContext));
-                case "Remove":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Remove, parameters, builderContext));
+                case "Where":
+                    return popCallStack(AnalyzeWhere(parameters, builderContext));
+                default:
+                    if (method.DeclaringType == typeof(Queryable))
+                        throw Error.BadArgument("S0133: Implement QueryMethod Queryable.{0}.", methodName);
+                    return popCallStack(null);
+            }
+        }
+
+        Func<Expression, Expression> PushCallStack(MethodInfo method, BuilderContext builderContext)
+        {
+
+            builderContext.CallStack.Push(method);
+            Func<Expression, Expression> popCallStack = r =>
+            {
+                builderContext.CallStack.Pop();
+                return r;
+            };
+            return popCallStack;
+        }
+
+        private Expression AnalyzeStringCall(MethodInfo method, IList<Expression> parameters, BuilderContext builderContext)
+        {
+            if (method.DeclaringType != typeof(string))
+                return null;
+            var popCallStack = PushCallStack(method, builderContext);
+            switch (method.Name)
+            {
+                case "Contains":
+                    return popCallStack(AnalyzeLike(parameters, builderContext));
+                case "EndsWith":
+                    return popCallStack(AnalyzeLikeEnd(parameters, builderContext));
                 case "IndexOf":
                     return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.IndexOf, parameters, builderContext));
+                case "Insert":
+                    return popCallStack(AnalyzeStringInsert(parameters, builderContext));
+                case "Remove":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Remove, parameters, builderContext));
+                case "Replace":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Replace, parameters, builderContext));
+                case "StartsWith":
+                    return popCallStack(AnalyzeLikeStart(parameters, builderContext));
+                case "Substring":
+                    return popCallStack(AnalyzeSubString(parameters, builderContext));
+                case "ToLower":
+                    return popCallStack(AnalyzeToLower(parameters, builderContext));
                 case "ToString":
                     return popCallStack(AnalyzeToString(method, parameters, builderContext));
-                case "Parse":
-                    return popCallStack(AnalyzeParse(method, parameters, builderContext));
+                case "ToUpper":
+                    return popCallStack(AnalyzeToUpper(parameters, builderContext));
+                case "Trim":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Trim, parameters, builderContext));
+                case "TrimEnd":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.RTrim, parameters, builderContext));
+                case "TrimStart":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.LTrim, parameters, builderContext));
+                default:
+                    throw Error.BadArgument("S0133: Implement QueryMethod String.{0}.", method.Name);
+            }
+        }
+
+        private Expression AnalyzeMathCall(MethodInfo method, IList<Expression> parameters, BuilderContext builderContext)
+        {
+            if (method.DeclaringType != typeof(System.Math))
+                return null;
+            var popCallStack = PushCallStack(method, builderContext);
+            switch (method.Name)
+            {
                 case "Abs":
                 case "Exp":
                 case "Floor":
@@ -293,14 +322,44 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case "Round":
                 case "Sign":
                 case "Sqrt":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType((SpecialExpressionType)Enum.Parse(typeof(SpecialExpressionType), methodName), parameters, builderContext));
-                case "Log10":
-                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Log, parameters, builderContext));
+                    return popCallStack(AnalyzeGenericSpecialExpressionType((SpecialExpressionType)Enum.Parse(typeof(SpecialExpressionType), method.Name), parameters, builderContext));
                 case "Log":
                     return popCallStack(AnalyzeLog(parameters, builderContext));
+                case "Log10":
+                    return popCallStack(AnalyzeGenericSpecialExpressionType(SpecialExpressionType.Log, parameters, builderContext));
                 default:
-                    throw Error.BadArgument("S0133: Implement QueryMethod '{0}'", methodName);
+                    throw Error.BadArgument("S0133: Implement QueryMethod Math.{0}.", method.Name);
             }
+        }
+
+        private Expression AnalyzeUnknownCall(MethodCallExpression expression, IList<Expression> parameters, BuilderContext builderContext)
+        {
+            var method = expression.Method;
+            switch (method.Name)
+            {
+                case "Parse":
+                    if (method.IsStatic && parameters.Count == 1)
+                        return AnalyzeParse(method, parameters, builderContext);
+                    break;
+                case "ToString": // Can we sanity check this type?
+                    return AnalyzeToString(method, parameters, builderContext);
+            }
+
+            var args = new List<Expression>();
+            foreach (var arg in expression.Arguments)
+            {
+                Expression newArg = arg;
+                var pe = arg as ParameterExpression;
+                if (pe != null)
+                {
+                    if (!builderContext.Parameters.TryGetValue(pe.Name, out newArg))
+                        throw new NotSupportedException("Do not currently support expression: " + expression);
+                }
+                else
+                    newArg = Analyze(arg, builderContext);
+                args.Add(newArg);
+            }
+            return Expression.Call(expression.Object, expression.Method, args);
         }
 
         private Expression AnalyzeStringInsert(IList<Expression> parameters, BuilderContext builderContext)
@@ -478,6 +537,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             if (limit.HasValue)
                 AddLimit(Expression.Constant(limit.Value), builderContext);
             var table = Analyze(parameters[0], builderContext);
+            var set = table as EntitySetExpression;
+            if (set != null)
+                table = set.TableExpression;
             CheckWhere(table, parameters, 1, builderContext);
             return table;
         }
@@ -770,18 +832,15 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 // before finding an association, we check for an EntitySet<>
                 // this will be used in RegisterAssociation
                 Type entityType;
-                bool isEntitySet = IsEntitySet(memberInfo.GetMemberType(), out entityType);
+                if (IsEntitySet(memberInfo.GetMemberType(), out entityType))
+                    return new EntitySetExpression(tableExpression, memberInfo, memberInfo.GetMemberType(), builderContext, this);
+
                 // first of all, then, try to find the association
                 var queryAssociationExpression = RegisterAssociation(tableExpression, memberInfo, entityType,
                                                                      builderContext);
                 if (queryAssociationExpression != null)
                 {
-                    // no entitySet? we have right association
-                    //if (!isEntitySet)
-                        return queryAssociationExpression;
-
-                    // from here, we may require to cast the table to an entitySet
-                    return new EntitySetExpression(queryAssociationExpression, memberInfo.GetMemberType());
+                    return queryAssociationExpression;
                 }
                 // then, try the column
                 ColumnExpression queryColumnExpression = RegisterColumn(tableExpression, memberInfo, builderContext);
@@ -1031,6 +1090,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         protected virtual Expression AnalyzeOperator(Expression expression, BuilderContext builderContext)
         {
+            var u = expression as UnaryExpression;
+            string parameterName;
+            if (expression.NodeType == ExpressionType.Convert && 
+                    u.Method == null &&
+                    (parameterName = GetParameterName(u.Operand)) != null)
+            {
+                Expression unaliasedExpression;
+                builderContext.Parameters.TryGetValue(parameterName, out unaliasedExpression);
+                var unaliasedTableExpression = unaliasedExpression as TableExpression;
+                if (unaliasedExpression != null && unaliasedTableExpression != null)
+                    return unaliasedTableExpression;
+            }
             var operands = expression.GetOperands().ToList();
             for (int operandIndex = 0; operandIndex < operands.Count; operandIndex++)
             {
@@ -1051,7 +1122,11 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 var aliases = new Dictionary<MemberInfo, MutableExpression>();
                 foreach (var memberInfo in typeInitializers.Keys)
                 {
-                    var tableExpression = Analyze(typeInitializers[memberInfo], builderContext) as TableExpression;
+                    var e = Analyze(typeInitializers[memberInfo], builderContext);
+                    var tableExpression = e as TableExpression;
+                    var ese = e as EntitySetExpression;
+                    if (ese != null)
+                        tableExpression = ese.TableExpression;
                     if (tableExpression != null)
                     {
                         aliases[memberInfo] = tableExpression;

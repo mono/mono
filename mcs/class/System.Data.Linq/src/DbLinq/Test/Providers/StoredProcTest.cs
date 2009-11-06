@@ -58,7 +58,7 @@ using nwind;
     public class StoredProcTest : TestBase
     {
 
-#if !SQLITE && !MSSQL && !L2SQL && !FIREBIRD
+#if !SQLITE && !MSSQL && !L2SQL && !FIREBIRD && !POSTGRES
         [Test]
         public void SP1_CallHello0()
         {

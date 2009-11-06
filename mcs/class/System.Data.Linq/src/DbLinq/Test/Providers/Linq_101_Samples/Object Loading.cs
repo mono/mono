@@ -58,7 +58,7 @@ using nwind;
 
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]
@@ -107,7 +107,7 @@ using nwind;
 
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !MONO_STRICT))
         [Explicit]
 #endif
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]

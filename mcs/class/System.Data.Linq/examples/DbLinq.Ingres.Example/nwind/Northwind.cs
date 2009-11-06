@@ -1,4 +1,4 @@
-#region Auto-generated classes for "Northwind" database on 2008-10-18 13:06:50Z
+#region Auto-generated classes for "Northwind;Port=A37" database on 2009-10-28 17:00:08Z
 
 //
 //  ____  _     __  __      _        _
@@ -7,7 +7,7 @@
 // | |_| | |_) | |  | |  __/ || (_| | |
 // |____/|_.__/|_|  |_|\___|\__\__,_|_|
 //
-// Auto-generated from "Northwind" on 2008-10-18 13:06:50Z
+// Auto-generated from "Northwind" on 2009-10-28 17:00:08Z
 // Please visit http://linq.to/db for more information
 
 #endregion
@@ -34,6 +34,11 @@ namespace nwind
 		{
 		}
 
+		public Northwind(string connectionString, IVendor vendor)
+		: base(connectionString)
+		{
+		}
+
 		public Table<Category> Categories { get { return GetTable<Category>(); } }
 		public Table<Customer> Customers { get { return GetTable<Customer>(); } }
 		public Table<Employee> Employees { get { return GetTable<Employee>(); } }
@@ -54,7 +59,7 @@ namespace nwind
 
 		private int _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "categoryid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"categories_seq\"")]
+		[Column(Storage = "_categoryID", Name = "categoryid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"categories_seq\"")]
 		public int CategoryID
 		{
 			get
@@ -76,7 +81,7 @@ namespace nwind
 
 		private string _categoryName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryName", Name = "categoryname", DbType = "VARCHAR(15)", CanBeNull = false)]
+		[Column(Storage = "_categoryName", Name = "categoryname", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CategoryName
 		{
 			get
@@ -98,7 +103,7 @@ namespace nwind
 
 		private string _description;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_description", Name = "description", DbType = "VARCHAR(500)")]
+		[Column(Storage = "_description", Name = "description", DbType = "VARCHAR(500)", AutoSync = AutoSync.Never)]
 		public string Description
 		{
 			get
@@ -120,7 +125,7 @@ namespace nwind
 
 		private Byte[] _picture;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_picture", Name = "picture", DbType = "LONG BYTE")]
+		[Column(Storage = "_picture", Name = "picture", DbType = "LONG BYTE", AutoSync = AutoSync.Never)]
 		public Byte[] Picture
 		{
 			get
@@ -140,13 +145,45 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "CategoryID", Name = "$categ_u0000010900000000")]
+		private EntitySet<Product> _products;
+		[Association(Storage = "_products", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "products_$categ_u0000010a00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Product> Products
 		{
-			get;set;
+			get
+			{
+				return _products;
+			}
+			set
+			{
+				_products = value;
+			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void Products_Attach(Product entity)
+		{
+			entity.Category = this;
+		}
+
+		private void Products_Detach(Product entity)
+		{
+			entity.Category = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Category()
+		{
+			_products = new EntitySet<Product>(Products_Attach, Products_Detach);
+		}
 
 		#endregion
 
@@ -159,7 +196,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)")]
+		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -181,7 +218,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -203,7 +240,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "companyname", DbType = "VARCHAR(40)", CanBeNull = false)]
+		[Column(Storage = "_companyName", Name = "companyname", DbType = "VARCHAR(40)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CompanyName
 		{
 			get
@@ -225,7 +262,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "contactname", DbType = "VARCHAR(30)")]
+		[Column(Storage = "_contactName", Name = "contactname", DbType = "VARCHAR(30)", AutoSync = AutoSync.Never)]
 		public string ContactName
 		{
 			get
@@ -247,7 +284,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "contacttitle", DbType = "VARCHAR(30)")]
+		[Column(Storage = "_contactTitle", Name = "contacttitle", DbType = "VARCHAR(30)", AutoSync = AutoSync.Never)]
 		public string ContactTitle
 		{
 			get
@@ -269,7 +306,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -291,7 +328,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "customerid", DbType = "VARCHAR(5)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_customerID", Name = "customerid", DbType = "VARCHAR(5)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CustomerID
 		{
 			get
@@ -313,7 +350,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "fax", DbType = "VARCHAR(24)")]
+		[Column(Storage = "_fax", Name = "fax", DbType = "VARCHAR(24)", AutoSync = AutoSync.Never)]
 		public string Fax
 		{
 			get
@@ -335,7 +372,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "phone", DbType = "VARCHAR(24)")]
+		[Column(Storage = "_phone", Name = "phone", DbType = "VARCHAR(24)", AutoSync = AutoSync.Never)]
 		public string Phone
 		{
 			get
@@ -357,7 +394,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)")]
+		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -379,7 +416,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -399,13 +436,45 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "CustomerID", Name = "$custo_u0000012800000000")]
+		private EntitySet<Order> _orders;
+		[Association(Storage = "_orders", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "orders_$custo_u0000012900000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Order> Orders
 		{
-			get;set;
+			get
+			{
+				return _orders;
+			}
+			set
+			{
+				_orders = value;
+			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void Orders_Attach(Order entity)
+		{
+			entity.Customer = this;
+		}
+
+		private void Orders_Detach(Order entity)
+		{
+			entity.Customer = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Customer()
+		{
+			_orders = new EntitySet<Order>(Orders_Attach, Orders_Detach);
+		}
 
 		#endregion
 
@@ -418,7 +487,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)")]
+		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -440,7 +509,7 @@ namespace nwind
 
 		private DateTime? _birthDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_birthDate", Name = "birthdate", DbType = "INGRESDATE")]
+		[Column(Storage = "_birthDate", Name = "birthdate", DbType = "INGRESDATE", AutoSync = AutoSync.Never)]
 		public DateTime? BirthDate
 		{
 			get
@@ -462,7 +531,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -484,7 +553,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -506,7 +575,7 @@ namespace nwind
 
 		private int _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"employees_seq\"")]
+		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"employees_seq\"")]
 		public int EmployeeID
 		{
 			get
@@ -528,7 +597,7 @@ namespace nwind
 
 		private string _extension;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_extension", Name = "extension", DbType = "VARCHAR(5)")]
+		[Column(Storage = "_extension", Name = "extension", DbType = "VARCHAR(5)", AutoSync = AutoSync.Never)]
 		public string Extension
 		{
 			get
@@ -550,7 +619,7 @@ namespace nwind
 
 		private string _firstName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_firstName", Name = "firstname", DbType = "VARCHAR(10)", CanBeNull = false)]
+		[Column(Storage = "_firstName", Name = "firstname", DbType = "VARCHAR(10)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string FirstName
 		{
 			get
@@ -572,7 +641,7 @@ namespace nwind
 
 		private DateTime? _hireDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_hireDate", Name = "hiredate", DbType = "INGRESDATE")]
+		[Column(Storage = "_hireDate", Name = "hiredate", DbType = "INGRESDATE", AutoSync = AutoSync.Never)]
 		public DateTime? HireDate
 		{
 			get
@@ -594,7 +663,7 @@ namespace nwind
 
 		private string _homePhone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_homePhone", Name = "homephone", DbType = "VARCHAR(24)")]
+		[Column(Storage = "_homePhone", Name = "homephone", DbType = "VARCHAR(24)", AutoSync = AutoSync.Never)]
 		public string HomePhone
 		{
 			get
@@ -616,7 +685,7 @@ namespace nwind
 
 		private string _lastName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_lastName", Name = "lastname", DbType = "VARCHAR(20)", CanBeNull = false)]
+		[Column(Storage = "_lastName", Name = "lastname", DbType = "VARCHAR(20)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string LastName
 		{
 			get
@@ -638,7 +707,7 @@ namespace nwind
 
 		private string _notes;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_notes", Name = "notes", DbType = "VARCHAR(100)")]
+		[Column(Storage = "_notes", Name = "notes", DbType = "VARCHAR(100)", AutoSync = AutoSync.Never)]
 		public string Notes
 		{
 			get
@@ -660,7 +729,7 @@ namespace nwind
 
 		private Byte[] _photo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photo", Name = "photo", DbType = "LONG BYTE")]
+		[Column(Storage = "_photo", Name = "photo", DbType = "LONG BYTE", AutoSync = AutoSync.Never)]
 		public Byte[] Photo
 		{
 			get
@@ -682,7 +751,7 @@ namespace nwind
 
 		private string _photoPath;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photoPath", Name = "photopath", DbType = "VARCHAR(255)")]
+		[Column(Storage = "_photoPath", Name = "photopath", DbType = "VARCHAR(255)", AutoSync = AutoSync.Never)]
 		public string PhotoPath
 		{
 			get
@@ -704,7 +773,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)")]
+		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -726,7 +795,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -748,7 +817,7 @@ namespace nwind
 
 		private int? _reportsTo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reportsTo", Name = "reportsto", DbType = "INTEGER(4)")]
+		[Column(Storage = "_reportsTo", Name = "reportsto", DbType = "INTEGER(4)", AutoSync = AutoSync.Never)]
 		public int? ReportsTo
 		{
 			get
@@ -770,7 +839,7 @@ namespace nwind
 
 		private string _title;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_title", Name = "title", DbType = "VARCHAR(30)")]
+		[Column(Storage = "_title", Name = "title", DbType = "VARCHAR(30)", AutoSync = AutoSync.Never)]
 		public string Title
 		{
 			get
@@ -792,7 +861,7 @@ namespace nwind
 
 		private string _titleOfCourtesy;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_titleOfCourtesy", Name = "titleofcourtesy", DbType = "VARCHAR(25)")]
+		[Column(Storage = "_titleOfCourtesy", Name = "titleofcourtesy", DbType = "VARCHAR(25)", AutoSync = AutoSync.Never)]
 		public string TitleOfCourtesy
 		{
 			get
@@ -812,25 +881,49 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "ReportsTo", Name = "$emplo_u0000012d00000000")]
+		private EntitySet<Employee> _employees;
+		[Association(Storage = "_employees", OtherKey = "ReportsTo", ThisKey = "EmployeeID", Name = "employees_$emplo_u0000012e00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Employee> Employees
 		{
-			get;set;
+			get
+			{
+				return _employees;
+			}
+			set
+			{
+				_employees = value;
+			}
 		}
 
-		[Association(Storage = null, OtherKey = "EmployeeID", Name = "$emplo_u0000012d00000000")]
+		private EntitySet<EmployeeTerritory> _employeeTerritories;
+		[Association(Storage = "_employeeTerritories", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "employeeterritories_$emplo_u0000012e00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<EmployeeTerritory> EmployeeTerritories
 		{
-			get;set;
+			get
+			{
+				return _employeeTerritories;
+			}
+			set
+			{
+				_employeeTerritories = value;
+			}
 		}
 
-		[Association(Storage = null, OtherKey = "EmployeeID", Name = "$emplo_u0000012d00000000")]
+		private EntitySet<Order> _orders;
+		[Association(Storage = "_orders", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "orders_$emplo_u0000012e00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Order> Orders
 		{
-			get;set;
+			get
+			{
+				return _orders;
+			}
+			set
+			{
+				_orders = value;
+			}
 		}
 
 
@@ -839,7 +932,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Employee> _reportsToEmployee;
-		[Association(Storage = "_reportsToEmployee", ThisKey = "ReportsTo", Name = "$emplo_u0000012d00000000", IsForeignKey = true)]
+		[Association(Storage = "_reportsToEmployee", OtherKey = "EmployeeID", ThisKey = "ReportsTo", Name = "employees_$emplo_u0000012e00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee ReportsToEmployee
 		{
@@ -849,10 +942,75 @@ namespace nwind
 			}
 			set
 			{
-				_reportsToEmployee.Entity = value;
+				if (value != _reportsToEmployee.Entity)
+				{
+					if (_reportsToEmployee.Entity != null)
+					{
+						var previousEmployee = _reportsToEmployee.Entity;
+						_reportsToEmployee.Entity = null;
+						previousEmployee.Employees.Remove(this);
+					}
+					_reportsToEmployee.Entity = value;
+					if (value != null)
+					{
+						value.Employees.Add(this);
+						_reportsTo = value.EmployeeID;
+					}
+					else
+					{
+						_reportsTo = null;
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void Employees_Attach(Employee entity)
+		{
+			entity.ReportsToEmployee = this;
+		}
+
+		private void Employees_Detach(Employee entity)
+		{
+			entity.ReportsToEmployee = null;
+		}
+
+		private void EmployeeTerritories_Attach(EmployeeTerritory entity)
+		{
+			entity.Employee = this;
+		}
+
+		private void EmployeeTerritories_Detach(EmployeeTerritory entity)
+		{
+			entity.Employee = null;
+		}
+
+		private void Orders_Attach(Order entity)
+		{
+			entity.Employee = this;
+		}
+
+		private void Orders_Detach(Order entity)
+		{
+			entity.Employee = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Employee()
+		{
+			_employees = new EntitySet<Employee>(Employees_Attach, Employees_Detach);
+			_employeeTerritories = new EntitySet<EmployeeTerritory>(EmployeeTerritories_Attach, EmployeeTerritories_Detach);
+			_orders = new EntitySet<Order>(Orders_Attach, Orders_Detach);
+			_reportsToEmployee = new EntityRef<Employee>();
+		}
 
 		#endregion
 
@@ -865,7 +1023,7 @@ namespace nwind
 
 		private int _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public int EmployeeID
 		{
 			get
@@ -887,7 +1045,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "territoryid", DbType = "VARCHAR(20)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_territoryID", Name = "territoryid", DbType = "VARCHAR(20)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryID
 		{
 			get
@@ -908,7 +1066,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Employee> _employee;
-		[Association(Storage = "_employee", ThisKey = "EmployeeID", Name = "$emplo_u0000012d00000000", IsForeignKey = true)]
+		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "employeeterritories_$emplo_u0000012e00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee Employee
 		{
@@ -918,12 +1076,30 @@ namespace nwind
 			}
 			set
 			{
-				_employee.Entity = value;
+				if (value != _employee.Entity)
+				{
+					if (_employee.Entity != null)
+					{
+						var previousEmployee = _employee.Entity;
+						_employee.Entity = null;
+						previousEmployee.EmployeeTerritories.Remove(this);
+					}
+					_employee.Entity = value;
+					if (value != null)
+					{
+						value.EmployeeTerritories.Add(this);
+						_employeeID = value.EmployeeID;
+					}
+					else
+					{
+						_employeeID = default(int);
+					}
+				}
 			}
 		}
 
 		private EntityRef<Territory> _territory;
-		[Association(Storage = "_territory", ThisKey = "TerritoryID", Name = "$terri_u000000fa00000000", IsForeignKey = true)]
+		[Association(Storage = "_territory", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "employeeterritories_$terri_u000000fb00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Territory Territory
 		{
@@ -933,10 +1109,38 @@ namespace nwind
 			}
 			set
 			{
-				_territory.Entity = value;
+				if (value != _territory.Entity)
+				{
+					if (_territory.Entity != null)
+					{
+						var previousTerritory = _territory.Entity;
+						_territory.Entity = null;
+						previousTerritory.EmployeeTerritories.Remove(this);
+					}
+					_territory.Entity = value;
+					if (value != null)
+					{
+						value.EmployeeTerritories.Add(this);
+						_territoryID = value.TerritoryID;
+					}
+					else
+					{
+						_territoryID = default(string);
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region ctor
+
+		public EmployeeTerritory()
+		{
+			_employee = new EntityRef<Employee>();
+			_territory = new EntityRef<Territory>();
+		}
 
 		#endregion
 
@@ -949,7 +1153,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "customerid", DbType = "VARCHAR(5)")]
+		[Column(Storage = "_customerID", Name = "customerid", DbType = "VARCHAR(5)", AutoSync = AutoSync.Never)]
 		public string CustomerID
 		{
 			get
@@ -971,7 +1175,7 @@ namespace nwind
 
 		private int? _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)")]
+		[Column(Storage = "_employeeID", Name = "employeeid", DbType = "INTEGER(4)", AutoSync = AutoSync.Never)]
 		public int? EmployeeID
 		{
 			get
@@ -993,7 +1197,7 @@ namespace nwind
 
 		private decimal? _freight;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_freight", Name = "freight", DbType = "DECIMAL(5, 0)")]
+		[Column(Storage = "_freight", Name = "freight", DbType = "DECIMAL(5, 0)", AutoSync = AutoSync.Never)]
 		public decimal? Freight
 		{
 			get
@@ -1015,7 +1219,7 @@ namespace nwind
 
 		private DateTime? _orderDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderDate", Name = "orderdate", DbType = "INGRESDATE")]
+		[Column(Storage = "_orderDate", Name = "orderdate", DbType = "INGRESDATE", AutoSync = AutoSync.Never)]
 		public DateTime? OrderDate
 		{
 			get
@@ -1037,7 +1241,7 @@ namespace nwind
 
 		private int _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "orderid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"orders_seq\"")]
+		[Column(Storage = "_orderID", Name = "orderid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"orders_seq\"")]
 		public int OrderID
 		{
 			get
@@ -1059,7 +1263,7 @@ namespace nwind
 
 		private DateTime? _requiredDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_requiredDate", Name = "requireddate", DbType = "INGRESDATE")]
+		[Column(Storage = "_requiredDate", Name = "requireddate", DbType = "INGRESDATE", AutoSync = AutoSync.Never)]
 		public DateTime? RequiredDate
 		{
 			get
@@ -1081,7 +1285,7 @@ namespace nwind
 
 		private string _shipAddress;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipAddress", Name = "shipaddress", DbType = "VARCHAR(60)")]
+		[Column(Storage = "_shipAddress", Name = "shipaddress", DbType = "VARCHAR(60)", AutoSync = AutoSync.Never)]
 		public string ShipAddress
 		{
 			get
@@ -1103,7 +1307,7 @@ namespace nwind
 
 		private string _shipCity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCity", Name = "shipcity", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_shipCity", Name = "shipcity", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string ShipCity
 		{
 			get
@@ -1125,7 +1329,7 @@ namespace nwind
 
 		private string _shipCountry;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCountry", Name = "shipcountry", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_shipCountry", Name = "shipcountry", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string ShipCountry
 		{
 			get
@@ -1147,7 +1351,7 @@ namespace nwind
 
 		private string _shipName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipName", Name = "shipname", DbType = "VARCHAR(40)")]
+		[Column(Storage = "_shipName", Name = "shipname", DbType = "VARCHAR(40)", AutoSync = AutoSync.Never)]
 		public string ShipName
 		{
 			get
@@ -1169,7 +1373,7 @@ namespace nwind
 
 		private DateTime? _shippedDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shippedDate", Name = "shippeddate", DbType = "INGRESDATE")]
+		[Column(Storage = "_shippedDate", Name = "shippeddate", DbType = "INGRESDATE", AutoSync = AutoSync.Never)]
 		public DateTime? ShippedDate
 		{
 			get
@@ -1191,7 +1395,7 @@ namespace nwind
 
 		private string _shipPostalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipPostalCode", Name = "shippostalcode", DbType = "VARCHAR(10)")]
+		[Column(Storage = "_shipPostalCode", Name = "shippostalcode", DbType = "VARCHAR(10)", AutoSync = AutoSync.Never)]
 		public string ShipPostalCode
 		{
 			get
@@ -1213,7 +1417,7 @@ namespace nwind
 
 		private string _shipRegion;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipRegion", Name = "shipregion", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_shipRegion", Name = "shipregion", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string ShipRegion
 		{
 			get
@@ -1235,7 +1439,7 @@ namespace nwind
 
 		private int? _shipVia;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipVia", Name = "shipvia", DbType = "INTEGER(4)")]
+		[Column(Storage = "_shipVia", Name = "shipvia", DbType = "INTEGER(4)", AutoSync = AutoSync.Never)]
 		public int? ShipVia
 		{
 			get
@@ -1255,11 +1459,19 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "OrderID", Name = "$order_u0000015200000000")]
+		private EntitySet<OrderDetail> _orderDetails;
+		[Association(Storage = "_orderDetails", OtherKey = "OrderID", ThisKey = "OrderID", Name = "orderdetails_$order_u0000015300000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<OrderDetail> OrderDetails
 		{
-			get;set;
+			get
+			{
+				return _orderDetails;
+			}
+			set
+			{
+				_orderDetails = value;
+			}
 		}
 
 
@@ -1268,7 +1480,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Customer> _customer;
-		[Association(Storage = "_customer", ThisKey = "CustomerID", Name = "$custo_u0000012800000000", IsForeignKey = true)]
+		[Association(Storage = "_customer", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "orders_$custo_u0000012900000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Customer Customer
 		{
@@ -1278,12 +1490,30 @@ namespace nwind
 			}
 			set
 			{
-				_customer.Entity = value;
+				if (value != _customer.Entity)
+				{
+					if (_customer.Entity != null)
+					{
+						var previousCustomer = _customer.Entity;
+						_customer.Entity = null;
+						previousCustomer.Orders.Remove(this);
+					}
+					_customer.Entity = value;
+					if (value != null)
+					{
+						value.Orders.Add(this);
+						_customerID = value.CustomerID;
+					}
+					else
+					{
+						_customerID = null;
+					}
+				}
 			}
 		}
 
 		private EntityRef<Employee> _employee;
-		[Association(Storage = "_employee", ThisKey = "EmployeeID", Name = "$emplo_u0000012d00000000", IsForeignKey = true)]
+		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "orders_$emplo_u0000012e00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee Employee
 		{
@@ -1293,10 +1523,54 @@ namespace nwind
 			}
 			set
 			{
-				_employee.Entity = value;
+				if (value != _employee.Entity)
+				{
+					if (_employee.Entity != null)
+					{
+						var previousEmployee = _employee.Entity;
+						_employee.Entity = null;
+						previousEmployee.Orders.Remove(this);
+					}
+					_employee.Entity = value;
+					if (value != null)
+					{
+						value.Orders.Add(this);
+						_employeeID = value.EmployeeID;
+					}
+					else
+					{
+						_employeeID = null;
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void OrderDetails_Attach(OrderDetail entity)
+		{
+			entity.Order = this;
+		}
+
+		private void OrderDetails_Detach(OrderDetail entity)
+		{
+			entity.Order = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Order()
+		{
+			_orderDetails = new EntitySet<OrderDetail>(OrderDetails_Attach, OrderDetails_Detach);
+			_customer = new EntityRef<Customer>();
+			_employee = new EntityRef<Employee>();
+		}
 
 		#endregion
 
@@ -1309,7 +1583,7 @@ namespace nwind
 
 		private double _discount;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discount", Name = "discount", DbType = "FLOAT", CanBeNull = false)]
+		[Column(Storage = "_discount", Name = "discount", DbType = "FLOAT", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public double Discount
 		{
 			get
@@ -1331,7 +1605,7 @@ namespace nwind
 
 		private int _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "orderid", DbType = "INTEGER(4)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_orderID", Name = "orderid", DbType = "INTEGER(4)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public int OrderID
 		{
 			get
@@ -1353,7 +1627,7 @@ namespace nwind
 
 		private int _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "productid", DbType = "INTEGER(4)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_productID", Name = "productid", DbType = "INTEGER(4)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public int ProductID
 		{
 			get
@@ -1375,7 +1649,7 @@ namespace nwind
 
 		private short _quantity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantity", Name = "quantity", DbType = "INTEGER(2)", CanBeNull = false)]
+		[Column(Storage = "_quantity", Name = "quantity", DbType = "INTEGER(2)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public short Quantity
 		{
 			get
@@ -1397,7 +1671,7 @@ namespace nwind
 
 		private decimal _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "unitprice", DbType = "DECIMAL(5, 0)", CanBeNull = false)]
+		[Column(Storage = "_unitPrice", Name = "unitprice", DbType = "DECIMAL(5, 0)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public decimal UnitPrice
 		{
 			get
@@ -1418,7 +1692,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Order> _order;
-		[Association(Storage = "_order", ThisKey = "OrderID", Name = "$order_u0000015200000000", IsForeignKey = true)]
+		[Association(Storage = "_order", OtherKey = "OrderID", ThisKey = "OrderID", Name = "orderdetails_$order_u0000015300000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Order Order
 		{
@@ -1428,12 +1702,30 @@ namespace nwind
 			}
 			set
 			{
-				_order.Entity = value;
+				if (value != _order.Entity)
+				{
+					if (_order.Entity != null)
+					{
+						var previousOrder = _order.Entity;
+						_order.Entity = null;
+						previousOrder.OrderDetails.Remove(this);
+					}
+					_order.Entity = value;
+					if (value != null)
+					{
+						value.OrderDetails.Add(this);
+						_orderID = value.OrderID;
+					}
+					else
+					{
+						_orderID = default(int);
+					}
+				}
 			}
 		}
 
 		private EntityRef<Product> _product;
-		[Association(Storage = "_product", ThisKey = "ProductID", Name = "$produ_u0000011100000000", IsForeignKey = true)]
+		[Association(Storage = "_product", OtherKey = "ProductID", ThisKey = "ProductID", Name = "orderdetails_$produ_u0000011200000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Product Product
 		{
@@ -1443,10 +1735,38 @@ namespace nwind
 			}
 			set
 			{
-				_product.Entity = value;
+				if (value != _product.Entity)
+				{
+					if (_product.Entity != null)
+					{
+						var previousProduct = _product.Entity;
+						_product.Entity = null;
+						previousProduct.OrderDetails.Remove(this);
+					}
+					_product.Entity = value;
+					if (value != null)
+					{
+						value.OrderDetails.Add(this);
+						_productID = value.ProductID;
+					}
+					else
+					{
+						_productID = default(int);
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region ctor
+
+		public OrderDetail()
+		{
+			_order = new EntityRef<Order>();
+			_product = new EntityRef<Product>();
+		}
 
 		#endregion
 
@@ -1459,7 +1779,7 @@ namespace nwind
 
 		private int? _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "categoryid", DbType = "INTEGER(4)")]
+		[Column(Storage = "_categoryID", Name = "categoryid", DbType = "INTEGER(4)", AutoSync = AutoSync.Never)]
 		public int? CategoryID
 		{
 			get
@@ -1481,7 +1801,7 @@ namespace nwind
 
 		private short _discontinued;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discontinued", Name = "discontinued", DbType = "INTEGER(2)", CanBeNull = false)]
+		[Column(Storage = "_discontinued", Name = "discontinued", DbType = "INTEGER(2)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public short Discontinued
 		{
 			get
@@ -1503,7 +1823,7 @@ namespace nwind
 
 		private int _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "productid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"products_seq\"")]
+		[Column(Storage = "_productID", Name = "productid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"products_seq\"")]
 		public int ProductID
 		{
 			get
@@ -1525,7 +1845,7 @@ namespace nwind
 
 		private string _productName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productName", Name = "productname", DbType = "VARCHAR(40)", CanBeNull = false)]
+		[Column(Storage = "_productName", Name = "productname", DbType = "VARCHAR(40)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string ProductName
 		{
 			get
@@ -1547,7 +1867,7 @@ namespace nwind
 
 		private string _quantityPerUnit;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantityPerUnit", Name = "quantityperunit", DbType = "VARCHAR(20)")]
+		[Column(Storage = "_quantityPerUnit", Name = "quantityperunit", DbType = "VARCHAR(20)", AutoSync = AutoSync.Never)]
 		public string QuantityPerUnit
 		{
 			get
@@ -1569,7 +1889,7 @@ namespace nwind
 
 		private short? _reorderLevel;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reorderLevel", Name = "reorderlevel", DbType = "INTEGER(2)")]
+		[Column(Storage = "_reorderLevel", Name = "reorderlevel", DbType = "INTEGER(2)", AutoSync = AutoSync.Never)]
 		public short? ReorderLevel
 		{
 			get
@@ -1591,7 +1911,7 @@ namespace nwind
 
 		private int? _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "supplierid", DbType = "INTEGER(4)")]
+		[Column(Storage = "_supplierID", Name = "supplierid", DbType = "INTEGER(4)", AutoSync = AutoSync.Never)]
 		public int? SupplierID
 		{
 			get
@@ -1613,7 +1933,7 @@ namespace nwind
 
 		private decimal? _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "unitprice", DbType = "DECIMAL(5, 0)")]
+		[Column(Storage = "_unitPrice", Name = "unitprice", DbType = "DECIMAL(5, 0)", AutoSync = AutoSync.Never)]
 		public decimal? UnitPrice
 		{
 			get
@@ -1635,7 +1955,7 @@ namespace nwind
 
 		private short? _unitsInStock;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsInStock", Name = "unitsinstock", DbType = "INTEGER(2)")]
+		[Column(Storage = "_unitsInStock", Name = "unitsinstock", DbType = "INTEGER(2)", AutoSync = AutoSync.Never)]
 		public short? UnitsInStock
 		{
 			get
@@ -1657,7 +1977,7 @@ namespace nwind
 
 		private short? _unitsOnOrder;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsOnOrder", Name = "unitsonorder", DbType = "INTEGER(2)")]
+		[Column(Storage = "_unitsOnOrder", Name = "unitsonorder", DbType = "INTEGER(2)", AutoSync = AutoSync.Never)]
 		public short? UnitsOnOrder
 		{
 			get
@@ -1677,11 +1997,19 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "ProductID", Name = "$produ_u0000011100000000")]
+		private EntitySet<OrderDetail> _orderDetails;
+		[Association(Storage = "_orderDetails", OtherKey = "ProductID", ThisKey = "ProductID", Name = "orderdetails_$produ_u0000011200000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<OrderDetail> OrderDetails
 		{
-			get;set;
+			get
+			{
+				return _orderDetails;
+			}
+			set
+			{
+				_orderDetails = value;
+			}
 		}
 
 
@@ -1690,7 +2018,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Category> _category;
-		[Association(Storage = "_category", ThisKey = "CategoryID", Name = "$categ_u0000010900000000", IsForeignKey = true)]
+		[Association(Storage = "_category", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "products_$categ_u0000010a00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Category Category
 		{
@@ -1700,12 +2028,30 @@ namespace nwind
 			}
 			set
 			{
-				_category.Entity = value;
+				if (value != _category.Entity)
+				{
+					if (_category.Entity != null)
+					{
+						var previousCategory = _category.Entity;
+						_category.Entity = null;
+						previousCategory.Products.Remove(this);
+					}
+					_category.Entity = value;
+					if (value != null)
+					{
+						value.Products.Add(this);
+						_categoryID = value.CategoryID;
+					}
+					else
+					{
+						_categoryID = null;
+					}
+				}
 			}
 		}
 
 		private EntityRef<Supplier> _supplier;
-		[Association(Storage = "_supplier", ThisKey = "SupplierID", Name = "$suppl_u0000010d00000000", IsForeignKey = true)]
+		[Association(Storage = "_supplier", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "products_$suppl_u0000010e00000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Supplier Supplier
 		{
@@ -1715,10 +2061,54 @@ namespace nwind
 			}
 			set
 			{
-				_supplier.Entity = value;
+				if (value != _supplier.Entity)
+				{
+					if (_supplier.Entity != null)
+					{
+						var previousSupplier = _supplier.Entity;
+						_supplier.Entity = null;
+						previousSupplier.Products.Remove(this);
+					}
+					_supplier.Entity = value;
+					if (value != null)
+					{
+						value.Products.Add(this);
+						_supplierID = value.SupplierID;
+					}
+					else
+					{
+						_supplierID = null;
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void OrderDetails_Attach(OrderDetail entity)
+		{
+			entity.Product = this;
+		}
+
+		private void OrderDetails_Detach(OrderDetail entity)
+		{
+			entity.Product = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Product()
+		{
+			_orderDetails = new EntitySet<OrderDetail>(OrderDetails_Attach, OrderDetails_Detach);
+			_category = new EntityRef<Category>();
+			_supplier = new EntityRef<Supplier>();
+		}
 
 		#endregion
 
@@ -1731,7 +2121,7 @@ namespace nwind
 
 		private string _regionDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionDescription", Name = "regiondescription", DbType = "VARCHAR(50)", CanBeNull = false)]
+		[Column(Storage = "_regionDescription", Name = "regiondescription", DbType = "VARCHAR(50)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string RegionDescription
 		{
 			get
@@ -1753,7 +2143,7 @@ namespace nwind
 
 		private int _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "regionid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"region_seq\"")]
+		[Column(Storage = "_regionID", Name = "regionid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"region_seq\"")]
 		public int RegionID
 		{
 			get
@@ -1773,13 +2163,45 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "RegionID", Name = "$regio_u000000f700000000")]
+		private EntitySet<Territory> _territories;
+		[Association(Storage = "_territories", OtherKey = "RegionID", ThisKey = "RegionID", Name = "territories_$regio_u000000f800000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Territory> Territories
 		{
-			get;set;
+			get
+			{
+				return _territories;
+			}
+			set
+			{
+				_territories = value;
+			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void Territories_Attach(Territory entity)
+		{
+			entity.Region = this;
+		}
+
+		private void Territories_Detach(Territory entity)
+		{
+			entity.Region = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Region()
+		{
+			_territories = new EntitySet<Territory>(Territories_Attach, Territories_Detach);
+		}
 
 		#endregion
 
@@ -1792,7 +2214,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)")]
+		[Column(Storage = "_address", Name = "address", DbType = "VARCHAR(60)", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -1814,7 +2236,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_city", Name = "city", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -1836,7 +2258,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "companyname", DbType = "VARCHAR(40)", CanBeNull = false)]
+		[Column(Storage = "_companyName", Name = "companyname", DbType = "VARCHAR(40)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CompanyName
 		{
 			get
@@ -1858,7 +2280,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "contactname", DbType = "VARCHAR(30)")]
+		[Column(Storage = "_contactName", Name = "contactname", DbType = "VARCHAR(30)", AutoSync = AutoSync.Never)]
 		public string ContactName
 		{
 			get
@@ -1880,7 +2302,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "contacttitle", DbType = "VARCHAR(30)")]
+		[Column(Storage = "_contactTitle", Name = "contacttitle", DbType = "VARCHAR(30)", AutoSync = AutoSync.Never)]
 		public string ContactTitle
 		{
 			get
@@ -1902,7 +2324,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_country", Name = "country", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -1924,7 +2346,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "fax", DbType = "VARCHAR(24)")]
+		[Column(Storage = "_fax", Name = "fax", DbType = "VARCHAR(24)", AutoSync = AutoSync.Never)]
 		public string Fax
 		{
 			get
@@ -1946,7 +2368,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "phone", DbType = "VARCHAR(24)")]
+		[Column(Storage = "_phone", Name = "phone", DbType = "VARCHAR(24)", AutoSync = AutoSync.Never)]
 		public string Phone
 		{
 			get
@@ -1968,7 +2390,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)")]
+		[Column(Storage = "_postalCode", Name = "postalcode", DbType = "VARCHAR(10)", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -1990,7 +2412,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)")]
+		[Column(Storage = "_region", Name = "region", DbType = "VARCHAR(15)", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -2012,7 +2434,7 @@ namespace nwind
 
 		private int _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "supplierid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, CanBeNull = false, Expression = "next value for \"linquser\".\"suppliers_seq\"")]
+		[Column(Storage = "_supplierID", Name = "supplierid", DbType = "INTEGER(4)", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false, Expression = "next value for \"linquser\".\"suppliers_seq\"")]
 		public int SupplierID
 		{
 			get
@@ -2032,13 +2454,45 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "SupplierID", Name = "$suppl_u0000010d00000000")]
+		private EntitySet<Product> _products;
+		[Association(Storage = "_products", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "products_$suppl_u0000010e00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<Product> Products
 		{
-			get;set;
+			get
+			{
+				return _products;
+			}
+			set
+			{
+				_products = value;
+			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void Products_Attach(Product entity)
+		{
+			entity.Supplier = this;
+		}
+
+		private void Products_Detach(Product entity)
+		{
+			entity.Supplier = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Supplier()
+		{
+			_products = new EntitySet<Product>(Products_Attach, Products_Detach);
+		}
 
 		#endregion
 
@@ -2051,7 +2505,7 @@ namespace nwind
 
 		private int _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "regionid", DbType = "INTEGER(4)", CanBeNull = false)]
+		[Column(Storage = "_regionID", Name = "regionid", DbType = "INTEGER(4)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public int RegionID
 		{
 			get
@@ -2073,7 +2527,7 @@ namespace nwind
 
 		private string _territoryDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryDescription", Name = "territorydescription", DbType = "VARCHAR(50)", CanBeNull = false)]
+		[Column(Storage = "_territoryDescription", Name = "territorydescription", DbType = "VARCHAR(50)", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryDescription
 		{
 			get
@@ -2095,7 +2549,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "territoryid", DbType = "VARCHAR(20)", IsPrimaryKey = true, CanBeNull = false)]
+		[Column(Storage = "_territoryID", Name = "territoryid", DbType = "VARCHAR(20)", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryID
 		{
 			get
@@ -2115,11 +2569,19 @@ namespace nwind
 
 		#region Children
 
-		[Association(Storage = null, OtherKey = "TerritoryID", Name = "$terri_u000000fa00000000")]
+		private EntitySet<EmployeeTerritory> _employeeTerritories;
+		[Association(Storage = "_employeeTerritories", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "employeeterritories_$terri_u000000fb00000000")]
 		[DebuggerNonUserCode]
 		public EntitySet<EmployeeTerritory> EmployeeTerritories
 		{
-			get;set;
+			get
+			{
+				return _employeeTerritories;
+			}
+			set
+			{
+				_employeeTerritories = value;
+			}
 		}
 
 
@@ -2128,7 +2590,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Region> _region;
-		[Association(Storage = "_region", ThisKey = "RegionID", Name = "$regio_u000000f700000000", IsForeignKey = true)]
+		[Association(Storage = "_region", OtherKey = "RegionID", ThisKey = "RegionID", Name = "territories_$regio_u000000f800000000", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Region Region
 		{
@@ -2138,10 +2600,53 @@ namespace nwind
 			}
 			set
 			{
-				_region.Entity = value;
+				if (value != _region.Entity)
+				{
+					if (_region.Entity != null)
+					{
+						var previousRegion = _region.Entity;
+						_region.Entity = null;
+						previousRegion.Territories.Remove(this);
+					}
+					_region.Entity = value;
+					if (value != null)
+					{
+						value.Territories.Add(this);
+						_regionID = value.RegionID;
+					}
+					else
+					{
+						_regionID = default(int);
+					}
+				}
 			}
 		}
 
+
+		#endregion
+
+		#region Attachement handlers
+
+		private void EmployeeTerritories_Attach(EmployeeTerritory entity)
+		{
+			entity.Territory = this;
+		}
+
+		private void EmployeeTerritories_Detach(EmployeeTerritory entity)
+		{
+			entity.Territory = null;
+		}
+
+
+		#endregion
+
+		#region ctor
+
+		public Territory()
+		{
+			_employeeTerritories = new EntitySet<EmployeeTerritory>(EmployeeTerritories_Attach, EmployeeTerritories_Detach);
+			_region = new EntityRef<Region>();
+		}
 
 		#endregion
 

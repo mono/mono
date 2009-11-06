@@ -123,7 +123,7 @@ using nwind;
             Assert.AreEqual(838, q.Count());
         }
 
-#if !DEBUG && (SQLITE)
+#if !DEBUG && (SQLITE || POSTGRES)
         [Explicit]
 #endif
         [Test]
@@ -196,7 +196,7 @@ using nwind;
 
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]
@@ -210,7 +210,6 @@ using nwind;
                     select c;
 
             var list = q.ToList();
-
         }
 
         //Devuelve una expresión numérica, redondeada a la longitud o precisión especificada. .

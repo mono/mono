@@ -39,9 +39,13 @@ namespace DbLinq.Ingres.Example
     {
         static void Main(string[] args)
         {
-
-            string connStr = "server=(local);user id=LinqUser; password=linq2; database=northwind";
-            nwind.Northwind db = new nwind.Northwind(new IngresConnection(connStr));
+            IngresConnectionStringBuilder icsb = new IngresConnectionStringBuilder();
+            icsb.Server = "(server)";
+            icsb.Port = "II7";
+            icsb.UserID = "LinqUser";
+            icsb.Password = "linq2";
+            icsb.Database = "northwind";
+            nwind.Northwind db = new nwind.Northwind(new IngresConnection(icsb.ConnectionString));
 
             var result = from customer in db.Customers
                          where customer.City == "London"

@@ -449,6 +449,9 @@ using DbLinq.Data.Linq;
             }
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void DateTimeDiffTotalDaysSelectWithNulls02()
         {

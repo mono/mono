@@ -1,4 +1,4 @@
-﻿#region MIT license
+#region MIT license
 // 
 // MIT license
 //
@@ -143,7 +143,7 @@ namespace DbMetal
         /// <summary>
         /// Interfaces to be implemented
         /// </summary>
-        [Option("Comma separated base interfaces of entity classes in the generated code (default: entities implement INotifyPropertyChanged).",
+        [Option("Comma separated base interfaces of entity classes in the generated code (default: entities implement INotifyPropertyChanging, INotifyPropertyChanged).",
             ValueName = "interface(s)", Group = 4)]
         public string EntityInterfaces { get; set; }
         public string[] EntityImplementedInterfaces { get { return GetArray(EntityInterfaces); } }
@@ -177,6 +177,13 @@ namespace DbMetal
         /// </summary>
         [Option("Extract stored procedures.", Group = 2)]
         public bool Sprocs { get; set; }
+
+        /// <summary>
+        /// preserve case of database names
+        /// DbLinq specific
+        /// </summary>
+        [Option("Transform names as indicated (default: net; may be: leave, pascal, camel, net).", Group = 4)]
+        public string Case { get; set; }
 
         /// <summary>
         /// ??
@@ -229,11 +236,16 @@ namespace DbMetal
         [Option("Specify a custom IDbConnection implementation type.", ValueName = "type", Group = 1)]
         public string DatabaseConnectionProvider { get; set; }
 
+        [Alternate("generate-timestamps")]
+        [Option("Generate timestampes within the /code:<file> file.  True by default.")]
+        public bool GenerateTimestamps { get; set; }
+
         public Parameters()
         {
             Schema = true;
             Culture = "en";
-            EntityInterfaces = "INotifyPropertyChanged";//INotifyPropertyChanging INotifyPropertyChanged IModified
+            GenerateTimestamps = true;
+            EntityInterfaces = "INotifyPropertyChanging,INotifyPropertyChanged";//INotifyPropertyChanging INotifyPropertyChanged IModified
         }
 
         public IEnumerable<Parameters> GetBatch(IList<string> args)

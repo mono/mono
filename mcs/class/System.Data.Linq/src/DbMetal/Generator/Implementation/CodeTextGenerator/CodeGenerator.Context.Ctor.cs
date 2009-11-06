@@ -26,6 +26,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Linq.Mapping;
 using DbLinq.Schema.Dbml;
 using DbLinq.Vendor;
 using Type = System.Type;
@@ -46,13 +47,21 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                     return false;
             }
             using (writer.WriteCtor(SpecificationDefinition.Public, schema.Class, parameters, baseCallParameterNames))
-            { }
+            {
+                writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("OnCreated")));
+            }
             writer.WriteLine();
             return true;
         }
 
         protected virtual void WriteDataContextCtors(CodeWriter writer, Database schema, Type contextBaseType, GenerationContext context)
         {
+            // ctor taking a connections tring
+            WriteDataContextCtor(writer, schema, contextBaseType,
+                   new[] { new ParameterDefinition { Name = "connectionString", Type = typeof(string) } },
+                   new[] { "connectionString" },
+                   new[] { typeof(string) },
+                   context);
             // the two constructors below have the same prototype, so they are mutually exclusive
             // the base class requires a IVendor
             if (!WriteDataContextCtor(writer, schema, contextBaseType,
@@ -68,18 +77,50 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                      new[] { typeof(IDbConnection) },
                                      context);
             }
+            // ctor(string, MappingSource)
+            WriteDataContextCtor(writer, schema, contextBaseType,
+                   new[] {
+                       new ParameterDefinition { Name = "connection", Type = typeof(string) },
+                       new ParameterDefinition { Name = "mappingSource", Type = typeof(MappingSource) },
+                   },
+                   new[] { "connection", "mappingSource" },
+                   new[] { typeof(string), typeof (MappingSource) },
+                   context);
+            // ctor(IDbConnection, MappingSource)
+            WriteDataContextCtor(writer, schema, contextBaseType,
+                    new[] {
+                        new ParameterDefinition { Name = "connection", Type = typeof(IDbConnection) },
+                        new ParameterDefinition { Name = "mappingSource", Type = typeof(MappingSource) },
+                    },
+                    new[] { "connection", "mappingSource" },
+                    new[] { typeof(IDbConnection), typeof(MappingSource) },
+                    context);
             // just in case you'd like to specify another vendor than the one who helped generating this file
             WriteDataContextCtor(writer, schema, contextBaseType,
-                                 new[] { new ParameterDefinition { Name = "connection", Type = typeof(IDbConnection) } ,
-                                 new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) } },
-                                 new[] { "connection", "vendor" }, new[] { typeof(IDbConnection), typeof(IVendor) },
-                                 context);
-            // ctor taking a connections tring
+                    new[] {
+                        new ParameterDefinition { Name = "connection", Type = typeof(IDbConnection) },
+                        new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) },
+                    },
+                    new[] { "connection", "vendor" },
+                    new[] { typeof(IDbConnection), typeof(IVendor) },
+                    context);
             WriteDataContextCtor(writer, schema, contextBaseType,
-                                 new[] { new ParameterDefinition { Name = "connectionString", Type = typeof(string) } ,
-                                 new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) } },
-                                 new[] { "connectionString" }, new[] { typeof(string) },
-                                 context);
+                    new[] {
+                        new ParameterDefinition { Name = "connection", Type = typeof(IDbConnection) },
+                        new ParameterDefinition { Name = "mappingSource", Type = typeof(MappingSource) },
+                        new ParameterDefinition { Name = "vendor", Type = typeof(IVendor) },
+                    },
+                    new[] { "connection", "mappingSource", "vendor" },
+                    new[] { typeof(IDbConnection), typeof(MappingSource), typeof(IVendor) },
+                    context);
+        }
+
+        protected virtual void WriteDataContextExtensibilityDeclarations(CodeWriter writer, Database schema, GenerationContext context)
+        {
+            using (writer.WriteRegion("Extensibility Method Definitions"))
+            {
+                writer.WriteLine("partial void OnCreated();");
+            }
         }
     }
 }

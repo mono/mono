@@ -1,3 +1,10 @@
+2009-11-06  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Sync with DbLinq r1265.  This fixes sqlmetal (it shouldn't 
+	  generate constructors referring to IVendor), enhances query support
+	  so that extension methods can be used within 'select' blocks,
+	  various FirebirdSQL fixes, etc.
+
 2009-09-04  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Also rsync dblinq2007/examples sources.

@@ -35,7 +35,9 @@ using nwind;
     [TestFixture]
     public class Join : TestBase
     {
-
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to select all orders for customers in London")]
         public void LinqToSqlJoin01()
         {
@@ -51,6 +53,9 @@ using nwind;
             Assert.IsTrue(list[0].CustomerID != null, "Missing CustomerID");
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to select all orders for customers in London")]
         public void LinqToSqlJoin01_b()
         {
@@ -78,6 +83,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to filter for employees in Seattle, and also list their territories")]
         public void LinqToSqlJoin03()
         {
@@ -93,6 +101,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "SelectMany - Self-Join.  filter for pairs of employees where one employee reports to the other and where both employees are from the same City")]
         public void LinqToSqlJoin04()
         {
@@ -119,6 +130,9 @@ using nwind;
             }
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "GroupJoin - Two-way join. This sample explictly joins two tables and projects results from both tables.")]
         public void LinqToSqlJoin05()
         {
@@ -133,6 +147,9 @@ using nwind;
 
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "GroupJoin - Three-way join. This sample explictly joins three tables and projects results from each of them.")]
         public void LinqToSqlJoin06()
         {
@@ -147,7 +164,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "GroupJoin - LEFT OUTER JOIN. This sample shows how to get LEFT OUTER JOIN by using DefaultIfEmpty(). The DefaultIfEmpty() method returns null when there is no Order for the Employee.")]
@@ -164,7 +181,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "GroupJoin - Projected let assignment. This sample projects a 'let' expression resulting from a join.")]
@@ -182,7 +199,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test(Description = "GroupJoin - Composite Key.This sample shows a join with a composite key.")]
@@ -206,6 +223,9 @@ using nwind;
         /// <summary>
         /// This sample shows how to construct a join where one side is nullable and the other isn't.
         /// </summary>
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "GroupJoin - Nullable\\Nonnullable Key Relationship")]
         public void LinqToSqlJoin10()
         {

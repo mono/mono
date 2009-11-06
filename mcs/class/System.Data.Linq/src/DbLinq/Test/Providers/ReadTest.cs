@@ -39,6 +39,22 @@ using DataLinq = System.Data.Linq;
 using DataLinq = DbLinq.Data.Linq;
 #endif
 
+namespace nwind
+{
+    interface IHasAddress
+    {
+        string Address { get; set; }
+    }
+
+    partial class Customer : IHasAddress
+    {
+    }
+
+    partial class Employee : IHasAddress
+    {
+    }
+}
+
 // test ns 
 #if MYSQL
     namespace Test_NUnit_MySql
@@ -264,6 +280,9 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.AreEqual(count, 1, "Expected one pen, got count=" + count);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void C4_CountWithOrderBy()
         {
@@ -455,6 +474,9 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.AreEqual(productCount, 8, "Expected eight products discontinued, got count=" + productCount);
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void C12_SelectEmployee_MultiJoinWithWhere()
         {
@@ -659,7 +681,155 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.AreEqual(employeesCount, allEmployees.Count());
         }
 
+        [Test]
+        public void C25_SelectViaInterface()
+        {
+            var db = CreateDB();
+            var c = MatchAddress(db.Customers, "ignoreme").FirstOrDefault();
+            Assert.IsNotNull(c);
+            var e = MatchAddress(db.Employees, "ignoreme").FirstOrDefault();
+            Assert.IsNotNull(e);
+        }
 
+        private static IEnumerable<T> MatchAddress<T>(IQueryable<T> query, string searchValue)
+            where T : IHasAddress
+        {
+            var lookups = query.OrderByDescending(v => v.Address.Length);
+            return lookups;
+        }
+
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
+        [Test]
+        public void C26_SelectWithNestedMethodCall()
+        {
+            var db = CreateDB();
+            var s = "param";
+            var q = from e in db.Employees select new
+            {
+                BackName    = e.LastName + ", " + e.FirstName,
+                StaticName  = GetStaticName(e),
+                InstanceName= GetInstanceName(e, s, "constant"),
+                Territories = e.EmployeeTerritories.ToList(),
+            };
+            var actual  = q.ToList();
+            var expected = new[]{
+                new {
+                    BackName        = "Davolio, Nancy",
+                    StaticName      = "Nancy Davolio [Hired: 1992-05-01]",
+                    InstanceName    = "Nancy Davolio [Home Phone: (206) 555-9857]",
+                    TerritoryCount  = 2,
+                },
+                new {
+                    BackName        = "Fuller, Andrew",
+                    StaticName      = "Andrew Fuller [Hired: 1992-08-14]",
+                    InstanceName    = "Andrew Fuller [Home Phone: (206) 555-9482]",
+                    TerritoryCount  = 7,
+                },
+                new {
+                    BackName        = "Leverling, Janet",
+                    StaticName      = "Janet Leverling [Hired: 1992-04-01]",
+                    InstanceName    = "Janet Leverling [Home Phone: (206) 555-3412]",
+                    TerritoryCount  = 4,
+                },
+                new {
+                    BackName        = "Peacock, Margaret",
+                    StaticName      = "Margaret Peacock [Hired: 1993-05-03]",
+                    InstanceName    = "Margaret Peacock [Home Phone: (206) 555-8122]",
+                    TerritoryCount  = 3,
+                },
+                new {
+                    BackName        = "Buchanan, Steven",
+                    StaticName      = "Steven Buchanan [Hired: 1993-10-17]",
+                    InstanceName    = "Steven Buchanan [Home Phone: (71) 555-4848]",
+                    TerritoryCount  = 7,
+                },
+                new {
+                    BackName        = "Suyama, Michael",
+                    StaticName      = "Michael Suyama [Hired: 1993-10-17]",
+                    InstanceName    = "Michael Suyama [Home Phone: (71) 555-7773]",
+                    TerritoryCount  = 5,
+                },
+                new {
+                    BackName        = "King, Robert",
+                    StaticName      = "Robert King [Hired: 1994-01-02]",
+                    InstanceName    = "Robert King [Home Phone: (71) 555-5598]",
+                    TerritoryCount  = 10,
+                },
+                new {
+                    BackName        = "Callahan, Laura",
+                    StaticName      = "Laura Callahan [Hired: 1994-03-05]",
+                    InstanceName    = "Laura Callahan [Home Phone: (206) 555-1189]",
+                    TerritoryCount  = 4,
+                },
+                new {
+                    BackName        = "Dodsworth, Anne",
+                    StaticName      = "Anne Dodsworth [Hired: 1994-11-15]",
+                    InstanceName    = "Anne Dodsworth [Home Phone: (71) 555-4444]",
+                    TerritoryCount  = 7,
+                },
+            };
+            Assert.AreEqual(expected.Length, actual.Count);
+            for (int i = 0; i < expected.Length; ++i)
+            {
+                Assert.AreEqual(expected[i].BackName, actual[i].BackName);
+                Assert.AreEqual(expected[i].StaticName, actual[i].StaticName);
+                Assert.AreEqual(expected[i].InstanceName, actual[i].InstanceName);
+                Assert.AreEqual(expected[i].TerritoryCount, actual[i].Territories.Count);
+            }
+        }
+
+        static string GetStaticName(Employee e)
+        {
+            return e.FirstName + " " + e.LastName + " [Hired: " + 
+                (e.HireDate.HasValue ? e.HireDate.Value.ToString("yyyy-MM-dd") : "") + "]";
+        }
+
+        string GetInstanceName(Employee e, string a, string b)
+        {
+            return e.FirstName + " " + e.LastName + " [Home Phone: " + e.HomePhone.ToString() + "]";
+        }
+
+        [Test]
+        public void C27_SelectEntitySet()
+        {
+            // Debugger.Break();
+            var db = CreateDB();
+            var q = from e in db.Employees
+                    orderby e.EmployeeID
+                    select new
+                    {
+                        e.Orders
+                    };
+            var expectedOrderCounts = new[]{
+                123,    // Nancy Davolio
+                 96,    // Andrew Fuller
+                127,    // Janet Leverling
+                156,    // Margaret Peacock
+                 42,    // Steven Buchanan
+                 67,    // Michael Suyama
+                 72,    // Robert King
+                104,    // Laura Callahan
+                 43,    // Anne Dodsworth
+            };
+            int c = 0;
+            foreach (var e in q)
+            {
+                Assert.AreEqual(expectedOrderCounts[c], e.Orders.Count);
+                ++c;
+            }
+            Assert.AreEqual(expectedOrderCounts.Length, c);
+        }
+
+        [Test]
+        public void C28_SelectEntityRef()
+        {
+            var db = CreateDB();
+            var emp = db.Employees.Single(e => e.EmployeeID == 1);
+            Assert.IsNotNull(emp.ReportsToEmployee);
+            Assert.AreEqual(emp.ReportsTo.Value, emp.ReportsToEmployee.EmployeeID);
+        }
         #endregion
 
         #region region D - select first or last - calls IQueryable.Execute instead of GetEnumerator
@@ -781,6 +951,9 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.Greater(list1.Count, 0, "Expected some orders for London customers");
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test]
         public void D07_OrdersFromLondon_Alt()
         {
@@ -849,7 +1022,7 @@ using DataLinq = DbLinq.Data.Linq;
         }
 
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTest+Northwind1+CustomerDerivedClass' is not mapped as a Table.
         [Explicit]
 #endif
@@ -921,7 +1094,7 @@ using DataLinq = DbLinq.Data.Linq;
             }
         }
 
-#if !DEBUG && (SQLITE || MSSQL)
+#if !DEBUG && (SQLITE || POSTGRES || MSSQL)
         // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTest+NorthwindDupl+CustomerDerivedClass' is not mapped as a Table.
         [Explicit]
 #endif

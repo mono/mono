@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Connections>
-  <Connection assembly="DbLinq.SqlServer_test">Data Source=.\SQLExpress;Integrated Security=True;Initial Catalog=Northwind</Connection>
+  <Connection assembly="DbLinq.SqlServer_test">Data Source=.\SQLExpress;Integrated Security=True;Initial Catalog=Northwind;MultipleActiveResultSets=True;</Connection>
   <Connection assembly="DbLinq.SqlServer_test_strict">Data Source=.\SQLExpress;Integrated Security=True;Initial Catalog=Northwind</Connection>
 
   <Connection assembly="DbLinq.Oracle_test_odp">Data Source = (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = {0})(PORT = 1521)))(CONNECT_DATA = (SERVER = DEDICATED))); User Id = Northwind; Password = linq2</Connection>

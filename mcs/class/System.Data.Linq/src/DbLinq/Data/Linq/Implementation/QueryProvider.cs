@@ -172,7 +172,12 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         public object Execute(Expression expression)
         {
-            return Execute<object>(expression);
+            return this.GetType()
+                .GetMethods()
+                .Where(m => m.Name == "Execute" && m.IsGenericMethod)
+                .Single()
+                .MakeGenericMethod(new Type[] { expression.Type })
+                .Invoke(this, new object[] { expression });
         }
 
         /// <summary>

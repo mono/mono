@@ -63,6 +63,9 @@ using nwind;
     [TestFixture]
     public class AdvancedTest : TestBase
     {
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample builds a query dynamically to return the contact name of each customer.")]
         public void LinqToSqlAdvanced01()
         {
@@ -83,6 +86,9 @@ using nwind;
 
         //TODO - 2,3,4,5
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample builds a query dynamically to filter for Customers in London.")]
         public void LinqToSqlAdvanced02()
         {
@@ -102,6 +108,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0, "Got London citiens > 0");
         }
 
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample builds a query dynamically to filter for Customers in London and order them by ContactName.")]
         public void LinqToSqlAdvanced03()
         {
@@ -124,7 +133,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-
+#if !DEBUG && POSTGRES
+        [Explicit]
+#endif
         [Test(Description = "This sample dynamically builds a Union to return a sequence of all countries where either a customer or an employee live.")]
         public void LinqToSqlAdvanced04()
         {

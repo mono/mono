@@ -75,7 +75,9 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                        ? dbSchema.ContextNamespace
                                        : context.Parameters.Namespace;
             context["database"] = dbSchema.Name;
-            context["generationTime"] = DateTime.Now.ToString("u");
+            context["generationTime"] = context.Parameters.GenerateTimestamps
+                ? DateTime.Now.ToString("u")
+                : "[TIMESTAMP]";
             context["class"] = dbSchema.Class;
 
             using (var codeWriter = CreateCodeWriter(textWriter))
@@ -139,8 +141,12 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
 #if MONO_STRICT
             writer.WriteUsingNamespace("System.Data.Linq");
 #else
+            writer.WriteLine("#if MONO_STRICT");
+            writer.WriteUsingNamespace("System.Data.Linq");
+            writer.WriteLine("#else   // MONO_STRICT");
             writer.WriteUsingNamespace("DbLinq.Data.Linq");
             writer.WriteUsingNamespace("DbLinq.Vendor");
+            writer.WriteLine("#endif  // MONO_STRICT");
 #endif
 
             //            writer.WriteUsingNamespace("System");
@@ -229,6 +235,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                 specifications |= GetSpecificationDefinition(schema.Modifier);
             using (writer.WriteClass(specifications, schema.Class, contextBase))
             {
+                WriteDataContextExtensibilityDeclarations(writer, schema, context);
                 WriteDataContextCtors(writer, schema, contextBaseType, context);
                 WriteDataContextTables(writer, schema, context);
                 WriteDataContextProcedures(writer, schema, context);

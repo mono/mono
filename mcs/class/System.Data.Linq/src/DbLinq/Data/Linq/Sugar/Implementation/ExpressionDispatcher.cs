@@ -191,7 +191,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             var operands = new List<Expression>();
             foreach (var operand in expression.GetOperands())
             {
-                operands.Add(CutOutOperands(operand, dataRecordParameter, mappingContextParameter, builderContext));
+                operands.Add(operand == null 
+                    ? null
+                    : CutOutOperands(operand, dataRecordParameter, mappingContextParameter, builderContext));
             }
             return expression.ChangeOperands(operands);
         }

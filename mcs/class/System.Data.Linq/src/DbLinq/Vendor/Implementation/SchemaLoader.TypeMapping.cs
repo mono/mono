@@ -59,8 +59,8 @@ namespace DbLinq.Vendor.Implementation
         protected virtual Type MapDbType(string columnName, IDataType dataType)
         {
             if (dataType == null)
-                return typeof(UnknownType);
-            string dataTypeL = dataType.Type.ToLower();
+                throw new ArgumentNullException("dataType");
+            string dataTypeL = dataType.Type.ToLowerInvariant();
 
             if (columnName != null && columnName.ToLower().Contains("guid"))
             {
@@ -87,6 +87,7 @@ namespace DbLinq.Vendor.Implementation
             case "longtext":
             case "long varchar":
             case "nchar":
+            case "ntext":
             case "nvarchar":
             case "nvarchar2":
             case "string":
@@ -151,6 +152,7 @@ namespace DbLinq.Vendor.Implementation
 
             // decimal
             case "decimal":
+            case "money":
             case "numeric":
                 return typeof(Decimal);
             case "number": // special oracle type
@@ -190,6 +192,7 @@ namespace DbLinq.Vendor.Implementation
             case "blob":
             case "bytea":
             case "byte varying":
+            case "image":
             case "longblob":
             case "long byte":
             case "oid":
@@ -210,7 +213,9 @@ namespace DbLinq.Vendor.Implementation
 
             // if we fall to this case, we must handle the type
             default:
-                return typeof(UnknownType);
+                throw new ArgumentException(
+                    string.Format("Don't know how to convert the SQL type '{0}' into a managed type.", dataTypeL),
+                    "dataType");
             }
         }
 

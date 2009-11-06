@@ -13,14 +13,15 @@ namespace nwind
         public Table<NoStorageCategory> NoStorageCategories { get { return GetTable<NoStorageCategory>(); }}
     }
         
-    partial class Employee
+    /* partial class Employee
     {
-        [Column(Storage = "_EmployeeID", Name = "EmployeeID", DbType = "serial", IsDbGenerated = true)]
+        [Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "serial", IsDbGenerated = false)]
         public string Identifier
         {
-            get { return null; /* this._EmployeeID.ToString();*/ }
+            get { return this._employeeID.ToString(); }
+            set {}
         }
-    }
+    } */
         
     [Table(Name = "public.\"Categories\"")]
     public partial class NoStorageCategory
