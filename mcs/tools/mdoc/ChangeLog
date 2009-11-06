@@ -1,3 +1,8 @@
+2009-11-06  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: When deleting the ExtensionMethods
+	  element, remove it from the correct parent XML node.  Fixes #553144.
+
 2009-09-19  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Add --with-profile=PROFILE

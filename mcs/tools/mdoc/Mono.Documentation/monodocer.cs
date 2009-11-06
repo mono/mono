@@ -805,7 +805,7 @@ class MDocUpdater : MDocCommand
 		if (extensionMethods.Count == 0) {
 			if (e == null)
 				return;
-			index_types.RemoveChild (e);
+			index_types.SelectSingleNode ("/Overview").RemoveChild (e);
 			return;
 		}
 		if (e == null) {
