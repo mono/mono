@@ -1,3 +1,7 @@
+2009-11-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-error.c: VS does not like this.
+
 2009-11-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-error-internals.h: Add mono_error_set_argument and mono_error_raise_exception.
