@@ -1,4 +1,4 @@
-// Compiler options: -t:library -langversion:future
+// Compiler options: -t:library
 
 public struct S
 {
@@ -21,7 +21,7 @@ public class B
 		return t;
 	}
 
-	public static S TestNew (S s = new S ())
+	public static ulong TestNew (ulong s = new ulong ())
 	{
 		return s;
 	}

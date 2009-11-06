@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Runtime.InteropServices;
 using System.Reflection;
@@ -33,10 +31,10 @@ public class C
 
 		info = typeof (C).GetMethod ("TestB").GetParameters ();
 
-		if (info[0].DefaultValue.GetType () != typeof (int))
+		if (info[0].DefaultValue.GetType () != typeof (long))
 			return 11;
 
-		if ((int) info[0].DefaultValue != 12)
+		if ((long) info[0].DefaultValue != 12)
 			return 12;
 
 		if (!info[0].IsOptional)

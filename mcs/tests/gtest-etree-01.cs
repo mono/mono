@@ -2090,6 +2090,19 @@ class Tester
 	{
 		Expression<Func<object>> e5 = () => new { A = 9, Value = "a" };
 		AssertNodeType (e5, ExpressionType.New);
+		var ne = ((NewExpression) e5.Body);
+
+		Assert (2, ne.Members.Count, "members count");	
+	
+		// Behaviour is different between .NET 3.5 and .NET 4.0
+		if (ne.Members [0].MemberType == MemberTypes.Property) {
+			Assert ("A", ne.Members [0].Name, "Name #1");
+			Assert ("Value", ne.Members [1].Name, "Name #2");
+		} else {
+			Assert ("get_A", ne.Members [0].Name, "Name #1");
+			Assert ("get_Value", ne.Members [1].Name, "Name #2");
+		}
+		
 		Assert (new { A = 9, Value = "a" }, e5.Compile ().Invoke ());
 	}	
 

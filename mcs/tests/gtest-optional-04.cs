@@ -1,10 +1,4 @@
-// Compiler options: -langversion:future
-
 using System;
-
-struct S
-{
-}
 
 public class C
 {
@@ -21,7 +15,7 @@ public class C
 	{
 	}
 
-	static void TestStruct (S? s = new S ())
+	static void TestStruct (int? s = new int ())
 	{
 	}
 	
