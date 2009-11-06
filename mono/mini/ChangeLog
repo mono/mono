@@ -1,3 +1,8 @@
+2009-11-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c exceptions-arm.c: Make ctx->regs map directly to the 16 hardware
+	registers, instead of r4..r11,ip,lr. Make restore_context () restore r0..r3 too.
+
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Don't allow OP_SEQ_POINT in
