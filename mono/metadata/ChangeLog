@@ -1,3 +1,9 @@
+2009-11-06  Mark Probst  <mark.probst@gmail.com>
+
+	* reflection.c (mono_reflection_setup_internal_class): Because
+	nested classes are not added to the name cache, we must put them
+	in the reflection_info_unregister_classes list.
+
 2009-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c: When CoreCLR is enabled don't call mono_init_com_types
