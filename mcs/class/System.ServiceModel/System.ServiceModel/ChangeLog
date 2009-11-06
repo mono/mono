@@ -1,3 +1,8 @@
+2009-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* ClientRuntimeChannel.cs: Support OperationContext in async calls
+	as well
+
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : removed internal dispatcher builder method.

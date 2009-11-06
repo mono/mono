@@ -46,6 +46,7 @@ namespace System.ServiceModel
 		TimeSpan default_open_timeout, default_close_timeout;
 		IChannel channel;
 		IChannelFactory factory;
+		OperationContext context;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -400,11 +401,15 @@ namespace System.ServiceModel
 
 		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
 		{
+			if (context != null)
+				throw new InvalidOperationException ("another operation is in progress");
+			context = OperationContext.Current;
 			return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
 		}
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
 		{
+			context = null;
 			if (result == null)
 				throw new ArgumentNullException ("result");
 			if (parameters == null)
@@ -551,15 +556,16 @@ namespace System.ServiceModel
 			else
 				msg = (Message) parameters [0];
 
-			if (OperationContext.Current != null) {
+			context = context ?? OperationContext.Current;
+			if (context != null) {
 				// CopyHeadersFrom does not work here (brings duplicates -> error)
-				foreach (var mh in OperationContext.Current.OutgoingMessageHeaders) {
+				foreach (var mh in context.OutgoingMessageHeaders) {
 					int x = msg.Headers.FindHeader (mh.Name, mh.Namespace, mh.Actor);
 					if (x >= 0)
 						msg.Headers.RemoveAt (x);
 					msg.Headers.Add ((MessageHeader) mh);
 				}
-				msg.Properties.CopyProperties (OperationContext.Current.OutgoingMessageProperties);
+				msg.Properties.CopyProperties (context.OutgoingMessageProperties);
 			}
 
 			if (OutputSession != null)
