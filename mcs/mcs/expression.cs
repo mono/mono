@@ -5305,16 +5305,16 @@ namespace Mono.CSharp {
 	///    Implements the new expression 
 	/// </summary>
 	public class New : ExpressionStatement, IMemoryLocation {
-		Arguments Arguments;
+		protected Arguments Arguments;
 
 		//
 		// During bootstrap, it contains the RequestedType,
 		// but if `type' is not null, it *might* contain a NewDelegate
 		// (because of field multi-initialization)
 		//
-		Expression RequestedType;
+		protected Expression RequestedType;
 
-		MethodGroupExpr method;
+		protected MethodGroupExpr method;
 
 		bool is_type_parameter;
 
@@ -5394,7 +5394,8 @@ namespace Mono.CSharp {
 				args = new Arguments (1);
 				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			} else {
-				args = Arguments.CreateForExpressionTree (ec, Arguments,
+				args = Arguments.CreateForExpressionTree (ec,
+					Arguments,
 					method.CreateExpressionTree (ec));
 			}
 
@@ -9754,17 +9755,19 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class AnonymousTypeDeclaration : Expression
+	public class NewAnonymousType : New
 	{
-		ArrayList parameters;
-		readonly TypeContainer parent;
 		static readonly ArrayList EmptyParameters = new ArrayList (0);
 
-		public AnonymousTypeDeclaration (ArrayList parameters, TypeContainer parent, Location loc)
+		ArrayList parameters;
+		readonly TypeContainer parent;
+		AnonymousTypeClass anonymous_type;
+
+		public NewAnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
+			 : base (null, null, loc)
 		{
 			this.parameters = parameters;
 			this.parent = parent;
-			this.loc = loc;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression target)
@@ -9772,7 +9775,7 @@ namespace Mono.CSharp {
 			if (parameters == null)
 				return;
 
-			AnonymousTypeDeclaration t = (AnonymousTypeDeclaration) target;
+			NewAnonymousType t = (NewAnonymousType) target;
 			t.parameters = new ArrayList (parameters.Count);
 			foreach (AnonymousTypeParameter atp in parameters)
 				t.parameters.Add (atp.Clone (clonectx));
@@ -9800,13 +9803,27 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			throw new NotSupportedException ("ET");
+			if (parameters == null)
+				return base.CreateExpressionTree (ec);
+
+			ArrayList init = new ArrayList (parameters.Count);
+			foreach (Property p in anonymous_type.Properties)
+				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (RequestedType.Type, p.GetBuilder), loc));
+
+			ArrayList ctor_args = new ArrayList (Arguments.Count);
+			foreach (Argument a in Arguments)
+				ctor_args.Add (a.CreateExpressionTree (ec));
+
+			Arguments args = new Arguments (3);
+			args.Add (new Argument (method.CreateExpressionTree (ec)));
+			args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", ctor_args, loc)));
+			args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", init, loc)));
+
+			return CreateExpressionFactoryCall (ec, "New", args);
 		}
 
 		public override Expression DoResolve (ResolveContext ec)
 		{
-			AnonymousTypeClass anonymous_type;
-
 			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
 				ec.Report.Error (836, loc, "Anonymous types cannot be used in this expression");
 				return null;
@@ -9814,12 +9831,12 @@ namespace Mono.CSharp {
 
 			if (parameters == null) {
 				anonymous_type = CreateAnonymousType (ec, EmptyParameters);
-				return new New (new TypeExpression (anonymous_type.TypeBuilder, loc),
-					null, loc).Resolve (ec);
+				RequestedType = new TypeExpression (anonymous_type.TypeBuilder, loc);
+				return base.DoResolve (ec);
 			}
 
 			bool error = false;
-			Arguments arguments = new Arguments (parameters.Count);
+			Arguments = new Arguments (parameters.Count);
 			TypeExpression [] t_args = new TypeExpression [parameters.Count];
 			for (int i = 0; i < parameters.Count; ++i) {
 				Expression e = ((AnonymousTypeParameter) parameters [i]).Resolve (ec);
@@ -9828,7 +9845,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				arguments.Add (new Argument (e));
+				Arguments.Add (new Argument (e));
 				t_args [i] = new TypeExpression (e.Type, e.Location);
 			}
 
@@ -9839,15 +9856,8 @@ namespace Mono.CSharp {
 			if (anonymous_type == null)
 				return null;
 
-			GenericTypeExpr te = new GenericTypeExpr (anonymous_type.TypeBuilder,
-				new TypeArguments (t_args), loc);
-
-			return new New (te, arguments, loc).Resolve (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("Should not be reached");
+			RequestedType = new GenericTypeExpr (anonymous_type.TypeBuilder, new TypeArguments (t_args), loc);
+			return base.DoResolve (ec);
 		}
 	}
 

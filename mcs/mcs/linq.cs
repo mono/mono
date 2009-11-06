@@ -255,7 +255,7 @@ namespace Mono.CSharp.Linq
 			ArrayList args = new ArrayList (2);
 			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
 			args.Add (new RangeAnonymousTypeParameter (init, name));
-			return new AnonymousTypeDeclaration (args, context.CurrentTypeDefinition, name.Location);
+			return new NewAnonymousType (args, context.CurrentTypeDefinition, name.Location);
 		}
 	}
 

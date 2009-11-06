@@ -2273,7 +2273,7 @@ namespace Mono.CSharp {
 			
 			PartialContainer = null;
 			types = null;
-			properties = null;
+//			properties = null;
 			delegates = null;
 			fields = null;
 			initialized_fields = null;

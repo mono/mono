@@ -1,3 +1,10 @@
+2009-11-06  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #553031
+
+	* linq.cs, expression.cs, class.cs, cs-parser.jay: Initialize
+	expression tree version of anonymous type with members declaration.
+
 2009-11-05  Marek Safar  <marek.safar@gmail.com>
 
 	* parameter.cs: Handle nullable parameter default expression.

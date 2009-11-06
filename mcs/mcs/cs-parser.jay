@@ -3498,7 +3498,7 @@ anonymous_type_expression
 	  	else if (RootContext.Version <= LanguageVersion.ISO_2)
 	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
-		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, GetLocation ($1));
+		$$ = new NewAnonymousType ((ArrayList) $3, current_container, GetLocation ($1));
 	  }
 	;
 
