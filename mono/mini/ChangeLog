@@ -1,5 +1,8 @@
 2009-11-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c debugger-agent.c: Android changes from Koushik K. Dutta
+	(koush@koushikdutta.com).
+
 	* mini-arm.c (handle_thunk): Add a domain argument to control the domain
 	where the thunk memory should be allocated from. Fixes appdomain unloading
 	on arm.
