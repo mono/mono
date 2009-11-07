@@ -1,0 +1,9 @@
+./IgnorePropertiesAttributeTests.cs
+./QueryInterceptorAttributeTests.cs
+./DataServiceTests.cs
+./ExpandSegmentCollectionTests.cs
+./ExpandSegmentTests.cs
+./ChangeInterceptorAttributeTests.cs
+./MimeTypeAttributeTests.cs
+./DataServiceExceptionTests.cs
+./ETagAttributeTests.cs
