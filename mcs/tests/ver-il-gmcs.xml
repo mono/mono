@@ -15944,7 +15944,7 @@
         <size>66</size>
       </method>
       <method name="Void NewTest_6()">
-        <size>53</size>
+        <size>182</size>
       </method>
     </type>
     <type name="InverseLogicalOperator">
@@ -16121,6 +16121,11 @@
     <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey5">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void NewTest_7()">
+        <size>53</size>
       </method>
     </type>
   </test>

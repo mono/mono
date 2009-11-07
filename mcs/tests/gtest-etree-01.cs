@@ -2104,10 +2104,16 @@ class Tester
 		}
 		
 		Assert (new { A = 9, Value = "a" }, e5.Compile ().Invoke ());
+	}
+	
+	void NewTest_6 ()
+	{
+		Expression<Func<object>> e5 = () => new { A = 9, Value = new MyType (5) };
+		AssertNodeType (e5, ExpressionType.New);
 	}	
 
 	// CSC bug: emits new MyEnum as a constant	
-	void NewTest_6 ()
+	void NewTest_7 ()
 	{
 		Expression<Func<MyEnum>> e = () => new MyEnum ();
 		AssertNodeType (e, ExpressionType.New);
