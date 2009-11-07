@@ -1,3 +1,8 @@
+2009-11-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_allocate_vars): Align small vtypes to 4 bytes too since
+	the code in the prolog requires it.
+
 2009-11-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c debugger-agent.c: Android changes from Koushik K. Dutta
