@@ -122,7 +122,8 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets       		\
-	WindowsBase			
+	WindowsBase			\
+	System.Data.Services
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
