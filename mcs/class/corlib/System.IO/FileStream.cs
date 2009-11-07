@@ -831,13 +831,18 @@ namespace System.IO
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			FlushBuffer ();
-			
-			// The flushing is not actually required, in
-			//the mono runtime we were mapping flush to
-			//`fsync' which is not the same.
-			//
-			//MonoIO.Flush (handle);
 		}
+
+#if NET_4_0
+		public virtual void Flush (bool flushToDisk)
+		{
+			FlushBuffer ();
+
+			// This does the fsync
+			if (flushToDisk)
+				MonoIO.Flush (handle);
+		}
+#endif
 
 		public virtual void Lock (long position, long length)
 		{

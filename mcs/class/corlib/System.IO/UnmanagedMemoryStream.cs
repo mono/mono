@@ -36,7 +36,6 @@ using System.Runtime.InteropServices;
 
 namespace System.IO
 {
-	[CLSCompliantAttribute(false)]
 	public class UnmanagedMemoryStream : Stream
 	{
 		long length;
@@ -54,16 +53,19 @@ namespace System.IO
 		{
 			closed = true;
 		}
-		
+
+		[CLSCompliantAttribute(false)]
 		public unsafe UnmanagedMemoryStream (byte *pointer, long length)
 		{
 			Initialize (pointer, length, length, FileAccess.Read);
 		}
 		
+		[CLSCompliantAttribute(false)]
 		public unsafe UnmanagedMemoryStream (byte *pointer, long length, long capacity, FileAccess access)
 		{
 			Initialize (pointer, length, capacity, access);
 		}
+		
 #endregion
 	
 #region Properties

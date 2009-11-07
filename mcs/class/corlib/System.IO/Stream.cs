@@ -260,6 +260,30 @@ namespace System.IO
 			if (result.Exception != null)
 				throw result.Exception;
 		}
+
+#if NET_4_0
+		public void CopyTo (Stream destination)
+		{
+			CopyTo (destination, 16*1024);
+		}
+
+		public void CopyTo (Stream destination, int bufferSize)
+		{
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if (!CanRead)
+				throw new NotSupportedException ("This stream does not support reading");
+			if (!destination.CanWrite)
+				throw new NotSupportedException ("This destination stream does not support writing");
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize");
+
+			var buffer = new byte [bufferSize];
+			int nread;
+			while ((nread = Read (buffer, 0, bufferSize)) != 0)
+				destination.Write (buffer, 0, nread);
+		}
+#endif
 	}
 
 	class NullStream : Stream

@@ -741,11 +741,12 @@ namespace System.IO {
 						l += DirectorySeparatorStr.Length;
 					}
 				}
-				l += s.Length;
 			}
 			var ret = new StringBuilder (l);
 			l = 0;
 			foreach (var s in paths){
+				if (IsPathRooted (s))
+					ret.Length = l = 0;
 				ret.Append (s);
 				if (l == 0 && need_sep)
 					ret.Append (DirectorySeparatorStr);
@@ -753,6 +754,16 @@ namespace System.IO {
 			}
 
 			return ret.ToString ();
+		}
+
+		public static string Combine (string path1, string path2, string path3)
+		{
+			return Combine (new string [] { path1, path2, path3 });
+		}
+
+		public static string Combine (string path1, string path2, string path3, string path4)
+		{
+			return Combine (new string [] { path1, path2, path3, path4 });
 		}
 #endif
 	}

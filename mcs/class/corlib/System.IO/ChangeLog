@@ -1,3 +1,16 @@
+2009-11-07  Miguel de Icaza  <miguel@novell.com>
+
+	* UnmanagedMemoryStream.cs: Move the CLS attribute to the methods
+	that are unsafe.
+
+	* Path.cs (Combine):e Fix implementation to follow docs (we need
+	to reset the path if any of the combined paths is rooted), and add a
+	couple of overloads;
+
+	* FileStream.cs (Flush/flushToDisk): Implement.
+
+	* Stream.cs (CopyTo): Implement.
+
 2009-11-03  Miguel de Icaza  <miguel@novell.com>
 
 	* FileStream.cs: Check the return value of MonoIO.Write and handle
