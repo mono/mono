@@ -1,5 +1,9 @@
 2009-11-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* appdomain.c: Fix shadow path code to better deal with exceptions.
+
+2009-11-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c: Use checked version of mono_string_to_utf8 to avoid raising an
 	exception in the middle of the runtime code.
 
