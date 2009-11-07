@@ -1,5 +1,8 @@
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_jit_parse_options): New public API function to parse options
+	as done by the runtime executable.
+
 	* debugger-agent.c (buffer_add_cattrs): Fix reading an uninitialized variable
 	when handling named arguments.
 
