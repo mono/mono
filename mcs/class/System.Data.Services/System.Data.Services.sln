@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Services", "System.Data.Services.csproj", "{A586EC7C-F793-42C1-8C14-D8C4DF147D1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Services.Tests", "Tests\System.Data.Services.Tests.csproj", "{2491EDE6-791F-4CA2-B99C-70791EE81E75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2491EDE6-791F-4CA2-B99C-70791EE81E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2491EDE6-791F-4CA2-B99C-70791EE81E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2491EDE6-791F-4CA2-B99C-70791EE81E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2491EDE6-791F-4CA2-B99C-70791EE81E75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A586EC7C-F793-42C1-8C14-D8C4DF147D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A586EC7C-F793-42C1-8C14-D8C4DF147D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A586EC7C-F793-42C1-8C14-D8C4DF147D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A586EC7C-F793-42C1-8C14-D8C4DF147D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = System.Data.Services.csproj
+	EndGlobalSection
+EndGlobal
