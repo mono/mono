@@ -1,3 +1,8 @@
+2009-11-07  Zoltan Varga  <vargaz@gmail.com>
+
+	*: Move .cs files to the System.Data.Services subdir to match their namespace,
+	move tests to 'Test' from 'Tests', add Makefile.
+
 2009-11-06  Eric Maupin  <me@ermau.com>
 
 	* Added
