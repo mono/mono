@@ -839,8 +839,10 @@ namespace System.IO
 			FlushBuffer ();
 
 			// This does the fsync
-			if (flushToDisk)
-				MonoIO.Flush (handle);
+			if (flushToDisk){
+				MonoIOError error;
+				MonoIO.Flush (handle, out error);
+			}
 		}
 #endif
 
