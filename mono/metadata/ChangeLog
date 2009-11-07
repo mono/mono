@@ -1,5 +1,10 @@
 2009-11-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* appdomain.c: Use checked version of mono_string_to_utf8 to avoid raising an
+	exception in the middle of the runtime code.
+
+2009-11-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): Don't
 	leak memory with broken envvar value.
 
