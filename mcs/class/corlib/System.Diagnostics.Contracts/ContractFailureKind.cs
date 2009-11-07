@@ -30,7 +30,6 @@ using System;
 
 namespace System.Diagnostics.Contracts {
 
-	[MonoTODO ("These values have not been checked yet, they might be incorrect")]
 #if NET_4_0
 	public
 #else
@@ -38,7 +37,7 @@ namespace System.Diagnostics.Contracts {
 #endif
 
 	enum ContractFailureKind {
-		Precondition, 
+		Precondition,
 		Postcondition,
 		PostconditionOnException,
 		Invariant,
