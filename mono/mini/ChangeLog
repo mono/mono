@@ -1,5 +1,10 @@
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (buffer_add_cattrs): Fix reading an uninitialized variable
+	when handling named arguments.
+
+2009-11-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-arm.c: Implement support for returning vtypes in registers, fix support
 	for passing small vtypes in registers, make the CallInfo structures more
 	similar to the code on the other platforms.
