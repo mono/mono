@@ -1,4 +1,8 @@
-2009-11-03  Zoltan Varga  <vargaz@gmail.com>
+2009-11-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (net_2_0_dirs): Add System.Data.Services.
+
+2009-11-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Move Mono.Debugger.Soft to net_2_0_dirs for 2.6.
 
