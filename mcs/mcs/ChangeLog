@@ -1,3 +1,10 @@
+2009-11-07  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #553465
+
+	* expression.cs: Fixed mixed version of expression tree anonymous
+	type.
+
 2009-11-06  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #553031

@@ -9808,7 +9808,7 @@ namespace Mono.CSharp {
 
 			ArrayList init = new ArrayList (parameters.Count);
 			foreach (Property p in anonymous_type.Properties)
-				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (RequestedType.Type, p.GetBuilder), loc));
+				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (type, p.GetBuilder), loc));
 
 			ArrayList ctor_args = new ArrayList (Arguments.Count);
 			foreach (Argument a in Arguments)
@@ -9816,7 +9816,7 @@ namespace Mono.CSharp {
 
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (method.CreateExpressionTree (ec)));
-			args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", ctor_args, loc)));
+			args.Add (new Argument (new ArrayCreation (TypeManager.expression_type_expr, "[]", ctor_args, loc)));
 			args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", init, loc)));
 
 			return CreateExpressionFactoryCall (ec, "New", args);
