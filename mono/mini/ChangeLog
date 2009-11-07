@@ -1,5 +1,9 @@
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Implement support for returning vtypes in registers, fix support
+	for passing small vtypes in registers, make the CallInfo structures more
+	similar to the code on the other platforms.
+
 	* mini-arm.c (mono_arch_allocate_vars): Align small vtypes to 4 bytes too since
 	the code in the prolog requires it.
 
