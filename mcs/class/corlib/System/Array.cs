@@ -43,7 +43,6 @@ namespace System
 	[Serializable]
 	[ComVisible (true)]
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
-	// FIXME: Sort overloads parameter checks are VERY inconsistent"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor
@@ -1154,19 +1153,13 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array array)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			Sort (array, null, array.GetLowerBound (0), array.GetLength (0), null);
+			Sort (array, (IComparer)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array keys, Array items)
 		{
-			if (keys == null)
-				throw new ArgumentNullException ("keys");
-
-			Sort (keys, items, keys.GetLowerBound (0), keys.GetLength (0), null);
+			Sort (keys, items, (IComparer)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1175,20 +1168,31 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
+			if (array.Rank > 1)
+				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+
 			SortImpl (array, null, array.GetLowerBound (0), array.GetLength (0), comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array array, int index, int length)
 		{
-			Sort (array, null, index, length, null);
+			Sort (array, index, length, (IComparer)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array keys, Array items, IComparer comparer)
 		{
+			if (items == null) {
+				Sort (keys, comparer);
+				return;
+			}		
+		
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
+
+			if (keys.Rank > 1 || items.Rank > 1)
+				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
 			SortImpl (keys, items, keys.GetLowerBound (0), keys.GetLength (0), comparer);
 		}
@@ -1196,25 +1200,46 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array keys, Array items, int index, int length)
 		{
-			Sort (keys, items, index, length, null);
+			Sort (keys, items, index, length, (IComparer)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array array, int index, int length, IComparer comparer)
 		{
-			Sort (array, null, index, length, comparer);
+			if (array == null)
+				throw new ArgumentNullException ("array");
+				
+			if (array.Rank > 1)
+				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+
+			if (index < array.GetLowerBound (0))
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
+					"Value has to be >= 0."));
+
+			if (array.Length - (array.GetLowerBound (0) + index) < length)
+				throw new ArgumentException ();
+				
+			SortImpl (array, null, index, length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort (Array keys, Array items, int index, int length, IComparer comparer)
 		{
+			if (items == null) {
+				Sort (keys, index, length, comparer);
+				return;
+			}
+
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 
-			if (keys.Rank > 1 || (items != null && items.Rank > 1))
+			if (keys.Rank > 1 || items.Rank > 1)
 				throw new RankException ();
 
-			if (items != null && keys.GetLowerBound (0) != items.GetLowerBound (0))
+			if (keys.GetLowerBound (0) != items.GetLowerBound (0))
 				throw new ArgumentException ();
 
 			if (index < keys.GetLowerBound (0))
@@ -1224,7 +1249,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
 					"Value has to be >= 0."));
 
-			if (keys.Length - (index + keys.GetLowerBound (0)) < length || (items != null && index > items.Length - length))
+			if (keys.Length != items.Length || keys.Length - (index + keys.GetLowerBound (0)) < length)
 				throw new ArgumentException ();
 
 			SortImpl (keys, items, index, length, comparer);
@@ -1451,19 +1476,13 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			Sort<T, T> (array, null, 0, array.Length, null);
+			Sort<T> (array, (IComparer<T>)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items)
 		{
-			if (keys == null)
-				throw new ArgumentNullException ("keys");
-			
-			Sort<TKey, TValue> (keys, items, 0, keys.Length, null);
+			Sort<TKey, TValue> (keys, items, (IComparer<TKey>)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1478,8 +1497,16 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, IComparer<TKey> comparer)
 		{
+			if (items == null) {
+				Sort<TKey> (keys, comparer);
+				return;
+			}		
+		
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
+				
+			if (keys.Length != items.Length)
+				throw new ArgumentException ("Length of keys and items does not match.");
 			
 			SortImpl<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
@@ -1487,16 +1514,13 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array, int index, int length)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-			
-			Sort<T, T> (array, null, index, length, null);
+			Sort<T> (array, index, length, (IComparer<T>)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length)
 		{
-			Sort<TKey, TValue> (keys, items, index, length, null);
+			Sort<TKey, TValue> (keys, items, index, length, (IComparer<TKey>)null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1505,12 +1529,27 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
+					"Value has to be >= 0."));
+
+			if (index + length > array.Length)
+				throw new ArgumentException ();
+				
 			SortImpl<T, T> (array, null, index, length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length, IComparer<TKey> comparer)
 		{
+			if (items == null) {
+				Sort<TKey> (keys, index, length, comparer);
+				return;
+			}
+
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 
@@ -1520,8 +1559,7 @@ namespace System
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length");
 
-			if (keys.Length - index < length
-				|| (items != null && index > items.Length - length))
+			if (keys.Length != items.Length || keys.Length - index < length)
 				throw new ArgumentException ();
 
 			SortImpl<TKey, TValue> (keys, items, index, length, comparer);
@@ -1571,23 +1609,26 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			SortImpl<T> (array, array.Length, comparison);
-		}
 
-		internal static void Sort<T> (T [] array, int length, Comparison<T> comparison)
-		{
 			if (comparison == null)
 				throw new ArgumentNullException ("comparison");
 
-			if (length <= 1 || array.Length <= 1)
+			SortImpl<T> (array, array.Length, comparison);
+		}
+
+		// used by List<T>.Sort (Comparison <T>)
+		internal static void SortImpl<T> (T [] array, int length, Comparison<T> comparison)
+		{
+			if (length <= 1)
 				return;
 			
 			try {
 				int low0 = 0;
 				int high0 = length - 1;
 				qsort<T> (array, low0, high0, comparison);
-			}
-			catch (Exception e) {
+			} catch (InvalidOperationException) {
+				throw;
+			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("Comparison threw an exception."), e);
 			}
 		}

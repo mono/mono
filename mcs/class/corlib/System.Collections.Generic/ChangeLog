@@ -1,3 +1,7 @@
+2009-11-08  Juraj Skripsky <js@hotfeet.ch>
+
+	* List.cs (Sort): Sync to latest changes in Array.Sort.
+
 2009-10-20  Marek Safar <marek.safar@gmail.com>
 	
 	* List.cs, CollectionDebuggerView.cs, KeyValuePair.cs, Dictionary.cs

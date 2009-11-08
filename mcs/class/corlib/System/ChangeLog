@@ -1,5 +1,15 @@
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
+	* Array.cs (Sort):
+	- Sort(..) without IComparer param call Sort(.., (IComparer)null) siblings
+	- Sort(keys, items,..) with items == null call Sort(keys,..) siblings
+	Add missing argument checks. Add SortImpl method to be used by
+	List<T>.Sort(Comparison <T>).
+
+	Part 3 of 3 fixing bug #351638.
+
+2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
+
 	* Array.cs (Sort): Add and call
 	- SortImpl methods which do the real work without argument checking
 	- MoveNullKeysToFront methods which do a null <-> non-null sorting and

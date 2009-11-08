@@ -574,7 +574,10 @@ namespace System.Collections.Generic {
 
 		public void Sort (Comparison <T> comparison)
 		{
-			Array.Sort<T> (_items, _size, comparison);
+			if (comparison == null)
+				throw new ArgumentNullException ("comparison");
+
+			Array.SortImpl<T> (_items, _size, comparison);
 			_version++;
 		}
 		
