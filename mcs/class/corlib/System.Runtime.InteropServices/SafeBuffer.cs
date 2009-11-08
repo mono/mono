@@ -37,24 +37,35 @@ namespace System.Runtime.InteropServices
 {
 	public abstract class SafeBuffer : SafeHandleZeroOrMinusOneIsInvalid, IDisposable {
 		ulong byte_length;
+		unsafe byte *last_byte;
 		bool inited;
 
-		protected SafeBuffer (bool ownsHandle) : base (ownsHandle) {
+		protected SafeBuffer (bool ownsHandle) : base (ownsHandle)
+		{
 		}
 
 		[CLSCompliant (false)]
-		public void Initialize (ulong numBytes) {
-			byte_length = numBytes;
+		public void Initialize (ulong numBytes)
+		{
+			if (numBytes == 0)
+				throw new ArgumentOutOfRangeException ("numBytes");
+
 			inited = true;
+			byte_length = numBytes;
+			unsafe {
+				last_byte = (byte *) (((byte *) handle) + numBytes);
+			}
 		}
 
 		[CLSCompliant (false)]
-		public void Initialize (uint numElements, uint sizeOfEachElement) {
+		public void Initialize (uint numElements, uint sizeOfEachElement)
+		{
 			Initialize (numElements * sizeOfEachElement);
 		}
 
 		[CLSCompliant (false)]
-		public void Initialize<T> (uint numElements) where T : struct {
+		public void Initialize<T> (uint numElements) where T : struct
+		{
 			Initialize (numElements, (uint)Marshal.SizeOf (typeof (T)));
 		}
 
@@ -84,26 +95,66 @@ namespace System.Runtime.InteropServices
 
 		[CLSCompliant (false)]
 		[MonoTODO]
-		public T Read<T> (ulong byteOffset) where T : struct {
-			throw new NotImplementedException ();
+		public T Read<T> (ulong byteOffset) where T : struct
+		{
+			if (!inited)
+				throw new InvalidOperationException ();
+
+			unsafe {
+				byte *source = (((byte *) handle) + byteOffset);
+				if (source >= last_byte || source + Marshal.SizeOf (typeof (T)) >= last_byte)
+					throw new ArgumentException ("byteOffset");
+
+				return (T) Marshal.PtrToStructure ((IntPtr) source, typeof (T));
+			}
 		}
 
 		[CLSCompliant (false)]
 		[MonoTODO]
 		public void ReadArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
-			throw new NotImplementedException ();
+			if (!inited)
+				throw new InvalidOperationException ();
+
+			unsafe {
+				int size = Marshal.SizeOf (typeof (T)) * count;
+				byte *source = (((byte *) handle) + byteOffset);
+				if (source >= last_byte || source + size >= last_byte)
+					throw new ArgumentException ("byteOffset");
+				
+				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count);
+			}
 		}
 
 		[CLSCompliant (false)]
 		[MonoTODO]
 		public void Write<T> (ulong byteOffset, T value) where T : struct {
-			throw new NotImplementedException ();
+			if (!inited)
+				throw new InvalidOperationException ();
+
+			unsafe {
+				byte *target = (((byte *) handle) + byteOffset);
+				if (target >= last_byte || target + Marshal.SizeOf (typeof (T)) >= last_byte)
+					throw new ArgumentException ("byteOffset");
+
+				Marshal.StructureToPtr (value, (IntPtr) target, false);
+			}
 		}
 
 		[CLSCompliant (false)]
 		[MonoTODO]
-		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
-			throw new NotImplementedException ();
+		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct
+		{
+			if (!inited)
+				throw new InvalidOperationException ();
+
+			unsafe {
+				byte *target = ((byte *) handle) + byteOffset;
+				int size = Marshal.SizeOf (typeof (T)) * count;
+				if (target >= last_byte || target + size >= last_byte)
+					throw new ArgumentException ("would overrite");
+				
+				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count);
+			}
 		}
 	}
 }

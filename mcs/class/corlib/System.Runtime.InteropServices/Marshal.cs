@@ -96,12 +96,12 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void copy_to_unmanaged (Array source, int startIndex,
-						      IntPtr destination, int length);
+		internal extern static void copy_to_unmanaged (Array source, int startIndex,
+							       IntPtr destination, int length);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void copy_from_unmanaged (IntPtr source, int startIndex,
-							Array destination, int length);
+		internal extern static void copy_from_unmanaged (IntPtr source, int startIndex,
+								 Array destination, int length);
 
 		public static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
 		{

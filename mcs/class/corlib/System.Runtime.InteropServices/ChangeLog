@@ -1,3 +1,9 @@
+2009-11-08  Miguel de Icaza  <miguel@novell.com>
+
+	* Marshal.cs: Expose copy_*_unamnaged to SafeBuffer.
+
+	* SafeBuffer.cs: Update SafeBufer implementation
+
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* Jumbo NET_2_0 removal patch.
