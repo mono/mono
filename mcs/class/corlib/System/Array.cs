@@ -1371,22 +1371,27 @@ namespace System
 
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
-			if (low0 >= high0)
-				return;
-
 			int low = low0;
 			int high = high0;
 
 			// Be careful with overflows
 			int mid = low + ((high - low) / 2);
-			object objPivot = keys.GetValueImpl (mid);
+			object keyPivot = keys.GetValueImpl (mid);
+			IComparable cmpPivot = keyPivot as IComparable;
 
 			while (true) {
 				// Move the walls in
-				while (low < high0 && compare (keys.GetValueImpl (low), objPivot, comparer) < 0)
-					++low;
-				while (high > low0 && compare (objPivot, keys.GetValueImpl (high), comparer) < 0)
-					--high;
+				if (comparer != null) {
+					while (low < high0 && comparer.Compare (keyPivot, keys.GetValueImpl (low)) > 0)
+						++low;
+					while (high > low0 && comparer.Compare (keyPivot, keys.GetValueImpl (high)) < 0)
+						--high;
+				} else {
+					while (low < high0 && cmpPivot.CompareTo (keys.GetValueImpl (low)) > 0)
+						++low;
+					while (high > low0 && cmpPivot.CompareTo (keys.GetValueImpl (high)) < 0)
+						--high;
+				}
 
 				if (low <= high) {
 					swap (keys, items, low, high);
@@ -1404,10 +1409,8 @@ namespace System
 
 		private static void swap (Array keys, Array items, int i, int j)
 		{
-			object tmp;
-
-			tmp = keys.GetValueImpl (i);
-			keys.SetValueImpl (keys.GetValue (j), i);
+			object tmp = keys.GetValueImpl (i);
+			keys.SetValueImpl (keys.GetValueImpl (j), i);
 			keys.SetValueImpl (tmp, j);
 
 			if (items != null) {
@@ -1417,18 +1420,6 @@ namespace System
 			}
 		}
 
-		private static int compare (object value1, object value2, IComparer comparer)
-		{
-			if (value1 == null)
-				return value2 == null ? 0 : -1;
-			else if (value2 == null)
-				return 1;
-			else if (comparer == null)
-				return ((IComparable) value1).CompareTo (value2);
-			else
-				return comparer.Compare (value1, value2);
-		}
-	
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Sort<T> (T [] array)
 		{
@@ -1571,24 +1562,35 @@ namespace System
 
 		private static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
 		{
-			if (low0 >= high0)
-				return;
-
 			int low = low0;
 			int high = high0;
 
 			// Be careful with overflows
 			int mid = low + ((high - low) / 2);
 			K keyPivot = keys [mid];
+			IComparable<K> genCmpPivot = keyPivot as IComparable<K>;
+			IComparable cmpPivot = keyPivot as IComparable;
 
 			while (true) {
 				// Move the walls in
-				//while (low < high0 && comparer.Compare (keys [low], keyPivot) < 0)
-				while (low < high0 && compare (keys [low], keyPivot, comparer) < 0)
-					++low;
-				//while (high > low0 && comparer.Compare (keyPivot, keys [high]) < 0)
-				while (high > low0 && compare (keyPivot, keys [high], comparer) < 0)
-					--high;
+				if (comparer != null) {
+					while (low < high0 && comparer.Compare (keyPivot, keys [low]) > 0)
+						++low;
+					while (high > low0 && comparer.Compare (keyPivot, keys [high]) < 0)
+						--high;
+				} else {
+					if (genCmpPivot != null) {
+						while (low < high0 && genCmpPivot.CompareTo (keys [low]) > 0)
+							++low;
+						while (high > low0 && genCmpPivot.CompareTo (keys [high]) < 0)
+							--high;
+					} else {
+						while (low < high0 && cmpPivot.CompareTo (keys [low]) > 0)
+							++low;
+						while (high > low0 && cmpPivot.CompareTo (keys [high]) < 0)
+							--high;
+					}
+				}
 
 				if (low <= high) {
 					swap<K, V> (keys, items, low, high);
@@ -1604,28 +1606,8 @@ namespace System
 				qsort<K, V> (keys, items, low, high0, comparer);
 		}
 
-		private static int compare<T> (T value1, T value2, IComparer<T> comparer)
-		{
-			if (comparer != null)
-				return comparer.Compare (value1, value2);
-			else if (value1 == null)
-				return value2 == null ? 0 : -1;
-			else if (value2 == null)
-				return 1;
-			else if (value1 is IComparable<T>)
-				return ((IComparable<T>) value1).CompareTo (value2);
-			else if (value1 is IComparable)
-				return ((IComparable) value1).CompareTo (value2);
-
-			string msg = Locale.GetText ("No IComparable or IComparable<{0}> interface found.");
-			throw new InvalidOperationException (String.Format (msg, typeof (T)));
-		}
-
 		private static void qsort<T> (T [] array, int low0, int high0, Comparison<T> comparison)
 		{
-			if (low0 >= high0)
-				return;
-
 			int low = low0;
 			int high = high0;
 

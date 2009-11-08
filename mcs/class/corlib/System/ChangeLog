@@ -1,3 +1,15 @@
+2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Array.cs (Sort): optimize qsort by employing multiple, faster copies
+	of the inner-most loops:
+	- for case "comparer != null"
+	- for case "pivot is IComparable<T>"
+	- for case "pivot is IComparable"
+	Remove compare methods as the inner loops now do their work.
+	Use GetValueImpl instead of GetValue in swap.
+
+	Part 1 of 3 fixing bug #351638.
+
 2009-11-03  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs (CheckWindowDimensions) Avoid extra checks, as
