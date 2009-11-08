@@ -129,7 +129,7 @@ namespace System.IO
 
 		public static Stream Synchronized (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return new SynchronizedStream (stream);
 		}
 
 		[Obsolete ("CreateWaitHandle is due for removal.  Use \"new ManualResetEvent(false)\" instead.")]
@@ -354,6 +354,103 @@ namespace System.IO
 
 		public override void WriteByte (byte value)
 		{
+		}
+	}
+
+	class SynchronizedStream : Stream {
+		Stream source;
+		object slock;
+			
+		internal SynchronizedStream (Stream source)
+		{
+			this.source = source;
+			slock = new object ();
+		}
+		
+		public override bool CanRead
+		{
+			get {
+				lock (slock)
+					return source.CanRead;
+			}
+		}
+
+		public override bool CanSeek
+		{
+                        get {
+				lock (slock)
+					return source.CanSeek;
+                        }
+                }
+
+                public override bool CanWrite
+		{
+                        get {
+				lock (slock)
+					return source.CanWrite;
+                        }
+                }
+
+		public override long Length
+		{
+			get {
+				lock (slock)
+					return source.Length;
+			}
+		}
+
+		public override long Position
+		{
+			get {
+				lock (slock)
+					return source.Position;
+			}
+			set {
+				lock (slock)
+					source.Position = value;
+			}
+		}
+
+		public override void Flush ()
+		{
+			lock (slock)
+				source.Flush ();
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			lock (slock)
+				return source.Read (buffer, offset, count);
+		}
+
+		public override int ReadByte ()
+		{
+			lock (slock)
+				return source.ReadByte ();
+		}
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			lock (slock)
+				return source.Seek (offset, origin);
+		}
+
+		public override void SetLength (long value)
+		{
+			lock (slock)
+				source.SetLength (value);
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			lock (slock)
+				source.Write (buffer, offset, count);
+		}
+
+		public override void WriteByte (byte value)
+		{
+			lock (slock)
+				source.WriteByte (value);
 		}
 	}
 }

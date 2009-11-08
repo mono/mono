@@ -1,3 +1,7 @@
+2009-11-08  Miguel de Icaza  <miguel@novell.com>
+
+	* Stream.cs: Implement synchornized.
+
 2009-11-07  Miguel de Icaza  <miguel@novell.com>
 
 	* UnmanagedMemoryStream.cs: Move the CLS attribute to the methods

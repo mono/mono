@@ -102,6 +102,8 @@ namespace System.IO
 					return (length);
 			}
 		}
+
+		[CLSCompliantAttribute(false)]
 		public override long Position {
 			get {
 				if (closed)
