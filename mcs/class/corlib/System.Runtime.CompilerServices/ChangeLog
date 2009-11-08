@@ -1,3 +1,11 @@
+2009-11-08  Miguel de Icaza  <miguel@novell.com>
+
+	* Use the ConditionalWeakTable.cs implementation from MEF, it
+	needs a little bit of work (see the comment on the file, and the
+	test suite that shows the problem).
+
+	This code is MS-PL
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeHelpers.cs: Add missing validations

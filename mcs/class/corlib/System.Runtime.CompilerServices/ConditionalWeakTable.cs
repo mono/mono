@@ -1,51 +1,130 @@
+﻿// -----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// -----------------------------------------------------------------------
 //
-// ConditionalWeakTable.cs
+// This code comes from the Managed Extension Frameworks:
+//  http://mef.codeplex.com
 //
-// Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+// And is licensed under the MS-PL license
 //
-// Copyright (C) 2009, Novell, Inc (http://www.novell.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+	// Glenn said on IRC:
+	//   "I think our table is weak, but does not do proper compacting"
+	//
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
-
 using System;
-using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Internal;
+using Microsoft.Internal.Collections;
 
-namespace System.Runtime.CompilerServices
+namespace Microsoft.Internal.Collections
 {
-	[ComVisible (false)]
-	public sealed class ConditionalWeakTable<TKey, TValue> where TKey : class where TValue : class
-	{
-		public void Add (TKey key, TValue value)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public bool TryGetValue (TKey key, out TValue value)
-		{
-			throw new NotImplementedException ();			
-		}
-	}
-}
+	
+    // This is a broken implementation of ConditionalWeakTable that allows us
+    // to compile and work on versions of .Net eariler then 4.0. This class is
+    // broken when there are circular dependencies between keys and values, which
+    // can only be fixed by using some specific CLR 4.0 features.
+    // For code samples of the broken behavior see ConditionalWeakTableTests.cs.
+    internal class ConditionalWeakTable<TKey, TValue> 
+        where TKey : class
+        where TValue : class
+    {
+        private readonly Dictionary<object, TValue> _table;
+        private int _capacity = 4;
 
+        public ConditionalWeakTable()
+        {
+            this._table = new Dictionary<object, TValue>();
+        }
+
+        public void Add(TKey key, TValue value)
+        {
+            CleanupDeadReferences();
+            this._table.Add(CreateWeakKey(key), value);
+        }
+
+        public bool Remove(TKey key)
+        {
+            return this._table.Remove(key);
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            return this._table.TryGetValue(key, out value);
+        }
+
+        private void CleanupDeadReferences()
+        {
+            if (this._table.Count < _capacity)
+            {
+                return;
+            }
+
+	    ArrayList deadKeys = new ArrayList ();
+	    foreach (var weakRef in _table.Keys){
+		    if (!((EquivalentWeakReference)weakRef).IsAlive)
+			    deadKeys.Add (weakRef);
+	    }
+
+            foreach (var deadKey in deadKeys)
+            {
+                this._table.Remove(deadKey);
+            }
+
+            if (this._table.Count >= _capacity)
+            {
+                _capacity *= 2;
+            }
+        }
+
+        private static object CreateWeakKey(TKey key)
+        {
+            return new EquivalentWeakReference(key);
+        }
+
+        private class EquivalentWeakReference
+        {
+            private readonly WeakReference _weakReference;
+            private readonly int _hashCode;
+
+            public EquivalentWeakReference(object obj)
+            {
+                this._hashCode = obj.GetHashCode();
+                this._weakReference = new WeakReference(obj);
+            }
+
+            public bool IsAlive
+            {
+                get
+                {
+                    return this._weakReference.IsAlive;
+                }
+            }
+
+            public override bool Equals(object obj)
+            {
+                EquivalentWeakReference weakRef = obj as EquivalentWeakReference;
+
+                if (weakRef != null)
+                {
+                    obj = weakRef._weakReference.Target;
+                }
+
+                if (obj == null)
+                {
+                    return base.Equals(weakRef);
+                }
+                
+                return object.Equals(this._weakReference.Target, obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return this._hashCode;
+            }
+        }
+    }
+}
 #endif
