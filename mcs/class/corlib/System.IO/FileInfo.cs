@@ -318,7 +318,7 @@ namespace System.IO {
 					 string destinationBackupFileName,
 					 bool ignoreMetadataErrors)
 		{
-			Replace (destinationFileName, destinationBackupFileName);
+			return Replace (destinationFileName, destinationBackupFileName);
 		}
 
 		public void SetAccessControl (FileSecurity fileSecurity)

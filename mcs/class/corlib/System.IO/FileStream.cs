@@ -170,19 +170,21 @@ namespace System.IO
 			this.safeHandle = handle;
 		}
 
+		[MonoLimitation ("This ignores the rights parameter")]
 		public FileStream (string path, FileMode mode,
 				   FileSystemRights rights, FileShare share,
 				   int bufferSize, FileOptions options)
+			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), share, bufferSize, false, options)
 		{
-			throw new NotImplementedException ();
 		}
 		
+		[MonoLimitation ("This ignores the rights and fileSecurity parameters")]
 		public FileStream (string path, FileMode mode,
 				   FileSystemRights rights, FileShare share,
 				   int bufferSize, FileOptions options,
 				   FileSecurity fileSecurity)
+			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), share, bufferSize, false, options)
 		{
-			throw new NotImplementedException ();
 		}
 #endif
 

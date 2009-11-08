@@ -404,5 +404,11 @@ namespace System.IO
 
 			stream.Write (internalBuffer, initialIndex, length - initialIndex);
 		}
+
+#if NET_4_0
+		public override void ObjectInvariant ()
+		{
+		}
+#endif
 	}               
 }

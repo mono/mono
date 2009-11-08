@@ -283,6 +283,10 @@ namespace System.IO
 			while ((nread = Read (buffer, 0, bufferSize)) != 0)
 				destination.Write (buffer, 0, nread);
 		}
+
+		public virtual void ObjectInvariant ()
+		{
+		}
 #endif
 	}
 
