@@ -313,11 +313,12 @@ namespace System.IO {
 		}
 		
 		[ComVisible (false)]
+		[MonoLimitation ("We ignore the ignoreMetadataErrors parameter")]
 		public FileInfo Replace (string destinationFileName,
 					 string destinationBackupFileName,
 					 bool ignoreMetadataErrors)
 		{
-			throw new NotImplementedException ();
+			Replace (destinationFileName, destinationBackupFileName);
 		}
 
 		public void SetAccessControl (FileSecurity fileSecurity)

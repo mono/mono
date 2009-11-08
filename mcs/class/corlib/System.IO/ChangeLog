@@ -1,5 +1,7 @@
 2009-11-08  Miguel de Icaza  <miguel@novell.com>
 
+	* FileInfo.cs: Partially implement.
+
 	* Stream.cs: Implement synchornized.
 
 2009-11-07  Miguel de Icaza  <miguel@novell.com>
