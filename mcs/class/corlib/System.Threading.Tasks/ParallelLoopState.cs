@@ -24,9 +24,9 @@
 //
 
 using System;
-using System.Threading.Tasks;
+using System.Threading;
 
-namespace System.Threading
+namespace System.Threading.Tasks
 {
 	public class ParallelLoopState
 	{
