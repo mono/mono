@@ -94,7 +94,6 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public T Read<T> (ulong byteOffset) where T : struct
 		{
 			if (!inited)
@@ -110,7 +109,6 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public void ReadArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -126,7 +124,6 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public void Write<T> (ulong byteOffset, T value) where T : struct {
 			if (!inited)
 				throw new InvalidOperationException ();
@@ -141,7 +138,6 @@ namespace System.Runtime.InteropServices
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public void WriteArray<T> (ulong byteOffset, T[] array, int index, int count) where T : struct
 		{
 			if (!inited)
