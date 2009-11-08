@@ -1,3 +1,7 @@
+2009-11-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* optflags-def.h: Remove dead TREEPROP optimization.
+
 2009-11-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-ppc.h: Make mono compiler under FreeBSD/ppc64. 
