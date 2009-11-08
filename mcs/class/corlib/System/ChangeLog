@@ -1,5 +1,14 @@
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
+	* Array.cs (Sort): Add and call
+	- SortImpl methods which do the real work without argument checking
+	- MoveNullKeysToFront methods which do a null <-> non-null sorting and
+	ensure that all non-null object implement IComparable/IComparable<T>
+
+	Part 2 of 3 fixing bug #351638.
+
+2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
+
 	* Array.cs (Sort): optimize qsort by employing multiple, faster copies
 	of the inner-most loops:
 	- for case "comparer != null"

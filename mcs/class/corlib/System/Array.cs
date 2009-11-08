@@ -1175,7 +1175,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			Sort (array, null, array.GetLowerBound (0), array.GetLength (0), comparer);
+			SortImpl (array, null, array.GetLowerBound (0), array.GetLength (0), comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1190,7 +1190,7 @@ namespace System
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 
-			Sort (keys, items, keys.GetLowerBound (0), keys.GetLength (0), comparer);
+			SortImpl (keys, items, keys.GetLowerBound (0), keys.GetLength (0), comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1227,15 +1227,16 @@ namespace System
 			if (keys.Length - (index + keys.GetLowerBound (0)) < length || (items != null && index > items.Length - length))
 				throw new ArgumentException ();
 
+			SortImpl (keys, items, index, length, comparer);
+		}
+
+		private static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
+		{
 			if (length <= 1)
 				return;
 
 			if (comparer == null) {
-				Swapper iswapper;
-				if (items == null)
-					iswapper = null;
-				else 
-					iswapper = get_swapper (items);
+				Swapper iswapper = (items != null ? get_swapper (items) : null);
 				if (keys is double[]) {
 					combsort (keys as double[], index, length, iswapper);
 					return;
@@ -1249,12 +1250,16 @@ namespace System
 					return;
 				}
 			}
+			
+			int low = index;
+			int high = index + length - 1;
+			low = MoveNullKeysToFront (keys, items, low, high, comparer == null);
+			if (low == high)
+				return;
+ 
 			try {
-				int low0 = index;
-				int high0 = index + length - 1;
-				qsort (keys, items, low0, high0, comparer);
-			}
-			catch (Exception e) {
+				qsort (keys, items, low, high, comparer);
+			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
 		}
@@ -1407,6 +1412,29 @@ namespace System
 				qsort (keys, items, low, high0, comparer);
 		}
 
+		private static int MoveNullKeysToFront (Array keys, Array items, int low, int high, bool ensureComparable)
+		{
+			// find first nun-null key
+			while (low < high && keys.GetValueImpl (low) == null)
+				low++;
+
+			// move null keys to beginning of array,
+			// ensure that non-null keys implement IComparable
+			for (int i = low + 1; i <= high; i++) {
+				object obj = keys.GetValueImpl (i);
+				if (obj == null) {
+					swap (keys, items, low, i);
+					low++;
+				} else {
+					if (ensureComparable && !(obj is IComparable)) {
+						string msg = Locale.GetText ("No IComparable interface found for type '{0}'.");
+						throw new InvalidOperationException (String.Format (msg, obj.GetType ()));
+					}  
+				}
+			}
+			return low;
+		}
+
 		private static void swap (Array keys, Array items, int i, int j)
 		{
 			object tmp = keys.GetValueImpl (i);
@@ -1444,7 +1472,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			Sort<T, T> (array, null, 0, array.Length, comparer);
+			SortImpl<T, T> (array, null, 0, array.Length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1453,7 +1481,7 @@ namespace System
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
 			
-			Sort<TKey, TValue> (keys, items, 0, keys.Length, comparer);
+			SortImpl<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1477,7 +1505,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			Sort<T, T> (array, null, index, length, comparer);
+			SortImpl<T, T> (array, null, index, length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1496,18 +1524,19 @@ namespace System
 				|| (items != null && index > items.Length - length))
 				throw new ArgumentException ();
 
-			if (length <= 1)
+			SortImpl<TKey, TValue> (keys, items, index, length, comparer);
+		}
+
+		private static void SortImpl<TKey, TValue> (TKey [] keys, TValue [] items, int index, int length, IComparer<TKey> comparer)
+		{
+			if (keys.Length <= 1)
 				return;
 			
 			//
 			// Check for value types which can be sorted without Compare () method
 			//
 			if (comparer == null) {
-				Swapper iswapper;
-				if (items == null)
-					iswapper = null;
-				else 
-					iswapper = get_swapper<TValue> (items);
+				Swapper iswapper = (items != null ? get_swapper<TValue> (items) : null);
 				if (keys is double[]) {
 					combsort (keys as double[], index, length, iswapper);
 					return;
@@ -1525,12 +1554,15 @@ namespace System
 				// comparer = Comparer<K>.Default;
 			}
 			
+			int low = index;
+			int high = index + length - 1;
+			low = MoveNullKeysToFront<TKey, TValue> (keys, items, low, high, comparer == null);
+			if (low == high)
+				return;
+ 
 			try {
-				int low0 = index;
-				int high0 = index + length - 1;
-				qsort<TKey, TValue> (keys, items, low0, high0, comparer);
-			}
-			catch (Exception e) {
+				qsort<TKey, TValue> (keys, items, low, high, comparer);
+			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
 		}
@@ -1539,7 +1571,7 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			Sort<T> (array, array.Length, comparison);
+			SortImpl<T> (array, array.Length, comparison);
 		}
 
 		internal static void Sort<T> (T [] array, int length, Comparison<T> comparison)
@@ -1634,6 +1666,29 @@ namespace System
 				qsort<T> (array, low0, high, comparison);
 			if (low < high0)
 				qsort<T> (array, low, high0, comparison);
+		}
+
+		private static int MoveNullKeysToFront<K, V> (K [] keys, V [] items, int low, int high, bool ensureComparable)
+		{
+			// find first nun-null key
+			while (low < high && keys [low] == null)
+				low++;
+
+			// move null keys to beginning of array,
+			// ensure that non-null keys implement IComparable
+			for (int i = low + 1; i <= high; i++) {
+				K key = keys [i];
+				if (key == null) {
+					swap<K, V> (keys, items, low, i);
+					low++;
+				} else {
+					if (ensureComparable && !(key is IComparable<K>) && !(key is IComparable)) {
+						string msg = Locale.GetText ("No IComparable<T> or IComparable interface found for type '{0}'.");
+						throw new InvalidOperationException (String.Format (msg, key.GetType ()));
+					}  
+				}
+			}
+			return low;
 		}
 
 		private static void swap<K, V> (K [] keys, V [] items, int i, int j)
