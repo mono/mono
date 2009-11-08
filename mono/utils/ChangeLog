@@ -1,3 +1,9 @@
+2009-11-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-sigcontext.h: Add ucontext support for FreeBSD/ppc64.
+
+	Patch by Justin Hibbits <chmeeedalf@gmail.com>.
+
 2009-11-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-error.c: VS does not like this.
