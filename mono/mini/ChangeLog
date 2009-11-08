@@ -1,5 +1,10 @@
 2009-11-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Compute the stack space used by arguments using
+	mini_type_stack_size_full ().
+
+2009-11-08  Zoltan Varga  <vargaz@gmail.com>
+
 	* optflags-def.h: Remove dead TREEPROP optimization.
 
 2009-11-08  Rodrigo Kumpera  <rkumpera@novell.com>
