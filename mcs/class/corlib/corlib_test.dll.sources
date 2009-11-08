@@ -10,6 +10,7 @@ System/ApplicationIdentityTest.cs
 System/ApplicationIdTest.cs
 System/ArgumentExceptionTest.cs
 System/ArrayTest.cs
+System/ArraySortArgChecks.cs
 System/ArraySegmentTest.cs
 System/AttributeTest.cs
 System/BadImageFormatExceptionTest.cs

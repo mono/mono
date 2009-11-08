@@ -1,3 +1,7 @@
+2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
+
+	* corlib_test.dll.sources: Add System/ArraySortArgChecks.cs
+
 2009-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Add System/WeakReferenceTest and
