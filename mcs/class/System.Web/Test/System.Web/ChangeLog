@@ -1,5 +1,7 @@
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpCookieTest.cs: added test for bug #553063
+
 	* HttpCookieCollectionTest.cs: added test for bug #553150
 
 2009-09-07  Marek Habersack  <mhabersack@novell.com>

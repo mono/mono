@@ -27,6 +27,8 @@
 //
 
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 
 using NUnit.Framework;
@@ -65,6 +67,18 @@ namespace MonoTests.System.Web {
 			Assert.IsFalse (cookie.HasKeys);
 		}
 
+		[Test (Description="Bug #553063")]
+		public void CookieValuesSerialization ()
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			HttpCookie c = new HttpCookie ("stuff", "value1");
+		
+			using (var ms = new MemoryStream()) {
+				bf.Serialize(ms, c.Values);
+				ms.Seek(0, SeekOrigin.Begin);
+			}
+		}
+		
 		[Test]
 		public void PropertySetters ()
 		{

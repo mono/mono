@@ -1,5 +1,9 @@
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpCookie.cs: made HttpCookie.CookieNVC serializable. Patch
+	from Sean Foy <sean.foy+novell@gmail.com>, thanks! Fixes bug
+	#553063
+
 	* HttpCookieCollection.cs: Add allows for duplicate cookie
 	names. Fixes bug #553150
 

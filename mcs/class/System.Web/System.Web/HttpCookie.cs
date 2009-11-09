@@ -226,6 +226,7 @@ namespace System.Web {
 		 * to get the desired behavior for
 		 * HttpCookie.Values
 		 */
+		[Serializable]
 		class CookieNVC : NameValueCollection
 		{
 #if NET_2_0
