@@ -1,3 +1,9 @@
+2009-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_emit_prolog): Implement support for varargs.
+
+	* mini-ops.h: Add documentation for the OP_ARGLIST opcode.
+
 2009-11-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c: Compute the stack space used by arguments using
