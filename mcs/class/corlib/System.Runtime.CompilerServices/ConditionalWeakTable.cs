@@ -16,10 +16,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Internal;
-using Microsoft.Internal.Collections;
 
-namespace Microsoft.Internal.Collections
+namespace System.Runtime.CompilerServices
 {
 	
     // This is a broken implementation of ConditionalWeakTable that allows us
