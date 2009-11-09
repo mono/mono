@@ -1,3 +1,9 @@
+2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: When moving the scroll, *dont* ever end the current
+	edit - this could seriously mess up our current edit cycle, specially
+	when adding new rows.
+
 2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: In OnKeyDown call the base implementation first -

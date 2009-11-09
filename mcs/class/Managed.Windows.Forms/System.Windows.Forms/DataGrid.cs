@@ -2661,8 +2661,6 @@ namespace System.Windows.Forms
 			if (pixels == 0)
 				return;
 
-			EndEdit ();
-
 			Rectangle rows_area = cells_area; // Cells area - partial rows space
 
 			if (RowHeadersVisible) {
