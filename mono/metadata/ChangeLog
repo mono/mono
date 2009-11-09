@@ -1,3 +1,8 @@
+2009-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_ArgIterator_Setup): Remove the MONO_ARCH_REGPARMS stuff, its not
+	needed.
+
 2009-11-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* appdomain.c: Fix shadow path code to better deal with exceptions.
