@@ -1,3 +1,10 @@
+2009-11-09  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: there's no need to cache sections by
+	_file_ path - using section name and web.config path is more than
+	enough and it reduces the number of cache entries
+	considerably. Fixes bug #550730
+
 2009-10-07  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: GetSection doesn't perform string +

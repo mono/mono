@@ -402,7 +402,7 @@ namespace System.Web.Configuration {
 			if (String.IsNullOrEmpty (config_vdir))
 				config_vdir = "/";
 
-			int sectionCacheKey = GetSectionCacheKey (sectionName, path, config_vdir);
+			int sectionCacheKey = GetSectionCacheKey (sectionName, config_vdir);
 			object cachedSection;
 			if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
 				return cachedSection;
@@ -584,11 +584,10 @@ namespace System.Web.Configuration {
 			sectionCache = tmpTable;
 		}
 
-		static int GetSectionCacheKey (string sectionName, string path, string vdir)
+		static int GetSectionCacheKey (string sectionName, string vdir)
 		{
 			return (sectionName != null ? sectionName.GetHashCode () : 0) ^
-				((path != null ? path.GetHashCode () : 0) + 37) ^
-				((vdir != null ? vdir.GetHashCode () : 0));
+				((vdir != null ? vdir.GetHashCode () : 0) + 37);
 		}
 
 		
