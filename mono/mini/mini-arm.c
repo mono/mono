@@ -1015,6 +1015,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	MonoInst *inst;
 	int i, offset, size, align, curinst;
 	int frame_reg = ARMREG_FP;
+	guint32 ualign;
 
 	/* FIXME: this will change when we use FP as gcc does */
 	cfg->flags |= MONO_CFG_HAS_SPILLUP;
@@ -1112,7 +1113,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		/* inst->backend.is_pinvoke indicates native sized value types, this is used by the
 		* pinvoke wrappers when they call functions returning structure */
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF) {
-			guint32 ualign;
 			size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), &ualign);
 			align = ualign;
 		}
@@ -1154,7 +1154,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if (inst->opcode != OP_REGVAR) {
 			inst->opcode = OP_REGOFFSET;
 			inst->inst_basereg = frame_reg;
-			size = mini_type_stack_size_full (NULL, sig->params [i], NULL, sig->pinvoke);
+			size = mini_type_stack_size_full (NULL, sig->params [i], &ualign, sig->pinvoke);
+			align = ualign;
 			/* FIXME: if a structure is misaligned, our memcpy doesn't work,
 			 * since it loads/stores misaligned words, which don't do the right thing.
 			 */
