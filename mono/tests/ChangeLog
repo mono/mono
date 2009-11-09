@@ -1,3 +1,7 @@
+2009-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable filter-stack.exe on ARM.
+
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* gen-runtime-invoke.cs: Add a test.
