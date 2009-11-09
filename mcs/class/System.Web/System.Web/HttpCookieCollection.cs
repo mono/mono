@@ -92,9 +92,6 @@ namespace System.Web {
 
 		public void Add (HttpCookie cookie)
 		{
-			if (BaseGet (cookie.Name) != null)
-				return;
-
 			BaseAdd (cookie.Name, cookie);
 		}
 

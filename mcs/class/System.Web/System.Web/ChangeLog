@@ -1,3 +1,8 @@
+2009-11-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpCookieCollection.cs: Add allows for duplicate cookie
+	names. Fixes bug #553150
+
 2009-10-30  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: added internal property ClientFilePath, which
