@@ -1,5 +1,12 @@
 2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: The large value for our vertical scrollbar should
+	depend on the number of visible rows, instead of trying to re-use the
+	value of VisibleRowCount, which is the value of *current* visible
+	rows, and can easily end messed up if new rows are added/removed.
+
+2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: When moving the scroll, *dont* ever end the current
 	edit - this could seriously mess up our current edit cycle, specially
 	when adding new rows.
