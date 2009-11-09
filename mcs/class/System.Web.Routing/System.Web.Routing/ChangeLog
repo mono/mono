@@ -1,3 +1,8 @@
+2009-11-09  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteCollection.cs: GetVirtualPath doesn't append trailing slash
+	to application path blindly anymore. Fixes bug #553022
+
 2009-09-09  Marek Habersack  <mhabersack@novell.com>
 
 	* Route.cs: when Url is set to null, create a parser for empty
