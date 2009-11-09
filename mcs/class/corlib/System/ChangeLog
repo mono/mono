@@ -1,3 +1,12 @@
+2009-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* Console.cs (OpenStandardError,OpenStandardOut,OpenStandardInput):
+	for NET_2_1 && !MONOTOUCH, disable these streams unless a debugger
+	is attached, or unless the MOONLIGHT_ENABLE_CONSOLE environment
+	variable is defined.
+
+	reviewed: alan
+	
 2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MonoType.cs: Don't pass null value to icalls 
