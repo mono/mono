@@ -167,7 +167,11 @@ namespace System.Web.Routing
 			}
 
 			if (vp != null) {
-				var pathWithApp = String.Concat (requestContext.HttpContext.Request.ApplicationPath, "/", vp.VirtualPath);
+				string appPath = requestContext.HttpContext.Request.ApplicationPath;
+				if (appPath != null && (appPath.Length == 0 || !appPath.EndsWith ("/", StringComparison.Ordinal)))
+					appPath += "/";
+				
+				string pathWithApp = String.Concat (appPath, vp.VirtualPath);
 				vp.VirtualPath = requestContext.HttpContext.Response.ApplyAppPathModifier (pathWithApp);
 				return vp;
 			}
