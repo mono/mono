@@ -64,6 +64,19 @@ namespace MonoTests.System.Web
 
 			col.Set (cookie2);
 			Assert.AreEqual ("value2", col["cookie"].Value, "set should use last used cookie");
+
+			col.Clear ();
+			col.Add (cookie1);
+			col.Add (cookie2);
+
+			// Bug #553150
+			HttpCookie tmp = col.Get (0);
+			Assert.AreEqual ("cookie", tmp.Name, "#A1");
+			Assert.AreEqual ("value1", tmp.Value, "#A1-1");
+
+			tmp = col.Get (1);
+			Assert.AreEqual ("cookie", tmp.Name, "#A2");
+			Assert.AreEqual ("value2", tmp.Value, "#A2-1");
 		}
 
 		[Test]
