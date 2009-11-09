@@ -172,7 +172,8 @@ net_4_0_dirs := \
 	System.Dynamic		\
 	System.Numerics		\
 	Microsoft.CSharp	\
-	System.Windows.Forms.DataVisualization
+	System.Windows.Forms.DataVisualization	\
+	System.ComponentModel.Composition
 
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
