@@ -27,7 +27,7 @@ namespace Microsoft.Internal.Collections
     // broken when there are circular dependencies between keys and values, which
     // can only be fixed by using some specific CLR 4.0 features.
     // For code samples of the broken behavior see ConditionalWeakTableTests.cs.
-    internal class ConditionalWeakTable<TKey, TValue> 
+    public class ConditionalWeakTable<TKey, TValue> 
         where TKey : class
         where TValue : class
     {
