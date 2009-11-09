@@ -1,3 +1,10 @@
+2009-11-10  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ToolExe): New.
+	* Csc.cs:
+	* AL.cs: Use ToolExe instead of ToolName to construct
+	tool's full path.
+
 2009-11-09  Ankit Jain  <jankit@novell.com>
 
 	* GetFrameworkPath.cs (FrameworkVersion11Path):

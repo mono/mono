@@ -1,3 +1,10 @@
+2009-11-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets(AL):
+	* xbuild/Microsoft.CSharp.targets (CSC):
+	* xbuild/Microsoft.VisualBasic.targets (Vbc): Set ToolExe and ToolPath to
+	corresponding properties, allowing them to be overridden.
+
 2009-11-09  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Set default TargetFrameworkVersion.
