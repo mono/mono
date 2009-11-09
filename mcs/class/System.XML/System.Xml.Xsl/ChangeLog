@@ -1,3 +1,8 @@
+2009-11-09  Jb Evain  <jbevain@novell.com>
+
+	* XslCompiledTransform.cs: ifdef the temporary files collection
+	for MonoTouch.
+
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : Fixed bug #450797, patch by Jonathan
