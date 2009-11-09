@@ -224,6 +224,7 @@ namespace System.Web
 		 * to get the desired behavior for
 		 * HttpCookie.Values
 		 */
+		[Serializable]
 		sealed class CookieNVC : NameValueCollection
 		{
 			public CookieNVC ()
