@@ -1,5 +1,8 @@
 2009-11-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_allocate_vars): Fix the previous change by passing
+	&align to mini_type_stack_size_full ().
+
 	* mini-arm.c (mono_arch_emit_prolog): Implement support for varargs.
 
 	* mini-ops.h: Add documentation for the OP_ARGLIST opcode.
