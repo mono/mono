@@ -1,5 +1,13 @@
 2009-11-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_get_llvm_imt_trampoline): Fix and enable this for
+	x86.
+
+	* mini-llvm-cpp.cpp (JITMemoryManager): Fix compilation with LLVM 2.7
+	SVN.
+
+	* aot-compiler.c: Ditto.
+
 	* mini-arm.c (mono_arch_allocate_vars): Fix the previous change by passing
 	&align to mini_type_stack_size_full ().
 
