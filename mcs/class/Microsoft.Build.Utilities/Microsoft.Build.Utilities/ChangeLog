@@ -1,3 +1,9 @@
+2009-11-09  Ankit Jain  <jankit@novell.com>
+
+	* TargetDotNetFrameworkVersion.cs (Version30):
+	(Version35): New.
+	* ToolLocationHelper.cs: Support 3.0 and 3.5 also.
+
 2009-10-13  Ankit Jain  <jankit@novell.com>
 
 	* TaskLoggingHelper.cs:

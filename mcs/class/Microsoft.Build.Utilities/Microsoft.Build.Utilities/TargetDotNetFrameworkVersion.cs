@@ -29,11 +29,15 @@
 
 namespace Microsoft.Build.Utilities
 {
+	// If changing something here then update
+	// ToolLocationHelper.GetPathToDotNetFramework also
 	public enum TargetDotNetFrameworkVersion
 	{
 		Version11,
 		Version20,
-		VersionLatest = Version20
+		Version30,
+		Version35,
+		VersionLatest = Version35
 	}
 }
 

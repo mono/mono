@@ -1,3 +1,10 @@
+2009-11-09  Ankit Jain  <jankit@novell.com>
+
+	* GetFrameworkPath.cs (FrameworkVersion11Path):
+	(FrameworkVersion20Path):
+	(FrameworkVersion30Path):
+	(FrameworkVersion35Path): New.
+
 2009-10-13  Ankit Jain  <jankit@novell.com>
 
 	* ResolveAssemblyReference.cs: Fix warnings.

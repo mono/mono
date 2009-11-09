@@ -16,6 +16,7 @@
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v2.0</TargetFrameworkVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -82,7 +83,15 @@
 		/>
 
 		<GetFrameworkPath>
-			<Output TaskParameter="Path" PropertyName="TargetFrameworkPath"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
+				TaskParameter="FrameworkVersion35Path"
+				ItemName="TargetFrameworkDirectories"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+				TaskParameter="FrameworkVersion30Path"
+				ItemName="TargetFrameworkDirectories"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+				TaskParameter="FrameworkVersion20Path"
+				ItemName="TargetFrameworkDirectories"/>
 		</GetFrameworkPath>
 	</Target>
 
@@ -125,7 +134,7 @@
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
-			TargetFrameworkDirectories="$(TargetFrameworkPath)"
+			TargetFrameworkDirectories="@(TargetFrameworkDirectories)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
 			AllowedRelatedFileExtensions="$(AllowedReferenceRelatedFileExtensions)"
 			FindDependencies="true"
