@@ -74,7 +74,7 @@ namespace Mono.Debugger
 			/* Handle the debuggee exiting so we don't block in Accept () forever */
 			p.Exited += delegate (object sender, EventArgs eargs) {
 				exited = true;
-				socket.Shutdown (SocketShutdown.Both);
+				socket.Close ();
 			};
 
 			/* 
@@ -85,7 +85,7 @@ namespace Mono.Debugger
 			Socket accepted = null;
 			try {
 				accepted = socket.Accept ();
-			} catch (SocketException) {
+			} catch (ObjectDisposedException) {
 				if (exited)
 					throw new IOException ("Debuggee process exited.");
 				else

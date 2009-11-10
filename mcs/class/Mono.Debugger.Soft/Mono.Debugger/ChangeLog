@@ -1,3 +1,9 @@
+2009-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachineManager.cs (Launch): Close the listening socket instead of
+	shutting it down since Shutdown throws on exception on non-connected sockets
+	in ms.net.
+
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachineManager.cs (Listen): Resurrect the old listen method.
