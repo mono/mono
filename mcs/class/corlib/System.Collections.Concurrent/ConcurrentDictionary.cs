@@ -33,7 +33,7 @@ namespace System.Collections.Concurrent
 {
 	public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 	  ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, 
-	  IDictionary, ICollection, IEnumerable, ISerializable, IDeserializationCallback
+	  IDictionary, ICollection, IEnumerable
 	{
 		class Pair
 		{
@@ -112,12 +112,6 @@ namespace System.Collections.Concurrent
 			: this (comparer)
 		{
 			
-		}
-		
-		[MonoTODO]
-		protected ConcurrentDictionary (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
 		}
 		
 		void Add (TKey key, TValue value)
@@ -512,33 +506,10 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		[MonoTODO]
-		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			GetObjectData (info, context);
-		}
-		
 		bool ICollection.IsSynchronized {
 			get { return true; }
 		}
 
-		[MonoTODO]
-		protected virtual void OnDeserialization (object sender)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-			OnDeserialization (sender);
-		}
-		
 		bool TryGetBasket (TKey key, out Basket basket)
 		{
 			basket = null;
