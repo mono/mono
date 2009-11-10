@@ -1,3 +1,18 @@
+2009-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* PasswordRecovery.cs:
+	{Question,Success,UserName}TemplateContainer must all be populated
+	the first time the property is accessed, so that calling
+	FindControl on the container returns valid and expected
+	results. If the associated template is not defined, though,
+	populating is postponed till CreateChildControls is called -
+	that's where default, empty, template will be created. This is
+	required to fix YetAnotherForum's password recovery control.
+	Mail template used in SendPasswordByMail must match the one used
+	in .NET (it has to end with a newline) as YAF parses the message
+	to retrieve user name and password and breaks if the last line
+	doesn't end with a newline character.
+
 2009-10-30  Marek Habersack  <mhabersack@novell.com>
 
 	* PasswordRecovery.cs: mail message replacements should include <%
