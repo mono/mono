@@ -1,4 +1,16 @@
-2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+    
+	* object-internals.h: Change signature for mono_string_to_utf8_image.
+
+	* object.c (mono_string_to_utf8_image): Change signature to take a MonoError
+	argument.
+
+	* reflection.c: Take care of mono_string_to_utf8_image change and avoid raising
+	exceptions due to mono_string_to_utf8.
+
+	Backport of r145797.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
     * object-internals.h: Change signature for mono_string_to_utf8_mp.
 
@@ -9,7 +21,7 @@
 
 	Backport of r145796.
 
-2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
  
      * mono-perfcounters.c (network_get_impl): Change variable initialization
      ordering to fix potential memory leak in case of exceptions.
@@ -19,7 +31,7 @@
 
 	Backport of r145795. 
 
-2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
     * file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): Change
     variable initialization ordering to fix potential memory leak in case
