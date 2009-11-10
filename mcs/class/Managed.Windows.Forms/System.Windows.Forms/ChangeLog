@@ -1,5 +1,15 @@
 2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGridTextBoxColumn.cs:
+	* DataGrid.cs: Position the cursor in the add row should *not* show
+	yet another new row - that will happen till we get any real input data
+	from the user. When that happens, we will also mark the new row as
+	ready to commit - otherwise, when the cursor moves to a different row,
+	the just added row will be discarded. This is exactly what .Net seems
+	to do.
+
+2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: The large value for our vertical scrollbar should
 	depend on the number of visible rows, instead of trying to re-use the
 	value of VisibleRowCount, which is the value of *current* visible
