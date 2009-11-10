@@ -384,7 +384,7 @@ namespace System.Net.Sockets {
 
 		void Linger (IntPtr handle)
 		{
-			if (linger_timeout <= 0)
+			if (!connected || linger_timeout <= 0)
 				return;
 
 			// We don't want to receive any more data
@@ -417,6 +417,7 @@ namespace System.Net.Sockets {
 				return;
 
 			disposed = true;
+			bool was_connected = connected;
 			connected = false;
 			if ((int) socket != -1) {
 				int error;
@@ -429,7 +430,8 @@ namespace System.Net.Sockets {
 					blocking_thread = null;
 				}
 
-				Linger (x);
+				if (was_connected)
+					Linger (x);
 				//DateTime start = DateTime.UtcNow;
 				Close_internal (x, out error);
 				//Console.WriteLine ("Time spent in Close_internal: {0}ms", (DateTime.UtcNow - start).TotalMilliseconds);
@@ -686,10 +688,12 @@ namespace System.Net.Sockets {
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
+			if (!connected)
+				throw new SocketException (10057); // Not connected
+
 			int error;
 			
 			Shutdown_internal (socket, how, out error);
-
 			if (error != 0)
 				throw new SocketException (error);
 		}
