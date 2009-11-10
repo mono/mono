@@ -1,3 +1,11 @@
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object-internals.h: Add mono_string_to_utf8_checked.
+
+	* object.c: Implement mono_string_to_utf8_checked.
+
+	Backport of r145539.
+
 2009-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c: When CoreCLR is enabled don't call mono_init_com_types
