@@ -31,6 +31,7 @@
 
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -42,10 +43,6 @@ using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
-
-#if NET_2_0
-using System.Collections.Generic;
-#endif
 
 namespace System.Web.UI {
 	internal class ServerSideScript
@@ -65,7 +62,6 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class TemplateParser : BaseParser
 	{
-#if NET_2_0
 		[Flags]
 		internal enum OutputCacheParsedParams
 		{
@@ -78,7 +74,6 @@ namespace System.Web.UI {
 			VaryByControl          = 0x0040,
 			VaryByContentEncodings = 0x0080
 		}
-#endif
 		
 		string inputFile;
 		string text;
@@ -86,17 +81,11 @@ namespace System.Web.UI {
 		ArrayList dependencies;
 		ArrayList assemblies;
 		Hashtable anames;
-#if NET_2_0
 		string[] binDirAssemblies;
 		Dictionary <string, bool> namespacesCache;
 		Dictionary <string, bool> imports;
 		List <string> interfaces;
 		List <ServerSideScript> scripts;
-#else
-		Hashtable imports;
-		ArrayList interfaces;
-		ArrayList scripts;
-#endif
 		Type baseType;
 		bool baseTypeIsGlobal = true;
 		string className;
@@ -111,14 +100,12 @@ namespace System.Web.UI {
 		bool output_cache;
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
-#if NET_2_0
 		string oc_content_encodings, oc_cacheprofile, oc_sqldependency;
 		bool oc_nostore;
 		OutputCacheParsedParams oc_parsed_params = 0;
-#endif
 		bool oc_shared;
 		OutputCacheLocation oc_location;
-#if NET_2_0
+
 		// Kludge needed to support pre-parsing of the main directive (see
 		// AspNetGenerator.GetRootBuilderType)
 		internal int allowedMainDirectives = 0;
@@ -136,50 +123,20 @@ namespace System.Web.UI {
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
 		Stack <string> includeDirs;
 		List <string> registeredTagNames;
-#else
-		Stack includeDirs;
-		Assembly srcAssembly;		
-#endif
 		ILocation directiveLocation;
 		
 		int appAssemblyIndex = -1;
 
 		internal TemplateParser ()
 		{
-#if NET_2_0
 			imports = new Dictionary <string, bool> (StringComparer.Ordinal);
-#else
-			imports = new Hashtable ();
-			imports.Add ("System", true);
-			imports.Add ("System.Collections", true);
-			imports.Add ("System.Collections.Specialized", true);
-			imports.Add ("System.Configuration", true);
-			imports.Add ("System.Text", true);
-			imports.Add ("System.Text.RegularExpressions", true);
-			imports.Add ("System.Web", true);
-			imports.Add ("System.Web.Caching", true);
-			imports.Add ("System.Web.Security", true);
-			imports.Add ("System.Web.SessionState", true);
-			imports.Add ("System.Web.UI", true);
-			imports.Add ("System.Web.UI.WebControls", true);
-			imports.Add ("System.Web.UI.HtmlControls", true);
-#endif
 			LoadConfigDefaults ();
 			assemblies = new ArrayList ();
-#if NET_2_0
 			CompilationSection compConfig = CompilationConfig;
 			foreach (AssemblyInfo info in compConfig.Assemblies) {
 				if (info.Assembly != "*")
 					AddAssemblyByName (info.Assembly);
 			}
-#else
-			CompilationConfiguration compConfig = CompilationConfig;
-			
-			foreach (string a in compConfig.Assemblies)
-				AddAssemblyByName (a);
-			if (compConfig.AssembliesInBin)
-				AddAssembliesInBin ();
-#endif
 
 			language = compConfig.DefaultLanguage;
 			implicitLanguage = true;
@@ -204,7 +161,6 @@ namespace System.Web.UI {
 
 		protected abstract Type CompileIntoType ();
 
-#if NET_2_0
 		internal void AddControl (Type type, IDictionary attributes)
 		{
 			AspGenerator generator = AspGenerator;
@@ -234,14 +190,11 @@ namespace System.Web.UI {
 				imports.Add (ns, true);
 			}
 		}
-#endif
 		
 		internal void RegisterCustomControl (string tagPrefix, string tagName, string src)
                 {
                         string realpath = null;
 			bool fileExists = false;
-			
-#if NET_2_0
 			VirtualFile vf = null;
 			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 			VirtualPath vp = new VirtualPath (src, BaseVirtualDir);
@@ -253,37 +206,18 @@ namespace System.Web.UI {
 				if (vf != null)
 					realpath = MapPath (vf.VirtualPath);
 			}
-#else
-			realpath = MapPath (src);
-			fileExists = File.Exists (realpath);
-#endif
+
 			if (!fileExists)
 				ThrowParseFileNotFound (src);
 
 			if (String.Compare (realpath, inputFile, false, Helpers.InvariantCulture) == 0)
                                 return;
 			
-#if NET_2_0
 			string vpath = vf.VirtualPath;
-#else
-			string vpath = VirtualPathUtility.Combine (BaseVirtualDir, src);
-			if (VirtualPathUtility.IsAbsolute (vpath))
-				vpath = VirtualPathUtility.ToAppRelative (vpath);
-#endif
                         
                         try {
-#if NET_2_0
 				RegisterTagName (tagPrefix + ":" + tagName);
 				RootBuilder.Foundry.RegisterFoundry (tagPrefix, tagName, vpath);
-#else
-				Type type = null;
-				ArrayList other_deps = new ArrayList ();
-                                type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
-				foreach (string s in other_deps)
-                                        AddDependency (s);
-				AddAssembly (type.Assembly, true);
-				RootBuilder.Foundry.RegisterFoundry (tagPrefix, tagName, type);
-#endif
 				AddDependency (vpath);
                         } catch (ParseException pe) {
                                 if (this is UserControlParser)
@@ -317,34 +251,25 @@ namespace System.Web.UI {
 		
 		internal virtual void AddDirective (string directive, Hashtable atts)
 		{
-#if NET_2_0
 			var pageParserFilter = PageParserFilter;
-#endif
 			if (String.Compare (directive, DefaultDirectiveName, true, Helpers.InvariantCulture) == 0) {
-#if NET_2_0
 				bool allowMainDirective = allowedMainDirectives > 0;
-#else
-				bool allowMainDirective = false;
-#endif
+				
 				if (mainAttributes != null && !allowMainDirective)
 					ThrowParseException ("Only 1 " + DefaultDirectiveName + " is allowed");
-#if NET_2_0
+
 				allowedMainDirectives--;
 				if (mainAttributes != null)
 					return;
 				
 				if (pageParserFilter != null)
 					pageParserFilter.PreprocessDirective (directive.ToLower (Helpers.InvariantCulture), atts);
-#endif
 				
 				mainAttributes = atts;
 				ProcessMainAttributes (mainAttributes);
 				return;
-			}
-#if NET_2_0
-			else if (pageParserFilter != null)
+			} else if (pageParserFilter != null)
 				pageParserFilter.PreprocessDirective (directive.ToLower (Helpers.InvariantCulture), atts);
-#endif
 				
 			int cmp = String.Compare ("Assembly", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {
@@ -424,7 +349,7 @@ namespace System.Web.UI {
 								ThrowParseException ("The 'duration' attribute must be set " +
 										     "to a positive integer value");
 							break;
-#if NET_2_0
+
 						case "sqldependency":
 							oc_sqldependency = (string) entry.Value;
 							break;
@@ -448,7 +373,7 @@ namespace System.Web.UI {
 							oc_content_encodings = (string) entry.Value;
 							oc_parsed_params |= OutputCacheParsedParams.VaryByContentEncodings;
 							break;
-#endif
+
 						case "varybyparam":
 							oc_param = (string) entry.Value;
 							if (String.Compare (oc_param, "none", true, Helpers.InvariantCulture) == 0)
@@ -456,15 +381,11 @@ namespace System.Web.UI {
 							break;
 						case "varybyheader":
 							oc_header = (string) entry.Value;
-#if NET_2_0
 							oc_parsed_params |= OutputCacheParsedParams.VaryByHeader;
-#endif
 							break;
 						case "varybycustom":
 							oc_custom = (string) entry.Value;
-#if NET_2_0
 							oc_parsed_params |= OutputCacheParsedParams.VaryByCustom;
-#endif
 							break;
 						case "location":
 							if (!(this is PageParser))
@@ -473,9 +394,7 @@ namespace System.Web.UI {
 							try {
 								oc_location = (OutputCacheLocation) Enum.Parse (
 									typeof (OutputCacheLocation), (string) entry.Value, true);
-#if NET_2_0
 								oc_parsed_params |= OutputCacheParsedParams.Location;
-#endif
 							} catch {
 								ThrowParseException ("The 'location' attribute is case sensitive and " +
 										     "must be one of the following values: Any, Client, " +
@@ -483,14 +402,8 @@ namespace System.Web.UI {
 							}
 							break;
 						case "varybycontrol":
-#if ONLY_1_1
-							if (this is PageParser)
-								goto default;
-#endif
 							oc_controls = (string) entry.Value;
-#if NET_2_0
 							oc_parsed_params |= OutputCacheParsedParams.VaryByControl;
-#endif
 							break;
 						case "shared":
 							if (this is PageParser)
@@ -536,30 +449,10 @@ namespace System.Web.UI {
 			return type;
 		}
 
-#if !NET_2_0
-		void AddAssembliesInBin ()
-		{
-			Assembly asm;
-			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
-				try {
-					asm = Assembly.LoadFrom (s);
-					assemblies.Add (asm.Location);
-				} catch (BadImageFormatException) {
-					// ignore silently
-				}
-			}
-		}
-#endif
-		
 		internal virtual void AddInterface (string iface)
 		{
-			if (interfaces == null) {
-#if NET_2_0
+			if (interfaces == null)
 				interfaces = new List <string> ();
-#else
-				interfaces = new ArrayList ();
-#endif
-			}
 
 			if (!interfaces.Contains (iface))
 				interfaces.Add (iface);
@@ -570,24 +463,16 @@ namespace System.Web.UI {
 			if (namesp == null || namesp.Length == 0)
 				return;
 			
-			if (imports == null) {
-#if NET_2_0
+			if (imports == null)
 				imports = new Dictionary <string, bool> (StringComparer.Ordinal);
-#else
-				imports = new Hashtable ();
-#endif
-			}
 			
 			if (imports.ContainsKey (namesp))
 				return;
 			
 			imports.Add (namesp, true);
-#if NET_2_0
 			AddAssemblyForNamespace (namesp);
-#endif
 		}
 
-#if NET_2_0
 		void AddAssemblyForNamespace (string namesp)
 		{
 			if (binDirAssemblies == null)
@@ -641,7 +526,6 @@ namespace System.Web.UI {
 
 			return false;
 		}
-#endif
 		
 		internal virtual void AddSourceDependency (string filename)
 		{
@@ -740,19 +624,12 @@ namespace System.Web.UI {
 		internal virtual void ProcessMainAttributes (Hashtable atts)
 		{
 			directiveLocation = new System.Web.Compilation.Location (Location);
-			
-#if NET_2_0
 			CompilationSection compConfig;
-#else
-			CompilationConfiguration compConfig;
-#endif
 
 			compConfig = CompilationConfig;
 			
 			atts.Remove ("Description"); // ignored
-#if NET_1_1
 			atts.Remove ("CodeBehind");  // ignored
-#endif
 			atts.Remove ("AspCompat"); // ignored
 			
 			debug = GetBool (atts, "Debug", compConfig.Debug);
@@ -769,7 +646,6 @@ namespace System.Web.UI {
 				linePragmasOn = GetBool (atts, "LinePragmas", true);
 
 			string inherits = GetString (atts, "Inherits", null);
-#if NET_2_0
 			string srcRealPath = null;
 			
 			// In ASP 2, the source file is actually integrated with
@@ -834,15 +710,7 @@ namespace System.Web.UI {
 				// Single-Page model.
 				SetBaseType (inherits);
 			}
-#else
-			string src = GetString (atts, "Src", null);
 
-			if (src != null)
-				srcAssembly = GetAssemblyFromSource (src);
-			
-			if (inherits != null)
-				SetBaseType (inherits);
-#endif
 			if (src != null) {
 				if (VirtualPathUtility.IsAbsolute (src))
 					src = VirtualPathUtility.ToAppRelative (src);
@@ -851,20 +719,13 @@ namespace System.Web.UI {
 			
 			className = GetString (atts, "ClassName", null);
 			if (className != null) {
-#if NET_2_0
 				string [] identifiers = className.Split ('.');
 				for (int i = 0; i < identifiers.Length; i++)
 					if (!CodeGenerator.IsValidLanguageIndependentIdentifier (identifiers [i]))
 						ThrowParseException (String.Format ("'{0}' is not a valid "
 							+ "value for attribute 'classname'.", className));
-#else
-				if (!CodeGenerator.IsValidLanguageIndependentIdentifier (className))
-					ThrowParseException (String.Format ("'{0}' is not a valid "
-						+ "value for attribute 'classname'.", className));
-#endif
 			}
 
-#if NET_2_0
 			if (this is TemplateControlParser)
 				metaResourceKey = GetString (atts, "meta:resourcekey", null);
 			
@@ -883,12 +744,11 @@ namespace System.Web.UI {
 				}
 				return;
 			}
-#endif
+
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 		}
 
-#if NET_2_0
 		void RegisterTagName (string tagName)
 		{
 			if (registeredTagNames == null)
@@ -971,7 +831,6 @@ namespace System.Web.UI {
 			UnknownAttributeDescriptor desc = new UnknownAttributeDescriptor (mi, value);
 			unknownMainAttributes.Add (desc);
 		}
-#endif
 		
 		internal void SetBaseType (string type)
 		{
@@ -982,16 +841,7 @@ namespace System.Web.UI {
 				parent = null;
 
 			if (parent == null) {
-#if NET_2_0			
 				parent = LoadType (type);
-#else
-				parent = null;
-				if (srcAssembly != null)
-					parent = srcAssembly.GetType (type);
-
-				if (parent == null)
-					parent = LoadType (type);
-#endif				
 
 				if (parent == null)
 					ThrowParseException ("Cannot find type " + type);
@@ -1000,11 +850,9 @@ namespace System.Web.UI {
 					ThrowParseException ("The parent type '" + type + "' does not derive from " + DefaultBaseType);
 			}
 
-#if NET_2_0
 			var pageParserFilter = PageParserFilter;
 			if (pageParserFilter != null && !pageParserFilter.AllowBaseType (parent))
 				throw new HttpException ("Base type '" + parent + "' is not allowed.");
-#endif
 			
 			baseType = parent;
 		}
@@ -1017,13 +865,8 @@ namespace System.Web.UI {
 
 		internal void PushIncludeDir (string dir)
 		{
-			if (includeDirs == null) {
-#if NET_2_0
+			if (includeDirs == null)
 				includeDirs = new Stack <string> (1);
-#else
-				includeDirs = new Stack (1);
-#endif
-			}
 
 			includeDirs.Push (dir);
 		}
@@ -1046,8 +889,6 @@ namespace System.Web.UI {
 			AddSourceDependency (vpath);
 			
 			CompilerResults result;
-
-#if NET_2_0
 			string tmp;
 			CompilerParameters parameters;
 			CodeDomProvider provider = BaseCompiler.CreateProvider (HttpContext.Current, language, out parameters, out tmp);
@@ -1059,9 +900,7 @@ namespace System.Web.UI {
 			abuilder.AddAssemblyReference (BuildManager.GetReferencedAssemblies () as List <Assembly>);
 			abuilder.AddCodeFile (realPath);
 			result = abuilder.BuildAssembly (new VirtualPath (vpath));
-#else
-			result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
-#endif
+
 			if (result.NativeCompilerReturnValue != 0) {
 				using (StreamReader reader = new StreamReader (realPath)) {
 					throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
@@ -1079,7 +918,6 @@ namespace System.Web.UI {
 			get { return linePragmasOn; }
 		}
 		
-#if NET_2_0
 		internal byte[] MD5Checksum {
 			get { return md5checksum; }
 			set { md5checksum = value; }
@@ -1114,7 +952,6 @@ namespace System.Web.UI {
 				return pageParserFilterType;
 			}
 		}
-#endif
 		
 		internal Type DefaultBaseType {
 			get {
@@ -1143,7 +980,6 @@ namespace System.Web.UI {
 			set { inputFile = value; }
 		}
 
-#if NET_2_0
 		internal bool IsPartial {
 			get { return (!srcIsLegacy && src != null); }
 		}
@@ -1178,7 +1014,6 @@ namespace System.Web.UI {
 		{
 			get { return unknownMainAttributes; }
 		}
-#endif
 
 		internal string Text {
 			get { return text; }
@@ -1199,9 +1034,7 @@ namespace System.Web.UI {
 			set { baseTypeIsGlobal = value; }
 		}
 
-#if NET_2_0
 		static long autoClassCounter = 0;
-#endif
 
 		internal string EncodeIdentifier (string value)
 		{
@@ -1263,7 +1096,6 @@ namespace System.Web.UI {
 				if (className != null)
 					return className;
 
-#if NET_2_0
 				string physPath = HttpContext.Current.Request.PhysicalApplicationPath;
 				string inFile;
 				
@@ -1290,14 +1122,12 @@ namespace System.Web.UI {
 				if (StrUtils.StartsWith (inFile, physPath))
 					className = inputFile.Substring (physPath.Length).ToLower (Helpers.InvariantCulture);
 				else
-#endif
 					className = Path.GetFileName (inputFile);
 				className = EncodeIdentifier (className);
 				return className;
 			}
 		}
 
-#if NET_2_0
 		internal List <ServerSideScript> Scripts {
 			get {
 				if (scripts == null)
@@ -1314,24 +1144,6 @@ namespace System.Web.UI {
 		internal List <string> Interfaces {
 			get { return interfaces; }
 		}
-#else
-		internal ArrayList Scripts {
-			get {
-				if (scripts == null)
-					scripts = new ArrayList ();
-
-				return scripts;
-			}
-		}
-
-		internal Hashtable Imports {
-			get { return imports; }
-		}
-
-		internal ArrayList Interfaces {
-			get { return interfaces; }
-		}
-#endif
 		
 		internal ArrayList Assemblies {
 			get {
@@ -1348,13 +1160,12 @@ namespace System.Web.UI {
 
 		internal RootBuilder RootBuilder {
 			get {
-#if NET_2_0
 				if (rootBuilder != null)
 					return rootBuilder;
 				AspGenerator generator = AspGenerator;
 				if (generator != null)
 					rootBuilder = generator.RootBuilder;
-#endif
+
 				return rootBuilder;
 			}
 			set { rootBuilder = value; }
@@ -1397,7 +1208,6 @@ namespace System.Web.UI {
 			get { return oc_duration; }
 		}
 
-#if NET_2_0
 		internal OutputCacheParsedParams OutputCacheParsedParameters {
 			get { return oc_parsed_params; }
 		}
@@ -1422,7 +1232,6 @@ namespace System.Web.UI {
 			get { return null; }
 			set { /* no-op */ }
 		}
-#endif
 		
 		internal string OutputCacheVaryByHeader {
 			get { return oc_header; }
@@ -1448,7 +1257,6 @@ namespace System.Web.UI {
 			get { return oc_param; }
 		}
 
-#if NET_2_0
 		internal List <string> RegisteredTagNames {
 			get { return registeredTagNames; }
 		}
@@ -1461,10 +1269,5 @@ namespace System.Web.UI {
 			get;
 			set;
 		}
-#else
-		internal PagesConfiguration PagesConfig {
-			get { return PagesConfiguration.GetInstance (Context); }
-		}
-#endif
 	}
 }
