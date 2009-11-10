@@ -1,3 +1,8 @@
+2009-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arch_get_call_filter_full): Update after the
+	LDMIA->LDM macro name change.
+
 2009-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Fix the previous change by passing
