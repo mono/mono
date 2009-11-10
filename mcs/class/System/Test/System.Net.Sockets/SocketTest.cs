@@ -3997,5 +3997,22 @@ namespace MonoTests.System.Net.Sockets
 				Assert.AreEqual (typeof (Socket).FullName, ex.ObjectName, "#5");
 			}
 		}
+
+		[Test]
+		public void Shutdown_NoConnect ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			s.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+			s.Listen (1);
+			try {
+				s.Shutdown (SocketShutdown.Both);
+				Assert.Fail ("#1");
+			} catch (SocketException exc) {
+				Assert.AreEqual (10057, exc.ErrorCode, "#2");
+			} finally {
+				s.Close ();
+			}
+		}
 	}
 }
+
