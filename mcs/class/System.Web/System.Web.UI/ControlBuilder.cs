@@ -476,7 +476,7 @@ namespace System.Web.UI {
 			if (tagType == null)
 				return null;
 			
-			PagesSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
+			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 			if (ps == null)
 				return tagType;
 

@@ -157,7 +157,7 @@ namespace System.Web.UI
 			VirtualPath vpath = VirtualPath;
 			string vp = vpath != null ? vpath.Absolute : null;
 			if (vp == null)
-				return WebConfigurationManager.GetWebApplicationSection (section) as TSection;
+				return WebConfigurationManager.GetSection (section) as TSection;
 			else
 				return WebConfigurationManager.GetSection (section, vp) as TSection;
 		}

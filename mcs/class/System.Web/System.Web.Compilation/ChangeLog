@@ -1,3 +1,11 @@
+2009-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseCompiler.cs: parser.Imports is a Dictionary <>/Hashtable
+	now.
+
+	* AspComponentFoundry.cs: system.web/pages section is not confined
+	to the top-level web.config
+
 2009-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: put default culture resources in a

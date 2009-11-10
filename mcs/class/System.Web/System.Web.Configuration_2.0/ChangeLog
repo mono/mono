@@ -1,3 +1,8 @@
+2009-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: path passed to OpenWebConfiguration
+	from GetSection does not come from FindWebConfig.
+
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: there's no need to cache sections by
