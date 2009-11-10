@@ -1,5 +1,15 @@
 2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object-internals.h: Change signature for mono_string_to_utf8_image.
+
+	* object.c (mono_string_to_utf8_image): Change signature to take a MonoError
+	argument.
+
+	* reflection.c: Take care of mono_string_to_utf8_image change and avoid raising
+	exceptions due to mono_string_to_utf8.
+
+2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object-internals.h: Change signature for mono_string_to_utf8_mp.
 
 	* object.c (mono_remote_class): Make sure all resources are released before
