@@ -1,3 +1,7 @@
+2009-11-10  Andrew Jorgensen  <ajorgensen@novell.com>
+
+	* Makefile.am: mint man page should be conditional also
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* interp.c: Change location of gc_wrapper.h.
