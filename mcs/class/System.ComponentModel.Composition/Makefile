@@ -3,9 +3,12 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ComponentModel.Composition.dll
-LIB_MCS_FLAGS = -r:System.dll -r:System.Core.dll -resource:./src/ComponentModel/Strings.resx
+LIB_MCS_FLAGS = -r:System.dll -r:System.Core.dll -d:CLR40 -resource:$(RESOURCE_FILES)
 
-RESX_RESOURCES = ./src/ComponentModel/Strings.resx
+RESOURCE_FILES = src/ComponentModel/Strings.resx
+
+EXTRA_DISTFILES = \
+	$(RESOURCE_FILES)
 
 VALID_PROFILE := $(filter 4.0, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE
