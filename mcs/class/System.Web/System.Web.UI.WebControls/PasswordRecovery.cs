@@ -337,10 +337,14 @@ namespace System.Web.UI.WebControls
 
 		public Control QuestionTemplateContainer
 		{
-			get
-			{
-				if (_questionTemplateContainer == null)
+			get {
+				if (_questionTemplateContainer == null) {
 					_questionTemplateContainer = new QuestionContainer (this);
+					ITemplate template = QuestionTemplate;
+					if (template != null)
+						_questionTemplateContainer.InstantiateTemplate (template);
+				}
+				
 				return _questionTemplateContainer;
 			}
 		}
@@ -354,10 +358,14 @@ namespace System.Web.UI.WebControls
 
 		public Control SuccessTemplateContainer
 		{
-			get
-			{
-				if (_successTemplateContainer == null)
+			get {
+				if (_successTemplateContainer == null) {
 					_successTemplateContainer = new SuccessContainer (this);
+					ITemplate template = SuccessTemplate;
+					if (template != null)
+						_successTemplateContainer.InstantiateTemplate (template);
+				}
+				
 				return _successTemplateContainer;
 			}
 		}
@@ -373,8 +381,13 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if (_userNameTemplateContainer == null)
+				if (_userNameTemplateContainer == null) {
 					_userNameTemplateContainer = new UserNameContainer (this);
+					ITemplate template = UserNameTemplate;
+					if (template != null)
+						_userNameTemplateContainer.InstantiateTemplate (template);
+				}
+				
 				return _userNameTemplateContainer;
 			}
 		}
@@ -519,19 +532,22 @@ namespace System.Web.UI.WebControls
 		protected internal override void CreateChildControls ()
 		{
 			ITemplate userNameTemplate = UserNameTemplate;
-			if (userNameTemplate == null)
+			if (userNameTemplate == null) {
 				userNameTemplate = new UserNameDefaultTemplate (this);
-			((UserNameContainer) UserNameTemplateContainer).InstantiateTemplate (userNameTemplate);
-
+				((UserNameContainer) UserNameTemplateContainer).InstantiateTemplate (userNameTemplate);
+			}
+			
 			ITemplate questionTemplate = QuestionTemplate;
-			if (questionTemplate == null)
+			if (questionTemplate == null) {
 				questionTemplate = new QuestionDefaultTemplate (this);
-			((QuestionContainer) QuestionTemplateContainer).InstantiateTemplate (questionTemplate);
+				((QuestionContainer) QuestionTemplateContainer).InstantiateTemplate (questionTemplate);
+			}
 
 			ITemplate successTemplate = SuccessTemplate;
-			if (successTemplate == null)
+			if (successTemplate == null) {
 				successTemplate = new SuccessDefaultTemplate (this);
-			((SuccessContainer) SuccessTemplateContainer).InstantiateTemplate (successTemplate);
+				((SuccessContainer) SuccessTemplateContainer).InstantiateTemplate (successTemplate);
+			}
 
 			Controls.AddAt (0, UserNameTemplateContainer);
 			Controls.AddAt (1, QuestionTemplateContainer);
@@ -791,8 +807,10 @@ namespace System.Web.UI.WebControls
 			if (user == null)
 				return;
 
+			// DO NOT change format of the message - it has to be exactly the same as in
+			// .NET as some software (e.g. YetAnotherForum) depends on it.
 			string messageText = "Please return to the site and log in using the following information.\n" +
-				"User Name: <%USERNAME%>\nPassword: <%PASSWORD%>";
+				"User Name: <%USERNAME%>\nPassword: <%PASSWORD%>\n";
 
 			ListDictionary dictionary = new ListDictionary (StringComparer.OrdinalIgnoreCase);
 			dictionary.Add ("<%USERNAME%>", username);
