@@ -283,6 +283,12 @@ namespace Mono.CSharp {
 		void_decimal_ctor_long_arg = null;
 
 		isvolatile_type = null;
+		
+		call_site_type =
+		generic_call_site_type =
+		binder_flags = null;
+
+		binder_type = null;
 			
 		// to uncover regressions
 		AllClsTopLevelTypes = null;

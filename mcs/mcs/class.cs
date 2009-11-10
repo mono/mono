@@ -1359,6 +1359,13 @@ namespace Mono.CSharp {
 
 						if (!ct.CheckConstraints (this))
 							return false;
+
+						if (ct.HasDynamicArguments ()) {
+							Report.Error (1966, iface.Location,
+								"`{0}': cannot implement a dynamic interface `{1}'",
+								GetSignatureForError (), iface.GetSignatureForError ());
+							return false;
+						}
 					}
 				}
 			}
@@ -2635,6 +2642,11 @@ namespace Mono.CSharp {
 
 				if (a.GetLayoutKindValue () == LayoutKind.Explicit)
 					PartialContainer.HasExplicitLayout = true;
+			}
+
+			if (a.Type == pa.Dynamic) {
+				a.Error_MisusedDynamicAttribute ();
+				return;
 			}
 
 			base.ApplyAttributeBuilder (a, cb, pa);
@@ -3937,7 +3949,7 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsDynamicType (ReturnType)) {
 				return_attributes = new ReturnParameter (MethodBuilder, Location);
-				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
 			if (OptAttributes != null)
@@ -5506,6 +5518,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == pa.Dynamic) {
+				a.Error_MisusedDynamicAttribute ();
+				return;
+			}
+
 			FieldBuilder.SetCustomAttribute (cb);
 		}
 
@@ -6152,7 +6169,7 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsDynamicType (ReturnType)) {
 				return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
-				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
 			if (OptAttributes != null)
@@ -6519,6 +6536,11 @@ namespace Mono.CSharp {
 		{
 			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
+				return;
+			}
+
+			if (a.Type == pa.Dynamic) {
+				a.Error_MisusedDynamicAttribute ();
 				return;
 			}
 

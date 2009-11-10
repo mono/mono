@@ -170,7 +170,11 @@ namespace Mono.CSharp {
 			impl_details_class = null;
 			helper_classes = null;
 
+#if NET_4_0
+			MetadataCompatibilityVersion = MetadataVersion.v4;
+#else
 			MetadataCompatibilityVersion = MetadataVersion.v2;
+#endif
 
 			//
 			// Setup default defines

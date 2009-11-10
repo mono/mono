@@ -322,6 +322,12 @@ namespace Mono.CSharp {
 				GenericTypeExpr cexpr = fn as GenericTypeExpr;
 				if (cexpr != null) {
 					expr = cexpr.ResolveAsBaseTerminal (ec, false);
+					if (expr != null && cexpr.HasDynamicArguments ()) {
+						Report.Error (1968, cexpr.Location,
+							"A constraint cannot be the dynamic type `{0}'",
+							cexpr.GetSignatureForError ());
+						expr = null;
+					}
 				} else
 					expr = ((Expression) obj).ResolveAsTypeTerminal (ec, false);
 
@@ -1416,6 +1422,25 @@ namespace Mono.CSharp {
 		public override bool CheckAccessLevel (IMemberContext mc)
 		{
 			return mc.CurrentTypeDefinition.CheckAccessLevel (open_type);
+		}
+
+		public bool HasDynamicArguments ()
+		{
+			return HasDynamicArguments (args.Arguments);
+		}
+
+		static bool HasDynamicArguments (Type[] args)
+		{
+			foreach (var item in args)
+			{
+				if (TypeManager.IsGenericType (item))
+					return HasDynamicArguments (TypeManager.GetTypeArguments (item));
+
+				if (TypeManager.IsDynamicType (item))
+					return true;
+			}
+
+			return false;
 		}
 
 		public override bool IsClass {

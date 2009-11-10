@@ -2644,8 +2644,18 @@ namespace Mono.CSharp {
 				return fne;
 			}
 
-			if (!HasTypeArguments && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3)
+			if (!HasTypeArguments && Name == "dynamic" &&
+				RootContext.Version > LanguageVersion.V_3 &&
+				RootContext.MetadataCompatibilityVersion > MetadataVersion.v2) {
+
+				if (!PredefinedAttributes.Get.Dynamic.IsDefined) {
+					ec.Compiler.Report.Error (1980, Location,
+						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
+						PredefinedAttributes.Get.Dynamic.GetSignatureForError ());
+				}
+
 				return new DynamicTypeExpr (loc);
+			}
 
 			if (silent || errors != ec.Compiler.Report.Errors)
 				return null;

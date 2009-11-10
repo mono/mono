@@ -41,7 +41,18 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == pa.Dynamic) {
+				a.Error_MisusedDynamicAttribute ();
+				return;
+			}
+
 			builder.SetCustomAttribute (cb);
+		}
+
+		public ParameterBuilder Builder {
+			get {
+				return builder;
+			}
 		}
 
 		public override bool IsClsComplianceRequired()
@@ -82,12 +93,6 @@ namespace Mono.CSharp {
 			get {
 				return AttributeTargets.ReturnValue;
 			}
-		}
-
-		public void EmitPredefined (PredefinedAttribute pa, Location loc)
-		{
-			if (builder != null)
-				pa.EmitAttribute (builder, loc);
 		}
 
 		/// <summary>
@@ -171,7 +176,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
 			base.ApplyAttributes (mb, cb, index);
-			PredefinedAttributes.Get.ParamArray.EmitAttribute (builder, Location);
+			PredefinedAttributes.Get.ParamArray.EmitAttribute (builder);
 		}
 	}
 
@@ -538,7 +543,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsDynamicType (parameter_type))
-				PredefinedAttributes.Get.Dynamic.EmitAttribute (builder, Location);
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (builder);
 		}
 
 		public override string[] ValidAttributeTargets {

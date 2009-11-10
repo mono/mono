@@ -269,6 +269,13 @@ namespace Mono.CSharp
 		{
 			int errors = rc.Report.Errors;
 
+			if (TypeManager.binder_type == null) {
+				var t = TypeManager.CoreLookupType (rc.Compiler,
+					"Microsoft.CSharp.RuntimeBinder", "Binder", Kind.Class, true);
+				if (t != null)
+					TypeManager.binder_type = new TypeExpression (t, Location.Null);
+			}
+
 			if (TypeManager.call_site_type == null)
 				TypeManager.call_site_type = TypeManager.CoreLookupType (rc.Compiler,
 					"System.Runtime.CompilerServices", "CallSite", Kind.Class, true);
@@ -276,13 +283,6 @@ namespace Mono.CSharp
 			if (TypeManager.generic_call_site_type == null)
 				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (rc.Compiler,
 					"System.Runtime.CompilerServices", "CallSite`1", Kind.Class, true);
-
-			if (TypeManager.binder_type == null) {
-				var t = TypeManager.CoreLookupType (rc.Compiler,
-					"Microsoft.CSharp.RuntimeBinder", "Binder", Kind.Class, true);
-				if (t != null)
-					TypeManager.binder_type = new TypeExpression (t, Location.Null);
-			}
 
 			if (TypeManager.binder_flags == null) {
 				TypeManager.binder_flags = TypeManager.CoreLookupType (rc.Compiler,
@@ -294,7 +294,12 @@ namespace Mono.CSharp
 			if (type == null)
 				type = InternalType.Dynamic;
 
-			return rc.Report.Errors == errors;
+			if (rc.Report.Errors == errors)
+				return true;
+
+			rc.Report.Error (1969, loc,
+				"Dynamic operation cannot be compiled without `Microsoft.CSharp.dll' assembly reference");
+			return false;
 		}
 
 		public override void Emit (EmitContext ec)

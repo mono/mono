@@ -202,6 +202,11 @@ namespace Mono.CSharp {
 			Report.Error (1112, Location, "Do not use `{0}' directly. Use parameter modifier `this' instead", GetSignatureForError ());
 		}
 
+		public void Error_MisusedDynamicAttribute ()
+		{
+			Report.Error (1970, loc, "Do not use `{0}' directly. Use `dynamic' keyword instead", GetSignatureForError ());
+		}
+
 		/// <summary>
 		/// This is rather hack. We report many emit attribute error with same error to be compatible with
 		/// csc. But because csc has to report them this way because error came from ilasm we needn't.
@@ -1201,9 +1206,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			var predefined = PredefinedAttributes.Get;
+
 			try {
 				foreach (Attributable target in targets)
-					target.ApplyAttributeBuilder (this, cb, PredefinedAttributes.Get);
+					target.ApplyAttributeBuilder (this, cb, predefined);
 			} catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
 				return;
@@ -1990,6 +1997,8 @@ namespace Mono.CSharp {
 		ConstructorInfo ctor;
 		readonly string ns, name;
 
+		static readonly Type NotFound = typeof (PredefinedAttribute);
+
 		public PredefinedAttribute (string ns, string name)
 		{
 			this.ns = ns;
@@ -2013,6 +2022,11 @@ namespace Mono.CSharp {
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
+		}
+
+		public string GetSignatureForError ()
+		{
+			return ns + "." + name;
 		}
 
 		public override bool Equals (object obj)
@@ -2056,14 +2070,14 @@ namespace Mono.CSharp {
 				builder.SetCustomAttribute (cab);
 		}
 
-		public void EmitAttribute (ParameterBuilder builder, Location loc)
+		public void EmitAttribute (ParameterBuilder builder)
 		{
 			if (ResolveBuilder ())
 				builder.SetCustomAttribute (cab);
 		}
 
 		public bool IsDefined {
-			get { return type != null && type != typeof (PredefinedAttribute); }
+			get { return type != null && type != NotFound; }
 		}
 
 		public bool Resolve (bool canFail)
@@ -2077,7 +2091,7 @@ namespace Mono.CSharp {
 
 			type = TypeManager.CoreLookupType (RootContext.ToplevelTypes.Compiler, ns, name, Kind.Class, !canFail);
 			if (type == null) {
-				type = typeof (PredefinedAttribute);
+				type = NotFound;
 				return false;
 			}
 

@@ -252,7 +252,7 @@ namespace Mono.CSharp
 							mg.Name);
 					} else if (arg_type == InternalType.AnonymousMethod) {
 						rc.Report.Error (1977, a.Expr.Location,
-							"An anonymous method or lambda expression cannot be used as an argument of dynamic operation without a cast");
+							"An anonymous method or lambda expression cannot be used as an argument of dynamic operation. Consider using a cast");
 					} else if (arg_type == TypeManager.void_type || arg_type == InternalType.Arglist || arg_type.IsPointer) {
 						rc.Report.Error (1978, a.Expr.Location,
 							"An expression of type `{0}' cannot be used as an argument of dynamic operation",

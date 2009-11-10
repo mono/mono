@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 		{
 			if (TypeManager.IsDynamicType (ret_type)) {
 				return_attributes = new ReturnParameter (InvokeBuilder, Location);
-				return_attributes.EmitPredefined (PredefinedAttributes.Get.Dynamic, Location);
+				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
 			Parameters.ApplyAttributes (InvokeBuilder);

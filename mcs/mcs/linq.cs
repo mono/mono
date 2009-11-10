@@ -38,7 +38,8 @@ namespace Mono.CSharp.Linq
 			int counter = QueryBlock.TransparentParameter.Counter;
 
 			Expression e = BuildQueryClause (ec, null);
-			e = e.Resolve (ec);
+			if (e != null)
+				e = e.Resolve (ec);
 
 			//
 			// Reset counter in probing mode to ensure that all transparent
@@ -268,6 +269,17 @@ namespace Mono.CSharp.Linq
 
 		public override Expression BuildQueryClause (ResolveContext ec, Expression lSide)
 		{
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return null;
+
+			if (TypeManager.IsDynamicType (expr.Type) || expr.Type == TypeManager.void_type) {
+				ec.Report.Error (1979, expr.Location,
+					"Query expression with a source or join sequence of type `{0}' is not allowed",
+					TypeManager.CSharpName (expr.Type));
+				return null;
+			}
+
 			return next.BuildQueryClause (ec, expr);
 		}
 
