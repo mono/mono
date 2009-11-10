@@ -35,7 +35,6 @@ man_MANS = \
 	monop.1               \
 	mono-service.1        \
 	mono-shlib-cop.1      \
-	monostyle.1           \
 	mono-xmltool.1        \
 	mozroots.1            \
 	pdb2mdb.1	      \
