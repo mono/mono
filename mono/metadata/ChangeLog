@@ -1,4 +1,14 @@
 2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+ 
+     * mono-perfcounters.c (network_get_impl): Change variable initialization
+     ordering to fix potential memory leak in case of exceptions.
+ 
+     * mono-perfcounters.c (mono_perfcounter_create): Properly handle badly
+     encoded strings.
+
+	Backport of r145795. 
+
+2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
     * file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): Change
     variable initialization ordering to fix potential memory leak in case
