@@ -1,4 +1,15 @@
 2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * object-internals.h: Change signature for mono_string_to_utf8_mp.
+
+    * object.c (mono_remote_class): Make sure all resources are released before
+    raising an exception.
+
+    * object.c (mono_print_unhandled_exception): Avoid raising an exception.
+
+	Backport of r145796.
+
+2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
  
      * mono-perfcounters.c (network_get_impl): Change variable initialization
      ordering to fix potential memory leak in case of exceptions.
