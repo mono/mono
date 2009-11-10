@@ -89,11 +89,11 @@ namespace System.Web.UI {
 #if NET_2_0
 		string[] binDirAssemblies;
 		Dictionary <string, bool> namespacesCache;
-		List <string> imports;
+		Dictionary <string, bool> imports;
 		List <string> interfaces;
 		List <ServerSideScript> scripts;
 #else
-		ArrayList imports;
+		Hashtable imports;
 		ArrayList interfaces;
 		ArrayList scripts;
 #endif
@@ -146,37 +146,31 @@ namespace System.Web.UI {
 
 		internal TemplateParser ()
 		{
-			LoadConfigDefaults ();
 #if NET_2_0
-			imports = new List <string> ();
-			AddNamespaces (imports);
+			imports = new Dictionary <string, bool> (StringComparer.Ordinal);
 #else
-			imports = new ArrayList ();
-			imports.Add ("System");
-			imports.Add ("System.Collections");
-			imports.Add ("System.Collections.Specialized");
-			imports.Add ("System.Configuration");
-			imports.Add ("System.Text");
-			imports.Add ("System.Text.RegularExpressions");
-			imports.Add ("System.Web");
-			imports.Add ("System.Web.Caching");
-			imports.Add ("System.Web.Security");
-			imports.Add ("System.Web.SessionState");
-			imports.Add ("System.Web.UI");
-			imports.Add ("System.Web.UI.WebControls");
-			imports.Add ("System.Web.UI.HtmlControls");
+			imports = new Hashtable ();
+			imports.Add ("System", true);
+			imports.Add ("System.Collections", true);
+			imports.Add ("System.Collections.Specialized", true);
+			imports.Add ("System.Configuration", true);
+			imports.Add ("System.Text", true);
+			imports.Add ("System.Text.RegularExpressions", true);
+			imports.Add ("System.Web", true);
+			imports.Add ("System.Web.Caching", true);
+			imports.Add ("System.Web.Security", true);
+			imports.Add ("System.Web.SessionState", true);
+			imports.Add ("System.Web.UI", true);
+			imports.Add ("System.Web.UI.WebControls", true);
+			imports.Add ("System.Web.UI.HtmlControls", true);
 #endif
-
+			LoadConfigDefaults ();
 			assemblies = new ArrayList ();
 #if NET_2_0
 			CompilationSection compConfig = CompilationConfig;
 			foreach (AssemblyInfo info in compConfig.Assemblies) {
 				if (info.Assembly != "*")
 					AddAssemblyByName (info.Assembly);
-			}
-
-			foreach (NamespaceInfo info in PagesConfig.Namespaces) {
-				imports.Add (info.Namespace);
 			}
 #else
 			CompilationConfiguration compConfig = CompilationConfig;
@@ -193,6 +187,7 @@ namespace System.Web.UI {
 
 		internal virtual void LoadConfigDefaults ()
 		{
+			AddNamespaces (imports);
 			debug = CompilationConfig.Debug;
 		}
 		
@@ -218,10 +213,10 @@ namespace System.Web.UI {
 			generator.AddControl (type, attributes);
 		}
 		
-		void AddNamespaces (List <string> imports)
+		void AddNamespaces (Dictionary <string, bool> imports)
 		{
 			if (BuildManager.HaveResources)
-				imports.Add ("System.Resources");
+				imports.Add ("System.Resources", true);
 			
 			PagesSection pages = PagesConfig;
 			if (pages == null)
@@ -230,9 +225,14 @@ namespace System.Web.UI {
 			NamespaceCollection namespaces = pages.Namespaces;
 			if (namespaces == null || namespaces.Count == 0)
 				return;
-
-			foreach (NamespaceInfo nsi in namespaces)
-				imports.Add (nsi.Namespace);
+			
+			foreach (NamespaceInfo nsi in namespaces) {
+				string ns = nsi.Namespace;
+				if (imports.ContainsKey (ns))
+					continue;
+				
+				imports.Add (ns, true);
+			}
 		}
 #endif
 		
@@ -572,16 +572,16 @@ namespace System.Web.UI {
 			
 			if (imports == null) {
 #if NET_2_0
-				imports = new List <string> ();
+				imports = new Dictionary <string, bool> (StringComparer.Ordinal);
 #else
-				imports = new ArrayList ();
+				imports = new Hashtable ();
 #endif
 			}
 			
-			if (imports.Contains (namesp))
+			if (imports.ContainsKey (namesp))
 				return;
 			
-			imports.Add (namesp);
+			imports.Add (namesp, true);
 #if NET_2_0
 			AddAssemblyForNamespace (namesp);
 #endif
@@ -1307,7 +1307,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		internal List <string> Imports {
+		internal Dictionary <string, bool> Imports {
 			get { return imports; }
 		}
 
@@ -1324,7 +1324,7 @@ namespace System.Web.UI {
 			}
 		}
 
-		internal ArrayList Imports {
+		internal Hashtable Imports {
 			get { return imports; }
 		}
 

@@ -188,7 +188,7 @@ namespace System.Web.Compilation
 
 		void RegisterConfigControls ()
 		{
-			PagesSection pages = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
+			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 			if (pages == null)
 				return;
 

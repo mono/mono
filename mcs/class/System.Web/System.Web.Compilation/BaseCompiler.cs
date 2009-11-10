@@ -225,7 +225,7 @@ namespace System.Web.Compilation
 			mainClass.TypeAttributes = TypeAttributes.Public;
 			mainNS.Types.Add (mainClass);
 
-			foreach (object o in parser.Imports) {
+			foreach (object o in parser.Imports.Keys) {
 				if (o is string)
 					mainNS.Imports.Add (new CodeNamespaceImport ((string) o));
 			}

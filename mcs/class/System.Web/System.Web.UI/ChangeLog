@@ -1,3 +1,14 @@
+2009-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: AddImports is called from LoadConfigDefaults
+	so that it reads configuration from the correct .config file (it
+	needs to be called after this.VirtualPath has been
+	initialized). Fixes an issue with MVC apps which put configuration
+	in Views/web.config etc. Fixes bug #552457
+
+	* ControlBuilder.cs, Page.cs: system.web/pages section is not
+	confined to the top-level web.config
+
 2009-10-30  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: ResolveClientUrl takes base path from
