@@ -477,13 +477,13 @@ public abstract class Encoding
 			case UnicodeEncoding.BIG_UNICODE_CODE_PAGE:
 				return BigEndianUnicode;
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			case Latin1Encoding.ISOLATIN_CODE_PAGE:
 				return ISOLatin1;
 #endif
 			default: break;
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// Try to obtain a code page handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codepage));
 		if (enc != null) {
@@ -534,7 +534,7 @@ public abstract class Encoding
 		return e;
 	}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 
 	public static Encoding GetEncoding (int codepage,
 		EncoderFallback encoderFallback, DecoderFallback decoderFallback)
@@ -653,7 +653,7 @@ public abstract class Encoding
 			"UTF_32BE",
 #endif
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
 			"iso_8859_1", "latin1"
 #endif // !NET_2_1
@@ -682,7 +682,7 @@ public abstract class Encoding
 			if (converted == ((string)encodings [i]))
 				return GetEncoding (code);
 		}
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		// Try to obtain a web encoding handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", name));
 		if (enc != null) {
@@ -924,7 +924,7 @@ public abstract class Encoding
 								case 3: code_page = UTF8Encoding.UTF8_CODE_PAGE; break;
 								case 4: code_page = UnicodeEncoding.UNICODE_CODE_PAGE; break;
 								case 5: code_page = UnicodeEncoding.BIG_UNICODE_CODE_PAGE; break;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 								case 6: code_page = Latin1Encoding.ISOLATIN_CODE_PAGE; break;
 #endif
 								}
@@ -949,7 +949,7 @@ public abstract class Encoding
 		}
 	}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 
 	// Get the ISO Latin1 encoding object.
 	private static Encoding ISOLatin1
