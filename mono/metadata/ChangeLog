@@ -1,5 +1,12 @@
 2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+    * icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): Don't
+    leak memory with broken envvar value.
+
+	Backport of r145656.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object-internals.h: Add mono_string_to_utf8_checked.
 
 	* object.c: Implement mono_string_to_utf8_checked.
