@@ -38,54 +38,35 @@ namespace System
 {
 	[SerializableAttribute]
 	[ComVisibleAttribute(false)]
-	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, 
-							 ExternalThreading = true)]
-	public class Lazy<T> : ISerializable
+	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
+	public class Lazy<T> 
 	{
 		T value;
 		bool inited;
-		LazyExecutionMode mode;
 		Func<T> factory;
 		object monitor;
 
-		public Lazy () : this (LazyExecutionMode.NotThreadSafe) {
+		public Lazy () : this (() => Activator.CreateInstance<T>(), true)
+		{
 		}
 
-		public Lazy (Func<T> valueFactory) : this (valueFactory, LazyExecutionMode.NotThreadSafe) {
+		public Lazy (Func<T> valueFactory) : this (valueFactory, true)
+		{
 		}
 
-		public Lazy (LazyExecutionMode mode) {
-			this.mode = mode;
-			if (mode != LazyExecutionMode.NotThreadSafe)
-				monitor = new Object ();
+		public Lazy (bool isThreadSafe) : this (() => Activator.CreateInstance<T> (), isThreadSafe)
+		{
 		}
-
-		public Lazy (Func<T> valueFactory, LazyExecutionMode mode) {
+		
+		public Lazy (Func<T> valueFactory, bool isThreadSafe)
+		{
 			if (valueFactory == null)
 				throw new ArgumentNullException ("valueFactory");
 			this.factory = valueFactory;
-			this.mode = mode;
-			if (mode != LazyExecutionMode.NotThreadSafe)
-				monitor = new Object ();
+			if (isThreadSafe)
+				monitor = new object ();
 		}
 
-		[MonoTODO]
-		protected Lazy (SerializationInfo info, StreamingContext context) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {
-			throw new NotImplementedException ();
-		}
-
-		public override string ToString () {
-			if (!IsValueCreated)
-				return "Value is not created";
-			return Value.ToString ();
-		}
-
-		[MonoTODO]
 		public T Value {
 			get {
 				if (inited)
@@ -96,15 +77,14 @@ namespace System
 		}
 
 		T InitValue () {
-			if (mode == LazyExecutionMode.NotThreadSafe) {
-				value = CreateValue ();
+			if (monitor == null) {
+				value = factory ();
 				inited = true;
 			} else {
-				// We treat AllowMultipleThread... as EnsureSingleThread...
 				lock (monitor) {
 					if (inited)
 						return value;
-					T v = CreateValue ();
+					T v = factory ();
 					value = v;
 					Thread.MemoryBarrier ();
 					inited = true;
@@ -113,18 +93,6 @@ namespace System
 
 			return value;
 		}
-
-		T CreateValue () {
-			if (factory == null) {
-				try {
-					return Activator.CreateInstance<T> ();
-				} catch (MissingMethodException) {
-					throw new MissingMemberException ("The lazily-initialized type does not have a public, parameterless constructor.");
-				}
-			} else {
-				return factory ();
-			}
-		}			
 
 		public bool IsValueCreated {
 			get {

@@ -1,3 +1,7 @@
+2009-11-10  Miguel de Icaza  <miguel@novell.com>
+
+	* Lazy.cs: Updated API to 4.0 Beta 2
+
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Array.cs (Sort):
