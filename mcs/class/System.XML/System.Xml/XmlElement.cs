@@ -250,8 +250,8 @@ namespace System.Xml
 		
 		public override XmlNode CloneNode (bool deep)
 		{
-			XmlElement node = new XmlElement (
-				name.Prefix, name.LocalName, name.NS, OwnerDocument, true);
+			XmlElement node = OwnerDocument.CreateElement (
+				name.Prefix, name.LocalName, name.NS, true);
 
 			for (int i = 0; i < Attributes.Count; i++)
 				node.SetAttributeNode ((XmlAttribute) 

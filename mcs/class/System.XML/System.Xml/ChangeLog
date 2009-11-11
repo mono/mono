@@ -1,5 +1,13 @@
 2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDocument.cs, XmlElement.cs, XmlAttribute.cs,
+	  XmlAttributeCollection.cs :
+	  when CreateElement() and/or CreateAttribute() are overriden,
+	  use overriden method. Otherwise, use internal optimal ones.
+	  Fixed bug #549839.
+
+2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlNodeReaderImpl.cs : when the reader is at attribute value,
 	  MoveToNextAttribute() incorrectly moved to the first attribute.
 	  Fixed bug #550379.
