@@ -3318,7 +3318,10 @@ namespace System.Windows.Forms
 		}
 
 		int VLargeChange {
-			get { return VisibleRowCount; }
+			get { 
+				// the possible number of visible rows
+				return cells_area.Height / RowHeight;
+			}
 		}
 
 		#endregion Instance Properties
