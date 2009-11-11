@@ -1,5 +1,7 @@
 2009-11-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Fix LOCALLOC.
+
 	* mini-llvm-cpp.cpp: Update to latest LLVM SVN.
 
 	* mini-llvm.c (mono_llvm_emit_method): Avoid creating plt entries for
