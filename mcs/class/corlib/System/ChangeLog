@@ -1,3 +1,11 @@
+2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Console.cs: Reduce duplication between OpenStandard[Input|
+	Output|Error] and, for Moonlight, don't return a NullStream if
+	security is disabled (e.g. when smcs executes)
+
+	r: alan
+
 2009-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* Console.cs (OpenStandardError,OpenStandardOut,OpenStandardInput):
