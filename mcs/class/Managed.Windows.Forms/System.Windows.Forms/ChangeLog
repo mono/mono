@@ -1,3 +1,13 @@
+2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: Add a new internal property to get the maximum possible
+	visible rows in the grid. We cannot use VisibleRowCount since this
+	value can, depending on the scroll position, return a +1 or -1 value,
+	so we need an absolute way to know whether we need a scroll bar or
+	not. Also, update VLargeChange to avoid code duplication.
+	Fixes a vertical scroll mismatch happening trying to add a new row
+	while the scrollbar has reached its maximum value.
+
 2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGridTextBoxColumn.cs:
