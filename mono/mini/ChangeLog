@@ -1,5 +1,8 @@
 2009-11-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Avoid creating plt entries for
+	virtual calls.
+
 	* aot-runtime.c: Don't define HAVE_DL_ITERATE_PHDR, configure now does that.
 
 2009-11-10  Zoltan Varga  <vargaz@gmail.com>
