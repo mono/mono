@@ -1608,6 +1608,39 @@ namespace Mono.CSharp {
 				      GetSignatureForError ());
 			return false;
 		}
+		
+		Type InflateType(IMemberContext ec, Type ctype)
+		{
+			Type[] types = TypeManager.GetTypeArguments (ctype);
+
+			TypeArguments new_args = new TypeArguments ();
+
+			for (int i = 0; i < types.Length; i++) {
+				Type t = TypeManager.TypeToCoreType (types [i]);
+
+				if (t.IsGenericParameter) {
+					int pos = t.GenericParameterPosition;
+					if (t.DeclaringMethod == null && this is MethodConstraintChecker) {
+						Type parent = ((MethodConstraintChecker) this).declaring_type;
+						t = parent.GetGenericArguments ()[pos];
+					} else {
+						t = atypes [pos];
+					}
+				} else if(TypeManager.HasGenericArguments(t)) {
+					t = InflateType (ec, t);
+					if (t == null) {
+						return null;
+					}
+				}
+				new_args.Add (new TypeExpression (t, loc));
+			}
+
+			TypeExpr ct = new GenericTypeExpr (ctype, new_args, loc);
+			if (ct.ResolveAsTypeStep (ec, false) == null)
+				return null;
+			
+			return ct.Type;
+		}
 
 		protected bool CheckConstraint (IMemberContext ec, Type ptype, Expression expr,
 						Type ctype)
@@ -1617,29 +1650,10 @@ namespace Mono.CSharp {
 			// real inflated type hierarchy
 			//
 			if (TypeManager.HasGenericArguments (ctype)) {
-				Type[] types = TypeManager.GetTypeArguments (ctype);
-
-				TypeArguments new_args = new TypeArguments ();
-
-				for (int i = 0; i < types.Length; i++) {
-					Type t = TypeManager.TypeToCoreType (types [i]);
-
-					if (t.IsGenericParameter) {
-						int pos = t.GenericParameterPosition;
-						if (t.DeclaringMethod == null && this is MethodConstraintChecker) {
-							Type parent = ((MethodConstraintChecker) this).declaring_type;
-							t = parent.GetGenericArguments ()[pos];
-						} else {
-							t = atypes [pos];
-						}
-					}
-					new_args.Add (new TypeExpression (t, loc));
-				}
-
-				TypeExpr ct = new GenericTypeExpr (ctype, new_args, loc);
-				if (ct.ResolveAsTypeStep (ec, false) == null)
+				ctype = InflateType (ec, ctype);
+				if(ctype == null) {
 					return false;
-				ctype = ct.Type;
+				}
 			} else if (ctype.IsGenericParameter) {
 				int pos = ctype.GenericParameterPosition;
 				if (ctype.DeclaringMethod == null) {

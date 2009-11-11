@@ -1,3 +1,8 @@
+2009-11-11  Scott Peterson  <lunchtimemama@gmail.com>
+
+	* generic.cs: Made type inflation for generic constraint checks
+	recursive. This fixes BGO #553655.
+
 2009-11-11  Marek Safar  <marek.safar@gmail.com>
 
 	* dynamic.cs, decl.cs, expression.cs, ecore.cs: More dynamic type
