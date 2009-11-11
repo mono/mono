@@ -192,6 +192,18 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (false, nr.IsEmptyElement, "#2.2");
 			Assert.IsTrue (!nr.Read (), "#3");
 		}
+		
+		[Test] // bug #550379
+		public void MoveToNextAttributeFromValue ()
+		{
+			document.LoadXml ("<ul test='xxx'></ul>");
+			XmlNodeReader nr = new XmlNodeReader (document);
+			nr.Read ();
+			nr.Read ();
+			Assert.IsTrue (nr.MoveToFirstAttribute (), "#1");
+			Assert.IsTrue (nr.ReadAttributeValue (), "#2");
+			Assert.IsFalse (nr.MoveToNextAttribute (), "#3");
+		}
 	}
 
 }

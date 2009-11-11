@@ -1,3 +1,9 @@
+2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNodeReaderImpl.cs : when the reader is at attribute value,
+	  MoveToNextAttribute() incorrectly moved to the first attribute.
+	  Fixed bug #550379.
+
 2009-10-23  Andreia Gaita  <avidigal@novell.com>
 
 	* XmlConvert.cs: make ToUri static, fixes #548918 (moon)
