@@ -207,6 +207,7 @@ namespace System.Windows.Forms
 		void textbox_TextChanged (object o, EventArgs e)
 		{
 			textbox.IsInEditOrNavigateMode = false;
+			grid.EditRowChanged (this);
 		}
 
 		protected void EndEdit ()
