@@ -1,3 +1,9 @@
+2009-11-11  Geoff Norton  <gnorton@novell.com>
+
+	* VirtualMachineManager.cs: Refactor the APIs to have async methods.
+	Remove a bunch of Listen overloads that are pointless.  Refactor
+	Launch to take a ProcessStartInfo instead of string arguments.
+
 2009-11-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachineManager.cs (Launch): Close the listening socket instead of
