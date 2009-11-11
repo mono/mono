@@ -1,3 +1,8 @@
+2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBoxTest.cs: New test case for data binding and Text
+	interaction.
+
 2009-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 [merge -r 132698:142738 from trunk]

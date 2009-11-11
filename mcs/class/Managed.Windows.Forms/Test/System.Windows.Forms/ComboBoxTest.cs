@@ -1155,6 +1155,34 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#S3");
 		}
 
+		[Test]
+		public void Text_DataBinding ()
+		{
+			ArrayList objects = new ArrayList ();
+			objects.Add (new MockItem ("A", 0));
+			objects.Add (new MockItem ("B", 1));
+
+			ComboBox cb = new ComboBox ();
+			cb.BindingContext = new BindingContext ();
+			cb.DataSource = objects;
+			cb.DisplayMember = "Text";
+
+			Assert.AreEqual ("A", cb.Text, "#A1");
+			Assert.AreEqual ("A", ((MockItem)cb.SelectedItem).Text, "#B2");
+			Assert.AreEqual (0, ((MockItem)cb.SelectedItem).Value, "#B3");
+
+			cb.Text = "B";
+			Assert.AreEqual ("B", cb.Text, "#B1");
+			Assert.AreEqual ("B", ((MockItem)cb.SelectedItem).Text, "#B2");
+			Assert.AreEqual (1, ((MockItem)cb.SelectedItem).Value, "#B3");
+
+			// the text will change graphically, but Text and
+			// SelectedItem will keep their previous valid values.
+			cb.Text = "dontexist";
+			Assert.AreEqual ("B", ((MockItem)cb.SelectedItem).Text, "#C2");
+			Assert.AreEqual (1, ((MockItem)cb.SelectedItem).Value, "#C3");
+		}
+
 		[Test]  // bug 360862
 		public void SizeChangesAtCreateHandle ()
 		{
