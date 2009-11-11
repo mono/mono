@@ -1,5 +1,12 @@
 2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ButtonBase.cs: Usually the click routines are handled in Control,
+	but in this class we are handling it ourselved, thus we need to have
+	the same calls, and we were missing the call to MouseClick.
+	Patch by Eric Petit <surfzoid@gmail.com>.
+
+2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: When setting Text and data source is being used, if the
 	passed value is not matching any of the items in the source, don't
 	pass it to GetItemText, since it's useless, as GetItemText expects a
