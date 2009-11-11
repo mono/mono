@@ -1,3 +1,9 @@
+2009-11-12  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c (find_tlab_next_from_address): Handle the case where
+	tlab_next points outside the TLAB because the allocator was
+	interrupted.
+
 2009-11-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_image_module_basic_init): Handle exceptions correctly.
