@@ -29,9 +29,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Permissions;
 using System.Text;
 
@@ -148,6 +150,19 @@ namespace System
 			}
 		}
 
+		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
+		{
+#if NET_2_1 && !MONOTOUCH
+			if (SecurityManager.SecurityEnabled && !Debugger.IsAttached && Environment.GetEnvironmentVariable ("MOONLIGHT_ENABLE_CONSOLE") == null)
+				return new NullStream ();
+#endif
+			try {
+				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
+			} catch (IOException) {
+				return new NullStream ();
+			}
+		}
+
 		public static Stream OpenStandardError ()
 		{
 			return OpenStandardError (0);
@@ -160,11 +175,7 @@ namespace System
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardError (int bufferSize)
 		{
-			try {
-				return new FileStream (MonoIO.ConsoleError, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
-			} catch (IOException) {
-				return new NullStream ();
-			}
+			return Open (MonoIO.ConsoleError, FileAccess.Write, bufferSize);
 		}
 
 		public static Stream OpenStandardInput ()
@@ -179,11 +190,7 @@ namespace System
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardInput (int bufferSize)
 		{
-			try {
-				return new FileStream (MonoIO.ConsoleInput, FileAccess.Read, false, bufferSize, false, bufferSize == 0);
-			} catch (IOException) {
-				return new NullStream ();
-			}
+			return Open (MonoIO.ConsoleInput, FileAccess.Read, bufferSize);
 		}
 
 		public static Stream OpenStandardOutput ()
@@ -198,11 +205,7 @@ namespace System
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public static Stream OpenStandardOutput (int bufferSize)
 		{
-			try {
-				return new FileStream (MonoIO.ConsoleOutput, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
-			} catch (IOException) {
-				return new NullStream ();
-			}
+			return Open (MonoIO.ConsoleOutput, FileAccess.Write, bufferSize);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]

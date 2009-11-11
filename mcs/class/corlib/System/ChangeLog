@@ -1,3 +1,10 @@
+2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Console.cs: Reduce duplication between OpenStandard[Input|
+	Output|Error] and, for Moonlight, don't return a NullStream if
+	security is disabled (e.g. when smcs executes) r: alan
+	Note: include changes from r145773 (2-6) from toshok
+
 2009-11-10  Miguel de Icaza  <miguel@novell.com>
 
 	* Lazy.cs: Updated API to 4.0 Beta 2
