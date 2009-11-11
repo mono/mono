@@ -29,7 +29,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	public class Task : IDisposable, IAsyncResult, ICancelableOperation
+	public class Task : IDisposable, IAsyncResult
 	{
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.

@@ -31,7 +31,7 @@ using System.Collections.Generic;
 namespace System.Threading
 {
 	
-	public class CancellationTokenSource : IDisposable, ICancelableOperation
+	public class CancellationTokenSource : IDisposable
 	{
 		volatile bool canceled;
 		volatile bool processed;

@@ -44,11 +44,6 @@ namespace System.Threading
 			return Register (callback, false);
 		}
 		
-		public CancellationTokenRegistration Register (ICancelableOperation cancelable)
-		{
-			return Register (cancelable, false);
-		}
-		
 		public CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)
 		{
 			if (callback == null)
@@ -60,14 +55,6 @@ namespace System.Threading
 		public CancellationTokenRegistration Register (Action<object> callback, object state)
 		{
 			return Register (callback, state, false);
-		}
-		
-		public CancellationTokenRegistration Register (ICancelableOperation cancelable, bool useSynchronizationContext)
-		{
-			if (cancelable == null)
-				throw new ArgumentNullException ("cancelable");
-			
-			return Register (() => cancelable.Cancel (), useSynchronizationContext);
 		}
 		
 		public CancellationTokenRegistration Register (Action<object> callback, object state, bool useSynchronizationContext)

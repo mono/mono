@@ -99,6 +99,14 @@ namespace System
 				return inited;
 			}
 		}
+
+		public override string ToString ()
+		{
+			if (inited)
+				return value.ToString ();
+			else
+				return "Value is not created";
+		}
 	}		
 }
 	
