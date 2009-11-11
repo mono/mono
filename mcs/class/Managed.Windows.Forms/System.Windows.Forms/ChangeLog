@@ -1,5 +1,10 @@
 2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ToolTip.cs: ShowAlways works at the form level, not at the control
+	level. Fixes #544565.
+
+2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ButtonBase.cs: Usually the click routines are handled in Control,
 	but in this class we are handling it ourselved, thus we need to have
 	the same calls, and we were missing the call to MouseClick.
