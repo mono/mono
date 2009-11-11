@@ -1,5 +1,5 @@
-// CS0111: A member `C.Foo<U>(U)' is already defined. Rename this member or use different parameter types
-// Line : 12
+// CS0111: A member `C.Foo<U>(G<U>)' is already defined. Rename this member or use different parameter types
+// Line : 14
 
 class G<T>
 {
