@@ -146,17 +146,23 @@ namespace Microsoft.CSharp.RuntimeBinder
 				return Compiler.Constant.CreateConstant (value.LimitType, null, Compiler.Location.Null);
 			}
 
+			bool is_compile_time;
+
 			if (info != null) {
 				if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
 					InitializeCompiler (null);
-					return Compiler.Constant.CreateConstant (value.RuntimeType ?? value.LimitType, value.Value, Compiler.Location.Null);
+					return Compiler.Constant.CreateConstant (value.LimitType, value.Value, Compiler.Location.Null);
 				}
 
 				if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
 					return new Compiler.TypeExpression ((Type) value.Value, Compiler.Location.Null);
+
+				is_compile_time = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0;
+			} else {
+				is_compile_time = false;
 			}
 
-			return new Compiler.RuntimeValueExpression (value);
+			return new Compiler.RuntimeValueExpression (value, is_compile_time);
 		}
 
 		public static Compiler.Arguments CreateCompilerArguments (IEnumerable<CSharpArgumentInfo> info, DynamicMetaObject[] args)

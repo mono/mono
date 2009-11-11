@@ -77,6 +77,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
 				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
+			else
+				expr = new Compiler.DynamicResultCast (ReturnType, expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
