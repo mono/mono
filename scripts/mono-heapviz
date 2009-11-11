@@ -1,0 +1,257 @@
+#!/usr/bin/env python
+
+# Generate a heap visualization for SGen from the heap dump written by
+# mono if the MONO_GC_DEBUG is set to something like
+# "heap-dump=/path/to/file".  This script accepts the file as stdin
+# and generates HTML and PNG files.
+
+from __future__ import print_function
+import sys, os
+import Image, ImageDraw
+from xml.sax import ContentHandler, saxutils, make_parser
+from xml.sax.handler import feature_namespaces
+from optparse import OptionParser
+
+chunk_size = 1024                       # number of bytes in a chunk
+chunk_pixel_size = 2                    # a chunk is a square with this side length
+large_sections = False
+
+def mark_chunk (img_draw, i, color, section_width):
+    row = i / section_width
+    col = i % section_width
+    pixel_col = col * chunk_pixel_size
+    pixel_row = row * chunk_pixel_size
+    img_draw.rectangle ([(pixel_col, pixel_row), (pixel_col + chunk_pixel_size - 1, pixel_row + chunk_pixel_size - 1)], fill = color)
+
+class Range:
+    pass
+
+class OccupiedRange (Range):
+    def __init__ (self, offset, size):
+        self.offset = offset
+        self.size = size
+
+    def mark (self, img_draw, color, section_width):
+        start = self.offset / chunk_size
+        end = (self.offset + self.size - 1) / chunk_size
+        for i in range (start, end + 1):
+            mark_chunk (img_draw, i, color, section_width)
+
+class ObjectRange (OccupiedRange):
+    def __init__ (self, klass, offset, size):
+        OccupiedRange.__init__ (self, offset, size)
+        self.klass = klass;
+
+class SectionHandler:
+    def __init__ (self, width):
+        self.width = width
+        self.ranges = []
+        self.size = 0
+        self.used = 0
+
+    def add_object (self, klass, offset, size):
+        self.ranges.append (ObjectRange (klass, offset, size))
+        self.used += size
+
+    def add_occupied (self, offset, size):
+        self.ranges.append (OccupiedRange (offset, size))
+        self.used += size
+
+    def draw (self):
+        height = (((self.size / chunk_size) + (self.width - 1)) / self.width) * chunk_pixel_size
+
+        color_background = (255, 255, 255)
+        color_free = (0, 0, 0)
+        color_occupied = (0, 255, 0)
+
+        img = Image.new ('RGB', (self.width * chunk_pixel_size, height), color_free)
+        img_draw = ImageDraw.Draw (img)
+        #FIXME: remove filling after end of heap
+
+        for r in self.ranges:
+            r.mark (img_draw, color_occupied, self.width)
+
+        return img
+
+    def emit (self, collection_file, collection_kind, collection_num, section_num):
+        print ('<h2>%s</h2>' % self.header (), file = collection_file)
+        print ('<p>Size %d kB - ' % (self.size / 1024), file = collection_file)
+        print ('used %d kB</p>' % (self.used / 1024), file = collection_file)
+
+        filename = '%s_%d_%d.png' % (collection_kind, collection_num, section_num)
+        print ('<p><img src="%s"></img></p>' % filename, file = collection_file)
+        img = self.draw ()
+        img.save (filename)
+
+class SmallSectionHandler (SectionHandler):
+    def __init__ (self):
+        SectionHandler.__init__ (self, -1)
+        self.offset = 0
+
+    def start_section (self, kind, size):
+        assert kind == 'old'
+        if self.width <= 0:
+            self.width = (size + chunk_size - 1) / chunk_size
+        else:
+            assert self.width == (size + chunk_size - 1) / chunk_size
+        self.size += size
+
+    def add_object (self, klass, offset, size):
+        SectionHandler.add_object (self, klass, self.offset + offset, size)
+
+    def add_occupied (self, offset, size):
+        SectionHandler.add_occupied (self, self.offset + offset, size)
+
+    def end_section (self):
+        self.offset += self.width * chunk_size
+
+    def header (self):
+        return 'old sections'
+
+class LargeSectionHandler (SectionHandler):
+    def __init__ (self):
+        SectionHandler.__init__ (self, 500)
+
+    def start_section (self, kind, size):
+        self.kind = kind
+        self.ranges = []
+        self.size = size
+        self.used = 0
+
+    def end_section (self):
+        pass
+
+    def header (self):
+        return self.kind + ' section'
+
+class DocHandler (saxutils.DefaultHandler):
+    def start (self):
+        self.collection_index = 0
+        self.index_file = open ('index.html', 'w')
+        print ('<html><body>', file = self.index_file)
+
+    def end (self):
+        print ('</body></html>', file = self.index_file)
+        self.index_file.close ()
+
+    def startElement (self, name, attrs):
+        if name == 'collection':
+            self.collection_kind = attrs.get('type', None)
+            self.collection_num = int(attrs.get('num', None))
+            reason = attrs.get('reason', None)
+            if reason:
+                reason = ' (%s)' % reason
+            else:
+                reason = ''
+            self.section_num = 0
+            filename = 'collection_%d.html' % self.collection_index
+            print ('<a href="%s">%s%s collection %d</a>' % (filename, self.collection_kind, reason, self.collection_num), file = self.index_file)
+            self.collection_file = open (filename, 'w')
+            print ('<html><body>', file = self.collection_file)
+            print ('<p><a href="collection_%d.html">Prev</a> <a href="collection_%d.html">Next</a> <a href="index.html">Index</a></p>' % (self.collection_index - 1, self.collection_index + 1), file = self.collection_file)
+            print ('<h1>%s collection %d</h1>' % (self.collection_kind, self.collection_num), file = self.collection_file)
+            self.usage = {}
+            self.los_usage = {}
+            self.in_los = False
+            self.heap_used = 0
+            self.heap_size = 0
+            self.los_size = 0
+            if large_sections:
+                self.section_handler = LargeSectionHandler ()
+            else:
+                self.section_handler = self.small_section_handler = SmallSectionHandler ()
+        elif name == 'pinned':
+            kind = attrs.get('type', None)
+            bytes = int(attrs.get('bytes', None))
+            print ('Pinned from %s: %d kB<br>' % (kind, bytes / 1024), file = self.collection_file)
+        elif name == 'section':
+            kind = attrs.get('type', None)
+            size = int(attrs.get('size', None))
+
+            self.heap_size += size
+
+            if not large_sections:
+                if kind == 'nursery':
+                    self.section_handler = LargeSectionHandler ()
+                else:
+                    self.section_handler = self.small_section_handler
+
+            self.section_handler.start_section (kind, size)
+        elif name == 'object':
+            klass = attrs.get('class', None)
+            size = int(attrs.get('size', None))
+
+            if self.in_los:
+                usage_dict = self.los_usage
+                self.los_size += size
+            else:
+                usage_dict = self.usage
+                offset = int(attrs.get('offset', None))
+
+                self.section_handler.add_object (klass, offset, size)
+                self.heap_used += size
+            if not (klass in usage_dict):
+                usage_dict [klass] = (0, 0)
+            usage = usage_dict [klass]
+            usage_dict [klass] = (usage [0] + 1, usage [1] + size)
+        elif name == 'occupied':
+            offset = int(attrs.get('offset', None))
+            size = int(attrs.get('size', None))
+
+            self.section_handler.add_occupied (offset, size)
+            self.heap_used += size
+        elif name == 'los':
+            self.in_los = True
+
+    def dump_usage (self, usage_dict, limit):
+        klasses = sorted (usage_dict.keys (), lambda x, y: usage_dict [y][1] - usage_dict [x][1])
+        if limit:
+            klasses = klasses [0:limit]
+        for klass in klasses:
+            usage = usage_dict [klass]
+            if usage [1] < 100000:
+                print ('%s %d bytes' % (klass, usage [1]), file = self.collection_file)
+            else:
+                print ('%s %d kB' % (klass, usage [1] / 1024), file = self.collection_file)
+            print (' (%d)<br>' % usage [0], file = self.collection_file)
+
+    def endElement (self, name):
+        if name == 'section':
+            self.section_handler.end_section ()
+
+            if large_sections or self.section_handler != self.small_section_handler:
+                self.section_handler.emit (self.collection_file, self.collection_kind, self.collection_num, self.section_num)
+                self.section_num += 1
+        elif name == 'collection':
+            if not large_sections:
+                self.small_section_handler.emit (self.collection_file, self.collection_kind, self.collection_num, self.section_num)
+
+            self.dump_usage (self.usage, 10)
+            print ('<h3>LOS</h3>', file = self.collection_file)
+            self.dump_usage (self.los_usage, None)
+            print ('</body></html>', file = self.collection_file)
+            print (' - %d kB / %d kB (%d%%) - %d kB LOS</a><br>' % (self.heap_used / 1024, self.heap_size / 1024, int(100.0 * self.heap_used / self.heap_size), self.los_size / 1024), file = self.index_file)
+            self.collection_file.close ()
+            self.collection_index += 1
+        elif name == 'los':
+            self.in_los = False
+
+def main ():
+    usage = "usage: %prog [options]"
+    parser = OptionParser (usage)
+    parser.add_option ("-l", "--large-sections", action = "store_true", dest = "large_sections")
+    parser.add_option ("-s", "--small-sections", action = "store_false", dest = "large_sections")
+    (options, args) = parser.parse_args ()
+    if options.large_sections:
+        large_sections = True
+
+    dh = DocHandler ()
+    parser = make_parser ()
+    parser.setFeature (feature_namespaces, 0)
+    parser.setContentHandler (dh)
+    dh.start ()
+    parser.parse (sys.stdin)
+    dh.end ()
+
+if __name__ == "__main__":
+    main ()
