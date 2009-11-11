@@ -27,6 +27,7 @@ using System;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
+	[Flags]
 	public enum AreaAlignmentOrientations
 	{
 		None = 0,
