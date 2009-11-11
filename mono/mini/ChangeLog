@@ -1,3 +1,7 @@
+2009-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Don't define HAVE_DL_ITERATE_PHDR, configure now does that.
+
 2009-11-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Change how mono_arch_find_jit_info () works.
