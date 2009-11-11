@@ -122,6 +122,10 @@ class Tester
 		Action<bool> f2 = Class.GenericVoid;
 		d = f2;
 		d (true);
+		
+		Func<string, int> f3 = (s) => 3;
+		d = f3;
+		d ("go");
 	}
 
 	void InvokeMember ()
@@ -135,6 +139,7 @@ class Tester
 
 		d = 2;
 		Assert (2, Class.StaticMethod (d), "#2");
+		Class.StaticMethod (d);
 	}
 
 	void InvokeConstructor ()
@@ -172,8 +177,6 @@ class Tester
 
 		d = new int[4];
 		Assert (4, d.Length, "#3");
-
-		// d.Event += delegate () { }; CS0019
 	}
 
 	void MemberGetError_Null ()
