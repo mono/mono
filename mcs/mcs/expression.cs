@@ -5278,16 +5278,7 @@ namespace Mono.CSharp {
 		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodInfo mi, Arguments args)
 		{
 			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
-			SLE.Expression expr = SLE.Expression.Call (instance_expr, mi,
-				Arguments.MakeExpression (args, ctx));
-
-			if (mi.ReturnType == typeof (void)) {
-				expr = SLE.Expression.Block (
-					expr,
-					SLE.Expression.Default (typeof (object)));
-			}
-
-			return expr;
+			return SLE.Expression.Call (instance_expr, mi, Arguments.MakeExpression (args, ctx));
 		}
 #endif
 

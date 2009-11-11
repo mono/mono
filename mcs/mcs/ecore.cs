@@ -3526,6 +3526,9 @@ namespace Mono.CSharp {
 				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
 					q == TypeManager.uint64_type)
 					return 1;
+			} else if (p == InternalType.Dynamic) {
+				if (q == TypeManager.object_type)
+					return 2;
 			}
 
 			if (q == TypeManager.int32_type) {
@@ -3542,6 +3545,9 @@ namespace Mono.CSharp {
 				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
 					p == TypeManager.uint64_type)
 					return 2;
+			} else if (q == InternalType.Dynamic) {
+				if (p == TypeManager.object_type)
+					return 1;
 			}
 
 			// TODO: this is expensive
@@ -3601,7 +3607,7 @@ namespace Mono.CSharp {
 					--b_idx;
 				}
 
-				if (ct.Equals (bt))
+				if (ct == bt)
 					continue;
 
 				same = false;

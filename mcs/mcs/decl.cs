@@ -2707,9 +2707,9 @@ namespace Mono.CSharp {
 
 						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
 							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
-							type_a = null;
+							break;
 
-					} while (type_a == type_b && ii-- != 0);
+					} while (TypeManager.IsEqual (type_a, type_b) && ii-- != 0);
 
 					if (ii >= 0)
 						continue;

@@ -62,21 +62,28 @@ namespace Mono.CSharp
 		}
 	}
 
+	#region Dynamic runtime binder expressions
+
 	//
-	// Expression created from runtime dynamic object value
+	// Expression created from runtime dynamic object value by dynamic binder
 	//
 	public class RuntimeValueExpression : Expression, IDynamicAssign, IMemoryLocation
 	{
 #if !NET_4_0
-		public class DynamicMetaObject { public Type RuntimeType; }
+		public class DynamicMetaObject
+		{
+			public Type RuntimeType;
+			public Type LimitType;
+		}
 #endif
 
 		readonly DynamicMetaObject obj;
 
-		public RuntimeValueExpression (DynamicMetaObject obj)
+		public RuntimeValueExpression (DynamicMetaObject obj, bool isCompileTimeType)
 		{
 			this.obj = obj;
-			this.type = obj.RuntimeType;
+			this.type = isCompileTimeType ? obj.LimitType : obj.RuntimeType;
+			this.type = obj.LimitType;
 			this.eclass = ExprClass.Variable;
 		}
 
@@ -135,6 +142,36 @@ namespace Mono.CSharp
 			get { return obj; }
 		}
 	}
+
+	//
+	// Wraps runtime dynamic expression into expected type. Needed
+	// to satify expected type check by dynamic binder and no conversion
+	// is required (ResultDiscarded).
+	//
+	public class DynamicResultCast : ShimExpression
+	{
+		public DynamicResultCast (Type type, Expression expr)
+			: base (expr)
+		{
+			this.type = type;
+		}
+
+		public override Expression DoResolve (ResolveContext ec)
+		{
+			expr = expr.DoResolve (ec);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+#if NET_4_0
+		public override SLE.Expression MakeExpression (BuilderContext ctx)
+		{
+			return SLE.Expression.Block (expr.MakeExpression (ctx),	SLE.Expression.Default (type));
+		}
+#endif
+	}
+
+	#endregion
 
 	//
 	// Creates dynamic binder expression
