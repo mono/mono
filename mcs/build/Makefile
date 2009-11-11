@@ -4,7 +4,7 @@ include ../build/rules.make
 
 BUILT_FILES = common/Consts.cs
 
-all-local install-local test-local run-test-local run-test-ondotnet-local uninstall-local doc-update-local: $(BUILT_FILES)
+all-local install-local test-local run-test-local csproj-local run-test-ondotnet-local uninstall-local doc-update-local: $(BUILT_FILES)
 	@:
 
 clean-local:

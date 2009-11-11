@@ -16,6 +16,6 @@ DISTFILES = \
 	src/util/SharedQueue.cs \
 	src/util/XmlUtil.cs
 
-all-local install-local clean-local test-local run-test-local run-test-ondotnet-local uninstall-local doc-update-local:
+all-local install-local clean-local test-local run-test-local run-test-ondotnet-local uninstall-local doc-update-local csproj-local:
 
 dist-local: dist-default

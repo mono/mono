@@ -142,6 +142,8 @@ DISTFILES = \
 
 dist-local: dist-default
 
+csproj-local:
+
 dist-pre:
 	rm -rf $(package)
 	mkdir $(package)

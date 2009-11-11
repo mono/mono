@@ -36,7 +36,7 @@ ifeq (net_2_0, $(PROFILE))
 all-local: build-documentation
 endif
 
-all-local test-local run-test-local run-test-ondotnet-local doc-update:
+all-local csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
 
 clean-local:
 	-rm -f $(CLEAN_FILES)

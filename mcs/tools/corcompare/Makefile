@@ -19,7 +19,7 @@ DISTFILES= $(COMMON_SOURCES) $(APIINFO_SOURCES)
 
 all-local: $(ALL_PROGRAMS)
 
-doc-update-local:
+csproj-local doc-update-local:
 
 install-local: $(ALL_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)

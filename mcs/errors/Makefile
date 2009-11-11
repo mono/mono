@@ -82,7 +82,7 @@ clean-local:
 
 dist-local: dist-default
 
-install-local uninstall-local:
+csproj-local install-local uninstall-local:
 
 %-lib.dll: %-lib.cs
 	$(CSCOMPILE) /target:library /out:$@ $<
