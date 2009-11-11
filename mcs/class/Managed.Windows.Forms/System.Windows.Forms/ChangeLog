@@ -7,6 +7,14 @@
 
 2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: Implement removal of rows the Correct Way by creating a
+	copy of the indexes, as any direct write access to the source will cause to
+	reset the entire selection - also, do the linear de-selection in
+	reverse order to avoid any index mismatch in the source, due to out of
+	synchronization removing the rows.
+
+2009-11-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TextBoxBase.cs: When returning the preferred height, and we are
 	supposed to be borderless, return the TopMargin value - usually in
 	borderless mode it has a value of 0, but in the ToolStrip controls we

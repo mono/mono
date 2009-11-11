@@ -2009,9 +2009,15 @@ namespace System.Windows.Forms
 				if (is_editing)
 					return false;
 				else if (selected_rows.Keys.Count > 0) {
-					foreach (int row in selected_rows.Keys)
-						ListManager.RemoveAt (row);
-					selected_rows.Clear ();
+					// the removal of the items in the source will cause to
+					// reset the selection, so we need a copy of it.
+					int [] rows = new int [selected_rows.Keys.Count];
+					selected_rows.Keys.CopyTo (rows, 0);
+
+					// reverse order to keep index sanity
+					for (int i = rows.Length - 1; i >= 0; i--)
+						ListManager.RemoveAt (rows [i]);
+
 					CalcAreasAndInvalidate ();
 				}
 
