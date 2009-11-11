@@ -266,7 +266,6 @@ namespace System.Windows.Forms
 		bool from_positionchanged_handler;
 
 		/* editing state */
-		internal bool pending_new_row;
 		bool cursor_in_add_row;
 		bool add_row_changed;
 		internal bool is_editing;		// Current cell is edit mode
@@ -545,11 +544,10 @@ namespace System.Windows.Forms
 				if (CurrentRow == RowsCount && ListManager.AllowNew) {
 					cursor_in_add_row = true;
 					add_row_changed = false;
-					pending_new_row = true;
+					AddNewRow ();
 				}
 				else {
 					cursor_in_add_row = false;
-					pending_new_row = false;
 				}
 
 				InvalidateRowHeader (old_row);
@@ -2549,7 +2547,7 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();
 		}
 
-		internal void AddNewRow ()
+		private void AddNewRow ()
 		{
 			ListManager.EndCurrentEdit ();
 			ListManager.AddNew ();
