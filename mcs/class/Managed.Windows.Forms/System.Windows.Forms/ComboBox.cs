@@ -809,8 +809,9 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				// set directly the passed value, since we already know it's not matching any item
 				if (dropdown_style != ComboBoxStyle.DropDownList)
-					textbox_ctrl.Text = GetItemText (value);
+					textbox_ctrl.Text = value;
 			}
 		}
 
