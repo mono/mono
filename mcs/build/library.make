@@ -92,7 +92,7 @@ is_boot=false
 endif
 
 csproj-local: 
-	config_file=`basename $(LIBRARY_NAME) .dll`-$(PROFILE).input; \
+	config_file=`basename $(LIBRARY) .dll`-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../mono/msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(MCS);	\
