@@ -1,3 +1,7 @@
+2009-11-12  Jb Evain  <jbevain@novell.com>
+
+	* Consts.cs.in: add a AssemblySystem_Core constant.
+
 2009-10-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Consts.cs.in: Update SL2 FX version to the second (and last)
