@@ -1,3 +1,9 @@
+2009-11-12  Geoff Norton  <gnorton@novell.com>
+
+	* mono-path.c: When resolving symlinks in a path, we need to
+	split on the directory separator and check each level, as
+	readlink only checks the final destination.
+
 2009-11-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-sigcontext.h: Add ucontext support for FreeBSD/ppc64.
