@@ -881,6 +881,23 @@ class Tester : DynamicObjectMock
 		d (typeof (bool), name:-1);
 	}
 	
+	void Invoke_5 (dynamic d, DynamicObjectMock mock)
+	{
+		mock.InvokeOperation = (binder, args) => {
+			Assert (binder.CallInfo, new CallInfo (2, new string[] { "name" }), "CallInfo");
+			AssertArgument (binder, new[] {
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.None, null),
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.UseCompileTimeType, null),
+				CSharpArgumentInfo.Create (CSharpArgumentInfoFlags.NamedArgument | CSharpArgumentInfoFlags.UseCompileTimeType, "name")
+			}, "ArgumentInfo");
+
+			Assert ((IList<object>) args, new object[] { typeof (bool), -1 }, "args");
+		};
+
+		Action<object> a = (i) => {};
+		a (d);
+	}
+	
 	void InvokeMember_1 (dynamic d, DynamicObjectMock mock)
 	{
 		mock.InvokeMemberOperation = (binder, args) => {
