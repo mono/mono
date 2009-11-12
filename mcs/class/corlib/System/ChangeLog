@@ -1,3 +1,22 @@
+2009-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Fix Make(Array|ByRef|Pointer)Type to not crash
+	with user types. 
+
+	* Type.cs (MakeGenericType): Don't crash with user types.
+
+	* Type.cs (GetGenericParameterConstraints): Don't crash with user types.
+
+	* Type.cs (GenericParameterAttributes): Don't crash with user types.
+
+	* Type.cs (IsInstanceOfType): Don't crash with user types.
+
+	* Type.cs (IsAssignableFrom): Better handle User Types.
+
+	* Type.cs (GetInterfaceMap): Don't crash with user types.
+
+	* Type.cs (Equals): Fix behavior to be more MS compatible.
+
 2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Console.cs: Reduce duplication between OpenStandard[Input|

@@ -388,7 +388,7 @@ namespace System {
 		}
 
 		public virtual RuntimeTypeHandle TypeHandle {
-			get { return default (RuntimeTypeHandle); }
+			get { throw new ArgumentException ("Derived class must provide implementation."); }
 		}
 
 		[ComVisible (true)]
@@ -411,19 +411,23 @@ namespace System {
 
 		public override bool Equals (object o)
 		{
-			if (o == null)
+			if (o == this)
+				return true;
+			Type me = UnderlyingSystemType;
+			if (me == null)
 				return false;
-			
-			Type cmp = o as Type;
-			if (cmp == null)
-				return false;
-			return Equals (cmp);
+			return me.EqualsInternal (o as Type);
 		}
 
 		public bool Equals (Type o) {
+			if (o == this)
+				return true;
 			if (o == null)
 				return false;
-			return UnderlyingSystemType.EqualsInternal (o.UnderlyingSystemType);
+			Type me = UnderlyingSystemType;
+			if (me == null)
+				return false;
+			return me.EqualsInternal (o.UnderlyingSystemType);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -616,6 +620,10 @@ namespace System {
 
 		[ComVisible (true)]
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (!interfaceType.IsSystemType)
+				throw new ArgumentException ("interfaceType", "Type is an user type");
 			InterfaceMapping res;
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
@@ -650,7 +658,12 @@ namespace System {
 				Type systemType = UnderlyingSystemType;
 				if (!systemType.IsSystemType)
 					return false;
-				return systemType.IsAssignableFrom (c);
+
+				Type other = c.UnderlyingSystemType;
+				if (!other.IsSystemType)
+					return false;
+
+				return systemType.IsAssignableFrom (other);
 			}
 
 			if (!c.IsSystemType) {
@@ -664,7 +677,15 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern virtual bool IsInstanceOfType (object o);
+		extern static bool IsInstanceOfType (Type type, object o);
+
+		public virtual bool IsInstanceOfType (object o)
+		{
+			Type type = UnderlyingSystemType;
+			if (!type.IsSystemType)
+				return false;
+			return IsInstanceOfType (type, o);
+		}
 
 		public virtual int GetArrayRank ()
 		{
@@ -1159,6 +1180,8 @@ namespace System {
 
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
+			if (IsUserType)
+				throw new NotSupportedException ();
 			if (!IsGenericTypeDefinition)
 				throw new InvalidOperationException ("not a generic type definition");
 			if (typeArguments == null)
@@ -1222,6 +1245,9 @@ namespace System {
 
 		public virtual GenericParameterAttributes GenericParameterAttributes {
 			get {
+				if (!IsSystemType)
+					throw new NotSupportedException ("Derived classes must provide an implementation.");
+
 				if (!IsGenericParameter)
 					throw new InvalidOperationException ();
 
@@ -1234,6 +1260,9 @@ namespace System {
 
 		public virtual Type[] GetGenericParameterConstraints ()
 		{
+			if (!IsSystemType)
+				throw new InvalidOperationException ();
+
 			if (!IsGenericParameter)
 				throw new InvalidOperationException ();
 
@@ -1251,14 +1280,17 @@ namespace System {
 
 		public virtual Type MakeArrayType ()
 		{
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
 			return make_array_type (0);
 		}
 
 		public virtual Type MakeArrayType (int rank)
 		{
-			if (rank < 1)
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (rank < 1 || rank > 255)
 				throw new IndexOutOfRangeException ();
-			
 			return make_array_type (rank);
 		}
 
@@ -1267,11 +1299,20 @@ namespace System {
 
 		public virtual Type MakeByRefType ()
 		{
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
 			return make_byref_type ();
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern virtual Type MakePointerType ();
+		static extern Type MakePointerType (Type type);
+
+		public virtual Type MakePointerType ()
+		{
+			if (!IsSystemType)
+				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			return MakePointerType (this);
+		}
 
 		public static Type ReflectionOnlyGetType (string typeName, 
 							  bool throwIfNotFound, 
