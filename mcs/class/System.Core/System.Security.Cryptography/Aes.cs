@@ -42,7 +42,7 @@ namespace System.Security.Cryptography {
 
 		public static new Aes Create () 
 		{
-			return Create ("System.Security.Cryptography.AesManaged, System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			return Create ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core);
 		}
 
 		public static new Aes Create (string algName) 
