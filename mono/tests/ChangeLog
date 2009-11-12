@@ -1,3 +1,8 @@
+2009-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-virtual.2.cs: Add a test for rebuilding virtual generic method
+	thunks.
+
 2009-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable filter-stack.exe on ARM.
