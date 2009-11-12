@@ -487,7 +487,12 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return Font.Height + (BorderStyle == BorderStyle.None ? 0 : 7);
+				if (BorderStyle != BorderStyle.None)
+					return Font.Height + 7;
+
+				// usually in borderless mode the top margin is 0, but
+				// try to access it, in case it was set manually, as ToolStrip* controls do
+				return Font.Height + TopMargin;
 			}
 		}
 
