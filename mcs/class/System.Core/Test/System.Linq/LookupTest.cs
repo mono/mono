@@ -1,4 +1,4 @@
-﻿//
+//
 // LookupTest.cs
 //
 // Author:
@@ -67,6 +67,55 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (0xff0000, lookup ["red"].First ());
 			Assert.AreEqual (0x00ff00, lookup ["GrEeN"].First ());
 			Assert.AreEqual (0x0000ff, lookup ["Blue"].First ());
+		}
+		
+		[Test]
+		public void LookupContains()
+		{
+			var lookup = new [] { "hi", "bye" }.ToLookup (c => c [0].ToString ());
+			
+			Assert.IsTrue (lookup.Contains ("h"));
+			Assert.IsFalse (lookup.Contains ("d"));
+			Assert.IsFalse (lookup.Contains (null));
+		}
+		
+		[Test]
+		public void LookupContainsNull()
+		{
+			var lookup = new [] { "hi", "bye", "42" }.ToLookup (c => (Char.IsNumber (c [0]) ? null : c [0].ToString ()));
+			
+			Assert.IsTrue (lookup.Contains ("h"));
+			Assert.IsTrue (lookup.Contains (null));
+			Assert.IsFalse (lookup.Contains ("d"));
+		}
+		
+		[Test]
+		public void LookupEnumeratorWithoutNull()
+		{
+			var lookup = new [] { "hi", "bye" }.ToLookup (c => c [0].ToString ());
+			
+			Assert.IsTrue (lookup.Any (g => g.Key == "h"));
+			Assert.IsTrue (lookup.Any (g => g.Key == "b"));
+			Assert.IsFalse (lookup.Any (g => g.Key == null));
+		}
+		
+		[Test]
+		public void LookupEnumeratorWithNull()
+		{
+			var lookup = new [] { "hi", "bye", "42" }.ToLookup (c => (Char.IsNumber (c [0]) ? null : c [0].ToString ()));
+			
+			Assert.IsTrue (lookup.Any (g => g.Key == "h"));
+			Assert.IsTrue (lookup.Any (g => g.Key == "b"));
+			Assert.IsTrue (lookup.Any (g => g.Key == null));
+		}
+		
+		[Test]
+		public void LookupNullKeyNone()
+		{
+			var lookup = new [] { "hi", "bye" }.ToLookup (c => c [0].ToString ());
+			
+			Assert.AreEqual (2, lookup.Count);
+			Assert.AreEqual (0, lookup [null].Count ());
 		}
 
 		[Test]
