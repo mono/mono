@@ -2166,14 +2166,20 @@ namespace System.Linq
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
+			List<TElement> nullKeyElements = null;
+			
 			var dictionary = new Dictionary<TKey, List<TElement>> (comparer ?? EqualityComparer<TKey>.Default);
 			foreach (var element in source) {
 				var key = keySelector (element);
-				if (key == null)
-					throw new ArgumentNullException ("key");
 
 				List<TElement> list;
-				if (!dictionary.TryGetValue (key, out list)) {
+				
+				if (key == null) {
+					if (nullKeyElements == null)
+						nullKeyElements = new List<TElement> ();
+					
+					list = nullKeyElements;
+				} else if (!dictionary.TryGetValue (key, out list)) {
 					list = new List<TElement> ();
 					dictionary.Add (key, list);
 				}
@@ -2181,7 +2187,7 @@ namespace System.Linq
 				list.Add (elementSelector (element));
 			}
 
-			return new Lookup<TKey, TElement> (dictionary);
+			return new Lookup<TKey, TElement> (dictionary, nullKeyElements);
 		}
 
 		#endregion

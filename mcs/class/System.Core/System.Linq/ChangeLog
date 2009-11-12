@@ -1,3 +1,8 @@
+2009-11-12  Eric Maupin  <me@ermau.com>
+
+	* Enumerable.cs (ToLookup): Accept null keys.
+	* Lookup.cs: Accept null keys.
+
 2009-10-08  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs (Empty): Optimized allocation.

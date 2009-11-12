@@ -1,3 +1,8 @@
+2009-11-12  Eric Maupin  <me@ermau.com>
+
+	* EnumerableMoreTest.cs: Added ToLookup test for null keys, updated old test to check count.
+	* LookupTest.cs: Added tests for contains, the enumerator and null keys in the indexer.
+
 2009-04-03  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: test for bug 491841.
