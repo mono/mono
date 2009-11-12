@@ -587,6 +587,213 @@ namespace Mono.CSharp {
 		}
 	}
 
+#if NET_4_0 || MS_COMPATIBLE
+	[System.Diagnostics.DebuggerDisplay ("Dynamic array type")]
+#endif
+	class DynamicArrayType : Type
+	{
+		readonly int rank;
+		Type reflection_type;
+
+		public DynamicArrayType (int rank)
+		{
+			this.rank = rank;
+		}
+
+		public override Assembly Assembly {
+			get { return UnderlyingSystemType.Assembly; }
+		}
+
+		public override string AssemblyQualifiedName {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type BaseType {
+			get { return TypeManager.array_type; }
+		}
+
+		public override string FullName {
+			get { return UnderlyingSystemType.FullName; }
+		}
+
+		public override Guid GUID {
+			get { throw new NotImplementedException (); }
+		}
+
+		protected override TypeAttributes GetAttributeFlagsImpl ()
+		{
+			return UnderlyingSystemType.Attributes;
+		}
+
+		public override int GetArrayRank ()
+		{
+			return rank;
+		}
+
+		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetElementType ()
+		{
+			return InternalType.Dynamic;
+		}
+
+		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetInterface (string name, bool ignoreCase)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type[] GetInterfaces ()
+		{
+			return Type.EmptyTypes;
+		}
+
+		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetNestedType (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool HasElementTypeImpl ()
+		{
+			return true;
+		}
+
+		public override object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsArrayImpl ()
+		{
+			return true;
+		}
+
+		protected override bool IsByRefImpl ()
+		{
+			return false;
+		}
+
+		protected override bool IsCOMObjectImpl ()
+		{
+			return false;
+		}
+
+		protected override bool IsPointerImpl ()
+		{
+			return false;
+		}
+
+		protected override bool IsPrimitiveImpl ()
+		{
+			return false;
+		}
+
+		public override Module Module {
+			get { return UnderlyingSystemType.Module; }
+		}
+
+		public override string Namespace {
+			get { return UnderlyingSystemType.Namespace; }
+		}
+
+		public override Type UnderlyingSystemType {
+			get {
+				if (reflection_type == null) {
+					reflection_type = rank == 1 ?
+						TypeManager.object_type.MakeArrayType () :
+						TypeManager.object_type.MakeArrayType (rank);
+				}
+
+				return reflection_type;
+			}
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return new object [0];
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			return new object [0];
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string Name {
+			get { return UnderlyingSystemType.Name; }
+		}
+
+		public override string ToString ()
+		{
+			return UnderlyingSystemType.ToString ();
+		}
+
+		public override RuntimeTypeHandle TypeHandle {
+			get { return UnderlyingSystemType.TypeHandle; }
+		}
+	}
+
 	public class UnixUtils {
 		[System.Runtime.InteropServices.DllImport ("libc", EntryPoint="isatty")]
 		extern static int _isatty (int fd);

@@ -410,10 +410,6 @@ namespace Mono.CSharp
 			if (args == null || args.Count == 0)
 				return null;
 
-			// TODO: implement
-			if (args.reordered != null)
-				throw new NotImplementedException ();
-
 			var exprs = new System.Linq.Expressions.Expression [args.Count];
 			for (int i = 0; i < exprs.Length; ++i) {
 				Argument a = (Argument) args.args [i];

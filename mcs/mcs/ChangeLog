@@ -1,5 +1,10 @@
 2009-11-12  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, argument.cs, support.cs, delegate.cs: Dynamic
+	arrays.
+
+2009-11-12  Marek Safar  <marek.safar@gmail.com>
+
 	* argument.cs, context.cs, expression.cs, ecore.cs: Dynamic binding
 	with a statically known candidate set.
 

@@ -283,13 +283,13 @@ namespace Mono.CSharp {
 		void_decimal_ctor_long_arg = null;
 
 		isvolatile_type = null;
-		
+
 		call_site_type =
 		generic_call_site_type =
 		binder_flags = null;
 
 		binder_type = null;
-			
+
 		// to uncover regressions
 		AllClsTopLevelTypes = null;
 	}
@@ -426,9 +426,9 @@ namespace Mono.CSharp {
 			return (Type) ret;
 
 		if (IsDynamicType (t)) {
-			// FIXME: this is more like not supported with SRE
-			// An example: var v = new [] { d, 1 }; int i = v [0];
-			throw new NotImplementedException ("dynamic arrays");
+			ret = new DynamicArrayType (dim.Length - 1);
+			type_hash.Insert (t, dim, ret);
+			return (Type) ret;
 		}
 
 		ret = t.Module.GetType (t.ToString () + dim);
@@ -1293,7 +1293,7 @@ namespace Mono.CSharp {
 	//
 	public static bool IsDynamicType (Type t)
 	{
-		if (t == InternalType.Dynamic)
+		if (object.ReferenceEquals (InternalType.Dynamic, t))
 			return true;
 
 		if (t != object_type)
@@ -2217,7 +2217,13 @@ namespace Mono.CSharp {
 	public static Type TypeToReflectionType (Type type)
 	{
 		// TODO: Very lame and painful, GetReference () is enough for mcs-cecil
-		return IsDynamicType (type) ? object_type : type;
+		if (IsDynamicType (type))
+			return object_type;
+
+		if (type is DynamicArrayType)
+			return type.UnderlyingSystemType;
+
+		return type;
 	}
 
 	/// <summary>

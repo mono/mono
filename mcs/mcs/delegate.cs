@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 			if (!is_applicable && !params_method && arg_count != pd_count) {
 				ec.Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
 					TypeManager.CSharpName (del_type), arg_count.ToString ());
-			} else {
+			} else if (arguments == null || !arguments.HasDynamic) {
 				me.VerifyArgumentsCompat (ec, ref arguments, arg_count, mb,
 					is_params_applicable || (!is_applicable && params_method), false, loc);
 			}
