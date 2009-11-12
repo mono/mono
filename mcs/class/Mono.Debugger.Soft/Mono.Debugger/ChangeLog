@@ -1,3 +1,8 @@
+2009-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachineManager.cs: Put back the old Launch (string[], LaunchOptions)
+	overload.
+
 2009-11-11  Geoff Norton  <gnorton@novell.com>
 
 	* VirtualMachineManager.cs: Refactor the APIs to have async methods.

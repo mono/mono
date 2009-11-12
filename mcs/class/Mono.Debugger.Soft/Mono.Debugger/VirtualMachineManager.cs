@@ -97,6 +97,13 @@ namespace Mono.Debugger
 			return EndLaunch (BeginLaunch (info, null, null));
 		}
 
+		public static VirtualMachine Launch (string[] args, LaunchOptions options = null) {
+			ProcessStartInfo pi = new ProcessStartInfo ("mono");
+			pi.Arguments = String.Join (" ", args);
+
+			return Launch (pi, options);
+		}
+			
 		public static VirtualMachine ListenInternal (Socket dbg_sock, Socket con_sock) {
 			Socket con_acc = null;
 			Socket dbg_acc = null;
