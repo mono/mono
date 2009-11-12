@@ -4920,8 +4920,8 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 			
-			Expression expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
-			if (expr_resolved == null)
+			Expression member_expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			if (member_expr == null)
 				return null;
 
 			//
@@ -4931,78 +4931,47 @@ namespace Mono.CSharp {
 			if (arguments != null && !arguments_resolved)
 				arguments.Resolve (ec, out dynamic_arg);
 
-			Type expr_type = expr_resolved.Type;
-			mg = expr_resolved as MethodGroupExpr;
+			Type expr_type = member_expr.Type;
+			mg = member_expr as MethodGroupExpr;
 
-			if (dynamic_arg || TypeManager.IsDynamicType (expr_type)) {
-				Arguments args;
-				DynamicMemberBinder dmb = expr_resolved as DynamicMemberBinder;
-				if (dmb != null) {
-					args = dmb.Arguments;
-					if (arguments != null)
-						args.AddRange (arguments);
-				} else if (mg == null) {
-					if (arguments == null)
-						args = new Arguments (1);
-					else
-						args = arguments;
+			bool dynamic_member = TypeManager.IsDynamicType (expr_type);
 
-					args.Insert (0, new Argument (expr_resolved));
-					expr = null;
-				} else {
-					if (mg.IsBase) {
-						ec.Report.Error (1971, loc,
-							"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
-							mg.Name);
-						return null;
-					}
+			if (!dynamic_member) {
+				Expression invoke = null;
 
-					args = arguments;
-
-					if (mg.IsStatic != mg.IsInstance) {
-						if (args == null)
-							args = new Arguments (1);
-
-						if (mg.IsStatic) {
-							args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicTypeName));
-						} else {
-							MemberAccess ma = expr as MemberAccess;
-							if (ma != null)
-								args.Insert (0, new Argument (ma.Left.Resolve (ec)));
-							else
-								args.Insert (0, new Argument (new This (loc).Resolve (ec)));
-						}
-					}
-				}
-
-				return new DynamicInvocation (expr as ATypeNameExpression, args, loc).Resolve (ec);
-			}
-
-			if (mg == null) {
-				if (expr_type != null && TypeManager.IsDelegateType (expr_type)){
-					return (new DelegateInvocation (
-						expr_resolved, arguments, loc)).Resolve (ec);
-				}
-
-				MemberExpr me = expr_resolved as MemberExpr;
-				if (me == null) {
-					expr_resolved.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
-					return null;
-				}
-				
-				mg = ec.LookupExtensionMethod (me.Type, me.Name, loc);
 				if (mg == null) {
-					ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
-						expr_resolved.GetSignatureForError ());
-					return null;
+					if (expr_type != null && TypeManager.IsDelegateType (expr_type)) {
+						invoke = new DelegateInvocation (member_expr, arguments, loc);
+						invoke = invoke.Resolve (ec);
+						if (invoke == null || !dynamic_arg)
+							return invoke;
+					} else {
+						MemberExpr me = member_expr as MemberExpr;
+						if (me == null) {
+							member_expr.Error_UnexpectedKind (ec, ResolveFlags.MethodGroup, loc);
+							return null;
+						}
+
+						mg = ec.LookupExtensionMethod (me.Type, me.Name, loc);
+						if (mg == null) {
+							ec.Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
+								member_expr.GetSignatureForError ());
+							return null;
+						}
+
+						((ExtensionMethodGroupExpr) mg).ExtensionExpression = me.InstanceExpression;
+					}
 				}
 
-				((ExtensionMethodGroupExpr)mg).ExtensionExpression = me.InstanceExpression;
+				if (invoke == null) {
+					mg = DoResolveOverload (ec);
+					if (mg == null)
+						return null;
+				}
 			}
 
-			mg = DoResolveOverload (ec);
-			if (mg == null)
-				return null;
+			if (dynamic_arg || dynamic_member)
+				return DoResolveDynamic (ec, member_expr);
 
 			MethodInfo method = (MethodInfo)mg;
 			if (method != null) {
@@ -5049,6 +5018,51 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
+		{
+			Arguments args;
+			DynamicMemberBinder dmb = memberExpr as DynamicMemberBinder;
+			if (dmb != null) {
+				args = dmb.Arguments;
+				if (arguments != null)
+					args.AddRange (arguments);
+			} else if (mg == null) {
+				if (arguments == null)
+					args = new Arguments (1);
+				else
+					args = arguments;
+
+				args.Insert (0, new Argument (memberExpr));
+				this.expr = null;
+			} else {
+				if (mg.IsBase) {
+					ec.Report.Error (1971, loc,
+						"The base call to method `{0}' cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access",
+						mg.Name);
+					return null;
+				}
+
+				args = arguments;
+
+				if (mg.IsStatic != mg.IsInstance) {
+					if (args == null)
+						args = new Arguments (1);
+
+					if (mg.IsStatic) {
+						args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicTypeName));
+					} else {
+						MemberAccess ma = expr as MemberAccess;
+						if (ma != null)
+							args.Insert (0, new Argument (ma.Left.Resolve (ec)));
+						else
+							args.Insert (0, new Argument (new This (loc).Resolve (ec)));
+					}
+				}
+			}
+
+			return new DynamicInvocation (expr as ATypeNameExpression, args, loc).Resolve (ec);
 		}
 
 		protected virtual MethodGroupExpr DoResolveOverload (ResolveContext ec)
@@ -5493,14 +5507,11 @@ namespace Mono.CSharp {
 			Expression ml = MemberLookupFinal (ec, type, type, ConstructorInfo.ConstructorName,
 				MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
+			bool dynamic;
 			if (Arguments != null) {
-				bool dynamic;
 				Arguments.Resolve (ec, out dynamic);
-
-				if (dynamic) {
-					Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
-					return new DynamicConstructorBinder (type, Arguments, loc).Resolve (ec);
-				}
+			} else {
+				dynamic = false;
 			}
 
 			if (ml == null)
@@ -5515,6 +5526,11 @@ namespace Mono.CSharp {
 			method = method.OverloadResolve (ec, ref Arguments, false, loc);
 			if (method == null)
 				return null;
+
+			if (dynamic) {
+				Arguments.Insert (0, new Argument (new TypeOf (texpr, loc).Resolve (ec), Argument.AType.DynamicTypeName));
+				return new DynamicConstructorBinder (type, Arguments, loc).Resolve (ec);
+			}
 
 			return this;
 		}
@@ -7638,7 +7654,7 @@ namespace Mono.CSharp {
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, Type type, string name)
 		{
-			if (RootContext.Version > LanguageVersion.ISO_2 &&
+			if (RootContext.Version > LanguageVersion.ISO_2 && !ec.Compiler.IsRuntimeBinder &&
 				((expr.eclass & (ExprClass.Value | ExprClass.Variable)) != 0)) {
 				ec.Report.Error (1061, loc, "Type `{0}' does not contain a definition for `{1}' and no " +
 					"extension method `{1}' of type `{0}' could be found " +
@@ -8481,9 +8497,31 @@ namespace Mono.CSharp {
 		{
 			CommonResolve (ec);
 
+			MethodGroupExpr mg;
+			Indexers ilist;
 			bool dynamic;
+
 			arguments.Resolve (ec, out dynamic);
-			if (dynamic || TypeManager.IsDynamicType (indexer_type)) {
+
+			if (TypeManager.IsDynamicType (indexer_type)) {
+				dynamic = true;
+				mg = null;
+				ilist = null;
+			} else {
+				ilist = Indexers.GetIndexersForType (current_type, indexer_type);
+				if (ilist.Methods == null) {
+					ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+							  TypeManager.CSharpName (indexer_type));
+					return null;
+				}
+
+				mg = new IndexerMethodGroupExpr (ilist, loc);
+				mg = mg.OverloadResolve (ec, ref arguments, false, loc);
+				if (mg == null)
+					return null;
+			}
+
+			if (dynamic) {
 				Arguments args = new Arguments (arguments.Count + 1);
 				if (is_base_indexer) {
 					ec.Report.Error (1972, loc, "The indexer base access cannot be dynamically dispatched. Consider casting the dynamic arguments or eliminating the base access");
@@ -8498,18 +8536,6 @@ namespace Mono.CSharp {
 
 				return expr.Resolve (ec);
 			}
-
-			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
-			if (ilist.Methods == null) {
-				ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-						  TypeManager.CSharpName (indexer_type));
-				return null;
-			}
-
-			MethodGroupExpr mg = new IndexerMethodGroupExpr (ilist, loc);
-			mg = mg.OverloadResolve (ec, ref arguments, false, loc);
-			if (mg == null)
-				return null;
 
 			MethodInfo mi = (MethodInfo) mg;
 			PropertyInfo pi = null;

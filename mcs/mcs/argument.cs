@@ -197,6 +197,7 @@ namespace Mono.CSharp
 	{
 		ArrayList args;			// TODO: This should really be linked list
 		ArrayList reordered;	// TODO: LinkedList
+		bool has_dynamic;
 
 		public Arguments (int capacity)
 		{
@@ -389,6 +390,15 @@ namespace Mono.CSharp
 			return args.GetEnumerator ();
 		}
 
+		//
+		// At least one argument is of dynamic type
+		//
+		public bool HasDynamic {
+			get {
+				return has_dynamic;
+			}
+		}
+
 		public void Insert (int index, Argument arg)
 		{
 			args.Insert (index, arg);
@@ -433,11 +443,12 @@ namespace Mono.CSharp
 		//
 		public void Resolve (ResolveContext ec, out bool dynamic)
 		{
-			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				dynamic |= TypeManager.IsDynamicType (a.Type);
+				this.has_dynamic |= TypeManager.IsDynamicType (a.Type);
 			}
+
+			dynamic = has_dynamic;
 		}
 
 		public void MutateHoistedGenericType (AnonymousMethodStorey storey)

@@ -1,3 +1,8 @@
+2009-11-12  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, context.cs, expression.cs, ecore.cs: Dynamic binding
+	with a statically known candidate set.
+
 2009-11-11  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* generic.cs: Made type inflation for generic constraint checks

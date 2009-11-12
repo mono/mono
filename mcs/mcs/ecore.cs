@@ -4064,11 +4064,19 @@ namespace Mono.CSharp {
 				if (TypeManager.HasElementType (a_type))
 					a_type = TypeManager.GetElementType (a_type);
 
-				if (a_type != parameter)
+				if (a_type != parameter) {
+					if (TypeManager.IsDynamicType (a_type))
+						return 0;
+
 					return 2;
+				}
 			} else {
-				if (!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
+				if (!Convert.ImplicitConversionExists (ec, argument.Expr, parameter)) {
+					if (TypeManager.IsDynamicType (argument.Type))
+						return 0;
+
 					return 2;
+				}
 			}
 
 			if (arg_mod != param_mod)
@@ -4349,55 +4357,8 @@ namespace Mono.CSharp {
 					if (CustomErrorHandler != null && !has_inaccessible_candidates_only && CustomErrorHandler.NoExactMatch (ec, best_candidate))
 						return null;
 
-					AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
-					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
-					if (arg_count == pd.Count || pd.HasParams) {
-						if (TypeManager.IsGenericMethodDefinition (best_candidate)) {
-							if (type_arguments == null) {
-								ec.Report.Error (411, loc,
-									"The type arguments for method `{0}' cannot be inferred from " +
-									"the usage. Try specifying the type arguments explicitly",
-									TypeManager.CSharpSignature (best_candidate));
-								return null;
-							}
-
-							Type[] g_args = TypeManager.GetGenericArguments (best_candidate);
-							if (type_arguments.Count != g_args.Length) {
-								ec.Report.SymbolRelatedToPreviousError (best_candidate);
-								ec.Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
-									TypeManager.CSharpSignature (best_candidate),
-									g_args.Length.ToString ());
-								return null;
-							}
-						} else {
-							if (type_arguments != null && !TypeManager.IsGenericMethod (best_candidate)) {
-								Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
-								return null;
-							}
-						}
-
-						if (has_inaccessible_candidates_only) {
-							if (InstanceExpression != null && type != ec.CurrentType && TypeManager.IsNestedFamilyAccessible (ec.CurrentType, best_candidate.DeclaringType)) {
-								// Although a derived class can access protected members of
-								// its base class it cannot do so through an instance of the
-								// base class (CS1540).  If the qualifier_type is a base of the
-								// ec.CurrentType and the lookup succeeds with the latter one,
-								// then we are in this situation.
-								Error_CannotAccessProtected (ec, loc, best_candidate, queried_type, ec.CurrentType);
-							} else {
-								ec.Report.SymbolRelatedToPreviousError (best_candidate);
-								ErrorIsInaccesible (loc, GetSignatureForError (), ec.Report);
-							}
-						}
-
-						if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
-							return null;
-
-						if (has_inaccessible_candidates_only)
-							return null;
-
-						throw new InternalErrorException ("VerifyArgumentsCompat didn't find any problem with rejected candidate " + best_candidate);
-					}
+					if (NoExactMatch (ec, ref Arguments, candidate_to_form))
+						return null;
 				}
 
 				//
@@ -4413,6 +4374,11 @@ namespace Mono.CSharp {
 				}
                                 
 				return null;
+			}
+
+			if (arg_count != 0 && Arguments.HasDynamic) {
+				best_candidate = null;
+				return this;
 			}
 
 			if (!is_sorted) {
@@ -4594,6 +4560,61 @@ namespace Mono.CSharp {
 			Arguments = candidate_args;
 			return this;
 		}
+
+		bool NoExactMatch (ResolveContext ec, ref Arguments Arguments, Hashtable candidate_to_form)
+		{
+			AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
+			int arg_count = Arguments == null ? 0 : Arguments.Count;
+
+			if (arg_count == pd.Count || pd.HasParams) {
+				if (TypeManager.IsGenericMethodDefinition (best_candidate)) {
+					if (type_arguments == null) {
+						ec.Report.Error (411, loc,
+							"The type arguments for method `{0}' cannot be inferred from " +
+							"the usage. Try specifying the type arguments explicitly",
+							TypeManager.CSharpSignature (best_candidate));
+						return true;
+					}
+
+					Type[] g_args = TypeManager.GetGenericArguments (best_candidate);
+					if (type_arguments.Count != g_args.Length) {
+						ec.Report.SymbolRelatedToPreviousError (best_candidate);
+						ec.Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
+							TypeManager.CSharpSignature (best_candidate),
+							g_args.Length.ToString ());
+						return true;
+					}
+				} else {
+					if (type_arguments != null && !TypeManager.IsGenericMethod (best_candidate)) {
+						Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
+						return true;
+					}
+				}
+
+				if (has_inaccessible_candidates_only) {
+					if (InstanceExpression != null && type != ec.CurrentType && TypeManager.IsNestedFamilyAccessible (ec.CurrentType, best_candidate.DeclaringType)) {
+						// Although a derived class can access protected members of
+						// its base class it cannot do so through an instance of the
+						// base class (CS1540).  If the qualifier_type is a base of the
+						// ec.CurrentType and the lookup succeeds with the latter one,
+						// then we are in this situation.
+						Error_CannotAccessProtected (ec, loc, best_candidate, queried_type, ec.CurrentType);
+					} else {
+						ec.Report.SymbolRelatedToPreviousError (best_candidate);
+						ErrorIsInaccesible (loc, GetSignatureForError (), ec.Report);
+					}
+				}
+
+				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+				if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, false, loc))
+					return true;
+
+				if (has_inaccessible_candidates_only)
+					return true;
+			}
+
+			return false;
+		}
 		
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
@@ -4670,6 +4691,9 @@ namespace Mono.CSharp {
 						}
 					}
 				}
+
+				if (TypeManager.IsDynamicType (a.Expr.Type))
+					continue;
 
 				if (delegate_type != null && !Delegate.IsTypeCovariant (a.Expr, pt))
 					break;

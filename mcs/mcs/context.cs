@@ -576,6 +576,8 @@ namespace Mono.CSharp
 			this.report = report;
 		}
 
+		public bool IsRuntimeBinder { get; set; }
+
 		public Report Report {
 			get { return report; }
 		}
