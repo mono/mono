@@ -1,3 +1,14 @@
+2009-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* common_System.ServiceModel.Web.dll.sources,
+	  net_2_0_System.ServiceModel.Web.dll.sources,
+	  net_4_0_System.ServiceModel.Web.dll.sources :
+
+	  in 4.0 profile, some types are moved from this
+	  assembly, so extract common basis and include
+	  it in 2.0 and 4.0 profile sources (4.0 is
+	  equivalent to common so far).
+
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* monotouch_System.ServiceModel.Web.dll.sources:
