@@ -1,3 +1,67 @@
+2009-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+[backport the improvements and speedups for ListView from trunk,
+-r 142738:144115]
+
+	2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the top item, take into account the
+		offset represented by the header control, to retrieve the proper
+		value. Patch by Christoph von Wittich (Christoph at ApiViewer.de)
+		Fixes the remaining bits of #543773.
+
+		2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: TopItem setter should set the value as the top, not
+		only ensuring its visibility.
+		Fixes part of #543773.
+
+		2009-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: For virtual mode, when navigating the items using keyboard,
+		don't use the matrix of positions, and instead calculate the positions
+		based on the number of cols and rows, taking advantage of the fixed
+		positions of items. Use the same idea to implement FirstVisibleIndex,
+		so we avoid iterating over all the items. Patch by Stephen Robinson
+		mono at esar.org.uk.
+		Fixes part of #467418.
+
+		2009-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When computing the value for groups height don't use
+		text_size field, since in LargeIcon view it sometimes contains a
+		double height value - use Font.Height directly, and also improve the
+		padding value.
+		* ThemeWin32Classic: The same as above.
+		This way the space between the group header, the line, and the items
+		area is not that big in LargeIcon view.
+
+		2009-10-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the fixed positions for the items in
+		virtual mode, use the row value to compute the coords of the item,
+		instead of the col value, as opposed to SmallIcon/LargeIcon views.
+
+		2009-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: The location of the items should be computed on the fly
+		in virtual mode - that decreased speed overall, but reduces the load
+		time.that decreased speed overall, but reduces the load time. Also,
+		handle the cases where we were using data structures we don't need to
+		use/create for this mode.
+		Fixes part of #467418.
+
+		2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: Tile view and VirtualMode can't be applied together.
+		Patch by Stephen Robinson <mono@esar.org.uk>.
+
+		2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When calculating the layout for Details view, don't ask
+		for the items *at all* in case we are in virtual mode. This should
+		re-enable the proper behaviour of virtual mode.
+
 2009-10-12  Dick Porter  <dporter@codicesoftware.com>
  
 	* Splitter.cs: Adjust offsets when more than one splitter is
