@@ -1,7 +1,14 @@
-2009-11-11  Zoltan Varga  <vargaz@gmail.com>
+2009-11-12  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-compiler.c (add_generic_instances): Only add GetGenericValueImpl to the
-	mscorlib aot image.
+	* mini-llvm.c: Add soft-float support.
+
+	* method-to-ir.c (mono_decompose_soft_float): Restart after decomposing an
+	FCALL which returns an R4.
+
+	* driver.c (mono_main): Add a missing '\n'.
+
+	* mini-trampolines.c (mono_create_llvm_imt_trampoline): Fix the build on
+	platforms which doesn't support the LLVM IMT trampoline.
 
 2009-11-11  Zoltan Varga  <vargaz@gmail.com>
 
