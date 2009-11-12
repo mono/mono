@@ -1,3 +1,9 @@
+2009-11-12  Geoff Norton  <gnorton@novell.com>
+
+	* mono-path.c: When resolving symlinks in a path, we need to
+	split on the directory separator and check each level, as
+	readlink only checks the final destination.
+
 2009-11-10 Rodrigo Kumpera  <rkumpera@novell.com>
  
      * mono-error-internals.h: Add mono_error_set_argument and mono_error_raise_exception.
