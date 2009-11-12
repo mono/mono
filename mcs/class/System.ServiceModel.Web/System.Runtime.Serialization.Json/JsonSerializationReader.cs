@@ -225,9 +225,10 @@ namespace System.Runtime.Serialization.Json
 				return type.GetElementType ();
 			if (type.IsGenericType) {
 				// returns T for ICollection<T>
-				Type gt = type.GetGenericTypeDefinition ();
-				if (gt == typeof (ICollection<>))
-					return type.GetGenericArguments () [0];
+				Type [] ifaces = type.GetInterfaces ();
+				foreach (Type i in ifaces)
+					if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
+						return i.GetGenericArguments () [0];
 			}
 			if (typeof (IList).IsAssignableFrom (type))
 				// return typeof(object) for mere collection.

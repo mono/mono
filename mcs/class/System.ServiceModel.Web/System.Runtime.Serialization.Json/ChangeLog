@@ -1,3 +1,8 @@
+2009-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	*  JsonSerializationReader.cs : reuse generic collection search
+	  logic in KnownTypeCollection.cs. Fixed bug #551671.
+
 2009-10-30  Andreia Gaita  <avidigal@novell.com>
 
 	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
