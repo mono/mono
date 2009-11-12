@@ -55,6 +55,11 @@ class Class
 	{
 		return value;
 	}
+	
+	public int Method (int a, byte b)
+	{
+		return a * b;
+	}
 
 	public void MethodInOut (ref int refValue, out string outValue)
 	{
@@ -132,6 +137,9 @@ class Tester
 	{
 		dynamic d = new Class ();
 		Assert ("vv", d.Method ("vv"), "#1");
+		
+		byte b = 2;
+		Assert (6, d.Method (b: b++, a: b), "#1a");
 
 		var arg1 = 1;
 		var arg2 = "a";
@@ -139,7 +147,7 @@ class Tester
 
 		d = 2;
 		Assert (2, Class.StaticMethod (d), "#2");
-		Class.StaticMethod (d);
+		Class.StaticMethod (d);	
 	}
 
 	void InvokeConstructor ()

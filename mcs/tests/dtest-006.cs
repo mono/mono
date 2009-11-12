@@ -688,6 +688,13 @@ class Tester
 		bool b = false;
 		var r = b ? d : "ss";
 		Assert ("ss", r, "#6");
+		
+		var v = new [] { d, 1 };
+		Assert ("aa", v [0], "#7");
+		
+		// TODO: Runtime bug #555013
+		//dynamic [,] a = new dynamic [,] { { 1, 2 }, { 'b', 'x' } };
+		//Assert ("aa", a [0, 1], "#8");
 	}
 
 	int ConvertImplicitReturnTest ()

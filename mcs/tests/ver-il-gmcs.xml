@@ -11910,6 +11910,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-469.cs">
+    <type name="Foo`2[T1,T2]">
+      <method name="Void .ctor(T2)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Bar">
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
