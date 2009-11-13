@@ -38,17 +38,16 @@ public partial class _Default : System.Web.UI.Page
         table.Columns.Add("Dosage", typeof(int));
         table.Columns.Add("Drug", typeof(string));
         table.Columns.Add("Patient", typeof(string));
-        table.Columns.Add("Date", typeof(DateTime));
+        table.Columns.Add("Date", typeof(string));
 
         //
         // Here we add five DataRows.
         //
-        DateTime dt = new DateTime (2009, 11, 13);
-        table.Rows.Add(25, "Indocin", "David", dt);
-        table.Rows.Add(50, "Enebrel", "Sam", dt);
-        table.Rows.Add(10, "Hydralazine", "Christoff", dt);
-        table.Rows.Add(21, "Combivent", "Janet", dt);
-        table.Rows.Add(100, "Dilantin", "Melanie", dt);
+        table.Rows.Add(25, "Indocin", "David", "2009-11-13");
+        table.Rows.Add(50, "Enebrel", "Sam", "2009-11-13");
+        table.Rows.Add(10, "Hydralazine", "Christoff", "2009-11-13");
+        table.Rows.Add(21, "Combivent", "Janet", "2009-11-13");
+        table.Rows.Add(100, "Dilantin", "Melanie", "2009-11-13");
         return table;
     }
 
