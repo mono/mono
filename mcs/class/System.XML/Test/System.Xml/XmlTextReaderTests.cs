@@ -1304,5 +1304,42 @@ namespace MonoTests.System.Xml
 			while (!xtr.EOF)
 				xtr.Read ();
 		}
+
+		[Test]
+		public void ParsingWithNSMgrSubclass ()
+		{
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (new NameTable ());
+			nsMgr.AddNamespace ("foo", "bar");
+			XmlParserContext inputContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
+			XmlReader xr = XmlReader.Create (new StringReader ("<empty/>"), new XmlReaderSettings (), inputContext);
+
+			XmlNamespaceManager aMgr = new MyNS (xr);
+			XmlParserContext inputContext2 = new XmlParserContext(null, aMgr, null, XmlSpace.None);
+			XmlReader xr2 = XmlReader.Create (new StringReader ("<foo:haha>namespace test</foo:haha>"), new XmlReaderSettings (), inputContext2);
+
+			while (xr2.Read ()) {}
+
+		}
+
+
+		// The MyNS subclass chains namespace lookups
+		class MyNS : XmlNamespaceManager {
+			private XmlReader xr;
+
+
+			public MyNS (XmlReader xr)
+				: base (xr.NameTable) {
+				this.xr = xr;
+			}
+
+			public override string LookupNamespace (string prefix) {
+				string str = base.LookupNamespace (prefix);
+				if (!string.IsNullOrEmpty (str))
+					return str;
+				if (xr != null)
+					return xr.LookupNamespace (prefix);
+				return String.Empty;
+			}
+		}
 	}
 }
