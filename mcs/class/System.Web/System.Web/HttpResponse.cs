@@ -839,25 +839,44 @@ namespace System.Web
 
 		public void Redirect (string url, bool endResponse)
 		{
+			if (url == null)
+				throw new ArgumentNullException ("url");
+			
 			if (headers_sent)
 				throw new HttpException ("Headers have already been sent");
 
+			if (url.IndexOf ('\n') != -1)
+				throw new ArgumentException ("Redirect URI cannot contain newline characters.", "url");
+			
 			is_request_being_redirected = true;
 			ClearHeaders ();
 			ClearContent ();
 			
 			StatusCode = 302;
 			url = ApplyAppPathModifier (url);
-			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
-			if (config != null && config.UseFullyQualifiedRedirectUrl) {
-				var ub = new UriBuilder (context.Request.Url);
-				ub.Path = url;
-				ub.Fragment = null;
-				ub.Password = null;
-				ub.Query = null;
-				ub.UserName = null;
-				url = ub.Uri.ToString ();
+
+			bool isFullyQualified;
+			if (StrUtils.StartsWith (url, "http:", true) ||
+			    StrUtils.StartsWith (url, "https:", true) ||
+			    StrUtils.StartsWith (url, "file:", true) ||
+			    StrUtils.StartsWith (url, "ftp:", true))
+				isFullyQualified = true;
+			else
+				isFullyQualified = false;
+
+			if (!isFullyQualified) {
+				HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+				if (config != null && config.UseFullyQualifiedRedirectUrl) {
+					var ub = new UriBuilder (context.Request.Url);
+					ub.Path = url;
+					ub.Fragment = null;
+					ub.Password = null;
+					ub.Query = null;
+					ub.UserName = null;
+					url = ub.Uri.ToString ();
+				}
 			}
+			
 			redirect_location = url;
 
 			// Text for browsers that can't handle location header
