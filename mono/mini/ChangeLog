@@ -1,5 +1,8 @@
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_call_body): Disable usage of near calls when running
+	under XEN. Fixes #522894.
+
 	* patch-info.h: Add LLVM_IMT_TRAMPOLINE.
 
 	* mini-llvm.c aot-compiler.c aot-runtime.c mini.c: Add support for making
