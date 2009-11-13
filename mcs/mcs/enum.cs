@@ -177,7 +177,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Define ()
+		protected override bool DoDefineMembers ()
 		{
 			member_cache = new MemberCache (TypeManager.enum_type, this);
 			DefineContainerMembers (constants);

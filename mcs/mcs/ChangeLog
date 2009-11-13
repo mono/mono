@@ -1,3 +1,10 @@
+2009-11-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #555170
+
+	* class.cs, delegate.cs, enum.cs: Constants have to be available
+	for parameters resolve.
+
 2009-11-12  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, argument.cs, support.cs, delegate.cs: Dynamic
