@@ -25,6 +25,7 @@ mainsoft/NunitWeb/NunitWeb/IForeignData.cs
 mainsoft/NunitWeb/NunitWeb/HandlerInvoker.cs
 mainsoft/NunitWeb/NunitWeb/MyHandler.cs
 mainsoft/NunitWeb/NunitWeb/MyHost.cs
+mainsoft/NunitWeb/NunitWeb/MyPage_1.1.cs
 mainsoft/NunitWeb/NunitWeb/MyPageHandlerFactory.cs
 mainsoft/NunitWeb/NunitWeb/MyTemplateControls.cs
 mainsoft/NunitWeb/NunitWeb/PageDelegates.cs

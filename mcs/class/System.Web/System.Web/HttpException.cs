@@ -94,7 +94,9 @@ namespace System.Web
 		HttpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+#if NET_2_0
 			http_code = info.GetInt32 ("_httpCode");
+#endif
 		}
 
 #if NET_2_0

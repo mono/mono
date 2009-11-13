@@ -48,7 +48,7 @@ namespace System.Web.Configuration
 		bool has_parent;
 #if NET_1_1
 		bool requireSSL;
-		bool slidingExpiration;
+		bool slidingExpiration = true;
 #endif
 #if NET_2_0
 		string cookie_domain;

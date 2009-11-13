@@ -79,6 +79,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage_1.1.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config \
