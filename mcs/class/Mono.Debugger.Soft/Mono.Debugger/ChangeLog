@@ -1,3 +1,8 @@
+2009-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Implement an async version of
+	InvokeMethod ().
+
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* InvokeOptions.cs: New file.
