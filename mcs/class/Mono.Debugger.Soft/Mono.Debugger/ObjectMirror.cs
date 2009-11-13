@@ -97,19 +97,29 @@ namespace Mono.Debugger
 		}
 
 		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return InvokeMethod (vm, thread, method, this, arguments);
+			return InvokeMethod (vm, thread, method, this, arguments, InvokeOptions.None);
 		}
 
-		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments) {
+		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
+			return InvokeMethod (vm, thread, method, this, arguments, options);
+		}
+
+		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
 			if (thread == null)
 				throw new ArgumentNullException ("thread");
 			if (method == null)
 				throw new ArgumentNullException ("method");
 			if (arguments == null)
 				arguments = new Value [0];
+
+			InvokeFlags f = InvokeFlags.NONE;
+
+			if ((options & InvokeOptions.DisableBreakpoints) != 0)
+				f |= InvokeFlags.DISABLE_BREAKPOINTS;
+
 			try {
 				ValueImpl exc;
-				ValueImpl v = vm.conn.VM_InvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), out exc);
+				ValueImpl v = vm.conn.VM_InvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, out exc);
 				if (v == null)
 					throw new InvocationException ((ObjectMirror)vm.DecodeValue (exc));
 				else
