@@ -39,6 +39,7 @@ namespace System.Drawing {
 		{
 		}
 #endif
+		// FindColorMatch relies on the index + 1 == KnowColor match
 		static internal uint[] ArgbValues = new uint[] {
 			0x00000000,	/* 000 - Empty */
 			0xFFD4D0C8,	/* 001 - ActiveBorder */
@@ -489,13 +490,20 @@ namespace System.Drawing {
 			return GetName ((short)kc);
 		}
 
+		// FIXME: Linear scan
 		public static Color FindColorMatch (Color c)
 		{
 			uint argb = (uint) c.ToArgb ();
-			for (int i = 0; i < KnownColors.ArgbValues.Length; i++) {
+			
+			// 1-based
+			const int first_real_color_index = (int) KnownColor.AliceBlue;
+			const int last_real_color_index = (int) KnownColor.YellowGreen;
+			
+			for (int i = first_real_color_index - 1; i < last_real_color_index; i++) {
 				if (argb == KnownColors.ArgbValues [i])
 					return KnownColors.FromKnownColor ((KnownColor)i);
-                        }
+			}
+			
 			return Color.Empty;
 		}
 

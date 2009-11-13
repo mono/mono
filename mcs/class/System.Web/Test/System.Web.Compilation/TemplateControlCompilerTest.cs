@@ -59,9 +59,9 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "FullTagsInText.aspx", "FullTagsInText.aspx");
 			WebTest.CopyResource (GetType (), "TagsExpressionsAndCommentsInText.aspx", "TagsExpressionsAndCommentsInText.aspx");
 			WebTest.CopyResource (GetType (), "NewlineInCodeExpression.aspx", "NewlineInCodeExpression.aspx");
-			WebTest.CopyResource (GetType (), "DuplicateControlsInClientComment.aspx", "DuplicateControlsInClientComment.aspx");
 			WebTest.CopyResource (GetType (), "TagsNestedInClientTag.aspx", "TagsNestedInClientTag.aspx");
 #if NET_2_0
+			WebTest.CopyResource (GetType (), "DuplicateControlsInClientComment.aspx", "DuplicateControlsInClientComment.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind3.aspx", "InvalidPropertyBind3.aspx");
