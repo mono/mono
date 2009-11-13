@@ -1,3 +1,11 @@
+2009-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: added parameter checks to Redirect ().
+	If the passed url starts with http:, https:, file: or ftp: then it
+	is treated as a fully qualified one and no attempt to rewrite the
+	url to the fully qualified form (if system.web/httpRuntime
+	UseFullyQualifiedRedirectUrl is true) is made.
+
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCookie.cs: made HttpCookie.CookieNVC serializable. Patch
