@@ -436,10 +436,10 @@ static GPtrArray *pending_assembly_loads;
 static gboolean debugger_thread_exited;
 
 /* Cond variable used to wait for debugger_thread_exited becoming true */
-static mono_cond_t debugger_thread_exited_cond = MONO_COND_INITIALIZER;
+static mono_cond_t debugger_thread_exited_cond;
 
 /* Mutex for the cond var above */
-static mono_mutex_t debugger_thread_exited_mutex = MONO_MUTEX_INITIALIZER;
+static mono_mutex_t debugger_thread_exited_mutex;
 
 static DebuggerProfiler debugger_profiler;
 
@@ -630,6 +630,9 @@ mono_debugger_agent_init (void)
 
 	event_requests = g_ptr_array_new ();
 
+	mono_mutex_init (&debugger_thread_exited_mutex, NULL);
+	mono_cond_init (&debugger_thread_exited_cond, NULL);
+
 	mono_profiler_install ((MonoProfiler*)&debugger_profiler, runtime_shutdown);
 	mono_profiler_set_events (MONO_PROFILE_APPDOMAIN_EVENTS | MONO_PROFILE_THREADS | MONO_PROFILE_ASSEMBLY_EVENTS | MONO_PROFILE_JIT_COMPILATION | MONO_PROFILE_METHOD_EVENTS);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
@@ -768,6 +771,10 @@ mono_debugger_agent_cleanup (void)
 	breakpoints_cleanup ();
 	objrefs_cleanup ();
 	ids_cleanup ();
+
+	
+	mono_mutex_destroy (&debugger_thread_exited_mutex);
+	mono_cond_destroy (&debugger_thread_exited_cond);
 }
 
 /*
@@ -789,6 +796,8 @@ transport_connect (const char *host, int port)
 
 	if (host) {
 		sprintf (port_string, "%d", port);
+
+		mono_network_init ();
 
 		/* Obtain address(es) matching host/port */
 
@@ -905,11 +914,11 @@ transport_connect (const char *host, int port)
 	
 	/* Write handshake message */
 	sprintf (handshake_msg, "DWP-Handshake");
-	res = write (conn_fd, handshake_msg, strlen (handshake_msg));
+	res = send (conn_fd, handshake_msg, strlen (handshake_msg), 0);
 	g_assert (res != -1);
 
 	/* Read answer */
-	res = read (conn_fd, buf, strlen (handshake_msg));
+	res = recv (conn_fd, buf, strlen (handshake_msg), 0);
 	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg) != 0))) {
 		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
 		exit (1);
@@ -935,7 +944,7 @@ transport_send (guint8 *data, int len)
 {
 	int res;
 
-	res = write (conn_fd, data, len);
+	res = send (conn_fd, data, len, 0);
 	if (res != len)
 		return FALSE;
 	else
@@ -1591,10 +1600,10 @@ static gint32 suspend_count;
  */
 static gint32 threads_suspend_count;
 
-static mono_mutex_t suspend_mutex = MONO_MUTEX_INITIALIZER;
+static mono_mutex_t suspend_mutex;
 
 /* Cond variable used to wait for suspend_count becoming 0 */
-static mono_cond_t suspend_cond = MONO_COND_INITIALIZER;
+static mono_cond_t suspend_cond;
 
 /* Semaphore used to wait for a thread becoming suspended */
 static MonoSemType suspend_sem;
@@ -1602,6 +1611,8 @@ static MonoSemType suspend_sem;
 static void
 suspend_init (void)
 {
+	mono_mutex_init (&suspend_mutex, NULL);
+	mono_cond_init (&suspend_cond, NULL);	
 	MONO_SEM_INIT (&suspend_sem, 0);
 }
 
@@ -1654,6 +1665,14 @@ mono_debugger_agent_thread_interrupt (MonoJitInfo *ji)
 	}
 }
 
+#ifdef PLATFORM_WIN32
+static void CALLBACK notify_thread_apc (ULONG_PTR param)
+{
+	//DebugBreak ();
+	mono_debugger_agent_thread_interrupt (NULL);
+}
+#endif /* PLATFORM_WIN32 */
+
 /*
  * notify_thread:
  *
@@ -1674,7 +1693,8 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 		 */
 		InterlockedIncrement (&tls->interrupt_count);
 #ifdef PLATFORM_WIN32
-		/*FIXME: Abort thread */
+	//	g_assert_not_reached ();
+		QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
 		pthread_kill ((pthread_t) tid, mono_thread_get_abort_signal ());
 #endif
@@ -1738,8 +1758,8 @@ resume_vm (void)
 		g_assert (err == 0);
 	}
 
-	err = mono_mutex_unlock (&suspend_mutex);
-	g_assert (err == 0);
+	mono_mutex_unlock (&suspend_mutex);
+	//g_assert (err == 0);
 
 	mono_loader_unlock ();
 }
@@ -1798,8 +1818,20 @@ suspend_current (void)
 	DEBUG(1, fprintf (log_file, "[%p] Suspended.\n", (gpointer)GetCurrentThreadId ()));
 
 	while (suspend_count > 0) {
+#ifdef PLATFORM_WIN32
+		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
+		{
+			mono_mutex_unlock (&suspend_mutex);
+			Sleep(0);
+			mono_mutex_lock (&suspend_mutex);
+		}
+		else
+		{
+		}
+#else
 		err = mono_cond_wait (&suspend_cond, &suspend_mutex);
 		g_assert (err == 0);
+#endif
 	}
 
 	tls->suspended = FALSE;
@@ -5404,7 +5436,7 @@ debugger_thread (void *arg)
 	mono_set_is_debugger_attached (TRUE);
 
 	while (TRUE) {
-		res = read (conn_fd, header, HEADER_LENGTH);
+		res = recv (conn_fd, header, HEADER_LENGTH, 0);
 
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH)
@@ -5424,9 +5456,12 @@ debugger_thread (void *arg)
 		DEBUG (1, fprintf (log_file, "[dbg] Received command %s(%d), id=%d.\n", command_set_to_string (command_set), command, id));
 
 		data = g_malloc (len - HEADER_LENGTH);
-		res = read (conn_fd, data, len - HEADER_LENGTH);
-		if (res != len - HEADER_LENGTH)
-			break;
+		if (len - HEADER_LENGTH > 0)
+		{
+			res = recv (conn_fd, data, len - HEADER_LENGTH, 0);
+			if (res != len - HEADER_LENGTH)
+				break;
+		}
 
 		p = data;
 		end = data + (len - HEADER_LENGTH);

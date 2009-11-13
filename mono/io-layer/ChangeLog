@@ -1,3 +1,9 @@
+2009-11-13 Jonathan Chambers <joncham@gmail.com>
+
+	* mono-mutex.h: Implementation for Windows platform.
+	
+	Code contributed under MIT/X11 license.
+
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Include mono-path.h.
