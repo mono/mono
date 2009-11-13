@@ -1,3 +1,7 @@
+2009-11-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* Makefile: Always install only 2.0 version of security and gacutil.
+
 2009-10-14  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (per_profile_dirs): New.  List of subdirs that build

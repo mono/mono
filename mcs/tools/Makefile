@@ -8,7 +8,6 @@ per_profile_dirs = \
 	csharplib	\
 	csharp		\
 	culevel		\
-	gacutil		\
 	genxs		\
 	mkbundle	\
 	monop		\
@@ -53,7 +52,7 @@ net_2_1_dirs := \
 
 basic_SUBDIRS = gacutil security
 net_2_0_bootstrap_SUBDIRS = resgen culevel
-net_2_0_SUBDIRS := $(net_2_0_dirs)
+net_2_0_SUBDIRS := $(net_2_0_dirs) $(basic_SUBDIRS)
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 net_2_1_SUBDIRS := $(net_2_1_dirs)
 net_4_0_bootstrap_SUBDIRS = resgen culevel
