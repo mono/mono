@@ -97,6 +97,11 @@ namespace Mono.Debugger
 		VALUE_TYPE_ID_TYPE = 0xf1
 	}
 
+	enum InvokeFlags {
+		NONE = 0x0,
+		DISABLE_BREAKPOINTS = 0x1
+	}
+
 	class ValueImpl {
 		public ElementType Type; /* or one of the VALUE_TYPE_ID constants */
 		public long Objid;
@@ -211,10 +216,13 @@ namespace Mono.Debugger
 
 		public const int HEADER_LENGTH = 11;
 
-		public const int MAJOR_VERSION = 0;
-		public const int MINOR_VERSION = 2;
-
-		// FIXME: Synchronize these with JDWP
+		/*
+		 * Th version of the wire-protocol implemented by the library. The library
+		 * and the debuggee can communicate if they implement the same major version,
+		 * and the debuggee's minor version is <= the library's minor version.
+		 */
+		public const int MAJOR_VERSION = 1;
+		public const int MINOR_VERSION = 0;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -805,6 +813,8 @@ namespace Mono.Debugger
 			return offset;
 		}
 
+		public VersionInfo Version;
+
 		// Do the wire protocol handshake
 		public void Connect () {
 			byte[] buf = new byte [HANDSHAKE_STRING.Length];
@@ -824,6 +834,8 @@ namespace Mono.Debugger
 
 			receiver_thread = new Thread (new ThreadStart (receiver_thread_main));
 			receiver_thread.Start ();
+
+			Version = VM_GetVersion ();
 		}
 
 		public EndPoint EndPoint {
@@ -1126,9 +1138,9 @@ namespace Mono.Debugger
 			SendReceive (CommandSet.VM, (int)CmdVM.DISPOSE);
 		}
 
-		public ValueImpl VM_InvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, out ValueImpl exc) {
+		public ValueImpl VM_InvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, out ValueImpl exc) {
 			exc = null;
-			PacketReader r = SendReceive (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments));
+			PacketReader r = SendReceive (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments).WriteInt ((int)flags));
 			if (r.ReadByte () == 0) {
 				exc = r.ReadValue ();
 				return null;
