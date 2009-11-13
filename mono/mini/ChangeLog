@@ -1,5 +1,13 @@
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* patch-info.h: Add LLVM_IMT_TRAMPOLINE.
+
+	* mini-llvm.c aot-compiler.c aot-runtime.c mini.c: Add support for making
+	interface calls in LLVM AOT code.
+
+	* aot-compiler.c mini-llvm.c: Abort llvm compilation if a non-encodable patch
+	is found.
+
 	* mini-llvm.c: Add support for OP_VPHI.
 
 	* objects.cs: Add a test.
