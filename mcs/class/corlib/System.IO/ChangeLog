@@ -1,3 +1,7 @@
+2009-11-13  Marek Safar <marek.safar@gmail.com>
+
+	* UnmanagedMemoryAccessor.cs: Finished.
+
 2009-11-08  Miguel de Icaza  <miguel@novell.com>
 
 	* FileInfo.cs: Partially implement.

@@ -3,6 +3,7 @@
 //
 // Author:
 //  Zoltan Varga (vargaz@gmail.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
@@ -40,7 +41,7 @@ namespace System.IO
 		long capacity;
 		bool canwrite, canread;
 
-		public UnmanagedMemoryAccessor ()
+		protected UnmanagedMemoryAccessor ()
 		{
 		}
 
@@ -79,12 +80,14 @@ namespace System.IO
 			this.capacity = capacity;
 		}
 		
-		public void Dispose () {
+		public void Dispose ()
+		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
 
-		public void Dispose (bool disposing) {
+		protected virtual void Dispose (bool disposing)
+		{
 			if (buffer != null){
 				if (disposing){
 					buffer.Dispose ();
@@ -93,11 +96,6 @@ namespace System.IO
 			buffer = null;
 		}
 
-#if false
-	//
-	// The code below can be enabled once this bug is fixed:
-	// https://bugzilla.novell.com/show_bug.cgi?id=553650
-	//
 		public byte ReadByte (long position) 
 		{
 			if (!canread)
@@ -122,7 +120,7 @@ namespace System.IO
 			return buffer.Read<bool> ((ulong) position);
 		}
 
-		public bool ReadChar (long position) 
+		public char ReadChar (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -134,7 +132,7 @@ namespace System.IO
 			return buffer.Read<char> ((ulong) position);
 		}
 		
-		public bool ReadDecimal (long position) 
+		public decimal ReadDecimal (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -146,7 +144,7 @@ namespace System.IO
 			return buffer.Read<decimal> ((ulong) position);
 		}
 		
-		public bool ReadDouble (long position) 
+		public double ReadDouble (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -158,7 +156,7 @@ namespace System.IO
 			return buffer.Read<double> ((ulong) position);
 		}
 
-		public bool ReadInt16 (long position) 
+		public short ReadInt16 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -170,7 +168,7 @@ namespace System.IO
 			return buffer.Read<short> ((ulong) position);
 		}
 		
-		public bool ReadInt32 (long position) 
+		public int ReadInt32 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -182,7 +180,7 @@ namespace System.IO
 			return buffer.Read<int> ((ulong) position);
 		}
 		
-		public bool ReadInt64 (long position) 
+		public long ReadInt64 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -194,7 +192,8 @@ namespace System.IO
 			return buffer.Read<long> ((ulong) position);
 		}
 		
-		public bool ReadSByte (long position) 
+		[CLSCompliant (false)]
+		public sbyte ReadSByte (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -206,7 +205,7 @@ namespace System.IO
 			return buffer.Read<sbyte> ((ulong) position);
 		}
 		
-		public bool ReadSingle (long position) 
+		public float ReadSingle (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -219,7 +218,7 @@ namespace System.IO
 		}
 		
 		[CLSCompliant (false)]
-		public bool ReadUInt16 (long position) 
+		public ushort ReadUInt16 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -232,7 +231,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-		public bool ReadUInt32 (long position) 
+		public uint ReadUInt32 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -245,7 +244,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-		public bool ReadUInt64 (long position) 
+		public ulong ReadUInt64 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -257,7 +256,7 @@ namespace System.IO
 			return buffer.Read<ulong> ((ulong) position);
 		}
 
-		public void Read<T> (long position, out T structure) 
+		public void Read<T> (long position, out T structure) where T : struct
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -269,15 +268,15 @@ namespace System.IO
 			structure = buffer.Read<T> ((ulong) position);
 		}
 
-		public int ReadArray<T> (long position, T [] array, int offset, int count) 
+		public int ReadArray<T> (long position, T [] array, int offset, int count) where T : struct
 		{
 			if (position < 0)
 				throw new ArgumentOutOfRangeException ();
 			
 			long left = capacity - position;
-			int slots = (left / Marshal.SizeOf (typeof (T)));
+			var slots = (int)(left / Marshal.SizeOf (typeof (T)));
 			
-			buffer.ReadArray ((ulong) position, array, index, slots);
+			buffer.ReadArray ((ulong) position, array, offset, slots);
 			return slots;
 		}
 		
@@ -328,6 +327,18 @@ namespace System.IO
 			
 			buffer.Write ((ulong)position, value);
 		}
+		
+		public void Write (long position, double value) 
+		{
+			if (!canwrite)
+				throw new NotSupportedException ();
+			if (buffer == null)
+				throw new ObjectDisposedException ("buffer");
+			if (position < 0)
+				throw new ArgumentOutOfRangeException ();
+			
+			buffer.Write ((ulong)position, value);
+		}
 
 		public void Write (long position, short value) 
 		{
@@ -366,7 +377,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-			public void Write (long position, sbyte value) 
+		public void Write (long position, sbyte value) 
 		{
 			if (!canwrite)
 				throw new NotSupportedException ();
@@ -391,7 +402,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-			public void Write (long position, ushort value) 
+		public void Write (long position, ushort value) 
 		{
 			if (!canwrite)
 				throw new NotSupportedException ();
@@ -404,7 +415,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-			public void Write (long position, uint value) 
+		public void Write (long position, uint value) 
 		{
 			if (!canwrite)
 				throw new NotSupportedException ();
@@ -429,7 +440,7 @@ namespace System.IO
 			buffer.Write ((ulong)position, value);
 		}
 
-		public void Write<T> (long position, ref T structure) 
+		public void Write<T> (long position, ref T structure) where T : struct
 		{
 			if (!canwrite)
 				throw new NotSupportedException ();
@@ -438,14 +449,13 @@ namespace System.IO
 			if (position < 0)
 				throw new ArgumentOutOfRangeException ();
 			
-			buffer.Write<T> (position, structure);
+			buffer.Write<T> ((ulong)position, structure);
 		}
 
 		public void WriteArray<T> (long position, T [] array, int offset, int count) where T : struct 
 		{
-			buffer.WriteArray (position, array, offset, count);
+			buffer.WriteArray ((ulong)position, array, offset, count);
 		}
-#endif
 	
 		public bool CanRead {
 			get { return canread; }
@@ -458,8 +468,10 @@ namespace System.IO
 		public long Capacity {
 			get { return capacity; }
 		}
-
 		
+		protected bool IsOpen {
+			get { return buffer != null; }
+		}
 	}
 }
 
