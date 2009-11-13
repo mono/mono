@@ -1,3 +1,8 @@
+2009-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuildProvider.cs: if directive has empty string as a
+	value and it represents a path, do not create a VirtualPath.
+
 2009-11-10  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: parser.Imports is a Dictionary <>/Hashtable
