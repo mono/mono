@@ -1,3 +1,8 @@
+2009-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_single_step_event): Avoid a crash if
+	this is called on the debugger thread.
+
 2009-11-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-arm.c (mono_arch_get_call_filter_full): Update after the
