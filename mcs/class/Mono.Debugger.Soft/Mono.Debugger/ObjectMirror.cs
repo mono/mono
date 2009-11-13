@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 namespace Mono.Debugger
 {
@@ -104,7 +105,19 @@ namespace Mono.Debugger
 			return InvokeMethod (vm, thread, method, this, arguments, options);
 		}
 
-		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
+		}
+
+	    public Value EndInvokeMethod (IAsyncResult asyncResult) {
+			return EndInvokeMethodInternal (asyncResult);
+		}
+
+		/*
+		 * Common implementation for invokes
+		 */
+
+		internal static IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			if (thread == null)
 				throw new ArgumentNullException ("thread");
 			if (method == null)
@@ -112,6 +125,29 @@ namespace Mono.Debugger
 			if (arguments == null)
 				arguments = new Value [0];
 
+			InvokeCallback cb = new InvokeCallback (InvokeImpl);
+			return cb.BeginInvoke (vm, thread, method, this_obj, arguments, options, callback, state);
+		}
+
+	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			if (!asyncResult.IsCompleted)
+				asyncResult.AsyncWaitHandle.WaitOne ();
+
+			AsyncResult async = (AsyncResult) asyncResult;
+			InvokeCallback cb = (InvokeCallback) async.AsyncDelegate;
+			return cb.EndInvoke (asyncResult);
+		}
+
+		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
+		}
+
+		public delegate Value InvokeCallback (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options);
+
+		public static Value InvokeImpl (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
 			InvokeFlags f = InvokeFlags.NONE;
 
 			if ((options & InvokeOptions.DisableBreakpoints) != 0)
