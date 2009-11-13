@@ -155,15 +155,20 @@ namespace System.Web.UI.WebControls {
 		
 		public void Remove (TableRow row)
 		{
-			row.Container = null;
+#if NET_2_0
+			if (row != null)
+				row.Container = null;
+#endif
 			cc.Remove (row);
 		}
 
 		public void RemoveAt (int index)
 		{
+#if NET_2_0
 			TableRow row = this [index] as TableRow;
 			if (row != null)
 				row.Container = null;
+#endif
 			
 			cc.RemoveAt (index);
 		}
