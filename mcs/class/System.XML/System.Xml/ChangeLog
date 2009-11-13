@@ -1,3 +1,11 @@
+2009-11-13  Andreia Gaita  <avidigal@novell.com>
+
+	* XmlNamespaceManager.cs: XmlReader.Read calls LookupNamespace via
+	the internal sig, which skips any overrides that might exist on
+	subclasses, so redirect all calls to the public call to make sure
+	all overrides are called as well.
+	Make AddNamespace, HasNamespace and RemoveNamespace private.
+
 2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocument.cs, XmlElement.cs, XmlAttribute.cs,

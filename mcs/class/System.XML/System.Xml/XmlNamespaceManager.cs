@@ -94,6 +94,7 @@ namespace System.Xml
 		internal const string XmlnsXmlns = "http://www.w3.org/2000/xmlns/";
 		internal const string PrefixXml = "xml";
 		internal const string PrefixXmlns = "xmlns";
+		internal bool internalAtomizedNames;
 
 		#endregion
 
@@ -139,7 +140,7 @@ namespace System.Xml
 			AddNamespace (prefix, uri, false);
 		}
 
-		internal virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
+		void AddNamespace (string prefix, string uri, bool atomizedNames)
 		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix", "Value cannot be null.");
@@ -264,7 +265,7 @@ namespace System.Xml
 			return HasNamespace (prefix, false);
 		}
 
-		internal virtual bool HasNamespace (string prefix, bool atomizedNames)
+		bool HasNamespace (string prefix, bool atomizedNames)
 		{
 			if (prefix == null || count == 0)
 				return false;
@@ -279,11 +280,6 @@ namespace System.Xml
 
 		public virtual string LookupNamespace (string prefix)
 		{
-			return LookupNamespace (prefix, false);
-		}
-
-		internal virtual string LookupNamespace (string prefix, bool atomizedNames)
-		{
 			switch (prefix) {
 			case PrefixXmlns:
 				return nameTable.Get (XmlnsXmlns);
@@ -296,11 +292,20 @@ namespace System.Xml
 			}
 
 			for (int i = declPos; i >= 0; i--) {
-				if (CompareString (decls [i].Prefix, prefix, atomizedNames) && decls [i].Uri != null /* null == flag for removed */)
+				if (CompareString (decls [i].Prefix, prefix, internalAtomizedNames) && decls [i].Uri != null /* null == flag for removed */)
 					return decls [i].Uri;
 			}
 			
 			return null;
+		}
+
+		internal string LookupNamespace (string prefix, bool atomizedNames)
+		{
+			internalAtomizedNames = atomizedNames;
+			string ret = LookupNamespace (prefix);
+			internalAtomizedNames = false;
+			return ret;
+
 		}
 
 		public virtual string LookupPrefix (string uri)
@@ -398,7 +403,7 @@ namespace System.Xml
 			RemoveNamespace (prefix, uri, false);
 		}
 
-		internal virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
+		void RemoveNamespace (string prefix, string uri, bool atomizedNames)
 		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix");
