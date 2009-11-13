@@ -194,6 +194,10 @@ namespace System.Web.Hosting {
 
 			setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, bindirPath);
 			setup.PrivateBinPathProbe = "*";
+#if !NET_2_0
+			setup.ShadowCopyFiles = "true";
+			setup.ShadowCopyDirectories = setup.PrivateBinPath;
+#endif
 			string dynamic_dir = null;
 			string user = Environment.UserName;
 			int tempDirTag = 0;
