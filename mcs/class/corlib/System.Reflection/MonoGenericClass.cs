@@ -266,7 +266,6 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
-			MethodInfo accessor;
 
 			initialize ();
 

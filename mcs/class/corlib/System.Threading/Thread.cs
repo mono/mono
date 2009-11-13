@@ -136,11 +136,13 @@ namespace System.Threading {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Thread))]
 	public sealed class Thread : CriticalFinalizerObject, _Thread {
+#pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
 		object start_obj;
 		private ExecutionContext ec_to_set;
 		#endregion
+#pragma warning restore 414
 
 		IPrincipal principal;
 		int principal_version;

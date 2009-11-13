@@ -212,6 +212,8 @@ namespace System.Reflection {
 		delegate R Getter<T,R> (T _this);
 		delegate R StaticGetter<R> ();
 
+#pragma warning disable 169
+		// Used via reflection
 		static object GetterAdapterFrame<T,R> (Getter<T,R> getter, object obj)
 		{
 			return getter ((T)obj);
@@ -221,6 +223,7 @@ namespace System.Reflection {
 		{
 			return getter ();
 		}
+#pragma warning restore 169
 
 		/*
 		 * The idea behing this optimization is to use a pair of delegates to simulate the same effect of doing a reflection call.

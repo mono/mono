@@ -56,7 +56,7 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public static TaskFactory<TResult> Factory {
+		public static new TaskFactory<TResult> Factory {
 			get {
 				return factory;
 			}

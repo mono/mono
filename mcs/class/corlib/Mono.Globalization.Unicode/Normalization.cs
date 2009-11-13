@@ -147,13 +147,14 @@ namespace Mono.Globalization.Unicode
 			return null;
 		}
 
+/*
 		private static bool CanBePrimaryComposite (int i)
 		{
 			if (i >= 0x3400 && i <= 0x9FBB)
 				return GetPrimaryCompositeHelperIndex (i) != 0;
 			return (PropValue (i) & IsUnsafe) != 0;
 		}
-
+*/
 		private static void Combine (StringBuilder sb, int start, int checkType)
 		{
 			for (int i = start; i < sb.Length; i++) {

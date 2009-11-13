@@ -219,7 +219,7 @@ namespace System.IO
 		}
 		
 		[CLSCompliant (false)]
-			public bool ReadUInt16 (long position) 
+		public bool ReadUInt16 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -232,7 +232,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-			public bool ReadUInt32 (long position) 
+		public bool ReadUInt32 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();
@@ -245,7 +245,7 @@ namespace System.IO
 		}
 
 		[CLSCompliant (false)]
-			public bool ReadUInt64 (long position) 
+		public bool ReadUInt64 (long position) 
 		{
 			if (!canread)
 				throw new NotSupportedException ();

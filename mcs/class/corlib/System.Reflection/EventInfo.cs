@@ -143,6 +143,8 @@ namespace System.Reflection {
 		delegate void AddEvent<T, D> (T _this, D dele);
 		delegate void StaticAddEvent<D> (D dele);
 
+#pragma warning disable 169
+		// Used via reflection
 		static void AddEventFrame<T,D> (AddEvent<T,D> addEvent, object obj, object dele)
 		{
 			if (obj == null)
@@ -156,6 +158,7 @@ namespace System.Reflection {
 		{
 			addEvent ((D)dele);
 		}
+#pragma warning restore 169
 
 		/*
 		 * The idea behing this optimization is to use a pair of delegates to simulate the same effect of doing a reflection call.

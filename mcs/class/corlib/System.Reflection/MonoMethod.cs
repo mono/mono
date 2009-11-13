@@ -42,11 +42,13 @@ namespace System.Reflection {
 	
 	internal struct MonoMethodInfo 
 	{
+#pragma warning disable 649	
 		private Type parent;
 		private Type ret;
 		internal MethodAttributes attrs;
 		internal MethodImplAttributes iattrs;
 		private CallingConventions callconv;
+#pragma warning restore 649		
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);

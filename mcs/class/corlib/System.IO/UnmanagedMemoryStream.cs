@@ -103,7 +103,6 @@ namespace System.IO
 			}
 		}
 
-		[CLSCompliantAttribute(false)]
 		public override long Position {
 			get {
 				if (closed)
@@ -121,9 +120,7 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_1
-		[CLSCompliantAttribute(false)]
-#endif
+		[CLSCompliantAttribute (false)]
 		public unsafe byte* PositionPointer {
 			get {
 				if (closed)
@@ -296,6 +293,7 @@ namespace System.IO
 			}
 		}
 
+		[CLSCompliant (false)]
 		protected unsafe void Initialize (byte* pointer, long length,
 						  long capacity,
 						  FileAccess access)
