@@ -155,7 +155,8 @@ namespace System.Web.UI.WebControls {
 		
 		public void Remove (TableRow row)
 		{
-			row.Container = null;
+			if (row != null)
+				row.Container = null;
 			cc.Remove (row);
 		}
 
