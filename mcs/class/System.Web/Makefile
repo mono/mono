@@ -191,7 +191,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx \
 	Test/mainsoft/NunitWebResources/ConditionalClientComments.aspx \
 	Test/mainsoft/NunitWebResources/OneLetterIdentifierInCodeRender.aspx \
-	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx
+	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx \
+	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx \
+	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx.cs
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

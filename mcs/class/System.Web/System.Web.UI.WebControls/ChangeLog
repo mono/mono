@@ -1,3 +1,17 @@
+2009-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TableRowCollection.cs: added .NET compatibility NREX throws to
+	several methods.
+	Whenever a row is added/removed, its Container property is
+	set. Fixes bug #551666
+
+	* TableRow.cs: introduced an internal property, Container, which
+	is set by TableRowCollection whenever this row is added/removed
+	to/from the collection. This allows the row to notify the
+	collectio and, in consequence, collection owner that TableSection
+	has been set and thead/tbody/tfoot elements need to be
+	generated. Fixes bug #551666
+
 2009-11-10  Marek Habersack  <mhabersack@novell.com>
 
 	* PasswordRecovery.cs:

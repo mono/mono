@@ -45,6 +45,9 @@ namespace System.Web.UI.WebControls {
 		
 		internal TableRowCollection (Table table)
 		{
+			if (table == null)
+				throw new ArgumentNullException ("table");
+			
 			cc = table.Controls;
 #if NET_2_0
 			owner = table;
@@ -73,9 +76,12 @@ namespace System.Web.UI.WebControls {
 
 		public int Add (TableRow row)
 		{
+			if (row == null)
+				throw new NullReferenceException (); // .NET compatibility
 #if NET_2_0
 			if (row.TableRowSectionSet)
 				owner.GenerateTableSections = true;
+			row.Container = this;
 #endif
 			int index = cc.IndexOf (row);
 			if (index < 0) {
@@ -87,10 +93,14 @@ namespace System.Web.UI.WebControls {
 
 		public void AddAt (int index, TableRow row)
 		{
+			if (row == null)
+				throw new NullReferenceException (); // .NET compatibility
+			
 			if (cc.IndexOf (row) < 0) {
 #if NET_2_0
 				if (row.TableRowSectionSet)
 					owner.GenerateTableSections = true;
+				row.Container = this;
 #endif
 				cc.AddAt (index, row);
 			}
@@ -99,10 +109,14 @@ namespace System.Web.UI.WebControls {
 		public void AddRange (TableRow[] rows)
 		{
 			foreach (TableRow tr in rows) {
+				if (tr == null)
+					throw new NullReferenceException (); // .NET compatibility
+				
 				if (cc.IndexOf (tr) < 0) {
 #if NET_2_0
 					if (tr.TableRowSectionSet)
 						owner.GenerateTableSections = true;
+					tr.Container = this;
 #endif
 					cc.Add (tr);
 				}
@@ -132,13 +146,25 @@ namespace System.Web.UI.WebControls {
 			return cc.IndexOf (row);
 		}
 
+#if NET_2_0
+		internal void RowTableSectionSet ()
+		{
+			owner.GenerateTableSections = true;
+		}
+#endif
+		
 		public void Remove (TableRow row)
 		{
+			row.Container = null;
 			cc.Remove (row);
 		}
 
 		public void RemoveAt (int index)
 		{
+			TableRow row = this [index] as TableRow;
+			if (row != null)
+				row.Container = null;
+			
 			cc.RemoveAt (index);
 		}
 
@@ -160,28 +186,27 @@ namespace System.Web.UI.WebControls {
 
 		int IList.Add (object value)
 		{
-			cc.Add ((TableRow)value);
-			return cc.IndexOf ((TableRow)value);
+			return Add (value as TableRow);
 		}
 
 		bool IList.Contains (object value)
 		{
-			return cc.Contains ((TableRow)value);
+			return cc.Contains (value as TableRow);
 		}
 
 		int IList.IndexOf (object value)
 		{
-			return cc.IndexOf ((TableRow)value);
+			return cc.IndexOf (value as TableRow);
 		}
 
 		void IList.Insert (int index, object value)
 		{
-			cc.AddAt (index, (TableRow)value);
+			AddAt (index, value as TableRow);
 		}
 
 		void IList.Remove (object value)
 		{
-			cc.Remove ((TableRow)value);
+			Remove (value as TableRow);
 		}
 	}
 }
