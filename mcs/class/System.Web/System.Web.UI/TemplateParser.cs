@@ -993,8 +993,11 @@ namespace System.Web.UI {
 					parent = LoadType (type);
 #endif				
 
-				if (parent == null)
+				if (parent == null) {
+					Console.WriteLine ("inputFile == {0}", inputFile);
+					Console.WriteLine (Environment.StackTrace);
 					ThrowParseException ("Cannot find type " + type);
+				}
 
 				if (!DefaultBaseType.IsAssignableFrom (parent))
 					ThrowParseException ("The parent type '" + type + "' does not derive from " + DefaultBaseType);

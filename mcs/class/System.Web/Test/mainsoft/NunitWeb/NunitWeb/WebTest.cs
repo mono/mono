@@ -525,11 +525,12 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest), "Common.fr-FR.resx", "App_GlobalResources/Common.fr-FR.resx");
 #endif
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
-#else
-			CopyResource (typeof (WebTest), "Web.mono.config.1.1", "Web.config");
-#endif
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
 			CopyResource (typeof (WebTest), "MyPage.aspx.cs", "MyPage.aspx.cs");
+#else
+			CopyResource (typeof (WebTest), "MyPage_1.1.aspx", "MyPage.aspx");
+			CopyResource (typeof (WebTest), "Web.mono.config.1.1", "Web.config");
+#endif
 			CopyResource (typeof (WebTest), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
 			CopyResource (typeof (WebTest), "My.master", "My.master");
 #endif
