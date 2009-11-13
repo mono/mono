@@ -1,3 +1,7 @@
+2009-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Include mono-path.h.
+
 2009-11-12  Geoff Norton  <gnorton@novell.com>
 
 	* processes.c: match_procname_to_modulename should resolve
