@@ -1,3 +1,14 @@
+2009-11-13 Jonathan Chambers <joncham@gmail.com>
+
+	* debugger-agent.c: Implementation for Windows platform.
+
+	* mini-x86.c: Add support for Windows. Use mono-* synchronization
+	primitives. Use SEH to implement breakpoints and single stepping.
+
+	* mini-x86.h: Enable soft debugger on Windows.
+
+	Code contributed under MIT/X11 license.
+
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (emit_call_body): Disable usage of near calls when running

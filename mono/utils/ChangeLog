@@ -1,3 +1,9 @@
+2009-11-13 Jonathan Chambers <joncham@gmail.com>
+
+	* mono-semaphore.h: Implementation for Windows platform.
+
+	Code contributed under MIT/X11 license.
+
 2009-11-12  Geoff Norton  <gnorton@novell.com>
 
 	* mono-path.c: When resolving symlinks in a path, we need to
