@@ -1,6 +1,6 @@
 using System;
 
-namespace MainsoftWebApp20
+namespace MainsoftWebApp
 {
 	public partial class Global : System.Web.HttpApplication
 	{

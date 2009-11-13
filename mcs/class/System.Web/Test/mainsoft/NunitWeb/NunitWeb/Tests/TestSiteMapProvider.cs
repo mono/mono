@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Collections.Specialized;
 using System.Web;
@@ -33,3 +34,4 @@ namespace Tests {
 		}
 	}
 }
+#endif
