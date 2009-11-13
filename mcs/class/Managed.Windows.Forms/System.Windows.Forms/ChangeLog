@@ -2741,6 +2741,11 @@
 	an alpha value.
 	[Fixes bug #444348]
 
+2008-11-11  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+       * Application.cs: After UIA assembly is successfully loaded,
+       dump any exception that happens on initialization to stderr.
+
 2008-11-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Add internal to OnAutoSizeColumnModeChanged.

@@ -14,11 +14,6 @@
 
 	* Makefile: here is another nunit24 option breakage.
 
-2008-11-11  Andrés G. Aragoneses  <aaragoneses@novell.com>
-
-	* Application.cs: After UIA assembly is successfully loaded,
-	dump any exception that happens on initialization to stderr.
-
 2008-11-08  Andreia Gaita <shana@jitted.com> 
 
 	* SWF2k5-tests.csproj: Fix the previous ChangeLog entry (bad merge). Update
