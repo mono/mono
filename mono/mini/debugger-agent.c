@@ -134,6 +134,9 @@ typedef struct {
 
 	/* Number of thread interruptions not yet processed */
 	gint32 interrupt_count;
+
+	/* Whenever to disable breakpoints (used during invokes) */
+	gboolean disable_breakpoints;
 } DebuggerTlsData;
 
 /* 
@@ -142,8 +145,8 @@ typedef struct {
 
 #define HEADER_LENGTH 11
 
-#define MAJOR_VERSION 0
-#define MINOR_VERSION 2
+#define MAJOR_VERSION 1
+#define MINOR_VERSION 0
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -231,6 +234,10 @@ typedef enum {
 typedef enum {
 	FRAME_FLAG_DEBUGGER_INVOKE = 1
 } StackFrameFlags;
+
+typedef enum {
+	INVOKE_FLAG_DISABLE_BPS = 1
+} InvokeFlags;
 
 typedef enum {
 	CMD_VM_VERSION = 1,
@@ -2781,7 +2788,7 @@ clear_breakpoint (MonoBreakpoint *bp)
 }
 
 static void
-process_breakpoint_inner (MonoContext *ctx)
+process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 {
 	MonoJitInfo *ji;
 	guint8 *orig_ip, *ip;
@@ -2813,7 +2820,7 @@ process_breakpoint_inner (MonoContext *ctx)
 	 */
 	mono_arch_skip_breakpoint (ctx);
 
-	if (ji->method->wrapper_type)
+	if (ji->method->wrapper_type || tls->disable_breakpoints)
 		return;
 
 	reqs = g_ptr_array_new ();
@@ -2891,7 +2898,7 @@ process_breakpoint (void)
 	tls = TlsGetValue (debugger_tls_id);
 	memcpy (&ctx, &tls->handler_ctx, sizeof (MonoContext));
 
-	process_breakpoint_inner (&ctx);
+	process_breakpoint_inner (tls, &ctx);
 
 	/* This is called when resuming from a signal handler, so it shouldn't return */
 	restore_context (&ctx);
@@ -3646,7 +3653,7 @@ add_thread (gpointer key, gpointer value, gpointer user_data)
 }
 
 static ErrorCode
-do_invoke_method (Buffer *buf, InvokeData *invoke)
+do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 {
 	guint8 *p = invoke->p;
 	guint8 *end = invoke->endp;
@@ -3661,6 +3668,7 @@ do_invoke_method (Buffer *buf, InvokeData *invoke)
 #ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
 	MonoLMFExt ext;
 #endif
+	InvokeFlags flags;
 
 	m = decode_methodid (p, &p, end, &domain, &err);
 	if (err)
@@ -3726,6 +3734,12 @@ do_invoke_method (Buffer *buf, InvokeData *invoke)
 	if (i < nargs)
 		return err;
 
+	flags = decode_int (p, &p, end);
+	if (flags & INVOKE_FLAG_DISABLE_BPS)
+		tls->disable_breakpoints = TRUE;
+	else
+		tls->disable_breakpoints = FALSE;
+
 	/* 
 	 * Add an LMF frame to link the stack frames on the invoke method with our caller.
 	 */
@@ -3789,6 +3803,8 @@ do_invoke_method (Buffer *buf, InvokeData *invoke)
 		}
 	}
 
+	tls->disable_breakpoints = FALSE;
+
 #ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
 	if (invoke->has_ctx)
 		mono_set_lmf ((gpointer)(((gssize)ext.lmf.previous_lmf) & ~3));
@@ -3831,7 +3847,7 @@ invoke_method (void)
 
 	buffer_init (&buf, 128);
 
-	err = do_invoke_method (&buf, invoke);
+	err = do_invoke_method (tls, &buf, invoke);
 
 	/* Start suspending before sending the reply */
 	suspend_vm ();
