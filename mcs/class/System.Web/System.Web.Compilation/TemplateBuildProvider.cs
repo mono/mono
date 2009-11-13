@@ -100,9 +100,13 @@ namespace System.Web.Compilation
 				if (index > valuesCount)
 					return String.Empty;
 
-				if (isPath)
-					return new VirtualPath (values [index].Value.Trim (directiveValueTrimChars), baseDirectory).Absolute;
-				else
+				if (isPath) {
+					string value = values [index].Value.Trim (directiveValueTrimChars);
+					if (String.IsNullOrEmpty (value))
+						return String.Empty;
+					
+					return new VirtualPath (value, baseDirectory).Absolute;
+				} else
 					return values [index].Value.Trim ();
 			}
 
