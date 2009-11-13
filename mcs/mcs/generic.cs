@@ -1508,7 +1508,7 @@ namespace Mono.CSharp {
 
 		protected bool CheckConstraints (IMemberContext ec, int index)
 		{
-			Type atype = atypes [index];
+			Type atype = TypeManager.TypeToCoreType (atypes [index]);
 			Type ptype = gen_params [index];
 
 			if (atype == ptype)

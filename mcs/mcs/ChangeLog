@@ -1,5 +1,10 @@
 2009-11-13  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #553650
+	* generic.cs: Another missing TypeToCoreType, still too many to fix.
+
+2009-11-13  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #555170
 
 	* class.cs, delegate.cs, enum.cs: Constants have to be available
