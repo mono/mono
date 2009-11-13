@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Zoltan Varga (vargaz@gmail.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2009 Novell
 //
@@ -33,6 +34,7 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Threading;
+using System.Diagnostics;
 
 namespace System
 {
@@ -46,15 +48,18 @@ namespace System
 		Func<T> factory;
 		object monitor;
 
-		public Lazy () : this (() => Activator.CreateInstance<T>(), true)
+		public Lazy ()
+			: this (true)
 		{
 		}
 
-		public Lazy (Func<T> valueFactory) : this (valueFactory, true)
+		public Lazy (Func<T> valueFactory)
+			: this (valueFactory, true)
 		{
 		}
 
-		public Lazy (bool isThreadSafe) : this (() => Activator.CreateInstance<T> (), isThreadSafe)
+		public Lazy (bool isThreadSafe)
+			: this (() => Activator.CreateInstance<T> (), isThreadSafe)
 		{
 		}
 		
@@ -67,6 +72,8 @@ namespace System
 				monitor = new object ();
 		}
 
+		// Don't trigger expensive initialization
+		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
 		public T Value {
 			get {
 				if (inited)
@@ -84,10 +91,21 @@ namespace System
 				lock (monitor) {
 					if (inited)
 						return value;
-					T v = factory ();
-					value = v;
-					Thread.MemoryBarrier ();
-					inited = true;
+
+					if (factory == null)
+						throw new InvalidOperationException ("The initialization function tries to access Value on this instance");
+
+					var init_factory = factory;
+					try {
+						factory = null;
+						T v = init_factory ();
+						value = v;
+						Thread.MemoryBarrier ();
+						inited = true;
+					} catch {
+						factory = init_factory;
+						throw;
+					}
 				}
 			}
 

@@ -1,3 +1,7 @@
+2009-11-13  Marek Safar  <marek.safar@gmail.com>
+
+	* Lazy.cs: Check recursive initializations.
+
 2009-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Fix Make(Array|ByRef|Pointer)Type to not crash
