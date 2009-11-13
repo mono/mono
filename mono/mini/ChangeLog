@@ -1,3 +1,8 @@
+2009-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_single_step_event): Avoid a crash if
+	this is called on the debugger thread.
+
 2009-11-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c: Add soft-float support.
