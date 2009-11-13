@@ -34,14 +34,20 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Diagnostics;
 
 // HashSet is basically implemented as a reduction of Dictionary<K, V>
 
 namespace System.Collections.Generic {
 
 	[Serializable, HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
-	public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback {
-
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
+	public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback
+#if NET_4_0
+							, ISet<T>
+#endif
+	{
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 		const int NO_SLOT = -1;

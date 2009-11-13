@@ -42,6 +42,7 @@ System.Linq/SortDirection.cs
 System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
 System.Collections.Generic/HashSet.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 System.Security.Cryptography/Aes.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs

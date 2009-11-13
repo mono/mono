@@ -1,3 +1,7 @@
+2009-11-13  Marek Safar  <marek.safar@gmail.com>
+
+    * HasSet.cs: Add ISet, debugger view.
+
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* HashSet.cs (Enumerator.CheckCurrent): Inline into ...

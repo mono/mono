@@ -65,6 +65,7 @@ System.Linq.Expressions/ParameterExpression.cs
 System.Linq.Expressions/TypeBinaryExpression.cs
 System.Linq.Expressions/UnaryExpression.cs
 System.Collections.Generic/HashSet.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 System.Security.Cryptography/Aes.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesTransform.cs
