@@ -337,7 +337,7 @@ namespace System.Web.UI.HtmlControls
 #if NET_2_0
 			if (String.IsNullOrEmpty (customAction))
 #endif
-				w.WriteAttribute ("action", ResolveClientUrl (action), true);
+				w.WriteAttribute ("action", action, true);
 
 			/*
 			 * This is a hack that guarantees the ID is set properly for HtmlControl to
