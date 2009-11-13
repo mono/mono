@@ -28,7 +28,9 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+using MonoTests.System.Threading.Tasks;
+
+namespace MonoTests.System.Threading
 {
 	[TestFixtureAttribute]
 	public class CountdownEventTests

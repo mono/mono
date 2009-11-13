@@ -419,10 +419,11 @@ System.Threading/ExecutionContextCas.cs
 System.Threading/MutexCas.cs
 System.Threading/ThreadCas.cs
 System.Threading/WaitHandleCas.cs
-
 System.Threading.Tasks/TaskTest.cs
 System.Threading.Tasks/FutureTests.cs
 System.Threading.Tasks/TaskCompletionSourceTests.cs
+System.Threading.Tasks/ParallelTestHelper.cs
+System.Threading.Tasks/ParallelTests.cs
 System.Collections.Concurrent/ParallelConcurrentStackTests.cs
 System.Collections.Concurrent/ConcurrentSkipListTests.cs
 ../System.Collections.Concurrent/ConcurrentSkipList.cs
@@ -435,8 +436,6 @@ System.Collections.Concurrent/ParallelConcurrentQueueTests.cs
 System.Threading/CancellationTokenTests.cs
 System.Threading/ManualResetEventSlimTests.cs
 System.Threading/SemaphoreSlimTests.cs
-System.Threading/ParallelTests.cs
 System.Threading/CountdownEventTests.cs
 System/AggregateExceptionTests.cs
 System.Threading/ThreadLazyTests.cs
-System.Threading/ParallelTestHelper.cs

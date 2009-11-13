@@ -32,6 +32,7 @@ using System.Collections.Concurrent;
 
 using System.Threading;
 using System.Linq;
+using MonoTests.System.Threading.Tasks;
 
 using NUnit;
 using NUnit.Framework;

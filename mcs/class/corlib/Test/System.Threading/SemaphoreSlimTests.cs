@@ -27,9 +27,11 @@ using System;
 using System.Linq;
 using System.Threading;
 
+using MonoTests.System.Threading.Tasks;
+
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading
 {
 	[TestFixture]
 	public class SemaphoreSlimTests

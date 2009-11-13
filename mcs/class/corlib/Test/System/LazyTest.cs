@@ -51,7 +51,7 @@ namespace MonoTests.System
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Ctor_Null_2 () {
-			new Lazy<int> (null, LazyExecutionMode.NotThreadSafe);
+			new Lazy<int> (null, false);
 		}
 
 		[Test]
@@ -84,11 +84,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (MissingMemberException))]
 		public void NoDefaultCtor () {
 			var l1 = new Lazy<NoDefaultCtorClass> ();
 			
-			var o = l1.Value;
+			try {
+				var o = l1.Value;
+				Assert.Fail ();
+			} catch (MissingMemberException) {
+			}
 		}
 
 		class NoDefaultCtorClass {
@@ -114,7 +117,7 @@ namespace MonoTests.System
 			counter = 42;
 
 			//var l = new Lazy<int> (delegate () { return counter ++; }, LazyExecutionMode.NotThreadSafe);
-			var l = new Lazy<int> (delegate () { return counter ++; }, LazyExecutionMode.EnsureSingleThreadSafeExecution);
+			var l = new Lazy<int> (delegate () { return counter ++; }, true);
 
 			object monitor = new object ();
 			var threads = new Thread [10];
@@ -132,7 +135,20 @@ namespace MonoTests.System
 				Monitor.PulseAll (monitor);
 			
 			Assert.AreEqual (42, l.Value);
-		}			
+		}
+		
+		[Test]
+		public void InitRecursion ()
+		{
+			Lazy<DefaultCtorClass> c = null;
+			c = new Lazy<DefaultCtorClass> (() => { Console.WriteLine (c.Value); return null; });
+			
+			try {
+				var r = c.Value;
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
+			}
+		}
 	}
 }
 

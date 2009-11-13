@@ -27,9 +27,9 @@ using System;
 using System.Threading;
 using System.Collections.Concurrent;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading.Tasks
 {
-	public static class ParallelTestHelper
+	static class ParallelTestHelper
 	{
 		const int NumRun = 100;
 		

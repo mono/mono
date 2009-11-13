@@ -27,6 +27,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.IO;
 using System.Xml.Serialization;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ using NUnit;
 using NUnit.Core;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading.Tasks
 {
 	
 	[TestFixture()]

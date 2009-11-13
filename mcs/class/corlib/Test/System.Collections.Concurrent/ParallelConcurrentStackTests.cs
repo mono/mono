@@ -24,7 +24,7 @@
 //
 
 using System;
-using System.Threading;
+using MonoTests.System.Threading.Tasks;
 using System.Collections.Concurrent;
 
 using NUnit.Framework;

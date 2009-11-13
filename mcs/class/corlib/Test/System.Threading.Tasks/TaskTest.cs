@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture()]
 	public class TaskTests
