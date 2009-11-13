@@ -1896,16 +1896,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			</thead><tbody>
 
 				<tr>
-					<td>25</td><td>Indocin</td><td>David</td><td>11/13/2009 12:00:00 AM</td>
+					<td>25</td><td>Indocin</td><td>David</td><td>2009-11-13</td>
 				</tr><tr>
-					<td>50</td><td>Enebrel</td><td>Sam</td><td>11/13/2009 12:00:00 AM</td>
+					<td>50</td><td>Enebrel</td><td>Sam</td><td>2009-11-13</td>
 				</tr><tr>
 
-					<td>10</td><td>Hydralazine</td><td>Christoff</td><td>11/13/2009 12:00:00 AM</td>
+					<td>10</td><td>Hydralazine</td><td>Christoff</td><td>2009-11-13</td>
 				</tr><tr>
-					<td>21</td><td>Combivent</td><td>Janet</td><td>11/13/2009 12:00:00 AM</td>
+					<td>21</td><td>Combivent</td><td>Janet</td><td>2009-11-13</td>
 				</tr><tr>
-					<td>100</td><td>Dilantin</td><td>Melanie</td><td>11/13/2009 12:00:00 AM</td>
+					<td>100</td><td>Dilantin</td><td>Melanie</td><td>2009-11-13</td>
 
 				</tr>
 			</tbody><tfoot>
