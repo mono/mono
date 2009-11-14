@@ -1,3 +1,7 @@
+2009-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Add a test for stack traces in native code.
+
 2009-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for InvokeOptions.DisableBreakpoints.
