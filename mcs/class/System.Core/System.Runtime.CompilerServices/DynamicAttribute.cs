@@ -38,16 +38,16 @@ namespace System.Runtime.CompilerServices
 	public sealed class DynamicAttribute : Attribute
 	{
 		bool[] transformFlags;
-		
+
 		public DynamicAttribute ()
 		{
 		}
-		
+
 		public DynamicAttribute (bool[] transformFlags)
 		{
 			this.transformFlags = transformFlags;
 		}
-		
+
 		public IList<bool> TransformFlags {
 			get { return transformFlags; }
 		}
