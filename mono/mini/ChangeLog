@@ -1,3 +1,9 @@
+2009-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Pass the 'flags' argument to VM_INVOKE_METHOD earlier in
+	the parameter list, so it can be acted upon by vm_commands (). Bump protocol
+	version.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* debugger-agent.c: Implementation for Windows platform.
