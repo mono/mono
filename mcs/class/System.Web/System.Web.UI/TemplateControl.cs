@@ -486,10 +486,11 @@ namespace System.Web.UI {
 			//TODO: fAsciiOnly?
 			IntPtr ptr = AddOffset (resource_data.Ptr, offset);
 			HttpWriter writer = output.GetHttpWriter ();
+			
 			if (writer == null || writer.Response.ContentEncoding.CodePage != 65001) {
 				byte [] bytes = new byte [size];
 				Marshal.Copy (ptr, bytes, 0, size);
-				writer.Write (Encoding.UTF8.GetString (bytes));
+				output.Write (Encoding.UTF8.GetString (bytes));
 				bytes = null;
 				return;
 			}
