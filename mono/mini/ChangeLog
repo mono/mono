@@ -1,5 +1,8 @@
 2009-11-14  Zoltan Varga  <vargaz@gmail.com>
 
+	(mono_debugger_agent_thread_interrupt): Save the context so stacktraces for
+	threads in native code work.
+
 	* debugger-agent.c: Pass the 'flags' argument to VM_INVOKE_METHOD earlier in
 	the parameter list, so it can be acted upon by vm_commands (). Bump protocol
 	version.
