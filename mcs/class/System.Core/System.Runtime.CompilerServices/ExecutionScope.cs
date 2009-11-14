@@ -74,7 +74,7 @@ namespace System.Runtime.CompilerServices {
 
 		public Expression IsolateExpression (Expression expression, object [] locals)
 		{
-			throw new NotSupportedException ();
+			return context.IsolateExpression (this, locals, expression);
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2009-11-14  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs: isolate quoted expressions.
+	* EmitContext.cs (ParameterReplacer): new helper type
+	to replace the parameters of isolated expressions.
+	Fix #550722.
+
 2009-10-08  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs (Compile): use the interpreter on MonoTouch.
