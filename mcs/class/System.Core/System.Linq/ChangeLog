@@ -1,3 +1,8 @@
+2009-11-14  Jb Evain  <jbevain@novell.com>
+
+	* QueryableTransformer: adjust to latest ExpressionTransformer
+	changes.
+
 2009-11-12  Eric Maupin  <me@ermau.com>
 
 	* Enumerable.cs (ToLookup): Accept null keys.

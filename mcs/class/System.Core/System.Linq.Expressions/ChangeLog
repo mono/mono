@@ -1,3 +1,9 @@
+2009-11-14  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTransformer.cs: adjust return type of all
+	 tranformation methods to make the transformer actually
+	 useful.
+
 2009-10-08  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs (Compile): use the interpreter on MonoTouch.
