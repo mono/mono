@@ -152,6 +152,8 @@ namespace Mono.Debugger
 
 			if ((options & InvokeOptions.DisableBreakpoints) != 0)
 				f |= InvokeFlags.DISABLE_BREAKPOINTS;
+			if ((options & InvokeOptions.SingleThreaded) != 0)
+				f |= InvokeFlags.SINGLE_THREADED;
 
 			try {
 				ValueImpl exc;

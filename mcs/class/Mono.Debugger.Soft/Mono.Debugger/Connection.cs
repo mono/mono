@@ -99,7 +99,8 @@ namespace Mono.Debugger
 
 	enum InvokeFlags {
 		NONE = 0x0,
-		DISABLE_BREAKPOINTS = 0x1
+		DISABLE_BREAKPOINTS = 0x1,
+		SINGLE_THREADED = 0x2
 	}
 
 	class ValueImpl {
@@ -221,7 +222,7 @@ namespace Mono.Debugger
 		 * and the debuggee can communicate if they implement the same major version,
 		 * and the debuggee's minor version is <= the library's minor version.
 		 */
-		public const int MAJOR_VERSION = 1;
+		public const int MAJOR_VERSION = 2;
 		public const int MINOR_VERSION = 0;
 
 		enum WPSuspendPolicy {
@@ -1140,7 +1141,7 @@ namespace Mono.Debugger
 
 		public ValueImpl VM_InvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, out ValueImpl exc) {
 			exc = null;
-			PacketReader r = SendReceive (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments).WriteInt ((int)flags));
+			PacketReader r = SendReceive (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments));
 			if (r.ReadByte () == 0) {
 				exc = r.ReadValue ();
 				return null;

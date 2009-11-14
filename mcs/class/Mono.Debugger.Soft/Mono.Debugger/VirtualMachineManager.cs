@@ -94,7 +94,7 @@ namespace Mono.Debugger
 		}
 
 		public static VirtualMachine Launch (ProcessStartInfo info, LaunchOptions options = null) {
-			return EndLaunch (BeginLaunch (info, null, null));
+			return EndLaunch (BeginLaunch (info, null, options));
 		}
 
 		public static VirtualMachine Launch (string[] args, LaunchOptions options = null) {

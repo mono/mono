@@ -1,5 +1,9 @@
 2009-11-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* InvokeOptions.cs: Add SingleThreaded option, not yet works.
+
+	* VirtualMachineManager.cs (Launch): Pass options to BeginLaunch.
+
 	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Implement an async version of
 	InvokeMethod ().
 
