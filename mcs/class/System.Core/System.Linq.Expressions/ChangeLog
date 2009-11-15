@@ -1,5 +1,11 @@
 2009-11-15  Jb Evain  <jbevain@novell.com>
 
+	* Expression (Call): deal with lambda expression <> delegate
+	comparison when filtering methods.
+	Fixes #536637.
+
+2009-11-15  Jb Evain  <jbevain@novell.com>
+
 	* Expression (Call): better filtering of generic methods.
 	Fixes #537768.
 
