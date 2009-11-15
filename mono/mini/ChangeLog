@@ -1,3 +1,9 @@
+2009-11-15  Andreas Faerber  <andreas.faerber@web.de>
+
+	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Signature fix.
+	
+	Code contributed under MIT/X11 license.
+
 2009-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	(mono_debugger_agent_thread_interrupt): Save the context so stacktraces for
