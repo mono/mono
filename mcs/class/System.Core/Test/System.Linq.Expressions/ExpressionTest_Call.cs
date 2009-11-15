@@ -422,7 +422,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CallAsQueryable () // #537768
 		{
 			var constant = Expression.Constant (
