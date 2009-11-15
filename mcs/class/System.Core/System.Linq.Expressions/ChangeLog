@@ -1,5 +1,13 @@
 2009-11-15  Jb Evain  <jbevain@novell.com>
 
+	backport of 146225.
+
+	* Expression (Call): deal with lambda expression <> delegate
+	comparison when filtering methods.
+	Fixes #536637.
+
+2009-11-15  Jb Evain  <jbevain@novell.com>
+
 	backport of 146222.
 
 	* Expression (Call): better filtering of generic methods.

@@ -1086,11 +1086,20 @@ namespace System.Linq.Expressions {
 			} else if (!method.IsGenericMethod && (argumentTypes != null && argumentTypes.Length > 0))
 				return false;
 
-			for (int i = 0; i < parameters.Length; i++)
-				if (!IsAssignableToParameterType (parameterTypes [i], parameters [i]))
+			for (int i = 0; i < parameters.Length; i++) {
+				var type = parameterTypes [i];
+				var parameter = parameters [i];
+				if (!IsAssignableToParameterType (type, parameter)
+					&& !IsExpressionOfParameter (type, parameter.ParameterType))
 					return false;
+			}
 
 			return true;
+		}
+
+		static bool IsExpressionOfParameter (Type type, Type ptype)
+		{
+			return ptype.IsGenericInstanceOf (typeof (Expression<>)) && ptype.GetFirstGenericArgument () == type;
 		}
 
 		static MethodInfo TryGetMethod (Type type, string methodName, BindingFlags flags, Type [] parameterTypes, Type [] argumentTypes)
