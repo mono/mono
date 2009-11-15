@@ -1,3 +1,8 @@
+2009-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_base_init): Applied patch from DKoushik K. Dutta (
+	koush@koushikdutta.com). Disable GC_no_dls on android.
+
 2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_image_module_basic_init): Handle exceptions correctly.
