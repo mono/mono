@@ -1,5 +1,7 @@
 2009-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	(mono_gc_get_suspend_signal): Fix the build with a system libgc.
+
 	* boehm-gc.c (mono_gc_base_init): Applied patch from DKoushik K. Dutta (
 	koush@koushikdutta.com). Disable GC_no_dls on android.
 
