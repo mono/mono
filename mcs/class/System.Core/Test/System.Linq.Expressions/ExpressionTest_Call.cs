@@ -420,5 +420,56 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (call);
 			Assert.IsNotNull (call.Method);
 		}
+
+		[Test]
+		public void CallAsQueryable () // #537768
+		{
+			var constant = Expression.Constant (
+				new List<string> (),
+				typeof (IEnumerable<string>));
+
+			var call = Expression.Call (
+				typeof (Queryable),
+				"AsQueryable",
+				new [] { typeof (string) },
+				constant);
+
+			Assert.IsNotNull (call);
+			Assert.AreEqual (1, call.Arguments.Count);
+			Assert.AreEqual (constant, call.Arguments [0]);
+
+			var method = call.Method;
+
+			Assert.AreEqual ("AsQueryable", method.Name);
+			Assert.IsTrue (method.IsGenericMethod);
+			Assert.AreEqual (typeof (string), method.GetGenericArguments () [0]);
+		}
+
+
+		[Test]
+		public void CallQueryableSelect () // #536637
+		{
+			var parameter = Expression.Parameter (typeof (string), "s");
+			var string_length = Expression.Property (parameter, typeof (string).GetProperty ("Length"));
+			var lambda = Expression.Lambda (string_length, parameter);
+
+			var strings = new [] { "1", "22", "333" };
+
+			var call = Expression.Call (
+				typeof (Queryable),
+				"Select",
+				new [] { typeof (string), typeof (int) },
+				Expression.Constant (strings.AsQueryable ()),
+				lambda);
+
+			Assert.IsNotNull (call);
+
+			var method = call.Method;
+
+			Assert.AreEqual ("Select", method.Name);
+			Assert.IsTrue (method.IsGenericMethod);
+			Assert.AreEqual (typeof (string), method.GetGenericArguments () [0]);
+			Assert.AreEqual (typeof (int), method.GetGenericArguments () [1]);
+		}
 	}
 }
