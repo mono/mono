@@ -447,7 +447,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CallQueryableSelect () // #536637
 		{
 			var parameter = Expression.Parameter (typeof (string), "s");
@@ -458,7 +457,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 			var call = Expression.Call (
 				typeof (Queryable),
-				"select",
+				"Select",
 				new [] { typeof (string), typeof (int) },
 				Expression.Constant (strings.AsQueryable ()),
 				lambda);
