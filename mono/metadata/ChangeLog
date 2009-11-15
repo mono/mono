@@ -1,3 +1,8 @@
+2009-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_base_init): Applied patch from DKoushik K. Dutta (
+	koush@koushikdutta.com). Disable GC_no_dls on android.
+
 2009-11-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* debug-helpers.c: avoid g_strdup() in mono_type_full_name().
