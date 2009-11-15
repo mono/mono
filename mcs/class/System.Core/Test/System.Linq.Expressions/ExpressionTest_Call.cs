@@ -420,5 +420,30 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (call);
 			Assert.IsNotNull (call.Method);
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CallAsQueryable () // #537768
+		{
+			var constant = Expression.Constant (
+				new List<string> (),
+				typeof (IEnumerable<string>));
+
+			var call = Expression.Call (
+				typeof (Queryable),
+				"AsQueryable",
+				new [] { typeof (string) },
+				constant);
+
+			Assert.IsNotNull (call);
+			Assert.AreEqual (1, call.Arguments.Count);
+			Assert.AreEqual (constant, call.Arguments [0]);
+
+			var method = call.Method;
+
+			Assert.AreEqual ("AsQueryable", method.Name);
+			Assert.IsTrue (method.IsGenericMethod);
+			Assert.AreEqual (typeof (string), method.GetGenericArguments () [0]);
+		}
 	}
 }
