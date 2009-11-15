@@ -1,3 +1,10 @@
+2009-11-15  Jb Evain  <jbevain@novell.com>
+
+	backport of 146222.
+
+	* Expression (Call): better filtering of generic methods.
+	Fixes #537768.
+
 2009-11-14  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs: isolate quoted expressions.
