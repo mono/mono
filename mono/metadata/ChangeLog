@@ -1,3 +1,9 @@
+
+Mon Nov 16 16:28:11 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: use the correct base class to get the virtual method
+	"get_UnderlyingSystemType" and speed up the icall. Fixes bug #555013.
+
 2009-11-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c (get_caller_no_reflection_related): 
