@@ -3,7 +3,7 @@
 	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
 	used.
 
-	* debugger-agent.c: Add some definitions to make backporting to 2.4 easier.
+	* debugger-agent.c: Add some definitions to make backporting to 2.6 easier.
 	Fix warnings.
 
 2009-11-15  Andreas Faerber  <andreas.faerber@web.de>
