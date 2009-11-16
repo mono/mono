@@ -1354,6 +1354,9 @@ namespace System.Web.UI.WebControls
 		
  		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)
 		{
+			if (node.PopulateOnDemand && node.HadChildrenBeforePopulating)
+				throw new InvalidOperationException ("PopulateOnDemand cannot be set to true on a node that already has children.");
+			
 			DecorateNode(node);
 			
 			string nodeImage;

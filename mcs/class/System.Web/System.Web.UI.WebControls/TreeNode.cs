@@ -56,6 +56,8 @@ namespace System.Web.UI.WebControls
 		bool gotBinding;
 		TreeNodeBinding binding;
 		PropertyDescriptorCollection boundProperties;
+		bool populating;
+		bool hadChildrenBeforePopulating;
 		
 		internal TreeNode (TreeView tree)
 		{
@@ -251,6 +253,16 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["NavigateUrl"] = value; }
 		}
 
+		internal bool HadChildrenBeforePopulating {
+			get { return hadChildrenBeforePopulating; }
+			set {
+				if (populating)
+					return;
+
+				hadChildrenBeforePopulating = value;
+			}
+		}
+		
 		[DefaultValue (false)]
 		public bool PopulateOnDemand {
 			get {
@@ -259,7 +271,13 @@ namespace System.Web.UI.WebControls
 					return (bool)o;
 				return false;
 			}
-			set { ViewState ["PopulateOnDemand"] = value; }
+			set {
+				ViewState ["PopulateOnDemand"] = value;
+				if (value && nodes != null && nodes.Count > 0)
+					HadChildrenBeforePopulating = true;
+				else
+					HadChildrenBeforePopulating = false;
+			}
 		}
 
 		[DefaultValue (TreeNodeSelectAction.Select)]
@@ -440,8 +458,10 @@ namespace System.Web.UI.WebControls
 			if (tree == null)
 				return;
 
-			Populated = true;
+			populating = true;
 			tree.NotifyPopulateRequired (this);
+			populating = false;
+			Populated = true;
 		}
 		
 		public void Collapse ()
