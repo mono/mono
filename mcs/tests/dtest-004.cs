@@ -1,3 +1,5 @@
+// internal dynamic<->object conversion tests
+
 class C
 {
 	public static dynamic Create ()
@@ -8,6 +10,6 @@ class C
 	public static void Main ()
 	{
 		var d = Create ();
-		d.Foo ();
+		d.ToString ();
 	}
 }
