@@ -232,6 +232,25 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void PopulateOnDemand_With_ChildNodes ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PopulateOnDemand_With_ChildNodes_OnLoad));
+			t.Run ();
+		}
+
+		protected static void PopulateOnDemand_With_ChildNodes_OnLoad (Page p)
+		{
+			TreeView tv = new TreeView ();
+			TreeNode node = new TreeNode ("text", "value", "imageUrl", "navigateUrl", "target");
+			node.PopulateOnDemand = true;
+			node.ChildNodes.Add (new TreeNode ("text", "value", "imageUrl", "navigateUrl", "target"));
+			tv.Nodes.Add (node);
+
+			p.Form.Controls.Add (tv);
+		}
+		
+		[Test]
 		public void TreeNode_ToggleExpandState ()
 		{
 			TreeNode node = new TreeNode ("node");
