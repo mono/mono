@@ -1,3 +1,9 @@
+2009-11-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DefaultWatcher.cs: patch by James P. Mitchel III.
+	The change corrects an instance of unsynchronized access to shared
+	state and is probably the intent of the original code.
+
 2009-09-30  Marek Habersack  <mhabersack@novell.com>
 
 	* InotifyWatcher.cs: optimized the Renamed event child update loop
