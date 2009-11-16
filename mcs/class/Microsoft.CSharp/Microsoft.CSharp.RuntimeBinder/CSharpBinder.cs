@@ -95,8 +95,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			Expression res;
 			try {
-				// TODO: ResolveOptions
-				Compiler.ResolveContext rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
+				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
@@ -190,9 +189,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 		{
 			return new Compiler.CompilerContext (
 				new Compiler.Report (ErrorPrinter.Instance) {
-					WarningLevel = 0 
-				}
-			);
+					WarningLevel = 0
+				}) {
+					IsRuntimeBinder = true
+				};
 		}
 
 		static BindingRestrictions CreateRestrictionsOnTarget (DynamicMetaObject arg)

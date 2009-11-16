@@ -47,7 +47,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public override void Print (Compiler.AbstractMessage msg)
 		{
-			throw new RuntimeBinderException (msg.Text);
+			string text;
+			if (msg.Code == 214) {
+				text = "Pointers and fixed size buffers cannot be used in a dynamic context";
+			} else {
+				text = msg.Text;
+			}
+
+			throw new RuntimeBinderException (text);
 		}
 	}
 }

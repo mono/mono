@@ -1,3 +1,8 @@
+2009-11-16  Marek Safar  <marek.safar@gmail.com>
+
+	* RuntimeBinderContext.cs, ErrorPrinter.cs, CSharpBinder.cs: Reject
+	unsafe type.
+
 2009-11-11  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpInvokeBinder.cs, CSharpBinder.cs,

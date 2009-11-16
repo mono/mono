@@ -68,8 +68,8 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public bool IsUnsafe {
 			get {
-				// Always true to pass all unsafe checks
-				return true;
+				// Dynamic cannot be used with pointers
+				return false;
 			}
 		}
 
