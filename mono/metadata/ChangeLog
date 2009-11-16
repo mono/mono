@@ -1,3 +1,9 @@
+2009-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c (get_caller_no_reflection_related): 
+	[Mono]Type.InvokeMember is outside System.Reflection[.Emit] but
+	it's still reflection and must be filtered correctly.
+
 2009-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (mono_gc_base_init): Applied patch from DKoushik K. Dutta (
