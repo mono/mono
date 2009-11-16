@@ -4064,9 +4064,9 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		EventRequest *req;
 		int i, event_kind, suspend_policy, nmodifiers, mod;
 		MonoMethod *method;
-		long location;
+		long location = 0;
 		MonoThread *step_thread;
-		int size, depth, step_thread_id;
+		int size = 0, depth = 0, step_thread_id = 0;
 		MonoDomain *domain;
 
 		event_kind = decode_byte (p, &p, end);
