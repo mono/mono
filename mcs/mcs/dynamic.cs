@@ -412,7 +412,7 @@ namespace Mono.CSharp
 				if (a.Type == TypeManager.null_type)
 					arg_type = TypeManager.object_type;
 				else
-					arg_type = TypeManager.TypeToReflectionType (a.Type);
+					arg_type = a.Type;
 
 				if (a.ArgType == Argument.AType.Out || a.ArgType == Argument.AType.Ref)
 					has_ref_out_argument = true;
@@ -427,7 +427,7 @@ namespace Mono.CSharp
 				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
 				if (t != null) {
 					if (!is_statement)
-						targs [targs.Length - 1] = new TypeExpression (TypeManager.TypeToReflectionType (type), loc);
+						targs [targs.Length - 1] = new TypeExpression (type, loc);
 
 					del_type = new GenericTypeExpr (t, new TypeArguments (targs), loc);
 				}
@@ -445,7 +445,7 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 
 				TypeContainer parent = CreateSiteContainer ();
-				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (TypeManager.TypeToReflectionType (rt), loc),
+				Delegate d = new Delegate (parent.NamespaceEntry, parent, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + container_counter++.ToString ("X")),
 					new ParametersCompiled (p), null);

@@ -25,10 +25,12 @@ namespace Mono.CSharp {
 		private static SymbolWriterImpl symwriter;
 
 		class SymbolWriterImpl : MonoSymbolWriter {
+#if !NET_4_0
 			delegate int GetILOffsetFunc (ILGenerator ig);
+			GetILOffsetFunc get_il_offset_func;
+#endif
 			delegate Guid GetGuidFunc (ModuleBuilder mb);
 
-			GetILOffsetFunc get_il_offset_func;
 			GetGuidFunc get_guid_func;
 
 			ModuleBuilder module_builder;
@@ -41,7 +43,11 @@ namespace Mono.CSharp {
 
 			public int GetILOffset (ILGenerator ig)
 			{
+#if NET_4_0
+				return ig.ILOffset;
+#else
 				return get_il_offset_func (ig);
+#endif
 			}
 
 			public void WriteSymbolFile ()
@@ -52,7 +58,9 @@ namespace Mono.CSharp {
 
 			public bool Initialize ()
 			{
-				MethodInfo mi = typeof (ILGenerator).GetMethod (
+				MethodInfo mi;
+#if !NET_4_0
+				mi = typeof (ILGenerator).GetMethod (
 					"Mono_GetCurrentOffset",
 					BindingFlags.Static | BindingFlags.NonPublic);
 				if (mi == null)
@@ -60,6 +68,7 @@ namespace Mono.CSharp {
 
 				get_il_offset_func = (GetILOffsetFunc) System.Delegate.CreateDelegate (
 					typeof (GetILOffsetFunc), mi);
+#endif
 
 				mi = typeof (ModuleBuilder).GetMethod (
 					"Mono_GetGuid",

@@ -5178,7 +5178,7 @@ namespace Mono.CSharp {
 			if (builder == null) {
 				builder = container.TypeBuilder.DefineMethod (
 					method_name, flags, method.CallingConventions,
-					TypeManager.TypeToReflectionType (method.ReturnType),
+					method.ReturnType,
 					param.GetEmitTypes ());
 				return;
 			}
