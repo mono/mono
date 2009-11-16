@@ -2528,6 +2528,13 @@ namespace System.Windows.Forms
 
 		private void OnListManagerPositionChanged (object sender, EventArgs e)
 		{
+			// Set the field directly, as we are empty now and using CurrentRow
+			// directly would add a new row in this case.
+			if (list_manager.Count == 0) {
+				current_cell = new DataGridCell (0, 0);
+				return;
+			}
+
 			from_positionchanged_handler = true;
 			CurrentRow = list_manager.Position;
 			from_positionchanged_handler = false;

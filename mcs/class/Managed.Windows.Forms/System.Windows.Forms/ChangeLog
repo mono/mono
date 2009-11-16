@@ -1,5 +1,14 @@
 2009-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: When we get notified by a change in the position of our
+	data source, don't set CurrentRow if the source is empty, as there's
+	no need to do anything else in the first place, and second, the logic
+	in the CurrentRow setter (public property) will add a new row by
+	default in this case (that is, when the source is empty).
+	Fixes part of #323154.
+
+2009-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ToolStripMenuItem.cs: Don't try to use SystemColors.MenuText if fore
 	color is SystemColors.ControlText, as this system color detection
 	should be done *completely*. This is specially important when
