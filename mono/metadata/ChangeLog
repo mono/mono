@@ -1,3 +1,7 @@
+2009-11-16  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (compute_class_bitmap): Fix for large bitmaps.
+
 2009-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	(mono_gc_get_suspend_signal): Fix the build with a system libgc.

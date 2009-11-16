@@ -1,3 +1,9 @@
+2009-11-16  Mark Probst  <mark.probst@gmail.com>
+
+	* large-gc-bitmap.cs: New test for large GC bitmaps.
+
+	* Makefile.am: Test added.
+
 2009-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for stack traces in native code.
