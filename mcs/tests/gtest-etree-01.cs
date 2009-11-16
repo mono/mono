@@ -2351,7 +2351,6 @@ class Tester
 		Assert (null, c2 (new MyType (1), null));
 	}
 
-	// CSC BUG: Fixed?
 	void OrNullableTest_3 ()
 	{
 		Expression<Func<MyType?, uint, long?>> e3 = (MyType? a, uint b) => a | b;
@@ -2426,8 +2425,7 @@ class Tester
 		Expression<Func<string, Expression<Func<string>>>> e = (string s) => () => s;
 		AssertNodeType (e, ExpressionType.Quote);
 		
-		// Blocked by https://bugzilla.novell.com/show_bug.cgi?id=550722
-		//Assert ("data", e.Compile ().Invoke ("data").Compile ().Invoke ());
+		Assert ("data", e.Compile ().Invoke ("data").Compile ().Invoke ());
 	}
 	
 	void RightShiftTest ()

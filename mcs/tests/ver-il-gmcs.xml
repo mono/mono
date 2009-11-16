@@ -16110,7 +16110,7 @@
         <size>152</size>
       </method>
       <method name="Void QuoteTest_2()">
-        <size>63</size>
+        <size>99</size>
       </method>
     </type>
     <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey1">
@@ -20618,6 +20618,19 @@
       </method>
       <method name="Void .ctor(Object, IntPtr)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-07.cs">
+    <type name="Tests">
+      <method name="Void foo(Foo)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
