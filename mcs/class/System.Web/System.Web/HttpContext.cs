@@ -618,25 +618,20 @@ namespace System.Web
 			bool pathRelative = VirtualPathUtility.IsAppRelative (filePath);
 			bool pathAbsolute = pathRelative ? false : VirtualPathUtility.IsAbsolute (filePath);
 			HttpRequest req = Request;
+			if (req == null)
+				return;
 			
 			if (pathRelative || pathAbsolute) {
-				bool needSubstring = false;
-
-				if (pathRelative && filePath.Length > 1)
-					needSubstring = true;
-
-				string bvd = req.BaseVirtualDir;
-				if (bvd.Length > 1)
-					bvd += "/";
-
-				string canonizedFilePath = VirtualPathUtility.Canonize (filePath);
-				filePath = VirtualPathUtility.Combine (bvd, needSubstring ? canonizedFilePath.Substring (2) : canonizedFilePath);
-			} else 
-				filePath = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (req.FilePath), filePath);
+				if (pathRelative)
+					filePath = VirtualPathUtility.ToAbsolute (filePath);
+				else
+					filePath = filePath;
+			} else
+				filePath = VirtualPathUtility.AppendTrailingSlash (req.BaseVirtualDir) + filePath;
 			
 			if (!StrUtils.StartsWith (filePath, HttpRuntime.AppDomainAppVirtualPath))
 				throw new HttpException (404, "The virtual path '" + HttpUtility.HtmlEncode (filePath) + "' maps to another application.", filePath);
-			
+
 			req.SetCurrentExePath (filePath);
 			req.SetFilePath (filePath);
 

@@ -28,8 +28,11 @@
 using System;
 using System.Text;
 using System.Web;
+using System.Web.UI;
 using System.Collections.Specialized;
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web {
 
@@ -85,6 +88,62 @@ namespace MonoTests.System.Web {
 			HttpContext ctx = new HttpContext (null);
 			Assert.IsNotNull (ctx.Request, "Request");
 			Assert.IsNotNull (ctx.Response, "Response");
+		}
+
+		[Test]
+		public void RewritePath ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (RewritePath_OnInit));
+			string html = t.Run ();
+		}
+
+		protected static void RewritePath_OnInit (Page p)
+		{
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = p.Request;
+			string origPath = req.FilePath;
+
+			ctx.RewritePath ("/NunitWeb/file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/file.html", req.FilePath, "#A1");
+			ctx.RewritePath (origPath, null, null, true);
+
+			ctx.RewritePath ("~/file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/file.html", req.FilePath, "#A2");
+			ctx.RewritePath (origPath, null, null, true);
+
+			ctx.RewritePath ("file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/file.html", req.FilePath, "#A3");
+			ctx.RewritePath (origPath, null, null, true);
+
+			try {
+				ctx.RewritePath ("/file.html", null, null, true);
+				Assert.Fail ("#A4");
+			} catch (HttpException ex) {
+				// The virtual path '/file.html' maps to another application.
+				//
+				// success
+			}
+			
+			ctx.RewritePath ("/NunitWeb/sub/file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/sub/file.html", req.FilePath, "#B1");
+			ctx.RewritePath (origPath, null, null, true);
+
+			ctx.RewritePath ("~/sub/file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/sub/file.html", req.FilePath, "#B2");
+			ctx.RewritePath (origPath, null, null, true);
+
+			ctx.RewritePath ("sub/file.html", null, null, true);
+			Assert.AreEqual ("/NunitWeb/sub/file.html", req.FilePath, "#B3");
+			ctx.RewritePath (origPath, null, null, true);
+
+			try {
+				ctx.RewritePath ("/sub/file.html", null, null, true);
+				Assert.Fail ("#B4");
+			} catch (HttpException ex) {
+				// The virtual path '/file.html' maps to another application.
+				//
+				// success
+			}
 		}
 	}
 }

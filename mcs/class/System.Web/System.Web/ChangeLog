@@ -1,3 +1,11 @@
+2009-11-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: RewritePath now treats non-rooted and
+	app-relative paths correctly - the former are formed by
+	concatenating base virtual path with the passed file path and the
+	latter by calling VirtualPathUtility.ToAbsolute. Rooted and
+	absolute paths are left unmodified. Fixes bug #550103
+
 2009-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: added parameter checks to Redirect ().
