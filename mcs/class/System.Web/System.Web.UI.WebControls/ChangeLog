@@ -1,3 +1,17 @@
+2009-11-16  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeNodeCollection.cs: whenever a node is added, let the owner
+	know about it.
+
+	* TreeNode.cs: added internal property HadChildrenBeforePopulating
+	which is used to let TreeView know about an error condition where
+	a populate-on-demand node contains children added outside the
+	OnTreeNodePopulate event
+
+	* TreeView.cs: if a node has any child nodes and PopulatOnDemand
+	is set, throw an exception from RenderNode. This is the behavior
+	of .NET
+
 2009-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TableRowCollection.cs: added .NET compatibility NREX throws to
