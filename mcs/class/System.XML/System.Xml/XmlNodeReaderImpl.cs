@@ -664,15 +664,21 @@ namespace System.Xml
 			if (current == null)
 				return false;
 
-			if (current.NodeType != XmlNodeType.Attribute)
-				return MoveToFirstAttribute ();
-			else
+			XmlNode anode = current;
+			if (current.NodeType != XmlNodeType.Attribute) {
+				// then it's either an attribute child or anything on the tree.
+				if (current.ParentNode == null ||  // document, or non-tree node
+				    current.ParentNode.NodeType != XmlNodeType.Attribute) // not an attr value
+					return MoveToFirstAttribute ();
+				anode = current.ParentNode;
+			}
+
 			{
-				XmlAttributeCollection ac = ((XmlAttribute) current).OwnerElement.Attributes;
+				XmlAttributeCollection ac = ((XmlAttribute) anode).OwnerElement.Attributes;
 				for (int i=0; i<ac.Count-1; i++)
 				{
 					XmlAttribute attr = ac [i];
-					if (attr == current)
+					if (attr == anode)
 					{
 						i++;
 						if (i == ac.Count)
