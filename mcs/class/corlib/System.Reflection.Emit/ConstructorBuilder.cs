@@ -173,6 +173,9 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public Type ReturnType {
 			get {
 				return null;
@@ -349,7 +352,7 @@ namespace System.Reflection.Emit {
 		internal void fixup ()
 		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
-			if ((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0))
+			if ((ilgen == null) || (ilgen.ILOffset == 0))
 				throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
 			}
 			if (ilgen != null)

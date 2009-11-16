@@ -997,17 +997,21 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[Obsolete ("Use ILOffset")]
+		// Still used by symbolwriter
+		[Obsolete ("Use ILOffset", true)]
 		internal static int Mono_GetCurrentOffset (ILGenerator ig)
 		{
 			return ig.code_len;
-		}
-		
+		}	
+
 #if NET_4_0 || BOOTSTRAP_NET_4_0
-		public int ILOffset {
+		public
+#else
+		internal
+#endif
+		virtual int ILOffset {
 			get { return code_len; }
 		}
-#endif
 
 		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

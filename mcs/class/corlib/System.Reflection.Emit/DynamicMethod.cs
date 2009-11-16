@@ -132,7 +132,7 @@ namespace System.Reflection.Emit {
 
 		private void CreateDynMethod () {
 			if (mhandle.Value == IntPtr.Zero) {
-				if (ilgen == null || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0))
+				if (ilgen == null || ilgen.ILOffset == 0)
 					throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
 
 				ilgen.label_fixup ();

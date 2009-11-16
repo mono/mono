@@ -332,7 +332,7 @@ namespace System.Reflection.Emit
 		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
 				// do not allow zero length method body on MS.NET 2.0 (and higher)
-				if (((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0)) && (code == null || code.Length == 0))
+				if (((ilgen == null) || (ilgen.ILOffset == 0)) && (code == null || code.Length == 0))
 					throw new InvalidOperationException (
 									     String.Format ("Method '{0}.{1}' does not have a method body.",
 											    DeclaringType.FullName, Name));
