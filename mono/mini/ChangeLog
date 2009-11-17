@@ -1,5 +1,8 @@
 2009-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_generic_instances): Emit instances of common generic
+	classes for char/bool too.
+
 	* debugger-agent.c (DebuggerTlsData): Honor the DISABLE_SOFT_DEBUG option.
 
 	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
