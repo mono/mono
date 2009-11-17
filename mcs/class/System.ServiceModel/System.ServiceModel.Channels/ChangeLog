@@ -1,3 +1,7 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElement.cs : changes for 2.1 build.
+
 2009-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* HttpsTransportBindingElement.cs: Implement basic https transport
