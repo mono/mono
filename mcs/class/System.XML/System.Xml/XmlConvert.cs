@@ -48,14 +48,6 @@ namespace System.Xml {
 		
 		static readonly string [] datetimeFormats = {
 		  // dateTime
-		  "yyyy-MM-ddTHH:mm:ss",
-		  "yyyy-MM-ddTHH:mm:ss.f",
-		  "yyyy-MM-ddTHH:mm:ss.ff",
-		  "yyyy-MM-ddTHH:mm:ss.fff",
-		  "yyyy-MM-ddTHH:mm:ss.ffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffff",
-		  "yyyy-MM-ddTHH:mm:ss.ffffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffffff",
 		  "yyyy-MM-ddTHH:mm:sszzz",
 		  "yyyy-MM-ddTHH:mm:ss.fzzz",
 		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
@@ -72,6 +64,14 @@ namespace System.Xml {
 		  "yyyy-MM-ddTHH:mm:ss.fffffZ",
 		  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
 		  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+		  "yyyy-MM-ddTHH:mm:ss",
+		  "yyyy-MM-ddTHH:mm:ss.f",
+		  "yyyy-MM-ddTHH:mm:ss.ff",
+		  "yyyy-MM-ddTHH:mm:ss.fff",
+		  "yyyy-MM-ddTHH:mm:ss.ffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffff",
+		  "yyyy-MM-ddTHH:mm:ss.ffffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffffff",
 		  // time
 		  "HH:mm:ss",
 		  "HH:mm:ss.f",

@@ -687,6 +687,12 @@ namespace MonoTests.System.Xml
 			} catch (FormatException) {
 			}
 		}
+
+		[Test] // see http://smdn.invisiblefulmoon.net/misc/forum/programming/#n10
+		public void DateTimeOffsetTimezoneRoundtrip ()
+		{
+			Assert.AreEqual (new DateTimeOffset (2009, 11, 05, 20, 16, 22, TimeSpan.FromHours (9)),  XmlConvert.ToDateTimeOffset ("2009-11-05T20:16:22+09:00"), "#1");
+		}
 #endif
 	}
 }
