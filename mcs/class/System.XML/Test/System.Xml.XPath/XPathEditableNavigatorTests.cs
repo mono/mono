@@ -771,6 +771,15 @@ namespace MonoTests.System.Xml.XPath
 			nodeElement.DeleteSelf ();
 			Assert.AreEqual ("<test><node>z</node></test>", document.OuterXml);
 		}
+
+		[Test]
+		public void WriteAttributeOnAppendedChild ()
+		{
+			XmlDocument x = new XmlDocument ();
+			XmlElement y = x.CreateElement ("test");
+			using (XmlWriter w = y.CreateNavigator ().AppendChild ())
+				w.WriteAttributeString ("test", "test1");
+		}
 	}
 }
 
