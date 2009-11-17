@@ -1,5 +1,9 @@
 2009-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (mono_debugger_agent_breakpoint_hit): Fix a warning.
+	(mono_debugger_agent_thread_interrupt): Make this return FALSE if the agent
+	is disabled.
+
 	* aot-compiler.c (add_generic_instances): Emit instances of common generic
 	classes for char/bool too.
 
