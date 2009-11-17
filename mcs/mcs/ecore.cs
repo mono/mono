@@ -2689,7 +2689,7 @@ namespace Mono.CSharp {
 				if (ec.CurrentTypeDefinition != null) {
 					Type t = ec.CurrentTypeDefinition.LookupAnyGeneric (Name);
 					if (t != null) {
-						Namespace.Error_InvalidNumberOfTypeArguments (t, loc);
+						Namespace.Error_InvalidNumberOfTypeArguments (ec.Compiler.Report, t, loc);
 						return;
 					}
 				}

@@ -1635,7 +1635,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Ldftn, delegate_method);
 
-			ConstructorInfo constructor_method = Delegate.GetConstructor (RootContext.ToplevelTypes.Compiler, ec.CurrentType, type);
+			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
 #if MS_COMPATIBLE
             if (type.IsGenericType && type is TypeBuilder)
                 constructor_method = TypeBuilder.GetConstructor (type, constructor_method);

@@ -1399,7 +1399,7 @@ namespace Mono.CSharp {
 			Type[] atypes = args.Arguments;
 			
 			if (atypes.Length != gen_params.Length) {
-				Namespace.Error_InvalidNumberOfTypeArguments (open_type, loc);
+				Namespace.Error_InvalidNumberOfTypeArguments (ec.Compiler.Report, open_type, loc);
 				return null;
 			}
 

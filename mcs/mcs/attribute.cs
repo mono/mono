@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 				Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}
 
-		Report Report {
+		public Report Report {
 			get { return context.Compiler.Report; }
 		}
 
@@ -1471,12 +1471,12 @@ namespace Mono.CSharp {
 				if (d.Value == null)
 					continue;
 
-				Report report = RootContext.ToplevelTypes.Compiler.Report;
-				foreach (Attribute collision in (ArrayList)d.Value)
-					report.SymbolRelatedToPreviousError (collision.Location, "");
+				Attribute a = (Attribute) d.Key;
 
-				Attribute a = (Attribute)d.Key;
-				report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",
+				foreach (Attribute collision in (ArrayList)d.Value)
+					a.Report.SymbolRelatedToPreviousError (collision.Location, "");
+
+				a.Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",
 					a.GetSignatureForError ());
 			}
 		}

@@ -69,7 +69,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
-					return_attributes = new ReturnParameter (InvokeBuilder, Location);
+					return_attributes = new ReturnParameter (this, InvokeBuilder, Location);
 
 				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
@@ -284,7 +284,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (TypeManager.IsDynamicType (ret_type)) {
-				return_attributes = new ReturnParameter (InvokeBuilder, Location);
+				return_attributes = new ReturnParameter (this, InvokeBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
@@ -323,7 +323,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Parameters.VerifyClsCompliance ();
+			Parameters.VerifyClsCompliance (this);
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
 				Report.Warning (3002, 1, Location, "Return type of `{0}' is not CLS-compliant",

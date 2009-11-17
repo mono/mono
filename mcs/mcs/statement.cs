@@ -1220,14 +1220,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (builder == null) {
-				if (Pinned)
-					//
-					// This is needed to compile on both .NET 1.x and .NET 2.x
-					// the later introduced `DeclareLocal (Type t, bool pinned)'
-					//
-					builder = TypeManager.DeclareLocalPinned (ec.ig, VariableType);
-				else
-					builder = ec.ig.DeclareLocal (TypeManager.TypeToReflectionType (VariableType));
+				builder = ec.ig.DeclareLocal (TypeManager.TypeToReflectionType (VariableType), Pinned);
 			}
 		}
 
@@ -4450,7 +4443,7 @@ namespace Mono.CSharp {
 					//
 					// Provided that array_type is unmanaged,
 					//
-					if (!TypeManager.VerifyUnManaged (array_type, loc))
+					if (!TypeManager.VerifyUnmanaged (ec.Compiler, array_type, loc))
 						return false;
 
 					//
@@ -4978,7 +4971,7 @@ namespace Mono.CSharp {
 			}
 
 			if (mi == null) {
-				RootContext.ToplevelTypes.Compiler.Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+				ec.Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
 				return;
 			}
 

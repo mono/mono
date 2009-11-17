@@ -360,7 +360,7 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitType ();
 
-				if (RootContext.ToplevelTypes.Compiler.Report.Errors > 0)
+				if (ToplevelTypes.Compiler.Report.Errors > 0)
 					return;
 
 				foreach (TypeContainer tc in type_container_resolve_order)

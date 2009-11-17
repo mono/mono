@@ -309,6 +309,11 @@ namespace Mono.CSharp {
 			get { return MemberContext.IsStatic; }
 		}
 
+		// Has to be used for emitter errors only
+		public Report Report {
+			get { return MemberContext.Compiler.Report; }
+		}
+
 		public Type ReturnType {
 			get {
 				return return_type;

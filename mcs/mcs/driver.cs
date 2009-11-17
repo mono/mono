@@ -1867,28 +1867,13 @@ namespace Mono.CSharp
 	{
 		interface IResource
 		{
-			void Emit ();
+			void Emit (CompilerContext cc);
 			string FileName { get; }
 		}
 
 		class EmbededResource : IResource
 		{
 			static MethodInfo embed_res;
-
-			static EmbededResource () {
-				Type[] argst = new Type [] { 
-											   typeof (string), typeof (string), typeof (ResourceAttributes)
-										   };
-
-				embed_res = typeof (AssemblyBuilder).GetMethod (
-					"EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,
-					null, CallingConventions.Any, argst, null);
-				
-				if (embed_res == null) {
-					RootContext.ToplevelTypes.Compiler.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
-				}
-			}
-
 			readonly object[] args;
 
 			public EmbededResource (string name, string file, bool isPrivate)
@@ -1899,8 +1884,22 @@ namespace Mono.CSharp
 				args [2] = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
 			}
 
-			public void Emit()
+			public void Emit (CompilerContext cc)
 			{
+				if (embed_res == null) {
+					var argst = new [] {
+						typeof (string), typeof (string), typeof (ResourceAttributes)
+					};
+
+					embed_res = typeof (AssemblyBuilder).GetMethod (
+						"EmbedResourceFile", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+						null, CallingConventions.Any, argst, null);
+
+					if (embed_res == null) {
+						cc.Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
+					}
+				}
+
 				embed_res.Invoke (CodeGen.Assembly.Builder, args);
 			}
 
@@ -1924,7 +1923,7 @@ namespace Mono.CSharp
 				this.attribute = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
 			}
 
-			public void Emit ()
+			public void Emit (CompilerContext cc)
 			{
 				CodeGen.Assembly.Builder.AddResourceFile (name, Path.GetFileName(file), attribute);
 			}
@@ -1971,7 +1970,7 @@ namespace Mono.CSharp
 					continue;
 				}
 				
-				r.Emit ();
+				r.Emit (ctx);
 			}
 		}
 	}

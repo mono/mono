@@ -1873,7 +1873,7 @@ namespace Mono.CSharp {
 				continue;
 
 			if (hash.Contains (ftc)) {
-				RootContext.ToplevelTypes.Compiler.Report.Error (523, tc.Location,
+				tc.Compiler.Report.Error (523, tc.Location,
 					      "Struct member `{0}.{1}' of type `{2}' " +
 					      "causes a cycle in the struct layout",
 					      tc.Name, field.Name, ftc.Name);
@@ -2230,7 +2230,7 @@ namespace Mono.CSharp {
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  
 	/// </summary>
-	public static bool VerifyUnManaged (Type t, Location loc)
+	public static bool VerifyUnmanaged (CompilerContext ctx, Type t, Location loc)
 	{
 		if (IsUnmanagedType (t))
 			return true;
@@ -2238,8 +2238,8 @@ namespace Mono.CSharp {
 		while (t.IsPointer)
 			t = GetElementType (t);
 
-		RootContext.ToplevelTypes.Compiler.Report.SymbolRelatedToPreviousError (t);
-		RootContext.ToplevelTypes.Compiler.Report.Error (208, loc,
+		ctx.Report.SymbolRelatedToPreviousError (t);
+		ctx.Report.Error (208, loc,
 			"Cannot take the address of, get the size of, or declare a pointer to a managed type `{0}'",
 			CSharpName (t));
 
@@ -2273,25 +2273,6 @@ namespace Mono.CSharp {
 		}
 
 		return TypeContainer.DefaultIndexerName;
-	}
-
-	static MethodInfo declare_local_method = null;
-	
-	public static LocalBuilder DeclareLocalPinned (ILGenerator ig, Type t)
-	{
-		if (declare_local_method == null){
-			declare_local_method = typeof (ILGenerator).GetMethod (
-				"DeclareLocal",
-				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-				null, 
-				new Type [] { typeof (Type), typeof (bool)},
-				null);
-			if (declare_local_method == null){
-				RootContext.ToplevelTypes.Compiler.Report.RuntimeMissingSupport (Location.Null, "pinned local variables");
-				return ig.DeclareLocal (t);
-			}
-		}
-		return (LocalBuilder) declare_local_method.Invoke (ig, new object [] { t, true });
 	}
 
 	private static bool IsSignatureEqual (Type a, Type b)

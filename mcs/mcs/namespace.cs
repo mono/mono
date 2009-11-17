@@ -297,9 +297,10 @@ namespace Mono.CSharp {
 			retval.AddAssemblyReference (assembly);
 		}
 
-		public override void Error_NamespaceDoesNotExist (Location loc, string name, Report Report)
+		public override void Error_NamespaceDoesNotExist (Location loc, string name, IMemberContext ctx)
 		{
-			Report.Error (400, loc, "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
+			ctx.Compiler.Report.Error (400, loc,
+				"The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
 				name);
 		}
 
@@ -408,30 +409,31 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, Report Report)
+		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, IMemberContext ctx)
 		{
 			if (name.IndexOf ('`') > 0) {
 				FullNamedExpression retval = Lookup (RootContext.ToplevelTypes.Compiler, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
-					retval.Error_TypeArgumentsCannotBeUsed (Report, loc);
+					retval.Error_TypeArgumentsCannotBeUsed (ctx.Compiler.Report, loc);
 					return;
 				}
 			} else {
 				Type t = LookForAnyGenericType (name);
 				if (t != null) {
-					Error_InvalidNumberOfTypeArguments (t, loc);
+					Error_InvalidNumberOfTypeArguments (ctx.Compiler.Report, t, loc);
 					return;
 				}
 			}
 
-			Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
+			ctx.Compiler.Report.Error (234, loc,
+				"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 				name, GetSignatureForError ());
 		}
 
-		public static void Error_InvalidNumberOfTypeArguments (Type t, Location loc)
+		public static void Error_InvalidNumberOfTypeArguments (Report report, Type t, Location loc)
 		{
-			RootContext.ToplevelTypes.Compiler.Report.SymbolRelatedToPreviousError (t);
-			RootContext.ToplevelTypes.Compiler.Report.Error (305, loc, "Using the generic type `{0}' requires `{1}' type argument(s)",
+			report.SymbolRelatedToPreviousError (t);
+			report.Error (305, loc, "Using the generic type `{0}' requires `{1}' type argument(s)",
 				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
 		}
 

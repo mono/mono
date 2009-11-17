@@ -632,7 +632,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!TypeManager.VerifyUnManaged (Expr.Type, loc)) {
+			if (!TypeManager.VerifyUnmanaged (ec.Compiler, Expr.Type, loc)) {
 				return null;
 			}
 
@@ -6051,7 +6051,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		MethodInfo GetArrayMethod (int arguments)
+		MethodInfo GetArrayMethod (EmitContext ec, int arguments)
 		{
 			ModuleBuilder mb = RootContext.ToplevelTypes.Builder;
 
@@ -6063,7 +6063,7 @@ namespace Mono.CSharp {
 							arg_types);
 
 			if (mi == null) {
-				RootContext.ToplevelTypes.Compiler.Report.Error (-6, "New invocation: Can not find a constructor for " +
+				ec.Report.Error (-6, "New invocation: Can not find a constructor for " +
 						  "this argument list");
 				return null;
 			}
@@ -6382,7 +6382,7 @@ namespace Mono.CSharp {
 			if (arguments.Count == 1)
 				ig.Emit (OpCodes.Newarr, TypeManager.TypeToReflectionType (array_element_type));
 			else {
-				ig.Emit (OpCodes.Newobj, GetArrayMethod (arguments.Count));
+				ig.Emit (OpCodes.Newobj, GetArrayMethod (ec, arguments.Count));
 			}
 			
 			if (initializers == null)
@@ -7242,7 +7242,7 @@ namespace Mono.CSharp {
 				return new IntConstant (size_of, loc);
 			}
 
-			if (!TypeManager.VerifyUnManaged (type_queried, loc)){
+			if (!TypeManager.VerifyUnmanaged (ec.Compiler, type_queried, loc)){
 				return null;
 			}
 
@@ -7397,7 +7397,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (ec.Compiler, LookupIdentifier, loc);
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier, ec.Report);
+					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier, ec);
 				else if (targs != null)
 					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (ec, false);
 
@@ -7566,7 +7566,7 @@ namespace Mono.CSharp {
 				FullNamedExpression retval = ns.Lookup (rc.Compiler, LookupIdentifier, loc);
 
 				if (retval == null && !silent)
-					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier, rc.Compiler.Report);
+					ns.Error_NamespaceDoesNotExist (loc, LookupIdentifier, rc);
 				else if (targs != null)
 					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (rc, silent);
 
@@ -9085,7 +9085,7 @@ namespace Mono.CSharp {
 				return nullable.ResolveAsTypeTerminal (ec, false);
 			}
 
-			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc))
+			if (dim == "*" && !TypeManager.VerifyUnmanaged (ec.Compiler, ltype, loc))
 				return null;
 
 			if (dim.Length != 0 && dim [0] == '[') {
@@ -9273,7 +9273,7 @@ namespace Mono.CSharp {
 
 			otype = texpr.Type;
 
-			if (!TypeManager.VerifyUnManaged (otype, loc))
+			if (!TypeManager.VerifyUnmanaged (ec.Compiler, otype, loc))
 				return null;
 
 			type = TypeManager.GetPointerType (otype);

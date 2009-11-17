@@ -64,21 +64,26 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Class for applying custom attributes on the return type
 	/// </summary>
-	public class ReturnParameter : ParameterBase {
-		public ReturnParameter (MethodBuilder mb, Location location)
+	public class ReturnParameter : ParameterBase
+	{
+		MemberCore method;
+
+		// TODO: merge method and mb
+		public ReturnParameter (MemberCore method, MethodBuilder mb, Location location)
 		{
+			this.method = method;
 			try {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				RootContext.ToplevelTypes.Compiler.Report.RuntimeMissingSupport (location, "custom attributes on the return type");
+				method.Compiler.Report.RuntimeMissingSupport (location, "custom attributes on the return type");
 			}
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.CLSCompliant) {
-				RootContext.ToplevelTypes.Compiler.Report.Warning (3023, 1, a.Location,
+				method.Compiler.Report.Warning (3023, 1, a.Location,
 					"CLSCompliant attribute has no meaning when applied to return types. Try putting it on the method instead");
 			}
 
@@ -263,31 +268,29 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			Report Report = RootContext.ToplevelTypes.Compiler.Report;
-
 			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
-				Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
+				a.Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
 			}
 
 			if (a.Type == pa.ParamArray) {
-				Report.Error (674, a.Location, "Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead");
+				a.Report.Error (674, a.Location, "Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead");
 				return;
 			}
 
 			if (a.Type == PredefinedAttributes.Get.Out && (ModFlags & Modifier.REF) == Modifier.REF &&
 			    !OptAttributes.Contains (pa.In)) {
-				Report.Error (662, a.Location,
+				a.Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
 				return;
 			}
 
 			if (a.Type == pa.CLSCompliant) {
-				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
+				a.Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
 			}
 
 			if (HasDefaultValue && (a.Type == pa.DefaultParameterValue || a.Type == pa.OptionalParameter)) {
-				Report.Error (1745, a.Location,
+				a.Report.Error (1745, a.Location,
 					"Cannot specify `{0}' attribute on optional parameter `{1}'",
 					TypeManager.CSharpName (a.Type).Replace ("Attribute", ""), Name);
 				return;
@@ -302,10 +305,10 @@ namespace Mono.CSharp {
 							if (!t.IsArray)
 								t = TypeManager.type_type;
 
-							Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
+							a.Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
 								TypeManager.CSharpName (t));
 						} else {
-							Report.Error (1909, a.Location, "The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
+							a.Report.Error (1909, a.Location, "The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
 								TypeManager.CSharpName (parameter_type)); ;
 						}
 						return;
@@ -317,7 +320,7 @@ namespace Mono.CSharp {
 				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
 					builder.SetConstant (val);
 				else
-					Report.Error (1908, a.Location, "The type of the default value should match the type of the parameter");
+					a.Report.Error (1908, a.Location, "The type of the default value should match the type of the parameter");
 				return;
 			}
 
@@ -509,12 +512,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void IsClsCompliant ()
+		public void IsClsCompliant (IMemberContext ctx)
 		{
 			if (AttributeTester.IsClsCompliant (parameter_type))
 				return;
 
-			RootContext.ToplevelTypes.Compiler.Report.Warning (3001, 1, Location, "Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
+			ctx.Compiler.Report.Warning (3001, 1, Location,
+				"Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
@@ -1162,10 +1166,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void VerifyClsCompliance ()
+		public void VerifyClsCompliance (IMemberContext ctx)
 		{
 			foreach (Parameter p in FixedParameters)
-				p.IsClsCompliant ();
+				p.IsClsCompliant (ctx);
 		}
 
 		public Parameter this [int pos] {

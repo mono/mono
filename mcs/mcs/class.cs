@@ -1430,7 +1430,7 @@ namespace Mono.CSharp {
 					requires_delayed_unmanagedtype_check = false;
 					foreach (FieldBase f in fields) {
 						if (f.MemberType != null && f.MemberType.IsPointer)
-							TypeManager.VerifyUnManaged (f.MemberType, f.Location);
+							TypeManager.VerifyUnmanaged (Compiler, f.MemberType, f.Location);
 					}
 				}
 			}
@@ -3343,7 +3343,7 @@ namespace Mono.CSharp {
 					GetSignatureForError ());
 			}
 
-			Parameters.VerifyClsCompliance ();
+			Parameters.VerifyClsCompliance (this);
 			return true;
 		}
 
@@ -3803,7 +3803,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
-					return_attributes = new ReturnParameter (MethodBuilder, Location);
+					return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 
 				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
@@ -3949,7 +3949,7 @@ namespace Mono.CSharp {
 				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (MethodBuilder);
 
 			if (TypeManager.IsDynamicType (ReturnType)) {
-				return_attributes = new ReturnParameter (MethodBuilder, Location);
+				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
@@ -5195,7 +5195,7 @@ namespace Mono.CSharp {
 						methodbuilder_attrs_field = typeof (MethodBuilder).GetField ("attrs", BindingFlags.NonPublic | BindingFlags.Instance);
 					methodbuilder_attrs_field.SetValue (builder, flags);
 				} catch {
-					RootContext.ToplevelTypes.Compiler.Report.RuntimeMissingSupport (method.Location, "Generic method MethodAttributes");
+					container.Compiler.Report.RuntimeMissingSupport (method.Location, "Generic method MethodAttributes");
 				}
 			}
 		}
@@ -6139,7 +6139,7 @@ namespace Mono.CSharp {
 
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
-					return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+					return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 
 				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
@@ -6169,7 +6169,7 @@ namespace Mono.CSharp {
 				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
 
 			if (TypeManager.IsDynamicType (ReturnType)) {
-				return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
 			}
 
@@ -7704,7 +7704,7 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			parameters.VerifyClsCompliance ();
+			parameters.VerifyClsCompliance (this);
 			return true;
 		}
 	}

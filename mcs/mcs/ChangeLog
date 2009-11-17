@@ -1,6 +1,10 @@
+2009-11-17  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: More context specific handling.
+
 2009-11-16  Marek Safar  <marek.safar@gmail.com>
 
-	* dynamic.cs, class: Removed few fixed user types conversions.
+	* dynamic.cs, class.cs: Removed few fixed user types conversions.
 	
 	* symbolwriter.cs: Uses public ILOffset.
 
