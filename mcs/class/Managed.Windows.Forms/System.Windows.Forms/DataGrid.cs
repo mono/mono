@@ -2045,8 +2045,10 @@ namespace System.Windows.Forms
 					selected_rows.Keys.CopyTo (rows, 0);
 
 					// reverse order to keep index sanity
+					int edit_row_index = ShowEditRow ? RowsCount : -1; // new cell is +1
 					for (int i = rows.Length - 1; i >= 0; i--)
-						ListManager.RemoveAt (rows [i]);
+						if (rows [i] != edit_row_index)
+							ListManager.RemoveAt (rows [i]);
 
 					CalcAreasAndInvalidate ();
 				}
