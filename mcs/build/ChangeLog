@@ -1,3 +1,8 @@
+2009-11-17  Marek Habersack  <mhabersack@novell.com>
+
+	* tests.make (TEST_RUNTIME_WRAPPERS_PATH): added - used to set up
+	correct PATH for tests
+
 2009-10-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	* profiles/basic.make (PROFILE_CS): Remove.
