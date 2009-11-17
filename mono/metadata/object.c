@@ -40,6 +40,7 @@
 #include <mono/metadata/gc-internal.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error-internals.h>
 #include "cominterop.h"
 
 #ifdef HAVE_BOEHM_GC
@@ -2283,13 +2284,16 @@ copy_remote_class_key (MonoDomain *domain, gpointer *key)
  * @class_name: name of the remote class
  *
  * Creates and initializes a MonoRemoteClass object for a remote type. 
- * 
+ *
+ * Can raise an exception on failure. 
  */
 MonoRemoteClass*
 mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_class)
 {
+	MonoError error;
 	MonoRemoteClass *rc;
 	gpointer* key, *mp_key;
+	char *name;
 	
 	key = create_remote_class_key (NULL, proxy_class);
 	
@@ -2300,6 +2304,13 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 		g_free (key);
 		mono_domain_unlock (domain);
 		return rc;
+	}
+
+	name = mono_string_to_utf8_mp (domain->mp, class_name, &error);
+	if (!mono_error_ok (&error)) {
+		g_free (key);
+		mono_domain_unlock (domain);
+		mono_error_raise_exception (&error);
 	}
 
 	mp_key = copy_remote_class_key (domain, key);
@@ -2319,7 +2330,7 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	
 	rc->default_vtable = NULL;
 	rc->xdomain_vtable = NULL;
-	rc->proxy_class_name = mono_string_to_utf8_mp (domain->mp, class_name);
+	rc->proxy_class_name = name;
 	mono_perfcounters->loader_bytes += mono_string_length (class_name) + 1;
 
 	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
@@ -3346,9 +3357,15 @@ call_unhandled_exception_delegate (MonoDomain *domain, MonoObject *delegate, Mon
 	mono_runtime_delegate_invoke (delegate, pa, &e);
 	
 	if (e) {
-		gchar *msg = mono_string_to_utf8 (((MonoException *) e)->message);
-		g_warning ("exception inside UnhandledException handler: %s\n", msg);
-		g_free (msg);
+		MonoError error;
+		gchar *msg = mono_string_to_utf8_checked (((MonoException *) e)->message, &error);
+		if (!mono_error_ok (&error)) {
+			g_warning ("Exception inside UnhandledException handler with invalid message (Invalid characters)\n");
+			mono_error_cleanup (&error);
+		} else {
+			g_warning ("exception inside UnhandledException handler: %s\n", msg);
+			g_free (msg);
+		}
 	}
 }
 
@@ -4897,13 +4914,28 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig)
  *
  * Return the UTF8 representation for @s.
  * the resulting buffer nedds to be freed with g_free().
+ *
+ * @deprecated Use mono_string_to_utf8_checked to avoid having an exception arbritraly raised.
  */
 char *
 mono_string_to_utf8 (MonoString *s)
 {
+	MonoError error;
+	char *result = mono_string_to_utf8_checked (s, &error);
+	
+	if (!mono_error_ok (&error))
+		mono_error_raise_exception (&error);
+	return result;
+}
+
+char *
+mono_string_to_utf8_checked (MonoString *s, MonoError *error)
+{
 	long written = 0;
 	char *as;
-	GError *error = NULL;
+	GError *gerror = NULL;
+
+	mono_error_init (error);
 
 	if (s == NULL)
 		return NULL;
@@ -4911,11 +4943,11 @@ mono_string_to_utf8 (MonoString *s)
 	if (!s->length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &error);
-	if (error) {
-		MonoException *exc = mono_get_exception_argument ("string", error->message);
-		g_error_free (error);
-		mono_raise_exception(exc);
+	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &gerror);
+	if (gerror) {
+		mono_error_set_argument (error, "string", "%s", gerror->message);
+		g_error_free (gerror);
+		return NULL;
 	}
 	/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
 	if (s->length > written) {
@@ -4982,18 +5014,18 @@ mono_string_from_utf16 (gunichar2 *data)
 
 
 static char *
-mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s)
+mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, MonoError *error)
 {
 	char *r;
 	char *mp_s;
 	int len;
 
-	if (!mp && !image)
-		return mono_string_to_utf8 (s);
-
-	r = mono_string_to_utf8 (s);
-	if (!r)
+	r = mono_string_to_utf8_checked (s, error);
+	if (!mono_error_ok (error))
 		return NULL;
+
+	if (!mp && !image)
+		return r;
 
 	len = strlen (r) + 1;
 	if (mp)
@@ -5015,9 +5047,9 @@ mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s)
  * Same as mono_string_to_utf8, but allocate the string from the image mempool.
  */
 char *
-mono_string_to_utf8_image (MonoImage *image, MonoString *s)
+mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error)
 {
-	return mono_string_to_utf8_internal (NULL, image, s);
+	return mono_string_to_utf8_internal (NULL, image, s, error);
 }
 
 /**
@@ -5027,9 +5059,9 @@ mono_string_to_utf8_image (MonoImage *image, MonoString *s)
  * Same as mono_string_to_utf8, but allocate the string from a mempool.
  */
 char *
-mono_string_to_utf8_mp (MonoMemPool *mp, MonoString *s)
+mono_string_to_utf8_mp (MonoMemPool *mp, MonoString *s, MonoError *error)
 {
-	return mono_string_to_utf8_internal (mp, NULL, s);
+	return mono_string_to_utf8_internal (mp, NULL, s, error);
 }
 
 static void
@@ -5359,6 +5391,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 void
 mono_print_unhandled_exception (MonoObject *exc)
 {
+	MonoError error;
 	char *message = (char *) "";
 	MonoString *str; 
 	MonoMethod *method;
@@ -5378,8 +5411,13 @@ mono_print_unhandled_exception (MonoObject *exc)
 
 		str = (MonoString *) mono_runtime_invoke (method, exc, NULL, NULL);
 		if (str) {
-			message = mono_string_to_utf8 (str);
-			free_message = TRUE;
+			message = mono_string_to_utf8_checked (str, &error);
+			if (!mono_error_ok (&error)) {
+				mono_error_cleanup (&error);
+				message = (char *)"";
+			} else {
+				free_message = TRUE;
+			}
 		}
 	}				
 

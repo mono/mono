@@ -359,6 +359,7 @@ Authors:
 %_prefix/lib/mono/2.0/System.Data.dll
 %_prefix/lib/mono/gac/System.Data.Linq
 %_prefix/lib/mono/2.0/System.Data.Linq.dll
+%_prefix/lib/mono/gac/System.Data.Services
 %_prefix/lib/mono/gac/Mono.Data
 %_prefix/lib/mono/1.0/Mono.Data.dll
 %_prefix/lib/mono/2.0/Mono.Data.dll
@@ -1047,11 +1048,13 @@ fi
 %_bindir/ilasm1
 %_bindir/ilasm2
 %_bindir/installvst
+%_bindir/lc
 %_bindir/macpack
 %_bindir/makecert
 %_bindir/mkbundle
 %_bindir/mkbundle1
 %_bindir/mkbundle2
+%_bindir/mono-gdb.py
 %_bindir/monodis
 %_bindir/monolinker
 %_bindir/monop
@@ -1079,6 +1082,8 @@ fi
 %_prefix/lib/mono/1.0/PEAPI.dll
 %_prefix/lib/mono/2.0/monolinker.*
 %_prefix/lib/mono/2.0/PEAPI.dll
+%_prefix/lib/mono/gac/Mono.Debugger.Soft
+%_prefix/lib/mono/2.0/Mono.Debugger.Soft.dll
 %_prefix/lib/mono/gac/Microsoft.Build.Tasks
 %_prefix/lib/mono/2.0/Microsoft.Build.Tasks.dll
 %_prefix/lib/mono/gac/Microsoft.Build.Tasks.v3.5

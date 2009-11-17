@@ -57,6 +57,8 @@
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-stdlib.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/utils/mono-error-internals.h>
+
 #ifdef PLATFORM_WIN32
 #include <direct.h>
 #endif
@@ -120,7 +122,7 @@ static MonoAppDomain *
 mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *setup);
 
 static char *
-get_shadow_assembly_location_base (MonoDomain *domain);
+get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error);
 
 static MonoLoadFunc load_function = NULL;
 
@@ -397,6 +399,7 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 static MonoAppDomain *
 mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *setup)
 {
+	MonoError error;
 	MonoClass *adclass;
 	MonoAppDomain *ad;
 	MonoDomain *data;
@@ -429,7 +432,10 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	add_assemblies_to_domain (data, mono_defaults.corlib->assembly, NULL);
 
 #ifndef DISABLE_SHADOW_COPY
-	shadow_location = get_shadow_assembly_location_base (data);
+	/*FIXME, guard this for when the debugger is not running */
+	shadow_location = get_shadow_assembly_location_base (data, &error);
+	if (!mono_error_ok (&error))
+		mono_error_raise_exception (&error);
 	mono_debugger_event_create_appdomain (data, shadow_location);
 	g_free (shadow_location);
 #endif
@@ -727,6 +733,7 @@ mono_parser = {
 void
 mono_set_private_bin_path_from_config (MonoDomain *domain)
 {
+	MonoError error;
 	gchar *config_file, *text;
 	gsize len;
 	GMarkupParseContext *context;
@@ -735,7 +742,11 @@ mono_set_private_bin_path_from_config (MonoDomain *domain)
 	if (!domain || !domain->setup || !domain->setup->configuration_file)
 		return;
 
-	config_file = mono_string_to_utf8 (domain->setup->configuration_file);
+	config_file = mono_string_to_utf8_checked (domain->setup->configuration_file, &error); 
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		return;
+	}
 
 	if (!g_file_get_contents (config_file, &text, &len, NULL)) {
 		g_free (config_file);
@@ -953,13 +964,14 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 static void
 set_domain_search_path (MonoDomain *domain)
 {
+	MonoError error;
 	MonoAppDomainSetup *setup;
 	gchar **tmp;
 	gchar *search_path = NULL;
 	gint i;
 	gint npaths = 0;
 	gchar **pvt_split = NULL;
-	GError *error = NULL;
+	GError *gerror = NULL;
 	gint appbaselen = -1;
 
 	/* 
@@ -985,8 +997,15 @@ set_domain_search_path (MonoDomain *domain)
 
 	npaths++;
 	
-	if (setup->private_bin_path)
-		search_path = mono_string_to_utf8 (setup->private_bin_path);
+	if (setup->private_bin_path) {
+		search_path = mono_string_to_utf8_checked (setup->private_bin_path, &error);
+		if (!mono_error_ok (&error)) { /*FIXME maybe we should bubble up the error.*/
+			g_warning ("Could not decode AppDomain search path since it contains invalid caracters");
+			mono_error_cleanup (&error);
+			mono_domain_assemblies_unlock (domain);
+			return;
+		}
+	}
 	
 	if (domain->private_bin_path) {
 		if (search_path == NULL)
@@ -1041,10 +1060,20 @@ set_domain_search_path (MonoDomain *domain)
 	if (domain->search_path)
 		g_strfreev (domain->search_path);
 
-	domain->search_path = tmp = g_malloc ((npaths + 1) * sizeof (gchar *));
+	tmp = g_malloc ((npaths + 1) * sizeof (gchar *));
 	tmp [npaths] = NULL;
 
-	*tmp = mono_string_to_utf8 (setup->application_base);
+	*tmp = mono_string_to_utf8_checked (setup->application_base, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		g_strfreev (pvt_split);
+		g_free (tmp);
+
+		mono_domain_assemblies_unlock (domain);
+		return;
+	}
+
+	domain->search_path = tmp;
 
 	/* FIXME: is this needed? */
 	if (strncmp (*tmp, "file://", 7) == 0) {
@@ -1057,15 +1086,15 @@ set_domain_search_path (MonoDomain *domain)
 
 		tmpuri = uri;
 		uri = mono_escape_uri_string (tmpuri);
-		*tmp = g_filename_from_uri (uri, NULL, &error);
+		*tmp = g_filename_from_uri (uri, NULL, &gerror);
 		g_free (uri);
 
 		if (tmpuri != file)
 			g_free (tmpuri);
 
-		if (error != NULL) {
-			g_warning ("%s\n", error->message);
-			g_error_free (error);
+		if (gerror != NULL) {
+			g_warning ("%s\n", gerror->message);
+			g_error_free (gerror);
 			*tmp = file;
 		} else {
 			g_free (file);
@@ -1171,16 +1200,20 @@ get_cstring_hash (const char *str)
  * Returned memory is malloc'd. Called must free it 
  */
 static char *
-get_shadow_assembly_location_base (MonoDomain *domain)
+get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 {
 	MonoAppDomainSetup *setup;
 	char *cache_path, *appname;
 	char *userdir;
 	char *location;
+
+	mono_error_init (error);
 	
 	setup = domain->setup;
 	if (setup->cache_path != NULL && setup->application_name != NULL) {
-		cache_path = mono_string_to_utf8 (setup->cache_path);
+		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
+		if (!mono_error_ok (error))
+			return NULL;
 #ifndef PLATFORM_WIN32
 		{
 			gint i;
@@ -1190,7 +1223,12 @@ get_shadow_assembly_location_base (MonoDomain *domain)
 		}
 #endif
 
-		appname = mono_string_to_utf8 (setup->application_name);
+		appname = mono_string_to_utf8_checked (setup->application_name, error);
+		if (!mono_error_ok (error)) {
+			g_free (cache_path);
+			return NULL;
+		}
+
 		location = g_build_filename (cache_path, appname, "assembly", "shadow", NULL);
 		g_free (appname);
 		g_free (cache_path);
@@ -1203,7 +1241,7 @@ get_shadow_assembly_location_base (MonoDomain *domain)
 }
 
 static char *
-get_shadow_assembly_location (const char *filename)
+get_shadow_assembly_location (const char *filename, MonoError *error)
 {
 	gint32 hash = 0, hash2 = 0;
 	char name_hash [9];
@@ -1212,12 +1250,20 @@ get_shadow_assembly_location (const char *filename)
 	char *dirname = g_path_get_dirname (filename);
 	char *location, *tmploc;
 	MonoDomain *domain = mono_domain_get ();
+
+	mono_error_init (error);
 	
 	hash = get_cstring_hash (bname);
 	hash2 = get_cstring_hash (dirname);
 	g_snprintf (name_hash, sizeof (name_hash), "%08x", hash);
 	g_snprintf (path_hash, sizeof (path_hash), "%08x_%08x_%08x", hash ^ hash2, hash2, domain->shadow_serial);
-	tmploc = get_shadow_assembly_location_base (domain);
+	tmploc = get_shadow_assembly_location_base (domain, error);
+	if (!mono_error_ok (error)) {
+		g_free (bname);
+		g_free (dirname);
+		return NULL;
+	}
+
 	location = g_build_filename (tmploc, name_hash, path_hash, bname, NULL);
 	g_free (tmploc);
 	g_free (bname);
@@ -1372,6 +1418,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 {
+	MonoError error;
 	const char *version;
 	MonoAppDomainSetup *setup;
 	gchar *all_dirs;
@@ -1390,10 +1437,20 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 		return FALSE;
 
 	version = mono_get_runtime_info ()->framework_version;
-	shadow_status_string = mono_string_to_utf8 (setup->shadow_copy_files);
+
 	/* For 1.x, not NULL is enough. In 2.0 it has to be "true" */
-	shadow_enabled = (*version <= '1' || !g_ascii_strncasecmp (shadow_status_string, "true", 4));
-	g_free (shadow_status_string);
+	if (*version <= '1') {
+		shadow_enabled = TRUE;
+	} else {
+		shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files, &error);
+		if (!mono_error_ok (&error)) {
+			mono_error_cleanup (&error);
+			return FALSE;
+		}
+		shadow_enabled = !g_ascii_strncasecmp (shadow_status_string, "true", 4);
+		g_free (shadow_status_string);
+	}
+		
 	if (!shadow_enabled)
 		return FALSE;
 
@@ -1401,14 +1458,24 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 		return TRUE;
 
 	/* Is dir_name a shadow_copy destination already? */
-	base_dir = get_shadow_assembly_location_base (domain);
+	base_dir = get_shadow_assembly_location_base (domain, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		return FALSE;
+	}
+
 	if (strstr (dir_name, base_dir)) {
 		g_free (base_dir);
 		return TRUE;
 	}
 	g_free (base_dir);
 
-	all_dirs = mono_string_to_utf8 (setup->shadow_copy_directories);
+	all_dirs = mono_string_to_utf8_checked (setup->shadow_copy_directories, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		return FALSE;
+	}
+
 	directories = g_strsplit (all_dirs, G_SEARCHPATH_SEPARATOR_S, 1000);
 	dir_ptr = directories;
 	while (*dir_ptr) {
@@ -1423,9 +1490,15 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	return found;
 }
 
+/*
+This function raises exceptions so it can cause as sorts of nasty stuff if called
+while holding a lock.
+FIXME bubble up the error instead of raising it here
+*/
 char *
 mono_make_shadow_copy (const char *filename)
 {
+	MonoError error;
 	gchar *sibling_source, *sibling_target;
 	gint sibling_source_len, sibling_target_len;
 	guint16 *orig, *dest;
@@ -1444,8 +1517,16 @@ mono_make_shadow_copy (const char *filename)
 		g_free (dir_name);
 		return (char *) filename;
 	}
+
 	/* Is dir_name a shadow_copy destination already? */
-	shadow_dir = get_shadow_assembly_location_base (domain);
+	shadow_dir = get_shadow_assembly_location_base (domain, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		g_free (dir_name);
+		exc = mono_get_exception_execution_engine ("Failed to create shadow copy (invalid characters in shadow directory name).");
+		mono_raise_exception (exc);
+	}
+
 	if (strstr (dir_name, shadow_dir)) {
 		g_free (shadow_dir);
 		g_free (dir_name);
@@ -1454,7 +1535,13 @@ mono_make_shadow_copy (const char *filename)
 	g_free (shadow_dir);
 	g_free (dir_name);
 
-	shadow = get_shadow_assembly_location (filename);
+	shadow = get_shadow_assembly_location (filename, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		exc = mono_get_exception_execution_engine ("Failed to create shadow copy (invalid characters in file name).");
+		mono_raise_exception (exc);
+	}
+
 	if (ensure_directory_exists (shadow) == FALSE) {
 		g_free (shadow);
 		exc = mono_get_exception_execution_engine ("Failed to create shadow copy (ensure directory exists).");

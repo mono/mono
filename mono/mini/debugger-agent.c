@@ -36,6 +36,10 @@
 #include <pthread.h>
 #endif
 
+#ifdef HAVE_UCONTEXT_H
+#include <ucontext.h>
+#endif
+
 #ifdef PLATFORM_ANDROID
 #include <linux/in.h>
 #include <linux/tcp.h>
@@ -47,11 +51,16 @@
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/socket-io.h>
 #include <mono/utils/mono-semaphore.h>
 #include "debugger-agent.h"
 #include "mini.h"
 
 #ifndef MONO_ARCH_SOFT_DEBUG_SUPPORTED
+#define DISABLE_DEBUGGER_AGENT 1
+#endif
+
+#ifdef DISABLE_SOFT_DEBUG
 #define DISABLE_DEBUGGER_AGENT 1
 #endif
 
@@ -91,6 +100,7 @@ typedef struct
 typedef struct
 {
 	int id;
+	int flags;
 	guint8 *p;
 	guint8 *endp;
 	/* This is the context which needs to be restored after the invoke */
@@ -123,6 +133,10 @@ typedef struct {
 	 * native code.
 	 */
 	gboolean suspended;
+	/*
+	 * Set to TRUE if this thread is suspended in suspend_current ().
+	 */
+	gboolean really_suspended;
 	/* Used to pass the context to the breakpoint/single step handler */
 	MonoContext handler_ctx;
 	/* Whenever thread_stop () was called for this thread */
@@ -130,6 +144,9 @@ typedef struct {
 
 	/* Number of thread interruptions not yet processed */
 	gint32 interrupt_count;
+
+	/* Whenever to disable breakpoints (used during invokes) */
+	gboolean disable_breakpoints;
 } DebuggerTlsData;
 
 /* 
@@ -138,8 +155,8 @@ typedef struct {
 
 #define HEADER_LENGTH 11
 
-#define MAJOR_VERSION 0
-#define MINOR_VERSION 2
+#define MAJOR_VERSION 2
+#define MINOR_VERSION 0
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -227,6 +244,10 @@ typedef enum {
 typedef enum {
 	FRAME_FLAG_DEBUGGER_INVOKE = 1
 } StackFrameFlags;
+
+typedef enum {
+	INVOKE_FLAG_DISABLE_BPS = 1
+} InvokeFlags;
 
 typedef enum {
 	CMD_VM_VERSION = 1,
@@ -425,10 +446,10 @@ static GPtrArray *pending_assembly_loads;
 static gboolean debugger_thread_exited;
 
 /* Cond variable used to wait for debugger_thread_exited becoming true */
-static mono_cond_t debugger_thread_exited_cond = MONO_COND_INITIALIZER;
+static mono_cond_t debugger_thread_exited_cond;
 
 /* Mutex for the cond var above */
-static mono_mutex_t debugger_thread_exited_mutex = MONO_MUTEX_INITIALIZER;
+static mono_mutex_t debugger_thread_exited_mutex;
 
 static DebuggerProfiler debugger_profiler;
 
@@ -619,6 +640,9 @@ mono_debugger_agent_init (void)
 
 	event_requests = g_ptr_array_new ();
 
+	mono_mutex_init (&debugger_thread_exited_mutex, NULL);
+	mono_cond_init (&debugger_thread_exited_cond, NULL);
+
 	mono_profiler_install ((MonoProfiler*)&debugger_profiler, runtime_shutdown);
 	mono_profiler_set_events (MONO_PROFILE_APPDOMAIN_EVENTS | MONO_PROFILE_THREADS | MONO_PROFILE_ASSEMBLY_EVENTS | MONO_PROFILE_JIT_COMPILATION | MONO_PROFILE_METHOD_EVENTS);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
@@ -757,6 +781,10 @@ mono_debugger_agent_cleanup (void)
 	breakpoints_cleanup ();
 	objrefs_cleanup ();
 	ids_cleanup ();
+
+	
+	mono_mutex_destroy (&debugger_thread_exited_mutex);
+	mono_cond_destroy (&debugger_thread_exited_cond);
 }
 
 /*
@@ -778,6 +806,8 @@ transport_connect (const char *host, int port)
 
 	if (host) {
 		sprintf (port_string, "%d", port);
+
+		mono_network_init ();
 
 		/* Obtain address(es) matching host/port */
 
@@ -894,11 +924,11 @@ transport_connect (const char *host, int port)
 	
 	/* Write handshake message */
 	sprintf (handshake_msg, "DWP-Handshake");
-	res = write (conn_fd, handshake_msg, strlen (handshake_msg));
+	res = send (conn_fd, handshake_msg, strlen (handshake_msg), 0);
 	g_assert (res != -1);
 
 	/* Read answer */
-	res = read (conn_fd, buf, strlen (handshake_msg));
+	res = recv (conn_fd, buf, strlen (handshake_msg), 0);
 	if ((res != strlen (handshake_msg)) || (memcmp (buf, handshake_msg, strlen (handshake_msg) != 0))) {
 		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
 		exit (1);
@@ -924,7 +954,7 @@ transport_send (guint8 *data, int len)
 {
 	int res;
 
-	res = write (conn_fd, data, len);
+	res = send (conn_fd, data, len, 0);
 	if (res != len)
 		return FALSE;
 	else
@@ -1547,6 +1577,12 @@ static void invoke_method (void);
  * SUSPEND/RESUME
  */
 
+/*
+ * save_thread_context:
+ *
+ *   Set CTX as the current threads context which is used for computing stack traces.
+ * This function is signal-safe.
+ */
 static void
 save_thread_context (MonoContext *ctx)
 {
@@ -1580,10 +1616,10 @@ static gint32 suspend_count;
  */
 static gint32 threads_suspend_count;
 
-static mono_mutex_t suspend_mutex = MONO_MUTEX_INITIALIZER;
+static mono_mutex_t suspend_mutex;
 
 /* Cond variable used to wait for suspend_count becoming 0 */
-static mono_cond_t suspend_cond = MONO_COND_INITIALIZER;
+static mono_cond_t suspend_cond;
 
 /* Semaphore used to wait for a thread becoming suspended */
 static MonoSemType suspend_sem;
@@ -1591,6 +1627,8 @@ static MonoSemType suspend_sem;
 static void
 suspend_init (void)
 {
+	mono_mutex_init (&suspend_mutex, NULL);
+	mono_cond_init (&suspend_cond, NULL);	
 	MONO_SEM_INIT (&suspend_sem, 0);
 }
 
@@ -1600,7 +1638,7 @@ suspend_init (void)
  *   Called by the abort signal handler.
  */
 gboolean
-mono_debugger_agent_thread_interrupt (MonoJitInfo *ji)
+mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 {
 	DebuggerTlsData *tls;
 
@@ -1636,12 +1674,31 @@ mono_debugger_agent_thread_interrupt (MonoJitInfo *ji)
 		 */
 		//printf ("S2: %p\n", GetCurrentThreadId ());
 		if (!tls->suspended) {
+			MonoContext ctx;
+
+			/* 
+			 * FIXME: This is dangerous as the thread is not really suspended, but
+			 * without this, we can't print stack traces for threads executing
+			 * native code.
+			 * Maybe do a stack walk now, and save its result ?
+			 */
+			mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+			save_thread_context (&ctx);
+
 			tls->suspended = TRUE;
 			MONO_SEM_POST (&suspend_sem);
 		}
 		return TRUE;
 	}
 }
+
+#ifdef PLATFORM_WIN32
+static void CALLBACK notify_thread_apc (ULONG_PTR param)
+{
+	//DebugBreak ();
+	mono_debugger_agent_thread_interrupt (NULL);
+}
+#endif /* PLATFORM_WIN32 */
 
 /*
  * notify_thread:
@@ -1663,7 +1720,8 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 		 */
 		InterlockedIncrement (&tls->interrupt_count);
 #ifdef PLATFORM_WIN32
-		/*FIXME: Abort thread */
+	//	g_assert_not_reached ();
+		QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
 		pthread_kill ((pthread_t) tid, mono_thread_get_abort_signal ());
 #endif
@@ -1727,8 +1785,8 @@ resume_vm (void)
 		g_assert (err == 0);
 	}
 
-	err = mono_mutex_unlock (&suspend_mutex);
-	g_assert (err == 0);
+	mono_mutex_unlock (&suspend_mutex);
+	//g_assert (err == 0);
 
 	mono_loader_unlock ();
 }
@@ -1781,17 +1839,31 @@ suspend_current (void)
 
 	if (!tls->suspended) {
 		tls->suspended = TRUE;
+		tls->really_suspended = TRUE;
 		MONO_SEM_POST (&suspend_sem);
 	}
 
 	DEBUG(1, fprintf (log_file, "[%p] Suspended.\n", (gpointer)GetCurrentThreadId ()));
 
 	while (suspend_count > 0) {
+#ifdef PLATFORM_WIN32
+		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
+		{
+			mono_mutex_unlock (&suspend_mutex);
+			Sleep(0);
+			mono_mutex_lock (&suspend_mutex);
+		}
+		else
+		{
+		}
+#else
 		err = mono_cond_wait (&suspend_cond, &suspend_mutex);
 		g_assert (err == 0);
+#endif
 	}
 
 	tls->suspended = FALSE;
+	tls->really_suspended = FALSE;
 
 	threads_suspend_count --;
 
@@ -2777,7 +2849,7 @@ clear_breakpoint (MonoBreakpoint *bp)
 }
 
 static void
-process_breakpoint_inner (MonoContext *ctx)
+process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 {
 	MonoJitInfo *ji;
 	guint8 *orig_ip, *ip;
@@ -2809,7 +2881,7 @@ process_breakpoint_inner (MonoContext *ctx)
 	 */
 	mono_arch_skip_breakpoint (ctx);
 
-	if (ji->method->wrapper_type)
+	if (ji->method->wrapper_type || tls->disable_breakpoints)
 		return;
 
 	reqs = g_ptr_array_new ();
@@ -2887,35 +2959,45 @@ process_breakpoint (void)
 	tls = TlsGetValue (debugger_tls_id);
 	memcpy (&ctx, &tls->handler_ctx, sizeof (MonoContext));
 
-	process_breakpoint_inner (&ctx);
+	process_breakpoint_inner (tls, &ctx);
 
 	/* This is called when resuming from a signal handler, so it shouldn't return */
 	restore_context (&ctx);
 	g_assert_not_reached ();
 }
 
-void
-mono_debugger_agent_breakpoint_hit (void *sigctx)
+static void
+resume_from_signal_handler (void *sigctx, void *func)
 {
 	DebuggerTlsData *tls;
 	MonoContext ctx;
 
+	/* Save the original context in TLS */
+	// FIXME: This might not work on an altstack ?
+	tls = TlsGetValue (debugger_tls_id);
+	g_assert (tls);
+
+	// FIXME: MonoContext usually doesn't include the fp registers, so these are 
+	// clobbered by a single step/breakpoint event. If this turns out to be a problem,
+	// clob:c could be added to op_seq_point.
+
+	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+	memcpy (&tls->handler_ctx, &ctx, sizeof (MonoContext));
+	MONO_CONTEXT_SET_IP (&ctx, func);
+
+	mono_arch_monoctx_to_sigctx (&ctx, sigctx);
+}
+
+void
+mono_debugger_agent_breakpoint_hit (void *sigctx)
+{
 	/*
 	 * We are called from a signal handler, and running code there causes all kinds of
 	 * problems, like the original signal is disabled, libgc can't handle altstack, etc.
 	 * So set up the signal context to return to the real breakpoint handler function.
 	 */
 
-	// FIXME: This might not work on an altstack ?
-	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
-
-	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
-	memcpy (&tls->handler_ctx, &ctx, sizeof (MonoContext));
-	
-	MONO_CONTEXT_SET_IP (&ctx, process_breakpoint);
-
-	mono_arch_monoctx_to_sigctx (&ctx, sigctx);
+	resume_from_signal_handler (sigctx, process_breakpoint);
 }
 
 static void
@@ -3108,25 +3190,27 @@ process_single_step (void)
 void
 mono_debugger_agent_single_step_event (void *sigctx)
 {
-	DebuggerTlsData *tls;
-	MonoContext ctx;
-
 	/* Resume to process_single_step through the signal context */
 
 	// FIXME: Since step out/over is implemented using step in, the step in case should
 	// be as fast as possible. Move the relevant code from process_single_step_inner ()
 	// here
 
-	/* Save the original context in TLS */
-	// FIXME: This might not work on an altstack ?
-	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
-	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
-	memcpy (&tls->handler_ctx, &ctx, sizeof (MonoContext));
-	
-	MONO_CONTEXT_SET_IP (&ctx, process_single_step);
+	if (GetCurrentThreadId () == debugger_thread_id) {
+		/* 
+		 * This could happen despite our best effors when the runtime calls 
+		 * assembly/type resolve hooks.
+		 * FIXME: Breakpoints too.
+		 */
+		MonoContext ctx;
 
-	mono_arch_monoctx_to_sigctx (&ctx, sigctx);
+		mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+		mono_arch_skip_single_step (&ctx);
+		mono_arch_monoctx_to_sigctx (&ctx, sigctx);
+		return;
+	}
+
+	resume_from_signal_handler (sigctx, process_single_step);
 }
 
 /*
@@ -3630,7 +3714,7 @@ add_thread (gpointer key, gpointer value, gpointer user_data)
 }
 
 static ErrorCode
-do_invoke_method (Buffer *buf, InvokeData *invoke)
+do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 {
 	guint8 *p = invoke->p;
 	guint8 *end = invoke->endp;
@@ -3710,6 +3794,11 @@ do_invoke_method (Buffer *buf, InvokeData *invoke)
 	if (i < nargs)
 		return err;
 
+	if (invoke->flags & INVOKE_FLAG_DISABLE_BPS)
+		tls->disable_breakpoints = TRUE;
+	else
+		tls->disable_breakpoints = FALSE;
+
 	/* 
 	 * Add an LMF frame to link the stack frames on the invoke method with our caller.
 	 */
@@ -3773,6 +3862,8 @@ do_invoke_method (Buffer *buf, InvokeData *invoke)
 		}
 	}
 
+	tls->disable_breakpoints = FALSE;
+
 #ifdef MONO_ARCH_HAVE_FIND_JIT_INFO_EXT
 	if (invoke->has_ctx)
 		mono_set_lmf ((gpointer)(((gssize)ext.lmf.previous_lmf) & ~3));
@@ -3815,7 +3906,7 @@ invoke_method (void)
 
 	buffer_init (&buf, 128);
 
-	err = do_invoke_method (&buf, invoke);
+	err = do_invoke_method (tls, &buf, invoke);
 
 	/* Start suspending before sending the reply */
 	suspend_vm ();
@@ -3931,11 +4022,13 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		int objid = decode_objid (p, &p, end);
 		MonoThread *thread;
 		DebuggerTlsData *tls;
-		int err;
+		int err, flags;
 
 		err = get_object (objid, (MonoObject**)&thread);
 		if (err)
 			return err;
+
+		flags = decode_int (p, &p, end);
 
 		// Wait for suspending if it already started
 		if (suspend_count)
@@ -3956,6 +4049,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			NOT_IMPLEMENTED;
 		tls->invoke = g_new0 (InvokeData, 1);
 		tls->invoke->id = id;
+		tls->invoke->flags = flags;
 		tls->invoke->p = g_malloc (end - p);
 		memcpy (tls->invoke->p, p, end - p);
 		tls->invoke->endp = tls->invoke->p + (end - p);
@@ -3980,9 +4074,9 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		EventRequest *req;
 		int i, event_kind, suspend_policy, nmodifiers, mod;
 		MonoMethod *method;
-		long location;
+		long location = 0;
 		MonoThread *step_thread;
-		int size, depth, step_thread_id;
+		int size = 0, depth = 0, step_thread_id = 0;
 		MonoDomain *domain;
 
 		event_kind = decode_byte (p, &p, end);
@@ -5372,7 +5466,7 @@ debugger_thread (void *arg)
 	mono_set_is_debugger_attached (TRUE);
 
 	while (TRUE) {
-		res = read (conn_fd, header, HEADER_LENGTH);
+		res = recv (conn_fd, header, HEADER_LENGTH, 0);
 
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH)
@@ -5392,9 +5486,12 @@ debugger_thread (void *arg)
 		DEBUG (1, fprintf (log_file, "[dbg] Received command %s(%d), id=%d.\n", command_set_to_string (command_set), command, id));
 
 		data = g_malloc (len - HEADER_LENGTH);
-		res = read (conn_fd, data, len - HEADER_LENGTH);
-		if (res != len - HEADER_LENGTH)
-			break;
+		if (len - HEADER_LENGTH > 0)
+		{
+			res = recv (conn_fd, data, len - HEADER_LENGTH, 0);
+			if (res != len - HEADER_LENGTH)
+				break;
+		}
 
 		p = data;
 		end = data + (len - HEADER_LENGTH);
@@ -5508,7 +5605,7 @@ mono_debugger_agent_free_domain_info (MonoDomain *domain)
 {
 }
 
-gboolean mono_debugger_agent_thread_interrupt (MonoJitInfo *ji)
+gboolean mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 {
 }
 

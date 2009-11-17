@@ -8,6 +8,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-error.h"
 
 /* 
  * We should find a better place for this stuff. We can't put it in mono-compiler.h,
@@ -1333,10 +1334,10 @@ void
 mono_release_type_locks (MonoThread *thread) MONO_INTERNAL;
 
 char *
-mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s) MONO_INTERNAL;
+mono_string_to_utf8_mp	(MonoMemPool *mp, MonoString *s, MonoError *error) MONO_INTERNAL;
 
 char *
-mono_string_to_utf8_image (MonoImage *image, MonoString *s) MONO_INTERNAL;
+mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error) MONO_INTERNAL;
 
 
 MonoArray*
@@ -1440,6 +1441,9 @@ mono_method_clear_object (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
 
 void
 mono_class_compute_gc_descriptor (MonoClass *class) MONO_INTERNAL;
+
+char *
+mono_string_to_utf8_checked (MonoString *s, MonoError *error) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

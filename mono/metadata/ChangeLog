@@ -1,3 +1,89 @@
+2009-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c (get_caller_no_reflection_related): 
+	[Mono]Type.InvokeMember is outside System.Reflection[.Emit] but
+	it's still reflection and must be filtered correctly.
+
+2009-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_base_init): Applied patch from DKoushik K. Dutta (
+	koush@koushikdutta.com). Disable GC_no_dls on android.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_module_basic_init): Handle exceptions correctly.
+
+	Backport of r145798.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+    
+	* object-internals.h: Change signature for mono_string_to_utf8_image.
+
+	* object.c (mono_string_to_utf8_image): Change signature to take a MonoError
+	argument.
+
+	* reflection.c: Take care of mono_string_to_utf8_image change and avoid raising
+	exceptions due to mono_string_to_utf8.
+
+	Backport of r145797.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * object-internals.h: Change signature for mono_string_to_utf8_mp.
+
+    * object.c (mono_remote_class): Make sure all resources are released before
+    raising an exception.
+
+    * object.c (mono_print_unhandled_exception): Avoid raising an exception.
+
+	Backport of r145796.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+ 
+     * mono-perfcounters.c (network_get_impl): Change variable initialization
+     ordering to fix potential memory leak in case of exceptions.
+ 
+     * mono-perfcounters.c (mono_perfcounter_create): Properly handle badly
+     encoded strings.
+
+	Backport of r145795. 
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * file-io.c (ves_icall_System_IO_MonoIO_GetFileSystemEntries): Change
+    variable initialization ordering to fix potential memory leak in case
+    of exceptions.
+
+	Backport of r145794.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * appdomain.c: Fix shadow path code to better deal with exceptions.
+
+	Backport of r145658.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * appdomain.c: Use checked version of mono_string_to_utf8 to avoid raising an
+    exception in the middle of the runtime code.
+
+	Backport of r145657.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+    * icall.c (ves_icall_System_Environment_InternalSetEnvironmentVariable): Don't
+    leak memory with broken envvar value.
+
+	Backport of r145656.
+
+2009-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object-internals.h: Add mono_string_to_utf8_checked.
+
+	* object.c: Implement mono_string_to_utf8_checked.
+
+	Backport of r145539.
+
 2009-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c: When CoreCLR is enabled don't call mono_init_com_types

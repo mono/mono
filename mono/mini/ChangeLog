@@ -1,3 +1,60 @@
+2009-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_instances): Emit instances of common generic
+	classes for char/bool too.
+
+	* debugger-agent.c (DebuggerTlsData): Honor the DISABLE_SOFT_DEBUG option.
+
+	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
+	used.
+
+	* debugger-agent.c: Add some definitions to make backporting to 2.6 easier.
+	Fix warnings.
+
+2009-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
+	used.
+
+	* debugger-agent.c: Add some definitions to make backporting to 2.4 easier.
+	Fix warnings.
+
+2009-11-15  Andreas Faerber  <andreas.faerber@web.de>
+
+	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Signature fix.
+	
+	Code contributed under MIT/X11 license.
+
+2009-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	(mono_debugger_agent_thread_interrupt): Save the context so stacktraces for
+	threads in native code work.
+
+	* debugger-agent.c: Pass the 'flags' argument to VM_INVOKE_METHOD earlier in
+	the parameter list, so it can be acted upon by vm_commands (). Bump protocol
+	version.
+
+2009-11-13 Jonathan Chambers <joncham@gmail.com>
+
+	* debugger-agent.c: Implementation for Windows platform.
+
+	* mini-x86.c: Add support for Windows. Use mono-* synchronization
+	primitives. Use SEH to implement breakpoints and single stepping.
+
+	* mini-x86.h: Enable soft debugger on Windows.
+
+	Code contributed under MIT/X11 license.
+
+2009-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_single_step_event): Avoid a crash if
+	this is called on the debugger thread.
+
+2009-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arch_get_call_filter_full): Update after the
+	LDMIA->LDM macro name change.
+
 2009-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Fix the previous change by passing

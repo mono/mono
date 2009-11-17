@@ -1,3 +1,29 @@
+2009-11-13 Jonathan Chambers <joncham@gmail.com>
+
+	* mono-semaphore.h: Implementation for Windows platform.
+
+	Code contributed under MIT/X11 license.
+
+2009-11-12  Geoff Norton  <gnorton@novell.com>
+
+	* mono-path.c: When resolving symlinks in a path, we need to
+	split on the directory separator and check each level, as
+	readlink only checks the final destination.
+
+2009-11-10 Rodrigo Kumpera  <rkumpera@novell.com>
+ 
+     * mono-error-internals.h: Add mono_error_set_argument and mono_error_raise_exception.
+ 
+     * mono-error.h: Add new MONO_ERROR_ARGUMENT constant for
+     ArgumentException.
+ 
+     * mono-error.c: Implement mono_error_set_argument, mono_error_raise_exception.
+ 
+     * mono-error.c (mono_error_prepare_exception) Init error_out at the beginning. Add support
+     for MONO_ERROR_ARGUMENT.
+
+	Backport of r145538.
+
 2009-11-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
     * mono-error.c, mono-error.h, mono-error-internal.h: New error handling
