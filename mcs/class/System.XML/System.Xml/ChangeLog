@@ -1,3 +1,25 @@
+2009-11-13  Andreia Gaita  <avidigal@novell.com>
+
+	* XmlNamespaceManager.cs: XmlReader.Read calls LookupNamespace via
+	the internal sig, which skips any overrides that might exist on
+	subclasses, so redirect all calls to the public call to make sure
+	all overrides are called as well.
+	Make AddNamespace, HasNamespace and RemoveNamespace private.
+
+2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs, XmlElement.cs, XmlAttribute.cs,
+	  XmlAttributeCollection.cs :
+	  when CreateElement() and/or CreateAttribute() are overriden,
+	  use overriden method. Otherwise, use internal optimal ones.
+	  Fixed bug #549839.
+
+2009-11-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNodeReaderImpl.cs : when the reader is at attribute value,
+	  MoveToNextAttribute() incorrectly moved to the first attribute.
+	  Fixed bug #550379.
+
 2009-10-23  Andreia Gaita  <avidigal@novell.com>
 
 	* XmlConvert.cs: make ToUri static, fixes #548918 (moon)

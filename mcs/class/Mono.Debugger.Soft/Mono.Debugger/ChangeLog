@@ -1,3 +1,43 @@
+2009-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* Connection.cs ObjectMirror.cs: Implement invokes in a real asynchronous way,
+	without waiting.
+
+2009-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* InvokeOptions.cs: Add SingleThreaded option, not yet works.
+
+	* VirtualMachineManager.cs (Launch): Pass options to BeginLaunch.
+
+	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Implement an async version of
+	InvokeMethod ().
+
+2009-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* InvokeOptions.cs: New file.
+
+	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Add support for passing flags
+	to InvokeMethod ().
+
+	* Connection.cs: Bump protocol version.
+
+2009-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachineManager.cs: Put back the old Launch (string[], LaunchOptions)
+	overload.
+
+2009-11-11  Geoff Norton  <gnorton@novell.com>
+
+	* VirtualMachineManager.cs: Refactor the APIs to have async methods.
+	Remove a bunch of Listen overloads that are pointless.  Refactor
+	Launch to take a ProcessStartInfo instead of string arguments.
+
+2009-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachineManager.cs (Launch): Close the listening socket instead of
+	shutting it down since Shutdown throws on exception on non-connected sockets
+	in ms.net.
+
 2009-11-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachineManager.cs (Listen): Resurrect the old listen method.

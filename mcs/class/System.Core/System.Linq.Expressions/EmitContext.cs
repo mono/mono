@@ -40,6 +40,53 @@ namespace System.Linq.Expressions {
 
 	class CompilationContext {
 
+		class ParameterReplacer : ExpressionTransformer {
+
+			CompilationContext context;
+			ExecutionScope scope;
+			object [] locals;
+
+			public ParameterReplacer (CompilationContext context, ExecutionScope scope, object [] locals)
+			{
+				this.context = context;
+				this.scope = scope;
+				this.locals = locals;
+			}
+
+			protected override Expression VisitParameter (ParameterExpression parameter)
+			{
+				var scope = this.scope;
+				var locals = this.locals;
+
+				while (scope != null) {
+					int position = IndexOfHoistedLocal (scope, parameter);
+					if (position != -1)
+						return ReadHoistedLocalFromArray (locals, position);
+
+					locals = scope.Locals;
+					scope = scope.Parent;
+				}
+
+				return parameter;
+			}
+
+			Expression ReadHoistedLocalFromArray (object [] locals, int position)
+			{
+				return Expression.Field (
+					Expression.Convert (
+						Expression.ArrayIndex (
+							Expression.Constant (locals),
+							Expression.Constant (position)),
+						locals [position].GetType ()),
+					"Value");
+			}
+
+			int IndexOfHoistedLocal (ExecutionScope scope, ParameterExpression parameter)
+			{
+				return context.units [scope.compilation_unit].IndexOfHoistedLocal (parameter);
+			}
+		}
+
 		class HoistedVariableDetector : ExpressionVisitor {
 
 			Dictionary<ParameterExpression, LambdaExpression> parameter_to_lambda =
@@ -143,6 +190,11 @@ namespace System.Linq.Expressions {
 		{
 			var hoisted = GetHoistedLocals (units [unit].Lambda);
 			return new object [hoisted == null ? 0 : hoisted.Count];
+		}
+
+		public Expression IsolateExpression (ExecutionScope scope, object [] locals, Expression expression)
+		{
+			return new ParameterReplacer (this, scope, locals).Transform (expression);
 		}
 
 		public Delegate CreateDelegate ()
@@ -402,11 +454,16 @@ namespace System.Linq.Expressions {
 			EmitReadGlobal (global, global.GetType ());
 		}
 
-		public void EmitReadGlobal (object global, Type type)
+		public void EmitLoadGlobals ()
 		{
 			EmitScope ();
 
 			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Globals"));
+		}
+
+		public void EmitReadGlobal (object global, Type type)
+		{
+			EmitLoadGlobals ();
 
 			ig.Emit (OpCodes.Ldc_I4, AddGlobal (global, type));
 			ig.Emit (OpCodes.Ldelem, typeof (object));
@@ -458,6 +515,11 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Stelem, typeof (object));
 		}
 
+		public void EmitLoadHoistedLocalsStore ()
+		{
+			ig.Emit (OpCodes.Ldloc, hoisted_store);
+		}
+
 		void EmitCreateStrongBox (Type type)
 		{
 			ig.Emit (OpCodes.Newobj, type.MakeStrongBoxType ().GetConstructor (new [] { type }));
@@ -479,6 +541,19 @@ namespace System.Linq.Expressions {
 		public void EmitParentScope ()
 		{
 			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Parent"));
+		}
+
+		public void EmitIsolateExpression ()
+		{
+			ig.Emit (OpCodes.Callvirt, typeof (ExecutionScope).GetMethod ("IsolateExpression"));
+		}
+
+		public int IndexOfHoistedLocal (ParameterExpression parameter)
+		{
+			if (!HasHoistedLocals)
+				return -1;
+
+			return hoisted.IndexOf (parameter);
 		}
 
 		public bool IsHoistedLocal (ParameterExpression parameter, ref int level, ref int position)

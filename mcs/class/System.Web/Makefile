@@ -79,6 +79,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
+	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage_1.1.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config \
@@ -191,7 +192,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx \
 	Test/mainsoft/NunitWebResources/ConditionalClientComments.aspx \
 	Test/mainsoft/NunitWebResources/OneLetterIdentifierInCodeRender.aspx \
-	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx
+	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx \
+	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx \
+	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx.cs
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

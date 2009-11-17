@@ -819,6 +819,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnKeyDown (KeyEventArgs ke)
 		{
+			base.OnKeyDown (ke);
+			if (ke.Handled)
+				return;
+
 			if (ke.KeyCode == Keys.Tab && (ke.KeyData & Keys.Control) != 0) {
 				if ((ke.KeyData & Keys.Shift) == 0)
 					SelectedIndex = (SelectedIndex + 1) % TabCount;
@@ -833,8 +837,6 @@ namespace System.Windows.Forms {
 				ke.Handled = true;
 			} else if (NavigateTabs (ke.KeyCode))
 				ke.Handled = true;
-
-			base.OnKeyDown (ke);
 		}
 
 		protected override bool IsInputKey (Keys keyData)

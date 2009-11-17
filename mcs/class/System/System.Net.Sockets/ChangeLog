@@ -1,3 +1,8 @@
+2009-11-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket_2_1.cs: throw when shutting down a socket that is not
+	connected. Don't linger if the socket is not connected.
+
 2009-11-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket_2_1.cs: stop any blocking thread before closing the socket.

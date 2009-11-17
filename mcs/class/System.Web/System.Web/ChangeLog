@@ -1,3 +1,19 @@
+2009-11-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: RewritePath now treats non-rooted and
+	app-relative paths correctly - the former are formed by
+	concatenating base virtual path with the passed file path and the
+	latter by calling VirtualPathUtility.ToAbsolute. Rooted and
+	absolute paths are left unmodified. Fixes bug #550103
+
+2009-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: added parameter checks to Redirect ().
+	If the passed url starts with http:, https:, file: or ftp: then it
+	is treated as a fully qualified one and no attempt to rewrite the
+	url to the fully qualified form (if system.web/httpRuntime
+	UseFullyQualifiedRedirectUrl is true) is made.
+
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCookie.cs: made HttpCookie.CookieNVC serializable. Patch

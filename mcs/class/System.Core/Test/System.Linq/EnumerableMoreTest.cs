@@ -1,4 +1,4 @@
-﻿//
+//
 // EnumerableMoreTest.cs
 //
 // Author:
@@ -2160,7 +2160,8 @@ namespace MonoTests.System.Linq {
 			expected.Add ("5", new List<string> () { "55" });
 			expected.Add ("4", new List<string> () { "42", "41" });
 
-
+			Assert.AreEqual (expected.Count, ((IEnumerable<string>)data).ToLookup ((x => x [0].ToString ())).Count);
+			
 			// ToLookup<string,string> (Func<string, string>)
 			AssertAreSame (expected, ((IEnumerable<string>) data).ToLookup ((x => x [0].ToString ())));
 
@@ -2172,6 +2173,25 @@ namespace MonoTests.System.Linq {
 
 			// ToLookup<string,string,string> (Func<string, string>, Func<string, string>, IEqualityComparer<string>)
 			AssertAreSame (expected, ((IEnumerable<string>) data).ToLookup (x => x [0].ToString (), x => x, EqualityComparer<string>.Default));
+		}
+		
+		[Test]
+		public void ToLookupNullKeyTest ()
+		{
+			string[] strs = new string[] { "one", null, "two", null, "three" };
+			
+			int i = 0;
+			var l = strs.ToLookup (s => (s == null) ? null : "numbers", s => (s == null) ? (++i).ToString() : s);
+			
+			Assert.AreEqual (2, l.Count);
+			Assert.AreEqual (2, l [null].Count());
+			Assert.IsTrue (l [null].Contains ("1"));
+			Assert.IsTrue (l [null].Contains ("2"));
+			
+			Assert.AreEqual (3, l ["numbers"].Count());
+			Assert.IsTrue (l ["numbers"].Contains ("one"));
+			Assert.IsTrue (l ["numbers"].Contains ("two"));
+			Assert.IsTrue (l ["numbers"].Contains ("three"));
 		}
 
 		[Test]

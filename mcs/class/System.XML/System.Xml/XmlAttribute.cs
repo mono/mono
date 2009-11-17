@@ -299,8 +299,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			XmlNode node = new XmlAttribute (name.Prefix, name.LocalName, name.NS,
-							 OwnerDocument, true, false);
+			XmlNode node = OwnerDocument.CreateAttribute (name.Prefix, name.LocalName, name.NS, true, false);
 			if (deep) {
 				for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
 					node.AppendChild (n.CloneNode (deep), false);

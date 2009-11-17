@@ -58,5 +58,22 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (42, get42 ());
 		}
+
+		[Test]
+		public void ParameterInQuotedExpression () // #550722
+		{
+			// Expression<Func<string, Expression<Func<string>>>> e = (string s) => () => s;
+
+			var s = Expression.Parameter (typeof (string), "s");
+
+			var lambda = Expression.Lambda<Func<string, Expression<Func<string>>>> (
+				Expression.Quote (
+					Expression.Lambda<Func<string>> (s, new ParameterExpression [0])),
+				s);
+
+			var fs = lambda.Compile () ("bingo").Compile ();
+
+			Assert.AreEqual ("bingo", fs ());
+		}
 	}
 }

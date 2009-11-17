@@ -414,7 +414,7 @@ namespace System.Web.Configuration {
 								 null, /* server */
 								 null, /* userName */
 								 null, /* password */
-								 true  /* path from FindWebConfig */);
+								 false  /* path from FindWebConfig */);
 			ConfigurationSection section = c.GetSection (sectionName);
 			if (section == null)
 				return null;

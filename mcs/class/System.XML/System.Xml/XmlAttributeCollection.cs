@@ -213,7 +213,7 @@ namespace System.Xml
 			DTDAttributeDefinition def = retAttr.GetAttributeDefinition ();
 			if (def != null && def.DefaultValue != null) {
 				XmlAttribute attr = ownerDocument.CreateAttribute (
-					retAttr.Prefix, retAttr.LocalName, retAttr.NamespaceURI);
+					retAttr.Prefix, retAttr.LocalName, retAttr.NamespaceURI, true, false);
 				attr.Value = def.DefaultValue;
 				attr.SetDefault ();
 				this.SetNamedItem (attr);

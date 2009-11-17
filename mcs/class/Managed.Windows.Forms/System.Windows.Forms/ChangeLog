@@ -1,3 +1,144 @@
+2009-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+[merge the very last changes from trunk, -r 144884:145790]
+
+	2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+		* DataGridTextBoxColumn.cs:
+		* DataGrid.cs: Position the cursor in the add row should *not* show
+		yet another new row - that will happen till we get any real input data
+		from the user. When that happens, we will also mark the new row as
+		ready to commit - otherwise, when the cursor moves to a different row,
+		the just added row will be discarded. This is exactly what .Net seems
+		to do.
+
+	2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: The large value for our vertical scrollbar should
+		depend on the number of visible rows, instead of trying to re-use the
+		value of VisibleRowCount, which is the value of *current* visible
+		rows, and can easily end messed up if new rows are added/removed.
+
+	2009-11-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: When moving the scroll, *dont* ever end the current
+		edit - this could seriously mess up our current edit cycle, specially
+		when adding new rows.
+
+		2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TabControl.cs: In OnKeyDown call the base implementation first -
+		this way we let the user tell us whether we should handle the key or
+		not.
+		Fixes #543717.
+
+	2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGrid.cs: Implement removal of rows the Correct Way by creating a
+		copy of the indexes, as any direct write access to the source will cause to
+		reset the entire selection - also, do the linear de-selection in
+		reverse order to avoid any index mismatch in the source, due to out of
+		synchronization removing the rows.
+
+	2009-11-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* DataGridTextBoxColumn.cs:
+		* DataGrid.cs: Don't use this add-pending behaviour to try to add a
+		new row until we have the first input char - it was helping us to fix
+		other issues we have/had, but it's not matching .net.
+
+	2009-10-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* TextBoxBase.cs: When returning the preferred height, and we are
+		supposed to be borderless, return the TopMargin value - usually in
+		borderless mode it has a value of 0, but in the ToolStrip controls we
+		need to set the margin manually.
+		Fixes #551214.
+
+	2009-10-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ToolTip.cs: ShowAlways works at the form level, not at the control
+		level. Fixes #544565.
+
+	2009-10-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ButtonBase.cs: Usually the click routines are handled in Control,
+		but in this class we are handling it ourselved, thus we need to have
+		the same calls, and we were missing the call to MouseClick.
+		Patch by Eric Petit <surfzoid@gmail.com>.
+
+	2009-10-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ComboBox.cs: When setting Text and data source is being used, if the
+		passed value is not matching any of the items in the source, don't
+		pass it to GetItemText, since it's useless, as GetItemText expects a
+		valid item.
+		Fixes #546009.
+
+2009-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+[backport the improvements and speedups for ListView from trunk,
+-r 142738:144115]
+
+	2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the top item, take into account the
+		offset represented by the header control, to retrieve the proper
+		value. Patch by Christoph von Wittich (Christoph at ApiViewer.de)
+		Fixes the remaining bits of #543773.
+
+		2009-10-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: TopItem setter should set the value as the top, not
+		only ensuring its visibility.
+		Fixes part of #543773.
+
+		2009-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: For virtual mode, when navigating the items using keyboard,
+		don't use the matrix of positions, and instead calculate the positions
+		based on the number of cols and rows, taking advantage of the fixed
+		positions of items. Use the same idea to implement FirstVisibleIndex,
+		so we avoid iterating over all the items. Patch by Stephen Robinson
+		mono at esar.org.uk.
+		Fixes part of #467418.
+
+		2009-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When computing the value for groups height don't use
+		text_size field, since in LargeIcon view it sometimes contains a
+		double height value - use Font.Height directly, and also improve the
+		padding value.
+		* ThemeWin32Classic: The same as above.
+		This way the space between the group header, the line, and the items
+		area is not that big in LargeIcon view.
+
+		2009-10-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When retrieving the fixed positions for the items in
+		virtual mode, use the row value to compute the coords of the item,
+		instead of the col value, as opposed to SmallIcon/LargeIcon views.
+
+		2009-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: The location of the items should be computed on the fly
+		in virtual mode - that decreased speed overall, but reduces the load
+		time.that decreased speed overall, but reduces the load time. Also,
+		handle the cases where we were using data structures we don't need to
+		use/create for this mode.
+		Fixes part of #467418.
+
+		2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: Tile view and VirtualMode can't be applied together.
+		Patch by Stephen Robinson <mono@esar.org.uk>.
+
+		2009-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+		* ListView.cs: When calculating the layout for Details view, don't ask
+		for the items *at all* in case we are in virtual mode. This should
+		re-enable the proper behaviour of virtual mode.
+
 2009-10-12  Dick Porter  <dporter@codicesoftware.com>
  
 	* Splitter.cs: Adjust offsets when more than one splitter is

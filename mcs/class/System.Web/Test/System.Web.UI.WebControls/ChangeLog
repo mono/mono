@@ -1,3 +1,13 @@
+2009-11-16  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeNodeTest.cs: added test for a situation when a
+	node already contains children when the PopulateOnDemand property
+	is set.
+
+2009-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* GridViewTest.cs: added test for bug #551666
+
 2009-10-13  Marek Habersack  <mhabersack@novell.com>
 
 	* WebColorConverterTest.cs: added test for bug #546173

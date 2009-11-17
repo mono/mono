@@ -148,7 +148,7 @@ namespace System.IO {
 					my_watches = (Hashtable) watches.Clone ();
 				}
 				
-				if (watches.Count != 0) {
+				if (my_watches.Count != 0) {
 					zeroes = 0;
 					foreach (DefaultWatcherData data in my_watches.Values) {
 						bool remove = UpdateDataAndDispatch (data, true);

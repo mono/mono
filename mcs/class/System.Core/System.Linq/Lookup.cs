@@ -5,6 +5,7 @@
 //	Alejandro Serrano "Serras" (trupill@yahoo.es)
 //	Marek Safar  <marek.safar@gmail.com>
 //	Jb Evain  <jbevain@novell.com>
+// 	Eric Maupin  <me@ermau.com>
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
@@ -37,48 +38,63 @@ namespace System.Linq {
 
 	public class Lookup<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>, ILookup<TKey, TElement> {
 
+		IGrouping<TKey, TElement> nullGrouping;
 		Dictionary<TKey, IGrouping<TKey, TElement>> groups;
 
 		public int Count {
-			get { return groups.Count; }
+			get { return (nullGrouping == null) ? groups.Count : groups.Count + 1; }
 		}
 
 		public IEnumerable<TElement> this [TKey key] {
 			get {
-				IGrouping<TKey, TElement> group;
-				if (groups.TryGetValue (key, out group))
-					return group;
-
+				if (key == null && nullGrouping != null)
+					return nullGrouping;
+				else if (key != null) {
+					IGrouping<TKey, TElement> group;
+					if (groups.TryGetValue (key, out group))
+						return group;
+				}
+				
 				return new TElement [0];
 			}
 		}
 
-		internal Lookup (Dictionary<TKey, List<TElement>> lookup)
+		internal Lookup (Dictionary<TKey, List<TElement>> lookup, IEnumerable<TElement> nullKeyElements)
 		{
 			groups = new Dictionary<TKey, IGrouping<TKey, TElement>> (lookup.Comparer);
 			foreach (var slot in lookup)
 				groups.Add (slot.Key, new Grouping<TKey, TElement> (slot.Key, slot.Value));
+			
+			if (nullKeyElements != null)
+				nullGrouping = new Grouping<TKey, TElement> (default (TKey), nullKeyElements);
 		}
 
 		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> selector)
 		{
+			if (nullGrouping != null)
+				yield return selector (nullGrouping.Key, nullGrouping);
+			
 			foreach (var group in groups.Values)
 				yield return selector (group.Key, group);
 		}
 
 		public bool Contains (TKey key)
-		{
-			return groups.ContainsKey (key);
+		{	
+			return (key != null) ? groups.ContainsKey (key) : nullGrouping != null; 
 		}
 
 		public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator ()
 		{
-			return groups.Values.GetEnumerator ();
+			if (nullGrouping != null)
+				yield return nullGrouping;
+			
+			foreach (var g in groups.Values)
+				yield return g;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return groups.Values.GetEnumerator ();
+			return GetEnumerator ();
 		}
 	}
 }

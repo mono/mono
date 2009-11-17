@@ -388,7 +388,16 @@ namespace System.Linq.Expressions {
 
 		void EmitQuote (EmitContext ec)
 		{
+			ec.EmitScope ();
+
 			ec.EmitReadGlobal (operand, typeof (Expression));
+
+			if (ec.HasHoistedLocals)
+				ec.EmitLoadHoistedLocalsStore ();
+			else
+				ec.ig.Emit (OpCodes.Ldnull);
+
+			ec.EmitIsolateExpression ();
 		}
 
 		internal override void Emit (EmitContext ec)

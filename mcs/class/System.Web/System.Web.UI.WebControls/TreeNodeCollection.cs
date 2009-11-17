@@ -78,6 +78,9 @@ namespace System.Web.UI.WebControls
 		internal void Add (TreeNode child, bool updateParent)
 		{
 			int index = items.Add (child);
+
+			if (parent != null)
+				parent.HadChildrenBeforePopulating = true;
 			
 			if (!updateParent)
 				return;

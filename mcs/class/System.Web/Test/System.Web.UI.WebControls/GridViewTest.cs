@@ -438,9 +438,13 @@ namespace MonoTests.System.Web.UI.WebControls
 #if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.TableSections_Bug551666.aspx", "TableSections_Bug551666.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.TableSections_Bug551666.aspx.cs", "TableSections_Bug551666.aspx.cs");
 #else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+			WebTest.CopyResource (GetType (), "TableSections_Bug551666.aspx", "TableSections_Bug551666.aspx");
+			WebTest.CopyResource (GetType (), "TableSections_Bug551666.aspx.cs", "TableSections_Bug551666.aspx.cs");
 #endif
 		}
 
@@ -1884,10 +1888,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderingButtonField");
 		}
 
-	
-	
+		[Test (Description="Bug #551666")]
+		public void TableSections_Bug551666 ()
+		{
+			string html = new WebTest ("TableSections_Bug551666.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			string originalHtml = @"<div>
+	<table id=""GridView1"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+			<thead>
+				<tr>
+					<th scope=""col"">Dosage</th><th scope=""col"">Drug</th><th scope=""col"">Patient</th><th scope=""col"">Date</th>
+				</tr>
+			</thead><tbody>
 
+				<tr>
+					<td>25</td><td>Indocin</td><td>David</td><td>2009-11-13</td>
+				</tr><tr>
+					<td>50</td><td>Enebrel</td><td>Sam</td><td>2009-11-13</td>
+				</tr><tr>
 
+					<td>10</td><td>Hydralazine</td><td>Christoff</td><td>2009-11-13</td>
+				</tr><tr>
+					<td>21</td><td>Combivent</td><td>Janet</td><td>2009-11-13</td>
+				</tr><tr>
+					<td>100</td><td>Dilantin</td><td>Melanie</td><td>2009-11-13</td>
+
+				</tr>
+			</tbody><tfoot>
+
+			</tfoot>
+		</table>
+	</div>";
+			
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
 		[Test]
 		public void GridView_RenderingTemplateField ()
 		{
