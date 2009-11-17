@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace Mono.Debugger
 {
@@ -117,6 +118,47 @@ namespace Mono.Debugger
 		 * Common implementation for invokes
 		 */
 
+		class InvokeAsyncResult : IAsyncResult {
+
+			public object AsyncState {
+				get; set;
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get; set;
+			}
+
+			public bool CompletedSynchronously {
+				get {
+					return false;
+				}
+			}
+
+			public bool IsCompleted {
+				get; set;
+			}
+
+			public AsyncCallback Callback {
+				get; set;
+			}
+
+			public ErrorCode ErrorCode {
+				get; set;
+			}
+
+			public VirtualMachine VM {
+				get; set;
+			}
+
+			public ValueImpl Value {
+				get; set;
+			}
+
+			public ValueImpl Exception {
+				get; set;
+			}
+		}
+
 		internal static IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			if (thread == null)
 				throw new ArgumentNullException ("thread");
@@ -125,29 +167,6 @@ namespace Mono.Debugger
 			if (arguments == null)
 				arguments = new Value [0];
 
-			InvokeCallback cb = new InvokeCallback (InvokeImpl);
-			return cb.BeginInvoke (vm, thread, method, this_obj, arguments, options, callback, state);
-		}
-
-	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			AsyncResult async = (AsyncResult) asyncResult;
-			InvokeCallback cb = (InvokeCallback) async.AsyncDelegate;
-			return cb.EndInvoke (asyncResult);
-		}
-
-		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
-			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
-		}
-
-		public delegate Value InvokeCallback (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options);
-
-		public static Value InvokeImpl (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
 			InvokeFlags f = InvokeFlags.NONE;
 
 			if ((options & InvokeOptions.DisableBreakpoints) != 0)
@@ -155,20 +174,60 @@ namespace Mono.Debugger
 			if ((options & InvokeOptions.SingleThreaded) != 0)
 				f |= InvokeFlags.SINGLE_THREADED;
 
-			try {
-				ValueImpl exc;
-				ValueImpl v = vm.conn.VM_InvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, out exc);
-				if (v == null)
-					throw new InvocationException ((ObjectMirror)vm.DecodeValue (exc));
+			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Callback = callback };
+
+			vm.conn.VM_BeginInvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, InvokeCB, r);
+
+			return r;
+		}
+
+		// This is called when the result of an invoke is received
+		static void InvokeCB (ValueImpl v, ValueImpl exc, ErrorCode error, object state) {
+			InvokeAsyncResult r = (InvokeAsyncResult)state;
+
+			if (error != 0) {
+				r.ErrorCode = error;
+			} else {
+				r.Value = v;
+				r.Exception = exc;
+			}
+
+			r.IsCompleted = true;
+			((ManualResetEvent)r.AsyncWaitHandle).Set ();
+
+			if (r.Callback != null)
+				r.Callback.BeginInvoke (r, null, null);
+		}
+
+	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			InvokeAsyncResult r = (InvokeAsyncResult)asyncResult;
+
+			if (!r.IsCompleted)
+				r.AsyncWaitHandle.WaitOne ();
+
+			if (r.ErrorCode != 0) {
+				try {
+					r.VM.ErrorHandler (null, new ErrorHandlerEventArgs () { ErrorCode = r.ErrorCode });
+				} catch (CommandException ex) {
+					if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
+						throw new ArgumentException ("Incorrect number or types of arguments", "arguments");
+					else
+						throw;
+				}
+				throw new NotImplementedException ();
+			} else {
+				if (r.Exception != null)
+					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
 				else
-					return vm.DecodeValue (v);
-			} catch (CommandException ex) {
-				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
-					throw new ArgumentException ("Incorrect number or types of arguments", "arguments");
-				else
-					throw;
+					return r.VM.DecodeValue (r.Value);
 			}
 		}
 
+		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
+		}
 	}
 }

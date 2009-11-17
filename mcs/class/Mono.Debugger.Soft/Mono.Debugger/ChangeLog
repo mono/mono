@@ -1,3 +1,8 @@
+2009-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* Connection.cs ObjectMirror.cs: Implement invokes in a real asynchronous way,
+	without waiting.
+
 2009-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* InvokeOptions.cs: Add SingleThreaded option, not yet works.
