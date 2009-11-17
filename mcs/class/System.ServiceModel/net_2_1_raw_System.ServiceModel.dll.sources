@@ -54,6 +54,9 @@ System.Collections.Generic/SynchronizedReadOnlyCollection.cs
 System.ServiceModel.Channels/AddressHeader.cs
 System.ServiceModel.Channels/AddressHeaderCollection.cs
 System.ServiceModel.Channels/AddressingVersion.cs
+System.ServiceModel.Channels/BinaryMessageEncoder.cs
+System.ServiceModel.Channels/BinaryMessageEncoderFactory.cs
+System.ServiceModel.Channels/BinaryMessageEncodingBindingElement.cs
 System.ServiceModel.Channels/Binding.cs
 System.ServiceModel.Channels/BindingContext.cs
 System.ServiceModel.Channels/BindingElement.cs
