@@ -1,5 +1,8 @@
 2009-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (mono_debugger_agent_handle_exception): Pass a MonoJitInfo to
+	create_event_list () so assembly filters can be used.
+
 	* exceptions-ppc.c (mono_arch_find_jit_info): Fix the restoration of registers
 	from the LMF.
 
