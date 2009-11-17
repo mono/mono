@@ -1,5 +1,14 @@
 2009-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGrid.cs: CurrentCell should be *used* if the new value is the
+	same as the current one, since we could need to activate the edition
+	in the current row. Also, when beginning the edition, do nothing if,
+	basides having an empty source, we are sure we don't have the new
+	cell, which could obviously start it.
+	Fixes other bits of #323154.
+
+2009-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGrid.cs: When we get notified by a change in the position of our
 	data source, don't set CurrentRow if the source is empty, as there's
 	no need to do anything else in the first place, and second, the logic
