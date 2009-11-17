@@ -1,3 +1,8 @@
+2009-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-ppc.c (mono_arch_find_jit_info): Fix the restoration of registers
+	from the LMF.
+
 2009-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_breakpoint_hit): Fix a warning.
