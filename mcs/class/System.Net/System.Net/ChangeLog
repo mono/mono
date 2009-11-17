@@ -1,3 +1,8 @@
+2009-11-17  Jackson Harper  <jackson@ximian.com>
+
+	* WebResponse_2_1.cs: Update to the SL3 API.
+	* HttpWebRequest.cs: Add cookies.
+	
 2009-09-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Dns_2_1.cs: New. Smaller version of Dns.cs that offers just
