@@ -489,7 +489,8 @@ namespace System.Windows.Forms
 					throw new Exception ("CurrentCell cannot be set at this time.");
 				}
 
-				if (current_cell.Equals (value) && !is_editing) {
+				/* Even if we are on the same cell, we could need to actually start edition */
+				if (current_cell.Equals (value) && is_editing) {
 					setting_current_cell = false;
 					return;
 				}
