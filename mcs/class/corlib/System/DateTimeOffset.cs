@@ -523,7 +523,7 @@ namespace System
 						ii += ParseEnum (input, ii, new string [] {dfi.TimeSeparator}, false, out temp_int);
 						ii += ParseNumber (input, ii, 2, true, false, out off_m);
 					}
-					if (off_h == -1 || off_m == -1 || sign == -1 || temp_int == -1)
+					if (off_h == -1 || off_m == -1 || sign == -1)
 						return false;
 
 					if (sign == 0)

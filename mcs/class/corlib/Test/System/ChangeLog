@@ -1,3 +1,8 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffsetTest.cs : add test for bug #547675.
+	  patch by Santa Marta.
+
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
 	* ArraySortArgChecks.cs: Added tests checking all possible exceptions

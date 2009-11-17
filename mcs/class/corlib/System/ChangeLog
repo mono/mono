@@ -1,3 +1,8 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffset.cs : fix parse failure on missing colon.
+	  Fixed bug #547675, patch by Santa Marta (see bugzilla).
+
 2009-11-13  Marek Safar  <marek.safar@gmail.com>
 
 	* Lazy.cs: Check recursive initializations.

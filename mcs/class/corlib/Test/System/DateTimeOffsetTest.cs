@@ -273,6 +273,27 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void ParseExactOffsetFormat ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string[] dates = {
+				"13/Oct/2009:22:35:35 +09:00",
+				"13/Oct/2009:22:35:35 +0900",
+				"13/Oct/2009:22:35:35 +09:30",
+				"13/Oct/2009:22:35:35 +0930",
+			};
+			TimeSpan[] offsets = {
+				new TimeSpan (9,0,0),
+				new TimeSpan (9,0,0),
+				new TimeSpan (9,30,0),
+				new TimeSpan (9,30,0),
+			};
+
+			for (int i = 0; i < dates.Length; i++)
+				Assert.AreEqual(offsets[i], DateTimeOffset.ParseExact (dates[i], "d/MMM/yyyy:HH:mm:ss zzz", fp).Offset, dates[i]);
+		}
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void ParseExactYearException ()
 		{
