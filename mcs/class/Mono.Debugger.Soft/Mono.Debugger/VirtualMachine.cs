@@ -167,7 +167,7 @@ namespace Mono.Debugger
 			}
 		}
 
-		void ErrorHandler (object sender, ErrorHandlerEventArgs args) {
+		internal void ErrorHandler (object sender, ErrorHandlerEventArgs args) {
 			switch (args.ErrorCode) {
 			case ErrorCode.INVALID_OBJECT:
 				throw new ObjectCollectedException ();

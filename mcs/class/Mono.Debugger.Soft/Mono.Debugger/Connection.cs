@@ -784,10 +784,13 @@ namespace Mono.Debugger
 			}
 		}
 
+		delegate void ReplyCallback (int packet_id, byte[] packet);
+
 		Socket socket;
 		bool closed;
 		Thread receiver_thread;
 		Dictionary<int, byte[]> reply_packets;
+		Dictionary<int, ReplyCallback> reply_cbs;
 		object reply_packets_monitor;
 
 		public event EventHandler<ErrorHandlerEventArgs> ErrorHandler;
@@ -797,6 +800,7 @@ namespace Mono.Debugger
 			//socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.NoDelay, 1);
 			closed = false;
 			reply_packets = new Dictionary<int, byte[]> ();
+			reply_cbs = new Dictionary<int, ReplyCallback> ();
 			reply_packets_monitor = new Object ();
 		}
 
@@ -923,10 +927,17 @@ namespace Mono.Debugger
 
 				if (IsReplyPacket (packet)) {
 					int id = GetPacketId (packet);
+					ReplyCallback cb = null;
 					lock (reply_packets_monitor) {
-						reply_packets [id] = packet;
-						Monitor.PulseAll (reply_packets_monitor);
+						reply_cbs.TryGetValue (id, out cb);
+						if (cb == null) {
+							reply_packets [id] = packet;
+							Monitor.PulseAll (reply_packets_monitor);
+						}
 					}
+
+					if (cb != null)
+						cb.Invoke (id, packet);
 				} else {
 					PacketReader r = new PacketReader (packet);
 
@@ -1000,6 +1011,24 @@ namespace Mono.Debugger
 
 		public IEventHandler EventHandler {
 			get; set;
+		}
+
+		/* Send a request and call cb when a result is received */
+		void Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb) {
+			int id = IdGenerator;
+
+			lock (reply_packets_monitor) {
+				reply_cbs [id] = delegate (int packet_id, byte[] p) {
+					/* Run the callback on a tp thread to avoid blocking the receive thread */
+					PacketReader r = new PacketReader (p);
+					cb.BeginInvoke (r, null, null);
+				};
+			}
+						
+			if (packet == null)
+				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
+			else
+				WritePacket (EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset));
 		}
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
@@ -1148,6 +1177,28 @@ namespace Mono.Debugger
 			} else {
 				return r.ReadValue ();
 			}
+		}
+
+		public delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ErrorCode error, object state);
+
+		public void VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
+			Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
+					ValueImpl v, exc;
+
+					if (r.ErrorCode != 0) {
+						callback (null, null, (ErrorCode)r.ErrorCode, state);
+					} else {
+						if (r.ReadByte () == 0) {
+							exc = r.ReadValue ();
+							v = null;
+						} else {
+							v = r.ReadValue ();
+							exc = null;
+						}
+
+						callback (v, exc, 0, state);
+					}
+				});
 		}
 
 		/*
