@@ -1,5 +1,15 @@
 2009-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (DebuggerTlsData): Honor the DISABLE_SOFT_DEBUG option.
+
+	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
+	used.
+
+	* debugger-agent.c: Add some definitions to make backporting to 2.6 easier.
+	Fix warnings.
+
+2009-11-17  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (DebuggerTlsData): Add a 'really_suspended' flag, not yet
 	used.
 
