@@ -205,14 +205,31 @@ namespace System.Xml.Linq
 
 		public void ReplaceNodes (object content)
 		{
-			RemoveNodes ();
+			// First, it adds new nodes and then removes existing
+			// nodes, for bug #540198. When the "content" is
+			// existing children, it has to be added first, because
+			// once "content" is removed, then they are not linked
+			// anymore and it does not iterate linked nodes as
+			// it did when it was passed to this method as argument.
+			var first = FirstNode;
+			var last = LastNode;
+
 			Add (content);
+
+			if (first == null)
+				return;
+
+			XNode next;
+			for (var n = first; n != last; n = next) {
+				next = n.NextNode;
+				n.Remove ();
+			}
+			last.Remove ();
 		}
 
 		public void ReplaceNodes (params object [] content)
 		{
-			RemoveNodes ();
-			Add (content);
+			ReplaceNodes ((object) content);
 		}
 	}
 }

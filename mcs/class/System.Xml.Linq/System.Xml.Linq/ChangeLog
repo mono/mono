@@ -1,3 +1,9 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XContainer.cs : when replacing nodes, add contents first and then
+	  remove them, so that the arguments are first unlinked and then
+	  no node ends up to be added. Fixed bug #541098.
+
 2009-09-22  Mike Feldman and Stephen A. Jazdzewski <steve@jazd.com>
 
 	* XUtil.cs: This patch fixes the '"False" is not a valid boolean

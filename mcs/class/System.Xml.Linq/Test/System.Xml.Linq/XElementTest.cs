@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -532,6 +533,23 @@ namespace MonoTests.System.Xml.Linq
 		{
 			var foo = XElement.Load (new XmlTextReader (new StringReader ("<foo></foo>")));
 			Assert.IsNotNull (foo);
+		}
+
+		[Test]
+		public void ReplaceNodes ()
+		{
+			var inputXml = "<Foo><C><Three>3</Three><Two></Two><One/></C><B><Aaa/><Yyy/><fff/></B><A Attrib=\"Hello World\"/></Foo>";
+			var reader = XmlReader.Create (new StringReader (inputXml), new XmlReaderSettings ());
+			XDocument doc = XDocument.Load (reader);
+			var result = doc.Root.Elements ().OrderBy (el => el.Name.ToString());
+			Assert.AreEqual (3, result.Count (), "#1");
+			doc.Root.FirstNode.Remove ();
+			Assert.AreEqual (2, result.Count (), "#2");
+
+			XContainer container = doc.Root;
+			container.ReplaceNodes (result);
+
+			Assert.AreEqual (2, container.Elements ().Count (), "#3");
 		}
 	}
 }
